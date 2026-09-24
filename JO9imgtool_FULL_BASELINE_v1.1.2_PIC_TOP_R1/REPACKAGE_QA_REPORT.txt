@@ -1,0 +1,45 @@
+PIC_TOP_R1 — Targeted Repackage QA
+Date: 2026-09-25
+
+PASS — Supplied PIC_TOP HTML embedded byte-for-byte, under installer filename.
+PASS — All 4 inline JavaScript blocks identical to original v1.1.2 HTML.
+PASS — Node syntax check of all 4 packaged inline JavaScript blocks.
+PASS — PIC connect / folderinfo IDs appear exactly once.
+PASS — PIC registration panel precedes the current-screen section.
+PASS — All 9 manifest source files exist and SHA-256 values match.
+PASS — Manifest destinations and installer / restore scripts unchanged.
+PASS — Patched and stock engine binaries unchanged from uploaded v1.1.2 ZIP.
+PASS — Detection, server, launch, filter and configuration files unchanged.
+PASS — Only the 5 pre-declared inherited files changed; all 19 others identical.
+PASS — Offline Chromium UI smoke checks: 13/13, no JavaScript page errors.
+
+Offline browser checks used synthetic context, a mock folder picker and an empty
+mock directory. They covered top-panel placement, hidden-resource toggle,
+checkbox selection, selection availability, and existing connect-handler wiring.
+HTTP navigation was blocked by the managed browser policy; UI testing used
+set_content with in-memory context injection rather than live HTTP polling.
+No policy settings were changed.
+
+NOT TESTED — Windows install/update/restore scripts executing in the game.
+NOT TESTED — Real Show HTML capture and live local-server context polling.
+NOT TESTED — Actual file-system writes, image conversion and backup/restore.
+NOT TESTED — In-game event replay or game-engine rendering.
+NOT IMPLEMENTED — SNmod event-specific image creation or QSP modifications.
+
+HTML SHA-256:
+e196e4b403816d7ecb68c793ce2917297263e36c4468ce6caa485c1dbd00214d
+
+Offline UI test details:
+PASS — Page loaded without JavaScript errors
+PASS — PIC registration control occurs once
+PASS — PIC panel precedes current-screen resources
+PASS — PIC registration control visible at top
+PASS — Mock detected resources rendered with UI filtered
+PASS — Target-selection button initially disabled
+PASS — Show all images reveals the filtered UI resource
+PASS — Image checkbox updates selected count
+PASS — Target-selection button enabled after selection
+PASS — Moved PIC button invokes the existing folder-picker handler
+PASS — Mock folder connection completes
+PASS — Image selection preserved after folder connection
+PASS — No JavaScript errors after interactions
