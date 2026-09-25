@@ -50,3 +50,29 @@
 - 바이트 동일로 확인: gear.png, sound_on.png, sound_off.png.
 - 미확인(한쪽 원본 미확보): `page_aura.png` (`pic/` vs `ui/grimdark/`), `page_blank.png` (`pic/` vs `ui/grimdark/bg/`).
 - 동적 경로: `ui overhaul\clothing bar small\<<$slave["armor"]>>.png` 등은 아이템명으로 파일명을 만든다. 평평한 폴더로 합치면 다른 UI 파일명과 충돌할 수 있어 하위 폴더 유지가 안전하다.
+
+### 사용자 결정 2 — SNKmod 아래 구조 규칙 (2026-09-25)
+- SNKmod 아래는 원본 구조를 최대한 따른다. 예: `game/SNKmod/content/pic/bg/slave_psychology/`.
+- 단, `ui/` 안의 모더 폴더(`grimdark`, `approved_main_v1`, `jo9_v197`, `jon-UIadds`)는 경로 단계에서 뺀다.
+- 모더 폴더 안에 원본과 같은 이름의 하위 폴더가 있으면 원본 폴더로 합친다. 예: `ui/grimdark/buttons/` → `SNKmod/content/pic/buttons/`.
+- 원본 루트에 같은 이름이 있는 `ui/grimdark/bg/page_blank.png`와 `ui/grimdark/page_aura.png`는 원본 위치(`SNKmod/content/pic/`)로 합친다. 합치기 전에 비교 결과로 승인받는다.
+- 그 밖의 모더 폴더 파일은 `SNKmod/content/pic/ui/`로 바로 들어간다. 현재 확인 범위(FIX6와 5개 location·base.css 참조)에서는 이름 충돌이 없다.
+
+### 묶음 1 처리
+- gear / sound_on / sound_off는 `SNKmod/content/pic/buttons/`의 한 파일로 합친다 (바이트 동일, 결정 1·2로 승인).
+
+### 묶음 2 조사 — `ui/grimdark/buttons/`의 나머지 (드라이브 `JO9main/game/content/pic` 원본)
+| 파일 | `pic/buttons/` 원본 | `pic/ui/grimdark/buttons/` | FIX6 `buttons/` |
+|---|---|---|---|
+| teach_a.png | 1,737 B | 1,737 B, 내용 동일 | 없음 |
+| teach_r.png | 1,618 B | 1,618 B, 내용 동일 | 없음 |
+| teach_s.png | 1,716 B | 1,716 B, 내용 동일 | 없음 |
+| lab.png | 21,464 B | 26,575 B, 다름 | 17,714 B (교체본) |
+| teach.png | 20,585 B | 25,681 B, 다름 | 16,098 B (교체본) |
+- 내용 동일은 드라이브에서 받은 두 파일의 base64 문자열이 같은 것으로 확인했다 (SHA-256 계산은 하지 않음).
+- `ui_style`은 이 5개 location 밖에서도 쓰인다 (`master_stat`, `ride_interface`, `interior_restore`, `боевой_интерфейс`, `раскладка_бой` 등). 통합하려면 이 location들도 고쳐야 하며, 범위 승인이 필요하다.
+
+### 묶음 3 후보 (다음 질문) — page_blank / page_aura
+- `pic/page_blank.png` 472,690 B vs `pic/ui/grimdark/bg/page_blank.png` 643,281 B: 다름.
+- `pic/page_aura.png` 990,058 B vs `pic/ui/grimdark/page_aura.png` 990,058 B: 크기 같음, 파일이 커서 내용 비교는 아직 못함.
+- 참고: `pic/bg/`에도 다른 `page_blank.png`(312,416 B)와 `page_aura.png`(144,250 B)가 있다.
