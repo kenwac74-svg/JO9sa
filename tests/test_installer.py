@@ -109,7 +109,7 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument('--qsp', required=True, type=Path)
     ap.add_argument('--pwsh', required=True)
-    ap.add_argument('--pkg', type=Path, default=REPO / 'dist/JO9_UI_v1_9_14_SNKmod_R2')
+    ap.add_argument('--pkg', type=Path, default=REPO / 'dist/JO9_UI_v1_9_14_SNKmod_R3')
     args = ap.parse_args()
     fix6 = fix6_files()
     work = Path(tempfile.mkdtemp(prefix='snkmod_test_'))

@@ -1,11 +1,13 @@
-# 수용 테스트 결과 — SNKmod R2
+# 수용 테스트 결과 — SNKmod R3
 
 - 실행일: 2026-09-25
 - 환경: Linux, PowerShell 7.4.6 (이동식), `-NonInteractive`
 - 실행한 것: `tests/test_installer.py` (가짜 게임 폴더 30개 검사 **30/30 통과**)
 - 실행하지 못한 것: Windows PowerShell 5.1 실행, Windows 대화창, 인게임 표시
 - 게임 입력: FIX6 설치 상태 `jack.qsp` (SHA-256 `9535334…b6d9`)
-- 패키지: `releases/JO9_UI_v1_9_14_SNKmod_R2.zip` (9,111,180 B, SHA-256 `d8b68119169d2043f5cc255b599895535b24095b5d59a4a237ff1e2399bce28a`). ZIP 안에 비ASCII 파일명 없음.
+- 패키지: `releases/JO9_UI_v1_9_14_SNKmod_R3.zip` (9,085,710 B, SHA-256 `99b9a60408be9e4b7ec95bbe96056ee8d4c4683645271b95d11d4b2270e5dc17`). 이미지 140개, SNKmod 참조 1,000곳. R2→R3 업데이트·복구 시험 통과.
+- 사용자 인게임 시험(R2): 정상, 누락 이미지 보고 → R3에 반영.
+- 이전: `releases/JO9_UI_v1_9_14_SNKmod_R2.zip` (9,111,180 B, SHA-256 `d8b68119169d2043f5cc255b599895535b24095b5d59a4a237ff1e2399bce28a`). ZIP 안에 비ASCII 파일명 없음.
 - 추가 시험: R1 설치 → R2 적용 시 R1을 먼저 되돌리고 R2 설치(참조 963곳 확인) → R2 복구 시 R1 설치 전 상태로 돌아감.
 - 이전: R1 (9,070,512 B, `4349b0be…d738`)
 

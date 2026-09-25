@@ -311,3 +311,9 @@
 - 이미지 외 파일 덮어쓰기에 `json/menu_icon.json`을 추가했다. 원본(`resources/originals/json/menu_icon.json`, SHA-256 `53296851…64fd`, CRLF·BOM 없음)에서 두 줄(`menu_item_take_drug`, `menu_item_drug_s`)만 SNKmod 경로로 바꾼다. 설치기는 `Overwrite` 목록(base.css, menu_icon.json)을 같은 방식으로 처리한다.
 - 결과: 이미지 140개(사용 122, 예비 18), 경로 치환 대상 location 47개(toggle_trophy 추가), 치환 705회. 설치기 시험 30/30 통과, SNKmod 참조 1,000곳이 모두 실제 파일을 가리킨다.
 - `.gitattributes`에 `resources/** -text`를 추가해 원본 바이트(CRLF)를 보존한다.
+
+### R3 패키징 (사용자 승인, 2026-09-25)
+- `releases/JO9_UI_v1_9_14_SNKmod_R3.zip`: 9,085,710 B, SHA-256 `99b9a604…dc17`, 153개 항목, 비ASCII 파일명 0개.
+- 시험 결과:
+  - 가짜 게임 폴더 시험 30/30 통과.
+  - R2→R3 업데이트: R2 기록은 restored, R3 기록은 applied가 된다. R3 복구 후 jack.qsp·base.css·menu_icon.json이 R2 설치 전과 같다.

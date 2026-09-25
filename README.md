@@ -8,7 +8,7 @@
 |---|---|
 | 기준 | FIX6 (`JO9_UI_v1_9_14_AllInOne_R2_FIX6.zip`, 9,073,868 B, SHA-256 `254dc8c5…bc82`). FIX5는 과거 기준 |
 | FIX6 원본 ZIP | `baseline/`에 바이트 그대로 저장. `releases/`로 올리는 Actions 가져오기 절차는 사용하지 않음 |
-| SNKmod R2 패키지 | `releases/JO9_UI_v1_9_14_SNKmod_R2.zip` (한글 파일명 영문화, Fer 새 아이콘 3개, pic 루트 UI 13개 포함) |
+| SNKmod R3 패키지 | `releases/JO9_UI_v1_9_14_SNKmod_R3.zip` (R2 + buttons 누락 이미지 15개, menu_icon.json 약물 복용 아이콘) |
 | 가짜 게임 폴더 시험 | `tests/test_installer.py` 30/30 통과 (Linux, PowerShell 7) |
 | Windows 실행·인게임 표시 | **미검증** |
 
