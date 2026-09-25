@@ -7,7 +7,7 @@ Windows 설치·인게임 표시는 아직 검증하지 않은 개발판입니�
 [설치 방식]
 - UI/UX 이미지: game/SNKmod/content/pic/ 아래에 새로 넣습니다.
   원래 game/content/pic/ 의 이미지는 수정·이동·삭제하지 않습니다.
-- 이미지가 아닌 파일(jack.qsp, css/base.css, 조건에 맞는 engine/jack.exe):
+- 이미지가 아닌 파일(jack.qsp, css/base.css, json/menu_icon.json, 조건에 맞는 engine/jack.exe):
   원래 경로에 덮어씁니다. 설치 전 원본을 _JO9_SNKmod_STATE 폴더에 보관해 복구할 수 있습니다.
 - jack.qsp: 5개 UI location 본문을 교체하고, 46개 location의 UI 이미지 경로를 SNKmod 경로로 바꿉니다.
 - BG 번역 이미지(slave_psychology)와 트로피룸은 UI/UX에 포함됩니다.

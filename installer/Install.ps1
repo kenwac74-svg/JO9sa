@@ -182,10 +182,14 @@ try {
     $qbytes=[Jo9PanelCodec]::Write($fields)
     if((HashBytes $qbytes)-ne (Hash $qsp)){$plan.Add([pscustomobject]@{Rel='jack.qsp';Data=$qbytes})}
 
-    $cssHash=Hash $css
-    if($cssHash-ne $manifest.Css.Hash){
-        if($manifest.Css.Before -notcontains $cssHash){Warn ('알려지지 않은 base.css('+$cssHash+')를 SNKmod UI용 base.css로 교체합니다. 원본은 복구용으로 보관합니다.')}
-        $plan.Add([pscustomobject]@{Rel=$manifest.Css.Rel;Data=[IO.File]::ReadAllBytes((SafePath $Root $manifest.Css.Source))})
+    # 이미지 외 파일(base.css, json/menu_icon.json): 원본 경로에 덮어쓰고, 원본은 복구용으로 보관한다.
+    foreach($ow in $manifest.Overwrite){
+        $t=SafePath $GamePath $ow.Rel
+        if(-not [IO.File]::Exists($t)){Warn ($ow.Rel+' 파일이 없어 건너뜁니다.');continue}
+        $h=Hash $t
+        if($h-eq $ow.Hash){continue}
+        if($ow.Before -notcontains $h){Warn ('알려지지 않은 '+$ow.Rel+'('+$h+')를 SNKmod UI용 파일로 교체합니다. 원본은 복구용으로 보관합니다.')}
+        $plan.Add([pscustomobject]@{Rel=$ow.Rel;Data=[IO.File]::ReadAllBytes((SafePath $Root $ow.Source))})
     }
 
     $engine=SafePath $GamePath $manifest.Engine.Rel

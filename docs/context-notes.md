@@ -299,3 +299,15 @@
 - json·css의 한글 이미지 참조는 `소리.png`(base.css) 하나이고, 이미 처리했다.
 - game.zip의 `css/base.css`(SHA-256 `7ec25fa3…aa06`)는 FIX6 CssBefore 목록에 있다 (FIX6 설치 전 상태).
 - `take a drug.png`(원본 `content/pic/ui overhaul/`, 5,201 B)는 menu_icon.json의 `menu_item_take_drug`와 `menu_item_drug_s`에서 쓴다. 스크린샷의 "약물 복용" 아이콘이다. 새 디자인을 SNKmod로 돌리려면 `json/menu_icon.json`의 두 곳을 고쳐야 한다. 이미지 외 파일이므로 원본 경로에 덮어쓰고 복구를 제공한다.
+
+### 사용자 결정 11 — buttons.zip 반영, 이름은 원본대로 (2026-09-25)
+- 사용자 지시: 한글 파일을 빼고 모든 이름은 원본대로 둔다. toggle_trophy와 json/menu_icon.json 수정을 승인한다.
+- `resources/new/content/pic/`에 저장했다. 빌드는 FIX6·원본보다 이 파일을 우선한다.
+  - `buttons/`: dual_active, dual_used, dual_active_trophy, dual_used_trophy, heavy_active, heavy_used, thumb_up, thumb_down, milk_drop_large, milk_drop_medium.
+  - pic 루트: hart_red, hart_green, hart_purple, hart_blue. SNKmod에서는 `ui/`에 둔다 (결정 10).
+  - `ui overhaul/take a drug.png`: 이름 그대로, 원래 구조 위치.
+- thumb_up·thumb_down·milk_drop_large는 FIX6판 대신 새 파일을 쓴다 (사용자 제공 최신본 우선).
+- 예비 리소스가 늘었다: milk_drop_medium, hart_blue. 예비 합계는 18개다.
+- 이미지 외 파일 덮어쓰기에 `json/menu_icon.json`을 추가했다. 원본(`resources/originals/json/menu_icon.json`, SHA-256 `53296851…64fd`, CRLF·BOM 없음)에서 두 줄(`menu_item_take_drug`, `menu_item_drug_s`)만 SNKmod 경로로 바꾼다. 설치기는 `Overwrite` 목록(base.css, menu_icon.json)을 같은 방식으로 처리한다.
+- 결과: 이미지 140개(사용 122, 예비 18), 경로 치환 대상 location 47개(toggle_trophy 추가), 치환 705회. 설치기 시험 30/30 통과, SNKmod 참조 1,000곳이 모두 실제 파일을 가리킨다.
+- `.gitattributes`에 `resources/** -text`를 추가해 원본 바이트(CRLF)를 보존한다.

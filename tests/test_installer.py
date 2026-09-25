@@ -53,6 +53,8 @@ def make_game(root: Path, qsp: Path, fix6: dict[str, bytes], with_fix6_backup: b
     shutil.copy2(qsp, root / 'jack.qsp')
     (root / 'css').mkdir()
     (root / 'css/base.css').write_bytes(fix6['payload/css/base.css'])
+    (root / 'json').mkdir()
+    shutil.copy2(REPO / 'resources/originals/json/menu_icon.json', root / 'json/menu_icon.json')
     (root / 'engine').mkdir()
     (root / 'engine/jack.exe').write_bytes(b'custom engine for test')
     m = json.loads(fix6['manifest.json'].decode('utf-8-sig'))
@@ -85,6 +87,8 @@ def verify_installed(game: Path, pkg: Path, label: str) -> None:
     originals = {o[len('content/pic/'):].lower() for u in ui_map for o in u['Originals']}
     texts = {l['name']: l['body'] for l in locs}
     texts['css'] = (game / 'css/base.css').read_text(encoding='utf-8')
+    texts['json'] = (game / 'json/menu_icon.json').read_text(encoding='utf-8')
+    json.loads(texts['json'])
     missing, left, count = [], [], 0
     direct = re.compile(r"(?<!SNKmod\\)(?<!SNKmod/)content[\\/]pic[\\/]([^\"'<>()]+?\.(?:png|jpg|gif))", re.I)
     for n, t in texts.items():
@@ -114,7 +118,7 @@ def main() -> int:
         g = work / 'A/game'
         make_game(g, args.qsp, fix6, with_fix6_backup=False)
         pic_before = tree_hashes(g / 'content')
-        code_before = {f: sha(g / f) for f in ['jack.qsp', 'css/base.css', 'engine/jack.exe']}
+        code_before = {f: sha(g / f) for f in ['jack.qsp', 'css/base.css', 'json/menu_icon.json', 'engine/jack.exe']}
         r = run(args.pwsh, args.pkg, g, 'Check')
         check('A1 Check 종료코드 0', r.returncode == 0, r.stdout[-300:] + r.stderr[-300:])
         check('A1 Check는 파일을 바꾸지 않음', tree_hashes(g) == {**{'content/' + k: v for k, v in pic_before.items()}, **code_before} or
@@ -125,12 +129,12 @@ def main() -> int:
         verify_installed(g, args.pkg, 'A2')
         check('A2 원본 content/pic 이미지 바이트 불변', tree_hashes(g / 'content') == pic_before)
         check('A2 커스텀 엔진 불변', sha(g / 'engine/jack.exe') == code_before['engine/jack.exe'])
-        installed = {f: sha(g / f) for f in ['jack.qsp', 'css/base.css']}
+        installed = {f: sha(g / f) for f in ['jack.qsp', 'css/base.css', 'json/menu_icon.json']}
         r = run(args.pwsh, args.pkg, g, 'Apply')
         check('A3 재실행은 변경 없음', r.returncode == 0 and '이미 설치' in r.stdout and {f: sha(g / f) for f in installed} == installed, r.stdout[-200:])
         r = run(args.pwsh, args.pkg, g, 'Restore')
         check('A4 Restore 종료코드 0', r.returncode == 0, r.stdout[-300:] + r.stderr[-300:])
-        check('A4 jack.qsp·base.css·엔진 설치 전과 동일', {f: sha(g / f) for f in code_before} == code_before)
+        check('A4 jack.qsp·base.css·menu_icon.json·엔진 설치 전과 동일', {f: sha(g / f) for f in code_before} == code_before)
         check('A4 SNKmod 폴더 정리', not (g / 'SNKmod').exists())
         check('A4 원본 content/pic 불변', tree_hashes(g / 'content') == pic_before)
 

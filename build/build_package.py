@@ -96,6 +96,8 @@ def main() -> int:
             images[dest] = {'data': data, 'originals': [rel], 'source': source}
         target[rel.lower()] = dest
 
+    # 사용자가 준 최신본(resources/new)이 있으면 FIX6·원본보다 우선한다.
+    newdir = REPO / 'resources/new/content/pic'
     for e in fmanifest['Files']:
         if not e['Rel'].startswith('content/pic/'):
             continue
@@ -103,11 +105,12 @@ def main() -> int:
         data = src[e['Source']]
         if sha(data) != e['After']:
             raise SystemExit('FIX6 payload mismatch: ' + rel)
-        add_image(rel, data, 'FIX6')
+        if (newdir / rel).is_file():
+            add_image(rel, (newdir / rel).read_bytes(), 'new')
+        else:
+            add_image(rel, data, 'FIX6')
 
-    # 1-2) FIX6에 없지만 포함할 원본 (한글 이름 영문화 등, 결정 9·10)
-    # 사용자가 준 새 디자인(resources/new)이 있으면 원본보다 우선한다.
-    newdir = REPO / 'resources/new/content/pic'
+    # 1-2) FIX6에 없지만 포함할 파일 (한글 이름 영문화, 누락 UI 등, 결정 9·10)
     missing = [r for r in rules['extra'] if not (newdir / r).is_file() and not (args.originals / r).is_file()]
     if missing:
         raise SystemExit('Missing original files under ' + str(args.originals) + ':\n' + '\n'.join(missing))
@@ -183,6 +186,12 @@ def main() -> int:
     css = src['payload/css/base.css'].decode('utf-8')
     css_new = apply(css, list(OrderedDict.fromkeys(rules_for(css))))
 
+    # 4-2) 엔진이 읽는 json/menu_icon.json (메뉴 아이콘 HTML). 이미지 외 파일이라 통째로 덮어쓰고 복구한다 (결정 8).
+    menu_raw = (REPO / 'resources/originals/json/menu_icon.json').read_bytes()
+    menu = menu_raw.decode('utf-8')
+    menu_new = apply(menu, list(OrderedDict.fromkeys(rules_for(menu))))
+    json.loads(menu_new)
+
     # 5) 정적 검증: 치환 후 SNKmod 참조는 모두 payload에 있고, FIX6 파일의 옛 경로 참조는 남지 않는다.
     final_texts = {l['name']: l['body'] for l in locs}
     by_loc: dict[str, list] = {}
@@ -193,6 +202,7 @@ def main() -> int:
     for p in patches:
         final_texts[p['Name']] = p['Text']
     final_texts['[css/base.css]'] = css_new
+    final_texts['[json/menu_icon.json]'] = menu_new
     lower_images = {k.lower() for k in images}
     used = Counter()
     problems = []
@@ -221,6 +231,8 @@ def main() -> int:
                             'Hash': sha(info['data'])})
     (pay / 'css').mkdir(parents=True)
     (pay / 'css/base.css').write_bytes(css_new.encode('utf-8'))
+    (pay / 'json').mkdir(parents=True)
+    (pay / 'json/menu_icon.json').write_bytes(menu_new.encode('utf-8'))
     (pay / 'engine').mkdir(parents=True)
     (pay / 'engine/jack.exe').write_bytes(src['payload/engine/jack.exe'])
 
@@ -248,8 +260,12 @@ def main() -> int:
     manifest = OrderedDict(
         Package=PACKAGE, Version=VERSION, GameVersion=fmanifest['GameVersion'],
         Images=img_entries,
-        Css={'Rel': 'css/base.css', 'Source': 'payload/css/base.css', 'Hash': sha(css_new.encode('utf-8')),
+        Overwrite=[
+            {'Rel': 'css/base.css', 'Source': 'payload/css/base.css', 'Hash': sha(css_new.encode('utf-8')),
              'Before': fmanifest['CssBefore'] + [sha(css.encode('utf-8'))]},
+            {'Rel': 'json/menu_icon.json', 'Source': 'payload/json/menu_icon.json', 'Hash': sha(menu_new.encode('utf-8')),
+             'Before': [sha(menu_raw)]},
+        ],
         Engine={'Rel': 'engine/jack.exe', 'Source': 'payload/engine/jack.exe', 'Before': fmanifest['EngineBefore'],
                 'After': fmanifest['EngineAfter'], 'QtWidgetsHash': fmanifest['QtWidgetsHash']},
         General=[],
