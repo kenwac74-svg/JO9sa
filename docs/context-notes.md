@@ -251,3 +251,6 @@
 - `pic.zip` 안의 13개(낙태, 출산, 상처, 질병, 소리, 임신, 임신s, 피임약0/0s/1/1s/2/2s)는 드라이브 `JO9main/game/content/pic/`의 같은 이름 파일과 바이트 크기가 모두 일치한다. `resources/originals/content/pic/`에 바이트 그대로 저장했다. ZIP의 한글 이름은 CP949(UTF-8 표시 없음)였다.
 - 함께 붙여 주신 새 아이콘 3개(28×30)는 `jon-UIadds`의 Fer_안전·Fer_젖소·Fer_평시를 대신할 새 디자인으로 보인다. 원본 세 파일도 28×30이지만 옛 스타일이다(1,517–1,602 B). 새 아이콘은 FIX6 Fer 아이콘과 같은 스타일이다(2,2xx B). 새 리소스이므로 배치·비교 승인을 받는다.
 - 새 아이콘 대응 확정 (사용자 답): 회색 자궁 = 안전일 → `Fer_PregS.png`, 젖소 머리 = 착유용 젖소 → `Fer_Milk.png`, 분홍 자궁 = 평시(임신률 저하) → `Fer_Normal.png`.
+- `JO9_FerVir_UI_11_20260925.zip`: Fer_안전·Fer_젖소·Fer_평시 새 디자인 3개. 붙여 주신 이미지와 바이트가 같다. `resources/new/content/pic/ui/jon-UIadds/`에 저장했다. 빌드는 `resources/new`를 원본보다 우선한다. ui_map의 Source는 `new`다.
+- 사용자 확인: 이번에 준 이미지 자료(pic 루트 13개, 새 아이콘 3개)는 모두 UI다. 따라서 13개는 `SNKmod/content/pic/ui/`에 둔다 (결정 10 적용).
+- 실제 파일로 빌드한 결과: 이미지 128개(사용 112, 예비 16), 5개 밖 경로 치환 679회, 설치기 시험 30/30 통과. 설치 후 jack.qsp·base.css에 한글 이미지 경로가 0곳이다. `releases/`의 R1 ZIP은 아직 갱신하지 않았다 (패키징 승인 대기).

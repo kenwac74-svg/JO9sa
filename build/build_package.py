@@ -106,11 +106,16 @@ def main() -> int:
         add_image(rel, data, 'FIX6')
 
     # 1-2) FIX6에 없지만 포함할 원본 (한글 이름 영문화 등, 결정 9·10)
-    missing = [r for r in rules['extra'] if not (args.originals / r).is_file()]
+    # 사용자가 준 새 디자인(resources/new)이 있으면 원본보다 우선한다.
+    newdir = REPO / 'resources/new/content/pic'
+    missing = [r for r in rules['extra'] if not (newdir / r).is_file() and not (args.originals / r).is_file()]
     if missing:
         raise SystemExit('Missing original files under ' + str(args.originals) + ':\n' + '\n'.join(missing))
     for rel in rules['extra']:
-        add_image(rel, (args.originals / rel).read_bytes(), 'original')
+        if (newdir / rel).is_file():
+            add_image(rel, (newdir / rel).read_bytes(), 'new')
+        else:
+            add_image(rel, (args.originals / rel).read_bytes(), 'original')
     bad = [d for d in images if any(ord(c) > 127 for c in d)]
     if bad:
         raise SystemExit('Non-ASCII SNKmod file names need a rename rule: ' + ', '.join(bad))

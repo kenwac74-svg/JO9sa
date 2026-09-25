@@ -32,6 +32,12 @@ Windows 설치·인게임 표시는 아직 검증하지 않은 개발판입니�
 - 이미지 교체 모드: 이 모드가 SNKmod로 옮긴 이미지(ui_map.json의 Originals 경로)를
   원본 경로에서 바꾸는 모드는 그 이미지가 게임에 반영되지 않으므로 호환되지 않습니다.
 
+[한글 파일명 정리]
+- 한글 이름 UI 이미지 22개는 SNKmod 안에서 영문 이름으로 바꿔 넣었습니다 (예: Fer_가임 → Fer_PregO, 소리 → Sound).
+  원본 한글 파일은 그대로 두며, jack.qsp·base.css의 참조만 영문 이름으로 바꿉니다.
+  대응표는 ui_map.json의 Originals와 SNKmod 항목에 있습니다.
+- Fer_안전·Fer_젖소·Fer_평시는 새 디자인 아이콘(Fer_PregS, Fer_Milk, Fer_Normal)으로 넣었습니다.
+
 [예비 리소스]
 - ui_map.json에서 Status가 "spare"인 16개 파일은 이 모드에서 쓰지 않습니다.
   앞으로 쓸 수 있도록 미리 넣어 둔 예비 리소스입니다.
