@@ -289,3 +289,13 @@
   3. `seed_fertility`는 json/slaves에서 정해질 가능성이 높다. 그렇다면 Fer_평시가 "소스상 도달 불가"라는 분석은 틀렸을 수 있다.
 - 사용자 스크린샷의 "약물 복용" 메뉴 아이콘(빨간 사각형에 녹색 선)은 원본 `content/pic/ui overhaul/take a drug.png`(5,201 B)로 보인다. 새 디자인(8,792 B)이 반영되지 않은 상태다.
 - 다음 조치: 사용자에게 `game/json` 폴더를 받아 JSON 참조를 전수 조사하고, 참조 맵과 빌드에 JSON 경로 치환을 넣는다. JSON은 이미지가 아닌 파일이므로 결정 8에 따라 원본 경로에 덮어쓰고 복구를 제공한다.
+
+### game.zip(json·css·fonts·picture_modding) 전수 조사 결과 (2026-09-25)
+- 사용자 지적: 구글 드라이브 원본을 처음부터 제대로 읽었어야 했다. 이후 게임 폴더 전체(qsp·json·css)를 참조 조사 대상으로 삼는다.
+- `json/menu_icon.json`: 키 `menu_item` 아래에 메뉴 아이콘 HTML 2,640개가 있다. 이미지 2,054종이며 모두 `content/pic/ui overhaul/`이다. 엔진이 읽어 `$menu_item_*` 변수로 쓴다 (QSP 변수 이름은 대소문자를 가리지 않는다).
+- `json/menu_item.json`: 메뉴 id 숫자 표다. 이미지 참조는 없다.
+- json·css에서 FIX6 파일을 참조하는 곳은 0곳이다. 따라서 "R2에서 JSON 아이콘이 옛 그림으로 돌아갔을 수 있다"는 우려는 해당하지 않는다. 사용 99개·미사용 16개 분류도 그대로다.
+- `json/slaves/*.json`의 seed_fertility 값은 -1, -2, 0, 1뿐이다. Fer_평시(-1·-2·-3 외의 음수)와 Fer_젖소(-3이면서 공개 전)가 소스상 나오지 않는다는 분석은 유지된다.
+- json·css의 한글 이미지 참조는 `소리.png`(base.css) 하나이고, 이미 처리했다.
+- game.zip의 `css/base.css`(SHA-256 `7ec25fa3…aa06`)는 FIX6 CssBefore 목록에 있다 (FIX6 설치 전 상태).
+- `take a drug.png`(원본 `content/pic/ui overhaul/`, 5,201 B)는 menu_icon.json의 `menu_item_take_drug`와 `menu_item_drug_s`에서 쓴다. 스크린샷의 "약물 복용" 아이콘이다. 새 디자인을 SNKmod로 돌리려면 `json/menu_icon.json`의 두 곳을 고쳐야 한다. 이미지 외 파일이므로 원본 경로에 덮어쓰고 복구를 제공한다.
