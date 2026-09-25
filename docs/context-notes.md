@@ -158,3 +158,19 @@
 ### CSS 로딩 확인
 - jack.qsp의 location 243개 어디에도 `.css`, `<link>`, `usercss`, `stylesheet`가 없다. 즉 `css/base.css`는 QSP 코드가 아니라 엔진(jack.exe)이 고정 경로로 읽는 것으로 보인다 (코드상 추정, 엔진 소스 없음).
 - 따라서 base.css를 SNKmod로 옮기거나 로딩 경로를 바꾸려면 exe 수정이 필요하다. 이는 정책상 이 작업 범위 밖이다.
+
+### 참조 맵 정정 (2026-09-25)
+- 첫 참조 맵은 부분 문자열로 비교해서 오탐이 있었다. 예: `ui/grimdark/buttons/thumb_down.png`가 `buttons/thumb_down.png` 참조로도 잡혔다.
+- `tools/fix6_refmap.py`를 정확한 경로 비교로 고쳤다. 비교 대상 형태는 세 가지다. ① `content\pic\경로`. ② `content\pic\<<iif(…)>>` 안의 경로. ③ `$special_image[N] = '경로'`.
+- 결과: 사용 99개와 미사용 16개, 5개 밖 location 46개와 base.css는 그대로다. 파일별 location 목록만 바뀌었다.
+
+### 사용자 결정 8 — 이미지 외 파일은 원본 경로 덮어쓰기 + 복구 제공 (2026-09-25)
+- 이미지 리소스를 뺀 모든 파일(jack.qsp, css/base.css, 기존 정책상의 engine/jack.exe)은 원본 경로에 덮어쓴다. 복구할 수 있도록 설치 전 원본을 보관한다.
+- base.css는 엔진이 고정 경로로 읽으므로 이 방식이 맞다. CSS 안의 FIX6 이미지 경로는 SNKmod 경로로 바꾼다.
+
+### 경로 치환 규칙 (결정 2·3·4·5에서 도출)
+- FIX6 파일 X(`content/pic/<rel>`)를 참조하는 모든 곳은 `SNKmod/content/pic/<SNKmod rel>`로 바꾼다. 구분자는 원래 쓰인 것(`\` 또는 `/`)을 따른다.
+- `iif(ui_style = 2, ''ui\grimdark\buttons\X'', ''buttons\X'')` 형태는 `buttons\X`가 FIX6 파일일 때만 식 전체를 SNKmod 고정 경로로 바꾼다. 두 분기가 같은 파일을 가리키게 되기 때문이다 (lab, teach, sound_on/off). teach_a/r/s처럼 FIX6에 없으면 그대로 둔다.
+- `ui/grimdark/buttons/X` 직접 참조도 `buttons/X`가 FIX6 파일이면 SNKmod `buttons/X`로 보낸다 (gear, sound_on/off, thumb_up/down). thumb는 FIX6에 grimdark판이 없으나, 결정 3(grimdark 하위 폴더 = 원래 폴더)과 FIX6 최신 기준에 따른다. 이 참조는 `ui_style = 2` 분기라 현재 화면에는 영향이 없다.
+- FIX6에 없는 grimdark 참조(`cryobutton`, `teach_a/r/s`, `bg/fight`, `bg/page_blank`, `page_aura`)는 바꾸지 않는다.
+- slave_psychology: `interaction_city`의 `$special_image[N] = 'bg\slave_psychology\N.png'`를 `$special_image_full[N] = 'SNKmod\content\pic\bg\slave_psychology\N.png'`로 바꾼다. `interaction_city`는 시작할 때 `killvar '$special_image_full'`을 하고, 표시 쪽은 `$special_image_full`을 우선 쓴다 (소스 확인).
