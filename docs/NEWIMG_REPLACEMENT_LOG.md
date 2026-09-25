@@ -30,6 +30,7 @@
 - 원본 이미지는 `JO9main/game/content/pic/` 아래에서 같은 경로의 파일로 대조한다.
 - 확인한 사항: `JO9main/game/engine/jack.exe`는 246,272 bytes로, 이미지편집툴 참조본의 순정 `original_jack.exe`와 크기가 같다. SHA-256은 대조하지 않았다.
 - 같은 폴더의 `newimage/`는 작업용 원본 그림 모음으로 보이며 기준 게임 파일이 아니다.
+- 사용자 로컬 폴더 `K:\doing\Jack O Nine Tails v2.3 Kor_nosex`도 2.3 순정이다(사용자 확인). 사용자 컴퓨터에서 실행하는 로컬 세션은 이 폴더의 `game/content/pic/`로 원본을 대조할 수 있다. 클라우드 세션은 이 폴더에 접근할 수 없으므로 `JO9main`을 쓴다.
 
 ## 기록 원칙
 
