@@ -149,3 +149,12 @@
   - 본문을 교체하는 5개 location은 해시가 맞지 않아도 설치를 거부하지 않는다. 경고를 보여 주고 기록한 뒤 교체한다.
   - 복구를 위해 교체 전 location 본문(QSP 상태)은 기록한다. 이것은 UI 연결 복구용 QSP 상태 기록이며, 일반 이미지 백업과는 별개다.
   - 경로 치환 46개도 같은 원칙이다. 치환할 문자열이 없으면 그 항목만 건너뛰고 보고한다.
+
+### 사용자 결정 7 — 참조 없는 FIX6 파일 16개는 예비 리소스로 포함 (2026-09-25)
+- 16개(trophywall, debug_a/s, fast_cook/milking/milking_gray/punishment/reward/sweep, influence, jo9_heart_a/s, question, soc_btn, trotest, yellow_button)를 SNKmod에 넣는다. 위치는 원래 구조를 따른다 (`SNKmod/content/pic/buttons/`, `SNKmod/content/pic/bg/trophy/`).
+- 이 모드에서는 쓰지 않지만 앞으로 쓸 수 있는 리소스라는 점을 명시한다. `ui_map`에 상태 `예비(미사용)`로 표시하고, 배포 안내에도 적는다.
+- 참조가 없으므로 이 16개는 경로 치환 대상이 아니다.
+
+### CSS 로딩 확인
+- jack.qsp의 location 243개 어디에도 `.css`, `<link>`, `usercss`, `stylesheet`가 없다. 즉 `css/base.css`는 QSP 코드가 아니라 엔진(jack.exe)이 고정 경로로 읽는 것으로 보인다 (코드상 추정, 엔진 소스 없음).
+- 따라서 base.css를 SNKmod로 옮기거나 로딩 경로를 바꾸려면 exe 수정이 필요하다. 이는 정책상 이 작업 범위 밖이다.
