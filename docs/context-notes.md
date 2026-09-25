@@ -32,3 +32,21 @@
   - `sound_on/off`: main_screen 181·183행이 `iif(ui_style = 2, 'ui\grimdark\buttons\…', 'buttons\…')`로 선택. city_screen 211–219행도 두 경로를 분기.
 - 즉 `ui_style` 테마(2=grimdark)별로 경로가 갈린다. 현재 FIX6에서 그림이 같더라도 테마 구분 의도가 있다.
 - 사용자 승인 전이므로 통합·이동하지 않았다.
+
+### 사용자 결정 1 — 단일 UI, SNKmod 아래 단일 경로로 통합 (2026-09-25)
+- 사용자 지시: 이 게임은 실제로 `ui_style`을 적용하지 않는 단일 UI다. 모더들이 흩어 놓은 UI 경로를 SNKmod 아래로 전부 통합하고 새 단일 경로를 지정한다.
+- 이 결정은 인계 문서의 "기본은 원본 폴더 구조 미러" 규칙보다 우선한다.
+- 결과: `gear/sound_on/sound_off`의 `buttons/` 사본과 `ui/grimdark/buttons/` 사본은 SNKmod의 한 파일로 합친다. `iif(ui_style = 2, …)` 분기는 두 쪽 모두 같은 새 경로를 가리키게 한다.
+- 새 단일 경로의 구체적 모양은 사용자 확인 대기 중이다.
+
+### 통합 대상이 되는 흩어진 UI 폴더 (5개 location + base.css + FIX6 payload 기준)
+- `content/pic/` 루트 (padding, menu_button, hart_*, 소리, blank_ava, chart, money_counter, page_aura, page_blank 등)
+- `buttons/`, `ui/approved_main_v1/`, `ui/grimdark/`(+`buttons/`, `bg/`), `ui/jo9_v197/`, `ui/jon-UIadds/`
+- `ui overhaul/`(+`clothing bar/`, `clothing bar small/`), CSS에는 `UI overhaul/` 표기도 섞여 있음
+- `bg/slave_psychology/`, `bg/trophy/`
+- 이 5개 location 밖의 UI 참조(트로피룸·심리 화면 등)는 아직 조사하지 않았다. 통합하려면 다른 location도 고쳐야 할 가능성이 높고, 그 범위는 따로 승인받아야 한다.
+
+### 파일명 충돌 (한 폴더로 합칠 때)
+- 바이트 동일로 확인: gear.png, sound_on.png, sound_off.png.
+- 미확인(한쪽 원본 미확보): `page_aura.png` (`pic/` vs `ui/grimdark/`), `page_blank.png` (`pic/` vs `ui/grimdark/bg/`).
+- 동적 경로: `ui overhaul\clothing bar small\<<$slave["armor"]>>.png` 등은 아이템명으로 파일명을 만든다. 평평한 폴더로 합치면 다른 UI 파일명과 충돌할 수 있어 하위 폴더 유지가 안전하다.
