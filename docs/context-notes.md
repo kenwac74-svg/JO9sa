@@ -232,3 +232,8 @@
     - 피임약0: slave_private_room1–4 각 2곳. 피임약1, 피임약2: slave_private_room1–4 각 1곳.
     - 피임약0s: main_screen 8곳. 피임약1s, 피임약2s: main_screen 각 4곳.
 - 참조하는 location은 모두 이미 승인된 범위(5개 + 46개)에 있다.
+
+### 사용자 결정 10 — pic 루트의 UI 파일은 SNKmod ui/ 아래로 (2026-09-25)
+- `content/pic/` 바로 아래 있는 파일 중 사용자가 UI라고 판단한 것은 `SNKmod/content/pic/ui/`로 옮긴다. 원래 구조를 그대로 따르는 규칙의 예외다.
+- UI 여부는 사용자가 판단한다. 파일마다 묻고 받은 답대로 배치한다.
+- 원본 파일은 그대로 둔다.
