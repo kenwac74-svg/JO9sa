@@ -202,3 +202,33 @@
 - UI 패치 작업의 최종 저장 브랜치는 `JO9UIpatch`다. `claude/…` 브랜치는 작업용이다.
 - 원격 `JO9UIpatch`에는 이 세션 밖에서 쌓인 커밋 6개가 있었다 (정책 문서, FIX6 첨부 기록, `tools/import_fix6.py`, Actions 가져오기 워크플로). 작업 브랜치에 병합하고 README 충돌만 손으로 합쳤다.
 - 워크플로 `import-fix6.yml`은 `releases/JO9_UI_v1_9_14_AllInOne_R2_FIX6.zip`이 push될 때만 실행된다. 이 작업은 FIX6 원본을 `baseline/`에 두므로 실행되지 않는다.
+
+### 사용자 결정 9 — 한글 파일명 처리 (2026-09-25)
+- 앞으로 한국어 파일명이 포함되면 사용자에게 알리고 대체 이름을 받는다.
+- 한글 이름 파일은 영문 이름으로 바꿔 이 모드(SNKmod) 안에 포함한다. 우리가 바꾸지 않은 원본 이미지라도 한글 이름이면 포함 대상이다 (결정 4의 예외). 원본 파일은 지우거나 바꾸지 않는다.
+- 사용자 지정 이름:
+
+| 원래 이름 | 새 이름 |
+|---|---|
+| ui/jon-UIadds/Fer_가임.png | Fer_PregO.png |
+| ui/jon-UIadds/Fer_불임.png | Fer_PregX.png |
+| ui/jon-UIadds/Fer_산란.png | Fer_PregEg.png |
+| ui/jon-UIadds/Fer_아동.png | Fer_Mi.png |
+| ui/jon-UIadds/Vir_비.png | Vir_Xcr.png |
+| ui/jon-UIadds/Vir_처.png | Vir_Ocr.png |
+| ui/jon-UIadds/Fer_안전.png | Fer_PregS.png |
+| ui/jon-UIadds/Fer_젖소.png | Fer_Milk.png |
+
+- 해석: "가임=PregO"처럼 한글 부분만 적은 항목도 `Fer_` 접두사를 유지한다 (`아동=Fer_Mi`와 같은 형식).
+
+### 게임 전체의 한글 이미지 참조 (jack.qsp 243개 location + base.css, 동적 경로 없음)
+- 위 8개 외에 이름이 정해지지 않은 파일이 14개 있다.
+  - `ui/jon-UIadds/Fer_평시.png`: sjm_UI_UIadds 2곳.
+  - `content/pic/` 바로 아래 13개.
+    - 낙태, 출산: assistant_stat 각 5곳.
+    - 상처, 질병, 임신s: main_screen 각 4곳.
+    - 소리: main_screen 1, city_screen 1, base.css 2곳.
+    - 임신: slave_private_room1–4 각 1곳.
+    - 피임약0: slave_private_room1–4 각 2곳. 피임약1, 피임약2: slave_private_room1–4 각 1곳.
+    - 피임약0s: main_screen 8곳. 피임약1s, 피임약2s: main_screen 각 4곳.
+- 참조하는 location은 모두 이미 승인된 범위(5개 + 46개)에 있다.
