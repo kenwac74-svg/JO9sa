@@ -317,3 +317,5 @@
 - 시험 결과:
   - 가짜 게임 폴더 시험 30/30 통과.
   - R2→R3 업데이트: R2 기록은 restored, R3 기록은 applied가 된다. R3 복구 후 jack.qsp·base.css·menu_icon.json이 R2 설치 전과 같다.
+- 사용자 R3 Windows 설치·인게임 시험: 이상 없음.
+- R3에 포함된 README_KR.txt에 숫자 오류 3곳이 있었다. location "46개"는 47개, 예비 "16개"는 18개가 맞고, RESTORE 설명에 menu_icon.json이 빠져 있었다. 소스만 고쳤다. 배포 ZIP 반영은 다음 패키징 때 한다 (패키징은 승인 후).

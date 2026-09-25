@@ -44,7 +44,7 @@
 - [x] 사용자 Windows 설치·인게임 시험 (R2): 정상, 누락 이미지 보고.
 - [x] buttons.zip 누락 이미지 15개 반영, toggle_trophy·json/menu_icon.json 수정 (사용자 승인). 빌드 이미지 140개, 시험 30/30.
 - [x] R3 패키징 (사용자 승인) — `releases/JO9_UI_v1_9_14_SNKmod_R3.zip`.
-- [ ] 사용자 Windows 설치·인게임 시험 (R3).
+- [x] 사용자 Windows 설치·인게임 시험 (R3): 이상 없음.
 
 ## P2 — 선택형 일반 이미지 교체와 패키징
 
