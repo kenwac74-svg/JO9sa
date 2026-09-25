@@ -262,3 +262,20 @@
   - 가짜 게임 폴더 시험 30/30 통과.
   - R1→R2 업데이트: R1 기록은 restored, R2 기록은 applied가 된다. R2 복구 후 jack.qsp·base.css가 R1 설치 전과 같다.
 - R1 ZIP은 이력으로 남긴다.
+
+### 사용자 시험 결과와 buttons.zip 검토 (2026-09-25)
+- 사용자 R2 설치 시험 결과: 정상. 다만 누락된 이미지가 있다며 `buttons.zip`(28개)을 주었다.
+- 비교 기준: FIX6 payload, 선택 버튼 묶음(`JO9_UI_buttons.zip`), 드라이브 게임 원본(`JO9main/game/content/pic/`), jack.qsp 참조.
+- FIX6와 바이트가 같은 파일 13개(이미 포함): imprison, lab, net_active/used, release, shield_active/used, teach, whip_active/used, z_ill, z_pregnant, z_wounds.
+- 새로 반영할 후보 15개:
+  - FIX6에 없고 게임이 `buttons/`로 참조하는 파일 6개:
+    - dual_active(32,915 B, 원본 12,860 B), dual_used(30,290 B, 원본 10,803 B) — 208×173.
+    - dual_active_trophy(4,115 B, 원본 2,119 B), dual_used_trophy(4,060 B, 원본 1,726 B) — 63×52.
+    - heavy_active(37,717 B, 원본 13,829 B), heavy_used(29,295 B, 원본 13,865 B) — 200×175.
+    - 참조: $gladiator_setup, $catfighter_setup, конец_боя, trophy_room_screen, toggle_trophy. **toggle_trophy는 승인된 46개 밖이다.**
+  - FIX6와 이름은 같고 내용이 다른 파일 3개:
+    - thumb_up·thumb_down: FIX6는 400×350(약 147 KB), 새 파일은 200×175(약 37 KB, net/shield/whip과 같은 규격), 원본은 21–22 KB.
+    - milk_drop_large: 59×66, FIX6 6,082 B, 새 파일 8,862 B, 원본 18,069 B.
+  - pic 루트 파일의 새 디자인 4개: hart_red·hart_green·hart_purple·hart_blue. 40×40, 약 2.3 KB. 원본은 `content/pic/hart_*.png`(40×40, 약 476 B)다. red·green·purple은 base.css와 боевой_интерфейс, конец_боя가 참조하고, blue는 참조가 없다.
+  - 참조가 없는 파일 2개: milk_drop_medium(44×49, 5,313 B, 원본 3,276 B), `take a drug.png`(59×66, 8,792 B, 원본 없음, 파일명에 공백이 있음).
+- 새 리소스이므로 배치·비교 승인을 받은 뒤에 반영한다. 아직 저장하거나 빌드에 넣지 않았다.
