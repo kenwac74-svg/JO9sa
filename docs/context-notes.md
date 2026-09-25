@@ -254,3 +254,11 @@
 - `JO9_FerVir_UI_11_20260925.zip`: Fer_안전·Fer_젖소·Fer_평시 새 디자인 3개. 붙여 주신 이미지와 바이트가 같다. `resources/new/content/pic/ui/jon-UIadds/`에 저장했다. 빌드는 `resources/new`를 원본보다 우선한다. ui_map의 Source는 `new`다.
 - 사용자 확인: 이번에 준 이미지 자료(pic 루트 13개, 새 아이콘 3개)는 모두 UI다. 따라서 13개는 `SNKmod/content/pic/ui/`에 둔다 (결정 10 적용).
 - 실제 파일로 빌드한 결과: 이미지 128개(사용 112, 예비 16), 5개 밖 경로 치환 679회, 설치기 시험 30/30 통과. 설치 후 jack.qsp·base.css에 한글 이미지 경로가 0곳이다. `releases/`의 R1 ZIP은 아직 갱신하지 않았다 (패키징 승인 대기).
+
+### R2 패키징 (사용자 승인, 2026-09-25)
+- 사용자가 R2로 패키징하라고 승인했다. 사용자가 설치 후 시험할 예정이다.
+- 빌드 버전을 R2로 올렸다. `releases/JO9_UI_v1_9_14_SNKmod_R2.zip`: 9,111,180 B, SHA-256 `d8b68119…e28a`, 140개 항목, 비ASCII 파일명 0개.
+- 시험 결과:
+  - 가짜 게임 폴더 시험 30/30 통과.
+  - R1→R2 업데이트: R1 기록은 restored, R2 기록은 applied가 된다. R2 복구 후 jack.qsp·base.css가 R1 설치 전과 같다.
+- R1 ZIP은 이력으로 남긴다.
