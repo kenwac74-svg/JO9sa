@@ -123,3 +123,18 @@
   - 참조 없는 16개(`trophywall`, `debug_a/s`, `fast_cook/milking/milking_gray/punishment/reward/sweep`, `influence`, `jo9_heart_a/s`, `question`, `soc_btn`, `trotest`, `yellow_button`)는 `buttons\<<…>>`처럼 이름을 조합하는 경로도 없다.
     - `main_screen`의 `fast_cook` 등은 div id와 변수명일 뿐 이미지 경로가 아니다.
     - `trophywall`은 FIX6 README에도 "호출 코드 추가 안 함"으로 적혀 있다.
+
+### 사용자 기본 정책 — exe 수정 제외 (2026-09-25)
+- exe를 고치는 모딩은 다른 AI에서 한다. 이 작업은 qsp(와 CSS·리소스) 범위만 다룬다. qsp를 넘는 수정이 필요하면 사용자에게 알린다.
+- 기존 FIX6의 엔진 교체 로직(순정+Qt 검증 시 교체)은 그대로 보존한다. 새로 바꾸지 않는다.
+
+### 사용자 결정 5 — 경로 치환형 패치 채택, 해시 불일치로 설치를 거부하지 않음 (2026-09-25)
+- 목적: 흩어진 UI를 SNKmod로 모아 개발 관리를 쉽게 하고, 다른 모드와 충돌을 줄인다.
+- 기존 문제: jack.qsp·location 해시가 맞지 않으면 설치 자체를 거부했다. 사용자는 해시와 상관없이 설치할 수 있다면 해시 규칙을 완화해도 된다고 했다.
+- 채택 방식:
+  - FIX6 파일을 참조하는 location(5개 밖 46개 포함)은 본문을 통째로 바꾸지 않는다. 이미지 경로 문자열만 `content\pic\…` → `SNKmod\content\pic\…`로 바꾼다.
+  - 복구는 우리 파일 경로만 되돌린다.
+  - 안전 검사는 본문 해시 대신 다음으로 한다. ① 치환 대상 문자열 개수 확인. ② 치환 뒤 모든 경로가 SNKmod 실제 파일을 가리키는지 확인. ③ location별 적용 결과 기록.
+- UI 리소스는 표 하나(`ui_map` 가칭)로 관리한다. 항목은 원래 경로, SNKmod 경로, 출처 폴더, 참조 location이다.
+- 46개 location 수정 범위는 이 결정으로 승인된 것으로 본다 (경로 문자열만 바꾸는 조건).
+- 미결정: FIX6가 본문 자체(레이아웃·로직)를 바꾼 5개 location을, Before 해시가 맞지 않는 jack.qsp에 어떻게 적용할지.
