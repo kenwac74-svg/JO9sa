@@ -174,3 +174,12 @@
 - `ui/grimdark/buttons/X` 직접 참조도 `buttons/X`가 FIX6 파일이면 SNKmod `buttons/X`로 보낸다 (gear, sound_on/off, thumb_up/down). thumb는 FIX6에 grimdark판이 없으나, 결정 3(grimdark 하위 폴더 = 원래 폴더)과 FIX6 최신 기준에 따른다. 이 참조는 `ui_style = 2` 분기라 현재 화면에는 영향이 없다.
 - FIX6에 없는 grimdark 참조(`cryobutton`, `teach_a/r/s`, `bg/fight`, `bg/page_blank`, `page_aura`)는 바꾸지 않는다.
 - slave_psychology: `interaction_city`의 `$special_image[N] = 'bg\slave_psychology\N.png'`를 `$special_image_full[N] = 'SNKmod\content\pic\bg\slave_psychology\N.png'`로 바꾼다. `interaction_city`는 시작할 때 `killvar '$special_image_full'`을 하고, 표시 쪽은 `$special_image_full`을 우선 쓴다 (소스 확인).
+
+### 빌드 스크립트 결과 (R1)
+- `python build/build_package.py --qsp <FIX6 상태 jack.qsp>` 실행 결과, `dist/JO9_UI_v1_9_14_SNKmod_R1/`가 생성된다.
+- 이미지 112개. FIX6 115개에서 grimdark/buttons 동일 사본 3개가 합쳐졌다. 사용 96개, 예비 16개.
+- 경로 치환: 46개 location, 규칙 164개, 치환 649회. 본문 교체: 5개 location.
+- 정적 검증: 치환 후 모든 `SNKmod\…` 참조가 payload 파일을 가리키고, FIX6 파일의 옛 경로 참조가 남지 않았다. 빌드에 포함돼 있어 어긋나면 빌드가 실패한다.
+- 5개 본문은 FIX6 Text와 줄 수가 같고, 바뀐 줄은 모두 SNKmod 경로가 들어간 줄이다 (sjm 34, main 60, slave_stat 113, city 9, #food_base 0).
+- 5개 본문의 `Before` 목록은 FIX6 Before와 FIX6 After(= FIX6 설치 상태)다. 결정 6에 따라 목록에 없으면 경고만 하고 교체한다.
+- baseline FIX6 ZIP(9,073,868 B, SHA-256 `254dc8c5…bc82`)을 `baseline/`에 저장했다. 빌드는 이 해시를 확인한다.
