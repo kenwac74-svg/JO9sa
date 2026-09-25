@@ -108,3 +108,18 @@
 - 드라이브 fullText 검색은 전수 결과를 주지 않는다. 예: `close_button` 검색 결과에 실제로 쓰는 main_screen·city_screen이 빠졌다. 순위가 매겨진 일부 결과만 온다.
 - FIX6 파일의 상당수(`buttons/close_button`, `Plus`, `approve`, `z_ill` 등)는 원본 파일을 같은 이름으로 교체한 것이다. 5개 밖 location에서도 쓰인다 (확인 예: trophy_room_screen, master_stat, sex_screen_woman, hero_customization, development).
 - SNKmod로 참조를 옮기려면 게임 전체 location을 텍스트로 검사해야 한다. `locations.zip`(2.4MB)이나 `jack.qsp`(16.6MB)는 현재 드라이브 도구로 받을 수 없어 사용자에게 파일 첨부를 요청한다.
+
+### 게임 소스 확보 (사용자 첨부, 2026-09-25)
+- `jack.qsp` 16,709,704 B, SHA-256 `953533402226c874f1d22a9023da4d235bd512b61c2fc30f028465226f49b6d9` = FIX6 manifest `FinalQsp`. 즉 FIX6 설치 후 상태다. 순정 상태(`OriginalQsp` `cbb3c446…f607`)는 아직 없다.
+- `locations.zip` 2,431,129 B, location 243개. jack.qsp도 location 243개로, 전체 목록과 수가 같다.
+- `tools/qsp_dump.py`로 jack.qsp를 풀었다. 5개 location 본문의 SHA-256이 qsp-patches.json `After`와 모두 일치해 디코더가 맞음을 확인했다.
+
+### FIX6 참조 맵 (`docs/FIX6_REFERENCE_MAP.md`, `tools/fix6_refmap.py`로 생성)
+- FIX6 이미지 115개 중 99개는 소스에서 참조된다. 16개는 참조가 없다.
+- 허용 5개 밖에서 FIX6 파일을 참조하는 location이 46개다. base.css에도 14개가 있다.
+- 동적 경로 확인:
+  - slave_psychology 1–7은 `interaction_city`가 `$special_image[N] = 'bg\slave_psychology\N.png'`로 넣는다. 그리면 `interaction_screen_city`가 `content\pic\` 접두사를 붙인다.
+  - 같은 화면은 `$special_image_full[txt]`가 있으면 그 전체 경로를 우선 쓴다. 따라서 `interaction_city`만 고쳐 `$special_image_full`에 SNKmod 전체 경로를 넣으면, 표시 location을 고치지 않고 전환할 수 있다 (소스 확인, 표시 미확인).
+  - 참조 없는 16개(`trophywall`, `debug_a/s`, `fast_cook/milking/milking_gray/punishment/reward/sweep`, `influence`, `jo9_heart_a/s`, `question`, `soc_btn`, `trotest`, `yellow_button`)는 `buttons\<<…>>`처럼 이름을 조합하는 경로도 없다.
+    - `main_screen`의 `fast_cook` 등은 div id와 변수명일 뿐 이미지 경로가 아니다.
+    - `trophywall`은 FIX6 README에도 "호출 코드 추가 안 함"으로 적혀 있다.

@@ -6,7 +6,7 @@
 
 - [x] 인계 ZIP 무결성 검증 (152개 파일, FIX6 128개, manifest Files 117 / Payload 119, QSP 본문 5개 PASS). 조건은 context-notes.md 참조.
 - [x] 구글 드라이브 `Moding/JO9main/game` 소스 위치 확인 (`jack.qsp`, `locations/*.qsrc`, `css/base.css`).
-- [ ] 실제 설치본 `jack.qsp` 해시 기록 — 16.6MB라 현재 도구(base64 인라인)로 내려받지 못함. 해시만이라도 사용자 PC에서 확보 필요.
+- [x] 실제 설치본 `jack.qsp` 해시 기록 — FIX6 FinalQsp와 일치 (사용자 첨부).
 - [ ] 사용자 SNKmod 작업 폴더 실물 확인 — 드라이브에서 `SNKmod` 이름 파일·폴더 검색 결과 없음.
 - [x] CSS `url()` 기준 확인 — FIX6 base.css의 56개 url이 모두 `content/...` 게임 루트 기준 (css/ 기준 아님).
 - [x] QSP 이미지 경로 형식 확인 — `content\pic\...` 백슬래시, 게임 루트 기준.
@@ -15,7 +15,9 @@
 - [x] 동명 묶음 2: lab·teach (FIX6) → `SNKmod/content/pic/buttons/`. teach_a/r/s는 FIX6 밖이라 원본 유지 (결정 4).
 - [ ] 동명 묶음 3: page_aura (크기 동일, 내용 미확인) — 결정 3 규칙상 서로 다른 목적지라 충돌 없음, 기록만.
 - [x] SNKmod 범위 = FIX6 리소스만 (결정 4).
-- [ ] 게임 전체 location 텍스트 확보 (`locations.zip` 첨부 요청 중) → FIX6 파일 참조 전수 목록 작성.
+- [x] 게임 전체 location 텍스트 확보, FIX6 파일 참조 전수 목록 작성 (`docs/FIX6_REFERENCE_MAP.md`).
+- [ ] 5개 밖 location 46개 + base.css 수정 범위 승인 — **사용자 질문 대기**.
+- [ ] 참조 없는 FIX6 파일 16개 패키징 제외 여부 승인.
 - [ ] 5개 밖 location 수정 범위 승인.
 - [ ] 추가 동명 후보(트로피·엄지 등) 전수 조사.
 
