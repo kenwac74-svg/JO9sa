@@ -70,6 +70,7 @@ def main() -> int:
     ap.add_argument('--qsp', required=True, type=Path)
     ap.add_argument('--fix6', type=Path, default=REPO / 'baseline/JO9_UI_v1_9_14_AllInOne_R2_FIX6.zip')
     ap.add_argument('--out', type=Path, default=REPO / 'dist')
+    ap.add_argument('--originals', type=Path, default=REPO / 'resources/originals/content/pic')
     args = ap.parse_args()
 
     src = read_fix6(args.fix6)
@@ -81,8 +82,20 @@ def main() -> int:
     locs = read_locations(qsp_bytes)
 
     # 1) FIX6 이미지 → SNKmod 위치. 같은 목적지로 모이는 파일은 바이트가 같아야 한다.
-    images = OrderedDict()   # snk rel -> {data, originals}
+    rules = json.loads((REPO / 'build/resource_rules.json').read_text(encoding='utf-8'))
+    images = OrderedDict()   # snk rel -> {data, originals, source}
     target = {}              # 원본 상대경로(소문자) -> snk rel
+
+    def add_image(rel: str, data: bytes, source: str) -> None:
+        dest = rules['rename'].get(rel, snk_rel(rel))
+        if dest in images:
+            if images[dest]['data'] != data:
+                raise SystemExit(f'Different files map to one SNKmod path: {dest}')
+            images[dest]['originals'].append(rel)
+        else:
+            images[dest] = {'data': data, 'originals': [rel], 'source': source}
+        target[rel.lower()] = dest
+
     for e in fmanifest['Files']:
         if not e['Rel'].startswith('content/pic/'):
             continue
@@ -90,14 +103,17 @@ def main() -> int:
         data = src[e['Source']]
         if sha(data) != e['After']:
             raise SystemExit('FIX6 payload mismatch: ' + rel)
-        dest = snk_rel(rel)
-        if dest in images:
-            if images[dest]['data'] != data:
-                raise SystemExit(f'Different files map to one SNKmod path: {dest}')
-            images[dest]['originals'].append(rel)
-        else:
-            images[dest] = {'data': data, 'originals': [rel]}
-        target[rel.lower()] = dest
+        add_image(rel, data, 'FIX6')
+
+    # 1-2) FIX6에 없지만 포함할 원본 (한글 이름 영문화 등, 결정 9·10)
+    missing = [r for r in rules['extra'] if not (args.originals / r).is_file()]
+    if missing:
+        raise SystemExit('Missing original files under ' + str(args.originals) + ':\n' + '\n'.join(missing))
+    for rel in rules['extra']:
+        add_image(rel, (args.originals / rel).read_bytes(), 'original')
+    bad = [d for d in images if any(ord(c) > 127 for c in d)]
+    if bad:
+        raise SystemExit('Non-ASCII SNKmod file names need a rename rule: ' + ', '.join(bad))
 
     def resolve(p: str) -> str | None:
         """게임 참조 경로 → SNKmod 목적지. FIX6 파일이거나, grimdark 하위 폴더가 가리키는 원래 파일이 FIX6일 때만."""
@@ -218,7 +234,7 @@ def main() -> int:
         hits = ref_locs.get(dest.lower(), {})
         ui_map.append({'SNKmod': 'SNKmod/content/pic/' + dest,
                        'Originals': ['content/pic/' + r for r in info['originals']],
-                       'Hash': sha(info['data']), 'Bytes': len(info['data']),
+                       'Hash': sha(info['data']), 'Bytes': len(info['data']), 'Source': info['source'],
                        'Status': 'used' if hits else 'spare',
                        'References': dict(hits)})
     dump('ui_map.json', ui_map)
