@@ -28,8 +28,8 @@
 
 - [x] 빌드 스크립트 `build/build_package.py`: SNKmod payload, CSS 경로 치환, 5개 본문, 경로 치환 규칙, `ui_map.json` 생성.
 - [x] 빌드 정적 검증 (빌드 시 자동 수행, 실패 시 중단): 치환 후 모든 SNKmod 참조가 payload 실제 파일을 가리킴, FIX6 사용 파일의 옛 경로 참조가 남지 않음.
-- [ ] 새 설치기 `installer/Install.ps1`: Apply/Check/Restore, FIX6 전환, 일반 이미지 동의.
-- [ ] 이동식 PowerShell로 가짜 게임 폴더 시험 (적용·재적용·복구).
+- [x] 새 설치기 `installer/Install.ps1`: Apply/Check/Restore, FIX6 전환, 일반 이미지 동의.
+- [x] 이동식 PowerShell로 가짜 게임 폴더 시험 — `tests/test_installer.py` 30/30.
 
 - [ ] 승인된 UI를 SNKmod에 배치, 원본 경로 보존.
 - [ ] 승인된 QSP/CSS 참조만 전환.
@@ -45,5 +45,6 @@
 
 ## P3 — 검증 후 배포
 
-- [ ] ACCEPTANCE_TESTS.md U01–U23 수행 (현재 전 항목 미실행).
+- [~] ACCEPTANCE_TESTS.md — 정적 부분 수행 (`docs/ACCEPTANCE_RESULTS.md`). Windows·인게임 미실행.
+- [ ] Windows에서 CHECK → APPLY → 인게임 확인 → RESTORE (사용자).
 - [ ] 산출물 제출·저장 확인.
