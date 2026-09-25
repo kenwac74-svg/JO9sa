@@ -319,3 +319,12 @@
   - R2→R3 업데이트: R2 기록은 restored, R3 기록은 applied가 된다. R3 복구 후 jack.qsp·base.css·menu_icon.json이 R2 설치 전과 같다.
 - 사용자 R3 Windows 설치·인게임 시험: 이상 없음.
 - R3에 포함된 README_KR.txt에 숫자 오류 3곳이 있었다. location "46개"는 47개, 예비 "16개"는 18개가 맞고, RESTORE 설명에 menu_icon.json이 빠져 있었다. 소스만 고쳤다. 배포 ZIP 반영은 다음 패키징 때 한다 (패키징은 승인 후).
+
+### 배포용 설치 패치 (사용자 지시 "설치용 패치를 만들어", 2026-09-25)
+- 인게임 시험을 통과한 R3를 배포판으로 만들었다. 설치 내용(이미지·jack.qsp 패치·치환 규칙·CSS·JSON·설치기)은 R3와 바이트가 같다. 다른 것은 README_KR.txt와, 그 해시를 담은 manifest.json뿐이다 (파일별 SHA-256으로 대조).
+- README 변경:
+  - "미검증 개발판"을 "제작자 환경 시험을 마친 배포판"으로 고쳤다.
+  - [빠른 설치] 절을 추가했다.
+  - 숫자 오류 3곳을 정정했다.
+- manifest Version은 R3 그대로다. 이미 R3를 설치한 사용자가 실행하면 "이미 설치돼 있습니다"로 끝난다.
+- `releases/JO9_UI_v1_9_14_SNKmod_R3_release.zip`: 9,086,026 B, SHA-256 `65eedd44…bdb8`, 153개 항목, 비ASCII 파일명 0개. 가짜 게임 폴더 시험 30/30 통과.

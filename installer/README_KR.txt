@@ -1,8 +1,17 @@
 JO9 UI v1.9.14 SNKmod R3 — 설치 안내
 ==========================================
 
-이 패키지는 FIX6 UI를 SNKmod 폴더 방식으로 옮긴 것입니다.
-Windows 설치·인게임 표시는 아직 검증하지 않은 개발판입니다.
+이 패키지는 FIX6 UI를 SNKmod 폴더 방식으로 옮긴 배포판입니다.
+제작자 환경(Windows, Jack-o-nine-tails 2.3.2.5 Korean)에서 설치·인게임 시험을 마쳤습니다.
+
+[빠른 설치]
+1. 게임을 닫습니다. 처음이라면 game 폴더를 따로 백업해 두기를 권합니다.
+2. 이 ZIP을 게임 폴더 밖의 아무 곳에나 풉니다 (7-Zip 또는 Windows 기본 압축 풀기).
+3. CHECK.cmd를 실행해 경고를 확인합니다. 이 단계는 파일을 바꾸지 않습니다.
+4. APPLY.cmd를 실행하고 game 폴더의 jack.qsp를 선택합니다.
+5. 게임을 다시 시작합니다.
+- 필요 환경: Windows PowerShell 5.1 (Windows 10/11 기본 포함).
+- 이전 SNKmod(R1~R2)가 설치돼 있어도 그대로 APPLY.cmd를 실행하면 됩니다. 이전 판을 먼저 되돌린 뒤 설치합니다.
 
 [설치 방식]
 - UI/UX 이미지: game/SNKmod/content/pic/ 아래에 새로 넣습니다.
