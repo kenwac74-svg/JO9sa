@@ -95,3 +95,16 @@
 ### 수정 범위 조사
 - 드라이브 location 중 `grimdark` 또는 `UIadds`를 포함한 파일이 25개다 (5개 허용 범위 밖: teach_screen, assistant_stat, master_stat, sex_screen, sex_screen_woman, slave_private_room1–4, ride_interface, #sex_options, init_game, 레이아웃·전투 location 등).
 - `buttons\` 등 원본 UI 폴더 참조까지 모두 SNKmod로 돌리면 수정 대상 location은 더 늘어난다.
+
+### 사용자 결정 4 — SNKmod 범위는 FIX6 리소스만, 새 리소스는 매번 배치 승인 (2026-09-25)
+- SNKmod에는 우리가 바꾼 UI 리소스(FIX6 제공 파일)만 둔다. 우리가 바꾸지 않은 이미지는 원본 경로를 그대로 쓴다.
+- 앞으로 사용자가 새 리소스를 줄 때마다 다음 순서로 한다. ① 어디에 배치할지 묻는다. ② 원본 이미지와 파일명을 대조·비교한다. ③ 승인을 받는다.
+- 결정 4에 따른 묶음 2·page_blank 정정:
+  - teach_a·teach_r·teach_s는 FIX6 파일이 아니므로 SNKmod에 넣지 않는다. 원본 경로를 그대로 쓴다. grimdark 분기 참조를 원본 `buttons/`로 모을지는 location 수정 범위를 승인받을 때 함께 정한다.
+  - lab·teach는 FIX6 파일이라 `SNKmod/content/pic/buttons/`에 넣는다.
+  - grimdark `page_blank.png`는 FIX6 파일이 아니므로 SNKmod에 넣지 않고 원본 경로를 쓴다.
+
+### 참조 전수 조사의 한계
+- 드라이브 fullText 검색은 전수 결과를 주지 않는다. 예: `close_button` 검색 결과에 실제로 쓰는 main_screen·city_screen이 빠졌다. 순위가 매겨진 일부 결과만 온다.
+- FIX6 파일의 상당수(`buttons/close_button`, `Plus`, `approve`, `z_ill` 등)는 원본 파일을 같은 이름으로 교체한 것이다. 5개 밖 location에서도 쓰인다 (확인 예: trophy_room_screen, master_stat, sex_screen_woman, hero_customization, development).
+- SNKmod로 참조를 옮기려면 게임 전체 location을 텍스트로 검사해야 한다. `locations.zip`(2.4MB)이나 `jack.qsp`(16.6MB)는 현재 드라이브 도구로 받을 수 없어 사용자에게 파일 첨부를 요청한다.

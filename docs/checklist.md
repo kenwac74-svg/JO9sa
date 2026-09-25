@@ -12,9 +12,10 @@
 - [x] QSP 이미지 경로 형식 확인 — `content\pic\...` 백슬래시, 게임 루트 기준.
 - [x] SNKmod 구조 규칙 확정 (결정 1–3: 단일 UI, 원본 구조 모사, 모더 폴더 제거, grimdark 하위 폴더 = 원래 폴더, FIX6 최신 기준).
 - [x] 동명 묶음 1: gear·sound_on·sound_off → `SNKmod/content/pic/buttons/` 한 파일.
-- [x] 동명 묶음 2: teach_a/r/s (동일), lab·teach (FIX6) → `SNKmod/content/pic/buttons/`.
+- [x] 동명 묶음 2: lab·teach (FIX6) → `SNKmod/content/pic/buttons/`. teach_a/r/s는 FIX6 밖이라 원본 유지 (결정 4).
 - [ ] 동명 묶음 3: page_aura (크기 동일, 내용 미확인) — 결정 3 규칙상 서로 다른 목적지라 충돌 없음, 기록만.
-- [ ] SNKmod로 옮길 UI 범위 결정 (FIX6 리소스만 vs 원본 UI 전체) — **사용자 질문 대기**.
+- [x] SNKmod 범위 = FIX6 리소스만 (결정 4).
+- [ ] 게임 전체 location 텍스트 확보 (`locations.zip` 첨부 요청 중) → FIX6 파일 참조 전수 목록 작성.
 - [ ] 5개 밖 location 수정 범위 승인.
 - [ ] 추가 동명 후보(트로피·엄지 등) 전수 조사.
 
