@@ -10,7 +10,12 @@
 - [ ] 사용자 SNKmod 작업 폴더 실물 확인 — 드라이브에서 `SNKmod` 이름 파일·폴더 검색 결과 없음.
 - [x] CSS `url()` 기준 확인 — FIX6 base.css의 56개 url이 모두 `content/...` 게임 루트 기준 (css/ 기준 아님).
 - [x] QSP 이미지 경로 형식 확인 — `content\pic\...` 백슬래시, 게임 루트 기준.
-- [ ] 동명 후보 묶음 1: `gear.png`, `sound_on.png`, `sound_off.png` — 사용 근거·동일성 확인 완료, **사용자 승인 대기**.
+- [x] SNKmod 구조 규칙 확정 (결정 1–3: 단일 UI, 원본 구조 모사, 모더 폴더 제거, grimdark 하위 폴더 = 원래 폴더, FIX6 최신 기준).
+- [x] 동명 묶음 1: gear·sound_on·sound_off → `SNKmod/content/pic/buttons/` 한 파일.
+- [x] 동명 묶음 2: teach_a/r/s (동일), lab·teach (FIX6) → `SNKmod/content/pic/buttons/`.
+- [ ] 동명 묶음 3: page_aura (크기 동일, 내용 미확인) — 결정 3 규칙상 서로 다른 목적지라 충돌 없음, 기록만.
+- [ ] SNKmod로 옮길 UI 범위 결정 (FIX6 리소스만 vs 원본 UI 전체) — **사용자 질문 대기**.
+- [ ] 5개 밖 location 수정 범위 승인.
 - [ ] 추가 동명 후보(트로피·엄지 등) 전수 조사.
 
 ## P1 — UI 전용 경로와 복구

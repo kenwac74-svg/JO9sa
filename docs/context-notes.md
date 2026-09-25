@@ -55,7 +55,7 @@
 - SNKmod 아래는 원본 구조를 최대한 따른다. 예: `game/SNKmod/content/pic/bg/slave_psychology/`.
 - 단, `ui/` 안의 모더 폴더(`grimdark`, `approved_main_v1`, `jo9_v197`, `jon-UIadds`)는 경로 단계에서 뺀다.
 - 모더 폴더 안에 원본과 같은 이름의 하위 폴더가 있으면 원본 폴더로 합친다. 예: `ui/grimdark/buttons/` → `SNKmod/content/pic/buttons/`.
-- 원본 루트에 같은 이름이 있는 `ui/grimdark/bg/page_blank.png`와 `ui/grimdark/page_aura.png`는 원본 위치(`SNKmod/content/pic/`)로 합친다. 합치기 전에 비교 결과로 승인받는다.
+- ~~원본 루트에 같은 이름이 있는 page_blank·page_aura는 `SNKmod/content/pic/`로 합친다~~ → 결정 3으로 정정.
 - 그 밖의 모더 폴더 파일은 `SNKmod/content/pic/ui/`로 바로 들어간다. 현재 확인 범위(FIX6와 5개 location·base.css 참조)에서는 이름 충돌이 없다.
 
 ### 묶음 1 처리
@@ -76,3 +76,22 @@
 - `pic/page_blank.png` 472,690 B vs `pic/ui/grimdark/bg/page_blank.png` 643,281 B: 다름.
 - `pic/page_aura.png` 990,058 B vs `pic/ui/grimdark/page_aura.png` 990,058 B: 크기 같음, 파일이 커서 내용 비교는 아직 못함.
 - 참고: `pic/bg/`에도 다른 `page_blank.png`(312,416 B)와 `page_aura.png`(144,250 B)가 있다.
+
+### 사용자 결정 3 — grimdark 하위 폴더의 의미와 최신본 기준 (2026-09-25)
+- `grimdark` 아래 하위 폴더는 그 이미지가 원래 있어야 할 폴더를 뜻한다. `ui/grimdark/buttons/` → `SNKmod/content/pic/buttons/`, `ui/grimdark/bg/` → `SNKmod/content/pic/bg/`.
+  - 따라서 `ui/grimdark/bg/page_blank.png`는 `SNKmod/content/pic/bg/page_blank.png`로 간다 (앞선 미리보기의 `pic/` 루트 안은 폐기).
+  - 하위 폴더 없이 `grimdark` 바로 아래 있는 파일(`bg*.png`, `page_aura.png`)은 규칙 2에 따라 `SNKmod/content/pic/ui/`로 간다.
+- 모든 파일의 최신 기준은 FIX6 교체본이다. 사용자가 제공한 UI 파일이나 이미 패키징된 FIX6가 최신본이다.
+- 모드의 핵심: 원본 이미지 파일을 건드리지 않고 새 UI 리소스를 SNKmod에 넣어 구현한다.
+
+### 묶음 2 처리 (결정 3으로 해결)
+- `SNKmod/content/pic/buttons/`에 teach_a·teach_r·teach_s (원본 = grimdark, 내용 동일), lab·teach (FIX6 교체본).
+- grimdark의 lab(26,575 B)·teach(25,681 B)는 패키징에서 제외. 게임 원본 파일은 건드리지 않는다.
+
+### page_blank 참고
+- `SNKmod/content/pic/bg/page_blank.png`에는 grimdark판(643,281 B)이 들어간다. slave_stat 491·543행이 grimdark판을 직접 참조하므로 지금 화면에 보이는 것도 이 파일이다.
+- 원본 `pic/bg/page_blank.png`(312,416 B)는 게임 원본 그대로 둔다. 이 파일을 참조하는 코드가 SNKmod로 옮겨질 때만 충돌하며, 그때 다시 확인한다.
+
+### 수정 범위 조사
+- 드라이브 location 중 `grimdark` 또는 `UIadds`를 포함한 파일이 25개다 (5개 허용 범위 밖: teach_screen, assistant_stat, master_stat, sex_screen, sex_screen_woman, slave_private_room1–4, ride_interface, #sex_options, init_game, 레이아웃·전투 location 등).
+- `buttons\` 등 원본 UI 폴더 참조까지 모두 SNKmod로 돌리면 수정 대상 location은 더 늘어난다.
