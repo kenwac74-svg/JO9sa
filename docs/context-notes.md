@@ -279,3 +279,13 @@
   - pic 루트 파일의 새 디자인 4개: hart_red·hart_green·hart_purple·hart_blue. 40×40, 약 2.3 KB. 원본은 `content/pic/hart_*.png`(40×40, 약 476 B)다. red·green·purple은 base.css와 боевой_интерфейс, конец_боя가 참조하고, blue는 참조가 없다.
   - 참조가 없는 파일 2개: milk_drop_medium(44×49, 5,313 B, 원본 3,276 B), `take a drug.png`(59×66, 8,792 B, 원본 없음, 파일명에 공백이 있음).
 - 새 리소스이므로 배치·비교 승인을 받은 뒤에 반영한다. 아직 저장하거나 빌드에 넣지 않았다.
+
+### 중요 정정 — 엔진이 읽는 json 폴더의 참조를 놓쳤다 (2026-09-25)
+- 메뉴 항목 아이콘(`$menu_item_*`)은 jack.qsp 어디에도 정의가 없다. `$menu`의 `goto`는 `$args[1]`(= `$menu_item_*`, 아이콘 HTML)을 그대로 출력한다.
+- `start_refresh`의 주석에 "engine has been updated to reload json files"라고 적혀 있다. 드라이브 `game/json/`에는 `menu_item.json`(74,222 B), `menu_icon.json`(388,262 B), `slave_index.json`, `slaves/`가 있다. 즉 엔진이 JSON을 읽어 변수를 채운다 (코드상 추정).
+- 영향:
+  1. 참조 맵(99개 사용, 16개 미사용)은 jack.qsp와 base.css만 본 결과다. JSON 참조는 빠져 있다. 예비로 분류한 16개(fast_*, influence, question, soc_btn 등) 중 일부는 JSON에서 쓰일 수 있다.
+  2. FIX6는 원본 경로를 덮어썼기 때문에 JSON이 가리키는 아이콘도 새 그림으로 보였다. R2는 원본을 건드리지 않으므로, JSON이 참조하는 FIX6 이미지는 옛 그림으로 되돌아갔을 수 있다.
+  3. `seed_fertility`는 json/slaves에서 정해질 가능성이 높다. 그렇다면 Fer_평시가 "소스상 도달 불가"라는 분석은 틀렸을 수 있다.
+- 사용자 스크린샷의 "약물 복용" 메뉴 아이콘(빨간 사각형에 녹색 선)은 원본 `content/pic/ui overhaul/take a drug.png`(5,201 B)로 보인다. 새 디자인(8,792 B)이 반영되지 않은 상태다.
+- 다음 조치: 사용자에게 `game/json` 폴더를 받아 JSON 참조를 전수 조사하고, 참조 맵과 빌드에 JSON 경로 치환을 넣는다. JSON은 이미지가 아닌 파일이므로 결정 8에 따라 원본 경로에 덮어쓰고 복구를 제공한다.
