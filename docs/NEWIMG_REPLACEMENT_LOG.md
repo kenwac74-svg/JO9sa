@@ -29,7 +29,8 @@
 - **이전 ZIP 백업:** 이 규칙 전에 만든 ZIP은 `patches/backup/`에 백업용으로 보관한다.
 - **산출물 형식:** ZIP으로 배포한다. 설치 스크립트는 넣지 않는다.
 - **패키징 기준 (2026-09-26 사용자 확정):** 사용자가 준 `newimage.zip`을 앞으로 패키징의 기준으로 삼는다. 구조는 `<용도 폴더>/pic/<원본 경로>`이고, 용도 폴더(`타이틀`, `데모`, `동부구역_캣파이터클럽`, `백색도시_콜로세움`) 아래가 본편의 `game/content/pic/` 경로와 같다. 경로 대조를 통과해 기준으로 등록했고, 원본 ZIP은 `basis/newimage_v1.zip`에 보관한다.
-- **기준 파일 버전 표기 (2026-09-26 사용자 확정):** 기준 ZIP은 `basis/newimage_v<번호>.zip`처럼 버전을 붙여 보관한다. 새 기준을 받으면 번호를 올려 따로 저장하고, 이전 버전은 지우거나 덮어쓰지 않는다. 현재 기준은 `v1`이다.
+  - 2026-09-28 `v2`로 갱신(`basis/newimage_v2.zip`). 새 용도 폴더 4개(`동부구역_아그라바 관문`, `동부구역_아마란스 살롱`, `동부구역_패션하우스`, `백색도시_부동산사무소`)가 추가됐다. v2는 최상위에 `newimage/` 폴더가 한 단계 더 있고, 새 용도 폴더 4개에는 `pic/` 단계가 없다. `백색도시_부동산사무소`에는 `ui overhau`(끝 글자 l 누락) 폴더가 있다. 대상 경로는 원본 대조로 하나씩 확정했다(아래 4차 기록).
+- **기준 파일 버전 표기 (2026-09-26 사용자 확정):** 기준 ZIP은 `basis/newimage_v<번호>.zip`처럼 버전을 붙여 보관한다. 새 기준을 받으면 번호를 올려 따로 저장하고, 이전 버전은 지우거나 덮어쓰지 않는다. 현재 기준은 `v2`이다.
 - **ZIP 내부 구조:** ZIP의 최상위 폴더는 `pic/`이다. 그 아래 경로는 원본 경로와 똑같이 둔다. 예를 들어 원본이 `game/content/pic/bg/port.png`이면 ZIP 안에서는 `pic/bg/port.png`다. 사용자는 이 `pic/`을 게임의 `game/content/` 폴더에 풀어 원본을 덮어쓴다.
 - **카탈로그 범위:** 원본 카탈로그에는 교체 대상만 기록한다. 이미지를 받을 때마다 같은 경로의 원본을 `JO9main`에서 받아 대조하고 항목을 추가한다. `pic` 폴더 전체를 미리 목록화하지 않는다.
 
@@ -195,6 +196,40 @@
 | 55 | `game/content/pic/mob/glad_shinobi_ava.png` | 58,780 / 150×150 / `9aaf473db0d7a45f…` | 39,884 / 150×150 / `ba368b795476b862…` | 저장 | 2026-09-26 | 백색도시_콜로세움. 승인(2026-09-26). `staging/pic/`에 보관 |
 | 56 | `game/content/pic/mob/glad_shinobi_ava_2.png` | 53,683 / 150×150 / `f1ed66d939215b37…` | 40,455 / 150×150 / `584dd22f3c497ecc…` | 저장 | 2026-09-26 | 백색도시_콜로세움. 승인(2026-09-26). `staging/pic/`에 보관 |
 | 57 | `game/content/pic/mob/glad_shinobi_ava_3.png` | 55,380 / 150×150 / `f288470f99e21acb…` | 38,822 / 150×150 / `c4b549bf7f83131a…` | 저장 | 2026-09-26 | 백색도시_콜로세움. 승인(2026-09-26). `staging/pic/`에 보관 |
+| 58 | `game/content/pic/bg/Agraba.png` | 691,216 / 795×596 / `b96fa06ac8a72d52…` | 303,719 / 795×596 / `a7aba4667131587a…` | 저장 | 2026-09-28 | 동부구역_아그라바 관문. 승인(배포 지시, 2026-09-28). `staging/pic/`에 보관 |
+| 59 | `game/content/pic/bg/Agraba_poor.png` | 669,007 / 795×596 / `bf9f0fb2becd6d95…` | 287,069 / 795×596 / `f768d7286c8f09fc…` | 저장 | 2026-09-28 | 동부구역_아그라바 관문. 승인(배포 지시, 2026-09-28). `staging/pic/`에 보관 |
+| 60 | `game/content/pic/bg/bordel_lilly.png` | 1,169,629 / 795×596 / `ef8cc4032aa2e1b7…` | 286,433 / 795×596 / `72cb8f14e8df840d…` | 저장 | 2026-09-28 | 동부구역_아그라바 관문. 승인(배포 지시, 2026-09-28). `staging/pic/`에 보관 |
+| 61 | `game/content/pic/bg/Jafar_academy.png` | 908,888 / 795×596 / `33428fb78716d7f5…` | 223,277 / 795×596 / `6db1edef78741f4c…` | 저장 | 2026-09-28 | 동부구역_아그라바 관문. 승인(배포 지시, 2026-09-28). `staging/pic/`에 보관 |
+| 62 | `game/content/pic/bg/maslab_tabern.png` | 873,674 / 795×596 / `748bad8a93c410a4…` | 283,883 / 795×596 / `e4209eee85d533d0…` | 저장 | 2026-09-28 | 동부구역_아그라바 관문. 승인(배포 지시, 2026-09-28). `staging/pic/`에 보관 |
+| 63 | `game/content/pic/characters/balsam.png` | 647,652 / 795×596 / `a44f0e0021216405…` | 209,056 / 795×596 / `bf49a35b79d498c6…` | 저장 | 2026-09-28 | 동부구역_아그라바 관문. 승인(배포 지시, 2026-09-28). `staging/pic/`에 보관 |
+| 64 | `game/content/pic/characters/rose.png` | 288,113 / 795×596 / `7ee955f9a7db00f6…` | 529,559 / 795×596 / `e6348436c550273e…` | 저장 | 2026-09-28 | 동부구역_아그라바 관문. 승인(배포 지시, 2026-09-28). `staging/pic/`에 보관 |
+| 65 | `game/content/pic/ui overhaul/agraba.png` | 43,300 / 59×66 / `a9b672953cb164f9…` | 9,580 / 59×66 / `f41af8f2e7244a3b…` | 저장 | 2026-09-28 | 동부구역_아그라바 관문. 승인(배포 지시, 2026-09-28). `staging/pic/`에 보관 |
+| 66 | `game/content/pic/ui overhaul/agraba_poor.png` | 45,181 / 59×66 / `d17d091a8e4eff29…` | 9,467 / 59×66 / `13e1a2269c771613…` | 저장 | 2026-09-28 | 동부구역_아그라바 관문. 승인(배포 지시, 2026-09-28). `staging/pic/`에 보관 |
+| 67 | `game/content/pic/ui overhaul/agraba_poor_gray.png` | 43,827 / 59×66 / `6f3110b510aaa2ce…` | 6,742 / 59×66 / `053e803838d42ca8…` | 저장 | 2026-09-28 | 동부구역_아그라바 관문. 승인(배포 지시, 2026-09-28). `staging/pic/`에 보관 |
+| 68 | `game/content/pic/ui overhaul/balsam.png` | 67,703 / 59×66 / `7e2220c35b8c4629…` | 10,011 / 59×66 / `4f84b496289b3514…` | 저장 | 2026-09-28 | 동부구역_아그라바 관문. 승인(배포 지시, 2026-09-28). `staging/pic/`에 보관 |
+| 69 | `game/content/pic/ui overhaul/balsam_gray.png` | 66,801 / 59×66 / `7ee067ff8dd5092b…` | 7,033 / 59×66 / `04d7f9781958f750…` | 저장 | 2026-09-28 | 동부구역_아그라바 관문. 승인(배포 지시, 2026-09-28). `staging/pic/`에 보관 |
+| 70 | `game/content/pic/ui overhaul/Jafar_academy.png` | 45,095 / 59×66 / `2f057cdc31502674…` | 9,513 / 59×66 / `191b9113e1b793f3…` | 저장 | 2026-09-28 | 동부구역_아그라바 관문. 승인(배포 지시, 2026-09-28). `staging/pic/`에 보관 |
+| 71 | `game/content/pic/ui overhaul/Jafar_academy_gray.png` | 43,848 / 59×66 / `cec947a88924ad37…` | 6,860 / 59×66 / `6b6b470f393c9066…` | 저장 | 2026-09-28 | 동부구역_아그라바 관문. 승인(배포 지시, 2026-09-28). `staging/pic/`에 보관 |
+| 72 | `game/content/pic/ui overhaul/maslab_tabern.png` | 44,888 / 59×66 / `79ed7cc35e7d8c92…` | 9,912 / 59×66 / `c3f7614359c44fcc…` | 저장 | 2026-09-28 | 동부구역_아그라바 관문. 승인(배포 지시, 2026-09-28). `staging/pic/`에 보관 |
+| 73 | `game/content/pic/ui overhaul/maslab_tabern_gray.png` | 43,847 / 59×66 / `eac818211d6c314b…` | 7,038 / 59×66 / `2be1603cb7b588b8…` | 저장 | 2026-09-28 | 동부구역_아그라바 관문. 승인(배포 지시, 2026-09-28). `staging/pic/`에 보관 |
+| 74 | `game/content/pic/ui overhaul/rose.png` | 67,518 / 59×66 / `17d077b416f6900f…` | 9,264 / 59×66 / `d37f741ad81ae6fb…` | 저장 | 2026-09-28 | 동부구역_아그라바 관문. 승인(배포 지시, 2026-09-28). `staging/pic/`에 보관 |
+| 75 | `game/content/pic/ui overhaul/rose_gray.png` | 66,833 / 59×66 / `34264610ebf2c51c…` | 6,638 / 59×66 / `d7fa66f6119944e6…` | 저장 | 2026-09-28 | 동부구역_아그라바 관문. 승인(배포 지시, 2026-09-28). `staging/pic/`에 보관 |
+| 76 | `game/content/pic/bg/erosalon.png` | 1,104,245 / 795×596 / `28ae2748ea08bc1e…` | 250,639 / 795×596 / `b20891cf636fbf4f…` | 저장 | 2026-09-28 | 동부구역_아마란스 살롱. 승인(배포 지시, 2026-09-28). `staging/pic/`에 보관 |
+| 77 | `game/content/pic/characters/Alina.png` | 233,814 / 795×596 / `5e351e0119b0612b…` | 767,310 / 795×596 / `e8effcfa72ef00a3…` | 저장 | 2026-09-28 | 동부구역_아마란스 살롱. 승인(배포 지시, 2026-09-28). `staging/pic/`에 보관 |
+| 78 | `game/content/pic/ui overhaul/alina.png` | 24,535 / 59×66 / `c944c57b986631a8…` | 8,302 / 59×66 / `ab5a6515522238be…` | 저장 | 2026-09-28 | 동부구역_아마란스 살롱. 승인(배포 지시, 2026-09-28). `staging/pic/`에 보관 |
+| 79 | `game/content/pic/ui overhaul/erosalon.png` | 24,797 / 59×66 / `7a4e2cac4a865d79…` | 9,575 / 59×66 / `bf6618a5344cc82f…` | 저장 | 2026-09-28 | 동부구역_아마란스 살롱. 승인(배포 지시, 2026-09-28). `staging/pic/`에 보관 |
+| 80 | `game/content/pic/ui overhaul/erosalon_gray.png` | 23,599 / 59×66 / `0d2ea68bc8a94c88…` | 7,051 / 59×66 / `9c489f68942657d9…` | 저장 | 2026-09-28 | 동부구역_아마란스 살롱. 승인(배포 지시, 2026-09-28). `staging/pic/`에 보관 |
+| 81 | `game/content/pic/bg/fashion_house.png` | 662,297 / 795×596 / `ba1d75c2f30901b9…` | 556,651 / 795×596 / `4b2392a898074fff…` | 저장 | 2026-09-28 | 동부구역_패션하우스. 승인(배포 지시, 2026-09-28). `staging/pic/`에 보관 |
+| 82 | `game/content/pic/characters/Amarida.png` | 328,791 / 795×596 / `3d9818672ce3e8f4…` | 490,761 / 795×596 / `83f4c17cdff20c00…` | 저장 | 2026-09-28 | 동부구역_패션하우스. 승인(배포 지시, 2026-09-28). `staging/pic/`에 보관 |
+| 83 | `game/content/pic/characters/Valentina1.png` | 321,798 / 795×596 / `d3c2bc0301ebfc9f…` | 638,523 / 795×596 / `e6f2eea799de890f…` | 저장 | 2026-09-28 | 동부구역_패션하우스. 승인(배포 지시, 2026-09-28). `staging/pic/`에 보관 |
+| 84 | `game/content/pic/ui overhaul/Amarida.png` | 43,646 / 59×66 / `8f29b3f13d0f9af0…` | 9,123 / 59×66 / `ce43f126ee624e23…` | 저장 | 2026-09-28 | 동부구역_패션하우스. 승인(배포 지시, 2026-09-28). `staging/pic/`에 보관 |
+| 85 | `game/content/pic/ui overhaul/Amarida_gray.png` | 44,396 / 59×66 / `59f158e768afdaf6…` | 6,606 / 59×66 / `df7024dd7e931242…` | 저장 | 2026-09-28 | 동부구역_패션하우스. 승인(배포 지시, 2026-09-28). `staging/pic/`에 보관 |
+| 86 | `game/content/pic/ui overhaul/Fashion_house.png` | 41,751 / 59×66 / `499eb630ee8505ab…` | 9,600 / 59×66 / `e38d01355db4f9b4…` | 저장 | 2026-09-28 | 동부구역_패션하우스. 승인(배포 지시, 2026-09-28). `staging/pic/`에 보관 |
+| 87 | `game/content/pic/ui overhaul/fashion_house_gray.png` | 40,909 / 59×66 / `a0a46e6fe3ffeef4…` | 7,098 / 59×66 / `28177a263946562c…` | 저장 | 2026-09-28 | 동부구역_패션하우스. 승인(배포 지시, 2026-09-28). `staging/pic/`에 보관 |
+| 88 | `game/content/pic/ui overhaul/valentina1.png` | 43,994 / 59×66 / `30a55feb66c83715…` | 9,672 / 59×66 / `c23e4981ff78d6dc…` | 저장 | 2026-09-28 | 동부구역_패션하우스. 승인(배포 지시, 2026-09-28). `staging/pic/`에 보관 |
+| 89 | `game/content/pic/characters/realtor.png` | 269,384 / 795×596 / `4dc1eb6b6d175c6e…` | 312,919 / 795×596 / `ccff9ca6df5aaf00…` | 저장 | 2026-09-28 | 백색도시_부동산사무소. 승인(배포 지시, 2026-09-28). `staging/pic/`에 보관 |
+| 90 | `game/content/pic/ui overhaul/speak to the manager.png` | 10,442 / 59×66 / `2fa35b02255d1562…` | 9,305 / 59×66 / `e2fca19828a8c47e…` | 저장 | 2026-09-28 | 백색도시_부동산사무소. 승인(배포 지시, 2026-09-28). `staging/pic/`에 보관. 기준 ZIP 폴더명 `ui overhau` → `ui overhaul`로 대조 |
+| 91 | `game/content/pic/ui overhaul/speak to the manager_gray.png` | 5,510 / 59×66 / `cd140d471e86bf64…` | 5,450 / 59×66 / `83f99d5abaafb58a…` | 저장 | 2026-09-28 | 백색도시_부동산사무소. 승인(배포 지시, 2026-09-28). `staging/pic/`에 보관. 기준 ZIP 폴더명 `ui overhau` → `ui overhaul`로 대조 |
 
 전체 SHA-256은 [원본 카탈로그](NEWIMG_ORIGINAL_CATALOG.json)와 아래 패치 기록에 있다.
 
@@ -270,6 +305,27 @@
 - 사용법: ZIP 안의 `pic/`을 게임의 `game/content/` 폴더에 풀어 덮어쓴다.
 - 상태: 저장. 게임 설치·실행 검증은 하지 않았다.
 
+### 4차: 패키징 기준 `newimage.zip` v2 (2026-09-28)
+
+- 받은 파일: `newimage.zip` (30,936,766 bytes, SHA-256 `e07f32233ff797399ef1a92ff8263c42aa82102cb98771649ccd504844af1f04`), PNG 93개. ZIP CRC 검사 통과. `basis/newimage_v2.zip`에 보관.
+- v1 대비: 기존 57개는 `staging` 파일과 바이트 동일. `title.png`·`title10.png`는 여전히 원본과 동일(교체 효과 없음, 패치 제외). 신규 34개.
+- 신규 34개 구성: 아그라바 관문 18(`bg` 5, `characters` 2, `ui overhaul` 11), 아마란스 살롱 5(`bg` 1, `characters` 1, `ui overhaul` 3), 패션하우스 8(`bg` 1, `characters` 2, `ui overhaul` 5), 부동산사무소 3(`characters` 1, `ui overhaul` 2).
+- 경로 대조: 34개 모두 `JO9main`에 같은 경로·같은 파일명(대소문자 포함)의 원본이 있다. 형식(PNG)과 사이즈(795×596, 59×66)도 모두 원본과 같다. 파일 손상 없음.
+- 기준 ZIP 구조 문제: 신규 용도 폴더 4개에 `pic/` 단계가 없고, 부동산사무소는 `ui overhau` 폴더명 오타가 있다. 모든 파일의 대상 경로가 원본 대조로 하나로 정해져서 `staging`과 배포 ZIP에는 올바른 경로로 넣었다. 사용자에게 알렸다.
+- 승인: 사용자가 배포 ZIP 생성을 지시해 승인으로 처리했다.
+
+배포 ZIP v2는 다음과 같다.
+
+- 파일: `patches/JO9_NewImg_Pack_v2.zip` (27,162,074 bytes, SHA-256 `2f1582775b56575da02fa49e5107aa964df28e182c6c245c716a3822af0a5dcc`)
+- 내용: `staging/pic/` 전체 91개(v1의 57개 + 신규 34개). 최상위 `pic/`, 파일명 UTF-8. 카탈로그 91개 항목과 파일 목록 일치, ZIP 안 각 파일이 `staging`과 바이트 동일, v1 파일을 모두 포함함을 확인했다.
+- 상태: 저장. 게임 설치·실행 검증은 하지 않았다.
+
+비교 HTML v2는 다음과 같다.
+
+- 파일: `compare/JO9_NewImg_Compare_v2.html` (2,751,026 bytes, SHA-256 `1060c6710733409c8c710585be95c7a63efd0ba8d33af3e9fbd45a37e7751cd2`)
+- 내용: 이번에 새로 추가된 34개 중 큰 이미지 13개만 비교한다(아그라바 7, 아마란스 2, 패션하우스 3, 부동산 1). 작은 아이콘 21개는 사용자 지시에 따라 생략했다.
+- 확인: Chromium에서 이미지 26장 표시, 스크립트 오류 없음, 휴대폰 폭에서 가로 스크롤 없음.
+
 ## 미결 사항
 
-- 없음. 다음 교체 이미지나 ZIP 생성 지시를 기다린다.
+- 기준 ZIP v2의 폴더 구조(`pic/` 누락, `ui overhau` 오타)를 사용자가 원본 쪽에서 고칠지. 배포물에는 영향 없음.
