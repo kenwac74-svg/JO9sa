@@ -379,6 +379,9 @@ def main() -> int:
         shutil.copy2(REPO / 'build/private_room/README_TEST10_KR.txt', out / 'README_KR.txt')
     if args.release:
         shutil.copy2(REPO / 'installer/README_RELEASE_KR.txt', out / 'README_KR.txt')
+        shutil.copy2(REPO / 'installer/README.html', out / 'README.html')
+        if (REPO / 'installer/README_images').is_dir():
+            shutil.copytree(REPO / 'installer/README_images', out / 'README_images')
         installer_path = out / 'Install.ps1'
         installer_text = installer_path.read_text(encoding='utf-8-sig')
         installer_text = installer_text.replace("$Title='JO9 UI SNKmod'", "$Title='JO9 UI_overhaul_SNKmod " + RELEASE_VERSION + "'")
