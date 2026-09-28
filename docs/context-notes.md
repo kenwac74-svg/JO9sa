@@ -499,3 +499,10 @@
 - Check 모드에서 이전 설치가 쓴 파일을 "순정과 다름"으로 잘못 경고하지 않도록, 이전 설치 기록의 After 해시는 호환성 경고에서 제외한다.
 - README의 [기존 설치본] 절을 [업데이트]로 정리했다.
 - 검사: test_installer 58/58 (C 항목을 "FIX6 흔적 메시지 없음·FIX6 백업 폴더 불변"으로 교체), 개인실 검사 통과.
+
+### cell_exchange 아이콘 교체 (2026-09-28, 사용자 지시)
+- 사용자가 새 `buttons/cell_exchange.png` 원본(1254×1254)을 제공. 원본은 `resources/source_art/cell_exchange_1254.png`에 보관.
+- 기존 순정 파일(49×66, 그림 영역 x5~49·세로 전체, SHA d696c5af…)에 맞춰 보이는 부분(398×567)을 비율 유지로 44×63에 축소, 49×66 투명 캔버스의 같은 영역에 배치 → `resources/new/content/pic/buttons/cell_exchange.png` (6,331 B).
+- `resource_rules.json` extra에 추가. SNKmod/buttons/cell_exchange.png로 설치되고 main_screen·prison_cell·stasis_cell 참조 3곳이 SNKmod 경로로 바뀐다. 원래 경로의 순정 파일은 건드리지 않는다.
+- 이 변경으로 패키지 jack.qsp는 사용자 확인본(a9bfe562…)과 이 경로 3곳만 다르다.
+- 검사: test_installer 58/58, 개인실 검사 통과, 참조 분류 이상 없음 (SNKMOD_CHANGED 100→101).
