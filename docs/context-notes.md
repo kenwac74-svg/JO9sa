@@ -370,3 +370,4 @@
   - 단, Codex 진단 기준으로 JO9O에는 0.1이 설치된 기록이 있다. `content/pic/SNKmod/`가 생겼고, `css/base.css`·`json/menu_icon.json`은 패키지 것으로 바뀌어 있다.
   - 목록 도구는 `content/pic/SNKmod/`를 제외하도록 고쳤다. JO9O 폴더에서 뽑으면 이미지 목록은 순정으로 쓸 수 있지만, css·json·jack.qsp 항목은 순정이 아닐 수 있다. 순정 ZIP에서 뽑는 것이 가장 정확하다.
 - `make_vanilla_manifest.ps1`에 UTF-8 BOM을 붙였다 (Windows PowerShell 5.1이 한글을 CP949로 잘못 읽는 문제 방지). cmd 안내문은 ASCII로 바꿨다. 폴더 입력(SNKmod 제외)과 ZIP 입력을 모두 시험했다.
+- 사용자 정보 (2026-09-28): JO9O를 순정으로 복원했다. 이제 JO9O game 폴더에서 뽑은 목록(css·json·jack.qsp 포함)을 순정 기준으로 쓸 수 있다. 목록 파일을 받으면 jack.qsp 해시를 인계 문서의 순정 QSP `070dad…77dc`와 대조해 복원 여부를 확인한다.
