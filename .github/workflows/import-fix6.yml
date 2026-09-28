@@ -1,0 +1,41 @@
+name: Import approved FIX6 archive
+on:
+  push:
+    branches: [JO9UIpatch]
+    paths:
+      - releases/JO9_UI_v1_9_14_AllInOne_R2_FIX6.zip
+permissions:
+  contents: write
+concurrency:
+  group: jo9uipatch-fix6-import
+  cancel-in-progress: false
+jobs:
+  import:
+    if: github.repository == 'kenwac74-svg/JO9sa' && github.ref == 'refs/heads/JO9UIpatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Verify and preserve the approved package on JO9UIpatch only
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          AUTH="$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)"
+          echo "::add-mask::$AUTH"
+          git init work
+          cd work
+          git config core.autocrlf false
+          git remote add origin https://github.com/kenwac74-svg/JO9sa.git
+          git -c http.https://github.com/.extraheader="AUTHORIZATION: basic $AUTH" fetch --depth=1 origin JO9UIpatch
+          git checkout -b JO9UIpatch FETCH_HEAD
+          python3 tools/import_fix6.py
+          git add -- packages/JO9_UI_v1_9_14_AllInOne_R2_FIX6 docs/FIX6_REPOSITORY_IMPORT.json
+          if git diff --cached --quiet; then
+            echo 'Approved FIX6 files already present and unchanged.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'chore(ui): import and hash-verify original FIX6 package'
+          git -c http.https://github.com/.extraheader="AUTHORIZATION: basic $AUTH" push origin HEAD:refs/heads/JO9UIpatch
