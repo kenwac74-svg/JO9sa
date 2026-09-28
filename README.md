@@ -1,3 +1,19 @@
+> 인수 시 먼저 [최종 리소스 분류 기준](docs/FINAL_RESOURCE_CLASSIFICATION_KR.md)을 읽으세요.
+
+# JO9 UI_overhaul_SNKmod 0.1 인계
+
+최신 소스와 배포본, Codex 작업 이력을 보관한 인계 브랜치입니다.
+
+- 먼저 [최신 핸드오프](docs/CLAUDE_HANDOFF_RELEASE_0_1_20260928.md)를 읽으세요.
+- **미해결:** [설치 후 QSP 변경 및 누적 리소스 검사](audits/CUMULATIVE_RELEASE_DIAGNOSIS_KR.md).
+- 배포 파일: `releases/JO9 UI_overhaul_SNKmod_0.1.zip` — 사용자가 실행 문제를 보고한 현행본이며, 이 전달에서 수정 재빌드하지 않았습니다.
+- [대화 이력](docs/handoff/history/conversation_visible.md), `docs/handoff/user_handoffs/`의 사용자 제공 문서 3개.
+- 최신 이미지 경로: `game/content/pic/SNKmod/`.
+
+아래는 이전 R3 당시 문서입니다. 충돌 시 위 최신 핸드오프와 진단이 우선합니다.
+
+---
+
 # JO9sa — UI 패치 (SNKmod 분리형)
 
 최종 저장 브랜치: `JO9UIpatch` · 상태 기록일: 2026-09-25 (Asia/Seoul)
