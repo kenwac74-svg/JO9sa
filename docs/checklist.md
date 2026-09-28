@@ -65,6 +65,10 @@
 - [ ] 수동 교체용 묶음과 안내문.
 - [ ] UI 복구가 일반 이미지에 관여하지 않음.
 
+## P2.5 — 확인된 원작/통합 버그 수정
+
+- [ ] BUG-001 아마란스 살롱 서비스에서 이전 `$service_picture`가 잔류해 `scene\\service\\...` 이미지가 함께 표시되는 문제 수정. 상세 원인·재현·최소 수정안은 `docs/BUGS.md` 참조.
+
 ## P3 — 검증 후 배포
 
 - [~] ACCEPTANCE_TESTS.md — 정적 부분 수행 (`docs/ACCEPTANCE_RESULTS.md`). Windows·인게임 미실행.
