@@ -395,3 +395,4 @@
   - 사용처(FIX6 상태 jack.qsp 정적 검색): `$menu_item_cum_gray`만 #sex_options·#sex_options_woman에서 쓴다. 나머지 11개 키는 정적 참조가 없다. 0.1·순정 QSP와 동적 조립 경로는 아직 확인하지 않았다.
 - 사용자 지시 (2026-09-28): cum_gray는 cum.png를 회색 처리해 넣는다. 누락 목록은 별도 문서로 저장한다 → `docs/MISSING_MENU_ICONS.md`. 화면 코드 확인은 QSP뿐 아니라 제공 ZIP의 내용(qsrc·json·css·txt)까지 함께 본다.
 - ref.zip 전수 검색 결과도 같다. 12개 키 중 `menu_item_cum_gray`만 #sex_options·#sex_options_woman(각 4곳)에서 쓰인다. 키를 동적으로 조립하는 코드는 없다.
+- cum_gray.png 생성 (2026-09-28): 순정 회색 처리 방식을 예시 한 쌍에서 분석해 재현했다. 재현 오차는 1.72이고, 결과는 `resources/new`에 보관했다. 0.1 빌드에 적용할 예정이며, 구 R3 빌드는 건드리지 않았다. 상세는 `docs/MISSING_MENU_ICONS.md`에 있다.
