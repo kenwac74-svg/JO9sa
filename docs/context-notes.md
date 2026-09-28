@@ -471,3 +471,12 @@
 - 산출물: `releases/JO9 UI_overhaul_SNKmod_0.11.zip` (23,739,025 B, SHA-256 `81d3bc1d877851f979c906d0fdf5d3c2642e9f046c044bdc4ef133c6c55a76cf`, 176 항목, 0.1과 같은 무압축·최상위 폴더 구조).
 - 검사: 빌드본과 ZIP 압축 해제본 모두 test_installer 53/53. 참조 분류는 한글 참조·연결 누락·출처 누락 0, trash 밖 미참조 0 (순정에 없는 참조 40은 기존 순정 참조 29 + menu_icon 누락 11).
 - 0.1 대비 변경: 예비 29개 trash 보관, cum_gray 추가, 바뀐 파일은 호환성 경고로 처리, 설치 순서 안내.
+
+### Codex 최종 인계 인수 (2026-09-28)
+- Codex 작업은 종료했고 이후는 Claude가 맡는다. `codex/snkmod-0.1-handoff` d3188e9를 작업 브랜치에 병합했다.
+- 들어온 것은 문서·색인·이력·검사 런타임뿐이다. build·installer·tests 변경은 없어 0.11을 덮어쓰지 않았다.
+  - 시작 문서 `docs/PATCH_0_1_MASTER_HANDOFF_KR.md`, `docs/package-index/`(0.1 ZIP 명세·이미지 맵·QSP location 색인·파일 목록), `docs/handoff/history/` 대화 이력.
+  - WASM 런타임 `audits/reward-diagnostic/vendor-legacy/package/` (@qsp/wasm-engine 1.0.0).
+- 인계 브랜치는 0.1 당시 기록이다. 0.1 수치(이미지 143개, ZIP 항목 161개)는 0.11(이미지 144개 + trash README, 항목 176개)과 다르다. 최신 기준은 0.11이다.
+- 런타임 보완 후 0.11 빌드본으로 다시 검사했다. 개인실 WASM 4종(출산·식단·착유·경로) 모두 PASS, test_private_room.py 13/13 OK (기준본은 releases의 R3 ZIP을 풀어 지정).
+- 남은 검증: Windows 실게임 CHECK→APPLY→인게임→RESTORE, test_release_clean_install.py(Windows PowerShell·실게임 폴더 필요). 완료로 표시하지 않는다.

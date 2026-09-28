@@ -75,6 +75,8 @@
 - [x] tests/test_installer.py 53/53.
 - [x] 패키징 0.11 (`releases/JO9 UI_overhaul_SNKmod_0.11.zip`).
 - [x] JO9UIpatch 반영.
+- [x] Codex 최종 인계(d3188e9) 병합, 개인실 WASM 4종·정적 13개 0.11 기준 통과.
+- [ ] test_release_clean_install.py — Windows PowerShell·실게임 폴더에서 실행 (사용자 환경).
 
 ## P2.5 — 확인된 원작/통합 버그 수정
 
