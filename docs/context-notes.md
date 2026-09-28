@@ -420,3 +420,7 @@
   - UI 패치 리소스의 출처는 UI 작업으로 명시된 것에 한정한다: FIX6, 사용자가 UI용으로 준 새 디자인(resources/new), 영문 이름 변경 파일, 0.1 패키지 이미지. 각 파일을 순정과 비교해 같으면 제외하고, 다르거나 없으면 포함한다.
   - Codex가 JO9와 JO9O를 비교해 찾은 147개(ui overhaul)는 이 기준으로 보면 UI 작업분이라는 근거가 없다. 이미지팩 등 다른 교체분일 수 있다. 사용자가 UI 작업분으로 지정한 파일만 포함한다.
   - 검증 방법: 0.1의 QSP·JSON·CSS가 참조하는 모든 이미지는 순정에 같은 경로로 있거나 패키지에 있어야 한다. 둘 다 아니면 빌드 실패로 처리한다.
+
+### 0.1 전수 분류 완료 (2026-09-28)
+- `docs/RESOURCE_CLASSIFICATION_0_1_REPORT_KR.md`, `audits/release_0_1_ref_classification.json`, `tools/classify_release_refs.py`.
+- 핵심 결과: 한글 경로 참조 0, 연결 누락 0, UI 작업 출처 누락 0. 순정에 없는 참조 41개는 순정 QSP 기존 참조 29개와 menu_icon 누락 12개다. 148개는 UI 작업 근거가 없어 제외한다. 순정과 같은 패키지 파일은 trophywall 1개.
