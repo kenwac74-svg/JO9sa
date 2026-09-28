@@ -506,3 +506,10 @@
 - `resource_rules.json` extra에 추가. SNKmod/buttons/cell_exchange.png로 설치되고 main_screen·prison_cell·stasis_cell 참조 3곳이 SNKmod 경로로 바뀐다. 원래 경로의 순정 파일은 건드리지 않는다.
 - 이 변경으로 패키지 jack.qsp는 사용자 확인본(a9bfe562…)과 이 경로 3곳만 다르다.
 - 검사: test_installer 58/58, 개인실 검사 통과, 참조 분류 이상 없음 (SNKMOD_CHANGED 100→101).
+
+### 배포용 README.html과 0.12 재패키징 (2026-09-28)
+- 사용자 지시: 배포 설치본에 이미지가 들어간 README html을 넣는다. 시스템 메시지 대신 호환 불가·권장 선행 설치 같은 꼭 필요한 정보만 쓴다.
+- `installer/README.html`: 설치 전 필수 안내(호환 불가, 권장 순서) → 설치 방법 → 주요 변경 사항(메인 화면·개인실 스크린샷, 새 상태 아이콘 9개는 payload 이미지를 직접 참조) → 화면이 예전 그대로일 때.
+- 스크린샷은 사용자 제공(메인 화면, 개인실 식사 설정) → `installer/README_images/main.png`, `private_room.png`. 빌드가 README.html과 README_images를 패키지 루트에 복사한다.
+- 설치기 메시지도 같은 원칙으로 줄였다: 확인 창·CHECK는 [꼭 읽어 주세요] 안내만, 완료는 "설치가 끝났습니다… 되돌리려면 RESTORE.cmd", 알림은 다른 모드 감지·설치 후 다른 패치 설치 두 경우만. 엔진·파일 수·해시·경로 문구 삭제.
+- 산출물: `releases/JO9 UI_overhaul_SNKmod_0.12.zip` (18,597,052 B, SHA-256 04f6642f…, 항목 180개). ZIP 해제본으로 test_installer 58/58, 개인실 검사 통과.

@@ -24,6 +24,9 @@
 - [x] jack.qsp 완성본을 패치에 넣고 설치 때 교체, 원본은 _JO9_SNKmod_STATE에 보관.
 - [x] 사용자 확인 정상 jack.qsp와 바이트 동일 (a9bfe562…).
 - [x] test_installer 58/58, 개인실 검사 통과, 패키징 0.12.
+- [x] 예전 흔적 메시지 제거, 설치기 메시지를 필수 안내만으로 축소.
+- [x] cell_exchange 아이콘 교체.
+- [x] 배포용 README.html(스크린샷 포함) 추가.
 - [ ] 사용자 Windows에서 0.12 APPLY 후 정상 화면 확인.
 
 ## 0.11 완료 내역
