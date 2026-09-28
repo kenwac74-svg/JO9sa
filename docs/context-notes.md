@@ -424,3 +424,14 @@
 ### 0.1 전수 분류 완료 (2026-09-28)
 - `docs/RESOURCE_CLASSIFICATION_0_1_REPORT_KR.md`, `audits/release_0_1_ref_classification.json`, `tools/classify_release_refs.py`.
 - 핵심 결과: 한글 경로 참조 0, 연결 누락 0, UI 작업 출처 누락 0. 순정에 없는 참조 41개는 순정 QSP 기존 참조 29개와 menu_icon 누락 12개다. 148개는 UI 작업 근거가 없어 제외한다. 순정과 같은 패키지 파일은 trophywall 1개.
+
+### 사용자 결정 15 — 예비는 trash 폴더, QSP 변경은 실패가 아님, 설치 순서 안내 (2026-09-28)
+- 예비 리소스(참조되지 않는 패키지 이미지)는 모두 trash 폴더에 넣어 보관한다. 그 폴더 안에 원래 경로를 적은 txt를 남긴다.
+  - 대상(0.1 기준 29개): FIX6 예비 16개(trophywall 포함), milk_drop_medium, hart_blue, buttons/z_pregnant(FIX6판), 한글→영문 pic 루트 10개(Ill, Wound, Pill0·0s·1·1s·2·2s, Preg, Preg_s).
+  - 위치안: `content/pic/SNKmod/trash/`. 파일명은 그대로 두고, `trash/README_trash.txt`에 "파일 → 원래 게임 경로 / 이전 SNKmod 경로"를 적는다.
+- 설치 후 QSP가 바뀌는 것은 다른 모드나 다른 버전 설치로 흔히 생긴다. 설치 실패로 판정하지 않는다.
+  - 이 UI 패치는 QSP를 바꾸는 다른 모드와 호환되지 않는다. 호환성 경고는 하되, 실패로 막지 않는다.
+- 설치 순서 안내:
+  - 이 패치는 다른 이미지 패치(QSP 없이 이미지·json만 바꾸는 패치 등)를 모두 마친 뒤 설치하도록 유도한다.
+  - `JoNT_IndividualityPatchInstaller.zip`, `ai_girl_pack.zip`을 설치한 뒤 **마지막에** 설치하도록 강력히 권장한다. 순서가 바뀌면 UI 패치가 정상 작동하지 않을 수 있다. 이 패치는 모든 패치 뒤에 덧씌우는 것이 안전하다.
+- QSP 변경 원인 조사(런처 재컴파일 가설 등)는 더 진행하지 않는다. 설치기 동작 문제로 다룬다.
