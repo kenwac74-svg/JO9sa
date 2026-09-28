@@ -266,13 +266,36 @@ def main() -> int:
             raise SystemExit('Unsafe build output directory: ' + str(out))
         shutil.rmtree(out)
     pay = out / 'payload'
+    ref_locs: dict[str, Counter] = {}
+    for name, text in final_texts.items():
+        for m in SNK_REF.finditer(text):
+            ref_locs.setdefault(norm(m.group(1)), Counter())[name] += 1
+    # 참조되지 않는 예비 리소스는 SNKmod/trash 아래에 원래 하위 경로를 유지해 보관한다 (결정 15).
+    placed = {}
+    for dest in images:
+        placed[dest] = dest if ref_locs.get(dest.lower()) else 'trash/' + dest
+    trash_lines = []
+    for dest, info in images.items():
+        if placed[dest].startswith('trash/'):
+            trash_lines.append(f"{placed[dest][len('trash/'):]}\t" + ', '.join('content/pic/' + r for r in info['originals'])
+                               + f"\tcontent/pic/SNKmod/{dest}")
     img_entries = []
     for dest, info in images.items():
+        dest = placed[dest]
         f = pay / 'content/pic/SNKmod' / dest
         f.parent.mkdir(parents=True, exist_ok=True)
         f.write_bytes(info['data'])
         img_entries.append({'Rel': 'content/pic/SNKmod/' + dest, 'Source': 'payload/content/pic/SNKmod/' + dest,
                             'Hash': sha(info['data'])})
+    if trash_lines:
+        note = ('# 이 UI 패치에서 현재 쓰지 않는 예비 리소스 보관 폴더 (게임은 이 폴더를 참조하지 않는다)\r\n'
+                '# 형식: trash 안 경로<TAB>원래 게임 경로<TAB>이전 SNKmod 경로\r\n' + '\r\n'.join(sorted(trash_lines)) + '\r\n')
+        data = b'\xef\xbb\xbf' + note.encode('utf-8')
+        f = pay / 'content/pic/SNKmod/trash/README_trash.txt'
+        f.parent.mkdir(parents=True, exist_ok=True)
+        f.write_bytes(data)
+        img_entries.append({'Rel': 'content/pic/SNKmod/trash/README_trash.txt',
+                            'Source': 'payload/content/pic/SNKmod/trash/README_trash.txt', 'Hash': sha(data)})
     (pay / 'css').mkdir(parents=True)
     (pay / 'css/base.css').write_bytes(css_new.encode('utf-8'))
     (pay / 'json').mkdir(parents=True)
@@ -286,14 +309,10 @@ def main() -> int:
     dump('qsp-patches.json', patches)
     dump('path-rules.json', path_rules)
 
-    ref_locs: dict[str, Counter] = {}
-    for name, text in final_texts.items():
-        for m in SNK_REF.finditer(text):
-            ref_locs.setdefault(norm(m.group(1)), Counter())[name] += 1
     ui_map = []
     for dest, info in images.items():
         hits = ref_locs.get(dest.lower(), {})
-        ui_map.append({'SNKmod': 'content/pic/SNKmod/' + dest,
+        ui_map.append({'SNKmod': 'content/pic/SNKmod/' + placed[dest],
                        'Originals': ['content/pic/' + r for r in info['originals']],
                        'Hash': sha(info['data']), 'Bytes': len(info['data']), 'Source': info['source'],
                        'Status': 'used' if hits else 'spare',
