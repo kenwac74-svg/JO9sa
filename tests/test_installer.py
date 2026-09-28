@@ -145,7 +145,7 @@ def main() -> int:
         pic_before = tree_hashes(g / 'content')
         code_before = {f: sha(g / f) for f in ['jack.qsp', 'css/base.css', 'json/menu_icon.json', 'engine/jack.exe']}
         r = run(args.pwsh, args.pkg, g, 'Check')
-        check('A1 Check가 마지막 설치 순서 안내', 'JoNT_IndividualityPatchInstaller.zip' in r.stdout and 'ai_girl_pack.zip' in r.stdout, r.stdout[-300:])
+        check('A1 Check가 마지막 설치 순서 안내', 'JoNT_IndividualityPatchInstaller' in r.stdout and 'ai_girl_pack' in r.stdout and '함께 쓸 수 없습니다' in r.stdout, r.stdout[-300:])
         check('A1 Check 종료코드 0', r.returncode == 0, r.stdout[-300:] + r.stderr[-300:])
         check('A1 Check는 파일을 바꾸지 않음', tree_hashes(g) == {**{'content/' + k: v for k, v in pic_before.items()}, **code_before} or
               ({f: sha(g / f) for f in code_before} == code_before and not (g / 'content/pic/SNKmod').exists() and not (g / '_JO9_SNKmod_STATE').exists()))
@@ -173,7 +173,7 @@ def main() -> int:
         r = run(args.pwsh, args.pkg, g, 'Apply')
         out = r.stdout + r.stderr
         check('B1 바뀐 파일이 있어도 재설치 성공', r.returncode == 0, out[-300:])
-        check('B1 바뀐 원래 게임 파일은 호환성 경고', 'css/base.css 파일이 설치 후 바뀌었습니다' in out, out[-300:])
+        check('B1 바뀐 원래 게임 파일은 호환성 경고', '다른 패치나 모드가 설치된 것으로 보입니다' in out, out[-300:])
         copies = list((g / '_JO9_SNKmod_STATE').glob('*/changed/*/css/base.css'))
         check('B2 변경 CSS 별도 백업', any(p.read_bytes() == edited_css for p in copies))
         copies = list((g / '_JO9_SNKmod_STATE').glob('*/changed/*/content/pic/SNKmod/buttons/close_button.png'))
@@ -186,7 +186,7 @@ def main() -> int:
         check('B3 바뀐 파일이 있어도 복원 성공', r.returncode == 0, out[-300:])
         check('B3 CSS는 재설치 당시 기준(다른 모드 판)으로 복원', (g / 'css/base.css').read_bytes() == edited_css)
         check('B3 복원 때 바뀐 menu_icon.json은 되돌리지 않고 경고', (g / 'json/menu_icon.json').read_bytes() == b'{"other": "mod"}'
-              and 'json/menu_icon.json 파일이 설치 후 바뀌었습니다' in out, out[-300:])
+              and '다른 패치가 바꾼 파일은 되돌리지 않고 그대로 둡니다' in out, out[-300:])
         check('B3 jack.qsp는 설치 전으로 복원', sha(g / 'jack.qsp') == code_before['jack.qsp'])
         check('B3 SNKmod 폴더 정리', not (g / 'content/pic/SNKmod').exists())
         copies = list((g / '_JO9_SNKmod_STATE').glob('*/changed/*/content/pic/SNKmod/buttons/close_button.png'))
@@ -198,9 +198,9 @@ def main() -> int:
         tamper_main_screen(g / 'jack.qsp')
         other_qsp = sha(g / 'jack.qsp')
         r = run(args.pwsh, args.pkg, g, 'Check')
-        check('B4 Check가 바뀐 jack.qsp 경고', r.returncode == 0 and 'jack.qsp 파일이 설치 후 바뀌었습니다' in r.stdout + r.stderr, r.stdout[-300:])
+        check('B4 Check가 바뀐 jack.qsp 경고', r.returncode == 0 and '다른 패치나 모드가 설치된 것으로 보입니다' in r.stdout + r.stderr, r.stdout[-300:])
         r = run(args.pwsh, args.pkg, g, 'Apply')
-        check('B4 바뀐 jack.qsp 위에 재설치 성공', r.returncode == 0 and 'jack.qsp 파일이 설치 후 바뀌었습니다' in r.stdout + r.stderr, r.stdout[-300:] + r.stderr[-300:])
+        check('B4 바뀐 jack.qsp 위에 재설치 성공', r.returncode == 0 and '다른 패치나 모드가 설치된 것으로 보입니다' in r.stdout + r.stderr, r.stdout[-300:] + r.stderr[-300:])
         verify_installed(g, args.pkg, 'B4')
         r = run(args.pwsh, args.pkg, g, 'Restore')
         check('B4 복원 시 다른 모드판 jack.qsp를 기준으로 되돌림', r.returncode == 0 and sha(g / 'jack.qsp') == other_qsp, r.stdout[-200:])
@@ -220,7 +220,7 @@ def main() -> int:
         make_game(g, args.qsp, fix6, with_fix6_backup=False)
         tamper_main_screen(g / 'jack.qsp')
         r = run(args.pwsh, args.pkg, g, 'Apply')
-        check('D1 알 수 없는 본문도 경고 후 설치', r.returncode == 0 and 'jack.qsp가 순정 2.3과 다릅니다' in r.stdout + r.stderr, r.stdout[-300:] + r.stderr[-300:])
+        check('D1 알 수 없는 본문도 경고 후 설치', r.returncode == 0 and '게임 코드(jack.qsp)가 순정과 다릅니다' in r.stdout + r.stderr, r.stdout[-300:] + r.stderr[-300:])
         verify_installed(g, args.pkg, 'D1')
 
         # E. 일반 이미지: 비대화형 실행은 동의로 보지 않는다
@@ -259,7 +259,7 @@ def main() -> int:
                 r = run(args.pwsh, pkg3, g, 'Restore')
                 check('F1 복구 시 순정 엔진으로 되돌림', r.returncode == 0 and (g / 'engine/jack.exe').read_bytes() == b'stock engine')
             else:
-                check('F2 Qt 불일치: 경고 후 엔진만 건너뛰고 설치', r.returncode == 0 and not replaced and 'Qt5Widgets' in r.stdout + r.stderr
+                check('F2 Qt 불일치: 경고 후 엔진만 건너뛰고 설치', r.returncode == 0 and not replaced
                       and (g / 'content/pic/SNKmod').exists(), r.stdout[-200:] + r.stderr[-200:])
         if args.upgrade_from:
             g = work / 'Upgrade/game'

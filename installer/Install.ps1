@@ -16,11 +16,12 @@ $script:Forms=$false
 $script:Warnings=New-Object Collections.Generic.List[string]
 # 이 패키지가 쓰는 파일과 같은 내용이면 다른 모드 변경으로 보지 않는다 (수동으로 패치 파일을 넣은 경우).
 $script:PackageHashes=@()
-# 이미지·json 패치가 menu_icon.json·base.css를 덮으면 UI가 깨지므로 이 패치를 마지막에 설치하도록 안내한다.
-$OrderNote="권장 설치 순서: JoNT_IndividualityPatchInstaller.zip → ai_girl_pack.zip → 그 밖의 이미지·json 패치 → 이 UI 패치(맨 마지막).`r`n순서가 바뀌면 UI 패치가 정상 작동하지 않을 수 있습니다. 다른 패치를 나중에 설치했다면 이 UI 패치를 다시 설치하세요.`r`nQSP를 바꾸는 다른 모드와는 호환되지 않습니다."
+# 처음 설치하는 사람이 꼭 알아야 할 내용만 안내한다: 호환 불가, 권장 설치 순서.
+$OrderNote="[꼭 읽어 주세요]`r`n- 이 패치는 게임 코드(jack.qsp)를 바꾸는 다른 모드와 함께 쓸 수 없습니다.`r`n- 다른 패치가 있다면 먼저 설치하고, 이 UI 패치는 맨 마지막에 설치하세요.`r`n  권장 순서: JoNT_IndividualityPatchInstaller → ai_girl_pack → 그 밖의 이미지 패치 → 이 UI 패치`r`n- UI 패치 뒤에 다른 패치를 설치했다면 APPLY.cmd를 다시 실행하세요."
 
 function Tell([string]$text,[string]$icon='Information'){Write-Host $text; if($script:Forms){[void][Windows.Forms.MessageBox]::Show($text,$Title,'OK',$icon)}}
-function Warn([string]$text){$script:Warnings.Add($text); Write-Warning $text}
+function Warn([string]$text){if(-not $script:Warnings.Contains($text)){$script:Warnings.Add($text); Write-Warning $text}}
+function Notices(){if($script:Warnings.Count-eq 0){return ''};return "`r`n`r`n알림:`r`n- "+($script:Warnings -join "`r`n- ")}
 function Ask([string]$text){if(-not $script:Forms){return $false}; return [Windows.Forms.MessageBox]::Show($text,$Title,'YesNo','Question')-eq 'Yes'}
 function Hash([string]$file){return (Get-FileHash -LiteralPath $file -Algorithm SHA256).Hash.ToLowerInvariant()}
 function HashBytes([byte[]]$data){$h=[Security.Cryptography.SHA256]::Create();try{return [BitConverter]::ToString($h.ComputeHash($data)).Replace('-','').ToLowerInvariant()}finally{$h.Dispose()}}
@@ -63,7 +64,7 @@ function ChangedSince($state,[string]$folder){
     }
     return ,$changed
 }
-function KeptMessage([string]$rel){return ($rel+' 파일이 설치 후 바뀌었습니다 (다른 모드·다른 버전 설치로 보임). 설치 전 원본으로 되돌리지 않고 현재 파일을 그대로 둡니다.')}
+function KeptMessage(){if($Mode-eq 'Restore'){return 'UI 패치 설치 뒤에 다른 패치가 바꾼 파일은 되돌리지 않고 그대로 둡니다.'};return 'UI 패치 설치 뒤에 다른 패치나 모드가 설치된 것으로 보입니다. 그 위에 UI 패치를 다시 설치합니다.'}
 
 # 바뀐 파일은 현재본을 별도 보관한다. 바뀐 원래 게임 파일은 그대로 두고, 나머지는 설치 전 상태로 되돌린다.
 function RestoreState($state,[string]$folder){
@@ -81,10 +82,9 @@ function RestoreState($state,[string]$folder){
                 [IO.File]::Copy($target,$copy)
                 if((Hash $copy)-ne $c.Hash){throw ('변경본 백업 검증 실패: '+$c.Rel)}
             }
-            if($c.Keep){Warn (KeptMessage $c.Rel)}
+            if($c.Keep){Warn (KeptMessage)}
         }
         [IO.File]::WriteAllText((Join-Path $changedDir 'changed-files.json'),(ConvertTo-Json -InputObject @($changed.ToArray()) -Depth 5),$Utf8Bom)
-        Write-Host ('설치 후 바뀐 파일 '+$changed.Count+'개의 현재본 백업: '+$changedDir)
     }
     $files=@($state.Files)
     for($i=$files.Count-1;$i-ge 0;$i--){
@@ -130,16 +130,14 @@ try {
 
     if($Mode-eq 'Restore'){
         $active=FindActiveState $stateRoot
-        if($null-eq $active){throw '복구할 SNKmod UI 설치 기록이 없습니다.'}
-        if($script:Forms -and -not (Ask "SNKmod UI를 제거하고 설치 전 jack.qsp·base.css·엔진으로 되돌릴까요?`r`n교체한 일반 이미지(캐릭터·NPC·일반 배경)는 되돌리지 않습니다.")){exit 0}
+        if($null-eq $active){throw 'UI 패치 설치 기록이 없습니다. 되돌릴 것이 없습니다.'}
+        if($script:Forms -and -not (Ask "UI 패치를 제거하고 설치 전 상태로 되돌릴까요?")){exit 0}
         RestoreState $active.State $active.Dir
-        $msg='SNKmod UI를 제거했습니다. jack.qsp·base.css·엔진은 설치 전 상태로 돌아갔습니다. 교체한 일반 이미지는 그대로 남습니다.'
-        if($script:Warnings.Count-gt 0){$msg+="`r`n`r`n경고:`r`n- "+($script:Warnings -join "`r`n- ")}
-        Tell $msg;exit 0
+        Tell ('UI 패치를 제거했습니다. 설치 전 상태로 돌아갔습니다.'+(Notices));exit 0
     }
 
     $manifest=ReadJson (Join-Path $Root 'manifest.json')
-    foreach($entry in $manifest.Payload){if((Hash (SafePath $Root $entry.Rel))-ne $entry.Hash){throw ('패키지가 손상됐습니다: '+$entry.Rel)}}
+    foreach($entry in $manifest.Payload){if((Hash (SafePath $Root $entry.Rel))-ne $entry.Hash){throw ('패치 파일이 손상됐습니다. 압축을 다시 풀어 주세요: '+$entry.Rel)}}
     $script:PackageHashes=@($manifest.Qsp.Hash)+@($manifest.Overwrite|ForEach-Object{$_.Hash})
 
     # 같은 버전이 이미 적용돼 있으면 끝, 다른 버전이면 먼저 되돌린다.
@@ -147,9 +145,9 @@ try {
     if($null-ne $active){
         $same=$active.State.Version-eq $manifest.Version
         if($same){foreach($e in $active.State.Files){if((HashOrAbsent (SafePath $GamePath $e.Rel))-ne $e.After){$same=$false;break}}}
-        if($same){Tell ('SNKmod UI '+$manifest.Version+'이(가) 이미 설치돼 있습니다. 바꿀 파일이 없습니다.');exit 0}
+        if($same){Tell ('UI 패치 '+$manifest.Version+'이(가) 이미 설치돼 있습니다.');exit 0}
         if($Mode-eq 'Check'){
-            foreach($c in (ChangedSince $active.State $active.Dir)){if($c.Keep){Warn (KeptMessage $c.Rel)}}
+            foreach($c in (ChangedSince $active.State $active.Dir)){if($c.Keep){Warn (KeptMessage)}}
         }
         else{RestoreState $active.State $active.Dir}
     }
@@ -161,30 +159,27 @@ try {
     # jack.qsp: 패키지에 든 완성본으로 교체한다. 원본은 _JO9_SNKmod_STATE에 보관한다.
     $qspHash=Hash $qsp
     if($qspHash-ne $manifest.Qsp.Hash){
-        if($manifest.Qsp.Before -notcontains $qspHash -and $known -notcontains $qspHash){Warn '호환성: jack.qsp가 순정 2.3과 다릅니다. 다른 QSP 모드나 다른 게임 버전이 설치된 것으로 보입니다. 이 UI 패치는 QSP를 바꾸는 모드와 호환되지 않아 jack.qsp를 이 패치의 파일로 교체합니다. 그 모드의 변경은 사라지며 원본은 복구용으로 보관합니다. 설치는 계속합니다.'}
+        if($manifest.Qsp.Before -notcontains $qspHash -and $known -notcontains $qspHash){Warn '게임 코드(jack.qsp)가 순정과 다릅니다. 다른 모드가 설치돼 있다면 그 모드는 이 패치와 함께 쓸 수 없고, 설치하면 그 모드의 변경은 사라집니다.'}
         $plan.Add([pscustomobject]@{Rel='jack.qsp';Data=[IO.File]::ReadAllBytes((SafePath $Root $manifest.Qsp.Source))})
     }
 
     # 이미지 외 파일(base.css, json/menu_icon.json): 원본 경로에 덮어쓰고, 원본은 복구용으로 보관한다.
     foreach($ow in $manifest.Overwrite){
         $t=SafePath $GamePath $ow.Rel
-        if(-not [IO.File]::Exists($t)){Warn ($ow.Rel+' 파일이 없어 건너뜁니다.');continue}
+        if(-not [IO.File]::Exists($t)){Warn ($ow.Rel+' 파일이 없습니다. 게임 폴더가 맞는지 확인하세요.');continue}
         $h=Hash $t
         if($h-eq $ow.Hash){continue}
-        if($ow.Before -notcontains $h -and $known -notcontains $h){Warn ('알려지지 않은 '+$ow.Rel+'('+$h+')를 SNKmod UI용 파일로 교체합니다. 원본은 복구용으로 보관합니다.')}
         $plan.Add([pscustomobject]@{Rel=$ow.Rel;Data=[IO.File]::ReadAllBytes((SafePath $Root $ow.Source))})
     }
 
     $engine=SafePath $GamePath $manifest.Engine.Rel
-    $engineHash=HashOrAbsent $engine;$engineMessage=''
+    $engineHash=HashOrAbsent $engine
     if($engineHash-eq $manifest.Engine.Before){
         $qt=SafePath $GamePath 'engine/Qt5Widgets.dll'
         if([IO.File]::Exists($qt)-and (Hash $qt)-eq $manifest.Engine.QtWidgetsHash){
             $plan.Add([pscustomobject]@{Rel=$manifest.Engine.Rel;Data=[IO.File]::ReadAllBytes((SafePath $Root $manifest.Engine.Source))})
-            $engineMessage='순정 jack.exe를 재도색 수정 엔진으로 교체합니다.'
-        }else{$engineMessage='순정 jack.exe이지만 Qt5Widgets.dll 버전이 맞지 않아 엔진은 바꾸지 않습니다.';Warn $engineMessage}
-    }elseif($engineHash-eq $manifest.Engine.After){$engineMessage='재도색 수정 엔진이 이미 설치돼 있어 그대로 둡니다.'}
-    else{$engineMessage='커스텀/미상 jack.exe는 그대로 둡니다 (SHA-256 '+$engineHash+').'}
+        }
+    }
 
     foreach($img in $manifest.Images){
         $target=SafePath $GamePath $img.Rel
@@ -201,14 +196,11 @@ try {
     }
 
     $entries=foreach($p in $plan){$t=SafePath $GamePath $p.Rel;$ex=[IO.File]::Exists($t);$b='ABSENT';if($ex){$b=Hash $t};[pscustomobject]@{Rel=$p.Rel;Existed=$ex;Before=$b;After=(HashBytes $p.Data)}}
-    $summary=$(if($null-ne $active){'이전 SNKmod UI 설치('+$active.State.Version+')를 정리하고 새로 설치합니다.'+"`r`n"}else{''})+$(if($qspHash-eq $manifest.Qsp.Hash){'jack.qsp는 이미 이 패치의 파일입니다.'}else{'jack.qsp를 이 패치의 파일로 교체합니다.'})+' 쓸 파일 '+$plan.Count+'개.'+"`r`n"+$engineMessage
     if($Mode-eq 'Check'){
-        $msg='CHECK: 게임 파일을 바꾸지 않았습니다.'+"`r`n"+$summary+"`r`n`r`n"+$OrderNote
-        if($script:Warnings.Count-gt 0){$msg+="`r`n`r`n경고:`r`n- "+($script:Warnings -join "`r`n- ")}
-        Tell $msg;exit 0
+        Tell ('설치할 수 있습니다. (확인만 했고 게임 파일은 바꾸지 않았습니다)'+"`r`n`r`n"+$OrderNote+(Notices));exit 0
     }
-    if($plan.Count-eq 0 -and -not $generalOk){Tell ('SNKmod UI 파일이 모두 설치돼 있습니다.'+"`r`n"+$engineMessage);exit 0}
-    if($script:Forms -and -not (Ask ('게임을 닫아 주세요. SNKmod UI를 설치할까요?'+"`r`n"+'원본 UI 이미지는 바꾸지 않고, jack.qsp·base.css는 복구용 원본을 보관한 뒤 교체합니다.'+"`r`n`r`n"+$summary+"`r`n`r`n"+$OrderNote+$(if($script:Warnings.Count-gt 0){"`r`n`r`n경고:`r`n- "+($script:Warnings -join "`r`n- ")}else{''})))){exit 0}
+    if($plan.Count-eq 0 -and -not $generalOk){Tell 'UI 패치가 이미 설치돼 있습니다.';exit 0}
+    if($script:Forms -and -not (Ask ('게임을 끈 상태에서 진행하세요. UI 패치를 설치할까요?'+"`r`n"+'원래 파일은 자동으로 보관되며 RESTORE.cmd로 언제든 되돌릴 수 있습니다.'+"`r`n`r`n"+$OrderNote+(Notices)))){exit 0}
 
     $folder=Join-Path $stateRoot ((Get-Date).ToString('yyyyMMdd_HHmmss')+'_'+[Guid]::NewGuid().ToString('N').Substring(0,8))
     foreach($e in $entries){if($e.Existed){$t=SafePath $GamePath $e.Rel;$b=SafePath (Join-Path $folder 'original') $e.Rel;[void][IO.Directory]::CreateDirectory([IO.Path]::GetDirectoryName($b));[IO.File]::Copy($t,$b);if((Hash $b)-ne $e.Before){throw '보관본을 만드는 동안 파일이 바뀌었습니다.'}}}
@@ -228,11 +220,9 @@ try {
         foreach($g in $general){try{Commit (SafePath $GamePath $g.Rel) ([IO.File]::ReadAllBytes((SafePath $Root $g.Source)))}catch{$failed.Add($g.Rel)}}
         if($failed.Count-gt 0){Warn ('일반 이미지 '+$failed.Count+'개 교체 실패 (자동 복구 없음): '+($failed -join ', '))}
     }
-    $msg='SNKmod UI를 설치했습니다. 게임을 다시 시작하세요.'+"`r`n"+$summary+"`r`n"+'복구 기록: '+$folder
-    if($script:Warnings.Count-gt 0){$msg+="`r`n`r`n경고:`r`n- "+($script:Warnings -join "`r`n- ")}
-    Tell $msg
+    Tell ('설치가 끝났습니다. 게임을 실행하세요.'+"`r`n"+'되돌리려면 RESTORE.cmd를 실행하세요.'+(Notices))
 }catch{
-    Write-Host ('[JO9 UI SNKmod 오류] '+$_.Exception.Message) -ForegroundColor Red
+    Write-Host ('[UI 패치 오류] '+$_.Exception.Message) -ForegroundColor Red
     if($script:Forms){[void][Windows.Forms.MessageBox]::Show($_.Exception.Message,$Title,'OK','Error')}
     exit 1
 }
