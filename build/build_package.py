@@ -21,6 +21,7 @@ from qsp_dump import read_locations  # noqa: E402
 PACKAGE = 'JO9_UI_SNKMOD'
 VERSION = 'R3'
 NAME = f'JO9_UI_v1_9_14_SNKmod_{VERSION}'
+RELEASE_VERSION = '0.11'  # 배포판(--release) 버전
 FIX6_SHA = '254dc8c5cce2c9f5442f34b6de0cdbb029893eb544c76635d76b8b2e2fc0bc82'
 FIX6_FINAL_QSP = '953533402226c874f1d22a9023da4d235bd512b61c2fc30f028465226f49b6d9'
 MODDER_DIRS = {'grimdark', 'approved_main_v1', 'jo9_v197', 'jon-uiadds'}
@@ -72,7 +73,7 @@ def main() -> int:
     ap.add_argument('--out', type=Path, default=REPO / 'dist')
     ap.add_argument('--originals', type=Path, default=REPO / 'resources/originals/content/pic')
     ap.add_argument('--private-room', action='store_true', help='Build the private-room development overlay; no release ZIP')
-    ap.add_argument('--release', action='store_true', help='Build JO9 UI_overhaul_SNKmod 0.1 including the approved private-room changes')
+    ap.add_argument('--release', action='store_true', help='Build JO9 UI_overhaul_SNKmod release including the approved private-room changes')
     ap.add_argument('--vanilla-qsp', type=Path, help='Unmodified game QSP used to validate release installation inputs')
     args = ap.parse_args()
     if args.release:
@@ -258,7 +259,7 @@ def main() -> int:
         for patch in patches:
             if patch['Name'] in vanilla:
                 patch['Before'] = list(dict.fromkeys([sha(vanilla[patch['Name']].encode('utf-8'))] + patch['Before']))
-    package_name = 'JO9 UI_overhaul_SNKmod_0.1' if args.release else NAME + ('_private_room_dev' if args.private_room else '')
+    package_name = 'JO9 UI_overhaul_SNKmod_' + RELEASE_VERSION if args.release else NAME + ('_private_room_dev' if args.private_room else '')
     out = args.out / package_name
     if out.exists():
         # Only the fixed package child of the requested output directory may be removed.
@@ -321,7 +322,7 @@ def main() -> int:
 
     fix6_files = [{'Rel': e['Rel'], 'After': e['After']} for e in fmanifest['Files']]
     manifest = OrderedDict(
-        Package='JO9 UI_overhaul_SNKmod' if args.release else PACKAGE, Version='0.1' if args.release else VERSION + ('-private-room-test13-birth' if args.private_room else ''), GameVersion=fmanifest['GameVersion'],
+        Package='JO9 UI_overhaul_SNKmod' if args.release else PACKAGE, Version=RELEASE_VERSION if args.release else VERSION + ('-private-room-test13-birth' if args.private_room else ''), GameVersion=fmanifest['GameVersion'],
         Images=img_entries,
         Overwrite=[
             {'Rel': 'css/base.css', 'Source': 'payload/css/base.css', 'Hash': sha(css_new.encode('utf-8')),
@@ -354,7 +355,7 @@ def main() -> int:
         shutil.copy2(REPO / 'installer/README_RELEASE_KR.txt', out / 'README_KR.txt')
         installer_path = out / 'Install.ps1'
         installer_text = installer_path.read_text(encoding='utf-8-sig')
-        installer_text = installer_text.replace("$Title='JO9 UI SNKmod'", "$Title='JO9 UI_overhaul_SNKmod 0.1'")
+        installer_text = installer_text.replace("$Title='JO9 UI SNKmod'", "$Title='JO9 UI_overhaul_SNKmod " + RELEASE_VERSION + "'")
         installer_path.write_text(installer_text, encoding='utf-8-sig')
     # 설치기·안내문도 무결성 목록에 넣는다.
     for f in ['Install.ps1', 'APPLY.cmd', 'CHECK.cmd', 'RESTORE.cmd', 'README_KR.txt', 'PanelCodec.cs']:
