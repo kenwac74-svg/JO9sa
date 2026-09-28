@@ -480,3 +480,14 @@
 - 인계 브랜치는 0.1 당시 기록이다. 0.1 수치(이미지 143개, ZIP 항목 161개)는 0.11(이미지 144개 + trash README, 항목 176개)과 다르다. 최신 기준은 0.11이다.
 - 런타임 보완 후 0.11 빌드본으로 다시 검사했다. 개인실 WASM 4종(출산·식단·착유·경로) 모두 PASS, test_private_room.py 13/13 OK (기준본은 releases의 R3 ZIP을 풀어 지정).
 - 남은 검증: Windows 실게임 CHECK→APPLY→인게임→RESTORE, test_release_clean_install.py(Windows PowerShell·실게임 폴더 필요). 완료로 표시하지 않는다.
+
+### 0.12 — jack.qsp 완성본 동봉 (2026-09-28)
+- 증상: 순정 + 0.11만 설치한 게임에서 화면이 패치 전 UI처럼 나옴. 사용자가 정상으로 보이는 jack.qsp를 제공.
+- 분석: 제공 파일(SHA a9bfe562…)과 0.11 APPLY 결과(4b421c1b…)는 location 248개 본문·설명·액션이 모두 같고, 헤더 필드 1만 다르다 (`0.1.1` 대 순정 `2026-09-03 (QGen 4.3.0-b1)`). 헤더가 원인인지는 미확정.
+- 사용자 결정: 설치 때 QSP를 조립하지 말고 완성된 jack.qsp를 패치에 넣고, 원본은 다른 폴더에 보관한다. 패치는 Python 없이 독립 실행돼야 한다.
+- 구현:
+  - build: `build_full_qsp()`가 순정 jack.qsp에 패치 본문을 넣고 신규 location 5개를 붙여 `payload/jack.qsp`를 만든다. 헤더는 사용자 확인 파일과 같은 `0.1.1`. 결과가 제공 파일과 바이트 단위로 같음(a9bfe562…).
+  - manifest `Qsp` {Hash, Before=[순정, FIX6 FinalQsp]}. 설치기는 원본을 `_JO9_SNKmod_STATE/<시각>/original/jack.qsp`에 보관하고 교체만 한다. `PanelCodec.cs`·`path-rules.json`은 패키지에서 뺐다. `qsp-patches.json`은 검사용 기록으로 남긴다.
+  - 설치 후 파일이 이 패키지 파일과 같은 내용이면 "다른 모드 변경"으로 보지 않는다 (사용자가 수동으로 패치 QSP를 넣은 경우에도 RESTORE가 순정으로 돌아가도록).
+- 검사: test_installer 58/58 (빌드본·ZIP 해제본), 개인실 WASM 4종·정적 13개 통과, 참조 분류 이상 없음. 순정에 새로 설치·0.11 위 업그레이드·수동 교체 후 업그레이드 모두 RESTORE 시 순정 QSP(070dad…)로 복원 확인.
+- 산출물: `releases/JO9 UI_overhaul_SNKmod_0.12.zip` (40,650,927 B, SHA-256 3adfec93…). 버전명 0.12는 임시로 정했다.

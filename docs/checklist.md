@@ -19,6 +19,13 @@
 - [ ] 누락 menu_icon 아이콘 11개 제작 여부 (`docs/MISSING_MENU_ICONS.md`, cum_gray는 반영 완료).
 - [ ] 147개 옛 차이 리소스 중 UI 작업으로 지정할 파일 (결정 14: 지정 전까지 제외).
 
+## 0.12 완료 내역
+
+- [x] jack.qsp 완성본을 패치에 넣고 설치 때 교체, 원본은 _JO9_SNKmod_STATE에 보관.
+- [x] 사용자 확인 정상 jack.qsp와 바이트 동일 (a9bfe562…).
+- [x] test_installer 58/58, 개인실 검사 통과, 패키징 0.12.
+- [ ] 사용자 Windows에서 0.12 APPLY 후 정상 화면 확인.
+
 ## 0.11 완료 내역
 
 - [x] 참조 없는 예비 리소스 29개를 SNKmod/trash로, 원래 경로 목록 README_trash.txt.
