@@ -371,3 +371,13 @@
   - 목록 도구는 `content/pic/SNKmod/`를 제외하도록 고쳤다. JO9O 폴더에서 뽑으면 이미지 목록은 순정으로 쓸 수 있지만, css·json·jack.qsp 항목은 순정이 아닐 수 있다. 순정 ZIP에서 뽑는 것이 가장 정확하다.
 - `make_vanilla_manifest.ps1`에 UTF-8 BOM을 붙였다 (Windows PowerShell 5.1이 한글을 CP949로 잘못 읽는 문제 방지). cmd 안내문은 ASCII로 바꿨다. 폴더 입력(SNKmod 제외)과 ZIP 입력을 모두 시험했다.
 - 사용자 정보 (2026-09-28): JO9O를 순정으로 복원했다. 이제 JO9O game 폴더에서 뽑은 목록(css·json·jack.qsp 포함)을 순정 기준으로 쓸 수 있다. 목록 파일을 받으면 jack.qsp 해시를 인계 문서의 순정 QSP `070dad…77dc`와 대조해 복원 여부를 확인한다.
+
+### 순정 목록 수신·분류 (2026-09-28)
+- `reference/vanilla_manifest.json`: JO9O game 폴더에서 뽑은 18,214개 항목이다 (content/pic 17,214개).
+- 순정 확인: jack.qsp `070dad…77dc`(인계 문서의 순정 QSP), css/base.css `7ec25fa3…`, json/menu_icon.json `53296851…`(game.zip과 같음). SNKmod 잔존 파일 없음. 순정 복원이 확인됐다.
+- FIX6 이미지 115개를 순정과 비교한 결과:
+  - 내용이 다름 79개, 순정에 없음 35개 → SNKmod 대상.
+  - 순정과 같음 1개(`bg/trophy/trophywall.png`, 예비 리소스) → 결정 12에 따르면 원본 경로에 두고 패키지에서 뺀다.
+- `resources/new`의 사용자 새 디자인 18개는 모두 순정과 다르다 → SNKmod 대상 (현행 유지).
+- 한글 이름 pic 루트 13개(`resources/originals`)는 순정과 바이트가 같다. 결정 12만 적용하면 원본 경로를 그대로 쓰게 되지만, 결정 9(한글 파일명은 영문으로 바꿔 모드에 포함)와 충돌한다 → 사용자에게 확인한다.
+- menu_icon.json이 참조하는 이미지 2,054개 중 12개는 순정에도 없다 (agraba_gray, agraba_poor2, agraba_poor2_gray, cum_gray, elisabet_gray, farm_shop, futaland_tower_gray, kamasutra, left hand_gray, over the shoulder_gray, right hand_gray, sabrina_2_gray). 순정 자체의 누락이다. 우리가 가진 파일이 없으므로 보고만 한다.
