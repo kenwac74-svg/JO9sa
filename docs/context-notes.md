@@ -464,3 +464,10 @@
   - 알려지지 않은 location 본문·없는 location 경고는 location마다가 아니라 호환성 경고 1줄로 모은다 (다른 QSP 모드면 243줄이 나올 수 있어서).
 - 설치 순서 안내(`$OrderNote`): Check 출력과 설치 확인 창에 표시. README_RELEASE_KR.txt에도 [설치 순서] 절 추가.
 - 검사: tests/test_installer.py 53/53 통과 (B1~B4를 새 동작으로 교체). test_release_clean_install.py와 개인실 cjs 검사는 이 환경에 Windows PowerShell·실제 게임·vendor WASM이 없어 돌리지 못했다. QSP 본문은 바꾸지 않았다.
+
+### 0.11 배포 (2026-09-28)
+- 사용자 승인: 버전 0.11로 패키징, JO9UIpatch 반영.
+- `build_package.py`에 `RELEASE_VERSION = '0.11'` 한 곳만 두고 패키지 이름·manifest Version·설치기 제목에 쓴다. README_RELEASE_KR.txt, test_release_clean_install.py도 0.11로 맞췄다.
+- 산출물: `releases/JO9 UI_overhaul_SNKmod_0.11.zip` (23,739,025 B, SHA-256 `81d3bc1d877851f979c906d0fdf5d3c2642e9f046c044bdc4ef133c6c55a76cf`, 176 항목, 0.1과 같은 무압축·최상위 폴더 구조).
+- 검사: 빌드본과 ZIP 압축 해제본 모두 test_installer 53/53. 참조 분류는 한글 참조·연결 누락·출처 누락 0, trash 밖 미참조 0 (순정에 없는 참조 40은 기존 순정 참조 29 + menu_icon 누락 11).
+- 0.1 대비 변경: 예비 29개 trash 보관, cum_gray 추가, 바뀐 파일은 호환성 경고로 처리, 설치 순서 안내.

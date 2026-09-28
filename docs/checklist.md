@@ -73,8 +73,8 @@
 - [x] 알려지지 않은 본문 경고 1줄로 통합.
 - [x] 설치 순서 안내(Check·확인 창·README_RELEASE_KR).
 - [x] tests/test_installer.py 53/53.
-- [ ] 패키징 (사용자 승인 대기, 버전명 확인).
-- [ ] JO9UIpatch 반영 (사용자 확인 대기).
+- [x] 패키징 0.11 (`releases/JO9 UI_overhaul_SNKmod_0.11.zip`).
+- [x] JO9UIpatch 반영.
 
 ## P2.5 — 확인된 원작/통합 버그 수정
 
