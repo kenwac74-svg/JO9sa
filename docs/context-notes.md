@@ -381,3 +381,11 @@
 - `resources/new`의 사용자 새 디자인 18개는 모두 순정과 다르다 → SNKmod 대상 (현행 유지).
 - 한글 이름 pic 루트 13개(`resources/originals`)는 순정과 바이트가 같다. 결정 12만 적용하면 원본 경로를 그대로 쓰게 되지만, 결정 9(한글 파일명은 영문으로 바꿔 모드에 포함)와 충돌한다 → 사용자에게 확인한다.
 - menu_icon.json이 참조하는 이미지 2,054개 중 12개는 순정에도 없다 (agraba_gray, agraba_poor2, agraba_poor2_gray, cum_gray, elisabet_gray, farm_shop, futaland_tower_gray, kamasutra, left hand_gray, over the shoulder_gray, right hand_gray, sabrina_2_gray). 순정 자체의 누락이다. 우리가 가진 파일이 없으므로 보고만 한다.
+
+### 사용자 결정 13 — 대원칙: QSP가 연결하는 파일명에 한글을 남기지 않는다 (2026-09-28)
+- 영어로 이름이 바뀐 파일은 내용이 순정과 같더라도 변경된 파일로 본다. SNKmod에 넣는다.
+- QSP(와 CSS·JSON)가 연결하는 이미지 파일명은 한글로 두지 않는다. 결정 12(순정과 같으면 원본 경로 유지)보다 이 원칙이 우선한다.
+- 적용 방법:
+  - 한글 이름 pic 루트 13개는 현행대로 영문 이름으로 SNKmod `ui/`에 넣는다.
+  - 0.1 전수 검사 때 한글 이름 참조가 남아 있으면 빌드 실패 조건으로 둔다 (지금 빌드의 비ASCII SNKmod 파일명 검사를 참조 전체로 넓힌다).
+  - 새 한글 파일이 나오면 사용자에게 알리고 영문 이름을 받는다 (결정 9 유지).
