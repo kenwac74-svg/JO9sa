@@ -344,3 +344,13 @@
 - 사용자 지정 임신 아이콘 (2026-09-26): 베이지 테두리 안에 임신한 실루엣이 있다. 28×30 RGBA, 2,369 B, SHA-256 `08d0517f0e9f8c12…`. 채팅 이미지이며, 청크는 IHDR·IDAT·IEND만 있다 (재인코딩 흔적 없음). `resources/pending/pregnant_icon_28x30.png`에 기록용으로 저장했다. 아직 빌드에 넣지 않았다.
 - 규격 참고: 28×30은 jon-UIadds의 Fer_·Vir_ 상태 아이콘 규격이다. 현재 `buttons/z_pregnant.png`(FIX6판)는 32×32다. sjm_UI_UIadds의 z_pregnant 표시 중 두 곳은 `height="32px"`를 지정하고 있어, 28×30 그림을 넣으면 그 두 곳에서는 늘어나 보인다.
 - 배치 위치(어느 파일을 대체하는지)는 사용자 확인이 필요하다. ZIP 금지, 대기.
+
+### Codex 0.1 인수 (2026-09-28)
+- 사용자 요청에 따라 Codex에서 한 작업(JO9 UI_overhaul_SNKmod 0.1)을 이 대화로 넘겨받았다. 원격 `JO9UIpatch`는 `30fb1b9`다. `codex/snkmod-0.1-handoff`(4d8b927)와 0.1 소스·audits는 아직 원격에 없다.
+- 이 브랜치의 R3 계열 기록(`095d6cd` 이후)은 0.1로 대체된다. 구 R3를 최신본으로 수정하거나 배포하지 않는다.
+- 0.1 자산 루트는 `game/content/pic/SNKmod/`다 (R3의 `game/SNKmod/content/pic`는 폐기).
+- 미해결 두 가지:
+  - 독립 설치가 아니다. 원본 경로 UI 참조가 2,157개 있고, 그중 패키지에 없는 변경 이미지가 147개다. 원인은 빌드가 목록 기반으로 치환·검증하기 때문이다.
+  - JO9O에서 설치 후 QSP가 바뀐다. 바뀐 뒤 QSP 해시 `cbb3c446…`는 FIX6 manifest의 OriginalQsp와 같다.
+- 이전 기록의 "buttons.zip에 새로 포함할 파일 없음"은 목록끼리 비교한 결과라 철회한다.
+- 사용자가 FIX6 ZIP을 다시 첨부했다. `baseline/`의 파일과 동일하다. 변경된 SNKmod 정책으로 반영할 대상이다. 예상 대응표 `docs/FIX6_TO_SNKMOD_0_1_MAP.md`를 만들었고, 0.1 소스를 받으면 대조한다.
