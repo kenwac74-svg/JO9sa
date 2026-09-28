@@ -354,3 +354,15 @@
   - JO9O에서 설치 후 QSP가 바뀐다. 바뀐 뒤 QSP 해시 `cbb3c446…`는 FIX6 manifest의 OriginalQsp와 같다.
 - 이전 기록의 "buttons.zip에 새로 포함할 파일 없음"은 목록끼리 비교한 결과라 철회한다.
 - 사용자가 FIX6 ZIP을 다시 첨부했다. `baseline/`의 파일과 동일하다. 변경된 SNKmod 정책으로 반영할 대상이다. 예상 대응표 `docs/FIX6_TO_SNKMOD_0_1_MAP.md`를 만들었고, 0.1 소스를 받으면 대조한다.
+
+### 사용자 결정 12 — 독립 설치형의 기준은 순정 잭오나 2.3 (2026-09-28)
+- 기준 판: `Jack O Nine Tails v2.3 Kor_nosex.zip`.
+- 이 순정 판에 같은 경로·같은 내용으로 있는 이미지는 원본 경로를 그대로 쓴다 (패키지에 넣지 않음).
+- 순정에 없는 이미지, 또는 새로 만들어 교체한 이미지(순정과 내용이 다름)는 `content/pic/SNKmod/`에 넣고 참조를 SNKmod로 바꾼다.
+- 설치할 때 이 구분(원본 유지 / SNKmod 추가·교체)을 사용자에게 알린다.
+- 분류에 필요한 순정 목록 도구: `tools/make_vanilla_manifest.ps1`, `tools/MAKE_VANILLA_MANIFEST.cmd`(ZIP을 끌어다 놓아 실행). ZIP이나 game 폴더에서 content/pic·css·json·jack.qsp의 경로·크기·SHA-256을 `vanilla_manifest.json`으로 만든다. ZIP 안의 game 위치는 jack.qsp로 찾는다. PowerShell 7 합성 ZIP 시험(한글 이름 포함)을 통과했다.
+- 적용 계획 (0.1 소스를 받은 뒤):
+  1. 0.1의 최종 QSP·CSS·JSON에서 이미지 참조를 전수 추출한다. 정적 경로뿐 아니라 iif·변수 조립 경로도 가능한 만큼 추출한다.
+  2. 참조마다 채택할 파일(작업 폴더 JO9 또는 사용자 승인본)의 해시를 순정 목록과 대조한다. 같으면 원본 경로를 유지하고, 다르거나 순정에 없으면 SNKmod에 넣는다.
+  3. 빌드 검증을 추가한다. SNKmod 밖을 가리키는 참조는 반드시 순정 목록에 같은 해시로 있어야 하며, 아니면 빌드 실패로 처리한다.
+  4. 설치기가 원본 유지 개수와 SNKmod 추가·교체 목록을 화면과 로그 파일로 알린다.
