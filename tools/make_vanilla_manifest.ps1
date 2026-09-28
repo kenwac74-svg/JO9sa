@@ -1,4 +1,4 @@
-# 순정 잭오나 2.3 ZIP(또는 풀어 둔 game 폴더)에서 content/pic·css·json 파일의 경로·크기·SHA-256 목록을 만든다
+﻿# 순정 잭오나 2.3 ZIP(또는 풀어 둔 game 폴더)에서 content/pic·css·json 파일의 경로·크기·SHA-256 목록을 만든다
 param(
     [Parameter(Mandatory=$true)][string]$Source,
     [string]$Out = 'vanilla_manifest.json'
@@ -9,7 +9,8 @@ Add-Type -AssemblyName System.IO.Compression
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 $sha = [Security.Cryptography.SHA256]::Create()
 function HexOf([byte[]]$h) { return [BitConverter]::ToString($h).Replace('-', '').ToLowerInvariant() }
-function Wanted([string]$rel) { return $rel -match '^(content/pic/|css/|json/|jack\.qsp$)' }
+# 패치가 만든 content/pic/SNKmod 폴더는 순정이 아니므로 제외한다.
+function Wanted([string]$rel) { return ($rel -match '^(content/pic/|css/|json/|jack\.qsp$)') -and -not ($rel -match '^content/pic/SNKmod/') }
 $items = New-Object Collections.Generic.List[object]
 $Source = [IO.Path]::GetFullPath($Source)
 
