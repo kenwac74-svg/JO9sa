@@ -77,7 +77,20 @@ def make_game(root: Path, qsp: Path, fix6: dict[str, bytes], with_fix6_backup: b
         (root / '_JO9_UI_ALL1914_BACKUPS/20260101_000000_test/state.json').write_text(json.dumps(state), encoding='utf-8-sig')
 
 
-def run(pwsh: str, pkg: Path, game: Path, mode: str, answer: str | None = None) -> subprocess.CompletedProcess:
+def tamper_main_screen(qsp: Path) -> None:
+    """다른 QSP 모드를 흉내 내어 main_screen 본문 끝에 한 줄을 붙인다."""
+    raw = qsp.read_bytes().decode('utf-16-le').split('\r\n')
+    n = int(''.join(chr(ord(c) + 5) for c in raw[3])); at = 4
+    for _ in range(n):
+        name = ''.join(chr(ord(c) + 5) for c in raw[at])
+        if name == 'main_screen':
+            body = ''.join(chr(ord(c) + 5) for c in raw[at + 2]) + '\n! other mod'
+            raw[at + 2] = ''.join(chr((ord(c) - 5) & 0xFFFF) for c in body)
+        at += 4 + int(''.join(chr(ord(c) + 5) for c in raw[at + 3])) * 3
+    qsp.write_bytes('\r\n'.join(raw).encode('utf-16-le'))
+
+
+def run(pwsh: str, pkg: Path, game: Path, mode: str) -> subprocess.CompletedProcess:
     env = os.environ.copy()
     if os.name == 'nt' and Path(pwsh).name.lower() == 'powershell.exe':
         # A parent PS7/Codex shell may export only its own module paths.
@@ -85,7 +98,7 @@ def run(pwsh: str, pkg: Path, game: Path, mode: str, answer: str | None = None) 
         env['PSModulePath'] = system_modules + os.pathsep + env.get('PSModulePath', '')
     # Same process-scoped invocation as the shipped APPLY/CHECK/RESTORE.cmd.
     return subprocess.run([pwsh, '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', str(pkg / 'Install.ps1'), '-Mode', mode,
-                           '-GamePath', str(game), '-NonInteractive'] + (['-ConfirmChangedFiles'] if answer is not None else []), input=answer, capture_output=True, text=True, encoding='utf-8', errors='replace', env=env)
+                           '-GamePath', str(game), '-NonInteractive'], capture_output=True, text=True, encoding='utf-8', errors='replace', env=env)
 
 
 def verify_installed(game: Path, pkg: Path, label: str) -> None:
@@ -130,6 +143,7 @@ def main() -> int:
         pic_before = tree_hashes(g / 'content')
         code_before = {f: sha(g / f) for f in ['jack.qsp', 'css/base.css', 'json/menu_icon.json', 'engine/jack.exe']}
         r = run(args.pwsh, args.pkg, g, 'Check')
+        check('A1 Check가 마지막 설치 순서 안내', 'JoNT_IndividualityPatchInstaller.zip' in r.stdout and 'ai_girl_pack.zip' in r.stdout, r.stdout[-300:])
         check('A1 Check 종료코드 0', r.returncode == 0, r.stdout[-300:] + r.stderr[-300:])
         check('A1 Check는 파일을 바꾸지 않음', tree_hashes(g) == {**{'content/' + k: v for k, v in pic_before.items()}, **code_before} or
               ({f: sha(g / f) for f in code_before} == code_before and not (g / 'content/pic/SNKmod').exists() and not (g / '_JO9_SNKmod_STATE').exists()))
@@ -148,30 +162,46 @@ def main() -> int:
         check('A4 SNKmod 폴더 정리', not (g / 'content/pic/SNKmod').exists())
         check('A4 원본 content/pic 불변', {k:v for k,v in tree_hashes(g / 'content').items() if not k.startswith('pic/SNKmod/')} == pic_before)
 
-        # B. 설치 후 사용자가 SNKmod 파일을 바꾸면 복구 거부, 아무것도 안 바뀜
+        # B. 설치 후 다른 모드·버전 설치로 파일이 바뀌어도 실패가 아니다: 현재본 백업, 원래 게임 파일은 새 기준으로 유지
         r = run(args.pwsh, args.pkg, g, 'Apply')
         victim = g / 'content/pic/SNKmod/buttons/close_button.png'
         victim.write_bytes(b'user edit')
-        snap = tree_hashes(g)
-        edited_css = (g / 'css/base.css').read_bytes() + b'\n/* user edit */'
+        edited_css = (g / 'css/base.css').read_bytes() + b'\n/* other mod */'
         (g / 'css/base.css').write_bytes(edited_css)
-        snap = tree_hashes(g)
-        r = run(args.pwsh, args.pkg, g, 'Apply', 'N\n')
-        check('B1 변경 목록 표시 후 N 취소', r.returncode != 0 and 'close_button' in r.stdout + r.stderr and 'css/base.css' in r.stdout + r.stderr, r.stdout[-300:])
-        check('B1 거부 시 파일 변화 없음', tree_hashes(g) == snap)
-        r = run(args.pwsh, args.pkg, g, 'Apply', 'Y\n')
-        check('B2 Y 승인 후 재설치 성공', r.returncode == 0, r.stdout[-250:] + r.stderr[-250:])
+        r = run(args.pwsh, args.pkg, g, 'Apply')
+        out = r.stdout + r.stderr
+        check('B1 바뀐 파일이 있어도 재설치 성공', r.returncode == 0, out[-300:])
+        check('B1 바뀐 원래 게임 파일은 호환성 경고', 'css/base.css 파일이 설치 후 바뀌었습니다' in out, out[-300:])
         copies = list((g / '_JO9_SNKmod_STATE').glob('*/changed/*/css/base.css'))
         check('B2 변경 CSS 별도 백업', any(p.read_bytes() == edited_css for p in copies))
         copies = list((g / '_JO9_SNKmod_STATE').glob('*/changed/*/content/pic/SNKmod/buttons/close_button.png'))
         check('B2 변경 이미지 별도 백업', any(p.read_bytes() == b'user edit' for p in copies))
         verify_installed(g, args.pkg, 'B2')
         victim.write_bytes(b'second edit')
-        r = run(args.pwsh, args.pkg, g, 'Restore', 'Y\n')
-        check('B3 변경 파일 Y 승인 복원', r.returncode == 0, r.stdout[-200:] + r.stderr[-200:])
-        check('B3 원래 CSS 복원', (g / 'css/base.css').read_bytes() == fix6['payload/css/base.css'])
+        (g / 'json/menu_icon.json').write_bytes(b'{"other": "mod"}')
+        r = run(args.pwsh, args.pkg, g, 'Restore')
+        out = r.stdout + r.stderr
+        check('B3 바뀐 파일이 있어도 복원 성공', r.returncode == 0, out[-300:])
+        check('B3 CSS는 재설치 당시 기준(다른 모드 판)으로 복원', (g / 'css/base.css').read_bytes() == edited_css)
+        check('B3 복원 때 바뀐 menu_icon.json은 되돌리지 않고 경고', (g / 'json/menu_icon.json').read_bytes() == b'{"other": "mod"}'
+              and 'json/menu_icon.json 파일이 설치 후 바뀌었습니다' in out, out[-300:])
+        check('B3 jack.qsp는 설치 전으로 복원', sha(g / 'jack.qsp') == code_before['jack.qsp'])
+        check('B3 SNKmod 폴더 정리', not (g / 'content/pic/SNKmod').exists())
         copies = list((g / '_JO9_SNKmod_STATE').glob('*/changed/*/content/pic/SNKmod/buttons/close_button.png'))
         check('B3 복원 직전 변경 이미지 백업', any(p.read_bytes() == b'second edit' for p in copies))
+
+        # B4. 설치 후 jack.qsp가 다른 모드로 바뀐 뒤 재설치: 실패하지 않고 경고
+        shutil.copy2(REPO / 'resources/originals/json/menu_icon.json', g / 'json/menu_icon.json')
+        r = run(args.pwsh, args.pkg, g, 'Apply')
+        tamper_main_screen(g / 'jack.qsp')
+        other_qsp = sha(g / 'jack.qsp')
+        r = run(args.pwsh, args.pkg, g, 'Check')
+        check('B4 Check가 바뀐 jack.qsp 경고', r.returncode == 0 and 'jack.qsp 파일이 설치 후 바뀌었습니다' in r.stdout + r.stderr, r.stdout[-300:])
+        r = run(args.pwsh, args.pkg, g, 'Apply')
+        check('B4 바뀐 jack.qsp 위에 재설치 성공', r.returncode == 0 and 'jack.qsp 파일이 설치 후 바뀌었습니다' in r.stdout + r.stderr, r.stdout[-300:] + r.stderr[-300:])
+        verify_installed(g, args.pkg, 'B4')
+        r = run(args.pwsh, args.pkg, g, 'Restore')
+        check('B4 복원 시 다른 모드판 jack.qsp를 기준으로 되돌림', r.returncode == 0 and sha(g / 'jack.qsp') == other_qsp, r.stdout[-200:])
 
         # C. FIX6 백업이 있는 설치본 → FIX6 이전으로 전환 후 설치, 복구 시 전환된 상태로
         g = work / 'C/game'
@@ -189,17 +219,9 @@ def main() -> int:
         # D. 알 수 없는 main_screen 본문(다른 QSP 모드 흉내) → 경고 후 설치
         g = work / 'D/game'
         make_game(g, args.qsp, fix6, with_fix6_backup=False)
-        raw = (g / 'jack.qsp').read_bytes().decode('utf-16-le').split('\r\n')
-        n = int(''.join(chr(ord(c) + 5) for c in raw[3])); at = 4
-        for _ in range(n):
-            name = ''.join(chr(ord(c) + 5) for c in raw[at])
-            if name == 'main_screen':
-                body = ''.join(chr(ord(c) + 5) for c in raw[at + 2]) + '\n! other mod'
-                raw[at + 2] = ''.join(chr((ord(c) - 5) & 0xFFFF) for c in body)
-            at += 4 + int(''.join(chr(ord(c) + 5) for c in raw[at + 3])) * 3
-        (g / 'jack.qsp').write_bytes('\r\n'.join(raw).encode('utf-16-le'))
+        tamper_main_screen(g / 'jack.qsp')
         r = run(args.pwsh, args.pkg, g, 'Apply')
-        check('D1 알 수 없는 본문도 경고 후 설치', r.returncode == 0 and '알려지지 않은 main_screen' in r.stdout + r.stderr, r.stdout[-300:] + r.stderr[-300:])
+        check('D1 알 수 없는 본문도 경고 후 설치', r.returncode == 0 and '알려지지 않은 location 본문 1개가 있습니다 (main_screen)' in r.stdout + r.stderr, r.stdout[-300:] + r.stderr[-300:])
         verify_installed(g, args.pkg, 'D1')
 
         # E. 일반 이미지: 비대화형 실행은 동의로 보지 않는다

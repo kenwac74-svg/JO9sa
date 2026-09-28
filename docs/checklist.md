@@ -65,6 +65,17 @@
 - [ ] 수동 교체용 묶음과 안내문.
 - [ ] UI 복구가 일반 이미지에 관여하지 않음.
 
+## 결정 15 — trash 보관·호환성 경고·설치 순서
+
+- [x] 참조 없는 예비 리소스 29개를 SNKmod/trash로, 원래 경로 목록 README_trash.txt.
+- [x] cum_gray.png 포함, menu_icon.json 연결.
+- [x] 설치 후 바뀐 파일(QSP 포함)은 실패가 아니라 호환성 경고, 현재본 백업, 바뀐 원래 파일은 유지.
+- [x] 알려지지 않은 본문 경고 1줄로 통합.
+- [x] 설치 순서 안내(Check·확인 창·README_RELEASE_KR).
+- [x] tests/test_installer.py 53/53.
+- [ ] 패키징 (사용자 승인 대기, 버전명 확인).
+- [ ] JO9UIpatch 반영 (사용자 확인 대기).
+
 ## P2.5 — 확인된 원작/통합 버그 수정
 
 - [ ] BUG-001 아마란스 살롱 서비스에서 이전 `$service_picture`가 잔류해 `scene\\service\\...` 이미지가 함께 표시되는 문제 수정. 상세 원인·재현·최소 수정안은 `docs/BUGS.md` 참조.

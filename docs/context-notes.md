@@ -453,3 +453,14 @@
 - `codex/snkmod-0.1-handoff`(b45ce99)를 이 작업 브랜치에 병합했다 (이력 보존).
 - build·installer·tests·baseline은 0.1과 같다. installer/README_KR.txt도 0.1판으로 맞췄다.
 - 이 브랜치의 R3 시절 산출물(`releases/…R3_release.zip`, `resources/pending/pregnant_icon_28x30.png`)은 이력으로만 남긴다. 최종 임신 아이콘은 0.1의 금색 `ui/z_pregnant.png`다.
+
+### 결정 15 구현 (2026-09-28)
+- 빌드: 참조가 없는 패키지 이미지는 `content/pic/SNKmod/trash/<원래 하위 경로>`에 둔다. `trash/README_trash.txt`(UTF-8 BOM, CRLF, 탭 구분)에 "trash 안 경로 / 원래 게임 경로 / 이전 SNKmod 경로"를 적는다. 0.1 재빌드 결과 이미지 144개, 사용 115개, trash 29개. `ui overhaul/cum_gray.png`도 extra로 포함했다.
+- 설치기: 설치 후 바뀐 파일은 실패 사유가 아니다. 확인 창(Y/N)과 `-ConfirmChangedFiles`를 없앴다.
+  - 바뀐 파일은 현재본을 `changed/` 아래에 모두 보관한다.
+  - 원래 게임 파일(jack.qsp·css·json·엔진)이 다른 내용으로 바뀌었으면 설치 전 원본으로 되돌리지 않는다. 그 파일을 새 기준으로 삼고 경고한다. 재설치 때는 그 위에 다시 적용하고 새 기록의 Before가 된다.
+  - 패치가 만든 SNKmod 파일은 바뀌었어도 백업 후 지운다 (제거 의미 유지).
+  - 삭제된 원래 게임 파일은 원본으로 되돌린다.
+  - 알려지지 않은 location 본문·없는 location 경고는 location마다가 아니라 호환성 경고 1줄로 모은다 (다른 QSP 모드면 243줄이 나올 수 있어서).
+- 설치 순서 안내(`$OrderNote`): Check 출력과 설치 확인 창에 표시. README_RELEASE_KR.txt에도 [설치 순서] 절 추가.
+- 검사: tests/test_installer.py 53/53 통과 (B1~B4를 새 동작으로 교체). test_release_clean_install.py와 개인실 cjs 검사는 이 환경에 Windows PowerShell·실제 게임·vendor WASM이 없어 돌리지 못했다. QSP 본문은 바꾸지 않았다.
