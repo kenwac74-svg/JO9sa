@@ -389,3 +389,7 @@
   - 한글 이름 pic 루트 13개는 현행대로 영문 이름으로 SNKmod `ui/`에 넣는다.
   - 0.1 전수 검사 때 한글 이름 참조가 남아 있으면 빌드 실패 조건으로 둔다 (지금 빌드의 비ASCII SNKmod 파일명 검사를 참조 전체로 넓힌다).
   - 새 한글 파일이 나오면 사용자에게 알리고 영문 이름을 받는다 (결정 9 유지).
+- 12개 누락 파일 상세 (2026-09-28 보고):
+  - 순정에 정상판이 있는 `_gray` 8개: agraba_gray, cum_gray, elisabet_gray, futaland_tower_gray, left hand_gray, over the shoulder_gray, right hand_gray, sabrina_2_gray.
+  - 순정에 짝이 없는 4개: agraba_poor2, agraba_poor2_gray, farm_shop, kamasutra.
+  - 사용처(FIX6 상태 jack.qsp 정적 검색): `$menu_item_cum_gray`만 #sex_options·#sex_options_woman에서 쓴다. 나머지 11개 키는 정적 참조가 없다. 0.1·순정 QSP와 동적 조립 경로는 아직 확인하지 않았다.
