@@ -19,8 +19,14 @@ if ([IO.File]::Exists($Source) -and $Source.ToLowerInvariant().EndsWith('.zip'))
     try {
         # game 폴더 위치를 jack.qsp로 찾는다 (ZIP 안의 최상위 폴더 이름과 무관하게).
         $qsp = $zip.Entries | Where-Object { $_.FullName.Replace('\', '/') -match '(^|/)jack\.qsp$' } | Sort-Object { $_.FullName.Length } | Select-Object -First 1
-        if ($null -eq $qsp) { throw 'ZIP 안에서 jack.qsp를 찾지 못했습니다.' }
-        $prefix = $qsp.FullName.Replace('\', '/').Substring(0, $qsp.FullName.Length - 'jack.qsp'.Length)
+        if ($null -ne $qsp) {
+            $prefix = $qsp.FullName.Replace('\', '/').Substring(0, $qsp.FullName.Length - 'jack.qsp'.Length)
+        } else {
+            # 이미지팩처럼 jack.qsp가 없는 ZIP: 처음 나오는 content/pic/ 앞부분을 game 위치로 본다.
+            $pic = $zip.Entries | ForEach-Object { $_.FullName.Replace('\', '/') } | Where-Object { $_ -match '(^|/)content/pic/' } | Sort-Object Length | Select-Object -First 1
+            if ($null -eq $pic) { throw 'ZIP 안에서 jack.qsp나 content/pic 폴더를 찾지 못했습니다.' }
+            $prefix = $pic.Substring(0, $pic.IndexOf('content/pic/'))
+        }
         foreach ($e in $zip.Entries) {
             $name = $e.FullName.Replace('\', '/')
             if (-not $name.StartsWith($prefix) -or $name.EndsWith('/')) { continue }
