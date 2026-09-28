@@ -31,7 +31,7 @@ DIRECT = re.compile(r"(?<!SNKmod\\)(?<!SNKmod/)content([\\/])pic[\\/]([^\"'<>()]
 IIF = re.compile(r"(?<!SNKmod\\)(?<!SNKmod/)content[\\/]pic[\\/]<<iif\((.*?)\)>>", re.I)
 INNER = re.compile(r"''([^']+?\.(?:png|jpg|gif))''", re.I)
 SPECIAL = re.compile(r"\$special_image\[(\d+)\]\s*=\s*'([^']+?\.png)'", re.I)
-SNK_REF = re.compile(r"SNKmod[\\/]content[\\/]pic[\\/]([^\"'<>()]+?\.(?:png|jpg|gif))", re.I)
+SNK_REF = re.compile(r"content[\\/]pic[\\/]SNKmod[\\/]([^\"'<>()]+?\.(?:png|jpg|gif))", re.I)
 
 
 def sha(data: bytes) -> str:
@@ -43,7 +43,7 @@ def norm(p: str) -> str:
 
 
 def snk_rel(rel: str) -> str:
-    """content/pic 아래 상대경로 → SNKmod/content/pic 아래 상대경로 (결정 2·3)."""
+    """content/pic 아래 상대경로 → content/pic/SNKmod 아래 상대경로 (결정 2·3)."""
     parts = rel.split('/')
     if len(parts) >= 3 and parts[0].lower() == 'ui' and parts[1].lower() in MODDER_DIRS:
         rest = parts[2:]
@@ -56,11 +56,11 @@ def read_fix6(path: Path) -> dict[str, bytes]:
     if sha(data) != FIX6_SHA:
         raise SystemExit('FIX6 archive hash mismatch')
     out = {}
-    with zipfile.ZipFile(path) as z:
+    with zipfile.ZipFile(path, metadata_encoding='cp949') as z:
         for info in z.infolist():
             if info.is_dir():
                 continue
-            name = info.filename if info.flag_bits & 0x800 else info.filename.encode('cp437').decode('cp949')
+            name = info.filename
             out[name] = z.read(info)
     return out
 
@@ -71,7 +71,14 @@ def main() -> int:
     ap.add_argument('--fix6', type=Path, default=REPO / 'baseline/JO9_UI_v1_9_14_AllInOne_R2_FIX6.zip')
     ap.add_argument('--out', type=Path, default=REPO / 'dist')
     ap.add_argument('--originals', type=Path, default=REPO / 'resources/originals/content/pic')
+    ap.add_argument('--private-room', action='store_true', help='Build the private-room development overlay; no release ZIP')
+    ap.add_argument('--release', action='store_true', help='Build JO9 UI_overhaul_SNKmod 0.1 including the approved private-room changes')
+    ap.add_argument('--vanilla-qsp', type=Path, help='Unmodified game QSP used to validate release installation inputs')
     args = ap.parse_args()
+    if args.release:
+        args.private_room = True
+        if args.vanilla_qsp is None:
+            raise SystemExit('--release requires --vanilla-qsp for clean-install validation')
 
     src = read_fix6(args.fix6)
     fmanifest = json.loads(src['manifest.json'].decode('utf-8-sig'))
@@ -80,6 +87,10 @@ def main() -> int:
     if sha(qsp_bytes) != FIX6_FINAL_QSP:
         raise SystemExit('jack.qsp is not the FIX6-installed state (manifest FinalQsp)')
     locs = read_locations(qsp_bytes)
+    vanilla = None
+    if args.release:
+        vanilla_bytes = args.vanilla_qsp.read_bytes()
+        vanilla = {l['name']: l['body'] for l in read_locations(vanilla_bytes)}
 
     # 1) FIX6 이미지 → SNKmod 위치. 같은 목적지로 모이는 파일은 바이트가 같아야 한다.
     rules = json.loads((REPO / 'build/resource_rules.json').read_text(encoding='utf-8'))
@@ -142,16 +153,16 @@ def main() -> int:
                 continue
             if None in dests or len(dests) != 1:
                 raise SystemExit('Mixed iif branch targets: ' + m.group(0))
-            found.append((m.group(0), 'SNKmod\\content\\pic\\' + dests.pop().replace('/', '\\')))
+            found.append((m.group(0), 'content\\pic\\SNKmod\\' + dests.pop().replace('/', '\\')))
         for m in DIRECT.finditer(text):
             dest = resolve(m.group(2))
             if dest:
                 sep = m.group(1)
-                found.append((m.group(0), sep.join(['SNKmod', 'content', 'pic']) + sep + dest.replace('/', sep)))
+                found.append((m.group(0), sep.join(['content', 'pic', 'SNKmod']) + sep + dest.replace('/', sep)))
         for m in SPECIAL.finditer(text):
             dest = resolve(m.group(2))
             if dest:
-                found.append((m.group(0), f"$special_image_full[{m.group(1)}] = 'SNKmod\\content\\pic\\{dest.replace('/', chr(92))}'"))
+                found.append((m.group(0), f"$special_image_full[{m.group(1)}] = 'content\\pic\\SNKmod\\{dest.replace('/', chr(92))}'"))
         return found
 
     def apply(text: str, rules) -> str:
@@ -201,6 +212,28 @@ def main() -> int:
         final_texts[name] = apply(final_texts[name], rules)
     for p in patches:
         final_texts[p['Name']] = p['Text']
+    if args.private_room:
+        import private_room
+        for rel in private_room.ASSETS:
+            if rel in images:
+                raise SystemExit('Private-room asset name collision: ' + rel)
+            data = (REPO / 'resources/private_room/content/pic' / rel).read_bytes()
+            images[rel] = {'data': data, 'originals': [], 'source': 'private-room'}
+        overlay = private_room.apply(final_texts)
+        old_patches = {p['Name']: p for p in patches}
+        for name, text in overlay.items():
+            text = apply(text, list(OrderedDict.fromkeys(rules_for(text))))
+            before = old_patches.get(name, {}).get('Before', [])[:]
+            original = next((l['body'] for l in locs if l['name'] == name), None)
+            if original is not None:
+                before += [sha(original.encode('utf-8')), sha(final_texts[name].encode('utf-8'))]
+            old_patches[name] = {'Name': name, 'Before': list(dict.fromkeys(before)),
+                                 'After': sha(text.encode('utf-8')), 'Text': text,
+                                 'New': original is None}
+            final_texts[name] = text
+        patches = list(old_patches.values())
+        path_rules = [r for r in path_rules if r['Location'] not in overlay]
+        css_new += '\n' + (REPO / 'build/private_room/style.css').read_text(encoding='utf-8')
     final_texts['[css/base.css]'] = css_new
     final_texts['[json/menu_icon.json]'] = menu_new
     lower_images = {k.lower() for k in images}
@@ -218,16 +251,27 @@ def main() -> int:
         raise SystemExit('Static verification failed:\n' + '\n'.join(problems))
 
     # 6) 출력
-    out = args.out / NAME
+    if vanilla is not None:
+        missing = [p['Name'] for p in patches if not p.get('New') and p['Name'] not in vanilla]
+        if missing:
+            raise SystemExit('Vanilla QSP is missing required locations: ' + ', '.join(missing))
+        for patch in patches:
+            if patch['Name'] in vanilla:
+                patch['Before'] = list(dict.fromkeys([sha(vanilla[patch['Name']].encode('utf-8'))] + patch['Before']))
+    package_name = 'JO9 UI_overhaul_SNKmod_0.1' if args.release else NAME + ('_private_room_dev' if args.private_room else '')
+    out = args.out / package_name
     if out.exists():
+        # Only the fixed package child of the requested output directory may be removed.
+        if out.is_symlink() or out.resolve().parent != args.out.resolve():
+            raise SystemExit('Unsafe build output directory: ' + str(out))
         shutil.rmtree(out)
     pay = out / 'payload'
     img_entries = []
     for dest, info in images.items():
-        f = pay / 'SNKmod/content/pic' / dest
+        f = pay / 'content/pic/SNKmod' / dest
         f.parent.mkdir(parents=True, exist_ok=True)
         f.write_bytes(info['data'])
-        img_entries.append({'Rel': 'SNKmod/content/pic/' + dest, 'Source': 'payload/SNKmod/content/pic/' + dest,
+        img_entries.append({'Rel': 'content/pic/SNKmod/' + dest, 'Source': 'payload/content/pic/SNKmod/' + dest,
                             'Hash': sha(info['data'])})
     (pay / 'css').mkdir(parents=True)
     (pay / 'css/base.css').write_bytes(css_new.encode('utf-8'))
@@ -249,7 +293,7 @@ def main() -> int:
     ui_map = []
     for dest, info in images.items():
         hits = ref_locs.get(dest.lower(), {})
-        ui_map.append({'SNKmod': 'SNKmod/content/pic/' + dest,
+        ui_map.append({'SNKmod': 'content/pic/SNKmod/' + dest,
                        'Originals': ['content/pic/' + r for r in info['originals']],
                        'Hash': sha(info['data']), 'Bytes': len(info['data']), 'Source': info['source'],
                        'Status': 'used' if hits else 'spare',
@@ -258,7 +302,7 @@ def main() -> int:
 
     fix6_files = [{'Rel': e['Rel'], 'After': e['After']} for e in fmanifest['Files']]
     manifest = OrderedDict(
-        Package=PACKAGE, Version=VERSION, GameVersion=fmanifest['GameVersion'],
+        Package='JO9 UI_overhaul_SNKmod' if args.release else PACKAGE, Version='0.1' if args.release else VERSION + ('-private-room-test13-birth' if args.private_room else ''), GameVersion=fmanifest['GameVersion'],
         Images=img_entries,
         Overwrite=[
             {'Rel': 'css/base.css', 'Source': 'payload/css/base.css', 'Hash': sha(css_new.encode('utf-8')),
@@ -272,6 +316,8 @@ def main() -> int:
         Fix6={'Package': fmanifest['Package'], 'BackupDir': '_JO9_UI_ALL1914_BACKUPS', 'Files': fix6_files,
               'FinalQsp': fmanifest['FinalQsp']},
     )
+    if args.release:
+        manifest['CleanInstall'] = {'OriginalQsp': sha(vanilla_bytes), 'PreexistingBackupRequired': False}
     payload = []
     for p in sorted(out.rglob('*')):
         if p.is_file() and p.name != 'manifest.json':
@@ -283,6 +329,14 @@ def main() -> int:
         if (REPO / 'installer' / f).exists():
             shutil.copy2(REPO / 'installer' / f, out / f)
     (out / 'PanelCodec.cs').write_bytes(src['PanelCodec.cs'])
+    if args.private_room:
+        shutil.copy2(REPO / 'build/private_room/README_TEST10_KR.txt', out / 'README_KR.txt')
+    if args.release:
+        shutil.copy2(REPO / 'installer/README_RELEASE_KR.txt', out / 'README_KR.txt')
+        installer_path = out / 'Install.ps1'
+        installer_text = installer_path.read_text(encoding='utf-8-sig')
+        installer_text = installer_text.replace("$Title='JO9 UI SNKmod'", "$Title='JO9 UI_overhaul_SNKmod 0.1'")
+        installer_path.write_text(installer_text, encoding='utf-8-sig')
     # 설치기·안내문도 무결성 목록에 넣는다.
     for f in ['Install.ps1', 'APPLY.cmd', 'CHECK.cmd', 'RESTORE.cmd', 'README_KR.txt', 'PanelCodec.cs']:
         if (out / f).exists():
@@ -290,9 +344,9 @@ def main() -> int:
     manifest['Payload'] = payload
     dump('manifest.json', manifest)
 
-    print(json.dumps({'package': NAME, 'images': len(images), 'used': sum(1 for u in ui_map if u['Status'] == 'used'),
+    print(json.dumps({'package': package_name, 'images': len(images), 'used': sum(1 for u in ui_map if u['Status'] == 'used'),
                       'spare': sum(1 for u in ui_map if u['Status'] == 'spare'),
-                      'rule_locations': len(by_loc), 'rules': len(path_rules),
+                      'rule_locations': len({r['Location'] for r in path_rules}), 'rules': len(path_rules),
                       'rule_replacements': sum(r['Expected'] for r in path_rules),
                       'body_patches': len(patches)}, ensure_ascii=False))
     return 0

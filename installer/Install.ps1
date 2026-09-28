@@ -2,7 +2,8 @@
 param(
     [ValidateSet('Check','Apply','Restore')][string]$Mode='Apply',
     [string]$GamePath='',
-    [switch]$NonInteractive
+    [switch]$NonInteractive,
+    [switch]$ConfirmChangedFiles
 )
 $ErrorActionPreference='Stop'
 Set-StrictMode -Version 2
@@ -41,25 +42,60 @@ function Commit([string]$file,[byte[]]$data){
 function SaveState($state,[string]$folder){[IO.File]::WriteAllText((Join-Path $folder 'state.json'),($state|ConvertTo-Json -Depth 8),$Utf8Bom)}
 function ReadJson([string]$file){return [IO.File]::ReadAllText($file,$Utf8)|ConvertFrom-Json}
 
-# 기록된 상태를 되돌린다. 모든 파일을 먼저 검사하고, 설치 후 다른 변경이 있으면 아무것도 바꾸지 않고 중단한다.
+# 변경 목록을 먼저 모두 표시하고 동의한 경우 현재 변경본도 별도 보관한다.
 function RestoreState($state,[string]$folder){
+    $changed=New-Object Collections.Generic.List[object]
     foreach($e in $state.Files){
         $target=SafePath $GamePath $e.Rel
         if($e.Existed){$backup=SafePath (Join-Path $folder 'original') $e.Rel;if((Hash $backup)-ne $e.Before){throw ('보관본 해시 불일치: '+$e.Rel)}}
         $current=HashOrAbsent $target
-        if($current-ne $e.Before-and $current-ne $e.After){throw ('설치 후 변경된 파일이 있어 복구를 중단합니다. 바뀐 파일: '+$e.Rel)}
+        # 사용자가 기존 모드 폴더를 pic 아래로 옮긴 경우 새 위치는 설치 계획에서 별도 백업한다.
+        $moved=$false
+        if($current-eq 'ABSENT' -and -not $e.Existed -and $e.Rel.StartsWith('SNKmod/content/pic/')){
+            $newRel='content/pic/SNKmod/'+$e.Rel.Substring('SNKmod/content/pic/'.Length)
+            $moved=[IO.File]::Exists((SafePath $GamePath $newRel))
+        }
+        if(-not $moved -and $current-ne $e.Before-and $current-ne $e.After){$changed.Add([pscustomobject]@{Rel=$e.Rel;Hash=$current})}
+    }
+    if($changed.Count-gt 0){
+        $listing=($changed|ForEach-Object{ $_.Rel + $(if($_.Hash-eq 'ABSENT'){' [삭제됨]'}else{' [내용 변경]'}) }) -join "`r`n"
+        $message="설치 후 변경된 파일 $($changed.Count)개:`r`n$listing`r`n`r`n현재 변경본을 별도 백업한 뒤 계속할까요?`r`nY: 계속 (패치/복원 내용으로 교체) / N: 취소"
+        Write-Host $message
+        $approved=$false
+        if($script:Forms){$approved=Ask $message}
+        elseif($ConfirmChangedFiles){
+            do{$answer=Read-Host '계속하시겠습니까? [Y/N]'}while($null-ne $answer -and $answer-notmatch '^(?i:y|n)$' -and $answer-ne '')
+            $approved=$answer-eq 'Y'
+        }
+        if(-not $approved){throw '사용자가 취소했거나 변경 파일 교체 동의가 없습니다. 파일은 변경하지 않았습니다.'}
+        $changedDir=Join-Path $folder ('changed/'+(Get-Date).ToString('yyyyMMdd_HHmmss')+'_'+[Guid]::NewGuid().ToString('N').Substring(0,8))
+        [void][IO.Directory]::CreateDirectory($changedDir)
+        foreach($c in $changed){
+            $target=SafePath $GamePath $c.Rel
+            if((HashOrAbsent $target)-ne $c.Hash){throw ('확인 중 파일이 다시 바뀌었습니다: '+$c.Rel)}
+            if($c.Hash-ne 'ABSENT'){
+                $copy=SafePath $changedDir $c.Rel
+                [void][IO.Directory]::CreateDirectory([IO.Path]::GetDirectoryName($copy))
+                [IO.File]::Copy($target,$copy)
+                if((Hash $copy)-ne $c.Hash){throw ('변경본 백업 검증 실패: '+$c.Rel)}
+            }
+        }
+        [IO.File]::WriteAllText((Join-Path $changedDir 'changed-files.json'),(ConvertTo-Json -InputObject @($changed.ToArray()) -Depth 5),$Utf8Bom)
+        Write-Host ('변경본 백업: '+$changedDir)
     }
     $files=@($state.Files)
     for($i=$files.Count-1;$i-ge 0;$i--){
         $e=$files[$i];$target=SafePath $GamePath $e.Rel
-        if($e.Existed){if((Hash $target)-ne $e.Before){Commit $target ([IO.File]::ReadAllBytes((SafePath (Join-Path $folder 'original') $e.Rel)))}}
+        if($e.Existed){if((HashOrAbsent $target)-ne $e.Before){Commit $target ([IO.File]::ReadAllBytes((SafePath (Join-Path $folder 'original') $e.Rel)))}}
         elseif([IO.File]::Exists($target)){[IO.File]::Delete($target)}
     }
     # 모드가 만든 빈 폴더만 정리한다. 사용자 파일이 남은 폴더는 그대로 둔다.
-    $snk=SafePath $GamePath 'SNKmod'
+    foreach($snkRel in @('SNKmod','content/pic/SNKmod')){
+    $snk=SafePath $GamePath $snkRel
     if(Test-Path -LiteralPath $snk){
         foreach($d in @(Get-ChildItem -LiteralPath $snk -Directory -Recurse | Sort-Object {$_.FullName.Length} -Descending)){if(@(Get-ChildItem -LiteralPath $d.FullName -Force).Count-eq 0){[IO.Directory]::Delete($d.FullName)}}
         if(@(Get-ChildItem -LiteralPath $snk -Force).Count-eq 0){[IO.Directory]::Delete($snk)}
+    }
     }
     $state.Status='restored';SaveState $state $folder
 }
@@ -68,7 +104,7 @@ function FindActiveState([string]$stateRoot){
     if(-not (Test-Path -LiteralPath $stateRoot)){return $null}
     foreach($dir in Get-ChildItem -LiteralPath $stateRoot -Directory | Sort-Object Name -Descending){
         $record=Join-Path $dir.FullName 'state.json'
-        if(Test-Path -LiteralPath $record){$s=ReadJson $record;if($s.Package-eq 'JO9_UI_SNKMOD' -and $s.Status-ne 'restored'){return [pscustomobject]@{Dir=$dir.FullName;State=$s}}}
+        if(Test-Path -LiteralPath $record){$s=ReadJson $record;if($s.Package -in @('JO9_UI_SNKMOD','JO9 UI_overhaul_SNKmod') -and $s.Status-ne 'restored'){return [pscustomobject]@{Dir=$dir.FullName;State=$s}}}
     }
     return $null
 }
@@ -156,7 +192,17 @@ try {
     $fields=[Jo9PanelCodec]::Read([IO.File]::ReadAllBytes($qsp))
     $patches=ReadJson (Join-Path $Root 'qsp-patches.json')
     foreach($patch in $patches){
-        try{$idx=[Jo9PanelCodec]::BodyIndex($fields,$patch.Name)}catch{Warn ('location 없음, 건너뜀: '+$patch.Name);continue}
+        try{$idx=[Jo9PanelCodec]::BodyIndex($fields,$patch.Name)}catch{
+            # Only explicitly declared SNKmod helper locations can be appended.
+            $isNew=$patch.PSObject.Properties['New'] -and $patch.New
+            if($isNew -and $patch.Name -in @('snk_room_bridge','snk_room_menu_screen','snk_room_diet_migrate','snk_room_birth_check','snk_room_birth_return')){
+                $count=[int][Jo9PanelCodec]::Shift($fields[3],5)
+                $fields=$fields[0..($fields.Length-2)]+@([Jo9PanelCodec]::Shift($patch.Name,-5),'',[Jo9PanelCodec]::Shift($patch.Text,-5),[Jo9PanelCodec]::Shift('0',-5),'')
+                $fields[3]=[Jo9PanelCodec]::Shift([string]($count+1),-5)
+                continue
+            }
+            Warn ('location 없음, 건너뜀: '+$patch.Name);continue
+        }
         $h=HashBytes ($Utf8.GetBytes([Jo9PanelCodec]::Shift($fields[$idx],5)))
         if($h-eq $patch.After){continue}
         if($patch.Before -notcontains $h){Warn ('알려지지 않은 '+$patch.Name+' 본문을 SNKmod UI 본문으로 교체합니다. 다른 QSP 모드의 변경은 사라집니다 (QSP 모드는 호환 불가).')}
