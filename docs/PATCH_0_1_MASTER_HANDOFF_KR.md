@@ -29,7 +29,7 @@
 ## 배포 파일 및 내용 조회
 
 - [기존 0.1 ZIP](../releases/JO9%20UI_overhaul_SNKmod_0.1.zip): 13,588,772 bytes, SHA256 `6249885f17fba8aef13ab1f668e4470e13880800bfaa81d774f9f7609a9475e0`.
-- 본문 패치 248개, 이미지 143개, ZIP 내부 파일 161개. 이 숫자를 독립 설치형 검증 완료의 근거로 사용하지 않는다.
+- 본문 패치 248개, 이미지 143개, ZIP 내부 파일 156개(디렉터리 5개 포함 시 항목 161개). 이 숫자를 독립 설치형 검증 완료의 근거로 사용하지 않는다.
 - [전체 ZIP 파일·크기·해시](package-index/archive-files.json).
 - [설치 명세](package-index/manifest.json), [이미지 출처·참조 맵](package-index/ui_map.json).
 - [QSP location별 색인](package-index/qsp-location-index.json), [경로 치환 규칙](package-index/path-rules.json).
