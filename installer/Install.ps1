@@ -113,45 +113,6 @@ function FindActiveState([string]$stateRoot){
     return $null
 }
 
-# 기존 FIX6 설치본 전환: FIX6 백업이 온전하면 FIX6 이전 상태로 되돌린다. 불가능하면 경고만 하고 계속한다.
-function TransitionFromFix6($manifest){
-    $fixRoot=SafePath $GamePath $manifest.Fix6.BackupDir
-    $found=$null
-    if(Test-Path -LiteralPath $fixRoot){foreach($dir in Get-ChildItem -LiteralPath $fixRoot -Directory | Sort-Object Name -Descending){
-        $record=Join-Path $dir.FullName 'state.json'
-        if(Test-Path -LiteralPath $record){$s=ReadJson $record;if($s.Package-eq $manifest.Fix6.Package -and $s.Status-ne 'restored'){$found=[pscustomobject]@{Dir=$dir.FullName;State=$s};break}}
-    }}
-    if($null-eq $found){
-        $touched=0
-        foreach($f in $manifest.Fix6.Files){if($f.Rel.StartsWith('content/pic/')){$t=SafePath $GamePath $f.Rel;if([IO.File]::Exists($t)-and (Hash $t)-eq $f.After){$touched++}}}
-        if($touched-gt 0){Warn ('FIX6 교체 이미지 '+$touched+'개가 원본 경로에 있지만 FIX6 백업이 없습니다. 이 원본 이미지들은 복구할 수 없어 그대로 둡니다.')}
-        return 'none'
-    }
-    $allowed=@('jack.qsp')+@($manifest.Fix6.Files|ForEach-Object{$_.Rel})
-    try{
-        foreach($e in $found.State.Files){
-            if($allowed -notcontains $e.Rel){throw ('예상하지 못한 백업 항목: '+$e.Rel)}
-            $target=SafePath $GamePath $e.Rel
-            if($e.Existed){$b=SafePath (Join-Path $found.Dir 'original') $e.Rel;if((Hash $b)-ne $e.Before){throw ('FIX6 백업 해시 불일치: '+$e.Rel)}}
-            $current=HashOrAbsent $target
-            if($current-ne $e.Before-and $current-ne $e.After){throw ('FIX6 설치 후 바뀐 파일: '+$e.Rel)}
-        }
-    }catch{
-        Warn ('FIX6 설치본을 원래대로 되돌릴 수 없습니다 ('+$_.Exception.Message+'). FIX6가 덮어쓴 원본 이미지는 그대로 남습니다. FIX6 백업 폴더는 지우지 않았습니다: '+$found.Dir)
-        return 'failed'
-    }
-    if($Mode-eq 'Check'){return 'possible'}
-    $files=@($found.State.Files)
-    for($i=$files.Count-1;$i-ge 0;$i--){
-        $e=$files[$i];$target=SafePath $GamePath $e.Rel
-        if($e.Existed){if((Hash $target)-ne $e.Before){Commit $target ([IO.File]::ReadAllBytes((SafePath (Join-Path $found.Dir 'original') $e.Rel)))}}
-        elseif([IO.File]::Exists($target)){[IO.File]::Delete($target)}
-    }
-    $found.State.Status='restored'
-    [IO.File]::WriteAllText((Join-Path $found.Dir 'state.json'),($found.State|ConvertTo-Json -Depth 8),$Utf8Bom)
-    return 'restored'
-}
-
 try {
     if(-not $NonInteractive){Add-Type -AssemblyName System.Windows.Forms;$script:Forms=$true}
     if([string]::IsNullOrWhiteSpace($GamePath)){
@@ -188,20 +149,19 @@ try {
         if($same){foreach($e in $active.State.Files){if((HashOrAbsent (SafePath $GamePath $e.Rel))-ne $e.After){$same=$false;break}}}
         if($same){Tell ('SNKmod UI '+$manifest.Version+'이(가) 이미 설치돼 있습니다. 바꿀 파일이 없습니다.');exit 0}
         if($Mode-eq 'Check'){
-            Warn ('이전 SNKmod 설치('+$active.State.Version+')가 있어 적용할 때 먼저 되돌립니다.')
             foreach($c in (ChangedSince $active.State $active.Dir)){if($c.Keep){Warn (KeptMessage $c.Rel)}}
         }
         else{RestoreState $active.State $active.Dir}
     }
-
-    $fix6=TransitionFromFix6 $manifest
+    # 이전 SNKmod 설치가 쓴 파일은 다른 모드 변경으로 보지 않는다 (Check 모드는 정리 전이라 이 파일이 남아 있다).
+    $known=@();if($null-ne $active){$known=@($active.State.Files|ForEach-Object{$_.After})}
 
     # --- 적용 계획 ---
     $plan=New-Object Collections.Generic.List[object]
     # jack.qsp: 패키지에 든 완성본으로 교체한다. 원본은 _JO9_SNKmod_STATE에 보관한다.
     $qspHash=Hash $qsp
     if($qspHash-ne $manifest.Qsp.Hash){
-        if($manifest.Qsp.Before -notcontains $qspHash){Warn '호환성: jack.qsp가 순정 2.3과 다릅니다. 다른 QSP 모드나 다른 게임 버전이 설치된 것으로 보입니다. 이 UI 패치는 QSP를 바꾸는 모드와 호환되지 않아 jack.qsp를 이 패치의 파일로 교체합니다. 그 모드의 변경은 사라지며 원본은 복구용으로 보관합니다. 설치는 계속합니다.'}
+        if($manifest.Qsp.Before -notcontains $qspHash -and $known -notcontains $qspHash){Warn '호환성: jack.qsp가 순정 2.3과 다릅니다. 다른 QSP 모드나 다른 게임 버전이 설치된 것으로 보입니다. 이 UI 패치는 QSP를 바꾸는 모드와 호환되지 않아 jack.qsp를 이 패치의 파일로 교체합니다. 그 모드의 변경은 사라지며 원본은 복구용으로 보관합니다. 설치는 계속합니다.'}
         $plan.Add([pscustomobject]@{Rel='jack.qsp';Data=[IO.File]::ReadAllBytes((SafePath $Root $manifest.Qsp.Source))})
     }
 
@@ -211,7 +171,7 @@ try {
         if(-not [IO.File]::Exists($t)){Warn ($ow.Rel+' 파일이 없어 건너뜁니다.');continue}
         $h=Hash $t
         if($h-eq $ow.Hash){continue}
-        if($ow.Before -notcontains $h){Warn ('알려지지 않은 '+$ow.Rel+'('+$h+')를 SNKmod UI용 파일로 교체합니다. 원본은 복구용으로 보관합니다.')}
+        if($ow.Before -notcontains $h -and $known -notcontains $h){Warn ('알려지지 않은 '+$ow.Rel+'('+$h+')를 SNKmod UI용 파일로 교체합니다. 원본은 복구용으로 보관합니다.')}
         $plan.Add([pscustomobject]@{Rel=$ow.Rel;Data=[IO.File]::ReadAllBytes((SafePath $Root $ow.Source))})
     }
 
@@ -241,8 +201,7 @@ try {
     }
 
     $entries=foreach($p in $plan){$t=SafePath $GamePath $p.Rel;$ex=[IO.File]::Exists($t);$b='ABSENT';if($ex){$b=Hash $t};[pscustomobject]@{Rel=$p.Rel;Existed=$ex;Before=$b;After=(HashBytes $p.Data)}}
-    $summary=$(if($qspHash-eq $manifest.Qsp.Hash){'jack.qsp는 이미 이 패치의 파일입니다.'}else{'jack.qsp를 이 패치의 파일로 교체합니다.'})+' 쓸 파일 '+$plan.Count+'개.'+"`r`n"+$engineMessage
-    if($fix6-eq 'possible'){$summary+="`r`nFIX6 설치본을 먼저 FIX6 이전 상태로 되돌린 뒤 적용합니다."}
+    $summary=$(if($null-ne $active){'이전 SNKmod UI 설치('+$active.State.Version+')를 정리하고 새로 설치합니다.'+"`r`n"}else{''})+$(if($qspHash-eq $manifest.Qsp.Hash){'jack.qsp는 이미 이 패치의 파일입니다.'}else{'jack.qsp를 이 패치의 파일로 교체합니다.'})+' 쓸 파일 '+$plan.Count+'개.'+"`r`n"+$engineMessage
     if($Mode-eq 'Check'){
         $msg='CHECK: 게임 파일을 바꾸지 않았습니다.'+"`r`n"+$summary+"`r`n`r`n"+$OrderNote
         if($script:Warnings.Count-gt 0){$msg+="`r`n`r`n경고:`r`n- "+($script:Warnings -join "`r`n- ")}
@@ -254,7 +213,7 @@ try {
     $folder=Join-Path $stateRoot ((Get-Date).ToString('yyyyMMdd_HHmmss')+'_'+[Guid]::NewGuid().ToString('N').Substring(0,8))
     foreach($e in $entries){if($e.Existed){$t=SafePath $GamePath $e.Rel;$b=SafePath (Join-Path $folder 'original') $e.Rel;[void][IO.Directory]::CreateDirectory([IO.Path]::GetDirectoryName($b));[IO.File]::Copy($t,$b);if((Hash $b)-ne $e.Before){throw '보관본을 만드는 동안 파일이 바뀌었습니다.'}}}
     [void][IO.Directory]::CreateDirectory($folder)
-    $state=[pscustomobject]@{Package=$manifest.Package;Version=$manifest.Version;Status='applying';Fix6Transition=$fix6;Files=@($entries);Warnings=@($script:Warnings)}
+    $state=[pscustomobject]@{Package=$manifest.Package;Version=$manifest.Version;Status='applying';Files=@($entries);Warnings=@($script:Warnings)}
     SaveState $state $folder
     try{
         for($i=0;$i-lt $plan.Count;$i++){$p=$plan[$i];$t=SafePath $GamePath $p.Rel;if((HashOrAbsent $t)-ne $entries[$i].Before){throw ('설치 중 파일이 바뀌었습니다: '+$p.Rel)};Commit $t $p.Data}

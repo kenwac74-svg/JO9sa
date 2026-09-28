@@ -1,4 +1,4 @@
-# 가짜 게임 폴더에서 Install.ps1의 적용·재적용·복구·FIX6 전환·충돌 처리를 PowerShell로 시험하는 스크립트
+# 가짜 게임 폴더에서 Install.ps1의 적용·재적용·복구·충돌 처리를 PowerShell로 시험하는 스크립트
 """Usage: python tests/test_installer.py --qsp <FIX6 상태 jack.qsp> --pwsh <pwsh 경로> [--pkg dist/...]
 
 Windows 대화창은 쓰지 않고 -NonInteractive로 실행한다. 인게임 표시 시험이 아니다.
@@ -139,7 +139,7 @@ def main() -> int:
     fix6 = fix6_files()
     work = Path(tempfile.mkdtemp(prefix='snkmod_test_'))
     try:
-        # A. FIX6 백업 없는 FIX6 설치본
+        # A. FIX6 이미지가 원본 경로에 남은 설치본 (예전 흔적 메시지 없이 설치)
         g = work / 'A/game'
         make_game(g, args.qsp, fix6, with_fix6_backup=False)
         pic_before = tree_hashes(g / 'content')
@@ -149,7 +149,7 @@ def main() -> int:
         check('A1 Check 종료코드 0', r.returncode == 0, r.stdout[-300:] + r.stderr[-300:])
         check('A1 Check는 파일을 바꾸지 않음', tree_hashes(g) == {**{'content/' + k: v for k, v in pic_before.items()}, **code_before} or
               ({f: sha(g / f) for f in code_before} == code_before and not (g / 'content/pic/SNKmod').exists() and not (g / '_JO9_SNKmod_STATE').exists()))
-        check('A1 Check가 FIX6 백업 없음 경고', '백업이 없습니다' in r.stdout + r.stderr)
+        check('A1 Check에 FIX6 흔적 메시지 없음', 'FIX6' not in r.stdout + r.stderr, r.stdout[-300:])
         r = run(args.pwsh, args.pkg, g, 'Apply')
         check('A2 Apply 종료코드 0', r.returncode == 0, r.stdout[-400:] + r.stderr[-400:])
         verify_installed(g, args.pkg, 'A2')
@@ -205,17 +205,14 @@ def main() -> int:
         r = run(args.pwsh, args.pkg, g, 'Restore')
         check('B4 복원 시 다른 모드판 jack.qsp를 기준으로 되돌림', r.returncode == 0 and sha(g / 'jack.qsp') == other_qsp, r.stdout[-200:])
 
-        # C. FIX6 백업이 있는 설치본 → FIX6 이전으로 전환 후 설치, 복구 시 전환된 상태로
+        # C. 예전 FIX6 백업 폴더가 있어도 FIX6 흔적 처리·메시지 없이 설치, 백업 폴더는 건드리지 않음
         g = work / 'C/game'
         make_game(g, args.qsp, fix6, with_fix6_backup=True)
+        fix6_dir = tree_hashes(g / '_JO9_UI_ALL1914_BACKUPS')
         r = run(args.pwsh, args.pkg, g, 'Apply')
         check('C1 Apply 종료코드 0', r.returncode == 0, r.stdout[-400:] + r.stderr[-400:])
-        m = json.loads(fix6['manifest.json'].decode('utf-8-sig'))
-        vanilla_ok = all((g / e['Rel']).read_bytes() == b'vanilla:' + e['Rel'].encode()
-                         for e in m['Files'] if e['Rel'].startswith('content/pic/'))
-        check('C1 FIX6가 덮어쓴 원본 이미지를 백업본으로 복원', vanilla_ok)
-        st = json.loads((g / '_JO9_UI_ALL1914_BACKUPS/20260101_000000_test/state.json').read_text(encoding='utf-8-sig'))
-        check('C1 FIX6 기록을 restored로 표시, 백업 폴더 유지', st['Status'] == 'restored' and (g / '_JO9_UI_ALL1914_BACKUPS/20260101_000000_test/original').exists())
+        check('C1 FIX6 흔적 메시지 없음', 'FIX6' not in r.stdout + r.stderr, r.stdout[-300:])
+        check('C1 FIX6 백업 폴더 불변', tree_hashes(g / '_JO9_UI_ALL1914_BACKUPS') == fix6_dir)
         verify_installed(g, args.pkg, 'C1')
 
         # D. 알 수 없는 main_screen 본문(다른 QSP 모드 흉내) → 경고 후 설치

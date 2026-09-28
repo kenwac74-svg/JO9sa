@@ -347,7 +347,6 @@ def main() -> int:
                        'References': dict(hits)})
     dump('ui_map.json', ui_map)
 
-    fix6_files = [{'Rel': e['Rel'], 'After': e['After']} for e in fmanifest['Files']]
     manifest = OrderedDict(
         Package='JO9 UI_overhaul_SNKmod' if args.release else PACKAGE, Version=RELEASE_VERSION if args.release else VERSION + ('-private-room-test13-birth' if args.private_room else ''), GameVersion=fmanifest['GameVersion'],
         Images=img_entries,
@@ -363,8 +362,6 @@ def main() -> int:
         Engine={'Rel': 'engine/jack.exe', 'Source': 'payload/engine/jack.exe', 'Before': fmanifest['EngineBefore'],
                 'After': fmanifest['EngineAfter'], 'QtWidgetsHash': fmanifest['QtWidgetsHash']},
         General=[],
-        Fix6={'Package': fmanifest['Package'], 'BackupDir': '_JO9_UI_ALL1914_BACKUPS', 'Files': fix6_files,
-              'FinalQsp': fmanifest['FinalQsp']},
     )
     if args.release:
         manifest['CleanInstall'] = {'OriginalQsp': sha(vanilla_bytes), 'PreexistingBackupRequired': False}

@@ -18,7 +18,6 @@ with tempfile.TemporaryDirectory(prefix='jo9_release_clean_') as folder:
     game = Path(folder)/'game'
     # Copy only files involved in the installer, plus Qt identity and original images.
     paths = ['jack.qsp','css/base.css','json/menu_icon.json','engine/jack.exe','engine/Qt5Widgets.dll']
-    paths += [x['Rel'] for x in manifest['Fix6']['Files'] if x['Rel'].startswith('content/pic/')]
     for rel in dict.fromkeys(paths):
         src = args.game/rel
         if src.is_file():
