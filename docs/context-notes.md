@@ -490,4 +490,4 @@
   - manifest `Qsp` {Hash, Before=[순정, FIX6 FinalQsp]}. 설치기는 원본을 `_JO9_SNKmod_STATE/<시각>/original/jack.qsp`에 보관하고 교체만 한다. `PanelCodec.cs`·`path-rules.json`은 패키지에서 뺐다. `qsp-patches.json`은 검사용 기록으로 남긴다.
   - 설치 후 파일이 이 패키지 파일과 같은 내용이면 "다른 모드 변경"으로 보지 않는다 (사용자가 수동으로 패치 QSP를 넣은 경우에도 RESTORE가 순정으로 돌아가도록).
 - 검사: test_installer 58/58 (빌드본·ZIP 해제본), 개인실 WASM 4종·정적 13개 통과, 참조 분류 이상 없음. 순정에 새로 설치·0.11 위 업그레이드·수동 교체 후 업그레이드 모두 RESTORE 시 순정 QSP(070dad…)로 복원 확인.
-- 산출물: `releases/JO9 UI_overhaul_SNKmod_0.12.zip` (40,650,927 B, SHA-256 3adfec93…). 버전명 0.12는 임시로 정했다.
+- 산출물: `releases/JO9 UI_overhaul_SNKmod_0.12.zip` (16,053,089 B, 압축 저장, SHA-256 e34477c0…). 버전명 0.12는 임시로 정했다.
