@@ -107,6 +107,8 @@ def verify_installed(game: Path, pkg: Path, label: str) -> None:
     originals = {o[len('content/pic/'):].lower() for u in ui_map for o in u['Originals']}
     texts = {l['name']: l['body'] for l in locs}
     new_locations = [p for p in json.loads((pkg/'qsp-patches.json').read_text(encoding='utf-8-sig')) if p.get('New')]
+    man = json.loads((pkg / 'manifest.json').read_text(encoding='utf-8-sig'))
+    check(f'{label}: jack.qsp가 패키지 완성본과 동일', sha(game / 'jack.qsp') == man['Qsp']['Hash'])
     check(f'{label}: 신규 location 본문 설치 확인', all(texts.get(p['Name']) == p['Text'] for p in new_locations))
     texts['css'] = (game / 'css/base.css').read_text(encoding='utf-8')
     texts['json'] = (game / 'json/menu_icon.json').read_text(encoding='utf-8')
@@ -221,7 +223,7 @@ def main() -> int:
         make_game(g, args.qsp, fix6, with_fix6_backup=False)
         tamper_main_screen(g / 'jack.qsp')
         r = run(args.pwsh, args.pkg, g, 'Apply')
-        check('D1 알 수 없는 본문도 경고 후 설치', r.returncode == 0 and '알려지지 않은 location 본문 1개가 있습니다 (main_screen)' in r.stdout + r.stderr, r.stdout[-300:] + r.stderr[-300:])
+        check('D1 알 수 없는 본문도 경고 후 설치', r.returncode == 0 and 'jack.qsp가 순정 2.3과 다릅니다' in r.stdout + r.stderr, r.stdout[-300:] + r.stderr[-300:])
         verify_installed(g, args.pkg, 'D1')
 
         # E. 일반 이미지: 비대화형 실행은 동의로 보지 않는다

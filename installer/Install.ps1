@@ -14,6 +14,8 @@ $Utf8Bom=New-Object Text.UTF8Encoding($true,$true)
 $Sep=[IO.Path]::DirectorySeparatorChar
 $script:Forms=$false
 $script:Warnings=New-Object Collections.Generic.List[string]
+# 이 패키지가 쓰는 파일과 같은 내용이면 다른 모드 변경으로 보지 않는다 (수동으로 패치 파일을 넣은 경우).
+$script:PackageHashes=@()
 # 이미지·json 패치가 menu_icon.json·base.css를 덮으면 UI가 깨지므로 이 패치를 마지막에 설치하도록 안내한다.
 $OrderNote="권장 설치 순서: JoNT_IndividualityPatchInstaller.zip → ai_girl_pack.zip → 그 밖의 이미지·json 패치 → 이 UI 패치(맨 마지막).`r`n순서가 바뀌면 UI 패치가 정상 작동하지 않을 수 있습니다. 다른 패치를 나중에 설치했다면 이 UI 패치를 다시 설치하세요.`r`nQSP를 바꾸는 다른 모드와는 호환되지 않습니다."
 
@@ -57,7 +59,7 @@ function ChangedSince($state,[string]$folder){
             $moved=[IO.File]::Exists((SafePath $GamePath $newRel))
         }
         # 원래 게임 파일이 다른 내용으로 바뀌었으면 그 상태를 새 기준으로 두고 되돌리지 않는다.
-        if(-not $moved -and $current-ne $e.Before-and $current-ne $e.After){$changed.Add([pscustomobject]@{Rel=$e.Rel;Hash=$current;Keep=($e.Existed -and $current-ne 'ABSENT')})}
+        if(-not $moved -and $current-ne $e.Before-and $current-ne $e.After){$changed.Add([pscustomobject]@{Rel=$e.Rel;Hash=$current;Keep=($e.Existed -and $current-ne 'ABSENT' -and $script:PackageHashes -notcontains $current)})}
     }
     return ,$changed
 }
@@ -177,6 +179,7 @@ try {
 
     $manifest=ReadJson (Join-Path $Root 'manifest.json')
     foreach($entry in $manifest.Payload){if((Hash (SafePath $Root $entry.Rel))-ne $entry.Hash){throw ('패키지가 손상됐습니다: '+$entry.Rel)}}
+    $script:PackageHashes=@($manifest.Qsp.Hash)+@($manifest.Overwrite|ForEach-Object{$_.Hash})
 
     # 같은 버전이 이미 적용돼 있으면 끝, 다른 버전이면 먼저 되돌린다.
     $active=FindActiveState $stateRoot
@@ -195,50 +198,12 @@ try {
 
     # --- 적용 계획 ---
     $plan=New-Object Collections.Generic.List[object]
-    Add-Type -Path (Join-Path $Root 'PanelCodec.cs')
-    $fields=[Jo9PanelCodec]::Read([IO.File]::ReadAllBytes($qsp))
-    $patches=ReadJson (Join-Path $Root 'qsp-patches.json')
-    $unknown=New-Object Collections.Generic.List[string];$absent=New-Object Collections.Generic.List[string]
-    foreach($patch in $patches){
-        try{$idx=[Jo9PanelCodec]::BodyIndex($fields,$patch.Name)}catch{
-            # Only explicitly declared SNKmod helper locations can be appended.
-            $isNew=$patch.PSObject.Properties['New'] -and $patch.New
-            if($isNew -and $patch.Name -in @('snk_room_bridge','snk_room_menu_screen','snk_room_diet_migrate','snk_room_birth_check','snk_room_birth_return')){
-                $count=[int][Jo9PanelCodec]::Shift($fields[3],5)
-                $fields=$fields[0..($fields.Length-2)]+@([Jo9PanelCodec]::Shift($patch.Name,-5),'',[Jo9PanelCodec]::Shift($patch.Text,-5),[Jo9PanelCodec]::Shift('0',-5),'')
-                $fields[3]=[Jo9PanelCodec]::Shift([string]($count+1),-5)
-                continue
-            }
-            $absent.Add($patch.Name);continue
-        }
-        $h=HashBytes ($Utf8.GetBytes([Jo9PanelCodec]::Shift($fields[$idx],5)))
-        if($h-eq $patch.After){continue}
-        if($patch.Before -notcontains $h){$unknown.Add($patch.Name)}
-        $fields[$idx]=[Jo9PanelCodec]::Shift($patch.Text,-5)
+    # jack.qsp: 패키지에 든 완성본으로 교체한다. 원본은 _JO9_SNKmod_STATE에 보관한다.
+    $qspHash=Hash $qsp
+    if($qspHash-ne $manifest.Qsp.Hash){
+        if($manifest.Qsp.Before -notcontains $qspHash){Warn '호환성: jack.qsp가 순정 2.3과 다릅니다. 다른 QSP 모드나 다른 게임 버전이 설치된 것으로 보입니다. 이 UI 패치는 QSP를 바꾸는 모드와 호환되지 않아 jack.qsp를 이 패치의 파일로 교체합니다. 그 모드의 변경은 사라지며 원본은 복구용으로 보관합니다. 설치는 계속합니다.'}
+        $plan.Add([pscustomobject]@{Rel='jack.qsp';Data=[IO.File]::ReadAllBytes((SafePath $Root $manifest.Qsp.Source))})
     }
-    # 다른 QSP 모드·다른 게임 버전의 jack.qsp도 설치 실패로 보지 않는다. 호환성 경고를 한 번만 한다.
-    function Few($list){$t=(@($list)[0..([Math]::Min($list.Count,10)-1)]) -join ', ';if($list.Count-gt 10){$t+=' 외'};return $t}
-    if($unknown.Count-gt 0){Warn ('호환성: jack.qsp에 알려지지 않은 location 본문 '+$unknown.Count+'개가 있습니다 ('+(Few $unknown)+'). 다른 QSP 모드나 다른 게임 버전이 설치된 것으로 보입니다. 이 UI 패치는 QSP를 바꾸는 모드와 호환되지 않아 해당 본문을 SNKmod UI 본문으로 교체합니다. 그 모드의 변경은 사라집니다. 설치는 계속합니다.')}
-    if($absent.Count-gt 0){Warn ('호환성: jack.qsp에 없는 location '+$absent.Count+'개는 건너뜁니다 ('+(Few $absent)+').')}
-    $rules=ReadJson (Join-Path $Root 'path-rules.json')
-    $applied=0;$skipped=0
-    foreach($group in ($rules|Group-Object Location)){
-        try{$idx=[Jo9PanelCodec]::BodyIndex($fields,$group.Name)}catch{Warn ('location 없음, 경로 치환 건너뜀: '+$group.Name);$skipped+=$group.Count;continue}
-        $body=[Jo9PanelCodec]::Shift($fields[$idx],5)
-        foreach($r in $group.Group){
-            $pattern='(?<!SNKmod\\)(?<!SNKmod/)'+[regex]::Escape($r.Find)
-            $n=[regex]::Matches($body,$pattern).Count
-            if($n-ne $r.Expected){
-                $already=[regex]::Matches($body,[regex]::Escape($r.Replace)).Count
-                if($n-eq 0 -and $already-ge $r.Expected){continue}
-                Warn ($group.Name+': 예상 '+$r.Expected+'곳 중 '+$n+'곳에서 경로를 찾았습니다 - '+$r.Find)
-            }
-            if($n-gt 0){$rep=$r.Replace;$body=[regex]::Replace($body,$pattern,[Text.RegularExpressions.MatchEvaluator]{param($m) $rep});$applied+=$n}else{$skipped++}
-        }
-        $fields[$idx]=[Jo9PanelCodec]::Shift($body,-5)
-    }
-    $qbytes=[Jo9PanelCodec]::Write($fields)
-    if((HashBytes $qbytes)-ne (Hash $qsp)){$plan.Add([pscustomobject]@{Rel='jack.qsp';Data=$qbytes})}
 
     # 이미지 외 파일(base.css, json/menu_icon.json): 원본 경로에 덮어쓰고, 원본은 복구용으로 보관한다.
     foreach($ow in $manifest.Overwrite){
@@ -276,7 +241,7 @@ try {
     }
 
     $entries=foreach($p in $plan){$t=SafePath $GamePath $p.Rel;$ex=[IO.File]::Exists($t);$b='ABSENT';if($ex){$b=Hash $t};[pscustomobject]@{Rel=$p.Rel;Existed=$ex;Before=$b;After=(HashBytes $p.Data)}}
-    $summary='jack.qsp 경로 치환 '+$applied+'곳, 본문 교체 대상 '+@($patches).Count+'개 location 확인. 쓸 파일 '+$plan.Count+'개.'+"`r`n"+$engineMessage
+    $summary=$(if($qspHash-eq $manifest.Qsp.Hash){'jack.qsp는 이미 이 패치의 파일입니다.'}else{'jack.qsp를 이 패치의 파일로 교체합니다.'})+' 쓸 파일 '+$plan.Count+'개.'+"`r`n"+$engineMessage
     if($fix6-eq 'possible'){$summary+="`r`nFIX6 설치본을 먼저 FIX6 이전 상태로 되돌린 뒤 적용합니다."}
     if($Mode-eq 'Check'){
         $msg='CHECK: 게임 파일을 바꾸지 않았습니다.'+"`r`n"+$summary+"`r`n`r`n"+$OrderNote

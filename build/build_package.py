@@ -21,7 +21,7 @@ from qsp_dump import read_locations  # noqa: E402
 PACKAGE = 'JO9_UI_SNKMOD'
 VERSION = 'R3'
 NAME = f'JO9_UI_v1_9_14_SNKmod_{VERSION}'
-RELEASE_VERSION = '0.11'  # 배포판(--release) 버전
+RELEASE_VERSION = '0.12'  # 배포판(--release) 버전
 FIX6_SHA = '254dc8c5cce2c9f5442f34b6de0cdbb029893eb544c76635d76b8b2e2fc0bc82'
 FIX6_FINAL_QSP = '953533402226c874f1d22a9023da4d235bd512b61c2fc30f028465226f49b6d9'
 MODDER_DIRS = {'grimdark', 'approved_main_v1', 'jo9_v197', 'jon-uiadds'}
@@ -37,6 +37,32 @@ SNK_REF = re.compile(r"content[\\/]pic[\\/]SNKmod[\\/]([^\"'<>()]+?\.(?:png|jpg|
 
 def sha(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
+
+
+def build_full_qsp(base: bytes, patches: list) -> bytes:
+    """기준 jack.qsp에 패치 본문을 넣고 신규 location을 붙인 완성본을 만든다 (설치기는 이 파일로 교체만 한다)."""
+    dec = lambda s: ''.join(chr((ord(c) + 5) & 0xFFFF) for c in s)
+    enc = lambda s: ''.join(chr((ord(c) - 5) & 0xFFFF) for c in s)
+    f = base.decode('utf-16-le').split('\r\n')
+    n = int(dec(f[3]))
+    at, body_at = 4, {}
+    for _ in range(n):
+        body_at[dec(f[at])] = at + 2
+        at += 4 + int(dec(f[at + 3])) * 3
+    new = []
+    for p in patches:
+        if p['Name'] in body_at:
+            f[body_at[p['Name']]] = enc(p['Text'])
+        else:
+            new.append(p)
+    tail = f[at:]
+    f = f[:at]
+    for p in new:
+        f += [enc(p['Name']), '', enc(p['Text']), enc('0')]
+    f[3] = enc(str(n + len(new)))
+    # 헤더는 사용자가 게임에서 정상 동작을 확인한 jack.qsp와 같은 값으로 쓴다.
+    f[1] = '0.1.1'
+    return '\r\n'.join(f + tail).encode('utf-16-le')
 
 
 def norm(p: str) -> str:
@@ -301,6 +327,8 @@ def main() -> int:
     (pay / 'css/base.css').write_bytes(css_new.encode('utf-8'))
     (pay / 'json').mkdir(parents=True)
     (pay / 'json/menu_icon.json').write_bytes(menu_new.encode('utf-8'))
+    full_qsp = build_full_qsp(vanilla_bytes if args.release else qsp_bytes, patches)
+    (pay / 'jack.qsp').write_bytes(full_qsp)
     (pay / 'engine').mkdir(parents=True)
     (pay / 'engine/jack.exe').write_bytes(src['payload/engine/jack.exe'])
 
@@ -308,7 +336,6 @@ def main() -> int:
         (out / name).write_text(json.dumps(obj, ensure_ascii=False, indent=1), encoding='utf-8')
 
     dump('qsp-patches.json', patches)
-    dump('path-rules.json', path_rules)
 
     ui_map = []
     for dest, info in images.items():
@@ -324,6 +351,9 @@ def main() -> int:
     manifest = OrderedDict(
         Package='JO9 UI_overhaul_SNKmod' if args.release else PACKAGE, Version=RELEASE_VERSION if args.release else VERSION + ('-private-room-test13-birth' if args.private_room else ''), GameVersion=fmanifest['GameVersion'],
         Images=img_entries,
+        # jack.qsp 완성본: 설치기는 원본을 보관한 뒤 이 파일로 교체한다. Before는 알려진 원본(순정·FIX6).
+        Qsp={'Rel': 'jack.qsp', 'Source': 'payload/jack.qsp', 'Hash': sha(full_qsp),
+             'Before': ([sha(vanilla_bytes)] if args.release else []) + [FIX6_FINAL_QSP]},
         Overwrite=[
             {'Rel': 'css/base.css', 'Source': 'payload/css/base.css', 'Hash': sha(css_new.encode('utf-8')),
              'Before': fmanifest['CssBefore'] + [sha(css.encode('utf-8'))]},
@@ -348,7 +378,6 @@ def main() -> int:
     for f in ['Install.ps1', 'APPLY.cmd', 'CHECK.cmd', 'RESTORE.cmd', 'README_KR.txt']:
         if (REPO / 'installer' / f).exists():
             shutil.copy2(REPO / 'installer' / f, out / f)
-    (out / 'PanelCodec.cs').write_bytes(src['PanelCodec.cs'])
     if args.private_room:
         shutil.copy2(REPO / 'build/private_room/README_TEST10_KR.txt', out / 'README_KR.txt')
     if args.release:
@@ -358,7 +387,7 @@ def main() -> int:
         installer_text = installer_text.replace("$Title='JO9 UI SNKmod'", "$Title='JO9 UI_overhaul_SNKmod " + RELEASE_VERSION + "'")
         installer_path.write_text(installer_text, encoding='utf-8-sig')
     # 설치기·안내문도 무결성 목록에 넣는다.
-    for f in ['Install.ps1', 'APPLY.cmd', 'CHECK.cmd', 'RESTORE.cmd', 'README_KR.txt', 'PanelCodec.cs']:
+    for f in ['Install.ps1', 'APPLY.cmd', 'CHECK.cmd', 'RESTORE.cmd', 'README_KR.txt']:
         if (out / f).exists():
             payload.append({'Rel': f, 'Hash': sha((out / f).read_bytes())})
     manifest['Payload'] = payload

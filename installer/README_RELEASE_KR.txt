@@ -1,5 +1,5 @@
 ﻿JO9 UI_overhaul_SNKmod
-버전 0.11
+버전 0.12
 
 Jack-o-nine-tails 2.3.2.5 한국어판용 UI 패치입니다.
 메인 UI와 개인실 UI, 개인실 식단·착유·출산 연결을 포함한 누적 배포본입니다.
@@ -23,7 +23,10 @@ UI 패치 설치 후 다른 패치를 설치했다면 APPLY.cmd를 다시 실행
 
 [파일과 복원]
 - UI 이미지는 game/content/pic/SNKmod에 설치합니다.
-- jack.qsp, css/base.css, json/menu_icon.json과 조건에 맞는 engine/jack.exe를 적용합니다.
+- jack.qsp는 패치에 든 완성본(payload/jack.qsp)으로 교체합니다.
+  교체 전 원본은 game/_JO9_SNKmod_STATE/<설치 시각>/original/jack.qsp에 보관합니다.
+- css/base.css, json/menu_icon.json과 조건에 맞는 engine/jack.exe도 같은 방식으로 교체·보관합니다.
+- 설치기는 Windows 기본 PowerShell로 실행되며 Python 등 별도 프로그램이 필요 없습니다.
 - 캐릭터·일반 배경 원본 이미지와 세이브는 수정하지 않습니다.
 - CHECK.cmd: 설치 계획 확인.
 - RESTORE.cmd: 설치 기록에 따라 변경 파일을 설치 전 상태로 복원.
