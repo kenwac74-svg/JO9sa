@@ -393,3 +393,5 @@
   - 순정에 정상판이 있는 `_gray` 8개: agraba_gray, cum_gray, elisabet_gray, futaland_tower_gray, left hand_gray, over the shoulder_gray, right hand_gray, sabrina_2_gray.
   - 순정에 짝이 없는 4개: agraba_poor2, agraba_poor2_gray, farm_shop, kamasutra.
   - 사용처(FIX6 상태 jack.qsp 정적 검색): `$menu_item_cum_gray`만 #sex_options·#sex_options_woman에서 쓴다. 나머지 11개 키는 정적 참조가 없다. 0.1·순정 QSP와 동적 조립 경로는 아직 확인하지 않았다.
+- 사용자 지시 (2026-09-28): cum_gray는 cum.png를 회색 처리해 넣는다. 누락 목록은 별도 문서로 저장한다 → `docs/MISSING_MENU_ICONS.md`. 화면 코드 확인은 QSP뿐 아니라 제공 ZIP의 내용(qsrc·json·css·txt)까지 함께 본다.
+- ref.zip 전수 검색 결과도 같다. 12개 키 중 `menu_item_cum_gray`만 #sex_options·#sex_options_woman(각 4곳)에서 쓰인다. 키를 동적으로 조립하는 코드는 없다.
