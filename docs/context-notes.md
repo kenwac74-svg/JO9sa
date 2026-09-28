@@ -490,4 +490,12 @@
   - manifest `Qsp` {Hash, Before=[순정, FIX6 FinalQsp]}. 설치기는 원본을 `_JO9_SNKmod_STATE/<시각>/original/jack.qsp`에 보관하고 교체만 한다. `PanelCodec.cs`·`path-rules.json`은 패키지에서 뺐다. `qsp-patches.json`은 검사용 기록으로 남긴다.
   - 설치 후 파일이 이 패키지 파일과 같은 내용이면 "다른 모드 변경"으로 보지 않는다 (사용자가 수동으로 패치 QSP를 넣은 경우에도 RESTORE가 순정으로 돌아가도록).
 - 검사: test_installer 58/58 (빌드본·ZIP 해제본), 개인실 WASM 4종·정적 13개 통과, 참조 분류 이상 없음. 순정에 새로 설치·0.11 위 업그레이드·수동 교체 후 업그레이드 모두 RESTORE 시 순정 QSP(070dad…)로 복원 확인.
-- 산출물: `releases/JO9 UI_overhaul_SNKmod_0.12.zip` (16,053,089 B, 압축 저장, SHA-256 e34477c0…). 버전명 0.12는 임시로 정했다.
+- 산출물: `releases/JO9 UI_overhaul_SNKmod_0.12.zip` (16,050,715 B, 압축 저장, SHA-256 cc6daaef…). 버전명 0.12는 임시로 정했다.
+
+### 예전 흔적 메시지 제거 (2026-09-28, 사용자 지시)
+- 지시: "FIX6 교체 이미지 1개가 … 백업이 없습니다" 같은 지난 흔적 메시지를 모두 지운다.
+- FIX6 전환 기능(`TransitionFromFix6`)과 관련 메시지·manifest `Fix6` 항목을 없앴다. 순정 기준 독립 설치형이라 필요 없다. 예전 FIX6 백업 폴더는 건드리지 않는다.
+- "이전 SNKmod 설치(x)가 있어 먼저 되돌립니다"는 경고가 아니라 요약 한 줄("이전 SNKmod UI 설치(x)를 정리하고 새로 설치합니다")로 바꿨다.
+- Check 모드에서 이전 설치가 쓴 파일을 "순정과 다름"으로 잘못 경고하지 않도록, 이전 설치 기록의 After 해시는 호환성 경고에서 제외한다.
+- README의 [기존 설치본] 절을 [업데이트]로 정리했다.
+- 검사: test_installer 58/58 (C 항목을 "FIX6 흔적 메시지 없음·FIX6 백업 폴더 불변"으로 교체), 개인실 검사 통과.
