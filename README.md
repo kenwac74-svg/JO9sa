@@ -1,3 +1,5 @@
+> **최종 인계 시작점:** [0.1 전체 인계 색인](docs/PATCH_0_1_MASTER_HANDOFF_KR.md) — 구성·정책·빌드·검수·미해결 과제·원문 이력.
+
 > 인수 시 먼저 [최종 리소스 분류 기준](docs/FINAL_RESOURCE_CLASSIFICATION_KR.md)을 읽으세요.
 
 # JO9 UI_overhaul_SNKmod 0.1 인계
