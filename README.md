@@ -1,3 +1,5 @@
+> 인수 시 먼저 [최종 리소스 분류 기준](docs/FINAL_RESOURCE_CLASSIFICATION_KR.md)을 읽으세요.
+
 # JO9 UI_overhaul_SNKmod 0.1 인계
 
 최신 소스와 배포본, Codex 작업 이력을 보관한 인계 브랜치입니다.

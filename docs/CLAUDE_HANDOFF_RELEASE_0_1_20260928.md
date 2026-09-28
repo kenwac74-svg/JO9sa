@@ -1,3 +1,5 @@
+> 최종 분류 기준은 [FINAL_RESOURCE_CLASSIFICATION_KR.md](FINAL_RESOURCE_CLASSIFICATION_KR.md)가 우선합니다. 147개 전체를 UI 누락으로 확정하지 않으며 이미지팩 작업분은 제외합니다.
+
 > 정정: 후속 검사에서 원본 경로 의존 및 패키지 미포함 변경 이미지 147개를 확인했습니다. audits/LEGACY_RESOURCE_DEPENDENCY_KR.md의 최신 진단을 우선합니다. 기존 패키지 목록 간 비교만으로 리소스 누락이 없다고 판단할 수 없습니다.
 
 > 최신 추가 진단: [누적 리소스/실행 QSP 검사](../audits/CUMULATIVE_RELEASE_DIAGNOSIS_KR.md). 0.1 설치 후 JO9O의 QSP가 설치 결과와 달라진 문제는 미해결이다. 기존 검사 통과를 런처 실행까지 보장한 것으로 해석하지 말 것.
