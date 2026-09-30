@@ -525,3 +525,15 @@
 - 검사: 새 `tests/test_equipment_tooltip.cjs`(WASM으로 패키지 jack.qsp의 #dynamic 실행 후 보조 코드 호출, 태그 정리·따옴표 처리 확인) 통과. test_private_room의 #dynamic 불변 검사는 기준본에 같은 툴팁 치환을 적용해 비교하도록 바꿨다(13/13). test_installer 58/58, 개인실 WASM 4종 통과.
 - README.html에 "4. 장비 설명 툴팁" 절 추가.
 - 산출물: `releases/JO9 UI_overhaul_SNKmod_0.12.zip` (18,642,667 B, SHA-256 c65c9c09…), payload/jack.qsp SHA b1ee13de…. 인게임 확인 전.
+
+### 쿠라 개인 패치 병합 (2026-09-30, 사용자 지시)
+- 출처: 툴팁 테스트 QSP의 기준(사용자 현재 jack.qsp, "JO9 Kura Personal Patch v0.3"). 순정과 다른 9곳 중 5곳(sjm_UI_UIadds·main_screen·slave_stat·city_screen·#food_base)은 FIX6 UI 본문과 같아 제외. 쿠라 변경은 4곳이다.
+  - main_menu: "일반 시작"이 hero_customization_man으로 감 (순정에 있는 location).
+  - init_custom_game: 커스텀 주인공 남성 고정 (`hero_choice = 1`).
+  - #masters_base: 13번 주인공 에드워드 → 쿠라 (설명·난이도·능력치·장비·물약·스파크 20000·세르피스 우호 3 등).
+  - #dynamic: 주인공 선택 범위를 18까지로, 13번은 뱀자리 구역(serpis_house)에서 시작.
+- 구현: `resources/kura/kura_personal_patch.json` (13개 묶음, 앞뒤 한 줄 문맥 포함, 같은 묶음이 여러 번 나오면 순정 기준 Occurrence). 릴리스 빌드가 툴팁 다음에 적용하고, UI 패치 본문에서 묶음 등장 횟수가 순정과 다르면 빌드를 멈춘다.
+- 확인: 순정에 적용한 결과가 쿠라 QSP(툴팁 제외)와 4곳 모두 동일. 패키지 결과는 UI 패치의 개인실 연결 줄만 다르다.
+- 검사: 새 `tests/test_kura_patch.cjs`(WASM에서 #masters_base 실행 후 13번 설정 실행: 이름·스파크·능력치·복장·세르피스 우호) 통과. test_private_room의 #dynamic 비교는 기준본에 쿠라 묶음도 적용해 비교(13/13). test_installer 58/58, 나머지 WASM 검사 통과.
+- README.html에 "5. 새 주인공 쿠라" 절 추가. 기존 세이브 영향은 확인하지 않아 쓰지 않았다(#masters_base는 refresh_database에서도 호출됨).
+- 산출물: `releases/JO9 UI_overhaul_SNKmod_0.12.zip` (18,643,714 B, SHA-256 028df365…), payload/jack.qsp SHA f185c2a7…. 인게임 확인 전.

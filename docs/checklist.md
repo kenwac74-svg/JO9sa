@@ -29,6 +29,8 @@
 - [x] 배포용 README.html(스크린샷 포함) 추가.
 - [x] 장비 툴팁 강화 통합 (#dynamic 380줄, Kura 변경 제외).
 - [ ] 인게임에서 장비 툴팁 표시 확인.
+- [x] 쿠라 개인 패치 병합 (main_menu·init_custom_game·#masters_base·#dynamic).
+- [ ] 인게임에서 새 게임 13번 쿠라 시작 확인.
 - [ ] 사용자 Windows에서 0.12 APPLY 후 정상 화면 확인.
 
 ## 0.11 완료 내역
