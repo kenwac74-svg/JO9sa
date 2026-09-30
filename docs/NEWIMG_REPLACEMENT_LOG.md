@@ -231,10 +231,10 @@
 | 89 | `game/content/pic/characters/realtor.png` | 269,384 / 795×596 / `4dc1eb6b6d175c6e…` | 312,919 / 795×596 / `ccff9ca6df5aaf00…` | 저장 | 2026-09-28 | 백색도시_부동산사무소. 승인(배포 지시, 2026-09-28). `staging/pic/`에 보관 |
 | 90 | `game/content/pic/ui overhaul/speak to the manager.png` | 10,442 / 59×66 / `2fa35b02255d1562…` | 9,305 / 59×66 / `e2fca19828a8c47e…` | 저장 | 2026-09-28 | 백색도시_부동산사무소. 승인(배포 지시, 2026-09-28). `staging/pic/`에 보관. 기준 ZIP 폴더명 `ui overhau` → `ui overhaul`로 대조 |
 | 91 | `game/content/pic/ui overhaul/speak to the manager_gray.png` | 5,510 / 59×66 / `cd140d471e86bf64…` | 5,450 / 59×66 / `83f99d5abaafb58a…` | 저장 | 2026-09-28 | 백색도시_부동산사무소. 승인(배포 지시, 2026-09-28). `staging/pic/`에 보관. 기준 ZIP 폴더명 `ui overhau` → `ui overhaul`로 대조 |
-| 92 | `game/content/pic/bg/vampire_hunter.png` | 830,454 / 795×596 / `d9d2c02a50c7c743…` | 766,751 / 795×596 / `9c5c2a5f36397561…` | 저장 | 2026-09-30 | 뱀파이어 헌터. 승인(패치 추가 지시, 2026-09-30). `staging/pic/`에 보관 |
-| 93 | `game/content/pic/characters/vampire_hunter.png` | 707,561 / 795×596 / `d7563d4a72ea9c56…` | 251,580 / 795×596 / `20c3642838079b09…` | 저장 | 2026-09-30 | 뱀파이어 헌터. 승인(패치 추가 지시, 2026-09-30). `staging/pic/`에 보관 |
-| 94 | `game/content/pic/ui overhaul/vampire_hunter.png` | 43,975 / 59×66 / `2b64e319e20721be…` | 9,297 / 59×66 / `7125e3c9beb7a566…` | 저장 | 2026-09-30 | 뱀파이어 헌터. 승인(패치 추가 지시, 2026-09-30). `staging/pic/`에 보관 |
-| 95 | `game/content/pic/ui overhaul/vampire_hunter_gray.png` | 42,982 / 59×66 / `b4c6414cb9c5694f…` | 6,727 / 59×66 / `585e41b69068050d…` | 저장 | 2026-09-30 | 뱀파이어 헌터. 승인(패치 추가 지시, 2026-09-30). `staging/pic/`에 보관 |
+| 92 | `game/content/pic/bg/vampire_hunter.png` | 830,454 / 795×596 / `d9d2c02a50c7c743…` | 766,751 / 795×596 / `9c5c2a5f36397561…` | 저장 | 2026-09-30 | 황소구역_흡혈귀 사냥꾼. 승인(패치 추가 지시, 2026-09-30). `staging/pic/`에 보관 |
+| 93 | `game/content/pic/characters/vampire_hunter.png` | 707,561 / 795×596 / `d7563d4a72ea9c56…` | 251,580 / 795×596 / `20c3642838079b09…` | 저장 | 2026-09-30 | 황소구역_흡혈귀 사냥꾼. 승인(패치 추가 지시, 2026-09-30). `staging/pic/`에 보관 |
+| 94 | `game/content/pic/ui overhaul/vampire_hunter.png` | 43,975 / 59×66 / `2b64e319e20721be…` | 9,297 / 59×66 / `7125e3c9beb7a566…` | 저장 | 2026-09-30 | 황소구역_흡혈귀 사냥꾼. 승인(패치 추가 지시, 2026-09-30). `staging/pic/`에 보관 |
+| 95 | `game/content/pic/ui overhaul/vampire_hunter_gray.png` | 42,982 / 59×66 / `b4c6414cb9c5694f…` | 6,727 / 59×66 / `585e41b69068050d…` | 저장 | 2026-09-30 | 황소구역_흡혈귀 사냥꾼. 승인(패치 추가 지시, 2026-09-30). `staging/pic/`에 보관 |
 | 96 | `game/content/pic/characters/maslab.png` | 752,397 / 795×596 / `31524e150ac40c06…` | 314,392 / 795×596 / `318ca7d069c811e1…` | 저장 | 2026-09-30 | 동부구역_아그라바 관문. 승인(패치 추가 지시, 2026-09-30). `staging/pic/`에 보관 |
 | 97 | `game/content/pic/ui overhaul/maslab.png` | 68,145 / 59×66 / `3540cc1ac78e2a1f…` | 8,709 / 59×66 / `93cc41d80f3f250e…` | 저장 | 2026-09-30 | 동부구역_아그라바 관문. 승인(패치 추가 지시, 2026-09-30). `staging/pic/`에 보관 |
 | 98 | `game/content/pic/ui overhaul/maslab_gray.png` | 67,154 / 59×66 / `2acbb1289b546105…` | 6,446 / 59×66 / `c8a18281de8be396…` | 저장 | 2026-09-30 | 동부구역_아그라바 관문. 승인(패치 추가 지시, 2026-09-30). `staging/pic/`에 보관 |
@@ -340,12 +340,12 @@
 
 | 받은 ZIP | 크기 · SHA-256 | 구성 | 대조 결과 |
 |---|---|---|---|
-| A | 1,035,569 bytes, `e07489b44b995a2ce5b22bb7f6f4dd937400fc88fdcb6985b14b59c3034fe767` | PNG 4개 | 모두 신규(뱀파이어 헌터: `bg` 1, `characters` 1, `ui overhaul` 2) |
-| B | 2,547,644 bytes, `313615bdc9ef73a10ab3aceafeb7b5c3ef12e4b0de089bbf91362b7e1ba476ae` | PNG 24개 | 21개는 이미 반영된 아그라바 관문 파일과 바이트 동일(건너뜀). 신규 3개(`characters/maslab.png`, `ui overhaul/maslab.png`, `maslab_gray.png`) |
+| A (`황소구역_흡혈귀 사냥꾼`) | 1,035,569 bytes, `e07489b44b995a2ce5b22bb7f6f4dd937400fc88fdcb6985b14b59c3034fe767` | PNG 4개 | 모두 신규(흡혈귀 사냥꾼: `bg` 1, `characters` 1, `ui overhaul` 2) |
+| B (`동부구역_아그라바 관문`) | 2,547,644 bytes, `313615bdc9ef73a10ab3aceafeb7b5c3ef12e4b0de089bbf91362b7e1ba476ae` | PNG 24개 | 21개는 이미 반영된 아그라바 관문 파일과 바이트 동일(건너뜀). 신규 3개(`characters/maslab.png`, `ui overhaul/maslab.png`, `maslab_gray.png`) |
 
 - 경로 대조: 신규 7개 모두 `JO9main`에 같은 경로·같은 파일명(대소문자 포함)의 원본이 있다. 형식(PNG)과 사이즈(795×596, 59×66)도 모두 원본과 같다.
 - 검사: 25개 모두 PNG 서명, 청크 CRC, 픽셀 데이터 압축 해제 통과. 움직이는 PNG 없음.
-- 그룹: maslab 3개는 같은 ZIP의 나머지 파일과 같은 `동부구역_아그라바 관문`으로 묶었다. 뱀파이어 헌터 4개는 ZIP 이름이 깨져 용도 폴더명을 알 수 없어 `뱀파이어 헌터`로 임시 기록했다.
+- 그룹: 사용자가 알려 준 용도 이름으로 기록했다. A는 `황소구역_흡혈귀 사냥꾼`, B는 `동부구역_아그라바 관문`이다(2026-09-30 사용자 확인). 처음에는 ZIP 이름이 깨져 A를 `뱀파이어 헌터`로 임시 기록했다가 고쳤다.
 - 승인: 사용자의 "패치에 추가하라" 지시를 승인으로 처리했다. 패키징 기준 ZIP은 `v2` 그대로이고, 이번 파일은 `staging/pic/`에 바로 합쳤다.
 
 배포 ZIP v3는 다음과 같다.
@@ -357,4 +357,3 @@
 ## 미결 사항
 
 - 기준 ZIP v2의 폴더 구조(`pic/` 누락, `ui overhau` 오타)를 사용자가 원본 쪽에서 고칠지. 배포물에는 영향 없음.
-- 뱀파이어 헌터 4개의 용도 폴더(그룹) 이름. ZIP 이름이 깨져 `뱀파이어 헌터`로 임시 기록했다.

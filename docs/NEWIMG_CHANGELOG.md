@@ -13,7 +13,7 @@
 
 - 파일: `JO9_NewImg_Pack_v3.zip`, 98개, 28,526,934 bytes, SHA-256 `8dac6b18c9a72011f67a09a14e280bac607cdf6cf1913118dad88e338af1bb47`
 - 추가 7개
-  - 뱀파이어 헌터: `pic/bg/vampire_hunter.png`, `pic/characters/vampire_hunter.png`, `pic/ui overhaul/vampire_hunter.png`, `pic/ui overhaul/vampire_hunter_gray.png`
+  - 황소구역 흡혈귀 사냥꾼: `pic/bg/vampire_hunter.png`, `pic/characters/vampire_hunter.png`, `pic/ui overhaul/vampire_hunter.png`, `pic/ui overhaul/vampire_hunter_gray.png`
   - 동부구역 아그라바 관문: `pic/characters/maslab.png`, `pic/ui overhaul/maslab.png`, `pic/ui overhaul/maslab_gray.png`
 - 변경·삭제: 없음. v2의 91개는 그대로다.
 
