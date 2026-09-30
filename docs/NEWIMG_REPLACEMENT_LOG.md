@@ -354,6 +354,12 @@
 - 내용: `staging/pic/` 전체 98개(v2의 91개 + 신규 7개). 최상위 `pic/`, 파일명 UTF-8. 카탈로그 98개 항목과 파일 목록 일치, ZIP 안 각 파일이 `staging`과 바이트 동일, v2 파일을 모두 포함함을 확인했다. ZIP CRC 검사 통과.
 - 상태: 저장. 게임 설치·실행 검증은 하지 않았다.
 
+비교 HTML v3는 다음과 같다.
+
+- 파일: `compare/JO9_NewImg_Compare_v3.html` (663,154 bytes, SHA-256 `861e31b9dbf0ede2e7fe8db4a3909056a8a901a659ae972d30b91d729c96b57a`)
+- 내용: 이번에 새로 추가된 7개 중 큰 이미지 3개만 비교한다(아그라바 관문 `characters/maslab.png` 1, 흡혈귀 사냥꾼 `bg/vampire_hunter.png`·`characters/vampire_hunter.png` 2). 작은 아이콘 4개는 사용자 지시에 따라 생략했다.
+- 확인: Chromium에서 이미지 6장 표시, 스크립트 오류 없음, 휴대폰 폭(390px)에서 가로 스크롤 없음.
+
 ## 미결 사항
 
 - 기준 ZIP v2의 폴더 구조(`pic/` 누락, `ui overhau` 오타)를 사용자가 원본 쪽에서 고칠지. 배포물에는 영향 없음.
