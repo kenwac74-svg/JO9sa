@@ -281,6 +281,30 @@ def main() -> int:
         target_patch['After'] = sha(text.encode('utf-8'))
         target_patch['Text'] = text
         final_texts[tip['Location']] = text
+        # 쿠라 개인 패치: 앞뒤 한 줄을 포함한 줄 묶음을 바꾼다. 같은 묶음이 여러 번 나오면 순정 기준 몇 번째인지로 찾는다.
+        kura = json.loads((REPO / 'resources/kura/kura_personal_patch.json').read_text(encoding='utf-8'))
+
+        def block_starts(lines, block):
+            return [i for i in range(len(lines) - len(block) + 1) if lines[i:i + len(block)] == block]
+
+        for loc in dict.fromkeys(h['Location'] for h in kura['Hunks']):
+            target_patch = by_name[loc]
+            eol = '\r\n' if '\r\n' in target_patch['Text'] else '\n'
+            lines = target_patch['Text'].split(eol)
+            vanilla_lines = vanilla[loc].replace('\r\n', '\n').split('\n')
+            edits = []
+            for h in (h for h in kura['Hunks'] if h['Location'] == loc):
+                found = block_starts(lines, h['Old'])
+                if len(found) != len(block_starts(vanilla_lines, h['Old'])):
+                    raise SystemExit(f'Kura patch: {loc} block count differs from vanilla: ' + h['Old'][0][:60])
+                edits.append((found[h['Occurrence']], h))
+            for start, h in sorted(edits, key=lambda e: -e[0]):
+                lines[start:start + len(h['Old'])] = h['New']
+            text = eol.join(lines)
+            target_patch['Before'] = list(dict.fromkeys(target_patch['Before'] + [target_patch['After']]))
+            target_patch['After'] = sha(text.encode('utf-8'))
+            target_patch['Text'] = text
+            final_texts[loc] = text
     final_texts['[css/base.css]'] = css_new
     final_texts['[json/menu_icon.json]'] = menu_new
     lower_images = {k.lower() for k in images}

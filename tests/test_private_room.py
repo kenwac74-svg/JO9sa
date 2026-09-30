@@ -168,11 +168,19 @@ class PrivateRoomTests(unittest.TestCase):
         for name in ['#txt_man','#txt_woman']:
             self.assertIn("$slave_sleep_condition[5] = '<br> 그녀만을", bodies[name])
         # No game logic edits below the entry guard in these shared routines.
-        # #dynamic은 장비 툴팁 강화(resources/tooltip)만 추가로 허용한다: 기준본에 같은 변경을 적용해 비교.
+        # #dynamic은 장비 툴팁(resources/tooltip)과 쿠라 개인 패치(resources/kura)만 추가로 허용한다: 기준본에 같은 변경을 적용해 비교.
         tip = json.loads((REPO/'resources/tooltip/dynamic_tooltip.json').read_text(encoding='utf-8'))
+        kura = json.loads((REPO/'resources/kura/kura_personal_patch.json').read_text(encoding='utf-8'))
         new_for = {r['Old']: r['New'] for r in tip['Replacements']}
+        def with_kura(name, text):
+            lines = text.split('\n')
+            starts = lambda b: [i for i in range(len(lines) - len(b) + 1) if lines[i:i + len(b)] == b]
+            edits = [(starts(h['Old'])[h['Occurrence']], h) for h in kura['Hunks'] if h['Location'] == name]
+            for s, h in sorted(edits, key=lambda e: -e[0]):
+                lines[s:s + len(h['Old'])] = h['New']
+            return '\n'.join(lines)
         for name in ['interaction_result','#dynamic','#static_base','sex_initiate','sex_end']:
-            expected = baseline[name].replace('\r\n','\n')
+            expected = with_kura(name, baseline[name].replace('\r\n','\n'))
             if name == tip['Location']:
                 expected = '\n'.join(x for line in expected.split('\n') for x in new_for.get(line, [line]))
             self.assertEqual(bodies[name].split('\n',1)[1].replace('\r\n','\n'), expected)
