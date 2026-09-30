@@ -537,3 +537,13 @@
 - 검사: 새 `tests/test_kura_patch.cjs`(WASM에서 #masters_base 실행 후 13번 설정 실행: 이름·스파크·능력치·복장·세르피스 우호) 통과. test_private_room의 #dynamic 비교는 기준본에 쿠라 묶음도 적용해 비교(13/13). test_installer 58/58, 나머지 WASM 검사 통과.
 - README.html에 "5. 새 주인공 쿠라" 절 추가. 기존 세이브 영향은 확인하지 않아 쓰지 않았다(#masters_base는 refresh_database에서도 호출됨).
 - 산출물: `releases/JO9 UI_overhaul_SNKmod_0.12.zip` (18,643,714 B, SHA-256 028df365…), payload/jack.qsp SHA f185c2a7…. 인게임 확인 전.
+
+### 쿠라 개인 패치 v0.3 원본 ZIP 대조 (2026-09-30)
+- 입력: `JO9_Kura_PersonalPatch_v0.3_2.zip` (jack.qsp, 초상화 2개, README, 변경 diff, 원본 텍스트).
+- jack.qsp(SHA dd079836…)는 툴팁 테스트의 기준 파일과 같다. 쿠라만의 변경 4곳(main_menu·init_custom_game·#masters_base·#dynamic)이 패키지에 모두 들어 있음을 확인(개인실 연결 줄과 툴팁을 빼면 동일).
+- 빠져 있던 것: 초상화 `content/pic/master/master_edward.png`, `master_edward_sepia.png`. 쿠라 패치는 순정 에드워드 초상화를 쿠라 그림(150×150, 두 파일 동일 내용 SHA 73323a81…)으로 덮어쓰는 방식이다.
+- 반영: 순정 파일은 두고 `content/pic/SNKmod/master/master_kura.png`, `master_kura_sepia.png`로 설치 (resources/new + extra + rename). 참조 3곳(hero_customization_man 1, #masters_base 2)이 SNKmod 경로로 바뀐다.
+- 빌드 수정: 이미지 경로 전환이 쿠라 병합보다 먼저 일어나 기준 줄이 달라지므로, 쿠라 묶음(Old/New)과 순정 비교 줄에도 같은 경로 전환을 적용한 뒤 찾는다.
+- 검사: test_kura_patch에 초상화 경로 확인 추가, 모든 검사 통과. 참조 분류: 두 초상화가 SNKMOD_RENAMED_CHANGED로 분류.
+- 참고: 쿠라 패치의 세피아 초상화는 컬러판과 같은 그림이다 (원본 그대로 반영).
+- 산출물: `releases/JO9 UI_overhaul_SNKmod_0.12.zip` (18,718,762 B, SHA-256 4928bfd2…). 인게임 확인 전.
