@@ -246,7 +246,7 @@ try {
         if(-not [IO.File]::Exists($t)){Warn ($ow.Rel+' 파일이 없어 건너뜁니다.');continue}
         $h=Hash $t
         if($h-eq $ow.Hash){continue}
-        if($ow.Before -notcontains $h){Warn ('알려지지 않은 '+$ow.Rel+'('+$h+')를 SNKmod UI용 파일로 교체합니다. 원본은 복구용으로 보관합니다.')}
+        if((-not $ow.AllowAnyBefore)-and $ow.Before -notcontains $h){Warn ('알려지지 않은 '+$ow.Rel+'('+$h+')를 SNKmod UI용 파일로 교체합니다. 원본은 복구용으로 보관합니다.')}
         $plan.Add([pscustomobject]@{Rel=$ow.Rel;Data=[IO.File]::ReadAllBytes((SafePath $Root $ow.Source))})
     }
 
