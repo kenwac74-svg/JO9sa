@@ -283,6 +283,10 @@ def main() -> int:
         final_texts[tip['Location']] = text
         # 쿠라 개인 패치: 앞뒤 한 줄을 포함한 줄 묶음을 바꾼다. 같은 묶음이 여러 번 나오면 순정 기준 몇 번째인지로 찾는다.
         kura = json.loads((REPO / 'resources/kura/kura_personal_patch.json').read_text(encoding='utf-8'))
+        # 쿠라 묶음에도 이미지 경로 전환(SNKmod)을 똑같이 적용해 본문과 맞춘다.
+        conv = lambda block: [apply(line, list(OrderedDict.fromkeys(rules_for(line)))) for line in block]
+        for h in kura['Hunks']:
+            h['Old'], h['New'] = conv(h['Old']), conv(h['New'])
 
         def block_starts(lines, block):
             return [i for i in range(len(lines) - len(block) + 1) if lines[i:i + len(block)] == block]
@@ -291,7 +295,7 @@ def main() -> int:
             target_patch = by_name[loc]
             eol = '\r\n' if '\r\n' in target_patch['Text'] else '\n'
             lines = target_patch['Text'].split(eol)
-            vanilla_lines = vanilla[loc].replace('\r\n', '\n').split('\n')
+            vanilla_lines = conv(vanilla[loc].replace('\r\n', '\n').split('\n'))
             edits = []
             for h in (h for h in kura['Hunks'] if h['Location'] == loc):
                 found = block_starts(lines, h['Old'])
