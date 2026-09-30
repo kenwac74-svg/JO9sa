@@ -6,11 +6,13 @@
 - [x] 지정 브랜치 `claude/lucid-ramanujan-2821xz`에서 시작
 - [x] 기획서를 `docs/text-workshop/HANDOFF_PLAN_v0.1.md`로 저장소에 보관
 - [x] 저장소 현황 조사 (Image Workshop 소스·QSRC 없음 확인)
-- [ ] 사용자에게 입력 자료 요청 (context-notes.md 미해결 질문 참조)
+- [x] 사용자에게 입력 자료 요청 → QSRC zip, Image Workshop zip 수신, 서버 전용·Python 불필요 결정
 
 ## 조사 (자료 수신 후)
-- [ ] Image Workshop 구조 파악 (진입, Show HTML, 서버, 백업/롤백)
-- [ ] QSRC 텍스트 구조·언어 구성 샘플 조사 (기획 §40)
+- [x] Image Workshop 구조 파악: 진입·Show HTML·서버 (백업/롤백 상세는 설치 스크립트·HTML 추가 조사 필요)
+- [x] QSRC 텍스트 구조·언어 구성 샘플 조사 (기획 §40): 한글, 인라인 HTML+`<<변수>>`
+- [ ] 실제 `jack.qsp` 형식 확인 (실물 대기)
+- [ ] 엔진 메뉴 진입 방식 결정
 
 ## 구현
 - [ ] QSRC 파서·인덱서
