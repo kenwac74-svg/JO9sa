@@ -263,6 +263,10 @@ try {
                 $script:LastPoll = [DateTime]::UtcNow
                 Send-Json $Stream 200 @{ ok = $true }
             }
+            elseif ($Path -eq '/api/status') {
+                $Age = if ($script:LastPoll -eq [DateTime]::MinValue) { 999999 } else { ([DateTime]::UtcNow - $script:LastPoll).TotalSeconds }
+                Send-Json $Stream 200 @{ alive = $true; clientActive = ($Age -lt 8); port = $ActualPort }
+            }
             elseif ($Path -eq '/api/state') {
                 $script:LastPoll = [DateTime]::UtcNow
                 $has = Test-Path -LiteralPath $QspFile
