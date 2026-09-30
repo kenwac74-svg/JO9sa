@@ -513,3 +513,15 @@
 - 스크린샷은 사용자 제공(메인 화면, 개인실 식사 설정) → `installer/README_images/main.png`, `private_room.png`. 빌드가 README.html과 README_images를 패키지 루트에 복사한다.
 - 설치기 메시지도 같은 원칙으로 줄였다: 확인 창·CHECK는 [꼭 읽어 주세요] 안내만, 완료는 "설치가 끝났습니다… 되돌리려면 RESTORE.cmd", 알림은 다른 모드 감지·설치 후 다른 패치 설치 두 경우만. 엔진·파일 수·해시·경로 문구 삭제.
 - 산출물: `releases/JO9 UI_overhaul_SNKmod_0.12.zip` (18,597,052 B, SHA-256 04f6642f…, 항목 180개). ZIP 해제본으로 test_installer 58/58, 개인실 검사 통과.
+
+### 장비 툴팁 강화 통합 (2026-09-30)
+- 입력: `JO9_EquipmentTooltip_TestPatch_v0.2_CurrentQSP_2.zip` (완성 QSP 1개 + README). 기준은 사용자 현재 jack.qsp(헤더 "JO9 Kura Personal Patch v0.3", location 243개)이고 #dynamic 본문만 바뀌었다고 적혀 있다.
+- 분석(순정 #dynamic 대비): 툴팁 변경은 두 종류뿐이다.
+  - 장비 링크 379줄: 기존 줄에 ` class="tooltip-left" tooltip-data="…"`만 붙음 (속성을 지우면 순정 줄과 동일).
+  - `$get_non_combat_equipment` 보조 코드 1줄 → 11줄: `$item_description`에서 태그를 지운 툴팁 문구를 만들어 링크에 붙임.
+  - 그 밖의 6곳(hero_choice 범위, 뱀자리 구역 시작 등)은 Kura 개인 패치 변경이라 통합하지 않았다.
+- 구현: 치환 목록 `resources/tooltip/dynamic_tooltip.json`(Old 줄 → New 줄들, 380개). 릴리스 빌드가 #dynamic 패치 본문에 적용하며, Old 줄이 하나라도 없으면 빌드를 멈춘다. 적용 결과의 툴팁 줄 383개가 테스트 QSP와 동일.
+- CSS: `.tooltip-left`는 이미 base.css에 있다.
+- 검사: 새 `tests/test_equipment_tooltip.cjs`(WASM으로 패키지 jack.qsp의 #dynamic 실행 후 보조 코드 호출, 태그 정리·따옴표 처리 확인) 통과. test_private_room의 #dynamic 불변 검사는 기준본에 같은 툴팁 치환을 적용해 비교하도록 바꿨다(13/13). test_installer 58/58, 개인실 WASM 4종 통과.
+- README.html에 "4. 장비 설명 툴팁" 절 추가.
+- 산출물: `releases/JO9 UI_overhaul_SNKmod_0.12.zip` (18,642,667 B, SHA-256 c65c9c09…), payload/jack.qsp SHA b1ee13de…. 인게임 확인 전.
