@@ -9,6 +9,13 @@
 - 기준 게임: Jack-o-nine-tails 2.3 순정.
 - QSP, 실행 파일, 세이브는 바꾸지 않는다. 기존 이미지를 같은 경로에 덮어쓰기만 한다.
 
+## v4 (2026-09-30)
+
+- 파일: `JO9_NewImg_Pack_v4.zip`, 100개, 28,770,801 bytes, SHA-256 `f66996fa49d8409109ebac9464b2b2bac89b378160c704cc063b1c810ac5ef51`
+- 추가 2개
+  - 홍등가 벼룩시장: `pic/bg/baraholka.png`, `pic/ui overhaul/baraholka.png`
+- 변경·삭제: 없음. v3의 98개는 그대로다.
+
 ## v3 (2026-09-30)
 
 - 파일: `JO9_NewImg_Pack_v3.zip`, 98개, 28,526,934 bytes, SHA-256 `8dac6b18c9a72011f67a09a14e280bac607cdf6cf1913118dad88e338af1bb47`

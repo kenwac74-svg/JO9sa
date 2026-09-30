@@ -238,6 +238,8 @@
 | 96 | `game/content/pic/characters/maslab.png` | 752,397 / 795×596 / `31524e150ac40c06…` | 314,392 / 795×596 / `318ca7d069c811e1…` | 저장 | 2026-09-30 | 동부구역_아그라바 관문. 승인(패치 추가 지시, 2026-09-30). `staging/pic/`에 보관 |
 | 97 | `game/content/pic/ui overhaul/maslab.png` | 68,145 / 59×66 / `3540cc1ac78e2a1f…` | 8,709 / 59×66 / `93cc41d80f3f250e…` | 저장 | 2026-09-30 | 동부구역_아그라바 관문. 승인(패치 추가 지시, 2026-09-30). `staging/pic/`에 보관 |
 | 98 | `game/content/pic/ui overhaul/maslab_gray.png` | 67,154 / 59×66 / `2acbb1289b546105…` | 6,446 / 59×66 / `c8a18281de8be396…` | 저장 | 2026-09-30 | 동부구역_아그라바 관문. 승인(패치 추가 지시, 2026-09-30). `staging/pic/`에 보관 |
+| 99 | `game/content/pic/bg/baraholka.png` | 1,087,000 / 795×596 / `bbd945ae66380be6…` | 234,020 / 795×596 / `b997f342d0ef9c36…` | 저장 | 2026-09-30 | 홍등가_벼룩시장. 승인(패치 추가 지시, 2026-09-30). `staging/pic/`에 보관 |
+| 100 | `game/content/pic/ui overhaul/baraholka.png` | 33,748 / 59×66 / `d45360c6e4bb1dfd…` | 9,597 / 59×66 / `b71a429cb5813034…` | 저장 | 2026-09-30 | 홍등가_벼룩시장. 승인(패치 추가 지시, 2026-09-30). `staging/pic/`에 보관 |
 
 전체 SHA-256은 [원본 카탈로그](NEWIMG_ORIGINAL_CATALOG.json)와 아래 패치 기록에 있다.
 
@@ -359,6 +361,20 @@
 - 파일: `compare/JO9_NewImg_Compare_v3.html` (663,154 bytes, SHA-256 `861e31b9dbf0ede2e7fe8db4a3909056a8a901a659ae972d30b91d729c96b57a`)
 - 내용: 이번에 새로 추가된 7개 중 큰 이미지 3개만 비교한다(아그라바 관문 `characters/maslab.png` 1, 흡혈귀 사냥꾼 `bg/vampire_hunter.png`·`characters/vampire_hunter.png` 2). 작은 아이콘 4개는 사용자 지시에 따라 생략했다.
 - 확인: Chromium에서 이미지 6장 표시, 스크립트 오류 없음, 휴대폰 폭(390px)에서 가로 스크롤 없음.
+
+### 6차: 추가 이미지 ZIP `홍등가_벼룩시장` → 배포 ZIP v4 (2026-09-30)
+
+- 받은 파일: 243,855 bytes, SHA-256 `6c2c8951377b00aa1ac8491b1ee77af076e225dd0aea9705e6d6a5edf8c0e201`, PNG 2개. ZIP CRC 검사 통과. 파일명 한글이 깨져(`________.zip`) 사용자에게 용도 이름 `홍등가_벼룩시장`을 확인받았다.
+- 내부 경로는 `pic/` 기준 상대 경로(`bg/baraholka.png`, `ui overhaul/baraholka.png`)이고 용도 폴더와 `pic/` 단계는 없다. 두 파일 모두 신규다.
+- 경로 대조: 두 파일 모두 `JO9main`에 같은 경로·같은 파일명의 원본이 있다. 형식(PNG)과 사이즈(795×596, 59×66)도 원본과 같다. 원본 `ui overhaul`에는 `baraholka_gray.png`가 없어 교체 대상도 없다.
+- 검사: PNG 서명, 청크 CRC, 픽셀 데이터 압축 해제 통과. 움직이는 PNG 없음.
+- 승인: 사용자의 "이미지 패치 추가" 지시를 승인으로 처리했다.
+
+배포 ZIP v4는 다음과 같다.
+
+- 파일: `patches/JO9_NewImg_Pack_v4.zip` (28,770,801 bytes, SHA-256 `f66996fa49d8409109ebac9464b2b2bac89b378160c704cc063b1c810ac5ef51`)
+- 내용: `staging/pic/` 전체 100개(v3의 98개 + 신규 2개). 최상위 `pic/`, 파일명 UTF-8. 카탈로그 100개 항목과 파일 목록 일치, ZIP 안 각 파일이 `staging`과 바이트 동일, v3 파일을 모두 포함함을 확인했다. ZIP CRC 검사 통과.
+- 상태: 저장. 게임 설치·실행 검증은 하지 않았다.
 
 ## 미결 사항
 
