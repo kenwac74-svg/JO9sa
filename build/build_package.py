@@ -261,6 +261,26 @@ def main() -> int:
         patches = list(old_patches.values())
         path_rules = [r for r in path_rules if r['Location'] not in overlay]
         css_new += '\n' + (REPO / 'build/private_room/style.css').read_text(encoding='utf-8')
+    if args.release:
+        # 장비 툴팁 강화: #dynamic의 장비 링크 줄에 기존 아이템 설명 툴팁을 붙인다. 원본 줄 수가 맞아야만 적용한다.
+        tip = json.loads((REPO / 'resources/tooltip/dynamic_tooltip.json').read_text(encoding='utf-8'))
+        by_name = {p['Name']: p for p in patches}
+        target_patch = by_name[tip['Location']]
+        eol = '\r\n' if '\r\n' in target_patch['Text'] else '\n'
+        lines = target_patch['Text'].split(eol)
+        new_for = {r['Old']: r['New'] for r in tip['Replacements']}
+        found = Counter(line for line in lines if line in new_for)
+        missing = [old[:60] for old in new_for if not found[old]]
+        if missing:
+            raise SystemExit('Tooltip patch: lines not found in #dynamic: ' + '; '.join(missing[:5]))
+        out_lines = []
+        for line in lines:
+            out_lines += new_for.get(line, [line])
+        text = eol.join(out_lines)
+        target_patch['Before'] = list(dict.fromkeys(target_patch['Before'] + [target_patch['After']]))
+        target_patch['After'] = sha(text.encode('utf-8'))
+        target_patch['Text'] = text
+        final_texts[tip['Location']] = text
     final_texts['[css/base.css]'] = css_new
     final_texts['[json/menu_icon.json]'] = menu_new
     lower_images = {k.lower() for k in images}

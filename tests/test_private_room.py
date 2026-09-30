@@ -168,8 +168,14 @@ class PrivateRoomTests(unittest.TestCase):
         for name in ['#txt_man','#txt_woman']:
             self.assertIn("$slave_sleep_condition[5] = '<br> 그녀만을", bodies[name])
         # No game logic edits below the entry guard in these shared routines.
+        # #dynamic은 장비 툴팁 강화(resources/tooltip)만 추가로 허용한다: 기준본에 같은 변경을 적용해 비교.
+        tip = json.loads((REPO/'resources/tooltip/dynamic_tooltip.json').read_text(encoding='utf-8'))
+        new_for = {r['Old']: r['New'] for r in tip['Replacements']}
         for name in ['interaction_result','#dynamic','#static_base','sex_initiate','sex_end']:
-            self.assertEqual(bodies[name].split('\n',1)[1].replace('\r\n','\n'), baseline[name].replace('\r\n','\n'))
+            expected = baseline[name].replace('\r\n','\n')
+            if name == tip['Location']:
+                expected = '\n'.join(x for line in expected.split('\n') for x in new_for.get(line, [line]))
+            self.assertEqual(bodies[name].split('\n',1)[1].replace('\r\n','\n'), expected)
 
     def test_menu_filter_preserves_original_statements_and_shortcut_guards(self):
         modified = bodies['menu_form'].split('\n',1)[1].replace('\r\n','\n')
