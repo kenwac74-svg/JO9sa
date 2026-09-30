@@ -202,7 +202,7 @@
   }
 
   // ---- 화면 매칭 -----------------------------------------------------------
-  const MIN_KEY = 4;
+  const MIN_KEY = 6;
   function fragmentsOf(text) {
     return text.split(/<<[\s\S]*?>>/).map(matchKey).filter(function (k) { return k.length >= 2; });
   }

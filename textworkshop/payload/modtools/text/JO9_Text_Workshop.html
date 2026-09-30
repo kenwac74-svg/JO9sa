@@ -1,0 +1,396 @@
+<!-- 현재 화면의 대사·지문을 jack.qsp에서 찾아 선택 수정·백업·롤백하는 JO9 Text Workshop 화면 -->
+<!doctype html>
+<html lang="ko">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JO9 Text Workshop v0.1</title>
+<style>
+:root{color-scheme:dark;--bg:#171a18;--panel:#232924;--line:#414b42;--fg:#eff1e9;--dim:#b4c1b5;--green:#b6d5a6;--gold:#e5c588;--red:#e6a0a0}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.6 'Malgun Gothic',sans-serif}
+button,input,textarea{font:inherit}
+button{cursor:pointer;border:1px solid #566653;border-radius:6px;background:#354332;color:var(--fg);padding:8px 14px}
+button:hover:enabled{background:#475a41}
+button:disabled{opacity:.4;cursor:not-allowed}
+button.primary{background:var(--green);color:#172414;font-weight:700;border-color:var(--green)}
+button.danger{border-color:#8a5a5a;background:#3d2a2a}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+input,textarea{background:#171e18;color:var(--fg);border:1px solid #51614d;border-radius:5px;padding:7px}
+input[type=checkbox]{accent-color:var(--green);transform:scale(1.15)}
+header,main{max-width:1000px;margin:auto;padding:20px}
+header{padding-top:28px;padding-bottom:8px}
+.eyebrow{font-size:11px;letter-spacing:2px;color:var(--green)}
+h1{font-size:26px;margin:4px 0}
+h2{font-size:16px;margin:0 0 8px}
+p{margin:6px 0;color:var(--dim)}
+.status{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.badge{border:1px solid var(--line);border-radius:20px;padding:4px 12px;font-size:12px;color:var(--green)}
+.badge.bad{color:var(--red);border-color:#7a4a4a}
+.tabs{display:flex;gap:6px;margin:14px 0;border-bottom:1px solid var(--line)}
+.tabs button{border-radius:6px 6px 0 0;border-bottom:0;background:#1d231e}
+.tabs button.on{background:var(--panel);color:var(--gold);border-color:var(--gold)}
+.panel{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:16px;margin-bottom:14px}
+.group{border:1px solid var(--line);border-radius:8px;margin-bottom:14px;overflow:hidden;background:#1d231e}
+.group-head{display:flex;justify-content:space-between;gap:10px;padding:8px 12px;background:#2a3129;color:#f0d9a6;flex-wrap:wrap}
+.card{display:flex;gap:12px;padding:12px;border-top:1px solid var(--line);align-items:flex-start}
+.card .body{flex:1;min-width:0}
+.card .meta{font-size:12px;color:var(--dim)}
+.tag{display:inline-block;border-radius:4px;padding:0 7px;font-size:11px;margin-right:6px;background:#354332;color:var(--green)}
+.tag.var{background:#4a3a24;color:#f0d9a6}
+.speaker{font-weight:700;color:var(--gold);margin-right:6px}
+.txt{white-space:pre-wrap;overflow-wrap:anywhere}
+.ctx{font-size:12px;color:var(--dim);border-left:2px solid #414b42;padding-left:8px;margin-top:6px;overflow-wrap:anywhere}
+.ctx b{color:#aeb9ad}
+.ctx .target{color:var(--fg)}
+.note{border:1px solid rgba(255,196,64,.3);background:rgba(255,196,64,.08);color:#ffe6a2;border-radius:8px;padding:9px 12px;margin:8px 0}
+.err{border:1px solid #7a4a4a;background:rgba(255,120,120,.08);color:#ffd7d7;border-radius:8px;padding:9px 12px;margin:8px 0;white-space:pre-wrap}
+.ok{border:1px solid #5b7a4d;background:rgba(150,220,120,.08);color:#d6f0c8;border-radius:8px;padding:9px 12px;margin:8px 0}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0}
+.row input[type=search],.row input[type=text]{flex:1;min-width:180px}
+dialog{background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:18px;width:min(760px,94vw);max-height:90vh;overflow:auto}
+dialog::backdrop{background:rgba(0,0,0,.6)}
+label.lbl{display:block;font-size:12px;color:var(--green);margin:10px 0 3px}
+textarea{width:100%;min-height:96px}
+textarea[readonly]{background:#1b211c;color:#c9d3c9}
+.diff{font-size:13px;border-top:1px solid var(--line);padding:8px 0}
+.diff .o{color:#e6b0b0}.diff .n{color:#b6e6a6}
+.hidden{display:none!important}
+.small{font-size:12px;color:var(--dim)}
+</style>
+
+<header>
+  <div class="eyebrow">JO9 WORKSHOP</div>
+  <h1>JO9 TEXT WORKSHOP <span class="small">v0.1</span></h1>
+  <p>화면에 보이는 대사·지문의 실제 사용처를 찾아, 원하는 곳만 수정합니다. 적용 전 자동 백업, 실패 시 자동 복구, 작업 단위 되돌리기를 지원합니다.</p>
+  <div class="status">
+    <span class="badge" id="stConn">서버 확인 중</span>
+    <span class="badge" id="stQsp">jack.qsp 확인 중</span>
+    <span class="badge" id="stScreen">현재 화면 없음</span>
+  </div>
+</header>
+
+<main>
+  <div class="tabs" role="tablist">
+    <button id="tabScreen" class="on" role="tab">현재 화면</button>
+    <button id="tabSearch" role="tab">텍스트 검색</button>
+    <button id="tabHistory" role="tab">기록</button>
+  </div>
+  <div id="msg"></div>
+
+  <section id="viewScreen">
+    <div class="row"><button id="reloadScreen">현재 화면 다시 읽기</button><span class="small">게임에서 Image Workshop을 다시 실행하면 화면 정보가 갱신됩니다.</span></div>
+    <div id="screenList"></div>
+  </section>
+
+  <section id="viewSearch" class="hidden">
+    <div class="panel">
+      <div class="row"><input id="q" type="search" placeholder="찾을 문장이나 이름 (예: 글로리아)"><button id="doSearch" class="primary">검색</button></div>
+      <div class="row"><input id="rep" type="text" placeholder="바꿀 문자열 (선택 항목에서 찾은 문자열만 바뀝니다)"><button id="doReplace" disabled>선택 항목 수정 → 적용 전 확인</button></div>
+      <p class="small">화면에 출력되는 문장만 검색합니다. 변수명·Location 이름·이미지 파일명은 대상이 아닙니다. 자동 전체 치환은 하지 않으며, 체크한 항목만 바뀝니다.</p>
+    </div>
+    <div id="searchList"></div>
+  </section>
+
+  <section id="viewHistory" class="hidden"><div id="historyList"></div></section>
+</main>
+
+<!-- 수정 화면 -->
+<dialog id="editDlg">
+  <h2>텍스트 수정</h2>
+  <label class="lbl">원문 (읽기 전용)</label>
+  <textarea id="edOld" readonly></textarea>
+  <label class="lbl">수정문</label>
+  <textarea id="edNew"></textarea>
+  <p class="small">HTML 태그(&lt;br&gt;, &lt;b&gt; 등)는 그대로 두세요. 줄바꿈은 &lt;br&gt;로 입력합니다. 따옴표 escape는 자동 처리됩니다. 변수(&lt;&lt;…&gt;&gt;)는 v0.1에서 넣을 수 없습니다.</p>
+  <div id="edErr"></div>
+  <div id="sameUses"></div>
+  <div class="row"><button id="edCancel">취소</button><button id="edNext" class="primary">적용 전 확인</button></div>
+</dialog>
+
+<!-- 적용 전 확인 -->
+<dialog id="cfmDlg">
+  <h2>변경 확인</h2>
+  <div id="cfmBody"></div>
+  <div id="cfmErr"></div>
+  <div class="row"><button id="cfmCancel">취소</button><button id="cfmApply" class="primary">적용</button></div>
+</dialog>
+
+<script src="/tw_core.js"></script>
+<script>
+'use strict';
+const $ = (id) => document.getElementById(id);
+const C = window.TWCore;
+const S = { model: null, items: [], sha: '', hits: null, perLoc: {}, screenHtml: '', changes: [], searchRows: [] };
+const MAX_ROWS = 150;
+
+// ---- 표시 도우미 --------------------------------------------------------
+function display(text) {
+  return text.replace(/<<[\s\S]*?>>/g, '⟪변수⟫').replace(/<br\s*\/?>/gi, ' ⏎ ').replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/\s+/g, ' ').trim();
+}
+function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+function say(kind, text) { const m = $('msg'); m.replaceChildren(); if (text) m.appendChild(el('div', kind, text)); }
+async function getJson(url, opt) { const r = await fetch(url, opt); let j = {}; try { j = await r.json(); } catch (e) { /* 본문 없음 */ } return { status: r.status, json: j }; }
+async function sha256(buf) {
+  const h = new Uint8Array(await crypto.subtle.digest('SHA-256', buf));
+  return Array.from(h, (b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+// ---- 로드 ---------------------------------------------------------------
+async function loadQsp() {
+  $('stQsp').textContent = 'jack.qsp 읽는 중…'; $('stQsp').classList.remove('bad');
+  const r = await fetch('/api/qsp', { cache: 'no-store' });
+  if (!r.ok) { $('stQsp').textContent = 'jack.qsp 없음'; $('stQsp').classList.add('bad'); throw new Error('jack.qsp를 읽을 수 없습니다.'); }
+  const buf = new Uint8Array(await r.arrayBuffer());
+  S.sha = r.headers.get('X-TW-Sha256');
+  S.model = C.parseQsp(buf);
+  const built = C.buildIndex(S.model);
+  S.items = built.items;
+  $('stQsp').textContent = 'jack.qsp ' + S.sha.slice(0, 8) + ' · 후보 ' + S.items.length.toLocaleString() + '개';
+  if (built.broken) say('note', '문자열 ' + built.broken + '개를 해석하지 못해 제외했습니다.');
+}
+async function loadScreen() {
+  const r = await fetch('/api/screen', { cache: 'no-store' });
+  if (!r.ok) { S.screenHtml = ''; S.hits = null; $('stScreen').textContent = '현재 화면 없음'; $('stScreen').classList.add('bad'); return; }
+  S.screenHtml = await r.text();
+  const m = C.matchScreen(S.items, S.screenHtml);
+  S.hits = m.hits; S.perLoc = m.perLocation;
+  $('stScreen').textContent = '현재 화면 ' + m.hits.length + '건 일치'; $('stScreen').classList.remove('bad');
+}
+
+// ---- 카드 ---------------------------------------------------------------
+function ctxBlock(it) {
+  const d = el('div', 'ctx');
+  const add = (label, t, cls) => { const p = el('div'); p.appendChild(el('b', null, label + ' ')); p.appendChild(el('span', cls || '', display(t) || '(빈 줄)')); d.appendChild(p); };
+  add('Before', it.before); add('Target', it.line, 'target'); add('After', it.after);
+  return d;
+}
+function sourceInfo(it) {
+  const d = el('div', 'ctx hidden');
+  d.textContent = 'Location: ' + it.location + ' · 종류: ' + (it.hasVar ? 'Text with variables' : 'Direct Text') + ' · Match: Exact · 위치: ' + it.start;
+  return d;
+}
+function card(it, opt) {
+  const c = el('div', 'card');
+  if (opt.check) {
+    const cb = el('input'); cb.type = 'checkbox'; cb.disabled = it.hasVar; cb.checked = !!opt.checked && !it.hasVar;
+    cb.addEventListener('change', () => opt.check(it, cb.checked));
+    c.appendChild(cb);
+  }
+  const b = el('div', 'body');
+  const top = el('div');
+  top.appendChild(el('span', 'tag', it.kind));
+  if (it.hasVar) top.appendChild(el('span', 'tag var', '변수 포함 텍스트'));
+  if (it.speaker) top.appendChild(el('span', 'speaker', it.speaker));
+  b.appendChild(top);
+  b.appendChild(el('div', 'txt', display(it.text)));
+  b.appendChild(el('div', 'meta', it.location + (opt.note ? ' · ' + opt.note : '')));
+  if (it.hasVar) b.appendChild(el('div', 'meta', '현재 버전에서는 직접 수정할 수 없습니다.'));
+  const info = sourceInfo(it), ctx = ctxBlock(it); ctx.classList.add('hidden');
+  const tg = el('button', null, '소스 정보'); tg.style.marginTop = '6px';
+  tg.addEventListener('click', () => { info.classList.toggle('hidden'); ctx.classList.toggle('hidden'); });
+  b.appendChild(tg); b.appendChild(info); b.appendChild(ctx);
+  c.appendChild(b);
+  if (!it.hasVar && opt.edit) {
+    const eb = el('button', 'primary', '수정'); eb.addEventListener('click', () => opt.edit(it)); c.appendChild(eb);
+  }
+  return c;
+}
+function groupBox(title, right) {
+  const g = el('div', 'group'); const h = el('div', 'group-head'); h.appendChild(el('span', null, title)); h.appendChild(el('span', 'small', right || '')); g.appendChild(h); return g;
+}
+
+// ---- 현재 화면 탭 ---------------------------------------------------------
+function renderScreen() {
+  const box = $('screenList'); box.replaceChildren();
+  if (!S.hits) { box.appendChild(el('div', 'note', '현재 화면 정보가 없습니다. 게임 화면에서 Other → Image Workshop을 실행한 뒤 [현재 화면 다시 읽기]를 누르세요. 문장을 직접 찾으려면 [텍스트 검색]을 사용하세요.')); return; }
+  if (!S.hits.length) { box.appendChild(el('div', 'note', '현재 화면의 문장과 일치하는 소스를 찾지 못했습니다. [텍스트 검색]에서 문장을 직접 입력해 보세요.')); return; }
+  const by = new Map();
+  for (const h of S.hits) { if (!by.has(h.location)) by.set(h.location, []); by.get(h.location).push(h); }
+  let first = true;
+  for (const [loc, list] of by) {
+    const g = groupBox((first ? '현재 장면 후보 · ' : '기타 · ') + loc, list.length + '건 일치');
+    first = false;
+    for (const it of list) g.appendChild(card(it, { edit: openEdit, note: '현재 화면과 일치' }));
+    box.appendChild(g);
+  }
+  box.insertBefore(el('p', 'small', 'Location 이름은 화면에서 직접 얻을 수 없어, 화면 문장이 많이 겹치는 곳을 위에 두었습니다(추정).'), box.firstChild);
+}
+
+// ---- 수정 흐름 ---------------------------------------------------------
+let editTarget = null, sameSel = new Map();
+function openEdit(it) {
+  editTarget = it; sameSel = new Map(); sameSel.set(it.id, it);
+  $('edOld').value = it.text; $('edNew').value = it.text; $('edErr').replaceChildren();
+  const box = $('sameUses'); box.replaceChildren();
+  const others = S.items.filter((x) => x.id !== it.id && !x.hasVar && x.text === it.text);
+  if (others.length) {
+    box.appendChild(el('label', 'lbl', '같은 문장의 다른 사용처 ' + others.length + '곳 (기본은 선택한 항목만 수정, 자동 전체 치환 없음)'));
+    const onScreen = new Set((S.hits || []).map((h) => h.id));
+    others.sort((a, b) => (onScreen.has(b.id) - onScreen.has(a.id)) || (a.loc - b.loc));
+    for (const o of others.slice(0, MAX_ROWS)) {
+      box.appendChild(card(o, { check: (x, on) => { on ? sameSel.set(x.id, x) : sameSel.delete(x.id); }, checked: false, note: onScreen.has(o.id) ? '현재 화면과 일치' : '다른 사용처' }));
+    }
+    if (others.length > MAX_ROWS) box.appendChild(el('p', 'small', '… 외 ' + (others.length - MAX_ROWS) + '곳은 표시하지 않았습니다.'));
+  }
+  $('editDlg').showModal();
+}
+$('edCancel').onclick = () => $('editDlg').close();
+$('edNext').onclick = () => {
+  const nt = $('edNew').value;
+  const err = C.validateNewText(nt);
+  if (err) { $('edErr').replaceChildren(el('div', 'err', err)); return; }
+  if (nt === editTarget.text) { $('edErr').replaceChildren(el('div', 'err', '수정문이 원문과 같습니다.')); return; }
+  $('editDlg').close();
+  confirmChanges(Array.from(sameSel.values()).map((x) => ({ it: x, newText: nt })), '텍스트 ' + sameSel.size + '개 수정');
+};
+
+// ---- 적용 전 확인·적용 ----------------------------------------------------
+let pending = null;
+function confirmChanges(changes, label) {
+  pending = { changes: changes, label: label };
+  const b = $('cfmBody'); b.replaceChildren(); $('cfmErr').replaceChildren();
+  b.appendChild(el('p', null, '변경 항목: ' + changes.length + '개 · 적용 전에 jack.qsp를 자동 백업합니다.'));
+  const det = document.createElement('details'); if (changes.length <= 3) det.open = true;
+  det.appendChild(el('summary', null, '변경 내용 펼쳐보기'));
+  for (const c of changes) {
+    const d = el('div', 'diff');
+    d.appendChild(el('div', 'small', 'Location: ' + c.it.location));
+    d.appendChild(el('div', 'o txt', '− ' + c.it.text));
+    d.appendChild(el('div', 'n txt', '+ ' + c.newText));
+    det.appendChild(d);
+  }
+  b.appendChild(det);
+  $('cfmApply').disabled = false;
+  $('cfmDlg').showModal();
+}
+$('cfmCancel').onclick = () => $('cfmDlg').close();
+$('cfmApply').onclick = async () => {
+  const btn = $('cfmApply'); btn.disabled = true;
+  const errBox = $('cfmErr'); errBox.replaceChildren();
+  try {
+    const edits = pending.changes.map((c) => ({ loc: c.it.loc, start: c.it.start, end: c.it.end, quote: c.it.quote, oldText: c.it.text, newText: c.newText }));
+    const out = C.serializeQsp(C.applyEdits(S.model, edits));
+    C.verifyEdits(S.model, out, edits);
+    const afterSha = await sha256(out);
+    const meta = { label: pending.label, entries: pending.changes.map((c) => ({ location: c.it.location, oldText: c.it.text, newText: c.newText })) };
+    const metaB64 = btoa(String.fromCharCode.apply(null, new TextEncoder().encode(JSON.stringify(meta))));
+    const r = await getJson('/api/apply', { method: 'POST', headers: { 'X-TW-Base': S.sha, 'X-TW-After': afterSha, 'X-TW-Meta': metaB64 }, body: out });
+    if (r.status !== 200) {
+      const m = r.json.message || '적용에 실패했습니다.';
+      errBox.appendChild(el('div', 'err', m));
+      if (r.json.error === 'source_changed') {
+        const rb = el('button', null, '다시 검색'); rb.onclick = async () => { $('cfmDlg').close(); await reloadAll(); };
+        errBox.appendChild(rb);
+      }
+      return;
+    }
+    $('cfmDlg').close();
+    say('ok', '적용했습니다. (작업 ' + r.json.id + ') 게임에서 확인하려면 게임을 다시 불러오거나 재시작하세요.' + (r.json.warning ? '\n' + r.json.warning : ''));
+    await reloadAll();
+  } catch (e) {
+    errBox.appendChild(el('div', 'err', e.message));
+  } finally { btn.disabled = false; }
+};
+
+async function reloadAll() {
+  await loadQsp(); await loadScreen(); renderScreen();
+  if (!$('viewSearch').classList.contains('hidden')) runSearch();
+  if (!$('viewHistory').classList.contains('hidden')) renderHistory();
+}
+
+// ---- 검색 탭 ------------------------------------------------------------
+let searchSel = new Map(), lastQuery = '';
+function runSearch() {
+  const q = $('q').value.trim(); lastQuery = q; searchSel = new Map(); $('doReplace').disabled = true;
+  const box = $('searchList'); box.replaceChildren();
+  if (!q) return;
+  const found = C.search(S.items, q);
+  const onScreen = new Set((S.hits || []).map((h) => h.id));
+  const cur = found.filter((x) => onScreen.has(x.id)), other = found.filter((x) => !onScreen.has(x.id));
+  box.appendChild(el('p', null, '“' + q + '” — ' + found.length + '건'));
+  let shown = 0;
+  const mk = (title, list) => {
+    if (!list.length) return;
+    const g = groupBox(title, list.length + '건');
+    for (const it of list) {
+      if (shown++ >= MAX_ROWS) break;
+      g.appendChild(card(it, { edit: openEdit, check: (x, on) => { on ? searchSel.set(x.id, x) : searchSel.delete(x.id); $('doReplace').disabled = searchSel.size === 0; }, checked: false }));
+    }
+    box.appendChild(g);
+  };
+  mk('현재 화면과 일치', cur); mk('다른 사용처', other);
+  if (found.length > MAX_ROWS) box.appendChild(el('p', 'small', '처음 ' + MAX_ROWS + '건만 표시합니다. 검색어를 더 구체적으로 입력하세요.'));
+}
+$('doSearch').onclick = runSearch;
+$('q').addEventListener('keydown', (e) => { if (e.key === 'Enter') runSearch(); });
+$('doReplace').onclick = () => {
+  const from = lastQuery, to = $('rep').value;
+  if (!from) return;
+  const changes = [];
+  for (const it of searchSel.values()) {
+    // 검색은 태그·공백을 무시하므로, 원문에서 문자열 그대로 찾을 수 있는 항목만 치환 대상이 된다.
+    if (it.text.indexOf(from) < 0) { say('err', '“' + display(it.text).slice(0, 40) + '…”에서 검색어가 태그·줄바꿈 때문에 그대로 발견되지 않습니다. 해당 항목은 [수정]으로 직접 고치세요.'); return; }
+    const nt = C.replaceInText(it.text, from, to);
+    const err = C.validateNewText(nt);
+    if (err) { say('err', err); return; }
+    changes.push({ it: it, newText: nt });
+  }
+  say('', '');
+  confirmChanges(changes, '“' + from + '” → “' + to + '” ' + changes.length + '개 수정');
+};
+
+// ---- 기록 탭 ------------------------------------------------------------
+async function renderHistory() {
+  const box = $('historyList'); box.replaceChildren();
+  const r = await getJson('/api/history', { cache: 'no-store' });
+  const items = (r.json.items || []).slice().reverse();
+  if (!items.length) { box.appendChild(el('div', 'note', '아직 적용한 작업이 없습니다.')); return; }
+  for (const h of items) {
+    const g = groupBox(h.time + ' · ' + h.label, h.status === 'applied' ? '적용됨' : '되돌림');
+    const c = el('div', 'card'); const b = el('div', 'body');
+    const ents = Array.isArray(h.entries) ? h.entries : [];
+    b.appendChild(el('div', null, '텍스트 ' + ents.length + '개 수정'));
+    const det = document.createElement('details'); det.appendChild(el('summary', null, '상세'));
+    for (const e of ents) {
+      const d = el('div', 'diff'); d.appendChild(el('div', 'small', e.location));
+      d.appendChild(el('div', 'o txt', '− ' + e.oldText)); d.appendChild(el('div', 'n txt', '+ ' + e.newText)); det.appendChild(d);
+    }
+    b.appendChild(det); c.appendChild(b);
+    if (h.status === 'applied') {
+      const rb = el('button', 'danger', '전체 되돌리기');
+      rb.onclick = async () => {
+        if (!confirm('이 작업을 되돌립니다. 계속할까요?')) return;
+        rb.disabled = true;
+        const rr = await getJson('/api/rollback?id=' + encodeURIComponent(h.id), { method: 'POST' });
+        if (rr.status === 200) { say('ok', '되돌렸습니다. 게임 파일이 이 작업 이전 상태입니다.'); await reloadAll(); }
+        else { say('err', rr.json.message || '되돌리지 못했습니다.'); rb.disabled = false; }
+      };
+      c.appendChild(rb);
+    }
+    g.appendChild(c); box.appendChild(g);
+  }
+}
+
+// ---- 탭·시작 ------------------------------------------------------------
+function showTab(name) {
+  for (const [t, v] of [['tabScreen', 'viewScreen'], ['tabSearch', 'viewSearch'], ['tabHistory', 'viewHistory']]) {
+    $(t).classList.toggle('on', t === name); $(v).classList.toggle('hidden', t !== name);
+  }
+  if (name === 'tabHistory') renderHistory();
+}
+$('tabScreen').onclick = () => showTab('tabScreen');
+$('tabSearch').onclick = () => showTab('tabSearch');
+$('tabHistory').onclick = () => showTab('tabHistory');
+$('reloadScreen').onclick = async () => { await loadScreen(); renderScreen(); };
+
+async function heartbeat() {
+  try { await fetch('/api/ping', { cache: 'no-store' }); $('stConn').textContent = '서버 연결: 정상'; $('stConn').classList.remove('bad'); }
+  catch (e) { $('stConn').textContent = '서버 연결 끊김'; $('stConn').classList.add('bad'); }
+}
+setInterval(heartbeat, 3000); heartbeat();
+(async () => {
+  try { await loadQsp(); await loadScreen(); renderScreen(); }
+  catch (e) { say('err', e.message); }
+})();
+</script>
+</html>
