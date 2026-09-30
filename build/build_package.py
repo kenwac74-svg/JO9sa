@@ -17,6 +17,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / 'tools'))
 from qsp_dump import read_locations  # noqa: E402
+import integrated_features  # noqa: E402
 
 PACKAGE = 'JO9_UI_SNKMOD'
 VERSION = 'R3'
@@ -235,6 +236,24 @@ def main() -> int:
         patches = list(old_patches.values())
         path_rules = [r for r in path_rules if r['Location'] not in overlay]
         css_new += '\n' + (REPO / 'build/private_room/style.css').read_text(encoding='utf-8')
+
+    # 5-2) Integrated gameplay/UI features approved by the user:
+    # Kura replaces Edward (hero 13), female protagonist entry points are blocked,
+    # and equipment-list item names show the existing item description on hover.
+    # Apply after all other QSP overlays so these features are built on the final UI bodies.
+    feature_overlay = integrated_features.apply(final_texts)
+    old_patches = {p['Name']: p for p in patches}
+    for name, text in feature_overlay.items():
+        before = old_patches.get(name, {}).get('Before', [])[:]
+        original = next((l['body'] for l in locs if l['name'] == name), None)
+        if original is not None:
+            before += [sha(original.encode('utf-8')), sha(final_texts[name].encode('utf-8'))]
+        old_patches[name] = {'Name': name, 'Before': list(dict.fromkeys(before)),
+                             'After': sha(text.encode('utf-8')), 'Text': text,
+                             'New': original is None}
+        final_texts[name] = text
+    patches = list(old_patches.values())
+    path_rules = [r for r in path_rules if r['Location'] not in feature_overlay]
     final_texts['[css/base.css]'] = css_new
     final_texts['[json/menu_icon.json]'] = menu_new
     lower_images = {k.lower() for k in images}
@@ -304,6 +323,19 @@ def main() -> int:
     (pay / 'engine').mkdir(parents=True)
     (pay / 'engine/jack.exe').write_bytes(src['payload/engine/jack.exe'])
 
+    # Kura portraits intentionally keep Edward's original file names because hero 13 is replaced.
+    # They are mandatory, backed-up overwrite files (not optional General image replacements).
+    integrated_asset_entries = []
+    for rel in integrated_features.KURA_PORTRAITS:
+        data = (REPO / 'resources/integrated' / rel).read_bytes()
+        dest = pay / rel
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_bytes(data)
+        integrated_asset_entries.append({
+            'Rel': rel, 'Source': 'payload/' + rel, 'Hash': sha(data),
+            'Before': [], 'AllowAnyBefore': True,
+        })
+
     def dump(name, obj):
         (out / name).write_text(json.dumps(obj, ensure_ascii=False, indent=1), encoding='utf-8')
 
@@ -329,7 +361,7 @@ def main() -> int:
              'Before': fmanifest['CssBefore'] + [sha(css.encode('utf-8'))]},
             {'Rel': 'json/menu_icon.json', 'Source': 'payload/json/menu_icon.json', 'Hash': sha(menu_new.encode('utf-8')),
              'Before': [sha(menu_raw)]},
-        ],
+        ] + integrated_asset_entries,
         Engine={'Rel': 'engine/jack.exe', 'Source': 'payload/engine/jack.exe', 'Before': fmanifest['EngineBefore'],
                 'After': fmanifest['EngineAfter'], 'QtWidgetsHash': fmanifest['QtWidgetsHash']},
         General=[],
