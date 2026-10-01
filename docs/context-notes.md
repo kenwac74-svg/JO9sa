@@ -552,3 +552,9 @@
 - 사용자 지적: 툴팁·쿠라 병합처럼 내용이 바뀌면 버전을 올린다. 0.12에 계속 덮어 빌드한 것은 잘못이었다.
 - RELEASE_VERSION 0.13 (README.html·README_KR·test_release_clean_install 표기 포함). 내용은 0.12 마지막 빌드(툴팁·쿠라·쿠라 초상화)와 같다.
 - 산출물: `releases/JO9 UI_overhaul_SNKmod_0.13.zip` (18,718,759 B, SHA-256 febc5113…). ZIP 해제본 검사 통과.
+
+### 사용자 결정 16 — QSP 변경 권한 분담 (2026-10-01)
+- QSP 최종 변경 권한은 실시간 게임 수정 세션에 있다. 대사·문구·수치·분기·게임 로직 변경은 그 세션이 `mods/*.json`으로 기록하고, UI 세션은 빌드 때 적용만 한다 (old가 location 안에서 count번 정확히 나와야 하며, 아니면 빌드 중단. 해시 검사 없음. 파일 이름 순서).
+- 단 UI 화면 코드(메인 화면·상태 아이콘·개인실 화면 등 표시용 location 본문)는 UI 세션이 계속 맡는다. 이미지 경로 치환도 UI 빌드가 맡는다.
+- UI 세션이 게임 내용 변경이 필요하면 대화창에 `[QSP 변경 요청]` 형식으로 적는다 (docs/modding/PROCESS.md, 게임 수정 세션 PR 브랜치 claude/elegant-carson-nbb823).
+- 기존 장비 툴팁(resources/tooltip)과 쿠라(resources/kura)를 mods로 옮길지는 미정. 사용자 지시 전까지 그대로 둔다.
