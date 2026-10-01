@@ -11,10 +11,11 @@
 
 ## 미배포 (staging 반영, ZIP 미생성)
 
-- 현재 `staging/pic/` 108개. v6 대비 추가 이미지 2개, 변경·삭제 없음.
-- 미배포 작업 단위(받은 ZIP) 2개
+- 현재 `staging/pic/` 109개. v6 대비 추가 이미지 3개, 변경·삭제 없음.
+- 미배포 작업 단위(받은 ZIP) 3개
   1. `JO9_converted_images_5.zip` (SHA-256 `0ba65e43…`) · 홍등가 사창가골목: `pic/bg/Dosugredlight.png` (2026-10-01 반영)
   2. `JO9_converted_images_5.zip` (SHA-256 `a696092c…`, 1번과 이름만 같은 별개 ZIP) · 홍등가 사창가골목: `pic/scene/whore_redlight/whore_redlight-112.png` (2026-10-01 반영)
+  3. `JO9_converted_images_6.zip` (SHA-256 `774c6ceb…`) · 홍등가 사창가골목: `pic/scene/whore_redlight/whore_redlight-113.png` (2026-10-01 반영)
 - 추가 ZIP을 받으면 여기에 작업 단위로 기록한다. 사용자가 ZIP 생성을 지시하거나, 미배포 작업 단위가 6개가 되면(이후로는 5개씩) 새 판 번호 항목으로 옮긴다.
 
 ## v6 (2026-10-01)

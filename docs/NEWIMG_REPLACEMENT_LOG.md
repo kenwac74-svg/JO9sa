@@ -253,6 +253,7 @@
 | 106 | `game/content/pic/bg/RedLight.png` | 1,064,474 / 1000×750 / `fbe3afece4ed3f5a…` | 532,478 / 1000×750 / `0e1147bf29178576…` | 저장 | 2026-10-01 | 홍등가_메인. 승인(패치 추가 지시, 2026-10-01). `staging/pic/`에 보관. 신규 파일은 팔레트(256색) PNG, 원본은 RGB PNG |
 | 107 | `game/content/pic/bg/Dosugredlight.png` | 1,240,587 / 795×596 / `10086f53245942bc…` | 343,870 / 795×596 / `ad523ebc6f68853a…` | 저장 | 2026-10-01 | 홍등가_사창가골목. 승인(패치 추가 지시, 2026-10-01). `staging/pic/`에 보관. 배포 ZIP 미생성. 신규 파일은 팔레트(256색) PNG, 원본은 RGB PNG |
 | 108 | `game/content/pic/scene/whore_redlight/whore_redlight-112.png` | 798,225 / 795×596 / `fe1608ce5f66195a…` | 639,150 / 795×596 / `82efb19c10afa141…` | 저장 | 2026-10-01 | 홍등가_사창가골목. 승인(패치 추가 지시, 2026-10-01). `staging/pic/`에 보관. 배포 ZIP 미생성 |
+| 109 | `game/content/pic/scene/whore_redlight/whore_redlight-113.png` | 770,679 / 795×596 / `56373f6963d9c2cf…` | 609,163 / 795×596 / `b3e5dea67c5a0d67…` | 저장 | 2026-10-01 | 홍등가_사창가골목. 승인(패치 추가 지시, 2026-10-01). `staging/pic/`에 보관. 배포 ZIP 미생성 |
 
 전체 SHA-256은 [원본 카탈로그](NEWIMG_ORIGINAL_CATALOG.json)와 아래 패치 기록에 있다.
 
@@ -440,6 +441,14 @@
 - 경로 대조: `JO9main`의 `game/content/pic/scene/whore_redlight/whore_redlight-112.png`와 경로·파일명이 같다. 형식(PNG, RGB)과 사이즈(795×596)도 원본과 같다. 같은 폴더의 `whore_redlight-112w.png`는 교체 대상이 아니라 원본 그대로 남는다.
 - 검사: PNG 서명, 청크 CRC, 픽셀 데이터 압축 해제 통과. 움직이는 PNG 없음.
 - 반영: `staging/pic/`에 넣었다(전체 108개). 배포 ZIP과 비교 HTML은 만들지 않았다. 미배포 작업 단위 2개째다.
+
+### 11차: 추가 이미지 ZIP `홍등가_사창가골목` 세 번째 (2026-10-01, 배포 ZIP 미생성)
+
+- 받은 파일: `JO9_converted_images_6.zip` (610,062 bytes, SHA-256 `774c6ceb093afd8d963e0ba89a5d9a753f5d4b1c502819039e962cd6ef3311c7`). `scene/whore_redlight/whore_redlight-113.png`와 변환 툴 안내문 `읽어주세요.txt`가 들어 있다. 안내문은 반영하지 않았다.
+- 그룹: 사용자가 `홍등가_사창가골목`으로 지정했다.
+- 경로 대조: `JO9main`의 `game/content/pic/scene/whore_redlight/whore_redlight-113.png`와 경로·파일명이 같다. 형식(PNG, RGB)과 사이즈(795×596)도 원본과 같다. 같은 폴더의 `whore_redlight-113w.png`는 교체 대상이 아니다.
+- 검사: PNG 서명, 청크 CRC, 픽셀 데이터 압축 해제 통과. 움직이는 PNG 없음.
+- 반영: `staging/pic/`에 넣었다(전체 109개). 배포 ZIP과 비교 HTML은 만들지 않았다. 미배포 작업 단위 3개째다.
 
 ## 미결 사항
 
