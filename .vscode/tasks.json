@@ -1,0 +1,40 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "JO9: 새 PC 준비(설치 + 게임 폴더 지정)",
+			"type": "process",
+			"command": "powershell.exe",
+			"args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}\\tools\\setup_pc.ps1"],
+			"problemMatcher": []
+		},
+		{
+			"label": "JO9: 게임 폴더만 다시 지정",
+			"type": "process",
+			"command": "powershell.exe",
+			"args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}\\tools\\setup_pc.ps1", "-GameOnly"],
+			"problemMatcher": []
+		},
+		{
+			"label": "JO9: 패치 검증만(DryRun)",
+			"type": "process",
+			"command": "powershell.exe",
+			"args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}\\tools\\apply_mods.ps1", "-DryRun"],
+			"problemMatcher": []
+		},
+		{
+			"label": "JO9: 패치 적용",
+			"type": "process",
+			"command": "powershell.exe",
+			"args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}\\tools\\apply_mods.ps1"],
+			"problemMatcher": []
+		},
+		{
+			"label": "JO9: 게임 실행 및 화면 캡처",
+			"type": "process",
+			"command": "powershell.exe",
+			"args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}\\tools\\launch_and_capture.ps1"],
+			"problemMatcher": []
+		}
+	]
+}
