@@ -19,6 +19,10 @@
 - 이미지 외 파일(jack.qsp, css/base.css, 조건부 engine/jack.exe): 원본 경로에 덮어쓰고, 설치 전 원본을 보관해 복구한다.
 - QSP를 고치는 다른 모드와는 호환되지 않는다. 이미지 교체 모드만 호환성을 점검한다.
 
+## 로컬 모딩(새 PC 재현)
+
+새 PC에서 환경을 준비하고 `mods/*.json` 패치 기록을 게임의 `<게임폴더>\game\jack.qsp`에 적용하는 절차는 [새 PC 안내](docs/modding/NEW_PC_KR.md)를 따른다. PC별 게임 경로는 `local.config.json`에 저장되며 Git에는 포함되지 않는다.
+
 ## 문서
 
 - [작업 결정과 근거](docs/context-notes.md) · [체크리스트](docs/checklist.md)

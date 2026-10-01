@@ -1,5 +1,7 @@
 # VS Code에서 JO9 모딩 시작하기
 
+새 PC라면 먼저 [새 PC 안내](NEW_PC_KR.md)대로 `tools\setup_pc.ps1`과 `tools\apply_mods.ps1`을 실행한다.
+
 ## 준비 (처음 한 번)
 1. VS Code 설치. 확장에서 `Korean Language Pack for Visual Studio Code`(Microsoft)를 설치하면 메뉴가 한국어가 된다.
 2. 확장에서 `Claude Code`(Anthropic 공식)를 설치하고 로그인한다.

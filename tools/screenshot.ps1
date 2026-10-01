@@ -1,7 +1,8 @@
-# 잭오나인 게임 창(없으면 전체 화면)을 PNG로 캡처해 경로를 출력하는 스크립트
+﻿# 잭오나인 게임 창을 잠시 맨 앞으로 올려 PNG로 캡처하고 경로를 출력하는 스크립트(창이 없으면 오류)
 param(
     [string]$Out = (Join-Path $env:TEMP 'jo9_shot.png'),
-    [string]$Title = 'Jack'
+    [string]$Title = 'Jack',
+    [string]$ProcessName = 'jack'
 )
 Add-Type -AssemblyName System.Drawing
 Add-Type @'
@@ -13,27 +14,33 @@ public class W {
   [DllImport("user32.dll")] public static extern bool ShowWindow(IntPtr h, int cmd);
   [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr h);
   [DllImport("user32.dll")] public static extern bool IsIconic(IntPtr h);
+  [DllImport("user32.dll")] public static extern bool SetWindowPos(IntPtr h, IntPtr insertAfter, int x, int y, int cx, int cy, uint flags);
 }
 '@
 [W]::SetProcessDPIAware() | Out-Null
 
-$p = Get-Process | Where-Object { $_.MainWindowHandle -ne 0 -and $_.MainWindowTitle -like "*$Title*" } | Select-Object -First 1
-if ($p) {
-    # 다른 창에 가려지면 화면 복사에 그 창이 찍히므로 게임 창을 맨 앞으로 가져온다
-    if ([W]::IsIconic($p.MainWindowHandle)) { [W]::ShowWindow($p.MainWindowHandle, 9) | Out-Null }
-    [W]::SetForegroundWindow($p.MainWindowHandle) | Out-Null
-    Start-Sleep -Milliseconds 500
-    $r = New-Object W+R
-    [W]::GetWindowRect($p.MainWindowHandle, [ref]$r) | Out-Null
-    $x = $r.L; $y = $r.T; $w = $r.Rt - $r.L; $h = $r.B - $r.T
-} else {
-    Add-Type -AssemblyName System.Windows.Forms
-    $b = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds
-    $x = $b.X; $y = $b.Y; $w = $b.Width; $h = $b.Height
+$p = Get-Process -Name $ProcessName -ErrorAction SilentlyContinue |
+    Where-Object { $_.MainWindowHandle -ne 0 -and $_.MainWindowTitle -like "*$Title*" } |
+    Select-Object -First 1
+if (-not $p) { throw "게임 창을 찾지 못했습니다. 프로세스='$ProcessName', 제목='$Title'" }
+$flags = 0x0001 -bor 0x0002 -bor 0x0040
+$bmp = $null
+$g = $null
+if (-not [W]::SetWindowPos($p.MainWindowHandle, [IntPtr](-1), 0, 0, 0, 0, $flags)) { throw '게임 창을 캡처 앞으로 가져오지 못했습니다.' }
+try {
+  if ([W]::IsIconic($p.MainWindowHandle)) { [W]::ShowWindow($p.MainWindowHandle, 9) | Out-Null }
+  [W]::SetForegroundWindow($p.MainWindowHandle) | Out-Null
+  Start-Sleep -Milliseconds 500
+  $r = New-Object W+R
+  [W]::GetWindowRect($p.MainWindowHandle, [ref]$r) | Out-Null
+  $x = $r.L; $y = $r.T; $w = $r.Rt - $r.L; $h = $r.B - $r.T
+  $bmp = New-Object System.Drawing.Bitmap $w, $h
+  $g = [System.Drawing.Graphics]::FromImage($bmp)
+  $g.CopyFromScreen($x, $y, 0, 0, $bmp.Size)
+  $bmp.Save($Out, [System.Drawing.Imaging.ImageFormat]::Png)
+} finally {
+  if ($g) { $g.Dispose() }
+  if ($bmp) { $bmp.Dispose() }
+  [W]::SetWindowPos($p.MainWindowHandle, [IntPtr](-2), 0, 0, 0, 0, $flags) | Out-Null
 }
-$bmp = New-Object System.Drawing.Bitmap $w, $h
-$g = [System.Drawing.Graphics]::FromImage($bmp)
-$g.CopyFromScreen($x, $y, 0, 0, $bmp.Size)
-$bmp.Save($Out, [System.Drawing.Imaging.ImageFormat]::Png)
-$g.Dispose(); $bmp.Dispose()
 Write-Output $Out

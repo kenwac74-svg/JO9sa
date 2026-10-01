@@ -8,7 +8,11 @@
 
 ## 경로
 - 게임 폴더와 qsp 경로는 사용자가 알려 준다. 문서나 이전 대화에서 추측하지 않는다. repo 루트에 `local.config.json`(git 제외)이 있으면 거기 적힌 값을 쓴다.
-- 최신 소스 보관본은 `source/` 아래 날짜가 붙은 파일이다. 가장 최근 날짜 파일이 기준이다.
+- 게임 qsp의 실제 위치는 `<게임폴더>\game\jack.qsp`다.
+- 최신 소스 보관본은 `source/` 아래 날짜가 붙은 파일이다. 가장 최근 날짜 파일이 기준이며 원본(패치 전) 상태로 둔다.
+
+## 패치 기록
+- 확정된 수정은 `mods/` 에 선언형 JSON(location, old, new, count, 적용 전·후 SHA-256)으로 남기고 `tools\apply_mods.ps1`로 적용한다. 형식과 새 PC 절차는 `docs/modding/NEW_PC_KR.md`.
 
 ## 핵심 규칙
 - qsp를 직접 수정한다. `.qsrc`로 재빌드하지 않는다.
