@@ -27,7 +27,6 @@ if ($p) {
     [W]::GetWindowRect($p.MainWindowHandle, [ref]$r) | Out-Null
     $x = $r.L; $y = $r.T; $w = $r.Rt - $r.L; $h = $r.B - $r.T
 } else {
-    $s = [System.Windows.Forms.Screen]::PrimaryScreen
     Add-Type -AssemblyName System.Windows.Forms
     $b = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds
     $x = $b.X; $y = $b.Y; $w = $b.Width; $h = $b.Height
