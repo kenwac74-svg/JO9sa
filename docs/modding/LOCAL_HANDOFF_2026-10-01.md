@@ -6,7 +6,7 @@
 - repo: `C:\MOVE\JO9sa` (브랜치 `main`, `git pull`로 최신 유지)
 - 게임 폴더: `C:\MOVE\Jack O Nine Tails v2.3 Kor_nosex` (여기에 git init 하지 않는다)
 - 최신 소스(사용자 지정): `source/jack_2026-10-01.qsp`, SHA-256 `59e1a1afb4fdd2e9bf9b1ffdcb12c10f2f4cc15d4cd3d890e21f8cb652f5958e`
-- 화면 확인: 게임을 켠 상태에서 `powershell -ExecutionPolicy Bypass -File tools\screenshot.ps1` → 출력된 PNG를 읽는다. 사용자가 "화면 봐"라고 하면 이걸 쓴다. 클릭·키 입력 자동화는 하지 않는다.
+- 화면 확인: 게임 실행과 화면 점검은 사용자가 수동으로 한다. 사용자가 요청할 때만 `tools\screenshot.ps1`로 PNG를 만들어 읽는다. 클릭·키 입력은 자동화하지 않는다.
 
 ## 결정 (확정)
 1. 소스 기준은 최신 qsp 직접 수정이다. `.qsrc` 재빌드는 하지 않는다 (FIX6가 5개 location을 qsp에서 직접 교체해서 `.qsrc`가 오래됐다).
