@@ -36,7 +36,7 @@
    - 현재 해시가 어떤 패치의 적용 후 해시와 같으면 거기까지는 "이미 적용됨"으로 건너뛴다.
    - 원본(`before_sha256`)도 적용 후 해시도 아니면 아무것도 쓰지 않고 중단한다. 이때는 게임 버전이나 다른 모드 적용 여부를 확인한다.
    - 읽고 그대로 다시 쓴 결과가 원본과 바이트 동일할 때(왕복 검증)만 진행한다.
-   - 쓰기 전에 `jack.qsp.bak_YYYYMMDD_HHMMSS` 백업을 만들고, 쓴 뒤 해시가 `after_sha256`과 다르면 백업으로 되돌린다.
+   - 쓰기 전에 `jack.qsp.bak_YYYYMMDD_HHMMSS` 백업을 만들고, 쓴 파일을 다시 읽은 해시가 메모리의 결과와 다르면 백업으로 되돌린다.
 4. 화면 확인 — 게임을 켜고(이미 켜져 있으면 재사용) 창을 캡처
    ```powershell
    powershell -ExecutionPolicy Bypass -File tools\launch_and_capture.ps1
@@ -46,7 +46,7 @@
 6. Claude Code 계정 로그인은 직접 한다(자동화하지 않음).
 
 ## 새 수정을 기록하는 방법
-게임에서 수정이 확정되면 `mods\` 에 날짜로 시작하는 JSON을 하나 추가한다. 앞 패치의 `after_sha256`이 다음 패치의 `before_sha256`이 된다.
+게임에서 수정이 확정되면 `mods\` 에 날짜로 시작하는 JSON을 하나 추가한다. `before_sha256`, `after_sha256`은 참고용이며 모르면 빈 문자열로 둔다. 적용 여부는 `old`/`new`/`count`로 판단하므로 `new`가 적용 전 파일의 같은 location에 이미 들어 있지 않도록 쓴다.
 
 ```json
 {

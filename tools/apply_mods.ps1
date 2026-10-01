@@ -1,4 +1,4 @@
-﻿# mods\*.json 패치 기록을 jack.qsp에 해시 검증·왕복 검증·백업과 함께 멱등 적용하는 스크립트(Python 불필요)
+﻿# mods\*.json 패치 기록을 jack.qsp에 edit 단위로 왕복 검증·백업과 함께 멱등 적용하는 스크립트(Python 불필요)
 param(
     # 대상 jack.qsp. 비우면 local.config.json의 GameQsp를 쓴다.
     [string]$Qsp = '',
@@ -74,18 +74,7 @@ $hash = [Jo9Qsp]::Sha256($raw)
 Write-Host "대상: $Qsp"
 Write-Host "현재 SHA-256: $hash"
 
-# 어디까지 적용됐는지 해시로 판단한다(멱등).
-$start = -1
-for ($k = $mods.Count - 1; $k -ge 0; $k--) {
-    if ($hash -eq $mods[$k].after_sha256.ToUpper()) { $start = $k + 1; break }
-}
-if ($start -lt 0) {
-    if ($hash -eq $mods[0].before_sha256.ToUpper()) { $start = 0 }
-    else { throw "예상하지 못한 해시라 중단합니다. 첫 패치($($mods[0].id))의 적용 전 해시 $($mods[0].before_sha256) 또는 어떤 패치의 적용 후 해시와도 같지 않습니다." }
-}
-for ($k = 0; $k -lt $start; $k++) { Write-Host "[건너뜀] $($mods[$k].id): 이미 적용됨" }
-if ($start -ge $mods.Count) { Write-Host '모든 패치가 이미 적용돼 있습니다. 쓰지 않았습니다.'; exit 0 }
-
+# edit 단위로 멱등 적용한다. 해시는 참고로만 출력하고 막지 않는다(여러 세션이 따로 만든 mods를 순서와 무관하게 적용하기 위해).
 # 왕복 검증: 읽고 수정 없이 다시 쓴 결과가 원본과 바이트 동일해야 한다.
 $lines = [Jo9Qsp]::Split($raw)
 if (-not [Jo9Qsp]::Same([Jo9Qsp]::Join($lines), $raw)) { throw '왕복 검증 실패: 수정 없이 다시 쓴 결과가 원본과 다릅니다. 쓰지 않았습니다.' }
@@ -93,23 +82,36 @@ $index = Get-LocationIndex $lines
 Write-Host "왕복 검증 통과 (location $($index.Count)개)"
 
 $offset = @{ 'desc' = 1; 'body' = 2 }
-for ($k = $start; $k -lt $mods.Count; $k++) {
-    $mod = $mods[$k]
-    if ($hash -ne $mod.before_sha256.ToUpper()) { throw "[$($mod.id)] 적용 전 해시가 다릅니다. 기대 $($mod.before_sha256), 실제 $hash" }
+$changed = 0
+foreach ($mod in $mods) {
+    if ($mod.before_sha256 -and $hash -eq $mod.before_sha256.ToUpper()) { Write-Host "[참고] $($mod.id): 현재 해시가 기록된 적용 전 해시와 같음" }
     foreach ($e in $mod.edits) {
-        if (-not $index.ContainsKey($e.location)) { throw "[$($mod.id)] location을 찾지 못했습니다: $($e.location)" }
-        if (-not $offset.ContainsKey($e.field)) { throw "[$($mod.id)] 지원하지 않는 field: $($e.field) (desc, body만 가능)" }
+        $where = "[$($mod.id)] $($e.location).$($e.field)"
+        if (-not $index.ContainsKey($e.location)) { throw "$where location을 찾지 못했습니다. 쓰지 않았습니다." }
+        if (-not $offset.ContainsKey($e.field)) { throw "$where 지원하지 않는 field입니다(desc, body만 가능). 쓰지 않았습니다." }
         $li = $index[$e.location] + $offset[$e.field]
         $text = [Jo9Qsp]::Shift($lines[$li], 5)
-        $found = [Jo9Qsp]::Count($text, $e.old)
-        if ($found -ne [int]$e.count) { throw "[$($mod.id)] $($e.location).$($e.field)에서 old 문자열이 $found 번 나왔습니다(기대 $($e.count)). 쓰지 않았습니다." }
-        $lines[$li] = [Jo9Qsp]::Shift($text.Replace($e.old, $e.new), -5)
-        Write-Host "[적용] $($mod.id): $($e.location).$($e.field) $found 곳 치환"
+        $want = [int]$e.count
+        $nOld = [Jo9Qsp]::Count($text, $e.old)
+        $nNew = [Jo9Qsp]::Count($text, $e.new)
+        # new가 old를 품으면 적용 후에도 old가 남으므로 new를 먼저 본다. 그 밖에는 old를 먼저 본다.
+        $applied = $nNew -eq $want -and ($nOld -eq 0 -or $e.new.Contains($e.old))
+        $pending = $nOld -eq $want -and -not ($e.new.Contains($e.old) -and $nNew -eq $want)
+        if ($pending) {
+            $lines[$li] = [Jo9Qsp]::Shift($text.Replace($e.old, $e.new), -5)
+            $changed++
+            Write-Host "[적용] $where $nOld 곳 치환"
+        } elseif ($applied) {
+            Write-Host "[건너뜀] $where 이미 적용됨"
+        } else {
+            throw "$where old $nOld 번, new $nNew 번 나왔습니다(기대 $want). 적용 상태를 판단할 수 없어 중단합니다. 쓰지 않았습니다."
+        }
     }
     $hash = [Jo9Qsp]::Sha256([Jo9Qsp]::Join($lines))
-    if ($hash -ne $mod.after_sha256.ToUpper()) { throw "[$($mod.id)] 적용 후 해시가 다릅니다. 기대 $($mod.after_sha256), 실제 $hash. 쓰지 않았습니다." }
+    if ($mod.after_sha256 -and $hash -eq $mod.after_sha256.ToUpper()) { Write-Host "[참고] $($mod.id): 기록된 적용 후 해시와 같음" }
 }
 
+if ($changed -eq 0) { Write-Host "모든 edit가 이미 적용돼 있습니다. 쓰지 않았습니다. SHA-256: $hash"; exit 0 }
 if ($DryRun) { Write-Host "DryRun: 검증만 통과했고 쓰지 않았습니다. 결과 SHA-256: $hash"; exit 0 }
 
 $backup = "$Qsp.bak_$(Get-Date -Format 'yyyyMMdd_HHmmss')"
