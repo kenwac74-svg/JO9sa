@@ -250,6 +250,7 @@
 | 104 | `game/content/pic/characters/anes.png` | 285,693 / 795×596 / `0aac2bc347a45dce…` | 586,500 / 795×596 / `928eca977f31c864…` | 저장 | 2026-10-01 | 홍등가_카페-신들의선물. 승인(패치 추가 지시, 2026-10-01). `staging/pic/`에 보관 |
 | 105 | `game/content/pic/ui overhaul/anes.png` | 14,476 / 59×66 / `2dc6d3175555e673…` | 9,254 / 59×66 / `2cde15312a478cdc…` | 저장 | 2026-10-01 | 홍등가_카페-신들의선물. 승인(패치 추가 지시, 2026-10-01). `staging/pic/`에 보관 |
 | 106 | `game/content/pic/bg/RedLight.png` | 1,064,474 / 1000×750 / `fbe3afece4ed3f5a…` | 532,478 / 1000×750 / `0e1147bf29178576…` | 저장 | 2026-10-01 | 홍등가_메인. 승인(패치 추가 지시, 2026-10-01). `staging/pic/`에 보관. 신규 파일은 팔레트(256색) PNG, 원본은 RGB PNG |
+| 107 | `game/content/pic/bg/Dosugredlight.png` | 1,240,587 / 795×596 / `10086f53245942bc…` | 343,870 / 795×596 / `ad523ebc6f68853a…` | 저장 | 2026-10-01 | 홍등가_사창가골목. 승인(패치 추가 지시, 2026-10-01). `staging/pic/`에 보관. 배포 ZIP 미생성. 신규 파일은 팔레트(256색) PNG, 원본은 RGB PNG |
 
 전체 SHA-256은 [원본 카탈로그](NEWIMG_ORIGINAL_CATALOG.json)와 아래 패치 기록에 있다.
 
@@ -420,6 +421,15 @@
 - 파일: `patches/JO9_NewImg_Pack_v6.zip` (30,176,069 bytes, SHA-256 `f89dc06e32dac0a102e986b249f7109c8197af7df9d69f6abf7ccbffbfaf0b46`)
 - 내용: `staging/pic/` 전체 106개(v5의 105개 + 신규 1개). 최상위 `pic/`, 파일명 UTF-8. 카탈로그 106개 항목과 파일 목록 일치, ZIP 안 각 파일이 `staging`과 바이트 동일, v5 파일을 모두 포함함을 확인했다. ZIP CRC 검사 통과.
 - 상태: 저장. 게임 설치·실행 검증은 하지 않았다.
+
+### 9차: 추가 이미지 ZIP `홍등가_사창가골목` (2026-10-01, 배포 ZIP 미생성)
+
+- 받은 파일: `JO9_converted_images_5.zip` (344,294 bytes, SHA-256 `0ba65e434bc72c579a6b452955e451a6b77b2a977878377949af8fa08a32c196`). `bg/Dosugredlight.png`와 변환 툴 안내문 `읽어주세요.txt`(7·8차와 같은 내용)가 들어 있다. 안내문은 반영하지 않았다.
+- 그룹: 사용자가 `홍등가_사창가골목`으로 지정했다.
+- 경로 대조: `JO9main`의 `game/content/pic/bg/Dosugredlight.png`와 경로·파일명(대소문자 포함)이 같다. 형식(PNG)과 사이즈(795×596)도 원본과 같다. 신규 파일은 팔레트(256색) PNG, 원본은 RGB PNG다.
+- 검사: PNG 서명, 청크 CRC, 픽셀 데이터 압축 해제 통과. 움직이는 PNG 없음.
+- 반영: `staging/pic/`에 넣었다(전체 107개). 2026-10-01 정책에 따라 배포 ZIP과 비교 HTML은 만들지 않았고, 변경 이력의 "미배포" 항목에 기록했다.
+- 참고: 파일명 번호로 보면 `JO9_converted_images_4.zip`은 받지 않았다.
 
 ## 미결 사항
 
