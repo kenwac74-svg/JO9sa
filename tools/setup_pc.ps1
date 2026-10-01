@@ -1,5 +1,4 @@
-# 새 PC에서 JO9 모딩 환경(Claude Code, VS Code 확장, 게임 폴더 경로)을 준비하는 스크립트
-param([string]$GameDir = '')
+# 새 PC에서 JO9 모딩 환경(Claude Code, VS Code 확장)을 준비하는 스크립트
 $ErrorActionPreference = 'Stop'
 $repo = Split-Path -Parent $PSScriptRoot
 
@@ -31,19 +30,4 @@ if (Get-Command code -ErrorAction SilentlyContinue) {
     Write-Warning 'code 명령이 없어 VS Code 확장은 건너뜁니다. 확장 탭에서 직접 설치하세요.'
 }
 
-# 4. 게임 폴더와 jack.qsp 경로 찾기
-if (-not $GameDir) {
-    $cands = @('C:\MOVE', 'D:\MOVE', "$env:USERPROFILE\Desktop", "$env:USERPROFILE\Downloads") |
-        Where-Object { Test-Path $_ } |
-        ForEach-Object { Get-ChildItem $_ -Directory -Filter 'Jack*' -ErrorAction SilentlyContinue }
-    $GameDir = ($cands | Select-Object -First 1).FullName
-}
-if (-not $GameDir) { $GameDir = Read-Host '게임 폴더 경로를 입력하세요' }
-$qsp = Get-ChildItem $GameDir -Filter 'jack.qsp' -Recurse -Depth 2 -ErrorAction SilentlyContinue | Select-Object -First 1
-if (-not $qsp) { Write-Warning "$GameDir 에서 jack.qsp를 찾지 못했습니다."; exit 1 }
-
-@{ gameDir = $GameDir; qspPath = $qsp.FullName } | ConvertTo-Json |
-    Set-Content (Join-Path $repo 'local.config.json') -Encoding UTF8
-Write-Host "게임 폴더: $GameDir"
-Write-Host "jack.qsp: $($qsp.FullName)"
-Write-Host '완료. 마지막으로 터미널에서 claude를 실행해 로그인하세요(계정 로그인만 직접 해야 합니다).'
+Write-Host '완료. 터미널에서 claude를 실행해 로그인하세요(계정 로그인만 직접 해야 합니다).'

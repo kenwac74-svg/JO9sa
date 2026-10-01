@@ -6,8 +6,8 @@
 2. `docs/modding/LOCAL_HANDOFF_2026-10-01.md` — 확정된 결정, qsp 형식, 작업 순서
 3. `docs/modding/context-notes.md` — 분석 결과와 근거 (계속 덧붙이는 기록)
 
-## 이 PC의 경로
-- 게임 폴더와 qsp 경로는 repo 루트의 `local.config.json`(git에 올리지 않음)에 있다. 없으면 `powershell -ExecutionPolicy Bypass -File tools\setup_pc.ps1`을 실행해 만든다. 경로를 문서에서 추측하지 않는다.
+## 경로
+- 게임 폴더와 qsp 경로는 사용자가 알려 준다. 문서나 이전 대화에서 추측하지 않는다. repo 루트에 `local.config.json`(git 제외)이 있으면 거기 적힌 값을 쓴다.
 - 최신 소스 보관본은 `source/` 아래 날짜가 붙은 파일이다. 가장 최근 날짜 파일이 기준이다.
 
 ## 핵심 규칙
