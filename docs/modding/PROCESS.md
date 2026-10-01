@@ -10,11 +10,17 @@
 | **UI패치모드 세션** | UI 화면 코드(아래 소유 location)를 계속 작성하고, UI 이미지·CSS·설치기를 만들고, 빌드·패키징을 한다. 소유 location 밖의 QSP 변경은 의뢰한다. |
 | **사용자** | 의뢰 전달 시점 결정, 게임에서 확인, PR 병합과 패키징 승인. |
 
-### UI 화면 코드 소유 location
-- 처음 목록(UI 설치기가 본문을 교체하는 5개): `sjm_UI_UIadds`, `main_screen`, `slave_stat`, `city_screen`, `#food_base`.
-- 장비 툴팁·쿠라 패치 등 UI 세션이 이미 넣은 화면 코드도 UI 세션 소유로 둔다. 소유 location의 정확한 전체 목록은 UI 세션이 확인해서 알려 주면 이 문서에 추가한다.
+### UI 화면 코드 소유 location (UI 세션 보고 기준, 0.13 패키지)
+- 0.12부터 UI 패키지는 완성된 `jack.qsp`를 통째로 넣는다. 0.13은 location 243개가 순정과 다르고 새 location 5개가 있다(UI 세션 보고, 이 세션이 직접 확인한 것은 아니다).
+- **새로 추가한 location 5개(개인실 연결):** `snk_room_bridge`, `snk_room_menu_screen`, `snk_room_diet_migrate`, `snk_room_birth_check`, `snk_room_birth_return`.
+- **모든 location 맨 위의 개인실 진입 보호 줄** `if snk_room_target > 0 and $curloc = '…': gs 'snk_room_bridge', 'guard', '…'`: 181개에는 이 줄만 붙었고, 27개는 이 줄과 이미지 경로만 바뀌었다. `city_menu_form`에도 이 줄이 한 줄 붙어 있다.
+- **내용이 바뀐 35개(UI 소유):**
+  - 화면: `_layout`, `main_layout`, `stats_layout`, `menu_form`, `sjm_UI_UIadds`, `debug_info`, `$newloc`, `$ride_start`, `next_day`, `main_screen`, `master_stat`, `slave_stat`, `assistant_stat`, `interaction`, `city_screen`, `interaction_city`, `ride_interface`, `trophy_room_screen`, `slave_private_room1`~`4`, `#food_base`, `конец_боя`, `раскладка_бой`, `боевой_интерфейс`, `sex_screen`, `sex_screen_woman`, `#txt_woman`, `#txt_man`
+  - 장비 툴팁: `#dynamic`
+  - 쿠라: `main_menu`, `init_custom_game`, `#masters_base`, `#dynamic`, `hero_customization_man`(초상화 경로)
 - UI 빌드가 파일 이동에서 기계적으로 만드는 이미지 경로 치환 규칙(`content\pic\…` → `SNKmod\…`)도 UI 세션이 맡는다.
-- 이 목록 밖의 location은 게임 수정 세션 소유다. 예: `city_menu_form`의 메뉴 라벨.
+- 이 목록 밖의 location은 게임 수정 세션 소유다. 예: `city_menu_form`의 메뉴 라벨(UI 빌드 본문에서도 `old`가 정확히 1번 나와서 그대로 적용된다).
+- 개인실(`slave_private_room1`~`4`, `snk_room_*`)처럼 UI와 게임 동작이 섞인 코드는 기본적으로 UI 세션이 작성하되, 게임 동작(식사·착유·출산 복귀 등)을 바꾸는 변경은 아래 최종 권한 절차를 거친다. (기본 가정, 사용자 확인 필요)
 
 ### 최종 권한 행사 방법
 - UI 세션은 패키징 전에 자기 QSP 변경 목록(location 이름, 변경 요지)을 게임 수정 세션에 알린다.
@@ -49,6 +55,10 @@
 - 적용 기준은 각 edit의 `location`·`field`·`old`·`count`다. `old` 문자열이 location 안에서 정확히 `count`번 나오지 않으면 빌드를 멈춘다.
 - `before_sha256`·`after_sha256`은 사용자 작업본(`source/`의 파일)에서의 값이다. UI 빌드의 기반 `jack.qsp`는 다른 파일이므로 UI 빌드는 이 해시를 검사하지 않는다.
 - `mods/*.json`은 파일 이름 순서로 적용한다. 같은 문자열을 고치는 변경은 앞 변경을 전제로 한다.
+- UI 빌드는 지금 `field`가 `body`인 edit만 처리한다. `desc`나 액션 칸을 고치는 mods가 생기면 UI 세션이 빌드를 확장해야 하므로 미리 알린다.
+- `old`·`new`에 원본 이미지 경로가 들어 있으면 UI 빌드가 SNKmod 경로로 같은 변환을 한 뒤 찾는다.
+- 위 "내용이 바뀐 35개(UI 소유)"를 고치는 mods는 UI 본문 기준으로 `old`가 맞지 않아 빌드가 멈출 수 있다. 이런 mods는 UI 세션에 미리 알리고, 필요하면 UI 본문 기준으로 `old`를 다시 쓴다.
+- UI 빌드는 `main`을 작업 브랜치로 가져온 뒤 `mods/`를 적용한다.
 - UI 세션은 `mods/`와 `source/`를 읽기만 한다. 소유 location의 자기 변경은 자기 빌드에서 관리한다.
 
 ## 지킬 것
