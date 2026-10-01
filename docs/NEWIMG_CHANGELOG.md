@@ -9,6 +9,13 @@
 - 기준 게임: Jack-o-nine-tails 2.3 순정.
 - QSP, 실행 파일, 세이브는 바꾸지 않는다. 기존 이미지를 같은 경로에 덮어쓰기만 한다.
 
+## v5 (2026-10-01)
+
+- 파일: `JO9_NewImg_Pack_v5.zip`, 105개, 29,643,477 bytes, SHA-256 `a20651a6ba97edaa5b786de01315a5f97eacc270f8ff032b84350f703749f9b5`
+- 추가 5개
+  - 홍등가 카페-신들의 선물: `pic/bg/kafe.png`, `pic/characters/anes.png`, `pic/ui overhaul/kafe.png`, `pic/ui overhaul/kafe_gray.png`, `pic/ui overhaul/anes.png`
+- 변경·삭제: 없음. v4의 100개는 그대로다.
+
 ## v4 (2026-09-30)
 
 - 파일: `JO9_NewImg_Pack_v4.zip`, 100개, 28,770,801 bytes, SHA-256 `f66996fa49d8409109ebac9464b2b2bac89b378160c704cc063b1c810ac5ef51`

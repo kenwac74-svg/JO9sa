@@ -240,6 +240,11 @@
 | 98 | `game/content/pic/ui overhaul/maslab_gray.png` | 67,154 / 59×66 / `2acbb1289b546105…` | 6,446 / 59×66 / `c8a18281de8be396…` | 저장 | 2026-09-30 | 동부구역_아그라바 관문. 승인(패치 추가 지시, 2026-09-30). `staging/pic/`에 보관 |
 | 99 | `game/content/pic/bg/baraholka.png` | 1,087,000 / 795×596 / `bbd945ae66380be6…` | 234,020 / 795×596 / `b997f342d0ef9c36…` | 저장 | 2026-09-30 | 홍등가_벼룩시장. 승인(패치 추가 지시, 2026-09-30). `staging/pic/`에 보관 |
 | 100 | `game/content/pic/ui overhaul/baraholka.png` | 33,748 / 59×66 / `d45360c6e4bb1dfd…` | 9,597 / 59×66 / `b71a429cb5813034…` | 저장 | 2026-09-30 | 홍등가_벼룩시장. 승인(패치 추가 지시, 2026-09-30). `staging/pic/`에 보관 |
+| 101 | `game/content/pic/bg/kafe.png` | 944,577 / 795×596 / `0c8164bea41eeb06…` | 259,085 / 795×596 / `fd46af793a3511ab…` | 저장 | 2026-10-01 | 홍등가_카페-신들의선물. 승인(패치 추가 지시, 2026-10-01). `staging/pic/`에 보관 |
+| 102 | `game/content/pic/ui overhaul/kafe.png` | 15,004 / 59×66 / `473a828c3f91eb6e…` | 10,069 / 59×66 / `afccc673105c57b6…` | 저장 | 2026-10-01 | 홍등가_카페-신들의선물. 승인(패치 추가 지시, 2026-10-01). `staging/pic/`에 보관 |
+| 103 | `game/content/pic/ui overhaul/kafe_gray.png` | 13,990 / 59×66 / `28d9946b4153de3c…` | 7,158 / 59×66 / `867a2d98d2d5de14…` | 저장 | 2026-10-01 | 홍등가_카페-신들의선물. 승인(패치 추가 지시, 2026-10-01). `staging/pic/`에 보관 |
+| 104 | `game/content/pic/characters/anes.png` | 285,693 / 795×596 / `0aac2bc347a45dce…` | 586,500 / 795×596 / `928eca977f31c864…` | 저장 | 2026-10-01 | 홍등가_카페-신들의선물. 승인(패치 추가 지시, 2026-10-01). `staging/pic/`에 보관 |
+| 105 | `game/content/pic/ui overhaul/anes.png` | 14,476 / 59×66 / `2dc6d3175555e673…` | 9,254 / 59×66 / `2cde15312a478cdc…` | 저장 | 2026-10-01 | 홍등가_카페-신들의선물. 승인(패치 추가 지시, 2026-10-01). `staging/pic/`에 보관 |
 
 전체 SHA-256은 [원본 카탈로그](NEWIMG_ORIGINAL_CATALOG.json)와 아래 패치 기록에 있다.
 
@@ -374,6 +379,25 @@
 
 - 파일: `patches/JO9_NewImg_Pack_v4.zip` (28,770,801 bytes, SHA-256 `f66996fa49d8409109ebac9464b2b2bac89b378160c704cc063b1c810ac5ef51`)
 - 내용: `staging/pic/` 전체 100개(v3의 98개 + 신규 2개). 최상위 `pic/`, 파일명 UTF-8. 카탈로그 100개 항목과 파일 목록 일치, ZIP 안 각 파일이 `staging`과 바이트 동일, v3 파일을 모두 포함함을 확인했다. ZIP CRC 검사 통과.
+- 상태: 저장. 게임 설치·실행 검증은 하지 않았다.
+
+### 7차: 추가 이미지 ZIP 2개 `홍등가_카페-신들의선물` → 배포 ZIP v5 (2026-10-01)
+
+| 받은 ZIP | 크기 · SHA-256 | 구성 |
+|---|---|---|
+| `JO9_converted_images_1.zip` | 277,052 bytes, `31b82a1c82219223778c5b1d8a05ba0eb938272f876a9f8a254c5e1b1610319a` | `bg/kafe.png`, `ui overhaul/kafe.png`, `ui overhaul/kafe_gray.png`, `읽어주세요.txt` |
+| `JO9_converted_images_2.zip` | 596,708 bytes, `1538c69040f366a68b13f64304bccd522abf729191037d56f0d062de39cb621a` | `characters/anes.png`, `ui overhaul/anes.png`, `읽어주세요.txt` |
+
+- 사용자가 두 ZIP을 `홍등가_카페-신들의선물` 그룹으로 넣으라고 지시했다. 내부 경로는 `pic/` 기준 상대 경로이고 용도 폴더와 `pic/` 단계는 없다.
+- `읽어주세요.txt`(168 bytes, 두 ZIP에서 같은 내용)는 이미지 변환 툴이 넣은 안내문이다. 순수 이미지 교체 팩 정책에 따라 패치에 넣지 않았다. 안내문이 말하는 `converted` 폴더는 두 ZIP 모두 없다.
+- 경로 대조: PNG 5개 모두 `JO9main`에 같은 경로·같은 파일명의 원본이 있다. 형식(PNG)과 사이즈(795×596, 59×66)도 원본과 같다. 원본 `ui overhaul`에 `anes_gray.png`는 없어 교체 대상도 없다.
+- 검사: PNG 서명, 청크 CRC, 픽셀 데이터 압축 해제 통과. 움직이는 PNG 없음. 5개 모두 신규다.
+- 승인: 사용자의 추가 지시를 승인으로 처리했다.
+
+배포 ZIP v5는 다음과 같다.
+
+- 파일: `patches/JO9_NewImg_Pack_v5.zip` (29,643,477 bytes, SHA-256 `a20651a6ba97edaa5b786de01315a5f97eacc270f8ff032b84350f703749f9b5`)
+- 내용: `staging/pic/` 전체 105개(v4의 100개 + 신규 5개). 최상위 `pic/`, 파일명 UTF-8. 카탈로그 105개 항목과 파일 목록 일치, ZIP 안 각 파일이 `staging`과 바이트 동일, v4 파일을 모두 포함함을 확인했다. ZIP CRC 검사 통과.
 - 상태: 저장. 게임 설치·실행 검증은 하지 않았다.
 
 ## 미결 사항
