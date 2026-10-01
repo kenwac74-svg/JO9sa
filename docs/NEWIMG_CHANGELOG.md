@@ -9,6 +9,13 @@
 - 기준 게임: Jack-o-nine-tails 2.3 순정.
 - QSP, 실행 파일, 세이브는 바꾸지 않는다. 기존 이미지를 같은 경로에 덮어쓰기만 한다.
 
+## v6 (2026-10-01)
+
+- 파일: `JO9_NewImg_Pack_v6.zip`, 106개, 30,176,069 bytes, SHA-256 `f89dc06e32dac0a102e986b249f7109c8197af7df9d69f6abf7ccbffbfaf0b46`
+- 추가 1개
+  - 홍등가 메인: `pic/bg/RedLight.png`
+- 변경·삭제: 없음. v5의 105개는 그대로다.
+
 ## v5 (2026-10-01)
 
 - 파일: `JO9_NewImg_Pack_v5.zip`, 105개, 29,643,477 bytes, SHA-256 `a20651a6ba97edaa5b786de01315a5f97eacc270f8ff032b84350f703749f9b5`
