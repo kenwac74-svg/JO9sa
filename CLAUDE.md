@@ -15,7 +15,7 @@
 - 확정된 수정은 `mods/` 에 선언형 JSON(location, old, new, count, 적용 전·후 SHA-256)으로 남기고 `tools\apply_mods.ps1`로 적용한다. 형식과 새 PC 절차는 `docs/modding/NEW_PC_KR.md`.
 
 ## 작업 분담
-- `jack.qsp` 변경은 이 repo의 Claude가 전담한다. UI패치모드 세션의 변경 의뢰는 `docs/modding/PROCESS.md`의 형식과 순서로 처리한다.
+- `jack.qsp`의 최종 변경 권한은 이 repo의 Claude에게 있다. UI 화면 코드(소유 location)는 UI패치모드 세션이 계속 맡고, 그 밖의 변경 의뢰와 UI 변경의 충돌 점검은 `docs/modding/PROCESS.md`의 형식과 순서로 처리한다. 빌드·패키징은 UI패치모드 세션이 한다.
 
 ## 핵심 규칙
 - qsp를 직접 수정한다. `.qsrc`로 재빌드하지 않는다.
