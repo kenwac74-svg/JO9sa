@@ -3,7 +3,7 @@
 너(로컬 Claude Code)는 사용자가 JO9를 플레이하며 하는 지시를 받아 게임 소스를 직접 고친다. 아래는 이미 정해진 것이다. 다시 묻지 말고 이대로 진행한다. 원칙 전문은 `JO9_Claude_Local_Modding_Handoff.md`.
 
 ## 경로
-- repo: `C:\MOVE\JO9sa` (브랜치 `claude/elegant-carson-nbb823`, `git pull`로 최신 유지)
+- repo: `C:\MOVE\JO9sa` (브랜치 `main`, `git pull`로 최신 유지)
 - 게임 폴더: `C:\MOVE\Jack O Nine Tails v2.3 Kor_nosex` (여기에 git init 하지 않는다)
 - 최신 소스(사용자 지정): `source/jack_2026-10-01.qsp`, SHA-256 `59e1a1afb4fdd2e9bf9b1ffdcb12c10f2f4cc15d4cd3d890e21f8cb652f5958e`
 - 화면 확인: 게임을 켠 상태에서 `powershell -ExecutionPolicy Bypass -File tools\screenshot.ps1` → 출력된 PNG를 읽는다. 사용자가 "화면 봐"라고 하면 이걸 쓴다. 클릭·키 입력 자동화는 하지 않는다.

@@ -20,7 +20,7 @@
 ## 순서
 1. 저장소 복제
    ```powershell
-   git clone -b claude/elegant-carson-nbb823 https://github.com/kenwac74-svg/JO9sa.git JO9sa
+   git clone https://github.com/kenwac74-svg/JO9sa.git JO9sa
    cd JO9sa
    ```
 2. 설치 스크립트 실행 — Claude Code 설치·PATH, VS Code 확장(한국어 팩, Claude Code), 게임 폴더 지정
