@@ -77,9 +77,12 @@ def main():
         ui = set()
         if a.ui_locations:
             if os.path.isfile(a.ui_locations):
-                ui = {x.strip() for x in open(a.ui_locations, encoding='utf-8-sig').read().replace(',', '\n').split('\n') if x.strip()}
+                items = open(a.ui_locations, encoding='utf-8-sig').read().replace(',', '\n').split('\n')
             else:
-                ui = {x.strip() for x in a.ui_locations.split(',') if x.strip()}
+                items = a.ui_locations.split(',')
+            # 줄 끝의 종류 표시(예: "main_screen [ui]")는 떼고 location 이름만 쓴다
+            ui = {re.sub(r'\s*\[[^\]]*\]\s*$', '', x).strip() for x in items if x.strip()}
+            ui.discard('')
         changed = sorted(n for n in cand if n in base and (cand[n]['body'] != base[n]['body'] or cand[n]['desc'] != base[n]['desc'] or cand[n]['actions'] != base[n]['actions']))
         added = sorted(n for n in cand if n not in base)
         removed = sorted(n for n in base if n not in cand)
