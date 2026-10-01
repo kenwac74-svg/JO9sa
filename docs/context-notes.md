@@ -547,3 +547,8 @@
 - 검사: test_kura_patch에 초상화 경로 확인 추가, 모든 검사 통과. 참조 분류: 두 초상화가 SNKMOD_RENAMED_CHANGED로 분류.
 - 참고: 쿠라 패치의 세피아 초상화는 컬러판과 같은 그림이다 (원본 그대로 반영).
 - 산출물: `releases/JO9 UI_overhaul_SNKmod_0.12.zip` (18,718,762 B, SHA-256 4928bfd2…). 인게임 확인 전.
+
+### 0.13 배포 (2026-10-01)
+- 사용자 지적: 툴팁·쿠라 병합처럼 내용이 바뀌면 버전을 올린다. 0.12에 계속 덮어 빌드한 것은 잘못이었다.
+- RELEASE_VERSION 0.13 (README.html·README_KR·test_release_clean_install 표기 포함). 내용은 0.12 마지막 빌드(툴팁·쿠라·쿠라 초상화)와 같다.
+- 산출물: `releases/JO9 UI_overhaul_SNKmod_0.13.zip` (18,718,759 B, SHA-256 febc5113…). ZIP 해제본 검사 통과.

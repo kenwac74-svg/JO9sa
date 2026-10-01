@@ -21,7 +21,7 @@ from qsp_dump import read_locations  # noqa: E402
 PACKAGE = 'JO9_UI_SNKMOD'
 VERSION = 'R3'
 NAME = f'JO9_UI_v1_9_14_SNKmod_{VERSION}'
-RELEASE_VERSION = '0.12'  # 배포판(--release) 버전
+RELEASE_VERSION = '0.13'  # 배포판(--release) 버전
 FIX6_SHA = '254dc8c5cce2c9f5442f34b6de0cdbb029893eb544c76635d76b8b2e2fc0bc82'
 FIX6_FINAL_QSP = '953533402226c874f1d22a9023da4d235bd512b61c2fc30f028465226f49b6d9'
 MODDER_DIRS = {'grimdark', 'approved_main_v1', 'jo9_v197', 'jon-uiadds'}

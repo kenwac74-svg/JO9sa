@@ -11,7 +11,7 @@ args = ap.parse_args()
 pwsh = 'C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe'
 manifest = json.loads((args.pkg/'manifest.json').read_text(encoding='utf-8'))
 assert manifest['Package'] == 'JO9 UI_overhaul_SNKmod'
-assert manifest['Version'] == '0.12'
+assert manifest['Version'] == '0.13'
 assert t.sha(args.game/'jack.qsp') == manifest['CleanInstall']['OriginalQsp']
 assert not manifest['CleanInstall']['PreexistingBackupRequired']
 with tempfile.TemporaryDirectory(prefix='jo9_release_clean_') as folder:
@@ -40,7 +40,7 @@ with tempfile.TemporaryDirectory(prefix='jo9_release_clean_') as folder:
     states = list((game/'_JO9_SNKmod_STATE').glob('*/state.json'))
     assert len(states) == 1
     state = json.loads(states[0].read_text(encoding='utf-8-sig'))
-    assert state['Package'] == manifest['Package'] and state['Version'] == '0.12'
+    assert state['Package'] == manifest['Package'] and state['Version'] == '0.13'
     first = t.tree_hashes(game)
     r = t.run(pwsh,args.pkg,game,'Apply')
     assert r.returncode == 0, r.stdout+r.stderr
@@ -49,7 +49,7 @@ with tempfile.TemporaryDirectory(prefix='jo9_release_clean_') as folder:
     assert r.returncode == 0, r.stdout+r.stderr
     after = {k:v for k,v in t.tree_hashes(game).items() if not k.startswith('_JO9_SNKmod_STATE/')}
     assert after == before, 'restored game does not match pristine source'
-    print('PASS: no prior backup; CHECK read-only; fresh install; all QSP patches; 0.12 state; idempotent reapply; exact original restoration.')
+    print('PASS: no prior backup; CHECK read-only; fresh install; all QSP patches; 0.13 state; idempotent reapply; exact original restoration.')
     if args.upgrade_from:
         r = t.run(pwsh,args.upgrade_from,game,'Apply')
         assert r.returncode == 0, r.stdout+r.stderr
@@ -57,9 +57,9 @@ with tempfile.TemporaryDirectory(prefix='jo9_release_clean_') as folder:
         assert r.returncode == 0, r.stdout+r.stderr
         active = [json.loads(f.read_text(encoding='utf-8-sig')) for f in (game/'_JO9_SNKmod_STATE').glob('*/state.json')]
         active = [s for s in active if s['Status'] != 'restored']
-        assert len(active) == 1 and active[0]['Package'] == 'JO9 UI_overhaul_SNKmod' and active[0]['Version'] == '0.12'
+        assert len(active) == 1 and active[0]['Package'] == 'JO9 UI_overhaul_SNKmod' and active[0]['Version'] == '0.13'
         r = t.run(pwsh,args.pkg,game,'Restore')
         assert r.returncode == 0, r.stdout+r.stderr
         after = {k:v for k,v in t.tree_hashes(game).items() if not k.startswith('_JO9_SNKmod_STATE/')}
         assert after == before
-        print('PASS: legacy TEST13 package identity -> release 0.12 upgrade; one active install; exact pristine restoration.')
+        print('PASS: legacy TEST13 package identity -> release 0.13 upgrade; one active install; exact pristine restoration.')
