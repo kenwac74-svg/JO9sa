@@ -1,12 +1,12 @@
 # JO9UIpatch — SNKmod UI 패치 체크리스트
 
-기준: 배포판 **0.11** (`releases/JO9 UI_overhaul_SNKmod_0.11.zip`, JO9UIpatch). 체크는 실제 수행·확인한 항목만 한다.
+기준: 배포판 **0.14** (`releases/JO9 UI_overhaul_SNKmod_0.11.zip`, JO9UIpatch). 체크는 실제 수행·확인한 항목만 한다.
 2026-09-28 R 시절 미완료 항목을 0.11 기준으로 정리했다. 종결 근거는 아래 "정리된 R 시절 항목"에 적었다.
 
 ## 남은 작업
 
 ### 검증 (사용자 Windows 환경)
-- [ ] Windows에서 CHECK → APPLY → 인게임 확인 → RESTORE (0.11).
+- [x] Windows 설치·인게임 점검 (0.14, 사용자 확인 2026-10-02). RESTORE 확인 여부는 기록 없음.
 - [ ] 실제 FastQSP에서 개인실 room1~4의 활성 기능·복원·세이브·예외 경로 확인. (WASM 모델 검사는 통과, 실게임 미확인)
 - [ ] 다른 패치 뒤 설치 확인: JoNT_IndividualityPatchInstaller → ai_girl_pack → UI 패치 순서로 설치 후 인게임 표시.
 - [ ] `tests/test_release_clean_install.py` — Windows PowerShell·실게임 폴더에서 실행.
@@ -31,7 +31,6 @@
 - [ ] 인게임에서 장비 툴팁 표시 확인.
 - [x] 쿠라 개인 패치 병합 (main_menu·init_custom_game·#masters_base·#dynamic).
 - [ ] 인게임에서 새 게임 13번 쿠라 시작 확인.
-- [ ] 사용자 Windows에서 0.12 APPLY 후 정상 화면 확인.
 
 ## 0.11 완료 내역
 
