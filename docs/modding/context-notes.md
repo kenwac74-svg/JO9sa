@@ -63,3 +63,38 @@
 - 이 PC 게임 `jack.qsp`는 기준 원본에 `main`의 mods 3개와 위 2개, 총 5개 mods를 모두 적용한 상태다. `apply_mods.ps1 -DryRun`에서 8개 edit이 전부 "이미 적용됨"이었고 SHA-256은 `8D963AE88DCEA0DB9500B29BCD5112933ABD81042D5BE8516113840094E607C6`(17,026,702 B)다. 이 해시는 이 PC의 PowerShell 구현으로 읽은 값이다.
 - UI 쪽에 필요한 파일(이 PC `game\content\pic` 기준, 모두 존재 확인): `SNKmod\characters\master_robertus_rufus.png`(735,178 B), `SNKmod\ui overhaul\robertus_rufus.png`(8,235 B), `SNKmod\ui overhaul\robertus_rufus_gray.png`(6,171 B), `SNKmod\scene\whore_redlight\whore_redlight-1121.png`(535,175 B), `SNKmod\scene\whore_redlight\whore_redlight-1131.png`(514,654 B). `json\menu_icon.json`의 `menu_item_art_tutor`, `menu_item_art_tutor_gray`는 위 루푸스 아이콘을 가리키고 있다.
 - 게임 실행 점검은 사용자가 수동으로 한다. 이 PC에서 5개 mods 전체의 화면 점검 결과는 아직 받지 못했다.
+
+## 2026-10-02 홍등가 장면 시퀀스
+
+### 확인한 사실
+- 기준은 항상 게임 폴더 `game\jack.qsp`다. `source/`에는 게임 QSP 상태를 날짜별로 보관하며 이전 스냅샷은 덮어쓰지 않는다.
+- 사용자가 제공한 Show HTML은 `DosugRedLight.png`와 소개문이 나오는 `txt = 1` 페이지다. 사용자는 "펠라 담당" 선택으로 이 화면에 들어오는 순간 새 001 이미지가 보여야 한다고 지정했다.
+- `interaction_city = 22701`에서 기존 `whore_redlight_bj_variant`가 1/2를 선택한다. 1은 기존 112/113 계열, 2는 기존 1121/1131 계열이었다.
+- 게임 폴더 `content\pic\SNKmod\scene\whore_redlight`에 r001-r003 및 s001-s003이 있으며 모두 795×596이다.
+
+### 적용 결과
+- `interaction_city = 22701` 진입 시 랜덤값 1은 `$special_image[1..3]`의 r001-r003, 2는 s001-s003을 표시하도록 연결했다. 따라서 기존 DosugRedLight 소개 화면 자체는 유지되고, 선택 직후 첫 장면부터 랜덤 시퀀스가 시작된다.
+- 게임 QSP SHA-256: `a70e618017de9ba5e474cf3945f2d93a023dab4a24129ef742313c8367c295f3`; 보관본 `source/jack_2026-10-02_whore_redlight_sequences.qsp`와 바이트 일치.
+- QSP 파싱, 변경 전 백업, 선언형 패치 해시 검증은 통과했다. 실제 게임에서 선택 후 화면 표시는 아직 사용자의 수동 입력이 필요해 미확인이다.
+
+## 2026-10-03 길거리 창녀 U 시퀀스
+
+- 사용자가 제공한 Show HTML 문구는 `#txt_man`의 `$Redlight_whore_b[1]`이며, `interaction_city = 22702`가 이 배열을 복사한다. 따라서 길거리 창녀 선택 후 나오는 고정 분기다. 같은 location의 두 번째 22702 여성용 랜덤 분기는 이번 수정 대상이 아니다.
+- 22702의 기존 121/122 이미지 참조를 `SNKmod\scene\whore_redlight\whore_redlight-u001`~`u003`으로 바꿨다. 첫 화면에 U001, 다음 페이지에 U002/U003을 `$special_image[1..3]`으로 표시한다.
+- 게임 QSP SHA-256: `fb630aca0bf688e7819e74fb571587833c33f39b6ef266f425b2cf5a93dac084`; 보관본 `source/jack_2026-10-03_whore_redlight_u_sequence.qsp`와 동기화했다.
+- 적용 전 백업은 `jack.qsp.bak_20261003_033744` (SHA-256 `a70e618017de9ba5e474cf3945f2d93a023dab4a24129ef742313c8367c295f3`). QSP 파싱/해시 검증 통과.
+- `whore_redlight-u001.png`~`u003.png`는 적용 시점에 아직 게임 폴더에 없었다. 따라서 실제 이미지 표시 검증은 아직 안 됐고, 이 파일들을 `game\content\pic\SNKmod\scene\whore_redlight`에 배치한 뒤 게임에서 확인해야 한다.
+
+## 2026-10-03 길거리 창녀 T/U 랜덤
+
+- 사용자 지시: 길거리 창녀(22702) 진입 시 t001~t003과 u001~u003이 무작위로 나와야 한다(앞 mod는 u 고정이었다). 코파일럿 세션이 크레딧 소진으로 중단된 작업을 이어받았다. 코파일럿은 기존 121/122와 u의 랜덤으로 해석했으나 사용자의 마지막 지시대로 t/u로 했다.
+- `mods/2026-10-03_whore_redlight_b_v_tu_random.json`: `whore_redlight_b_variant = rand(1, 2)`, 1이면 t001~t003, 2이면 u001~u003을 `$special_bg`, `$special_image[1..3]`에 넣는다(count 1). 파일 이름은 `b_u_sequence` 뒤에 정렬되도록 `b_v_`로 지었다.
+- 게임 QSP: `FB630ACA…` → `76FB33944F070719E1B720B2DF80A44458C612F63773C9F48EA19759FA169BAA`(17,028,166 B). 백업 `jack.qsp.bak_20261003_051230`. 보관본 `source/jack_2026-10-03_whore_redlight_tu_random.qsp`.
+- 검증: 원본 `59E1A1AF…`에 mods 8개 전체를 적용한 결과와 게임 QSP가 바이트 동일하다. t·u 이미지 6개가 게임 폴더에 있다. 게임 화면 점검은 사용자 몫이며 아직 받지 못했다.
+- 알려진 한계: 이미 패치된 게임 QSP에 `apply_mods.ps1`을 mods 전체로 다시 돌리면 `2026-10-02_redlight_bj_variant`에서 중단한다(뒤 mod `2026-10-02_whore_redlight_sequences`가 그 결과 줄을 다시 바꿔 old/new 둘 다 없음). 그래서 이번 적용은 새 mod만 넣은 폴더를 `-ModsDir`로 지정해 했다. 원본부터 전체 적용은 정상이다.
+## 2026-10-03 PC 이전 준비
+
+- `tools/apply_mods.ps1`: 뒤 mod의 `old`가 앞 edit의 `new`를 품고 그 뒤 edit이 적용돼 있으면 앞 edit을 "적용돼 있음"으로 건너뛴다. 이제 이미 패치된 게임 QSP에 mods 전체를 다시 돌려도 중단하지 않는다. 시험: 원본(`59E1A1AF…`), 10-02 보관본(`8D963AE8…`), 현재 게임(`76FB3394…`) 세 상태 모두 결과 `76FB3394…`.
+- `tools/mod_assets.ps1`(-Pack/-Install/-Check): 현재 게임 QSP가 실제로 쓰는 mods의 SNKmod 이미지와 `mods_assets/extra.txt`(루푸스 메뉴 아이콘 2개, `json\menu_icon.json`)를 `dist\JO9_mod_assets.zip`으로 묶고, 목록·해시는 `mods_assets/manifest.json`(커밋)에 남긴다. 현재 16개, 7.6MB. 뒤 mod가 대체한 1121/1131 이미지는 지금 QSP가 쓰지 않아 빠진다. 가짜 게임 폴더에 설치·재점검 시험을 통과했다.
+- zip은 git에 넣지 않는다. 사용자가 직접 새 PC로 옮긴다. 절차는 `docs/modding/NEW_PC_KR.md`.
+- `setup_pc.ps1`: Node.js가 있으면 이미지 편집 UI용 `npm install`, 없으면 안내만 한다.
