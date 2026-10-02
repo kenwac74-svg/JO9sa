@@ -1,0 +1,15 @@
+{
+  "description": "펠라 담당 장면에서 112/1121을 무작위 선택하고 113/1131을 같은 변형으로 연결",
+  "id": "2026-10-02_redlight_bj_variant",
+  "target": "game\\jack.qsp",
+  "before_sha256": "FACBA55BEBE4141D8B6F0F266E0CF55336DCA883E4620AD518D978DA20828A84",
+  "edits": [
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t $special_bg  = 'scene\\whore_redlight\\whore_redlight-111'\r\n\t $special_image[2] = 'scene\\whore_redlight\\whore_redlight-112.png'\r\n\t $special_image[3] = 'scene\\whore_redlight\\whore_redlight-113.png'",
+      "new": "\t $special_bg  = 'scene\\whore_redlight\\whore_redlight-111'\r\n\t whore_redlight_bj_variant = rand(1, 2)\r\n\t $special_image[2] = 'scene\\whore_redlight\\whore_redlight-112.png'\r\n\t $special_image[3] = 'scene\\whore_redlight\\whore_redlight-113.png'\r\n\t if whore_redlight_bj_variant = 2:\r\n\t\t $special_image[2] = 'SNKmod\\scene\\whore_redlight\\whore_redlight-1121.png'\r\n\t\t $special_image[3] = 'SNKmod\\scene\\whore_redlight\\whore_redlight-1131.png'\r\n\t END",
+      "count": 1
+    }
+  ]
+}
