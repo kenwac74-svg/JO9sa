@@ -63,3 +63,24 @@
 - 이 PC 게임 `jack.qsp`는 기준 원본에 `main`의 mods 3개와 위 2개, 총 5개 mods를 모두 적용한 상태다. `apply_mods.ps1 -DryRun`에서 8개 edit이 전부 "이미 적용됨"이었고 SHA-256은 `8D963AE88DCEA0DB9500B29BCD5112933ABD81042D5BE8516113840094E607C6`(17,026,702 B)다. 이 해시는 이 PC의 PowerShell 구현으로 읽은 값이다.
 - UI 쪽에 필요한 파일(이 PC `game\content\pic` 기준, 모두 존재 확인): `SNKmod\characters\master_robertus_rufus.png`(735,178 B), `SNKmod\ui overhaul\robertus_rufus.png`(8,235 B), `SNKmod\ui overhaul\robertus_rufus_gray.png`(6,171 B), `SNKmod\scene\whore_redlight\whore_redlight-1121.png`(535,175 B), `SNKmod\scene\whore_redlight\whore_redlight-1131.png`(514,654 B). `json\menu_icon.json`의 `menu_item_art_tutor`, `menu_item_art_tutor_gray`는 위 루푸스 아이콘을 가리키고 있다.
 - 게임 실행 점검은 사용자가 수동으로 한다. 이 PC에서 5개 mods 전체의 화면 점검 결과는 아직 받지 못했다.
+
+## 2026-10-02 홍등가 장면 시퀀스
+
+### 확인한 사실
+- 기준은 항상 게임 폴더 `game\jack.qsp`다. `source/`에는 게임 QSP 상태를 날짜별로 보관하며 이전 스냅샷은 덮어쓰지 않는다.
+- 사용자가 제공한 Show HTML은 `DosugRedLight.png`와 소개문이 나오는 `txt = 1` 페이지다. 사용자는 "펠라 담당" 선택으로 이 화면에 들어오는 순간 새 001 이미지가 보여야 한다고 지정했다.
+- `interaction_city = 22701`에서 기존 `whore_redlight_bj_variant`가 1/2를 선택한다. 1은 기존 112/113 계열, 2는 기존 1121/1131 계열이었다.
+- 게임 폴더 `content\pic\SNKmod\scene\whore_redlight`에 r001-r003 및 s001-s003이 있으며 모두 795×596이다.
+
+### 적용 결과
+- `interaction_city = 22701` 진입 시 랜덤값 1은 `$special_image[1..3]`의 r001-r003, 2는 s001-s003을 표시하도록 연결했다. 따라서 기존 DosugRedLight 소개 화면 자체는 유지되고, 선택 직후 첫 장면부터 랜덤 시퀀스가 시작된다.
+- 게임 QSP SHA-256: `a70e618017de9ba5e474cf3945f2d93a023dab4a24129ef742313c8367c295f3`; 보관본 `source/jack_2026-10-02_whore_redlight_sequences.qsp`와 바이트 일치.
+- QSP 파싱, 변경 전 백업, 선언형 패치 해시 검증은 통과했다. 실제 게임에서 선택 후 화면 표시는 아직 사용자의 수동 입력이 필요해 미확인이다.
+
+## 2026-10-03 길거리 창녀 U 시퀀스
+
+- 사용자가 제공한 Show HTML 문구는 `#txt_man`의 `$Redlight_whore_b[1]`이며, `interaction_city = 22702`가 이 배열을 복사한다. 따라서 길거리 창녀 선택 후 나오는 고정 분기다. 같은 location의 두 번째 22702 여성용 랜덤 분기는 이번 수정 대상이 아니다.
+- 22702의 기존 121/122 이미지 참조를 `SNKmod\scene\whore_redlight\whore_redlight-u001`~`u003`으로 바꿨다. 첫 화면에 U001, 다음 페이지에 U002/U003을 `$special_image[1..3]`으로 표시한다.
+- 게임 QSP SHA-256: `fb630aca0bf688e7819e74fb571587833c33f39b6ef266f425b2cf5a93dac084`; 보관본 `source/jack_2026-10-03_whore_redlight_u_sequence.qsp`와 동기화했다.
+- 적용 전 백업은 `jack.qsp.bak_20261003_033744` (SHA-256 `a70e618017de9ba5e474cf3945f2d93a023dab4a24129ef742313c8367c295f3`). QSP 파싱/해시 검증 통과.
+- `whore_redlight-u001.png`~`u003.png`는 적용 시점에 아직 게임 폴더에 없었다. 따라서 실제 이미지 표시 검증은 아직 안 됐고, 이 파일들을 `game\content\pic\SNKmod\scene\whore_redlight`에 배치한 뒤 게임에서 확인해야 한다.
