@@ -564,3 +564,7 @@
 - mods 이미지 5개·menu_icon 2개 키는 `resources/mod_assets/`(사용자 PC에서 복사)로 넣고 trash 제외.
 - 후보 SHA 8D963AE8… = 사용자 PC 게임 jack.qsp, 기반 SHA 59E1A1AF… = source/jack_2026-10-01.qsp. qsp_verify PASS, 설치기 58/58(Windows PowerShell 5.1, 출력 인코딩 oem으로 검사 수정), 개인실 정적 13/13. node 없음 → WASM 미실행.
 - 컨펌 요청: `release/qsp-review/0.14/`. 협업 절차: `docs/UI_SESSION_PROTOCOL.md`. 배포 ZIP은 컨펌·사용자 승인 전 만들지 않음.
+
+### 0.14 배포 (2026-10-02)
+- 사용자 게임 점검 완료·패키징 승인. 게임 수정 세션 기록(docs/modding/context-notes.md)의 mods 5개 적용 결과 SHA 8D963AE8…가 후보와 같아 병합 결과 일치 확인 (별도 컨펌 메시지는 없음).
+- 산출물: `releases/JO9 UI_overhaul_SNKmod_0.14.zip` (20,517,743 B, SHA-256 152c9e22…, 항목 191개). payload/jack.qsp SHA 8D963AE8…. ZIP 해제본 설치기 58/58 (Windows PowerShell 5.1).
