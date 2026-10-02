@@ -84,3 +84,11 @@
 - 게임 QSP SHA-256: `fb630aca0bf688e7819e74fb571587833c33f39b6ef266f425b2cf5a93dac084`; 보관본 `source/jack_2026-10-03_whore_redlight_u_sequence.qsp`와 동기화했다.
 - 적용 전 백업은 `jack.qsp.bak_20261003_033744` (SHA-256 `a70e618017de9ba5e474cf3945f2d93a023dab4a24129ef742313c8367c295f3`). QSP 파싱/해시 검증 통과.
 - `whore_redlight-u001.png`~`u003.png`는 적용 시점에 아직 게임 폴더에 없었다. 따라서 실제 이미지 표시 검증은 아직 안 됐고, 이 파일들을 `game\content\pic\SNKmod\scene\whore_redlight`에 배치한 뒤 게임에서 확인해야 한다.
+
+## 2026-10-03 길거리 창녀 T/U 랜덤
+
+- 사용자 지시: 길거리 창녀(22702) 진입 시 t001~t003과 u001~u003이 무작위로 나와야 한다(앞 mod는 u 고정이었다). 코파일럿 세션이 크레딧 소진으로 중단된 작업을 이어받았다. 코파일럿은 기존 121/122와 u의 랜덤으로 해석했으나 사용자의 마지막 지시대로 t/u로 했다.
+- `mods/2026-10-03_whore_redlight_b_v_tu_random.json`: `whore_redlight_b_variant = rand(1, 2)`, 1이면 t001~t003, 2이면 u001~u003을 `$special_bg`, `$special_image[1..3]`에 넣는다(count 1). 파일 이름은 `b_u_sequence` 뒤에 정렬되도록 `b_v_`로 지었다.
+- 게임 QSP: `FB630ACA…` → `76FB33944F070719E1B720B2DF80A44458C612F63773C9F48EA19759FA169BAA`(17,028,166 B). 백업 `jack.qsp.bak_20261003_051230`. 보관본 `source/jack_2026-10-03_whore_redlight_tu_random.qsp`.
+- 검증: 원본 `59E1A1AF…`에 mods 8개 전체를 적용한 결과와 게임 QSP가 바이트 동일하다. t·u 이미지 6개가 게임 폴더에 있다. 게임 화면 점검은 사용자 몫이며 아직 받지 못했다.
+- 알려진 한계: 이미 패치된 게임 QSP에 `apply_mods.ps1`을 mods 전체로 다시 돌리면 `2026-10-02_redlight_bj_variant`에서 중단한다(뒤 mod `2026-10-02_whore_redlight_sequences`가 그 결과 줄을 다시 바꿔 old/new 둘 다 없음). 그래서 이번 적용은 새 mod만 넣은 폴더를 `-ModsDir`로 지정해 했다. 원본부터 전체 적용은 정상이다.
