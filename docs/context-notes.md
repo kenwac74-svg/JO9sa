@@ -568,3 +568,6 @@
 ### 0.14 배포 (2026-10-02)
 - 사용자 게임 점검 완료·패키징 승인. 게임 수정 세션 기록(docs/modding/context-notes.md)의 mods 5개 적용 결과 SHA 8D963AE8…가 후보와 같아 병합 결과 일치 확인 (별도 컨펌 메시지는 없음).
 - 산출물: `releases/JO9 UI_overhaul_SNKmod_0.14.zip` (20,517,743 B, SHA-256 152c9e22…, 항목 191개). payload/jack.qsp SHA 8D963AE8…. ZIP 해제본 설치기 58/58 (Windows PowerShell 5.1).
+
+### JO9UIpatch 반영 (2026-10-02)
+- JO9UIpatch에 9/30 다른 세션의 별도 쿠라·툴팁 통합 26커밋(55d51a0까지)이 있었다. 그 쿠라 초상화는 손상된 PNG(PIL 읽기 실패). `-s ours` 병합으로 이력만 남기고 내용은 0.14로 유지한 뒤 fast-forward로 반영.
