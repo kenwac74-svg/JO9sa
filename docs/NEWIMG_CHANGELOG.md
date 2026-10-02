@@ -11,12 +11,16 @@
 
 ## 미배포 (staging 반영, ZIP 미생성)
 
-- 현재 `staging/pic/` 109개. v6 대비 추가 이미지 3개, 변경·삭제 없음.
-- 미배포 작업 단위(받은 ZIP) 3개
-  1. `JO9_converted_images_5.zip` (SHA-256 `0ba65e43…`) · 홍등가 사창가골목: `pic/bg/Dosugredlight.png` (2026-10-01 반영)
-  2. `JO9_converted_images_5.zip` (SHA-256 `a696092c…`, 1번과 이름만 같은 별개 ZIP) · 홍등가 사창가골목: `pic/scene/whore_redlight/whore_redlight-112.png` (2026-10-01 반영)
-  3. `JO9_converted_images_6.zip` (SHA-256 `774c6ceb…`) · 홍등가 사창가골목: `pic/scene/whore_redlight/whore_redlight-113.png` (2026-10-01 반영)
-- 추가 ZIP을 받으면 여기에 작업 단위로 기록한다. 사용자가 ZIP 생성을 지시하거나, 미배포 작업 단위가 6개가 되면(이후로는 5개씩) 새 판 번호 항목으로 옮긴다.
+- 없음. 현재 `staging/pic/` 109개는 v7과 같다.
+- 추가 ZIP을 받으면 여기에 작업 단위로 기록한다. 사용자가 ZIP 생성을 지시하거나, 미배포 작업 단위가 5개가 되면 새 판 번호 항목으로 옮긴다.
+
+## v7 (2026-10-02)
+
+- 파일: `JO9_NewImg_Pack_v7.zip`, 109개, 31,768,716 bytes, SHA-256 `0050c2dc31e8bfe92935ec17021469bbe3671f9c259abc265c42d768e69ae7db`
+- 사용자 지시로 생성(미배포 작업 단위 3개 시점).
+- 추가 3개 (작업 단위 3개)
+  - 홍등가 사창가골목: `pic/bg/Dosugredlight.png`, `pic/scene/whore_redlight/whore_redlight-112.png`, `pic/scene/whore_redlight/whore_redlight-113.png`
+- 변경·삭제: 없음. v6의 106개는 그대로다.
 
 ## v6 (2026-10-01)
 

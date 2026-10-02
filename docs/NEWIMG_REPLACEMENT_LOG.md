@@ -258,9 +258,9 @@
 | 104 | `game/content/pic/characters/anes.png` | 285,693 / 795×596 / `0aac2bc347a45dce…` | 586,500 / 795×596 / `928eca977f31c864…` | 저장 | 2026-10-01 | 홍등가_카페-신들의선물. 승인(패치 추가 지시, 2026-10-01). `staging/pic/`에 보관 |
 | 105 | `game/content/pic/ui overhaul/anes.png` | 14,476 / 59×66 / `2dc6d3175555e673…` | 9,254 / 59×66 / `2cde15312a478cdc…` | 저장 | 2026-10-01 | 홍등가_카페-신들의선물. 승인(패치 추가 지시, 2026-10-01). `staging/pic/`에 보관 |
 | 106 | `game/content/pic/bg/RedLight.png` | 1,064,474 / 1000×750 / `fbe3afece4ed3f5a…` | 532,478 / 1000×750 / `0e1147bf29178576…` | 저장 | 2026-10-01 | 홍등가_메인. 승인(패치 추가 지시, 2026-10-01). `staging/pic/`에 보관. 신규 파일은 팔레트(256색) PNG, 원본은 RGB PNG |
-| 107 | `game/content/pic/bg/Dosugredlight.png` | 1,240,587 / 795×596 / `10086f53245942bc…` | 343,870 / 795×596 / `ad523ebc6f68853a…` | 저장 | 2026-10-01 | 홍등가_사창가골목. 승인(패치 추가 지시, 2026-10-01). `staging/pic/`에 보관. 배포 ZIP 미생성. 신규 파일은 팔레트(256색) PNG, 원본은 RGB PNG |
-| 108 | `game/content/pic/scene/whore_redlight/whore_redlight-112.png` | 798,225 / 795×596 / `fe1608ce5f66195a…` | 639,150 / 795×596 / `82efb19c10afa141…` | 저장 | 2026-10-01 | 홍등가_사창가골목. 승인(패치 추가 지시, 2026-10-01). `staging/pic/`에 보관. 배포 ZIP 미생성 |
-| 109 | `game/content/pic/scene/whore_redlight/whore_redlight-113.png` | 770,679 / 795×596 / `56373f6963d9c2cf…` | 609,163 / 795×596 / `b3e5dea67c5a0d67…` | 저장 | 2026-10-01 | 홍등가_사창가골목. 승인(패치 추가 지시, 2026-10-01). `staging/pic/`에 보관. 배포 ZIP 미생성 |
+| 107 | `game/content/pic/bg/Dosugredlight.png` | 1,240,587 / 795×596 / `10086f53245942bc…` | 343,870 / 795×596 / `ad523ebc6f68853a…` | 저장 | 2026-10-01 | 홍등가_사창가골목. 승인(패치 추가 지시, 2026-10-01). `staging/pic/`에 보관. 배포 ZIP v7에 포함. 신규 파일은 팔레트(256색) PNG, 원본은 RGB PNG |
+| 108 | `game/content/pic/scene/whore_redlight/whore_redlight-112.png` | 798,225 / 795×596 / `fe1608ce5f66195a…` | 639,150 / 795×596 / `82efb19c10afa141…` | 저장 | 2026-10-01 | 홍등가_사창가골목. 승인(패치 추가 지시, 2026-10-01). `staging/pic/`에 보관. 배포 ZIP v7에 포함 |
+| 109 | `game/content/pic/scene/whore_redlight/whore_redlight-113.png` | 770,679 / 795×596 / `56373f6963d9c2cf…` | 609,163 / 795×596 / `b3e5dea67c5a0d67…` | 저장 | 2026-10-01 | 홍등가_사창가골목. 승인(패치 추가 지시, 2026-10-01). `staging/pic/`에 보관. 배포 ZIP v7에 포함 |
 
 전체 SHA-256은 [원본 카탈로그](NEWIMG_ORIGINAL_CATALOG.json)와 아래 패치 기록에 있다.
 
@@ -456,6 +456,14 @@
 - 경로 대조: `JO9main`의 `game/content/pic/scene/whore_redlight/whore_redlight-113.png`와 경로·파일명이 같다. 형식(PNG, RGB)과 사이즈(795×596)도 원본과 같다. 같은 폴더의 `whore_redlight-113w.png`는 교체 대상이 아니다.
 - 검사: PNG 서명, 청크 CRC, 픽셀 데이터 압축 해제 통과. 움직이는 PNG 없음.
 - 반영: `staging/pic/`에 넣었다(전체 109개). 배포 ZIP과 비교 HTML은 만들지 않았다. 미배포 작업 단위 3개째다.
+
+### 배포 ZIP v7 (2026-10-02)
+
+- 사용자 지시로 만들었다. 9·10·11차 미배포 작업 단위 3개(`Dosugredlight.png`, `whore_redlight-112.png`, `whore_redlight-113.png`)를 포함한다.
+- 파일: `patches/JO9_NewImg_Pack_v7.zip` (31,768,716 bytes, SHA-256 `0050c2dc31e8bfe92935ec17021469bbe3671f9c259abc265c42d768e69ae7db`)
+- 내용: `staging/pic/` 전체 109개(v6의 106개 + 신규 3개). 최상위 `pic/`, 파일명 UTF-8. 카탈로그 항목과 파일 목록 일치, ZIP 안 각 파일이 `staging`과 바이트 동일, v6 파일을 모두 포함함을 확인했다. ZIP CRC 검사 통과.
+- 자동 ZIP 기준 재설정: 이번 판으로 미배포가 0개가 되었다. 다음 자동 판은 미배포 작업 단위(받은 ZIP)가 5개 모일 때 만든다.
+- 상태: 저장. 게임 설치·실행 검증은 하지 않았다.
 
 ## 미결 사항
 
