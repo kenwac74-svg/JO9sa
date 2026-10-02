@@ -2,18 +2,19 @@
 
 이 저장소를 쓰는 모든 채팅은 하나의 업무(Jack-o-nine-tails 2.3 한국어판 모딩 배포)를 위한 것이다. 채팅을 시작하면 이 문서를 먼저 읽고, 자기 역할만 한다. 채팅끼리 직접 협업하지 않는다. 필요한 정보는 이 문서와 git 기록으로 주고받는다.
 
-- 갱신: 2026-10-02 (사용자 결정 17)
-- 관리: PM(JO9UI패치모드). 이 문서는 PM만 고친다.
+- 갱신: 2026-10-02 (사용자 결정 17, 채팅 이름 지정)
+- 관리: 카일(PM, JO9UI패치모드). 이 문서는 카일만 고친다.
+- 사용자는 채팅을 이름으로 부른다. 채팅이 사라지거나 새 PC에서 새 채팅을 열면, 아래 "새 채팅으로 이어받기"대로 같은 이름·역할을 이어받는다.
 
 ## 역할
 
-| 채팅 | 역할 | 하지 않는 것 |
-|---|---|---|
-| **JO9UI패치모드 (PM)** | 총괄. 히스토리·결정 기록, 작업 지시. UI 이미지와 UI 화면 코드. QSP 수정이 들어가는 모든 빌드·검증·배포(UI 패치). 이미지 교체 패치의 관리(일정·기록). | 게임 실행 점검(사용자가 함) |
-| **homecom / notebook (로컬 VS Code)** | 같은 역할의 모딩 도구. 장소만 다르다. 사용자가 플레이하며 지시한 대사·분기 등 QSP 내용 수정을 `mods/*.json`으로 기록해 main에 올린다. | 빌드·패키징·배포. 서로 대화하기 |
-| **실시간모딩** | 자문. 모딩 환경(도구·절차·apply_mods 등)에 문제가 생기면 상담하고 개선을 조언한다. | 직접 모딩 작업, QSP 컨펌 |
-| **이미지 교체 패치 관리** | 원본 경로를 그대로 덮어쓰는 단순 이미지 ZIP 패킹(QSP 변경 없음). | QSP 수정, UI 패치 빌드 |
-| **텍스트편집** | 역할 없음(대기). 편집 도구가 필요해지면 그때 재개한다. | — |
+| 이름 | 채팅 | 역할 | 하지 않는 것 |
+|---|---|---|---|
+| **카일** | JO9UI패치모드 (PM) | 총괄. 히스토리·결정 기록, 작업 지시. UI 이미지와 UI 화면 코드. QSP 수정이 들어가는 모든 빌드·검증·배포(UI 패치). 이미지 교체 패치의 관리(일정·기록). | 게임 실행 점검(사용자가 함) |
+| **집컴 / 노트북** | 로컬 VS Code (homecom / notebook) | 같은 역할의 모딩 도구. 장소만 다르다. 사용자가 플레이하며 지시한 대사·분기 등 QSP 내용 수정을 `mods/*.json`으로 기록해 main에 올린다. 사람 이름으로 부르지 않는다. | 빌드·패키징·배포. 서로 대화하기 |
+| **애니** | 실시간모딩 | 자문. 모딩 환경(도구·절차·apply_mods 등)에 문제가 생기면 상담하고 개선을 조언한다. | 직접 모딩 작업, QSP 컨펌 |
+| **비비** | 이미지 교체 패치 관리 | 원본 경로를 그대로 덮어쓰는 단순 이미지 ZIP 패킹(QSP 변경 없음). | QSP 수정, UI 패치 빌드 |
+| **펜디** | 텍스트편집 | 역할 없음(대기). 편집 도구가 필요해지면 그때 재개한다. | — |
 
 ### 로컬 도구의 인수인계 (homecom ↔ notebook)
 - 장소를 바꿀 때는 git만으로 이어받는다: main을 pull하고 `docs/modding/context-notes.md`를 읽는다.
@@ -48,3 +49,17 @@
 - UI 패치 최신: 0.14 (`releases/JO9 UI_overhaul_SNKmod_0.14.zip`, JO9UIpatch 브랜치 반영). 장비 툴팁·쿠라 개인 패치·mods 5개 포함.
 - PM 작업 브랜치: `claude/sweet-meitner-72rd73`. 최종 저장소: `JO9UIpatch`.
 - 할 일 목록: `docs/checklist.md`. 결정 기록: `docs/context-notes.md`.
+
+## 새 채팅으로 이어받기 (다른 PC·새 세션)
+대화 기록은 채팅에만 남는다. 이어서 일하는 데 필요한 것은 모두 이 저장소에 있다. 새 채팅을 열면 첫 메시지로 아래처럼 보낸다.
+
+- **카일(PM)**: "너는 카일이다. JO9sa 저장소의 `claude/sweet-meitner-72rd73` 브랜치를 받아 `docs/PROJECT.md`, `docs/context-notes.md`, `docs/checklist.md`를 읽고 PM으로 이어서 해."
+  - 결정 기록: `docs/context-notes.md` (결정 1~17과 버전별 기록). 할 일: `docs/checklist.md`.
+  - 빌드: `python build/build_package.py --qsp reference/FIX6-jack.qsp --release --vanilla-qsp reference/vanilla-jack.qsp --out dist/<버전>` (버전은 `build/build_package.py`의 `RELEASE_VERSION`). mods는 main을 병합한 뒤 빌드가 자동 적용한다.
+  - 검사: `tests/test_installer.py`(PowerShell 필요, Windows PowerShell 5.1 또는 pwsh), 개인실·툴팁·쿠라 `tests/*.cjs`(node 필요), `tests/test_private_room.py`.
+  - 배포본: `releases/`. 최종 저장소: `JO9UIpatch` 브랜치. 패키징은 사용자 승인 후.
+- **집컴 / 노트북**: VS Code에서 main을 열면 `CLAUDE.md`가 이 문서와 `docs/modding/` 문서를 읽게 한다. 새 PC 준비는 `docs/modding/NEW_PC_KR.md`.
+- **애니**: "너는 애니다. main을 받아 `docs/PROJECT.md`와 `docs/modding/` 문서를 읽고 모딩 환경 자문만 해."
+- **비비**: "너는 비비다. `newimgadd` 브랜치를 받아 `docs/PROJECT.md`와 `docs/NEWIMG_REPLACEMENT_LOG.md`를 읽고 이미지 교체 패치 일을 이어서 해."
+- **펜디**: 필요할 때만. "너는 펜디다. main의 `docs/PROJECT.md`와 `docs/text-workshop/`를 읽어."
+
