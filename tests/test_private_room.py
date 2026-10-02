@@ -179,8 +179,14 @@ class PrivateRoomTests(unittest.TestCase):
             for s, h in sorted(edits, key=lambda e: -e[0]):
                 lines[s:s + len(h['Old'])] = h['New']
             return '\n'.join(lines)
+        # 게임 수정 세션 mods(mods/*.json)도 같은 규칙으로 기준본에 적용해 비교한다.
+        mod_edits = [e for f in sorted((REPO/'mods').glob('*.json')) for e in json.loads(f.read_text(encoding='utf-8-sig'))['edits']]
+        def with_mods(name, text):
+            for e in (e for e in mod_edits if e['location'] == name):
+                text = text.replace(e['old'].replace('\r\n','\n'), e['new'].replace('\r\n','\n'))
+            return text
         for name in ['interaction_result','#dynamic','#static_base','sex_initiate','sex_end']:
-            expected = with_kura(name, baseline[name].replace('\r\n','\n'))
+            expected = with_mods(name, with_kura(name, baseline[name].replace('\r\n','\n')))
             if name == tip['Location']:
                 expected = '\n'.join(x for line in expected.split('\n') for x in new_for.get(line, [line]))
             self.assertEqual(bodies[name].split('\n',1)[1].replace('\r\n','\n'), expected)

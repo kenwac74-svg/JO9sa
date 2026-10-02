@@ -96,9 +96,11 @@ def run(pwsh: str, pkg: Path, game: Path, mode: str) -> subprocess.CompletedProc
         # A parent PS7/Codex shell may export only its own module paths.
         system_modules = str(Path(env.get('SystemRoot', 'C:/Windows')) / 'System32/WindowsPowerShell/v1.0/Modules')
         env['PSModulePath'] = system_modules + os.pathsep + env.get('PSModulePath', '')
+    # Windows PowerShell 5.1은 콘솔 코드 페이지(한국어 Windows는 CP949)로 출력한다.
+    out_enc = 'oem' if os.name == 'nt' and Path(pwsh).name.lower() == 'powershell.exe' else 'utf-8'
     # Same process-scoped invocation as the shipped APPLY/CHECK/RESTORE.cmd.
     return subprocess.run([pwsh, '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', str(pkg / 'Install.ps1'), '-Mode', mode,
-                           '-GamePath', str(game), '-NonInteractive'], capture_output=True, text=True, encoding='utf-8', errors='replace', env=env)
+                           '-GamePath', str(game), '-NonInteractive'], capture_output=True, text=True, encoding=out_enc, errors='replace', env=env)
 
 
 def verify_installed(game: Path, pkg: Path, label: str) -> None:

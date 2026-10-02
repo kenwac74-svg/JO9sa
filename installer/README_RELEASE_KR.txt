@@ -1,5 +1,5 @@
 ﻿JO9 UI_overhaul_SNKmod
-버전 0.13
+버전 0.14
 
 Jack-o-nine-tails 2.3.2.5 한국어판용 UI 패치입니다.
 메인 UI와 개인실 UI, 개인실 식단·착유·출산 연결을 포함한 누적 배포본입니다.

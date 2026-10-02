@@ -21,7 +21,7 @@ from qsp_dump import read_locations  # noqa: E402
 PACKAGE = 'JO9_UI_SNKMOD'
 VERSION = 'R3'
 NAME = f'JO9_UI_v1_9_14_SNKmod_{VERSION}'
-RELEASE_VERSION = '0.13'  # 배포판(--release) 버전
+RELEASE_VERSION = '0.14'  # 배포판(--release) 버전
 FIX6_SHA = '254dc8c5cce2c9f5442f34b6de0cdbb029893eb544c76635d76b8b2e2fc0bc82'
 FIX6_FINAL_QSP = '953533402226c874f1d22a9023da4d235bd512b61c2fc30f028465226f49b6d9'
 MODDER_DIRS = {'grimdark', 'approved_main_v1', 'jo9_v197', 'jon-uiadds'}
@@ -101,6 +101,7 @@ def main() -> int:
     ap.add_argument('--private-room', action='store_true', help='Build the private-room development overlay; no release ZIP')
     ap.add_argument('--release', action='store_true', help='Build JO9 UI_overhaul_SNKmod release including the approved private-room changes')
     ap.add_argument('--vanilla-qsp', type=Path, help='Unmodified game QSP used to validate release installation inputs')
+    ap.add_argument('--no-mods', action='store_true', help='Skip mods/*.json (builds the review base QSP: UI build without game-session mods)')
     args = ap.parse_args()
     if args.release:
         args.private_room = True
@@ -309,6 +310,53 @@ def main() -> int:
             target_patch['After'] = sha(text.encode('utf-8'))
             target_patch['Text'] = text
             final_texts[loc] = text
+    pinned = set()
+    applied_mods = []
+    if args.release:
+        # 게임 수정 세션 mods가 쓰는 이미지·메뉴 아이콘 (resources/mod_assets). 이미지는 참조 형식과 관계없이 trash로 보내지 않는다.
+        assets = json.loads((REPO / 'resources/mod_assets/assets.json').read_text(encoding='utf-8'))
+        for f in assets['Files']:
+            data = (REPO / 'resources/mod_assets/content/pic/SNKmod' / f['Path']).read_bytes()
+            if sha(data) != f['Sha256']:
+                raise SystemExit('mod_assets hash mismatch: ' + f['Path'])
+            if f['Path'] in images and images[f['Path']]['data'] != data:
+                raise SystemExit('mod_assets collides with a different UI image: ' + f['Path'])
+            images[f['Path']] = {'data': data, 'originals': [], 'source': 'mods'}
+            pinned.add(f['Path'])
+        menu_obj = json.loads(menu_new)['menu_item']
+        for key, value in assets['MenuIcon'].items():
+            old_entry = f'"{key}": ' + json.dumps(menu_obj[key], ensure_ascii=False)
+            if menu_new.count(old_entry) != 1:
+                raise SystemExit('menu_icon.json entry not found once: ' + key)
+            menu_new = menu_new.replace(old_entry, f'"{key}": ' + json.dumps(value, ensure_ascii=False))
+        json.loads(menu_new)
+    if args.release and not args.no_mods:
+        # 게임 수정 세션 mods/*.json: 파일 이름 순서로 적용한다. old가 location 본문에 정확히 count번 있어야 하며, 아니면 빌드를 멈춘다. 해시는 검사하지 않는다 (PROCESS.md).
+        for mod_file in sorted((REPO / 'mods').glob('*.json')):
+            mod = json.loads(mod_file.read_text(encoding='utf-8-sig'))
+            for i, e in enumerate(mod['edits']):
+                if e.get('field', 'body') != 'body':
+                    raise SystemExit(f'{mod_file.name} edit {i}: only body edits are supported')
+                if e['location'] not in by_name:
+                    raise SystemExit(f'{mod_file.name} edit {i}: location not in package: ' + e['location'])
+                target_patch = by_name[e['location']]
+                eol = '\r\n' if '\r\n' in target_patch['Text'] else '\n'
+                old = eol.join(conv(e['old'].replace('\r\n', '\n').split('\n')))
+                new = eol.join(conv(e['new'].replace('\r\n', '\n').split('\n')))
+                found = target_patch['Text'].count(old)
+                if found != e['count']:
+                    raise SystemExit(f"{mod_file.name} edit {i}: {e['location']} has old {found} times, expected {e['count']}")
+                text = target_patch['Text'].replace(old, new)
+                target_patch['Before'] = list(dict.fromkeys(target_patch['Before'] + [target_patch['After']]))
+                target_patch['After'] = sha(text.encode('utf-8'))
+                target_patch['Text'] = text
+                final_texts[e['location']] = text
+            applied_mods.append(mod_file.name)
+            # mods가 가리키는 SNKmod 이미지(확장자 없는 배경 경로 포함)가 패키지에 있어야 한다.
+            for ref in re.findall(r"SNKmod\\\\?([^'\"]+)", json.dumps([e['new'] for e in mod['edits']], ensure_ascii=False)):
+                rel = ref.replace('\\\\', '/').replace('\\', '/')
+                if not any(d.lower() in (rel.lower(), rel.lower() + '.png', rel.lower() + '.jpg') for d in images):
+                    raise SystemExit(f'{mod_file.name}: SNKmod image not in package: ' + rel)
     final_texts['[css/base.css]'] = css_new
     final_texts['[json/menu_icon.json]'] = menu_new
     lower_images = {k.lower() for k in images}
@@ -348,7 +396,7 @@ def main() -> int:
     # 참조되지 않는 예비 리소스는 SNKmod/trash 아래에 원래 하위 경로를 유지해 보관한다 (결정 15).
     placed = {}
     for dest in images:
-        placed[dest] = dest if ref_locs.get(dest.lower()) else 'trash/' + dest
+        placed[dest] = dest if ref_locs.get(dest.lower()) or dest in pinned else 'trash/' + dest
     trash_lines = []
     for dest, info in images.items():
         if placed[dest].startswith('trash/'):
@@ -391,7 +439,7 @@ def main() -> int:
         ui_map.append({'SNKmod': 'content/pic/SNKmod/' + placed[dest],
                        'Originals': ['content/pic/' + r for r in info['originals']],
                        'Hash': sha(info['data']), 'Bytes': len(info['data']), 'Source': info['source'],
-                       'Status': 'used' if hits else 'spare',
+                       'Status': 'used' if hits or dest in pinned else 'spare',
                        'References': dict(hits)})
     dump('ui_map.json', ui_map)
 

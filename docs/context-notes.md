@@ -558,3 +558,9 @@
 - 단 UI 화면 코드(메인 화면·상태 아이콘·개인실 화면 등 표시용 location 본문)는 UI 세션이 계속 맡는다. 이미지 경로 치환도 UI 빌드가 맡는다.
 - UI 세션이 게임 내용 변경이 필요하면 대화창에 `[QSP 변경 요청]` 형식으로 적는다 (docs/modding/PROCESS.md, 게임 수정 세션 PR 브랜치 claude/elegant-carson-nbb823).
 - 기존 장비 툴팁(resources/tooltip)과 쿠라(resources/kura)를 mods로 옮길지는 미정. 사용자 지시 전까지 그대로 둔다.
+
+### 0.14 후보 — mods 5개 반영 (2026-10-02, 사용자 PC VS Code)
+- main(게임 수정 세션 mods 5개) 병합. 빌드가 mods를 파일 이름 순서로 적용(old count 검사, 해시 미검사), `--no-mods`로 기반 생성.
+- mods 이미지 5개·menu_icon 2개 키는 `resources/mod_assets/`(사용자 PC에서 복사)로 넣고 trash 제외.
+- 후보 SHA 8D963AE8… = 사용자 PC 게임 jack.qsp, 기반 SHA 59E1A1AF… = source/jack_2026-10-01.qsp. qsp_verify PASS, 설치기 58/58(Windows PowerShell 5.1, 출력 인코딩 oem으로 검사 수정), 개인실 정적 13/13. node 없음 → WASM 미실행.
+- 컨펌 요청: `release/qsp-review/0.14/`. 협업 절차: `docs/UI_SESSION_PROTOCOL.md`. 배포 ZIP은 컨펌·사용자 승인 전 만들지 않음.
