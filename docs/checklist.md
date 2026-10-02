@@ -1,6 +1,6 @@
 # JO9UIpatch — SNKmod UI 패치 체크리스트
 
-기준: 배포판 **0.14** (`releases/JO9 UI_overhaul_SNKmod_0.11.zip`, JO9UIpatch). 체크는 실제 수행·확인한 항목만 한다.
+기준: 배포판 **0.14** (`releases/JO9 UI_overhaul_SNKmod_0.14.zip`, JO9UIpatch). 체크는 실제 수행·확인한 항목만 한다.
 2026-09-28 R 시절 미완료 항목을 0.11 기준으로 정리했다. 종결 근거는 아래 "정리된 R 시절 항목"에 적었다.
 
 ## 남은 작업
