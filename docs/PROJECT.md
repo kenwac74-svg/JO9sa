@@ -19,6 +19,12 @@
 - 장소를 바꿀 때는 git만으로 이어받는다: main을 pull하고 `docs/modding/context-notes.md`를 읽는다.
 - 작업을 끝낼 때는 mods와 context-notes를 커밋·푸시한다. 상대 도구에 메시지를 보내지 않는다.
 
+### 이미지 교체 패치 작업 룰 (2026-10-02 확인)
+- 받은 이미지는 원본과 대조하고 `newimgadd` 브랜치 staging에 반영한 뒤 교체 기록(`docs/NEWIMG_REPLACEMENT_LOG.md`)을 남긴다.
+- 미배포 ZIP이 6개가 되면 다음 버전(v7…)을 패킹해 사용자에게 보낸다. 기록은 `newimgadd` 브랜치에 남긴다.
+- PM은 이 기준을 그대로 인정한다. 묶는 시점이나 기록 방식을 바꿀 때만 PM이 이 문서에 적는다.
+- 참고: `whore_redlight` 펠라 장면 mod는 변형을 무작위로 고른다. 변형 1은 원래 경로 `scene/whore_redlight/whore_redlight-112.png`·`-113.png`(순정에 있음, 이미지 패치가 덮어쓸 수 있음), 변형 2는 UI 패치 `SNKmod` 폴더의 `-1121`·`-1131`.
+
 ## 두 배포물의 경계
 
 | | UI 패치 (JO9 UI_overhaul_SNKmod) | 이미지 교체 패치 |
