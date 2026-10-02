@@ -63,3 +63,13 @@
 - 이 PC 게임 `jack.qsp`는 기준 원본에 `main`의 mods 3개와 위 2개, 총 5개 mods를 모두 적용한 상태다. `apply_mods.ps1 -DryRun`에서 8개 edit이 전부 "이미 적용됨"이었고 SHA-256은 `8D963AE88DCEA0DB9500B29BCD5112933ABD81042D5BE8516113840094E607C6`(17,026,702 B)다. 이 해시는 이 PC의 PowerShell 구현으로 읽은 값이다.
 - UI 쪽에 필요한 파일(이 PC `game\content\pic` 기준, 모두 존재 확인): `SNKmod\characters\master_robertus_rufus.png`(735,178 B), `SNKmod\ui overhaul\robertus_rufus.png`(8,235 B), `SNKmod\ui overhaul\robertus_rufus_gray.png`(6,171 B), `SNKmod\scene\whore_redlight\whore_redlight-1121.png`(535,175 B), `SNKmod\scene\whore_redlight\whore_redlight-1131.png`(514,654 B). `json\menu_icon.json`의 `menu_item_art_tutor`, `menu_item_art_tutor_gray`는 위 루푸스 아이콘을 가리키고 있다.
 - 게임 실행 점검은 사용자가 수동으로 한다. 이 PC에서 5개 mods 전체의 화면 점검 결과는 아직 받지 못했다.
+
+### 0.14 QSP 후보 검토 (2026-10-02, 클라우드 세션)
+- 대상: UI 세션이 `claude/sweet-meitner-72rd73`의 `release/qsp-review/0.14/`에 올린 후보 `candidate_jack.qsp`(17,026,702 B, SHA-256 `8D963AE88DCEA0DB9500B29BCD5112933ABD81042D5BE8516113840094E607C6`)와 기반 `base_jack.qsp`(`59E1A1AF…F5958E`), `ui_changed_locations.txt`(248개, 종류 표시 포함).
+- 검토 결과(통과):
+  - 기반은 `source/jack_2026-10-01.qsp`와 바이트 동일하다. 후보는 이 세션이 `source`에 `main`의 mods 5개를 적용해 독립적으로 만든 파일과 바이트 동일하다(해시도 이 PC 게임 `jack.qsp`와 VS Code 세션 보고와 같다).
+  - `tools/qsp_verify.py`(후보·기반·mods·UI 목록): PASS. location 248개, 기반 대비 바뀐 location 7개(`#place_base`, `#txt_man`, `#txt_woman`, `city_menu_form`, `interaction`, `interaction_city`, `interaction_result`), 추가·삭제 없음, mods 5개 모두 반영.
+  - 0.14 ZIP(`releases/JO9 UI_overhaul_SNKmod_0.14.zip`)의 `payload/jack.qsp`도 같은 해시이고, 루푸스 이미지 3개와 홍등가 장면 이미지 2개, `json/menu_icon.json`(루푸스 아이콘 2개가 ZIP 안의 파일을 가리킴)이 들어 있다. `menu_icon.json`의 원본 대비 변경은 `take_drug`·`drug_s`·`cum_gray`(UI 세션의 기존 변경)와 `art_tutor`·`art_tutor_gray`(루푸스)다.
+- 아직 컨펌하지 않았다. 컨펌 절차 4단계인 사용자의 게임 점검(수동)을 받지 못했다. 점검할 곳: 홍등가 메뉴 라벨과 장소 제목, 펠라 담당 대사('가슴'), 펠라 담당 장면 이미지 변형 1/2(여러 번 반복해 두 변형이 나오는지), 미술 수업의 루푸스(이름·첫 대사·평가 대사·메뉴 아이콘·배경 이미지, 음악 수업은 본 왈츠 그대로).
+- 절차와 어긋난 점: UI 세션 README는 컨펌 전에 배포 ZIP을 만들지 않는다고 했는데 `0.14.zip`이 컨펌 요청 폴더(13:48)보다 7분 뒤(13:55)에 브랜치에 commit돼 있다. 해시가 후보와 같아서 내용 문제는 없지만, 컨펌 전에는 배포하지 않아야 한다.
+- 확인하지 못한 것: 게임 실행, 설치기 실행(UI 세션이 보고한 58/58·13/13은 이 세션이 재현하지 않았다), WASM 엔진 검사(UI 세션도 하지 못함).
