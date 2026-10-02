@@ -1,6 +1,6 @@
 # JO9 로컬 모딩 — Claude 작업 규칙
 
-이 repo를 연 Claude는 먼저 아래 문서를 읽고 그대로 따른다. 이미 정해진 결정은 다시 묻지 않는다.
+이 repo를 연 Claude는 먼저 `docs/PROJECT.md`(채팅별 역할, PM 관리)를 읽고 자기 역할만 한다. 그다음 아래 문서를 읽고 그대로 따른다. 이미 정해진 결정은 다시 묻지 않는다.
 
 1. `docs/modding/JO9_Claude_Local_Modding_Handoff.md` — 작업 방식과 원칙 전문
 2. `docs/modding/LOCAL_HANDOFF_2026-10-01.md` — 확정된 결정, qsp 형식, 작업 순서
@@ -15,8 +15,9 @@
 - 확정된 수정은 `mods/` 에 선언형 JSON(location, old, new, count, 적용 전·후 SHA-256)으로 남기고 `tools\apply_mods.ps1`로 적용한다. 형식과 새 PC 절차는 `docs/modding/NEW_PC_KR.md`.
 
 ## 작업 분담
-- 이 repo의 Claude: 텍스트 수정·이벤트 분기 등 텍스트 기반 QSP 변경(주 작업)과, UI 세션이 만든 후보 QSP의 **최종 검증·컨펌**(`tools/qsp_verify.py`).
-- UI패치모드 세션: 이미지·UI 작업과 **설치 빌드·패키징**(컨펌된 QSP만 사용). 절차는 `docs/modding/PROCESS.md`.
+- 역할은 `docs/PROJECT.md`가 기준이다 (2026-10-02 결정 17).
+- 로컬 모딩 도구(homecom·notebook): 텍스트 수정·이벤트 분기 등 QSP 내용 변경을 `mods/`로 기록해 main에 올린다. 빌드·패키징은 하지 않는다.
+- JO9UI패치모드(PM): 빌드·검증·패키징, 기록과 작업 지휘.
 
 ## 핵심 규칙
 - qsp를 직접 수정한다. `.qsrc`로 재빌드하지 않는다.
