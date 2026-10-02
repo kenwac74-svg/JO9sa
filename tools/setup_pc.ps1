@@ -36,6 +36,14 @@ if (-not $GameOnly) {
     } else {
         Write-Warning 'code 명령이 없어 VS Code 확장은 건너뜁니다. 확장 탭에서 직접 설치하세요.'
     }
+
+    # 3-1. 이미지 편집 UI용 Node 패키지(선택)
+    if (Get-Command npm -ErrorAction SilentlyContinue) {
+        Push-Location $repo
+        try { npm install --no-audit --no-fund | Out-Null; Write-Host '이미지 편집 UI용 Node 패키지를 설치했습니다.' } finally { Pop-Location }
+    } else {
+        Write-Warning 'Node.js가 없어 이미지 편집 UI 준비는 건너뜁니다. 쓰려면 https://nodejs.org 에서 LTS를 설치한 뒤 다시 실행하세요.'
+    }
 }
 
 # 4. 게임 경로(사용자가 직접 지정)
@@ -74,6 +82,7 @@ Write-Host "로컬 설정 저장(git 제외): $configPath"
 
 Write-Host ''
 Write-Host '다음 단계:'
+Write-Host '  이미지 설치: dist\JO9_mod_assets.zip을 두고 powershell -ExecutionPolicy Bypass -File tools\mod_assets.ps1 -Install'
 Write-Host '  패치 적용: powershell -ExecutionPolicy Bypass -File tools\apply_mods.ps1'
 Write-Host '  화면 확인: powershell -ExecutionPolicy Bypass -File tools\launch_and_capture.ps1'
 Write-Host '  터미널에서 claude를 실행해 로그인하세요(계정 로그인만 직접 해야 합니다).'

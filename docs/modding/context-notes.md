@@ -92,3 +92,9 @@
 - 게임 QSP: `FB630ACA…` → `76FB33944F070719E1B720B2DF80A44458C612F63773C9F48EA19759FA169BAA`(17,028,166 B). 백업 `jack.qsp.bak_20261003_051230`. 보관본 `source/jack_2026-10-03_whore_redlight_tu_random.qsp`.
 - 검증: 원본 `59E1A1AF…`에 mods 8개 전체를 적용한 결과와 게임 QSP가 바이트 동일하다. t·u 이미지 6개가 게임 폴더에 있다. 게임 화면 점검은 사용자 몫이며 아직 받지 못했다.
 - 알려진 한계: 이미 패치된 게임 QSP에 `apply_mods.ps1`을 mods 전체로 다시 돌리면 `2026-10-02_redlight_bj_variant`에서 중단한다(뒤 mod `2026-10-02_whore_redlight_sequences`가 그 결과 줄을 다시 바꿔 old/new 둘 다 없음). 그래서 이번 적용은 새 mod만 넣은 폴더를 `-ModsDir`로 지정해 했다. 원본부터 전체 적용은 정상이다.
+## 2026-10-03 PC 이전 준비
+
+- `tools/apply_mods.ps1`: 뒤 mod의 `old`가 앞 edit의 `new`를 품고 그 뒤 edit이 적용돼 있으면 앞 edit을 "적용돼 있음"으로 건너뛴다. 이제 이미 패치된 게임 QSP에 mods 전체를 다시 돌려도 중단하지 않는다. 시험: 원본(`59E1A1AF…`), 10-02 보관본(`8D963AE8…`), 현재 게임(`76FB3394…`) 세 상태 모두 결과 `76FB3394…`.
+- `tools/mod_assets.ps1`(-Pack/-Install/-Check): 현재 게임 QSP가 실제로 쓰는 mods의 SNKmod 이미지와 `mods_assets/extra.txt`(루푸스 메뉴 아이콘 2개, `json\menu_icon.json`)를 `dist\JO9_mod_assets.zip`으로 묶고, 목록·해시는 `mods_assets/manifest.json`(커밋)에 남긴다. 현재 16개, 7.6MB. 뒤 mod가 대체한 1121/1131 이미지는 지금 QSP가 쓰지 않아 빠진다. 가짜 게임 폴더에 설치·재점검 시험을 통과했다.
+- zip은 git에 넣지 않는다. 사용자가 직접 새 PC로 옮긴다. 절차는 `docs/modding/NEW_PC_KR.md`.
+- `setup_pc.ps1`: Node.js가 있으면 이미지 편집 UI용 `npm install`, 없으면 안내만 한다.
