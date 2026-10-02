@@ -18,6 +18,7 @@
 
 - 파일: `JO9_NewImg_Pack_v7.zip`, 109개, 31,768,716 bytes, SHA-256 `0050c2dc31e8bfe92935ec17021469bbe3671f9c259abc265c42d768e69ae7db`
 - 사용자 지시로 생성(미배포 작업 단위 3개 시점).
+- 전달: 30 MiB 전송 한도 때문에 `part1of2`(60개)와 `part2of2`(49개) 두 조각으로 보냈다. 둘 다 `game/content/`에 풀면 v7 전체와 같다.
 - 추가 3개 (작업 단위 3개)
   - 홍등가 사창가골목: `pic/bg/Dosugredlight.png`, `pic/scene/whore_redlight/whore_redlight-112.png`, `pic/scene/whore_redlight/whore_redlight-113.png`
 - 변경·삭제: 없음. v6의 106개는 그대로다.
