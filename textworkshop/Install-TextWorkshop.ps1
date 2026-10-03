@@ -1,4 +1,4 @@
-# Text Workshop을 설치·제거하고 Image Workshop v1.1.2 PIC_TOP_R1에 최소 연동 3곳을 붙이는 설치기
+﻿# Text Workshop을 설치·제거하고 Image Workshop v1.1.2 PIC_TOP_R1에 최소 연동 3곳을 붙이는 설치기
 param(
     [ValidateSet('Install', 'Remove', 'Check')][string]$Action = 'Check',
     [string]$GameRoot = $PSScriptRoot,
@@ -12,11 +12,11 @@ $HookBackup = Join-Path $TextDir 'hook_backup'
 $HooksJson = Join-Path $HookBackup 'hooks.json'
 $Payload = Join-Path $PSScriptRoot 'payload\modtools\text'
 
-# 기준본(v1.1.2 PIC_TOP_R1)의 SHA-256. 이 값과 다르면 연동을 붙이지 않는다.
+# 기준본(v1.1.2 PIC_TOP_R1 및 확인된 변형본)의 SHA-256. 이 값들과 다르면 연동을 붙이지 않는다.
 $Targets = @(
-    @{ Name = 'Detect'; Rel = 'JO9_Detect.ps1'; Sha = '0045852F0F10415969DE15821C3CB39101F743B0245AD1B0010C8CC81445CBCC' },
-    @{ Name = 'Server'; Rel = 'JO9_Server.ps1'; Sha = '4E92D9D0ADD479C2C720E196731F55D21D795D743AFDFE35A1C6F394350361CD' },
-    @{ Name = 'Html'; Rel = 'place\JO9_Place_Workshop.html'; Sha = 'E196E4B403816D7ECB68C793CE2917297263E36C4468CE6CAA485C1DBD00214D' }
+    @{ Name = 'Detect'; Rel = 'JO9_Detect.ps1'; Shas = @('0045852F0F10415969DE15821C3CB39101F743B0245AD1B0010C8CC81445CBCC') },
+    @{ Name = 'Server'; Rel = 'JO9_Server.ps1'; Shas = @('4E92D9D0ADD479C2C720E196731F55D21D795D743AFDFE35A1C6F394350361CD') },
+    @{ Name = 'Html'; Rel = 'place\JO9_Place_Workshop.html'; Shas = @('E196E4B403816D7ECB68C793CE2917297263E36C4468CE6CAA485C1DBD00214D', '6A5C7A3851718165C9C3751E3A1E9997304777972C75D377586F0BE903F978CC') }  # 두 번째는 '연동형 경로복구 1.1.3' 변형본
 )
 $ProgramFiles = @('JO9_Text_Server.ps1', 'JO9_Text_Workshop.html', 'tw_core.js')
 
@@ -111,7 +111,7 @@ function State-Of($t) {
     $p = Join-Path $ModTools $t.Rel
     $r = Read-Text $p
     if ($r.Text.Contains($Marker)) { return 'patched' }
-    if ((Sha $p) -eq $t.Sha) { return 'baseline' }
+    if ($t.Shas -contains (Sha $p)) { return 'baseline' }
     return 'unknown'
 }
 
@@ -140,14 +140,14 @@ switch ($Action) {
             $p = Join-Path $ModTools $t.Rel
             if ($states[$t.Name] -eq 'patched') { Say ("  {0}: 이미 연동됨" -f $t.Name); continue }
             $bk = Join-Path $HookBackup ($t.Name + '.orig')
-            [IO.File]::Copy($p, $bk, $true)
-            if ((Sha $bk) -ne $t.Sha) { Fail "백업 검증 실패: $($t.Name)" }
+            $srcSha = Sha $p; [IO.File]::Copy($p, $bk, $true)
+            if ((Sha $bk) -ne $srcSha) { Fail "백업 검증 실패: $($t.Name)" }
             $r = Read-Text $p
             $nl = if ($r.Text.Contains("`r`n")) { "`r`n" } else { "`n" }
             $new = & $Hooks[$t.Name] $r.Text $nl
             if (-not $new.Contains($Marker)) { Fail "연동 결과 확인 실패: $($t.Name)" }
             Write-Text $p $new $r.Bom
-            $rec[$t.Name] = @{ original = $t.Sha; patched = (Sha $p) }
+            $rec[$t.Name] = @{ original = $srcSha; patched = (Sha $p) }
             Say ("  {0}: 연동 완료" -f $t.Name)
         }
         ($rec | ConvertTo-Json -Depth 4) | Set-Content -LiteralPath $HooksJson -Encoding UTF8
@@ -165,10 +165,10 @@ switch ($Action) {
             $st = State-Of $t
             $bk = Join-Path $HookBackup ($t.Name + '.orig')
             if ($st -ne 'patched') { Say ("  {0}: 연동 상태가 아님({1}), 건드리지 않음" -f $t.Name, $st); continue }
-            if (-not (Test-Path -LiteralPath $bk) -or (Sha $bk) -ne $t.Sha) { Say ("  {0}: 백업이 없거나 손상되어 복구하지 못했습니다." -f $t.Name) -ForegroundColor Yellow; continue }
+            if (-not (Test-Path -LiteralPath $bk) -or -not ($t.Shas -contains (Sha $bk))) { Say ("  {0}: 백업이 없거나 손상되어 복구하지 못했습니다." -f $t.Name) -ForegroundColor Yellow; continue }
             if ($rec.ContainsKey($t.Name) -and (Sha $p) -ne $rec[$t.Name].patched) { Say ("  {0}: 연동 이후 다른 변경이 있어 자동 복구를 중단했습니다." -f $t.Name) -ForegroundColor Yellow; continue }
             [IO.File]::Copy($bk, $p, $true)
-            if ((Sha $p) -ne $t.Sha) { Fail "복구 검증 실패: $($t.Name)" }
+            if ((Sha $p) -ne (Sha $bk)) { Fail "복구 검증 실패: $($t.Name)" }
             Say ("  {0}: 원본으로 복구" -f $t.Name)
         }
         $pidFile = Join-Path $TextDir 'runtime\server.pid'
