@@ -87,3 +87,7 @@
 - `docs/modding/IMAGE_RANDOM_RULES.md`: 번호 규칙(기본 이름 + `_2`…), `picMax`(qsp에 대입 코드 없음, 엔진이 채우는 것으로 추정), `display_pic`의 특정/일반·2인(`A~B`) 풀, 반복 방지, 모딩 반영법. 창 제목은 `game\config.xml`의 `title`.
 - 체크리스트 카탈로그: 400px 미만(UI·포트레이트)은 기본 숨김, 큰 그림과 이름 줄기가 같은 짝은 그 카드 안에 함께 표시.
 
+### 대사 편집실(Codex, tools/text-workshop) 점검과 첫 반영 기록 (2026-10-04, homecom)
+- 테스트 9개 통과(Codex 번들 node v24). 실제 게임 qsp로 읽기 전용 확인: 바이트 왕복 일치, location 248, 문자열 133,291, 장면 탐색 동작. 저장소본과 게임 설치본(`G:\somi\JO9\game\modtools\text-workshop`) 동일.
+- 사용자가 편집실로 1건 반영(10-04 05:39): `interaction_city` 22700 사창가 골목 첫 화면 "엘리트 모담 조프리 살롱" → "고급스러운 마담 조프리 살롱". 게임 qsp `6D5E7563…` → `88F6A7F0…`. mods에 없어서 `mods/2026-10-04_redlight_intro_text.json`으로 최소 문구만 기록(원본에서 mods 11개 → `88F6A7F0…`, 게임 qsp DryRun 전부 건너뜀).
+- 주의: 편집실의 "수정 기록 내보내기"는 old/new에 **location 필드 전체**를 넣는다(이번 건은 약 130만 자). 그대로 mods에 넣으면 파일이 1 MB를 넘고 같은 location의 다른 mod와 충돌한다. 내보낸 JSON은 그대로 쓰지 말고 바뀐 문구만 old/new로 줄여 기록한다(개선 제안: 내보내기를 바뀐 문자열 + 앞뒤 맥락의 최소 고유 구간으로).
