@@ -1,43 +1,78 @@
-﻿# 머지본(merge_work\game)과 원본(JO9O\game)을 같은 경로끼리 비교해 작업 체크리스트 카탈로그(.hta/.html)를 만든다.
-# 체크 상태는 카탈로그와 따로 catalog_status.js에 저장되므로 다시 만들어도 유지된다.
+﻿# 플레이 폴더(JO9\game: 올걸팩 + 사용자 이미지 + UI 패치가 모두 적용된 곳)와 원본(JO9O\game)을 같은 경로끼리 비교해
+# 작업 체크리스트 카탈로그(.hta/.html)를 만든다. 체크 상태는 catalog_status.js에 따로 저장되므로 다시 만들어도 유지된다.
 param(
     [string]$Root = (Split-Path -Parent $PSScriptRoot),
+    [string]$Play = 'G:\somi\JO9\game',
     [string]$Original = 'G:\somi\JO9O\game'
 )
 $ErrorActionPreference = 'Stop'
-$M = Join-Path $Root 'merge_work\game'
+$M = $Play
+# 목록에서 뺄 폴더(이미지 도구 백업 등)
+$skipDirs = @('content\pic\__jo9_imagebackups\')
 
+function Get-Index($base) {
+    $h = @{}
+    foreach ($s in 'content\pic', 'json') {
+        $b = Join-Path $base $s
+        if (-not (Test-Path -LiteralPath $b)) { continue }
+        foreach ($f in Get-ChildItem -LiteralPath $b -Recurse -File) {
+            $rel = $f.FullName.Substring($base.Length + 1)
+            $skip = $false; foreach ($d in $skipDirs) { if ($rel.ToLower().StartsWith($d.ToLower())) { $skip = $true } }
+            if (-not $skip) { $h[$rel.ToLower()] = $f }
+        }
+    }
+    $h
+}
+# 인디패치 데이터(노예별 설정): 이 번호의 json\slaves\<번호>.json은 인디패치 출처로 본다.
+$indiIds = @{}
+$indiDir = Join-Path (Split-Path $Play) 'individuality_patch_data'
+if (Test-Path -LiteralPath $indiDir) { Get-ChildItem -LiteralPath $indiDir -Directory | Where-Object { $_.Name -match '^\d+$' } | ForEach-Object { $indiIds[$_.Name] = 1 } }
+function Get-Sha($p) { (Get-FileHash -LiteralPath $p -Algorithm SHA256).Hash }
+# 출처: 같은 경로에 같은 내용이 있는 작업 폴더. 없으면 기타.
+function Get-Src($rel, $f) {
+    $r = $rel
+    if ($r.StartsWith('content\pic\SNKmod\')) {
+        $u = Join-Path $Root ('UIpatch\pic\SNKmod\' + $r.Substring(19)); if ((Test-Path -LiteralPath $u) -and (Get-Item -LiteralPath $u).Length -eq $f.Length) { return 'ui' }
+        return 'etc'
+    }
+    $cands = @()
+    if ($r.StartsWith('content\pic\')) {
+        $p = $r.Substring(12)
+        $cands += , @('new', (Join-Path $Root "newimgpack\pic\$p"))
+        $cands += , @('ui', (Join-Path $Root "UIpatch\pic\SNKmod\$p"))
+    }
+    $cands += , @('ai', (Join-Path $Root "ai_girl_pack\game\$r"))
+    $h = $null
+    foreach ($c in $cands) {
+        if ((Test-Path -LiteralPath $c[1]) -and (Get-Item -LiteralPath $c[1]).Length -eq $f.Length) {
+            if (-not $h) { $h = Get-Sha $f.FullName }
+            if ((Get-Sha $c[1]) -eq $h) { return $c[0] }
+        }
+    }
+    if ($r -match '^json\\slaves\\(\d+)\.json$' -and $indiIds.ContainsKey($Matches[1])) { return 'indi' }
+    # 인디패치(개성 패치)는 설치기가 이미지를 내려받아 로컬 목록이 없다. girls 아래의 나머지는 인디패치로 추정한다.
+    if ($r.StartsWith('content\pic\girls\')) { return 'indi' }
+    'etc'
+}
+
+$P = Get-Index $Play
+$Q = Get-Index $Original
 $data = New-Object System.Collections.ArrayList
-foreach ($f in Get-ChildItem -LiteralPath $M -Recurse -File) {
-    $rel = $f.FullName.Substring($M.Length + 1)
-    $op = Join-Path $Original $rel
-    $olen = 0
-    if (Test-Path -LiteralPath $op) {
-        $olen = (Get-Item -LiteralPath $op).Length
-        $st = 'r'
-        if ($olen -eq $f.Length -and (Get-FileHash -LiteralPath $op).Hash -eq (Get-FileHash -LiteralPath $f.FullName).Hash) { $st = 's' }
-    } else { $st = 'a' }
-    $src = 'ai'
-    if ($rel.StartsWith('content\pic\')) {
-        $p = $rel.Substring(12)
-        if (Test-Path -LiteralPath (Join-Path $Root "newimgpack\pic\$p")) { $src = 'new' }
-        elseif (Test-Path -LiteralPath (Join-Path $Root "UIpatch\pic\$p")) { $src = 'ui' }
-    }
-    [void]$data.Add(@($rel, $st, $src, $f.Length, $olen))
-}
-# 머지본에 없는 원본(올걸팩·뉴이미지·UI패치 어디서도 손대지 않은 파일)은 원본 폴더를 연결해 '작업내역 없는 원본'으로 넣는다.
-$inMerge = @{}
-foreach ($x in $data) { $inMerge[$x[0].ToLower()] = 1 }
-foreach ($sub in 'content\pic', 'json') {
-    $base = Join-Path $Original $sub
-    if (-not (Test-Path -LiteralPath $base)) { continue }
-    foreach ($f in Get-ChildItem -LiteralPath $base -Recurse -File) {
-        $rel = $f.FullName.Substring($Original.Length + 1)
-        if (-not $inMerge.ContainsKey($rel.ToLower())) { [void]$data.Add(@($rel, 'o', 'orig', 0, $f.Length)) }
+foreach ($k in $P.Keys) {
+    $f = $P[$k]; $rel = $f.FullName.Substring($Play.Length + 1)
+    if ($Q.ContainsKey($k)) {
+        $o = $Q[$k]
+        if ($o.Length -eq $f.Length -and (Get-Sha $o.FullName) -eq (Get-Sha $f.FullName)) { [void]$data.Add(@($rel, 'o', 'orig', $f.Length, $o.Length)); continue }
+        [void]$data.Add(@($rel, 'r', (Get-Src $rel $f), $f.Length, $o.Length))
+    } else {
+        [void]$data.Add(@($rel, 'a', (Get-Src $rel $f), $f.Length, 0))
     }
 }
+foreach ($k in $Q.Keys) { if (-not $P.ContainsKey($k)) { $o = $Q[$k]; [void]$data.Add(@($o.FullName.Substring($Original.Length + 1), 'd', 'orig', 0, $o.Length)) } }
 $json = ConvertTo-Json @($data) -Compress -Depth 3
 $stats = ($data | Group-Object { $_[1] } | ForEach-Object { "$($_.Name)=$($_.Count)" }) -join ', '
+$srcStats = ($data | Where-Object { $_[1] -eq 'r' -or $_[1] -eq 'a' } | Group-Object { $_[2] } | ForEach-Object { "$($_.Name)=$($_.Count)" }) -join ', '
+
 
 $html = @"
 <!doctype html><html lang="ko"><head><meta charset="utf-8"><meta http-equiv="x-ua-compatible" content="ie=edge"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -67,7 +102,7 @@ button{cursor:pointer}#q{width:180px}
 .row{background:var(--card);border-radius:8px;padding:10px;margin-bottom:10px;border-left:5px solid var(--line)}
 .hd{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:8px}
 .tag{font-size:11px;font-weight:700;padding:1px 6px;border-radius:4px;color:#fff}
-.t-r{background:#c0612b}.t-a{background:#2b8a4a}.t-s{background:#888}.t-o{background:#4f6f7f}.p-orig{background:#777}.conf{color:#2b8a4a;font-weight:700}.p-ai{background:#a0522d}.p-new{background:#2b6fc0}.p-ui{background:#7a4fc0}
+.t-r{background:#c0612b}.t-a{background:#2b8a4a}.t-s{background:#888}.t-o{background:#4f6f7f}.p-orig{background:#777}.p-etc{background:#5a5a5a}.p-indi{background:#8a6d1f}.t-d{background:#8a3b3b}.conf{color:#2b8a4a;font-weight:700}.p-ai{background:#a0522d}.p-new{background:#2b6fc0}.p-ui{background:#7a4fc0}
 .rel{font-weight:600;word-break:break-all}
 .sts{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
 .sb{font-size:12px;padding:2px 8px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--fg);cursor:pointer}
@@ -84,15 +119,15 @@ a.open{color:inherit;font-weight:600;cursor:pointer}
 <div id="side"><div class="sub" style="margin:0 4px 8px"><b>폴더</b> · 이름 옆 숫자는 완료/전체</div><div class="tree" id="tree"></div></div>
 <div id="main">
 <h1>이미지 패치 작업 체크리스트</h1>
-<p class="sub">머지본 <code>merge_work\game</code> × 원본 <code>$($Original -replace '\\','\')</code>, 같은 경로끼리 비교. 생성 $(Get-Date -Format 'yyyy-MM-dd HH:mm').
+<p class="sub">플레이 폴더 <code>$($Play -replace '\\','\')</code>(순정 + 올걸팩 + 인디패치 + 사용자 이미지·UI 패치) × 순정 원본 <code>$($Original -replace '\\','\')</code>, 같은 경로끼리 비교. 생성 $(Get-Date -Format 'yyyy-MM-dd HH:mm').
 비교: <b>교체</b> 원본을 다른 내용으로 덮어씀 · <b>추가</b> 원본에 없는 새 파일 · <b>동일</b> 원본과 같음 · <b>작업내역 없는 원본</b> 올걸팩·뉴이미지·UI패치 어디서도 손대지 않은 원본(원본 폴더 연결). 상태 버튼과 태그에 마우스를 올리면 뜻이 나옵니다. <b>완료만</b> 체크된 항목이 <b>확정</b>(2.4 패치 반영 결정)입니다.
 상태는 여러 개 동시에 체크할 수 있고, 다시 누르면 해제. 아무것도 없으면 검토중. 파일명을 누르면 폴더가 열립니다(.hta는 탐색기에서 파일 선택).</p>
 <div class="sum" id="sum"></div>
 <div class="bar">
  <label><input type="checkbox" id="sub" checked> 하위 폴더 포함</label>
  <label>작업상태 <select id="fs"></select></label>
- <label>비교 <select id="st"><option value="">전체</option><option value="r">교체</option><option value="a">추가</option><option value="s">동일</option><option value="o">작업내역 없는 원본</option></select></label>
- <label>출처 <select id="src"><option value="">전체</option><option value="ai">올걸팩</option><option value="new">뉴이미지</option><option value="ui">UI패치</option><option value="orig">원본</option></select></label>
+ <label>비교 <select id="st"><option value="">전체</option><option value="r">교체</option><option value="a">추가</option><option value="s">동일</option><option value="o">작업내역 없는 원본</option><option value="d">플레이에 없음</option></select></label>
+ <label>출처 <select id="src"><option value="">전체</option><option value="ai">올걸팩</option><option value="new">뉴이미지</option><option value="ui">UI패치</option><option value="orig">원본</option><option value="indi">인디패치(추정)</option><option value="etc">기타</option></select></label>
  <input id="q" placeholder="경로 검색">
  <label>쪽당 <select id="per"><option>30</option><option selected>60</option><option>120</option></select></label>
 </div>
@@ -110,14 +145,14 @@ a.open{color:inherit;font-weight:600;cursor:pointer}
 <script>
 var D=$json;
 var MR='$($M -replace '\\','\\')', OR='$($Original -replace '\\','\\')';
-var CMP={'r':'교체','a':'추가','s':'동일','o':'작업내역 없는 원본'}, SRC={'ai':'올걸팩','new':'뉴이미지','ui':'UI패치','orig':'원본'};
-var CMPT={'r':'머지본이 원본을 다른 그림·데이터로 덮어씀','a':'원본에 없는 새 파일','s':'머지본이 원본과 내용까지 같음(덮어써도 변화 없음)','o':'올걸팩·뉴이미지·UI패치 어디서도 작업하지 않은 원본 그대로의 파일'};
+var CMP={'r':'교체','a':'추가','s':'동일','o':'작업내역 없는 원본','d':'플레이에 없음'}, SRC={'ai':'올걸팩','new':'뉴이미지','ui':'UI패치','orig':'원본','indi':'인디패치(추정)','etc':'기타'};
+var CMPT={'r':'플레이 폴더가 원본을 다른 그림·데이터로 덮어씀','a':'원본에 없는 새 파일','s':'원본과 같음','o':'플레이 폴더의 파일이 원본과 내용까지 같음(작업내역 없음)','d':'원본에는 있으나 플레이 폴더에 없음'};
 // 저장 코드(done, branch, spare 등)는 그대로 두고 표시 이름과 뜻만 바꾼다(기존 체크 유지).
 var STS=[['done','완료','#2b8a4a','작업을 했다는 뜻. 완료만 체크돼 있으면 「확정」 = 2.4 패치에 반영하기로 결정된 이미지.'],
  ['ore','원본re','#2b6fc0','원본을 바탕으로 재작업해 볼 이미지. 완료와 함께 체크되면 일단 완료로 보지만, 나중에 재작업해서 교체할 수 있음.'],
- ['mre','머지re','#c0612b','머지본(올걸팩·뉴이미지)을 바탕으로 재작업해 볼 이미지. 완료와 함께 체크되면 일단 완료로 보지만, 나중에 재작업해서 교체할 수 있음.'],
+ ['mre','머지re','#c0612b','플레이 폴더 그림(올걸팩·뉴이미지 등, 머지본)을 바탕으로 재작업해 볼 이미지. 완료와 함께 체크되면 일단 완료로 보지만, 나중에 재작업해서 교체할 수 있음.'],
  ['branch','재활용','#7a4fc0','원래 용도가 아닌 다른 장면에 연결하거나 편집용 소스로 쓰는 등, 어쨌든 필요한 이미지. 보관 대상.'],
- ['spare','보관','#8a6d1f','원본과 머지본 둘 다 특색이 있어 따로 보관. 추후 [원본스타일]·[올걸팩스타일]·[SNK스타일] 전환 기능에서 게임 QSP가 경로를 연결해 줄 대상(물리적 위치는 그대로).'],
+ ['spare','보관','#8a6d1f','원본과 플레이 폴더 그림(머지본) 둘 다 특색이 있어 따로 보관. 추후 [원본스타일]·[올걸팩스타일]·[SNK스타일] 전환 기능에서 게임 QSP가 경로를 연결해 줄 대상(물리적 위치는 그대로).'],
  ['wip','작업중','#d14a8a','현재 진행 중인 이미지.'],['todo','작업필요','#5a5a5a','아직 착수 전이지만 인지하고 있는 이미지.']];
 function isConf(rel){var a=S[rel];return !!(a&&a.length==1&&a[0]=='done');}
 var STN={};for(var i=0;i<STS.length;i++)STN[STS[i][0]]=STS[i];
@@ -199,7 +234,7 @@ function render(){
   for(var i=page*per;i<end;i++){var d=view[i],dd=dirOf(d[0]);
     if(dd!==last){h.push('<div class="fh">📁 '+esc(dd||'(최상위)')+'</div>');last=dd;}
     h.push('<div class="row" id="r'+i+'" style="border-left-color:'+rowColor(d[0])+'"><div class="hd"><span class="tag t-'+d[1]+'" title="'+CMPT[d[1]]+'">'+CMP[d[1]]+'</span><span class="tag p-'+d[2]+'" title="출처">'+SRC[d[2]]+'</span><span class="rel">'+esc(leaf(d[0]))+'</span></div>'+
-      '<div class="sts" id="s'+i+'">'+stsHtml(i)+'</div><div class="pair">'+side('원본 (JO9O)',OR,d[0],d[4],true)+(d[1]=='o'?'<div class="side"><div class="lab">머지본</div><div class="none">작업내역 없는 원본<br>(머지본에 없음, 원본이 그대로 쓰임)</div></div>':side('머지본',MR,d[0],d[3],false))+'</div></div>');}
+      '<div class="sts" id="s'+i+'">'+stsHtml(i)+'</div><div class="pair">'+side('원본 (JO9O)',OR,d[0],d[4],true)+(d[1]=='o'?'<div class="side"><div class="lab">플레이 (JO9)</div><div class="none">작업내역 없는 원본<br>(플레이 폴더 = 원본 그대로)</div></div>':d[1]=='d'?'<div class="side"><div class="lab">플레이 (JO9)</div><div class="none">플레이 폴더에 없음</div></div>':side('플레이 (JO9)',MR,d[0],d[3],false))+'</div></div>');}
   el('list').innerHTML=h.join('')||'<p class="sub">해당 항목 없음</p>';
   el('cnt').innerHTML='<b>'+n.toLocaleString()+'</b>건 (전체 '+D.length.toLocaleString()+')';
   var p='<button onclick="go(-1)">이전</button> <span>'+(page+1)+' / '+pages+' 쪽</span> <button onclick="go(1)">다음</button> <span class="sub" style="margin:0">'+esc(curDir||'전체')+'</span>';
@@ -244,4 +279,4 @@ $utf8 = New-Object Text.UTF8Encoding $true
 foreach ($ext in 'html', 'hta') { [IO.File]::WriteAllText((Join-Path $Root "catalog_merge_vs_original.$ext"), $html, $utf8) }
 $sp = Join-Path $Root 'catalog_status.js'
 if (-not (Test-Path -LiteralPath $sp)) { [IO.File]::WriteAllText($sp, "window.CATALOG_STATUS={`"savedAt`":0,`"items`":{}};`r`n", [Text.Encoding]::ASCII) }
-"항목 $($data.Count): $stats"
+"항목 $($data.Count): $stats / 출처(교체·추가) $srcStats"
