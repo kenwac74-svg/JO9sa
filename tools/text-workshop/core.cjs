@@ -25,11 +25,11 @@ function parse(raw) {
 }
 const serialize = doc => Buffer.from(doc.lines.join('\r\n'), 'utf16le');
 function literals(body) {
-  const result = []; let i = 0, line=1;
+  const result = []; let i = 0, line=1, statementStart=0;
   while (i < body.length) {
-    if (body[i] === '!') { const end = body.indexOf('\n', i); if(end>=0)line++;i = end < 0 ? body.length : end+1; continue; }
+    if (body[i] === '!' && !body.slice(statementStart,i).trim()) { const end = body.indexOf('\n', i); if(end>=0)line++;i = end < 0 ? body.length : end+1;statementStart=i;continue; }
     const quote = body[i];
-    if (quote !== "'" && quote !== '"') { if(body[i]==='\n')line++;i++; continue; }
+    if (quote !== "'" && quote !== '"') { if(body[i]==='\n')line++;if(/[\n&:]/.test(body[i]))statementStart=i+1;i++; continue; }
     const start = ++i, startLine=line; let value = ''; let closed = false;
     while (i < body.length) {
       if (body[i] === quote) {

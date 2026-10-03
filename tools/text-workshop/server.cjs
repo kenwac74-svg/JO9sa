@@ -1,16 +1,17 @@
 'use strict';
 const fs=require('node:fs'); const path=require('node:path'); const http=require('node:http'); const crypto=require('node:crypto');
 const core=require('./core.cjs');
+const scenes=require('./scenes.cjs');
 const arg=n=>{const i=process.argv.indexOf(n);return i<0 ? undefined : process.argv[i+1];};
 const game=path.resolve(arg('--game-dir') || 'G:/somi/JO9/game');
 const target=path.join(game,'jack.qsp');
 const runtime=path.resolve(arg('--runtime') || path.join(__dirname,'runtime'));
 fs.mkdirSync(runtime,{recursive:true});
 const backups=path.join(runtime,'backups');fs.mkdirSync(backups,{recursive:true});
-const token=crypto.randomBytes(24).toString('hex'); let cache,cacheEntries,preview; let busy=false;
+const token=crypto.randomBytes(24).toString('hex'); let cache,cacheEntries,navigator,preview; let busy=false;
 function current() {
   const raw=fs.readFileSync(target);const digest=core.hash(raw);
-  if(!cache || cache.hash!==digest){cache=core.parse(raw);cacheEntries=core.entries(cache);}
+  if(!cache || cache.hash!==digest){cache=core.parse(raw);cacheEntries=core.entries(cache);navigator=scenes.buildNavigator(cache,cacheEntries);}
   return {raw,doc:cache};
 }
 function history() {return fs.readdirSync(backups).filter(n=>/^\d.*\.json$/.test(n)).sort().reverse().map(n=>JSON.parse(fs.readFileSync(path.join(backups,n),'utf8')));}
@@ -59,6 +60,15 @@ const server=http.createServer(async(req,res)=>{
       json(res,200,{hash:doc.hash,total:found.length,results:found.slice(0,200).map(e=>({...e,hash:doc.hash}))});return;
     }
     if(req.method==='GET' && url.pathname==='/api/history'){json(res,200,history().map(({id,date,location,field,status,before,after,kind})=>({id,date,location,field,status,before,after,kind})));return;}
+    if(req.method==='POST' && url.pathname==='/api/context'){
+      const input=await body(req);current();json(res,200,navigator.context(input.selection,input.sceneId));return;
+    }
+    if(req.method==='POST' && url.pathname==='/api/scene'){
+      const input=await body(req);const {doc}=current();if(input.hash!==doc.hash)throw Error('QSP가 바뀌었습니다. 다시 검색해 주세요.');json(res,200,navigator.open(input.destination));return;
+    }
+    if(req.method==='POST' && url.pathname==='/api/incoming'){
+      const input=await body(req);current();json(res,200,navigator.incoming(input));return;
+    }
     if(req.method==='GET' && url.pathname==='/api/export'){
       const id=url.searchParams.get('id');if(!/^[\dTZ_-]+[a-f0-9]{6}$/.test(id||''))throw Error('잘못된 기록 번호입니다.');
       const m=history().find(e=>e.id===id);if(!m || !m.mod || m.status!=='applied')throw Error('내보낼 수정 기록이 없습니다.');json(res,200,m.mod);return;
@@ -73,7 +83,9 @@ const server=http.createServer(async(req,res)=>{
       const p=preview,{raw,doc}=current();if(doc.hash!==p.before)throw Error('미리보기 이후 QSP가 변경되었습니다. 다시 검색해 주세요.');
       if(doc.locations.filter(l=>l.name===p.entry.location).length!==1)throw Error('동일한 이름의 위치가 중복되어 반영할 수 없습니다.');
       const mod={id:'text_'+new Date().toISOString().replace(/[:.]/g,'-'),before_sha256:p.before,after_sha256:p.after,edits:[{location:p.entry.location,field:p.entry.field,old:p.oldField,new:p.newField,count:1}]};
-      const m=transact(raw,p.raw,{kind:'edit',location:p.entry.location,field:p.entry.field,line:p.entry.line,mod});json(res,200,m);return;
+      const m=transact(raw,p.raw,{kind:'edit',location:p.entry.location,field:p.entry.field,line:p.entry.line,mod});current();
+      const updated=cacheEntries.find(e=>e.fieldIndex===p.entry.fieldIndex&&e.start===p.entry.start);
+      json(res,200,{...m,selection:updated?{...updated,hash:cache.hash}:null});return;
     }
     if(req.method==='POST' && url.pathname==='/api/restore'){
       const input=await body(req),m=history().find(e=>e.id===input.id);
