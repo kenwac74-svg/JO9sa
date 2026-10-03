@@ -115,6 +115,15 @@ textarea[readonly]{background:#1b211c;color:#c9d3c9}
   <div class="row"><button id="cfmCancel">취소</button><button id="cfmApply" class="primary">적용</button></div>
 </dialog>
 
+<!-- 원문 복사: 게임 클라이언트에서 복사할 수 없으므로 소스 원문을 그대로 보여준다 -->
+<dialog id="rawDlg">
+  <h2>원문 복사</h2>
+  <p class="small" id="rawInfo"></p>
+  <textarea id="rawText" readonly></textarea>
+  <div id="rawMsg"></div>
+  <div class="row"><button id="rawClose">닫기</button><button id="rawCopy" class="primary">원문 복사</button></div>
+</dialog>
+
 <script src="/tw_core.js"></script>
 <script>
 'use strict';
@@ -188,7 +197,9 @@ function card(it, opt) {
   const info = sourceInfo(it), ctx = ctxBlock(it); ctx.classList.add('hidden');
   const tg = el('button', null, '소스 정보'); tg.style.marginTop = '6px';
   tg.addEventListener('click', () => { info.classList.toggle('hidden'); ctx.classList.toggle('hidden'); });
-  b.appendChild(tg); b.appendChild(info); b.appendChild(ctx);
+  const rb = el('button', null, '원문 복사'); rb.style.marginTop = '6px'; rb.style.marginLeft = '6px';
+  rb.addEventListener('click', () => openRaw(it));
+  b.appendChild(tg); b.appendChild(rb); b.appendChild(info); b.appendChild(ctx);
   c.appendChild(b);
   if (!it.hasVar && opt.edit) {
     const eb = el('button', 'primary', '수정'); eb.addEventListener('click', () => opt.edit(it)); c.appendChild(eb);
@@ -215,6 +226,20 @@ function renderScreen() {
   }
   box.insertBefore(el('p', 'small', 'Location 이름은 화면에서 직접 얻을 수 없어, 화면 문장이 많이 겹치는 곳을 위에 두었습니다(추정).'), box.firstChild);
 }
+
+// ---- 원문 복사 ----------------------------------------------------------
+function openRaw(it) {
+  $('rawInfo').textContent = it.location + (it.hasVar ? ' · 변수 포함(<<…>>는 그대로 표시됩니다)' : '');
+  $('rawText').value = it.text; $('rawMsg').replaceChildren();
+  $('rawDlg').showModal(); $('rawText').focus(); $('rawText').select();
+}
+$('rawClose').onclick = () => $('rawDlg').close();
+$('rawCopy').onclick = async () => {
+  const ta = $('rawText'); ta.focus(); ta.select();
+  let ok = false;
+  try { await navigator.clipboard.writeText(ta.value); ok = true; } catch (e) { try { ok = document.execCommand('copy'); } catch (e2) { ok = false; } }
+  $('rawMsg').replaceChildren(ok ? el('div', 'ok', '복사했습니다.') : el('div', 'err', '자동 복사에 실패했습니다. 선택된 텍스트를 Ctrl+C로 복사하세요.'));
+};
 
 // ---- 수정 흐름 ---------------------------------------------------------
 let editTarget = null, sameSel = new Map();

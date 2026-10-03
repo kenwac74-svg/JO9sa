@@ -1,4 +1,4 @@
-# Text Workshop 전용 로컬 서버. jack.qsp 읽기, 해시 확인, 백업, 교체, 검증, 롤백, 기록만 담당한다.
+﻿# Text Workshop 전용 로컬 서버. jack.qsp 읽기, 해시 확인, 백업, 교체, 검증, 롤백, 기록만 담당한다.
 param([int]$Port = 0)
 
 $ErrorActionPreference = 'Stop'
@@ -44,8 +44,21 @@ function Write-Response {
     $head += "`r`n"
     $hb = [Text.Encoding]::ASCII.GetBytes($head)
     $Stream.Write($hb, 0, $hb.Length)
-    if ($Body.Length) { $Stream.Write($Body, 0, $Body.Length) }
+    # 큰 응답(jack.qsp 약 17MB)은 나눠 쓰고, 송신 종료 후 상대가 닫을 때까지 기다린다.
+    # 바로 Close하면 Windows에서 남은 데이터가 버려져 응답이 잘린다.
+    $off = 0
+    while ($off -lt $Body.Length) {
+        $n = [Math]::Min(65536, $Body.Length - $off)
+        $Stream.Write($Body, $off, $n)
+        $off += $n
+    }
     $Stream.Flush()
+    try {
+        $script:CurClient.Client.Shutdown([Net.Sockets.SocketShutdown]::Send)
+        $script:CurClient.ReceiveTimeout = 5000
+        $drain = New-Object byte[] 1024
+        while ($Stream.Read($drain, 0, 1024) -gt 0) {}
+    } catch {}
 }
 function Json-Bytes($Object) { [Text.Encoding]::UTF8.GetBytes(($Object | ConvertTo-Json -Compress -Depth 8)) }
 function Send-Json($Stream, [int]$Status, $Object) { Write-Response -Stream $Stream -Status $Status -Body (Json-Bytes $Object) }
@@ -106,7 +119,10 @@ function Load-History {
     try {
         $raw = [IO.File]::ReadAllText($HistoryFile, [Text.Encoding]::UTF8)
         if ([string]::IsNullOrWhiteSpace($raw)) { return @() }
-        return @(ConvertFrom-Json -InputObject $raw)
+        # Windows PowerShell 5.1은 JSON 배열을 한 개체로 돌려줘 이중 배열이 되므로 평탄화한다.
+        $out = @()
+        foreach ($a in @(ConvertFrom-Json -InputObject $raw)) { $out += $a }
+        return $out
     } catch { Log ("history read failed: " + $_.Exception.Message); return @() }
 }
 function Save-History($List) {
@@ -244,6 +260,7 @@ try {
         $Client = $null; $Stream = $null
         try {
             $Client = $Listener.AcceptTcpClient()
+            $script:CurClient = $Client
             $Client.ReceiveTimeout = 30000
             $Client.SendTimeout = 30000
             $Stream = $Client.GetStream()
