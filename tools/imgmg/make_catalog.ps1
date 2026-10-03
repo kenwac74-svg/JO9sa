@@ -156,7 +156,7 @@ button{cursor:pointer}#q{width:180px}
 .meta{font-size:12px;color:var(--mute);margin-top:4px;word-break:break-all}
 a.open{color:inherit;font-weight:600;cursor:pointer}
 .none{color:var(--mute);padding:30px 0;text-align:center;border:1px dashed var(--line);border-radius:4px}
-.kids{margin-top:10px;border-top:1px dashed var(--line);padding-top:8px;display:flex;flex-direction:column;gap:8px}.kid{border-left:4px solid var(--line);padding-left:8px}.kid .side{flex:0 1 200px;max-width:220px}.kid .side img{max-height:160px;width:auto;max-width:100%}.kid .hd{margin-bottom:4px}.pager{display:flex;gap:6px;align-items:center;margin:10px 0;flex-wrap:wrap}
+.wsb{margin-left:auto;font-size:12px;padding:3px 10px;border-radius:12px;border:1px solid #2b6fc0;background:var(--card);color:var(--fg);cursor:pointer}.kids{margin-top:10px;border-top:1px dashed var(--line);padding-top:8px;display:flex;flex-direction:column;gap:8px}.kid{border-left:4px solid var(--line);padding-left:8px}.kid .side{flex:0 1 200px;max-width:220px}.kid .side img{max-height:160px;width:auto;max-width:100%}.kid .hd{margin-bottom:4px}.pager{display:flex;gap:6px;align-items:center;margin:10px 0;flex-wrap:wrap}
 #save{font-size:12px;color:var(--mute)}
 </style></head><body>
 <div id="side"><div class="sub" style="margin:0 4px 8px"><b>폴더</b> · 이름 옆 숫자는 완료/전체</div><div class="tree" id="tree"></div></div>
@@ -164,7 +164,7 @@ a.open{color:inherit;font-weight:600;cursor:pointer}
 <h1>이미지 패치 작업 체크리스트</h1>
 <p class="sub">플레이 폴더 <code>$($Play -replace '\\','\')</code>(순정 + 올걸팩 + 인디패치 + 사용자 이미지·UI 패치) × 순정 원본 <code>$($Original -replace '\\','\')</code>, 같은 경로끼리 비교. 생성 $(Get-Date -Format 'yyyy-MM-dd HH:mm').
 비교: <b>교체</b> 원본을 다른 내용으로 덮어씀 · <b>추가</b> 원본에 없는 새 파일 · <b>동일</b> 원본과 같음 · <b>작업내역 없는 원본</b> 올걸팩·뉴이미지·UI패치 어디서도 손대지 않은 원본(원본 폴더 연결). 상태 버튼과 태그에 마우스를 올리면 뜻이 나옵니다. <b>완료만</b> 체크된 항목이 <b>확정</b>(2.4 패치 반영 결정)입니다.
-상태는 여러 개 동시에 체크할 수 있고, 다시 누르면 해제. 아무것도 없으면 검토중. 파일명을 누르면 폴더가 열립니다(.hta는 탐색기에서 파일 선택).</p>
+상태는 여러 개 동시에 체크할 수 있고, 다시 누르면 해제. 아무것도 없으면 검토중. 파일명을 누르면 폴더가 열립니다(.hta는 탐색기에서 파일 선택). 카드의 <b>🖼 교체</b>로 새 이미지를 직접 넣을 수 있습니다(Edge·Chrome으로 .html을 열었을 때만).</p>
 <div class="sum" id="sum"></div>
 <div class="bar">
  <label><input type="checkbox" id="sub" checked> 하위 폴더 포함</label> <label title="가로·세로 모두 400px 미만인 그림(UI 아이콘·포트레이트 등). 큰 그림과 짝인 것은 끄더라도 그 큰 그림 카드 안에 함께 보입니다."><input type="checkbox" id="small"> UI·포트레이트 보기</label>
@@ -262,10 +262,14 @@ function pick(p){curDir=p;var parts=p?p.split('\\'):[],n=T;n.open=true;for(var i
 function side(lab,root,rel,len,orig){
   if(orig&&!len)return '<div class="side"><div class="lab">'+lab+'</div><div class="none">원본에 없음</div></div>';
   var full=root+'\\'+rel, dir=dirOf(full);
-  var img=isImg(rel)?'<a href="'+url(full)+'" target="_blank"><img src="'+url(full)+'" onload="var m=this.parentNode.parentNode.getElementsByTagName(\'span\')[0];if(m)m.innerHTML=this.naturalWidth+\'×\'+this.naturalHeight+\' · \'"></a>':'';
+  var bq=(!orig&&BUST[rel])?'?t='+BUST[rel]:'';var img=isImg(rel)?'<a href="'+url(full)+bq+'" target="_blank"><img src="'+url(full)+bq+'" onload="var m=this.parentNode.parentNode.getElementsByTagName(\'span\')[0];if(m)m.innerHTML=this.naturalWidth+\'×\'+this.naturalHeight+\' · \'"></a>':'';
   return '<div class="side"><div class="lab">'+lab+'</div>'+img+'<div class="meta"><span></span>'+kb(len)+' · <a class="open" href="'+url(dir)+'" onclick="return openFolder(\''+js(full)+'\')">'+esc(leaf(rel))+'</a></div></div>';
 }
 function has(rel,s){var a=S[rel];if(!a)return false;for(var i=0;i<a.length;i++)if(a[i]==s)return true;return false;}
+var EDIT=false,BUST={};
+function wsBtn(d,i){if(!EDIT||d[1]=='d'||!/\.png$/i.test(d[0])||d[0].indexOf('content\\pic\\')!=0)return '';return '<button class="wsb" title="이 그림을 새 이미지로 교체(이미지 교체기)" onclick="wsOpen('+i+')">🖼 교체</button>';}
+function wsOpen(i){var d=R[i],p='content/pic/'+d[0].substring(12).replace(/\\/g,'/'),parts=p.split('/');
+  window.JO9WS.open([{path:p,folder:parts.length>3?parts[2]:'pic root',file:parts[parts.length-1],width:d[5],height:d[6],size:d[3],fullPath:MR+'\\'+d[0]}]);}
 var R=[],KIDS={},IDX={};function isSmall(d){return isImg(d[0])&&d[5]>0&&Math.max(d[5],d[6])<400;}
 function stsHtml(i){var rel=R[i][0],cur=S[rel],h='';
   for(var k=0;k<STS.length;k++){var s=STS[k],on=has(rel,s[0]);h+='<button class="sb'+(on?' on':'')+'" title="'+s[3]+'" style="'+(on?'background:'+s[2]+';border-color:'+s[2]:'')+'" onclick="setSt('+i+',\''+s[0]+'\')">'+(on?'☑ ':'☐ ')+s[1]+'</button>';}
@@ -287,7 +291,7 @@ function render(){
 }
 function rowHtml(d,i,kid){
     var kids='';if(!kid&&KIDS[d[0]]){var ks=KIDS[d[0]],a=[];for(var k=0;k<ks.length;k++){var j=R.length;R.push(ks[k]);a.push(rowHtml(ks[k],j,true));}kids='<div class="kids"><div class="sub" style="margin:0">짝 그림(UI·포트레이트) '+ks.length+'</div>'+a.join('')+'</div>';}
-    return '<div class="'+(kid?'kid':'row')+'" id="r'+i+'" style="border-left-color:'+rowColor(d[0])+'"><div class="hd"><span class="tag t-'+d[1]+'" title="'+CMPT[d[1]]+'">'+CMP[d[1]]+'</span><span class="tag p-'+d[2]+'" title="출처">'+SRC[d[2]]+'</span><span class="rel">'+esc(leaf(d[0]))+'</span></div>'+
+    return '<div class="'+(kid?'kid':'row')+'" id="r'+i+'" style="border-left-color:'+rowColor(d[0])+'"><div class="hd"><span class="tag t-'+d[1]+'" title="'+CMPT[d[1]]+'">'+CMP[d[1]]+'</span><span class="tag p-'+d[2]+'" title="출처">'+SRC[d[2]]+'</span><span class="rel">'+esc(leaf(d[0]))+'</span>'+wsBtn(d,i)+'</div>'+
       '<div class="sts" id="s'+i+'">'+stsHtml(i)+'</div><div class="pair">'+side('원본 (JO9O)',OR,d[0],d[4],true)+(d[1]=='o'?'<div class="side"><div class="lab">플레이 (JO9)</div><div class="none">작업내역 없는 원본<br>(플레이 폴더 = 원본 그대로)</div></div>':d[1]=='d'?'<div class="side"><div class="lab">플레이 (JO9)</div><div class="none">플레이 폴더에 없음</div></div>':side('플레이 (JO9)',MR,d[0],d[3],false))+'</div>'+kids+'</div>';
 }
 function setSt(i,s){var rel=R[i][0];if(has(rel,s))unmark(rel,s);else mark(rel,s);
@@ -331,6 +335,17 @@ function bulkSet(){var s=el('bulk').value,md=el('bmode').value,n=view.length;if(
   var ids=['st','src','per','fs','sub','small'];for(var k=0;k<ids.length;k++)el(ids[k]).onchange=filter;
   var t;el('q').onkeyup=function(){clearTimeout(t);t=setTimeout(filter,250);};
   filter();
+})();
+</script>
+<script>
+(function(){
+  if(!window.showDirectoryPicker||!window.Promise)return;
+  var s=document.createElement('script');s.src='catalog_editor.js';
+  s.onload=function(){EDIT=true;render();
+    window.addEventListener('jo9ws-applied',function(e){var t=new Date().getTime(),a=e.detail||[];for(var k=0;k<a.length;k++)BUST['content\\pic\\'+a[k].replace(/\//g,'\\')]=t;render();
+      el('save').innerHTML='이미지 '+a.length+'개 교체됨 · 비교 분류(교체/추가/출처)는 카탈로그를 다시 만들면 갱신됩니다';});};
+  s.onerror=function(){el('save').innerHTML='catalog_editor.js를 불러오지 못해 이미지 교체 기능이 꺼졌습니다';};
+  document.body.appendChild(s);
 })();
 </script></body></html>
 "@
