@@ -14,6 +14,17 @@
 - 없음. 현재 `staging/pic/` 109개는 v7과 같다.
 - 추가 ZIP을 받으면 여기에 작업 단위로 기록한다. 사용자가 ZIP 생성을 지시하거나, 미배포 작업 단위가 5개가 되면 새 판 번호 항목으로 옮긴다.
 
+## v8 (2026-10-04, 집컴 로컬 세션이 IMGMG에서 생성 · 사용자 점검 전)
+
+- 파일: `JO9_NewImg_Pack_v8.zip`, 249개, 55,062,280 bytes, SHA-256 `b079baf3e72ac0a7aad46a4cfda20e3f9489172d3868acc75a51d4c285a078f7`
+- 저장소에는 올리지 않았다(50 MB 초과). 원본은 사용자 PC `G:\somi\IMGMG\imagepack\`. 만든 도구는 main `tools/imgmg/make_imagepack.ps1`.
+- **구조 변경**: 최상위가 `pic/`에서 `game/content/pic/`으로 바뀌었다. ZIP의 `game` 폴더를 게임 폴더(Jack-o-nine-tails.exe 있는 곳)에 풀어 덮어쓴다. `game/JO9_NewImg_Pack_v8_catalog.html`(첨부 비교 카탈로그)와 `README.txt` 포함.
+- 사용자 방침(2026-10-04): 이미지 교체 팩은 2.4 등 버전업과 무관하게 수시 배포한다. **사용자 작업물만** 담고 올걸팩·원본 이미지는 넣지 않는다. 모든 작업물은 원본과 같은 폴더 위치에 둔다. 따라서 "원본에 있는 경로만 교체, 새 파일 추가 없음" 정책은 v8부터 바뀌어, 원본에 없는 새 이름 파일(2.4·UI 패치에서 쓰임)도 들어간다.
+- 추가 140개 (v7의 109개는 그대로)
+  - 원본 자리 대체본 4개: `pic/scene/whore_redlight/whore_redlight-121.png`·`122`(길거리 창녀 t002·t003), `212`·`213`(개인 영업녀 p002·p003). QSP 없이도 새 장면 그림이 보이게 하려는 것.
+  - UI 패치용으로 그린 이미지 136개를 SNKmod 단계 없이 원본과 같은 폴더에: 원본 경로 덮어쓰기(`buttons`, `bg/slave_psychology`, `bg/trophy`, `ui overhaul` 등)와 새 파일(`ui/…`, `master/master_kura*`, `characters/master_robertus_rufus`, 홍등가 p/r/s/t/u 시퀀스 등). trash와 trash 중복 59개는 제외.
+- 비교: `compare/JO9_NewImg_Compare_v8.html`(웹 게시용, 썸네일 320px). 카드마다 원본 2.3 · 올걸팩(있을 때) · 이 팩. 목록 70개, 아이콘·포트레이트·중복·QSP 전용 179개는 생략.
+- 확인할 것: UI 버튼·배경 덮어쓰기를 순정/올걸팩 환경에서 본 화면(사용자 점검), 전송 방법(30 MiB 초과).
 ## v7 (2026-10-02)
 
 - 파일: `JO9_NewImg_Pack_v7.zip`, 109개, 31,768,716 bytes, SHA-256 `0050c2dc31e8bfe92935ec17021469bbe3671f9c259abc265c42d768e69ae7db`
