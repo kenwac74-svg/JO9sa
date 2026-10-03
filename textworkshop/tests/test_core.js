@@ -117,11 +117,25 @@ t('편집: 탐색 이후 원본이 바뀌면 중단', () => {
   assert.throws(() => C.applyEdits(m, [{ loc: it.loc, start: it.start, end: it.end, quote: it.quote, oldText: '다른 내용이었던 문장', newText: '바꾼 문장입니다, 안녕.' }]), /바뀌었습니다/);
 });
 
-t('입력 검증: 변수·줄바꿈·빈 문자열 거부', () => {
+t('입력 검증: 변수·빈 문자열 거부, 줄바꿈은 허용', () => {
   assert.ok(C.validateNewText('가 <<x>> 나'));
-  assert.ok(C.validateNewText('가\n나'));
+  assert.strictEqual(C.validateNewText('가\n나'), '');
   assert.ok(C.validateNewText('<br>'));
   assert.strictEqual(C.validateNewText('정상 <b>문장</b>입니다.'), '');
+});
+
+t('편집: 원본처럼 줄바꿈이 있는 문자열을 줄바꿈 유지한 채 수정(LF 입력은 CRLF로 저장)', () => {
+  const b = makeQsp([{ name: 'a', body: "$a = '  첫 줄 문장입니다, 안녕하세요.\r\n둘째 줄 문장입니다, 반갑습니다.'\r\nx = 1\r\n" }]);
+  const { m, ix } = idx(b);
+  assert.strictEqual(ix.items.length, 1);
+  const it = ix.items[0];
+  const nt = '  첫 줄 문장입니다, 안녕하세요.\n둘째 줄을 고친 문장입니다, 반갑습니다.\n셋째 줄도 추가합니다, 정말로.'; // textarea는 LF를 돌려준다
+  const ed = [{ loc: it.loc, start: it.start, end: it.end, quote: it.quote, oldText: it.text, newText: nt }];
+  const bytes = C.serializeQsp(C.applyEdits(m, ed));
+  C.verifyEdits(m, bytes, ed);
+  const re = C.buildIndex(C.parseQsp(bytes)).items[0];
+  assert.strictEqual(re.text, C.normalizeNewlines(nt));
+  assert.ok(!/[^\r]\n/.test(re.text), 'LF 단독 줄바꿈이 남음');
 });
 
 t('verifyEdits는 의도하지 않은 변경을 잡아낸다', () => {
@@ -156,6 +170,16 @@ if (qi > 0) {
     const re = C.buildIndex(C.parseQsp(bytes));
     assert.ok(re.items.some(x => x.location === 'interaction_city' && x.text === nt));
     assert.strictEqual(re.items.length, built.items.length);
+  });
+  t('실제 jack.qsp: 줄바꿈이 있는 원문(#txt_man Redlight_whore_b[1])을 수정해도 줄바꿈 구조와 나머지가 유지', () => {
+    const it = built.items.find(x => x.location === '#txt_man' && x.text.indexOf('길거리 계집들 무리 속에서') >= 0);
+    assert.ok(it && !it.hasVar && it.text.indexOf('\r\n') >= 0);
+    const nt = it.text.replace('제법 외모가 괜찮은', '제법 괜찮아 보이는');
+    const ed = [{ loc: it.loc, start: it.start, end: it.end, quote: it.quote, oldText: it.text, newText: nt.replace(/\r\n/g, '\n') }];
+    const bytes = C.serializeQsp(C.applyEdits(m, ed));
+    C.verifyEdits(m, bytes, ed);
+    const re = C.buildIndex(C.parseQsp(bytes)).items.find(x => x.id === it.id);
+    assert.strictEqual(re.text, nt);
   });
   t('실제 jack.qsp: 글로리아 검색과 화면 매칭', () => {
     assert.ok(C.search(built.items, '글로리아').length > 10);

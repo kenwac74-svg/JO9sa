@@ -240,8 +240,9 @@
   }
 
   // ---- 편집 검증·적용 ------------------------------------------------------
+  // 소스의 문자열 안 줄바꿈은 CRLF다(문자열 5천여 개가 실제 줄바꿈을 쓴다). 입력의 줄바꿈을 CRLF로 통일한다.
+  function normalizeNewlines(t) { return t.replace(/\r\n|\r|\n/g, '\r\n'); }
   function validateNewText(newText) {
-    if (/[\r\n]/.test(newText)) return '줄바꿈은 <br>로 입력하세요.';
     if (newText.indexOf('<<') >= 0 || newText.indexOf('>>') >= 0) return 'v0.1에서는 변수(<<...>>)를 넣을 수 없습니다.';
     if (/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/.test(newText)) return '제어 문자는 입력할 수 없습니다.';
     if (newText.replace(/<[^>]*>/g, '').trim().length === 0) return '내용이 비어 있습니다.';
@@ -264,7 +265,7 @@
           throw new Error('원본이 탐색 이후 바뀌었습니다: ' + model.locs[li].name);
         const err = validateNewText(e.newText);
         if (err) throw new Error(err);
-        body = body.slice(0, e.start) + escapeLit(e.newText, e.quote) + body.slice(e.end);
+        body = body.slice(0, e.start) + escapeLit(normalizeNewlines(e.newText), e.quote) + body.slice(e.end);
       }
       fields[model.locs[li].bodyIdx] = shift(body, -5);
     }
@@ -285,7 +286,7 @@
       const li = +k;
       let expect = readBody(before, li);
       const list = byLoc[k].slice().sort(function (a, b) { return b.start - a.start; });
-      for (const e of list) expect = expect.slice(0, e.start) + escapeLit(e.newText, e.quote) + expect.slice(e.end);
+      for (const e of list) expect = expect.slice(0, e.start) + escapeLit(normalizeNewlines(e.newText), e.quote) + expect.slice(e.end);
       if (readBody(after, li) !== expect) throw new Error('검증 실패: 본문 불일치 ' + before.locs[li].name);
     }
     return true;
@@ -295,7 +296,7 @@
     shift: shift, parseQsp: parseQsp, serializeQsp: serializeQsp, readBody: readBody,
     scanLiterals: scanLiterals, classify: classify, matchKey: matchKey,
     buildIndex: buildIndex, matchScreen: matchScreen, search: search, replaceInText: replaceInText,
-    validateNewText: validateNewText, applyEdits: applyEdits, verifyEdits: verifyEdits,
+    validateNewText: validateNewText, normalizeNewlines: normalizeNewlines, applyEdits: applyEdits, verifyEdits: verifyEdits,
     escapeLit: escapeLit, unescapeLit: unescapeLit
   };
 });

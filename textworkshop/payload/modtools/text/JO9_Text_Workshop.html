@@ -101,7 +101,7 @@ textarea[readonly]{background:#1b211c;color:#c9d3c9}
   <textarea id="edOld" readonly></textarea>
   <label class="lbl">수정문</label>
   <textarea id="edNew"></textarea>
-  <p class="small">HTML 태그(&lt;br&gt;, &lt;b&gt; 등)는 그대로 두세요. 줄바꿈은 &lt;br&gt;로 입력합니다. 따옴표 escape는 자동 처리됩니다. 변수(&lt;&lt;…&gt;&gt;)는 v0.1에서 넣을 수 없습니다.</p>
+  <p class="small">HTML 태그(&lt;br&gt;, &lt;b&gt; 등)는 그대로 두세요. 줄바꿈은 엔터 또는 &lt;br&gt;로 입력합니다(원본이 쓰는 방식 그대로 유지됩니다). 따옴표 escape는 자동 처리됩니다. 변수(&lt;&lt;…&gt;&gt;)는 v0.1에서 넣을 수 없습니다.</p>
   <div id="edErr"></div>
   <div id="sameUses"></div>
   <div class="row"><button id="edCancel">취소</button><button id="edNext" class="primary">적용 전 확인</button></div>
@@ -264,7 +264,7 @@ $('edNext').onclick = () => {
   const nt = $('edNew').value;
   const err = C.validateNewText(nt);
   if (err) { $('edErr').replaceChildren(el('div', 'err', err)); return; }
-  if (nt === editTarget.text) { $('edErr').replaceChildren(el('div', 'err', '수정문이 원문과 같습니다.')); return; }
+  if (C.normalizeNewlines(nt) === C.normalizeNewlines(editTarget.text)) { $('edErr').replaceChildren(el('div', 'err', '수정문이 원문과 같습니다.')); return; }
   $('editDlg').close();
   confirmChanges(Array.from(sameSel.values()).map((x) => ({ it: x, newText: nt })), '텍스트 ' + sameSel.size + '개 수정');
 };
