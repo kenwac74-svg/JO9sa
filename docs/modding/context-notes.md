@@ -78,3 +78,7 @@
 - 검증: 기준 원본 복사본에 mods 10개 전체 적용 → `6D5E7563DEB3A155437D2F14E5756D9BDCA95DED2A9B76FD7D0615596B06A05B`, 재실행 시 전부 건너뜀. 이 PC 게임 qsp도 같은 해시(백업 `jack.qsp.bak_20261004_002852`).
 - `assets/content/pic/SNKmod/scene/whore_redlight/`에 홍등가 시퀀스 이미지 15개(p/r/s/t/u 001~003)를 넣었다(`assets/README.md`).
 - BUG-001(아마란스 살롱 `$service_picture` 잔류)은 2.4.0에서 미해결로 남긴다. 로컬 해결 과제.
+
+### 2.4 결정·이미지 교체 팩 v8·IMGMG (2026-10-04, homecom)
+- 상세는 `docs/session-handoffs/2026-10-04/homecom-2026-10-04.md`. 요점: 대체된 구버전 원본 이미지는 2.4에서 폐기, 여자 주인공 플레이 제거 예정(범위 미정), 엔진·창 제목은 빌드 지시 때, 테스트 게임 QSP는 그대로, BUG-001은 2.4.0 미해결, 이미지 교체 팩은 버전업과 무관하게 사용자 작업물만 수시 배포(v8부터 `game/` 구조).
+- `whore_redlight-1121/1131`은 참조 0 확인 후 게임 폴더·IMGMG에서 삭제.
