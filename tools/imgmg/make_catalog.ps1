@@ -69,6 +69,49 @@ foreach ($k in $P.Keys) {
     }
 }
 foreach ($k in $Q.Keys) { if (-not $P.ContainsKey($k)) { $o = $Q[$k]; [void]$data.Add(@($o.FullName.Substring($Original.Length + 1), 'd', 'orig', 0, $o.Length)) } }
+# 가로·세로(PNG·GIF는 헤더만 읽음). 가로나 세로가 400 이상이면 큰 그림, 아니면 UI·포트레이트로 보고 기본 목록에서 숨긴다.
+Add-Type -AssemblyName System.Drawing
+function Get-Dim($path) {
+    $fs = [IO.File]::OpenRead($path)
+    try {
+        $b = New-Object byte[] 26; [void]$fs.Read($b, 0, 26)
+        $v = [int[]]$b; if ($v[0] -eq 0x89 -and $v[1] -eq 0x50) { return @((($v[16] -shl 24) -bor ($v[17] -shl 16) -bor ($v[18] -shl 8) -bor $v[19]), (($v[20] -shl 24) -bor ($v[21] -shl 16) -bor ($v[22] -shl 8) -bor $v[23])) }
+        if ($v[0] -eq 0x47 -and $v[1] -eq 0x49) { return @(($v[6] -bor ($v[7] -shl 8)), ($v[8] -bor ($v[9] -shl 8))) }
+        if ($b[0] -eq 0xFF -and $b[1] -eq 0xD8) { $fs.Position = 0; $i = [Drawing.Image]::FromStream($fs, $false, $false); try { return @($i.Width, $i.Height) } finally { $i.Dispose() } }
+    } catch { } finally { $fs.Dispose() }
+    @(0, 0)
+}
+$imgExt = '\.(png|jpe?g|gif|bmp|webp)$'
+# 위에서 배열에 더한 것은 복사본이라, 새 배열로 다시 만든다.
+$data2 = New-Object System.Collections.ArrayList
+foreach ($x in $data) {
+    $w = 0; $h = 0
+    if ($x[0] -match $imgExt) { $src = if ($x[1] -eq 'd') { Join-Path $Original $x[0] } else { Join-Path $Play $x[0] }; $d = Get-Dim $src; $w = $d[0]; $h = $d[1] }
+    [void]$data2.Add(@($x[0], $x[1], $x[2], $x[3], $x[4], $w, $h, ''))
+}
+$data = $data2
+function Is-Small($x) { ($x[0] -match $imgExt) -and $x[5] -gt 0 -and [Math]::Max($x[5], $x[6]) -lt 400 }
+# 짝: 이름에서 _gray·_sepia·_ava를 뺀 줄기가 같은 큰 그림에 붙인다(같은 폴더 우선, 다음 girls\full·characters·bg·mob·scene 순).
+function Get-Stem($rel) {
+    $n = [IO.Path]::GetFileNameWithoutExtension($rel).ToLower()
+    $n = $n -replace '_(gray|grey|sepia)$', ''
+    $n = $n -replace '_ava(?=(_\d+)?$)', ''
+    $n
+}
+$big = @{}
+foreach ($x in $data) { if (($x[0] -match $imgExt) -and -not (Is-Small $x)) { $k = Get-Stem $x[0]; if (-not $big[$k]) { $big[$k] = New-Object System.Collections.ArrayList }; [void]$big[$k].Add($x[0]) } }
+$pref = @('content\pic\girls\full\', 'content\pic\characters\', 'content\pic\bg\', 'content\pic\mob\', 'content\pic\scene\')
+$paired = 0
+foreach ($x in $data) {
+    if (-not (Is-Small $x)) { continue }
+    $c = $big[(Get-Stem $x[0])]; if (-not $c) { continue }
+    $dir = [IO.Path]::GetDirectoryName($x[0]).ToLower()
+    $best = $c | Where-Object { [IO.Path]::GetDirectoryName($_).ToLower() -eq $dir } | Select-Object -First 1
+    if (-not $best) { foreach ($p in $pref) { $best = $c | Where-Object { $_.ToLower().StartsWith($p) } | Select-Object -First 1; if ($best) { break } } }
+    if (-not $best) { $best = $c[0] }
+    $x[7] = $best; $paired++
+}
+$smallN = @($data | Where-Object { Is-Small $_ }).Count
 $json = ConvertTo-Json @($data) -Compress -Depth 3
 $stats = ($data | Group-Object { $_[1] } | ForEach-Object { "$($_.Name)=$($_.Count)" }) -join ', '
 $srcStats = ($data | Where-Object { $_[1] -eq 'r' -or $_[1] -eq 'a' } | Group-Object { $_[2] } | ForEach-Object { "$($_.Name)=$($_.Count)" }) -join ', '
@@ -113,7 +156,7 @@ button{cursor:pointer}#q{width:180px}
 .meta{font-size:12px;color:var(--mute);margin-top:4px;word-break:break-all}
 a.open{color:inherit;font-weight:600;cursor:pointer}
 .none{color:var(--mute);padding:30px 0;text-align:center;border:1px dashed var(--line);border-radius:4px}
-.pager{display:flex;gap:6px;align-items:center;margin:10px 0;flex-wrap:wrap}
+.kids{margin-top:10px;border-top:1px dashed var(--line);padding-top:8px;display:flex;flex-direction:column;gap:8px}.kid{border-left:4px solid var(--line);padding-left:8px}.kid .side{flex:0 1 200px;max-width:220px}.kid .side img{max-height:160px;width:auto;max-width:100%}.kid .hd{margin-bottom:4px}.pager{display:flex;gap:6px;align-items:center;margin:10px 0;flex-wrap:wrap}
 #save{font-size:12px;color:var(--mute)}
 </style></head><body>
 <div id="side"><div class="sub" style="margin:0 4px 8px"><b>폴더</b> · 이름 옆 숫자는 완료/전체</div><div class="tree" id="tree"></div></div>
@@ -124,7 +167,7 @@ a.open{color:inherit;font-weight:600;cursor:pointer}
 상태는 여러 개 동시에 체크할 수 있고, 다시 누르면 해제. 아무것도 없으면 검토중. 파일명을 누르면 폴더가 열립니다(.hta는 탐색기에서 파일 선택).</p>
 <div class="sum" id="sum"></div>
 <div class="bar">
- <label><input type="checkbox" id="sub" checked> 하위 폴더 포함</label>
+ <label><input type="checkbox" id="sub" checked> 하위 폴더 포함</label> <label title="가로·세로 모두 400px 미만인 그림(UI 아이콘·포트레이트 등). 큰 그림과 짝인 것은 끄더라도 그 큰 그림 카드 안에 함께 보입니다."><input type="checkbox" id="small"> UI·포트레이트 보기</label>
  <label>작업상태 <select id="fs"></select></label>
  <label>비교 <select id="st"><option value="">전체</option><option value="r">교체</option><option value="a">추가</option><option value="s">동일</option><option value="o">작업내역 없는 원본</option><option value="d">플레이에 없음</option></select></label>
  <label>출처 <select id="src"><option value="">전체</option><option value="ai">올걸팩</option><option value="new">뉴이미지</option><option value="ui">UI패치</option><option value="orig">원본</option><option value="indi">인디패치(추정)</option><option value="etc">기타</option></select></label>
@@ -223,33 +266,46 @@ function side(lab,root,rel,len,orig){
   return '<div class="side"><div class="lab">'+lab+'</div>'+img+'<div class="meta"><span></span>'+kb(len)+' · <a class="open" href="'+url(dir)+'" onclick="return openFolder(\''+js(full)+'\')">'+esc(leaf(rel))+'</a></div></div>';
 }
 function has(rel,s){var a=S[rel];if(!a)return false;for(var i=0;i<a.length;i++)if(a[i]==s)return true;return false;}
-function stsHtml(i){var cur=S[view[i][0]],h='';
-  for(var k=0;k<STS.length;k++){var s=STS[k],on=has(view[i][0],s[0]);h+='<button class="sb'+(on?' on':'')+'" title="'+s[3]+'" style="'+(on?'background:'+s[2]+';border-color:'+s[2]:'')+'" onclick="setSt('+i+',\''+s[0]+'\')">'+(on?'☑ ':'☐ ')+s[1]+'</button>';}
-  var st=!cur?'<span title="아무 상태도 체크되지 않음">검토중</span>':isConf(view[i][0])?'<span class="conf" title="완료만 체크됨: 2.4 패치 반영 확정">✔ 확정</span>':has(view[i][0],'done')?'<span title="완료와 다른 상태가 함께 체크됨: 일단 완료로 보지만 확정은 아님">완료(재작업 여지)</span>':'';
+var R=[],KIDS={},IDX={};function isSmall(d){return isImg(d[0])&&d[5]>0&&Math.max(d[5],d[6])<400;}
+function stsHtml(i){var rel=R[i][0],cur=S[rel],h='';
+  for(var k=0;k<STS.length;k++){var s=STS[k],on=has(rel,s[0]);h+='<button class="sb'+(on?' on':'')+'" title="'+s[3]+'" style="'+(on?'background:'+s[2]+';border-color:'+s[2]:'')+'" onclick="setSt('+i+',\''+s[0]+'\')">'+(on?'☑ ':'☐ ')+s[1]+'</button>';}
+  var st=!cur?'<span title="아무 상태도 체크되지 않음">검토중</span>':isConf(rel)?'<span class="conf" title="완료만 체크됨: 2.4 패치 반영 확정">✔ 확정</span>':has(rel,'done')?'<span title="완료와 다른 상태가 함께 체크됨: 일단 완료로 보지만 확정은 아님">완료(재작업 여지)</span>':'';
   return h+'<span class="sub" style="margin:0 0 0 6px;align-self:center">'+st+'</span>';}
 function rowColor(rel){var a=S[rel];return a?STN[a[0]][2]:'var(--line)';}
 function render(){
   var per=+el('per').value,n=view.length,pages=Math.max(1,Math.ceil(n/per));if(page>=pages)page=pages-1;
   var h=[],end=Math.min(n,(page+1)*per),last=null;
-  for(var i=page*per;i<end;i++){var d=view[i],dd=dirOf(d[0]);
+  R=[];
+  for(var vi=page*per;vi<end;vi++){var d=view[vi],dd=dirOf(d[0]),i=R.length;R.push(d);
     if(dd!==last){h.push('<div class="fh">📁 '+esc(dd||'(최상위)')+'</div>');last=dd;}
-    h.push('<div class="row" id="r'+i+'" style="border-left-color:'+rowColor(d[0])+'"><div class="hd"><span class="tag t-'+d[1]+'" title="'+CMPT[d[1]]+'">'+CMP[d[1]]+'</span><span class="tag p-'+d[2]+'" title="출처">'+SRC[d[2]]+'</span><span class="rel">'+esc(leaf(d[0]))+'</span></div>'+
-      '<div class="sts" id="s'+i+'">'+stsHtml(i)+'</div><div class="pair">'+side('원본 (JO9O)',OR,d[0],d[4],true)+(d[1]=='o'?'<div class="side"><div class="lab">플레이 (JO9)</div><div class="none">작업내역 없는 원본<br>(플레이 폴더 = 원본 그대로)</div></div>':d[1]=='d'?'<div class="side"><div class="lab">플레이 (JO9)</div><div class="none">플레이 폴더에 없음</div></div>':side('플레이 (JO9)',MR,d[0],d[3],false))+'</div></div>');}
+    h.push(rowHtml(d,i,false));}
   el('list').innerHTML=h.join('')||'<p class="sub">해당 항목 없음</p>';
-  el('cnt').innerHTML='<b>'+n.toLocaleString()+'</b>건 (전체 '+D.length.toLocaleString()+')';
+  var nk=0;for(var q=0;q<R.length;q++)if(R[q][7])nk++;
+  el('cnt').innerHTML='<b>'+n.toLocaleString()+'</b>건'+(nk?' (+ 짝 그림 '+nk+')':'')+' (전체 '+D.length.toLocaleString()+')';
   var p='<button onclick="go(-1)">이전</button> <span>'+(page+1)+' / '+pages+' 쪽</span> <button onclick="go(1)">다음</button> <span class="sub" style="margin:0">'+esc(curDir||'전체')+'</span>';
   el('pg1').innerHTML=p;el('pg2').innerHTML=p;
 }
-function setSt(i,s){var rel=view[i][0];if(has(rel,s))unmark(rel,s);else mark(rel,s);
+function rowHtml(d,i,kid){
+    var kids='';if(!kid&&KIDS[d[0]]){var ks=KIDS[d[0]],a=[];for(var k=0;k<ks.length;k++){var j=R.length;R.push(ks[k]);a.push(rowHtml(ks[k],j,true));}kids='<div class="kids"><div class="sub" style="margin:0">짝 그림(UI·포트레이트) '+ks.length+'</div>'+a.join('')+'</div>';}
+    return '<div class="'+(kid?'kid':'row')+'" id="r'+i+'" style="border-left-color:'+rowColor(d[0])+'"><div class="hd"><span class="tag t-'+d[1]+'" title="'+CMPT[d[1]]+'">'+CMP[d[1]]+'</span><span class="tag p-'+d[2]+'" title="출처">'+SRC[d[2]]+'</span><span class="rel">'+esc(leaf(d[0]))+'</span></div>'+
+      '<div class="sts" id="s'+i+'">'+stsHtml(i)+'</div><div class="pair">'+side('원본 (JO9O)',OR,d[0],d[4],true)+(d[1]=='o'?'<div class="side"><div class="lab">플레이 (JO9)</div><div class="none">작업내역 없는 원본<br>(플레이 폴더 = 원본 그대로)</div></div>':d[1]=='d'?'<div class="side"><div class="lab">플레이 (JO9)</div><div class="none">플레이 폴더에 없음</div></div>':side('플레이 (JO9)',MR,d[0],d[3],false))+'</div>'+kids+'</div>';
+}
+function setSt(i,s){var rel=R[i][0];if(has(rel,s))unmark(rel,s);else mark(rel,s);
   el('s'+i).innerHTML=stsHtml(i);el('r'+i).style.borderLeftColor=rowColor(rel);saveSoon();summary();drawTree();
   if(el('fs').value)setTimeout(filterKeepPage,300);}
 function go(d){page+=d;if(page<0)page=0;render();window.scrollTo(0,0);}
-function match(d,fs){var st=el('st').value,src=el('src').value,q=el('q').value.toLowerCase(),dd=dirOf(d[0]);
-  if(curDir){if(el('sub').checked){if(dd!=curDir&&dd.indexOf(curDir+'\\')!=0)return false;}else if(dd!=curDir)return false;}
+function match(d,fs,nd){var st=el('st').value,src=el('src').value,q=el('q').value.toLowerCase(),dd=dirOf(d[0]);
+  if(curDir&&!nd){if(el('sub').checked){if(dd!=curDir&&dd.indexOf(curDir+'\\')!=0)return false;}else if(dd!=curDir)return false;}
   if(st&&d[1]!=st)return false;if(src&&d[2]!=src)return false;if(q&&d[0].toLowerCase().indexOf(q)<0)return false;
   if(fs){if(fs=='none'){if(S[d[0]])return false;}else if(fs=='conf'){if(!isConf(d[0]))return false;}else if(!has(d[0],fs))return false;}return true;}
 function filterKeepPage(){var p=page;filter();page=p;render();}
-function filter(){var fs=el('fs').value;view=[];for(var i=0;i<D.length;i++)if(match(D[i],fs))view.push(D[i]);page=0;render();summary();}
+function filter(){var fs=el('fs').value,sm=el('small').checked;view=[];
+  for(var i=0;i<D.length;i++){var d=D[i];
+    if(d[7]&&IDX[d[7]])continue; // 짝이 있는 작은 그림은 큰 그림 카드 안에서
+    if(isSmall(d)&&!sm)continue;
+    var ok=match(d,fs);if(!ok&&KIDS[d[0]]){var ks=KIDS[d[0]];for(var k=0;k<ks.length;k++)if(match(ks[k],fs,true)){ok=true;break;}}
+    if(ok)view.push(d);}
+  page=0;render();summary();}
 function summary(){var c={none:0},v={none:0},i,s;for(i=0;i<STS.length;i++){c[STS[i][0]]=0;v[STS[i][0]]=0;}
   for(i=0;i<D.length;i++){s=S[D[i][0]];if(!s)c.none++;else for(var j=0;j<s.length;j++)c[s[j]]++;}
   var h='';for(i=0;i<STS.length;i++){var t=STS[i];h+='<span class="chip" title="'+t[3]+'" style="border-color:'+t[2]+'" onclick="el(\'fs\').value=\''+t[0]+'\';filter()">'+t[1]+'<b>'+c[t[0]]+'</b></span>';}
@@ -261,15 +317,18 @@ function mark(rel,s){var a=S[rel]||[],o=[];for(var j=0;j<STS.length;j++){var k=S
 function unmark(rel,s){var a=S[rel]||[],o=[];for(var m=0;m<a.length;m++)if(a[m]!=s)o.push(a[m]);if(o.length)S[rel]=o;else delete S[rel];}
 function bulkSet(){var s=el('bulk').value,md=el('bmode').value,n=view.length;if(!n)return;
   var what=s?'「'+STN[s][1]+'」 '+(md=='add'?'추가':'해제'):'모든 체크 해제(검토중)';
-  if(!confirm('현재 목록 '+n+'건에 '+what+' 할까요?'))return;
-  for(var i=0;i<n;i++){var r=view[i][0];if(!s)delete S[r];else if(md=='add')mark(r,s);else unmark(r,s);}saveNow();drawTree();filterKeepPage();}
+  if(!confirm('현재 목록 '+n+'건(카드 안의 짝 그림 포함)에 '+what+' 할까요?'))return;
+  var all=[];for(var i=0;i<n;i++){all.push(view[i][0]);var ks=KIDS[view[i][0]];if(ks)for(var k=0;k<ks.length;k++)all.push(ks[k][0]);}
+  for(i=0;i<all.length;i++){var r=all[i];if(!s)delete S[r];else if(md=='add')mark(r,s);else unmark(r,s);}saveNow();drawTree();filterKeepPage();}
 
 (function(){
   D.sort(function(a,b){a=sortKey(a[0]);b=sortKey(b[0]);return a<b?-1:a>b?1:0;});
+  IDX={};for(var x=0;x<D.length;x++)IDX[D[x][0]]=1;
+  for(x=0;x<D.length;x++){var pr=D[x][7];if(pr&&IDX[pr]){if(!KIDS[pr])KIDS[pr]=[];KIDS[pr].push(D[x]);}}
   var o='<option value="">전체</option>';for(var i=0;i<STS.length;i++)o+='<option value="'+STS[i][0]+'">'+STS[i][1]+'</option>';o+='<option value="conf">✔ 확정(완료만)</option><option value="none">검토중(미체크)</option>';el('fs').innerHTML=o;
   var b='';for(i=0;i<STS.length;i++)b+='<option value="'+STS[i][0]+'">'+STS[i][1]+'</option>';b+='<option value="">모든 체크 해제</option>';el('bulk').innerHTML=b;
   loadStatus();buildTree();drawTree();
-  var ids=['st','src','per','fs','sub'];for(var k=0;k<ids.length;k++)el(ids[k]).onchange=filter;
+  var ids=['st','src','per','fs','sub','small'];for(var k=0;k<ids.length;k++)el(ids[k]).onchange=filter;
   var t;el('q').onkeyup=function(){clearTimeout(t);t=setTimeout(filter,250);};
   filter();
 })();
@@ -279,4 +338,4 @@ $utf8 = New-Object Text.UTF8Encoding $true
 foreach ($ext in 'html', 'hta') { [IO.File]::WriteAllText((Join-Path $Root "catalog_merge_vs_original.$ext"), $html, $utf8) }
 $sp = Join-Path $Root 'catalog_status.js'
 if (-not (Test-Path -LiteralPath $sp)) { [IO.File]::WriteAllText($sp, "window.CATALOG_STATUS={`"savedAt`":0,`"items`":{}};`r`n", [Text.Encoding]::ASCII) }
-"항목 $($data.Count): $stats / 출처(교체·추가) $srcStats"
+"항목 $($data.Count): $stats / 출처(교체·추가) $srcStats / UI·포트레이트(400px 미만) $smallN, 그중 큰 그림과 짝 $paired"

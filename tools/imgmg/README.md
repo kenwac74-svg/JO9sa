@@ -8,6 +8,7 @@ IMGMG는 용량 때문에 git 밖에서 사용자가 관리한다. 이 폴더는
 | `make_catalog.ps1` | 머지본 × 원본 작업 체크리스트 카탈로그(`catalog_merge_vs_original.hta/.html`). 상태는 `catalog_status.js`에 따로 저장돼 다시 만들어도 유지 |
 | `sync_snkmod.ps1` | 게임 폴더 SNKmod → `UIpatch`, `merge_work` 동기화(기본 보고, `-Apply` 적용, 덮어쓰기 전 `_backup` 보관, 대상에만 있는 파일은 지우지 않음) |
 | `make_imagepack.ps1 -Version N` | 이미지 교체 팩 ZIP + 첨부 카탈로그 + 웹 게시용 카탈로그(`imagepack\`) |
+| `make_scene_sample.ps1` | 새 장면 리소스 × 올걸팩 계열별 대표 샘플 비교 카탈로그(loli 표기 계열 제외) |
 | `make_replacement_preview.ps1` | 원본 자리 대체 이미지 설명 페이지 |
 
 결정과 규칙은 `docs/session-handoffs/2026-10-04/homecom-2026-10-04.md`.
