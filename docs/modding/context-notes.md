@@ -69,3 +69,12 @@
 - old 문자열은 기준 원본(`source/jack_2026-10-01.qsp`)과 이 PC 게임 qsp 모두에 1번 있다. 이 PC 게임 qsp `76FB3394…9BAA` → `B30E31E3…A2BA`, 백업 `jack.qsp.bak_20261003_230921`.
 - 이 PC 게임 qsp에는 노트북 브랜치(`claude/elegant-carson-nbb823`)의 홍등가 시퀀스 mods 3개(r/s, b_u, t/u)도 적용돼 있다(2026-10-03, 이미지 12개는 `assets\`에서 설치). 그 3개는 아직 main에 병합되지 않았다.
 - p001~p003 이미지는 사용자가 게임 폴더 `game\content\pic\SNKmod\scene\whore_redlight\`에 넣었다. repo `assets\`에는 없다. 게임 화면 점검은 사용자가 한다.
+
+### 2.4 전환 후 첫 정리 (2026-10-04, homecom)
+- 사용자 결정: 홍등가 mods는 2.4 정식 콘텐츠. 2.4 경로 전환(`SNKmod\` 제거)은 카일 빌드가 일괄 처리하므로 mods와 assets는 SNKmod 경로 그대로 둔다.
+- 노트북 브랜치(`claude/elegant-carson-nbb823`)에서 mods 3개(`2026-10-02_whore_redlight_sequences`, `2026-10-03_whore_redlight_b_u_sequence`, `2026-10-03_whore_redlight_b_v_tu_random`)와 `tools/apply_mods.ps1`의 "뒤 mod가 앞 mod 결과를 다시 바꾼 edit은 적용된 것으로 건너뜀" 수정을 main에 가져왔다. 이 수정이 없으면 r/s 시퀀스가 `2026-10-02_redlight_bj_variant`의 결과를 덮어써서, 모두 적용된 qsp에서 apply_mods가 중단된다. 브랜치의 다른 도구·스냅샷 qsp는 가져오지 않았다.
+- r/s 시퀀스가 적용되면 `whore_redlight-1121`/`1131`(bj_variant용)은 쓰이지 않는다.
+- `mods/2026-10-04_credits_2_4.json`: `credits` 화면에 "잭오나 2.4.0 한국어판 - 2.4 작업: SAnk", 변경 내역 한 줄, "AI 걸 팩 이미지는 smsfbatalovehandle 님의 작업" 추가(원본 한국어판 감사 문구 뒤, count 1). 변경 내역 문구는 초안이며 사용자 점검 대상.
+- 검증: 기준 원본 복사본에 mods 10개 전체 적용 → `6D5E7563DEB3A155437D2F14E5756D9BDCA95DED2A9B76FD7D0615596B06A05B`, 재실행 시 전부 건너뜀. 이 PC 게임 qsp도 같은 해시(백업 `jack.qsp.bak_20261004_002852`).
+- `assets/content/pic/SNKmod/scene/whore_redlight/`에 홍등가 시퀀스 이미지 15개(p/r/s/t/u 001~003)를 넣었다(`assets/README.md`).
+- BUG-001(아마란스 살롱 `$service_picture` 잔류)은 2.4.0에서 미해결로 남긴다. 로컬 해결 과제.

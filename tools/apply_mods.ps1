@@ -83,9 +83,22 @@ Write-Host "왕복 검증 통과 (location $($index.Count)개)"
 
 $offset = @{ 'desc' = 1; 'body' = 2 }
 $changed = 0
+
+# 뒤 mod가 앞 mod의 결과 줄을 다시 바꾼 경우(뒤 edit의 old가 앞 edit의 new를 품음), 뒤 edit이 적용돼 있으면 앞 edit도 적용된 것으로 본다.
+$later = @(foreach ($m in $mods) { foreach ($x in $m.edits) { $x } })
+function Test-Superseded($edit, [string]$text, [int]$from) {
+    for ($j = $from; $j -lt $later.Count; $j++) {
+        $f = $later[$j]
+        if ($f.location -ne $edit.location -or $f.field -ne $edit.field -or -not $f.old.Contains($edit.new)) { continue }
+        if ([Jo9Qsp]::Count($text, $f.new) -ge 1 -or (Test-Superseded $f $text ($j + 1))) { return $true }
+    }
+    return $false
+}
+$pos = 0
 foreach ($mod in $mods) {
     if ($mod.before_sha256 -and $hash -eq $mod.before_sha256.ToUpper()) { Write-Host "[참고] $($mod.id): 현재 해시가 기록된 적용 전 해시와 같음" }
     foreach ($e in $mod.edits) {
+        $pos++
         $where = "[$($mod.id)] $($e.location).$($e.field)"
         if (-not $index.ContainsKey($e.location)) { throw "$where location을 찾지 못했습니다. 쓰지 않았습니다." }
         if (-not $offset.ContainsKey($e.field)) { throw "$where 지원하지 않는 field입니다(desc, body만 가능). 쓰지 않았습니다." }
@@ -103,6 +116,8 @@ foreach ($mod in $mods) {
             Write-Host "[적용] $where $nOld 곳 치환"
         } elseif ($applied) {
             Write-Host "[건너뜀] $where 이미 적용됨"
+        } elseif ($nOld -eq 0 -and $nNew -eq 0 -and (Test-Superseded $e $text $pos)) {
+            Write-Host "[건너뜀] $where 뒤 패치가 이 결과를 다시 바꿔 적용돼 있음"
         } else {
             throw "$where old $nOld 번, new $nNew 번 나왔습니다(기대 $want). 적용 상태를 판단할 수 없어 중단합니다. 쓰지 않았습니다."
         }
