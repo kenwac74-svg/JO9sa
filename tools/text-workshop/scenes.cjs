@@ -7,7 +7,8 @@ function masked(source) {
   let comment=false,start=0;for(let i=0;i<chars.length;i++){if(chars[i]==='\n')comment=false;if(chars[i]==='!'&&!chars.slice(start,i).join('').trim())comment=true;if(comment&&chars[i]!=='\n'&&chars[i]!=='\r')chars[i]=' ';if(/[\n&:]/.test(chars[i]))start=i+1;}
   return chars.join('');
 }
-const clean=s=>s.replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
+// <<변수>>를 먼저 지워야 '<img src="a<<$x>>.png">' 같은 태그가 깨지지 않는다.
+const clean=s=>s.replace(/<<[\s\S]*?>>/g,' ').replace(/<[^>]*>/g,' ').replace(/&[a-z]+;|&#\d+;/gi,' ').replace(/\s+/g,' ').trim();
 function value(s){s=s.trim();if(/^[-+]?\d+$/.test(s))return {known:true,value:s};if((s[0]==="'"||s[0]==='"')&&s.at(-1)===s[0])return {known:true,value:s.slice(1,-1).split(s[0]+s[0]).join(s[0])};return {known:false,value:s};}
 function predicate(condition) {
   const m=condition.match(/^\s*(\$?[\wа-яА-Я가-힣]+(?:\[[^\]]+\])?)\s*=\s*(.*?)\s*$/u);
@@ -72,7 +73,7 @@ function calls(source,context) {
 }
 function links(text) {
   const out=[],re=/<a\b[^>]*href\s*=\s*(["'])([\s\S]*?)\1[^>]*>([\s\S]*?)<\/a>/gi;let m;
-  while((m=re.exec(text))){if(/^exec:/i.test(m[2]))out.push({code:m[2].slice(5).replace(/&amp;/gi,'&').replace(/&quot;/gi,'"').replace(/&#(?:39|x27);/gi,"'"),label:clean(m[3])||'선택지'});}
+  while((m=re.exec(text))){if(/^exec:/i.test(m[2])){const img=m[3].match(/<img\b[^>]*\bsrc\s*=\s*["']([^"']+)["']/i);const label=clean(m[3])||(img?'[그림 선택지]':'선택지');out.push({code:m[2].slice(5).replace(/&amp;/gi,'&').replace(/&quot;/gi,'"').replace(/&#(?:39|x27);/gi,"'"),label});}}
   return out;
 }
 function sceneEntries(entries,scene,mode){return entries.filter(e=>inScene(e,scene)&&(mode==='all'?e.text.trim().length>0:visible(e)));}
