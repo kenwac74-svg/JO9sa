@@ -6,3 +6,4 @@
 3. 모딩 규칙: `CLAUDE.md`(QSP는 `mods/*.json`으로 기록, `tools/apply_mods.ps1`로 적용), `docs/modding/`(특히 `IMAGE_RANDOM_RULES.md`, `context-notes.md`).
 4. 경로: 저장소 `G:\somi\JO9sa`, 플레이(테스트) 게임 `G:\somi\JO9\game`, 순정 원본 `G:\somi\JO9O`(건드리지 않음), 이미지 통합 작업 `G:\somi\IMGMG`(git 밖, 도구는 `tools/imgmg/`).
 5. 게임 실행·화면 점검은 사용자가 한다. PowerShell 스크립트는 UTF-8 BOM으로 저장한다(Windows PowerShell 5.1).
+6. 대사 편집실(`tools/text-workshop`)은 2026-10-04에 집컴 Claude가 고쳤다(보기 모드, 게임 화면 미리보기, 최소 mods 내보내기, 장면 그림 규칙). 고치기 전에 `tools/text-workshop/VERIFICATION.md`와 집컴 인계 8절을 읽을 것. 게임 설치본(`G:\somi\JO9\game\modtools\text-workshop`)도 같이 맞춘다.
