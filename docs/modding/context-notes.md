@@ -96,3 +96,10 @@
 ### 대사 편집실 분기/이미지 체크리스트 연동 (2026-10-04, Codex)
 - 사용자 승인 후 「분기 한눈에」 UI, 대사 배열 → 사용 장면 → 단계 이미지 추적, 조건별 카드, 최신 플레이 이미지와 체크리스트 공통 상태·카드 이동을 추가. bg/UO 등 파일별 고정 번호와 큰 그림 연결 번호 원장은 IMGMG에 보관. 자세한 경로·규칙·한계·검증은 `tools/text-workshop/VERIFICATION.md`의 마지막 절.
 - 저장소와 게임 설치본 동일 배치. 사용자 승인 후 편집실 3813 서버만 재시작. 실제 문제 대사의 2단계 이미지와 SC-1395 확인. 테스트 16개 및 시험 화면 양방향 상태 확인. QSP와 기존 체크 상태, 게임 리소스 변경 없음. 번호 원장 `catalog_work_ids.json`은 PC 이전 때 반드시 함께 옮긴다.
+
+
+### 안개괴물 착정 전용 버튼 (2026-10-04, Codex)
+- 사용자 제공 `Fer_착정.jpg`를 비율을 유지한 32×32 RGBA PNG `content/pic/buttons/Fer_Tentacle.png`로 반영. 노예와 조수 단축 버튼의 폐기된 녹색 이미지 두 곳만 교체했다. 표시 조건·툴팁·interaction 59/45는 유지.
+- 선언형 패치: `mods/2026-10-04_fog_milking_button.json`. 리소스: `resources/new/content/pic/buttons/Fer_Tentacle.png`(SNKmod 없는 2.4 경로). 플레이 및 IMGMG merge_work에 동일 이미지 배치. UI 패치 통합·패키징은 하지 않았다.
+- 게임 QSP SHA-256: `88F6A7F0A8060E47DFB0475FED4AD1D66442DABDADB931E8C71E744BE2F08FA6` → `A90A9ED558F1F48115AA15FEFEE06FD5D4BF984497F4EA8087FD8DEAF208E6CB`. 원본 왕복 일치, 복사본에 apply_mods 적용 결과 일치, 변경 location은 main_screen 하나·이미지 경로 두 곳. 기존 녹색 이미지와 원본 JO9O는 유지.
+- 체크리스트 UI-0559 추가 및 done 체크. 기존 항목·번호·체크 상태·PIC 공유 등록 기능 유지. progress.json/history.jsonl에도 기록. 백업 및 제공 원본: `G:\somi\IMGMG\image_work\backups\fog_button_20261004_191021`. 게임 실행·화면 검증은 사용자 담당(미검증).
