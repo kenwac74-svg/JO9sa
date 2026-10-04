@@ -43,15 +43,42 @@ function literals(body) {
   }
   return result;
 }
+// 게임 화면에 보이는 대사인지(true) 코드·경로·변수 이름 같은 내부 문자열인지(false) 판정한다.
+const CODE_START=/^\s*(?:gs|gt|xgt|gosub|goto|jump|if|elseif|else|end|dynamic|dyneval|func|killvar|killall|act|delact|cla|clr|cls|close|play|view|msg|wait|exec:|\$|\*p|\*pl|\*nl|set |let |local )/i;
+function visibleText(s) {
+  return s.replace(/<<[\s\S]*?>>/g,'X').replace(/<[^>]*>/g,' ').replace(/&[a-z]+;|&#\d+;/gi,' ').replace(/\s+/g,' ').trim();
+}
+function isDialogue(e) {
+  if (e.field==='desc') return true;
+  const raw=e.text, t=visibleText(raw);
+  if (!t || CODE_START.test(raw)) return false;
+  if (/[가-힣]/.test(t)) return true;
+  if (/^[\w.$\[\]\\\/:#%+-]+$/u.test(t)) return false;
+  if (/\.(png|jpe?g|gif|webp|mp3|ogg|wav|css|js|json|qsp)\b/i.test(t)) return false;
+  if (/[=;{}]|\b\w+\(|\]\s*=|\bthen\b/.test(t)) return false;
+  if (/^[\p{L}\d_]+(?:\s*,\s*[\p{L}\d_]+)+$/u.test(t)) return false; // 'slave, assistant' 같은 인자 목록
+  if (/^[a-z0-9 _-]+$/.test(t) && /[-_]/.test(t)) return false; // 'icon tooltip-right' 같은 CSS 클래스 목록
+  return (t.match(/\p{L}{2,}/gu)||[]).length>=3; // 영어·러시아어 등 문장(세 단어 이상)
+}
 function entries(doc) {
   const out=[];
   for (const loc of doc.locations) {
     const desc=shift(doc.lines[loc.desc],5);
-    if (desc.trim()) out.push({ location:loc.name, locationIndex:loc.index, field:'desc', fieldIndex:loc.desc, start:0,end:desc.length,quote:'',text:desc,line:1 });
+    if (desc.trim()) out.push({ location:loc.name, locationIndex:loc.index, field:'desc', fieldIndex:loc.desc, start:0,end:desc.length,quote:'',text:desc,line:1,dialogue:true });
     const body=shift(doc.lines[loc.body],5);
-    for (const entry of literals(body)) out.push({ ...entry,location:loc.name,locationIndex:loc.index,field:'body',fieldIndex:loc.body });
+    for (const entry of literals(body)) { const e={ ...entry,location:loc.name,locationIndex:loc.index,field:'body',fieldIndex:loc.body }; e.dialogue=isDialogue(e); out.push(e); }
   }
   return out;
+}
+// 바뀐 문자열과 앞뒤 맥락을 필드 안에서 한 번만 나오는 최소 구간으로 잘라 mods(old/new/count 1)용 조각을 만든다.
+function minimalEdit(oldField,newField,start,oldEnd,newEnd) {
+  const delta=newEnd-oldEnd;
+  for (let pad=0;;pad=pad?pad*2:16) {
+    const a=Math.max(0,start-pad), b=Math.min(oldField.length,oldEnd+pad);
+    const old=oldField.slice(a,b);
+    let n=0,at=-1;while((at=oldField.indexOf(old,at+1))>=0&&n<2)n++;
+    if (old && n===1 || (a===0&&b===oldField.length)) return { old, new:newField.slice(a,b+delta) };
+  }
 }
 function protectedParts(s) {
   return s.match(/<<[\s\S]*?>>|<[^<>]*>|\$[A-Za-z_가-힣][\w가-힣]*|\{\{[\s\S]*?\}\}/g) || [];
@@ -75,6 +102,7 @@ function prepare(doc, selection, replacement) {
     const parsed=literals(newField).find(e=>e.start===entry.start);
     if (!parsed || parsed.text!==replacement) throw Error('수정문의 따옴표 검사가 실패했습니다.');
   }
-  return { raw,entry,replacement,oldField,newField,after:hash(raw) };
+  const piece=minimalEdit(oldField,newField,entry.start,entry.end,entry.start+encoded.length);
+  return { raw,entry,replacement,oldField,newField,piece,after:hash(raw) };
 }
-module.exports={hash,shift,parse,serialize,literals,entries,prepare,protectedParts};
+module.exports={hash,shift,parse,serialize,literals,entries,prepare,protectedParts,isDialogue,visibleText,minimalEdit};

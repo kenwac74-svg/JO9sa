@@ -46,7 +46,7 @@ function analyse(location,body) {
   return {body,safe,blocks,scenes,lineStarts};
 }
 function lineAt(analysis,offset){let lo=0,hi=analysis.lineStarts.length;while(lo<hi){const mid=(lo+hi)>>>1;if(analysis.lineStarts[mid]<=offset)lo=mid+1;else hi=mid;}return lo;}
-function visible(e){const text=clean(e.text.replace(/<<[\s\S]*?>>/g,'이름'));return text.length>0&&!/^[\w./\\:#-]+$/u.test(text)&&!/^\s*(?:if|gs|gt|dynamic)\b/i.test(text);}
+function visible(e){return e.dialogue!==undefined?e.dialogue:core.isDialogue(e);}
 function inScene(entry,scene){return entry.field==='desc'?scene.id==='desc':entry.start>=scene.start&&entry.start<scene.end;}
 function chooseScene(analysis,entry){return analysis.scenes.filter(s=>s.id!=='root'&&s.type!=='condition'&&inScene(entry,s)).sort((a,b)=>(a.end-a.start)-(b.end-b.start))[0]||analysis.scenes[0];}
 function splitArgs(source){const safe=masked(source);const out=[];let at=0,depth=0;for(let i=0;i<safe.length;i++){if(safe[i]==='('||safe[i]==='[')depth++;if(safe[i]===')'||safe[i]===']')depth--;if(safe[i]===','&&depth===0){out.push(source.slice(at,i).trim());at=i+1;}}out.push(source.slice(at).trim());return out;}
@@ -75,7 +75,22 @@ function links(text) {
   while((m=re.exec(text))){if(/^exec:/i.test(m[2]))out.push({code:m[2].slice(5).replace(/&amp;/gi,'&').replace(/&quot;/gi,'"').replace(/&#(?:39|x27);/gi,"'"),label:clean(m[3])||'선택지'});}
   return out;
 }
-function sceneEntries(entries,scene){return entries.filter(e=>inScene(e,scene)&&visible(e));}
+function sceneEntries(entries,scene,mode){return entries.filter(e=>inScene(e,scene)&&(mode==='all'?e.text.trim().length>0:visible(e)));}
+// 장면 코드에서 화면에 쓰이는 이미지 경로 후보(배경·장면 이미지·img 태그)를 순서대로 모은다. 존재 확인은 서버가 한다.
+function sceneImages(analysis,scene){
+  if(scene.id==='root'||scene.id==='desc')return [];
+  const src=analysis.body.slice(scene.start,scene.end),out=[];
+  // $place = '이름' 은 게임이 bg\이름 을 배경으로 쓴다.
+  for(const m of masked(src).matchAll(/\$place\s*=/gi)){const lit=core.literals(src.slice(m.index+m[0].length,m.index+m[0].length+120))[0];if(lit&&/^[\w\-]+$/.test(lit.text))out.push('bg\\'+lit.text);}
+  for(const l of core.literals(src)){
+    const t=l.text.trim();
+    for(const m of t.matchAll(/<img\b[^>]*\bsrc\s*=\s*["']([^"'<>]+)["']/gi))out.push(m[1]);
+    if(/^[\w\-. ~가-힣]+(?:[\\\/][\w\-. ~가-힣]+)+$/u.test(t)&&/^(?:content[\\\/]pic[\\\/])?(?:bg|scene|characters|girls|mob|master|demo|SNKmod|images?)[\\\/]/i.test(t))out.push(t);
+    else if(/\.(png|jpe?g|gif)$/i.test(t)&&!/[\s<>]/.test(t))out.push(t);
+    if(out.length>=24)break;
+  }
+  return [...new Set(out)];
+}
 function branchList(analysis,scene,location,entries) {
   const start=scene.start,end=scene.end,branches=[];
   function add(call,label,line,conditions,kind,sourceStart){branches.push({...call,label:label||`${call.target}로 ${/^(gs|gosub)$/.test(call.mode)?'호출':'이동'}`,line,conditions,kind,sourceStart});}
@@ -111,23 +126,23 @@ function buildNavigator(doc,allEntries) {
     const d=data(loc.name);const matches=d.analysis.scenes.filter(s=>s.type!=='condition'&&s.predicate&&branch.states[s.predicate.key]===s.predicate.value);
     return (matches.length?matches:[d.analysis.scenes[0]]).map(s=>({location:loc.name,sceneId:s.id,title:s.condition,line:s.line}));
   }
-  function context(selection,sceneId){
+  function context(selection,sceneId,mode){
     if(selection.hash!==doc.hash)throw Error('QSP가 바뀌었습니다. 다시 검색해 주세요.');
     const d=data(selection.location),entry=d.entries.find(e=>e.fieldIndex===selection.fieldIndex&&e.start===selection.start&&e.end===selection.end);
     if(!entry || entry.text!==selection.text)throw Error('선택한 원문 위치가 바뀌었습니다.');
     const scene=entry.field==='desc'?{id:'desc',start:0,end:0,line:1,condition:'위치 설명',parents:[]}:sceneId?d.analysis.scenes.find(s=>s.id===sceneId):chooseScene(d.analysis,entry);
     if(!scene)throw Error('장면 범위를 찾지 못했습니다.');
-    const texts=sceneEntries(d.entries,scene);if(!texts.includes(entry))texts.push(entry);texts.sort((a,b)=>a.fieldIndex-b.fieldIndex||a.start-b.start);
+    const texts=sceneEntries(d.entries,scene,mode);if(!texts.includes(entry))texts.push(entry);texts.sort((a,b)=>a.fieldIndex-b.fieldIndex||a.start-b.start);
     const at=texts.indexOf(entry);const from=Math.max(0,at-15),to=Math.min(texts.length,at+16);
     const branches=scene.id==='desc'?[]:branchList(d.analysis,scene,d.loc.name,d.entries).map(b=>({...b,destinations:b.destinations||resolve(b)}));
     const lines=d.analysis.body.split('\n');const lineStart=Math.max(scene.line-1,entry.line-9),lineEnd=Math.min(lines.length,entry.line+8);
-    return {hash:doc.hash,location:d.loc.name,scene:{id:scene.id,title:scene.condition,conditions:scene.parents||[],line:scene.line},selection:reference(entry),previous:reference(texts[at-1]),next:reference(texts[at+1]),ordinal:at+1,total:texts.length,texts:texts.slice(from,to).map(reference),branches:branches.slice(0,150),branchTotal:branches.length,source:lines.slice(lineStart,lineEnd).map((s,i)=>`${lineStart+i+1}: ${s}`).join('\n')};
+    return {hash:doc.hash,mode:mode==='all'?'all':'text',location:d.loc.name,scene:{id:scene.id,title:scene.condition,conditions:scene.parents||[],line:scene.line},images:sceneImages(d.analysis,scene),screen:sceneEntries(d.entries,scene,'text').slice(0,60).map(reference),selection:reference(entry),previous:reference(texts[at-1]),next:reference(texts[at+1]),ordinal:at+1,total:texts.length,texts:texts.slice(from,to).map(reference),branches:branches.slice(0,150),branchTotal:branches.length,source:lines.slice(lineStart,lineEnd).map((s,i)=>`${lineStart+i+1}: ${s}`).join('\n')};
   }
-  function open(destination){
+  function open(destination,mode){
     const d=data(destination.location),scene=d.analysis.scenes.find(s=>s.id===destination.sceneId);if(!scene)throw Error('이 장면을 찾지 못했습니다.');
-    const texts=sceneEntries(d.entries,scene);const entry=texts[0]||d.entries.find(e=>inScene(e,scene));
-    if(!entry)return {empty:true,hash:doc.hash,location:d.loc.name,scene:{id:scene.id,title:scene.condition,conditions:scene.parents||[]},branches:branchList(d.analysis,scene,d.loc.name,d.entries).map(b=>({...b,destinations:b.destinations||resolve(b)})),source:d.analysis.body.slice(scene.start,Math.min(scene.end,scene.start+6000))};
-    return context(reference(entry),scene.id);
+    const texts=sceneEntries(d.entries,scene,mode);const entry=texts[0]||(mode==='all'?d.entries.find(e=>inScene(e,scene)):null);
+    if(!entry)return {empty:true,hash:doc.hash,mode:mode==='all'?'all':'text',location:d.loc.name,scene:{id:scene.id,title:scene.condition,conditions:scene.parents||[]},images:sceneImages(d.analysis,scene),screen:[],branches:branchList(d.analysis,scene,d.loc.name,d.entries).map(b=>({...b,destinations:b.destinations||resolve(b)})),source:d.analysis.body.slice(scene.start,Math.min(scene.end,scene.start+6000))};
+    return context(reference(entry),scene.id,mode);
   }
   let incomingIndex=null;
   function incoming(input){
@@ -148,4 +163,4 @@ function buildNavigator(doc,allEntries) {
   }
   return {context,open,incoming};
 }
-module.exports={analyse,masked,predicate,assignments,calls,links,buildNavigator};
+module.exports={analyse,masked,predicate,assignments,calls,links,buildNavigator,sceneImages};

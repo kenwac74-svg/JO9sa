@@ -9,10 +9,29 @@ const runtime=path.resolve(arg('--runtime') || path.join(__dirname,'runtime'));
 fs.mkdirSync(runtime,{recursive:true});
 const backups=path.join(runtime,'backups');fs.mkdirSync(backups,{recursive:true});
 const token=crypto.randomBytes(24).toString('hex'); let cache,cacheEntries,navigator,preview; let busy=false;
+// 17 MB QSP를 요청마다 읽고 해시하지 않도록, 크기·수정 시각이 같으면 메모리의 결과를 쓴다(반영 직전 검사는 transact가 파일을 다시 읽어 한다).
+let cacheRaw=null,cacheStat='';
 function current() {
+  const st=fs.statSync(target),stamp=st.size+':'+st.mtimeMs;
+  if(cache && cacheStat===stamp) return {raw:cacheRaw,doc:cache};
   const raw=fs.readFileSync(target);const digest=core.hash(raw);
   if(!cache || cache.hash!==digest){cache=core.parse(raw);cacheEntries=core.entries(cache);navigator=scenes.buildNavigator(cache,cacheEntries);}
-  return {raw,doc:cache};
+  cacheRaw=raw;cacheStat=stamp;return {raw,doc:cache};
+}
+const pic=path.join(game,'content','pic');
+// 장면 이미지 후보를 실제 파일로 확인한다(확장자가 없으면 png·jpg·gif 순으로).
+function resolvePic(p) {
+  let rel=String(p).replace(/\//g,'\\').replace(/^\\+/,'').replace(/^content\\pic\\/i,'');
+  if(!rel||rel.includes('..'))return null;
+  for(const cand of /\.(png|jpe?g|gif)$/i.test(rel)?[rel]:[rel+'.png',rel+'.jpg',rel+'.gif']){
+    const full=path.join(pic,cand);if(full.startsWith(pic+path.sep)&&fs.existsSync(full)&&fs.statSync(full).isFile())return {rel:cand,full};
+  }
+  return null;
+}
+function withImages(c) {
+  const seen=new Set(),images=[];
+  for(const p of c.images||[]){const r=resolvePic(p);if(r&&!seen.has(r.rel.toLowerCase())){seen.add(r.rel.toLowerCase());images.push({path:r.rel,url:'/api/pic?t='+token+'&p='+encodeURIComponent(r.rel)});}if(images.length>=8)break;}
+  return {...c,images,imageCandidates:(c.images||[]).length};
 }
 function history() {return fs.readdirSync(backups).filter(n=>/^\d.*\.json$/.test(n)).sort().reverse().map(n=>JSON.parse(fs.readFileSync(path.join(backups,n),'utf8')));}
 function transact(before,after,details) {
@@ -48,23 +67,28 @@ const server=http.createServer(async(req,res)=>{
       res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','Content-Security-Policy':"default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'"});
       res.end(fs.readFileSync(path.join(__dirname,'index.html'),'utf8').replace('__SESSION_TOKEN__',token));return;
     }
+    if(req.method==='GET' && url.pathname==='/api/pic'){
+      if(url.searchParams.get('t')!==token){json(res,403,{error:'편집기를 다시 열어 주세요.'});return;}
+      const r=resolvePic(url.searchParams.get('p')||'');if(!r){json(res,404,{error:'이미지를 찾지 못했습니다.'});return;}
+      const ext=path.extname(r.full).toLowerCase();res.writeHead(200,{'Content-Type':ext==='.gif'?'image/gif':ext==='.png'?'image/png':'image/jpeg','Cache-Control':'no-store'});fs.createReadStream(r.full).pipe(res);return;
+    }
     if(req.headers['x-jo9-token']!==token) {json(res,403,{error:'편집기를 다시 열어 주세요.'});return;}
     if(req.headers.origin && req.headers.origin!=='http://'+host){json(res,403,{error:'다른 사이트에서는 사용할 수 없습니다.'});return;}
     if(req.method==='GET' && url.pathname==='/api/state'){
       const {doc}=current();json(res,200,{target,hash:doc.hash,locations:doc.locations.length,backups});return;
     }
     if(req.method==='GET' && url.pathname==='/api/search'){
-      const query=(url.searchParams.get('q')||'').trim(),loc=(url.searchParams.get('location')||'').trim();
+      const query=(url.searchParams.get('q')||'').trim(),loc=(url.searchParams.get('location')||'').trim(),all=url.searchParams.get('mode')==='all';
       if(query.length<2 && !loc)throw Error('원문 일부를 두 글자 이상 입력하거나 위치 이름을 넣어 주세요.');
-      const {doc}=current();const found=cacheEntries.filter(e=>(!query || e.text.includes(query)) && (!loc || e.location.includes(loc)));
+      const {doc}=current();const found=cacheEntries.filter(e=>(all||e.dialogue) && (!query || e.text.includes(query)) && (!loc || e.location.includes(loc)));
       json(res,200,{hash:doc.hash,total:found.length,results:found.slice(0,200).map(e=>({...e,hash:doc.hash}))});return;
     }
     if(req.method==='GET' && url.pathname==='/api/history'){json(res,200,history().map(({id,date,location,field,status,before,after,kind})=>({id,date,location,field,status,before,after,kind})));return;}
     if(req.method==='POST' && url.pathname==='/api/context'){
-      const input=await body(req);current();json(res,200,navigator.context(input.selection,input.sceneId));return;
+      const input=await body(req);current();json(res,200,withImages(navigator.context(input.selection,input.sceneId,input.mode)));return;
     }
     if(req.method==='POST' && url.pathname==='/api/scene'){
-      const input=await body(req);const {doc}=current();if(input.hash!==doc.hash)throw Error('QSP가 바뀌었습니다. 다시 검색해 주세요.');json(res,200,navigator.open(input.destination));return;
+      const input=await body(req);const {doc}=current();if(input.hash!==doc.hash)throw Error('QSP가 바뀌었습니다. 다시 검색해 주세요.');json(res,200,withImages(navigator.open(input.destination,input.mode)));return;
     }
     if(req.method==='POST' && url.pathname==='/api/incoming'){
       const input=await body(req);current();json(res,200,navigator.incoming(input));return;
@@ -82,7 +106,9 @@ const server=http.createServer(async(req,res)=>{
       const input=await body(req);if(!preview || input.id!==preview.id || input.approved!==true)throw Error('미리보기와 수정문 승인이 필요합니다.');
       const p=preview,{raw,doc}=current();if(doc.hash!==p.before)throw Error('미리보기 이후 QSP가 변경되었습니다. 다시 검색해 주세요.');
       if(doc.locations.filter(l=>l.name===p.entry.location).length!==1)throw Error('동일한 이름의 위치가 중복되어 반영할 수 없습니다.');
-      const mod={id:'text_'+new Date().toISOString().replace(/[:.]/g,'-'),before_sha256:p.before,after_sha256:p.after,edits:[{location:p.entry.location,field:p.entry.field,old:p.oldField,new:p.newField,count:1}]};
+      // mods용 기록은 location 전체가 아니라 바뀐 문구와 최소 맥락만 담는다(apply_mods.ps1 형식).
+      const stamp=new Date().toISOString();
+      const mod={description:`대사 편집실: ${p.entry.location} ${p.entry.field==='desc'?'설명':'본문 '+p.entry.line+'행'} 문구 수정`,id:stamp.slice(0,10)+'_text_'+stamp.slice(11,19).replace(/:/g,''),target:'game\\jack.qsp',before_sha256:p.before.toUpperCase(),after_sha256:p.after.toUpperCase(),edits:[{location:p.entry.location,field:p.entry.field,old:p.piece.old,new:p.piece.new,count:1}]};
       const m=transact(raw,p.raw,{kind:'edit',location:p.entry.location,field:p.entry.field,line:p.entry.line,mod});current();
       const updated=cacheEntries.find(e=>e.fieldIndex===p.entry.fieldIndex&&e.start===p.entry.start);
       json(res,200,{...m,selection:updated?{...updated,hash:cache.hash}:null});return;

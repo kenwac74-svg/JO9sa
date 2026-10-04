@@ -25,9 +25,21 @@ test('로컬 서버 반영, 백업, 내보내기, 충돌 거부, 복원',async()
   assert.equal(applied.value.selection.text,'검증용 수정문');assert.equal(applied.value.selection.hash,applied.value.after);
   assert.equal(c.entries(c.parse(fs.readFileSync(file))).filter(e=>e.text==='같은 대사').length,2);
   const exported=await api('/api/export?id='+applied.value.id);assert.equal(exported.status,200);assert.equal(exported.value.edits[0].count,1);
+  {const ed=exported.value.edits[0],before=c.shift(c.parse(original).lines[ed.location==='first'?6:12],5);assert.ok(ed.old.length<before.length,'전체 필드가 아니라 일부만');assert.equal(before.split(ed.old).length-1,1,'old는 필드에서 한 번만');assert.ok(ed.new.includes('검증용 수정문'));assert.equal(exported.value.target,'game\\jack.qsp');}
   result=await api('/api/search?q='+encodeURIComponent('검증용'));preview=await api('/api/preview',{selection:result.value.results[0],replacement:'둘째 수정'});const next=await api('/api/apply',{id:preview.value.id,approved:true});assert.equal(next.status,200);
   assert.equal((await api('/api/restore',{id:applied.value.id})).status,400);
   assert.equal((await api('/api/restore',{id:next.value.id})).status,200);
   assert.equal((await api('/api/restore',{id:applied.value.id})).status,200);assert.deepEqual(fs.readFileSync(file),original);
  }finally{child.kill();await new Promise(resolve=>child.exitCode!==null?resolve():child.once('exit',resolve));fs.rmSync(dir,{recursive:true,force:true});}
+});
+test('게임에 보이는 대사와 코드 문자열 구분',()=>{
+ const d=e=>c.isDialogue({field:'body',text:e});
+ for(const s of ['안녕하세요','<b>이름</b>: <<$name>>님','You don’t own a dog','<font color="red">The Slums are dangerous</font>'])assert.equal(d(s),true,s);
+ for(const s of ['slave, assistant','icon tooltip-right','scene\\whore_redlight\\whore_redlight-111','bg.png','$menu',"gs 'x'",'<br>','interaction','<div class="a" tooltip-data="질병"><img src="a.png"></div>','x = 1'])assert.equal(d(s),false,s);
+ assert.equal(c.isDialogue({field:'desc',text:'anything'}),true);
+});
+test('최소 수정 조각은 필드에서 한 번만 나오는 구간까지 넓힌다',()=>{
+ const oldF="*pl '같은 대사'\n*pl '같은 대사'\n*pl '끝'",start=oldF.indexOf("같은 대사",8),end=start+5,enc='새 대사';
+ const newF=oldF.slice(0,start)+enc+oldF.slice(end);const p=c.minimalEdit(oldF,newF,start,end,start+enc.length);
+ assert.equal(oldF.split(p.old).length-1,1);assert.equal(oldF.replace(p.old,p.new),newF);
 });

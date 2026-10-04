@@ -36,4 +36,21 @@ test('HTML 선택지의 상태 변경, ACT 분기, args 경로 연결, 동적 �
 test('else/elseif, 재방문과 오래된 원문 차단',()=>{const d=make(),entries=core.entries(d),nav=scenes.buildNavigator(d,entries),entry=entries.find(e=>e.text==='숲의 출구');assert.equal(nav.context({...entry,hash:d.hash}).scene.title,"$args[0] = 'exit'");assert.throws(()=>nav.context({...entry,hash:'stale'}),/바뀌/);assert.deepEqual(core.serialize(d),core.serialize(core.parse(core.serialize(d))));});
 test('방문 기록이 없는 장면의 실제 진입 경로 찾기',()=>{const d=make(),entries=core.entries(d),nav=scenes.buildNavigator(d,entries),c=nav.context({...entries.find(e=>e.text==='가게 장면'),hash:d.hash});const incoming=nav.incoming({hash:d.hash,location:c.location,sceneId:c.scene.id});assert.ok(incoming.items.some(e=>e.source.title==='town = 1'&&!e.uncertain));assert.ok(!incoming.items.some(e=>e.source.title==='town = 2'));assert.throws(()=>nav.incoming({hash:'stale',location:'town',sceneId:'root'}),/바뀌/);});
 test('다른 위치로 이동하지 않는 조건별 대사 분기도 열기',()=>{const d=make(),entries=core.entries(d),nav=scenes.buildNavigator(d,entries),c=nav.context({...entries.find(e=>e.text==='처음 대사'),hash:d.hash});const b=c.branches.find(b=>b.mode==='condition'&&b.label==='mood = 1');assert.ok(b);const arm=nav.open(b.destinations[0]);assert.equal(arm.selection.text,'밝은 반응');assert.ok(!arm.texts.some(e=>e.text==='담담한 반응'));const other=c.branches.find(b=>b.mode==='condition'&&b.label==='그 외 (else)');assert.equal(nav.open(other.destinations[0]).selection.text,'담담한 반응');});
+test('보기 모드: 대사만 / 코드까지, 장면 이미지 후보',()=>{
+ const defs=[['room',`if room = 1:
+ $place = 'roomplace'
+ $special_bg = 'scene\\room\\room-1'
+ $special_image[2] = 'scene\\room\\room-2.png'
+ $who = 'slave, assistant'
+ *pl '방에 들어선다.'
+ *pl '<img src="content/pic/bg/room.png">'
+end`]];
+ const lines=['QSPGAME','head','',core.shift('1',-5)];for(const [n,b] of defs)lines.push(core.shift(n,-5),'',core.shift(b,-5),core.shift('0',-5));lines.push('');
+ const d=core.parse(Buffer.from(lines.join('\r\n'),'utf16le')),entries=core.entries(d),nav=scenes.buildNavigator(d,entries),e=entries.find(x=>x.text==='방에 들어선다.');
+ const t=nav.context({...e,hash:d.hash},undefined,'text'),a=nav.context({...e,hash:d.hash},undefined,'all');
+ assert.ok(!t.texts.some(x=>x.text==='slave, assistant'));assert.ok(a.texts.some(x=>x.text==='slave, assistant'));
+ assert.deepEqual(t.screen.map(x=>x.text),['방에 들어선다.']);
+ assert.deepEqual(t.images,['bg\\roomplace','scene\\room\\room-1','scene\\room\\room-2.png','content/pic/bg/room.png']);
+ const o=nav.open({location:'room',sceneId:t.scene.id},'text');assert.equal(o.selection.text,'방에 들어선다.');
+});
 module.exports={make};
