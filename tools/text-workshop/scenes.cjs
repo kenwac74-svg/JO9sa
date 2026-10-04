@@ -1,6 +1,7 @@
 'use strict';
 // Read-only source navigation. This module never evaluates QSP or save variables.
 const core=require('./core.cjs');
+const flowModule=require('./flow.cjs');
 function masked(source) {
   const spans=core.literals(source);const chars=source.split('');
   for(const s of spans)for(let i=s.start-1;i<=s.end;i++)if(chars[i]!=='\n'&&chars[i]!=='\r')chars[i]=' ';
@@ -104,9 +105,15 @@ function imageRefs(src,bg){
 function sceneImages(analysis,scene,bg){
   if(scene.id==='root'||scene.id==='desc')return [];
   let out=imageRefs(analysis.body.slice(scene.start,scene.end),bg);
-  if(!out.length){
-    const outer=analysis.blocks.filter(b=>b.kind==='if'&&b.start<scene.start&&b.end>=scene.end).sort((a,b)=>b.start-a.start);
-    for(const b of outer){const refs=imageRefs(analysis.body.slice(b.start,scene.start),bg);if(refs.length){out=refs.map(r=>typeof r==='string'?{path:r,note:'상위 조건에서 정한 그림'}:r);break;}}
+  const outer=analysis.blocks.filter(b=>b.kind==='if'&&b.start<scene.start&&b.end>=scene.end).sort((a,b)=>b.start-a.start);
+  // Only the active ancestor's statements can be inherited. Completed sibling arms are not predecessors.
+  for(const b of outer){
+    let offset=b.start;const rows=analysis.body.slice(b.start,scene.start).split('\n');
+    const active=rows.map(row=>{const here=offset;offset+=row.length+1;return analysis.blocks.some(x=>x.start>b.start&&here>=x.start&&here<x.end&&!(x.start<scene.start&&x.end>=scene.end))?'':row;}).join('\n');
+    const refs=imageRefs(active,bg);
+    const existingBg=out.some(r=>/^bg[\\/]/i.test(typeof r==='string'?r:r.path));
+    const inherit=out.length?refs.filter(r=>!existingBg&&/^bg[\\/]/i.test(typeof r==='string'?r:r.path)):refs;
+    out.push(...inherit.map(r=>typeof r==='string'?{path:r,note:'상위 조건에서 정한 그림'}:r));
   }
   const seen=new Set();return out.filter(r=>{const k=(typeof r==='string'?r:r.path).toLowerCase();if(seen.has(k))return false;seen.add(k);return true;});
 }
@@ -145,7 +152,8 @@ function buildNavigator(doc,allEntries) {
     const d=data(loc.name);const matches=d.analysis.scenes.filter(s=>s.type!=='condition'&&s.predicate&&branch.states[s.predicate.key]===s.predicate.value);
     return (matches.length?matches:[d.analysis.scenes[0]]).map(s=>({location:loc.name,sceneId:s.id,title:s.condition,line:s.line}));
   }
-  function context(selection,sceneId,mode){
+  const flow=flowModule.build(doc,allEntries,{analyse,masked,chooseScene,sceneImages,bg,branches:(a,s,l,e)=>branchList(a,s,l,e).map(b=>({...b,destinations:b.destinations||resolve(b)}))});
+  function context(selection,sceneId,mode,usageId){
     if(selection.hash!==doc.hash)throw Error('QSP가 바뀌었습니다. 다시 검색해 주세요.');
     const d=data(selection.location),entry=d.entries.find(e=>e.fieldIndex===selection.fieldIndex&&e.start===selection.start&&e.end===selection.end);
     if(!entry || entry.text!==selection.text)throw Error('선택한 원문 위치가 바뀌었습니다.');
@@ -155,7 +163,8 @@ function buildNavigator(doc,allEntries) {
     const at=texts.indexOf(entry);const from=Math.max(0,at-15),to=Math.min(texts.length,at+16);
     const branches=scene.id==='desc'?[]:branchList(d.analysis,scene,d.loc.name,d.entries).map(b=>({...b,destinations:b.destinations||resolve(b)}));
     const lines=d.analysis.body.split('\n');const lineStart=Math.max(scene.line-1,entry.line-9),lineEnd=Math.min(lines.length,entry.line+8);
-    return {hash:doc.hash,mode:mode==='all'?'all':'text',location:d.loc.name,scene:{id:scene.id,title:scene.condition,conditions:scene.parents||[],line:scene.line},images:sceneImages(d.analysis,scene,bg),screen:sceneEntries(d.entries,scene,'text').slice(0,60).map(reference),selection:reference(entry),previous:reference(texts[at-1]),next:reference(texts[at+1]),ordinal:at+1,total:texts.length,texts:texts.slice(from,to).map(reference),branches:branches.slice(0,150),branchTotal:branches.length,source:lines.slice(lineStart,lineEnd).map((s,i)=>`${lineStart+i+1}: ${s}`).join('\n')};
+    const result={hash:doc.hash,mode:mode==='all'?'all':'text',location:d.loc.name,scene:{id:scene.id,title:scene.condition,conditions:scene.parents||[],line:scene.line},images:sceneImages(d.analysis,scene,bg),screen:sceneEntries(d.entries,scene,'text').slice(0,60).map(reference),selection:reference(entry),previous:reference(texts[at-1]),next:reference(texts[at+1]),ordinal:at+1,total:texts.length,texts:texts.slice(from,to).map(reference),branches:branches.slice(0,150),branchTotal:branches.length,source:lines.slice(lineStart,lineEnd).map((s,i)=>`${lineStart+i+1}: ${s}`).join('\n')};
+    return mode==='all'?result:flow.extend(result,entry,usageId);
   }
   function open(destination,mode){
     const d=data(destination.location),scene=d.analysis.scenes.find(s=>s.id===destination.sceneId);if(!scene)throw Error('이 장면을 찾지 못했습니다.');

@@ -2,9 +2,13 @@
 const fs=require('node:fs'); const path=require('node:path'); const http=require('node:http'); const crypto=require('node:crypto');
 const core=require('./core.cjs');
 const scenes=require('./scenes.cjs');
+const catalogModule=require('./catalog.cjs');
 const arg=n=>{const i=process.argv.indexOf(n);return i<0 ? undefined : process.argv[i+1];};
 const game=path.resolve(arg('--game-dir') || 'G:/somi/JO9/game');
 const target=path.join(game,'jack.qsp');
+const catalogRoot=path.resolve(arg('--catalog-dir')||path.join(game,'..','..','IMGMG'));
+const originalRoot=path.resolve(arg('--original-dir')||path.join(game,'..','..','JO9O','game'));
+const catalog=catalogModule.create(catalogRoot);
 const runtime=path.resolve(arg('--runtime') || path.join(__dirname,'runtime'));
 fs.mkdirSync(runtime,{recursive:true});
 const backups=path.join(runtime,'backups');fs.mkdirSync(backups,{recursive:true});
@@ -24,15 +28,38 @@ function resolvePic(p) {
   let rel=String(p).replace(/\//g,'\\').replace(/^\\+/,'').replace(/^content\\pic\\/i,'');
   if(!rel||rel.includes('..'))return null;
   for(const cand of /\.(png|jpe?g|gif)$/i.test(rel)?[rel]:[rel+'.png',rel+'.jpg',rel+'.gif']){
-    const full=path.join(pic,cand);if(full.startsWith(pic+path.sep)&&fs.existsSync(full)&&fs.statSync(full).isFile())return {rel:cand,full};
+    const full=path.join(pic,cand);if(full.startsWith(pic+path.sep)&&fs.existsSync(full)&&fs.statSync(full).isFile()&&fs.realpathSync(full).startsWith(fs.realpathSync(pic)+path.sep))return {rel:cand,full};
   }
   return null;
 }
 function withImages(c) {
-  const seen=new Set(),images=[];
-  for(const item of c.images||[]){const p=typeof item==='string'?item:item.path,note=typeof item==='string'?'':item.note||'';const r=resolvePic(p);if(r&&!seen.has(r.rel.toLowerCase())){seen.add(r.rel.toLowerCase());images.push({path:r.rel,note,url:'/api/pic?t='+token+'&p='+encodeURIComponent(r.rel)});}if(images.length>=8)break;}
-  return {...c,images,imageCandidates:(c.images||[]).length};
+  const seen=new Set(),images=[],unresolved=[];
+  for(const item of c.images||[]){const im=typeof item==='string'?{path:item}:item,note=im.note||'';
+    let candidates=[im.path];
+    if(im.path.includes('<<')){
+      const rel=im.path.replace(/^content[\\/]pic[\\/]/i,'').replace(/\\/g,'/');
+      const dir=path.posix.dirname(rel),file=path.posix.basename(rel);
+      if(!dir.includes('<<')&&!dir.includes('..')){
+        const pattern=file.split(/<<[\s\S]*?>>/).map(t=>t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join(im.random?'(?:[0-9]+)':'[^/]*');
+        const re=new RegExp('^'+pattern+'$','i'),folder=path.join(pic,...dir.split('/'));
+        candidates=fs.existsSync(folder)?fs.readdirSync(folder).filter(n=>re.test(n)).map(n=>dir+'/'+n):[];
+      }else candidates=[];
+    }else if(im.random){
+      const r=resolvePic(im.path);if(r){const stem=path.basename(r.full,path.extname(r.full)),folder=path.dirname(r.full);const re=new RegExp('^'+stem.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'(?:_[2-9][0-9]*|_[1-9][0-9]+)?'+path.extname(r.full).replace('.','\\.')+'$','i');candidates=fs.readdirSync(folder).filter(n=>re.test(n)).map(n=>path.join(path.dirname(r.rel),n));}
+    }
+    let count=0;
+    for(const p of candidates){const r=resolvePic(p);if(r&&!seen.has(r.rel.toLowerCase())){seen.add(r.rel.toLowerCase());count++;images.push({path:r.rel,note:note+(im.random?' · 랜덤 후보':im.path.includes('<<')?' · 상태에 따른 후보':''),random:!!im.random,url:'/api/pic?t='+token+'&p='+encodeURIComponent(r.rel)+'&v='+fs.statSync(r.full).mtimeMs,work:catalog.meta('content\\pic\\'+r.rel)});}}
+    if(!count&&!candidates.some(p=>seen.has(String(p).toLowerCase())))unresolved.push({path:im.path,note});
+  }
+  return {...c,images,imageCandidates:(c.images||[]).length,unresolvedImages:unresolved};
 }
+function catalogAsset(rel,original){
+  const root=original?originalRoot:game;
+  const p=String(rel).replace(/\\/g,'/');if(!/^content\/pic\//i.test(p)||p.split('/').some(x=>x==='..'||x==='.')||! /\.(png|jpe?g|gif|webp|bmp)$/i.test(p))return null;
+  const full=path.resolve(root,...p.split('/'));if(!full.startsWith(root+path.sep)||!fs.existsSync(full)||!fs.statSync(full).isFile())return null;
+  const actual=fs.realpathSync(full),realRoot=fs.realpathSync(root);return actual.startsWith(realRoot+path.sep)?actual:null;
+}
+
 function history() {return fs.readdirSync(backups).filter(n=>/^\d.*\.json$/.test(n)).sort().reverse().map(n=>JSON.parse(fs.readFileSync(path.join(backups,n),'utf8')));}
 function transact(before,after,details) {
   if(busy) throw Error('다른 반영 작업이 진행 중입니다.'); busy=true;
@@ -57,7 +84,7 @@ function transact(before,after,details) {
   } finally {if(fs.existsSync(tmp))fs.unlinkSync(tmp);busy=false;}
 }
 function json(res,status,value){res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store'});res.end(JSON.stringify(value));}
-async function body(req){let text='';for await(const chunk of req){text+=chunk;if(Buffer.byteLength(text)>3000000)throw Error('입력 크기가 너무 큽니다.');}return JSON.parse(text);}
+async function body(req,limit=3000000){let text='';for await(const chunk of req){text+=chunk;if(Buffer.byteLength(text)>limit)throw Error('입력 크기가 너무 큽니다.');}return JSON.parse(text);}
 const server=http.createServer(async(req,res)=>{
   try {
     const host=`127.0.0.1:${server.address().port}`;
@@ -67,13 +94,47 @@ const server=http.createServer(async(req,res)=>{
       res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','Content-Security-Policy':"default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'"});
       res.end(fs.readFileSync(path.join(__dirname,'index.html'),'utf8').replace('__SESSION_TOKEN__',token));return;
     }
+    const catalogRoute=url.pathname.startsWith('/api/catalog/');
+    if(catalogRoute&&req.headers.origin==='null'){
+      res.setHeader('Access-Control-Allow-Origin','null');res.setHeader('Vary','Origin');
+      if(req.method==='OPTIONS'){res.setHeader('Access-Control-Allow-Methods','GET, POST');res.setHeader('Access-Control-Allow-Headers','X-JO9-Token, Content-Type');res.setHeader('Access-Control-Allow-Private-Network','true');res.writeHead(204);res.end();return;}
+    }
+    if(req.method==='GET'&&url.pathname==='/catalog'){
+      if(!catalog.load()){json(res,404,{error:'체크리스트를 찾지 못했습니다.'});return;}
+      let html=fs.readFileSync(path.join(catalogRoot,'catalog_merge_vs_original.html'),'utf8');
+      const cfg=JSON.stringify({url:'http://'+host+'/',token});
+      html=html.replace(/<script src="catalog_workshop_config.js"><\/script>/,'<script>window.JO9_CATALOG_BRIDGE='+cfg+';</script>');
+      // file:// cannot be displayed inside HTTP pages. Serve only allowlisted catalog images.
+      html=html.replace("function url(p){", "function url(p){if(p.indexOf(MR+'\\\\')===0||p.indexOf(OR+'\\\\')===0){var orig=p.indexOf(OR+'\\\\')===0;return '/api/catalog-asset?t='+"+JSON.stringify(token)+"+'&original='+(orig?'1':'0')+'&p='+encodeURIComponent(p.substring((orig?OR:MR).length+1));}");
+      res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store'});res.end(html);return;
+    }
+    const catalogFiles=['catalog_status.js','catalog_work_codes.js','catalog_workshop.js','catalog_editor.js'];
+    if(req.method==='GET'&&catalogFiles.includes(url.pathname.slice(1))){
+      const file=url.pathname.slice(1);let text;
+      if(file==='catalog_status.js')text='window.CATALOG_STATUS='+JSON.stringify(catalog.state())+';';
+      else if(file==='catalog_work_codes.js')text='window.JO9_WORK_CODES='+JSON.stringify(catalog.snapshot().codes||{})+';window.JO9_WORK_UNITS='+JSON.stringify(catalog.snapshot().unitCodes||{})+';';
+      else {const full=path.join(catalogRoot,file);if(!fs.existsSync(full)){res.writeHead(404);res.end();return;}text=fs.readFileSync(full,'utf8');}
+      res.writeHead(200,{'Content-Type':'text/javascript; charset=utf-8','Cache-Control':'no-store'});res.end(text);return;
+    }
+    if(req.method==='GET'&&url.pathname==='/api/catalog-asset'){
+      if(url.searchParams.get('t')!==token){json(res,403,{error:'편집기를 다시 열어 주세요.'});return;}
+      const full=catalogAsset(url.searchParams.get('p')||'',url.searchParams.get('original')==='1');if(!full){json(res,404,{error:'이미지를 찾지 못했습니다.'});return;}
+      const types={'.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.gif':'image/gif','.webp':'image/webp','.bmp':'image/bmp'};
+      res.writeHead(200,{'Content-Type':types[path.extname(full).toLowerCase()],'Cache-Control':'no-store'});fs.createReadStream(full).pipe(res);return;
+    }
     if(req.method==='GET' && url.pathname==='/api/pic'){
       if(url.searchParams.get('t')!==token){json(res,403,{error:'편집기를 다시 열어 주세요.'});return;}
       const r=resolvePic(url.searchParams.get('p')||'');if(!r){json(res,404,{error:'이미지를 찾지 못했습니다.'});return;}
       const ext=path.extname(r.full).toLowerCase();res.writeHead(200,{'Content-Type':ext==='.gif'?'image/gif':ext==='.png'?'image/png':'image/jpeg','Cache-Control':'no-store'});fs.createReadStream(r.full).pipe(res);return;
     }
     if(req.headers['x-jo9-token']!==token) {json(res,403,{error:'편집기를 다시 열어 주세요.'});return;}
-    if(req.headers.origin && req.headers.origin!=='http://'+host){json(res,403,{error:'다른 사이트에서는 사용할 수 없습니다.'});return;}
+    if(req.headers.origin && req.headers.origin!=='http://'+host && !(catalogRoute&&req.headers.origin==='null')){json(res,403,{error:'다른 사이트에서는 사용할 수 없습니다.'});return;}
+    if(req.method==='GET'&&url.pathname==='/api/catalog/state'){
+      if(url.searchParams.get('brief')==='1'){json(res,200,{available:catalog.load(),...catalog.state()});return;}
+      if(url.searchParams.has('since')&&Number(url.searchParams.get('since'))===Number(catalog.state().savedAt||0)){json(res,200,{unchanged:true,available:catalog.load()});return;}
+      json(res,200,catalog.snapshot());return;
+    }
+    if(req.method==='POST'&&url.pathname==='/api/catalog/status'){const input=await body(req,12000000);json(res,200,catalog.update(input.actions));return;}
     if(req.method==='GET' && url.pathname==='/api/state'){
       const {doc}=current();json(res,200,{target,hash:doc.hash,locations:doc.locations.length,backups});return;
     }
@@ -85,7 +146,7 @@ const server=http.createServer(async(req,res)=>{
     }
     if(req.method==='GET' && url.pathname==='/api/history'){json(res,200,history().map(({id,date,location,field,status,before,after,kind})=>({id,date,location,field,status,before,after,kind})));return;}
     if(req.method==='POST' && url.pathname==='/api/context'){
-      const input=await body(req);current();json(res,200,withImages(navigator.context(input.selection,input.sceneId,input.mode)));return;
+      const input=await body(req);current();json(res,200,withImages(navigator.context(input.selection,input.sceneId,input.mode,input.usageId)));return;
     }
     if(req.method==='POST' && url.pathname==='/api/scene'){
       const input=await body(req);const {doc}=current();if(input.hash!==doc.hash)throw Error('QSP가 바뀌었습니다. 다시 검색해 주세요.');json(res,200,withImages(navigator.open(input.destination,input.mode)));return;
@@ -126,5 +187,10 @@ const server=http.createServer(async(req,res)=>{
 current();
 server.listen(Number(arg('--port')||0),'127.0.0.1',()=>{
   const state={url:`http://127.0.0.1:${server.address().port}/`,pid:process.pid,target};
-  fs.writeFileSync(path.join(runtime,'server.json'),JSON.stringify(state,null,2));console.log(JSON.stringify(state));
+  fs.writeFileSync(path.join(runtime,'server.json'),JSON.stringify(state,null,2));
+  if(catalog.load()){
+    catalogModule.atomic(path.join(catalogRoot,'catalog_workshop_config.js'),'window.JO9_CATALOG_BRIDGE='+JSON.stringify({url:state.url,token})+';\n');
+    catalogModule.atomic(path.join(catalogRoot,'catalog_work_codes.js'),'window.JO9_WORK_CODES='+JSON.stringify(catalog.snapshot().codes)+';window.JO9_WORK_UNITS='+JSON.stringify(catalog.snapshot().unitCodes)+';\n');
+  }
+  console.log(JSON.stringify(state));
 });

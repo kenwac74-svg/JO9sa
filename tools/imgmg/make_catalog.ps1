@@ -347,10 +347,16 @@ function bulkSet(){var s=el('bulk').value,md=el('bmode').value,n=view.length;if(
   s.onerror=function(){el('save').innerHTML='catalog_editor.js를 불러오지 못해 이미지 교체 기능이 꺼졌습니다';};
   document.body.appendChild(s);
 })();
-</script></body></html>
+</script>
+<script src="catalog_work_codes.js"></script>
+<script src="catalog_workshop_config.js"></script>
+<script src="catalog_workshop.js"></script>
+</body></html>
 "@
 $utf8 = New-Object Text.UTF8Encoding $true
 foreach ($ext in 'html', 'hta') { [IO.File]::WriteAllText((Join-Path $Root "catalog_merge_vs_original.$ext"), $html, $utf8) }
+$bridgeSource = Join-Path $PSScriptRoot 'catalog_workshop.js'
+if (Test-Path -LiteralPath $bridgeSource) { Copy-Item -LiteralPath $bridgeSource -Destination (Join-Path $Root 'catalog_workshop.js') -Force }
 $sp = Join-Path $Root 'catalog_status.js'
 if (-not (Test-Path -LiteralPath $sp)) { [IO.File]::WriteAllText($sp, "window.CATALOG_STATUS={`"savedAt`":0,`"items`":{}};`r`n", [Text.Encoding]::ASCII) }
 "항목 $($data.Count): $stats / 출처(교체·추가) $srcStats / UI·포트레이트(400px 미만) $smallN, 그중 큰 그림과 짝 $paired"
