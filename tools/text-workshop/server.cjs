@@ -30,7 +30,7 @@ function resolvePic(p) {
 }
 function withImages(c) {
   const seen=new Set(),images=[];
-  for(const p of c.images||[]){const r=resolvePic(p);if(r&&!seen.has(r.rel.toLowerCase())){seen.add(r.rel.toLowerCase());images.push({path:r.rel,url:'/api/pic?t='+token+'&p='+encodeURIComponent(r.rel)});}if(images.length>=8)break;}
+  for(const item of c.images||[]){const p=typeof item==='string'?item:item.path,note=typeof item==='string'?'':item.note||'';const r=resolvePic(p);if(r&&!seen.has(r.rel.toLowerCase())){seen.add(r.rel.toLowerCase());images.push({path:r.rel,note,url:'/api/pic?t='+token+'&p='+encodeURIComponent(r.rel)});}if(images.length>=8)break;}
   return {...c,images,imageCandidates:(c.images||[]).length};
 }
 function history() {return fs.readdirSync(backups).filter(n=>/^\d.*\.json$/.test(n)).sort().reverse().map(n=>JSON.parse(fs.readFileSync(path.join(backups,n),'utf8')));}
