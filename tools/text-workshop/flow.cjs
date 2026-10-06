@@ -25,6 +25,23 @@ function build(doc,entries,helpers){
         if(!found.some(x=>x.id===id))found.push({id,location:loc.name,sceneId:scene.id,title:scene.condition,line:scene.line,d,scene});
       }
     }
+    // NPC dialogue is copied by the shared result location through a name
+    // template ($<<$npc_id>>_pref). Resolve only literal NPC assignments.
+    const npcFamily=array.match(/^\$(.+)_(pref|otkaz)$/i);
+    if(npcFamily){
+      const template='$<<$npc_id>>_'+npcFamily[2];
+      const hasTemplate=doc.locations.some(loc=>{const d=data(loc);return [...helpers.masked(d.body).matchAll(/\bcopyarr\s+/gi)].some(m=>{const tail=d.body.slice(m.index,d.body.indexOf('\n',m.index)<0?d.body.length:d.body.indexOf('\n',m.index)),args=core.literals(tail);return norm(args[0]?.text||'')==='$text'&&norm(args[1]?.text||'')===template;});});
+      if(hasTemplate)for(const loc of doc.locations){
+        if(loc.name.startsWith('#'))continue;
+        const d=data(loc);
+        for(const e of d.entries){const prefix=d.body.slice(d.body.lastIndexOf('\n',e.start-1)+1,e.start-1);if(!/\$npc_id\s*=\s*$/i.test(prefix)||norm(e.text)!==npcFamily[1])continue;
+          const scene=helpers.chooseScene(d.a,e);if(scene.id==='root')continue;
+          const code=d.body.slice(scene.start,scene.end);
+          if(!/\$interaction_type\s*=\s*['"]byer_invitation['"]/i.test(code))continue;
+          const id=loc.name+':'+scene.id;if(!found.some(x=>x.id===id))found.push({id,location:loc.name,sceneId:scene.id,title:scene.condition,line:scene.line,d,scene});
+        }
+      }
+    }
     usageMemo.set(array,found);return found;
   }
   const ref=e=>({...e,hash:doc.hash});
@@ -32,11 +49,14 @@ function build(doc,entries,helpers){
     if(entry.field!=='body')return base;
     const loc=doc.locations[entry.locationIndex],d=data(loc),bind=binding(d.body,entry);
     if(!bind)return {...base,flow:{kind:'source',stages:base.texts.map((e,i)=>({number:i+1,variants:[{entry:e,conditions:conditions(d.a,e.start)}]})),selected:base.ordinal}};
-    const family=d.entries.filter(e=>e.dialogue&&binding(d.body,e)?.array===bind.array);
+    // $text is reused by every event in the same location. Its assignments
+    // belong to the selected event, not to one global dialogue family.
+    const direct=bind.array==='$text',scope=helpers.chooseScene(d.a,entry);
+    const family=d.entries.filter(e=>e.dialogue&&binding(d.body,e)?.array===bind.array&&(!direct||helpers.chooseScene(d.a,e).id===scope.id));
     const grouped=new Map();for(const e of family){const b=binding(d.body,e);if(!grouped.has(b.stage))grouped.set(b.stage,[]);grouped.get(b.stage).push({entry:ref(e),conditions:conditions(d.a,e.start)});}
     const common=conditions(d.a,family[0]?.start||entry.start).filter(c=>family.every(e=>conditions(d.a,e.start).includes(c)));
     const stages=[...grouped].sort((a,b)=>a[0]-b[0]).map(([number,variants])=>({number,variants:variants.map(v=>({...v,conditions:v.conditions.filter(c=>!common.includes(c)),overrides:variants.length>1&&v.entry.start!==variants[0].entry.start}))}));
-    const contexts=usages(bind.array),use=contexts.find(u=>u.id===usageId)||contexts[0];
+    const contexts=direct?[{id:loc.name+':'+scope.id,location:loc.name,sceneId:scope.id,title:scope.condition,line:scope.line,d,scene:scope}]:usages(bind.array),use=contexts.find(u=>u.id===usageId)||contexts[0];
     const stageAt=stages.findIndex(s=>s.number===bind.stage),images=[];
     if(use){
       for(const e of use.d.entries){const b=binding(use.d.body,e);if(!b||b.array!=='$special_image'||b.stage!==bind.stage||e.start<use.scene.start||e.start>=use.scene.end)continue;

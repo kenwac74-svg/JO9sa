@@ -3,6 +3,7 @@ const fs=require('node:fs'); const path=require('node:path'); const http=require
 const core=require('./core.cjs');
 const scenes=require('./scenes.cjs');
 const catalogModule=require('./catalog.cjs');
+const {spawn}=require('node:child_process');
 const arg=n=>{const i=process.argv.indexOf(n);return i<0 ? undefined : process.argv[i+1];};
 const game=path.resolve(arg('--game-dir') || 'G:/somi/JO9/game');
 const target=path.join(game,'jack.qsp');
@@ -12,6 +13,8 @@ const catalog=catalogModule.create(catalogRoot);
 const runtime=path.resolve(arg('--runtime') || path.join(__dirname,'runtime'));
 fs.mkdirSync(runtime,{recursive:true});
 const backups=path.join(runtime,'backups');fs.mkdirSync(backups,{recursive:true});
+const grok=require('./grok-prompt.cjs').create(runtime);
+const dialogueAI=require('./grok-prompt.cjs').create(runtime,{kind:'dialogue'});
 const token=crypto.randomBytes(24).toString('hex'); let cache,cacheEntries,navigator,preview; let busy=false;
 // 17 MB QSP를 요청마다 읽고 해시하지 않도록, 크기·수정 시각이 같으면 메모리의 결과를 쓴다(반영 직전 검사는 transact가 파일을 다시 읽어 한다).
 let cacheRaw=null,cacheStat='';
@@ -23,6 +26,7 @@ function current() {
   cacheRaw=raw;cacheStat=stamp;return {raw,doc:cache};
 }
 const pic=path.join(game,'content','pic');
+const localPic=require('./pic-local.cjs').create(game,catalogRoot,catalog);
 // 장면 이미지 후보를 실제 파일로 확인한다(확장자가 없으면 png·jpg·gif 순으로).
 function resolvePic(p) {
   let rel=String(p).replace(/\//g,'\\').replace(/^\\+/,'').replace(/^content\\pic\\/i,'');
@@ -31,6 +35,16 @@ function resolvePic(p) {
     const full=path.join(pic,cand);if(full.startsWith(pic+path.sep)&&fs.existsSync(full)&&fs.statSync(full).isFile()&&fs.realpathSync(full).startsWith(fs.realpathSync(pic)+path.sep))return {rel:cand,full};
   }
   return null;
+}
+// Exclude thumbnails even when they sit outside portrait/icon folders.
+const imageSizeMemo=new Map();
+function smallImage(full){
+  const st=fs.statSync(full),stamp=st.size+':'+st.mtimeMs,cached=imageSizeMemo.get(full);if(cached?.stamp===stamp)return cached.small;
+  const header=Buffer.alloc(Math.min(st.size,65536)),fd=fs.openSync(full,'r');try{fs.readSync(fd,header,0,header.length,0);}finally{fs.closeSync(fd);}let w=0,h=0;
+  if(header.length>=24&&header.subarray(0,8).toString('hex')==='89504e470d0a1a0a'){w=header.readUInt32BE(16);h=header.readUInt32BE(20);}
+  else if(header.length>=10&&/^GIF8/.test(header.toString('ascii',0,4))){w=header.readUInt16LE(6);h=header.readUInt16LE(8);}
+  else if(header.length>4&&header[0]===255&&header[1]===216){let at=2;while(at+4<header.length){if(header[at++]!==255)break;const marker=header[at++];if(marker===216||marker===217)continue;const len=header.readUInt16BE(at);if(len<2||at+len>header.length)break;if([192,193,194,195,197,198,199,201,202,203,205,206,207].includes(marker)&&len>=7){h=header.readUInt16BE(at+3);w=header.readUInt16BE(at+5);break;}at+=len;}}
+  const small=!!(w&&h&&w<400&&h<400);imageSizeMemo.set(full,{stamp,small});return small;
 }
 function withImages(c) {
   const seen=new Set(),images=[],unresolved=[];
@@ -48,7 +62,7 @@ function withImages(c) {
       const r=resolvePic(im.path);if(r){const stem=path.basename(r.full,path.extname(r.full)),folder=path.dirname(r.full);const re=new RegExp('^'+stem.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'(?:_[2-9][0-9]*|_[1-9][0-9]+)?'+path.extname(r.full).replace('.','\\.')+'$','i');candidates=fs.readdirSync(folder).filter(n=>re.test(n)).map(n=>path.join(path.dirname(r.rel),n));}
     }
     let count=0;
-    for(const p of candidates){const r=resolvePic(p);if(r&&!seen.has(r.rel.toLowerCase())){seen.add(r.rel.toLowerCase());count++;images.push({path:r.rel,note:note+(im.random?' · 랜덤 후보':im.path.includes('<<')?' · 상태에 따른 후보':''),random:!!im.random,url:'/api/pic?t='+token+'&p='+encodeURIComponent(r.rel)+'&v='+fs.statSync(r.full).mtimeMs,work:catalog.meta('content\\pic\\'+r.rel)});}}
+    for(const p of candidates){if(/(?:^|[\\/])(?:ui(?: overhaul)?|buttons?|portraits?|icons?|avatars?)(?:[\\/]|$)|(?:_ava|_portrait|_icon)\.(?:png|jpe?g|gif|webp)$/i.test(String(p)))continue;const r=resolvePic(p);if(r&&!smallImage(r.full)&&!seen.has(r.rel.toLowerCase())){seen.add(r.rel.toLowerCase());count++;images.push({path:r.rel,note:note+(im.random?' · 랜덤 후보':im.path.includes('<<')?' · 상태에 따른 후보':''),random:!!im.random,url:'/api/pic?t='+token+'&p='+encodeURIComponent(r.rel)+'&v='+fs.statSync(r.full).mtimeMs,work:catalog.meta('content\\pic\\'+r.rel)});}}
     if(!count&&!candidates.some(p=>seen.has(String(p).toLowerCase())))unresolved.push({path:im.path,note});
   }
   return {...c,images,imageCandidates:(c.images||[]).length,unresolvedImages:unresolved};
@@ -94,6 +108,7 @@ const server=http.createServer(async(req,res)=>{
       res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','Content-Security-Policy':"default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'"});
       res.end(fs.readFileSync(path.join(__dirname,'index.html'),'utf8').replace('__SESSION_TOKEN__',token));return;
     }
+    if(req.method==='GET'&&['/dialogue-ai.js','/editing-tools.js'].includes(url.pathname)){res.writeHead(200,{'Content-Type':'text/javascript; charset=utf-8','Cache-Control':'no-store'});res.end(fs.readFileSync(path.join(__dirname,url.pathname.slice(1)),'utf8'));return;}
     const catalogRoute=url.pathname.startsWith('/api/catalog/');
     if(catalogRoute&&req.headers.origin==='null'){
       res.setHeader('Access-Control-Allow-Origin','null');res.setHeader('Vary','Origin');
@@ -103,17 +118,20 @@ const server=http.createServer(async(req,res)=>{
       if(!catalog.load()){json(res,404,{error:'체크리스트를 찾지 못했습니다.'});return;}
       let html=fs.readFileSync(path.join(catalogRoot,'catalog_merge_vs_original.html'),'utf8');
       const cfg=JSON.stringify({url:'http://'+host+'/',token});
-      html=html.replace(/<script src="catalog_workshop_config.js"><\/script>/,'<script>window.JO9_CATALOG_BRIDGE='+cfg+';</script>');
+      html=html.replace(/<script src="catalog_workshop_config.js"><\/script>/,'');
+      // Initialize the bridge before any asynchronously loaded PIC modules.
+      html=html.replace(/<head(?:\s[^>]*)?>/i,head=>head+'<script>window.JO9_CATALOG_BRIDGE='+cfg+';</script>');
       // file:// cannot be displayed inside HTTP pages. Serve only allowlisted catalog images.
       html=html.replace("function url(p){", "function url(p){if(p.indexOf(MR+'\\\\')===0||p.indexOf(OR+'\\\\')===0){var orig=p.indexOf(OR+'\\\\')===0;return '/api/catalog-asset?t='+"+JSON.stringify(token)+"+'&original='+(orig?'1':'0')+'&p='+encodeURIComponent(p.substring((orig?OR:MR).length+1));}");
+      html=html.replace(/<\/body>/i,'<script src="catalog_grok.js"></script></body>');
       res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store'});res.end(html);return;
     }
-    const catalogFiles=['catalog_status.js','catalog_work_codes.js','catalog_workshop.js','catalog_editor.js'];
+    const catalogFiles=['catalog_status.js','catalog_work_codes.js','catalog_workshop.js','catalog_editor.js','catalog_pic.js','catalog_local_pic.js','catalog_grok.js'];
     if(req.method==='GET'&&catalogFiles.includes(url.pathname.slice(1))){
       const file=url.pathname.slice(1);let text;
       if(file==='catalog_status.js')text='window.CATALOG_STATUS='+JSON.stringify(catalog.state())+';';
       else if(file==='catalog_work_codes.js')text='window.JO9_WORK_CODES='+JSON.stringify(catalog.snapshot().codes||{})+';window.JO9_WORK_UNITS='+JSON.stringify(catalog.snapshot().unitCodes||{})+';';
-      else {const full=path.join(catalogRoot,file);if(!fs.existsSync(full)){res.writeHead(404);res.end();return;}text=fs.readFileSync(full,'utf8');}
+      else {const full=path.join(catalogRoot,file);if(!fs.existsSync(full)){res.writeHead(404);res.end();return;}text=fs.readFileSync(full,'utf8');if(file==='catalog_pic.js')text=fs.readFileSync(path.join(catalogRoot,'catalog_local_pic.js'),'utf8')+'\n'+text;}
       res.writeHead(200,{'Content-Type':'text/javascript; charset=utf-8','Cache-Control':'no-store'});res.end(text);return;
     }
     if(req.method==='GET'&&url.pathname==='/api/catalog-asset'){
@@ -129,10 +147,68 @@ const server=http.createServer(async(req,res)=>{
     }
     if(req.headers['x-jo9-token']!==token) {json(res,403,{error:'편집기를 다시 열어 주세요.'});return;}
     if(req.headers.origin && req.headers.origin!=='http://'+host && !(catalogRoute&&req.headers.origin==='null')){json(res,403,{error:'다른 사이트에서는 사용할 수 없습니다.'});return;}
+    if(url.pathname.startsWith('/api/catalog/pic/')){
+      const action=url.pathname.slice('/api/catalog/pic/'.length);let result;
+      if(req.method==='GET'&&action==='index')result={index:localPic.scan(url.searchParams.get('rescan')==='1')};
+      else if(req.method==='POST'){const input=await body(req,170000000);if(action==='entries')result=localPic.entries(input.path||'');else if(action==='file')result=localPic.file(input.path);else if(action==='apply')result=localPic.apply(input.jobs);else if(action==='revisions')result=localPic.revisions(input.paths);else if(action==='restore')result=localPic.restore(input.id);}
+      if(result===undefined){json(res,400,{error:'잘못된 PIC 요청입니다.'});return;}json(res,200,result);return;
+    }
     if(req.method==='GET'&&url.pathname==='/api/catalog/state'){
       if(url.searchParams.get('brief')==='1'){json(res,200,{available:catalog.load(),...catalog.state()});return;}
       if(url.searchParams.has('since')&&Number(url.searchParams.get('since'))===Number(catalog.state().savedAt||0)){json(res,200,{unchanged:true,available:catalog.load()});return;}
       json(res,200,catalog.snapshot());return;
+    }
+    if(url.pathname.startsWith('/api/dialogue-ai/')){
+      const action=url.pathname.slice('/api/dialogue-ai/'.length);
+      if(req.method==='GET'&&action==='settings'){json(res,200,dialogueAI.state());return;}
+      if(req.method==='GET'&&action==='models'){json(res,200,{models:await dialogueAI.models(true)});return;}
+      if(req.method==='POST'&&action==='settings'){json(res,200,dialogueAI.settings(await body(req,4096)));return;}
+      if(req.method==='POST'&&action==='chat'){
+        const input=await body(req,24000);current();
+        const c=withImages(navigator.context(input.selection,input.sceneId,'text',input.usageId));
+        if(!c.selection||c.selection.dialogue===false)throw Error('게임 대사를 선택하세요.');
+        const image=input.imagePath?c.images.find(im=>im.path===input.imagePath):null;
+        if(input.imagePath&&!image)throw Error('이 장면의 이미지 후보를 선택하세요.');
+        const resolved=image?resolvePic(image.path):null;
+        if(image&&!resolved)throw Error('장면 이미지를 찾지 못했습니다.');
+        const reference='위치: '+c.location+' / '+c.selection.line+'행\n장면: '+c.scene.title+'\n조건: '+(c.scene.conditions||[]).join(' → ')+'\n선택한 원문:\n'+c.selection.text;
+        json(res,200,await dialogueAI.chat(resolved?.full||null,c.selection.fieldIndex+':'+c.selection.start,{message:input.message,reset:input.reset,reference}));return;
+      }
+      json(res,404,{error:'잘못된 각색 요청입니다.'});return;
+    }
+    if(url.pathname.startsWith('/api/catalog/grok/')){
+      const action=url.pathname.slice('/api/catalog/grok/'.length);
+      if(req.method==='GET'&&action==='settings'){json(res,200,grok.state());return;}
+      if(req.method==='GET'&&action==='models'){json(res,200,{models:await grok.models(true)});return;}
+      if(req.method==='POST'&&action==='settings'){json(res,200,grok.settings(await body(req,4096)));return;}
+      if(req.method==='POST'&&action==='chat'){
+        const input=await body(req,24000);
+        const member=typeof input.path==='string'&&(catalog.meta(input.path)||catalog.meta(input.path.replace(/^content[\\/]pic[\\/]/i,'content/pic/reserve/')));
+        if(!member)throw Error('체크리스트에 없는 이미지입니다.');
+        const source=catalogAsset(input.path,true);if(!source)throw Error('순정 원본 이미지를 찾지 못했습니다.');
+        const workFolder=path.join(game,'content','modworkpic'),work=path.join(workFolder,path.basename(source));
+        if(!fs.existsSync(work)||fs.lstatSync(work).isSymbolicLink()||!fs.realpathSync(work).startsWith(fs.realpathSync(workFolder)+path.sep)||!fs.readFileSync(work).equals(fs.readFileSync(source)))throw Error('작업폴더로 복사 버튼으로 이미지를 먼저 연결하세요.');
+        json(res,200,await grok.chat(source,input.path,input));return;
+      }
+      json(res,404,{error:'잘못된 Grok 요청입니다.'});return;
+    }
+    if(req.method==='POST'&&url.pathname==='/api/catalog/copy-original'){
+      const input=await body(req,4096);
+      const member=typeof input.path==='string'&&(catalog.meta(input.path)||catalog.meta(input.path.replace(/^content[\\/]pic[\\/]/i,'content/pic/reserve/')));
+      if(!member){json(res,400,{error:'체크리스트에 없는 원본 이미지입니다.'});return;}
+      const source=catalogAsset(input.path,true);
+      if(!source){json(res,404,{error:'순정 원본 이미지를 찾지 못했습니다.'});return;}
+      json(res,200,require('./original-copy.cjs').copyOriginal(source,game,catalogRoot,input.replaceHash));return;
+    }
+    if(req.method==='POST'&&url.pathname==='/api/catalog/open-folder'){
+      const input=await body(req,4096);
+      const member=typeof input.path==='string'&&(catalog.meta(input.path)||(input.original===true&&catalog.meta(input.path.replace(/^content[\\/]pic[\\/]/i,'content/pic/reserve/'))));
+      if(!member){json(res,400,{error:'체크리스트에 없는 이미지입니다. 새로고침 후 다시 선택하세요.'});return;}
+      const full=catalogAsset(input.path,input.original===true);
+      if(!full){json(res,404,{error:'이미지 파일을 찾지 못했습니다.'});return;}
+      if(process.platform!=='win32'){json(res,400,{error:'Windows 탐색기에서만 열 수 있습니다.'});return;}
+      await new Promise((resolve,reject)=>{const child=spawn('explorer.exe',['/select,',full],{shell:false,detached:true,stdio:'ignore'});child.once('error',reject);child.once('spawn',()=>{child.unref();resolve();});});
+      json(res,200,{ok:true});return;
     }
     if(req.method==='POST'&&url.pathname==='/api/catalog/status'){const input=await body(req,12000000);json(res,200,catalog.update(input.actions));return;}
     if(req.method==='GET' && url.pathname==='/api/state'){

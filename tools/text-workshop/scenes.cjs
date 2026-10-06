@@ -3,7 +3,7 @@
 const core=require('./core.cjs');
 const flowModule=require('./flow.cjs');
 function masked(source) {
-  const spans=core.literals(source);const chars=source.split('');
+  const spans=core.literals(source,true);const chars=source.split('');
   for(const s of spans)for(let i=s.start-1;i<=s.end;i++)if(chars[i]!=='\n'&&chars[i]!=='\r')chars[i]=' ';
   let comment=false,start=0;for(let i=0;i<chars.length;i++){if(chars[i]==='\n')comment=false;if(chars[i]==='!'&&!chars.slice(start,i).join('').trim())comment=true;if(comment&&chars[i]!=='\n'&&chars[i]!=='\r')chars[i]=' ';if(/[\n&:]/.test(chars[i]))start=i+1;}
   return chars.join('');
@@ -92,6 +92,7 @@ function bgTable(doc){
 function imageRefs(src,bg){
   const out=[];
   for(const m of masked(src).matchAll(/\$place\s*=/gi)){const lit=core.literals(src.slice(m.index+m[0].length,m.index+m[0].length+120))[0];if(lit&&/^[\w\-]+$/.test(lit.text)){const r=bg?bg(lit.text):{path:'bg\\'+lit.text};if(r)out.push(r.example?{path:r.path,note:'예시(세이브 상태로 결정)'}:r.path);}}
+  if(bg?.npc)for(const m of masked(src).matchAll(/\$npc_id\s*=/gi)){const lit=core.literals(src.slice(m.index+m[0].length,m.index+m[0].length+120))[0];if(lit){const file=bg.npc(lit.text);if(file)out.push({path:'characters\\'+file,note:'공용 화면 · NPC 이미지 이름표'});}}
   for(const l of core.literals(src)){
     const t=l.text.trim();
     for(const m of t.matchAll(/<img\b[^>]*\bsrc\s*=\s*["']([^"'<>]+)["']/gi))out.push(m[1]);
@@ -143,6 +144,7 @@ function branchList(analysis,scene,location,entries) {
 }
 function buildNavigator(doc,allEntries) {
   const analyses=new Map(),locations=new Map(doc.locations.map(l=>[l.name.toLowerCase(),l]));let bgFn=null;const bg=p=>(bgFn||(bgFn=bgTable(doc)))(p);
+  const npcImages=new Map(),npcBodies=new Map();for(const e of allEntries){if(e.field!=='body'||!/^#npc_base$/i.test(e.location))continue;if(!npcBodies.has(e.fieldIndex))npcBodies.set(e.fieldIndex,core.shift(doc.lines[e.fieldIndex],5));const body=npcBodies.get(e.fieldIndex),prefix=body.slice(body.lastIndexOf('\n',e.start-1)+1,e.start-1),m=prefix.match(/\$npc_image\[\s*(['"])([^'"]+)\1\s*\]\s*=\s*$/i);if(m&&e.text.trim())npcImages.set(m[2].toLowerCase(),e.text.trim());}bg.npc=id=>npcImages.get(String(id).toLowerCase());
   const byLocation=new Map();for(const e of allEntries){const key=e.location.toLowerCase();if(!byLocation.has(key))byLocation.set(key,[]);byLocation.get(key).push(e);}
   function data(name){const loc=locations.get(name.toLowerCase());if(!loc)throw Error('연결된 위치가 QSP에 없습니다.');if(!analyses.has(loc.index))analyses.set(loc.index,analyse(loc.name,core.shift(doc.lines[loc.body],5)));return {loc,analysis:analyses.get(loc.index),entries:byLocation.get(loc.name.toLowerCase())||[]};}
   function reference(e){return e?{...e,hash:doc.hash}:null;}

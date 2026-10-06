@@ -13,3 +13,7 @@ IMGMG는 용량 때문에 git 밖에서 사용자가 관리한다. 이 폴더는
 | `make_replacement_preview.ps1` | 원본 자리 대체 이미지 설명 페이지 |
 
 결정과 규칙은 `docs/session-handoffs/2026-10-04/homecom-2026-10-04.md`.
+
+체크리스트 상단의 **PIC 폴더 등록**은 `catalog_pic.js`가 관리한다. 하위 폴더 전체의 PNG 경로를 읽어 한 개의 폴더 연결과 함께 기억하고, 교체기는 `window.JO9PIC`의 연결과 목록을 그대로 사용한다. 브라우저 저장소가 멈추거나 저장을 거부해도 현재 창의 등록을 완료한다. 새 파일을 추가했으면 **전체 다시 읽기**, 다른 폴더를 연결하려면 **폴더 다시 선택**을 사용한다. `catalog_pic.js`도 `_tools`와 카탈로그 폴더에 같이 배치한다.
+
+공유 연결 검사는 `tests/catalog-pic.test.cjs`에 있다. 생성한 `catalog_editor.js` 경로, 카탈로그 HTML 경로, 시나리오(`hang`, `blocked`, `cached`, `denied`, `bad-folder`)를 순서대로 전달한다. 실제 브라우저의 폴더 선택·권한 승인과 게임 이미지 교체 확인은 사용자가 한다.

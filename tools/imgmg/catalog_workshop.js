@@ -10,6 +10,39 @@
   function same(a,b){return JSON.stringify(a||[])===JSON.stringify(b||[]);}
   function changes(from,to){var keys={},out=[];Object.keys(from).concat(Object.keys(to)).forEach(function(k){keys[k]=1;});Object.keys(keys).forEach(function(p){STS.forEach(function(f){var before=(from[p]||[]).indexOf(f[0])>=0,after=(to[p]||[]).indexOf(f[0])>=0;if(before!==after)out.push({path:p,flag:f[0],expected:before,checked:after});});});return out;}
   function request(route,data){var headers={'X-JO9-Token':config.token};if(data)headers['Content-Type']='application/json';return fetch(config.url+route,{method:data?'POST':'GET',headers:headers,body:data?JSON.stringify(data):undefined}).then(function(r){return r.json().then(function(v){if(!r.ok)throw Error(v.error);return v;});});}
+  openFolder=function(full){
+    try{var shell=new ActiveXObject('WScript.Shell');shell.Run('explorer.exe /select,"'+full+'"');return false;}catch(e){}
+    var roots=[MR,OR],original=false,rel=null;
+    for(var n=0;n<roots.length;n++){if(full.toLowerCase().indexOf((roots[n]+'\\').toLowerCase())===0){rel=full.substring(roots[n].length+1);original=n===1;break;}}
+    if(!config||!window.fetch||rel===null){alert('탐색기 연결을 위해 대사 편집실을 켜 주세요.');return false;}
+    request('api/catalog/open-folder',{path:rel,original:original}).catch(function(e){alert('폴더 열기 실패: '+e.message);});
+    return false;
+  };
+  var copySide=side;
+  side=function(lab,root,rel,len,orig){
+    var html=copySide(lab,root,rel,len,orig);
+    if(orig&&len&&root===OR&&isImg(rel)){
+      rel=rel.replace(/^content\\pic\\reserve\\/i,'content\\pic\\');
+      var button=' <button type="button" class="copy-original" title="이 순정 이미지를 modworkpic으로 복사" onclick="copyCatalogOriginal(\''+js(rel)+'\',this)">작업폴더로 복사</button>';
+      html=html.replace('</a></div></div>','</a>'+button+'</div></div>');
+    }
+    return html;
+  };
+  window.copyCatalogOriginal=async function(rel,button){
+    if(!config){alert('로컬 체크리스트에서 사용해 주세요.');return;}
+    button.disabled=true;
+    try{
+      var result=await request('api/catalog/copy-original',{path:rel});
+      if(result.conflict){
+        if(!confirm(result.name+' 파일이 modworkpic에 이미 있습니다. 기존 파일을 백업하고 원본으로 덮어쓸까요?'))return;
+        result=await request('api/catalog/copy-original',{path:rel,replaceHash:result.hash});
+      }
+      button.textContent=result.unchanged?'이미 복사됨':'복사 완료';
+      button.title=result.destination;
+      if(window.JO9_GROK_SELECT)window.JO9_GROK_SELECT(rel,result);
+    }catch(e){alert('원본 복사 실패: '+e.message);}
+    finally{button.disabled=false;}
+  };
   function accept(v){baseline=JSON.parse(JSON.stringify(v.items||{}));S=JSON.parse(JSON.stringify(baseline));codes=v.codes||codes;unitCodes=v.unitCodes||unitCodes;window.CATALOG_STATUS=v;try{localStorage.setItem('imgmg_status',JSON.stringify({savedAt:v.savedAt,items:S}));}catch(e){}el('save').textContent='편집실과 공유 저장 · '+new Date(v.savedAt||Date.now()).toLocaleTimeString();redraw();}
   rowHtml=function(d,i,kid){var html=originalRow(d,i,kid),code=codes[d[0]];if(code)html=html.replace('<span class="rel">','<span class="tag workcode" title="파일 분류와 고정 번호">'+esc(code)+'</span>'+(unitCodes[d[0]]?'<span class="tag workunit" title="큰 그림과 연결된 작업 단위">짝 '+esc(unitCodes[d[0]])+'</span>':'')+'<span class="rel">');return html;};
   match=function(d,fs,nd){var q=el('q').value.toLowerCase(),code=(codes[d[0]]||'').toLowerCase(),unit=(unitCodes[d[0]]||'').toLowerCase();if(q&&(code.indexOf(q)>=0||unit.indexOf(q)>=0)){var old=el('q').value;el('q').value='';try{return originalMatch(d,fs,nd);}finally{el('q').value=old;}}return originalMatch(d,fs,nd);};
@@ -31,4 +64,20 @@
     var edits=changes(fileBase,initial);accept(v);return edits.length?request('api/catalog/status',{actions:edits}).then(accept):null;
   }).then(locate).catch(function(e){remote=false;el('save').textContent='공유 연결 대기: '+e.message+' · 현재 브라우저에 저장';locate();});
   window.addEventListener('focus',refresh);setInterval(refresh,5000);
+})();
+
+/* Visible, live filename / work-code search. Reuse the catalog's filters and paired-image cards. */
+(function(){
+  'use strict';
+  var query=document.getElementById('q'),main=document.getElementById('main');if(!query||!main)return;
+  var style=document.createElement('style');style.textContent='#jo9SearchBar{position:sticky;top:0;z-index:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px;margin-bottom:12px;background:#20354d;color:#f1f6fc;border:1px solid #8fa9c6;border-radius:6px}#jo9SearchBar #q{flex:1;min-width:180px;width:auto;padding:9px;background:#fff;color:#172235;border:1px solid #9ab0c9;border-radius:4px;font-size:15px}#jo9SearchBar button{padding:7px 10px;background:#e7eef8;color:#172235;border:1px solid #9ab0c9;border-radius:4px;cursor:pointer}#jo9SearchBar label{color:#f1f6fc}';document.head.appendChild(style);
+  var bar=document.createElement('div');bar.id='jo9SearchBar';bar.innerHTML='<strong>이미지 검색</strong><button id="jo9SearchGo" type="button">검색</button><button id="jo9SearchClear" type="button">검색 지우기</button><label><input id="jo9SearchAll" type="checkbox" checked> 전체 폴더 · 미적용 포함</label><span id="jo9SearchCount" aria-live="polite"></span>';
+  query.placeholder='파일명 또는 작업번호 · 예: womens_attraction, bg-0028';query.setAttribute('aria-label','이미지 파일명 또는 작업번호 검색');bar.insertBefore(query,bar.children[1]);main.insertBefore(bar,main.firstChild);
+  var scope=document.getElementById('jo9SearchAll'),counter=document.getElementById('jo9SearchCount'),beforeInDir=inDir,beforeMatch=match;
+  function globalSearch(){return scope.checked&&!!query.value.trim();}
+  inDir=function(d){return globalSearch()?true:beforeInDir(d);};
+  match=function(d,fs,nd){if(!globalSearch())return beforeMatch(d,fs,nd);var savedDir=curDir;curDir=catalogDir(d[0]);try{return beforeMatch(d,fs,nd);}finally{curDir=savedDir;}};
+  var timer,lastQuery=null;function run(force){clearTimeout(timer);var currentQuery=query.value.trim();query.value=currentQuery;if(globalSearch()&&(currentQuery!==lastQuery||force===true)){['fs','st','src'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('small').checked=true;}lastQuery=currentQuery;filter();counter.textContent=currentQuery?'검색 결과 '+view.length+'개':'';}
+  query.addEventListener('input',function(){clearTimeout(timer);timer=setTimeout(function(){run(false);},180);});query.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();run(true);}if(e.key==='Escape'){query.value='';run();}});
+  document.getElementById('jo9SearchGo').onclick=function(){run(true);};document.getElementById('jo9SearchClear').onclick=function(){query.value='';run();query.focus();};scope.onchange=function(){run(true);};
 })();

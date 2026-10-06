@@ -24,10 +24,24 @@ function parse(raw) {
   return { lines, locations, hash:hash(raw) };
 }
 const serialize = doc => Buffer.from(doc.lines.join('\r\n'), 'utf16le');
-function literals(body) {
+function literals(body, includeComments=false) {
   const result = []; let i = 0, line=1, statementStart=0;
   while (i < body.length) {
-    if (body[i] === '!' && !body.slice(statementStart,i).trim()) { const end = body.indexOf('\n', i); if(end>=0)line++;i = end < 0 ? body.length : end+1;statementStart=i;continue; }
+    if (body[i] === '!' && !body.slice(statementStart,i).trim()) {
+      // A QSP comment can contain a multiline quoted string. Its following
+      // physical lines remain part of the comment until the string closes.
+      const commentStart=i,commentLine=line;let q='', braces=0; i++;
+      while(i<body.length){const ch=body[i];
+        if(ch==='\n'){line++;i++;if(!q&&!braces)break;continue;}
+        if(q){if(ch===q){if(body[i+1]===q){i+=2;continue;}q='';}}
+        else if(ch==="'"||ch==='"')q=ch;
+        else if(ch==='{')braces++;
+        else if(ch==='}'&&braces)braces--;
+        i++;
+      }
+      if(includeComments)result.push({start:commentStart+1,end:i-1,line:commentLine,comment:true});
+      statementStart=i;continue;
+    }
     const quote = body[i];
     if (quote !== "'" && quote !== '"') { if(body[i]==='\n')line++;if(/[\n&:]/.test(body[i]))statementStart=i+1;i++; continue; }
     const start = ++i, startLine=line; let value = ''; let closed = false;
@@ -83,6 +97,68 @@ function minimalEdit(oldField,newField,start,oldEnd,newEnd) {
 function protectedParts(s) {
   return s.match(/<<[\s\S]*?>>|<[^<>]*>|\$[A-Za-z_가-힣][\w가-힣]*|\{\{[\s\S]*?\}\}/g) || [];
 }
+// Edit strings as strings: valid interpolation/HTML changes are permitted.
+// HTML may be a fragment whose opening/closing tags live in other strings.
+function validateMarkup(s) {
+  let plain='',at=0;
+  while(at<s.length){
+    if(!s.startsWith('<<',at)){plain+=s[at++];continue;}
+    const start=at;at+=2;let quote='',closed=false,stack=[];
+    const expressionStart=at;
+    for(;at<s.length;at++){
+      const ch=s[at];
+      if(quote){if(ch===quote){if(s[at+1]===quote)at++;else quote='';}continue;}
+      if(ch==='"'||ch==="'"){quote=ch;continue;}
+      if(s.startsWith('>>',at)){
+        if(!s.slice(expressionStart,at).trim())throw Error('빈 치환문 <<>>은 사용할 수 없습니다.');
+        if(stack.length)throw Error('치환문 안의 괄호가 닫히지 않았습니다.');
+        at+=2;closed=true;break;
+      }
+      if(ch==='('||ch==='[')stack.push(ch);
+      else if(ch===')'||ch===']'){
+        if(stack.pop()!==(ch===')'?'(':'['))throw Error('치환문 안의 괄호 짝이 맞지 않습니다.');
+      }
+    }
+    if(!closed)throw Error('치환문 <<...>>이 닫히지 않았습니다 (문자 '+(start+1)+').');
+    plain+=' ';
+  }
+  const tagStart=/<\/?[A-Za-z][A-Za-z0-9:_-]*(?=[\s/>]|$)/g;
+  let m;
+  while((m=tagStart.exec(plain))){
+    let quote='',closed=false,i=tagStart.lastIndex;
+    for(;i<plain.length;i++){
+      const ch=plain[i];
+      if(quote){if(ch===quote)quote='';}
+      else if(ch==='"'||ch==="'")quote=ch;
+      else if(ch==='>'){closed=true;break;}
+      else if(ch==='<')break;
+    }
+    if(!closed)throw Error('HTML 태그의 > 또는 속성 따옴표가 닫히지 않았습니다.');
+    tagStart.lastIndex=i+1;
+  }
+}
+const displayMaps=new WeakMap();
+function tokenMap(texts) {
+  const map=new Map();
+  for(const text of texts) for(const m of text.matchAll(/<<[\s\S]*?>>/g)) {
+    const label=m[0].slice(2,-2).replace(/^\$/,'');
+    if(!map.has(label))map.set(label,new Set());
+    map.get(label).add(m[0]);
+  }
+  return map;
+}
+function restoreDisplayTokens(doc,text,original='') {
+  if(!/〈[^〉\r\n]+〉/.test(text))return text;
+  let map=displayMaps.get(doc);
+  if(!map){map=tokenMap(entries(doc).map(e=>e.text));displayMaps.set(doc,map);}
+  const local=tokenMap([original]);
+  return text.split(/(<<[\s\S]*?>>)/).map(part=>part.startsWith('<<')?part:part.replace(/〈([^〉\r\n]+)〉/g,(shown,label)=>{
+    const choices=local.get(label)||map.get(label);
+    if(!choices)return shown;
+    if(choices.size!==1)throw Error(`표시 이름 ${shown}에 대응하는 코드가 여러 개입니다. 원문의 <<…>> 코드를 복사해 주세요.`);
+    return [...choices][0];
+  })).join('');
+}
 function prepare(doc, selection, replacement) {
   if (typeof replacement !== 'string' || !replacement.trim()) throw Error('수정문을 넣어 주세요.');
   if (replacement.length > 1000000 || /[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(replacement)) throw Error('수정문에 지원하지 않는 제어문자가 있습니다.');
@@ -90,8 +166,9 @@ function prepare(doc, selection, replacement) {
   if (selection.hash !== doc.hash) throw Error('검색 이후 QSP가 변경되었습니다. 다시 검색해 주세요.');
   const entry=entries(doc).find(e=>e.fieldIndex===selection.fieldIndex && e.start===selection.start && e.end===selection.end);
   if (!entry || entry.text !== selection.text) throw Error('선택한 원문 위치가 달라졌습니다. 다시 검색해 주세요.');
+  replacement=restoreDisplayTokens(doc,replacement,entry.text);
   if (entry.text === replacement) throw Error('원문과 수정문이 같습니다.');
-  if (JSON.stringify(protectedParts(entry.text)) !== JSON.stringify(protectedParts(replacement))) throw Error('변수·치환문·HTML 태그가 원문과 다릅니다. 이 요소들은 순서까지 그대로 유지해 주세요.');
+  validateMarkup(replacement);
   const oldField=shift(doc.lines[entry.fieldIndex],5);
   const encoded=entry.quote ? replacement.split(entry.quote).join(entry.quote+entry.quote) : replacement;
   const newField=oldField.slice(0,entry.start)+encoded+oldField.slice(entry.end);
@@ -105,4 +182,4 @@ function prepare(doc, selection, replacement) {
   const piece=minimalEdit(oldField,newField,entry.start,entry.end,entry.start+encoded.length);
   return { raw,entry,replacement,oldField,newField,piece,after:hash(raw) };
 }
-module.exports={hash,shift,parse,serialize,literals,entries,prepare,protectedParts,isDialogue,visibleText,minimalEdit};
+module.exports={hash,shift,parse,serialize,literals,entries,prepare,protectedParts,validateMarkup,isDialogue,visibleText,minimalEdit,restoreDisplayTokens};

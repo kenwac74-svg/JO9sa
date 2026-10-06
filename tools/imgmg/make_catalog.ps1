@@ -12,11 +12,12 @@ $skipDirs = @('content\pic\__jo9_imagebackups\')
 
 function Get-Index($base) {
     $h = @{}
-    foreach ($s in 'content\pic', 'json') {
+    foreach ($s in 'content\pic') {
         $b = Join-Path $base $s
         if (-not (Test-Path -LiteralPath $b)) { continue }
         foreach ($f in Get-ChildItem -LiteralPath $b -Recurse -File) {
             $rel = $f.FullName.Substring($base.Length + 1)
+            if ($f.Extension -notmatch '^\.(png|jpe?g|gif|webp|bmp)$') { continue }
             $skip = $false; foreach ($d in $skipDirs) { if ($rel.ToLower().StartsWith($d.ToLower())) { $skip = $true } }
             if (-not $skip) { $h[$rel.ToLower()] = $f }
         }
@@ -162,6 +163,11 @@ a.open{color:inherit;font-weight:600;cursor:pointer}
 <div id="side"><div class="sub" style="margin:0 4px 8px"><b>폴더</b> · 이름 옆 숫자는 완료/전체</div><div class="tree" id="tree"></div></div>
 <div id="main">
 <h1>이미지 패치 작업 체크리스트</h1>
+<section id="catalogPicPanel" style="color:#eff1e9;border:1px solid #596552;background:#202920;border-radius:8px;padding:14px 18px;margin:16px 0">
+ <strong style="color:#e5c588">플레이 PIC 폴더 연결</strong> · <code>G:\somi\JO9\game\content\pic</code>
+ <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button id="catalogPicConnect">PIC 폴더 등록</button><button id="catalogPicChoose">폴더 다시 선택</button><button id="catalogPicRescan" disabled>전체 다시 읽기</button></div>
+ <p id="catalogPicStatus" role="status" aria-live="polite" style="margin:10px 0 0">PIC 폴더를 한 번 등록하면 교체기가 같은 연결과 전체 목록을 사용합니다.</p>
+</section>
 <p class="sub">플레이 폴더 <code>$($Play -replace '\\','\')</code>(순정 + 올걸팩 + 인디패치 + 사용자 이미지·UI 패치) × 순정 원본 <code>$($Original -replace '\\','\')</code>, 같은 경로끼리 비교. 생성 $(Get-Date -Format 'yyyy-MM-dd HH:mm').
 비교: <b>교체</b> 원본을 다른 내용으로 덮어씀 · <b>추가</b> 원본에 없는 새 파일 · <b>동일</b> 원본과 같음 · <b>작업내역 없는 원본</b> 올걸팩·뉴이미지·UI패치 어디서도 손대지 않은 원본(원본 폴더 연결). 상태 버튼과 태그에 마우스를 올리면 뜻이 나옵니다. <b>완료만</b> 체크된 항목이 <b>확정</b>(2.4 패치 반영 결정)입니다.
 상태는 여러 개 동시에 체크할 수 있고, 다시 누르면 해제. 아무것도 없으면 검토중. 파일명을 누르면 폴더가 열립니다(.hta는 탐색기에서 파일 선택). 카드의 <b>🖼 교체</b>로 새 이미지를 직접 넣을 수 있습니다(Edge·Chrome으로 .html을 열었을 때만).</p>
@@ -196,7 +202,7 @@ var STS=[['done','완료','#2b8a4a','작업을 했다는 뜻. 완료만 체크�
  ['mre','머지re','#c0612b','플레이 폴더 그림(올걸팩·뉴이미지 등, 머지본)을 바탕으로 재작업해 볼 이미지. 완료와 함께 체크되면 일단 완료로 보지만, 나중에 재작업해서 교체할 수 있음.'],
  ['branch','재활용','#7a4fc0','원래 용도가 아닌 다른 장면에 연결하거나 편집용 소스로 쓰는 등, 어쨌든 필요한 이미지. 보관 대상.'],
  ['spare','보관','#8a6d1f','원본과 플레이 폴더 그림(머지본) 둘 다 특색이 있어 따로 보관. 추후 [원본스타일]·[올걸팩스타일]·[SNK스타일] 전환 기능에서 게임 QSP가 경로를 연결해 줄 대상(물리적 위치는 그대로).'],
- ['wip','작업중','#d14a8a','현재 진행 중인 이미지.'],['todo','작업필요','#5a5a5a','아직 착수 전이지만 인지하고 있는 이미지.']];
+ ['wip','작업중','#d14a8a','현재 진행 중인 이미지.'],['todo','작업필요','#5a5a5a','아직 착수 전이지만 인지하고 있는 이미지.'],['delete','삭제 예정','#b53b36','작업 완료: 최종 게임폴더 적용본은 유지하고, 해당 이미지의 불필요한 구버전·원본·시안·중복 보관본을 정리할 대상으로 표시합니다. 순정 JO9O 폴더는 항상 제외합니다. 체크만으로 즉시 삭제되지는 않습니다.']];
 function isConf(rel){var a=S[rel];return !!(a&&a.length==1&&a[0]=='done');}
 var STN={};for(var i=0;i<STS.length;i++)STN[STS[i][0]]=STS[i];
 var S={}, curDir='', page=0, view=[], isHta=false, saveTimer=null;
@@ -205,6 +211,8 @@ function url(p){var s=p.replace(/\\/g,'/').split('/'),o=[];for(var i=0;i<s.lengt
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 function kb(n){return Math.round(n/1024).toLocaleString()+' KB';}
 function isImg(r){return /\.(png|jpe?g|gif|webp|bmp)$/i.test(r);}
+function isUnapplied(r){return /^content\\pic\\reserve(?:\\|$)/i.test(r);}
+function catalogDir(r){return (isUnapplied(r)?'[미적용]\\':'')+dirOf(r);}
 function dirOf(r){var i=r.lastIndexOf('\\');return i<0?'':r.substring(0,i);}
 function leaf(r){return r.substring(r.lastIndexOf('\\')+1);}
 function sortKey(r){return (dirOf(r).replace(/\\/g,'\u0002')+'\u0001'+leaf(r)).toLowerCase();}
@@ -240,11 +248,11 @@ function exportStatus(){
 // ---- 폴더 트리 ----
 var T={name:'game',path:'',kids:{},n:0,done:0,open:true};
 function buildTree(){
-  for(var i=0;i<D.length;i++){var parts=dirOf(D[i][0]).split('\\'),node=T,p='';node.n++;
+  for(var i=0;i<D.length;i++){var parts=catalogDir(D[i][0]).split('\\'),node=T,p='';node.n++;
     for(var j=0;j<parts.length;j++){if(!parts[j])continue;p=p?p+'\\'+parts[j]:parts[j];
       if(!node.kids[parts[j]])node.kids[parts[j]]={name:parts[j],path:p,kids:{},n:0,done:0,open:j<2};node=node.kids[parts[j]];node.n++;}}
 }
-function tallyDone(){var c={};for(var i=0;i<D.length;i++)if(has(D[i][0],'done')){var d=dirOf(D[i][0]);c[d]=(c[d]||0)+1;}
+function tallyDone(){var c={};for(var i=0;i<D.length;i++)if(has(D[i][0],'done')){var d=catalogDir(D[i][0]);c[d]=(c[d]||0)+1;}
   (function walk(n){n.done=c[n.path]||0;for(var k in n.kids)n.done+=walk(n.kids[k]);return n.done;})(T);}
 function treeHtml(n){
   var ks=[];for(var k in n.kids)ks.push(k);ks.sort(function(a,b){a=a.toLowerCase();b=b.toLowerCase();return a<b?-1:a>b?1:0;});
@@ -256,13 +264,14 @@ function js(s){return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'");}
 function findNode(p){if(!p)return T;var parts=p.split('\\'),n=T;for(var i=0;i<parts.length;i++){n=n.kids[parts[i]];if(!n)return T;}return n;}
 function drawTree(){tallyDone();el('tree').innerHTML='<ul>'+treeHtml(T)+'</ul>';}
 function tog(p){var n=findNode(p);n.open=!n.open;drawTree();}
-function pick(p){curDir=p;var parts=p?p.split('\\'):[],n=T;n.open=true;for(var i=0;i<parts.length;i++){n=n.kids[parts[i]];n.open=true;}drawTree();filter();}
+function pick(p){curDir=p;el('q').value='';el('small').checked=true;var parts=p?p.split('\\'):[],n=T;n.open=true;for(var i=0;i<parts.length;i++){n=n.kids[parts[i]];n.open=true;}drawTree();filter();}
 
 // ---- 목록 ----
 function side(lab,root,rel,len,orig){
+  if(orig)rel=rel.replace(/^content\\pic\\reserve\\/i,'content\\pic\\');
   if(orig&&!len)return '<div class="side"><div class="lab">'+lab+'</div><div class="none">원본에 없음</div></div>';
   var full=root+'\\'+rel, dir=dirOf(full);
-  var bq=(!orig&&BUST[rel])?'?t='+BUST[rel]:'';var img=isImg(rel)?'<a href="'+url(full)+bq+'" target="_blank"><img src="'+url(full)+bq+'" onload="var m=this.parentNode.parentNode.getElementsByTagName(\'span\')[0];if(m)m.innerHTML=this.naturalWidth+\'×\'+this.naturalHeight+\' · \'"></a>':'';
+  var bq=(!orig&&BUST[rel])?(url(full).indexOf('?')>=0?'&v=':'?v=')+BUST[rel]:'';var img=isImg(rel)?'<a href="'+url(full)+bq+'" target="_blank"><img src="'+url(full)+bq+'" onload="var m=this.parentNode.parentNode.getElementsByTagName(\'span\')[0];if(m)m.innerHTML=this.naturalWidth+\'×\'+this.naturalHeight+\' · \'"></a>':'';
   return '<div class="side"><div class="lab">'+lab+'</div>'+img+'<div class="meta"><span></span>'+kb(len)+' · <a class="open" href="'+url(dir)+'" onclick="return openFolder(\''+js(full)+'\')">'+esc(leaf(rel))+'</a></div></div>';
 }
 function has(rel,s){var a=S[rel];if(!a)return false;for(var i=0;i<a.length;i++)if(a[i]==s)return true;return false;}
@@ -280,7 +289,7 @@ function render(){
   var per=+el('per').value,n=view.length,pages=Math.max(1,Math.ceil(n/per));if(page>=pages)page=pages-1;
   var h=[],end=Math.min(n,(page+1)*per),last=null;
   R=[];
-  for(var vi=page*per;vi<end;vi++){var d=view[vi],dd=dirOf(d[0]),i=R.length;R.push(d);
+  for(var vi=page*per;vi<end;vi++){var d=view[vi],dd=catalogDir(d[0]),i=R.length;R.push(d);
     if(dd!==last){h.push('<div class="fh">📁 '+esc(dd||'(최상위)')+'</div>');last=dd;}
     h.push(rowHtml(d,i,false));}
   el('list').innerHTML=h.join('')||'<p class="sub">해당 항목 없음</p>';
@@ -290,7 +299,7 @@ function render(){
   el('pg1').innerHTML=p;el('pg2').innerHTML=p;
 }
 function rowHtml(d,i,kid){
-    var kids='';if(!kid&&KIDS[d[0]]){var ks=KIDS[d[0]],a=[];for(var k=0;k<ks.length;k++){var j=R.length;R.push(ks[k]);a.push(rowHtml(ks[k],j,true));}kids='<div class="kids"><div class="sub" style="margin:0">짝 그림(UI·포트레이트) '+ks.length+'</div>'+a.join('')+'</div>';}
+    var kids='';if(!kid&&KIDS[d[0]]){var ks=KIDS[d[0]],a=[];for(var k=0;k<ks.length;k++){if(!inDir(ks[k]))continue;var j=R.length;R.push(ks[k]);a.push(rowHtml(ks[k],j,true));}kids='<div class="kids"><div class="sub" style="margin:0">짝 그림(UI·포트레이트) '+ks.length+'</div>'+a.join('')+'</div>';}
     return '<div class="'+(kid?'kid':'row')+'" id="r'+i+'" style="border-left-color:'+rowColor(d[0])+'"><div class="hd"><span class="tag t-'+d[1]+'" title="'+CMPT[d[1]]+'">'+CMP[d[1]]+'</span><span class="tag p-'+d[2]+'" title="출처">'+SRC[d[2]]+'</span><span class="rel">'+esc(leaf(d[0]))+'</span>'+wsBtn(d,i)+'</div>'+
       '<div class="sts" id="s'+i+'">'+stsHtml(i)+'</div><div class="pair">'+side('원본 (JO9O)',OR,d[0],d[4],true)+(d[1]=='o'?'<div class="side"><div class="lab">플레이 (JO9)</div><div class="none">작업내역 없는 원본<br>(플레이 폴더 = 원본 그대로)</div></div>':d[1]=='d'?'<div class="side"><div class="lab">플레이 (JO9)</div><div class="none">플레이 폴더에 없음</div></div>':side('플레이 (JO9)',MR,d[0],d[3],false))+'</div>'+kids+'</div>';
 }
@@ -298,14 +307,17 @@ function setSt(i,s){var rel=R[i][0];if(has(rel,s))unmark(rel,s);else mark(rel,s)
   el('s'+i).innerHTML=stsHtml(i);el('r'+i).style.borderLeftColor=rowColor(rel);saveSoon();summary();drawTree();
   if(el('fs').value)setTimeout(filterKeepPage,300);}
 function go(d){page+=d;if(page<0)page=0;render();window.scrollTo(0,0);}
-function match(d,fs,nd){var st=el('st').value,src=el('src').value,q=el('q').value.toLowerCase(),dd=dirOf(d[0]);
-  if(curDir&&!nd){if(el('sub').checked){if(dd!=curDir&&dd.indexOf(curDir+'\\')!=0)return false;}else if(dd!=curDir)return false;}
+function inDir(d){var dd=catalogDir(d[0]);return (!curDir&&!isUnapplied(d[0]))||dd==curDir||(el('sub').checked&&dd.indexOf(curDir+'\\')==0);}
+function match(d,fs,nd){var st=el('st').value,src=el('src').value,q=el('q').value.toLowerCase(),dd=catalogDir(d[0]);
+  if(!curDir&&isUnapplied(d[0]))return false;
+  if(curDir){if(el('sub').checked){if(dd!=curDir&&dd.indexOf(curDir+'\\')!=0)return false;}else if(dd!=curDir)return false;}
   if(st&&d[1]!=st)return false;if(src&&d[2]!=src)return false;if(q&&d[0].toLowerCase().indexOf(q)<0)return false;
   if(fs){if(fs=='none'){if(S[d[0]])return false;}else if(fs=='conf'){if(!isConf(d[0]))return false;}else if(!has(d[0],fs))return false;}return true;}
 function filterKeepPage(){var p=page;filter();page=p;render();}
 function filter(){var fs=el('fs').value,sm=el('small').checked;view=[];
   for(var i=0;i<D.length;i++){var d=D[i];
-    if(d[7]&&IDX[d[7]])continue; // 짝이 있는 작은 그림은 큰 그림 카드 안에서
+    if(d[7]&&IDX[d[7]]&&(!curDir||inDir(D.filter(function(x){return x[0]==d[7];})[0])))continue; // 짝이 있는 작은 그림은 큰 그림 카드 안에서
+    if(!inDir(d))continue;
     if(isSmall(d)&&!sm)continue;
     var ok=match(d,fs);if(!ok&&KIDS[d[0]]){var ks=KIDS[d[0]];for(var k=0;k<ks.length;k++)if(match(ks[k],fs,true)){ok=true;break;}}
     if(ok)view.push(d);}
@@ -326,6 +338,7 @@ function bulkSet(){var s=el('bulk').value,md=el('bmode').value,n=view.length;if(
   for(i=0;i<all.length;i++){var r=all[i];if(!s)delete S[r];else if(md=='add')mark(r,s);else unmark(r,s);}saveNow();drawTree();filterKeepPage();}
 
 (function(){
+  D=D.filter(function(d){return isImg(d[0]);});
   D.sort(function(a,b){a=sortKey(a[0]);b=sortKey(b[0]);return a<b?-1:a>b?1:0;});
   IDX={};for(var x=0;x<D.length;x++)IDX[D[x][0]]=1;
   for(x=0;x<D.length;x++){var pr=D[x][7];if(pr&&IDX[pr]){if(!KIDS[pr])KIDS[pr]=[];KIDS[pr].push(D[x]);}}
@@ -340,12 +353,18 @@ function bulkSet(){var s=el('bulk').value,md=el('bmode').value,n=view.length;if(
 <script>
 (function(){
   if(!window.showDirectoryPicker||!window.Promise)return;
-  var s=document.createElement('script');s.src='catalog_editor.js';
-  s.onload=function(){EDIT=true;render();
+  function loadEditor(){
+  var s=document.createElement('script');s.src='catalog_editor.js?v='+new Date().getTime();
+  s.onload=function(){if(!window.JO9WS||typeof window.JO9WS.open!=='function'){EDIT=false;render();el('save').textContent='이미지 교체기 초기화 실패 · 새로고침 후 다시 확인하세요.';return;}EDIT=true;render();
     window.addEventListener('jo9ws-applied',function(e){var t=new Date().getTime(),a=e.detail||[];for(var k=0;k<a.length;k++)BUST['content\\pic\\'+a[k].replace(/\//g,'\\')]=t;render();
       el('save').innerHTML='이미지 '+a.length+'개 교체됨 · 비교 분류(교체/추가/출처)는 카탈로그를 다시 만들면 갱신됩니다';});};
   s.onerror=function(){el('save').innerHTML='catalog_editor.js를 불러오지 못해 이미지 교체 기능이 꺼졌습니다';};
   document.body.appendChild(s);
+  }
+  var p=document.createElement('script');p.src='catalog_pic.js?v='+new Date().getTime();
+  p.onload=function(){if(!window.JO9PIC){el('catalogPicStatus').textContent='PIC 연결 모듈 초기화 실패';return;}loadEditor();};
+  p.onerror=function(){el('catalogPicStatus').textContent='catalog_pic.js를 불러오지 못했습니다.';};
+  document.body.appendChild(p);
 })();
 </script>
 <script src="catalog_work_codes.js"></script>
@@ -353,10 +372,14 @@ function bulkSet(){var s=el('bulk').value,md=el('bmode').value,n=view.length;if(
 <script src="catalog_workshop.js"></script>
 </body></html>
 "@
+$reserveCompare = Join-Path $Root "image_work\reserve_compare_inline.js"
+if (Test-Path -LiteralPath $reserveCompare) { $html = $html.Replace('<script src="catalog_work_codes.js"></script>', "<script>" + [IO.File]::ReadAllText($reserveCompare) + "</script>" + '<script src="catalog_work_codes.js"></script>') }
 $utf8 = New-Object Text.UTF8Encoding $true
 foreach ($ext in 'html', 'hta') { [IO.File]::WriteAllText((Join-Path $Root "catalog_merge_vs_original.$ext"), $html, $utf8) }
 $bridgeSource = Join-Path $PSScriptRoot 'catalog_workshop.js'
 if (Test-Path -LiteralPath $bridgeSource) { Copy-Item -LiteralPath $bridgeSource -Destination (Join-Path $Root 'catalog_workshop.js') -Force }
+$picSource = Join-Path $PSScriptRoot 'catalog_pic.js'
+if (Test-Path -LiteralPath $picSource) { Copy-Item -LiteralPath $picSource -Destination (Join-Path $Root 'catalog_pic.js') -Force }
 $sp = Join-Path $Root 'catalog_status.js'
 if (-not (Test-Path -LiteralPath $sp)) { [IO.File]::WriteAllText($sp, "window.CATALOG_STATUS={`"savedAt`":0,`"items`":{}};`r`n", [Text.Encoding]::ASCII) }
 "항목 $($data.Count): $stats / 출처(교체·추가) $srcStats / UI·포트레이트(400px 미만) $smallN, 그중 큰 그림과 짝 $paired"

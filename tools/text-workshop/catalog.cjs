@@ -1,6 +1,6 @@
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
-const FLAGS=['done','ore','mre','branch','spare','wip','todo'];
+const FLAGS=['done','ore','mre','branch','spare','wip','todo','delete'];
 const normalize=p=>String(p).replace(/\//g,'\\').toLowerCase();
 function parseStatus(text){const m=text.replace(/^\uFEFF/,'').match(/window\.CATALOG_STATUS\s*=\s*([\s\S]*);\s*$/);if(!m)throw Error('체크리스트 상태 파일 형식을 확인하세요.');const v=JSON.parse(m[1]);if(!v.items||typeof v.items!=='object'||Array.isArray(v.items))throw Error('상태 목록이 올바르지 않습니다.');return v;}
 function category(d){const p=normalize(d[0]);if(/\\ui overhaul\\|\\ui[_-]overhaul\\/.test(p))return 'UO';if(/\\bg\\/.test(p))return 'bg';if(/\\characters\\/.test(p))return 'CH';if(/\\scene\\/.test(p))return 'SC';if(/\\ui\\|\\buttons\\/.test(p))return 'UI';if(/\\girls\\/.test(p))return 'GL';if(/\\mob\\/.test(p))return 'MB';if(/\\master\\/.test(p))return 'MA';return 'ET';}
