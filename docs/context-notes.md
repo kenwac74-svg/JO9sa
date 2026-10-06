@@ -396,3 +396,202 @@
 - 사용자 지시 (2026-09-28): cum_gray는 cum.png를 회색 처리해 넣는다. 누락 목록은 별도 문서로 저장한다 → `docs/MISSING_MENU_ICONS.md`. 화면 코드 확인은 QSP뿐 아니라 제공 ZIP의 내용(qsrc·json·css·txt)까지 함께 본다.
 - ref.zip 전수 검색 결과도 같다. 12개 키 중 `menu_item_cum_gray`만 #sex_options·#sex_options_woman(각 4곳)에서 쓰인다. 키를 동적으로 조립하는 코드는 없다.
 - cum_gray.png 생성 (2026-09-28): 순정 회색 처리 방식을 예시 한 쌍에서 분석해 재현했다. 재현 오차는 1.72이고, 결과는 `resources/new`에 보관했다. 0.1 빌드에 적용할 예정이며, 구 R3 빌드는 건드리지 않았다. 상세는 `docs/MISSING_MENU_ICONS.md`에 있다.
+
+### 사용자 결정 14 — UI 패치 리소스 분류 확정과 이미지팩 예외 (2026-09-28, Codex 대화 공유)
+- 사용자가 Codex와 나눈 대화를 공유했다. Codex도 이 대화의 분류 방향(순정 해시 비교)이 맞다고 정정했다.
+- 최종 분류:
+
+| 구분 | UI 패치 처리 |
+|---|---|
+| 순정과 같은 경로·같은 해시 | 패키지에서 제외, 원본 참조 유지 |
+| UI 패치 작업으로 교체·추가한 리소스 (순정과 해시가 다르거나 순정에 없음) | `content/pic/SNKmod/`에 포함, 참조 변경 |
+| UI 패치에서 영문 이름으로 바꾼 리소스 | 내용이 같아도 포함 (결정 13) |
+| 이미지팩이 교체한 리소스 | **제외.** 이미지팩이 원본 경로에서 관리한다 |
+
+- 이미지팩: 원본을 직접 교체하는 ZIP이며 복구를 지원하지 않는다. UI 패치가 중복으로 포장하거나 복원 대상으로 삼지 않는다. UI 패치의 리소스는 UI 패치 작업으로 교체된 것만을 뜻한다.
+- 영향: JO9 작업 폴더에서 순정과 해시가 다른 147개를 모두 UI 누락으로 볼 수 없다. 이미지팩 교체분을 먼저 걸러 낸 뒤 UI 작업분만 포함한다.
+- 분류 방법:
+  1. JO9 작업 폴더의 목록(해시)을 순정 목록과 비교해 다른 파일을 찾는다.
+  2. 그중 이미지팩 ZIP 목록에 같은 경로·같은 해시로 있는 파일은 이미지팩 소관으로 보고 제외한다.
+  3. 남은 파일은 UI 작업 후보다. 목록을 사용자에게 보여 확인받은 뒤 포함한다.
+- 도구 보강: `make_vanilla_manifest.ps1`이 jack.qsp가 없는 이미지팩 ZIP도 처리한다 (처음 나오는 `content/pic/` 앞부분을 game 위치로 본다). 합성 ZIP 두 종류로 시험했다.
+- 사용자 정정 (2026-09-28): 순정 폴더(JO9O)에는 이미지팩으로 교체한 이미지가 없다. 그래서 UI 패치는 순정에서 작업한다.
+  - 따라서 분류 기준은 "순정 대비"뿐이다. JO9 작업 폴더(이미지팩이 섞인 환경)를 리소스 출처로 쓰지 않는다. 이미지팩 ZIP 목록과 JO9 목록 요청은 철회한다.
+  - UI 패치 리소스의 출처는 UI 작업으로 명시된 것에 한정한다: FIX6, 사용자가 UI용으로 준 새 디자인(resources/new), 영문 이름 변경 파일, 0.1 패키지 이미지. 각 파일을 순정과 비교해 같으면 제외하고, 다르거나 없으면 포함한다.
+  - Codex가 JO9와 JO9O를 비교해 찾은 147개(ui overhaul)는 이 기준으로 보면 UI 작업분이라는 근거가 없다. 이미지팩 등 다른 교체분일 수 있다. 사용자가 UI 작업분으로 지정한 파일만 포함한다.
+  - 검증 방법: 0.1의 QSP·JSON·CSS가 참조하는 모든 이미지는 순정에 같은 경로로 있거나 패키지에 있어야 한다. 둘 다 아니면 빌드 실패로 처리한다.
+
+### 0.1 전수 분류 완료 (2026-09-28)
+- `docs/RESOURCE_CLASSIFICATION_0_1_REPORT_KR.md`, `audits/release_0_1_ref_classification.json`, `tools/classify_release_refs.py`.
+- 핵심 결과: 한글 경로 참조 0, 연결 누락 0, UI 작업 출처 누락 0. 순정에 없는 참조 41개는 순정 QSP 기존 참조 29개와 menu_icon 누락 12개다. 148개는 UI 작업 근거가 없어 제외한다. 순정과 같은 패키지 파일은 trophywall 1개.
+
+### 사용자 결정 15 — 예비는 trash 폴더, QSP 변경은 실패가 아님, 설치 순서 안내 (2026-09-28)
+- 예비 리소스(참조되지 않는 패키지 이미지)는 모두 trash 폴더에 넣어 보관한다. 그 폴더 안에 원래 경로를 적은 txt를 남긴다.
+  - 대상(0.1 기준 29개): FIX6 예비 16개(trophywall 포함), milk_drop_medium, hart_blue, buttons/z_pregnant(FIX6판), 한글→영문 pic 루트 10개(Ill, Wound, Pill0·0s·1·1s·2·2s, Preg, Preg_s).
+  - 위치안: `content/pic/SNKmod/trash/`. 파일명은 그대로 두고, `trash/README_trash.txt`에 "파일 → 원래 게임 경로 / 이전 SNKmod 경로"를 적는다.
+- 설치 후 QSP가 바뀌는 것은 다른 모드나 다른 버전 설치로 흔히 생긴다. 설치 실패로 판정하지 않는다.
+  - 이 UI 패치는 QSP를 바꾸는 다른 모드와 호환되지 않는다. 호환성 경고는 하되, 실패로 막지 않는다.
+- 설치 순서 안내:
+  - 이 패치는 다른 이미지 패치(QSP 없이 이미지·json만 바꾸는 패치 등)를 모두 마친 뒤 설치하도록 유도한다.
+  - `JoNT_IndividualityPatchInstaller.zip`, `ai_girl_pack.zip`을 설치한 뒤 **마지막에** 설치하도록 강력히 권장한다. 순서가 바뀌면 UI 패치가 정상 작동하지 않을 수 있다. 이 패치는 모든 패치 뒤에 덧씌우는 것이 안전하다.
+- QSP 변경 원인 조사(런처 재컴파일 가설 등)는 더 진행하지 않는다. 설치기 동작 문제로 다룬다.
+
+### (병합) Codex 브랜치에서 온 기록
+- 아래는 `codex/snkmod-0.1-handoff`의 context-notes에 추가돼 있던 내용이다. 2026-09-28 병합 때 원문 그대로 옮겼다.
+
+### 개인실 UI 후속 설명 및 개발본 (2026-09-27)
+- 사용자가 명확히 구분: 질문·칭찬·빠른 보상·교육·성교육·가정교사는 이번에 원작 기능으로 실제 연결한다. 최소 room1~4 대상 bridge는 허용하며 “연결 준비 중” 표시는 원하지 않는다. 개인실 전용 신규 효과/시스템만 후속 범위다.
+- 처벌·처분·영향·사회화 비활성, 업무 버튼 숨김. 기존 방별 식단·씻기·상호작용 유지.
+- 승인된 식단 아이콘을 32×32 / 2,484 B로 가공했다. 투명 안내 PNG는 615×550 / 66,536 B. 신규 자산은 SNKmod에만 설치한다.
+- `--private-room` 개발 빌드: 원작 교환 함수로 지정 방 인물을 잠시 대상에 연결하고 복원. QSP helper 두 개, 기존 location 진입 guard. 원작 판정 본문과 기존 엔진 정책 유지.
+- 정적/대상 모델 검사 8/8, Windows PowerShell 설치·복구·R3 업그레이드 검사 34/34 통과. 인게임 플레이 QA는 미검증. 실제 게임 설치본과 배포 ZIP은 변경하지 않았다.
+- 상세 파일 목록, 예외 경로, 시안과 인게임 QA 항목: [PRIVATE_ROOM_WORK_20260927.md](PRIVATE_ROOM_WORK_20260927.md).
+
+- 후속 승인: 개인실 우측 거주자→안내→주인공 배치를 TEST1 ZIP으로 묶음. 안내 286×258 / 35,297 B로 축소. 재검사 8/8 및 설치/복원 34/34 통과. 실제 게임 미설치·플레이 미검증.
+
+### 작업 기준을 0.1로 전환 (2026-09-28)
+- `codex/snkmod-0.1-handoff`(b45ce99)를 이 작업 브랜치에 병합했다 (이력 보존).
+- build·installer·tests·baseline은 0.1과 같다. installer/README_KR.txt도 0.1판으로 맞췄다.
+- 이 브랜치의 R3 시절 산출물(`releases/…R3_release.zip`, `resources/pending/pregnant_icon_28x30.png`)은 이력으로만 남긴다. 최종 임신 아이콘은 0.1의 금색 `ui/z_pregnant.png`다.
+
+### 결정 15 구현 (2026-09-28)
+- 빌드: 참조가 없는 패키지 이미지는 `content/pic/SNKmod/trash/<원래 하위 경로>`에 둔다. `trash/README_trash.txt`(UTF-8 BOM, CRLF, 탭 구분)에 "trash 안 경로 / 원래 게임 경로 / 이전 SNKmod 경로"를 적는다. 0.1 재빌드 결과 이미지 144개, 사용 115개, trash 29개. `ui overhaul/cum_gray.png`도 extra로 포함했다.
+- 설치기: 설치 후 바뀐 파일은 실패 사유가 아니다. 확인 창(Y/N)과 `-ConfirmChangedFiles`를 없앴다.
+  - 바뀐 파일은 현재본을 `changed/` 아래에 모두 보관한다.
+  - 원래 게임 파일(jack.qsp·css·json·엔진)이 다른 내용으로 바뀌었으면 설치 전 원본으로 되돌리지 않는다. 그 파일을 새 기준으로 삼고 경고한다. 재설치 때는 그 위에 다시 적용하고 새 기록의 Before가 된다.
+  - 패치가 만든 SNKmod 파일은 바뀌었어도 백업 후 지운다 (제거 의미 유지).
+  - 삭제된 원래 게임 파일은 원본으로 되돌린다.
+  - 알려지지 않은 location 본문·없는 location 경고는 location마다가 아니라 호환성 경고 1줄로 모은다 (다른 QSP 모드면 243줄이 나올 수 있어서).
+- 설치 순서 안내(`$OrderNote`): Check 출력과 설치 확인 창에 표시. README_RELEASE_KR.txt에도 [설치 순서] 절 추가.
+- 검사: tests/test_installer.py 53/53 통과 (B1~B4를 새 동작으로 교체). test_release_clean_install.py와 개인실 cjs 검사는 이 환경에 Windows PowerShell·실제 게임·vendor WASM이 없어 돌리지 못했다. QSP 본문은 바꾸지 않았다.
+
+### 0.11 배포 (2026-09-28)
+- 사용자 승인: 버전 0.11로 패키징, JO9UIpatch 반영.
+- `build_package.py`에 `RELEASE_VERSION = '0.11'` 한 곳만 두고 패키지 이름·manifest Version·설치기 제목에 쓴다. README_RELEASE_KR.txt, test_release_clean_install.py도 0.11로 맞췄다.
+- 산출물: `releases/JO9 UI_overhaul_SNKmod_0.11.zip` (23,739,025 B, SHA-256 `81d3bc1d877851f979c906d0fdf5d3c2642e9f046c044bdc4ef133c6c55a76cf`, 176 항목, 0.1과 같은 무압축·최상위 폴더 구조).
+- 검사: 빌드본과 ZIP 압축 해제본 모두 test_installer 53/53. 참조 분류는 한글 참조·연결 누락·출처 누락 0, trash 밖 미참조 0 (순정에 없는 참조 40은 기존 순정 참조 29 + menu_icon 누락 11).
+- 0.1 대비 변경: 예비 29개 trash 보관, cum_gray 추가, 바뀐 파일은 호환성 경고로 처리, 설치 순서 안내.
+
+### Codex 최종 인계 인수 (2026-09-28)
+- Codex 작업은 종료했고 이후는 Claude가 맡는다. `codex/snkmod-0.1-handoff` d3188e9를 작업 브랜치에 병합했다.
+- 들어온 것은 문서·색인·이력·검사 런타임뿐이다. build·installer·tests 변경은 없어 0.11을 덮어쓰지 않았다.
+  - 시작 문서 `docs/PATCH_0_1_MASTER_HANDOFF_KR.md`, `docs/package-index/`(0.1 ZIP 명세·이미지 맵·QSP location 색인·파일 목록), `docs/handoff/history/` 대화 이력.
+  - WASM 런타임 `audits/reward-diagnostic/vendor-legacy/package/` (@qsp/wasm-engine 1.0.0).
+- 인계 브랜치는 0.1 당시 기록이다. 0.1 수치(이미지 143개, ZIP 항목 161개)는 0.11(이미지 144개 + trash README, 항목 176개)과 다르다. 최신 기준은 0.11이다.
+- 런타임 보완 후 0.11 빌드본으로 다시 검사했다. 개인실 WASM 4종(출산·식단·착유·경로) 모두 PASS, test_private_room.py 13/13 OK (기준본은 releases의 R3 ZIP을 풀어 지정).
+- 남은 검증: Windows 실게임 CHECK→APPLY→인게임→RESTORE, test_release_clean_install.py(Windows PowerShell·실게임 폴더 필요). 완료로 표시하지 않는다.
+
+### 0.12 — jack.qsp 완성본 동봉 (2026-09-28)
+- 증상: 순정 + 0.11만 설치한 게임에서 화면이 패치 전 UI처럼 나옴. 사용자가 정상으로 보이는 jack.qsp를 제공.
+- 분석: 제공 파일(SHA a9bfe562…)과 0.11 APPLY 결과(4b421c1b…)는 location 248개 본문·설명·액션이 모두 같고, 헤더 필드 1만 다르다 (`0.1.1` 대 순정 `2026-09-03 (QGen 4.3.0-b1)`). 헤더가 원인인지는 미확정.
+- 사용자 결정: 설치 때 QSP를 조립하지 말고 완성된 jack.qsp를 패치에 넣고, 원본은 다른 폴더에 보관한다. 패치는 Python 없이 독립 실행돼야 한다.
+- 구현:
+  - build: `build_full_qsp()`가 순정 jack.qsp에 패치 본문을 넣고 신규 location 5개를 붙여 `payload/jack.qsp`를 만든다. 헤더는 사용자 확인 파일과 같은 `0.1.1`. 결과가 제공 파일과 바이트 단위로 같음(a9bfe562…).
+  - manifest `Qsp` {Hash, Before=[순정, FIX6 FinalQsp]}. 설치기는 원본을 `_JO9_SNKmod_STATE/<시각>/original/jack.qsp`에 보관하고 교체만 한다. `PanelCodec.cs`·`path-rules.json`은 패키지에서 뺐다. `qsp-patches.json`은 검사용 기록으로 남긴다.
+  - 설치 후 파일이 이 패키지 파일과 같은 내용이면 "다른 모드 변경"으로 보지 않는다 (사용자가 수동으로 패치 QSP를 넣은 경우에도 RESTORE가 순정으로 돌아가도록).
+- 검사: test_installer 58/58 (빌드본·ZIP 해제본), 개인실 WASM 4종·정적 13개 통과, 참조 분류 이상 없음. 순정에 새로 설치·0.11 위 업그레이드·수동 교체 후 업그레이드 모두 RESTORE 시 순정 QSP(070dad…)로 복원 확인.
+- 산출물: `releases/JO9 UI_overhaul_SNKmod_0.12.zip` (16,050,715 B, 압축 저장, SHA-256 cc6daaef…). 버전명 0.12는 임시로 정했다.
+
+### 예전 흔적 메시지 제거 (2026-09-28, 사용자 지시)
+- 지시: "FIX6 교체 이미지 1개가 … 백업이 없습니다" 같은 지난 흔적 메시지를 모두 지운다.
+- FIX6 전환 기능(`TransitionFromFix6`)과 관련 메시지·manifest `Fix6` 항목을 없앴다. 순정 기준 독립 설치형이라 필요 없다. 예전 FIX6 백업 폴더는 건드리지 않는다.
+- "이전 SNKmod 설치(x)가 있어 먼저 되돌립니다"는 경고가 아니라 요약 한 줄("이전 SNKmod UI 설치(x)를 정리하고 새로 설치합니다")로 바꿨다.
+- Check 모드에서 이전 설치가 쓴 파일을 "순정과 다름"으로 잘못 경고하지 않도록, 이전 설치 기록의 After 해시는 호환성 경고에서 제외한다.
+- README의 [기존 설치본] 절을 [업데이트]로 정리했다.
+- 검사: test_installer 58/58 (C 항목을 "FIX6 흔적 메시지 없음·FIX6 백업 폴더 불변"으로 교체), 개인실 검사 통과.
+
+### cell_exchange 아이콘 교체 (2026-09-28, 사용자 지시)
+- 사용자가 새 `buttons/cell_exchange.png` 원본(1254×1254)을 제공. 원본은 `resources/source_art/cell_exchange_1254.png`에 보관.
+- 기존 순정 파일(49×66, 그림 영역 x5~49·세로 전체, SHA d696c5af…)에 맞춰 보이는 부분(398×567)을 비율 유지로 44×63에 축소, 49×66 투명 캔버스의 같은 영역에 배치 → `resources/new/content/pic/buttons/cell_exchange.png` (6,331 B).
+- `resource_rules.json` extra에 추가. SNKmod/buttons/cell_exchange.png로 설치되고 main_screen·prison_cell·stasis_cell 참조 3곳이 SNKmod 경로로 바뀐다. 원래 경로의 순정 파일은 건드리지 않는다.
+- 이 변경으로 패키지 jack.qsp는 사용자 확인본(a9bfe562…)과 이 경로 3곳만 다르다.
+- 검사: test_installer 58/58, 개인실 검사 통과, 참조 분류 이상 없음 (SNKMOD_CHANGED 100→101).
+
+### 배포용 README.html과 0.12 재패키징 (2026-09-28)
+- 사용자 지시: 배포 설치본에 이미지가 들어간 README html을 넣는다. 시스템 메시지 대신 호환 불가·권장 선행 설치 같은 꼭 필요한 정보만 쓴다.
+- `installer/README.html`: 설치 전 필수 안내(호환 불가, 권장 순서) → 설치 방법 → 주요 변경 사항(메인 화면·개인실 스크린샷, 새 상태 아이콘 9개는 payload 이미지를 직접 참조) → 화면이 예전 그대로일 때.
+- 스크린샷은 사용자 제공(메인 화면, 개인실 식사 설정) → `installer/README_images/main.png`, `private_room.png`. 빌드가 README.html과 README_images를 패키지 루트에 복사한다.
+- 설치기 메시지도 같은 원칙으로 줄였다: 확인 창·CHECK는 [꼭 읽어 주세요] 안내만, 완료는 "설치가 끝났습니다… 되돌리려면 RESTORE.cmd", 알림은 다른 모드 감지·설치 후 다른 패치 설치 두 경우만. 엔진·파일 수·해시·경로 문구 삭제.
+- 산출물: `releases/JO9 UI_overhaul_SNKmod_0.12.zip` (18,597,052 B, SHA-256 04f6642f…, 항목 180개). ZIP 해제본으로 test_installer 58/58, 개인실 검사 통과.
+
+### 장비 툴팁 강화 통합 (2026-09-30)
+- 입력: `JO9_EquipmentTooltip_TestPatch_v0.2_CurrentQSP_2.zip` (완성 QSP 1개 + README). 기준은 사용자 현재 jack.qsp(헤더 "JO9 Kura Personal Patch v0.3", location 243개)이고 #dynamic 본문만 바뀌었다고 적혀 있다.
+- 분석(순정 #dynamic 대비): 툴팁 변경은 두 종류뿐이다.
+  - 장비 링크 379줄: 기존 줄에 ` class="tooltip-left" tooltip-data="…"`만 붙음 (속성을 지우면 순정 줄과 동일).
+  - `$get_non_combat_equipment` 보조 코드 1줄 → 11줄: `$item_description`에서 태그를 지운 툴팁 문구를 만들어 링크에 붙임.
+  - 그 밖의 6곳(hero_choice 범위, 뱀자리 구역 시작 등)은 Kura 개인 패치 변경이라 통합하지 않았다.
+- 구현: 치환 목록 `resources/tooltip/dynamic_tooltip.json`(Old 줄 → New 줄들, 380개). 릴리스 빌드가 #dynamic 패치 본문에 적용하며, Old 줄이 하나라도 없으면 빌드를 멈춘다. 적용 결과의 툴팁 줄 383개가 테스트 QSP와 동일.
+- CSS: `.tooltip-left`는 이미 base.css에 있다.
+- 검사: 새 `tests/test_equipment_tooltip.cjs`(WASM으로 패키지 jack.qsp의 #dynamic 실행 후 보조 코드 호출, 태그 정리·따옴표 처리 확인) 통과. test_private_room의 #dynamic 불변 검사는 기준본에 같은 툴팁 치환을 적용해 비교하도록 바꿨다(13/13). test_installer 58/58, 개인실 WASM 4종 통과.
+- README.html에 "4. 장비 설명 툴팁" 절 추가.
+- 산출물: `releases/JO9 UI_overhaul_SNKmod_0.12.zip` (18,642,667 B, SHA-256 c65c9c09…), payload/jack.qsp SHA b1ee13de…. 인게임 확인 전.
+
+### 쿠라 개인 패치 병합 (2026-09-30, 사용자 지시)
+- 출처: 툴팁 테스트 QSP의 기준(사용자 현재 jack.qsp, "JO9 Kura Personal Patch v0.3"). 순정과 다른 9곳 중 5곳(sjm_UI_UIadds·main_screen·slave_stat·city_screen·#food_base)은 FIX6 UI 본문과 같아 제외. 쿠라 변경은 4곳이다.
+  - main_menu: "일반 시작"이 hero_customization_man으로 감 (순정에 있는 location).
+  - init_custom_game: 커스텀 주인공 남성 고정 (`hero_choice = 1`).
+  - #masters_base: 13번 주인공 에드워드 → 쿠라 (설명·난이도·능력치·장비·물약·스파크 20000·세르피스 우호 3 등).
+  - #dynamic: 주인공 선택 범위를 18까지로, 13번은 뱀자리 구역(serpis_house)에서 시작.
+- 구현: `resources/kura/kura_personal_patch.json` (13개 묶음, 앞뒤 한 줄 문맥 포함, 같은 묶음이 여러 번 나오면 순정 기준 Occurrence). 릴리스 빌드가 툴팁 다음에 적용하고, UI 패치 본문에서 묶음 등장 횟수가 순정과 다르면 빌드를 멈춘다.
+- 확인: 순정에 적용한 결과가 쿠라 QSP(툴팁 제외)와 4곳 모두 동일. 패키지 결과는 UI 패치의 개인실 연결 줄만 다르다.
+- 검사: 새 `tests/test_kura_patch.cjs`(WASM에서 #masters_base 실행 후 13번 설정 실행: 이름·스파크·능력치·복장·세르피스 우호) 통과. test_private_room의 #dynamic 비교는 기준본에 쿠라 묶음도 적용해 비교(13/13). test_installer 58/58, 나머지 WASM 검사 통과.
+- README.html에 "5. 새 주인공 쿠라" 절 추가. 기존 세이브 영향은 확인하지 않아 쓰지 않았다(#masters_base는 refresh_database에서도 호출됨).
+- 산출물: `releases/JO9 UI_overhaul_SNKmod_0.12.zip` (18,643,714 B, SHA-256 028df365…), payload/jack.qsp SHA f185c2a7…. 인게임 확인 전.
+
+### 쿠라 개인 패치 v0.3 원본 ZIP 대조 (2026-09-30)
+- 입력: `JO9_Kura_PersonalPatch_v0.3_2.zip` (jack.qsp, 초상화 2개, README, 변경 diff, 원본 텍스트).
+- jack.qsp(SHA dd079836…)는 툴팁 테스트의 기준 파일과 같다. 쿠라만의 변경 4곳(main_menu·init_custom_game·#masters_base·#dynamic)이 패키지에 모두 들어 있음을 확인(개인실 연결 줄과 툴팁을 빼면 동일).
+- 빠져 있던 것: 초상화 `content/pic/master/master_edward.png`, `master_edward_sepia.png`. 쿠라 패치는 순정 에드워드 초상화를 쿠라 그림(150×150, 두 파일 동일 내용 SHA 73323a81…)으로 덮어쓰는 방식이다.
+- 반영: 순정 파일은 두고 `content/pic/SNKmod/master/master_kura.png`, `master_kura_sepia.png`로 설치 (resources/new + extra + rename). 참조 3곳(hero_customization_man 1, #masters_base 2)이 SNKmod 경로로 바뀐다.
+- 빌드 수정: 이미지 경로 전환이 쿠라 병합보다 먼저 일어나 기준 줄이 달라지므로, 쿠라 묶음(Old/New)과 순정 비교 줄에도 같은 경로 전환을 적용한 뒤 찾는다.
+- 검사: test_kura_patch에 초상화 경로 확인 추가, 모든 검사 통과. 참조 분류: 두 초상화가 SNKMOD_RENAMED_CHANGED로 분류.
+- 참고: 쿠라 패치의 세피아 초상화는 컬러판과 같은 그림이다 (원본 그대로 반영).
+- 산출물: `releases/JO9 UI_overhaul_SNKmod_0.12.zip` (18,718,762 B, SHA-256 4928bfd2…). 인게임 확인 전.
+
+### 0.13 배포 (2026-10-01)
+- 사용자 지적: 툴팁·쿠라 병합처럼 내용이 바뀌면 버전을 올린다. 0.12에 계속 덮어 빌드한 것은 잘못이었다.
+- RELEASE_VERSION 0.13 (README.html·README_KR·test_release_clean_install 표기 포함). 내용은 0.12 마지막 빌드(툴팁·쿠라·쿠라 초상화)와 같다.
+- 산출물: `releases/JO9 UI_overhaul_SNKmod_0.13.zip` (18,718,759 B, SHA-256 febc5113…). ZIP 해제본 검사 통과.
+
+### 사용자 결정 16 — QSP 변경 권한 분담 (2026-10-01)
+- QSP 최종 변경 권한은 실시간 게임 수정 세션에 있다. 대사·문구·수치·분기·게임 로직 변경은 그 세션이 `mods/*.json`으로 기록하고, UI 세션은 빌드 때 적용만 한다 (old가 location 안에서 count번 정확히 나와야 하며, 아니면 빌드 중단. 해시 검사 없음. 파일 이름 순서).
+- 단 UI 화면 코드(메인 화면·상태 아이콘·개인실 화면 등 표시용 location 본문)는 UI 세션이 계속 맡는다. 이미지 경로 치환도 UI 빌드가 맡는다.
+- UI 세션이 게임 내용 변경이 필요하면 대화창에 `[QSP 변경 요청]` 형식으로 적는다 (docs/modding/PROCESS.md, 게임 수정 세션 PR 브랜치 claude/elegant-carson-nbb823).
+- 기존 장비 툴팁(resources/tooltip)과 쿠라(resources/kura)를 mods로 옮길지는 미정. 사용자 지시 전까지 그대로 둔다.
+
+### 0.14 후보 — mods 5개 반영 (2026-10-02, 사용자 PC VS Code)
+- main(게임 수정 세션 mods 5개) 병합. 빌드가 mods를 파일 이름 순서로 적용(old count 검사, 해시 미검사), `--no-mods`로 기반 생성.
+- mods 이미지 5개·menu_icon 2개 키는 `resources/mod_assets/`(사용자 PC에서 복사)로 넣고 trash 제외.
+- 후보 SHA 8D963AE8… = 사용자 PC 게임 jack.qsp, 기반 SHA 59E1A1AF… = source/jack_2026-10-01.qsp. qsp_verify PASS, 설치기 58/58(Windows PowerShell 5.1, 출력 인코딩 oem으로 검사 수정), 개인실 정적 13/13. node 없음 → WASM 미실행.
+- 컨펌 요청: `release/qsp-review/0.14/`. 협업 절차: `docs/UI_SESSION_PROTOCOL.md`. 배포 ZIP은 컨펌·사용자 승인 전 만들지 않음.
+
+### 0.14 배포 (2026-10-02)
+- 사용자 게임 점검 완료·패키징 승인. 게임 수정 세션 기록(docs/modding/context-notes.md)의 mods 5개 적용 결과 SHA 8D963AE8…가 후보와 같아 병합 결과 일치 확인 (별도 컨펌 메시지는 없음).
+- 산출물: `releases/JO9 UI_overhaul_SNKmod_0.14.zip` (20,517,743 B, SHA-256 152c9e22…, 항목 191개). payload/jack.qsp SHA 8D963AE8…. ZIP 해제본 설치기 58/58 (Windows PowerShell 5.1).
+
+### JO9UIpatch 반영 (2026-10-02)
+- JO9UIpatch에 9/30 다른 세션의 별도 쿠라·툴팁 통합 26커밋(55d51a0까지)이 있었다. 그 쿠라 초상화는 손상된 PNG(PIL 읽기 실패). `-s ours` 병합으로 이력만 남기고 내용은 0.14로 유지한 뒤 fast-forward로 반영.
+
+### 사용자 결정 17 — PM 체계와 채팅 역할 재정리 (2026-10-02)
+- 이 저장소의 모든 채팅은 하나의 업무. JO9UI패치모드가 PM(히스토리 관리·작업 지휘). 에이전트끼리 복잡한 협업은 하지 않는다. 기준 문서는 `docs/PROJECT.md`.
+- homecom·notebook: 같은 역할의 로컬 모딩 도구(장소만 다름). git(main, docs/modding/context-notes.md)으로 이어받는다.
+- 실시간모딩: 모딩 환경을 만들고 개선하는 것에 대한 자문만. 직접 모딩·컨펌에 참여하지 않는다. (결정 16의 "최종 변경 권한·컨펌"은 이것으로 대체: 검증은 PM, 확인은 사용자 게임 점검.)
+- 텍스트편집: 역할 없음, 대기. 도구가 필요해지면 재개.
+- 이미지 교체 패치: PM이 관리하되 역할은 다르다. QSP 수정이 들어가는 일은 UI 패치(원본과 겹치지 않는 SNKmod 폴더). 이미지 패치는 원본을 덮어쓰는 단순 ZIP.
+- PM 세션에는 다른 채팅에 메시지를 보내는 도구가 없다. 각 채팅에는 사용자가 "docs/PROJECT.md 읽고 그 역할만 해"라고 전한다.
+- 운영 방식 확정: 채팅 간 메시지 도구 없이 진행. 각 채팅에는 사용자가 처음 한 번 'main 받아서 docs/PROJECT.md 읽고 그 역할만 해'를 전한다. PROJECT.md는 main(fe67df3)과 JO9UIpatch에 반영됨.
+- 채팅 이름 지정(2026-10-02): 카일=PM(JO9UI패치모드), 애니=모딩 기능 자문(실시간모딩), 비비=이미지 교체 패치, 펜디=텍스트편집(대기). 로컬 VS Code는 집컴·노트북. 새 PC·새 채팅 이어받기 방법을 PROJECT.md에 적었다.
+
+### 사용자 결정 18 — 잭오나 2.4로 전환 (2026-10-03)
+- SNKmod 폴더 유지로 빌드 관리가 어려워 UI 패치를 끝내고 잭오나 2.4로 방향을 바꾼다.
+- 배포물: (1) 2.4 패치 = 2.3 원본 대비 변경·추가 파일만 담은 덮어쓰기 ZIP, 카일이 빌드. (2) 통압축 = 원본 + 2.4 패치 완성본, 사용자가 로컬에서 관리하고 Google Drive에 수동 업로드.
+- 모딩 작업은 계속 집컴·노트북.
+- 잭오나는 오픈소스, 출처만 밝히면 재배포 허락. 개발자 크레딧에 변경 내역 기입. 2.4 작업자 SAnk, 올걸팩은 smsfbatalovehandle 님 작업.
+- 미결정: SNKmod 폐지, 기존 배포물 흡수·종료, 세이브 호환 범위, 버전 표기.
+
+### 사용자 결정 19 — 2.4 세부 (2026-10-03)
+- SNKmod 폐지 동의. 세이브는 2.3 호환. 버전 표기 2.4.0, 게임 타이틀도 변경.
+- 카일 계획 초안: `docs/PLAN_2_4.md`, 파일 이전 목록 `docs/PLAN_2_4_SNKMOD_MAP.md` (덮어쓰기 56, 새 파일 67, trash 제외 30).
+- 미결정: 창 제목 위치(엔진 설정으로 추정), 재도색 엔진 포함 여부, 기존 배포물 흡수·종료와 이미지 교체 패치 포함 여부.
+- 창 제목은 엔진 빌드 로컬에서 처리. 재도색 엔진 포함, 기존 배포물 흡수·이미지 패치 포함은 로컬 세션에서 결정 (2026-10-03).
+- 로컬 상의용 핸드오프 문서 docs/HANDOFF_2_4_TO_LOCAL.md 작성, main에도 PLAN 두 문서와 함께 올림 (2026-10-03).
