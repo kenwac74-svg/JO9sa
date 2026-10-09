@@ -28,6 +28,7 @@ function current() {
   cacheRaw=raw;cacheStat=stamp;return {raw,doc:cache};
 }
 const pic=path.join(game,'content','pic');
+const isWorkshopOrigin=require('./workshop-origin.cjs').create(game);
 const imageCuts=require('./image-cuts.cjs').create(game,catalogRoot,catalog,runtime);
 const originalCutRegistrar=require('./original-cuts.cjs');
 const localPic=require('./pic-local.cjs').create(game,catalogRoot,catalog,imageCuts);
@@ -162,8 +163,8 @@ const server=http.createServer(async(req,res)=>{
     }
     // A loopback workshop may request UI navigation only, without receiving the editing token.
     if(req.method==='POST'&&url.pathname==='/api/catalog/selection'){
-      const origin='http://127.0.0.1:5269';
-      if(req.headers.origin!==origin){json(res,403,{error:'이미지워크샵에서만 선택할 수 있습니다.'});return;}
+      const origin=req.headers.origin;
+      if(!await isWorkshopOrigin(origin)){json(res,403,{error:'이미지워크샵에서만 선택할 수 있습니다.'});return;}
       res.setHeader('Access-Control-Allow-Origin',origin);res.setHeader('Vary','Origin');
       const input=await body(req,4096);
       const selected=require('./catalog-selection.cjs').select(game,catalog,input.path);
@@ -176,7 +177,7 @@ const server=http.createServer(async(req,res)=>{
 
     // A scoped workshop token grants only cut info/add; it never grants dialogue editing.
     if(url.pathname.startsWith('/api/catalog/cuts/')){
-      const origin=req.headers.origin,workshop=origin==='http://127.0.0.1:5269';
+      const origin=req.headers.origin,workshop=await isWorkshopOrigin(origin);
       if(workshop){res.setHeader('Access-Control-Allow-Origin',origin);res.setHeader('Vary','Origin');}
       if(req.method==='OPTIONS'&&workshop){res.setHeader('Access-Control-Allow-Methods','GET, POST');res.setHeader('Access-Control-Allow-Headers','Content-Type, X-JO9-Cut-Token');res.writeHead(204);res.end();return;}
       const action=url.pathname.slice('/api/catalog/cuts/'.length);

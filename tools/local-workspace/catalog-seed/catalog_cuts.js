@@ -1,6 +1,6 @@
 /* Shared additional-cut dialog for the catalog and image replacement workshop. */
 (function(){
- 'use strict';const config=window.JO9_CATALOG_BRIDGE,workshop=location.port==='5269',host=config?.url||'http://127.0.0.1:3813/';let cutToken;
+ 'use strict';const config=window.JO9_CATALOG_BRIDGE,workshop=!config&&location.protocol==='http:'&&location.hostname==='127.0.0.1'&&!!location.port,host=config?.url||'http://127.0.0.1:3813/';let cutToken;
  async function call(action,input){if(!config&&!cutToken){const r=await fetch(host+'api/catalog/cuts/session');const v=await r.json();if(!r.ok)throw Error(v.error);cutToken=v.token;}
   const r=await fetch(host+'api/catalog/cuts/'+action,{method:'POST',headers:{'Content-Type':'application/json',...(config?{'X-JO9-Token':config.token}:{'X-JO9-Cut-Token':cutToken})},body:JSON.stringify(input)});const v=await r.json();if(!r.ok)throw Error(v.error);return v;
  }

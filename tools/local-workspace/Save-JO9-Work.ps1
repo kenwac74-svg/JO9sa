@@ -1,10 +1,11 @@
-﻿param([string]$GameDir='',[string]$OriginalDir='',[string]$CatalogDir='',[string]$RuntimeDir='',[switch]$Push)
+﻿param([string]$GameDir='',[string]$OriginalDir='',[string]$CatalogDir='',[string]$RuntimeDir='',[string]$SharedRoot='',[switch]$Push)
 $ErrorActionPreference='Stop'
 $repoRoot=Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $config=Get-Content -LiteralPath (Join-Path $PSScriptRoot 'local.config.json') -Raw -Encoding UTF8 | ConvertFrom-Json
 if (!$GameDir) {$GameDir=$config.game}
 if (!$OriginalDir) {$OriginalDir=$config.original}
 if (!$CatalogDir) {if ($config.catalog) {$CatalogDir=$config.catalog} else {$CatalogDir=Join-Path $PSScriptRoot 'catalog'}}
+if (!$SharedRoot -and $config.workspace) {$SharedRoot=$config.workspace}
 if (!$RuntimeDir) {if ($config.runtime) {$RuntimeDir=$config.runtime} else {$RuntimeDir=Join-Path $PSScriptRoot 'runtime'}}
 $taskPython=Join-Path $env:USERPROFILE '.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe'
 if (!(Test-Path -LiteralPath $taskPython)) {$taskPython=(Get-Command python -ErrorAction Stop).Source}
@@ -18,7 +19,7 @@ foreach($name in 'grok-settings.json','dialogue-ai-settings.json') {
  }
 }
 if ($Push) {
- & git -c "safe.directory=$repoRoot" -C $repoRoot add -- tools/local-workspace tools/text-workshop tools/imgmg tools/image-workshop docs mods
+ & git -c "safe.directory=$repoRoot" -C $repoRoot add -- tools/local-workspace tools/text-workshop tools/imgmg tools/image-workshop docs mods records
  if ($LASTEXITCODE -ne 0) {throw 'Git stage failed.'}
  & git -c "safe.directory=$repoRoot" -C $repoRoot diff --cached --quiet
  if ($LASTEXITCODE -eq 1) {
@@ -33,3 +34,9 @@ if ($Push) {
  if (!$taskRemote.StartsWith($taskLocal)) {throw 'Remote verification failed.'}
  Write-Output ('Remote checkpoint verified: '+$taskBranch+' '+$taskLocal)
 } else {Write-Output 'Saved complete management snapshot; Git push was not requested.'}
+
+if ($SharedRoot) {
+ & $taskPython (Join-Path $PSScriptRoot 'export-shared-work.py') --repo $repoRoot --game $GameDir --original $OriginalDir --catalog $CatalogDir --runtime $RuntimeDir --destination $SharedRoot
+ if ($LASTEXITCODE -ne 0) {throw 'Shared folder checkpoint failed. Do not copy an older workspace as the latest work.'}
+ Write-Output ('Shared folder checkpoint saved: '+$SharedRoot)
+}

@@ -1,23 +1,23 @@
-﻿param([string]$GameDir='G:\somi\JO9\game', [string]$NodePath='', [switch]$NoBrowser)
+﻿# The standalone editor entry point delegates to the single workspace launcher.
+param([string]$GameDir='', [string]$OriginalDir='', [string]$CatalogDir='', [string]$RuntimeDir='', [string]$ConfigFile='', [string]$NodePath='', [int]$Port=3813, [switch]$NoBrowser, [string]$WorkspaceLauncher='')
 $ErrorActionPreference='Stop'
-if (!$NodePath) {
-    $bundled=Join-Path $env:USERPROFILE '.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe'
-    if (Test-Path -LiteralPath $bundled) {$NodePath=$bundled} else {$NodePath=(Get-Command node -ErrorAction Stop).Source}
+if (!$WorkspaceLauncher) {
+ # In a repository checkout the launcher is alongside text-workshop.
+ $candidate=Join-Path (Split-Path -Parent $PSScriptRoot) 'local-workspace\Start-JO9-Tools.ps1'
+ if (Test-Path -LiteralPath $candidate) {$WorkspaceLauncher=$candidate}
 }
-$runtime=Join-Path $PSScriptRoot 'runtime'
-New-Item -ItemType Directory -Path $runtime -Force | Out-Null
-$ready=Join-Path $runtime 'server.json'
-if (Test-Path -LiteralPath $ready) {
-    $old=Get-Content -LiteralPath $ready -Raw | ConvertFrom-Json
-    try {$active=Get-Process -Id $old.pid -ErrorAction Stop} catch {$active=$null}
-    if ($active -and $active.ProcessName -eq 'node') {Write-Output $old.url; if (!$NoBrowser) {Start-Process $old.url}; exit}
-    Remove-Item -LiteralPath $ready
+if (!$WorkspaceLauncher) {
+ # Installed tools keep only the launcher location, never API keys or another state store.
+ $pointer=Join-Path $PSScriptRoot 'workspace-launcher.json'
+ if (Test-Path -LiteralPath $pointer) {
+  $location=Get-Content -LiteralPath $pointer -Raw -Encoding UTF8 | ConvertFrom-Json
+  if (Test-Path -LiteralPath $location.launcher) {$WorkspaceLauncher=[string]$location.launcher;if (!$ConfigFile -and $location.config) {$ConfigFile=[string]$location.config}}
+ }
 }
-$arguments='"'+(Join-Path $PSScriptRoot 'server.cjs')+'" --game-dir "'+$GameDir+'" --runtime "'+$runtime+'"'
-$process=Start-Process -FilePath $NodePath -ArgumentList $arguments -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $runtime 'server.log') -RedirectStandardError (Join-Path $runtime 'error.log')
-for ($i=0; $i -lt 100; $i++) {
-    if (Test-Path -LiteralPath $ready) {$state=Get-Content -LiteralPath $ready -Raw | ConvertFrom-Json;Write-Output $state.url;if (!$NoBrowser) {Start-Process $state.url};exit}
-    if ($process.HasExited) {throw (Get-Content -LiteralPath (Join-Path $runtime 'error.log') -Raw)}
-    Start-Sleep -Milliseconds 100
+if (!$WorkspaceLauncher -or !(Test-Path -LiteralPath $WorkspaceLauncher)) {throw 'Canonical workspace launcher not found. Run Start-JO9-Tools.ps1 from the workspace folder first.'}
+$arguments=@{NoBrowser=$NoBrowser;Port=$Port}
+foreach ($name in @('GameDir','OriginalDir','CatalogDir','RuntimeDir','ConfigFile','NodePath')) {
+ $value=Get-Variable -Name $name -ValueOnly
+ if ($value) {$arguments[$name]=$value}
 }
-throw '서버 시작 시간이 초과되었습니다. runtime\error.log를 확인하세요.'
+& $WorkspaceLauncher @arguments
