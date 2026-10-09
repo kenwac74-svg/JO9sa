@@ -165,3 +165,5 @@
 - 실제 클라이언트에서 집 UI 표시, 감옥 전환, 외출/귀환, 개인실 진입/귀환 확인. records/ui/2026-10-10_home_ui_recovery.png에 화면 보관.
 - 추가 사용자 표시: 상단 개인실 초상화 줄은 필요한 이동 기능이다. 구 아이콘 폐지를 기능 삭제로 해석하지 말 것. 방 1~4 초상화 클릭 바로가기를 복구하고, 낡은 maidroom.png 덮개와 생리상태 배지는 생략. 방 개방/빈방/생존/사망 표시 조건 유지. 이 후속 변경의 화면 확인은 사용자 담당.
 - 두 수정은 각각 mods/2026-10-10_restore_home_ui_block.json 및 mods/2026-10-10_restore_room_portrait_navigation.json에 기록. 식단·개인침대 명칭·이미지 전환 수정 유지. 게임 저장 파일은 덮어쓰지 않음.
+
+- 감옥 인물 교체 아이콘: 사용자가 지정한 content/pic/SNKmod/buttons/cell_exchange.png(08DD514A...)를 현재 참조 경로 content/pic/buttons/cell_exchange.png에 복사해 복구. QSP 이동/교체 로직 유지. resources/new에도 동일 파일과 assets mod 기록.
