@@ -1,0 +1,48 @@
+{
+  "before": "428c595bbf88775436741a3dd94d578cc7bf5674025ee64e8c57c46f3797b54d",
+  "after": "6f0bb27bd9fad108773b44f005da247f5c3ad34bf344d4e904f170e9863d7902",
+  "source": {
+    "zip": "G:/somi/JO9/JO9 UI_overhaul_SNKmod_0.14.zip",
+    "qspHash": "8d963ae88dcea0db9500b29bcd5112933abd81042d5be8516113840094e607c6",
+    "threadId": "6ab6213b-3698-83ee-9b44-fa23511e4d04",
+    "threadTitle": "UI 편집 4",
+    "adoptionTurn": "0ecf1135-7235-4bff-aa04-55d4ca6aad64"
+  },
+  "findings": {
+    "diet": "2 / 4 / 8 sparks daily accumulated in total_food_cost; old -1 or 2 -> 1 on migration; 0/1 preserved; special food after manual selection",
+    "specialDay5": "pos_cookie >= 1; spoil rate += 1 + moral each day from day 5",
+    "specialDay10": "pos_dessert >= 1",
+    "sleepName": "Only sleeping preference renamed; physical room names unchanged",
+    "deprecatedIcons": "Remove main_screen legacy maidroom1..4 portrait links and attached status badges. No images deleted.",
+    "buttonCause": "interior_change injected controls inside left:150px character layer with pointer-events:none; now siblings under room container",
+    "notInRelease": "개인침대 label and old portrait-link removal not present in 0.14; applied from current user correction"
+  },
+  "changedLocations": [
+    "slave_stat",
+    "#txt_man",
+    "interior_change",
+    "main_screen",
+    "slave_private_room1",
+    "slave_private_room2",
+    "slave_private_room3",
+    "slave_private_room4",
+    "next_day",
+    "$newloc",
+    "interaction"
+  ],
+  "added": [
+    "snk_room_diet_migrate"
+  ],
+  "visualVerification": "pending-user",
+  "tests": [
+    "QSP roundtrip and official replay exact byte match",
+    "Repeat apply_mods dry run skips 27 edits and added helper",
+    "234 unaffected location bodies unchanged, including pregnancy helper",
+    "Daily diet block exactly matches release 0.14",
+    "Four panels contain special diet and exclude discontinued choices/kitchen restrictions",
+    "Four room assignment streak resets and version-gated save migration inspected",
+    "Sleeping preference and legacy shortcut removal assertions"
+  ],
+  "backup": "G:/somi/JO9/game/modtools/text-workshop/runtime/backups/2026-10-09T15-58-55-969Z_before-private-room-ui-corrections.qsp",
+  "appliedAt": "2026-10-09T15:58:55.969Z"
+}
