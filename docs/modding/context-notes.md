@@ -167,3 +167,12 @@
 - 두 수정은 각각 mods/2026-10-10_restore_home_ui_block.json 및 mods/2026-10-10_restore_room_portrait_navigation.json에 기록. 식단·개인침대 명칭·이미지 전환 수정 유지. 게임 저장 파일은 덮어쓰지 않음.
 
 - 감옥 인물 교체 아이콘: 사용자가 지정한 content/pic/SNKmod/buttons/cell_exchange.png(08DD514A...)를 현재 참조 경로 content/pic/buttons/cell_exchange.png에 복사해 복구. QSP 이동/교체 로직 유지. resources/new에도 동일 파일과 assets mod 기록.
+
+
+## 2026-10-10 빈 참고 정보 반영 및 남자 주인공 기준 확정
+- 사용자 승인 초안 중 남자 주인공·공용 인물 73명, 장소 62곳의 설명을 보충. 여자 주인공 전용 mister_grease/Jade_Guardsman 2명은 제외. 기존 비어 있지 않은 설명은 덮어쓰지 않음.
+- 사용자 결정: 여자 주인공 플레이는 폐지 예정. 앞으로 남자 주인공 플레이 기준으로 설계. 이번에는 여자 주인공 분기 삭제·메뉴 폐쇄를 수행하지 않았음. 별도 변경에서 시작 선택/세이브/전용 이벤트 참조를 함께 점검할 것.
+- jo9_reference_info location 추가. #npc_base/#place_base 초기화 후 보충, 기존 세이브는 $newloc 최초 호출 때 보충. 게임 진행 조건·UI·전투·수치 코드는 유지.
+- gastronom/meat의 동적 상품 재고 설명은 기존 동작 유지. dojo는 예비, erza_battle은 전투용 등록 장소.
+- 왕복 바이트 일치, 남자/공용 인물·장소 등록 확인, 기존 location 3곳 외 변경 없음, 공식 패치 재생 일치 및 반복 적용 검사 통과. 실제 화면은 사용자 확인.
+- mods/2026-10-10_missing_reference_descriptions_male.json 및 records/reference-info/2026-10-10_missing_reference_descriptions_male.json에 본문·범위·백업·해시·검사 기록.
