@@ -1,0 +1,25 @@
+{
+  "cause": "Legacy room shortcut deletion also removed the enclosing home facilities END (net block depth -1). Restored that END.",
+  "before": "6f0bb27bd9fad108773b44f005da247f5c3ad34bf344d4e904f170e9863d7902",
+  "after": "a621fca06c99d6d49e5aa8eed7f66a00f56abc2c0e3ade76f2940e95f11faefc",
+  "backup": "G:/somi/JO9/game/jack.qsp.bak_20261010_015650",
+  "tests": [
+    "Official apply_mods replay matches installed bytes",
+    "Main_screen equals pre-removal body with only deprecated shortcuts removed and enclosing END preserved",
+    "Other 245 location bodies unchanged",
+    "Removed fragment structural depth -1 confirms enclosing END belonged outside shortcut section"
+  ],
+  "visualVerification": [
+    "Home facilities, travel list, card actions and exit visible in live client",
+    "Prison facility toggle works",
+    "Exit to city and return home works",
+    "Private room navigation and return works"
+  ],
+  "previousReportCorrection": "Previous UI recovery tests did not validate main_screen block nesting; prior claims did not establish whole-home visual correctness.",
+  "followup": {
+    "change": "Restore four room portrait shortcuts per marked screenshot. Old overlay icon and home cycle badges stay removed.",
+    "hash": "e662a0d7798ba33f803deae9a29bd456ed5397c392b197daf93585f78d3d1732",
+    "visualVerification": "User will verify after game reload",
+    "backup": "G:/somi/JO9/game/jack.qsp.bak_20261010_021009"
+  }
+}
