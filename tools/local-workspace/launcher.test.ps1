@@ -118,6 +118,18 @@ try {
  Set-Content -LiteralPath (Join-Path $workshopRuntime 'server.pid') -Value '2001' -Encoding ASCII
  Set-Content -LiteralPath (Join-Path $workshopRuntime 'port.txt') -Value '12770' -Encoding ASCII
  $global:jo9LauncherTest.workshop=[pscustomobject]@{ProcessId=2001;CommandLine=('powershell.exe -NoProfile -File "'+$workshop.Replace('\','/').ToUpperInvariant()+'" -Port 0')}
+ $validWorkshop=$global:jo9LauncherTest.workshop
+ foreach ($mode in @('-Command','-co','-c','-EncodedCommand','-ec','-e')) {
+  $global:jo9LauncherTest.workshop=@($validWorkshop,[pscustomobject]@{ProcessId=2002;CommandLine=('pwsh.exe '+$mode+' Write-Output -File "'+$workshop+'"')})
+  $matched=@(Get-WorkshopProcess $workshop)
+  Assert ($matched.Count -eq 1 -and $matched[0].ProcessId -eq 2001) ('PowerShell command body was mistaken for a script: '+$mode)
+ }
+ foreach ($fakePath in @('JO9_Server.ps1',('G:\bad'+[char]0+'\JO9_Server.ps1'))) {
+  $global:jo9LauncherTest.workshop=@($validWorkshop,[pscustomobject]@{ProcessId=2002;CommandLine=('pwsh.exe -File "'+$fakePath+'"')})
+  $matched=@(Get-WorkshopProcess $workshop)
+  Assert ($matched.Count -eq 1 -and $matched[0].ProcessId -eq 2001) 'Invalid or relative process path disrupted workshop ownership detection.'
+ }
+ $global:jo9LauncherTest.workshop=$validWorkshop
  $global:jo9LauncherTest.status=[pscustomobject]@{alive=$true;pid=2001;port=12770}
  Assert ((Get-WorkshopUrl $workshopRuntime $workshop) -eq 'http://127.0.0.1:12770/') 'Workshop did not reuse the dynamic registered port.'
  $global:jo9LauncherTest.status.pid=999

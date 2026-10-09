@@ -8,8 +8,22 @@ function Normalize-WorkshopPath([string]$Value) {
 function Get-WorkshopProcess([string]$Script) {
  return @(Get-CimInstance Win32_Process -Filter "Name='powershell.exe' OR Name='pwsh.exe'" | Where-Object {
   $tokens=@([regex]::Matches([string]$_.CommandLine,'"([^"]*)"|(\S+)') | ForEach-Object {if ($_.Groups[1].Success) {$_.Groups[1].Value} else {$_.Groups[2].Value}})
-  $index=[array]::IndexOf($tokens,'-File')
-  $index -ge 0 -and $index+1 -lt $tokens.Count -and (Normalize-WorkshopPath $tokens[$index+1]) -eq (Normalize-WorkshopPath $Script)
+  $index=-1
+  for ($i=1;$i -lt $tokens.Count;$i++) {if ($tokens[$i] -ieq '-File') {$index=$i;break}}
+  if ($index -lt 0 -or $index+1 -ge $tokens.Count) {return $false}
+  # A -Command body can mention -File; it is not the process's script argument.
+  for ($i=1;$i -lt $index;$i++) {
+   $option=([string]$tokens[$i]).TrimStart([char[]]'-/').ToLowerInvariant()
+   if ($tokens[$i] -match '^[-/]' -and $option) {
+    foreach ($mode in @('command','commandwithargs','encodedcommand','encodedarguments','ec','ea')) {
+     if ($mode.StartsWith($option,[StringComparison]::OrdinalIgnoreCase)) {return $false}
+    }
+   }
+  }
+  $scriptPath=[string]$tokens[$index+1]
+  # Resolve only absolute paths; another process may have a different working directory.
+  if ($scriptPath -notmatch '^(?:[A-Za-z]:[\\/]|\\\\[^\\]+\\[^\\]+\\)') {return $false}
+  try {return (Normalize-WorkshopPath $scriptPath) -eq (Normalize-WorkshopPath $Script)} catch {return $false}
  })
 }
 function Get-WorkshopUrl([string]$Runtime,[string]$Script) {
