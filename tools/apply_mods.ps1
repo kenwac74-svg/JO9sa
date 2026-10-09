@@ -94,6 +94,20 @@ function Test-Superseded($edit, [string]$text, [int]$from) {
     }
     return $false
 }
+# An added location may later be deliberately replaced by a full-body edit.
+# Accept only an exact declared evolution; unexpected bodies still abort.
+function Test-AddedBodyEvolution($loc, [string]$actual, [int]$from) {
+    $expected = [string]$loc.body
+    for ($j = $from; $j -lt $later.Count; $j++) {
+        $f = $later[$j]
+        if ($f.location -eq $loc.name -and $f.field -eq 'body' -and
+            [int]$f.count -eq 1 -and [string]$f.old -ceq $expected) {
+            $expected = [string]$f.new
+            if ($expected -ceq $actual) { return $true }
+        }
+    }
+    return $false
+}
 $pos = 0
 foreach ($mod in $mods) {
     if ($mod.before_sha256 -and $hash -eq $mod.before_sha256.ToUpper()) { Write-Host "[참고] $($mod.id): 현재 해시가 기록된 적용 전 해시와 같음" }
@@ -105,7 +119,8 @@ foreach ($mod in $mods) {
         if ($index.ContainsKey($loc.name)) {
             $li = $index[$loc.name]
             if ([Jo9Qsp]::Shift($lines[$li + 1], 5) -cne [string]$loc.desc -or
-                [Jo9Qsp]::Shift($lines[$li + 2], 5) -cne [string]$loc.body -or
+                ([Jo9Qsp]::Shift($lines[$li + 2], 5) -cne [string]$loc.body -and
+                 -not (Test-AddedBodyEvolution $loc ([Jo9Qsp]::Shift($lines[$li + 2], 5)) $pos)) -or
                 [Jo9Qsp]::Shift($lines[$li + 3], 5) -ne '0') {
                 throw "[$($mod.id)] added location conflicts: $($loc.name). No file written."
             }
@@ -135,7 +150,9 @@ foreach ($mod in $mods) {
         # new가 old를 품으면 적용 후에도 old가 남으므로 new를 먼저 본다. 그 밖에는 old를 먼저 본다.
         $applied = $nNew -eq $want -and ($nOld -eq 0 -or $e.new.Contains($e.old))
         $pending = $nOld -eq $want -and -not ($e.new.Contains($e.old) -and $nNew -eq $want)
-        if ($pending) {
+        if (Test-Superseded $e $text $pos) {
+            Write-Host "[건너뜀] $where 뒤 패치가 이 결과를 다시 바꿔 적용돼 있음"
+        } elseif ($pending) {
             $lines[$li] = [Jo9Qsp]::Shift($text.Replace($e.old, $e.new), -5)
             $changed++
             Write-Host "[적용] $where $nOld 곳 치환"

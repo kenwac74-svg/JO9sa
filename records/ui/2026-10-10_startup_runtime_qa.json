@@ -1,0 +1,70 @@
+{
+  "id": "2026-10-10_startup_runtime_qa",
+  "recorded": "2026-10-09T19:16:04.401Z",
+  "target": "G:/somi/JO9/game/jack.qsp",
+  "before_sha256": "9037345f7d479570e2b5deb1e2ab512e614cec3770210948635b61ebd06a2030",
+  "after_sha256": "c45a110453e5e037dbb728f068370c98ac94f18b3cc9ed2b0cc7f4706b9641d5",
+  "backup": "G:/somi/JO9/game/jack.qsp.bak_20261010_040936",
+  "runtime_backup": "G:/somi/JO9/game/modtools/text-workshop/runtime/backups/2026-10-09T19-16-04-401Z_startup-crlf.qsp",
+  "result": "reported startup failure fixed; user confirmed normal operation",
+  "cause": "My reference-description patch used bare LF instead of CRLF in executable QSP helper and three initialization hooks. It interrupted initialization before menu background assignment and again during new-game start.",
+  "previous_qa_failure": "I reported byte/structure and Kura data tests without executing the initialization path. Those tests did not demonstrate that a new game could start.",
+  "changes": [
+    "CRLF restored in jo9_reference_info, #npc_base, #place_base and $newloc; text content unchanged",
+    "apply_mods recognizes exact declared full-body evolution of an added location and checks later applied edits before reapplying earlier anchors",
+    "tests/test_reference_runtime.cjs checks executable delimiters and 135 complete blocks"
+  ],
+  "checks": [
+    {
+      "name": "QSP byte-exact round trip",
+      "status": "PASS"
+    },
+    {
+      "name": "135 reference blocks and three hook delimiters",
+      "status": "PASS"
+    },
+    {
+      "name": "Kura preset, male start routes, 42 avatar cases and two portrait checksums",
+      "status": "PASS"
+    },
+    {
+      "name": "fresh original-description plus CRLF-fix replay",
+      "status": "PASS",
+      "sha256": "c45a110453e5e037dbb728f068370c98ac94f18b3cc9ed2b0cc7f4706b9641d5"
+    },
+    {
+      "name": "repeat combined patches leave QSP unchanged",
+      "status": "PASS"
+    },
+    {
+      "name": "unexpected added body rejects without writing",
+      "status": "PASS"
+    },
+    {
+      "name": "before fix: white menu and white screen after Kura confirmation",
+      "status": "REPRODUCED in actual client"
+    },
+    {
+      "name": "before fix: male selection and Kura data screen",
+      "status": "PASS observed in actual client"
+    },
+    {
+      "name": "after fix: normal operation",
+      "status": "PASS user confirmation: 이제 되네"
+    },
+    {
+      "name": "after fix: current NPC screen",
+      "status": "PASS observed in actual client"
+    },
+    {
+      "name": "after fix: complete menu-to-house route, room/diet/end-day gameplay",
+      "status": "NOT independently tested; user owns gameplay testing"
+    }
+  ],
+  "preservation": "Only four QSP bodies change. Home/private-room UI, diet, pregnancy and Kura gameplay values are otherwise byte-identical to the pre-fix file.",
+  "playtest_policy": "User on 2026-10-10: 플레이 테스트는 어지간하면 내가 할테니까 나한테 부탁해. Ask user to do gameplay checks; do not control client by default.",
+  "screenshots_supplied_by_user": [
+    "C:/Users/User/AppData/Local/Temp/codex-clipboard-ba8bd670-707e-4586-b2ba-27c25c8622c9.png",
+    "C:/Users/User/AppData/Local/Temp/codex-clipboard-7e15bae2-e344-4ad3-b7e7-81d2aee0adf6.png"
+  ]
+}

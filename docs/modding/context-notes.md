@@ -185,3 +185,12 @@
 - master_kura.png/master_kura_sepia.png는 content/pic/master/와 resources/new/에 보관. SNKmod 참조를 새로 만들지 않음. 공유폴더 복원용 개인 이미지 ledger에도 등록.
 - 기존 세이브의 돈·능력치·장비·거처는 자동 덮어쓰지 않음. 새 시작 화면은 게임 재실행 후 일반 시작에서 확인.
 - QSP 왕복, 공식 재생/반복, 5 locations 이외 바이트 보존, 개인실·식단·임신·설명 유지 확인. tests/test_kura_patch.cjs는 쿠라 preset/시작/42개 선택 경계/초상화 해시를 확인. 실제 화면은 사용자 확인.
+
+
+## 2026-10-10 시작 흰 화면 회귀 QA 및 수정
+- 설명 보충 패치의 실행 코드에 CRLF 대신 bare LF를 넣은 내 오류. 메인 메뉴 버튼 출력 이후 DB 초기화가 중단되어 배경이 흰색, 쿠라 승인 뒤 시작도 흰색으로 중단. 실제 클라이언트에서 두 증상 재현. 기존 코드 검사 통과를 동작 검증으로 보고한 것은 부적절했음.
+- jo9_reference_info 408행과 #npc_base/#place_base/$newloc 호출부 개행만 수정. 기존 인물/장소 문장과 쿠라 능력치·돈·집 UI·식단·임신 코드는 유지.
+- 공식 패치 원본→수정 재생 결과 일치, 합본 재적용 무변경, 임의 added body 충돌 시 무쓰기 검사 통과. apply_mods.ps1은 후속 full-body edit로 변경된 added location을 정확한 선언형 기록으로 확인하고, 이전 anchor가 남아 있어도 후속 적용 상태를 먼저 검사.
+- 사용자 “이제 되네”로 정상 동작 확인. 수정 뒤 현재 NPC 화면 정상 출력 관찰. 수정 후 메뉴→새 게임→집 전체 경로와 개인실/식사/하루 넘김을 내가 모두 플레이 검증한 것은 아님. records/ui/2026-10-10_startup_runtime_qa.json에 구분 기록.
+- 사용자 명시 결정: 플레이 테스트는 어지간하면 사용자가 한다. 앞으로 테스트가 필요하면 요청하고, 기본적으로 직접 클라이언트를 조작하지 말 것.
+- 새 QSP 실행 코드 생성 시 CRLF 사용. tests/test_reference_runtime.cjs로 helper 블록 및 호출 delimiter 확인. 바이트 왕복 검사는 실행 검증을 대체하지 않음.
