@@ -92,14 +92,17 @@ function create(game,catalogRoot,catalog,runtime){
   return groups.map(g=>`if $jo9_base = ${quote(g.base)}:\r\n\tjo9_count = ${g.paths.length}\r\n`+g.paths.map((p,i)=>`\tif jo9_selected = ${i}: $jo9_path = ${quote(p)}\r\n`).join('')+'end').join('\r\n');
  }
  function refresh(id){const raw=fs.readFileSync(target),doc=cycleDocument(raw);if(!core.serialize(doc).equals(raw))throw Error('QSP 왕복 검사 실패');const loc=doc.locations.find(l=>l.name==='interior_change');
-  const body=core.shift(doc.lines[loc.body],5),start=' if jo9_selected < 0: jo9_selected = 0\r\n',end='\r\n if jo9_selected >= jo9_count:',a=body.indexOf(start),b=body.indexOf(end,a);if(!body.startsWith('! JO9 image-cycle:')||a<0||b<0)throw Error('이미지 전환 패치를 먼저 설치하세요.');
+  const body=core.shift(doc.lines[loc.body],5),marker='! JO9 image-cycle:',mark=body.indexOf(marker),start=' if jo9_selected < 0: jo9_selected = 0\r\n',end='\r\n if jo9_selected >= jo9_count:',a=mark<0?-1:body.indexOf(start,mark),b=a<0?-1:body.indexOf(end,a);
+  // Other installed features can prepend a location guard. Preserve that code;
+  // only the marked image-cycle registry is replaced, never the whole location.
+  if(mark<0||(mark>0&&body.slice(mark-2,mark)!=='\r\n')||body.indexOf(marker,mark+marker.length)>=0||a<0||b<0)throw Error('이미지 전환 패치의 등록 구간을 확인할 수 없습니다.');
   const next=body.slice(0,a+start.length)+' '+registry()+body.slice(b);if(!checkSyntax(next).ok)throw Error('추가 컷 등록 코드의 따옴표·END 검사 실패');if(body===next)return{unchanged:true};doc.lines[loc.body]=core.shift(next,-5);const after=core.serialize(doc);if(!core.serialize(core.parse(after)).equals(after))throw Error('QSP 출력 검사 실패');
   const record={id,description:'JO9O 원본 B컷 경로와 Windows 복사 이름을 이미지 전환 목록에 등록',before_sha256:hash(raw),after_sha256:hash(after),edits:[{location:'interior_change',field:'body',old:body,new:next,count:1}]};
   const dir=path.join(runtime,'cut-mods',id);fs.mkdirSync(dir,{recursive:true});fs.writeFileSync(path.join(dir,id+'.json'),JSON.stringify(record,null,2));
   const result=spawnSync('powershell.exe',['-NoProfile','-ExecutionPolicy','Bypass','-File',path.join(__dirname,'apply_mods.ps1'),'-Qsp',target,'-ModsDir',dir],{encoding:'utf8',windowsHide:true,timeout:60000});
   if(hash(fs.readFileSync(target))!==record.after_sha256)throw Error('전환 목록 갱신 실패: '+(result.stderr||result.error?.message||result.stdout));
   const canonical=path.resolve(__dirname,'../../mods/2026-10-08_persistent_image_cycle.json');
-  if(fs.existsSync(canonical)){const mod=JSON.parse(fs.readFileSync(canonical,'utf8')),edit=mod.edits.find(e=>e.location==='interior_change'),anchor='!Move to a different room in your apartment';if(edit&&next.includes(anchor)){edit.new=next.slice(0,next.indexOf(anchor))+anchor;mod.after_sha256=record.after_sha256;fs.writeFileSync(canonical,JSON.stringify(mod,null,2));}}
+  if(fs.existsSync(canonical)){const mod=JSON.parse(fs.readFileSync(canonical,'utf8')),edit=mod.edits.find(e=>e.location==='interior_change'),anchor='!Move to a different room in your apartment';if(edit&&next.includes(anchor)){edit.new=next.slice(mark,next.indexOf(anchor))+anchor;mod.after_sha256=record.after_sha256;fs.writeFileSync(canonical,JSON.stringify(mod,null,2));}}
   return{hash:record.after_sha256,mod:path.join(dir,id+'.json')};
  }
  function add(input){if(locked)throw Error('추가 컷 저장 중입니다.');locked=true;let full,data,id;

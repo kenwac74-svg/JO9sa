@@ -194,3 +194,10 @@
 - 사용자 “이제 되네”로 정상 동작 확인. 수정 뒤 현재 NPC 화면 정상 출력 관찰. 수정 후 메뉴→새 게임→집 전체 경로와 개인실/식사/하루 넘김을 내가 모두 플레이 검증한 것은 아님. records/ui/2026-10-10_startup_runtime_qa.json에 구분 기록.
 - 사용자 명시 결정: 플레이 테스트는 어지간하면 사용자가 한다. 앞으로 테스트가 필요하면 요청하고, 기본적으로 직접 클라이언트를 조작하지 말 것.
 - 새 QSP 실행 코드 생성 시 CRLF 사용. tests/test_reference_runtime.cjs로 helper 블록 및 호출 delimiter 확인. 바이트 왕복 검사는 실행 검증을 대체하지 않음.
+
+## 2026-10-10 New-cut save rejected after private-room UI recovery
+- Symptom: adding bg/Erza (2).png reported that the image-cycle patch must be installed, even though the patch was present.
+- Cause: image-cuts.refresh required its marker at body offset zero. The private-room bridge guard legitimately precedes that marker in interior_change.
+- Fix: locate a unique CRLF-anchored cycle marker and replace only its registry. Preserve the preceding guard and original room-switching tail. Canonical cycle-mod export begins at the marker, so the separate bridge guard is not duplicated in the mod.
+- QA: reproduced two failures before the fix; three regression/integration tests pass afterward. Temporary-QSP cut save preserves the guard, unrelated location and room UI tail, writes a backup, and repeats without a change. Missing/incomplete cycle blocks still fail without writing.
+- Runtime/gameplay verification: no game client automation. The PLAY QSP and user images are not changed by installing this tool fix. User retries the failed new-cut save after refreshing the tool.
