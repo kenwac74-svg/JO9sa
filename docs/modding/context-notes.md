@@ -103,3 +103,9 @@
 - 선언형 패치: `mods/2026-10-04_fog_milking_button.json`. 리소스: `resources/new/content/pic/buttons/Fer_Tentacle.png`(SNKmod 없는 2.4 경로). 플레이 및 IMGMG merge_work에 동일 이미지 배치. UI 패치 통합·패키징은 하지 않았다.
 - 게임 QSP SHA-256: `88F6A7F0A8060E47DFB0475FED4AD1D66442DABDADB931E8C71E744BE2F08FA6` → `A90A9ED558F1F48115AA15FEFEE06FD5D4BF984497F4EA8087FD8DEAF208E6CB`. 원본 왕복 일치, 복사본에 apply_mods 적용 결과 일치, 변경 location은 main_screen 하나·이미지 경로 두 곳. 기존 녹색 이미지와 원본 JO9O는 유지.
 - 체크리스트 UI-0559 추가 및 done 체크. 기존 항목·번호·체크 상태·PIC 공유 등록 기능 유지. progress.json/history.jsonl에도 기록. 백업 및 제공 원본: `G:\somi\IMGMG\image_work\backups\fog_button_20261004_191021`. 게임 실행·화면 검증은 사용자 담당(미검증).
+
+
+### 대사 줄맞춤·주인공 호칭 통일 (2026-10-09, Codex)
+- 사용자 기준: 머리 대시 제거, NPC 이름 아래 <br>&nbsp; 한 칸 들여쓰기, 물리 개행·탭 정리, 주인공 너는/넌→당신은. 다른 인물을 지칭하는 말과 의도 문단은 유지.
+- 6674개 표시 문자열 정리. 규칙은 DIALOGUE_FORMAT_RULES_KR.md, mods/2026-10-09_dialogue_format_and_protagonist.json에 선언형 기록. 실행 코드·치환문·HTML 속성 보존 및 공식 적용기 재생·재적용 검사 통과.
+- 플레이 QSP 165F3986B3B3 → 11E712F41E96. 순정 변경 없음. 편집실 백업/이력에 일괄 기록. 게임 화면 확인은 사용자 담당.
