@@ -1,6 +1,7 @@
 'use strict';
 const fs=require('node:fs'); const path=require('node:path'); const http=require('node:http'); const crypto=require('node:crypto');
 const core=require('./core.cjs');
+const addition=require('./addition.cjs');
 const scenes=require('./scenes.cjs');
 const catalogModule=require('./catalog.cjs');
 const {spawn}=require('node:child_process');
@@ -15,6 +16,7 @@ fs.mkdirSync(runtime,{recursive:true});
 const backups=path.join(runtime,'backups');fs.mkdirSync(backups,{recursive:true});
 const grok=require('./grok-prompt.cjs').create(runtime);
 const dialogueAI=require('./grok-prompt.cjs').create(runtime,{kind:'dialogue'});
+let catalogSelection={id:0,path:''};
 const token=crypto.randomBytes(24).toString('hex'); let cache,cacheEntries,navigator,preview; let busy=false;
 // 17 MB QSP를 요청마다 읽고 해시하지 않도록, 크기·수정 시각이 같으면 메모리의 결과를 쓴다(반영 직전 검사는 transact가 파일을 다시 읽어 한다).
 let cacheRaw=null,cacheStat='';
@@ -26,7 +28,18 @@ function current() {
   cacheRaw=raw;cacheStat=stamp;return {raw,doc:cache};
 }
 const pic=path.join(game,'content','pic');
-const localPic=require('./pic-local.cjs').create(game,catalogRoot,catalog);
+const imageCuts=require('./image-cuts.cjs').create(game,catalogRoot,catalog,runtime);
+const originalCutRegistrar=require('./original-cuts.cjs');
+const localPic=require('./pic-local.cjs').create(game,catalogRoot,catalog,imageCuts);
+function syncSavedOriginals(paths,reconcile=false){
+  const registration=originalCutRegistrar.register(game,catalogRoot,originalRoot,runtime,paths,reconcile);
+  const priorManifest=registration.prior?JSON.parse(registration.prior):{};
+  if(registration.changed){const before=fs.readFileSync(target),persistent=path.resolve(__dirname,'../../mods/2026-10-08_persistent_image_cycle.json'),priorMod=fs.existsSync(persistent)?fs.readFileSync(persistent):null;try{imageCuts.refresh('original_B_'+Date.now());}catch(error){originalCutRegistrar.rollback(registration);if(!fs.readFileSync(target).equals(before))catalogModule.atomic(target,before);if(priorMod)catalogModule.atomic(persistent,priorMod);throw error;}}
+  let warning,added=[];try{added=originalCutRegistrar.exposeCatalog(catalogRoot,catalog,registration.registered,runtime,registration.released||[]);}catch(error){warning=error.message;}
+  if(registration.changed||added.length||(registration.released||[]).length){localPic.scan(true);cache=null;preview=null;}
+  return {linked:registration.registered.filter(e=>!priorManifest.originals?.[e.base.toLowerCase()]).length,released:(registration.released||[]).length,details:registration.pending,pending:registration.pending.length,warning,originalCuts:Object.fromEntries(registration.registered.map(e=>[e.base.toLowerCase(),e])),originalReservations:imageCuts.reservations()};
+}
+const cutToken=crypto.randomBytes(24).toString('hex');
 // 장면 이미지 후보를 실제 파일로 확인한다(확장자가 없으면 png·jpg·gif 순으로).
 function resolvePic(p) {
   let rel=String(p).replace(/\//g,'\\').replace(/^\\+/,'').replace(/^content\\pic\\/i,'');
@@ -70,7 +83,9 @@ function withImages(c) {
 function catalogAsset(rel,original){
   const root=original?originalRoot:game;
   const p=String(rel).replace(/\\/g,'/');if(!/^content\/pic\//i.test(p)||p.split('/').some(x=>x==='..'||x==='.')||! /\.(png|jpe?g|gif|webp|bmp)$/i.test(p))return null;
+  if(!original){const alias=imageCuts.resolveAlias(p);if(alias)return alias;}
   const full=path.resolve(root,...p.split('/'));if(!full.startsWith(root+path.sep)||!fs.existsSync(full)||!fs.statSync(full).isFile())return null;
+  let cursor=root;for(const part of p.split('/')){if(!fs.readdirSync(cursor).includes(part))return null;cursor=path.join(cursor,part);}
   const actual=fs.realpathSync(full),realRoot=fs.realpathSync(root);return actual.startsWith(realRoot+path.sep)?actual:null;
 }
 
@@ -117,16 +132,16 @@ const server=http.createServer(async(req,res)=>{
     if(req.method==='GET'&&url.pathname==='/catalog'){
       if(!catalog.load()){json(res,404,{error:'체크리스트를 찾지 못했습니다.'});return;}
       let html=fs.readFileSync(path.join(catalogRoot,'catalog_merge_vs_original.html'),'utf8');
-      const cfg=JSON.stringify({url:'http://'+host+'/',token});
+      const cfg=JSON.stringify({url:'http://'+host+'/',token,originalCuts:imageCuts.originals(),originalReservations:imageCuts.reservations()}).replaceAll('<','\\u003c');
       html=html.replace(/<script src="catalog_workshop_config.js"><\/script>/,'');
       // Initialize the bridge before any asynchronously loaded PIC modules.
       html=html.replace(/<head(?:\s[^>]*)?>/i,head=>head+'<script>window.JO9_CATALOG_BRIDGE='+cfg+';</script>');
       // file:// cannot be displayed inside HTTP pages. Serve only allowlisted catalog images.
       html=html.replace("function url(p){", "function url(p){if(p.indexOf(MR+'\\\\')===0||p.indexOf(OR+'\\\\')===0){var orig=p.indexOf(OR+'\\\\')===0;return '/api/catalog-asset?t='+"+JSON.stringify(token)+"+'&original='+(orig?'1':'0')+'&p='+encodeURIComponent(p.substring((orig?OR:MR).length+1));}");
-      html=html.replace(/<\/body>/i,'<script src="catalog_grok.js"></script></body>');
+      html=html.replace(/<\/body>/i,'<script src="catalog_grok.js"></script><script src="catalog_cuts.js"></script></body>');
       res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store'});res.end(html);return;
     }
-    const catalogFiles=['catalog_status.js','catalog_work_codes.js','catalog_workshop.js','catalog_editor.js','catalog_pic.js','catalog_local_pic.js','catalog_grok.js'];
+    const catalogFiles=['catalog_cuts.js','catalog_status.js','catalog_work_codes.js','catalog_workshop.js','catalog_editor.js','catalog_pic.js','catalog_local_pic.js','catalog_grok.js'];
     if(req.method==='GET'&&catalogFiles.includes(url.pathname.slice(1))){
       const file=url.pathname.slice(1);let text;
       if(file==='catalog_status.js')text='window.CATALOG_STATUS='+JSON.stringify(catalog.state())+';';
@@ -145,6 +160,46 @@ const server=http.createServer(async(req,res)=>{
       const r=resolvePic(url.searchParams.get('p')||'');if(!r){json(res,404,{error:'이미지를 찾지 못했습니다.'});return;}
       const ext=path.extname(r.full).toLowerCase();res.writeHead(200,{'Content-Type':ext==='.gif'?'image/gif':ext==='.png'?'image/png':'image/jpeg','Cache-Control':'no-store'});fs.createReadStream(r.full).pipe(res);return;
     }
+    // A loopback workshop may request UI navigation only, without receiving the editing token.
+    if(req.method==='POST'&&url.pathname==='/api/catalog/selection'){
+      const origin='http://127.0.0.1:5269';
+      if(req.headers.origin!==origin){json(res,403,{error:'이미지워크샵에서만 선택할 수 있습니다.'});return;}
+      res.setHeader('Access-Control-Allow-Origin',origin);res.setHeader('Vary','Origin');
+      const input=await body(req,4096);
+      const selected=require('./catalog-selection.cjs').select(game,catalog,input.path);
+      if(!selected){
+        json(res,404,{error:'체크리스트에 없는 이미지입니다.'});return;
+      }
+      catalogSelection={id:catalogSelection.id+1,path:selected};
+      json(res,200,{ok:true});return;
+    }
+
+    // A scoped workshop token grants only cut info/add; it never grants dialogue editing.
+    if(url.pathname.startsWith('/api/catalog/cuts/')){
+      const origin=req.headers.origin,workshop=origin==='http://127.0.0.1:5269';
+      if(workshop){res.setHeader('Access-Control-Allow-Origin',origin);res.setHeader('Vary','Origin');}
+      if(req.method==='OPTIONS'&&workshop){res.setHeader('Access-Control-Allow-Methods','GET, POST');res.setHeader('Access-Control-Allow-Headers','Content-Type, X-JO9-Cut-Token');res.writeHead(204);res.end();return;}
+      const action=url.pathname.slice('/api/catalog/cuts/'.length);
+      if(req.method==='GET'&&action==='session'&&workshop){json(res,200,{token:cutToken});return;}
+      const authorized=(req.headers['x-jo9-token']===token&&(!origin||origin==='http://'+host||origin==='null'))||(workshop&&req.headers['x-jo9-cut-token']===cutToken);
+      if(!authorized){json(res,403,{error:'편집실을 다시 열어 주세요.'});return;}
+      if(req.method!=='POST'||!['info','add','families','file','replace'].includes(action)){json(res,400,{error:'잘못된 추가 컷 요청입니다.'});return;}
+      const input=await body(req,85000000);let result;
+      if(action==='families'){
+        if(!Array.isArray(input.paths)||input.paths.length>200)throw Error('현재 화면 이미지 목록을 확인하세요.');
+        result={families:input.paths.map(p=>{try{return imageCuts.family(p);}catch(e){return{requested:p,error:e.message,items:[]};}})};
+      }else if(action==='file'||action==='replace'){
+        const rel=String(input.path||'').replaceAll('\\','/').replace(/^content\/pic\//,'');
+        if(!/^(bg|characters|scene|reserve)\/.+\.png$/i.test(rel))throw Error('편집할 이미지 경로를 확인하세요.');
+        if(action==='file')result=localPic.file(rel);
+        else{if(!/ \(([2-9]|[1-9][0-9]+)\)\.png$/i.test(rel))throw Error('기존 전환 컷만 이 경로로 저장할 수 있습니다.');result=localPic.apply([{path:rel,before:input.before,data:input.data,cap:input.cap}]);}
+      }else{
+        result=action==='info'?imageCuts.info(input.base):imageCuts.add(input);
+      }
+      if(action==='add'){localPic.scan(true);cache=null;preview=null;}
+      json(res,200,result);return;
+    }
+
     if(req.headers['x-jo9-token']!==token) {json(res,403,{error:'편집기를 다시 열어 주세요.'});return;}
     if(req.headers.origin && req.headers.origin!=='http://'+host && !(catalogRoute&&req.headers.origin==='null')){json(res,403,{error:'다른 사이트에서는 사용할 수 없습니다.'});return;}
     if(url.pathname.startsWith('/api/catalog/pic/')){
@@ -153,6 +208,7 @@ const server=http.createServer(async(req,res)=>{
       else if(req.method==='POST'){const input=await body(req,170000000);if(action==='entries')result=localPic.entries(input.path||'');else if(action==='file')result=localPic.file(input.path);else if(action==='apply')result=localPic.apply(input.jobs);else if(action==='revisions')result=localPic.revisions(input.paths);else if(action==='restore')result=localPic.restore(input.id);}
       if(result===undefined){json(res,400,{error:'잘못된 PIC 요청입니다.'});return;}json(res,200,result);return;
     }
+    if(req.method==='GET'&&url.pathname==='/api/catalog/selection'){json(res,200,catalogSelection);return;}
     if(req.method==='GET'&&url.pathname==='/api/catalog/state'){
       if(url.searchParams.get('brief')==='1'){json(res,200,{available:catalog.load(),...catalog.state()});return;}
       if(url.searchParams.has('since')&&Number(url.searchParams.get('since'))===Number(catalog.state().savedAt||0)){json(res,200,{unchanged:true,available:catalog.load()});return;}
@@ -210,7 +266,14 @@ const server=http.createServer(async(req,res)=>{
       await new Promise((resolve,reject)=>{const child=spawn('explorer.exe',['/select,',full],{shell:false,detached:true,stdio:'ignore'});child.once('error',reject);child.once('spawn',()=>{child.unref();resolve();});});
       json(res,200,{ok:true});return;
     }
-    if(req.method==='POST'&&url.pathname==='/api/catalog/status'){const input=await body(req,12000000);json(res,200,catalog.update(input.actions));return;}
+    if(req.method==='POST'&&url.pathname==='/api/catalog/original-sync'){
+      if(busy)throw Error('다른 저장 작업이 끝난 뒤 다시 눌러 주세요.');busy=true;
+      try{const result=syncSavedOriginals(undefined,true);json(res,200,{...catalog.snapshot(),sync:result,rows:originalCutRegistrar.readRows(catalogRoot),originalCuts:imageCuts.originals(),originalReservations:imageCuts.reservations()});}finally{busy=false;}return;
+    }
+    if(req.method==='POST'&&url.pathname==='/api/catalog/status'){
+      const input=await body(req,12000000);catalog.update(input.actions);let originalCutSync;
+      json(res,200,{...catalog.snapshot(),originalCutSync});return;
+    }
     if(req.method==='GET' && url.pathname==='/api/state'){
       const {doc}=current();json(res,200,{target,hash:doc.hash,locations:doc.locations.length,backups});return;
     }
@@ -235,9 +298,9 @@ const server=http.createServer(async(req,res)=>{
       const m=history().find(e=>e.id===id);if(!m || !m.mod || m.status!=='applied')throw Error('내보낼 수정 기록이 없습니다.');json(res,200,m.mod);return;
     }
     if(req.method==='POST' && url.pathname==='/api/preview'){
-      const input=await body(req);const {doc}=current();const p=core.prepare(doc,input.selection,input.replacement);
+      const input=await body(req);const {doc}=current();const p=input.operation==='add'?addition.prepare(doc,input.selection,input.addition,input.additionMode):core.prepare(doc,input.selection,input.replacement);
       preview={...p,before:doc.hash,id:crypto.randomBytes(24).toString('hex')};
-      json(res,200,{id:preview.id,location:p.entry.location,field:p.entry.field,line:p.entry.line,old:p.entry.text,new:p.replacement,after:p.after});return;
+      json(res,200,{id:preview.id,location:p.entry.location,field:p.entry.field,line:p.entry.line,old:p.entry.text,new:p.replacement,after:p.after,operation:p.operation||'edit',page:p.page,adjustments:p.adjustments||[]});return;
     }
     if(req.method==='POST' && url.pathname==='/api/apply'){
       const input=await body(req);if(!preview || input.id!==preview.id || input.approved!==true)throw Error('미리보기와 수정문 승인이 필요합니다.');
@@ -245,9 +308,9 @@ const server=http.createServer(async(req,res)=>{
       if(doc.locations.filter(l=>l.name===p.entry.location).length!==1)throw Error('동일한 이름의 위치가 중복되어 반영할 수 없습니다.');
       // mods용 기록은 location 전체가 아니라 바뀐 문구와 최소 맥락만 담는다(apply_mods.ps1 형식).
       const stamp=new Date().toISOString();
-      const mod={description:`대사 편집실: ${p.entry.location} ${p.entry.field==='desc'?'설명':'본문 '+p.entry.line+'행'} 문구 수정`,id:stamp.slice(0,10)+'_text_'+stamp.slice(11,19).replace(/:/g,''),target:'game\\jack.qsp',before_sha256:p.before.toUpperCase(),after_sha256:p.after.toUpperCase(),edits:[{location:p.entry.location,field:p.entry.field,old:p.piece.old,new:p.piece.new,count:1}]};
+      const mod={description:`대사 편집실: ${p.entry.location} ${p.entry.field==='desc'?'설명':'본문 '+p.entry.line+'행'} ${p.operation==='page'?'다음 페이지 추가':p.operation==='paragraph'?'문단 추가':'문구 수정'}`,id:stamp.slice(0,10)+'_text_'+stamp.slice(11,19).replace(/:/g,''),target:'game\\jack.qsp',before_sha256:p.before.toUpperCase(),after_sha256:p.after.toUpperCase(),edits:[{location:p.entry.location,field:p.entry.field,old:p.piece.old,new:p.piece.new,count:1}]};
       const m=transact(raw,p.raw,{kind:'edit',location:p.entry.location,field:p.entry.field,line:p.entry.line,mod});current();
-      const updated=cacheEntries.find(e=>e.fieldIndex===p.entry.fieldIndex&&e.start===p.entry.start);
+      const updated=cacheEntries.find(e=>e.fieldIndex===p.entry.fieldIndex&&e.start===(p.selectionStart??p.entry.start));
       json(res,200,{...m,selection:updated?{...updated,hash:cache.hash}:null});return;
     }
     if(req.method==='POST' && url.pathname==='/api/restore'){

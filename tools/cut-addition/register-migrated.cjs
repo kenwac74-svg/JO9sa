@@ -1,0 +1,5 @@
+const fs=require('node:fs'),path=require('node:path');
+const project='C:/Users/Ken Choung/Documents/Codex/2026-10-06/task/JO9sa',root=path.join(project,'tools/local-workspace/catalog'),file=path.join(root,'catalog_merge_vs_original.html'),html=fs.readFileSync(file,'utf8'),m=html.match(/var D\s*=\s*(\[[\s\S]*?\]);\s*\r?\nvar MR/),rows=JSON.parse(m[1]);
+const rel='content\\pic\\characters\\Tsyuansu (2).png',old='content\\pic\\characters\\Tsyuansu_2.png',base='content\\pic\\characters\\Tsyuansu.png',bytes=fs.readFileSync('C:/MOVE/Jack O Nine Tails v2.3 Kor_nosex/game/content/pic/characters/Tsyuansu (2).png');
+let row=rows.find(d=>d[0]===rel);if(!row){row=rows.find(d=>d[0]===old);if(row)row[0]=rel;else rows.push([rel,'a','etc',bytes.length,0,795,596,base]);fs.copyFileSync(file,file+'.bak_windowscuts');fs.writeFileSync(file,html.replace(m[1],JSON.stringify(rows)));}
+const catalog=require(path.join(project,'tools/text-workshop/catalog.cjs')).create(root);catalog.load();const meta=catalog.meta(rel);if(!meta.flags.includes('done'))catalog.update([{path:rel,flag:'done',checked:true,expected:false}]);console.log('Migrated B cut registered in catalog.');

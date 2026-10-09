@@ -43,7 +43,7 @@
     }catch(e){alert('원본 복사 실패: '+e.message);}
     finally{button.disabled=false;}
   };
-  function accept(v){baseline=JSON.parse(JSON.stringify(v.items||{}));S=JSON.parse(JSON.stringify(baseline));codes=v.codes||codes;unitCodes=v.unitCodes||unitCodes;window.CATALOG_STATUS=v;try{localStorage.setItem('imgmg_status',JSON.stringify({savedAt:v.savedAt,items:S}));}catch(e){}el('save').textContent='편집실과 공유 저장 · '+new Date(v.savedAt||Date.now()).toLocaleTimeString();redraw();}
+  function accept(v){if(v.originalCutSync){Object.assign(config.originalCuts||(config.originalCuts={}),v.originalCutSync.originalCuts||{});Object.assign(config.originalReservations||(config.originalReservations={}),v.originalCutSync.originalReservations||{});}baseline=JSON.parse(JSON.stringify(v.items||{}));S=JSON.parse(JSON.stringify(baseline));codes=v.codes||codes;unitCodes=v.unitCodes||unitCodes;window.CATALOG_STATUS=v;try{localStorage.setItem('imgmg_status',JSON.stringify({savedAt:v.savedAt,items:S}));}catch(e){}el('save').textContent='편집실과 공유 저장 · '+new Date(v.savedAt||Date.now()).toLocaleTimeString();redraw();if(v.originalCutSync){var sync=v.originalCutSync;el('save').textContent=sync.warning?'보관 상태 저장됨 · B컷 연결 확인 필요: '+sync.warning:'보관 상태 저장됨 · JO9O B컷 연결 '+sync.linked+'개'+(sync.pending?' · 원본 없는 B컷 예약 '+sync.pending+'개':'');}}
   rowHtml=function(d,i,kid){var html=originalRow(d,i,kid),code=codes[d[0]];if(code)html=html.replace('<span class="rel">','<span class="tag workcode" title="파일 분류와 고정 번호">'+esc(code)+'</span>'+(unitCodes[d[0]]?'<span class="tag workunit" title="큰 그림과 연결된 작업 단위">짝 '+esc(unitCodes[d[0]])+'</span>':'')+'<span class="rel">');return html;};
   match=function(d,fs,nd){var q=el('q').value.toLowerCase(),code=(codes[d[0]]||'').toLowerCase(),unit=(unitCodes[d[0]]||'').toLowerCase();if(q&&(code.indexOf(q)>=0||unit.indexOf(q)>=0)){var old=el('q').value;el('q').value='';try{return originalMatch(d,fs,nd);}finally{el('q').value=old;}}return originalMatch(d,fs,nd);};
   function applyCodesOffline(){redraw();}
@@ -55,7 +55,7 @@
   setSt=function(i,s){if(remote&&(saving||pending.length)){el('save').textContent='상태 저장 중입니다. 저장 후 다시 선택하세요.';return;}originalSet(i,s);if(remote)saveNow();};
   bulkSet=function(){if(remote&&(saving||pending.length))return;originalBulk();};
   function refresh(){if(!remote||saving||pending.length||refreshing)return;refreshing=true;request('api/catalog/state?since='+encodeURIComponent(window.CATALOG_STATUS.savedAt||0)).then(function(v){if(!v.unchanged)accept(v);}).catch(function(){el('save').textContent='편집실 연결이 끊겼습니다 · 재연결 전에는 체크할 수 없습니다';}).finally(function(){refreshing=false;});}
-  function locate(){var p=new URLSearchParams(location.search).get('image');if(!p)return;var target=D.find(function(d){return d[0].toLowerCase()===p.replace(/\//g,'\\').toLowerCase();});if(!target){el('save').textContent='체크리스트에 없는 이미지입니다: '+p;return;}var parent=target[7]||target[0];curDir='';el('small').checked=true;['fs','st','src'].forEach(function(k){el(k).value='';});el('q').value=parent;filter();var i=R.findIndex(function(d){return d[0]===target[0];});if(i>=0){var card=el('r'+i);card.style.outline='3px solid #d8a958';card.scrollIntoView({block:'center'});}}
+  function locate(p){if(typeof p!=='string')p=new URLSearchParams(location.search).get('image');if(!p)return;var target=D.find(function(d){return d[0].toLowerCase()===p.replace(/\//g,'\\').toLowerCase();});if(!target){el('save').textContent='체크리스트에 없는 이미지입니다: '+p;return;}var parent=target[7]||target[0];curDir='';el('small').checked=true;['fs','st','src'].forEach(function(k){el(k).value='';});el('q').value=parent;filter();var i=R.findIndex(function(d){return d[0]===target[0];});if(i>=0){var card=el('r'+i);card.style.outline='3px solid #d8a958';card.scrollIntoView({block:'center'});}}
   applyCodesOffline();
   if(!config||!window.fetch){if(window.URLSearchParams)locate();return;}
   request('api/catalog/state').then(function(v){
@@ -64,6 +64,22 @@
     var edits=changes(fileBase,initial);accept(v);return edits.length?request('api/catalog/status',{actions:edits}).then(accept):null;
   }).then(locate).catch(function(e){remote=false;el('save').textContent='공유 연결 대기: '+e.message+' · 현재 브라우저에 저장';locate();});
   window.addEventListener('focus',refresh);setInterval(refresh,5000);
+  // This channel only changes the displayed catalog card; it never changes file/status data.
+  var selectionRevision=0,selectionPolling=false;
+  function followWorkshop(){
+    if(!remote||selectionPolling)return;
+    selectionPolling=true;
+    request('api/catalog/selection').then(function(v){
+      if(!v.path||v.id===selectionRevision)return;
+      selectionRevision=v.id;
+      var url=new URL(location.href);url.searchParams.set('image',v.path);
+      history.replaceState(null,'',url);
+      locate(v.path);
+    }).catch(function(){}).finally(function(){selectionPolling=false;});
+  }
+  window.addEventListener('focus',followWorkshop);
+  setInterval(followWorkshop,1000);
+
 })();
 
 /* Visible, live filename / work-code search. Reuse the catalog's filters and paired-image cards. */

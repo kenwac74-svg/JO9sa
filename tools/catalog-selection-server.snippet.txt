@@ -1,0 +1,13 @@
+    // A loopback workshop may request UI navigation only, without receiving the editing token.
+    if(req.method==='POST'&&url.pathname==='/api/catalog/selection'){
+      const origin='http://127.0.0.1:5269';
+      if(req.headers.origin!==origin){json(res,403,{error:'이미지워크샵에서만 선택할 수 있습니다.'});return;}
+      res.setHeader('Access-Control-Allow-Origin',origin);res.setHeader('Vary','Origin');
+      const input=await body(req,4096);
+      const selected=typeof input.path==='string'?input.path.replace(/\\/g,'/'):'';
+      if(!/^content\/pic\//i.test(selected)||selected.split('/').some(p=>p==='..'||p==='.')||!catalog.meta(selected)){
+        json(res,404,{error:'체크리스트에 없는 이미지입니다.'});return;
+      }
+      catalogSelection={id:catalogSelection.id+1,path:selected};
+      json(res,200,{ok:true});return;
+    }

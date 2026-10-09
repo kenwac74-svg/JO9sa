@@ -1,7 +1,7 @@
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
 const FLAGS=['done','ore','mre','branch','spare','wip','todo','delete'];
-const normalize=p=>String(p).replace(/\//g,'\\').toLowerCase();
+const normalize=p=>String(p).replace(/\//g,'\\');
 function parseStatus(text){const m=text.replace(/^\uFEFF/,'').match(/window\.CATALOG_STATUS\s*=\s*([\s\S]*);\s*$/);if(!m)throw Error('체크리스트 상태 파일 형식을 확인하세요.');const v=JSON.parse(m[1]);if(!v.items||typeof v.items!=='object'||Array.isArray(v.items))throw Error('상태 목록이 올바르지 않습니다.');return v;}
 function category(d){const p=normalize(d[0]);if(/\\ui overhaul\\|\\ui[_-]overhaul\\/.test(p))return 'UO';if(/\\bg\\/.test(p))return 'bg';if(/\\characters\\/.test(p))return 'CH';if(/\\scene\\/.test(p))return 'SC';if(/\\ui\\|\\buttons\\/.test(p))return 'UI';if(/\\girls\\/.test(p))return 'GL';if(/\\mob\\/.test(p))return 'MB';if(/\\master\\/.test(p))return 'MA';return 'ET';}
 function atomic(file,text){const tmp=file+'.'+crypto.randomBytes(6).toString('hex')+'.tmp';try{fs.writeFileSync(tmp,text,{flag:'wx'});fs.renameSync(tmp,file);}finally{if(fs.existsSync(tmp))fs.unlinkSync(tmp);}}
@@ -13,6 +13,9 @@ function create(root){
     const text=fs.readFileSync(html,'utf8'),m=text.match(/var D\s*=\s*(\[[\s\S]*?\]);\s*\r?\nvar MR/);if(!m)throw Error('카탈로그 목록을 읽지 못했습니다.');records=JSON.parse(m[1]);idx=new Map(records.map(d=>[normalize(d[0]),d]));
     if(fs.existsSync(idFile))ids=JSON.parse(fs.readFileSync(idFile,'utf8').replace(/^\uFEFF/,''));
     let changed=false;const parents=[...records].sort((a,b)=>normalize(a[0])<normalize(b[0])?-1:1);
+    // Reuse legacy folded IDs only when the catalog has exactly one spelling.
+    const spellings=new Map();for(const d of records){const folded=normalize(d[0]).toLowerCase();spellings.set(folded,(spellings.get(folded)||0)+1);}
+    for(const d of records){const key=normalize(d[0]),folded=key.toLowerCase();if(!ids.items[key]&&ids.items[folded]&&spellings.get(folded)===1){ids.items[key]=ids.items[folded];changed=true;}}
     for(const d of parents){const key=normalize(d[0]);if(!ids.items[key]){const cat=category(d),n=(ids.counters[cat]||0)+1;ids.counters[cat]=n;ids.items[key]=cat+'-'+String(n).padStart(4,'0');changed=true;}}
     if(changed)atomic(idFile,JSON.stringify(ids,null,2)+'\n');stamp=s;return true;
   }

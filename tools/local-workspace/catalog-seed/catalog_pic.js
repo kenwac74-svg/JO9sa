@@ -3,7 +3,7 @@
  'use strict';
  const ui=id=>document.getElementById(id),listeners=new Set();
  const state={root:null,index:[],ready:false,busy:false,phase:'idle',message:'PIC 폴더를 한 번 등록하면 교체기가 같은 연결을 사용합니다.',error:false};
- const cacheKey='pic:file:///'+String(window.MR||'G:/somi/JO9/game').replace(/\\/g,'/').replace(/\/$/,'')+'/';
+ const cacheKey='pic:file:///'+String(window.MR||"C:/MOVE/Jack O Nine Tails v2.3 Kor_nosex/game").replace(/\\/g,'/').replace(/\/$/,'')+'/';
  let saved=null,generation=0;
  function paint(){
   const status=ui('catalogPicStatus');

@@ -1,4 +1,4 @@
-param([string]$GameDir='G:\somi\JO9\game', [string]$NodePath='', [switch]$NoBrowser)
+﻿param([string]$GameDir='G:\somi\JO9\game', [string]$NodePath='', [switch]$NoBrowser)
 $ErrorActionPreference='Stop'
 if (!$NodePath) {
     $bundled=Join-Path $env:USERPROFILE '.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe'

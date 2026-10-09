@@ -1,0 +1,20 @@
+// 현재 작업 기록과 이식에 필요한 파일을 읽기 전용으로 조사한다.
+'use strict';
+const fs=require('node:fs'),p=require('node:path'),crypto=require('node:crypto');
+const a='C:/Users/Ken Choung/Documents/Codex/2026-10-06/task/JO9sa',g='C:/MOVE/Jack O Nine Tails v2.3 Kor_nosex/game';
+const j=x=>JSON.parse(fs.readFileSync(x,'utf8').replace(/^\uFEFF/,''));
+const orig=j(g+'/modtools/image-original-cuts.json');
+const ledger=a+'/tools/local-workspace/catalog/image_work/personal-patch';
+const report=j(ledger+'/import-report.json');
+const progress=j(a+'/tools/local-workspace/catalog/image_work/progress.json');
+const cuts=fs.readdirSync(a+'/tools/local-workspace/runtime/cut-history').filter(n=>n.endsWith('.json')).map(n=>j(a+'/tools/local-workspace/runtime/cut-history/'+n));
+const core=require(a+'/tools/text-workshop/core.cjs'),raw=fs.readFileSync(g+'/jack.qsp'),doc=core.parse(raw);
+const all=doc.locations.map(l=>core.shift(doc.lines[l.body],5)).join('\n');
+const refs=new Set([...all.matchAll(/(?:content[\\/]pic[\\/]|SNKmod[\\/]content[\\/]pic[\\/])([^'"<>\r\n]+?\.(?:png|jpg|gif|webp))/ig)].map(m=>m[0].replaceAll('\\','/')));
+const absent=[...refs].filter(s=>!fs.existsSync(p.join(g,s)));
+const actual=[...refs].filter(s=>fs.existsSync(p.join(g,s)));
+const groups=actual.reduce((m,s)=>{const k=s.replace(/^content\/pic\//,'').split('/')[0];m[k]||={count:0,bytes:0};m[k].count++;m[k].bytes+=fs.statSync(p.join(g,s)).size;return m;},{});
+const summarize=x=>({base:x.base,alias:x.alias,source:x.source,target:x.target,bytes:x.bytes,sha:x.sourceSha});
+const out={qsp:{bytes:raw.length,sha:core.hash(raw),roundtrip:core.serialize(doc).equals(raw),locations:doc.locations.length},originalCuts:{count:Object.keys(orig.originals).length,bytes:Object.values(orig.originals).reduce((n,x)=>n+x.bytes,0),sourceRoot:orig.sourceRoot,entries:Object.values(orig.originals).map(summarize),reservations:Object.keys(orig.reservations).length},import:{count:report.imported,skipped:report.skipped},progress:progress.items.filter(x=>/Tsyuansu|Sabrina|Voland/i.test(x.relative_path)),cutHistory:cuts,settings:['grok-settings.json','dialogue-ai-settings.json'].map(n=>({name:n,keys:Object.keys(j(a+'/tools/local-workspace/runtime/'+n))})),references:{count:refs.size,groups,missing:absent}};
+fs.mkdirSync('tmp/transfer-audit',{recursive:true});fs.writeFileSync('tmp/transfer-audit/audit.json',JSON.stringify(out,null,2));
+console.log(JSON.stringify({...out,originalCuts:{...out.originalCuts,entries:undefined},progress:out.progress.map(x=>({path:x.relative_path,status:x.work_status,input:x.input_image,sha:x.sha256_after})),import:{...out.import,skipped:out.import.skipped.slice(0,10)},references:{...out.references,missing:out.references.missing.slice(0,25)}},null,2));
