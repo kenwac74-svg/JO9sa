@@ -25,6 +25,15 @@ test('로컬 서버 반영, 백업, 내보내기, 충돌 거부, 복원',async()
   let result=await api('/api/search?q='+encodeURIComponent('같은 대사'));assert.equal(result.value.total,3);
   const selected=result.value.results[1];let preview=await api('/api/preview',{selection:selected,replacement:'검증용 수정문'});assert.equal(preview.status,200);
   const context=await api('/api/context',{selection:selected});assert.equal(context.status,200);assert.equal(context.value.previous.text,'같은 대사');
+  const variableSearch=await api('/api/search?q='+encodeURIComponent('이름'));
+  const variableSelection=variableSearch.value.results[0];
+  const inspected=await api('/api/variables',{selection:variableSelection});
+  assert.equal(inspected.status,200);assert.ok(inspected.value.substitutions.some(s=>s.code==='<<$name>>'));
+  assert.ok(inspected.value.variables.some(v=>v.name==='$name'&&v.type==='string'));
+  assert.deepEqual(fs.readFileSync(file),original,'변수 조회는 QSP를 변경하지 않음');
+  assert.equal(fs.readdirSync(path.join(runtime,'backups')).length,0,'변수 조회는 반영/백업을 만들지 않음');
+  assert.equal((await api('/api/variables',{selection:{...variableSelection,hash:'stale'}})).status,400);
+  assert.equal((await fetch(base+'/api/variables',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({selection:variableSelection})})).status,403);
   const opened=await api('/api/scene',{hash:context.value.hash,destination:{location:'first',sceneId:context.value.scene.id}});assert.equal(opened.status,200);
   assert.equal((await api('/api/scene',{hash:'stale',destination:{location:'first',sceneId:'root'}})).status,400);
   fs.writeFileSync(file,Buffer.concat([original,Buffer.from([0,0])]));let stale=await api('/api/apply',{id:preview.value.id,approved:true});assert.equal(stale.status,400);assert.equal(fs.readdirSync(path.join(runtime,'backups')).length,0);fs.writeFileSync(file,original);

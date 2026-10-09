@@ -19,12 +19,12 @@ const dialogueAI=require('./grok-prompt.cjs').create(runtime,{kind:'dialogue'});
 let catalogSelection={id:0,path:''};
 const token=crypto.randomBytes(24).toString('hex'); let cache,cacheEntries,navigator,preview; let busy=false;
 // 17 MB QSP를 요청마다 읽고 해시하지 않도록, 크기·수정 시각이 같으면 메모리의 결과를 쓴다(반영 직전 검사는 transact가 파일을 다시 읽어 한다).
-let cacheRaw=null,cacheStat='';
+let cacheRaw=null,cacheStat='',variableInspector=null;
 function current() {
   const st=fs.statSync(target),stamp=st.size+':'+st.mtimeMs;
   if(cache && cacheStat===stamp) return {raw:cacheRaw,doc:cache};
   const raw=fs.readFileSync(target);const digest=core.hash(raw);
-  if(!cache || cache.hash!==digest){cache=core.parse(raw);cacheEntries=core.entries(cache);navigator=scenes.buildNavigator(cache,cacheEntries);}
+  if(!cache || cache.hash!==digest){cache=core.parse(raw);cacheEntries=core.entries(cache);variableInspector=null;navigator=scenes.buildNavigator(cache,cacheEntries);}
   cacheRaw=raw;cacheStat=stamp;return {raw,doc:cache};
 }
 const pic=path.join(game,'content','pic');
@@ -123,7 +123,7 @@ const server=http.createServer(async(req,res)=>{
       res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','Content-Security-Policy':"default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'"});
       res.end(fs.readFileSync(path.join(__dirname,'index.html'),'utf8').replace('__SESSION_TOKEN__',token));return;
     }
-    if(req.method==='GET'&&['/dialogue-ai.js','/editing-tools.js'].includes(url.pathname)){res.writeHead(200,{'Content-Type':'text/javascript; charset=utf-8','Cache-Control':'no-store'});res.end(fs.readFileSync(path.join(__dirname,url.pathname.slice(1)),'utf8'));return;}
+    if(req.method==='GET'&&['/dialogue-ai.js','/editing-tools.js','/variable-inspector.js'].includes(url.pathname)){res.writeHead(200,{'Content-Type':'text/javascript; charset=utf-8','Cache-Control':'no-store'});res.end(fs.readFileSync(path.join(__dirname,url.pathname.slice(1)),'utf8'));return;}
     const catalogRoute=url.pathname.startsWith('/api/catalog/');
     if(catalogRoute&&req.headers.origin==='null'){
       res.setHeader('Access-Control-Allow-Origin','null');res.setHeader('Vary','Origin');
@@ -284,6 +284,12 @@ const server=http.createServer(async(req,res)=>{
       json(res,200,{hash:doc.hash,total:found.length,results:found.slice(0,200).map(e=>({...e,hash:doc.hash}))});return;
     }
     if(req.method==='GET' && url.pathname==='/api/history'){json(res,200,history().map(({id,date,location,field,status,before,after,kind})=>({id,date,location,field,status,before,after,kind})));return;}
+    if(req.method==='POST' && url.pathname==='/api/variables'){
+      const input=await body(req);const {doc}=current();
+      const c=navigator.context(input.selection,input.sceneId,input.mode,input.usageId);
+      variableInspector ||= require('./variable-inspector.cjs').create(doc,cacheEntries);
+      json(res,200,variableInspector.inspect(c));return;
+    }
     if(req.method==='POST' && url.pathname==='/api/context'){
       const input=await body(req);current();json(res,200,withImages(navigator.context(input.selection,input.sceneId,input.mode,input.usageId)));return;
     }
