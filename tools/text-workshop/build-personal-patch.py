@@ -41,7 +41,16 @@ def build(root, output, until, since=None, dry_run=False):
                         name='thumbs/'+h+'.webp';thumbs[h]=(name,data);return name
         raise ValueError('썸네일 용량 한도를 맞출 수 없습니다.')
     for key,f in sorted(chosen.items()):
-        b=(root/'objects'/f['after']).read_bytes()
+        object_path=root/'objects'/f['after']
+        if object_path.is_file():
+            b=object_path.read_bytes()
+        else:
+            settings=json.loads((root/'settings.json').read_text('utf-8-sig'))
+            game=pathlib.Path(settings['game']).resolve()
+            current=(game/'content'/'pic'/key).resolve()
+            if not current.is_relative_to(game/'content'/'pic') or not current.is_file():
+                raise ValueError('PC 이전 이미지가 아직 없습니다: '+key)
+            b=current.read_bytes()
         if digest(b)!=f['after']: raise ValueError('보존 이미지 해시 오류: '+f['path'])
         dest='game/content/pic/'+f['path'];blobs[dest]=b;after=thumb(b);before=None
         old=baseline[key]; p=old.get('beforePath')

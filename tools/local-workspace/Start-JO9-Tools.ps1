@@ -35,9 +35,13 @@ $runtime=Join-Path $PSScriptRoot 'runtime'
 $source=Join-Path (Split-Path -Parent $PSScriptRoot) 'text-workshop\server.cjs'
 New-Item -ItemType Directory -Path $catalog,$runtime -Force | Out-Null
 if (!(Test-Path -LiteralPath (Join-Path $catalog 'catalog_merge_vs_original.html'))) {
- Copy-Item -Path (Join-Path $PSScriptRoot 'catalog-seed\*') -Destination $catalog
+ Copy-Item -Path (Join-Path $PSScriptRoot 'catalog-seed\*') -Destination $catalog -Recurse
  New-Item -ItemType Directory -Path (Join-Path $catalog 'image_work') -Force | Out-Null
- Move-Item -LiteralPath (Join-Path $catalog 'progress.json') -Destination (Join-Path $catalog 'image_work\progress.json')
+ if (!(Test-Path -LiteralPath (Join-Path $catalog 'image_work\progress.json'))) {Move-Item -LiteralPath (Join-Path $catalog 'progress.json') -Destination (Join-Path $catalog 'image_work\progress.json')}
+ $taskPython=Join-Path $env:USERPROFILE '.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe'
+ if (!(Test-Path -LiteralPath $taskPython)) {$taskPython=(Get-Command python -ErrorAction Stop).Source}
+ & $taskPython (Join-Path $PSScriptRoot 'sync-workspace-state.py') --source (Join-Path $PSScriptRoot 'catalog-seed') --catalog $catalog --game $GameDir --original $OriginalDir
+ if ($LASTEXITCODE -ne 0) {throw 'Workspace state restore failed.'}
 }
 @{game=$GameDir;original=$OriginalDir} | ConvertTo-Json | Set-Content -LiteralPath $configFile -Encoding UTF8
 foreach ($name in 'grok-settings.json','dialogue-ai-settings.json') {
