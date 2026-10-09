@@ -1,0 +1,59 @@
+{
+  "id": "2026-10-10_restore_kura_personal_patch",
+  "status": "applied",
+  "source": "G:/somi/JO9/JO9 UI_overhaul_SNKmod_0.14.zip:payload/jack.qsp",
+  "source_sha256": "8d963ae88dcea0db9500b29bcd5112933abd81042d5be8516113840094e607c6",
+  "before_sha256": "2b75e574e99d979535eb5bf2a96e779255d77d606472aa2c894e020d2eb448b7",
+  "after_sha256": "9037345f7d479570e2b5deb1e2ab512e614cec3770210948635b61ebd06a2030",
+  "changed_locations": [
+    "main_menu",
+    "init_custom_game",
+    "hero_customization_man",
+    "#dynamic",
+    "#masters_base"
+  ],
+  "edits": 7,
+  "assets": [
+    {
+      "path": "content/pic/master/master_kura.png",
+      "repository_path": "resources/new/content/pic/master/master_kura.png",
+      "sha256": "73323a81cf6d46e4b5b4ff470425dafcd28e47ed2377018c7b38aa14ba20cf78",
+      "source": "content/pic/SNKmod/master/master_kura.png",
+      "bytes": 36876
+    },
+    {
+      "path": "content/pic/master/master_kura_sepia.png",
+      "repository_path": "resources/new/content/pic/master/master_kura_sepia.png",
+      "sha256": "73323a81cf6d46e4b5b4ff470425dafcd28e47ed2377018c7b38aa14ba20cf78",
+      "source": "content/pic/SNKmod/master/master_kura_sepia.png",
+      "bytes": 36876
+    }
+  ],
+  "restored": {
+    "hero": 13,
+    "name": "쿠라",
+    "sparks": 20000,
+    "estate": "serpis_house",
+    "serpis_fame": 3,
+    "forward_avatar_range": "1..18",
+    "backward_avatar_range": "1..18",
+    "normal_start": "hero_customization_man",
+    "custom_start": 1
+  },
+  "cause": "현재 QSP는 쿠라 13번 시작 데이터 및 시작 helper를 보유하지 않았음. 앞선 개인실 복구는 개인실 UI/연결부만 추출하여 main_menu/init_custom_game/#masters_base/#dynamic/hero_customization_man의 쿠라 변경은 복구 대상에서 제외됐음.",
+  "save_policy": "시작 데이터 및 DB 배열 복구. 기존 세이브의 현재 돈·능력치·장비·거처를 자동 변환하지 않음.",
+  "tests": [
+    "byte-exact QSP round trip",
+    "only five locations changed; all descriptions and other locations unchanged",
+    "home UI, room UI, pregnancy display, daily logic and reference descriptions unchanged",
+    "release portrait checksums verified",
+    "official mod replay equals candidate",
+    "repeat application skips seven edits",
+    "installed game checksum matches candidate",
+    "Kura regression: preset/start routes/42 avatar boundary cases/portrait checksums"
+  ],
+  "screen_verification": "사용자 확인 필요",
+  "applied_at": "2026-10-09T19:01:08.073Z",
+  "backup": "G:/somi/JO9/game/jack.qsp.bak_20261010_040107",
+  "runtime_backup": "G:/somi/JO9/game/modtools/text-workshop/runtime/backups/2026-10-09T19-01-08-073Z_kura-recovery.qsp"
+}

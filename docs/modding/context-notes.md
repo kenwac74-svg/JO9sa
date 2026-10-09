@@ -176,3 +176,12 @@
 - gastronom/meat의 동적 상품 재고 설명은 기존 동작 유지. dojo는 예비, erza_battle은 전투용 등록 장소.
 - 왕복 바이트 일치, 남자/공용 인물·장소 등록 확인, 기존 location 3곳 외 변경 없음, 공식 패치 재생 일치 및 반복 적용 검사 통과. 실제 화면은 사용자 확인.
 - mods/2026-10-10_missing_reference_descriptions_male.json 및 records/reference-info/2026-10-10_missing_reference_descriptions_male.json에 본문·범위·백업·해시·검사 기록.
+
+
+## 2026-10-10 쿠라 개인 패치 복구
+- 사용자 화면에서 13번이 에드워드로 남은 것을 확인. 배포본 0.14 QSP(SHA 8d963ae8…e607c6)의 쿠라 개인 패치를 대조. 앞선 개인실 UI/연결부 복원 범위에서 시작 캐릭터 변경을 제외하여 누락이 남았음.
+- main_menu, init_custom_game, #masters_base의 13번 블록, #dynamic의 초상화 순환/시작 거처 helper, hero_customization_man만 7 edits로 복구. 전체 배포 QSP를 덮어쓰지 않음.
+- 쿠라 이름·배경·능력·장비·약품·2만 스파크·세르피스 우호 3·serpis_house 시작을 0.14와 동일하게 복구. 일반 시작은 남자 선택화면, 커스텀은 남자 1번, 초상화 순환은 1~18. 여자 플레이 신규 진입 경로를 기존 쿠라 패치대로 제한하며 여성 전용 런타임 코드는 삭제하지 않음.
+- master_kura.png/master_kura_sepia.png는 content/pic/master/와 resources/new/에 보관. SNKmod 참조를 새로 만들지 않음. 공유폴더 복원용 개인 이미지 ledger에도 등록.
+- 기존 세이브의 돈·능력치·장비·거처는 자동 덮어쓰지 않음. 새 시작 화면은 게임 재실행 후 일반 시작에서 확인.
+- QSP 왕복, 공식 재생/반복, 5 locations 이외 바이트 보존, 개인실·식단·임신·설명 유지 확인. tests/test_kura_patch.cjs는 쿠라 preset/시작/42개 선택 경계/초상화 해시를 확인. 실제 화면은 사용자 확인.

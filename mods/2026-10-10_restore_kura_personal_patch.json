@@ -1,0 +1,74 @@
+{
+  "id": "2026-10-10_restore_kura_personal_patch",
+  "description": "배포본 0.14의 쿠라 개인 패치만 현재 QSP에 복구. 현재 경로 초상화 사용. 기존 세이브 수치는 변경하지 않음.",
+  "target": "jack.qsp",
+  "before_sha256": "2b75e574e99d979535eb5bf2a96e779255d77d606472aa2c894e020d2eb448b7",
+  "after_sha256": "9037345f7d479570e2b5deb1e2ab512e614cec3770210948635b61ebd06a2030",
+  "edits": [
+    {
+      "location": "#masters_base",
+      "field": "body",
+      "old": "$sepia_ava_path[13] = 'content\\pic\\master\\master_edward_sepia.png'\r\n$clear_ava_path[13] = 'content\\pic\\master\\master_edward.png'\r\n$master_base_name[13] = '에드워드'\r\n$hero_description[13] = '   올리가르히의 아들과 그가 거느린 고급 수행 여성들과 함께 요트 파티를 즐기다 바다 괴물의 습격을 받고, 에드워드는 간신히 살아남는다. 항구 술집에서 카드 결제가 거절된 순간, 잭이라는 남자가 노예상 길드와 관련된 수상한 기회를 제안한다. 에드워드는 그 제안을 받아들이고, 여자친구들을 넘기는 대가로 일자리를 얻는다.' + _\r\n'<br>세력: 무소속<br>스파크: 500'\r\n$hero_difficulty[13] = '<font color=\"#C71585\">매우 높은 난이도</font>'\r\n$master_version_stats[13] = {\r\nmaster_str = 3\r\nmaster_cha = 2\r\nmaster_style = 3\r\nmaster_libido = 4\r\nmaster_tutor = 1\r\nmaster_fighter = 0\r\nmaster_butler = 1\r\nmaster_artdirector = 2\r\nmaster_medic = 0\r\nmaster_mage = 0\r\nmaster_torture = 1\r\nmaster_domination = 1\r\nmaster_bondage = 1\r\nmaster_flagelation = 1\r\nmaster_petting = 2\r\nmaster_oral = 2\r\nmaster_penetration = 2\r\nmaster_fetish = 4\r\n$master_armor = 'без_брони'\r\n$master_cloth = 'man_rugs'\r\n$master_right_wpn = ''\r\nsparks = 500\r\nfaction_fame['serpis'] = 0\r\nfaction_fame['taurus'] = 0\r\ndebt = 0\r\ndebt_count = 0\r\ndebt_history = 0\r\nmaster_vampire = 0\r\n}\r\n\r\n",
+      "new": "$sepia_ava_path[13] = 'content\\pic\\master\\master_kura_sepia.png'\r\n$clear_ava_path[13] = 'content\\pic\\master\\master_kura.png'\r\n$master_base_name[13] = '쿠라'\r\n$hero_description[13] = '   본명 카일 윈스턴. 지구 24의 거대도시 메가델피아에서 강화인간 용병으로 이름을 날린 뒤 탄트라 서비스를 세웠다. 회사는 도시 매춘 산업의 약 95%를 장악했고, 그는 2조 달러가 넘는 자산을 축적했다. 하지만 목표는 한 도시가 아니라 세계의 매춘 산업 전체다.<br>' + _\r\n'<br>   코드네임 쿠라. 안개와 마법을 연구해 지구 24와 불멸의 로마를 잇는 비밀 통로를 완성했다. 로마에서 노예를 훈련하고 창관 사업을 장악한 뒤 인력과 기술을 지구로 가져갈 계획이며, 여러 사람이 통과할 수 있도록 통로를 개량할 협력자도 찾고 있다. 전투·의술·마법 지식과 충분한 자금을 준비해 왔다.<br>' + _\r\n'<br>세력: 무소속 (세르피스 가문과 우호)<br>스파크: 20000'\r\n$hero_difficulty[13] = '<font color=\"#009900\">매우 쉬운 난이도</font>'\r\n$master_version_stats[13] = {\r\nmaster_str = 5\r\nmaster_cha = 5\r\nmaster_style = 4\r\nmaster_libido = 4\r\nmaster_tutor = 5\r\nmaster_fighter = 5\r\nmaster_butler = 3\r\nmaster_artdirector = 3\r\nmaster_medic = 4\r\nmaster_mage = 3\r\nmaster_torture = 5\r\nmaster_domination = 5\r\nmaster_bondage = 5\r\nmaster_flagelation = 4\r\nmaster_petting = 5\r\nmaster_oral = 5\r\nmaster_penetration = 5\r\nmaster_fetish = 5\r\n\r\n$master_armor = 'без_брони'\r\n$master_cloth = 'fancy_suit'\r\n$master_wpn = 'катана'\r\n$master_left_wpn = 'катана'\r\n$master_right_wpn = 'безоружный'\r\n$master_leg_wpn = 'кинжал'\r\n\r\nтонизируюзщий_эликсир = 10\r\nцелительный_бальзам = 10\r\nsparks = 20000\r\n\r\nfaction_fame['neutral'] = 0\r\nfaction_fame['taurus'] = 0\r\nfaction_fame['serpis'] = 3\r\nfaction_fame['korvus'] = 0\r\nfaction_fame['kamira'] = 0\r\n\r\nnoble_status = 0\r\ndebt = 0\r\ndebt_count = 0\r\ndebt_history = 0\r\nmaster_vampire = 0\r\n}\r\n\r\n",
+      "count": 1
+    },
+    {
+      "location": "main_menu",
+      "field": "body",
+      "old": "$menu_item_Storyselect, 'gt \"hero_customization\"'",
+      "new": "$menu_item_Storyselect, 'gt \"hero_customization_man\"'",
+      "count": 1
+    },
+    {
+      "location": "init_custom_game",
+      "field": "body",
+      "old": "get_initial_slave = 0",
+      "new": "get_initial_slave = 0\r\nhero_choice = 1 &! Personal patch: custom protagonist is male-only",
+      "count": 1
+    },
+    {
+      "location": "#dynamic",
+      "field": "body",
+      "old": "$scroll_ava = {\r\n    IF hero_choice < 124:\r\n        hero_choice += 1\r\n    else\r\n        hero_choice = 1\r\n    END\r\n    if hero_choice > 18 and hero_choice < 101: hero_choice = 101    \r\n    gt $curloc\r\n}\r\n",
+      "new": "$scroll_ava = {\r\n    IF hero_choice < 18:\r\n        hero_choice += 1\r\n    else\r\n        hero_choice = 1\r\n    END\r\n    gt $curloc\r\n}\r\n",
+      "count": 1
+    },
+    {
+      "location": "#dynamic",
+      "field": "body",
+      "old": "$scroll_ava_back = {\r\n    IF hero_choice > 1:\r\n        hero_choice -= 1\r\n    else\r\n        hero_choice = 124\r\n    END\r\n    if hero_choice > 18 and hero_choice < 101: hero_choice = 18  \r\n    gt $curloc\r\n}\r\n\r\n",
+      "new": "$scroll_ava_back = {\r\n    IF hero_choice > 1 and hero_choice <= 18:\r\n        hero_choice -= 1\r\n    else\r\n        hero_choice = 18\r\n    END\r\n    gt $curloc\r\n}\r\n\r\n",
+      "count": 1
+    },
+    {
+      "location": "#dynamic",
+      "field": "body",
+      "old": "$name_and_start = {\r\n\t$estate = 'slum_house'\r\n\t$starting_area = '<font color=\"cd0000\">The Slums</font>'\r\n\t!$a = input ('Give your character a name. Please try to keep this shorter than 14 characters.')\r\n\t!if $a !'': $master_name = $a\r\n\tgt 'start_game'\r\n}\r\n\r\n",
+      "new": "$name_and_start = {\r\n\tif hero_choice = 13:\r\n\t\t$estate = 'serpis_house'\r\n\t\t$starting_area = '<font color=\"6B0084\">뱀자리 구역</font>'\r\n\telse\r\n\t\t$estate = 'slum_house'\r\n\t\t$starting_area = '<font color=\"cd0000\">The Slums</font>'\r\n\tend\r\n\t!$a = input ('Give your character a name. Please try to keep this shorter than 14 characters.')\r\n\t!if $a !'': $master_name = $a\r\n\tgt 'start_game'\r\n}\r\n\r\n",
+      "count": 1
+    },
+    {
+      "location": "hero_customization_man",
+      "field": "body",
+      "old": "content\\pic\\master\\master_edward_sepia.png",
+      "new": "content\\pic\\master\\master_kura_sepia.png",
+      "count": 1
+    }
+  ],
+  "assets": [
+    {
+      "path": "content/pic/master/master_kura.png",
+      "repository_path": "resources/new/content/pic/master/master_kura.png",
+      "sha256": "73323a81cf6d46e4b5b4ff470425dafcd28e47ed2377018c7b38aa14ba20cf78",
+      "source": "content/pic/SNKmod/master/master_kura.png",
+      "bytes": 36876
+    },
+    {
+      "path": "content/pic/master/master_kura_sepia.png",
+      "repository_path": "resources/new/content/pic/master/master_kura_sepia.png",
+      "sha256": "73323a81cf6d46e4b5b4ff470425dafcd28e47ed2377018c7b38aa14ba20cf78",
+      "source": "content/pic/SNKmod/master/master_kura_sepia.png",
+      "bytes": 36876
+    }
+  ]
+}
