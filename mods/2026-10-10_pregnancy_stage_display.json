@@ -1,0 +1,37 @@
+{
+  "id": "2026-10-10_pregnancy_stage_display",
+  "description": "Display-only pregnancy stages and correct slave icon discovery lookup; preserve pregnancy events and diagnosis.",
+  "target": "jack.qsp",
+  "before_sha256": "c4dc5d0a7566a9e7b33eb1f53910fd5c8345241986b6bce5a631309f4ee1be5c",
+  "after_sha256": "dee1e5fe835595ad9eeacf92efa5553d35d39329e0f2602b10eacdd578fff629",
+  "edits": [
+    {
+      "location": "sjm_UI_UIadds",
+      "field": "body",
+      "old": "killvar '$kilrel'",
+      "new": "! JO9_PREG_STAGE_20261010: display only; args days, revealed, fertility, modification, parasite\r\nif $args[0] = 'preg_label' or $args[0] = 'preg_feature':\r\n\t$result = ''\r\n\tif args[1] <= 0 or args[3] = 1 or args[3] = -2 or args[4] = 4 or args[5] > 0: exit\r\n\tif args[2] <= 0 and args[1] < 120: exit\r\n\t$result = '임신 확인'\r\n\tif args[1] >= 120: $result = '임신 중기'\r\n\tif args[1] >= 196: $result = '임신 후기'\r\n\tif args[1] >= 273: $result = '만삭'\r\n\tif $args[0] = 'preg_feature': $result = '<span title=\"임신 진행 상태입니다. 정확한 출산 예정일을 뜻하지 않습니다.\"><b><<$result>></b></span><br>'\r\n\texit\r\nend\r\n\r\nkillvar '$kilrel'",
+      "count": 1
+    },
+    {
+      "location": "sjm_UI_UIadds",
+      "field": "body",
+      "old": "\t\telseif slave['pregnant'] > 0 and slave['vaginal_modification'] ! 4 and slave['fertility'] = 0:\r\n\t\t\tif assistant['pregnant_revealed'] > 0:\r\n\t\t\t\t*p '<div id = \"slinfo_pregnant\" class=\"tooltip-left-small-button\" tooltip-data=\"<<$slave_name>>: 임신함\"><a href = \"EXEC: interaction_city = 331 & gt ''interaction_city''\"><img src=\"content\\pic\\buttons\\z_pregnant.png\"></a></div>'\r\n\t\t\tend\r\n\t\tend\r\n",
+      "new": "\t\tend\r\n\tend\r\n\t$jo9_preg_label = func('sjm_UI_UIadds', 'preg_label', slave['pregnant'], slave['pregnant_revealed'], slave['fertility'], slave['vaginal_modification'], slave['parasite'])\r\n\tif $jo9_preg_label ! '':\r\n\t\t*p '<div id=\"slinfo_pregnant\" class=\"tooltip-left-small-button\" tooltip-data=\"<<$slave_name>>: <<$jo9_preg_label>>\"><a href=\"EXEC: interaction_city = 331 & gt ''interaction_city''\"><img src=\"content\\pic\\buttons\\z_pregnant.png\" alt=\"<<$jo9_preg_label>>\"></a></div>'\r\n\tend\r\n\tif inventory['stethoscope'] ! 0:\r\n",
+      "count": 1
+    },
+    {
+      "location": "sjm_UI_UIadds",
+      "field": "body",
+      "old": "\t\telseif assistant['pregnant'] > 0 and assistant['vaginal_modification'] ! 4 and assistant['fertility'] = 0:\r\n\t\t\tif assistant['pregnant_revealed'] > 0:\r\n\t\t\t\t*p '<div id = \"asinfo_pregnant\" class=\"tooltip-left-small-button\" tooltip-data=\"<<$assistant_name>>: 임신\"><a href = \"EXEC: interaction_city = 331 & gt ''interaction_city''\"><img src=\"content\\pic\\buttons\\z_pregnant.png\"></a></div>'\r\n\t\t\tend\r\n\t\tend\r\n",
+      "new": "\t\tend\r\n\tend\r\n\t$jo9_preg_label = func('sjm_UI_UIadds', 'preg_label', assistant['pregnant'], assistant['pregnant_revealed'], assistant['fertility'], assistant['vaginal_modification'], assistant['parasite'])\r\n\tif $jo9_preg_label ! '':\r\n\t\t*p '<div id=\"asinfo_pregnant\" class=\"tooltip-left-small-button\" tooltip-data=\"<<$assistant_name>>: <<$jo9_preg_label>>\"><a href=\"EXEC: interaction_city = 331 & gt ''interaction_city''\"><img src=\"content\\pic\\buttons\\z_pregnant.png\" alt=\"<<$jo9_preg_label>>\"></a></div>'\r\n\tend\r\n\tif inventory['stethoscope'] ! 0:\r\n",
+      "count": 1
+    },
+    {
+      "location": "$slave_traits",
+      "field": "body",
+      "old": "!reveals slave traits",
+      "new": "! JO9_PREG_STAGE: refresh saved feature-rendering code without resetting character data\r\nif instr($update_slave_features_list, 'JO9_PREG_STAGE') = 0:\r\n\t$update_slave_features_list += {\r\n! JO9_PREG_STAGE\r\nif dynslave_state > CONST_INT['no_slave']:\r\n\t$dynslave_features_list += func('sjm_UI_UIadds', 'preg_feature', dynslave['pregnant'], dynslave['pregnant_revealed'], dynslave['fertility'], dynslave['vaginal_modification'], dynslave['parasite'])\r\nend\r\n}\r\nend\r\n\r\n!reveals slave traits",
+      "count": 1
+    }
+  ]
+}
