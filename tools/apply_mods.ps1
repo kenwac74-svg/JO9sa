@@ -97,6 +97,31 @@ function Test-Superseded($edit, [string]$text, [int]$from) {
 $pos = 0
 foreach ($mod in $mods) {
     if ($mod.before_sha256 -and $hash -eq $mod.before_sha256.ToUpper()) { Write-Host "[참고] $($mod.id): 현재 해시가 기록된 적용 전 해시와 같음" }
+    # Optional append-only locations. A conflicting existing location aborts before any disk write.
+    foreach ($loc in @($mod.add_locations)) {
+        if ($null -eq $loc) { continue }
+        if ([string]::IsNullOrWhiteSpace([string]$loc.name)) { throw 'add_locations requires a name.' }
+        if (@($loc.actions).Count -gt 0) { throw 'add_locations currently supports empty actions only.' }
+        if ($index.ContainsKey($loc.name)) {
+            $li = $index[$loc.name]
+            if ([Jo9Qsp]::Shift($lines[$li + 1], 5) -cne [string]$loc.desc -or
+                [Jo9Qsp]::Shift($lines[$li + 2], 5) -cne [string]$loc.body -or
+                [Jo9Qsp]::Shift($lines[$li + 3], 5) -ne '0') {
+                throw "[$($mod.id)] added location conflicts: $($loc.name). No file written."
+            }
+            Write-Host "[skip location] $($loc.name)"
+        } else {
+            $newLines = @([Jo9Qsp]::Shift([string]$loc.name, -5),
+                          [Jo9Qsp]::Shift([string]$loc.desc, -5),
+                          [Jo9Qsp]::Shift([string]$loc.body, -5),
+                          [Jo9Qsp]::Shift('0', -5), '')
+            $lines = @($lines[0..($lines.Length - 2)]) + $newLines
+            $lines[3] = [Jo9Qsp]::Shift([string]($index.Count + 1), -5)
+            $index = Get-LocationIndex $lines
+            $changed++
+            Write-Host "[add location] $($loc.name)"
+        }
+    }
     foreach ($e in $mod.edits) {
         $pos++
         $where = "[$($mod.id)] $($e.location).$($e.field)"
