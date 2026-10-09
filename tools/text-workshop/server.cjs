@@ -242,19 +242,19 @@ const server=http.createServer(async(req,res)=>{
         const input=await body(req,24000);
         const member=typeof input.path==='string'&&(catalog.meta(input.path)||catalog.meta(input.path.replace(/^content[\\/]pic[\\/]/i,'content/pic/reserve/')));
         if(!member)throw Error('체크리스트에 없는 이미지입니다.');
-        const source=catalogAsset(input.path,true);if(!source)throw Error('순정 원본 이미지를 찾지 못했습니다.');
+        const source=catalogAsset(input.path,input.original!==false);if(!source)throw Error('선택한 이미지를 찾지 못했습니다.');
         const workFolder=path.join(game,'content','modworkpic'),work=path.join(workFolder,path.basename(source));
         if(!fs.existsSync(work)||fs.lstatSync(work).isSymbolicLink()||!fs.realpathSync(work).startsWith(fs.realpathSync(workFolder)+path.sep)||!fs.readFileSync(work).equals(fs.readFileSync(source)))throw Error('작업폴더로 복사 버튼으로 이미지를 먼저 연결하세요.');
-        json(res,200,await grok.chat(source,input.path,input));return;
+        json(res,200,await grok.chat(source,(input.original===false?'current:':'original:')+input.path,input));return;
       }
       json(res,404,{error:'잘못된 Grok 요청입니다.'});return;
     }
     if(req.method==='POST'&&url.pathname==='/api/catalog/copy-original'){
       const input=await body(req,4096);
       const member=typeof input.path==='string'&&(catalog.meta(input.path)||catalog.meta(input.path.replace(/^content[\\/]pic[\\/]/i,'content/pic/reserve/')));
-      if(!member){json(res,400,{error:'체크리스트에 없는 원본 이미지입니다.'});return;}
-      const source=catalogAsset(input.path,true);
-      if(!source){json(res,404,{error:'순정 원본 이미지를 찾지 못했습니다.'});return;}
+      if(!member){json(res,400,{error:'체크리스트에 없는 이미지입니다.'});return;}
+      const source=catalogAsset(input.path,input.original!==false);
+      if(!source){json(res,404,{error:'선택한 이미지를 찾지 못했습니다.'});return;}
       json(res,200,require('./original-copy.cjs').copyOriginal(source,game,catalogRoot,input.replaceHash));return;
     }
     if(req.method==='POST'&&url.pathname==='/api/catalog/open-folder'){

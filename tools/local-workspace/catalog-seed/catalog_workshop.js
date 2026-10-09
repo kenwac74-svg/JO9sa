@@ -21,26 +21,27 @@
   var copySide=side;
   side=function(lab,root,rel,len,orig){
     var html=copySide(lab,root,rel,len,orig);
-    if(orig&&len&&root===OR&&isImg(rel)){
-      rel=rel.replace(/^content\\pic\\reserve\\/i,'content\\pic\\');
-      var button=' <button type="button" class="copy-original" title="이 순정 이미지를 modworkpic으로 복사" onclick="copyCatalogOriginal(\''+js(rel)+'\',this)">작업폴더로 복사</button>';
+    if(len&&(root===OR||root===MR)&&isImg(rel)){
+      if(orig)rel=rel.replace(/^content\\pic\\reserve\\/i,'content\\pic\\');
+      var button=' <button type="button" class="copy-original" title="이 이미지를 modworkpic으로 복사" onclick="copyCatalogImage(\''+js(rel)+'\',this,'+(orig?'true':'false')+')">작업폴더로 복사</button>';
       html=html.replace('</a></div></div>','</a>'+button+'</div></div>');
     }
     return html;
   };
-  window.copyCatalogOriginal=async function(rel,button){
+  window.copyCatalogOriginal=function(rel,button){return window.copyCatalogImage(rel,button,true);};
+  window.copyCatalogImage=async function(rel,button,original){
     if(!config){alert('로컬 체크리스트에서 사용해 주세요.');return;}
     button.disabled=true;
     try{
-      var result=await request('api/catalog/copy-original',{path:rel});
+      var result=await request('api/catalog/copy-original',{path:rel,original:original});
       if(result.conflict){
-        if(!confirm(result.name+' 파일이 modworkpic에 이미 있습니다. 기존 파일을 백업하고 원본으로 덮어쓸까요?'))return;
-        result=await request('api/catalog/copy-original',{path:rel,replaceHash:result.hash});
+        if(!confirm(result.name+' 파일이 modworkpic에 이미 있습니다. 기존 파일을 백업하고 선택한 이미지로 덮어쓸까요?'))return;
+        result=await request('api/catalog/copy-original',{path:rel,original:original,replaceHash:result.hash});
       }
       button.textContent=result.unchanged?'이미 복사됨':'복사 완료';
       button.title=result.destination;
-      if(window.JO9_GROK_SELECT)window.JO9_GROK_SELECT(rel,result);
-    }catch(e){alert('원본 복사 실패: '+e.message);}
+      if(window.JO9_GROK_SELECT)window.JO9_GROK_SELECT(rel,Object.assign({},result,{original:original}));
+    }catch(e){alert('이미지 복사 실패: '+e.message);}
     finally{button.disabled=false;}
   };
   function accept(v){if(v.originalCutSync){Object.assign(config.originalCuts||(config.originalCuts={}),v.originalCutSync.originalCuts||{});Object.assign(config.originalReservations||(config.originalReservations={}),v.originalCutSync.originalReservations||{});}baseline=JSON.parse(JSON.stringify(v.items||{}));S=JSON.parse(JSON.stringify(baseline));codes=v.codes||codes;unitCodes=v.unitCodes||unitCodes;window.CATALOG_STATUS=v;try{localStorage.setItem('imgmg_status',JSON.stringify({savedAt:v.savedAt,items:S}));}catch(e){}el('save').textContent='편집실과 공유 저장 · '+new Date(v.savedAt||Date.now()).toLocaleTimeString();redraw();if(v.originalCutSync){var sync=v.originalCutSync;el('save').textContent=sync.warning?'보관 상태 저장됨 · B컷 연결 확인 필요: '+sync.warning:'보관 상태 저장됨 · JO9O B컷 연결 '+sync.linked+'개'+(sync.pending?' · 원본 없는 B컷 예약 '+sync.pending+'개':'');}}
