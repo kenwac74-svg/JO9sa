@@ -1,0 +1,177 @@
+{
+  "id": "2026-10-10_restore_ui_format_after_dialogue_normalization",
+  "description": "대사 정리 패치가 변경한 전투 메뉴·상태 패널·UI 제목의 줄바꿈과 간격만 패치 전으로 복구. 분기·EXEC·이미지 경로 유지.",
+  "target": "game\\jack.qsp",
+  "before_sha256": "C45A110453E5E037DBB728F068370C98AC94F18B3CC9ED2B0CC7F4706B9641D5",
+  "after_sha256": "1AF050F737D62BA29BCB898A18DBD7C43443B4F114B837C2ED05618AF34A96E6",
+  "edits": [
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "\t$setting_display_r += '<a style=\"line-height:25%\"><br></a><div id=\"under_gray_cheats\">안개 괴물 즉시진화 -<br></div>'\r",
+      "new": "\t$setting_display_r += '<a style=\"line-height:25%\"><br></a><div id=\"under_gray_cheats\">- 안개 괴물 즉시진화 -<br></div>'\r",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "\t$setting_display_r += '<a style=\"line-height:25%\"><br></a><div id=\"under_gray_cheats\">노예 굶주림 -<br></div>'\r",
+      "new": "\t$setting_display_r += '<a style=\"line-height:25%\"><br></a><div id=\"under_gray_cheats\">- 노예 굶주림 -<br></div>'\r",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "\t$setting_display_r += '<a style=\"line-height:25%\"><br></a><div id=\"under_gray_cheats\">행동력 -<br></div>'\r",
+      "new": "\t$setting_display_r += '<a style=\"line-height:25%\"><br></a><div id=\"under_gray_cheats\">- 행동력 -<br></div>'\r",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "\t$setting_display_r += '<div id=\"under_gray_cheats\">경주 -<br></div>'\r",
+      "new": "\t$setting_display_r += '<div id=\"under_gray_cheats\">- 경주 -<br></div>'\r",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "\t$setting_display += '<a style=\"line-height:25%\"><br></a><div id=\"under_gray_cheats\">섹스 게임 -<br></div>'\r",
+      "new": "\t$setting_display += '<a style=\"line-height:25%\"><br></a><div id=\"under_gray_cheats\">- 섹스 게임 -<br></div>'\r",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "\t$setting_display += '<a style=\"line-height:25%\"><br></a><div id=\"under_gray_cheats\">전투 무적 -<br></div>'\r",
+      "new": "\t$setting_display += '<a style=\"line-height:25%\"><br></a><div id=\"under_gray_cheats\">- 전투 무적 -<br></div>'\r",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "\t$setting_display += '<a style=\"line-height:25%\"><br></a><div id=\"under_gray_cheats\">교육효과 배수 -<br></div>'\r",
+      "new": "\t$setting_display += '<a style=\"line-height:25%\"><br></a><div id=\"under_gray_cheats\">- 교육효과 배수 -<br></div>'\r",
+      "count": 1
+    },
+    {
+      "location": "master_stat",
+      "field": "body",
+      "old": "\t*p '<div id = \"center_text_column_2\"><u>착용 가능 장비-</u><br><font size=\"5\"><<$equip_choice>></font></div>'\r",
+      "new": "\t*p '<div id = \"center_text_column_2\"><u>-착용 가능 장비-</u><br><font size=\"5\"><<$equip_choice>></font></div>'\r",
+      "count": 1
+    },
+    {
+      "location": "slave_stat",
+      "field": "body",
+      "old": "\t\t*p '<div id = \"center_text_column_2\"><u>착용 가능 장비-</u><br><font size=\"5\"><<$equip_choice>></font></div>'\r",
+      "new": "\t\t*p '<div id = \"center_text_column_2\"><u>-착용 가능 장비-</u><br><font size=\"5\"><<$equip_choice>></font></div>'\r",
+      "count": 1
+    },
+    {
+      "location": "slave_stat",
+      "field": "body",
+      "old": "\t\t*p '<div id = \"center_text_column_2\"><u>착용 가능 장비-</u>&nbsp;<a href = \"EXEC: dynamic $replace($equip_set_manager, ''dyn''+''slave'', ''slave'')\"><img src=\"content\\pic\\ui\\jon-UIadds\\equipment.png\"></a><br><font size=\"5\"><<$equip_choice>></font></div>'\r",
+      "new": "\t\t*p '<div id = \"center_text_column_2\"><u>-착용 가능 장비-</u>&nbsp;<a href = \"EXEC: dynamic $replace($equip_set_manager, ''dyn''+''slave'', ''slave'')\"><img src=\"content\\pic\\ui\\jon-UIadds\\equipment.png\"></a><br><font size=\"5\"><<$equip_choice>></font></div>'\r",
+      "count": 1
+    },
+    {
+      "location": "slave_stat",
+      "field": "body",
+      "old": "\t*p '<div id=\"right_rules_heading\">규칙- (<<iif(overnight_rules_count < iif(difficulty_setting = 2, 3, 2), \"<div style=''display:inline-block;position:relative;line-height:110%'' class=''tooltip-left'' tooltip-data=''규칙이 없으면 노예를 망칠수도 있습니다.''>\" + dyneval($vb_cycle, 0, $str(overnight_rules_count)) + \"</div>\", overnight_rules_count)>>):</div>'\r",
+      "new": "\t*p '<div id=\"right_rules_heading\">-규칙- (<<iif(overnight_rules_count < iif(difficulty_setting = 2, 3, 2), \"<div style=''display:inline-block;position:relative;line-height:110%'' class=''tooltip-left'' tooltip-data=''규칙이 없으면 노예를 망칠수도 있습니다.''>\" + dyneval($vb_cycle, 0, $str(overnight_rules_count)) + \"</div>\", overnight_rules_count)>>):</div>'\r",
+      "count": 1
+    },
+    {
+      "location": "assistant_stat",
+      "field": "body",
+      "old": "\t\t*p '<div id = \"center_text_column_2\"><u>착용 가능 장비-</u><br><font size=\"5\"><<$equip_choice>></font></div>'\r",
+      "new": "\t\t*p '<div id = \"center_text_column_2\"><u>-착용 가능 장비-</u><br><font size=\"5\"><<$equip_choice>></font></div>'\r",
+      "count": 1
+    },
+    {
+      "location": "assistant_stat",
+      "field": "body",
+      "old": "\t\t*p '<div id = \"center_text_column_2\"><u>착용 가능 장비-</u>&nbsp;<a href = \"EXEC: dynamic $replace($equip_set_manager, ''dyn''+''slave'', ''assistant'')\"><img src=\"content\\pic\\ui\\jon-UIadds\\equipment.png\"></a><br><font size=\"5\"><<$equip_choice>></font></div>'\r",
+      "new": "\t\t*p '<div id = \"center_text_column_2\"><u>-착용 가능 장비-</u>&nbsp;<a href = \"EXEC: dynamic $replace($equip_set_manager, ''dyn''+''slave'', ''assistant'')\"><img src=\"content\\pic\\ui\\jon-UIadds\\equipment.png\"></a><br><font size=\"5\"><<$equip_choice>></font></div>'\r",
+      "count": 1
+    },
+    {
+      "location": "assistant_stat",
+      "field": "body",
+      "old": "\t\t*p '<div id=\"right_padding\">임무 -<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><span style=\"display:block; height:8px;\"></span>보고 -</div>'\r",
+      "new": "\t\t*p '<div id=\"right_padding\">- 임무 -<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><span style=\"display:block; height:8px;\"></span>- 보고 -</div>'\r",
+      "count": 1
+    },
+    {
+      "location": "assistant_stat",
+      "field": "body",
+      "old": "\t\t*p '<div id=\"right_padding\">임무 -<br><br><br><br><br><br><br><br><br><br><br><br><br>외형 -<br><br><br><br><br><br><br><span style=\"display:block; height:8px;\"></span>보고 -</div>'\r",
+      "new": "\t\t*p '<div id=\"right_padding\">- 임무 -<br><br><br><br><br><br><br><br><br><br><br><br><br>- 외형 -<br><br><br><br><br><br><br><span style=\"display:block; height:8px;\"></span>- 보고 -</div>'\r",
+      "count": 1
+    },
+    {
+      "location": "interaction_screen_city",
+      "field": "body",
+      "old": "$for_inter_screen_city += '<br><font style=\"color:#000000\">노예의 특성</font><a style=\"line-height:25%\"><br> </a><<$ucase($mid($stock_boobs2_txt[stock[\"boobs\"]],1,1))+mid($stock_boobs2_txt[stock[\"boobs\"]],2)>><a style=\"line-height:25%\"><br></a><<$stock_features_list>>'\r",
+      "new": "$for_inter_screen_city += '<br><font style=\"color:#000000\">노예의 특성</font><a style=\"line-height:25%\"><br>\r\n</a><<$ucase($mid($stock_boobs2_txt[stock[\"boobs\"]],1,1))+mid($stock_boobs2_txt[stock[\"boobs\"]],2)>><a style=\"line-height:25%\"><br></a><<$stock_features_list>>'\r",
+      "count": 1
+    },
+    {
+      "location": "interaction_screen_city",
+      "field": "body",
+      "old": "$for_inter_screen_city = '<br> 속성정보<br><div style=\"line-height:25%\"> </div><font style=\"font-size:12px;\"> 외모 </font><<$beauty[stock[\"beauty\"]]>> <font style=\"font-size:12px;\"> 체력 </font><<$stamina[stock[\"stamina\"]]>> <font style=\"font-size:12px;\"> 감수성 </font><<$sensitivity[stock[\"sensitivity\"]]>> <a style=\"line-height:25%\"><br></a><font style=\"font-size:12px;\"> 성격 </font> <<$temper[stock[\"temper\"]]>> <font style=\"font-size:12px;\"> 지성 </font><<$intellect[stock[\"intellect\"]]>> <font style=\"font-size:12px;\"> 자아 </font><<$ego[stock[\"ego\"]]>><br><a style=\"line-height:25%\"> </a><font style=\"font-size:12px;\"> 태도 </font><<$pride[stock[\"pride\"]]>> <font style=\"font-size:12px;\"> 독특함 </font><<$exotic[stock[\"exotic\"]]>> <font style=\"font-size:12px;\"> 체형 </font><<$fat[stock[\"fat\"]]>><br><a style=\"line-height:25%\"> </a><font style=\"font-size:12px;\"> 화려함 </font><<$style[stock[\"style\"]]>><br></a>'\r",
+      "new": "$for_inter_screen_city = '<br>\t 속성정보<br><div style=\"line-height:25%\">\r\n</div><font style=\"font-size:12px;\"> 외모\t\t</font><<$beauty[stock[\"beauty\"]]>>\r\n<font style=\"font-size:12px;\"> 체력\t</font><<$stamina[stock[\"stamina\"]]>>\r\n<font style=\"font-size:12px;\"> 감수성\t</font><<$sensitivity[stock[\"sensitivity\"]]>>\r\n<a style=\"line-height:25%\"><br></a><font style=\"font-size:12px;\"> 성격\t\t</font>\t<<$temper[stock[\"temper\"]]>>\r\n<font style=\"font-size:12px;\"> 지성\t\t</font><<$intellect[stock[\"intellect\"]]>>\r\n<font style=\"font-size:12px;\"> 자아\t</font><<$ego[stock[\"ego\"]]>><br><a style=\"line-height:25%\">\r\n</a><font style=\"font-size:12px;\"> 태도\t</font><<$pride[stock[\"pride\"]]>>\r\n<font style=\"font-size:12px;\"> 독특함\t</font><<$exotic[stock[\"exotic\"]]>>\r\n<font style=\"font-size:12px;\"> 체형\t</font><<$fat[stock[\"fat\"]]>><br><a style=\"line-height:25%\">\r\n</a><font style=\"font-size:12px;\"> 화려함\t</font><<$style[stock[\"style\"]]>><br></a>'\r",
+      "count": 1
+    },
+    {
+      "location": "боевой_интерфейс",
+      "field": "body",
+      "old": "\t\t*p '<div id = \"fight_options\"><a href = \"EXEC: dynamic $в_боевое_меню\">일반 공격</a> <a href = \"EXEC: gt ''инвентарь''\">물약 사용</a> <a href = \"EXEC: gt ''сменить_оружие''\">무기 변경</a> <a href=\"EXEC: gt ''передышка''\">방어</a> </div>'\r",
+      "new": "\t\t*p '<div id = \"fight_options\"><a href = \"EXEC: dynamic $в_боевое_меню\">일반 공격</a>\r\n\t\t\t<a href = \"EXEC: gt ''инвентарь''\">물약 사용</a>\r\n\t\t\t<a href = \"EXEC: gt ''сменить_оружие''\">무기 변경</a>\r\n\t\t\t<a href=\"EXEC: gt ''передышка''\">방어</a>\r\n\t\t</div>'\r",
+      "count": 1
+    },
+    {
+      "location": "боевой_интерфейс",
+      "field": "body",
+      "old": "\t\t*p '<div id = \"fight_options_ui2\"><a href = \"EXEC: dynamic $в_боевое_меню\">일반 공격</a> <a href = \"EXEC: gt ''инвентарь''\">물약 사용</a> <a href = \"EXEC: gt ''сменить_оружие''\">무기 변경</a> <a href=\"EXEC: gt ''передышка''\">방어</a> </div>'\r",
+      "new": "\t\t*p '<div id = \"fight_options_ui2\"><a href = \"EXEC: dynamic $в_боевое_меню\">일반 공격</a>\r\n\t\t\t<a href = \"EXEC: gt ''инвентарь''\">물약 사용</a>\r\n\t\t\t<a href = \"EXEC: gt ''сменить_оружие''\">무기 변경</a>\r\n\t\t\t<a href=\"EXEC: gt ''передышка''\">방어</a>\r\n\t\t</div>'\r",
+      "count": 1
+    },
+    {
+      "location": "боевой_интерфейс",
+      "field": "body",
+      "old": "\t\t*p '<div id = \"fight_options\"><a href = \"EXEC: dynamic $в_боевое_меню\">일반 공격</a> <a href=\"EXEC: gt ''суперудары''\">특수 기술</a> <a href = \"EXEC: gt ''инвентарь''\">물약 사용</a> <a href = \"EXEC: gt ''сменить_оружие''\">무기 변경</a> <a href=\"EXEC: gt ''передышка''\">방어</a> </div>'\r",
+      "new": "\t\t*p '<div id = \"fight_options\"><a href = \"EXEC: dynamic $в_боевое_меню\">일반 공격</a>\r\n\t\t\t<a href=\"EXEC: gt ''суперудары''\">특수 기술</a>\r\n\t\t\t<a href = \"EXEC: gt ''инвентарь''\">물약 사용</a>\r\n\t\t\t<a href = \"EXEC: gt ''сменить_оружие''\">무기 변경</a>\r\n\t\t\t<a href=\"EXEC: gt ''передышка''\">방어</a>\r\n\t\t</div>'\r",
+      "count": 1
+    },
+    {
+      "location": "боевой_интерфейс",
+      "field": "body",
+      "old": "\t\t*p '<div id = \"fight_options_ui2\"><a href = \"EXEC: dynamic $в_боевое_меню\">일반 공격</a> <a href=\"EXEC: gt ''суперудары''\">특수 기술</a> <a href = \"EXEC: gt ''инвентарь''\">물약 사용</a> <a href = \"EXEC: gt ''сменить_оружие''\">무기 변경</a> <a href=\"EXEC: gt ''передышка''\">방어</a> </div>'\r",
+      "new": "\t\t*p '<div id = \"fight_options_ui2\"><a href = \"EXEC: dynamic $в_боевое_меню\">일반 공격</a>\r\n\t\t\t<a href=\"EXEC: gt ''суперудары''\">특수 기술</a>\r\n\t\t\t<a href = \"EXEC: gt ''инвентарь''\">물약 사용</a>\r\n\t\t\t<a href = \"EXEC: gt ''сменить_оружие''\">무기 변경</a>\r\n\t\t\t<a href=\"EXEC: gt ''передышка''\">방어</a>\r\n\t\t</div>'\r",
+      "count": 1
+    },
+    {
+      "location": "black_market_interface",
+      "field": "body",
+      "old": "*p '<div id = \"side_panel_main\"><center><div style=\"font-size: 40px;\"><<$place_name[$place]>></div> <<$place_location[$place]>> 참고 정보: </center></div>'\r",
+      "new": "*p '<div id = \"side_panel_main\"><center><div style=\"font-size: 40px;\"><<$place_name[$place]>></div>\r\n<<$place_location[$place]>>\r\n 참고 정보:\r\n </center></div>'\r",
+      "count": 1
+    },
+    {
+      "location": "pharmacy",
+      "field": "body",
+      "old": " *p '<div id = \"side_panel_main\"><center><font size = 50%><<$npc_name[$npc_id]>></font><<$npc_status[$npc_id]>> 참고 정보: </center></div>'\r",
+      "new": " *p '<div id = \"side_panel_main\"><center><font size = 50%><<$npc_name[$npc_id]>></font><<$npc_status[$npc_id]>>\r\n참고 정보:\r\n</center></div>'\r",
+      "count": 1
+    },
+    {
+      "location": "pharmacy",
+      "field": "body",
+      "old": " *p '<div id = \"side_panel_main\"><center><div style=\"font-size: 40px;\"><<$place_name[$place]>></div><<$place_location[$place]>> 참고 정보: </center></div>'\r",
+      "new": " *p '<div id = \"side_panel_main\"><center><div style=\"font-size: 40px;\"><<$place_name[$place]>></div><<$place_location[$place]>>\r\n 참고 정보:\r\n </center></div>'\r",
+      "count": 1
+    }
+  ]
+}

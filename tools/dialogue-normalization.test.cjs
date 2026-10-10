@@ -39,3 +39,24 @@ test('standalone battle/status labels stay',()=>{
  assert.equal(normalize('<b>[시야 흐림]</b>').text,'<b>[시야 흐림]</b>');
  assert.equal(normalize('[<<$master_name>>]').text,'[<<$master_name>>]');
 });
+
+test('QSP combat menu variants keep every physical line and EXEC target',()=>{
+ const fs=require('node:fs'),path=require('node:path');
+ const source=JSON.parse(fs.readFileSync(path.join(__dirname,'../mods/2026-10-09_dialogue_format_and_protagonist.json'),'utf8'));
+ const menus=source.edits.filter(e=>e.location==='боевой_интерфейс');
+ assert.equal(menus.length,4);
+ for(const e of menus){
+  const result=normalize(e.old);
+  assert.equal(result.skipped,'ui-layout');assert.equal(result.text,e.old);
+  assert.equal(normalize(result.text).text,e.old);
+ }
+});
+test('all restored UI fragments are excluded from dialogue formatting',()=>{
+ const fs=require('node:fs'),path=require('node:path');
+ const fix=JSON.parse(fs.readFileSync(path.join(__dirname,'../mods/2026-10-10_restore_ui_format_after_dialogue_normalization.json'),'utf8'));
+ assert.equal(fix.edits.length,24);
+ for(const e of fix.edits){
+  const result=normalize(e.new,{assignment:e.new.split("'")[0]});
+  assert.equal(result.skipped,'ui-layout',e.location);assert.equal(result.text,e.new,e.location);
+ }
+});

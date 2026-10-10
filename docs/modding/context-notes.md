@@ -201,3 +201,7 @@
 - Fix: locate a unique CRLF-anchored cycle marker and replace only its registry. Preserve the preceding guard and original room-switching tail. Canonical cycle-mod export begins at the marker, so the separate bridge guard is not duplicated in the mod.
 - QA: reproduced two failures before the fix; three regression/integration tests pass afterward. Temporary-QSP cut save preserves the guard, unrelated location and room UI tail, writes a backup, and repeats without a change. Missing/incomplete cycle blocks still fail without writing.
 - Runtime/gameplay verification: no game client automation. The PLAY QSP and user images are not changed by installing this tool fix. User retries the failed new-cut save after refreshing the tool.
+
+## 2026-10-10 전투 메뉴 한 줄 표시 회귀 복구
+
+10/09 대사 정리 패치가 전투 메뉴의 실제 CRLF를 공백으로 접었다. 같은 패치의 UI 조각 24개(8 location)를 패치 전 형식으로 복원했고, 대사 정리 도구에서 UI 구조를 제외했다. [근거·백업·검증·남은 확인](../COMBAT_MENU_RESTORATION_20261010.md). QSP 적용 완료, 12개 테스트 통과, 사용자 플레이 검증 대기. 전체 과거 모드 재실행은 기존 debug_info 매칭 문제로 미확인이다.

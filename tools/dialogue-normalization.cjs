@@ -49,7 +49,14 @@ function minorContext(text,meta={}){
 function normalize(text,meta={}){
  const stats={dashes:0,headers:0,whitespace:0,pronouns:0,retainedPronouns:0};
  if(minorContext(text,meta))return {text,stats,skipped:'restricted-context'};
- const protect=tokens(text),headers=speakerHeaders(protect.masked,protect.unmask);
+ const protect=tokens(text);
+ // QSP renders physical line breaks and tabs in menu/status literals. They are UI,
+ // even when their visible labels contain Korean, and must not be folded as prose.
+ const layout=protect.parts.some(p=>p.type==='tag'&&
+  (/^<(?:div|span)\b[^>]*\bid\s*=/i.test(p.raw)||/^<(?:table|tr|td|th|pre|textarea|script|style|select|button|input)\b/i.test(p.raw)))||
+  /\$for_inter_screen_city\b/.test(meta.assignment||'');
+ if(layout)return {text,stats,skipped:'ui-layout'};
+ const headers=speakerHeaders(protect.masked,protect.unmask);
  // Bracketed battle/status labels are labels, not speech paragraphs.
  const onlyLabel=text.replace(/<<[\s\S]*?>>/g,'X').replace(/<[^>]*>/g,'').replace(/&nbsp;|&#(?:160|x0*a0);/gi,' ').trim();
  if(/^\[[^\]\r\n]+\]$/.test(onlyLabel))return {text,stats};
