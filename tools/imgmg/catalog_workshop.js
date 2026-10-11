@@ -56,7 +56,7 @@
   setSt=function(i,s){if(remote&&(saving||pending.length)){el('save').textContent='상태 저장 중입니다. 저장 후 다시 선택하세요.';return;}originalSet(i,s);if(remote)saveNow();};
   bulkSet=function(){if(remote&&(saving||pending.length))return;originalBulk();};
   function refresh(){if(!remote||saving||pending.length||refreshing)return;refreshing=true;request('api/catalog/state?since='+encodeURIComponent(window.CATALOG_STATUS.savedAt||0)).then(function(v){if(!v.unchanged)accept(v);}).catch(function(){el('save').textContent='편집실 연결이 끊겼습니다 · 재연결 전에는 체크할 수 없습니다';}).finally(function(){refreshing=false;});}
-  function locate(p){if(typeof p!=='string')p=new URLSearchParams(location.search).get('image');if(!p)return;var target=D.find(function(d){return d[0].toLowerCase()===p.replace(/\//g,'\\').toLowerCase();});if(!target){el('save').textContent='체크리스트에 없는 이미지입니다: '+p;return;}var parent=target[7]||target[0];curDir='';el('small').checked=true;['fs','st','src'].forEach(function(k){el(k).value='';});el('q').value=parent;filter();var i=R.findIndex(function(d){return d[0]===target[0];});if(i>=0){var card=el('r'+i);card.style.outline='3px solid #d8a958';card.scrollIntoView({block:'center'});}}
+  function locate(p){if(window.JO9_UNCHECKED_REVIEW&&window.JO9_UNCHECKED_REVIEW.active())return;if(typeof p!=='string')p=new URLSearchParams(location.search).get('image');if(!p)return;var target=D.find(function(d){return d[0].toLowerCase()===p.replace(/\//g,'\\').toLowerCase();});if(!target){el('save').textContent='체크리스트에 없는 이미지입니다: '+p;return;}var parent=target[7]||target[0];curDir='';el('small').checked=true;['fs','st','src'].forEach(function(k){el(k).value='';});el('q').value=parent;filter();var i=R.findIndex(function(d){return d[0]===target[0];});if(i>=0){var card=el('r'+i);card.style.outline='3px solid #d8a958';card.scrollIntoView({block:'center'});}}
   applyCodesOffline();
   if(!config||!window.fetch){if(window.URLSearchParams)locate();return;}
   request('api/catalog/state').then(function(v){
@@ -98,3 +98,90 @@
   query.addEventListener('input',function(){clearTimeout(timer);timer=setTimeout(function(){run(false);},180);});query.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();run(true);}if(e.key==='Escape'){query.value='';run();}});
   document.getElementById('jo9SearchGo').onclick=function(){run(true);};document.getElementById('jo9SearchClear').onclick=function(){query.value='';run();query.focus();};scope.onchange=function(){run(true);};
 })();
+
+/* JO9_UNCHECKED_REVIEW_BEGIN: dedicated, non-mutating review of every unmarked file. */
+(function(){
+  'use strict';
+  var active=false,previous=null,timer;
+  var beforeRender=render,beforeFilter=filter,beforeSummary=summary,beforeBulk=bulkSet;
+  function unchecked(value){return value==null||value===''||(Array.isArray(value)&&value.length===0);}
+  function candidates(rows,state){return rows.filter(function(d){return unchecked(state[d[0]]);});}
+  window.JO9_UNCHECKED_REVIEW={isUnchecked:unchecked,candidates:candidates,active:function(){return active;}};
+  var bar=document.createElement('div');bar.className='bar unchecked-review';
+  bar.innerHTML='<button type="button" id="review-unchecked">미체크 전체 보기</button> <button type="button" id="review-normal" hidden>일반 보기로 돌아가기</button> <span id="review-description">상태 체크가 하나도 없는 이미지를 따로 확인합니다.</span>';
+  var sum=el('sum');sum.parentNode.insertBefore(bar,sum.nextSibling);
+  var style=document.createElement('style');style.textContent='.unchecked-review{padding:12px;border:1px solid #83996c;background:#263323;color:#f4f1df}.unchecked-review button{font-weight:bold}.unchecked-review.review-active{border-color:#d6bc71;background:#343421}.unchecked-review #review-description{color:#f4f1df;line-height:1.5}';document.head.appendChild(style);
+  function refreshBadge(){
+    var total=candidates(D,S).length;
+    el('review-unchecked').textContent='미체크 전체 보기 ('+total.toLocaleString()+'개)';
+    el('review-unchecked').disabled=active;el('review-normal').hidden=!active;
+    bar.className='bar unchecked-review'+(active?' review-active':'');
+    el('review-description').textContent=active?'포트레이트·UI·미적용 시안도 포함합니다. 체크를 추가한 파일은 이 목록에서 빠집니다. 미체크는 미사용 판정이 아닙니다.':'상태 체크가 하나도 없는 이미지를 따로 확인합니다.';
+  }
+  function visibleRows(){
+    return candidates(D,S).filter(function(d){
+      var dd=catalogDir(d[0]);
+      if(curDir&&dd!==curDir&&dd.indexOf(curDir+'\\')!==0)return false;
+      // Use the current workshop matcher for path and work-code searches, but
+      // check state above and allow the root to include reserve images too.
+      var old=curDir;curDir=dd;
+      try{return match(d,'',true);}finally{curDir=old;}
+    });
+  }
+  function withoutPairs(fn){var old=KIDS;KIDS={};try{return fn();}finally{KIDS=old;}}
+  render=function(){
+    if(!active)return beforeRender();
+    el('fs').value='none';
+    view=visibleRows();
+    var result=withoutPairs(function(){return beforeRender();});
+    el('cnt').textContent='미체크 '+view.length.toLocaleString()+'개 / 전체 미체크 '+candidates(D,S).length.toLocaleString()+'개';
+    refreshBadge();return result;
+  };
+  filter=function(){if(!active)return beforeFilter();page=0;render();summary();};
+  summary=function(){var result=beforeSummary();refreshBadge();return result;};
+  bulkSet=function(){
+    if(!active)return beforeBulk();
+    // Existing bulk logic includes paired children; in this view each file is
+    // independent, so checked relatives must never receive a bulk mutation.
+    view=visibleRows();return withoutPairs(function(){return beforeBulk();});
+  };
+  function enter(){
+    if(active)return;
+    previous={dir:curDir,page:page,values:{},checks:{},disabled:{}};
+    ['fs','st','src','q'].forEach(function(id){previous.values[id]=el(id).value;});
+    ['small','sub'].forEach(function(id){previous.checks[id]=el(id).checked;});
+    ['fs','small','sub'].forEach(function(id){previous.disabled[id]=el(id).disabled;el(id).disabled=true;});
+    active=true;curDir='';el('fs').value='none';el('st').value='';el('src').value='';el('q').value='';el('small').checked=true;el('sub').checked=true;
+    drawTree();filter();
+  }
+  function leave(){
+    if(!active)return;active=false;clearTimeout(timer);
+    curDir=previous.dir;
+    Object.keys(previous.values).forEach(function(id){el(id).value=previous.values[id];});
+    Object.keys(previous.checks).forEach(function(id){el(id).checked=previous.checks[id];});
+    Object.keys(previous.disabled).forEach(function(id){el(id).disabled=previous.disabled[id];});
+    var oldPage=previous.page;drawTree();filter();page=oldPage;render();refreshBadge();
+  }
+  // Classic handlers captured the old filter function during page startup.
+  // Capture only review controls; normal-mode event handling stays untouched.
+  document.addEventListener('change',function(e){
+    if(active&&['fs','st','src','per','small','sub'].indexOf(e.target.id)>=0){e.stopImmediatePropagation();filter();}
+  },true);
+  document.addEventListener('keyup',function(e){
+    if(active&&e.target.id==='q'){e.stopImmediatePropagation();clearTimeout(timer);timer=setTimeout(filter,250);}
+  },true);
+  document.addEventListener('input',function(e){
+    if(active&&e.target.id==='q'){e.stopImmediatePropagation();clearTimeout(timer);timer=setTimeout(filter,180);}
+  },true);
+  document.addEventListener('keydown',function(e){
+    if(active&&e.target.id==='q'&&(e.key==='Enter'||e.key==='Escape')){e.stopImmediatePropagation();e.preventDefault();if(e.key==='Escape')el('q').value='';filter();}
+  },true);
+  document.addEventListener('click',function(e){
+    if(active&&(e.target.id==='jo9SearchGo'||e.target.id==='jo9SearchClear')){e.stopImmediatePropagation();if(e.target.id==='jo9SearchClear')el('q').value='';filter();}
+  },true);
+  el('review-unchecked').onclick=enter;el('review-normal').onclick=leave;
+  window.JO9_UNCHECKED_REVIEW.enter=enter;window.JO9_UNCHECKED_REVIEW.leave=leave;
+  refreshBadge();
+  if(new URLSearchParams(location.search).get('review')==='unchecked')enter();
+})();
+/* JO9_UNCHECKED_REVIEW_END */

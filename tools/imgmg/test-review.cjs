@@ -1,0 +1,28 @@
+const fs=require('fs'),vm=require('vm'),assert=require('node:assert/strict');
+const elements={};
+function element(id=''){return {id,value:'',checked:false,disabled:false,hidden:false,textContent:'',parentNode:{insertBefore(){}},appendChild(){},addEventListener(){}};}
+for(const id of ['sum','fs','st','src','q','small','sub','per','cnt','review-unchecked','review-normal','review-description'])elements[id]=element(id);
+elements.fs.value='done';elements.q.value='prior';elements.small.checked=false;
+const row=(p,parent='',src='orig')=>[p,'s',src,1,1,150,150,parent];
+const parent=row('content\\pic\\parent.png'),child=row('content\\pic\\face\\child.png',parent[0]);
+const empty=row('content\\pic\\empty.png'),reserve=row('content\\pic\\reserve\\draft.png');
+const sibling=row('content\\pic\\face\\checked.png',parent[0]);
+const root=row('content\\pic\\root.png'),rootChild=row('content\\pic\\face\\checked2.png',root[0]);
+const context={console,URLSearchParams,setTimeout,clearTimeout,location:{search:''},document:{createElement:()=>element(),head:{appendChild(){}},addEventListener(){}},el:id=>elements[id],D:[parent,child,empty,reserve,sibling,root,rootChild],S:{[parent[0]]:['done'],[empty[0]]:[],[sibling[0]]:['keep'],[rootChild[0]]:['done']},KIDS:{[parent[0]]:[child,sibling],[root[0]]:[rootChild]},curDir:'old-folder',page:2,view:[],R:[],catalogDir:d=>d.slice(0,d.lastIndexOf('\\')),drawTree(){},render(){this.R=this.view.slice();},filter(){this.view=['normal'];},summary(){},bulkSet(){for(const d of this.view){this.S[d[0]]=['done'];for(const k of this.KIDS[d[0]]||[])this.S[k[0]]=['done'];}},match(d){const q=elements.q.value.toLowerCase();return (!q||d[0].toLowerCase().includes(q)||q==='code-child'&&d===child)&&(!elements.src.value||d[2]===elements.src.value);}};
+// Classic catalog functions resolve globals, not a receiver.
+context.render=()=>{context.R=context.view.slice();};context.filter=()=>{context.view=['normal'];};context.bulkSet=()=>{for(const d of context.view){context.S[d[0]]=['done'];for(const k of context.KIDS[d[0]]||[])context.S[k[0]]=['done'];}};
+context.window=context;
+vm.createContext(context);vm.runInContext(fs.readFileSync(__dirname+'/catalog-review-module.js','utf8'),context);
+const api=context.JO9_UNCHECKED_REVIEW;
+for(const v of [undefined,null,'',[]])assert.equal(api.isUnchecked(v),true);
+for(const v of [['done'],['keep'],['redo'],'done'])assert.equal(api.isUnchecked(v),false);
+const unchanged=JSON.stringify(context.S);api.enter();
+assert.equal(JSON.stringify(context.S),unchanged,'enter never mutates flags');
+assert.deepEqual(Array.from(context.view,d=>d[0]),[child[0],empty[0],reserve[0],root[0]],'include small, reserve and unmarked child of checked parent; exclude marked children');
+assert.equal(context.KIDS[parent[0]].length,2,'pair data restored after render');
+elements.q.value='code-child';context.filter();assert.equal(context.view.length,1);assert.equal(context.view[0],child);
+elements.q.value='';context.curDir='content\\pic\\reserve';context.filter();assert.equal(context.view.length,1);assert.equal(context.view[0],reserve);
+context.curDir='';context.filter();context.bulkSet();assert.deepEqual(context.S[sibling[0]],['keep'],'bulk does not alter checked sibling');assert.deepEqual(context.S[rootChild[0]],['done']);assert.deepEqual(context.S[parent[0]],['done']);
+context.render();assert.equal(context.view.length,0,'checked files disappear after state refresh');
+api.leave();assert.equal(context.curDir,'old-folder');assert.equal(elements.q.value,'prior');assert.equal(elements.fs.value,'done');assert.equal(elements.small.checked,false);assert.equal(elements.fs.disabled,false);assert.equal(context.page,2);
+console.log('PASS: empty flags, independent paired files, reserve/small inclusion, code/folder filtering, mutation-free entry, safe bulk, live refresh and filter restoration');

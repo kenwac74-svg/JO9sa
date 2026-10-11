@@ -195,3 +195,10 @@
 - 공용 배열의 실제 사용 장면, 조건별 대입, 지연 실행, 주석 제외, 출력 상한 및 인증/오래된 선택 검사. 전체 회귀 54개 통과, 조회 전후 fixture 및 실제 QSP 바이트 보존.
 - 저장소와 설치본 동기화, 사용자 상시 승인으로 3813 서버만 재시작. 내장 브라우저에서 확인. 게임·이미지·순정·키 변경 없음.
 - 상세: `docs/DIALOGUE_VARIABLE_INSPECTION_20261009.md`. 백업: `G:/somi/IMGMG/image_work/tool_backups/variable_inspector_20261009_164704`.
+
+## 2026-10-11 이미지 체크리스트 미체크 전체 보기
+
+- `catalog_workshop.js`에 독립 파일 단위 미체크 검토 모드를 추가했다. 작은 포트레이트·미적용 시안·체크한 부모의 미체크 자식을 포함하며, 보기를 열어도 상태를 저장하지 않는다.
+- 일괄 적용은 이 목록의 파일에만 적용한다. 일반 보기 복귀 시 이전 폴더·검색·상태 필터를 복원한다. 공유 상태 갱신 시 체크한 파일은 목록에서 사라진다.
+- 모듈 원본은 `tools/imgmg/catalog-review-module.js`, 테스트는 `node tools/imgmg/test-review.cjs`. 배포된 `catalog_workshop.js` 끝의 같은 모듈과 함께 갱신한다. 생성기는 기존처럼 `catalog_workshop.js`를 복사한다.
+- 전용 주소: `/catalog?review=unchecked`. 소스·IMGMG·로컬 작업/seed에 동일 모듈을 적용한다. 서버 API 변경이나 재시작이 필요하지 않다.
