@@ -7,6 +7,11 @@ param(
     [switch]$Apply
 )
 $ErrorActionPreference = 'Stop'
+# Retired after canonical resource relocation; never recreate the deprecated folder.
+if ($Apply) { throw 'SNKmod 동기화는 폐기되었습니다. docs/SNKMOD_RELOCATION_20261011.md의 정규 경로를 사용하세요.' }
+Write-Warning 'SNKmod 동기화는 폐기되었습니다. 기존 파일은 정규 위치로 이전되었습니다.'
+return
+
 $stamp = Get-Date -Format 'yyyyMMdd_HHmmss'
 $backupRoot = Join-Path $Root "_backup\$stamp"
 $plan = New-Object System.Collections.ArrayList

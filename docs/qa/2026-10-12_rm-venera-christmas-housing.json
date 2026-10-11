@@ -1,0 +1,69 @@
+{
+  "date": "2026-10-12",
+  "before": "0b2d1ab6102fb1b5dfe706c302d7fda00d227398268f7cff522b44385d62a019",
+  "after": "6997bd3ce1bcf073da2d0a77cc7a516352adb3ca0d0edbb80c0591163a33f285",
+  "backup": "G:/somi/JO9/game/jack.qsp.bak_20261012_033627",
+  "rmReference": "894138e52617972a6d94962368a3bb9b27708ec9b313bef5c69a9c31e062b5a8",
+  "applied": [
+    "Venera acquisition flag/menu/entry guards",
+    "Christmas 10375 remove stage rewind"
+  ],
+  "notApplied": [
+    "RM owner-forced positive wealth and housing effects",
+    "Goblin quest rhetoric requirement removal",
+    "RM venera2 bookkeeping swap (current reward and menu already agree)"
+  ],
+  "checks": [
+    "Pre-fix tests fail for missing flag and stage rewind",
+    "Post-fix source contracts and boundary simulations pass",
+    "247 locations; unaffected QSP records preserved",
+    "Official apply_mods candidate byte equality and idempotency",
+    "qsp_verify PASS",
+    "Previous transaction, gameover, hide choice and Leshiy regression tests pass",
+    "Four save structure roundtrips and actual menu/route bindings pass",
+    "Installed saves match verified hashes",
+    "Original 7-1.sav hash unchanged"
+  ],
+  "gameplayVerified": false,
+  "houseUserPlayTest": {
+    "date": "2026-10-12",
+    "reportedBy": "user",
+    "before": "이상 없음, 기분 B+",
+    "after": "이상 없음, 기분 B+",
+    "scope": "두 주택 테스트 세이브 정상 및 기분 등급 동일",
+    "unconfirmedDetails": [
+      "취소 시 차감 여부와 본채 임대료 수치는 별도로 보고되지 않음"
+    ],
+    "decision": "RM 소유자 긍정 효과 강제 변경 미적용 유지"
+  },
+  "christmasUserPlayTest": {
+    "date": "2026-10-12",
+    "reportedBy": "user",
+    "result": "After restart, user confirmed Stage8/9 operate normally.",
+    "confirmedPass": true,
+    "gameProcessStarted": "2026-10-12 02:08:24",
+    "diskPatchApplied": "2026-10-12 03:36:27",
+    "autoSaveModified": "2026-10-12 04:07:26",
+    "autoSaveStage": 6,
+    "testSaveStages": [
+      8,
+      9
+    ],
+    "diagnosis": "Restart resolved the reported menu issue; stale in-memory pre-patch code remains the inferred cause.",
+    "nextAction": "Christmas menus and Venera overall test user-confirmed; 3500$ reward amount not separately reported.",
+    "initialResult": "Stage8/9 both show the same ordinary menu; auction/final Grinch option missing",
+    "userConfirmation": "정상 동작한다.",
+    "confirmedScope": [
+      "Stage8 auction menu retained after handover",
+      "Stage9 final Grinch menu retained after handover"
+    ]
+  },
+  "veneraUserPlayTest": {
+    "date": "2026-10-12",
+    "reportedBy": "user",
+    "confirmation": "정상",
+    "confirmedPass": true,
+    "scope": "베네라 테스트 안내 후 사용자 정상 확인",
+    "details": "BEFORE/AFTER/LEGACY별 결과와 차감 수치는 별도로 보고되지 않음"
+  }
+}

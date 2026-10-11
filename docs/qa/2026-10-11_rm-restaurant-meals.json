@@ -1,0 +1,107 @@
+{
+  "source": "User-updated RM game/jack.qsp",
+  "source_sha256": "894138e52617972a6d94962368a3bb9b27708ec9b313bef5c69a9c31e062b5a8",
+  "source_bytes": 17338012,
+  "target": "G:/somi/JO9/game/jack.qsp",
+  "before_sha256": "f1dd091e634b6b2172d78023b9f9213b1cb7d525c4829675c445427b248f0ee1",
+  "after_sha256": "1805493073d8613f6fafd491074f76f87768f2e661b4aaa6221dde6b0901ef5f",
+  "backup": "G:/somi/JO9/game/jack.qsp.bak_20261011_235511",
+  "locations": 247,
+  "changed_locations": [
+    "interaction"
+  ],
+  "events": [
+    853,
+    5604
+  ],
+  "checks": {
+    "restaurant_source_checks": 30,
+    "kura_regression": "pass",
+    "reference_runtime_regression": "pass",
+    "official_mod_replay": "matches candidate",
+    "repeat_apply": "no change",
+    "unchanged_qsp_records": "all except interaction body"
+  },
+  "gameplay": "Both restaurant routes and happy dialogue observed by user; day end confirmed for event 853. Direct runtime hunger/meal-state inspection pending. Group execution correction now applied; recheck pending.",
+  "user_gameplay": {
+    "date": "2026-10-12",
+    "event_853": {
+      "status": "user_smoke_test_pass",
+      "evidence": "텍스트로 행복해하고 있다 라는 지문 확인했어. 하루 종료해도 이상없어",
+      "scope": [
+        "restaurant visit completed",
+        "happy dialogue observed",
+        "day end without reported issue"
+      ],
+      "limitations": [
+        "Specific moodlet value, ate_already value, cooking cost and strength changes were not separately measured."
+      ]
+    },
+    "event_5604": {
+      "status": "user_route_and_dialogue_pass",
+      "evidence": "조수와 둘이 가는 경로도 이상없음 행복해 한다가 나오는데 배고픔이 해결되는지를 봐야할거 같아",
+      "meal_state_verification": "pending"
+    }
+  },
+  "execution_followup": {
+    "date": "2026-10-12",
+    "cause": "Event 853 sets prise_date, but current result handler handles praise_date; no handler executes the legacy group callback. Initial source checks did not verify this connection.",
+    "change": "Move only food moodlet and ate_already=5 into executed event 853 body, following RM placement.",
+    "after_sha256": "82ee7d4bd1d9355752d5283b6bba4e7dbc1aea0c8f47deee867e7f9ee2929ac6",
+    "backup": "G:/somi/JO9/game/jack.qsp.bak_20261012_001334",
+    "mod": "mods/2026-10-12_fix_rm_group_meal_execution.json",
+    "tests": {
+      "red": "Group meal must be recorded in executed event body",
+      "green_checks": 32,
+      "reference_runtime_regression": "pass",
+      "official_replay": "matches candidate",
+      "repeat_apply": "no change"
+    },
+    "runtime": "User-provided 7-1 save confirms executed event 853 sets ate_already=5 and pos_self_food=1 after correction."
+  },
+  "save_state_verification": {
+    "date": "2026-10-12",
+    "event": 853,
+    "files": [
+      {
+        "file": "G:/somi/JO9/game/save/7.sav",
+        "sha256": "14af5ba4acc4a5379bd5e6f8ee15b7a5cbaa21560c943083ca8cb488569ce197",
+        "location": "city_screen"
+      },
+      {
+        "file": "G:/somi/JO9/game/save/7-1.sav",
+        "sha256": "6f04acfa01fa3d05d5bc8a14c46da47c982c581f796f5b322be5beaa99d83ab2",
+        "location": "main_screen"
+      }
+    ],
+    "ate_already": [
+      0,
+      5
+    ],
+    "pos_self_food": [
+      0,
+      1
+    ],
+    "day": [
+      12,
+      12
+    ],
+    "master_str": [
+      5,
+      5
+    ],
+    "slave_calories": [
+      4,
+      4
+    ],
+    "assistant_calories": [
+      1,
+      1
+    ],
+    "sparks": [
+      168974,
+      168974
+    ],
+    "verdict": "Player meal-state confirmed in saved runtime; no next-day save comparison. Slave/assistant calories unchanged. Cost difference requires separate review."
+  }
+}

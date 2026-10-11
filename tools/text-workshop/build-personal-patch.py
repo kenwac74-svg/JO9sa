@@ -17,7 +17,17 @@ def build(root, output, until, since=None, dry_run=False):
         for f in e['files']:
             p=pathlib.PurePosixPath(f['path'])
             if p.is_absolute() or '..' in p.parts or '\\' in f['path'] or ':' in f['path']: raise ValueError('잘못된 파일 경로')
-            key=f['path']; baseline.setdefault(key,f)
+            key=f['path']
+            if e['operation']=='relocate':
+                source=f.get('fromPath'); prior=chosen.get(source)
+                # Moving bytes transfers existing ownership; it never creates it.
+                if prior and prior['after']==f['after']:
+                    chosen.pop(source)
+                    baseline[key]=baseline.get(source,f)
+                    owned.add((key,f['after']))
+                    chosen[key]={**prior,'path':key,'created':e['created'],'createdKST':e['createdKST'],'operation':'relocate'}
+                continue
+            baseline.setdefault(key,f)
             if e['operation']=='restore':
                 # A restored hash is owned only if an earlier recorded user result had it.
                 if (key,f['after']) not in owned: chosen.pop(key,None); continue

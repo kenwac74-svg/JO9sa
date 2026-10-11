@@ -1,0 +1,15 @@
+{
+  "id": "2026-10-11_fix_hunting_result_character_origin",
+  "description": "Keep the captured-character foreground at the first result screen scene origin. The options menu remains at its existing coordinates.",
+  "before_sha256": "ebc47527fd421915f66c9f75e39d54ee5f8a3caccbd53e4b3299441e768500ce",
+  "after_sha256": "f1dd091e634b6b2172d78023b9f9213b1cb7d525c4829675c445427b248f0ee1",
+  "edits": [
+    {
+      "location": "shop_general",
+      "field": "body",
+      "old": "></div>')\r\nend\r\n\r\nif $place = 'g",
+      "new": "></div>')\r\nend\r\n\r\n! JO9 hunting result: separate the foreground from the menu, including saved options.\r\nif nsfw = 0 and (interaction_city = 61120 or interaction_city = 61121) and sp_txt = 1:\r\n\tlocal $jo9_hunting_foreground = func('display_fullimage', 'stock', 'center_Isabella')\r\n\tif $jo9_hunting_foreground ! '':\r\n\t\t$text_display = replace($text_display, $jo9_hunting_foreground, '')\r\n\t\t*p '<div id = \"bg\">' + $jo9_hunting_foreground + '</div>'\r\n\tend\r\nend\r\n\r\nif $place = 'g",
+      "count": 1
+    }
+  ]
+}

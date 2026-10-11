@@ -1,0 +1,8 @@
+// QSP 5.7 세이브를 바이트 왕복 보존하며 읽고 복사본을 구성한다.
+'use strict';
+const c=require('G:/somi/JO9sa/tools/text-workshop/core.cjs');
+const dec=s=>c.shift(s,5),enc=s=>c.shift(String(s),-5);
+function parse(raw){const lines=raw.toString('utf16le').split('\r\n');if(!Buffer.from(lines.join('\r\n'),'utf16le').equals(raw)||lines[0]!=='QSPSAVEDGAME'||lines[1]!=='5.7.0')throw Error('Unsupported save');let p=17;p+=+dec(lines[16]);p+=1+(+dec(lines[p]));const ac=+dec(lines[p++]);for(let i=0;i<ac;i++){p+=2;const n=+dec(lines[p++]);p+=2*n+4;}const ob=+dec(lines[p++]);p+=ob*2;const start=p,count=+dec(lines[p++]),vars=[];for(let i=0;i<count;i++){const slot=+dec(lines[p++]),name=dec(lines[p++]),n=+dec(lines[p++]),values=[];for(let j=0;j<n;j++)values.push([dec(lines[p++]),dec(lines[p++])]);const ni=+dec(lines[p++]),idx=[];for(let j=0;j<ni;j++)idx.push([+dec(lines[p++]),dec(lines[p++])]);vars.push({slot,name,values,idx});}if(p!==lines.length-1||lines[p]!=='')throw Error('Incomplete parse');return {lines,start,vars};}
+function serialize(s){const out=s.lines.slice(0,s.start);out.push(enc(s.vars.length));for(const v of s.vars){out.push(enc(v.slot),enc(v.name),enc(v.values.length));for(const a of v.values)out.push(enc(a[0]),enc(a[1]));out.push(enc(v.idx.length));for(const a of v.idx)out.push(enc(a[0]),enc(a[1]));}out.push('');return Buffer.from(out.join('\r\n'),'utf16le');}
+function value(s,name,key){const vv=s.vars.filter(v=>v.name===name.toUpperCase());if(vv.length>1)throw Error('Duplicate '+name);const v=vv[0];const at=key===undefined?0:v?.idx.find(x=>x[1]===key.toUpperCase())?.[0];return v?.values[at]||['0',''];}
+module.exports={parse,serialize,value,enc,dec};

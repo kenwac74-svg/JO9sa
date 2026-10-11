@@ -1,0 +1,25 @@
+# 2026-10-11 전투 종료 선택 화면 캐릭터 높이 수정
+
+사용자가 확인한 첫 결과 화면(`interaction_screen_city`)은 정상이며 다음 선택 화면(`shop_general`, 사냥 전리품 메뉴)에서만 캐릭터가 아래 대사를 덮었다.
+
+원인은 `2026-10-09_city_scene_menu_alignment`의 메뉴 부모 변경이다. `$hunting_prize_options[1]`은 캐릭터 그림도 `$text_display`에 넣는다. 이 문자열을 `jo9_scene_menu`로 감싸면서 그림의 `center_Isabella` 위치 기준까지 메뉴 원점(left 36, top 64)이 됐다. 정상 배경 원점(left 4, top 3)과 비교하면 오른쪽 32px, 아래 61px 이동한다. 이미지 리소스 크기나 SNKmod 경로 이동은 이 좌표 차이의 원인이 아니다.
+
+## 적용
+
+- `mods/2026-10-11_fix_hunting_result_character_origin.json`: `shop_general.body`의 한 곳만 변경.
+- 사냥 결과 두 경로(61120 / 61121)의 첫 선택 메뉴, 그림 표시 설정이 켜진 경우에만, 캐릭터 HTML을 메뉴 문자열에서 분리하고 배경 원점에 출력한다.
+- `#options` 및 저장된 `$display_options` 배열은 수정하지 않는다. 저장된 메뉴가 캐릭터 HTML을 포함한 경우에도 렌더링 직후 분리하므로 같은 처리를 거친다. 실제 구형 세이브 로드 검증은 아직 하지 않았다.
+- 첫 결과 화면, 메뉴 열/버튼/EXEC 동작, 우측 정보, 대사와 CSS, 이미지 파일은 변경하지 않았다.
+- 적용 전 SHA-256: `ebc47527fd421915f66c9f75e39d54ee5f8a3caccbd53e4b3299441e768500ce`
+- 적용 후 SHA-256: `f1dd091e634b6b2172d78023b9f9213b1cb7d525c4829675c445427b248f0ee1`
+- 백업: `G:/somi/JO9_unused_images/20261011_hunting_result_height/jack.before.qsp` 및 적용기가 만든 `G:/somi/JO9/game/jack.qsp.bak_20261011_222541`.
+
+## 확인 결과
+
+- 현재 QSP 읽기/쓰기 바이트 왕복 일치, 247 location 유지, 변경 필드는 `shop_general.body` 하나.
+- 이 패치만 DryRun 적용 및 적용 후 멱등 재검사. 전체 과거 mods의 재빌드는 이 검사 범위에 포함하지 않는다.
+- QSP 따옴표/블록 정적 검사 통과. 실제 게임 실행 검사가 아니다.
+- 실제 게임 CSS와 메뉴 layout 스타일을 사용하는 별도 headless Edge fixture에 중립적인 795×596 그림으로 문제를 재현했다. 수정 전 그림 아래끝 668px이 대사 시작 629px을 침범했고, 수정 후에는 첫 화면과 같은 아래끝 607px로 돌아왔다(브라우저 기본 여백 포함). 메뉴와 버튼 좌표/크기/EXEC 링크, 우측 정보와 대사 좌표는 동일했다.
+- 상세 기록: [검증 JSON](qa/2026-10-11_hunting-result-character-origin.json).
+
+게임 플레이는 사용자 담당이다. 게임 재실행 후 같은 전투에서 첫 결과 화면에서 다음 선택 화면으로 넘어가도 캐릭터 높이가 유지되고 대사를 덮지 않는지 확인한다. 기존 세이브에서도 확인하며, 가능하면 추가 행동 후 다시 선택 메뉴로 돌아오는 경로도 확인한다.

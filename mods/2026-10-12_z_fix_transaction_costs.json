@@ -1,0 +1,624 @@
+{
+  "id": "2026-10-12_z_fix_transaction_costs",
+  "description": "Apply after visible_menu_prices. Repair seven missing payments and audited food/interior/surgery balance checks; preserve event types, rewards and meal records.",
+  "before_sha256": "b210be73869d9096edc1c3a2c7bb99375a3b5aefd21c7e972a0d3a9b7cd4f2a4",
+  "edits": [
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "  IF assistant[\"energy\"] >= 2 and sparks >= 5:\r\n    FUNC('$menu', 'goto', $menu_item_Goldencage, 5607, 'interaction', 'interaction', '\"황금 새장\" (5$)', '조수를 황금 새장에서 하루 보내게 한다.')\r\n  ELSEIF sparks < 2:\r\n    FUNC('$menu', 'exec', $menu_item_Goldencage_gray, empty, '\"황금 새장\" (5$)', '스파크가 부족합니다')\r\n  ELSE\r\n",
+      "new": "  IF assistant[\"energy\"] >= 2 and sparks >= 5:\r\n    FUNC('$menu', 'goto', $menu_item_Goldencage, 5607, 'interaction', 'interaction', '\"황금 새장\" (5$)', '조수를 황금 새장에서 하루 보내게 한다.')\r\n  ELSEIF sparks < 5:\r\n    FUNC('$menu', 'exec', $menu_item_Goldencage_gray, empty, '\"황금 새장\" (5$)', '스파크가 부족합니다')\r\n  ELSE\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "!A trip to a restaurant for three - mrross\r\nIF interaction = 853:\r\n $interaction_type = 'prise_date'\r\n slave['teambuilding_3'] = 1\r\n",
+      "new": "!A trip to a restaurant for three - mrross\r\nIF interaction = 853:\r\n jo9_event_cost = 12\r\n if sparks < jo9_event_cost: msg '돈이 부족합니다. (<<jo9_event_cost>>$ 필요)' & gt 'menu_form'\r\n sparks -= jo9_event_cost\r\n $interaction_type = 'prise_date'\r\n slave['teambuilding_3'] = 1\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "!Beach Trip for Three - mrross\r\nIF interaction = 5543:\r\n $interaction_type = 'prise_date'\r\n slave['teambuilding_35'] = 1\r\n",
+      "new": "!Beach Trip for Three - mrross\r\nIF interaction = 5543:\r\n jo9_event_cost = 4\r\n if sparks < jo9_event_cost: msg '돈이 부족합니다. (<<jo9_event_cost>>$ 필요)' & gt 'menu_form'\r\n sparks -= jo9_event_cost\r\n $interaction_type = 'prise_date'\r\n slave['teambuilding_35'] = 1\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "end\r\nIF interaction = 5602:\r\n $interaction_type = 'assistant_prise_date'\r\n praise_potence = assistant[\"stamina\"] + assistant[\"temper\"] + (assistant[\"moral\"]*2 + assistant[\"rational\"] + assistant[\"instinct\"] + assistant[\"spoil\"])*2 - assistant[\"fear\"]\r\n",
+      "new": "end\r\nIF interaction = 5602:\r\n jo9_event_cost = 2\r\n if sparks < jo9_event_cost: msg '돈이 부족합니다. (<<jo9_event_cost>>$ 필요)' & gt 'menu_form'\r\n sparks -= jo9_event_cost\r\n $interaction_type = 'assistant_prise_date'\r\n praise_potence = assistant[\"stamina\"] + assistant[\"temper\"] + (assistant[\"moral\"]*2 + assistant[\"rational\"] + assistant[\"instinct\"] + assistant[\"spoil\"])*2 - assistant[\"fear\"]\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "!Going to the theatre\r\nIF interaction = 5603:\r\n $interaction_type = 'assistant_prise_date'\r\n praise_potence = 5 + (assistant[\"moral\"]*2 + assistant[\"rational\"] + assistant[\"instinct\"] + assistant[\"spoil\"])*3  - assistant[\"fear\"]\r\n",
+      "new": "!Going to the theatre\r\nIF interaction = 5603:\r\n jo9_event_cost = 4\r\n if sparks < jo9_event_cost: msg '돈이 부족합니다. (<<jo9_event_cost>>$ 필요)' & gt 'menu_form'\r\n sparks -= jo9_event_cost\r\n $interaction_type = 'assistant_prise_date'\r\n praise_potence = 5 + (assistant[\"moral\"]*2 + assistant[\"rational\"] + assistant[\"instinct\"] + assistant[\"spoil\"])*3  - assistant[\"fear\"]\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "!Going to a restaurant\r\nIF interaction = 5604:\r\n $interaction_type = 'assistant_prise_date'\r\n praise_potence = 4 + (assistant[\"moral\"]*2 + assistant[\"rational\"] + assistant[\"instinct\"] + assistant[\"spoil\"] - assistant[\"fear\"])*4\r\n",
+      "new": "!Going to a restaurant\r\nIF interaction = 5604:\r\n jo9_event_cost = 8\r\n if sparks < jo9_event_cost: msg '돈이 부족합니다. (<<jo9_event_cost>>$ 필요)' & gt 'menu_form'\r\n sparks -= jo9_event_cost\r\n $interaction_type = 'assistant_prise_date'\r\n praise_potence = 4 + (assistant[\"moral\"]*2 + assistant[\"rational\"] + assistant[\"instinct\"] + assistant[\"spoil\"] - assistant[\"fear\"])*4\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "!Hot springs\r\nIF interaction = 5606:\r\n $interaction_type = 'assistant_rest'\r\npraise_potence = 3\r\n",
+      "new": "!Hot springs\r\nIF interaction = 5606:\r\n jo9_event_cost = 2\r\n if sparks < jo9_event_cost: msg '돈이 부족합니다. (<<jo9_event_cost>>$ 필요)' & gt 'menu_form'\r\n sparks -= jo9_event_cost\r\n $interaction_type = 'assistant_rest'\r\npraise_potence = 3\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "    assistant_rate[\"angst\"] -= (assistant[\"custom\"] + assistant[\"instinct\"] + assistant[\"rational\"] + assistant[\"moral\"])\r\n    assistant_rate[\"fear\"] -= (assistant[\"custom\"] + assistant[\"instinct\"] + assistant[\"rational\"] + assistant[\"moral\"])\r\n    sparks -= 2\r\n    if assistant['pos_games'] < 2: assistant['pos_games'] = 2\r\n}\r\n",
+      "new": "    assistant_rate[\"angst\"] -= (assistant[\"custom\"] + assistant[\"instinct\"] + assistant[\"rational\"] + assistant[\"moral\"])\r\n    assistant_rate[\"fear\"] -= (assistant[\"custom\"] + assistant[\"instinct\"] + assistant[\"rational\"] + assistant[\"moral\"])\r\n    if assistant['pos_games'] < 2: assistant['pos_games'] = 2\r\n}\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "!A day in a golden cage\r\nIF interaction = 5607:\r\n $interaction_type = 'assistant_rest'\r\n praise_potence = 25 + assistant[\"ego\"] + assistant[\"temper\"] + assistant[\"sensitivity\"]\r\n",
+      "new": "!A day in a golden cage\r\nIF interaction = 5607:\r\n jo9_event_cost = 5\r\n if sparks < jo9_event_cost: msg '돈이 부족합니다. (<<jo9_event_cost>>$ 필요)' & gt 'menu_form'\r\n sparks -= jo9_event_cost\r\n $interaction_type = 'assistant_rest'\r\n praise_potence = 25 + assistant[\"ego\"] + assistant[\"temper\"] + assistant[\"sensitivity\"]\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "    assistant_rate[\"sensitivity\"] += 2\r\n    assistant_rate[\"moral\"] += 2\r\n    sparks -= 5\r\n    assistant['pos_games'] = assistant[\"ego\"] + assistant[\"temper\"] + assistant[\"sensitivity\"]\r\n}\r\n",
+      "new": "    assistant_rate[\"sensitivity\"] += 2\r\n    assistant_rate[\"moral\"] += 2\r\n    assistant['pos_games'] = assistant[\"ego\"] + assistant[\"temper\"] + assistant[\"sensitivity\"]\r\n}\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$place = 'gastronom'\r\n\t$return_lock = 'shop_general'\r\n\tsparks -= 30\r\n\tfridge['eggs'] += 5\r\n",
+      "new": "\t$place = 'gastronom'\r\n\t$return_lock = 'shop_general'\r\n\tdynamic $get_fridge_space\r\n\tif sparks < 30: msg '돈이 부족합니다. (30$ 필요)' & skip_to = 2 & gt 'shop_general'\r\n\tif kitchen < 1 or fridge_space < 5: msg '음식을 보관할 자리가 없습니다.' & skip_to = 2 & gt 'shop_general'\r\n\tsparks -= 30\r\n\tfridge['eggs'] += 5\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$place = 'gastronom'\r\n\t$return_lock = 'shop_general'\r\n\tsparks -= 30\r\n\tfridge['milk'] += 5\r\n",
+      "new": "\t$place = 'gastronom'\r\n\t$return_lock = 'shop_general'\r\n\tdynamic $get_fridge_space\r\n\tif sparks < 30: msg '돈이 부족합니다. (30$ 필요)' & skip_to = 2 & gt 'shop_general'\r\n\tif kitchen < 1 or fridge_space < 5: msg '음식을 보관할 자리가 없습니다.' & skip_to = 2 & gt 'shop_general'\r\n\tsparks -= 30\r\n\tfridge['milk'] += 5\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$place = 'gastronom'\r\n\t$return_lock = 'shop_general'\r\n\tsparks -= 30\r\n\tfridge['cream'] += 5\r\n",
+      "new": "\t$place = 'gastronom'\r\n\t$return_lock = 'shop_general'\r\n\tdynamic $get_fridge_space\r\n\tif sparks < 30: msg '돈이 부족합니다. (30$ 필요)' & skip_to = 2 & gt 'shop_general'\r\n\tif kitchen < 1 or fridge_space < 5: msg '음식을 보관할 자리가 없습니다.' & skip_to = 2 & gt 'shop_general'\r\n\tsparks -= 30\r\n\tfridge['cream'] += 5\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$place = 'gastronom'\r\n\t$return_lock = 'shop_general'\r\n\tsparks -= 30\r\n\tfridge['cheese'] += 5\r\n",
+      "new": "\t$place = 'gastronom'\r\n\t$return_lock = 'shop_general'\r\n\tdynamic $get_fridge_space\r\n\tif sparks < 30: msg '돈이 부족합니다. (30$ 필요)' & skip_to = 2 & gt 'shop_general'\r\n\tif kitchen < 1 or fridge_space < 5: msg '음식을 보관할 자리가 없습니다.' & skip_to = 2 & gt 'shop_general'\r\n\tsparks -= 30\r\n\tfridge['cheese'] += 5\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$place = 'gastronom'\r\n\t$return_lock = 'shop_general'\r\n\tsparks -= 10\r\n\tfridge['vegetables'] += 5\r\n",
+      "new": "\t$place = 'gastronom'\r\n\t$return_lock = 'shop_general'\r\n\tdynamic $get_fridge_space\r\n\tif sparks < 10: msg '돈이 부족합니다. (10$ 필요)' & skip_to = 3 & gt 'shop_general'\r\n\tif kitchen < 1 or fridge_space < 5: msg '음식을 보관할 자리가 없습니다.' & skip_to = 3 & gt 'shop_general'\r\n\tsparks -= 10\r\n\tfridge['vegetables'] += 5\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$place = 'gastronom'\r\n\t$return_lock = 'shop_general'\r\n\tsparks -= 10\r\n\tfridge['grain'] += 5\r\n",
+      "new": "\t$place = 'gastronom'\r\n\t$return_lock = 'shop_general'\r\n\tdynamic $get_fridge_space\r\n\tif sparks < 10: msg '돈이 부족합니다. (10$ 필요)' & skip_to = 3 & gt 'shop_general'\r\n\tif kitchen < 1 or fridge_space < 5: msg '음식을 보관할 자리가 없습니다.' & skip_to = 3 & gt 'shop_general'\r\n\tsparks -= 10\r\n\tfridge['grain'] += 5\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$place = 'gastronom'\r\n\t$return_lock = 'shop_general'\r\n\tsparks -= 10\r\n\tfridge['spice'] += 5\r\n",
+      "new": "\t$place = 'gastronom'\r\n\t$return_lock = 'shop_general'\r\n\tdynamic $get_fridge_space\r\n\tif sparks < 10: msg '돈이 부족합니다. (10$ 필요)' & skip_to = 3 & gt 'shop_general'\r\n\tif kitchen < 1 or fridge_space < 5: msg '음식을 보관할 자리가 없습니다.' & skip_to = 3 & gt 'shop_general'\r\n\tsparks -= 10\r\n\tfridge['spice'] += 5\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실용적인 실내 장식이 단 (20$) 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$study = 'econom'\r\n\t\tsparks -= 20\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실용적인 실내 장식이 단 (20$) 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 20: msg '돈이 부족합니다. (20$ 필요)' & gt 'shop_general'\r\n\t\t$study = 'econom'\r\n\t\tsparks -= 20\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실용적인 실내 장식이 단 25$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$study = 'japan'\r\n\t\tsparks -= 25\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실용적인 실내 장식이 단 25$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 25: msg '돈이 부족합니다. (25$ 필요)' & gt 'shop_general'\r\n\t\t$study = 'japan'\r\n\t\tsparks -= 25\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실용적인 실내 장식이 단 25$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$study = 'comfy'\r\n\t\tsparks -= 25\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실용적인 실내 장식이 단 25$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 25: msg '돈이 부족합니다. (25$ 필요)' & gt 'shop_general'\r\n\t\t$study = 'comfy'\r\n\t\tsparks -= 25\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실용적인 실내 장식이 단 (50$) 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$study = 'fort'\r\n\t\tsparks -= 50\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실용적인 실내 장식이 단 (50$) 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 50: msg '돈이 부족합니다. (50$ 필요)' & gt 'shop_general'\r\n\t\t$study = 'fort'\r\n\t\tsparks -= 50\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 고품격 실내 장식이 단 50$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$study = 'modern'\r\n\t\tsparks -= 50\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 고품격 실내 장식이 단 50$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 50: msg '돈이 부족합니다. (50$ 필요)' & gt 'shop_general'\r\n\t\t$study = 'modern'\r\n\t\tsparks -= 50\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 고품격 실내 장식이 단 50$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$study = 'classic'\r\n\t\tsparks -= 50\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 고품격 실내 장식이 단 50$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 50: msg '돈이 부족합니다. (50$ 필요)' & gt 'shop_general'\r\n\t\t$study = 'classic'\r\n\t\tsparks -= 50\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 고품격 실내 장식이 단 100$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$study = 'victorian'\r\n\t\tsparks -= 100\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 고품격 실내 장식이 단 100$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 100: msg '돈이 부족합니다. (100$ 필요)' & gt 'shop_general'\r\n\t\t$study = 'victorian'\r\n\t\tsparks -= 100\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 고품격 실내 장식이 단 100$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$study = 'gothic'\r\n\t\tsparks -= 100\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 고품격 실내 장식이 단 100$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 100: msg '돈이 부족합니다. (100$ 필요)' & gt 'shop_general'\r\n\t\t$study = 'gothic'\r\n\t\tsparks -= 100\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 고품격 실내 장식이 단 100$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$study = 'elite'\r\n\t\tsparks -= 100\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 고품격 실내 장식이 단 100$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 100: msg '돈이 부족합니다. (100$ 필요)' & gt 'shop_general'\r\n\t\t$study = 'elite'\r\n\t\tsparks -= 100\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 고품격 실내 장식이 단 150$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$study = 'slaver'\r\n\t\tsparks -= 150\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 고품격 실내 장식이 단 150$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 150: msg '돈이 부족합니다. (150$ 필요)' & gt 'shop_general'\r\n\t\t$study = 'slaver'\r\n\t\tsparks -= 150\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 고품격 실내 장식이 단 200$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$study = 'lux'\r\n\t\tsparks -= 200\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 고품격 실내 장식이 단 200$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 200: msg '돈이 부족합니다. (200$ 필요)' & gt 'shop_general'\r\n\t\t$study = 'lux'\r\n\t\tsparks -= 200\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실용적인 실내 장식이 단 15$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$bed = 'econom'\r\n\t\tsparks -= 15\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실용적인 실내 장식이 단 15$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 15: msg '돈이 부족합니다. (15$ 필요)' & gt 'shop_general'\r\n\t\t$bed = 'econom'\r\n\t\tsparks -= 15\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실용적인 실내 장식이 단 25$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$bed = 'japan'\r\n\t\tsparks -= 25\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실용적인 실내 장식이 단 25$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 25: msg '돈이 부족합니다. (25$ 필요)' & gt 'shop_general'\r\n\t\t$bed = 'japan'\r\n\t\tsparks -= 25\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실용적인 실내 장식이 단 25$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$bed = 'comfy'\r\n\t\tsparks -= 25\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실용적인 실내 장식이 단 25$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 25: msg '돈이 부족합니다. (25$ 필요)' & gt 'shop_general'\r\n\t\t$bed = 'comfy'\r\n\t\tsparks -= 25\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실용적인 실내 장식이 단 30$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$bed = 'fort'\r\n\t\tsparks -= 30\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실용적인 실내 장식이 단 30$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 30: msg '돈이 부족합니다. (30$ 필요)' & gt 'shop_general'\r\n\t\t$bed = 'fort'\r\n\t\tsparks -= 30\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 고품격 실내 장식이 단 50$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$bed = 'modern'\r\n\t\tsparks -= 50\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 고품격 실내 장식이 단 50$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 50: msg '돈이 부족합니다. (50$ 필요)' & gt 'shop_general'\r\n\t\t$bed = 'modern'\r\n\t\tsparks -= 50\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 고품격 실내 장식이 단 100$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$bed = 'classic'\r\n\t\tsparks -= 100\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 고품격 실내 장식이 단 100$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 100: msg '돈이 부족합니다. (100$ 필요)' & gt 'shop_general'\r\n\t\t$bed = 'classic'\r\n\t\tsparks -= 100\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 고품격 실내 장식이 단 100$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$bed = 'slaver'\r\n\t\tsparks -= 100\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 고품격 실내 장식이 단 100$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 100: msg '돈이 부족합니다. (100$ 필요)' & gt 'shop_general'\r\n\t\t$bed = 'slaver'\r\n\t\tsparks -= 100\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 고품격 실내 장식이 단 150$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$bed = 'stylish'\r\n\t\tsparks -= 150\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 고품격 실내 장식이 단 150$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 150: msg '돈이 부족합니다. (150$ 필요)' & gt 'shop_general'\r\n\t\t$bed = 'stylish'\r\n\t\tsparks -= 150\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 고품격 실내 장식이 단 150$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$bed = 'gothic'\r\n\t\tsparks -= 150\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 고품격 실내 장식이 단 150$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 150: msg '돈이 부족합니다. (150$ 필요)' & gt 'shop_general'\r\n\t\t$bed = 'gothic'\r\n\t\tsparks -= 150\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 고품격 실내 장식이 단 150$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$bed = 'elite'\r\n\t\tsparks -= 150\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 고품격 실내 장식이 단 150$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 150: msg '돈이 부족합니다. (150$ 필요)' & gt 'shop_general'\r\n\t\t$bed = 'elite'\r\n\t\tsparks -= 150\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 고품격 실내 장식이 단 200$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$bed = 'lux'\r\n\t\tsparks -= 200\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 고품격 실내 장식이 단 200$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 200: msg '돈이 부족합니다. (200$ 필요)' & gt 'shop_general'\r\n\t\t$bed = 'lux'\r\n\t\tsparks -= 200\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실용적인 실내 장식이 단 20$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$kitchen = 'basic'\r\n\t\tsparks -= 20\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실용적인 실내 장식이 단 20$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 20: msg '돈이 부족합니다. (20$ 필요)' & gt 'shop_general'\r\n\t\t$kitchen = 'basic'\r\n\t\tsparks -= 20\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실용적인 실내 장식이 단 20$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$kitchen = 'econom'\r\n\t\tsparks -= 20\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실용적인 실내 장식이 단 20$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 20: msg '돈이 부족합니다. (20$ 필요)' & gt 'shop_general'\r\n\t\t$kitchen = 'econom'\r\n\t\tsparks -= 20\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실용적인 실내 장식이 단 20$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$kitchen = 'fort'\r\n\t\tsparks -= 20\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실용적인 실내 장식이 단 20$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 20: msg '돈이 부족합니다. (20$ 필요)' & gt 'shop_general'\r\n\t\t$kitchen = 'fort'\r\n\t\tsparks -= 20\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 고품격 실내 장식이 단 50$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$kitchen = 'gothic'\r\n\t\tsparks -= 50\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 고품격 실내 장식이 단 50$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 50: msg '돈이 부족합니다. (50$ 필요)' & gt 'shop_general'\r\n\t\t$kitchen = 'gothic'\r\n\t\tsparks -= 50\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 고품격 실내 장식이 단 50$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$kitchen = 'elite'\r\n\t\tsparks -= 50\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 고품격 실내 장식이 단 50$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 50: msg '돈이 부족합니다. (50$ 필요)' & gt 'shop_general'\r\n\t\t$kitchen = 'elite'\r\n\t\tsparks -= 50\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실용적인 실내 장식이 단 20$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$bath = 'econom'\r\n\t\tsparks -= 20\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실용적인 실내 장식이 단 20$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 20: msg '돈이 부족합니다. (20$ 필요)' & gt 'shop_general'\r\n\t\t$bath = 'econom'\r\n\t\tsparks -= 20\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실용적인 실내 장식이 단 20$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$bath = 'fort'\r\n\t\tsparks -= 20\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실용적인 실내 장식이 단 20$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 20: msg '돈이 부족합니다. (20$ 필요)' & gt 'shop_general'\r\n\t\t$bath = 'fort'\r\n\t\tsparks -= 20\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 고품격 실내 장식이 단 50$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$bath = 'classic'\r\n\t\tsparks -= 50\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 고품격 실내 장식이 단 50$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 50: msg '돈이 부족합니다. (50$ 필요)' & gt 'shop_general'\r\n\t\t$bath = 'classic'\r\n\t\tsparks -= 50\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실용적 실내 장식이 단 (50$) 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$bath = 'japan'\r\n\t\tsparks -= 50\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실용적 실내 장식이 단 (50$) 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 50: msg '돈이 부족합니다. (50$ 필요)' & gt 'shop_general'\r\n\t\t$bath = 'japan'\r\n\t\tsparks -= 50\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 고품격 실내 장식이 단 50$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$bath = 'gothic'\r\n\t\tsparks -= 50\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 고품격 실내 장식이 단 50$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 50: msg '돈이 부족합니다. (50$ 필요)' & gt 'shop_general'\r\n\t\t$bath = 'gothic'\r\n\t\tsparks -= 50\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 고품격 실내 장식이 단 50$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$bath = 'elite'\r\n\t\tsparks -= 50\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 고품격 실내 장식이 단 50$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 50: msg '돈이 부족합니다. (50$ 필요)' & gt 'shop_general'\r\n\t\t$bath = 'elite'\r\n\t\tsparks -= 50\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 고품격 실내 장식이 단 100$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$bath = 'lux'\r\n\t\tsparks -= 100\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 고품격 실내 장식이 단 100$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 100: msg '돈이 부족합니다. (100$ 필요)' & gt 'shop_general'\r\n\t\t$bath = 'lux'\r\n\t\tsparks -= 100\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 20$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$dungeon = 'econom'\r\n\t\tsparks -= 20\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 20$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 20: msg '돈이 부족합니다. (20$ 필요)' & gt 'shop_general'\r\n\t\t$dungeon = 'econom'\r\n\t\tsparks -= 20\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 10$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$dungeon = 'fort'\r\n\t\tsparks -= 10\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 10$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 10: msg '돈이 부족합니다. (10$ 필요)' & gt 'shop_general'\r\n\t\t$dungeon = 'fort'\r\n\t\tsparks -= 10\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 10$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$dungeon = 'entomb'\r\n\t\tsparks -= 10\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 10$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 10: msg '돈이 부족합니다. (10$ 필요)' & gt 'shop_general'\r\n\t\t$dungeon = 'entomb'\r\n\t\tsparks -= 10\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 20$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$dungeon = 'classic'\r\n\t\tsparks -= 20\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 20$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 20: msg '돈이 부족합니다. (20$ 필요)' & gt 'shop_general'\r\n\t\t$dungeon = 'classic'\r\n\t\tsparks -= 20\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 (20$) 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$dungeon = 'pastoral'\r\n\t\tsparks -= 20\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 (20$) 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 20: msg '돈이 부족합니다. (20$ 필요)' & gt 'shop_general'\r\n\t\t$dungeon = 'pastoral'\r\n\t\tsparks -= 20\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 (20$) 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$dungeon = 'gothic'\r\n\t\tsparks -= 20\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 (20$) 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 20: msg '돈이 부족합니다. (20$ 필요)' & gt 'shop_general'\r\n\t\t$dungeon = 'gothic'\r\n\t\tsparks -= 20\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 25$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$dungeon = 'executor'\r\n\t\tsparks -= 25\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 25$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 25: msg '돈이 부족합니다. (25$ 필요)' & gt 'shop_general'\r\n\t\t$dungeon = 'executor'\r\n\t\tsparks -= 25\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 25$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$dungeon = 'slaver'\r\n\t\tsparks -= 25\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 25$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 25: msg '돈이 부족합니다. (25$ 필요)' & gt 'shop_general'\r\n\t\t$dungeon = 'slaver'\r\n\t\tsparks -= 25\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 50$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$dungeon = 'victorian'\r\n\t\tsparks -= 50\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 50$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 50: msg '돈이 부족합니다. (50$ 필요)' & gt 'shop_general'\r\n\t\t$dungeon = 'victorian'\r\n\t\tsparks -= 50\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 50$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$dungeon = 'elite'\r\n\t\tsparks -= 50\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 50$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 50: msg '돈이 부족합니다. (50$ 필요)' & gt 'shop_general'\r\n\t\t$dungeon = 'elite'\r\n\t\tsparks -= 50\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 50$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$dungeon = 'lux'\r\n\t\tsparks -= 50\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 50$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 50: msg '돈이 부족합니다. (50$ 필요)' & gt 'shop_general'\r\n\t\t$dungeon = 'lux'\r\n\t\tsparks -= 50\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 10$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$boudoir = 'econom'\r\n\t\tsparks -= 10\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 10$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 10: msg '돈이 부족합니다. (10$ 필요)' & gt 'shop_general'\r\n\t\t$boudoir = 'econom'\r\n\t\tsparks -= 10\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 20$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$boudoir = 'modern'\r\n\t\tsparks -= 20\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 20$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 20: msg '돈이 부족합니다. (20$ 필요)' & gt 'shop_general'\r\n\t\t$boudoir = 'modern'\r\n\t\tsparks -= 20\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 20$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$boudoir = 'comfy'\r\n\t\tsparks -= 20\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 20$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 20: msg '돈이 부족합니다. (20$ 필요)' & gt 'shop_general'\r\n\t\t$boudoir = 'comfy'\r\n\t\tsparks -= 20\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 50$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$boudoir = 'magic'\r\n\t\tsparks -= 50\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 50$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 50: msg '돈이 부족합니다. (50$ 필요)' & gt 'shop_general'\r\n\t\t$boudoir = 'magic'\r\n\t\tsparks -= 50\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 50$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$boudoir = 'victorian'\r\n\t\tsparks -= 50\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 50$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 50: msg '돈이 부족합니다. (50$ 필요)' & gt 'shop_general'\r\n\t\t$boudoir = 'victorian'\r\n\t\tsparks -= 50\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 50$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$boudoir = 'slaver'\r\n\t\tsparks -= 50\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 50$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 50: msg '돈이 부족합니다. (50$ 필요)' & gt 'shop_general'\r\n\t\t$boudoir = 'slaver'\r\n\t\tsparks -= 50\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 100$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$boudoir = 'fort'\r\n\t\tsparks -= 100\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 100$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 100: msg '돈이 부족합니다. (100$ 필요)' & gt 'shop_general'\r\n\t\t$boudoir = 'fort'\r\n\t\tsparks -= 100\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 150$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$boudoir = 'elite'\r\n\t\tsparks -= 150\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 150$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 150: msg '돈이 부족합니다. (150$ 필요)' & gt 'shop_general'\r\n\t\t$boudoir = 'elite'\r\n\t\tsparks -= 150\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 200$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$boudoir = 'gothic'\r\n\t\tsparks -= 200\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 200$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 200: msg '돈이 부족합니다. (200$ 필요)' & gt 'shop_general'\r\n\t\t$boudoir = 'gothic'\r\n\t\tsparks -= 200\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 250$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$boudoir = 'lux'\r\n\t\tsparks -= 250\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 250$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 250: msg '돈이 부족합니다. (250$ 필요)' & gt 'shop_general'\r\n\t\t$boudoir = 'lux'\r\n\t\tsparks -= 250\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 20$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$lab = 'econom'\r\n\t\tsparks -= 20\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 20$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 20: msg '돈이 부족합니다. (20$ 필요)' & gt 'shop_general'\r\n\t\t$lab = 'econom'\r\n\t\tsparks -= 20\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 20$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$lab = 'basic'\r\n\t\tsparks -= 20\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 20$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 20: msg '돈이 부족합니다. (20$ 필요)' & gt 'shop_general'\r\n\t\t$lab = 'basic'\r\n\t\tsparks -= 20\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 50$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$lab = 'fort'\r\n\t\tsparks -= 50\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 50$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 50: msg '돈이 부족합니다. (50$ 필요)' & gt 'shop_general'\r\n\t\t$lab = 'fort'\r\n\t\tsparks -= 50\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 100$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$lab = 'gothic'\r\n\t\tsparks -= 100\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 100$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 100: msg '돈이 부족합니다. (100$ 필요)' & gt 'shop_general'\r\n\t\t$lab = 'gothic'\r\n\t\tsparks -= 100\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 100$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$lab = 'slaver'\r\n\t\tsparks -= 100\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 100$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 100: msg '돈이 부족합니다. (100$ 필요)' & gt 'shop_general'\r\n\t\t$lab = 'slaver'\r\n\t\tsparks -= 100\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 100$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$lab = 'victorian'\r\n\t\tsparks -= 100\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 100$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 100: msg '돈이 부족합니다. (100$ 필요)' & gt 'shop_general'\r\n\t\t$lab = 'victorian'\r\n\t\tsparks -= 100\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 100$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\t$lab = 'elite'\r\n\t\tsparks -= 100\r\n",
+      "new": "\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 100$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n\t\tif sparks < 100: msg '돈이 부족합니다. (100$ 필요)' & gt 'shop_general'\r\n\t\t$lab = 'elite'\r\n\t\tsparks -= 100\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[의사]<br>&nbsp;당신의 노예에게 하피 자궁을 이식할 수 있습니다. 그럼 아이를 갖는 대신 새처럼, 산란을 할 겁니다. 건강이 다소 악화될 수 있습니다. 수술 비용은 <b>(25$)</b>, 회복 기간은 <b>20 일</b> 입니다.</div><br><br> 행동력 -4, 체력 -20, 산란'\r\n\t$yes = {\r\n\t\tsparks -= 25\r\n\t\tslave['energy'] = -4\r\n",
+      "new": "\t$text[1] = '[의사]<br>&nbsp;당신의 노예에게 하피 자궁을 이식할 수 있습니다. 그럼 아이를 갖는 대신 새처럼, 산란을 할 겁니다. 건강이 다소 악화될 수 있습니다. 수술 비용은 <b>(25$)</b>, 회복 기간은 <b>20 일</b> 입니다.</div><br><br> 행동력 -4, 체력 -20, 산란'\r\n\t$yes = {\r\n\t\tif sparks < 25: msg '돈이 부족합니다. (25$ 필요)' & gt 'shop_general'\r\n\t\tsparks -= 25\r\n\t\tslave['energy'] = -4\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '[의사]<br>&nbsp;당신의 조수에게 하피 자궁을 이식할 수 있습니다. 그럼 아이를 갖는 대신 새처럼, 산란을 할 겁니다. 건강이 다소 악화될 수 있습니다. 수술 비용은 <b>(25$)</b>, 회복 기간은 <b>20 일</b> 입니다.</div><br><br>행동력 -4, 체력 -20, 산란'\r\n\t$yes = {\r\n\t\tsparks -= 25\r\n\t\tassistant['energy'] = -4\r\n",
+      "new": "\t$text[1] = '[의사]<br>&nbsp;당신의 조수에게 하피 자궁을 이식할 수 있습니다. 그럼 아이를 갖는 대신 새처럼, 산란을 할 겁니다. 건강이 다소 악화될 수 있습니다. 수술 비용은 <b>(25$)</b>, 회복 기간은 <b>20 일</b> 입니다.</div><br><br>행동력 -4, 체력 -20, 산란'\r\n\t$yes = {\r\n\t\tif sparks < 25: msg '돈이 부족합니다. (25$ 필요)' & gt 'shop_general'\r\n\t\tsparks -= 25\r\n\t\tassistant['energy'] = -4\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\t\tfunc('$menu', 'exec', $menu_item_SNeoplasty_gray, empty, '성형 수술 (250$)', iif(sparks < 250, '스파크가 부족하다. ', '') + iif(slave['beauty_enhanced'] ! 0, '이미 성형 수술를 받았다. ', '') + iif(slave['rehabilitation'] > 0, '다른 시술에서 회복 중이다. ', ''))\r\n\tend\r\n\tif sparks >= 50 and slave['fertility'] = 0 and slave['rehabilitation'] < 1 and slave['parasite'] = 0:\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_SOviparity, menu_SOviparity, '산란화 (25$)')\r\n\telse\r\n\t\tfunc('$menu', 'exec', $menu_item_SOviparity_gray, empty, '산란화 (25$)', iif(sparks < 50, '스파크가 부족하다. ', '') + iif(slave['fertility'] = -3, '수유 중인 노예는 알을 낳을 수 없다. ', iif(slave['fertility'] = 1, '이미 산란형이다. ', '가임 상태가 아니다. ')) + iif(slave['parasite'] ! 0, '이종 기생충이 있다. ', '') + iif(slave['rehabilitation'] > 0, '다른 시술에서 회복 중이다. ', ''))\r\n\tend\r\n\tfunc('$menu', '===END===')\r\n",
+      "new": "\t\tfunc('$menu', 'exec', $menu_item_SNeoplasty_gray, empty, '성형 수술 (250$)', iif(sparks < 250, '스파크가 부족하다. ', '') + iif(slave['beauty_enhanced'] ! 0, '이미 성형 수술를 받았다. ', '') + iif(slave['rehabilitation'] > 0, '다른 시술에서 회복 중이다. ', ''))\r\n\tend\r\n\tif sparks >= 25 and slave['fertility'] = 0 and slave['rehabilitation'] < 1 and slave['parasite'] = 0:\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_SOviparity, menu_SOviparity, '산란화 (25$)')\r\n\telse\r\n\t\tfunc('$menu', 'exec', $menu_item_SOviparity_gray, empty, '산란화 (25$)', iif(sparks < 25, '스파크가 부족하다. ', '') + iif(slave['fertility'] = -3, '수유 중인 노예는 알을 낳을 수 없다. ', iif(slave['fertility'] = 1, '이미 산란형이다. ', '가임 상태가 아니다. ')) + iif(slave['parasite'] ! 0, '이종 기생충이 있다. ', '') + iif(slave['rehabilitation'] > 0, '다른 시술에서 회복 중이다. ', ''))\r\n\tend\r\n\tfunc('$menu', '===END===')\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\t\tfunc('$menu', 'exec', $menu_item_ANeoplasty_gray, empty, '성형 수술 (250$)', iif(sparks < 250, '스파크가 부족하다. ', '') + iif(assistant['beauty_enhanced'] ! 0, '이미 성형 수술를 받았다. ', '') + iif(assistant['rehabilitation'] > 0, '다른 시술에서 회복 중이다. ', ''))\r\n\tend\r\n\tif sparks >= 50 and assistant['fertility'] = 0 and assistant['rehabilitation'] < 1 and assistant['parasite'] = 0:\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_AOviparity, menu_AOviparity, '산란화 (25$)')\r\n\telse\r\n\t\tfunc('$menu', 'exec', $menu_item_AOviparity_gray, empty, '산란화 (25$)', iif(sparks < 50, '스파크가 부족하다. ', '') + iif(assistant['fertility'] = -3, '수유 중인 노예는 알을 낳을 수 없다. ', iif(assistant['fertility'] = 1, '이미 산란형이다. ', '가임 상태가 아니다. ')) + iif(assistant['parasite'] ! 0, '이종 기생충이 있다. ', '') + iif(assistant['rehabilitation'] > 0, '다른 시술에서 회복 중이다. ', ''))\r\n\tend\r\n\tfunc('$menu', '===END===')\r\n",
+      "new": "\t\tfunc('$menu', 'exec', $menu_item_ANeoplasty_gray, empty, '성형 수술 (250$)', iif(sparks < 250, '스파크가 부족하다. ', '') + iif(assistant['beauty_enhanced'] ! 0, '이미 성형 수술를 받았다. ', '') + iif(assistant['rehabilitation'] > 0, '다른 시술에서 회복 중이다. ', ''))\r\n\tend\r\n\tif sparks >= 25 and assistant['fertility'] = 0 and assistant['rehabilitation'] < 1 and assistant['parasite'] = 0:\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_AOviparity, menu_AOviparity, '산란화 (25$)')\r\n\telse\r\n\t\tfunc('$menu', 'exec', $menu_item_AOviparity_gray, empty, '산란화 (25$)', iif(sparks < 25, '스파크가 부족하다. ', '') + iif(assistant['fertility'] = -3, '수유 중인 노예는 알을 낳을 수 없다. ', iif(assistant['fertility'] = 1, '이미 산란형이다. ', '가임 상태가 아니다. ')) + iif(assistant['parasite'] ! 0, '이종 기생충이 있다. ', '') + iif(assistant['rehabilitation'] > 0, '다른 시술에서 회복 중이다. ', ''))\r\n\tend\r\n\tfunc('$menu', '===END===')\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tfunc('$menu', '===BEGIN===', 'column_0')\r\n\tif $hall ! 'basic' and sparks >= 0: func('$menu', 'interaction_city', $menu_item_hallFree, menu_hallFree, '기본')\r\n\tif $hall ! 'econom' and sparks >= 25: func('$menu', 'interaction_city', $menu_item_hallEconom, menu_hallEconom, '실속형 (20$)')\r\n\tif $hall ! 'japan' and sparks >= 25: func('$menu', 'interaction_city', $menu_item_hallJapanese, menu_hallJapanese, '일본식 (25$)')\r\n\tif $hall ! 'comfy' and sparks >= 25: func('$menu', 'interaction_city', $menu_item_hallCozy, menu_hallCozy, '아늑한 (25$)')\r\n",
+      "new": "\tfunc('$menu', '===BEGIN===', 'column_0')\r\n\tif $hall ! 'basic' and sparks >= 0: func('$menu', 'interaction_city', $menu_item_hallFree, menu_hallFree, '기본')\r\n\tif $hall ! 'econom' and sparks >= 20: func('$menu', 'interaction_city', $menu_item_hallEconom, menu_hallEconom, '실속형 (20$)')\r\n\tif $hall ! 'japan' and sparks >= 25: func('$menu', 'interaction_city', $menu_item_hallJapanese, menu_hallJapanese, '일본식 (25$)')\r\n\tif $hall ! 'comfy' and sparks >= 25: func('$menu', 'interaction_city', $menu_item_hallCozy, menu_hallCozy, '아늑한 (25$)')\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tif $hall ! 'classic' and sparks >= 50: func('$menu', 'interaction_city', $menu_item_hallClassical, menu_hallClassical, '고전풍 (50$)')\r\n\tif $hall ! 'victorian' and sparks >= 100: func('$menu', 'interaction_city', $menu_item_HallVictorian, menu_HallVictorian, '빅토리아풍 (100$)')\r\n\tif $hall ! 'gothic' and sparks >= 150: func('$menu', 'interaction_city', $menu_item_HallNecro, menu_HallNecro, '네크로 고딕 (100$)')\r\n\tif $hall ! 'elite' and sparks >= 100: func('$menu', 'interaction_city', $menu_item_HallElite, menu_HallElite, '엘리트 (100$)')\r\n\tif $hall ! 'Slaver' and sparks >= 150: func('$menu', 'interaction_city', $menu_item_hallSlaver, menu_hallSlaver, '노예상풍 (150$)')\r\n",
+      "new": "\tif $hall ! 'classic' and sparks >= 50: func('$menu', 'interaction_city', $menu_item_hallClassical, menu_hallClassical, '고전풍 (50$)')\r\n\tif $hall ! 'victorian' and sparks >= 100: func('$menu', 'interaction_city', $menu_item_HallVictorian, menu_HallVictorian, '빅토리아풍 (100$)')\r\n\tif $hall ! 'gothic' and sparks >= 100: func('$menu', 'interaction_city', $menu_item_HallNecro, menu_HallNecro, '네크로 고딕 (100$)')\r\n\tif $hall ! 'elite' and sparks >= 100: func('$menu', 'interaction_city', $menu_item_HallElite, menu_HallElite, '엘리트 (100$)')\r\n\tif $hall ! 'Slaver' and sparks >= 150: func('$menu', 'interaction_city', $menu_item_hallSlaver, menu_hallSlaver, '노예상풍 (150$)')\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\r\n\tfunc('$menu', '===BEGIN===', 'column_1')\r\n\tif $dungeon ! 'gothic' and sparks >= 25: func('$menu', 'interaction_city', $menu_item_dungeonNecro, menu_dungeonNecro, '네크로 고딕 (20$)')\r\n\tif $dungeon ! 'executor' and sparks >= 25: func('$menu', 'interaction_city', $menu_item_dungeonExecutioner, menu_dungeonExecutioner, '집행인풍 (25$)')\r\n\tif $dungeon ! 'slaver' and sparks >= 25: func('$menu', 'interaction_city', $menu_item_dungeonSlaver, menu_dungeonSlaver, '노예상풍 (25$)')\r\n",
+      "new": "\r\n\tfunc('$menu', '===BEGIN===', 'column_1')\r\n\tif $dungeon ! 'gothic' and sparks >= 20: func('$menu', 'interaction_city', $menu_item_dungeonNecro, menu_dungeonNecro, '네크로 고딕 (20$)')\r\n\tif $dungeon ! 'executor' and sparks >= 25: func('$menu', 'interaction_city', $menu_item_dungeonExecutioner, menu_dungeonExecutioner, '집행인풍 (25$)')\r\n\tif $dungeon ! 'slaver' and sparks >= 25: func('$menu', 'interaction_city', $menu_item_dungeonSlaver, menu_dungeonSlaver, '노예상풍 (25$)')\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\r\n\tfunc('$menu', '===BEGIN===', 'column_0')\r\n\tif sparks >= 10 and fridge_space >= 5 and kitchen > 0:\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_Fresh_eggs, menu_Fresh_eggs, '신선한 달걀 x5 (30$)')\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_Fresh_milk, menu_Fresh_milk, '신선한 우유 x5 (30$)')\r\n\telse\r\n\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_Fresh_eggs_gray, empty, '신선한 달걀 x5 (30$)', '음식을 보관할 자리가 없다')\r\n\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_Fresh_milk_gray, empty, '신선한 우유 x5 (30$)', '음식을 보관할 자리가 없다')\r\n\tend\r\n\tif sparks >= 20 and fridge_space >= 5 and kitchen > 0:\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_Double_cream, menu_Double_cream, '농축된 크림 x5 (30$)')\r\n\telse\r\n\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_Double_cream_gray, empty, '농축된 크림 x5 (30$)', '음식을 보관할 자리가 없다')\r\n\tend\r\n\tif sparks >= 5 and fridge_space >= 5 and kitchen > 0:\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_Mature_cheese, menu_Mature_cheese, '숙성 치즈/버터 x5 (30$)')\r\n\telse\r\n\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_Mature_cheese_gray, empty, '숙성 치즈/버터 x5 (30$)', '음식을 보관할 자리가 없다')\r\n\tend\r\n\tfunc('$menu', 'exec_options', $menu_item_store_options, 'sp_txt = 1 & gt $curloc', '더 둘러보기')\r\n",
+      "new": "\r\n\tfunc('$menu', '===BEGIN===', 'column_0')\r\n\tif sparks >= 30 and fridge_space >= 5 and kitchen > 0:\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_Fresh_eggs, menu_Fresh_eggs, '신선한 달걀 x5 (30$)')\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_Fresh_milk, menu_Fresh_milk, '신선한 우유 x5 (30$)')\r\n\telse\r\n\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_Fresh_eggs_gray, empty, '신선한 달걀 x5 (30$)', iif(sparks < 30, '돈이 부족합니다. (30$ 필요)', '음식을 보관할 자리가 없다'))\r\n\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_Fresh_milk_gray, empty, '신선한 우유 x5 (30$)', iif(sparks < 30, '돈이 부족합니다. (30$ 필요)', '음식을 보관할 자리가 없다'))\r\n\tend\r\n\tif sparks >= 30 and fridge_space >= 5 and kitchen > 0:\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_Double_cream, menu_Double_cream, '농축된 크림 x5 (30$)')\r\n\telse\r\n\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_Double_cream_gray, empty, '농축된 크림 x5 (30$)', iif(sparks < 30, '돈이 부족합니다. (30$ 필요)', '음식을 보관할 자리가 없다'))\r\n\tend\r\n\tif sparks >= 30 and fridge_space >= 5 and kitchen > 0:\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_Mature_cheese, menu_Mature_cheese, '숙성 치즈/버터 x5 (30$)')\r\n\telse\r\n\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_Mature_cheese_gray, empty, '숙성 치즈/버터 x5 (30$)', iif(sparks < 30, '돈이 부족합니다. (30$ 필요)', '음식을 보관할 자리가 없다'))\r\n\tend\r\n\tfunc('$menu', 'exec_options', $menu_item_store_options, 'sp_txt = 1 & gt $curloc', '더 둘러보기')\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\r\n\tfunc('$menu', '===BEGIN===', 'column_0')\r\n\tif sparks < 5:\r\n\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_Fresh_vegetables_gray, empty, '신선한 야채류 x5 (10$)', '구매할 수 없다')\r\n\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_Cereals_flour_gray, empty, '시리얼/곡물류 x5 (10$)', '구매할 수 없다')\r\n\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_Herbs_spices_gray, empty, '허브류/향신료 x5 (10$)', '구매할 수 없다')\r\n\telseif fridge_space >= 5 and kitchen > 0:\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_Fresh_vegetables, menu_Fresh_vegetables, '신선한 야채류 x5 (10$)')\r\n",
+      "new": "\r\n\tfunc('$menu', '===BEGIN===', 'column_0')\r\n\tif sparks < 10:\r\n\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_Fresh_vegetables_gray, empty, '신선한 야채류 x5 (10$)', '돈이 부족합니다. (10$ 필요)')\r\n\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_Cereals_flour_gray, empty, '시리얼/곡물류 x5 (10$)', '돈이 부족합니다. (10$ 필요)')\r\n\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_Herbs_spices_gray, empty, '허브류/향신료 x5 (10$)', '돈이 부족합니다. (10$ 필요)')\r\n\telseif fridge_space >= 5 and kitchen > 0:\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_Fresh_vegetables, menu_Fresh_vegetables, '신선한 야채류 x5 (10$)')\r\n",
+      "count": 1
+    }
+  ],
+  "after_sha256": "1a8d5f041c0eabaeced6f238bdac96063112e1e10cfa2bafceeeb8ae00fadfa4"
+}

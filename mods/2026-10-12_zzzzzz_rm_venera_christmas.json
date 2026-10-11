@@ -1,0 +1,36 @@
+{
+  "id": "2026-10-12_rm_venera_christmas",
+  "description": "베네라 구매 기록/재진입 보호, 크리스마스 슐랴프킨 전달 후 단계 역행 제거. 주택 기분 강제 변경은 제외.",
+  "before_sha256": "0b2d1ab6102fb1b5dfe706c302d7fda00d227398268f7cff522b44385d62a019",
+  "after_sha256": "6997bd3ce1bcf073da2d0a77cc7a516352adb3ca0d0edbb80c0591163a33f285",
+  "edits": [
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "IF interaction_city = 6540:\r\n",
+      "new": "IF interaction_city = 6540:\r\n if unique_slave['venera'] ! 0 or venera ! 0 or slave_state ! CONST_INT['no_slave'] or active[$quest[14]] ! 1 or sparks < 10000: gt 'shop_general'\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": " venera = 1\r\n txt_count = 4",
+      "new": " venera = 1\r\n unique_slave[\"venera\"] = 1\r\n txt_count = 4",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "IF unique_slave[\"venera\"] = 0 and",
+      "new": "IF unique_slave[\"venera\"] = 0 and venera = 0 and",
+      "count": 2
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "IF interaction_city = 10375:\r\n npc = 1\r\n $npc_id = 'shlyapkin'\r\n $place = 'XXXTalesforest'\r\n $return_lock  = 'shop_general'\r\n txt_count = arrsize('$shlyapkin_win') - 1\r\n npc_progress['shlyapkin'] = 2\r\n gs 'killslave'\r\n sparks += 3500\r\n txt_count = 3\r\n$text[1] = \"[슐랴프킨]<br>&nbsp;오, 맙소사! 아름답군! 지금 이 순간 나를 덮쳐 오는 모든 감정을 다 표현할 말이 없을 정도야... 이리 와라, 아가씨! 우리가 못 한 건 이제 충분히 만회할 시간이 있으니까!!!\"\r\n$text[2] = \"[슐랴프킨]<br>&nbsp;고맙다, <<$master_name>>! 정말 훌륭하게 해냈어. 나도 꼭 보답하고 싶지만, 지금은 불가항력적인 상황이 생겼다. 스네구로치카가 곧 경매에 넘어가게 됐어. 그리고 그건 내가 어떻게 할 수가 없다. 갑자기 와서 데려가 버렸거든. 왜 이렇게 서두르는지 설명도 안 해 줬고, 아직 완벽하게 준비된 게 아니라는 내 호소를 들어볼 생각조차 없었어...\"\r\n$text[3] = \"[슐랴프킨]<br>&nbsp;네게 한 약속을 완전히 지키진 못했다는 건 나도 안다. 그래도 적어도 마지막 일격을 그린치와 산타클로스 부인에게 날릴 준비는 어느 정도 해 뒀길 바란다. 여기 스파크를 줄 테니, 그들과 싸우는 데 필요한 걸 전부 사라. 행운을 빈다, <<$master_name>>!\"\r\n active[$event['спасение_рождества']] = 6\r\n gs '$newloc'\r\nEND\r\n",
+      "new": "IF interaction_city = 10375:\r\n npc = 1\r\n $npc_id = 'shlyapkin'\r\n $place = 'XXXTalesforest'\r\n $return_lock  = 'shop_general'\r\n txt_count = arrsize('$shlyapkin_win') - 1\r\n npc_progress['shlyapkin'] = 2\r\n gs 'killslave'\r\n sparks += 3500\r\n txt_count = 3\r\n$text[1] = \"[슐랴프킨]<br>&nbsp;오, 맙소사! 아름답군! 지금 이 순간 나를 덮쳐 오는 모든 감정을 다 표현할 말이 없을 정도야... 이리 와라, 아가씨! 우리가 못 한 건 이제 충분히 만회할 시간이 있으니까!!!\"\r\n$text[2] = \"[슐랴프킨]<br>&nbsp;고맙다, <<$master_name>>! 정말 훌륭하게 해냈어. 나도 꼭 보답하고 싶지만, 지금은 불가항력적인 상황이 생겼다. 스네구로치카가 곧 경매에 넘어가게 됐어. 그리고 그건 내가 어떻게 할 수가 없다. 갑자기 와서 데려가 버렸거든. 왜 이렇게 서두르는지 설명도 안 해 줬고, 아직 완벽하게 준비된 게 아니라는 내 호소를 들어볼 생각조차 없었어...\"\r\n$text[3] = \"[슐랴프킨]<br>&nbsp;네게 한 약속을 완전히 지키진 못했다는 건 나도 안다. 그래도 적어도 마지막 일격을 그린치와 산타클로스 부인에게 날릴 준비는 어느 정도 해 뒀길 바란다. 여기 스파크를 줄 테니, 그들과 싸우는 데 필요한 걸 전부 사라. 행운을 빈다, <<$master_name>>!\"\r\n gs '$newloc'\r\nEND\r\n",
+      "count": 1
+    }
+  ]
+}

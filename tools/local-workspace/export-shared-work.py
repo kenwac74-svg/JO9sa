@@ -156,12 +156,37 @@ def selected_images(ledger):
             if not re.fullmatch('[0-9a-fA-F]{64}', h) or PurePosixPath(key).suffix.lower() not in IMAGE_EXTENSIONS:
                 raise ValueError('Invalid personal-image ledger entry: ' + key)
             h = h.lower()
+            if event['operation'] == 'relocate':
+                source = relative(item['fromPath'])
+                if chosen.get(source) == h:
+                    chosen.pop(source)
+                    chosen[key] = h
+                    owned.add((key, h))
+                continue
             if event['operation'] == 'restore' and (key, h) not in owned:
                 chosen.pop(key, None)
                 continue
             owned.add((key, h))
             chosen[key] = h
     return chosen
+
+def retired_images(repo):
+    """Only the explicitly approved legacy retirement manifest authorizes omission."""
+    plan = Path(repo) / 'docs/resource-audits/2026-10-11/legacy-1.2.1/plan.json'
+    if not plan.is_file():
+        return {}
+    result = {}
+    for entry in read_json(plan)['entries']:
+        prefix = 'game/content/pic/'
+        source = entry['path'].replace('\\', '/')
+        if not source.startswith(prefix):
+            raise ValueError('Invalid retirement path: ' + source)
+        key = relative(source[len(prefix):])
+        h = entry['sha256'].lower()
+        if '1.2.1' not in PurePosixPath(key).name or not re.fullmatch('[0-9a-f]{64}', h):
+            raise ValueError('Invalid legacy retirement record: ' + key)
+        result[key] = h
+    return result
 
 def load_sync(repo):
     p = repo / 'tools/local-workspace/sync-workspace-state.py'
@@ -285,9 +310,14 @@ def export(repo, game, catalog, runtime, destination, original=None):
             if p.suffix.lower() == '.json':
                 put('game-metadata/mods/' + rel, json_bytes(portable(read_json(p), replacements)), 'game-metadata')
         chosen = selected_images(catalog / 'image_work/personal-patch/events.jsonl')
+        retired = retired_images(repo)
+        omitted_retired = []
         for key, expected in sorted(chosen.items()):
             source = game / 'content/pic' / key
             if not source.is_file():
+                if retired.get(key) == expected:
+                    omitted_retired.append({'path': key, 'sha256': expected})
+                    continue
                 raise ValueError('Adopted personal image is missing: ' + key)
             copy(source, 'personal-images/content/pic/' + key, 'personal-images', expected)
         for folder in ('content/modworkpic', 'content/pic/reserve/jo9mod'):
@@ -363,6 +393,7 @@ def export(repo, game, catalog, runtime, destination, original=None):
                     'workspaceId': workspace_id,
                     'createdAt': created.isoformat(), 'catalogSnapshot': catalog_snapshot,
                     'dialogueBackupInputs': inputs,
+                    'omittedRetiredImages': omitted_retired,
                     'files': sorted(planned.values(), key=lambda f: f['path']), 'counts': counts,
                     'gameCheckpoint': {'path': 'game-checkpoint/jack.qsp', 'sha256': planned['game-checkpoint/jack.qsp']['sha256']},
                     'policy': {'unmanagedFilesDeleted': False, 'apiKeysIncluded': False,

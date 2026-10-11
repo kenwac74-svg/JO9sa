@@ -1,0 +1,687 @@
+{
+  "id": "2026-10-12_visible_menu_prices",
+  "description": "Show audited fees on menu captions, normalize monetary menu units to $, and correct fixed-price captions to existing deductions. Preserve prices, conditions, rewards and execution paths.",
+  "before_sha256": "82ee7d4bd1d9355752d5283b6bba4e7dbc1aea0c8f47deee867e7f9ee2929ac6",
+  "edits": [
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "\telseif sparks < coach_price[slave[\"service\"]]:\r\n\t\tfunc('$menu', 'exec', $menu_item_Housekeeping_tutor_gray, empty, '잡일과 청소 교육 불가 (<<coach_price[slave[\"service\"]]>>$)', '<<$coach_price[slave[\"service\"]]>> 스파크가 부족하다.')\r\n\telse\r\n",
+      "new": "\telseif sparks < coach_price[slave[\"service\"]]:\r\n\t\tfunc('$menu', 'exec', $menu_item_Housekeeping_tutor_gray, empty, '잡일과 청소 교육 불가 (<<coach_price[slave[\"service\"]]>>$)', '<<$coach_price[slave[\"service\"]]>>$가 부족하다.')\r\n\telse\r\n",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "\telseif sparks < coach_price[slave[\"cook\"]]:\r\n\t\tfunc('$menu', 'exec', $menu_item_Cookery_tutor_gray, empty, '요리 교육 불가 (<<coach_price[slave[\"cook\"]]>>$)', '<<$coach_price[slave[\"cook\"]]>> 스파크가 부족하다.')\r\n\telse\r\n",
+      "new": "\telseif sparks < coach_price[slave[\"cook\"]]:\r\n\t\tfunc('$menu', 'exec', $menu_item_Cookery_tutor_gray, empty, '요리 교육 불가 (<<coach_price[slave[\"cook\"]]>>$)', '<<$coach_price[slave[\"cook\"]]>>$가 부족하다.')\r\n\telse\r\n",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "\telseif sparks < coach_price[slave[\"secretary\"]]:\r\n\t\tfunc('$menu', 'exec', $menu_item_Clerical_tutor_gray, empty, '사무지식 교육 불가 (<<coach_price[slave[\"secretary\"]]>>$)', '<<$coach_price[slave[\"secretary\"]]>> 스파크가 부족하다.')\r\n\telse\r\n",
+      "new": "\telseif sparks < coach_price[slave[\"secretary\"]]:\r\n\t\tfunc('$menu', 'exec', $menu_item_Clerical_tutor_gray, empty, '사무지식 교육 불가 (<<coach_price[slave[\"secretary\"]]>>$)', '<<$coach_price[slave[\"secretary\"]]>>$가 부족하다.')\r\n\telse\r\n",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "\telseif sparks < coach_price[slave[\"expression\"]]:\r\n\t\tfunc('$menu', 'exec', $menu_item_expression_tutor_gray, empty, '표현과 수사학 교육 불가 (<<coach_price[slave[\"expression\"]]>>$)', '<<$coach_price[slave[\"expression\"]]>> 스파크가 부족하다.')\r\n\telse\r\n",
+      "new": "\telseif sparks < coach_price[slave[\"expression\"]]:\r\n\t\tfunc('$menu', 'exec', $menu_item_expression_tutor_gray, empty, '표현과 수사학 교육 불가 (<<coach_price[slave[\"expression\"]]>>$)', '<<$coach_price[slave[\"expression\"]]>>$가 부족하다.')\r\n\telse\r\n",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "\telseif sparks < coach_price[slave[\"nurse\"]]:\r\n\t\tfunc('$menu', 'exec', $menu_item_Medicine_tutor_gray, empty, '간호의학 교육 불가 (<<coach_price[slave[\"nurse\"]]>>$)', '<<$coach_price[slave[\"nurse\"]]>> 스파크가 부족하다.')\r\n\telse\r\n",
+      "new": "\telseif sparks < coach_price[slave[\"nurse\"]]:\r\n\t\tfunc('$menu', 'exec', $menu_item_Medicine_tutor_gray, empty, '간호의학 교육 불가 (<<coach_price[slave[\"nurse\"]]>>$)', '<<$coach_price[slave[\"nurse\"]]>>$가 부족하다.')\r\n\telse\r\n",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "\telseif sparks < coach_price[slave[\"alchemy\"]]:\r\n\t\tfunc('$menu', 'exec', $menu_item_Alchemy_tutor_gray, empty, '연금술 교육 불가 (<<coach_price[slave[\"alchemy\"]]>>$)', '<<$coach_price[slave[\"alchemy\"]]>> 스파크가 부족하다.')\r\n\telse\r\n",
+      "new": "\telseif sparks < coach_price[slave[\"alchemy\"]]:\r\n\t\tfunc('$menu', 'exec', $menu_item_Alchemy_tutor_gray, empty, '연금술 교육 불가 (<<coach_price[slave[\"alchemy\"]]>>$)', '<<$coach_price[slave[\"alchemy\"]]>>$가 부족하다.')\r\n\telse\r\n",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "\telseif sparks < coach_price[slave[\"enchanter\"]]:\r\n\t\tfunc('$menu', 'exec', $menu_item_Esoterictheory_tutor_gray, empty, '마법의 기술 교육 불가 (<<coach_price[slave[\"enchanter\"]]>>$)', '<<$coach_price[slave[\"enchanter\"]]>> 스파크가 부족하다.')\r\n\telse\r\n",
+      "new": "\telseif sparks < coach_price[slave[\"enchanter\"]]:\r\n\t\tfunc('$menu', 'exec', $menu_item_Esoterictheory_tutor_gray, empty, '마법의 기술 교육 불가 (<<coach_price[slave[\"enchanter\"]]>>$)', '<<$coach_price[slave[\"enchanter\"]]>>$가 부족하다.')\r\n\telse\r\n",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "\telseif sparks < coach_price[slave[\"stamina\"]]:\r\n\t\tfunc('$menu', 'exec', $menu_item_Gymnastics_tutor_gray, empty, '신체 단련술 불가 (<<coach_price[slave[\"stamina\"]]>>$)', '<<$coach_price[slave[\"stamina\"]]>> 스파크가 부족하다.')\r\n\telse\r\n",
+      "new": "\telseif sparks < coach_price[slave[\"stamina\"]]:\r\n\t\tfunc('$menu', 'exec', $menu_item_Gymnastics_tutor_gray, empty, '신체 단련술 불가 (<<coach_price[slave[\"stamina\"]]>>$)', '<<$coach_price[slave[\"stamina\"]]>>$가 부족하다.')\r\n\telse\r\n",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "\telseif sparks < coach_price[slave[\"gladiatrix\"]]:\r\n\t\tfunc('$menu', 'exec', $menu_item_gladiatrix_tutor_gray, empty, '전투술 훈련 불가 (<<coach_price[slave[\"gladiatrix\"]]>>$)', '<<$coach_price[slave[\"gladiatrix\"]]>> 스파크가 부족하다.')\r\n\telse\r\n",
+      "new": "\telseif sparks < coach_price[slave[\"gladiatrix\"]]:\r\n\t\tfunc('$menu', 'exec', $menu_item_gladiatrix_tutor_gray, empty, '전투술 훈련 불가 (<<coach_price[slave[\"gladiatrix\"]]>>$)', '<<$coach_price[slave[\"gladiatrix\"]]>>$가 부족하다.')\r\n\telse\r\n",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "\telseif sparks < coach_price[slave[\"calisthenics\"]]:\r\n\t\tfunc('$menu', 'exec', $menu_item_Choreography_tutor_gray, empty, '전통 무용 교육 불가 (<<coach_price[slave[\"calisthenics\"]]>>$)', '<<$coach_price[slave[\"calisthenics\"]]>> 스파크가 부족하다.')\r\n\telse\r\n",
+      "new": "\telseif sparks < coach_price[slave[\"calisthenics\"]]:\r\n\t\tfunc('$menu', 'exec', $menu_item_Choreography_tutor_gray, empty, '전통 무용 교육 불가 (<<coach_price[slave[\"calisthenics\"]]>>$)', '<<$coach_price[slave[\"calisthenics\"]]>>$가 부족하다.')\r\n\telse\r\n",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "\telseif sparks < coach_price[slave[\"music\"]]:\r\n\t\tfunc('$menu', 'exec', $menu_item_music_tutor_gray, empty, '전통 음악 교육 불가 (<<coach_price[slave[\"music\"]]>>$)', '<<$coach_price[slave[\"music\"]]>> 스파크가 부족하다.')\r\n\telse\r\n",
+      "new": "\telseif sparks < coach_price[slave[\"music\"]]:\r\n\t\tfunc('$menu', 'exec', $menu_item_music_tutor_gray, empty, '전통 음악 교육 불가 (<<coach_price[slave[\"music\"]]>>$)', '<<$coach_price[slave[\"music\"]]>>$가 부족하다.')\r\n\telse\r\n",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "\telseif sparks < coach_price[slave[\"art\"]]:\r\n\t\tfunc('$menu', 'exec', $menu_item_art_tutor_gray, empty, '전통 미술 교육 불가 (<<coach_price[slave[\"art\"]]>>$)', '<<$coach_price[slave[\"art\"]]>> 스파크가 부족하다.')\r\n\telse\r\n",
+      "new": "\telseif sparks < coach_price[slave[\"art\"]]:\r\n\t\tfunc('$menu', 'exec', $menu_item_art_tutor_gray, empty, '전통 미술 교육 불가 (<<coach_price[slave[\"art\"]]>>$)', '<<$coach_price[slave[\"art\"]]>>$가 부족하다.')\r\n\telse\r\n",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "\telseif sparks < coach_price[slave[\"pet\"]]:\r\n\t\tfunc('$menu', 'exec', $menu_item_Taming_tutor_gray, empty, '애완녀 조련 불가 (<<coach_price[slave[\"pet\"]]>>$)', '<<$coach_price[slave[\"pet\"]]>> 스파크가 부족하다.')\r\n\telse\r\n",
+      "new": "\telseif sparks < coach_price[slave[\"pet\"]]:\r\n\t\tfunc('$menu', 'exec', $menu_item_Taming_tutor_gray, empty, '애완녀 조련 불가 (<<coach_price[slave[\"pet\"]]>>$)', '<<$coach_price[slave[\"pet\"]]>>$가 부족하다.')\r\n\telse\r\n",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "\telseif sparks < coach_price[slave[\"dressage\"]]:\r\n\t\tfunc('$menu', 'exec', $menu_item_Dressage_tutor_gray, empty, '경마녀 조련 불가 (<<coach_price[slave[\"dressage\"]]>>$)', '<<$coach_price[slave[\"dressage\"]]>> 스파크가 부족하다.')\r\n\telse\r\n",
+      "new": "\telseif sparks < coach_price[slave[\"dressage\"]]:\r\n\t\tfunc('$menu', 'exec', $menu_item_Dressage_tutor_gray, empty, '경마녀 조련 불가 (<<coach_price[slave[\"dressage\"]]>>$)', '<<$coach_price[slave[\"dressage\"]]>>$가 부족하다.')\r\n\telse\r\n",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "\telseif sparks < coach_price[slave[\"cowSK\"]]:\r\n\t\tfunc('$menu', 'exec', $menu_item_cow_tutor_gray, empty, '젖소녀 조련 불가 (<<coach_price[slave[\"cowSK\"]]>>$)', '<<$coach_price[slave[\"cowSK\"]]>> 스파크가 부족하다.')\r\n\telse\r\n",
+      "new": "\telseif sparks < coach_price[slave[\"cowSK\"]]:\r\n\t\tfunc('$menu', 'exec', $menu_item_cow_tutor_gray, empty, '젖소녀 조련 불가 (<<coach_price[slave[\"cowSK\"]]>>$)', '<<$coach_price[slave[\"cowSK\"]]>>$가 부족하다.')\r\n\telse\r\n",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "\tif already_done_today['1513'] > 0:\r\n\t\tfunc('$menu', 'exec', $menu_item_beach_gray, empty, '바다로 소풍', '바다에 이미 다녀왔다.')\r\n\telseif sparks < 2:\r\n\t\tfunc('$menu', 'exec', $menu_item_beach_gray, empty, '바다로 소풍', '스파크가 부족하다. (2$)')\r\n\telse\r\n",
+      "new": "\tif already_done_today['1513'] > 0:\r\n\t\tfunc('$menu', 'exec', $menu_item_beach_gray, empty, '바다로 소풍 (2$)', '바다에 이미 다녀왔다.')\r\n\telseif sparks < 2:\r\n\t\tfunc('$menu', 'exec', $menu_item_beach_gray, empty, '바다로 소풍 (2$)', '스파크가 부족하다. (2$)')\r\n\telse\r\n",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "\tif already_done_today['1514'] > 0:\r\n\t\tfunc('$menu', 'exec', $menu_item_theater_gray, empty, '공연 관람', '극장에 이미 다녀왔다.')\r\n\telseif custom_game = 0 and hero_choice = 6:\r\n\t\t! Maestro gets free theater tickets in story mode - ImperatorAugustus\r\n\t\tfunc('$menu', 'goto', $menu_item_theater, menu_theater, 'interaction', 'interaction', '공연 관람', '<<$slave_name>> 함께 공연관람 (4단계, 행동력 -1/1)')\r\n\telseif sparks < 4:\r\n\t\tfunc('$menu', 'exec', $menu_item_theater_gray, empty, '공연 관람', '스파크가 부족하다. (4$)')\r\n\telse\r\n",
+      "new": "\tif already_done_today['1514'] > 0:\r\n\t\tfunc('$menu', 'exec', $menu_item_theater_gray, empty, '공연 관람 (<<iif(custom_game = 0 and hero_choice = 6, 0, 4)>>$)', '극장에 이미 다녀왔다.')\r\n\telseif custom_game = 0 and hero_choice = 6:\r\n\t\t! Maestro gets free theater tickets in story mode - ImperatorAugustus\r\n\t\tfunc('$menu', 'goto', $menu_item_theater, menu_theater, 'interaction', 'interaction', '공연 관람 (0$)', '<<$slave_name>> 함께 공연관람 (4단계, 행동력 -1/1)')\r\n\telseif sparks < 4:\r\n\t\tfunc('$menu', 'exec', $menu_item_theater_gray, empty, '공연 관람 (4$)', '스파크가 부족하다. (4$)')\r\n\telse\r\n",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "\tif already_done_today['1515'] > 0:\r\n\t\tfunc('$menu', 'exec', $menu_item_restaurant_gray, empty, '고풍스런 식당 데이트', '식당에 이미 다녀왔다.')\r\n\telseif sparks < 8:\r\n\t\tfunc('$menu', 'exec', $menu_item_restaurant_gray, empty, '고풍스런 식당 데이트', '스파크가 부족하다. (8$)')\r\n\telse\r\n",
+      "new": "\tif already_done_today['1515'] > 0:\r\n\t\tfunc('$menu', 'exec', $menu_item_restaurant_gray, empty, '고풍스런 식당 데이트 (8$)', '식당에 이미 다녀왔다.')\r\n\telseif sparks < 8:\r\n\t\tfunc('$menu', 'exec', $menu_item_restaurant_gray, empty, '고풍스런 식당 데이트 (8$)', '스파크가 부족하다. (8$)')\r\n\telse\r\n",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "\tif sparks < 2:\r\n\t\tfunc('$menu', 'exec', $menu_item_springs_gray, empty, '온천 명소', '<<$slave_name>> 온천 명소를 보내줄 돈이 없다. (2$)')\r\n\telseif slave['energy'] < 1:\r\n",
+      "new": "\tif sparks < 2:\r\n\t\tfunc('$menu', 'exec', $menu_item_springs_gray, empty, '온천 명소 (2$)', '<<$slave_name>> 온천 명소를 보내줄 돈이 없다. (2$)')\r\n\telseif slave['energy'] < 1:\r\n",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "\tif sparks < 5:\r\n\t\tfunc('$menu', 'exec', $menu_item_Goldencage_gray, empty, '황금우리', '<<$slave_name>> 황금우리에 보내줄 돈이 없다. (5$)')\r\n\telseif (slave['energy'] - slave['half_action']/2) < 3:\r\n",
+      "new": "\tif sparks < 5:\r\n\t\tfunc('$menu', 'exec', $menu_item_Goldencage_gray, empty, '황금우리 (5$)', '<<$slave_name>> 황금우리에 보내줄 돈이 없다. (5$)')\r\n\telseif (slave['energy'] - slave['half_action']/2) < 3:\r\n",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "    FUNC('$menu', 'exec', $menu_item_teambuilding_1_gray, empty, '함께 집안일', '집이 이미 충분히 깨끗합니다.') \r\n  else\r\n    FUNC('$menu', 'goto', $menu_item_teambuilding_1, 851, 'interaction', 'interaction', '함께 집안일', '둘이 함께 집안일을 하게 한다.')\r\n  end\r\n  if slave['teambuilding_2'] = 1 or assistant['teambuilding_2'] = 1: \r\n    FUNC('$menu', 'exec', $menu_item_teambuilding_2_gray, empty, '함께 체조', '오늘은 이미 이걸 했습니다.')\r\n  else  \r\n    FUNC('$menu', 'goto', $menu_item_teambuilding_2, 852, 'interaction', 'interaction', '함께 체조', '둘이 함께 체조 공연을 한다.')\r\n  end\r\n  if sparks >= 4:\r\n    if slave['teambuilding_35'] = 1 or assistant['teambuilding_35'] = 1:\r\n      FUNC('$menu', 'exec', $menu_item_teambuilding_35_gray, empty, '해변 데이트', '오늘은 이미 해변에 다녀왔습니다.')\r\n    else\r\n      FUNC('$menu', 'goto', $menu_item_teambuilding_35, 5543, 'interaction', 'interaction', '해변 데이트', '노예와 조수를 해변에 데려간다. (4 스파크) (=3)')\r\n    end\r\n  else  \r\n      FUNC('$menu', 'exec', $menu_item_teambuilding_35_gray, empty, '해변 데이트', '스파크가 부족합니다.')\r\n  end\r\n  if sparks >= 12:\r\n    if slave['teambuilding_3'] = 1 or assistant['teambuilding_3'] = 1:\r\n      FUNC('$menu', 'exec', $menu_item_teambuilding_3_gray, empty, '둘 다 데이트', '오늘은 이미 식당에 다녀왔습니다.')\r\n    else\r\n      FUNC('$menu', 'goto', $menu_item_teambuilding_3, 853, 'interaction', 'interaction', '둘 다 데이트', '노예와 조수 둘 다를 식당에 데려간다. (12 스파크) (=5)')\r\n    end\r\n  else  \r\n      FUNC('$menu', 'exec', $menu_item_teambuilding_3_gray, empty, '둘 다 데이트', '스파크가 부족합니다.')\r\n  end\r\n  FUNC('$menu', 'goto', $menu_item_Lesbianshow, menu_Lesbianshow, 'interaction', 'interaction', '레즈비언 쇼', '<<$assistant_name>>와 <<$slave_name>>가 레즈비언 쇼를 한다.')\r\n  FUNC('$menu', 'goto', $menu_item_Threesome, menu_Threesome, 'interaction', 'interaction', '쓰리섬', '쓰리섬을 한다')\r\n",
+      "new": "    FUNC('$menu', 'exec', $menu_item_teambuilding_1_gray, empty, '함께 집안일', '집이 이미 충분히 깨끗합니다.') \r\n  else\r\n    FUNC('$menu', 'goto', $menu_item_teambuilding_1, 851, 'interaction', 'interaction', '함께 집안일', '둘이 함께 집안일을 하게 한다.')\r\n  end\r\n  if slave['teambuilding_2'] = 1 or assistant['teambuilding_2'] = 1: \r\n    FUNC('$menu', 'exec', $menu_item_teambuilding_2_gray, empty, '함께 체조', '오늘은 이미 이걸 했습니다.')\r\n  else  \r\n    FUNC('$menu', 'goto', $menu_item_teambuilding_2, 852, 'interaction', 'interaction', '함께 체조', '둘이 함께 체조 공연을 한다.')\r\n  end\r\n  if sparks >= 4:\r\n    if slave['teambuilding_35'] = 1 or assistant['teambuilding_35'] = 1:\r\n      FUNC('$menu', 'exec', $menu_item_teambuilding_35_gray, empty, '해변 데이트 (4$)', '오늘은 이미 해변에 다녀왔습니다.')\r\n    else\r\n      FUNC('$menu', 'goto', $menu_item_teambuilding_35, 5543, 'interaction', 'interaction', '해변 데이트 (4$)', '노예와 조수를 해변에 데려간다. (4$) (=3)')\r\n    end\r\n  else  \r\n      FUNC('$menu', 'exec', $menu_item_teambuilding_35_gray, empty, '해변 데이트 (4$)', '스파크가 부족합니다.')\r\n  end\r\n  if sparks >= 12:\r\n    if slave['teambuilding_3'] = 1 or assistant['teambuilding_3'] = 1:\r\n      FUNC('$menu', 'exec', $menu_item_teambuilding_3_gray, empty, '둘 다 데이트 (12$)', '오늘은 이미 식당에 다녀왔습니다.')\r\n    else\r\n      FUNC('$menu', 'goto', $menu_item_teambuilding_3, 853, 'interaction', 'interaction', '둘 다 데이트 (12$)', '노예와 조수 둘 다를 식당에 데려간다. (12$) (=5)')\r\n    end\r\n  else  \r\n      FUNC('$menu', 'exec', $menu_item_teambuilding_3_gray, empty, '둘 다 데이트 (12$)', '스파크가 부족합니다.')\r\n  end\r\n  FUNC('$menu', 'goto', $menu_item_Lesbianshow, menu_Lesbianshow, 'interaction', 'interaction', '레즈비언 쇼', '<<$assistant_name>>와 <<$slave_name>>가 레즈비언 쇼를 한다.')\r\n  FUNC('$menu', 'goto', $menu_item_Threesome, menu_Threesome, 'interaction', 'interaction', '쓰리섬', '쓰리섬을 한다')\r\n",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "    FUNC('$menu', 'exec', $menu_item_teambuilding_1_gray, empty, '함께 집안일', '집이 이미 충분히 깨끗합니다.')\r\n  else\r\n    FUNC('$menu', 'goto', $menu_item_teambuilding_1, 851, 'interaction', 'interaction', '함께 집안일', '둘이 함께 집안일을 하게 한다.')\r\n  end\r\n  if slave['teambuilding_2'] = 1 or assistant['teambuilding_2'] = 1: \r\n    FUNC('$menu', 'exec', $menu_item_teambuilding_2_gray, empty, '함께 체조', '오늘은 이미 이걸 했습니다.')\r\n  else  \r\n    FUNC('$menu', 'goto', $menu_item_teambuilding_2, 852, 'interaction', 'interaction', '함께 체조', '둘이 함께 체조 공연을 한다.')\r\n  end\r\n  if sparks >= 4:\r\n    if slave['teambuilding_35'] = 1 or assistant['teambuilding_35'] = 1:\r\n      FUNC('$menu', 'exec', $menu_item_teambuilding_35_gray, empty, '해변 데이트', '오늘은 이미 해변에 다녀왔습니다.')\r\n    else\r\n      FUNC('$menu', 'goto', $menu_item_teambuilding_35, 5543, 'interaction', 'interaction', '해변 데이트', '노예와 조수를 해변에 데려간다. (4 스파크) (=3)')\r\n    end\r\n  else  \r\n      FUNC('$menu', 'exec', $menu_item_teambuilding_35_gray, empty, '해변 데이트', '스파크가 부족합니다.')\r\n  end\r\n  if sparks >= 12:\r\n    if slave['teambuilding_3'] = 1 or assistant['teambuilding_3'] = 1:\r\n      FUNC('$menu', 'exec', $menu_item_teambuilding_3_gray, empty, '둘 다 데이트', '오늘은 이미 식당에 다녀왔습니다.')\r\n    else\r\n      FUNC('$menu', 'goto', $menu_item_teambuilding_3, 853, 'interaction', 'interaction', '둘 다 데이트', '노예와 조수 둘 다를 식당에 데려간다. (12 스파크) (=5)')\r\n    end\r\n  else  \r\n      FUNC('$menu', 'exec', $menu_item_teambuilding_3_gray, empty, '둘 다 데이트', '스파크가 부족합니다.')\r\n  end\r\n  FUNC('$menu', 'goto', $menu_item_Lesbianshow, menu_Lesbianshow, 'interaction', 'interaction', '레즈비언 쇼', '<<$assistant_name>>와 <<$slave_name>>가 레즈비언 쇼를 한다.')\r\n  FUNC('$menu', 'goto', $menu_item_Threesome, menu_Threesome, 'interaction', 'interaction', '쓰리섬', '쓰리섬을 한다.')\r\n",
+      "new": "    FUNC('$menu', 'exec', $menu_item_teambuilding_1_gray, empty, '함께 집안일', '집이 이미 충분히 깨끗합니다.')\r\n  else\r\n    FUNC('$menu', 'goto', $menu_item_teambuilding_1, 851, 'interaction', 'interaction', '함께 집안일', '둘이 함께 집안일을 하게 한다.')\r\n  end\r\n  if slave['teambuilding_2'] = 1 or assistant['teambuilding_2'] = 1: \r\n    FUNC('$menu', 'exec', $menu_item_teambuilding_2_gray, empty, '함께 체조', '오늘은 이미 이걸 했습니다.')\r\n  else  \r\n    FUNC('$menu', 'goto', $menu_item_teambuilding_2, 852, 'interaction', 'interaction', '함께 체조', '둘이 함께 체조 공연을 한다.')\r\n  end\r\n  if sparks >= 4:\r\n    if slave['teambuilding_35'] = 1 or assistant['teambuilding_35'] = 1:\r\n      FUNC('$menu', 'exec', $menu_item_teambuilding_35_gray, empty, '해변 데이트 (4$)', '오늘은 이미 해변에 다녀왔습니다.')\r\n    else\r\n      FUNC('$menu', 'goto', $menu_item_teambuilding_35, 5543, 'interaction', 'interaction', '해변 데이트 (4$)', '노예와 조수를 해변에 데려간다. (4$) (=3)')\r\n    end\r\n  else  \r\n      FUNC('$menu', 'exec', $menu_item_teambuilding_35_gray, empty, '해변 데이트 (4$)', '스파크가 부족합니다.')\r\n  end\r\n  if sparks >= 12:\r\n    if slave['teambuilding_3'] = 1 or assistant['teambuilding_3'] = 1:\r\n      FUNC('$menu', 'exec', $menu_item_teambuilding_3_gray, empty, '둘 다 데이트 (12$)', '오늘은 이미 식당에 다녀왔습니다.')\r\n    else\r\n      FUNC('$menu', 'goto', $menu_item_teambuilding_3, 853, 'interaction', 'interaction', '둘 다 데이트 (12$)', '노예와 조수 둘 다를 식당에 데려간다. (12$) (=5)')\r\n    end\r\n  else  \r\n      FUNC('$menu', 'exec', $menu_item_teambuilding_3_gray, empty, '둘 다 데이트 (12$)', '스파크가 부족합니다.')\r\n  end\r\n  FUNC('$menu', 'goto', $menu_item_Lesbianshow, menu_Lesbianshow, 'interaction', 'interaction', '레즈비언 쇼', '<<$assistant_name>>와 <<$slave_name>>가 레즈비언 쇼를 한다.')\r\n  FUNC('$menu', 'goto', $menu_item_Threesome, menu_Threesome, 'interaction', 'interaction', '쓰리섬', '쓰리섬을 한다.')\r\n",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "  IF sparks >= 2:\r\n    FUNC('$menu', 'goto', $menu_item_beach, 5602, 'interaction', 'interaction', '해변', '해변에 간다. (2 스파크)')\r\n  ELSE\r\n    FUNC('$menu', 'exec', $menu_item_beach_gray, empty, '해변', '스파크가 부족합니다. (2 스파크)')\r\n  END\r\n  IF sparks >= 4:\r\n    FUNC('$menu', 'goto', $menu_item_theater, 5603, 'interaction', 'interaction', '극장', '극장에 간다. (4 스파크)')\r\n  ELSE\r\n    FUNC('$menu', 'exec', $menu_item_theater_gray, empty, '극장', '스파크가 부족합니다. (4 스파크)')\r\n  END\r\n  IF sparks >= 8:\r\n    FUNC('$menu', 'goto', $menu_item_restaurant, 5604, 'interaction', 'interaction', '식당', '<<$assistant_name>>가 식당에서 식사한다. (8 스파크)')\r\n  ELSE\r\n    FUNC('$menu', 'exec', $menu_item_restaurant_gray, empty, '식당', '스파크가 부족합니다. (8 스파크)')\r\n  END\r\n",
+      "new": "  IF sparks >= 2:\r\n    FUNC('$menu', 'goto', $menu_item_beach, 5602, 'interaction', 'interaction', '해변 (2$)', '해변에 간다. (2$)')\r\n  ELSE\r\n    FUNC('$menu', 'exec', $menu_item_beach_gray, empty, '해변 (2$)', '스파크가 부족합니다. (2$)')\r\n  END\r\n  IF sparks >= 4:\r\n    FUNC('$menu', 'goto', $menu_item_theater, 5603, 'interaction', 'interaction', '극장 (4$)', '극장에 간다. (4$)')\r\n  ELSE\r\n    FUNC('$menu', 'exec', $menu_item_theater_gray, empty, '극장 (4$)', '스파크가 부족합니다. (4$)')\r\n  END\r\n  IF sparks >= 8:\r\n    FUNC('$menu', 'goto', $menu_item_restaurant, 5604, 'interaction', 'interaction', '식당 (8$)', '<<$assistant_name>>가 식당에서 식사한다. (8$)')\r\n  ELSE\r\n    FUNC('$menu', 'exec', $menu_item_restaurant_gray, empty, '식당 (8$)', '스파크가 부족합니다. (8$)')\r\n  END\r\n",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "  IF assistant[\"energy\"] >= 1 and sparks >= 2:\r\n    FUNC('$menu', 'goto', $menu_item_springs, 5606, 'interaction', 'interaction', '온천 (2 스파크)', '온천에서 시간을 보낸다.')\r\n  ELSEIF sparks < 2:\r\n    FUNC('$menu', 'exec', $menu_item_springs_gray, empty, '온천', '스파크가 부족합니다. (2 스파크)')\r\n  ELSE\r\n    FUNC('$menu', 'exec', $menu_item_springs_gray, empty, '온천', '<<$assistant_name>>는 너무 지쳐서 이걸 할 수 없습니다.')\r\n  END\r\n  IF assistant[\"energy\"] >= 2 and sparks >= 5:\r\n    FUNC('$menu', 'goto', $menu_item_Goldencage, 5607, 'interaction', 'interaction', '\"황금 새장\" (5 스파크)', '조수를 황금 새장에서 하루 보내게 한다.')\r\n  ELSEIF sparks < 2:\r\n    FUNC('$menu', 'exec', $menu_item_Goldencage_gray, empty, '\"황금 새장\"', '스파크가 부족합니다')\r\n  ELSE\r\n    FUNC('$menu', 'exec', $menu_item_Goldencage_gray, empty, '\"황금 새장\"', '<<$assistant_name>>는 이 보상을 받기엔 너무 지쳐 있습니다.')\r\n  END\r\n",
+      "new": "  IF assistant[\"energy\"] >= 1 and sparks >= 2:\r\n    FUNC('$menu', 'goto', $menu_item_springs, 5606, 'interaction', 'interaction', '온천 (2$)', '온천에서 시간을 보낸다.')\r\n  ELSEIF sparks < 2:\r\n    FUNC('$menu', 'exec', $menu_item_springs_gray, empty, '온천 (2$)', '스파크가 부족합니다. (2$)')\r\n  ELSE\r\n    FUNC('$menu', 'exec', $menu_item_springs_gray, empty, '온천 (2$)', '<<$assistant_name>>는 너무 지쳐서 이걸 할 수 없습니다.')\r\n  END\r\n  IF assistant[\"energy\"] >= 2 and sparks >= 5:\r\n    FUNC('$menu', 'goto', $menu_item_Goldencage, 5607, 'interaction', 'interaction', '\"황금 새장\" (5$)', '조수를 황금 새장에서 하루 보내게 한다.')\r\n  ELSEIF sparks < 2:\r\n    FUNC('$menu', 'exec', $menu_item_Goldencage_gray, empty, '\"황금 새장\" (5$)', '스파크가 부족합니다')\r\n  ELSE\r\n    FUNC('$menu', 'exec', $menu_item_Goldencage_gray, empty, '\"황금 새장\" (5$)', '<<$assistant_name>>는 이 보상을 받기엔 너무 지쳐 있습니다.')\r\n  END\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$bg_path = 'bg\\interiors\\econom_study'\r\n\t$text[1] = '[글로리아]<br> 이 실용적인 실내 장식이 단 25$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n",
+      "new": "\t$bg_path = 'bg\\interiors\\econom_study'\r\n\t$text[1] = '[글로리아]<br> 이 실용적인 실내 장식이 단 (20$) 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$bg_path = 'bg\\interiors\\fort_study'\r\n\t$text[1] = '[글로리아]<br> 이 실용적인 실내 장식이 단 30$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n",
+      "new": "\t$bg_path = 'bg\\interiors\\fort_study'\r\n\t$text[1] = '[글로리아]<br> 이 실용적인 실내 장식이 단 (50$) 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$bg_path = 'bg\\interiors\\japan_bath'\r\n\t$text[1] = '[글로리아]<br> 이 실용적 실내 장식이 단 25$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n",
+      "new": "\t$bg_path = 'bg\\interiors\\japan_bath'\r\n\t$text[1] = '[글로리아]<br> 이 실용적 실내 장식이 단 (50$) 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$bg_path = 'bg\\interiors\\pastoral_dungeon'\r\n\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 25$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n",
+      "new": "\t$bg_path = 'bg\\interiors\\pastoral_dungeon'\r\n\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 (20$) 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$bg_path = 'bg\\interiors\\gothic_dungeon'\r\n\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 25$ 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n",
+      "new": "\t$bg_path = 'bg\\interiors\\gothic_dungeon'\r\n\t$text[1] = '[글로리아]<br> 이 실내 장식이 단 (20$) 면 가능합니다. 저희 직원들이 하루만에 설치해드릴 겁니다.</div>'\r\n\t$yes = {\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$npc_id = 'doctor'\r\n\t$text[1] = '[의사]<br>&nbsp;당신의 노예에게 하피 자궁을 이식할 수 있습니다. 그럼 아이를 갖는 대신 새처럼, 산란을 할 겁니다. 건강이 다소 악화될 수 있습니다. 수술 비용은 <b>50 스파크</b>, 회복 기간은 <b>20 일</b> 입니다.</div><br><br> 행동력 -4, 체력 -20, 산란'\r\n\t$yes = {\r\n",
+      "new": "\t$npc_id = 'doctor'\r\n\t$text[1] = '[의사]<br>&nbsp;당신의 노예에게 하피 자궁을 이식할 수 있습니다. 그럼 아이를 갖는 대신 새처럼, 산란을 할 겁니다. 건강이 다소 악화될 수 있습니다. 수술 비용은 <b>(25$)</b>, 회복 기간은 <b>20 일</b> 입니다.</div><br><br> 행동력 -4, 체력 -20, 산란'\r\n\t$yes = {\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$npc_id = 'doctor'\r\n\t$text[1] = '[의사]<br>&nbsp;당신의 조수에게 하피 자궁을 이식할 수 있습니다. 그럼 아이를 갖는 대신 새처럼, 산란을 할 겁니다. 건강이 다소 악화될 수 있습니다. 수술 비용은 <b>50 스파크</b>, 회복 기간은 <b>20 일</b> 입니다.</div><br><br>행동력 -4, 체력 -20, 산란'\r\n\t$yes = {\r\n",
+      "new": "\t$npc_id = 'doctor'\r\n\t$text[1] = '[의사]<br>&nbsp;당신의 조수에게 하피 자궁을 이식할 수 있습니다. 그럼 아이를 갖는 대신 새처럼, 산란을 할 겁니다. 건강이 다소 악화될 수 있습니다. 수술 비용은 <b>(25$)</b>, 회복 기간은 <b>20 일</b> 입니다.</div><br><br>행동력 -4, 체력 -20, 산란'\r\n\t$yes = {\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tfunc('$menu', 'interaction_city', $menu_item_Slaughter_slave, menu_prize_slaughter, '스파크용으로 도축한다')\r\n\tfunc('$menu', 'interaction_city', $menu_item_butcher_slave, menu_prize_butcher, '고기용 도축하기')\r\n\tfunc('$menu', 'interaction_city', $menu_item_marketbuy, menu_prize_sell, '경매에 부친다')\r\n",
+      "new": "\tfunc('$menu', 'interaction_city', $menu_item_Slaughter_slave, menu_prize_slaughter, '스파크용으로 도축한다')\r\n\tfunc('$menu', 'interaction_city', $menu_item_butcher_slave, menu_prize_butcher, '고기용 도축하기 (5$)')\r\n\tfunc('$menu', 'interaction_city', $menu_item_marketbuy, menu_prize_sell, '경매에 부친다')\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tif master_health_checked = 1:\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_M_checkup, menu_M_checkup, '결과 되묻기 : 노예상')\r\n\telseif custom_game = 0 and hero_choice = 7:\r\n\t\t! free exams for Doc in story mode\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_M_checkup, menu_M_checkup, '검진 : 노예상')\r\n\telseif sparks >= 5:\r\n",
+      "new": "\tif master_health_checked = 1:\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_M_checkup, menu_M_checkup, '결과 되묻기 : 노예상 (0$)')\r\n\telseif custom_game = 0 and hero_choice = 7:\r\n\t\t! free exams for Doc in story mode\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_M_checkup, menu_M_checkup, '검진 : 노예상 (0$)')\r\n\telseif sparks >= 5:\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\t\tif slave['health_issues_revealed'] = 1:\r\n\t\t\tfunc('$menu', 'interaction_city', $menu_item_S_checkup, menu_S_checkup, '결과 되묻기 : 노예')\r\n\t\t\tif slave['rehabilitation'] < 1 and slave_state = CONST_INT['slave_exist'] and sparks >= 5:\r\n",
+      "new": "\t\tif slave['health_issues_revealed'] = 1:\r\n\t\t\tfunc('$menu', 'interaction_city', $menu_item_S_checkup, menu_S_checkup, '결과 되묻기 : 노예 (0$)')\r\n\t\t\tif slave['rehabilitation'] < 1 and slave_state = CONST_INT['slave_exist'] and sparks >= 5:\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\t\t\t! free exams for Doc in story mode\r\n\t\t\tfunc('$menu', 'interaction_city', $menu_item_S_checkup, menu_S_checkup, '검진 : 노예')\r\n\t\telseif sparks >= 5:\r\n",
+      "new": "\t\t\t! free exams for Doc in story mode\r\n\t\t\tfunc('$menu', 'interaction_city', $menu_item_S_checkup, menu_S_checkup, '검진 : 노예 (0$)')\r\n\t\telseif sparks >= 5:\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\t\tif assistant['health_issues_revealed'] = 1:\r\n\t\t\tfunc('$menu', 'interaction_city', $menu_item_A_checkup, menu_A_checkup, '결과 되묻기 : 조수')\r\n\t\t\tif assistant['rehabilitation'] < 1 and assistant_state = CONST_INT['slave_exist'] and sparks >= 5:\r\n",
+      "new": "\t\tif assistant['health_issues_revealed'] = 1:\r\n\t\t\tfunc('$menu', 'interaction_city', $menu_item_A_checkup, menu_A_checkup, '결과 되묻기 : 조수 (0$)')\r\n\t\t\tif assistant['rehabilitation'] < 1 and assistant_state = CONST_INT['slave_exist'] and sparks >= 5:\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\t\t\t! free exams for Doc in story mode\r\n\t\t\tfunc('$menu', 'interaction_city', $menu_item_A_checkup, menu_A_checkup, '검진 : 조수')\r\n\t\telseif sparks >= 5:\r\n",
+      "new": "\t\t\t! free exams for Doc in story mode\r\n\t\t\tfunc('$menu', 'interaction_city', $menu_item_A_checkup, menu_A_checkup, '검진 : 조수 (0$)')\r\n\t\telseif sparks >= 5:\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tif sparks >= 50 and slave['fertility'] = 0 and slave['rehabilitation'] < 1 and slave['parasite'] = 0:\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_SOviparity, menu_SOviparity, '산란화 (50$)')\r\n\telse\r\n\t\tfunc('$menu', 'exec', $menu_item_SOviparity_gray, empty, '산란화 (50$)', iif(sparks < 50, '스파크가 부족하다. ', '') + iif(slave['fertility'] = -3, '수유 중인 노예는 알을 낳을 수 없다. ', iif(slave['fertility'] = 1, '이미 산란형이다. ', '가임 상태가 아니다. ')) + iif(slave['parasite'] ! 0, '이종 기생충이 있다. ', '') + iif(slave['rehabilitation'] > 0, '다른 시술에서 회복 중이다. ', ''))\r\n\tend\r\n",
+      "new": "\tif sparks >= 50 and slave['fertility'] = 0 and slave['rehabilitation'] < 1 and slave['parasite'] = 0:\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_SOviparity, menu_SOviparity, '산란화 (25$)')\r\n\telse\r\n\t\tfunc('$menu', 'exec', $menu_item_SOviparity_gray, empty, '산란화 (25$)', iif(sparks < 50, '스파크가 부족하다. ', '') + iif(slave['fertility'] = -3, '수유 중인 노예는 알을 낳을 수 없다. ', iif(slave['fertility'] = 1, '이미 산란형이다. ', '가임 상태가 아니다. ')) + iif(slave['parasite'] ! 0, '이종 기생충이 있다. ', '') + iif(slave['rehabilitation'] > 0, '다른 시술에서 회복 중이다. ', ''))\r\n\tend\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tif sparks >= 50 and assistant['fertility'] = 0 and assistant['rehabilitation'] < 1 and assistant['parasite'] = 0:\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_AOviparity, menu_AOviparity, '산란화 (50$)')\r\n\telse\r\n\t\tfunc('$menu', 'exec', $menu_item_AOviparity_gray, empty, '산란화 (50$)', iif(sparks < 50, '스파크가 부족하다. ', '') + iif(assistant['fertility'] = -3, '수유 중인 노예는 알을 낳을 수 없다. ', iif(assistant['fertility'] = 1, '이미 산란형이다. ', '가임 상태가 아니다. ')) + iif(assistant['parasite'] ! 0, '이종 기생충이 있다. ', '') + iif(assistant['rehabilitation'] > 0, '다른 시술에서 회복 중이다. ', ''))\r\n\tend\r\n",
+      "new": "\tif sparks >= 50 and assistant['fertility'] = 0 and assistant['rehabilitation'] < 1 and assistant['parasite'] = 0:\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_AOviparity, menu_AOviparity, '산란화 (25$)')\r\n\telse\r\n\t\tfunc('$menu', 'exec', $menu_item_AOviparity_gray, empty, '산란화 (25$)', iif(sparks < 50, '스파크가 부족하다. ', '') + iif(assistant['fertility'] = -3, '수유 중인 노예는 알을 낳을 수 없다. ', iif(assistant['fertility'] = 1, '이미 산란형이다. ', '가임 상태가 아니다. ')) + iif(assistant['parasite'] ! 0, '이종 기생충이 있다. ', '') + iif(assistant['rehabilitation'] > 0, '다른 시술에서 회복 중이다. ', ''))\r\n\tend\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\t\tif stasis_tank = 0:\r\n\t\t\tfunc('$menu', 'interaction_city', $menu_item_Rentcapsule, menu_Rentcapsule, '가정용 캡슐을 임대한다')\r\n\t\telse\r\n",
+      "new": "\t\tif stasis_tank = 0:\r\n\t\t\tfunc('$menu', 'interaction_city', $menu_item_Rentcapsule, menu_Rentcapsule, '가정용 캡슐을 임대한다 (20$)')\r\n\t\telse\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\t\t\t($estate ! 'slum_house' and $estate ! 'white_house' and faction_fame[$replace($estate, '_house', '')] >= 4 and owner = 0):\r\n\t\t\tfunc('$menu', 'interaction_city', $menu_item_realtorBuy, menu_realtorBuy, '현 상태 주택 구매')\r\n\t\telseif owner = 1:\r\n",
+      "new": "\t\t\t($estate ! 'slum_house' and $estate ! 'white_house' and faction_fame[$replace($estate, '_house', '')] >= 4 and owner = 0):\r\n\t\t\tfunc('$menu', 'interaction_city', $menu_item_realtorBuy, menu_realtorBuy, '현 상태 주택 구매 (<<75 * estate_cost_main[$estate]>>$)')\r\n\t\telseif owner = 1:\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tif dungeon = 0:\r\n\t\tif sparks >= estate_cost_dungeon[$estate]: func('$menu', 'interaction_city', $menu_item_Rentdungeon, menu_Rentdungeon, '지하실을 임대한다')\r\n\telseif estate_cost_dungeon[$estate] > 0:\r\n",
+      "new": "\tif dungeon = 0:\r\n\t\tif sparks >= estate_cost_dungeon[$estate]: func('$menu', 'interaction_city', $menu_item_Rentdungeon, menu_Rentdungeon, '지하실을 임대한다 (<<estate_cost_dungeon[$estate]/10 * (10 - decadecount)>>$)')\r\n\telseif estate_cost_dungeon[$estate] > 0:\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tif boudoir = 0:\r\n\t\tif sparks >= estate_cost_boudoir[$estate]: func('$menu', 'interaction_city', $menu_item_Rentboudoir, menu_Rentboudoir, '개인실를 임대한다')\r\n\telseif estate_cost_boudoir[$estate] > 0:\r\n",
+      "new": "\tif boudoir = 0:\r\n\t\tif sparks >= estate_cost_boudoir[$estate]: func('$menu', 'interaction_city', $menu_item_Rentboudoir, menu_Rentboudoir, '개인실를 임대한다 (<<estate_cost_boudoir[$estate]/10 * (10 - decadecount)>>$)')\r\n\telseif estate_cost_boudoir[$estate] > 0:\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tif lab = 0:\r\n\t\tif sparks >= estate_cost_lab[$estate]: func('$menu', 'interaction_city', $menu_item_Rentlaboratory, menu_Rentlaboratory, '연구실을 임대한다')\r\n\telseif estate_cost_lab[$estate] > 0:\r\n",
+      "new": "\tif lab = 0:\r\n\t\tif sparks >= estate_cost_lab[$estate]: func('$menu', 'interaction_city', $menu_item_Rentlaboratory, menu_Rentlaboratory, '연구실을 임대한다 (<<estate_cost_lab[$estate]/10 * (10 - decadecount)>>$)')\r\n\telseif estate_cost_lab[$estate] > 0:\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tif pen = 0:\r\n\t\tif sparks >= 10 + tentacle_size*5: func('$menu', 'interaction_city', $menu_item_Rentpen, menu_Rentpen, '안개 괴물 우리를 임대한다')\r\n\telse\r\n",
+      "new": "\tif pen = 0:\r\n\t\tif sparks >= 10 + tentacle_size*5: func('$menu', 'interaction_city', $menu_item_Rentpen, menu_Rentpen, '안개 괴물 우리를 임대한다 (<<10/10 * (10 - decadecount)>>$)')\r\n\telse\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tif barn = 0:\r\n\t\tif sparks >= estate_cost_barn[$estate]: func('$menu', 'interaction_city', $menu_item_Rentbarn, menu_Rentbarn, '외양간을 임대한다')\r\n\telseif estate_cost_barn[$estate] > 0:\r\n",
+      "new": "\tif barn = 0:\r\n\t\tif sparks >= estate_cost_barn[$estate]: func('$menu', 'interaction_city', $menu_item_Rentbarn, menu_Rentbarn, '외양간을 임대한다 (<<estate_cost_barn[$estate]>>$)')\r\n\telseif estate_cost_barn[$estate] > 0:\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tif $hall ! 'basic' and sparks >= 0: func('$menu', 'interaction_city', $menu_item_hallFree, menu_hallFree, '기본')\r\n\tif $hall ! 'econom' and sparks >= 25: func('$menu', 'interaction_city', $menu_item_hallEconom, menu_hallEconom, '실속형')\r\n\tif $hall ! 'japan' and sparks >= 25: func('$menu', 'interaction_city', $menu_item_hallJapanese, menu_hallJapanese, '일본식')\r\n\tif $hall ! 'comfy' and sparks >= 25: func('$menu', 'interaction_city', $menu_item_hallCozy, menu_hallCozy, '아늑한')\r\n\tif $hall ! 'fort' and sparks >= 50: func('$menu', 'interaction_city', $menu_item_hallmedieval, menu_hallmedieval, '신중세풍')\r\n\tif $hall ! 'modern' and sparks >= 50: func('$menu', 'interaction_city', $menu_item_hallModern, menu_hallModern, '현대식')\r\n\tfunc('$menu', 'exec_options', $menu_item_Backfromhall, 'sp_txt = 4 & gt $curloc', '뒤로')\r\n",
+      "new": "\tif $hall ! 'basic' and sparks >= 0: func('$menu', 'interaction_city', $menu_item_hallFree, menu_hallFree, '기본')\r\n\tif $hall ! 'econom' and sparks >= 25: func('$menu', 'interaction_city', $menu_item_hallEconom, menu_hallEconom, '실속형 (20$)')\r\n\tif $hall ! 'japan' and sparks >= 25: func('$menu', 'interaction_city', $menu_item_hallJapanese, menu_hallJapanese, '일본식 (25$)')\r\n\tif $hall ! 'comfy' and sparks >= 25: func('$menu', 'interaction_city', $menu_item_hallCozy, menu_hallCozy, '아늑한 (25$)')\r\n\tif $hall ! 'fort' and sparks >= 50: func('$menu', 'interaction_city', $menu_item_hallmedieval, menu_hallmedieval, '신중세풍 (50$)')\r\n\tif $hall ! 'modern' and sparks >= 50: func('$menu', 'interaction_city', $menu_item_hallModern, menu_hallModern, '현대식 (50$)')\r\n\tfunc('$menu', 'exec_options', $menu_item_Backfromhall, 'sp_txt = 4 & gt $curloc', '뒤로')\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tfunc('$menu', '===BEGIN===', 'column_1')\r\n\tif $hall ! 'classic' and sparks >= 50: func('$menu', 'interaction_city', $menu_item_hallClassical, menu_hallClassical, '고전풍')\r\n\tif $hall ! 'victorian' and sparks >= 100: func('$menu', 'interaction_city', $menu_item_HallVictorian, menu_HallVictorian, '빅토리아풍')\r\n\tif $hall ! 'gothic' and sparks >= 150: func('$menu', 'interaction_city', $menu_item_HallNecro, menu_HallNecro, '네크로 고딕')\r\n\tif $hall ! 'elite' and sparks >= 100: func('$menu', 'interaction_city', $menu_item_HallElite, menu_HallElite, '엘리트')\r\n\tif $hall ! 'Slaver' and sparks >= 150: func('$menu', 'interaction_city', $menu_item_hallSlaver, menu_hallSlaver, '노예상풍')\r\n\tif $hall ! 'lux' and sparks >= 200: func('$menu', 'interaction_city', $menu_item_hallluxurious, menu_hallLuxurious, '호화풍')\r\n\tfunc('$menu', '===END===')\r\n",
+      "new": "\tfunc('$menu', '===BEGIN===', 'column_1')\r\n\tif $hall ! 'classic' and sparks >= 50: func('$menu', 'interaction_city', $menu_item_hallClassical, menu_hallClassical, '고전풍 (50$)')\r\n\tif $hall ! 'victorian' and sparks >= 100: func('$menu', 'interaction_city', $menu_item_HallVictorian, menu_HallVictorian, '빅토리아풍 (100$)')\r\n\tif $hall ! 'gothic' and sparks >= 150: func('$menu', 'interaction_city', $menu_item_HallNecro, menu_HallNecro, '네크로 고딕 (100$)')\r\n\tif $hall ! 'elite' and sparks >= 100: func('$menu', 'interaction_city', $menu_item_HallElite, menu_HallElite, '엘리트 (100$)')\r\n\tif $hall ! 'Slaver' and sparks >= 150: func('$menu', 'interaction_city', $menu_item_hallSlaver, menu_hallSlaver, '노예상풍 (150$)')\r\n\tif $hall ! 'lux' and sparks >= 200: func('$menu', 'interaction_city', $menu_item_hallluxurious, menu_hallLuxurious, '호화풍 (200$)')\r\n\tfunc('$menu', '===END===')\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tif $bed ! 'basic' and sparks >= 0: func('$menu', 'interaction_city', $menu_item_bedFree, menu_bedFree, '기본')\r\n\tif $bed ! 'econom' and sparks >= 15: func('$menu', 'interaction_city', $menu_item_bedEconom, menu_bedEconom, '실속형')\r\n\tif $bed ! 'japan' and sparks >= 25: func('$menu', 'interaction_city', $menu_item_bedJapanese, menu_bedJapanese, '일본식')\r\n\tif $bed ! 'comfy' and sparks >= 25: func('$menu', 'interaction_city', $menu_item_bedCozy, menu_bedCozy, '아늑한')\r\n\tif $bed ! 'fort' and sparks >= 30: func('$menu', 'interaction_city', $menu_item_bedmedieval, menu_bedmedieval, '신중세풍')\r\n\tif $bed ! 'modern' and sparks >= 50: func('$menu', 'interaction_city', $menu_item_bedModern, menu_bedModern, '현대식')\r\n\tfunc('$menu', 'exec_options', $menu_item_Backfrombed, 'sp_txt = 4 & gt $curloc', '뒤로')\r\n",
+      "new": "\tif $bed ! 'basic' and sparks >= 0: func('$menu', 'interaction_city', $menu_item_bedFree, menu_bedFree, '기본')\r\n\tif $bed ! 'econom' and sparks >= 15: func('$menu', 'interaction_city', $menu_item_bedEconom, menu_bedEconom, '실속형 (15$)')\r\n\tif $bed ! 'japan' and sparks >= 25: func('$menu', 'interaction_city', $menu_item_bedJapanese, menu_bedJapanese, '일본식 (25$)')\r\n\tif $bed ! 'comfy' and sparks >= 25: func('$menu', 'interaction_city', $menu_item_bedCozy, menu_bedCozy, '아늑한 (25$)')\r\n\tif $bed ! 'fort' and sparks >= 30: func('$menu', 'interaction_city', $menu_item_bedmedieval, menu_bedmedieval, '신중세풍 (30$)')\r\n\tif $bed ! 'modern' and sparks >= 50: func('$menu', 'interaction_city', $menu_item_bedModern, menu_bedModern, '현대식 (50$)')\r\n\tfunc('$menu', 'exec_options', $menu_item_Backfrombed, 'sp_txt = 4 & gt $curloc', '뒤로')\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tfunc('$menu', '===BEGIN===', 'column_1')\r\n\tif $bed ! 'classic' and sparks >= 100: func('$menu', 'interaction_city', $menu_item_bedClassical, menu_bedClassical, '고전풍')\r\n\tif $bed ! 'slaver' and sparks >= 100: func('$menu', 'interaction_city', $menu_item_bedSlaver, menu_bedSlaver, '노예상풍')\r\n\tif $bed ! 'stylish' and sparks >= 150: func('$menu', 'interaction_city', $menu_item_bedStyle, menu_bedStyle, '세련된')\r\n\tif $bed ! 'gothic' and sparks >= 150: func('$menu', 'interaction_city', $menu_item_bedNecro, menu_bedNecro, '네크로 고딕')\r\n\tif $bed ! 'elite' and sparks >= 150: func('$menu', 'interaction_city', $menu_item_bedElite, menu_bedElite, '엘리트')\r\n\tif $bed ! 'lux' and sparks >= 200: func('$menu', 'interaction_city', $menu_item_beduxurious, menu_bedLuxurious, '호화풍')\r\n\tfunc('$menu', '===END===')\r\n",
+      "new": "\tfunc('$menu', '===BEGIN===', 'column_1')\r\n\tif $bed ! 'classic' and sparks >= 100: func('$menu', 'interaction_city', $menu_item_bedClassical, menu_bedClassical, '고전풍 (100$)')\r\n\tif $bed ! 'slaver' and sparks >= 100: func('$menu', 'interaction_city', $menu_item_bedSlaver, menu_bedSlaver, '노예상풍 (100$)')\r\n\tif $bed ! 'stylish' and sparks >= 150: func('$menu', 'interaction_city', $menu_item_bedStyle, menu_bedStyle, '세련된 (150$)')\r\n\tif $bed ! 'gothic' and sparks >= 150: func('$menu', 'interaction_city', $menu_item_bedNecro, menu_bedNecro, '네크로 고딕 (150$)')\r\n\tif $bed ! 'elite' and sparks >= 150: func('$menu', 'interaction_city', $menu_item_bedElite, menu_bedElite, '엘리트 (150$)')\r\n\tif $bed ! 'lux' and sparks >= 200: func('$menu', 'interaction_city', $menu_item_beduxurious, menu_bedLuxurious, '호화풍 (200$)')\r\n\tfunc('$menu', '===END===')\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tfunc('$menu', '===BEGIN===', 'column_0')\r\n\tif $kitchen ! 'basic' and sparks >= 20: func('$menu', 'interaction_city', $menu_item_kitchenRustic, menu_kitchenRustic, '소박한')\r\n\tif $kitchen ! 'econom' and sparks >= 20: func('$menu', 'interaction_city', $menu_item_kitchenEconom, menu_kitchenEconom, '실속형')\r\n\tif $kitchen ! 'fort' and sparks >= 20: func('$menu', 'interaction_city', $menu_item_kitchenmedieval, menu_kitchenmedieval, '신중세풍')\r\n\tif $kitchen ! 'gothic' and sparks >= 50: func('$menu', 'interaction_city', $menu_item_kitchenNecro, menu_kitchenNecro, '네크로 고딕')\r\n\tif $kitchen ! 'elite' and sparks >= 50: func('$menu', 'interaction_city', $menu_item_kitchenElite, menu_kitchenElite, '엘리트')\r\n\tfunc('$menu', 'exec_options', $menu_item_Backfromkitchen, 'sp_txt = 4 & gt $curloc', '뒤로')\r\n",
+      "new": "\tfunc('$menu', '===BEGIN===', 'column_0')\r\n\tif $kitchen ! 'basic' and sparks >= 20: func('$menu', 'interaction_city', $menu_item_kitchenRustic, menu_kitchenRustic, '소박한 (20$)')\r\n\tif $kitchen ! 'econom' and sparks >= 20: func('$menu', 'interaction_city', $menu_item_kitchenEconom, menu_kitchenEconom, '실속형 (20$)')\r\n\tif $kitchen ! 'fort' and sparks >= 20: func('$menu', 'interaction_city', $menu_item_kitchenmedieval, menu_kitchenmedieval, '신중세풍 (20$)')\r\n\tif $kitchen ! 'gothic' and sparks >= 50: func('$menu', 'interaction_city', $menu_item_kitchenNecro, menu_kitchenNecro, '네크로 고딕 (50$)')\r\n\tif $kitchen ! 'elite' and sparks >= 50: func('$menu', 'interaction_city', $menu_item_kitchenElite, menu_kitchenElite, '엘리트 (50$)')\r\n\tfunc('$menu', 'exec_options', $menu_item_Backfromkitchen, 'sp_txt = 4 & gt $curloc', '뒤로')\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tif $bath ! 'basic' and sparks >= 0: func('$menu', 'interaction_city', $menu_item_bathFree, menu_bathFree, '기본')\r\n\tif $bath ! 'econom' and sparks >= 20: func('$menu', 'interaction_city', $menu_item_bathEconom, menu_bathEconom, '실속형')\r\n\tif $bath ! 'fort' and sparks >= 20: func('$menu', 'interaction_city', $menu_item_bathmedieval, menu_bathmedieval, '신중세풍')\r\n\tif $bath ! 'classic' and sparks >= 50: func('$menu', 'interaction_city', $menu_item_bathClassical, menu_bathClassical, '고전풍')\r\n\tif $bath ! 'japan' and sparks >= 50: func('$menu', 'interaction_city', $menu_item_bathJapanese, menu_bathJapanese, '일본식 욕조')\r\n\tif $bath ! 'gothic' and sparks >= 50: func('$menu', 'interaction_city', $menu_item_bathNecro, menu_bathNecro, '네크로 고딕')\r\n\tif $bath ! 'elite' and sparks >= 50: func('$menu', 'interaction_city', $menu_item_bathElite, menu_bathElite, '엘리트')\r\n\tif $bath ! 'lux' and sparks >= 100: func('$menu', 'interaction_city', $menu_item_bathLuxurious, menu_bathLuxurious, '호화풍')\r\n\tfunc('$menu', 'exec_options', $menu_item_Backfrombath, 'sp_txt = 4 & gt $curloc', '뒤로')\r\n",
+      "new": "\tif $bath ! 'basic' and sparks >= 0: func('$menu', 'interaction_city', $menu_item_bathFree, menu_bathFree, '기본')\r\n\tif $bath ! 'econom' and sparks >= 20: func('$menu', 'interaction_city', $menu_item_bathEconom, menu_bathEconom, '실속형 (20$)')\r\n\tif $bath ! 'fort' and sparks >= 20: func('$menu', 'interaction_city', $menu_item_bathmedieval, menu_bathmedieval, '신중세풍 (20$)')\r\n\tif $bath ! 'classic' and sparks >= 50: func('$menu', 'interaction_city', $menu_item_bathClassical, menu_bathClassical, '고전풍 (50$)')\r\n\tif $bath ! 'japan' and sparks >= 50: func('$menu', 'interaction_city', $menu_item_bathJapanese, menu_bathJapanese, '일본식 욕조 (50$)')\r\n\tif $bath ! 'gothic' and sparks >= 50: func('$menu', 'interaction_city', $menu_item_bathNecro, menu_bathNecro, '네크로 고딕 (50$)')\r\n\tif $bath ! 'elite' and sparks >= 50: func('$menu', 'interaction_city', $menu_item_bathElite, menu_bathElite, '엘리트 (50$)')\r\n\tif $bath ! 'lux' and sparks >= 100: func('$menu', 'interaction_city', $menu_item_bathLuxurious, menu_bathLuxurious, '호화풍 (100$)')\r\n\tfunc('$menu', 'exec_options', $menu_item_Backfrombath, 'sp_txt = 4 & gt $curloc', '뒤로')\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tif $dungeon ! 'basic' and sparks >= 0: func('$menu', 'interaction_city', $menu_item_dungeonFree, menu_dungeonFree, '기본')\r\n\tif $dungeon ! 'fort' and sparks >= 10: func('$menu', 'interaction_city', $menu_item_dungeonMedieval, menu_dungeonMedieval, '중세풍')\r\n\tif $dungeon ! 'entomb' and sparks >= 10: func('$menu', 'interaction_city', $menu_item_dungeonStone, menu_dungeonStone, '석조풍')\r\n\tif $dungeon ! 'econom' and sparks >= 20: func('$menu', 'interaction_city', $menu_item_dungeonEconom, menu_dungeonEconom, '실속형')\r\n\tif $dungeon ! 'classic' and sparks >= 20: func('$menu', 'interaction_city', $menu_item_dungeonClassical, menu_dungeonClassical, '고전풍')\r\n\tif $dungeon ! 'pastoral' and sparks >= 20: func('$menu', 'interaction_city', $menu_item_dungeonRustic, menu_dungeonRustic, '소박한')\r\n\tfunc('$menu', 'exec_options', $menu_item_Backfromdungeon, 'sp_txt = 4 & gt $curloc', '뒤로')\r\n",
+      "new": "\tif $dungeon ! 'basic' and sparks >= 0: func('$menu', 'interaction_city', $menu_item_dungeonFree, menu_dungeonFree, '기본')\r\n\tif $dungeon ! 'fort' and sparks >= 10: func('$menu', 'interaction_city', $menu_item_dungeonMedieval, menu_dungeonMedieval, '중세풍 (10$)')\r\n\tif $dungeon ! 'entomb' and sparks >= 10: func('$menu', 'interaction_city', $menu_item_dungeonStone, menu_dungeonStone, '석조풍 (10$)')\r\n\tif $dungeon ! 'econom' and sparks >= 20: func('$menu', 'interaction_city', $menu_item_dungeonEconom, menu_dungeonEconom, '실속형 (20$)')\r\n\tif $dungeon ! 'classic' and sparks >= 20: func('$menu', 'interaction_city', $menu_item_dungeonClassical, menu_dungeonClassical, '고전풍 (20$)')\r\n\tif $dungeon ! 'pastoral' and sparks >= 20: func('$menu', 'interaction_city', $menu_item_dungeonRustic, menu_dungeonRustic, '소박한 (20$)')\r\n\tfunc('$menu', 'exec_options', $menu_item_Backfromdungeon, 'sp_txt = 4 & gt $curloc', '뒤로')\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tfunc('$menu', '===BEGIN===', 'column_1')\r\n\tif $dungeon ! 'gothic' and sparks >= 25: func('$menu', 'interaction_city', $menu_item_dungeonNecro, menu_dungeonNecro, '네크로 고딕')\r\n\tif $dungeon ! 'executor' and sparks >= 25: func('$menu', 'interaction_city', $menu_item_dungeonExecutioner, menu_dungeonExecutioner, '집행인풍')\r\n\tif $dungeon ! 'slaver' and sparks >= 25: func('$menu', 'interaction_city', $menu_item_dungeonSlaver, menu_dungeonSlaver, '노예상풍')\r\n\tif $dungeon ! 'victorian' and sparks >= 50: func('$menu', 'interaction_city', $menu_item_dungeonVictorian, menu_dungeonVictorian, '빅토리아풍')\r\n\tif $dungeon ! 'elite' and sparks >= 50: func('$menu', 'interaction_city', $menu_item_dungeonElite, menu_dungeonElite, '엘리트')\r\n\tif $dungeon ! 'lux' and sparks >= 50: func('$menu', 'interaction_city', $menu_item_dungeonLuxurious, menu_dungeonLuxurious, '호화풍')\r\n\tfunc('$menu', '===END===')\r\n",
+      "new": "\tfunc('$menu', '===BEGIN===', 'column_1')\r\n\tif $dungeon ! 'gothic' and sparks >= 25: func('$menu', 'interaction_city', $menu_item_dungeonNecro, menu_dungeonNecro, '네크로 고딕 (20$)')\r\n\tif $dungeon ! 'executor' and sparks >= 25: func('$menu', 'interaction_city', $menu_item_dungeonExecutioner, menu_dungeonExecutioner, '집행인풍 (25$)')\r\n\tif $dungeon ! 'slaver' and sparks >= 25: func('$menu', 'interaction_city', $menu_item_dungeonSlaver, menu_dungeonSlaver, '노예상풍 (25$)')\r\n\tif $dungeon ! 'victorian' and sparks >= 50: func('$menu', 'interaction_city', $menu_item_dungeonVictorian, menu_dungeonVictorian, '빅토리아풍 (50$)')\r\n\tif $dungeon ! 'elite' and sparks >= 50: func('$menu', 'interaction_city', $menu_item_dungeonElite, menu_dungeonElite, '엘리트 (50$)')\r\n\tif $dungeon ! 'lux' and sparks >= 50: func('$menu', 'interaction_city', $menu_item_dungeonLuxurious, menu_dungeonLuxurious, '호화풍 (50$)')\r\n\tfunc('$menu', '===END===')\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tif $boudoir ! 'basic' and sparks >= 0: func('$menu', 'interaction_city', $menu_item_boudoirFree, menu_boudoirFree, '기본')\r\n\tif $boudoir ! 'econom' and sparks >= 10: func('$menu', 'interaction_city', $menu_item_boudoirEconom, menu_boudoirEconom, '실속형')\r\n\tif $boudoir ! 'modern' and sparks >= 20: func('$menu', 'interaction_city', $menu_item_boudoirModern, menu_boudoirModern, '현대식')\r\n\tif $boudoir ! 'comfy' and sparks >= 20: func('$menu', 'interaction_city', $menu_item_boudoirComfy, menu_boudoirComfy, '아늑한')\r\n\tif $boudoir ! 'magic' and sparks >= 50: func('$menu', 'interaction_city', $menu_item_boudoirWitch, menu_boudoirWitch, '마녀풍')\r\n\tfunc('$menu', 'exec_options', $menu_item_Backfromdungeon, 'sp_txt = 4 & gt $curloc', '뒤로')\r\n",
+      "new": "\tif $boudoir ! 'basic' and sparks >= 0: func('$menu', 'interaction_city', $menu_item_boudoirFree, menu_boudoirFree, '기본')\r\n\tif $boudoir ! 'econom' and sparks >= 10: func('$menu', 'interaction_city', $menu_item_boudoirEconom, menu_boudoirEconom, '실속형 (10$)')\r\n\tif $boudoir ! 'modern' and sparks >= 20: func('$menu', 'interaction_city', $menu_item_boudoirModern, menu_boudoirModern, '현대식 (20$)')\r\n\tif $boudoir ! 'comfy' and sparks >= 20: func('$menu', 'interaction_city', $menu_item_boudoirComfy, menu_boudoirComfy, '아늑한 (20$)')\r\n\tif $boudoir ! 'magic' and sparks >= 50: func('$menu', 'interaction_city', $menu_item_boudoirWitch, menu_boudoirWitch, '마녀풍 (50$)')\r\n\tfunc('$menu', 'exec_options', $menu_item_Backfromdungeon, 'sp_txt = 4 & gt $curloc', '뒤로')\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tfunc('$menu', '===BEGIN===', 'column_1')\r\n\tif $boudoir ! 'victorian' and sparks >= 50: func('$menu', 'interaction_city', $menu_item_boudoirVictorian, menu_boudoirVictorian, '빅토리아풍')\r\n\tif $boudoir ! 'slaver' and sparks >= 50: func('$menu', 'interaction_city', $menu_item_boudoirSlaver, menu_boudoirSlaver, '노예상풍')\r\n\tif $boudoir ! 'fort' and sparks >= 100: func('$menu', 'interaction_city', $menu_item_boudoirMedieval, menu_boudoirMedieval, '신중세풍')\r\n\tif $boudoir ! 'elite' and sparks >= 150: func('$menu', 'interaction_city', $menu_item_boudoirElite, menu_boudoirElite, '엘리트')\r\n\tif $boudoir ! 'gothic' and sparks >= 200: func('$menu', 'interaction_city', $menu_item_boudoirNecro, menu_boudoirNecro, '네크로 고딕')\r\n\tif $boudoir ! 'lux' and sparks >= 250: func('$menu', 'interaction_city', $menu_item_boudoirLuxurious, menu_boudoirLuxurious, '호화풍')\r\n\tfunc('$menu', '===END===')\r\n",
+      "new": "\tfunc('$menu', '===BEGIN===', 'column_1')\r\n\tif $boudoir ! 'victorian' and sparks >= 50: func('$menu', 'interaction_city', $menu_item_boudoirVictorian, menu_boudoirVictorian, '빅토리아풍 (50$)')\r\n\tif $boudoir ! 'slaver' and sparks >= 50: func('$menu', 'interaction_city', $menu_item_boudoirSlaver, menu_boudoirSlaver, '노예상풍 (50$)')\r\n\tif $boudoir ! 'fort' and sparks >= 100: func('$menu', 'interaction_city', $menu_item_boudoirMedieval, menu_boudoirMedieval, '신중세풍 (100$)')\r\n\tif $boudoir ! 'elite' and sparks >= 150: func('$menu', 'interaction_city', $menu_item_boudoirElite, menu_boudoirElite, '엘리트 (150$)')\r\n\tif $boudoir ! 'gothic' and sparks >= 200: func('$menu', 'interaction_city', $menu_item_boudoirNecro, menu_boudoirNecro, '네크로 고딕 (200$)')\r\n\tif $boudoir ! 'lux' and sparks >= 250: func('$menu', 'interaction_city', $menu_item_boudoirLuxurious, menu_boudoirLuxurious, '호화풍 (250$)')\r\n\tfunc('$menu', '===END===')\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tfunc('$menu', '===BEGIN===', 'column_0')\r\n\tif $lab ! 'econom' and sparks >= 20: func('$menu', 'interaction_city', $menu_item_labProfessor, menu_labProfessor, '교수풍')\r\n\tif $lab ! 'basic' and sparks >= 20: func('$menu', 'interaction_city', $menu_item_labWitch, menu_labWitch, '마녀풍')\r\n\tif $lab ! 'fort' and sparks >= 50: func('$menu', 'interaction_city', $menu_item_labAlchemist, menu_labAlchemist, '연금술사풍')\r\n\tif $lab ! 'gothic' and sparks >= 100: func('$menu', 'interaction_city', $menu_item_labNecromancer, menu_labNecromancer, '네크로맨서풍')\r\n\tif $lab ! 'slaver' and sparks >= 100: func('$menu', 'interaction_city', $menu_item_labSlaver, menu_labSlaver, '노예상풍')\r\n\tif $lab ! 'victorian' and sparks >= 100: func('$menu', 'interaction_city', $menu_item_labVictorian, menu_labVictorian, '빅토리아풍')\r\n\tif $lab ! 'elite' and sparks >= 100: func('$menu', 'interaction_city', $menu_item_labElite, menu_labElite, '엘리트')\r\n\tfunc('$menu', 'exec_options', $menu_item_Backfromlab, 'sp_txt = 4 & gt $curloc', '뒤로')\r\n",
+      "new": "\tfunc('$menu', '===BEGIN===', 'column_0')\r\n\tif $lab ! 'econom' and sparks >= 20: func('$menu', 'interaction_city', $menu_item_labProfessor, menu_labProfessor, '교수풍 (20$)')\r\n\tif $lab ! 'basic' and sparks >= 20: func('$menu', 'interaction_city', $menu_item_labWitch, menu_labWitch, '마녀풍 (20$)')\r\n\tif $lab ! 'fort' and sparks >= 50: func('$menu', 'interaction_city', $menu_item_labAlchemist, menu_labAlchemist, '연금술사풍 (50$)')\r\n\tif $lab ! 'gothic' and sparks >= 100: func('$menu', 'interaction_city', $menu_item_labNecromancer, menu_labNecromancer, '네크로맨서풍 (100$)')\r\n\tif $lab ! 'slaver' and sparks >= 100: func('$menu', 'interaction_city', $menu_item_labSlaver, menu_labSlaver, '노예상풍 (100$)')\r\n\tif $lab ! 'victorian' and sparks >= 100: func('$menu', 'interaction_city', $menu_item_labVictorian, menu_labVictorian, '빅토리아풍 (100$)')\r\n\tif $lab ! 'elite' and sparks >= 100: func('$menu', 'interaction_city', $menu_item_labElite, menu_labElite, '엘리트 (100$)')\r\n\tfunc('$menu', 'exec_options', $menu_item_Backfromlab, 'sp_txt = 4 & gt $curloc', '뒤로')\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tif milk_license = 1:\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_milk_tip, menu_milk_tip, '내일의 우유 가격을 묻는다')\r\n\telse\r\n",
+      "new": "\tif milk_license = 1:\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_milk_tip, menu_milk_tip, '내일의 우유 가격을 묻는다 (0~5$)')\r\n\telse\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tIF active[$event['Akabur_quest']] = 19 and ((slave_type = 2617 and slave['pregnant'] < 1) or (assistant_type = 2617 and assistant['pregnant'] < 1)) and sparks >= 25000: FUNC('$menu', 'interaction_city', $menu_item_aboutsmug, 301196, '자스민과 아리엘?')\r\n\tIF active[$event['Akabur_quest']] = 19 and ((slave_type = 2617 and slave['pregnant'] > 0) or (assistant_type = 2617 and assistant['pregnant'] > 0)) and sparks >= 25000: FUNC('$menu', 'interaction_city', $menu_item_aboutsmug, 301197, '자스민과 아리엘?')\r\n\tfunc('$menu', 'interaction_city', $menu_item_aboutsmug, 621, '밀수에 대해 묻는다')\r\n",
+      "new": "\tIF active[$event['Akabur_quest']] = 19 and ((slave_type = 2617 and slave['pregnant'] < 1) or (assistant_type = 2617 and assistant['pregnant'] < 1)) and sparks >= 25000: FUNC('$menu', 'interaction_city', $menu_item_aboutsmug, 301196, '자스민과 아리엘?')\r\n\tIF active[$event['Akabur_quest']] = 19 and ((slave_type = 2617 and slave['pregnant'] > 0) or (assistant_type = 2617 and assistant['pregnant'] > 0)) and sparks >= 25000: FUNC('$menu', 'interaction_city', $menu_item_aboutsmug, 301197, '자스민과 아리엘? (25000$)')\r\n\tfunc('$menu', 'interaction_city', $menu_item_aboutsmug, 621, '밀수에 대해 묻는다')\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tfunc('$menu', '===BEGIN===', 'column_0')\r\n\tfunc('$menu', 'interaction_city', $menu_item_Fastsex, menu_Fastsex, '빠른 섹스')\r\n\tfunc('$menu', 'interaction_city', $menu_item_Analsex, menu_Analsex, '애널 섹스')\r\n\tfunc('$menu', 'interaction_city', $menu_item_Fastblowjob, menu_Fastblowjob, '빠른 펠라')\r\n\tfunc('$menu', 'interaction_city', $menu_item_Fastpaizuri, menu_Fastpaizuri, '빠른 파이즈리')\r\n\tif no_loli ! 1: func('$menu', 'interaction_city', $menu_item_Sexlolita, menu_Sexlolita, '로리타와 섹스')\r\n\tfunc('$menu', 'exec_options', $menu_item_Changeselection, 'sp_txt = 1 & gt $curloc', '선택을 바꾼다')\r\n",
+      "new": "\tfunc('$menu', '===BEGIN===', 'column_0')\r\n\tfunc('$menu', 'interaction_city', $menu_item_Fastsex, menu_Fastsex, '빠른 섹스 (1$)')\r\n\tfunc('$menu', 'interaction_city', $menu_item_Analsex, menu_Analsex, '애널 섹스 (1$)')\r\n\tfunc('$menu', 'interaction_city', $menu_item_Fastblowjob, menu_Fastblowjob, '빠른 펠라 (1$)')\r\n\tfunc('$menu', 'interaction_city', $menu_item_Fastpaizuri, menu_Fastpaizuri, '빠른 파이즈리 (1$)')\r\n\tif no_loli ! 1: func('$menu', 'interaction_city', $menu_item_Sexlolita, menu_Sexlolita, '로리타와 섹스 (1$)')\r\n\tfunc('$menu', 'exec_options', $menu_item_Changeselection, 'sp_txt = 1 & gt $curloc', '선택을 바꾼다')\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tfunc('$menu', '===BEGIN===', 'column_0')\r\n\tfunc('$menu', 'interaction_city', $menu_item_Twins, menu_Twins, '쌍둥이')\r\n\tif no_loli ! 1: func('$menu', 'interaction_city', $menu_item_Threelolita, menu_Threelolita, '로리타 셋')\r\n\tfunc('$menu', 'interaction_city', $menu_item_Fivegirls, menu_Fivegirls, '다섯 여자')\r\n\tfunc('$menu', 'interaction_city', $menu_item_Mistressslave, menu_Mistressslave, '주인과 노예')\r\n\tfunc('$menu', 'interaction_city', $menu_item_Exoticsex, menu_Exoticsex, '이색적인 섹스')\r\n\tfunc('$menu', 'exec_options', $menu_item_Changeselection, 'sp_txt = 1 & gt $curloc', '선택을 바꾼다')\r\n",
+      "new": "\tfunc('$menu', '===BEGIN===', 'column_0')\r\n\tfunc('$menu', 'interaction_city', $menu_item_Twins, menu_Twins, '쌍둥이 (5$)')\r\n\tif no_loli ! 1: func('$menu', 'interaction_city', $menu_item_Threelolita, menu_Threelolita, '로리타 셋 (5$)')\r\n\tfunc('$menu', 'interaction_city', $menu_item_Fivegirls, menu_Fivegirls, '다섯 여자 (5$)')\r\n\tfunc('$menu', 'interaction_city', $menu_item_Mistressslave, menu_Mistressslave, '주인과 노예 (5$)')\r\n\tfunc('$menu', 'interaction_city', $menu_item_Exoticsex, menu_Exoticsex, '이색적인 섹스 (5$)')\r\n\tfunc('$menu', 'exec_options', $menu_item_Changeselection, 'sp_txt = 1 & gt $curloc', '선택을 바꾼다')\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tfunc('$menu', '===BEGIN===', 'column_0')\r\n\tfunc('$menu', 'interaction_city', $menu_item_Motherdaughter, menu_Motherdaughter, '어머니와 딸')\r\n\tif no_loli ! 1: func('$menu', 'interaction_city', $menu_item_Sixlolitas, menu_Sixlolitas, '로리타 여섯')\r\n\tfunc('$menu', 'interaction_city', $menu_item_Sevengirls, menu_Sevengirls, '일곱 여자')\r\n\tfunc('$menu', 'interaction_city', $menu_item_Doubleexotic, menu_Doubleexotic, '더블 이색')\r\n\tfunc('$menu', 'interaction_city', $menu_item_Exotictwins, menu_Exotictwins, '이색 쌍둥이')\r\n\tfunc('$menu', 'exec_options', $menu_item_Changeselection, 'sp_txt = 1 & gt $curloc', '선택을 바꾼다')\r\n",
+      "new": "\tfunc('$menu', '===BEGIN===', 'column_0')\r\n\tfunc('$menu', 'interaction_city', $menu_item_Motherdaughter, menu_Motherdaughter, '어머니와 딸 (15$)')\r\n\tif no_loli ! 1: func('$menu', 'interaction_city', $menu_item_Sixlolitas, menu_Sixlolitas, '로리타 여섯 (15$)')\r\n\tfunc('$menu', 'interaction_city', $menu_item_Sevengirls, menu_Sevengirls, '일곱 여자 (15$)')\r\n\tfunc('$menu', 'interaction_city', $menu_item_Doubleexotic, menu_Doubleexotic, '더블 이색 (15$)')\r\n\tfunc('$menu', 'interaction_city', $menu_item_Exotictwins, menu_Exotictwins, '이색 쌍둥이 (15$)')\r\n\tfunc('$menu', 'exec_options', $menu_item_Changeselection, 'sp_txt = 1 & gt $curloc', '선택을 바꾼다')\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "   FUNC('$menu', '===BEGIN===', 'column_0')\r\n   FUNC('$menu', 'interaction_city', $menu_item_brothel_domina_1, menu_brothel_domina_1, '빠른 섹스')\r\n   FUNC('$menu', 'interaction_city', $menu_item_brothel_domina_2, menu_brothel_domina_2, '애널 섹스')\r\n   FUNC('$menu', 'interaction_city', $menu_item_brothel_domina_3, menu_brothel_domina_3, '빠른 손장난')\r\n   FUNC('$menu', 'interaction_city', $menu_item_brothel_domina_4, menu_brothel_domina_4, '빠른 커닐링구스')\r\n   FUNC('$menu', 'interaction_city', $menu_item_brothel_domina_5, menu_brothel_domina_5, '젊은 남자와의 섹스')\r\n   FUNC('$menu', 'exec_options', $menu_item_Changeselection, 'sp_txt = 1 & gt $curloc', '선택을 바꾼다')\r\n",
+      "new": "   FUNC('$menu', '===BEGIN===', 'column_0')\r\n   FUNC('$menu', 'interaction_city', $menu_item_brothel_domina_1, menu_brothel_domina_1, '빠른 섹스 (1$)')\r\n   FUNC('$menu', 'interaction_city', $menu_item_brothel_domina_2, menu_brothel_domina_2, '애널 섹스 (1$)')\r\n   FUNC('$menu', 'interaction_city', $menu_item_brothel_domina_3, menu_brothel_domina_3, '빠른 손장난 (1$)')\r\n   FUNC('$menu', 'interaction_city', $menu_item_brothel_domina_4, menu_brothel_domina_4, '빠른 커닐링구스 (1$)')\r\n   FUNC('$menu', 'interaction_city', $menu_item_brothel_domina_5, menu_brothel_domina_5, '젊은 남자와의 섹스 (1$)')\r\n   FUNC('$menu', 'exec_options', $menu_item_Changeselection, 'sp_txt = 1 & gt $curloc', '선택을 바꾼다')\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "   FUNC('$menu', '===BEGIN===', 'column_0')\r\n   FUNC('$menu', 'interaction_city', $menu_item_brothel_domina_6, menu_brothel_domina_6, '젊은 남자 둘') \r\n   FUNC('$menu', 'interaction_city', $menu_item_brothel_domina_7, menu_brothel_domina_7, '남자 셋') \r\n   FUNC('$menu', 'interaction_city', $menu_item_brothel_domina_8, menu_brothel_domina_8, '남자 다섯') \r\n   FUNC('$menu', 'interaction_city', $menu_item_brothel_domina_9, menu_brothel_domina_9, '주인과 노예') \r\n   FUNC('$menu', 'interaction_city', $menu_item_brothel_domina_10, menu_brothel_domina_10, '레즈비언 난교')\r\n   FUNC('$menu', 'exec_options', $menu_item_Changeselection, 'sp_txt = 1 & gt $curloc', '선택을 바꾼다')\r\n",
+      "new": "   FUNC('$menu', '===BEGIN===', 'column_0')\r\n   FUNC('$menu', 'interaction_city', $menu_item_brothel_domina_6, menu_brothel_domina_6, '젊은 남자 둘 (5$)') \r\n   FUNC('$menu', 'interaction_city', $menu_item_brothel_domina_7, menu_brothel_domina_7, '남자 셋 (5$)') \r\n   FUNC('$menu', 'interaction_city', $menu_item_brothel_domina_8, menu_brothel_domina_8, '남자 다섯 (5$)') \r\n   FUNC('$menu', 'interaction_city', $menu_item_brothel_domina_9, menu_brothel_domina_9, '주인과 노예 (5$)') \r\n   FUNC('$menu', 'interaction_city', $menu_item_brothel_domina_10, menu_brothel_domina_10, '레즈비언 난교 (5$)')\r\n   FUNC('$menu', 'exec_options', $menu_item_Changeselection, 'sp_txt = 1 & gt $curloc', '선택을 바꾼다')\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "   FUNC('$menu', '===BEGIN===', 'column_0')\r\n   FUNC('$menu', 'interaction_city', $menu_item_brothel_domina_11, menu_brothel_domina_11, '야수인') \r\n   FUNC('$menu', 'interaction_city', $menu_item_brothel_domina_12, menu_brothel_domina_12, '후타') \r\n   FUNC('$menu', 'interaction_city', $menu_item_brothel_domina_13, menu_brothel_domina_13, '야수인 셋') \r\n   FUNC('$menu', 'interaction_city', $menu_item_brothel_domina_14, menu_brothel_domina_14, '파티') \r\n   FUNC('$menu', 'interaction_city', $menu_item_brothel_domina_15, menu_brothel_domina_15, '안개 괴물')\r\n   FUNC('$menu', 'exec_options', $menu_item_Changeselection, 'sp_txt = 1 & gt $curloc', '선택을 바꾼다')\r\n",
+      "new": "   FUNC('$menu', '===BEGIN===', 'column_0')\r\n   FUNC('$menu', 'interaction_city', $menu_item_brothel_domina_11, menu_brothel_domina_11, '야수인 (15$)') \r\n   FUNC('$menu', 'interaction_city', $menu_item_brothel_domina_12, menu_brothel_domina_12, '후타 (15$)') \r\n   FUNC('$menu', 'interaction_city', $menu_item_brothel_domina_13, menu_brothel_domina_13, '야수인 셋 (15$)') \r\n   FUNC('$menu', 'interaction_city', $menu_item_brothel_domina_14, menu_brothel_domina_14, '파티 (15$)') \r\n   FUNC('$menu', 'interaction_city', $menu_item_brothel_domina_15, menu_brothel_domina_15, '안개 괴물 (15$)')\r\n   FUNC('$menu', 'exec_options', $menu_item_Changeselection, 'sp_txt = 1 & gt $curloc', '선택을 바꾼다')\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\t\tfunc('$menu', 'interaction_city', $menu_item_Fresh_eggs, menu_Fresh_eggs, '신선한 달걀 x5 (30$)')\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_Fresh_milk, menu_Fresh_milk, '신선한 우유 x5 (40$)')\r\n\telse\r\n\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_Fresh_eggs_gray, empty, '신선한 달걀 x5 (30$)', '음식을 보관할 자리가 없다')\r\n\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_Fresh_milk_gray, empty, '신선한 우유 x5 (40$)', '음식을 보관할 자리가 없다')\r\n\tend\r\n\tif sparks >= 20 and fridge_space >= 5 and kitchen > 0:\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_Double_cream, menu_Double_cream, '농축된 크림 x5 (40$)')\r\n\telse\r\n\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_Double_cream_gray, empty, '농축된 크림 x5 (40$)', '음식을 보관할 자리가 없다')\r\n\tend\r\n\tif sparks >= 5 and fridge_space >= 5 and kitchen > 0:\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_Mature_cheese, menu_Mature_cheese, '숙성 치즈/버터 x5 (25$)')\r\n\telse\r\n\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_Mature_cheese_gray, empty, '숙성 치즈/버터 x5 (25$)', '음식을 보관할 자리가 없다')\r\n\tend\r\n",
+      "new": "\t\tfunc('$menu', 'interaction_city', $menu_item_Fresh_eggs, menu_Fresh_eggs, '신선한 달걀 x5 (30$)')\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_Fresh_milk, menu_Fresh_milk, '신선한 우유 x5 (30$)')\r\n\telse\r\n\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_Fresh_eggs_gray, empty, '신선한 달걀 x5 (30$)', '음식을 보관할 자리가 없다')\r\n\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_Fresh_milk_gray, empty, '신선한 우유 x5 (30$)', '음식을 보관할 자리가 없다')\r\n\tend\r\n\tif sparks >= 20 and fridge_space >= 5 and kitchen > 0:\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_Double_cream, menu_Double_cream, '농축된 크림 x5 (30$)')\r\n\telse\r\n\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_Double_cream_gray, empty, '농축된 크림 x5 (30$)', '음식을 보관할 자리가 없다')\r\n\tend\r\n\tif sparks >= 5 and fridge_space >= 5 and kitchen > 0:\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_Mature_cheese, menu_Mature_cheese, '숙성 치즈/버터 x5 (30$)')\r\n\telse\r\n\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_Mature_cheese_gray, empty, '숙성 치즈/버터 x5 (30$)', '음식을 보관할 자리가 없다')\r\n\tend\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tif sparks < 5:\r\n\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_Fresh_vegetables_gray, empty, '신선한 야채류 x5 (15$)', '구매할 수 없다')\r\n\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_Cereals_flour_gray, empty, '시리얼/곡물류 x5 (15$)', '구매할 수 없다')\r\n\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_Herbs_spices_gray, empty, '허브류/향신료 x5 (15$)', '구매할 수 없다')\r\n\telseif fridge_space >= 5 and kitchen > 0:\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_Fresh_vegetables, menu_Fresh_vegetables, '신선한 야채류 x5 (15$)')\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_Cereals_flour, menu_Cereals_flour, '시리얼/곡물류 x5 (15$)')\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_Herbs_spices, menu_Herbs_spices, '허브류/향신료 x5 (15$)')\r\n\telse\r\n\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_Fresh_vegetables_gray, empty, '신선한 야채류 x5 (15$)', '음식을 보관할 자리가 없다')\r\n\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_Cereals_flour_gray, empty, '시리얼/곡물류 x5 (15$)', '음식을 보관할 자리가 없다')\r\n\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_Herbs_spices_gray, empty, '허브류/향신료 x5 (15$)', '음식을 보관할 자리가 없다')\r\n\tend\r\n",
+      "new": "\tif sparks < 5:\r\n\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_Fresh_vegetables_gray, empty, '신선한 야채류 x5 (10$)', '구매할 수 없다')\r\n\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_Cereals_flour_gray, empty, '시리얼/곡물류 x5 (10$)', '구매할 수 없다')\r\n\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_Herbs_spices_gray, empty, '허브류/향신료 x5 (10$)', '구매할 수 없다')\r\n\telseif fridge_space >= 5 and kitchen > 0:\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_Fresh_vegetables, menu_Fresh_vegetables, '신선한 야채류 x5 (10$)')\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_Cereals_flour, menu_Cereals_flour, '시리얼/곡물류 x5 (10$)')\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_Herbs_spices, menu_Herbs_spices, '허브류/향신료 x5 (10$)')\r\n\telse\r\n\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_Fresh_vegetables_gray, empty, '신선한 야채류 x5 (10$)', '음식을 보관할 자리가 없다')\r\n\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_Cereals_flour_gray, empty, '시리얼/곡물류 x5 (10$)', '음식을 보관할 자리가 없다')\r\n\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_Herbs_spices_gray, empty, '허브류/향신료 x5 (10$)', '음식을 보관할 자리가 없다')\r\n\tend\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\t\tif master_medic >= 5 and sparks >= 50:\r\n\t\t\tFUNC('$menu', 'interaction_city', $menu_item_potion_S, menu_Vampire_hunter_test3, '실버 테스트 (50 스파크)')\r\n\t\telse\r\n\t\t\tFUNC('$menu', 'exec', $menu_item_potion_S_gray, empty, '실버 테스트 (50 스파크)', '의술이나 돈이 부족하다.')   \r\n\t\tend\r\n",
+      "new": "\t\tif master_medic >= 5 and sparks >= 50:\r\n\t\t\tFUNC('$menu', 'interaction_city', $menu_item_potion_S, menu_Vampire_hunter_test3, '실버 테스트 (50$)')\r\n\t\telse\r\n\t\t\tFUNC('$menu', 'exec', $menu_item_potion_S_gray, empty, '실버 테스트 (50$)', '의술이나 돈이 부족하다.')   \r\n\t\tend\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "   IF sparks >= debt:\r\n    FUNC('$menu', 'interaction_city', $menu_item_Repay_debt, menu_Repay_debt, '빚 갚기', '스파크가 부족하다')\r\n    ELSE\r\n",
+      "new": "   IF sparks >= debt:\r\n    FUNC('$menu', 'interaction_city', $menu_item_Repay_debt, menu_Repay_debt, '빚 갚기 (<<debt>>$)', '스파크가 부족하다')\r\n    ELSE\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "  IF sparks >= credit:\r\n   FUNC('$menu', 'interaction_city', $menu_item_Repay_debt, 6332, '빚 갚기')\r\n   ELSE\r\n",
+      "new": "  IF sparks >= credit:\r\n   FUNC('$menu', 'interaction_city', $menu_item_Repay_debt, 6332, '빚 갚기 (<<credit>>$)')\r\n   ELSE\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "  IF sparks >= payment:\r\n   FUNC('$menu', 'interaction_city', $menu_item_Repay_debt, 6333, '의무 상환')\r\n   ELSE\r\n",
+      "new": "  IF sparks >= payment:\r\n   FUNC('$menu', 'interaction_city', $menu_item_Repay_debt, 6333, '의무 상환 (<<payment>>$)')\r\n   ELSE\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tnpc = 1 & $npc_id = 'Kulaside'\r\n\t$sp_text[4] = '[쿨라]<br>&nbsp;히토카리 복장을 주문하실수 있어요. 한벌에 1000스파크입니다.</div>'\r\n\t$text_display = '<br><br>'\r\n",
+      "new": "\tnpc = 1 & $npc_id = 'Kulaside'\r\n\t$sp_text[4] = '[쿨라]<br>&nbsp;히토카리 복장을 주문하실수 있어요. 한벌에 1000$입니다.</div>'\r\n\t$text_display = '<br><br>'\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\t\telse\t\r\n\t        func('$menu', 'exec_options', $menu_item_kikuhito, '$item_id = \"kikuhito\" & wpn_price = 1000 & skip_to = 4 & gt $curloc', '키쿠치요의 히토카리 복장')\t\r\n\t    end \r\n",
+      "new": "\t\telse\t\r\n\t        func('$menu', 'exec_options', $menu_item_kikuhito, '$item_id = \"kikuhito\" & wpn_price = 1000 & skip_to = 4 & gt $curloc', '키쿠치요의 히토카리 복장 (1000$)')\t\r\n\t    end \r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\t\telse\t\r\n\t        func('$menu', 'exec_options', $menu_item_porhito, '$item_id = \"porhito\" & wpn_price = 1000 & skip_to = 4 & gt $curloc', '포르노의 히토카리 복장')\t\r\n\t    end \r\n",
+      "new": "\t\telse\t\r\n\t        func('$menu', 'exec_options', $menu_item_porhito, '$item_id = \"porhito\" & wpn_price = 1000 & skip_to = 4 & gt $curloc', '포르노의 히토카리 복장 (1000$)')\t\r\n\t    end \r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\t\telse\t\r\n\t        func('$menu', 'exec_options', $menu_item_kirahito, '$item_id = \"kirahito\" & wpn_price = 1000 & skip_to = 4 & gt $curloc', '키라키라의 히토카리 복장')\t\r\n\t    end \r\n",
+      "new": "\t\telse\t\r\n\t        func('$menu', 'exec_options', $menu_item_kirahito, '$item_id = \"kirahito\" & wpn_price = 1000 & skip_to = 4 & gt $curloc', '키라키라의 히토카리 복장 (1000$)')\t\r\n\t    end \r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\t\telse\t\r\n\t        func('$menu', 'exec_options', $menu_item_medihito, '$item_id = \"medihito\" & wpn_price = 1000 & skip_to = 4 & gt $curloc', '메디코의 히토카리 복장')\t\r\n\t    end \r\n",
+      "new": "\t\telse\t\r\n\t        func('$menu', 'exec_options', $menu_item_medihito, '$item_id = \"medihito\" & wpn_price = 1000 & skip_to = 4 & gt $curloc', '메디코의 히토카리 복장 (1000$)')\t\r\n\t    end \r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\t\telse\t\r\n\t        func('$menu', 'exec_options', $menu_item_antehito, '$item_id = \"antehito\" & wpn_price = 1000 & skip_to = 4 & gt $curloc', '안테나의 히토카리 복장')\t\r\n\t    end \r\n",
+      "new": "\t\telse\t\r\n\t        func('$menu', 'exec_options', $menu_item_antehito, '$item_id = \"antehito\" & wpn_price = 1000 & skip_to = 4 & gt $curloc', '안테나의 히토카리 복장 (1000$)')\t\r\n\t    end \r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\t\telse\t\r\n\t        func('$menu', 'exec_options', $menu_item_arihito, '$item_id = \"arihito\" & wpn_price = 1000 & skip_to = 4 & gt $curloc', '아리스의 히토카리 복장')\t\r\n\t    end    \t\r\n",
+      "new": "\t\telse\t\r\n\t        func('$menu', 'exec_options', $menu_item_arihito, '$item_id = \"arihito\" & wpn_price = 1000 & skip_to = 4 & gt $curloc', '아리스의 히토카리 복장 (1000$)')\t\r\n\t    end    \t\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": " FUNC('$menu', 'interaction_city', $menu_item_employeecamp, 8994, '전리품을 풀어 준다')\r\n FUNC('$menu', 'interaction_city', $menu_item_employeecamp, 8995, '전리품을 판다 (~100 스파크)')\r\n FUNC('$menu', 'interaction_city', $menu_item_employeecamp, 8996, '전리품을 죽인다')\r\n",
+      "new": " FUNC('$menu', 'interaction_city', $menu_item_employeecamp, 8994, '전리품을 풀어 준다')\r\n FUNC('$menu', 'interaction_city', $menu_item_employeecamp, 8995, '전리품을 판다 (~100$)')\r\n FUNC('$menu', 'interaction_city', $menu_item_employeecamp, 8996, '전리품을 죽인다')\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "IF sparks >= 350 and master_energy >= 2:\r\n FUNC('$menu', 'interaction_city', $menu_item_requirementscamp, 8993, '참가한다 (350 스파크)')\r\n ELSE\r\nFUNC('$menu', 'location_gray', $menu_item_employeecamp_gray, empty, '참가한다 (350 스파크)')\r\n END\r\n",
+      "new": "IF sparks >= 350 and master_energy >= 2:\r\n FUNC('$menu', 'interaction_city', $menu_item_requirementscamp, 8993, '참가한다 (350$)')\r\n ELSE\r\nFUNC('$menu', 'location_gray', $menu_item_employeecamp_gray, empty, '참가한다 (350$)')\r\n END\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "IF sparks >= 20:\r\nFUNC('$menu', 'interaction_city', $menu_item_Elitewhore, 102024, '여자 하나 (20스파크)')\r\nelse\r\nFUNC('$menu', 'location_gray', $menu_item_Elitewhore_gray, empty, '여자 하나 (20스파크)')\r\nEND\r\nIF sparks >= 50:\r\nFUNC('$menu', 'interaction_city', $menu_item_whore_e, 102025, '단체 서비스 (50스파크)')\r\nelse\r\nFUNC('$menu', 'location_gray', $menu_item_whore_e_gray, empty, '단체 서비스 (50스파크)')\r\nEND\r\n",
+      "new": "IF sparks >= 20:\r\nFUNC('$menu', 'interaction_city', $menu_item_Elitewhore, 102024, '여자 하나 (20$)')\r\nelse\r\nFUNC('$menu', 'location_gray', $menu_item_Elitewhore_gray, empty, '여자 하나 (20$)')\r\nEND\r\nIF sparks >= 50:\r\nFUNC('$menu', 'interaction_city', $menu_item_whore_e, 102025, '단체 서비스 (50$)')\r\nelse\r\nFUNC('$menu', 'location_gray', $menu_item_whore_e_gray, empty, '단체 서비스 (50$)')\r\nEND\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "FUNC('$menu', 'spacer', 1)\r\n$sp_text[4] = \"[알리나]<br>&nbsp;신사 숙녀 여러분, 준비되셨나요?!.. 그럼 오늘 밤의 쇼를 시작하겠습니다... 마음껏 구경하시고, 꼭 참가도 해 보세요! 참가비는 100스파크입니다. 참가 신청을 기다리고 있습니다...\"\r\n$text_display = '<br><br>'\r\n",
+      "new": "FUNC('$menu', 'spacer', 1)\r\n$sp_text[4] = \"[알리나]<br>&nbsp;신사 숙녀 여러분, 준비되셨나요?!.. 그럼 오늘 밤의 쇼를 시작하겠습니다... 마음껏 구경하시고, 꼭 참가도 해 보세요! 참가비는 100$입니다. 참가 신청을 기다리고 있습니다...\"\r\n$text_display = '<br><br>'\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "if master_vampire >= 1 and (slave_state = CONST_INT['slave_exist'] or unique_slave[\"vampirella\"] > 0 or sparks < 3000) and slave_type ! 2605: FUNC('$menu', 'location_gray', $menu_item_buyvampirella_gray, empty, '특수 노예를 산다')\r\nif master_vampire >= 1 and slave_type = 2605: FUNC('$menu', 'interaction_city', $menu_item_potion_S, menu_Vampire_hunter_test, '실버 테스트 (500스파크)')\r\nFUNC('$menu', 'city_form', $menu_item_Leavepalace, menu_Leavepalace, '대화를 끝낸다')\r\n",
+      "new": "if master_vampire >= 1 and (slave_state = CONST_INT['slave_exist'] or unique_slave[\"vampirella\"] > 0 or sparks < 3000) and slave_type ! 2605: FUNC('$menu', 'location_gray', $menu_item_buyvampirella_gray, empty, '특수 노예를 산다')\r\nif master_vampire >= 1 and slave_type = 2605: FUNC('$menu', 'interaction_city', $menu_item_potion_S, menu_Vampire_hunter_test, '실버 테스트 (500$)')\r\nFUNC('$menu', 'city_form', $menu_item_Leavepalace, menu_Leavepalace, '대화를 끝낸다')\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "if master_vampire >= 1 and slave_state = CONST_INT['slave_exist']: FUNC('$menu', 'interaction_city', $menu_item_Vampire_Ball, menu_Vampire_Ball3, '무도회에 참석한다', '갈기갈기 찢길 노예를 바친다')\r\nif master_vampire >= 1 and slave_state = CONST_INT['no_slave'] and sparks >= 200: FUNC('$menu', 'interaction_city', $menu_item_Vampire_Ball, menu_Vampire_Ball3, '흡혈귀 무도회에 참석한다', '피 기금에 기부한다')\r\nif master_vampire >= 1 and slave_state = CONST_INT['no_slave'] and sparks < 200: FUNC('$menu', 'location_gray', $menu_item_Vampire_Ball_gray, empty, '흡혈귀 무도회에 참석한다', '새 친구들에게 바칠 만한 것이 없다')\r\nFUNC('$menu', 'city_form', $menu_item_Redlight, menu_LeaveRedLight_district, '떠난다')\r\n",
+      "new": "if master_vampire >= 1 and slave_state = CONST_INT['slave_exist']: FUNC('$menu', 'interaction_city', $menu_item_Vampire_Ball, menu_Vampire_Ball3, '무도회에 참석한다', '갈기갈기 찢길 노예를 바친다')\r\nif master_vampire >= 1 and slave_state = CONST_INT['no_slave'] and sparks >= 200: FUNC('$menu', 'interaction_city', $menu_item_Vampire_Ball, menu_Vampire_Ball3, '흡혈귀 무도회에 참석한다 (200$)', '피 기금에 기부한다')\r\nif master_vampire >= 1 and slave_state = CONST_INT['no_slave'] and sparks < 200: FUNC('$menu', 'location_gray', $menu_item_Vampire_Ball_gray, empty, '흡혈귀 무도회에 참석한다 (200$)', '새 친구들에게 바칠 만한 것이 없다')\r\nFUNC('$menu', 'city_form', $menu_item_Redlight, menu_LeaveRedLight_district, '떠난다')\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "IF sparks >= 3 and master_energy > 0:\r\n FUNC('$menu', 'interaction_city', $menu_item_streetwhore, 22701, '길거리 여자들 (3)')\r\n else\r\n FUNC('$menu', 'location_gray', $menu_item_streetwhore_gray, empty, '길거리 여자들 (3)')\r\nEND\r\nIF sparks >= 5 and master_energy > 0:\r\n FUNC('$menu', 'interaction_city', $menu_item_Standardwhore, 22702, '표준 유흥 (5-10)')\r\n else\r\n FUNC('$menu', 'location_gray', $menu_item_Standardwhore_gray, empty, '표준 유흥 (5-10)')\r\nEND\r\n",
+      "new": "IF sparks >= 3 and master_energy > 0:\r\n FUNC('$menu', 'interaction_city', $menu_item_streetwhore, 22701, '길거리 여자들 (3$)')\r\n else\r\n FUNC('$menu', 'location_gray', $menu_item_streetwhore_gray, empty, '길거리 여자들 (3$)')\r\nEND\r\nIF sparks >= 5 and master_energy > 0:\r\n FUNC('$menu', 'interaction_city', $menu_item_Standardwhore, 22702, '표준 유흥 (5-10$)')\r\n else\r\n FUNC('$menu', 'location_gray', $menu_item_Standardwhore_gray, empty, '표준 유흥 (5-10$)')\r\nEND\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "IF sparks >= 300 and master_energy > 0:\r\n FUNC('$menu', 'interaction_city', $menu_item_Elitewhore, 22704, '고급 유흥 (300)')\r\n else\r\n FUNC('$menu', 'location_gray', $menu_item_Elitewhore_gray, empty, '고급 유흥 (300)')\r\nEND\r\n",
+      "new": "IF sparks >= 300 and master_energy > 0:\r\n FUNC('$menu', 'interaction_city', $menu_item_Elitewhore, 22704, '고급 유흥 (300$)')\r\n else\r\n FUNC('$menu', 'location_gray', $menu_item_Elitewhore_gray, empty, '고급 유흥 (300$)')\r\nEND\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "   IF slave_state = CONST_INT['slave_exist'] and slave[\"energy\"] > 2 and sparks >= 10:\r\n      FUNC('$menu', 'interaction_city', $menu_item_Slave_whore, 22710, '노예를 보낸다 (10)')\r\n    else\r\n      FUNC('$menu', 'location_gray', $menu_item_Slave_whore_gray, empty, '노예를 보낸다 (10)')\r\n   END\r\n   IF assistant_state = 1 and assistant[\"energy\"] > 2 and sparks >= 10 and faction_fame['RedLight'] > 1:\r\n      FUNC('$menu', 'interaction_city', $menu_item_assistant_whore, 22711, '조수를 보낸다 (10)')\r\n    else\r\n      FUNC('$menu', 'location_gray', $menu_item_assistant_whore_gray, empty, '조수를 보낸다 (10)')\r\n   END\r\n   IF slave_state = CONST_INT['slave_exist'] and slave[\"energy\"] > 2 and assistant_state = 1 and assistant[\"energy\"] > 2 and sparks >= 20 and faction_fame['RedLight'] > 1:\r\n      FUNC('$menu', 'interaction_city', $menu_item_sawhore, 22712, '두 여자 모두 보낸다 (20)')\r\n    else\r\n      FUNC('$menu', 'location_gray', $menu_item_sawhore_gray, empty, '두 여자 모두 보낸다 (20)')\r\n   END\r\n   IF master_energy > 2 and sparks >= 10:\r\n      FUNC('$menu', 'interaction_city', $menu_item_dosug_w_vip, 22713, '직접 패널을 조작한다 (10)')\r\n    else\r\n      FUNC('$menu', 'location_gray', $menu_item_dosug_w_vip_gray, empty, '직접 패널을 조작한다 (10)')\r\n   END\r\n   IF master_energy > 2 and slave_state = CONST_INT['slave_exist'] and slave[\"energy\"] > 2 and sparks >= 20:\r\n      FUNC('$menu', 'interaction_city', $menu_item_sawhore, 22714, '너와 노예 (20 스파크)')\r\n    else\r\n      FUNC('$menu', 'location_gray', $menu_item_sawhore_gray, empty, '너와 노예 (20)')\r\n   END\r\n   IF master_energy > 2 and assistant_state = 1 and assistant[\"energy\"] > 2 and sparks >= 20:\r\n      FUNC('$menu', 'interaction_city', $menu_item_sawhore, 22715, '너와 조수 (20)')\r\n    else\r\n      FUNC('$menu', 'location_gray', $menu_item_sawhore_gray, empty, '너와 조수 (20)')\r\n   END\r\n   IF master_energy > 2 and slave_state = CONST_INT['slave_exist'] and slave[\"energy\"] > 2 and assistant_state = 1 and assistant[\"energy\"] > 2 and sparks >= 30:\r\n      FUNC('$menu', 'interaction_city', $menu_item_dosug_w_trio, 22716, '너와 여자들 (30)')\r\n    else\r\n      FUNC('$menu', 'location_gray', $menu_item_dosug_w_trio_gray, empty, '너와 여자들 (30)')\r\n   END\r\n ELSE\r\n   FUNC('$menu', 'exec', $menu_item_Slave_whore_gray, empty, '노예를 보낸다 (10)', '구역에서 네 여자들로 돈을 벌 만큼 인맥이 충분하지 않다')\r\n   FUNC('$menu', 'exec', $menu_item_assistant_whore_gray, empty, '조수를 보낸다 (10)', '구역에서 네 여자들로 돈을 벌 만큼 인맥이 충분하지 않다')\r\n   FUNC('$menu', 'exec', $menu_item_sawhore_gray, empty, '두 여자 모두 보낸다 (20)', '구역에서 네 여자들로 돈을 벌 만큼 인맥이 충분하지 않다')\r\n   IF master_energy > 2 and sparks >= 10:\r\n      FUNC('$menu', 'interaction_city', $menu_item_dosug_w_vip, 22713, '패널을 조작한다 (10)')\r\n    else\r\n      FUNC('$menu', 'location_gray', $menu_item_dosug_w_vip_gray, empty, '패널을 조작한다 (10)')\r\n   END\r\n   FUNC('$menu', 'exec', $menu_item_sawhore_gray, empty, '너와 노예 (20)', '구역에서 네 여자들로 돈을 벌 만큼 인맥이 충분하지 않다')\r\n   FUNC('$menu', 'exec', $menu_item_sawhore_gray, empty, '너와 조수 (20)', '구역에서 네 여자들로 돈을 벌 만큼 인맥이 충분하지 않다')\r\n   FUNC('$menu', 'exec', $menu_item_dosug_w_trio_gray, empty, '너와 여자들 (30)', '구역에서 네 여자들로 돈을 벌 만큼 인맥이 충분하지 않다')\r\nEND\r\n",
+      "new": "   IF slave_state = CONST_INT['slave_exist'] and slave[\"energy\"] > 2 and sparks >= 10:\r\n      FUNC('$menu', 'interaction_city', $menu_item_Slave_whore, 22710, '노예를 보낸다 (10$)')\r\n    else\r\n      FUNC('$menu', 'location_gray', $menu_item_Slave_whore_gray, empty, '노예를 보낸다 (10$)')\r\n   END\r\n   IF assistant_state = 1 and assistant[\"energy\"] > 2 and sparks >= 10 and faction_fame['RedLight'] > 1:\r\n      FUNC('$menu', 'interaction_city', $menu_item_assistant_whore, 22711, '조수를 보낸다 (10$)')\r\n    else\r\n      FUNC('$menu', 'location_gray', $menu_item_assistant_whore_gray, empty, '조수를 보낸다 (10$)')\r\n   END\r\n   IF slave_state = CONST_INT['slave_exist'] and slave[\"energy\"] > 2 and assistant_state = 1 and assistant[\"energy\"] > 2 and sparks >= 20 and faction_fame['RedLight'] > 1:\r\n      FUNC('$menu', 'interaction_city', $menu_item_sawhore, 22712, '두 여자 모두 보낸다 (20$)')\r\n    else\r\n      FUNC('$menu', 'location_gray', $menu_item_sawhore_gray, empty, '두 여자 모두 보낸다 (20$)')\r\n   END\r\n   IF master_energy > 2 and sparks >= 10:\r\n      FUNC('$menu', 'interaction_city', $menu_item_dosug_w_vip, 22713, '직접 패널을 조작한다 (10$)')\r\n    else\r\n      FUNC('$menu', 'location_gray', $menu_item_dosug_w_vip_gray, empty, '직접 패널을 조작한다 (10$)')\r\n   END\r\n   IF master_energy > 2 and slave_state = CONST_INT['slave_exist'] and slave[\"energy\"] > 2 and sparks >= 20:\r\n      FUNC('$menu', 'interaction_city', $menu_item_sawhore, 22714, '너와 노예 (20$)')\r\n    else\r\n      FUNC('$menu', 'location_gray', $menu_item_sawhore_gray, empty, '너와 노예 (20$)')\r\n   END\r\n   IF master_energy > 2 and assistant_state = 1 and assistant[\"energy\"] > 2 and sparks >= 20:\r\n      FUNC('$menu', 'interaction_city', $menu_item_sawhore, 22715, '너와 조수 (20$)')\r\n    else\r\n      FUNC('$menu', 'location_gray', $menu_item_sawhore_gray, empty, '너와 조수 (20$)')\r\n   END\r\n   IF master_energy > 2 and slave_state = CONST_INT['slave_exist'] and slave[\"energy\"] > 2 and assistant_state = 1 and assistant[\"energy\"] > 2 and sparks >= 30:\r\n      FUNC('$menu', 'interaction_city', $menu_item_dosug_w_trio, 22716, '너와 여자들 (30$)')\r\n    else\r\n      FUNC('$menu', 'location_gray', $menu_item_dosug_w_trio_gray, empty, '너와 여자들 (30$)')\r\n   END\r\n ELSE\r\n   FUNC('$menu', 'exec', $menu_item_Slave_whore_gray, empty, '노예를 보낸다 (10$)', '구역에서 네 여자들로 돈을 벌 만큼 인맥이 충분하지 않다')\r\n   FUNC('$menu', 'exec', $menu_item_assistant_whore_gray, empty, '조수를 보낸다 (10$)', '구역에서 네 여자들로 돈을 벌 만큼 인맥이 충분하지 않다')\r\n   FUNC('$menu', 'exec', $menu_item_sawhore_gray, empty, '두 여자 모두 보낸다 (20$)', '구역에서 네 여자들로 돈을 벌 만큼 인맥이 충분하지 않다')\r\n   IF master_energy > 2 and sparks >= 10:\r\n      FUNC('$menu', 'interaction_city', $menu_item_dosug_w_vip, 22713, '패널을 조작한다 (10$)')\r\n    else\r\n      FUNC('$menu', 'location_gray', $menu_item_dosug_w_vip_gray, empty, '패널을 조작한다 (10$)')\r\n   END\r\n   FUNC('$menu', 'exec', $menu_item_sawhore_gray, empty, '너와 노예 (20$)', '구역에서 네 여자들로 돈을 벌 만큼 인맥이 충분하지 않다')\r\n   FUNC('$menu', 'exec', $menu_item_sawhore_gray, empty, '너와 조수 (20$)', '구역에서 네 여자들로 돈을 벌 만큼 인맥이 충분하지 않다')\r\n   FUNC('$menu', 'exec', $menu_item_dosug_w_trio_gray, empty, '너와 여자들 (30$)', '구역에서 네 여자들로 돈을 벌 만큼 인맥이 충분하지 않다')\r\nEND\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "FUNC('$menu', '===BEGIN===', 'column_0')\r\nFUNC('$menu', 'interaction_city', $menu_item_whore_a, 22701, '펠라 담당')\r\nFUNC('$menu', 'interaction_city', $menu_item_whore_b, 22702, '길거리 창녀')\r\nFUNC('$menu', 'exec_options', $menu_item_Changeselection, 'sp_txt = 1 & gt $curloc', '선택을 바꾼다')\r\n",
+      "new": "FUNC('$menu', '===BEGIN===', 'column_0')\r\nFUNC('$menu', 'interaction_city', $menu_item_whore_a, 22701, '펠라 담당 (3$)')\r\nFUNC('$menu', 'interaction_city', $menu_item_whore_b, 22702, '길거리 창녀 (3$)')\r\nFUNC('$menu', 'exec_options', $menu_item_Changeselection, 'sp_txt = 1 & gt $curloc', '선택을 바꾼다')\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "FUNC('$menu', '===BEGIN===', 'column_0')\r\nFUNC('$menu', 'interaction_city', $menu_item_whore_c, 22703, '개인 영업녀')\r\nFUNC('$menu', 'interaction_city', $menu_item_whore_d, 22704, '개인 영업 여자와 친구')\r\nFUNC('$menu', 'exec_options', $menu_item_Changeselection, 'sp_txt = 1 & gt $curloc', '선택을 바꾼다')\r\n",
+      "new": "FUNC('$menu', '===BEGIN===', 'column_0')\r\nFUNC('$menu', 'interaction_city', $menu_item_whore_c, 22703, '개인 영업녀 (5$)')\r\nFUNC('$menu', 'interaction_city', $menu_item_whore_d, 22704, '개인 영업 여자와 친구 (5$)')\r\nFUNC('$menu', 'exec_options', $menu_item_Changeselection, 'sp_txt = 1 & gt $curloc', '선택을 바꾼다')\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "FUNC('$menu', '===BEGIN===', 'column_0')\r\nFUNC('$menu', 'interaction_city', $menu_item_whore_e, 22705, '엘리트 여자')\r\nFUNC('$menu', 'exec_options', $menu_item_Changeselection, 'sp_txt = 1 & gt $curloc', '선택을 바꾼다')\r\n",
+      "new": "FUNC('$menu', '===BEGIN===', 'column_0')\r\nFUNC('$menu', 'interaction_city', $menu_item_whore_e, 22705, '엘리트 여자 (10$)')\r\nFUNC('$menu', 'exec_options', $menu_item_Changeselection, 'sp_txt = 1 & gt $curloc', '선택을 바꾼다')\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "IF sparks >= 300:\r\n FUNC('$menu', 'interaction_city', $menu_item_VIP_club, 227550, '파티에 간다')\r\n else\r\n FUNC('$menu', 'location_gray', $menu_item_VIP_club_gray, empty, '파티에 간다')\r\nEND\r\n",
+      "new": "IF sparks >= 300:\r\n FUNC('$menu', 'interaction_city', $menu_item_VIP_club, 227550, '파티에 간다 (100~300$)')\r\n else\r\n FUNC('$menu', 'location_gray', $menu_item_VIP_club_gray, empty, '파티에 간다 (100~300$)')\r\nEND\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "IF active[$event['спасение_рождества']] = 2: FUNC('$menu', 'interaction_city', $menu_item_central_square, 10311, '주민들과 이야기한다')\r\nIF active[$event['спасение_рождества']] = 2 and sparks >= 25: FUNC('$menu', 'interaction_city', $menu_item_central_square, 10312, '썰매를 탄다')\r\nIF active[$event['спасение_рождества']] > 2 and sparks >= 25: FUNC('$menu', 'interaction_city', $menu_item_central_square, 103123, '썰매를 탄다')\r\nIF active[$event['спасение_рождества']] > 2 and sparks < 25: FUNC('$menu', 'interaction_city', $menu_item_central_square, empty, '썰매를 탄다')\r\n",
+      "new": "IF active[$event['спасение_рождества']] = 2: FUNC('$menu', 'interaction_city', $menu_item_central_square, 10311, '주민들과 이야기한다')\r\nIF active[$event['спасение_рождества']] = 2 and sparks >= 25: FUNC('$menu', 'interaction_city', $menu_item_central_square, 10312, '썰매를 탄다 (25$)')\r\nIF active[$event['спасение_рождества']] > 2 and sparks >= 25: FUNC('$menu', 'interaction_city', $menu_item_central_square, 103123, '썰매를 탄다 (25$)')\r\nIF active[$event['спасение_рождества']] > 2 and sparks < 25: FUNC('$menu', 'interaction_city', $menu_item_central_square, empty, '썰매를 탄다')\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "IF active[$event['спасение_рождества']] = 4: FUNC('$menu', 'interaction_city', $menu_item_rabbit_hole, 10336, '캐롤라인과 이야기한다')\r\nIF active[$event['спасение_рождества']] = 5 and slave_state = CONST_INT['no_slave'] and sparks >= 2000: FUNC('$menu', 'interaction_city', $menu_item_rabbit_hole, 10337, '캐롤라인을 산다 (2000 스파크)')\r\nIF active[$event['спасение_рождества']] = 5 and sparks < 2000: FUNC('$menu', 'interaction_city', $menu_item_rabbit_hole, 10340, '캐롤라인을 산다 (2000 스파크)')\r\nFUNC('$menu', 'city_form', $menu_item_wintertales, 131, '떠난다')\r\n",
+      "new": "IF active[$event['спасение_рождества']] = 4: FUNC('$menu', 'interaction_city', $menu_item_rabbit_hole, 10336, '캐롤라인과 이야기한다')\r\nIF active[$event['спасение_рождества']] = 5 and slave_state = CONST_INT['no_slave'] and sparks >= 2000: FUNC('$menu', 'interaction_city', $menu_item_rabbit_hole, 10337, '캐롤라인을 산다 (2000$)')\r\nIF active[$event['спасение_рождества']] = 5 and sparks < 2000: FUNC('$menu', 'interaction_city', $menu_item_rabbit_hole, 10340, '캐롤라인을 산다 (2000$)')\r\nFUNC('$menu', 'city_form', $menu_item_wintertales, 131, '떠난다')\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "FUNC('$menu', '===BEGIN===', 'column_0')\r\nIF sparks >= 100: FUNC('$menu', 'interaction_city', $menu_item_balsam, 302110, '100 스파크를 환전한다')\r\nIF sparks < 100: FUNC('$menu', 'location_gray', $menu_item_balsam, empty, '100 스파크를 환전한다')\r\nIF sparks >= 250: FUNC('$menu', 'interaction_city', $menu_item_balsam, 302111, '250 스파크를 환전한다')\r\nIF sparks < 250: FUNC('$menu', 'location_gray', $menu_item_balsam, empty, '250 스파크를 환전한다')\r\nIF sparks >= 500: FUNC('$menu', 'interaction_city', $menu_item_balsam, 302112, '500 스파크를 환전한다')\r\nIF sparks < 500: FUNC('$menu', 'location_gray', $menu_item_balsam, empty, '500 스파크를 환전한다')\r\nIF sparks >= 1000: FUNC('$menu', 'interaction_city', $menu_item_balsam, 302113, '1000 스파크를 환전한다')\r\nIF sparks < 1000: FUNC('$menu', 'location_gray', $menu_item_balsam, empty, '1000 스파크를 환전한다')\r\nIF gold > 0: FUNC('$menu', 'interaction_city', $menu_item_balsam, 302114, '금을 스파크로 바꾼다')\r\n",
+      "new": "FUNC('$menu', '===BEGIN===', 'column_0')\r\nIF sparks >= 100: FUNC('$menu', 'interaction_city', $menu_item_balsam, 302110, '환전한다 (100$)')\r\nIF sparks < 100: FUNC('$menu', 'location_gray', $menu_item_balsam, empty, '환전한다 (100$)')\r\nIF sparks >= 250: FUNC('$menu', 'interaction_city', $menu_item_balsam, 302111, '환전한다 (250$)')\r\nIF sparks < 250: FUNC('$menu', 'location_gray', $menu_item_balsam, empty, '환전한다 (250$)')\r\nIF sparks >= 500: FUNC('$menu', 'interaction_city', $menu_item_balsam, 302112, '환전한다 (500$)')\r\nIF sparks < 500: FUNC('$menu', 'location_gray', $menu_item_balsam, empty, '환전한다 (500$)')\r\nIF sparks >= 1000: FUNC('$menu', 'interaction_city', $menu_item_balsam, 302113, '환전한다 (1000$)')\r\nIF sparks < 1000: FUNC('$menu', 'location_gray', $menu_item_balsam, empty, '환전한다 (1000$)')\r\nIF gold > 0: FUNC('$menu', 'interaction_city', $menu_item_balsam, 302114, '금을 스파크로 바꾼다')\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "IF npc_progress['Jane'] < 1: FUNC('$menu', 'interaction_city', $menu_item_jane, 10391, '제인과 이야기한다')\r\nIF npc_progress['Jane'] = 1 and sparks >= 6000 and assistant_state = 0: FUNC('$menu', 'interaction_city', $menu_item_buy_kyaru, 10392, '캬루를 산다 (6000 스파크)')\r\nIF npc_progress['Jane'] = 1 and assistant_state = 1 and sparks >= 6000: FUNC('$menu', 'interaction_city', $menu_item_buy_kyaru_gray, 10393, '캬루를 산다 (6000 스파크)')\r\nIF npc_progress['Jane'] = 1 and sparks < 6000: FUNC('$menu', 'interaction_city', $menu_item_buy_kyaru_gray, 10394, '캬루를 산다 (6000 스파크)')\r\nFUNC('$menu', 'city_form', $menu_item_kamira_street, 41, '떠난다')\r\n",
+      "new": "IF npc_progress['Jane'] < 1: FUNC('$menu', 'interaction_city', $menu_item_jane, 10391, '제인과 이야기한다')\r\nIF npc_progress['Jane'] = 1 and sparks >= 6000 and assistant_state = 0: FUNC('$menu', 'interaction_city', $menu_item_buy_kyaru, 10392, '캬루를 산다 (6000$)')\r\nIF npc_progress['Jane'] = 1 and assistant_state = 1 and sparks >= 6000: FUNC('$menu', 'interaction_city', $menu_item_buy_kyaru_gray, 10393, '캬루를 산다 (6000$)')\r\nIF npc_progress['Jane'] = 1 and sparks < 6000: FUNC('$menu', 'interaction_city', $menu_item_buy_kyaru_gray, 10394, '캬루를 산다 (6000$)')\r\nFUNC('$menu', 'city_form', $menu_item_kamira_street, 41, '떠난다')\r\n",
+      "count": 1
+    },
+    {
+      "location": "pharmacy",
+      "field": "body",
+      "old": " IF sparks > 700:\r\n    FUNC('$menu', 'exec_options', $menu_item_Philtrepotion, 'sp_txt = 111 & gt $curloc', '사랑의 묘약 (700 스파크)')\r\n ELSE\r\n    FUNC('$menu', 'location_gray', $menu_item_Philtrepotion_gray, empty, '사랑의 묘약 (700 스파크)')\r\n END\r\n IF sparks > 800:\r\n    FUNC('$menu', 'exec_options', $menu_item_BacchicNectar, 'sp_txt = 112 & gt $curloc', '바쿠스의 넥타르 (800 스파크)')\r\n ELSE\r\n    FUNC('$menu', 'location_gray', $menu_item_BacchicNectar_gray, empty, '바쿠스의 넥타르 (800 스파크)')\r\n END\r\n IF sparks > 800:\r\n    FUNC('$menu', 'exec_options', $menu_item_TonicElixir, 'sp_txt = 113 & gt $curloc', '강장 영약 (800 스파크)')\r\n ELSE\r\n    FUNC('$menu', 'location_gray', $menu_item_TonicElixir_gray, empty, '강장 영약 (800 스파크)')\r\n END\r\n IF sparks > 1200:\r\n    FUNC('$menu', 'exec_options', $menu_item_MiracleBalm, 'sp_txt = 114 & gt $curloc', '기적의 연고 (1200 스파크)')\r\n ELSE\r\n    FUNC('$menu', 'location_gray', $menu_item_MiracleBalm_gray, empty, '기적의 연고 (1200 스파크)')\r\n END\r\n IF sparks > 600:\r\n    FUNC('$menu', 'exec_options', $menu_item_Aphrodisiac, 'sp_txt = 115 & gt $curloc', '최음제 (600 스파크)')\r\n ELSE\r\n    FUNC('$menu', 'location_gray', $menu_item_Aphrodisiac_gray, empty, '최음제 (600 스파크)')\r\n END\r\n IF sparks > 700:\r\n    FUNC('$menu', 'exec_options', $menu_item_PowerfulAphrodisiac, 'sp_txt = 116 & gt $curloc', '배란 유발제 (700 스파크)')\r\n ELSE\r\n    FUNC('$menu', 'location_gray', $menu_item_PowerfulAphrodisiac_gray, empty, '배란 유발제 (700 스파크)')\r\n END\r\n IF sparks > 600:\r\n    FUNC('$menu', 'exec_options', $menu_item_WaterofLethe, 'sp_txt = 117 & gt $curloc', '레테의 물 (600 스파크)')\r\n ELSE\r\n    FUNC('$menu', 'location_gray', $menu_item_WaterofLethe_gray, empty, '레테의 물 (600 스파크)')\r\n END\r\n",
+      "new": " IF sparks > 700:\r\n    FUNC('$menu', 'exec_options', $menu_item_Philtrepotion, 'sp_txt = 111 & gt $curloc', '사랑의 묘약 (700$)')\r\n ELSE\r\n    FUNC('$menu', 'location_gray', $menu_item_Philtrepotion_gray, empty, '사랑의 묘약 (700$)')\r\n END\r\n IF sparks > 800:\r\n    FUNC('$menu', 'exec_options', $menu_item_BacchicNectar, 'sp_txt = 112 & gt $curloc', '바쿠스의 넥타르 (800$)')\r\n ELSE\r\n    FUNC('$menu', 'location_gray', $menu_item_BacchicNectar_gray, empty, '바쿠스의 넥타르 (800$)')\r\n END\r\n IF sparks > 800:\r\n    FUNC('$menu', 'exec_options', $menu_item_TonicElixir, 'sp_txt = 113 & gt $curloc', '강장 영약 (800$)')\r\n ELSE\r\n    FUNC('$menu', 'location_gray', $menu_item_TonicElixir_gray, empty, '강장 영약 (800$)')\r\n END\r\n IF sparks > 1200:\r\n    FUNC('$menu', 'exec_options', $menu_item_MiracleBalm, 'sp_txt = 114 & gt $curloc', '기적의 연고 (1200$)')\r\n ELSE\r\n    FUNC('$menu', 'location_gray', $menu_item_MiracleBalm_gray, empty, '기적의 연고 (1200$)')\r\n END\r\n IF sparks > 600:\r\n    FUNC('$menu', 'exec_options', $menu_item_Aphrodisiac, 'sp_txt = 115 & gt $curloc', '최음제 (600$)')\r\n ELSE\r\n    FUNC('$menu', 'location_gray', $menu_item_Aphrodisiac_gray, empty, '최음제 (600$)')\r\n END\r\n IF sparks > 700:\r\n    FUNC('$menu', 'exec_options', $menu_item_PowerfulAphrodisiac, 'sp_txt = 116 & gt $curloc', '배란 유발제 (700$)')\r\n ELSE\r\n    FUNC('$menu', 'location_gray', $menu_item_PowerfulAphrodisiac_gray, empty, '배란 유발제 (700$)')\r\n END\r\n IF sparks > 600:\r\n    FUNC('$menu', 'exec_options', $menu_item_WaterofLethe, 'sp_txt = 117 & gt $curloc', '레테의 물 (600$)')\r\n ELSE\r\n    FUNC('$menu', 'location_gray', $menu_item_WaterofLethe_gray, empty, '레테의 물 (600$)')\r\n END\r\n",
+      "count": 1
+    },
+    {
+      "location": "pharmacy",
+      "field": "body",
+      "old": " IF sparks > 900:\r\n    FUNC('$menu', 'exec_options', $menu_item_metabolism_plus, 'sp_txt = 121 & gt $curloc', '대사+ (900 스파크)')\r\n ELSE\r\n    FUNC('$menu', 'location_gray', $menu_item_metabolism_plus_gray, empty, '대사+ (900 스파크)')\r\n END\r\n IF sparks > 900:\r\n    FUNC('$menu', 'exec_options', $menu_item_metabolism_minus, 'sp_txt = 122 & gt $curloc', '대사- (900 스파크)')\r\n ELSE\r\n    FUNC('$menu', 'location_gray', $menu_item_metabolism_minus_gray, empty, '대사- (900 스파크)')\r\n END\r\n IF sparks > 900:\r\n    FUNC('$menu', 'exec_options', $menu_item_zhir_plus, 'sp_txt = 123 & gt $curloc', '지방+ (900 스파크)')\r\n ELSE\r\n    FUNC('$menu', 'location_gray', $menu_item_zhir_plus_gray, empty, '지방+ (900 스파크)')\r\n END\r\n IF sparks > 900:\r\n    FUNC('$menu', 'exec_options', $menu_item_zhir_minus, 'sp_txt = 124 & gt $curloc', '지방- (900 스파크)')\r\n ELSE\r\n    FUNC('$menu', 'location_gray', $menu_item_zhir_minus_gray, empty, '지방- (900 스파크)')\r\n END\r\n",
+      "new": " IF sparks > 900:\r\n    FUNC('$menu', 'exec_options', $menu_item_metabolism_plus, 'sp_txt = 121 & gt $curloc', '대사+ (900$)')\r\n ELSE\r\n    FUNC('$menu', 'location_gray', $menu_item_metabolism_plus_gray, empty, '대사+ (900$)')\r\n END\r\n IF sparks > 900:\r\n    FUNC('$menu', 'exec_options', $menu_item_metabolism_minus, 'sp_txt = 122 & gt $curloc', '대사- (900$)')\r\n ELSE\r\n    FUNC('$menu', 'location_gray', $menu_item_metabolism_minus_gray, empty, '대사- (900$)')\r\n END\r\n IF sparks > 900:\r\n    FUNC('$menu', 'exec_options', $menu_item_zhir_plus, 'sp_txt = 123 & gt $curloc', '지방+ (900$)')\r\n ELSE\r\n    FUNC('$menu', 'location_gray', $menu_item_zhir_plus_gray, empty, '지방+ (900$)')\r\n END\r\n IF sparks > 900:\r\n    FUNC('$menu', 'exec_options', $menu_item_zhir_minus, 'sp_txt = 124 & gt $curloc', '지방- (900$)')\r\n ELSE\r\n    FUNC('$menu', 'location_gray', $menu_item_zhir_minus_gray, empty, '지방- (900$)')\r\n END\r\n",
+      "count": 1
+    }
+  ],
+  "after_sha256": "b210be73869d9096edc1c3a2c7bb99375a3b5aefd21c7e972a0d3a9b7cd4f2a4"
+}

@@ -1,3 +1,5 @@
+> 2026-10-11 변경: 아래는 옛 초안이다. 최신 사용자 확정 배포 담당·두 버전 기준은 COMMUNITY_RELEASE_2_4_0.md, 실제 SNKmod 이동 결과는 SNKMOD_RELOCATION_20261011.md 및 resource-audits/2026-10-11/snkmod/path-map.json을 따른다. 이 초안의 전량 덮어쓰기/153개 가정은 현재 적용 기준이 아니다.
+
 # SNKmod 폐지 — 파일 이전 목록 (0.14 기준, 2026-10-03)
 
 | SNKmod 안 경로 | 처리 | 2.4 위치 |

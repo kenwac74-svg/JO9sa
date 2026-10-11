@@ -1,0 +1,21 @@
+{
+  "id": "2026-10-12_zzzz_gameover_layout",
+  "description": "Remove duplicate gameover headings, rewrite generic combat death line, place return menu on the book.",
+  "before_sha256": "e09cc9928e86c4a43f121cee40650677c5167e768e6e612df9ade8b47cabdf78",
+  "edits": [
+    {
+      "location": "exit",
+      "field": "body",
+      "old": "if snk_room_target > 0 and $curloc = 'exit': gs 'snk_room_bridge', 'guard', 'exit'\r\n\r\nclr\r\n*clr\r\n\r\ngs '_layout'\r\n\r\n*p func('interior_change', 'jo9_html', '<div id = \"bg\"><img src=\"content/pic/bg/game_over.png\"></div>')\r\n\r\n*p '<div id = \"side_panel_main\">'\r\n\t*p '<div style=\"font-size: 100px;\"><center><b>게임 오버</b></center></div>'\r\n\t*nl '<div style=\"font-size: 50px;\"><center>참고 정보:</center></div>'\r\n*p '</div>'\r\n\r\n*p '<div id = \"side_panel_text\" style=\"font-size: 20px;\"><br><<$args[0]>></div>'\r\n\r\n*p '<div id = \"text\" style=\"font-size: 22px;\"><br><br>  저장한 게임을 불러오거나 <a href=\"EXEC: gt ''main_menu''\">메인 메뉴로 돌아가기</a>.</div>'\r\n",
+      "new": "if snk_room_target > 0 and $curloc = 'exit': gs 'snk_room_bridge', 'guard', 'exit'\r\n\r\nclr\r\n*clr\r\n\r\ngs '_layout'\r\n\r\n*p func('interior_change', 'jo9_html', '<div id = \"bg\"><img src=\"content/pic/bg/game_over.png\"></div>')\r\n\r\n*p '<div id=\"jo9_gameover_message\" style=\"position:absolute;left:225px;top:240px;width:830px;max-height:180px;overflow:auto;box-sizing:border-box;padding:14px 22px;background:rgba(15,10,6,0.72);color:#f0dfbc;font-family:경기천년제목 Medium;font-size:22px;line-height:150%;text-align:center;text-shadow:1px 1px 2px #000;\"><<$args[0]>></div>'\r\n\r\n*p '<div id=\"jo9_gameover_menu\" style=\"position:absolute;left:110px;top:505px;width:460px;box-sizing:border-box;padding:12px 18px;background:rgba(239,214,169,0.90);border:1px solid #79552d;color:#28190e;font-family:경기천년제목 Medium;font-size:20px;line-height:150%;text-align:center;text-shadow:none;\">저장 불러오기: 상단 메뉴 이용<br><a style=\"display:inline-block;margin-top:8px;padding:6px 20px;background:#302016;border:1px solid #bd9355;color:#ffe0a0;text-decoration:none;font-size:22px;\" href=\"EXEC: gt ''main_menu''\">메인 메뉴로 돌아가기</a></div>'\r\n",
+      "count": 1
+    },
+    {
+      "location": "выход_из_боя",
+      "field": "body",
+      "old": "당신은 의식을 잃었다. 불행히도, 다시는 깨어나지 못했다.",
+      "new": "당신의 의식은 어둠 속으로 가라앉았다.<br>불멸의 로마에서, 당신의 이야기는 여기서 끝났다.",
+      "count": 1
+    }
+  ]
+}

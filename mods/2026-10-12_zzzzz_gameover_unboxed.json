@@ -1,0 +1,14 @@
+{
+  "id": "2026-10-12_zzzzz_gameover_unboxed",
+  "description": "Remove gameover overlay fills and visible borders, preserving positions, dimensions, text and navigation.",
+  "before_sha256": "8bb573399ae74d81bc7900707e076db3f3756d4d092fcc71ac40dc5fb1cc7d44",
+  "edits": [
+    {
+      "location": "exit",
+      "field": "body",
+      "old": "if snk_room_target > 0 and $curloc = 'exit': gs 'snk_room_bridge', 'guard', 'exit'\r\n\r\nclr\r\n*clr\r\n\r\ngs '_layout'\r\n\r\n*p func('interior_change', 'jo9_html', '<div id = \"bg\"><img src=\"content/pic/bg/game_over.png\"></div>')\r\n\r\n*p '<div id=\"jo9_gameover_message\" style=\"position:absolute;left:225px;top:240px;width:830px;max-height:180px;overflow:auto;box-sizing:border-box;padding:14px 22px;background:rgba(15,10,6,0.72);color:#f0dfbc;font-family:경기천년제목 Medium;font-size:22px;line-height:150%;text-align:center;text-shadow:1px 1px 2px #000;\"><<$args[0]>></div>'\r\n\r\n*p '<div id=\"jo9_gameover_menu\" style=\"position:absolute;left:110px;top:505px;width:460px;box-sizing:border-box;padding:12px 18px;background:rgba(239,214,169,0.90);border:1px solid #79552d;color:#28190e;font-family:경기천년제목 Medium;font-size:20px;line-height:150%;text-align:center;text-shadow:none;\">저장 불러오기: 상단 메뉴 이용<br><a style=\"display:inline-block;margin-top:8px;padding:6px 20px;background:#302016;border:1px solid #bd9355;color:#ffe0a0;text-decoration:none;font-size:22px;\" href=\"EXEC: gt ''main_menu''\">메인 메뉴로 돌아가기</a></div>'\r\n",
+      "new": "if snk_room_target > 0 and $curloc = 'exit': gs 'snk_room_bridge', 'guard', 'exit'\r\n\r\nclr\r\n*clr\r\n\r\ngs '_layout'\r\n\r\n*p func('interior_change', 'jo9_html', '<div id = \"bg\"><img src=\"content/pic/bg/game_over.png\"></div>')\r\n\r\n*p '<div id=\"jo9_gameover_message\" style=\"position:absolute;left:225px;top:240px;width:830px;max-height:180px;overflow:auto;box-sizing:border-box;padding:14px 22px;background:transparent;color:#f0dfbc;font-family:경기천년제목 Medium;font-size:22px;line-height:150%;text-align:center;text-shadow:1px 1px 2px #000;\"><<$args[0]>></div>'\r\n\r\n*p '<div id=\"jo9_gameover_menu\" style=\"position:absolute;left:110px;top:505px;width:460px;box-sizing:border-box;padding:12px 18px;background:transparent;border:1px solid transparent;color:#28190e;font-family:경기천년제목 Medium;font-size:20px;line-height:150%;text-align:center;text-shadow:0 1px 1px #e8c78e;\">저장 불러오기: 상단 메뉴 이용<br><a style=\"display:inline-block;margin-top:8px;padding:6px 20px;background:transparent;border:1px solid transparent;color:#ffe0a0;text-shadow:1px 1px 2px #000;text-decoration:none;font-size:22px;\" href=\"EXEC: gt ''main_menu''\">메인 메뉴로 돌아가기</a></div>'\r\n",
+      "count": 1
+    }
+  ]
+}

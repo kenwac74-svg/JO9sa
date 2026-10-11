@@ -8,7 +8,7 @@ param(
 $ErrorActionPreference = 'Stop'
 $M = $Play
 # 목록에서 뺄 폴더(이미지 도구 백업 등)
-$skipDirs = @('content\pic\__jo9_imagebackups\')
+$skipDirs = @('content\pic\__jo9_imagebackups\', 'content\pic\snkmod\')
 
 function Get-Index($base) {
     $h = @{}
@@ -18,6 +18,8 @@ function Get-Index($base) {
         foreach ($f in Get-ChildItem -LiteralPath $b -Recurse -File) {
             $rel = $f.FullName.Substring($base.Length + 1)
             if ($f.Extension -notmatch '^\.(png|jpe?g|gif|webp|bmp)$') { continue }
+            # User-retired 1.2.1 assets: omit from both play and original indexes.
+            if ($f.Name.Contains('1.2.1')) { continue }
             $skip = $false; foreach ($d in $skipDirs) { if ($rel.ToLower().StartsWith($d.ToLower())) { $skip = $true } }
             if (-not $skip) { $h[$rel.ToLower()] = $f }
         }
