@@ -1,7 +1,7 @@
 """Sync JO9 management records without copying game images, QSP or API keys."""
 import argparse,datetime,hashlib,json,pathlib,re,shutil,subprocess,time
 P=pathlib.Path
-FILES=['catalog_merge_vs_original.html','catalog_work_ids.json','catalog_status.js','image_work/progress.json','image_work/history.jsonl','image_work/bg_queue.json','image_work/personal-patch/events.jsonl','image_work/personal-patch/settings.json']
+FILES=['catalog_merge_vs_original.html','catalog_work_ids.json','catalog_status.js','image_work/progress.json','image_work/history.jsonl','image_work/bg_queue.json','image_work/personal-patch/events.jsonl','image_work/personal-patch/settings.json','catalog_path_aliases.json']
 def read(p):return p.read_text(encoding='utf-8-sig')
 def load(p):return json.loads(read(p))
 def rows(s):return json.loads(re.search(r'var D\s*=\s*(\[[\s\S]*?\]);\s*\r?\nvar MR',s)[1])

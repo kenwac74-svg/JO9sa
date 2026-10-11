@@ -28,9 +28,13 @@ class Tests(unittest.TestCase):
    root=P(t);a=root/'old';b=root/'new';seed=root/'seed';g=root/'g';o=root/'o'
    fixture(a,['p'],{'items':{'p':['done']}},{'p':'bg-0001'})
    record=a/'image_work/personal-patch/events.jsonl';record.parent.mkdir(parents=True);record.write_text(json.dumps({'key':'1','files':[{'path':'bg/p.png','after':'hash'}]})+'\n')
+   aliases={'version':1,'aliases':[{'from':'content/pic/SNKmod/bg/test.png','to':'content/pic/bg/test.png','flags':['done'] }]}
+   (a/'catalog_path_aliases.json').write_text(json.dumps(aliases),encoding='utf-8')
    sync.export(a,seed,g,o)
+   self.assertEqual(sync.load(seed/'catalog_path_aliases.json'),aliases)
    fixture(b,[],{'items':{}},{})
    sync.sync(seed,b,root/'newGame',root/'newOriginal')
    self.assertEqual(sync.read(record),sync.read(b/'image_work/personal-patch/events.jsonl'))
+   self.assertEqual(sync.load(b/'catalog_path_aliases.json'),aliases)
    self.assertFalse((seed/'image_work/personal-patch/objects').exists())
 if __name__=='__main__':unittest.main()
