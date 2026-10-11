@@ -31,4 +31,17 @@
 
 전체 mods DryRun은 옛 미술 교사 패치에서 중단됐다. 현재 루푸스 교사 id·정식 이미지 경로·결과 판정과 성별별 6단계 평가가 모두 살아 있음을 직접 확인했다. 이번 검수에서 QSP는 수정하지 않았다. **다른 PC에서는 검증된 최신 QSP 체크포인트를 사용한다. 순정부터의 일괄 재빌드가 검증되었다고 취급하지 않는다.** 이 재적용 호환성은 후속 작업으로 남긴다.
 
-Drive 로컬 압축과 내부 검증 완료는 Google 서버 업로드 완료와 별개다. 최종 서버 반영 상태는 후속 확인 기록을 따른다.
+Google Drive 웹에서 네 ZIP 및 네 manifest 모두 표시되고, 각 ZIP의 서버 표시 용량이 로컬 용량과 일치함을 확인했다. ZIP 내부 SHA-256은 마운트 드라이브에서 전수 검증했고, 서버 파일을 다시 다운로드해 해시 검증한 것은 아니다.
+
+## 이미지 복원 경로
+
+ZIP 안에는 아래 원천 폴더 기준의 상대 경로가 들어 있다. 새 PC에서는 해당 용도의 새 경로에 푼다.
+
+|ZIP|홈컴의 원천 폴더|
+|---|---|
+|play_images.zip|`G:/somi/JO9/game/content/pic`|
+|working_images.zip|`G:/somi/JO9/game/content/modworkpic`|
+|IMGMG_image_sources.zip|`G:/somi/IMGMG`|
+|archived_images.zip|`G:/somi/JO9_unused_images` (게임 밖 보관)|
+
+기존 같은 이름의 파일을 덮어쓰기 전 manifest 해시와 현재 작업 상태를 확인한다. 게임 실행 파일·세이브·소스는 이미지 ZIP에 포함되지 않으며 Git main과 기존 JO9WORK를 함께 사용한다.
