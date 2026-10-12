@@ -67,5 +67,6 @@ test('valid relatives keep exactly one response and their dedicated text',()=>{c
 test('missing relation text keeps general dialogue',()=>assert(relation(rel,777,777,'')[2].includes('GENERAL_ORIGIN_DESCRIPTION')));
 test('refusal and isolation are not replaced with kinship text',()=>{for(const options of [{refusal:true},{isolate:true}])assert(relation(rel,777,777,'RM_REL_MARKER',options)[2].includes('GENERAL_ORIGIN_DESCRIPTION'));});
 test('changed locations pass the engine-derived syntax check',()=>{for(const name of ['get_stock_seed','get_demo_slave','origins_relations']){const result=syntax.checkSyntax(body(name));assert(result.ok,JSON.stringify(result));}});
+test('changed location code preserves CRLF statement separators',()=>{for(const name of ['get_stock_seed','get_demo_slave','origins_relations']){const source=body(name),literals=core.literals(source,true);for(const m of source.matchAll(/(?<!\r)\n|\r(?!\n)/g))assert(literals.some(l=>m.index>=l.start&&m.index<l.end),name+' contains a bare line break outside a string/comment at '+m.index);}});
 console.log(JSON.stringify({verification:'Source-fragment replay and static syntax; native patched gameplay remains pending',qspSha256:core.hash(raw),checks,failures}));
 process.exitCode=failures?1:0;

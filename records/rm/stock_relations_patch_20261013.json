@@ -37,12 +37,31 @@
   },
   "diagnostic_save": {
     "file": "C:\\MOVE\\Jack O Nine Tails v2.3 Kor_nosex\\game\\save\\RM_TEST_STOCK_RELATIONS_PATCHED.sav",
-    "sha256": "3fbef3ad857f2f923efa2cb69db223ada429e4c3a3e4a25cbcd219c019b2eb4f",
+    "sha256": "ebc5778548bac257ace2484e2742a9a4c5be17f87dd7cf3535db59aff45195ba",
     "tests": [
       "SLAVE 111111 stays / STOCK 333333 is populated",
       "ID 0 and ID 777 control show the same intro",
       "Valid relative description body shows RM_REL_MARKER"
     ],
     "instructions": "Fully restart the game. Load this diagnostic copy again before each of the three tests; do not use it as a play save."
+  },
+  "runtime_followup": {
+    "reported_by_user": "Test 1 passed; tests 2 and 3 did not respond.",
+    "stock_test_native": "passed by user",
+    "relation_tests_native": "pending after repair",
+    "cause": "Patch string slice consumed CR after the kinship END, leaving an LF-only executable separator. Earlier source replay accepted LF and missed the runtime delimiter error.",
+    "repair_mod": "mods/2026-10-13_z_stock_relations_crlf_repair.json",
+    "repair_before_sha256": "ce1f9292e708f54cf0736ca2455e4d51969159cec9b0f77f7cb56931dda92f1b",
+    "repair_after_sha256": "09fe8b24ee3eadfe72912d1aee6b4a5003f7287ce23c9a4e28f5813fc8ee6acc",
+    "repair_backup": "C:\\MOVE\\Jack O Nine Tails v2.3 Kor_nosex\\game\\jack.qsp.bak_20261013_003643",
+    "repair_time": "2026-10-13T00:37:30+09:00",
+    "checks": {
+      "regression_count": 9,
+      "old_qsp_crlf_regression": "failed at origins_relations offset 1697",
+      "installed_qsp_regression": "all passed",
+      "backup_to_final_mod_chain": "exact replay passed",
+      "repeat_chain": "no changes"
+    },
+    "diagnostic_buttons": "All three EXEC links now dispatch through DO_SERVICE with a numeric argument; no URL array index. Tests 2 and 3 refresh right-panel progress immediately before the relationship call."
   }
 }
