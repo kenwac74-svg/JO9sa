@@ -1,0 +1,297 @@
+{
+  "date": "2026-10-12",
+  "currentQspSha256": "6997bd3ce1bcf073da2d0a77cc7a516352adb3ca0d0edbb80c0591163a33f285",
+  "rmQspSha256": "894138e52617972a6d94962368a3bb9b27708ec9b313bef5c69a9c31e062b5a8",
+  "checks": [
+    {
+      "location": "get_stock_seed",
+      "current": [
+        {
+          "line": 205,
+          "text": "slave[\"world_index\"] = stock_world_index[slave_type]"
+        },
+        {
+          "line": 206,
+          "text": "slave[\"nation_index\"] = stock_nation_index[slave_type]"
+        },
+        {
+          "line": 207,
+          "text": "slave[\"family_index\"] = stock_family_index[slave_type]"
+        },
+        {
+          "line": 208,
+          "text": "slave[\"work_index\"] = stock_work_index[slave_type]"
+        },
+        {
+          "line": 209,
+          "text": "slave[\"id\"] = stock_id[slave_type]"
+        },
+        {
+          "line": 210,
+          "text": "slave[\"relative_id\"] = stock_id_relative[slave_type]"
+        },
+        {
+          "line": 211,
+          "text": "$slave[\"relative_relations\"] = $stock_relative_relations[slave_type]"
+        },
+        {
+          "line": 212,
+          "text": "slave['tolerant_world'] = RAND (0,20) - (slave[\"world_index\"] * 4) + 4"
+        },
+        {
+          "line": 213,
+          "text": "slave['tolerant_nation'] = RAND (0,20) - (slave[\"world_index\"] * 4) + 4"
+        },
+        {
+          "line": 214,
+          "text": "slave['tolerant_family'] = RAND (0,20) - (slave[\"world_index\"] * 4) + 4"
+        },
+        {
+          "line": 215,
+          "text": "slave['tolerant_work'] = RAND (0,20) - (slave[\"world_index\"] * 4) + 4"
+        }
+      ],
+      "rm": [
+        {
+          "line": 208,
+          "text": "stock[\"world_index\"] = stock_world_index[stock_type]"
+        },
+        {
+          "line": 209,
+          "text": "stock[\"nation_index\"] = stock_nation_index[stock_type]"
+        },
+        {
+          "line": 210,
+          "text": "stock[\"family_index\"] = stock_family_index[stock_type]"
+        },
+        {
+          "line": 211,
+          "text": "stock[\"work_index\"] = stock_work_index[stock_type]"
+        },
+        {
+          "line": 212,
+          "text": "stock[\"id\"] = stock_id[stock_type]"
+        },
+        {
+          "line": 213,
+          "text": "stock[\"relative_id\"] = stock_id_relative[stock_type]"
+        },
+        {
+          "line": 214,
+          "text": "$stock[\"relative_relations\"] = $stock_relative_relations[stock_type]"
+        },
+        {
+          "line": 215,
+          "text": "stock['tolerant_world'] = RAND (0,20) - (stock[\"world_index\"] * 4) + 4"
+        },
+        {
+          "line": 216,
+          "text": "stock['tolerant_nation'] = RAND (0,20) - (stock[\"world_index\"] * 4) + 4"
+        },
+        {
+          "line": 217,
+          "text": "stock['tolerant_family'] = RAND (0,20) - (stock[\"world_index\"] * 4) + 4"
+        },
+        {
+          "line": 218,
+          "text": "stock['tolerant_work'] = RAND (0,20) - (stock[\"world_index\"] * 4) + 4"
+        }
+      ]
+    },
+    {
+      "location": "origins_relations",
+      "current": [
+        {
+          "line": 34,
+          "text": "if slave1[\"relative_id\"] = slave2[\"id\"]:"
+        },
+        {
+          "line": 39,
+          "text": "!\tjump 'bio_override'"
+        },
+        {
+          "line": 48,
+          "text": "!\tjump 'bio_override'"
+        },
+        {
+          "line": 57,
+          "text": "!\tjump 'bio_override'"
+        },
+        {
+          "line": 305,
+          "text": "!:bio_override"
+        }
+      ],
+      "rm": [
+        {
+          "line": 34,
+          "text": "if slave1[\"id\"] = 1926319775 and slave2[\"id\"] = 1395836363:"
+        },
+        {
+          "line": 37,
+          "text": "jump 'bio_override'"
+        },
+        {
+          "line": 41,
+          "text": "if slave2[\"id\"] = 1926319775 and slave1[\"id\"] = 1395836363:"
+        },
+        {
+          "line": 44,
+          "text": "jump 'bio_override'"
+        },
+        {
+          "line": 48,
+          "text": "if slave1[\"relative_id\"] > 0 and slave1[\"relative_id\"] = slave2[\"id\"]:"
+        },
+        {
+          "line": 53,
+          "text": "jump 'bio_override'"
+        },
+        {
+          "line": 62,
+          "text": "jump 'bio_override'"
+        },
+        {
+          "line": 71,
+          "text": "jump 'bio_override'"
+        },
+        {
+          "line": 319,
+          "text": ":bio_override"
+        }
+      ]
+    },
+    {
+      "location": "#quest_base",
+      "current": [
+        {
+          "line": 153,
+          "text": "'<<$russiankvartal_fame[faction_fame[\"russiankvartal\"]]>><br><br>' + _"
+        },
+        {
+          "line": 159,
+          "text": "'<<$russiankvartal_fame[faction_fame[\"russiankvartal\"]]>><br><br>' + _"
+        },
+        {
+          "line": 160,
+          "text": "'<<$futaland_fame[faction_fame[\"futaland\"]]>><br><br>' + _"
+        }
+      ],
+      "rm": [
+        {
+          "line": 154,
+          "text": "'<<$russiankvartal_fame[faction_fame[\"russiankvartal\"]]>><br><br>' + _"
+        },
+        {
+          "line": 160,
+          "text": "'<<$russiankvartal_fame[faction_fame[\"russiankvartal\"]]>><br><br>' + _"
+        },
+        {
+          "line": 161,
+          "text": "'<<$futaland_fame[faction_fame[\"futaland\"]]>><br><br>' + _"
+        }
+      ]
+    },
+    {
+      "location": "#static_txt",
+      "current": [],
+      "rm": [
+        {
+          "line": 195,
+          "text": "$russiankvartal_fame[0] = dyneval($vb_cycle_skill, 0, 'The people calling themselves Russians have not heard of me yet. One must want a D+ slave.')"
+        },
+        {
+          "line": 196,
+          "text": "$russiankvartal_fame[1] = dyneval($vb_cycle_skill, 1, 'I have a few clients in the Russian Quarter, but it is not enough. I must find one that wants a C+ slave.')"
+        },
+        {
+          "line": 197,
+          "text": "$russiankvartal_fame[2] = dyneval($vb_cycle_skill, 2, 'I know several people in the Russian Quarter, but I can’t stop here. Someone must need a B+ slave!')"
+        },
+        {
+          "line": 198,
+          "text": "$russiankvartal_fame[3] = dyneval($vb_cycle_skill, 3, 'I have enough friends in the Russian Quarter to gain access to the Detinec. If I impress the advisor, I can meet the prince.')"
+        },
+        {
+          "line": 199,
+          "text": "$russiankvartal_fame[4] = dyneval($vb_cycle_skill, 4, 'Thanks to my dealings with his advisor, the prince has agreed to see me.')"
+        },
+        {
+          "line": 200,
+          "text": "$russiankvartal_fame[5] = dyneval($vb_cycle_skill, 5, 'The prince was happy with his product. Now the whole Russian Quarter is behind me! I even got a lost spell as thanks!')"
+        },
+        {
+          "line": 202,
+          "text": "$futaland_fame[0] = dyneval($vb_cycle_skill, 0, 'The dick-girls of Futaland have never heard of me. One of them must need a D+ slave!')"
+        },
+        {
+          "line": 203,
+          "text": "$futaland_fame[1] = dyneval($vb_cycle_skill, 1, 'I do not command respect in Futaland yet, but I’m sure I can gain some if I sell a C+ slave.')"
+        },
+        {
+          "line": 204,
+          "text": "$futaland_fame[2] = dyneval($vb_cycle_skill, 2, 'I know a few people in Futaland already, but it’s not enough. Someone must need a B+ slave!')"
+        },
+        {
+          "line": 205,
+          "text": "$futaland_fame[3] = dyneval($vb_cycle_skill, 3, 'I have enough friends in Futaland to gain access to the Queen of Spades Tower! I should go and offer my services.')"
+        },
+        {
+          "line": 206,
+          "text": "$futaland_fame[4] = dyneval($vb_cycle_skill, 4, 'I have the chance to meet the ruler of Futaland! Surely, she wants my services?')"
+        },
+        {
+          "line": 207,
+          "text": "$futaland_fame[5] = dyneval($vb_cycle_skill, 5, 'I have impressed the queen of Futaland! All the dick-girls of Futaland are behind me now!')"
+        }
+      ]
+    },
+    {
+      "location": "pharmacy",
+      "current": [],
+      "rm": [
+        {
+          "line": 12,
+          "text": "FUNC('$menu', 'interaction_city', $menu_item_prefapteka, 19914, 'Ask about Wares')"
+        }
+      ]
+    },
+    {
+      "location": "next_day",
+      "current": [],
+      "rm": [
+        {
+          "line": 3775,
+          "text": "spell_revelio = obereg_on"
+        }
+      ]
+    }
+  ],
+  "rmAdditionalDemandKeys": [
+    "anal_pure",
+    "fertility",
+    "golden_shower",
+    "lactation",
+    "lesbian",
+    "lesbiansex",
+    "masohism",
+    "max_boobs",
+    "max_pride",
+    "max_tolerant",
+    "middle_fat",
+    "min_boobs",
+    "min_pride",
+    "min_sensitivity",
+    "nipplefuck",
+    "no_lactation",
+    "nopreversion",
+    "nymphomania",
+    "only_for_human_slut",
+    "oral_pure",
+    "slave_food_sperm",
+    "slut",
+    "unknown",
+    "vaginal_pure",
+    "zoo_slut"
+  ]
+}
