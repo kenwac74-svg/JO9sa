@@ -209,3 +209,12 @@
 ### 2026-10-10 무기 선택 글자 정렬
 
 도시 메뉴 정렬 패치가 옛 under/under_gray 버튼에 왼쪽 정렬을 상속시켰다. 해당 버튼 내부 정렬만 가운데로 복원했고 위치·크기·클릭 오버레이를 유지했다. [검증과 백업](../LEGACY_SCENE_BUTTON_ALIGNMENT_20261010.md). QSP 클라이언트 화면 검증은 사용자 담당이다.
+
+
+## 2026-10-13 STOCK 생성 정보와 친족 대화 수정
+
+- 사용자 진단으로 기존 SLAVE 덮어쓰기와 ID 0 친족 오판을 실제 엔진에서 재현. 수정 전 QSP ZIP과 백업지점 기록을 먼저 GitHub 커밋 fa36536으로 업로드했다.
+- mods/2026-10-13_stock_metadata_and_origin_relations.json: get_stock_seed의 메타데이터를 stock/stock_type에 기록. get_demo_slave는 직접 SLAVE 초기화하고 seed의 STOCK 메타데이터 블록을 생략해 기존 내성 랜덤 호출 위치·횟수를 유지. get_special_slave 자체 초기화는 변경하지 않음.
+- origins_relations: 양수 ID의 친족 비교만 인정. 전용 설명이 있는 정상 대화에서 소개문·본문을 보존하며 관계 계산은 유지. 거부·격리 대화는 전용 친족 문장으로 대체하지 않음.
+- 적용 후 QSP SHA-256: ce1f9292e708f54cf0736ca2455e4d51969159cec9b0f77f7cb56931dda92f1b. 세 location만 수정, 247 location 유지, 8개 소스 재생·구문 검사 통과, 재적용 무변경. 실제 수정 후 게임 플레이 검증은 사용자 확인 대기.
+- 상세 백업과 검사 결과: records/rm/stock_relations_patch_20261013.json. 기존 플레이 세이브 자동 복구 및 EXE 변경 없음.

@@ -1,0 +1,48 @@
+{
+  "applied_at": "2026-10-13T00:13:52+09:00",
+  "timezone": "Asia/Seoul",
+  "branch": "codex/modding-tools-transfer-20261009",
+  "backup_checkpoint_commit": "fa365364e3ee2be072a5dd22006728c3552bd51d",
+  "backup_record": "docs/checkpoints/stock_relations_before_20261013_000445.json",
+  "backup_archive": "backups/jack_pre_stock_relations_20261013_000445.zip",
+  "patch": "mods/2026-10-13_stock_metadata_and_origin_relations.json",
+  "game_qsp": "C:\\MOVE\\Jack O Nine Tails v2.3 Kor_nosex\\game\\jack.qsp",
+  "before_sha256": "9d03be0e645e3944316988f9d0310c40ca91637d4ba614f0f1496decf64c881c",
+  "after_sha256": "ce1f9292e708f54cf0736ca2455e4d51969159cec9b0f77f7cb56931dda92f1b",
+  "locations": [
+    "get_stock_seed",
+    "get_demo_slave",
+    "origins_relations"
+  ],
+  "location_count": 247,
+  "patch_edits": 4,
+  "verification": {
+    "qsp_roundtrip": "passed",
+    "candidate_matches_installed": "passed",
+    "untouched_locations_preserved": "passed",
+    "source_fragment_regression_tests": 8,
+    "static_syntax": "passed",
+    "repeat_apply": "no changes",
+    "native_before_patch": "Both bugs reproduced by the user with diagnostic saves.",
+    "native_after_patch": "pending user play test"
+  },
+  "compatibility": {
+    "exe_changed": false,
+    "regular_saves_changed": false,
+    "existing_save_auto_repair": false,
+    "special_slave_initialization": "unchanged",
+    "demo_random_calls": "Original 4 seed tolerance rolls moved to direct SLAVE initialization immediately after the demo seed call; STOCK metadata block skipped for demo.",
+    "relation_calculations": "Unchanged; only kinship detection and final prose selection modified.",
+    "refusal_and_isolation": "Dedicated kinship prose does not override these cases."
+  },
+  "diagnostic_save": {
+    "file": "C:\\MOVE\\Jack O Nine Tails v2.3 Kor_nosex\\game\\save\\RM_TEST_STOCK_RELATIONS_PATCHED.sav",
+    "sha256": "3fbef3ad857f2f923efa2cb69db223ada429e4c3a3e4a25cbcd219c019b2eb4f",
+    "tests": [
+      "SLAVE 111111 stays / STOCK 333333 is populated",
+      "ID 0 and ID 777 control show the same intro",
+      "Valid relative description body shows RM_REL_MARKER"
+    ],
+    "instructions": "Fully restart the game. Load this diagnostic copy again before each of the three tests; do not use it as a play save."
+  }
+}
