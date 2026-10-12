@@ -24,8 +24,9 @@ for (const [id, price] of [[102024,20], [102025,50]]) {
     assert.equal(servicePicture, '', 'Previous service picture must not reach the shared background renderer');
     assert(block.includes('service_price = '+price));
     const splitSolo = price===20 && block.includes('salononeg01.png');
+    const splitGroup = price===50 && block.includes('salongroup01.png');
     for (const n of [1,2]) {
-      const file = splitSolo ? 'salononeg0'+n : 'VIP3';
+      const file = splitSolo ? 'salononeg0'+n : splitGroup ? 'salongroup0'+n : 'VIP3';
       assert(block.includes("$special_image["+n+"] = 'scene\\VIP\\"+file+".png'"), 'Preserve the configured salon page layer');
     }
   });

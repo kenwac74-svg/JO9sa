@@ -2,12 +2,14 @@
 // Prepare editable placeholders only. Existing user images are never overwritten.
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
 const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
-function prepare(game,catalogRoot){
+function prepare(game,catalogRoot,kind='single'){
+ if(!['single','group'].includes(kind))throw Error('Choose single or group page images');
  const dir=path.join(path.resolve(game),'content/pic/scene/VIP'),source=path.join(dir,'VIP3.png');
  const original=fs.readFileSync(source);
  if(!original.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10])))throw Error('VIP3 source is not PNG');
  const record={source:'content/pic/scene/VIP/VIP3.png',sourceSha256:sha(original),files:[]};
- for(const name of ['salononeg01.png','salononeg02.png']){
+ const stem=kind==='group'?'salongroup':'salononeg';
+ for(const name of [stem+'01.png',stem+'02.png']){
   const dest=path.join(dir,name),created=!fs.existsSync(dest);
   if(created)fs.copyFileSync(source,dest,fs.constants.COPYFILE_EXCL);
   const b=fs.readFileSync(dest);if(!b.subarray(0,8).equals(original.subarray(0,8)))throw Error('Page target is not PNG');
@@ -29,4 +31,4 @@ function prepare(game,catalogRoot){
  return record;
 }
 module.exports={prepare};
-if(require.main===module){console.log(JSON.stringify(prepare(process.argv[2],process.argv[3]),null,2));}
+if(require.main===module){console.log(JSON.stringify(prepare(process.argv[2],process.argv[3],process.argv[4]),null,2));}

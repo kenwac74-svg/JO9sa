@@ -36,9 +36,9 @@ check('Image targets exist',()=>pictures.forEach(p=>{
  assert(b.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10])));
  assert(b.readUInt32BE(16)>0&&b.readUInt32BE(20)>0);
 }));
-check('50-spark group service remains VIP3',()=>{
+check('50-spark group service has its configured page paths',()=>{
  const starts=[...city.matchAll(/IF interaction_city = 102025:/g)];assert.equal(starts.length,2);
- for(const s of starts){const block=city.slice(s.index,city.indexOf('\r\n\t $text[1]',s.index));assert(block.includes('service_price = 50'));for(const i of [1,2])assert(block.includes("$special_image["+i+"] = 'scene\\VIP\\VIP3.png'"));}
+ for(const s of starts){const block=city.slice(s.index,city.indexOf('\r\n\t $text[1]',s.index));assert(block.includes('service_price = 50'));const split=block.includes('salongroup01.png');for(const i of [1,2])assert(block.includes("$special_image["+i+"] = 'scene\\VIP\\"+(split?'salongroup0'+i:'VIP3')+".png'"));}
 });
 if(baseline&&modFile)check('Exact QSP change scope',()=>{
  const prev=core.parse(fs.readFileSync(baseline)),mod=JSON.parse(fs.readFileSync(modFile,'utf8'));

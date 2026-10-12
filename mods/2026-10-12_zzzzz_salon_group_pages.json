@@ -1,0 +1,22 @@
+{
+  "id": "2026-10-12_zzzzz_salon_group_pages",
+  "description": "Use salongroup01/02 for the two 50-spark group-service pages; prevent stale background overrides and migrate VIP3 paths in legacy saved group-service scenes. Solo service is unchanged.",
+  "before_sha256": "9f3f7a87db01fc3248f06e479a0f18b88f81cd024c231310f2d784cbc178c00f",
+  "after_sha256": "832e13d0015eb96b8aecad918961b8255bad08f893c2f69ed63449a7fcdb17d2",
+  "edits": [
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "IF interaction_city = 102025:\r\n\t npc = 0\r\n\t $npc_id = ''\r\n\t $place = 'erosalon'\r\n\t $return_lock  = 'shop_general'\r\n\t $interaction_type = 'service'\r\n\t $service_picture = ''\r\n\t service_price = 50\r\n\t copyarr '$display_options', '$erosalon_options'\r\n\t $do_service = {\r\n\t    IF master_massaged = 0:\r\n\t        master_massaged = 1\r\n\t        if master_energy < 5: master_energy = 5\r\n\t        if master_moodlet[\"pos_massage\"] < 2: master_moodlet[\"pos_massage\"] = 2\r\n\t    END\r\n\t    IF master_erected = 0:\r\n\t       master_erected = 1\r\n\t       if master_excitement < 5: master_excitement_rate += master_libido*4\r\n\t    END\r\n\t }\r\n\t master_hygiene_rate = 0\r\n\t master_hygiene = 0\r\n\t master_spaed = 1\r\n\t master_mood_rate += 7\r\n\t txt_count = 2\r\n\t $special_image[1] = 'scene\\VIP\\VIP3.png'\r\n\t $special_image[2] = 'scene\\VIP\\VIP3.png'",
+      "new": "IF interaction_city = 102025:\r\n\t npc = 0\r\n\t $npc_id = ''\r\n\t $place = 'erosalon'\r\n\t $return_lock  = 'shop_general'\r\n\t $interaction_type = 'service'\r\n\t $service_picture = ''\r\n\t service_price = 50\r\n\t copyarr '$display_options', '$erosalon_options'\r\n\t $do_service = {\r\n\t    IF master_massaged = 0:\r\n\t        master_massaged = 1\r\n\t        if master_energy < 5: master_energy = 5\r\n\t        if master_moodlet[\"pos_massage\"] < 2: master_moodlet[\"pos_massage\"] = 2\r\n\t    END\r\n\t    IF master_erected = 0:\r\n\t       master_erected = 1\r\n\t       if master_excitement < 5: master_excitement_rate += master_libido*4\r\n\t    END\r\n\t }\r\n\t master_hygiene_rate = 0\r\n\t master_hygiene = 0\r\n\t master_spaed = 1\r\n\t master_mood_rate += 7\r\n\t txt_count = 2\r\n\t $special_image[1] = 'scene\\VIP\\salongroup01.png'\r\n\t $special_image[2] = 'scene\\VIP\\salongroup02.png'",
+      "count": 2
+    },
+    {
+      "location": "interaction_screen_city",
+      "field": "body",
+      "old": "if not_safe = 1:",
+      "new": "! JO9_SALON_GROUP_PAGES_20261012\r\nif $place = 'erosalon' and interaction_city = 102025:\r\n\t$service_picture = ''\r\n\t$bg_path = ''\r\n\tif $special_image[1] = 'scene\\VIP\\VIP3.png': $special_image[1] = 'scene\\VIP\\salongroup01.png'\r\n\tif $special_image[2] = 'scene\\VIP\\VIP3.png': $special_image[2] = 'scene\\VIP\\salongroup02.png'\r\nend\r\n\r\nif not_safe = 1:",
+      "count": 1
+    }
+  ]
+}
