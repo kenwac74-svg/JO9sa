@@ -48,7 +48,7 @@ function replay(source,state){
  assert.equal(stack.length,0);
 }
 function relation(source,relative,target,text='',options={}){
- const state={sa_rel:1,int_index:2,slave:{obedience:1},slave1:{relative_id:relative,isolate:0},slave2:{id:target},$slave1:{relative_relations:text},$text:{}};
+ const state={sa_rel:1,int_index:2,slave:{obedience:1},slave1:{id:options.sourceId||0,relative_id:relative,isolate:0},slave2:{id:target},$slave1:{relative_relations:text},$text:{}};
  if(options.refusal){state.sa_rel=2;state.slave.obedience=-1;}if(options.isolate)state.slave1.isolate=1;
  const intro=source.slice(source.indexOf('if sa_rel = 1: $text[1]'),source.indexOf('! МИРОВЫЕ ОТНОШЕНИЯ'));
  replay(intro,state);
@@ -70,3 +70,4 @@ test('changed locations pass the engine-derived syntax check',()=>{for(const nam
 test('changed location code preserves CRLF statement separators',()=>{for(const name of ['get_stock_seed','get_demo_slave','origins_relations']){const source=body(name),literals=core.literals(source,true);for(const m of source.matchAll(/(?<!\r)\n|\r(?!\n)/g))assert(literals.some(l=>m.index>=l.start&&m.index<l.end),name+' contains a bare line break outside a string/comment at '+m.index);}});
 console.log(JSON.stringify({verification:'Source-fragment replay and static syntax; native patched gameplay remains pending',qspSha256:core.hash(raw),checks,failures}));
 process.exitCode=failures?1:0;
+module.exports={relation};

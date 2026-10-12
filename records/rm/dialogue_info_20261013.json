@@ -1,0 +1,60 @@
+{
+  "applied_at": "2026-10-13T01:12:51+09:00",
+  "timezone": "Asia/Seoul",
+  "branch": "codex/modding-tools-transfer-20261009",
+  "backup_checkpoint_commit": "09fe69f998377586acb033ba2d545689bf30bf88",
+  "backup_record": "docs/checkpoints/rm_dialogue_before_20261013_010118.json",
+  "patch": "mods/2026-10-13_zz_rm_dialogue_info.json",
+  "game_qsp": "C:\\MOVE\\Jack O Nine Tails v2.3 Kor_nosex\\game\\jack.qsp",
+  "before_sha256": "09fe8b24ee3eadfe72912d1aee6b4a5003f7287ce23c9a4e28f5813fc8ee6acc",
+  "after_sha256": "32edcf174eb0cd930d810348332a63d8fa39dea96f05b1843141e3960082e82e",
+  "rm_source_sha256": "894138e52617972a6d94962368a3bb9b27708ec9b313bef5c69a9c31e062b5a8",
+  "locations_changed": [
+    "#quest_base",
+    "pharmacy",
+    "interaction_city",
+    "origins_relations"
+  ],
+  "location_added": "snk_rm_dialogue_info",
+  "location_count": 248,
+  "supplements": {
+    "faction_fame": "Russian Quarter and Futaland stages 0 through 5: 12 Korean guidance entries, lazily loaded when the quest screen opens.",
+    "pharmacy": "Missing menu/event 19914: four pages describing goods, five potion servings and three decoction servings at the existing 900-spark price.",
+    "character_recognition": "Both directions for current JSON IDs Frieren 1926319775 and Sense 1395836363, retaining ordinary score calculations and refusal/isolation handling.",
+    "pamela": "Two reminder pages in event 3003 only while npc_progress elsa is below 3, based on current event 30031 delivery checks. Original first page and quest state preserved.",
+    "goblin_quest": "Two checklist pages appended to current quest descriptions on first/refused-repeat visits. Based on current event 1034 checks, including expression, age, intellect range and brand below 4."
+  },
+  "audit_decisions": {
+    "catfight_description": "Already present in Korean with the same Egeya demand dialogue; left unchanged.",
+    "existing_christmas_dialogue": "Current Shlyapkin/Goblin dialogue arrays already translated; preserved instead of overwriting them with RM.",
+    "other_buyer_demand_clarifications": "Require per-buyer common/individual demand tracing before adapting RM text; no speculative changes.",
+    "egeya_min_exotic": "Current demand block uses a comparison instead of assignment. Recorded as a separate system-check candidate, not changed in this dialogue batch."
+  },
+  "preserved": [
+    "eligibility predicates",
+    "money and rewards",
+    "quest progress",
+    "character IDs and stats",
+    "images",
+    "UI geometry",
+    "EXE",
+    "regular saved games"
+  ],
+  "validation": {
+    "source_and_fragment_tests": 15,
+    "roundtrip": "passed",
+    "untouched_location_records": "preserved",
+    "native_ranking_labels": "Checked current skill_grade and atr_name mappings. Brand 4 is guild brand, not a completed generic brand.",
+    "incremental_mod_chain": "Backup before stock fixes -> stock fix -> CRLF repair -> dialogue patch exactly matches installed QSP.",
+    "repeat_apply": "no changes",
+    "legacy_static_parser_diagnostics": "Existing interaction_city checker diagnostics retained with no additional diagnostic codes; new helper and other touched locations pass syntax checks.",
+    "native_gameplay": "pending user confirmation"
+  },
+  "user_checkpoints": [
+    "Quest journal faction goals: Russian Quarter and Futaland.",
+    "Marianna pharmacy -> 商品説明 menu (Korean label: 상품 설명 듣기) -> four pages -> return.",
+    "Pamela revisit during unfinished Elsa training; reminder disappears after Elsa delivery.",
+    "Goblin quest first/repeat refusal dialogue has two extra requirement pages.",
+    "Frieren/Sense mutual impressions with their valid JSON IDs."
+  ]
+}
