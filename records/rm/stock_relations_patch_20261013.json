@@ -24,7 +24,7 @@
     "static_syntax": "passed",
     "repeat_apply": "no changes",
     "native_before_patch": "Both bugs reproduced by the user with diagnostic saves.",
-    "native_after_patch": "pending user play test"
+    "native_after_patch": "User confirmed all three diagnostic tests normal on 2026-10-13 (Asia/Seoul). Scope: STOCK metadata preservation, zero-ID relation guard, dedicated kinship prose."
   },
   "compatibility": {
     "exe_changed": false,
@@ -48,7 +48,7 @@
   "runtime_followup": {
     "reported_by_user": "Test 1 passed; tests 2 and 3 did not respond.",
     "stock_test_native": "passed by user",
-    "relation_tests_native": "pending after repair",
+    "relation_tests_native": "tests 2 and 3 passed by user after CRLF repair",
     "cause": "Patch string slice consumed CR after the kinship END, leaving an LF-only executable separator. Earlier source replay accepted LF and missed the runtime delimiter error.",
     "repair_mod": "mods/2026-10-13_z_stock_relations_crlf_repair.json",
     "repair_before_sha256": "ce1f9292e708f54cf0736ca2455e4d51969159cec9b0f77f7cb56931dda92f1b",
@@ -58,10 +58,22 @@
     "checks": {
       "regression_count": 9,
       "old_qsp_crlf_regression": "failed at origins_relations offset 1697",
-      "installed_qsp_regression": "all passed",
+      "installed_qsp_regression": "all 9 passed; all 3 diagnostic controls subsequently confirmed by user in the native engine",
       "backup_to_final_mod_chain": "exact replay passed",
       "repeat_chain": "no changes"
     },
     "diagnostic_buttons": "All three EXEC links now dispatch through DO_SERVICE with a numeric argument; no URL array index. Tests 2 and 3 refresh right-panel progress immediately before the relationship call."
+  },
+  "current_qsp_sha256": "09fe8b24ee3eadfe72912d1aee6b4a5003f7287ce23c9a4e28f5813fc8ee6acc",
+  "native_confirmation": {
+    "date": "2026-10-13",
+    "timezone": "Asia/Seoul",
+    "user_statement": "전부 정상",
+    "diagnostic_tests": {
+      "stock_metadata": "passed",
+      "zero_id_relation": "passed",
+      "dedicated_kinship_prose": "passed"
+    },
+    "scope": "Controlled diagnostic saves; does not imply a full gameplay or existing-save data-repair audit."
   }
 }
