@@ -10,7 +10,7 @@
 - 로컬 브랜치들의 이력은 원격 브랜치에도 존재. 모든 알려진 ref의 Git bundle을 로컬 검수 폴더에 추가 보존했다. 오래된 브랜치를 최신 main에 무조건 병합하지 않았다.
 - 대사/분기/변수/장면 전환 회귀 31개 통과, Windows 파일 symlink 미지원 1개 건너뜀. 관리기록 3개·내보내기 11개 통과.
 
-## 이미지 자료
+## 이전 전체 백업 (최종 선택 묶음 아님)
 
 [Google Drive 날짜 폴더의 homecom](https://drive.google.com/drive/u/0/folders/1g8roGyvXMoVAN6uhBSURYFxEnUqLDKZr)
 
@@ -45,3 +45,24 @@ ZIP 안에는 아래 원천 폴더 기준의 상대 경로가 들어 있다. 새
 |archived_images.zip|`G:/somi/JO9_unused_images` (게임 밖 보관)|
 
 기존 같은 이름의 파일을 덮어쓰기 전 manifest 해시와 현재 작업 상태를 확인한다. 게임 실행 파일·세이브·소스는 이미지 ZIP에 포함되지 않으며 Git main과 기존 JO9WORK를 함께 사용한다.
+
+
+## 최종 인계: 개인 교체·추가 이미지만
+
+사용자 확정 범위: **내가 교체·추가한 패치 이미지만 — 기존 게임·외부팩 이미지는 제외**.
+
+[2026-10-12 개인 패치 이미지 폴더](https://drive.google.com/drive/u/0/folders/1B8fgspH5uAjkJZt-aDhVKRRdfOqjwBoR)
+
+최종 파일은 **JO9_personal_patch_images_complete_20261012.zip**이다. 이미지 **687개**, 원본 합계 133,633,200바이트, ZIP **133,741,910바이트 (127.5 MiB)**.
+
+- 최신 개인작업 장부 456개를 모두 포함했다. 장부 이전 홈컴 v8 제작팩, 버전 관리된 개인 UI 제작팩·버튼 명세 및 현재 개인 UI 프로젝트까지 대조했다.
+- 기존 게임과 동일한 이미지, 외부팩, 원본 비교 컷, 초안·백업은 제외했다. 현재 baraholka 및 ui overhaul/baraholka 두 파일은 use_allgirl_pack 이력과 해시가 일치해 제외했다.
+- 예전 SNKmod 경로는 현재 정식 경로로 대응했다. 폐기 1.2.1 이름과 SNKmod 경로는 최종 ZIP에 없다. 역사적 제작팩 대조에서 남은 미해결 해시 불일치 0개.
+- 원본 → 로컬 ZIP → 마운트 드라이브 ZIP의 687개 파일 전체 SHA-256 검증 통과. 웹에서 최종 ZIP·manifest·README_FINAL 및 표시 용량 확인.
+- **서버 파일을 재다운로드한 뒤의 SHA-256 검증은 완료하지 못했다.** 다운로드 요청 후 완료된 로컬 파일을 얻지 못했으므로 서버 바이트 검증으로 기록하지 않는다.
+
+ZIP SHA-256: `72fbe975c36607861fd148d0daef436413fe30de9fa02c37f77e1b6a1b801714`.
+
+상세 목록·출처·제외 사유: [개인 이미지 전송 검수 JSON](qa/2026-10-12_personal-image-transfer.json), Drive의 PERSONAL_PATCH_COMPLETE.manifest.json. 최종 ZIP 내부는 game/content/pic 기준이다. 게임 루트의 상위 폴더에 풀어 복원한다.
+
+같은 Drive 폴더의 456개 JO9_personal_patch_images_20261012.zip은 장부만으로 만든 부분 묶음이다. 앞선 homecom 전체 백업 및 homecom_required 의존 묶음도 보관본이며, **이번 확정 범위의 인계에는 complete ZIP을 사용한다.** 실행 파일·세이브·게임 소스는 포함하지 않으며 최신 Git main 및 JO9WORK 체크포인트를 함께 사용한다. 원본 이미지 삭제 없음.
