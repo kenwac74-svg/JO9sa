@@ -1,7 +1,7 @@
 'use strict';
 // Focused source-fragment replay; this is not a replacement for native engine play tests.
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
-const repo=process.argv[3]||path.resolve(__dirname,'../..');
+const repo=path.resolve(process.argv[3]||path.join(__dirname,'../..'));
 const core=require(path.join(repo,'tools/text-workshop/core.cjs'));
 const syntax=require(path.join(repo,'tools/check-image-cycle-syntax.cjs'));
 const raw=fs.readFileSync(process.argv[2]),doc=core.parse(raw);

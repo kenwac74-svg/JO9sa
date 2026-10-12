@@ -1,7 +1,7 @@
 'use strict';
 // Source checks and controlled prose-fragment replay; actual game screens are checked by the user.
 const fs=require('fs'),path=require('path'),assert=require('node:assert/strict');
-const repo=process.argv[3]||path.resolve(__dirname,'../..'),c=require(path.join(repo,'tools/text-workshop/core.cjs')),syn=require(path.join(repo,'tools/check-image-cycle-syntax.cjs'));
+const repo=path.resolve(process.argv[3]||path.join(__dirname,'../..')),c=require(path.join(repo,'tools/text-workshop/core.cjs')),syn=require(path.join(repo,'tools/check-image-cycle-syntax.cjs'));
 const shared=require(process.env.JO9_RELATION_TEST||path.join(repo,'tools/qa/test-stock-relations.cjs'));
 const raw=fs.readFileSync(process.argv[2]),d=c.parse(raw),baseline=c.parse(fs.readFileSync(process.argv[4]||process.argv[2]));assert(c.serialize(d).equals(raw));
 const body=n=>{const l=d.locations.find(l=>l.name===n);return l?c.shift(d.lines[l.body],5):'';};

@@ -1,6 +1,6 @@
 'use strict';
 const fs=require('fs'),path=require('path'),assert=require('node:assert/strict');
-const repo=process.argv[3]||'C:/Users/Ken Choung/.codex/worktrees/modding-tools-transfer/JO9sa',c=require(repo+'/tools/text-workshop/core.cjs');
+const repo=path.resolve(process.argv[3]||path.join(__dirname,'../..')),c=require(repo+'/tools/text-workshop/core.cjs');
 const raw=fs.readFileSync(process.argv[2]),d=c.parse(raw),report=require(path.resolve(process.argv[4]||repo+'/records/reference-info/2026-10-13_reference_supplements_nwtx.json'));
 const tag='<!-- #nwtx -->',body=n=>c.shift(d.lines[d.locations.find(l=>l.name===n).body],5),helper=body('jo9_reference_info');
 assert(c.serialize(d).equals(raw));assert.equal(d.locations.length,248);
