@@ -93,3 +93,11 @@ node tools/qa/test-rm-dialogue-info.cjs "<PLAY game 폴더>/jack.qsp" .
 ## 홈컴에서 새 채팅에 붙여넣을 문장
 
 > JO9sa의 codex/modding-tools-transfer-20261009 최신 커밋을 받아 docs/modding/HOME_HANDOFF_2026-10-13.md부터 읽고 이어가. 이미지는 내가 직접 옮긴다. 최신 QSP는 backups/JO9_home_checkpoint_20261013.zip이고 해시는 문서에 있다. 실제 홈컴 PLAY/순정 경로를 확인한 뒤 QSP·도구·체크리스트 설정만 맞춰라. 이미지 전체 검사와 Drive 대량 복사를 하지 말고 사람이 더 쉽게 하는 일은 먼저 나에게 요청해. 게임 화면 확인은 내가 한다.
+
+## 추가 전달 — 오늘 이미지와 QSP 통합 ZIP
+
+- 사용자 후속 요청으로 10월12일 00:00부터 10월13일 02:56:11(KST)까지의 최종 교체 이미지 49개와 직접 지정한 아마란스 4컷을 포함해 53개를 묶었다. 같은 파일의 중간 수정본은 제외.
+- 공유 위치: `G:\내 드라이브\Moding\JO9_오늘작업_이미지_QSP_20261013_025611.zip`
+- ZIP 약 15.33MiB. 최신 QSP·CSS·명시 JSON 8개, 작은 대조 카탈로그도 포함. 이번 통합 ZIP을 적용하면 위 이미지 없는 checkpoint ZIP을 다시 적용할 필요 없음. 도구/관리 상태는 Git 최신 seed를 사용한다.
+- 원본이 없는 신규 B컷 2개는 카탈로그에서 비교 원본 없음으로 표시. 나머지는 직전 작업본 또는 순정 비교 기준을 표시했다. 다른 이미지팩의 파일은 포함하지 않았다.
+- ZIP은 사용자 지정 Drive 폴더로 전달, Git에는 images ZIP 대신 파일별 해시/작업 시각/선별 근거 기록을 남겼다: `records/transfers/2026-10-13_daily_images_qsp.json`.

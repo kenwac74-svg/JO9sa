@@ -259,3 +259,9 @@
 - Save-JO9-Work로 관리 seed 9개/비밀키 없는 설정 저장. 현재 QSP를 비롯한 명시 파일 8개를 backups/JO9_home_checkpoint_20261013.zip에 보존(이미지·EXE·세이브 제외). SHA 및 파일별 명세는 docs/checkpoints/home_transfer_20261013.json.
 - docs/modding/HOME_HANDOFF_2026-10-13.md에 브랜치/기준 커밋/PLAY 해시, 홈컴 경로 확인·관리 파일 동기화, 완료/화면 확인 대기, RM 후보, 복구 지점, 새 세션 시작 문구 기록.
 - 인수인계 명령 검증에서 QA의 상대 저장소 경로 처리 결함을 발견해 검사 파일 3개를 path.resolve로 수정. 노트북 절대 경로 기본값도 제거하여 홈컴 저장소의 자체 위치를 사용. 게임 QSP 변경 없음.
+
+## 2026-10-13 오늘 작업 이미지·QSP 통합 전달
+
+- 사용자 요청으로 10/12~10/13 새벽 작업분 53개(교체 기록 49 + 직접 추가 salon 4)와 최신 QSP/설정 8개를 ZIP으로 묶어 G:\내 드라이브\Moding에 저장.
+- 작업 후 해시와 실제 PLAY 일치, 중간본/타 이미지팩/EXE/세이브/키 제외. 카탈로그 264659바이트, 썸네일 241542바이트.
+- 전달 ZIP SHA-256 5c86225f61ad19b808a4ce06fc5f79e2f22fec27794d16f560111ea56b760620. 파일별 기록은 records/transfers/2026-10-13_daily_images_qsp.json. Drive 대상 해시/CRC/manifest 전체 검증 완료.
