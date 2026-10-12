@@ -23,7 +23,11 @@ for (const [id, price] of [[102024,20], [102025,50]]) {
     for (const m of assignments) servicePicture = m[1];
     assert.equal(servicePicture, '', 'Previous service picture must not reach the shared background renderer');
     assert(block.includes('service_price = '+price));
-    for (const n of [1,2]) assert(block.includes("$special_image["+n+"] = 'scene\\VIP\\VIP3.png'"), 'Preserve VIP3 layer');
+    const splitSolo = price===20 && block.includes('salononeg01.png');
+    for (const n of [1,2]) {
+      const file = splitSolo ? 'salononeg0'+n : 'VIP3';
+      assert(block.includes("$special_image["+n+"] = 'scene\\VIP\\"+file+".png'"), 'Preserve the configured salon page layer');
+    }
   });
 }
 check('Transparent menu container', () => {
