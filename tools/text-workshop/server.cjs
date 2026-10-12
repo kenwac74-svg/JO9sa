@@ -282,7 +282,7 @@ const server=http.createServer(async(req,res)=>{
       const query=(url.searchParams.get('q')||'').trim(),loc=(url.searchParams.get('location')||'').trim(),all=url.searchParams.get('mode')==='all';
       if(query.length<2 && !loc)throw Error('원문 일부를 두 글자 이상 입력하거나 위치 이름을 넣어 주세요.');
       const {doc}=current();const found=cacheEntries.filter(e=>(all||e.dialogue) && (!query || e.text.includes(query)) && (!loc || e.location.includes(loc)));
-      json(res,200,{hash:doc.hash,total:found.length,results:found.slice(0,200).map(e=>({...e,hash:doc.hash}))});return;
+      json(res,200,{hash:doc.hash,total:found.length,results:(query==='#nwtx'?found:found.slice(0,200)).map(e=>({...e,hash:doc.hash}))});return;
     }
     if(req.method==='GET' && url.pathname==='/api/history'){json(res,200,history().map(({id,date,location,field,status,before,after,kind})=>({id,date,location,field,status,before,after,kind})));return;}
     if(req.method==='POST' && url.pathname==='/api/variables'){

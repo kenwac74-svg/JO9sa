@@ -242,3 +242,13 @@
 - 인물/장소/상품 설명 본문 30개 바인딩(17 location)에만 공통 20px important 규칙을 적용. 제목·글 내용·패널 좌표/크기·색·서체·다른 작은 능력치 라벨을 유지했다. CSS 파일과 EXE 변경 없이 QSP HTML에 반영.
 - 수정 전 백업 커밋 37f3e81. 설명 래퍼를 제거하면 원래 코드와 바이트 수준 문자열 동일, 나머지 QSP 레코드/248 location 보존, 구문 진단 추가 없음, 실제 적용 파일과 후보 일치, 재적용 무변경.
 - 적용 후 SHA-256 4e08563170d12c6b8f832431ff4062ec8fec6956ce7500a888999c1f5510a352. records/ui/reference_description_font_20261013.json 및 mods/2026-10-13_zzz_reference_description_font_20px.json에 기록. 실제 화면은 게임 재시작 후 사용자 확인 대기.
+
+## 2026-10-13 설정 보완 및 숨김 #nwtx 표식
+
+- 사용자 지시: 빈약한 참고 정보를 기존 설정·이벤트에 근거해 채우고, 이전/이번 작성분을 보이지 않는 #nwtx로 검색. HTML 주석 `<!-- #nwtx -->` 사용.
+- 빈 NPC 소개 33개와 짧은 NPC/장소 소개 16개를 보완. 동일 게임의 #npc_base_woman 원문 설정, 현재 #npc_base 직책, interaction_city·#options 이벤트를 근거로 작성. 출처/미보완 판단은 records/reference-info/2026-10-13_reference_supplements_nwtx.json. 아소기 시민 12명은 개별 배경이 확인되지 않아 새 설정을 만들지 않음.
+- 이전 참고 정보 135개와 RM 안내/대사 22개도 표시하여 총 206개 검색 가능. 기존 원문이나 단순 서식 변경을 작성분으로 잘못 표시하지 않음.
+- jo9_reference_info_revision 2로 다음 화면 이동 때 기존 세이브 갱신. 빈 값 또는 알려진 이전 기본 문장과 정확히 같은 값만 변경해 사용자 수정 설명 유지.
+- #nwtx 단독 검색은 200개 상한을 적용하지 않아 모든 작성분을 표시. 다른 검색 정책, CSS/EXE/이미지/일반 저장 파일/이벤트 조건은 유지.
+- 적용 전 백업: GitHub 90cc56b, docs/checkpoints/reference_nwtx_before_20261013_014317.json. 실제 게임 화면은 사용자 확인 필요.
+- 적용 SHA-256 a9e6e3b77aabe16c8177e519f6d0c56960ef87bcdfee38802242244e8ce026c9. 왕복/보존/표식 검사 8개 및 기존 STOCK·RM 회귀 15개 통과. 실제 내부 브라우저에서 `#nwtx`: 206개 발견/206개 표시, 결과 본문 표식 비노출 확인.
