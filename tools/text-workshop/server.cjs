@@ -29,6 +29,8 @@ function current() {
 }
 const pic=path.join(game,'content','pic');
 const isWorkshopOrigin=require('./workshop-origin.cjs').create(game);
+const workshopContext=require('./workshop-context.cjs').create(game);
+let workshopSeen=0;
 const imageCuts=require('./image-cuts.cjs').create(game,catalogRoot,catalog,runtime);
 const originalCutRegistrar=require('./original-cuts.cjs');
 const localPic=require('./pic-local.cjs').create(game,catalogRoot,catalog,imageCuts);
@@ -120,8 +122,11 @@ const server=http.createServer(async(req,res)=>{
     const host=`127.0.0.1:${server.address().port}`;
     if(req.headers.host!==host){json(res,403,{error:'허용되지 않은 접속 주소입니다.'});return;}
     const url=new URL(req.url,'http://'+host);
-    if(req.method==='GET' && url.pathname==='/'){
-      res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','Content-Security-Policy':"default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'"});
+    if(url.pathname.startsWith('/workshop-image/')){await require('./image-workshop-proxy.cjs').serve(req,res,url,workshopContext.registration(),token,'http://'+host);return;}
+    if(req.method==='GET'&&url.pathname==='/api/workshop/ready'){json(res,200,{alive:true,pid:process.pid,target,url:'http://'+host+'/workshop',clientActive:Date.now()-workshopSeen<10000});return;}
+    if(req.method==='GET'&&url.pathname==='/unified-workshop.js'){res.writeHead(200,{'Content-Type':'text/javascript; charset=utf-8','Cache-Control':'no-store'});res.end(fs.readFileSync(path.join(__dirname,'unified-workshop.js')));return;}
+    if(req.method==='GET' && (url.pathname==='/' || url.pathname==='/workshop')){
+      res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','Content-Security-Policy':"default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self'; frame-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'"});
       res.end(fs.readFileSync(path.join(__dirname,'index.html'),'utf8').replace('__SESSION_TOKEN__',token));return;
     }
     if(req.method==='GET'&&['/dialogue-ai.js','/editing-tools.js','/variable-inspector.js'].includes(url.pathname)){res.writeHead(200,{'Content-Type':'text/javascript; charset=utf-8','Cache-Control':'no-store'});res.end(fs.readFileSync(path.join(__dirname,url.pathname.slice(1)),'utf8'));return;}
@@ -164,7 +169,7 @@ const server=http.createServer(async(req,res)=>{
     // A loopback workshop may request UI navigation only, without receiving the editing token.
     if(req.method==='POST'&&url.pathname==='/api/catalog/selection'){
       const origin=req.headers.origin;
-      if(!await isWorkshopOrigin(origin)){json(res,403,{error:'이미지워크샵에서만 선택할 수 있습니다.'});return;}
+      if(!(origin==='http://'+host&&req.headers['x-jo9-token']===token)&&!await isWorkshopOrigin(origin)){json(res,403,{error:'이미지워크샵에서만 선택할 수 있습니다.'});return;}
       res.setHeader('Access-Control-Allow-Origin',origin);res.setHeader('Vary','Origin');
       const input=await body(req,4096);
       const selected=require('./catalog-selection.cjs').select(game,catalog,input.path);
@@ -278,6 +283,7 @@ const server=http.createServer(async(req,res)=>{
     if(req.method==='GET' && url.pathname==='/api/state'){
       const {doc}=current();json(res,200,{target,hash:doc.hash,locations:doc.locations.length,backups});return;
     }
+    if(req.method==='GET'&&url.pathname==='/api/workshop/context'){workshopSeen=Date.now();const {doc}=current();const snapshot=workshopContext.state(doc,cacheEntries,navigator);json(res,200,url.searchParams.get('since')===snapshot.id?{id:snapshot.id,unchanged:true}:{...snapshot,imageWorkshopUrl:snapshot.workshopUrl?'/workshop-image/?workshop_token='+token:null});return;}
     if(req.method==='GET' && url.pathname==='/api/search'){
       const query=(url.searchParams.get('q')||'').trim(),loc=(url.searchParams.get('location')||'').trim(),all=url.searchParams.get('mode')==='all';
       if(query.length<2 && !loc)throw Error('원문 일부를 두 글자 이상 입력하거나 위치 이름을 넣어 주세요.');
@@ -292,7 +298,7 @@ const server=http.createServer(async(req,res)=>{
       json(res,200,variableInspector.inspect(c));return;
     }
     if(req.method==='POST' && url.pathname==='/api/context'){
-      const input=await body(req);current();json(res,200,withImages(navigator.context(input.selection,input.sceneId,input.mode,input.usageId)));return;
+      const input=await body(req);const {doc}=current();let c=navigator.context(input.selection,input.sceneId,input.mode,input.usageId);if(input.liveSnapshotId)c=require('./workshop-context.cjs').forCandidate(workshopContext.state(doc,cacheEntries,navigator),input,c);json(res,200,withImages(c));return;
     }
     if(req.method==='POST' && url.pathname==='/api/scene'){
       const input=await body(req);const {doc}=current();if(input.hash!==doc.hash)throw Error('QSP가 바뀌었습니다. 다시 검색해 주세요.');json(res,200,withImages(navigator.open(input.destination,input.mode)));return;

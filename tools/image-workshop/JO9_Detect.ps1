@@ -63,7 +63,7 @@ function Log([string]$Text) {
 }
 
 function Write-Context([hashtable]$Data) {
-    $Data.version = 17
+    $Data.version = 18
     $Data.updated = [DateTime]::UtcNow.ToString('o')
     $Tmp = $ContextFile + '.tmp'
     $Json = $Data | ConvertTo-Json -Depth 8
@@ -155,29 +155,32 @@ function Open-Tool-OneShot([hashtable]$Context) {
     Start-Process $u
 }
 
+function Read-Workshop-Editor {
+    $stateFile = Join-Path $Root 'text-workshop\runtime\server.json'
+    if (!(Test-Path -LiteralPath $stateFile)) {return $null}
+    try {
+        $state = Get-Content -LiteralPath $stateFile -Raw -Encoding UTF8 | ConvertFrom-Json
+        $uri = [Uri]$state.url
+        $expected = [IO.Path]::GetFullPath((Join-Path $GameDir 'jack.qsp'))
+        if ($uri.Scheme -ne 'http' -or $uri.Host -ne '127.0.0.1' -or $uri.AbsolutePath -ne '/' -or [IO.Path]::GetFullPath($state.target) -ne $expected) {return $null}
+        $ready = Invoke-RestMethod ($state.url+'api/workshop/ready') -TimeoutSec 2
+        if (!$ready.alive -or [int]$ready.pid -ne [int]$state.pid -or [IO.Path]::GetFullPath($ready.target) -ne $expected) {return $null}
+        return $ready
+    } catch {return $null}
+}
+
 function Show-Tool([hashtable]$Context) {
-    $s = Ensure-Server
-    if ($s -and $s.alive -and $script:CurrentPort -gt 0) {
-        $BaseUrl = "http://127.0.0.1:$($script:CurrentPort)/"
-        if (-not $s.clientActive) {
-            Log 'No active workshop page; opening one browser page'
-            Start-Process $BaseUrl
-        } else {
-            Log 'Existing workshop page active; context only'
-        }
-    } else {
-        Log 'Persistent server unavailable; one-shot fallback'
-        try {
-            Open-Tool-OneShot $Context
-        } catch {
-            try {
-                [System.Windows.Forms.MessageBox]::Show(
-                    'JO9 Image Workshop을 열지 못했습니다. detect.log를 확인하세요.',
-                    'JO9 Image Workshop'
-                ) | Out-Null
-            } catch {}
-        }
+    $imageServer = Ensure-Server
+    if (!$imageServer -or !$imageServer.alive) {Log 'Image server is unavailable';return}
+    $ready = Read-Workshop-Editor
+    if (!$ready) {
+        $entry = Join-Path $Root 'text-workshop\Start-JO9-Text.ps1'
+        if (Test-Path -LiteralPath $entry) {& $entry -GameDir $GameDir -NoBrowser | Out-Null}
+        $ready = Read-Workshop-Editor
     }
+    if (!$ready) {Log 'Unified WORKSHOP could not be opened';[System.Windows.Forms.MessageBox]::Show('통합 WORKSHOP을 열지 못했습니다. 도구 실행기와 detect.log를 확인하세요.','WORKSHOP');return}
+    if (!$ready.clientActive) {Start-Process ([string]$ready.url)}
+    else {Log 'Existing unified WORKSHOP receives the new SHOW HTML snapshot'}
 }
 
 function Asset-Info([string]$Rel) {
@@ -552,6 +555,12 @@ try {
     }
 
     Log ("HTML captured, chars="+$Html.Length)
+    $htmlPath = Join-Path $Runtime 'show-html.html'
+    [IO.File]::WriteAllText($htmlPath+'.tmp',$Html,[Text.UTF8Encoding]::new($false))
+    Move-Item -LiteralPath ($htmlPath+'.tmp') -Destination $htmlPath -Force
+    $htmlHasher = [Security.Cryptography.SHA256]::Create()
+    try {$script:CurrentHtmlSha256 = [BitConverter]::ToString($htmlHasher.ComputeHash([Text.Encoding]::UTF8.GetBytes($Html))).Replace('-','').ToLowerInvariant()} finally {$htmlHasher.Dispose()}
+
 
     # Save static QTextEdit handle for the next detection.
     try {
@@ -565,7 +574,7 @@ try {
 
     $RawMatches=[regex]::Matches(
         $Html,
-        '(?i)content[\\/]+pic[\\/]+[^"''<>\)\r\n]+?\.(?:png|jpg|jpeg|webp|gif)'
+        '(?i)content[\\/]+pic[\\/]+[^"''<>\r\n]+?\.(?:png|jpg|jpeg|webp|gif)'
     )
 
     Log ("Raw resource refs="+$RawMatches.Count)
@@ -574,16 +583,14 @@ try {
 
     # Keep ALL detected resources. Display filtering belongs to the HTML UI,
     # so "모든 이미지 보기" can reveal everything without re-detecting.
-    $Seen = @{}
+    $Seen = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
     $Resources = @()
 
     foreach ($rm in $RawMatches) {
         $p = Normalize ([string]$rm.Value)
         if (-not $p) { continue }
 
-        $dedupe = $p.ToLowerInvariant()
-        if ($Seen.ContainsKey($dedupe)) { continue }
-        $Seen[$dedupe] = $true
+        if (-not $Seen.Add($p)) { continue }
 
         $info = Asset-Info $p
         $full = ''
@@ -624,6 +631,7 @@ try {
         bg=$Bg
         npc=$Npc
         resources=@($Resources)
+        showHtmlSha256=$script:CurrentHtmlSha256
         hiddenFolders=@($HiddenFolders)
         hiddenFilePatterns=@($HiddenFilePatterns)
     }

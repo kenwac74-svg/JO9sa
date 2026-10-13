@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>JO9 대사 편집실</title>
+<html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>JO9 WORKSHOP</title>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#111827;color:#e5e7eb;font:15px/1.6 system-ui,sans-serif}main{max-width:1180px;margin:auto;padding:26px}h1{font-size:26px;margin:0}h2{font-size:18px}p{color:#b9c3d5}section{background:#1d293c;border:1px solid #36445b;border-radius:12px;padding:18px;margin:16px 0}input,textarea,button,select{font:inherit;border-radius:7px;border:1px solid #516078}input,textarea,select{background:#111c2c;color:#fff;padding:10px;width:100%}textarea{min-height:180px;resize:vertical}button{background:#34465f;color:#fff;padding:8px 14px;cursor:pointer}button.primary{background:#246963}button:disabled{opacity:.4;cursor:default}a{color:#90c8ff}.row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}.row>label{flex:1;min-width:160px}.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}label{display:block;color:#c7d3e4}.result{display:block;width:100%;text-align:left;margin:7px 0;white-space:pre-wrap;overflow-wrap:anywhere}.result.selected{border-color:#79d8c9;background:#214e52}.result.code{border-style:dashed;color:#b9c3d5}.muted{color:#9caec5;font-size:13px;overflow-wrap:anywhere}#message{white-space:pre-wrap;color:#a0e4d5}#message.error{color:#ffb4aa}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#111c2c;padding:14px;border-radius:8px;max-height:360px;overflow:auto}input[type=checkbox]{width:auto}.history,.branch{padding:12px 0;border-top:1px solid #40516b}#results,#sceneTexts{max-height:290px;overflow:auto}#branches{max-height:450px;overflow:auto}#difference{border-left:3px solid #78cbb7;padding-left:12px}details{margin-top:10px}summary{cursor:pointer;color:#b8d1ef}.branch strong{display:block}.branch .row{margin-top:7px}#sceneTitle{margin-bottom:12px;font-weight:600;color:#a0e4d5}[hidden]{display:none!important}@media(max-width:800px){.cols,.game{grid-template-columns:1fr!important}}
 #incomingList{max-height:230px;overflow:auto}
@@ -172,8 +172,12 @@ async function init(){await Promise.all([state(),refresh()]);let saved;try{saved
 let stateRefreshBusy=false;
 async function refreshImageStatus(){if(statusSaving||stateRefreshBusy||!context?.images?.some(x=>x.work))return;stateRefreshBusy=true;try{const v=await api('/api/catalog/state?brief=1');if(v.available)updateWorkState(v);}catch{}finally{stateRefreshBusy=false;}}
 window.addEventListener('focus',refreshImageStatus);setInterval(refreshImageStatus,5000);
-init().catch(e=>say(e.message,true));
+const jo9WorkshopReady=init().catch(e=>say(e.message,true));
+const workshopDraftState=()=>JSON.stringify([selection?key(selection):null,context?.scene?.id,context?.flow?.usage?.id,$('replacement').value,$('additionText').value,document.getElementById('aiReply')?.value,previewId]);
+window.JO9_WORKSHOP_EDITOR={api,ready:jo9WorkshopReady,dirty:()=>!!selection&&(($('replacement').value!==$('original').value)||!!$('additionText').value.trim()||!!previewId||!!document.getElementById('aiReply')?.value?.trim()),load:async (candidate,liveSnapshotId)=>{remember();rememberAddition();const before=workshopDraftState();const c=await api('/api/context',{selection:candidate.selection,sceneId:candidate.sceneId,usageId:candidate.usageId,liveSnapshotId,mode:'text'});if(before!==workshopDraftState())throw Error('요청 중 작성하거나 선택한 내용을 보존했습니다. 감지 결과 갱신으로 다시 불러오세요.');render(c);say('SHOW HTML의 현재 장면을 불러왔습니다.');}};
 </script></html>
 
 <script src="variable-inspector.js"></script>
 <script src="dialogue-ai.js"></script>
+
+<script src="unified-workshop.js"></script>
