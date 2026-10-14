@@ -1,0 +1,219 @@
+{
+  "id": "2026-10-15_z_inline_text_prefix",
+  "description": "Trim leading blank tokens in current/cached narrative immediately before unchanged original output. Only existing STRFIND/MID/LEN builtins; no helper or CHR.",
+  "target": "game/jack.qsp",
+  "before_sha256": "efe45d628f8c7574f727d5150faf3e0f7ba4391160d7a9de2d0a0aa9421c7e33",
+  "after_sha256": "a0807556e9d3c1c9d9c208cdfa702af6c1319223302468e223ad8baab91c803e",
+  "edits": [
+    {
+      "location": "slavebase_test",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "new": "! JO9_INLINE_TEXT_PREFIX_20261015\r\nlocal $jo9_leading_empty = $strfind($text[txt], '^(\\s|&nbsp;|<[bB][rR]\\s*/?>)+')\r\nif $jo9_leading_empty ! '': $text[txt] = $mid($text[txt], len($jo9_leading_empty) + 1, len($text[txt]))\r\n*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "count": 1
+    },
+    {
+      "location": "choice_screen",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "new": "! JO9_INLINE_TEXT_PREFIX_20261015\r\nlocal $jo9_leading_empty = $strfind($text[txt], '^(\\s|&nbsp;|<[bB][rR]\\s*/?>)+')\r\nif $jo9_leading_empty ! '': $text[txt] = $mid($text[txt], len($jo9_leading_empty) + 1, len($text[txt]))\r\n*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text>></div>'",
+      "new": "! JO9_INLINE_TEXT_PREFIX_20261015\r\nlocal $jo9_leading_empty = $strfind($text, '^(\\s|&nbsp;|<[bB][rR]\\s*/?>)+')\r\nif $jo9_leading_empty ! '': $text = $mid($text, len($jo9_leading_empty) + 1, len($text))\r\n*p '<div id = \"text\"><<$text>></div>'",
+      "count": 1
+    },
+    {
+      "location": "master_stat_clients",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "new": "! JO9_INLINE_TEXT_PREFIX_20261015\r\nlocal $jo9_leading_empty = $strfind($text[txt], '^(\\s|&nbsp;|<[bB][rR]\\s*/?>)+')\r\nif $jo9_leading_empty ! '': $text[txt] = $mid($text[txt], len($jo9_leading_empty) + 1, len($text[txt]))\r\n*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "count": 1
+    },
+    {
+      "location": "prison_cell",
+      "field": "body",
+      "old": "*p '<div id=\"text\"><<$prisoner_info_text>></div>'",
+      "new": "! JO9_INLINE_TEXT_PREFIX_20261015\r\nlocal $jo9_leading_empty = $strfind($prisoner_info_text, '^(\\s|&nbsp;|<[bB][rR]\\s*/?>)+')\r\nif $jo9_leading_empty ! '': $prisoner_info_text = $mid($prisoner_info_text, len($jo9_leading_empty) + 1, len($prisoner_info_text))\r\n*p '<div id=\"text\"><<$prisoner_info_text>></div>'",
+      "count": 1
+    },
+    {
+      "location": "barn",
+      "field": "body",
+      "old": "*p '<div id=\"text\"><<$cow_info_text>></div>'",
+      "new": "! JO9_INLINE_TEXT_PREFIX_20261015\r\nlocal $jo9_leading_empty = $strfind($cow_info_text, '^(\\s|&nbsp;|<[bB][rR]\\s*/?>)+')\r\nif $jo9_leading_empty ! '': $cow_info_text = $mid($cow_info_text, len($jo9_leading_empty) + 1, len($cow_info_text))\r\n*p '<div id=\"text\"><<$cow_info_text>></div>'",
+      "count": 1
+    },
+    {
+      "location": "interaction_screen",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "new": "! JO9_INLINE_TEXT_PREFIX_20261015\r\nlocal $jo9_leading_empty = $strfind($text[txt], '^(\\s|&nbsp;|<[bB][rR]\\s*/?>)+')\r\nif $jo9_leading_empty ! '': $text[txt] = $mid($text[txt], len($jo9_leading_empty) + 1, len($text[txt]))\r\n*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "count": 1
+    },
+    {
+      "location": "interaction_screen_city",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "new": "! JO9_INLINE_TEXT_PREFIX_20261015\r\nlocal $jo9_leading_empty = $strfind($text[txt], '^(\\s|&nbsp;|<[bB][rR]\\s*/?>)+')\r\nif $jo9_leading_empty ! '': $text[txt] = $mid($text[txt], len($jo9_leading_empty) + 1, len($text[txt]))\r\n*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "count": 1
+    },
+    {
+      "location": "guild",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "new": "! JO9_INLINE_TEXT_PREFIX_20261015\r\nlocal $jo9_leading_empty = $strfind($text[txt], '^(\\s|&nbsp;|<[bB][rR]\\s*/?>)+')\r\nif $jo9_leading_empty ! '': $text[txt] = $mid($text[txt], len($jo9_leading_empty) + 1, len($text[txt]))\r\n*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "count": 1
+    },
+    {
+      "location": "guild_board",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "new": "! JO9_INLINE_TEXT_PREFIX_20261015\r\nlocal $jo9_leading_empty = $strfind($text[txt], '^(\\s|&nbsp;|<[bB][rR]\\s*/?>)+')\r\nif $jo9_leading_empty ! '': $text[txt] = $mid($text[txt], len($jo9_leading_empty) + 1, len($text[txt]))\r\n*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "count": 1
+    },
+    {
+      "location": "shop_general",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$sp_text[sp_txt]>></div>'",
+      "new": "! JO9_INLINE_TEXT_PREFIX_20261015\r\nlocal $jo9_leading_empty = $strfind($sp_text[sp_txt], '^(\\s|&nbsp;|<[bB][rR]\\s*/?>)+')\r\nif $jo9_leading_empty ! '': $sp_text[sp_txt] = $mid($sp_text[sp_txt], len($jo9_leading_empty) + 1, len($sp_text[sp_txt]))\r\n*p '<div id = \"text\"><<$sp_text[sp_txt]>></div>'",
+      "count": 1
+    },
+    {
+      "location": "shop_wpn",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "new": "! JO9_INLINE_TEXT_PREFIX_20261015\r\nlocal $jo9_leading_empty = $strfind($text[txt], '^(\\s|&nbsp;|<[bB][rR]\\s*/?>)+')\r\nif $jo9_leading_empty ! '': $text[txt] = $mid($text[txt], len($jo9_leading_empty) + 1, len($text[txt]))\r\n*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "count": 1
+    },
+    {
+      "location": "item_buy",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "new": "! JO9_INLINE_TEXT_PREFIX_20261015\r\nlocal $jo9_leading_empty = $strfind($text[txt], '^(\\s|&nbsp;|<[bB][rR]\\s*/?>)+')\r\nif $jo9_leading_empty ! '': $text[txt] = $mid($text[txt], len($jo9_leading_empty) + 1, len($text[txt]))\r\n*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "count": 1
+    },
+    {
+      "location": "plastics",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "new": "! JO9_INLINE_TEXT_PREFIX_20261015\r\nlocal $jo9_leading_empty = $strfind($text[txt], '^(\\s|&nbsp;|<[bB][rR]\\s*/?>)+')\r\nif $jo9_leading_empty ! '': $text[txt] = $mid($text[txt], len($jo9_leading_empty) + 1, len($text[txt]))\r\n*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "count": 1
+    },
+    {
+      "location": "slave_auction_buy",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text>></div>'",
+      "new": "! JO9_INLINE_TEXT_PREFIX_20261015\r\nlocal $jo9_leading_empty = $strfind($text, '^(\\s|&nbsp;|<[bB][rR]\\s*/?>)+')\r\nif $jo9_leading_empty ! '': $text = $mid($text, len($jo9_leading_empty) + 1, len($text))\r\n*p '<div id = \"text\"><<$text>></div>'",
+      "count": 1
+    },
+    {
+      "location": "slave_auction_sell",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "new": "! JO9_INLINE_TEXT_PREFIX_20261015\r\nlocal $jo9_leading_empty = $strfind($text[txt], '^(\\s|&nbsp;|<[bB][rR]\\s*/?>)+')\r\nif $jo9_leading_empty ! '': $text[txt] = $mid($text[txt], len($jo9_leading_empty) + 1, len($text[txt]))\r\n*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "count": 1
+    },
+    {
+      "location": "special_screen",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "new": "! JO9_INLINE_TEXT_PREFIX_20261015\r\nlocal $jo9_leading_empty = $strfind($text[txt], '^(\\s|&nbsp;|<[bB][rR]\\s*/?>)+')\r\nif $jo9_leading_empty ! '': $text[txt] = $mid($text[txt], len($jo9_leading_empty) + 1, len($text[txt]))\r\n*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "count": 1
+    },
+    {
+      "location": "assistant_private_room",
+      "field": "body",
+      "old": "*p '<div id=\"text\"><<$assistant_info_text>></div>'",
+      "new": "! JO9_INLINE_TEXT_PREFIX_20261015\r\nlocal $jo9_leading_empty = $strfind($assistant_info_text, '^(\\s|&nbsp;|<[bB][rR]\\s*/?>)+')\r\nif $jo9_leading_empty ! '': $assistant_info_text = $mid($assistant_info_text, len($jo9_leading_empty) + 1, len($assistant_info_text))\r\n*p '<div id=\"text\"><<$assistant_info_text>></div>'",
+      "count": 1
+    },
+    {
+      "location": "slave_private_room1",
+      "field": "body",
+      "old": "*p '<div id=\"text\"><<$room1_info_text>></div>'",
+      "new": "! JO9_INLINE_TEXT_PREFIX_20261015\r\nlocal $jo9_leading_empty = $strfind($room1_info_text, '^(\\s|&nbsp;|<[bB][rR]\\s*/?>)+')\r\nif $jo9_leading_empty ! '': $room1_info_text = $mid($room1_info_text, len($jo9_leading_empty) + 1, len($room1_info_text))\r\n*p '<div id=\"text\"><<$room1_info_text>></div>'",
+      "count": 1
+    },
+    {
+      "location": "slave_private_room2",
+      "field": "body",
+      "old": "*p '<div id=\"text\"><<$room2_info_text>></div>'",
+      "new": "! JO9_INLINE_TEXT_PREFIX_20261015\r\nlocal $jo9_leading_empty = $strfind($room2_info_text, '^(\\s|&nbsp;|<[bB][rR]\\s*/?>)+')\r\nif $jo9_leading_empty ! '': $room2_info_text = $mid($room2_info_text, len($jo9_leading_empty) + 1, len($room2_info_text))\r\n*p '<div id=\"text\"><<$room2_info_text>></div>'",
+      "count": 1
+    },
+    {
+      "location": "slave_private_room3",
+      "field": "body",
+      "old": "*p '<div id=\"text\"><<$room3_info_text>></div>'",
+      "new": "! JO9_INLINE_TEXT_PREFIX_20261015\r\nlocal $jo9_leading_empty = $strfind($room3_info_text, '^(\\s|&nbsp;|<[bB][rR]\\s*/?>)+')\r\nif $jo9_leading_empty ! '': $room3_info_text = $mid($room3_info_text, len($jo9_leading_empty) + 1, len($room3_info_text))\r\n*p '<div id=\"text\"><<$room3_info_text>></div>'",
+      "count": 1
+    },
+    {
+      "location": "slave_private_room4",
+      "field": "body",
+      "old": "*p '<div id=\"text\"><<$room4_info_text>></div>'",
+      "new": "! JO9_INLINE_TEXT_PREFIX_20261015\r\nlocal $jo9_leading_empty = $strfind($room4_info_text, '^(\\s|&nbsp;|<[bB][rR]\\s*/?>)+')\r\nif $jo9_leading_empty ! '': $room4_info_text = $mid($room4_info_text, len($jo9_leading_empty) + 1, len($room4_info_text))\r\n*p '<div id=\"text\"><<$room4_info_text>></div>'",
+      "count": 1
+    },
+    {
+      "location": "stasis_cell",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text>></div>'",
+      "new": "! JO9_INLINE_TEXT_PREFIX_20261015\r\nlocal $jo9_leading_empty = $strfind($text, '^(\\s|&nbsp;|<[bB][rR]\\s*/?>)+')\r\nif $jo9_leading_empty ! '': $text = $mid($text, len($jo9_leading_empty) + 1, len($text))\r\n*p '<div id = \"text\"><<$text>></div>'",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction_screen",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "new": "! JO9_INLINE_TEXT_PREFIX_20261015\r\nlocal $jo9_leading_empty = $strfind($text[txt], '^(\\s|&nbsp;|<[bB][rR]\\s*/?>)+')\r\nif $jo9_leading_empty ! '': $text[txt] = $mid($text[txt], len($jo9_leading_empty) + 1, len($text[txt]))\r\n*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "count": 1
+    },
+    {
+      "location": "demo_intro",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "new": "! JO9_INLINE_TEXT_PREFIX_20261015\r\nlocal $jo9_leading_empty = $strfind($text[txt], '^(\\s|&nbsp;|<[bB][rR]\\s*/?>)+')\r\nif $jo9_leading_empty ! '': $text[txt] = $mid($text[txt], len($jo9_leading_empty) + 1, len($text[txt]))\r\n*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "count": 1
+    },
+    {
+      "location": "choose_the_girl",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "new": "! JO9_INLINE_TEXT_PREFIX_20261015\r\nlocal $jo9_leading_empty = $strfind($text[txt], '^(\\s|&nbsp;|<[bB][rR]\\s*/?>)+')\r\nif $jo9_leading_empty ! '': $text[txt] = $mid($text[txt], len($jo9_leading_empty) + 1, len($text[txt]))\r\n*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "count": 3
+    },
+    {
+      "location": "black_market_interface",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "new": "! JO9_INLINE_TEXT_PREFIX_20261015\r\nlocal $jo9_leading_empty = $strfind($text[txt], '^(\\s|&nbsp;|<[bB][rR]\\s*/?>)+')\r\nif $jo9_leading_empty ! '': $text[txt] = $mid($text[txt], len($jo9_leading_empty) + 1, len($text[txt]))\r\n*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "count": 1
+    },
+    {
+      "location": "pharmacy",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "new": "! JO9_INLINE_TEXT_PREFIX_20261015\r\nlocal $jo9_leading_empty = $strfind($text[txt], '^(\\s|&nbsp;|<[bB][rR]\\s*/?>)+')\r\nif $jo9_leading_empty ! '': $text[txt] = $mid($text[txt], len($jo9_leading_empty) + 1, len($text[txt]))\r\n*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "count": 1
+    },
+    {
+      "location": "slave_sell",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "new": "! JO9_INLINE_TEXT_PREFIX_20261015\r\nlocal $jo9_leading_empty = $strfind($text[txt], '^(\\s|&nbsp;|<[bB][rR]\\s*/?>)+')\r\nif $jo9_leading_empty ! '': $text[txt] = $mid($text[txt], len($jo9_leading_empty) + 1, len($text[txt]))\r\n*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "count": 1
+    },
+    {
+      "location": "snk_room_menu_screen",
+      "field": "body",
+      "old": "*p '<div id=\"text\"><<$snk_room_last_text[snk_room_target]>></div>'",
+      "new": "! JO9_INLINE_TEXT_PREFIX_20261015\r\nlocal $jo9_leading_empty = $strfind($snk_room_last_text[snk_room_target], '^(\\s|&nbsp;|<[bB][rR]\\s*/?>)+')\r\nif $jo9_leading_empty ! '': $snk_room_last_text[snk_room_target] = $mid($snk_room_last_text[snk_room_target], len($jo9_leading_empty) + 1, len($snk_room_last_text[snk_room_target]))\r\n*p '<div id=\"text\"><<$snk_room_last_text[snk_room_target]>></div>'",
+      "count": 1
+    }
+  ]
+}
