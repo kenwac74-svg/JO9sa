@@ -358,3 +358,46 @@ flowchart LR
   | 투박한 해요체 | 존댓말이지만 거친 어휘 | "어제 칭찬해 주신 거, 솔직히 좀 좋았어요." |
 - **귀족 가문 하인·궁정 출신은 말투(어미)는 위 셋 중 하나를 쓰되 어휘를 다르게 한다.** 예: "칭찬해 주셔서" 대신 "치하해 주셔서", "기뻤어요" 대신 "영광이었어요". 어휘 차이는 어휘 조각(낱말 바꿈 표)으로 처리하고, 어미는 바꾸지 않는다.
 - 반말은 12.5대로 사건 통 대사 전용이다.
+
+### 12.8 배경 변수 → 말투·어휘 배정 (초안, 2026-10-14 사용자 승인 방향)
+원칙: **직업(`$slave_occupation`)으로 말투 3종을, 가족 계층(`family_index`)으로 어휘를 정한다.** 새 변수는 없다.
+
+#### 가족 (`$slave_family`, 54종)
+- 생성 순서: 출신 세계(13) → 세계별 가족 후보 묶음(`$<세계>_family`) → 가족.
+- 가족마다 계층 값 `family_index`(1~5), 능력치 보정, 이름표(`$stock_family_auk`, 예 "상인의 딸"), 1인칭 과거 이야기(`$family_description`)가 붙는다.
+
+| family_index | 가족 |
+|---|---|
+| 1 왕가 | barbarian_king(야만족 왕가), mprincess(공주) |
+| 2 상류 | knight(영주), magnat, bankeer, mayor, mafiosi, surgeon, businessman, finance, general, astrofarm, nanofarmacist |
+| 3 중류 | viking, craftsman, merchant, farmers, clerk, naturalist, ingeneer, doctor, servant(부잣집 하인), manager, biologist, programmer, poet, operator, artist, architect, freetrader, astrogator, admiral, gendesigner |
+| 4 서민 | pesant, hunter, fisher, bondman, valetry(하녀 집안), proletarian, worker, jailer, bioreactor, asteroid |
+| 5 최하·외부 | tribe, amazon, nomad, orphan, gypsy, church, workhouse, orpnange, policeman, minitruth, anter |
+
+주의: 5에 policeman·minitruth가 있어 순수한 신분 순서가 아닐 수 있다.
+
+#### 직업 (`$slave_occupation`, 58종)
+- 생성 순서: 가족별 직업 후보 묶음(`$<가족>_occupation`) → 직업. 어린 나이(`loli_age`)는 직업이 없다.
+- 직업마다 노동 계층 `work_index`(2~5), 기술 보정(예: maid는 service·custom, secretary는 expression·secretary·service), 이름표, 설명이 붙는다.
+
+#### 말투 배정 초안 (직업 기준)
+| 말투 | 직업 |
+|---|---|
+| **합니다체** (격식) | maid·valertry(하녀), secretary(비서), nun(수녀), policewoman(경찰), mind_contol(정신 지배 경찰), time_plice(시간 경찰), jailer(교도관), academy(스타플릿 졸업생), mech(전투 로봇 조종사) |
+| **투박한 해요체** | tribal_girl(부족 소녀), thief(도둑), beggar(거지), gypsy(점쟁이), whore·markitane·brothel(창녀), thug(노상강도), brigand(산적), punk(펑크), contraband(밀수업자) |
+| **해요체** (기본) | 나머지 전부 (학생, 교사, 간호사, 웨이트리스, 작가, 예술가, 모델, 운동선수, 해커, 농사·직조 노동, 마녀·샤먼·약초사·마법사 제자, 영웅 여전사, 신부·아내 계열, 여왕의 딸 등) 및 직업 없음 |
+
+#### 어휘 배정 초안 (가족 기준)
+| 어휘 | 가족 |
+|---|---|
+| **궁정·귀족가 하인 어휘** (사용자 지정) | 궁정: mprincess, knight / 귀족가 하인: valetry, servant |
+| 세련된 어휘 | 그 밖의 family_index 2 (상류) |
+| 보통 어휘 | family_index 3·4 |
+| 거친 어휘 | family_index 5 중 tribe, amazon, nomad, gypsy, workhouse, orphan, orpnange, anter (policeman, minitruth, church는 보통 어휘) |
+
+- barbarian_king(야만족 왕가)은 계층 1이지만 궁정 어휘가 아니라 거친 쪽이 맞는지 판단이 필요하다.
+- 말투와 어휘는 따로 정해져 조합된다. 예: 하녀 집안(valetry 가족) + 하녀 직업 = 합니다체 + 귀족가 하인 어휘.
+
+#### 발견한 원본 데이터 문제 (참고, 수정은 로컬 담당)
+- 직업 후보 묶음에 번역된 값이 섞여 있다: `$orphan_occupation`의 '창녀', `$orpnange_occupation`의 '창녀'·'매춘굴'. 원래 'whore'·'brothel'이어야 하며, 이 값이 뽑히면 직업 처리(능력치·설명)가 빠진다.
+- `$barbarian_king_occupation`의 'barbarian_princess'는 직업 처리 분기가 없다.
