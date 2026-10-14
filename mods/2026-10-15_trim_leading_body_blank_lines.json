@@ -1,443 +1,1541 @@
 {
   "id": "2026-10-15_trim_leading_body_blank_lines",
-  "description": "Remove only leading blank line tokens at narrative render boundaries, including old-save cached text. Preserve interior paragraphs, UI position and source prose.",
+  "description": "Corrected version: remove leading BR only from direct narrative assignments. Keep renderers unchanged; no helper, new built-ins, or save migrations.",
   "target": "game/jack.qsp",
   "before_sha256": "84d298ef0be15290283e0592fb0d8cd3c870c88752c17f0ecf013d62dc58f9f3",
-  "after_sha256": "07e1c43299bec91f051b9eaee8db6fd145b12b06a9d3ff2a958234a7331fdf44",
-  "add_locations": [
-    {
-      "name": "$jo9_trim_text_start",
-      "desc": "",
-      "body": "! JO9_LEADING_TEXT_NORMALIZER_20261015\r\n! Strip only empty prefix tokens; preserve all body and paragraph separators.\r\nlocal $jo9_trim_text = $args[0]\r\nlocal $jo9_trim_prefix = ''\r\nlocal jo9_trim_width = 0\r\nlocal $jo9_trim_head = ''\r\n:jo9_trim_text_prefix\r\njo9_trim_width = 0\r\nif len($jo9_trim_text) > 0:\r\n $jo9_trim_head = $mid($jo9_trim_text, 1, 1)\r\n if $jo9_trim_head = ' ' or $jo9_trim_head = $chr(9) or $jo9_trim_head = $chr(10) or $jo9_trim_head = $chr(13) or $jo9_trim_head = $chr(160):\r\n  jo9_trim_width = 1\r\n elseif $lcase($mid($jo9_trim_text, 1, 4)) = '<br>':\r\n  jo9_trim_width = 4\r\n elseif $lcase($mid($jo9_trim_text, 1, 5)) = '<br/>':\r\n  jo9_trim_width = 5\r\n elseif $lcase($mid($jo9_trim_text, 1, 6)) = '<br />' or $lcase($mid($jo9_trim_text, 1, 6)) = '&nbsp;':\r\n  jo9_trim_width = 6\r\n elseif instr($jo9_trim_text, '<span class=\"jo9-reference-body\">') = 1:\r\n  $jo9_trim_prefix = $jo9_trim_prefix + '<span class=\"jo9-reference-body\">'\r\n  jo9_trim_width = 33\r\n end\r\nend\r\nif jo9_trim_width > 0:\r\n $jo9_trim_text = $mid($jo9_trim_text, jo9_trim_width + 1, len($jo9_trim_text))\r\n jump 'jo9_trim_text_prefix'\r\nend\r\n$result = $jo9_trim_prefix + $jo9_trim_text\r\n",
-      "actions": []
-    }
-  ],
+  "after_sha256": "efe45d628f8c7574f727d5150faf3e0f7ba4391160d7a9de2d0a0aa9421c7e33",
   "edits": [
     {
-      "location": "slavebase_test",
+      "location": "end_day_screen",
       "field": "body",
-      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
-      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text[txt]) + '</div>'",
-      "count": 1
-    },
-    {
-      "location": "choice_screen",
-      "field": "body",
-      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
-      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text[txt]) + '</div>'",
-      "count": 1
-    },
-    {
-      "location": "choice_screen",
-      "field": "body",
-      "old": "*p '<div id = \"side_panel_text\"><span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>'",
-      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', '<span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>')",
-      "count": 1
-    },
-    {
-      "location": "choice_screen",
-      "field": "body",
-      "old": "*p '<div id = \"side_panel_text\"><<$npc_attitude[npc_attitude[$npc_id]]>>'",
-      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', $npc_attitude[npc_attitude[$npc_id]])",
+      "old": "$text = ' <br> <<$assistant_name>>(은)는 알몸으로 식재료를 사러 나갔다 <br><br><br><br>[<<$assistant_name>>]<br>&nbsp;:\"-대충 부끄러워 하는 내용-.\"</div>'",
+      "new": "$text = '<<$assistant_name>>(은)는 알몸으로 식재료를 사러 나갔다 <br><br><br><br>[<<$assistant_name>>]<br>&nbsp;:\"-대충 부끄러워 하는 내용-.\"</div>'",
       "count": 1
     },
     {
       "location": "end_day_screen",
       "field": "body",
-      "old": "*p '<div id = \"text\"><<$text>></div>'",
-      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text) + '</div>'",
+      "old": "$text = ' <br> <<$room1_name>>(은)는 귀족에게 처녀를 따이고 돌아왔다 <br><br><br><br>[<<$room1_name>>]<br>&nbsp;:\"내 순결이...\"</div>'",
+      "new": "$text = '<<$room1_name>>(은)는 귀족에게 처녀를 따이고 돌아왔다 <br><br><br><br>[<<$room1_name>>]<br>&nbsp;:\"내 순결이...\"</div>'",
       "count": 1
     },
     {
       "location": "end_day_screen",
       "field": "body",
-      "old": "*p '<div id = \"side_panel_text\"><<$npc_attitude[npc_attitude[$npc_id]]>>'",
-      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', $npc_attitude[npc_attitude[$npc_id]])",
+      "old": "$text = ' <br> <<$room1_name>>에게 매춘을 시켰다.</div>'",
+      "new": "$text = '<<$room1_name>>에게 매춘을 시켰다.</div>'",
       "count": 1
     },
     {
       "location": "end_day_screen",
       "field": "body",
-      "old": "*nl '<div id = \"side_panel_text\"><span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>'",
-      "new": "*nl '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', '<span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>')",
+      "old": "$text = ' <br> <<$room2_name>>에게 매춘을 시켰다.</div>'",
+      "new": "$text = '<<$room2_name>>에게 매춘을 시켰다.</div>'",
       "count": 1
     },
     {
-      "location": "master_stat_clients",
+      "location": "end_day_screen",
       "field": "body",
-      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
-      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text[txt]) + '</div>'",
+      "old": "$text = ' <br> <<$room3_name>>에게 매춘을 시켰다.</div>'",
+      "new": "$text = '<<$room3_name>>에게 매춘을 시켰다.</div>'",
       "count": 1
     },
     {
-      "location": "master_stat_clients",
+      "location": "end_day_screen",
       "field": "body",
-      "old": "*p '<div id = \"side_panel_text\"><<$npc_attitude[npc_attitude[$npc_id]]>>'",
-      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', $npc_attitude[npc_attitude[$npc_id]])",
+      "old": "$text = ' <br> <<$room4_name>>에게 매춘을 시켰다.</div>'",
+      "new": "$text = '<<$room4_name>>에게 매춘을 시켰다.</div>'",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "$text = '<br><<$room1_name>>(은)는 손에 양동이를 들고 안개 괴물 우리로 다가갔다. 경험이 있던 탓인지, 이번엔 다행히도 기절은 하지 않았다. 끝없는 욕망을 품은 촉수들이, 온 몸 골이란 골을 탐닉하며 쑤셔대던 중, 손으로 하날 낚아채서 양동이로 쳐박았다.<br><br> 안개 괴물 산란액 획득량 : <<semen_gain[max(0, tentacle_size - spawn_milked)]>>'",
+      "new": "$text = '<<$room1_name>>(은)는 손에 양동이를 들고 안개 괴물 우리로 다가갔다. 경험이 있던 탓인지, 이번엔 다행히도 기절은 하지 않았다. 끝없는 욕망을 품은 촉수들이, 온 몸 골이란 골을 탐닉하며 쑤셔대던 중, 손으로 하날 낚아채서 양동이로 쳐박았다.<br><br> 안개 괴물 산란액 획득량 : <<semen_gain[max(0, tentacle_size - spawn_milked)]>>'",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "$text = '<br> <<$room1_name>>(은)는 손에 양동이를 들고 안개 괴물 우리로 다가갔다. 하지만 어쩐 일인지, 무슨 시도에도 별다른 소용이 없어보인다. 강대한 힘의 촉수들이 <<$room1_name>> 몸을 휘둘러 감싸 미친듯이 쑤셔댔고, 그 희멀건한 산란액들이 몸 속 깊이 수정되는 동안, 몇 번이고 절정만을 느끼고 있었다.'",
+      "new": "$text = '<<$room1_name>>(은)는 손에 양동이를 들고 안개 괴물 우리로 다가갔다. 하지만 어쩐 일인지, 무슨 시도에도 별다른 소용이 없어보인다. 강대한 힘의 촉수들이 <<$room1_name>> 몸을 휘둘러 감싸 미친듯이 쑤셔댔고, 그 희멀건한 산란액들이 몸 속 깊이 수정되는 동안, 몇 번이고 절정만을 느끼고 있었다.'",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "$text = '<br><<$room2_name>>(은)는 손에 양동이를 들고 안개 괴물 우리로 다가갔다. 경험이 있던 탓인지, 이번엔 다행히도 기절은 하지 않았다. 끝없는 욕망을 품은 촉수들이, 온 몸 골이란 골을 탐닉하며 쑤셔대던 중, 손으로 하날 낚아채서 양동이로 쳐박았다.<br><br> 안개 괴물 산란액 획득량 : <<semen_gain[max(0, tentacle_size - spawn_milked)]>>'",
+      "new": "$text = '<<$room2_name>>(은)는 손에 양동이를 들고 안개 괴물 우리로 다가갔다. 경험이 있던 탓인지, 이번엔 다행히도 기절은 하지 않았다. 끝없는 욕망을 품은 촉수들이, 온 몸 골이란 골을 탐닉하며 쑤셔대던 중, 손으로 하날 낚아채서 양동이로 쳐박았다.<br><br> 안개 괴물 산란액 획득량 : <<semen_gain[max(0, tentacle_size - spawn_milked)]>>'",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "$text = '<br> <<$room2_name>>(은)는 손에 양동이를 들고 안개 괴물 우리로 다가갔다. 하지만 어쩐 일인지, 무슨 시도에도 별다른 소용이 없어보인다. 강대한 힘의 촉수들이 <<$room2_name>> 몸을 휘둘러 감싸 미친듯이 쑤셔댔고, 그 희멀건한 산란액들이 몸 속 깊이 수정되는 동안, 몇 번이고 절정만을 느끼고 있었다.'",
+      "new": "$text = '<<$room2_name>>(은)는 손에 양동이를 들고 안개 괴물 우리로 다가갔다. 하지만 어쩐 일인지, 무슨 시도에도 별다른 소용이 없어보인다. 강대한 힘의 촉수들이 <<$room2_name>> 몸을 휘둘러 감싸 미친듯이 쑤셔댔고, 그 희멀건한 산란액들이 몸 속 깊이 수정되는 동안, 몇 번이고 절정만을 느끼고 있었다.'",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "$text = '<br><<$room3_name>>(은)는 손에 양동이를 들고 안개 괴물 우리로 다가갔다. 경험이 있던 탓인지, 이번엔 다행히도 기절은 하지 않았다. 끝없는 욕망을 품은 촉수들이, 온 몸 골이란 골을 탐닉하며 쑤셔대던 중, 손으로 하날 낚아채서 양동이로 쳐박았다.<br><br> 안개 괴물 산란액 획득량 : <<semen_gain[max(0, tentacle_size - spawn_milked)]>>'",
+      "new": "$text = '<<$room3_name>>(은)는 손에 양동이를 들고 안개 괴물 우리로 다가갔다. 경험이 있던 탓인지, 이번엔 다행히도 기절은 하지 않았다. 끝없는 욕망을 품은 촉수들이, 온 몸 골이란 골을 탐닉하며 쑤셔대던 중, 손으로 하날 낚아채서 양동이로 쳐박았다.<br><br> 안개 괴물 산란액 획득량 : <<semen_gain[max(0, tentacle_size - spawn_milked)]>>'",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "$text = '<br> <<$room3_name>>(은)는 손에 양동이를 들고 안개 괴물 우리로 다가갔다. 하지만 어쩐 일인지, 무슨 시도에도 별다른 소용이 없어보인다. 강대한 힘의 촉수들이 <<$room3_name>> 몸을 휘둘러 감싸 미친듯이 쑤셔댔고, 그 희멀건한 산란액들이 몸 속 깊이 수정되는 동안, 몇 번이고 절정만을 느끼고 있었다.'",
+      "new": "$text = '<<$room3_name>>(은)는 손에 양동이를 들고 안개 괴물 우리로 다가갔다. 하지만 어쩐 일인지, 무슨 시도에도 별다른 소용이 없어보인다. 강대한 힘의 촉수들이 <<$room3_name>> 몸을 휘둘러 감싸 미친듯이 쑤셔댔고, 그 희멀건한 산란액들이 몸 속 깊이 수정되는 동안, 몇 번이고 절정만을 느끼고 있었다.'",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "$text = '<br><<$room4_name>>(은)는 손에 양동이를 들고 안개 괴물 우리로 다가갔다. 경험이 있던 탓인지, 이번엔 다행히도 기절은 하지 않았다. 끝없는 욕망을 품은 촉수들이, 온 몸 골이란 골을 탐닉하며 쑤셔대던 중, 손으로 하날 낚아채서 양동이로 쳐박았다.<br><br> 안개 괴물 산란액 획득량 : <<semen_gain[max(0, tentacle_size - spawn_milked)]>>'",
+      "new": "$text = '<<$room4_name>>(은)는 손에 양동이를 들고 안개 괴물 우리로 다가갔다. 경험이 있던 탓인지, 이번엔 다행히도 기절은 하지 않았다. 끝없는 욕망을 품은 촉수들이, 온 몸 골이란 골을 탐닉하며 쑤셔대던 중, 손으로 하날 낚아채서 양동이로 쳐박았다.<br><br> 안개 괴물 산란액 획득량 : <<semen_gain[max(0, tentacle_size - spawn_milked)]>>'",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "$text = '<br> <<$room4_name>>(은)는 손에 양동이를 들고 안개 괴물 우리로 다가갔다. 하지만 어쩐 일인지, 무슨 시도에도 별다른 소용이 없어보인다. 강대한 힘의 촉수들이 <<$room4_name>> 몸을 휘둘러 감싸 미친듯이 쑤셔댔고, 그 희멀건한 산란액들이 몸 속 깊이 수정되는 동안, 몇 번이고 절정만을 느끼고 있었다.'",
+      "new": "$text = '<<$room4_name>>(은)는 손에 양동이를 들고 안개 괴물 우리로 다가갔다. 하지만 어쩐 일인지, 무슨 시도에도 별다른 소용이 없어보인다. 강대한 힘의 촉수들이 <<$room4_name>> 몸을 휘둘러 감싸 미친듯이 쑤셔댔고, 그 희멀건한 산란액들이 몸 속 깊이 수정되는 동안, 몇 번이고 절정만을 느끼고 있었다.'",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "$text = '<br> 자위 현장을 붙잡았지만, 노예는 멈추지 않았다. 되려 쳐다 보는게 더 흥분되는지, <<$room1_name>> 손이 더 격렬하게 쑤셔댔다. 점점 움찔거리며, 허리가 휠정도로 엄청난 절정에 달하는 듯 했다. 아주 만족스러운 신음과 함께.<br><br>'",
+      "new": "$text = '자위 현장을 붙잡았지만, 노예는 멈추지 않았다. 되려 쳐다 보는게 더 흥분되는지, <<$room1_name>> 손이 더 격렬하게 쑤셔댔다. 점점 움찔거리며, 허리가 휠정도로 엄청난 절정에 달하는 듯 했다. 아주 만족스러운 신음과 함께.<br><br>'",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "$text = '<br> 자위 현장을 붙잡았지만, 노예는 멈추지 않았다. 되려 쳐다 보는게 더 흥분되는지, <<$room2_name>> 손이 더 격렬하게 쑤셔댔다. 점점 움찔거리며, 허리가 휠정도로 엄청난 절정에 달하는 듯 했다. 아주 만족스러운 신음과 함께.<br><br>'",
+      "new": "$text = '자위 현장을 붙잡았지만, 노예는 멈추지 않았다. 되려 쳐다 보는게 더 흥분되는지, <<$room2_name>> 손이 더 격렬하게 쑤셔댔다. 점점 움찔거리며, 허리가 휠정도로 엄청난 절정에 달하는 듯 했다. 아주 만족스러운 신음과 함께.<br><br>'",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "$text = '<br> 자위 현장을 붙잡았지만, 노예는 멈추지 않았다. 되려 쳐다 보는게 더 흥분되는지, <<$room3_name>> 손이 더 격렬하게 쑤셔댔다. 점점 움찔거리며, 허리가 휠정도로 엄청난 절정에 달하는 듯 했다. 아주 만족스러운 신음과 함께.<br><br>'",
+      "new": "$text = '자위 현장을 붙잡았지만, 노예는 멈추지 않았다. 되려 쳐다 보는게 더 흥분되는지, <<$room3_name>> 손이 더 격렬하게 쑤셔댔다. 점점 움찔거리며, 허리가 휠정도로 엄청난 절정에 달하는 듯 했다. 아주 만족스러운 신음과 함께.<br><br>'",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "$text = '<br> 자위 현장을 붙잡았지만, 노예는 멈추지 않았다. 되려 쳐다 보는게 더 흥분되는지, <<$room4_name>> 손이 더 격렬하게 쑤셔댔다. 점점 움찔거리며, 허리가 휠정도로 엄청난 절정에 달하는 듯 했다. 아주 만족스러운 신음과 함께.<br><br>'",
+      "new": "$text = '자위 현장을 붙잡았지만, 노예는 멈추지 않았다. 되려 쳐다 보는게 더 흥분되는지, <<$room4_name>> 손이 더 격렬하게 쑤셔댔다. 점점 움찔거리며, 허리가 휠정도로 엄청난 절정에 달하는 듯 했다. 아주 만족스러운 신음과 함께.<br><br>'",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "$text[1] = '<br> 문을 두드리는 소리에 누구인지 확인하니, 웡 나으리가 굉장히 화난 표정을 하고 있었다.'",
+      "new": "$text[1] = '문을 두드리는 소리에 누구인지 확인하니, 웡 나으리가 굉장히 화난 표정을 하고 있었다.'",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "$text[3] = '<br> 당신은 조합 훈련사로써 전문성이 없다 간주되어, 조합에서 방출되었다.<br><br><center>~ Game Over ~ </center>'",
+      "new": "$text[3] = '당신은 조합 훈련사로써 전문성이 없다 간주되어, 조합에서 방출되었다.<br><br><center>~ Game Over ~ </center>'",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "$text[3] = '<br> 당신은 벌금과 함께 평판이 추락했다. '",
+      "new": "$text[3] = '당신은 벌금과 함께 평판이 추락했다. '",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "$text[1] = '<br> 문을 쿵쿵대는 소리에 달려나가보니, 여주인 안젤리카가 심술 가득한 얼굴로 나를 쏘아보았다.'",
+      "new": "$text[1] = '문을 쿵쿵대는 소리에 달려나가보니, 여주인 안젤리카가 심술 가득한 얼굴로 나를 쏘아보았다.'",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "$text[3] = '<br> 당신은 조합 훈련사로써 전문성이 없다 간주되어, 조합에서 방출되었다.<br><br><center>~ Game Over ~</center>'",
+      "new": "$text[3] = '당신은 조합 훈련사로써 전문성이 없다 간주되어, 조합에서 방출되었다.<br><br><center>~ Game Over ~</center>'",
       "count": 1
     },
     {
       "location": "prison_cell",
       "field": "body",
-      "old": "*p '<div id=\"text\"><<$prisoner_info_text>></div>'",
-      "new": "*p '<div id=\"text\">' + func('$jo9_trim_text_start', $prisoner_info_text) + '</div>'",
+      "old": "$prisoner_info_text = '<br> <<$prisoner_name>>의 몸무게가 어마어마하다. 쿠키 그릇을 끝없이 요구하길래, 안에 던져놓고 문을 잠궈 버렸다. 무거워서 그런지 미는 힘도 무척 강하다. 목에 하루종일 음식을 들이붓고, 비루해진 몸뚱이를 쳐다보며 또 저주했다가, 또 계속 먹어댄다.'",
+      "new": "$prisoner_info_text = '<<$prisoner_name>>의 몸무게가 어마어마하다. 쿠키 그릇을 끝없이 요구하길래, 안에 던져놓고 문을 잠궈 버렸다. 무거워서 그런지 미는 힘도 무척 강하다. 목에 하루종일 음식을 들이붓고, 비루해진 몸뚱이를 쳐다보며 또 저주했다가, 또 계속 먹어댄다.'",
       "count": 1
     },
     {
-      "location": "barn",
+      "location": "prison_cell",
       "field": "body",
-      "old": "*p '<div id=\"text\"><<$cow_info_text>></div>'",
-      "new": "*p '<div id=\"text\">' + func('$jo9_trim_text_start', $cow_info_text) + '</div>'",
+      "old": "$prisoner_info_text = '<br> 처음 감금 했을때 <<$prisoner_name>>의 몸은 <<$prisoner_fat_txt[prisoner[''orig_fat'']]>>. 지금은 거대한 마차같은 돼지가 따로없다. 그녀는 너무 뚱뚱해져서 거동도 힘들어 보이지만, 이만한 몸무게를 유지하는데는 단 몇개의 쿠키만 있어도 된다. 그녀에게 자존심이란 남아있지 않은 것 같다...'",
+      "new": "$prisoner_info_text = '처음 감금 했을때 <<$prisoner_name>>의 몸은 <<$prisoner_fat_txt[prisoner[''orig_fat'']]>>. 지금은 거대한 마차같은 돼지가 따로없다. 그녀는 너무 뚱뚱해져서 거동도 힘들어 보이지만, 이만한 몸무게를 유지하는데는 단 몇개의 쿠키만 있어도 된다. 그녀에게 자존심이란 남아있지 않은 것 같다...'",
       "count": 1
     },
     {
-      "location": "interaction_screen",
+      "location": "prison_cell",
       "field": "body",
-      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
-      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text[txt]) + '</div>'",
+      "old": "$prisoner_info_text = '<br> <<$prisoner_name>>(은)는 이미 거대한 비만 돼지에 불과하다. 그녀는 너무 뚱뚱해져서 거동도 힘들어 보이지만, 이만한 몸무게를 유지하는데는 단 몇개의 쿠키만 있어도 된다. 그녀에게 자존심이란 남아있지 않은 것 같다...'",
+      "new": "$prisoner_info_text = '<<$prisoner_name>>(은)는 이미 거대한 비만 돼지에 불과하다. 그녀는 너무 뚱뚱해져서 거동도 힘들어 보이지만, 이만한 몸무게를 유지하는데는 단 몇개의 쿠키만 있어도 된다. 그녀에게 자존심이란 남아있지 않은 것 같다...'",
       "count": 1
     },
     {
-      "location": "interaction_screen",
+      "location": "prison_cell",
       "field": "body",
-      "old": "*p '<div id = \"side_panel_text\"><span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>'",
-      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', '<span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>')",
+      "old": "$prisoner_info_text = '<br> <<$prisoner_name>>의 낮은 신음이 터지며 몸이 거꾸러졌다. 상태가 좋지 않아보이니, 쉬게 하며 검진을 받아보게 하는게 좋을 것이다.'",
+      "new": "$prisoner_info_text = '<<$prisoner_name>>의 낮은 신음이 터지며 몸이 거꾸러졌다. 상태가 좋지 않아보이니, 쉬게 하며 검진을 받아보게 하는게 좋을 것이다.'",
       "count": 1
     },
     {
-      "location": "interaction_screen",
+      "location": "prison_cell",
       "field": "body",
-      "old": "*p '<div id = \"side_panel_text\"><<$npc_attitude[npc_attitude[$npc_id]]>>'",
-      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', $npc_attitude[npc_attitude[$npc_id]])",
+      "old": "$prisoner_info_text = '<br> <<$prisoner_name>>(이)가 죽었다. 생기없는 시신 덩어리가 바닥에서 뒹굴고 있다.'",
+      "new": "$prisoner_info_text = '<<$prisoner_name>>(이)가 죽었다. 생기없는 시신 덩어리가 바닥에서 뒹굴고 있다.'",
       "count": 1
     },
     {
-      "location": "interaction_screen_city",
+      "location": "prison_cell",
       "field": "body",
-      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
-      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text[txt]) + '</div>'",
+      "old": "$prisoner_info_text = '<br><b> 경고! 이것은 에러 메세지 입니다! 이 문장을 보셨다면 prisoner_state = <<prisoner_state>> 구문이 인식되지 않고 있는 것입니다! 수리가 가능한 사람에게 도움을 요청하거나, 직접 고쳐주세요.</b>'",
+      "new": "$prisoner_info_text = '<b> 경고! 이것은 에러 메세지 입니다! 이 문장을 보셨다면 prisoner_state = <<prisoner_state>> 구문이 인식되지 않고 있는 것입니다! 수리가 가능한 사람에게 도움을 요청하거나, 직접 고쳐주세요.</b>'",
       "count": 1
     },
     {
-      "location": "interaction_screen_city",
+      "location": "interaction",
       "field": "body",
-      "old": "*p '<div id = \"side_panel_text\"><<$npc_attitude[npc_attitude[$npc_id]]>>'",
-      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', $npc_attitude[npc_attitude[$npc_id]])",
+      "old": "$text[1] = '<br><center> 모든 재료들이 혼합되었을 때에야 비로소 비약들이 만들어집니다.<br><br> 질높은 연금 장비들을 적절히 사용하여 증류하고 양조해주세요.<br><br> 그 다음, 스파크의 힘을 가득히 담아 내어야만 마법깃든 영약이 완성됩니다.</center>'",
+      "new": "$text[1] = '<center> 모든 재료들이 혼합되었을 때에야 비로소 비약들이 만들어집니다.<br><br> 질높은 연금 장비들을 적절히 사용하여 증류하고 양조해주세요.<br><br> 그 다음, 스파크의 힘을 가득히 담아 내어야만 마법깃든 영약이 완성됩니다.</center>'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br> 연금을 준비하러 가면서, 당신은 필요한 모든 재료를 가지고 있지 않다는 것을 깨닫게 된다. 이건 노예의 잘못이지, 그렇지 않나?'",
+      "new": "$text[1] = '연금을 준비하러 가면서, 당신은 필요한 모든 재료를 가지고 있지 않다는 것을 깨닫게 된다. 이건 노예의 잘못이지, 그렇지 않나?'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br> 당신은 사슬로 묶여 있어 어떠한 저항도 할 수 없는 <<$prisoner_name>>의 <<$slave_ass_txt[prisoner[\"fat\"]]>> 엉덩이를 붙잡고 보지에 좆을 밀어넣었다. 그리고 <<$slave_virgin_txt[interaction_prisoner[\"virginity\"]]>>허리를 아무렇게나 놀리며 그녀의 자궁에 정액을 쏟아부었다. 딱히 야하진 않지만, 효율적인 자위 방법이다.'",
+      "new": "$text[1] = '당신은 사슬로 묶여 있어 어떠한 저항도 할 수 없는 <<$prisoner_name>>의 <<$slave_ass_txt[prisoner[\"fat\"]]>> 엉덩이를 붙잡고 보지에 좆을 밀어넣었다. 그리고 <<$slave_virgin_txt[interaction_prisoner[\"virginity\"]]>>허리를 아무렇게나 놀리며 그녀의 자궁에 정액을 쏟아부었다. 딱히 야하진 않지만, 효율적인 자위 방법이다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br> 당신은 감옥으로 내려가 <<$prisoner_name>>의 <<$slave_ass_txt[prisonere[\"fat\"]]>> 엉덩이를 붙잡고 보지에 좆을 밀어넣었다. <<$slave_virgin_txt[interaction_prisoner[\"virginity\"]]>>그런 다음 자궁에 정액을 부어 넣을 때까지 허리를 아무렇게나 놀리고, 싸고난 다음에는 그녀의 머리를 두드리며 좋은 정액 휴지통이라고 칭찬해 주었다.'",
+      "new": "$text[1] = '당신은 감옥으로 내려가 <<$prisoner_name>>의 <<$slave_ass_txt[prisonere[\"fat\"]]>> 엉덩이를 붙잡고 보지에 좆을 밀어넣었다. <<$slave_virgin_txt[interaction_prisoner[\"virginity\"]]>>그런 다음 자궁에 정액을 부어 넣을 때까지 허리를 아무렇게나 놀리고, 싸고난 다음에는 그녀의 머리를 두드리며 좋은 정액 휴지통이라고 칭찬해 주었다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br> 당신은 사슬로 묶여 있어 어떠한 저항도 할 수 없는 암소의 <<$slave_ass_txt[cow[\"fat\"]]>> 엉덩이를 붙잡고 보지에 좆을 밀어넣었다. 그리고 <<$slave_virgin_txt[interaction_cow[\"virginity\"]]>>허리를 아무렇게나 놀리며 그녀의 자궁에 정액을 쏟아부었다. 딱히 야하진 않지만, 효율적인 자위 방법이다.'",
+      "new": "$text[1] = '당신은 사슬로 묶여 있어 어떠한 저항도 할 수 없는 암소의 <<$slave_ass_txt[cow[\"fat\"]]>> 엉덩이를 붙잡고 보지에 좆을 밀어넣었다. 그리고 <<$slave_virgin_txt[interaction_cow[\"virginity\"]]>>허리를 아무렇게나 놀리며 그녀의 자궁에 정액을 쏟아부었다. 딱히 야하진 않지만, 효율적인 자위 방법이다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br> 당신은 외양간으로 가 <<$cow_name>>의 <<$slave_ass_txt[cow[\"fat\"]]>> 엉덩이를 붙잡고 보지에 좆을 밀어넣었다. <<$slave_virgin_txt[interaction_cow[\"virginity\"]]>>그런 다음 자궁에 정액을 부어 넣을 때까지 허리를 아무렇게나 놀리고, 싸고난 다음에는 그녀의 머리를 두드리며 좋은 정액받이 젖소라고 칭찬해 주었다.'",
+      "new": "$text[1] = '당신은 외양간으로 가 <<$cow_name>>의 <<$slave_ass_txt[cow[\"fat\"]]>> 엉덩이를 붙잡고 보지에 좆을 밀어넣었다. <<$slave_virgin_txt[interaction_cow[\"virginity\"]]>>그런 다음 자궁에 정액을 부어 넣을 때까지 허리를 아무렇게나 놀리고, 싸고난 다음에는 그녀의 머리를 두드리며 좋은 정액받이 젖소라고 칭찬해 주었다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br>당신은 메이드와 섹스했다.'",
+      "new": "$text[1] = '당신은 메이드와 섹스했다.'",
+      "count": 4
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br> <<$room1_name>>와 섹스했다.'",
+      "new": "$text[1] = '<<$room1_name>>와 섹스했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br> <<$room2_name>>와 섹스했다.'",
+      "new": "$text[1] = '<<$room2_name>>와 섹스했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br> <<$room3_name>>와 섹스했다.'",
+      "new": "$text[1] = '<<$room3_name>>와 섹스했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br> <<$room4_name>>와 섹스했다.'",
+      "new": "$text[1] = '<<$room4_name>>와 섹스했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br> 당신은 노예에게 다가가 통을 내려놓고, 젖꼭지에서 즙을 짜내기 시작했다. <<$room1_name>>(은)는 편해보이진 않았지만, 그렇다고 별다른 저항을 보이는 건 아니었다'",
+      "new": "$text[1] = '당신은 노예에게 다가가 통을 내려놓고, 젖꼭지에서 즙을 짜내기 시작했다. <<$room1_name>>(은)는 편해보이진 않았지만, 그렇다고 별다른 저항을 보이는 건 아니었다'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br> 당신은 노예에게 다가가 통을 내려놓고, 젖꼭지에서 즙을 짜내기 시작했다. <<$room2_name>>(은)는 편해보이진 않았지만, 그렇다고 별다른 저항을 보이는 건 아니었다'",
+      "new": "$text[1] = '당신은 노예에게 다가가 통을 내려놓고, 젖꼭지에서 즙을 짜내기 시작했다. <<$room2_name>>(은)는 편해보이진 않았지만, 그렇다고 별다른 저항을 보이는 건 아니었다'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br> 당신은 노예에게 다가가 통을 내려놓고, 젖꼭지에서 즙을 짜내기 시작했다. <<$room3_name>>(은)는 편해보이진 않았지만, 그렇다고 별다른 저항을 보이는 건 아니었다'",
+      "new": "$text[1] = '당신은 노예에게 다가가 통을 내려놓고, 젖꼭지에서 즙을 짜내기 시작했다. <<$room3_name>>(은)는 편해보이진 않았지만, 그렇다고 별다른 저항을 보이는 건 아니었다'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br> 당신은 노예에게 다가가 통을 내려놓고, 젖꼭지에서 즙을 짜내기 시작했다. <<$room4_name>>(은)는 편해보이진 않았지만, 그렇다고 별다른 저항을 보이는 건 아니었다'",
+      "new": "$text[1] = '당신은 노예에게 다가가 통을 내려놓고, 젖꼭지에서 즙을 짜내기 시작했다. <<$room4_name>>(은)는 편해보이진 않았지만, 그렇다고 별다른 저항을 보이는 건 아니었다'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$slave_name>>에게 방을 배정했다.'",
+      "new": "$text[1] = '<<$slave_name>>에게 방을 배정했다.'",
+      "count": 4
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br>메이드를 시키기에는 충성도가 부족하다.'",
+      "new": "$text[1] = '메이드를 시키기에는 충성도가 부족하다.'",
+      "count": 4
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br>내 명령에 따라 방을 비웠다.'",
+      "new": "$text[1] = '내 명령에 따라 방을 비웠다.'",
+      "count": 4
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$room1_name>>에게 청소를 도우라고 했다.'",
+      "new": "$text[1] = '<<$room1_name>>에게 청소를 도우라고 했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$room1_name>>에게 더이상 청소를 하지말라고 했다.'",
+      "new": "$text[1] = '<<$room1_name>>에게 더이상 청소를 하지말라고 했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$room2_name>>에게 청소를 도우라고 했다.'",
+      "new": "$text[1] = '<<$room2_name>>에게 청소를 도우라고 했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$room2_name>>에게 더이상 청소를 하지말라고 했다.'",
+      "new": "$text[1] = '<<$room2_name>>에게 더이상 청소를 하지말라고 했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$room3_name>>에게 청소를 도우라고 했다.'",
+      "new": "$text[1] = '<<$room3_name>>에게 청소를 도우라고 했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$room3_name>>에게 더이상 청소를 하지말라고 했다.'",
+      "new": "$text[1] = '<<$room3_name>>에게 더이상 청소를 하지말라고 했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$room4_name>>에게 청소를 도우라고 했다.'",
+      "new": "$text[1] = '<<$room4_name>>에게 청소를 도우라고 했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$room4_name>>에게 더이상 청소를 하지말라고 했다.'",
+      "new": "$text[1] = '<<$room4_name>>에게 더이상 청소를 하지말라고 했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$room1_name>>에게 주인과 노예의 목욕을 도우라고 했다.'",
+      "new": "$text[1] = '<<$room1_name>>에게 주인과 노예의 목욕을 도우라고 했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$room2_name>>에게 주인과 노예의 목욕을 도우라고 했다.'",
+      "new": "$text[1] = '<<$room2_name>>에게 주인과 노예의 목욕을 도우라고 했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$room3_name>>에게 주인과 노예의 목욕을 도우라고 했다.'",
+      "new": "$text[1] = '<<$room3_name>>에게 주인과 노예의 목욕을 도우라고 했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$room4_name>>에게 주인과 노예의 목욕을 도우라고 했다.'",
+      "new": "$text[1] = '<<$room4_name>>에게 주인과 노예의 목욕을 도우라고 했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$room1_name>>에게 목욕봉사를 그만하라고했다.'",
+      "new": "$text[1] = '<<$room1_name>>에게 목욕봉사를 그만하라고했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$room2_name>>에게 목욕봉사를 그만하라고했다.'",
+      "new": "$text[1] = '<<$room2_name>>에게 목욕봉사를 그만하라고했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$room3_name>>에게 목욕봉사를 그만하라고했다.'",
+      "new": "$text[1] = '<<$room3_name>>에게 목욕봉사를 그만하라고했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$room4_name>>에게 목욕봉사를 그만하라고했다.'",
+      "new": "$text[1] = '<<$room4_name>>에게 목욕봉사를 그만하라고했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$room1_name>>에게 안개괴물의 정액을 채취하라고 했다.'",
+      "new": "$text[1] = '<<$room1_name>>에게 안개괴물의 정액을 채취하라고 했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br>촉수 착정을 지시하려면 안개괴물 문신이 필요하다.'",
+      "new": "$text[1] = '촉수 착정을 지시하려면 안개괴물 문신이 필요하다.'",
+      "count": 4
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$room2_name>>에게 안개괴물의 정액을 채취하라고 했다.'",
+      "new": "$text[1] = '<<$room2_name>>에게 안개괴물의 정액을 채취하라고 했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$room3_name>>에게 안개괴물의 정액을 채취하라고 했다.'",
+      "new": "$text[1] = '<<$room3_name>>에게 안개괴물의 정액을 채취하라고 했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$room4_name>>에게 안개괴물의 정액을 채취하라고 했다.'",
+      "new": "$text[1] = '<<$room4_name>>에게 안개괴물의 정액을 채취하라고 했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$room1_name>>에게 착정을 멈추라고 했다.'",
+      "new": "$text[1] = '<<$room1_name>>에게 착정을 멈추라고 했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$room2_name>>에게 착정을 멈추라고 했다.'",
+      "new": "$text[1] = '<<$room2_name>>에게 착정을 멈추라고 했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$room3_name>>에게 착정을 멈추라고 했다.'",
+      "new": "$text[1] = '<<$room3_name>>에게 착정을 멈추라고 했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$room4_name>>에게 착정을 멈추라고 했다.'",
+      "new": "$text[1] = '<<$room4_name>>에게 착정을 멈추라고 했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$room1_name>>에게 요리를 도우라고 했다.'",
+      "new": "$text[1] = '<<$room1_name>>에게 요리를 도우라고 했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$room2_name>>에게 요리를 도우라고 했다.'",
+      "new": "$text[1] = '<<$room2_name>>에게 요리를 도우라고 했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$room3_name>>에게 요리를 도우라고 했다.'",
+      "new": "$text[1] = '<<$room3_name>>에게 요리를 도우라고 했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$room4_name>>에게 요리를 도우라고 했다.'",
+      "new": "$text[1] = '<<$room4_name>>에게 요리를 도우라고 했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$room1_name>>에게 더이상 요리를 하지말라고 했다.'",
+      "new": "$text[1] = '<<$room1_name>>에게 더이상 요리를 하지말라고 했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$room2_name>>에게 더이상 요리를 하지말라고 했다.'",
+      "new": "$text[1] = '<<$room2_name>>에게 더이상 요리를 하지말라고 했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$room3_name>>에게 더이상 요리를 하지말라고 했다.'",
+      "new": "$text[1] = '<<$room3_name>>에게 더이상 요리를 하지말라고 했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$room4_name>>에게 더이상 요리를 하지말라고 했다.'",
+      "new": "$text[1] = '<<$room4_name>>에게 더이상 요리를 하지말라고 했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$room1_name>>에게 손님을 받으라고 했다.'",
+      "new": "$text[1] = '<<$room1_name>>에게 손님을 받으라고 했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br>노예의 조건이 맞지 않아 불가능하다.'",
+      "new": "$text[1] = '노예의 조건이 맞지 않아 불가능하다.'",
+      "count": 4
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$room1_name>>에게 이제 손님을 받지 말라고 했다.'",
+      "new": "$text[1] = '<<$room1_name>>에게 이제 손님을 받지 말라고 했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$room2_name>>에게 손님을 받으라고 했다.'",
+      "new": "$text[1] = '<<$room2_name>>에게 손님을 받으라고 했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$room2_name>>에게 이제 손님을 받지 말라고 했다.'",
+      "new": "$text[1] = '<<$room2_name>>에게 이제 손님을 받지 말라고 했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$room3_name>>에게 손님을 받으라고 했다.'",
+      "new": "$text[1] = '<<$room3_name>>에게 손님을 받으라고 했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$room3_name>>에게 이제 손님을 받지 말라고 했다.'",
+      "new": "$text[1] = '<<$room3_name>>에게 이제 손님을 받지 말라고 했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$room4_name>>에게 손님을 받으라고 했다.'",
+      "new": "$text[1] = '<<$room4_name>>에게 손님을 받으라고 했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "$text[1] = '<br><<$room4_name>>에게 이제 손님을 받지 말라고 했다.'",
+      "new": "$text[1] = '<<$room4_name>>에게 이제 손님을 받지 말라고 했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_result",
+      "field": "body",
+      "old": "$text[1] = '<br> 교육은 엉망진창이었다. 여자의 육체를 다루려는데 물건은 세워야 할 것 아닌가?'",
+      "new": "$text[1] = '교육은 엉망진창이었다. 여자의 육체를 다루려는데 물건은 세워야 할 것 아닌가?'",
+      "count": 1
+    },
+    {
+      "location": "interaction_result",
+      "field": "body",
+      "old": "$text[] = '<br> 조교가 끝나갈 때 쯤 당신은 제대로 된 성과를 냈다. 더 어려운 테크닉을 조교하는 것이 가능해졌다.'",
+      "new": "$text[] = '조교가 끝나갈 때 쯤 당신은 제대로 된 성과를 냈다. 더 어려운 테크닉을 조교하는 것이 가능해졌다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_result",
+      "field": "body",
+      "old": "$text[] = '<br> <<$dynslave_name>>는 당신이 가르치려 한 것을 완전히 해내지는 못했다. 어쩌면 다음번에는 가능할지도 모른다. 당신은 그녀에게 이렇게 설명한다. <br><br>  <i>\"처음에 씨를 빨아내지 못했다면, 다시, 또 다시 시도해야 한다.\"</i>'",
+      "new": "$text[] = '<<$dynslave_name>>는 당신이 가르치려 한 것을 완전히 해내지는 못했다. 어쩌면 다음번에는 가능할지도 모른다. 당신은 그녀에게 이렇게 설명한다. <br><br>  <i>\"처음에 씨를 빨아내지 못했다면, 다시, 또 다시 시도해야 한다.\"</i>'",
+      "count": 1
+    },
+    {
+      "location": "interaction_result",
+      "field": "body",
+      "old": "$text[] = '<br> <<$dynslave_name>>는 당신이 가르치려 한 것을 완전히 해내지는 못했다. 이 수업은 다시 반복할 필요가 있지만, 연습이 완벽을 만든다. 다음에는 더 쉬워질 것이다.'",
+      "new": "$text[] = '<<$dynslave_name>>는 당신이 가르치려 한 것을 완전히 해내지는 못했다. 이 수업은 다시 반복할 필요가 있지만, 연습이 완벽을 만든다. 다음에는 더 쉬워질 것이다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$text[1] = '<br> 당신이 맨 헌터의 가게로 들어서자, 주인은 특유의 미소로 당신을 반겼다.'",
+      "new": "$text[1] = '당신이 맨 헌터의 가게로 들어서자, 주인은 특유의 미소로 당신을 반겼다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$sp_text[1] = '<br> 양품점에서는 다양한 옷과 신발을 구입할 수 있다.'",
+      "new": "$sp_text[1] = '양품점에서는 다양한 옷과 신발을 구입할 수 있다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$text[1] = '<br> 도축자는 무자비하게 노예의 머리채를 쥐어 잡더니 날카로운 칼로 그녀의 목을 빠르게 그었다. 흘러나오는 피로 인해 질식해가면서도 <<$slave_name>>(은)는 얼마 간 그의 손을 잡아 끌었다. 그녀는 이내 숨을 멈추고, 도축자는 피를 빼내기 위해 그녀를 고리에 걸었다. 물론, 당신은 약속된 돈을 받았다.'",
+      "new": "$text[1] = '도축자는 무자비하게 노예의 머리채를 쥐어 잡더니 날카로운 칼로 그녀의 목을 빠르게 그었다. 흘러나오는 피로 인해 질식해가면서도 <<$slave_name>>(은)는 얼마 간 그의 손을 잡아 끌었다. 그녀는 이내 숨을 멈추고, 도축자는 피를 빼내기 위해 그녀를 고리에 걸었다. 물론, 당신은 약속된 돈을 받았다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$text[1] = '<br> 도축자는 무자비하게 노예의 머리채를 쥐어 잡더니 날카로운 칼로 그녀의 목을 빠르게 그었다. 흘러나오는 피로 인해 질식해가면서도 <<$slave_name>>(은)는 얼마 간 그의 손을 잡아 끌었다.'",
+      "new": "$text[1] = '도축자는 무자비하게 노예의 머리채를 쥐어 잡더니 날카로운 칼로 그녀의 목을 빠르게 그었다. 흘러나오는 피로 인해 질식해가면서도 <<$slave_name>>(은)는 얼마 간 그의 손을 잡아 끌었다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$text[2] = '<br> 도축자는 독특하게 굴곡진 칼로 노예의 몸에서 피부를 벗겨냈다. 그리고 거대한 도끼로 고기 덩어리를 썰었다. 가장 좋은 안심 부위는 1인분의 양만큼 자르고, 나머지 부위는 큰 분쇄기에 지방과 함께 넣어 좋은 품질의 갈아놓은 고기를 만들었다.'",
+      "new": "$text[2] = '도축자는 독특하게 굴곡진 칼로 노예의 몸에서 피부를 벗겨냈다. 그리고 거대한 도끼로 고기 덩어리를 썰었다. 가장 좋은 안심 부위는 1인분의 양만큼 자르고, 나머지 부위는 큰 분쇄기에 지방과 함께 넣어 좋은 품질의 갈아놓은 고기를 만들었다.'",
       "count": 2
     },
     {
-      "location": "interaction_screen_city",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id = \"side_panel_text\"><span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>'",
-      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', '<span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>')",
+      "old": "$text[3] = '<br> 두시간 후, 당신은 비닐봉지 안에 깔끔하게 포장되어 있는 노예를 되돌려 받았다.<BR><br><center>획득한 고기 -</center>'",
+      "new": "$text[3] = '두시간 후, 당신은 비닐봉지 안에 깔끔하게 포장되어 있는 노예를 되돌려 받았다.<BR><br><center>획득한 고기 -</center>'",
       "count": 1
     },
     {
-      "location": "guild",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
-      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text[txt]) + '</div>'",
+      "old": "$text[2] = '<br> 동양 소녀가 손가락에 오일을 칠하고, 30분 쯤 당신의 남근을 어루어 만지며 애무해줬다. 그러면서 어떤 부위에 침을 놓는데, 기분 좋기는 하지만 안마 전보다도 흥분되지 않았다. 소녀는 당신의 자지를 한 번 쳐다보더니 작은 약병을 건네준다. 그리곤 의미 심장한 눈빛으로 방 문에 다가서며, 마사지를 하던 손가락이 자기의 입을 가르켰다.'",
+      "new": "$text[2] = '동양 소녀가 손가락에 오일을 칠하고, 30분 쯤 당신의 남근을 어루어 만지며 애무해줬다. 그러면서 어떤 부위에 침을 놓는데, 기분 좋기는 하지만 안마 전보다도 흥분되지 않았다. 소녀는 당신의 자지를 한 번 쳐다보더니 작은 약병을 건네준다. 그리곤 의미 심장한 눈빛으로 방 문에 다가서며, 마사지를 하던 손가락이 자기의 입을 가르켰다.'",
       "count": 1
     },
     {
-      "location": "guild",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id = \"side_panel_text\"><span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>'",
-      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', '<span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>')",
+      "old": "$text[2] = '<br> 집으로 오는 길, 당신은 그 노예를 떠올리고 마음속으로 계산했다. 노예시장에 팔아버리는 것보다 내가 키우는 것이 더 이윤이 남지 않을까? 그렇다면 지금 데리고 있는 노예를 어떻게 처리할지 결정해야 한다...'",
+      "new": "$text[2] = '집으로 오는 길, 당신은 그 노예를 떠올리고 마음속으로 계산했다. 노예시장에 팔아버리는 것보다 내가 키우는 것이 더 이윤이 남지 않을까? 그렇다면 지금 데리고 있는 노예를 어떻게 처리할지 결정해야 한다...'",
       "count": 1
     },
     {
-      "location": "guild",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id = \"side_panel_text\"><<$npc_attitude[npc_attitude[$npc_id]]>>'",
-      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', $npc_attitude[npc_attitude[$npc_id]])",
+      "old": "$text[2] = '<br> 당신은 경매인에게 위약금을 내고 새로운 노예를 데리고 왔다. 이 노예가 그 동안의 당신의 노력과 돈에 부합하는 노예로 성장하길 바라는 수밖에...'",
+      "new": "$text[2] = '당신은 경매인에게 위약금을 내고 새로운 노예를 데리고 왔다. 이 노예가 그 동안의 당신의 노력과 돈에 부합하는 노예로 성장하길 바라는 수밖에...'",
       "count": 1
     },
     {
-      "location": "guild_board",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
-      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text[txt]) + '</div>'",
+      "old": "$sp_text[1] = '<br> 당신은 원형 경기장 밑에 위치한 대기실에 들어섰다. 경비병이 아무런 문제없이 당신을 통과시켜줬다. - 노예 길드는 검투사와 경마 무리에도 영향력을 미친다. 당신은 적당한 상대를 고르기만 하면 된다.'",
+      "new": "$sp_text[1] = '당신은 원형 경기장 밑에 위치한 대기실에 들어섰다. 경비병이 아무런 문제없이 당신을 통과시켜줬다. - 노예 길드는 검투사와 경마 무리에도 영향력을 미친다. 당신은 적당한 상대를 고르기만 하면 된다.'",
       "count": 1
     },
     {
-      "location": "guild_board",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id = \"side_panel_text\"><span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>'",
-      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', '<span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>')",
+      "old": "$text[1] = '<br> <<$slave_name>>(은)는 일어나지 못했다. 도우미들이 경기장으로 서둘러 들어갔을 때, 그녀는 심각한 부상과 출혈로 죽어있었다. 콜로세움의 관행에 따라 그녀의 시체는 상원의회 만찬에 초대된 손님들을 접대하기 위해 요리사에게 건네졌다. 당신은 그 대가로 5 스파크를 받았다.<br><br> 기분-3 계급-1'",
+      "new": "$text[1] = '<<$slave_name>>(은)는 일어나지 못했다. 도우미들이 경기장으로 서둘러 들어갔을 때, 그녀는 심각한 부상과 출혈로 죽어있었다. 콜로세움의 관행에 따라 그녀의 시체는 상원의회 만찬에 초대된 손님들을 접대하기 위해 요리사에게 건네졌다. 당신은 그 대가로 5 스파크를 받았다.<br><br> 기분-3 계급-1'",
       "count": 1
     },
     {
-      "location": "guild_board",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id = \"side_panel_text\"><<$npc_attitude[npc_attitude[$npc_id]]>>'",
-      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', $npc_attitude[npc_attitude[$npc_id]])",
+      "old": "$text[1] = '<br> 관중들은 몸을 가누지 못하는 노예를 향해 야유를 보내며 발을 쿵쿵 댔다. 그들은 <<$slave_name>>(이)가 최선을 다해 싸우지 않는다고 생각하는 듯했다. 관중들의 뜻은 곧 받아들여졌고, 그녀의 고기는 상원의회 요리사에게 건네졌다.<br><br> 기분-5 계급-2'",
+      "new": "$text[1] = '관중들은 몸을 가누지 못하는 노예를 향해 야유를 보내며 발을 쿵쿵 댔다. 그들은 <<$slave_name>>(이)가 최선을 다해 싸우지 않는다고 생각하는 듯했다. 관중들의 뜻은 곧 받아들여졌고, 그녀의 고기는 상원의회 요리사에게 건네졌다.<br><br> 기분-5 계급-2'",
       "count": 1
     },
     {
-      "location": "shop_general",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id = \"side_panel_text\"><<$info_bar>><span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>'",
-      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', '<<$info_bar>><span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>')",
+      "old": "$text[1] = '<br> <<$slave_name>>(은)는 가까스로 살아남았지만, 패배했다. 하지만 그녀가 열심히 싸운 것을 근거로 관중은 그녀를 살려내는 것에 동의했다. 도우미들은 응급구호를 하기 위해 들 것에 노예를 싣고 노예 우리로 향했다.<br><br> 기분-3 계급-1, 노예 태도-5'",
+      "new": "$text[1] = '<<$slave_name>>(은)는 가까스로 살아남았지만, 패배했다. 하지만 그녀가 열심히 싸운 것을 근거로 관중은 그녀를 살려내는 것에 동의했다. 도우미들은 응급구호를 하기 위해 들 것에 노예를 싣고 노예 우리로 향했다.<br><br> 기분-3 계급-1, 노예 태도-5'",
       "count": 1
     },
     {
-      "location": "shop_general",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id = \"side_panel_text\"><<$npc_attitude[npc_attitude[$npc_id]]>>'",
-      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', $npc_attitude[npc_attitude[$npc_id]])",
+      "old": "$text[1] = '<br> 최후의 일격이 가해진 후 상대는 바닥에 쓰러졌다. <<$slave_name>>(은)는 무기를 높게 들어 관중에게 화답했다. 이번 승리로 그녀는 관중의 사랑을 한 몸에 받았고, 당신은 조교사로서 영광을 얻게 되었다.<br><br> 성격+10 자아+10 태도+5 체력+10 기분/인식/평판Up 불안Dn 기타+a'",
+      "new": "$text[1] = '최후의 일격이 가해진 후 상대는 바닥에 쓰러졌다. <<$slave_name>>(은)는 무기를 높게 들어 관중에게 화답했다. 이번 승리로 그녀는 관중의 사랑을 한 몸에 받았고, 당신은 조교사로서 영광을 얻게 되었다.<br><br> 성격+10 자아+10 태도+5 체력+10 기분/인식/평판Up 불안Dn 기타+a'",
       "count": 1
     },
     {
-      "location": "shop_general",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id = \"text\"><<$sp_text[sp_txt]>></div>'",
-      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $sp_text[sp_txt]) + '</div>'",
+      "old": "$text[2] = '<br><center>우승 상금 : <<purse>> 스파크 !</center>'",
+      "new": "$text[2] = '<center>우승 상금 : <<purse>> 스파크 !</center>'",
       "count": 1
     },
     {
-      "location": "shop_wpn",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id = \"side_panel_text\"><span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>'",
-      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', '<span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>')",
+      "old": "$text[1] = '<br> 노예의 장엄한 승리를 목격한 관중들은 황홀경에 포효한다. 관중들은 한 명씩 의자위에 올라서 «LI-BE-RO!!!»를 외치기 시작했다. 당신은 그녀를 노예에서 해방시켜줘야만 한다... 그러나 사람들은 그들에게 이 영광스러운 챔피언을 선사한 마스터를 영원히 기억할 것이다!'",
+      "new": "$text[1] = '노예의 장엄한 승리를 목격한 관중들은 황홀경에 포효한다. 관중들은 한 명씩 의자위에 올라서 «LI-BE-RO!!!»를 외치기 시작했다. 당신은 그녀를 노예에서 해방시켜줘야만 한다... 그러나 사람들은 그들에게 이 영광스러운 챔피언을 선사한 마스터를 영원히 기억할 것이다!'",
       "count": 1
     },
     {
-      "location": "shop_wpn",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id = \"side_panel_text\"><<$npc_attitude[npc_attitude[$npc_id]]>>'",
-      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', $npc_attitude[npc_attitude[$npc_id]])",
+      "old": "$text[2] = '<br> 공식적으로 당신이 <<$slave_name>>에게 자유를 줬지만 만찬 직후 그녀는 당신에게로 다시 돌아왔다. 그녀는 당신을 섬기는 것 이외의 일은 하고 싶지 않은 듯 보인다. 아니면 단순히 어디로 가야할 지 몰랐다든지. 경우야 어떻든 굉장히 좋은 상황임에는 틀림없다. <br><br> 투사+30 성격+20 자아+20 태도+10 채력+10 기분/인식/평판Up 불안Dn'",
+      "new": "$text[2] = '공식적으로 당신이 <<$slave_name>>에게 자유를 줬지만 만찬 직후 그녀는 당신에게로 다시 돌아왔다. 그녀는 당신을 섬기는 것 이외의 일은 하고 싶지 않은 듯 보인다. 아니면 단순히 어디로 가야할 지 몰랐다든지. 경우야 어떻든 굉장히 좋은 상황임에는 틀림없다. <br><br> 투사+30 성격+20 자아+20 태도+10 채력+10 기분/인식/평판Up 불안Dn'",
       "count": 1
     },
     {
-      "location": "shop_wpn",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
-      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text[txt]) + '</div>'",
+      "old": "$text[2] = '<br> 당신은 어쩔 수 없이 노예를 풀어줬다. 이제 <<$slave_name>>(은)는 자유인이고 당신은 그녀를 다시 만날 수 없을 듯하다. 만약 그녀가 당신에게 조금 더 헌신적이었거나, 당신을 덜 두려워했다면 결과는 달라졌을지도 모른다...'",
+      "new": "$text[2] = '당신은 어쩔 수 없이 노예를 풀어줬다. 이제 <<$slave_name>>(은)는 자유인이고 당신은 그녀를 다시 만날 수 없을 듯하다. 만약 그녀가 당신에게 조금 더 헌신적이었거나, 당신을 덜 두려워했다면 결과는 달라졌을지도 모른다...'",
       "count": 1
     },
     {
-      "location": "item_buy",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
-      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text[txt]) + '</div>'",
+      "old": "$text[3] = '<br><center>우승 상금 : <<purse>> 스파크 !</center>'",
+      "new": "$text[3] = '<center>우승 상금 : <<purse>> 스파크 !</center>'",
       "count": 1
     },
     {
-      "location": "item_buy",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id = \"side_panel_text\"><span class=\"jo9-reference-body\"><<dyneval($show_item_effects, $item_id)>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>'",
-      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', '<span class=\"jo9-reference-body\"><<dyneval($show_item_effects, $item_id)>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>')",
+      "old": "$text[1] = '<br> 당신은 패배해여 땅바닥에 드러누웠다.'",
+      "new": "$text[1] = '당신은 패배해여 땅바닥에 드러누웠다.'",
       "count": 1
     },
     {
-      "location": "item_buy",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id = \"side_panel_text\"><<$npc_attitude[npc_attitude[$npc_id]]>>'",
-      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', $npc_attitude[npc_attitude[$npc_id]])",
+      "old": "$text[1] = '<br> 당신의 마지막 공격이 적을 땅바닥에 처박았다.'",
+      "new": "$text[1] = '당신의 마지막 공격이 적을 땅바닥에 처박았다.'",
       "count": 1
     },
     {
-      "location": "plastics",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
-      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text[txt]) + '</div>'",
+      "old": "$text[1] = '<br> <<$slave_name>>(은)는 패배해여 땅바닥에 드러누웠다.<br>안타깝게도 이런식으로 져버리면, <b>전투술도 체력도 오르지 않는다</b>.'",
+      "new": "$text[1] = '<<$slave_name>>(은)는 패배해여 땅바닥에 드러누웠다.<br>안타깝게도 이런식으로 져버리면, <b>전투술도 체력도 오르지 않는다</b>.'",
       "count": 1
     },
     {
-      "location": "plastics",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id = \"side_panel_text\"><span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style><br></div>'",
-      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', '<span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style><br></div>')",
+      "old": "$text[1] = '<br> <<$slave_name>>의 마지막 공격이 적을 땅바닥에 처박았다.'",
+      "new": "$text[1] = '<<$slave_name>>의 마지막 공격이 적을 땅바닥에 처박았다.'",
       "count": 1
     },
     {
-      "location": "slave_auction_buy",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id = \"text\"><<$text>></div>'",
-      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text) + '</div>'",
+      "old": "$text[1] = '<br><<$assistant_name>>(은)는 패배해여 땅바닥에 드러누웠다.<br>안타깝게도 이런식으로 져버리면, <b>전투술도 체력도 오르지 않는다</b>.'",
+      "new": "$text[1] = '<<$assistant_name>>(은)는 패배해여 땅바닥에 드러누웠다.<br>안타깝게도 이런식으로 져버리면, <b>전투술도 체력도 오르지 않는다</b>.'",
       "count": 1
     },
     {
-      "location": "slave_auction_buy",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id = \"side_panel_text\"><span class=\"jo9-reference-body\"><<$npc_info[$npc_id]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>'",
-      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', '<span class=\"jo9-reference-body\"><<$npc_info[$npc_id]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>')",
+      "old": "$text[1] = '<br><<$assistant_name>>의 마지막 공격이 적을 땅바닥에 처박았다.'",
+      "new": "$text[1] = '<<$assistant_name>>의 마지막 공격이 적을 땅바닥에 처박았다.'",
       "count": 1
     },
     {
-      "location": "slave_auction_buy",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id = \"side_panel_text\"><span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style><br></div>'",
-      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', '<span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style><br></div>')",
+      "old": "$text[2] = '<br> 그 직후, 안젤리카는 당신에게 다트를 던지자, 아무것도 느끼지 못하고 그대로 쓰러집니다. 이제 당신에겐 조합 내의 이름없는 시종으로 살게 될 슬픈 운명만이 남아있습니다...<br><br><center><b>Game Over</b></center>'",
+      "new": "$text[2] = '그 직후, 안젤리카는 당신에게 다트를 던지자, 아무것도 느끼지 못하고 그대로 쓰러집니다. 이제 당신에겐 조합 내의 이름없는 시종으로 살게 될 슬픈 운명만이 남아있습니다...<br><br><center><b>Game Over</b></center>'",
       "count": 1
     },
     {
-      "location": "slave_auction_sell",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
-      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text[txt]) + '</div>'",
+      "old": "$text[1] = '<br> 당신은 집회장에서 친구들에게 노예의 일거리와 잠재적인 고객들에 대해 묻고, 일기에 그 내용을 신경 써서 적어 내려가며 얼마간 시간을 보냈다. 탐색 결과는 일지에서 확인할 수 있다.'",
+      "new": "$text[1] = '당신은 집회장에서 친구들에게 노예의 일거리와 잠재적인 고객들에 대해 묻고, 일기에 그 내용을 신경 써서 적어 내려가며 얼마간 시간을 보냈다. 탐색 결과는 일지에서 확인할 수 있다.'",
       "count": 1
     },
     {
-      "location": "slave_auction_sell",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id = \"side_panel_text\"><<$npc_attitude[npc_attitude[$npc_id]]>>'",
-      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', $npc_attitude[npc_attitude[$npc_id]])",
+      "old": "$text[1] = '<br> 당신은 집회장에서 생산적으로 시간을 보냈다. 길드원이 아닌 라이벌에 대한 악랄한 루머를 퍼트리고, 당신의 장점은 하늘 꼭대기까지 칭찬했다. 이것은 분명 당신의 명성에 긍정적인 영향을 미칠 것이다.<br><Br> 평판+1'",
+      "new": "$text[1] = '당신은 집회장에서 생산적으로 시간을 보냈다. 길드원이 아닌 라이벌에 대한 악랄한 루머를 퍼트리고, 당신의 장점은 하늘 꼭대기까지 칭찬했다. 이것은 분명 당신의 명성에 긍정적인 영향을 미칠 것이다.<br><Br> 평판+1'",
       "count": 1
     },
     {
-      "location": "slave_auction_sell",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id = \"side_panel_text\"><span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style><br></div>'",
-      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', '<span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style><br></div>')",
+      "old": "$text[1] = '<br> 당신은 집회장에서 2시간 정도 시간을 보내보지만, 모두 익숙한 얼굴들이고, 이미 당신과 대화를 한 사람들 뿐이다. 내일 다시 오면 더 흥미로운 사람들이 있을지도 모른다.'",
+      "new": "$text[1] = '당신은 집회장에서 2시간 정도 시간을 보내보지만, 모두 익숙한 얼굴들이고, 이미 당신과 대화를 한 사람들 뿐이다. 내일 다시 오면 더 흥미로운 사람들이 있을지도 모른다.'",
       "count": 1
     },
     {
-      "location": "slave_to_train",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id = \"text\">    Вместе со своим потенциальным работодателем вы отправляетесь в центр передержки гильдии, чтобы осмотреть предмет контракта. После тщательной оценки рабыни, вы готовы принять решение о том браться ли за контракт или отказаться от него как от бесперспективного.</div>'",
-      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', '    Вместе со своим потенциальным работодателем вы отправляетесь в центр передержки гильдии, чтобы осмотреть предмет контракта. После тщательной оценки рабыни, вы готовы принять решение о том браться ли за контракт или отказаться от него как от бесперспективного.</div>')",
+      "old": "$text[2] = '<br> 받았던 편지 내용을 떠올리며 요한나의 행방을 물색해 보았지만, 현재로써는 찾을 수 없었다. 어떻게든 당신의 동생이 여기로 왔을때 그녀가 지낼 자리가 필요하다. 즉, 지금 노예를 어떻게든 처리해야 한다...'",
+      "new": "$text[2] = '받았던 편지 내용을 떠올리며 요한나의 행방을 물색해 보았지만, 현재로써는 찾을 수 없었다. 어떻게든 당신의 동생이 여기로 왔을때 그녀가 지낼 자리가 필요하다. 즉, 지금 노예를 어떻게든 처리해야 한다...'",
       "count": 1
     },
     {
-      "location": "special_screen",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
-      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text[txt]) + '</div>'",
+      "old": "$text[1] = '<br> 당신의 상품과 조교 방식을 자화자찬하고, 동시에 다른 길드원의 상품 품질에 대해 의구심을 나타내는 등 까다로운 물밑 작업을 했다. 클럽 멤버들은 당신의 발언을 지지해주었고, 그래서 당신의 이미지를 높이기 위한 시도는 굉장히 성공적으로 끝이 났다.<br><br> 평판Up'",
+      "new": "$text[1] = '당신의 상품과 조교 방식을 자화자찬하고, 동시에 다른 길드원의 상품 품질에 대해 의구심을 나타내는 등 까다로운 물밑 작업을 했다. 클럽 멤버들은 당신의 발언을 지지해주었고, 그래서 당신의 이미지를 높이기 위한 시도는 굉장히 성공적으로 끝이 났다.<br><br> 평판Up'",
       "count": 1
     },
     {
-      "location": "special_screen",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id = \"side_panel_text\"><span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>'",
-      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', '<span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>')",
+      "old": "$text[1] = '<br> 가십과 소문과 관련해서 오늘은 더 이상 할 수 있는 게 없는 것 같다. 멤버 모두가 당신의 거만한 자랑과 경쟁자에 대한 험담에 질려버린 듯하다. 당신은 내일 클럽의 새로운 멤버들을 상대로 다시 시도할 수 있다.'",
+      "new": "$text[1] = '가십과 소문과 관련해서 오늘은 더 이상 할 수 있는 게 없는 것 같다. 멤버 모두가 당신의 거만한 자랑과 경쟁자에 대한 험담에 질려버린 듯하다. 당신은 내일 클럽의 새로운 멤버들을 상대로 다시 시도할 수 있다.'",
       "count": 1
     },
     {
-      "location": "assistant_private_room",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id=\"text\"><<$assistant_info_text>></div>'",
-      "new": "*p '<div id=\"text\">' + func('$jo9_trim_text_start', $assistant_info_text) + '</div>'",
+      "old": "$text[1] = '<br> 당신은 오늘 소문을 내는 것을 실패했다. 브랜드의 명성이 오르지 않았다. 당신은 내일 클럽의 새로운 멤버들을 상대로 다시 시도할 수 있다.'",
+      "new": "$text[1] = '당신은 오늘 소문을 내는 것을 실패했다. 브랜드의 명성이 오르지 않았다. 당신은 내일 클럽의 새로운 멤버들을 상대로 다시 시도할 수 있다.'",
       "count": 1
     },
     {
-      "location": "slave_private_room1",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id=\"text\"><<$room1_info_text>></div>'",
-      "new": "*p '<div id=\"text\">' + func('$jo9_trim_text_start', $room1_info_text) + '</div>'",
+      "old": "$text[1] = '<br> 당신은 혹독한 도시의 걱정거리를 뒤로한 채 좋은 시간을 보냈다. 이곳은 당신이 휴식을 하는 데 필요한 모든 것을 제공한다. 맛있는 음식, 뛰어난 오락거리, 그리고 즐거운 몸의 대화까지.<br><br> 식사, 힘+a 전투 기술+a'",
+      "new": "$text[1] = '당신은 혹독한 도시의 걱정거리를 뒤로한 채 좋은 시간을 보냈다. 이곳은 당신이 휴식을 하는 데 필요한 모든 것을 제공한다. 맛있는 음식, 뛰어난 오락거리, 그리고 즐거운 몸의 대화까지.<br><br> 식사, 힘+a 전투 기술+a'",
       "count": 1
     },
     {
-      "location": "slave_private_room2",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id=\"text\"><<$room2_info_text>></div>'",
-      "new": "*p '<div id=\"text\">' + func('$jo9_trim_text_start', $room2_info_text) + '</div>'",
+      "old": "$text[1] = '<br> 당신은 산처럼 쌓인 가루 위스키와 1리터에 달하는 가루 맥주에 빠져 허우적댄 게 기억난다. 당신은 그게 -바벨 피쉬- 라고 불리는 것도 기억난다. 그러나 그 이후로는 모든 것이 뿌옇다... 안개처럼.'",
+      "new": "$text[1] = '당신은 산처럼 쌓인 가루 위스키와 1리터에 달하는 가루 맥주에 빠져 허우적댄 게 기억난다. 당신은 그게 -바벨 피쉬- 라고 불리는 것도 기억난다. 그러나 그 이후로는 모든 것이 뿌옇다... 안개처럼.'",
       "count": 1
     },
     {
-      "location": "slave_private_room3",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id=\"text\"><<$room3_info_text>></div>'",
-      "new": "*p '<div id=\"text\">' + func('$jo9_trim_text_start', $room3_info_text) + '</div>'",
+      "old": "$text[1] = '<br> 당신은 가루 위스키와 가루 맥주를 흡입했다. 이 거품은... 세제도 같이 먹은 건가... 하지만 뭐.. 몸과 머리가 급격히 가벼워지는 기분이 든다면 세제라도 상관없다. 그리고 삶이 더 즐거워진다! 주변의 모든 여자들이 예뻐 보이고 음악도 좋다.'",
+      "new": "$text[1] = '당신은 가루 위스키와 가루 맥주를 흡입했다. 이 거품은... 세제도 같이 먹은 건가... 하지만 뭐.. 몸과 머리가 급격히 가벼워지는 기분이 든다면 세제라도 상관없다. 그리고 삶이 더 즐거워진다! 주변의 모든 여자들이 예뻐 보이고 음악도 좋다.'",
       "count": 1
     },
     {
-      "location": "slave_private_room4",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id=\"text\"><<$room4_info_text>></div>'",
-      "new": "*p '<div id=\"text\">' + func('$jo9_trim_text_start', $room4_info_text) + '</div>'",
+      "old": "$text[1] = '<br> 짙은 안개 속을 뚫고 운반해야 하기 때문에, 로마에서는 싼 술은 현장에서 제조되어 가루의 형태로 배달된다. 당신은 반 리터의 가루 위스키를 주문했고, 소금 뿌린 땅콩을 먹으며 천천히 마셨다. 이젠 가지고 있던 고민이 그리 신경 쓰이지 않는다.'",
+      "new": "$text[1] = '짙은 안개 속을 뚫고 운반해야 하기 때문에, 로마에서는 싼 술은 현장에서 제조되어 가루의 형태로 배달된다. 당신은 반 리터의 가루 위스키를 주문했고, 소금 뿌린 땅콩을 먹으며 천천히 마셨다. 이젠 가지고 있던 고민이 그리 신경 쓰이지 않는다.'",
       "count": 1
     },
     {
-      "location": "stasis_cell",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id = \"text\"><<$text>></div>'",
-      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text) + '</div>'",
+      "old": "$text[1] = '<br> 불멸의 로마 최고의 샤와르마는 인내와 자존심이 만들어 낸다. 신선한 처녀 고기를 깊게, 찔러넣고, 불에 천천히 돌려 익히며 흘러 내리는 즙이 외관을 덮어 마치 카라멜처럼 절여내는게 첫 과정이다. 다음은 여기 주방장이 얇은 종이처럼 썰어내고, 우린 그 신선한 고깃조각을 입안에서 녹이면 된다.<br><br> 가루 위스키, 얇게 저며진 샤와르마, 그리고 불한당. - Roland'",
+      "new": "$text[1] = '불멸의 로마 최고의 샤와르마는 인내와 자존심이 만들어 낸다. 신선한 처녀 고기를 깊게, 찔러넣고, 불에 천천히 돌려 익히며 흘러 내리는 즙이 외관을 덮어 마치 카라멜처럼 절여내는게 첫 과정이다. 다음은 여기 주방장이 얇은 종이처럼 썰어내고, 우린 그 신선한 고깃조각을 입안에서 녹이면 된다.<br><br> 가루 위스키, 얇게 저며진 샤와르마, 그리고 불한당. - Roland'",
       "count": 1
     },
     {
-      "location": "stasis_cell",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id = \"side_panel_text\"><span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>'",
-      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', '<span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>')",
+      "old": "$sp_text[1] = '<br> 전 도시를 통틀어 괜찮은 병원은 한 곳 밖에 없기 때문에, 진료를 받으려면 대기실에서 순서를 기다려야 한다. 잠깐 관리 직원과 대화하는 건 가능할 지도 모른다.'",
+      "new": "$sp_text[1] = '전 도시를 통틀어 괜찮은 병원은 한 곳 밖에 없기 때문에, 진료를 받으려면 대기실에서 순서를 기다려야 한다. 잠깐 관리 직원과 대화하는 건 가능할 지도 모른다.'",
       "count": 1
     },
     {
-      "location": "sex_interaction_screen",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
-      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text[txt]) + '</div>'",
+      "old": "$text[1] = '<br> 당신은 즉시 마취에 빠졌고, 수술을 받았다. 무슨 일이 일어났는지는 모르지만, 당신은 기분이 아주 좋다. 아픈 곳도 없고 마취가 당신을 거의 아무것도 못 느끼게 했다'",
+      "new": "$text[1] = '당신은 즉시 마취에 빠졌고, 수술을 받았다. 무슨 일이 일어났는지는 모르지만, 당신은 기분이 아주 좋다. 아픈 곳도 없고 마취가 당신을 거의 아무것도 못 느끼게 했다'",
       "count": 1
     },
     {
-      "location": "demo_intro",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id = \"side_panel_text\"><<$npc_attitude[npc_attitude]>><br>'",
-      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', '<<$npc_attitude[npc_attitude]>><br>')",
+      "old": "$text[1] = '<br> 당신은 즉시 마취에 빠졌고, 수술을 받았다. 무슨 일이 일어났는지는 모르지만, 당신은 기분이 아주 좋다. 아픈 곳도 없고 마취가 당신을 거의 아무것도 못 느끼게 했다.'",
+      "new": "$text[1] = '당신은 즉시 마취에 빠졌고, 수술을 받았다. 무슨 일이 일어났는지는 모르지만, 당신은 기분이 아주 좋다. 아픈 곳도 없고 마취가 당신을 거의 아무것도 못 느끼게 했다.'",
       "count": 1
     },
     {
-      "location": "demo_intro",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id = \"side_panel_text\"><span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>'",
-      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', '<span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>')",
+      "old": "$text[1] = '<br> 그들은 당신의 노예를 한 시간 동안 데려갔다가 돌려보냈다. 부상의 흔적을 찾아볼 수 없다.'",
+      "new": "$text[1] = '그들은 당신의 노예를 한 시간 동안 데려갔다가 돌려보냈다. 부상의 흔적을 찾아볼 수 없다.'",
       "count": 1
     },
     {
-      "location": "demo_intro",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
-      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text[txt]) + '</div>'",
-      "count": 1
-    },
-    {
-      "location": "choose_the_girl",
-      "field": "body",
-      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
-      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text[txt]) + '</div>'",
+      "old": "$text[1] = '<br> 그들은 당신의 노예를 한 시간 동안 데려갔다가 돌려보냈다. 그녀는 꽤 건강해 보인다.'",
+      "new": "$text[1] = '그들은 당신의 노예를 한 시간 동안 데려갔다가 돌려보냈다. 그녀는 꽤 건강해 보인다.'",
       "count": 3
     },
     {
-      "location": "black_market_interface",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
-      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text[txt]) + '</div>'",
+      "old": "$text[1] = '<br> 그들은 당신의 노예를 한 시간 동안 데려갔다가 돌려보냈다. 흉터는 마법처럼 없어졌다.'",
+      "new": "$text[1] = '그들은 당신의 노예를 한 시간 동안 데려갔다가 돌려보냈다. 흉터는 마법처럼 없어졌다.'",
       "count": 1
     },
     {
-      "location": "pharmacy",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
-      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text[txt]) + '</div>'",
+      "old": "$text[1] = '<br> 그들은 전극을 붙이고, 전류를 흘려 넣어 그녀에게 몇 번 충격을 가했다. 그리고 그녀의 심장에 아드레날린을 주입하니, 그녀가 깨어났다.'",
+      "new": "$text[1] = '그들은 전극을 붙이고, 전류를 흘려 넣어 그녀에게 몇 번 충격을 가했다. 그리고 그녀의 심장에 아드레날린을 주입하니, 그녀가 깨어났다.'",
+      "count": 6
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$text[1] = '<br> 그들은 당신의 조수를 한 시간 동안 데려갔다가 돌려보냈다. 그녀의 부상은 흔적도 찾아볼 수 없다.'",
+      "new": "$text[1] = '그들은 당신의 조수를 한 시간 동안 데려갔다가 돌려보냈다. 그녀의 부상은 흔적도 찾아볼 수 없다.'",
       "count": 1
     },
     {
-      "location": "pharmacy",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id = \"side_panel_text\">  <span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style>\r\n</div>'",
-      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', '  <span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style>\r\n</div>')",
+      "old": "$text[1] = '<br> 그들은 당신의 메이드를 한 시간 동안 데려갔다가 돌려보냈다. 그녀의 부상은 흔적도 찾아볼 수 없다.'",
+      "new": "$text[1] = '그들은 당신의 메이드를 한 시간 동안 데려갔다가 돌려보냈다. 그녀의 부상은 흔적도 찾아볼 수 없다.'",
+      "count": 4
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$text[1] = '<br> 그들은 당신의 조수를 한 시간 동안 데려갔다가 돌려보냈다. 그녀는 꽤 건강해 보인다.'",
+      "new": "$text[1] = '그들은 당신의 조수를 한 시간 동안 데려갔다가 돌려보냈다. 그녀는 꽤 건강해 보인다.'",
+      "count": 3
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$text[1] = '<br> 그들은 당신의 메이드를 한 시간 동안 데려갔다가 돌려보냈다. 그녀는 꽤 건강해 보인다.'",
+      "new": "$text[1] = '그들은 당신의 메이드를 한 시간 동안 데려갔다가 돌려보냈다. 그녀는 꽤 건강해 보인다.'",
+      "count": 12
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$text[1] = '<br> 그들은 당신의 조수를 한 시간 동안 데려갔다가 돌려보냈다. 흉터는 마법처럼 없어졌다.'",
+      "new": "$text[1] = '그들은 당신의 조수를 한 시간 동안 데려갔다가 돌려보냈다. 흉터는 마법처럼 없어졌다.'",
       "count": 1
     },
     {
-      "location": "pharmacy",
+      "location": "interaction_city",
       "field": "body",
-      "old": "*p '<div id = \"side_panel_text\">  <<$npc_attitude[npc_attitude[$npc_id]]>>\r\n <span class=\"jo9-reference-body\"><<$npc_info[$npc_id]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style>\r\n</div>'",
-      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', '  <<$npc_attitude[npc_attitude[$npc_id]]>>\r\n <span class=\"jo9-reference-body\"><<$npc_info[$npc_id]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style>\r\n</div>')",
+      "old": "$text[1] = '<br> 그들은 당신의 메이드를 한 시간 동안 데려갔다가 돌려보냈다. 흉터는 마법처럼 없어졌다.'",
+      "new": "$text[1] = '그들은 당신의 메이드를 한 시간 동안 데려갔다가 돌려보냈다. 흉터는 마법처럼 없어졌다.'",
+      "count": 4
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$sp_text[1] = '<br> 거대한 동면 기술소 내부는 무덤처럼 고요하다. 이 곳에는 안에 사람이나 다른 생물체의 몸이 둥둥 떠 있는 보관 장치가 사람 키 높이 쯤 되는 많은 층들의 벽을 따라 끝없이 펼쳐져 있다.'",
+      "new": "$sp_text[1] = '거대한 동면 기술소 내부는 무덤처럼 고요하다. 이 곳에는 안에 사람이나 다른 생물체의 몸이 둥둥 떠 있는 보관 장치가 사람 키 높이 쯤 되는 많은 층들의 벽을 따라 끝없이 펼쳐져 있다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$text[1] = '<br> 당신이 낙농장에 들어서자, 처음보는 여자가 당신을 반겨준다.'",
+      "new": "$text[1] = '당신이 낙농장에 들어서자, 처음보는 여자가 당신을 반겨준다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$text[1] = '<br>  당신은 <u><<milk_stock>> 병</u>의 우유를 <b><<milk_price * milk_stock>></b> 스파크에 판매하였다.'",
+      "new": "$text[1] = '당신은 <u><<milk_stock>> 병</u>의 우유를 <b><<milk_price * milk_stock>></b> 스파크에 판매하였다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$text[1] = '<br>우유 <u>한 병</u>을 <b><<milk_price>></b> 스파크에 판매하였다.'",
+      "new": "$text[1] = '우유 <u>한 병</u>을 <b><<milk_price>></b> 스파크에 판매하였다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$text[1] = '<br>우유 <u>다섯 병</u>을 <b><<milk_price*5>></b> 스파크에 판매하였다.'",
+      "new": "$text[1] = '우유 <u>다섯 병</u>을 <b><<milk_price*5>></b> 스파크에 판매하였다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$text[1] = '<br> 당신은 상관하지 않기로 했다, 안개의 테두리에서 물러나 조용한 곳으로 갔다. 느리지만 꾸준한 것이 경주에서 이기는 방법이다.'",
+      "new": "$text[1] = '당신은 상관하지 않기로 했다, 안개의 테두리에서 물러나 조용한 곳으로 갔다. 느리지만 꾸준한 것이 경주에서 이기는 방법이다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$sp_text[1] = '<br> 당신은 안개 속을 기어 다니다가 여자를 잡은 어린 안개 괴물을 봤다. 그 놈은 으르렁대며 촉수로 여자를 임신시키려 한다. 어쩌면 아직 그녀를 구할 수 있을지도 모른다.'",
+      "new": "$sp_text[1] = '당신은 안개 속을 기어 다니다가 여자를 잡은 어린 안개 괴물을 봤다. 그 놈은 으르렁대며 촉수로 여자를 임신시키려 한다. 어쩌면 아직 그녀를 구할 수 있을지도 모른다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$sp_text[2] = '<br> 당신은 평소 보다 멀리 기어 나와서, 촉수로 여자를 지독하게 괴롭히던 큰 촉수 괴물을 우연히 마주쳤다. 괴물은 여자를 임신시키려는 듯, 모든 구멍에 정액을 펌프질 하고 있다.'",
+      "new": "$sp_text[2] = '당신은 평소 보다 멀리 기어 나와서, 촉수로 여자를 지독하게 괴롭히던 큰 촉수 괴물을 우연히 마주쳤다. 괴물은 여자를 임신시키려는 듯, 모든 구멍에 정액을 펌프질 하고 있다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$sp_text[3] = '<br> 당신은 희생자를 찾아 배회하던 거대한 촉수 괴물을 발견했다. 괴물은 곧 여자를 발견했고 촉수로 여자를 끔찍하게 괴롭혔다. 괴물은 누군가가 그녀를 구하거나, 그녀가 임신할 때까지 그녀를 놓아줄 생각이 없어 보인다.'",
+      "new": "$sp_text[3] = '당신은 희생자를 찾아 배회하던 거대한 촉수 괴물을 발견했다. 괴물은 곧 여자를 발견했고 촉수로 여자를 끔찍하게 괴롭혔다. 괴물은 누군가가 그녀를 구하거나, 그녀가 임신할 때까지 그녀를 놓아줄 생각이 없어 보인다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$sp_text[4] = '<br> 안개의 경계선을 정찰하던 중, 당신 검은 의사와 함께 있는 용병들을 마주쳤다. 그들은 막 여자를 잡았고, 의사는 불길한 도구들을 분류하고 있다. 그녀의 장기들을 꺼내 의료 센터에 팔려는 듯하다.'",
+      "new": "$sp_text[4] = '안개의 경계선을 정찰하던 중, 당신 검은 의사와 함께 있는 용병들을 마주쳤다. 그들은 막 여자를 잡았고, 의사는 불길한 도구들을 분류하고 있다. 그녀의 장기들을 꺼내 의료 센터에 팔려는 듯하다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$sp_text[5] = '<br> 안개의 경계선을 걷다가, 당신은 저 앞에서 기사가 다가오는 걸 발견했다. 두 명의 보병을 대동한 타우루스 가문의 성기사다. 그는 알몸의 여자를 사슬로 끌고 가고 있다, 보아하니 순찰하다 잡은 도주 노예 같다.'",
+      "new": "$sp_text[5] = '안개의 경계선을 걷다가, 당신은 저 앞에서 기사가 다가오는 걸 발견했다. 두 명의 보병을 대동한 타우루스 가문의 성기사다. 그는 알몸의 여자를 사슬로 끌고 가고 있다, 보아하니 순찰하다 잡은 도주 노예 같다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$sp_text[6] = '<br> 당신은 멀리서 으르렁대는 소리와 비명을 들었다. 가까운 곳에서 카미라 가문의 짐승족 무리가 여자를 잡은 듯하다. 그들 중 하나가 그녀를 강간하는 동안 나머지는 그녀를 구워 먹기 위해 불을 피우고 있다.'",
+      "new": "$sp_text[6] = '당신은 멀리서 으르렁대는 소리와 비명을 들었다. 가까운 곳에서 카미라 가문의 짐승족 무리가 여자를 잡은 듯하다. 그들 중 하나가 그녀를 강간하는 동안 나머지는 그녀를 구워 먹기 위해 불을 피우고 있다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$sp_text[7] = '<br> 뭔가가 마치 회색 번개처럼 질주하며 당신을 지나 여자에게 달려들어 바닥에 쓰러뜨렸다. 웨어울프다. 그는 당신을 곁눈질로 흘끗 보고는, 그녀의 옷을 찢어버렸다. 그리고 그녀를 강간하고 산채로 먹을 준비를 하고 있다.'",
+      "new": "$sp_text[7] = '뭔가가 마치 회색 번개처럼 질주하며 당신을 지나 여자에게 달려들어 바닥에 쓰러뜨렸다. 웨어울프다. 그는 당신을 곁눈질로 흘끗 보고는, 그녀의 옷을 찢어버렸다. 그리고 그녀를 강간하고 산채로 먹을 준비를 하고 있다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$sp_text[8] = '<br> 당신은 안개의 테두리 근처에서 두 명의 인영을 발견했다. 밤처럼 검은 갑옷을 입은 뱀파이어다. 그는 눈으로 어린 소녀에게 마법을 걸었고, 그녀의 피를 마실 준비를 한다. 당신은 들키지 않고 접근할 수 있었다.'",
+      "new": "$sp_text[8] = '당신은 안개의 테두리 근처에서 두 명의 인영을 발견했다. 밤처럼 검은 갑옷을 입은 뱀파이어다. 그는 눈으로 어린 소녀에게 마법을 걸었고, 그녀의 피를 마실 준비를 한다. 당신은 들키지 않고 접근할 수 있었다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$sp_text[9] = '<br> 당신은 멀리서 파괴적인 푸른 섬광의 마법을 발견했다. 다가가보니 리치가 안개 속에서 모습을 드러내고 마법으로 어린 소녀를 마비시키고 있었다. 제물이나 어두운 의식에 쓰기위해 소녀가 필요한 듯하다. 이 언데드 놈은 여성이 정말로 원하는 게 뭔지 모르는군...'",
+      "new": "$sp_text[9] = '당신은 멀리서 파괴적인 푸른 섬광의 마법을 발견했다. 다가가보니 리치가 안개 속에서 모습을 드러내고 마법으로 어린 소녀를 마비시키고 있었다. 제물이나 어두운 의식에 쓰기위해 소녀가 필요한 듯하다. 이 언데드 놈은 여성이 정말로 원하는 게 뭔지 모르는군...'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$sp_text[10] = '<br> 당신은 시끌벅적한 웃음소리와 비명을 들었다. 소리를 따라 간 곳에는, 빈민가의 쓰레기들이 어린 소녀를 잡아 윤간하고 있었다. 나머지 놈들은 불을 피우기 위해 장작을 모으고 있다. 생고기는 안 좋아 하나 보군.'",
+      "new": "$sp_text[10] = '당신은 시끌벅적한 웃음소리와 비명을 들었다. 소리를 따라 간 곳에는, 빈민가의 쓰레기들이 어린 소녀를 잡아 윤간하고 있었다. 나머지 놈들은 불을 피우기 위해 장작을 모으고 있다. 생고기는 안 좋아 하나 보군.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$sp_text[11] = '<br> 안개의 경계선에서 웃음소리와 함께 들려오는 비명소리를 들었다. 가까이 다가가자 사람을 잡아먹는 거대한 오우거를 찾아냈다. 그녀는 한창 강간당하고 있었고, 거대한 성기가 쑤셔질때마다 그녀의 배를 부풀어오르게 한다. 그놈은 아직 당신을 발견하지 못했다.'",
+      "new": "$sp_text[11] = '안개의 경계선에서 웃음소리와 함께 들려오는 비명소리를 들었다. 가까이 다가가자 사람을 잡아먹는 거대한 오우거를 찾아냈다. 그녀는 한창 강간당하고 있었고, 거대한 성기가 쑤셔질때마다 그녀의 배를 부풀어오르게 한다. 그놈은 아직 당신을 발견하지 못했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$sp_text[12] = '<br> 당신은 고블린들에게 강간당하고 있는 공포에 질린 여자를 발견했다. 그 중 하나는 목에 단검을 지니고 있다. 그녀는 지금은 비교적 무사해 보이지만, 고블린들이 그녀와 관계를 가지고 나면 아마 목이 잘릴 것이다.'",
+      "new": "$sp_text[12] = '당신은 고블린들에게 강간당하고 있는 공포에 질린 여자를 발견했다. 그 중 하나는 목에 단검을 지니고 있다. 그녀는 지금은 비교적 무사해 보이지만, 고블린들이 그녀와 관계를 가지고 나면 아마 목이 잘릴 것이다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$sp_text[13] = '<br> 당신이 안개의 경계선을 순찰하고 있을 때, 흐느끼는 소리와 함께 으르렁거리는 소리를 들을 수 있었다. 조용히 접근하자, 부상당한 여자를 강간중인 큰 늑대를 발견할 수 있었다. 그는 그녀의 목을 이빨로 잡고있으며, 사정 후 그녀를 먹어치울 것이다. 그는 당신이 접근하면 냄새를 맡을 것이다'",
+      "new": "$sp_text[13] = '당신이 안개의 경계선을 순찰하고 있을 때, 흐느끼는 소리와 함께 으르렁거리는 소리를 들을 수 있었다. 조용히 접근하자, 부상당한 여자를 강간중인 큰 늑대를 발견할 수 있었다. 그는 그녀의 목을 이빨로 잡고있으며, 사정 후 그녀를 먹어치울 것이다. 그는 당신이 접근하면 냄새를 맡을 것이다'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$sp_text[14] = '<br> 안개의 경계선을 천천히 걷고 있을 때, 거대한 무언가가 조그마한 무언가를 짊어지고 가는 것을 보았다. 가까이 접근하자, 오크 전사가 여자를 잡은것을 보았다. 그는 당신을 보았고, 그의 큰 도끼를 휘둘렀다.'",
+      "new": "$sp_text[14] = '안개의 경계선을 천천히 걷고 있을 때, 거대한 무언가가 조그마한 무언가를 짊어지고 가는 것을 보았다. 가까이 접근하자, 오크 전사가 여자를 잡은것을 보았다. 그는 당신을 보았고, 그의 큰 도끼를 휘둘렀다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$text[1] = '<br> 적은 발밑에 쓰러져 죽었고, 당신은 공포에 질려있는 <<$stock_noun2[stock[\"age\"]]>>를 바라봤다.'",
+      "new": "$text[1] = '적은 발밑에 쓰러져 죽었고, 당신은 공포에 질려있는 <<$stock_noun2[stock[\"age\"]]>>를 바라봤다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$text[1] = '<br> 당신이 그녀를<<$attackers_txt>> 구해냈을 때, 여자는 안전하길 바랐을 것이다. 하지만 당신이 갑옷을 벗고 허리춤을 풀자, 그녀의 표정은 빠르게 무너졌다. 지금까지 이 남자가 해치운 것들에게 당하고 있던 자신이, 그보다 더 강한 이 남자에게 저항할 수 있을리 없다. 그녀는 흐느끼면서도 자신의 몸을 간신히 감싸고 있던 헝겊을 벗겨내는 손에 저항하지도 못하고, 그대로 바닥에 내팽겨쳐져 <<$stock_virgin_txt[stock[\"virginity\"]]>>'",
+      "new": "$text[1] = '당신이 그녀를<<$attackers_txt>> 구해냈을 때, 여자는 안전하길 바랐을 것이다. 하지만 당신이 갑옷을 벗고 허리춤을 풀자, 그녀의 표정은 빠르게 무너졌다. 지금까지 이 남자가 해치운 것들에게 당하고 있던 자신이, 그보다 더 강한 이 남자에게 저항할 수 있을리 없다. 그녀는 흐느끼면서도 자신의 몸을 간신히 감싸고 있던 헝겊을 벗겨내는 손에 저항하지도 못하고, 그대로 바닥에 내팽겨쳐져 <<$stock_virgin_txt[stock[\"virginity\"]]>>'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$text[2] = '<br> 그녀의 보지는 전혀 준비되지 않아 있었기 떄문에 완전히 건조했다. 그에 그녀는 고통을 참을 수 없어 몸부치며 그만해달라고 간청하지만, 전투의 흥분이 자극한 정복욕을 막아설 정도의 설득은 아니었다. 당신은, 방금 괴물을 죽여버린 그 강인한 힘으로 그녀를 짓누르고 잔인하게 보지를 자지로 찔러댔다.'",
+      "new": "$text[2] = '그녀의 보지는 전혀 준비되지 않아 있었기 떄문에 완전히 건조했다. 그에 그녀는 고통을 참을 수 없어 몸부치며 그만해달라고 간청하지만, 전투의 흥분이 자극한 정복욕을 막아설 정도의 설득은 아니었다. 당신은, 방금 괴물을 죽여버린 그 강인한 힘으로 그녀를 짓누르고 잔인하게 보지를 자지로 찔러댔다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$text[1] = '<br> 당신은 이 여자를 데려가기로 마음 먹었다. 이제 당신의 노예다. 이 여자에 대한 처우는 이제 온전히 당신의 것이다.'",
+      "new": "$text[1] = '당신은 이 여자를 데려가기로 마음 먹었다. 이제 당신의 노예다. 이 여자에 대한 처우는 이제 온전히 당신의 것이다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$text[1] = '<br> 도축자는 무자비하게 <<$stock_noun2[stock[\"age\"]]>>의 머리채를 쥐어 잡더니 날카로운 칼로 그녀의 목을 빠르게 그었다. 흘러나오는 피에 <<$stock_noun2[stock[\"age\"]]>>의 손이 움찔대며, 그 생명의 불꽃이 빠르게 꺼졌다. 이후 도축자는 피를 빼내기 위해 생고기를 갈고리에 걸고, 당신에게 스파크를 건넸다.'",
+      "new": "$text[1] = '도축자는 무자비하게 <<$stock_noun2[stock[\"age\"]]>>의 머리채를 쥐어 잡더니 날카로운 칼로 그녀의 목을 빠르게 그었다. 흘러나오는 피에 <<$stock_noun2[stock[\"age\"]]>>의 손이 움찔대며, 그 생명의 불꽃이 빠르게 꺼졌다. 이후 도축자는 피를 빼내기 위해 생고기를 갈고리에 걸고, 당신에게 스파크를 건넸다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$text[1] = '<br> 도축자는 무자비하게 <<$stock_noun2[stock[\"age\"]]>>의 머리채를 쥐어 잡더니 날카로운 칼로 그녀의 목을 빠르게 그었다. 흘러나오는 피에 <<$stock_noun2[stock[\"age\"]]>>의 손이 움찔대며, 그 생명의 불꽃이 빠르게 꺼졌다.'",
+      "new": "$text[1] = '도축자는 무자비하게 <<$stock_noun2[stock[\"age\"]]>>의 머리채를 쥐어 잡더니 날카로운 칼로 그녀의 목을 빠르게 그었다. 흘러나오는 피에 <<$stock_noun2[stock[\"age\"]]>>의 손이 움찔대며, 그 생명의 불꽃이 빠르게 꺼졌다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$text[3] = '<br> 두시간 후, 당신은 비닐 봉지 안에 깔끔하게 포장되어 있는 노예를 되돌려 받았다.<br><br><center>획득한 고기 -</center>'",
+      "new": "$text[3] = '두시간 후, 당신은 비닐 봉지 안에 깔끔하게 포장되어 있는 노예를 되돌려 받았다.<br><br><center>획득한 고기 -</center>'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$text[1] = '<br> 발랄라이카는 당신에게 돈을 받고 방을 나갔다, 그리고 머지않아 비명과 함께 살이 찢어지는 축축한 소리들이 근처에서 들려온다. 소리가 잦아들고 나서, 발랄라이카는 돌아와 당신에게 뭔가 몸부림치는 게 들어있는 큰 상자를 건넸다.<br><br> 안개 괴물 유충 획득'",
+      "new": "$text[1] = '발랄라이카는 당신에게 돈을 받고 방을 나갔다, 그리고 머지않아 비명과 함께 살이 찢어지는 축축한 소리들이 근처에서 들려온다. 소리가 잦아들고 나서, 발랄라이카는 돌아와 당신에게 뭔가 몸부림치는 게 들어있는 큰 상자를 건넸다.<br><br> 안개 괴물 유충 획득'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$text[1] = '<br> <<$slave_name>>(은)는 고객의 마음을 전혀 사로잡지 못했다.<br>'",
+      "new": "$text[1] = '<<$slave_name>>(은)는 고객의 마음을 전혀 사로잡지 못했다.<br>'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$text[1] = '<br> <<$slave_name>>(은)는 고객의 마음을 만족시킬만 했다.<br>'",
+      "new": "$text[1] = '<<$slave_name>>(은)는 고객의 마음을 만족시킬만 했다.<br>'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$text[1] = '<br> <<$slave_name>>(은)는 협상에 크게 도움이 될 수 있을 정도로 무척이나 매력적이었다.<br>'",
+      "new": "$text[1] = '<<$slave_name>>(은)는 협상에 크게 도움이 될 수 있을 정도로 무척이나 매력적이었다.<br>'",
+      "count": 2
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$text[1] = '<br> 당신은 거래 금액에 동의했다. 원하던 만큼 이윤이 나진 않았지만, 고객과 좋은 관계를 유지하는 게 단기적인 이윤보다 더 중요하다.<br>'",
+      "new": "$text[1] = '당신은 거래 금액에 동의했다. 원하던 만큼 이윤이 나진 않았지만, 고객과 좋은 관계를 유지하는 게 단기적인 이윤보다 더 중요하다.<br>'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$text[1] = '<br> 당신은 <<$npc_name[$npc_id]>>(이)가 제시한 금액이 마음에 들지 않아, 거래를 하지 않기로 결정했다.<br>'",
+      "new": "$text[1] = '당신은 <<$npc_name[$npc_id]>>(이)가 제시한 금액이 마음에 들지 않아, 거래를 하지 않기로 결정했다.<br>'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$text[1] = '<br> 당신은 고객의 환심을 사기 위해, 고객이 제시한 <<sell_price>> 스파크에 맞춰 팔았다. 원하던 만큼 이윤이 나진 않았지만, 고객과 좋은 관계를 유지하는 게 단기적인 이윤보다 더 중요하다.'",
+      "new": "$text[1] = '당신은 고객의 환심을 사기 위해, 고객이 제시한 <<sell_price>> 스파크에 맞춰 팔았다. 원하던 만큼 이윤이 나진 않았지만, 고객과 좋은 관계를 유지하는 게 단기적인 이윤보다 더 중요하다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$text[1] = '<br> 당신의 제품은 이 고객이 감당할 수 있는 것 이상의 가치가 있기에 거절했다.'",
+      "new": "$text[1] = '당신의 제품은 이 고객이 감당할 수 있는 것 이상의 가치가 있기에 거절했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$text[1] = '<br> 당신은 시세를 떨어뜨리지 않기로 하고, 공정한 평균가인 <<sell_price>> 스파크로 거래했다.'",
+      "new": "$text[1] = '당신은 시세를 떨어뜨리지 않기로 하고, 공정한 평균가인 <<sell_price>> 스파크로 거래했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$text[1] = '<br> 당신은 고객의 환심을 사기 위해, <<sell_price>>스파크의 가격으로 낮춰 팔았다. 원하던 만큼 이윤이 나진 않았지만, 고객과 좋은 관계를 유지하는 게 단기적인 이윤보다 더 중요하다.'",
+      "new": "$text[1] = '당신은 고객의 환심을 사기 위해, <<sell_price>>스파크의 가격으로 낮춰 팔았다. 원하던 만큼 이윤이 나진 않았지만, 고객과 좋은 관계를 유지하는 게 단기적인 이윤보다 더 중요하다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$text[1] = '<br><<$slave_name>>의 몸을 경매에 붙이겠습니까? 결정은 되돌릴 수 없습니다.'",
+      "new": "$text[1] = '<<$slave_name>>의 몸을 경매에 붙이겠습니까? 결정은 되돌릴 수 없습니다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$text[1] = '<br> <<$slave_name>>(은)는 경매에 올랐다. 먼저, 고객들이 미리 그녀들을 살펴보고 의견을 정할 수 있게 하기 위해 그녀는 오늘 판매 예정이던 다른 노예들과 함께 음료와 스낵을 나르며 칵테일파티에 참가했다.'",
+      "new": "$text[1] = '<<$slave_name>>(은)는 경매에 올랐다. 먼저, 고객들이 미리 그녀들을 살펴보고 의견을 정할 수 있게 하기 위해 그녀는 오늘 판매 예정이던 다른 노예들과 함께 음료와 스낵을 나르며 칵테일파티에 참가했다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$text[1] = '<br> 당신은 무료로 여러 노예들과 섹스하며 낭만적인 시간을 보냈다. 물론 다음 교육에는 당신의 노예도 제공해 보답을 해줘야 한다.'",
+      "new": "$text[1] = '당신은 무료로 여러 노예들과 섹스하며 낭만적인 시간을 보냈다. 물론 다음 교육에는 당신의 노예도 제공해 보답을 해줘야 한다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$text[1] = '<br> 불행하지만, 마음과는 달리 육체가 따라주지 않았다. 어쩔 수 없이 제대로 참여할 수 없어서 당신은 그저 현장을 구경하도록 했다. 그래도 몇가지 테크닉에 대해서 배울 수는 있었다.'",
+      "new": "$text[1] = '불행하지만, 마음과는 달리 육체가 따라주지 않았다. 어쩔 수 없이 제대로 참여할 수 없어서 당신은 그저 현장을 구경하도록 했다. 그래도 몇가지 테크닉에 대해서 배울 수는 있었다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$sp_text[1] = '<br> 이 전투로 돌입하기 전에, 사용할 무기를 선택해야 합니다. 처음 선택한 무기가 이 전투에서 기본 무기가 됩니다. 전투 중에도 무기 교체는 가능합니다.'",
+      "new": "$sp_text[1] = '이 전투로 돌입하기 전에, 사용할 무기를 선택해야 합니다. 처음 선택한 무기가 이 전투에서 기본 무기가 됩니다. 전투 중에도 무기 교체는 가능합니다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$sp_text[2] = '<br> 현재 빈 손이 남아있습니다. 다른 무기를 추가 선택하여 양손으로 싸울 수 있습니다. 습득한 특수기는 처음 선택한 무기로 사용합니다.'",
+      "new": "$sp_text[2] = '현재 빈 손이 남아있습니다. 다른 무기를 추가 선택하여 양손으로 싸울 수 있습니다. 습득한 특수기는 처음 선택한 무기로 사용합니다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$sp_text[10] = '<br> 갑작스런 전투 돌입에 무기를 들 여유따윈 없었다. 맨손으로라도 싸워야 한다!'",
+      "new": "$sp_text[10] = '갑작스런 전투 돌입에 무기를 들 여유따윈 없었다. 맨손으로라도 싸워야 한다!'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$sp_text[3] = '<br> 칼에 대항해 맨손으로 싸우는 것은 너무 위험하다. 다행히도 당신은 항상 베개 밑에 단검을 준비하고 있었다. 아니면 의자를 집어 들 수도 있다.'",
+      "new": "$sp_text[3] = '칼에 대항해 맨손으로 싸우는 것은 너무 위험하다. 다행히도 당신은 항상 베개 밑에 단검을 준비하고 있었다. 아니면 의자를 집어 들 수도 있다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$text[12] = \"<br>[돈 스콜루포네]<br>&nbsp;됐어, 그만! 이런 계집애 같은 징징거림은 충분해... 네 사연은 다른 데 가서 풀어. 여기 있는 사람들은 다 알아들을 건 이미 다 알아들었으니까... 자, 본론으로 들어가자...\"",
+      "new": "$text[12] = \"[돈 스콜루포네]<br>&nbsp;됐어, 그만! 이런 계집애 같은 징징거림은 충분해... 네 사연은 다른 데 가서 풀어. 여기 있는 사람들은 다 알아들을 건 이미 다 알아들었으니까... 자, 본론으로 들어가자...\"",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$text[7] = \"<br>[관리자]<br>&nbsp;어머, 정말 고마워요, 돈 브발린! 기록을 관리하는 게 제 일이긴 하지만, 이런 제안은 정말 거절할 수가 없죠... 게다가 난 예쁜 여자애들이 내 달콤한 보지를 핥는 걸 정말 좋아하거든...\"",
+      "new": "$text[7] = \"[관리자]<br>&nbsp;어머, 정말 고마워요, 돈 브발린! 기록을 관리하는 게 제 일이긴 하지만, 이런 제안은 정말 거절할 수가 없죠... 게다가 난 예쁜 여자애들이 내 달콤한 보지를 핥는 걸 정말 좋아하거든...\"",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$text[20] = '<br>[프리실라]<br>&nbsp;음! 아, 그래!'",
+      "new": "$text[20] = '[프리실라]<br>&nbsp;음! 아, 그래!'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$text[21] = '<br>[프리실라]<br>&nbsp;더어어어어! 더 깊게! 아, 신이시여! 아, 그래!'",
+      "new": "$text[21] = '[프리실라]<br>&nbsp;더어어어어! 더 깊게! 아, 신이시여! 아, 그래!'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "$text[22] = '<br>[프리실라]<br>&nbsp;으으으으음!...<br>[당신]<br>&nbsp;읏! 읏! 으으으으읏!... 아, 좋아아아아아아!...'",
+      "new": "$text[22] = '[프리실라]<br>&nbsp;으으으으음!...<br>[당신]<br>&nbsp;읏! 읏! 으으으으읏!... 아, 좋아아아아아아!...'",
+      "count": 1
+    },
+    {
+      "location": "interaction_result_city",
+      "field": "body",
+      "old": "$text[2] = '<br><i>야릭가 네 여자를 재빨리 살펴본 뒤, 네 쪽으로 돌아선다:</i><br>[야릭]<br>&nbsp;'",
+      "new": "$text[2] = '<i>야릭가 네 여자를 재빨리 살펴본 뒤, 네 쪽으로 돌아선다:</i><br>[야릭]<br>&nbsp;'",
+      "count": 2
+    },
+    {
+      "location": "stasis_cell",
+      "field": "body",
+      "old": "$text = '<br> <<$dynslave_name>>의 몸은, 동면관 안에 들어가 정체된 상태다. 당신이 스파크만 낼 수 있다면, 그녀는 엄청난 기간동안 살아 갈 수 있을 것이다.'",
+      "new": "$text = '<<$dynslave_name>>의 몸은, 동면관 안에 들어가 정체된 상태다. 당신이 스파크만 낼 수 있다면, 그녀는 엄청난 기간동안 살아 갈 수 있을 것이다.'",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "$sp_text[1] = '<br>  <br>  네 사냥 전리품을 어떻게 할까?'",
+      "new": "$sp_text[1] = '네 사냥 전리품을 어떻게 할까?'",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "$sp_text[1] = '<br>치열한 전투가 끝났고, 여자는 헐벗은채 겁에 질려있다.'",
+      "new": "$sp_text[1] = '치열한 전투가 끝났고, 여자는 헐벗은채 겁에 질려있다.'",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "$sp_text[1] = '<br> 당신은 노예 조사부의 대표자를 만났다. 이 조교사들은 노예를 평가하는 일과 시장에서 고급 노예들을 찾는데의 전문가들이다.'",
+      "new": "$sp_text[1] = '당신은 노예 조사부의 대표자를 만났다. 이 조교사들은 노예를 평가하는 일과 시장에서 고급 노예들을 찾는데의 전문가들이다.'",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "$sp_text[1] = '<br> 중앙 집회장은 엄청난 기회의 장이다. 여기서는 내 자신을 광고하거나, 경쟁자에게 훼방을 놓거나, 잠재적인 고객의 정보를 얻을 수도 있다.'",
+      "new": "$sp_text[1] = '중앙 집회장은 엄청난 기회의 장이다. 여기서는 내 자신을 광고하거나, 경쟁자에게 훼방을 놓거나, 잠재적인 고객의 정보를 얻을 수도 있다.'",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "$sp_text[2] = '<br> 집회장에서는 간혹, 특별한 노예를 원하는 사람들을 만날 수 있다. 그들 중 몇몇은 정말 흥미로운 물건을 제공한다고 한다.'",
+      "new": "$sp_text[2] = '집회장에서는 간혹, 특별한 노예를 원하는 사람들을 만날 수 있다. 그들 중 몇몇은 정말 흥미로운 물건을 제공한다고 한다.'",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "$sp_text[1] = '<br> 길게 늘어선 막사에는 여러 개의 우리가 구겨지듯 채워져있다. 우리 안에는 동물들과 사람들이 뒤섞여있다. 이곳의 냄새는 매우 역겹다. 그래도 일은 일이다.'",
+      "new": "$sp_text[1] = '길게 늘어선 막사에는 여러 개의 우리가 구겨지듯 채워져있다. 우리 안에는 동물들과 사람들이 뒤섞여있다. 이곳의 냄새는 매우 역겹다. 그래도 일은 일이다.'",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "$sp_text[2] = '<br> 미스트라는 연금술과 이 곳에서 판매하는 재료로 집 연구실에서 만들 수 있는 유용한 영약에 대한 지식이 많다. 그녀에게 궁금한 것을 묻는 것은 좋은 생각같다.'",
+      "new": "$sp_text[2] = '미스트라는 연금술과 이 곳에서 판매하는 재료로 집 연구실에서 만들 수 있는 유용한 영약에 대한 지식이 많다. 그녀에게 궁금한 것을 묻는 것은 좋은 생각같다.'",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "$sp_text[1] = '<br> 당신은 원형 경기장 밑에 위치한 대기실에 들어섰다. 경비병이 아무런 문제 없이 당신을 통과시켜줬다. - 노예 상인 길드는 검투사와 경마에도 영향력을 미친다. 당신은 적당한 상대를 고르기만 하면 된다.'",
+      "new": "$sp_text[1] = '당신은 원형 경기장 밑에 위치한 대기실에 들어섰다. 경비병이 아무런 문제 없이 당신을 통과시켜줬다. - 노예 상인 길드는 검투사와 경마에도 영향력을 미친다. 당신은 적당한 상대를 고르기만 하면 된다.'",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "$sp_text[22] = '<br> 당신은 경주를 담당하는 말 머리 수인 마구간지기를 만났다. 특히 다음 레이스 코스를 알아야 할 때 그는 유용한 정보원이 될 수 있을 것이다.'",
+      "new": "$sp_text[22] = '당신은 경주를 담당하는 말 머리 수인 마구간지기를 만났다. 특히 다음 레이스 코스를 알아야 할 때 그는 유용한 정보원이 될 수 있을 것이다.'",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "$sp_text[23] = '<br> 경주가 시작되기 전까지 남은 시간 동안 당신은 마차 개조를 주문할 수 있다. 무거운 재료가 쓰인 마차는 속도와 민첩성이 떨어진다. 하지만 경주 도중에 마차가 부서질 위험은 낮다. 스스로의 안전을 경시하는 것은 목숨을 걸고 경주에 참가하는 것과 같다.'",
+      "new": "$sp_text[23] = '경주가 시작되기 전까지 남은 시간 동안 당신은 마차 개조를 주문할 수 있다. 무거운 재료가 쓰인 마차는 속도와 민첩성이 떨어진다. 하지만 경주 도중에 마차가 부서질 위험은 낮다. 스스로의 안전을 경시하는 것은 목숨을 걸고 경주에 참가하는 것과 같다.'",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "$sp_text[1] = '<br> 이 알수없는 상점에서는 특이한 물품과 노예를 구할수있다.'",
+      "new": "$sp_text[1] = '이 알수없는 상점에서는 특이한 물품과 노예를 구할수있다.'",
+      "count": 1
+    },
+    {
+      "location": "origins_relations",
+      "field": "body",
+      "old": "$text[2] = '<br><<$slave2[\"name\"]>> '",
+      "new": "$text[2] = '<<$slave2[\"name\"]>> '",
+      "count": 1
+    },
+    {
+      "location": "origins_relations",
+      "field": "body",
+      "old": "$text[2] = '<br>'",
+      "new": "$text[2] = ''",
+      "count": 1
+    },
+    {
+      "location": "origins_relations",
+      "field": "body",
+      "old": "$text[2] = \"<br><<$slave2['name']>>\"",
+      "new": "$text[2] = \"<<$slave2['name']>>\"",
+      "count": 1
+    },
+    {
+      "location": "origins_relations",
+      "field": "body",
+      "old": "$text[4] = \"<br>\"",
+      "new": "$text[4] = \"\"",
+      "count": 1
+    },
+    {
+      "location": "origins_relations",
+      "field": "body",
+      "old": "$text[6] = \"<br>하지만 조금 더 생각한 뒤, 그녀는 덧붙인다:<br><br>\"",
+      "new": "$text[6] = \"하지만 조금 더 생각한 뒤, 그녀는 덧붙인다:<br><br>\"",
       "count": 1
     },
     {
       "location": "slave_sell",
       "field": "body",
-      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
-      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text[txt]) + '</div>'",
+      "old": "$text[1] = '<br> 고객은 노예를 검사하더니 가격을 부르는 것을 듣지도 않고 거절했다. 당신은 고객 개개인의 취향과 요구에 신경을 써야한다.'",
+      "new": "$text[1] = '고객은 노예를 검사하더니 가격을 부르는 것을 듣지도 않고 거절했다. 당신은 고객 개개인의 취향과 요구에 신경을 써야한다.'",
       "count": 1
     },
     {
-      "location": "snk_room_menu_screen",
+      "location": "slave_sell",
       "field": "body",
-      "old": "*p '<div id=\"text\"><<$snk_room_last_text[snk_room_target]>></div>'",
-      "new": "*p '<div id=\"text\">' + func('$jo9_trim_text_start', $snk_room_last_text[snk_room_target]) + '</div>'",
+      "old": "$text[1] = '<br> 고객은 노예를 검사하더니 가격을 부르는 것을 듣지도 않고 거절했다. 고객의 흥미를 끌기 위해선, 당신은 노예의 등급을 <<$rating[demand_rating[$npc_id]]>>등급보다 높게 올려야 한다.'",
+      "new": "$text[1] = '고객은 노예를 검사하더니 가격을 부르는 것을 듣지도 않고 거절했다. 고객의 흥미를 끌기 위해선, 당신은 노예의 등급을 <<$rating[demand_rating[$npc_id]]>>등급보다 높게 올려야 한다.'",
+      "count": 1
+    },
+    {
+      "location": "slave_sell",
+      "field": "body",
+      "old": "$text[1] = '<br> 고객은 노예를 검사하더니 가격을 부르는 것을 듣지도 않고 거절했다. 당신의 조교의 품질의 문제가 아니라, 고객은 그저 <<$slave_name>>(이)가 마음에 들지 않는 것 같다. 음, 고객은 노예를 고를 권리가 있다.'",
+      "new": "$text[1] = '고객은 노예를 검사하더니 가격을 부르는 것을 듣지도 않고 거절했다. 당신의 조교의 품질의 문제가 아니라, 고객은 그저 <<$slave_name>>(이)가 마음에 들지 않는 것 같다. 음, 고객은 노예를 고를 권리가 있다.'",
+      "count": 1
+    },
+    {
+      "location": "slave_sell",
+      "field": "body",
+      "old": "$text[1] = '<br> 고객은 노예가 조건에 충분히 부합하는지 알기위해 당신에게 노예의 능력에 관해서 캐물었다. 물론 당신은 <<$slave_name>>(이)가 그렇지 않다는 건 알지만. 당신은 그녀를 조금 미화시킬 수도 있다...'",
+      "new": "$text[1] = '고객은 노예가 조건에 충분히 부합하는지 알기위해 당신에게 노예의 능력에 관해서 캐물었다. 물론 당신은 <<$slave_name>>(이)가 그렇지 않다는 건 알지만. 당신은 그녀를 조금 미화시킬 수도 있다...'",
+      "count": 1
+    },
+    {
+      "location": "slave_sell",
+      "field": "body",
+      "old": "$text[1] = '<br> 당신의 노예는 고객이 말한 요구사항을 완벽하게 만족하므로, 당신은 노예의 현재 능력과 품질에 대해서 솔직하게 말했다. <<$rating[rating]>> 랭크의 노예들은 시장에서 대개 <<common_price[rating]>> 스파크에 팔리지만, 당신은 좀 더 높은 가격을 불러 볼 수 있다.'",
+      "new": "$text[1] = '당신의 노예는 고객이 말한 요구사항을 완벽하게 만족하므로, 당신은 노예의 현재 능력과 품질에 대해서 솔직하게 말했다. <<$rating[rating]>> 랭크의 노예들은 시장에서 대개 <<common_price[rating]>> 스파크에 팔리지만, 당신은 좀 더 높은 가격을 불러 볼 수 있다.'",
+      "count": 1
+    },
+    {
+      "location": "slave_sell",
+      "field": "body",
+      "old": "$text[1] = '<br> 당신의 노예가 고객의 생각보다 더 품질이 좋다. 하지만 가격은 요구하던 <<$rating[demand_rating[$npc_id]]>> 등급에 맞춰서 결정되고, 시장에서의 이 등급의 가격은 약 <<common_price[demand_rating[$npc_id]]>> 스파크이다. 흥정으로 조금은 더 가격을 받을 수 있을지도 모른다. '",
+      "new": "$text[1] = '당신의 노예가 고객의 생각보다 더 품질이 좋다. 하지만 가격은 요구하던 <<$rating[demand_rating[$npc_id]]>> 등급에 맞춰서 결정되고, 시장에서의 이 등급의 가격은 약 <<common_price[demand_rating[$npc_id]]>> 스파크이다. 흥정으로 조금은 더 가격을 받을 수 있을지도 모른다. '",
+      "count": 1
+    },
+    {
+      "location": "slave_sell",
+      "field": "body",
+      "old": "$text[1] = '<br> 고객의 요구사항에 맞도록, 당신은 노예의 스킬을 조금 미화시켜서 말했다. 고객은 <<$rating[demand_rating[$npc_id]]>> 등급의 노예를 살 준비가 됐고, 시장에서의 이 등급의 가격은 약 <<common_price[demand_rating[$npc_id]]>> 스파크이다. 그러나 당신은 무례하긴 하지만 흥정을 해볼 수도 있다.'",
+      "new": "$text[1] = '고객의 요구사항에 맞도록, 당신은 노예의 스킬을 조금 미화시켜서 말했다. 고객은 <<$rating[demand_rating[$npc_id]]>> 등급의 노예를 살 준비가 됐고, 시장에서의 이 등급의 가격은 약 <<common_price[demand_rating[$npc_id]]>> 스파크이다. 그러나 당신은 무례하긴 하지만 흥정을 해볼 수도 있다.'",
       "count": 1
     }
   ]
