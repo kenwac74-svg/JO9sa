@@ -1,0 +1,15 @@
+{
+  "id": "2026-10-14_menu_foreground_canvas_alignment",
+  "description": "Detach option foregrounds from the offset menu into background coordinates and fit proportionally at the canvas bottom, including cached menus.",
+  "before_sha256": "90506109d2afb3110f4db6cdc7a97f5acdd420f9291696f12dbfc761c013fcd2",
+  "after_sha256": "06d34458f0d40745adbd5ed05b2c94bf72bad1dbdf8a6077d15b41346ef96430",
+  "edits": [
+    {
+      "location": "shop_general",
+      "field": "body",
+      "old": "if $place = 'gastronom':",
+      "new": "! JO9_MENU_FOREGROUND_CANVAS_20261014\r\n! Foreground belongs to the 795x595 background, not the offset options menu.\r\nlocal jo9_menu_foreground_start = instr($text_display, '<div id=\"center_Isabella\">')\r\nif jo9_menu_foreground_start > 0:\r\n local $jo9_menu_foreground_tail = mid($text_display, jo9_menu_foreground_start, len($text_display))\r\n local jo9_menu_foreground_end = instr($jo9_menu_foreground_tail, '</div>')\r\n if jo9_menu_foreground_end > 0:\r\n  local $jo9_menu_foreground = mid($jo9_menu_foreground_tail, 1, jo9_menu_foreground_end + 5)\r\n  $text_display = replace($text_display, $jo9_menu_foreground, '')\r\n  *p '<div id=\"bg\">' + $jo9_menu_foreground + '</div>'\r\n end\r\nend\r\n*p '<style id=\"jo9_menu_foreground_fit\">#bg>#center_Isabella{left:0;top:0;width:795px;height:595px;overflow:hidden;pointer-events:none;}#bg>#center_Isabella>img{position:absolute;left:50%;top:auto;bottom:0;max-width:795px;max-height:595px;width:auto;height:auto;display:block;transform:translateX(-50%);-webkit-transform:translateX(-50%);}</style>'\r\n\r\nif $place = 'gastronom':",
+      "count": 1
+    }
+  ]
+}

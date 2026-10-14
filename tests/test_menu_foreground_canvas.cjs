@@ -1,0 +1,11 @@
+const fs=require('fs'),assert=require('node:assert/strict'),c=require('../tools/text-workshop/core.cjs');
+assert(process.argv[2],'Pass the current game QSP path.');
+const raw=fs.readFileSync(process.argv[2]),d=c.parse(raw);assert(c.serialize(d).equals(raw));
+const loc=d.locations.find(l=>l.name==='shop_general'),b=c.shift(d.lines[loc.body],5);
+assert(b.includes('JO9_MENU_FOREGROUND_CANVAS_20261014'),'all option foregrounds must be detached from menu coordinates');
+const general=b.slice(b.indexOf('JO9_MENU_FOREGROUND_CANVAS_20261014'),b.indexOf("if $place = 'gastronom':"));
+assert(!general.includes('interaction_city =')&&!general.includes('sp_txt ='),'must not restrict correction to hunting or first menu page');
+assert(b.indexOf('$text_display = replace($text_display, $jo9_menu_foreground,')<b.indexOf('*p \'<div id="jo9_scene_menu"'));
+assert(b.includes('max-width:795px;max-height:595px;')&&b.includes('bottom:0;')&&b.includes('width:auto;height:auto;'));
+assert(b.includes("if jo9_menu_foreground_end > 0:"),'malformed cached HTML must remain intact');
+console.log('PASS: generic foreground detachment precedes menu rendering, malformed guard, proportional bottom alignment, QSP roundtrip');
