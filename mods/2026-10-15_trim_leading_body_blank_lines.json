@@ -1,0 +1,444 @@
+{
+  "id": "2026-10-15_trim_leading_body_blank_lines",
+  "description": "Remove only leading blank line tokens at narrative render boundaries, including old-save cached text. Preserve interior paragraphs, UI position and source prose.",
+  "target": "game/jack.qsp",
+  "before_sha256": "84d298ef0be15290283e0592fb0d8cd3c870c88752c17f0ecf013d62dc58f9f3",
+  "after_sha256": "07e1c43299bec91f051b9eaee8db6fd145b12b06a9d3ff2a958234a7331fdf44",
+  "add_locations": [
+    {
+      "name": "$jo9_trim_text_start",
+      "desc": "",
+      "body": "! JO9_LEADING_TEXT_NORMALIZER_20261015\r\n! Strip only empty prefix tokens; preserve all body and paragraph separators.\r\nlocal $jo9_trim_text = $args[0]\r\nlocal $jo9_trim_prefix = ''\r\nlocal jo9_trim_width = 0\r\nlocal $jo9_trim_head = ''\r\n:jo9_trim_text_prefix\r\njo9_trim_width = 0\r\nif len($jo9_trim_text) > 0:\r\n $jo9_trim_head = $mid($jo9_trim_text, 1, 1)\r\n if $jo9_trim_head = ' ' or $jo9_trim_head = $chr(9) or $jo9_trim_head = $chr(10) or $jo9_trim_head = $chr(13) or $jo9_trim_head = $chr(160):\r\n  jo9_trim_width = 1\r\n elseif $lcase($mid($jo9_trim_text, 1, 4)) = '<br>':\r\n  jo9_trim_width = 4\r\n elseif $lcase($mid($jo9_trim_text, 1, 5)) = '<br/>':\r\n  jo9_trim_width = 5\r\n elseif $lcase($mid($jo9_trim_text, 1, 6)) = '<br />' or $lcase($mid($jo9_trim_text, 1, 6)) = '&nbsp;':\r\n  jo9_trim_width = 6\r\n elseif instr($jo9_trim_text, '<span class=\"jo9-reference-body\">') = 1:\r\n  $jo9_trim_prefix = $jo9_trim_prefix + '<span class=\"jo9-reference-body\">'\r\n  jo9_trim_width = 33\r\n end\r\nend\r\nif jo9_trim_width > 0:\r\n $jo9_trim_text = $mid($jo9_trim_text, jo9_trim_width + 1, len($jo9_trim_text))\r\n jump 'jo9_trim_text_prefix'\r\nend\r\n$result = $jo9_trim_prefix + $jo9_trim_text\r\n",
+      "actions": []
+    }
+  ],
+  "edits": [
+    {
+      "location": "slavebase_test",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text[txt]) + '</div>'",
+      "count": 1
+    },
+    {
+      "location": "choice_screen",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text[txt]) + '</div>'",
+      "count": 1
+    },
+    {
+      "location": "choice_screen",
+      "field": "body",
+      "old": "*p '<div id = \"side_panel_text\"><span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>'",
+      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', '<span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>')",
+      "count": 1
+    },
+    {
+      "location": "choice_screen",
+      "field": "body",
+      "old": "*p '<div id = \"side_panel_text\"><<$npc_attitude[npc_attitude[$npc_id]]>>'",
+      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', $npc_attitude[npc_attitude[$npc_id]])",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text>></div>'",
+      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text) + '</div>'",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "*p '<div id = \"side_panel_text\"><<$npc_attitude[npc_attitude[$npc_id]]>>'",
+      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', $npc_attitude[npc_attitude[$npc_id]])",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "*nl '<div id = \"side_panel_text\"><span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>'",
+      "new": "*nl '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', '<span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>')",
+      "count": 1
+    },
+    {
+      "location": "master_stat_clients",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text[txt]) + '</div>'",
+      "count": 1
+    },
+    {
+      "location": "master_stat_clients",
+      "field": "body",
+      "old": "*p '<div id = \"side_panel_text\"><<$npc_attitude[npc_attitude[$npc_id]]>>'",
+      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', $npc_attitude[npc_attitude[$npc_id]])",
+      "count": 1
+    },
+    {
+      "location": "prison_cell",
+      "field": "body",
+      "old": "*p '<div id=\"text\"><<$prisoner_info_text>></div>'",
+      "new": "*p '<div id=\"text\">' + func('$jo9_trim_text_start', $prisoner_info_text) + '</div>'",
+      "count": 1
+    },
+    {
+      "location": "barn",
+      "field": "body",
+      "old": "*p '<div id=\"text\"><<$cow_info_text>></div>'",
+      "new": "*p '<div id=\"text\">' + func('$jo9_trim_text_start', $cow_info_text) + '</div>'",
+      "count": 1
+    },
+    {
+      "location": "interaction_screen",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text[txt]) + '</div>'",
+      "count": 1
+    },
+    {
+      "location": "interaction_screen",
+      "field": "body",
+      "old": "*p '<div id = \"side_panel_text\"><span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>'",
+      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', '<span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>')",
+      "count": 1
+    },
+    {
+      "location": "interaction_screen",
+      "field": "body",
+      "old": "*p '<div id = \"side_panel_text\"><<$npc_attitude[npc_attitude[$npc_id]]>>'",
+      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', $npc_attitude[npc_attitude[$npc_id]])",
+      "count": 1
+    },
+    {
+      "location": "interaction_screen_city",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text[txt]) + '</div>'",
+      "count": 1
+    },
+    {
+      "location": "interaction_screen_city",
+      "field": "body",
+      "old": "*p '<div id = \"side_panel_text\"><<$npc_attitude[npc_attitude[$npc_id]]>>'",
+      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', $npc_attitude[npc_attitude[$npc_id]])",
+      "count": 2
+    },
+    {
+      "location": "interaction_screen_city",
+      "field": "body",
+      "old": "*p '<div id = \"side_panel_text\"><span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>'",
+      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', '<span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>')",
+      "count": 1
+    },
+    {
+      "location": "guild",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text[txt]) + '</div>'",
+      "count": 1
+    },
+    {
+      "location": "guild",
+      "field": "body",
+      "old": "*p '<div id = \"side_panel_text\"><span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>'",
+      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', '<span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>')",
+      "count": 1
+    },
+    {
+      "location": "guild",
+      "field": "body",
+      "old": "*p '<div id = \"side_panel_text\"><<$npc_attitude[npc_attitude[$npc_id]]>>'",
+      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', $npc_attitude[npc_attitude[$npc_id]])",
+      "count": 1
+    },
+    {
+      "location": "guild_board",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text[txt]) + '</div>'",
+      "count": 1
+    },
+    {
+      "location": "guild_board",
+      "field": "body",
+      "old": "*p '<div id = \"side_panel_text\"><span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>'",
+      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', '<span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>')",
+      "count": 1
+    },
+    {
+      "location": "guild_board",
+      "field": "body",
+      "old": "*p '<div id = \"side_panel_text\"><<$npc_attitude[npc_attitude[$npc_id]]>>'",
+      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', $npc_attitude[npc_attitude[$npc_id]])",
+      "count": 1
+    },
+    {
+      "location": "shop_general",
+      "field": "body",
+      "old": "*p '<div id = \"side_panel_text\"><<$info_bar>><span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>'",
+      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', '<<$info_bar>><span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>')",
+      "count": 1
+    },
+    {
+      "location": "shop_general",
+      "field": "body",
+      "old": "*p '<div id = \"side_panel_text\"><<$npc_attitude[npc_attitude[$npc_id]]>>'",
+      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', $npc_attitude[npc_attitude[$npc_id]])",
+      "count": 1
+    },
+    {
+      "location": "shop_general",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$sp_text[sp_txt]>></div>'",
+      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $sp_text[sp_txt]) + '</div>'",
+      "count": 1
+    },
+    {
+      "location": "shop_wpn",
+      "field": "body",
+      "old": "*p '<div id = \"side_panel_text\"><span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>'",
+      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', '<span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>')",
+      "count": 1
+    },
+    {
+      "location": "shop_wpn",
+      "field": "body",
+      "old": "*p '<div id = \"side_panel_text\"><<$npc_attitude[npc_attitude[$npc_id]]>>'",
+      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', $npc_attitude[npc_attitude[$npc_id]])",
+      "count": 1
+    },
+    {
+      "location": "shop_wpn",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text[txt]) + '</div>'",
+      "count": 1
+    },
+    {
+      "location": "item_buy",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text[txt]) + '</div>'",
+      "count": 1
+    },
+    {
+      "location": "item_buy",
+      "field": "body",
+      "old": "*p '<div id = \"side_panel_text\"><span class=\"jo9-reference-body\"><<dyneval($show_item_effects, $item_id)>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>'",
+      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', '<span class=\"jo9-reference-body\"><<dyneval($show_item_effects, $item_id)>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>')",
+      "count": 1
+    },
+    {
+      "location": "item_buy",
+      "field": "body",
+      "old": "*p '<div id = \"side_panel_text\"><<$npc_attitude[npc_attitude[$npc_id]]>>'",
+      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', $npc_attitude[npc_attitude[$npc_id]])",
+      "count": 1
+    },
+    {
+      "location": "plastics",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text[txt]) + '</div>'",
+      "count": 1
+    },
+    {
+      "location": "plastics",
+      "field": "body",
+      "old": "*p '<div id = \"side_panel_text\"><span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style><br></div>'",
+      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', '<span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style><br></div>')",
+      "count": 1
+    },
+    {
+      "location": "slave_auction_buy",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text>></div>'",
+      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text) + '</div>'",
+      "count": 1
+    },
+    {
+      "location": "slave_auction_buy",
+      "field": "body",
+      "old": "*p '<div id = \"side_panel_text\"><span class=\"jo9-reference-body\"><<$npc_info[$npc_id]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>'",
+      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', '<span class=\"jo9-reference-body\"><<$npc_info[$npc_id]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>')",
+      "count": 1
+    },
+    {
+      "location": "slave_auction_buy",
+      "field": "body",
+      "old": "*p '<div id = \"side_panel_text\"><span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style><br></div>'",
+      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', '<span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style><br></div>')",
+      "count": 1
+    },
+    {
+      "location": "slave_auction_sell",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text[txt]) + '</div>'",
+      "count": 1
+    },
+    {
+      "location": "slave_auction_sell",
+      "field": "body",
+      "old": "*p '<div id = \"side_panel_text\"><<$npc_attitude[npc_attitude[$npc_id]]>>'",
+      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', $npc_attitude[npc_attitude[$npc_id]])",
+      "count": 1
+    },
+    {
+      "location": "slave_auction_sell",
+      "field": "body",
+      "old": "*p '<div id = \"side_panel_text\"><span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style><br></div>'",
+      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', '<span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style><br></div>')",
+      "count": 1
+    },
+    {
+      "location": "slave_to_train",
+      "field": "body",
+      "old": "*p '<div id = \"text\">    Вместе со своим потенциальным работодателем вы отправляетесь в центр передержки гильдии, чтобы осмотреть предмет контракта. После тщательной оценки рабыни, вы готовы принять решение о том браться ли за контракт или отказаться от него как от бесперспективного.</div>'",
+      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', '    Вместе со своим потенциальным работодателем вы отправляетесь в центр передержки гильдии, чтобы осмотреть предмет контракта. После тщательной оценки рабыни, вы готовы принять решение о том браться ли за контракт или отказаться от него как от бесперспективного.</div>')",
+      "count": 1
+    },
+    {
+      "location": "special_screen",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text[txt]) + '</div>'",
+      "count": 1
+    },
+    {
+      "location": "special_screen",
+      "field": "body",
+      "old": "*p '<div id = \"side_panel_text\"><span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>'",
+      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', '<span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>')",
+      "count": 1
+    },
+    {
+      "location": "assistant_private_room",
+      "field": "body",
+      "old": "*p '<div id=\"text\"><<$assistant_info_text>></div>'",
+      "new": "*p '<div id=\"text\">' + func('$jo9_trim_text_start', $assistant_info_text) + '</div>'",
+      "count": 1
+    },
+    {
+      "location": "slave_private_room1",
+      "field": "body",
+      "old": "*p '<div id=\"text\"><<$room1_info_text>></div>'",
+      "new": "*p '<div id=\"text\">' + func('$jo9_trim_text_start', $room1_info_text) + '</div>'",
+      "count": 1
+    },
+    {
+      "location": "slave_private_room2",
+      "field": "body",
+      "old": "*p '<div id=\"text\"><<$room2_info_text>></div>'",
+      "new": "*p '<div id=\"text\">' + func('$jo9_trim_text_start', $room2_info_text) + '</div>'",
+      "count": 1
+    },
+    {
+      "location": "slave_private_room3",
+      "field": "body",
+      "old": "*p '<div id=\"text\"><<$room3_info_text>></div>'",
+      "new": "*p '<div id=\"text\">' + func('$jo9_trim_text_start', $room3_info_text) + '</div>'",
+      "count": 1
+    },
+    {
+      "location": "slave_private_room4",
+      "field": "body",
+      "old": "*p '<div id=\"text\"><<$room4_info_text>></div>'",
+      "new": "*p '<div id=\"text\">' + func('$jo9_trim_text_start', $room4_info_text) + '</div>'",
+      "count": 1
+    },
+    {
+      "location": "stasis_cell",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text>></div>'",
+      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text) + '</div>'",
+      "count": 1
+    },
+    {
+      "location": "stasis_cell",
+      "field": "body",
+      "old": "*p '<div id = \"side_panel_text\"><span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>'",
+      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', '<span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>')",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction_screen",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text[txt]) + '</div>'",
+      "count": 1
+    },
+    {
+      "location": "demo_intro",
+      "field": "body",
+      "old": "*p '<div id = \"side_panel_text\"><<$npc_attitude[npc_attitude]>><br>'",
+      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', '<<$npc_attitude[npc_attitude]>><br>')",
+      "count": 1
+    },
+    {
+      "location": "demo_intro",
+      "field": "body",
+      "old": "*p '<div id = \"side_panel_text\"><span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>'",
+      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', '<span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>')",
+      "count": 1
+    },
+    {
+      "location": "demo_intro",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text[txt]) + '</div>'",
+      "count": 1
+    },
+    {
+      "location": "choose_the_girl",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text[txt]) + '</div>'",
+      "count": 3
+    },
+    {
+      "location": "black_market_interface",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text[txt]) + '</div>'",
+      "count": 1
+    },
+    {
+      "location": "pharmacy",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text[txt]) + '</div>'",
+      "count": 1
+    },
+    {
+      "location": "pharmacy",
+      "field": "body",
+      "old": "*p '<div id = \"side_panel_text\">  <span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style>\r\n</div>'",
+      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', '  <span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style>\r\n</div>')",
+      "count": 1
+    },
+    {
+      "location": "pharmacy",
+      "field": "body",
+      "old": "*p '<div id = \"side_panel_text\">  <<$npc_attitude[npc_attitude[$npc_id]]>>\r\n <span class=\"jo9-reference-body\"><<$npc_info[$npc_id]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style>\r\n</div>'",
+      "new": "*p '<div id = \"side_panel_text\">' + func('$jo9_trim_text_start', '  <<$npc_attitude[npc_attitude[$npc_id]]>>\r\n <span class=\"jo9-reference-body\"><<$npc_info[$npc_id]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style>\r\n</div>')",
+      "count": 1
+    },
+    {
+      "location": "slave_sell",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "new": "*p '<div id = \"text\">' + func('$jo9_trim_text_start', $text[txt]) + '</div>'",
+      "count": 1
+    },
+    {
+      "location": "snk_room_menu_screen",
+      "field": "body",
+      "old": "*p '<div id=\"text\"><<$snk_room_last_text[snk_room_target]>></div>'",
+      "new": "*p '<div id=\"text\">' + func('$jo9_trim_text_start', $snk_room_last_text[snk_room_target]) + '</div>'",
+      "count": 1
+    }
+  ]
+}
