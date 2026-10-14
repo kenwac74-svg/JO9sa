@@ -30,4 +30,3 @@ body:after{left:0;top:784px;width:1003px;height:16px;background-position:0 -30px
 /* JO9_SINGLE_GRIMDARK_UI_20261014_END */\r\n`;
 function css(source){assert(!source.includes('JO9_SINGLE_GRIMDARK_UI_20261014_BEGIN'),'Already patched CSS');return source+frame;}
 module.exports={body,css,frame};
-
