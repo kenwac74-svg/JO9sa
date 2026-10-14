@@ -21,3 +21,7 @@ CSS는 원래 바이트 뒤에 frame 블록만 추가했다. 기존 grimdark/bg_
 백업 및 정확한 해시: `records/ui/2026-10-14-single-grimdark-cg-slots.json`. 백업 ZIP의 game/jack.qsp와 game/css/base.css를 같은 실제 경로에 복원하면 수정 직전 상태로 돌아간다. 공식 QSP 적용기의 .bak 및 CSS .bak_singleui도 생성했다.
 
 재적용: `tools/install-single-grimdark-ui.ps1 -GameDir <실제 game 폴더>`. 다른 작업으로 수정된 QSP에서 기존/신규 본문을 확인할 수 없으면 공식 적용기가 중단한다. CSS는 원래 인코딩을 다시 쓰지 않고 장식 블록만 바이트 추가한다. 재실행은 QSP/프레임의 중복 적용을 건너뛴다.
+
+## 테두리 두께 후속 조정
+
+사용자 요청에 따라 추가한 좌측/하단 외곽을 16px에서 8px로 줄였다. 하단 y792로 화면 끝은 y800 그대로다. 텍스처도 두께 방향으로 1/2 축소하여 양쪽 가장자리를 유지한다. 컷신·버튼·다른 CSS/QSP 내용은 변경하지 않았다. 최신 설치기는 기존 테두리 블록을 바이트 단위로 교체하며, 재적용 때 중복시키지 않는다. 백업/해시는 records/ui/2026-10-14-ui-border-8px.json. 실제 게임은 재실행 후 사용자 확인이 필요하다.

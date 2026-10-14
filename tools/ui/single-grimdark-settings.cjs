@@ -24,9 +24,9 @@ const frame=`\r\n/* JO9_SINGLE_GRIMDARK_UI_20261014_BEGIN */
 /* Paint only: existing geometry and hit boxes remain unchanged. */
 body:before,body:after{content:"";position:fixed;display:block;pointer-events:none;z-index:900;background-image:url('content/pic/ui/grimdark/bg_main.png');background-repeat:no-repeat;}
 /* Reuse the existing vertical metal strip in the vacant left gutter. */
-body:before{left:0;top:45px;width:16px;height:755px;background-position:-1003px -45px;}
+body:before{left:0;top:45px;width:8px;height:755px;background-size:640px 800px;background-position:-501.5px -45px;}
 /* Close the bottom outer edge with the existing horizontal metal strip. */
-body:after{left:0;top:784px;width:1003px;height:16px;background-position:0 -30px;}
+body:after{left:0;top:792px;width:1003px;height:8px;background-size:1280px 400px;background-position:0 -15px;}
 /* JO9_SINGLE_GRIMDARK_UI_20261014_END */\r\n`;
 function css(source){assert(!source.includes('JO9_SINGLE_GRIMDARK_UI_20261014_BEGIN'),'Already patched CSS');return source+frame;}
 module.exports={body,css,frame};
