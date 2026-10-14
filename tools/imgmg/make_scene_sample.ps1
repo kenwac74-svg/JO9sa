@@ -3,7 +3,7 @@
 # 'loli' 표기 계열은 넣지 않는다.
 param(
     [string]$NewDir = 'K:\doing\JONT2.3kor_scene\game\content\pic\girls\sex_scenes',
-    [string]$PlayDir = 'G:\somi\JO9\game\content\pic\girls\sex_scenes',
+    [string]$PlayDir = 'G:\somi\Jack O Nine Tails v2.4_work\game\content\pic\girls\sex_scenes',
     [string]$AiDir = 'G:\somi\IMGMG\ai_girl_pack\game\content\pic\girls\sex_scenes',
     [string]$Out = 'G:\somi\IMGMG\scene_compare_sample100.html',
     [int]$Count = 100,

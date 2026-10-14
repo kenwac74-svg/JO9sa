@@ -79,3 +79,8 @@
 - **비비**: "너는 비비다. `newimgadd` 브랜치를 받아 `docs/PROJECT.md`와 `docs/NEWIMG_REPLACEMENT_LOG.md`를 읽고 이미지 교체 패치 일을 이어서 해."
 - **펜디**: 필요할 때만. "너는 펜디다. main의 `docs/PROJECT.md`와 `docs/text-workshop/`를 읽어."
 
+
+
+## 2026-10-15 확정 폴더와 퇴역 정리
+
+플레이는 G:/somi/Jack O Nine Tails v2.4_work, 배포는 G:/somi/Jack O Nine Tails v2.4 Kor_Full. 구 JO9·JO924와 지난 백업·작업 흔적은 JO9_trash/2026-10-15_cleanup에 이동. 필요한 자료 보존 및 도구 경로 갱신 완료. [조사·보존·이동·복구 기록](SOMI_CLEANUP_20261015.md). 이전 문서의 JO9 플레이 경로보다 이 사용자 결정을 우선한다.

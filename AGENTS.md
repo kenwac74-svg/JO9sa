@@ -11,3 +11,5 @@
 7. 커뮤니티 배포 담당과 최신 기준: `docs/COMMUNITY_RELEASE_2_4_0.md`(2026-10-11 사용자 확정). Codex가 풀팩·간소화 패치 2.4.0을 제작한다. 기존 PM 전용 빌드 제한보다 이 기준을 우선한다.
 
 8. 최신 사용자 지침: `docs/USER_DIRECTIONS_20261011.md`. 미사용 이미지 이동·복구 결과와 검증 한계는 `docs/UNUSED_IMAGES_ARCHIVE_20261011.md`. 새 장면전환/B컷 및 불확실한 동적 리소스를 미체크라는 이유로 제거하지 않는다.
+
+9. 2026-10-15 사용자 확정 경로: 플레이 G:/somi/Jack O Nine Tails v2.4_work, 빌드배포 G:/somi/Jack O Nine Tails v2.4 Kor_Full. 이전 G:/somi/JO9와 JO924는 JO9_trash/2026-10-15_cleanup으로 퇴역. QSP 수정은 새 두 대상에 각각 적용·검증하며 보호 순정 JO9O와 현재 원천 IMGMG/JO9sa는 유지. 자세한 이동·복구는 docs/SOMI_CLEANUP_20261015.md.

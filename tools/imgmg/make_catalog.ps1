@@ -2,7 +2,7 @@
 # 작업 체크리스트 카탈로그(.hta/.html)를 만든다. 체크 상태는 catalog_status.js에 따로 저장되므로 다시 만들어도 유지된다.
 param(
     [string]$Root = (Split-Path -Parent $PSScriptRoot),
-    [string]$Play = 'G:\somi\JO9\game',
+    [string]$Play = 'G:\somi\Jack O Nine Tails v2.4_work\game',
     [string]$Original = 'G:\somi\JO9O\game'
 )
 $ErrorActionPreference = 'Stop'
@@ -166,7 +166,7 @@ a.open{color:inherit;font-weight:600;cursor:pointer}
 <div id="main">
 <h1>이미지 패치 작업 체크리스트</h1>
 <section id="catalogPicPanel" style="color:#eff1e9;border:1px solid #596552;background:#202920;border-radius:8px;padding:14px 18px;margin:16px 0">
- <strong style="color:#e5c588">플레이 PIC 폴더 연결</strong> · <code>G:\somi\JO9\game\content\pic</code>
+ <strong style="color:#e5c588">플레이 PIC 폴더 연결</strong> · <code>G:\somi\Jack O Nine Tails v2.4_work\game\content\pic</code>
  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button id="catalogPicConnect">PIC 폴더 등록</button><button id="catalogPicChoose">폴더 다시 선택</button><button id="catalogPicRescan" disabled>전체 다시 읽기</button></div>
  <p id="catalogPicStatus" role="status" aria-live="polite" style="margin:10px 0 0">PIC 폴더를 한 번 등록하면 교체기가 같은 연결과 전체 목록을 사용합니다.</p>
 </section>

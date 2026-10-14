@@ -3,7 +3,7 @@
 # 기본은 차이만 보고한다. -Apply를 주면 복사한다(덮어쓰는 파일은 _backup에 날짜별로 보관).
 param(
     [string]$Root = (Split-Path -Parent $PSScriptRoot),
-    [string]$GamePic = 'G:\somi\JO9\game\content\pic',
+    [string]$GamePic = 'G:\somi\Jack O Nine Tails v2.4_work\game\content\pic',
     [switch]$Apply
 )
 $ErrorActionPreference = 'Stop'

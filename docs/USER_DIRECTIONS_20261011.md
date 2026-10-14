@@ -40,3 +40,8 @@
 ## 2026-10-15 플레이·배포 폴더 동시 반영
 
 사용자 확정: 수정은 G:/somi/JO9와 G:/somi/Jack O Nine Tails v2.4 Kor_Full 양쪽에 적용한다. 각 대상 코드를 보존하고 edit를 적용·검증하며 전체 QSP를 상호 덮어쓰지 않는다. 초기 테두리·캐릭터 정렬·구버전 알림 버튼 세 패치의 양쪽 반영 완료. [원인·검증·사용자 확인](MESSAGE_LOAD_BUTTON_FIX_20261015.md). 실제 플레이 확인 대기.
+
+
+## 2026-10-15 확정 폴더와 퇴역 정리
+
+플레이는 G:/somi/Jack O Nine Tails v2.4_work, 배포는 G:/somi/Jack O Nine Tails v2.4 Kor_Full. 구 JO9·JO924와 지난 백업·작업 흔적은 JO9_trash/2026-10-15_cleanup에 이동. 필요한 자료 보존 및 도구 경로 갱신 완료. [조사·보존·이동·복구 기록](SOMI_CLEANUP_20261015.md). 이전 문서의 JO9 플레이 경로보다 이 사용자 결정을 우선한다.

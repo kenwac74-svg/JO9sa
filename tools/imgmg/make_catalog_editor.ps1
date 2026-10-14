@@ -3,9 +3,9 @@
 # - 교체기 코드는 하나의 함수 범위에 넣어 카탈로그의 전역 이름(S, render, esc 등)과 겹치지 않게 한다.
 # - 카탈로그는 window.JO9WS.open([대상])으로 교체기를 열고, 교체가 끝나면 'jo9ws-applied' 이벤트를 받는다.
 param(
-    [string]$Workshop = 'G:\somi\JO9\game\modtools\place\JO9_Place_Workshop.html',
+    [string]$Workshop = 'G:\somi\Jack O Nine Tails v2.4_work\game\modtools\place\JO9_Place_Workshop.html',
     [string]$Out = (Join-Path (Split-Path -Parent $PSScriptRoot) 'catalog_editor.js'),
-    [string]$PlayUrl = 'file:///G:/somi/JO9/game/'
+    [string]$PlayUrl = 'file:///G:/somi/Jack%20O%20Nine%20Tails%20v2.4_work/game/'
 )
 $ErrorActionPreference = 'Stop'
 $html = [IO.File]::ReadAllText($Workshop, [Text.Encoding]::UTF8).Replace("`r`n", "`n")
