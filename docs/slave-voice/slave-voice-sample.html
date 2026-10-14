@@ -1,0 +1,312 @@
+<!-- 노예 아침 대사(사건 기억·감정·표현 단계·조각 조립)를 브라우저에서 체험하는 설계 검토용 샘플 -->
+<title>노예 아침 대사 실험</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<style>
+/* 레이아웃: 왼쪽은 하루 행동, 가운데는 아침 대사와 근거, 오른쪽은 노예의 속마음(감정·기억). 좁으면 한 줄로 쌓는다. */
+:root{
+  --bg:#f3f1ec; --panel:#fbfaf7; --ink:#24211d; --muted:#6c665c; --line:#ddd7cb;
+  --brass:#8a5a1c; --brass-soft:#efe2cc; --cold:#3d5a73; --warn:#9b3d2e; --good:#3f6b45;
+  --serif:"Gowun Batang","Batang",serif; --sans:"IBM Plex Sans KR","Malgun Gothic",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#17181a; --panel:#1f2023; --ink:#e9e4da; --muted:#a39c90; --line:#34353a;
+  --brass:#d6a35c; --brass-soft:#3a2f20; --cold:#8fb1cc; --warn:#e08b7a; --good:#8fc196; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#17181a; --panel:#1f2023; --ink:#e9e4da; --muted:#a39c90; --line:#34353a;
+  --brass:#d6a35c; --brass-soft:#3a2f20; --cold:#8fb1cc; --warn:#e08b7a; --good:#8fc196; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.6}
+.wrap{max-width:1180px;margin:0 auto;padding-block:20px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 16px;margin-bottom:16px}
+h1{font-family:var(--serif);font-size:1.6rem;margin:0;text-wrap:balance}
+.sub{color:var(--muted);font-size:.9rem;margin:0}
+.grid{display:grid;grid-template-columns:260px minmax(0,1fr) 300px;gap:16px;align-items:start}
+@media (max-width:980px){.grid{grid-template-columns:minmax(0,1fr)}}
+section{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;min-width:0}
+h2{font-size:.78rem;letter-spacing:.08em;color:var(--muted);margin:0 0 10px;font-weight:600}
+label{display:block;font-size:.85rem;color:var(--muted);margin-top:10px}
+select,input[type=range]{width:100%}
+select{font:inherit;padding:6px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink)}
+.val{float:right;color:var(--ink);font-variant-numeric:tabular-nums}
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}
+button{font:inherit;font-size:.88rem;padding:8px 10px;border-radius:4px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+button:hover{border-color:var(--brass)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+button:disabled{opacity:.45;cursor:default}
+.primary{grid-column:1/-1;background:var(--brass);border-color:var(--brass);color:var(--panel);font-weight:600}
+.queue{margin-top:10px;font-size:.85rem;color:var(--muted);min-height:1.6em}
+.chip{display:inline-block;padding:1px 8px;border-radius:99px;background:var(--brass-soft);color:var(--ink);margin:2px 4px 2px 0;font-size:.8rem}
+.day{font-family:var(--serif);font-size:1.05rem;margin-bottom:8px}
+.speech{font-family:var(--serif);font-size:1.18rem;line-height:1.9;border-left:3px solid var(--brass);padding:6px 0 6px 14px;margin:0 0 14px}
+.speech .q{display:block}
+.speech .n{display:block;color:var(--muted);font-size:1rem}
+.old{font-size:.88rem;color:var(--muted);border-top:1px dashed var(--line);padding-top:10px;margin-top:4px}
+.old b{color:var(--ink);font-weight:500}
+details{margin-top:12px}
+summary{cursor:pointer;font-size:.88rem;color:var(--brass)}
+table{border-collapse:collapse;width:100%;font-size:.84rem;margin-top:8px}
+td{border-top:1px solid var(--line);padding:5px 4px;vertical-align:top}
+td:first-child{color:var(--muted);white-space:nowrap;width:7em}
+.feel{display:grid;grid-template-columns:4.5em minmax(0,1fr) 2.4em;gap:8px;align-items:center;font-size:.86rem;margin:6px 0}
+.bar{height:7px;background:var(--line);border-radius:4px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--brass)}
+.bar i.neg{background:var(--warn)} .bar i.pos{background:var(--good)}
+.feel small{color:var(--muted);grid-column:2/-1;margin-top:-4px}
+.mem{font-size:.84rem;margin:4px 0;color:var(--ink)}
+.mem span{color:var(--muted)}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;font-size:.84rem;font-variant-numeric:tabular-nums;margin-bottom:6px}
+.stats span{color:var(--muted)}
+.log{margin-top:16px}
+.log p{font-family:var(--serif);font-size:.95rem;margin:6px 0;color:var(--ink)}
+.log p span{font-family:var(--sans);font-size:.78rem;color:var(--muted);margin-right:6px}
+.empty{color:var(--muted);font-size:.85rem}
+.note{font-size:.8rem;color:var(--muted);margin-top:18px}
+</style>
+
+<div class="wrap">
+<header>
+  <h1>노예 아침 대사 실험</h1>
+  <p class="sub">낮에 한 일이 다음 날 아침 한마디에 어떻게 남는지 확인하는 샘플입니다. 수치·대사는 실험용입니다.</p>
+</header>
+
+<div class="grid">
+  <section aria-labelledby="h-day">
+    <h2 id="h-day">오늘 할 일 (최대 2개)</h2>
+    <label for="pers">성격 <span class="val" id="pers-v"></span></label>
+    <select id="pers">
+      <option value="timid">소심함 — 두려움을 쉽게 드러냄</option>
+      <option value="proud">자존심 강함 — 수치심·두려움을 감춤</option>
+      <option value="cold">냉정함 — 믿지 않으면 거짓 표정</option>
+    </select>
+    <label for="obey">복종 <span class="val" id="obey-v"></span></label>
+    <input type="range" id="obey" min="0" max="100">
+    <label for="trust">신뢰 <span class="val" id="trust-v"></span></label>
+    <input type="range" id="trust" min="0" max="100">
+    <div class="acts" role="group" aria-label="행동">
+      <button data-act="punish_hard" id="a1">엄하게 처벌</button>
+      <button data-act="punish_light" id="a2">가볍게 꾸짖기</button>
+      <button data-act="praise" id="a3">칭찬</button>
+      <button data-act="gift" id="a4">선물</button>
+      <button data-act="serve" id="a5">손님 접대</button>
+      <button data-act="rest" id="a6">쉬게 하기</button>
+      <button class="primary" id="end">하루 종료 → 다음 날 아침</button>
+    </div>
+    <div class="queue" id="queue"></div>
+    <div class="note">하루 종료를 누르면 감정이 옅어지고, 오늘 일이 기억과 감정으로 남은 뒤, 아침 상태를 계산해 대사를 조립합니다.</div>
+  </section>
+
+  <section aria-labelledby="h-morning">
+    <h2 id="h-morning">아침</h2>
+    <div class="day" id="dayline"></div>
+    <blockquote class="speech" id="speech"></blockquote>
+    <div class="old" id="old"></div>
+    <details open>
+      <summary>왜 이렇게 말했나</summary>
+      <table id="why"></table>
+    </details>
+    <div class="log">
+      <h2>지난 아침들</h2>
+      <div id="log"></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-inner">
+    <h2 id="h-inner">속마음</h2>
+    <div class="stats" id="stats"></div>
+    <h2 style="margin-top:14px">감정 (원인과 남은 세기)</h2>
+    <div id="feels"></div>
+    <h2 style="margin-top:14px">기억하는 일</h2>
+    <div id="mems"></div>
+  </section>
+</div>
+</div>
+
+<script>
+// 노예 아침 대사 샘플: 사건 기억 → 원인 있는 감정 → 아침 상태 → 표현 단계 → 조각 조립(반복 방지)
+const GUESTS=['굵은 목소리의 상인','얼굴에 흉터가 있는 용병','젊은 귀족','단골 대장장이'];
+const EMO={
+  fear:{ko:'두려움',neg:true,decay:.75},shame:{ko:'수치심',neg:true,decay:.65},
+  resent:{ko:'원망',neg:true,decay:.8},unease:{ko:'불안',neg:true,decay:.65},
+  pride:{ko:'자부심',neg:false,decay:.6},grat:{ko:'고마움',neg:false,decay:.7},relief:{ko:'안도',neg:false,decay:.5}
+};
+const ACT={
+  punish_hard:{ko:'엄하게 처벌'},punish_light:{ko:'가볍게 꾸짖기'},praise:{ko:'칭찬'},
+  gift:{ko:'선물'},serve:{ko:'손님 접대'},rest:{ko:'쉬게 하기'}
+};
+// 조각 대사. {when}=그 일이 있던 때, {who}=관련 인물.
+const L={
+  greet:{
+    high:{good:['좋은 아침이에요, 주인님.','주인님, 일어나셨어요?','오늘도 시중들 준비가 됐어요, 주인님.'],
+          bad:['……안녕히 주무셨어요, 주인님.','부르셨어요, 주인님?','주인님, 오셨어요.']},
+    mid:{good:['아, 주인님. 아침이네요.','일어나셨네요.','오셨어요?'],
+         bad:['……아침이에요.','네, 일어났어요.','……주인님.']},
+    low:{good:['벌써 아침이야?','왔어?','또 하루 시작이네.'],
+         bad:['……뭐.','또 무슨 일이죠.','말 걸지 마세요, 아직.']}
+  },
+  body:{
+    sore:['몸이 아직 욱신거려요.','움직일 때마다 결려요.','어디 하나 안 아픈 데가 없네요.'],
+    tired:['잠을 거의 못 잤어요.','눈꺼풀이 무거워요.','조금 지쳤어요.'],
+    rested:['푹 잤어요.','오랜만에 몸이 가벼워요.','잘 쉬었어요.'],
+    fine:[]
+  },
+  feel:{
+    fear:{
+      reveal:['{when} 일이 자꾸 떠올라요. 또 그러실 건가요?','{when}처럼 화나시게 하지 않을게요. 정말이에요.','밤새 {when} 생각이 나서 잠을 설쳤어요.'],
+      hint:['오늘은 실수 안 할게요.','시키시는 건 다 할게요. 다요.','*그녀는 당신의 손이 움직일 때마다 움찔합니다.'],
+      conceal:['*목소리가 아주 조금 떨립니다.','*그녀는 당신과 눈을 마주치지 않습니다.','아무렇지도 않아요.'],
+      mask:['{when} 일요? 벌써 잊었어요.','그 정도로 겁먹을 줄 아셨어요?','*그녀는 태연한 얼굴로 고개를 듭니다. 지나치게 태연합니다.']},
+    shame:{
+      reveal:['{who} 앞에서 그런 모습을 보였다는 게…… 아직도 얼굴이 뜨거워요.','{when} 일은 떠올리기만 해도 숨고 싶어요.','그 사람이 저를 보던 눈이 잊히지 않아요.'],
+      hint:['{when} 얘기는…… 안 하시면 안 돼요?','오늘은 조용히 있고 싶어요.','*그녀는 옷깃을 자꾸 여밉니다.'],
+      conceal:['*그녀는 시선을 바닥에 둔 채 대답합니다.','*대답이 평소보다 짧습니다.','별일 없었어요.'],
+      mask:['별일 아니었잖아요.','손님 하나 상대한 것뿐이에요.','*그녀는 어깨를 으쓱합니다. 손끝이 하얗습니다.']},
+    resent:{
+      reveal:['{when} 일, 저는 아직 납득 못 했어요.','그렇게까지 하실 일이었나요?','솔직히 말할게요. {when} 일은 너무하셨어요.'],
+      hint:['……알겠어요. 시키시는 대로 할게요.','네. 주인님 뜻대로요.','*대답은 하는데 목소리에 온기가 없습니다.'],
+      conceal:['*대답은 공손하지만 눈빛이 차갑습니다.','*그녀는 필요한 말만 합니다.','네.'],
+      mask:['불만 같은 거 없어요.','제가 뭐라고 불평을 하겠어요.','*그녀가 웃습니다. 눈은 웃지 않습니다.']},
+    unease:{
+      reveal:['{who}…… 그 사람, 또 오나요?','{when} 그 손님, 다시는 안 왔으면 좋겠어요.','{who}가 나가면서 한 말이 계속 마음에 걸려요.'],
+      hint:['{when} 손님은…… 아니, 아니에요.','오늘은 손님 없는 날이죠?','*문밖에서 발소리가 나자 그녀가 고개를 돌립니다.'],
+      conceal:['*손님 얘기가 나오자 그녀가 화제를 돌립니다.','*그녀는 문 쪽을 한 번 흘끗 봅니다.','괜찮아요.'],
+      mask:['손님이야 다 똑같죠.','누가 오든 상관없어요.','*그녀는 무심한 척 머리를 넘깁니다.']},
+    pride:{
+      reveal:['{when} 칭찬해 주신 거, 계속 생각났어요.','주인님이 잘했다고 하셔서 기뻤어요.','{when} 일, 저 정말 잘했죠?'],
+      hint:['오늘도 잘할 수 있을 것 같아요.','뭐든 시켜 보세요.','*등이 평소보다 곧게 펴져 있습니다.'],
+      conceal:['*입꼬리가 살짝 올라가 있습니다.','*그녀는 콧노래를 삼킵니다.','평소랑 같아요.'],
+      mask:['당연히 할 일을 했을 뿐이에요.','칭찬 한마디에 들뜰 줄 아셨어요?','*그녀는 무표정을 지키려 애씁니다.']},
+    grat:{
+      reveal:['{when} 주신 거, 소중히 간직하고 있어요.','선물 받은 건 정말 오랜만이었어요.','고맙다는 말, 제대로 못 한 것 같아서요. 고마워요.'],
+      hint:['*그녀는 선물 받은 리본을 매만집니다.','오늘은 기분이 좋아요.','*그녀가 당신 쪽으로 반 걸음 다가섭니다.'],
+      conceal:['……고맙다는 말은 했었죠?','*그녀는 리본을 옷 안쪽에 감춥니다.','네, 잘 지냈어요.'],
+      mask:['그런 걸로 마음이 바뀌진 않아요.','물건 하나로 길들이실 생각이에요?','*그녀는 선물 얘기를 못 들은 척합니다.']},
+    relief:{
+      reveal:['쉬게 해 주셔서 고마워요. 정말 필요했어요.','어제는 오랜만에 숨을 돌렸어요.','하루 쉬니까 살 것 같아요.'],
+      hint:['오늘은 기운이 좀 나요.','*표정이 한결 부드럽습니다.','덕분에요.'],
+      conceal:['*그녀는 기지개를 켜다 멈춥니다.','괜찮아요.','*얼굴빛이 어제보다 낫습니다.'],
+      mask:['하루 쉰다고 달라질 건 없어요.','쉬는 것도 명령인가요?','*그녀는 별일 없다는 듯 굽니다.']}
+  },
+  // 감정이 없을 때의 맺음
+  idle:{good:['오늘은 뭘 할까요?','*그녀가 당신의 지시를 기다립니다.'],bad:['……','*그녀는 말없이 서 있습니다.']}
+};
+const OLD={high:'좋은 아침입니다, 주인님. 오늘은 무엇을 할까요?',mid:'일어났어요. 무슨 일이죠?',low:'……또 아침이네요.'};
+
+let S;
+function fresh(){
+  S={day:3,pers:'proud',obey:55,trust:35,energy:0,mood:0,body:'fine',
+     events:[{kind:'serve',who:GUESTS[1],day:1,inten:60},{kind:'punish_hard',who:'주인님',day:2,inten:70}],
+     feels:[{emo:'unease',inten:38,src:0,who:GUESTS[1],day:1},{emo:'fear',inten:52,src:1,who:'주인님',day:2},{emo:'shame',inten:30,src:0,who:GUESTS[1],day:1}],
+     used:{},queue:[],log:[],last:null};
+  S.energy=-.3; S.body='sore'; computeMood();
+  S.last=speak();
+}
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const pick=(arr,key)=>{ // 최근 2일 안에 쓴 조각은 피한다
+  if(!arr.length) return null;
+  const ok=arr.filter(t=>!(S.used[key+'|'+t]>=S.day-2));
+  const pool=ok.length?ok:arr; const t=pool[Math.floor(Math.random()*pool.length)];
+  S.used[key+'|'+t]=S.day; return t;
+};
+const whenOf=d=>{const g=S.day-d;return g<=1?'어제':g===2?'그저께':'며칠 전'};
+function addFeel(emo,inten,who,srcIdx){
+  const f=S.feels.find(x=>x.emo===emo);
+  if(f){f.inten=clamp(Math.max(f.inten,inten)+10,0,95);f.who=who;f.src=srcIdx;f.day=S.day}
+  else S.feels.push({emo,inten,who,src:srcIdx,day:S.day});
+}
+function computeMood(){
+  let m=0; for(const f of S.feels) m+=(EMO[f.emo].neg?-1:1)*f.inten/100;
+  S.mood=clamp(m+S.energy*.4,-1,1);
+}
+function endDay(){
+  // 1) 지난 감정이 옅어진다
+  S.feels=S.feels.map(f=>({...f,inten:Math.round(f.inten*EMO[f.emo].decay)})).filter(f=>f.inten>=15);
+  // 2) 오늘 일이 기억과 감정으로 남는다
+  let load=0,soreHit=false,rested=false;
+  for(const a of S.queue){
+    const who=a==='serve'?GUESTS[Math.floor(Math.random()*GUESTS.length)]:'주인님';
+    const inten={punish_hard:70,punish_light:35,praise:50,gift:55,serve:60,rest:40}[a];
+    S.events.push({kind:a,who,day:S.day,inten}); if(S.events.length>6) S.events.shift();
+    const i=S.events.length-1;
+    if(a==='punish_hard'){addFeel('fear',70,who,i); if(S.trust<45) addFeel('resent',50,who,i); S.obey+=5; S.trust-=6; soreHit=true; load+=1}
+    if(a==='punish_light'){addFeel('fear',35,who,i); S.obey+=2; S.trust-=2}
+    if(a==='praise'){addFeel('pride',50,who,i); S.trust+=4}
+    if(a==='gift'){addFeel('grat',55,who,i); S.trust+=5}
+    if(a==='serve'){addFeel('shame',45,who,i); addFeel('unease',50,who,i); load+=1.2}
+    if(a==='rest'){addFeel('relief',40,who,i); rested=true; load-=1.5}
+  }
+  S.obey=clamp(S.obey,0,100); S.trust=clamp(S.trust,0,100);
+  // 3) 아침 상태
+  S.day+=1;
+  S.energy=clamp(.25-load*.35+(Math.random()-.5)*.2,-1,1);
+  S.body=soreHit?'sore':S.energy<-.3?'tired':rested||S.energy>.35?'rested':'fine';
+  computeMood();
+  S.log.unshift({day:S.day-1,acts:S.queue.map(a=>ACT[a].ko),line:S.last.text});
+  S.queue=[];
+  S.last=speak();
+  render();
+}
+function mode(emo){
+  // 신뢰로 기본 단계를 정하고 성격으로 한 칸 조정한다
+  const steps=['mask','conceal','hint','reveal'];
+  let i=S.trust>=65?3:S.trust>=40?2:1;
+  if(S.pers==='proud'&&(emo==='shame'||emo==='fear')) i-=1;
+  if(S.pers==='timid'&&emo==='fear') i+=1;
+  if(i<=1&&S.pers==='cold'&&S.trust<40) i=0;
+  if(i<0) i=S.pers==='cold'?0:1;
+  return steps[clamp(i,0,3)];
+}
+function speak(){
+  const why=[];
+  const tier=S.obey>=65?'high':S.obey>=35?'mid':'low';
+  const tone=S.mood>=0?'good':'bad';
+  const parts=[];
+  const g=pick(L.greet[tier][tone],'g'); parts.push(g);
+  why.push(['인사',`복종 ${S.obey} → ${({high:'높음',mid:'중간',low:'낮음'})[tier]}, 기분 ${S.mood.toFixed(2)} → ${tone==='good'?'좋음':'나쁨'}`]);
+  const b=pick(L.body[S.body],'b'); if(b) parts.push(b);
+  why.push(['몸 상태',({sore:'쑤심',tired:'지침',rested:'개운함',fine:'보통 (말하지 않음)'})[S.body]+` · 기력 ${S.energy.toFixed(2)}`]);
+  const top=[...S.feels].sort((x,y)=>y.inten-x.inten)[0];
+  if(top&&top.inten>=25){
+    const m=mode(top.emo);
+    let t=pick(L.feel[top.emo][m],'f'+top.emo+m);
+    t=t.replaceAll('{when}',whenOf(top.day)).replaceAll('{who}',top.who);
+    parts.push(t);
+    why.push(['마음에 걸리는 일',`${EMO[top.emo].ko} ${top.inten} · 원인: ${whenOf(top.day)} ${eventKo(S.events[top.src])}`]);
+    why.push(['표현 방식',`${({reveal:'드러냄',hint:'암시',conceal:'숨김',mask:'거짓 표정'})[m]} · 신뢰 ${S.trust}, 성격 ${persKo()}`]);
+    if(m==='reveal') S.trust=clamp(S.trust+3,0,100);
+    if(m==='hint') S.trust=clamp(S.trust+1,0,100);
+  } else {
+    parts.push(pick(L.idle[tone],'i'));
+    why.push(['마음에 걸리는 일','세기 25 이상인 감정이 없음']);
+  }
+  why.push(['반복 방지','최근 2일 안에 쓴 조각은 다시 고르지 않음']);
+  return {parts,why,tier,text:parts.map(p=>p.startsWith('*')?p.slice(1):p).join(' ')};
+}
+const persKo=()=>({timid:'소심함',proud:'자존심 강함',cold:'냉정함'})[S.pers];
+function eventKo(e){ if(!e) return '(오래된 일)'; return e.kind==='serve'?`${e.who} 접대`:ACT[e.kind].ko; }
+
+function render(){
+  document.getElementById('pers').value=S.pers;
+  for(const k of ['obey','trust']){document.getElementById(k).value=S[k];document.getElementById(k+'-v').textContent=S[k]}
+  document.getElementById('pers-v').textContent='';
+  document.getElementById('dayline').textContent=`${S.day}일째 아침`;
+  const sp=document.getElementById('speech'); sp.innerHTML='';
+  for(const p of S.last.parts){const s=document.createElement('span');
+    if(p.startsWith('*')){s.className='n';s.textContent=p.slice(1)} else {s.className='q';s.textContent='“'+p+'”'}
+    sp.appendChild(s)}
+  document.getElementById('old').innerHTML=`지금 잭오나 방식이라면 (복종만 봄) → <b>“${OLD[S.last.tier]}”</b>`;
+  document.getElementById('why').innerHTML=S.last.why.map(([a,b])=>`<tr><td>${a}</td><td>${b}</td></tr>`).join('');
+  document.getElementById('queue').innerHTML=S.queue.length?'오늘: '+S.queue.map(a=>`<span class="chip">${ACT[a].ko}</span>`).join(''):'오늘 할 일을 고르세요. 아무것도 안 해도 하루를 넘길 수 있습니다.';
+  document.querySelectorAll('[data-act]').forEach(b=>b.disabled=S.queue.length>=2);
+  document.getElementById('stats').innerHTML=`<div><span>기분</span> ${S.mood.toFixed(2)}</div><div><span>기력</span> ${S.energy.toFixed(2)}</div><div><span>복종</span> ${S.obey}</div><div><span>신뢰</span> ${S.trust}</div>`;
+  const fs=[...S.feels].sort((x,y)=>y.inten-x.inten);
+  document.getElementById('feels').innerHTML=fs.length?fs.map(f=>`<div class="feel"><span>${EMO[f.emo].ko}</span><div class="bar"><i class="${EMO[f.emo].neg?'neg':'pos'}" style="width:${f.inten}%"></i></div><span>${f.inten}</span><small>${whenOf(f.day)} · ${eventKo(S.events[f.src])}</small></div>`).join(''):'<p class="empty">남아 있는 감정이 없습니다.</p>';
+  document.getElementById('mems').innerHTML=[...S.events].reverse().map(e=>`<p class="mem">${eventKo(e)} <span>· ${e.day}일째</span></p>`).join('');
+  document.getElementById('log').innerHTML=S.log.length?S.log.map(l=>`<p><span>${l.day+1}일째 · 전날 ${l.acts.join(', ')||'아무 일 없음'}</span>${l.line}</p>`).join(''):'<p class="empty">하루를 넘기면 여기에 쌓입니다.</p>';
+}
+document.querySelectorAll('[data-act]').forEach(b=>b.addEventListener('click',()=>{if(S.queue.length<2){S.queue.push(b.dataset.act);render()}}));
+document.getElementById('end').addEventListener('click',endDay);
+document.getElementById('pers').addEventListener('change',e=>{S.pers=e.target.value;render()});
+for(const k of ['obey','trust']) document.getElementById(k).addEventListener('input',e=>{S[k]=+e.target.value;document.getElementById(k+'-v').textContent=S[k]});
+fresh(); render();
+</script>
