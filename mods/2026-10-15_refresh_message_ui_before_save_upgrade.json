@@ -1,0 +1,22 @@
+{
+  "id": "2026-10-15_refresh_message_ui_before_save_upgrade",
+  "description": "Restore canonical message artwork and coordinates before saved-game navigation and version-update notices; preserve game/save data.",
+  "before_sha256": "06d34458f0d40745adbd5ed05b2c94bf72bad1dbdf8a6077d15b41346ef96430",
+  "after_sha256": "84d298ef0be15290283e0592fb0d8cd3c870c88752c17f0ecf013d62dc58f9f3",
+  "edits": [
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "saved_game_loaded = 1",
+      "new": "! JO9_MESSAGE_LAYOUT_REFRESH_20261015\r\n! Saved UI settings must not retain retired button paths.\r\n$MSG_BACKIMAGE = 'content/pic/msg_bg.png'\r\n$MSG_OK_IMAGE = 'content/pic/buttons/ok-icon.png'\r\n$MSG_FORMAT = '<div id=\"ink\">%TEXT%</div>'\r\nMSG_TEXT_X = 80\r\nMSG_TEXT_Y = 40\r\nMSG_TEXT_W = 370\r\nMSG_TEXT_H = 400\r\nMSG_OK_X = 250\r\nMSG_OK_Y = 340\r\nMSG_X = 200\r\n! JO9_MESSAGE_LAYOUT_REFRESH_END\r\nsaved_game_loaded = 1",
+      "count": 1
+    },
+    {
+      "location": "$addon",
+      "field": "body",
+      "old": "\t\t!title fix",
+      "new": "! JO9_MESSAGE_LAYOUT_REFRESH_20261015\r\n! Saved UI settings must not retain retired button paths.\r\n$MSG_BACKIMAGE = 'content/pic/msg_bg.png'\r\n$MSG_OK_IMAGE = 'content/pic/buttons/ok-icon.png'\r\n$MSG_FORMAT = '<div id=\"ink\">%TEXT%</div>'\r\nMSG_TEXT_X = 80\r\nMSG_TEXT_Y = 40\r\nMSG_TEXT_W = 370\r\nMSG_TEXT_H = 400\r\nMSG_OK_X = 250\r\nMSG_OK_Y = 340\r\nMSG_X = 200\r\n! JO9_MESSAGE_LAYOUT_REFRESH_END\r\n\t\t!title fix",
+      "count": 1
+    }
+  ]
+}

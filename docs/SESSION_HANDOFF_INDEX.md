@@ -128,3 +128,8 @@ exit/전투종료의 일반 사망 문구 수정. 중복 제목 제거, 종료 �
 ## 2026-10-14 선택창 캐릭터 하단 정렬
 
 center_Isabella가 메뉴 이동 좌표를 상속하는 원인을 해결. 현재 G:/somi/Jack O Nine Tails v2.4 Kor_Full에 적용, 기존 사냥 분리는 유지. [원인·변경·검증·사용자 확인 항목](MENU_FOREGROUND_ALIGNMENT_20261014.md). 사용자 재실행 확인 대기.
+
+
+## 2026-10-15 플레이·배포 폴더 동시 반영
+
+사용자 확정: 수정은 G:/somi/JO9와 G:/somi/Jack O Nine Tails v2.4 Kor_Full 양쪽에 적용한다. 각 대상 코드를 보존하고 edit를 적용·검증하며 전체 QSP를 상호 덮어쓰지 않는다. 초기 테두리·캐릭터 정렬·구버전 알림 버튼 세 패치의 양쪽 반영 완료. [원인·검증·사용자 확인](MESSAGE_LOAD_BUTTON_FIX_20261015.md). 실제 플레이 확인 대기.
