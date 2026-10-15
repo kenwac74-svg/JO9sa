@@ -1,0 +1,132 @@
+{
+  "id": "2026-10-15_z_meiki_voluntary_outcome",
+  "description": "Adult voluntary special-trait outcome delta; no forced-route bonuses, no automatic acquisition or skill changes. Restore dedicated state-3 HUD and add state-4 label/icon.",
+  "target": "game/jack.qsp",
+  "edits": [
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "\t\t\tdynamic $replace($vaginally_penetrated, 'dyn'+'slave', 'dynslave') &! includes $master_ejaculate\r\n\t\t\tdynslave['pos_gentle'] = max(dynslave['pos_gentle'], 2)\r\n\t\t\tdynamic $master_energy_drop &! slave energy drop is handled in interaction_result",
+      "new": "\t\t\t! jo9_meiki_relaxed_bonus: favorable delta after an accepted voluntary outcome.\r\n\t\t\tif interaction_dynslave['diligence'] > 0 and func('jo9_meiki_willing', 'dynslave', 1) = 1: master_mood_rate += 1\r\n\t\t\tdynamic $replace($vaginally_penetrated, 'dyn'+'slave', 'dynslave') &! includes $master_ejaculate\r\n\t\t\tdynslave['pos_gentle'] = max(dynslave['pos_gentle'], 2)\r\n\t\t\tdynamic $master_energy_drop &! slave energy drop is handled in interaction_result",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "\t\t\tdynamic $replace($vaginally_penetrated, 'dyn'+'slave', 'assistant') &! includes $master_ejaculate\r\n\t\t\tdynamic $master_energy_drop &! slave and assistant are handled by interaction_result",
+      "new": "\t\t\t! jo9_meiki_group_bonus: all participants willing/adult; at most one bonus.\r\n\t\t\tif min(interaction_slave['diligence'], interaction_assistant['diligence']) > 0 and func('jo9_meiki_willing', 'slave', 0) = 1 and func('jo9_meiki_willing', 'assistant', 0) = 1:\r\n\t\t\t\tif func('jo9_meiki_willing', 'slave', 1) = 1 or func('jo9_meiki_willing', 'assistant', 1) = 1: master_mood_rate += 1\r\n\t\t\tend\r\n\t\t\tdynamic $replace($vaginally_penetrated, 'dyn'+'slave', 'assistant') &! includes $master_ejaculate\r\n\t\t\tdynamic $master_energy_drop &! slave and assistant are handled by interaction_result",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "\t\t\tdynamic $replace($vaginally_penetrated, 'dyn'+'slave', 'slave') &! includes $master_ejaculate\r\n\t\t\thouse_mess_rate += 15",
+      "new": "\t\t\t! jo9_meiki_hired_bonus: only explicitly adult companion variants.\r\n\t\t\tif interaction_slave['diligence'] > 0 and func('jo9_meiki_willing', 'slave', 1) = 1:\r\n\t\t\t\tif $slave_les_txt5 = '젊은' or $slave_les_txt5 = '밀프': master_mood_rate += 1\r\n\t\t\tend\r\n\t\t\tdynamic $replace($vaginally_penetrated, 'dyn'+'slave', 'slave') &! includes $master_ejaculate\r\n\t\t\thouse_mess_rate += 15",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "if snk_room_target > 0 and $curloc = 'interaction': gs 'snk_room_bridge', 'guard', 'interaction'",
+      "new": "if snk_room_target > 0 and $curloc = 'interaction': gs 'snk_room_bridge', 'guard', 'interaction'\r\n! JO9_MEIKI_BONUS_V1: refresh this cached template for existing saves.\r\ncode_defined['interaction_relaxed_vaginal'] = 0",
+      "count": 1
+    },
+    {
+      "location": "sex_initiate",
+      "field": "body",
+      "old": "killvar 'sex_done_today'",
+      "new": "killvar 'sex_done_today'\r\n! JO9_MEIKI_BONUS_V1: per-session eligibility, never inherited from a prior partner.\r\nsex['jo9_meiki_eligible'] = 0\r\nsex['jo9_meiki_bonus_paid'] = 0\r\nsex['jo9_meiki_voluntary_steps'] = 0\r\nif $sex_partner = '' and interaction = 5415: sex['jo9_meiki_eligible'] = func('jo9_meiki_willing', 'slave', 1)\r\nif $sex_partner = 'assistant' and interaction = 44: sex['jo9_meiki_eligible'] = func('jo9_meiki_willing', 'assistant', 1)",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction_result",
+      "field": "body",
+      "old": "gs 'sex_addup'",
+      "new": "gs 'sex_addup'\r\n! JO9_MEIKI_BONUS_V1: invalidate for refusal, restraint, or a non-allowlisted route.\r\nif sex_interaction ! 101 and sex_interaction ! 102 and sex_interaction ! 103 and sex_interaction ! 104 and sex_interaction ! 1041 and sex_interaction ! 1042 and sex_interaction ! 1043 and sex_interaction ! 1044 and sex_interaction ! 1045 and sex_interaction ! 105 and sex_interaction ! 106 and sex_interaction ! 19 and sex_interaction ! 12 and sex_interaction ! 15 and sex_interaction ! 151 and sex_interaction ! 152 and sex_interaction ! 153 and sex_interaction ! 154 and sex_interaction ! 155 and sex_interaction ! 161 and sex_interaction ! 162 and sex_interaction ! 91 and sex_interaction ! 94 and sex_interaction ! 95: sex['jo9_meiki_eligible'] = 0\r\nif $interaction_type = 'deny' or diligence < 0 or sex['bondage'] > 0 or sex['girl_raped'] > 0 or sex['girl_disgust'] > 0 or sex['girl_fear'] > 0: sex['jo9_meiki_eligible'] = 0\r\nif sex['jo9_meiki_eligible'] = 1:\r\n\tif sex_interaction = 12 and $interaction_type = 'penetration' and diligence > 0: sex['jo9_meiki_voluntary_steps'] += 1\r\n\tif $interaction_type = 'ejaculate' and sex['cum_pleasure'] > 0 and sex['jo9_meiki_voluntary_steps'] > 0 and sex['jo9_meiki_bonus_paid'] = 0:\r\n\t\tsex['cum_pleasure'] += 1\r\n\t\tsex['jo9_meiki_bonus_paid'] = 1\r\n\tend\r\nend",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction_result_woman",
+      "field": "body",
+      "old": "gs 'sex_addup'",
+      "new": "gs 'sex_addup'\r\n! JO9_MEIKI_BONUS_V1: invalidate for refusal, restraint, or a non-allowlisted route.\r\nif sex_interaction ! 101 and sex_interaction ! 102 and sex_interaction ! 103 and sex_interaction ! 104 and sex_interaction ! 1041 and sex_interaction ! 1042 and sex_interaction ! 1043 and sex_interaction ! 1044 and sex_interaction ! 1045 and sex_interaction ! 105 and sex_interaction ! 106 and sex_interaction ! 19 and sex_interaction ! 12 and sex_interaction ! 15 and sex_interaction ! 151 and sex_interaction ! 152 and sex_interaction ! 153 and sex_interaction ! 154 and sex_interaction ! 155 and sex_interaction ! 161 and sex_interaction ! 162 and sex_interaction ! 91 and sex_interaction ! 94 and sex_interaction ! 95: sex['jo9_meiki_eligible'] = 0\r\nif $interaction_type = 'deny' or diligence < 0 or sex['bondage'] > 0 or sex['girl_raped'] > 0 or sex['girl_disgust'] > 0 or sex['girl_fear'] > 0: sex['jo9_meiki_eligible'] = 0\r\nif sex['jo9_meiki_eligible'] = 1:\r\n\tif sex_interaction = 12 and $interaction_type = 'penetration' and diligence > 0: sex['jo9_meiki_voluntary_steps'] += 1\r\n\tif $interaction_type = 'ejaculate' and sex['cum_pleasure'] > 0 and sex['jo9_meiki_voluntary_steps'] > 0 and sex['jo9_meiki_bonus_paid'] = 0:\r\n\t\tsex['cum_pleasure'] += 1\r\n\t\tsex['jo9_meiki_bonus_paid'] = 1\r\n\tend\r\nend",
+      "count": 1
+    },
+    {
+      "location": "sjm_UI_UIadds",
+      "field": "body",
+      "old": "\t! JO9_STATUS_DETAIL_ONLY_20261015_0\r\n",
+      "new": "\telseif slave['virginity'] = 3:\r\n\t\t$tmp_s += '<div style=\"display:inline-block;position:relative;\" class=\"tooltip-left-small-button\" tooltip-data=\"크게 늘어난 상태\"><img style=\"width:30px;height:30px\" src=\"content\\pic\\ui\\jon-UIadds\\Vir_black.png\"></div>'\r\n\telseif slave['virginity'] = 4:\r\n\t\t$tmp_s += '<div style=\"display:inline-block;position:relative;\" class=\"tooltip-left-small-button\" tooltip-data=\"명기\"><img style=\"width:30px;height:30px\" src=\"content\\pic\\ui\\jon-UIadds\\Vir_golden.png\"></div>'\r\n",
+      "count": 1
+    },
+    {
+      "location": "sjm_UI_UIadds",
+      "field": "body",
+      "old": "\t! JO9_STATUS_DETAIL_ONLY_20261015_1\r\n",
+      "new": "\telseif assistant['virginity'] = 3:\r\n\t\t$tmp_a += '<div style=\"display:inline-block;position:relative;\" class=\"tooltip-left-small-button\" tooltip-data=\"크게 늘어난 상태\"><img style=\"width:30px;height:30px\" src=\"content\\pic\\ui\\jon-UIadds\\Vir_black.png\"></div>'\r\n\telseif assistant['virginity'] = 4:\r\n\t\t$tmp_a += '<div style=\"display:inline-block;position:relative;\" class=\"tooltip-left-small-button\" tooltip-data=\"명기\"><img style=\"width:30px;height:30px\" src=\"content\\pic\\ui\\jon-UIadds\\Vir_golden.png\"></div>'\r\n",
+      "count": 1
+    },
+    {
+      "location": "slave_private_room1",
+      "field": "body",
+      "old": "\t! JO9_STATUS_DETAIL_ONLY_20261015_0\r\n",
+      "new": "\telseif room1['virginity'] = 3:\r\n\t\t*p '<div style=\"display:inline-block;position:relative;\" class=\"tooltip-left-small-button\" tooltip-data=\"크게 늘어난 상태\"><img style=\"width:30px;height:30px\" src=\"content\\pic\\ui\\Vir_black.png\"></div>'\r\n\telseif room1['virginity'] = 4:\r\n\t\t*p '<div style=\"display:inline-block;position:relative;\" class=\"tooltip-left-small-button\" tooltip-data=\"명기\"><img style=\"width:30px;height:30px\" src=\"content\\pic\\ui\\Vir_golden.png\"></div>'\r\n",
+      "count": 1
+    },
+    {
+      "location": "slave_private_room2",
+      "field": "body",
+      "old": "\t! JO9_STATUS_DETAIL_ONLY_20261015_0\r\n",
+      "new": "\telseif room2['virginity'] = 3:\r\n\t\t*p '<div style=\"display:inline-block;position:relative;\" class=\"tooltip-left-small-button\" tooltip-data=\"크게 늘어난 상태\"><img style=\"width:30px;height:30px\" src=\"content\\pic\\ui\\Vir_black.png\"></div>'\r\n\telseif room2['virginity'] = 4:\r\n\t\t*p '<div style=\"display:inline-block;position:relative;\" class=\"tooltip-left-small-button\" tooltip-data=\"명기\"><img style=\"width:30px;height:30px\" src=\"content\\pic\\ui\\Vir_golden.png\"></div>'\r\n",
+      "count": 1
+    },
+    {
+      "location": "slave_private_room3",
+      "field": "body",
+      "old": "\t! JO9_STATUS_DETAIL_ONLY_20261015_0\r\n",
+      "new": "\telseif room3['virginity'] = 3:\r\n\t\t*p '<div style=\"display:inline-block;position:relative;\" class=\"tooltip-left-small-button\" tooltip-data=\"크게 늘어난 상태\"><img style=\"width:30px;height:30px\" src=\"content\\pic\\ui\\Vir_black.png\"></div>'\r\n\telseif room3['virginity'] = 4:\r\n\t\t*p '<div style=\"display:inline-block;position:relative;\" class=\"tooltip-left-small-button\" tooltip-data=\"명기\"><img style=\"width:30px;height:30px\" src=\"content\\pic\\ui\\Vir_golden.png\"></div>'\r\n",
+      "count": 1
+    },
+    {
+      "location": "slave_private_room4",
+      "field": "body",
+      "old": "\t! JO9_STATUS_DETAIL_ONLY_20261015_0\r\n",
+      "new": "\telseif room4['virginity'] = 3:\r\n\t\t*p '<div style=\"display:inline-block;position:relative;\" class=\"tooltip-left-small-button\" tooltip-data=\"크게 늘어난 상태\"><img style=\"width:30px;height:30px\" src=\"content\\pic\\ui\\Vir_black.png\"></div>'\r\n\telseif room4['virginity'] = 4:\r\n\t\t*p '<div style=\"display:inline-block;position:relative;\" class=\"tooltip-left-small-button\" tooltip-data=\"명기\"><img style=\"width:30px;height:30px\" src=\"content\\pic\\ui\\Vir_golden.png\"></div>'\r\n",
+      "count": 1
+    },
+    {
+      "location": "snk_room_menu_screen",
+      "field": "body",
+      "old": "\t! JO9_STATUS_DETAIL_ONLY_20261015_0\r\n",
+      "new": "\telseif slave['virginity'] = 3:\r\n\t\t*p '<div style=\"display:inline-block;position:relative;\" class=\"tooltip-left-small-button\" tooltip-data=\"크게 늘어난 상태\"><img style=\"width:30px;height:30px\" src=\"content\\pic\\ui\\Vir_black.png\"></div>'\r\n\telseif slave['virginity'] = 4:\r\n\t\t*p '<div style=\"display:inline-block;position:relative;\" class=\"tooltip-left-small-button\" tooltip-data=\"명기\"><img style=\"width:30px;height:30px\" src=\"content\\pic\\ui\\Vir_golden.png\"></div>'\r\n",
+      "count": 1
+    },
+    {
+      "location": "#variative",
+      "field": "body",
+      "old": "$virginity[3] = '부드러운 보지'",
+      "new": "$virginity[3] = '부드러운 보지'\r\n$virginity[4] = '명기'",
+      "count": 1
+    }
+  ],
+  "add_locations": [
+    {
+      "name": "jo9_meiki_willing",
+      "desc": "",
+      "body": "! JO9_MEIKI_BONUS_V1: no state changes; args[1]=1 requires a discovered trait.\r\nresult = 0\r\nif $args[0] = 'slave':\r\n\tif slave_state = CONST_INT['slave_exist'] and (slave['age'] = CONST_INT['young_age'] or slave['age'] = CONST_INT['milf_age']):\r\n\t\tif slave['fear'] = 0 and slave['domini_dictum'] = 0 and slave['neg_raped'] = 0 and slave['neg_disgust'] = 0:\r\n\t\t\tif interaction_slave['res'] >= 0 and interaction_slave['sex_acceptance'] > 0:\r\n\t\t\t\tresult = 1\r\n\t\t\t\tif $args[1] = 1:\r\n\t\t\t\t\tresult = 0\r\n\t\t\t\t\tif slave['virginity'] = 4 or (slave['jo9_meiki_known'] = 1 and (slave['virginity'] = 2 or slave['virginity'] = 3)):\r\n\t\t\t\t\t\tresult = 1\r\n\t\t\t\t\tend\r\n\t\t\t\tend\r\n\t\t\tend\r\n\t\tend\r\n\tend\r\nend\r\nif $args[0] = 'assistant':\r\n\tif assistant_state = CONST_INT['slave_exist'] and (assistant['age'] = CONST_INT['young_age'] or assistant['age'] = CONST_INT['milf_age']):\r\n\t\tif assistant['fear'] = 0 and assistant['domini_dictum'] = 0 and assistant['neg_raped'] = 0 and assistant['neg_disgust'] = 0:\r\n\t\t\tif interaction_assistant['res'] >= 0 and interaction_assistant['sex_acceptance'] > 0:\r\n\t\t\t\tresult = 1\r\n\t\t\t\tif $args[1] = 1:\r\n\t\t\t\t\tresult = 0\r\n\t\t\t\t\tif assistant['virginity'] = 4 or (assistant['jo9_meiki_known'] = 1 and (assistant['virginity'] = 2 or assistant['virginity'] = 3)):\r\n\t\t\t\t\t\tresult = 1\r\n\t\t\t\t\tend\r\n\t\t\t\tend\r\n\t\t\tend\r\n\t\tend\r\n\tend\r\nend\r\n",
+      "actions": []
+    }
+  ],
+  "targets": {
+    "full": {
+      "qsp": "G:/somi/Jack O Nine Tails v2.4 Kor_Full/game/jack.qsp",
+      "before": "fee14dc7ed34b0e3ff74b84c5e378f4b303b4fba2b0051ee9cee81b619a54223",
+      "after": "8811e2f8f13ac2421e59cd37a053ef144e7b5b443a678c3cd5fb9056ef6a6cf8"
+    },
+    "work": {
+      "qsp": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+      "before": "a15cd51134d00106cf69ee0e980f4578abba44bb068d45cbe396f760ed04d4f1",
+      "after": "8673dfc71c5a52a877851ce35841466951c5a3ab9ee633672181579182083617"
+    }
+  }
+}
