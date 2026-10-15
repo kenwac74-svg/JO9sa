@@ -13,8 +13,8 @@
 |---|---|---|---|
 | A 요즘 자주 칭찬 | 중기 | 최근 칭찬 횟수가 많음 (`already_done_recent`의 칭찬 계열) | 긍정 |
 | B 요즘 자주 처벌 | 중기 | 최근 처벌 횟수가 많음 (`already_done_recent`의 처벌 계열) | 적대·취약 |
-| C 오늘 처벌 | 단기 | 오늘 처벌받음 (`punished_today` > 0) | 적대·취약 |
-| D 오늘 칭찬 | 단기 | 오늘 칭찬받음 (`rewarded_today` > 0) | 긍정 |
+| C 오늘 처벌 | 단기 | 오늘 처벌받음 (`slave['daily_punishment_count'] > 0`) | 적대·취약 |
+| D 오늘 칭찬 | 단기 | 오늘 칭찬받음 (`slave['daily_reward_count'] > 0`) | 긍정 |
 
 고르는 규칙
 1. 오늘 일(C·D)이 있으면 오늘 일 문장 하나만 쓴다.

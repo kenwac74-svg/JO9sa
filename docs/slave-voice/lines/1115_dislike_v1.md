@@ -11,7 +11,7 @@
 ## 2. 화제와 조건
 | 화제 | 층 | 조건 | 우선순위 |
 |---|---|---|---|
-| A 오늘 처벌 | 단기 | `punished_today` > 0 | 1 |
+| A 오늘 처벌 | 단기 | `slave['daily_punishment_count'] > 0` | 1 |
 | B 욕설 | 중기 | `neg_abuse` | 2 |
 | C 싫은 일 | 중기 | `neg_job`, `neg_forced`, `neg_disgust` 중 하나 | 3 |
 | D 규칙 | 중기 | `neg_rules` | 4 |
