@@ -11,6 +11,11 @@
 | `lines/1112_impression_v1.md` | 대사 첫 묶음: 인상 묻기(1112) 덧붙임 대사 108문장 (화제 4 × 유형 9 × 말투 3). 다른 AI와 비교용 |
 | `lines/1113_request_v1.md` | 요구 묻기(1113) 덧붙임 대사 162문장 (몸 상태 6 × 유형 9 × 말투 3). 원래 문장 앞에 붙임 |
 | `lines/1114_wish_v1.md` | 희망사항 묻기(1114) 덧붙임 대사 135문장 (수업 방식 5 × 유형 9 × 말투 3). 수업 방식 = 주제, 유형 = 말하는 방식 |
+| `lines/1111_past_v1.md` | 과거 묻기(1111) 덧붙임 대사 81문장 (화제 3 × 유형 9 × 말투 3) |
+| `lines/1115_dislike_v1.md` | 불만 묻기(1115) 덧붙임 대사 135문장 (화제 5 × 유형 9 × 말투 3) |
+| `lines/1117_assistant_v1.md` | 조수에 대해 묻기(1117) 덧붙임 대사 135문장 (화제 5 × 유형 9 × 말투 3) |
+| `lines/portrait_slave_v1.md` | 노예 포트레이트 1인칭 한 줄 162문장 (화제 6 × 유형 9 × 말투 3) |
+| `lines/portrait_assistant_v1.md` | 조수 포트레이트 말투판 8문장 (합니다체는 원문 유지, 해요체·투박 판만) |
 | `ENGINE_AND_PORT_REVIEW.md` | 같은 날 논의한 엔진·HTML 포팅·BUG-002·자동 저장 검토 결과 |
 | `slave-voice-sample.html` | 브라우저 체험용 샘플(아티팩트로 게시한 것과 같은 파일). 반말 인사 조각은 12.5 원칙과 맞지 않아 다시 쓸 때 고친다 |
 | `voice_qsp_test.cjs` | 조각 조립을 QSP 코드로 짜서 WASM QSP 엔진에서 돌린 시험. 엔진 패키지 경로는 `QSP_WASM` 환경 변수로 지정한다(`claude/sweet-meitner-72rd73` 브랜치의 `audits/reward-diagnostic/vendor-legacy/package`) |
