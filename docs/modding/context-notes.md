@@ -307,3 +307,7 @@ S++·각각 +1등급안은 사용자 취소. 기존 S+ 상한 유지, 발견 시
 ## 2026-10-16 상태 편집기 유형 코드 입력 수정
 
 사용자: 유형은 AI가 고정/정의하지 말고 직접 코드(milf)를 타이핑하도록 한다. generation.type.code 텍스트/빈기본/placeholder, predefined dropdown 없음. 기존 $age[stock[age]] 역매핑 문자열 비교, 미정의 코드 숫자0대체 방지. generation.milf.state legacyID는 프로젝트호환유지하되 제품labelgeneric. 비활성code-only 프로젝트초안/QSPno-op, 활성0~3에서nonempty필수. 예전MILF블록 읽기/no-op보존. 119개 중118pass/0fail/1환경skip, 브라우저/독립리뷰/실서버32필드 확인. repo/Work/Full10개제품파일동기화, 현재Work76f61280…db1b81da와Full기존hash 불변. 상세 docs/STATE_EDITOR_TYPE_CODES_20261016.md.
+
+## 2026-10-16 상태 초기값 검색 입력·명기4 누락 수정
+
+사용자 요청: 생성 초기값 dropdown도폐기,텍스트로찾기; 명기4누락지적. kindstate-search + actual#variative $virginity literal정의 suggestions 동적읽기. -1기존유지/0..2147483647 직접수치입력(검색결과는allowlist아님), exactname/tooltip→numeric, 부분query/null미확정차단. 명기4는 기존helpercurrent4인식→known/checked/1회grant가이미지원하므로 이전0..3제약철회; 새history/helper/eligibility변경없음. 122중121pass/0fail/1환경skip, browserfull+state4apply/restore,독립registry30/30,UIrange문제fix확인. 제품3곳동기화,실서버32fields/gen dropdown0/state4검색pass. 실제Work사용자hash76f61280…db1b81da,Full3d8fd3c…1006b9b 불변. 최신 docs/STATE_EDITOR_STATE_SEARCH_20261016.md.

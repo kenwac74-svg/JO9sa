@@ -197,15 +197,16 @@ test('malformed cache options are rejected even for an otherwise empty edit list
 });
 
 const generationAnchor = '!PREPARE TRAIT LIST FOR DISPLAY (NOT EVERYTHING IS VISIBLE BEFORE ACQUISITION)';
-test('generation defaults to original rules with actual state-name select options and byte exact no-op', () => {
+test('generation defaults to original rules with source state-search suggestions including four and byte exact no-op', () => {
   const view = inspect(), field = view.fields.find(f => f.id === 'generation.milf.state');
   assert.ok(field, 'mature generation must be an actual registered source rule');
-  assert.equal(field.kind, 'select');
+  assert.equal(field.kind, 'state-search');
   assert.equal(field.group, '생성 초기값');
   assert.equal(field.value, -1);
-  assert.deepEqual(field.options.map(o => o.value), [-1, 0, 1, 2, 3]);
-  assert.equal(field.options[0].label, '기존 생성 규칙 유지');
-  assert.ok(field.options[4].label.includes(view.states[3].label));
+  assert.equal(field.options, undefined);
+  assert.deepEqual(field.suggestions.map(o => o.value), [0, 1, 2, 3, 4]);
+  assert.equal(field.suggestions[4].label, '명기');
+  assert.equal(field.suggestions[3].label, view.states[3].label);
   assert.equal(field.bindings[0].location, 'generate_stock');
   assert.match(field.help, /특수|고유/);
   assert.match(field.help, /퀘스트|의뢰/);
@@ -217,13 +218,13 @@ test('generation defaults to original rules with actual state-name select option
 
 test('users can identify a generation state by its familiar icon description as well as its current display name', () => {
   const view = inspect(), field = view.fields.find(f => f.id === 'generation.milf.state');
-  const enlarged = field.options.find(option => option.label.includes('크게 늘어난 상태'));
+  const enlarged = field.suggestions.find(option => option.tooltip.includes('크게 늘어난 상태'));
   assert.ok(enlarged, 'the familiar icon description must identify its matching generation option');
   assert.equal(enlarged.value, 3);
   assert.ok(enlarged.label.includes('상태 삼'));
   const renamed = registry.prepare(raw, [{ id: 'state.3.label', value: '새 표시 이름' }, { id: 'state.3.tooltip', value: '새 아이콘 설명' }], view.hash);
   const current = registry.inspect(renamed.raw).fields.find(f => f.id === 'generation.milf.state');
-  const identified = current.options.find(option => option.label.includes('새 아이콘 설명'));
+  const identified = current.suggestions.find(option => option.tooltip.includes('새 아이콘 설명'));
   assert.equal(identified.value, 3);
   assert.ok(identified.label.includes('새 표시 이름'));
   assert.equal(current.value, -1);
@@ -259,16 +260,16 @@ test('typed initial state applies after existing calculations to ordinary new st
   }
 });
 
-test('generation rejects unregistered select values and damaged, ambiguous or moved source rules', () => {
+test('generation rejects invalid numeric input and damaged, ambiguous or moved source rules', () => {
   const view = inspect();
-  for (const value of [-2, 4, 99, '3', 2.5, null, NaN]) assert.throws(() => registry.prepare(raw, [{ id: 'generation.milf.state', value }], view.hash));
+  for (const value of [-2, 2147483648, '3', 2.5, null, NaN, Infinity]) assert.throws(() => registry.prepare(raw, [{ id: 'generation.type.code', value: 'milf' }, { id: 'generation.milf.state', value }], view.hash));
   const active = registry.prepare(raw, [{ id: 'generation.type.code', value: 'milf' }, { id: 'generation.milf.state', value: 3 }], view.hash).raw;
   for (const [before, after] of [
     [generationAnchor, generationAnchor + '\n' + generationAnchor],
     [generationAnchor, '! missing anchor'],
     ['! JO9_STATE_EDITOR_TYPE_INITIAL_END', '! JO9_STATE_EDITOR_TYPE_INITIAL_BAD'],
     ['! JO9_STATE_EDITOR_TYPE_INITIAL_BEGIN', '! JO9_STATE_EDITOR_TYPE_INITIAL_BEGIN\n! JO9_STATE_EDITOR_TYPE_INITIAL_BEGIN'],
-    ["stock['virginity'] = 3", "stock['virginity'] = 4"],
+    ["stock['virginity'] = 3", "stock['virginity'] = 2147483648"],
     ['if special_stock = 0 and', 'if special_stock >= 0 and'],
     ['! JO9_STATE_EDITOR_TYPE_INITIAL_END', "other = 10\n! JO9_STATE_EDITOR_TYPE_INITIAL_END"],
     [generationAnchor, "other = 10\n" + generationAnchor],
@@ -362,12 +363,54 @@ test('free literal type codes cannot be confused with source marker comments or 
   }
 });
 
+test('state search discovers future literal definitions without inventing editable rows or requiring catalog membership', () => {
+  const future = alter(raw, '#variative', "$virginity[4] = '명기'", "$virginity[4] = '명기'\n$virginity[5] = '미래 ''상태'''");
+  const view = inspect(future), field = view.fields.find(f => f.id === 'generation.milf.state');
+  assert.deepEqual(field.suggestions.map(s => s.value), [0, 1, 2, 3, 4, 5]);
+  assert.deepEqual(field.suggestions.find(s => s.value === 5), { value: 5, label: "미래 '상태'", tooltip: '' });
+  assert.ok(!view.fields.some(f => f.id === 'state.5.label'));
+  const result = registry.prepare(future, [{ id: 'generation.type.code', value: 'typed_type' }, { id: 'generation.milf.state', value: 5 }], view.hash);
+  assert.equal(registry.inspect(result.raw).fields.find(f => f.id === 'generation.milf.state').value, 5);
+  assert.equal(body(result.raw, '#variative'), body(future, '#variative'));
+  const duplicate = alter(future, '#variative', "$virginity[5] = '미래 ''상태'''", "$virginity[5] = '미래 ''상태'''\n$virginity[5] = '다른 정의'");
+  assert.throws(() => registry.inspect(duplicate), /상태|정의|중복|여러/);
+});
+
+test('undefined state seventeen and signed integer boundary values are allowed with an honest source-definition notice', () => {
+  const view = inspect();
+  for (const value of [0, 4, 17, 2147483647]) {
+    const result = registry.prepare(raw, [{ id: 'generation.type.code', value: 'milf' }, { id: 'generation.milf.state', value }], view.hash);
+    const after = registry.inspect(result.raw), field = after.fields.find(f => f.id === 'generation.milf.state');
+    assert.equal(field.value, value);
+    assert.equal(result.patch.edits.length, 1);
+    assert.equal(result.patch.edits[0].location, 'generate_stock');
+    if (value === 17) {
+      assert.ok(!field.suggestions.some(s => s.value === 17));
+      assert.ok(after.warnings.some(w => /17/.test(w) && /정의|표시/.test(w)));
+    }
+  }
+});
+
+test('initial state four only assigns current stock state and leaves every existing history, grant, action and cache byte untouched', () => {
+  const view = inspect(), result = registry.prepare(raw, [{ id: 'generation.type.code', value: 'milf' }, { id: 'generation.milf.state', value: 4 }], view.hash);
+  const text = body(result.raw, 'generate_stock');
+  assert.match(text, /\$age\[stock\['age'\]\] = 'milf': stock\['virginity'\] = 4/);
+  const block = text.slice(text.indexOf('! JO9_STATE_EDITOR_TYPE_INITIAL_BEGIN'), text.indexOf('! JO9_STATE_EDITOR_TYPE_INITIAL_END'));
+  assert.doesNotMatch(block, /jo9_meiki_|\bgs\b|initialized|known|checked|sub_/);
+  const before = core.parse(raw), after = core.parse(result.raw), generationBody = before.locations.find(l => l.name === 'generate_stock').body;
+  before.lines.forEach((line, index) => { if (index !== generationBody) assert.equal(after.lines[index], line); });
+  assert.ok(!registry.inspect(result.raw).warnings.some(w => /명기.*지원하지|4.*지원하지/.test(w)));
+  let reversed = result.raw;
+  for (const edit of result.patch.edits.slice().reverse()) reversed = alter(reversed, edit.location, edit.new, edit.old);
+  assert.deepEqual(reversed, raw);
+});
+
 const realPaths = ['G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp', 'G:/somi/Jack O Nine Tails v2.4 Kor_Full/game/jack.qsp'];
 test('real installed QSP candidates reverse to every original byte while installed files remain untouched', { skip: !realPaths.every(p => fs.existsSync(p)) }, () => {
   inspect();
   for (const filename of realPaths) {
     const bytes = fs.readFileSync(filename), view = registry.inspect(bytes);
-    const edits = view.fields.map(field => ({ id: field.id, value: field.id === 'generation.type.code' ? 'future_review_type' : field.kind === 'select' ? 3 : field.kind === 'number' ? field.value + (field.value === field.max ? -1 : 1) : field.kind === 'icon' ? field.value.replace(/\.png$/i, '-review.png') : field.value + ' 검토' }));
+    const edits = view.fields.map(field => ({ id: field.id, value: field.id === 'generation.type.code' ? 'future_review_type' : field.kind === 'state-search' ? 4 : field.kind === 'number' ? field.value + (field.value === field.max ? -1 : 1) : field.kind === 'icon' ? field.value.replace(/\.png$/i, '-review.png') : field.value + ' 검토' }));
     const result = registry.prepare(bytes, edits, view.hash);
     assert.equal(result.changes.length, 33);
     let reversed = result.raw;

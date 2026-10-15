@@ -56,13 +56,31 @@
 
   function displayValue(field, value) {
     if (field?.kind === 'select') return field.options?.find((option) => Object.is(option.value, value))?.label || String(value);
+    if (field?.kind === 'state-search') {
+      if (!Number.isSafeInteger(value)) return '검색 중 · 값 미확정';
+      const state = field.suggestions?.find((item) => item.value === value);
+      return state ? `${state.label} · 코드 ${value}` : value === -1 ? '기존 생성 규칙 유지 · 코드 -1' : `코드 ${value} · 현재 정의에 표시명 없음`;
+    }
     if (field?.allowEmpty && value === '') return '비어 있음';
     return String(value);
   }
 
   function generationTypeRequired() {
     const state = fields().find((field) => field.id === 'generation.milf.state');
-    return Boolean(fields().some((field) => field.id === 'generation.type.code') && state && typeof valueFor(state) === 'number' && valueFor(state) >= 0);
+    return Boolean(fields().some((field) => field.id === 'generation.type.code') && state && Number.isSafeInteger(valueFor(state)) && valueFor(state) !== -1);
+  }
+
+  function resolveStateQuery(field, query) {
+    const text = query.trim();
+    if (!text) return null;
+    if (/^-?\d+$/.test(text)) {
+      const value = Number(text);
+      return Number.isSafeInteger(value) ? value : null;
+    }
+    if (text === '기존 생성 규칙 유지') return -1;
+    const needle = text.toLocaleLowerCase();
+    const matches = (field.suggestions || []).filter((item) => [item.label, item.tooltip].some((value) => typeof value === 'string' && value.trim().toLocaleLowerCase() === needle));
+    return matches.length === 1 && Number.isSafeInteger(matches[0].value) ? matches[0].value : null;
   }
 
   function fieldRequired(field) {
@@ -70,12 +88,16 @@
   }
 
   function fieldExplanation(field) {
-    const purpose = /\.tooltip$/.test(field.id) ? '아이콘 설명(툴팁)입니다. 게임에서 아이콘에 마우스를 올릴 때 보이며, 상태 표시명과 별도로 편집합니다.' : /\.label$/.test(field.id) ? '상태의 표시명입니다. 아이콘 설명(툴팁)은 별도 항목에서 편집합니다.' : '';
+    const purpose = field.kind === 'state-search' ? '상태 코드를 직접 입력하거나 현재 QSP의 상태명·툴팁으로 검색합니다. 검색 중인 문구는 확정된 코드가 아닙니다.' : /\.tooltip$/.test(field.id) ? '아이콘 설명(툴팁)입니다. 게임에서 아이콘에 마우스를 올릴 때 보이며, 상태 표시명과 별도로 편집합니다.' : /\.label$/.test(field.id) ? '상태의 표시명입니다. 아이콘 설명(툴팁)은 별도 항목에서 편집합니다.' : '';
     return [purpose, field.help || `${field.group}에 등록된 소스 값입니다.`].filter(Boolean).join(' ');
   }
 
   function validation(field, value) {
-    if (field.kind === 'select') {
+    if (field.kind === 'state-search') {
+      if (!Number.isSafeInteger(value)) return '검색 중인 값이 미확정입니다. 상태 코드 또는 정확한 상태명을 입력하거나 검색 결과에서 이 값 사용을 누르세요.';
+      if (field.min !== undefined && value < field.min) return `최솟값은 ${field.min}입니다.`;
+      if (field.max !== undefined && value > field.max) return `최댓값은 ${field.max}입니다.`;
+    } else if (field.kind === 'select') {
       if (!field.options?.some((option) => Object.is(option.value, value))) return '등록된 목록에서 값을 선택하세요.';
     } else if (field.kind === 'number') {
       if (value === '' || typeof value !== 'number' || !Number.isFinite(value)) return '유효한 숫자를 입력하세요.';
@@ -138,6 +160,7 @@
     });
     model.fieldNodes.forEach(({ input }) => { input.disabled = model.busy; });
     document.querySelectorAll('[data-action]').forEach((button) => { button.disabled = model.busy; });
+    document.querySelectorAll('[data-state-action]').forEach((button) => { button.disabled = model.busy; });
   }
 
   async function run(task, message) {
@@ -204,6 +227,7 @@
     input.value = String(valueFor(field));
     input.required = fieldRequired(field);
     if (typeof field.placeholder === 'string' && field.kind !== 'select') input.placeholder = field.placeholder;
+    if (field.kind === 'state-search' && !input.placeholder) input.placeholder = '상태 코드 또는 상태명·툴팁 검색';
     input.autocomplete = 'off';
     input.spellcheck = false;
     if (field.kind === 'number') {
@@ -219,7 +243,7 @@
     labelRow.append(label, access);
     const control = el('div', 'field-control');
     control.append(input);
-    const entryHint = field.id === 'generation.type.code' ? '유형 코드 직접 입력' : field.kind === 'select' ? '목록에서 선택하여 편집' : field.kind === 'number' ? '숫자 직접 입력' : field.kind === 'icon' ? '이미지 경로 직접 입력' : /\.tooltip$/.test(field.id) ? '아이콘 설명(툴팁) 직접 입력' : /\.label$/.test(field.id) ? '표시명 직접 입력' : '문구 직접 입력';
+    const entryHint = field.id === 'generation.type.code' ? '유형 코드 직접 입력' : field.kind === 'state-search' ? '상태 코드·상태명·툴팁 직접 검색' : field.kind === 'select' ? '목록에서 선택하여 편집' : field.kind === 'number' ? '숫자 직접 입력' : field.kind === 'icon' ? '이미지 경로 직접 입력' : /\.tooltip$/.test(field.id) ? '아이콘 설명(툴팁) 직접 입력' : /\.label$/.test(field.id) ? '표시명 직접 입력' : '문구 직접 입력';
     card.append(labelRow, el('span', 'field-entry-hint', entryHint), control);
     const explanation = fieldExplanation(field);
     input.title = explanation;
@@ -236,6 +260,58 @@
     tooltip.id = `tooltip-${field.id}`;
     tooltip.setAttribute('role', 'tooltip');
     card.append(tooltip);
+    let renderStateSearch;
+    if (field.kind === 'state-search') {
+      const stateStatus = el('p', 'state-search-status');
+      stateStatus.setAttribute('role', 'status');
+      stateStatus.setAttribute('aria-live', 'polite');
+      const resultList = el('div', 'state-search-results');
+      resultList.dataset.stateSearchField = field.id;
+      const reset = el('button', 'button small state-rule-reset', '규칙 해제');
+      reset.type = 'button';
+      reset.dataset.stateReset = field.id;
+      reset.dataset.stateAction = 'reset';
+      reset.addEventListener('click', () => {
+        input.value = '-1';
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.focus({ preventScroll: true });
+      });
+      const resetRow = el('div', 'state-rule-reset-row');
+      resetRow.append(reset, el('span', '', '기존 생성 규칙 유지 (-1)'));
+      card.append(stateStatus, resultList, resetRow);
+      renderStateSearch = (showResults) => {
+        const value = valueFor(field);
+        const known = field.suggestions?.find((item) => item.value === value);
+        const pending = !Number.isSafeInteger(value);
+        const outOfRange = !pending && ((field.min !== undefined && value < field.min) || (field.max !== undefined && value > field.max));
+        stateStatus.textContent = outOfRange ? `입력 범위 확인: ${validation(field, value)}` : pending ? '검색 중 · 값 미확정. 결과에서 값을 사용하거나 정확한 이름·툴팁·코드를 입력하세요.' : `확정값: ${displayValue(field, value)}${known?.tooltip ? ` · ${known.tooltip}` : ''}`;
+        stateStatus.classList.toggle('pending', pending || outOfRange);
+        resultList.replaceChildren();
+        const query = input.value.trim().toLocaleLowerCase();
+        resultList.hidden = !showResults || !query;
+        if (!showResults || !query) return;
+        const matches = (field.suggestions || []).filter((item) => [String(item.value), item.label, item.tooltip].filter(Boolean).join(' ').toLocaleLowerCase().includes(query));
+        matches.forEach((item) => {
+          const row = el('article', 'state-search-result');
+          row.dataset.stateValue = String(item.value);
+          const copy = el('div', 'state-search-copy');
+          copy.append(el('strong', '', `${item.label} · 코드 ${item.value}`));
+          if (item.tooltip) copy.append(el('p', '', item.tooltip));
+          const use = el('button', 'button small', '이 값 사용');
+          use.type = 'button';
+          use.dataset.stateAction = 'use';
+          use.addEventListener('click', () => {
+            input.value = String(item.value);
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+            input.focus({ preventScroll: true });
+          });
+          row.append(copy, use);
+          resultList.append(row);
+        });
+        if (!matches.length) resultList.append(el('p', 'state-search-empty', '현재 QSP 상태 정의에서 일치하는 결과가 없습니다. 정수 코드는 직접 입력할 수 있으며 적용 가능 여부는 후보 검사에서 확인합니다.'));
+      };
+      renderStateSearch(false);
+    }
     let iconPreview;
     let iconStatus;
     if (field.kind === 'icon') {
@@ -256,13 +332,14 @@
     if (field.bindings?.length) card.append(bindingsList(field.bindings));
     model.fieldNodes.set(field.id, { input, card, marker, original, error, view, field });
     const handleEdit = () => {
-      const value = field.kind === 'select' ? field.options?.find((option) => String(option.value) === input.value)?.value : field.kind === 'number' ? (input.value === '' ? '' : Number(input.value)) : input.value;
+      const value = field.kind === 'state-search' ? resolveStateQuery(field, input.value) : field.kind === 'select' ? field.options?.find((option) => String(option.value) === input.value)?.value : field.kind === 'number' ? (input.value === '' ? '' : Number(input.value)) : input.value;
       model.drafts.set(field.id, value);
       const changed = !Object.is(value, field.value);
       card.classList.toggle('is-changed', changed);
-      marker.textContent = changed ? '수정됨' : '원본 값';
+      marker.textContent = field.kind === 'state-search' && value === null ? '검색 중 · 미확정' : changed ? '수정됨' : '원본 값';
       original.textContent = `원본: ${displayValue(field, field.value)}`;
       original.hidden = !changed;
+      if (renderStateSearch) renderStateSearch(true);
       refreshFieldValidation();
       const problem = validation(field, value);
       error.textContent = problem;
@@ -437,12 +514,12 @@
     let matches = 0;
     const perView = { states: 0, rules: 0, effects: 0, defaults: 0 };
     const results = [];
-    model.fieldNodes.forEach(({ card, field, view }) => {
+    model.fieldNodes.forEach(({ card, input, field, view }) => {
       const state = model.snapshot.inspection.states?.find((item) => field.id === item.labelFieldId || field.id === item.iconFieldId || field.id.startsWith(`state.${item.code}.`));
       const labelField = state && fields().find((item) => item.id === state.labelFieldId);
       const stateName = state ? `상태 ${state.code} · 표시명 ${labelField ? valueFor(labelField) : state.label}` : view === 'defaults' ? '신규 인물 초기 설정' : '상태 체계 공통';
       const currentValue = displayValue(field, valueFor(field));
-      const haystack = [field.id, field.label, field.group, field.help, stateName, valueFor(field), currentValue, ...(field.options || []).map((option) => option.label), ...(field.bindings || []).flatMap((binding) => [binding.location, binding.role, binding.code])].filter((value) => value !== undefined && value !== null).join(' ').toLocaleLowerCase();
+      const haystack = [field.id, field.label, field.group, field.help, stateName, valueFor(field), currentValue, field.kind === 'state-search' ? input.value : '', ...(field.suggestions || []).flatMap((item) => [item.label, item.tooltip]), ...(field.options || []).map((option) => option.label), ...(field.bindings || []).flatMap((binding) => [binding.location, binding.role, binding.code])].filter((value) => value !== undefined && value !== null).join(' ').toLocaleLowerCase();
       const match = !query || haystack.includes(query);
       card.hidden = !match && model.focusedFieldId !== field.id;
       if (match) {
@@ -720,7 +797,7 @@
     if (project.featureId !== snapshot.inspection.feature.id) throw new Error('현재 등록된 상태 체계와 다른 프로젝트입니다.');
     for (const edit of project.edits || []) {
       const field = fields(snapshot).find((item) => item.id === edit.id);
-      const validType = field && (field.kind === 'number' ? typeof edit.value === 'number' && Number.isFinite(edit.value) : field.kind === 'select' ? field.options?.some((option) => Object.is(option.value, edit.value)) : typeof edit.value === 'string');
+      const validType = field && (field.kind === 'number' || field.kind === 'state-search' ? typeof edit.value === 'number' && Number.isFinite(edit.value) : field.kind === 'select' ? field.options?.some((option) => Object.is(option.value, edit.value)) : typeof edit.value === 'string');
       if (!validType) throw new Error(`프로젝트의 편집 항목을 확인할 수 없습니다: ${edit.id}`);
     }
     adoptSnapshot(snapshot);

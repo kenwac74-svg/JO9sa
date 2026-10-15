@@ -64,9 +64,10 @@ function generationBinding(source) {
     blockStart = markers[0].index;
     const block = source.body.slice(blockStart, anchor.index);
     const condition = legacy ? "stock\\['age'\\] = CONST_INT\\['milf_age'\\]" : "\\$age\\[stock\\['age'\\]\\] = '((?:''|[^'\\r\\n])*)'";
-    const match = new RegExp(`^${escapeRE(begin)}\\r?\\n(if special_stock = 0 and ${condition}: stock\\['virginity'\\] = ([0-3]))\\r?\\n${escapeRE(end)}\\r?\\n$`).exec(block);
+    const match = new RegExp(`^${escapeRE(begin)}\\r?\\n(if special_stock = 0 and ${condition}: stock\\['virginity'\\] = (\\d+))\\r?\\n${escapeRE(end)}\\r?\\n$`).exec(block);
     if (!match) error('유형별 생성 초기값 블록에 예상하지 않은 코드·상태 또는 위치가 있습니다.');
     value = Number(match[legacy ? 2 : 3]);
+    if (!Number.isSafeInteger(value) || value < 0 || value > 2147483647) error('생성 초기 상태 코드가 0~2147483647 정수 범위를 벗어났습니다.');
     typeCode = legacy ? 'milf' : unquote(match[2]);
     if (!typeCode.trim() || typeCode.length > 200 || /[\u0000-\u001f\u007f<>]/.test(typeCode)) error('생성 규칙의 유형 코드가 비어 있거나 지원하지 않는 문자열입니다.');
     blockEnd = anchor.index;
@@ -208,25 +209,32 @@ function scan(raw) {
   let generation;
   if (sources.has('generate_stock')) {
     generation = generationBinding(sources.get('generate_stock'));
-    const generationOptions = [{ value: -1, label: '기존 생성 규칙 유지' }, ...[0, 1, 2, 3].map(code => {
-      const label = fields.find(field => field.id === `state.${code}.label`).value;
-      const tooltip = fields.find(field => field.id === `state.${code}.tooltip`).value;
-      return { value: code, label: `${code} · ${label}${tooltip === label ? '' : ` (아이콘 설명: ${tooltip})`}` };
-    })];
+    const definitionMatches = [...variative.body.matchAll(/^[ \t]*\$virginity\[[ \t]*(\d+)[ \t]*\][ \t]*=[ \t]*(?:'((?:''|[^'\r\n])*)'|"((?:""|[^"\r\n])*)")[ \t]*(?:&![^\r\n]*)?$/gm)];
+    const definitionValues = new Set(), suggestions = [];
+    for (const match of definitionMatches) {
+      const value = Number(match[1]);
+      if (!Number.isSafeInteger(value) || value > 2147483647) { warnings.push(`상태 표시 정의 ${match[1]}은 검색 가능한 정수 범위를 벗어납니다.`); continue; }
+      if (definitionValues.has(value)) error(`상태 ${value} 표시 정의가 중복되어 검색 결과가 모호합니다.`);
+      definitionValues.add(value);
+      suggestions.push({ value, label: match[2] === undefined ? match[3].replace(/""/g, '"') : unquote(match[2]), tooltip: fields.find(field => field.id === `state.${value}.tooltip`)?.value ?? '' });
+    }
+    suggestions.sort((a, b) => a.value - b.value);
+    if ([...variative.body.matchAll(/^[ \t]*\$virginity\[[^\r\n]+?\][ \t]*=/gm)].length !== definitionMatches.length) warnings.push('일부 상태 표시 정의는 정수 코드와 문자열 리터럴 형태가 아니어서 검색 목록에 해석하지 않았습니다. 직접 입력한 코드의 표시·동작은 기존 소스를 따릅니다.');
     fields.push({ id: GENERATION_CODE_ID, label: '적용할 유형 코드', group: '생성 초기값', kind: 'text', value: generation.typeCode, allowEmpty: true, placeholder: '예: milf', help: '적용할 기존 유형 코드 문자열을 직접 입력합니다. 새 유형을 정의하거나 등록하지 않습니다. 신규 인물의 기존 $age 역매핑 문자열과 정확히 비교하며, 미정의 코드는 다른 유형에 적용되지 않습니다. 기존 생성 규칙 유지 상태의 입력은 프로젝트 초안에만 보관합니다.', bindings: [generation.binding], _encode: quote });
-    fields.push({ id: GENERATION_ID, label: '신규 생성 초기 상태', group: '생성 초기값', kind: 'select', value: generation.value, options: generationOptions, help: '일반 신규 생성에서 직접 입력한 유형 코드에만 적용합니다. 고유·특수 프리셋(special_stock > 0)은 제외하고, 같은 일반 생성기를 쓰는 무작위 의뢰·퀘스트 인물은 포함합니다. 클론·사건의 후속 상태 덮어쓰기는 유지합니다. 기존 인물·세이브를 일괄 변경하지 않고 발견·지급 이력도 편집하지 않습니다. 명기(4)는 최초 발견·일회 지급 이력 연결이 필요해 직접 초기값 지정을 지원하지 않습니다.', bindings: [generation.binding], _encode: String });
-    warnings.push('생성 초기값은 일반 신규 생성의 마지막 상태 지정입니다. 고유·특수 프리셋은 제외하지만 같은 일반 생성기를 쓰는 무작위 의뢰·퀘스트는 포함하며, 후속 클론·사건 규칙은 우선할 수 있습니다. 명기(4) 초기 지정은 발견·일회 지급 이력 연결 때문에 지원하지 않습니다.');
+    fields.push({ id: GENERATION_ID, label: '신규 생성 초기 상태', group: '생성 초기값', kind: 'state-search', value: generation.value, min: -1, max: 2147483647, step: 1, suggestions, placeholder: '상태명 또는 코드 검색', help: '상태명·아이콘 설명을 검색하거나 0~2147483647 정수 코드를 직접 입력합니다. -1은 기존 생성 규칙 유지입니다. 검색 목록은 현재 QSP의 실제 표시 정의이며 입력 허용 목록이 아닙니다. 정의 없는 코드도 입력할 수 있고 표시·동작은 기존 소스를 따릅니다. 새 상태 정의는 만들지 않습니다. 일반 신규 생성에서 입력한 유형에만 적용하고 고유·특수 프리셋은 제외합니다. 같은 생성기를 쓰는 무작위 의뢰·퀘스트는 포함하며 클론·사건의 후속 덮어쓰기는 유지합니다. 기존 인물·세이브를 일괄 변경하지 않습니다. 명기(4)의 발견 이력·일회 보장은 소유 역할로 옮긴 뒤 기존 helper 지원 범위에서 처리하며 이력·추가 호출을 새로 만들지 않습니다.', bindings: [generation.binding], _encode: String });
+    warnings.push('생성 초기값은 일반 신규 생성의 마지막 상태 지정입니다. 고유·특수 프리셋은 제외하지만 같은 일반 생성기를 쓰는 무작위 의뢰·퀘스트는 포함하며, 후속 클론·사건 규칙은 우선할 수 있습니다. 명기(4)의 이력·일회 보장은 기존 helper의 역할·유형 지원 범위를 따릅니다.');
     warnings.push('유형 코드는 사용자가 직접 입력하는 기존 역매핑 문자열입니다. 입력으로 새 유형이 만들어지지 않으며 미정의 코드는 적용 대상과 일치하지 않습니다.');
+    if (generation.value >= 0 && !definitionValues.has(generation.value)) warnings.push(`현재 QSP 표시 정의 검색에 상태 코드 ${generation.value}가 없습니다. 입력은 허용하며 표시·동작은 기존 소스를 따릅니다.`);
   } else warnings.push('generate_stock 생성 위치가 없어 유형별 신규 생성 초기값 편집을 지원하지 않습니다.');
   const plainFields = fields.map(({ _encode, bindings, ...field }) => ({ ...field, bindings: bindings.map(publicBinding) }));
-  const view = { hash: doc.hash, feature: { id: 'jo9.meiki', title: '명기와 기존 인물 상태 축', type: 'character-state', summary: '기존 virginity 0~4 상태 축의 표시와 등록된 수치 연결을 편집합니다. 코드·이력·조건은 읽기 전용입니다.' }, roles: ROLES.map(id => ({ id, label: id === 'slave' ? '현재 동행 역할 슬롯 (slave)' : id === 'assistant' ? '조수 (assistant)' : `개인실 ${id.slice(-1)} (${id})` })), fields: plainFields, states: Array.from({ length: 5 }, (_, code) => ({ code, label: plainFields.find(f => f.id === `state.${code}.label`).value, icon: plainFields.find(f => f.id === `state.${code}.icon.main`).value, labelFieldId: `state.${code}.label`, iconFieldId: `state.${code}.icon.main` })), history, transitions, warnings };
+  const view = { hash: doc.hash, feature: { id: 'jo9.meiki', title: '명기와 기존 인물 상태 축', type: 'character-state', summary: '기존 virginity 상태 축의 표시와 등록된 수치 연결을 편집합니다. 코드·이력·조건은 읽기 전용입니다.' }, roles: ROLES.map(id => ({ id, label: id === 'slave' ? '현재 동행 역할 슬롯 (slave)' : id === 'assistant' ? '조수 (assistant)' : `개인실 ${id.slice(-1)} (${id})` })), fields: plainFields, states: Array.from({ length: 5 }, (_, code) => ({ code, label: plainFields.find(f => f.id === `state.${code}.label`).value, icon: plainFields.find(f => f.id === `state.${code}.icon.main`).value, labelFieldId: `state.${code}.label`, iconFieldId: `state.${code}.icon.main` })), history, transitions, warnings };
   return { doc, sources, fields, view, guard, generation };
 }
 
 function inspect(raw) { return scan(raw).view; }
 function validate(field, value) {
-  if (field.kind === 'select') {
-    if (typeof value !== 'number' || !Number.isSafeInteger(value) || !field.options.some(option => option.value === value)) error(`${field.label}: 등록된 생성 상태 선택값이 필요합니다.`);
+  if (field.kind === 'state-search') {
+    if (typeof value !== 'number' || !Number.isSafeInteger(value) || value < -1 || value > 2147483647) error(`${field.label}: -1 또는 0~2147483647 범위의 정수 코드가 필요합니다.`);
   } else if (field.kind === 'number') {
     if (typeof value !== 'number' || !Number.isSafeInteger(value) || value < field.min || value > field.max) error(`${field.label}: ${field.min}~${field.max} 범위의 정수가 필요합니다.`);
   } else {

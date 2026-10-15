@@ -47,7 +47,9 @@ const {createServer}=require('./server.cjs'),{makeFixture}=require('./test-fixtu
     await tip.fill('새 표시 문구');assert(await page.locator('#apply-button').isDisabled());
     await page.locator('#field-search').fill('');
     await page.locator('[data-view="defaults"]').click();
-    const initial=page.locator('select[data-field-id="generation.milf.state"]');
+    const initial=page.locator('input[data-field-id="generation.milf.state"]');
+    assert.equal(await initial.count(),1,'Initial state must be a text search input');
+    assert.equal(await page.locator('#default-fields select, #default-fields datalist').count(),0,'Generation editing must not use fixed dropdowns or datalists');
     const typeCode=page.locator('input[data-field-id="generation.type.code"]');
     assert.equal(await typeCode.count(),1,'Generation type must have a direct text input');
     assert.equal(await page.locator('select[data-field-id="generation.type.code"]').count(),0,'Type code must not be a predefined dropdown');
@@ -65,8 +67,22 @@ const {createServer}=require('./server.cjs'),{makeFixture}=require('./test-fixtu
     assert.equal(await typeCode.inputValue(),'custom_mature','Future codes must persist without a predefined list');
     await typeCode.fill('milf');
     assert.equal(await initial.inputValue(),'-1','Existing generation must remain the initial choice');
-    assert((await initial.locator('option[value="3"]').innerText()).includes('크게 늘어난'));
-    await initial.selectOption('3');
+    await initial.fill('명');
+    const specialResult=page.locator('[data-state-search-field="generation.milf.state"] [data-state-value="4"]');
+    assert.equal(await specialResult.count(),1,'Actual QSP state 4 must be searchable by name');
+    assert((await specialResult.innerText()).includes('명기'));
+    await page.locator('.field-card[data-search-field="generation.milf.state"]').screenshot({path:path.join(out,'state4-search.png')});
+    await specialResult.getByRole('button',{name:'이 값 사용'}).click();
+    assert.equal(await initial.inputValue(),'4');
+    await initial.fill('17');
+    assert(await page.locator('#save-project').isEnabled(),'Numeric code input must not be limited to fixed search suggestions');
+    for(const invalid of ['-2','2147483648']){
+      await initial.fill(invalid);
+      assert(await page.locator('#save-project').isDisabled(),'Out-of-engine-range code must not be offered as a valid draft');
+      assert(!(await page.locator('.field-card[data-search-field="generation.milf.state"] .state-search-status').innerText()).startsWith('확정값:'),'Invalid numeric range must not be marked confirmed');
+    }
+    await initial.fill('명기');
+    assert((await page.locator('.field-card[data-search-field="generation.milf.state"] .state-search-status').innerText()).includes('4'),'An exact state name must resolve to its actual code');
     for(const target of targets)await page.locator('#target-checks input[value="'+target.id+'"]').check();
     await page.locator('#save-project').click();
     await page.waitForFunction(()=>document.querySelector('#status').textContent.includes('프로젝트 저장 완료'));
@@ -75,7 +91,7 @@ const {createServer}=require('./server.cjs'),{makeFixture}=require('./test-fixtu
     await page.locator('#load-project').click();
     await page.waitForFunction(()=>document.querySelector('#status').textContent.includes('프로젝트 불러오기 완료'));
     await page.locator('[data-view="defaults"]').click();
-    assert.equal(await initial.inputValue(),'3','Saved numeric select drafts must reload as the same choice');
+    assert.equal(await initial.inputValue(),'4','Saved state search drafts must reload as the same numeric code');
     assert.equal(await typeCode.inputValue(),'milf','Typed type code must persist in the saved project');
     for(const target of targets)await page.locator('#target-checks input[value="'+target.id+'"]').check();
     await page.locator('#preview-button').click();
@@ -83,15 +99,18 @@ const {createServer}=require('./server.cjs'),{makeFixture}=require('./test-fixtu
     const previewText=await page.locator('#preview-result').innerText();
     assert(previewText.includes('유형 코드')&&previewText.includes('milf'),'Preview must show the user-typed target code');
     await page.locator('[data-view="defaults"]').click();
-    await initial.selectOption('2');
-    assert(await page.locator('#apply-button').isDisabled(),'Changing a select must invalidate a prepared candidate');
-    await initial.selectOption('3');
+    await initial.fill('없는상태검색');
+    assert(await page.locator('#apply-button').isDisabled(),'Unresolved state search must invalidate a prepared candidate');
+    assert(await page.locator('#preview-button').isDisabled(),'Unresolved text must never become state zero');
+    await initial.fill('');
+    assert(await page.locator('#preview-button').isDisabled(),'Empty search must never become state zero');
+    await initial.fill('4');
     await page.locator('#preview-button').click();
     await page.waitForFunction(()=>document.querySelector('#status').textContent.includes('미리보기 완료'));
     for(const target of targets)assert(fs.readFileSync(target.path).equals(originals.get(target.id)),'Preview must not write QSP');
     await page.locator('#apply-button').click();
     await page.waitForFunction(()=>document.querySelector('#status').textContent.includes('적용 완료'));
-    for(const target of targets){const fields=registry.inspect(fs.readFileSync(target.path)).fields;assert.equal(fields.find(f=>f.id==='generation.milf.state').value,3);assert.equal(fields.find(f=>f.id==='generation.type.code').value,'milf');}
+    for(const target of targets){const fields=registry.inspect(fs.readFileSync(target.path)).fields;assert.equal(fields.find(f=>f.id==='generation.milf.state').value,4);assert.equal(fields.find(f=>f.id==='generation.type.code').value,'milf');}
     await page.locator('[data-action="restore"]').first().click();
     await page.waitForFunction(()=>document.querySelector('#status').textContent.includes('복원 완료'));
     for(const target of targets)assert(fs.readFileSync(target.path).equals(originals.get(target.id)),'Restore must return every original byte');
@@ -109,8 +128,8 @@ const {createServer}=require('./server.cjs'),{makeFixture}=require('./test-fixtu
       await page.screenshot({path:path.join(out,'defaults-'+width+'.png'),fullPage:true});
     }
     assert.deepEqual(errors,[]);
-    fs.writeFileSync(path.join(out,'usability-result.json'),JSON.stringify({status:'pass',pageErrors:errors,actualInstalledGameWritten:false,checks:['cross-tab search','exact-field focus','editable field explanation','initial source-preserving choice','numeric select project persistence','two independent candidate apply/restore','no result message','3 widths x 5 views']},null,2)+'\n');
-    console.log('PASS: cross-tab search, focused editing, generation select/project/preview/apply/restore, 3 widths x 5 views.');
+    fs.writeFileSync(path.join(out,'usability-result.json'),JSON.stringify({status:'pass',pageErrors:errors,actualInstalledGameWritten:false,checks:['cross-tab search','exact-field focus','editable field explanation','initial source-preserving choice','state name and tooltip search','state4 search and numeric project persistence','unknown numeric code entry','unresolved search prevents preview','two independent candidate apply/restore','no result message','3 widths x 5 views']},null,2)+'\n');
+    console.log('PASS: direct state search, state4 project/apply/restore, arbitrary numeric codes, cross-tab focus, 3 widths x 5 views.');
   }finally{
     if(browser)await browser.close();await new Promise(r=>server.close(r));
     assert(path.resolve(dir).startsWith(path.resolve(os.tmpdir())+path.sep));fs.rmSync(dir,{recursive:true,force:true});
