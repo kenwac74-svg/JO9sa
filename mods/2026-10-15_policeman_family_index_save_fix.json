@@ -1,0 +1,26 @@
+{
+  "id": "2026-10-15_policeman_family_index_save_fix",
+  "description": "게임에서: 세이브를 불러올 때 이미 데리고 있던 경찰관 집안 노예(노예·조수·포로·젖소·개인실 1~4)도 서민층(4)으로 바로잡아, 그날부터 노예·조수 관계가 정상적으로 계산되게 한다. 이미 쌓인 호감·적대는 되돌리지 않는다. mods/2026-10-15_policeman_family_index_fix.json(새 노예 생성 수정)의 후속이다. 동면실 등 위 8자리 밖에 보관된 노예는 대상이 아니다.",
+  "target": "game/jack.qsp",
+  "before_sha256": "57f157d17e5f1d18035b5fe0430ffff18e95b3430021e3cb4f6dbaf1801a0242",
+  "after_sha256": "22de60ba957ebb9ad7e8702f59c8a4c479e8fa47ba4d866daae4c582ecf633d1",
+  "edits": [
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "saved_game_loaded = 1 &! do-once flag for $newloc",
+      "new": "! JO9_POLICEMAN_FAMILY_INDEX_SAVE_FIX_20261015 (경찰관 집안 54 -> 4, 이미 있는 노예)\r\nif slave['family_index'] = 54: slave['family_index'] = 4\r\nif assistant['family_index'] = 54: assistant['family_index'] = 4\r\nif prisoner['family_index'] = 54: prisoner['family_index'] = 4\r\nif cow['family_index'] = 54: cow['family_index'] = 4\r\nif room1['family_index'] = 54: room1['family_index'] = 4\r\nif room2['family_index'] = 54: room2['family_index'] = 4\r\nif room3['family_index'] = 54: room3['family_index'] = 4\r\nif room4['family_index'] = 54: room4['family_index'] = 4\r\nsaved_game_loaded = 1 &! do-once flag for $newloc",
+      "count": 1
+    }
+  ],
+  "targets": {
+    "work": {
+      "before": "57f157d17e5f1d18035b5fe0430ffff18e95b3430021e3cb4f6dbaf1801a0242",
+      "after": "22de60ba957ebb9ad7e8702f59c8a4c479e8fa47ba4d866daae4c582ecf633d1"
+    },
+    "full": {
+      "before": "e53d5991c923136b556e0b22e166d3c8bc19157f711711746c717dc63fae1955",
+      "after": "6b7696c9bb179ffb94efc250e21b62da040be2235d8803866df7e1ad45445cf0"
+    }
+  }
+}

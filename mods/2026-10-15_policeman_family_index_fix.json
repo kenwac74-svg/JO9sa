@@ -2,8 +2,8 @@
   "id": "2026-10-15_policeman_family_index_fix",
   "description": "경찰관 집안(policeman) family_index 오타 54를 4로 바로잡는다(사용자 결정 2026-10-15, 세계관 설정 기준). family_index는 1~5만 가정하는 노예·조수 관계 계산(origins_relations, relations_fastcalc)에 쓰인다. 54면 상대가 왕가·상류·중류일 때 관계 점수 -51/-50/-49, 최하층일 때 +48이 되고, 경찰 집안 쪽에서는 가족 관계 문장이 빠진다. 같은 현대 세계의 worker 4, manager 3, orpnange 5와 맞춰 4로 한다. 한국어판 순정 2.3.2.5부터 있던 값이다. 새로 생성되는 노예에만 적용되며, 이미 세이브에 있는 노예의 54는 그대로 남는다(필요하면 별도 처리).",
   "target": "game/jack.qsp",
-  "before_sha256": "",
-  "after_sha256": "",
+  "before_sha256": "adb47c5bd59f7f4482be9c141e1148ed6414719369b0c48bfe7361702f0b942d",
+  "after_sha256": "57f157d17e5f1d18035b5fe0430ffff18e95b3430021e3cb4f6dbaf1801a0242",
   "edits": [
     {
       "location": "generate_stock",
@@ -12,5 +12,15 @@
       "new": "stock[\"family_index\"] = 4 &! JO9_POLICEMAN_FAMILY_INDEX_FIX_20261015 (was 54)",
       "count": 1
     }
-  ]
+  ],
+  "targets": {
+    "work": {
+      "before": "adb47c5bd59f7f4482be9c141e1148ed6414719369b0c48bfe7361702f0b942d",
+      "after": "57f157d17e5f1d18035b5fe0430ffff18e95b3430021e3cb4f6dbaf1801a0242"
+    },
+    "full": {
+      "before": "b0a47c7215f0423da01b10e161ab1ade6aa9f9168bccebe68be954474eb21fa5",
+      "after": "e53d5991c923136b556e0b22e166d3c8bc19157f711711746c717dc63fae1955"
+    }
+  }
 }

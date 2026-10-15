@@ -1,0 +1,26 @@
+{
+  "id": "2026-10-15_barbarian_princess_general_occupation",
+  "description": "Apply only the nonsexual occupation adjustments from the supplied handoff: capped expression/calisthenics/combat boosts, zero cook/service, work index 5. Sexual-history changes excluded.",
+  "edits": [
+    {
+      "location": "generate_stock",
+      "field": "body",
+      "old": "elseif $stock_occupation = 'mprincess':",
+      "new": "elseif $stock_occupation = 'barbarian_princess':\r\n\t! JO9_BARBARIAN_PRINCESS_GENERAL_OCCUPATION_20261015\r\n\tif stock['expression'] < 5: stock['expression'] += 1\r\n\tif stock['calisthenics'] < 5: stock['calisthenics'] += 1\r\n\tif stock['gladiatrix'] < 5: stock['gladiatrix'] += 1\r\n\tstock['cook'] = 0\r\n\tstock['service'] = 0\r\n\tstock[\"work_index\"] = 5\r\nelseif $stock_occupation = 'mprincess':",
+      "count": 1
+    }
+  ],
+  "targets": {
+    "work": {
+      "before": "ccc61f74cbda5fe5c55de394225e0135fa646d3ef4bdf79480311aa142eb8671",
+      "after": "2a35a670d45b22eecc55ad919c6987335aa203d7b6d0a59b6244cdbbe9848e9d"
+    },
+    "full": {
+      "before": "6dbeca36dafd047a458b73680ee40ae67e6667404f0005a20e2f000b174196c4",
+      "after": "e95f0d93c066d02d38b02c84087a443c511dd4e0d4fc8ed775f454d0b8216c5a"
+    }
+  },
+  "target": "game/jack.qsp",
+  "before_sha256": "ccc61f74cbda5fe5c55de394225e0135fa646d3ef4bdf79480311aa142eb8671",
+  "after_sha256": "2a35a670d45b22eecc55ad919c6987335aa203d7b6d0a59b6244cdbbe9848e9d"
+}
