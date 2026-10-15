@@ -9,6 +9,7 @@
 | `WAYWARD_REVERSE_DESIGN.md` | 본 문서. Wayward 역기획, 변수 매칭, 대사 결정 모델, 기억 3층, 대사 출력 자리, 1차 적용 범위, 말투 원칙과 배경 변수 배정 (1~15절: 1차 범위 상세, 노예 유형 9종, 유형을 바꾸는 사건, 창관 연동 포함) |
 | `DIALOGUE_GENERATION_RULES.md` | **대사 생성 규정집 v1.** 어떤 AI·사람이든 이 문서만 보고 같은 기준으로 대사를 만들 수 있게 정리한 규칙 (입력 카드, 말투·어휘, 유형 9종, 기억 층, 질문별 규칙, 점검표, 예시) |
 | `lines/1112_impression_v1.md` | 대사 첫 묶음: 인상 묻기(1112) 덧붙임 대사 108문장 (화제 4 × 유형 9 × 말투 3). 다른 AI와 비교용 |
+| `lines/1113_request_v1.md` | 요구 묻기(1113) 덧붙임 대사 162문장 (몸 상태 6 × 유형 9 × 말투 3). 원래 문장 앞에 붙임 |
 | `ENGINE_AND_PORT_REVIEW.md` | 같은 날 논의한 엔진·HTML 포팅·BUG-002·자동 저장 검토 결과 |
 | `slave-voice-sample.html` | 브라우저 체험용 샘플(아티팩트로 게시한 것과 같은 파일). 반말 인사 조각은 12.5 원칙과 맞지 않아 다시 쓸 때 고친다 |
 | `voice_qsp_test.cjs` | 조각 조립을 QSP 코드로 짜서 WASM QSP 엔진에서 돌린 시험. 엔진 패키지 경로는 `QSP_WASM` 환경 변수로 지정한다(`claude/sweet-meitner-72rd73` 브랜치의 `audits/reward-diagnostic/vendor-legacy/package`) |
