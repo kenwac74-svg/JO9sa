@@ -1,0 +1,74 @@
+{
+  "id": "2026-10-15_status_detail_only",
+  "description": "Keep virginity=3 mechanics and detailed body description; omit its dedicated persistent HUD icon and use the ordinary non-virgin indicator.",
+  "target": "game/jack.qsp",
+  "edits": [
+    {
+      "location": "sjm_UI_UIadds",
+      "field": "body",
+      "old": "\telseif slave['virginity'] = 3:\r\n\t\t$tmp_s += '<div style=\"display:inline-block;position:relative;\" class=\"tooltip-left-small-button\" tooltip-data=\"크게 늘어난 상태\"><img src=\"content\\pic\\ui\\jon-UIadds\\Vir_shriveled.png\"></div>'\r\n",
+      "new": "\t! JO9_STATUS_DETAIL_ONLY_20261015_0\r\n",
+      "count": 1
+    },
+    {
+      "location": "sjm_UI_UIadds",
+      "field": "body",
+      "old": "\telseif assistant['virginity'] = 3:\r\n\t\t$tmp_a += '<div style=\"display:inline-block;position:relative;\" class=\"tooltip-left-small-button\" tooltip-data=\"크게 늘어난 상태\"><img src=\"content\\pic\\ui\\jon-UIadds\\Vir_shriveled.png\"></div>'\r\n",
+      "new": "\t! JO9_STATUS_DETAIL_ONLY_20261015_1\r\n",
+      "count": 1
+    },
+    {
+      "location": "slave_private_room1",
+      "field": "body",
+      "old": "\telseif room1['virginity'] = 3:\r\n\t\t*p '<div style=\"display:inline-block;position:relative;\" class=\"tooltip-left-small-button\" tooltip-data=\"크게 늘어난 상태\"><img src=\"content\\pic\\ui\\Vir_shriveled.png\"></div>'\r\n",
+      "new": "\t! JO9_STATUS_DETAIL_ONLY_20261015_0\r\n",
+      "count": 1
+    },
+    {
+      "location": "slave_private_room2",
+      "field": "body",
+      "old": "\telseif room2['virginity'] = 3:\r\n\t\t*p '<div style=\"display:inline-block;position:relative;\" class=\"tooltip-left-small-button\" tooltip-data=\"크게 늘어난 상태\"><img src=\"content\\pic\\ui\\Vir_shriveled.png\"></div>'\r\n",
+      "new": "\t! JO9_STATUS_DETAIL_ONLY_20261015_0\r\n",
+      "count": 1
+    },
+    {
+      "location": "slave_private_room3",
+      "field": "body",
+      "old": "\telseif room3['virginity'] = 3:\r\n\t\t*p '<div style=\"display:inline-block;position:relative;\" class=\"tooltip-left-small-button\" tooltip-data=\"크게 늘어난 상태\"><img src=\"content\\pic\\ui\\Vir_shriveled.png\"></div>'\r\n",
+      "new": "\t! JO9_STATUS_DETAIL_ONLY_20261015_0\r\n",
+      "count": 1
+    },
+    {
+      "location": "slave_private_room4",
+      "field": "body",
+      "old": "\telseif room4['virginity'] = 3:\r\n\t\t*p '<div style=\"display:inline-block;position:relative;\" class=\"tooltip-left-small-button\" tooltip-data=\"크게 늘어난 상태\"><img src=\"content\\pic\\ui\\Vir_shriveled.png\"></div>'\r\n",
+      "new": "\t! JO9_STATUS_DETAIL_ONLY_20261015_0\r\n",
+      "count": 1
+    },
+    {
+      "location": "snk_room_menu_screen",
+      "field": "body",
+      "old": "\telseif slave['virginity'] = 3:\r\n\t\t*p '<div style=\"display:inline-block;position:relative;\" class=\"tooltip-left-small-button\" tooltip-data=\"크게 늘어난 상태\"><img src=\"content\\pic\\ui\\Vir_shriveled.png\"></div>'\r\n",
+      "new": "\t! JO9_STATUS_DETAIL_ONLY_20261015_0\r\n",
+      "count": 1
+    }
+  ],
+  "targets": {
+    "work": {
+      "qsp": "G:\\somi\\Jack O Nine Tails v2.4_work\\game\\jack.qsp",
+      "before": "9bd9ff1d4e485bf8f6ae7d7037c3380da47d707aa04139ab96f13e77e1da462c",
+      "after": "af6170660b4c77bfec9bdc02b00a205e0f5fd376e8f42f32c209fda75491621d",
+      "css": "G:\\somi\\Jack O Nine Tails v2.4_work\\game\\css\\base.css",
+      "cssBefore": "632adbc9330b7871b4e9d85a4c0b04e49d0ec358dd42717645ba032c10e2cf5e",
+      "cssAfter": "22cf0fb078729a1cdaf82d4b7fddc3d532b0361a85d4eebc23029d977e15f482"
+    },
+    "full": {
+      "qsp": "G:\\somi\\Jack O Nine Tails v2.4 Kor_Full\\game\\jack.qsp",
+      "before": "467e5c5dc133b217633cf8de4ffe796886e1cf61f12ebd68254e51971be5bee8",
+      "after": "b31bd9e745e86bfded473f93f2c06eb70856a71e24de4fd585c7cf6e4b073aea",
+      "css": "G:\\somi\\Jack O Nine Tails v2.4 Kor_Full\\game\\css\\base.css",
+      "cssBefore": "632adbc9330b7871b4e9d85a4c0b04e49d0ec358dd42717645ba032c10e2cf5e",
+      "cssAfter": "22cf0fb078729a1cdaf82d4b7fddc3d532b0361a85d4eebc23029d977e15f482"
+    }
+  }
+}
