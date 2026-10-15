@@ -1,0 +1,8 @@
+'use strict';
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),os=require('node:os'),path=require('node:path');
+const {readIcon}=require('./assets.cjs');
+const png=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jX1sAAAAASUVORK5CYII=','base64');
+function setup(t){const dir=fs.mkdtempSync(path.join(os.tmpdir(),'jo9-state-assets-'));t.after(()=>{assert(path.resolve(dir).startsWith(path.resolve(os.tmpdir())+path.sep));fs.rmSync(dir,{recursive:true,force:true});});const target={path:path.join(dir,'jack.qsp')},pic=path.join(dir,'content','pic');fs.mkdirSync(pic,{recursive:true});return{dir,target,pic};}
+test('icon lookup verifies target-relative image file and dimensions',t=>{const{target,pic}=setup(t);fs.writeFileSync(path.join(pic,'icon.png'),png);const r=readIcon(target,'content/pic/icon.png');assert.equal(r.width,1);assert.equal(r.height,1);assert.equal(r.type,'image/png');assert(r.raw.equals(png));});
+test('missing, traversal and extension-spoofed icon references cannot pass validation',t=>{const{target,pic}=setup(t);for(const p of['content/pic/missing.png','content/pic/../../secret.png','C:/secret.png'])assert.throws(()=>readIcon(target,p));fs.writeFileSync(path.join(pic,'fake.png'),'not an image');assert.throws(()=>readIcon(target,'content/pic/fake.png'));fs.writeFileSync(path.join(pic,'fake.gif'),png);assert.throws(()=>readIcon(target,'content/pic/fake.gif'));});
+test('truncated PNG cannot be accepted just because its signature is correct',t=>{const{target,pic}=setup(t);fs.writeFileSync(path.join(pic,'broken.png'),png.subarray(0,25));assert.throws(()=>readIcon(target,'content/pic/broken.png'));});
