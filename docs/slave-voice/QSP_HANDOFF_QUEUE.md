@@ -21,6 +21,14 @@ QSP 내용 수정은 로컬 담당(집컴·노트북)이 `mods/*.json`과 `tools
 |---|---|
 | 배포본 `FastQSP.ini`에 `ignoreCRC=true` | `ENGINE_AND_PORT_REVIEW.md` 4절. QSP가 바뀐 뒤 세이브 불러오기가 표시 없이 거부되는 문제 |
 
+## 참조 원본과의 대조 (2026-10-15)
+참조 자료: 사용자 지정 `I:\내 드라이브\Moding\JO9mod\jont-rm-mod-master`(구글 드라이브 폴더 id 13PHSc… 아님, `JO9mod` 아래 1XlpB1gpzvRvWkMrSS3W2TMS4FfUoJ7Rp). 원본에 가까운 판으로, 한국어판과 다를 때 대조용으로 쓴다. 이 판의 `generate_stock.qsrc`는 gitgud `game-base`(master-ia-patch)와 바이트 동일하다.
+| # | 참조 원본 | 판단 |
+|---|---|---|
+| 1·4 | `family_index` 자체가 없다 | 계층 값과 관계 계산은 한국어판 계열에 따로 들어온 코드라 원본으로 원래 값을 확인할 수 없다. 사용자 결정(세계관 기준 4)대로 간다 |
+| 2 | `$orphan_occupation[3] = 'whore'`, `$orpnange_occupation[11] = 'whore'`, `[13] = 'brothel'` | **번역 과정에서 생긴 버그로 확정.** 수정 초안이 원본 값과 같다 |
+| 3 | 'barbarian_princess'의 직업 처리 분기도 직업 설명도 없다 | 원본부터 빠져 있던 부분이다. 한국어판은 직업 설명만 추가했다. 3번 제안은 복구가 아니라 **보충**이다 |
+
 ## 게임에서 달라지는 것 (2026-10-15 정리)
 ### 1. 경찰관 집안 노예의 관계 버그
 - 지금: 노예와 조수가 매일 밤 서로 관계가 바뀌는데, 상대가 경찰관 집안이면 계산이 망가진다. 하루 변화량은 성격(`temper`)만큼으로 막혀 있어서, **매일 최대 속도로** 움직인다.

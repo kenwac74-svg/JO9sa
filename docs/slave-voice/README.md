@@ -11,6 +11,9 @@
 | `slave-voice-sample.html` | 브라우저 체험용 샘플(아티팩트로 게시한 것과 같은 파일). 반말 인사 조각은 12.5 원칙과 맞지 않아 다시 쓸 때 고친다 |
 | `voice_qsp_test.cjs` | 조각 조립을 QSP 코드로 짜서 WASM QSP 엔진에서 돌린 시험. 엔진 패키지 경로는 `QSP_WASM` 환경 변수로 지정한다(`claude/sweet-meitner-72rd73` 브랜치의 `audits/reward-diagnostic/vendor-legacy/package`) |
 
+## 참조 자료
+- 원본 대조: 사용자 구글 드라이브 `Moding\JO9mod\jont-rm-mod-master` (원본에 가까운 판, qsrc 소스). 한국어판과 차이가 있으면 이것과 대조한다.
+
 ## 지금까지 확정된 것
 1. 대사 출력 1차 범위: 질문하기 7종(1111~1117)과 포트레이트 정보 화면을 열 때의 대사(노예·조수). 규칙 칸은 제외.
 2. 새 상태 변수는 최소로 하고 기존 잭오나 변수·문법을 활용한다. 기억 3층은 `already_done_today/recent/total`과 무드렛·등급으로 대신한다.
