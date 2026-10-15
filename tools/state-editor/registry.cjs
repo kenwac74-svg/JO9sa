@@ -3,6 +3,10 @@ const core = require('../text-workshop/core.cjs');
 const ROLES = ['slave', 'assistant', 'room1', 'room2', 'room3', 'room4'];
 const CACHE_BEGIN = '! JO9_STATE_EDITOR_LABEL_CACHE_BEGIN';
 const CACHE_END = '! JO9_STATE_EDITOR_LABEL_CACHE_END';
+const GENERATION_ID = 'generation.milf.state';
+const GENERATION_ANCHOR = '!PREPARE TRAIT LIST FOR DISPLAY (NOT EVERYTHING IS VISIBLE BEFORE ACQUISITION)';
+const GENERATION_BEGIN = '! JO9_STATE_EDITOR_MILF_INITIAL_BEGIN';
+const GENERATION_END = '! JO9_STATE_EDITOR_MILF_INITIAL_END';
 const quote = text => text.replace(/'/g, "''");
 const unquote = text => text.replace(/''/g, "'");
 const escapeRE = text => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -39,6 +43,31 @@ function cacheGuard(source) {
   if (statements.some(line => !/^(?:jo9_meiki_revision = \d+|gs '#(?:static_base|dynamic)'|\$virginity\[[0-4]\] = '(?:''|[^'\r\n])*')$/.test(line)) || statements.filter(line => line === "gs '#static_base'").length !== 1 || statements.filter(line => line === "gs '#dynamic'").length !== 1) error('캐시 갱신 가드에 확인되지 않은 조건 또는 코드가 있습니다.');
   if (Number(start[2]) > 2147483646) error('캐시 갱신 버전 범위를 초과했습니다.');
   return { start, assignment, stop, value: Number(start[2]) };
+}
+function generationBinding(source) {
+  const anchor = once(source.body, new RegExp(`^${escapeRE(GENERATION_ANCHOR)}\\r?$`, 'gm'), '성숙 생성 초기값 앵커');
+  const clear = once(source.body, /^dynamic \$clear_slave_instance, 'stock'[^\r\n]*/gm, '신규 stock 생성 연결');
+  const preset = once(source.body, /^gs 'get_stock_seed'[^\r\n]*/gm, '생성 시드 연결');
+  const traits = once(source.body, /^gs '\$stock_traits'[^\r\n]*/gm, '생성 특성목록 연결');
+  const price = once(source.body, /^gs '\$slave_price', 'stock'[^\r\n]*/gm, '생성 가격 연결');
+  const reset = once(source.body, /^special_stock = 0[ \t]*$/gm, '생성 종료 연결');
+  if (clear.index >= anchor.index || preset.index >= anchor.index || traits.index <= anchor.index || price.index <= traits.index || reset.index <= price.index || /stock\[['"]virginity['"]\]\s*=/.test(source.body.slice(anchor.index))) error('성숙 생성 초기값 연결의 기존 처리 순서를 확인할 수 없습니다.');
+  const markers = [...source.body.matchAll(/^.*JO9_STATE_EDITOR_MILF_INITIAL[^\r\n]*/gm)];
+  let blockStart = anchor.index, blockEnd = anchor.index, value = -1, binding = sourceBinding(source, anchor.index, anchor.index + anchor[0].length);
+  if (markers.length) {
+    if (markers.length !== 2 || markers[0][0] !== GENERATION_BEGIN || markers[1][0] !== GENERATION_END) error('성숙 생성 초기값 블록 마커가 중복되거나 손상되었습니다.');
+    blockStart = markers[0].index;
+    const block = source.body.slice(blockStart, anchor.index);
+    const match = new RegExp(`^${escapeRE(GENERATION_BEGIN)}\\r?\\n(if special_stock = 0 and stock\\['age'\\] = CONST_INT\\['milf_age'\\]: stock\\['virginity'\\] = ([0-3]))\\r?\\n${escapeRE(GENERATION_END)}\\r?\\n$`).exec(block);
+    if (!match) error('성숙 생성 초기값 블록에 예상하지 않은 코드·상태 또는 위치가 있습니다.');
+    value = Number(match[2]);
+    blockEnd = anchor.index;
+    const statementStart = blockStart + block.indexOf(match[1]);
+    binding = sourceBinding(source, statementStart, statementStart + match[1].length);
+  }
+  const directRules = [...source.body.matchAll(/^if special_stock = 0 and stock\['age'\] = CONST_INT\['milf_age'\]: stock\['virginity'\] = [^\r\n]+/gm)];
+  if (directRules.length !== (value === -1 ? 0 : 1)) error('성숙 생성 초기값에 등록되지 않은 중복 연결이 있습니다.');
+  return { source, anchor, blockStart, blockEnd, value, binding };
 }
 
 function scan(raw) {
@@ -81,7 +110,7 @@ function scan(raw) {
     });
   }
   add({ id: 'discovery.chance', label: '최초 발견 확률 (%)', group: '전환', kind: 'number', min: 0, max: 100, step: 1, help: '기존 최초 전환 1회 판정의 rand(1, 100) 상한입니다. 6개 역할을 함께 편집합니다.' }, roleNumbers(() => /^\s*if rand\(1, 100\) <= (\d+):[ \t]*$/gm, '발견 확률'));
-  const skills = { sub_vaginal: '주 기술 보장 등급', sub_threesome: '하위 기술 1 보장 등급', sub_dp: '하위 기술 2 보장 등급', sub_tp: '하위 기술 3 보장 등급', sub_gangbang: '하위 기술 4 보장 등급', sub_bukkake: '하위 기술 5 보장 등급' };
+  const skills = { sub_vaginal: '질 섹스 보장 등급', sub_threesome: '쓰리섬 보장 등급', sub_dp: '양구멍 삽입 보장 등급', sub_tp: '세구멍 삽입 보장 등급', sub_gangbang: '난교 보장 등급', sub_bukkake: '부카케 보장 등급' };
   for (const [key, label] of Object.entries(skills)) add({ id: 'grant.' + key, label, group: '연결 효과', kind: 'number', min: 0, max: 5, step: 1, help: '기존 max(현재값, 보장값)의 하한만 편집합니다. 기존 상한 5와 일회 지급 이력을 유지하며 이미 지급된 인물에게 재지급하지 않습니다.' }, roleNumbers(role => new RegExp(`^[ \\t]*${role}\\['${key}'\\] = max\\(${role}\\['${key}'\\], (\\d+)\\)[ \\t]*$`, 'gm'), key));
   const variative = get('#variative'), newloc = sources.get('$newloc');
   const existingCache = new Map();
@@ -168,14 +197,27 @@ function scan(raw) {
     { key: 'jo9_meiki_prev', label: '이전 상태', type: 'state-code', description: '기존 상태 이동 검사의 내부 코드. 읽기 전용입니다.' },
     { key: 'jo9_meiki_initialized', label: '초기화·일회 지급 버전', type: 'version', description: '기존 0/1/2 처리 버전입니다. 체크박스나 편집 대상이 아니며 보장값 변경으로 재지급하지 않습니다.' }
   ];
+  let generation;
+  if (sources.has('generate_stock')) {
+    generation = generationBinding(sources.get('generate_stock'));
+    const generationOptions = [{ value: -1, label: '기존 생성 규칙 유지' }, ...[0, 1, 2, 3].map(code => {
+      const label = fields.find(field => field.id === `state.${code}.label`).value;
+      const tooltip = fields.find(field => field.id === `state.${code}.tooltip`).value;
+      return { value: code, label: `${code} · ${label}${tooltip === label ? '' : ` (아이콘 설명: ${tooltip})`}` };
+    })];
+    fields.push({ id: GENERATION_ID, label: '성숙 (MILF) 유형의 신규 생성 초기 상태', group: '생성 초기값', kind: 'select', value: generation.value, options: generationOptions, help: '일반 신규 생성 중 성숙 유형에만 적용합니다. 고유·특수 프리셋(special_stock > 0)은 제외하고, 같은 일반 생성기를 쓰는 무작위 의뢰·퀘스트 인물은 포함합니다. 클론·사건의 후속 상태 덮어쓰기는 유지합니다. 기존 인물·세이브를 일괄 변경하지 않고 발견·지급 이력도 편집하지 않습니다. 명기(4)는 최초 발견·일회 지급 이력 연결이 필요해 직접 초기값 지정을 지원하지 않습니다.', bindings: [generation.binding], _encode: String });
+    warnings.push('생성 초기값은 일반 신규 생성의 마지막 상태 지정입니다. 고유·특수 프리셋은 제외하지만 같은 일반 생성기를 쓰는 무작위 의뢰·퀘스트는 포함하며, 후속 클론·사건 규칙은 우선할 수 있습니다. 명기(4) 초기 지정은 발견·일회 지급 이력 연결 때문에 지원하지 않습니다.');
+  } else warnings.push('generate_stock 생성 위치가 없어 성숙 유형의 신규 생성 초기값 편집을 지원하지 않습니다.');
   const plainFields = fields.map(({ _encode, bindings, ...field }) => ({ ...field, bindings: bindings.map(publicBinding) }));
   const view = { hash: doc.hash, feature: { id: 'jo9.meiki', title: '명기와 기존 인물 상태 축', type: 'character-state', summary: '기존 virginity 0~4 상태 축의 표시와 등록된 수치 연결을 편집합니다. 코드·이력·조건은 읽기 전용입니다.' }, roles: ROLES.map(id => ({ id, label: id === 'slave' ? '현재 동행 역할 슬롯 (slave)' : id === 'assistant' ? '조수 (assistant)' : `개인실 ${id.slice(-1)} (${id})` })), fields: plainFields, states: Array.from({ length: 5 }, (_, code) => ({ code, label: plainFields.find(f => f.id === `state.${code}.label`).value, icon: plainFields.find(f => f.id === `state.${code}.icon.main`).value, labelFieldId: `state.${code}.label`, iconFieldId: `state.${code}.icon.main` })), history, transitions, warnings };
-  return { doc, sources, fields, view, guard };
+  return { doc, sources, fields, view, guard, generation };
 }
 
 function inspect(raw) { return scan(raw).view; }
 function validate(field, value) {
-  if (field.kind === 'number') {
+  if (field.kind === 'select') {
+    if (typeof value !== 'number' || !Number.isSafeInteger(value) || !field.options.some(option => option.value === value)) error(`${field.label}: 등록된 생성 상태 선택값이 필요합니다.`);
+  } else if (field.kind === 'number') {
     if (typeof value !== 'number' || !Number.isSafeInteger(value) || value < field.min || value > field.max) error(`${field.label}: ${field.min}~${field.max} 범위의 정수가 필요합니다.`);
   } else {
     if (typeof value !== 'string' || !value.trim() || value.length > (field.kind === 'icon' ? 240 : 200) || /[\u0000-\u001f\u007f<>]/.test(value)) error(`${field.label}: 지원하지 않는 문자열입니다.`);
@@ -206,6 +248,7 @@ function prepare(raw, edits, baseHash, options = {}) {
   const replacements = new Map();
   for (const { field, value } of actual) {
     changes.push({ id: field.id, label: field.label, before: field.value, after: value, bindings: field.bindings.map(publicBinding) });
+    if (field.id === GENERATION_ID) continue;
     for (const binding of field.bindings) {
       if (!replacements.has(binding.location)) replacements.set(binding.location, []);
       replacements.get(binding.location).push({ start: binding._start, end: binding._end, value: field._encode(value) });
@@ -219,6 +262,12 @@ function prepare(raw, edits, baseHash, options = {}) {
       previousStart = span.start;
     }
     changed.set(name, body);
+  }
+  const generationEdit = actual.find(({ field }) => field.id === GENERATION_ID);
+  if (generationEdit) {
+    const { source, blockStart, blockEnd } = state.generation, newline = source.body.includes('\r\n') ? '\r\n' : '\n';
+    const block = generationEdit.value === -1 ? '' : `${GENERATION_BEGIN}${newline}if special_stock = 0 and stock['age'] = CONST_INT['milf_age']: stock['virginity'] = ${generationEdit.value}${newline}${GENERATION_END}${newline}`;
+    changed.set(source.name, source.body.slice(0, blockStart) + block + source.body.slice(blockEnd));
   }
   const needsCache = options.refreshCache || actual.some(({ field }) => field.id === 'training.xp' || /^state\.[0-4]\.label$/.test(field.id));
   if (needsCache) {
@@ -248,7 +297,11 @@ function prepare(raw, edits, baseHash, options = {}) {
     let start = 0, end = old.length, newEnd = next.length;
     while (start < end && start < newEnd && old[start] === next[start]) start++;
     while (end > start && newEnd > start && old[end - 1] === next[newEnd - 1]) { end--; newEnd--; }
-    const piece = core.minimalEdit(old, next, start, end, newEnd);
+    let piece;
+    for (let pad = 0; ; pad = pad ? pad * 2 : 16) {
+      piece = core.minimalEdit(old, next, Math.max(0, start - pad), Math.min(old.length, end + pad), Math.min(next.length, newEnd + pad));
+      if (piece.new && next.split(piece.new).length - 1 === 1) break;
+    }
     if (old.split(piece.old).length - 1 !== 1) error('원본 치환 개수가 일치하지 않습니다.');
     patchEdits.push({ location: name, field: 'body', ...piece, count: 1 });
     candidate.lines[source.index] = core.shift(next, -5);

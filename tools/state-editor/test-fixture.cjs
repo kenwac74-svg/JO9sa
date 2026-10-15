@@ -34,6 +34,9 @@ end`).join('\n');
   const locations = [
     ['jo9_meiki_state', state],
     ['#variative', labels.map((value, i) => `$virginity[${i}] = '${value}'`).join('\n')],
+    // A compact reference of the real generator ordering: clear/new stock,
+    // preset + randomization, derived attributes, traits, price, reset.
+    ['generate_stock', "dynamic $clear_slave_instance, 'stock'\nstock_state = CONST_INT['slave_exist']\ngs 'get_stock_seed'\nif special_stock = 0:\n if stock['age'] = CONST_INT['milf_age'] and rand(1,100) <= 80: stock['virginity'] = 2\n stock['service'] += rand(1,2)\nend &! end of randomization to make slaves more unique\ndynamic $replace($dyn_calc_slave_attrs, 'dyn'+'slave', 'stock')\n!PREPARE TRAIT LIST FOR DISPLAY (NOT EVERYTHING IS VISIBLE BEFORE ACQUISITION)\ngs '$stock_traits'\ngs '$slave_price', 'stock' &! original price calculation\nspecial_stock = 0"],
     ['sjm_UI_UIadds', ui('slave', true) + '\n' + ui('assistant', true)],
     ...[1, 2, 3, 4].map(i => [`slave_private_room${i}`, ui('room' + i, false)]),
     ['snk_room_menu_screen', ui('slave', false)],

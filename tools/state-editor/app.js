@@ -3,8 +3,8 @@
 (() => {
   const $ = (id) => document.getElementById(id);
   const token = document.querySelector('meta[name="jo9-state-token"]')?.content || '';
-  const model = { snapshot: null, drafts: new Map(), selected: new Set(), preview: null, busy: false, view: 'states', icons: new Map(), fieldNodes: new Map(), generation: 0 };
-  const viewTitles = { states: '상태표', rules: '전환·이력', effects: '연결 효과', review: '비교·적용' };
+  const model = { snapshot: null, drafts: new Map(), selected: new Set(), preview: null, busy: false, view: 'states', icons: new Map(), fieldNodes: new Map(), focusedFieldId: null, generation: 0 };
+  const viewTitles = { states: '상태표', rules: '전환·이력', effects: '연결 효과', defaults: '생성 초기값', review: '비교·적용' };
 
   function el(tag, className, text) {
     const node = document.createElement(tag);
@@ -54,8 +54,20 @@
     return model.drafts.has(field.id) ? model.drafts.get(field.id) : field.value;
   }
 
+  function displayValue(field, value) {
+    if (field?.kind === 'select') return field.options?.find((option) => Object.is(option.value, value))?.label || String(value);
+    return String(value);
+  }
+
+  function fieldExplanation(field) {
+    const purpose = /\.tooltip$/.test(field.id) ? '아이콘 설명(툴팁)입니다. 게임에서 아이콘에 마우스를 올릴 때 보이며, 상태 표시명과 별도로 편집합니다.' : /\.label$/.test(field.id) ? '상태의 표시명입니다. 아이콘 설명(툴팁)은 별도 항목에서 편집합니다.' : '';
+    return [purpose, field.help || `${field.group}에 등록된 소스 값입니다.`].filter(Boolean).join(' ');
+  }
+
   function validation(field, value) {
-    if (field.kind === 'number') {
+    if (field.kind === 'select') {
+      if (!field.options?.some((option) => Object.is(option.value, value))) return '등록된 목록에서 값을 선택하세요.';
+    } else if (field.kind === 'number') {
       if (value === '' || typeof value !== 'number' || !Number.isFinite(value)) return '유효한 숫자를 입력하세요.';
       if (field.min !== undefined && value < field.min) return `최솟값은 ${field.min}입니다.`;
       if (field.max !== undefined && value > field.max) return `최댓값은 ${field.max}입니다.`;
@@ -127,7 +139,6 @@
       if (active) button.setAttribute('aria-current', 'page');
       else button.removeAttribute('aria-current');
     });
-    $('field-search').closest('.search-bar').hidden = view === 'review';
     if (focus) $('view-' + view).scrollIntoView({ block: 'start', behavior: 'smooth' });
   }
 
@@ -154,10 +165,16 @@
     card.dataset.fieldView = view;
     const labelRow = el('div', 'field-label-row');
     const label = el('label', '', field.label);
-    const input = el('input');
+    const input = el(field.kind === 'select' ? 'select' : 'input');
     input.id = `field-${field.id}`;
     input.dataset.fieldId = field.id;
-    input.type = field.kind === 'number' ? 'number' : 'text';
+    if (field.kind === 'select') {
+      (field.options || []).forEach((item) => {
+        const option = el('option', '', item.label);
+        option.value = String(item.value);
+        input.append(option);
+      });
+    } else input.type = field.kind === 'number' ? 'number' : 'text';
     input.value = String(valueFor(field));
     input.required = true;
     input.autocomplete = 'off';
@@ -169,12 +186,17 @@
       input.inputMode = 'decimal';
     }
     label.htmlFor = input.id;
-    const marker = el('span', 'field-state', '원본');
-    labelRow.append(label, marker);
+    const marker = el('span', 'field-state', '원본 값');
+    const access = el('div', 'field-access');
+    access.append(el('span', 'edit-badge', '편집 가능'), marker);
+    labelRow.append(label, access);
     const control = el('div', 'field-control');
     control.append(input);
-    card.append(labelRow, control);
-    const help = el('p', 'field-help', field.help || `${field.group}에 등록된 소스 값입니다.`);
+    const entryHint = field.kind === 'select' ? '목록에서 선택하여 편집' : field.kind === 'number' ? '숫자 직접 입력' : field.kind === 'icon' ? '이미지 경로 직접 입력' : /\.tooltip$/.test(field.id) ? '아이콘 설명(툴팁) 직접 입력' : /\.label$/.test(field.id) ? '표시명 직접 입력' : '문구 직접 입력';
+    card.append(labelRow, el('span', 'field-entry-hint', entryHint), control);
+    const explanation = fieldExplanation(field);
+    input.title = explanation;
+    const help = el('p', 'field-help', explanation);
     help.id = `help-${field.id}`;
     input.setAttribute('aria-describedby', help.id);
     const original = el('p', 'field-original');
@@ -183,6 +205,10 @@
     error.id = `error-${field.id}`;
     error.hidden = true;
     card.append(help, original, error);
+    const tooltip = el('div', 'field-tooltip', explanation);
+    tooltip.id = `tooltip-${field.id}`;
+    tooltip.setAttribute('role', 'tooltip');
+    card.append(tooltip);
     let iconPreview;
     let iconStatus;
     if (field.kind === 'icon') {
@@ -202,13 +228,13 @@
     }
     if (field.bindings?.length) card.append(bindingsList(field.bindings));
     model.fieldNodes.set(field.id, { input, card, marker, original, error, view, field });
-    input.addEventListener('input', () => {
-      const value = field.kind === 'number' ? (input.value === '' ? '' : Number(input.value)) : input.value;
+    const handleEdit = () => {
+      const value = field.kind === 'select' ? field.options?.find((option) => String(option.value) === input.value)?.value : field.kind === 'number' ? (input.value === '' ? '' : Number(input.value)) : input.value;
       model.drafts.set(field.id, value);
       const changed = !Object.is(value, field.value);
       card.classList.toggle('is-changed', changed);
-      marker.textContent = changed ? '수정됨' : '원본';
-      original.textContent = `원본: ${field.value}`;
+      marker.textContent = changed ? '수정됨' : '원본 값';
+      original.textContent = `원본: ${displayValue(field, field.value)}`;
       original.hidden = !changed;
       const problem = validation(field, value);
       error.textContent = problem;
@@ -220,7 +246,9 @@
       if (problem) status(`${field.label}: ${problem}`, 'error');
       else status(`변경 ${edits().length}개 · 미리보기에서 설치본별 수정 위치를 확인하세요.`);
       updateSearch();
-    });
+    };
+    input.addEventListener('input', handleEdit);
+    if (field.kind === 'select') input.addEventListener('change', handleEdit);
     return card;
   }
 
@@ -307,7 +335,14 @@
       icon.append(el('span', 'icon-missing', '◇'));
       const originalIcon = el('div', 'state-icon-origin');
       originalIcon.append(el('span', '', '원본 아이콘'), icon);
-      head.append(el('span', 'state-code', item.code), el('h3', 'state-label', item.label), originalIcon);
+      const code = el('span', 'state-code', item.code);
+      code.title = '내부 상태 코드 · 읽기 전용';
+      code.setAttribute('aria-label', `상태 코드 ${item.code} · 읽기 전용`);
+      const stateCopy = el('div', 'state-heading-copy');
+      stateCopy.append(el('span', 'state-origin-label', '원본 표시명 · 읽기 전용'), el('h3', 'state-label', item.label));
+      const tooltipField = fields().find((field) => field.id === `state.${item.code}.tooltip`);
+      if (tooltipField) stateCopy.append(el('p', 'state-tooltip-summary', `아이콘 설명(툴팁): ${tooltipField.value}`));
+      head.append(code, stateCopy, originalIcon);
       row.append(head);
       const attached = fields().filter((field) => field.id === item.labelFieldId || field.id === item.iconFieldId || field.id.startsWith(`state.${item.code}.`));
       attached.forEach((field) => { assigned.add(field.id); row.append(fieldCard(field, 'states')); });
@@ -318,6 +353,7 @@
     if (!inspection.states?.length) empty(stateTable, '등록된 상태 행이 없습니다.');
     const other = fields().filter((field) => !assigned.has(field.id));
     const category = (field) => {
+      if (field.group === '생성 초기값') return 'defaults';
       if (/상태표|표시|아이콘/.test(field.group)) return 'states';
       if (/이력|유지/.test(field.group)) return 'history';
       if (/전환|판정/.test(field.group)) return 'rules';
@@ -327,12 +363,23 @@
     appendGroups($('rule-fields'), other.filter((field) => category(field) === 'rules'), 'rules');
     appendGroups($('history-edit-fields'), other.filter((field) => category(field) === 'history'), 'rules');
     appendGroups($('effect-fields'), other.filter((field) => category(field) === 'effects'), 'effects');
+    const defaults = other.filter((field) => category(field) === 'defaults');
+    appendGroups($('default-fields'), defaults, 'defaults');
+    const defaultsTab = document.querySelector('[data-view="defaults"]');
+    defaultsTab.disabled = !defaults.length;
+    defaultsTab.title = defaults.length ? '등록된 신규 생성 초기값을 편집합니다.' : '현재 QSP에 등록된 생성 초기값 연결이 없습니다.';
+    $('defaults-availability').textContent = defaults.length ? `등록된 초기값 ${defaults.length}개 편집` : '현재 원본에 등록 연결 없음';
+    $('defaults-scope').textContent = defaults.length ? '등록된 초기값 편집 가능' : '등록 연결 없음 · 조회';
+    if (!defaults.length) {
+      empty($('default-fields'), '현재 원본에 편집 가능한 생성 초기값이 등록되어 있지 않습니다.');
+      if (model.view === 'defaults') switchView('states');
+    }
     if (!$('effect-fields').children.length) empty($('effect-fields'), '등록된 편집 가능한 연결 효과가 없습니다.');
     $('transitions').replaceChildren();
     (inspection.transitions || []).forEach((item) => {
       const card = el('article', 'definition-card');
       const heading = el('div', 'definition-heading');
-      heading.append(el('h3', '', item.title), el('span', 'definition-type', '기존 전환 구조'));
+      heading.append(el('h3', '', item.title), el('span', 'definition-type', '기존 전환 구조 · 읽기 전용'));
       card.append(heading, el('p', '', item.description));
       if (item.bindings?.length) card.append(bindingsList(item.bindings));
       $('transitions').append(card);
@@ -360,19 +407,57 @@
   function updateSearch() {
     const query = $('field-search').value.trim().toLocaleLowerCase();
     let matches = 0;
-    const perView = { states: 0, rules: 0, effects: 0 };
+    const perView = { states: 0, rules: 0, effects: 0, defaults: 0 };
+    const results = [];
     model.fieldNodes.forEach(({ card, field, view }) => {
-      const haystack = [field.id, field.label, field.group, field.help, valueFor(field), ...(field.bindings || []).flatMap((binding) => [binding.location, binding.role, binding.code])].filter((value) => value !== undefined && value !== null).join(' ').toLocaleLowerCase();
+      const state = model.snapshot.inspection.states?.find((item) => field.id === item.labelFieldId || field.id === item.iconFieldId || field.id.startsWith(`state.${item.code}.`));
+      const labelField = state && fields().find((item) => item.id === state.labelFieldId);
+      const stateName = state ? `상태 ${state.code} · 표시명 ${labelField ? valueFor(labelField) : state.label}` : view === 'defaults' ? '신규 인물 초기 설정' : '상태 체계 공통';
+      const currentValue = displayValue(field, valueFor(field));
+      const haystack = [field.id, field.label, field.group, field.help, stateName, valueFor(field), currentValue, ...(field.options || []).map((option) => option.label), ...(field.bindings || []).flatMap((binding) => [binding.location, binding.role, binding.code])].filter((value) => value !== undefined && value !== null).join(' ').toLocaleLowerCase();
       const match = !query || haystack.includes(query);
-      card.hidden = !match;
-      if (match) { matches += 1; perView[view] += 1; }
+      card.hidden = !match && model.focusedFieldId !== field.id;
+      if (match) {
+        matches += 1;
+        perView[view] += 1;
+        if (query) results.push({ field, view, stateName, currentValue });
+      }
     });
     document.querySelectorAll('.field-group').forEach((group) => { group.hidden = ![...group.querySelectorAll('.field-card')].some((card) => !card.hidden); });
     document.querySelectorAll('.state-row').forEach((row) => {
       const cards = [...row.querySelectorAll('.field-card')];
       row.hidden = Boolean(query) && !cards.some((card) => !card.hidden);
     });
-    $('search-result').textContent = query ? `현재 상태 정의의 편집 항목 ${matches}/${fields().length}개 · 상태표 ${perView.states} · 전환·이력 ${perView.rules} · 연결 효과 ${perView.effects}` : `현재 상태 정의의 편집 가능한 ${fields().length}개 항목 · 실제 소스 값 기준`;
+    $('search-result').textContent = query ? `현재 상태 정의의 편집 항목 ${matches}/${fields().length}개 · 상태표 ${perView.states} · 전환·이력 ${perView.rules} · 연결 효과 ${perView.effects} · 생성 초기값 ${perView.defaults}` : `현재 상태 정의의 편집 가능한 ${fields().length}개 항목 · 모든 메뉴의 실제 소스 값 기준`;
+    $('search-results').hidden = !query;
+    $('search-results-count').textContent = `${results.length}개 결과`;
+    $('search-results-list').replaceChildren();
+    results.forEach(({ field, view, stateName, currentValue }) => {
+      const row = el('article', 'search-result-row');
+      row.dataset.searchField = field.id;
+      const copy = el('div', 'search-result-copy');
+      copy.append(el('p', 'search-result-menu', `${viewTitles[view]} / ${stateName}`), el('h3', '', field.label));
+      const value = el('p', 'search-result-value');
+      value.append(el('span', 'search-value-label', '현재값 '), el('span', '', currentValue));
+      copy.append(value);
+      const jump = el('button', 'button small search-jump', '편집으로 이동');
+      jump.type = 'button';
+      jump.addEventListener('click', () => jumpToField(field.id));
+      row.append(copy, jump);
+      $('search-results-list').append(row);
+    });
+    if (query && !results.length) empty($('search-results-list'), '일치하는 등록 편집 항목이 없습니다. 다른 표시명, 툴팁, 효과 또는 연결 위치를 검색하세요.');
+  }
+
+  function jumpToField(id) {
+    const node = model.fieldNodes.get(id);
+    if (!node) return;
+    model.focusedFieldId = id;
+    model.fieldNodes.forEach(({ card, field }) => card.classList.toggle('field-highlight', field.id === id));
+    updateSearch();
+    switchView(node.view);
+    node.card.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    node.input.focus({ preventScroll: true });
   }
 
   function renderTargets(snapshot) {
@@ -459,6 +544,7 @@
     model.generation += 1;
     model.snapshot = snapshot;
     model.drafts.clear();
+    model.focusedFieldId = null;
     model.preview = null;
     renderTargets(snapshot);
     renderDefinitions(snapshot);
@@ -498,9 +584,10 @@
         item.append(el('h4', '', change.label));
         const values = el('div', 'value-comparison');
         const before = el('div', 'change-value before');
-        before.append(el('span', 'change-label', '원본'), document.createTextNode(String(change.before)));
+        const field = fields().find((item) => item.id === change.id);
+        before.append(el('span', 'change-label', '원본'), document.createTextNode(displayValue(field, change.before)));
         const after = el('div', 'change-value after');
-        after.append(el('span', 'change-label', '후보'), document.createTextNode(String(change.after)));
+        after.append(el('span', 'change-label', '후보'), document.createTextNode(displayValue(field, change.after)));
         values.append(before, el('span', 'value-arrow', '→'), after);
         item.append(values);
         if (change.bindings?.length) item.append(bindingsList(change.bindings));
@@ -538,7 +625,11 @@
       }
     }, '선택한 설치본에서 상태 정의를 읽습니다.');
   });
-  $('field-search').addEventListener('input', updateSearch);
+  $('field-search').addEventListener('input', () => {
+    model.focusedFieldId = null;
+    model.fieldNodes.forEach(({ card }) => card.classList.remove('field-highlight'));
+    updateSearch();
+  });
   $('reload-source').addEventListener('click', () => {
     invalidatePreview('원본을 새로 읽었습니다. 변경 내용을 다시 확인하세요.');
     run(async () => {
@@ -601,7 +692,8 @@
     if (project.featureId !== snapshot.inspection.feature.id) throw new Error('현재 등록된 상태 체계와 다른 프로젝트입니다.');
     for (const edit of project.edits || []) {
       const field = fields(snapshot).find((item) => item.id === edit.id);
-      if (!field || (field.kind === 'number' ? typeof edit.value !== 'number' || !Number.isFinite(edit.value) : typeof edit.value !== 'string')) throw new Error(`프로젝트의 편집 항목을 확인할 수 없습니다: ${edit.id}`);
+      const validType = field && (field.kind === 'number' ? typeof edit.value === 'number' && Number.isFinite(edit.value) : field.kind === 'select' ? field.options?.some((option) => Object.is(option.value, edit.value)) : typeof edit.value === 'string');
+      if (!validType) throw new Error(`프로젝트의 편집 항목을 확인할 수 없습니다: ${edit.id}`);
     }
     adoptSnapshot(snapshot);
     for (const edit of project.edits || []) {
