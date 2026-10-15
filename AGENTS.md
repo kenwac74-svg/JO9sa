@@ -13,3 +13,5 @@
 8. 최신 사용자 지침: `docs/USER_DIRECTIONS_20261011.md`. 미사용 이미지 이동·복구 결과와 검증 한계는 `docs/UNUSED_IMAGES_ARCHIVE_20261011.md`. 새 장면전환/B컷 및 불확실한 동적 리소스를 미체크라는 이유로 제거하지 않는다.
 
 9. 2026-10-15 사용자 확정 경로: 플레이 G:/somi/Jack O Nine Tails v2.4_work, 빌드배포 G:/somi/Jack O Nine Tails v2.4 Kor_Full. 이전 G:/somi/JO9와 JO924는 JO9_trash/2026-10-15_cleanup으로 퇴역. QSP 수정은 새 두 대상에 각각 적용·검증하며 보호 순정 JO9O와 현재 원천 IMGMG/JO9sa는 유지. 자세한 이동·복구는 docs/SOMI_CLEANUP_20261015.md.
+
+10. 2.4 CSS 기준: docs/CSS_2_4_POLICY_20261015.md. 원본 CSS의 역할(배치/폰트/배경/툴팁 표현)은 CSS에 유지한다. 비원본 문구/상태 출력의 CSS 임시 변경은 커밋·푸시 전에 QSP로 이관하고 제거·검증한다. 기준본은 assets/css-2.4이며 원본 JO9O는 수정하지 않는다. CSS 전체를 QSP로 옮기지 않는다.
