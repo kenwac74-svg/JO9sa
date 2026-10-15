@@ -1,0 +1,30 @@
+{
+  "id": "2026-10-15_occupation_pool_untranslate",
+  "description": "게임에서: 고아·고아원 집안 노예가 창녀 출신으로 뽑혀도 직업을 알아보지 못해 '과거 묻기'의 직업 이야기가 비고, 창녀 출신의 성 경험·기초 기술이 붙지 않던 버그를 고친다. 직업 후보에 잘못 번역돼 들어간 값('창녀', '매춘굴')을 원래 값(whore, brothel)으로 되돌린다. 새로 생성되는 노예부터 적용된다.",
+  "target": "game/jack.qsp",
+  "before_sha256": "",
+  "after_sha256": "",
+  "edits": [
+    {
+      "location": "#static_txt",
+      "field": "body",
+      "old": "$orphan_occupation[3] = '창녀'",
+      "new": "$orphan_occupation[3] = 'whore'",
+      "count": 1
+    },
+    {
+      "location": "#static_txt",
+      "field": "body",
+      "old": "$orpnange_occupation[11] = '창녀'",
+      "new": "$orpnange_occupation[11] = 'whore'",
+      "count": 1
+    },
+    {
+      "location": "#static_txt",
+      "field": "body",
+      "old": "$orpnange_occupation[13] = '매춘굴'",
+      "new": "$orpnange_occupation[13] = 'brothel'",
+      "count": 1
+    }
+  ]
+}
