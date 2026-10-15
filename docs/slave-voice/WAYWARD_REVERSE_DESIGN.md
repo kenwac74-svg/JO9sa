@@ -372,9 +372,10 @@ flowchart LR
 | 2 상류 | knight(영주), magnat, bankeer, mayor, mafiosi, surgeon, businessman, finance, general, astrofarm, nanofarmacist |
 | 3 중류 | viking, craftsman, merchant, farmers, clerk, naturalist, ingeneer, doctor, servant(부잣집 하인), manager, biologist, programmer, poet, operator, artist, architect, freetrader, astrogator, admiral, gendesigner |
 | 4 서민 | pesant, hunter, fisher, bondman, valetry(하녀 집안), proletarian, worker, jailer, bioreactor, asteroid |
-| 5 최하·외부 | tribe, amazon, nomad, orphan, gypsy, church, workhouse, orpnange, policeman, minitruth, anter |
+| 5 최하·외부 | tribe, amazon, nomad, orphan, gypsy, church, workhouse, orpnange, minitruth, anter |
+| **54 (버그)** | policeman |
 
-주의: 5에 policeman·minitruth가 있어 순수한 신분 순서가 아닐 수 있다.
+주의: policeman은 5가 아니라 **54**다. 12.9 참고.
 
 #### 직업 (`$slave_occupation`, 58종)
 - 생성 순서: 가족별 직업 후보 묶음(`$<가족>_occupation`) → 직업. 어린 나이(`loli_age`)는 직업이 없다.
@@ -401,3 +402,15 @@ flowchart LR
 #### 발견한 원본 데이터 문제 (참고, 수정은 로컬 담당)
 - 직업 후보 묶음에 번역된 값이 섞여 있다: `$orphan_occupation`의 '창녀', `$orpnange_occupation`의 '창녀'·'매춘굴'. 원래 'whore'·'brothel'이어야 하며, 이 값이 뽑히면 직업 처리(능력치·설명)가 빠진다.
 - `$barbarian_king_occupation`의 'barbarian_princess'는 직업 처리 분기가 없다.
+
+### 12.9 사용자 결정과 확인 결과 (2026-10-15)
+1. 야만족 왕가(barbarian_king): **거친 어휘**.
+2. 간호사·교사·웨이트리스: **해요체** (초안 유지).
+3. 계층 5의 경찰·관료 집안 → 조사 결과
+   - **policeman(경찰관의 딸)의 `family_index`는 54다. 버그(오타)로 판단한다.**
+     - 한국어판 순정 2.3.2.5에도 54로 들어 있다. 우리 패치가 만든 것이 아니다.
+     - gitgud 영어 원본(`game-base` master-ia-patch, master)에는 `family_index`와 노예·조수 관계 계산(`origins_relations`, 러시아어 주석 "mrross")이 아예 없다. 이 계층 값과 관계 계산은 한국어판 계열에 따로 들어온 코드이고, 54도 그때 생긴 것으로 보인다.
+     - 이 값은 노예·조수 관계 점수에 쓰인다. 계산은 1~5만 가정한다. 54면 상대가 왕가·상류·중류일 때 관계 점수가 −51·−50·−49, 최하층일 때 +48이 되고, 경찰 집안 노예 쪽에서 보면 해당 분기가 없어 가족 관계 문장이 빠진다.
+     - 같은 현대 세계 가족이 worker 4, manager 3, orpnange 5인 것으로 보아 의도는 4로 추정한다. 확정은 아니다.
+     - 수정은 QSP 내용 변경이라 로컬 담당(mods)이다. 대사 설계에서는 경찰 집안을 계층 4(보통 어휘)로 취급한다.
+   - **minitruth(진리부 관료의 딸) 5는 설정으로 본다.** 값이 정상 범위이고, 전체주의 미래 세계의 가족 네 개가 모두 4~5(jailer 4, bioreactor 4, minitruth 5, anter 5)다. 이 세계에서는 관료 집안도 낮은 계층으로 설계한 것으로 보인다. 어휘는 계층대로 거친 어휘 대상에 넣지 않고 보통 어휘로 둔다(12.8 유지).
