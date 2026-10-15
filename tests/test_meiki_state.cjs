@@ -12,7 +12,7 @@ for(let line of source.split(/\r?\n/)){
 }
 let checks=0;
 for(const role of ['slave','assistant','room1','room2','room3','room4']){
- const make=(age=2)=>{const ctx={STRARGS:[role],ARGS:[role,0],CONST_INT:{young_age:0,milf_age:2},rolls:0};for(const r of ['slave','assistant','room1','room2','room3','room4'])ctx[r]={age,virginity:0,jo9_meiki_initialized:0,jo9_meiki_checked:0,jo9_meiki_prev:0,jo9_meiki_known:0};ctx.rand=()=>{ctx.rolls++;return ctx.roll};return ctx;};
+ const make=(age=2)=>{const ctx={STRARGS:[role],ARGS:[role,0],CONST_INT:{young_age:0,milf_age:2},rolls:0,max:Math.max};for(const r of ['slave','assistant','room1','room2','room3','room4'])ctx[r]={age,virginity:0,jo9_meiki_initialized:0,jo9_meiki_checked:0,jo9_meiki_prev:0,jo9_meiki_known:0,sub_vaginal:0,sub_threesome:0,sub_dp:0,sub_tp:0,sub_gangbang:0,sub_bukkake:0};ctx.rand=()=>{ctx.rolls++;return ctx.roll};return ctx;};
  const run=x=>vm.runInNewContext(js,x);const step=(x,v,allow=0)=>{x[role].virginity=v;x.ARGS[1]=allow;run(x);};
  for(let n=1;n<=100;n++){const x=make();x.roll=n;run(x);step(x,2,1);assert.equal(x[role].jo9_meiki_known||0,n<=5?1:0);assert.equal(x[role].virginity,n<=5?4:2);step(x,3,1);assert.equal(x.rolls,1);checks++;}
  let x=make();x.roll=1;step(x,1);step(x,2,1);assert.equal(x.rolls,0);checks++;
