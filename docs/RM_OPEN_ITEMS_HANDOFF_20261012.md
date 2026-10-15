@@ -4,13 +4,13 @@
 
 ## 현재 비교 기준
 
-플레이 G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp, 배포 G:/somi/Jack O Nine Tails v2.4 Kor_Full/game/jack.qsp는 각각 251 locations. RM은 I:/내 드라이브/Moding/JO9mod/jont-rm-mod-master/game/jack.qsp, 228 locations이며 10월 12일 기록 해시와 같다. 파일별 현재 해시·왕복·조사한 18개 location의 양쪽 본문 일치는 [근거 JSON](qa/2026-10-16_rm-d3-audit.json)에 있다. 전체 게임 해시가 서로 다르므로 상호 덮어쓰지 않는다.
+플레이 G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp, 배포 G:/somi/Jack O Nine Tails v2.4 Kor_Full/game/jack.qsp는 각각 251 locations. RM은 I:/내 드라이브/Moding/JO9mod/jont-rm-mod-master/game/jack.qsp, 228 locations이며 10월 12일 기록 해시와 같다. 파일별 현재 해시·왕복·조사한 17개 location의 양쪽 본문 일치는 [근거 JSON](qa/2026-10-16_rm-d3-audit.json)에 있다. 전체 게임 해시가 서로 다르므로 상호 덮어쓰지 않는다.
 
 ## 먼저 검토할 남은 후보
 
 |우선순위|항목|현재 근거·다음 범위|
 |---|---|---|
-|높음|구매자 요구판정|RM 전용 검사 키 25개 중 20개가 현재 고객 정의에도 등록. 레시 unknown/min_sensitivity 미검사 및 요구 정의의 비교식 확인. 현재 고객의 실제 호출→판정→인수/거절 연결표부터 확정. RM 오류 후보를 그대로 복사하지 않음. 상세와 전체 키별 고객표는 재확인 기록 참조.|
+|높음|구매자 요구판정|여성 주인공용 정의와 주석 대입 제외. RM 전용 검사 키 25개 중 13개가 현재 남성용 활성 고객 정의에 등록. 레시 unknown/min_sensitivity 미검사 및 요구 정의의 비교식 확인. 현재 고객의 실제 호출→판정→인수/거절 연결표부터 확정. RM 오류 후보를 그대로 복사하지 않음. 상세와 전체 키별 고객표는 재확인 기록 참조.|
 |중간|지역 최종 인정 평판|일반 납품은 공통 상승 경로가 있어 메뉴 대입 부재만으로 버그 확정 불가. 이전 완료 세이브의 4→5 보정과 야만왕 지역 키를 별도 추적. 미완료·비귀족에 5 강제 금지.|
 |재분류|적 특수공격|현재 엘리트 선택 범위 1~3, 특수 4~6은 통상 도달하지 않음. 피해 0 공격 버그라고 단정하지 않음. 활성화는 난이도 결정과 분리.|
 |낮음|오베레그 일일 유지|현행 일일 0 초기화와 상태 재계산 시 장착 복원 존재. RM도 obereg_on 대입 뒤 0으로 덮어씀. 실제 공백 재현 전 이식 금지.|

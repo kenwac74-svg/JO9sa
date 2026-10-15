@@ -8,7 +8,7 @@
 |full|251|5b32358a24c32ecf40bbab9bc1b764dca6eb84fb4ef9ec78c5371c0faee4af00|
 |rm|228|894138e52617972a6d94962368a3bb9b27708ec9b313bef5c69a9c31e062b5a8|
 
-조사한 18개 location 본문은 플레이·배포가 모두 같다. 전체 QSP 해시가 서로 다르므로 두 설치본 전체가 동일하다는 의미는 아니다. [재실행 가능한 읽기 전용 도구](../tools/qa/audit-rm-d3.cjs), [근거 JSON](qa/2026-10-16_rm-d3-audit.json).
+조사한 17개 location 본문은 플레이·배포가 모두 같다. 전체 QSP 해시가 서로 다르므로 두 설치본 전체가 동일하다는 의미는 아니다. [재실행 가능한 읽기 전용 도구](../tools/qa/audit-rm-d3.cjs), [근거 JSON](qa/2026-10-16_rm-d3-audit.json).
 
 ## 이전 미해결 목록에서 제외할 구현 7건
 
@@ -38,9 +38,11 @@
 
 ### 확인된 누락과 그 범위
 
-RM 공통 검사기에만 있는 요구 키는 25개다. 그중 **20개는 현재 고객 정의에도 등록**, 5개는 현재 $buyer_demand 정의에서 등록을 찾지 못했다. 이는 20개 고객이나 25개 이벤트라는 뜻이 아니다. 아래는 등록 연결표이며 각 고객의 메뉴·개별 우회 검사·도달 가능성까지 모두 확정한 표가 아니다. 특히 여성 주인공용 정의도 포함한다.
+사용자 지시로 **여성 주인공용 #npc_base_woman 정의를 제외**한다. 주석 처리된 요구 대입도 활성 등록으로 세지 않는다. RM 공통 검사에만 있는 키 25개 중 현재 남성 주인공용 활성 정의에 등록된 것은 **13종**이다. 이는 13개 고객이나 확정 버그 13건이라는 뜻이 아니다.
 
-|공통 검사에 없는 키|현재 등록한 고객 ID|
+앞선 20종은 여성 주인공용 정의를 포함한 수치였다. 초기 연결표에는 일부 주석 처리된 남성용 대입도 표시됐으므로 이번 표에서 제외·정정했다. 조건을 주석으로 끈 항목은 의도된 제외일 수 있어 자동 복구하지 않는다.
+
+|공통 검사에 없는 키|현재 남성용 활성 등록 고객 ID|
 |---|---|
 | `unknown` | leshiy |
 | `min_sensitivity` | leshiy, poison |
@@ -50,25 +52,15 @@ RM 공통 검사기에만 있는 요구 키는 25개다. 그중 **20개는 현�
 | `min_pride` | Margosha |
 | `lesbian` | Barin, valentina1, valentina2 |
 | `nymphomania` | Artemia |
-| `masohism` | 현재 고객 등록 없음 |
 | `fertility` | Ilariya, mstislava |
-| `nopreversion` | 현재 고객 등록 없음 |
-| `max_tolerant` | Marquis_de_s |
-| `min_boobs` | Elisabet_1, Elisabet_3, Elisabet_11, Elisabet_13 |
-| `max_boobs` | Mikhalych, Elisabet_2, Santa, Elisabet_12 |
-| `no_lactation` | 현재 고객 등록 없음 |
-| `lactation` | Elisabet_2, ferma_futa, Elisabet_12 |
-| `middle_fat` | Elisabet_3, Elisabet_13 |
-| `slave_food_sperm` | Jinn, Elisabet_4, Elisabet_5, Elisabet_14, Elisabet_15 |
-| `slut` | 현재 고객 등록 없음 |
-| `only_for_human_slut` | Jinn |
-| `zoo_slut` | 현재 고객 등록 없음 |
-| `anal_pure` | Margosha |
-| `oral_pure` | Elisabet_5, Elisabet_15 |
-| `vaginal_pure` | kikimora, Margosha, Elisabet_5, Elisabet_15 |
+| `min_boobs` | Elisabet_1, Elisabet_3 |
+| `max_boobs` | Mikhalych, Elisabet_2, Santa |
+| `lactation` | Elisabet_2, ferma_futa |
 | `golden_shower` | Jinn |
 
-현재 등록 없는 5개를 새 의뢰처럼 추가하지 않는다. 등록된 20개도 개별 이벤트 검사·표기·의도된 임계값을 확인한 뒤 필요한 것만 보완한다. contractor_demand는 다른 배열이므로 이 통계에서 제외했다.
+나머지 12종은 남성용 활성 고객 정의에서 등록을 찾지 못했다: `masohism`, `nopreversion`, `max_tolerant`, `no_lactation`, `middle_fat`, `slave_food_sperm`, `slut`, `only_for_human_slut`, `zoo_slut`, `anal_pure`, `oral_pure`, `vaginal_pure`. 이 범위에 새 의뢰나 검사 조건을 추가하지 않는다. contractor_demand는 다른 배열이므로 통계에서 제외했다.
+
+**판단 방식:** 코드 대조로 검사 누락·값 미설정 여부를 확인할 수 있다. 그러나 누락 자체가 의도된 완화인지까지는 요구 대사·주석·변경 이력·개별 경로를 함께 봐야 한다. 플레이는 조건을 바꾼 전후에 실제 인수/거절·금액·진행이 예상대로 변하는지 검증한다. 플레이만으로 원작자의 의도를 확정할 수는 없다. 다음 수정은 확정된 기술 오류와 기획 판단이 필요한 항목을 분리한다.
 
 ### 레시: 실제 연결을 확인한 예
 
