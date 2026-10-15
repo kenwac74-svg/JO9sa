@@ -1,0 +1,140 @@
+{
+  "id": "2026-10-15_z_private_diet_state_and_font",
+  "description": "Fix COPYARR overwriting rooms 2-4 numeric diet selections during help refresh; copy string entries only. Restore compact theme-font popup and keep detailed prose below scene.",
+  "target": "game/jack.qsp",
+  "edits": [
+    {
+      "location": "snk_room_diet_migrate",
+      "field": "body",
+      "old": "copyarr '$room2_ration', '$room1_ration'\r\ncopyarr '$room3_ration', '$room1_ration'\r\ncopyarr '$room4_ration', '$room1_ration'",
+      "new": "! JO9_DIET_HELP_STRINGS_ONLY_20261015: do not COPYARR numeric ration state.\r\n$room2_ration[1] = $room1_ration[1]\r\n$room2_ration[2] = $room1_ration[2]\r\n$room2_ration[3] = $room1_ration[3]\r\n$room2_ration[4] = $room1_ration[4]\r\n$room3_ration[1] = $room1_ration[1]\r\n$room3_ration[2] = $room1_ration[2]\r\n$room3_ration[3] = $room1_ration[3]\r\n$room3_ration[4] = $room1_ration[4]\r\n$room4_ration[1] = $room1_ration[1]\r\n$room4_ration[2] = $room1_ration[2]\r\n$room4_ration[3] = $room1_ration[3]\r\n$room4_ration[4] = $room1_ration[4]",
+      "count": 1
+    },
+    {
+      "location": "slave_private_room1",
+      "field": "body",
+      "old": "<style id=\"jo9_private_diet_style\">#snk_room_diet{z-index:2147483100!important;}#snk_room_diet h2{margin-bottom:10px;}#snk_room_diet .snk_diet_row{margin:6px 0;line-height:20px;}#snk_room_diet .jo9_diet_option{display:block;position:relative;box-sizing:border-box;min-height:68px;padding:5px 7px 5px 46px;border:1px solid #967345;background:rgba(255,245,217,.35);color:#211a11;text-decoration:none;pointer-events:auto;}#snk_room_diet .jo9_diet_option img{position:absolute;left:7px;top:8px;width:30px;height:30px;}#snk_room_diet .jo9_diet_title{display:block;font-size:17px;line-height:23px;}#snk_room_diet .jo9_diet_description{display:block;font-size:12px;line-height:16px;}#snk_room_diet .jo9_diet_selected{border-color:#6d4618;background:rgba(206,162,79,.25);}#snk_room_diet .jo9_diet_option:hover{color:#211a11;background:rgba(245,218,158,.7);}#snk_room_diet .snk_close{z-index:1;}</style>",
+      "new": "<style id=\"jo9_private_diet_style\">#snk_room_diet{z-index:2147483100!important;font-family:\"경기천년제목 Medium\";font-size:20px;line-height:32px;}#snk_room_diet h2{font-family:inherit;font-size:24px;line-height:36px;margin-bottom:22px;}#snk_room_diet .snk_diet_row{margin:12px 0;line-height:32px;}#snk_room_diet .jo9_diet_option{display:block;position:relative;box-sizing:border-box;min-height:44px;padding:6px 7px 6px 46px;border:0;background:transparent;color:#211a11;text-decoration:none;pointer-events:auto;font-family:inherit;font-size:20px;}#snk_room_diet .jo9_diet_option img{position:absolute;left:7px;top:6px;width:30px;height:30px;}#snk_room_diet .jo9_diet_title{display:block;font-family:inherit;font-size:20px;line-height:32px;white-space:nowrap;}#snk_room_diet .jo9_diet_selected{color:#70430c;}#snk_room_diet .jo9_diet_option:hover{color:#70430c;background:rgba(245,218,158,.25);}#snk_room_diet .snk_close{z-index:1;}</style>",
+      "count": 1
+    },
+    {
+      "location": "slave_private_room1",
+      "field": "body",
+      "old": "<span class=\"jo9_diet_description\">체형에 맞춰 배급량을 조절하는 소박한 식사.</span>",
+      "new": "<!-- JO9_DIET_HELP_BELOW_1 -->",
+      "count": 2
+    },
+    {
+      "location": "slave_private_room1",
+      "field": "body",
+      "old": "<span class=\"jo9_diet_description\">넉넉한 식사로 살을 붙이고 수유에 필요한 기력을 보충한다.</span>",
+      "new": "<!-- JO9_DIET_HELP_BELOW_2 -->",
+      "count": 2
+    },
+    {
+      "location": "slave_private_room1",
+      "field": "body",
+      "old": "<span class=\"jo9_diet_description\">조절한 양에 좋은 재료와 간식을 더한다. 대접이 이어지면 기분과 응석에 영향을 준다.</span>",
+      "new": "<!-- JO9_DIET_HELP_BELOW_3 -->",
+      "count": 2
+    },
+    {
+      "location": "slave_private_room2",
+      "field": "body",
+      "old": "<style id=\"jo9_private_diet_style\">#snk_room_diet{z-index:2147483100!important;}#snk_room_diet h2{margin-bottom:10px;}#snk_room_diet .snk_diet_row{margin:6px 0;line-height:20px;}#snk_room_diet .jo9_diet_option{display:block;position:relative;box-sizing:border-box;min-height:68px;padding:5px 7px 5px 46px;border:1px solid #967345;background:rgba(255,245,217,.35);color:#211a11;text-decoration:none;pointer-events:auto;}#snk_room_diet .jo9_diet_option img{position:absolute;left:7px;top:8px;width:30px;height:30px;}#snk_room_diet .jo9_diet_title{display:block;font-size:17px;line-height:23px;}#snk_room_diet .jo9_diet_description{display:block;font-size:12px;line-height:16px;}#snk_room_diet .jo9_diet_selected{border-color:#6d4618;background:rgba(206,162,79,.25);}#snk_room_diet .jo9_diet_option:hover{color:#211a11;background:rgba(245,218,158,.7);}#snk_room_diet .snk_close{z-index:1;}</style>",
+      "new": "<style id=\"jo9_private_diet_style\">#snk_room_diet{z-index:2147483100!important;font-family:\"경기천년제목 Medium\";font-size:20px;line-height:32px;}#snk_room_diet h2{font-family:inherit;font-size:24px;line-height:36px;margin-bottom:22px;}#snk_room_diet .snk_diet_row{margin:12px 0;line-height:32px;}#snk_room_diet .jo9_diet_option{display:block;position:relative;box-sizing:border-box;min-height:44px;padding:6px 7px 6px 46px;border:0;background:transparent;color:#211a11;text-decoration:none;pointer-events:auto;font-family:inherit;font-size:20px;}#snk_room_diet .jo9_diet_option img{position:absolute;left:7px;top:6px;width:30px;height:30px;}#snk_room_diet .jo9_diet_title{display:block;font-family:inherit;font-size:20px;line-height:32px;white-space:nowrap;}#snk_room_diet .jo9_diet_selected{color:#70430c;}#snk_room_diet .jo9_diet_option:hover{color:#70430c;background:rgba(245,218,158,.25);}#snk_room_diet .snk_close{z-index:1;}</style>",
+      "count": 1
+    },
+    {
+      "location": "slave_private_room2",
+      "field": "body",
+      "old": "<span class=\"jo9_diet_description\">체형에 맞춰 배급량을 조절하는 소박한 식사.</span>",
+      "new": "<!-- JO9_DIET_HELP_BELOW_1 -->",
+      "count": 2
+    },
+    {
+      "location": "slave_private_room2",
+      "field": "body",
+      "old": "<span class=\"jo9_diet_description\">넉넉한 식사로 살을 붙이고 수유에 필요한 기력을 보충한다.</span>",
+      "new": "<!-- JO9_DIET_HELP_BELOW_2 -->",
+      "count": 2
+    },
+    {
+      "location": "slave_private_room2",
+      "field": "body",
+      "old": "<span class=\"jo9_diet_description\">조절한 양에 좋은 재료와 간식을 더한다. 대접이 이어지면 기분과 응석에 영향을 준다.</span>",
+      "new": "<!-- JO9_DIET_HELP_BELOW_3 -->",
+      "count": 2
+    },
+    {
+      "location": "slave_private_room3",
+      "field": "body",
+      "old": "<style id=\"jo9_private_diet_style\">#snk_room_diet{z-index:2147483100!important;}#snk_room_diet h2{margin-bottom:10px;}#snk_room_diet .snk_diet_row{margin:6px 0;line-height:20px;}#snk_room_diet .jo9_diet_option{display:block;position:relative;box-sizing:border-box;min-height:68px;padding:5px 7px 5px 46px;border:1px solid #967345;background:rgba(255,245,217,.35);color:#211a11;text-decoration:none;pointer-events:auto;}#snk_room_diet .jo9_diet_option img{position:absolute;left:7px;top:8px;width:30px;height:30px;}#snk_room_diet .jo9_diet_title{display:block;font-size:17px;line-height:23px;}#snk_room_diet .jo9_diet_description{display:block;font-size:12px;line-height:16px;}#snk_room_diet .jo9_diet_selected{border-color:#6d4618;background:rgba(206,162,79,.25);}#snk_room_diet .jo9_diet_option:hover{color:#211a11;background:rgba(245,218,158,.7);}#snk_room_diet .snk_close{z-index:1;}</style>",
+      "new": "<style id=\"jo9_private_diet_style\">#snk_room_diet{z-index:2147483100!important;font-family:\"경기천년제목 Medium\";font-size:20px;line-height:32px;}#snk_room_diet h2{font-family:inherit;font-size:24px;line-height:36px;margin-bottom:22px;}#snk_room_diet .snk_diet_row{margin:12px 0;line-height:32px;}#snk_room_diet .jo9_diet_option{display:block;position:relative;box-sizing:border-box;min-height:44px;padding:6px 7px 6px 46px;border:0;background:transparent;color:#211a11;text-decoration:none;pointer-events:auto;font-family:inherit;font-size:20px;}#snk_room_diet .jo9_diet_option img{position:absolute;left:7px;top:6px;width:30px;height:30px;}#snk_room_diet .jo9_diet_title{display:block;font-family:inherit;font-size:20px;line-height:32px;white-space:nowrap;}#snk_room_diet .jo9_diet_selected{color:#70430c;}#snk_room_diet .jo9_diet_option:hover{color:#70430c;background:rgba(245,218,158,.25);}#snk_room_diet .snk_close{z-index:1;}</style>",
+      "count": 1
+    },
+    {
+      "location": "slave_private_room3",
+      "field": "body",
+      "old": "<span class=\"jo9_diet_description\">체형에 맞춰 배급량을 조절하는 소박한 식사.</span>",
+      "new": "<!-- JO9_DIET_HELP_BELOW_1 -->",
+      "count": 2
+    },
+    {
+      "location": "slave_private_room3",
+      "field": "body",
+      "old": "<span class=\"jo9_diet_description\">넉넉한 식사로 살을 붙이고 수유에 필요한 기력을 보충한다.</span>",
+      "new": "<!-- JO9_DIET_HELP_BELOW_2 -->",
+      "count": 2
+    },
+    {
+      "location": "slave_private_room3",
+      "field": "body",
+      "old": "<span class=\"jo9_diet_description\">조절한 양에 좋은 재료와 간식을 더한다. 대접이 이어지면 기분과 응석에 영향을 준다.</span>",
+      "new": "<!-- JO9_DIET_HELP_BELOW_3 -->",
+      "count": 2
+    },
+    {
+      "location": "slave_private_room4",
+      "field": "body",
+      "old": "<style id=\"jo9_private_diet_style\">#snk_room_diet{z-index:2147483100!important;}#snk_room_diet h2{margin-bottom:10px;}#snk_room_diet .snk_diet_row{margin:6px 0;line-height:20px;}#snk_room_diet .jo9_diet_option{display:block;position:relative;box-sizing:border-box;min-height:68px;padding:5px 7px 5px 46px;border:1px solid #967345;background:rgba(255,245,217,.35);color:#211a11;text-decoration:none;pointer-events:auto;}#snk_room_diet .jo9_diet_option img{position:absolute;left:7px;top:8px;width:30px;height:30px;}#snk_room_diet .jo9_diet_title{display:block;font-size:17px;line-height:23px;}#snk_room_diet .jo9_diet_description{display:block;font-size:12px;line-height:16px;}#snk_room_diet .jo9_diet_selected{border-color:#6d4618;background:rgba(206,162,79,.25);}#snk_room_diet .jo9_diet_option:hover{color:#211a11;background:rgba(245,218,158,.7);}#snk_room_diet .snk_close{z-index:1;}</style>",
+      "new": "<style id=\"jo9_private_diet_style\">#snk_room_diet{z-index:2147483100!important;font-family:\"경기천년제목 Medium\";font-size:20px;line-height:32px;}#snk_room_diet h2{font-family:inherit;font-size:24px;line-height:36px;margin-bottom:22px;}#snk_room_diet .snk_diet_row{margin:12px 0;line-height:32px;}#snk_room_diet .jo9_diet_option{display:block;position:relative;box-sizing:border-box;min-height:44px;padding:6px 7px 6px 46px;border:0;background:transparent;color:#211a11;text-decoration:none;pointer-events:auto;font-family:inherit;font-size:20px;}#snk_room_diet .jo9_diet_option img{position:absolute;left:7px;top:6px;width:30px;height:30px;}#snk_room_diet .jo9_diet_title{display:block;font-family:inherit;font-size:20px;line-height:32px;white-space:nowrap;}#snk_room_diet .jo9_diet_selected{color:#70430c;}#snk_room_diet .jo9_diet_option:hover{color:#70430c;background:rgba(245,218,158,.25);}#snk_room_diet .snk_close{z-index:1;}</style>",
+      "count": 1
+    },
+    {
+      "location": "slave_private_room4",
+      "field": "body",
+      "old": "<span class=\"jo9_diet_description\">체형에 맞춰 배급량을 조절하는 소박한 식사.</span>",
+      "new": "<!-- JO9_DIET_HELP_BELOW_1 -->",
+      "count": 2
+    },
+    {
+      "location": "slave_private_room4",
+      "field": "body",
+      "old": "<span class=\"jo9_diet_description\">넉넉한 식사로 살을 붙이고 수유에 필요한 기력을 보충한다.</span>",
+      "new": "<!-- JO9_DIET_HELP_BELOW_2 -->",
+      "count": 2
+    },
+    {
+      "location": "slave_private_room4",
+      "field": "body",
+      "old": "<span class=\"jo9_diet_description\">조절한 양에 좋은 재료와 간식을 더한다. 대접이 이어지면 기분과 응석에 영향을 준다.</span>",
+      "new": "<!-- JO9_DIET_HELP_BELOW_3 -->",
+      "count": 2
+    }
+  ],
+  "targets": {
+    "full": {
+      "path": "G:/somi/Jack O Nine Tails v2.4 Kor_Full/game/jack.qsp",
+      "before": "e0cc5c9bab543998c3fee46513a96df2e1f51ce513f6c4f604e7538d2d604bcb",
+      "after": "467e5c5dc133b217633cf8de4ffe796886e1cf61f12ebd68254e51971be5bee8"
+    },
+    "work": {
+      "path": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+      "before": "e0cc5c9bab543998c3fee46513a96df2e1f51ce513f6c4f604e7538d2d604bcb",
+      "after": "467e5c5dc133b217633cf8de4ffe796886e1cf61f12ebd68254e51971be5bee8"
+    }
+  },
+  "before_sha256": "e0cc5c9bab543998c3fee46513a96df2e1f51ce513f6c4f604e7538d2d604bcb",
+  "after_sha256": "467e5c5dc133b217633cf8de4ffe796886e1cf61f12ebd68254e51971be5bee8"
+}

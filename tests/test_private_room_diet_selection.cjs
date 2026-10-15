@@ -7,7 +7,7 @@ for(let n=1;n<=4;n++){
  for(const value of [0,1,2])assert(b.includes(`gt ''slave_private_room${n}'', ''diet_set'', ${value}`));
  assert(b.includes('.jo9_diet_option{display:block;'));
  const overlay=b.slice(b.indexOf("if $snk_room_view = 'diet':",b.indexOf('snk_room_notice')),b.indexOf(`$snk_room_last_text[${n}]`));
- assert(!overlay.includes('스파크/일'));assert(overlay.includes('8$/일'));assert(overlay.includes('조절한 양에 좋은 재료와 간식을 더한다'));
+ assert(!overlay.includes('스파크/일'));assert(overlay.includes('8$/일'));assert(!overlay.includes('<span class="jo9_diet_description">'));
 }
 const help=body('snk_room_diet_migrate');assert(help.includes('닷새')&&help.includes('열흘'));assert(!help.includes('기존 체형 관리 식단.'));assert(!help.includes('5일부터 특별대우 기분 효과'));
 if(process.argv[3]){const prev=c.parse(fs.readFileSync(process.argv[3]));const edits=JSON.parse(fs.readFileSync(process.argv[4])).edits;let expected=[...prev.lines];for(const e of edits){const l=prev.locations.find(l=>l.name===e.location);let b=c.shift(expected[l.body],5);assert.equal(b.split(e.old).length-1,e.count);expected[l.body]=c.shift(b.split(e.old).join(e.new),-5)}assert.deepEqual(d.lines,expected);assert.equal(body('next_day'),c.shift(prev.lines[prev.locations.find(l=>l.name==='next_day').body],5));}
