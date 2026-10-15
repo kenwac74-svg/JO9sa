@@ -1,0 +1,48 @@
+{
+  "id": "2026-10-15_z_cryo_cell_names",
+  "description": "Show stored character names beside cryo cell numbers; ellipsis for long names, escaped HTML, empty cells unchanged.",
+  "edits": [
+    {
+      "location": "shop_general",
+      "field": "body",
+      "old": "local $jo9_cryo_portrait, $jo9_cryo_caption, $jo9_cryo_link, $jo9_cryo_icon",
+      "new": "local $jo9_cryo_portrait, $jo9_cryo_caption, $jo9_cryo_link, $jo9_cryo_icon, $jo9_cryo_name, $jo9_cryo_heading",
+      "count": 1
+    },
+    {
+      "location": "shop_general",
+      "field": "body",
+      "old": "#jo9_cryo_grid .jo9_cryo_label small{font-size:15px;}",
+      "new": "#jo9_cryo_grid .jo9_cryo_heading{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}#jo9_cryo_grid .jo9_cryo_label small{display:block;font-size:15px;}",
+      "count": 1
+    },
+    {
+      "location": "shop_general",
+      "field": "body",
+      "old": "  $jo9_cryo_link = ''\r\n  if jo9_cryo_state ! CONST_INT['no_slave']:",
+      "new": "  $jo9_cryo_link = ''\r\n  $jo9_cryo_name = ''\r\n  $jo9_cryo_heading = '셀 №<<jo9_cryo_i>>'\r\n  if jo9_cryo_state ! CONST_INT['no_slave']:\r\n   dynamic '$jo9_cryo_name = $iced_<<jo9_cryo_i>>_name'\r\n   if $jo9_cryo_name ! '':\r\n    $jo9_cryo_name = replace(replace(replace($jo9_cryo_name, '&', '&amp;'), '<', '&lt;'), '>', '&gt;')\r\n    $jo9_cryo_heading += ' · ' + $jo9_cryo_name\r\n   end",
+      "count": 1
+    },
+    {
+      "location": "shop_general",
+      "field": "body",
+      "old": "셀 №<<jo9_cryo_i>><br><small><<$jo9_cryo_caption>></small>",
+      "new": "<span class=\"jo9_cryo_heading\"><<$jo9_cryo_heading>></span><small><<$jo9_cryo_caption>></small>",
+      "count": 2
+    }
+  ],
+  "targets": {
+    "work": {
+      "path": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+      "before": "65425bdebbda4f12e65b6dbea403ee193d41267eb028895d7118593f81b7eba7",
+      "after": "4871fdc513bf286c473b8c6c811311dec095e535a1245ce5b8aebfa2c2a51a2a"
+    },
+    "full": {
+      "path": "G:/somi/Jack O Nine Tails v2.4 Kor_Full/game/jack.qsp",
+      "before": "43424ba79564c5bce47d172899422f468d1d019665c2efa8799e6a8b8aeec1c3",
+      "after": "6dbeca36dafd047a458b73680ee40ae67e6667404f0005a20e2f000b174196c4"
+    }
+  },
+  "before_sha256": "65425bdebbda4f12e65b6dbea403ee193d41267eb028895d7118593f81b7eba7",
+  "after_sha256": "4871fdc513bf286c473b8c6c811311dec095e535a1245ce5b8aebfa2c2a51a2a"
+}
