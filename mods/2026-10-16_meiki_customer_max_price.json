@@ -1,0 +1,69 @@
+{
+  "id": "2026-10-16_meiki_customer_max_price",
+  "description": "Known active meiki and current buyer performance requirements select the best existing bargaining price for current stats; preserve admission, fixed rewards, budget cap and all non-price outcomes.",
+  "target": "game/jack.qsp",
+  "edits": [
+    {
+      "location": "slave_sell_chek",
+      "field": "body",
+      "old": "buyer_interested = 0",
+      "new": "buyer_interested = 0\r\njo9_meiki_max_sale = 0",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "if interaction_city = 911:",
+      "new": "if interaction_city = 911:\r\n\tjo9_meiki_max_sale = func('jo9_meiki_sale', 'eligible')\r\n\tlocal jo9_sale_roll = (48271 * (day + slave_type)) mod 65537\r\n\tif jo9_meiki_max_sale = 1: jo9_sale_roll = func('jo9_meiki_sale', 'roll')",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "bargain_charm_coefficient = demand_rating[$npc_id] + (48271 * (day + slave_type) mod 65537) / (65537 / (1 + demand_rating[$npc_id]))",
+      "new": "bargain_charm_coefficient = demand_rating[$npc_id] + jo9_sale_roll / (65537 / (1 + demand_rating[$npc_id]))",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "bargain_master_chance = (master_cha + master_domination + master_style + master_str) + 4 * personal_relations[$npc_id] + ((48271 * (day + slave_type)) mod 65537) / (65537 / 77)",
+      "new": "bargain_master_chance = (master_cha + master_domination + master_style + master_str) + 4 * personal_relations[$npc_id] + jo9_sale_roll / (65537 / 77)",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "bargain_master_coefficient = 5 + (48271 * (day + slave_type) mod 65537) / (65537 / 4)",
+      "new": "bargain_master_coefficient = 5 + jo9_sale_roll / (65537 / 4)",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "if sell_price < common_price[demand_rating[$npc_id]]:",
+      "new": "if sell_price < common_price[demand_rating[$npc_id]]:\r\n\t\tif jo9_meiki_max_sale = 1 and sell_price > npc_money[$npc_id]: sell_price = npc_money[$npc_id]",
+      "count": 1
+    }
+  ],
+  "add_locations": [
+    {
+      "name": "jo9_meiki_sale",
+      "desc": "",
+      "body": "! JO9_MEIKI_SALE_V1: price selection only; local scratch variables do not persist.\r\nresult = 0\r\nif $args[0] = 'eligible':\r\n if slave['virginity'] ! 4: exit\r\n if $interesting_specialisation[$npc_id] = 'concubine': result = 1\r\n if max(stat_importance['petting'], stat_importance['oral'], stat_importance['penetration'], stat_importance['orgy'], stat_importance['roleplay'], stat_importance['fetishism'], stat_importance['xenophily'], stat_importance['lesbiansex'], stat_importance['nipplefuck']) > 0: result = 1\r\n if max(demand['lesbiansex'], demand['nipplefuck'], demand['selftorture'], demand['golden_shower']) > 0: result = 1\r\n exit\r\nend\r\nif $args[0] = 'roll':\r\n local jo9_base = common_price[demand_rating[$npc_id]]\r\n local jo9_unit = jo9_base / 100\r\n local jo9_brand = 1 + (brand_reputation - 1) / 2\r\n local jo9_rating = (rating - demand_rating[$npc_id]) / 2\r\n local jo9_excess = 0\r\n if (demand_rating[$npc_id] + 1) / 2 = 1: jo9_excess = charm - 6\r\n if (demand_rating[$npc_id] + 1) / 2 = 2: jo9_excess = charm - 12\r\n if (demand_rating[$npc_id] + 1) / 2 = 3: jo9_excess = charm - 18\r\n if (demand_rating[$npc_id] + 1) / 2 = 4: jo9_excess = charm - 24\r\n if (demand_rating[$npc_id] + 1) / 2 = 5: jo9_excess = 2 * (charm - 38)\r\n local jo9_factor = 0\r\n if jo9_excess < 0:\r\n  jo9_factor = 0\r\n elseif jo9_excess <= 7:\r\n  jo9_factor = 1\r\n elseif jo9_excess < 15:\r\n  jo9_factor = 2\r\n else\r\n  jo9_factor = 3\r\n end\r\n local jo9_best = -2147483647\r\n local jo9_best_roll = 0\r\n local jo9_i = 0\r\n local jo9_roll = 0\r\n local jo9_charm_coefficient = 0\r\n local jo9_charm_bonus = 0\r\n local jo9_chance = 0\r\n local jo9_master_coefficient = 0\r\n local jo9_master_bonus = 0\r\n local jo9_price = 0\r\n ! Within each master coefficient interval the highest price is at its right endpoint.\r\n ! Keep the extra 65536 endpoint: QSP integer division reaches coefficient 9 there.\r\n for jo9_i = 0 to 4:\r\n  jo9_roll = min(65536, 16384 * (jo9_i + 1) - 1)\r\n  jo9_charm_coefficient = demand_rating[$npc_id] + jo9_roll / (65537 / (1 + demand_rating[$npc_id]))\r\n  jo9_charm_bonus = jo9_unit * (jo9_excess / 2 + jo9_charm_coefficient + 2 * jo9_brand + 3 * jo9_rating)\r\n  jo9_price = jo9_base\r\n  if jo9_factor = 2: jo9_price += jo9_charm_bonus\r\n  if jo9_factor = 3: jo9_price += jo9_charm_bonus + jo9_charm_bonus / 2\r\n  jo9_chance = master_cha + master_domination + master_style + master_str + 4 * personal_relations[$npc_id] + jo9_roll / (65537 / 77)\r\n  if custom_game = 0 and hero_choice = 4: jo9_chance += 2 * master_cha\r\n  jo9_master_coefficient = 5 + jo9_roll / (65537 / 4)\r\n  jo9_master_bonus = jo9_unit * (jo9_master_coefficient + jo9_rating) * (jo9_factor + jo9_brand) / 2\r\n  if jo9_chance <= 30:\r\n   jo9_master_bonus -= jo9_unit * jo9_rating\r\n   jo9_price -= jo9_master_bonus\r\n  elseif jo9_chance <= 49:\r\n   jo9_price += 0\r\n  elseif jo9_chance <= 68:\r\n   jo9_price += jo9_master_bonus\r\n  else\r\n   jo9_price += jo9_master_bonus + jo9_master_bonus / 2\r\n  end\r\n  if jo9_price > jo9_best:\r\n   jo9_best = jo9_price\r\n   jo9_best_roll = jo9_roll\r\n  end\r\n end\r\n result = jo9_best_roll\r\nend\r\n",
+      "actions": []
+    }
+  ],
+  "targets": {
+    "work": {
+      "qsp": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+      "before": "9c3e33bc081c6baabc414fde1c2fa9fed33461efe31c8fc949bd1532c645eeb1",
+      "after": "7dd3201eead6b495d3c4851ed08f177ced4f4604994f539882290ba2f6d56adb"
+    },
+    "full": {
+      "qsp": "G:/somi/Jack O Nine Tails v2.4 Kor_Full/game/jack.qsp",
+      "before": "5b32358a24c32ecf40bbab9bc1b764dca6eb84fb4ef9ec78c5371c0faee4af00",
+      "after": "0779be8bb8d98c931249a3a0b0d5b126ed02ccb9533d78f7d81889727c26db30"
+    }
+  }
+}
