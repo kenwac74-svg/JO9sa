@@ -6,7 +6,8 @@
  function wrap(value,start,end,open,close){return {text:value.slice(0,start)+open+value.slice(start,end)+close+value.slice(end),start:start+open.length,end:end+open.length};}
  function page(rows,index){const pages=Math.max(1,Math.ceil(rows.length/10)),at=Math.min(Math.max(0,index),pages-1);return {items:rows.slice(at*10,at*10+10),index:at,pages,total:rows.length};}
  function imageTag(id){if(!icons.some(x=>x[0]===id))throw Error('알 수 없는 이모지');return '<img src="content/pic/ui/dialogue_emoji/'+id+'.png" width="19" height="19" style="vertical-align:-4px">';}
- const api={wrap,page,imageTag,icons,categories,emojiPage};if(typeof module==='object'&&module.exports){module.exports=api;return;}root.JO9Editing=api;
+ function imageUrl(id,session,revision){if(!icons.some(x=>x[0]===id))throw Error('알 수 없는 이모지');return '/api/pic?t='+encodeURIComponent(session)+'&p='+encodeURIComponent('ui/dialogue_emoji/'+id+'.png')+'&v='+encodeURIComponent(revision);}
+ const api={wrap,page,imageTag,imageUrl,icons,categories,emojiPage};if(typeof module==='object'&&module.exports){module.exports=api;return;}root.JO9Editing=api;
  document.addEventListener('DOMContentLoaded',()=>{
   const field=document.getElementById('replacement'),toolbar=document.getElementById('textToolbar'),picker=document.getElementById('emojiPicker');let range={start:0,end:0},dragId=null;
   const saveRange=()=>{range={start:field.selectionStart,end:field.selectionEnd};};
@@ -15,16 +16,16 @@
   function insert(text){const start=range.start;commit({text:field.value.slice(0,start)+text+field.value.slice(range.end),start:start+text.length,end:start+text.length});}
   toolbar.addEventListener('pointerdown',e=>{if(e.target.closest('button'))e.preventDefault();});
   toolbar.addEventListener('click',e=>{const button=e.target.closest('[data-format]');if(!button)return;const kind=button.dataset.format;
-   if(kind==='emoji'){picker.hidden=!picker.hidden;return;}
+   if(kind==='emoji'){picker.hidden=!picker.hidden;if(!picker.hidden)renderEmojiPage(selectedPage);return;}
    if(kind==='br'){insert('<br>');return;}
    const tags=kind==='color'?['<font color="'+document.getElementById('textColor').value+'">','</font>']:['<'+kind+'>','</'+kind+'>'];
    commit(wrap(field.value,range.start,range.end,...tags));
   });
-  let selectedCategory=0;
-  function iconImage(id,label){const img=document.createElement('img');img.src='/api/pic?t='+encodeURIComponent(token)+'&p='+encodeURIComponent('ui/dialogue_emoji/'+id+'.png');img.alt=label;img.draggable=false;return img;}
-  function renderEmojiPage(at){const result=emojiPage(at,selectedCategory),grid=picker.querySelector('.emojiGrid'),pages=picker.querySelector('.emojiPages');grid.replaceChildren();pages.replaceChildren();
+  let selectedCategory=0,selectedPage=0,imageRevision=0,imageVersion=String(Date.now());
+  function iconImage(id,label){const img=document.createElement('img');img.src=imageUrl(id,token,imageVersion);img.alt=label;img.draggable=false;return img;}
+  function renderEmojiPage(at){const result=emojiPage(at,selectedCategory),grid=picker.querySelector('.emojiGrid'),pages=picker.querySelector('.emojiPages');selectedPage=result.index;imageVersion=Date.now()+'-'+(++imageRevision);grid.replaceChildren();pages.replaceChildren();
    for(let i=0;i<result.pages;i++){const b=document.createElement('button');b.type='button';b.textContent=String(i+1);b.classList.toggle('active',i===result.index);b.onclick=()=>renderEmojiPage(i);pages.append(b);}
-   for(const b of picker.querySelectorAll('[data-emoji-category]'))b.classList.toggle('active',Number(b.dataset.emojiCategory)===selectedCategory);
+   for(const b of picker.querySelectorAll('[data-emoji-category]')){const at=Number(b.dataset.emojiCategory);b.classList.toggle('active',at===selectedCategory);b.querySelector('img').src=imageUrl(categories[at][1][0][0],token,imageVersion);}
    for(const [id,label] of result.items){const button=document.createElement('button');button.type='button';button.title=label;button.setAttribute('aria-label',label);button.draggable=true;button.append(iconImage(id,label));button.addEventListener('pointerdown',saveRange);button.onclick=()=>insert(imageTag(id));button.ondragstart=e=>{saveRange();dragId=id;e.dataTransfer.setData('application/x-jo9-emoji',id);e.dataTransfer.setData('text/plain',imageTag(id));e.dataTransfer.effectAllowed='copy';};button.ondragend=()=>{dragId=null;};grid.append(button);}
   }
   const tabs=picker.querySelector('.emojiCategories');categories.forEach(([label,items],at)=>{const b=document.createElement('button');b.type='button';b.dataset.emojiCategory=at;b.title=label;b.setAttribute('aria-label',label);b.append(iconImage(items[0][0],label));b.onclick=()=>{selectedCategory=at;renderEmojiPage(0);};tabs.append(b);});renderEmojiPage(0);

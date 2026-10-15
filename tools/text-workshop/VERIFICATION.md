@@ -202,3 +202,11 @@
 - 일괄 적용은 이 목록의 파일에만 적용한다. 일반 보기 복귀 시 이전 폴더·검색·상태 필터를 복원한다. 공유 상태 갱신 시 체크한 파일은 목록에서 사라진다.
 - 모듈 원본은 `tools/imgmg/catalog-review-module.js`, 테스트는 `node tools/imgmg/test-review.cjs`. 배포된 `catalog_workshop.js` 끝의 같은 모듈과 함께 갱신한다. 생성기는 기존처럼 `catalog_workshop.js`를 복사한다.
 - 전용 주소: `/catalog?review=unchecked`. 소스·IMGMG·로컬 작업/seed에 동일 모듈을 적용한다. 서버 API 변경이나 재시작이 필요하지 않다.
+
+
+## 2026-10-16 PNG 이모지 선택창 갱신
+
+- 선택창 재개방 시 현재 분류/페이지를 다시 그려 이미 로드한 예전 PNG를 교체한다. 그림 요청 버전만 변경하며 게임 삽입 경로·19px·292종 목록은 유지한다.
+- node --check editing-tools.js 및 node --test editing-tools.test.cjs: 6개 통과. 새 URL 회귀는 수정 전 실패 확인.
+- 실제 3813 내부 브라우저: 새 채색 얼굴 표시, 생활·거래 2페이지 재개방 시 분류/페이지/수정문 유지 및 요청 버전 변경 확인.
+- 저장소·두 설치본 JS 반영. 게임 QSP/CSS/PNG/세이브 변경 없음. 상세와 화면 증거: docs/EMOJI_SYNC_20261016.md.
