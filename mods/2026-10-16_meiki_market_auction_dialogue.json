@@ -1,0 +1,54 @@
+{
+  "id": "2026-10-16_meiki_market_auction_dialogue",
+  "description": "Known meiki: customer bargain text only; optional Jappa counteroffer at 10x original direct-buyout quote; masked collector closes guild auction at 2x the original terminal bid. Preserve other sales, debt/brand admission, ordinary bidders, payouts and fixed rewards.",
+  "target": "game/jack.qsp",
+  "edits": [
+    {
+      "location": "slave_auction_sell",
+      "field": "body",
+      "old": "sell_price = slaveprice/2\r\nif sell_price < 10: sell_price = 10",
+      "new": "sell_price = slaveprice/2\r\nif sell_price < 10: sell_price = 10\r\nif slave['virginity'] = 4 and txt >= 6 and txt <= 7: sell_price *= 10",
+      "count": 1
+    },
+    {
+      "location": "slave_auction_sell",
+      "field": "body",
+      "old": "\r\nend\r\n\r\nif nsfw = 1:",
+      "new": "\r\n\t! JO9_MEIKI_MARKET_V1\r\n\tif slave['virginity'] = 4:\r\n\t\t$text[5] += '<br><a href = ''EXEC: killobj & txt = 6 & gt \"slave_auction_sell\"''><font color=\"#DAA520\">이 노예는 희귀한 명기인데, 그런 헐값에 팔 수는 없지. 적절한 가격을 제시해 봐.</font></a>'\r\n\t\t$text[6] = '[잡파]<br>&nbsp;<font color=\"#660000\">명기라고?! 아니, 친구! 그런 귀한 상품을 데려왔으면 진작 말했어야지! 이건 평범한 상품과는 차원이 다르잖소! 좋소, 앞서 부른 값의 열 배, <<sell_price>> 스파크를 주겠소. 이만한 거래를 다른 상인에게 넘길 수야 없지!<br></font>'\r\n\t\t$text[7] = '[<<$master_name>>]<br>&nbsp;<a href = ''EXEC: killobj & gt \"slave_auction_sell_end\"''><font color=\"#228B22\">좋아. 그 정도는 받아야지. 거래하자!</font></a><br>' + _\r\n\t\t'<a href = ''EXEC: killobj & gt \"city_menu_form\"''><font color=\"#B22222\">아직 마음에 들지 않아. 다른 구매자를 찾아보겠어.</font></a>'\r\n\tend\r\n\t! JO9_MEIKI_MARKET_END\r\nend\r\n\r\nif nsfw = 1:",
+      "count": 1
+    },
+    {
+      "location": "slave_auction_sell",
+      "field": "body",
+      "old": "if txt ! 5: addobj",
+      "new": "if txt ! 5 and txt ! 7: addobj",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t!msg \"common_price = <<common_price[demand_rating[$npc_id]]>><br>bargain_master_chance = <<bargain_master_chance>><br>bargain_master_bonus = <<bargain_master_bonus>><br>bargain_charm_excess = <<bargain_charm_excess>><br>bargain_charm_bonus = <<bargain_charm_bonus>><br>sell_price = <<sell_price>>\"",
+      "new": "\t! JO9_MEIKI_BARGAIN_TEXT_V1\r\n\tif jo9_meiki_max_sale = 1:\r\n\t\t$text[1] = '<<$slave_name>>(이)가 희귀한 명기라는 사실에 고객의 관심이 쏠렸다.<br>'\r\n\t\t$text[1] += '당신은 그 희소성과 고객이 원하는 능력을 짚어 설명하며, 현재 능력과 거래 조건에서 제시받을 수 있는 가장 높은 금액을 끌어냈다.<br>'\r\n\tend\r\n\t! JO9_MEIKI_BARGAIN_TEXT_END\r\n\t!msg \"common_price = <<common_price[demand_rating[$npc_id]]>><br>bargain_master_chance = <<bargain_master_chance>><br>bargain_master_bonus = <<bargain_master_bonus>><br>bargain_charm_excess = <<bargain_charm_excess>><br>bargain_charm_bonus = <<bargain_charm_bonus>><br>sell_price = <<sell_price>>\"",
+      "count": 1
+    },
+    {
+      "location": "$guild_auction",
+      "field": "body",
+      "old": "sparks_get = bank_size\r\ninteraction_city = 931",
+      "new": "! JO9_MEIKI_AUCTION_V1\r\nif slave['virginity'] = 4:\r\n local jo9_auction_base = bank_size\r\n bank_size *= 2\r\n $auc_winner = '가면 쓴 수집가'\r\n $auction_flow[u - 1] = '[가면 쓴 수집가]<br>&nbsp;잠깐. 희귀한 명기를 이대로 보낼 수는 없지. 방금 나온 <<jo9_auction_base>> 스파크의 두 배, <<bank_size>> 스파크를 내겠소!'\r\n $auction_flow[u] = '[경매사]<br>&nbsp;두 배라니! <<bank_size>> 스파크 나왔습니다! 더 부르실 분 없습니까? 하나, 둘, 셋! 낙찰! <<$auc_winner>>께 <<bank_size>> 스파크에 낙찰되었습니다!'\r\nend\r\n! JO9_MEIKI_AUCTION_END\r\nsparks_get = bank_size\r\ninteraction_city = 931",
+      "count": 1
+    }
+  ],
+  "targets": {
+    "work": {
+      "qsp": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+      "before": "7dd3201eead6b495d3c4851ed08f177ced4f4604994f539882290ba2f6d56adb",
+      "after": "766de37c590f4d14382d3f8d7c5ff5f04ac0caa3ecb22d3b9518f85c282c7332"
+    },
+    "full": {
+      "qsp": "G:/somi/Jack O Nine Tails v2.4 Kor_Full/game/jack.qsp",
+      "before": "0779be8bb8d98c931249a3a0b0d5b126ed02ccb9533d78f7d81889727c26db30",
+      "after": "1aef4dd9c8d13c586ba92ca15fad47e31b6a26f89fd06bef3c2c9060b1e9d9f3"
+    }
+  }
+}
