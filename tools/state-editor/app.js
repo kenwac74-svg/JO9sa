@@ -56,7 +56,17 @@
 
   function displayValue(field, value) {
     if (field?.kind === 'select') return field.options?.find((option) => Object.is(option.value, value))?.label || String(value);
+    if (field?.allowEmpty && value === '') return '비어 있음';
     return String(value);
+  }
+
+  function generationTypeRequired() {
+    const state = fields().find((field) => field.id === 'generation.milf.state');
+    return Boolean(fields().some((field) => field.id === 'generation.type.code') && state && typeof valueFor(state) === 'number' && valueFor(state) >= 0);
+  }
+
+  function fieldRequired(field) {
+    return !field.allowEmpty || (field.id === 'generation.type.code' && generationTypeRequired());
   }
 
   function fieldExplanation(field) {
@@ -71,7 +81,11 @@
       if (value === '' || typeof value !== 'number' || !Number.isFinite(value)) return '유효한 숫자를 입력하세요.';
       if (field.min !== undefined && value < field.min) return `최솟값은 ${field.min}입니다.`;
       if (field.max !== undefined && value > field.max) return `최댓값은 ${field.max}입니다.`;
-    } else if (typeof value !== 'string' || !value.trim()) return '값을 입력하세요.';
+    } else if (typeof value !== 'string' || (!value.trim() && !field.allowEmpty)) return '값을 입력하세요.';
+    if (generationTypeRequired() && ['generation.type.code', 'generation.milf.state'].includes(field.id)) {
+      const code = fields().find((item) => item.id === 'generation.type.code');
+      if (typeof valueFor(code) !== 'string' || !valueFor(code).trim()) return '초기 상태를 적용할 유형 코드를 직접 입력하세요.';
+    }
     const node = model.fieldNodes.get(field.id)?.input;
     if (node && !node.validity.valid) return node.validationMessage || '입력 범위를 확인하세요.';
     return '';
@@ -85,6 +99,17 @@
     return fields().filter((field) => validation(field, valueFor(field)));
   }
 
+  function refreshFieldValidation() {
+    model.fieldNodes.forEach(({ input, field }) => { input.required = fieldRequired(field); });
+    model.fieldNodes.forEach(({ input, field, error }) => {
+      const problem = validation(field, valueFor(field));
+      error.textContent = problem;
+      error.hidden = !problem;
+      input.setAttribute('aria-invalid', String(Boolean(problem)));
+      input.setAttribute('aria-describedby', [`help-${field.id}`, problem ? error.id : ''].filter(Boolean).join(' '));
+    });
+  }
+
   function invalidatePreview(message = '수정한 값으로 미리보기를 다시 실행하세요.') {
     model.preview = null;
     empty($('preview-result'), message);
@@ -93,6 +118,7 @@
 
   function updateControls() {
     const loaded = Boolean(model.snapshot);
+    refreshFieldValidation();
     const count = edits().length;
     const invalid = invalidFields().length;
     $('changed-count').replaceChildren(document.createTextNode(String(count)), el('span', '', '개'));
@@ -176,7 +202,8 @@
       });
     } else input.type = field.kind === 'number' ? 'number' : 'text';
     input.value = String(valueFor(field));
-    input.required = true;
+    input.required = fieldRequired(field);
+    if (typeof field.placeholder === 'string' && field.kind !== 'select') input.placeholder = field.placeholder;
     input.autocomplete = 'off';
     input.spellcheck = false;
     if (field.kind === 'number') {
@@ -192,7 +219,7 @@
     labelRow.append(label, access);
     const control = el('div', 'field-control');
     control.append(input);
-    const entryHint = field.kind === 'select' ? '목록에서 선택하여 편집' : field.kind === 'number' ? '숫자 직접 입력' : field.kind === 'icon' ? '이미지 경로 직접 입력' : /\.tooltip$/.test(field.id) ? '아이콘 설명(툴팁) 직접 입력' : /\.label$/.test(field.id) ? '표시명 직접 입력' : '문구 직접 입력';
+    const entryHint = field.id === 'generation.type.code' ? '유형 코드 직접 입력' : field.kind === 'select' ? '목록에서 선택하여 편집' : field.kind === 'number' ? '숫자 직접 입력' : field.kind === 'icon' ? '이미지 경로 직접 입력' : /\.tooltip$/.test(field.id) ? '아이콘 설명(툴팁) 직접 입력' : /\.label$/.test(field.id) ? '표시명 직접 입력' : '문구 직접 입력';
     card.append(labelRow, el('span', 'field-entry-hint', entryHint), control);
     const explanation = fieldExplanation(field);
     input.title = explanation;
@@ -236,6 +263,7 @@
       marker.textContent = changed ? '수정됨' : '원본 값';
       original.textContent = `원본: ${displayValue(field, field.value)}`;
       original.hidden = !changed;
+      refreshFieldValidation();
       const problem = validation(field, value);
       error.textContent = problem;
       error.hidden = !problem;

@@ -9,7 +9,7 @@ try { registry = require('./registry.cjs'); } catch (error) { if (error.code !==
 const raw = makeFixture();
 function inspect(bytes = raw) { assert.ok(registry?.inspect, 'registry must inspect actual source bindings'); return registry.inspect(bytes); }
 function body(bytes, name) { const doc = core.parse(bytes); return core.shift(doc.lines[doc.locations.find(l => l.name === name).body], 5); }
-function alter(bytes, name, old, replacement) { const doc = core.parse(bytes), loc = doc.locations.find(l => l.name === name); doc.lines[loc.body] = core.shift(core.shift(doc.lines[loc.body], 5).replace(old, replacement), -5); return core.serialize(doc); }
+function alter(bytes, name, old, replacement) { const doc = core.parse(bytes), loc = doc.locations.find(l => l.name === name); doc.lines[loc.body] = core.shift(core.shift(doc.lines[loc.body], 5).replace(old, () => replacement), -5); return core.serialize(doc); }
 
 test('discovers five display states, six lifecycle roles, exact source locations and readonly history', () => {
   const view = inspect();
@@ -230,23 +230,24 @@ test('users can identify a generation state by its familiar icon description as 
   assert.equal(body(renamed.raw, 'generate_stock'), body(raw, 'generate_stock'));
 });
 
-test('mature initial state applies after existing calculations to ordinary new stock only and removes exactly to original bytes', () => {
+test('typed initial state applies after existing calculations to ordinary new stock only and removes exactly to original bytes', () => {
   const view = inspect(), originalBody = body(raw, 'generate_stock');
-  const first = registry.prepare(raw, [{ id: 'generation.milf.state', value: 3 }], view.hash);
+  const first = registry.prepare(raw, [{ id: 'generation.type.code', value: 'milf' }, { id: 'generation.milf.state', value: 3 }], view.hash);
   const text = body(first.raw, 'generate_stock');
-  assert.match(text, /if special_stock = 0 and stock\['age'\] = CONST_INT\['milf_age'\]: stock\['virginity'\] = 3/);
-  assert.ok(text.indexOf('JO9_STATE_EDITOR_MILF_INITIAL_BEGIN') > text.indexOf('dynamic $replace($dyn_calc_slave_attrs'));
-  assert.ok(text.indexOf('JO9_STATE_EDITOR_MILF_INITIAL_END') < text.indexOf(generationAnchor));
+  assert.match(text, /if special_stock = 0 and \$age\[stock\['age'\]\] = 'milf': stock\['virginity'\] = 3/);
+  assert.ok(text.indexOf('JO9_STATE_EDITOR_TYPE_INITIAL_BEGIN') > text.indexOf('dynamic $replace($dyn_calc_slave_attrs'));
+  assert.ok(text.indexOf('JO9_STATE_EDITOR_TYPE_INITIAL_END') < text.indexOf(generationAnchor));
   assert.equal(body(first.raw, '$newloc'), body(raw, '$newloc'));
   assert.equal(body(first.raw, 'jo9_meiki_state'), body(raw, 'jo9_meiki_state'));
   assert.equal(first.patch.edits.length, 1);
   assert.equal(first.patch.edits[0].location, 'generate_stock');
-  assert.deepEqual(first.changes.map(c => c.id), ['generation.milf.state']);
+  assert.deepEqual(first.changes.map(c => c.id), ['generation.type.code', 'generation.milf.state']);
   const next = registry.prepare(first.raw, [{ id: 'generation.milf.state', value: 1 }], registry.inspect(first.raw).hash);
   assert.equal(registry.inspect(next.raw).fields.find(f => f.id === 'generation.milf.state').value, 1);
-  assert.equal((body(next.raw, 'generate_stock').match(/JO9_STATE_EDITOR_MILF_INITIAL_BEGIN/g) || []).length, 1);
+  assert.equal((body(next.raw, 'generate_stock').match(/JO9_STATE_EDITOR_TYPE_INITIAL_BEGIN/g) || []).length, 1);
   const disabled = registry.prepare(next.raw, [{ id: 'generation.milf.state', value: -1 }], registry.inspect(next.raw).hash);
   assert.equal(body(disabled.raw, 'generate_stock'), originalBody);
+  assert.equal(registry.inspect(disabled.raw).fields.find(f => f.id === 'generation.type.code').value, '');
   assert.deepEqual(disabled.raw, raw);
   for (const result of [first, next, disabled]) {
     let reversed = result.raw;
@@ -261,15 +262,15 @@ test('mature initial state applies after existing calculations to ordinary new s
 test('generation rejects unregistered select values and damaged, ambiguous or moved source rules', () => {
   const view = inspect();
   for (const value of [-2, 4, 99, '3', 2.5, null, NaN]) assert.throws(() => registry.prepare(raw, [{ id: 'generation.milf.state', value }], view.hash));
-  const active = registry.prepare(raw, [{ id: 'generation.milf.state', value: 3 }], view.hash).raw;
+  const active = registry.prepare(raw, [{ id: 'generation.type.code', value: 'milf' }, { id: 'generation.milf.state', value: 3 }], view.hash).raw;
   for (const [before, after] of [
     [generationAnchor, generationAnchor + '\n' + generationAnchor],
     [generationAnchor, '! missing anchor'],
-    ['! JO9_STATE_EDITOR_MILF_INITIAL_END', '! JO9_STATE_EDITOR_MILF_INITIAL_BAD'],
-    ['! JO9_STATE_EDITOR_MILF_INITIAL_BEGIN', '! JO9_STATE_EDITOR_MILF_INITIAL_BEGIN\n! JO9_STATE_EDITOR_MILF_INITIAL_BEGIN'],
+    ['! JO9_STATE_EDITOR_TYPE_INITIAL_END', '! JO9_STATE_EDITOR_TYPE_INITIAL_BAD'],
+    ['! JO9_STATE_EDITOR_TYPE_INITIAL_BEGIN', '! JO9_STATE_EDITOR_TYPE_INITIAL_BEGIN\n! JO9_STATE_EDITOR_TYPE_INITIAL_BEGIN'],
     ["stock['virginity'] = 3", "stock['virginity'] = 4"],
     ['if special_stock = 0 and', 'if special_stock >= 0 and'],
-    ['! JO9_STATE_EDITOR_MILF_INITIAL_END', "other = 10\n! JO9_STATE_EDITOR_MILF_INITIAL_END"],
+    ['! JO9_STATE_EDITOR_TYPE_INITIAL_END', "other = 10\n! JO9_STATE_EDITOR_TYPE_INITIAL_END"],
     [generationAnchor, "other = 10\n" + generationAnchor],
   ]) assert.throws(() => registry.inspect(alter(active, 'generate_stock', before, after)), /생성|initial|연결|블록/i);
   assert.throws(() => registry.inspect(alter(raw, 'generate_stock', "\nspecial_stock = 0", "\nspecial_stock = 0\nstock['virginity'] = 2")), /생성|연결/i);
@@ -286,14 +287,89 @@ test('generation is visibly unsupported when its source location is absent while
   assert.throws(() => registry.prepare(bytes, [{ id: 'generation.milf.state', value: 3 }], view.hash));
 });
 
+test('generation type is an empty free text input until the user chooses a literal code', () => {
+  const view = inspect(), code = view.fields.find(f => f.id === 'generation.type.code');
+  assert.ok(code, 'the user must be able to type a code instead of choosing a predefined type');
+  assert.equal(code.kind, 'text');
+  assert.equal(code.value, '');
+  assert.equal(code.allowEmpty, true);
+  assert.equal(code.placeholder, '예: milf');
+  assert.equal(code.options, undefined);
+  assert.equal(view.fields.find(f => f.id === 'generation.milf.state').label, '신규 생성 초기 상태');
+  const unchanged = registry.prepare(raw, [{ id: code.id, value: '' }], view.hash);
+  assert.equal(unchanged.raw, raw);
+});
+
+test('inactive type-only drafts are project friendly and produce no QSP candidate edits', () => {
+  const view = inspect();
+  for (const value of ['milf', 'future_type', "unknown 'literal'", '']) {
+    const result = registry.prepare(raw, [{ id: 'generation.type.code', value }], view.hash);
+    assert.equal(result.raw, raw);
+    assert.deepEqual(result.changes, []);
+    assert.deepEqual(result.patch.edits, []);
+  }
+  assert.throws(() => registry.prepare(raw, [{ id: 'generation.milf.state', value: 3 }], view.hash), /유형|코드/);
+  assert.throws(() => registry.prepare(raw, [{ id: 'generation.type.code', value: '   ' }, { id: 'generation.milf.state', value: 3 }], view.hash), /유형|코드/);
+});
+
+test('unknown and future codes compare existing reverse type strings without numeric zero fallback or new type definitions', () => {
+  const view = inspect();
+  for (const value of ['future_custom_type', 'unknown_code_99', "mother's type", '직접 입력 코드']) {
+    const result = registry.prepare(raw, [{ id: 'generation.type.code', value }, { id: 'generation.milf.state', value: 3 }], view.hash);
+    const current = registry.inspect(result.raw);
+    assert.equal(current.fields.find(f => f.id === 'generation.type.code').value, value);
+    const added = result.patch.edits[0].new;
+    assert.match(added, /\$age\[stock\['age'\]\]/);
+    assert.doesNotMatch(added, /age_code\[|CONST_INT\['milf_age'\]|\$age\[[^\n]*\]\s*=\s*'[^\n]*'\s*&/);
+    assert.equal(body(result.raw, '$newloc'), body(raw, '$newloc'));
+    assert.equal(body(result.raw, 'jo9_meiki_state'), body(raw, 'jo9_meiki_state'));
+    assert.equal(result.patch.edits.length, 1);
+  }
+  const quoted = registry.prepare(raw, [{ id: 'generation.type.code', value: "mother's type" }, { id: 'generation.milf.state', value: 3 }], view.hash);
+  assert.match(body(quoted.raw, 'generate_stock'), /\$age\[stock\['age'\]\] = 'mother''s type'/);
+});
+
+test('legacy mature rules load as typed milf, remain byte exact on no-op, and migrate only on a generation edit', () => {
+  const legacyBlock = "! JO9_STATE_EDITOR_MILF_INITIAL_BEGIN\nif special_stock = 0 and stock['age'] = CONST_INT['milf_age']: stock['virginity'] = 3\n! JO9_STATE_EDITOR_MILF_INITIAL_END\n";
+  const legacy = alter(raw, 'generate_stock', generationAnchor, legacyBlock + generationAnchor), view = inspect(legacy);
+  assert.equal(view.fields.find(f => f.id === 'generation.type.code').value, 'milf');
+  assert.equal(view.fields.find(f => f.id === 'generation.milf.state').value, 3);
+  assert.equal(registry.prepare(legacy, [{ id: 'generation.type.code', value: 'milf' }, { id: 'generation.milf.state', value: 3 }], view.hash).raw, legacy);
+  const migrated = registry.prepare(legacy, [{ id: 'generation.type.code', value: 'future_type' }], view.hash);
+  assert.doesNotMatch(body(migrated.raw, 'generate_stock'), /JO9_STATE_EDITOR_MILF_INITIAL/);
+  assert.match(body(migrated.raw, 'generate_stock'), /\$age\[stock\['age'\]\] = 'future_type'/);
+  const disabled = registry.prepare(migrated.raw, [{ id: 'generation.type.code', value: 'draft_after_disable' }, { id: 'generation.milf.state', value: -1 }], registry.inspect(migrated.raw).hash);
+  assert.deepEqual(disabled.raw, raw);
+  assert.deepEqual(disabled.changes.map(c => c.id), ['generation.milf.state']);
+});
+
+test('typed codes retain normal source protection and malformed generic or mixed legacy rules fail closed', () => {
+  const view = inspect();
+  for (const value of [null, 3, 'bad\ncode', '<<injected>>', 'a'.repeat(201)]) assert.throws(() => registry.prepare(raw, [{ id: 'generation.type.code', value }], view.hash));
+  const active = registry.prepare(raw, [{ id: 'generation.type.code', value: 'custom' }, { id: 'generation.milf.state', value: 3 }], view.hash).raw;
+  assert.throws(() => registry.inspect(alter(active, 'generate_stock', "= 'custom': stock['virginity']", "= '': stock['virginity']")), /유형|코드|생성/);
+  assert.throws(() => registry.inspect(alter(active, 'generate_stock', '! JO9_STATE_EDITOR_TYPE_INITIAL_END', '! JO9_STATE_EDITOR_MILF_INITIAL_END')), /생성|블록/);
+});
+
+test('free literal type codes cannot be confused with source marker comments or replacement directives', () => {
+  const view = inspect();
+  for (const value of ['! JO9_STATE_EDITOR_TYPE_INITIAL_END', 'JO9_STATE_EDITOR_MILF_INITIAL_BEGIN', "$& $` $' $$"]) {
+    const result = registry.prepare(raw, [{ id: 'generation.type.code', value }, { id: 'generation.milf.state', value: 3 }], view.hash);
+    assert.equal(registry.inspect(result.raw).fields.find(f => f.id === 'generation.type.code').value, value);
+    let reversed = result.raw;
+    for (const edit of result.patch.edits.slice().reverse()) reversed = alter(reversed, edit.location, edit.new, edit.old);
+    assert.deepEqual(reversed, raw);
+  }
+});
+
 const realPaths = ['G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp', 'G:/somi/Jack O Nine Tails v2.4 Kor_Full/game/jack.qsp'];
 test('real installed QSP candidates reverse to every original byte while installed files remain untouched', { skip: !realPaths.every(p => fs.existsSync(p)) }, () => {
   inspect();
   for (const filename of realPaths) {
     const bytes = fs.readFileSync(filename), view = registry.inspect(bytes);
-    const edits = view.fields.map(field => ({ id: field.id, value: field.kind === 'select' ? 3 : field.kind === 'number' ? field.value + (field.value === field.max ? -1 : 1) : field.kind === 'icon' ? field.value.replace(/\.png$/i, '-review.png') : field.value + ' 검토' }));
+    const edits = view.fields.map(field => ({ id: field.id, value: field.id === 'generation.type.code' ? 'future_review_type' : field.kind === 'select' ? 3 : field.kind === 'number' ? field.value + (field.value === field.max ? -1 : 1) : field.kind === 'icon' ? field.value.replace(/\.png$/i, '-review.png') : field.value + ' 검토' }));
     const result = registry.prepare(bytes, edits, view.hash);
-    assert.equal(result.changes.length, 32);
+    assert.equal(result.changes.length, 33);
     let reversed = result.raw;
     for (const edit of result.patch.edits.slice().reverse()) {
       const oldBody = body(reversed, edit.location);

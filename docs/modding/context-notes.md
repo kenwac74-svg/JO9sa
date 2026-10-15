@@ -303,3 +303,7 @@ S++·각각 +1등급안은 사용자 취소. 기존 S+ 상한 유지, 발견 시
 ## 2026-10-16 상태 편집기 0.2 — 취합한 사용성 의견 반영
 
 사용자 재구현 지시로 직접 편집 입력의 강조/설명, 메뉴 범위 안내, 탭 독립 검색·필드 이동, 좁은 사이드뷰 편집 우선 배치를 추가. generation.milf.state는 기존 generate_stock 일반 성숙 신규 생성의 초기값만 변경하며 기본은 -1(원본 유지). special_stock>0 프리셋 제외, 같은 일반 생성기를 쓰는 의뢰/일부 보상 포함, 클론·사건 후속 덮어쓰기 유지. 명기4의 직접 초기 지정은 발견/일회지급 이력 연결 필요로 미지원. 새 게임 변수 없음. 기존 QSP/세이브 쓰기 없음, 도구 10개 제품파일 repo/Work/Full 동기화. 113 검사 중112pass/0fail/1환경skip 및 실제 Edge 회귀·새 사용성 흐름 통과. 주소 http://127.0.0.1:5284/ 재시작과 실제 두 대상31필드 확인. 자세한 기록: docs/STATE_EDITOR_USABILITY_20261016.md 및 docs/qa/2026-10-16_state-editor-usability.json.
+
+## 2026-10-16 상태 편집기 유형 코드 입력 수정
+
+사용자: 유형은 AI가 고정/정의하지 말고 직접 코드(milf)를 타이핑하도록 한다. generation.type.code 텍스트/빈기본/placeholder, predefined dropdown 없음. 기존 $age[stock[age]] 역매핑 문자열 비교, 미정의 코드 숫자0대체 방지. generation.milf.state legacyID는 프로젝트호환유지하되 제품labelgeneric. 비활성code-only 프로젝트초안/QSPno-op, 활성0~3에서nonempty필수. 예전MILF블록 읽기/no-op보존. 119개 중118pass/0fail/1환경skip, 브라우저/독립리뷰/실서버32필드 확인. repo/Work/Full10개제품파일동기화, 현재Work76f61280…db1b81da와Full기존hash 불변. 상세 docs/STATE_EDITOR_TYPE_CODES_20261016.md.

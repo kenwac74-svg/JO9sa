@@ -48,6 +48,22 @@ const {createServer}=require('./server.cjs'),{makeFixture}=require('./test-fixtu
     await page.locator('#field-search').fill('');
     await page.locator('[data-view="defaults"]').click();
     const initial=page.locator('select[data-field-id="generation.milf.state"]');
+    const typeCode=page.locator('input[data-field-id="generation.type.code"]');
+    assert.equal(await typeCode.count(),1,'Generation type must have a direct text input');
+    assert.equal(await page.locator('select[data-field-id="generation.type.code"]').count(),0,'Type code must not be a predefined dropdown');
+    assert.equal(await typeCode.getAttribute('list'),null,'Type code must not be restricted by a predefined datalist');
+    assert.equal(await typeCode.inputValue(),'','Type code must be typed by the user when no generation rule exists');
+    await typeCode.fill('custom_mature');
+    await page.locator('#save-project').click();
+    await page.waitForFunction(()=>document.querySelector('#status').textContent.includes('프로젝트 저장 완료'));
+    for(const target of targets)assert(fs.readFileSync(target.path).equals(originals.get(target.id)),'Saving a typed future type must not change QSP');
+    await page.reload();
+    await page.waitForFunction(()=>document.querySelector('#source-hash').textContent.length===64&&!document.querySelector('#save-project').disabled);
+    await page.locator('#load-project').click();
+    await page.waitForFunction(()=>document.querySelector('#status').textContent.includes('프로젝트 불러오기 완료'));
+    await page.locator('[data-view="defaults"]').click();
+    assert.equal(await typeCode.inputValue(),'custom_mature','Future codes must persist without a predefined list');
+    await typeCode.fill('milf');
     assert.equal(await initial.inputValue(),'-1','Existing generation must remain the initial choice');
     assert((await initial.locator('option[value="3"]').innerText()).includes('크게 늘어난'));
     await initial.selectOption('3');
@@ -60,10 +76,12 @@ const {createServer}=require('./server.cjs'),{makeFixture}=require('./test-fixtu
     await page.waitForFunction(()=>document.querySelector('#status').textContent.includes('프로젝트 불러오기 완료'));
     await page.locator('[data-view="defaults"]').click();
     assert.equal(await initial.inputValue(),'3','Saved numeric select drafts must reload as the same choice');
+    assert.equal(await typeCode.inputValue(),'milf','Typed type code must persist in the saved project');
     for(const target of targets)await page.locator('#target-checks input[value="'+target.id+'"]').check();
     await page.locator('#preview-button').click();
     await page.waitForFunction(()=>document.querySelector('#status').textContent.includes('미리보기 완료'));
-    assert((await page.locator('#preview-result').innerText()).includes('성숙'));
+    const previewText=await page.locator('#preview-result').innerText();
+    assert(previewText.includes('유형 코드')&&previewText.includes('milf'),'Preview must show the user-typed target code');
     await page.locator('[data-view="defaults"]').click();
     await initial.selectOption('2');
     assert(await page.locator('#apply-button').isDisabled(),'Changing a select must invalidate a prepared candidate');
@@ -73,7 +91,7 @@ const {createServer}=require('./server.cjs'),{makeFixture}=require('./test-fixtu
     for(const target of targets)assert(fs.readFileSync(target.path).equals(originals.get(target.id)),'Preview must not write QSP');
     await page.locator('#apply-button').click();
     await page.waitForFunction(()=>document.querySelector('#status').textContent.includes('적용 완료'));
-    for(const target of targets)assert.equal(registry.inspect(fs.readFileSync(target.path)).fields.find(f=>f.id==='generation.milf.state').value,3);
+    for(const target of targets){const fields=registry.inspect(fs.readFileSync(target.path)).fields;assert.equal(fields.find(f=>f.id==='generation.milf.state').value,3);assert.equal(fields.find(f=>f.id==='generation.type.code').value,'milf');}
     await page.locator('[data-action="restore"]').first().click();
     await page.waitForFunction(()=>document.querySelector('#status').textContent.includes('복원 완료'));
     for(const target of targets)assert(fs.readFileSync(target.path).equals(originals.get(target.id)),'Restore must return every original byte');
