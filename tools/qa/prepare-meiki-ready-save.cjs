@@ -1,0 +1,24 @@
+const fs=require('fs'),path=require('path'),assert=require('assert');
+const s=require('./save-codec.cjs'),c=require('../text-workshop/core.cjs');
+const base=process.argv[2]||'G:/somi/Jack O Nine Tails v2.4_work/game/save/auto_decade.sav';
+const outDir=process.argv[3]||path.join(require('os').tmpdir(),'JO9-meiki-ready-20261015');fs.mkdirSync(outDir,{recursive:true});
+const raw=fs.readFileSync(base),baseHash=c.hash(raw),before=s.parse(raw),d=s.parse(raw);assert(s.serialize(d).equals(raw));
+assert.equal(s.value(d,'SLAVE_STATE')[0],'1','Source must contain an active adult');assert.equal(s.value(d,'SLAVE','age')[0],'2','Use an existing mature adult, do not relabel age');assert.equal(s.value(d,'SNK_ROOM_TARGET')[0],'0','Source must be outside a private-room bridge');assert.equal(s.value(d,'ONGLOAD')[1],'$ongload','Keep the standard native load callback');assert.equal(s.dec(d.lines[10]),'main_screen','Source must be a regular home save');
+const changes=[];
+function set(name,num,str,key){const v=d.vars.find(v=>v.name===name);assert(v,'Missing existing variable '+name);let at=0;if(key!==undefined){let entry=v.idx.find(x=>x[1]===key.toUpperCase());if(entry)at=entry[0];else{at=v.values.length;v.values.push(['0','']);v.idx.push([at,key.toUpperCase()]);v.idx.sort((a,b)=>a[1]<b[1]?-1:a[1]>b[1]?1:0);}}if(!v.values.length)v.values.push(['0','']);const old=v.values[at].slice();if(num!==undefined)v.values[at][0]=String(num);if(str!==undefined)v.values[at][1]=str;changes.push({name,key,before:old,after:v.values[at].slice()});}
+const keys={virginity:0,jo9_meiki_initialized:0,jo9_meiki_prev:0,jo9_meiki_known:0,jo9_meiki_checked:0,sub_vaginal:0,sub_vaginal_xp:0,sub_threesome:0,sub_threesome_xp:0,sub_dp:0,sub_dp_xp:0,sub_tp:0,sub_tp_xp:0,sub_gangbang:0,sub_gangbang_xp:0,sub_bukkake:0,sub_bukkake_xp:0,fear:0,domini_dictum:0,neg_raped:0,neg_disgust:0,angst:0,pride:0,moral:5,rational:5,custom:5,energy:5};
+for(const [key,val]of Object.entries(keys))set('SLAVE',val,undefined,key);
+for(const key of ['fear','angst','pride','moral','rational','custom','energy'])if(d.vars.find(v=>v.name==='SLAVE_RATE').idx.some(x=>x[1]===key.toUpperCase()))set('SLAVE_RATE',0,undefined,key);
+for(const name of ['AUTOSAVE','DECADESAVE','AUTOSAVE_DAY','AUTOSAVE_DECADE'])if(d.vars.find(v=>v.name===name))set(name,0);
+set('MENU_FORM',1);set('MASTER_ENERGY',10);
+const result=s.serialize(d),after=s.parse(result);assert(s.serialize(after).equals(result));
+for(const key of ['virginity','jo9_meiki_known','jo9_meiki_checked','jo9_meiki_initialized',...Object.keys(keys).filter(k=>k.startsWith('sub_'))])assert.equal(+s.value(after,'SLAVE',key)[0],0,key);
+assert.equal(s.value(after,'SLAVE','age')[0],s.value(before,'SLAVE','age')[0]);
+assert.equal(s.value(after,'SLAVE_NAME')[1],s.value(before,'SLAVE_NAME')[1]);
+assert.equal(s.value(after,'ONGLOAD')[1],s.value(before,'ONGLOAD')[1]);assert.deepEqual(s.value(after,'ONNEWLOC'),s.value(before,'ONNEWLOC'));
+assert.deepEqual(after.lines.slice(0,after.start),before.lines.slice(0,before.start),'Preserve native save header, screen and actions; no injected EXEC launcher');
+const changed=new Set(changes.map(x=>x.name));assert.equal(after.vars.length,before.vars.length);for(let i=0;i<before.vars.length;i++)if(!changed.has(before.vars[i].name))assert.deepEqual(after.vars[i],before.vars[i],'Unrelated data slot '+before.vars[i].slot);
+for(const v of after.vars)for(const [i]of v.idx)assert(i>=0&&i<v.values.length);
+assert.equal(c.hash(fs.readFileSync(base)),baseHash);const name='JO9_MEIKI_READY_20261015.sav';fs.writeFileSync(path.join(outDir,name),result);
+const manifest={base,baseHash,name,sha256:c.hash(result),actor:{name:s.value(after,'SLAVE_NAME')[1],type:s.value(after,'SLAVE_TYPE')[0],age:2,virginity:0,known:0,checked:0},changes,gameQspChanged:false,hasInjectedLauncher:false,nativeVerified:false,limitations:['Existing adult home save edited offline; no runtime generator, party clear/swap, refresh_database bootstrap or added ONNEWLOC callback.','Uses standard existing $ongload/menu_form flow. Native load/discovery still needs user verification.','Original companion and other characters were not replaced; this fixture focuses on first discovery of the active adult.']};
+fs.writeFileSync(path.join(outDir,'ready-save-manifest.json'),JSON.stringify(manifest,null,2));console.log('Prepared ready-to-load '+name+' for '+manifest.actor.name+'; no launcher, source preserved, native verification pending.');

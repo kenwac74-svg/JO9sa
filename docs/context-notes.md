@@ -396,3 +396,8 @@
 - 사용자 지시 (2026-09-28): cum_gray는 cum.png를 회색 처리해 넣는다. 누락 목록은 별도 문서로 저장한다 → `docs/MISSING_MENU_ICONS.md`. 화면 코드 확인은 QSP뿐 아니라 제공 ZIP의 내용(qsrc·json·css·txt)까지 함께 본다.
 - ref.zip 전수 검색 결과도 같다. 12개 키 중 `menu_item_cum_gray`만 #sex_options·#sex_options_woman(각 4곳)에서 쓰인다. 키를 동적으로 조립하는 코드는 없다.
 - cum_gray.png 생성 (2026-09-28): 순정 회색 처리 방식을 예시 한 쌍에서 분석해 재현했다. 재현 오차는 1.72이고, 결과는 `resources/new`에 보관했다. 0.1 빌드에 적용할 예정이며, 구 R3 빌드는 건드리지 않았다. 상세는 `docs/MISSING_MENU_ICONS.md`에 있다.
+
+
+## 2026-10-15 테스트 시작 버튼 종료 후속
+
+[직접 로드 세이브와 검증 한계](MEIKI_READY_SAVE_RECOVERY_20261015.md): 주석 수정 뒤에도 종료 재현. 기존 EXEC 초기화 버튼을 폐기하고 정상 홈 세이브의 성인 이사벨라를 오프라인으로 준비한 JO9_MEIKI_READY_20261015.sav를 두 설치본에 배치. 게임 QSP/CSS/원본 저장 파일 보존. 실제 클라이언트 로드·클릭은 아직 사용자 확인 대기.
