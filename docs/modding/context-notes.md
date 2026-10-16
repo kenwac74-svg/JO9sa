@@ -311,3 +311,16 @@ S++·각각 +1등급안은 사용자 취소. 기존 S+ 상한 유지, 발견 시
 ## 2026-10-16 상태 초기값 검색 입력·명기4 누락 수정
 
 사용자 요청: 생성 초기값 dropdown도폐기,텍스트로찾기; 명기4누락지적. kindstate-search + actual#variative $virginity literal정의 suggestions 동적읽기. -1기존유지/0..2147483647 직접수치입력(검색결과는allowlist아님), exactname/tooltip→numeric, 부분query/null미확정차단. 명기4는 기존helpercurrent4인식→known/checked/1회grant가이미지원하므로 이전0..3제약철회; 새history/helper/eligibility변경없음. 122중121pass/0fail/1환경skip, browserfull+state4apply/restore,독립registry30/30,UIrange문제fix확인. 제품3곳동기화,실서버32fields/gen dropdown0/state4검색pass. 실제Work사용자hash76f61280…db1b81da,Full3d8fd3c…1006b9b 불변. 최신 docs/STATE_EDITOR_STATE_SEARCH_20261016.md.
+
+## 2026-10-16 — 명기 착정 성공과 안전일 아이콘
+
+- 사용자 최종 결정: 안개괴물 착정의 명기 발견 차단안은 취소. 기존 발견 로직을 유지하고, 현재 명기 상태(virginity=4)가 착정을 진행하면 숙련도와 무관하게 채취 성공. 전용 대사 원문은 정확히 `%명기착정성공`으로 둔다.
+- 수동·교육·일과 성공 판정 15곳, 전용 대사 9곳. 기존 거절·자원량·성장 수치는 보존. 기존 세이브 교육 캐시 갱신 포함.
+- 안전일 상태창의 옛 한글 글자 아이콘 2곳을 승인된 회색 자궁 `content/pic/ui/Fer_PregS.png`로 연결. 개인실은 기존 정상 연결 유지.
+- Work/Full 각각 최신 QSP에서 독립 적용하고 검증·백업 완료. 대상 검사 16개와 관련 회귀 37개 통과, 실제 게임 화면 점검은 사용자 담당.
+- 기록: [명기 착정 성공·안전일 아이콘](../MEIKI_TENTACLE_SUCCESS_SAFE_ICON_20261016.md). patch: `mods/2026-10-16_meiki_tentacle_success_safe_icon.json`.
+
+
+## 2026-10-17 확정 특성 일괄 적용·커밋 준비
+
+신규 14종과 기존 용기 사기 보정, 수동 편집 페이지 2107을 최신 Play에 적용하고 작업 마무리 지시에 따라 배포본을 동기화했다. `docs/TRAITS_BATCH_20261017.md`에 인물별 저장 키·호출·분리 영향을, `docs/WRAPUP_20261017.md`와 `docs/qa/2026-10-17_traits-batch.json`에 동기화·검증·한계를 기록했다. 이전 수동 수정과 대사 1112 구현은 보존한다. 외모만 6/S++이며 종합등급 상한10/S+는 유지한다.

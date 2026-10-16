@@ -1,0 +1,1059 @@
+{
+  "id": "2026-10-16_innate_learning_traits",
+  "description": "Innate genius/idiot: 3% each on random generation, initial intellect 5/0, growth XP x2/x0.5 except stamina, no ego changes",
+  "before_sha256": "119dc430bd050547bd820b547e4fba7aa07408d88ab7020be2266440fc8ad49d",
+  "after_sha256": "cb0082e6091de9a178a8061e160487ad731162a8491e63f531e379621af11b19",
+  "edits": [
+    {
+      "location": "generate_stock",
+      "field": "body",
+      "old": "stock['neg_slave'] = 1 + stock['pride'] + stock['temper'] + stock['ego'] + stock['intellect'] - stock['rational'] - stock['custom']",
+      "new": "! JO9 MOD START COG_GENERATE | 2026-10-16_innate_learning_traits\r\n! 신규 무작위 생성만 추첨: 1~3 천재, 4~6 백치, 7~100 특성 없음.\r\n! 고정 프리셋과 기존 인물에는 추첨하지 않는다. 지성과 자아의 이후 변화는 기존 규칙을 따른다.\r\nif special_stock = 0:\r\n stock['jo9_learning_trait'] = 0\r\n jo9_learning_roll = rand(1,100)\r\n if jo9_learning_roll <= 3:\r\n  stock['jo9_learning_trait'] = 1\r\n  stock['intellect'] = 5\r\n  stock_rate['intellect'] = 0\r\n elseif jo9_learning_roll <= 6:\r\n  stock['jo9_learning_trait'] = -1\r\n  stock['intellect'] = 0\r\n  stock_rate['intellect'] = 0\r\n end\r\nend\r\nstock['neg_slave'] = 1 + stock['pride'] + stock['temper'] + stock['ego'] + stock['intellect'] - stock['rational'] - stock['custom']\r\n! JO9 MOD END COG_GENERATE",
+      "count": 1
+    },
+    {
+      "location": "#static_base",
+      "field": "body",
+      "old": "\t\t$dynslave_features_list = ''",
+      "new": "! JO9 MOD START COG_DISPLAY | 2026-10-16_innate_learning_traits\r\n\t\t$dynslave_features_list = ''\r\n  ! jo9_learning_trait: 1 천재, -1 백치, 0 일반. 선천 특성은 보유 즉시 표시한다.\r\n  if dynslave['jo9_learning_trait'] = 1: $dynslave_features_list += '<a href=\"EXEC: msg $jo9_genius_text\"><<dyneval($vb_cycle_skill, 5, \"천재\")>></a><br>'\r\n  if dynslave['jo9_learning_trait'] = -1: $dynslave_features_list += '<a href=\"EXEC: msg $jo9_idiot_text\"><<dyneval($vb_cycle_skill, 0, \"백치\")>></a><br>'\r\n! JO9 MOD END COG_DISPLAY",
+      "count": 1
+    },
+    {
+      "location": "$stock_traits",
+      "field": "body",
+      "old": "$stock_features_list = ''",
+      "new": "! JO9 MOD START COG_STOCK_DISPLAY | 2026-10-16_innate_learning_traits\r\n$stock_features_list = ''\r\nif stock['jo9_learning_trait'] = 1: $stock_features_list += '<a href=\"EXEC: msg $jo9_genius_text\"><<dyneval($vb_cycle_skill, 5, \"천재\")>></a><br>'\r\nif stock['jo9_learning_trait'] = -1: $stock_features_list += '<a href=\"EXEC: msg $jo9_idiot_text\"><<dyneval($vb_cycle_skill, 0, \"백치\")>></a><br>'\r\n! JO9 MOD END COG_STOCK_DISPLAY",
+      "count": 1
+    },
+    {
+      "location": "#static_txt",
+      "field": "body",
+      "old": "! JO9 MOD END J9M2492",
+      "new": "! JO9 MOD START COG_TEXT | 2026-10-16_innate_learning_traits\r\n! JO9 MOD END J9M2492\r\n$jo9_genius_text = '당신의 노예는 천재적인 학습 능력을 타고났다. 생성 시 지성은 최고 등급이며, 육체단련을 제외한 분야에서 새로 얻는 성장 경험치가 두 배가 된다. 지성은 이후 기존 규칙에 따라 변할 수 있다.'\r\n$jo9_idiot_text = '당신의 노예는 새로운 지식과 기술을 익히는 데 남들보다 오랜 시간이 걸린다. 생성 시 지성은 최저 등급이며, 육체단련을 제외한 분야에서 새로 얻는 성장 경험치가 절반이 된다. 양수 경험치는 소수점 이하를 버리되 최소 1을 얻는다. 지성은 이후 기존 규칙에 따라 변할 수 있다.'\r\n! JO9 MOD END COG_TEXT",
+      "count": 1
+    },
+    {
+      "location": "#txt_woman",
+      "field": "body",
+      "old": "$prize_rape_description4 = '  The <<$stock_noun2[stock[\"age\"]]>> cries uncontrollably, both from the pain and the feeling of helpless humiliation. For you it is intoxicating; there is nothing better than ravishing a girl that you have just won in battle. You roar like a beast as you spill your juices into her, marking her as your property.'",
+      "new": "! JO9 MOD START COG_TEXT | 2026-10-16_innate_learning_traits\r\n$prize_rape_description4 = '  The <<$stock_noun2[stock[\"age\"]]>> cries uncontrollably, both from the pain and the feeling of helpless humiliation. For you it is intoxicating; there is nothing better than ravishing a girl that you have just won in battle. You roar like a beast as you spill your juices into her, marking her as your property.'\r\n$jo9_genius_text = '당신의 노예는 천재적인 학습 능력을 타고났다. 생성 시 지성은 최고 등급이며, 육체단련을 제외한 분야에서 새로 얻는 성장 경험치가 두 배가 된다. 지성은 이후 기존 규칙에 따라 변할 수 있다.'\r\n$jo9_idiot_text = '당신의 노예는 새로운 지식과 기술을 익히는 데 남들보다 오랜 시간이 걸린다. 생성 시 지성은 최저 등급이며, 육체단련을 제외한 분야에서 새로 얻는 성장 경험치가 절반이 된다. 양수 경험치는 소수점 이하를 버리되 최소 1을 얻는다. 지성은 이후 기존 규칙에 따라 변할 수 있다.'\r\n! JO9 MOD END COG_TEXT",
+      "count": 1
+    },
+    {
+      "location": "$newloc",
+      "field": "body",
+      "old": "ui_style = 2",
+      "new": "! JO9 MOD START COG_CACHE | 2026-10-16_innate_learning_traits\r\nui_style = 2\r\nif jo9_learning_revision < 1:\r\n jo9_learning_revision = 1\r\n gs '#static_base'\r\n gs '#dynamic'\r\n gs '#static_txt'\r\n gs '#txt'\r\n code_defined['newloc_update_iced_features_list'] = 0\r\nend\r\n! JO9 MOD END COG_CACHE",
+      "count": 1
+    },
+    {
+      "location": "$newloc",
+      "field": "body",
+      "old": "\t$newloc_update_iced_features_list = {\r\n\t\t$dynslave_features_list = ''\r\n\t\tif dynslave_state ! CONST_INT['no_slave']:",
+      "new": "! JO9 MOD START COG_ICED_DISPLAY | 2026-10-16_innate_learning_traits\r\n\t$newloc_update_iced_features_list = {\r\r\n\t\t$dynslave_features_list = ''\r\r\n\t\tif dynslave_state ! CONST_INT['no_slave']:\r\n   if dynslave['jo9_learning_trait'] = 1: $dynslave_features_list += '<a href=\"EXEC: msg $jo9_genius_text\">천재</a><br>'\r\n   if dynslave['jo9_learning_trait'] = -1: $dynslave_features_list += '<a href=\"EXEC: msg $jo9_idiot_text\">백치</a><br>'\r\n! JO9 MOD END COG_ICED_DISPLAY",
+      "count": 1
+    },
+    {
+      "location": "#dynamic",
+      "field": "body",
+      "old": "\t\t\tdynslave_rate[$target_skill] += (skill_rise * skill_adv_mul)",
+      "new": "! JO9 MOD START COG_MAIN_XP | 2026-10-16_innate_learning_traits\r\n\t\t\tdynslave_rate[$target_skill] += func('jo9_learning_xp', (skill_rise * skill_adv_mul), dynslave['jo9_learning_trait'], $target_skill)\r\n! JO9 MOD END COG_MAIN_XP",
+      "count": 1
+    },
+    {
+      "location": "#dynamic",
+      "field": "body",
+      "old": "\t\t\t\t\tdynamic $replace('<<$subskill_xp>> += skill_adv_mul * max(2, success - <<$subskill_xp>>)', 'slave', 'dynslave') &! accumulate partial success (subtracting xp here avoids compounding), with a minimum of 2",
+      "new": "! JO9 MOD START COG_SUB_PRIMARY | 2026-10-16_innate_learning_traits\r\n\t\t\t\t\tdynamic $replace('jo9_learning_gain = skill_adv_mul * max(2, success - <<$subskill_xp>>)', 'slave', 'dynslave')\r\n     if func('jo9_meiki_training_bonus', 'dynslave', $subskill) = 1: jo9_learning_gain += 1\r\n     jo9_learning_gain = func('jo9_learning_xp', (jo9_learning_gain), dynslave['jo9_learning_trait'], 'subskill')\r\n     dynamic $replace('<<$subskill_xp>> += jo9_learning_gain', 'slave', 'dynslave')\r\n! JO9 MOD END COG_SUB_PRIMARY",
+      "count": 1
+    },
+    {
+      "location": "#dynamic",
+      "field": "body",
+      "old": "\t\t\t\t\tif func('jo9_meiki_training_bonus', 'dynslave', $subskill) = 1: dynamic $replace('<<$subskill_xp>> += 1', 'slave', 'dynslave')",
+      "new": "! JO9 MOD START COG_SUB_BONUS_MERGED | 2026-10-16_innate_learning_traits\r\n! 기존 교육 추가 경험치는 COG_SUB_PRIMARY에서 합산한다.\r\n! JO9 MOD END COG_SUB_BONUS_MERGED",
+      "count": 1
+    },
+    {
+      "location": "#dynamic",
+      "field": "body",
+      "old": "\t\t\t\t\t\tdynamic $replace('if <<$subskill_two>> < 5: <<$subskill_two_xp>> += 1', 'slave', 'dynslave') &! secondary skills get a small xp boost (line order here is important - add xp before level-up/reset, not after)",
+      "new": "! JO9 MOD START COG_DYNAMIC_1 | 2026-10-16_innate_learning_traits\r\n\t\t\t\t\t\tdynamic $replace('if <<$subskill_two>> < 5: <<$subskill_two_xp>> += func(''jo9_learning_xp'', (1), dynslave[''jo9_learning_trait''], ''subskill'')', 'slave', 'dynslave') &! secondary skills get a small xp boost (line order here is important - add xp before level-up/reset, not after)\r\n! JO9 MOD END COG_DYNAMIC_1",
+      "count": 1
+    },
+    {
+      "location": "#dynamic",
+      "field": "body",
+      "old": "\t\t\t\t\tif $subskill_two_xp ! '': dynamic $replace('if <<$subskill_two>> < 5: <<$subskill_two_xp>> += 1', 'slave', 'dynslave') &! secondary skills get a small xp boost",
+      "new": "! JO9 MOD START COG_DYNAMIC_2 | 2026-10-16_innate_learning_traits\r\n\t\t\t\t\tif $subskill_two_xp ! '': dynamic $replace('if <<$subskill_two>> < 5: <<$subskill_two_xp>> += func(''jo9_learning_xp'', (1), dynslave[''jo9_learning_trait''], ''subskill'')', 'slave', 'dynslave') &! secondary skills get a small xp boost\r\n! JO9 MOD END COG_DYNAMIC_2",
+      "count": 1
+    },
+    {
+      "location": "interaction_result",
+      "field": "body",
+      "old": "\t\t\t\t\tdynamic $replace('if <<$subskill_two>> < 5: <<$subskill_two_xp>> += 1', 'slave', 'dynslave') &! secondary skills get a small xp boost (line order here is important - add xp before level-up/reset, not after)",
+      "new": "! JO9 MOD START COG_DYNAMIC_3 | 2026-10-16_innate_learning_traits\r\n\t\t\t\t\tdynamic $replace('if <<$subskill_two>> < 5: <<$subskill_two_xp>> += func(''jo9_learning_xp'', (1), dynslave[''jo9_learning_trait''], ''subskill'')', 'slave', 'dynslave') &! secondary skills get a small xp boost (line order here is important - add xp before level-up/reset, not after)\r\n! JO9 MOD END COG_DYNAMIC_3",
+      "count": 1
+    },
+    {
+      "location": "interaction_result",
+      "field": "body",
+      "old": "\t\t\t\tdynamic $replace('if <<$subskill>> > 0: <<$subskill_xp>> += skill_adv_mul', 'slave', 'dynslave')",
+      "new": "! JO9 MOD START COG_DYNAMIC_4 | 2026-10-16_innate_learning_traits\r\n\t\t\t\tdynamic $replace('if <<$subskill>> > 0: <<$subskill_xp>> += func(''jo9_learning_xp'', (skill_adv_mul), dynslave[''jo9_learning_trait''], ''subskill'')', 'slave', 'dynslave')\r\n! JO9 MOD END COG_DYNAMIC_4",
+      "count": 1
+    },
+    {
+      "location": "$ride_finish",
+      "field": "body",
+      "old": "\tslave_rate['dressage'] += 25",
+      "new": "! JO9 MOD START COG_DIRECT_5 | 2026-10-16_innate_learning_traits\r\n\tslave_rate['dressage'] += func('jo9_learning_xp', (25), slave['jo9_learning_trait'], 'dressage')\r\n! JO9 MOD END COG_DIRECT_5",
+      "count": 1
+    },
+    {
+      "location": "billing",
+      "field": "body",
+      "old": "\t\tdynslave_rate['intellect'] += 5",
+      "new": "! JO9 MOD START COG_DIRECT_6 | 2026-10-16_innate_learning_traits\r\n\t\tdynslave_rate['intellect'] += func('jo9_learning_xp', (5), dynslave['jo9_learning_trait'], 'intellect')\r\n! JO9 MOD END COG_DIRECT_6",
+      "count": 1
+    },
+    {
+      "location": "billing",
+      "field": "body",
+      "old": "\t\tdynslave_rate['secretary'] += 15",
+      "new": "! JO9 MOD START COG_DIRECT_7 | 2026-10-16_innate_learning_traits\r\n\t\tdynslave_rate['secretary'] += func('jo9_learning_xp', (15), dynslave['jo9_learning_trait'], 'secretary')\r\n! JO9 MOD END COG_DIRECT_7",
+      "count": 1
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "\t\tif slave['expression'] < master_artdirector: slave_rate['expression'] += 1",
+      "new": "! JO9 MOD START COG_DIRECT_8 | 2026-10-16_innate_learning_traits\r\n\t\tif slave['expression'] < master_artdirector: slave_rate['expression'] += func('jo9_learning_xp', (1), slave['jo9_learning_trait'], 'expression')\r\n! JO9 MOD END COG_DIRECT_8",
+      "count": 1
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "\t\tif $slave['cloth'] ! 'petsuit' and slave['calisthenics'] < 3: slave_rate['calisthenics'] += 1 &! stops at B+; petsuit inhibits free movement - ImperatorAugustus",
+      "new": "! JO9 MOD START COG_DIRECT_9 | 2026-10-16_innate_learning_traits\r\n\t\tif $slave['cloth'] ! 'petsuit' and slave['calisthenics'] < 3: slave_rate['calisthenics'] += func('jo9_learning_xp', (1), slave['jo9_learning_trait'], 'calisthenics') &! stops at B+; petsuit inhibits free movement - ImperatorAugustus\r\n! JO9 MOD END COG_DIRECT_9",
+      "count": 1
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "\t\tif slave['pet'] < 2: slave_rate['pet'] += 2 &! stops at C-",
+      "new": "! JO9 MOD START COG_DIRECT_10 | 2026-10-16_innate_learning_traits\r\n\t\tif slave['pet'] < 2: slave_rate['pet'] += func('jo9_learning_xp', (2), slave['jo9_learning_trait'], 'pet') &! stops at C-\r\n! JO9 MOD END COG_DIRECT_10",
+      "count": 1
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "\t\tslave['sub_vaginal_xp'] += 1",
+      "new": "! JO9 MOD START COG_DIRECT_11 | 2026-10-16_innate_learning_traits\r\n\t\tslave['sub_vaginal_xp'] += func('jo9_learning_xp', (1), slave['jo9_learning_trait'], 'sub_vaginal')\r\n! JO9 MOD END COG_DIRECT_11",
+      "count": 1
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "\t\t\tcow_rate['cowSK'] += 10",
+      "new": "! JO9 MOD START COG_DIRECT_12 | 2026-10-16_innate_learning_traits\r\n\t\t\tcow_rate['cowSK'] += func('jo9_learning_xp', (10), cow['jo9_learning_trait'], 'cowSK')\r\n! JO9 MOD END COG_DIRECT_12",
+      "count": 1
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "\t\t\tcow_rate['cowSK'] += 8",
+      "new": "! JO9 MOD START COG_DIRECT_13 | 2026-10-16_innate_learning_traits\r\n\t\t\tcow_rate['cowSK'] += func('jo9_learning_xp', (8), cow['jo9_learning_trait'], 'cowSK')\r\n! JO9 MOD END COG_DIRECT_13",
+      "count": 1
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "\t\t\tcow_rate['cowSK'] += 5",
+      "new": "! JO9 MOD START COG_DIRECT_14 | 2026-10-16_innate_learning_traits\r\n\t\t\tcow_rate['cowSK'] += func('jo9_learning_xp', (5), cow['jo9_learning_trait'], 'cowSK')\r\n! JO9 MOD END COG_DIRECT_14",
+      "count": 1
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "\t\t\tcow_rate['cowSK'] += 3",
+      "new": "! JO9 MOD START COG_DIRECT_15 | 2026-10-16_innate_learning_traits\r\n\t\t\tcow_rate['cowSK'] += func('jo9_learning_xp', (3), cow['jo9_learning_trait'], 'cowSK')\r\n! JO9 MOD END COG_DIRECT_15",
+      "count": 1
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "\t\t\tcow_rate['cowSK'] += 2 ",
+      "new": "! JO9 MOD START COG_DIRECT_16 | 2026-10-16_innate_learning_traits\r\n\t\t\tcow_rate['cowSK'] += func('jo9_learning_xp', (2), cow['jo9_learning_trait'], 'cowSK') \r\n! JO9 MOD END COG_DIRECT_16",
+      "count": 1
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "\t\tcow_rate['cowSK'] += 6",
+      "new": "! JO9 MOD START COG_DIRECT_17 | 2026-10-16_innate_learning_traits\r\n\t\tcow_rate['cowSK'] += func('jo9_learning_xp', (6), cow['jo9_learning_trait'], 'cowSK')\r\n! JO9 MOD END COG_DIRECT_17",
+      "count": 1
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "\t\tdynslave_rate['intellect'] += daily_bonus['intellect']",
+      "new": "! JO9 MOD START COG_DIRECT_18 | 2026-10-16_innate_learning_traits\r\n\t\tdynslave_rate['intellect'] += func('jo9_learning_xp', (daily_bonus['intellect']), dynslave['jo9_learning_trait'], 'intellect')\r\n! JO9 MOD END COG_DIRECT_18",
+      "count": 1
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "\t\t\t\tassistant[\"sub_masturbation_xp\"] += 1",
+      "new": "! JO9 MOD START COG_DIRECT_19 | 2026-10-16_innate_learning_traits\r\n\t\t\t\tassistant[\"sub_masturbation_xp\"] += func('jo9_learning_xp', (1), assistant['jo9_learning_trait'], 'sub_masturbation')\r\n! JO9 MOD END COG_DIRECT_19",
+      "count": 1
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "\t\t\t\t\t\tslave[\"sub_masturbation_xp\"] += 1",
+      "new": "! JO9 MOD START COG_DIRECT_20 | 2026-10-16_innate_learning_traits\r\n\t\t\t\t\t\tslave[\"sub_masturbation_xp\"] += func('jo9_learning_xp', (1), slave['jo9_learning_trait'], 'sub_masturbation')\r\n! JO9 MOD END COG_DIRECT_20",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "\t\t\t\t\tdynslave_rate['intellect'] += 1",
+      "new": "! JO9 MOD START COG_DIRECT_21 | 2026-10-16_innate_learning_traits\r\n\t\t\t\t\tdynslave_rate['intellect'] += func('jo9_learning_xp', (1), dynslave['jo9_learning_trait'], 'intellect')\r\n! JO9 MOD END COG_DIRECT_21",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "\t\tif interaction_slave['diligence'] > 2: slave_rate['intellect'] += 2",
+      "new": "! JO9 MOD START COG_DIRECT_22 | 2026-10-16_innate_learning_traits\r\n\t\tif interaction_slave['diligence'] > 2: slave_rate['intellect'] += func('jo9_learning_xp', (2), slave['jo9_learning_trait'], 'intellect')\r\n! JO9 MOD END COG_DIRECT_22",
+      "count": 20
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "\t\tif interaction_slave['diligence'] > 2: slave_rate['temper'] += 1 & slave_rate['intellect'] += 1",
+      "new": "! JO9 MOD START COG_DIRECT_23 | 2026-10-16_innate_learning_traits\r\n\t\tif interaction_slave['diligence'] > 2: slave_rate['temper'] += 1 & slave_rate['intellect'] += func('jo9_learning_xp', (1), slave['jo9_learning_trait'], 'intellect')\r\n! JO9 MOD END COG_DIRECT_23",
+      "count": 12
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "\t\t\tdynslave_rate['expression'] += rise_up",
+      "new": "! JO9 MOD START COG_DIRECT_24 | 2026-10-16_innate_learning_traits\r\n\t\t\tdynslave_rate['expression'] += func('jo9_learning_xp', (rise_up), dynslave['jo9_learning_trait'], 'expression')\r\n! JO9 MOD END COG_DIRECT_24",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "\t\t\tdynslave_rate['calisthenics'] += rise_up",
+      "new": "! JO9 MOD START COG_DIRECT_25 | 2026-10-16_innate_learning_traits\r\n\t\t\tdynslave_rate['calisthenics'] += func('jo9_learning_xp', (rise_up), dynslave['jo9_learning_trait'], 'calisthenics')\r\n! JO9 MOD END COG_DIRECT_25",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "\t\tcow_rate['cowSK'] += 1",
+      "new": "! JO9 MOD START COG_DIRECT_26 | 2026-10-16_innate_learning_traits\r\n\t\tcow_rate['cowSK'] += func('jo9_learning_xp', (1), cow['jo9_learning_trait'], 'cowSK')\r\n! JO9 MOD END COG_DIRECT_26",
+      "count": 2
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "    dynamic 'slave_rate[\"cook\"] += skill_rise'",
+      "new": "! JO9 MOD START COG_DIRECT_27 | 2026-10-16_innate_learning_traits\r\n    dynamic 'slave_rate[\"cook\"] += func(''jo9_learning_xp'', (skill_rise), slave[''jo9_learning_trait''], ''cook'')'\r\n! JO9 MOD END COG_DIRECT_27",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "    dynamic 'assistant_rate[\"cook\"] += skill_rise'",
+      "new": "! JO9 MOD START COG_DIRECT_28 | 2026-10-16_innate_learning_traits\r\n    dynamic 'assistant_rate[\"cook\"] += func(''jo9_learning_xp'', (skill_rise), assistant[''jo9_learning_trait''], ''cook'')'\r\n! JO9 MOD END COG_DIRECT_28",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "\t\tif interaction_assistant['diligence'] > 2: assistant_rate['intellect'] += 2",
+      "new": "! JO9 MOD START COG_DIRECT_29 | 2026-10-16_innate_learning_traits\r\n\t\tif interaction_assistant['diligence'] > 2: assistant_rate['intellect'] += func('jo9_learning_xp', (2), assistant['jo9_learning_trait'], 'intellect')\r\n! JO9 MOD END COG_DIRECT_29",
+      "count": 5
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "\t\tif interaction_assistant['diligence'] > 2: assistant_rate['temper'] += 1 & assistant_rate['intellect'] += 1",
+      "new": "! JO9 MOD START COG_DIRECT_30 | 2026-10-16_innate_learning_traits\r\n\t\tif interaction_assistant['diligence'] > 2: assistant_rate['temper'] += 1 & assistant_rate['intellect'] += func('jo9_learning_xp', (1), assistant['jo9_learning_trait'], 'intellect')\r\n! JO9 MOD END COG_DIRECT_30",
+      "count": 6
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "\troom1_rate['cowSK'] += 1",
+      "new": "! JO9 MOD START COG_DIRECT_31 | 2026-10-16_innate_learning_traits\r\n\troom1_rate['cowSK'] += func('jo9_learning_xp', (1), room1['jo9_learning_trait'], 'cowSK')\r\n! JO9 MOD END COG_DIRECT_31",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "\troom2_rate['cowSK'] += 1",
+      "new": "! JO9 MOD START COG_DIRECT_32 | 2026-10-16_innate_learning_traits\r\n\troom2_rate['cowSK'] += func('jo9_learning_xp', (1), room2['jo9_learning_trait'], 'cowSK')\r\n! JO9 MOD END COG_DIRECT_32",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "\troom3_rate['cowSK'] += 1",
+      "new": "! JO9 MOD START COG_DIRECT_33 | 2026-10-16_innate_learning_traits\r\n\troom3_rate['cowSK'] += func('jo9_learning_xp', (1), room3['jo9_learning_trait'], 'cowSK')\r\n! JO9 MOD END COG_DIRECT_33",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "\troom4_rate['cowSK'] += 1",
+      "new": "! JO9 MOD START COG_DIRECT_34 | 2026-10-16_innate_learning_traits\r\n\troom4_rate['cowSK'] += func('jo9_learning_xp', (1), room4['jo9_learning_trait'], 'cowSK')\r\n! JO9 MOD END COG_DIRECT_34",
+      "count": 1
+    },
+    {
+      "location": "interaction_result",
+      "field": "body",
+      "old": "\t\t\tdynslave_rate['cowSK'] += 1",
+      "new": "! JO9 MOD START COG_DIRECT_35 | 2026-10-16_innate_learning_traits\r\n\t\t\tdynslave_rate['cowSK'] += func('jo9_learning_xp', (1), dynslave['jo9_learning_trait'], 'cowSK')\r\n! JO9 MOD END COG_DIRECT_35",
+      "count": 1
+    },
+    {
+      "location": "interaction_result",
+      "field": "body",
+      "old": "\t\t\tcow_rate['cowSK'] += 1",
+      "new": "! JO9 MOD START COG_DIRECT_36 | 2026-10-16_innate_learning_traits\r\n\t\t\tcow_rate['cowSK'] += func('jo9_learning_xp', (1), cow['jo9_learning_trait'], 'cowSK')\r\n! JO9 MOD END COG_DIRECT_36",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\tslave_rate['gladiatrix'] += iif(slave['gladiatrix'] >= 4, 0, slave['intellect']) &! defeat cannot raise skill above A+ - ImperatorAugustus",
+      "new": "! JO9 MOD START COG_DIRECT_37 | 2026-10-16_innate_learning_traits\r\n\tslave_rate['gladiatrix'] += func('jo9_learning_xp', (iif(slave['gladiatrix'] >= 4, 0, slave['intellect'])), slave['jo9_learning_trait'], 'gladiatrix') &! defeat cannot raise skill above A+ - ImperatorAugustus\r\n! JO9 MOD END COG_DIRECT_37",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\tslave_rate['gladiatrix'] += iif(challenge_type = 2 and slave['gladiatrix'] >= 4, 0, max(1, slave['intellect'] - slave['gladiatrix'])) &! diminishing returns + group fight against unarmed slaves cannot raise skill above A+ - ImperatorAugustus",
+      "new": "! JO9 MOD START COG_DIRECT_38 | 2026-10-16_innate_learning_traits\r\n\tslave_rate['gladiatrix'] += func('jo9_learning_xp', (iif(challenge_type = 2 and slave['gladiatrix'] >= 4, 0, max(1, slave['intellect'] - slave['gladiatrix']))), slave['jo9_learning_trait'], 'gladiatrix') &! diminishing returns + group fight against unarmed slaves cannot raise skill above A+ - ImperatorAugustus\r\n! JO9 MOD END COG_DIRECT_38",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\tslave_rate['gladiatrix'] += slave['intellect'] &! gain less skill xp to increase value of sparring / other training methods - ImperatorAugustus",
+      "new": "! JO9 MOD START COG_DIRECT_39 | 2026-10-16_innate_learning_traits\r\n\t\tslave_rate['gladiatrix'] += func('jo9_learning_xp', (slave['intellect']), slave['jo9_learning_trait'], 'gladiatrix') &! gain less skill xp to increase value of sparring / other training methods - ImperatorAugustus\r\n! JO9 MOD END COG_DIRECT_39",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\tslave_rate['gladiatrix'] += (skill_adv_mul * fighting_experience)",
+      "new": "! JO9 MOD START COG_DIRECT_40 | 2026-10-16_innate_learning_traits\r\n\tslave_rate['gladiatrix'] += func('jo9_learning_xp', ((skill_adv_mul * fighting_experience)), slave['jo9_learning_trait'], 'gladiatrix')\r\n! JO9 MOD END COG_DIRECT_40",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\tassistant_rate['gladiatrix'] += (skill_adv_mul * fighting_experience)",
+      "new": "! JO9 MOD START COG_DIRECT_41 | 2026-10-16_innate_learning_traits\r\n\tassistant_rate['gladiatrix'] += func('jo9_learning_xp', ((skill_adv_mul * fighting_experience)), assistant['jo9_learning_trait'], 'gladiatrix')\r\n! JO9 MOD END COG_DIRECT_41",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t slave_rate[\"gladiatrix\"] += 5",
+      "new": "! JO9 MOD START COG_DIRECT_42 | 2026-10-16_innate_learning_traits\r\n\t slave_rate[\"gladiatrix\"] += func('jo9_learning_xp', (5), slave['jo9_learning_trait'], 'gladiatrix')\r\n! JO9 MOD END COG_DIRECT_42",
+      "count": 4
+    },
+    {
+      "location": "выход_из_боя",
+      "field": "body",
+      "old": "\tslave_rate[\"gladiatrix\"] += RAND(0,slave[\"gladiatrix\"])",
+      "new": "! JO9 MOD START COG_DIRECT_43 | 2026-10-16_innate_learning_traits\r\n\tslave_rate[\"gladiatrix\"] += func('jo9_learning_xp', (RAND(0,slave[\"gladiatrix\"])), slave['jo9_learning_trait'], 'gladiatrix')\r\n! JO9 MOD END COG_DIRECT_43",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\tif diligence > slave['calisthenics'] and sex_done_today[$str(sex_interaction)] = 0: slave_rate['calisthenics'] += 1",
+      "new": "! JO9 MOD START COG_DIRECT_44 | 2026-10-16_innate_learning_traits\r\n\t\tif diligence > slave['calisthenics'] and sex_done_today[$str(sex_interaction)] = 0: slave_rate['calisthenics'] += func('jo9_learning_xp', (1), slave['jo9_learning_trait'], 'calisthenics')\r\n! JO9 MOD END COG_DIRECT_44",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\t\tif diligence > slave['sub_exhibit'] and sex_done_today[$str(sex_interaction)] = 0: slave['sub_exhibit_xp'] += 1",
+      "new": "! JO9 MOD START COG_DIRECT_45 | 2026-10-16_innate_learning_traits\r\n\t\t\tif diligence > slave['sub_exhibit'] and sex_done_today[$str(sex_interaction)] = 0: slave['sub_exhibit_xp'] += func('jo9_learning_xp', (1), slave['jo9_learning_trait'], 'sub_exhibit')\r\n! JO9 MOD END COG_DIRECT_45",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\t\tif diligence > slave['sub_seduce'] and sex_done_today[$str(sex_interaction)] = 0: slave['sub_seduce_xp'] += 1",
+      "new": "! JO9 MOD START COG_DIRECT_46 | 2026-10-16_innate_learning_traits\r\n\t\t\tif diligence > slave['sub_seduce'] and sex_done_today[$str(sex_interaction)] = 0: slave['sub_seduce_xp'] += func('jo9_learning_xp', (1), slave['jo9_learning_trait'], 'sub_seduce')\r\n! JO9 MOD END COG_DIRECT_46",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\tif diligence > assistant['calisthenics']: assistant_rate['calisthenics'] += 1",
+      "new": "! JO9 MOD START COG_DIRECT_47 | 2026-10-16_innate_learning_traits\r\n\t\tif diligence > assistant['calisthenics']: assistant_rate['calisthenics'] += func('jo9_learning_xp', (1), assistant['jo9_learning_trait'], 'calisthenics')\r\n! JO9 MOD END COG_DIRECT_47",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\t\tif diligence > assistant['sub_exhibit'] and sex_done_today[$str(sex_interaction)] = 0: assistant['sub_exhibit_xp'] += 1",
+      "new": "! JO9 MOD START COG_DIRECT_48 | 2026-10-16_innate_learning_traits\r\n\t\t\tif diligence > assistant['sub_exhibit'] and sex_done_today[$str(sex_interaction)] = 0: assistant['sub_exhibit_xp'] += func('jo9_learning_xp', (1), assistant['jo9_learning_trait'], 'sub_exhibit')\r\n! JO9 MOD END COG_DIRECT_48",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\t\tif diligence > assistant['sub_seduce'] and sex_done_today[$str(sex_interaction)] = 0: assistant['sub_seduce_xp'] += 1",
+      "new": "! JO9 MOD START COG_DIRECT_49 | 2026-10-16_innate_learning_traits\r\n\t\t\tif diligence > assistant['sub_seduce'] and sex_done_today[$str(sex_interaction)] = 0: assistant['sub_seduce_xp'] += func('jo9_learning_xp', (1), assistant['jo9_learning_trait'], 'sub_seduce')\r\n! JO9 MOD END COG_DIRECT_49",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\t\tif diligence > slave['sub_seduce'] and sex_done_today[$str(sex_interaction)] = 0: slave['sub_seduce_xp'] += sex['girl_attention'] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_50 | 2026-10-16_innate_learning_traits\r\n\t\t\tif diligence > slave['sub_seduce'] and sex_done_today[$str(sex_interaction)] = 0: slave['sub_seduce_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), slave['jo9_learning_trait'], 'sub_seduce')\r\n! JO9 MOD END COG_DIRECT_50",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\t\tif diligence > slave['sub_humiliation'] and sex_done_today[$str(sex_interaction)] = 0: slave['sub_humiliation_xp'] += sex['girl_attention'] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_51 | 2026-10-16_innate_learning_traits\r\n\t\t\tif diligence > slave['sub_humiliation'] and sex_done_today[$str(sex_interaction)] = 0: slave['sub_humiliation_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), slave['jo9_learning_trait'], 'sub_humiliation')\r\n! JO9 MOD END COG_DIRECT_51",
+      "count": 2
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\t\tif diligence > slave['sub_masturbation'] and sex_done_today[$str(sex_interaction)] = 0: slave['sub_masturbation_xp'] += sex['girl_attention'] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_52 | 2026-10-16_innate_learning_traits\r\n\t\t\tif diligence > slave['sub_masturbation'] and sex_done_today[$str(sex_interaction)] = 0: slave['sub_masturbation_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), slave['jo9_learning_trait'], 'sub_masturbation')\r\n! JO9 MOD END COG_DIRECT_52",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\t\tif diligence > assistant['sub_seduce'] and sex_done_today[$str(sex_interaction)] = 0: assistant['sub_seduce_xp'] += sex['girl_attention'] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_53 | 2026-10-16_innate_learning_traits\r\n\t\t\tif diligence > assistant['sub_seduce'] and sex_done_today[$str(sex_interaction)] = 0: assistant['sub_seduce_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), assistant['jo9_learning_trait'], 'sub_seduce')\r\n! JO9 MOD END COG_DIRECT_53",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\t\tif diligence > assistant['sub_humiliation'] and sex_done_today[$str(sex_interaction)] = 0: assistant['sub_humiliation_xp'] += sex['girl_attention'] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_54 | 2026-10-16_innate_learning_traits\r\n\t\t\tif diligence > assistant['sub_humiliation'] and sex_done_today[$str(sex_interaction)] = 0: assistant['sub_humiliation_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), assistant['jo9_learning_trait'], 'sub_humiliation')\r\n! JO9 MOD END COG_DIRECT_54",
+      "count": 2
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\t\tif diligence > assistant['sub_masturbation'] and sex_done_today[$str(sex_interaction)] = 0: assistant['sub_masturbation_xp'] += sex['girl_attention'] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_55 | 2026-10-16_innate_learning_traits\r\n\t\t\tif diligence > assistant['sub_masturbation'] and sex_done_today[$str(sex_interaction)] = 0: assistant['sub_masturbation_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), assistant['jo9_learning_trait'], 'sub_masturbation')\r\n! JO9 MOD END COG_DIRECT_55",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\t\tif sex['girl_attention'] > slave['sub_kiss'] and sex_done_today[$str(sex_interaction)] = 0: slave['sub_kiss_xp'] += sex['girl_attention'] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_56 | 2026-10-16_innate_learning_traits\r\n\t\t\tif sex['girl_attention'] > slave['sub_kiss'] and sex_done_today[$str(sex_interaction)] = 0: slave['sub_kiss_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), slave['jo9_learning_trait'], 'sub_kiss')\r\n! JO9 MOD END COG_DIRECT_56",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\t\tif sex['girl_attention'] > assistant['sub_kiss'] and sex_done_today[$str(sex_interaction)] = 0: assistant['sub_kiss_xp'] += sex['girl_attention'] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_57 | 2026-10-16_innate_learning_traits\r\n\t\t\tif sex['girl_attention'] > assistant['sub_kiss'] and sex_done_today[$str(sex_interaction)] = 0: assistant['sub_kiss_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), assistant['jo9_learning_trait'], 'sub_kiss')\r\n! JO9 MOD END COG_DIRECT_57",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\t\tif diligence > slave['sub_tongue'] and sex_done_today[$str(sex_interaction)] = 0: slave['sub_tongue_xp'] += sex['girl_attention'] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_58 | 2026-10-16_innate_learning_traits\r\n\t\t\tif diligence > slave['sub_tongue'] and sex_done_today[$str(sex_interaction)] = 0: slave['sub_tongue_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), slave['jo9_learning_trait'], 'sub_tongue')\r\n! JO9 MOD END COG_DIRECT_58",
+      "count": 5
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\t\tif diligence > slave['sub_hj'] and sex_done_today[$str(sex_interaction)] = 0: slave['sub_hj_xp'] += sex['girl_attention'] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_59 | 2026-10-16_innate_learning_traits\r\n\t\t\tif diligence > slave['sub_hj'] and sex_done_today[$str(sex_interaction)] = 0: slave['sub_hj_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), slave['jo9_learning_trait'], 'sub_hj')\r\n! JO9 MOD END COG_DIRECT_59",
+      "count": 5
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\t\tif diligence > slave['sub_hug'] and sex_done_today[$str(sex_interaction)] = 0: slave['sub_hug_xp'] += sex['girl_attention'] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_60 | 2026-10-16_innate_learning_traits\r\n\t\t\tif diligence > slave['sub_hug'] and sex_done_today[$str(sex_interaction)] = 0: slave['sub_hug_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), slave['jo9_learning_trait'], 'sub_hug')\r\n! JO9 MOD END COG_DIRECT_60",
+      "count": 5
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\t\tif diligence > assistant['sub_tongue'] and sex_done_today[$str(sex_interaction)] = 0: assistant['sub_tongue_xp'] += sex['girl_attention'] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_61 | 2026-10-16_innate_learning_traits\r\n\t\t\tif diligence > assistant['sub_tongue'] and sex_done_today[$str(sex_interaction)] = 0: assistant['sub_tongue_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), assistant['jo9_learning_trait'], 'sub_tongue')\r\n! JO9 MOD END COG_DIRECT_61",
+      "count": 5
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\t\tif diligence > assistant['sub_hj'] and sex_done_today[$str(sex_interaction)] = 0: assistant['sub_hj_xp'] += sex['girl_attention'] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_62 | 2026-10-16_innate_learning_traits\r\n\t\t\tif diligence > assistant['sub_hj'] and sex_done_today[$str(sex_interaction)] = 0: assistant['sub_hj_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), assistant['jo9_learning_trait'], 'sub_hj')\r\n! JO9 MOD END COG_DIRECT_62",
+      "count": 5
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\t\tif diligence > assistant['sub_hug'] and sex_done_today[$str(sex_interaction)] = 0: assistant['sub_hug_xp'] += sex['girl_attention'] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_63 | 2026-10-16_innate_learning_traits\r\n\t\t\tif diligence > assistant['sub_hug'] and sex_done_today[$str(sex_interaction)] = 0: assistant['sub_hug_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), assistant['jo9_learning_trait'], 'sub_hug')\r\n! JO9 MOD END COG_DIRECT_63",
+      "count": 5
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\t\tif slave['sub_vaginal'] > 0: slave['sub_vaginal_xp'] += sex['girl_attention'] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_64 | 2026-10-16_innate_learning_traits\r\n\t\t\tif slave['sub_vaginal'] > 0: slave['sub_vaginal_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), slave['jo9_learning_trait'], 'sub_vaginal')\r\n! JO9 MOD END COG_DIRECT_64",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\t\tif assistant['sub_vaginal'] > 0: assistant['sub_vaginal_xp'] += sex['girl_attention'] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_65 | 2026-10-16_innate_learning_traits\r\n\t\t\tif assistant['sub_vaginal'] > 0: assistant['sub_vaginal_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), assistant['jo9_learning_trait'], 'sub_vaginal')\r\n! JO9 MOD END COG_DIRECT_65",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\t\tif slave['sub_anal'] > 0: slave['sub_anal_xp'] += sex['girl_attention'] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_66 | 2026-10-16_innate_learning_traits\r\n\t\t\tif slave['sub_anal'] > 0: slave['sub_anal_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), slave['jo9_learning_trait'], 'sub_anal')\r\n! JO9 MOD END COG_DIRECT_66",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\t\tif assistant['sub_anal'] > 0: assistant['sub_anal_xp'] += sex['girl_attention'] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_67 | 2026-10-16_innate_learning_traits\r\n\t\t\tif assistant['sub_anal'] > 0: assistant['sub_anal_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), assistant['jo9_learning_trait'], 'sub_anal')\r\n! JO9 MOD END COG_DIRECT_67",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\tif slave['sub_bj'] > 0: slave['sub_bj_xp'] += sex['girl_attention'] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_68 | 2026-10-16_innate_learning_traits\r\n\t\tif slave['sub_bj'] > 0: slave['sub_bj_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), slave['jo9_learning_trait'], 'sub_bj')\r\n! JO9 MOD END COG_DIRECT_68",
+      "count": 2
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\tif assistant['sub_bj'] > 0: assistant['sub_bj_xp'] += sex['girl_attention'] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_69 | 2026-10-16_innate_learning_traits\r\n\t\tif assistant['sub_bj'] > 0: assistant['sub_bj_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), assistant['jo9_learning_trait'], 'sub_bj')\r\n! JO9 MOD END COG_DIRECT_69",
+      "count": 2
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\tif slave['sub_dt'] > 0: slave['sub_dt_xp'] += sex['girl_sub_dt'] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_70 | 2026-10-16_innate_learning_traits\r\n\t\tif slave['sub_dt'] > 0: slave['sub_dt_xp'] += func('jo9_learning_xp', (sex['girl_sub_dt'] - 2), slave['jo9_learning_trait'], 'sub_dt')\r\n! JO9 MOD END COG_DIRECT_70",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\tif assistant['sub_dt'] > 0: assistant['sub_dt_xp'] += sex['girl_sub_dt'] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_71 | 2026-10-16_innate_learning_traits\r\n\t\tif assistant['sub_dt'] > 0: assistant['sub_dt_xp'] += func('jo9_learning_xp', (sex['girl_sub_dt'] - 2), assistant['jo9_learning_trait'], 'sub_dt')\r\n! JO9 MOD END COG_DIRECT_71",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\tif slave['sub_hug'] > 0: slave['sub_hug_xp'] += sex['girl_attention'] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_72 | 2026-10-16_innate_learning_traits\r\n\t\tif slave['sub_hug'] > 0: slave['sub_hug_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), slave['jo9_learning_trait'], 'sub_hug')\r\n! JO9 MOD END COG_DIRECT_72",
+      "count": 2
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\tif assistant['sub_hug'] > 0: assistant['sub_hug_xp'] += sex['girl_attention'] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_73 | 2026-10-16_innate_learning_traits\r\n\t\tif assistant['sub_hug'] > 0: assistant['sub_hug_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), assistant['jo9_learning_trait'], 'sub_hug')\r\n! JO9 MOD END COG_DIRECT_73",
+      "count": 2
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\tif slave['sub_hj'] > 0: slave['sub_hj_xp'] += sex['girl_attention'] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_74 | 2026-10-16_innate_learning_traits\r\n\t\tif slave['sub_hj'] > 0: slave['sub_hj_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), slave['jo9_learning_trait'], 'sub_hj')\r\n! JO9 MOD END COG_DIRECT_74",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\tif assistant['sub_hj'] > 0: assistant['sub_hj_xp'] += sex['girl_attention'] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_75 | 2026-10-16_innate_learning_traits\r\n\t\tif assistant['sub_hj'] > 0: assistant['sub_hj_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), assistant['jo9_learning_trait'], 'sub_hj')\r\n! JO9 MOD END COG_DIRECT_75",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\tif slave['sub_paizuri'] > 0: slave['sub_paizuri_xp'] += sex['girl_attention'] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_76 | 2026-10-16_innate_learning_traits\r\n\t\tif slave['sub_paizuri'] > 0: slave['sub_paizuri_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), slave['jo9_learning_trait'], 'sub_paizuri')\r\n! JO9 MOD END COG_DIRECT_76",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\tif assistant['sub_paizuri'] > 0: assistant['sub_paizuri_xp'] += sex['girl_attention'] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_77 | 2026-10-16_innate_learning_traits\r\n\t\tif assistant['sub_paizuri'] > 0: assistant['sub_paizuri_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), assistant['jo9_learning_trait'], 'sub_paizuri')\r\n! JO9 MOD END COG_DIRECT_77",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\tif slave['sub_fj'] > 0: slave['sub_fj_xp'] += sex['girl_attention'] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_78 | 2026-10-16_innate_learning_traits\r\n\t\tif slave['sub_fj'] > 0: slave['sub_fj_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), slave['jo9_learning_trait'], 'sub_fj')\r\n! JO9 MOD END COG_DIRECT_78",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\tif assistant['sub_fj'] > 0: assistant['sub_fj_xp'] += sex['girl_attention'] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_79 | 2026-10-16_innate_learning_traits\r\n\t\tif assistant['sub_fj'] > 0: assistant['sub_fj_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), assistant['jo9_learning_trait'], 'sub_fj')\r\n! JO9 MOD END COG_DIRECT_79",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\t\tif diligence > slave['sub_mazo'] and sex_done_today[$str(sex_interaction)] = 0: slave['sub_mazo_xp'] += sex['girl_attention'] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_80 | 2026-10-16_innate_learning_traits\r\n\t\t\tif diligence > slave['sub_mazo'] and sex_done_today[$str(sex_interaction)] = 0: slave['sub_mazo_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), slave['jo9_learning_trait'], 'sub_mazo')\r\n! JO9 MOD END COG_DIRECT_80",
+      "count": 2
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\t\tif diligence > assistant['sub_mazo'] and sex_done_today[$str(sex_interaction)] = 0: assistant['sub_mazo_xp'] += sex['girl_attention'] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_81 | 2026-10-16_innate_learning_traits\r\n\t\t\tif diligence > assistant['sub_mazo'] and sex_done_today[$str(sex_interaction)] = 0: assistant['sub_mazo_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), assistant['jo9_learning_trait'], 'sub_mazo')\r\n! JO9 MOD END COG_DIRECT_81",
+      "count": 2
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\tif slave['sub_piss'] > 0: slave['sub_piss_xp'] += sex['girl_attention'] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_82 | 2026-10-16_innate_learning_traits\r\n\t\tif slave['sub_piss'] > 0: slave['sub_piss_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), slave['jo9_learning_trait'], 'sub_piss')\r\n! JO9 MOD END COG_DIRECT_82",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\tif assistant['sub_piss'] > 0: assistant['sub_piss_xp'] += sex['girl_attention'] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_83 | 2026-10-16_innate_learning_traits\r\n\t\tif assistant['sub_piss'] > 0: assistant['sub_piss_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), assistant['jo9_learning_trait'], 'sub_piss')\r\n! JO9 MOD END COG_DIRECT_83",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\tif slave['anal_stretch'] > 0: slave['anal_stretch_xp'] += sex['girl_attention'] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_84 | 2026-10-16_innate_learning_traits\r\n\t\tif slave['anal_stretch'] > 0: slave['anal_stretch_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), slave['jo9_learning_trait'], 'anal_stretch')\r\n! JO9 MOD END COG_DIRECT_84",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\tif assistant['anal_stretch'] > 0: assistant['anal_stretch_xp'] += sex['girl_attention'] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_85 | 2026-10-16_innate_learning_traits\r\n\t\tif assistant['anal_stretch'] > 0: assistant['anal_stretch_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), assistant['jo9_learning_trait'], 'anal_stretch')\r\n! JO9 MOD END COG_DIRECT_85",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\tif slave['sub_bukkake'] > 0: slave['sub_bukkake_xp'] += sex['girl_attention'] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_86 | 2026-10-16_innate_learning_traits\r\n\t\tif slave['sub_bukkake'] > 0: slave['sub_bukkake_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), slave['jo9_learning_trait'], 'sub_bukkake')\r\n! JO9 MOD END COG_DIRECT_86",
+      "count": 3
+    },
+    {
+      "location": "sex_interaction",
+      "field": "body",
+      "old": "\t\tif assistant['sub_bukkake'] > 0: assistant['sub_bukkake_xp'] += sex['girl_attention'] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_87 | 2026-10-16_innate_learning_traits\r\n\t\tif assistant['sub_bukkake'] > 0: assistant['sub_bukkake_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), assistant['jo9_learning_trait'], 'sub_bukkake')\r\n! JO9 MOD END COG_DIRECT_87",
+      "count": 3
+    },
+    {
+      "location": "interaction.relations",
+      "field": "body",
+      "old": "    dynamic 'slave_rate[\"cook\"] += skill_rise'",
+      "new": "! JO9 MOD START COG_DIRECT_88 | 2026-10-16_innate_learning_traits\r\n    dynamic 'slave_rate[\"cook\"] += func(''jo9_learning_xp'', (skill_rise), slave[''jo9_learning_trait''], ''cook'')'\r\n! JO9 MOD END COG_DIRECT_88",
+      "count": 1
+    },
+    {
+      "location": "interaction.relations",
+      "field": "body",
+      "old": "    dynamic 'assistant_rate[\"cook\"] += skill_rise'",
+      "new": "! JO9 MOD START COG_DIRECT_89 | 2026-10-16_innate_learning_traits\r\n    dynamic 'assistant_rate[\"cook\"] += func(''jo9_learning_xp'', (skill_rise), assistant[''jo9_learning_trait''], ''cook'')'\r\n! JO9 MOD END COG_DIRECT_89",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "  if diligence > slave['calisthenics']: slave_rate['calisthenics'] += 1",
+      "new": "! JO9 MOD START COG_DIRECT_90 | 2026-10-16_innate_learning_traits\r\n  if diligence > slave['calisthenics']: slave_rate['calisthenics'] += func('jo9_learning_xp', (1), slave['jo9_learning_trait'], 'calisthenics')\r\n! JO9 MOD END COG_DIRECT_90",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "   if diligence > slave[\"sub_exhibit\"]: slave[\"sub_exhibit_xp\"] += 1",
+      "new": "! JO9 MOD START COG_DIRECT_91 | 2026-10-16_innate_learning_traits\r\n   if diligence > slave[\"sub_exhibit\"]: slave[\"sub_exhibit_xp\"] += func('jo9_learning_xp', (1), slave['jo9_learning_trait'], 'sub_exhibit')\r\n! JO9 MOD END COG_DIRECT_91",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "   if diligence > slave[\"sub_seduce\"]: slave[\"sub_seduce_xp\"] += 1",
+      "new": "! JO9 MOD START COG_DIRECT_92 | 2026-10-16_innate_learning_traits\r\n   if diligence > slave[\"sub_seduce\"]: slave[\"sub_seduce_xp\"] += func('jo9_learning_xp', (1), slave['jo9_learning_trait'], 'sub_seduce')\r\n! JO9 MOD END COG_DIRECT_92",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "  if diligence > assistant['calisthenics']: assistant_rate['calisthenics'] += 1",
+      "new": "! JO9 MOD START COG_DIRECT_93 | 2026-10-16_innate_learning_traits\r\n  if diligence > assistant['calisthenics']: assistant_rate['calisthenics'] += func('jo9_learning_xp', (1), assistant['jo9_learning_trait'], 'calisthenics')\r\n! JO9 MOD END COG_DIRECT_93",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "   if diligence > assistant[\"sub_exhibit\"]: assistant[\"sub_exhibit_xp\"] += 1",
+      "new": "! JO9 MOD START COG_DIRECT_94 | 2026-10-16_innate_learning_traits\r\n   if diligence > assistant[\"sub_exhibit\"]: assistant[\"sub_exhibit_xp\"] += func('jo9_learning_xp', (1), assistant['jo9_learning_trait'], 'sub_exhibit')\r\n! JO9 MOD END COG_DIRECT_94",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "   if diligence > assistant[\"sub_seduce\"]: assistant[\"sub_seduce_xp\"] += 1",
+      "new": "! JO9 MOD START COG_DIRECT_95 | 2026-10-16_innate_learning_traits\r\n   if diligence > assistant[\"sub_seduce\"]: assistant[\"sub_seduce_xp\"] += func('jo9_learning_xp', (1), assistant['jo9_learning_trait'], 'sub_seduce')\r\n! JO9 MOD END COG_DIRECT_95",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "   if diligence > slave[\"sub_seduce\"]: slave[\"sub_seduce_xp\"] += sex[\"girl_attention\"] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_96 | 2026-10-16_innate_learning_traits\r\n   if diligence > slave[\"sub_seduce\"]: slave[\"sub_seduce_xp\"] += func('jo9_learning_xp', (sex[\"girl_attention\"] - 2), slave['jo9_learning_trait'], 'sub_seduce')\r\n! JO9 MOD END COG_DIRECT_96",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "   if diligence > slave[\"sub_humiliation\"]: slave[\"sub_humiliation_xp\"] += sex[\"girl_attention\"] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_97 | 2026-10-16_innate_learning_traits\r\n   if diligence > slave[\"sub_humiliation\"]: slave[\"sub_humiliation_xp\"] += func('jo9_learning_xp', (sex[\"girl_attention\"] - 2), slave['jo9_learning_trait'], 'sub_humiliation')\r\n! JO9 MOD END COG_DIRECT_97",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "   if diligence > slave[\"sub_masturbation\"]: slave[\"sub_masturbation_xp\"] += sex[\"girl_attention\"] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_98 | 2026-10-16_innate_learning_traits\r\n   if diligence > slave[\"sub_masturbation\"]: slave[\"sub_masturbation_xp\"] += func('jo9_learning_xp', (sex[\"girl_attention\"] - 2), slave['jo9_learning_trait'], 'sub_masturbation')\r\n! JO9 MOD END COG_DIRECT_98",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "   if diligence > assistant[\"sub_seduce\"]: assistant[\"sub_seduce_xp\"] += sex[\"girl_attention\"] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_99 | 2026-10-16_innate_learning_traits\r\n   if diligence > assistant[\"sub_seduce\"]: assistant[\"sub_seduce_xp\"] += func('jo9_learning_xp', (sex[\"girl_attention\"] - 2), assistant['jo9_learning_trait'], 'sub_seduce')\r\n! JO9 MOD END COG_DIRECT_99",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "   if diligence > assistant[\"sub_humiliation\"]: assistant[\"sub_humiliation_xp\"] += sex[\"girl_attention\"] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_100 | 2026-10-16_innate_learning_traits\r\n   if diligence > assistant[\"sub_humiliation\"]: assistant[\"sub_humiliation_xp\"] += func('jo9_learning_xp', (sex[\"girl_attention\"] - 2), assistant['jo9_learning_trait'], 'sub_humiliation')\r\n! JO9 MOD END COG_DIRECT_100",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "   if diligence > assistant[\"sub_masturbation\"]: assistant[\"sub_masturbation_xp\"] += sex[\"girl_attention\"] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_101 | 2026-10-16_innate_learning_traits\r\n   if diligence > assistant[\"sub_masturbation\"]: assistant[\"sub_masturbation_xp\"] += func('jo9_learning_xp', (sex[\"girl_attention\"] - 2), assistant['jo9_learning_trait'], 'sub_masturbation')\r\n! JO9 MOD END COG_DIRECT_101",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "   if sex[\"girl_attention\"] > slave[\"sub_kiss\"] and sex_done_today[sex_interaction] = 0: slave[\"sub_kiss_xp\"] += sex[\"girl_attention\"] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_102 | 2026-10-16_innate_learning_traits\r\n   if sex[\"girl_attention\"] > slave[\"sub_kiss\"] and sex_done_today[sex_interaction] = 0: slave[\"sub_kiss_xp\"] += func('jo9_learning_xp', (sex[\"girl_attention\"] - 2), slave['jo9_learning_trait'], 'sub_kiss')\r\n! JO9 MOD END COG_DIRECT_102",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "   if sex[\"girl_attention\"] > assistant[\"sub_kiss\"] and sex_done_today[sex_interaction] = 0: assistant[\"sub_kiss_xp\"] += sex[\"girl_attention\"] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_103 | 2026-10-16_innate_learning_traits\r\n   if sex[\"girl_attention\"] > assistant[\"sub_kiss\"] and sex_done_today[sex_interaction] = 0: assistant[\"sub_kiss_xp\"] += func('jo9_learning_xp', (sex[\"girl_attention\"] - 2), assistant['jo9_learning_trait'], 'sub_kiss')\r\n! JO9 MOD END COG_DIRECT_103",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "   if diligence > slave[\"sub_tongue\"]: slave[\"sub_tongue_xp\"] += sex[\"girl_attention\"] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_104 | 2026-10-16_innate_learning_traits\r\n   if diligence > slave[\"sub_tongue\"]: slave[\"sub_tongue_xp\"] += func('jo9_learning_xp', (sex[\"girl_attention\"] - 2), slave['jo9_learning_trait'], 'sub_tongue')\r\n! JO9 MOD END COG_DIRECT_104",
+      "count": 5
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "   if diligence > slave[\"sub_hj\"]: slave[\"sub_hj_xp\"] += sex[\"girl_attention\"] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_105 | 2026-10-16_innate_learning_traits\r\n   if diligence > slave[\"sub_hj\"]: slave[\"sub_hj_xp\"] += func('jo9_learning_xp', (sex[\"girl_attention\"] - 2), slave['jo9_learning_trait'], 'sub_hj')\r\n! JO9 MOD END COG_DIRECT_105",
+      "count": 5
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "   if diligence > slave[\"sub_hug\"]: slave[\"sub_hug_xp\"] += sex[\"girl_attention\"] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_106 | 2026-10-16_innate_learning_traits\r\n   if diligence > slave[\"sub_hug\"]: slave[\"sub_hug_xp\"] += func('jo9_learning_xp', (sex[\"girl_attention\"] - 2), slave['jo9_learning_trait'], 'sub_hug')\r\n! JO9 MOD END COG_DIRECT_106",
+      "count": 5
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "   if diligence > assistant[\"sub_tongue\"]: assistant[\"sub_tongue_xp\"] += sex[\"girl_attention\"] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_107 | 2026-10-16_innate_learning_traits\r\n   if diligence > assistant[\"sub_tongue\"]: assistant[\"sub_tongue_xp\"] += func('jo9_learning_xp', (sex[\"girl_attention\"] - 2), assistant['jo9_learning_trait'], 'sub_tongue')\r\n! JO9 MOD END COG_DIRECT_107",
+      "count": 5
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "   if diligence > assistant[\"sub_hj\"]: assistant[\"sub_hj_xp\"] += sex[\"girl_attention\"] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_108 | 2026-10-16_innate_learning_traits\r\n   if diligence > assistant[\"sub_hj\"]: assistant[\"sub_hj_xp\"] += func('jo9_learning_xp', (sex[\"girl_attention\"] - 2), assistant['jo9_learning_trait'], 'sub_hj')\r\n! JO9 MOD END COG_DIRECT_108",
+      "count": 5
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "   if diligence > assistant[\"sub_hug\"]: assistant[\"sub_hug_xp\"] += sex[\"girl_attention\"] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_109 | 2026-10-16_innate_learning_traits\r\n   if diligence > assistant[\"sub_hug\"]: assistant[\"sub_hug_xp\"] += func('jo9_learning_xp', (sex[\"girl_attention\"] - 2), assistant['jo9_learning_trait'], 'sub_hug')\r\n! JO9 MOD END COG_DIRECT_109",
+      "count": 5
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "   if slave['sub_vaginal'] > 0: slave['sub_vaginal_xp'] += sex[\"girl_attention\"] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_110 | 2026-10-16_innate_learning_traits\r\n   if slave['sub_vaginal'] > 0: slave['sub_vaginal_xp'] += func('jo9_learning_xp', (sex[\"girl_attention\"] - 2), slave['jo9_learning_trait'], 'sub_vaginal')\r\n! JO9 MOD END COG_DIRECT_110",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "   if assistant['sub_vaginal'] > 0: assistant['sub_vaginal_xp'] += sex[\"girl_attention\"] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_111 | 2026-10-16_innate_learning_traits\r\n   if assistant['sub_vaginal'] > 0: assistant['sub_vaginal_xp'] += func('jo9_learning_xp', (sex[\"girl_attention\"] - 2), assistant['jo9_learning_trait'], 'sub_vaginal')\r\n! JO9 MOD END COG_DIRECT_111",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "   if slave['sub_anal'] > 0: slave['sub_anal_xp'] += sex[\"girl_attention\"] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_112 | 2026-10-16_innate_learning_traits\r\n   if slave['sub_anal'] > 0: slave['sub_anal_xp'] += func('jo9_learning_xp', (sex[\"girl_attention\"] - 2), slave['jo9_learning_trait'], 'sub_anal')\r\n! JO9 MOD END COG_DIRECT_112",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "   if assistant['sub_anal'] > 0: assistant['sub_anal_xp'] += sex[\"girl_attention\"] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_113 | 2026-10-16_innate_learning_traits\r\n   if assistant['sub_anal'] > 0: assistant['sub_anal_xp'] += func('jo9_learning_xp', (sex[\"girl_attention\"] - 2), assistant['jo9_learning_trait'], 'sub_anal')\r\n! JO9 MOD END COG_DIRECT_113",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "  if slave['sub_bj'] > 0: slave['sub_bj_xp'] += sex[\"girl_attention\"] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_114 | 2026-10-16_innate_learning_traits\r\n  if slave['sub_bj'] > 0: slave['sub_bj_xp'] += func('jo9_learning_xp', (sex[\"girl_attention\"] - 2), slave['jo9_learning_trait'], 'sub_bj')\r\n! JO9 MOD END COG_DIRECT_114",
+      "count": 2
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "  if assistant['sub_bj'] > 0: assistant['sub_bj_xp'] += sex[\"girl_attention\"] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_115 | 2026-10-16_innate_learning_traits\r\n  if assistant['sub_bj'] > 0: assistant['sub_bj_xp'] += func('jo9_learning_xp', (sex[\"girl_attention\"] - 2), assistant['jo9_learning_trait'], 'sub_bj')\r\n! JO9 MOD END COG_DIRECT_115",
+      "count": 2
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "  if slave['sub_dt'] > 0: slave['sub_dt_xp'] += sex[\"girl_sub_dt\"] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_116 | 2026-10-16_innate_learning_traits\r\n  if slave['sub_dt'] > 0: slave['sub_dt_xp'] += func('jo9_learning_xp', (sex[\"girl_sub_dt\"] - 2), slave['jo9_learning_trait'], 'sub_dt')\r\n! JO9 MOD END COG_DIRECT_116",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "  if assistant['sub_dt'] > 0: assistant['sub_dt_xp'] += sex[\"girl_sub_dt\"] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_117 | 2026-10-16_innate_learning_traits\r\n  if assistant['sub_dt'] > 0: assistant['sub_dt_xp'] += func('jo9_learning_xp', (sex[\"girl_sub_dt\"] - 2), assistant['jo9_learning_trait'], 'sub_dt')\r\n! JO9 MOD END COG_DIRECT_117",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "  if slave['sub_hug'] > 0: slave['sub_hug_xp'] += sex[\"girl_attention\"] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_118 | 2026-10-16_innate_learning_traits\r\n  if slave['sub_hug'] > 0: slave['sub_hug_xp'] += func('jo9_learning_xp', (sex[\"girl_attention\"] - 2), slave['jo9_learning_trait'], 'sub_hug')\r\n! JO9 MOD END COG_DIRECT_118",
+      "count": 2
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "  if assistant['sub_hug'] > 0: assistant['sub_hug_xp'] += sex[\"girl_attention\"] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_119 | 2026-10-16_innate_learning_traits\r\n  if assistant['sub_hug'] > 0: assistant['sub_hug_xp'] += func('jo9_learning_xp', (sex[\"girl_attention\"] - 2), assistant['jo9_learning_trait'], 'sub_hug')\r\n! JO9 MOD END COG_DIRECT_119",
+      "count": 2
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "  if slave['sub_hj'] > 0: slave['sub_hj_xp'] += sex[\"girl_attention\"] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_120 | 2026-10-16_innate_learning_traits\r\n  if slave['sub_hj'] > 0: slave['sub_hj_xp'] += func('jo9_learning_xp', (sex[\"girl_attention\"] - 2), slave['jo9_learning_trait'], 'sub_hj')\r\n! JO9 MOD END COG_DIRECT_120",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "  if assistant['sub_hj'] > 0: assistant['sub_hj_xp'] += sex[\"girl_attention\"] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_121 | 2026-10-16_innate_learning_traits\r\n  if assistant['sub_hj'] > 0: assistant['sub_hj_xp'] += func('jo9_learning_xp', (sex[\"girl_attention\"] - 2), assistant['jo9_learning_trait'], 'sub_hj')\r\n! JO9 MOD END COG_DIRECT_121",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "  if slave['sub_paizuri'] > 0: slave['sub_paizuri_xp'] += sex[\"girl_attention\"] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_122 | 2026-10-16_innate_learning_traits\r\n  if slave['sub_paizuri'] > 0: slave['sub_paizuri_xp'] += func('jo9_learning_xp', (sex[\"girl_attention\"] - 2), slave['jo9_learning_trait'], 'sub_paizuri')\r\n! JO9 MOD END COG_DIRECT_122",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "  if assistant['sub_paizuri'] > 0: assistant['sub_paizuri_xp'] += sex[\"girl_attention\"] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_123 | 2026-10-16_innate_learning_traits\r\n  if assistant['sub_paizuri'] > 0: assistant['sub_paizuri_xp'] += func('jo9_learning_xp', (sex[\"girl_attention\"] - 2), assistant['jo9_learning_trait'], 'sub_paizuri')\r\n! JO9 MOD END COG_DIRECT_123",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "  if slave['sub_fj'] > 0: slave['sub_fj_xp'] += sex[\"girl_attention\"] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_124 | 2026-10-16_innate_learning_traits\r\n  if slave['sub_fj'] > 0: slave['sub_fj_xp'] += func('jo9_learning_xp', (sex[\"girl_attention\"] - 2), slave['jo9_learning_trait'], 'sub_fj')\r\n! JO9 MOD END COG_DIRECT_124",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "  if assistant['sub_fj'] > 0: assistant['sub_fj_xp'] += sex[\"girl_attention\"] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_125 | 2026-10-16_innate_learning_traits\r\n  if assistant['sub_fj'] > 0: assistant['sub_fj_xp'] += func('jo9_learning_xp', (sex[\"girl_attention\"] - 2), assistant['jo9_learning_trait'], 'sub_fj')\r\n! JO9 MOD END COG_DIRECT_125",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "   if diligence > slave[\"sub_humiliation\"] and sex_done_today[sex_interaction] = 0: slave[\"sub_humiliation_xp\"] += sex[\"girl_attention\"] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_126 | 2026-10-16_innate_learning_traits\r\n   if diligence > slave[\"sub_humiliation\"] and sex_done_today[sex_interaction] = 0: slave[\"sub_humiliation_xp\"] += func('jo9_learning_xp', (sex[\"girl_attention\"] - 2), slave['jo9_learning_trait'], 'sub_humiliation')\r\n! JO9 MOD END COG_DIRECT_126",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "   if diligence > assistant[\"sub_humiliation\"] and sex_done_today[sex_interaction] = 0: assistant[\"sub_humiliation_xp\"] += sex[\"girl_attention\"] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_127 | 2026-10-16_innate_learning_traits\r\n   if diligence > assistant[\"sub_humiliation\"] and sex_done_today[sex_interaction] = 0: assistant[\"sub_humiliation_xp\"] += func('jo9_learning_xp', (sex[\"girl_attention\"] - 2), assistant['jo9_learning_trait'], 'sub_humiliation')\r\n! JO9 MOD END COG_DIRECT_127",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "   if diligence > slave[\"sub_mazo\"] and sex_done_today[sex_interaction] = 0: slave[\"sub_mazo_xp\"] += sex[\"girl_attention\"] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_128 | 2026-10-16_innate_learning_traits\r\n   if diligence > slave[\"sub_mazo\"] and sex_done_today[sex_interaction] = 0: slave[\"sub_mazo_xp\"] += func('jo9_learning_xp', (sex[\"girl_attention\"] - 2), slave['jo9_learning_trait'], 'sub_mazo')\r\n! JO9 MOD END COG_DIRECT_128",
+      "count": 2
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "   if diligence > assistant[\"sub_mazo\"] and sex_done_today[sex_interaction] = 0: assistant[\"sub_mazo_xp\"] += sex[\"girl_attention\"] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_129 | 2026-10-16_innate_learning_traits\r\n   if diligence > assistant[\"sub_mazo\"] and sex_done_today[sex_interaction] = 0: assistant[\"sub_mazo_xp\"] += func('jo9_learning_xp', (sex[\"girl_attention\"] - 2), assistant['jo9_learning_trait'], 'sub_mazo')\r\n! JO9 MOD END COG_DIRECT_129",
+      "count": 2
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "  if slave['sub_piss'] > 0: slave['sub_piss_xp'] += sex[\"girl_attention\"] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_130 | 2026-10-16_innate_learning_traits\r\n  if slave['sub_piss'] > 0: slave['sub_piss_xp'] += func('jo9_learning_xp', (sex[\"girl_attention\"] - 2), slave['jo9_learning_trait'], 'sub_piss')\r\n! JO9 MOD END COG_DIRECT_130",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "  if assistant['sub_piss'] > 0: assistant['sub_piss_xp'] += sex[\"girl_attention\"] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_131 | 2026-10-16_innate_learning_traits\r\n  if assistant['sub_piss'] > 0: assistant['sub_piss_xp'] += func('jo9_learning_xp', (sex[\"girl_attention\"] - 2), assistant['jo9_learning_trait'], 'sub_piss')\r\n! JO9 MOD END COG_DIRECT_131",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "  if slave['anal_stretch'] > 0: slave['anal_stretch_xp'] += sex[\"girl_attention\"] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_132 | 2026-10-16_innate_learning_traits\r\n  if slave['anal_stretch'] > 0: slave['anal_stretch_xp'] += func('jo9_learning_xp', (sex[\"girl_attention\"] - 2), slave['jo9_learning_trait'], 'anal_stretch')\r\n! JO9 MOD END COG_DIRECT_132",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "  if assistant['anal_stretch'] > 0: assistant['anal_stretch_xp'] += sex[\"girl_attention\"] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_133 | 2026-10-16_innate_learning_traits\r\n  if assistant['anal_stretch'] > 0: assistant['anal_stretch_xp'] += func('jo9_learning_xp', (sex[\"girl_attention\"] - 2), assistant['jo9_learning_trait'], 'anal_stretch')\r\n! JO9 MOD END COG_DIRECT_133",
+      "count": 1
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "  if slave['sub_bukkake'] > 0: slave['sub_bukkake_xp'] += sex[\"girl_attention\"] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_134 | 2026-10-16_innate_learning_traits\r\n  if slave['sub_bukkake'] > 0: slave['sub_bukkake_xp'] += func('jo9_learning_xp', (sex[\"girl_attention\"] - 2), slave['jo9_learning_trait'], 'sub_bukkake')\r\n! JO9 MOD END COG_DIRECT_134",
+      "count": 2
+    },
+    {
+      "location": "sex_interaction_woman",
+      "field": "body",
+      "old": "  if assistant['sub_bukkake'] > 0: assistant['sub_bukkake_xp'] += sex[\"girl_attention\"] - 2",
+      "new": "! JO9 MOD START COG_DIRECT_135 | 2026-10-16_innate_learning_traits\r\n  if assistant['sub_bukkake'] > 0: assistant['sub_bukkake_xp'] += func('jo9_learning_xp', (sex[\"girl_attention\"] - 2), assistant['jo9_learning_trait'], 'sub_bukkake')\r\n! JO9 MOD END COG_DIRECT_135",
+      "count": 2
+    },
+    {
+      "location": "interaction_result",
+      "field": "body",
+      "old": "    slave[$lecture_theme] += skill_rise",
+      "new": "! JO9 MOD START COG_LECTURE_SLAVE | 2026-10-16_innate_learning_traits\r\n    slave[$lecture_theme] += func('jo9_learning_xp', (skill_rise), slave['jo9_learning_trait'], $lecture_theme)\r\n! JO9 MOD END COG_LECTURE_SLAVE",
+      "count": 1
+    },
+    {
+      "location": "interaction_result",
+      "field": "body",
+      "old": "    assistant[$lecture_theme] += skill_rise",
+      "new": "! JO9 MOD START COG_LECTURE_ASSISTANT | 2026-10-16_innate_learning_traits\r\n    assistant[$lecture_theme] += func('jo9_learning_xp', (skill_rise), assistant['jo9_learning_trait'], $lecture_theme)\r\n! JO9 MOD END COG_LECTURE_ASSISTANT",
+      "count": 1
+    },
+    {
+      "location": "interaction_result",
+      "field": "body",
+      "old": "  dynamic '<<$target_skill>> += skill_rise'",
+      "new": "! JO9 MOD START COG_COMPETITION_SLAVE | 2026-10-16_innate_learning_traits\r\n  dynamic '<<$target_skill>> += func(''jo9_learning_xp'', (skill_rise), slave[''jo9_learning_trait''], $target_skill)'\r\n! JO9 MOD END COG_COMPETITION_SLAVE",
+      "count": 1
+    },
+    {
+      "location": "interaction_result",
+      "field": "body",
+      "old": "  dynamic '<<$target_skill_two>> += skill_rise'",
+      "new": "! JO9 MOD START COG_COMPETITION_ASSISTANT | 2026-10-16_innate_learning_traits\r\n  dynamic '<<$target_skill_two>> += func(''jo9_learning_xp'', (skill_rise), assistant[''jo9_learning_trait''], $target_skill_two)'\r\n! JO9 MOD END COG_COMPETITION_ASSISTANT",
+      "count": 1
+    }
+  ],
+  "add_locations": [
+    {
+      "name": "jo9_learning_xp",
+      "desc": "",
+      "body": "! JO9 MOD START COG_XP_HELPER | 2026-10-16_innate_learning_traits\r\n! args[0]: 이번에 새로 얻는 경험치, args[1]: 특성 값, $args[2]: 성장 항목.\r\n! 누적 경험치·등급·자아를 직접 바꾸지 않고 보정된 증가량만 반환한다.\r\nresult = args[0]\r\nif args[0] > 0 and $args[2] ! 'stamina' and $args[2] ! 'slave_rate[\"stamina\"]' and $args[2] ! 'assistant_rate[\"stamina\"]':\r\n if args[1] = 1:\r\n  result = args[0] * 2\r\n elseif args[1] = -1:\r\n  result = args[0] / 2\r\n  if result < 1: result = 1\r\n end\r\nend\r\n! JO9 MOD END COG_XP_HELPER",
+      "actions": []
+    }
+  ]
+}

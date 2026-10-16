@@ -1,0 +1,201 @@
+{
+  "id": "2026-10-16_meiki_tentacle_success_safe_icon",
+  "description": "Use approved gray safe-day icon; virginity=4 guarantees collection success in existing mist-creature milking routes; nine dedicated dialogue placeholders. Preserve discovery, refusal, resource amounts, and training thresholds.",
+  "target": "game/jack.qsp",
+  "edits": [
+    {
+      "location": "sjm_UI_UIadds",
+      "field": "body",
+      "old": "content\\pic\\ui\\jon-UIadds\\Fer_안전.png",
+      "new": "content\\pic\\ui\\Fer_PregS.png",
+      "count": 2
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "\t\tif slave['sub_tentacles'] > tentacle_size:\r\n",
+      "new": "\t\tif slave['sub_tentacles'] > tentacle_size or slave['virginity'] = 4:\r\n",
+      "count": 1
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "\t\tif assistant['sub_tentacles'] > tentacle_size:\r\n",
+      "new": "\t\tif assistant['sub_tentacles'] > tentacle_size or assistant['virginity'] = 4:\r\n",
+      "count": 1
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "\t\tif room1['sub_tentacles'] > tentacle_size:\r\n",
+      "new": "\t\tif room1['sub_tentacles'] > tentacle_size or room1['virginity'] = 4:\r\n",
+      "count": 1
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "\t\tif room2['sub_tentacles'] > tentacle_size:\r\n",
+      "new": "\t\tif room2['sub_tentacles'] > tentacle_size or room2['virginity'] = 4:\r\n",
+      "count": 1
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "\t\tif room3['sub_tentacles'] > tentacle_size:\r\n",
+      "new": "\t\tif room3['sub_tentacles'] > tentacle_size or room3['virginity'] = 4:\r\n",
+      "count": 1
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "\t\tif room4['sub_tentacles'] > tentacle_size:\r\n",
+      "new": "\t\tif room4['sub_tentacles'] > tentacle_size or room4['virginity'] = 4:\r\n",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "\tif slave['sub_tentacles'] > tentacle_size:\r\n",
+      "new": "\tif slave['sub_tentacles'] > tentacle_size or slave['virginity'] = 4:\r\n",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "\t\t$text = '  <<$slave_name>>는 양동이를 들고 안개 괴물 우리로 간다. 이전 경험 덕분에 그녀는 자제력을 잃지 않고 해낸다. 만족할 줄 모르는 미끈한 촉수 몇 개가 그녀의 모든 구멍을 파고드는 동안, 그녀는 다른 촉수들을 붙잡고 그것들을 양동이 안으로 직접 짜낸다. 획득한 안개 괴물 정액: <<semen_gain[max(0, tentacle_size - spawn_milked)]>>'",
+      "new": "\t\tif slave['virginity'] = 4:\r\n\t\t\t$text = '%명기착정성공'\r\n\t\telse\r\n\t\t\t$text = '  <<$slave_name>>는 양동이를 들고 안개 괴물 우리로 간다. 이전 경험 덕분에 그녀는 자제력을 잃지 않고 해낸다. 만족할 줄 모르는 미끈한 촉수 몇 개가 그녀의 모든 구멍을 파고드는 동안, 그녀는 다른 촉수들을 붙잡고 그것들을 양동이 안으로 직접 짜낸다. 획득한 안개 괴물 정액: <<semen_gain[max(0, tentacle_size - spawn_milked)]>>'\r\n\t\tend",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "\tif assistant['sub_tentacles'] > tentacle_size:\r\n",
+      "new": "\tif assistant['sub_tentacles'] > tentacle_size or assistant['virginity'] = 4:\r\n",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "\t\t$text = '  <<$assistant_name>>는 양동이를 들고 안개 괴물 우리로 간다. 이전 경험 덕분에 그녀는 자제력을 잃지 않고 해낸다. 만족할 줄 모르는 미끈한 촉수 몇 개가 그녀의 모든 구멍을 파고드는 동안, 그녀는 다른 촉수들을 붙잡고 그것들을 양동이 안으로 직접 짜낸다. 획득한 안개 괴물 정액: <<semen_gain[max(0, tentacle_size - spawn_milked)]>>'",
+      "new": "\t\tif assistant['virginity'] = 4:\r\n\t\t\t$text = '%명기착정성공'\r\n\t\telse\r\n\t\t\t$text = '  <<$assistant_name>>는 양동이를 들고 안개 괴물 우리로 간다. 이전 경험 덕분에 그녀는 자제력을 잃지 않고 해낸다. 만족할 줄 모르는 미끈한 촉수 몇 개가 그녀의 모든 구멍을 파고드는 동안, 그녀는 다른 촉수들을 붙잡고 그것들을 양동이 안으로 직접 짜낸다. 획득한 안개 괴물 정액: <<semen_gain[max(0, tentacle_size - spawn_milked)]>>'\r\n\t\tend",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "\tif room1['sub_tentacles'] > tentacle_size:\r\n",
+      "new": "\tif room1['sub_tentacles'] > tentacle_size or room1['virginity'] = 4:\r\n",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "\t\t$text = '<<$room1_name>>(은)는 손에 양동이를 들고 안개 괴물 우리로 다가갔다. 경험이 있던 탓인지, 이번엔 다행히도 기절은 하지 않았다. 끝없는 욕망을 품은 촉수들이, 온 몸 골이란 골을 탐닉하며 쑤셔대던 중, 손으로 하날 낚아채서 양동이로 쳐박았다.<br><br> 안개 괴물 산란액 획득량 : <<semen_gain[max(0, tentacle_size - spawn_milked)]>>'",
+      "new": "\t\tif room1['virginity'] = 4:\r\n\t\t\t$text = '%명기착정성공'\r\n\t\telse\r\n\t\t\t$text = '<<$room1_name>>(은)는 손에 양동이를 들고 안개 괴물 우리로 다가갔다. 경험이 있던 탓인지, 이번엔 다행히도 기절은 하지 않았다. 끝없는 욕망을 품은 촉수들이, 온 몸 골이란 골을 탐닉하며 쑤셔대던 중, 손으로 하날 낚아채서 양동이로 쳐박았다.<br><br> 안개 괴물 산란액 획득량 : <<semen_gain[max(0, tentacle_size - spawn_milked)]>>'\r\n\t\tend",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "\tif room2['sub_tentacles'] > tentacle_size:\r\n",
+      "new": "\tif room2['sub_tentacles'] > tentacle_size or room2['virginity'] = 4:\r\n",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "\t\t$text = '<<$room2_name>>(은)는 손에 양동이를 들고 안개 괴물 우리로 다가갔다. 경험이 있던 탓인지, 이번엔 다행히도 기절은 하지 않았다. 끝없는 욕망을 품은 촉수들이, 온 몸 골이란 골을 탐닉하며 쑤셔대던 중, 손으로 하날 낚아채서 양동이로 쳐박았다.<br><br> 안개 괴물 산란액 획득량 : <<semen_gain[max(0, tentacle_size - spawn_milked)]>>'",
+      "new": "\t\tif room2['virginity'] = 4:\r\n\t\t\t$text = '%명기착정성공'\r\n\t\telse\r\n\t\t\t$text = '<<$room2_name>>(은)는 손에 양동이를 들고 안개 괴물 우리로 다가갔다. 경험이 있던 탓인지, 이번엔 다행히도 기절은 하지 않았다. 끝없는 욕망을 품은 촉수들이, 온 몸 골이란 골을 탐닉하며 쑤셔대던 중, 손으로 하날 낚아채서 양동이로 쳐박았다.<br><br> 안개 괴물 산란액 획득량 : <<semen_gain[max(0, tentacle_size - spawn_milked)]>>'\r\n\t\tend",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "\tif room3['sub_tentacles'] > tentacle_size:\r\n",
+      "new": "\tif room3['sub_tentacles'] > tentacle_size or room3['virginity'] = 4:\r\n",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "\t\t$text = '<<$room3_name>>(은)는 손에 양동이를 들고 안개 괴물 우리로 다가갔다. 경험이 있던 탓인지, 이번엔 다행히도 기절은 하지 않았다. 끝없는 욕망을 품은 촉수들이, 온 몸 골이란 골을 탐닉하며 쑤셔대던 중, 손으로 하날 낚아채서 양동이로 쳐박았다.<br><br> 안개 괴물 산란액 획득량 : <<semen_gain[max(0, tentacle_size - spawn_milked)]>>'",
+      "new": "\t\tif room3['virginity'] = 4:\r\n\t\t\t$text = '%명기착정성공'\r\n\t\telse\r\n\t\t\t$text = '<<$room3_name>>(은)는 손에 양동이를 들고 안개 괴물 우리로 다가갔다. 경험이 있던 탓인지, 이번엔 다행히도 기절은 하지 않았다. 끝없는 욕망을 품은 촉수들이, 온 몸 골이란 골을 탐닉하며 쑤셔대던 중, 손으로 하날 낚아채서 양동이로 쳐박았다.<br><br> 안개 괴물 산란액 획득량 : <<semen_gain[max(0, tentacle_size - spawn_milked)]>>'\r\n\t\tend",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "\tif room4['sub_tentacles'] > tentacle_size:\r\n",
+      "new": "\tif room4['sub_tentacles'] > tentacle_size or room4['virginity'] = 4:\r\n",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "\t\t$text = '<<$room4_name>>(은)는 손에 양동이를 들고 안개 괴물 우리로 다가갔다. 경험이 있던 탓인지, 이번엔 다행히도 기절은 하지 않았다. 끝없는 욕망을 품은 촉수들이, 온 몸 골이란 골을 탐닉하며 쑤셔대던 중, 손으로 하날 낚아채서 양동이로 쳐박았다.<br><br> 안개 괴물 산란액 획득량 : <<semen_gain[max(0, tentacle_size - spawn_milked)]>>'",
+      "new": "\t\tif room4['virginity'] = 4:\r\n\t\t\t$text = '%명기착정성공'\r\n\t\telse\r\n\t\t\t$text = '<<$room4_name>>(은)는 손에 양동이를 들고 안개 괴물 우리로 다가갔다. 경험이 있던 탓인지, 이번엔 다행히도 기절은 하지 않았다. 끝없는 욕망을 품은 촉수들이, 온 몸 골이란 골을 탐닉하며 쑤셔대던 중, 손으로 하날 낚아채서 양동이로 쳐박았다.<br><br> 안개 괴물 산란액 획득량 : <<semen_gain[max(0, tentacle_size - spawn_milked)]>>'\r\n\t\tend",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "\t\tif assistant['sub_tentacles'] > tentacle_size:\r\n",
+      "new": "\t\tif assistant['sub_tentacles'] > tentacle_size or assistant['virginity'] = 4:\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "\t\t\t$text[1] = '  <<$assistant_name>>는 바가지 통을 들고 괴물가 있는 우리로 들어간다. 이전 경험 덕분에, 그녀는 간신히 이성을 잃지 않는다. 굶주린 미끈한 촉수 몇 가닥이 그녀의 모든 구멍을 파고드는 동안, 그녀는 다른 촉수들을 붙잡아 바가지에 직접 착유한다. 획득한 괴물의 정액: <<semen_gain[max(0, tentacle_size - spawn_milked)]>>'",
+      "new": "\t\t\tif assistant['virginity'] = 4:\r\n\t\t\t\t$text[1] = '%명기착정성공'\r\n\t\t\telse\r\n\t\t\t\t$text[1] = '  <<$assistant_name>>는 바가지 통을 들고 괴물가 있는 우리로 들어간다. 이전 경험 덕분에, 그녀는 간신히 이성을 잃지 않는다. 굶주린 미끈한 촉수 몇 가닥이 그녀의 모든 구멍을 파고드는 동안, 그녀는 다른 촉수들을 붙잡아 바가지에 직접 착유한다. 획득한 괴물의 정액: <<semen_gain[max(0, tentacle_size - spawn_milked)]>>'\r\n\t\t\tend",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "\t\tif slave['sub_tentacles'] > tentacle_size:\r\n",
+      "new": "\t\tif slave['sub_tentacles'] > tentacle_size or slave['virginity'] = 4:\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "\t\t\t$text[1] = '  <<$slave_name>>는 바가지 통을 들고 괴물가 있는 우리로 들어간다. 이전 경험 덕분에, 그녀는 간신히 이성을 잃지 않는다. 굶주린 미끈한 촉수 몇 가닥이 그녀의 모든 구멍을 파고드는 동안, 그녀는 다른 촉수들을 붙잡아 바가지에 직접 착유한다. 획득한 괴물의 정액: <<semen_gain[max(0, tentacle_size - spawn_milked)]>>'",
+      "new": "\t\t\tif slave['virginity'] = 4:\r\n\t\t\t\t$text[1] = '%명기착정성공'\r\n\t\t\telse\r\n\t\t\t\t$text[1] = '  <<$slave_name>>는 바가지 통을 들고 괴물가 있는 우리로 들어간다. 이전 경험 덕분에, 그녀는 간신히 이성을 잃지 않는다. 굶주린 미끈한 촉수 몇 가닥이 그녀의 모든 구멍을 파고드는 동안, 그녀는 다른 촉수들을 붙잡아 바가지에 직접 착유한다. 획득한 괴물의 정액: <<semen_gain[max(0, tentacle_size - spawn_milked)]>>'\r\n\t\t\tend",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "\t\t\tif dynslave['sub_tentacles'] > tentacle_size:\r\n",
+      "new": "\t\t\tif dynslave['sub_tentacles'] > tentacle_size or dynslave['virginity'] = 4:\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "\t\t\tif dynslave['sub_tentacles'] > tentacle_size or dynslave['virginity'] = 4:\r\n\t\t\t\ttentacle_hp += 2\r\n\t\t\t\tspawn_semen += semen_gain[max(0, tentacle_size - spawn_milked)]\r\n\t\t\tend",
+      "new": "\t\t\tif dynslave['sub_tentacles'] > tentacle_size or dynslave['virginity'] = 4:\r\n\t\t\t\ttentacle_hp += 2\r\n\t\t\t\tspawn_semen += semen_gain[max(0, tentacle_size - spawn_milked)]\r\n\t\t\t\tif dynslave['virginity'] = 4: $text[1] = '%명기착정성공'\r\n\t\t\tend",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "code_defined['interaction_relaxed_vaginal'] = 0\r\n",
+      "new": "code_defined['interaction_relaxed_vaginal'] = 0\r\n! JO9_MEIKI_TENTACLE_V1: refresh the cached lesson for saved games.\r\ncode_defined['interaction_lesson_tentacles'] = 0\r\n",
+      "count": 1
+    }
+  ],
+  "targets": {
+    "work": {
+      "qsp": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+      "before": "dc9668a474213ddbb349ddac821e2a96fc4c912cb4bc23b57aaff41ea2be98ec",
+      "after": "c037516a65b2f24606f2b9171d6e1292c32c7d38fcd0b2804dc430829a064795"
+    },
+    "full": {
+      "qsp": "G:/somi/Jack O Nine Tails v2.4 Kor_Full/game/jack.qsp",
+      "before": "3d8fd3c0439b187b7afc220f9c6d12b06e9837561e1442ffb820a75a51006b9b",
+      "after": "1e3ef5e1a8ebf434168bdb0b337d128380744ac94ab2799c6ff9b0e4fca5ef65"
+    }
+  }
+}

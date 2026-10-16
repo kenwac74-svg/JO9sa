@@ -1,0 +1,29 @@
+{
+  "id": "2026-10-17_editor_alignment",
+  "description": "노예 속성정보 등급 안내 정정, 편집기 여섯 페이지 정렬 범위, 명기 감소 시 발견 기록 동기화. 다른 조건과 시스템은 유지.",
+  "before_sha256": "efc9fbdd38bac9a3f9a708a818b5f8fd2a59fcc2511525eea79a841a0d3277d6",
+  "after_sha256": "9772e2fafc029ad183ca5ed7544c870257c645f849f7cabd4b0b9f1e1a5804bf",
+  "edits": [
+    {
+      "location": "#help_msg",
+      "field": "body",
+      "old": "! JO9 MOD START RANK_HELP_TABLE | 2026-10-17_rank_help_table\r\n! 등급 안내를 표로 배치한다. 기술 점수와 승급 계산은 변경하지 않는다.\r\n$rank_help_2 = '<center style=\"font-size:16px;line-height:20px\"><font face=\"맑은 고딕\" size=\"4\" color=\"#222222\"><b>기술 등급 안내</b><br><table align=\"center\" width=\"270\" border=\"0\" cellpadding=\"2\" cellspacing=\"0\" style=\"font-size:16px;line-height:20px\"><tr><td align=\"center\"><b>점수</b></td><td align=\"center\"><b>단계</b></td><td align=\"center\"><b>기술 등급</b></td></tr>'\r\n$rank_help_2 += '<tr><td align=\"center\">0</td><td align=\"center\">최하</td><td align=\"center\"><font color=\"#cd0000\"><b>F-</b></font></td></tr>'\r\n$rank_help_2 += '<tr><td align=\"center\">1</td><td align=\"center\">하등</td><td align=\"center\"><font color=\"#EA0090\"><b>D-</b></font></td></tr>'\r\n$rank_help_2 += '<tr><td align=\"center\">2</td><td align=\"center\">일반</td><td align=\"center\"><font color=\"#6B0084\"><b>C-</b></font></td></tr>'\r\n$rank_help_2 += '<tr><td align=\"center\">3</td><td align=\"center\">전문</td><td align=\"center\"><font color=\"#0000D8\"><b>B+</b></font></td></tr>'\r\n$rank_help_2 += '<tr><td align=\"center\">4</td><td align=\"center\">상등</td><td align=\"center\"><font color=\"#009FEF\"><b>A+</b></font></td></tr>'\r\n$rank_help_2 += '<tr><td align=\"center\">5</td><td align=\"center\">최상</td><td align=\"center\"><font color=\"#009900\"><b>S+</b></font></td></tr>'\r\n$rank_help_2 += '</table><font size=\"3\">종합등급은 별도의 11단계(F- ~ S+)입니다.<br>일부 주인공 전문기술은 S++까지 있습니다.</font></font></center>'\r\n! JO9 MOD END RANK_HELP_TABLE",
+      "new": "! JO9 MOD START ATTRIBUTE_RANK_HELP | 2026-10-17_editor_alignment\r\n! 속성정보 물음표의 두 번째 안내창. 원래 점수·단계·등급 내용을 표로 배치한다.\r\n$rank_help_2 = '<center style=\"font-size:16px;line-height:20px\"><font face=\"맑은 고딕\" size=\"4\" color=\"#222222\"><b>속성정보 등급 안내</b><br><table align=\"center\" width=\"270\" border=\"0\" cellpadding=\"2\" cellspacing=\"0\" style=\"font-size:16px;line-height:20px\"><tr><td align=\"center\"><b>점수</b></td><td align=\"center\"><b>단계</b></td><td align=\"center\"><b>등급</b></td></tr>'\r\n$rank_help_2 += '<tr><td align=\"center\">0</td><td align=\"center\">최하</td><td align=\"center\"><font color=\"#cd0000\"><b>F</b></font></td></tr>'\r\n$rank_help_2 += '<tr><td align=\"center\">1</td><td align=\"center\">하등</td><td align=\"center\"><font color=\"#EA0090\"><b>D</b></font></td></tr>'\r\n$rank_help_2 += '<tr><td align=\"center\">2</td><td align=\"center\">일반</td><td align=\"center\"><font color=\"#6B0084\"><b>C</b></font></td></tr>'\r\n$rank_help_2 += '<tr><td align=\"center\">3</td><td align=\"center\">전문</td><td align=\"center\"><font color=\"#0000D8\"><b>B</b></font></td></tr>'\r\n$rank_help_2 += '<tr><td align=\"center\">4</td><td align=\"center\">상등</td><td align=\"center\"><font color=\"#009FEF\"><b>A</b></font></td></tr>'\r\n$rank_help_2 += '<tr><td align=\"center\">5</td><td align=\"center\">최상</td><td align=\"center\"><font color=\"#009900\"><b>S</b></font></td></tr>'\r\n$rank_help_2 += '</table><font size=\"3\">속성정보 제목 옆의 종합등급은<br>F- ~ S+의 11단계로 표시됩니다.</font></font></center>'\r\n! JO9 MOD END ATTRIBUTE_RANK_HELP",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "\tif slave['virginity'] > 0: $setting_display_r += '<a href = \"EXEC: slave[''virginity''] -= 1 & gt ''menu_form''\"><img src=\"content/pic/buttons/Minus_small.png\"></a>'",
+      "new": "! JO9 MOD START EDITOR_MEIKI_DECREASE | 2026-10-17_editor_alignment\r\n! 명기(4)에서 값을 내릴 때 발견 기록도 해제하여 화면 갱신 후 4로 복원되지 않게 한다.\r\n\tif slave['virginity'] = 4:\r\n\t\t$setting_display_r += '<a href = \"EXEC: slave[''jo9_meiki_known''] = 0 & slave[''virginity''] -= 1 & gt ''menu_form''\"><img src=\"content/pic/buttons/Minus_small.png\"></a>'\r\n\telseif slave['virginity'] > 0:\r\n\t\t$setting_display_r += '<a href = \"EXEC: slave[''virginity''] -= 1 & gt ''menu_form''\"><img src=\"content/pic/buttons/Minus_small.png\"></a>'\r\n\tend\r\n! JO9 MOD END EDITOR_MEIKI_DECREASE",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "\r\ngt 'main_screen'",
+      "new": "\r\n! JO9 MOD START SLAVE_EDITOR_LAYOUT | 2026-10-17_editor_alignment\r\n! 편집기 여섯 페이지에만 배치용 CSS 범위를 추가한다. 기존 링크·증감 조건은 유지한다.\r\nif menu_form >= 2101 and menu_form <= 2106:\r\n\t$setting_display = '<div class=\"jo9-slave-editor\">' + $setting_display + '</div>'\r\n\t$setting_display_r = '<div class=\"jo9-slave-editor\">' + $setting_display_r + '</div>'\r\n\t$setting_display_c = '<div class=\"jo9-editor-nav\">' + $setting_display_c + '</div>'\r\n\t$setting_display_c2 = '<div class=\"jo9-editor-nav\">' + $setting_display_c2 + '</div>'\r\nend\r\n! JO9 MOD END SLAVE_EDITOR_LAYOUT\r\n\r\ngt 'main_screen'",
+      "count": 1
+    }
+  ]
+}

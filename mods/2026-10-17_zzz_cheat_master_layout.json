@@ -1,0 +1,22 @@
+{
+  "id": "2026-10-17_zzz_cheat_master_layout",
+  "description": "치트 설정/주인 편집기 배치 정렬, 동일한 뒤로 버튼 중복 출력 하나 제거. 기능·수치·기타 링크 유지.",
+  "before_sha256": "a870eb0b203fe0466afbb56bfbec6e45901e84a0af8efebb3f64a3e1f5b54a65",
+  "after_sha256": "16a954528f33a0f544d048c715632f7ef65e069aa17c673b749479850379fdb8",
+  "edits": [
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "\t$setting_display_c += '<br><div id=\"under_cheats\">뒤로 <br><div id = \"clear\"><a href = \"EXEC: gs ''$newloc'' & menu_form = 2000 & gt ''menu_form''\"><img src = \"content\\pic\\clear.png\"></a></div></div>'\r\n\t\r\n\t\r\n! JO9 MOD START J9M2718",
+      "new": "! JO9 MOD START CHEAT_SINGLE_BACK | 2026-10-17_zzz_cheat_master_layout\r\n! 동일한 뒤로 버튼은 이 화면의 마지막 출력부에 한 번만 남긴다.\r\n! JO9 MOD END CHEAT_SINGLE_BACK\r\n\t\r\n\t\r\n! JO9 MOD START J9M2718",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "\r\ngt 'main_screen'",
+      "new": "\r\n! JO9 MOD START CHEAT_MASTER_LAYOUT | 2026-10-17_zzz_cheat_master_layout\r\n! 두 화면에 배치 클래스만 추가한다. 주인 편집기는 기존 편집기 스타일을 공유한다.\r\nif menu_form = 2100:\r\n\t$setting_display = '<div class=\"jo9-cheat-menu jo9-editor-nav\">' + $setting_display + '</div>'\r\n\t$setting_display_r = '<div class=\"jo9-cheat-menu jo9-editor-nav\">' + $setting_display_r + '</div>'\r\nend\r\nif menu_form = 2110:\r\n\t$setting_display = '<div class=\"jo9-slave-editor jo9-master-editor\">' + $setting_display + '</div>'\r\n\t$setting_display_r = '<div class=\"jo9-slave-editor jo9-master-editor\">' + $setting_display_r + '</div>'\r\nend\r\nif menu_form = 2100 or menu_form = 2110:\r\n\t$setting_display_c = '<div class=\"jo9-editor-nav\">' + $setting_display_c + '</div>'\r\n\t$setting_display_c2 = '<div class=\"jo9-editor-nav\">' + $setting_display_c2 + '</div>'\r\nend\r\n! JO9 MOD END CHEAT_MASTER_LAYOUT\r\n\r\ngt 'main_screen'",
+      "count": 1
+    }
+  ]
+}

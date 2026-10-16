@@ -154,20 +154,26 @@ function scan(raw) {
   for (const site of uiSites) {
     const source = get(site.location);
     const start = once(source.body, new RegExp(`^[ \\t]*if ${site.role}\\['virginity'\\] = 1:[ \\t]*$`, 'gm'), `${site.location}/${site.role} 상태표`);
-    const section = source.body.slice(start.index), rows = section.split('\n');
+    // JO9 MOD START STATE_EDITOR_UI_COMMENT_SCAN | 2026-10-17
+    const section = source.body.slice(start.index), rows = [];
     let offset = start.index;
+    for (const text of section.split('\n')) {
+      if (text.trim() && !/^[ \t]*!/.test(text)) rows.push({ text, offset });
+      offset += text.length + 1;
+    }
+    // JO9 MOD END STATE_EDITOR_UI_COMMENT_SCAN
     const codes = [1, 3, 4, 0, 2];
     for (let i = 0; i < codes.length; i++) {
-      const code = codes[i], condition = rows[i * 2], markup = rows[i * 2 + 1];
+      const code = codes[i], condition = rows[i * 2]?.text, markup = rows[i * 2 + 1]?.text;
       const expected = i === 4 ? /^\s*else\s*$/ : new RegExp(`^\\s*${i ? 'elseif' : 'if'} ${site.role}\\['virginity'\\] ${code === 0 ? '< 2' : '= ' + code}:[ \\t]*$`);
       if (!expected.test((condition || '').replace(/\r$/, '')) || !markup) error(`${site.location}/${site.role}: 상태표 분기 연결을 확인할 수 없습니다.`);
       const tip = once(markup, /tooltip-data="([^"\r\n]*)"/g, '상태 툴팁'), icon = once(markup, /src="([^"\r\n]*)"/g, '상태 아이콘');
-      const markupOffset = offset + condition.length + 1;
+      const markupOffset = rows[i * 2 + 1].offset;
       for (const [key, match] of [['tooltip', tip], [site.family, icon]]) {
         match.index += markupOffset;
         uiBindings[code][key].push(captured(source, match, 1, { role: site.role }));
       }
-      offset = markupOffset + markup.length + 1;
+      // Binding offsets refer to the unchanged original QSP source.
     }
   }
   for (let code = 0; code <= 4; code++) {
@@ -176,18 +182,30 @@ function scan(raw) {
   }
   const dynamic = sources.get('#dynamic');
   if (dynamic) {
-    const xp = once(dynamic.body, /if func\('jo9_meiki_training_bonus', 'dynslave', \$subskill\) = 1: dynamic \$replace\('<<\$subskill_xp>> \+= (\d+)', 'slave', 'dynslave'\)/g, '교육 경험치');
-    add({ id: 'training.xp', label: '기존 지정 교육의 추가 XP', group: '연결 효과', kind: 'number', min: 0, max: 1000, step: 1, help: '기존 보너스 자격 검사·실패 분기·승급 기준을 보존하고 추가 XP 수치만 바꿉니다. 저장된 동적 정의 갱신을 위해 기존 캐시 버전이 자동 증가합니다.' }, [captured(dynamic, xp, 1)]);
+    // JO9 MOD START STATE_EDITOR_LEARNING_XP | 2026-10-17
+    const xp = once(dynamic.body, /if func\('jo9_meiki_training_bonus', 'dynslave', \$subskill\) = 1: (?:dynamic \$replace\('<<\$subskill_xp>> \+= (\d+)', 'slave', 'dynslave'\)|jo9_learning_gain \+= (\d+)[ \t]*$)/gm, '교육 경험치');
+    add({ id: 'training.xp', label: '기존 지정 교육의 추가 XP', group: '연결 효과', kind: 'number', min: 0, max: 1000, step: 1, help: '기존 보너스 자격 검사·실패 분기·승급 기준을 보존하고 추가 XP 수치만 바꿉니다. 저장된 동적 정의 갱신을 위해 기존 캐시 버전이 자동 증가합니다.' }, [captured(dynamic, xp, xp[1] === undefined ? 2 : 1)]);
+    // JO9 MOD END STATE_EDITOR_LEARNING_XP
   } else warnings.push('교육 XP 정의가 없어 편집 연결을 제공하지 않습니다.');
   const saleSpecs = [
     { id: 'sale.market.multiplier', location: 'slave_auction_sell', label: '시장 기존 재제안 배수', regex: /if slave\['virginity'\] = 4 and txt >= 6 and txt <= 7: sell_price \*= (\d+)/g },
     { id: 'sale.auction.multiplier', location: '$guild_auction', label: '길드 기존 최종가 배수', regex: /! JO9_MEIKI_AUCTION_V1\r?\nif slave\['virginity'\] = 4:\r?\n[ \t]*local jo9_auction_base = bank_size\r?\n[ \t]*bank_size \*= (\d+)/g }
   ];
   for (const spec of saleSpecs) {
-    const source = sources.get(spec.location);
-    if (!source) { warnings.push(`${spec.label}: 기존 연결 위치가 없어 지원하지 않습니다.`); continue; }
-    const match = once(source.body, spec.regex, spec.label);
-    add({ id: spec.id, label: spec.label, group: '연결 효과', kind: 'number', min: 0, max: 1000, step: 1, help: '기존 상태 검사와 지급 경로를 보존하며 등록된 배수만 바꿉니다. 대사는 별도 값이므로 기존 배수 표현을 확인해야 합니다.' }, [captured(source, match, 1)]);
+    // JO9 MOD START STATE_EDITOR_SHARED_SALE | 2026-10-17_traits_batch
+    const caller = sources.get(spec.location), shared = sources.get('jo9_traits_value');
+    if (!caller) { warnings.push(`${spec.label}: 기존 연결 위치가 없어 지원하지 않습니다.`); continue; }
+    let source = caller, match, label = spec.label;
+    if (shared) {
+      const market = spec.id === 'sale.market.multiplier';
+      const mode = market ? 'market' : 'auction', variable = market ? 'sell_price' : 'bank_size';
+      once(caller.body, new RegExp(variable + " = func\\('jo9_traits_value', '" + mode + "', 'slave', " + variable + "\\)", 'g'), spec.label + ' 공유 호출');
+      source = shared;
+      match = once(shared.body, new RegExp("if \\$jo9_trait_value_mode = '" + mode + "': result \\*= (\\d+)", 'g'), spec.label + ' 공유 배수');
+      label = market ? '시장 특별 판매 공유 배수' : '길드 경매 공유 배수';
+    } else match = once(source.body, spec.regex, spec.label);
+    add({ id: spec.id, label, group: '연결 효과', kind: 'number', min: 0, max: 1000, step: 1, help: '기존 상태 검사와 지급 경로를 보존하며 등록된 배수만 바꿉니다. 공유 특성 함수가 있는 버전에서는 명기와 경국지색의 공통 배수입니다. 대사는 별도 값입니다.' }, [captured(source, match, 1)]);
+    // JO9 MOD END STATE_EDITOR_SHARED_SALE
   }
   let guard;
   try { guard = cacheGuard(newloc); } catch (cause) { warnings.push(`캐시 갱신을 확인할 수 없어 표시명·교육 XP 후보 생성을 제한합니다: ${cause.message}`); }

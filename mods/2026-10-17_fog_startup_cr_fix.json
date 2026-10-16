@@ -1,0 +1,29 @@
+{
+  "id": "2026-10-17_fog_startup_cr_fix",
+  "description": "Fix two duplicated CRs introduced by COG_ICED_DISPLAY, bump existing cache revision to rebuild saved templates; preserve relay and gameplay rules",
+  "before_sha256": "1383f8c1da38c266a6c844e2d4c5689c050e3428689d5ad2e260921c401807e9",
+  "after_sha256": "c0372248853f3d603481b5465231fd38a0074efbdc58ebee9acac46500db6e4b",
+  "edits": [
+    {
+      "location": "$newloc",
+      "field": "body",
+      "old": "$newloc_update_iced_features_list = {\r\r\n\t\t$dynslave_features_list = ''\r\r\n\t\tif dynslave_state ! CONST_INT['no_slave']:\r\n   if dynslave['jo9_learning_trait'] = 1: $dynslave_features_list += '<a href=\"EXEC: msg $jo9_genius_text\">천재</a><br>'\r\n   if dynslave['jo9_learning_trait'] = -1: $dynslave_features_list += '<a href=\"EXEC: msg $jo9_idiot_text\">백치</a><br>'\r\n! JO9 MOD END COG_ICED_DISPLAY\r\n\t\t\tif dynslave['brand'] = 0: $dynslave_features_list +='<a color = ''#cd0000;'' href = ''EXEC: msg $Нет_клейма''>낙인 없음</a><br>'\r\n\t\t\tif dynslave['wounds'] > 0: $dynslave_features_list += $wounds[dynslave['wounds']] + '<br>'\r\n\t\t\tif dynslave['scars'] > 0: $dynslave_features_list += $scars[dynslave['scars']] + '<br>'\r\n\t\t\tif dynslave['bruises'] > 0: $dynslave_features_list += $bruises[dynslave['bruises']] + '<br>'\r\n\t\t\tif dynslave['rehabilitation'] > 0: $dynslave_features_list += '회복 [<<dynslave[''rehabilitation'']>>]<br>'\r\n\t\t\tif dynslave['virginity'] < 2: $dynslave_features_list += '처녀<br>'\r\n\t\t\tif dynslave['fertility'] = -2: $dynslave_features_list += '미성숙<br>'\r\n\t\t\tif dynslave['fertility'] = -1: $dynslave_features_list += '불임<br>'\r\n\t\t\tif dynslave['fertility'] = 1: $dynslave_features_list += '산란형<br>'\r\n\t\t\tif dynslave['pregnant'] > 0 and dynslave['pregnant_revealed'] > 0: $dynslave_features_list += '임신<br>'\r\n\t\t\tif dynslave['arena_level'] > 4: $dynslave_features_list += '투기장 챔피언<br>'\r\n\t\tend\r\n\t}",
+      "new": "$newloc_update_iced_features_list = {\r\n\t\t$dynslave_features_list = ''\r\n\t\tif dynslave_state ! CONST_INT['no_slave']:\r\n   if dynslave['jo9_learning_trait'] = 1: $dynslave_features_list += '<a href=\"EXEC: msg $jo9_genius_text\">천재</a><br>'\r\n   if dynslave['jo9_learning_trait'] = -1: $dynslave_features_list += '<a href=\"EXEC: msg $jo9_idiot_text\">백치</a><br>'\r\n! JO9 MOD END COG_ICED_DISPLAY\r\n\t\t\tif dynslave['brand'] = 0: $dynslave_features_list +='<a color = ''#cd0000;'' href = ''EXEC: msg $Нет_клейма''>낙인 없음</a><br>'\r\n\t\t\tif dynslave['wounds'] > 0: $dynslave_features_list += $wounds[dynslave['wounds']] + '<br>'\r\n\t\t\tif dynslave['scars'] > 0: $dynslave_features_list += $scars[dynslave['scars']] + '<br>'\r\n\t\t\tif dynslave['bruises'] > 0: $dynslave_features_list += $bruises[dynslave['bruises']] + '<br>'\r\n\t\t\tif dynslave['rehabilitation'] > 0: $dynslave_features_list += '회복 [<<dynslave[''rehabilitation'']>>]<br>'\r\n\t\t\tif dynslave['virginity'] < 2: $dynslave_features_list += '처녀<br>'\r\n\t\t\tif dynslave['fertility'] = -2: $dynslave_features_list += '미성숙<br>'\r\n\t\t\tif dynslave['fertility'] = -1: $dynslave_features_list += '불임<br>'\r\n\t\t\tif dynslave['fertility'] = 1: $dynslave_features_list += '산란형<br>'\r\n\t\t\tif dynslave['pregnant'] > 0 and dynslave['pregnant_revealed'] > 0: $dynslave_features_list += '임신<br>'\r\n\t\t\tif dynslave['arena_level'] > 4: $dynslave_features_list += '투기장 챔피언<br>'\r\n\t\tend\r\n\t}",
+      "count": 1
+    },
+    {
+      "location": "$newloc",
+      "field": "body",
+      "old": "if jo9_learning_revision < 1:",
+      "new": "if jo9_learning_revision < 2:",
+      "count": 1
+    },
+    {
+      "location": "$newloc",
+      "field": "body",
+      "old": " jo9_learning_revision = 1",
+      "new": " jo9_learning_revision = 2",
+      "count": 1
+    }
+  ]
+}

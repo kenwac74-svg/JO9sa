@@ -1,0 +1,22 @@
+{
+  "id": "2026-10-17_zzzz_monster_status_icon",
+  "description": "괴물 상태를 조수 텍스트칸에서 분리하여 포트레이트 하단의 갈망/만족 아이콘으로 표시. 성장명/상태 툴팁과 기존 성장표 클릭 보존. 게임 수치 변경 없음.",
+  "before_sha256": "16a954528f33a0f544d048c715632f7ef65e069aa17c673b749479850379fdb8",
+  "after_sha256": "271bb3d4877126523a8c79e07fad249b0e942af65f7314481fe5c2b19253743f",
+  "edits": [
+    {
+      "location": "main_screen",
+      "field": "body",
+      "old": "if pet_tentacle = 0:\r\n\t*nl '<<$tentacle_state[tentacle_state]>>'\r\nelse\r\n\t*nl '<a href = \"EXEC: msg $tentacle_chart\"><<$tentacle_name[tentacle_size]>></a>: <<$tentacle_state[tentacle_state]>>'\r\n\tend\r\n*p '</div>'",
+      "new": "*p '</div>'\r\n! JO9 MOD START MONSTER_STATUS_MAIN_SCREEN | 2026-10-17_zzzz_monster_status_icon\r\n! 조수 상태칸 밖에 괴물 상태 아이콘을 표시한다. 1=갈망, 2=만족. 성장 이름은 툴팁으로 표시한다.\r\nif pet_tentacle > 0 and (tentacle_state = 1 or tentacle_state = 2):\r\n\t$tooltip_text = $strfind($tentacle_name[tentacle_size], '>([^<>]+)<', 1)\r\n\tif $tooltip_text = '': $tooltip_text = $tentacle_name[tentacle_size]\r\n\t$tooltip_text = '안개 괴물 · ' + $tooltip_text + ' / 현재 상태: ' + iif(tentacle_state = 1, '갈망', '만족')\r\n\t*p '<div id=\"jo9_house_monster\"><a class=\"tooltip-left-small-button\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: msg $tentacle_chart\"><img src=\"content\\pic\\ui\\monster_status\\<<iif(tentacle_state = 1, \"craving\", \"satisfied\")>>.png\" alt=\"안개 괴물\"></a></div>'\r\nend\r\n! JO9 MOD END MONSTER_STATUS_MAIN_SCREEN",
+      "count": 1
+    },
+    {
+      "location": "city_screen",
+      "field": "body",
+      "old": "if pet_tentacle = 0:\r\n\t*nl '<<$tentacle_state[tentacle_state]>>'\r\nelse\r\n\t*nl '<a href = \"EXEC: msg $tentacle_chart\"><<$tentacle_name[tentacle_size]>></a>: <<$tentacle_state[tentacle_state]>>'\r\nend\r\n*p '</div>'",
+      "new": "*p '</div>'\r\n! JO9 MOD START MONSTER_STATUS_CITY_SCREEN | 2026-10-17_zzzz_monster_status_icon\r\n! 조수 상태칸 밖에 괴물 상태 아이콘을 표시한다. 1=갈망, 2=만족. 성장 이름은 툴팁으로 표시한다.\r\nif pet_tentacle > 0 and (tentacle_state = 1 or tentacle_state = 2):\r\n\t$tooltip_text = $strfind($tentacle_name[tentacle_size], '>([^<>]+)<', 1)\r\n\tif $tooltip_text = '': $tooltip_text = $tentacle_name[tentacle_size]\r\n\t$tooltip_text = '안개 괴물 · ' + $tooltip_text + ' / 현재 상태: ' + iif(tentacle_state = 1, '갈망', '만족')\r\n\t*p '<div id=\"jo9_house_monster\"><a class=\"tooltip-left-small-button\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: msg $tentacle_chart\"><img src=\"content\\pic\\ui\\monster_status\\<<iif(tentacle_state = 1, \"craving\", \"satisfied\")>>.png\" alt=\"안개 괴물\"></a></div>'\r\nend\r\n! JO9 MOD END MONSTER_STATUS_CITY_SCREEN",
+      "count": 1
+    }
+  ]
+}

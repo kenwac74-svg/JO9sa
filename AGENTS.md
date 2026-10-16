@@ -21,3 +21,5 @@
 9. 2026-10-15 사용자 확정 경로: 플레이 G:/somi/Jack O Nine Tails v2.4_work, 빌드배포 G:/somi/Jack O Nine Tails v2.4 Kor_Full. 이전 G:/somi/JO9와 JO924는 JO9_trash/2026-10-15_cleanup으로 퇴역. QSP 수정은 새 두 대상에 각각 적용·검증하며 보호 순정 JO9O와 현재 원천 IMGMG/JO9sa는 유지. 자세한 이동·복구는 docs/SOMI_CLEANUP_20261015.md.
 
 10. 2.4 CSS 기준: docs/CSS_2_4_POLICY_20261015.md. 원본 CSS의 역할(배치/폰트/배경/툴팁 표현)은 CSS에 유지한다. 비원본 문구/상태 출력의 CSS 임시 변경은 커밋·푸시 전에 QSP로 이관하고 제거·검증한다. 기준본은 assets/css-2.4이며 원본 JO9O는 수정하지 않는다. CSS 전체를 QSP로 옮기지 않는다.
+
+11. 2026-10-16 사용자 확정: 플레이 폴더가 항상 최신이다. 작업 전 현재 저장된 플레이 QSP를 새로 읽어 먼저 적용한다. 배포 폴더는 별도 지시 또는 작업 마무리 후 커밋·푸시 지시 때만 반영한다. 이전 플레이·배포 동시 반영 기본값보다 우선한다. 자세한 기준: docs/WORKING_COPY_POLICY_20261016.md.
