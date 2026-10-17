@@ -44,9 +44,9 @@ test('save primer omits callbacks, multiline cached code and interpolation; disa
 });
 test('smoke fixtures retain the candidate lifecycle bodies, use unique markers and assert cache reset',()=>{
  assert.equal(typeof qa.buildSmoke,'function');
- const raw=fixture(['Start','main_screen','end_day_screen','menu_form','refresh_database','init_game','start_game','next_day','$newloc'].map(n=>[n,'! original']));
+ const raw=fixture(['Start','main_screen','end_day_screen','menu_form','refresh_database','init_game','start_game','next_day','$newloc','interaction_city','interaction_screen_city','начать_бой','боевое_меню','боевой_интерфейс'].map(n=>[n,'! original']));
  const probes=qa.buildSmoke(raw,'slave_state=1\r\nassistant_state=1',2,'ABC123');
- assert.equal(probes.length,6);assert.equal(new Set(probes.map(p=>p.marker)).size,6);
+ assert.equal(probes.length,9);assert.equal(new Set(probes.map(p=>p.marker)).size,9);
  for(const p of probes){const d=core.parse(p.raw);assert.deepEqual(core.serialize(d),p.raw);qa.inspectWorld(p.raw);}
  const cache=core.parse(probes.find(p=>p.name==='cache').raw);
  const body=core.shift(cache.lines[cache.locations.find(l=>l.name==='main_screen').body],5);

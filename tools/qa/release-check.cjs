@@ -3,12 +3,15 @@
 const fs=require('node:fs'),path=require('node:path'),os=require('node:os');
 const {spawnSync}=require('node:child_process'),{randomBytes}=require('node:crypto');
 const core=require('../text-workshop/core.cjs'),{inspect}=require('./check-qsp-line-endings.cjs');
+const {inspectMarkerBoundaries}=require('./check-qsp-marker-boundaries.cjs');
 const quote=s=>"'"+s.replaceAll("'","''")+"'";
 function inspectWorld(raw){
  const doc=core.parse(raw);
  if(!core.serialize(doc).equals(raw))throw Error('QSP byte roundtrip failed');
  const names=new Set();
  for(const l of doc.locations){const key=l.name.toUpperCase();if(!key||names.has(key))throw Error('Empty or duplicate location: '+l.name);names.add(key);}
+ const markerCheck=inspectMarkerBoundaries(raw);
+ if(markerCheck.issues.length){const e=Error('Invalid marker boundary: '+markerCheck.issues.length);e.issues=markerCheck.issues;throw e;}
  const r=inspect(raw);
  if(r.issues.length){const e=Error('Invalid line endings: '+r.issues.length);e.issues=r.issues;throw e;}
  // Location action bodies are scripts too; the older standalone checker only checks main bodies.
@@ -57,7 +60,7 @@ function primeState(doc){
 function buildSmoke(raw,prime,revision,token){
  if(!Number.isSafeInteger(revision)||revision<1)throw Error('Explicit positive cache revision required');
  if(!/^[A-Z0-9]+$/.test(token))throw Error('Unsafe marker token');
- const names=['home','newgame','editor-slave','editor-assistant','cache','daily'];
+ const names=['home','newgame','editor-slave','editor-assistant','cache','daily','city-weapons','city-beauty','battle-entry'];
  return names.map(name=>{
   const d=core.parse(raw),loc=n=>{const l=d.locations.find(l=>l.name===n);if(!l)throw Error('Missing smoke location '+n);return l;};
   const required=['Start','main_screen','end_day_screen','menu_form','refresh_database','init_game','start_game','next_day','$newloc'];required.forEach(loc);
@@ -71,6 +74,19 @@ function buildSmoke(raw,prime,revision,token){
    assertion='jo9_traits_revision='+revision+" and code_defined['interaction_result_make_slave_do']=0 and code_defined['interaction_result_self_sex_lesson']=0";
   }
   if(name==='daily'){setup+='day=3\r\ndecadecount=3\r\n';call="gs 'next_day'";checkpoint='end_day_screen';}
+  if(name==='city-weapons'||name==='city-beauty'){
+   const city=name==='city-weapons'?{id:111,npc:'менхантер',place:'shop_wpn'}:{id:11631,npc:'estelindel',place:'beauty_shop'};
+   setup+="is_home=0\r\ncity_district=1\r\nnpc_progress['Hassa']=0\r\ninteraction_city="+city.id+'\r\n';
+   call="gt 'interaction_city'";checkpoint='interaction_screen_city';
+   assertion='$npc_id='+quote(city.npc)+' and $place='+quote(city.place);
+  }
+  if(name==='battle-entry'){
+   setup+='get_weapon=1\r\ncombatant=0\r\nmemcf=0\r\nколичество_врагов=0\r\n';
+   call="gt 'начать_бой'";checkpoint='боевое_меню';
+   // Check the menu initialization dispatch; this is not a combat-balance test.
+   d.lines[loc(checkpoint).body]='';
+   d.lines[loc('боевой_интерфейс').body]=core.shift("msg 'JO9_QA_BATTLE_MENU_WAS_SKIPPED'",-5);
+  }
   const check=assertion?'if '+assertion+':\r\n msg '+quote(marker)+"\r\nelse\r\n msg 'JO9_QA_ASSERTION_FAILED'\r\nend":'msg '+quote(marker);
   d.lines[loc('Start').body]=core.shift(setup+call,-5);
   const end=loc(checkpoint);d.lines[end.body]=core.shift(core.shift(d.lines[end.body],5)+'\r\n'+check,-5);
@@ -105,6 +121,7 @@ function run(o){
   'Save data is used only to prime representative state. GUI save-file loading, CRC compatibility and full saved script restoration are NOT tested.',
   'Start is replaced only in diagnostic copies. Smoke covers lifecycle calls, not the character-selection UI or every gameplay branch.',
   'No complete QSP syntax checker: dynamic code and all game logic are not statically proved.'
+  ,'Battle smoke instruments the menu dispatch only; full combat outcomes and balance are not tested.'
  ]};
  const tracked=[...new Set(['candidate','baseline','mirror','state-save'].map(k=>o[k]).filter(Boolean).map(p=>path.resolve(p)))];
  const hashes=new Map();let raw;
@@ -150,8 +167,8 @@ function run(o){
     const results=fs.existsSync(resultFile)?JSON.parse(fs.readFileSync(resultFile,'utf8').replace(/^\uFEFF/,'')):[];
     report.client={engineSha256:core.hash(fs.readFileSync(o.engine)),stateAssignments:prime.assignments,probes:results};
     if(runnerError)throw runnerError;
-    if(results.length!==6||results.some(p=>!p.pass))throw Error('All six installed-client completion markers are required');
-    return{passed:results.length,expected:6};
+    if(results.length!==9||results.some(p=>!p.pass))throw Error('All nine installed-client completion markers are required');
+    return{passed:results.length,expected:9};
    });
   }else skip('installed-client-smoke',inputs.some(k=>!o[k])?'Required client inputs missing: '+inputs.filter(k=>!o[k]).join(', '):'A preceding check failed');
  }finally{

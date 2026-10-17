@@ -43,7 +43,7 @@ PowerShell에서 다른 명령과 묶을 때는 `$LASTEXITCODE`와 보고서의 
 1. **파일 구조:** UTF-16 QSP를 끝까지 읽을 수 있는지, 바이트 왕복이 같은지, 로케이션 이름이 중복되는지 검사한다. 본문과 로케이션 기본 행동의 실행 코드에 CRLF가 아닌 단독 CR/LF가 있으면 실패한다. 줄바꿈을 임의 수정하지 않는다.
 2. **패치 재생:** 첫 패치의 적용 전 해시와 마지막 패치의 적용 후 해시를 실제 입력과 비교한다. 임시 백업 복사본에 기존 `tools/apply_mods.ps1`을 실행해 후보와 바이트 단위로 같아지는지 확인한다. 한 번 더 적용해 바뀌지 않아야 한다. 빈 검색 문자열 등 위험한 패치 형식도 거부한다.
 3. **설치 엔진 실행:** 실제 설치된 `jack.exe`를 사용한다. 진단용 QSP의 `Start`만 검사 진입점으로 바꾸고, 후보의 원래 로케이션 실행 끝에 고유 완료 메시지를 붙인다. 단순히 프로세스가 살아 있는 것으로 통과시키지 않는다. 완료 메시지 전에 다른 메시지·엔진 종료·12초 제한 초과가 발생하면 실패한다.
-4. **여섯 실행 경로:** `menu_form → main_screen` 홈 진입, `init_game → start_game` 새 게임 초기화, 편집기 2107의 노예/조수 두 역할, 이전 캐시 버전에서 두 코드 정의 플래그 초기화, `next_day → end_day_screen` 하루 진행을 확인한다.
+4. **아홉 실행 경로:** `menu_form → main_screen` 홈 진입, `init_game → start_game` 새 게임 초기화, 편집기 2107의 노예/조수 두 역할, 이전 캐시 버전에서 두 코드 정의 플래그 초기화, `next_day → end_day_screen` 하루 진행을 확인한다. 무기점·미용실의 실제 NPC 대화 화면과 전투 메뉴 초기화 호출도 검사한다. 전투 승패·밸런스 검사는 별도다.
 5. **배포 사본/입력 보존:** 지정한 배포 사본은 후보와 바이트가 같아야 한다. 검사 전후 후보·백업·배포 QSP·입력 세이브의 SHA-256을 대조한다.
 
 ## 기존 패치 적용기의 쓰기 전 방어
@@ -87,3 +87,7 @@ node tools/qa/release-check.cjs --candidate '<jack.qsp>' --profile static --out 
 ```powershell
 node --test tools/qa/release-check.test.cjs tools/qa/qsp-line-endings.test.cjs tools/state-editor/*.test.cjs
 ```
+
+## 2026-10-17 후속: 완전히 누락된 줄 경계
+
+기존 단독 CR/LF 검사가 놓친 END 주석+명령 결합을 `check-qsp-marker-boundaries.cjs`로 추가 검사한다. `apply_mods.ps1`도 쓰기 전에 거부한다. 기본 실제 엔진 경로는 기존6개에 도시 대화2개·전투 진입1개를 더해9개다. [원인과 복구](CITY_SCENE_MARKER_FIX_20261017.md), [검증 결과](qa/2026-10-17_city-scene-marker-fix.json). 일반 주석과 모든 QSP 문법을 완전히 검사하는 도구는 아니다.

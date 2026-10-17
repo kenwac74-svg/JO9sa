@@ -1,0 +1,15 @@
+{
+  "id": "2026-10-18_release_navigation_fix",
+  "description": "Allow backward navigation from index 1 when index 0 contains a real page; preserve one-based arrays with an empty index-0 sentinel and the existing object dispatch.",
+  "before_sha256": "a39ad7307f1ba10928c2c322d50057dfe2b47ad268352c690109899f0484c8aa",
+  "after_sha256": "bfba200b1fbef1f10b3adb82d046329751d346724552a7fc637c61f5bc3187af",
+  "edits": [
+    {
+      "location": "interaction_screen",
+      "field": "body",
+      "old": "if txt > 1:\r\n\taddobj '<img src = \"content\\pic\\buttons\\back_button.png\">'\r\nelse\r\n\taddobj '<img src = \"content\\pic\\buttons\\noback_button.png\">'\r\nend",
+      "new": "! JO9 MOD START RELEASE_NAVIGATION_FIX | 2026-10-18_release_navigation_fix\r\nif txt > 1 or (txt = 1 and $text[0] ! ''):\r\n\taddobj '<img src = \"content\\pic\\buttons\\back_button.png\">'\r\nelse\r\n\taddobj '<img src = \"content\\pic\\buttons\\noback_button.png\">'\r\nend\r\n! JO9 MOD END RELEASE_NAVIGATION_FIX",
+      "count": 1
+    }
+  ]
+}

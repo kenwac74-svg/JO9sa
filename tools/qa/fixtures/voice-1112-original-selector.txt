@@ -1,0 +1,23 @@
+		obed = 0
+		if slave['obedience'] > 0: obed = 1
+		if slave['obedience'] > 10: obed = 2
+		if slave['obedience'] > 20: obed = 3
+		if slave['obedience'] > 30: obed = 4
+		if slave['obedience'] > 40: obed = 5
+		$text[1] = $slave_relation_description[$slave_psy_status]
+		if obed = 0 and slave['obedience'] >= -5 + iif(slave['stamina'] < 3, 1, -1) + iif(slave['intellect'] > 2, 1, -1) + iif(slave['pride'] > 2, slave['pride'] - 2, slave['pride'] - 3) + _ 
+																			iif(slave['pride'] > 2, -2, 0) + iif(slave['ego'] < 3, 1, 0) + iif(slave['intellect'] < 3, 1, 0):
+			$text[2] = $slave_obed_description[1] &! slave will obey maid rule, according to the text
+		else
+			$text[2] = $slave_obed_description[obed]
+		end
+		if rebell[$slave_psy_status] > 0: obed = 0
+		if $slave_psy_status ! 'broken':
+			if obed > 0 and slave['sex_sum'] > 0: $text[] = $slave_urge_description[min(obed, slave['arousal'])] &! only comment on arousal if obed > 0 and slave has some sex experience
+			$text[] = $slave_fear_description[max(slave['fear'] ! 0, slave['fear'] - slave['moral']/2)] &! fear level is offset by devotion, but always show at least [1] if any fear (fear ! 0)
+			$text[] = $slave_ratio_description[min(obed + (slave['daily_reward_count'] ! 0)*2, slave['rational'])] &! gates the [3] answer until obed > 0 ([0], [1] and [2] can be seen before obed > 0, but only [0] will be seen before a reward has been given that day)
+			$text[] = $slave_instinct_description[min(obed + 2, slave['instinct'])] &! min obed + 2 gates the [3] answer until obed > 0 ([1] and [2] can be seen before obed > 0)
+			$text[] = $slave_custom_description[min(obed + 2, slave['custom'])] &! min obed + 2 gates the [3] answer until obed > 0 ([1] and [2] can be seen before obed > 0)
+			if obed > 0: $text[] = $slave_spoil_description[slave['spoil']] &! only comment on spoil if obed > 0, no min for spoil because higher is "worse"
+			if obed > 0: $text[] = $slave_moral_description[min(obed, slave['moral'])] &! only comment on devotion if obed > 0, limited by overall obedience so it tracks (or lags) slave_obed_description
+		end

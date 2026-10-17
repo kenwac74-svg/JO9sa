@@ -3,10 +3,14 @@ $ErrorActionPreference = 'Stop'
 $toolDir = $PSScriptRoot
 $runtimeDir = Join-Path $toolDir 'runtime'
 New-Item -ItemType Directory -Force -Path $runtimeDir | Out-Null
-$nodeCommand = Get-Command node.exe -ErrorAction SilentlyContinue
-if ($nodeCommand) { $nodeExe = $nodeCommand.Source } else {
-    $nodeExe = Join-Path $env:USERPROFILE '.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node.exe'
-    if (-not (Test-Path -LiteralPath $nodeExe -PathType Leaf)) { throw 'Node.js 20 이상이 필요합니다. node.exe를 PATH에 등록하세요.' }
+# JO9 MOD START [state-editor-portable-launch-20261018]
+$bundledNode = [IO.Path]::GetFullPath((Join-Path $toolDir '../runtime-bundle/node.exe'))
+if (Test-Path -LiteralPath $bundledNode -PathType Leaf) { $nodeExe = $bundledNode } else {
+    $nodeCommand = Get-Command node.exe -ErrorAction SilentlyContinue
+    if ($nodeCommand) { $nodeExe = $nodeCommand.Source } else {
+        $nodeExe = Join-Path $env:USERPROFILE '.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node.exe'
+        if (-not (Test-Path -LiteralPath $nodeExe -PathType Leaf)) { throw 'Node.js 20 이상이 필요합니다. node.exe를 PATH에 등록하세요.' }
+    }
 }
 if (-not $Targets) {
     $Targets = Join-Path $runtimeDir 'targets.json'
@@ -15,16 +19,17 @@ if (-not $Targets) {
         $local = Get-Content -LiteralPath $repoConfig -Raw -Encoding UTF8 | ConvertFrom-Json
         $workQsp = [IO.Path]::GetFullPath($local.GameQsp)
         $familyDir = Split-Path -Parent ([IO.Path]::GetFullPath($local.GameRoot))
+        $fullQsp = Join-Path $familyDir 'Jack O Nine Tails v2.4 Kor_Full/game/jack.qsp'
+        $targetList = @(@{ id='work'; label='플레이'; path=$workQsp }, @{ id='full'; label='배포'; path=$fullQsp })
     } else {
         $gameDir = [IO.Path]::GetFullPath((Join-Path $toolDir '../..'))
-        if (-not (Test-Path -LiteralPath (Join-Path $gameDir 'jack.qsp') -PathType Leaf)) { throw '-Targets로 대상 JSON 경로를 지정하세요.' }
-        $familyDir = Split-Path -Parent (Split-Path -Parent $gameDir)
-        $workQsp = Join-Path $familyDir 'Jack O Nine Tails v2.4_work/game/jack.qsp'
+        $gameQsp = Join-Path $gameDir 'jack.qsp'
+        if (-not (Test-Path -LiteralPath $gameQsp -PathType Leaf)) { throw '-Targets로 대상 JSON 경로를 지정하세요.' }
+        $targetList = @(@{ id='work'; label='현재 게임'; path=$gameQsp })
     }
-    $fullQsp = Join-Path $familyDir 'Jack O Nine Tails v2.4 Kor_Full/game/jack.qsp'
-    $targetList = @(@{ id='work'; label='플레이'; path=$workQsp }, @{ id='full'; label='배포'; path=$fullQsp })
     [IO.File]::WriteAllText($Targets, (ConvertTo-Json -InputObject $targetList -Depth 5), [Text.UTF8Encoding]::new($false))
 }
+# JO9 MOD END [state-editor-portable-launch-20261018]
 $Targets = [IO.Path]::GetFullPath($Targets)
 $stateFile = Join-Path $runtimeDir 'server.json'
 if (Test-Path -LiteralPath $stateFile) {

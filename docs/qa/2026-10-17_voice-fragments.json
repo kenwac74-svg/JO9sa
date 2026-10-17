@@ -1,0 +1,194 @@
+{
+  "date": "2026-10-17",
+  "scope": "1112 semantic fragments; Play only",
+  "id": "2026-10-17_zzzzzzzzzzzzzz_voice_fragments",
+  "before": "27c47fedebf6132f2530f6db5feb6b5eb4d6fbd57be26afba48f16edafb8acee",
+  "after": "096743a6678f45c48f514d28b313f3fe2ec89aca5d65a5871c48ecfa6bb84fd3",
+  "locations": 259,
+  "edits": 4,
+  "rows": 684,
+  "newDialogue": 0,
+  "newLocations": 0,
+  "newHistoryKeys": 0,
+  "exactReverse": true,
+  "installed": true,
+  "wasm": {
+    "passed": 4723,
+    "failed": 0,
+    "selectorCases": 4455,
+    "engine": "5.8.0"
+  },
+  "native": [
+    {
+      "name": "speech",
+      "checkpoint": "Nine real save actors, 36 fragment replies, actual renderer/history isolation",
+      "pass": true
+    },
+    {
+      "name": "cold",
+      "checkpoint": "Old cached helper/data update, broken HTML and no introduction, refused talk history unchanged",
+      "pass": true
+    },
+    {
+      "name": "flow",
+      "checkpoint": "Actual 1112 interaction/result/renderer chain with diagnostic acceptance branch",
+      "pass": true
+    }
+  ],
+  "regressions": {
+    "passed": 79,
+    "failed": 0
+  },
+  "release": {
+    "verdict": "PASS",
+    "checks": [
+      {
+        "name": "inputs-readable",
+        "required": true,
+        "status": "PASS",
+        "detail": {
+          "candidate": "096743a6678f45c48f514d28b313f3fe2ec89aca5d65a5871c48ecfa6bb84fd3"
+        }
+      },
+      {
+        "name": "world-structure-and-line-endings",
+        "required": true,
+        "status": "PASS",
+        "detail": {
+          "sha256": "096743a6678f45c48f514d28b313f3fe2ec89aca5d65a5871c48ecfa6bb84fd3",
+          "bytes": 19646664,
+          "locations": 259,
+          "roundtrip": true,
+          "lineEndingIssues": 0
+        }
+      },
+      {
+        "name": "distribution-byte-match",
+        "required": false,
+        "status": "SKIP",
+        "reason": "No mirror specified; this run does not verify the distribution copy"
+      },
+      {
+        "name": "patch-replay-and-idempotence",
+        "required": true,
+        "status": "PASS",
+        "detail": {
+          "patches": [
+            "2026-10-17_zzzzzzzzzzzzzz_voice_fragments"
+          ],
+          "byteExact": true,
+          "idempotent": true
+        }
+      },
+      {
+        "name": "installed-client-smoke",
+        "required": true,
+        "status": "PASS",
+        "detail": {
+          "passed": 9,
+          "expected": 9
+        }
+      },
+      {
+        "name": "input-hashes-unchanged",
+        "required": true,
+        "status": "PASS",
+        "detail": {
+          "files": 3
+        }
+      }
+    ],
+    "limits": [
+      "No GUI clicks or visual layout verification.",
+      "Save data is used only to prime representative state. GUI save-file loading, CRC compatibility and full saved script restoration are NOT tested.",
+      "Start is replaced only in diagnostic copies. Smoke covers lifecycle calls, not the character-selection UI or every gameplay branch.",
+      "No complete QSP syntax checker: dynamic code and all game logic are not statically proved.",
+      "Battle smoke instruments the menu dispatch only; full combat outcomes and balance are not tested."
+    ]
+  },
+  "testSave": {
+    "hash": "ba73a7a5ea3020280b4f1a2e2a5b91ee89300e86d151ea50d149e7b610d01bab",
+    "originalPreserved": true,
+    "actors": [
+      {
+        "actor": "slave",
+        "type": "flame",
+        "status": "optimistic",
+        "mood": 2,
+        "event": "today-praise"
+      },
+      {
+        "actor": "iced_1",
+        "type": "ice",
+        "status": "arrogant",
+        "mood": -2,
+        "event": "today-praise-hostile"
+      },
+      {
+        "actor": "iced_2",
+        "type": "proud",
+        "status": "soft",
+        "mood": -1,
+        "event": "none"
+      },
+      {
+        "actor": "iced_3",
+        "type": "frank",
+        "status": "obedient",
+        "mood": 2,
+        "event": "recent-praise-today-punishment"
+      },
+      {
+        "actor": "iced_4",
+        "type": "calm",
+        "status": "depresive",
+        "mood": -1,
+        "event": "recent-punishment"
+      },
+      {
+        "actor": "iced_5",
+        "type": "plain",
+        "status": "servile",
+        "mood": 3,
+        "event": "recent-punishment-today-praise"
+      },
+      {
+        "actor": "iced_6",
+        "type": "fragile",
+        "status": "lachrymose",
+        "mood": -2,
+        "event": "today-punishment"
+      },
+      {
+        "actor": "prisoner",
+        "type": "meek",
+        "status": "frightened",
+        "mood": -1,
+        "event": "none"
+      },
+      {
+        "actor": "room2",
+        "type": "doll",
+        "status": "docile",
+        "mood": 2,
+        "event": "recent-praise"
+      }
+    ],
+    "recalculations": 36,
+    "swappedActors": 8,
+    "swapRecalculations": 16,
+    "fixtureException": "room2 courage_revealed=2 after the normal one-time discovery; courage stays 1"
+  },
+  "firstReleaseAttempt": {
+    "verdict": "FAIL",
+    "cause": "Normal bravery discovery popup from room2 fear=3/courage=1/unrevealed in the new test fixture; original game initialization and trait bodies byte unchanged",
+    "resolution": "Only the test save discovery flag was set to the normal completed state, then all required checks reran and passed"
+  },
+  "limits": [
+    "Original information without authored variants keeps its original complete wording.",
+    "GUI pixel layout and GUI save-file loading/CRC are not automatically verified.",
+    "Only 1112 is integrated; no complete conversation-system expansion."
+  ],
+  "distributionUnchanged": true,
+  "protectedOriginalUnchanged": true
+}

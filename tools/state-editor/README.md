@@ -4,9 +4,11 @@
 
 ## 실행
 
-PowerShell에서 `Start-StateEditor.ps1`을 실행한다. Node.js 20 이상이 필요하며, PATH의 Node 또는 Codex 번들 Node를 찾는다. 서버는 숨김으로 시작하고 localhost URL을 출력한다. Codex에서는 그 URL을 우측 브라우저에 연다. 저장소의 local.config.json 또는 설치 위치로 플레이/배포 대상을 확인하며, 사용자 지정은 `-Targets <JSON경로>`로 준다.
+게임 폴더에서 PowerShell로 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\game\modtools\state-editor\Start-StateEditor.ps1`을 실행한다. 도구 폴더를 연 상태라면 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Start-StateEditor.ps1`로 실행한다. 서버는 숨김으로 시작하고 localhost URL을 출력한다. 출력된 주소를 브라우저에 연다.
 
-직접 실행: `node server.cjs --targets targets.json --runtime runtime --port 0`.
+게임에 포함된 `game/modtools/runtime-bundle/node.exe`를 먼저 사용한다. 없으면 PATH의 Node, Codex 번들 Node 순서로 찾는다. 별도로 준비할 때는 Node.js 20 이상이 필요하다. 기본 대상은 이 도구가 들어 있는 `game/jack.qsp` 하나이며, 압축을 푼 폴더 이름이나 드라이브 문자를 지정할 필요가 없다. 저장소의 `tools/state-editor`에서 실행하면 `local.config.json`의 플레이/배포 대상이 우선한다. 사용자 지정 대상 파일은 `-Targets <JSON경로>`로 준다. 이 파일이 있으면 자동 탐색 대신 지정한 대상을 사용한다.
+
+도구 폴더에서 번들 Node로 직접 실행: `..\runtime-bundle\node.exe .\server.cjs --runtime .\runtime --port 0`. 게임 안의 `jack.qsp`를 자동으로 선택한다. 사용자 지정 대상은 `--targets targets.json`을 추가한다. 저장소에서는 `node server.cjs --targets targets.json --runtime runtime --port 0`으로도 실행할 수 있다.
 
 targets.json 예:
 

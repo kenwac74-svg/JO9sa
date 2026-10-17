@@ -1,0 +1,125 @@
+{
+  "date": "2026-10-17",
+  "scope": "1112 pagination only; Play only",
+  "id": "2026-10-17_zzzzzzzzzzzzz_voice_pages",
+  "before": "133e82f5c7ec8a2de3eca3ce56115f1dc825191f87fcacdff0222fe7d2a85252",
+  "after": "27c47fedebf6132f2530f6db5feb6b5eb4d6fbd57be26afba48f16edafb8acee",
+  "locations": 259,
+  "edits": 1,
+  "exactReverse": true,
+  "maxPageCharacters": 110,
+  "newLocations": 0,
+  "newFunctions": 0,
+  "pagination": {
+    "passed": 46,
+    "failed": 0,
+    "candidateHash": "27c47fedebf6132f2530f6db5feb6b5eb4d6fbd57be26afba48f16edafb8acee",
+    "maxPageCharacters": 110,
+    "losslessContent": true,
+    "forwardBackAndExit": true,
+    "chooseOnce": true,
+    "guiPixelsVerified": false
+  },
+  "composition": {
+    "passed": 3045,
+    "failed": 0,
+    "candidateHash": "27c47fedebf6132f2530f6db5feb6b5eb4d6fbd57be26afba48f16edafb8acee",
+    "engine": "5.8.0",
+    "originalInformationCases": 2430,
+    "profiles": 27,
+    "relationshipStates": 15,
+    "originalSelectorsPreserved": true,
+    "oneSpeakerPerPage": true,
+    "pagedOutput": true,
+    "relationshipAwareEvents": true,
+    "guiLoadVerified": false
+  },
+  "installedClient": [
+    {
+      "name": "speech",
+      "checkpoint": "Nine profiles, 54 paged responses, page bound, actual interaction renderer, state/history unchanged",
+      "pass": true
+    },
+    {
+      "name": "oldsave",
+      "checkpoint": "Old cached helper refresh, original data retained, denied talk history unchanged",
+      "pass": true
+    }
+  ],
+  "regressions": {
+    "passed": 79,
+    "failed": 0
+  },
+  "release": {
+    "verdict": "PASS",
+    "checks": [
+      {
+        "name": "inputs-readable",
+        "required": true,
+        "status": "PASS",
+        "detail": {
+          "candidate": "27c47fedebf6132f2530f6db5feb6b5eb4d6fbd57be26afba48f16edafb8acee"
+        }
+      },
+      {
+        "name": "world-structure-and-line-endings",
+        "required": true,
+        "status": "PASS",
+        "detail": {
+          "sha256": "27c47fedebf6132f2530f6db5feb6b5eb4d6fbd57be26afba48f16edafb8acee",
+          "bytes": 18626310,
+          "locations": 259,
+          "roundtrip": true,
+          "lineEndingIssues": 0
+        }
+      },
+      {
+        "name": "distribution-byte-match",
+        "required": false,
+        "status": "SKIP",
+        "reason": "No mirror specified; this run does not verify the distribution copy"
+      },
+      {
+        "name": "patch-replay-and-idempotence",
+        "required": true,
+        "status": "PASS",
+        "detail": {
+          "patches": [
+            "2026-10-17_zzzzzzzzzzzzz_voice_pages"
+          ],
+          "byteExact": true,
+          "idempotent": true
+        }
+      },
+      {
+        "name": "installed-client-smoke",
+        "required": true,
+        "status": "PASS",
+        "detail": {
+          "passed": 9,
+          "expected": 9
+        }
+      },
+      {
+        "name": "input-hashes-unchanged",
+        "required": true,
+        "status": "PASS",
+        "detail": {
+          "files": 3
+        }
+      }
+    ],
+    "limits": [
+      "No GUI clicks or visual layout verification.",
+      "Save data is used only to prime representative state. GUI save-file loading, CRC compatibility and full saved script restoration are NOT tested.",
+      "Start is replaced only in diagnostic copies. Smoke covers lifecycle calls, not the character-selection UI or every gameplay branch.",
+      "No complete QSP syntax checker: dynamic code and all game logic are not statically proved.",
+      "Battle smoke instruments the menu dispatch only; full combat outcomes and balance are not tested."
+    ]
+  },
+  "diagnosticNote": "Repeated inline hooks caused duplicate labels in a discarded diagnostic fixture; dynamic calls matching the game passed.",
+  "guiPixelsVerified": false,
+  "distributionUnchanged": true,
+  "testSaveUnchanged": true,
+  "protectedOriginalUnchanged": true
+}

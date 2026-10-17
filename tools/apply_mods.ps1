@@ -175,6 +175,7 @@ foreach ($mod in $mods) {
 # Validate complete final scripts, not just edit fragments. A lone LF after a
 # comment can swallow the following END in FastQSP despite a valid container.
 # Reject instead of silently repairing author text; no QSP/backup is written.
+$qaMarkerScripts = @()
 foreach ($locationName in $index.Keys) {
     $locationAt = $index[$locationName]
     $scriptIndexes = @($locationAt + 2)
@@ -184,10 +185,39 @@ foreach ($locationName in $index.Keys) {
     }
     foreach ($scriptIndex in $scriptIndexes) {
         $scriptBody = [Jo9Qsp]::Shift($lines[$scriptIndex], 5)
+        $qaMarkerScripts += [pscustomobject]@{ Name = $locationName; Text = $scriptBody }
         $badEnding = [regex]::Match($scriptBody, '\r(?!\n)|(?<!\r)\n')
         if ($badEnding.Success) {
             $scriptLine = 1 + [regex]::Matches($scriptBody.Substring(0, $badEnding.Index), '\r\n|\r|\n').Count
             throw "Invalid script line ending: $locationName line $scriptLine. No file written."
+        }
+    }
+}
+
+# A completely missing newline has no lone CR/LF. Match known START IDs to find
+# END comments glued to the following command or another marker.
+$qaMarkerIds = @{}
+foreach ($qaScript in $qaMarkerScripts) {
+    foreach ($qaStart in [regex]::Matches($qaScript.Text, '(?m)^[\t ]*! JO9 MOD START ([A-Za-z0-9_]+)')) {
+        $qaMarkerIds[$qaStart.Groups[1].Value] = $true
+    }
+}
+foreach ($qaScript in $qaMarkerScripts) {
+    $qaLineNo = 0
+    foreach ($qaLine in $qaScript.Text.Split(@("`r`n"), [StringSplitOptions]::None)) {
+        $qaLineNo++
+        $qaEnd = [regex]::Match($qaLine, '^[\t ]*! JO9 MOD END (.*)$')
+        if (-not $qaEnd.Success) { continue }
+        $qaRest = $qaEnd.Groups[1].Value
+        $qaToken = [regex]::Match($qaRest, '^[A-Za-z0-9_]+').Value
+        $qaKnownId = if ($qaMarkerIds.ContainsKey($qaToken)) { $qaToken } else {
+            $qaMarkerIds.Keys | Where-Object { $qaRest.StartsWith($_, [StringComparison]::Ordinal) } | Sort-Object Length -Descending | Select-Object -First 1
+        }
+        if ($qaKnownId) {
+            $qaSuffix = $qaRest.Substring($qaKnownId.Length).Trim()
+            if ($qaSuffix -and -not $qaSuffix.StartsWith('|')) {
+                throw "Invalid marker boundary: $($qaScript.Name) line $qaLineNo. No file written."
+            }
         }
     }
 }

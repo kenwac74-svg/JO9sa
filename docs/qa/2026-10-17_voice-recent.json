@@ -1,0 +1,116 @@
+{
+  "date": "2026-10-17",
+  "scope": "1112 only; Play only",
+  "id": "2026-10-17_zzzzzzzzzz_voice_recent",
+  "before": "9a73b88bde8ff1ba6327c75b25554a0ec8fbf070aea6d1e7ab0c5efe082d452a",
+  "after": "cf613e7d3dd45c07c2ff78ef1478f9c85c1a91b6cc06361dfc19215be4ed9299",
+  "edits": 4,
+  "locations": 259,
+  "exactReverse": true,
+  "originalLines": 108,
+  "addedLines": 216,
+  "wasm": {
+    "passed": 1517,
+    "failed": 0,
+    "engine": "5.8.0",
+    "candidateHash": "cf613e7d3dd45c07c2ff78ef1478f9c85c1a91b6cc06361dfc19215be4ed9299",
+    "profiles": 27,
+    "topicCases": 10,
+    "baseRows": 108,
+    "addedRows": 216
+  },
+  "nativeSave": {
+    "engine": "5.7.0",
+    "exactByteRoundtrip": true,
+    "historyKeysSaved": 2,
+    "distinctRecentIDs": true,
+    "sourceSaveUnmodified": true
+  },
+  "voiceClient": [
+    {
+      "name": "speech",
+      "pass": true
+    },
+    {
+      "name": "oldsave",
+      "pass": true
+    },
+    {
+      "name": "swap",
+      "pass": true
+    }
+  ],
+  "regressions": {
+    "passed": 79,
+    "failed": 0
+  },
+  "release": {
+    "verdict": "PASS",
+    "checks": [
+      {
+        "name": "inputs-readable",
+        "required": true,
+        "status": "PASS",
+        "detail": {
+          "candidate": "cf613e7d3dd45c07c2ff78ef1478f9c85c1a91b6cc06361dfc19215be4ed9299"
+        }
+      },
+      {
+        "name": "world-structure-and-line-endings",
+        "required": true,
+        "status": "PASS",
+        "detail": {
+          "sha256": "cf613e7d3dd45c07c2ff78ef1478f9c85c1a91b6cc06361dfc19215be4ed9299",
+          "bytes": 18547938,
+          "locations": 259,
+          "roundtrip": true,
+          "lineEndingIssues": 0
+        }
+      },
+      {
+        "name": "distribution-byte-match",
+        "required": false,
+        "status": "SKIP",
+        "reason": "No mirror specified; this run does not verify the distribution copy"
+      },
+      {
+        "name": "patch-replay-and-idempotence",
+        "required": true,
+        "status": "PASS",
+        "detail": {
+          "patches": [
+            "2026-10-17_zzzzzzzzzz_voice_recent"
+          ],
+          "byteExact": true,
+          "idempotent": true
+        }
+      },
+      {
+        "name": "installed-client-smoke",
+        "required": true,
+        "status": "PASS",
+        "detail": {
+          "passed": 9,
+          "expected": 9
+        }
+      },
+      {
+        "name": "input-hashes-unchanged",
+        "required": true,
+        "status": "PASS",
+        "detail": {
+          "files": 3
+        }
+      }
+    ]
+  },
+  "limitations": [
+    "No GUI clicks or visual layout verification.",
+    "Save data is used only to prime representative state. GUI save-file loading, CRC compatibility and full saved script restoration are NOT tested.",
+    "Start is replaced only in diagnostic copies. Smoke covers lifecycle calls, not the character-selection UI or every gameplay branch.",
+    "No complete QSP syntax checker: dynamic code and all game logic are not statically proved.",
+    "Battle smoke instruments the menu dispatch only; full combat outcomes and balance are not tested."
+  ],
+  "distributionUpdated": false,
+  "guiSaveLoadVerified": false
+}

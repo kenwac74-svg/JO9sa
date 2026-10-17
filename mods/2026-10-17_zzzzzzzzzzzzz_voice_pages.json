@@ -1,0 +1,15 @@
+{
+  "id": "2026-10-17_zzzzzzzzzzzzz_voice_pages",
+  "description": "1112 재조립 답변을 기존 $text 페이지에 분할. 본문110자 상한/문장·문단 경계/글자 누락 없음. 선택 함수와 관계/반복 이력은 유지.",
+  "before_sha256": "133e82f5c7ec8a2de3eca3ce56115f1dc825191f87fcacdff0222fe7d2a85252",
+  "after_sha256": "27c47fedebf6132f2530f6db5feb6b5eb4d6fbd57be26afba48f16edafb8acee",
+  "edits": [
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "  killvar '$text'\r\n  $text[1] = '[' + $slave_name + ']<br>&nbsp;' + $jo9_voice_impression_line + '</div>'",
+      "new": "  ! JO9 MOD START VOICE_COMPOSE_PAGES | 2026-10-17_zzzzzzzzzzzzz_voice_pages\r\n  ! 대사 선택은 위에서 한 번만 한다. 여기서는 고른 본문을 기존 $text 페이지 배열에 나눈다.\r\n  killvar '$text'\r\n  $text[0] = ''\r\n  jo9_vp_limit = 110\r\n  $jo9_vp_color = $strfind($jo9_voice_impression_line, '<font[^>]*>')\r\n  $jo9_vp_rest = $replace($jo9_voice_impression_line, $jo9_vp_color, '')\r\n  $jo9_vp_rest = $replace($jo9_vp_rest, '</font>', '')\r\n  $jo9_vp_rest = $replace($jo9_vp_rest, '<br><br>', ' <br><br> ')\r\n  $jo9_vp_head = '[' + $slave_name + ']<br>&nbsp;' + $jo9_vp_color\r\n  $jo9_vp_tail = $iif($jo9_vp_color ! '', '</font>', '') + '</div>'\r\n  $jo9_vp_page = ''\r\n  :jo9_vp_word\r\n  if len($jo9_vp_rest) > 0:\r\n   jo9_vp_space = instr($jo9_vp_rest, ' ')\r\n   if jo9_vp_space > 0:\r\n    $jo9_vp_word = $mid($jo9_vp_rest, 1, jo9_vp_space - 1)\r\n    $jo9_vp_rest = $mid($jo9_vp_rest, jo9_vp_space + 1)\r\n   else\r\n    $jo9_vp_word = $jo9_vp_rest\r\n    $jo9_vp_rest = ''\r\n   end\r\n   if $jo9_vp_word = '<br><br>':\r\n    ! 문단 경계는 페이지 경계로 유지한다. 빈 페이지는 만들지 않는다.\r\n    if $jo9_vp_page ! '': $text[] = $jo9_vp_head + $jo9_vp_page + $jo9_vp_tail\r\n    $jo9_vp_page = ''\r\n   elseif $jo9_vp_word ! '':\r\n    if $jo9_vp_page ! '' and len($jo9_vp_page) + 1 + len($jo9_vp_word) > jo9_vp_limit:\r\n     $text[] = $jo9_vp_head + $jo9_vp_page + $jo9_vp_tail\r\n     $jo9_vp_page = ''\r\n    end\r\n    ! 띄어쓰기가 전혀 없는 긴 조각도 화면 밖으로 넘치지 않게 나눈다.\r\n    :jo9_vp_long_word\r\n    if len($jo9_vp_word) > jo9_vp_limit:\r\n     $text[] = $jo9_vp_head + $mid($jo9_vp_word, 1, jo9_vp_limit) + $jo9_vp_tail\r\n     $jo9_vp_word = $mid($jo9_vp_word, jo9_vp_limit + 1)\r\n     jump 'jo9_vp_long_word'\r\n    end\r\n    if $jo9_vp_page ! '': $jo9_vp_page += ' '\r\n    $jo9_vp_page += $jo9_vp_word\r\n    ! 충분히 찬 페이지는 문장 끝에서 넘겨 중간 절단을 줄인다.\r\n    if len($jo9_vp_page) >= 65 and instr('.?!…', $mid($jo9_vp_word, len($jo9_vp_word), 1)) > 0:\r\n     $text[] = $jo9_vp_head + $jo9_vp_page + $jo9_vp_tail\r\n     $jo9_vp_page = ''\r\n    end\r\n   end\r\n   jump 'jo9_vp_word'\r\n  end\r\n  if $jo9_vp_page ! '': $text[] = $jo9_vp_head + $jo9_vp_page + $jo9_vp_tail\r\n  if arrsize('$text') = 1: $text[1] = $jo9_vp_head + $jo9_vp_tail\r\n  killvar 'jo9_vp_limit'\r\n  killvar '$jo9_vp_color'\r\n  killvar '$jo9_vp_rest'\r\n  killvar '$jo9_vp_head'\r\n  killvar '$jo9_vp_tail'\r\n  killvar '$jo9_vp_page'\r\n  killvar 'jo9_vp_space'\r\n  killvar '$jo9_vp_word'\r\n  ! JO9 MOD END VOICE_COMPOSE_PAGES",
+      "count": 1
+    }
+  ]
+}

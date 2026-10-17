@@ -36,7 +36,18 @@ function createServer({targets,runtime}){
   return{server,token};
 }
 function arg(name){const at=process.argv.indexOf(name);return at<0?undefined:process.argv[at+1];}
-function defaultTargets(){const config=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../local.config.json'),'utf8'));const work=path.resolve(config.GameQsp);return[{id:'work',label:'플레이',path:work},{id:'full',label:'배포',path:path.resolve(path.dirname(config.GameRoot),'Jack O Nine Tails v2.4 Kor_Full','game','jack.qsp')}];}
+// JO9 MOD START [state-editor-portable-launch-20261018]
+function defaultTargets(){
+  const configPath=path.resolve(__dirname,'../../local.config.json');
+  if(fs.existsSync(configPath)){
+    const config=JSON.parse(fs.readFileSync(configPath,'utf8').replace(/^\uFEFF/,'')),work=path.resolve(config.GameQsp);
+    return[{id:'work',label:'플레이',path:work},{id:'full',label:'배포',path:path.resolve(path.dirname(config.GameRoot),'Jack O Nine Tails v2.4 Kor_Full','game','jack.qsp')}];
+  }
+  const qsp=path.resolve(__dirname,'../../jack.qsp');
+  if(!fs.existsSync(qsp)||!fs.statSync(qsp).isFile())throw failure('local.config.json 또는 이 게임의 jack.qsp가 필요합니다. --targets로 대상 JSON을 지정하세요.');
+  return[{id:'work',label:'현재 게임',path:qsp}];
+}
+// JO9 MOD END [state-editor-portable-launch-20261018]
 if(require.main===module){
   const configPath=arg('--targets'),parsed=configPath?JSON.parse(fs.readFileSync(path.resolve(configPath),'utf8')):null,targets=parsed?(Array.isArray(parsed)?parsed:parsed.targets):defaultTargets();
   const runtime=path.resolve(arg('--runtime')||path.join(__dirname,'runtime')),port=Number(arg('--port')||0);

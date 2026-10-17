@@ -24,18 +24,19 @@ test('a preexisting numbered file with different spelling keeps its actual filen
  assert.deepEqual(family.items.map(x=>x.file),['lilly.png','Lilly (2).png']);
  assert.equal(family.requested,'content/pic/characters/Lilly (2).png');
 });
-test('virtual JO9O B is shown with dimensions and remains protected by the replacement writer',()=>{
+test('physical JO9O B is shown with dimensions and remains protected by the replacement writer',()=>{
  const dir=fs.mkdtempSync(path.join(__dirname,'cut-family-original-')),game=path.join(dir,'game'),source=path.join(dir,'original');
  for(const root of [path.join(game,'content/pic'),source]){fs.mkdirSync(path.join(root,'characters'),{recursive:true});fs.writeFileSync(path.join(root,'characters/Example.png'),png);}
  fs.mkdirSync(path.join(game,'modtools'),{recursive:true});fs.symlinkSync(source,path.join(game,'content/jo9o_original_cuts'),'junction');
  const entry={base:'characters/Example.png',alias:'characters/Example (2).png',source:'content/pic/characters/Example.png',target:'content/jo9o_original_cuts/characters/Example.png',sourceSha:core.hash(png),bytes:png.length,width:1,height:1};
  fs.writeFileSync(path.join(game,'modtools/image-original-cuts.json'),JSON.stringify({version:1,originals:{'characters/example.png':entry},reservations:{'characters/example.png':{base:entry.base,alias:entry.alias,status:'linked'}}}));
+ fs.writeFileSync(path.join(game,'content/pic',entry.alias),png);
  const api=create(game,dir,{},dir),family=api.family(entry.base),pic=require('./pic-local.cjs').create(game,dir,{},api);
  assert.equal(family.next,'characters/Example (3).png');assert.equal(family.items[1].readOnly,true);assert.equal(family.items[1].width,1);
  assert.equal(pic.file(entry.alias).readOnly,true);
  assert.throws(()=>pic.apply([{path:entry.alias}]),/예약/);
  assert.equal(core.hash(fs.readFileSync(path.join(source,'characters/Example.png'))),core.hash(png));
- assert.ok(!fs.existsSync(path.join(game,'content/pic',entry.alias)));
+ assert.deepEqual(fs.readFileSync(path.join(game,'content/pic',entry.alias)),png);
 });
 test('editing an existing B backs up its prior pixels and preserves A and QSP',()=>{
  const dir=fs.mkdtempSync(path.join(__dirname,'cut-edit-')),game=path.join(dir,'game'),folder=path.join(game,'content/pic/characters');fs.mkdirSync(folder,{recursive:true});
