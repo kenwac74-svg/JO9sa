@@ -57,7 +57,11 @@ function Get-LocationIndex([string[]]$lines) {
     $at = 4
     $index = @{}
     for ($k = 0; $k -lt $n; $k++) {
-        $index[[Jo9Qsp]::Shift($lines[$at], 5)] = $at
+        $locationName = [Jo9Qsp]::Shift($lines[$at], 5)
+        if ([string]::IsNullOrWhiteSpace($locationName) -or $index.ContainsKey($locationName)) {
+            throw "Empty or duplicate location: $locationName"
+        }
+        $index[$locationName] = $at
         $acts = [int][Jo9Qsp]::Shift($lines[$at + 3], 5)
         $at += 4 + $acts * 3
     }
@@ -166,6 +170,26 @@ foreach ($mod in $mods) {
     }
     $hash = [Jo9Qsp]::Sha256([Jo9Qsp]::Join($lines))
     if ($mod.after_sha256 -and $hash -eq $mod.after_sha256.ToUpper()) { Write-Host "[참고] $($mod.id): 기록된 적용 후 해시와 같음" }
+}
+
+# Validate complete final scripts, not just edit fragments. A lone LF after a
+# comment can swallow the following END in FastQSP despite a valid container.
+# Reject instead of silently repairing author text; no QSP/backup is written.
+foreach ($locationName in $index.Keys) {
+    $locationAt = $index[$locationName]
+    $scriptIndexes = @($locationAt + 2)
+    $actionCount = [int][Jo9Qsp]::Shift($lines[$locationAt + 3], 5)
+    for ($actionNo = 0; $actionNo -lt $actionCount; $actionNo++) {
+        $scriptIndexes += $locationAt + 6 + $actionNo * 3
+    }
+    foreach ($scriptIndex in $scriptIndexes) {
+        $scriptBody = [Jo9Qsp]::Shift($lines[$scriptIndex], 5)
+        $badEnding = [regex]::Match($scriptBody, '\r(?!\n)|(?<!\r)\n')
+        if ($badEnding.Success) {
+            $scriptLine = 1 + [regex]::Matches($scriptBody.Substring(0, $badEnding.Index), '\r\n|\r|\n').Count
+            throw "Invalid script line ending: $locationName line $scriptLine. No file written."
+        }
+    }
 }
 
 if ($changed -eq 0) { Write-Host "모든 edit가 이미 적용돼 있습니다. 쓰지 않았습니다. SHA-256: $hash"; exit 0 }

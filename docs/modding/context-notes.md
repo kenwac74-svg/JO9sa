@@ -329,3 +329,7 @@ S++·각각 +1등급안은 사용자 취소. 기존 S+ 상한 유지, 발견 시
 ## 2026-10-17 시작·로드 빈 화면 회귀 수정
 
 부분 치환이 CRLF 사이를 끊어 menu_form에서 end를 주석에 붙인 것이 직접 원인이었다. 4개 본문21곳의 줄바꿈만 복구하고 기존 캐시 버전을2로 올렸다. 실제 설치 엔진의 정상/오류/수정 복사본에서 홈·새 게임·편집·캐시·일일 마무리를 대조했다. 자세한 한계와 기록은 docs/TRAITS_STARTUP_REGRESSION_FIX_20261017.md.
+
+## 2026-10-17 QSP 출고 검사기
+
+사용자 요청으로 재사용 검사기 `tools/qa/release-check.cjs` 추가. 구조/CRLF/중복 이름, 명시 백업+선별 패치의 정확 재생/재적용, 실제 설치 FastQSP의 6개 완료 지점, 배포 사본 및 입력 해시 보존을 검사한다. 누락은 INCOMPLETE, 정적 전용은 STATIC_PASS로 구분한다. `apply_mods.ps1`도 완성 코드의 단독 CR/LF를 쓰기 전에 거부한다. 알려진 불량 f22c02dd…는 21곳으로 FAIL, 수정본16efdf5b…는 전부 PASS, 테스트75개 통과. 이번 도구 작업은 제품 QSP/세이브를 변경하지 않았다. 실제 세이브 불러오기/시각 배치/모든 분기 검증을 의미하지 않는다. 설명: [QSP_RELEASE_VALIDATION](../QSP_RELEASE_VALIDATION.md), 결과: [qa](../qa/2026-10-17_qsp-release-validator.json).

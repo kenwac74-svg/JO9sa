@@ -1,0 +1,280 @@
+{
+  "date": "2026-10-17",
+  "tool": "tools/qa/release-check.cjs",
+  "final": {
+    "schema": 1,
+    "createdAt": "2026-10-17T02:10:47.615Z",
+    "profile": "release",
+    "checks": [
+      {
+        "name": "inputs-readable",
+        "required": true,
+        "status": "PASS",
+        "detail": {
+          "candidate": "16efdf5b65348401431a967decf3f92be861cd3e47bc0671ee8769437e5ca8d7"
+        }
+      },
+      {
+        "name": "world-structure-and-line-endings",
+        "required": true,
+        "status": "PASS",
+        "detail": {
+          "sha256": "16efdf5b65348401431a967decf3f92be861cd3e47bc0671ee8769437e5ca8d7",
+          "bytes": 18512614,
+          "locations": 259,
+          "roundtrip": true,
+          "lineEndingIssues": 0
+        }
+      },
+      {
+        "name": "distribution-byte-match",
+        "required": true,
+        "status": "PASS",
+        "detail": {
+          "sha256": "16efdf5b65348401431a967decf3f92be861cd3e47bc0671ee8769437e5ca8d7"
+        }
+      },
+      {
+        "name": "patch-replay-and-idempotence",
+        "required": true,
+        "status": "PASS",
+        "detail": {
+          "patches": [
+            "2026-10-17_zzzzzzzzz_traits_line_endings_fix"
+          ],
+          "byteExact": true,
+          "idempotent": true
+        }
+      },
+      {
+        "name": "installed-client-smoke",
+        "required": true,
+        "status": "PASS",
+        "detail": {
+          "passed": 6,
+          "expected": 6
+        }
+      },
+      {
+        "name": "input-hashes-unchanged",
+        "required": true,
+        "status": "PASS",
+        "detail": {
+          "files": 4
+        }
+      }
+    ],
+    "limits": [
+      "No GUI clicks or visual layout verification.",
+      "Save data is used only to prime representative state. GUI save-file loading, CRC compatibility and full saved script restoration are NOT tested.",
+      "Start is replaced only in diagnostic copies. Smoke covers lifecycle calls, not the character-selection UI or every gameplay branch.",
+      "No complete QSP syntax checker: dynamic code and all game logic are not statically proved."
+    ],
+    "client": {
+      "engineSha256": "f75032d79ecb58eeb7b969cd3f774d66b091fca38a360acdabd782e03a46c6e6",
+      "stateAssignments": 44404,
+      "probes": [
+        {
+          "name": "home",
+          "checkpoint": "main_screen",
+          "pass": true,
+          "reason": "",
+          "durationMs": 1084
+        },
+        {
+          "name": "newgame",
+          "checkpoint": "main_screen",
+          "pass": true,
+          "reason": "",
+          "durationMs": 1307
+        },
+        {
+          "name": "editor-slave",
+          "checkpoint": "main_screen",
+          "pass": true,
+          "reason": "",
+          "durationMs": 1047
+        },
+        {
+          "name": "editor-assistant",
+          "checkpoint": "main_screen",
+          "pass": true,
+          "reason": "",
+          "durationMs": 1054
+        },
+        {
+          "name": "cache",
+          "checkpoint": "main_screen",
+          "pass": true,
+          "reason": "",
+          "durationMs": 1050
+        },
+        {
+          "name": "daily",
+          "checkpoint": "end_day_screen",
+          "pass": true,
+          "reason": "",
+          "durationMs": 1056
+        }
+      ]
+    },
+    "verdict": "PASS"
+  },
+  "negativeControls": [
+    {
+      "candidateSha256": "f22c02dd2e206bc2ec31d768a8c59fa6d571d4331eb262703214e7b8a4f00dff",
+      "verdict": "FAIL",
+      "exitCode": 1,
+      "issues": [
+        {
+          "location": "menu_form",
+          "offset": 318210,
+          "line": 4432,
+          "kind": "loneLF"
+        },
+        {
+          "location": "next_day",
+          "offset": 27890,
+          "line": 624,
+          "kind": "loneCR"
+        },
+        {
+          "location": "next_day",
+          "offset": 28817,
+          "line": 643,
+          "kind": "loneCR"
+        },
+        {
+          "location": "next_day",
+          "offset": 29586,
+          "line": 660,
+          "kind": "loneCR"
+        },
+        {
+          "location": "next_day",
+          "offset": 30317,
+          "line": 676,
+          "kind": "loneCR"
+        },
+        {
+          "location": "next_day",
+          "offset": 31046,
+          "line": 691,
+          "kind": "loneCR"
+        },
+        {
+          "location": "next_day",
+          "offset": 31777,
+          "line": 707,
+          "kind": "loneCR"
+        },
+        {
+          "location": "next_day",
+          "offset": 33630,
+          "line": 742,
+          "kind": "loneCR"
+        },
+        {
+          "location": "next_day",
+          "offset": 35837,
+          "line": 779,
+          "kind": "loneCR"
+        },
+        {
+          "location": "next_day",
+          "offset": 38167,
+          "line": 817,
+          "kind": "loneCR"
+        },
+        {
+          "location": "next_day",
+          "offset": 39939,
+          "line": 853,
+          "kind": "loneCR"
+        },
+        {
+          "location": "next_day",
+          "offset": 41711,
+          "line": 889,
+          "kind": "loneCR"
+        },
+        {
+          "location": "next_day",
+          "offset": 43483,
+          "line": 925,
+          "kind": "loneCR"
+        },
+        {
+          "location": "next_day",
+          "offset": 51563,
+          "line": 1092,
+          "kind": "loneCR"
+        },
+        {
+          "location": "next_day",
+          "offset": 52281,
+          "line": 1106,
+          "kind": "loneCR"
+        },
+        {
+          "location": "next_day",
+          "offset": 52904,
+          "line": 1118,
+          "kind": "loneCR"
+        },
+        {
+          "location": "next_day",
+          "offset": 53527,
+          "line": 1130,
+          "kind": "loneCR"
+        },
+        {
+          "location": "next_day",
+          "offset": 54150,
+          "line": 1142,
+          "kind": "loneCR"
+        },
+        {
+          "location": "main_screen",
+          "offset": 60859,
+          "line": 790,
+          "kind": "loneLF"
+        },
+        {
+          "location": "interaction_result",
+          "offset": 44440,
+          "line": 718,
+          "kind": "loneCR"
+        },
+        {
+          "location": "interaction_result",
+          "offset": 59973,
+          "line": 917,
+          "kind": "loneCR"
+        }
+      ]
+    },
+    {
+      "case": "release inputs omitted",
+      "verdict": "INCOMPLETE",
+      "exitCode": 2,
+      "skipped": [
+        "patch-replay-and-idempotence",
+        "installed-client-smoke"
+      ]
+    }
+  ],
+  "tests": {
+    "total": 75,
+    "pass": 75,
+    "fail": 0,
+    "skipped": 0,
+    "suites": [
+      "release-check.test.cjs (10)",
+      "qsp-line-endings.test.cjs (4)",
+      "state-editor/*.test.cjs (61)"
+    ]
+  },
+  "productCodeChangedByValidatorWork": false,
+  "note": "Only sanitized reports are committed. Diagnostic worlds, save-derived values, game JSON copies and original saves are excluded."
+}
