@@ -1,0 +1,147 @@
+SONYA QSP ID routing evidence - 2026-10-26
+Read-only game/source inspection; only this report is written.
+Line numbers below are local to the named QSP location.
+
+Conclusion: current Biker-option acceptance/reward generates type2618. The October1 source already generated2618 in the same event9222.
+No literal2604 character-generation reference was found in either QSP. Current voice_fragment_ids[2604] and [2618] are dialogue fragment indexes and do not create character types.
+Limitation: this is a literal QSP routing audit. Generic data loading, external/custom paths, or saved instances can still expose other IDs. It does not prove2604 can never be loaded, nor establish which JSON was historically created first.
+
+FILE CURRENT C:/MOVE/JO9_2.4_Full/game/jack.qsp
+LOCATION #options
+7204: $Biker_options[1] = {
+7205: ! JO9 MOD START J9M2256 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included
+7206: $sp_text[1] = '[소녀]<br>&nbsp;그럼, <<$master_name>>, 절 데려가시겠어요?'
+7207: ! JO9 MOD END J9M2256
+7208: $text_display = '<br><br><br><br><br>'
+7209: if nsfw = 0: $text_display += '<div id="center_Isabella"><img src="content\pic\characters\biker_girl.png"></div>'
+7210: FUNC('$menu', 'spacer', 4)
+7211: FUNC('$menu', '===BEGIN===', 'column_0')
+7212: FUNC('$menu', 'interaction_city', $menu_item_acceptIsabella, 9222, '데려간다')
+7213: FUNC('$menu', 'city_form', $menu_item_refuseIsabella, 6, '그녀를 남겨 둔다')
+7214: FUNC('$menu', '===END===')
+7215: }
+
+LOCATION interaction_city
+31720: END
+31721: 
+31722: IF interaction_city = 9221:
+31723:  npc = 0
+31724:  $npc_id = ''
+31725:  $place = 'slum_house'
+31726:  npc_progress['Biker'] = 2 
+31727:  $return_lock  = 'shop_general'
+31728:  txt_count = 6
+31729:  copyarr '$text', '$biker_met'
+31730:  copyarr '$display_options', '$biker_options' 
+31731:  $special_image[1] = 'scene\others\biker_girl.png'
+31732:  $special_image[2] = 'scene\others\biker_girl.png'
+31733:  $special_image[3] = 'scene\others\biker_girl.png'
+31734:  $special_image[4] = 'scene\others\biker_girl.png'
+31735:  $special_image[5] = 'scene\others\biker_girl.png'
+31736:  $special_image[6] = 'scene\others\biker_girl.png'
+31737:  Байкер_квест = 3
+31738: END
+31739: 
+31740: ! JO9 MOD START TBV_GIFT_BIKER | 2026-10-17_trait_value
+31741: IF interaction_city = 9222:
+31742:  $place = 'slum_house'
+31743:  $return_lock  = 'menu_form'
+31744:  jo9_trait_value_gift_peerless = slave['jo9_peerless']
+31745:  gs 'killslave'
+31746:  $special_image[1] = 'scene\others\bike.png'
+31747:  $special_image[2] = 'scene\others\bike.png'
+31748:  txt_count = arrsize('$biker_branded') - 1
+31749:  special_stock = 2618
+31750:  slave['brand'] = 5
+31751:  tattoo_brand = slave['brand']
+31752: ! gs 'get_special_slave'
+31753: ! gs '$slave_price'
+31754:  gs 'generate_stock'
+31755:  gs 'stock_to_slave_nogt'
+31756:  !gs 'get_demo_slave'
+31757:  gs '$slave_price'
+31758:  brand_rate += func('jo9_traits_value', 'reward', '', 10, jo9_trait_value_gift_peerless)
+31759:  guild_reputation_rate += func('jo9_traits_value', 'reward', '', 10, jo9_trait_value_gift_peerless)
+31760:  copyarr '$text', '$biker_branded'
+31761: killvar 'jo9_trait_value_gift_peerless'
+31762: END
+
+LOCATION generate_stock
+18: if special_stock > 0:
+19: 	!OPTIONAL OVERRIDE TO USE A SPECIFIC PRESET FROM JSON FILES (IT IS RECOMMENDED TO USE NUMBERS AFTER milf_last TO AVOID CHANCE OF RANDOM GENERATION)
+20: 	stock_type = special_stock
+21: else
+22: 	!NO TYPE OVERRIDE
+
+LOCATION generate_stock
+70: end &! AGE AND TYPE ARE NOW SET
+71: 
+72: !LOAD PRESET CHARACTERISTICS (must do this first to avoid overwriting)
+73: gs 'get_stock_seed'
+74: 
+
+LOCATION get_stock_seed
+8: !Gets slave data from slave.json files in the json folder
+9: 
+10: !Age
+11: stock['age'] = seed_age[stock_type]
+12: 
+13: !Stats
+14: stock['beauty'] = seed_beauty[stock_type]
+15: stock['stamina'] = seed_stamina[stock_type]
+
+LOCATION get_stock_seed
+293: !Images
+294: $stock['fullimage'] = $fullimage[stock_type]
+295: $stock['ava'] = $seed_ava[stock_type]
+296: $stock['ava_gray'] = $seed_ava_gray[stock_type]
+297: $stock['ava_clear'] = $seed_ava_clear[stock_type]
+
+All literal2604/2618 hits:
+interaction_city:31749  special_stock = 2618
+#txt_man:23417 $voice_fragment_ids[2604]='r2_q1112_body_relation_resistant_core_neutral_t2_v2'
+#txt_man:23529 $voice_fragment_ids[2618]='body_relation_resistant_detail_b_3'
+
+FILE OCTOBER1 C:/Users/Ken Choung/.codex/worktrees/6f86/JO9sa/source/jack_2026-10-01.qsp
+LOCATION interaction_city
+32280: IF interaction_city = 9221:
+32281:  npc = 0
+32282:  $npc_id = ''
+32283:  $place = 'slum_house'
+32284:  npc_progress['Biker'] = 2 
+32285:  $return_lock  = 'shop_general'
+32286:  txt_count = 6
+32287:  copyarr '$text', '$biker_met'
+32288:  copyarr '$display_options', '$biker_options' 
+32289:  $special_image[1] = 'scene\others\biker_girl.png'
+32290:  $special_image[2] = 'scene\others\biker_girl.png'
+32291:  $special_image[3] = 'scene\others\biker_girl.png'
+32292:  $special_image[4] = 'scene\others\biker_girl.png'
+32293:  $special_image[5] = 'scene\others\biker_girl.png'
+32294:  $special_image[6] = 'scene\others\biker_girl.png'
+32295:  Байкер_квест = 3
+32296: END
+32297: 
+32298: IF interaction_city = 9222:
+32299:  $place = 'slum_house'
+32300:  $return_lock  = 'menu_form'
+32301:  gs 'killslave'
+32302:  $special_image[1] = 'scene\others\bike.png'
+32303:  $special_image[2] = 'scene\others\bike.png'
+32304:  txt_count = arrsize('$biker_branded') - 1
+32305:  special_stock = 2618
+32306:  slave['brand'] = 5
+32307:  tattoo_brand = slave['brand']
+32308: ! gs 'get_special_slave'
+32309: ! gs '$slave_price'
+32310:  gs 'generate_stock'
+32311:  gs 'stock_to_slave_nogt'
+32312:  !gs 'get_demo_slave'
+32313:  gs '$slave_price'
+32314:  brand_rate += 10
+32315:  guild_reputation_rate += 10
+32316:  copyarr '$text', '$biker_branded'
+32317: END
+
+All literal2604/2618 hits:
+interaction_city:32305  special_stock = 2618

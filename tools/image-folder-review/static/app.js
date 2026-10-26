@@ -5,6 +5,10 @@ const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;',
 const number = value => Number(value || 0).toLocaleString('ko-KR');
 const labels = {original:'원본 유지',comparison:'비교본 유지',defer:'보류',unreviewed:'미검토',mixed:'혼합 선택',review:'재검토 필요'};
 const state = {token:'',pid:'',data:null,page:1,saving:false,scanning:false,sequence:0,signature:'',viewerRow:null,polling:false,groupLimits:{}};
+const filterIds = ['comparison-only','original-only','hash-different','hash-same'];
+const hashLabels = {same:'해시 일치',different:'해시 불일치',pending:'해시 확인 중',error:'해시 확인 오류'};
+function resetFilters() {for(const id of filterIds)$(id).value='all';$('review-filter').value='all';$('search').value='';}
+function hashBadge(row) {return hashLabels[row.hash_status]?`<span class="hash-badge hash-${row.hash_status}">${hashLabels[row.hash_status]}</span>`:'';}
 
 async function api(path, body) {
   const response = await fetch(path, body === undefined ? {} : {method:'POST',headers:{'Content-Type':'application/json','X-Review-Token':state.token},body:JSON.stringify(body)});
@@ -31,20 +35,20 @@ function choices(row, group=false) {
   return `<div class="choices ${group?'group-decisions':'row-decisions'}">${['original','comparison','defer'].map(choice=>{
     const checked=group?row.decision_summary===choice:row.decision===choice;
     const disabled=state.saving || state.scanning || (!group && choice!=='defer' && !row[choice]);
-    return `<label class="choice"><input type="checkbox" value="${choice}" data-scope="${scope}" data-id="${esc(row.id)}" ${checked?'checked':''} ${disabled?'disabled':''} aria-label="${group?'그룹 전체 ':''}${labels[choice]}">${labels[choice]}</label>`;
+    return `<label class="choice"><input type="checkbox" value="${choice}" data-scope="${scope}" data-id="${esc(row.id)}" ${checked?'checked':''} ${disabled?'disabled':''} aria-label="${group?'표시된 항목 전체 ':''}${labels[choice]}">${labels[choice]}</label>`;
   }).join('')}</div>`;
 }
 function fileSide(row, side) {
   const f=row[side];
   const heading=`<div class="side-heading"><i class="side-dot ${side}-dot"></i>${side==='original'?'원본':'비교본'}</div>`;
   if(!f)return `<div class="image-side">${heading}<div class="missing">파일 없음</div><div class="file-label">이쪽 폴더에는 대응 파일이 없습니다.</div></div>`;
-  return `<div class="image-side">${heading}<button class="thumb" data-open-row="${esc(row.id)}" aria-label="${esc(f.relative_path)} 확대 비교"><img class="thumbnail" loading="lazy" decoding="async" data-file-id="${f.id}" data-request-sha="${f.thumbnail?.sha256 || ''}" src="${asset(f)}" alt="${esc(f.relative_path)}"></button><div class="file-label" title="${esc(fullPath(f))}">${esc(f.relative_path)}</div><div class="image-meta ${f.thumbnail?.error?'error':''}" data-file="${esc(f.id)}">${esc(metadata(f))}</div></div>`;
+  return `<div class="image-side">${heading}<button class="thumb" data-open-row="${esc(row.id)}" aria-label="${esc(f.relative_path)} 확대 비교"><img class="thumbnail" loading="lazy" decoding="async" data-file-id="${f.id}" data-request-sha="${f.thumbnail?.sha256 || ''}" src="${asset(f)}" alt="${esc(f.relative_path)}"></button><div class="file-label ${row.hash_status==='different'?'hash-different':''}" title="${esc(fullPath(f))}">${esc(f.relative_path)}</div><div class="image-meta ${f.thumbnail?.error?'error':''}" data-file="${esc(f.id)}">${esc(metadata(f))}</div></div>`;
 }
 function renderGroups() {
   const groups=state.data.groups;
   $('groups').innerHTML=groups.length?groups.map(g=>{
     const shown=g.rows.slice(0,state.groupLimits[g.id] || 20), remaining=g.rows.length-shown.length;
-    return `<article class="group" data-name="${esc(g.name)}" data-dir="${esc(g.relative_dir)}"><div class="group-heading"><div class="group-title">${g.relative_dir?`<span class="subdir">${esc(g.relative_dir)}</span>`:''}<h2>${esc(g.name)}<span class="group-state ${g.decision_summary}">${labels[g.decision_summary] || '미검토'}</span></h2></div><div class="group-actions"><span class="group-count">그룹 전체 ${number(g.rows.length)}개</span>${choices(g,true)}</div></div>${shown.map(r=>`<section class="pair-row" data-row="${r.id}" data-variant="${esc(r.variant_key)}"><div class="row-heading"><div><span class="variant-label">${esc(r.variant_key || '기본 파일')}</span>${r.review_required?'<span class="review-badge">파일 또는 대조 쌍이 바뀌었습니다 · 재검토</span>':''}</div>${choices(r)}</div><div class="image-pair">${fileSide(r,'original')}${fileSide(r,'comparison')}</div></section>`).join('')}${remaining?`<div class="group-more"><span>${number(shown.length)} / ${number(g.rows.length)}개 표시 · 그룹 선택은 전체에 적용됩니다.</span><button data-more="${g.id}">${number(Math.min(20,remaining))}개 더 보기</button></div>`:''}</article>`;
+    return `<article class="group" data-name="${esc(g.name)}" data-dir="${esc(g.relative_dir)}"><div class="group-heading"><div class="group-title">${g.relative_dir?`<span class="subdir">${esc(g.relative_dir)}</span>`:''}<h2>${esc(g.name)}<span class="group-state ${g.decision_summary}">${labels[g.decision_summary] || '미검토'}</span></h2></div><div class="group-actions"><span class="group-count">표시 ${number(g.rows.length)} / 전체 ${number(g.total_rows)}개</span>${choices(g,true)}</div></div>${shown.map(r=>`<section class="pair-row" data-row="${r.id}" data-variant="${esc(r.variant_key)}"><div class="row-heading"><div><span class="variant-label">${esc(r.variant_key || '기본 파일')}</span>${hashBadge(r)}${r.review_required?'<span class="review-badge">파일 또는 대조 쌍이 바뀌었습니다 · 재검토</span>':''}</div>${choices(r)}</div><div class="image-pair">${fileSide(r,'original')}${fileSide(r,'comparison')}</div></section>`).join('')}${remaining?`<div class="group-more"><span>${number(shown.length)} / ${number(g.rows.length)}개 표시 · 그룹 선택은 필터에 맞는 항목 전체에 적용됩니다.</span><button data-more="${g.id}">${number(Math.min(20,remaining))}개 더 보기</button></div>`:''}</article>`;
   }).join(''):'<div class="no-results">조건에 맞는 그룹이 없습니다.</div>';
   if($('viewer').open)updateViewerChoices();
 }
@@ -56,7 +60,9 @@ function updateHeader() {
   $('overview').innerHTML=[['이미지 파일',s.files],['번호 그룹',s.groups],['비교 항목',s.rows],['검토됨',s.reviewed],['미검토',s.unreviewed],['보류',s.deferred],['재검토',s.review_required]].map(([label,value])=>`<div class="stat"><span>${label}</span><b>${number(value)}</b></div>`).join('');
   $('thumb-progress').textContent=`썸네일 ${number(t.ready+t.failed)} / ${number(t.total)}${t.failed?' · 읽기 오류 '+number(t.failed):''}`;
   $('thumbnail-progress').max=Math.max(t.total,1);$('thumbnail-progress').value=t.ready+t.failed;
-  $('result-count').textContent=`${number(state.data.total_groups)}개 그룹${$('search').value?' · 검색 결과':''}`;
+  $('result-count').textContent=`${number(state.data.total_groups)}개 그룹 · ${number(state.data.total_rows)}개 항목${$('search').value?' · 검색 결과':''}`;
+  const h=state.data.hash_counts;
+  $('hash-progress').textContent=`동일 파일명 SHA-256: 일치 ${number(h.same)} · 불일치 ${number(h.different)} · 확인 중 ${number(h.pending)} · 오류 ${number(h.error)}. 확인 중·오류는 일치/불일치 골라보기에서 제외됩니다.`;
   $('page-count').textContent=`${state.data.page} / ${state.data.pages}`;
   $('previous-page').disabled=state.data.page<=1; $('next-page').disabled=state.data.page>=state.data.pages;
   $('export-json').href=`/api/projects/${state.pid}/export?format=json`;
@@ -65,13 +71,13 @@ function updateHeader() {
   const issueCount=p.scan.issues.length+t.failed;
   $('show-issues').textContent=`검사 알림${issueCount?' '+number(issueCount):''}`;
 }
-function params() {return new URLSearchParams({page:state.page,q:$('search').value,presence:$('presence').value,review:$('review-filter').value});}
+function params() {return new URLSearchParams({page:state.page,q:$('search').value,review:$('review-filter').value,...Object.fromEntries(filterIds.map(id=>[id.replaceAll('-','_'),$(id).value]))});}
 async function loadPage(render=true) {
   if(!state.pid)return;
   const seq=++state.sequence;
   const data=await api(`/api/projects/${state.pid}?${params()}`);
   if(seq!==state.sequence)return;
-  const signature=JSON.stringify(data.groups.map(g=>[g.id,g.decision_summary,g.rows.map(r=>[r.id,r.decision,r.review_required])]));
+  const signature=JSON.stringify(data.groups.map(g=>[g.id,g.decision_summary,g.rows.map(r=>[r.id,r.decision,r.review_required,r.hash_status])]));
   const redraw=render || signature!==state.signature;
   state.data=data;state.page=data.page;state.signature=signature;
   updateHeader();
@@ -94,7 +100,7 @@ async function openProject(pid) {
   if(!pid)return;
   state.pid=pid;state.page=1;state.signature='';state.scanning=false;state.groupLimits={};
   localStorage.setItem('folder-review.active',pid);$('projects').value=pid;
-  $('search').value='';$('presence').value='all';$('review-filter').value='all';
+  resetFilters();
   notice('');notice('',false,'status');
   await loadPage();$('registration').open=false;
 }
@@ -174,7 +180,7 @@ $('register-form').addEventListener('submit',async event=>{
     const data=await api('/api/projects',{name:$('project-name').value,original:$('original-root').value,comparison:$('comparison-root').value});
     state.pid=data.project.id;state.page=1;state.signature='';state.data=null;state.groupLimits={};
     $('groups').innerHTML='';$('registration').open=false;
-    $('search').value='';$('presence').value='all';$('review-filter').value='all';
+    resetFilters();
     localStorage.setItem('folder-review.active',state.pid);
     await refreshProjects();await waitForScan(data.job_id,state.pid);
   }catch(error){notice(error.message,true);$('registration').open=true;}
@@ -197,7 +203,8 @@ $('new-project').addEventListener('click',()=>{$('registration').open=true;$('or
 $('rescan').addEventListener('click',async()=>{try{notice('');const {job_id}=await api(`/api/projects/${state.pid}/rescan`,{});await waitForScan(job_id,state.pid);}catch(error){notice(error.message,true);}});
 let searchTimer;
 $('search').addEventListener('input',()=>{clearTimeout(searchTimer);searchTimer=setTimeout(()=>{state.page=1;loadPage().catch(e=>notice(e.message,true));},180);});
-for(const id of ['presence','review-filter'])$(id).addEventListener('change',()=>{state.page=1;loadPage().catch(e=>notice(e.message,true));});
+for(const id of [...filterIds,'review-filter'])$(id).addEventListener('change',()=>{clearTimeout(searchTimer);state.page=1;state.groupLimits={};loadPage().catch(e=>notice(e.message,true));});
+$('reset-filters').addEventListener('click',()=>{clearTimeout(searchTimer);resetFilters();state.page=1;state.groupLimits={};loadPage().catch(e=>notice(e.message,true));});
 for(const [id,delta] of [['previous-page',-1],['next-page',1]])$(id).addEventListener('click',()=>{state.page+=delta;loadPage().then(()=>document.querySelector('.toolbar').scrollIntoView()).catch(e=>notice(e.message,true));});
 $('close-viewer').addEventListener('click',()=>$('viewer').close());
 $('fit-view').addEventListener('click',()=>$('viewer-images').classList.remove('natural'));

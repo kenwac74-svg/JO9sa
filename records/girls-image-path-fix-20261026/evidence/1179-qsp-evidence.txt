@@ -1,0 +1,232 @@
+1179 image routing evidence - 2026-10-26
+Read-only inspection; only this report written. No new ID selected or runtime data changed.
+
+Conclusion:1179 currently uses fixed red_short fullimage/portrait strings. Unreferenced1179_green_long assets are not automatically selected by matching numeric prefix.
+The hairColor/hairLen routine infers scene tags from the selected fullimage string; it does not choose between alternate full/face files. Thus filename words can disagree with actual artwork.
+If the two appearances represent two intended characters, separate ID+JSON registration is appropriate. A new ID must first be checked for duplicate filenames/IDs; random young generation presently draws1001..1448. A number outside the range needs an explicit range/routing decision, not an arbitrary rename.
+Available engine source is historicalengine-base9bb0276 and is supporting loader evidence, not a claim of binary identity.
+
+CURRENT QSP LOCATION get_stock_seed (local line numbers)
+293: !Images
+294: $stock['fullimage'] = $fullimage[stock_type]
+295: $stock['ava'] = $seed_ava[stock_type]
+296: $stock['ava_gray'] = $seed_ava_gray[stock_type]
+297: $stock['ava_clear'] = $seed_ava_clear[stock_type]
+
+CURRENT QSP LOCATION display_pic (local line numbers)
+19: 	$init_slave_image_characteristics = {
+20: 		! Getting slave info for showing pics lokplart
+21: 		if $dynslave['hairColor'] = '' and dynslave_state ! CONST_INT['no_slave']:
+22: 			if instr($dynslave['fullimage'], 'white') ! 0: 
+23: 				$dynslave['hairColor'] = 'white'
+24: 			elseif instr($dynslave['fullimage'], 'red') ! 0: 
+25: 				$dynslave['hairColor'] = 'red'
+26: 			elseif instr($dynslave['fullimage'], 'purple') ! 0: 
+27: 				$dynslave['hairColor'] = 'purple'
+28: 			elseif instr($dynslave['fullimage'], 'pink') ! 0: 
+29: 				$dynslave['hairColor'] = 'pink'
+30: 			elseif instr($dynslave['fullimage'], 'green') ! 0: 
+31: 				$dynslave['hairColor'] = 'green'
+32: 			elseif instr($dynslave['fullimage'], 'brown') ! 0: 
+33: 				$dynslave['hairColor'] = 'brown'
+34: 			elseif instr($dynslave['fullimage'], 'blue') ! 0: 
+35: 				$dynslave['hairColor'] = 'blue'
+36: 			elseif instr($dynslave['fullimage'], 'blond') ! 0: 
+37: 				$dynslave['hairColor'] = 'blond'
+38: 			elseif instr($dynslave['fullimage'], 'black') ! 0: 
+39: 				$dynslave['hairColor'] = 'black'
+40: 			end
+41: 			if instr($dynslave['fullimage'], 'short') ! 0:
+42: 				$dynslave['hairLen'] = 'short'
+43: 			else
+44: 				$dynslave['hairLen'] = 'long'
+45: 			end
+46: 		end
+47: 	}
+
+CURRENT QSP LOCATION display_pic (local line numbers)
+74: if $main_actor = 'slave':
+75: 	if $args[1] = 'fullimage':
+76: ! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022
+77: 		$result = func("jo9_seed_role_images", "resolve", slave_type, $slave['fullimage'], "fullimage")
+78: ! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022
+79: 		exit
+80: 	else
+81: 		dynamic $replace($init_slave_image_characteristics, 'dyn'+'slave', 'slave')
+82: 		$main_spec_noNr = $slave['hairColor'] + '_' + $slave['hairLen'] + '_' + $age[slave['age']]
+83: 		$main_gen_noNr = 'general_' + $age[slave['age']]
+84: 		$unique_scene_tag = $slave_scene_tag    &!고유씬이미지태그
+85: 		main_actor_type = slave_type
+
+CURRENT QSP LOCATION display_fullimage (local line numbers)
+104: $def_image_path = func('jo9_seed_role_images', 'resolve', actor_type, $def_image_path, $iif($actor_name = 'assistant', $assistant_img_key, 'fullimage'))
+105: ! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022
+106: $patch_image_path = dyneval('$result = $<<$patch_img_arr_name>>[actor_type]')
+107: 
+108: if $patch_image_path = '':
+109:     $res_image_path = $def_image_path
+110: else
+111:     $patch_mood_suffix = ''
+112:     if actor_arousal > 3:
+113:         $patch_mood_suffix = '_horny'
+114:     elseif actor_moral < 3:
+115:         $patch_mood_suffix = '_rebel'
+116:     end
+117: 
+118:     $patch_mood_tagname = $patch_img_arr_name+$patch_mood_suffix
+119:     
+120:     if $patch_mood_suffix <> '':
+121:         $patch_mood_image_path = dyneval('$result = $<<$patch_mood_tagname>>[actor_type]')
+122:     end
+123: 
+124:     if $patch_mood_image_path <> '':
+125:         $res_image_path = $patch_mood_image_path
+126:     else
+127:         $res_image_path = $patch_image_path
+128:     end
+129: 
+130: end
+131: 
+132: ! JO9 MOD START J9M1255 | 2026-10-08_persistent_image_cycle | changed block; context may be included
+133: $result = '<div id="<<$args[1]>>"><img src="content\pic\<<$res_image_path>>.png"></div>'
+
+CURRENT QSP LOCATION generate_stock (local line numbers)
+52: 	!SELECT A RANDOM UNIQUE (PREVIOUSLY UNUSED) TYPE, OF APPROPRIATE AGE, FROM JSON FILES
+53: 	:loop_type
+54: 		if meta_type = 1: stock_type = rand(loli_first, loli_last)
+55: 		if meta_type = 2: stock_type = rand(young_first, young_last)
+56: 		if meta_type = 3: stock_type = rand(milf_first, milf_last)
+
+All literal1179 hits in current QSP:
+#txt_man:12116 $voice_fragment_ids[1179]='q1111_occupation_occupation_punk_core_reserved_t1'
+
+CURRENT json/slaves/1179.json
+{
+    "fullimage": "girls/full/1179_red_short_young",
+    "fullmade": "girls/full/cloth/1179_red_short_young",
+    "fullmistress": "",
+    "fullsecretary": "",
+    "seed_ava": "content/pic/girls/face/1179_red_short_young_sepia",
+    "seed_ava_gray": "content/pic/girls/face/1179_red_short_young_gray",
+    "seed_ava_clear": "content/pic/girls/face/1179_red_short_young",
+    "seed_age": 0,
+    "seed_boobs": 3,
+    "seed_boobs_img": "boobs_DD",
+    "seed_pussy_img": "pussy_g1",
+    "seed_psy_basic": "",
+    "seed_world": ""
+}
+CURRENT json/slave_index.json
+{
+    "loli_first": 1,
+    "loli_last": 247,
+    "young_first": 1001,
+    "young_last": 1448,
+    "milf_first": 2001,
+    "milf_last": 2323
+}
+
+SUPPORTING LOADER SOURCE C:/Users/Ken Choung/.codex/worktrees/6f86/JO9sa/tmp/engine-validation-research/source/engine-base-master-9bb0276be5f94f94f911fab0daeb225cc3c559ec/qsp/jack.cpp
+16:     if (!styleSheetDone) { setStylesheet(); } //Yeah not good place, I know.
+17:     QDirIterator dir_iterator(*qspGameDirectory + "json", QDirIterator::Subdirectories);
+18: 
+19:     while (dir_iterator.hasNext()) {
+20:         dir_iterator.next();
+21: 
+22:         QFileInfo file_info(dir_iterator.filePath());
+23: 
+24:         if (file_info.isFile()) {
+25:             if (file_info.suffix() == "json") {
+26:                 if (file_info.baseName() == "save_config") { continue; }
+27: 
+28:                 QFile file(dir_iterator.filePath());
+29:                 file.open(QIODevice::ReadOnly | QIODevice::Text);
+30:                 QByteArray json_data = file.readAll();
+31:                 file.close();
+32: 
+33:                 QJsonDocument doc = QJsonDocument::fromJson(json_data);
+34: 
+35:                 QStringList part = file_info.baseName().split("_");
+36: 
+37:                 iterateKeys(doc, part[0].toInt());
+38:             }
+
+49: 
+50: void Jack::getImages() {
+51:     QStringList img_dir = { "girls/normal_scenes", "girls/reward_scenes", "girls/sex_scenes", "girls/torture_scenes", "scene" /*, "scene/service", "scene/gangbang"*/ }; // now we recursively search, so make sure there are no duplicates here (parent + subfolder)
+52:     bool tmp = true;
+53:     for (QString dir : img_dir) {
+54:         QDirIterator dir_iterator(*qspGameDirectory + "content/pic/" + dir, QDirIterator::Subdirectories);
+55: 
+56:         while (dir_iterator.hasNext()) {
+57:             dir_iterator.next();
+58:             
+59:             if (dir_iterator.filePath().contains("/unused/")) continue; // skip "unused" folders
+60: 
+61:             QFileInfo file_info(dir_iterator.filePath());
+62: 
+63:             if (file_info.isFile() && file_info.suffix() == "png" && !file_info.baseName().contains("item")) {
+64:                 QString fileName = file_info.baseName();
+65:                 int separatorIndex = fileName.lastIndexOf("_");
+66:                 if (fileName[separatorIndex + 1] >= QChar('0') && fileName[separatorIndex + 1] <= QChar('9')) {
+67:                     fileName.truncate(separatorIndex);
+68:                 }
+69: 
+
+108:     QJsonObject obj = doc.object();
+109: 
+110:     for (QString key : obj.keys())
+111:     {
+112:         if (obj.value(key).isString())
+113:         {
+114:             QString value = obj.value(key).toString();
+115:             if (array_indice == 0)
+116:             {
+117:                 if (key.at(0) != '$')
+118:                     key = "$" + key;
+119:                 setStringVariable(key, value);
+120:             }
+121:             else
+122:                 setStringVariable(key, array_indice, value);
+123:         }
+124:         else if (obj.value(key).isDouble() || obj.value(key).isBool())
+125:         {
+126:             int value = obj.value(key).toInt();
+
+132:         else if (obj.value(key).isArray())
+133:         {
+134:             QJsonArray img_array = obj[key].toArray();
+135:             QVariantList list = img_array.toVariantList();
+136: 
+137:             //      if(image_arrays[list[0].toString()] == NULL)
+138:             //        image_arrays[list[0].toString()] = new QList<QString>;
+139:             //      else
+140:             image_arrays[list[0].toString()].clear();
+141: 
+142:             for (int i = 0; i < list.size(); ++i)
+143:             {
+144:                 if (i == 0)
+145:                     setStringVariable(key, array_indice, list[0].toString());
+146: 
+147:                 image_arrays[list[0].toString()].append(list[i].toString());
+
+REGISTERED SAME-ID OUTFIT EXAMPLE 1005.json
+{
+  "fullimage": "girls/full/1005_black_long_young",
+  "indpack_dom": "girls/full/1005/1005_full_dom",
+  "indpack_maid": "girls/full/1005/1005_full_maid",
+  "indpack_maid_rebel": "girls/full/1005/1005_full_maid_rebel",
+  "indpack_naked": "girls/full/1005/1005_full_naked",
+  "indpack_secr": "girls/full/1005/1005_full_secr",
+  "indpack_title": "girls/full/1005/1005_full_title"
+}
+
+REGISTERED SAME-ID OUTFIT EXAMPLE 2579_egeya.json
+{
+  "fullimage": "girls/full/egeya_blond_long",
+  "indpack_title": "girls/full/2579/2579_full_naked",
+  "indpack_naked": "girls/full/2579/2579_full_naked",
+  "indpack_maid": "girls/full/2579/2579_full_maid",
+  "indpack_secr": "girls/full/2579/2579_full_secr",
+  "indpack_dom": "girls/full/2579/2579_full_dom"
+}

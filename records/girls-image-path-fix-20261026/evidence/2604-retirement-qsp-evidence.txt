@@ -1,0 +1,221 @@
+2604 retirement QSP evidence -2026-10-26
+Read-only inspection. Only this report is written; no game/QSP/JSON/image/save modification.
+
+CONCLUSION
+In the current shipped QSP/data routing,2604_sonya.json is an unused preset definition. Active Sonya acquisition remains2618.
+The only literal2604 QSP occurrence is voice_fragment_ids[2604], a dialogue fragment index. No2604_sonya basename or Sonya/RussianSonya direct string routing occurs.
+No special_stock or stock_type arithmetic operation or computed special random range including2604 was found. General ranges are in slave_index and all exclude2604.
+Professor-related RAND(2599,2603) is a condition, excludes2604, and is not a generation assignment.
+Dynamic special_stock=bm_sequence_index is explicitly bounded3003..3026. Black-market index starts3002 and indexes upward to3027 (due preincrement and <= guard); fog index scans1..497. Both exclude2604.
+get_special_slave has only two active literal callers: fixedslave_type946 in doagirls event7961; black-market s_type derived from bm_index. Neither supplies2604.
+SCOPE LIMIT: generic JSON importing/manual developer ID entry, external custom libraries and a previously imported save containing2604 were not executed or inspected. This supports retirement from current normal gameplay routing, not proof that no historical save ever contained2604.
+Deletion scope proposed by parent is onlyjson/slaves/2604_sonya.json;2618 and shared images must remain.
+
+CURRENT INDEX
+{
+    "loli_first": 1,
+    "loli_last": 247,
+    "young_first": 1001,
+    "young_last": 1449,
+    "milf_first": 2001,
+    "milf_last": 2323
+}
+
+LOCATION generate_stock (local line numbers)
+18: if special_stock > 0:
+19: 	!OPTIONAL OVERRIDE TO USE A SPECIFIC PRESET FROM JSON FILES (IT IS RECOMMENDED TO USE NUMBERS AFTER milf_last TO AVOID CHANCE OF RANDOM GENERATION)
+20: 	stock_type = special_stock
+21: else
+22: 	!NO TYPE OVERRIDE
+23: 	!OPTIONAL OVERRIDES FOR AGE
+24: 	if $special_age ! '':
+25: 		seed_age = age_code[$special_age]
+26: 		if seed_age = CONST_INT['loli_age']: meta_type = 1
+27: 		if seed_age = CONST_INT['young_age']: meta_type = 2
+28: 		if seed_age = CONST_INT['milf_age']: meta_type = 3
+29: 		killvar '$special_age'
+30: 	elseif cheat_e = 1 and no_loli ! 1:
+31: 		meta_type = 1
+32: 		cheat_f = 0
+33: 		cheat_g = 0
+34: 	elseif cheat_f = 1:
+35: 		meta_type = 2
+36: 		cheat_e = 0
+37: 		cheat_g = 0
+38: 	elseif cheat_g = 1 and no_milf ! 1:
+39: 		meta_type = 3
+40: 		cheat_e = 0
+41: 		cheat_f = 0
+42: 	else
+43: 		!RANDOM AGE
+44: 		:loop_meta
+45: 			meta_type = rand(1,5)
+46: 			if meta_type = 4: meta_type = 2
+47: 			if meta_type = 5: meta_type = 3
+48: 		if no_loli = 1 and meta_type = 1: jump 'loop_meta'
+49: 		if no_milf = 1 and meta_type = 3: jump 'loop_meta'
+50: 	end
+51: 
+52: 	!SELECT A RANDOM UNIQUE (PREVIOUSLY UNUSED) TYPE, OF APPROPRIATE AGE, FROM JSON FILES
+53: 	:loop_type
+54: 		if meta_type = 1: stock_type = rand(loli_first, loli_last)
+55: 		if meta_type = 2: stock_type = rand(young_first, young_last)
+56: 		if meta_type = 3: stock_type = rand(milf_first, milf_last)
+
+LOCATION interaction_city (local line numbers)
+13725: 
+13726: IF interaction_city = 8992:
+13727:  npc = 0
+13728:  $npc_id = ''
+13729:  $place = 'safari'
+13730:  $return_lock  = 'shop_general'
+13731:  copyarr '$display_options', '$safari_options'
+13732:  sp_txt = 1
+13733:  IF slave_type = RAND(2599,2603):
+13734:   interaction_city = 89924
+13735:  else
+13736:   if (slave["age"] = CONST_INT['loli_age'] and slave["boobs"] > 3) or ((slave["age"] = CONST_INT['young_age'] or slave["age"] = CONST_INT['milf_age']) and (slave["boobs"] < 1 or slave["boobs"] > 3)): interaction_city = 89923
+13737:   if ((slave["age"] = CONST_INT['loli_age'] and slave["boobs"] < 4) or ((slave["age"] = CONST_INT['young_age'] or slave["age"] = CONST_INT['milf_age']) and (slave["boobs"] > 0 and slave["boobs"] < 4))) and slave['beauty'] > 2 and slave['stamina'] > 2 and slave["intellect"] > 1: interaction_city = 89921
+13738:   if slave['beauty'] < 3 or slave['stamina'] < 3 or slave["intellect"] < 2: interaction_city = 89922
+13739:  END
+
+LOCATION interaction_city (local line numbers)
+31740: ! JO9 MOD START TBV_GIFT_BIKER | 2026-10-17_trait_value
+31741: IF interaction_city = 9222:
+31742:  $place = 'slum_house'
+31743:  $return_lock  = 'menu_form'
+31744:  jo9_trait_value_gift_peerless = slave['jo9_peerless']
+31745:  gs 'killslave'
+31746:  $special_image[1] = 'scene\others\bike.png'
+31747:  $special_image[2] = 'scene\others\bike.png'
+31748:  txt_count = arrsize('$biker_branded') - 1
+31749:  special_stock = 2618
+31750:  slave['brand'] = 5
+31751:  tattoo_brand = slave['brand']
+31752: ! gs 'get_special_slave'
+31753: ! gs '$slave_price'
+31754:  gs 'generate_stock'
+31755:  gs 'stock_to_slave_nogt'
+31756:  !gs 'get_demo_slave'
+31757:  gs '$slave_price'
+31758:  brand_rate += func('jo9_traits_value', 'reward', '', 10, jo9_trait_value_gift_peerless)
+31759:  guild_reputation_rate += func('jo9_traits_value', 'reward', '', 10, jo9_trait_value_gift_peerless)
+31760:  copyarr '$text', '$biker_branded'
+31761: killvar 'jo9_trait_value_gift_peerless'
+31762: END
+
+LOCATION black_market_get_comm_slave (local line numbers)
+4: !activates the slave for training mode
+5: slave_state = CONST_INT['slave_exist']
+6: slave_type = s_type
+7: gs 'get_special_slave'
+8: $slave_psy_basic = $seed_psy_basic[slave_type]
+9: $slave_type = 'unic'
+10: 
+11: if bm_sequence_index < 3003 or bm_sequence_index > 3026:
+12:     bm_sequence_index = 3003
+13: end
+14: 
+15: 
+16: special_stock = bm_sequence_index
+17: gs 'generate_stock'
+18: gs 'stock_to_slave_nogt'
+19: gs '$slave_price'
+20: 
+21: 
+22: rand_roll = RAND(0,1)
+23: slave["grace"] = rand_roll
+24: killvar 'rand_roll'
+25: 
+26: 
+27: bm_sequence_index += 1
+28: 
+29: 
+30: if bm_sequence_index > 3026: bm_sequence_index = 3003
+
+LOCATION black_market_index (local line numbers)
+7: i = 3002
+8: 
+9: ! Счётчик коммунальных уникалок
+10: bmi = 0
+11: 
+12: :index_loop
+13: 
+14: i += 1
+15: if $seed_name[i] <> 'blank' and $seed_name[i] <> '' and $seed_name[i] <> 'пусто' and black_market_taken['<<i>>'] = 0:
+16: 	bm_index[bmi] = i
+17: 	bmi += 1
+18: 	!msg "i = <<i>><br>bm_index[<<bmi>>] name is <<$seed_name[i]>>"
+19: end
+20: if i <= 3026: jump 'index_loop'
+21: 
+22: !msg "Кол-во рабынь: <<arrsize('bm_index')>>"
+23: 
+24: txt = 0
+25: gt 'black_market_interface'
+
+LOCATION fog_index (local line numbers)
+6: i = 0
+7: 
+8: ! Счётчик коммунальных уникалок
+9: bmi = 0
+10: 
+11: :index_loop
+12: 
+13: i += 1
+14: if $seed_name[i] <> 'blank' and $seed_name[i] <> '' and $seed_name[i] <> 'пусто' and black_market_taken['<<i>>'] = 0:
+15: 	bm_index[bmi] = i
+16: 	bmi += 1
+17: 	!msg "i = <<i>><br>bm_index[<<bmi>>] name is <<$seed_name[i]>>"
+18: end
+19: if i < 497: jump 'index_loop'
+20: 
+21: !msg "Кол-во рабынь: <<arrsize('bm_index')>>"
+22: 
+23: txt = 0
+24: 
+
+LOCATION black_market_interface (local line numbers)
+11: if txt = 0:
+12:    txt = 1
+13:    min_txt = 1
+14:    txt_count = arrsize('bm_index')
+15: end
+16: 
+17: s_type = bm_index[txt - 1]
+
+LOCATION black_market_interface (local line numbers)
+109: $yes = {
+110:       if sound_on = 1: play 'content\snd\kkm.wav', sound_volume
+111:       killobj
+112:       killvar 'bm_index'
+113:       black_market_taken['<<s_type>>'] = 1
+114:       sparks -= bm_price
+115:       gs 'black_market_get_comm_slave'
+116:       gt 'shop_general'
+
+LOCATION #npc_base (local line numbers)
+6793: IF interaction_city = 7961:
+6794:  $place = 'redlight_street_rental'
+6795:  $return_lock  = 'menu_form'
+6796:  txt_count = arrsize('$doagirls_branded') - 1
+6797:  slave_type = 946
+6798:  slave['brand'] = 0
+6799:  tattoo_brand = slave['brand']
+6800:  assistant_type = 945
+6801:  gs 'get_special_slave'
+6802:  gs '$slave_price'
+6803:  gs 'get_special_assistant'
+
+LOCATION get_special_slave (local line numbers)
+5: !activates the slave for training mode
+6: slave_state = CONST_INT['slave_exist']
+7: gs 'get_stock_seed'
+8: $slave_psy_basic = $seed_psy_basic[slave_type]
+9: $slave_type = 'unic'
+10: slave["null"] = 0
+11: slave["age"] = seed_age[slave_type]
+12: $slave["hair"] = $seed_hair[slave_type]
+
+ALL2604/SONYA DIRECT HITS (comments excluded)
+#txt_man:23417 $voice_fragment_ids[2604]='r2_q1112_body_relation_resistant_core_neutral_t2_v2'

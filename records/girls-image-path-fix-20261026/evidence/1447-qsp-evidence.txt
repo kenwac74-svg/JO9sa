@@ -1,0 +1,240 @@
+1447 QSP use and missing portrait evidence -2026-10-26
+Read-only runtime/source inspection; only this report written. No hashes, image rendering, game execution or runtime modifications.
+
+SUMMARY
+1447 is a registered young-generation preset, not an orphan solely because no hardcoded character-specific event names it.
+Current index is1001..1449 inclusive.1447 was also inside the preceding1001..1448 range. A particular loaded save may carry range/history variables; no live save was inspected.
+Representative routes: initial-slave start forcesyoung; requested young expert-search forcesyoung; ordinary untrained auction uses default randomage and can selectyoung.
+Recent-generation suppression isprev_num_type/num_count; IDs are re-rolled when present in that history, with history reset atnum_count>=88. This is not a permanent never-used-again restriction. No literalstockmark_used variable occurs in currentQSP.
+1447 has no declaredindpack. Its role-image fields are empty, so absence of those optional roles is not an additional missing-CG error. Generic scene selection can use hair/age-specific or general image pools via display_pic; lack of dedicated1447 scene files does not itself prevent it being a valid preset.
+The fullimage file exists while all three registeredface files are missing; therefore it can appear in gameplay with its main/fullpicture but broken portraits.
+Appearance surgery searches young_first..young_last;1447 is inside that lookup range and its blond filename is eligible when those filters match. This is separate from random generation.
+
+CURRENT INDEX
+{
+  "loli_first": 1,
+  "loli_last": 247,
+  "young_first": 1001,
+  "young_last": 1449,
+  "milf_first": 2001,
+  "milf_last": 2323
+}
+CURRENT1447JSON
+{
+  "fullimage": "girls/full/1447_blond_long_young",
+  "fullmade": "",
+  "fullmistress": "",
+  "fullsecretary": "",
+  "seed_ava": "content/pic/girls/face/1447_blond_long_young_sepia",
+  "seed_ava_gray": "content/pic/girls/face/1447_blond_long_young_gray",
+  "seed_ava_clear": "content/pic/girls/face/1447_blond_long_young",
+  "seed_age": 0,
+  "seed_boobs": 2,
+  "seed_boobs_img": "boobs_D",
+  "seed_pussy_img": "pussy_l1",
+  "seed_psy_basic": "",
+  "seed_world": ""
+}
+DECLARED BASIC FILE EXISTENCE
+fullimage C:/MOVE/JO9_2.4_Full/game/content/pic/girls/full/1447_blond_long_young.png exists=true
+seed_ava C:/MOVE/JO9_2.4_Full/game/content/pic/girls/face/1447_blond_long_young_sepia.png exists=false
+seed_ava_gray C:/MOVE/JO9_2.4_Full/game/content/pic/girls/face/1447_blond_long_young_gray.png exists=false
+seed_ava_clear C:/MOVE/JO9_2.4_Full/game/content/pic/girls/face/1447_blond_long_young.png exists=false
+
+LOCATION menu_form (local line numbers)
+103: if get_initial_slave = 1:
+104: 	$special_age = 'young'
+105: 	gs 'generate_stock'
+106: 	gs 'stock_to_slave'
+
+LOCATION $expert_search (local line numbers)
+8: for expert_search_attempts = 1 to rand(search['cost'], search['cost']*2):
+9: 
+10: 	if search['age'] = 1: $special_age = 'milf'
+11: 	if search['age'] = 2: $special_age = 'young'
+12: 	if search['age'] = 3 and no_loli ! 1: $special_age = 'loli'
+13: 	gs 'generate_stock'
+
+LOCATION slave_auction_buy (local line numbers)
+21: if farid_debt > 0: interaction_city = 1193 & gt 'interaction_city'
+22: killobj
+23: 
+24: if stock_state = CONST_INT['no_slave'] or (no_loli = 1 and stock['age'] = CONST_INT['loli_age']):
+25: 	gs 'generate_stock'
+26: 	if stock['base_beauty'] = 0: stock['base_beauty'] = 1 & stock_rate['beauty'] += 10 &! no F- natural beauty slaves will be generated for the market - ImperatorAugustus
+27: else
+28: 	gs '$slave_price', 'stock'
+29: end
+30: $place = 'slave_stage'
+
+LOCATION slave_auction_next (local line numbers)
+4: !Skip auction lot
+5: 
+6: if stock_sold >= stock_limit:
+7: 	auction_phase = 5
+8: 	haggling_stage = 0
+9: else
+10: 	auction_phase = 0
+11: 	haggling_stage = 0
+12: 	gs 'generate_stock'
+13: 	gt 'slave_auction_pass'
+14: end
+
+LOCATION generate_stock (local line numbers)
+18: if special_stock > 0:
+19: 	!OPTIONAL OVERRIDE TO USE A SPECIFIC PRESET FROM JSON FILES (IT IS RECOMMENDED TO USE NUMBERS AFTER milf_last TO AVOID CHANCE OF RANDOM GENERATION)
+20: 	stock_type = special_stock
+21: else
+22: 	!NO TYPE OVERRIDE
+23: 	!OPTIONAL OVERRIDES FOR AGE
+24: 	if $special_age ! '':
+25: 		seed_age = age_code[$special_age]
+26: 		if seed_age = CONST_INT['loli_age']: meta_type = 1
+27: 		if seed_age = CONST_INT['young_age']: meta_type = 2
+28: 		if seed_age = CONST_INT['milf_age']: meta_type = 3
+29: 		killvar '$special_age'
+30: 	elseif cheat_e = 1 and no_loli ! 1:
+31: 		meta_type = 1
+32: 		cheat_f = 0
+33: 		cheat_g = 0
+34: 	elseif cheat_f = 1:
+35: 		meta_type = 2
+36: 		cheat_e = 0
+37: 		cheat_g = 0
+38: 	elseif cheat_g = 1 and no_milf ! 1:
+39: 		meta_type = 3
+40: 		cheat_e = 0
+41: 		cheat_f = 0
+42: 	else
+43: 		!RANDOM AGE
+44: 		:loop_meta
+45: 			meta_type = rand(1,5)
+46: 			if meta_type = 4: meta_type = 2
+47: 			if meta_type = 5: meta_type = 3
+48: 		if no_loli = 1 and meta_type = 1: jump 'loop_meta'
+49: 		if no_milf = 1 and meta_type = 3: jump 'loop_meta'
+50: 	end
+51: 
+52: 	!SELECT A RANDOM UNIQUE (PREVIOUSLY UNUSED) TYPE, OF APPROPRIATE AGE, FROM JSON FILES
+53: 	:loop_type
+54: 		if meta_type = 1: stock_type = rand(loli_first, loli_last)
+55: 		if meta_type = 2: stock_type = rand(young_first, young_last)
+56: 		if meta_type = 3: stock_type = rand(milf_first, milf_last)
+57: 
+58: 		!Keeps track of slaves you’ve already had and doesn’t allow duplicates - crushboss
+59: 		!Reset num_count to avoid infinite loop, when there are no more new slaves
+60: 		if num_count >= 88:
+61: 			killvar 'num_count'
+62: 			killvar 'prev_num_type'
+63: 			num_count = 0
+64: 			prev_num_type = 0
+65: 		end
+66: 	for i = 0 to num_count step 1: if stock_type = prev_num_type[i]: jump 'loop_type'
+67: 
+68: 	prev_num_type[num_count] = stock_type &! record that we have used this type
+69: 	num_count += 1 &! increment total number of unique types used
+70: end &! AGE AND TYPE ARE NOW SET
+71: 
+72: !LOAD PRESET CHARACTERISTICS (must do this first to avoid overwriting)
+73: gs 'get_stock_seed'
+74: 
+75: ! OPTIONAL OVERRIDE FOR AGE IN COMBINATION WITH special_stock TYPE OVERRIDE
+76: if special_stock > 0 and $special_age ! '': stock['age'] = age_code[$special_age]
+
+LOCATION get_stock_seed (local line numbers)
+293: !Images
+294: $stock['fullimage'] = $fullimage[stock_type]
+295: $stock['ava'] = $seed_ava[stock_type]
+296: $stock['ava_gray'] = $seed_ava_gray[stock_type]
+297: $stock['ava_clear'] = $seed_ava_clear[stock_type]
+
+LOCATION #dynamic (local line numbers)
+5045: 			if master_ill > 0 and dynslave['ill'] = 0 and rand(1,6) > dynslave['stamina']: dynslave['ill'] += 1 &! venereal disease transmission to slave
+5046: 		end
+5047: 	end
+5048: }
+5049: 
+5050: $plastics_get_image_range = {
+5051: 	if dynslave['age'] = CONST_INT['young_age']:
+5052: 		txt_count = young_last
+5053: 		min_txt = young_first
+5054: 	elseif dynslave['age'] = CONST_INT['loli_age']:
+5055: 		txt_count = loli_last
+5056: 		min_txt = loli_first
+5057: 	elseif dynslave['age'] = CONST_INT['milf_age']:
+5058: 		txt_count = milf_last
+5059: 		min_txt = milf_first
+5060: 	end
+5061: }
+5062: 
+5063: $plastics_hair_color_range = {
+5064: 	if instr($fullimage[txt], $hair_color) = 0: 
+5065: 		txt += args[0]
+5066: 		dynamic $plastics_hair_color_range, args[0]
+5067: 	end
+5068: }
+5069: 
+5070: $plastics_confirm_appearance = {
+5071: 	$dynslave["fullimage"] = $fullimage[txt]
+5072: 	$dynslave["ava"] = $seed_ava[txt]
+5073: 	$dynslave["ava_gray"] = $seed_ava_gray[txt]
+5074: 	$dynslave["ava_clear"] = $seed_ava_clear[txt]
+5075: 	$dynslave["hairColor"] = ''
+5076: 	slave_type = txt 
+5077: 	sp_txt = 1
+5078: 	killobj
+5079: 	dynamic $replace($plastics_confirm_procedure, "dyn"+"slave", $plastics_target)
+
+LOCATION display_fullimage (local line numbers)
+104: $def_image_path = func('jo9_seed_role_images', 'resolve', actor_type, $def_image_path, $iif($actor_name = 'assistant', $assistant_img_key, 'fullimage'))
+105: ! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022
+106: $patch_image_path = dyneval('$result = $<<$patch_img_arr_name>>[actor_type]')
+107: 
+108: if $patch_image_path = '':
+109:     $res_image_path = $def_image_path
+
+LOCATION display_pic (local line numbers)
+216: $dir_path = $args[2]
+217: 
+218: $picPath_seed_noNr =  main_actor_type + '_' + $args[1]
+219: !msg "$picPath_seed_noNr: " + $picPath_seed_noNr + " picMax: " + picMax[$picPath_seed_noNr] + " $dir_path: " + $dir_path
+220: !msg "main_actor_type: " + main_actor_type + " $secondary_actor: " + $secondary_actor + " $picPath_seed_noNr: " + $picPath_seed_noNr + " picMax: " + picMax[$picPath_seed_noNr]
+221: if main_actor_type ! 0 and $secondary_actor = '' and picMax[$picPath_seed_noNr] <> 0:
+222: 	$picPath = $picPath_seed_noNr
+223: 	$dir_path = "girls/sex_scenes/" + main_actor_type + '/'
+224: else
+
+LOCATION display_pic (local line numbers)
+388: 	! choosing gen or spec
+389: 	if picMax[$picPath_spec_noNr] ! 0 and picMax[$picPath_gen_noNr] ! 0:
+390: 		pic_rand = rand(1, picMax[$picPath_spec_noNr] + picMax[$picPath_gen_noNr])
+391: 		pic_type = picMax[$picPath_gen_noNr] - picMax[$picPath_spec_noNr] 
+392: 		if pic_type <= 0:
+393: 			if pic_rand > picMax[$picPath_gen_noNr] - (1 * (picMax[$picPath_gen_noNr] > 2)):
+394: 				$picPath = $picPath_spec_noNr
+395: 			else
+396: 				$picPath = $picPath_gen_noNr
+397: 				args[3] = 0 &! making the (safe?) assumption that general pics can be reused (see usage of args[3] below)
+398: 			end
+399: 		else
+400: 			if pic_rand > ((picMax[$picPath_spec_noNr] + picMax[$picPath_gen_noNr]) / 2) - (pic_type / 3) + (1 * (picMax[$picPath_spec_noNr] = 1)):
+401: 				$picPath = $picPath_gen_noNr
+402: 				args[3] = 0 &! making the (safe?) assumption that general pics can be reused (see usage of args[3] below)
+403: 			else
+404: 				$picPath = $picPath_spec_noNr
+405: 			end
+406: 		end
+407: 	elseif picMax[$picPath_spec_noNr] = 0:
+408: 		$picPath = $picPath_gen_noNr
+409: 		args[3] = 0 &! making the (safe?) assumption that general pics can be reused (see usage of args[3] below)
+410: 	elseif picMax[$picPath_gen_noNr] = 0:
+411: 		$picPath = $picPath_spec_noNr
+412: 	else
+413: 		$picPath = 'none'
+414: 	end
+
+ALL LITERAL1447 HITS (event and dialogue indexes are not character IDs)
+interaction:7274 if interaction = 1447:
+#dynamic:5166 voice_punishment_ids[24] = 1447
+#txt_man:14161 $voice_fragment_ids[1447]='q1111_family_react_loyal_detail_hesitant_t2'
+stockmark_used matching locations=0

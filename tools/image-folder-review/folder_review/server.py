@@ -102,9 +102,40 @@ class ReviewService:
         q = query.get('q', [''])[0].strip().casefold()
         presence = query.get('presence', ['all'])[0]
         review = query.get('review', ['all'])[0]
+        modes = {key: query.get(key, ['all'])[0] for key in
+                 ('original_only', 'comparison_only', 'hash_different', 'hash_same')}
+        if any(mode not in ('all', 'only', 'hide') for mode in modes.values()):
+            raise ValueError('필터는 전체 표시, 골라보기, 숨기기 중에서 선택해 주세요.')
+        hash_counts = dict(same=0, different=0, pending=0, error=0)
+
+        # Reuse the background thumbnail SHA-256 results; filtering never rereads
+        # every source image or treats pending/failed verification as equality.
+        for row in rows_of(p):
+            a, b = row['original'], row['comparison']
+            row['hash_status'] = 'not_applicable'
+            if not a or not b or Path(a['relative_path']).name != Path(b['relative_path']).name:
+                continue
+            infos = [self.thumbs.info(index['files'][f['id']]) for f in (a, b)]
+            if any(info['status'] == 'failed' for info in infos):
+                status = 'error'
+            elif not all(info['status'] == 'ready' and info.get('sha256') for info in infos):
+                status = 'pending'
+            else:
+                status = 'same' if infos[0]['sha256'] == infos[1]['sha256'] else 'different'
+            row['hash_status'] = status
+            hash_counts[status] += 1
 
         def matches(row):
             both = bool(row['original'] and row['comparison'])
+            conditions = {
+                'original_only': bool(row['original'] and not row['comparison']),
+                'comparison_only': bool(row['comparison'] and not row['original']),
+                'hash_different': row['hash_status'] == 'different',
+                'hash_same': row['hash_status'] == 'same',
+            }
+            for key, condition in conditions.items():
+                if (modes[key] == 'only' and not condition) or (modes[key] == 'hide' and condition):
+                    return False
             if presence == 'both' and not both:
                 return False
             if presence == 'original' and (not row['original'] or row['comparison']):
@@ -121,9 +152,18 @@ class ReviewService:
                 return False
             return True
 
-        groups = [g for g in p['groups'] if (not q or q in (g['relative_dir'] + '/' + g['name']).casefold()
-                                            or any(q in r[s]['relative_path'].casefold() for r in g['rows'] for s in ('original', 'comparison') if r[s]))
-                  and any(matches(r) for r in g['rows'])]
+        groups = []
+        for group in p['groups']:
+            group_match = not q or q in (group['relative_dir'] + '/' + group['name']).casefold()
+            rows = [r for r in group['rows'] if matches(r) and (group_match or any(
+                q in r[s]['relative_path'].casefold() for s in ('original', 'comparison') if r[s]))]
+            if rows:
+                choices = {r['decision'] for r in rows}
+                summary = ('review' if any(r['review_required'] for r in rows) else
+                           'unreviewed' if choices == {None} else
+                           next(iter(choices)) if len(choices) == 1 else 'mixed')
+                groups.append(group | {'rows': rows, 'total_rows': len(group['rows']),
+                                       'decision_summary': summary})
         size = max(1, min(40, int(query.get('page_size', ['20'])[0])))
         pages = max(1, (len(groups) + size - 1) // size)
         page = max(1, min(pages, int(query.get('page', ['1'])[0])))
@@ -138,6 +178,7 @@ class ReviewService:
         metadata['history_count'] = len(p['history'])
         metadata['scanning'] = self.is_scanning(pid)
         return {'ok': True, 'project': metadata, 'groups': shown, 'total_groups': len(groups),
+                'total_rows': sum(len(g['rows']) for g in groups), 'hash_counts': hash_counts,
                 'page': page, 'pages': pages, 'thumbnails': self.thumbs.progress(list(index['files'].values()))}
 
 

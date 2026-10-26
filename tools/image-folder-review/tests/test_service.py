@@ -42,6 +42,89 @@ class ServiceTests(unittest.TestCase):
         p = self.svc.store.apply_scan(p['id'], scan_pair(self.a, self.b))
         return p
 
+    def presence_fixture(self):
+        for name in ('scene_1.png', 'scene_2.png', 'scene_3.png', 'scene_5.png'):
+            self.image(name, size=(20, 20))
+        for name in ('scene_1.png', 'scene_4.png'):
+            self.image(name, side=self.b, size=(20, 20))
+        self.image('scene_2.png', side=self.b, color='blue', size=(20, 20))
+        Image.new('RGB', (20, 20), 'red').save(self.b / 'scene_5.jpg')
+        p = self.project()
+        for f in self.svc.index(p['id'])['files'].values():
+            self.svc.thumbs.get(f)
+        return p
+
+    def test_presence_filters_remove_individual_rows_in_mixed_group(self):
+        p = self.presence_fixture()
+        for key, mode, expected in [
+            ('original_only', 'only', {'_3'}),
+            ('comparison_only', 'only', {'_4'}),
+            ('original_only', 'hide', {'_1', '_2', '_4', '_5'}),
+            ('comparison_only', 'hide', {'_1', '_2', '_3', '_5'}),
+            ('presence', 'both', {'_1', '_2', '_5'}),
+        ]:
+            with self.subTest(key=key, mode=mode):
+                result = self.svc.page(p['id'], {key: [mode]})
+                self.assertEqual({r['variant_key'] for g in result['groups'] for r in g['rows']}, expected)
+        result = self.svc.page(p['id'], {'original_only': ['hide'], 'comparison_only': ['hide']})
+        self.assertEqual(len(result['groups'][0]['rows']), 3)
+        self.assertEqual(len(self.svc.store.get_project(p['id'])['groups'][0]['rows']), 5)
+
+    def test_hash_filters_only_compare_identical_filenames(self):
+        p = self.presence_fixture()
+        expected_modes = [
+            ('hash_different', 'only', {'_2'}),
+            ('hash_same', 'only', {'_1'}),
+            ('hash_different', 'hide', {'_1', '_3', '_4', '_5'}),
+            ('hash_same', 'hide', {'_2', '_3', '_4', '_5'}),
+        ]
+        for key, mode, expected in expected_modes:
+            with self.subTest(key=key, mode=mode):
+                result = self.svc.page(p['id'], {key: [mode]})
+                self.assertEqual({r['variant_key'] for g in result['groups'] for r in g['rows']}, expected)
+        rows = self.svc.page(p['id'], {})['groups'][0]['rows']
+        self.assertEqual({r['variant_key']: r['hash_status'] for r in rows},
+                         {'_1': 'same', '_2': 'different', '_3': 'not_applicable',
+                          '_4': 'not_applicable', '_5': 'not_applicable'})
+
+    def test_pending_and_failed_hashes_are_never_classified_as_equal(self):
+        self.image(); self.image(side=self.b)
+        p = self.project()
+        self.svc.thumbs.close()
+        self.svc.thumbs = ThumbnailCache(self.root / 'pending-thumbnails', workers=0)
+        result = self.svc.page(p['id'], {'hash_same': ['only']})
+        self.assertEqual(result['groups'], [])
+        self.assertEqual(result['hash_counts']['pending'], 1)
+        result = self.svc.page(p['id'], {'hash_same': ['hide']})
+        self.assertEqual(result['groups'][0]['rows'][0]['hash_status'], 'pending')
+
+    def test_hash_read_errors_are_visible_without_false_mismatch(self):
+        (self.a / 'broken.png').write_bytes(b'broken-a')
+        (self.b / 'broken.png').write_bytes(b'broken-b')
+        p = self.project()
+        for f in self.svc.index(p['id'])['files'].values():
+            self.svc.thumbs.get(f)
+        result = self.svc.page(p['id'], {})
+        self.assertEqual(result['groups'][0]['rows'][0]['hash_status'], 'error')
+        self.assertEqual(result['hash_counts']['error'], 1)
+        self.assertEqual(self.svc.page(p['id'], {'hash_different': ['only']})['groups'], [])
+
+    def test_filtered_group_selection_preserves_hidden_rows(self):
+        p = self.presence_fixture()
+        page = self.svc.page(p['id'], {'hash_different': ['only']})
+        ids = [r['id'] for g in page['groups'] for r in g['rows']]
+        self.svc.store.set_decision(p['id'], ids, 'comparison')
+        rows = self.svc.store.get_project(p['id'])['groups'][0]['rows']
+        self.assertEqual({r['variant_key'] for r in rows if r['decision']}, {'_2'})
+        self.assertEqual(self.svc.page(p['id'], {'hash_different': ['only'], 'review': ['unreviewed']})['groups'], [])
+
+    def test_filtering_happens_before_group_pagination(self):
+        self.image('a.png'); self.image('b.png', side=self.b); self.image('c.png', side=self.b)
+        p = self.project()
+        result = self.svc.page(p['id'], {'comparison_only': ['only'], 'page_size': ['1'], 'page': ['2']})
+        self.assertEqual((result['total_groups'], result['pages'], result['groups'][0]['name']), (2, 2, 'c'))
+        self.assertEqual(self.svc.page(p['id'], {'original_only': ['only'], 'comparison_only': ['only']})['groups'], [])
+
     def test_thumbnail_bound_alpha_and_cache_reuse(self):
         self.image(color=(255, 0, 0, 0))
         p = self.project(); f = p['groups'][0]['rows'][0]['original'] | {'_root': str(self.a)}

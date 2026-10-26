@@ -1,0 +1,408 @@
+LOCATION display_fullimage (location-local line numbers)
+1: ! JO9 MOD START ROOM_IMAGE_ACTOR_RESOLVER | 2026-10-19_room_appearance_routing
+2: ! JO9 MOD START J9M1256 | 2026-10-10_restore_private_room_ui | changed block; context may be included
+3: if snk_room_target > 0 and $curloc = 'display_fullimage': gs 'snk_room_bridge', 'guard', 'display_fullimage'
+4: ! JO9 MOD END J9M1256
+5: ! func('display_fullimage', 'slavetype', 'divtype', 'psy') -- parameters are optional except the slavetype
+6: 
+7: if $args[1] = '': $args[1] = 'bg'
+8: 
+9: !$result = '<div id="bg"><img src="content\pic\<<$slave["fullimage"]>>.png"></div>'
+10: 
+11: ! fainted (or otherwise indisposed) slaves currently have no display (TODO: maybe apply a sepia filter?)
+12: if dyneval('result = <<$args[0]>>_state') ! CONST_INT['slave_exist']: $result = '' & exit
+13: 
+14: $actor_name = $args[0]
+15: $outfit_game = dyneval('$result = $<<$args[0]>>["cloth"]')
+16: $outfit_patch = ''
+17: 
+18: if $outfit_game = 'голая': $outfit_patch = 'naked'
+19: if $outfit_game = 'common_apron': $outfit_patch = 'apron'
+20: if $outfit_game = 'maid_dress': $outfit_patch = 'maid'
+21: if $outfit_game = 'nurse_dress': $outfit_patch = 'nurse'
+22: if $outfit_game = 'sailor_foku': $outfit_patch = 'school'
+23: if $outfit_game = 'enchanter_robe': $outfit_patch = 'sorc'
+24: if $outfit_game = 'leotard': $outfit_patch = 'leotard'
+25: if $outfit_game = 'chainmail_bikini': $outfit_patch = 'chainmail'
+26: if $outfit_game = 'ukata': $outfit_patch = 'kimono'
+27: if $outfit_game = 'sun_dress': $outfit_patch = 'sundress'
+28: if $outfit_game = 'laced_underwear': $outfit_patch = 'lace'
+29: if $outfit_game = 'cocktail_dress': $outfit_patch = 'cocktail'
+30: if $outfit_game = 'rubber_dress': $outfit_patch = 'latex'
+31: if $outfit_game = 'bellydance': $outfit_patch = 'exotic'
+32: if $outfit_game = 'leather_corset': $outfit_patch = 'corset'
+33: if $outfit_game = 'rich_dress': $outfit_patch = 'gorgeous'
+34: if $outfit_game = 'wedding_dress': $outfit_patch = 'bride'
+35: if $outfit_game = 'anal_tail': $outfit_patch = 'tail'
+36: if $outfit_game = 'cow_gear': $outfit_patch = 'cow'
+37: if $outfit_game = 'petsuit': $outfit_patch = 'pet'
+38: if $outfit_game = 'deprivation_suit': $outfit_patch = 'restrain'
+39: 
+40: $def_img_key = 'fullimage'
+41: $patch_img_arr_name = 'indpack_title'
+42: $patch_image_path = ''
+43: $patch_mood_image_path = ''
+44: actor_type = dyneval('result = <<$actor_name>>_type')
+45: actor_moral = dyneval('result = <<$actor_name>>["moral"]')
+46: actor_arousal = dyneval('result = <<$actor_name>>["arousal"]')
+47: $def_image_path = dyneval('$result = $<<$actor_name>>["fullimage"]')
+48: 
+49: if $outfit_patch <> '' :
+50:     $patch_img_arr_name = 'indpack_' + $outfit_patch
+51: end
+52: 
+53:     if $actor_name = 'slave':
+54:         actor_type = slave_type
+55:         $def_image_path = $slave[ $def_img_key ]
+56:         actor_moral = slave['moral']
+57:         actor_arousal = slave['arousal']
+58:     elseif $actor_name = 'assistant':
+59:         $assistant_img_key = ''
+60: 		if assistant['image_mode'] = 1:
+61: 			$assistant_img_key = 'fullmistress'
+62:             $patch_img_arr_name = 'indpack_dom'
+63: 		end
+64: 		if assistant['image_mode'] = 2:
+65:             $assistant_img_key = 'fullmade'
+66: 			$patch_img_arr_name = 'indpack_maid'
+67: 		end
+68: 		if assistant['image_mode'] = 3:
+69: 			$assistant_img_key = 'fullsecretary'
+70:             $patch_img_arr_name = 'indpack_secr'
+71: 		end
+72:         actor_type = assistant_type
+73:         actor_moral = assistant['moral']
+74:         actor_arousal = assistant['arousal']
+75: 
+76:         $assistant_image_path = $assistant[ $assistant_img_key ]
+77:         if $assistant_image_path <> '':
+78:             $def_image_path = $assistant_image_path
+79:         else
+80:             $def_image_path = $assistant[ $def_img_key ]
+81:         end
+82: 
+83:     elseif $actor_name = 'cow':
+84:         $patch_img_arr_name = 'indpack_cow'
+85:         actor_type = cow_type
+86:         $def_image_path = $cow[ $def_img_key ]
+87:         actor_moral = cow['moral']
+88:         actor_arousal = cow['arousal']
+89:     elseif $actor_name = 'prisoner':
+90:         actor_type = prisoner_type
+91:         $def_image_path = $prisoner[ $def_img_key ]
+92:         actor_moral = prisoner['moral']
+93:         actor_arousal = prisoner['arousal']
+94:     elseif $actor_name = 'stock':
+95:         $patch_img_arr_name = 'indpack_title'
+96:         actor_type = stock_type
+97:         $def_image_path = $stock[ $def_img_key ]
+98:     elseif $actor_name = 'farmhand':
+99:         actor_type = farmhand_type
+100:         $def_image_path = $farmhand[ $def_img_key ]
+101:     end
+102: 
+103: ! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022
+104: $def_image_path = func('jo9_seed_role_images', 'resolve', actor_type, $def_image_path, $iif($actor_name = 'assistant', $assistant_img_key, 'fullimage'))
+105: ! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022
+106: $patch_image_path = dyneval('$result = $<<$patch_img_arr_name>>[actor_type]')
+107: 
+108: if $patch_image_path = '':
+109:     $res_image_path = $def_image_path
+110: else
+111:     $patch_mood_suffix = ''
+112:     if actor_arousal > 3:
+113:         $patch_mood_suffix = '_horny'
+114:     elseif actor_moral < 3:
+115:         $patch_mood_suffix = '_rebel'
+116:     end
+117: 
+118:     $patch_mood_tagname = $patch_img_arr_name+$patch_mood_suffix
+119:     
+120:     if $patch_mood_suffix <> '':
+121:         $patch_mood_image_path = dyneval('$result = $<<$patch_mood_tagname>>[actor_type]')
+122:     end
+123: 
+124:     if $patch_mood_image_path <> '':
+125:         $res_image_path = $patch_mood_image_path
+126:     else
+127:         $res_image_path = $patch_image_path
+128:     end
+129: 
+130: end
+131: 
+132: ! JO9 MOD START J9M1255 | 2026-10-08_persistent_image_cycle | changed block; context may be included
+133: $result = '<div id="<<$args[1]>>"><img src="content\pic\<<$res_image_path>>.png"></div>'
+134: if $args[1] = 'bg' or $args[1] = 'large_image': $result = func('interior_change', 'jo9_html', $result)
+135: ! JO9 MOD END J9M1255
+136: 
+137: ! JO9 MOD END ROOM_IMAGE_ACTOR_RESOLVER
+
+LOCATION jo9_seed_role_images (location-local line numbers)
+1: ! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022
+2: ! Global cleanup and non-mutating read resolver; keep actor cache markers across ONGLOAD -> JSON.
+3: local $jo9_seed_role_stem, $jo9_seed_role_keys, $jo9_seed_role_dirs, $jo9_seed_role_old, $jo9_seed_role_wanted, $jo9_seed_role_new
+4: local jo9_seed_role_id, jo9_seed_role_k, jo9_seed_role_known
+5: $jo9_seed_role_stem[0]='medico'
+6: $jo9_seed_role_stem[1]='por'
+7: $jo9_seed_role_stem[2]='kirakira'
+8: $jo9_seed_role_stem[3]='tsuina'
+9: $jo9_seed_role_stem[4]='yammy'
+10: $jo9_seed_role_stem[5]='antenna'
+11: $jo9_seed_role_stem[6]='alyce'
+12: $jo9_seed_role_stem[7]='mist'
+13: $jo9_seed_role_stem[8]='joker'
+14: $jo9_seed_role_stem[9]='Inui'
+15: $jo9_seed_role_stem[10]='zion'
+16: $jo9_seed_role_stem[11]='rin'
+17: $jo9_seed_role_stem[12]='kikuchiyo'
+18: $jo9_seed_role_stem[13]='Ririe'
+19: $jo9_seed_role_stem[14]='Kyoka'
+20: $jo9_seed_role_stem[15]='Noelle'
+21: $jo9_seed_role_stem[16]='Miruki'
+22: $jo9_seed_role_stem[17]='Tamaki'
+23: $jo9_seed_role_stem[18]='Chiharu'
+24: $jo9_seed_role_stem[19]='Fumi'
+25: $jo9_seed_role_stem[20]='Sana'
+26: $jo9_seed_role_stem[21]='Nanami'
+27: $jo9_seed_role_stem[22]='Shuko'
+28: $jo9_seed_role_stem[23]='celestine'
+29: $jo9_seed_role_stem[24]='olga'
+30: $jo9_seed_role_keys[0]='fullmade'
+31: $jo9_seed_role_keys[1]='fullsecretary'
+32: $jo9_seed_role_keys[2]='fullmistress'
+33: $jo9_seed_role_keys[3]='fullpregnant'
+34: $jo9_seed_role_dirs[0]='maid'
+35: $jo9_seed_role_dirs[1]='secretary'
+36: $jo9_seed_role_dirs[2]='mistress'
+37: $jo9_seed_role_dirs[3]='pregnant'
+38: if $args[0]='resolve':
+39:  $result=$args[2]
+40:  jo9_seed_role_id=args[1]
+41:  $jo9_seed_role_wanted=$args[3]
+42: ! JO9 MOD START INDIE_EVENT_FULLIMAGE_20261023 | 2026-10-23_indie_event_fullimage
+43:  ! Resolve only a known default/role alias for this ID; do not rewrite actor caches.
+44:  if $jo9_seed_role_wanted='fullimage' and $args[2] ! '':
+45:   $jo9_seed_role_new=''
+46:   if $args[2]=$fullimage[jo9_seed_role_id]:
+47:    $jo9_seed_role_new=$indpack_title[jo9_seed_role_id]
+48:   elseif $args[2]=$fullmade[jo9_seed_role_id]:
+49:    $jo9_seed_role_new=$indpack_maid[jo9_seed_role_id]
+50:    if $jo9_seed_role_new='': $jo9_seed_role_new=$indpack_title[jo9_seed_role_id]
+51:   elseif $args[2]=$fullsecretary[jo9_seed_role_id]:
+52:    $jo9_seed_role_new=$indpack_secr[jo9_seed_role_id]
+53:    if $jo9_seed_role_new='': $jo9_seed_role_new=$indpack_title[jo9_seed_role_id]
+54:   elseif $args[2]=$fullmistress[jo9_seed_role_id]:
+55:    $jo9_seed_role_new=$indpack_dom[jo9_seed_role_id]
+56:    if $jo9_seed_role_new='': $jo9_seed_role_new=$indpack_title[jo9_seed_role_id]
+57:   end
+58:   if $jo9_seed_role_new ! '': $result=$jo9_seed_role_new & exit
+59:  end
+60: ! JO9 MOD END INDIE_EVENT_FULLIMAGE_20261023
+61:  if jo9_seed_role_id>=2577 and jo9_seed_role_id<=2601:
+62:   for jo9_seed_role_k=0 to 3:
+63:    jo9_seed_role_known=1
+64:    if jo9_seed_role_k=3 and (jo9_seed_role_id=2585 or jo9_seed_role_id=2597 or jo9_seed_role_id=2600 or jo9_seed_role_id=2601): jo9_seed_role_known=0
+65:    if jo9_seed_role_known=1:
+66:     $jo9_seed_role_old='girls/full/'+$jo9_seed_role_dirs[jo9_seed_role_k]+'/'+$jo9_seed_role_stem[jo9_seed_role_id-2577]
+67:     if $args[2]=$jo9_seed_role_old:
+68:      $result=$fullimage[jo9_seed_role_id]
+69:      if $jo9_seed_role_wanted='fullmade' or $jo9_seed_role_wanted='fullsecretary' or $jo9_seed_role_wanted='fullmistress' or $jo9_seed_role_wanted='fullpregnant':
+70:       $jo9_seed_role_new=dyneval('$result = $<<$jo9_seed_role_wanted>>[jo9_seed_role_id]')
+71:       if $jo9_seed_role_new ! '': $result=$jo9_seed_role_new
+72:      end
+73:      exit
+74:     end
+75:    end
+76:   end
+77:  end
+78:  exit
+79: end
+80: ! Original25 role values are absent/empty. Four absent legacy pregnancy keys are never inferred.
+81: for jo9_seed_role_id=2577 to 2601:
+82:  for jo9_seed_role_k=0 to 3:
+83:   jo9_seed_role_known=1
+84:   if jo9_seed_role_k=3 and (jo9_seed_role_id=2585 or jo9_seed_role_id=2597 or jo9_seed_role_id=2600 or jo9_seed_role_id=2601): jo9_seed_role_known=0
+85:   if jo9_seed_role_known=1:
+86:    $jo9_seed_role_old='girls/full/'+$jo9_seed_role_dirs[jo9_seed_role_k]+'/'+$jo9_seed_role_stem[jo9_seed_role_id-2577]
+87:    dynamic "if $<<$jo9_seed_role_keys[jo9_seed_role_k]>>[jo9_seed_role_id]=$jo9_seed_role_old: $<<$jo9_seed_role_keys[jo9_seed_role_k]>>[jo9_seed_role_id]=''"
+88:   end
+89:  end
+90: end
+91: ! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022
+
+LOCATION display_pic (location-local line numbers)
+216: $dir_path = $args[2]
+217: 
+218: $picPath_seed_noNr =  main_actor_type + '_' + $args[1]
+219: !msg "$picPath_seed_noNr: " + $picPath_seed_noNr + " picMax: " + picMax[$picPath_seed_noNr] + " $dir_path: " + $dir_path
+220: !msg "main_actor_type: " + main_actor_type + " $secondary_actor: " + $secondary_actor + " $picPath_seed_noNr: " + $picPath_seed_noNr + " picMax: " + picMax[$picPath_seed_noNr]
+221: if main_actor_type ! 0 and $secondary_actor = '' and picMax[$picPath_seed_noNr] <> 0:
+222: 	$picPath = $picPath_seed_noNr
+223: 	$dir_path = "girls/sex_scenes/" + main_actor_type + '/'
+224: else
+225: 	if $args[3] = 'any_age':
+
+LOCATION display_pic (location-local line numbers)
+388: 	! choosing gen or spec
+389: 	if picMax[$picPath_spec_noNr] ! 0 and picMax[$picPath_gen_noNr] ! 0:
+390: 		pic_rand = rand(1, picMax[$picPath_spec_noNr] + picMax[$picPath_gen_noNr])
+391: 		pic_type = picMax[$picPath_gen_noNr] - picMax[$picPath_spec_noNr] 
+392: 		if pic_type <= 0:
+393: 			if pic_rand > picMax[$picPath_gen_noNr] - (1 * (picMax[$picPath_gen_noNr] > 2)):
+394: 				$picPath = $picPath_spec_noNr
+395: 			else
+396: 				$picPath = $picPath_gen_noNr
+397: 				args[3] = 0 &! making the (safe?) assumption that general pics can be reused (see usage of args[3] below)
+398: 			end
+399: 		else
+400: 			if pic_rand > ((picMax[$picPath_spec_noNr] + picMax[$picPath_gen_noNr]) / 2) - (pic_type / 3) + (1 * (picMax[$picPath_spec_noNr] = 1)):
+401: 				$picPath = $picPath_gen_noNr
+402: 				args[3] = 0 &! making the (safe?) assumption that general pics can be reused (see usage of args[3] below)
+403: 			else
+404: 				$picPath = $picPath_spec_noNr
+405: 			end
+406: 		end
+407: 	elseif picMax[$picPath_spec_noNr] = 0:
+408: 		$picPath = $picPath_gen_noNr
+409: 		args[3] = 0 &! making the (safe?) assumption that general pics can be reused (see usage of args[3] below)
+410: 	elseif picMax[$picPath_gen_noNr] = 0:
+411: 		$picPath = $picPath_spec_noNr
+412: 	else
+413: 		$picPath = 'none'
+414: 	end
+415: end
+416: 
+417: ! choosing image number (random selection without reusing last used number of the same path)
+418: if picMax[$picPath] = 0:
+419: 	pic_rand = 1
+420: else
+421: 	pic_rand = rand(1, picMax[$picPath])
+422: 	! replacing pic if it is the same as last time and if it is possible (optional final parameter from caller can be an image number that should not be reused, for specific pics associated with one-time events)
+423: 	if (pic_rand = last_pic[$picPath] or pic_rand = args[3]) and picMax[$picPath] > 1:
+424: 		if pic_rand = picMax[$picPath]:
+425: 			! select any number not at the end of the range
+426: 			pic_rand = rand(1, picMax[$picPath] - 1)
+427: 		elseif pic_rand = 1:
+428: 			! select any number not at the beginning of the range
+429: 			pic_rand = rand(2, picMax[$picPath])
+430: 		elseif rand(1,2) = 1:
+431: 			! last_pic/args[3] is not at the beginning or end of the range - 50% chance to select a number after last_pic/args[3]
+432: 			pic_rand = rand(pic_rand + 1, picMax[$picPath])
+433: 		else
+434: 			! last_pic/args[3] is not at the beginning or end of the range - 50% chance to select a number before last_pic/args[3]
+435: 			pic_rand = rand(1, pic_rand)
+436: 		end
+437: 	end
+438: 	if pic_rand = args[3] and picMax[$picPath_gen_noNr] ! 0:
+439: 		! could not find an alternative specific pic (args[3] must be non-zero if it matches pic_rand, and we reset args[3] above if it is a general pic, so we know we have a specific path)
+440: 		! and at least one general pic exists - so use a random general pic instead
+441: 		$picPath = $picPath_gen_noNr
+442: 		pic_rand = rand(1, picMax[$picPath])
+443: 	else
+444: 		! normal case and args[3] failsafe if no general pic exists (this could only happen if we have just one specific pic and no general)
+445: 		! remember selected number for next time we look for an image with this path
+446: 		last_pic[$picPath] = pic_rand
+447: 	end
+448: end
+449: 
+450: !msg "chosen pic: " + $picPath
+451: 
+452: ! appending selected image number to gen or spec image path
+453: if pic_rand > 1:
+454: 	$picPath = $dir_path + $picPath + '_' + $str(pic_rand)
+455: else
+456: 	$picPath = $dir_path + $picPath &! numbered image filenames start from _2, do not append _1, do not use $replace($picPath, '_1') because _10 is a valid path
+457: end
+458: 
+459: $result = $picPath
+
+LOCATION get_stock_seed (location-local line numbers)
+293: !Images
+294: $stock['fullimage'] = $fullimage[stock_type]
+295: $stock['ava'] = $seed_ava[stock_type]
+296: $stock['ava_gray'] = $seed_ava_gray[stock_type]
+297: $stock['ava_clear'] = $seed_ava_clear[stock_type]
+
+LOCATION main_screen (location-local line numbers)
+283: !ImperatorAugustus: consolidated assistant avatar and status display, moved energy to top, added : to fiend status
+284: if assistant_state = CONST_INT['slave_exist']:
+285: 	*p '<div id = "assistant_short_ava"><a href = "EXEC: assistant_stat_screen = 0 & gt ''assistant_stat''"><img src = "<<$assistant[''ava_clear'']>>.png"></a></div>'
+286: 	! JO9_UI_V192_AP_assistant
+
+LOCATION main_screen (location-local line numbers)
+320: elseif assistant_state = CONST_INT['no_slave']:
+321: 	*p '<div id = "assistant_short_ava"><img src = "content/pic/blank_ava.png"></div>'
+322: 	*p '<div id = "assistant_short_stat">조수 없음'
+323: elseif assistant_state = CONST_INT['slave_faint']:
+324: 	*p '<div id = "assistant_short_ava"><a href = "EXEC: assistant_stat_screen = 0 & gt ''assistant_stat''"><img src = "<<$assistant["ava"]>>.png"></a></div>'
+325: 	*p '<div id = "assistant_short_stat">의식 없음'
+326: elseif assistant_state = CONST_INT['slave_dead']:
+327: 	*p '<div id = "assistant_short_ava"><a href = "EXEC: assistant_stat_screen = 0 & gt ''assistant_stat''"><img src = "<<$assistant["ava_gray"]>>.png"></a></div>'
+328: 	*p '<div id = "assistant_short_stat">사망'
+
+LOCATION main_screen (location-local line numbers)
+388: !ImperatorAugustus: consolidated slave avatar and status display, sync with city_screen
+389: if slave_state = CONST_INT['slave_exist']:
+390: 	*p '<div id = "slave_short_ava"><a href = "EXEC: slave_stat_screen = 0 & gt ''slave_stat''"><img src = "<<$slave[''ava_clear'']>>.png"></a></div>'
+391: 	! JO9_UI_V192_AP_slave
+
+LOCATION main_screen (location-local line numbers)
+451: elseif slave_state = CONST_INT['no_slave']:
+452: ! *p '<div id = "slave_short_ava"><img src = "content/pic/blank_ava.png"></div>'
+453: 	*p '<div id = "slave_short_ava"><a href = "EXEC: menu_form = 3000 & gt ''menu_form''"><img src = "content/pic/blank_ava.png"></a></div>'
+454: 	*p '<div id = "slave_short_stat">노예 없음</div>'
+455: elseif slave_state = CONST_INT['slave_faint']:
+456: 	*p '<div id = "slave_short_ava"><a href = "EXEC: slave_stat_screen = 0 & gt ''slave_stat''"><img src = "<<$slave[''ava'']>>.png"></a></div>'
+457: 	*p '<div id = "slave_short_stat">기절</div>'
+458: elseif slave_state = CONST_INT['slave_dead']:
+459: 	*p '<div id = "slave_short_ava"><a href = "EXEC: slave_stat_screen = 0 & gt ''slave_stat''"><img src = "<<$slave[''ava_gray'']>>.png"></a></div>'
+460: 	*p '<div id = "slave_short_stat">사망</div>'
+
+LOCATION interaction_screen (location-local line numbers)
+9: if nsfw = 0:
+10: 	if $bg[$place] ! '':
+11: ! JO9 MOD START J9M1328 | 2026-10-08_persistent_image_cycle | changed block; context may be included
+12: 		*p func('interior_change', 'jo9_html', '<div id = "bg"><img src="content/pic/bg/<<$bg[$place]>>.png"></div>')
+13: ! JO9 MOD END J9M1328
+14: 	end
+15: 	if $bg_path ! '':
+16: ! JO9 MOD START J9M1327 | 2026-10-08_persistent_image_cycle | changed block; context may be included
+17: 		*p func('interior_change', 'jo9_html', '<div id = "bg"><img src="content/pic/<<$bg_path>>.png"></div>')
+18: ! JO9 MOD END J9M1327
+19: 	end
+20: 	if $special_image_full[txt] ! '':
+21: ! JO9 MOD START J9M1326 | 2026-10-08_persistent_image_cycle | changed block; context may be included
+22: 		*p func('interior_change', 'jo9_html', '<div id = "bg"><img src="<<$special_image_full[txt]>>"></div>')
+23: ! JO9 MOD END J9M1326
+24: 	elseif $special_image[txt] ! '':
+25: ! JO9 MOD START J9M1325 | 2026-10-08_persistent_image_cycle | changed block; context may be included
+26: 		*p func('interior_change', 'jo9_html', '<div id = "bg"><img src="content/pic/<<$special_image[txt]>>"></div>')
+27: ! JO9 MOD END J9M1325
+28: 	end
+
+LOCATION interaction_screen_city (location-local line numbers)
+71: if $picture_type = 'pic_png':
+72: 	if $bg_path ! '': 
+73: 		! show the image and reset the variable to empty string. this way it will not override any of the special_image images
+74: 		! that might need to show after it. 
+75: ! JO9 MOD START J9M1339 | 2026-10-08_persistent_image_cycle | changed block; context may be included
+76: 		*p func('interior_change', 'jo9_html', '<div id = "bg"><img src="content\pic\<<$bg_path>>.png"></div>')
+77: ! JO9 MOD END J9M1339
+78: 		$bg_path = ''
+79: 	end
+80: end
+81: 
+82: if $picture_type = 'unique':
+83: ! JO9 MOD START J9M1338 | 2026-10-08_persistent_image_cycle | changed block; context may be included
+84: 	if $bg_path ! '': *p func('interior_change', 'jo9_html', '<div id = "bg"><img src="content\pic\<<$bg_path>>.png"></div>')
+85: ! JO9 MOD END J9M1338
+86: end
+87: 
+88: if $picture_type = 'untyped':
+89: 	if nsfw = 0 and $bg_path ! '': 
+90: ! JO9 MOD START J9M1337 | 2026-10-08_persistent_image_cycle | changed block; context may be included
+91: 		*p func('interior_change', 'jo9_html', '<div id = "bg"><img src="<<$bg_path>>"></div>')
+92: ! JO9 MOD END J9M1337
+93: 		$bg_path = ''
+94: 	end
+95: end
