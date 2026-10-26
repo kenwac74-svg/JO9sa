@@ -1,0 +1,14 @@
+{
+  "id": "2026-10-23_indie_event_fullimage",
+  "before_sha256": "daa953cd391d8268a57724d27b54194e71378dc9ef54ad1e79279cce6897d7db",
+  "after_sha256": "5aeff11fffe6e5f2523749987577f42dab870f4d0adee0df385375f9eefb074f",
+  "edits": [
+    {
+      "location": "jo9_seed_role_images",
+      "field": "body",
+      "old": " $jo9_seed_role_wanted=$args[3]\r\n if jo9_seed_role_id>=2577 and jo9_seed_role_id<=2601:",
+      "new": " $jo9_seed_role_wanted=$args[3]\r\n! JO9 MOD START INDIE_EVENT_FULLIMAGE_20261023 | 2026-10-23_indie_event_fullimage\r\n ! Resolve only a known default/role alias for this ID; do not rewrite actor caches.\r\n if $jo9_seed_role_wanted='fullimage' and $args[2] ! '':\r\n  $jo9_seed_role_new=''\r\n  if $args[2]=$fullimage[jo9_seed_role_id]:\r\n   $jo9_seed_role_new=$indpack_title[jo9_seed_role_id]\r\n  elseif $args[2]=$fullmade[jo9_seed_role_id]:\r\n   $jo9_seed_role_new=$indpack_maid[jo9_seed_role_id]\r\n   if $jo9_seed_role_new='': $jo9_seed_role_new=$indpack_title[jo9_seed_role_id]\r\n  elseif $args[2]=$fullsecretary[jo9_seed_role_id]:\r\n   $jo9_seed_role_new=$indpack_secr[jo9_seed_role_id]\r\n   if $jo9_seed_role_new='': $jo9_seed_role_new=$indpack_title[jo9_seed_role_id]\r\n  elseif $args[2]=$fullmistress[jo9_seed_role_id]:\r\n   $jo9_seed_role_new=$indpack_dom[jo9_seed_role_id]\r\n   if $jo9_seed_role_new='': $jo9_seed_role_new=$indpack_title[jo9_seed_role_id]\r\n  end\r\n  if $jo9_seed_role_new ! '': $result=$jo9_seed_role_new & exit\r\n end\r\n! JO9 MOD END INDIE_EVENT_FULLIMAGE_20261023\r\n if jo9_seed_role_id>=2577 and jo9_seed_role_id<=2601:",
+      "count": 1
+    }
+  ]
+}

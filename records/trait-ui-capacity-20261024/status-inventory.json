@@ -1,0 +1,355 @@
+{
+  "qspSha256": "afb2b9eccbe02193f77fefea4a990081616a79eb84ed14fe2d8f0bbd3cf2d1fc",
+  "mode": "READ_ONLY_STATIC_AUDIT",
+  "changedRuntime": false,
+  "normal": {
+    "maxSimultaneousRows": 8,
+    "rows": [
+      {
+        "id": "sanity",
+        "keys": [
+          "ego",
+          "temper",
+          "pride"
+        ],
+        "maxRows": 1,
+        "condition": "ego+temper+pride < 5",
+        "exclusive": "<3 and 3..4 use if/elseif, one label",
+        "source": "#static_base:1932-1937",
+        "labels": [
+          "정신분열",
+          "신경 쇠약"
+        ]
+      },
+      {
+        "id": "brand",
+        "keys": [
+          "brand"
+        ],
+        "maxRows": 1,
+        "condition": "brand = 0",
+        "source": "#static_base:1938",
+        "labels": [
+          "상표 없음"
+        ]
+      },
+      {
+        "id": "wounds",
+        "keys": [
+          "wounds"
+        ],
+        "maxRows": 1,
+        "condition": "wounds > 0",
+        "source": "#static_base:1939",
+        "labels": [
+          "가벼운 상처",
+          "경상",
+          "중간 부상",
+          "중상",
+          "치명상"
+        ]
+      },
+      {
+        "id": "scars",
+        "keys": [
+          "scars"
+        ],
+        "maxRows": 1,
+        "condition": "scars > 0",
+        "source": "#static_base:1940",
+        "labels": [
+          "작은 흉터",
+          "흉터",
+          "커다란 흉터",
+          "심각한 흉터",
+          "끔찍한 흉터"
+        ]
+      },
+      {
+        "id": "bruises",
+        "keys": [
+          "bruises"
+        ],
+        "maxRows": 1,
+        "condition": "bruises > 0",
+        "source": "#static_base:1941",
+        "labels": [
+          "멍자국",
+          "여러개의 멍자국",
+          "구타 흔적",
+          "심한 구타 흔적",
+          "끔찍한 구타 흔적"
+        ]
+      },
+      {
+        "id": "starvation",
+        "keys": [
+          "days_without_food",
+          "neg_hungry"
+        ],
+        "maxRows": 1,
+        "condition": "cheat_no_starve = 0; medical knowledge >=4; matching hunger condition",
+        "exclusive": "Five branches form one if/elseif chain",
+        "source": "#static_base:1942-1954",
+        "labels": [
+          "속쓰림",
+          "갈증과 허기",
+          "고통스러운 허기",
+          "영양실조",
+          "기아"
+        ]
+      },
+      {
+        "id": "rehabilitation",
+        "keys": [
+          "rehabilitation"
+        ],
+        "maxRows": 1,
+        "condition": "rehabilitation > 0",
+        "source": "#static_base:1955",
+        "labels": [
+          "회복 [1]",
+          "회복 [30]"
+        ]
+      },
+      {
+        "id": "pregnancy_stage",
+        "keys": [
+          "pregnant",
+          "pregnant_revealed",
+          "fertility",
+          "vaginal_modification",
+          "parasite"
+        ],
+        "maxRows": 1,
+        "condition": "pregnant > 0; fertility not 1/-2; modification not 4; parasite <=0; revealed >0 or day>=120",
+        "exclusive": "Stage labels overwrite one result string at 120/196/273 days",
+        "source": "$slave_traits:3-11; sjm_UI_UIadds:10-20",
+        "labels": [
+          "임신 확인",
+          "임신 중기",
+          "임신 후기",
+          "만삭"
+        ]
+      }
+    ],
+    "allCanCoexistUnderDisplayConditions": true,
+    "typicalScenarios": [
+      {
+        "name": "Healthy, branded, no pregnancy",
+        "rows": 0
+      },
+      {
+        "name": "Unbranded only",
+        "rows": 1
+      },
+      {
+        "name": "One injury or one pregnancy",
+        "rows": 1
+      },
+      {
+        "name": "Wound + bruise + pregnancy",
+        "rows": 3
+      }
+    ],
+    "typicalFrequencyMeasured": false
+  },
+  "stock": {
+    "maxSimultaneousRows": 7,
+    "rows": [
+      "sanity",
+      "wounds",
+      "scars",
+      "bruises",
+      "starvation",
+      "rehabilitation",
+      "virginity"
+    ],
+    "source": "$stock_traits:16-40",
+    "brandSuppressed": true,
+    "pregnancyNotAppended": true
+  },
+  "frozen": {
+    "maxSimultaneousRows": 8,
+    "rows": [
+      "brand",
+      "wounds",
+      "scars",
+      "bruises",
+      "rehabilitation",
+      "virginity",
+      "fertility_type",
+      "pregnancy"
+    ],
+    "source": "$newloc:397-406",
+    "fertilityTypeExclusive": "fertility=-2/-1/1 cannot coexist",
+    "caution": "Frozen pregnancy renderer has fewer guards than active pregnancy renderer; this is branch maximum, not evidence that every combination is normally generated."
+  },
+  "excluded": {
+    "traits": "All affinities, preference/personality/combat/learning traits, grace/dexterity, arena and race titles.",
+    "basicAttributes": "Top-panel beauty, stamina, intellect, fame, mood etc are outside the status list.",
+    "iconsOnly": [
+      "ill",
+      "wounds icons",
+      "pregnancy icon",
+      "fertility icons"
+    ],
+    "disabledNormalRows": [
+      "virginity",
+      "fertility -2/-1/1"
+    ],
+    "source": "#static_base:1956,1972-1982"
+  },
+  "layoutImplication": {
+    "requestedTraits": 12,
+    "maxStatusRows": 8,
+    "totalRequiredOneLineRows": 20,
+    "categoryHeadingsRequired": false,
+    "currentProxySafeRows": 13,
+    "current12TraitsReserve": 1,
+    "overflowAtMaximum": 7,
+    "notAMaxTraitRecommendation": "Font or layout must be measured for 20 rows before claiming 12 traits fit every status."
+  },
+  "verificationLimits": [
+    "Read-only branch analysis, not frequency telemetry.",
+    "All active row conditions can coexist syntactically. Global gameplay reachability of a worst-case state was not simulated.",
+    "Existing native HTML and Edge measurements remain proxy layout evidence, not Qt pixel proof."
+  ],
+  "exactEightRowFixture": {
+    "purpose": "Eight simultaneous status rows, using long display labels where available. No game changes.",
+    "state": {
+      "ego": 1,
+      "temper": 1,
+      "pride": 1,
+      "brand": 0,
+      "wounds": 1,
+      "scars": 5,
+      "bruises": 5,
+      "days_without_food": 2,
+      "neg_hungry": 1,
+      "rehabilitation": 30,
+      "pregnant": 120,
+      "pregnant_revealed": 1,
+      "fertility": 0,
+      "vaginal_modification": 0,
+      "parasite": 0
+    },
+    "globals": {
+      "cheat_no_starve": 0,
+      "master_medic": 4
+    },
+    "plainLabels": [
+      "신경 쇠약",
+      "상표 없음",
+      "가벼운 상처",
+      "끔찍한 흉터",
+      "끔찍한 구타 흔적",
+      "고통스러운 허기",
+      "회복 [30]",
+      "임신 중기"
+    ],
+    "html": "<a style=\"color:#EA0090\">신경 쇠약</a><br><a><font color=\"#cd0000\">상표 없음</font></a><br><a>가벼운 상처</a><br><a>끔찍한 흉터</a><br><a>끔찍한 구타 흔적</a><br><a>고통스러운 허기</a><br><font color=\"#cd0000\">회복</font> [30]<br><span><b>임신 중기</b></span><br>",
+    "rehabilitationUpperBound": {
+      "max": 30,
+      "source": "#static_base:951-952"
+    },
+    "labelSources": [
+      {
+        "source": "#variative:625",
+        "label": "끔찍한 흉터"
+      },
+      {
+        "source": "#variative:626",
+        "label": "심각한 흉터"
+      },
+      {
+        "source": "#variative:627",
+        "label": "커다란 흉터"
+      },
+      {
+        "source": "#variative:628",
+        "label": "흉터"
+      },
+      {
+        "source": "#variative:629",
+        "label": "작은 흉터"
+      },
+      {
+        "source": "#variative:630",
+        "label": "흉터 없음"
+      },
+      {
+        "source": "#variative:635",
+        "label": "끔찍한 구타 흔적"
+      },
+      {
+        "source": "#variative:636",
+        "label": "심한 구타 흔적"
+      },
+      {
+        "source": "#variative:637",
+        "label": "구타 흔적"
+      },
+      {
+        "source": "#variative:638",
+        "label": "여러개의 멍자국"
+      },
+      {
+        "source": "#variative:639",
+        "label": "멍자국"
+      },
+      {
+        "source": "#variative:640",
+        "label": "흔적 없음"
+      },
+      {
+        "source": "#variative:645",
+        "label": "기아"
+      },
+      {
+        "source": "#variative:646",
+        "label": "영양실조"
+      },
+      {
+        "source": "#variative:647",
+        "label": "고통스러운 허기"
+      },
+      {
+        "source": "#variative:648",
+        "label": "갈증과 허기"
+      },
+      {
+        "source": "#variative:649",
+        "label": "속쓰림"
+      },
+      {
+        "source": "#variative:650",
+        "label": "부족함 없음"
+      },
+      {
+        "source": "#variative:656",
+        "label": "치명상"
+      },
+      {
+        "source": "#variative:657",
+        "label": "중상"
+      },
+      {
+        "source": "#variative:658",
+        "label": "중간 부상"
+      },
+      {
+        "source": "#variative:659",
+        "label": "경상"
+      },
+      {
+        "source": "#variative:660",
+        "label": "가벼운 상처"
+      },
+      {
+        "source": "#variative:661",
+        "label": "무사"
+      }
+    ]
+  }
+}

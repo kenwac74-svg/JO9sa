@@ -1,0 +1,18 @@
+'use strict';
+const fs=require('node:fs'),assert=require('node:assert/strict'),c=require('G:/somi/JO9sa/tools/text-workshop/core.cjs');
+const json=p=>JSON.parse(fs.readFileSync(p,'utf8').replace(/^\uFEFF/,'')),m=json(__dirname+'/candidate.json');
+const record='G:/somi/JO9sa/records/shop-text-quest-20261026',official='G:/Codex/tmp/shop-text-quest-release-20261026/run-C4CuDp';
+for(const x of json(__dirname+'/inputs.json'))assert.equal(c.hash(fs.readFileSync(x.path)),x.sha256,x.path);
+for(const f of m.runtime)assert.equal(c.hash(fs.readFileSync(m.stage+'/'+f.path)),f.after);
+const release=json(official+'/report.json');assert.equal(release.verdict,'PASS');assert.equal(release.client.probes.length,9);assert(release.client.probes.every(x=>x.pass));assert.equal(release.checks.find(x=>x.name==='inputs-readable').detail.candidate,m.after);
+const ui=json(__dirname+'/ui-verification.json');assert.equal(ui.nativeUi.status,'PASS');assert.equal(ui.nativeUi.cases.length,8);assert(ui.nativeUi.cases.every(x=>x.pass));
+const spacing=json(__dirname+'/spacing-native-results.json');assert.equal(spacing.verdict,'PASS_APPROVED_READABILITY_SCOPE');assert.equal(spacing.finalCandidateJsHash,m.runtime.find(x=>x.path.endsWith('word_wrap.js')).after);
+const review=json(__dirname+'/independent-review.json');assert.equal(review.findings.length,0);assert.equal(review.candidate.sha256,m.after);assert.equal(review.candidate.jsSha256,spacing.finalCandidateJsHash);
+const cache=json(m.task+'/final-cache/client-results.json');assert.equal(cache.length,1);assert(cache[0].pass);
+assert(!fs.existsSync(record));fs.mkdirSync(record,{recursive:true});
+for(const e of fs.readdirSync(__dirname,{withFileTypes:true}))if(e.isFile()&&e.name!=='patch.json'&&/\.(?:cjs|md|json|js)$/.test(e.name))fs.copyFileSync(__dirname+'/'+e.name,record+'/'+e.name,fs.constants.COPYFILE_EXCL);
+fs.mkdirSync(record+'/official');for(const n of ['report.json','report.md'])fs.copyFileSync(official+'/'+n,record+'/official/'+n);
+fs.mkdirSync(record+'/final-cache');for(const e of fs.readdirSync(m.task+'/final-cache',{withFileTypes:true}))if(e.isFile()&&/\.(?:json|log)$/.test(e.name))fs.copyFileSync(m.task+'/final-cache/'+e.name,record+'/final-cache/'+e.name);
+const patch='G:/somi/JO9sa/mods/'+m.id+'.json';assert(!fs.existsSync(patch));fs.copyFileSync(m.mods+'/'+m.id+'.json',patch,fs.constants.COPYFILE_EXCL);assert(fs.readFileSync(patch).equals(fs.readFileSync(__dirname+'/patch.json')));
+const result={status:'VERIFIED_READY_TO_APPLY',record,patch,candidate:m.candidate,before:m.before,after:m.after,runtime:m.runtime,official:9,ui:8,cache:1,spacing:spacing.verdict,questEvidence:'27 expected outcomes, including original failures and one-character repair controls',runtimeWritten:false};
+fs.writeFileSync(__dirname+'/STAGED.json',JSON.stringify(result,null,2)+'\n');fs.writeFileSync(record+'/STAGED.json',JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result));

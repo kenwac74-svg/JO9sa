@@ -1,0 +1,60 @@
+{
+  "scope": "Only two authorized QA source files changed. No game/Full/save/stage/commit/push writes.",
+  "files": [
+    {
+      "path": "G:/somi/JO9sa/tools/qa/check-qsp-marker-boundaries.cjs",
+      "sha256": "4b0f8e5f80a60f38610f29c7246282721c36e2c833e863713a3212de17027077"
+    },
+    {
+      "path": "G:/somi/JO9sa/tools/qa/qsp-marker-boundaries.test.cjs",
+      "sha256": "7150b7be694739e75e4c14547d7b83a62e810c7c7c58e825d8b0bf9b606b8b40"
+    }
+  ],
+  "red": {
+    "tests": 13,
+    "pass": 7,
+    "fail": 6,
+    "reason": "Five joined START cases were missed; one multiline string marker example was falsely rejected by the older END scanner.",
+    "log": "marker-test-red.log"
+  },
+  "green": {
+    "tests": 13,
+    "pass": 13,
+    "fail": 0,
+    "log": "marker-test-green.log"
+  },
+  "qaRegression": {
+    "command": "node --test G:/somi/JO9sa/tools/qa/*.test.cjs",
+    "tests": 35,
+    "pass": 34,
+    "fail": 0,
+    "skipped": 1,
+    "skipReason": "Existing discovery/refusal/unrelated-fields baseline comparison requires JO9_BEFORE_QSP, which was not supplied for this QA tool change.",
+    "log": "qa-regression.log"
+  },
+  "worldCheck": {
+    "sha256": "b0c40f46bc020c9d372e72e490ccde28894d31797bcf1653a7b7aac1e3490f71",
+    "issues": [
+      {
+        "location": "interaction_result",
+        "line": 398,
+        "kind": "joinedMarkerStart"
+      },
+      {
+        "location": "interaction_result",
+        "line": 796,
+        "kind": "joinedMarkerStart"
+      }
+    ],
+    "validCommentLine659NotFlagged": true,
+    "report": "marker-world-check.json"
+  },
+  "diffCheck": {
+    "passed": true,
+    "files": 2
+  },
+  "limitations": [
+    "This tool change is not a native runtime certification or the game repair. Parent handles both independently.",
+    "The lexer deliberately ignores marker text inside quoted literals and existing comments, including valid &! and : ! comments."
+  ]
+}

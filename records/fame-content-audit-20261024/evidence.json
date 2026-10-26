@@ -1,0 +1,1070 @@
+{
+  "status": "READ_ONLY_AUDIT",
+  "date": "2026-10-24",
+  "source": {
+    "path": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+    "sha256": "6ac1d81489320b5211c03e9e2b36436d15ed4a7ebf47768f384802f469cfccdb",
+    "locations": 266,
+    "lineConvention": "One-based line in decoded QSP location body; not raw compiled-file lines"
+  },
+  "personalFameModel": {
+    "rateKey": "actor_rate[fame]",
+    "displayKey": "actor[fame]",
+    "range": [
+      0,
+      200
+    ],
+    "thresholds": [
+      10,
+      20,
+      40,
+      80,
+      160
+    ],
+    "refs": [
+      {
+        "location": "#variative",
+        "start": 17,
+        "end": 34
+      },
+      {
+        "location": "#static_base",
+        "start": 509,
+        "end": 528
+      }
+    ],
+    "excluded": [
+      "brand_rate / brand_reputation",
+      "faction_fame",
+      "guild_reputation"
+    ]
+  },
+  "activities": [
+    {
+      "id": "colosseum",
+      "name": "콜로세움",
+      "personalFame": true,
+      "roles": [
+        "slave"
+      ],
+      "conditions": [
+        "$fight_return='Start' and $итог_боя='победа'",
+        "interaction_city=1294 또는 1295의 잔류 분기"
+      ],
+      "change": "slave_rate['fame'] += 4 + slave['winning_series']/2",
+      "keys": [
+        "winning_series",
+        "arena_level",
+        "loser_rating",
+        "challenge_type",
+        "c1done",
+        "c2done",
+        "c3done",
+        "c4done"
+      ],
+      "refs": [
+        {
+          "location": "выход_из_боя",
+          "start": 14,
+          "end": 58
+        },
+        {
+          "location": "interaction_city",
+          "start": 1763,
+          "end": 1885
+        },
+        {
+          "location": "#options",
+          "start": 3855,
+          "end": 3890
+        }
+      ],
+      "safePoint": "기존 승리 결과 분기 1294/1295. 연승은 전투 종료에서 먼저 증가한다. 기존 값이며 신규 명성 보너스 없음."
+    },
+    {
+      "id": "chariot",
+      "name": "전투마차 경주",
+      "personalFame": true,
+      "roles": [
+        "slave"
+      ],
+      "conditions": [
+        "$ride_finish args[0]=4 (완주)",
+        "$race_winner='master'이면 우승"
+      ],
+      "change": "우승 fame_rate +11, 완주 비우승 +1. 중도 탈락 경로는 해당 보너스 없음.",
+      "keys": [
+        "has_ride_win",
+        "race_win_ratio",
+        "ride_count",
+        "pony_dead"
+      ],
+      "refs": [
+        {
+          "location": "$ride_finish",
+          "start": 20,
+          "end": 89
+        },
+        {
+          "location": "#options",
+          "start": 3725,
+          "end": 3755
+        },
+        {
+          "location": "#options",
+          "start": 3800,
+          "end": 3853
+        }
+      ],
+      "safePoint": "$ride_finish 완주 결과 분기. has_ride_win은 우승 시 +1이며 명성은 이 승수에 비례하지 않는다."
+    },
+    {
+      "id": "singing_special",
+      "name": "노래 개인수업의 특수 이벤트",
+      "personalFame": true,
+      "roles": [
+        "slave",
+        "assistant"
+      ],
+      "conditions": [
+        "interaction=112332 또는 502112",
+        "instr($bg_path,'white_short_young_2') != 0"
+      ],
+      "change": "대상 actor_rate[fame] +10",
+      "keys": [
+        "special_singing_lesson"
+      ],
+      "refs": [
+        {
+          "location": "interaction",
+          "start": 4026,
+          "end": 4062
+        },
+        {
+          "location": "interaction",
+          "start": 12063,
+          "end": 12095
+        }
+      ],
+      "safePoint": "기존 특수 결과 분기. special_singing_lesson=2가 재사용 방지용으로 설정된다. 일반 노래 교육의 매회 명성 보상으로 해석하면 안 된다."
+    },
+    {
+      "id": "rally",
+      "name": "아마란스 살롱 정액 랠리",
+      "personalFame": false,
+      "roles": [
+        "slave"
+      ],
+      "conditions": [
+        "메뉴: 의식 있는 노예, energy>=2, sparks>=100",
+        "진입 102102; 기술 조합에 따라 102113~102116에서 추첨",
+        "성공 결과 102118,102119,102121,102123"
+      ],
+      "change": "현재 성공 시 sparks +300, virtue=5, sin=0. 개인 fame 및 랠리 승수 누적 없음.",
+      "keys": [
+        "oral",
+        "xenophily",
+        "obedience",
+        "energy",
+        "virtue",
+        "sin"
+      ],
+      "refs": [
+        {
+          "location": "#options",
+          "start": 5344,
+          "end": 5359
+        },
+        {
+          "location": "interaction_city",
+          "start": 18084,
+          "end": 18310
+        },
+        {
+          "location": "interaction_city",
+          "start": 18462,
+          "end": 18687
+        }
+      ],
+      "safePoint": "제안: 남/여 주인공 각각의 성공 결과 4개(총8개 결과 블록)에만 참가자 승수/명성 정산을 연결. 보상 수치 및 반복 실행 방지 방식은 별도 설계. 미적용."
+    },
+    {
+      "id": "fog",
+      "name": "안개 경계 동료 전투",
+      "personalFame": false,
+      "roles": [
+        "slave",
+        "assistant"
+      ],
+      "conditions": [
+        "$place='edge_patrol'",
+        "actor=1/2 and active=1 and settled=0",
+        "해당 동료의 $итог_боя='победа'"
+      ],
+      "change": "현재 개인 fame 보상 없음. 실제 동료 승리에 ego_rate/temper_rate 각+5.",
+      "keys": [
+        "jo9_fog.actor",
+        "jo9_fog.active",
+        "jo9_fog.settled",
+        "jo9_fog.switched",
+        "jo9_fog.victory_snapshot"
+      ],
+      "refs": [
+        {
+          "location": "jo9_fog_relay",
+          "start": 15,
+          "end": 32
+        },
+        {
+          "location": "jo9_fog_relay",
+          "start": 35,
+          "end": 59
+        },
+        {
+          "location": "jo9_fog_relay",
+          "start": 61,
+          "end": 139
+        },
+        {
+          "location": "выход_из_боя",
+          "start": 4,
+          "end": 10
+        },
+        {
+          "location": "конец_боя",
+          "start": 1,
+          "end": 12
+        }
+      ],
+      "safePoint": "제안: settle의 actor별 기존 승리 성장 분기(91~96,130~135). settled 가드를 재사용하면 1회 정산이며 패배 후 주인공 교대 승리를 동료에게 잘못 지급하지 않는다. 미적용."
+    },
+    {
+      "id": "catfight",
+      "name": "캣파이트 클럽 노예 시합",
+      "personalFame": false,
+      "roles": [
+        "slave"
+      ],
+      "conditions": [
+        "메뉴: slave_exist,energy>3,arena_level<4,catfight_level<3",
+        "$fight_return='Start1' and $итог_боя='победа' -> interaction_city=103005"
+      ],
+      "change": "상금300, 기술/성격 성장, catfight_level 및 winning_series 갱신. 개인 fame 증가 없음.",
+      "keys": [
+        "catfight_level",
+        "winning_series",
+        "loser_rating",
+        "totalEarned"
+      ],
+      "refs": [
+        {
+          "location": "#options",
+          "start": 5246,
+          "end": 5286
+        },
+        {
+          "location": "выход_из_боя",
+          "start": 63,
+          "end": 112
+        },
+        {
+          "location": "interaction_city",
+          "start": 17682,
+          "end": 17709
+        },
+        {
+          "location": "interaction_city",
+          "start": 17910,
+          "end": 17937
+        }
+      ],
+      "safePoint": "제안: 개인 승리 결과103005(남/여 주인공 두 분기). 기존 winning_series는 콜로세움과 공유하므로 새 콘텐츠 승수로 무조건 재사용하면 연동 부작용이 생길 수 있다. 미적용."
+    },
+    {
+      "id": "redlight_work",
+      "name": "홍등가 공개 서비스",
+      "personalFame": false,
+      "roles": [
+        "slave",
+        "assistant"
+      ],
+      "conditions": [
+        "메뉴 22710/22711/22712; 노예 또는 조수의 행동력 등 입장 조건 존재"
+      ],
+      "change": "현재 fame 등급*5가 base_tips에 들어가는 입력일 뿐, 공연/서비스 결과로 fame이 오르지는 않는다.",
+      "keys": [
+        "base_tips",
+        "fame",
+        "arena_level"
+      ],
+      "refs": [
+        {
+          "location": "#options",
+          "start": 5560,
+          "end": 5587
+        },
+        {
+          "location": "#options",
+          "start": 5722,
+          "end": 5742
+        },
+        {
+          "location": "interaction_city",
+          "start": 15279,
+          "end": 15464
+        },
+        {
+          "location": "interaction_city",
+          "start": 16021,
+          "end": 16205
+        }
+      ],
+      "safePoint": "제안 단계. 추후 공개 활동으로 인정할 결과와 횟수/효과가 따로 결정되어야 하며 현재 명성 지급 변경 없음."
+    }
+  ],
+  "additionalContent": [
+    {
+      "name": "콜로세움 챔피언/집단전/괴물전/절대 왕좌",
+      "classification": "실제 공개 대회; 콜로세움 활동의 변형",
+      "refs": [
+        {
+          "location": "#options",
+          "start": 3855,
+          "end": 3890
+        }
+      ],
+      "personalFame": "별도 신규 시스템이 아니라 기존1294/1295 승리 정산으로 연결"
+    },
+    {
+      "name": "극장 공연 관람",
+      "classification": "관객으로 가는 콘텐츠; 노예의 공개 출연이 아님",
+      "refs": [
+        {
+          "location": "menu_form",
+          "start": 3020,
+          "end": 3038
+        },
+        {
+          "location": "interaction",
+          "start": 6038,
+          "end": 6064
+        }
+      ],
+      "personalFame": false
+    },
+    {
+      "name": "극장 예술가 제안",
+      "classification": "거래/납품",
+      "refs": [
+        {
+          "location": "#options",
+          "start": 2142,
+          "end": 2156
+        }
+      ],
+      "personalFame": "노예가 공개 공연하여 개인 명성을 쌓는 결과는 확인되지 않음"
+    },
+    {
+      "name": "가정 연주회",
+      "classification": "주인공을 위한 사적 공연",
+      "refs": [
+        {
+          "location": "interaction",
+          "start": 1781,
+          "end": 1825
+        }
+      ],
+      "personalFame": "음악/의욕을 통해 주인공 기분 등을 계산. 개인 fame 지급 없음"
+    },
+    {
+      "name": "노예와 조수의 competition",
+      "classification": "사적 경쟁 교육",
+      "refs": [
+        {
+          "location": "interaction_result",
+          "start": 1789,
+          "end": 1885
+        }
+      ],
+      "personalFame": false
+    },
+    {
+      "name": "콜로세움 연습 경기",
+      "classification": "훈련 메뉴; 정규 공개 승리와 구별",
+      "refs": [
+        {
+          "location": "#options",
+          "start": 3760,
+          "end": 3782
+        },
+        {
+          "location": "interaction_city",
+          "start": 1887,
+          "end": 2036
+        }
+      ],
+      "personalFame": false
+    },
+    {
+      "name": "항구 일자리",
+      "classification": "공개 노동/서비스; 대회 아님",
+      "refs": [
+        {
+          "location": "#options",
+          "start": 6697,
+          "end": 6732
+        }
+      ],
+      "personalFame": "개인 fame 증가문 확인되지 않음"
+    },
+    {
+      "name": "에게야 직접 결투",
+      "classification": "주인공 결투 및 고유 인물 영입",
+      "refs": [
+        {
+          "location": "#options",
+          "start": 5258,
+          "end": 5272
+        },
+        {
+          "location": "interaction_city",
+          "start": 17551,
+          "end": 17583
+        },
+        {
+          "location": "interaction_city",
+          "start": 17782,
+          "end": 17813
+        }
+      ],
+      "personalFame": "기존 보유 노예 성장과 다름. 새로 영입하는 에게야 fame_rate=160 초기 설정"
+    }
+  ],
+  "literalWriterInventory": [
+    {
+      "location": "assistant_testing",
+      "line": 79,
+      "code": "assistant_rate['fame'] += 15",
+      "classification": "test_cheat"
+    },
+    {
+      "location": "generate_stock_testing",
+      "line": 12,
+      "code": "stock['fame'] = rand(1,3)",
+      "classification": "test_cheat"
+    },
+    {
+      "location": "generate_stock_maximum_testing",
+      "line": 12,
+      "code": "stock[\"fame\"] = 5",
+      "classification": "test_cheat"
+    },
+    {
+      "location": "stock_to_slave_testing",
+      "line": 23,
+      "code": "slave_rate['fame'] += 15",
+      "classification": "test_cheat"
+    },
+    {
+      "location": "stock_to_slave_testing",
+      "line": 24,
+      "code": "if cheat_j = 1: slave_rate['fame'] += 25",
+      "classification": "test_cheat"
+    },
+    {
+      "location": "$ride_finish",
+      "line": 67,
+      "code": "slave_rate['fame'] += 11",
+      "classification": "gameplay_gain"
+    },
+    {
+      "location": "$ride_finish",
+      "line": 79,
+      "code": "slave_rate['fame'] += 1",
+      "classification": "gameplay_gain"
+    },
+    {
+      "location": "generate_stock",
+      "line": 1157,
+      "code": "if rand(1, a) = 1: stock_rate['fame'] += rand(1,25)",
+      "classification": "generation_seed"
+    },
+    {
+      "location": "get_stock_seed",
+      "line": 24,
+      "code": "stock_rate['fame'] = seed_fame_rate[stock_type]",
+      "classification": "generation_seed"
+    },
+    {
+      "location": "interaction",
+      "line": 4048,
+      "code": "slave_rate['fame'] += 10",
+      "classification": "gameplay_gain"
+    },
+    {
+      "location": "interaction",
+      "line": 12085,
+      "code": "assistant_rate['fame'] += 10",
+      "classification": "gameplay_gain"
+    },
+    {
+      "location": "interaction_city",
+      "line": 1791,
+      "code": "slave_rate['fame'] += 4 + slave['winning_series']/2",
+      "classification": "gameplay_gain"
+    },
+    {
+      "location": "interaction_city",
+      "line": 1874,
+      "code": "slave_rate['fame'] += 4 + slave['winning_series']/2",
+      "classification": "gameplay_gain"
+    },
+    {
+      "location": "interaction_city",
+      "line": 12723,
+      "code": "stock['fame'] = 1 & stock_rate['fame'] = 10",
+      "classification": "guild_contract_seed"
+    },
+    {
+      "location": "interaction_city",
+      "line": 17568,
+      "code": "slave_rate[\"fame\"] = 160",
+      "classification": "egeya_acquisition_seed"
+    },
+    {
+      "location": "interaction_city",
+      "line": 17798,
+      "code": "slave_rate[\"fame\"] = 160",
+      "classification": "egeya_acquisition_seed"
+    },
+    {
+      "location": "get_special_assistant_quest",
+      "line": 36,
+      "code": "assistant_rate['fame'] = seed_fame_rate[assistant_type]",
+      "classification": "generation_seed"
+    }
+  ],
+  "codeEvidence": [
+    {
+      "location": "#variative",
+      "start": 17,
+      "end": 34,
+      "lines": [
+        {
+          "line": 17,
+          "code": "$cont_atr[0] = 'arousal'"
+        },
+        {
+          "line": 18,
+          "code": "$cont_atr[1] = 'beauty'"
+        },
+        {
+          "line": 19,
+          "code": "$cont_atr[2] = 'bruises'"
+        },
+        {
+          "line": 20,
+          "code": "$cont_atr[3] = 'exotic'"
+        },
+        {
+          "line": 21,
+          "code": "$cont_atr[4] = 'fame'"
+        },
+        {
+          "line": 22,
+          "code": "$cont_atr[5] = 'hygiene'"
+        },
+        {
+          "line": 23,
+          "code": "$cont_atr[6] = 'scars'"
+        },
+        {
+          "line": 24,
+          "code": "$cont_atr[7] = 'style'"
+        },
+        {
+          "line": 25,
+          "code": "$cont_atr[8] = 'wounds'"
+        },
+        {
+          "line": 26,
+          "code": ""
+        },
+        {
+          "line": 27,
+          "code": "cont_atr_min = 0"
+        },
+        {
+          "line": 28,
+          "code": "cont_atr_threshold[0] = 0"
+        },
+        {
+          "line": 29,
+          "code": "cont_atr_threshold[1] = 10"
+        },
+        {
+          "line": 30,
+          "code": "cont_atr_threshold[2] = 20"
+        },
+        {
+          "line": 31,
+          "code": "cont_atr_threshold[3] = 40"
+        },
+        {
+          "line": 32,
+          "code": "cont_atr_threshold[4] = 80"
+        },
+        {
+          "line": 33,
+          "code": "cont_atr_threshold[5] = 160"
+        },
+        {
+          "line": 34,
+          "code": "cont_atr_max = 200"
+        }
+      ]
+    },
+    {
+      "location": "jo9_fog_relay",
+      "start": 51,
+      "end": 59,
+      "lines": [
+        {
+          "line": 51,
+          "code": "if $args[0] = 'finish':"
+        },
+        {
+          "line": 52,
+          "code": " if jo9_fog['active'] = 1 and combatant > 0: gs 'jo9_fog_relay', 'settle'"
+        },
+        {
+          "line": 53,
+          "code": "end"
+        },
+        {
+          "line": 54,
+          "code": ""
+        },
+        {
+          "line": 55,
+          "code": "if $args[0] = 'settle':"
+        },
+        {
+          "line": 56,
+          "code": " if jo9_fog['active'] ! 1 or jo9_fog['settled'] ! 0: exit"
+        },
+        {
+          "line": 57,
+          "code": " jo9_fog['settled'] = 1"
+        },
+        {
+          "line": 58,
+          "code": " ! 3명 이상 적 전멸 시 원본이 사기를 덮어쓰기 전의 실제 값을 정산에 사용한다."
+        },
+        {
+          "line": 59,
+          "code": " if jo9_fog['victory_snapshot'] = 1: дух_игрока = jo9_fog['spirit_before_victory']"
+        }
+      ]
+    },
+    {
+      "location": "jo9_fog_relay",
+      "start": 91,
+      "end": 99,
+      "lines": [
+        {
+          "line": 91,
+          "code": "   ! JO9 MOD START FOG_VICTORY_GROWTH_SLAVE | 2026-10-19_combat_trait_probability"
+        },
+        {
+          "line": 92,
+          "code": "   if $итог_боя = 'победа':"
+        },
+        {
+          "line": 93,
+          "code": "    slave_rate['ego'] += 5"
+        },
+        {
+          "line": 94,
+          "code": "    slave_rate['temper'] += 5"
+        },
+        {
+          "line": 95,
+          "code": "   end"
+        },
+        {
+          "line": 96,
+          "code": "   ! JO9 MOD END FOG_VICTORY_GROWTH_SLAVE"
+        },
+        {
+          "line": 97,
+          "code": "   dynamic $replace($dyn_calc_slave_attrs, 'dyn'+'slave', 'slave')"
+        },
+        {
+          "line": 98,
+          "code": "  end"
+        },
+        {
+          "line": 99,
+          "code": " end"
+        }
+      ]
+    },
+    {
+      "location": "jo9_fog_relay",
+      "start": 130,
+      "end": 139,
+      "lines": [
+        {
+          "line": 130,
+          "code": "   ! JO9 MOD START FOG_VICTORY_GROWTH_ASSISTANT | 2026-10-19_combat_trait_probability"
+        },
+        {
+          "line": 131,
+          "code": "   if $итог_боя = 'победа':"
+        },
+        {
+          "line": 132,
+          "code": "    assistant_rate['ego'] += 5"
+        },
+        {
+          "line": 133,
+          "code": "    assistant_rate['temper'] += 5"
+        },
+        {
+          "line": 134,
+          "code": "   end"
+        },
+        {
+          "line": 135,
+          "code": "   ! JO9 MOD END FOG_VICTORY_GROWTH_ASSISTANT"
+        },
+        {
+          "line": 136,
+          "code": "   dynamic $replace($dyn_calc_slave_attrs, 'dyn'+'slave', 'assistant')"
+        },
+        {
+          "line": 137,
+          "code": "  end"
+        },
+        {
+          "line": 138,
+          "code": " end"
+        },
+        {
+          "line": 139,
+          "code": "end"
+        }
+      ]
+    }
+  ],
+  "method": [
+    "Read current installed WORK jack.qsp and decode every location",
+    "Scan literal actor fame/fame_rate writes and classify generation/test/gameplay",
+    "Reverse-reference menu entries and event handlers for races, arena challenges, rally, catfight, public service, theater, private concert and competition",
+    "No gameplay, GUI, modifications, implementation or release action"
+  ],
+  "limitations": [
+    "Read-only source analysis; no native gameplay reproduction in this audit",
+    "Absence conclusions concern currently reachable analyzed handlers and all explicit personal fame writes; dynamic generic stat tools are separate",
+    "Existing content can share global counters; proposed updates require balancing/duplicate-settlement review before implementation"
+  ],
+  "enemyDifficultyReuse": {
+    "status": "PROPOSAL_GROUNDS_ONLY_NOT_IMPLEMENTED",
+    "sourceSha256": "afb2b9eccbe02193f77fefea4a990081616a79eb84ed14fe2d8f0bbd3cf2d1fc",
+    "originalAuditSourceSha256": "6ac1d81489320b5211c03e9e2b36436d15ed4a7ebf47768f384802f469cfccdb",
+    "originalAuditReferencesRetained": true,
+    "existingInputs": {
+      "encounterKey": "patrol_num 1..14; quest override15",
+      "enemyIds": "$враг[1..количество_врагов]",
+      "enemyClasses": "$класс_моба[id] -> $класс_врага[index]",
+      "enemyStats": [
+        "базовое_здоровье[id]",
+        "базовая_выносливость[id]",
+        "базовый_дух[id]",
+        "базовый_вред[id]"
+      ],
+      "originalCount": "количество_врагов",
+      "defeatedCount": "поверженные_враги",
+      "deathCount": "труп[id]",
+      "knockoutCount": "в_отключке[id]"
+    },
+    "classValues": [
+      "пешка",
+      "рядовой",
+      "элитный"
+    ],
+    "fogEnemyMetadata": [
+      {
+        "enemyId": "исчадие_молодь",
+        "enemyClass": "элитный",
+        "classLine": 983,
+        "hp": "70",
+        "stamina": "60",
+        "spirit": "90",
+        "baseDamage": "9"
+      },
+      {
+        "enemyId": "исчадие",
+        "enemyClass": "элитный",
+        "classLine": 1050,
+        "hp": "120",
+        "stamina": "120",
+        "spirit": "160",
+        "baseDamage": "15"
+      },
+      {
+        "enemyId": "чудовщиное_исчадие",
+        "enemyClass": "элитный",
+        "classLine": 1135,
+        "hp": "200",
+        "stamina": "300",
+        "spirit": "300",
+        "baseDamage": "20"
+      },
+      {
+        "enemyId": "черный_медик",
+        "enemyClass": "рядовой",
+        "classLine": 817,
+        "hp": "60",
+        "stamina": "60",
+        "spirit": "60",
+        "baseDamage": "9"
+      },
+      {
+        "enemyId": "подручный",
+        "enemyClass": "пешка",
+        "classLine": 36,
+        "hp": "1",
+        "stamina": "1",
+        "spirit": "1",
+        "baseDamage": "3"
+      },
+      {
+        "enemyId": "паладин",
+        "enemyClass": "рядовой",
+        "classLine": 459,
+        "hp": "50",
+        "stamina": "80",
+        "spirit": "90",
+        "baseDamage": "9"
+      },
+      {
+        "enemyId": "пехотинец",
+        "enemyClass": "рядовой",
+        "classLine": 509,
+        "hp": "40",
+        "stamina": "60",
+        "spirit": "50",
+        "baseDamage": "6"
+      },
+      {
+        "enemyId": "козлорогий",
+        "enemyClass": "рядовой",
+        "classLine": 561,
+        "hp": "50",
+        "stamina": "65",
+        "spirit": "50",
+        "baseDamage": "9"
+      },
+      {
+        "enemyId": "свинорылый",
+        "enemyClass": "рядовой",
+        "classLine": 611,
+        "hp": "60",
+        "stamina": "80",
+        "spirit": "60",
+        "baseDamage": "6"
+      },
+      {
+        "enemyId": "жабован",
+        "enemyClass": "рядовой",
+        "classLine": 661,
+        "hp": "40",
+        "stamina": "60",
+        "spirit": "40",
+        "baseDamage": "5"
+      },
+      {
+        "enemyId": "крысолюд",
+        "enemyClass": "рядовой",
+        "classLine": 711,
+        "hp": "30",
+        "stamina": "40",
+        "spirit": "50",
+        "baseDamage": "4"
+      },
+      {
+        "enemyId": "вервольф",
+        "enemyClass": "элитный",
+        "classLine": 1297,
+        "hp": "150",
+        "stamina": "300",
+        "spirit": "150",
+        "baseDamage": "10"
+      },
+      {
+        "enemyId": "вампир",
+        "enemyClass": "элитный",
+        "classLine": 1230,
+        "hp": "150",
+        "stamina": "200",
+        "spirit": "150",
+        "baseDamage": "15"
+      },
+      {
+        "enemyId": "лич",
+        "enemyClass": "элитный",
+        "classLine": 1362,
+        "hp": "60",
+        "stamina": "100",
+        "spirit": "300",
+        "baseDamage": "25"
+      },
+      {
+        "enemyId": "канибал",
+        "enemyClass": "пешка",
+        "classLine": 72,
+        "hp": "1",
+        "stamina": "1",
+        "spirit": "1",
+        "baseDamage": "3"
+      },
+      {
+        "enemyId": "калека",
+        "enemyClass": "пешка",
+        "classLine": 96,
+        "hp": "1",
+        "stamina": "1",
+        "spirit": "1",
+        "baseDamage": "5"
+      },
+      {
+        "enemyId": "нищеброд",
+        "enemyClass": "пешка",
+        "classLine": 120,
+        "hp": "1",
+        "stamina": "1",
+        "spirit": "1",
+        "baseDamage": "2"
+      },
+      {
+        "enemyId": "безумец",
+        "enemyClass": "пешка",
+        "classLine": 152,
+        "hp": "1",
+        "stamina": "1",
+        "spirit": "1",
+        "baseDamage": "2"
+      },
+      {
+        "enemyId": "изможденный",
+        "enemyClass": "пешка",
+        "classLine": 180,
+        "hp": "1",
+        "stamina": "1",
+        "spirit": "1",
+        "baseDamage": "3"
+      },
+      {
+        "enemyId": "ogre",
+        "enemyClass": "элитный",
+        "classLine": 1433,
+        "hp": "200",
+        "stamina": "175",
+        "spirit": "175",
+        "baseDamage": "22"
+      },
+      {
+        "enemyId": "goblin",
+        "enemyClass": "рядовой",
+        "classLine": 1496,
+        "hp": "50",
+        "stamina": "40",
+        "spirit": "40",
+        "baseDamage": "7"
+      },
+      {
+        "enemyId": "warg",
+        "enemyClass": "элитный",
+        "classLine": 1546,
+        "hp": "150",
+        "stamina": "150",
+        "spirit": "120",
+        "baseDamage": "20"
+      },
+      {
+        "enemyId": "orc",
+        "enemyClass": "рядовой",
+        "classLine": 1614,
+        "hp": "80",
+        "stamina": "100",
+        "spirit": "150",
+        "baseDamage": "12"
+      },
+      {
+        "enemyId": "garsid",
+        "enemyClass": "рядовой",
+        "classLine": 765,
+        "hp": "60",
+        "stamina": "60",
+        "spirit": "10",
+        "baseDamage": "0"
+      }
+    ],
+    "findings": [
+      "Confirmed class values are пешка/рядовой/элитный. They are combat classes, not an approved generic/strong/unique-boss fame tier.",
+      "Young, ordinary and giant fiends share элитный with lich/ogre/warg despite different stats and existing rewards.",
+      "No existing one-number enemy level/strength/difficulty rating or unique-boss flag suitable for the proposed fame tiers was confirmed.",
+      "At jo9_fog_relay settle (выход_из_боя line9), enemy IDs/classes, original count and defeated count still exist.",
+      "Garsid branch kills $враг later at выход_из_боя307, after companion settlement.",
+      "On defeat handoff, начать_бой resuming guard preserves enemy states and defeated count.",
+      "поверженные_враги includes death, knockout and morale retreat. On victory it equals the original enemy count; it is not a killed-only count.",
+      "fighting_experience is assigned to current enemy later in выход_из_боя295..456, after companion settlement. Reading it directly inside settle can read stale/unset data.",
+      "Existing fighting_experience commonly uses5/10/15 but the ogre assignment15 is commented at410, so it is not a complete difficulty registry."
+    ],
+    "refs": [
+      {
+        "location": "interaction_city",
+        "start": 10839,
+        "end": 11089
+      },
+      {
+        "location": "#противники",
+        "start": 26,
+        "end": 1652
+      },
+      {
+        "location": "начать_бой",
+        "start": 46,
+        "end": 65
+      },
+      {
+        "location": "начать_бой",
+        "start": 423,
+        "end": 456
+      },
+      {
+        "location": "конец_раунда",
+        "start": 178,
+        "end": 244
+      },
+      {
+        "location": "jo9_fog_relay",
+        "start": 35,
+        "end": 59
+      },
+      {
+        "location": "выход_из_боя",
+        "start": 4,
+        "end": 10
+      },
+      {
+        "location": "выход_из_боя",
+        "start": 284,
+        "end": 456
+      }
+    ],
+    "proposal": "Use a small explicit patrol_num / enemy-ID-composition table for the agreed fame tiers, then settle once through the existing actor-win branch and settled guard. Do not directly map enemyClass to fame tier or consume fighting_experience before its assignment. Proposed point values remain in PROPOSAL_KO.md and are not implemented."
+  }
+}

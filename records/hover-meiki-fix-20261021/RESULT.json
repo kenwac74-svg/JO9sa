@@ -1,0 +1,54 @@
+{
+  "status": "APPLIED_WORK_ONLY",
+  "date": "2026-10-21",
+  "before": "1e911ced3798826e8cd1f35ed1e4115e9fd6450a9fdecaeb231b5f6885c1abb4",
+  "after": "498e7fcaa2c116e382ab73ffe38549762297cce945247c2b8ad27509ba874fe0",
+  "locations": 262,
+  "changedBodyFields": [
+    "#dynamic",
+    "$newloc",
+    "jo9_meiki_willing"
+  ],
+  "newLocations": 0,
+  "newActorStateKeys": 0,
+  "migration": false,
+  "discoveryProbabilityUnchanged": "rand(1,100)<=5; first eligible opportunity only",
+  "retroactiveReroll": false,
+  "cache": {
+    "existingRevision": "jo9_meiki_revision",
+    "old": 214348873,
+    "new": 214348874,
+    "newCachedFormatter": "$jo9_equipment_tooltip",
+    "scratchVariablesCleared": true
+  },
+  "verification": {
+    "releaseVerdict": "PASS",
+    "nativeReleasePaths": 9,
+    "nativeFocusedPaths": 9,
+    "qaTests": {
+      "pass": 103,
+      "fail": 0,
+      "skip": 1,
+      "skipReason": "older meiki-tentacle differential test intentionally has no JO9_BEFORE_QSP; unrelated-field preservation is covered by exact combined delta"
+    },
+    "independentReview": "APPROVE; no findings; candidate hash and all three fields reviewed"
+  },
+  "preserved": {
+    "full": true,
+    "css": true,
+    "json": true,
+    "saveWritesByThisTask": 0,
+    "zip": true,
+    "commitPush": false
+  },
+  "limits": [
+    "No GUI clicks or visual layout verification.",
+    "Save data is used only to prime representative state. GUI save-file loading, CRC compatibility and full saved script restoration are NOT tested.",
+    "Start is replaced only in diagnostic copies. Smoke covers lifecycle calls, not the character-selection UI or every gameplay branch.",
+    "No complete QSP syntax checker: dynamic code and all game logic are not statically proved.",
+    "Battle smoke instruments the menu dispatch only; full combat outcomes and balance are not tested.",
+    "Focused meiki diagnostic replaces only six rand expressions in disposable copies with fixed numeric results; production PRNG unchanged.",
+    "Actual hover visual rendering and GUI save load not tested.",
+    "Previously consumed missing-roll opportunities are not reset."
+  ]
+}

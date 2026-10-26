@@ -1,0 +1,196 @@
+TAP version 13
+# Subtest: ordinary checklist open clears previous Warg cut mode; later explicit cut uses clicked Ride base
+not ok 1 - ordinary checklist open clears previous Warg cut mode; later explicit cut uses clicked Ride base
+  ---
+  duration_ms: 5.8705
+  type: 'test'
+  location: 'G:\\somi\\JO9sa\\tools\\cut-addition\\workshop-cut-target-state.test.cjs:100:1'
+  failureType: 'testCodeFailure'
+  error: 'ordinary input must not inherit a prior cut plan'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    assertOrdinary (G:\somi\JO9sa\tools\cut-addition\workshop-cut-target-state.test.cjs:84:9)
+    TestContext.<anonymous> (G:\somi\JO9sa\tools\cut-addition\workshop-cut-target-state.test.cjs:103:2)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+  ...
+# Subtest: public cut reset retains already staged cut metadata while future drops become ordinary
+not ok 2 - public cut reset retains already staged cut metadata while future drops become ordinary
+  ---
+  duration_ms: 1.7083
+  type: 'test'
+  location: 'G:\\somi\\JO9sa\\tools\\cut-addition\\workshop-cut-target-state.test.cjs:108:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    workshop exposes the ordinary-mode reset used by the catalog
+    + actual - expected
+    
+    + 'undefined'
+    - 'function'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'function'
+  actual: 'undefined'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (G:\somi\JO9sa\tools\cut-addition\workshop-cut-target-state.test.cjs:111:9)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: cut cancel retains already staged cut save target while future drops become ordinary
+ok 3 - cut cancel retains already staged cut save target while future drops become ordinary
+  ---
+  duration_ms: 2.1167
+  type: 'test'
+  ...
+# Subtest: ordinary checklist open prevents a late Warg info reply from restoring the previous cut target
+not ok 4 - ordinary checklist open prevents a late Warg info reply from restoring the previous cut target
+  ---
+  duration_ms: 1.1665
+  type: 'test'
+  location: 'G:\\somi\\JO9sa\\tools\\cut-addition\\workshop-cut-target-state.test.cjs:125:1'
+  failureType: 'testCodeFailure'
+  error: 'ordinary input must not inherit a prior cut plan'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    assertOrdinary (G:\somi\JO9sa\tools\cut-addition\workshop-cut-target-state.test.cjs:84:9)
+    TestContext.<anonymous> (G:\somi\JO9sa\tools\cut-addition\workshop-cut-target-state.test.cjs:129:2)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: cut cancel prevents a late Ride info reply from reenabling cut mode
+not ok 5 - cut cancel prevents a late Ride info reply from reenabling cut mode
+  ---
+  duration_ms: 1.1817
+  type: 'test'
+  location: 'G:\\somi\\JO9sa\\tools\\cut-addition\\workshop-cut-target-state.test.cjs:132:1'
+  failureType: 'testCodeFailure'
+  error: 'ordinary input must not inherit a prior cut plan'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    assertOrdinary (G:\somi\JO9sa\tools\cut-addition\workshop-cut-target-state.test.cjs:84:9)
+    TestContext.<anonymous> (G:\somi\JO9sa\tools\cut-addition\workshop-cut-target-state.test.cjs:136:52)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: racing explicit cut requests keep the latest clicked base when replies arrive in reverse order
+not ok 6 - racing explicit cut requests keep the latest clicked base when replies arrive in reverse order
+  ---
+  duration_ms: 1.1599
+  type: 'test'
+  location: 'G:\\somi\\JO9sa\\tools\\cut-addition\\workshop-cut-target-state.test.cjs:139:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'mob/Warg.png'
+    - 'mob/ride_ippolita.png'
+           ^
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'mob/ride_ippolita.png'
+  actual: 'mob/Warg.png'
+  operator: 'strictEqual'
+  stack: |-
+    assertRideCut (G:\somi\JO9sa\tools\cut-addition\workshop-cut-target-state.test.cjs:90:9)
+    TestContext.<anonymous> (G:\somi\JO9sa\tools\cut-addition\workshop-cut-target-state.test.cjs:144:34)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: explicit Ride cut switches current screen and selection from an already open Warg workshop
+not ok 7 - explicit Ride cut switches current screen and selection from an already open Warg workshop
+  ---
+  duration_ms: 1.3982
+  type: 'test'
+  location: 'G:\\somi\\JO9sa\\tools\\cut-addition\\workshop-cut-target-state.test.cjs:147:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+    +   'content/pic/mob/Warg.png'
+    -   'content/pic/mob/ride_ippolita.png'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'content/pic/mob/ride_ippolita.png'
+  actual:
+    0: 'content/pic/mob/Warg.png'
+  operator: 'deepStrictEqual'
+  stack: |-
+    assertRideContext (G:\somi\JO9sa\tools\cut-addition\workshop-cut-target-state.test.cjs:95:9)
+    TestContext.<anonymous> (G:\somi\JO9sa\tools\cut-addition\workshop-cut-target-state.test.cjs:150:31)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: closeButton cancels pending cut preparation before ordinary reopen
+not ok 8 - closeButton cancels pending cut preparation before ordinary reopen
+  ---
+  duration_ms: 0.9942
+  type: 'test'
+  location: 'G:\\somi\\JO9sa\\tools\\cut-addition\\workshop-cut-target-state.test.cjs:153:51'
+  failureType: 'testCodeFailure'
+  error: |-
+    late cut preparation must not reopen a closed workshop
+    
+    true !== false
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (G:\somi\JO9sa\tools\cut-addition\workshop-cut-target-state.test.cjs:157:9)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: cancelDialog cancels pending cut preparation before ordinary reopen
+not ok 9 - cancelDialog cancels pending cut preparation before ordinary reopen
+  ---
+  duration_ms: 0.9385
+  type: 'test'
+  location: 'G:\\somi\\JO9sa\\tools\\cut-addition\\workshop-cut-target-state.test.cjs:153:51'
+  failureType: 'testCodeFailure'
+  error: |-
+    late cut preparation must not reopen a closed workshop
+    
+    true !== false
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (G:\somi\JO9sa\tools\cut-addition\workshop-cut-target-state.test.cjs:157:9)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 1
+# fail 8
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 115.2333

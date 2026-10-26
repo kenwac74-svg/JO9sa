@@ -1,0 +1,23 @@
+B컷 대상 상태 연결 수정 — CUT_TARGET_STATE_20261021
+
+보고된 현상: 체크리스트는 mob/ride_ippolita.png(150×150)를 선택했지만 전환 컷 모드와 신규 입력은 이전 mob/Warg (2).png(795×596)를 유지했다.
+원인: JO9WS.open은 새 이미지의 선택/입력 목록을 갱신하면서 cutDraft를 초기화하지 않았다. 닫기/ESC도 모드를 남겼고, info/file/family 비동기 응답에 이전 요청 여부를 검사하지 않았다. 폴더 허용목록 수리와 별개로 이전 상태 수명 관리가 빠져 있었다.
+
+적용: tools/cut-addition/workshop-cut-editor.js, 두 canonical Workshop HTML, 두 cut지원 catalog_editor 소스, make_catalog_editor.ps1 생성기 훅을 수정했다. 실제 IMGMG/catalog_editor.js, Work/modtools/catalog/catalog_editor.js, Work/modtools/place/JO9_Place_Workshop.html에도 반영했다. Work 상대 PLAY_URL은 보존했다. 구형 미사용 local-workspace/catalog 사본은 덮어쓰지 않았다.
+
+입출력/동작:
+- resetCutMode()는 인수/반환값 없이 다음 파일 투입에 사용할 B컷 모드와 준비 상태를 지우고 이전 준비 요청을 무효화한다. 버전/준비 상태는 브라우저 메모리에만 있으며 세이브나 게임 변수에 기록하지 않는다.
+- 일반 JO9WS.open/닫기/ESC/일반 교체 취소에서 이 함수를 호출한다. 수동 선택 해제와 독립 교체기의 새 화면 컨텍스트에서도 미래 투입 모드를 정리한다. 이미 별도 지정되어 편집된 전환 컷 카드의 cutPlan/editCut과 결과물은 유지한다. 일반 open이 이전 입력을 비우는 기존 동작은 유지한다.
+- beginCut(base,row)는 해당 기본 경로의 info로 준비한 draft를 반환하거나 취소/실패 시 null을 반환한다. 최신 응답만 반영하고, 이미 열린 작업창에서도 선택·상세 대상을 눌렀던 파일에 맞춘다. 새 가족이 현재 목록에 없으면 그 가족의 선택 컨텍스트를 보여주되 이미 투입한 개별 작업을 임의로 재지정하지 않는다.
+- editExistingCut은 파일 읽기 뒤 요청/작업 상태를 확인한다. 원본 B컷 편집은 기존대로 새 작업 컷을 준비하며, 중간 취소 후 다른 전역 draft로 저장 대상을 바꾸지 않는다.
+- 준비가 끝나기 전 파일을 넣으면 안내 후 접수하지 않는다. 확인이 끝난 뒤 다시 넣는다. 확인 실패 때 이전 대상이 복구되지 않는다. 한 번에 여러 파일을 넣을 때는 접수 시 확정된 대상 정보를 끝까지 사용한다.
+- 변환/저장 중에는 새 일반 open/선택 변경이 세션을 바꾸지 못한다. 늦은 families/원본 썸네일 응답은 다른 이미지의 컨텍스트를 덮지 못한다.
+
+의존/호출: JO9_CUTS.open → JO9Workshop.beginCut, catalog JO9WS.open과 생성기의 같은 훅, 기존 JO9PIC/JO9_CUTS 읽기·쓰기 API 및 rebuild/render를 사용한다. 서버·QSP·등록 ID·이미지 파일명 규칙·저장 효과는 변경하지 않았다. 저장 시 기존 add/replace 흐름을 계속 사용한다.
+분리·제거: helper만 되돌리고 일반 open 훅을 남기면 optional reset 호출은 무시되지만 상태 버그가 돌아온다. generator 훅을 되돌리면 재생성 때 catalog 초기화가 사라진다. 반대로 helper와 catalog의 서로 다른 버전을 섞지 말고 source/runtime-changes.json 및 압축 백업을 기준으로 필요한 블록을 함께 복구한다. 최신 수동 변경을 전체 사본으로 덮어쓰지 않는다.
+
+검증: 최초 9개 중 8개 실패로 신고 증상·지연 응답·닫기/ESC 재진입을 재현했다. 수정 후 최종 관련 검사 38개 통과/0실패. 그중 24개는 대상 상태·파일 입력/기존 편집 보존/순서 역전/준비 중 투입·실패·busy/늦은 원본 미리보기 회귀이다. 기존 helper4/catalog3/backend7도 포함한다. JS/HTML 스크립트24개 및 테스트4개 파싱, PowerShell 생성기 파싱·실행과 생성된 훅을 확인했다.
+실제 브라우저: 와그 B컷 → 닫기 → 히폴리타 일반 교체에서 옛 배너가 없음을 확인. 이어 히폴리타 B컷 → mob/ride_ippolita (2).png, 150×150 연결을 확인했다. proof는 correct-target.png. 기존 사용자 입력 탭은 새로고침하지 않았으며, 새 검증 탭을 올바른 대상으로 열어 두었다. 기존 탭은 새로고침 전까지 옛 스크립트를 사용한다.
+한계: 실제 게임 이미지를 저장하지 않았다. lifecycle 검사는 메모리 DOM/이미지/API fixture이며 backend7은 격리된 작은 파일 fixture를 사용한다. 게임 플레이/전투 컷 전환 변경이나 새 런타임 기능 검증이 아니다.
+
+보존: game/jack.qsp, mob/Warg.png, mob/ride_ippolita.png 해시 불변. Full/ZIP/세이브/커밋푸시 변경 없음. P2-T04 별도 편집도구 수정으로 등록했다. 사용한 재생성 가능 임시 빌드/fixture는 정리하고 검사 스크립트·명세·보고서·압축 복구본을 보관한다.

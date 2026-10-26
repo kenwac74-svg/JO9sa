@@ -1,0 +1,101 @@
+{
+  "status": "APPROVED_RUNTIME_SCOPE_QSP_AND_CSS",
+  "reviewMode": "Read-only; no engine executed; no G:/, game, Full, repository or Git writes.",
+  "runtimeFiles": [
+    "game/jack.qsp",
+    "game/css/base.css"
+  ],
+  "documentationFiles": [
+    "README_KO.txt",
+    "CHANGELOG_KO.md"
+  ],
+  "baseline": {
+    "qsp": "84e978d5b06bf9a3fb6ed6a030160c7761cfbec5cfa54d2fd90102f25552fc3a",
+    "locations": 259
+  },
+  "previousR2": {
+    "zip": "G:\\somi\\JO9_2.4_FirstPatch_20261019\\JO9_2.4_FirstPatch_20261019_Manual_r2.zip",
+    "zipSha256": "4482a532730b9720732f12c8e51d8f01efb4e5d464a26524504adeb6068cb966",
+    "qsp": "b0c40f46bc020c9d372e72e490ccde28894d31797bcf1653a7b7aac1e3490f71",
+    "locations": 261,
+    "zipCRCVerified": true,
+    "entries": [
+      "CHANGELOG_KO.md",
+      "README_KO.txt",
+      "game/css/base.css",
+      "game/jack.qsp"
+    ]
+  },
+  "current": {
+    "qsp": "20137b7336f2ec27c419605cbd2ada1a6fab459919c6ceaaedad89a9152f40f5",
+    "qspBytes": 48236660,
+    "locations": 262,
+    "css": "593f1f8e4aa80413b2da01af9bb8ffe35a869738f0652f5df821e4bbb4b0ffc3",
+    "cssBytes": 231474
+  },
+  "educationDelta": {
+    "changedFields": [
+      {
+        "location": "menu_form",
+        "field": "body"
+      },
+      {
+        "location": "interaction",
+        "field": "body"
+      },
+      {
+        "location": "interaction_result",
+        "field": "body"
+      },
+      {
+        "location": "slave_to_cow",
+        "field": "body"
+      },
+      {
+        "location": "#dynamic",
+        "field": "body"
+      }
+    ],
+    "addedLocations": [
+      {
+        "name": "assistant_to_cow",
+        "body": "! JO9 MOD START PORTRAIT_COW_LEGACY_ALIAS | 2026-10-19_portrait_cow_legacy_action_alias\r\ncow_lesson_in_progress = 2\r\ngt 'slave_to_cow'\r\n! JO9 MOD END PORTRAIT_COW_LEGACY_ALIAS"
+      }
+    ],
+    "removedLocations": [],
+    "existingActionsByteIdentical": true,
+    "newContentPaths": [],
+    "newResourceLiterals": []
+  },
+  "cumulativeContentPathAdditionsFrom24": [],
+  "pregnancyImage": {
+    "path": "content/pic/ui/z_pregnant.png",
+    "baselineAndWorkByteIdentical": true,
+    "sha256": "9544a8bdc718d90bd9e9b12e768bd2a17a2e7be791487c189b42edb34dacfc24",
+    "bytes": 2116425,
+    "includeInZip": false
+  },
+  "dependencies": {
+    "newJSONFiles": 0,
+    "newImageFiles": 0,
+    "newExecutablesOrLibraries": 0,
+    "reason": "Education updates use existing helpers and restore one internal QSP entry. Resource literal/path inventories add nothing against r2; CSS is byte-identical. The previously changed pregnancy path points to a byte-identical image already shipped in 2.4."
+  },
+  "excluded": [
+    "All saves and personal settings",
+    "External Indie images and their changed registration JSON",
+    "Installers and scripts",
+    "Diagnostics, logs, temporary QSP fixtures and backup files",
+    "Git metadata and source workshop tools"
+  ],
+  "warnings": [
+    "Use latest Work QSP; Full still intentionally contains the previous QSP at review time.",
+    "Preserve previous ZIPs and publish under a new dated filename.",
+    "The old loose MANUAL_ARTIFACT_MANIFEST.json in the release directory describes r1, so it is not the current source of truth; the r2 ZIP was inspected directly."
+  ],
+  "limits": [
+    "This report verifies package dependency scope, not all gameplay states or actual GUI save/CRC compatibility.",
+    "Archive under construction is not reviewed here; root must verify the final new archive CRC, four-file allowlist, runtime hashes and Korean instructions.",
+    "Images/JSON for the deferred Indie update remain a separate complete bundle; this review does not authorize partial inclusion."
+  ]
+}

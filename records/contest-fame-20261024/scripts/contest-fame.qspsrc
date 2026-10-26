@@ -1,0 +1,48 @@
+! JO9 MOD START RALLY_FAME_HELPER | 2026-10-24_contest_fame
+local $jo9_cf_mode = $args[0]
+result = 0
+if $jo9_cf_mode = 'begin':
+ killvar 'jo9_rally_ticket'
+ killvar '$jo9_rally_ticket'
+ if slave_state ! CONST_INT['slave_exist'] or snk_room_target > 0: exit
+ jo9_rally_ticket['active'] = 1
+ jo9_rally_ticket['id'] = slave['id']
+ jo9_rally_ticket['type'] = slave_type
+ $jo9_rally_ticket['name'] = $slave_name
+ result = 1
+ exit
+end
+if $jo9_cf_mode = 'cancel':
+ killvar 'jo9_rally_ticket'
+ killvar '$jo9_rally_ticket'
+ exit
+end
+if $jo9_cf_mode ! 'settle': exit
+if jo9_rally_ticket['active'] ! 1: exit
+local jo9_cf_id = jo9_rally_ticket['id']
+local jo9_cf_type = jo9_rally_ticket['type']
+local $jo9_cf_name = $jo9_rally_ticket['name']
+! Consume before validation or payout; both winning and losing draws settle once.
+killvar 'jo9_rally_ticket'
+killvar '$jo9_rally_ticket'
+if args[1] ! 102118 and args[1] ! 102119 and args[1] ! 102121 and args[1] ! 102123: exit
+if slave_state ! CONST_INT['slave_exist'] or snk_room_target > 0: exit
+if slave['id'] ! jo9_cf_id or slave_type ! jo9_cf_type or $slave_name ! $jo9_cf_name: exit
+local jo9_cf_first = iif(slave['jo9_rally_won'] = 0, 1, 0)
+slave['jo9_rally_won'] = 1
+! The cap is specific to rally fame; do not reduce fame earned elsewhere.
+if slave_rate['fame'] >= 80:
+ slave['jo9_rally_fame_quarter'] = 0
+ exit
+end
+local jo9_cf_quarter = max(0, min(3, slave['jo9_rally_fame_quarter']))
+local jo9_cf_current = slave_rate['fame'] * 4 + jo9_cf_quarter
+local jo9_cf_gain = 1
+if slave_rate['fame'] < 40: jo9_cf_gain = 4
+if jo9_cf_first = 1: jo9_cf_gain = 40
+jo9_cf_gain = min(jo9_cf_gain, max(0, 320 - jo9_cf_current))
+local jo9_cf_total = jo9_cf_current + jo9_cf_gain
+slave_rate['fame'] = jo9_cf_total / 4
+slave['jo9_rally_fame_quarter'] = jo9_cf_total mod 4
+result = jo9_cf_gain
+! JO9 MOD END RALLY_FAME_HELPER

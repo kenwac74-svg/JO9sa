@@ -1,0 +1,536 @@
+{
+  "source": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+  "sha256": "09c12dec13870967f558a830981604c7b65f199da3824e7a519f5f95285f6e14",
+  "byteRoundtrip": true,
+  "locations": [
+    {
+      "location": "menu_form",
+      "refs": [
+        {
+          "line": 4130,
+          "code": "\tif slave[\"passion_comfort\"]  = 1:"
+        },
+        {
+          "line": 4131,
+          "code": "\t\t$setting_display += '<div id=\"under_cheats\">무기력증<div id = \"clear\"><a href = \"EXEC: slave[''passion_comfort''] = -1 & gt ''menu_form''\"><img src = \"content\\pic\\clear.png\"></a></div></div>'"
+        },
+        {
+          "line": 4133,
+          "code": "\tif slave[\"passion_comfort\"]  = -1:"
+        },
+        {
+          "line": 4134,
+          "code": "\t\t$setting_display += '<div id=\"under_cheats\">과다행동장애<div id = \"clear\"><a href = \"EXEC: slave[''passion_comfort''] = 0 & gt ''menu_form''\"><img src = \"content\\pic\\clear.png\"></a></div></div>'"
+        },
+        {
+          "line": 4136,
+          "code": "\tif slave[\"passion_comfort\"]  = 0:"
+        },
+        {
+          "line": 4137,
+          "code": "\t\t$setting_display += '<div id=\"under_cheats\"><strike> 행동 </strike><div id = \"clear\"><a href = \"EXEC: slave[''passion_comfort''] = 1 & gt ''menu_form''\"><img src = \"content\\pic\\clear.png\"></a></div></div>'"
+        }
+      ]
+    },
+    {
+      "location": "generate_stock_maximum_testing",
+      "refs": [
+        {
+          "line": 242,
+          "code": "stock[\"passion_comfort\"] = 0"
+        }
+      ]
+    },
+    {
+      "location": "chose_answer",
+      "refs": [
+        {
+          "line": 10,
+          "code": "\tif slave['passion_comfort'] = 1:"
+        },
+        {
+          "line": 134,
+          "code": "\t\tif slave['passion_comfort'] = -1:"
+        }
+      ]
+    },
+    {
+      "location": "generate_stock",
+      "refs": [
+        {
+          "line": 1292,
+          "code": "\tif rand(1, 6) = 1: stock['passion_comfort'] = rand(-1,2)"
+        },
+        {
+          "line": 1390,
+          "code": "!stock['passion_comfort_revealed'] = 2"
+        },
+        {
+          "line": 1439,
+          "code": "\tif stock['passion_comfort'] <= 0: stock['passion_comfort'] = rand(0,1)"
+        }
+      ]
+    },
+    {
+      "location": "get_stock_seed",
+      "refs": [
+        {
+          "line": 197,
+          "code": "stock['passion_comfort'] = seed_passion_comfort[stock_type]"
+        },
+        {
+          "line": 198,
+          "code": "stock['passion_comfort_revealed'] = seed_passion_comfort_revealed[stock_type]"
+        }
+      ]
+    },
+    {
+      "location": "interaction",
+      "refs": [
+        {
+          "line": 6292,
+          "code": "\t\tif slave['passion_comfort'] > 0: interaction_reward_potence *= 2 &! see interaction_result and $dyn_reward_potence in #dynamic"
+        },
+        {
+          "line": 6293,
+          "code": "\t\tif slave['passion_comfort'] < 0: interaction_reward_potence /= 2 &! see interaction_result and $dyn_reward_potence in #dynamic"
+        },
+        {
+          "line": 6294,
+          "code": "\t\tif slave['passion_comfort'] ! 0 and slave['passion_comfort_revealed'] = 0: slave['passion_comfort_revealed'] = 1"
+        },
+        {
+          "line": 11302,
+          "code": " if assistant[\"passion_comfort\"] ! 0 and assistant[\"passion_comfort_revealed\"] = 0: assistant[\"passion_comfort_revealed\"] = 1"
+        }
+      ]
+    },
+    {
+      "location": "interaction_result",
+      "refs": [
+        {
+          "line": 1354,
+          "code": "\tif slave['passion_comfort'] ! 0 and slave['passion_comfort_revealed'] = 0: slave['passion_comfort_revealed'] = 1"
+        },
+        {
+          "line": 1359,
+          "code": "\telseif slave['passion_comfort'] = 1:"
+        },
+        {
+          "line": 1363,
+          "code": "\telseif slave['passion_comfort'] = -1 and $slave_psy_status ! 'broken':"
+        },
+        {
+          "line": 1380,
+          "code": "\tif slave['passion_comfort'] = 1 or $slave_psy_status = 'broken':"
+        },
+        {
+          "line": 1382,
+          "code": "\telseif slave['passion_comfort'] = -1 or interaction_reward_level < min(5, min(3, slave['total_rewards']/5) + min(3, max(slave['spoil'], slave['pride'] - 2)) - max(0, slave['moral'] - 2)):"
+        }
+      ]
+    },
+    {
+      "location": "#static_base",
+      "refs": [
+        {
+          "line": 1731,
+          "code": "\t\tif dynslave['passion_comfort_revealed'] = 1 and dynslave['passion_comfort'] ! 0:"
+        },
+        {
+          "line": 1732,
+          "code": "\t\t\tif dynslave['passion_comfort'] = 1: msg '<<$Ленивая>>'"
+        },
+        {
+          "line": 1733,
+          "code": "\t\t\tif dynslave['passion_comfort'] = -1: msg '<<$Гиперактивная>>'"
+        },
+        {
+          "line": 1734,
+          "code": "\t\t\tdynslave['passion_comfort_revealed'] = 2"
+        },
+        {
+          "line": 1735,
+          "code": "\t\telseif dynslave['passion_comfort'] = 0:"
+        },
+        {
+          "line": 1736,
+          "code": "\t\t\tdynslave['passion_comfort_revealed'] = 0"
+        },
+        {
+          "line": 2171,
+          "code": "        if dynslave['passion_comfort'] = 1 and (dynslave['passion_comfort_revealed'] = 2 or spell_revelio = 1):"
+        },
+        {
+          "line": 2174,
+          "code": "        if dynslave['passion_comfort'] = -1 and (dynslave['passion_comfort_revealed'] = 2 or spell_revelio = 1):"
+        },
+        {
+          "line": 2176,
+          "code": "            if dynslave['passion_comfort_revealed'] = 2: dynslave['pos_well_rested'] = 0"
+        }
+      ]
+    },
+    {
+      "location": "jo9_traits",
+      "refs": [
+        {
+          "line": 58,
+          "code": "  if dynslave['jo9_work_ethic'] = 1 and dynslave['jo9_work_ethic_known'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''workaholic''\">일벌레</a><br>'"
+        },
+        {
+          "line": 59,
+          "code": "  if dynslave['jo9_work_ethic'] = -1 and dynslave['jo9_work_ethic_known'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''content''\">안분지족</a><br>'"
+        },
+        {
+          "line": 104,
+          "code": " stock['jo9_work_ethic'] = 0"
+        },
+        {
+          "line": 106,
+          "code": " if jo9_trait_registry_roll <= 10: stock['jo9_work_ethic'] = 1"
+        },
+        {
+          "line": 107,
+          "code": " if jo9_trait_registry_roll > 10 and jo9_trait_registry_roll <= 20: stock['jo9_work_ethic'] = -1"
+        },
+        {
+          "line": 125,
+          "code": " stock['jo9_work_ethic_known'] = 0"
+        },
+        {
+          "line": 177,
+          "code": "  if $args[0] = 'jo9_work_ethic': dynslave['jo9_work_ethic_known'] = 1"
+        },
+        {
+          "line": 257,
+          "code": "  $setting_display += '<div id=\"under_cheats\"><a href=\"EXEC: gs ''jo9_traits'', ''edit'', ''dynslave'', ''jo9_work_ethic'', 1 & gt ''menu_form''\">일벌레: '"
+        },
+        {
+          "line": 258,
+          "code": "  if dynslave['jo9_work_ethic'] = 1: $setting_display += '있음'"
+        },
+        {
+          "line": 259,
+          "code": "  if dynslave['jo9_work_ethic'] ! 1: $setting_display += '없음'"
+        },
+        {
+          "line": 261,
+          "code": "  $setting_display += '<div id=\"under_cheats\"><a href=\"EXEC: gs ''jo9_traits'', ''edit'', ''dynslave'', ''jo9_work_ethic'', -1 & gt ''menu_form''\">안분지족: '"
+        },
+        {
+          "line": 262,
+          "code": "  if dynslave['jo9_work_ethic'] = -1: $setting_display += '있음'"
+        },
+        {
+          "line": 263,
+          "code": "  if dynslave['jo9_work_ethic'] ! -1: $setting_display += '없음'"
+        }
+      ]
+    },
+    {
+      "location": "jo9_traits_personality",
+      "refs": [
+        {
+          "line": 98,
+          "code": " if jo9actor['jo9_work_ethic'] = 1 or jo9actor['jo9_work_ethic'] = -1:"
+        },
+        {
+          "line": 105,
+          "code": "   jo9actor_rate['mood'] += 2 * jo9actor['jo9_work_ethic']"
+        },
+        {
+          "line": 106,
+          "code": "   jo9actor['jo9_work_ethic_known'] = 1"
+        }
+      ]
+    },
+    {
+      "location": "jo9_chaotic",
+      "refs": [
+        {
+          "line": 143,
+          "code": " if jo9ceactor['jo9_work_ethic'] = -1:"
+        },
+        {
+          "line": 144,
+          "code": "  $jo9_chaotic_keys[jo9_chaotic_count] = 'jo9_work_ethic'"
+        },
+        {
+          "line": 183,
+          "code": " if $args[0] = 'jo9_work_ethic' or $args[0] = 'jo9_focus' or $args[0] = 'jo9_grudge': jo9ceactor[$args[0] + '_known'] = 0"
+        }
+      ]
+    }
+  ],
+  "actionRefs": [],
+  "relatedRefs": [
+    {
+      "location": "next_day",
+      "line": 651,
+      "code": "gs 'jo9_traits_personality', 'activity', 'slave', 'work:' + 'rule', 1"
+    },
+    {
+      "location": "next_day",
+      "line": 672,
+      "code": "gs 'jo9_traits_personality', 'activity', 'assistant', 'work:' + 'rule', 1"
+    },
+    {
+      "location": "next_day",
+      "line": 689,
+      "code": "gs 'jo9_traits_personality', 'activity', 'room1', 'work:' + 'rule', 1"
+    },
+    {
+      "location": "next_day",
+      "line": 705,
+      "code": "gs 'jo9_traits_personality', 'activity', 'room2', 'work:' + 'rule', 1"
+    },
+    {
+      "location": "next_day",
+      "line": 720,
+      "code": "gs 'jo9_traits_personality', 'activity', 'room3', 'work:' + 'rule', 1"
+    },
+    {
+      "location": "next_day",
+      "line": 736,
+      "code": "gs 'jo9_traits_personality', 'activity', 'room4', 'work:' + 'rule', 1"
+    },
+    {
+      "location": "next_day",
+      "line": 783,
+      "code": "gs 'jo9_traits_personality', 'activity', 'slave', 'work:' + 'rule', 1"
+    },
+    {
+      "location": "next_day",
+      "line": 826,
+      "code": "gs 'jo9_traits_personality', 'activity', 'assistant', 'work:' + 'rule', 1"
+    },
+    {
+      "location": "next_day",
+      "line": 868,
+      "code": "gs 'jo9_traits_personality', 'activity', 'room1', 'work:' + 'rule', 1"
+    },
+    {
+      "location": "next_day",
+      "line": 908,
+      "code": "gs 'jo9_traits_personality', 'activity', 'room2', 'work:' + 'rule', 1"
+    },
+    {
+      "location": "next_day",
+      "line": 948,
+      "code": "gs 'jo9_traits_personality', 'activity', 'room3', 'work:' + 'rule', 1"
+    },
+    {
+      "location": "next_day",
+      "line": 988,
+      "code": "gs 'jo9_traits_personality', 'activity', 'room4', 'work:' + 'rule', 1"
+    },
+    {
+      "location": "next_day",
+      "line": 1171,
+      "code": "gs 'jo9_traits_personality', 'activity', 'assistant', 'work:' + 'rule', 1"
+    },
+    {
+      "location": "next_day",
+      "line": 1185,
+      "code": "gs 'jo9_traits_personality', 'activity', 'room1', 'work:' + 'rule', 1"
+    },
+    {
+      "location": "next_day",
+      "line": 1197,
+      "code": "gs 'jo9_traits_personality', 'activity', 'room2', 'work:' + 'rule', 1"
+    },
+    {
+      "location": "next_day",
+      "line": 1209,
+      "code": "gs 'jo9_traits_personality', 'activity', 'room3', 'work:' + 'rule', 1"
+    },
+    {
+      "location": "next_day",
+      "line": 1221,
+      "code": "gs 'jo9_traits_personality', 'activity', 'room4', 'work:' + 'rule', 1"
+    },
+    {
+      "location": "interaction",
+      "line": 12181,
+      "code": "gs 'jo9_traits_personality', 'activity', 'room1', 'work:' + 'cowSK', 0"
+    },
+    {
+      "location": "interaction",
+      "line": 12223,
+      "code": "gs 'jo9_traits_personality', 'activity', 'room2', 'work:' + 'cowSK', 0"
+    },
+    {
+      "location": "interaction",
+      "line": 12265,
+      "code": "gs 'jo9_traits_personality', 'activity', 'room3', 'work:' + 'cowSK', 0"
+    },
+    {
+      "location": "interaction",
+      "line": 12307,
+      "code": "gs 'jo9_traits_personality', 'activity', 'room4', 'work:' + 'cowSK', 0"
+    },
+    {
+      "location": "interaction_result",
+      "line": 316,
+      "code": "gs 'jo9_traits_personality', 'activity', 'slave', 'work:' + $target_skill, 0"
+    },
+    {
+      "location": "interaction_result",
+      "line": 317,
+      "code": "gs 'jo9_traits_personality', 'activity', 'assistant', 'work:' + $target_skill, 0"
+    },
+    {
+      "location": "interaction_result",
+      "line": 377,
+      "code": "gs 'jo9_traits_personality', 'activity', 'slave', 'learn:' + $target_skill, 0"
+    },
+    {
+      "location": "interaction_result",
+      "line": 378,
+      "code": "gs 'jo9_traits_personality', 'activity', 'assistant', 'work:' + 'teach:' + $target_skill, 0"
+    },
+    {
+      "location": "interaction_result",
+      "line": 432,
+      "code": "gs 'jo9_traits_personality', 'activity', 'slave', 'learn:' + $target_skill, 0"
+    },
+    {
+      "location": "interaction_result",
+      "line": 464,
+      "code": "gs 'jo9_traits_personality', 'activity', 'assistant', 'work:' + 'escort', 1"
+    },
+    {
+      "location": "interaction_result",
+      "line": 475,
+      "code": "gs 'jo9_traits_personality', 'activity', 'slave', 'learn:' + $target_skill, 0"
+    },
+    {
+      "location": "interaction_result",
+      "line": 659,
+      "code": "gs 'jo9_traits_personality', 'activity', 'dynslave', 'work:' + iif($target_skill ! '', $target_skill, $target_affinity), 0"
+    },
+    {
+      "location": "interaction_result",
+      "line": 729,
+      "code": "gs 'jo9_traits_personality', 'activity', 'slave', 'learn:' + $target_skill, 0"
+    },
+    {
+      "location": "interaction_result",
+      "line": 800,
+      "code": "gs 'jo9_traits_personality', 'activity', 'assistant', 'learn:' + $target_skill, 0"
+    },
+    {
+      "location": "interaction_result",
+      "line": 873,
+      "code": "gs 'jo9_traits_personality', 'activity', 'dynslave', 'learn:' + $replace($replace($subskill, 'assistant', 'slave'), 'slave_rate', 'slave'), 0"
+    },
+    {
+      "location": "interaction_result",
+      "line": 979,
+      "code": "gs 'jo9_traits_personality', 'activity', 'slave', 'learn:' + $subskill, 0"
+    },
+    {
+      "location": "interaction_result",
+      "line": 1540,
+      "code": "gs 'jo9_traits_personality', 'activity', 'dynslave', 'work:' + 'cowSK', 0"
+    },
+    {
+      "location": "interaction_result",
+      "line": 1609,
+      "code": "\tif interaction_cow['res'] >= 0: gs 'jo9_traits_personality', 'activity', 'farmhand', 'work:milking', 0"
+    },
+    {
+      "location": "interaction_result",
+      "line": 1731,
+      "code": "gs 'jo9_traits_personality', 'activity', 'assistant', 'learn:' + $lecture_theme, 0"
+    },
+    {
+      "location": "interaction_result",
+      "line": 1766,
+      "code": "gs 'jo9_traits_personality', 'activity', 'slave', 'learn:' + $lecture_theme, 0"
+    },
+    {
+      "location": "interaction_result",
+      "line": 1807,
+      "code": "gs 'jo9_traits_personality', 'activity', 'slave', 'learn:' + $replace($target_skill, 'slave_rate', 'slave'), 0"
+    },
+    {
+      "location": "interaction_result",
+      "line": 1808,
+      "code": "gs 'jo9_traits_personality', 'activity', 'assistant', 'learn:' + $replace($target_skill_two, 'assistant_rate', 'slave'), 0"
+    },
+    {
+      "location": "interaction_city",
+      "line": 1926,
+      "code": "gs 'jo9_traits_personality', 'activity', 'slave', 'learn:' + 'gladiatrix', 0"
+    },
+    {
+      "location": "interaction_city",
+      "line": 1983,
+      "code": "gs 'jo9_traits_personality', 'activity', 'assistant', 'learn:' + 'gladiatrix', 0"
+    },
+    {
+      "location": "#dynamic",
+      "line": 1144,
+      "code": "\t\tif $curloc = 'next_day': gs 'jo9_traits_personality', 'activity', 'dynslave', 'work:' + $target_skill, 1"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 99,
+      "code": "  if jo9actor['jo9_activity_day'] ! day + 1:"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 100,
+      "code": "   jo9actor['jo9_activity_day'] = day + 1"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 101,
+      "code": "   jo9actor['jo9_activity_count'] = 0"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 103,
+      "code": "  jo9actor['jo9_activity_count'] += 1"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 104,
+      "code": "  if jo9actor['jo9_activity_count'] > 1:"
+    }
+  ],
+  "seeds": [
+    {
+      "file": "2573_wilhelmine.json",
+      "fields": {
+        "seed_passion_comfort": 1
+      }
+    },
+    {
+      "file": "2583_galateya.json",
+      "fields": {
+        "seed_passion_comfort": 1
+      }
+    },
+    {
+      "file": "2619_milintina.json",
+      "fields": {
+        "seed_passion_comfort": 1
+      }
+    },
+    {
+      "file": "2620_lana.json",
+      "fields": {
+        "seed_passion_comfort": 1
+      }
+    },
+    {
+      "file": "3018.json",
+      "fields": {
+        "seed_passion_comfort": 1
+      }
+    }
+  ]
+}

@@ -1,0 +1,368 @@
+{
+  "issue_id": "SELECTION_TRANSLATION_GAPS_20261022",
+  "date": "2026-10-22",
+  "status": "STATIC_CODE_AUDIT_COMPLETE_TRANSLATION_PENDING",
+  "work_qsp_sha256": "c6701e3ab130b1a762d0b1a523d52cd53cee846f71c3d7899a4c369389aa853d",
+  "baseline_qsp_sha256": "070dad711ec21038684c713e7e4999bd913741aa953be4d16ebf123ffccf77dc",
+  "scope": {
+    "locations": 262,
+    "menu_display_calls": 4214,
+    "direct_caption_literals": 4193,
+    "direct_tooltip_literals": 1392,
+    "direct_display_literals_total": 5585,
+    "variable_caption_arguments": 13,
+    "variable_tooltip_arguments": 178,
+    "html_anchor_button_starts": 3002,
+    "html_closed_in_same_literal": 2980,
+    "html_split_fragments_reviewed": 22,
+    "ACT_statements": 19,
+    "metadata_actions": 0,
+    "nonempty_location_descriptions": 0,
+    "dynamic_html_interpolations": 737,
+    "dynamic_caption_base_variables_reviewed": 213
+  },
+  "counts": {
+    "english_caption_sites": 8,
+    "english_tooltip_sites": 4,
+    "english_name_input_prompts": 1,
+    "russian_caption_branches": 4,
+    "unique_russian_captions": 1,
+    "mixed_Tip_sites": 8
+  },
+  "findings": [
+    {
+      "id": "MENU-01",
+      "kind": "English caption",
+      "location": "menu_form",
+      "line": 2197,
+      "condition": "menu_form=135; dog=0",
+      "text": "Dog mating",
+      "baseline_line": 2087,
+      "status": "active conditional unavailable label; inherited"
+    },
+    {
+      "id": "MENU-02",
+      "kind": "English caption",
+      "location": "menu_form",
+      "line": 2216,
+      "condition": "menu_form=135; dungeon!=0; arachnidSpider=0",
+      "text": "Spider mating",
+      "baseline_line": 2106,
+      "status": "active conditional unavailable label; inherited"
+    },
+    {
+      "id": "MENU-03",
+      "kind": "English caption",
+      "location": "menu_form",
+      "line": 2225,
+      "condition": "menu_form=135; dungeon!=0; polypusvermin=0",
+      "text": "Sea Tentacle mating",
+      "baseline_line": 2115,
+      "status": "active conditional unavailable label; inherited"
+    },
+    {
+      "id": "ACT-01",
+      "kind": "English ACT caption",
+      "location": "warning",
+      "line": 15,
+      "condition": "warning screen",
+      "text": "1 agree",
+      "baseline_line": 11,
+      "status": "active; inherited"
+    },
+    {
+      "id": "HTML-01",
+      "kind": "English caption",
+      "location": "teach_screen",
+      "line": 311,
+      "condition": "teach_stat_screen=0; slave['sub_vaginal']>5",
+      "text": "Vaginal Sex",
+      "baseline_line": 308,
+      "status": "active maximum-skill warning link; inherited"
+    },
+    {
+      "id": "HTML-02",
+      "kind": "English caption",
+      "location": "teach_screen",
+      "line": 649,
+      "condition": "teach_stat_screen=1; assistant['stamina']>=0; slave['calisthenics']>5",
+      "text": "Dance Lesson",
+      "baseline_line": 646,
+      "status": "active maximum-skill warning link; inherited"
+    },
+    {
+      "id": "HTML-03",
+      "kind": "English caption",
+      "location": "#quest_base",
+      "line": 184,
+      "condition": "quest_description[18]; no_futa=1",
+      "text": "Back",
+      "baseline_line": 162,
+      "status": "active; inherited"
+    },
+    {
+      "id": "HTML-04",
+      "kind": "English caption",
+      "location": "#quest_base",
+      "line": 191,
+      "condition": "quest_description[18]; no_futa!=1",
+      "text": "Back",
+      "baseline_line": 169,
+      "status": "active; inherited"
+    },
+    {
+      "id": "TIP-01",
+      "kind": "English tooltip",
+      "location": "menu_form",
+      "line": 724,
+      "condition": "punishment example menu",
+      "text": "<<$slave_name>> example of punishment",
+      "baseline_line": 684,
+      "status": "active; inherited"
+    },
+    {
+      "id": "TIP-02",
+      "kind": "English tooltip",
+      "location": "menu_form",
+      "line": 2197,
+      "condition": "same as MENU-01",
+      "text": "You don’t own a dog",
+      "baseline_line": 2087,
+      "status": "active; inherited"
+    },
+    {
+      "id": "TIP-03",
+      "kind": "English tooltip",
+      "location": "menu_form",
+      "line": 2216,
+      "condition": "same as MENU-02",
+      "text": "You don’t have access to a spider",
+      "baseline_line": 2106,
+      "status": "active; inherited"
+    },
+    {
+      "id": "TIP-04",
+      "kind": "English tooltip",
+      "location": "menu_form",
+      "line": 2225,
+      "condition": "same as MENU-03",
+      "text": "You don’t have access to a sea tentacle",
+      "baseline_line": 2115,
+      "status": "active; inherited"
+    },
+    {
+      "id": "INPUT-01",
+      "kind": "English input prompt",
+      "location": "#dynamic",
+      "line": 135,
+      "condition": "dynamic $name_type",
+      "text": "Give your character a name. Please try to keep this shorter than 14 characters.",
+      "baseline_line": 117,
+      "status": "active prompt; separate from choice count"
+    },
+    {
+      "id": "RUS-01",
+      "kind": "Russian caption",
+      "location": "$menu",
+      "line": 184,
+      "condition": "master_vampire>=1; master_str and RAND(1,20) conditions",
+      "text": "Пить кровь",
+      "baseline_line": 177,
+      "status": "one caption repeated in four active branches; inherited"
+    },
+    {
+      "id": "RUS-02",
+      "kind": "Russian caption",
+      "location": "$menu",
+      "line": 189,
+      "condition": "master_vampire>=1; master_str and RAND(1,20) conditions",
+      "text": "Пить кровь",
+      "baseline_line": 182,
+      "status": "one caption repeated in four active branches; inherited"
+    },
+    {
+      "id": "RUS-03",
+      "kind": "Russian caption",
+      "location": "$menu",
+      "line": 231,
+      "condition": "master_vampire>=1; master_str and RAND(1,20) conditions",
+      "text": "Пить кровь",
+      "baseline_line": 224,
+      "status": "one caption repeated in four active branches; inherited"
+    },
+    {
+      "id": "RUS-04",
+      "kind": "Russian caption",
+      "location": "$menu",
+      "line": 236,
+      "condition": "master_vampire>=1; master_str and RAND(1,20) conditions",
+      "text": "Пить кровь",
+      "baseline_line": 229,
+      "status": "one caption repeated in four active branches; inherited"
+    },
+    {
+      "id": "MIX-01",
+      "kind": "Korean/English mixed style",
+      "location": "debug_info",
+      "line": 67,
+      "condition": "information/help link",
+      "text": "Tip",
+      "baseline_line": 59,
+      "status": "inherited wording; style cleanup, separate from English caption count"
+    },
+    {
+      "id": "MIX-02",
+      "kind": "Korean/English mixed style",
+      "location": "debug_info",
+      "line": 135,
+      "condition": "information/help link",
+      "text": "Tip",
+      "baseline_line": 59,
+      "status": "inherited wording; style cleanup, separate from English caption count"
+    },
+    {
+      "id": "MIX-03",
+      "kind": "Korean/English mixed style",
+      "location": "debug_info",
+      "line": 203,
+      "condition": "information/help link",
+      "text": "Tip",
+      "baseline_line": 59,
+      "status": "inherited wording; style cleanup, separate from English caption count"
+    },
+    {
+      "id": "MIX-04",
+      "kind": "Korean/English mixed style",
+      "location": "debug_info",
+      "line": 271,
+      "condition": "information/help link",
+      "text": "Tip",
+      "baseline_line": 59,
+      "status": "inherited wording; style cleanup, separate from English caption count"
+    },
+    {
+      "id": "MIX-05",
+      "kind": "Korean/English mixed style",
+      "location": "debug_info",
+      "line": 339,
+      "condition": "information/help link",
+      "text": "Tip",
+      "baseline_line": 59,
+      "status": "inherited wording; style cleanup, separate from English caption count"
+    },
+    {
+      "id": "MIX-06",
+      "kind": "Korean/English mixed style",
+      "location": "debug_info",
+      "line": 409,
+      "condition": "information/help link",
+      "text": "Tip",
+      "baseline_line": 59,
+      "status": "inherited wording; style cleanup, separate from English caption count"
+    },
+    {
+      "id": "MIX-07",
+      "kind": "Korean/English mixed style",
+      "location": "debug_info_assistant",
+      "line": 63,
+      "condition": "information/help link",
+      "text": "Tip",
+      "baseline_line": 58,
+      "status": "inherited wording; style cleanup, separate from English caption count"
+    },
+    {
+      "id": "MIX-08",
+      "kind": "Korean/English mixed style",
+      "location": "#quest_base",
+      "line": 114,
+      "condition": "information/help link",
+      "text": "Tip",
+      "baseline_line": 95,
+      "status": "inherited wording; style cleanup, separate from English caption count"
+    }
+  ],
+  "excluded_or_unconfirmed": [
+    {
+      "type": "commented old menu captions",
+      "examples": [
+        "The Slums",
+        "Unknown House",
+        "Return to Slums",
+        "Enter the City",
+        "Operate Panel...",
+        "Dress Assistant",
+        "Men’s Goods"
+      ],
+      "reason": "commented out; not current executable menu captions"
+    },
+    {
+      "type": "unused female-protagonist intensity labels",
+      "location": "#sex_texts",
+      "lines": [
+        668,
+        669,
+        671,
+        672
+      ],
+      "reason": "hero_choice>=100 branch; current male branch is Korean"
+    },
+    {
+      "type": "latent starting-area string",
+      "location": "#dynamic",
+      "line": 126,
+      "text": "The Slums",
+      "reason": "written by $name_and_start immediately before start_game; return to hero_creation link not established"
+    },
+    {
+      "type": "weapon template abbreviations",
+      "location": "#боевые_предметы",
+      "lines": [
+        990,
+        1010
+      ],
+      "reason": "образец template; actual equipped-key use not established"
+    },
+    {
+      "type": "proper names and abbreviations",
+      "examples": [
+        "Alesha",
+        "VIP",
+        "VS",
+        "3p",
+        "Dem.",
+        "Str.",
+        "Gld.",
+        "Pat.",
+        "Sp."
+      ],
+      "reason": "not automatically classified as untranslated ordinary actions"
+    }
+  ],
+  "provenance": "All confirmed wording was present in the 2026-09-29 preserved QSP. No newly introduced English wording was identified among confirmed sites.",
+  "saved_menu_cache": {
+    "status": "POSSIBLE_NOT_REPRODUCED",
+    "path": [
+      "$ongload saved_game_loaded=1",
+      "$newloc update full",
+      "refresh_database refreshes #options",
+      "shop_general dynamically executes saved $display_options[sp_txt]"
+    ],
+    "limitation": "Refreshing source option arrays does not alone prove an already copied display_options array was recopied. No user-specific save-cache reproduction was performed."
+  },
+  "verification": {
+    "static_structure_roundtrip": true,
+    "locations": 262,
+    "line_ending_issues": 0,
+    "marker_boundary_issues": 0,
+    "native_full_branch_execution": false,
+    "runtime_files_modified": false,
+    "save_files_modified": false,
+    "commit_push": false
+  },
+  "limits": [
+    "Complete static inspection of selection-producing code is not execution of every branch and saved state.",
+    "Counts are source display sites, not numbers of unique events or player-visible choices at once.",
+    "Variable definitions and consumers were checked statically; unproven reachability is kept separate.",
+    "Prose/dialogue outside selection labels was not counted as choice text."
+  ]
+}

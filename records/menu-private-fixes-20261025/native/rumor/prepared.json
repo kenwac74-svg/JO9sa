@@ -1,0 +1,45 @@
+{
+  "source": "G:\\Codex\\tmp\\menu-private-fixes-20261025\\candidate-final.qsp",
+  "sourceHash": "8b9cf39fe2327079b0823f6e474c93151538a512fa8738ed5f330749a0940db5",
+  "baseSave": "G:/somi/Jack O Nine Tails v2.4_work/game/save/JO9_MANUAL_20261025/01_검사완료재확인/20_traits_overflow_merge.sav",
+  "baseSaveHash": "604a607fc3f94c58d69cfe79566da77bf4a0b093c7f49d9699a6eaeed6c52bba",
+  "preparedOnly": true,
+  "cases": [
+    {
+      "name": "skups-regular",
+      "file": "G:\\Codex\\tmp\\menu-private-fixes-20261025\\native-rumor-final/skups-regular.qsp",
+      "marker": "JO9_QA_RUMOR_skups_regular_COMPLETE",
+      "checkpoint": "Real original menu anchor -> result, one charge -> actual next anchor -> actual back anchor -> stale original command rejected, no second charge."
+    },
+    {
+      "name": "barman-regular",
+      "file": "G:\\Codex\\tmp\\menu-private-fixes-20261025\\native-rumor-final/barman-regular.qsp",
+      "marker": "JO9_QA_RUMOR_barman_regular_COMPLETE",
+      "checkpoint": "Real original menu anchor -> result, one charge -> actual next anchor -> actual back anchor -> stale original command rejected, no second charge."
+    },
+    {
+      "name": "anes-regular",
+      "file": "G:\\Codex\\tmp\\menu-private-fixes-20261025\\native-rumor-final/anes-regular.qsp",
+      "marker": "JO9_QA_RUMOR_anes_regular_COMPLETE",
+      "checkpoint": "Real original menu anchor -> result, one charge -> actual next anchor -> actual back anchor -> stale original command rejected, no second charge."
+    },
+    {
+      "name": "skups-discount",
+      "file": "G:\\Codex\\tmp\\menu-private-fixes-20261025\\native-rumor-final/skups-discount.qsp",
+      "marker": "JO9_QA_RUMOR_skups_discount_COMPLETE",
+      "checkpoint": "Real original menu anchor -> result, one charge -> actual next anchor -> actual back anchor -> stale original command rejected, no second charge."
+    },
+    {
+      "name": "skups-insufficient",
+      "file": "G:\\Codex\\tmp\\menu-private-fixes-20261025\\native-rumor-final/skups-insufficient.qsp",
+      "marker": "JO9_QA_RUMOR_skups_insufficient_COMPLETE",
+      "checkpoint": "Real original menu click reaches original insufficient-funds branch; expected modal captured before display, money unchanged and one-use token consumed."
+    }
+  ],
+  "limits": [
+    "Actual anchor hrefs are prepended only with diagnostic stage counters/storage; the original production command runs unchanged.",
+    "The insufficient-funds case captures the original notice and state before its blocking modal, so native dialog dismissal is not tested.",
+    "The stale original command is invoked again through a diagnostic EXEC bridge after returning to the NPC.",
+    "No price, roster, matching, actor attributes or production save is changed. Fixture contains two existing adult actors for pagination."
+  ]
+}

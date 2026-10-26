@@ -1,0 +1,99 @@
+{
+  "id": "2026-10-23_indie_event_fullimage",
+  "recordedAt": "2026-10-23T08:42:25.305Z",
+  "status": "APPLIED_WORK_ONLY_UNRELEASED",
+  "work": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+  "beforeSha256": "daa953cd391d8268a57724d27b54194e71378dc9ef54ad1e79279cce6897d7db",
+  "afterSha256": "5aeff11fffe6e5f2523749987577f42dab870f4d0adee0df385375f9eefb074f",
+  "changedLocations": [
+    "jo9_seed_role_images"
+  ],
+  "edits": 1,
+  "newLocations": 0,
+  "newPersistentKeys": 0,
+  "actorDataWrites": false,
+  "nativeFeatureCases": 207,
+  "officialClientPaths": 9,
+  "preserved": {
+    "saveFiles": 57,
+    "slaveJsonFiles": 1126,
+    "fullQsp": true,
+    "checkedAssetFiles": 46
+  },
+  "releaseChecks": [
+    {
+      "name": "inputs-readable",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "candidate": "5aeff11fffe6e5f2523749987577f42dab870f4d0adee0df385375f9eefb074f"
+      }
+    },
+    {
+      "name": "world-structure-and-line-endings",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "sha256": "5aeff11fffe6e5f2523749987577f42dab870f4d0adee0df385375f9eefb074f",
+        "bytes": 48391568,
+        "locations": 263,
+        "roundtrip": true,
+        "lineEndingIssues": 0
+      }
+    },
+    {
+      "name": "slave-template-registry",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "files": 1126,
+        "numericIds": 1126,
+        "collisions": 0,
+        "invalidJson": 0,
+        "embeddedIdMismatches": 0
+      }
+    },
+    {
+      "name": "distribution-byte-match",
+      "required": false,
+      "status": "SKIP",
+      "reason": "No mirror specified; this run does not verify the distribution copy"
+    },
+    {
+      "name": "patch-replay-and-idempotence",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "patches": [
+          "2026-10-23_indie_event_fullimage"
+        ],
+        "byteExact": true,
+        "idempotent": true
+      }
+    },
+    {
+      "name": "installed-client-smoke",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "passed": 9,
+        "expected": 9
+      }
+    },
+    {
+      "name": "input-hashes-unchanged",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "files": 3
+      }
+    }
+  ],
+  "limits": [
+    "No GUI clicks or visual layout verification.",
+    "Save data is used only to prime representative state. GUI save-file loading, CRC compatibility and full saved script restoration are NOT tested.",
+    "Start is replaced only in diagnostic copies. Smoke covers lifecycle calls, not the character-selection UI or every gameplay branch.",
+    "No complete QSP syntax checker: dynamic code and all game logic are not statically proved.",
+    "Battle smoke instruments the menu dispatch only; full combat outcomes and balance are not tested."
+  ]
+}

@@ -1,6 +1,9 @@
 'use strict';
 const fs=require('node:fs'); const path=require('node:path'); const http=require('node:http'); const crypto=require('node:crypto');
 const core=require('./core.cjs');
+// JO9 MOD START: text-batch-replace-20261018-module
+const batchReplace=require('./batch-replace.cjs');
+// JO9 MOD END: text-batch-replace-20261018-module
 const addition=require('./addition.cjs');
 const scenes=require('./scenes.cjs');
 const catalogModule=require('./catalog.cjs');
@@ -124,7 +127,9 @@ const server=http.createServer(async(req,res)=>{
       res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','Content-Security-Policy':"default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'"});
       res.end(fs.readFileSync(path.join(__dirname,'index.html'),'utf8').replace('__SESSION_TOKEN__',token));return;
     }
-    if(req.method==='GET'&&['/dialogue-ai.js','/editing-tools.js','/variable-inspector.js'].includes(url.pathname)){res.writeHead(200,{'Content-Type':'text/javascript; charset=utf-8','Cache-Control':'no-store'});res.end(fs.readFileSync(path.join(__dirname,url.pathname.slice(1)),'utf8'));return;}
+    // JO9 MOD START: text-batch-replace-20261018-static
+    if(req.method==='GET'&&['/dialogue-ai.js','/editing-tools.js','/variable-inspector.js','/batch-replace.js'].includes(url.pathname)){res.writeHead(200,{'Content-Type':'text/javascript; charset=utf-8','Cache-Control':'no-store'});res.end(fs.readFileSync(path.join(__dirname,url.pathname.slice(1)),'utf8'));return;}
+    // JO9 MOD END: text-batch-replace-20261018-static
     const catalogRoute=url.pathname.startsWith('/api/catalog/');
     if(catalogRoute&&req.headers.origin==='null'){
       res.setHeader('Access-Control-Allow-Origin','null');res.setHeader('Vary','Origin');
@@ -191,7 +196,7 @@ const server=http.createServer(async(req,res)=>{
         result={families:input.paths.map(p=>{try{return imageCuts.family(p);}catch(e){return{requested:p,error:e.message,items:[]};}})};
       }else if(action==='file'||action==='replace'){
         const rel=String(input.path||'').replaceAll('\\','/').replace(/^content\/pic\//,'');
-        if(!/^(bg|characters|scene|reserve)\/.+\.png$/i.test(rel))throw Error('편집할 이미지 경로를 확인하세요.');
+        if(!/^(bg|characters|scene|mob|reserve)\/.+\.png$/i.test(rel))throw Error('편집할 이미지 경로를 확인하세요.');
         if(action==='file')result=localPic.file(rel);
         else{if(!/ \(([2-9]|[1-9][0-9]+)\)\.png$/i.test(rel))throw Error('기존 전환 컷만 이 경로로 저장할 수 있습니다.');result=localPic.apply([{path:rel,before:input.before,data:input.data,cap:input.cap}]);}
       }else{
@@ -284,6 +289,24 @@ const server=http.createServer(async(req,res)=>{
       const {doc}=current();const found=cacheEntries.filter(e=>(all||e.dialogue) && (!query || e.text.includes(query)) && (!loc || e.location.includes(loc)));
       json(res,200,{hash:doc.hash,total:found.length,results:found.slice(0,200).map(e=>({...e,hash:doc.hash}))});return;
     }
+    // JO9 MOD START: text-batch-replace-20261018-routes
+    if(req.method==='GET' && url.pathname==='/api/batch/search'){
+      const {doc}=current(),limit=Number(url.searchParams.get('limit')||50);
+      if(!Number.isSafeInteger(limit)||limit<1)throw Error('검색 페이지가 올바르지 않습니다.');
+      json(res,200,batchReplace.search(doc,{query:url.searchParams.get('q')||'',location:url.searchParams.get('location')||'',mode:url.searchParams.get('mode')||'text',offset:Number(url.searchParams.get('offset')||0),limit:Math.min(limit,50)},cacheEntries));return;
+    }
+    if(req.method==='POST' && url.pathname==='/api/batch/preview'){
+      const input=await body(req),{doc}=current(),p=batchReplace.prepare(doc,input,cacheEntries);
+      preview={...p,kind:'batch',id:crypto.randomBytes(24).toString('hex')};
+      json(res,200,{id:preview.id,operation:'batch',before:p.before,after:p.after,count:p.count,occurrences:p.occurrences,totalChanges:p.changes.length,offset:0,limit:50,changes:p.changes.slice(0,50)});return;
+    }
+    if(req.method==='GET' && url.pathname==='/api/batch/preview'){
+      if(!preview || preview.kind!=='batch' || url.searchParams.get('id')!==preview.id)throw Error('유효한 일괄 변경 미리보기가 없습니다.');
+      const offset=Number(url.searchParams.get('offset')||0),limit=Number(url.searchParams.get('limit')||50);
+      if(!Number.isSafeInteger(offset)||offset<0||!Number.isSafeInteger(limit)||limit<1||limit>50)throw Error('미리보기 페이지 범위를 확인하세요.');
+      const p=preview;json(res,200,{id:p.id,operation:'batch',before:p.before,after:p.after,count:p.count,occurrences:p.occurrences,totalChanges:p.changes.length,offset,limit,changes:p.changes.slice(offset,offset+limit)});return;
+    }
+    // JO9 MOD END: text-batch-replace-20261018-routes
     if(req.method==='GET' && url.pathname==='/api/history'){json(res,200,history().map(({id,date,location,field,status,before,after,kind})=>({id,date,location,field,status,before,after,kind})));return;}
     if(req.method==='POST' && url.pathname==='/api/variables'){
       const input=await body(req);const {doc}=current();
@@ -312,6 +335,16 @@ const server=http.createServer(async(req,res)=>{
     if(req.method==='POST' && url.pathname==='/api/apply'){
       const input=await body(req);if(!preview || input.id!==preview.id || input.approved!==true)throw Error('미리보기와 수정문 승인이 필요합니다.');
       const p=preview,{raw,doc}=current();if(doc.hash!==p.before)throw Error('미리보기 이후 QSP가 변경되었습니다. 다시 검색해 주세요.');
+      // JO9 MOD START: text-batch-replace-20261018-apply
+      if(p.kind==='batch'){
+        const locations=[...new Set(p.edits.map(e=>e.location))];
+        if(locations.some(name=>doc.locations.filter(l=>l.name===name).length!==1))throw Error('동일한 이름의 위치가 중복되어 반영할 수 없습니다.');
+        const stamp=new Date().toISOString();
+        const mod={description:`대사 편집실: 문구 ${p.count}개에서 단어 ${p.occurrences}회 일괄 변경`,id:stamp.slice(0,10)+'_text_batch_'+stamp.slice(11,19).replace(/:/g,''),target:'game\\jack.qsp',before_sha256:p.before.toUpperCase(),after_sha256:p.after.toUpperCase(),edits:p.edits};
+        const m=transact(raw,p.raw,{kind:'batch',location:locations.length===1?locations[0]:'여러 위치',field:'batch',count:p.count,occurrences:p.occurrences,mod});
+        current();json(res,200,{...m,selection:null});return;
+      }
+      // JO9 MOD END: text-batch-replace-20261018-apply
       if(doc.locations.filter(l=>l.name===p.entry.location).length!==1)throw Error('동일한 이름의 위치가 중복되어 반영할 수 없습니다.');
       // mods용 기록은 location 전체가 아니라 바뀐 문구와 최소 맥락만 담는다(apply_mods.ps1 형식).
       const stamp=new Date().toISOString();

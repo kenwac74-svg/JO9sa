@@ -1,0 +1,64 @@
+{
+  "id": "2026-10-21_argon_ab_display_repairs",
+  "description": "Approved A/B only: two milk value interpolation references and twelve HTML tokens in six existing NPC strings.",
+  "before_sha256": "995cd980c9a91416655fd096fc02817e29afc47876011f4c43b132c3bd6c6bab",
+  "after_sha256": "a2e0265881bebd8a72b3fcbb214ddaf831106cfe50e9c96da8e0b6e7d692707a",
+  "edits": [
+    {
+      "location": "#var_base",
+      "field": "body",
+      "old": "if room2['milk_summ'] >= 50: $room2_milk_quantity = '<center>우유량 -<br><img src=\"content/pic/girls/milk/milk_04.png\"><br><font color=\"#9b1e82\">상당한 모유량( <<croom2[\"milk_summ\"]>> )</font></center>'",
+      "new": "! JO9 MOD START ARGONAB_MILK_ROOM2 | 2026-10-21_argon_ab_display_repairs\r\nif room2['milk_summ'] >= 50: $room2_milk_quantity = '<center>우유량 -<br><img src=\"content/pic/girls/milk/milk_04.png\"><br><font color=\"#9b1e82\">상당한 모유량( <<room2[\"milk_summ\"]>> )</font></center>'\r\n! JO9 MOD END ARGONAB_MILK_ROOM2",
+      "count": 1
+    },
+    {
+      "location": "#var_base",
+      "field": "body",
+      "old": "if room3['milk_summ'] >= 50: $room3_milk_quantity = '<center>우유량 -<br><img src=\"content/pic/girls/milk/milk_04.png\"><br><font color=\"#9b1e82\">상당한 모유량( <<croom3[\"milk_summ\"]>> )</font></center>'",
+      "new": "! JO9 MOD START ARGONAB_MILK_ROOM3 | 2026-10-21_argon_ab_display_repairs\r\nif room3['milk_summ'] >= 50: $room3_milk_quantity = '<center>우유량 -<br><img src=\"content/pic/girls/milk/milk_04.png\"><br><font color=\"#9b1e82\">상당한 모유량( <<room3[\"milk_summ\"]>> )</font></center>'\r\n! JO9 MOD END ARGONAB_MILK_ROOM3",
+      "count": 1
+    },
+    {
+      "location": "#npc_base",
+      "field": "body",
+      "old": "$quinta_pref[3] = '[세르빌리아 퀸타]<br> 특이해도 상관은 없어요, 그건 감점 요인이 아니에요. 여기 고객은 여자나 힐끔대러 오는게 아니니까 <font color=\"#EA0090\"\"><b>눈 버리지만 않게</b></font> 해 주세요. 정작 중요한 건, 무거운 원단 갖고도 일 할 <font color=\"#0000D8\"><b>충분한 체력</b></font>, 섬세한 작업에 맞는 <font color=\"#0000D8\"><b>예민한</b></font> 손놀림. 거기에 손님들을 대처할 <font color=\"#0000D8\"><b>화술</b></font>도.</div>'",
+      "new": "! JO9 MOD START ARGONAB_QUINTA_PREF_3 | 2026-10-21_argon_ab_display_repairs\r\n$quinta_pref[3] = '[세르빌리아 퀸타]<br> 특이해도 상관은 없어요, 그건 감점 요인이 아니에요. 여기 고객은 여자나 힐끔대러 오는게 아니니까 <font color=\"#EA0090\"><b>눈 버리지만 않게</b></font> 해 주세요. 정작 중요한 건, 무거운 원단 갖고도 일 할 <font color=\"#0000D8\"><b>충분한 체력</b></font>, 섬세한 작업에 맞는 <font color=\"#0000D8\"><b>예민한</b></font> 손놀림. 거기에 손님들을 대처할 <font color=\"#0000D8\"><b>화술</b></font>도.</div>'\r\n! JO9 MOD END ARGONAB_QUINTA_PREF_3",
+      "count": 1
+    },
+    {
+      "location": "#npc_base",
+      "field": "body",
+      "old": "$barman_pref[1] = '[바텐더 작크]<br>&nbsp;잘 들어 보게, <<$master_name>>. 내 주점엔 늘 일손이 필요해. 한 명당 기본 매입가는 <<common_price[demand_rating[''barman'']]>> 스파크일세. 건방지게 게으름을 피우거나 술병을 깨먹는 직원은 사절이고, 손님들 술맛을 떨어뜨릴 만큼 <font color=\"#6b0084\"></b>흉측한 외모</b></font>도 곤란하네. 종일 술통과 쟁반을 나를 최소한의 <font color=\"#6b0084\"></b>체력</b></font>은 있어야겠지.</div>'",
+      "new": "! JO9 MOD START ARGONAB_BARMAN_PREF_1 | 2026-10-21_argon_ab_display_repairs\r\n$barman_pref[1] = '[바텐더 작크]<br>&nbsp;잘 들어 보게, <<$master_name>>. 내 주점엔 늘 일손이 필요해. 한 명당 기본 매입가는 <<common_price[demand_rating[''barman'']]>> 스파크일세. 건방지게 게으름을 피우거나 술병을 깨먹는 직원은 사절이고, 손님들 술맛을 떨어뜨릴 만큼 <font color=\"#6b0084\"><b>흉측한 외모</b></font>도 곤란하네. 종일 술통과 쟁반을 나를 최소한의 <font color=\"#6b0084\"><b>체력</b></font>은 있어야겠지.</div>'\r\n! JO9 MOD END ARGONAB_BARMAN_PREF_1",
+      "count": 1
+    },
+    {
+      "location": "#npc_base",
+      "field": "body",
+      "old": "$barman_pref[2] = '[바텐더 작크]<br>&nbsp;주점에선 언제나 손님 만족이 최우선이야. 그러니 <font color=\"#6b0084\"></b>상냥하게 손님을 응대</b></font>하고, 재빨리 술상을 <font color=\"#6b0084\"></b>나르고 설거지하고 닦을</b></font> 줄 알아야지. 여긴 자선사업장이 아니니 <font color=\"#6b0084\"></b>술값 계산</b></font>도 정확히 하고, 주방을 거들 <font color=\"#6b0084\"></b>요리</b></font> 실력도 있어야 하네.</div>'",
+      "new": "! JO9 MOD START ARGONAB_BARMAN_PREF_2 | 2026-10-21_argon_ab_display_repairs\r\n$barman_pref[2] = '[바텐더 작크]<br>&nbsp;주점에선 언제나 손님 만족이 최우선이야. 그러니 <font color=\"#6b0084\"><b>상냥하게 손님을 응대</b></font>하고, 재빨리 술상을 <font color=\"#6b0084\"><b>나르고 설거지하고 닦을</b></font> 줄 알아야지. 여긴 자선사업장이 아니니 <font color=\"#6b0084\"><b>술값 계산</b></font>도 정확히 하고, 주방을 거들 <font color=\"#6b0084\"><b>요리</b></font> 실력도 있어야 하네.</div>'\r\n! JO9 MOD END ARGONAB_BARMAN_PREF_2",
+      "count": 1
+    },
+    {
+      "location": "#npc_base",
+      "field": "body",
+      "old": "$barman_pref[3] = '[바텐더 작크]<br>&nbsp;만약 종업원이 손님을 접대 안 할거면, 빈둥대는 대신 흥이라도 돋궈야지. 우리가게 최고의 행사 나체쇼로. 거기서 <font color=\"#0000D8\"></b>노래나 피아노 연주</b></font>를 시킬거야, 감이 좀 오나. <font color=\"#6b0084\"></b>춤</b></font>출때는 <font color=\"#EA0090\"></b>가슴으로 문대</b></font>주기도 해야 할거고, 그래야 랩댄스라고 부를수나 있겠지.</div>'",
+      "new": "! JO9 MOD START ARGONAB_BARMAN_PREF_3 | 2026-10-21_argon_ab_display_repairs\r\n$barman_pref[3] = '[바텐더 작크]<br>&nbsp;만약 종업원이 손님을 접대 안 할거면, 빈둥대는 대신 흥이라도 돋궈야지. 우리가게 최고의 행사 나체쇼로. 거기서 <font color=\"#0000D8\"><b>노래나 피아노 연주</b></font>를 시킬거야, 감이 좀 오나. <font color=\"#6b0084\"><b>춤</b></font>출때는 <font color=\"#EA0090\"><b>가슴으로 문대</b></font>주기도 해야 할거고, 그래야 랩댄스라고 부를수나 있겠지.</div>'\r\n! JO9 MOD END ARGONAB_BARMAN_PREF_3",
+      "count": 1
+    },
+    {
+      "location": "#npc_base",
+      "field": "body",
+      "old": "$barman_pref[4] = '[바텐더 작크]<br>&nbsp;지금은 우리가 따로 업소 운영은 안하지만, 팁이라도 받으면 그 즉시 테이블 아래에서 물건을 <font color=\"#EA0090\"></b>빨아줘</b></font>야 하고.</div>'",
+      "new": "! JO9 MOD START ARGONAB_BARMAN_PREF_4 | 2026-10-21_argon_ab_display_repairs\r\n$barman_pref[4] = '[바텐더 작크]<br>&nbsp;지금은 우리가 따로 업소 운영은 안하지만, 팁이라도 받으면 그 즉시 테이블 아래에서 물건을 <font color=\"#EA0090\"><b>빨아줘</b></font>야 하고.</div>'\r\n! JO9 MOD END ARGONAB_BARMAN_PREF_4",
+      "count": 1
+    },
+    {
+      "location": "#npc_base",
+      "field": "body",
+      "old": "$barman_pref[5] = '[바텐더 작크]<br>&nbsp;통 큰 손님들은 가끔 가게를 임대할때도 있는데, 그땐 입에 무는정도로는 안끝내. 다들 취해서 맛이 가기 시작하면 종업원이 풀어 줘야지. <font color=\"#6b0084\"></b>혼자서 한꺼번에</b></font>. 이게 내 이야기 전부네, <<$master_name>></div>'",
+      "new": "! JO9 MOD START ARGONAB_BARMAN_PREF_5 | 2026-10-21_argon_ab_display_repairs\r\n$barman_pref[5] = '[바텐더 작크]<br>&nbsp;통 큰 손님들은 가끔 가게를 임대할때도 있는데, 그땐 입에 무는정도로는 안끝내. 다들 취해서 맛이 가기 시작하면 종업원이 풀어 줘야지. <font color=\"#6b0084\"><b>혼자서 한꺼번에</b></font>. 이게 내 이야기 전부네, <<$master_name>></div>'\r\n! JO9 MOD END ARGONAB_BARMAN_PREF_5",
+      "count": 1
+    }
+  ]
+}

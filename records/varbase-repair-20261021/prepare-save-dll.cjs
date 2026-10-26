@@ -1,0 +1,23 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+const core=require('G:/somi/JO9sa/tools/text-workshop/core.cjs');
+const codec=require('G:/somi/JO9sa/tools/qa/save-codec.cjs');
+const root=path.resolve(__dirname,'..');
+const source=path.join(root,'candidate.qsp');
+const raw=fs.readFileSync(source),beforeHash=core.hash(raw),doc=core.parse(raw);
+const loc=doc.locations.find(l=>l.name==='$ongload');assert(loc);
+const originalBody=doc.lines[loc.body];doc.lines[loc.body]='';
+const diagnostic=core.serialize(doc),verify=core.parse(diagnostic);
+assert.equal(verify.locations.length,doc.locations.length);
+for(let i=0;i<doc.lines.length;i++)if(i!==loc.body)assert.equal(verify.lines[i],doc.lines[i]);
+const world=path.join(__dirname,'save-api-world.qsp');
+if(fs.existsSync(world))assert(fs.readFileSync(world).equals(diagnostic));else fs.writeFileSync(world,diagnostic);
+const fixtures=['save-slot-one-input.sav','save-decade-input.sav'].map(name=>{
+ const input=path.join(root,'save-native',name),b=fs.readFileSync(input),s=codec.parse(b);assert(codec.serialize(s).equals(b));
+ const roles=['SLAVE','ASSISTANT'].map(role=>{const v=s.vars.find(v=>v.name===role);assert(v);return {name:role,count:v.values.length,excludedIndex:role==='SLAVE'?(v.idx.find(([i,k])=>k==='ERO_RWD_CNT')?.[0]??-1):-1};});
+ return {name:name.replace('-input.sav',''),input,sha256:core.hash(b),roles,output:path.join(__dirname,name.replace('-input.sav','-resaved.sav'))};
+});
+assert.equal(core.hash(fs.readFileSync(source)),beforeHash);
+const config={schema:1,source,sourceSha256:beforeHash,world,worldSha256:core.hash(diagnostic),onlyWorldChange:{location:'$ongload',field:'body',blanked:true,originalBodySha256:core.hash(Buffer.from(originalBody,'utf16le'))},fixtures};
+fs.writeFileSync(path.join(__dirname,'config.json'),JSON.stringify(config,null,2)+'\n');
+console.log(JSON.stringify({worldPrepared:true,sourcePreserved:true,fixtures:fixtures.length}));

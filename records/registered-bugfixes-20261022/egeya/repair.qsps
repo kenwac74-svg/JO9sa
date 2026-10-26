@@ -1,0 +1,72 @@
+! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022
+! Global cleanup and non-mutating read resolver; keep actor cache markers across ONGLOAD -> JSON.
+local $jo9_seed_role_stem, $jo9_seed_role_keys, $jo9_seed_role_dirs, $jo9_seed_role_old, $jo9_seed_role_wanted, $jo9_seed_role_new
+local jo9_seed_role_id, jo9_seed_role_k, jo9_seed_role_known
+$jo9_seed_role_stem[0]='medico'
+$jo9_seed_role_stem[1]='por'
+$jo9_seed_role_stem[2]='kirakira'
+$jo9_seed_role_stem[3]='tsuina'
+$jo9_seed_role_stem[4]='yammy'
+$jo9_seed_role_stem[5]='antenna'
+$jo9_seed_role_stem[6]='alyce'
+$jo9_seed_role_stem[7]='mist'
+$jo9_seed_role_stem[8]='joker'
+$jo9_seed_role_stem[9]='Inui'
+$jo9_seed_role_stem[10]='zion'
+$jo9_seed_role_stem[11]='rin'
+$jo9_seed_role_stem[12]='kikuchiyo'
+$jo9_seed_role_stem[13]='Ririe'
+$jo9_seed_role_stem[14]='Kyoka'
+$jo9_seed_role_stem[15]='Noelle'
+$jo9_seed_role_stem[16]='Miruki'
+$jo9_seed_role_stem[17]='Tamaki'
+$jo9_seed_role_stem[18]='Chiharu'
+$jo9_seed_role_stem[19]='Fumi'
+$jo9_seed_role_stem[20]='Sana'
+$jo9_seed_role_stem[21]='Nanami'
+$jo9_seed_role_stem[22]='Shuko'
+$jo9_seed_role_stem[23]='celestine'
+$jo9_seed_role_stem[24]='olga'
+$jo9_seed_role_keys[0]='fullmade'
+$jo9_seed_role_keys[1]='fullsecretary'
+$jo9_seed_role_keys[2]='fullmistress'
+$jo9_seed_role_keys[3]='fullpregnant'
+$jo9_seed_role_dirs[0]='maid'
+$jo9_seed_role_dirs[1]='secretary'
+$jo9_seed_role_dirs[2]='mistress'
+$jo9_seed_role_dirs[3]='pregnant'
+if $args[0]='resolve':
+ $result=$args[2]
+ jo9_seed_role_id=args[1]
+ $jo9_seed_role_wanted=$args[3]
+ if jo9_seed_role_id>=2577 and jo9_seed_role_id<=2601:
+  for jo9_seed_role_k=0 to 3:
+   jo9_seed_role_known=1
+   if jo9_seed_role_k=3 and (jo9_seed_role_id=2585 or jo9_seed_role_id=2597 or jo9_seed_role_id=2600 or jo9_seed_role_id=2601): jo9_seed_role_known=0
+   if jo9_seed_role_known=1:
+    $jo9_seed_role_old='girls/full/'+$jo9_seed_role_dirs[jo9_seed_role_k]+'/'+$jo9_seed_role_stem[jo9_seed_role_id-2577]
+    if $args[2]=$jo9_seed_role_old:
+     $result=$fullimage[jo9_seed_role_id]
+     if $jo9_seed_role_wanted='fullmade' or $jo9_seed_role_wanted='fullsecretary' or $jo9_seed_role_wanted='fullmistress' or $jo9_seed_role_wanted='fullpregnant':
+      $jo9_seed_role_new=dyneval('$result = $<<$jo9_seed_role_wanted>>[jo9_seed_role_id]')
+      if $jo9_seed_role_new ! '': $result=$jo9_seed_role_new
+     end
+     exit
+    end
+   end
+  end
+ end
+ exit
+end
+! Original25 role values are absent/empty. Four absent legacy pregnancy keys are never inferred.
+for jo9_seed_role_id=2577 to 2601:
+ for jo9_seed_role_k=0 to 3:
+  jo9_seed_role_known=1
+  if jo9_seed_role_k=3 and (jo9_seed_role_id=2585 or jo9_seed_role_id=2597 or jo9_seed_role_id=2600 or jo9_seed_role_id=2601): jo9_seed_role_known=0
+  if jo9_seed_role_known=1:
+   $jo9_seed_role_old='girls/full/'+$jo9_seed_role_dirs[jo9_seed_role_k]+'/'+$jo9_seed_role_stem[jo9_seed_role_id-2577]
+   dynamic "if $<<$jo9_seed_role_keys[jo9_seed_role_k]>>[jo9_seed_role_id]=$jo9_seed_role_old: $<<$jo9_seed_role_keys[jo9_seed_role_k]>>[jo9_seed_role_id]=''"
+  end
+ end
+end
+! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022

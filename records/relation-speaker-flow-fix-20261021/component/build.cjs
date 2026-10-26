@@ -1,0 +1,40 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+const core=require('G:/somi/JO9sa/tools/text-workshop/core.cjs');
+const root=__dirname,baseline='G:/Codex/tmp/relation-speaker-flow-fix-20261021/inputs/baseline.qsp';
+const raw=fs.readFileSync(baseline),doc=core.parse(raw),pin='498e7fcaa2c116e382ab73ffe38549762297cce945247c2b8ad27509ba874fe0';assert.equal(doc.hash,pin);
+const edits=[];const q=s=>"'"+s.replaceAll("'","''")+"'";
+function edit(location,old,next){const l=doc.locations.find(l=>l.name===location),body=core.shift(doc.lines[l.body],5);assert.equal(body.split(old).length-1,1,'unique old '+location);doc.lines[l.body]=core.shift(body.replace(old,next),-5);edits.push({location,field:'body',old,new:next,count:1});}
+function block(id,code){return '! JO9 MOD START '+id+' | 2026-10-21_relation_speaker_empathy\r\n'+code+'\r\n! JO9 MOD END '+id;}
+const tpl=JSON.parse(fs.readFileSync('G:/somi/JO9sa/docs/slave-voice/2026-10-18_RELATION_PAIR_TEMPLATES.json','utf8'));
+const bank=core.shift(doc.lines[doc.locations.find(l=>l.name==='#txt_man').body],5);
+const bankText=(i,t)=>{const key='q1117_rel_personal_goodtol_'+i+'_core_direct_t'+t;const start=bank.indexOf("$voice_fragment_text['"+key+"']=");assert(start>=0);return core.literals(bank.slice(start).split('\r\n')[0])[1].text;};
+const manifest=[];
+const empathy={1:{1:'그래도 정말 안쓰럽습니다. 이런 세상은 어린 여자아이가 버틸 곳이 아닙니다.',2:'그래도 정말 안쓰러워요. 이런 세상은 여자애가 버틸 곳이 아니에요.',3:'그래도 정말 안쓰러워. 이런 세상은 여자애가 버틸 곳이 아니야.'},3:{1:'그래도 이렇게 어린 여자아이가 이런 세상에 온 건 슬픈 일입니다. 무슨 죄를 지었다고 이런 일을 당해야 합니까?',2:'그래도 이렇게 어린 여자애가 이런 세상에 온 건 슬픈 일이에요. 무슨 죄를 지었다고 이런 일을 당해야 하죠?',3:'그래도 이렇게 어린 여자애가 이런 세상에 온 건 슬픈 일이야. 무슨 죄를 지었다고 이런 일을 당해야 하지?'}};
+for(const i of [1,3])for(const tone of [1,2,3]){const p=tpl.find(e=>e.left_group==='1117_world_prim_'+i&&e.right_group==='1117_nation_neq_'+i&&e.tone===tone);assert(p);for(const [group,left] of [[p.left_group,p.left],[p.right_group,p.expected_right],[p.right_group,p.right]])manifest.push({left_group:group,right_group:'1117_personal_goodtol_'+i,tone,page:2,left,expected_right:bankText(i,tone),right:empathy[i][tone]});}
+assert.equal(manifest.length,18);
+const statements=manifest.map(p=>'  if $args[0]='+q(p.left_group)+' and $args[1]='+q(p.right_group)+' and $args[2]='+q(p.left)+' and $args[3]='+q(p.expected_right)+' and args[4]='+p.tone+': $result='+q(p.right));
+const dyn=core.shift(doc.lines[doc.locations.find(l=>l.name==='#dynamic').body],5);const continuation=dyn.slice(dyn.indexOf('$voice_relation_continue = {'),dyn.indexOf('\r\n! JO9 MOD END VOICE_RELATION_CONTINUATION'));
+const oldEnd=continuation.slice(continuation.lastIndexOf('\r\n if $args[0]='));
+assert(oldEnd.endsWith('\r\n}'));
+edit('#dynamic',oldEnd,oldEnd.slice(0,-3)+'\r\n'+block('REL9_EMPATHY_CONTINUATION'," ! Only reviewed immediate background/sympathy pairs on page 2; existing connectives stay untouched.\r\n if args[6]=2:\r\n"+statements.join('\r\n')+'\r\n end')+'\r\n}');
+const oldCall=' $jo9_vrl_continued=$dyneval($voice_relation_continue,$jo9_relation_prev_group[args[2]],$jo9_vrl_group,$jo9_relation_prev_body[args[2]],$jo9_vrl_body,jo9_vf_tone,jo9_relation_prev_tone[args[2]])';
+edit('#dynamic',oldCall,block('REL9_CONTINUATION_PAGE',oldCall.slice(0,-1)+',args[2])'));
+edit('#dynamic',' ! VOICE_ARGON_RELATION_FLOW_V8: display-only context; original native fact selection is retained.',' ! VOICE_ARGON_RELATION_FLOW_V9: display-only context; original native fact selection is retained.');
+const prefix="   if $text[2]=$slave2['name']: $result=': '+$trim($result)+' '";
+edit('#dynamic',prefix,block('REL9_NATIVE_FIRST',"   if $text[2]=$slave2['name']:\r\n    $result=': '+$trim($result)+' '\r\n    if jo9_relation_active=1 and args[2]=2: jo9_relation_native_first=1\r\n   end"));
+edit('origins_relations','jo9_relation_active=1',block('REL9_CONTEXT_INIT',"killvar 'jo9_relation_native_first'\r\njo9_relation_active=1"));
+const oldOverride="\t$text[2] = $snk_origin_relation_body\r\nend\r\nkillvar 'snk_origin_relation'";
+edit('origins_relations',oldOverride,"\t$text[2] = $snk_origin_relation_body\r\nend\r\n"+block('REL9_SPEAKER_PAGE2',"! Only native first fragments replace the target seed; source fallback and dedicated prose keep their subject.\r\nif jo9_relation_native_first=1: $text[2]=mid($text[2],len($slave2['name'])+3,len($text[2]))\r\nif instr($text[2],'<br>')=1:\r\n $text[2]='['+$slave1['name']+']'+$text[2]\r\nelse\r\n $text[2]='['+$slave1['name']+']<br>&nbsp;'+$text[2]\r\nend")+"\r\nkillvar 'snk_origin_relation'");
+edit('origins_relations','$text[4] = ""',block('REL9_SPEAKER_PAGE4',"$text[4]='['+$slave1['name']+']<br>&nbsp;'"));
+edit('origins_relations','! JO9 MOD END VOICE_RELATION_NARRATOR_V8','! JO9 MOD END VOICE_RELATION_NARRATOR_V8\r\n'+block('REL9_SPEAKER_PAGE5',"$text[5]+='['+$slave1['name']+']<br>&nbsp;'"));
+const page6='$text[6] = "하지만 조금 더 생각한 뒤, 그녀는 덧붙인다:<br><br>"';
+edit('origins_relations',page6,page6+'\r\n'+block('REL9_SPEAKER_PAGE6',"$text[6]+='['+$slave1['name']+']<br>&nbsp;'"));
+edit('origins_relations',"killvar 'jo9_relation_active'",block('REL9_CONTEXT_END',"killvar 'jo9_relation_active'\r\nkillvar 'jo9_relation_native_first'"));
+edit('interaction',"instr($voice_relation_line,'VOICE_ARGON_RELATION_FLOW_V8')=0","instr($voice_relation_line,'VOICE_ARGON_RELATION_FLOW_V9')=0");
+const candidate=core.serialize(doc);assert.equal(core.parse(candidate).locations.length,core.parse(raw).locations.length);
+const patch={id:'2026-10-21_relation_speaker_empathy',description:'Display-only actual speaker headers and reviewed immediate background-to-sympathy continuations. Preserve native selection, relation calculations, histories, source fallback, dedicated prose and color scopes.',before_sha256:pin,after_sha256:core.hash(candidate),edits};
+let inverse=core.parse(candidate);for(const e of edits.toReversed()){const l=inverse.locations.find(l=>l.name===e.location),b=core.shift(inverse.lines[l.body],5);assert.equal(b.split(e.new).length-1,1);inverse.lines[l.body]=core.shift(b.replace(e.new,e.old),-5);}assert(core.serialize(inverse).equals(raw));
+fs.mkdirSync(path.join(root,'patches'),{recursive:true});fs.writeFileSync(path.join(root,'patches',patch.id+'.json'),JSON.stringify(patch,null,2)+'\n');fs.writeFileSync(path.join(root,'candidate.qsp'),candidate);fs.writeFileSync(path.join(root,'bridge-manifest.json'),JSON.stringify(manifest,null,2)+'\n');
+fs.writeFileSync(path.join(root,'build-result.json'),JSON.stringify({before:pin,after:patch.after_sha256,edits:edits.length,locations:doc.locations.length,inverseByteExact:true},null,2)+'\n');
+console.log(JSON.stringify({before:pin,after:patch.after_sha256,edits:edits.length,pairs:manifest.length}));

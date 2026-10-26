@@ -1,0 +1,57 @@
+{
+  "source": {
+    "file": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+    "sha256": "1f2c666a7f61deb79794fe338d2d7005a5539e6ce5970ab7c27ff330b636c59c",
+    "bytes": 47816282,
+    "locations": 259
+  },
+  "referenceRevision": 5,
+  "rows": [
+    {
+      "key": "stasis_bank",
+      "stage": "entry-background",
+      "oldNative": "   이 장소는 원래 세르피스 가문 군대를 위해 만들어졌다. 필요해질 때까지 병사들의 식비와 주거비에 돈을 쓰고 싶지 않았기 때문이다. 빈 셀을 놀리지 않기 위해, 세르피스 가문은 그것을 개인 고객에게 임대하고 있다. 같은 원리로, 로마 전역에서 제품 보관에도 정지 캡슐이 쓰이지만, 테크노스피어 밖에서 작동하는 크라이오 캡슐을 유지하는 비용은 결코 싸지 않다.",
+      "newText": "이 장소는 원래 세르피스 가문이 병사들의 식비와 주거비를 아끼려고 군대를 냉동 보관하던 곳이다.",
+      "source": "Approved first paragraph, preserved verbatim."
+    },
+    {
+      "key": "stasis_bank_2",
+      "stage": "cell-storage-operation",
+      "oldValue": "이 장소는 원래 세르피스 가문이 병사들의 식비와 주거비를 아끼려고 군대를 냉동 보관하던 곳이다.<br><br>빈 셀을 놀리지 않기 위해 개인 고객에게도 임대하는데, 당장 밥값을 아끼거나 몸값을 보존하려는 노예상들이 노예를 산 채로 신선하게 냉동 보관하는 용도로 애용한다. 생체 활동을 멈춰 물건처럼 재고로 쌓아 두는 구조지만, 테크노스피어 밖에서 캡슐을 유지하는 비용은 결코 싸지 않다.<!-- #nwtx -->",
+      "oldBlock": "if $trim($place_info['stasis_bank_2']) = '' or $place_info['stasis_bank_2'] = '크라이오 보관 서비스를 위한 시설.<br><br>여기서는 사람의 활동과 시간을 잠시 멈춘 채 보관하는 일이 업무로 처리된다. 당신에게 중요한 것은 보관 조건과 맡긴 사람을 다시 데려올 절차다. 장치의 낯선 모습도 직원들에게는 익숙한 일상의 일부다.' or $place_info['stasis_bank_2'] = '크라이오 보관 서비스를 위한 시설.<br><br>여기서는 사람의 활동과 시간을 잠시 멈춘 채 보관하는 일이 업무로 처리된다. 당신에게 중요한 것은 보관 조건과 맡긴 사람을 다시 데려올 절차다. 장치의 낯선 모습도 직원들에게는 익숙한 일상의 일부다.<!-- #nwtx -->':\r\n\t$place_info['stasis_bank_2'] = '이 장소는 원래 세르피스 가문이 병사들의 식비와 주거비를 아끼려고 군대를 냉동 보관하던 곳이다.<br><br>빈 셀을 놀리지 않기 위해 개인 고객에게도 임대하는데, 당장 밥값을 아끼거나 몸값을 보존하려는 노예상들이 노예를 산 채로 신선하게 냉동 보관하는 용도로 애용한다. 생체 활동을 멈춰 물건처럼 재고로 쌓아 두는 구조지만, 테크노스피어 밖에서 캡슐을 유지하는 비용은 결코 싸지 않다.<!-- #nwtx -->'\r\nend",
+      "newText": "빈 셀을 놀리지 않기 위해 개인 고객에게도 임대하는데, 당장 밥값을 아끼거나 몸값을 보존하려는 노예상들이 노예를 산 채로 신선하게 냉동 보관하는 용도로 애용한다. 생체 활동을 멈춰 물건처럼 재고로 쌓아 두는 구조지만, 테크노스피어 밖에서 캡슐을 유지하는 비용은 결코 싸지 않다.",
+      "source": "Approved remaining paragraph, preserved verbatim."
+    },
+    {
+      "key": "egeya_battle",
+      "stage": "duel-with-egeya",
+      "oldNative": "여자들 싸움에 돈을 거는 일은, 최소한 흥미롭기라도 하다. 그리고 이곳은 네 열정의 수준을 시험할 준비가 되어 있다.",
+      "newText": "클럽의 주인 에게야와 직접 맞붙는 결투장이다.<br><br>다른 여자들의 싸움에 판돈을 거는 대신, 이제는 당신이 그녀를 상대할 차례다.",
+      "source": "Existing interaction_city 102015/102016 sets player combatant and enemy egeya. No new rule or reward."
+    }
+  ],
+  "legacy": [
+    {
+      "key": "gastronom",
+      "block": "if $place = 'gastronom':\r\n\t! сразу выводится сумма запасов дома, минус алкоголь(не занимает места?), by Lyazar\r\n\t! возможно и не нужно, т.к. впилил подсчет в каждый пункт магаза, но пусть будет\r\n\tdynamic $get_fridge_space\r\n\t$place_info[$place] = '현재 재고 [<<fridge_items>>/<<estate_size[$estate]>>]:' + _\r\n\t'<br><br>신선한 달걀 x<<fridge[\"eggs\"]>>' + _\r\n\t'<br>신선한 우유 x<<fridge[\"milk\"]>>' + _\r\n\t'<br>농축된 크림 x<<fridge[\"cream\"]>>' + _\r\n\t'<br>숙성 치즈/버터 x<<fridge[\"cheese\"]>>' + _\r\n\t'<br><br>신선한 야채류 х<<fridge[\"vegetables\"]>>' + _\r\n\t'<br>시리얼/곡물류 х<<fridge[\"grain\"]>>' + _\r\n\t'<br>허브류/향신료 x<<fridge[\"spice\"]>>' + _\r\n\t'<br>도수높은 주류 x<<fridge[\"alcohol\"]>>' + _\r\n\t'<br><br>고기/간 고기 x<<fridge[\"mince\"]>>' + _\r\n\t'<br>안심 살코기 x<<fridge[\"meat\"]>>' + _\r\n\t'<br>처녀 고깃살 x<<fridge[\"virgin_meat\"]>>'\r\nend",
+      "template": "현재 재고 [<<fridge_items>>/<<estate_size[$estate]>>]:<br><br>신선한 달걀 x<<fridge[\"eggs\"]>><br>신선한 우유 x<<fridge[\"milk\"]>><br>농축된 크림 x<<fridge[\"cream\"]>><br>숙성 치즈/버터 x<<fridge[\"cheese\"]>><br><br>신선한 야채류 х<<fridge[\"vegetables\"]>><br>시리얼/곡물류 х<<fridge[\"grain\"]>><br>허브류/향신료 x<<fridge[\"spice\"]>><br>도수높은 주류 x<<fridge[\"alcohol\"]>><br><br>고기/간 고기 x<<fridge[\"mince\"]>><br>안심 살코기 x<<fridge[\"meat\"]>><br>처녀 고깃살 x<<fridge[\"virgin_meat\"]>>",
+      "pattern": "^현재 재고 \\[-?[0-9]+/-?[0-9]+\\]:<br><br>신선한 달걀 x-?[0-9]+<br>신선한 우유 x-?[0-9]+<br>농축된 크림 x-?[0-9]+<br>숙성 치즈/버터 x-?[0-9]+<br><br>신선한 야채류 х-?[0-9]+<br>시리얼/곡물류 х-?[0-9]+<br>허브류/향신료 x-?[0-9]+<br>도수높은 주류 x-?[0-9]+<br><br>고기/간 고기 x-?[0-9]+<br>안심 살코기 x-?[0-9]+<br>처녀 고깃살 x-?[0-9]+(?![\\s\\S])",
+      "oldBlock": "if $trim($place_info['gastronom']) = '' or $place_info['gastronom'] = '백색 도시의 식품점 미식가들.<br><br>저택에서 먹고 마실 물건을 구하는 손님들이 드나든다. 어떤 재료를 얼마나 마련할지는 식단과 살림의 규모에 따라 달라진다. 당신의 저택이 커질수록 장을 보는 일도 교육과 관리의 중요한 부분이 된다.' or $place_info['gastronom'] = '백색 도시의 식품점 미식가들.<br><br>저택에서 먹고 마실 물건을 구하는 손님들이 드나든다. 어떤 재료를 얼마나 마련할지는 식단과 살림의 규모에 따라 달라진다. 당신의 저택이 커질수록 장을 보는 일도 교육과 관리의 중요한 부분이 된다.<!-- #nwtx -->':\r\n\t$place_info['gastronom'] = '백색 도시의 부유층이 드나드는 고급 식료품점 ‘미식가들’.<br><br>안개 너머에서 들여온 진귀한 식재료부터 노예에게 먹일 값싼 통조림 사료까지 취급한다. 하지만 단골 귀족들이 뒷문을 통해 찾는 진짜 별미는 따로 있다.<!-- #nwtx -->'\r\nend",
+      "approved": "백색 도시의 부유층이 드나드는 고급 식료품점 ‘미식가들’.<br><br>안개 너머에서 들여온 진귀한 식재료부터 노예에게 먹일 값싼 통조림 사료까지 취급한다. 하지만 단골 귀족들이 뒷문을 통해 찾는 진짜 별미는 따로 있다.<!-- #nwtx -->"
+    },
+    {
+      "key": "meat",
+      "block": "if $place = 'meat':\r\n\tdynamic $get_fridge_space\r\n\t$place_info[$place] = '현재 재고 [<<fridge_items>>/<<estate_size[$estate]>>]:' + _\r\n\t'<br>다진 고기 x<<fridge[\"mince\"]>>' + _\r\n\t'<br>안심육 x<<fridge[\"meat\"]>>' + _\r\n\t'<br>처녀육 x<<fridge[\"virgin_meat\"]>>'\r\nend",
+      "template": "현재 재고 [<<fridge_items>>/<<estate_size[$estate]>>]:<br>다진 고기 x<<fridge[\"mince\"]>><br>안심육 x<<fridge[\"meat\"]>><br>처녀육 x<<fridge[\"virgin_meat\"]>>",
+      "pattern": "^현재 재고 \\[-?[0-9]+/-?[0-9]+\\]:<br>다진 고기 x-?[0-9]+<br>안심육 x-?[0-9]+<br>처녀육 x-?[0-9]+(?![\\s\\S])",
+      "oldBlock": "if $trim($place_info['meat']) = '' or $place_info['meat'] = '도축장의 거래 구역.<br><br>준비된 고기와 저택의 식재료 재고를 확인할 수 있다. 여기서는 상품의 출처와 손님의 식탁이 장부와 수량으로 이어진다. 당신에게 필요한 양을 고르는 동안에도 작업장 안쪽의 일은 계속된다.' or $place_info['meat'] = '도축장의 거래 구역.<br><br>준비된 고기와 저택의 식재료 재고를 확인할 수 있다. 여기서는 상품의 출처와 손님의 식탁이 장부와 수량으로 이어진다. 당신에게 필요한 양을 고르는 동안에도 작업장 안쪽의 일은 계속된다.<!-- #nwtx -->':\r\n\t$place_info['meat'] = '비릿한 피비린내와 냉기가 진동하는 도축장 내부의 정육 거래 구역.<br><br>가축 고기부터 갓 손질된 인육까지 등급별 가격표가 붙어 장부로 거래된다. 작업장 안쪽에서 들려오는 뼈 자르는 소리와 단말마가 이 도시의 식탁이 어떻게 채워지는지 보여 준다.<!-- #nwtx -->'\r\nend",
+      "approved": "비릿한 피비린내와 냉기가 진동하는 도축장 내부의 정육 거래 구역.<br><br>가축 고기부터 갓 손질된 인육까지 등급별 가격표가 붙어 장부로 거래된다. 작업장 안쪽에서 들려오는 뼈 자르는 소리와 단말마가 이 도시의 식탁이 어떻게 채워지는지 보여 준다.<!-- #nwtx -->"
+    }
+  ],
+  "notes": [
+    "No new location or persistent state.",
+    "Gas./meat inventory remains in its current right panel; static place_info stays unchanged.",
+    "Only empty bottom narration receives facility context for gastronom/meat/slaughter. Existing nonempty narration wins.",
+    "Other correctly distinct stages are preserved after route audit."
+  ]
+}

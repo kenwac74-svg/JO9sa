@@ -1,0 +1,10 @@
+const fs=require('fs'),path=require('path'),crypto=require('crypto');
+const root='G:/Codex/tmp/jo9-insolvency-20261023';fs.mkdirSync(root,{recursive:true});
+const core=require('G:/somi/JO9sa/tools/text-workshop/core.cjs');
+const work='G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp';const b=fs.readFileSync(work);const d=core.parse(b);
+if(!fs.existsSync(path.join(root,'before.qsp')))fs.writeFileSync(path.join(root,'before.qsp'),b);
+const round=Buffer.from(d.lines.join('\r\n'),'utf16le');
+fs.mkdirSync(path.join(root,'source'),{recursive:true});
+for(const loc of d.locations) fs.writeFileSync(path.join(root,'source',loc.name.replace(/[<>:"/\\|?*]/g,'_')+'.txt'),core.shift(d.lines[loc.body],5),'utf8');
+fs.writeFileSync(path.join(root,'input.json'),JSON.stringify({hash:d.hash,locations:d.locations.map(x=>x.name),inputSize:b.length},null,2));
+console.log(JSON.stringify({hash:d.hash,locations:d.locations.length,root}));

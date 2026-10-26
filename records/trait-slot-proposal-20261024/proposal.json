@@ -1,0 +1,1241 @@
+{
+  "id": "TRAIT_SLOT_RANDOM_REMOVAL_PROPOSAL_20261024",
+  "date": "2026-10-24",
+  "status": "PROPOSAL_NOT_IMPLEMENTED",
+  "sourceWorkSha256": "f2d5a9c2970bd7cbc7479f80901204b8fcdcaeab6cff83019a4a3ece6f8a9775",
+  "sourceInventory": "G:/somi/JO9sa/records/trait-system-review-20261024/all-traits.json",
+  "approved": {
+    "generalSlots": 8,
+    "titleSlots": 3,
+    "preserveExistingSaveTraits": true
+  },
+  "latestUserDirection": {
+    "removePositiveOrNegative": true,
+    "randomTarget": true,
+    "playerCannotSelectTrait": true,
+    "statusesNotRemovable": true
+  },
+  "proposed": {
+    "generalAxes": 51,
+    "generalDisplayVariants": 90,
+    "titleStoredAxes": 3,
+    "titleDisplayVariants": 5,
+    "titleSlots": [
+      {
+        "id": 1,
+        "name": "다재다능",
+        "keys": [
+          "jo9_versatile"
+        ]
+      },
+      {
+        "id": 2,
+        "name": "향후 창관용성취",
+        "keys": [],
+        "effectDesigned": false
+      },
+      {
+        "id": 3,
+        "name": "경기 챔피언",
+        "keys": [
+          "arena_level",
+          "has_ride_win"
+        ],
+        "displayGroupOnly": true,
+        "condition": "arena_level >= 5 OR has_ride_win >= 4",
+        "tooltip": "두 종목의 현재 단계를 각각 표시; 과거 최고기록으로 바꾸지 않음",
+        "requiresUserApproval": true
+      }
+    ],
+    "item": {
+      "nameDraft": "성향 소거제",
+      "price": null,
+      "priceDirection": "고가; 구체 금액 미정",
+      "scope": "실제로 보유한 유효한 일반 특성 축",
+      "includeHidden": true,
+      "uniformPerAxis": true,
+      "removesAxesPerUse": 1,
+      "notSelectable": true,
+      "doesNotRerollOtherTraits": true,
+      "excluded": [
+        "칭호형 성취",
+        "임신·문신 없음·상처·질병·기아·회복 등 상태",
+        "기본 능력치·신체 단계·명성·시설/퀘스트 상태",
+        "보류된 비활성 값과 해석 불명인 비표준 세이브 값"
+      ],
+      "consumeOnlyAfterSuccessfulRemoval": true,
+      "noEligibleTargetConsumesNothing": true
+    },
+    "fullSlots": {
+      "newAxis": "보류, 자동 삭제/교체 없음",
+      "discovery": "허용; 이미 점유한 칸",
+      "existingAxisChange": "허용; 같은 칸 교체, 기존 성장/변화 조건 유지",
+      "persistentConditions": "진행도 보존 후 빈칸이 생긴 다음 정상 검사에서 재판정",
+      "randomEvents": "유효한 다음 발생 시 재추첨; 성공 후보를 몰래 저장하지 않음",
+      "paidOneOff": "결제/소모 전에 슬롯 점검하고 만석이면 실행하지 않음",
+      "queueAdded": false
+    },
+    "legacy": {
+      "preserveAll": true,
+      "preserveEffects": true,
+      "noOriginMigration": true,
+      "greaterThanEight": "새 일반 축만 제한",
+      "nineToEightStillFull": true,
+      "newAcquisitionWhen": "7개 이하",
+      "overflowDisplay": "일반 목록을 8개씩 페이지로 보기; 상태·칭호 자리 유지. 기존 특성 제목을 넘김 진입점으로 쓰는 안",
+      "unknownValues": "자동 정규화/삭제 금지; 해당 값별 판정 확인 전 보존"
+    },
+    "removalConsequences": {
+      "selectedAxisExpressionXp": "즉시 재발 방지를 위해 선택된 축의 발현 누적 XP만 초기화하는 안; 추가 효과로 명시",
+      "confirmedSkillXpPreserved": true,
+      "baseAttributesPreserved": true,
+      "grantHistoryPreserved": true,
+      "permanentImmunityAdded": false,
+      "unrelatedTraitProgressPreserved": true
+    },
+    "pending": [
+      "경기 칭호를 한 성취 칸으로 묶는 세 번째 성취안",
+      "개별 일반/칭호 분류의 채택",
+      "가격",
+      "선택된 축 발현 XP 정리",
+      "기존 초과 목록의 페이지 표시",
+      "저장·불러오기에 따른 삭제 결과 재추첨 취급"
+    ],
+    "runtimeApplied": false
+  },
+  "rows": [
+    {
+      "key": "grace",
+      "labels": [
+        "품위있는 여자",
+        "촌뜨기"
+      ],
+      "variants": [
+        {
+          "name": "품위있는 여자",
+          "value": ">0"
+        },
+        {
+          "name": "촌뜨기",
+          "value": "<0"
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "dexterity",
+      "labels": [
+        "기민한 손놀림",
+        "투박한 손놀림"
+      ],
+      "variants": [
+        {
+          "name": "기민한 손놀림",
+          "value": ">0"
+        },
+        {
+          "name": "투박한 손놀림",
+          "value": "<0"
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "arena_level",
+      "labels": [
+        "아레나 챔피언",
+        "아레나 그랜드 챔피언"
+      ],
+      "variants": [
+        {
+          "name": "아레나 챔피언",
+          "value": "5..8"
+        },
+        {
+          "name": "아레나 그랜드 챔피언",
+          "value": ">=9"
+        }
+      ],
+      "group": "title",
+      "slotFamily": "competition",
+      "randomRemovalEligible": false,
+      "neutralValue": null,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "has_ride_win",
+      "labels": [
+        "경주 챔피언",
+        "경주 그랜드 챔피언"
+      ],
+      "variants": [
+        {
+          "name": "경주 챔피언",
+          "value": "4..6"
+        },
+        {
+          "name": "경주 그랜드 챔피언",
+          "value": ">=7"
+        }
+      ],
+      "group": "title",
+      "slotFamily": "competition",
+      "randomRemovalEligible": false,
+      "neutralValue": null,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "sport_affinity",
+      "labels": [
+        "운동광",
+        "게으름"
+      ],
+      "variants": [
+        {
+          "name": "운동광",
+          "value": "=1"
+        },
+        {
+          "name": "게으름",
+          "value": "=-1"
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "expression_affinity",
+      "labels": [
+        "달변가"
+      ],
+      "variants": [
+        {
+          "name": "달변가",
+          "value": ">0"
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "pet_affinity",
+      "labels": [
+        "순종적인 동물"
+      ],
+      "variants": [
+        {
+          "name": "순종적인 동물",
+          "value": ">0"
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "dressage_affinity",
+      "labels": [
+        "순종적인 말"
+      ],
+      "variants": [
+        {
+          "name": "순종적인 말",
+          "value": ">0"
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "cowSK_affinity",
+      "labels": [
+        "미련한 소"
+      ],
+      "variants": [
+        {
+          "name": "미련한 소",
+          "value": ">0"
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "nurse_affinity",
+      "labels": [
+        "타고난 간호사"
+      ],
+      "variants": [
+        {
+          "name": "타고난 간호사",
+          "value": ">0"
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "service_affinity",
+      "labels": [
+        "타고난 하녀"
+      ],
+      "variants": [
+        {
+          "name": "타고난 하녀",
+          "value": ">0"
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "cook_affinity",
+      "labels": [
+        "예민한 미각"
+      ],
+      "variants": [
+        {
+          "name": "예민한 미각",
+          "value": ">0"
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "gladiatrix_affinity",
+      "labels": [
+        "타고난 투사"
+      ],
+      "variants": [
+        {
+          "name": "타고난 투사",
+          "value": ">0"
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "enchanter_affinity",
+      "labels": [
+        "타고난 마법사"
+      ],
+      "variants": [
+        {
+          "name": "타고난 마법사",
+          "value": ">0"
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "art_affinity",
+      "labels": [
+        "타고난 미적감각"
+      ],
+      "variants": [
+        {
+          "name": "타고난 미적감각",
+          "value": ">0"
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "music_affinity",
+      "labels": [
+        "절대음감"
+      ],
+      "variants": [
+        {
+          "name": "절대음감",
+          "value": ">0"
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "calisthenics_affinity",
+      "labels": [
+        "발레리나",
+        "이국적인 댄서"
+      ],
+      "variants": [
+        {
+          "name": "발레리나",
+          "value": ">0"
+        },
+        {
+          "name": "이국적인 댄서",
+          "value": ">0 및 nymphomania/perversion의추가표시조건"
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "secretary_affinity",
+      "labels": [
+        "보좌관"
+      ],
+      "variants": [
+        {
+          "name": "보좌관",
+          "value": ">0"
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "metabolism",
+      "labels": [
+        "고도 대사량",
+        "높은 대사량",
+        "낮은 대사량",
+        "미약한 대사량"
+      ],
+      "variants": [
+        {
+          "name": "고도 대사량",
+          "value": "=5"
+        },
+        {
+          "name": "높은 대사량",
+          "value": "=4"
+        },
+        {
+          "name": "낮은 대사량",
+          "value": "=2"
+        },
+        {
+          "name": "미약한 대사량",
+          "value": "=1"
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 3,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "nymphomania",
+      "labels": [
+        "색정광",
+        "불감증"
+      ],
+      "variants": [
+        {
+          "name": "색정광",
+          "value": ">0"
+        },
+        {
+          "name": "불감증",
+          "value": "<0"
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "masochism",
+      "labels": [
+        "피학 성애자",
+        "통증 내성",
+        "통증 공포증"
+      ],
+      "variants": [
+        {
+          "name": "피학 성애자",
+          "value": "=2"
+        },
+        {
+          "name": "통증 내성",
+          "value": "=1"
+        },
+        {
+          "name": "통증 공포증",
+          "value": "=-1"
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "exhibitionism",
+      "labels": [
+        "노출 집착증",
+        "노출 기피"
+      ],
+      "variants": [
+        {
+          "name": "노출 집착증",
+          "value": "=2"
+        },
+        {
+          "name": "노출 기피",
+          "value": "=-1"
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "perversion",
+      "labels": [
+        "이상성욕 선호",
+        "순수한 영혼"
+      ],
+      "variants": [
+        {
+          "name": "이상성욕 선호",
+          "value": "=2"
+        },
+        {
+          "name": "순수한 영혼",
+          "value": "=-1"
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "homosexualism",
+      "labels": [
+        "레즈비언",
+        "양성애자",
+        "동성애 혐오자"
+      ],
+      "variants": [
+        {
+          "name": "레즈비언",
+          "value": "=2"
+        },
+        {
+          "name": "양성애자",
+          "value": "=1"
+        },
+        {
+          "name": "동성애 혐오자",
+          "value": "=-1"
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "courage",
+      "labels": [
+        "무모함",
+        "용감함",
+        "겁쟁이"
+      ],
+      "variants": [
+        {
+          "name": "무모함",
+          "value": "=2"
+        },
+        {
+          "name": "용감함",
+          "value": "=1"
+        },
+        {
+          "name": "겁쟁이",
+          "value": "=-1"
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "meekness",
+      "labels": [
+        "강한 복종심",
+        "자유로운 영혼"
+      ],
+      "variants": [
+        {
+          "name": "강한 복종심",
+          "value": ">0"
+        },
+        {
+          "name": "자유로운 영혼",
+          "value": "<0"
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "selfesteem",
+      "labels": [
+        "과대망상",
+        "자책망상"
+      ],
+      "variants": [
+        {
+          "name": "과대망상",
+          "value": ">0"
+        },
+        {
+          "name": "자책망상",
+          "value": "<0"
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "compassion",
+      "labels": [
+        "평화주의자",
+        "가학성애자"
+      ],
+      "variants": [
+        {
+          "name": "평화주의자",
+          "value": ">0"
+        },
+        {
+          "name": "가학성애자",
+          "value": "<0"
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "abuse_attitude",
+      "labels": [
+        "심리피학 성애자",
+        "연극성 인격장애"
+      ],
+      "variants": [
+        {
+          "name": "심리피학 성애자",
+          "value": "=2"
+        },
+        {
+          "name": "연극성 인격장애",
+          "value": "=-1"
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "darkness_attitude",
+      "labels": [
+        "암흑 기호증",
+        "암흑 공포증"
+      ],
+      "variants": [
+        {
+          "name": "암흑 기호증",
+          "value": "=2"
+        },
+        {
+          "name": "암흑 공포증",
+          "value": "=-1"
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "blood_attitude",
+      "labels": [
+        "혈액 기호증",
+        "혈액 공포증"
+      ],
+      "variants": [
+        {
+          "name": "혈액 기호증",
+          "value": "=2"
+        },
+        {
+          "name": "혈액 공포증",
+          "value": "=-1"
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "fire_attitude",
+      "labels": [
+        "발화 기호증",
+        "발화 공포증"
+      ],
+      "variants": [
+        {
+          "name": "발화 기호증",
+          "value": "=2"
+        },
+        {
+          "name": "발화 공포증",
+          "value": "=-1"
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "water_attitude",
+      "labels": [
+        "물 기호증",
+        "물 공포증"
+      ],
+      "variants": [
+        {
+          "name": "물 기호증",
+          "value": "=2"
+        },
+        {
+          "name": "물 공포증",
+          "value": "=-1"
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "vermin_attitude",
+      "labels": [
+        "벌레 애호증",
+        "벌레 공포증"
+      ],
+      "variants": [
+        {
+          "name": "벌레 애호증",
+          "value": "=2"
+        },
+        {
+          "name": "벌레 공포증",
+          "value": "=-1"
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "deprivation_attitude",
+      "labels": [
+        "폐소 기호증",
+        "폐소 내성",
+        "폐소 공포증"
+      ],
+      "variants": [
+        {
+          "name": "폐소 기호증",
+          "value": "=2"
+        },
+        {
+          "name": "폐소 내성",
+          "value": "=1"
+        },
+        {
+          "name": "폐소 공포증",
+          "value": "=-1"
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "passion_comfort",
+      "labels": [
+        "무기력증",
+        "과다행동장애"
+      ],
+      "variants": [
+        {
+          "name": "무기력증",
+          "value": "=1"
+        },
+        {
+          "name": "과다행동장애",
+          "value": "=-1"
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "passion_luxury",
+      "labels": [
+        "사치광",
+        "구두쇠"
+      ],
+      "variants": [
+        {
+          "name": "사치광",
+          "value": "=1"
+        },
+        {
+          "name": "구두쇠",
+          "value": "=-1"
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "passion_sweets",
+      "labels": [
+        "당분 중독",
+        "까다로운 입맛"
+      ],
+      "variants": [
+        {
+          "name": "당분 중독",
+          "value": "=1"
+        },
+        {
+          "name": "까다로운 입맛",
+          "value": "=-1"
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "passion_fame",
+      "labels": [
+        "인지욕구",
+        "은둔형 외톨이"
+      ],
+      "variants": [
+        {
+          "name": "인지욕구",
+          "value": "=1"
+        },
+        {
+          "name": "은둔형 외톨이",
+          "value": "=-1"
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "oral_affinity",
+      "labels": [
+        "펠라 중독"
+      ],
+      "variants": [
+        {
+          "name": "펠라 중독",
+          "value": ">0"
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "jo9_gag_reflex",
+      "labels": [
+        "반사적 구역질"
+      ],
+      "variants": [
+        {
+          "name": "반사적 구역질",
+          "value": 1
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "anal_affinity",
+      "labels": [
+        "애널섹스 중독",
+        "애널섹스 혐오"
+      ],
+      "variants": [
+        {
+          "name": "애널섹스 중독",
+          "value": ">0"
+        },
+        {
+          "name": "애널섹스 혐오",
+          "value": "<0"
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "defiant",
+      "labels": [
+        "거센 반항심"
+      ],
+      "variants": [
+        {
+          "name": "거센 반항심",
+          "value": 1
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "jo9_slave_nature",
+      "labels": [
+        "노예근성"
+      ],
+      "variants": [
+        {
+          "name": "노예근성",
+          "value": 1
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "jo9_voice_trait",
+      "labels": [
+        "선천적 벙어리"
+      ],
+      "variants": [
+        {
+          "name": "선천적 벙어리",
+          "value": 1
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "jo9_ambition",
+      "labels": [
+        "야심가"
+      ],
+      "variants": [
+        {
+          "name": "야심가",
+          "value": 1
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "jo9_work_ethic",
+      "labels": [
+        "일벌레",
+        "안분지족"
+      ],
+      "variants": [
+        {
+          "name": "일벌레",
+          "value": 1
+        },
+        {
+          "name": "안분지족",
+          "value": -1
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "jo9_focus",
+      "labels": [
+        "끈기",
+        "산만함"
+      ],
+      "variants": [
+        {
+          "name": "끈기",
+          "value": 1
+        },
+        {
+          "name": "산만함",
+          "value": -1
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "jo9_grudge",
+      "labels": [
+        "옹졸함",
+        "너그러움"
+      ],
+      "variants": [
+        {
+          "name": "옹졸함",
+          "value": 1
+        },
+        {
+          "name": "너그러움",
+          "value": -1
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "jo9_constitution",
+      "labels": [
+        "건강체질",
+        "약골"
+      ],
+      "variants": [
+        {
+          "name": "건강체질",
+          "value": 1
+        },
+        {
+          "name": "약골",
+          "value": -1
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "jo9_combat_trait",
+      "labels": [
+        "광전사",
+        "성기사",
+        "역전의 용사"
+      ],
+      "variants": [
+        {
+          "name": "광전사",
+          "value": 1
+        },
+        {
+          "name": "성기사",
+          "value": 2
+        },
+        {
+          "name": "역전의 용사",
+          "value": 3
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "jo9_versatile",
+      "labels": [
+        "다재다능"
+      ],
+      "variants": [
+        {
+          "name": "다재다능",
+          "value": 1
+        }
+      ],
+      "group": "title",
+      "slotFamily": "versatile",
+      "randomRemovalEligible": false,
+      "neutralValue": null,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "jo9_peerless",
+      "labels": [
+        "절세미인"
+      ],
+      "variants": [
+        {
+          "name": "절세미인",
+          "value": 1
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    },
+    {
+      "key": "jo9_learning_trait",
+      "labels": [
+        "천재",
+        "백치"
+      ],
+      "variants": [
+        {
+          "name": "천재",
+          "value": 1
+        },
+        {
+          "name": "백치",
+          "value": -1
+        }
+      ],
+      "group": "general",
+      "slotFamily": null,
+      "randomRemovalEligible": true,
+      "neutralValue": 0,
+      "status": "PROPOSED_NOT_IMPLEMENTED"
+    }
+  ],
+  "randomRemovalSupersededBy": "../chaotic-essence-20261024/MANUAL_KO.md",
+  "currentRemovalRule": {
+    "item": "카오틱 에센스",
+    "price": 900,
+    "quantity": 1,
+    "negativeOnly": true,
+    "achievementProtected": true,
+    "runtimeApplied": true,
+    "slotAndTitleProposalStillUnapplied": true
+  }
+}

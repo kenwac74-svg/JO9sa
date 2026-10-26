@@ -1,0 +1,289 @@
+{
+  "id": "CUT_TARGET_STATE_20261021",
+  "files": [
+    {
+      "path": "G:/somi/JO9sa/tools/cut-addition/workshop-cut-editor.js",
+      "before": "0e57ca3121e2ee7d4227cf417e2a931042d4269ef8a86c142b757b7e8327ffe0",
+      "after": "da96354af971acc61194aacd3a1b64f8a6a3d5751e4c21031930d69c5a7e3882",
+      "bytesBefore": 11966,
+      "bytesAfter": 13934
+    },
+    {
+      "path": "G:/somi/JO9sa/tools/image-workshop/place/JO9_Place_Workshop.html",
+      "before": "47582fa53c1beb5e398c32a15541c33570ab0f1a9c4989812bd3245739c5de37",
+      "after": "16a6192e50ef56e6b63bf398c2b949ad3e08daff74794a2d87040287d68968b8",
+      "bytesBefore": 265498,
+      "bytesAfter": 267670
+    },
+    {
+      "path": "G:/somi/JO9sa/tools/cut-addition/JO9_Place_Workshop.html",
+      "before": "47582fa53c1beb5e398c32a15541c33570ab0f1a9c4989812bd3245739c5de37",
+      "after": "16a6192e50ef56e6b63bf398c2b949ad3e08daff74794a2d87040287d68968b8",
+      "bytesBefore": 265498,
+      "bytesAfter": 267670
+    },
+    {
+      "path": "G:/somi/JO9sa/tools/cut-addition/catalog_editor.js",
+      "before": "b3858705865703a05a7e3b185856546ac6da2c6b83f154f949bfcc7037b9c934",
+      "after": "f53ac4ec2a156bb93f20fcc4824f3d5df314b29154880d54c86df7b2d1dea24d",
+      "bytesBefore": 270419,
+      "bytesAfter": 272793
+    },
+    {
+      "path": "G:/somi/JO9sa/tools/local-workspace/catalog-seed/catalog_editor.js",
+      "before": "b3858705865703a05a7e3b185856546ac6da2c6b83f154f949bfcc7037b9c934",
+      "after": "f53ac4ec2a156bb93f20fcc4824f3d5df314b29154880d54c86df7b2d1dea24d",
+      "bytesBefore": 270419,
+      "bytesAfter": 272793
+    },
+    {
+      "path": "G:/somi/JO9sa/tools/imgmg/make_catalog_editor.ps1",
+      "before": "1627983b06c1b856c34ef5c40e500ec2781b4f2a975a3382d9703c54240014d4",
+      "after": "aeafc58668ec865178b5d556075e0cb840297b65a61345ed8eee1857c37ed9a3",
+      "bytesBefore": 10765,
+      "bytesAfter": 10968
+    }
+  ],
+  "backup": "G:/somi/JO9_work_backups/bcut-target-state-fix-20261021/source-before.json.gz",
+  "replacements": [
+    {
+      "where": "cut lifecycle version",
+      "old": "let cutDraft=null,cutFamilyStamp='',cutFamilyLoading=false;",
+      "new": "let cutDraft=null,cutFamilyStamp='',cutFamilyLoading=false,cutRequestVersion=0;"
+    },
+    {
+      "where": "cut mode reset",
+      "old": "}\nfunction cutImageUrl(r)",
+      "new": "}\n// JO9 MOD START CUT_TARGET_STATE_20261021\n// Reset only the future-drop mode. Existing staged cut jobs keep their destinations.\nfunction resetCutMode(){cutRequestVersion++;cutDraft=null;cutModeBar();}\n// JO9 MOD END CUT_TARGET_STATE_20261021\nfunction cutImageUrl(r)"
+    },
+    {
+      "where": "beginCut stale response and selected family",
+      "old": "async function beginCut(base,row){\n if(S.busy)return;\n try{\n  const plan=await window.JO9_CUTS.call('info',{base:relPicPath(base)});\n  if(window.JO9WS&&!$('wsdialog').open)window.JO9WS.open([{path:'content/pic/'+plan.base,file:plan.base.split('/').pop(),folder:plan.base.split('/')[0],width:plan.width,height:plan.height}]);\n  cutDraft={plan};cutModeBar();\n  await refreshCutFamilies(true);\n  if(row){\n   const source=S.inputs.find(s=>s.id===row.inputId),file=row.output?new File([row.output],plan.next.split('/').pop(),{type:'image/png'}):row.file;\n   await stageCutFile(file,{plan},source?.relative||'',row.output?null:row.options);\n  }\n  $('drop').scrollIntoView({behavior:'smooth',block:'center'});\n  msg((plan.originalCut?'B컷은 JO9O 원본입니다. ':'')+'새 이미지 → '+plan.next+' · 기존 드롭박스와 구도·비교를 사용하세요.');\n }catch(e){msg('전환 컷 준비 실패: '+e.message,true);}\n}\n",
+      "new": "async function beginCut(base,row){\n if(S.busy)return null;\n let request=++cutRequestVersion;\n try{\n  const plan=await window.JO9_CUTS.call('info',{base:relPicPath(base)});\n  if(request!==cutRequestVersion)return null;\n  if(window.JO9WS&&!$('wsdialog').open){\n   window.JO9WS.open([{path:'content/pic/'+plan.base,file:plan.base.split('/').pop(),folder:plan.base.split('/')[0],width:plan.width,height:plan.height}]);\n   request=cutRequestVersion;\n  }\n  const requested=resourceByPath('content/pic/'+relPicPath(base))||resourceByPath('content/pic/'+plan.base)||{path:'content/pic/'+plan.base,file:plan.base.split('/').pop(),folder:plan.base.split('/')[0],width:plan.width,height:plan.height};\n  if(!ScreenContext.resources.some(r=>r.path===requested.path)){ScreenContext.resources=[requested];cutFamilyStamp='' ;}\n  SelectedScreenPaths.clear();SelectedScreenPaths.add(requested.path);ScreenDetailPath=requested.path;\n  const draft={plan};cutDraft=draft;cutModeBar();renderScreenResources();\n  await refreshCutFamilies(true);\n  if(request!==cutRequestVersion||cutDraft!==draft)return null;\n  if(row){\n   const source=S.inputs.find(s=>s.id===row.inputId),file=row.output?new File([row.output],plan.next.split('/').pop(),{type:'image/png'}):row.file;\n   busy(true);try{await stageCutFile(file,draft,source?.relative||'',row.output?null:row.options);}finally{busy(false);}\n  }\n  $('drop').scrollIntoView({behavior:'smooth',block:'center'});\n  msg((plan.originalCut?'B컷은 JO9O 원본입니다. ':'')+'새 이미지 → '+plan.next+' · 기존 드롭박스와 구도·비교를 사용하세요.');\n  return draft;\n }catch(e){if(request===cutRequestVersion)msg('전환 컷 준비 실패: '+e.message,true);return null;}\n}\n"
+    },
+    {
+      "where": "editExistingCut stale read and stable draft",
+      "old": "async function editExistingCut(p){\n if(S.busy)return;\n try{\n  const resource=resourceByPath(p),loaded=await readCut(p);\n  if(loaded.readOnly||resource?.readOnly){await beginCut(resource?.base||p);await stageCutFile(loaded.file,cutDraft);msg('JO9O B컷을 작업 영역으로 불러왔습니다. 원본을 보존하고 '+cutDraft.plan.next+'로 저장합니다.');}\n  else{cutDraft={editCut:relPicPath(p)};cutModeBar();await stageCutFile(loaded.file,cutDraft);msg('기존 컷을 작업 영역으로 불러왔습니다. 구도·비교에서 편집하세요: '+relPicPath(p));}\n  $('rows').scrollIntoView({behavior:'smooth',block:'start'});\n }catch(e){msg('전환 컷 불러오기 실패: '+e.message,true);}\n}\n",
+      "new": "async function editExistingCut(p){\n if(S.busy)return;\n const request=++cutRequestVersion;\n try{\n  const resource=resourceByPath(p),loaded=await readCut(p);\n  if(request!==cutRequestVersion)return;\n  if(loaded.readOnly||resource?.readOnly){\n   const draft=await beginCut(resource?.base||p);if(!draft||cutDraft!==draft)return;\n   busy(true);try{await stageCutFile(loaded.file,draft);}finally{busy(false);}\n   msg('JO9O B컷을 작업 영역으로 불러왔습니다. 원본을 보존하고 '+draft.plan.next+'로 저장합니다.');\n  }else{\n   const draft={editCut:relPicPath(p)};cutDraft=draft;cutModeBar();\n   busy(true);try{await stageCutFile(loaded.file,draft);}finally{busy(false);}\n   msg('기존 컷을 작업 영역으로 불러왔습니다. 구도·비교에서 편집하세요: '+relPicPath(p));\n  }\n  $('rows').scrollIntoView({behavior:'smooth',block:'start'});\n }catch(e){if(request===cutRequestVersion)msg('전환 컷 불러오기 실패: '+e.message,true);}\n}\n"
+    },
+    {
+      "where": "drop draft snapshot",
+      "old": " if(S.busy)return;busy(true);\n try{for(const entry of files)",
+      "new": " if(S.busy)return;const draft=cutDraft;busy(true);\n try{for(const entry of files)"
+    },
+    {
+      "where": "stable drop destination",
+      "old": "await stageCutFile(file,cutDraft,entry.relative||file.webkitRelativePath||'');",
+      "new": "await stageCutFile(file,draft,entry.relative||file.webkitRelativePath||'');"
+    },
+    {
+      "where": "cancel invalidates preparation",
+      "old": "else{cutDraft=null;cutModeBar();msg('일반 이미지 교체 모드입니다.');}",
+      "new": "else{resetCutMode();msg('일반 이미지 교체 모드입니다.');}"
+    },
+    {
+      "where": "public lifecycle hook",
+      "old": "window.JO9Workshop.beginCut=beginCut;",
+      "new": "window.JO9Workshop.resetCutMode=resetCutMode;\nwindow.JO9Workshop.beginCut=beginCut;"
+    },
+    {
+      "where": "context update reset",
+      "old": "  JO9ContextStamp=stamp;\n",
+      "new": "  JO9ContextStamp=stamp;\n  resetCutMode();\n"
+    },
+    {
+      "where": "selection change reset",
+      "old": " const path=e.target.dataset.path;\n if(e.target.checked)",
+      "new": " const path=e.target.dataset.path;\n if(S.busy){e.target.checked=SelectedScreenPaths.has(path);return;}\n resetCutMode();\n if(e.target.checked)"
+    },
+    {
+      "where": "selection uncheck reset",
+      "old": " const b=e.target.closest('[data-action=\"screen-unselect\"]');if(!b)return;\n SelectedScreenPaths.delete",
+      "new": " const b=e.target.closest('[data-action=\"screen-unselect\"]');if(!b||S.busy)return;\n resetCutMode();\n SelectedScreenPaths.delete"
+    },
+    {
+      "where": "context update reset",
+      "old": "  JO9ContextStamp=stamp;\n",
+      "new": "  JO9ContextStamp=stamp;\n  resetCutMode();\n"
+    },
+    {
+      "where": "selection change reset",
+      "old": " const path=e.target.dataset.path;\n if(e.target.checked)",
+      "new": " const path=e.target.dataset.path;\n if(S.busy){e.target.checked=SelectedScreenPaths.has(path);return;}\n resetCutMode();\n if(e.target.checked)"
+    },
+    {
+      "where": "selection uncheck reset",
+      "old": " const b=e.target.closest('[data-action=\"screen-unselect\"]');if(!b)return;\n SelectedScreenPaths.delete",
+      "new": " const b=e.target.closest('[data-action=\"screen-unselect\"]');if(!b||S.busy)return;\n resetCutMode();\n SelectedScreenPaths.delete"
+    },
+    {
+      "where": "context update reset",
+      "old": "  JO9ContextStamp=stamp;\n",
+      "new": "  JO9ContextStamp=stamp;\n  resetCutMode();\n"
+    },
+    {
+      "where": "selection change reset",
+      "old": " const path=e.target.dataset.path;\n if(e.target.checked)",
+      "new": " const path=e.target.dataset.path;\n if(S.busy){e.target.checked=SelectedScreenPaths.has(path);return;}\n resetCutMode();\n if(e.target.checked)"
+    },
+    {
+      "where": "selection uncheck reset",
+      "old": " const b=e.target.closest('[data-action=\"screen-unselect\"]');if(!b)return;\n SelectedScreenPaths.delete",
+      "new": " const b=e.target.closest('[data-action=\"screen-unselect\"]');if(!b||S.busy)return;\n resetCutMode();\n SelectedScreenPaths.delete"
+    },
+    {
+      "where": "ordinary open reset",
+      "old": " open(list){\n  for(const s of S.inputs)",
+      "new": " open(list){\n  if(S.busy)return msg('작업이 끝난 뒤 대상을 바꿔 주세요.',true);\n  window.JO9Workshop?.resetCutMode();\n  for(const s of S.inputs)"
+    },
+    {
+      "where": "close reset",
+      "old": "$('wsdialog').addEventListener('cancel',e=>{if(S.busy)e.preventDefault()});",
+      "new": "$('wsdialog').addEventListener('cancel',e=>{if(S.busy)e.preventDefault()});\n$('wsdialog').addEventListener('close',()=>window.JO9Workshop?.resetCutMode());"
+    },
+    {
+      "where": "context update reset",
+      "old": "  JO9ContextStamp=stamp;\n",
+      "new": "  JO9ContextStamp=stamp;\n  resetCutMode();\n"
+    },
+    {
+      "where": "selection change reset",
+      "old": " const path=e.target.dataset.path;\n if(e.target.checked)",
+      "new": " const path=e.target.dataset.path;\n if(S.busy){e.target.checked=SelectedScreenPaths.has(path);return;}\n resetCutMode();\n if(e.target.checked)"
+    },
+    {
+      "where": "selection uncheck reset",
+      "old": " const b=e.target.closest('[data-action=\"screen-unselect\"]');if(!b)return;\n SelectedScreenPaths.delete",
+      "new": " const b=e.target.closest('[data-action=\"screen-unselect\"]');if(!b||S.busy)return;\n resetCutMode();\n SelectedScreenPaths.delete"
+    },
+    {
+      "where": "ordinary open reset",
+      "old": " open(list){\n  for(const s of S.inputs)",
+      "new": " open(list){\n  if(S.busy)return msg('작업이 끝난 뒤 대상을 바꿔 주세요.',true);\n  window.JO9Workshop?.resetCutMode();\n  for(const s of S.inputs)"
+    },
+    {
+      "where": "close reset",
+      "old": "$('wsdialog').addEventListener('cancel',e=>{if(S.busy)e.preventDefault()});",
+      "new": "$('wsdialog').addEventListener('cancel',e=>{if(S.busy)e.preventDefault()});\n$('wsdialog').addEventListener('close',()=>window.JO9Workshop?.resetCutMode());"
+    },
+    {
+      "where": "ordinary open reset",
+      "old": " open(list){\n  for(const s of S.inputs)",
+      "new": " open(list){\n  if(S.busy)return msg('작업이 끝난 뒤 대상을 바꿔 주세요.',true);\n  window.JO9Workshop?.resetCutMode();\n  for(const s of S.inputs)"
+    },
+    {
+      "where": "close reset",
+      "old": "`$('wsdialog').addEventListener('cancel',e=>{if(S.busy)e.preventDefault()});",
+      "new": "`$('wsdialog').addEventListener('cancel',e=>{if(S.busy)e.preventDefault()});\n`$('wsdialog').addEventListener('close',()=>window.JO9Workshop?.resetCutMode());"
+    }
+  ],
+  "followupReplacements": [
+    {
+      "path": "G:/somi/JO9sa/tools/cut-addition/workshop-cut-editor.js",
+      "old": "  ScreenContext.resources=resources;cutFamilyStamp=stamp;renderScreenResources();",
+      "new": "  if(ScreenContext.resources.filter(r=>!r.cutFamily&&cutEligible(r.path)).map(r=>r.path).join('|')!==stamp)return;\n  ScreenContext.resources=resources;cutFamilyStamp=stamp;renderScreenResources();"
+    },
+    {
+      "path": "G:/somi/JO9sa/tools/image-workshop/place/JO9_Place_Workshop.html",
+      "old": "if(s.mappedPath&&!valid.has(s.mappedPath))s.mappedPath='';",
+      "new": "if(!s.cutPlan&&!s.editCut&&s.mappedPath&&!valid.has(s.mappedPath))s.mappedPath='';"
+    },
+    {
+      "path": "G:/somi/JO9sa/tools/image-workshop/place/JO9_Place_Workshop.html",
+      "old": "if(s.mappedPath===path&&!SelectedScreenPaths.has(path)){s.mappedPath='';s.faceCrop=null}",
+      "new": "if(!s.cutPlan&&!s.editCut&&s.mappedPath===path&&!SelectedScreenPaths.has(path)){s.mappedPath='';s.faceCrop=null}"
+    },
+    {
+      "path": "G:/somi/JO9sa/tools/image-workshop/place/JO9_Place_Workshop.html",
+      "old": "for(const s of S.inputs)if(s.mappedPath===b.dataset.path){s.mappedPath='';s.faceCrop=null}",
+      "new": "for(const s of S.inputs)if(!s.cutPlan&&!s.editCut&&s.mappedPath===b.dataset.path){s.mappedPath='';s.faceCrop=null}"
+    },
+    {
+      "path": "G:/somi/JO9sa/tools/cut-addition/JO9_Place_Workshop.html",
+      "old": "if(s.mappedPath&&!valid.has(s.mappedPath))s.mappedPath='';",
+      "new": "if(!s.cutPlan&&!s.editCut&&s.mappedPath&&!valid.has(s.mappedPath))s.mappedPath='';"
+    },
+    {
+      "path": "G:/somi/JO9sa/tools/cut-addition/JO9_Place_Workshop.html",
+      "old": "if(s.mappedPath===path&&!SelectedScreenPaths.has(path)){s.mappedPath='';s.faceCrop=null}",
+      "new": "if(!s.cutPlan&&!s.editCut&&s.mappedPath===path&&!SelectedScreenPaths.has(path)){s.mappedPath='';s.faceCrop=null}"
+    },
+    {
+      "path": "G:/somi/JO9sa/tools/cut-addition/JO9_Place_Workshop.html",
+      "old": "for(const s of S.inputs)if(s.mappedPath===b.dataset.path){s.mappedPath='';s.faceCrop=null}",
+      "new": "for(const s of S.inputs)if(!s.cutPlan&&!s.editCut&&s.mappedPath===b.dataset.path){s.mappedPath='';s.faceCrop=null}"
+    },
+    {
+      "path": "G:/somi/JO9sa/tools/cut-addition/catalog_editor.js",
+      "old": "if(s.mappedPath&&!valid.has(s.mappedPath))s.mappedPath='';",
+      "new": "if(!s.cutPlan&&!s.editCut&&s.mappedPath&&!valid.has(s.mappedPath))s.mappedPath='';"
+    },
+    {
+      "path": "G:/somi/JO9sa/tools/cut-addition/catalog_editor.js",
+      "old": "if(s.mappedPath===path&&!SelectedScreenPaths.has(path)){s.mappedPath='';s.faceCrop=null}",
+      "new": "if(!s.cutPlan&&!s.editCut&&s.mappedPath===path&&!SelectedScreenPaths.has(path)){s.mappedPath='';s.faceCrop=null}"
+    },
+    {
+      "path": "G:/somi/JO9sa/tools/cut-addition/catalog_editor.js",
+      "old": "for(const s of S.inputs)if(s.mappedPath===b.dataset.path){s.mappedPath='';s.faceCrop=null}",
+      "new": "for(const s of S.inputs)if(!s.cutPlan&&!s.editCut&&s.mappedPath===b.dataset.path){s.mappedPath='';s.faceCrop=null}"
+    },
+    {
+      "path": "G:/somi/JO9sa/tools/local-workspace/catalog-seed/catalog_editor.js",
+      "old": "if(s.mappedPath&&!valid.has(s.mappedPath))s.mappedPath='';",
+      "new": "if(!s.cutPlan&&!s.editCut&&s.mappedPath&&!valid.has(s.mappedPath))s.mappedPath='';"
+    },
+    {
+      "path": "G:/somi/JO9sa/tools/local-workspace/catalog-seed/catalog_editor.js",
+      "old": "if(s.mappedPath===path&&!SelectedScreenPaths.has(path)){s.mappedPath='';s.faceCrop=null}",
+      "new": "if(!s.cutPlan&&!s.editCut&&s.mappedPath===path&&!SelectedScreenPaths.has(path)){s.mappedPath='';s.faceCrop=null}"
+    },
+    {
+      "path": "G:/somi/JO9sa/tools/local-workspace/catalog-seed/catalog_editor.js",
+      "old": "for(const s of S.inputs)if(s.mappedPath===b.dataset.path){s.mappedPath='';s.faceCrop=null}",
+      "new": "for(const s of S.inputs)if(!s.cutPlan&&!s.editCut&&s.mappedPath===b.dataset.path){s.mappedPath='';s.faceCrop=null}"
+    }
+  ],
+  "preparationReplacements": [
+    {
+      "old": "let cutDraft=null,cutFamilyStamp='',cutFamilyLoading=false,cutRequestVersion=0;",
+      "new": "let cutDraft=null,cutFamilyStamp='',cutFamilyLoading=false,cutRequestVersion=0,cutPreparing=0;"
+    },
+    {
+      "old": "function resetCutMode(){cutRequestVersion++;cutDraft=null;cutModeBar();}",
+      "new": "function resetCutMode(){cutRequestVersion++;cutPreparing=0;cutDraft=null;cutModeBar();}"
+    },
+    {
+      "old": " let request=++cutRequestVersion;",
+      "new": " resetCutMode();let request=cutRequestVersion;cutPreparing=request;\n msg('전환 컷 대상을 확인하고 있습니다.');"
+    },
+    {
+      "old": "  if(request!==cutRequestVersion)return null;\n  if(window.JO9WS",
+      "new": "  if(request!==cutRequestVersion)return null;\n  cutPreparing=0;if(S.busy)return null;\n  if(window.JO9WS"
+    },
+    {
+      "old": "  if(request!==cutRequestVersion||cutDraft!==draft)return null;",
+      "new": "  if(request!==cutRequestVersion||cutDraft!==draft||S.busy)return null;"
+    },
+    {
+      "old": " }catch(e){if(request===cutRequestVersion)msg('전환 컷 준비 실패: '+e.message,true);return null;}",
+      "new": " }catch(e){if(request===cutRequestVersion){cutPreparing=0;msg('전환 컷 준비 실패: '+e.message,true);}return null;}"
+    },
+    {
+      "old": " const request=++cutRequestVersion;",
+      "new": " resetCutMode();const request=cutRequestVersion;cutPreparing=request;\n msg('전환 컷을 불러오고 있습니다.');"
+    },
+    {
+      "old": "  if(request!==cutRequestVersion)return;\n  if(loaded.readOnly",
+      "new": "  if(request!==cutRequestVersion)return;\n  cutPreparing=0;if(S.busy)return;\n  if(loaded.readOnly"
+    },
+    {
+      "old": " }catch(e){if(request===cutRequestVersion)msg('전환 컷 불러오기 실패: '+e.message,true);}",
+      "new": " }catch(e){if(request===cutRequestVersion){cutPreparing=0;msg('전환 컷 불러오기 실패: '+e.message,true);}}"
+    },
+    {
+      "old": "add=async function(files){\n if(!cutDraft)",
+      "new": "add=async function(files){\n if(cutPreparing)return msg('전환 컷 대상을 확인 중입니다. 확인이 끝난 뒤 이미지를 넣어 주세요.',true);\n if(!cutDraft)"
+    }
+  ]
+}

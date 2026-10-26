@@ -1,0 +1,20 @@
+'use strict';
+const fs=require('fs'),assert=require('assert/strict');
+const repo='G:/somi/JO9sa',rec=repo+'/records/third-patch-approved-followups-20261026';
+const result=JSON.parse(fs.readFileSync(rec+'/FINAL_RESULT.json'));assert.equal(result.status,'WORK_QSP_APPLIED');
+const image=JSON.parse(fs.readFileSync(rec+'/images/FINAL_RESULT.json'));assert.equal(image.status,'PASS');
+const read=p=>fs.readFileSync(repo+'/'+p,'utf8'),write=(p,s)=>fs.writeFileSync(repo+'/'+p,s);
+const notes='docs/THIRD_PATCH_RELEASE_NOTES_20261026_KO.md';let n=read(notes);
+const additions=[
+ '- 랠리에서 참가를 거부했는데도 경기가 진행되던 문제를 수정했습니다.',
+ '- 정상 범위를 벗어난 기술값에서도 랠리 결과 분기가 정상적으로 선택되도록 보완했습니다.',
+ '- 일부 인물의 얼굴·복장 이미지 참조 오류를 수정하고 기존 저장의 이미지 경로 호환을 보완했습니다.'
+];for(const s of additions){assert(!n.includes(s));n=n.trimEnd()+'\n'+s+'\n';}assert.deepEqual(n.split(/\r?\n/).filter(x=>x.startsWith('## ')),['## [신규 업데이트]','## [버그 수정]']);write(notes,n);
+const pending='docs/THIRD_PATCH_PENDING_20261026_KO.md';let p=read(pending);
+for(const prefix of ['- **정확한 이미지 참조 두 건:**','- 랠리에서 낮은 복종의 거절 결과가','- 정상 범위 밖인 기술값 5 초과 조합의']){const lines=p.split('\n').filter(s=>s.startsWith(prefix));assert.equal(lines.length,1,prefix);p=p.replace(lines[0]+'\n','');}
+const old='- 이미지2건, 랠리복종거절, 비정상기술값대응은 수정안을제시했고 사용자선택대기다. 아직적용하지않았다.';assert(p.includes(old));p=p.replace(old,'- 이미지 두 건, 랠리 복종 거절, 범위 밖 기술값 대응은 사용자 승인 후 WORK에 적용했고 별도 분기 검사와 공식 엔진 검사를 통과했다. 3차 r1에 포함한다.');
+p+='\n## 2026-10-26 — 추가 승인 세 건 적용\n\n- 랠리 복종 거절을 기술 분기보다 먼저 처리한다. 기존 거절 비용·행동력·명성 취소 규칙은 유지한다.\n- 기술값이 정상 상한을 넘어도 기존 최고 구간으로 분류하며 저장 수치를 수정하지 않는다. 정상 구간의 분류와 추첨은 유지한다.\n- JSON 두 필드를 교정하고 옛 URL의 호환 PNG 두 개를 추가했다. 파일명 일괄 변경이나 세이브 이관은 없다.\n\n근거: records/third-patch-approved-followups-20261026/FINAL_RESULT.json, qsp-independent-review.json, images/FINAL_RESULT.json. 이전 제안 문서는 당시 상태를 보존하며 이 결과가 최신이다.\n';write(pending,p);
+const oldreport='records/third-followups-20261026/REPORT_KO.md';write(oldreport,read(oldreport)+'\n## 2026-10-26 최신 적용 결과\n\n위 문서에서 승인 대기로 기록한 랠리 복종 거절·최고 구간 처리·이미지 JSON+호환 PNG 안은 이후 사용자가 승인하여 WORK 적용과 검증을 마쳤다. 최신 근거는 ../third-patch-approved-followups-20261026/FINAL_RESULT.json, qsp-independent-review.json 및 images/FINAL_RESULT.json이다. 기존 제안/관찰 과정은 변경하지 않는다.\n');
+const manual=`# 승인된 3차 추가 수정 — 기능과 검증\n\n패치 ID: 2026-10-26_rally_refusal_top_tier. WORK SHA-256: ${result.after}.\n\n## 호출과 입출력\n\n기존 interaction_city의 랠리 참가 코드 102102에서 남녀 주인공 두 분기만 수정한다. 기존 slave 복종/종합 기술을 읽고 interaction_city 결과 코드를 정한다. 복종 거절은 기존 102103 결과로 즉시 이동한다. 최고 기술 구간의 상한 비교만 제거하여 정상 상한을 넘는 입력도 기존 상위 구간으로 보낸다. 저장 기술값·정상 구간의 경계·원래 추첨 분기와 보상은 바꾸지 않는다.\n\n## 부작용과 의존성\n\n거절 결과의 참가비와 행동력, 기존 덕/죄 변화 및 jo9_contest_fame 취소 처리를 그대로 사용한다. 새 함수·QSP 로케이션·영구 저장키·외부 의존성은 없다. 적용 위치는 interaction_city 한 곳이고 markers RALLY_REFUSAL_PRIORITY_20261026 / RALLY_TOP_TIER_1..3_20261026으로 찾을 수 있다. 거절 우선 이동을 제거하면 뒤 기술 조건이 거절 코드를 덮고, 상한을 복구하면 범위 밖 값의 분류가 누락될 수 있다.\n\n이미지 두 건은 images/REPORT_KO.md를 참고한다. 교정 JSON은 신규 정의, 호환 PNG는 기존 저장에 남은 URL을 지원한다. 호환 파일을 제거하면 옛 경로의 저장 화면이 다시 누락될 수 있다. 정상 원본 이미지는 보존했으며 새 그림 제작이 아니다.\n\n## 검증\n\n적용 전 실제 엔진에서 거절 덮임 및 기술값 초과 분류 실패를 확인했다. 후보는 남녀 256개 분류 사례, 거절 비용/행동력/명성 취소, 실제 GT 이동 네 경로를 포함한 6개 native 검사 그룹을 통과했다. 별도 독립 역비교는 정상 72쌍 분류, 승인 실행문 8개 외 모든 본문 불변을 확인했다. 공식 출고 검사의 구조·CRLF·주석 경계·정확 재생·멱등성과 실제 엔진 9경로는 PASS다. 파일 구조 전체와 모든 동적 코드의 완전한 문법 증명은 아니며 GUI 화면 클릭·실제 세이브 불러오기는 하지 않았다.\n\n## 보존과 복구\n\nbefore.qsp.gz는 이번 작업 직전 최소 원본이다. patch.json 및 mods의 동일 패치로 재현한다. 실제 WORK 적용은 tools/apply_mods.ps1을 사용했다. 복구는 현재 해시와 사용자 수정을 먼저 확인한 뒤 최소 원본을 사용해야 한다. 기존 세이브·Full·JO9O·기존 ZIP·설정은 보존했고 커밋·푸시는 하지 않았다.\n`;
+fs.writeFileSync(rec+'/MANUAL_KO.md',manual);const plan=fs.readFileSync(rec+'/PLAN_KO.md','utf8').replaceAll('- [ ] 적용 전','- [x] 적용 전').replaceAll('- [ ] interaction_city','- [x] interaction_city').replaceAll('- [ ] 이미지','- [x] 이미지').replaceAll('- [ ] 이번 직전','- [x] 이번 직전');fs.writeFileSync(rec+'/PLAN_KO.md',plan);
+fs.copyFileSync(__filename,rec+'/update-docs.cjs');console.log(JSON.stringify({playerNoteBulletsAdded:3,sourceNotes:notes,pendingStatusUpdated:true,manual:rec+'/MANUAL_KO.md'}));

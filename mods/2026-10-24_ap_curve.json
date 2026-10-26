@@ -1,0 +1,144 @@
+{
+  "id": "2026-10-24_ap_curve",
+  "description": "체력0..5 기본AP0/2/3/4/5/5. 상한/일일회복/신규생성/영입상한/UI통일. 기존잔량·보너스·주인·과로·신체성장/경제불변.",
+  "before_sha256": "05257a003f3984f8a8ceeca534b7a459ae0e501ecf3d9bff983519a251f03a44",
+  "after_sha256": "30f5f2e9458a7c10c4852270ee42203d0501ed705845509512043969836a04ae",
+  "edits": [
+    {
+      "location": "#static_base",
+      "field": "body",
+      "old": "\t\t! if energy exceeds cap and a half star is missing, refill it\r\n\t\tif dynslave['energy'] > dynslave['stamina'] and dynslave['half_action'] = 1: dynslave['half_action'] = 0\r\n\t\t! transfer bonus energy stars (negative half_actions) to normal energy stars\r\n\t\tif dynslave['half_action'] < 0 and dynslave['energy'] < dynslave['stamina']:\r\n\t\t\tdynslave['energy'] += (-1 * dynslave['half_action']) / 2\r\n\t\t\tdynslave['half_action'] = dynslave['half_action'] MOD 2 - max(0, dynslave['energy'] - dynslave['stamina'])*2\r\n\t\tend\r\n\t\t! consume spent half actions (positive half_actions)\r\n\t\t:_process_slave_half_actions_loop\r\n\t\t\tif dynslave['half_action'] > 1: dynslave['half_action'] -= 2 & dynamic $replace($dynamic_energy_drop, 'dyn'+'slave', 'dynslave')\r\n\t\t\tif dynslave['half_action'] > 1: jump '_process_slave_half_actions_loop'\r\n\t\t! clamp value\r\n\t\tdynslave['energy'] = max(-5, min(dynslave['stamina'], dynslave['energy']))",
+      "new": "\t\t! JO9 MOD START AP_CURVE_CAP | 2026-10-24_ap_curve\r\n\t\tlocal jo9_base_ap_cap = iif(dynslave['stamina'] > 0, min(5, dynslave['stamina'] + 1), 0)\r\n\t\t! if energy exceeds cap and a half star is missing, refill it\r\n\t\tif dynslave['energy'] > jo9_base_ap_cap and dynslave['half_action'] = 1: dynslave['half_action'] = 0\r\n\t\t! transfer bonus energy stars (negative half_actions) to normal energy stars\r\n\t\tif dynslave['half_action'] < 0 and dynslave['energy'] < jo9_base_ap_cap:\r\n\t\t\tdynslave['energy'] += (-1 * dynslave['half_action']) / 2\r\n\t\t\tdynslave['half_action'] = dynslave['half_action'] MOD 2 - max(0, dynslave['energy'] - jo9_base_ap_cap)*2\r\n\t\tend\r\n\t\t! consume spent half actions (positive half_actions)\r\n\t\t:_process_slave_half_actions_loop\r\n\t\t\tif dynslave['half_action'] > 1: dynslave['half_action'] -= 2 & dynamic $replace($dynamic_energy_drop, 'dyn'+'slave', 'dynslave')\r\n\t\t\tif dynslave['half_action'] > 1: jump '_process_slave_half_actions_loop'\r\n\t\t! clamp value\r\n\t\tdynslave['energy'] = max(-5, min(jo9_base_ap_cap, dynslave['energy']))\r\n\t\t! JO9 MOD END AP_CURVE_CAP",
+      "count": 1,
+      "patchId": "AP_CURVE_CAP"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "\t\ta = dynslave['stamina'] - dynslave['wounds']",
+      "new": "\t\t! JO9 MOD START AP_CURVE_RECOVERY | 2026-10-24_ap_curve\r\n\t\ta = iif(dynslave['stamina'] > 0, min(5, dynslave['stamina'] + 1), 0) - dynslave['wounds']\r\n\t\t! JO9 MOD END AP_CURVE_RECOVERY",
+      "count": 1,
+      "patchId": "AP_CURVE_RECOVERY"
+    },
+    {
+      "location": "generate_stock",
+      "field": "body",
+      "old": "stock['energy'] = stock['stamina']",
+      "new": "! JO9 MOD START AP_CURVE_INIT_GENERATE_STOCK | 2026-10-24_ap_curve\r\nstock['energy'] = iif(stock['stamina'] > 0, min(5, stock['stamina'] + 1), 0)\r\n! JO9 MOD END AP_CURVE_INIT_GENERATE_STOCK",
+      "count": 1,
+      "patchId": "AP_CURVE_INIT_GENERATE_STOCK"
+    },
+    {
+      "location": "generate_clone",
+      "field": "body",
+      "old": "stock['energy'] = stock['stamina']",
+      "new": "! JO9 MOD START AP_CURVE_INIT_GENERATE_CLONE | 2026-10-24_ap_curve\r\nstock['energy'] = iif(stock['stamina'] > 0, min(5, stock['stamina'] + 1), 0)\r\n! JO9 MOD END AP_CURVE_INIT_GENERATE_CLONE",
+      "count": 1,
+      "patchId": "AP_CURVE_INIT_GENERATE_CLONE"
+    },
+    {
+      "location": "get_demo_slave",
+      "field": "body",
+      "old": "slave[\"energy\"] = slave[\"metabolism\"]",
+      "new": "! JO9 MOD START AP_CURVE_INIT_GET_DEMO_SLAVE | 2026-10-24_ap_curve\r\nslave['energy'] = iif(slave['stamina'] > 0, min(5, slave['stamina'] + 1), 0)\r\n! JO9 MOD END AP_CURVE_INIT_GET_DEMO_SLAVE",
+      "count": 1,
+      "patchId": "AP_CURVE_INIT_GET_DEMO_SLAVE"
+    },
+    {
+      "location": "get_special_slave",
+      "field": "body",
+      "old": "slave[\"energy\"] = slave[\"metabolism\"]",
+      "new": "! JO9 MOD START AP_CURVE_INIT_GET_SPECIAL_SLAVE | 2026-10-24_ap_curve\r\nslave['energy'] = iif(slave['stamina'] > 0, min(5, slave['stamina'] + 1), 0)\r\n! JO9 MOD END AP_CURVE_INIT_GET_SPECIAL_SLAVE",
+      "count": 1,
+      "patchId": "AP_CURVE_INIT_GET_SPECIAL_SLAVE"
+    },
+    {
+      "location": "stock_to_slave_nogt",
+      "field": "body",
+      "old": "if stock['energy'] > stock['stamina']: stock['energy'] = stock['stamina']",
+      "new": "! JO9 MOD START AP_CURVE_ACQUIRE_CAP | 2026-10-24_ap_curve\r\nlocal jo9_acquire_ap_cap = iif(stock['stamina'] > 0, min(5, stock['stamina'] + 1), 0)\r\nif stock['energy'] > jo9_acquire_ap_cap: stock['energy'] = jo9_acquire_ap_cap\r\n! JO9 MOD END AP_CURVE_ACQUIRE_CAP",
+      "count": 1,
+      "patchId": "AP_CURVE_ACQUIRE_CAP"
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "\tslave['energy'] = slave['stamina']",
+      "new": "\t! JO9 MOD START AP_CURVE_EXAM | 2026-10-24_ap_curve\r\n\tslave['energy'] = iif(slave['stamina'] > 0, min(5, slave['stamina'] + 1), 0)\r\n\t! JO9 MOD END AP_CURVE_EXAM",
+      "count": 1,
+      "patchId": "AP_CURVE_EXAM"
+    },
+    {
+      "location": "main_screen",
+      "field": "body",
+      "old": "jo9_ap_cap = max(0, min(5, slave['stamina']))",
+      "new": "! JO9 MOD START AP_CURVE_UI_MAIN_SCREEN_SLAVE | 2026-10-24_ap_curve\r\njo9_ap_cap = iif(slave['stamina'] > 0, min(5, slave['stamina'] + 1), 0)\r\n! JO9 MOD END AP_CURVE_UI_MAIN_SCREEN_SLAVE",
+      "count": 1,
+      "patchId": "AP_CURVE_UI_MAIN_SCREEN_SLAVE"
+    },
+    {
+      "location": "main_screen",
+      "field": "body",
+      "old": "jo9_ap_cap = max(0, min(5, assistant['stamina']))",
+      "new": "! JO9 MOD START AP_CURVE_UI_MAIN_SCREEN_ASSISTANT | 2026-10-24_ap_curve\r\njo9_ap_cap = iif(assistant['stamina'] > 0, min(5, assistant['stamina'] + 1), 0)\r\n! JO9 MOD END AP_CURVE_UI_MAIN_SCREEN_ASSISTANT",
+      "count": 1,
+      "patchId": "AP_CURVE_UI_MAIN_SCREEN_ASSISTANT"
+    },
+    {
+      "location": "city_screen",
+      "field": "body",
+      "old": "jo9_ap_cap = max(0, min(5, slave['stamina']))",
+      "new": "! JO9 MOD START AP_CURVE_UI_CITY_SCREEN_SLAVE | 2026-10-24_ap_curve\r\njo9_ap_cap = iif(slave['stamina'] > 0, min(5, slave['stamina'] + 1), 0)\r\n! JO9 MOD END AP_CURVE_UI_CITY_SCREEN_SLAVE",
+      "count": 1,
+      "patchId": "AP_CURVE_UI_CITY_SCREEN_SLAVE"
+    },
+    {
+      "location": "city_screen",
+      "field": "body",
+      "old": "jo9_ap_cap = max(0, min(5, assistant['stamina']))",
+      "new": "! JO9 MOD START AP_CURVE_UI_CITY_SCREEN_ASSISTANT | 2026-10-24_ap_curve\r\njo9_ap_cap = iif(assistant['stamina'] > 0, min(5, assistant['stamina'] + 1), 0)\r\n! JO9 MOD END AP_CURVE_UI_CITY_SCREEN_ASSISTANT",
+      "count": 1,
+      "patchId": "AP_CURVE_UI_CITY_SCREEN_ASSISTANT"
+    },
+    {
+      "location": "slave_private_room1",
+      "field": "body",
+      "old": "jo9_ap_cap = max(0, min(5, room1['stamina']))",
+      "new": "! JO9 MOD START AP_CURVE_UI_SLAVE_PRIVATE_ROOM1_ROOM1 | 2026-10-24_ap_curve\r\njo9_ap_cap = iif(room1['stamina'] > 0, min(5, room1['stamina'] + 1), 0)\r\n! JO9 MOD END AP_CURVE_UI_SLAVE_PRIVATE_ROOM1_ROOM1",
+      "count": 1,
+      "patchId": "AP_CURVE_UI_SLAVE_PRIVATE_ROOM1_ROOM1"
+    },
+    {
+      "location": "slave_private_room2",
+      "field": "body",
+      "old": "jo9_ap_cap = max(0, min(5, room2['stamina']))",
+      "new": "! JO9 MOD START AP_CURVE_UI_SLAVE_PRIVATE_ROOM2_ROOM2 | 2026-10-24_ap_curve\r\njo9_ap_cap = iif(room2['stamina'] > 0, min(5, room2['stamina'] + 1), 0)\r\n! JO9 MOD END AP_CURVE_UI_SLAVE_PRIVATE_ROOM2_ROOM2",
+      "count": 1,
+      "patchId": "AP_CURVE_UI_SLAVE_PRIVATE_ROOM2_ROOM2"
+    },
+    {
+      "location": "slave_private_room3",
+      "field": "body",
+      "old": "jo9_ap_cap = max(0, min(5, room3['stamina']))",
+      "new": "! JO9 MOD START AP_CURVE_UI_SLAVE_PRIVATE_ROOM3_ROOM3 | 2026-10-24_ap_curve\r\njo9_ap_cap = iif(room3['stamina'] > 0, min(5, room3['stamina'] + 1), 0)\r\n! JO9 MOD END AP_CURVE_UI_SLAVE_PRIVATE_ROOM3_ROOM3",
+      "count": 1,
+      "patchId": "AP_CURVE_UI_SLAVE_PRIVATE_ROOM3_ROOM3"
+    },
+    {
+      "location": "slave_private_room4",
+      "field": "body",
+      "old": "jo9_ap_cap = max(0, min(5, room4['stamina']))",
+      "new": "! JO9 MOD START AP_CURVE_UI_SLAVE_PRIVATE_ROOM4_ROOM4 | 2026-10-24_ap_curve\r\njo9_ap_cap = iif(room4['stamina'] > 0, min(5, room4['stamina'] + 1), 0)\r\n! JO9 MOD END AP_CURVE_UI_SLAVE_PRIVATE_ROOM4_ROOM4",
+      "count": 1,
+      "patchId": "AP_CURVE_UI_SLAVE_PRIVATE_ROOM4_ROOM4"
+    },
+    {
+      "location": "snk_room_menu_screen",
+      "field": "body",
+      "old": "jo9_ap_cap = max(0, min(5, slave['stamina']))",
+      "new": "! JO9 MOD START AP_CURVE_UI_SNK_ROOM_MENU_SCREEN_SLAVE | 2026-10-24_ap_curve\r\njo9_ap_cap = iif(slave['stamina'] > 0, min(5, slave['stamina'] + 1), 0)\r\n! JO9 MOD END AP_CURVE_UI_SNK_ROOM_MENU_SCREEN_SLAVE",
+      "count": 1,
+      "patchId": "AP_CURVE_UI_SNK_ROOM_MENU_SCREEN_SLAVE"
+    }
+  ]
+}

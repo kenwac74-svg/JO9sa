@@ -1,0 +1,134 @@
+{
+  "status": "PASS",
+  "candidateSha256": "e4110fb537108326d0de680efa4a87d286f9b3a6e5bc0b6073e83d13e1ee97f0",
+  "baselineSha256": "b8de16b088051eea5e51d8636f9ca3cc3975974129adf950ce122260ba2b5cf1",
+  "nativeProbeGroups": 6,
+  "expectedRedGroups": 1,
+  "results": [
+    {
+      "name": "red-farid",
+      "status": "EXPECTED_RED",
+      "engineResults": [
+        {
+          "name": "red-farid",
+          "checkpoint": "Bounded native trader and public auction cap regression",
+          "pass": false,
+          "reason": "Unexpected message before completion",
+          "durationMs": 6508
+        }
+      ],
+      "expectedNegative": true,
+      "failure": "FAIL_CAP_baseline_farid_overflow_cash_100_sell_6750_bank_0",
+      "processExit": 1
+    },
+    {
+      "name": "quote-boundaries",
+      "status": "PASS",
+      "engineResults": [
+        {
+          "name": "quote-boundaries",
+          "checkpoint": "Bounded native trader and public auction cap regression",
+          "pass": true,
+          "reason": "",
+          "durationMs": 6507
+        }
+      ],
+      "expectedNegative": false,
+      "processExit": 0
+    },
+    {
+      "name": "ordinary-farid",
+      "status": "PASS",
+      "engineResults": [
+        {
+          "name": "ordinary-farid",
+          "checkpoint": "Bounded native trader and public auction cap regression",
+          "pass": true,
+          "reason": "",
+          "durationMs": 6505
+        }
+      ],
+      "expectedNegative": false,
+      "processExit": 0
+    },
+    {
+      "name": "rare-farid-settings",
+      "status": "PASS",
+      "engineResults": [
+        {
+          "name": "rare-farid-settings",
+          "checkpoint": "Bounded native trader and public auction cap regression",
+          "pass": true,
+          "reason": "",
+          "durationMs": 6756
+        }
+      ],
+      "expectedNegative": false,
+      "processExit": 0
+    },
+    {
+      "name": "wong-settings",
+      "status": "PASS",
+      "engineResults": [
+        {
+          "name": "wong-settings",
+          "checkpoint": "Bounded native trader and public auction cap regression",
+          "pass": true,
+          "reason": "",
+          "durationMs": 6526
+        }
+      ],
+      "expectedNegative": false,
+      "processExit": 0
+    },
+    {
+      "name": "auction-broker-flows",
+      "status": "PASS",
+      "engineResults": [
+        {
+          "name": "auction-broker-flows",
+          "checkpoint": "Bounded native trader and public auction cap regression",
+          "pass": true,
+          "reason": "",
+          "durationMs": 6516
+        }
+      ],
+      "expectedNegative": false,
+      "processExit": 0
+    },
+    {
+      "name": "auction-saved-payouts",
+      "status": "PASS",
+      "engineResults": [
+        {
+          "name": "auction-saved-payouts",
+          "checkpoint": "Bounded native trader and public auction cap regression",
+          "pass": true,
+          "reason": "",
+          "durationMs": 6502
+        }
+      ],
+      "expectedNegative": false,
+      "processExit": 0
+    }
+  ],
+  "sourceGuards": [
+    "jo9_liquidation",
+    "jo9_liquidation_assets",
+    "jo9_liquidation_sale",
+    "jo9_traits_value/base_price unchanged"
+  ],
+  "instrumentation": [
+    "Start replaced with synthetic state; native valuation/offer/payment code retained",
+    "Terminal city/guild navigation changed to EXIT for subroutine return",
+    "Wong offer and 931 result blocks extracted verbatim from exact candidate",
+    "Quote boundaries use native valuation with synthetic auction table inputs 5999/6000/6001",
+    "Broker no-bid flows use native complete guild auction and synthetic 7500 starting increment; no bidder"
+  ],
+  "limits": [
+    "No GUI or user-save load test",
+    "No complete player auction click-through",
+    "Intermediate bid narration remains original; cap applies final amount"
+  ],
+  "runtimeModified": false
+}

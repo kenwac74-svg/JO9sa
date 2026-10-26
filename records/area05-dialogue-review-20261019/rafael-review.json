@@ -1,0 +1,113 @@
+{
+  "sourceHash": "ae591ef904a5fe0f4cbac3454815ac36cd1475464689869bb75c94e3e7fe7826",
+  "scope": "검토 전용; 게임 반영 미승인",
+  "rows": [
+    {
+      "key": "$rafael_quest[1]",
+      "sourceLine": 312,
+      "currentDictionaryLine": 3427,
+      "decision": "채택",
+      "kind": "말투 정리",
+      "reason": "항구 세력과 길드의 적대, 아버지의 중개는 직전 선장 대사와 러시아어 보존 주석에 모두 있다. 새 적대관계를 만드는 수정이 아니다.",
+      "evidence": [
+        "interaction_city:20412–20422",
+        "#static_txt:3280–3283"
+      ],
+      "caution": "원고의 강한 거래 거부 어조는 화자의 태도이며 신규 거래 제한으로 바꾸지 않는다.",
+      "speakerFix": "불필요",
+      "route": "현재 배열 복사 출력 경로에 연결됨"
+    },
+    {
+      "key": "$rafael_quest[2]",
+      "sourceLine": 313,
+      "currentDictionaryLine": 3428,
+      "decision": "채택",
+      "kind": "말투·직무 표현 정리",
+      "reason": "치료가 핵심이고 실제 납품 조건도 nurse>=4이다. 선원·항해 중 전투·치료인력이라는 설정을 유지한다.",
+      "evidence": [
+        "interaction_city:20437",
+        "#static_txt:3284–3286"
+      ],
+      "caution": "치료사는 직무 표현이다. 새 마법 치유 능력이나 직업 조건을 추가하지 않는다.",
+      "speakerFix": "라фа엘 → 라파엘",
+      "route": "현재 배열 복사 출력 경로에 연결됨"
+    },
+    {
+      "key": "$rafael_quest[3]",
+      "sourceLine": 314,
+      "currentDictionaryLine": 3429,
+      "decision": "채택",
+      "kind": "표현 정리",
+      "reason": "마법·요리·청소의 요구는 원문에 있으며 실제 enchanter/cook/service>=4와 맞는다. 부지런하다는 표현은 여기서 성격 특성 플래그의 요구가 아니다.",
+      "evidence": [
+        "interaction_city:20437",
+        "#static_txt:3287–3288"
+      ],
+      "caution": "문장상 선호처럼 말하더라도 현재 코드는 세 능력을 모두 요구한다. 조건 완화나 새 일벌레 특성 조건을 추가하지 않는다.",
+      "speakerFix": "라фа엘 → 라파엘",
+      "route": "현재 배열 복사 출력 경로에 연결됨"
+    },
+    {
+      "key": "$rafael_quest[4]",
+      "sourceLine": 315,
+      "currentDictionaryLine": 3430,
+      "decision": "채택",
+      "kind": "표현 정리",
+      "reason": "성숙·지능·지구력은 원문과 현재 age=milf_age, intellect/stamina>=4에 대응한다. 외모 조건은 실제 없다.",
+      "evidence": [
+        "interaction_city:20437",
+        "#static_base:130",
+        "#static_txt:3289–3291"
+      ],
+      "caution": "성숙은 현재 코드에서 선호가 아닌 정확한 나이 분류 조건이다. 낙인 brand<4도 실행 조건에 남지만 이번 문체 검토로 동작을 변경하지 않는다.",
+      "speakerFix": "라фа엘 → 라파엘",
+      "route": "현재 배열 복사 출력 경로에 연결됨"
+    },
+    {
+      "key": "$rafael_win[1]",
+      "sourceLine": 316,
+      "currentDictionaryLine": 3431,
+      "decision": "채택",
+      "kind": "보상 안내 표현 정리",
+      "reason": "대금 수령과 암시장 거래처 소개는 성공 시 4500스파크 지급 및 npc_progress=2일 때 암시장 메뉴 공개와 맞는다.",
+      "evidence": [
+        "interaction_city:20454–20465",
+        "city_menu_form:520",
+        "#static_txt:3292–3294"
+      ],
+      "caution": "현재 실제 성공 출력은 interaction_city:20464의 직접 문자열이다. 배열 원고만 교체해선 화면이 바뀌지 않는다.",
+      "route": "직접 출력문 수정 필요; 사전만 교체하면 미표시",
+      "speakerFix": "라фа엘 → 라파엘"
+    },
+    {
+      "key": "$rafael_win[2]",
+      "sourceLine": 317,
+      "currentDictionaryLine": 3432,
+      "decision": "절충",
+      "kind": "의미가 달라지는 표현",
+      "reason": "원고의 불량품 처분은 현재의 하자 보완보다 강하고 거래관행을 바꿔 읽히게 한다. 보존 러시아어도 брак을 устраняем이라고 하며 결함 해소로 읽을 수 있어 사람을 폐기한다고 확정할 근거가 부족하다. 품질 보증·상호 이익을 말하는 새 어조는 취하고 하자를 손본다는 뜻은 보존한다.",
+      "evidence": [
+        "#static_txt:3295–3296",
+        "interaction_city:20465"
+      ],
+      "caution": "새 처분·살해 시스템이나 설정을 도입하는 근거로 사용하지 않는다. 현재 직접 출력도 따로 맞춰야 한다.",
+      "route": "직접 출력문 수정 필요; 사전만 교체하면 미표시",
+      "speakerFix": "라фа엘 → 라파엘"
+    },
+    {
+      "key": "$rafael_fail[1]",
+      "sourceLine": 318,
+      "currentDictionaryLine": 3433,
+      "decision": "채택",
+      "kind": "말투 정리",
+      "reason": "요청 인물을 갖추지 못했을 때의 질책으로 기존 실패 분기와 맞는다. 실패 보상·벌칙을 새로 약속하지 않는다.",
+      "evidence": [
+        "interaction_city:20445–20452",
+        "#static_txt:3297–3298"
+      ],
+      "caution": "잘못 준비한 동행자가 있을 때의 문구이며 NPC 관계나 벌금 동작을 새로 추가하지 않는다.",
+      "speakerFix": "라фа엘 → 라파엘",
+      "route": "현재 배열 복사 출력 경로에 연결됨"
+    }
+  ]
+}

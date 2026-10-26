@@ -1,0 +1,233 @@
+{
+  "status": "DIALOGUE_DRAFT_AWAITING_USER_CONFIRMATION",
+  "date": "2026-10-25",
+  "sourceQsp": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+  "sourceSha256": "7ba03d9adb313169c78a26dfad2970fc9f57b11f13aad67da9f768a04bafc113",
+  "scope": "Fog boundary encounters 61101-61115; no runtime edit",
+  "userDirections": [
+    "원래 상황 묘사와 문장 흐름을 유지하며 짧게 각색",
+    "전투 선택지를 누르기 전의 조우 설명에 배치",
+    "절대적으로 강한 적은 강함, 상성이 중요한 적은 특징을 암시",
+    "초안을 제시하고 사용자 컨펌 뒤 적용"
+  ],
+  "placement": "Keep original encounter narrative, integrate short danger passage before the existing combat/withdraw decision. Do not insert only into the post-selection battle start/results.",
+  "implementation": "Existing sp_text narrative strings only; no new victory calculation, functions, persistent keys or UI. Preserve goblin 2/3 variants and Garsid separate scene despite shared text index14.",
+  "drafts": [
+    {
+      "event": 61101,
+      "name": "성장기 안개 괴물",
+      "text": "아직 다 자라지는 않았지만, 꿈틀거리는 촉수의 힘까지 얕볼 수는 없다.",
+      "basis": "성장기 개체의 위협을 낮은 강도로 예고",
+      "targets": [
+        {
+          "location": "interaction_city",
+          "line": 10880,
+          "key": "$sp_text[1]",
+          "originalLineSha256": "5f87fdd57e64493417c8944c980a948eb36d6750dee8202cea919cbecf8b9074"
+        }
+      ]
+    },
+    {
+      "event": 61102,
+      "name": "안개 괴물",
+      "text": "성체의 촉수는 굵고 질겨 보인다. 무턱대고 두들겨 패기보다는 날붙이로 끊어 내는 편이 나을 듯하다.",
+      "basis": "타격 저항과 참격의 상대적 유효성",
+      "targets": [
+        {
+          "location": "interaction_city",
+          "line": 10895,
+          "key": "$sp_text[2]",
+          "originalLineSha256": "9fa54750095408ec3a6999c4725aadd00f1ab63fa3bb05854cfe26fe36fe4897"
+        }
+      ]
+    },
+    {
+      "event": 61103,
+      "name": "거대 안개 괴물",
+      "text": "몸을 움직일 때마다 땅이 울리고, 나무줄기 같은 촉수가 사방을 휘젓는다. 어설픈 무장으로 덤볐다가는 뼈도 추리지 못할 괴물이다.",
+      "basis": "최상위 개체의 전반적인 강함",
+      "targets": [
+        {
+          "location": "interaction_city",
+          "line": 10906,
+          "key": "$sp_text[3]",
+          "originalLineSha256": "b580445e511be482c462b0503356ef308119ad971fd629b972457195a8b05fb4"
+        }
+      ]
+    },
+    {
+      "event": 61104,
+      "name": "검은 의사와 하인",
+      "text": "하인들의 기세는 요란하지만 움직임은 서툴다. 그보다는 틈을 살피는 검은 의사를 경계해야겠다.",
+      "basis": "수만 보고 과대평가하지 않고 주 적을 안내",
+      "targets": [
+        {
+          "location": "interaction_city",
+          "line": 10919,
+          "key": "$sp_text[4]",
+          "originalLineSha256": "70484dfba8f4a3872723486f885e555b8f2f3e4351713097bc631ba7f61ff815"
+        }
+      ]
+    },
+    {
+      "event": 61105,
+      "name": "성기사와 병사",
+      "text": "갑옷과 자세가 제대로 훈련받은 군인들임을 말해 준다. 쇠붙이가 막아 주지 못하는 힘이라면 빈틈을 만들 수 있을지도 모른다.",
+      "basis": "물리 방호와 원소 공격의 상대적 유효성",
+      "targets": [
+        {
+          "location": "interaction_city",
+          "line": 10935,
+          "key": "$sp_text[5]",
+          "originalLineSha256": "44e4a8bda49c212deb712aa1fd4f93aada309d9d6dc629113530f252cf6fd9ba"
+        }
+      ]
+    },
+    {
+      "event": 61106,
+      "name": "수인 무리",
+      "text": "무장한 수인들이 사방을 살피고 있다. 하나를 상대하는 사이 나머지에게 등을 보이지 않도록 해야겠다.",
+      "basis": "무작위 구성 4인 집단의 위협",
+      "targets": [
+        {
+          "location": "interaction_city",
+          "line": 10950,
+          "key": "$sp_text[6]",
+          "originalLineSha256": "d411f83eb704fdbd639842f8091b39ca93ceafbadf3a6306adf6f92a065b3e2c"
+        }
+      ]
+    },
+    {
+      "event": 61107,
+      "name": "늑대인간",
+      "text": "으르렁대는 괴물에게서는 지치는 기색도, 두려움도 느껴지지 않는다. 두들겨 기운을 빼려 하기보다 몸을 꿰뚫을 수단이 필요해 보인다.",
+      "basis": "피로·공포 면역, 타격·정신 무효와 관통 공격 안내",
+      "targets": [
+        {
+          "location": "interaction_city",
+          "line": 10971,
+          "key": "$sp_text[7]",
+          "originalLineSha256": "8ba0696650ee4801ebbcda0568ba59705bce28389c094fba043c9845f1382833"
+        }
+      ]
+    },
+    {
+      "event": 61108,
+      "name": "흡혈귀",
+      "text": "창백한 얼굴과 달리 움직임에는 빈틈이 없고, 숨이 가빠지는 기색도 없다. 오래 버티며 지치기를 기다리는 싸움은 통하지 않을 듯하다.",
+      "basis": "피로 면역",
+      "targets": [
+        {
+          "location": "interaction_city",
+          "line": 10986,
+          "key": "$sp_text[8]",
+          "originalLineSha256": "75f4683b84f9f7bd84ae434217f4e9e2bbca01e19e3cf98d1e8ce7209c9028b4"
+        }
+      ]
+    },
+    {
+      "event": 61109,
+      "name": "리치",
+      "text": "살점 없는 몸을 찌르고 베어도 숨통을 끊을 수는 없을 것이다. 뼈대를 두들겨, 저 몸을 움직이는 힘부터 소진시켜야 할 듯하다.",
+      "basis": "불사·공포 면역, 타격을 통한 지구력 소진",
+      "targets": [
+        {
+          "location": "interaction_city",
+          "line": 10999,
+          "key": "$sp_text[9]",
+          "originalLineSha256": "8f2310852f4301047ba9807bfc4f50b55667e7372ec2c0c1561a894718080139"
+        }
+      ]
+    },
+    {
+      "event": 61110,
+      "name": "하급 인간 무리",
+      "text": "수는 많지만 앙상한 몸과 비틀거리는 걸음에는 힘이 없어 보인다. 머릿수만 보고 겁먹을 상대는 아닐지도 모른다.",
+      "basis": "종류가 무작위인 최하급 집단의 낮은 내구",
+      "targets": [
+        {
+          "location": "interaction_city",
+          "line": 11010,
+          "key": "$sp_text[10]",
+          "originalLineSha256": "f0d95b85ab77670d7eaa8f16f990eea130a96c8bf22aa24d9ea47a2a3b3d869a"
+        }
+      ]
+    },
+    {
+      "event": 61111,
+      "name": "오우거",
+      "text": "저 두꺼운 살과 근육을 힘으로 두들겨 이기기는 어려워 보인다. 험악한 기세와 달리, 눈동자는 작은 위협에도 바쁘게 흔들린다.",
+      "basis": "타격 저항과 정신 약점",
+      "targets": [
+        {
+          "location": "interaction_city",
+          "line": 11033,
+          "key": "$sp_text[11]",
+          "originalLineSha256": "cd58219547f5e62293bb4218d3a09efccb670d890ec94f78116bde7a8dd4cea2"
+        }
+      ]
+    },
+    {
+      "event": 61112,
+      "name": "고블린 무리",
+      "text": "작은 몸집이라도 녹슨 단검까지 무시할 수는 없다. 앞에 있는 놈에게만 시선을 빼앗겨서는 안 되겠다.",
+      "basis": "둘·셋 두 변형 모두에 맞는 집단 위협",
+      "targets": [
+        {
+          "location": "interaction_city",
+          "line": 11046,
+          "key": "$sp_text[12]",
+          "originalLineSha256": "70218659f980017f25014904fcb3487d74e5f4f5f1c6b8203ad6cd1f6673ebab"
+        },
+        {
+          "location": "interaction_city",
+          "line": 11052,
+          "key": "$sp_text[12]",
+          "originalLineSha256": "64ad48c7b863a79ecd4df42180fcabbb37c109e91be814699de3d473a390a684"
+        }
+      ]
+    },
+    {
+      "event": 61113,
+      "name": "와그",
+      "text": "굵은 근육과 가죽은 웬만한 타격을 버텨 낼 듯하다. 불길로 몰아세우거나 기세를 꺾으면 빈틈이 생길지도 모른다.",
+      "basis": "타격 저항과 화염·정신 약점",
+      "targets": [
+        {
+          "location": "interaction_city",
+          "line": 11067,
+          "key": "$sp_text[13]",
+          "originalLineSha256": "82c42ee9982655b52e4cbe593add980e78f82ea60e5f14263fca17a56b3e5b15"
+        }
+      ]
+    },
+    {
+      "event": 61114,
+      "name": "오크 전사",
+      "text": "두꺼운 갑옷을 걸친 채 무기를 쥔 자세가 흔들리지 않는다. 날만 세워 휘두르기보다는 갑옷의 틈을 노리는 편이 낫겠다.",
+      "basis": "중무장과 높은 참격 저항",
+      "targets": [
+        {
+          "location": "interaction_city",
+          "line": 11080,
+          "key": "$sp_text[14]",
+          "originalLineSha256": "b2ba2f91e279f3ef1f16ef3f6257eb0b880261d126b76a3d16f922cb67d377d1"
+        }
+      ]
+    },
+    {
+      "event": 61115,
+      "name": "가르시드와 수인",
+      "text": "가르시드보다 그를 둘러싼 무장한 수인들이 더 위협적이다. 손쉬운 횡재라고 생각하고 덤빌 일은 아니다.",
+      "basis": "가르시드 본인의 공격력보다 동행 수인 넷의 위협",
+      "targets": [
+        {
+          "location": "interaction_city",
+          "line": 11096,
+          "key": "$sp_text[14]",
+          "originalLineSha256": "9eae4048dfa937887b323e8ab766375d63618ecdf4ff5898bf091742f2ef2416"
+        }
+      ]
+    }
+  ]
+}

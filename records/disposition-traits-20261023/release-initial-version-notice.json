@@ -1,0 +1,151 @@
+{
+  "schema": 1,
+  "createdAt": "2026-10-23T07:59:53.689Z",
+  "profile": "release",
+  "checks": [
+    {
+      "name": "inputs-readable",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "candidate": "24f39cf0c0fd7554abc9b53e7c582c4ede5f9aada47675b9a6ecc3c26db524c8"
+      }
+    },
+    {
+      "name": "world-structure-and-line-endings",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "sha256": "24f39cf0c0fd7554abc9b53e7c582c4ede5f9aada47675b9a6ecc3c26db524c8",
+        "bytes": 48388714,
+        "locations": 263,
+        "roundtrip": true,
+        "lineEndingIssues": 0
+      }
+    },
+    {
+      "name": "slave-template-registry",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "files": 1126,
+        "numericIds": 1126,
+        "collisions": 0,
+        "invalidJson": 0,
+        "embeddedIdMismatches": 0
+      }
+    },
+    {
+      "name": "distribution-byte-match",
+      "required": false,
+      "status": "SKIP",
+      "reason": "No mirror specified; this run does not verify the distribution copy"
+    },
+    {
+      "name": "patch-replay-and-idempotence",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "patches": [
+          "2026-10-23_disposition_traits"
+        ],
+        "byteExact": true,
+        "idempotent": true
+      }
+    },
+    {
+      "name": "installed-client-smoke",
+      "required": true,
+      "status": "FAIL",
+      "error": "PowerShell check failed; see client-runner.log"
+    },
+    {
+      "name": "input-hashes-unchanged",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "files": 3
+      }
+    }
+  ],
+  "limits": [
+    "No GUI clicks or visual layout verification.",
+    "Save data is used only to prime representative state. GUI save-file loading, CRC compatibility and full saved script restoration are NOT tested.",
+    "Start is replaced only in diagnostic copies. Smoke covers lifecycle calls, not the character-selection UI or every gameplay branch.",
+    "No complete QSP syntax checker: dynamic code and all game logic are not statically proved.",
+    "Battle smoke instruments the menu dispatch only; full combat outcomes and balance are not tested."
+  ],
+  "client": {
+    "timeoutSeconds": 30,
+    "runnerTimeoutMs": 282000,
+    "engineSha256": "f75032d79ecb58eeb7b969cd3f774d66b091fca38a360acdabd782e03a46c6e6",
+    "stateAssignments": 37548,
+    "probes": [
+      {
+        "name": "home",
+        "checkpoint": "main_screen",
+        "pass": true,
+        "reason": "",
+        "durationMs": 7531
+      },
+      {
+        "name": "newgame",
+        "checkpoint": "main_screen",
+        "pass": false,
+        "reason": "Unexpected message before completion",
+        "durationMs": 6984
+      },
+      {
+        "name": "editor-slave",
+        "checkpoint": "main_screen",
+        "pass": true,
+        "reason": "",
+        "durationMs": 7516
+      },
+      {
+        "name": "editor-assistant",
+        "checkpoint": "main_screen",
+        "pass": true,
+        "reason": "",
+        "durationMs": 6993
+      },
+      {
+        "name": "cache",
+        "checkpoint": "main_screen",
+        "pass": true,
+        "reason": "",
+        "durationMs": 7495
+      },
+      {
+        "name": "daily",
+        "checkpoint": "end_day_screen",
+        "pass": true,
+        "reason": "",
+        "durationMs": 6995
+      },
+      {
+        "name": "city-weapons",
+        "checkpoint": "interaction_screen_city",
+        "pass": true,
+        "reason": "",
+        "durationMs": 6977
+      },
+      {
+        "name": "city-beauty",
+        "checkpoint": "interaction_screen_city",
+        "pass": true,
+        "reason": "",
+        "durationMs": 6730
+      },
+      {
+        "name": "battle-entry",
+        "checkpoint": "боевое_меню",
+        "pass": true,
+        "reason": "",
+        "durationMs": 6834
+      }
+    ]
+  },
+  "verdict": "FAIL",
+  "output": "G:\\Codex\\tmp\\jo9-disposition-release-20261023\\run-LxQ06l"
+}

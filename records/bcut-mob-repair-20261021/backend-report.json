@@ -1,0 +1,73 @@
+{
+  "status": "PASS scoped mob restoration; deployment belongs to parent",
+  "files": [
+    {
+      "file": "G:/somi/JO9sa/tools/text-workshop/image-cuts.cjs",
+      "changedLines": [
+        15,
+        62,
+        89,
+        117
+      ],
+      "before": "10b04c03455075baf9bfeb6f6cc085ed2de09aa73f98c45cf5bf0ba573124801",
+      "after": "08d28584ad681cf081f562d1865aa68b71f0cfe719bba6966806eb3f3016ddc8",
+      "reverseRestoresPriorHash": true
+    },
+    {
+      "file": "G:/somi/JO9sa/tools/text-workshop/original-cuts.cjs",
+      "changedLines": [
+        6
+      ],
+      "before": "3f5294486a78e8d788143c04a072ea8f880527ad09eab87e4dca15427949ea51",
+      "after": "82b93cec5a8f97980feeb036d7d87be869716e1e16ef3cad9728d6a7647dd0f0",
+      "reverseRestoresPriorHash": true
+    },
+    {
+      "file": "G:/somi/JO9sa/tools/text-workshop/server.cjs",
+      "changedLines": [
+        199
+      ],
+      "before": "d64a9e55003f6734387bf44d9e86ae073bd96bc3a062180854bc19ff70cf312d",
+      "after": "5a33f5ec648c6b9e9a9de145c24883cfbe1518628160934c3a4e7acec0b66f39",
+      "reverseRestoresPriorHash": true
+    }
+  ],
+  "test": {
+    "path": "G:/somi/JO9sa/tools/text-workshop/mob-image-cuts.test.cjs",
+    "sha256": "5c893b96b2af81a8ed29a7ef7b13087228fcd8791e7ba6f5e795f993f83d6072",
+    "beforePatch": {
+      "tests": 6,
+      "pass": 0,
+      "fail": 6,
+      "expected": "mob is rejected by imagePath and HTTP cut file whitelist"
+    },
+    "final": {
+      "tests": 7,
+      "pass": 7,
+      "fail": 0
+    },
+    "coverage": [
+      "family and PIC list",
+      "add B, ordinary B replacement, preserve A/QSP",
+      "fifth cut registration10005 and previous paths/IDs/other fields",
+      "original B read-only and writer rejection",
+      "traversal and external intermediate directory junction rejection through info",
+      "actual HTTP file/replace endpoints and traversal rejection",
+      "new original B registration/rollback"
+    ],
+    "isolation": "Each test copies modules and canonical mods into G:/Codex/tmp/bcut-mob-repair-20261021/fixtures/mob-*/project. A tiny synthetic QSP is used; fixture child folders are removed after checks."
+  },
+  "liveEvidence": {
+    "workQspSha256": "a2e0265881bebd8a72b3fcbb214ddaf831106cfe50e9c96da8e0b6e7d692707a",
+    "guard": "Suite before/after asserts unchanged WorkQSP, live Warg image and repository canonical image-cycle mod hashes.",
+    "installedServerTouched": false,
+    "liveImagesWritten": false,
+    "fixtureChildrenRemaining": 0
+  },
+  "limits": [
+    "Existing registrar A/parent-junction handling, category-root junction traversal in registry scans, and info exact-stem variant symlink handling were reported as pre-existing potential gaps by independent read-only review. These were not changed by this whitelist-only repair and were not represented as fully verified safe.",
+    "The tested symlink guarantee is API info rejecting an external intermediate folder and protection of recorded original B, not every pre-existing symlink path.",
+    "No existing broad suite was run; only the isolated new regression suite.",
+    "No game engine or actual-image write tests; live deployment/restart is pending parent review."
+  ]
+}

@@ -1,0 +1,167 @@
+! JO9 MOD START TRAIT_MERGER_ACTIVITY_20261025
+if $args[0] = 'activity_value' or $args[0] = 'activity_sign' or $args[0] = 'activity_compatible' or $args[0] = 'activity_known':
+ local $j9av_role = $args[1]
+ local j9av_a = dyneval('result = ' + $j9av_role + "['jo9_work_ethic']")
+ local j9av_c = dyneval('result = ' + $j9av_role + "['passion_comfort']")
+ local j9av_ok = 0
+ local j9av_sign = 0
+ if j9av_a >= -1 and j9av_a <= 1 and j9av_c >= -1 and j9av_c <= 1:
+  j9av_ok = 1
+ end
+ if j9av_ok = 1:
+  if j9av_a = 1 or j9av_c = -1:
+   j9av_sign = 1
+  elseif j9av_a = -1 or j9av_c = 1:
+   j9av_sign = -1
+  end
+ end
+ result = 0
+ if $args[0] = 'activity_compatible': result = j9av_ok
+ if $args[0] = 'activity_sign': result = j9av_sign
+ if $args[0] = 'activity_known':
+  if dyneval('result = ' + $j9av_role + "['jo9_work_ethic_known']") = 1 or dyneval('result = ' + $j9av_role + "['passion_comfort_revealed']") = 2: result = 1
+ end
+ if $args[0] = 'activity_value':
+  if $args[2] = 'jo9_work_ethic': result = j9av_a
+  if $args[2] = 'passion_comfort': result = j9av_c
+  if j9av_ok = 1:
+   if $args[2] = 'jo9_work_ethic': result = j9av_sign
+   if $args[2] = 'passion_comfort': result = -j9av_sign
+  end
+ end
+ exit
+end
+if $args[0] = 'activity_repair':
+ local $j9av_role = $args[1]
+ local j9av_a = dyneval('result = ' + $j9av_role + "['jo9_work_ethic']")
+ local j9av_c = dyneval('result = ' + $j9av_role + "['passion_comfort']")
+ result = 0
+ if (j9av_a = 1 and j9av_c = 1) or (j9av_a = -1 and j9av_c = -1):
+  dynamic $replace({
+   j9avactor['jo9_work_ethic'] = 1
+   j9avactor['passion_comfort'] = -1
+  }, 'j9avactor', $j9av_role)
+  result = 1
+ end
+ exit
+end
+if $args[0] = 'activity_reveal':
+ local $j9av_role = $args[1]
+ local j9av_value = func('jo9_traits', 'activity_value', $j9av_role, 'passion_comfort')
+ if j9av_value ! 0:
+  if func('jo9_traits', 'activity_compatible', $j9av_role) = 0 or func('jo9_traits', 'activity_known', $j9av_role) = 0:
+   dynamic $replace({
+    if j9avactor['passion_comfort_revealed'] = 0: j9avactor['passion_comfort_revealed'] = 1
+   }, 'j9avactor', $j9av_role)
+  end
+ end
+ exit
+end
+if $args[0] = 'activity_discover':
+ local $j9av_role = $args[1]
+ if func('jo9_traits', 'activity_compatible', $j9av_role) = 1:
+  local j9av_sign = func('jo9_traits', 'activity_sign', $j9av_role)
+  dynamic $replace({
+   if j9avactor['passion_comfort_revealed'] = 1 and args[0] ! 0:
+    if j9avactor['jo9_work_ethic_known'] ! 1:
+     if args[0] = 1: msg $func('jo9_traits', 'text', 'activity_active')
+     if args[0] = -1: msg $func('jo9_traits', 'text', 'activity_passive')
+    end
+    j9avactor['jo9_work_ethic_known'] = 1
+    j9avactor['passion_comfort_revealed'] = 2
+   elseif args[0] = 0:
+    j9avactor['passion_comfort_revealed'] = 0
+   end
+  }, 'j9avactor', $j9av_role), j9av_sign
+ else
+  dynamic $replace({
+   if j9avactor['passion_comfort_revealed'] = 1 and j9avactor['passion_comfort'] ! 0:
+    if j9avactor['passion_comfort'] = 1: msg '<<$Ленивая>>'
+    if j9avactor['passion_comfort'] = -1: msg '<<$Гиперактивная>>'
+    j9avactor['passion_comfort_revealed'] = 2
+   elseif j9avactor['passion_comfort'] = 0:
+    j9avactor['passion_comfort_revealed'] = 0
+   end
+  }, 'j9avactor', $j9av_role)
+ end
+ exit
+end
+if $args[0] = 'activity_generate':
+ local $j9av_role = $args[1]
+ local j9av_a = dyneval('result = ' + $j9av_role + "['jo9_work_ethic']")
+ local j9av_c = dyneval('result = ' + $j9av_role + "['passion_comfort']")
+ local j9av_sign = 0
+ if j9av_a = 1 or j9av_c = -1:
+  j9av_sign = 1
+ elseif j9av_a = -1 or j9av_c > 0:
+  j9av_sign = -1
+ end
+ if j9av_sign ! 0:
+  if func('jo9_traits', 'allow', $j9av_role, 'jo9_work_ethic', j9av_sign) = 0: j9av_sign = 0
+ end
+ dynamic $replace({
+  j9avactor['jo9_work_ethic'] = args[0]
+  j9avactor['passion_comfort'] = -args[0]
+ }, 'j9avactor', $j9av_role), j9av_sign
+ result = 1
+ exit
+end
+if $args[0] = 'activity_set':
+ local $j9av_role = $args[1]
+ local j9av_sign = args[2]
+ result = 0
+ if j9av_sign ! 1 and j9av_sign ! -1: exit
+ if func('jo9_traits', 'activity_compatible', $j9av_role) = 0: exit
+ if func('jo9_traits', 'allow', $j9av_role, 'jo9_work_ethic', j9av_sign) = 0: exit
+ dynamic $replace({
+  j9avactor['jo9_work_ethic'] = args[0]
+  j9avactor['passion_comfort'] = -args[0]
+  j9avactor['jo9_work_ethic_known'] = 1
+  j9avactor['passion_comfort_revealed'] = 2
+ }, 'j9avactor', $j9av_role), j9av_sign
+ result = 1
+ exit
+end
+if $args[0] = 'activity_remove':
+ local $j9av_role = $args[1]
+ local $j9av_target = $args[2]
+ result = 0
+ if $j9av_target = '':
+  if func('jo9_traits', 'activity_compatible', $j9av_role) = 0: exit
+ end
+ if $j9av_target ! '' and $j9av_target ! 'jo9_work_ethic' and $j9av_target ! 'passion_comfort': exit
+ dynamic $replace({
+  if $args[0] = '' or $args[0] = 'jo9_work_ethic':
+   j9avactor['jo9_work_ethic'] = 0
+   j9avactor['jo9_work_ethic_known'] = 0
+  end
+  if $args[0] = '' or $args[0] = 'passion_comfort':
+   j9avactor['passion_comfort'] = 0
+   j9avactor['passion_comfort_revealed'] = 0
+  end
+ }, 'j9avactor', $j9av_role), $j9av_target
+ result = 1
+ exit
+end
+if $args[0] = 'activity_edit':
+ local $j9av_role = $args[1]
+ local $j9av_key = $args[2]
+ local j9av_wanted = args[3]
+ local j9av_sign = j9av_wanted
+ if $j9av_key = 'passion_comfort': j9av_sign = -j9av_wanted
+ if func('jo9_traits', 'activity_compatible', $j9av_role) = 0:
+  if dyneval('result = ' + $j9av_role + "['" + $j9av_key + "']") = j9av_wanted:
+   gs 'jo9_traits', 'activity_remove', $j9av_role, $j9av_key
+  else
+   msg '이전 활동 성향의 조합을 보존합니다. 바꾸려면 해당 기존 성향을 먼저 해제하세요.'
+  end
+  exit
+ end
+ if func('jo9_traits', 'activity_sign', $j9av_role) = j9av_sign:
+  gs 'jo9_traits', 'activity_remove', $j9av_role
+ else
+  if func('jo9_traits', 'activity_set', $j9av_role, j9av_sign) = 0: msg '함께 가질 수 없는 특성이 있어 이 활동 성향을 부여할 수 없습니다.'
+ end
+ exit
+end
+! JO9 MOD END TRAIT_MERGER_ACTIVITY_20261025

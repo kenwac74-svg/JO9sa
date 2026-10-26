@@ -1,13 +1,17 @@
 // Installed inside the existing workshop scope; shares its drop area, rows and editor.
-let cutDraft=null,cutFamilyStamp='',cutFamilyLoading=false;
+let cutDraft=null,cutFamilyStamp='',cutFamilyLoading=false,cutRequestVersion=0,cutPreparing=0;
 const cutImages=new Map;
-const cutEligible=p=>/^(?:content\/pic\/)?(?:bg|characters|scene|reserve)\/.+\.png$/i.test(String(p).replaceAll('\\','/'));
+const cutEligible=p=>/^(?:content\/pic\/)?(?:bg|characters|scene|reserve|mob)\/.+\.png$/i.test(String(p).replaceAll('\\','/'));
 const cutName=n=>n<=26?String.fromCharCode(64+n)+'컷':n+'번 컷';
 function cutModeBar(){
  let bar=$('cutMode');if(!bar){bar=document.createElement('div');bar.id='cutMode';bar.className='setwarning';$('drop').before(bar);}
  bar.hidden=!cutDraft;
  if(cutDraft)bar.innerHTML='<strong>'+esc(cutDraft.editCut?'기존 전환 컷 편집':'전환 컷 추가')+'</strong> · '+esc(cutDraft.editCut||cutDraft.plan.next)+'<p class="small">아래 드롭박스에 이미지를 넣고 기존 구도·비교에서 조절하세요. 저장은 결과 카드에서 합니다.</p><button type="button" data-cut-cancel>일반 교체로 돌아가기</button>';
 }
+// JO9 MOD START CUT_TARGET_STATE_20261021
+// Reset only the future-drop mode. Existing staged cut jobs keep their destinations.
+function resetCutMode(){cutRequestVersion++;cutPreparing=0;cutDraft=null;cutModeBar();}
+// JO9 MOD END CUT_TARGET_STATE_20261021
 function cutImageUrl(r){return cutImages.get(r.path)?.url||assetUrl(r.path);}
 async function readCut(p){
  const v=await window.JO9_CUTS.call('file',{path:relPicPath(p)});
@@ -39,23 +43,36 @@ async function refreshCutFamilies(force=false){
     }
    }
   }
+  if(ScreenContext.resources.filter(r=>!r.cutFamily&&cutEligible(r.path)).map(r=>r.path).join('|')!==stamp)return;
   ScreenContext.resources=resources;cutFamilyStamp=stamp;renderScreenResources();
  }catch(e){console.warn('전환 컷 목록:',e.message);}finally{cutFamilyLoading=false;}
 }
 async function beginCut(base,row){
- if(S.busy)return;
+ if(S.busy)return null;
+ resetCutMode();let request=cutRequestVersion;cutPreparing=request;
+ msg('전환 컷 대상을 확인하고 있습니다.');
  try{
   const plan=await window.JO9_CUTS.call('info',{base:relPicPath(base)});
-  if(window.JO9WS&&!$('wsdialog').open)window.JO9WS.open([{path:'content/pic/'+plan.base,file:plan.base.split('/').pop(),folder:plan.base.split('/')[0],width:plan.width,height:plan.height}]);
-  cutDraft={plan};cutModeBar();
+  if(request!==cutRequestVersion)return null;
+  cutPreparing=0;if(S.busy)return null;
+  if(window.JO9WS&&!$('wsdialog').open){
+   window.JO9WS.open([{path:'content/pic/'+plan.base,file:plan.base.split('/').pop(),folder:plan.base.split('/')[0],width:plan.width,height:plan.height}]);
+   request=cutRequestVersion;
+  }
+  const requested=resourceByPath('content/pic/'+relPicPath(base))||resourceByPath('content/pic/'+plan.base)||{path:'content/pic/'+plan.base,file:plan.base.split('/').pop(),folder:plan.base.split('/')[0],width:plan.width,height:plan.height};
+  if(!ScreenContext.resources.some(r=>r.path===requested.path)){ScreenContext.resources=[requested];cutFamilyStamp='' ;}
+  SelectedScreenPaths.clear();SelectedScreenPaths.add(requested.path);ScreenDetailPath=requested.path;
+  const draft={plan};cutDraft=draft;cutModeBar();renderScreenResources();
   await refreshCutFamilies(true);
+  if(request!==cutRequestVersion||cutDraft!==draft||S.busy)return null;
   if(row){
    const source=S.inputs.find(s=>s.id===row.inputId),file=row.output?new File([row.output],plan.next.split('/').pop(),{type:'image/png'}):row.file;
-   await stageCutFile(file,{plan},source?.relative||'',row.output?null:row.options);
+   busy(true);try{await stageCutFile(file,draft,source?.relative||'',row.output?null:row.options);}finally{busy(false);}
   }
   $('drop').scrollIntoView({behavior:'smooth',block:'center'});
   msg((plan.originalCut?'B컷은 JO9O 원본입니다. ':'')+'새 이미지 → '+plan.next+' · 기존 드롭박스와 구도·비교를 사용하세요.');
- }catch(e){msg('전환 컷 준비 실패: '+e.message,true);}
+  return draft;
+ }catch(e){if(request===cutRequestVersion){cutPreparing=0;msg('전환 컷 준비 실패: '+e.message,true);}return null;}
 }
 async function stageCutFile(file,draft,relative='',options){
  const data=await file.arrayBuffer(),snapshot=new File([data],file.name,{type:file.type,lastModified:file.lastModified});
@@ -68,18 +85,30 @@ async function stageCutFile(file,draft,relative='',options){
 }
 async function editExistingCut(p){
  if(S.busy)return;
+ resetCutMode();const request=cutRequestVersion;cutPreparing=request;
+ msg('전환 컷을 불러오고 있습니다.');
  try{
   const resource=resourceByPath(p),loaded=await readCut(p);
-  if(loaded.readOnly||resource?.readOnly){await beginCut(resource?.base||p);await stageCutFile(loaded.file,cutDraft);msg('JO9O B컷을 작업 영역으로 불러왔습니다. 원본을 보존하고 '+cutDraft.plan.next+'로 저장합니다.');}
-  else{cutDraft={editCut:relPicPath(p)};cutModeBar();await stageCutFile(loaded.file,cutDraft);msg('기존 컷을 작업 영역으로 불러왔습니다. 구도·비교에서 편집하세요: '+relPicPath(p));}
+  if(request!==cutRequestVersion)return;
+  cutPreparing=0;if(S.busy)return;
+  if(loaded.readOnly||resource?.readOnly){
+   const draft=await beginCut(resource?.base||p);if(!draft||cutDraft!==draft)return;
+   busy(true);try{await stageCutFile(loaded.file,draft);}finally{busy(false);}
+   msg('JO9O B컷을 작업 영역으로 불러왔습니다. 원본을 보존하고 '+draft.plan.next+'로 저장합니다.');
+  }else{
+   const draft={editCut:relPicPath(p)};cutDraft=draft;cutModeBar();
+   busy(true);try{await stageCutFile(loaded.file,draft);}finally{busy(false);}
+   msg('기존 컷을 작업 영역으로 불러왔습니다. 구도·비교에서 편집하세요: '+relPicPath(p));
+  }
   $('rows').scrollIntoView({behavior:'smooth',block:'start'});
- }catch(e){msg('전환 컷 불러오기 실패: '+e.message,true);}
+ }catch(e){if(request===cutRequestVersion){cutPreparing=0;msg('전환 컷 불러오기 실패: '+e.message,true);}}
 }
 const cutBaseAdd=add;
 add=async function(files){
+ if(cutPreparing)return msg('전환 컷 대상을 확인 중입니다. 확인이 끝난 뒤 이미지를 넣어 주세요.',true);
  if(!cutDraft)return cutBaseAdd(files);
- if(S.busy)return;busy(true);
- try{for(const entry of files){const file=entry.file||entry;if(!/\.(png|jpe?g|webp)$/i.test(file.name)||file.size>60*1024*1024)continue;if(S.inputs.length>=100)throw Error('한 번에 100장까지 편집할 수 있습니다.');await stageCutFile(file,cutDraft,entry.relative||file.webkitRelativePath||'');}msg('전환 컷 이미지를 기존 작업 영역에 넣었습니다. 구도·비교 → 규격 맞추기 → 결과 카드에서 저장하세요.');}finally{busy(false);}
+ if(S.busy)return;const draft=cutDraft;busy(true);
+ try{for(const entry of files){const file=entry.file||entry;if(!/\.(png|jpe?g|webp)$/i.test(file.name)||file.size>60*1024*1024)continue;if(S.inputs.length>=100)throw Error('한 번에 100장까지 편집할 수 있습니다.');await stageCutFile(file,draft,entry.relative||file.webkitRelativePath||'');}msg('전환 컷 이미지를 기존 작업 영역에 넣었습니다. 구도·비교 → 규격 맞추기 → 결과 카드에서 저장하세요.');}finally{busy(false);}
 };
 const cutBaseSourceTargets=sourceTargets;
 sourceTargets=function(s){if(s.cutPlan||s.editCut){const p=s.editCut||s.cutPlan.next;return[{path:p,name:p.split('/').pop()}];}return cutBaseSourceTargets(s);};
@@ -135,10 +164,11 @@ render=function(){cutBaseRender();cutModeBar();};
 document.addEventListener('click',e=>{
  const save=e.target.closest('[data-cut-save]'),load=e.target.closest('[data-cut-edit]'),cancel=e.target.closest('[data-cut-cancel]');if(!save&&!load&&!cancel)return;
  e.preventDefault();e.stopPropagation();if(S.busy)return;
- if(save)saveWorkshopCut(save.dataset.cutSave);else if(load)editExistingCut(load.dataset.cutEdit);else{cutDraft=null;cutModeBar();msg('일반 이미지 교체 모드입니다.');}
+ if(save)saveWorkshopCut(save.dataset.cutSave);else if(load)editExistingCut(load.dataset.cutEdit);else{resetCutMode();msg('일반 이미지 교체 모드입니다.');}
 },true);
 window.addEventListener('jo9-local-images-changed',()=>{cutFamilyStamp='';refreshCutFamilies(true);});
 setInterval(refreshCutFamilies,1500);
+window.JO9Workshop.resetCutMode=resetCutMode;
 window.JO9Workshop.beginCut=beginCut;
 window.JO9Workshop.editCut=editExistingCut;
 window.JO9Workshop.refreshCuts=()=>refreshCutFamilies(true);

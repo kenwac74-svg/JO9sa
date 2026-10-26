@@ -1,0 +1,68 @@
+{
+  "status": "REVIEW_RECORDED_NOT_APPLIED",
+  "workSha256": "be2c993d24911fec5edfc0efceee9d4bd570c2d9e3a511975a69e29e383ba898",
+  "findings": [
+    {
+      "id": "BR1025-01",
+      "title": "큰까마귀 관 종합정보 정신상태 팝업이 뒤에 가림",
+      "status": "CODE_LAYER_CONFLICT_GUI_PENDING",
+      "cause": "종합정보 FIX6 z-index가 기본 엔진 MSG보다 높으며 공통 MSG 레이어 보정이 없다. MSG 동안 일반 링크는 비활성화된다.",
+      "scope": "일반 노예·조수 및 같은 종합정보 구조",
+      "proposal": "기존 프로필의 #__message__ 최상단 규칙을 공통 CSS에 적용하고 실제 열기/닫기 검증",
+      "runtimeEdited": false
+    },
+    {
+      "id": "BR1025-02",
+      "title": "이미지 경로 숫자 앞 0 불일치",
+      "status": "FILE_REFERENCE_MISMATCH_CONFIRMED",
+      "cause": "212 seed_ava_clear는 00212 대신 0212, 178 fullmade는 178 대신 0178이 실제 파일명이다.",
+      "scope": "WORK/Full 동일2개 참조. 1126 JSON의 이미지 문자열9780개 중 같은 디렉터리에서 숫자0만 다른 누락2건",
+      "proposal": "확정된 정확한2경로만 교정하고 기존 인물 캐시에 저장된 동일 오기의 호환 처리 범위를 검증. 색상·머리길이 선택 자체는 임의 변경하지 않음.",
+      "runtimeEdited": false
+    },
+    {
+      "id": "BR1025-03",
+      "title": "명기 보유자의 마법낙인 특수 이벤트 미발생",
+      "status": "USER_DEFERRED_REPRODUCTION",
+      "cause": "전달받은 제보라 장비 착용 및 당시 저장 상태 미확인. 사용자 지시로 추후 재현 후 수정.",
+      "scope": "현재 interaction:428은 virginity>0이므로 명기값4를 배제하지 않음. 실제 이벤트 불능은 미확정.",
+      "proposal": "지금 수정하거나 새 조건을 넣지 않음. 추후 실제 저장으로 장비/상대우위/안개괴물/지하감옥/임신/남은 신체이상과 이벤트 연결 확인.",
+      "runtimeEdited": false
+    },
+    {
+      "id": "BR1025-04",
+      "title": "노예·개인실 모유량 아이콘이 눌리지 않음",
+      "status": "INVALID_LINK_TAG_CONFIRMED",
+      "cause": "일반노예1곳·개인실4곳·개인실활동1곳의 href가 a 대신 div에 있다. 조수와 신체탭은 정상 a.",
+      "scope": "6곳. 역할별 우유량 설명 변수는 이미 존재함.",
+      "proposal": "기존 조건·콜백·대상을 유지하고6곳의 시작/닫기 태그만 a로 교정한 뒤 실제 클릭 검증",
+      "runtimeEdited": false
+    },
+    {
+      "id": "BR1025-05",
+      "title": "개인실 얼굴 프로필의 이종취향 클릭 시 방으로 복귀",
+      "status": "MISSING_MENU_GUARD_ENTRY_CONFIRMED",
+      "cause": "slave_stat는 menu_form135로 이동하지만 snk_room_bridge 허용목록이134 다음136으로 넘어가135를 복귀 처리한다.",
+      "scope": "개인실1~4. 일반노예/조수 정상경로와 구분.",
+      "proposal": "기존 guard에135 허용을 추가하고 대상 역할/원래노예 보존·취소/복귀·하위활동을 실제 엔진으로 검증",
+      "runtimeEdited": false
+    }
+  ],
+  "nativeUiExecuted": false,
+  "staticAssertions": "PASS",
+  "protectedFiles": {
+    "jack.qsp": "be2c993d24911fec5edfc0efceee9d4bd570c2d9e3a511975a69e29e383ba898",
+    "css/base.css": "eebc83753cbe894a2b914b4a620449cd4d1e73a8bc053846e6cebd84c351d1df",
+    "css/jo9_traits_view.css": "b525759a63acb7373a959ff9fd727c282aebe8f9315bf98b829d7d80585de728",
+    "content/js/jo9_traits_view.js": "4490307a6ae62e68e4341473c82ae6e8201e9695742521dcf437b622b2e6c7b3",
+    "json/slaves/212.json": "bd9331a972cfb9abb974cc367c1b366baeee8b3cf264918759c3fe8217d0cb46",
+    "json/slaves/178.json": "1419803a38afea194d5e1d0297bf820db8ab1cdbb5190eff972e9052abab5cc5"
+  },
+  "protectedFilesUnchanged": true,
+  "temporaryQspOrJsonCopiesCreated": 0,
+  "saveFilesEdited": 0,
+  "commit": false,
+  "push": false,
+  "Full": false,
+  "ZIP": false
+}

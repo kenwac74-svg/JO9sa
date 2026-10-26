@@ -1,0 +1,672 @@
+{
+  "date": "2026-10-24",
+  "status": "READ_ONLY_REVIEW_COMPLETE",
+  "runtimeSha256": "afb2b9eccbe02193f77fefea4a990081616a79eb84ed14fe2d8f0bbd3cf2d1fc",
+  "scope": "Current WORK code relationships and acquisition mechanisms. No game/save edits, no new exclusions or limits.",
+  "classification": {
+    "approvedPrinciple": "Generated already present then discovered=innate; newly randomly/conditionally acquired while owned=achievement. No separate acquired category.",
+    "notImplemented": "Display slot caps, category provenance migration, automatic removal or replacement.",
+    "legacyLimitation": "No reliable origin flag for original habit axes/combat class/peerless. Current values, XP, wins, revealed/known do not prove whether present at generation.",
+    "thirdAchievementCandidate": "Existing real-combat class enum as one axis when actually acquired during ownership; no new effects proposed. Mansion/brothel achievement effects are out of scope."
+  },
+  "relationships": [
+    {
+      "id": "R01",
+      "names": [
+        "천재",
+        "개별 분야 적성"
+      ],
+      "keys": [
+        "jo9_learning_trait",
+        "*_affinity"
+      ],
+      "relation": "개념상 성장 중첩, 코드상 보완·중첩",
+      "implemented": "대체하거나 적성 플래그를 일괄 부여하지 않는다. 천재는 양의 XP×2, 개별 적성은 해당 과목 성실도+10과 비성애 기술 승급 경계 완화 등 별도 효과다.",
+      "risk": "천재와 분야 적성이 함께 있으면 두 효과가 함께 작동한다. 단순한 같은 효과 중복 지급 버그는 아니지만 결합 성장 속도는 단일 천재보다 높다.",
+      "proposal": "사용자가 XP2배가 통합 성장 개념이라고 확인한 현재 사양을 유지한다. 적성 삭제·가상 적성 추가·배타를 자동 도입하지 않는다.",
+      "evidence": [
+        "jo9_learning_xp:4-27",
+        "#dynamic:621-647",
+        "#dynamic:1150-1184",
+        "#static_base:574-604"
+      ]
+    },
+    {
+      "id": "R02",
+      "names": [
+        "천재",
+        "백치"
+      ],
+      "keys": [
+        "jo9_learning_trait"
+      ],
+      "relation": "같은 축의 반대값, 실제 배타",
+      "implemented": "동일 키의+1/-1로 표현된다. 신규 생성의 같은1~100추첨에서1~3/4~6구간이다.",
+      "risk": "동시 보유는 정상 데이터에서 불가능하다. 일반 지성 등급은 이후 달라질 수 있으므로 현재 지성만 보고 특성이 바뀌었다고 판단하면 안 된다.",
+      "proposal": "현행 배타 유지.",
+      "evidence": [
+        "generate_stock:1617-1634",
+        "jo9_learning_xp:5-27"
+      ]
+    },
+    {
+      "id": "R03",
+      "names": [
+        "천재",
+        "동물역 적성"
+      ],
+      "keys": [
+        "jo9_learning_trait",
+        "pet_affinity",
+        "dressage_affinity",
+        "cowSK_affinity"
+      ],
+      "relation": "학습 배율은 반대 방향, 적성과 양립",
+      "implemented": "천재의 pet/dressage/cowSK XP는 일반75%, 다른 성장 XP는2배다. 동물역 적성은 별도 성실도·승급 경계에 작용한다.",
+      "risk": "천재가 해당 동물역을 절대 학습할 수 없는 것은 아니다. 건강체질·끈기 등의 별도 양의 보정과도 중첩되어 최종75%만으로 끝나지 않을 수 있다.",
+      "proposal": "반대 방향 수치가 있다는 이유만으로 동물역 적성을 강제 해제하지 않는다.",
+      "evidence": [
+        "jo9_learning_xp:5-23",
+        "jo9_traits_combat:106-120",
+        "#dynamic:621-647"
+      ]
+    },
+    {
+      "id": "R04",
+      "names": [
+        "천재",
+        "건강체질",
+        "끈기"
+      ],
+      "keys": [
+        "jo9_learning_trait",
+        "jo9_constitution",
+        "jo9_focus"
+      ],
+      "relation": "서로 다른 축의 성장 보완·곱 중첩",
+      "implemented": "공통 교육은 천재 보정→운동 교육 보정→연속 과목 보정의 순서다. 운동 계열 중 해당 과목에서는 이론상2×1.5×1.1=3.3배가 될 수 있으며 정수 버림/잔여 누적에 따라 개별 수치는 다르다.",
+      "risk": "강한 결합이지만 보유 일수에 따라 배율이 계속 커지는 구조는 아니다. stamina는 천재 배율 제외, dressage는 천재75%라는 예외가 있다.",
+      "proposal": "밸런스 검토 대상으로 기록하되 새 상한·배타를 자동 추가하지 않는다.",
+      "evidence": [
+        "#dynamic:1181-1187",
+        "jo9_learning_xp:5-27",
+        "jo9_traits_combat:106-120",
+        "jo9_traits_personality:129-134"
+      ]
+    },
+    {
+      "id": "R05",
+      "names": [
+        "노예근성",
+        "거센 반항심"
+      ],
+      "keys": [
+        "jo9_slave_nature",
+        "defiant"
+      ],
+      "relation": "실제 배제 구현",
+      "implemented": "같은 생성 추첨의1~2/3~12구간을 사용하며 노예근성은 ego<4/pride<4도 요구한다. 수동 편집에서도 한쪽을 추가하면 반대쪽을0으로 만든다. 노예근성 초기화 시 defiant가 있으면 취소한다.",
+      "risk": "정상 생성·편집 경로에서는 동시 보유하지 않는다. 인물 외부 편집으로 깨진 값을 넣는 상황과 일반 플레이를 구분해야 한다.",
+      "proposal": "추가 배제 불필요.",
+      "evidence": [
+        "jo9_traits:82-87",
+        "jo9_traits:152-162",
+        "jo9_traits:343-349"
+      ]
+    },
+    {
+      "id": "R06",
+      "names": [
+        "노예근성",
+        "자유로운 영혼"
+      ],
+      "keys": [
+        "jo9_slave_nature",
+        "meekness<0"
+      ],
+      "relation": "개념상 긴장, 실제 배제 없음",
+      "implemented": "노예근성은 획득 시 한 번 복종 상태를 만드는 초기화다. 자유로운 영혼은 상시 복종 계산의 meekness 가산을 낮추는 성향이다. 현재 노예근성 생성/편집/초기화 조건에 meekness 검사가 없다.",
+      "risk": "이름만 보면 반대처럼 보일 수 있으나 초기 상태와 성향이라는 서로 다른 층위다. 노예근성이 이후 영구 복종을 보장하는 효과도 아니다.",
+      "proposal": "동시 출현을 금지할지는 창작 개념 선택이다. 검토만 요청된 현재에는 배제를 추가하지 않는다.",
+      "evidence": [
+        "jo9_traits:82-87",
+        "jo9_traits:343-405",
+        "#static_base:1315-1320",
+        "#static_base:2102-2106"
+      ]
+    },
+    {
+      "id": "R07",
+      "names": [
+        "노예근성",
+        "강한 복종심(기존 완전한 사육)"
+      ],
+      "keys": [
+        "jo9_slave_nature",
+        "meekness>0"
+      ],
+      "relation": "개념상 유사, 실제 보완",
+      "implemented": "노예근성은 초기 복종 획득, meekness 양수는 계속 복종 계산에 가산된다. 같은 저장값이나 같은 초기화 함수가 아니다.",
+      "risk": "초기부터 복종하며 복종 성향까지 좋은 인물이 될 수 있다. 현재 코드가 둘을 동의어나 대체 관계로 취급하지 않는다.",
+      "proposal": "명칭·설명에서 일회 초기 상태와 상시 성향을 구분하는 것이 우선이다.",
+      "evidence": [
+        "jo9_traits:343-405",
+        "#static_base:1315-1320",
+        "#static_base:2102-2106"
+      ]
+    },
+    {
+      "id": "R08",
+      "names": [
+        "거센 반항심",
+        "강한 복종심 / 자유로운 영혼"
+      ],
+      "keys": [
+        "defiant",
+        "meekness"
+      ],
+      "relation": "다른 복종 관련 축; 양립 또는 보완",
+      "implemented": "defiant는 pride0/정신 붕괴까지 양의 moral 누적을 막으며 해당 조건에서 해제된다. meekness는 일반 복종 보너스·일부 규칙 기분·경주 조종에 작용한다.",
+      "risk": "강한 복종심과 거센 반항심이 함께 있어도 행동 복종이 쉬우나 헌신 성장에 저항하는 결과일 수 있다. 자유로운 영혼과 거센 반항심은 부정 효과가 보완된다.",
+      "proposal": "단어가 비슷하다는 이유로 동일 축으로 합치거나 새 배제를 두지 않는다.",
+      "evidence": [
+        "jo9_traits:407-418",
+        "#static_base:1315-1320",
+        "$ride_start:20-21",
+        "next_day:2084-2089"
+      ]
+    },
+    {
+      "id": "R09",
+      "names": [
+        "역전의 용사",
+        "타고난 투사"
+      ],
+      "keys": [
+        "jo9_combat_trait=3",
+        "gladiatrix_affinity"
+      ],
+      "relation": "서로 다른 전투 재능·직업의 보완",
+      "implemented": "타고난 투사는 기본 공격 관련 능력에 적성을 더하고 최대 전투 체력의 상처 감점 완화·기술 기반 스태미나·사기 보너스가 있다. 역전의 용사는 계산된 전투 최대HP/STA/사기를1.5배 한다.",
+      "risk": "강한 동시 보유가 가능하며 기존 타고난 투사 효과를 새 직업이 대체하지 않는다.",
+      "proposal": "기존 승인된 양립을 유지하고 수치가 과한지는 별도 밸런스 검토로 다룬다.",
+      "evidence": [
+        "$catfight_fight_start:10-17",
+        "$catfight_fight_start:39-50",
+        "jo9_traits_combat:24-46"
+      ]
+    },
+    {
+      "id": "R10",
+      "names": [
+        "역전의 용사",
+        "용감함 / 겁쟁이"
+      ],
+      "keys": [
+        "jo9_combat_trait=3",
+        "courage"
+      ],
+      "relation": "다른 축의 전투 보완 또는 상쇄",
+      "implemented": "역전의 용사는 사기1.5배, courage=1은 사기1.5배, courage=-1은0.5배다. 따라서 용사+용감함의 사기는2.25배, 용사+겁쟁이는0.75배다.",
+      "risk": "용감함은 일반 복종 페널티+4도 있어 순수한 긍정 특성으로만 볼 수 없다. 겁쟁이는 공포를 이용한 복종 보너스도 있다.",
+      "proposal": "유용함과 인격 성향을 나눠 설명한다. 새 직업과 courage를 일괄 배제하지 않는다.",
+      "evidence": [
+        "jo9_traits_combat:30-43",
+        "#static_base:1317-1320",
+        "#dynamic:716-721"
+      ]
+    },
+    {
+      "id": "R11",
+      "names": [
+        "광전사",
+        "성기사",
+        "역전의 용사"
+      ],
+      "keys": [
+        "jo9_combat_trait"
+      ],
+      "relation": "같은 enum의 실제 배타",
+      "implemented": "1/2/3 중 하나만 저장한다. 실전10·15·20…승 때 현재0인 사람만 한 번 추첨하고 각3%, 총9%다. 새 일반 인물의 특정 배경에서는 생성 시 같은 키를 받을 수도 있다.",
+      "risk": "전투를 오래 해도 정상 경로로 세 직업을 모두 쌓지 않는다. 미보유자가 끝없이 유효 추첨을 받으면 언젠가 하나를 얻을 가능성은 높아진다.",
+      "proposal": "세 직업을 별도 성취 슬롯3개로 집계하지 말고 같은 직업 축임을 고려한다.",
+      "evidence": [
+        "jo9_traits_combat:85-103",
+        "generate_stock:1654-1667"
+      ]
+    },
+    {
+      "id": "R12",
+      "names": [
+        "건강체질",
+        "약골"
+      ],
+      "keys": [
+        "jo9_constitution"
+      ],
+      "relation": "동일 축의 반대값, 실제 배타",
+      "implemented": "+1/-1 하나로 저장하며 생성 같은 추첨1~3/4~6구간이다. 건강체질은 전투HP/STA와 운동 교육XP1.5배, 약골은0.5배다.",
+      "risk": "현재 체력 단계와는 별도 특성이다. 체력이 낮아도 건강체질이 있을 수 있고 체력을 키워도 약골 플래그가 자동 제거되지는 않는다.",
+      "proposal": "현재 체력 등급과 특성을 설명에서 구분한다.",
+      "evidence": [
+        "jo9_traits:110-113",
+        "jo9_traits_combat:24-29",
+        "jo9_traits_combat:106-120"
+      ]
+    },
+    {
+      "id": "R13",
+      "names": [
+        "건강체질",
+        "운동광 / 운동 비선호",
+        "몸치로 부를 수 있는 기존 항목"
+      ],
+      "keys": [
+        "jo9_constitution",
+        "sport_affinity",
+        "grace",
+        "dexterity"
+      ],
+      "relation": "서로 다른 신체 능력/선호 축",
+      "implemented": "sport_affinity는 운동 과목 성실도 등 선호·학습 효과, grace는 스타일과 가격, dexterity는 손기술 과목 동기·가격이다. 건강체질은 전투 자원과 운동 교육 배율이다.",
+      "risk": "afb 기준 게임 표시문자열에 몸치는 없다. grace=-1의 촌뜨기, dexterity=-1의 투박한 손놀림, sport_affinity=-1의 게으름을 같은 항목으로 혼동하면 안 된다.",
+      "proposal": "명칭을 바꾸는 항목의 원래 키부터 특정한다. 건강과 운동 취향·우아함·손재주는 이름만으로 상호 배제하지 않는다.",
+      "evidence": [
+        "#static_base:969",
+        "#static_base:1230-1233",
+        "#dynamic:621-625",
+        "next_day:3786-3787",
+        "#static_base:1957-1960",
+        "#static_base:1984-1988"
+      ]
+    },
+    {
+      "id": "R14",
+      "names": [
+        "일벌레",
+        "안분지족"
+      ],
+      "keys": [
+        "jo9_work_ethic"
+      ],
+      "relation": "동일 축의 실제 배타",
+      "implemented": "+1/-1이다. 일일 첫 활동은 중립, 두 번째부터 기분 누적값+2/-2다. known은 첫 효과가 발생했는지의 발견 표식이다.",
+      "risk": "기다리다 다른 한쪽을 새로 얻거나 둘을 동시에 획득하는 루프가 아니다.",
+      "proposal": "현행 축 유지.",
+      "evidence": [
+        "jo9_traits:98-101",
+        "jo9_traits_personality:96-108"
+      ]
+    },
+    {
+      "id": "R15",
+      "names": [
+        "끈기",
+        "산만함"
+      ],
+      "keys": [
+        "jo9_focus"
+      ],
+      "relation": "동일 축의 실제 배타",
+      "implemented": "같은 수동 과목 연속 수행에서+10%XP와기분+2 또는-10%XP/작업성과를 적용한다. 같은 키+1/-1이다. fixed-rule 자동 업무는 연속과목 효과 제외다.",
+      "risk": "동일 과목을 수백 번 해도 배율이10%에서 계속 증가하지 않는다. 회수 잔여값은 소수점 처리용이지 새 배율 축적이 아니다.",
+      "proposal": "현행 축 유지.",
+      "evidence": [
+        "jo9_traits:102-105",
+        "jo9_traits_personality:109-138"
+      ]
+    },
+    {
+      "id": "R16",
+      "names": [
+        "옹졸함",
+        "너그러움"
+      ],
+      "keys": [
+        "jo9_grudge"
+      ],
+      "relation": "동일 축의 실제 배타",
+      "implemented": "같은 키+1/-1이다. 지정된 사건성 부정 기억의 회복 기간을 약1.5배/0.7배로 바꾸고 최초 기분 손실은 바꾸지 않는다.",
+      "risk": "부정 기억을 더 많이 만들거나 모든 질병·기아 회복을 바꾸는 기능으로 확대 해석하면 안 된다.",
+      "proposal": "현행 축 유지.",
+      "evidence": [
+        "jo9_traits:106-109",
+        "jo9_traits_personality:139-167"
+      ]
+    },
+    {
+      "id": "R17",
+      "names": [
+        "일벌레 / 안분지족",
+        "무기력증 / 과다행동장애(기존 표기)"
+      ],
+      "keys": [
+        "jo9_work_ethic",
+        "passion_comfort"
+      ],
+      "relation": "개념 일부 겹침, 다른 트리거",
+      "implemented": "jo9_work_ethic는 하루 활동 횟수별 기분이다. passion_comfort는 휴식·보상 강도 등 기존 상호작용에서 효과가 다르다. 배제 코드는 없다.",
+      "risk": "활동적인 의미의 이름이 비슷해도 완전 중복은 아니다. 기존 표기의 긍정·부정성은 기계적 보너스와 일치하지 않을 수 있다.",
+      "proposal": "명칭·툴팁으로 차이를 설명하되 자동 통합이나 삭제는 하지 않는다.",
+      "evidence": [
+        "jo9_traits_personality:96-108",
+        "interaction:6292-6293",
+        "interaction_result:1359-1382",
+        "#static_base:2166-2171"
+      ]
+    },
+    {
+      "id": "R18",
+      "names": [
+        "야심가",
+        "인지욕구 / 은둔형 외톨이"
+      ],
+      "keys": [
+        "jo9_ambition",
+        "passion_fame"
+      ],
+      "relation": "칭찬 보상 일부 겹침, 다른 조건",
+      "implemented": "야심가는 당일 기술 등급 상승 후 첫 칭찬에 기분 누적값+5를 한 번 지급한다. passion_fame는 기존 칭찬 반응/보상 강도에 관여한다.",
+      "risk": "같은 칭찬에서 함께 영향을 받을 수 있으나 야심가의 횟수 제한은 별도로 남는다.",
+      "proposal": "등급 상승 성취에 대한 반응과 관심받기 선호를 구분한다.",
+      "evidence": [
+        "jo9_traits_personality:9-95",
+        "interaction:6011-6032",
+        "interaction:10608",
+        "#static_base:2186-2191"
+      ]
+    },
+    {
+      "id": "R19",
+      "names": [
+        "기존 각 양·음 성향 및 단계"
+      ],
+      "keys": [
+        "meekness",
+        "courage",
+        "masochism",
+        "exhibitionism",
+        "perversion",
+        "homosexualism",
+        "grace",
+        "dexterity",
+        "sport_affinity",
+        "passion_*",
+        "anal_affinity"
+      ],
+      "relation": "동일 키의 수치·단계는 동시 보유 불가",
+      "implemented": "양수/음수 또는1/2 단계 이름은 한 배열 키의 현재값을 서로 다르게 표시한다. 예 masochism1과2, courage-1/1/2, meekness양/음은 다른 동시 플래그가 아니다.",
+      "risk": "항목명을 모두 독립 특성으로 세면 슬롯·중복·배타 계산을 과대 집계한다. 1→2의 진행은 기존 항목을 대체한다.",
+      "proposal": "특성 레지스트리는 표시 이름뿐 아니라 저장 축과 가능한 값으로 묶는다.",
+      "evidence": [
+        "#static_base:2051-2191",
+        "generate_stock:1277-1322"
+      ]
+    },
+    {
+      "id": "R20",
+      "names": [
+        "펠라 중독",
+        "반사적 구역질"
+      ],
+      "keys": [
+        "oral_affinity",
+        "jo9_gag_reflex"
+      ],
+      "relation": "부분 상쇄, 실제 배제 없음",
+      "implemented": "서로 독립적으로 생성된다. 대상 기술 수용 계산에서 oral 적성+2와 구역반사-2가 함께 적용될 수 있다. 적성의+50%XP 효과는 별도다.",
+      "risk": "이름이 충돌해도 코드상 전체 효과가 무효화되는 것은 아니다. 수용 보정만 상쇄될 수 있다.",
+      "proposal": "동시 보유를 없앨지 여부는 별도 창작 선택이며 현재 배제를 추가하지 않는다.",
+      "evidence": [
+        "jo9_traits:73-76",
+        "jo9_traits:313-339"
+      ]
+    },
+    {
+      "id": "R21",
+      "names": [
+        "선천적 벙어리",
+        "달변가"
+      ],
+      "keys": [
+        "jo9_voice_trait",
+        "expression_affinity"
+      ],
+      "relation": "개념상 긴장과 특정 기능 충돌",
+      "implemented": "다른 필드로 생성되어 일괄 배제하지 않는다. voice trait은 특정 발성 의존 행동을 차단하며 expression 적성은 분야 성실도·승급 경계에 작용한다.",
+      "risk": "말하기 재능으로만 해석한 명칭과 발성 제한은 설명이 충돌할 수 있다. 표현 기술 전체를 잃거나 성격을 바꾸는 효과는 구현하지 않았다.",
+      "proposal": "설명 범위를 먼저 맞춘다. 새 의학·명령·기술 제한을 이 검토에서 추가하지 않는다.",
+      "evidence": [
+        "jo9_traits:89-91",
+        "interaction:184-207",
+        "#dynamic:621-625",
+        "#static_base:1990-1994"
+      ]
+    },
+    {
+      "id": "R22",
+      "names": [
+        "다재다능",
+        "절세미인",
+        "기존 특별 판매 특성"
+      ],
+      "keys": [
+        "jo9_versatile",
+        "jo9_peerless",
+        "virginity=4 (existing premium/meiki check)"
+      ],
+      "relation": "서로 다른 성취/가치 축의 의도된 중첩",
+      "implemented": "다재다능은24개 표시기술이 A이상이면 영구 획득하고 기본가+25%, 새0→1부여 때 명성 한 등급이다. 절세미인은 외모·특별 판매, 기존 특별 판매 특성과 함께는 기존 프리미엄에추가1.5배를 적용한다.",
+      "risk": "일반 시장 특수 배수15×기본가1.25=원기준18.75배, 경매3×1.25=3.75배까지 가능하다. 반복 가격조회로 무한 복리 증가하는 구조는 아니다. 성취 보유 수 제한은 현재 없다.",
+      "proposal": "시장 가치 중첩은 기존 의도와 대조해 별도 밸런스 검토한다. 자동 해제·가격 상한을 새로 넣지 않는다.",
+      "evidence": [
+        "jo9_traits_value:17-36",
+        "jo9_traits_value:49-73",
+        "jo9_traits_value:75-107"
+      ]
+    },
+    {
+      "id": "R23",
+      "names": [
+        "옹졸함 / 너그러움",
+        "특정 부정 기억을 지우는 원본 성향"
+      ],
+      "keys": [
+        "jo9_grudge",
+        "masochism",
+        "exhibitionism",
+        "courage"
+      ],
+      "relation": "맥락에 따라 효과 일부 비활성, 전체 중복 아님",
+      "implemented": "기억 기간 보정은 해당 부정 기억이 남아 있을 때만 의미가 있다. 일부 원본 성향은 발견 후 특정 neg_* 기억을0으로 지운다.",
+      "risk": "원본 성향이 그 기억을0으로 만들면 해당 기억에 대한 옹졸함/너그러움 효과는 나타나지 않지만 다른 사건 기억은 여전히 영향을 받는다.",
+      "proposal": "서로 배타로 만들 필요는 없다. 전체 효과가 사라졌다고 설명하지 않는다.",
+      "evidence": [
+        "jo9_traits_personality:139-167",
+        "#static_base:2057-2059",
+        "#static_base:2067-2071",
+        "#static_base:2092-2094"
+      ]
+    }
+  ],
+  "postGenerationChanges": {
+    "source": "#static_base:1616-1629",
+    "transitionCount": 14,
+    "distinctAxisCount": 13,
+    "axes": [
+      {
+        "key": "masochism",
+        "steps": [
+          {
+            "xp": ">50",
+            "from": 0,
+            "to": 1
+          },
+          {
+            "xp": ">100",
+            "from": 1,
+            "to": 2
+          }
+        ],
+        "oppositeReplacement": false
+      },
+      {
+        "key": "exhibitionism",
+        "steps": [
+          {
+            "xp": ">75",
+            "from": "<2",
+            "to": 2
+          }
+        ],
+        "oppositeReplacement": true
+      },
+      {
+        "key": "nymphomania",
+        "steps": [
+          {
+            "xp": ">200",
+            "from": "<1",
+            "to": 1
+          }
+        ],
+        "oppositeReplacement": true
+      },
+      {
+        "key": "perversion",
+        "steps": [
+          {
+            "xp": ">150",
+            "from": "<2",
+            "to": 2
+          }
+        ],
+        "oppositeReplacement": true
+      },
+      {
+        "key": "homosexualism",
+        "steps": [
+          {
+            "xp": ">50",
+            "from": 0,
+            "to": 1
+          }
+        ],
+        "oppositeReplacement": false
+      },
+      {
+        "key": "abuse_attitude",
+        "steps": [
+          {
+            "xp": ">50",
+            "from": 0,
+            "to": 2
+          }
+        ],
+        "oppositeReplacement": false
+      },
+      {
+        "key": "darkness_attitude",
+        "steps": [
+          {
+            "xp": ">50",
+            "from": 0,
+            "to": 2
+          }
+        ],
+        "oppositeReplacement": false
+      },
+      {
+        "key": "blood_attitude",
+        "steps": [
+          {
+            "xp": ">50",
+            "from": 0,
+            "to": 2
+          }
+        ],
+        "oppositeReplacement": false
+      },
+      {
+        "key": "fire_attitude",
+        "steps": [
+          {
+            "xp": ">50",
+            "from": 0,
+            "to": 2
+          }
+        ],
+        "oppositeReplacement": false
+      },
+      {
+        "key": "water_attitude",
+        "steps": [
+          {
+            "xp": ">50",
+            "from": 0,
+            "to": 2
+          }
+        ],
+        "oppositeReplacement": false
+      },
+      {
+        "key": "vermin_attitude",
+        "steps": [
+          {
+            "xp": ">50",
+            "from": 0,
+            "to": 2
+          }
+        ],
+        "oppositeReplacement": false
+      },
+      {
+        "key": "deprivation_attitude",
+        "steps": [
+          {
+            "xp": ">50",
+            "from": 0,
+            "to": 1
+          }
+        ],
+        "oppositeReplacement": false
+      },
+      {
+        "key": "compassion",
+        "steps": [
+          {
+            "xp": ">10",
+            "from": 0,
+            "to": 1
+          }
+        ],
+        "oppositeReplacement": false
+      }
+    ]
+  },
+  "longTerm": {
+    "allTraitsGuaranteed": false,
+    "timeAloneGivesTraits": false,
+    "canExceedSmallUiBudget": true,
+    "reason": "Original habit XP paths, a combat class, versatile, surgery peerless, championship progression and already-born hidden traits can combine. Opposite values on same axis cannot all coexist. Innate JO9 personality/constitution/learning traits are not daily rerolled.",
+    "generationVsDiscovery": [
+      "*_revealed and jo9_*_known reveal existing states; they do not create an absent original aptitude or absent JO9 personality.",
+      "Original habit XP conditions can actually change a trait value and sometimes replace an opposite.",
+      "Combat repeated draws stop at first class.",
+      "Versatile is permanent after all skills qualify.",
+      "Peerless can be innate or surgery-earned; surgery retains once-per-person behavior."
+    ]
+  },
+  "designBoundaries": [
+    "Do not infer new mutual exclusions from names alone.",
+    "Do not replace genius2x with a virtual all-affinities system; latest user confirmed existing2x concept.",
+    "Do not classify every discovered label as a newly gained achievement.",
+    "Do not silently force an origin category onto old saves.",
+    "Do not implement new slot caps, trait deletion, rerolls or brothel mechanics as part of this review."
+  ],
+  "limitations": [
+    "Static source review only; no independent native-engine replay in this task.",
+    "Specific scripted one-off quests/presets may set traits outside ordinary growth; not a claim of exhaustive reachability proof for every generated character.",
+    "Current display names are from stated hash; parent may separately apply approved terminology updates."
+  ]
+}

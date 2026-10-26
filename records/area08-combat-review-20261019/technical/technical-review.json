@@ -1,0 +1,1672 @@
+{
+  "qsp": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+  "sha256": "ae591ef904a5fe0f4cbac3454815ac36cd1475464689869bb75c94e3e7fe7826",
+  "locations": 261,
+  "analysisOnly": true,
+  "runtimeOrBuildExecuted": false,
+  "records": [
+    {
+      "name": "#противники",
+      "currentSnapshotMatchesLiveQsp": true,
+      "headerLine": 1,
+      "normalizedAfterKnownProposalsEqual": true,
+      "knownNonDisplayChanges": [
+        "egeya Russian result keys3 + English aliases3",
+        "erza result keys3"
+      ],
+      "unreviewedBehavioralChanges": []
+    },
+    {
+      "name": "#суперудары",
+      "currentSnapshotMatchesLiveQsp": true,
+      "headerLine": 3780,
+      "normalizedAfterKnownProposalsEqual": true,
+      "knownNonDisplayChanges": [
+        "roundhouse numeric-array reference",
+        "face-bash text registration key"
+      ],
+      "unreviewedBehavioralChanges": []
+    },
+    {
+      "name": "атака_игрока",
+      "currentSnapshotMatchesLiveQsp": true,
+      "headerLine": 4133,
+      "normalizedAfterKnownProposalsEqual": true,
+      "knownNonDisplayChanges": [],
+      "unreviewedBehavioralChanges": []
+    },
+    {
+      "name": "суперудары",
+      "currentSnapshotMatchesLiveQsp": true,
+      "headerLine": 4661,
+      "normalizedAfterKnownProposalsEqual": true,
+      "knownNonDisplayChanges": [],
+      "unreviewedBehavioralChanges": []
+    },
+    {
+      "name": "#боевые_предметы",
+      "currentSnapshotMatchesLiveQsp": true,
+      "headerLine": 4781,
+      "normalizedAfterKnownProposalsEqual": true,
+      "knownNonDisplayChanges": [],
+      "unreviewedBehavioralChanges": []
+    },
+    {
+      "name": "инвентарь",
+      "currentSnapshotMatchesLiveQsp": true,
+      "headerLine": 6153,
+      "normalizedAfterKnownProposalsEqual": true,
+      "knownNonDisplayChanges": [],
+      "unreviewedBehavioralChanges": []
+    },
+    {
+      "name": "вторичные_атаки",
+      "currentSnapshotMatchesLiveQsp": true,
+      "headerLine": 6170,
+      "normalizedAfterKnownProposalsEqual": true,
+      "knownNonDisplayChanges": [],
+      "unreviewedBehavioralChanges": []
+    },
+    {
+      "name": "выход_из_боя",
+      "currentSnapshotMatchesLiveQsp": true,
+      "headerLine": 6190,
+      "normalizedAfterKnownProposalsEqual": true,
+      "knownNonDisplayChanges": [],
+      "unreviewedBehavioralChanges": []
+    },
+    {
+      "name": "#chariots_base",
+      "currentSnapshotMatchesLiveQsp": true,
+      "headerLine": 6812,
+      "normalizedAfterKnownProposalsEqual": true,
+      "knownNonDisplayChanges": [
+        "second startline registration key"
+      ],
+      "unreviewedBehavioralChanges": []
+    }
+  ],
+  "proposals": [
+    {
+      "id": "egeya_result_keys",
+      "decision": "merge",
+      "severity": "실제 표시 연결 누락",
+      "currentEffect": "사전에는 영어 결과키만 있고 시작 루틴은 러시아어 키에서 복사한다. 세 패배상태의 적 최종 라운드 로그가 비게 되는 연결 누락이다. 승리 처리/노예 획득 자체를 추가하는 변경은 아니다.",
+      "change": "러시아어 3키를 정의하고 영어 3키는 해당 값의 별칭으로 보존한다. 별칭은 현재 소비가 발견되지 않지만 기존 키를 삭제하지 않는 호환 조치다.",
+      "tests": [
+        "에게야 결투에서 체력/체력 외 소모/사기 종료의 각 최종 로그와 후속 장면 확인",
+        "기존 저장 불러오기 후 사전 재로딩 및 영어키와 러시아어키의 값 일치 확인"
+      ],
+      "evidence": [
+        {
+          "kind": "current",
+          "location": "#противники",
+          "start": 3436,
+          "end": 3438,
+          "lines": [
+            {
+              "line": 3436,
+              "code": "$death['egeya'] = '피를 흘리며 삶과 죽음의 경계에 선 에게야가 땅에 쓰러진다. 그녀를 끝장내는 건 네게 이득이 아니다. 그녀는 살아 있어야 한다...'"
+            },
+            {
+              "line": 3437,
+              "code": "$disconnect['egeya'] = '에게야는 너무 약해져 더는 싸움을 이어 갈 수 없다. 네가 원하던 걸 얻었다 - 이제 이 엘리트 여검투사는 네 노예다.'"
+            },
+            {
+              "line": 3438,
+              "code": "$escape['egeya'] = '에게야가 항복하고 자비를 구한다. 네가 원하던 걸 얻었다 - 이제 이 엘리트 여검투사는 네 노예다.'"
+            }
+          ]
+        },
+        {
+          "kind": "incoming",
+          "location": "#противники",
+          "start": 3436,
+          "end": 3441,
+          "lines": [
+            {
+              "line": 3436,
+              "code": "$смерть['egeya'] = '피를 흘리며 생사의 경계에 선 에게야가 바닥에 쓰러진다. 여기서 숨통을 끊어 놓는 건 당신에게도 손해다. 그녀는 산 채로 챙겨야 한다...'"
+            },
+            {
+              "line": 3437,
+              "code": "$отключка['egeya'] = '기력이 다한 에게야는 더 이상 싸움을 이어 갈 수 없다. 당신이 원하던 바를 이루었다. 이제 이 일류 여검투사는 당신의 노예다.'"
+            },
+            {
+              "line": 3438,
+              "code": "$бегство['egeya'] = '에게야가 무기를 버리고 항복하며 자비를 구걸한다. 당신이 원하던 바를 이루었다. 이제 이 일류 여검투사는 당신의 노예다.'"
+            },
+            {
+              "line": 3439,
+              "code": "$death['egeya'] = $смерть['egeya']"
+            },
+            {
+              "line": 3440,
+              "code": "$disconnect['egeya'] = $отключка['egeya']"
+            },
+            {
+              "line": 3441,
+              "code": "$escape['egeya'] = $бегство['egeya']"
+            }
+          ],
+          "sourceFile": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\outputs\\argon-text-review-20261019\\input\\10_qsp_patch_area3_combat_and_training.txt",
+          "sourceStart": 3437,
+          "sourceEnd": 3442,
+          "sourceCoordinatesChecked": true
+        },
+        {
+          "kind": "current",
+          "location": "начать_бой",
+          "start": 421,
+          "end": 431,
+          "lines": [
+            {
+              "line": 421,
+              "code": "!Getting information about mobs/enemies with a cycle"
+            },
+            {
+              "line": 422,
+              "code": "i = 0"
+            },
+            {
+              "line": 423,
+              "code": ":loop"
+            },
+            {
+              "line": 424,
+              "code": "if i < количество_врагов:"
+            },
+            {
+              "line": 425,
+              "code": "\ti += 1"
+            },
+            {
+              "line": 426,
+              "code": "\t$имя_врага[i] = $название_моба[$враг[i]]"
+            },
+            {
+              "line": 427,
+              "code": "\t$склонение_врага[i] = $склонение_моба[$враг[i]]"
+            },
+            {
+              "line": 428,
+              "code": "\t$класс_врага[i] = $класс_моба[$враг[i]]"
+            },
+            {
+              "line": 429,
+              "code": "\t$труп_врага[i] = $смерть[$враг[i]]"
+            },
+            {
+              "line": 430,
+              "code": "\t$тело_врага[i] = $отключка[$враг[i]]"
+            },
+            {
+              "line": 431,
+              "code": "\t$беглец[i] = $бегство[$враг[i]]"
+            }
+          ]
+        },
+        {
+          "kind": "current",
+          "location": "конец_раунда",
+          "start": 184,
+          "end": 205,
+          "lines": [
+            {
+              "line": 184,
+              "code": "\t\tif здоровье_врага[i] <= 0 and $класс_врага[i]!'пешка':"
+            },
+            {
+              "line": 185,
+              "code": "\t\t\tвраг[i] = 0"
+            },
+            {
+              "line": 186,
+              "code": "\t\t\tповерженные_враги += 1"
+            },
+            {
+              "line": 187,
+              "code": "\t\t\t$трофей[тр] = $труп_моба_в_локацию[$враг[i]]"
+            },
+            {
+              "line": 188,
+              "code": "\t\t\tтруп[$враг[i]] += 1"
+            },
+            {
+              "line": 189,
+              "code": "\t\t\tтр += 1"
+            },
+            {
+              "line": 190,
+              "code": "\t\t\t$действия_врага[i] += '<<$труп_врага[i]>><br>' &! append defeat text to last combat round text to show the final action - ImperatorAugustus"
+            },
+            {
+              "line": 191,
+              "code": "\t\t\tjump 'loop5'"
+            },
+            {
+              "line": 192,
+              "code": "\t\tend"
+            },
+            {
+              "line": 193,
+              "code": "\t\tif выносливость_врага[i] <= 0 and $класс_врага[i]!'пешка':"
+            },
+            {
+              "line": 194,
+              "code": "\t\t\tвраг[i] = 0"
+            },
+            {
+              "line": 195,
+              "code": "\t\t\tповерженные_враги += 1"
+            },
+            {
+              "line": 196,
+              "code": "\t\t\t$трофей[тр] = $вырубленный_моб_в_локацию[$враг[i]]"
+            },
+            {
+              "line": 197,
+              "code": "\t\t\tв_отключке[$враг[i]] += 1"
+            },
+            {
+              "line": 198,
+              "code": "\t\t\tтр += 1"
+            },
+            {
+              "line": 199,
+              "code": "\t\t\t$действия_врага[i] += '<<$тело_врага[i]>><br>' &! append defeat text to last combat round text to show the final action - ImperatorAugustus"
+            },
+            {
+              "line": 200,
+              "code": "\t\t\tjump 'loop5'"
+            },
+            {
+              "line": 201,
+              "code": "\t\tend"
+            },
+            {
+              "line": 202,
+              "code": "\t\tif дух_врага[i] <= 0 and $класс_врага[i]!'пешка':"
+            },
+            {
+              "line": 203,
+              "code": "\t\t\tвраг[i] = 0"
+            },
+            {
+              "line": 204,
+              "code": "\t\t\tповерженные_враги += 1"
+            },
+            {
+              "line": 205,
+              "code": "\t\t\t$действия_врага[i] += '<<$беглец[i]>><br>' &! append defeat text to last combat round text to show the final action - ImperatorAugustus"
+            }
+          ]
+        },
+        {
+          "kind": "current",
+          "location": "конец_боя",
+          "start": 17,
+          "end": 23,
+          "lines": [
+            {
+              "line": 17,
+              "code": "if $боевая_обстановка ! '': $информация_о_бое += '<<$боевая_обстановка>><br><br>'"
+            },
+            {
+              "line": 18,
+              "code": "$информация_о_бое += '<<$действия_игрока>><br><br>'"
+            },
+            {
+              "line": 19,
+              "code": "$информация_о_бое += '<<$действия_врага[1]>><br>'"
+            },
+            {
+              "line": 20,
+              "code": "$информация_о_бое += '<<$действия_врага[2]>><br>'"
+            },
+            {
+              "line": 21,
+              "code": "$информация_о_бое += '<<$действия_врага[3]>><br>'"
+            },
+            {
+              "line": 22,
+              "code": "$информация_о_бое += '<<$действия_врага[4]>><br>'"
+            },
+            {
+              "line": 23,
+              "code": "$информация_о_бое += '<<$действия_врага[5]>><br>'"
+            }
+          ]
+        },
+        {
+          "kind": "current",
+          "location": "выход_из_боя",
+          "start": 535,
+          "end": 545,
+          "lines": [
+            {
+              "line": 535,
+              "code": "IF $враг[1] = 'egeya' and $итог_боя = 'победа':"
+            },
+            {
+              "line": 536,
+              "code": "\tfighting_expirience = 20"
+            },
+            {
+              "line": 537,
+              "code": "\twon_slave_minimum_value = RAND(20,150)"
+            },
+            {
+              "line": 538,
+              "code": "\tif won_slave_minimum_value > 120: won_slave_minimum_value = 120 + RAND(0,180)"
+            },
+            {
+              "line": 539,
+              "code": "\tfog_battle = 1"
+            },
+            {
+              "line": 540,
+              "code": "\tmaster_str_rate += 5"
+            },
+            {
+              "line": 541,
+              "code": "\tmaster_domination_rate += 3"
+            },
+            {
+              "line": 542,
+              "code": "\tinteraction_city = 102017"
+            },
+            {
+              "line": 543,
+              "code": "\t$fight_return = 'interaction_city'"
+            },
+            {
+              "line": 544,
+              "code": "\tgt 'interaction_city'"
+            },
+            {
+              "line": 545,
+              "code": "END"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "erza_result_keys",
+      "decision": "merge",
+      "severity": "실제 표시 연결 누락 + 신규 문장",
+      "currentEffect": "엘자는 세 러시아어 결과키가 모두 없다. 같은 시작/최종 로그 경로에 빈 값이 전달된다. 그러나 후속 분기는 이미 엘자 생존/사망을 검사하여 장면을 선택하므로 결과키 추가가 그 분기를 구현하는 것은 아니다.",
+      "change": "신규 결과문 3개를 기존 엔진이 읽는 키에 추가한다. 문안 내용은 별도 원문/설정 심사와 함께 병합해야 한다.",
+      "tests": [
+        "엘자 체력0/기력0/사기0 종료의 적 로그 확인",
+        "이후 생존 시 획득 장면과 사망 장면의 기존 분기 보존 확인"
+      ],
+      "evidence": [
+        {
+          "kind": "current",
+          "location": "#противники",
+          "start": 3682,
+          "end": 3694,
+          "lines": [
+            {
+              "line": 3682,
+              "code": "$суператака_1_тип_вреда['erza'] = 'рубящий'"
+            },
+            {
+              "line": 3683,
+              "code": "$суператака_1_текст['erza'] = \"엘자의 <font color='red'>파괴적인</font> 톱니채찍이 당신의 몸을 깊고 거칠게 찢어놓았다.\""
+            },
+            {
+              "line": 3684,
+              "code": "$суператака_1_кратко['erza'] = \"[대지 진동]\""
+            },
+            {
+              "line": 3685,
+              "code": "$спецэффект_суператаки_1['erza'] = {"
+            },
+            {
+              "line": 3686,
+              "code": "боль = 50"
+            },
+            {
+              "line": 3687,
+              "code": "слабость = 50"
+            },
+            {
+              "line": 3688,
+              "code": "скованность = 50"
+            },
+            {
+              "line": 3689,
+              "code": "}"
+            },
+            {
+              "line": 3690,
+              "code": ""
+            },
+            {
+              "line": 3691,
+              "code": "!SAMPLE ['образец']"
+            },
+            {
+              "line": 3692,
+              "code": "!название_моба - enemy name;"
+            },
+            {
+              "line": 3693,
+              "code": "!аватара_моба - mob avatar;"
+            },
+            {
+              "line": 3694,
+              "code": "!силуэт_моба - full mob sprite;"
+            }
+          ]
+        },
+        {
+          "kind": "incoming",
+          "location": "#противники",
+          "start": 3690,
+          "end": 3695,
+          "lines": [
+            {
+              "line": 3690,
+              "code": "слабость = 50"
+            },
+            {
+              "line": 3691,
+              "code": "скованность = 50"
+            },
+            {
+              "line": 3692,
+              "code": "}"
+            },
+            {
+              "line": 3693,
+              "code": "$смерть['erza'] = '피투성이가 된 엘자가 신음하며 결투장 바닥에 쓰러진다.'"
+            },
+            {
+              "line": 3694,
+              "code": "$отключка['erza'] = '기력이 바닥난 엘자가 무릎을 꿇고 의식을 잃은 채 쓰러진다.'"
+            },
+            {
+              "line": 3695,
+              "code": "$бегство['erza'] = '엘자가 입술을 깨물며 패배를 인정하고 물러선다.'"
+            }
+          ],
+          "sourceFile": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\outputs\\argon-text-review-20261019\\input\\10_qsp_patch_area3_combat_and_training.txt",
+          "sourceStart": 3691,
+          "sourceEnd": 3696,
+          "sourceCoordinatesChecked": true
+        },
+        {
+          "kind": "current",
+          "location": "начать_бой",
+          "start": 429,
+          "end": 431,
+          "lines": [
+            {
+              "line": 429,
+              "code": "\t$труп_врага[i] = $смерть[$враг[i]]"
+            },
+            {
+              "line": 430,
+              "code": "\t$тело_врага[i] = $отключка[$враг[i]]"
+            },
+            {
+              "line": 431,
+              "code": "\t$беглец[i] = $бегство[$враг[i]]"
+            }
+          ]
+        },
+        {
+          "kind": "current",
+          "location": "выход_из_боя",
+          "start": 557,
+          "end": 566,
+          "lines": [
+            {
+              "line": 557,
+              "code": "IF $враг[1] = 'erza' and $итог_боя = 'победа':"
+            },
+            {
+              "line": 558,
+              "code": "\tfighting_expirience = 20"
+            },
+            {
+              "line": 559,
+              "code": "\twon_slave_minimum_value = RAND(20,150)"
+            },
+            {
+              "line": 560,
+              "code": "\tif won_slave_minimum_value > 120: won_slave_minimum_value = 120 + RAND(0,180)"
+            },
+            {
+              "line": 561,
+              "code": "\tfog_battle = 1"
+            },
+            {
+              "line": 562,
+              "code": "\tmaster_str_rate += 5"
+            },
+            {
+              "line": 563,
+              "code": "\tmaster_domination_rate += 3"
+            },
+            {
+              "line": 564,
+              "code": "\tinteraction_city = 666779"
+            },
+            {
+              "line": 565,
+              "code": "\tgt 'interaction_city'"
+            },
+            {
+              "line": 566,
+              "code": "END"
+            }
+          ]
+        },
+        {
+          "kind": "current",
+          "location": "interaction_city",
+          "start": 31552,
+          "end": 31560,
+          "lines": [
+            {
+              "line": 31552,
+              "code": "IF interaction_city = 666779:"
+            },
+            {
+              "line": 31553,
+              "code": " $place = 'erza_battle'"
+            },
+            {
+              "line": 31554,
+              "code": " copyarr '$display_options', '$erza_battle_options'"
+            },
+            {
+              "line": 31555,
+              "code": " if здоровье_врага[1] <= 0: "
+            },
+            {
+              "line": 31556,
+              "code": "   interaction_city = 6667792"
+            },
+            {
+              "line": 31557,
+              "code": " else "
+            },
+            {
+              "line": 31558,
+              "code": "   interaction_city = 6667791"
+            },
+            {
+              "line": 31559,
+              "code": " end"
+            },
+            {
+              "line": 31560,
+              "code": " gt 'interaction_city'"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "erza_description",
+      "decision": "hold",
+      "severity": "빈 표시값에 신규 설정 문장 추가",
+      "currentEffect": "현재 설명은 공백 3개다. 일반 적 설명 소비 경로는 interaction_city:5142에 있으나 엘자 정상 준비 경로는 직접 shop_general로 가므로 이 새 문장이 반드시 그 결투에서 노출된다고 단정할 수 없다.",
+      "change": "기술적으로는 기존 키의 문자열 교체이고 능력치/분기 추가는 없다. 창작된 묘사이므로 내용 검토 결과와 함께 결정한다.",
+      "tests": [
+        "엘자 정상 도전 경로에서 설명의 실제 노출 위치 확인",
+        "문장 설정이 기존 NPC/장비와 맞는지 검토"
+      ],
+      "evidence": [
+        {
+          "kind": "current",
+          "location": "#противники",
+          "start": 3652,
+          "end": 3652,
+          "lines": [
+            {
+              "line": 3652,
+              "code": "$описание_моба['erza'] = \"   \""
+            }
+          ]
+        },
+        {
+          "kind": "incoming",
+          "location": "#противники",
+          "start": 3655,
+          "end": 3655,
+          "lines": [
+            {
+              "line": 3655,
+              "code": "$описание_моба['erza'] = \"강철 갑옷과 톱니채찍으로 무장한 채 매서운 눈초리로 맞서는 여전사 엘자다.\""
+            }
+          ],
+          "sourceFile": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\outputs\\argon-text-review-20261019\\input\\10_qsp_patch_area3_combat_and_training.txt",
+          "sourceStart": 3656,
+          "sourceEnd": 3656,
+          "sourceCoordinatesChecked": true
+        },
+        {
+          "kind": "current",
+          "location": "interaction_city",
+          "start": 5136,
+          "end": 5147,
+          "lines": [
+            {
+              "line": 5136,
+              "code": ""
+            },
+            {
+              "line": 5137,
+              "code": "if interaction_city = 199:"
+            },
+            {
+              "line": 5138,
+              "code": "\t$place = 'colosseum'"
+            },
+            {
+              "line": 5139,
+              "code": "\t$return_lock = 'shop_general'"
+            },
+            {
+              "line": 5140,
+              "code": "\t$toplay = 'arena'"
+            },
+            {
+              "line": 5141,
+              "code": "\t$picture_type = 'untyped'"
+            },
+            {
+              "line": 5142,
+              "code": "\t$text[1] = '  <<$описание_моба[$враг[1]]>>'"
+            },
+            {
+              "line": 5143,
+              "code": "\t$bg_path = '<<$силуэт_моба[$враг[1]]>>'"
+            },
+            {
+              "line": 5144,
+              "code": "\t$return_lock = 'начать_бой'"
+            },
+            {
+              "line": 5145,
+              "code": "\tmemcf = colosseum_fight"
+            },
+            {
+              "line": 5146,
+              "code": "end"
+            },
+            {
+              "line": 5147,
+              "code": ""
+            }
+          ]
+        },
+        {
+          "kind": "current",
+          "location": "interaction_city",
+          "start": 31534,
+          "end": 31551,
+          "lines": [
+            {
+              "line": 31534,
+              "code": "IF interaction_city = 6667770:"
+            },
+            {
+              "line": 31535,
+              "code": " gs '$combat_variable_reset'"
+            },
+            {
+              "line": 31536,
+              "code": " $place = 'erza_battle'"
+            },
+            {
+              "line": 31537,
+              "code": " $return_lock  = 'city_menu_form'"
+            },
+            {
+              "line": 31538,
+              "code": " combatant = 0"
+            },
+            {
+              "line": 31539,
+              "code": " interaction_city = 666778"
+            },
+            {
+              "line": 31540,
+              "code": "END"
+            },
+            {
+              "line": 31541,
+              "code": "IF interaction_city = 666778:"
+            },
+            {
+              "line": 31542,
+              "code": " $fight_return  = 'city_menu_form'"
+            },
+            {
+              "line": 31543,
+              "code": " skip_to = 10385"
+            },
+            {
+              "line": 31544,
+              "code": "! JO9 MOD START J9M0148 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included"
+            },
+            {
+              "line": 31545,
+              "code": " $sp_text[10385] = '[엘자]<br>&nbsp;머지않아 당신은 내 전리품 목록에 오르게 될 거다, <<$master_name>>!<br>[당신]<br>&nbsp;흠!... 아니면 네가 내 노예 목록에 오르게 될지도 모르겠군, 미인?!'"
+            },
+            {
+              "line": 31546,
+              "code": "! JO9 MOD END J9M0148"
+            },
+            {
+              "line": 31547,
+              "code": " количество_врагов = 1"
+            },
+            {
+              "line": 31548,
+              "code": " $враг[1] = 'erza'"
+            },
+            {
+              "line": 31549,
+              "code": " copyarr '$display_options', '$edge_of_mists'"
+            },
+            {
+              "line": 31550,
+              "code": " GT 'shop_general'"
+            },
+            {
+              "line": 31551,
+              "code": "END"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "roundhouse_dictionary_reference",
+      "decision": "hold",
+      "severity": "사전 오타이나 정상 공격에서 덮어씀",
+      "currentEffect": "iбазовый_вред는 현 QSP 전체에서 이 1회뿐이다. 사전값은 잘못된 참조다. 그러나 정상 메뉴는 #dynamic:2044..2047에서 args=21로 가고 атака_игрока:76이 사전 기본값을 무기1배로 재등록한 뒤 :89가 실제 피해 계산 입력을 무기2배로 직접 설정한다. 따라서 이 제안만으로 현재 0피해가 3배로 고쳐진다고 설명할 수 없다. 2배는 최종 HP 손실이 아니라 후속 계산 전 입력이다.",
+      "change": "제공 제안은 사전 초기값을 무기3배로 바꾸지만 정상 실행의 2배 입력은 바꾸지 않는다. 유지관리 목적의 오타 정리로 채택할 수 있으나 전투 수리/밸런스 변경 효과는 별개다.",
+      "tests": [
+        "학습한 돌려차기를 정상 메뉴로 사용하여 기존/수정안의 실제 계산 입력 및 최종 피해 비교",
+        "무기 교체/사전 재로딩 후 값 비교",
+        "별도 합의 없이는 실행부 2배를 3배로 바꾸지 않는다"
+      ],
+      "evidence": [
+        {
+          "kind": "current",
+          "location": "#суперудары",
+          "start": 6,
+          "end": 17,
+          "lines": [
+            {
+              "line": 6,
+              "code": "!Roundhouse kick ['удар_с_разворота']"
+            },
+            {
+              "line": 7,
+              "code": "базовый_вред['удар_с_разворота'] = iбазовый_вред[$оружие]*3"
+            },
+            {
+              "line": 8,
+              "code": "$тип_вреда['удар_с_разворота'] = $тип_вреда[$оружие]"
+            },
+            {
+              "line": 9,
+              "code": "$суперудар_тип['удар_с_разворота'] = 'сильная'"
+            },
+            {
+              "line": 10,
+              "code": "$суперудар_название['удар_с_разворота'] = \"<font color='red'>돌려차기</font>\""
+            },
+            {
+              "line": 11,
+              "code": "суперудар_длительность['удар_с_разворота'] = 2+сила"
+            },
+            {
+              "line": 12,
+              "code": "$суперудар_текст['удар_с_разворота'] = \"당신은 적을 향해 <font color='red'>강력한</font> 돌려차기를 날렸다!\""
+            },
+            {
+              "line": 13,
+              "code": "$спецэффект_описание['удар_с_разворота'] = '다량 피해'"
+            },
+            {
+              "line": 14,
+              "code": "$суперудар_условие_1['удар_с_разворота'] = 'нет'"
+            },
+            {
+              "line": 15,
+              "code": "$суперудар_условие_2['удар_с_разворота'] = 'нет'"
+            },
+            {
+              "line": 16,
+              "code": "$суперудар_условие_против['удар_с_разворота'] = 'отсутствует'"
+            },
+            {
+              "line": 17,
+              "code": "$спецэффект_суперудара['удар_с_разворота'] = {}"
+            }
+          ]
+        },
+        {
+          "kind": "incoming",
+          "location": "#суперудары",
+          "start": 7,
+          "end": 7,
+          "lines": [
+            {
+              "line": 7,
+              "code": "базовый_вред['удар_с_разворота'] = базовый_вред[$оружие]*3"
+            }
+          ],
+          "sourceFile": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\outputs\\argon-text-review-20261019\\input\\10_qsp_patch_area3_combat_and_training.txt",
+          "sourceStart": 3787,
+          "sourceEnd": 3787,
+          "sourceCoordinatesChecked": true
+        },
+        {
+          "kind": "current",
+          "location": "#dynamic",
+          "start": 2044,
+          "end": 2047,
+          "lines": [
+            {
+              "line": 2044,
+              "code": "$суперудар_11 = {"
+            },
+            {
+              "line": 2045,
+              "code": "\tсуперудар_сделан[11] = 1"
+            },
+            {
+              "line": 2046,
+              "code": "\tgt 'атака_игрока',21"
+            },
+            {
+              "line": 2047,
+              "code": "}"
+            }
+          ]
+        },
+        {
+          "kind": "current",
+          "location": "суперудары",
+          "start": 32,
+          "end": 36,
+          "lines": [
+            {
+              "line": 32,
+              "code": "if spm_learned['удар_с_разворота'] = 1 and суперудар_сделан[11] = 0:"
+            },
+            {
+              "line": 33,
+              "code": "\t$суперудар_название[$суперудар[1]] = \"<font color='red'>돌려차기</font>\""
+            },
+            {
+              "line": 34,
+              "code": "\t$меню_суперудар[1] = $суперудар_название[$суперудар[1]]"
+            },
+            {
+              "line": 35,
+              "code": "\t! $меню_суперудар[1] = 'Roundhouse Kick'"
+            },
+            {
+              "line": 36,
+              "code": "else"
+            }
+          ]
+        },
+        {
+          "kind": "current",
+          "location": "суперудары",
+          "start": 106,
+          "end": 106,
+          "lines": [
+            {
+              "line": 106,
+              "code": "if $меню_суперудар[1] ! '': $боевое_меню += \"<a href = 'EXEC: dynamic $суперудар_11'><<$меню_суперудар[1]>></a><br>\""
+            }
+          ]
+        },
+        {
+          "kind": "current",
+          "location": "атака_игрока",
+          "start": 73,
+          "end": 92,
+          "lines": [
+            {
+              "line": 73,
+              "code": "!Roundhouse kick ['удар_с_разворота']"
+            },
+            {
+              "line": 74,
+              "code": "if args = 21:"
+            },
+            {
+              "line": 75,
+              "code": "\tсупер = args - 20"
+            },
+            {
+              "line": 76,
+              "code": "\tбазовый_вред[$суперудар[супер]] = базовый_вред[$оружие]"
+            },
+            {
+              "line": 77,
+              "code": "\t$тип_вреда[$суперудар[супер]] = $тип_вреда[$оружие]"
+            },
+            {
+              "line": 78,
+              "code": "\t$суперудар_тип[$суперудар[супер]] = 'сильная'"
+            },
+            {
+              "line": 79,
+              "code": "\t$суперудар_название[$суперудар[супер]] = \"<font color='red'>돌려차기</font>\""
+            },
+            {
+              "line": 80,
+              "code": "\tсуперудар_длительность[$суперудар[супер]] = 2+сила"
+            },
+            {
+              "line": 81,
+              "code": "\t$суперудар_текст[$суперудар[супер]] = \"당신은 적을 향해 <font color='red'>강력한</font> 돌려차기!\""
+            },
+            {
+              "line": 82,
+              "code": "\t$спецэффект_описание[$суперудар[супер]] = '다량 피해'"
+            },
+            {
+              "line": 83,
+              "code": "\t$суперудар_условие_1[$суперудар[супер]] = 'нет'"
+            },
+            {
+              "line": 84,
+              "code": "\t$суперудар_условие_2[$суперудар[супер]] = 'нет'"
+            },
+            {
+              "line": 85,
+              "code": "\t$суперудар_условие_против[$суперудар[супер]] = 'отсутствует'"
+            },
+            {
+              "line": 86,
+              "code": "\t$спецэффект_суперудара[$суперудар[супер]] = {}"
+            },
+            {
+              "line": 87,
+              "code": "\t$атака[0] = 'сильная'"
+            },
+            {
+              "line": 88,
+              "code": "\t$рассчетный_тип_вреда = $тип_вреда[$оружие]"
+            },
+            {
+              "line": 89,
+              "code": "\tвред_на_рассчет = базовый_вред[$оружие]*2"
+            },
+            {
+              "line": 90,
+              "code": "\t$действия_игрока = $суперудар_текст[$суперудар[супер]]"
+            },
+            {
+              "line": 91,
+              "code": "\tэто_суперудар = 1"
+            },
+            {
+              "line": 92,
+              "code": "end"
+            }
+          ]
+        },
+        {
+          "kind": "current",
+          "location": "атака_игрока",
+          "start": 399,
+          "end": 399,
+          "lines": [
+            {
+              "line": 399,
+              "code": "gs 'рассчет_вреда'"
+            }
+          ]
+        },
+        {
+          "kind": "current",
+          "location": "рассчет_вреда",
+          "start": 43,
+          "end": 72,
+          "lines": [
+            {
+              "line": 43,
+              "code": "!damage calculation itself"
+            },
+            {
+              "line": 44,
+              "code": "if модификатор < -2: нанесенный_вред[atk] = вред_на_рассчет/6"
+            },
+            {
+              "line": 45,
+              "code": "if модификатор = -2: нанесенный_вред[atk] = вред_на_рассчет/4"
+            },
+            {
+              "line": 46,
+              "code": "if модификатор = -1: нанесенный_вред[atk] = вред_на_рассчет/2"
+            },
+            {
+              "line": 47,
+              "code": "if модификатор = 0: нанесенный_вред[atk] = вред_на_рассчет"
+            },
+            {
+              "line": 48,
+              "code": "if модификатор = 1: нанесенный_вред[atk] = вред_на_рассчет*2"
+            },
+            {
+              "line": 49,
+              "code": "if модификатор = 2: нанесенный_вред[atk] = вред_на_рассчет*4"
+            },
+            {
+              "line": 50,
+              "code": "if модификатор > 2: нанесенный_вред[atk] = вред_на_рассчет*6"
+            },
+            {
+              "line": 51,
+              "code": ""
+            },
+            {
+              "line": 52,
+              "code": "модифер = 0"
+            },
+            {
+              "line": 53,
+              "code": ""
+            },
+            {
+              "line": 54,
+              "code": "if def = 0: dynamic 'модифер = модификатор_<<$рассчетный_тип_вреда>>'"
+            },
+            {
+              "line": 55,
+              "code": "if def > 0: dynamic 'модифер = модификатор_<<$рассчетный_тип_вреда>>[$враг[def]]'"
+            },
+            {
+              "line": 56,
+              "code": "нанесенный_вред[atk] += модифер"
+            },
+            {
+              "line": 57,
+              "code": "! JO9 MOD START TRAITS_COMBAT_DAMAGE | 2026-10-17_traits_batch"
+            },
+            {
+              "line": 58,
+              "code": "gs 'jo9_traits_combat', 'damage'"
+            },
+            {
+              "line": 59,
+              "code": "! JO9 MOD END TRAITS_COMBAT_DAMAGE"
+            },
+            {
+              "line": 60,
+              "code": ""
+            },
+            {
+              "line": 61,
+              "code": "if нанесенный_вред[atk] < 1:"
+            },
+            {
+              "line": 62,
+              "code": "\tнанесенный_вред[atk] = 1"
+            },
+            {
+              "line": 63,
+              "code": "\ta = 1 + ((48271 * (day + master_energy + master_half_energy + sparks)) mod 65537)/(65537/10) &! pseudo-rand(1,10) using multiple factors as offset - ImperatorAugustus"
+            },
+            {
+              "line": 64,
+              "code": "\tif a = 1: нанесенный_вред[atk] += 1"
+            },
+            {
+              "line": 65,
+              "code": "\tif a = 2: нанесенный_вред[atk] += 2"
+            },
+            {
+              "line": 66,
+              "code": "\tif a = 3: нанесенный_вред[atk] += 3"
+            },
+            {
+              "line": 67,
+              "code": "\ta = 0"
+            },
+            {
+              "line": 68,
+              "code": "end"
+            },
+            {
+              "line": 69,
+              "code": ""
+            },
+            {
+              "line": 70,
+              "code": "$тип_нанесенного_вреда[atk] = $рассчетный_тип_вреда"
+            },
+            {
+              "line": 71,
+              "code": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "face_bash_dictionary_key",
+      "decision": "adopt",
+      "severity": "사전 등록키 오류; 정상 공격은 재등록",
+      "currentEffect": "사전에서 안면강타 텍스트를 현재 супер 선택값으로 등록하므로 정해진 키가 아닌 빈 키 또는 다른 기술 키에 쓸 수 있다. 단 정상 메뉴 args=28은 атака_игрока:288에서 텍스트를 재등록하고 :299에서 사용하므로 현재 정상 안면강타 텍스트가 항상 누락된다고 단정할 수 없다.",
+      "change": "등록 대상을 고정 키 лицо_прикладом으로 고치는 최소 수리는 타당하다. 피해 입력은 기존 무기2배이며 변경하지 않는다.",
+      "tests": [
+        "사전 초기 로드 및 다른 필살기 직후 재로딩에서 각 기술 텍스트가 덮이지 않는지 확인",
+        "둔기 안면강타 정상 메뉴의 텍스트/피해 입력이 기존과 동등한지 확인"
+      ],
+      "evidence": [
+        {
+          "kind": "current",
+          "location": "#суперудары",
+          "start": 158,
+          "end": 169,
+          "lines": [
+            {
+              "line": 158,
+              "code": "!Face Bash ['лицо_прикладом']"
+            },
+            {
+              "line": 159,
+              "code": "базовый_вред['лицо_прикладом'] = базовый_вред[$оружие]*2"
+            },
+            {
+              "line": 160,
+              "code": "$тип_вреда['лицо_прикладом'] = 'дробящий'"
+            },
+            {
+              "line": 161,
+              "code": "$суперудар_тип['лицо_прикладом'] = 'сильная'"
+            },
+            {
+              "line": 162,
+              "code": "$суперудар_название['лицо_прикладом'] = \"<font color='red'>안면 강타</font>\""
+            },
+            {
+              "line": 163,
+              "code": "суперудар_длительность['лицо_прикладом'] = 2+сила"
+            },
+            {
+              "line": 164,
+              "code": "$суперудар_текст[$суперудар[супер]] = \"하단을 치는척 적의 자세를 낮췄어. 그리곤 <font color='red'>온 힘</font> 실어 안면을 둔기로 빠각!\""
+            },
+            {
+              "line": 165,
+              "code": "$спецэффект_описание['лицо_прикладом'] = '안면 박살'"
+            },
+            {
+              "line": 166,
+              "code": "$суперудар_условие_1['лицо_прикладом'] = 'дробящий'"
+            },
+            {
+              "line": 167,
+              "code": "$суперудар_условие_2['лицо_прикладом'] = 'нет'"
+            },
+            {
+              "line": 168,
+              "code": "$суперудар_условие_против['лицо_прикладом'] = 'отсутствует'"
+            },
+            {
+              "line": 169,
+              "code": "$спецэффект_суперудара['лицо_прикладом'] = {"
+            }
+          ]
+        },
+        {
+          "kind": "incoming",
+          "location": "#суперудары",
+          "start": 164,
+          "end": 164,
+          "lines": [
+            {
+              "line": 164,
+              "code": "$суперудар_текст['лицо_прикладом'] = \"하단을 노리는 척 자세를 무너뜨린 뒤, <font color='red'>온 힘</font>을 실어 안면을 강타했다!\""
+            }
+          ],
+          "sourceFile": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\outputs\\argon-text-review-20261019\\input\\10_qsp_patch_area3_combat_and_training.txt",
+          "sourceStart": 3944,
+          "sourceEnd": 3944,
+          "sourceCoordinatesChecked": true
+        },
+        {
+          "kind": "current",
+          "location": "#dynamic",
+          "start": 2072,
+          "end": 2075,
+          "lines": [
+            {
+              "line": 2072,
+              "code": "$суперудар_18 = {"
+            },
+            {
+              "line": 2073,
+              "code": "\tсуперудар_сделан[18] = 1"
+            },
+            {
+              "line": 2074,
+              "code": "\tgt 'атака_игрока',28"
+            },
+            {
+              "line": 2075,
+              "code": "}"
+            }
+          ]
+        },
+        {
+          "kind": "current",
+          "location": "атака_игрока",
+          "start": 280,
+          "end": 301,
+          "lines": [
+            {
+              "line": 280,
+              "code": "!Face Bash ['лицо_прикладом']"
+            },
+            {
+              "line": 281,
+              "code": "if args = 28:"
+            },
+            {
+              "line": 282,
+              "code": "\tсупер = args - 20"
+            },
+            {
+              "line": 283,
+              "code": "\tбазовый_вред[$суперудар[супер]] = базовый_вред[$оружие]*2"
+            },
+            {
+              "line": 284,
+              "code": "\t$тип_вреда[$суперудар[супер]] = 'дробящий'"
+            },
+            {
+              "line": 285,
+              "code": "\t$суперудар_тип[$суперудар[супер]] = 'сильная'"
+            },
+            {
+              "line": 286,
+              "code": "\t$суперудар_название[$суперудар[супер]] = \"<font color='red'>안면 강타</font>\""
+            },
+            {
+              "line": 287,
+              "code": "\tсуперудар_длительность[$суперудар[супер]] = 2+сила"
+            },
+            {
+              "line": 288,
+              "code": "\t$суперудар_текст[$суперудар[супер]] = \"하단을 치는척 적의 자세를 낮추고, <font color='red'>온 힘</font>을 실어 안면을 후려쳤다.\""
+            },
+            {
+              "line": 289,
+              "code": "\t$спецэффект_описание[$суперудар[супер]] = '안면 박살'"
+            },
+            {
+              "line": 290,
+              "code": "\t$суперудар_условие_1[$суперудар[супер]] = 'дробящий'"
+            },
+            {
+              "line": 291,
+              "code": "\t$суперудар_условие_2[$суперудар[супер]] = 'нет'"
+            },
+            {
+              "line": 292,
+              "code": "\t$суперудар_условие_против[$суперудар[супер]] = 'отсутствует'"
+            },
+            {
+              "line": 293,
+              "code": "\t$спецэффект_суперудара[$суперудар[супер]] = {"
+            },
+            {
+              "line": 294,
+              "code": "\t\tслабость[текущий] = 4"
+            },
+            {
+              "line": 295,
+              "code": "\t}"
+            },
+            {
+              "line": 296,
+              "code": "\t$атака[0] = 'сильная'"
+            },
+            {
+              "line": 297,
+              "code": "\t$рассчетный_тип_вреда = 'дробящий'"
+            },
+            {
+              "line": 298,
+              "code": "\tвред_на_рассчет = базовый_вред[$оружие]*2"
+            },
+            {
+              "line": 299,
+              "code": "\t$действия_игрока = $суперудар_текст[$суперудар[супер]]"
+            },
+            {
+              "line": 300,
+              "code": "\tэто_суперудар = 1"
+            },
+            {
+              "line": 301,
+              "code": "end"
+            }
+          ]
+        },
+        {
+          "kind": "current",
+          "location": "$combat_variable_reset",
+          "start": 53,
+          "end": 53,
+          "lines": [
+            {
+              "line": 53,
+              "code": "супер = 0"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "avgia_startline_key",
+      "decision": "adopt",
+      "severity": "현재 실행되는 다른 참가자 키 덮어쓰기",
+      "currentEffect": "현재 사전 :82의 안젤리카 블록이 :119에서 덮인다. 안젤리카 참가 시 호출되는 것은 아우게아스 속도점수를 가산하는 코드이며 아우게아스 자신의 출발선 키는 정의되지 않는다. 두 명이 함께 참가하면 아우게아스가 안젤리카 호출에서 점수를 받고 안젤리카는 자기 출발 점수를 받지 못한다. 아우게아스만 있으면 이 블록은 호출되지 않는다.",
+      "change": "두 번째 등록키만 ride_avgia로 고치면 안젤리카는 기존 12+의 공식, 아우게아스는 기존 15+의 공식으로 각자 점수를 얻는다. 가산 수식/다른 구간은 바뀌지 않는다. 원고 주석의 범위 12..14/15..17은 의도 주석이며 정수 나눗셈 경계는 런타임 검증 대상이다.",
+      "tests": [
+        "안젤리카만/아우게아스만/둘 모두 참가한 세 경우의 첫 구간 점수 비교",
+        "고정 day에서 위 두 공식이 각 참가자에게 1회씩만 적용되는지 확인",
+        "기존 저장에서 새 경주 시작 시 #chariots_base 재로딩 확인"
+      ],
+      "evidence": [
+        {
+          "kind": "current",
+          "location": "#chariots_base",
+          "start": 82,
+          "end": 84,
+          "lines": [
+            {
+              "line": 82,
+              "code": "$race_startline['ride_angelika'] = {"
+            },
+            {
+              "line": 83,
+              "code": "\tspeed_points['ride_angelika'] += 12 + ((48271 * (day + 1)) mod 65537)/(65537/3) &! pseudo-rand(12,14)"
+            },
+            {
+              "line": 84,
+              "code": "}"
+            }
+          ]
+        },
+        {
+          "kind": "current",
+          "location": "#chariots_base",
+          "start": 119,
+          "end": 121,
+          "lines": [
+            {
+              "line": 119,
+              "code": "$race_startline['ride_angelika'] = {"
+            },
+            {
+              "line": 120,
+              "code": "\tspeed_points['ride_avgia'] += 15 + ((48271 * (day + 13)) mod 65537)/(65537/3) &! pseudo-rand(15,17)"
+            },
+            {
+              "line": 121,
+              "code": "}"
+            }
+          ]
+        },
+        {
+          "kind": "incoming",
+          "location": "#chariots_base",
+          "start": 119,
+          "end": 121,
+          "lines": [
+            {
+              "line": 119,
+              "code": "$race_startline['ride_avgia'] = {"
+            },
+            {
+              "line": 120,
+              "code": "\tspeed_points['ride_avgia'] += 15 + ((48271 * (day + 13)) mod 65537)/(65537/3) &! pseudo-rand(15,17)"
+            },
+            {
+              "line": 121,
+              "code": "}"
+            }
+          ],
+          "sourceFile": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\outputs\\argon-text-review-20261019\\input\\10_qsp_patch_area3_combat_and_training.txt",
+          "sourceStart": 6931,
+          "sourceEnd": 6933,
+          "sourceCoordinatesChecked": true
+        },
+        {
+          "kind": "current",
+          "location": "$ride_start",
+          "start": 16,
+          "end": 16,
+          "lines": [
+            {
+              "line": 16,
+              "code": "gs '#chariots_base'"
+            }
+          ]
+        },
+        {
+          "kind": "current",
+          "location": "$ride_start",
+          "start": 85,
+          "end": 87,
+          "lines": [
+            {
+              "line": 85,
+              "code": "killvar 'speed_points'"
+            },
+            {
+              "line": 86,
+              "code": "trace_segment = 1"
+            },
+            {
+              "line": 87,
+              "code": ""
+            }
+          ]
+        },
+        {
+          "kind": "current",
+          "location": "ride_next",
+          "start": 38,
+          "end": 50,
+          "lines": [
+            {
+              "line": 38,
+              "code": "if $trace[trace_segment] = 'ride_start':"
+            },
+            {
+              "line": 39,
+              "code": "\tif args = 1:"
+            },
+            {
+              "line": 40,
+              "code": "\t\t$current_ride = $trace_pass_description['ride_start']"
+            },
+            {
+              "line": 41,
+              "code": "\telse"
+            },
+            {
+              "line": 42,
+              "code": "\t\t$current_ride = $trace_fail_description['ride_start']"
+            },
+            {
+              "line": 43,
+              "code": "\tend"
+            },
+            {
+              "line": 44,
+              "code": "\tdynamic $race_startline[$participant[1]]"
+            },
+            {
+              "line": 45,
+              "code": "\tdynamic $race_startline[$participant[2]]"
+            },
+            {
+              "line": 46,
+              "code": "\tdynamic $race_startline[$participant[3]]"
+            },
+            {
+              "line": 47,
+              "code": "\tdynamic $race_startline[$participant[4]]"
+            },
+            {
+              "line": 48,
+              "code": "\tdynamic $race_startline[$participant[5]]"
+            },
+            {
+              "line": 49,
+              "code": "\tdynamic $race_startline[$participant[6]]"
+            },
+            {
+              "line": 50,
+              "code": "end"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "references": {
+    "egeyaEnglishDeath": [
+      {
+        "location": "#противники",
+        "line": 3436,
+        "code": "$death['egeya'] = '피를 흘리며 삶과 죽음의 경계에 선 에게야가 땅에 쓰러진다. 그녀를 끝장내는 건 네게 이득이 아니다. 그녀는 살아 있어야 한다...'"
+      }
+    ],
+    "egeyaEnglishDisconnect": [
+      {
+        "location": "#противники",
+        "line": 3437,
+        "code": "$disconnect['egeya'] = '에게야는 너무 약해져 더는 싸움을 이어 갈 수 없다. 네가 원하던 걸 얻었다 - 이제 이 엘리트 여검투사는 네 노예다.'"
+      }
+    ],
+    "egeyaEnglishEscape": [
+      {
+        "location": "#противники",
+        "line": 3438,
+        "code": "$escape['egeya'] = '에게야가 항복하고 자비를 구한다. 네가 원하던 걸 얻었다 - 이제 이 엘리트 여검투사는 네 노예다.'"
+      }
+    ],
+    "typo": [
+      {
+        "location": "#суперудары",
+        "line": 7,
+        "code": "базовый_вред['удар_с_разворота'] = iбазовый_вред[$оружие]*3"
+      }
+    ],
+    "resultCopies": [
+      {
+        "location": "$gladiator_fight_start",
+        "line": 75,
+        "code": "\t\t$труп_врага[i] = $смерть[$враг[i]]"
+      },
+      {
+        "location": "начать_бой",
+        "line": 429,
+        "code": "\t$труп_врага[i] = $смерть[$враг[i]]"
+      },
+      {
+        "location": "$catfight_fight_start",
+        "line": 75,
+        "code": "\t\t$труп_врага[i] = $смерть[$враг[i]]"
+      }
+    ],
+    "resultDisplays": [
+      {
+        "location": "конец_раунда",
+        "line": 190,
+        "code": "\t\t\t$действия_врага[i] += '<<$труп_врага[i]>><br>' &! append defeat text to last combat round text to show the final action - ImperatorAugustus"
+      },
+      {
+        "location": "конец_раунда",
+        "line": 199,
+        "code": "\t\t\t$действия_врага[i] += '<<$тело_врага[i]>><br>' &! append defeat text to last combat round text to show the final action - ImperatorAugustus"
+      },
+      {
+        "location": "конец_раунда",
+        "line": 205,
+        "code": "\t\t\t$действия_врага[i] += '<<$беглец[i]>><br>' &! append defeat text to last combat round text to show the final action - ImperatorAugustus"
+      },
+      {
+        "location": "конец_раунда",
+        "line": 214,
+        "code": "\t\t\t$действия_врага[i] += '<<$труп_врага[i]>><br>' &! append defeat text to last combat round text to show the final action - ImperatorAugustus"
+      }
+    ],
+    "startlineDefinitions": [
+      {
+        "location": "#chariots_base",
+        "line": 59,
+        "code": "$race_startline['crashed'] = {}"
+      },
+      {
+        "location": "#chariots_base",
+        "line": 69,
+        "code": "$race_startline['master'] = {}"
+      },
+      {
+        "location": "#chariots_base",
+        "line": 82,
+        "code": "$race_startline['ride_angelika'] = {"
+      },
+      {
+        "location": "#chariots_base",
+        "line": 119,
+        "code": "$race_startline['ride_angelika'] = {"
+      },
+      {
+        "location": "#chariots_base",
+        "line": 156,
+        "code": "$race_startline['ride_geralt'] = {"
+      },
+      {
+        "location": "#chariots_base",
+        "line": 193,
+        "code": "$race_startline['ride_ippolita'] = {"
+      },
+      {
+        "location": "#chariots_base",
+        "line": 230,
+        "code": "$race_startline['ride_jeevs'] = {"
+      },
+      {
+        "location": "#chariots_base",
+        "line": 267,
+        "code": "$race_startline['ride_morrigan'] = {"
+      }
+    ],
+    "sourceExactLines": [
+      {
+        "line": 3787,
+        "code": "базовый_вред['удар_с_разворота'] = базовый_вред[$оружие]*3"
+      }
+    ]
+  }
+}

@@ -1,0 +1,14 @@
+'use strict';
+const k=require('./root-kit.cjs'),{fs,root,q,doc,init,resources,addScript,domClick,run,sc}=k;
+const out=root+'/roles-native';resources(out,true);const plans=[];
+for(const who of ['isabella','egeya']){
+ const d=doc(),swap=who==='egeya'?"dynamic $swap_slave_instances,'slave','assistant'\n":'';
+ d.set('Start',init()+`\n$onnewloc='' & $counter=''\nnsfw=0\n${swap}qa_step=0\nassistant_stat_screen=0\ngt 'assistant_stat'`);
+ const js=`(function(){setTimeout(function(){var is=document.querySelectorAll('#center_image img'),n=0,bad=0;for(var i=0;i<is.length;i++){if(is[i].naturalWidth>0)n++;if(is[i].getAttribute('src').toLowerCase().indexOf('kirakira')>=0)bad++}var a=document.createElement('a');a.href="EXEC:qa_images="+n+" & qa_bad="+bad+" & qa_app="+(document.getElementById('assistant_appear')?1:0)+" & gs 'item_buy'";document.body.appendChild(a);var e=document.createEvent('MouseEvents');e.initMouseEvent('click',true,true,window,1,0,0,0,0,false,false,false,false,0,null);a.dispatchEvent(e)},400)}());`;
+ d.set('assistant_stat',d.get('assistant_stat')+'\n'+addScript(js));
+ const body=`if qa_bad!0 or qa_images<2: msg 'FAIL_ROLE_RENDER' & exit\nqa_modes[qa_step]=assistant['image_mode']\n$qa_paths[qa_step]=$assistant['fullimage']\nqa_image_count[qa_step]=qa_images\n`+(who==='egeya'?`if assistant_alt_appearance_count!0 or qa_app!0: msg 'FAIL_EGEYA_APPEARANCE' & exit\nsavegame 'egeya-role.sav'\nmsg 'JO9_QA_ROLES_egeya_COMPLETE'`:
+ `if qa_app!1 or assistant_alt_appearance_count!3: msg 'FAIL_ISABELLA_APPEARANCE' & exit\nif qa_step=0:\n qa_step=1\n ${addScript(domClick('#chekbox_11r a'))}\nelseif qa_step=1:\n if assistant['image_mode']!2: msg 'FAIL_MAID' & exit\n qa_step=2\n ${addScript(domClick('#chekbox_12r a'))}\nelseif qa_step=2:\n if assistant['image_mode']!3: msg 'FAIL_SECRETARY' & exit\n qa_step=3\n ${addScript(domClick('#chekbox_13r a'))}\nelse\n if assistant['image_mode']!1: msg 'FAIL_DOMINA' & exit\n savegame 'isabella-roles.sav'\n msg 'JO9_QA_ROLES_isabella_COMPLETE'\nend`);
+ d.set('item_buy',body);const file=out+'/'+who+'.qsp';fs.writeFileSync(file,d.bytes());plans.push({name:who,file,marker:'JO9_QA_ROLES_'+who+'_COMPLETE',checkpoint:'Original assistant profile role checkboxes and native loaded image paths; Egeya stale Kirakira cache resolves and unsupported appearances hidden'});
+}
+const result=run(out,plans,25),snapshots=[];for(const f of ['egeya-role.sav','isabella-roles.sav'])if(fs.existsSync(out+'/'+f)){const s=sc.parse(fs.readFileSync(out+'/'+f));snapshots.push({file:f,type:sc.value(s,'assistant_type')[0],paths:s.vars.find(v=>v.name==='QA_PATHS')?.values.map(v=>v[1]),imageMode:s.vars.find(v=>v.name==='QA_MODES')?.values.map(v=>v[0]),loadedImages:s.vars.find(v=>v.name==='QA_IMAGE_COUNT')?.values.map(v=>v[0])});}
+fs.writeFileSync(out+'/result.json',JSON.stringify({result,snapshots},null,2));console.log(JSON.stringify({result,snapshots}));

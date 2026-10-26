@@ -1,0 +1,190 @@
+{
+  "status": "PASS_PATCH_ARTIFACT_ONLY",
+  "scope": {
+    "gameSource": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+    "sourceSHA256": "1e911ced3798826e8cd1f35ed1e4115e9fd6450a9fdecaeb231b5f6885c1abb4",
+    "liveWorkWritten": false,
+    "fullWritten": false,
+    "repoWritten": false,
+    "savesReadOrWritten": false,
+    "commitOrPush": false
+  },
+  "patch": {
+    "source": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+    "baselineHash": "1e911ced3798826e8cd1f35ed1e4115e9fd6450a9fdecaeb231b5f6885c1abb4",
+    "candidatePath": "G:\\Codex\\tmp\\hover-meiki-fix-20261021\\meiki\\meiki-candidate.qsp",
+    "candidateHash": "a45ee01d7601e5aba277ed9052ade454ab7aa4cdc50f7df338dd4385d724afd5",
+    "stableID": "MEIKI_ROOM_ROLE_ROUTING_20261021",
+    "counts": {
+      "existingRoles": 2,
+      "addedRoles": 4,
+      "addedLocations": 0,
+      "newStateKeys": 0,
+      "changedBodyFields": 1,
+      "unchangedBodyFields": 261,
+      "rollExpressionsInState": 6,
+      "linesBefore": 33,
+      "linesAfter": 92
+    },
+    "checks": {
+      "roundtrip": true,
+      "unchangedOtherFields": true,
+      "existingRolePrefixIdentical": true,
+      "unchangedStateHandler": true,
+      "patchOldCount": 1,
+      "reverseRestoresBaselineHash": true
+    }
+  },
+  "finalNativeSuite": {
+    "nativeProcessCount": 7,
+    "redProcessCount": 2,
+    "greenProcessCount": 5,
+    "greenCaseRows": 1094,
+    "greenAssertions": 2213,
+    "redExpectedFailure": "JO9_QA_FAIL_eligibility_400_room1",
+    "red": [
+      {
+        "name": "baseline-reproduction",
+        "checkpoint": "Real native QSP numeric assertions",
+        "pass": true,
+        "reason": "",
+        "durationMs": 335
+      },
+      {
+        "name": "role-eligibility",
+        "checkpoint": "Real native QSP numeric assertions",
+        "pass": false,
+        "reason": "Unexpected message before completion",
+        "durationMs": 276
+      }
+    ],
+    "green": [
+      {
+        "name": "role-eligibility",
+        "checkpoint": "Real native QSP numeric assertions",
+        "pass": true,
+        "reason": "",
+        "durationMs": 597
+      },
+      {
+        "name": "first-transition-boundaries",
+        "checkpoint": "Real native QSP numeric assertions",
+        "pass": true,
+        "reason": "",
+        "durationMs": 268
+      },
+      {
+        "name": "history-and-arguments",
+        "checkpoint": "Real native QSP numeric assertions",
+        "pass": true,
+        "reason": "",
+        "durationMs": 274
+      },
+      {
+        "name": "direct-daily-actor-gates",
+        "checkpoint": "Real native QSP numeric assertions",
+        "pass": true,
+        "reason": "",
+        "durationMs": 532
+      },
+      {
+        "name": "bridge-alias-preserved",
+        "checkpoint": "Real native QSP numeric assertions",
+        "pass": true,
+        "reason": "",
+        "durationMs": 531
+      }
+    ],
+    "assertionsByProbe": [
+      {
+        "name": "role-eligibility",
+        "assertions": 1920
+      },
+      {
+        "name": "first-transition-boundaries",
+        "assertions": 72
+      },
+      {
+        "name": "history-and-arguments",
+        "assertions": 96
+      },
+      {
+        "name": "direct-daily-actor-gates",
+        "assertions": 61
+      },
+      {
+        "name": "bridge-alias-preserved",
+        "assertions": 64
+      }
+    ]
+  },
+  "allNativeExecutionsThisSubtask": {
+    "red": 2,
+    "initialGreen": 5,
+    "expandedFinalGreen": 5,
+    "total": 12,
+    "pass": 11,
+    "expectedRedFailure": 1,
+    "unexpectedFailure": 0,
+    "initialGreenResultFile": "green-first-results.json"
+  },
+  "nativeCoverage": {
+    "roleEligibilityCases": 960,
+    "rngBoundaryCases": 36,
+    "historyAndArgumentCases": 48,
+    "directTemplateActorAndTransitionCases": 42,
+    "bridgeCases": 8,
+    "bridgeNoReroll": "forced 5 or 6 once; leave; force 1; direct repeat; bridge reentry; RNG calls remains 1 and checked/known unchanged",
+    "numericArrayInvariants": [
+      "original slave qa_sentinel/virginity/checked/known restored",
+      "room qa_sentinel/known/checked retained",
+      "numeric inventory and rate arrays transported/restored",
+      "parked slave empty after leave"
+    ]
+  },
+  "forcedRngInstrumentation": {
+    "diagnosticOnly": true,
+    "location": "jo9_meiki_state",
+    "old": "rand(1, 100)",
+    "new": "func('qa_rng')",
+    "replacements": 6,
+    "qaRngImplementation": "qa_rng_calls += 1; result=qa_rng_value",
+    "productionComparisonUnchanged": "<= 5",
+    "forcedValues": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "productionRngNotModified": true,
+    "distributionSampling": false
+  },
+  "toolVerification": {
+    "qspByteRoundtrip": true,
+    "unrelatedFieldsUnchanged": true,
+    "originalHelperPrefixUnchanged": true,
+    "reversePatchRestoresBaselineHash": true,
+    "applyModsDryRunBefore": true,
+    "applyModsIdempotentDryRunAfter": true,
+    "nodeSyntaxChecks": true
+  },
+  "limits": [
+    "Minimal QSP diagnostics run the actual current helper, checks, state handler and transition closure; they do not replay complete interaction/next_day orchestration. Those caller bodies are byte unchanged and source-map lists the direct room callers.",
+    "Bridge enter/leave and actual swap closure run natively; unrelated text refresh locations #var_base/#txt_man/#txt_2_man are diagnostic no-op stubs, and update-feature text is empty.",
+    "No live UI, gameplay save loading, save migration, save persistence roundtrip, or probabilistic distribution experiment was performed. No live save was inspected.",
+    "The combined equipment+meiki candidate release gate is owned by the parent task."
+  ],
+  "cleanup": {
+    "standaloneCandidateRegenerable": true,
+    "minimalDiagnosticsRegenerable": true,
+    "retentionUntilParentIntegration": true,
+    "retain": [
+      "patch JSON",
+      "before/after helper evidence",
+      "builder/test/verification scripts",
+      "reports and native logs"
+    ]
+  }
+}

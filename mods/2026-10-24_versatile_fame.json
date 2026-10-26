@@ -1,0 +1,51 @@
+{
+  "id": "2026-10-24_versatile_fame",
+  "description": "다재다능 0→1 부여 시 fame 표시 한 단계 상승(상한5). 원천 rate 동기화, 기존 보유자 소급/반복 refresh 중복 없음. 기존 획득조건·가치25% 유지.",
+  "target": "game\\jack.qsp",
+  "before_sha256": "6ac1d81489320b5211c03e9e2b36436d15ed4a7ebf47768f384802f469cfccdb",
+  "after_sha256": "afb2b9eccbe02193f77fefea4a990081616a79eb84ed14fe2d8f0bbd3cf2d1fc",
+  "edits": [
+    {
+      "location": "jo9_traits_value",
+      "field": "body",
+      "old": "if $jo9_trait_value_actor = '': jump 'jo9_trait_value_done'",
+      "new": "! JO9 MOD START VERSATILE_GRANT_DISPATCH | 2026-10-24_versatile_fame\r\nif $jo9_trait_value_actor = '': jump 'jo9_trait_value_done'\r\nif $jo9_trait_value_mode = 'grant_versatile': jump 'jo9_trait_value_grant_versatile'\r\n! JO9 MOD END VERSATILE_GRANT_DISPATCH",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits_value",
+      "field": "body",
+      "old": "  if dynslave['jo9_versatile'] = 0 and dynslave['jo9_versatile_manual_off'] = 0 and min(min(dynslave['service'], dynslave['cook'], dynslave['secretary'], dynslave['expression'], dynslave['nurse'], dynslave['alchemy'], dynslave['enchanter'], dynslave['stamina']), min(dynslave['gladiatrix'], dynslave['calisthenics'], dynslave['music'], dynslave['art'], dynslave['pet'], dynslave['dressage'], dynslave['cowSK'], dynslave['petting']), min(dynslave['oral'], dynslave['penetration'], dynslave['orgy'], dynslave['roleplay'], dynslave['fetishism'], dynslave['xenophily'], dynslave['nipplefuck'], dynslave['lesbiansex'])) >= 4: dynslave['jo9_versatile'] = 1",
+      "new": "! JO9 MOD START VERSATILE_AUTO_GRANT | 2026-10-24_versatile_fame\r\n  if dynslave['jo9_versatile'] = 0 and dynslave['jo9_versatile_manual_off'] = 0 and min(min(dynslave['service'], dynslave['cook'], dynslave['secretary'], dynslave['expression'], dynslave['nurse'], dynslave['alchemy'], dynslave['enchanter'], dynslave['stamina']), min(dynslave['gladiatrix'], dynslave['calisthenics'], dynslave['music'], dynslave['art'], dynslave['pet'], dynslave['dressage'], dynslave['cowSK'], dynslave['petting']), min(dynslave['oral'], dynslave['penetration'], dynslave['orgy'], dynslave['roleplay'], dynslave['fetishism'], dynslave['xenophily'], dynslave['nipplefuck'], dynslave['lesbiansex'])) >= 4: $jo9_trait_value_mode = 'grant_versatile'\r\n! JO9 MOD END VERSATILE_AUTO_GRANT",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits_value",
+      "field": "body",
+      "old": " }, 'dyn'+'slave', $jo9_trait_value_actor)\r\n jump 'jo9_trait_value_done'\r\nend\r\nif $jo9_trait_value_mode = 'base_price':",
+      "new": "! JO9 MOD START VERSATILE_AUTO_DISPATCH | 2026-10-24_versatile_fame\r\n }, 'dyn'+'slave', $jo9_trait_value_actor)\r\n if $jo9_trait_value_mode = 'grant_versatile': jump 'jo9_trait_value_grant_versatile'\r\n jump 'jo9_trait_value_done'\r\nend\r\nif $jo9_trait_value_mode = 'base_price':\r\n! JO9 MOD END VERSATILE_AUTO_DISPATCH",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits_value",
+      "field": "body",
+      "old": ":jo9_trait_value_done",
+      "new": "! JO9 MOD START VERSATILE_FAME_GRANT | 2026-10-24_versatile_fame\r\njump 'jo9_trait_value_done'\r\n:jo9_trait_value_grant_versatile\r\ndynamic $replace({\r\n if dynslave['jo9_versatile'] = 0:\r\n  dynslave['jo9_versatile'] = 1\r\n  ! Grant one displayed fame grade through the original continuous attribute source.\r\n  jo9_trait_value_rate = max(cont_atr_min, min(cont_atr_max, dynslave_rate['fame'])) + dynslave_rate['temp_fame']\r\n  jo9_trait_value_grade = 0\r\n  if jo9_trait_value_rate >= cont_atr_threshold[1]: jo9_trait_value_grade = 1\r\n  if jo9_trait_value_rate >= cont_atr_threshold[2]: jo9_trait_value_grade = 2\r\n  if jo9_trait_value_rate >= cont_atr_threshold[3]: jo9_trait_value_grade = 3\r\n  if jo9_trait_value_rate >= cont_atr_threshold[4]: jo9_trait_value_grade = 4\r\n  if jo9_trait_value_rate >= cont_atr_threshold[5]: jo9_trait_value_grade = 5\r\n  if jo9_trait_value_grade < 5: dynslave_rate['fame'] = max(cont_atr_min, min(cont_atr_max, max(dynslave_rate['fame'], cont_atr_threshold[jo9_trait_value_grade + 1] - dynslave_rate['temp_fame'])))\r\n  jo9_trait_value_rate = max(cont_atr_min, min(cont_atr_max, dynslave_rate['fame'])) + dynslave_rate['temp_fame']\r\n  jo9_trait_value_grade = 0\r\n  if jo9_trait_value_rate >= cont_atr_threshold[1]: jo9_trait_value_grade = 1\r\n  if jo9_trait_value_rate >= cont_atr_threshold[2]: jo9_trait_value_grade = 2\r\n  if jo9_trait_value_rate >= cont_atr_threshold[3]: jo9_trait_value_grade = 3\r\n  if jo9_trait_value_rate >= cont_atr_threshold[4]: jo9_trait_value_grade = 4\r\n  if jo9_trait_value_rate >= cont_atr_threshold[5]: jo9_trait_value_grade = 5\r\n  dynslave['fame'] = jo9_trait_value_grade\r\n end\r\n}, 'dyn'+'slave', $jo9_trait_value_actor)\r\n:jo9_trait_value_done\r\n! JO9 MOD END VERSATILE_FAME_GRANT",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": "  else\r\n   dynslave[$args[0]] = args[1]\r\n  end",
+      "new": "! JO9 MOD START VERSATILE_MANUAL_GRANT | 2026-10-24_versatile_fame\r\n  else\r\n   if $args[0] = 'jo9_versatile' and args[1] = 1:\r\n    gs 'jo9_traits_value', 'grant_versatile', 'dynslave'\r\n   else\r\n    dynslave[$args[0]] = args[1]\r\n   end\r\n  end\r\n! JO9 MOD END VERSATILE_MANUAL_GRANT",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": " if $args[1] = 'versatile': msg '다재다능: 표시되는 지식·기술과 성애기술·ST가 모두 A(4) 이상이면 영구 획득. 기본 가치 +25%. 편집기로 해제하면 자동 재획득을 보류합니다.'",
+      "new": "! JO9 MOD START VERSATILE_FAME_DESCRIPTION | 2026-10-24_versatile_fame\r\n if $args[1] = 'versatile': msg '다재다능: 표시되는 지식·기술과 성애기술·ST가 모두 A(4) 이상이면 영구 획득. 기본 가치 +25%. 새로 부여되는 순간 명성이 한 단계 오른다(최고 등급 유지). 편집기로 해제하면 자동 재획득을 보류합니다.'\r\n! JO9 MOD END VERSATILE_FAME_DESCRIPTION",
+      "count": 1
+    }
+  ]
+}

@@ -1,0 +1,154 @@
+{
+  "schema": 1,
+  "createdAt": "2026-10-25T19:35:13.957Z",
+  "profile": "release",
+  "checks": [
+    {
+      "name": "inputs-readable",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "candidate": "060295923fd646e87148dc0e900ef7acce92e1086b6376e1f1fc9d12298513b7"
+      }
+    },
+    {
+      "name": "world-structure-and-line-endings",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "sha256": "060295923fd646e87148dc0e900ef7acce92e1086b6376e1f1fc9d12298513b7",
+        "bytes": 48825236,
+        "locations": 273,
+        "roundtrip": true,
+        "lineEndingIssues": 0
+      }
+    },
+    {
+      "name": "slave-template-registry",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "files": 1126,
+        "numericIds": 1126,
+        "collisions": 0,
+        "invalidJson": 0,
+        "embeddedIdMismatches": 0
+      }
+    },
+    {
+      "name": "distribution-byte-match",
+      "required": false,
+      "status": "SKIP",
+      "reason": "No mirror specified; this run does not verify the distribution copy"
+    },
+    {
+      "name": "patch-replay-and-idempotence",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "patches": [
+          "2026-10-26_meiki_discovery_popup"
+        ],
+        "byteExact": true,
+        "idempotent": true
+      }
+    },
+    {
+      "name": "installed-client-smoke",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "passed": 9,
+        "expected": 9
+      }
+    },
+    {
+      "name": "input-hashes-unchanged",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "files": 3
+      }
+    }
+  ],
+  "limits": [
+    "No GUI clicks or visual layout verification.",
+    "Save data is used only to prime representative state. GUI save-file loading, CRC compatibility and full saved script restoration are NOT tested.",
+    "Start is replaced only in diagnostic copies. Smoke covers lifecycle calls, not the character-selection UI or every gameplay branch.",
+    "No complete QSP syntax checker: dynamic code and all game logic are not statically proved.",
+    "Battle smoke instruments the menu dispatch only; full combat outcomes and balance are not tested."
+  ],
+  "client": {
+    "timeoutSeconds": 30,
+    "runnerTimeoutMs": 282000,
+    "engineSha256": "f75032d79ecb58eeb7b969cd3f774d66b091fca38a360acdabd782e03a46c6e6",
+    "stateAssignments": 201720,
+    "probes": [
+      {
+        "name": "home",
+        "checkpoint": "main_screen",
+        "pass": true,
+        "reason": "",
+        "durationMs": 8835
+      },
+      {
+        "name": "newgame",
+        "checkpoint": "main_screen",
+        "pass": true,
+        "reason": "",
+        "durationMs": 8319
+      },
+      {
+        "name": "editor-slave",
+        "checkpoint": "main_screen",
+        "pass": true,
+        "reason": "",
+        "durationMs": 7550
+      },
+      {
+        "name": "editor-assistant",
+        "checkpoint": "main_screen",
+        "pass": true,
+        "reason": "",
+        "durationMs": 7540
+      },
+      {
+        "name": "cache",
+        "checkpoint": "main_screen",
+        "pass": true,
+        "reason": "",
+        "durationMs": 8041
+      },
+      {
+        "name": "daily",
+        "checkpoint": "end_day_screen",
+        "pass": true,
+        "reason": "",
+        "durationMs": 8555
+      },
+      {
+        "name": "city-weapons",
+        "checkpoint": "interaction_screen_city",
+        "pass": true,
+        "reason": "",
+        "durationMs": 8578
+      },
+      {
+        "name": "city-beauty",
+        "checkpoint": "interaction_screen_city",
+        "pass": true,
+        "reason": "",
+        "durationMs": 8550
+      },
+      {
+        "name": "battle-entry",
+        "checkpoint": "боевое_меню",
+        "pass": true,
+        "reason": "",
+        "durationMs": 8299
+      }
+    ]
+  },
+  "verdict": "PASS",
+  "output": "G:\\Codex\\tmp\\meiki-discovery-release-20261026\\run-pVc0m6"
+}

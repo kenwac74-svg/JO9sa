@@ -1,0 +1,404 @@
+{
+  "schema": "jo9-market-loot-planning-v1",
+  "reviewMode": "read-only static planning; no game edits or implementation",
+  "source": {
+    "path": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+    "sha256": "a2e0265881bebd8a72b3fcbb214ddaf831106cfe50e9c96da8e0b6e7d692707a",
+    "lineConvention": "one-based decoded location-body lines"
+  },
+  "authorityBoundary": {
+    "allowed": "사용자가 허용한 범위는 상점 판매 물품 중 식료품 제외이다.",
+    "additionalExclusionsAdopted": [],
+    "note": "아래 미확인 카테고리나 비물품 구분은 추가 제외 결정이 아니다. 적 분류 회의를 위한 예시이며 전품목 목록이 아니다."
+  },
+  "marketEntry": {
+    "location": "city_menu_form",
+    "line": 60,
+    "label": "교역 광장",
+    "state": "city_form=11",
+    "place": "market",
+    "placeEvidenceLine": 71,
+    "directMenus": [
+      {
+        "label": "노예 시장",
+        "lines": [
+          75,
+          76,
+          77,
+          78,
+          80
+        ],
+        "kind": "person trading",
+        "targets": [
+          "slave_auction_buy",
+          "slave_auction_sell"
+        ]
+      },
+      {
+        "label": "식품점 -미식가들-",
+        "line": 82,
+        "menu": "menu_Gastronomicon",
+        "kind": "food; excluded by user"
+      },
+      {
+        "label": "미용실 -누워있는 엘프-",
+        "line": 83,
+        "menu": "menu_laid",
+        "kind": "services"
+      },
+      {
+        "label": "양품점 -세르빌리아 퀸타-",
+        "line": 84,
+        "menu": "menu_Quint",
+        "kind": "clothes/gloves/footwear"
+      },
+      {
+        "label": "패물점 -아주라-",
+        "line": 85,
+        "menu": "menu_treasury",
+        "kind": "jewelry/accessories"
+      },
+      {
+        "label": "무구점 -맨 헌터의 무기점-",
+        "line": 86,
+        "menu": "menu_armory",
+        "kind": "weapons/armor"
+      },
+      {
+        "label": "부동산 사무소",
+        "line": 87,
+        "menu": "menu_office",
+        "kind": "property/facility/interior operations"
+      }
+    ]
+  },
+  "confirmedPhysicalGoods": [
+    {
+      "category": "무기",
+      "store": "무구점",
+      "examples": [
+        {
+          "name": "스틸레토",
+          "id": "стилет",
+          "price": 10,
+          "evidence": {
+            "location": "shop_wpn",
+            "line": 60
+          }
+        },
+        {
+          "name": "단검",
+          "id": "кинжал",
+          "price": 15,
+          "evidence": {
+            "location": "shop_wpn",
+            "line": 64
+          }
+        },
+        {
+          "name": "도축칼",
+          "id": "тесак",
+          "price": 20,
+          "evidence": {
+            "location": "shop_wpn",
+            "line": 65
+          }
+        }
+      ]
+    },
+    {
+      "category": "방어구",
+      "store": "무구점",
+      "examples": [
+        {
+          "name": "아라미드 전투복",
+          "id": "комбез",
+          "price": 100,
+          "evidence": {
+            "location": "shop_wpn",
+            "line": 116
+          }
+        },
+        {
+          "name": "요정족 사슬갑옷",
+          "id": "эльчуга",
+          "price": 250,
+          "evidence": {
+            "location": "shop_wpn",
+            "line": 118
+          }
+        },
+        {
+          "name": "고딕 플레이트",
+          "id": "плейт",
+          "price": 1000,
+          "evidence": {
+            "location": "shop_wpn",
+            "line": 121
+          }
+        }
+      ]
+    },
+    {
+      "category": "의복",
+      "store": "양품점",
+      "examples": [
+        {
+          "name": "주름 앞치마",
+          "id": "common_apron",
+          "price": 5,
+          "menuEvidence": {
+            "location": "#options",
+            "line": 2741
+          },
+          "definitionEvidence": {
+            "location": "#item_base",
+            "line": 343
+          }
+        },
+        {
+          "name": "마법 망토",
+          "id": "enchanter_robe",
+          "price": 5,
+          "menuEvidence": {
+            "location": "#options",
+            "line": 2744
+          },
+          "definitionEvidence": {
+            "location": "#item_base",
+            "line": 405
+          }
+        }
+      ]
+    },
+    {
+      "category": "장갑",
+      "store": "양품점",
+      "examples": [
+        {
+          "name": "가죽 장갑",
+          "id": "leather_gloves",
+          "price": 5,
+          "menuEvidence": {
+            "location": "#options",
+            "line": 2783
+          },
+          "definitionEvidence": {
+            "location": "#item_base",
+            "line": 559
+          }
+        },
+        {
+          "name": "탄소섬유 장갑",
+          "id": "plastic_bracers",
+          "price": 10,
+          "menuEvidence": {
+            "location": "#options",
+            "line": 2785
+          },
+          "definitionEvidence": {
+            "location": "#item_base",
+            "line": 570
+          }
+        }
+      ]
+    },
+    {
+      "category": "신발",
+      "store": "양품점",
+      "examples": [
+        {
+          "name": "푹신한 슬리퍼",
+          "id": "fluffy_stepins",
+          "price": 5,
+          "menuEvidence": {
+            "location": "#options",
+            "line": 2797
+          },
+          "definitionEvidence": {
+            "location": "#item_base",
+            "line": 620
+          }
+        },
+        {
+          "name": "운동화",
+          "id": "sneakers",
+          "price": 5,
+          "menuEvidence": {
+            "location": "#options",
+            "line": 2799
+          },
+          "definitionEvidence": {
+            "location": "#item_base",
+            "line": 641
+          }
+        }
+      ]
+    },
+    {
+      "category": "장신구·액세서리",
+      "store": "패물점",
+      "examples": [
+        {
+          "name": "장식 목걸이",
+          "id": "plain_pendant",
+          "price": 5,
+          "menuEvidence": {
+            "location": "#options",
+            "line": 2891
+          },
+          "definitionEvidence": {
+            "location": "#item_base",
+            "line": 930
+          }
+        },
+        {
+          "name": "날개장식 티아라",
+          "id": "incrusted_tiara",
+          "price": 20,
+          "menuEvidence": {
+            "location": "#options",
+            "line": 2895
+          },
+          "definitionEvidence": {
+            "location": "#item_base",
+            "line": 903
+          }
+        },
+        {
+          "name": "머리띠",
+          "id": "plain_headband",
+          "price": 3,
+          "menuEvidence": {
+            "location": "#options",
+            "line": 2915
+          },
+          "definitionEvidence": {
+            "location": "#item_base",
+            "line": 786
+          }
+        }
+      ]
+    }
+  ],
+  "separateNonItemActivities": [
+    {
+      "category": "미용 시술·마사지·목욕",
+      "evidence": {
+        "location": "#options",
+        "lines": [
+          2935,
+          2940,
+          2945,
+          2957,
+          2995,
+          3005,
+          3015
+        ]
+      },
+      "note": "현금으로 받는 서비스이며 직접 휴대 물품과 구분한다."
+    },
+    {
+      "category": "부동산·임대시설·실내장식",
+      "examples": [
+        "주택",
+        "지하실",
+        "개인실",
+        "연구실",
+        "우리",
+        "외양간",
+        "실내장식 양식"
+      ],
+      "evidence": {
+        "location": "#options",
+        "lines": [
+          1698,
+          1711,
+          1712,
+          1788,
+          1795,
+          1802,
+          1809,
+          1816,
+          1828,
+          1857,
+          1874
+        ]
+      },
+      "note": "시설과 장식 상태 변경이며 이 조사에서 별도 일반 인벤토리 가구 상품은 확인하지 않았다."
+    },
+    {
+      "category": "인물 매매",
+      "evidence": {
+        "location": "city_menu_form",
+        "lines": [
+          75,
+          76,
+          77,
+          78
+        ]
+      },
+      "note": "물품 랜덤 드롭과 구분한다."
+    }
+  ],
+  "notEstablishedByDirectMarketMenus": [
+    {
+      "category": "별도 교육 도구·연금 재료·일반 소모품 판매대",
+      "status": "직결 상점 목록에서는 확인하지 못함; 양품점 물품 중 교육효율 효과가 있는 옷은 존재함",
+      "scope": "별도 약국 등 다른 상점 전체는 이번 조사 범위 밖; 사용자 허용 범위에서 제외한 것이 아님"
+    },
+    {
+      "category": "괴물 소재·희귀 고유품",
+      "status": "새 전리품 기획 범주이며 현재 교역광장 판매대의 확정 상품 목록으로 취급하지 않음"
+    }
+  ],
+  "planningConsiderations": [
+    {
+      "topic": "적 분류와 물품 개연성",
+      "note": "인간 적과 무장한 적의 무기·방어구·의복·장신구는 자연스러운 후보이다. 나머지 괴물의 소재·소모품·희귀품은 현재 회의의 제안으로 유지한다. 인간 세 종류/무장인형/기타괴물의 실제 적 매핑은 담당 에이전트 보고를 따른다."
+    },
+    {
+      "topic": "가격 편차",
+      "note": "예시 가격이 머리띠3/의복5/무기10~20/갑옷100~1000$로 넓다. 동일확률 추첨은 고가 장비 구매를 대체하는 효과가 크므로 적 등급별 후보·가중치 회의가 필요하다. 가격·확률 변경은 하지 않았다."
+    },
+    {
+      "topic": "소유와 세이브",
+      "note": "일반 inventory 계열과 주인공 전투장비 소유 변수의 저장 방식이 섞여 있다. 지급 시 수량·기존 보유·장착 상태와 결과 화면 재진입 중복 지급을 확인해야 한다. 새 영구 키나 세이브 마이그레이션은 설계·구현하지 않았다."
+    },
+    {
+      "topic": "시설·시술",
+      "note": "서비스나 설치형 상태는 휴대 물품과 지급 형태가 다르다. 이 구분을 임의 제외 승인으로 해석하지 않는다."
+    }
+  ],
+  "captureContext": {
+    "currentMechanism": "get_girl 경로는 적 자체를 인벤토리에 포획하는 구조가 아니라 별도 stock 인물을 generate_stock으로 생성한다.",
+    "evidence": [
+      {
+        "location": "выход_из_боя",
+        "lines": [
+          595,
+          597,
+          598,
+          616,
+          617
+        ]
+      },
+      {
+        "location": "interaction_city",
+        "lines": [
+          10741,
+          10776,
+          10777,
+          10821,
+          10829
+        ]
+      }
+    ],
+    "fiftyPercent": "현재 get_girl 쓰기 조사에는 전투별1/특수0 설정이 보이며 기존50% 판정 근거는 확인되지 않았다. 미포획50% 및 아이템 보장은 사용자 새 기획으로 분리한다. 실패를 사망 또는 적 자체 포획 실패로 확정하지 않는다."
+  },
+  "limits": [
+    "교역광장 직결 메뉴 및 대표 상품 정적 확인; 전품목119개 전량 검토 아님",
+    "게임 실행·실제 플레이 도달·드롭 구현 없음",
+    "소스·게임·세이브 수정 및 QSP 복제 생성 없음"
+  ]
+}

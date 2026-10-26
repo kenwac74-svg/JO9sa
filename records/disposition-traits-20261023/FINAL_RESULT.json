@@ -1,0 +1,79 @@
+{
+  "id": "2026-10-23_disposition_traits",
+  "recordedAt": "2026-10-23T08:24:09.325Z",
+  "status": "APPLIED_WORK_ONLY_UNRELEASED",
+  "work": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+  "beforeSha256": "26115873b7cfbe72cc35531345fa319cfd759a5704b46bf80378e8fe1da59796",
+  "afterSha256": "daa953cd391d8268a57724d27b54194e71378dc9ef54ad1e79279cce6897d7db",
+  "generation": {
+    "defiantPercent": 2,
+    "eligibleSlaveNaturePercent": 10,
+    "excludedSlaveNaturePercent": 0,
+    "egoExclusiveMax": 4,
+    "prideExclusiveMax": 4,
+    "mutuallyExclusive": true,
+    "callsPassed": 3601
+  },
+  "native": {
+    "acquisitionCases": 24,
+    "guardCases": 8,
+    "uiCases": 10,
+    "releasePaths": 9,
+    "pass": true
+  },
+  "preserved": {
+    "saveFiles": 57,
+    "fullQsp": true,
+    "existingActorsNoReroll": true
+  },
+  "changedLocations": [
+    "jo9_traits",
+    "get_stock_seed",
+    "get_special_assistant_quest",
+    "stock_to_slave_nogt",
+    "expert_to_slave",
+    "$expert_search",
+    "generate_clone"
+  ],
+  "releaseStatus": [
+    {
+      "name": "inputs-readable",
+      "status": "PASS"
+    },
+    {
+      "name": "world-structure-and-line-endings",
+      "status": "PASS"
+    },
+    {
+      "name": "slave-template-registry",
+      "status": "PASS"
+    },
+    {
+      "name": "patch-replay-and-idempotence",
+      "status": "PASS"
+    },
+    {
+      "name": "installed-client-smoke",
+      "status": "PASS"
+    },
+    {
+      "name": "input-hashes-unchanged",
+      "status": "PASS"
+    }
+  ],
+  "exclusions": [
+    "Full sync",
+    "packaging",
+    "commit",
+    "push",
+    "economy and rumor design",
+    "AP curve and constitution-improvement design"
+  ],
+  "limitations": [
+    "No GUI clicks or visual layout verification.",
+    "Save data is used only to prime representative state. GUI save-file loading, CRC compatibility and full saved script restoration are NOT tested.",
+    "Start is replaced only in diagnostic copies. Smoke covers lifecycle calls, not the character-selection UI or every gameplay branch.",
+    "No complete QSP syntax checker: dynamic code and all game logic are not statically proved.",
+    "Battle smoke instruments the menu dispatch only; full combat outcomes and balance are not tested."
+  ]
+}

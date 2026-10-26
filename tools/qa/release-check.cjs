@@ -4,6 +4,9 @@ const fs=require('node:fs'),path=require('node:path'),os=require('node:os');
 const {spawnSync}=require('node:child_process'),{randomBytes}=require('node:crypto');
 const core=require('../text-workshop/core.cjs'),{inspect}=require('./check-qsp-line-endings.cjs');
 const {inspectMarkerBoundaries}=require('./check-qsp-marker-boundaries.cjs');
+// JO9 MOD START SEED_NAMESPACE_GUARD_IMPORT_20261020
+const {assertRegistry}=require('./check-slave-template-ids.cjs');
+// JO9 MOD END SEED_NAMESPACE_GUARD_IMPORT_20261020
 const quote=s=>"'"+s.replaceAll("'","''")+"'";
 function inspectWorld(raw){
  const doc=core.parse(raw);
@@ -101,16 +104,23 @@ function assertOutside(output,protectedDirs){
  const out=realPath(output).toLowerCase();
  for(const p of protectedDirs){const dir=realPath(p).toLowerCase(),rel=path.relative(dir,out);if(!rel||(!rel.startsWith('..'+path.sep)&&rel!=='..'&&!path.isAbsolute(rel)))throw Error('Output must be outside protected input directories: '+p);}
 }
-function powershell(args,log){
- const r=spawnSync('powershell.exe',['-NoProfile','-ExecutionPolicy','Bypass',...args],{encoding:'utf8',windowsHide:true,timeout:120000,maxBuffer:4*1024*1024});
+function clientRunnerTiming(option,probeCount){
+ const timeoutSeconds=option===undefined?12:Number(option);
+ if(!Number.isSafeInteger(timeoutSeconds)||timeoutSeconds<1||timeoutSeconds>60)throw Error('Client timeout must be an integer from 1 to 60 seconds');
+ if(!Number.isSafeInteger(probeCount)||probeCount<1)throw Error('Positive probe count required');
+ return{timeoutSeconds,runnerTimeoutMs:(timeoutSeconds*probeCount+12)*1000};
+}
+function powershell(args,log,timeoutMs=120000){
+ const r=spawnSync('powershell.exe',['-NoProfile','-ExecutionPolicy','Bypass',...args],{encoding:'utf8',windowsHide:true,timeout:timeoutMs,maxBuffer:4*1024*1024});
  fs.writeFileSync(log,(r.stdout||'')+(r.stderr||''));
  if(r.error||r.status!==0)throw Error('PowerShell check failed; see '+path.basename(log)+(r.error?' ('+r.error.message+')':''));
 }
 function parseArgs(argv){
- const allowed=['candidate','baseline','mods-dir','engine','game-dir','state-save','mirror','out','profile','cache-revision'],o={profile:'release'};
+ const allowed=['candidate','baseline','mods-dir','engine','game-dir','state-save','mirror','out','profile','cache-revision','client-timeout-seconds'],o={profile:'release'};
  for(let i=0;i<argv.length;i+=2){const k=argv[i]?.replace(/^--/,'');if(!argv[i]?.startsWith('--')||!allowed.includes(k)||!argv[i+1]||argv[i+1].startsWith('--'))throw Error('Unknown or missing option: '+argv[i]);o[k]=argv[i+1];}
  if(!o.candidate)throw Error('--candidate is required');
- if(!['static','release'].includes(o.profile))throw Error('profile must be static or release');return o;
+ if(!['static','release'].includes(o.profile))throw Error('profile must be static or release');
+ clientRunnerTiming(o['client-timeout-seconds'],9);return o;
 }
 function run(o){
  const protectedDirs=[path.dirname(path.resolve(o.candidate)),o.baseline&&path.dirname(path.resolve(o.baseline)),o['game-dir'],o.mirror&&path.dirname(path.resolve(o.mirror)),o['state-save']&&path.dirname(path.resolve(o['state-save']))].filter(Boolean);
@@ -130,6 +140,13 @@ function run(o){
  try{
   check('inputs-readable',true,()=>{for(const p of tracked)hashes.set(p,core.hash(fs.readFileSync(p)));raw=fs.readFileSync(o.candidate);return{candidate:hashes.get(path.resolve(o.candidate))};});
   const statics=check('world-structure-and-line-endings',true,()=>inspectWorld(raw));
+ // JO9 MOD START SEED_NAMESPACE_RELEASE_GATE_20261020
+ if(o['game-dir'])check('slave-template-registry',true,()=>{
+   const registry=assertRegistry(path.join(o['game-dir'],'json','slaves'));
+   return{files:registry.files,numericIds:registry.numericIds,collisions:0,invalidJson:0,embeddedIdMismatches:0};
+  });
+ else report.checks.push({name:'slave-template-registry',required:o.profile==='release',status:'SKIP',reason:'--game-dir is required to verify JSON character IDs and syntax'});
+ // JO9 MOD END SEED_NAMESPACE_RELEASE_GATE_20261020
   if(o.mirror)check('distribution-byte-match',true,()=>{if(!fs.readFileSync(o.mirror).equals(raw))throw Error('Mirror differs from candidate');return{sha256:core.hash(raw)};});
   else report.checks.push({name:'distribution-byte-match',required:false,status:'SKIP',reason:'No mirror specified; this run does not verify the distribution copy'});
   if(o.baseline&&o['mods-dir']&&statics){
@@ -162,10 +179,11 @@ function run(o){
     fs.writeFileSync(path.join(game,'FastQSP.ini'),'[General]\r\nignoreCRC=true\r\nmutedState=true\r\n');
     const plan=probes.map(p=>{inspectWorld(p.raw);const file=path.join(game,p.name+'.qsp');fs.writeFileSync(file,p.raw);return{name:p.name,file,marker:p.marker,checkpoint:p.checkpoint};});
     const planFile=path.join(game,'plan.json');fs.writeFileSync(planFile,JSON.stringify(plan,null,2));
-    let runnerError;try{powershell(['-File',path.join(__dirname,'run-client-smoke.ps1'),'-Engine',path.resolve(o.engine),'-Plan',planFile],path.join(output,'client-runner.log'));}catch(e){runnerError=e;}
+    const timing=clientRunnerTiming(o['client-timeout-seconds'],plan.length);
+    let runnerError;try{powershell(['-File',path.join(__dirname,'run-client-smoke.ps1'),'-Engine',path.resolve(o.engine),'-Plan',planFile,'-TimeoutSeconds',String(timing.timeoutSeconds)],path.join(output,'client-runner.log'),timing.runnerTimeoutMs);}catch(e){runnerError=e;}
     const resultFile=path.join(game,'client-results.json');
     const results=fs.existsSync(resultFile)?JSON.parse(fs.readFileSync(resultFile,'utf8').replace(/^\uFEFF/,'')):[];
-    report.client={engineSha256:core.hash(fs.readFileSync(o.engine)),stateAssignments:prime.assignments,probes:results};
+    report.client={timeoutSeconds:timing.timeoutSeconds,runnerTimeoutMs:timing.runnerTimeoutMs,engineSha256:core.hash(fs.readFileSync(o.engine)),stateAssignments:prime.assignments,probes:results};
     if(runnerError)throw runnerError;
     if(results.length!==9||results.some(p=>!p.pass))throw Error('All nine installed-client completion markers are required');
     return{passed:results.length,expected:9};
@@ -184,4 +202,4 @@ function run(o){
  }
 }
 if(require.main===module){try{process.exitCode=run(parseArgs(process.argv.slice(2))).exitCode;}catch(e){console.error(e.message);process.exitCode=2;}}
-module.exports={inspectWorld,verdict,validatePatchSet,primeState,buildSmoke,assertOutside,parseArgs,run};
+module.exports={inspectWorld,verdict,validatePatchSet,primeState,buildSmoke,assertOutside,parseArgs,clientRunnerTiming,run};

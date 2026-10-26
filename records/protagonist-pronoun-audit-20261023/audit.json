@@ -1,0 +1,335 @@
+{
+  "schema": 1,
+  "auditId": "protagonist-pronoun-audit-20261023",
+  "createdAt": "2026-10-23T12:14:31.970Z",
+  "mode": "read-only source audit; report artifacts only",
+  "source": {
+    "path": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+    "sha256": "c50b33e24f302e949399171ef79550d770bb844b7a51f434adb85e94ae4b4bcf",
+    "locations": 266,
+    "byteRoundtrip": true,
+    "liveEditorMatchesWork": true,
+    "liveEditorVerification": "Parent agent verified the live editor uses this Work snapshot."
+  },
+  "counts": {
+    "broadCandidateStrings": 1831,
+    "broadCandidateOccurrences": 2881,
+    "broadCandidatesAreConfirmedMisses": false,
+    "legacyForms": {
+      "words": [
+        "너는",
+        "넌"
+      ],
+      "strings": 148,
+      "occurrences": 171,
+      "automaticCandidates": 4,
+      "preservedOccurrences": {
+        "explicitException": 43,
+        "speakerOrIndirectAddress": 119,
+        "restrictedContext": 4,
+        "verse": 1
+      }
+    },
+    "manualVerifiedSample": {
+      "strings": 11,
+      "occurrences": 17,
+      "narrationStrings": 10,
+      "narrationOccurrences": 16,
+      "npcToPlayerStrings": 1,
+      "npcToPlayerOccurrences": 1,
+      "notExhaustive": true
+    },
+    "screenshotConfirmed": {
+      "strings": 2,
+      "occurrences": 2,
+      "disjointFromManualSample": true
+    }
+  },
+  "sourceDiscrepancy": {
+    "verification": "Parent agent checked current source and live editor.",
+    "currentScreenshotSource": {
+      "location": "end_day_screen",
+      "automaticSuccessLines": [
+        287,
+        310
+      ],
+      "automaticFailureLines": [
+        296,
+        319
+      ],
+      "screenshotMatches": "automaticFailureLines",
+      "sameStoredFieldShowsAllFourBranchStrings": true
+    },
+    "manualCounterparts": {
+      "location": "interaction",
+      "lines": [
+        9384,
+        9427
+      ],
+      "warning": "Corresponding manual-event path, not the screenshot source."
+    },
+    "questFailure": {
+      "location": "end_day_screen",
+      "failreasonAssignmentLine": 293,
+      "conditions": {
+        "questMustBeActive": true,
+        "felicity": 1,
+        "typeMustNotEqual": 2572,
+        "questStateMustNotEqual": "fail"
+      },
+      "displayLines": [
+        1264,
+        1265,
+        1266,
+        1267,
+        1268
+      ],
+      "warning": "A failreason assignment alone does not prove the message is shown; conditions and the display path must be considered.",
+      "verification": "Directly rechecked decoded end_day_screen:293 and 1264-1268 in the same source snapshot."
+    }
+  },
+  "rules": {
+    "historicalScope": "Narration referring to the protagonist: 너는/넌 -> 당신은; preserve references to other characters.",
+    "preserve": [
+      "Player speech addressing others",
+      "NPC-to-NPC dialogue",
+      "네 meaning yes or four",
+      "Substrings in ordinary words",
+      "Variables, conditions, interpolation, HTML attributes, paths and game behavior"
+    ],
+    "automaticDetectionReferences": [
+      {
+        "path": "tools/dialogue-normalization.cjs",
+        "lines": [
+          3,
+          5,
+          67,
+          68,
+          74,
+          75
+        ]
+      },
+      {
+        "path": "tools/prepare-dialogue-normalization.cjs",
+        "lines": [
+          13,
+          14,
+          20,
+          43
+        ]
+      },
+      {
+        "path": "docs/modding/DIALOGUE_FORMAT_RULES_KR.md",
+        "lines": [
+          8,
+          9,
+          10,
+          14
+        ]
+      }
+    ],
+    "proposedEditorialMappings": {
+      "네가": "당신이",
+      "네/너의": "당신의",
+      "네게/너에게": "당신에게",
+      "너를/널": "당신을",
+      "너는/넌": "당신은"
+    },
+    "proposalApplied": false
+  },
+  "manualVerifiedSample": [
+    {
+      "location": "end_day_screen",
+      "line": 882,
+      "words": [
+        "네가"
+      ],
+      "kind": "narration"
+    },
+    {
+      "location": "end_day_screen",
+      "line": 884,
+      "words": [
+        "네"
+      ],
+      "kind": "narration"
+    },
+    {
+      "location": "interaction",
+      "line": 10430,
+      "words": [
+        "너의"
+      ],
+      "kind": "narration"
+    },
+    {
+      "location": "interaction_city",
+      "line": 12866,
+      "words": [
+        "네가"
+      ],
+      "kind": "npc-to-player",
+      "speaker": "마스터 봉"
+    },
+    {
+      "location": "interaction_city",
+      "line": 18051,
+      "words": [
+        "네",
+        "네가"
+      ],
+      "kind": "narration",
+      "branch": "hero_choice < 100; interaction_city = 102025"
+    },
+    {
+      "location": "interaction_city",
+      "line": 18082,
+      "words": [
+        "네",
+        "네"
+      ],
+      "kind": "narration",
+      "branch": "hero_choice < 100; interaction_city = 102101"
+    },
+    {
+      "location": "interaction_city",
+      "line": 18429,
+      "words": [
+        "네",
+        "네가"
+      ],
+      "kind": "narration",
+      "branch": "else of hero_choice < 100; interaction_city = 102025"
+    },
+    {
+      "location": "interaction_city",
+      "line": 18460,
+      "words": [
+        "네",
+        "네"
+      ],
+      "kind": "narration",
+      "branch": "else of hero_choice < 100; interaction_city = 102101"
+    },
+    {
+      "location": "interaction_city",
+      "line": 19209,
+      "words": [
+        "네가",
+        "널",
+        "너에게"
+      ],
+      "kind": "narration"
+    },
+    {
+      "location": "interaction_city",
+      "line": 19323,
+      "words": [
+        "네게"
+      ],
+      "kind": "narration"
+    },
+    {
+      "location": "interaction_city",
+      "line": 19520,
+      "words": [
+        "네게"
+      ],
+      "kind": "narration"
+    }
+  ],
+  "screenshotConfirmed": [
+    {
+      "location": "end_day_screen",
+      "line": 296,
+      "word": "네",
+      "role": "slave",
+      "branch": "automatic-failure"
+    },
+    {
+      "location": "end_day_screen",
+      "line": 319,
+      "word": "네",
+      "role": "assistant",
+      "branch": "automatic-failure"
+    }
+  ],
+  "legacyAutomaticCandidates": [
+    {
+      "location": "#npc_base",
+      "line": 2773,
+      "word": "너는",
+      "assignment": "$buy_quote['bishop_shaitana']",
+      "kind": "npc-to-player",
+      "activeReferences": [
+        {
+          "location": "interaction_result_city",
+          "lines": [
+            82,
+            198,
+            243
+          ]
+        }
+      ]
+    },
+    {
+      "location": "#txt_man",
+      "line": 53494,
+      "word": "넌",
+      "key": "q1116_slave_neg_spoil_core_reserved_t3",
+      "kind": "npc-to-player",
+      "activeReferencePattern": "native_1116_slave_neg_spoil_core_*_3_*"
+    },
+    {
+      "location": "#txt_man",
+      "line": 53515,
+      "word": "넌",
+      "key": "q1116_slave_neg_spoil_core_direct_t3",
+      "kind": "npc-to-player",
+      "activeReferencePattern": "native_1116_slave_neg_spoil_core_*_3_*"
+    },
+    {
+      "location": "#txt_man",
+      "line": 53536,
+      "word": "넌",
+      "key": "q1116_slave_neg_spoil_core_hesitant_t3",
+      "kind": "npc-to-player",
+      "activeReferencePattern": "native_1116_slave_neg_spoil_core_*_3_*"
+    }
+  ],
+  "duplicateBranchFinding": {
+    "discardedDuplicates": false,
+    "locations": "interaction_city:18051/18429 and 18082/18460",
+    "outerConditions": [
+      {
+        "line": 17942,
+        "condition": "hero_choice < 100"
+      },
+      {
+        "line": 18312,
+        "condition": "else"
+      }
+    ],
+    "conclusion": "Separate active branches; do not delete as stale duplicate text."
+  },
+  "verificationLimits": [
+    "No game engine or UI play test for this read-only audit.",
+    "Broad inventory is a search index, not a full contextual classification.",
+    "No claim that all candidate branches are reachable.",
+    "Internal location lines are valid for the recorded source hash."
+  ],
+  "modifications": {
+    "qsp": false,
+    "code": false,
+    "mods": false,
+    "release": false,
+    "commit": false,
+    "push": false,
+    "artifacts": [
+      "REPORT_KO.md",
+      "audit.json",
+      "candidate-inventory.json"
+    ]
+  },
+  "sourceUnchangedAfterAudit": true
+}

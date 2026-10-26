@@ -1,0 +1,63 @@
+{
+  "id": "2026-10-26_shop_text_quest_ui",
+  "before_sha256": "8b9cf39fe2327079b0823f6e474c93151538a512fa8738ed5f330749a0940db5",
+  "after_sha256": "8d388588aaebe33ba34dbcdde66f55a4b29beeb12467ba48b3638cda9802238c",
+  "edits": [
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\t\tfunc('$menu', 'interaction_city', $menu_item_milk_tip, menu_milk_tip, '내일의 우유 가격을 묻는다 ($0~5)')",
+      "new": "! JO9 MOD START SHOP_TEXT_20261026_001 | 2026-10-26_shop_text_quest_ui\r\n! JO9 MOD START MILK_TIP_LABEL_FIT_20261026\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_milk_tip, menu_milk_tip, '내일의 우유 가격을 묻는다')\r\n! JO9 MOD END MILK_TIP_LABEL_FIT_20261026\r\n! JO9 MOD END SHOP_TEXT_20261026_001",
+      "count": 1
+    },
+    {
+      "location": "shop_general",
+      "field": "body",
+      "old": "*p func('$menu', 'layout_style')",
+      "new": "! JO9 MOD START SHOP_TEXT_20261026_002 | 2026-10-26_shop_text_quest_ui\r\n! JO9 MOD START MILK_TIP_SAVED_LABEL_20261026\r\n! Old saves may retain the former label in $display_options; preserve the existing question link.\r\nif $place = 'milk_cooperative': $text_display = replace($text_display, '내일의 우유 가격을 묻는다 ($0~5)', '내일의 우유 가격을 묻는다')\r\n! JO9 MOD END MILK_TIP_SAVED_LABEL_20261026\r\n*p func('$menu', 'layout_style')\r\n! JO9 MOD END SHOP_TEXT_20261026_002",
+      "count": 1
+    },
+    {
+      "location": "main_screen",
+      "field": "body",
+      "old": "*p '<div id = \"main_screen\"><<$text_display>></div>'",
+      "new": "! JO9 MOD START SHOP_TEXT_20261026_003 | 2026-10-26_shop_text_quest_ui\r\n! JO9 MOD START HOME_POTION_COLUMNS_20261026\r\nif menu_form = menu_potion_S or menu_form = menu_potion_S_assistant:\r\n *p '<div id=\"main_screen\" class=\"jo9_home_potions\"><<$text_display>></div>'\r\nelse\r\n*p '<div id = \"main_screen\"><<$text_display>></div>'\r\nend\r\n! JO9 MOD END HOME_POTION_COLUMNS_20261026\r\n! JO9 MOD END SHOP_TEXT_20261026_003",
+      "count": 1
+    },
+    {
+      "location": "$menu",
+      "field": "body",
+      "old": "! Creates a link to something",
+      "new": "! JO9 MOD START SHOP_TEXT_20261026_004 | 2026-10-26_shop_text_quest_ui\r\n! JO9 MOD START PHARMACY_GRAY_HTML_20261026\r\n! Native saves may restore old icon HTML; repair only the missing style attribute at the common input.\r\nif instr($args[1], '<li id=\"grey\" =\"background:') > 0: $args[1] = replace($args[1], '<li id=\"grey\" =\"background:', '<li id=\"grey\" style=\"background:')\r\n! JO9 MOD END PHARMACY_GRAY_HTML_20261026\r\n\r\n! Creates a link to something\r\n! JO9 MOD END SHOP_TEXT_20261026_004",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": " if $args[1] = 'healthy': $result = '[건강체질]<br>전투에서 버틸 체력과 지구력이 좋으며 운동도 빠르게 익힌다. 식사와 보조식품, 충분한 휴식으로 체력을 기르는 데도 유리하다. 타고나기도 하고 의료센터의 체질개선 시술로 얻기도 한다. 약골과 양립하지 않는다.'",
+      "new": "! JO9 MOD START SHOP_TEXT_20261026_005 | 2026-10-26_shop_text_quest_ui\r\n if $args[1] = 'healthy': $result = '[건강체질]<br>전투에서 버틸 체력과 지구력이 좋으며 운동도 빠르게 익힌다. 식사와 보조식품, 충분한 휴식으로 체력을 기르는 데도 유리하다. 타고나기도 하지만, 특별한 계기로 체질이 바뀌기도 한다. 약골과 양립하지 않는다.'\r\n! JO9 MOD END SHOP_TEXT_20261026_005",
+      "count": 1
+    },
+    {
+      "location": "#help_msg",
+      "field": "body",
+      "old": "$слава_совет = '[로마 인지도 TIPS]<br>&nbsp;인지도가 전부는 아닙니다. 이것에 개의치 않고도 훌륭한 노예를 육성할 수 있습니다.<br>명성 영향: 경주, 투기 대회, 캣파이트, 랠리, 안개경계 전투.<br><br>랠리: 첫 우승 +10, 반복 우승은 명성40 미만 +1 / 40~79 +0.25. 최대80까지만 상승합니다.<br>캣파이트: 첫 승 +10, 다음 두 승은 각각 +3. 3승을 달성하면 더는 출전할 수 없습니다.'",
+      "new": "! JO9 MOD START SHOP_TEXT_20261026_006 | 2026-10-26_shop_text_quest_ui\r\n$слава_совет = '[로마 인지도 TIPS]<br>&nbsp;인지도가 전부는 아닙니다. 이것에 개의치 않고도 훌륭한 노예를 육성할 수 있습니다.<br><br>명성을 쌓을 수 있는 곳: 콜로세움의 경주와 투기 대회, 동부 구역의 캣파이트 클럽과 아마란스 살롱의 랠리, 안개 경계 순찰.<br><br>랠리는 우승으로 명성이 오르지만, 첫 우승 이후에는 상승 폭이 작아지고 일정 수준에 이르면 더는 오르지 않습니다.<br>캣파이트는 승리할 때 명성이 오르며, 3승을 달성하면 더는 출전할 수 없습니다.'\r\n! JO9 MOD END SHOP_TEXT_20261026_006",
+      "count": 1
+    },
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "if instr($слава_совет, '랠리: 첫 우승 +10') = 0: gs '#help_msg'",
+      "new": "! JO9 MOD START SHOP_TEXT_20261026_007 | 2026-10-26_shop_text_quest_ui\r\nif instr($слава_совет, '명성을 쌓을 수 있는 곳: 콜로세움의 경주와 투기 대회') = 0: gs '#help_msg'\r\n! JO9 MOD END SHOP_TEXT_20261026_007",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "IF interaction_city = 30045:\r\n  npc = 1\r\n $npc_id = 'witch_Pamela'\r\n $place = 'Russiankvartal_forest'\r\n $return_lock  = 'shop_general'\r\n txt_count = 3\r\n! JO9 MOD START J9M0351 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included\r\n$text[1] = '[파멜라]<br>&nbsp;자스민한테 여자를 기쁘게 하는 법 가르치는 게 그렇게 어렵냐, <<$master_name>>?! 게다가 걘 원래 그런 데 소질도 있어! 그걸 위해 타락시킬 필요조차 없다고! 필요하다면 내가 직접 여자 핥는 법을 가르쳐 줄 수도 있어!'\r\n! JO9 MOD END J9M0351\r\n$text[2] ' 하지만 네 조수로 로마에서 제일 유명한 레즈비언 도미나트릭스 안젤리카가 붙어 있는데, 이 정도가 네게 조금도 어렵게 느껴질 리가 없잖아!... 이런 사소한 일 때문에 우리가 소중한 시간을 낭비하고 술탄 궁전의 연회를 미루고 있다는 게 나로선 도무지 믿기지 않아,'\r\n! JO9 MOD START J9M0350 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included\r\n$text[3] = '[파멜라]<br>&nbsp;이런 사소한 일 때문에 우리가 소중한 시간을 낭비하고 술탄 궁전의 연회를 미루고 있다는 게 나로선 도무지 믿기지 않아. 우리가 진작 모든 문제를 끝낼 수도 있었는데 말이야!... 우린 이제 거의 다 왔어, <<$master_name>>! 마지막 한 걸음만 얼른 떼라고!... 다음엔 지니의 램프를 든 네가 자스민과 함께 내 앞에 서 있길 바라!...'\r\n! JO9 MOD END J9M0350\r\nEND",
+      "new": "! JO9 MOD START SHOP_TEXT_20261026_008 | 2026-10-26_shop_text_quest_ui\r\nIF interaction_city = 30045:\r\n  npc = 1\r\n $npc_id = 'witch_Pamela'\r\n $place = 'Russiankvartal_forest'\r\n $return_lock  = 'shop_general'\r\n txt_count = 3\r\n! JO9 MOD START J9M0351 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included\r\n$text[1] = '[파멜라]<br>&nbsp;자스민한테 여자를 기쁘게 하는 법 가르치는 게 그렇게 어렵냐, <<$master_name>>?! 게다가 걘 원래 그런 데 소질도 있어! 그걸 위해 타락시킬 필요조차 없다고! 필요하다면 내가 직접 여자 핥는 법을 가르쳐 줄 수도 있어!'\r\n! JO9 MOD END J9M0351\r\n$text[2]= ' 하지만 네 조수로 로마에서 제일 유명한 레즈비언 도미나트릭스 안젤리카가 붙어 있는데, 이 정도가 네게 조금도 어렵게 느껴질 리가 없잖아!... 이런 사소한 일 때문에 우리가 소중한 시간을 낭비하고 술탄 궁전의 연회를 미루고 있다는 게 나로선 도무지 믿기지 않아,'\r\n! JO9 MOD START J9M0350 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included\r\n$text[3] = '[파멜라]<br>&nbsp;이런 사소한 일 때문에 우리가 소중한 시간을 낭비하고 술탄 궁전의 연회를 미루고 있다는 게 나로선 도무지 믿기지 않아. 우리가 진작 모든 문제를 끝낼 수도 있었는데 말이야!... 우린 이제 거의 다 왔어, <<$master_name>>! 마지막 한 걸음만 얼른 떼라고!... 다음엔 지니의 램프를 든 네가 자스민과 함께 내 앞에 서 있길 바라!...'\r\n! JO9 MOD END J9M0350\r\nEND\r\n! JO9 MOD END SHOP_TEXT_20261026_008",
+      "count": 1
+    }
+  ]
+}

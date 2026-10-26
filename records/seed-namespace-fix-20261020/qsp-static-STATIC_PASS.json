@@ -1,0 +1,74 @@
+{
+  "schema": 1,
+  "createdAt": "2026-10-20T06:28:38.223Z",
+  "profile": "static",
+  "checks": [
+    {
+      "name": "inputs-readable",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "candidate": "20137b7336f2ec27c419605cbd2ada1a6fab459919c6ceaaedad89a9152f40f5"
+      }
+    },
+    {
+      "name": "world-structure-and-line-endings",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "sha256": "20137b7336f2ec27c419605cbd2ada1a6fab459919c6ceaaedad89a9152f40f5",
+        "bytes": 48236660,
+        "locations": 262,
+        "roundtrip": true,
+        "lineEndingIssues": 0
+      }
+    },
+    {
+      "name": "slave-template-registry",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "files": 1126,
+        "numericIds": 1126,
+        "collisions": 0,
+        "invalidJson": 0,
+        "embeddedIdMismatches": 0
+      }
+    },
+    {
+      "name": "distribution-byte-match",
+      "required": false,
+      "status": "SKIP",
+      "reason": "No mirror specified; this run does not verify the distribution copy"
+    },
+    {
+      "name": "patch-replay-and-idempotence",
+      "required": false,
+      "status": "SKIP",
+      "reason": "Explicit --baseline and selected --mods-dir required"
+    },
+    {
+      "name": "installed-client-smoke",
+      "required": false,
+      "status": "SKIP",
+      "reason": "Static profile explicitly requested"
+    },
+    {
+      "name": "input-hashes-unchanged",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "files": 1
+      }
+    }
+  ],
+  "limits": [
+    "No GUI clicks or visual layout verification.",
+    "Save data is used only to prime representative state. GUI save-file loading, CRC compatibility and full saved script restoration are NOT tested.",
+    "Start is replaced only in diagnostic copies. Smoke covers lifecycle calls, not the character-selection UI or every gameplay branch.",
+    "No complete QSP syntax checker: dynamic code and all game logic are not statically proved.",
+    "Battle smoke instruments the menu dispatch only; full combat outcomes and balance are not tested."
+  ],
+  "verdict": "STATIC_PASS",
+  "output": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\outputs\\seed-id-fix-20261020\\static\\run-NSaVnD"
+}

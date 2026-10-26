@@ -1,0 +1,68 @@
+{
+  "schema": 1,
+  "createdAt": "2026-10-21T03:59:17.669Z",
+  "inputHashes": {
+    "baseline": "a2e0265881bebd8a72b3fcbb214ddaf831106cfe50e9c96da8e0b6e7d692707a",
+    "candidate": "404b57f83893e6fc06ff69260b654de770de09a75c3709570c0eaa2d23411365",
+    "state-save": "3c9dc2bb01ac729d81aeea08cdc8cb09ef1f9606c116474948fd3e21c2178fc6"
+  },
+  "cacheRevision": 2,
+  "heroChoiceFixture": 0,
+  "stateAssignments": 201574,
+  "inputHashesUnchanged": true,
+  "engineInvoked": false,
+  "probes": [
+    {
+      "mode": "baseline",
+      "name": "baseline-npc",
+      "assignmentChecks": 6,
+      "statePreservationChecks": 4,
+      "interpolationValueChecks": 0,
+      "interpolationExpressionSnapshotsSkipped": [],
+      "expectedFirstBaselineFailure": "JO9_QA_ARGONSEL_NPC_001",
+      "sha256": "df1f7bc1fff144e008d85a21610185608692df0c582dbec69544ed1313afc5d1"
+    },
+    {
+      "mode": "baseline",
+      "name": "baseline-editorial",
+      "assignmentChecks": 36,
+      "statePreservationChecks": 4,
+      "interpolationValueChecks": 2,
+      "interpolationExpressionSnapshotsSkipped": [],
+      "expectedFirstBaselineFailure": "JO9_QA_ARGONSEL_EDITORIAL_001",
+      "sha256": "e2f6dee00863cd8eb95b2042c6aaa1366b0d44ca66a7578ba570b1ead45f162f"
+    },
+    {
+      "mode": "candidate",
+      "name": "candidate-npc",
+      "assignmentChecks": 6,
+      "statePreservationChecks": 4,
+      "interpolationValueChecks": 0,
+      "interpolationExpressionSnapshotsSkipped": [],
+      "expectedFirstBaselineFailure": null,
+      "sha256": "a937229559f11977abd7ed7fd4ed796564954680a11691e00ada68bc4dabd8bf"
+    },
+    {
+      "mode": "candidate",
+      "name": "candidate-editorial",
+      "assignmentChecks": 36,
+      "statePreservationChecks": 4,
+      "interpolationValueChecks": 2,
+      "interpolationExpressionSnapshotsSkipped": [],
+      "expectedFirstBaselineFailure": null,
+      "sha256": "4290fac32eb8da394e10c35c243211c9e552dc5378fb347786c60eae60579b17"
+    }
+  ],
+  "executionOrder": [
+    "baseline-plan.json: expected two assertion failures",
+    "candidate-plan.json: required two completion markers"
+  ],
+  "limits": [
+    "Actual initializer values are checked, not a self-assigned temporary literal.",
+    "Baseline failure must match each expected first assertion message; arbitrary failure is not a successful negative control.",
+    "hero_choice=0 explicitly selects the male protagonist definitions; female protagonist paths are not tested.",
+    "Representative state is primed; native saved-game loading and visual layout are not tested.",
+    "Only simple interpolation references are value-snapshotted; every interpolation token is statically preserved exactly.",
+    "All fixtures contain save-derived state and must be removed after sanitized reports and reproduction script are retained."
+  ]
+}

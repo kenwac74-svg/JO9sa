@@ -1,0 +1,143 @@
+{
+  "status": "DEFERRED_BY_USER_PENDING_BALANCE_REVIEW",
+  "date": "2026-10-24",
+  "workSha256": "5560055182d40dd856791dc948429beb7ba636e118e20b748ce0ad91d2546ea7",
+  "locations": 267,
+  "workStructure": "PASS",
+  "byteRoundtrip": true,
+  "nativeExecutionThisStage": false,
+  "gameEdits": 0,
+  "saveEdits": 0,
+  "fullSync": false,
+  "commit": false,
+  "push": false,
+  "confirmed": {
+    "intellect": [
+      {
+        "value": 0,
+        "label": "정신지체"
+      },
+      {
+        "value": 1,
+        "label": "우둔함"
+      },
+      {
+        "value": 2,
+        "label": "평범함"
+      },
+      {
+        "value": 3,
+        "label": "영리함"
+      },
+      {
+        "value": 4,
+        "label": "총명함"
+      },
+      {
+        "value": 5,
+        "label": "지적임"
+      }
+    ],
+    "baseAp": [
+      0,
+      2,
+      3,
+      4,
+      5,
+      5
+    ],
+    "existingIntellectApDiscount": false,
+    "existingXpModifiers": [
+      -2,
+      -2,
+      -1,
+      0,
+      1,
+      2
+    ],
+    "geniusOrdinaryXpMultiplier": 2,
+    "geniusIntellectAtCreation": 5
+  },
+  "evidence": [
+    {
+      "location": "#variative",
+      "lines": "330-335",
+      "fact": "intellect display labels"
+    },
+    {
+      "location": "#dynamic",
+      "lines": "1154-1161",
+      "fact": "existing intellect-based skill XP modifiers"
+    },
+    {
+      "location": "#dynamic",
+      "lines": "1295-1298 and 1395-1398",
+      "fact": "ordinary energy and easy half cost"
+    },
+    {
+      "location": "#static_base",
+      "lines": "750-753",
+      "fact": "pending half_action settlement also calls dynamic_energy_drop"
+    },
+    {
+      "location": "interaction_result",
+      "lines": "461-471",
+      "fact": "school escort directly accumulates half_action"
+    }
+  ],
+  "alternatives": [
+    {
+      "id": "all_paid_character_actions",
+      "recommended": true,
+      "scope": "Slave and assistant ordinary AP costs including education and work, without a knowledge-only rule. Protagonist costs and outcome HP/wound/exertion penalties remain separate.",
+      "reason": "Most directly follows the request that high intelligence can offset low stamina without funneling training into knowledge fields."
+    },
+    {
+      "id": "education_only",
+      "recommended": false,
+      "scope": "All education subjects, all learners; ordinary work excluded.",
+      "tradeoff": "Smaller economic effect and simpler scope, but does not help low-stamina workers outside training."
+    }
+  ],
+  "proposedPercentByIntellect": [
+    0,
+    0,
+    0,
+    12.5,
+    25,
+    37.5
+  ],
+  "proposedPercentApproved": false,
+  "earlierUnapprovedPercentByHighIntellect": [
+    12.5,
+    25,
+    50
+  ],
+  "ordinaryApCostPerEightActions": {
+    "none": 8,
+    "smart": 7,
+    "bright": 6,
+    "intellectual": 5
+  },
+  "proposedStacking": "Use the stronger existing discount rather than adding discounts; an existing half-cost action stays half-cost.",
+  "structuralNotes": [
+    "Do not discount generic settlement recursively. Explicitly distinguish actual action charges from pending half_action normalization.",
+    "Do not infer eligibility from stale target_skill or interaction_type alone.",
+    "Any fractional savings must be accumulated per character and persist through save, role swaps, grade changes and days; initialize only for a newly created character.",
+    "Free and cheat-suppressed actions must not generate savings.",
+    "AP discount must not refill saved AP or alter the base stamina/AP curve."
+  ],
+  "balance": {
+    "full50PercentApDiscountActionMultiplier": 2,
+    "proposedTopActionMultiplier": 1.6,
+    "geniusXpCombinedWithProposedTop": 3.2,
+    "geniusXpCombinedWith50Percent": 4,
+    "limits": "Long-run comparison of equal nominal 1AP costs and base XP. Existing XP modifiers, restrictions, exertion, money, rounding and actor roles change actual outcomes."
+  },
+  "next": "REVISIT_ADOPTION_WITH_USER_AFTER_BALANCE_REVIEW",
+  "hold": {
+    "date": "2026-10-24",
+    "reason": "지성별 행동력 할인안은 보류한다. 나중에 실제 밸런스를 본 뒤 채택 여부를 다시 논의한다.",
+    "gameApplied": false
+  }
+}

@@ -1,0 +1,164 @@
+{
+  "schema": "jo9-existing-safe-potions-v1",
+  "status": "read-only planning facts; no drop or effect design",
+  "source": {
+    "path": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+    "sha256": "a2e0265881bebd8a72b3fcbb214ddaf831106cfe50e9c96da8e0b6e7d692707a",
+    "lineConvention": "one-based decoded location body lines"
+  },
+  "items": [
+    {
+      "id": "тонизируюзщий_эликсир",
+      "names": {
+        "shop": "강장 영약",
+        "battle": "자양 강장제"
+      },
+      "category": "회복·체력·능력보조",
+      "shop": {
+        "confirmed": true,
+        "location": "pharmacy",
+        "menuLine": 51,
+        "purchaseLines": [
+          130,
+          131,
+          132,
+          133,
+          134,
+          135
+        ],
+        "batchCost": 800,
+        "batchQuantity": 5,
+        "equivalentUnitCost": 160,
+        "unitCostNote": "개별1병판매가격이아닌5개묶음800$의환산값"
+      },
+      "alchemy": {
+        "confirmed": true,
+        "location": "interaction",
+        "definitionLine": 1071,
+        "selectionLines": [
+          1076,
+          1077,
+          1080,
+          1081,
+          1082
+        ],
+        "outputLine": 1142,
+        "minimumSkill": "min(alchemy,enchanter)>1",
+        "base": "spirit",
+        "qualification": "재료검사와소모가별도로있음. 이보고서는제조공식변경이나새재료를설계하지않음"
+      },
+      "currentEffects": {
+        "battle": {
+          "location": "#боевые_предметы",
+          "lines": [
+            1328,
+            1330,
+            1331,
+            1332,
+            1333,
+            1334,
+            1335
+          ],
+          "summary": "1개소모; 지구력최대, дух+20, разгон=10, внимание=10, слабость=0"
+        },
+        "home": {
+          "location": "interaction",
+          "lines": [
+            9012,
+            9013,
+            9016,
+            9017,
+            9018
+          ],
+          "summary": "master_half_action-=2; 기존energised에따른rate차감후energised+=1. 연속사용은단순영구체력상승으로해석하지않음"
+        }
+      }
+    },
+    {
+      "id": "целительный_бальзам",
+      "names": {
+        "shop": "기적의 연고",
+        "battle": "기적의 향유"
+      },
+      "category": "회복·건강",
+      "shop": {
+        "confirmed": true,
+        "location": "pharmacy",
+        "menuLine": 60,
+        "purchaseLines": [
+          146,
+          147,
+          148,
+          149,
+          150,
+          151
+        ],
+        "batchCost": 1200,
+        "batchQuantity": 5,
+        "equivalentUnitCost": 240,
+        "unitCostNote": "개별1병판매가격이아닌5개묶음1200$의환산값"
+      },
+      "alchemy": {
+        "confirmed": true,
+        "location": "interaction",
+        "definitionLine": 1071,
+        "selectionLines": [
+          1076,
+          1077,
+          1084,
+          1085,
+          1086
+        ],
+        "outputLine": 1142,
+        "minimumSkill": "min(alchemy,enchanter)>2",
+        "base": "slime",
+        "qualification": "재료검사와소모가별도로있음. 기존소재수량/효과/제조식변경없음"
+      },
+      "currentEffects": {
+        "battle": {
+          "location": "#боевые_предметы",
+          "lines": [
+            1314,
+            1316,
+            1317,
+            1318,
+            1319,
+            1320
+          ],
+          "summary": "1개소모; 건강/지구력최대, дух+20, боль=0"
+        },
+        "home": {
+          "location": "interaction",
+          "lines": [
+            9028,
+            9029,
+            9033,
+            9034
+          ],
+          "summary": "master_wounds_rate-=25; master_str<3이면master_str_rate+=skill_adv_mul*2"
+        }
+      }
+    }
+  ],
+  "separateCheckedButNotAdopted": [
+    {
+      "id": "potion_of_mystra",
+      "name": "미스트라의 비약",
+      "shop": "별도마녀상점교환구매확인:interaction_city9346~9353,1500$+molar_of_wolf1소모로1개",
+      "alchemyManufacture": "이번한정조사에서확인되지않음",
+      "reason": "확인한효과는fear/angst/spoil초기화(interaction1530~1534)여서학습약으로표기하지않고이번회복·체력후보2개와분리"
+    }
+  ],
+  "scope": {
+    "maxRequested": 8,
+    "fullyConfirmedSafeCandidates": 2,
+    "otherSafeLearningPotion": "상점판매와연금제조를모두확인한추가학습약없음; 전체게임에없다고단정하지않음",
+    "excludedFromDesign": "성적행동·성적복종·호감조작계열은드롭·효과설계하지않음",
+    "monsterRareMaterials": "1~3%희귀연금재료화는사용자기획이며기존물약이나제조식에이미구현된동작으로취급하지않음"
+  },
+  "limits": [
+    "현재로컬QSP의기능코드정적조사만수행",
+    "원문서술덤프·전체QSP복제·게임실행·기능코드변경0",
+    "이번보고서는후보의존재/가격/현재효과근거이며새드롭확률·지급량·효과를정하지않음"
+  ]
+}

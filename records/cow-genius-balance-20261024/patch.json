@@ -1,0 +1,170 @@
+{
+  "id": "2026-10-24_cow_genius_balance",
+  "description": "미련한소 일일 우유 생산량1.5배. 천재 pet/dressage/cowSK 양의XP75%, 인물·분야별 사분의일 잔여 보존. 다른2배/체력제외/백치/다재다능 유지.",
+  "target": "game\\jack.qsp",
+  "before_sha256": "b36831e4f3f94ac4885da4c522cdc2c19c9aeb98efc75f23ff19a18585bec172",
+  "after_sha256": "6ac1d81489320b5211c03e9e2b36436d15ed4a7ebf47768f384802f469cfccdb",
+  "edits": [
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "\t\t\tif $dynslave_psy_status = 'broken': dynslave['milk_gain'] = (dynslave['milk_gain']/3)*2",
+      "new": "! JO9 MOD START COW_APTITUDE_MILK_150 | 2026-10-24_cow_genius_balance\r\n\t\t\tif $dynslave_psy_status = 'broken': dynslave['milk_gain'] = (dynslave['milk_gain']/3)*2\r\n\t\t\tif dynslave['cowSK_affinity'] > 0: dynslave['milk_gain'] = max(0, dynslave['milk_gain']) * 3 / 2\r\n\t\t\t! Base production comments below exclude this aptitude bonus; base37 becomes55, before lactation grade and existing food costs.\r\n! JO9 MOD END COW_APTITUDE_MILK_150",
+      "count": 1
+    },
+    {
+      "location": "jo9_learning_xp",
+      "field": "body",
+      "old": "! JO9 MOD START COG_XP_HELPER | 2026-10-16_innate_learning_traits\r\n! args[0]: 이번에 새로 얻는 경험치, args[1]: 특성 값, $args[2]: 성장 항목.\r\n! 누적 경험치·등급·자아를 직접 바꾸지 않고 보정된 증가량만 반환한다.\r\nresult = args[0]\r\nif args[0] > 0 and $args[2] ! 'stamina' and $args[2] ! 'slave_rate[\"stamina\"]' and $args[2] ! 'assistant_rate[\"stamina\"]':\r\n if args[1] = 1:\r\n  result = args[0] * 2\r\n elseif args[1] = -1:\r\n  result = args[0] / 2\r\n  if result < 1: result = 1\r\n end\r\nend\r\n! JO9 MOD END COG_XP_HELPER",
+      "new": "! JO9 MOD START GENIUS_ANIMAL_XP_75 | 2026-10-24_cow_genius_balance\r\n! args[0]: new XP, args[1]: learning trait, $args[2]: field, optional $args[3]: actor role.\r\n! Animal75% carries quarters on the actor; other growth and the old stamina/idiot rules are unchanged.\r\nresult = args[0]\r\nif args[0] > 0 and $args[2] ! 'stamina' and $args[2] ! 'slave_rate[\"stamina\"]' and $args[2] ! 'assistant_rate[\"stamina\"]':\r\n if args[1] = 1:\r\n  $jo9_g75_field = replace($args[2], '\"', '')\r\n  $jo9_g75_field = replace($jo9_g75_field, \"'\", '')\r\n  if instr($jo9_g75_field, '[') > 0: $jo9_g75_field = mid($jo9_g75_field, instr($jo9_g75_field, '[') + 1, len($jo9_g75_field))\r\n  $jo9_g75_field = replace($jo9_g75_field, ']', '')\r\n  if $jo9_g75_field = 'pet' or $jo9_g75_field = 'dressage' or $jo9_g75_field = 'cowSK':\r\n   result = args[0] * 3 / 4\r\n   if $args[3] ! '':\r\n    $jo9_g75_role = $args[3]\r\n    $jo9_g75_key = 'jo9_g75_' + $jo9_g75_field\r\n    jo9_g75_credit = dyneval('result = ' + $jo9_g75_role + '[\"' + $jo9_g75_key + '\"]')\r\n    jo9_g75_total = args[0] * 3 + max(0, min(3, jo9_g75_credit))\r\n    result = jo9_g75_total / 4\r\n    dynamic $jo9_g75_role + '[\"' + $jo9_g75_key + '\"] = ' + str(jo9_g75_total mod 4)\r\n   end\r\n  else\r\n   result = args[0] * 2\r\n  end\r\n elseif args[1] = -1:\r\n  result = args[0] / 2\r\n  if result < 1: result = 1\r\n end\r\nend\r\nkillvar '$jo9_g75_field'\r\nkillvar '$jo9_g75_role'\r\nkillvar '$jo9_g75_key'\r\nkillvar 'jo9_g75_credit'\r\nkillvar 'jo9_g75_total'\r\n! JO9 MOD END GENIUS_ANIMAL_XP_75",
+      "count": 1
+    },
+    {
+      "location": "$ride_finish",
+      "field": "body",
+      "old": "\tslave_rate['dressage'] += func('jo9_learning_xp', (25), slave['jo9_learning_trait'], 'dressage')",
+      "new": "! JO9 MOD START GENIUS_ANIMAL_ROLE_01 | 2026-10-24_cow_genius_balance\r\n\tslave_rate['dressage'] += func('jo9_learning_xp', (25), slave['jo9_learning_trait'], 'dressage', 'slave')\r\n! JO9 MOD END GENIUS_ANIMAL_ROLE_01",
+      "count": 1
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "\t\tif slave['pet'] < 2: slave_rate['pet'] += func('jo9_learning_xp', (2), slave['jo9_learning_trait'], 'pet') &! stops at C-",
+      "new": "! JO9 MOD START GENIUS_ANIMAL_ROLE_02 | 2026-10-24_cow_genius_balance\r\n\t\tif slave['pet'] < 2: slave_rate['pet'] += func('jo9_learning_xp', (2), slave['jo9_learning_trait'], 'pet', 'slave') &! stops at C-\r\n! JO9 MOD END GENIUS_ANIMAL_ROLE_02",
+      "count": 1
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "\t\t\tcow_rate['cowSK'] += func('jo9_learning_xp', (10), cow['jo9_learning_trait'], 'cowSK')",
+      "new": "! JO9 MOD START GENIUS_ANIMAL_ROLE_03 | 2026-10-24_cow_genius_balance\r\n\t\t\tcow_rate['cowSK'] += func('jo9_learning_xp', (10), cow['jo9_learning_trait'], 'cowSK', 'cow')\r\n! JO9 MOD END GENIUS_ANIMAL_ROLE_03",
+      "count": 1
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "\t\t\tcow_rate['cowSK'] += func('jo9_learning_xp', (8), cow['jo9_learning_trait'], 'cowSK')",
+      "new": "! JO9 MOD START GENIUS_ANIMAL_ROLE_04 | 2026-10-24_cow_genius_balance\r\n\t\t\tcow_rate['cowSK'] += func('jo9_learning_xp', (8), cow['jo9_learning_trait'], 'cowSK', 'cow')\r\n! JO9 MOD END GENIUS_ANIMAL_ROLE_04",
+      "count": 1
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "\t\t\tcow_rate['cowSK'] += func('jo9_learning_xp', (5), cow['jo9_learning_trait'], 'cowSK')",
+      "new": "! JO9 MOD START GENIUS_ANIMAL_ROLE_05 | 2026-10-24_cow_genius_balance\r\n\t\t\tcow_rate['cowSK'] += func('jo9_learning_xp', (5), cow['jo9_learning_trait'], 'cowSK', 'cow')\r\n! JO9 MOD END GENIUS_ANIMAL_ROLE_05",
+      "count": 1
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "\t\t\tcow_rate['cowSK'] += func('jo9_learning_xp', (3), cow['jo9_learning_trait'], 'cowSK')",
+      "new": "! JO9 MOD START GENIUS_ANIMAL_ROLE_06 | 2026-10-24_cow_genius_balance\r\n\t\t\tcow_rate['cowSK'] += func('jo9_learning_xp', (3), cow['jo9_learning_trait'], 'cowSK', 'cow')\r\n! JO9 MOD END GENIUS_ANIMAL_ROLE_06",
+      "count": 1
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "\t\t\tcow_rate['cowSK'] += func('jo9_learning_xp', (2), cow['jo9_learning_trait'], 'cowSK') ",
+      "new": "! JO9 MOD START GENIUS_ANIMAL_ROLE_07 | 2026-10-24_cow_genius_balance\r\n\t\t\tcow_rate['cowSK'] += func('jo9_learning_xp', (2), cow['jo9_learning_trait'], 'cowSK', 'cow') \r\n! JO9 MOD END GENIUS_ANIMAL_ROLE_07",
+      "count": 1
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "\t\tcow_rate['cowSK'] += func('jo9_learning_xp', (6), cow['jo9_learning_trait'], 'cowSK')",
+      "new": "! JO9 MOD START GENIUS_ANIMAL_ROLE_08 | 2026-10-24_cow_genius_balance\r\n\t\tcow_rate['cowSK'] += func('jo9_learning_xp', (6), cow['jo9_learning_trait'], 'cowSK', 'cow')\r\n! JO9 MOD END GENIUS_ANIMAL_ROLE_08",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "\t\tcow_rate['cowSK'] += func('jo9_traits_personality', 'xp', 'cow', 'cowSK', func('jo9_learning_xp', (1), cow['jo9_learning_trait'], 'cowSK'))",
+      "new": "! JO9 MOD START GENIUS_ANIMAL_ROLE_09 | 2026-10-24_cow_genius_balance\r\n\t\tcow_rate['cowSK'] += func('jo9_traits_personality', 'xp', 'cow', 'cowSK', func('jo9_learning_xp', (1), cow['jo9_learning_trait'], 'cowSK', 'cow'))\r\n! JO9 MOD END GENIUS_ANIMAL_ROLE_09",
+      "count": 2
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "\troom1_rate['cowSK'] += func('jo9_traits_personality', 'xp', 'room1', 'cowSK', func('jo9_learning_xp', (1), room1['jo9_learning_trait'], 'cowSK'))",
+      "new": "! JO9 MOD START GENIUS_ANIMAL_ROLE_10 | 2026-10-24_cow_genius_balance\r\n\troom1_rate['cowSK'] += func('jo9_traits_personality', 'xp', 'room1', 'cowSK', func('jo9_learning_xp', (1), room1['jo9_learning_trait'], 'cowSK', 'room1'))\r\n! JO9 MOD END GENIUS_ANIMAL_ROLE_10",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "\troom2_rate['cowSK'] += func('jo9_traits_personality', 'xp', 'room2', 'cowSK', func('jo9_learning_xp', (1), room2['jo9_learning_trait'], 'cowSK'))",
+      "new": "! JO9 MOD START GENIUS_ANIMAL_ROLE_11 | 2026-10-24_cow_genius_balance\r\n\troom2_rate['cowSK'] += func('jo9_traits_personality', 'xp', 'room2', 'cowSK', func('jo9_learning_xp', (1), room2['jo9_learning_trait'], 'cowSK', 'room2'))\r\n! JO9 MOD END GENIUS_ANIMAL_ROLE_11",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "\troom3_rate['cowSK'] += func('jo9_traits_personality', 'xp', 'room3', 'cowSK', func('jo9_learning_xp', (1), room3['jo9_learning_trait'], 'cowSK'))",
+      "new": "! JO9 MOD START GENIUS_ANIMAL_ROLE_12 | 2026-10-24_cow_genius_balance\r\n\troom3_rate['cowSK'] += func('jo9_traits_personality', 'xp', 'room3', 'cowSK', func('jo9_learning_xp', (1), room3['jo9_learning_trait'], 'cowSK', 'room3'))\r\n! JO9 MOD END GENIUS_ANIMAL_ROLE_12",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "\troom4_rate['cowSK'] += func('jo9_traits_personality', 'xp', 'room4', 'cowSK', func('jo9_learning_xp', (1), room4['jo9_learning_trait'], 'cowSK'))",
+      "new": "! JO9 MOD START GENIUS_ANIMAL_ROLE_13 | 2026-10-24_cow_genius_balance\r\n\troom4_rate['cowSK'] += func('jo9_traits_personality', 'xp', 'room4', 'cowSK', func('jo9_learning_xp', (1), room4['jo9_learning_trait'], 'cowSK', 'room4'))\r\n! JO9 MOD END GENIUS_ANIMAL_ROLE_13",
+      "count": 1
+    },
+    {
+      "location": "interaction_result",
+      "field": "body",
+      "old": "\t\t\tdynslave_rate['cowSK'] += func('jo9_traits_personality', 'xp', 'dynslave', 'cowSK', func('jo9_learning_xp', (1), dynslave['jo9_learning_trait'], 'cowSK'))",
+      "new": "! JO9 MOD START GENIUS_ANIMAL_ROLE_14 | 2026-10-24_cow_genius_balance\r\n\t\t\tdynslave_rate['cowSK'] += func('jo9_traits_personality', 'xp', 'dynslave', 'cowSK', func('jo9_learning_xp', (1), dynslave['jo9_learning_trait'], 'cowSK', 'dynslave'))\r\n! JO9 MOD END GENIUS_ANIMAL_ROLE_14",
+      "count": 1
+    },
+    {
+      "location": "interaction_result",
+      "field": "body",
+      "old": "\t\t\tcow_rate['cowSK'] += func('jo9_traits_personality', 'xp', 'cow', 'cowSK', func('jo9_learning_xp', (1), cow['jo9_learning_trait'], 'cowSK'))",
+      "new": "! JO9 MOD START GENIUS_ANIMAL_ROLE_15 | 2026-10-24_cow_genius_balance\r\n\t\t\tcow_rate['cowSK'] += func('jo9_traits_personality', 'xp', 'cow', 'cowSK', func('jo9_learning_xp', (1), cow['jo9_learning_trait'], 'cowSK', 'cow'))\r\n! JO9 MOD END GENIUS_ANIMAL_ROLE_15",
+      "count": 1
+    },
+    {
+      "location": "#dynamic",
+      "field": "body",
+      "old": "\t\t\tdynslave_rate[$target_skill] += func('jo9_traits_personality', 'xp', 'dynslave', $target_skill, func('jo9_traits_combat', 'education_xp', 'dynslave', func('jo9_learning_xp', (skill_rise * skill_adv_mul), dynslave['jo9_learning_trait'], $target_skill), $target_skill))",
+      "new": "! JO9 MOD START GENIUS_ANIMAL_ROLE_16 | 2026-10-24_cow_genius_balance\r\n\t\t\tdynslave_rate[$target_skill] += func('jo9_traits_personality', 'xp', 'dynslave', $target_skill, func('jo9_traits_combat', 'education_xp', 'dynslave', func('jo9_learning_xp', (skill_rise * skill_adv_mul), dynslave['jo9_learning_trait'], $target_skill, 'dynslave'), $target_skill))\r\n! JO9 MOD END GENIUS_ANIMAL_ROLE_16",
+      "count": 1
+    },
+    {
+      "location": "#static_txt",
+      "field": "body",
+      "old": "$Indolent = ' 당신 노예는 몸도 머리도 쓰기 싫어하고, 그저 빈둥거리길 좋아한다. 어쩌면 젖소로 바꾸기가 더 쉬울지도 모르겠다?'",
+      "new": "! JO9 MOD START COW_APTITUDE_DESC_COMMON | 2026-10-24_cow_genius_balance\r\n$Indolent = ' 당신 노예는 몸도 머리도 쓰기 싫어하고, 그저 빈둥거리길 좋아한다. 어쩌면 젖소로 바꾸기가 더 쉬울지도 모르겠다? 젖소 적성으로 하루 우유 생산량이 최종 계산값의 1.5배가 된다.'\r\n! JO9 MOD END COW_APTITUDE_DESC_COMMON",
+      "count": 1
+    },
+    {
+      "location": "#static_txt",
+      "field": "body",
+      "old": "$jo9_genius_text = '당신의 노예는 천재적인 학습 능력을 타고났다. 생성 시 지성은 최고 등급이며, 육체단련을 제외한 분야에서 새로 얻는 성장 경험치가 두 배가 된다. 지성은 이후 기존 규칙에 따라 변할 수 있다.'",
+      "new": "! JO9 MOD START GENIUS_ANIMAL_DESC_COMMON | 2026-10-24_cow_genius_balance\r\n$jo9_genius_text = '당신의 노예는 천재적인 학습 능력을 타고났다. 생성 시 지성은 최고 등급이며, 육체단련을 제외한 분야에서 새로 얻는 성장 경험치가 두 배가 된다. 다만 애완녀·망아지·젖소녀 기술의 성장 경험치는 일반의 75%이며, 소수점 나머지는 인물과 기술별로 누적된다. 지성은 이후 기존 규칙에 따라 변할 수 있다.'\r\n! JO9 MOD END GENIUS_ANIMAL_DESC_COMMON",
+      "count": 1
+    },
+    {
+      "location": "#txt_woman",
+      "field": "body",
+      "old": "$Indolent = ' 당신 노예는 몸도 머리도 쓰기 싫어하고, 그저 빈둥거리길 좋아한다. 어쩌면 젖소로 바꾸기가 더 쉬울지도 모르겠다?'",
+      "new": "! JO9 MOD START COW_APTITUDE_DESC_WOMAN | 2026-10-24_cow_genius_balance\r\n$Indolent = ' 당신 노예는 몸도 머리도 쓰기 싫어하고, 그저 빈둥거리길 좋아한다. 어쩌면 젖소로 바꾸기가 더 쉬울지도 모르겠다? 젖소 적성으로 하루 우유 생산량이 최종 계산값의 1.5배가 된다.'\r\n! JO9 MOD END COW_APTITUDE_DESC_WOMAN",
+      "count": 1
+    },
+    {
+      "location": "#txt_woman",
+      "field": "body",
+      "old": "$jo9_genius_text = '당신의 노예는 천재적인 학습 능력을 타고났다. 생성 시 지성은 최고 등급이며, 육체단련을 제외한 분야에서 새로 얻는 성장 경험치가 두 배가 된다. 지성은 이후 기존 규칙에 따라 변할 수 있다.'",
+      "new": "! JO9 MOD START GENIUS_ANIMAL_DESC_WOMAN | 2026-10-24_cow_genius_balance\r\n$jo9_genius_text = '당신의 노예는 천재적인 학습 능력을 타고났다. 생성 시 지성은 최고 등급이며, 육체단련을 제외한 분야에서 새로 얻는 성장 경험치가 두 배가 된다. 다만 애완녀·망아지·젖소녀 기술의 성장 경험치는 일반의 75%이며, 소수점 나머지는 인물과 기술별로 누적된다. 지성은 이후 기존 규칙에 따라 변할 수 있다.'\r\n! JO9 MOD END GENIUS_ANIMAL_DESC_WOMAN",
+      "count": 1
+    },
+    {
+      "location": "$newloc",
+      "field": "body",
+      "old": "if jo9_learning_revision < 2:\r\n jo9_learning_revision = 2\r\n gs '#static_base'\r\n gs '#dynamic'\r\n gs '#static_txt'\r\n gs '#txt'\r\n code_defined['newloc_update_iced_features_list'] = 0\r\nend",
+      "new": "! JO9 MOD START GENIUS_ANIMAL_CACHE_REV3 | 2026-10-24_cow_genius_balance\r\nif jo9_learning_revision < 3:\r\n jo9_learning_revision = 3\r\n gs '#static_base'\r\n gs '#dynamic'\r\n gs '#static_txt'\r\n gs '#txt'\r\n code_defined['newloc_update_iced_features_list'] = 0\r\n code_defined['interaction_result_milking_slave'] = 0\r\nend\r\n! JO9 MOD END GENIUS_ANIMAL_CACHE_REV3",
+      "count": 1
+    }
+  ]
+}

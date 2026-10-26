@@ -1,0 +1,1 @@
+The outer inline PowerShell wrapper tested an unset LASTEXITCODE after calling a ps1 in-process. All nine engine completion markers passed. The false failure is reproduced by ($null -ne 0). Results validated directly: nine entries, no failed/missing markers. Future invocation should spawn powershell.exe -File or check the result JSON rather than unset native exit status.

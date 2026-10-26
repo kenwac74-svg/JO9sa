@@ -1,0 +1,12 @@
+'use strict';
+const fs=require('fs'),assert=require('assert/strict'),c=require('G:/somi/JO9sa/tools/text-workshop/core.cjs');
+const game='G:/somi/Jack O Nine Tails v2.4_work/game',record='G:/somi/JO9sa/records/profile-polish-20261025-r3',task='G:/Codex/tmp/profile-polish-20261025-r3';
+const result=JSON.parse(fs.readFileSync(__dirname+'/FINAL_RESULT.json'));assert.equal(result.status,'APPLIED_AND_VERIFIED');assert.equal(c.hash(fs.readFileSync(game+'/jack.qsp')),result.after);
+for(const p of JSON.parse(fs.readFileSync(__dirname+'/inputs.json')))if(p.path!==game+'/jack.qsp'&&p.path!==game+'/css/jo9_traits_view.css')assert.equal(c.hash(fs.readFileSync(p.path)),p.sha256,p.path);
+let plan=fs.readFileSync(__dirname+'/PLAN_KO.md','utf8').replaceAll('- [ ]','- [x]');fs.writeFileSync(__dirname+'/PLAN_KO.md',plan);fs.writeFileSync(record+'/PLAN_KO.md',plan);
+const bundle='G:/somi/JO9sa/docs/SECOND_PATCH_WORK_BUNDLE_20261021.md',text=fs.readFileSync(bundle,'utf8'),heading='## 2026-10-25 PROFILE_POLISH_R3';
+assert(!text.includes(heading));
+fs.appendFileSync(bundle,'\r\n'+heading+'\r\n\r\nWORK 적용 완료. 파산·특성 설명의 어절 단위 줄바꿈, 숫자 금액 $접두 통일, 속성 묶음10px/좌측 특성80%·중앙 유지, [제목] 다음줄 설명, 관심종자 이름·문구. 가격/형질 산식과 원본 세이브 보존.\r\n\r\n다음 패치에 jack.qsp, css/jo9_traits_view.css, 새 content/js/jo9_word_wrap.js를 함께 포함해야 한다. 배포·ZIP·커밋·푸시는 미진행.\r\n\r\n검사: 출고 PASS(엔진9경로·패치 재생/재적용), 별도 UI/cache5 및 통화3 PASS. 기록: records/profile-polish-20261025-r3/MANUAL_KO.md 및 FINAL_RESULT.json.\r\n','utf8');
+for(const name of ['cleanup.ps1','finalize.cjs'])fs.copyFileSync(__dirname+'/'+name,record+'/'+name);
+for(const [from,to]of [['native-view/stderr.log','actual-load-stderr.log'],['wrap-investigate/client-results.json','prototype-keepall-results.json'],['wrap-webkit/client-results.json','prototype-webkit-results.json']])if(fs.existsSync(task+'/'+from))fs.copyFileSync(task+'/'+from,record+'/'+to);
+console.log(JSON.stringify({status:'FINAL_HASH_AND_PROTECTED_INPUTS_VERIFIED',after:result.after,record,bundleUpdated:true}));

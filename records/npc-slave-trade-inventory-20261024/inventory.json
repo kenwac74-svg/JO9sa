@@ -1,0 +1,426 @@
+{
+  "date": "2026-10-24",
+  "status": "READ_ONLY_AUDIT_COMPLETE",
+  "qsp": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+  "sha256": "c362bde0e8cf814e3e28efd594e27482ef33ea0fa3a5b142f95c96164c5ea3eb",
+  "locations": 267,
+  "roundtrip": true,
+  "engineExecuted": false,
+  "runtimeFilesChanged": false,
+  "userSavesChanged": false,
+  "pricingImplemented": false,
+  "coreNamedRoles": 9,
+  "roles": [
+    {
+      "name": "경매인 잡파",
+      "ids": [
+        "фарид_аукционщик",
+        "zappa"
+      ],
+      "place": "거래 광장 · 노예 무대",
+      "group": "일반 매입·판매",
+      "buy": "가능",
+      "sell": "가능 · 일일 경매",
+      "detail": "낙인 없음은 매입. 낙인 있음은 brand_reputation<=3일 때 거절, >3이면 예외 매입. 파리드 키와 잡파를 두 사람으로 세지 않는다.",
+      "refs": [
+        {
+          "location": "#npc_base",
+          "line": 695,
+          "end": 708
+        },
+        {
+          "location": "slave_auction_sell",
+          "line": 14,
+          "end": 45
+        },
+        {
+          "location": "slave_auction_sell_end",
+          "line": 8,
+          "end": 10
+        }
+      ]
+    },
+    {
+      "name": "웡 나으리",
+      "ids": [
+        "master_vong"
+      ],
+      "place": "노예상 길드",
+      "group": "일반 매입",
+      "buy": "가능",
+      "sell": "확인 안 됨",
+      "detail": "판매부 대표이자 재매입상. 길드 진입 메뉴는 존재 상태와 brand>0을 요구하며, 실제 매입 확인 선택지는 rating>0일 때 생성된다.",
+      "refs": [
+        {
+          "location": "#npc_base",
+          "line": 421,
+          "end": 424
+        },
+        {
+          "location": "guild",
+          "line": 22,
+          "end": 32
+        },
+        {
+          "location": "interaction_city",
+          "line": 12859,
+          "end": 12894
+        }
+      ]
+    },
+    {
+      "name": "마스터 스컵스",
+      "ids": [
+        "master_skups"
+      ],
+      "place": "노예상 길드",
+      "group": "감정·탐색·조달",
+      "buy": "일반 매입 경로 미확인",
+      "sell": "맞춤 탐색 후 인도",
+      "detail": "감정부 대표. 조건에 맞는 인물을 선불 수수료로 찾아 공급한다. 소개에서도 평소 자문과 드문 재판매를 구분한다.",
+      "refs": [
+        {
+          "location": "#npc_base",
+          "line": 415,
+          "end": 418
+        },
+        {
+          "location": "interaction_city",
+          "line": 12903,
+          "end": 12965
+        },
+        {
+          "location": "expert_to_slave",
+          "line": 1,
+          "end": 14
+        }
+      ]
+    },
+    {
+      "name": "발랄라이카",
+      "ids": [
+        "bararaika"
+      ],
+      "place": "빈민가 · 밀수업자 소굴",
+      "group": "밀수 공급",
+      "buy": "매입 경로 미확인",
+      "sell": "가능 · 복제 및 고정 재고",
+      "detail": "밀수업자 우두머리. 플레이어에게 재고를 공급하여 플레이어가 상표를 새기고 재판매하는 설정. 문신 때문에 매입을 거절하는 분기는 확인되지 않았다.",
+      "refs": [
+        {
+          "location": "#npc_base",
+          "line": 365,
+          "end": 368
+        },
+        {
+          "location": "#options",
+          "line": 2173,
+          "end": 2296
+        },
+        {
+          "location": "#static_txt",
+          "line": 1223,
+          "end": 1239
+        },
+        {
+          "location": "interaction_city",
+          "line": 11495,
+          "end": 11537
+        },
+        {
+          "location": "interaction_city",
+          "line": 12054,
+          "end": 12129
+        }
+      ]
+    },
+    {
+      "name": "나타샤",
+      "ids": [
+        "natasha"
+      ],
+      "place": "안개의 경계 · 암시장",
+      "group": "암시장 공급",
+      "buy": "매입 경로 미확인",
+      "sell": "가능 · 일반/특별 재고",
+      "detail": "시장 주인의 전속 판매원이며 상태에 노예 상인으로 명시되어 있다. black_market_interface도 같은 암시장 재고의 확장으로, 별도 상인으로 세지 않는다.",
+      "refs": [
+        {
+          "location": "#npc_base",
+          "line": 371,
+          "end": 375
+        },
+        {
+          "location": "#options",
+          "line": 6354,
+          "end": 6410
+        },
+        {
+          "location": "interaction_city",
+          "line": 20014,
+          "end": 20745
+        },
+        {
+          "location": "black_market_interface",
+          "line": 108,
+          "end": 115
+        }
+      ]
+    },
+    {
+      "name": "유전학 교수 바이너",
+      "ids": [
+        "Viner"
+      ],
+      "place": "배제 구역 · 동물 농장",
+      "group": "전문 재고 공급",
+      "buy": "현금 매입 경로 미확인",
+      "sell": "가능 · 전문 재고",
+      "detail": "동물 농장의 고정 재고를 판매한다. 현재 노예를 잠시 수용하는 동작은 재매입과 다르다.",
+      "refs": [
+        {
+          "location": "#options",
+          "line": 4941,
+          "end": 5004
+        },
+        {
+          "location": "interaction_city",
+          "line": 14092,
+          "end": 14344
+        }
+      ]
+    },
+    {
+      "name": "쿨라",
+      "ids": [
+        "kula",
+        "kulaside"
+      ],
+      "place": "팔라티노 언덕 · 비밀 상점",
+      "group": "특수 재고 공급",
+      "buy": "매입 경로 미확인",
+      "sell": "가능 · 고정 재고",
+      "detail": "판매 이벤트6236~6257의 22개 분기. 이어지는6258~6261의 네 분기는 번호가 연속이어도 발랄라이카에게 속한다.",
+      "refs": [
+        {
+          "location": "#npc_base",
+          "line": 679,
+          "end": 692
+        },
+        {
+          "location": "interaction_city",
+          "line": 11643,
+          "end": 12053
+        }
+      ]
+    },
+    {
+      "name": "여주인 안젤리카",
+      "ids": [
+        "mistress_angelika",
+        "госпожа_ангелика"
+      ],
+      "place": "노예상 길드",
+      "group": "길드 계약·중개",
+      "buy": "계약 조건 충족 시 인수",
+      "sell": "일반 재고 판매 아님",
+      "detail": "길드 마스터이자 납품/위탁훈련 계약 담당. 자유로운 도매 매입상 웡 및 경매 서비스와 구분한다.",
+      "refs": [
+        {
+          "location": "#masters_base",
+          "line": 1862,
+          "end": 1873
+        },
+        {
+          "location": "interaction_city",
+          "line": 4905,
+          "end": 4963
+        },
+        {
+          "location": "interaction_city",
+          "line": 5029,
+          "end": 5034
+        }
+      ]
+    },
+    {
+      "name": "쿠마",
+      "ids": [
+        "kuma",
+        "kuma1"
+      ],
+      "place": "교회 관련 장면",
+      "group": "설정상 현역 노예상",
+      "buy": "거래 메뉴 미확인",
+      "sell": "거래 메뉴 미확인",
+      "detail": "현재 직업이 노예상이라고 명시되어 있다. 두 ID는 같은 인물이며, 현재 일반 매매 기능이 있다는 뜻은 아니다.",
+      "refs": [
+        {
+          "location": "#npc_base",
+          "line": 653,
+          "end": 667
+        },
+        {
+          "location": "interaction_city",
+          "line": 5421,
+          "end": 5433
+        }
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "name": "이름 없는 경매 중개인",
+      "ids": [
+        "Middleman"
+      ],
+      "role": "길드 경매의 최저가 낙찰 역할",
+      "detail": "웡과 동일 인물이라는 코드 연결 없음. 별도 이름 있는 상인으로 세지 않는다.",
+      "refs": [
+        {
+          "location": "$guild_auction",
+          "line": 67,
+          "end": 69
+        }
+      ]
+    },
+    {
+      "name": "수상한 중개인",
+      "ids": [
+        "broker"
+      ],
+      "role": "의뢰 알선",
+      "detail": "조합 소속 중개인 설정과 퀘스트 제공은 있으나 해당 분기에 매매 이전/대금 지급은 없다.",
+      "refs": [
+        {
+          "location": "#npc_base",
+          "line": 711,
+          "end": 717
+        },
+        {
+          "location": "interaction_city",
+          "line": 12195,
+          "end": 12211
+        }
+      ]
+    },
+    {
+      "name": "뱀파이어 헌터",
+      "ids": [
+        "vampire_hunter"
+      ],
+      "role": "개인 구매자 + 한정 재고 판매",
+      "detail": "10011은 반복 개인 매입,10014는 고정 인물 한 명의 판매. 일반 도매상으로 분류하지 않는다.",
+      "refs": [
+        {
+          "location": "interaction_city",
+          "line": 18984,
+          "end": 18990
+        },
+        {
+          "location": "interaction_city",
+          "line": 19026,
+          "end": 19059
+        }
+      ]
+    },
+    {
+      "name": "래빗 홀의 이름 없는 관리자",
+      "ids": [],
+      "role": "고정 인물의 한정 양도",
+      "detail": "10337→10338의 몸값 거래. 이름 있는 반복 노예상은 아니다.",
+      "refs": [
+        {
+          "location": "#options",
+          "line": 6958,
+          "end": 6958
+        },
+        {
+          "location": "interaction_city",
+          "line": 23938,
+          "end": 23979
+        }
+      ]
+    },
+    {
+      "name": "도살자",
+      "ids": [
+        "butcher"
+      ],
+      "role": "전문 처분 매입",
+      "detail": "11544→115441 등에서 대금 지급/인물 제거를 수행하나, 살아 있는 노예를 재판매하는 일반 유통상과 다르다.",
+      "refs": [
+        {
+          "location": "interaction_city",
+          "line": 877,
+          "end": 912
+        }
+      ]
+    }
+  ],
+  "exclusions": [
+    {
+      "name": "마스터 알렉스",
+      "why": "대금을 받는 훈련 서비스; 일반 매입·재고 공급 경로는 미확인",
+      "refs": [
+        {
+          "location": "interaction_city",
+          "line": 19552,
+          "end": 19700
+        }
+      ]
+    },
+    {
+      "name": "인형사",
+      "why": "관련 의뢰 제공·결과 확인을 매매로 세지 않음",
+      "refs": [
+        {
+          "location": "interaction_city",
+          "line": 22460,
+          "end": 22493
+        }
+      ]
+    },
+    {
+      "name": "사브리나·제인",
+      "why": "과거 길드 교육/졸업 배경만으로 현역 거래 서비스로 분류하지 않음",
+      "refs": [
+        {
+          "location": "#npc_base",
+          "line": 7481,
+          "end": 7491
+        },
+        {
+          "location": "#npc_base",
+          "line": 7938,
+          "end": 7941
+        }
+      ]
+    },
+    {
+      "name": "슐랴프킨",
+      "why": "활성 설정은 화가. 전 길드원 설명이 있는 #npc_base_woman은 현재 호출 미확인",
+      "refs": [
+        {
+          "location": "#npc_base",
+          "line": 7474,
+          "end": 7477
+        }
+      ]
+    }
+  ],
+  "registry": {
+    "auctionSlots": 171,
+    "auctionUniqueIds": 170,
+    "buyerDemandUniqueIds": 92,
+    "repeatSlots": 30,
+    "buyerInvitationOccurrences": 138,
+    "buyerInvitationUniqueCaseInsensitiveIds": 127,
+    "dormantFemaleBaseCallers": []
+  },
+  "limits": [
+    "Source and callback audit, not complete GUI playthrough",
+    "Registry entries are not counts of reachable unique merchant people",
+    "Settings-only, supplier-only, personal-customer and emergency-disposal roles kept distinct"
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "id": "2026-10-24_combat_color_portraits",
+  "description": "전투 노예·조수 포트레이트를 ava_clear 컬러 원본으로 연결. 일반/콜로세움/캣파이트4대입만 변경.",
+  "target": "game\\jack.qsp",
+  "before_sha256": "2958af5909714d4964cd03f243e8aa81fe515106cbf289de2e3dbb686d63193d",
+  "after_sha256": "76dbf8479f74a034f8c8645b62fa32a8b8985fa77e49541afaf3dc787d0ba050",
+  "edits": [
+    {
+      "location": "начать_бой",
+      "field": "body",
+      "old": "\t$combatant_ava = '<<$slave[''ava'']>>.png'",
+      "new": "! JO9 MOD START COMBAT_COLOR_GENERAL_SLAVE | 2026-10-24_combat_color_portraits\r\n\t$combatant_ava = '<<$slave[''ava_clear'']>>.png'\r\n! JO9 MOD END COMBAT_COLOR_GENERAL_SLAVE",
+      "count": 1
+    },
+    {
+      "location": "начать_бой",
+      "field": "body",
+      "old": "\t$combatant_ava = '<<$assistant[''ava'']>>.png'",
+      "new": "! JO9 MOD START COMBAT_COLOR_GENERAL_ASSISTANT | 2026-10-24_combat_color_portraits\r\n\t$combatant_ava = '<<$assistant[''ava_clear'']>>.png'\r\n! JO9 MOD END COMBAT_COLOR_GENERAL_ASSISTANT",
+      "count": 1
+    },
+    {
+      "location": "$gladiator_fight_start",
+      "field": "body",
+      "old": "$combatant_ava = '<<$slave[''ava'']>>.png'",
+      "new": "! JO9 MOD START COMBAT_COLOR_ARENA_SLAVE | 2026-10-24_combat_color_portraits\r\n$combatant_ava = '<<$slave[''ava_clear'']>>.png'\r\n! JO9 MOD END COMBAT_COLOR_ARENA_SLAVE",
+      "count": 1
+    },
+    {
+      "location": "$catfight_fight_start",
+      "field": "body",
+      "old": "$combatant_ava = '<<$slave[''ava'']>>.png'",
+      "new": "! JO9 MOD START COMBAT_COLOR_CATFIGHT_SLAVE | 2026-10-24_combat_color_portraits\r\n$combatant_ava = '<<$slave[''ava_clear'']>>.png'\r\n! JO9 MOD END COMBAT_COLOR_CATFIGHT_SLAVE",
+      "count": 1
+    }
+  ]
+}

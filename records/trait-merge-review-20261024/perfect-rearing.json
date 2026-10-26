@@ -1,0 +1,917 @@
+{
+  "mode": "READ_ONLY",
+  "qspSha256": "afb2b9eccbe02193f77fefea4a990081616a79eb84ed14fe2d8f0bbd3cf2d1fc",
+  "key": "meekness",
+  "display": {
+    "positive": "완전한 사육",
+    "negative": "자유로운 영혼",
+    "neutral": "훈육",
+    "condition": "meekness > 0 and (meekness_revealed=2 or spell_revelio=1)",
+    "source": "#static_base:2102-2106",
+    "descriptionVariable": "$Дисциплинированная",
+    "hiddenTraitStillEffective": true
+  },
+  "representation": {
+    "numericAxis": true,
+    "generatedRange": [
+      -2,
+      5
+    ],
+    "jsonRange": [
+      -5,
+      6
+    ],
+    "booleanMergeLosesMagnitude": true,
+    "negativeOppositeSharesKey": true,
+    "noGlobalMeeknessClampFound": true
+  },
+  "acquisition": [
+    {
+      "source": "generate_stock:1319",
+      "kind": "random-stock",
+      "rule": "On 1/6 trigger choose integer -2..5; positive chance 5/48 before any scenario override"
+    },
+    {
+      "source": "generate_stock:1424-1430",
+      "kind": "cheat-generation",
+      "rule": "cheat_l: if meekness<=0 replace with rand(0,3)"
+    },
+    {
+      "source": "get_stock_seed:140-141",
+      "kind": "json-preset",
+      "rule": "Read seed_meekness and seed_meekness_revealed into stock; generate_stock:72/get_special_slave:6/get_demo_slave:4 callers"
+    },
+    {
+      "source": "get_special_assistant_quest:271,289",
+      "kind": "special-assistant",
+      "rule": "Read same JSON seed values directly into assistant"
+    },
+    {
+      "source": "interaction_city:12733",
+      "kind": "scenario-preset",
+      "rule": "stock meekness=-1"
+    },
+    {
+      "source": "interaction_city:12828",
+      "kind": "scenario-preset",
+      "rule": "stock meekness=1"
+    },
+    {
+      "source": "menu_form:4287,4297",
+      "kind": "manual-editor",
+      "rule": "Primary slave value decreases/increases by1, can cross positive/neutral/negative; no clamp shown here"
+    },
+    {
+      "source": "generate_stock_maximum_testing:238",
+      "kind": "test-only",
+      "rule": "Set0"
+    }
+  ],
+  "naturalAcquisitionAfterCreationFound": false,
+  "removal": {
+    "manual": "Decrement positive value to0; negative crossing uses same numeric axis",
+    "automaticAfterCreationFound": false,
+    "roleMoves": "Stored inside actor array; ordinary array move/swap carries it",
+    "source": "stock_to_slave_nogt:80 uses existing array swap"
+  },
+  "discovery": [
+    {
+      "source": "$ride_start:13",
+      "rule": "Start race: revealed0→1"
+    },
+    {
+      "source": "interaction:4049,5743,12086",
+      "rule": "Specific completed activities: nonzero value with revealed0→1"
+    },
+    {
+      "source": "#dynamic:978",
+      "rule": "Negative branch in sin gained: revealed0→1 only"
+    },
+    {
+      "source": "#dynamic:1034,1084",
+      "rule": "Positive branch in virtue gained: revealed0→1 only"
+    },
+    {
+      "source": "#static_base:1885-1890",
+      "rule": "revealed1 + nonzero: description then revealed2; value0 clears revealed0"
+    }
+  ],
+  "effects": [
+    {
+      "id": "obedience",
+      "source": "#static_base:1317;1343-1344",
+      "rule": "slave_obedience_bonus += meekness + seed_obedience_bonus[type]. Meekness is added by numeric magnitude regardless of discovery; it does not guarantee a minimum final obedience."
+    },
+    {
+      "id": "prestige",
+      "source": "#static_base:1577",
+      "rule": "If meekness>0 and revealed>0, prestige +=1. Do not equate this numeric prestige field with a fixed cash bonus."
+    },
+    {
+      "id": "chariot",
+      "source": "$ride_start:19-21",
+      "rule": "Positive meekness adds1 maneuverability; negative subtracts1; magnitude ignored for race."
+    },
+    {
+      "id": "daily-rule-mood",
+      "source": "next_day:2084-2089,2234-2239",
+      "rule": "The applicable rule mood-loss expression subtracts meekness. Positive m reduces computed loss by m; negative m increases it. Same value also affects the accompanying branch test."
+    }
+  ],
+  "directInteractions": {
+    "jo9_slave_nature": false,
+    "defiant": false,
+    "notes": "No direct meekness condition in new trait modules. Both traits can coexist and contribute through different mechanisms. Discovery does not grant or remove the numeric trait."
+  },
+  "servile": {
+    "differentFromMeekness": true,
+    "type": "Recomputed psychological state, not trait",
+    "source": "#static_base:1063-1120",
+    "debugDisplay": "debug_info and debug_info_assistant label servile as 노예근성",
+    "noDirectMeeknessTransition": true,
+    "indirectLink": "Meekness changes obedience; obedience >= slave_psy_hardness/2 is one gate to the motivation-based status block.",
+    "conditions": [
+      "Higher priority broken/frightened/depressed conditions must not win.",
+      "Obedience >= hardness/2; spoil gate must not force hysteric; mood>=0.",
+      "moral=max_motivation or moral>3 selects servile, but later spoil/arousal conditions can replace it with docile/horny."
+    ],
+    "permanent": false,
+    "why": "Every attribute refresh first restores baseline psy then overrides it from current mood/motivation/obedience. Losing a condition can change state.",
+    "sourceOrdering": "This refresh block computes psy before update_slave_price refreshes obedience; this is existing evaluation order, not a one-time permanent conversion."
+  },
+  "seeds": {
+    "filesWithMeekness": 88,
+    "invalidJson": [],
+    "values": [
+      {
+        "file": "2571_isabella.json",
+        "value": 6,
+        "revealed": 0
+      },
+      {
+        "file": "2572_felicity.json",
+        "value": -5,
+        "revealed": 0
+      },
+      {
+        "file": "2575_helen.json",
+        "value": 4,
+        "revealed": 0
+      },
+      {
+        "file": "2576_julia.json",
+        "value": 0,
+        "revealed": 0
+      },
+      {
+        "file": "2577_pelageya.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2578_mira.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2579_egeya.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2580_marselina.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2581_marirose.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2582_rachel.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2584_venera.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2585_pelageya.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2586_african1.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2587_african2.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2588_african3.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2589_european1.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2590_european2.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2591_european3.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2592_asian1.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2593_asian2.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2594_asian3.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2595_slavyanka1.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2596_slavyanka2.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2597_slavyanka3.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2598_hryushka.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2599_svinomatka.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2600_tsypochka.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2601_nesushka.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2602_telka.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2603_burenka.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2604_sonya.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2605_vampirella.json",
+        "value": 3,
+        "revealed": 0
+      },
+      {
+        "file": "2606_venera2.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2607_pelageya2.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2608_marselina.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2609_mira.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2610_vasilisa.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2611_snegurochka.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2612_madelyn.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2613_carolina.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2614_snezhana.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2615_zhanna.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2616_elsa.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2617_jasmine.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2618_sonya.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2622_sense.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "2623_friren.json",
+        "value": 0,
+        "revealed": 0
+      },
+      {
+        "file": "2624_erza.json",
+        "value": -1,
+        "revealed": 0
+      },
+      {
+        "file": "3001_Tsuki.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "3002_Luminous.json",
+        "value": -1,
+        "revealed": 0
+      },
+      {
+        "file": "3003.json",
+        "value": -1,
+        "revealed": 0
+      },
+      {
+        "file": "3004.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "3005.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "3006.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "3007.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "3008.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "3009.json",
+        "value": -1,
+        "revealed": 0
+      },
+      {
+        "file": "3010.json",
+        "value": -1,
+        "revealed": 0
+      },
+      {
+        "file": "3011.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "3013.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "3014.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "3015.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "3019.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "3021.json",
+        "value": -1,
+        "revealed": 0
+      },
+      {
+        "file": "3023.json",
+        "value": -1,
+        "revealed": 2
+      },
+      {
+        "file": "3024.json",
+        "value": 1,
+        "revealed": 2
+      },
+      {
+        "file": "3026.json",
+        "value": 1,
+        "revealed": 2
+      },
+      {
+        "file": "8877_medico.json",
+        "value": 4,
+        "revealed": 0
+      },
+      {
+        "file": "8878_porno.json",
+        "value": 6,
+        "revealed": 0
+      },
+      {
+        "file": "8879_kirakira.json",
+        "value": 4,
+        "revealed": 0
+      },
+      {
+        "file": "8884_mist.json",
+        "value": 4,
+        "revealed": 0
+      },
+      {
+        "file": "8885_joker.json",
+        "value": 4,
+        "revealed": 0
+      },
+      {
+        "file": "8886_Inui.json",
+        "value": 4,
+        "revealed": 0
+      },
+      {
+        "file": "8888_rin.json",
+        "value": 4,
+        "revealed": 0
+      },
+      {
+        "file": "8889_kikuchiyo.json",
+        "value": 6,
+        "revealed": 0
+      },
+      {
+        "file": "8890_Ririe.json",
+        "value": 4,
+        "revealed": 0
+      },
+      {
+        "file": "8891_Kyoka.json",
+        "value": 4,
+        "revealed": 0
+      },
+      {
+        "file": "8892_Noelle.json",
+        "value": 4,
+        "revealed": 0
+      },
+      {
+        "file": "8893_Miruki.json",
+        "value": 4,
+        "revealed": 0
+      },
+      {
+        "file": "8894_Tamaki.json",
+        "value": 4,
+        "revealed": 0
+      },
+      {
+        "file": "8895_Chiharu.json",
+        "value": 4,
+        "revealed": 0
+      },
+      {
+        "file": "8896_Fumi.json",
+        "value": 4,
+        "revealed": 0
+      },
+      {
+        "file": "8897_Sana.json",
+        "value": 4,
+        "revealed": 0
+      },
+      {
+        "file": "8898_Nanami.json",
+        "value": 4,
+        "revealed": 0
+      },
+      {
+        "file": "8899_Shuko.json",
+        "value": 4,
+        "revealed": 0
+      },
+      {
+        "file": "8900_celestine.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "8901_Olga.json",
+        "value": 1,
+        "revealed": 0
+      },
+      {
+        "file": "8902_RiceShower.json",
+        "value": 5,
+        "revealed": 0
+      }
+    ],
+    "examples": [
+      {
+        "file": "2571_isabella.json",
+        "value": 6,
+        "revealed": 0
+      },
+      {
+        "file": "2572_felicity.json",
+        "value": -5,
+        "revealed": 0
+      },
+      {
+        "file": "2575_helen.json",
+        "value": 4,
+        "revealed": 0
+      },
+      {
+        "file": "2579_egeya.json",
+        "value": 1,
+        "revealed": 0
+      }
+    ]
+  },
+  "references": [
+    {
+      "location": "menu_form",
+      "line": 4287,
+      "code": "\t$setting_display += '<div id=\"under_cheats\"><a href = \"EXEC: slave[''meekness''] -= 1 & gt ''menu_form''\"><img src=\"content/pic/buttons/Minus_small.png\"></a>'"
+    },
+    {
+      "location": "menu_form",
+      "line": 4288,
+      "code": "\tif slave[\"meekness\"] > 0:"
+    },
+    {
+      "location": "menu_form",
+      "line": 4289,
+      "code": "\t\t$setting_display += '완전한 사육 ' + slave[\"meekness\"]"
+    },
+    {
+      "location": "menu_form",
+      "line": 4291,
+      "code": "\tif slave[\"meekness\"] < 0:"
+    },
+    {
+      "location": "menu_form",
+      "line": 4292,
+      "code": "\t\t$setting_display += '자유로운 영혼 ' + slave[\"meekness\"]"
+    },
+    {
+      "location": "menu_form",
+      "line": 4294,
+      "code": "\tif slave[\"meekness\"] = 0:"
+    },
+    {
+      "location": "menu_form",
+      "line": 4295,
+      "code": "\t\t$setting_display += '훈육 ' + slave[\"meekness\"]"
+    },
+    {
+      "location": "menu_form",
+      "line": 4297,
+      "code": "\t$setting_display += '<a href = \"EXEC: slave[''meekness''] += 1 & gt ''menu_form''\"><img src=\"content/pic/buttons/Plus_small.png\"></a></div>'"
+    },
+    {
+      "location": "generate_stock_maximum_testing",
+      "line": 238,
+      "code": "stock[\"meekness\"] = 0"
+    },
+    {
+      "location": "$ride_start",
+      "line": 11,
+      "code": "!Dressage, meekness, and courage affinity revealed - crushboss"
+    },
+    {
+      "location": "$ride_start",
+      "line": 13,
+      "code": "if slave['meekness_revealed'] = 0: slave['meekness_revealed'] = 1"
+    },
+    {
+      "location": "$ride_start",
+      "line": 20,
+      "code": "if slave['meekness'] < 0: chariot['maneuverability'] -= 1"
+    },
+    {
+      "location": "$ride_start",
+      "line": 21,
+      "code": "if slave['meekness'] > 0: chariot['maneuverability'] += 1"
+    },
+    {
+      "location": "generate_stock",
+      "line": 1319,
+      "code": "\tif rand(1, 6) = 1: stock['meekness'] = rand(-2,5)"
+    },
+    {
+      "location": "generate_stock",
+      "line": 1410,
+      "code": "!stock['meekness_revealed'] = 2"
+    },
+    {
+      "location": "generate_stock",
+      "line": 1430,
+      "code": "\tif stock['meekness'] <= 0: stock['meekness'] = rand(0,3)"
+    },
+    {
+      "location": "get_stock_seed",
+      "line": 140,
+      "code": "stock['meekness'] = seed_meekness[stock_type]"
+    },
+    {
+      "location": "get_stock_seed",
+      "line": 141,
+      "code": "stock['meekness_revealed'] = seed_meekness_revealed[stock_type]"
+    },
+    {
+      "location": "next_day",
+      "line": 2086,
+      "code": "\t\t\t\t\t\t\t\tdynslave['nymphomania'] - dynslave['perversion'] - dynslave['meekness']"
+    },
+    {
+      "location": "next_day",
+      "line": 2089,
+      "code": "\t\t\t\t\t\t\t\tdynslave['nymphomania'] - dynslave['perversion'] - dynslave['meekness'] > 0:"
+    },
+    {
+      "location": "next_day",
+      "line": 2236,
+      "code": "\t\t\t\t\t\t\t\tslave['nymphomania'] - slave['perversion'] - slave['meekness']"
+    },
+    {
+      "location": "next_day",
+      "line": 2239,
+      "code": "\t\t\t\t\t\t\t\tslave['nymphomania'] - slave['perversion'] - slave['meekness'] > 0:"
+    },
+    {
+      "location": "interaction",
+      "line": 4049,
+      "code": "\t\t\tif slave['meekness'] ! 0 and slave['meekness_revealed'] = 0: slave['meekness_revealed'] = 1"
+    },
+    {
+      "location": "interaction",
+      "line": 5743,
+      "code": "\t\t\tif dynslave['meekness'] ! 0 and dynslave['meekness_revealed'] = 0: dynslave['meekness_revealed'] = 1"
+    },
+    {
+      "location": "interaction",
+      "line": 12086,
+      "code": "\t\t\tif assistant['meekness'] ! 0 and assistant['meekness_revealed'] = 0: assistant['meekness_revealed'] = 1"
+    },
+    {
+      "location": "interaction_city",
+      "line": 12733,
+      "code": "\t\tstock['meekness'] = -1 &! Wayward"
+    },
+    {
+      "location": "interaction_city",
+      "line": 12828,
+      "code": "\t\tstock['meekness'] = 1 &! Disciplined"
+    },
+    {
+      "location": "#dynamic",
+      "line": 978,
+      "code": "\t\t\tif <<$args[0]>>['meekness'] < 0 and <<$args[0]>>['meekness_revealed'] = 0: <<$args[0]>>['meekness_revealed'] = 1"
+    },
+    {
+      "location": "#dynamic",
+      "line": 1034,
+      "code": "\t\t\tif <<$args[0]>>['meekness'] > 0 and <<$args[0]>>['meekness_revealed'] = 0: <<$args[0]>>['meekness_revealed'] = 1"
+    },
+    {
+      "location": "#dynamic",
+      "line": 1084,
+      "code": "\t\tif dynslave['meekness'] > 0 and dynslave['meekness_revealed'] = 0: dynslave['meekness_revealed'] = 1"
+    },
+    {
+      "location": "#static_base",
+      "line": 1317,
+      "code": "\t\tslave_obedience_bonus += dynslave['meekness'] + seed_obedience_bonus[dynslave_type] &! get obedience bonus from current json for backward compatibility"
+    },
+    {
+      "location": "#static_base",
+      "line": 1577,
+      "code": "\t\tif dynslave['meekness'] > 0 and dynslave['meekness_revealed'] > 0: dynslave['prestige'] += 1            &! disciplined"
+    },
+    {
+      "location": "#static_base",
+      "line": 1885,
+      "code": "\t\tif dynslave['meekness_revealed'] = 1 and dynslave['meekness'] ! 0:"
+    },
+    {
+      "location": "#static_base",
+      "line": 1886,
+      "code": "\t\t\tif dynslave['meekness'] > 0: msg '<<$Дисциплинированная>>'"
+    },
+    {
+      "location": "#static_base",
+      "line": 1887,
+      "code": "\t\t\tif dynslave['meekness'] < 0: msg '<<$Своенравная>>'"
+    },
+    {
+      "location": "#static_base",
+      "line": 1888,
+      "code": "\t\t\tdynslave['meekness_revealed'] = 2"
+    },
+    {
+      "location": "#static_base",
+      "line": 1889,
+      "code": "\t\telseif dynslave['meekness'] = 0:"
+    },
+    {
+      "location": "#static_base",
+      "line": 1890,
+      "code": "\t\t\tdynslave['meekness_revealed'] = 0"
+    },
+    {
+      "location": "#static_base",
+      "line": 2102,
+      "code": "        if dynslave['meekness'] > 0 and (dynslave['meekness_revealed'] = 2 or spell_revelio = 1):"
+    },
+    {
+      "location": "#static_base",
+      "line": 2103,
+      "code": "            $dynslave_features_list += '<a href=\"EXEC: msg $Дисциплинированная\"><<dyneval($vb_cycle_skill, 5, \"완전한 사육\")>></a><br>'"
+    },
+    {
+      "location": "#static_base",
+      "line": 2105,
+      "code": "        if dynslave['meekness'] < 0 and (dynslave['meekness_revealed'] = 2 or spell_revelio = 1):"
+    },
+    {
+      "location": "#static_base",
+      "line": 2106,
+      "code": "            $dynslave_features_list += '<a href=\"EXEC: msg $Своенравная\"><<dyneval($vb_cycle_skill, 0, \"자유로운 영혼\")>></a><br>'"
+    },
+    {
+      "location": "#static_txt",
+      "line": 1496,
+      "kind": "description-definition",
+      "code": "[Description prose omitted; variable definition only]"
+    },
+    {
+      "location": "#static_txt",
+      "line": 1497,
+      "kind": "description-definition",
+      "code": "[Description prose omitted; variable definition only]"
+    },
+    {
+      "location": "#static_txt",
+      "line": 1499,
+      "kind": "description-definition",
+      "code": "[Description prose omitted; variable definition only]"
+    },
+    {
+      "location": "#static_txt",
+      "line": 1500,
+      "kind": "description-definition",
+      "code": "[Description prose omitted; variable definition only]"
+    },
+    {
+      "location": "get_special_assistant_quest",
+      "line": 271,
+      "code": "assistant[\"meekness\"] = seed_meekness[assistant_type]"
+    },
+    {
+      "location": "get_special_assistant_quest",
+      "line": 289,
+      "code": "assistant[\"meekness_revealed\"] = seed_meekness_revealed[assistant_type]"
+    },
+    {
+      "location": "#txt_woman",
+      "line": 1031,
+      "kind": "description-definition",
+      "code": "[Description prose omitted; variable definition only]"
+    },
+    {
+      "location": "#txt_woman",
+      "line": 1032,
+      "kind": "description-definition",
+      "code": "[Description prose omitted; variable definition only]"
+    }
+  ],
+  "mergeReview": {
+    "decisionNeeded": true,
+    "preferredLowRiskOption": "Keep mechanics separate and clarify names: meekness is continuing numerical discipline modifier; jo9_slave_nature is one-time initial obedience preparation; servile is temporary state. Naming-only cleanup is simpler than merging arrays.",
+    "ifMechanicalMergeChosen": [
+      "Preserve signed magnitude of existing meekness including JSON6/-5 and old saves.",
+      "Preserve negative opposite behavior.",
+      "Preserve initial one-time onboarding and repeated-load idempotence separately.",
+      "Decide whether both current traits consume one or two acquisition slots.",
+      "Do not delete old values, flatten them to1, or hide a trait while leaving uncounted effects active."
+    ],
+    "integratedNumericAxisOption": {
+      "possible": true,
+      "storage": "Keep signed meekness, including old+6/-5 and negative opposite. Future positive grant can share the initial obedience preparation.",
+      "requiredDecisions": [
+        "Do not reinitialize every old positive meekness actor on load.",
+        "Define a single future positive/negative origin roll and prevent duplicate/new flag rerolls.",
+        "Decide whether positive meekness is incompatible with defiant, because the existing systems can currently coexist.",
+        "Keep an explicit marker distinguishing already processed/new grants for one-time onboarding.",
+        "Choose behavior for already coexisting meekness and jo9_slave_nature without deleting magnitude or applying retroactive rewards."
+      ],
+      "status": "Proposal only, no runtime changes."
+    }
+  },
+  "verification": {
+    "qspUnchanged": true,
+    "nativeGameplaySimulated": false,
+    "scope": "Static exhaustive keyword/reference scan plus manual branch review; no runtime edits, no new trait restrictions, no save migration."
+  },
+  "generationProbability": {
+    "gate": "generate_stock:1150 special_stock=0; block ends1375",
+    "seedLoadedFirst": "generate_stock:72 calls get_stock_seed; meekness assignment get_stock_seed:140",
+    "conditionalPositive": "5/48 = 10.4167% only with initial meekness=0, ordinary random block entered, no later testing/scenario override",
+    "conditionalNegative": "2/48 = 4.1667% under the same conditions",
+    "seedNonzero": "If 1/6 roll does not fire, prior JSON seed remains; positive preset means unconditional positive probability differs",
+    "laterOverrides": [
+      "generate_stock:1422 testing generator",
+      "generate_stock:1423 maximum-testing generator sets meekness0 at generate_stock_maximum_testing:238",
+      "generate_stock:1424-1430 cheat_l changes nonpositive value to rand(0,3)",
+      "External scenario overrides interaction_city:12733 and12828"
+    ]
+  },
+  "descriptionMeaning": {
+    "source": "#static_txt:1497 and #txt_woman:1031",
+    "nonExplicitSummary": "Accustomed to strict discipline and prepared to prioritize obedience over personal wants.",
+    "explicitInnateClaim": false,
+    "explicitTrainingResultClaim": false,
+    "interpretation": "The wording suggests familiarity with discipline, but does not prove a congenital origin or a specific training acquisition. The game code does not naturally train this numeric key upward after creation.",
+    "displayNameAssessment": "완전한 사육 is stronger than the actual effect: any positive value displays it, while the mechanic only contributes a numeric obedience bonus and does not guarantee permanent/complete obedience."
+  }
+}

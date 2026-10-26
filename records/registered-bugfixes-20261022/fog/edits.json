@@ -1,0 +1,16 @@
+[
+  {
+    "location": "jo9_fog_relay",
+    "field": "body",
+    "old": "   slave['energy'] = min(slave['energy'], jo9_fog['energy_before'])",
+    "new": "   ! JO9 MOD START FOG_ENERGY_MIN_COST_SLAVE | 2026-10-22_fog_energy_cost\r\n   ! 출전 동료의 최소 1 행동력 비용을 보장하고 더 큰 잔여 지구력 손실은 유지한다.\r\n   slave['energy'] = min(slave['energy'], jo9_fog['energy_before'] - 1)\r\n   ! JO9 MOD END FOG_ENERGY_MIN_COST_SLAVE",
+    "count": 1
+  },
+  {
+    "location": "jo9_fog_relay",
+    "field": "body",
+    "old": "   assistant['energy'] = min(assistant['energy'], jo9_fog['energy_before'])",
+    "new": "   ! JO9 MOD START FOG_ENERGY_MIN_COST_ASSISTANT | 2026-10-22_fog_energy_cost\r\n   ! 출전 동료의 최소 1 행동력 비용을 보장하고 더 큰 잔여 지구력 손실은 유지한다.\r\n   assistant['energy'] = min(assistant['energy'], jo9_fog['energy_before'] - 1)\r\n   ! JO9 MOD END FOG_ENERGY_MIN_COST_ASSISTANT",
+    "count": 1
+  }
+]

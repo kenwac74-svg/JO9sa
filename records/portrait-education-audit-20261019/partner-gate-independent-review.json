@@ -1,0 +1,77 @@
+{
+  "verdict": "PASS",
+  "blockingFindings": [],
+  "beforeSha256": "1084c6f39e15c1c66470449b8d748974eb003966db729391d4804e4029d3501a",
+  "candidateSha256": "20137b7336f2ec27c419605cbd2ada1a6fab459919c6ceaaedad89a9152f40f5",
+  "scope": "Independent read-only static review. Only this workspace JSON report written. No repo/game/Git writes and no runtime tests performed by this reviewer.",
+  "checks": {
+    "reversePinnedBaselineHash": true,
+    "exactForwardReplay": true,
+    "patchEdits": 1,
+    "changedFields": [
+      "menu_form.body"
+    ],
+    "otherEncodedFieldsByteIdentical": true,
+    "semanticChange": "One constant comparison in existing elseif; MOD provenance comments only otherwise.",
+    "displayTextMultisetUnchanged": true,
+    "newLocations": 0,
+    "newPersistentKeys": 0,
+    "staticResult": {
+      "sha256": "20137b7336f2ec27c419605cbd2ada1a6fab459919c6ceaaedad89a9152f40f5",
+      "bytes": 48236660,
+      "locations": 262,
+      "roundtrip": true,
+      "lineEndingIssues": 0
+    }
+  },
+  "evidence": [
+    {
+      "location": "menu_form",
+      "line": 2494,
+      "fact": "Active slave uses the unchanged primary lesson. Its skill condition remains <=5."
+    },
+    {
+      "location": "menu_form",
+      "line": 2497,
+      "fact": "Fallback now tests slave_state != slave_exist, preserving skill<=5 and sparks>0."
+    },
+    {
+      "location": "menu_form",
+      "line": 2499,
+      "fact": "Existing author comment explicitly requires ! exist and permits faint/dead states."
+    },
+    {
+      "location": "menu_form",
+      "line": 2137,
+      "fact": "Mirror slave menu already uses assistant_state != slave_exist with the same skill/money guards."
+    },
+    {
+      "location": "interaction",
+      "line": 4352,
+      "fact": "6999 reuses existing no-partner template for assistant; the real slave slot is not required."
+    },
+    {
+      "location": "interaction",
+      "line": 4319,
+      "fact": "Existing successful lesson fee sparks-=1 is unchanged."
+    },
+    {
+      "location": "interaction_result",
+      "line": 972,
+      "fact": "Shared self-lesson handler substitutes interaction_partner; existing subskill expressions are evaluated through actor substitution."
+    }
+  ],
+  "behavior": {
+    "newlyReachable": "When slave_state=no_slave, assistant skill<=5 and sparks>0, existing hired-partner action6999 becomes available.",
+    "unchanged": [
+      "Active slave uses existing primary action.",
+      "Faint/dead partner already used fallback and continue to do so.",
+      "Zero money and existing skill conditions remain unchanged.",
+      "No lesson formula, fee, actor, text, scene selection or save migration was edited."
+    ]
+  },
+  "limits": [
+    "Agent09 owns actual menu-state/action regression tests; no claim about their completion is made here.",
+    "Existing <=5 skill boundary is preserved, not independently redesigned."
+  ]
+}

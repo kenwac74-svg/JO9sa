@@ -1,0 +1,100 @@
+! JO9 MOD START BUYER_RUMORS_SCAN | 2026-10-24_buyer_rumors
+local $jo9_rs_provider = $args[0]
+local $jo9_rs_role, jo9_rs_i, jo9_rs_b, jo9_rs_rank, jo9_rs_best, jo9_rs_ties, $jo9_rs_names, $jo9_rs_actor, $jo9_rs_sentence
+killvar '$jo9_rumor_pages'
+jo9_rumor_actor_count = 0
+gs 'jo9_rumor_roster', $jo9_rs_provider
+local slave_specialisation, slave_obedience_bonus, slaveprice, haggling_limit, relative_rating, rating, $rating_help, is_stock
+local slave_mood_bonus, slave_nature, slave_fear_bonus, slave_obedience_penalty, attribute_sum, max_skill, max_sex, skill_sum, maxsum, slave_base_price
+local base_meat_gain, mince_gain, mince_bonus, meat_max, meat_gain, virgin_meat_gain, meat_price, skill_adv_mul, overnight_rules_count, relative_fat, charm_from_aura, charm, $charm_stat
+! Nested trait helpers explicitly erase their scratch variables, so preserve exact arrays.
+copyarr '$jo9_rumor_saved_mode', '$jo9_trait_value_mode'
+copyarr '$jo9_rumor_saved_actor', '$jo9_trait_value_actor'
+copyarr 'jo9_rumor_saved_amount', 'jo9_trait_value_amount'
+copyarr 'jo9_rumor_saved_peerless', 'jo9_trait_value_saved_peerless'
+copyarr 'jo9_rumor_saved_rate', 'jo9_trait_value_rate'
+copyarr 'jo9_rumor_saved_grade', 'jo9_trait_value_grade'
+if snk_room_target > 0: jump 'jo9_rs_cleanup'
+for jo9_rs_i = 0 to arrsize('$all_slave_characters') - 1:
+ $jo9_rs_role = $all_slave_characters[jo9_rs_i]
+ killvar 'jo9_rumor_probe'
+ killvar '$jo9_rumor_probe'
+ killvar 'jo9_rumor_probe_rate'
+ copyarr 'jo9_rumor_probe', $jo9_rs_role
+ copyarr '$jo9_rumor_probe', '$' + $jo9_rs_role
+ copyarr 'jo9_rumor_probe_rate', $jo9_rs_role + '_rate'
+ dynamic 'jo9_rumor_probe_state = <<$jo9_rs_role>>_state & jo9_rumor_probe_type = <<$jo9_rs_role>>_type & $jo9_rumor_probe_psy_status = $<<$jo9_rs_role>>_psy_status & $jo9_rumor_probe_name = $<<$jo9_rs_role>>_name'
+ if jo9_rumor_probe_state = CONST_INT['slave_exist'] or jo9_rumor_probe_state = CONST_INT['slave_faint']:
+  if jo9_rumor_probe['brand'] ! 4:
+   jo9_rumor_actor_count += 1
+   gs 'jo9_traits_value', 'refresh', 'jo9_rumor_probe'
+   dynamic $replace($update_slave_price, 'dyn'+'slave', 'jo9_rumor_probe')
+   jo9_rumor_rating = rating
+   jo9_rumor_charm = charm
+   copyarr 'jo9_rumor_spec', 'slave_specialisation'
+   jo9_rs_best = -1
+   killvar '$jo9_rs_hits'
+   if jo9_rumor_probe['brand'] > 0 and jo9_rumor_probe_state = CONST_INT['slave_exist']:
+    for jo9_rs_b = 0 to arrsize('$jo9_rumor_buyer') - 1:
+     if func('jo9_rumor_roster', 'available', $jo9_rumor_buyer[jo9_rs_b]) = 1:
+      if func('jo9_rumor_match', $jo9_rumor_buyer[jo9_rs_b], $jo9_rumor_mode[jo9_rs_b], jo9_rumor_nocharm[jo9_rs_b]) = 1:
+       jo9_rs_rank = demand_rating[$jo9_rumor_buyer[jo9_rs_b]]
+       if jo9_rs_rank > jo9_rs_best:
+        killvar '$jo9_rs_hits'
+        jo9_rs_best = jo9_rs_rank
+       end
+       if jo9_rs_rank = jo9_rs_best: $jo9_rs_hits[arrsize('$jo9_rs_hits')] = $jo9_rumor_buyer[jo9_rs_b]
+      end
+     end
+    end
+   end
+   $jo9_rs_actor = replace(replace(replace($jo9_rumor_probe_name, '&', '&amp;'), '<', '&lt;'), '>', '&gt;')
+   if $jo9_rs_actor = '': $jo9_rs_actor = '이 인물'
+   if arrsize('$jo9_rs_hits') = 0:
+    $jo9_rs_sentence = '<<$jo9_rs_actor>>에게는 지금 이 지역에서 권할 만한 고정 구매처가 떠오르지 않는군. 몸 상태나 낙인, 교육 정도를 다시 살펴보게.'
+    $jo9_rumor_pages[arrsize('$jo9_rumor_pages')] = $jo9_rs_sentence
+   else
+    $jo9_rs_names = ''
+    jo9_rs_ties = 0
+    for jo9_rs_b = 0 to arrsize('$jo9_rs_hits') - 1:
+     if jo9_rs_ties > 0: $jo9_rs_names += ', '
+     $jo9_rs_names += $npc_name[$jo9_rs_hits[jo9_rs_b]]
+     jo9_rs_ties += 1
+     if jo9_rs_ties = 3 or jo9_rs_b = arrsize('$jo9_rs_hits') - 1:
+      $jo9_rumor_pages[arrsize('$jo9_rumor_pages')] = '내가 듣기로는 <<$jo9_rs_names>> 쪽에서 찾는 조건과 <<$jo9_rs_actor>>의 상태가 잘 맞는군. 이 근방에서도 눈여겨볼 만한 상대들이지. 직접 찾아가 이야기를 들어 보게.'
+      jo9_rs_ties = 0
+      $jo9_rs_names = ''
+     end
+    end
+   end
+  end
+ end
+end
+:jo9_rs_cleanup
+copyarr '$jo9_trait_value_mode', '$jo9_rumor_saved_mode'
+copyarr '$jo9_trait_value_actor', '$jo9_rumor_saved_actor'
+copyarr 'jo9_trait_value_amount', 'jo9_rumor_saved_amount'
+copyarr 'jo9_trait_value_saved_peerless', 'jo9_rumor_saved_peerless'
+copyarr 'jo9_trait_value_rate', 'jo9_rumor_saved_rate'
+copyarr 'jo9_trait_value_grade', 'jo9_rumor_saved_grade'
+killvar '$jo9_rumor_saved_mode'
+killvar '$jo9_rumor_saved_actor'
+killvar 'jo9_rumor_saved_amount'
+killvar 'jo9_rumor_saved_peerless'
+killvar 'jo9_rumor_saved_rate'
+killvar 'jo9_rumor_saved_grade'
+killvar 'jo9_rumor_probe'
+killvar '$jo9_rumor_probe'
+killvar 'jo9_rumor_probe_rate'
+killvar 'jo9_rumor_probe_state'
+killvar 'jo9_rumor_probe_type'
+killvar '$jo9_rumor_probe_name'
+killvar '$jo9_rumor_probe_psy_status'
+killvar 'jo9_rumor_rating'
+killvar 'jo9_rumor_charm'
+killvar 'jo9_rumor_spec'
+killvar '$jo9_rs_hits'
+killvar '$jo9_rumor_buyer'
+killvar '$jo9_rumor_mode'
+killvar 'jo9_rumor_nocharm'
+! JO9 MOD END BUYER_RUMORS_SCAN

@@ -1,0 +1,395 @@
+{
+  "status": "READ_ONLY_PLANNING_EVIDENCE",
+  "source": {
+    "qsp": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+    "sha256": "a2e0265881bebd8a72b3fcbb214ddaf831106cfe50e9c96da8e0b6e7d692707a",
+    "locations": 262,
+    "method": "같은 SHA의 기존 전체 QSP 파싱 결과를 재사용하여 연결 추적; 새 QSP 사본 없음"
+  },
+  "scope": "안개 경계 일반14조우와 가르시드 특수1조우. 전투 실행·게임 변경 없음.",
+  "counts": {
+    "normalEncounterGroups": 14,
+    "normalLeaderDefinitionKeys": 21,
+    "minionOnlyDefinitionKeys": 2,
+    "totalNormalEnemyKeys": 23,
+    "specialAdditionalEnemyKeys": 1,
+    "totalIncludingGarsid": 24,
+    "humanEncounterGroups": 3,
+    "warning": "트로피14는14조우 묶음이며 적종14개를 의미하지 않음"
+  },
+  "selection": {
+    "source": "interaction_city:10485~10499",
+    "expression": "1+((48271*(day+city_already_done_ever[$str(interaction_city)])) mod65537)/(65537/14)",
+    "inputs": "day + 누적순찰횟수(city_already_done_ever[611])",
+    "nominalNormalRange": "1~14; 현재 주석의 의도",
+    "event": "61100+patrol_num",
+    "counter": "선택 후 city_already_done_ever[611]+=1",
+    "independentRand": false,
+    "qualification": "RAND(1,14)가 아닌 날짜·누적횟수 기반 결정식이므로 각 방문이 독립1/14확률이라고 단정하지 않음",
+    "integerBoundaryObservation": {
+      "status": "현재 엔진 산술 미실행; 정수나눗셈이라면 확인할 경계",
+      "denominator": 4681,
+      "remainders": [
+        65534,
+        65535,
+        65536
+      ],
+      "possiblePatrolNum": 15,
+      "dayPlusCountExamples": [
+        21313,
+        28950,
+        57900
+      ]
+    },
+    "questOverride": {
+      "source": "interaction_city:10497",
+      "conditions": [
+        "active[$quest[8]]=1",
+        "기본선택 patrol_num=14",
+        "$master_head_gear='raven_crown'",
+        "$master_amulet='snake_amulet'",
+        "$master_ring='bull_ring'"
+      ],
+      "operation": "patrol_num=15",
+      "replaces": "61114 오크 전사 조우"
+    }
+  },
+  "encounters": [
+    {
+      "event": 61101,
+      "names": [
+        "성장기 안개 괴물"
+      ],
+      "enemyKeys": [
+        "исчадие_молодь"
+      ],
+      "count": 1,
+      "group": "안개 괴물",
+      "evidence": "적 정의가 성장기 안개 괴물로 명시",
+      "definitionLines": [
+        976,
+        979
+      ],
+      "encounterLine": 10522
+    },
+    {
+      "event": 61102,
+      "names": [
+        "안개 괴물"
+      ],
+      "enemyKeys": [
+        "исчадие"
+      ],
+      "count": 1,
+      "group": "안개 괴물",
+      "evidence": "적 정의가 성숙한 안개 괴물로 명시",
+      "definitionLines": [
+        1043,
+        1046
+      ],
+      "encounterLine": 10532
+    },
+    {
+      "event": 61103,
+      "names": [
+        "거대 안개 괴물"
+      ],
+      "enemyKeys": [
+        "чудовщиное_исчадие"
+      ],
+      "count": 1,
+      "group": "안개 괴물",
+      "evidence": "한층 더 강해진 안개 괴물로 명시",
+      "definitionLines": [
+        1128,
+        1131
+      ],
+      "encounterLine": 10548
+    },
+    {
+      "event": 61104,
+      "names": [
+        "검은 의사",
+        "하인"
+      ],
+      "enemyKeys": [
+        "черный_медик",
+        "подручный"
+      ],
+      "count": 4,
+      "composition": "검은 의사1 + 하인3",
+      "group": "인간",
+      "evidence": "검은 의사는 남자로, 하인은 그의 보조로 설명됨",
+      "definitionLines": [
+        810,
+        813,
+        29,
+        32
+      ],
+      "encounterLine": 10561
+    },
+    {
+      "event": 61105,
+      "names": [
+        "성기사",
+        "병사"
+      ],
+      "enemyKeys": [
+        "паладин",
+        "пехотинец"
+      ],
+      "count": 3,
+      "composition": "성기사1 + 병사2",
+      "group": "인간",
+      "evidence": "두 적 모두 타우루스 가문에 복무하는 인물로 설명됨",
+      "definitionLines": [
+        452,
+        455,
+        502,
+        505
+      ],
+      "encounterLine": 10577
+    },
+    {
+      "event": 61106,
+      "names": [
+        "염소 머리",
+        "돼지낯짝",
+        "두꺼비인간",
+        "쥐인간"
+      ],
+      "enemyKeys": [
+        "козлорогий",
+        "свинорылый",
+        "жабован",
+        "крысолюд"
+      ],
+      "count": 4,
+      "composition": "4개 슬롯 각각 rand(1,4); 같은 하위종 중복 가능",
+      "group": "수인/지성형 괴물 분류 후보",
+      "evidence": "각 적 설명이 염소·돼지·두꺼비·쥐 짐승을 명시. 인간형 외형과 전리품표의 인간 분류를 동일시하지 않음",
+      "definitionLines": [
+        554,
+        557,
+        604,
+        607,
+        654,
+        657,
+        704,
+        707
+      ],
+      "encounterLine": 10596
+    },
+    {
+      "event": 61107,
+      "names": [
+        "늑대인간"
+      ],
+      "enemyKeys": [
+        "вервольф"
+      ],
+      "count": 1,
+      "group": "야수/변신형 괴물",
+      "evidence": "사냥중인 늑대인간으로 명시",
+      "definitionLines": [
+        1290,
+        1293
+      ],
+      "encounterLine": 10613
+    },
+    {
+      "event": 61108,
+      "names": [
+        "흡혈귀"
+      ],
+      "enemyKeys": [
+        "вампир"
+      ],
+      "count": 1,
+      "group": "흡혈귀/언데드 분류 후보",
+      "evidence": "사냥중인 흡혈귀로 명시. 언데드라는 별도 종족 플래그는 없음",
+      "definitionLines": [
+        1223,
+        1226
+      ],
+      "encounterLine": 10623
+    },
+    {
+      "event": 61109,
+      "names": [
+        "리치"
+      ],
+      "enemyKeys": [
+        "лич"
+      ],
+      "count": 1,
+      "group": "리치/언데드 분류 후보",
+      "evidence": "강령술사 리치로 명시. 언데드라는 별도 종족 플래그는 없음",
+      "definitionLines": [
+        1355,
+        1358
+      ],
+      "encounterLine": 10636
+    },
+    {
+      "event": 61110,
+      "names": [
+        "식인종",
+        "불구자",
+        "거지",
+        "미치광이",
+        "말라깽이"
+      ],
+      "enemyKeys": [
+        "канибал",
+        "калека",
+        "нищеброд",
+        "безумец",
+        "изможденный"
+      ],
+      "count": 5,
+      "composition": "5개 슬롯 각각 rand(1,5); 같은 하위유형 중복 가능",
+      "group": "인간",
+      "evidence": "현재 이름과 인물 묘사에 따른 인간 분류. scum은 이5종을 묶은 트로피명이며 단일 적종이 아님",
+      "definitionLines": [
+        65,
+        68,
+        89,
+        92,
+        113,
+        116,
+        138,
+        142,
+        173,
+        176
+      ],
+      "encounterLine": 10657
+    },
+    {
+      "event": 61111,
+      "names": [
+        "오우거"
+      ],
+      "enemyKeys": [
+        "ogre"
+      ],
+      "count": 1,
+      "group": "거대 인간형 괴물",
+      "evidence": "크고 인간같은 생물로 설명됨",
+      "definitionLines": [
+        1426,
+        1429
+      ],
+      "encounterLine": 10675
+    },
+    {
+      "event": 61112,
+      "names": [
+        "고블린"
+      ],
+      "enemyKeys": [
+        "goblin"
+      ],
+      "count": "2~3",
+      "composition": "기본2마리; ((48271*(day+city_already_done_ever[611])) mod65537)>32768이면3마리",
+      "group": "무장한 지성형 괴물 후보",
+      "evidence": "작은 초록빛 생물이며 단검을 사용하는 것으로 설명됨",
+      "definitionLines": [
+        1489,
+        1492
+      ],
+      "encounterLine": 10688
+    },
+    {
+      "event": 61113,
+      "names": [
+        "와그"
+      ],
+      "enemyKeys": [
+        "warg"
+      ],
+      "count": 1,
+      "group": "지능을 가진 야수",
+      "evidence": "커다랗고 지능을 지닌 늑대형 생물로 명시",
+      "definitionLines": [
+        1539,
+        1542
+      ],
+      "encounterLine": 10704
+    },
+    {
+      "event": 61114,
+      "names": [
+        "오크 전사"
+      ],
+      "enemyKeys": [
+        "orc"
+      ],
+      "count": 1,
+      "group": "무장한 지성형 괴물 후보",
+      "evidence": "중장비로 무장한 커다란 인간형 생물체로 명시. 인간형은 외형 설명이며 인간 종족 확정이 아님",
+      "definitionLines": [
+        1607,
+        1610
+      ],
+      "encounterLine": 10717
+    }
+  ],
+  "classificationNotes": [
+    "모든 names는 #противники의 $название_моба에서 확인한 실제 전투 표시명이다. 트로피 룸의 다른 이름을 대신 사용하지 않았다.",
+    "인간3묶음은 검은 의사 일행·성기사 일행·scum5유형이다. 각 인물 묘사/소속에 근거한 분류이며 별도 human 종족 플래그는 아니다.",
+    "$класс_моба의 пешка/рядовой/элитный는 전투 계열/등급이고 인간/괴물 종족 분류가 아니다.",
+    "수인·오크·흡혈귀·리치 등의 전리품표 배정은 기획에서 확정할 사항이다. 위 명칭은 현 설명의 근거와 기획용 분류 후보를 구분한다.",
+    "임의 난이도 점수나 추천 전투력은 부여하지 않았다."
+  ],
+  "currentRewardPerson": {
+    "source": "выход_из_боя:313/324/335/346/357/368/379/390/401/412/423/436/447/458 및595~618",
+    "normalGroups": 14,
+    "behavior": "일반14분기 모두 get_girl=1이며, 이후 generate_stock으로 별도 인물을 생성한다. 쓰러뜨린 적 자체를 포로로 바꾸는 코드가 아니다.",
+    "groupQuantity": "무리의 인원과 별개로 보상 인물 생성 경로1건. 가격 하한을 맞추기 위한 재생성 루프가 있음.",
+    "nextEvent": 61120,
+    "currentCaptureSuccessRoll": "현재50%성공/실패 판정 없음. 정상 승리 종료 후 해당 기본 보상 경로로 진입.",
+    "newProposal": "포획50%·미포획 아이템보장·인간형상점품+스파크·괴물형재료/극희귀품은 새 기획이며 현재 구현이라고 보고하지 않음."
+  },
+  "specialEncounter": {
+    "event": 61115,
+    "name": "가르시드",
+    "enemyKey": "garsid",
+    "source": "interaction_city:10726~10737",
+    "composition": [
+      "염소 머리",
+      "돼지낯짝",
+      "두꺼비인간",
+      "쥐인간",
+      "가르시드"
+    ],
+    "count": 5,
+    "fixedComposition": true,
+    "definition": "#противники:758/761; 수수께끼의 생물",
+    "settlement": "выход_из_боя:294~307",
+    "reward": "chimera_earring=1",
+    "exceptions": [
+      "get_girl=0: 기본 보상 인물 없음",
+      "fog_battle=0: 불지팡이 발견 제외",
+      "killvar '$враг': 일반 비스트맨 트로피 분기 제외"
+    ],
+    "note": "일반 수인4슬롯의 무작위 편성과 별도인 퀘스트 편성"
+  },
+  "otherRewardExceptions": [
+    {
+      "name": "화룡의 유물 지팡이 발견",
+      "source": "выход_из_боя:585~589 → special_screen:21~49",
+      "behavior": "조건을 만족해 특수 장비 이벤트로 이동하면 get_girl=0이 되어 같은 종료의 기본 보상 인물 생성을 건너뜀"
+    },
+    {
+      "name": "동료 릴레이",
+      "source": "jo9_fog_relay",
+      "behavior": "같은 적과 상태를 이어가며 공통 전투 종료 보상을 사용함. 별도 추가 포획률/드롭표 없음"
+    }
+  ],
+  "limitations": [
+    "현재 Work의 정적 연결 조사만 수행했다.",
+    "성적 서술·상세 인물 생성 상태는 전재하지 않았다.",
+    "종족 분류 후보와 기존 코드 사실을 구분했으며 새로운 획득 규칙을 구현하지 않았다."
+  ]
+}

@@ -1,0 +1,537 @@
+[
+  {
+    "location": "start_refresh",
+    "line": 84,
+    "text": "cooked_food = -1"
+  },
+  {
+    "location": "init_game",
+    "line": 56,
+    "text": "cooked_food = -1"
+  },
+  {
+    "location": "menu_form",
+    "line": 307,
+    "text": "\telseif cooked_food < master_butler:"
+  },
+  {
+    "location": "menu_form",
+    "line": 353,
+    "text": "\telseif cooked_food >= assistant['moral']:"
+  },
+  {
+    "location": "menu_form",
+    "line": 418,
+    "text": "\telseif cooked_food >= slave['cook']:"
+  },
+  {
+    "location": "menu_form",
+    "line": 834,
+    "text": "\telseif cooked_food >= slave['cook']:"
+  },
+  {
+    "location": "menu_form",
+    "line": 1817,
+    "text": "\telseif cooked_food >= slave['cook']:"
+  },
+  {
+    "location": "$newloc",
+    "line": 418,
+    "text": "if cooked_food < 0: cooked_food_plus = 0"
+  },
+  {
+    "location": "$newloc",
+    "line": 419,
+    "text": "if cooked_food > 0: cooked_food_plus = cooked_food"
+  },
+  {
+    "location": "$food_choice",
+    "line": 7,
+    "text": "if cooked_food <= 0:"
+  },
+  {
+    "location": "$food_choice",
+    "line": 9,
+    "text": "\tcooked_food = 0 &! canned food will not kill the slaver; unlike no food (-1) which can drain strength to zero"
+  },
+  {
+    "location": "$food_choice",
+    "line": 48,
+    "text": "\t\t\t\tif meal_quality > cooked_food:"
+  },
+  {
+    "location": "$food_choice",
+    "line": 50,
+    "text": "\t\t\t\t\tcooked_food = meal_quality"
+  },
+  {
+    "location": "$food_choice",
+    "line": 53,
+    "text": "\t\t\t\t\tcooked_food = 100 &! exit signal"
+  },
+  {
+    "location": "$food_choice",
+    "line": 60,
+    "text": "\t\tif cooked_food = 100: cooked_food = meal_quality & exit &! outer loop"
+  },
+  {
+    "location": "$food_choice",
+    "line": 68,
+    "text": "!outputs are cooked_food and $cooked_meal (which will be unchanged if we were not able to make a better quality meal) and last_cooked_food (prepared meal quality, if any)"
+  },
+  {
+    "location": "next_day",
+    "line": 444,
+    "text": "if $jo9_cook_worker = 'slave' and kitchen > 0 and cooked_food <= 0 and ate_already < max(1, master_str) and slave_state = CONST_INT['slave_exist'] and slave['cooks_rule'] = 1 and slave['energy'] >= 0 and slave['obedience'] >= -6 + iif(slave['pride'] > 2, -2, 0) + iif(slave['ego'] < 3, 1, 0) + iif(slave['intellect'] < 3, 1, 0):"
+  },
+  {
+    "location": "next_day",
+    "line": 447,
+    "text": "\tgs '$food_choice', slave_skill &! consume ingredients, update last_cooked_food, cooked_food and $cooked_meal - lack of ingredients or skill limits meal quality - will only replace a lower quality meal"
+  },
+  {
+    "location": "next_day",
+    "line": 466,
+    "text": "if $jo9_cook_worker = 'assistant' and kitchen > 0 and cooked_food <= 0 and ate_already < max(1, master_str) and assistant_state = CONST_INT['slave_exist'] and assistant['cooks_rule'] = 1 and assistant['energy'] >= 0:"
+  },
+  {
+    "location": "next_day",
+    "line": 469,
+    "text": "\tgs '$food_choice', slave_skill &! consume ingredients, update last_cooked_food, cooked_food and $cooked_meal - lack of ingredients or skill limits meal quality - will only replace a lower quality meal"
+  },
+  {
+    "location": "next_day",
+    "line": 488,
+    "text": "if $jo9_cook_worker = 'room1' and kitchen > 0 and cooked_food <= 0 and ate_already < max(1, master_str) and room1_state = CONST_INT['slave_exist'] and room1['cooks_rule'] = 1 and room1['energy'] >= 0:"
+  },
+  {
+    "location": "next_day",
+    "line": 507,
+    "text": "if $jo9_cook_worker = 'room2' and kitchen > 0 and cooked_food <= 0 and ate_already < max(1, master_str) and room2_state = CONST_INT['slave_exist'] and room2['cooks_rule'] = 1 and room2['energy'] >= 0:"
+  },
+  {
+    "location": "next_day",
+    "line": 526,
+    "text": "if $jo9_cook_worker = 'room3' and kitchen > 0 and cooked_food <= 0 and ate_already < max(1, master_str) and room3_state = CONST_INT['slave_exist'] and room3['cooks_rule'] = 1 and room3['energy'] >= 0:"
+  },
+  {
+    "location": "next_day",
+    "line": 545,
+    "text": "if $jo9_cook_worker = 'room4' and kitchen > 0 and cooked_food <= 0 and ate_already < max(1, master_str) and room4_state = CONST_INT['slave_exist'] and room4['cooks_rule'] = 1 and room4['energy'] >= 0:"
+  },
+  {
+    "location": "next_day",
+    "line": 567,
+    "text": "if cooked_food < 0 and ate_already < iif(kitchen > 0, max(1, master_str), 1) and master_energy >= 0:"
+  },
+  {
+    "location": "next_day",
+    "line": 568,
+    "text": "\tgs '$food_choice', master_butler &! consume ingredients, update last_cooked_food, cooked_food and $cooked_meal - lack of ingredients or skill limits meal quality - will only replace a lower quality meal"
+  },
+  {
+    "location": "next_day",
+    "line": 570,
+    "text": "\tif cooked_food > 0 or ate_already = 0 or kitchen = 0:"
+  },
+  {
+    "location": "next_day",
+    "line": 581,
+    "text": "if cooked_food >= 0: master_eats_dinner = 1 &! flag for end_day_screen to show dinner scene (skipped if no one prepared food or if master ate already and the home meal is not higher quality)"
+  },
+  {
+    "location": "next_day",
+    "line": 584,
+    "text": "if (cooked_food - 1) > master_str:"
+  },
+  {
+    "location": "next_day",
+    "line": 586,
+    "text": "elseif ate_already < master_str and master_str > (cooked_food + max(0, assistant['nurse'] - 3)):"
+  },
+  {
+    "location": "next_day",
+    "line": 590,
+    "text": "\tmaster_str_rate -= master_str - max(ate_already, cooked_food) &! the larger the difference in level, the faster the decline"
+  },
+  {
+    "location": "next_day",
+    "line": 591,
+    "text": "\t! eating nothing (cooked_food = -1) can be deadly ($master_pass_out when master_str_rate is negative)"
+  },
+  {
+    "location": "next_day",
+    "line": 592,
+    "text": "\t! A+ food (cooked_food = 4) can lower strength to Strong   (master_str = 4) and will stabilize there"
+  },
+  {
+    "location": "next_day",
+    "line": 593,
+    "text": "\t! B+ food (cooked_food = 3) can lower strength to Vigorous (master_str = 3) and will stabilize there"
+  },
+  {
+    "location": "next_day",
+    "line": 594,
+    "text": "\t! C- food (cooked_food = 2) can lower strength to Unfit    (master_str = 2) and will stabilize there"
+  },
+  {
+    "location": "next_day",
+    "line": 595,
+    "text": "\t! D- food (cooked_food = 1) can lower strength to Weak     (master_str = 1) and will stabilize there"
+  },
+  {
+    "location": "next_day",
+    "line": 596,
+    "text": "\t! F- food (cooked_food = 0) can lower strength to Frail    (master_str = 0) and will stabilize there (only on extreme difficulty)"
+  },
+  {
+    "location": "next_day",
+    "line": 597,
+    "text": "\tif cooked_food = 0 and game_difficulty < 2: master_str_rate += 1"
+  },
+  {
+    "location": "next_day",
+    "line": 604,
+    "text": "\tif cooked_food >= max(master_cha, master_str):"
+  },
+  {
+    "location": "next_day",
+    "line": 606,
+    "text": "\t\tmaster_half_action -= max(0, cooked_food - 3) &! negative values add energy; mirrors fresh food energy bonus for slaves (full star for S+ meal, half for A+) - ImperatorAugustus"
+  },
+  {
+    "location": "next_day",
+    "line": 1644,
+    "text": "\t\t\tif slave['diet_leftovers'] = 1 and cooked_food > slave['pride']*2: slave['pos_cookie'] = 1"
+  },
+  {
+    "location": "next_day",
+    "line": 1647,
+    "text": "\t\t\tif slave['diet_leftovers'] = 1 and cooked_food > slave['pride']*2 - 1: slave['pos_cookie'] = 1"
+  },
+  {
+    "location": "next_day",
+    "line": 1654,
+    "text": "\t\tif slave['diet_leftovers'] = 1 and cooked_food > slave['pride']*2: slave['pos_cookie'] = 1"
+  },
+  {
+    "location": "next_day",
+    "line": 1659,
+    "text": "\t\tif slave['diet_leftovers'] = 1 and cooked_food > slave['pride']*2 - 1: slave['pos_cookie'] = 1"
+  },
+  {
+    "location": "next_day",
+    "line": 1665,
+    "text": "\t\tif slave['diet_leftovers'] = 1 and cooked_food > slave['pride']*2 - 1: slave['pos_cookie'] = 1"
+  },
+  {
+    "location": "next_day",
+    "line": 1668,
+    "text": "\t\tif slave['diet_leftovers'] = 1 and cooked_food > slave['pride']: slave['pos_cookie'] = 1"
+  },
+  {
+    "location": "next_day",
+    "line": 1672,
+    "text": "!Added benefits and penalties to Eat my leftovers given to slaves - crushboss (added check for cooked_food; rule is skipped if no food prepared)"
+  },
+  {
+    "location": "next_day",
+    "line": 1673,
+    "text": "if slave['diet_leftovers'] = 1 and cooked_food >= 0:"
+  },
+  {
+    "location": "next_day",
+    "line": 1678,
+    "text": "\t\tif cooked_food > 0 and master_eats_dinner = 0: slave_rate['spoil'] += 9 &! being allowed to eat an entire meal is a significant privilege - ImperatorAugustus"
+  },
+  {
+    "location": "next_day",
+    "line": 1681,
+    "text": "\t\tif cooked_food > 0 and master_eats_dinner = 0: slave_rate['spoil'] += 6 &! being allowed to eat an entire meal is a significant privilege - ImperatorAugustus"
+  },
+  {
+    "location": "next_day",
+    "line": 1684,
+    "text": "\t\tif cooked_food > 0 and master_eats_dinner = 0: slave_rate['spoil'] += 3 &! being allowed to eat an entire meal is a significant privilege (in total, 2x fresh food spoil) - ImperatorAugustus"
+  },
+  {
+    "location": "next_day",
+    "line": 1687,
+    "text": "\t\tif cooked_food > slave['moral'] and master_eats_dinner = 0: slave_rate['moral'] += 1 & slave['pos_cookie'] = 1 &! being allowed to eat an entire high-quality meal can increase devotion - ImperatorAugustus"
+  },
+  {
+    "location": "next_day",
+    "line": 1721,
+    "text": "if slave['diet_leftovers'] = 1 and cooked_food > 0: slave['calories'] += ((48271 * (day + slave_type)) mod 65537)/(65537/4) &! pseudo-rand(0,3) (bonus is skipped if no food prepared)"
+  },
+  {
+    "location": "next_day",
+    "line": 1722,
+    "text": "if slave['diet_leftovers'] = 1 and cooked_food > 0 and master_eats_dinner = 0:"
+  },
+  {
+    "location": "next_day",
+    "line": 1723,
+    "text": "\tslave['calories'] += 1 + ((48271 * (day + slave_type + cooked_food)) mod 65537)/(65537/cooked_food) &! pseudo-rand(1,cooked_food) (extra calories if master skips dinner)"
+  },
+  {
+    "location": "next_day",
+    "line": 1724,
+    "text": "\tslave['half_action'] -= max(0, cooked_food - 3) &! negative values add energy; mirrors fresh food energy bonus for slaves (full star for S+ meal, half for A+) - ImperatorAugustus"
+  },
+  {
+    "location": "next_day",
+    "line": 3006,
+    "text": "\tmaster_wounds_rate -= master_str + healing - (master_hygiene + 1) + max(0, ate_already - 2, cooked_food - 2) &! B+ = +1, A+ = +2, S+ = +3 - ImperatorAugustus"
+  },
+  {
+    "location": "next_day",
+    "line": 3009,
+    "text": "\tmaster_wounds_rate -= master_str + healing + max(0, ate_already - 2, cooked_food - 2) &! after wounds close, they continue healing but hygiene no longer affects them - ImperatorAugustus"
+  },
+  {
+    "location": "next_day",
+    "line": 3897,
+    "text": "\t\tif farmhand_state = CONST_INT['slave_exist'] and slave['diet_leftovers'] = 0 and cooked_food >= 0: pig['calories'] += 2 &! if slave does not eat them, farmhand feeds pig kitchen scraps, 0$ and maybe table scraps"
+  },
+  {
+    "location": "next_day",
+    "line": 4384,
+    "text": "if cooked_food < 1 and master_eats_dinner = 1: total_food_cost += 2 &! canned food (for the master) costs 2 sparks a day, otherwise cost is paid in ingredients"
+  },
+  {
+    "location": "next_day",
+    "line": 4628,
+    "text": "!cooked_food and ate_already are not used after this in next_day or end_day_screen, so we can now reset them for tomorrow - ImperatorAugustus"
+  },
+  {
+    "location": "next_day",
+    "line": 4629,
+    "text": "cooked_food = -1 &! reset for tomorrow (cooked_food_plus is untouched so end_day_screen can use it in master_auto_cook scene)"
+  },
+  {
+    "location": "main_screen",
+    "line": 319,
+    "text": "$tooltip_text = func('$addon', 'no_rate_stat_tooltip_text', 'cooked_food', cooked_food_plus, 1)"
+  },
+  {
+    "location": "main_screen",
+    "line": 321,
+    "text": "if ate_already >= max(1, master_str) and cooked_food <= master_str:"
+  },
+  {
+    "location": "main_screen",
+    "line": 339,
+    "text": "if cooked_food < 1 and kitchen > 0:"
+  },
+  {
+    "location": "slave_stat",
+    "line": 133,
+    "text": "!if double_ration = 1: food_cost += food_cost - double_ration is never set, so this is always false"
+  },
+  {
+    "location": "slave_stat",
+    "line": 134,
+    "text": "!if enable_dessert = 1: food_cost += 2 - enable_dessert is never non-zero, so this is always false"
+  },
+  {
+    "location": "interaction",
+    "line": 1209,
+    "text": "if interaction = 331:"
+  },
+  {
+    "location": "interaction",
+    "line": 1213,
+    "text": "if interaction = 332:"
+  },
+  {
+    "location": "interaction",
+    "line": 1215,
+    "text": "\t!$bg_path = $bread_and_water"
+  },
+  {
+    "location": "interaction",
+    "line": 1218,
+    "text": "if interaction = 333:"
+  },
+  {
+    "location": "interaction",
+    "line": 1223,
+    "text": "if interaction = 334:"
+  },
+  {
+    "location": "interaction",
+    "line": 1228,
+    "text": "if interaction = 335:"
+  },
+  {
+    "location": "interaction",
+    "line": 1230,
+    "text": "\t!$bg_path = $double_ration"
+  },
+  {
+    "location": "interaction",
+    "line": 1233,
+    "text": "if interaction = 336:"
+  },
+  {
+    "location": "interaction",
+    "line": 1235,
+    "text": "\t!$bg_path = $cooked_food"
+  },
+  {
+    "location": "interaction",
+    "line": 1238,
+    "text": "if interaction = 337:"
+  },
+  {
+    "location": "interaction",
+    "line": 1239,
+    "text": "\tenable_dessert = 1"
+  },
+  {
+    "location": "interaction",
+    "line": 1243,
+    "text": "if interaction = 338:"
+  },
+  {
+    "location": "interaction",
+    "line": 1244,
+    "text": "\tenable_dessert = 0"
+  },
+  {
+    "location": "interaction",
+    "line": 1271,
+    "text": "\tgs '$food_choice', master_butler &! consume ingredients, update last_cooked_food, cooked_food and $cooked_meal - lack of ingredients or skill limits meal quality - will only replace a lower quality meal"
+  },
+  {
+    "location": "interaction",
+    "line": 1586,
+    "text": "\t\t\tgs '$food_choice', func('jo9_traits_personality', 'performance', 'dynslave', '', slave_skill) &! consume ingredients, update last_cooked_food, cooked_food and $cooked_meal - lack of ingredients or skill limits meal quality - will only replace a lower quality meal"
+  },
+  {
+    "location": "interaction",
+    "line": 2764,
+    "text": "\t\tgs '$food_choice', slave_skill &! consume ingredients, update last_cooked_food, cooked_food and $cooked_meal - lack of ingredients or skill limits meal quality - will only replace a lower quality meal"
+  },
+  {
+    "location": "interaction",
+    "line": 2788,
+    "text": "\t\tgs '$food_choice', slave_skill &! consume ingredients, update last_cooked_food, cooked_food and $cooked_meal - lack of ingredients or skill limits meal quality - will only replace a lower quality meal"
+  },
+  {
+    "location": "interaction",
+    "line": 2814,
+    "text": "\t\tgs '$food_choice', slave_skill &! consume ingredients, update last_cooked_food, cooked_food and $cooked_meal - lack of ingredients or skill limits meal quality - will only replace a lower quality meal"
+  },
+  {
+    "location": "interaction",
+    "line": 10408,
+    "text": "    if cooked_food < slave[\"cook\"]: cooked_food = (slave[\"cook\"] + assistant[\"cook\"]) / 2"
+  },
+  {
+    "location": "interaction",
+    "line": 11570,
+    "text": "\t\tgs '$food_choice', assistant_skill &! consume ingredients, update last_cooked_food, cooked_food and $cooked_meal - lack of ingredients or skill limits meal quality - will only replace a lower quality meal"
+  },
+  {
+    "location": "city_screen",
+    "line": 139,
+    "text": "$tooltip_text = func('$addon', 'no_rate_stat_tooltip_text', 'cooked_food', cooked_food_plus, 1)"
+  },
+  {
+    "location": "city_screen",
+    "line": 141,
+    "text": "if ate_already >= max(1, master_str) and cooked_food <= master_str:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 12482,
+    "text": "if interaction_city = menu_subpurchaser:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 12496,
+    "text": "! JO9 MOD START TBV_SUBPURCHASER_REWARD | 2026-10-17_trait_value"
+  },
+  {
+    "location": "interaction_city",
+    "line": 12499,
+    "text": "! JO9 MOD END TBV_SUBPURCHASER_REWARD"
+  },
+  {
+    "location": "interaction_city",
+    "line": 12500,
+    "text": "! JO9 MOD START TBV_SUBPURCHASER_BASE | 2026-10-17_trait_value"
+  },
+  {
+    "location": "interaction_city",
+    "line": 12505,
+    "text": "! JO9 MOD END TBV_SUBPURCHASER_BASE"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 505,
+    "text": "\t\tgs '$food_choice', 5 &! consume ingredients, update cooked_food and $cooked_meal - lack of ingredients or skill limits meal quality - will only replace a lower quality meal"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 536,
+    "text": "\t\tgs '$food_choice', 5 &! consume ingredients, update cooked_food and $cooked_meal - lack of ingredients or skill limits meal quality - will only replace a lower quality meal"
+  },
+  {
+    "location": "guild",
+    "line": 23,
+    "text": "\t\tfunc('$menu', 'interaction_city', $menu_item_subpurchaser, menu_subpurchaser, '재매입상과 대화')"
+  },
+  {
+    "location": "guild",
+    "line": 25,
+    "text": "\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_subpurchaser_gray, empty, '재매입상과 대화', '내놓을 낙인 노예가 없다')"
+  },
+  {
+    "location": "guild",
+    "line": 30,
+    "text": "\t\t\tfunc('$menu', 'interaction_city', $menu_item_Auction_slaves, menu_Auction_slaves, '낙인 노예 경매')"
+  },
+  {
+    "location": "guild",
+    "line": 32,
+    "text": "\t\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_Auction_slaves_gray, empty, '낙인 노예 경매', '내놓을 훈련된 낙인 노예가 없다')"
+  },
+  {
+    "location": "guild",
+    "line": 35,
+    "text": "\t\tfunc('$menu', 'location_gray', $menu_item_Auction_slaves_gray, empty, '경매까지 남은 날: <<auction_count>>')"
+  },
+  {
+    "location": "#variative",
+    "line": 223,
+    "text": "$atr_name['cooked_food'] = '저녁식사 품질'"
+  },
+  {
+    "location": "init_demo_game",
+    "line": 54,
+    "text": "cooked_food = -1"
+  },
+  {
+    "location": "start_demo_game",
+    "line": 23,
+    "text": "cooked_food = -1"
+  },
+  {
+    "location": "demo_menu_form",
+    "line": 113,
+    "text": "\tif kitchen > 0 and cooked_food < slave['cook']:"
+  },
+  {
+    "location": "interaction.relations",
+    "line": 140,
+    "text": "    if cooked_food < slave[\"cook\"]: cooked_food = (slave[\"cook\"] + assistant[\"cook\"]) / 2"
+  },
+  {
+    "location": "jo9_household_worker",
+    "line": 25,
+    "text": " if kitchen<=0 or cooked_food>0 or ate_already>=max(1,master_str): exit"
+  }
+]

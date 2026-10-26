@@ -1,0 +1,5342 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "candidate": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+  "candidateSha256": "a70bd177d8e7ade58243578b2f04745ff00cec3884d26d3b924dfffc8a8d007a",
+  "engine": "G:/somi/Jack O Nine Tails v2.4_work/game/engine/jack.exe",
+  "engineSha256": "f75032d79ecb58eeb7b969cd3f774d66b091fca38a360acdabd782e03a46c6e6",
+  "status": "PASS_WITH_PREEXISTING_DEFECT",
+  "features": [
+    {
+      "id": "GRINCH_DEDICATED_COMBAT",
+      "status": "PASS",
+      "cases": [
+        "grinch"
+      ],
+      "sourceRoutes": [
+        "interaction_city 10383 -> 10384 -> shop_general(sp_txt10384)",
+        "native join link -> начать_бой -> interaction_city901 -> native weapon selection",
+        "боевой_интерфейс actual attack -> конец_боя -> native exit -> выход_из_боя -> interaction_city10385 -> interaction_screen_city"
+      ],
+      "limits": [
+        "Weak enemy test profile (HP/stamina/spirit1, damage and physical resistances0). Actual attack, round and victory decisions retained. Quest return observed; full subsequent holiday dialogue/day sequence not played."
+      ]
+    },
+    {
+      "id": "FOG_AP_ONCE",
+      "status": "PASS",
+      "cases": [
+        "fog-slave",
+        "fog-assistant",
+        "healthy-slave-off",
+        "healthy-assistant-off"
+      ],
+      "sourceRoutes": [
+        "interaction_city61102 -> shop_general -> native role begin link -> jo9_fog_relay begin -> начать_бой",
+        "native weapon/attack/victory/exit -> выход_из_боя -> jo9_fog_relay finish/settle/close -> actual city screen"
+      ],
+      "limits": [
+        "Actual residual stamina may charge more than minimum1AP; expected min(original stamina conversion, energy_before−1), one settlement and other-role/master AP preservation verified. Short weak-enemy battles also verify the minimum1AP charge."
+      ]
+    },
+    {
+      "id": "CATFIGHT_CUMULATIVE_THREE",
+      "status": "PASS",
+      "cases": [
+        "catfight-first",
+        "catfight-second",
+        "catfight-third",
+        "catfight-series",
+        "catfight-blocked",
+        "catfight-loss"
+      ],
+      "sourceRoutes": [
+        "interaction_city10201 -> shop_general original entry -> style -> $catfighter_setup -> interaction_city103001",
+        "native forward objects -> $catfight_fight_start -> actual attacks -> actual win/loss -> выход_из_боя -> interaction_city103005/103004",
+        "3wins menu excludes entry; stale native start callback returns to10201 before battle"
+      ],
+      "limits": [
+        "Connected series never reseeds wins/fame. Between bouts only AP/wounds/master AP reset and diagnostic club reentry is used. Broken original result return is tested separately and classified as preexisting.",
+        "Loss fixture uses a durable enemy (HP/stamina/spirit9999) with large psychic attacks so actual damage triggers morale retreat; no direct outcome assignment."
+      ]
+    },
+    {
+      "id": "RALLY_FAME_THRESHOLDS",
+      "status": "PASS",
+      "cases": [
+        "rally-first",
+        "rally-repeat-below",
+        "rally-repeat-quarter",
+        "rally-repeat-cap",
+        "rally-eighty",
+        "rally-loss"
+      ],
+      "sourceRoutes": [
+        "actual erosalon shop page4 original rally entry link -> interaction_city102102",
+        "jo9_contest_fame begin -> original skill route102113 -> original result102118/102117 -> interaction_result_city -> interaction_screen_city"
+      ],
+      "limits": [
+        "Exactly eight rally outcome RNG draw statements substituted by deterministic draws1/2. Entry eligibility, ticket settlement, fame helper, AP and money effects and result renderer retained.",
+        "Real salon entry callback and first result display played; result-screen reentry duplicate callbacks not covered in this new native suite."
+      ]
+    },
+    {
+      "id": "FOG_FAME_WITNESS_CAP",
+      "status": "PASS",
+      "cases": [
+        "fog-witness-twenty",
+        "fog-witness-twentyone",
+        "fog-assistant-cap",
+        "fog-assistant-eighty"
+      ],
+      "sourceRoutes": [
+        "original fog event61103/61115 -> native selected combatant route -> actual victory -> jo9_fog_relay settle -> original actor fame write"
+      ],
+      "limits": [
+        "Only the two witness RNG draws are substituted by20or21; actual 20% threshold, selected actor, tier and cap checks retained. Weak enemies allow short real fights.",
+        "Representative low/high/boss tiers and40/80 boundaries covered; all15encounter tier combinations not exhaustively fought."
+      ]
+    },
+    {
+      "id": "FOG_DANGER_PRECHOICE",
+      "status": "PASS",
+      "cases": [
+        {
+          "event": 61101,
+          "day": 1,
+          "hintHash": "4a39d3af3355e55943c264079001f9f6b980886a105b25fdc3e5acef864b28f0"
+        },
+        {
+          "event": 61102,
+          "day": 1,
+          "hintHash": "fcfeef59036d8ce0b5ba3830b7ed9fbd1c808d135805059ade5340d0e825f2b6"
+        },
+        {
+          "event": 61103,
+          "day": 1,
+          "hintHash": "97d0089623f12f7e4e2168bf3858f8012058d557e463ab331982b62be0b707b0"
+        },
+        {
+          "event": 61104,
+          "day": 1,
+          "hintHash": "575761a8298df0aaa477ee7355c6204259dfdf2f729f9b7c64239ec3e119d90f"
+        },
+        {
+          "event": 61105,
+          "day": 1,
+          "hintHash": "62c484580f71a46834c9b99f776334e71c6fc3eac410e7160844ee72ac41b31a"
+        },
+        {
+          "event": 61106,
+          "day": 1,
+          "hintHash": "00ba3f943441a091bcebeb1ca0d09fceea3da3fbf07046179dbc2f02b58f1df3"
+        },
+        {
+          "event": 61107,
+          "day": 1,
+          "hintHash": "0c896463a80aa8451ba310ee4900af9c96e40acc00a06c7dcce5ee5e7940b5bf"
+        },
+        {
+          "event": 61108,
+          "day": 1,
+          "hintHash": "4aac6c1435655117f7185831ebf0e369d447de32283f465fe87ab36ccb8ff1b9"
+        },
+        {
+          "event": 61109,
+          "day": 1,
+          "hintHash": "d7856e654ea614746d2f0d04280d904bf3d116b3abf212ea1fb7712ff8f7d356"
+        },
+        {
+          "event": 61110,
+          "day": 1,
+          "hintHash": "ae44c5356407efd24d9db654feb3deb837286aefa873eb373621c2885d57adde"
+        },
+        {
+          "event": 61111,
+          "day": 1,
+          "hintHash": "97f0fbea73b4573370f7280edcee2303ae184709fec972a3ffbe88626c9de113"
+        },
+        {
+          "event": 61112,
+          "day": 2,
+          "hintHash": "2a79889441c72a674fdbc5227891c10014c740afa6f79b81a848d25cae396f0c"
+        },
+        {
+          "event": 61112,
+          "day": 1,
+          "hintHash": "2a79889441c72a674fdbc5227891c10014c740afa6f79b81a848d25cae396f0c"
+        },
+        {
+          "event": 61113,
+          "day": 1,
+          "hintHash": "38a9270667fca0a0031009d5c01522307b5e01526f84b277ba11a9d7ea5a5467"
+        },
+        {
+          "event": 61114,
+          "day": 1,
+          "hintHash": "83105513221b6bb0893b06310205af94f097efb115af48cf807e3cf9b4da5186"
+        },
+        {
+          "event": 61115,
+          "day": 1,
+          "hintHash": "8097a783b98315c7c9706b28063f7a538e7c12e4797f874d60bf817c05d221c8"
+        }
+      ],
+      "sourceRoutes": [
+        "interaction_city61101..61115 (goblin2/3variants) -> original shop_general renderer -> actual native DOM hint-before-menu assertion"
+      ],
+      "limits": [
+        "Native Qt DOM is inspected after actual encounter and shop rendering. Only diagnostic navigation between independent encounters is injected.",
+        "No fight callback is selected in this pre-choice display test. Actual fog fight callbacks are covered by native-playtest.cjs.",
+        "Arena exclusion is source-level verification, not an exhaustive arena UI playthrough."
+      ]
+    },
+    {
+      "id": "COMBAT_COLOR_PORTRAITS",
+      "status": "PASS",
+      "cases": [
+        "healthy-slave-off",
+        "healthy-assistant-off",
+        "catfight-second",
+        "arena-color"
+      ],
+      "sourceRoutes": [
+        "начать_бой slave/assistant -> actual rendered combat img",
+        "native catfight style/forward -> $catfight_fight_start -> actual rendered img",
+        "native colosseum style/forward -> $gladiator_fight_start -> actual rendered img"
+      ],
+      "limits": [
+        "Actual DOM src selects2571_face.png and naturalWidth151 for all four changed assignments; no sepia URL. Native canvas pixel access raisesSecurityError. Root visual check remains separate."
+      ]
+    },
+    {
+      "id": "HEALTHY_BATTLE_120_PERCENT",
+      "status": "PASS",
+      "cases": [
+        "healthy-slave-off",
+        "healthy-slave-on",
+        "healthy-assistant-off",
+        "healthy-assistant-on"
+      ],
+      "sourceRoutes": [
+        "original fog role begin -> original начать_бой -> jo9_traits_combat setup -> actual combat renderer"
+      ],
+      "limits": [
+        "Adult fixture traits0/1; native setup maxima compared with captured pre-trait HP/stamina. Hospital acquisition is covered by economy agent."
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "name": "fog-slave",
+      "checkpoint": "Current WORK with intact product routes and native DOM click callbacks: fog",
+      "pass": true,
+      "reason": "",
+      "durationMs": 13213,
+      "fixture": {
+        "name": "fog-slave",
+        "kind": "fog",
+        "actor": 1,
+        "event": 61102,
+        "fame": 23,
+        "witnessFame": 61,
+        "witness": null,
+        "weakEnemyFixture": false,
+        "instrumentation": [
+          "Start fixture",
+          "prefix counters",
+          "tail assertions and save snapshots",
+          "native DOM synthetic click driver"
+        ],
+        "productionHelpersUnchanged": true,
+        "GTTargetsRetained": true,
+        "combatOutcomeInjected": false
+      },
+      "logs": {
+        "stderr.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/fog-slave-stderr.log",
+          "sha256": "8f04a494d704ca03933ebfb10d8176cb065def529b58b7045417c736199126a8"
+        },
+        "stdout.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/fog-slave-stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "snapshots": {
+        "combat": {
+          "sha256": "5411eb39b7c83fc8879f62420b1fce2341b3194a9df110f39bcc8a87ad98d728",
+          "bytes": 48149374,
+          "values": {
+            "qa_turns": 2,
+            "qa_exit_count": 0,
+            "qa_end_count": 0,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 901,
+            "combatant": 1,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": 0,
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        },
+        "victory": {
+          "sha256": "cc9363fb7ea19a7b97f2424ee1811d639f57666deab0b71643cd9c4228003be5",
+          "bytes": 48134228,
+          "values": {
+            "qa_turns": 2,
+            "qa_exit_count": 0,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 901,
+            "combatant": 1,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": "победа",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        },
+        "settled": {
+          "sha256": "52ea405e7bee8b6f15cfc6c9f20db7257574a27df4637996352b8dd44ec41502",
+          "bytes": 48132386,
+          "values": {
+            "qa_turns": 2,
+            "qa_exit_count": 1,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 1,
+            "qa_finish_stamina": 21,
+            "qa_pre_settle_energy": 5,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 901,
+            "combatant": 0,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": "победа",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": -1,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        },
+        "complete": {
+          "sha256": "5eb1c988a38ae845bc15c74548edbd684f225ee956b7d2e6b32a1d211a10d5cd",
+          "bytes": 48051566,
+          "values": {
+            "qa_turns": 2,
+            "qa_exit_count": 1,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 1,
+            "qa_finish_stamina": 21,
+            "qa_pre_settle_energy": 5,
+            "qa_expected_energy": -1,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 61120,
+            "combatant": 0,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": 0,
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": -1,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "fog-assistant",
+      "checkpoint": "Current WORK with intact product routes and native DOM click callbacks: fog",
+      "pass": true,
+      "reason": "",
+      "durationMs": 12426,
+      "fixture": {
+        "name": "fog-assistant",
+        "kind": "fog",
+        "actor": 2,
+        "event": 61102,
+        "fame": 23,
+        "witnessFame": 61,
+        "witness": null,
+        "weakEnemyFixture": false,
+        "instrumentation": [
+          "Start fixture",
+          "prefix counters",
+          "tail assertions and save snapshots",
+          "native DOM synthetic click driver"
+        ],
+        "productionHelpersUnchanged": true,
+        "GTTargetsRetained": true,
+        "combatOutcomeInjected": false
+      },
+      "logs": {
+        "stderr.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/fog-assistant-stderr.log",
+          "sha256": "308b96b2c39afd77b3e2ee51d6260f9307c9a27fdacb26d64f53d6f79d8bfda1"
+        },
+        "stdout.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/fog-assistant-stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "snapshots": {
+        "combat": {
+          "sha256": "7f4400e3336b632941866a72220255e6cef949013de8979735fd23e39015ef38",
+          "bytes": 48149258,
+          "values": {
+            "qa_turns": 2,
+            "qa_exit_count": 0,
+            "qa_end_count": 0,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 901,
+            "combatant": 2,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": 0,
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        },
+        "victory": {
+          "sha256": "021a6dcf64f8bfb33de232c059f6c604b4f391f3c018978529aeafa08a41a74f",
+          "bytes": 48134002,
+          "values": {
+            "qa_turns": 2,
+            "qa_exit_count": 0,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 901,
+            "combatant": 2,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": "победа",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        },
+        "settled": {
+          "sha256": "a7a506a4e6de96f1fe65b3437825fb31df16a064e198008a333fd0ef4c5f95eb",
+          "bytes": 48132250,
+          "values": {
+            "qa_turns": 2,
+            "qa_exit_count": 1,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 1,
+            "qa_finish_stamina": 45,
+            "qa_pre_settle_energy": 5,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 901,
+            "combatant": 0,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": "победа",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 2,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        },
+        "complete": {
+          "sha256": "89ca7307dc7a27ce11fc63a7a1d7dde9cbb23c20e84fd4bc9bad0e97568efc3e",
+          "bytes": 48050638,
+          "values": {
+            "qa_turns": 2,
+            "qa_exit_count": 1,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 1,
+            "qa_finish_stamina": 45,
+            "qa_pre_settle_energy": 5,
+            "qa_expected_energy": 2,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 61120,
+            "combatant": 0,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": 0,
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 2,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "fog-witness-twenty",
+      "checkpoint": "Current WORK with intact product routes and native DOM click callbacks: fog",
+      "pass": true,
+      "reason": "",
+      "durationMs": 12416,
+      "fixture": {
+        "name": "fog-witness-twenty",
+        "kind": "fog",
+        "actor": 1,
+        "event": 61103,
+        "fame": 39,
+        "witnessFame": 61,
+        "witness": 20,
+        "weakEnemyFixture": true,
+        "instrumentation": [
+          "Start fixture",
+          "prefix counters",
+          "tail assertions and save snapshots",
+          "native DOM synthetic click driver",
+          "Enemy test fixture HP/stamina/spirit=1, damage/resistance=0 after actual database load",
+          "Only witness RNG draw substituted by 20"
+        ],
+        "productionHelpersUnchanged": false,
+        "GTTargetsRetained": true,
+        "combatOutcomeInjected": false
+      },
+      "logs": {
+        "stderr.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/fog-witness-twenty-stderr.log",
+          "sha256": "e8489584692879e3c00555d4b8579a9953effbf555eb55988505881671a675a5"
+        },
+        "stdout.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/fog-witness-twenty-stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "snapshots": {
+        "combat": {
+          "sha256": "e57845d8dba58e0cdac8835bfb71905297e8257dc3526039095b9d38dbe5d8a7",
+          "bytes": 48147872,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 0,
+            "qa_end_count": 0,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 901,
+            "combatant": 1,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": 0,
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 39
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        },
+        "victory": {
+          "sha256": "ecce6fc70322b1813487a94514f62868731b9e31bf2b47b7cce9baca7b97fcd4",
+          "bytes": 48134138,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 0,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 901,
+            "combatant": 1,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": "победа",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 39
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        },
+        "settled": {
+          "sha256": "5259b7880e4788cdec7b6f9e972402347f2054a56ccca2efbe545c33141268c9",
+          "bytes": 48132376,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 1,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 1,
+            "qa_finish_stamina": 71,
+            "qa_pre_settle_energy": 5,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 901,
+            "combatant": 0,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": "победа",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 4,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 42
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        },
+        "complete": {
+          "sha256": "6ce2dde5513b30455e6714285f85449a4f35c7727f1afd079a66ce9162c6b2fe",
+          "bytes": 48051560,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 1,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 1,
+            "qa_finish_stamina": 71,
+            "qa_pre_settle_energy": 5,
+            "qa_expected_energy": 4,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 61120,
+            "combatant": 0,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": 0,
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 4,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 42
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "fog-witness-twentyone",
+      "checkpoint": "Current WORK with intact product routes and native DOM click callbacks: fog",
+      "pass": true,
+      "reason": "",
+      "durationMs": 15267,
+      "fixture": {
+        "name": "fog-witness-twentyone",
+        "kind": "fog",
+        "actor": 1,
+        "event": 61103,
+        "fame": 39,
+        "witnessFame": 61,
+        "witness": 21,
+        "weakEnemyFixture": true,
+        "instrumentation": [
+          "Start fixture",
+          "prefix counters",
+          "tail assertions and save snapshots",
+          "native DOM synthetic click driver",
+          "Enemy test fixture HP/stamina/spirit=1, damage/resistance=0 after actual database load",
+          "Only witness RNG draw substituted by 21"
+        ],
+        "productionHelpersUnchanged": false,
+        "GTTargetsRetained": true,
+        "combatOutcomeInjected": false
+      },
+      "logs": {
+        "stderr.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/fog-witness-twentyone-stderr.log",
+          "sha256": "e23964d92e8aff7faee87a709b1472cb8042b9a380e99beb1504e94dc71c52c8"
+        },
+        "stdout.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/fog-witness-twentyone-stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "snapshots": {
+        "combat": {
+          "sha256": "4833dc6dc5b5a9bea17be7e14bb7ed16f60d91da24507128d3b2cc55c040e649",
+          "bytes": 48147884,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 0,
+            "qa_end_count": 0,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 901,
+            "combatant": 1,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": 0,
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 39
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        },
+        "victory": {
+          "sha256": "ea7ee8c705a61c80e767b007f46434e3befff37c03a7364c7271f284d477861b",
+          "bytes": 48134212,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 0,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 901,
+            "combatant": 1,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": "победа",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 39
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        },
+        "settled": {
+          "sha256": "639e7071e1fccdf44ca2414a9d2e1255340b5426b5169acb7ed28257848d8b70",
+          "bytes": 48132436,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 1,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 1,
+            "qa_finish_stamina": 71,
+            "qa_pre_settle_energy": 5,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 901,
+            "combatant": 0,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": "победа",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 4,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 39
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        },
+        "complete": {
+          "sha256": "be63a51e6017b0ca397c23d0bfe1fc28bd454fc8f99160eab0ccaabb8014e85a",
+          "bytes": 48051806,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 1,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 1,
+            "qa_finish_stamina": 71,
+            "qa_pre_settle_energy": 5,
+            "qa_expected_energy": 4,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 61120,
+            "combatant": 0,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": 0,
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 4,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 39
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "fog-assistant-cap",
+      "checkpoint": "Current WORK with intact product routes and native DOM click callbacks: fog",
+      "pass": true,
+      "reason": "",
+      "durationMs": 14497,
+      "fixture": {
+        "name": "fog-assistant-cap",
+        "kind": "fog",
+        "actor": 2,
+        "event": 61115,
+        "fame": 23,
+        "witnessFame": 79,
+        "witness": 20,
+        "weakEnemyFixture": true,
+        "instrumentation": [
+          "Start fixture",
+          "prefix counters",
+          "tail assertions and save snapshots",
+          "native DOM synthetic click driver",
+          "Enemy test fixture HP/stamina/spirit=1, damage/resistance=0 after actual database load",
+          "Only witness RNG draw substituted by 20"
+        ],
+        "productionHelpersUnchanged": false,
+        "GTTargetsRetained": true,
+        "combatOutcomeInjected": false
+      },
+      "logs": {
+        "stderr.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/fog-assistant-cap-stderr.log",
+          "sha256": "45d43afa1890bb69a2016fb4f9201341d8e3493dbb15f5f5d3342ec8fce42597"
+        },
+        "stdout.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/fog-assistant-cap-stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "snapshots": {
+        "combat": {
+          "sha256": "c3a41176a3254b4f1513aec7d58fe29e8f0de80ce906988ddfec30b3b2dbcff1",
+          "bytes": 48152138,
+          "values": {
+            "qa_turns": 5,
+            "qa_exit_count": 0,
+            "qa_end_count": 0,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 901,
+            "combatant": 2,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": 0,
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 79
+            }
+          }
+        },
+        "victory": {
+          "sha256": "f2f6bb5e264f788239d115dbdf112649d03c7b9ef3babf84e49e4c0a7590a9a6",
+          "bytes": 48136496,
+          "values": {
+            "qa_turns": 5,
+            "qa_exit_count": 0,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 901,
+            "combatant": 2,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": "победа",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 79
+            }
+          }
+        },
+        "settled": {
+          "sha256": "c8b5791341b27dc227e62ff87d5b251ecbcdb1a83f82ab6e0a444a79b389138a",
+          "bytes": 48134394,
+          "values": {
+            "qa_turns": 5,
+            "qa_exit_count": 1,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 1,
+            "qa_finish_stamina": 35,
+            "qa_pre_settle_energy": 5,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 901,
+            "combatant": 0,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": "победа",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 1,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 80
+            }
+          }
+        },
+        "complete": {
+          "sha256": "edf8bfeaf6a40aec554d5fdaa43b43ac07cb2b7e2ef83aadfd70368c47624289",
+          "bytes": 48054894,
+          "values": {
+            "qa_turns": 5,
+            "qa_exit_count": 1,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 1,
+            "qa_finish_stamina": 35,
+            "qa_pre_settle_energy": 5,
+            "qa_expected_energy": 1,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 901,
+            "combatant": 0,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": 0,
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 1,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 80
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "fog-assistant-eighty",
+      "checkpoint": "Current WORK with intact product routes and native DOM click callbacks: fog",
+      "pass": true,
+      "reason": "",
+      "durationMs": 13467,
+      "fixture": {
+        "name": "fog-assistant-eighty",
+        "kind": "fog",
+        "actor": 2,
+        "event": 61103,
+        "fame": 23,
+        "witnessFame": 80,
+        "witness": 20,
+        "weakEnemyFixture": true,
+        "instrumentation": [
+          "Start fixture",
+          "prefix counters",
+          "tail assertions and save snapshots",
+          "native DOM synthetic click driver",
+          "Enemy test fixture HP/stamina/spirit=1, damage/resistance=0 after actual database load",
+          "Only witness RNG draw substituted by 20"
+        ],
+        "productionHelpersUnchanged": false,
+        "GTTargetsRetained": true,
+        "combatOutcomeInjected": false
+      },
+      "logs": {
+        "stderr.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/fog-assistant-eighty-stderr.log",
+          "sha256": "73ce5369c8d95c555c0212c4b45e1b1df78a875fd4c2cd2d07f8a20da71dd8bf"
+        },
+        "stdout.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/fog-assistant-eighty-stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "snapshots": {
+        "combat": {
+          "sha256": "54c24df1a15e7fc78a9b5abf46d457022e5b3c1def5a9590807dc3e54485fd1f",
+          "bytes": 48147754,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 0,
+            "qa_end_count": 0,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 901,
+            "combatant": 2,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": 0,
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 80
+            }
+          }
+        },
+        "victory": {
+          "sha256": "42709a6bc9078aa74ef3a33ab96af632ac4580a79d6b2ebc2c7b66d1701567a2",
+          "bytes": 48134086,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 0,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 901,
+            "combatant": 2,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": "победа",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 80
+            }
+          }
+        },
+        "settled": {
+          "sha256": "a67d51a11834df421e8d7ef0c29bcb1b1fce892cd81f2b467dd4ad6e85de782b",
+          "bytes": 48132352,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 1,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 1,
+            "qa_finish_stamina": 71,
+            "qa_pre_settle_energy": 5,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 901,
+            "combatant": 0,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": "победа",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 4,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 80
+            }
+          }
+        },
+        "complete": {
+          "sha256": "da78e8ac5cd7c7fee2778972b0adf252e990117ce05598055863dfa34df25836",
+          "bytes": 48051964,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 1,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 1,
+            "qa_finish_stamina": 71,
+            "qa_pre_settle_energy": 5,
+            "qa_expected_energy": 4,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 61120,
+            "combatant": 0,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": 0,
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 4,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 80
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "catfight-first",
+      "checkpoint": "Current WORK with intact product routes and native DOM click callbacks: catfight",
+      "pass": true,
+      "reason": "",
+      "durationMs": 10896,
+      "fixture": {
+        "name": "catfight-first",
+        "kind": "catfight",
+        "actor": 1,
+        "event": 61102,
+        "fame": 23,
+        "witnessFame": 61,
+        "witness": null,
+        "weakEnemyFixture": false,
+        "instrumentation": [
+          "Start fixture",
+          "prefix counters",
+          "tail assertions and save snapshots",
+          "native DOM synthetic click driver"
+        ],
+        "productionHelpersUnchanged": true,
+        "GTTargetsRetained": true,
+        "combatOutcomeInjected": false
+      },
+      "logs": {
+        "stderr.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/catfight-first-stderr.log",
+          "sha256": "1b6a652c159eba5164a4a09f9c12be2c10264201cdc2c294ceddee2c3cf43831"
+        },
+        "stdout.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/catfight-first-stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "snapshots": {
+        "combat": {
+          "sha256": "02d4496bed70615253606cfb62a02605d1992e69be40ac92738bc22235ed08bc",
+          "bytes": 48135290,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 0,
+            "qa_end_count": 0,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 530,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 103001,
+            "combatant": 1,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": 0,
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        },
+        "victory": {
+          "sha256": "2367acb90f80b5d1c7bc32868c71975a7390489c1025eeb6141858de949ae892",
+          "bytes": 48118800,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 0,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 530,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 103001,
+            "combatant": 1,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": "победа",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        },
+        "complete": {
+          "sha256": "e6c117bfba6b5a7a4661d22a691886b3988467bc5657f1d5482fd30fd9bccd56",
+          "bytes": 48119174,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 1,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 530,
+            "master_energy": 4,
+            "sparks": 10300,
+            "interaction_city": 103005,
+            "combatant": 1,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": "победа",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": -3,
+              "half_action": 0,
+              "catfight_level": 1,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 33
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "catfight-second",
+      "checkpoint": "Current WORK with intact product routes and native DOM click callbacks: catfight",
+      "pass": true,
+      "reason": "",
+      "durationMs": 13785,
+      "fixture": {
+        "name": "catfight-second",
+        "kind": "catfight",
+        "actor": 1,
+        "event": 61102,
+        "fame": 23,
+        "witnessFame": 61,
+        "witness": null,
+        "wins": 1,
+        "loss": false,
+        "draw": 1,
+        "rallyWon": 0,
+        "quarter": 0,
+        "resultReturn": false,
+        "weakEnemyFixture": false,
+        "instrumentation": [
+          "Start fixture",
+          "prefix counters",
+          "tail assertions and save snapshots",
+          "native DOM synthetic click driver"
+        ],
+        "productionHelpersUnchanged": true,
+        "GTTargetsRetained": true,
+        "combatOutcomeInjected": false
+      },
+      "logs": {
+        "stderr.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/catfight-second-stderr.log",
+          "sha256": "d3b6a2862009655cb16495b7373c12ae0962cb91c3c790e805b976732957b51b"
+        },
+        "stdout.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/catfight-second-stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "snapshots": {
+        "combat": {
+          "sha256": "187254663285cbad00364f1f3de868121ee3f0dd3b05cdb12e68fda53e5653a5",
+          "bytes": 48135306,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 0,
+            "qa_end_count": 0,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 530,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 103001,
+            "combatant": 1,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": 0,
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 1,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        },
+        "victory": {
+          "sha256": "a91c480aca8985a1405442bec64326afa482aea7f9aa44ab78256a4f2e8fce3a",
+          "bytes": 48119032,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 0,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": 1,
+            "qa_canvas_blocked": 1,
+            "qa_portrait_width": 151,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 530,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 103001,
+            "combatant": 1,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": "победа",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 1,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        },
+        "complete": {
+          "sha256": "8401a08d76f4d33480b6130b6f4917110ed38a14f8a003e32ff80fc3a2489150",
+          "bytes": 48119396,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 1,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": 1,
+            "qa_canvas_blocked": 1,
+            "qa_portrait_width": 151,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 530,
+            "master_energy": 4,
+            "sparks": 10300,
+            "interaction_city": 103005,
+            "combatant": 1,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": "победа",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": -3,
+              "half_action": 0,
+              "catfight_level": 2,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 26
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "catfight-third",
+      "checkpoint": "Current WORK with intact product routes and native DOM click callbacks: catfight",
+      "pass": true,
+      "reason": "",
+      "durationMs": 13750,
+      "fixture": {
+        "name": "catfight-third",
+        "kind": "catfight",
+        "actor": 1,
+        "event": 61102,
+        "fame": 23,
+        "witnessFame": 61,
+        "witness": null,
+        "wins": 2,
+        "loss": false,
+        "draw": 1,
+        "rallyWon": 0,
+        "quarter": 0,
+        "resultReturn": false,
+        "weakEnemyFixture": false,
+        "instrumentation": [
+          "Start fixture",
+          "prefix counters",
+          "tail assertions and save snapshots",
+          "native DOM synthetic click driver"
+        ],
+        "productionHelpersUnchanged": true,
+        "GTTargetsRetained": true,
+        "combatOutcomeInjected": false
+      },
+      "logs": {
+        "stderr.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/catfight-third-stderr.log",
+          "sha256": "d75e78f4fa34a0eb0f2d4c64cae31b627a901f6e795d347d594c3f2153f0bfd3"
+        },
+        "stdout.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/catfight-third-stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "snapshots": {
+        "combat": {
+          "sha256": "69804a75db03793993298bc4b7bc5513cb247b3123e10c1fab9716fac53f22a2",
+          "bytes": 48135296,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 0,
+            "qa_end_count": 0,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 530,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 103001,
+            "combatant": 1,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": 0,
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 2,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        },
+        "victory": {
+          "sha256": "f23b211d0d03d9e0324c9f86999fb18ea37943c7fe9d6fea28988614dd7a4216",
+          "bytes": 48119184,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 0,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": 1,
+            "qa_canvas_blocked": 1,
+            "qa_portrait_width": 151,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 530,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 103001,
+            "combatant": 1,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": "победа",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 2,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        },
+        "complete": {
+          "sha256": "5f14fda83fb6487ad356de5d7497dd4aee769b44aa6b37b52a7fc59522700d7a",
+          "bytes": 48119496,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 1,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": 1,
+            "qa_canvas_blocked": 1,
+            "qa_portrait_width": 151,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 530,
+            "master_energy": 4,
+            "sparks": 10300,
+            "interaction_city": 103005,
+            "combatant": 1,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": "победа",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": -3,
+              "half_action": 0,
+              "catfight_level": 3,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 26
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "catfight-blocked",
+      "checkpoint": "Current WORK with intact product routes and native DOM click callbacks: catfight",
+      "pass": true,
+      "reason": "",
+      "durationMs": 11898,
+      "fixture": {
+        "name": "catfight-blocked",
+        "kind": "catfight",
+        "actor": 1,
+        "event": 61102,
+        "fame": 23,
+        "witnessFame": 61,
+        "witness": null,
+        "wins": 3,
+        "loss": false,
+        "draw": 1,
+        "rallyWon": 0,
+        "quarter": 0,
+        "resultReturn": false,
+        "weakEnemyFixture": false,
+        "instrumentation": [
+          "Start fixture",
+          "prefix counters",
+          "tail assertions and save snapshots",
+          "native DOM synthetic click driver"
+        ],
+        "productionHelpersUnchanged": true,
+        "GTTargetsRetained": true,
+        "combatOutcomeInjected": false
+      },
+      "logs": {
+        "stderr.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/catfight-blocked-stderr.log",
+          "sha256": "373181a268657647ee9bf304f309bdb26defaa29aa56bd8e00eb41b7bc1bf689"
+        },
+        "stdout.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/catfight-blocked-stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "snapshots": {
+        "complete": {
+          "sha256": "e81a27402c36094985f23f8891db102e23bb7d2404870853763f0687808f8a81",
+          "bytes": 48133036,
+          "values": {
+            "qa_turns": 0,
+            "qa_exit_count": 0,
+            "qa_end_count": 0,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 80,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 10201,
+            "combatant": null,
+            "combatant_ava": "content\\pic\\master\\master_edward_sepia.png",
+            "итог_боя": null,
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 3,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "rally-first",
+      "checkpoint": "Current WORK with intact product routes and native DOM click callbacks: rally",
+      "pass": true,
+      "reason": "",
+      "durationMs": 12689,
+      "fixture": {
+        "name": "rally-first",
+        "kind": "rally",
+        "actor": 1,
+        "event": 61102,
+        "fame": 23,
+        "witnessFame": 61,
+        "witness": null,
+        "wins": 0,
+        "loss": false,
+        "draw": 1,
+        "rallyWon": 0,
+        "quarter": 0,
+        "resultReturn": false,
+        "weakEnemyFixture": false,
+        "instrumentation": [
+          "Start fixture",
+          "prefix counters",
+          "tail assertions and save snapshots",
+          "native DOM synthetic click driver",
+          "Only eight native rally RNG draw lines substituted"
+        ],
+        "productionHelpersUnchanged": false,
+        "GTTargetsRetained": true,
+        "combatOutcomeInjected": false
+      },
+      "logs": {
+        "stderr.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/rally-first-stderr.log",
+          "sha256": "ca86af569d62bc59fb3b05ec5ce0657188a45175d0e036314d53e84896db9738"
+        },
+        "stdout.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/rally-first-stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "snapshots": {
+        "complete": {
+          "sha256": "6b573dd08d2cd23595e2c2119cfa8f07a95bdd50fb2b216288051d7a53560b5c",
+          "bytes": 48133532,
+          "values": {
+            "qa_turns": 0,
+            "qa_exit_count": 0,
+            "qa_end_count": 0,
+            "qa_battle_count": 0,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 80,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 10300,
+            "interaction_city": 102118,
+            "combatant": null,
+            "combatant_ava": "content\\pic\\master\\master_edward_sepia.png",
+            "итог_боя": null,
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 2,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 1,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 33
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "rally-repeat-below",
+      "checkpoint": "Current WORK with intact product routes and native DOM click callbacks: rally",
+      "pass": true,
+      "reason": "",
+      "durationMs": 11925,
+      "fixture": {
+        "name": "rally-repeat-below",
+        "kind": "rally",
+        "actor": 1,
+        "event": 61102,
+        "fame": 39,
+        "witnessFame": 61,
+        "witness": null,
+        "wins": 0,
+        "loss": false,
+        "draw": 1,
+        "rallyWon": 1,
+        "quarter": 0,
+        "resultReturn": false,
+        "weakEnemyFixture": false,
+        "instrumentation": [
+          "Start fixture",
+          "prefix counters",
+          "tail assertions and save snapshots",
+          "native DOM synthetic click driver",
+          "Only eight native rally RNG draw lines substituted"
+        ],
+        "productionHelpersUnchanged": false,
+        "GTTargetsRetained": true,
+        "combatOutcomeInjected": false
+      },
+      "logs": {
+        "stderr.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/rally-repeat-below-stderr.log",
+          "sha256": "59fe55847371d5c160c754236200a9206dd745a054fb7cfc21085d16bdc15417"
+        },
+        "stdout.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/rally-repeat-below-stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "snapshots": {
+        "complete": {
+          "sha256": "33776c03b252ff52026b0aea3c0b55c264155d567b50116290e138e918af244b",
+          "bytes": 48133530,
+          "values": {
+            "qa_turns": 0,
+            "qa_exit_count": 0,
+            "qa_end_count": 0,
+            "qa_battle_count": 0,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 80,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 10300,
+            "interaction_city": 102118,
+            "combatant": null,
+            "combatant_ava": "content\\pic\\master\\master_edward_sepia.png",
+            "итог_боя": null,
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 2,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 1,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 40
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "rally-repeat-quarter",
+      "checkpoint": "Current WORK with intact product routes and native DOM click callbacks: rally",
+      "pass": true,
+      "reason": "",
+      "durationMs": 11411,
+      "fixture": {
+        "name": "rally-repeat-quarter",
+        "kind": "rally",
+        "actor": 1,
+        "event": 61102,
+        "fame": 40,
+        "witnessFame": 61,
+        "witness": null,
+        "wins": 0,
+        "loss": false,
+        "draw": 1,
+        "rallyWon": 1,
+        "quarter": 0,
+        "resultReturn": false,
+        "weakEnemyFixture": false,
+        "instrumentation": [
+          "Start fixture",
+          "prefix counters",
+          "tail assertions and save snapshots",
+          "native DOM synthetic click driver",
+          "Only eight native rally RNG draw lines substituted"
+        ],
+        "productionHelpersUnchanged": false,
+        "GTTargetsRetained": true,
+        "combatOutcomeInjected": false
+      },
+      "logs": {
+        "stderr.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/rally-repeat-quarter-stderr.log",
+          "sha256": "e80030aab73332357a5c3469639592147076a9f71193735692537a13f33358d7"
+        },
+        "stdout.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/rally-repeat-quarter-stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "snapshots": {
+        "complete": {
+          "sha256": "8d045b3ebc791ee61769fb855cf024dc7b9b6e3ea073a53038eb80f6d47b951b",
+          "bytes": 48133534,
+          "values": {
+            "qa_turns": 0,
+            "qa_exit_count": 0,
+            "qa_end_count": 0,
+            "qa_battle_count": 0,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 80,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 10300,
+            "interaction_city": 102118,
+            "combatant": null,
+            "combatant_ava": "content\\pic\\master\\master_edward_sepia.png",
+            "итог_боя": null,
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 2,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 1,
+              "jo9_rally_fame_quarter": 1,
+              "jo9_constitution": 0,
+              "fame": 40
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "rally-repeat-cap",
+      "checkpoint": "Current WORK with intact product routes and native DOM click callbacks: rally",
+      "pass": true,
+      "reason": "",
+      "durationMs": 12464,
+      "fixture": {
+        "name": "rally-repeat-cap",
+        "kind": "rally",
+        "actor": 1,
+        "event": 61102,
+        "fame": 79,
+        "witnessFame": 61,
+        "witness": null,
+        "wins": 0,
+        "loss": false,
+        "draw": 1,
+        "rallyWon": 1,
+        "quarter": 3,
+        "resultReturn": false,
+        "weakEnemyFixture": false,
+        "instrumentation": [
+          "Start fixture",
+          "prefix counters",
+          "tail assertions and save snapshots",
+          "native DOM synthetic click driver",
+          "Only eight native rally RNG draw lines substituted"
+        ],
+        "productionHelpersUnchanged": false,
+        "GTTargetsRetained": true,
+        "combatOutcomeInjected": false
+      },
+      "logs": {
+        "stderr.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/rally-repeat-cap-stderr.log",
+          "sha256": "1e6183684e0c21ad652222d5fa4f404281c9a105721d00253e6083f852aae253"
+        },
+        "stdout.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/rally-repeat-cap-stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "snapshots": {
+        "complete": {
+          "sha256": "cd311a080f65aaa72fa7b993d7ac7b21343d093146e46f5d1e07d4e1031e56a5",
+          "bytes": 48133528,
+          "values": {
+            "qa_turns": 0,
+            "qa_exit_count": 0,
+            "qa_end_count": 0,
+            "qa_battle_count": 0,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 80,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 10300,
+            "interaction_city": 102118,
+            "combatant": null,
+            "combatant_ava": "content\\pic\\master\\master_edward_sepia.png",
+            "итог_боя": null,
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 2,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 1,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 80
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "rally-eighty",
+      "checkpoint": "Current WORK with intact product routes and native DOM click callbacks: rally",
+      "pass": true,
+      "reason": "",
+      "durationMs": 13756,
+      "fixture": {
+        "name": "rally-eighty",
+        "kind": "rally",
+        "actor": 1,
+        "event": 61102,
+        "fame": 80,
+        "witnessFame": 61,
+        "witness": null,
+        "wins": 0,
+        "loss": false,
+        "draw": 1,
+        "rallyWon": 1,
+        "quarter": 0,
+        "resultReturn": false,
+        "weakEnemyFixture": false,
+        "instrumentation": [
+          "Start fixture",
+          "prefix counters",
+          "tail assertions and save snapshots",
+          "native DOM synthetic click driver",
+          "Only eight native rally RNG draw lines substituted"
+        ],
+        "productionHelpersUnchanged": false,
+        "GTTargetsRetained": true,
+        "combatOutcomeInjected": false
+      },
+      "logs": {
+        "stderr.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/rally-eighty-stderr.log",
+          "sha256": "2b7892294c030dc712ca7d415ad3832501b265d0751e23098bba9f4135e0fbd7"
+        },
+        "stdout.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/rally-eighty-stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "snapshots": {
+        "complete": {
+          "sha256": "14dd00b35faea3f1ee9696a6afc64608cb206c76b9ca76fb863531755f6a8a0c",
+          "bytes": 48133310,
+          "values": {
+            "qa_turns": 0,
+            "qa_exit_count": 0,
+            "qa_end_count": 0,
+            "qa_battle_count": 0,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 80,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 10300,
+            "interaction_city": 102118,
+            "combatant": null,
+            "combatant_ava": "content\\pic\\master\\master_edward_sepia.png",
+            "итог_боя": null,
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 2,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 1,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 80
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "rally-loss",
+      "checkpoint": "Current WORK with intact product routes and native DOM click callbacks: rally",
+      "pass": true,
+      "reason": "",
+      "durationMs": 11664,
+      "fixture": {
+        "name": "rally-loss",
+        "kind": "rally",
+        "actor": 1,
+        "event": 61102,
+        "fame": 39,
+        "witnessFame": 61,
+        "witness": null,
+        "wins": 0,
+        "loss": false,
+        "draw": 2,
+        "rallyWon": 1,
+        "quarter": 0,
+        "resultReturn": false,
+        "weakEnemyFixture": false,
+        "instrumentation": [
+          "Start fixture",
+          "prefix counters",
+          "tail assertions and save snapshots",
+          "native DOM synthetic click driver",
+          "Only eight native rally RNG draw lines substituted"
+        ],
+        "productionHelpersUnchanged": false,
+        "GTTargetsRetained": true,
+        "combatOutcomeInjected": false
+      },
+      "logs": {
+        "stderr.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/rally-loss-stderr.log",
+          "sha256": "0f276e1c4b43c345117435eb4447fa12c3fa5bff8baa579361076204848fec92"
+        },
+        "stdout.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/rally-loss-stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "snapshots": {
+        "complete": {
+          "sha256": "88b2ce6f8a4fff9f004b04002cd7f7f32d030a0577730f4ca572da7276f9c034",
+          "bytes": 48132044,
+          "values": {
+            "qa_turns": 0,
+            "qa_exit_count": 0,
+            "qa_end_count": 0,
+            "qa_battle_count": 0,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 80,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 9900,
+            "interaction_city": 102117,
+            "combatant": null,
+            "combatant_ava": "content\\pic\\master\\master_edward_sepia.png",
+            "итог_боя": null,
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 2,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 1,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 39
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "catfight-return",
+      "checkpoint": "Current WORK with intact product routes and native DOM click callbacks: catfight",
+      "pass": false,
+      "reason": "Completion marker timeout",
+      "durationMs": 45231,
+      "fixture": {
+        "name": "catfight-return",
+        "kind": "catfight",
+        "actor": 1,
+        "event": 61102,
+        "fame": 23,
+        "witnessFame": 61,
+        "witness": null,
+        "wins": 0,
+        "loss": false,
+        "draw": 1,
+        "rallyWon": 0,
+        "quarter": 0,
+        "resultReturn": true,
+        "weakEnemyFixture": true,
+        "instrumentation": [
+          "Start fixture",
+          "prefix counters",
+          "tail assertions and save snapshots",
+          "native DOM synthetic click driver",
+          "Enemy test fixture HP/stamina/spirit=1, damage/resistance=0 after actual database load"
+        ],
+        "productionHelpersUnchanged": true,
+        "GTTargetsRetained": true,
+        "combatOutcomeInjected": false
+      },
+      "logs": {
+        "stderr.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/catfight-return-stderr.log",
+          "sha256": "3ab21c1b8949d442c0a29937f64b3890035e6785fca79a91c9ac9ffdc1d99457"
+        },
+        "stdout.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/catfight-return-stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "snapshots": {
+        "combat": {
+          "sha256": "534f4c4d46bbcb4fb29f0049c7a3fec4fd4766c95f1002572a4e22118bbb43ef",
+          "bytes": 48135450,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 0,
+            "qa_end_count": 0,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 530,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 103001,
+            "combatant": 1,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": 0,
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        },
+        "victory": {
+          "sha256": "4645b808210f67484257ec088da2f5fdf99b89177e49ce82634b94eec159ab23",
+          "bytes": 48119210,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 0,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": 1,
+            "qa_canvas_blocked": 1,
+            "qa_portrait_width": 151,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 530,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 103001,
+            "combatant": 1,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": "победа",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        },
+        "complete": {
+          "sha256": "09b7405482ac4c0da1e2b78f393d2d6d21b326ef2338c51518925bc0589ee072",
+          "bytes": 48119390,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 1,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": 1,
+            "qa_canvas_blocked": 1,
+            "qa_portrait_width": 151,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 530,
+            "master_energy": 4,
+            "sparks": 10300,
+            "interaction_city": 103005,
+            "combatant": 1,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": "победа",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": -3,
+              "half_action": 0,
+              "catfight_level": 1,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 33
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "catfight-series",
+      "checkpoint": "Current WORK with intact product routes and native DOM click callbacks: catfight",
+      "pass": true,
+      "reason": "",
+      "durationMs": 18723,
+      "fixture": {
+        "name": "catfight-series",
+        "kind": "catfight",
+        "actor": 1,
+        "event": 61102,
+        "fame": 23,
+        "witnessFame": 61,
+        "witness": null,
+        "wins": 0,
+        "loss": false,
+        "draw": 1,
+        "rallyWon": 0,
+        "quarter": 0,
+        "resultReturn": false,
+        "constitution": null,
+        "series": true,
+        "weakEnemyFixture": false,
+        "instrumentation": [
+          "Start fixture",
+          "prefix counters",
+          "tail assertions and save snapshots",
+          "native DOM synthetic click driver",
+          "Between matches only AP/wounds are reset and the original club entry is invoked. Cumulative wins and fame are never reseeded; original result-return tested separately."
+        ],
+        "productionHelpersUnchanged": true,
+        "GTTargetsRetained": true,
+        "combatOutcomeInjected": false
+      },
+      "logs": {
+        "stderr.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/catfight-series-stderr.log",
+          "sha256": "b7ab7d8fed3bc35efebe053565a36eafd53cbbaaf298abeb4485c3236ee69941"
+        },
+        "stdout.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/catfight-series-stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "snapshots": {
+        "combat": {
+          "sha256": "7a61563e1ba675ca70154b3ab5afb1cd77f1be5d5ac6e3a49f65448d1bb32ebc",
+          "bytes": 48136746,
+          "values": {
+            "qa_turns": 3,
+            "qa_exit_count": 2,
+            "qa_end_count": 2,
+            "qa_battle_count": 3,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": 1,
+            "qa_canvas_blocked": 1,
+            "qa_portrait_width": 151,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 530,
+            "master_energy": 5,
+            "sparks": 10600,
+            "interaction_city": 103001,
+            "combatant": 1,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": 0,
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 2,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 36
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        },
+        "victory": {
+          "sha256": "c83db16037bccf73c3b21a0702c8c4b707628d8c96a65aa139c8c37a7807ddca",
+          "bytes": 48120184,
+          "values": {
+            "qa_turns": 3,
+            "qa_exit_count": 2,
+            "qa_end_count": 3,
+            "qa_battle_count": 3,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": 1,
+            "qa_canvas_blocked": 1,
+            "qa_portrait_width": 151,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 530,
+            "master_energy": 5,
+            "sparks": 10600,
+            "interaction_city": 103001,
+            "combatant": 1,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": "победа",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 2,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 36
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        },
+        "complete": {
+          "sha256": "cb3df60eb3216fc15d118b8eb67f136be0ad886c53f56684a90d3707d178a769",
+          "bytes": 48129554,
+          "values": {
+            "qa_turns": 3,
+            "qa_exit_count": 3,
+            "qa_end_count": 3,
+            "qa_battle_count": 3,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": 1,
+            "qa_canvas_blocked": 1,
+            "qa_portrait_width": 151,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 530,
+            "master_energy": 5,
+            "sparks": 10900,
+            "interaction_city": 10201,
+            "combatant": 1,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": "победа",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 3,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 39
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        },
+        "win-1": {
+          "sha256": "a4826a226fcff2b2506bcf08af93fcdc31ada7b88d3caf17c13647520da4eac6",
+          "bytes": 48119498,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 1,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": 1,
+            "qa_canvas_blocked": 1,
+            "qa_portrait_width": 151,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 530,
+            "master_energy": 4,
+            "sparks": 10300,
+            "interaction_city": 103005,
+            "combatant": 1,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": "победа",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": -3,
+              "half_action": 0,
+              "catfight_level": 1,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 33
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        },
+        "win-2": {
+          "sha256": "39d28801e800ba5164f88ca90516616031725a6ab9f4d10be8d4e5a889a1ff9c",
+          "bytes": 48119534,
+          "values": {
+            "qa_turns": 2,
+            "qa_exit_count": 2,
+            "qa_end_count": 2,
+            "qa_battle_count": 2,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": 1,
+            "qa_canvas_blocked": 1,
+            "qa_portrait_width": 151,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 530,
+            "master_energy": 4,
+            "sparks": 10600,
+            "interaction_city": 103005,
+            "combatant": 1,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": "победа",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": -3,
+              "half_action": 0,
+              "catfight_level": 2,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 36
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        },
+        "win-3": {
+          "sha256": "90343fe4a2febaf9cda84798bea167222851444b2f7a3fea1b5c840624c07fd6",
+          "bytes": 48119588,
+          "values": {
+            "qa_turns": 3,
+            "qa_exit_count": 3,
+            "qa_end_count": 3,
+            "qa_battle_count": 3,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": 1,
+            "qa_canvas_blocked": 1,
+            "qa_portrait_width": 151,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 530,
+            "master_energy": 4,
+            "sparks": 10900,
+            "interaction_city": 103005,
+            "combatant": 1,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": "победа",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": -3,
+              "half_action": 0,
+              "catfight_level": 3,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 39
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "grinch",
+      "checkpoint": "Current WORK with intact product routes and native DOM click callbacks: grinch",
+      "pass": true,
+      "reason": "",
+      "durationMs": 13452,
+      "fixture": {
+        "name": "grinch",
+        "kind": "grinch",
+        "actor": 1,
+        "event": 61102,
+        "fame": 23,
+        "witnessFame": 61,
+        "witness": null,
+        "wins": 0,
+        "loss": false,
+        "draw": 1,
+        "rallyWon": 0,
+        "quarter": 0,
+        "resultReturn": false,
+        "constitution": null,
+        "series": false,
+        "weakEnemyFixture": true,
+        "instrumentation": [
+          "Start fixture",
+          "prefix counters",
+          "tail assertions and save snapshots",
+          "native DOM synthetic click driver",
+          "Enemy test fixture HP/stamina/spirit=1, damage/resistance=0 after actual database load"
+        ],
+        "productionHelpersUnchanged": true,
+        "GTTargetsRetained": true,
+        "combatOutcomeInjected": false
+      },
+      "logs": {
+        "stderr.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/grinch-stderr.log",
+          "sha256": "649aa2e25fac4ab9b9e25b77f96f57a794bf1cea4402752532469f2070956251"
+        },
+        "stdout.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/grinch-stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "snapshots": {
+        "combat": {
+          "sha256": "800b6d3e8c628a1e624417918d96f1fda0d3692b8a2af754d4037ad14db8b74f",
+          "bytes": 48148670,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 0,
+            "qa_end_count": 0,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 705,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 901,
+            "combatant": 0,
+            "combatant_ava": "content\\pic\\master\\master_edward_sepia.png",
+            "итог_боя": 0,
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        },
+        "victory": {
+          "sha256": "0b0b0cc1a7c54e57fff86d7944ba6cbfc473fde90513d1845bd29b0a8e7ee5b2",
+          "bytes": 48133034,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 0,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 705,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 901,
+            "combatant": 0,
+            "combatant_ava": "content\\pic\\master\\master_edward_sepia.png",
+            "итог_боя": "победа",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        },
+        "complete": {
+          "sha256": "f4d289be17763bcf62b856a21aa1b115e082cfda40176152f0045a6121ef1ee7",
+          "bytes": 48125904,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 1,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 705,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 1,
+            "sparks": 10000,
+            "interaction_city": 10385,
+            "combatant": 0,
+            "combatant_ava": "content\\pic\\master\\master_edward_sepia.png",
+            "итог_боя": "победа",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "healthy-slave-off",
+      "checkpoint": "Current WORK with intact product routes and native DOM click callbacks: fog",
+      "pass": true,
+      "reason": "",
+      "durationMs": 12754,
+      "fixture": {
+        "name": "healthy-slave-off",
+        "kind": "fog",
+        "actor": 1,
+        "event": 61102,
+        "fame": 23,
+        "witnessFame": 61,
+        "witness": null,
+        "wins": 0,
+        "loss": false,
+        "draw": 1,
+        "rallyWon": 0,
+        "quarter": 0,
+        "resultReturn": false,
+        "constitution": 0,
+        "series": false,
+        "weakEnemyFixture": true,
+        "instrumentation": [
+          "Start fixture",
+          "prefix counters",
+          "tail assertions and save snapshots",
+          "native DOM synthetic click driver",
+          "Enemy test fixture HP/stamina/spirit=1, damage/resistance=0 after actual database load"
+        ],
+        "productionHelpersUnchanged": true,
+        "GTTargetsRetained": true,
+        "combatOutcomeInjected": false
+      },
+      "logs": {
+        "stderr.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/healthy-slave-off-stderr.log",
+          "sha256": "d203a20f3dc8ee94e4f67d570d1ca92b9295e3033cae612ff303621d4df98cb3"
+        },
+        "stdout.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/healthy-slave-off-stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "snapshots": {
+        "combat": {
+          "sha256": "801075b7ca83e054352e369ccbc3b6d6a75daf1ee187ff776f514c2019309e60",
+          "bytes": 48148328,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 0,
+            "qa_end_count": 0,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": 65,
+            "qa_base_stamina": 80,
+            "макс_здоровье_игрока": 65,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 901,
+            "combatant": 1,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": 0,
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        },
+        "victory": {
+          "sha256": "89b6410ec6117948007c0380f7604714d0c3522dc0b7231bf8e2451b349f81ca",
+          "bytes": 48134780,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 0,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": 1,
+            "qa_canvas_blocked": 1,
+            "qa_portrait_width": 151,
+            "qa_base_hp": 65,
+            "qa_base_stamina": 80,
+            "макс_здоровье_игрока": 65,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 901,
+            "combatant": 1,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": "победа",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        },
+        "settled": {
+          "sha256": "269704e095f225f2294961506c702ab9b0d036cbfd5ab94869fff7499c66a881",
+          "bytes": 48133038,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 1,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 1,
+            "qa_finish_stamina": 71,
+            "qa_pre_settle_energy": 5,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": 1,
+            "qa_canvas_blocked": 1,
+            "qa_portrait_width": 151,
+            "qa_base_hp": 65,
+            "qa_base_stamina": 80,
+            "макс_здоровье_игрока": 65,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 901,
+            "combatant": 0,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": "победа",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 4,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        },
+        "complete": {
+          "sha256": "56d419e39fe2f077802dc8f0e3d364e35e5558308eb565af47d3b6aff81bbb21",
+          "bytes": 48051976,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 1,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 1,
+            "qa_finish_stamina": 71,
+            "qa_pre_settle_energy": 5,
+            "qa_expected_energy": 4,
+            "qa_portrait_loaded": 1,
+            "qa_canvas_blocked": 1,
+            "qa_portrait_width": 151,
+            "qa_base_hp": 65,
+            "qa_base_stamina": 80,
+            "макс_здоровье_игрока": 65,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 61120,
+            "combatant": 0,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": 0,
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 4,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "healthy-slave-on",
+      "checkpoint": "Current WORK with intact product routes and native DOM click callbacks: fog",
+      "pass": true,
+      "reason": "",
+      "durationMs": 13976,
+      "fixture": {
+        "name": "healthy-slave-on",
+        "kind": "fog",
+        "actor": 1,
+        "event": 61102,
+        "fame": 23,
+        "witnessFame": 61,
+        "witness": null,
+        "wins": 0,
+        "loss": false,
+        "draw": 1,
+        "rallyWon": 0,
+        "quarter": 0,
+        "resultReturn": false,
+        "constitution": 1,
+        "series": false,
+        "weakEnemyFixture": true,
+        "instrumentation": [
+          "Start fixture",
+          "prefix counters",
+          "tail assertions and save snapshots",
+          "native DOM synthetic click driver",
+          "Enemy test fixture HP/stamina/spirit=1, damage/resistance=0 after actual database load"
+        ],
+        "productionHelpersUnchanged": true,
+        "GTTargetsRetained": true,
+        "combatOutcomeInjected": false
+      },
+      "logs": {
+        "stderr.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/healthy-slave-on-stderr.log",
+          "sha256": "bdc976c53958933df1e4cca32e07ad48f937b3784cd563a16596fe1a7f4b7d83"
+        },
+        "stdout.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/healthy-slave-on-stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "snapshots": {
+        "combat": {
+          "sha256": "292656ef0f070d4b8f14c5202d70aea71fc06e418e1d4afa7008ea5ac0b06ef7",
+          "bytes": 48148316,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 0,
+            "qa_end_count": 0,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": 65,
+            "qa_base_stamina": 80,
+            "макс_здоровье_игрока": 78,
+            "макс_выносливость_игрока": 96,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 901,
+            "combatant": 1,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": 0,
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 1,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 1,
+              "fame": 61
+            }
+          }
+        },
+        "victory": {
+          "sha256": "c50fa61f18b758fc615f5b3ea34e618b27f13910efa9734e9be1918efe8be5d1",
+          "bytes": 48134874,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 0,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": 1,
+            "qa_canvas_blocked": 1,
+            "qa_portrait_width": 151,
+            "qa_base_hp": 65,
+            "qa_base_stamina": 80,
+            "макс_здоровье_игрока": 78,
+            "макс_выносливость_игрока": 96,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 901,
+            "combatant": 1,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": "победа",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 1,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 1,
+              "fame": 61
+            }
+          }
+        },
+        "settled": {
+          "sha256": "50c3a1646ffcf81fda76bb8fe82fc37105476bb99bca21e1561ba082bff622c8",
+          "bytes": 48133096,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 1,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 1,
+            "qa_finish_stamina": 92,
+            "qa_pre_settle_energy": 5,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": 1,
+            "qa_canvas_blocked": 1,
+            "qa_portrait_width": 151,
+            "qa_base_hp": 65,
+            "qa_base_stamina": 80,
+            "макс_здоровье_игрока": 78,
+            "макс_выносливость_игрока": 96,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 901,
+            "combatant": 0,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": "победа",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 4,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 1,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 1,
+              "fame": 61
+            }
+          }
+        },
+        "complete": {
+          "sha256": "36a8bd91232c5b305b7b832ac37ccb5310739094b2fd02b04482cf759390398e",
+          "bytes": 48052034,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 1,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 1,
+            "qa_finish_stamina": 92,
+            "qa_pre_settle_energy": 5,
+            "qa_expected_energy": 4,
+            "qa_portrait_loaded": 1,
+            "qa_canvas_blocked": 1,
+            "qa_portrait_width": 151,
+            "qa_base_hp": 65,
+            "qa_base_stamina": 80,
+            "макс_здоровье_игрока": 78,
+            "макс_выносливость_игрока": 96,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 61120,
+            "combatant": 0,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": 0,
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 4,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 1,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 1,
+              "fame": 61
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "healthy-assistant-off",
+      "checkpoint": "Current WORK with intact product routes and native DOM click callbacks: fog",
+      "pass": true,
+      "reason": "",
+      "durationMs": 11651,
+      "fixture": {
+        "name": "healthy-assistant-off",
+        "kind": "fog",
+        "actor": 2,
+        "event": 61102,
+        "fame": 23,
+        "witnessFame": 61,
+        "witness": null,
+        "wins": 0,
+        "loss": false,
+        "draw": 1,
+        "rallyWon": 0,
+        "quarter": 0,
+        "resultReturn": false,
+        "constitution": 0,
+        "series": false,
+        "weakEnemyFixture": true,
+        "instrumentation": [
+          "Start fixture",
+          "prefix counters",
+          "tail assertions and save snapshots",
+          "native DOM synthetic click driver",
+          "Enemy test fixture HP/stamina/spirit=1, damage/resistance=0 after actual database load"
+        ],
+        "productionHelpersUnchanged": true,
+        "GTTargetsRetained": true,
+        "combatOutcomeInjected": false
+      },
+      "logs": {
+        "stderr.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/healthy-assistant-off-stderr.log",
+          "sha256": "848bc13e76d191f289d0e876cd74833fac915aef53456f6d52859f25349df529"
+        },
+        "stdout.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/healthy-assistant-off-stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "snapshots": {
+        "combat": {
+          "sha256": "487a8a4c436b51be4819d1dd9c7edbf258004249e281f3e24971ef871fa6bd07",
+          "bytes": 48148198,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 0,
+            "qa_end_count": 0,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": 65,
+            "qa_base_stamina": 80,
+            "макс_здоровье_игрока": 65,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 901,
+            "combatant": 2,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": 0,
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        },
+        "victory": {
+          "sha256": "3a1aba6852f6378911147d8d8ec2a9386b219e39440b25a4eeadd8cb7919f439",
+          "bytes": 48134638,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 0,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": 1,
+            "qa_canvas_blocked": 1,
+            "qa_portrait_width": 151,
+            "qa_base_hp": 65,
+            "qa_base_stamina": 80,
+            "макс_здоровье_игрока": 65,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 901,
+            "combatant": 2,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": "победа",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        },
+        "settled": {
+          "sha256": "cbe9766e89330e5362cc26f50609324b75eac93a7de1a0cf1ec0dcbff6bd6534",
+          "bytes": 48132948,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 1,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 1,
+            "qa_finish_stamina": 71,
+            "qa_pre_settle_energy": 5,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": 1,
+            "qa_canvas_blocked": 1,
+            "qa_portrait_width": 151,
+            "qa_base_hp": 65,
+            "qa_base_stamina": 80,
+            "макс_здоровье_игрока": 65,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 901,
+            "combatant": 0,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": "победа",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 4,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        },
+        "complete": {
+          "sha256": "f8836740980138b8716c0c82e95c8d1a1ade3a5be158f365e7fca208e240825f",
+          "bytes": 48051774,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 1,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 1,
+            "qa_finish_stamina": 71,
+            "qa_pre_settle_energy": 5,
+            "qa_expected_energy": 4,
+            "qa_portrait_loaded": 1,
+            "qa_canvas_blocked": 1,
+            "qa_portrait_width": 151,
+            "qa_base_hp": 65,
+            "qa_base_stamina": 80,
+            "макс_здоровье_игрока": 65,
+            "макс_выносливость_игрока": 80,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 61120,
+            "combatant": 0,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": 0,
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 4,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "healthy-assistant-on",
+      "checkpoint": "Current WORK with intact product routes and native DOM click callbacks: fog",
+      "pass": true,
+      "reason": "",
+      "durationMs": 11906,
+      "fixture": {
+        "name": "healthy-assistant-on",
+        "kind": "fog",
+        "actor": 2,
+        "event": 61102,
+        "fame": 23,
+        "witnessFame": 61,
+        "witness": null,
+        "wins": 0,
+        "loss": false,
+        "draw": 1,
+        "rallyWon": 0,
+        "quarter": 0,
+        "resultReturn": false,
+        "constitution": 1,
+        "series": false,
+        "weakEnemyFixture": true,
+        "instrumentation": [
+          "Start fixture",
+          "prefix counters",
+          "tail assertions and save snapshots",
+          "native DOM synthetic click driver",
+          "Enemy test fixture HP/stamina/spirit=1, damage/resistance=0 after actual database load"
+        ],
+        "productionHelpersUnchanged": true,
+        "GTTargetsRetained": true,
+        "combatOutcomeInjected": false
+      },
+      "logs": {
+        "stderr.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/healthy-assistant-on-stderr.log",
+          "sha256": "49df2b2aeaa25e9f4730cffee4c3a02826918ce5729c8510dc35b12988534db9"
+        },
+        "stdout.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/healthy-assistant-on-stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "snapshots": {
+        "combat": {
+          "sha256": "65b7886a853a343d09efd49ce783abf3e70c1d100fb40b0bcaa7e834d5097f44",
+          "bytes": 48148180,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 0,
+            "qa_end_count": 0,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": 65,
+            "qa_base_stamina": 80,
+            "макс_здоровье_игрока": 78,
+            "макс_выносливость_игрока": 96,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 901,
+            "combatant": 2,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": 0,
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 1,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 1,
+              "fame": 61
+            }
+          }
+        },
+        "victory": {
+          "sha256": "88bbecaed03b700966ba72ab64c7c9ebaa4b52c82a3c2e39defdae1929839344",
+          "bytes": 48134738,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 0,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": 1,
+            "qa_canvas_blocked": 1,
+            "qa_portrait_width": 151,
+            "qa_base_hp": 65,
+            "qa_base_stamina": 80,
+            "макс_здоровье_игрока": 78,
+            "макс_выносливость_игрока": 96,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 901,
+            "combatant": 2,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": "победа",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 1,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 1,
+              "fame": 61
+            }
+          }
+        },
+        "settled": {
+          "sha256": "283308645f1ff11c84f0bebdefee21ea21b739da5addf614836e7c3cc9750ae5",
+          "bytes": 48133012,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 1,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 1,
+            "qa_finish_stamina": 92,
+            "qa_pre_settle_energy": 5,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": 1,
+            "qa_canvas_blocked": 1,
+            "qa_portrait_width": 151,
+            "qa_base_hp": 65,
+            "qa_base_stamina": 80,
+            "макс_здоровье_игрока": 78,
+            "макс_выносливость_игрока": 96,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 901,
+            "combatant": 0,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": "победа",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 1,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 4,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 1,
+              "fame": 61
+            }
+          }
+        },
+        "complete": {
+          "sha256": "bf1f593b7a9401c7a81333c3118c2ce460cde85d964c86486cc70f1c699eb7a2",
+          "bytes": 48052116,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 1,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 1,
+            "qa_finish_stamina": 92,
+            "qa_pre_settle_energy": 5,
+            "qa_expected_energy": 4,
+            "qa_portrait_loaded": 1,
+            "qa_canvas_blocked": 1,
+            "qa_portrait_width": 151,
+            "qa_base_hp": 65,
+            "qa_base_stamina": 80,
+            "макс_здоровье_игрока": 78,
+            "макс_выносливость_игрока": 96,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 61120,
+            "combatant": 0,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": 0,
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 1,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 4,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 1,
+              "fame": 61
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "catfight-loss",
+      "checkpoint": "Current WORK with intact product routes and native DOM click callbacks: catfight",
+      "pass": true,
+      "reason": "",
+      "durationMs": 12737,
+      "fixture": {
+        "name": "catfight-loss",
+        "kind": "catfight",
+        "actor": 1,
+        "event": 61102,
+        "fame": 23,
+        "witnessFame": 61,
+        "witness": null,
+        "wins": 2,
+        "loss": true,
+        "draw": 1,
+        "rallyWon": 0,
+        "quarter": 0,
+        "resultReturn": false,
+        "constitution": null,
+        "series": false,
+        "weakEnemyFixture": false,
+        "instrumentation": [
+          "Start fixture",
+          "prefix counters",
+          "tail assertions and save snapshots",
+          "native DOM synthetic click driver"
+        ],
+        "productionHelpersUnchanged": true,
+        "GTTargetsRetained": true,
+        "combatOutcomeInjected": false,
+        "durableEnemyFixture": {
+          "health": 9999,
+          "stamina": 9999,
+          "spirit": 9999,
+          "normalDamage": 1000,
+          "normalDamageType": "psychic",
+          "specialDamage": 0,
+          "outcomeAssigned": false
+        }
+      },
+      "logs": {
+        "stderr.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/catfight-loss-stderr.log",
+          "sha256": "480a68bfd6bba4cac97f3ffd9e0fc2a30645b7a92f82b01fabb4cf34a5a1fedc"
+        },
+        "stdout.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/catfight-loss-stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "snapshots": {
+        "combat": {
+          "sha256": "2b3ff4a5572d275dd4b873fff22dc1965e291957ca2e0125f7f5ee8ac6121c58",
+          "bytes": 48137656,
+          "values": {
+            "qa_turns": 3,
+            "qa_exit_count": 0,
+            "qa_end_count": 0,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": 1,
+            "qa_canvas_blocked": 1,
+            "qa_portrait_width": 151,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 530,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 103001,
+            "combatant": 1,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": 0,
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 2,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        },
+        "victory": {
+          "sha256": "e2fecbea8865ec18becd5667c1d91fa84e1375170a0b356f0feea75566b4f265",
+          "bytes": 48119872,
+          "values": {
+            "qa_turns": 3,
+            "qa_exit_count": 0,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": 1,
+            "qa_canvas_blocked": 1,
+            "qa_portrait_width": 151,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 530,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 103001,
+            "combatant": 1,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": "бегство",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 2,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        },
+        "outcome": {
+          "sha256": "1006fa7d315519dc2f7777ff190c362cf6f6f7bcf7d7e5ee0a8bf96f817d569b",
+          "bytes": 48119872,
+          "values": {
+            "qa_turns": 3,
+            "qa_exit_count": 0,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": 1,
+            "qa_canvas_blocked": 1,
+            "qa_portrait_width": 151,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 530,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 103001,
+            "combatant": 1,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": "бегство",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 2,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        },
+        "complete": {
+          "sha256": "52db29256211a7d79e053761a49a6447e8e0d93539829ebe865b8ea06a8cc6b7",
+          "bytes": 48119782,
+          "values": {
+            "qa_turns": 3,
+            "qa_exit_count": 1,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": 1,
+            "qa_canvas_blocked": 1,
+            "qa_portrait_width": 151,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 530,
+            "master_energy": 4,
+            "sparks": 9700,
+            "interaction_city": 103004,
+            "combatant": 1,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": "бегство",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": -3,
+              "half_action": 0,
+              "catfight_level": 2,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "arena-color",
+      "checkpoint": "Current WORK with intact product routes and native DOM click callbacks: arena",
+      "pass": true,
+      "reason": "",
+      "durationMs": 14563,
+      "fixture": {
+        "name": "arena-color",
+        "kind": "arena",
+        "actor": 1,
+        "event": 61102,
+        "fame": 23,
+        "witnessFame": 61,
+        "witness": null,
+        "wins": 0,
+        "loss": false,
+        "draw": 1,
+        "rallyWon": 0,
+        "quarter": 0,
+        "resultReturn": false,
+        "constitution": null,
+        "series": false,
+        "weakEnemyFixture": true,
+        "instrumentation": [
+          "Start fixture",
+          "prefix counters",
+          "tail assertions and save snapshots",
+          "native DOM synthetic click driver",
+          "Enemy test fixture HP/stamina/spirit=1, damage/resistance=0 after actual database load"
+        ],
+        "productionHelpersUnchanged": true,
+        "GTTargetsRetained": true,
+        "combatOutcomeInjected": false
+      },
+      "logs": {
+        "stderr.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/arena-color-stderr.log",
+          "sha256": "820a897412bddd4d2f28f5a14eabbfb99abe62d564d3f31f04cb688b15cc8df2"
+        },
+        "stdout.log": {
+          "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\combat/evidence/arena-color-stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "snapshots": {
+        "combat": {
+          "sha256": "67d2494b13e200bc70bcf63863d2ba81ad461e9284fe1987c141d460a9acf917",
+          "bytes": 48135846,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 0,
+            "qa_end_count": 0,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": null,
+            "qa_canvas_blocked": null,
+            "qa_portrait_width": null,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 530,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 12801,
+            "combatant": 1,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": 0,
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        },
+        "victory": {
+          "sha256": "046b1b9b788068ad6fe950a46cd88018ccfdec121a05b3bbf5ee6ad2d51a5135",
+          "bytes": 48120672,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 0,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": 1,
+            "qa_canvas_blocked": 1,
+            "qa_portrait_width": 151,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 530,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 12801,
+            "combatant": 1,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": "победа",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        },
+        "outcome": {
+          "sha256": "76086c07ccb3541a06d643bf90318e94078010e9dcce44757d21d002b9668d81",
+          "bytes": 48120672,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 0,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": 1,
+            "qa_canvas_blocked": 1,
+            "qa_portrait_width": 151,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 530,
+            "master_energy": 5,
+            "sparks": 10000,
+            "interaction_city": 12801,
+            "combatant": 1,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": "победа",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 23
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        },
+        "complete": {
+          "sha256": "574cac4c22f5f68c41212a53796a5ebfee94abd2513c65c1df006b2ab22de219",
+          "bytes": 48121340,
+          "values": {
+            "qa_turns": 1,
+            "qa_exit_count": 1,
+            "qa_end_count": 1,
+            "qa_battle_count": 1,
+            "qa_settle_count": 0,
+            "qa_finish_stamina": null,
+            "qa_pre_settle_energy": null,
+            "qa_expected_energy": null,
+            "qa_portrait_loaded": 1,
+            "qa_canvas_blocked": 1,
+            "qa_portrait_width": 151,
+            "qa_base_hp": null,
+            "qa_base_stamina": null,
+            "макс_здоровье_игрока": 605,
+            "макс_выносливость_игрока": 530,
+            "master_energy": 4,
+            "sparks": 10050,
+            "interaction_city": 1294,
+            "combatant": 1,
+            "combatant_ava": "content/pic/girls/face/2571/2571_face.png",
+            "итог_боя": "победа",
+            "slave": {
+              "id": 91401,
+              "age": 2,
+              "energy": -3,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 1,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 27
+            },
+            "assistant": {
+              "id": 91402,
+              "age": 2,
+              "energy": 5,
+              "half_action": 0,
+              "catfight_level": 0,
+              "arena_level": 0,
+              "jo9_rally_won": 0,
+              "jo9_rally_fame_quarter": 0,
+              "jo9_constitution": 0,
+              "fame": 61
+            }
+          }
+        }
+      }
+    }
+  ],
+  "danger": {
+    "hash": "a70bd177d8e7ade58243578b2f04745ff00cec3884d26d3b924dfffc8a8d007a",
+    "exit": 0,
+    "results": [
+      {
+        "name": "danger-ui",
+        "checkpoint": "16 original encounters -> real shop render -> native DOM hint and 3 fight links -> test next case",
+        "pass": true,
+        "reason": "",
+        "durationMs": 16381
+      }
+    ],
+    "cases": [
+      {
+        "event": 61101,
+        "day": 1,
+        "hintHash": "4a39d3af3355e55943c264079001f9f6b980886a105b25fdc3e5acef864b28f0"
+      },
+      {
+        "event": 61102,
+        "day": 1,
+        "hintHash": "fcfeef59036d8ce0b5ba3830b7ed9fbd1c808d135805059ade5340d0e825f2b6"
+      },
+      {
+        "event": 61103,
+        "day": 1,
+        "hintHash": "97d0089623f12f7e4e2168bf3858f8012058d557e463ab331982b62be0b707b0"
+      },
+      {
+        "event": 61104,
+        "day": 1,
+        "hintHash": "575761a8298df0aaa477ee7355c6204259dfdf2f729f9b7c64239ec3e119d90f"
+      },
+      {
+        "event": 61105,
+        "day": 1,
+        "hintHash": "62c484580f71a46834c9b99f776334e71c6fc3eac410e7160844ee72ac41b31a"
+      },
+      {
+        "event": 61106,
+        "day": 1,
+        "hintHash": "00ba3f943441a091bcebeb1ca0d09fceea3da3fbf07046179dbc2f02b58f1df3"
+      },
+      {
+        "event": 61107,
+        "day": 1,
+        "hintHash": "0c896463a80aa8451ba310ee4900af9c96e40acc00a06c7dcce5ee5e7940b5bf"
+      },
+      {
+        "event": 61108,
+        "day": 1,
+        "hintHash": "4aac6c1435655117f7185831ebf0e369d447de32283f465fe87ab36ccb8ff1b9"
+      },
+      {
+        "event": 61109,
+        "day": 1,
+        "hintHash": "d7856e654ea614746d2f0d04280d904bf3d116b3abf212ea1fb7712ff8f7d356"
+      },
+      {
+        "event": 61110,
+        "day": 1,
+        "hintHash": "ae44c5356407efd24d9db654feb3deb837286aefa873eb373621c2885d57adde"
+      },
+      {
+        "event": 61111,
+        "day": 1,
+        "hintHash": "97f0fbea73b4573370f7280edcee2303ae184709fec972a3ffbe88626c9de113"
+      },
+      {
+        "event": 61112,
+        "day": 2,
+        "hintHash": "2a79889441c72a674fdbc5227891c10014c740afa6f79b81a848d25cae396f0c"
+      },
+      {
+        "event": 61112,
+        "day": 1,
+        "hintHash": "2a79889441c72a674fdbc5227891c10014c740afa6f79b81a848d25cae396f0c"
+      },
+      {
+        "event": 61113,
+        "day": 1,
+        "hintHash": "38a9270667fca0a0031009d5c01522307b5e01526f84b277ba11a9d7ea5a5467"
+      },
+      {
+        "event": 61114,
+        "day": 1,
+        "hintHash": "83105513221b6bb0893b06310205af94f097efb115af48cf807e3cf9b4da5186"
+      },
+      {
+        "event": 61115,
+        "day": 1,
+        "hintHash": "8097a783b98315c7c9706b28063f7a538e7c12e4797f874d60bf817c05d221c8"
+      }
+    ],
+    "exclusionChecks": [
+      {
+        "location": "$catfight_fight_start",
+        "containsHint": false
+      },
+      {
+        "location": "$gladiator_fight_start",
+        "containsHint": false
+      },
+      {
+        "location": "colosseum_fight",
+        "containsHint": false
+      }
+    ],
+    "limits": [
+      "Native Qt DOM is inspected after actual encounter and shop rendering. Only diagnostic navigation between independent encounters is injected.",
+      "No fight callback is selected in this pre-choice display test. Actual fog fight callbacks are covered by native-playtest.cjs.",
+      "Arena exclusion is source-level verification, not an exhaustive arena UI playthrough."
+    ]
+  },
+  "preexistingDefects": [
+    {
+      "id": "CATFIGHT_RESULT_RETURN_MISSING_LOCATION",
+      "status": "REPRODUCED",
+      "case": "catfight-return",
+      "observed": "Native win result -> two original forward object clicks -> no club return, completion timeout.",
+      "cause": "$return_lock='goto_loc', but no goto_loc location exists.",
+      "baseline": "Root independently verified shipped r4 FullQSP c6701e3a also has both return assignments and no goto_loc location.",
+      "changed": false
+    }
+  ],
+  "verificationBoundaries": [
+    "Disposable current-WORK copies only. Original bodies retained; counters/assertions/snapshots/native DOM automation appended. Test actor/enemy fixtures and narrowly deterministic RNG are disclosed per case.",
+    "Native DOM mouse events drive original anchors and object callbacks. Diagnostic portrait counters prefix the unchanged original attack callback expression. No external physical mouse is claimed.",
+    "No product edits, Full sync, commits, pushes, normal-save writes or packaging."
+  ]
+}

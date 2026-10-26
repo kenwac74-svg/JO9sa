@@ -1,0 +1,344 @@
+[
+  {
+    "id": "assets-and-quick",
+    "titleKo": "파산 위기: 전체 자산과 무낙인 급매",
+    "group": "checked",
+    "baseSave": "JO9_TEST_20261023_07_ASSETS.sav",
+    "setup": [
+      "is_home=1 & city_form=0 & city_district=-1 & menu_form=0",
+      "$place='home_lux' & $return_lock='menu_form'",
+      "slave['brand']=0 & assistant['brand']=0",
+      "sparks=0 & final_payment=50000",
+      "jo9_lq['active']=0",
+      "gs 'jo9_liquidation','begin'",
+      "jo9_lq['page']=0"
+    ],
+    "entry": "gt 'jo9_liquidation','view'",
+    "checkpoint": "jo9_liquidation",
+    "checkpointGuard": "jo9_lq['active']=1 and jo9_lq['bill']=50000 and jo9_lq['page']=0 and sparks=0 and slave_state=1 and assistant_state=1 and slave_type=2579 and assistant_type=2571 and slave['age']=2 and assistant['age']=2 and slave['brand']=0 and assistant['brand']=0",
+    "how": [
+      "불러온 상태는 처분 전의 실내장식 페이지다. 장식 정리, 다음 자산, 이전 자산을 직접 선택해 15페이지를 확인한다.",
+      "장식 정리 후 기본 인테리어가 되고 같은 장식에서 두 번 환급되지 않는지 확인한다. 빈 시설과 개인실 철거 후 현재 청구액과 다음 결산 유지비의 설명을 구별한다.",
+      "무낙인 급매만 비교할 때는 이 파일을 다시 불러오고 처분을 실행하지 않은 채 다음 자산으로 노예·조수 매각 페이지까지 이동한다. 각 인물은 별도로 다시 불러와 판매한다.",
+      "다른 방법으로 자금을 마련한다를 선택하면 원래 집 메뉴로 돌아와야 한다. 미납 상태의 하루 종료는 처분 화면으로 돌아와야 한다.",
+      "별도 재로드 분기에서 모든 자산과 두 인물을 실제로 처분하고도 돈이 모자라면 원래 파산 엔딩을 확인한다."
+    ],
+    "expect": [
+      "시험 청구 50000, 초기 자금 0. 장식 첫 환급 460. 큰 청구를 자동으로 조정하지 않는다.",
+      "동일 원본 인물의 무낙인 급매는 에게야 202, 이사벨라 204가 기존 현재 WORK 검사값이다. 각 제시액과 실제 증가액이 같고 선택한 한 사람만 제거되어야 한다.",
+      "일반 NPC 납품 의뢰·퀘스트·평판 완료가 급매 때문에 발생하지 않는다.",
+      "모든 처분 가능 자산이 실제로 소진되고도 미납일 때만 원래 파산 엔딩으로 이동한다."
+    ],
+    "limits": [
+      "07 전체 자산과 10 무낙인 급매를 합친 시험 표본이다. 급매 가격 비교는 다른 처분을 하기 전 재로드 분기로 수행한다.",
+      "50000은 여러 페이지와 최종 소진 분기를 볼 수 있게 만든 시험값이며 정상 플레이의 청구액이 아니다.",
+      "baseSave의 $death[0]는 전투용 문장으로 오염되어 있다. 공장 공통 복원에서 auto_day_end.sav의 원래 전체 다행 $death[0]를 정확히 복구해야 한다.",
+      "원래 $ongload는 활성 미납 상태에서 interior_storage→refresh_database→interior_restore→jo9_liquidation view를 실행한다. 저장 때의 화면 문자열만 보존하는 방식으로 대체하면 안 된다."
+    ]
+  },
+  {
+    "id": "bill-settle-once",
+    "titleKo": "파산 위기: 100스파크 1회 정산",
+    "group": "checked",
+    "baseSave": "JO9_TEST_20261023_08_SETTLE.sav",
+    "setup": [
+      "is_home=1 & city_form=0 & city_district=-1 & menu_form=0",
+      "$place='home_lux' & $return_lock='menu_form'",
+      "sparks=0 & final_payment=100",
+      "jo9_lq['active']=0",
+      "gs 'jo9_liquidation','begin'",
+      "jo9_lq['page']=0"
+    ],
+    "entry": "gt 'jo9_liquidation','view'",
+    "checkpoint": "jo9_liquidation",
+    "checkpointGuard": "jo9_lq['active']=1 and jo9_lq['bill']=100 and jo9_lq['page']=0 and sparks=0 and slave_type=2579 and assistant_type=2571 and slave['age']=2 and assistant['age']=2",
+    "how": [
+      "실내장식을 정리한다를 직접 선택한다.",
+      "원래 집 화면으로 돌아오면 자금 360과 기본 인테리어를 확인한다.",
+      "사용자가 새 이름으로 저장하고 다시 불러와도 자금이 360인지 확인한다. 원래 미납 세이브는 다시 불러와 독립적으로 재시험한다."
+    ],
+    "expect": [
+      "장식 환급 460에서 청구 100을 정확히 한 번 차감하여 360이 남는다.",
+      "jo9_lq active=0인 원래 집 메뉴로 복귀한다. 재저장·재로드에서 100을 또 차감하지 않는다."
+    ],
+    "limits": [
+      "100스파크는 정산을 한 행동으로 완료하기 위한 시험값이다.",
+      "조작 후 별도 저장은 수동 확인 절차이며 이 레시피가 자동으로 클릭하거나 후속 저장을 만들지 않는다."
+    ]
+  },
+  {
+    "id": "occupied-assets",
+    "titleKo": "파산 위기: 입주 개인실·동면 장치 보호",
+    "group": "checked",
+    "baseSave": "JO9_TEST_20261023_09_OCCUPIED.sav",
+    "setup": [
+      "is_home=1 & city_form=0 & city_district=-1 & menu_form=0",
+      "$place='home_lux' & $return_lock='menu_form'",
+      "sparks=0 & final_payment=50000",
+      "jo9_lq['active']=0",
+      "gs 'jo9_liquidation','begin'",
+      "jo9_lq['page']=4"
+    ],
+    "entry": "gt 'jo9_liquidation','view'",
+    "checkpoint": "jo9_liquidation",
+    "checkpointGuard": "jo9_lq['active']=1 and jo9_lq['bill']=50000 and jo9_lq['page']=4 and sparks=0 and room4_state=1 and iced_1_state=1 and slave_state=0 and assistant_state=0 and room4_type=2579 and iced_1_type=2571 and room4['age']=2 and iced_1['age']=2 and jo9_lq_available['room4']=0",
+    "how": [
+      "최초 화면의 개인실4를 처분할 수 없는지 확인한다. 이 표본의 에게야는 개인실4, 이사벨라는 동면 셀1에 있다.",
+      "다음 자산으로 동면 장치와 현재 거처 페이지까지 이동한다. 입주자 때문에 장치 반환과 이주가 막히는지 확인한다.",
+      "다른 방법으로 자금을 마련한다로 집에 돌아온 뒤 하루 종료를 선택한다. 청구 50000과 인물 배치를 유지한 채 처분 화면으로 돌아와야 한다.",
+      "인물을 옮기려면 원래 배치 메뉴를 사용한다. 시설을 비우기 전에 화면 진입만으로 인물이 자동 이동하거나 시설이 철거되면 안 된다."
+    ],
+    "expect": [
+      "개인실4·동면 장치·현재 거처 처분이 입주 상태에서 차단된다.",
+      "수동 복귀 후 미납 하루 종료는 같은 날짜와 청구액을 보존하며 재차단된다.",
+      "room4와 iced_1의 인물 ID·종류·age=2가 유지된다."
+    ],
+    "limits": [
+      "활성 slave/assistant 슬롯이 비어 있는 것이 의도한 상태다. 전역 성인 검사도 room4/iced_1에 적용해야 하며 빈 슬롯의 age=0을 실패로 오인하면 안 된다.",
+      "다른 시설은 비어 있어 처분 가능할 수 있다. 보호 대상은 실제 입주한 시설과 그 배치로 막히는 거처 이전이다."
+    ]
+  },
+  {
+    "id": "clinic-and-growth",
+    "titleKo": "의료센터: 1000스파크 시술·취소·건강 성장",
+    "group": "checked",
+    "baseSave": "JO9_TEST_20261023_01_HOME.sav",
+    "setup": [
+      "is_home=0 & city_form=33 & city_district=3 & sp_txt=1 & skip_to=0",
+      "$return_lock='shop_general'",
+      "sparks=2500 & master_medic=0 & bath=0",
+      "slave_state=1 & assistant_state=1",
+      "slave['health_issues_revealed']=1 & assistant['health_issues_revealed']=1",
+      "slave['rehabilitation']=0 & assistant['rehabilitation']=0",
+      "slave['jo9_constitution']=-1 & assistant['jo9_constitution']=0",
+      "slave['jo9_constitution_treated']=0 & assistant['jo9_constitution_treated']=0",
+      "slave['jo9_constitution_half']=0 & assistant['jo9_constitution_half']=0",
+      "slave['stamina']=1 & slave_rate['stamina']=0 & slave['energy']=1 & slave['half_action']=0",
+      "slave['diet_supplements']=1 & slave['diet_portion']=2 & slave['metabolism']=2 & slave['calories']=2 & slave['well_rested']=0",
+      "slave['fat']=2 & slave['mood']=3 & slave['nurse']=0 & assistant['nurse']=0",
+      "slave['ill']=0 & slave['wounds']=0 & slave['injury']=0 & slave['jo9_learning_trait']=0",
+      "interaction_city=331"
+    ],
+    "entry": "gt 'interaction_city'",
+    "checkpoint": "shop_general",
+    "checkpointGuard": "$place='hospital' and $return_lock='shop_general' and sp_txt=1 and sparks=2500 and slave_type=2579 and assistant_type=2571 and slave['age']=2 and assistant['age']=2 and slave['jo9_constitution']=-1 and slave['jo9_constitution_treated']=0 and assistant['jo9_constitution']=0 and assistant['jo9_constitution_treated']=0 and instr($display_options[2],'constitution_menu')>0",
+    "how": [
+      "노예 신체 개조→체질개선 (1000$)을 누른다. 확인창에서 취소하면 잔액 2500과 약골이 유지되어야 한다.",
+      "다시 신청해 승인한다. 잔액 1500, 건강체질, 같은 인물에게 재시술 불가를 확인한다. 즉시 체력 등급이 올라가는 시술은 아니다.",
+      "다시 불러와 조수 신체 개조에서도 같은 확인·취소 경로를 비교한다. 원래 메뉴로 두 인물의 시술을 모두 승인한 분기에서는 잔액이 500이다.",
+      "건강 성장만 시험할 때는 다시 불러온 뒤 에게야에게만 시술하고, 그녀에게 다른 과제를 주지 않고 집에 돌아와 하루를 종료한다. 식사·보조식품·남은 행동력의 휴식 보고를 끝까지 넘긴다.",
+      "비교하려면 다시 불러와 시술을 취소한 뒤 같은 방식으로 하루를 종료한다. 원래 인물 정보와 행동력 표시로 차이를 확인한다."
+    ],
+    "expect": [
+      "확인창을 열 때는 차감하지 않고 승인 시 인물당 1000을 한 번만 차감한다. 취소 시 0 차감이다.",
+      "약골 -1은 건강체질 1로 바뀌며 treated=1. 기존 체력 등급·체력 경험치를 시술 자체로 올리지 않는다.",
+      "건강체질은 운동 관련 교육과 원래 식사·보조식품·충분한 휴식의 양수 체력 성장에 1.5배를 적용한다. 홀수 증가분은 인물의 절반 이월값으로 누적한다.",
+      "하루 종료의 다른 조건이 같고 추가 과제가 없다면 건강 성장 입력 2(휴식)+2(영양)+1(보조식품)=5가 7과 절반 이월로 반영되는 기존 검사와 비교할 수 있다.",
+      "체력1의 기본 행동력 한도는2이다. 휴식 보너스는 기본 한도와 별도로 표시되므로 다음 날의 총 행동력을 기본 한도와 혼동하지 않는다."
+    ],
+    "limits": [
+      "2500·약골·검진완료·식단과 성장 조건은 수동 비교용 시험값이다.",
+      "여행, 자동 업무, 장비, 기분, 보너스 식사에 따라 실제 하루의 최종 체력 경험치가 달라질 수 있다. 7은 지정한 3개 성장 호출의 합계이지 최종 경험치 잔액 전체를 보증하는 값이 아니다.",
+      "초기 setup에서 건강체질을 부여하지 않는다. 의료센터의 원래 승인 콜백으로 얻는다."
+    ]
+  },
+  {
+    "id": "dealer-difficulties",
+    "titleKo": "상인: 쉬움90%·보통75%·어려움 기존 가격",
+    "group": "checked",
+    "baseSave": "JO9_TEST_20261023_01_HOME.sav",
+    "setup": [
+      "is_home=1 & city_form=0 & city_district=-1 & menu_form=2000",
+      "$place='home_lux' & $return_lock='menu_form'",
+      "game_difficulty=1 & difficulty_setting=0 & sparks=100",
+      "slave_state=1 & slave['brand']=2 & slave['obedience']=50",
+      "slave['defiant']=0 & slave['jo9_slave_nature']=0",
+      "$slave_psy_status='docile' & $slave_psy_basic='docile'",
+      "brand_reputation=5 & farid_debt=0 & farid_potential_debt=0",
+      "snk_room_target=0 & txt=1 & sp_txt=1"
+    ],
+    "entry": "gt 'menu_form'",
+    "checkpoint": "main_screen",
+    "checkpointGuard": "menu_form=2000 and game_difficulty=1 and difficulty_setting=0 and sparks=100 and slave_state=1 and slave_type=2579 and slave['age']=2 and assistant_type=2571 and assistant['age']=2 and slave['brand']=2 and instr($setting_display_r,'난이도 설정')>0",
+    "how": [
+      "처음에는 원래 설정 화면이다. 난이도 설정에서 쉬움·클래식/보통·어려움/하드코어 중 하나를 직접 고른 뒤 설정을 닫는다.",
+      "도시→백색 도시→노예상 길드→재매입상과 대화로 마스터 봉의 제시가를 확인한다. 승인 전 취소와 승인 후 실제 자금 증가를 각각 재로드하여 비교한다.",
+      "잡파는 다시 불러와 같은 난이도를 고른 뒤 백색 도시→교역 광장→노예 시장으로 간다. 원래 대화·앞으로 버튼을 넘겨 제시가와 실제 지급액을 확인한다.",
+      "각 판매상·난이도는 반드시 이 파일을 다시 불러와 독립적으로 비교한다. 한 번 판매한 뒤 다른 상인에게 같은 인물을 이어서 팔 수는 없다."
+    ],
+    "expect": [
+      "쉬움 difficulty_setting=1은 기준가90%, 보통0은75%. 기준가는 max(30,몸값×1.5,등급별 일반가격의 성취 보정값)이다.",
+      "저복종은 기준가에20%를 먼저 적용한다. 봉의 붕괴 상태는 별도 기존 감가를 유지한다. 이 최초 표본은 복종50으로 저복종 조건이 아니다.",
+      "어려움2의 잡파는 max(10,기존 slaveprice/2), 봉은 기존 auction_price와 기존 보정이다.",
+      "판매 취소는 초기 자금100과 인물을 유지한다. 승인하면 제시가만큼 증가하고 해당 인물이 제거되며 잡파는 원래 도시, 봉은 길드로 복귀한다."
+    ],
+    "limits": [
+      "세 난도·두 판매상을 한 설정 시작 표본으로 통합했다. 실제 제시가를 보려면 사용자가 원래 도시 메뉴를 이동해야 한다.",
+      "생성 난도 game_difficulty=1은 원래 설정에서 쉬움/보통 전환을 허용한다. 실제 지급가는 difficulty_setting만 사용한다.",
+      "현재 인물의 원래 능력·특성으로 계산하므로 과거 간소화 fixture의 절대 제시액을 이 표본에 붙이지 않는다. 가격 기준과 실제 증가액의 일치를 검증한다."
+    ]
+  },
+  {
+    "id": "genius-health-overwork",
+    "titleKo": "육성: 천재·건강체질·근육질 과로",
+    "group": "checked",
+    "baseSave": "JO9_TEST_20261023_01_HOME.sav",
+    "setup": [
+      "is_home=1 & city_form=0 & city_district=-1",
+      "$place='home_lux' & $return_lock='menu_form'",
+      "sparks=50000 & kitchen=1 & cooked_food=0 & house_mess=0",
+      "cheat_inf_en=0 & master_energy=5 & master_half_action=0",
+      "slave_state=1 & slave['stamina']=5 & slave_rate['stamina']=0 & slave['energy']=0 & slave['half_action']=0",
+      "slave['jo9_learning_trait']=1 & slave['jo9_constitution']=1 & slave['jo9_constitution_half']=0 & slave['jo9_overwork_half']=0",
+      "slave['jo9_g75_pet']=0 & slave['jo9_g75_dressage']=0 & slave['jo9_g75_cowSK']=0",
+      "slave['pet']=3 & slave_rate['pet']=0 & slave['dressage']=3 & slave_rate['dressage']=0 & slave['cowSK']=3 & slave_rate['cowSK']=0 & slave['cook']=3 & slave_rate['cook']=0",
+      "slave['intellect']=5 & slave['obedience']=100 & slave['fear']=0 & slave['pride']=0 & slave['moral']=3 & slave['custom']=30 & slave['mood']=3",
+      "slave['ill']=0 & slave['injury']=0 & slave['wounds']=0 & slave['calories']=50",
+      "slave['jo9_focus']=0 & slave['jo9_work_ethic']=0 & slave['jo9_activity']=0 & slave['sport_affinity']=0 & slave['cowSK_affinity']=0 & slave['defiant']=0 & slave['jo9_slave_nature']=0",
+      "killvar 'slave_already_done_today'",
+      "menu_form=menu_tutor"
+    ],
+    "entry": "gt 'menu_form'",
+    "checkpoint": "main_screen",
+    "checkpointGuard": "menu_form=menu_tutor and is_home=1 and slave_type=2579 and slave['age']=2 and assistant_type=2571 and assistant['age']=2 and slave['stamina']=5 and slave['energy']=0 and slave['jo9_learning_trait']=1 and slave['jo9_constitution']=1 and slave['jo9_overwork_half']=0 and sparks=50000 and instr($text_display,'애완녀 조련')>0",
+    "how": [
+      "원래 가정교사 메뉴에서 애완녀 조련, 경마녀 조련, 젖소녀 조련, 요리 교육 중 한 가지를 직접 선택하고 결과·앞으로 버튼을 끝까지 넘긴다. 과목 비교는 각각 다시 불러와 한 과목만 실행한다.",
+      "동물 계열은 천재 보정75%, 요리는2배, 운동 관련 과목은 건강체질1.5배를 적용하는지 원래 인물 경험치 표시와 비교한다.",
+      "과로만 볼 때는 다시 불러와 애완녀 조련처럼 체력 자체를 올리지 않는 교육을 두 차례 수행한다. 최초 행동력이0이므로 완료 후 -1, 다음 행동 후 -2가 된다.",
+      "근육질의 음수 행동력 손실은 첫 과로점1에서 체력 경험치0 손실+절반 이월1, 다음 과로점2와 이월1에서1 손실+이월1이어야 한다. 작업 완료 후 가정교사 메뉴가 계속 선택 가능한지도 확인한다.",
+      "같은 상태에서 새 이름으로 저장하고 다시 불러와도 사용한 행동력이 임의 충전되지 않는지 확인한다."
+    ],
+    "expect": [
+      "천재의 pet/dressage/cowSK 새 경험치=(기본입력×3+기존4분의1 이월)/4, 나머지 해당 성장은 기본입력×2. stamina는 천재 배수의 대상이 아니다.",
+      "건강체질의 stamina/calisthenics/gladiatrix/dressage 교육은 천재 계산 뒤1.5배다. 따라서 경마 과목은 천재75%와 건강체질150%가 함께 적용된다.",
+      "근육질 stamina5의 과로는 각 호출의 음수행동력 절댓값과 절반 이월을 합한 뒤2로 나눈 정수만 체력 경험치에서 차감한다.",
+      "기본 행동력 한도는 체력5에서5이며 최초 현재 행동력0은 의도한 소진 상태다. 새로 불러오는 것만으로 충전되지 않는다."
+    ],
+    "limits": [
+      "천재·건강·근육질·50000자금·행동력0·경험치0은 비교용 시험값이다. 원래 능력과 장비·성실도 보정이 남으므로 절대 획득량을 고정하지 않는다.",
+      "경마의 실효112.5%는 정수 절사와 각 이월 상태 때문에 한 번의 표시 증가량과 정확히 같지 않을 수 있다.",
+      "과거 자동 클릭 방식의 근육질 가정교사 전체 동선에는 진단 GAP가 있었으나 같은 초기 메뉴의 원래 렌더링과 별도 실제 interaction 과로 계산은 통과했다. 이 파일은 원래 메뉴 선택을 수동 확인하기 위한 표본이다.",
+      "AP0~5의 전 등급 회복표를 한 파일에 복제 인물로 만들지 않는다. 이 표본은 체력5 한도5와 음수 과로를 담당한다."
+    ]
+  },
+  {
+    "id": "cow-milk-daily",
+    "titleKo": "하루 종료: 미련한 소 모유 생산1.5배",
+    "group": "checked",
+    "baseSave": "JO9_TEST_20261023_01_HOME.sav",
+    "setup": [
+      "is_home=1 & city_form=0 & city_district=-1 & menu_form=0",
+      "$place='home_lux' & $return_lock='menu_form'",
+      "sparks=20000 & barn=1 & dungeon=1 & bath=0 & master_medic=0",
+      "dynamic $swap_slave_instances,'slave','cow'",
+      "dynamic $swap_slave_instances,'assistant','prisoner'",
+      "cow['stamina']=3 & cow['energy']=3 & cow['half_action']=0 & cow_rate['stamina']=0",
+      "prisoner['stamina']=3 & prisoner['energy']=3 & prisoner['half_action']=0 & prisoner_rate['stamina']=0",
+      "cow['boobs']=6 & prisoner['boobs']=6 & cow['cowSK']=5 & prisoner['cowSK']=5",
+      "cow['impregnation']=10 & prisoner['impregnation']=10 & cow['cum_load']=120 & prisoner['cum_load']=120",
+      "cow['custom']=4 & prisoner['custom']=4 & cow['lactation']=1 & prisoner['lactation']=1 & cow['milk_summ']=0 & prisoner['milk_summ']=0",
+      "cow['fat']=2 & prisoner['fat']=2 & cow['mood']=3 & prisoner['mood']=3 & cow['angst']=0 & prisoner['angst']=0",
+      "cow['rehabilitation']=0 & prisoner['rehabilitation']=0 & cow['ill']=0 & prisoner['ill']=0 & cow['wounds']=0 & prisoner['wounds']=0",
+      "cow['calories']=50 & prisoner['calories']=50 & cow['diet_portion']=2 & prisoner['prison_food_type']=0",
+      "cow['sport_affinity']=0 & cow['jo9_work_ethic']=0 & cow['jo9_activity']=0 & cow['passion_comfort']=0 & cow['cowSK_affinity']=1 & prisoner['cowSK_affinity']=0",
+      "cow['nurse']=0 & prisoner['nurse']=0 & cow['jo9_constitution']=0 & prisoner['jo9_constitution']=0",
+      "$cow_psy_status='docile' & $cow_psy_basic='docile' & $prisoner_psy_status='docile' & $prisoner_psy_basic='docile'"
+    ],
+    "entry": "gt 'menu_form'",
+    "checkpoint": "main_screen",
+    "checkpointGuard": "menu_form=0 and is_home=1 and cow_state=1 and prisoner_state=1 and slave_state=0 and assistant_state=0 and cow_type=2579 and prisoner_type=2571 and cow['age']=2 and prisoner['age']=2 and cow['cowSK_affinity']=1 and prisoner['cowSK_affinity']=0 and cow['lactation']=1 and prisoner['lactation']=1 and cow['milk_summ']=0 and prisoner['milk_summ']=0 and sparks=20000",
+    "how": [
+      "에게야는 축사의 젖소, 이사벨라는 감옥의 포로로 옮겨진 상태다. 두 인물을 새로 생성하거나 복제한 표본이 아니다.",
+      "다른 명령을 주지 말고 원래 하루 종료를 누른 뒤 일일 보고의 앞으로 버튼을 끝까지 넘긴다.",
+      "각 인물의 모유 생산·저장량과 상태를 확인한다. 미련한 소 보정은 새로 생산한 milk_gain에 적용되며 저장 총량의 난수 증감과 구별한다.",
+      "비교를 반복하려면 이 파일을 다시 불러온다. 한번 하루를 넘긴 후 다시 다음 날을 진행하면 다른 상태와 재고가 된다."
+    ],
+    "expect": [
+      "미련한 소 cowSK_affinity>0은 해당 인물의 기존 생산 계산값에 정수1.5배를 적용한다. 일반 인물에는 적용하지 않는다.",
+      "두 인물은 모유 관련 수치를 맞추었으나 원래 일일 기분·역할 처리로 생산 기초값이 달라질 수 있다. 각 생산은 원래 boobs+cowSK+impregnation+min(custom×1.5,5)+mood-angst×2-rehabilitation/2 및 체형·상태 보정으로 계산된다.",
+      "cum_load120은 밤의 난수 감소 후에도 impregnation10을 유지하는 시험값이다. milk_summ에는 별도의 난수0~1 등 기존 재고 보정이 있으므로 저장 총량 비율만으로1.5배를 단정하지 않는다.",
+      "일일 처리 후 원래 집 메뉴로 돌아오며 축사와 감옥의 인물 종류·age2가 유지된다."
+    ],
+    "limits": [
+      "모유 수치·시설·자금·cum_load는 수동 비교를 위한 시험값이다. 특정 최종 병수나 저장 총량을 보장하지 않는다.",
+      "기존 검사에서 간소화된 동일조건 표본은 일반22/미련한 소33이었으나 여기서는 원래 성인 두 인물의 모든 데이터를 유지하므로22/33을 고정 기대값으로 쓰지 않는다.",
+      "활성 slave/assistant가 빈 상태이며 성인 검사는 cow/prisoner에 적용한다. 미련한 소 배수는 교육XP 배수가 아니다."
+    ]
+  },
+  {
+    "id": "essence-purchase-use",
+    "titleKo": "카오틱 에센스: 900구매·연구실·부정 특성1개 제거",
+    "group": "checked",
+    "baseSave": "JO9_TEST_20261023_01_HOME.sav",
+    "setup": [
+      "is_home=0 & city_form=118 & city_district=9 & sp_txt=1 & skip_to=0 & txt=1",
+      "$place='pharmacy' & $return_lock='pharmacy'",
+      "sparks=900 & chaotic_essence=0 & lab=1",
+      "slave['grace']=0 & slave['dexterity']=0 & slave['sport_affinity']=0 & slave['masochism']=0 & slave['exhibitionism']=0 & slave['meekness']=0 & slave['selfesteem']=0",
+      "slave['jo9_attention']=0 & slave['darkness_attitude']=0 & slave['blood_attitude']=0 & slave['deprivation_attitude']=0 & slave['jo9_gag_reflex']=0 & slave['anal_affinity']=0 & slave['defiant']=0",
+      "slave['jo9_voice_trait']=0 & slave['voice_trait']=0 & slave['jo9_activity']=0 & slave['jo9_work_ethic']=0 & slave['jo9_focus']=0 & slave['jo9_grudge']=0 & slave['jo9_constitution']=0 & slave['jo9_learning_trait']=0",
+      "slave['grace']=-1 & slave['jo9_versatile']=1 & slave['jo9_peerless']=1 & slave['jo9_constitution_treated']=1",
+      "assistant['grace']=0 & assistant['dexterity']=0 & assistant['sport_affinity']=0 & assistant['masochism']=0 & assistant['exhibitionism']=0 & assistant['meekness']=0 & assistant['selfesteem']=0",
+      "assistant['jo9_attention']=0 & assistant['darkness_attitude']=0 & assistant['blood_attitude']=0 & assistant['deprivation_attitude']=0 & assistant['jo9_gag_reflex']=0 & assistant['anal_affinity']=0 & assistant['defiant']=0",
+      "assistant['jo9_voice_trait']=0 & assistant['voice_trait']=0 & assistant['jo9_activity']=0 & assistant['jo9_work_ethic']=0 & assistant['jo9_focus']=0 & assistant['jo9_grudge']=0 & assistant['jo9_constitution']=0 & assistant['jo9_learning_trait']=0",
+      "assistant['grace']=-1 & assistant['jo9_versatile']=1 & assistant['jo9_peerless']=1 & assistant['jo9_constitution_treated']=1",
+      "dynamic $get_lab_space"
+    ],
+    "entry": "gt 'pharmacy'",
+    "checkpoint": "pharmacy",
+    "checkpointGuard": "$place='pharmacy' and $return_lock='pharmacy' and sp_txt=1 and sparks=900 and chaotic_essence=0 and lab_space>0 and slave_type=2579 and assistant_type=2571 and slave['age']=2 and assistant['age']=2 and func('jo9_chaotic','count','slave')=1 and func('jo9_chaotic','count','assistant')=1",
+    "how": [
+      "원래 약국의 스테로이드와 탕제→카오틱 에센스 (900$)를 누른다. 자금0과 보유1회분을 확인한다.",
+      "가게를 나가 원래 집·연구실 메뉴에서 재고를 확인한다. 에센스가 연구실 총 보관량을1칸 차지하는지 확인한다.",
+      "노예 과제 할당→마법약 복용→카오틱 에센스를 직접 선택한다. 이 표본은 부정 특성을 촌뜨기1개만 남겨 결과를 고정했다.",
+      "촌뜨기가 없어지고 재고0, 성취 특성과 시술기록이 유지되는지 확인한다. 부정 특성이 없는 대상에게 재사용할 수 없는지도 본다.",
+      "다시 불러와 같은 구매를 한 뒤 조수 과제 할당→마법약 복용에서 이사벨라 사용도 별도로 비교한다."
+    ],
+    "expect": [
+      "900스파크를 정확히 차감하고1회분을 받는다. lab_items는 구매 전보다1 증가한다.",
+      "정상 사용은 재고1→0, 해당 역할 grace -1→0이다. 다른 역할의 촌뜨기는 그대로 남는다.",
+      "다재다능·경국지색의 조9 성취 플래그와 constitution_treated는 유지한다.",
+      "재고가 없거나 제거할 부정 특성이 없으면 소모하지 않는다. 대상 역할은 slave/assistant만이다."
+    ],
+    "limits": [
+      "부정 특성을 정리하고 촌뜨기1개만 남긴 것은 단일 제거 확인용 시험값이다. 원래 프리셋의 일반적인 특성 구성을 뜻하지 않는다.",
+      "체크포인트를 구매 처리 sp_txt125에 저장하면 재진입 때 구매를 재실행할 수 있으므로 반드시 구매 전 sp_txt1에서 저장한다.",
+      "재고 UI 하단 겹침은 현재 미수정 관찰 항목이다. 수량·구매·사용의 기능 검증과 시각 문제를 구별한다."
+    ]
+  },
+  {
+    "id": "rumor-native-menu",
+    "titleKo": "수동 확인: 스컵스 유료 소문 링크",
+    "group": "manual",
+    "baseSave": "JO9_TEST_20261023_01_HOME.sav",
+    "setup": [
+      "is_home=0 & city_form=1 & city_district=1 & sp_txt=1 & skip_to=0",
+      "$place='guild_hall' & $return_lock='guild'",
+      "sparks=20 & brand_reputation=5",
+      "killvar 'jo9_rumor_discount'",
+      "jo9_rumor_pending=0 & jo9_rumor_page=0",
+      "$jo9_rumor_pending_provider='' & $jo9_rumor_provider=''",
+      "gs 'jo9_buyer_rumors','refreshmenus'",
+      "interaction_city=95"
+    ],
+    "entry": "gt 'interaction_city'",
+    "checkpoint": "shop_general",
+    "checkpointGuard": "$place='guild_hall' and $return_lock='guild' and interaction_city=95 and sp_txt=1 and sparks=20 and slave_type=2579 and assistant_type=2571 and slave['age']=2 and assistant['age']=2 and instr($text_display,'구매자 소문')>0 and jo9_rumor_pending>0",
+    "how": [
+      "길드 전문가 스컵스의 원래 구매자 소문을 듣는다 (10스파크) 항목을 직접 누른다.",
+      "현재 WORK에서 상담 화면이 열리지 않는 알려진 현상을 확인한다. 자금20이 유지되고 결제·결과 추천 화면으로 이동하지 않아야 한다.",
+      "다른 원래 메뉴로 나가도 조작할 수 있는지 확인한다. 이 링크를 고친 별도 패치가 반영되기 전에는 후속 결제·다중 추천·납품 할인 동선의 완료로 기록하지 않는다.",
+      "다른 두 NPC의 동일 결함을 더 확인하려면 원래 도시 메뉴로 이동해 술집 작크의 대화 메뉴와 카페 아네스의 구매자 소문 항목을 직접 연다. 이 파일의 첫 화면은 스컵스 대표1곳이다."
+    ],
+    "expect": [
+      "현재 확인된 결과: 표시 항목은 있으나 원래 href가 exec:gt에서 잘려 상담으로 진입하지 못한다.",
+      "자금은20 유지. 후속 결과·추천·실제 납품 후 할인 검증은 미완료로 남긴다.",
+      "정상 설계의 비용은 기본10, 실제 납품으로 할인 권한을 얻은 해당 제공자는5이다. 이 대표 표본에 할인 권한을 인위 부여하지 않는다."
+    ],
+    "limits": [
+      "확인된 결함을 수동 재현하기 위한 파일이며 통과 세이브로 분류하지 않는다.",
+      "jo9_buyer_rumors consult를 직접 호출하여 막힌 원래 메뉴를 우회하지 않는다. 메뉴 HTML·링크·대사·콜백은 모두 현재 WORK 원본이 생성한다.",
+      "원래 $ongload가 해당 NPC의 display_options를 다시 연결하고 소문 메뉴를 갱신한다. 원래 로드 콜백을 보존해야 한다."
+    ]
+  }
+]

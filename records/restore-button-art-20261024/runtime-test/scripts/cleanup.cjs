@@ -1,0 +1,15 @@
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),c=require('G:/somi/JO9sa/tools/text-workshop/core.cjs');
+const root='G:/Codex/tmp/jo9-button-runtime-20261024',rec='G:/somi/JO9sa/records/restore-button-art-20261024/runtime-test';
+assert.equal(fs.realpathSync(root),'G:\\Codex\\tmp\\jo9-button-runtime-20261024');
+assert.equal(JSON.parse(fs.readFileSync(rec+'/result.json','utf8')).status,'PASS');
+for(const n of ['slave.png','assistant.png','slave-after.sav.gz','assistant-after.sav.gz'])assert(fs.statSync(rec+'/'+n).isFile());
+const link=root+'/game/content',source='G:/somi/Jack O Nine Tails v2.4_work/game/content',icon=source+'/pic/buttons/Fer_Tentacle.png',hash=c.hash(fs.readFileSync(icon));
+assert(fs.lstatSync(link).isSymbolicLink());assert.equal(fs.realpathSync(link),fs.realpathSync(source));
+fs.rmdirSync(link);assert(!fs.existsSync(link));assert.equal(c.hash(fs.readFileSync(icon)),hash);
+let count=0,bytes=0;function walk(p){for(const e of fs.readdirSync(p)){const q=path.join(p,e),st=fs.lstatSync(q);assert(!st.isSymbolicLink(),'Unexpected reparse point '+q);if(st.isDirectory())walk(q);else{count++;bytes+=st.size;}}}walk(root);
+fs.copyFileSync(__filename,rec+'/scripts/cleanup.cjs');
+fs.appendFileSync('G:/somi/JO9sa/records/restore-button-art-20261024/MANUAL_KO.md','\n## 2026-10-24 실제 GUI 추가 검증\n\nWORK 바이트 동일 복사본을 새 FastQSP 창에서 열어 16/17 기존 세이브를 실제 UI로 로드했다. 노예·조수 두 그림 표시와 실제 클릭, 콜백 59/45, 실행 인물 행동력 5→4 및 미실행 인물 보존을 확인했다. 구조·줄·주석 검사 PASS, 원본 79파일 보존. 위의 GUI 미실행 제한은 이 두 버튼에 한해 해소되었다. [화면·결과·제한](runtime-test/README_KO.md).\n');
+fs.appendFileSync('G:/somi/JO9sa/docs/SECOND_PATCH_WORK_BUNDLE_20261021.md','\n- RESTORE_SHORTCUT_ART_20261024 추가 확인: 실제 Qt 게임 창에서 기존 16/17 세이브 로드 → 노예·조수 전용 그림 표시 → 실제 클릭 및 콜백/행동력 검증 PASS. 코드 추가 변경 없음. [실행 검증 기록](../records/restore-button-art-20261024/runtime-test/README_KO.md).\n');
+fs.rmSync(root,{recursive:true,force:true});assert(!fs.existsSync(root));
+fs.writeFileSync(rec+'/cleanup.json',JSON.stringify({status:'PASS',removedRoot:root,regeneratedFiles:count,removedBytes:bytes,junctionRemovedWithoutTraversal:true,sourceAssetPreserved:true},null,2));
+console.log(JSON.stringify({cleanup:'PASS',files:count,bytes}));

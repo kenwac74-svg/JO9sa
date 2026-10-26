@@ -1,0 +1,126 @@
+{
+  "id": "2026-10-26_sale_cap_b",
+  "before_sha256": "b8de16b088051eea5e51d8636f9ca3cc3975974129adf950ce122260ba2b5cf1",
+  "after_sha256": "e4110fb537108326d0de680efa4a87d286f9b3a6e5bc0b6073e83d13e1ee97f0",
+  "edits": [
+    {
+      "location": "jo9_traits_value",
+      "field": "body",
+      "old": "  end\r\n end\r\n exit\r\nend\r\n! JO9 MOD END DEALER_QUOTE",
+      "new": "  end\r\n end\r\n ! JO9 MOD START SALE_CAP_B_DEALER_QUOTE_20261026\r\n result = min(6000, result)\r\n ! JO9 MOD END SALE_CAP_B_DEALER_QUOTE_20261026\r\n exit\r\nend\r\n! JO9 MOD END DEALER_QUOTE",
+      "count": 1
+    },
+    {
+      "location": "slave_auction_sell",
+      "field": "body",
+      "old": "if txt >= 6 and txt <= 7: sell_price = func('jo9_traits_value', 'market', 'slave', sell_price)",
+      "new": "if txt >= 6 and txt <= 7: sell_price = func('jo9_traits_value', 'market', 'slave', sell_price)\r\n! JO9 MOD START SALE_CAP_B_FARID_OFFER_20261026\r\nsell_price = min(6000, sell_price)\r\n! JO9 MOD END SALE_CAP_B_FARID_OFFER_20261026",
+      "count": 1
+    },
+    {
+      "location": "slave_auction_sell_end",
+      "field": "body",
+      "old": "if txt >= 6 and txt <= 7: sell_price = func('jo9_traits_value', 'market', 'slave', sell_price)",
+      "new": "if txt >= 6 and txt <= 7: sell_price = func('jo9_traits_value', 'market', 'slave', sell_price)\r\n! JO9 MOD START SALE_CAP_B_FARID_PAYMENT_20261026\r\nsell_price = min(6000, sell_price)\r\n! JO9 MOD END SALE_CAP_B_FARID_PAYMENT_20261026",
+      "count": 1
+    },
+    {
+      "location": "slave_auction_sell",
+      "field": "body",
+      "old": "\t\t$text[6] = '[잡파]<br>&nbsp;<font color=\"#660000\">명기라고?! 아니, 친구! 그런 귀한 상품을 데려왔으면 진작 말했어야지! 이건 평범한 상품과는 차원이 다르잖소! 좋소, 앞서 부른 값의 열 배, $<<sell_price>>를 주겠소. 이만한 거래를 다른 상인에게 넘길 수야 없지!<br></font>'",
+      "new": "! JO9 MOD START SALE_CAP_B_FARID_TEXT_20261026\r\n\t\t$text[6] = '[잡파]<br>&nbsp;<font color=\"#660000\">명기라고?! 아니, 친구! 그런 귀한 상품을 데려왔으면 진작 말했어야지! 이건 평범한 상품과는 차원이 다르잖소! 좋소, 그 희소성을 인정해 $<<sell_price>>를 주겠소. 이만한 거래를 다른 상인에게 넘길 수야 없지!<br></font>'\r\n! JO9 MOD END SALE_CAP_B_FARID_TEXT_20261026",
+      "count": 1
+    },
+    {
+      "location": "$guild_auction",
+      "field": "body",
+      "old": "bank_size = func('jo9_traits_value', 'base_price', 'slave', bank_size)\r\nif slave['jo9_versatile'] = 1: $auction_flow[u - 1] = '[경매사]<br>&nbsp;$<<bank_size>>, 셋! 낙찰! 최종 가격: <<bank_size>>. 구매자: <<$auc_winner>>.'",
+      "new": "bank_size = func('jo9_traits_value', 'base_price', 'slave', bank_size)\r\n! JO9 MOD START SALE_CAP_B_AUCTION_AMOUNT_20261026\r\nif func('jo9_traits_value', 'premium', 'slave') = 1: bank_size = func('jo9_traits_value', 'auction', 'slave', bank_size)\r\nbank_size = min(6000, bank_size)\r\n$auction_flow[u - 1] = '[경매사]<br>&nbsp;$<<bank_size>>, 셋! 낙찰! 최종 가격: <<bank_size>>. 구매자: <<$auc_winner>>.'\r\n! JO9 MOD END SALE_CAP_B_AUCTION_AMOUNT_20261026",
+      "count": 1
+    },
+    {
+      "location": "$guild_auction",
+      "field": "body",
+      "old": " jo9_trait_value_auction_base = bank_size\r\n bank_size = func('jo9_traits_value', 'auction', 'slave', bank_size)\r\n! JO9 MOD END TBV_AUCTION_PREMIUM",
+      "new": " jo9_trait_value_auction_base = bank_size\r\n ! JO9 MOD START SALE_CAP_B_AUCTION_PREMIUM_ONCE_20261026\r\n ! The final premium amount is already calculated before the quote strings.\r\n ! JO9 MOD END SALE_CAP_B_AUCTION_PREMIUM_ONCE_20261026\r\n! JO9 MOD END TBV_AUCTION_PREMIUM",
+      "count": 1
+    },
+    {
+      "location": "$guild_auction",
+      "field": "body",
+      "old": " $auction_flow[u - 1] = '[가면 쓴 수집가]<br>&nbsp;잠깐. 희귀한 명기를 이대로 보낼 수는 없지. 방금 나온 $<<jo9_trait_value_auction_base>>의 두 배, $<<bank_size>>를 내겠소!'",
+      "new": " ! JO9 MOD START SALE_CAP_B_AUCTION_COLLECTOR_TEXT_20261026\r\n $auction_flow[u - 1] = '[가면 쓴 수집가]<br>&nbsp;잠깐. 희귀한 명기를 이대로 보낼 수는 없지. 그 희소성을 인정해 $<<bank_size>>를 내겠소!'\r\n ! JO9 MOD END SALE_CAP_B_AUCTION_COLLECTOR_TEXT_20261026",
+      "count": 1
+    },
+    {
+      "location": "$guild_auction",
+      "field": "body",
+      "old": " $auction_flow[u] = '[경매사]<br>&nbsp;두 배라니! $<<bank_size>> 나왔습니다! 더 부르실 분 없습니까? 하나, 둘, 셋! 낙찰! <<$auc_winner>>께 $<<bank_size>>에 낙찰되었습니다!'",
+      "new": " ! JO9 MOD START SALE_CAP_B_AUCTION_HAMMER_TEXT_20261026\r\n $auction_flow[u] = '[경매사]<br>&nbsp;$<<bank_size>> 나왔습니다! 더 부르실 분 없습니까? 하나, 둘, 셋! 낙찰! <<$auc_winner>>께 $<<bank_size>>에 낙찰되었습니다!'\r\n ! JO9 MOD END SALE_CAP_B_AUCTION_HAMMER_TEXT_20261026",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "! JO9 MOD END TBV_AUCTION_REWARD_M_0\r\n\tsparks += sparks_get",
+      "new": "! JO9 MOD END TBV_AUCTION_REWARD_M_0\r\n\t! JO9 MOD START SALE_CAP_B_AUCTION_PAYMENT_M_20261026\r\n\tsparks_get = min(6000, sparks_get)\r\n\tsparks += sparks_get\r\n\t! JO9 MOD END SALE_CAP_B_AUCTION_PAYMENT_M_20261026",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "! JO9 MOD END TBV_AUCTION_REWARD_F_0\r\n\tsparks += sparks_get",
+      "new": "! JO9 MOD END TBV_AUCTION_REWARD_F_0\r\n\t! JO9 MOD START SALE_CAP_B_AUCTION_PAYMENT_F_20261026\r\n\tsparks_get = min(6000, sparks_get)\r\n\tsparks += sparks_get\r\n\t! JO9 MOD END SALE_CAP_B_AUCTION_PAYMENT_F_20261026",
+      "count": 1
+    },
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "if $npc_id = 'master_vong' and instr($yes, 'TBV_SUBPURCHASER_BASE') > 0:\r\n jo9_dealer_old_confirm = 1\r\nend",
+      "new": "! JO9 MOD START SALE_CAP_B_WONG_SAVED_QUOTE_20261026\r\nif $npc_id = 'master_vong' and (instr($yes, 'TBV_SUBPURCHASER_BASE') > 0 or (instr($yes, 'dealer_wong_finish') > 0 and jo9_dealer_wong_quote > 6000)):\r\n jo9_dealer_old_confirm = 1\r\nend\r\n! JO9 MOD END SALE_CAP_B_WONG_SAVED_QUOTE_20261026",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\tif jo9_meiki_max_sale = 1: sell_price = func('jo9_traits_value', 'haggle', 'slave', sell_price)\r\n\t! JO9_MEIKI_BARGAIN_TEXT_V1",
+      "new": "\tif jo9_meiki_max_sale = 1: sell_price = func('jo9_traits_value', 'haggle', 'slave', sell_price)\r\n! JO9 MOD START SALE_CAP_B_PRIVATE_HAGGLE_20261026 | 2026-10-26_sale_cap_b\r\n\tsell_price = min(sell_price, 8000)\r\n! JO9 MOD END SALE_CAP_B_PRIVATE_HAGGLE_20261026\r\n\t! JO9_MEIKI_BARGAIN_TEXT_V1",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\tsell_price = common_price[demand_rating[$npc_id]] + virgin_price\r\n! JO9 MOD START J9M0748",
+      "new": "\tsell_price = common_price[demand_rating[$npc_id]] + virgin_price\r\n! JO9 MOD START SALE_CAP_B_PRIVATE_DIRECT_20261026 | 2026-10-26_sale_cap_b\r\n\tsell_price = min(sell_price, 8000)\r\n! JO9 MOD END SALE_CAP_B_PRIVATE_DIRECT_20261026\r\n! JO9 MOD START J9M0748",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\tsell_price -= sell_discount\r\n! JO9 MOD START J9M0747",
+      "new": "\tsell_price -= sell_discount\r\n! JO9 MOD START SALE_CAP_B_PRIVATE_DISCOUNT_20261026 | 2026-10-26_sale_cap_b\r\n\tsell_price = min(sell_price, 8000)\r\n! JO9 MOD END SALE_CAP_B_PRIVATE_DISCOUNT_20261026\r\n! JO9 MOD START J9M0747",
+      "count": 1
+    },
+    {
+      "location": "interaction_result_city",
+      "field": "body",
+      "old": "! JO9 MOD END TBV_SALE_REWARD_1_0\r\n\tend\r\n\tsparks += sell_price",
+      "new": "! JO9 MOD END TBV_SALE_REWARD_1_0\r\n\tend\r\n! JO9 MOD START SALE_CAP_B_PRIVATE_HOUSE_PAY_20261026 | 2026-10-26_sale_cap_b\r\n\tsell_price = min(sell_price, 8000)\r\n! JO9 MOD END SALE_CAP_B_PRIVATE_HOUSE_PAY_20261026\r\n\tsparks += sell_price",
+      "count": 1
+    },
+    {
+      "location": "interaction_result_city",
+      "field": "body",
+      "old": "\t$return_lock = $return_lock_transfer\r\n\tsparks += sell_price",
+      "new": "\t$return_lock = $return_lock_transfer\r\n! JO9 MOD START SALE_CAP_B_PRIVATE_REPEAT_PAY_20261026 | 2026-10-26_sale_cap_b\r\n\tsell_price = min(sell_price, 8000)\r\n! JO9 MOD END SALE_CAP_B_PRIVATE_REPEAT_PAY_20261026\r\n\tsparks += sell_price",
+      "count": 1
+    },
+    {
+      "location": "interaction_screen_city",
+      "field": "body",
+      "old": "local $jo9_gold_result_text = $text[txt]",
+      "new": "local $jo9_gold_result_text = $text[txt]\r\n! JO9 MOD START SALE_CAP_B_SAVED_QUOTE_INFO_20261026 | 2026-10-26_sale_cap_b\r\nif (interaction_city = 911 or interaction_city = 912 or interaction_city = 913) and ($interaction_type = 'slave_sold' or $interaction_type = 'slave_sold_house') and slave_state = CONST_INT['slave_exist'] and sell_price > 8000:\r\n $jo9_gold_result_text += '<br><br>개인 거래의 최종 지급액은 최대 $8,000이다.'\r\nend\r\nif interaction_city = 931 and sparks_get > 6000: $jo9_gold_result_text += '<br><br>공개경매의 최종 지급액은 최대 $6,000이다.'\r\n! JO9 MOD END SALE_CAP_B_SAVED_QUOTE_INFO_20261026",
+      "count": 1
+    }
+  ]
+}

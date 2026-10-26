@@ -1,0 +1,72 @@
+{
+  "status": "NO_ACCUMULATION_FAILURE_REPRODUCED",
+  "balances": {
+    "saved": {
+      "gold": 324,
+      "sparks": 3050
+    },
+    "loaded": {
+      "gold": 324,
+      "sparks": 3050
+    },
+    "afterReverse": {
+      "gold": 0,
+      "sparks": 6290
+    }
+  },
+  "guiLoad": {
+    "performed": true,
+    "method": "Computer Use Game->Load,generated gold-state.sav,separate diagnostic window30154870,PID45788",
+    "versionCheckIgnoredForDiagnostic": true
+  },
+  "display": {
+    "tests": [
+      {
+        "name": "display-zero",
+        "checkpoint": "Actual Balsam exchange menu,hidden gold0; HUD displays sparks only; reverse-exchange link availability reflects gold.",
+        "pass": true,
+        "reason": "",
+        "durationMs": 10096
+      },
+      {
+        "name": "display-positive",
+        "checkpoint": "Actual Balsam exchange menu,hidden gold17; HUD displays sparks only; reverse-exchange link availability reflects gold.",
+        "pass": true,
+        "reason": "",
+        "durationMs": 9849
+      }
+    ],
+    "metrics": [
+      {
+        "name": "display-zero",
+        "gold": 0,
+        "sparks": 1000,
+        "sparksText": "$1000",
+        "reverseAction302114": false,
+        "rawSavedDiagnostic": "{\"sparksText\":\"$1000\",\"goldReverseEnabled\":true,\"reverseHref\":\"EXEC: =0 & gt /\"/\"\"}"
+      },
+      {
+        "name": "display-positive",
+        "gold": 17,
+        "sparks": 1000,
+        "sparksText": "$1000",
+        "reverseAction302114": true,
+        "rawSavedDiagnostic": "{\"sparksText\":\"$1000\",\"goldReverseEnabled\":true,\"reverseHref\":\"EXEC: interaction_city=302114 & gt /\"interaction_city/\"\"}"
+      }
+    ],
+    "missingGoldBalanceInherited": true
+  },
+  "reporterSaveSupplied": false,
+  "runtimeWritten": false,
+  "workHash": "ed7f14b5a892f2dc695e8b90a29dfd1331c31536b604911fb2fddd9af8107648",
+  "fixtureHash": "2a74b63a76f570637a8627b2ecab42f1cd6ad2717f2150d67b0be02ce2c5a247",
+  "limits": [
+    "Generated diagnostic save was actually loaded through native UI; reporter save was not provided.",
+    "Saved diagnostic callback checks currency and current refresh_database; full original ONGLOAD/quest scene is not tested.",
+    "Job credit handlers executed with assigned actor types disabled,skipping role-specific scenes.",
+    "Assistant AP result is source/history comparison only.",
+    "QSP callback serializes quote escapes in href metrics; raw strings retained and destination checked directly.",
+    "Initial test harness assumptions are recorded separately."
+  ],
+  "cleanup": "pending"
+}

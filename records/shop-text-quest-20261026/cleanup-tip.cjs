@@ -1,0 +1,8 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+const record='G:/somi/JO9sa/records/shop-text-quest-20261026',roots=['G:/Codex/tmp/shop-text-quest-tip-20261026','G:/Codex/tmp/shop-text-quest-tip-release-20261026'];
+const execute=process.argv.includes('--execute'),normal=p=>path.resolve(p).replace(/\\/g,'/').toLowerCase(),totals={files:0,bytes:0,directories:0,links:0};
+if(execute){const r=JSON.parse(fs.readFileSync(record+'/FINAL_RESULT.json','utf8'));assert.equal(r.status,'APPLIED_AND_VERIFIED');assert(r.checks.finalTipOnlyPlaces);assert(fs.existsSync(record+'/official-tip/report.json'));assert(fs.existsSync(record+'/TIP_PLACE_REVIEW.md'));}
+function walk(p,root){assert(normal(p)===normal(root)||normal(p).startsWith(normal(root)+'/'));const s=fs.lstatSync(p);if(s.isSymbolicLink()){totals.links++;if(execute){try{fs.unlinkSync(p);}catch(e){if(e.code!=='EPERM'&&e.code!=='EISDIR')throw e;fs.rmdirSync(p);}}return;}if(s.isDirectory()){totals.directories++;for(const n of fs.readdirSync(p))walk(path.join(p,n),root);if(execute)fs.rmdirSync(p);return;}assert(s.isFile());totals.files++;totals.bytes+=s.size;if(execute)fs.unlinkSync(p);}
+const checked=[];for(const root of roots){if(!fs.existsSync(root)){checked.push({root,exists:false});continue;}assert(!fs.lstatSync(root).isSymbolicLink());assert.equal(normal(fs.realpathSync(root)),normal(root));checked.push({root,resolved:fs.realpathSync(root)});walk(root,root);}
+const report={status:execute?'CLEANED':'DRY_RUN',roots:checked,...totals,followedLinks:false};if(execute){assert(roots.every(p=>!fs.existsSync(p)));fs.writeFileSync(record+'/TIP_CLEANUP_RESULT.json',JSON.stringify(report,null,2)+'\n');}console.log(JSON.stringify(report));

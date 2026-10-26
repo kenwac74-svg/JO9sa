@@ -1,0 +1,238 @@
+{
+  "status": "EDITORIAL_FRAGMENTS_ONLY_NOT_APPLIED",
+  "baselineSha256": "c6ba9600e78f38ae1adeb9cf5c09a53115254ec40f666e48b53b912ab3e0195e",
+  "sourceFile": "C:/Users/User/AppData/Local/Temp/12_qsp_patch_var_base.txt",
+  "items": [
+    {
+      "location": "#var_base",
+      "old": "if slave['intellect'] > 2:\r\n\t$slave_teach_txt = '그녀는 그다지 똑똑하지 않기 때문에, 쉽게 설명해야 한다.'",
+      "new": "if slave['intellect'] > 2:\r\n\t$slave_teach_txt = '그녀는 총명해서 당신의 설명을 빠르게 이해했다.'",
+      "count": 1,
+      "sourceLine": 1374,
+      "reason": "현재 intellect > 2 조건을 보존하고, 능력이 높은 분기에도 낮은 이해력 문구가 중복되던 표시만 구분한다. 소비처 문장 끝에 맞춰 제안의 연결어미를 완결형으로 각색했다.",
+      "variable": "$slave_teach_txt",
+      "currentBodyLine": 1373
+    },
+    {
+      "location": "#var_base",
+      "old": "else\r\n\t$slave_teach_txt = '그녀는 그다지 똑똑하지 않기 때문에, 쉽게 설명해야 한다.'",
+      "new": "else\r\n\t$slave_teach_txt = '그녀가 내용을 이해할 수 있도록 같은 설명을 여러 번 반복해야 했다.'",
+      "count": 1,
+      "sourceLine": 1376,
+      "reason": "현재 else 범위와 대입 대상을 보존하고, 반복 설명이 필요하다는 제안의 뜻을 소비처 문장 끝에 맞는 완결형으로 옮긴다.",
+      "variable": "$slave_teach_txt",
+      "currentBodyLine": 1375
+    },
+    {
+      "location": "#var_base",
+      "old": "if assistant['intellect'] > 2:\r\n\t$assistant_teach_txt = '그녀는 그다지 똑똑하지 않기 때문에, 쉽게 설명해야 한다.'",
+      "new": "if assistant['intellect'] > 2:\r\n\t$assistant_teach_txt = '그녀는 총명해서 당신의 설명을 빠르게 이해했다.'",
+      "count": 1,
+      "sourceLine": 1380,
+      "reason": "현재 intellect > 2 조건을 보존하고, 능력이 높은 분기에도 낮은 이해력 문구가 중복되던 표시만 구분한다. 소비처 문장 끝에 맞춰 제안의 연결어미를 완결형으로 각색했다.",
+      "variable": "$assistant_teach_txt",
+      "currentBodyLine": 1379
+    },
+    {
+      "location": "#var_base",
+      "old": "else\r\n\t$assistant_teach_txt = '그녀는 그다지 똑똑하지 않기 때문에, 쉽게 설명해야 한다.'",
+      "new": "else\r\n\t$assistant_teach_txt = '그녀가 내용을 이해할 수 있도록 같은 설명을 여러 번 반복해야 했다.'",
+      "count": 1,
+      "sourceLine": 1382,
+      "reason": "현재 else 범위와 대입 대상을 보존하고, 반복 설명이 필요하다는 제안의 뜻을 소비처 문장 끝에 맞는 완결형으로 옮긴다.",
+      "variable": "$assistant_teach_txt",
+      "currentBodyLine": 1381
+    },
+    {
+      "location": "#var_base",
+      "old": "if slave['intellect'] < 3:\r\n\thum_cnt += 1\r\n\thum_sign[hum_cnt] = 3\r\n\t$hum_text1[hum_cnt] = '당신에게 완전히 종속된 노예라는 것을'\r\n\t$hum_text2[hum_cnt] = '요리 솜씨가 없는 것을'",
+      "new": "if slave['intellect'] < 3:\r\n\thum_cnt += 1\r\n\thum_sign[hum_cnt] = 3\r\n\t$hum_text1[hum_cnt] = '가르침을 바로 이해하지 못한다는 것을'\r\n\t$hum_text2[hum_cnt] = '가르침을 이해하는 데 반복 설명이 필요하다는 것을'",
+      "count": 1,
+      "sourceLine": 597,
+      "reason": "이해력이 낮은 현재 조건에서 공통 소유 관계·요리 문구 대신 이해력의 한계를 설명한다. 실제 소비처의 의식/부끄러움/사과 대상 형태를 보존한다.",
+      "variable": "$hum_text1[hum_cnt], $hum_text2[hum_cnt]",
+      "currentBodyLine": 599,
+      "sourceLines": [
+        597,
+        598
+      ]
+    },
+    {
+      "location": "#var_base",
+      "old": "if slave['ego'] < 1:\r\n\thum_cnt += 1\r\n\thum_sign[hum_cnt] = 3\r\n\t$hum_text1[hum_cnt] = '당신에게 완전히 종속된 노예라는 것을'\r\n\t$hum_text2[hum_cnt] = '요리 솜씨가 없는 것을'",
+      "new": "if slave['ego'] < 1:\r\n\thum_cnt += 1\r\n\thum_sign[hum_cnt] = 3\r\n\t$hum_text1[hum_cnt] = '혼자 결정을 내리기 어려워 주인의 지시에 의존한다는 것을'\r\n\t$hum_text2[hum_cnt] = '스스로 결정을 내리지 못하고 주인의 지시를 기다리는 것을'",
+      "count": 1,
+      "sourceLine": 685,
+      "reason": "자아가 낮은 현재 조건에서 자기 판단과 의존을 설명한다. 새 상태·결과를 만들지 않으며 소비처가 요구하는 명사절 목적어로 각색했다.",
+      "variable": "$hum_text1[hum_cnt], $hum_text2[hum_cnt]",
+      "currentBodyLine": 689,
+      "sourceLines": [
+        685,
+        686
+      ]
+    },
+    {
+      "location": "#var_base",
+      "old": "if slave['cook'] < 2:\r\n\thum_cnt += 1\r\n\thum_sign[hum_cnt] = 3\r\n\t$hum_text1[hum_cnt] = '당신에게 완전히 종속된 노예라는 것을'",
+      "new": "if slave['cook'] < 2:\r\n\thum_cnt += 1\r\n\thum_sign[hum_cnt] = 3\r\n\t$hum_text1[hum_cnt] = '아직 기본적인 요리에도 서툴다는 것을'",
+      "count": 1,
+      "sourceLine": 692,
+      "reason": "낮은 요리 능력에 맞는 비노골적 묘사를 선택했다. 요리를 전혀 할 수 없다는 과도한 단정과 제안의 다른 성적 문구는 가져오지 않았다.",
+      "variable": "$hum_text1[hum_cnt]",
+      "currentBodyLine": 696
+    }
+  ],
+  "dispositions": [
+    {
+      "decision": "ADAPT_LITERAL",
+      "scope": "12:1374/1376/1380/1382",
+      "count": 4,
+      "reason": "비노골적 교육 이해력 문구를 기존 능력 조건과 소비처의 문장 끝 형식에 맞춤"
+    },
+    {
+      "decision": "ADAPT_LITERAL",
+      "scope": "12:597/598/685/686/692",
+      "count": 5,
+      "reason": "이해력·자기판단·요리 능력 설명만 선택하고 목적어 및 사과 대상 형태를 맞춤"
+    },
+    {
+      "decision": "PRESERVE",
+      "scope": "공통 호칭·기본 외모 등 현재와 같은 제안 문구",
+      "reason": "이미 같은 문구이므로 신규 개선으로 중복 집계하지 않음"
+    },
+    {
+      "decision": "PRESERVE",
+      "scope": "food/work/health/mood 독립 설명",
+      "reason": "제공된 12의 해당 독립 설명 대입은 확인되지 않음. ego/cook/intellect/obedience는 hum 조각에서만 확인"
+    },
+    {
+      "decision": "PRESERVE",
+      "scope": "12:795~799 obedience/fallback",
+      "reason": "현재 조건이 obedience < 1 or hum_cnt < 1이므로 제안의 불복종 단정은 fallback 대상에게 맞는다고 보장할 수 없음"
+    },
+    {
+      "decision": "EXCLUDE_LITERAL",
+      "scope": "hum_text3/4 및 노골적 성행위·미성년 성적 묘사",
+      "reason": "이번 안전한 공통 문구 선별 범위에서 제외. 원문을 이 산출물에 전재하지 않음"
+    },
+    {
+      "decision": "PRESERVE_MARKUP",
+      "scope": "12:346~476,804~806,1881,1934,2092",
+      "count": 97,
+      "reason": "HTML 이스케이프만 바뀐 97행은 수입하지 않음. 기존 HTML 보존"
+    },
+    {
+      "decision": "PRESERVE_INTERNAL_VALUE",
+      "scope": "12:1985~2004,2051~2070 *_les_txt5",
+      "count": 10,
+      "reason": "내부 판별값이며 표시 번역만으로 변경하지 않음"
+    },
+    {
+      "decision": "PRESERVE_BEHAVIOR",
+      "scope": "조건·수치·인덱스·키·배열 선택·이미지·음향·포상 후속 동작",
+      "reason": "대사 개선과 분리하여 확인 후 승인받을 기능 범위"
+    },
+    {
+      "decision": "REFERENCE_ONLY",
+      "scope": "11 전체",
+      "reason": "설명·대조표이며 별도 실행 코드 이식 대상이 아님"
+    }
+  ],
+  "functionalCandidates": [
+    {
+      "id": "CROOM_MILK_INTERPOLATION",
+      "currentBodyLines": [
+        447,
+        460
+      ],
+      "sourceLines": [
+        445,
+        458
+      ],
+      "count": 2,
+      "identifiers": [
+        "croom2 -> room2",
+        "croom3 -> room3"
+      ],
+      "reason": "50 <= milk_summ < 65에서 잘못된 배열을 표시하는 현재 오타. 이번 문구 변경에서는 적용하지 않음",
+      "requiresConfirmation": true
+    },
+    {
+      "id": "ALREADY_APPLIED_SCOPE_INDEX",
+      "count": 19,
+      "reason": "VARBASE_STRUCTURE_INDEX_20261021의 분기19곳과 hum 초기화/fallback은 현재 적용 상태. 재적용 불필요",
+      "requiresConfirmation": false
+    },
+    {
+      "id": "PROPOSAL_BEHAVIOR_CHANGES",
+      "sourceLines": [
+        204,
+        246,
+        488,
+        497,
+        723,
+        729,
+        2298,
+        2719
+      ],
+      "reason": "연령/배열 선택, 난수 호출 제거, hum_sign/tess_num 및 포상 자원 변경은 채택하지 않음. 필요한 기능 범위를 별도로 확정해야 함",
+      "requiresConfirmation": true
+    },
+    {
+      "id": "DISCRIMINATOR_CONSUMERS",
+      "sourceLines": [
+        1985,
+        1990,
+        1994,
+        2000,
+        2004,
+        2051,
+        2056,
+        2060,
+        2066,
+        2070
+      ],
+      "consumer": "jo9_meiki_checks:44 / interaction:2363,2381",
+      "reason": "제안의10대입값은 현재 인정값3종과 일치0건. 표시문구와 내부 값 분리 여부는 기능 작업으로 검토",
+      "requiresConfirmation": true
+    }
+  ],
+  "verification": {
+    "items": 7,
+    "literalChanges": 9,
+    "eachOldSingleMatch": true,
+    "nonliteralSkeletonIdentical": true,
+    "interpolationsIdentical": true,
+    "htmlTagsIdentical": true,
+    "consumerLocations": [
+      "#static_txt:777",
+      "#static_txt:924",
+      "#static_txt:925",
+      "#static_txt:927"
+    ],
+    "inactiveReference": "#txt_2_man:91 is commented; not an active consumer",
+    "scope": "static exact-anchor and composition validation only; no game edit or engine run"
+  },
+  "consumerIntegrationExamples": [
+    {
+      "consumer": "#static_txt:777",
+      "scope": "문장 끝 접합부만 표시",
+      "high": "설명해주었다. 그녀는 총명해서 당신의 설명을 빠르게 이해했다.",
+      "low": "설명해주었다. 그녀가 내용을 이해할 수 있도록 같은 설명을 여러 번 반복해야 했다."
+    },
+    {
+      "consumer": "#static_txt:924/925/927",
+      "intellect": "스스로 가르침을 바로 이해하지 못한다는 것을 의식하고 있다고 했다. / 가르침을 바로 이해하지 못한다는 것을 부끄러워하고 있다.",
+      "ego": "스스로 주인의 지시 없이는 아무런 판단도 내리지 못한다는 것을 의식하고 있다고 했다.",
+      "cook": "아직 기본적인 요리에도 서툴다는 것을 부끄러워하고 있다."
+    },
+    {
+      "consumer": "#static_txt:924",
+      "apology": "같은 설명을 여러 번 들어야 했던 것을 사과하게 했다. / 스스로 판단하지 못하고 지시만 기다린 것을 사과하게 했다."
+    }
+  ],
+  "independentEditorialAdjustments": [
+    "ego<1 is indecision, not inability to think.",
+    "Intellect stat alone does not prove previous repeated lessons."
+  ]
+}

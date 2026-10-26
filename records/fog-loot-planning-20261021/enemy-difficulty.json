@@ -1,0 +1,774 @@
+{
+  "status": "ANALYTICAL_PLANNING_DRAFT_NOT_OFFICIAL_DIFFICULTY",
+  "source": {
+    "qsp": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+    "sha256": "a2e0265881bebd8a72b3fcbb214ddaf831106cfe50e9c96da8e0b6e7d692707a",
+    "existingRoster": "G:/somi/JO9sa/records/fog-loot-planning-20261021/enemies.json",
+    "cached262LocationParseReused": true
+  },
+  "scope": "현재 Work 일반 안개14묶음에 대한 상대적 강약 1~5 초안. 게임/소스/AI/드롭 코드 변경 없음.",
+  "method": [
+    "기본 HP뿐 아니라 지구력·정신력, 기본 피해, 피해형별 감쇄/약점, 면역 플래그, 실제 집단 인원을 함께 비교했다.",
+    "플레이어 능력/무기/특성·동료·방어 선택을 고정한 실전 시뮬레이션이 아니므로 같은 단계 안의 정밀 서열을 주장하지 않는다.",
+    "수인 무작위 구성, 고블린2~3마리, 물리/정신/속성 상성으로 달라지는 행은 범위와 불확실성을 표시했다."
+  ],
+  "interpretation": {
+    "stats": "#противники 기본 정의. начать_бой:433~436에서 HP/지구력/정신력으로 복사됨.",
+    "damageModifiers": "рассчет_вреда:54~56은 피해에 보정치를 더한다. 음수는 감쇄, 양수는 해당 피해 약점.",
+    "flags": "конец_раунда:30~40 및 атака_игрока:144~155에서 бессмертный/безустали/бесстрашный가 각각 HP/지구력/사기 피해 적용을 제한한다."
+  },
+  "activeAttackObservation": {
+    "source": "искусственный_идиот:17~27 및45~75",
+    "selection": "пешка=통상1; рядовой=통상1~2; элитный=통상1~3",
+    "definedSpecialBranches": "특수공격 처리는4~6 분기에 정의됨",
+    "planningTreatment": "현재 선택 범위에서4~6을 선택하는 대입을 찾지 못했으므로 정의된 정신계/특수공격을 상시 활성 가중치로 넣지 않았다. 활성 경로 제한 관찰이며 신규 버그 판정이나 AI 수리 제안이 아니다.",
+    "magicAndRange": "리치 통상공격에는 마법/번개 묘사가 있으나 현재 피해형은 관통/절단/타격 값이다. 서술만으로 별도의 원거리/마법 우위를 확정하지 않았다. 거리 유효성 실전 검사는 하지 않음."
+  },
+  "table": [
+    {
+      "event": 61101,
+      "names": [
+        "성장기 안개 괴물"
+      ],
+      "count": 1,
+      "composition": null,
+      "draftGrade": 2,
+      "draftBand": "하",
+      "plausibleRange": "2",
+      "uncertainty": "보통",
+      "reason": "단독 HP70/지구력60/정신90, 기본피해9. 타격-4·냉기/정신-2의 감쇄가 있으나 다수전이나 특수 면역은 아님.",
+      "baseStats": {
+        "hp": [
+          70
+        ],
+        "stamina": [
+          60
+        ],
+        "spirit": [
+          90
+        ],
+        "damage": [
+          9
+        ]
+      },
+      "sources": {
+        "enemyDefinitions": {
+          "location": "#противники",
+          "lines": [
+            984,
+            985,
+            986,
+            989,
+            1031,
+            1032,
+            1034,
+            1040
+          ]
+        },
+        "composition": {
+          "location": "interaction_city",
+          "line": 10522
+        }
+      },
+      "equipmentQualification": "설명/공격 문구와 감쇄를 분석한 것이며 소지품 장비 ID나 새 드롭 목록으로 변환하지 않음"
+    },
+    {
+      "event": 61102,
+      "names": [
+        "안개 괴물"
+      ],
+      "count": 1,
+      "composition": null,
+      "draftGrade": 3,
+      "draftBand": "중",
+      "plausibleRange": "3~4",
+      "uncertainty": "경계",
+      "reason": "단독 HP120/지구력120/정신160, 피해15. 타격-6·냉기/어둠/정신-8로 단순 근접보다 대응폭이 좁음. 정의된 특수공격은 현 선택 범위의 가중치에서 제외.",
+      "baseStats": {
+        "hp": [
+          120
+        ],
+        "stamina": [
+          120
+        ],
+        "spirit": [
+          160
+        ],
+        "damage": [
+          15
+        ]
+      },
+      "sources": {
+        "enemyDefinitions": {
+          "location": "#противники",
+          "lines": [
+            1051,
+            1052,
+            1053,
+            1056,
+            1116,
+            1118,
+            1121,
+            1124
+          ]
+        },
+        "composition": {
+          "location": "interaction_city",
+          "line": 10532
+        }
+      },
+      "equipmentQualification": "설명/공격 문구와 감쇄를 분석한 것이며 소지품 장비 ID나 새 드롭 목록으로 변환하지 않음"
+    },
+    {
+      "event": 61103,
+      "names": [
+        "거대 안개 괴물"
+      ],
+      "count": 1,
+      "composition": null,
+      "draftGrade": 5,
+      "draftBand": "최상 후보",
+      "plausibleRange": "4~5",
+      "uncertainty": "상위권",
+      "reason": "HP200/지구력300/정신300, 피해20. 타격-10, 냉기/어둠-6, 정신-8. 단독이지만 모든 자원과 감쇄가 높아 최상위 후보.",
+      "baseStats": {
+        "hp": [
+          200
+        ],
+        "stamina": [
+          300
+        ],
+        "spirit": [
+          300
+        ],
+        "damage": [
+          20
+        ]
+      },
+      "sources": {
+        "enemyDefinitions": {
+          "location": "#противники",
+          "lines": [
+            1136,
+            1137,
+            1138,
+            1141,
+            1212,
+            1214,
+            1217,
+            1220
+          ]
+        },
+        "composition": {
+          "location": "interaction_city",
+          "line": 10548
+        }
+      },
+      "equipmentQualification": "설명/공격 문구와 감쇄를 분석한 것이며 소지품 장비 ID나 새 드롭 목록으로 변환하지 않음"
+    },
+    {
+      "event": 61104,
+      "names": [
+        "검은 의사",
+        "하인"
+      ],
+      "count": 4,
+      "composition": "검은 의사1 + 하인3",
+      "draftGrade": 2,
+      "draftBand": "하",
+      "plausibleRange": "2~3",
+      "uncertainty": "하인 처리 속도 영향",
+      "reason": "검은 의사 HP60·피해9·주요 물리-4에 하인3명. 하인은 각 HP/지구력/정신1·피해3이므로 적4명이라는 이유만으로 정예전 수준으로 올리지 않음.",
+      "baseStats": {
+        "hp": [
+          60,
+          1,
+          1,
+          1
+        ],
+        "stamina": [
+          60,
+          1,
+          1,
+          1
+        ],
+        "spirit": [
+          60,
+          1,
+          1,
+          1
+        ],
+        "damage": [
+          9,
+          3,
+          3,
+          3
+        ]
+      },
+      "sources": {
+        "enemyDefinitions": {
+          "location": "#противники",
+          "lines": [
+            818,
+            819,
+            820,
+            823,
+            847,
+            848,
+            849,
+            37,
+            38,
+            39,
+            42
+          ]
+        },
+        "composition": {
+          "location": "interaction_city",
+          "line": 10561
+        }
+      },
+      "equipmentQualification": "설명/공격 문구와 감쇄를 분석한 것이며 소지품 장비 ID나 새 드롭 목록으로 변환하지 않음"
+    },
+    {
+      "event": 61105,
+      "names": [
+        "성기사",
+        "병사"
+      ],
+      "count": 3,
+      "composition": "성기사1 + 병사2",
+      "draftGrade": 3,
+      "draftBand": "중",
+      "plausibleRange": "3~4",
+      "uncertainty": "장비 상성 영향",
+      "reason": "성기사 HP50·피해9 + 병사2명 각HP40·피해6. 성기사 절단/타격-6, 병사 절단-5. 정신 감쇄도 높지만 화염/냉기+2·번개+5 약점이 있음.",
+      "baseStats": {
+        "hp": [
+          50,
+          40,
+          40
+        ],
+        "stamina": [
+          80,
+          60,
+          60
+        ],
+        "spirit": [
+          90,
+          50,
+          50
+        ],
+        "damage": [
+          9,
+          6,
+          6
+        ]
+      },
+      "sources": {
+        "enemyDefinitions": {
+          "location": "#противники",
+          "lines": [
+            460,
+            461,
+            462,
+            465,
+            489,
+            490,
+            491,
+            492,
+            493,
+            494,
+            499,
+            510,
+            511,
+            512,
+            515,
+            542,
+            544,
+            545,
+            546,
+            551
+          ]
+        },
+        "composition": {
+          "location": "interaction_city",
+          "line": 10577
+        }
+      },
+      "equipmentQualification": "설명/공격 문구와 감쇄를 분석한 것이며 소지품 장비 ID나 새 드롭 목록으로 변환하지 않음"
+    },
+    {
+      "event": 61106,
+      "names": [
+        "염소 머리",
+        "돼지낯짝",
+        "두꺼비인간",
+        "쥐인간"
+      ],
+      "count": 4,
+      "composition": "4개 슬롯 각각 rand(1,4); 같은 하위종 중복 가능",
+      "draftGrade": 3,
+      "draftBand": "중",
+      "plausibleRange": "3~4",
+      "uncertainty": "편성 변동 큼",
+      "reason": "수인4명이 각각 무작위. 개체 HP30~60·피해4~9, 주요 물리 감쇄는 거의0 또는+1. 4명의 공격 압력과 둔화/기절류 상태가 핵심이며 돼지·염소 위주면 상향 후보.",
+      "baseStats": {
+        "hpPerUnit": [
+          30,
+          60
+        ],
+        "staminaPerUnit": [
+          40,
+          80
+        ],
+        "spiritPerUnit": [
+          40,
+          60
+        ],
+        "damagePerUnit": [
+          4,
+          9
+        ]
+      },
+      "sources": {
+        "enemyDefinitions": {
+          "location": "#противники",
+          "lines": [
+            562,
+            563,
+            564,
+            567,
+            570,
+            576,
+            612,
+            613,
+            614,
+            617,
+            620,
+            662,
+            663,
+            664,
+            667,
+            712,
+            713,
+            714,
+            717
+          ]
+        },
+        "composition": {
+          "location": "interaction_city",
+          "line": 10596
+        }
+      },
+      "equipmentQualification": "설명/공격 문구와 감쇄를 분석한 것이며 소지품 장비 ID나 새 드롭 목록으로 변환하지 않음"
+    },
+    {
+      "event": 61107,
+      "names": [
+        "늑대인간"
+      ],
+      "count": 1,
+      "composition": null,
+      "draftGrade": 4,
+      "draftBand": "상",
+      "plausibleRange": "3~4",
+      "uncertainty": "관통/처치 경로 영향",
+      "reason": "HP150/지구력300/정신150, 피해10. 무피로·무공포 플래그로 지구력·사기 공격을 통한 일반 소모 경로가 제한됨. 절단/타격-6도 있어 HP만큼 가볍게 보지 않음.",
+      "baseStats": {
+        "hp": [
+          150
+        ],
+        "stamina": [
+          300
+        ],
+        "spirit": [
+          150
+        ],
+        "damage": [
+          10
+        ],
+        "flags": {
+          "безустали": 1,
+          "бесстрашный": 1
+        }
+      },
+      "sources": {
+        "enemyDefinitions": {
+          "location": "#противники",
+          "lines": [
+            1298,
+            1299,
+            1300,
+            1303,
+            1339,
+            1340,
+            1343,
+            1344
+          ]
+        },
+        "composition": {
+          "location": "interaction_city",
+          "line": 10613
+        }
+      },
+      "equipmentQualification": "설명/공격 문구와 감쇄를 분석한 것이며 소지품 장비 ID나 새 드롭 목록으로 변환하지 않음"
+    },
+    {
+      "event": 61108,
+      "names": [
+        "흡혈귀"
+      ],
+      "count": 1,
+      "composition": null,
+      "draftGrade": 4,
+      "draftBand": "상",
+      "plausibleRange": "3~4",
+      "uncertainty": "정신 공격 상성 영향",
+      "reason": "HP150/지구력200/정신150, 피해15. 무피로 플래그와 절단/타격/냉기/어둠 감쇄-4, 정신-6. 특수 정신공격 정의만으로 가중하지 않음.",
+      "baseStats": {
+        "hp": [
+          150
+        ],
+        "stamina": [
+          200
+        ],
+        "spirit": [
+          150
+        ],
+        "damage": [
+          15
+        ],
+        "flags": {
+          "безустали": 1
+        }
+      },
+      "sources": {
+        "enemyDefinitions": {
+          "location": "#противники",
+          "lines": [
+            1231,
+            1232,
+            1233,
+            1236,
+            1274,
+            1278,
+            1279,
+            1281,
+            1284,
+            1287
+          ]
+        },
+        "composition": {
+          "location": "interaction_city",
+          "line": 10623
+        }
+      },
+      "equipmentQualification": "설명/공격 문구와 감쇄를 분석한 것이며 소지품 장비 ID나 새 드롭 목록으로 변환하지 않음"
+    },
+    {
+      "event": 61109,
+      "names": [
+        "리치"
+      ],
+      "count": 1,
+      "composition": null,
+      "draftGrade": 5,
+      "draftBand": "최상 후보",
+      "plausibleRange": "3~5",
+      "uncertainty": "상성 의존 가장 큼",
+      "reason": "HP60만 보면 낮지만 지구력100/정신300·기본피해25. 불사·무공포 플래그가 HP/사기 피해 경로를 제한하고 관통/절단/정신-10 감쇄. 타격+2 약점과 지구력 공략으로 체감 난이도 하락 가능.",
+      "baseStats": {
+        "hp": [
+          60
+        ],
+        "stamina": [
+          100
+        ],
+        "spirit": [
+          300
+        ],
+        "damage": [
+          25
+        ],
+        "flags": {
+          "бессмертный": 1,
+          "бесстрашный": 1
+        }
+      },
+      "sources": {
+        "enemyDefinitions": {
+          "location": "#противники",
+          "lines": [
+            1363,
+            1364,
+            1365,
+            1368,
+            1406,
+            1408,
+            1410,
+            1411,
+            1412,
+            1420
+          ]
+        },
+        "composition": {
+          "location": "interaction_city",
+          "line": 10636
+        }
+      },
+      "equipmentQualification": "설명/공격 문구와 감쇄를 분석한 것이며 소지품 장비 ID나 새 드롭 목록으로 변환하지 않음"
+    },
+    {
+      "event": 61110,
+      "names": [
+        "식인종",
+        "불구자",
+        "거지",
+        "미치광이",
+        "말라깽이"
+      ],
+      "count": 5,
+      "composition": "5개 슬롯 각각 rand(1,5); 같은 하위유형 중복 가능",
+      "draftGrade": 1,
+      "draftBand": "최하",
+      "plausibleRange": "1",
+      "uncertainty": "낮음",
+      "reason": "5명이지만 각 HP/지구력/정신1, 기본피해2~5, 단일 통상공격만 선택하는 пешка 계열. 머릿수만으로 고가 전리품을 주면 저난도 보상이 과해질 수 있음.",
+      "baseStats": {
+        "hpPerUnit": 1,
+        "staminaPerUnit": 1,
+        "spiritPerUnit": 1,
+        "damagePerUnit": [
+          2,
+          5
+        ]
+      },
+      "sources": {
+        "enemyDefinitions": {
+          "location": "#противники",
+          "lines": [
+            73,
+            74,
+            75,
+            78,
+            97,
+            98,
+            99,
+            102,
+            121,
+            122,
+            123,
+            126,
+            153,
+            154,
+            155,
+            158,
+            181,
+            182,
+            183,
+            186
+          ]
+        },
+        "composition": {
+          "location": "interaction_city",
+          "line": 10657
+        }
+      },
+      "equipmentQualification": "설명/공격 문구와 감쇄를 분석한 것이며 소지품 장비 ID나 새 드롭 목록으로 변환하지 않음"
+    },
+    {
+      "event": 61111,
+      "names": [
+        "오우거"
+      ],
+      "count": 1,
+      "composition": null,
+      "draftGrade": 4,
+      "draftBand": "상",
+      "plausibleRange": "3~5",
+      "uncertainty": "정신 공격 대응 시 하락",
+      "reason": "HP200/지구력175/정신175, 피해22. 타격-20·절단-6로 물리 정면전이 강하나 정신+10 약점. HP합이나 근접 난도만으로 최고 고정등급을 주기 어려움.",
+      "baseStats": {
+        "hp": [
+          200
+        ],
+        "stamina": [
+          175
+        ],
+        "spirit": [
+          175
+        ],
+        "damage": [
+          22
+        ]
+      },
+      "sources": {
+        "enemyDefinitions": {
+          "location": "#противники",
+          "lines": [
+            1434,
+            1435,
+            1436,
+            1439,
+            1477,
+            1478,
+            1486
+          ]
+        },
+        "composition": {
+          "location": "interaction_city",
+          "line": 10675
+        }
+      },
+      "equipmentQualification": "설명/공격 문구와 감쇄를 분석한 것이며 소지품 장비 ID나 새 드롭 목록으로 변환하지 않음"
+    },
+    {
+      "event": 61112,
+      "names": [
+        "고블린"
+      ],
+      "count": "2~3",
+      "composition": "기본2마리; ((48271*(day+city_already_done_ever[611])) mod65537)>32768이면3마리",
+      "draftGrade": 2,
+      "draftBand": "하",
+      "plausibleRange": "2~3",
+      "uncertainty": "2마리/3마리 차이",
+      "reason": "2~3마리, 각각 HP50/지구력40/정신40·피해7, 관통/절단-2. 단검·상태이상 공격을 갖지만 정예 특수 면역은 없음. 3마리 편성은 3단계 경계.",
+      "baseStats": {
+        "hpPerUnit": 50,
+        "staminaPerUnit": 40,
+        "spiritPerUnit": 40,
+        "damagePerUnit": 7
+      },
+      "sources": {
+        "enemyDefinitions": {
+          "location": "#противники",
+          "lines": [
+            1489,
+            1492,
+            1497,
+            1498,
+            1499,
+            1502,
+            1505,
+            1511,
+            1526,
+            1527
+          ]
+        },
+        "composition": {
+          "location": "interaction_city",
+          "line": 10688
+        }
+      },
+      "equipmentQualification": "설명/공격 문구와 감쇄를 분석한 것이며 소지품 장비 ID나 새 드롭 목록으로 변환하지 않음"
+    },
+    {
+      "event": 61113,
+      "names": [
+        "와그"
+      ],
+      "count": 1,
+      "composition": null,
+      "draftGrade": 4,
+      "draftBand": "상",
+      "plausibleRange": "3~5",
+      "uncertainty": "화염/정신 대응 시 하락",
+      "reason": "HP150/지구력150/정신120, 피해20. 타격-20·절단-6·번개-10로 물리/번개 정면전이 강하나 화염+5·정신+10 약점. 특수 정신공격 정의만으로 가중하지 않음.",
+      "baseStats": {
+        "hp": [
+          150
+        ],
+        "stamina": [
+          150
+        ],
+        "spirit": [
+          120
+        ],
+        "damage": [
+          20
+        ]
+      },
+      "sources": {
+        "enemyDefinitions": {
+          "location": "#противники",
+          "lines": [
+            1547,
+            1548,
+            1549,
+            1552,
+            1595,
+            1596,
+            1597,
+            1599,
+            1604
+          ]
+        },
+        "composition": {
+          "location": "interaction_city",
+          "line": 10704
+        }
+      },
+      "equipmentQualification": "설명/공격 문구와 감쇄를 분석한 것이며 소지품 장비 ID나 새 드롭 목록으로 변환하지 않음"
+    },
+    {
+      "event": 61114,
+      "names": [
+        "오크 전사"
+      ],
+      "count": 1,
+      "composition": null,
+      "draftGrade": 3,
+      "draftBand": "중",
+      "plausibleRange": "2~3",
+      "uncertainty": "관통/타격 상성",
+      "reason": "HP80/지구력100/정신150·피해12. 절단-10, 관통/타격-4. 무장한 전사지만 단독이므로 상위 정예/다수전과 구분.",
+      "baseStats": {
+        "hp": [
+          80
+        ],
+        "stamina": [
+          100
+        ],
+        "spirit": [
+          150
+        ],
+        "damage": [
+          12
+        ]
+      },
+      "sources": {
+        "enemyDefinitions": {
+          "location": "#противники",
+          "lines": [
+            1607,
+            1610,
+            1615,
+            1616,
+            1617,
+            1620,
+            1652,
+            1653,
+            1654
+          ]
+        },
+        "composition": {
+          "location": "interaction_city",
+          "line": 10717
+        }
+      },
+      "equipmentQualification": "설명/공격 문구와 감쇄를 분석한 것이며 소지품 장비 ID나 새 드롭 목록으로 변환하지 않음"
+    }
+  ],
+  "lootPlanningBoundary": {
+    "userRule": "저급 몬스터에서 고급 장비가 나오지 않게 난도에 따라 가치 배분",
+    "draftImplication": "1~2단계는 고급 장비 풀에서 제외하는 하한 구획으로 쓰기 적합. 3단계는 중간 보상,4~5단계는 고가/고유 보상 검토 후보이되 상성에 따라 쉬워지는 적은 별도 확인 필요.",
+    "status": "아이템 가격·확률·실제 드롭 상한을 아직 확정하거나 구현하지 않음"
+  },
+  "limits": [
+    "전투 실행 없음. 정의와 활성 코드의 정적 분석이다.",
+    "정확한 승률·처치시간·보상 스파크 금액을 산출한 공식 지표가 아니다.",
+    "성적 서술과 전체 원문 덤프는 포함하지 않음.",
+    "가르시드 퀘스트 편성과 고유 보상은 일반14단계 표에 합산하지 않음."
+  ]
+}

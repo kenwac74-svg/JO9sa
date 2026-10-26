@@ -3,7 +3,7 @@
 // Copy original B bytes to the physical Windows sibling (2); preserve A and source bytes.
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
 const normalize=s=>String(s).replaceAll('\\','/').replace(/^content\/pic\//i,'').toLowerCase();
-const eligible=s=>/^(bg|characters|scene|reserve)\/.+\.png$/i.test(s)&&!s.split('/').some(p=>!p||p==='.'||p==='..'||/[\x00-\x1f:*?"<>|]/.test(p));
+const eligible=s=>/^(bg|characters|scene|mob|reserve)\/.+\.png$/i.test(s)&&!s.split('/').some(p=>!p||p==='.'||p==='..'||/[\x00-\x1f:*?"<>|]/.test(p));
 const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
 function readRows(catalogRoot){const html=fs.readFileSync(path.join(catalogRoot,'catalog_merge_vs_original.html'),'utf8'),m=html.match(/var D\s*=\s*(\[[\s\S]*?\]);\s*\r?\nvar MR/);if(!m)throw Error('카탈로그 목록을 읽지 못했습니다.');return JSON.parse(m[1]);}
 function png(data){if(data.length<24||data.subarray(0,8).toString('hex')!=='89504e470d0a1a0a')throw Error('원본이 PNG가 아닙니다.');return{width:data.readUInt32BE(16),height:data.readUInt32BE(20)};}

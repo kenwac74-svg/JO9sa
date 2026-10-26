@@ -1,0 +1,36 @@
+{
+  "id": "2026-10-19_combat_trait_probability",
+  "description": "User balance: personal real wins 10/15/20... roll once; 3% per exclusive combat trait, 91% none. Fog personal victory grants ego/temper rate +5 each.",
+  "before_sha256": "ae591ef904a5fe0f4cbac3454815ac36cd1475464689869bb75c94e3e7fe7826",
+  "after_sha256": "7f4edf1b21d7bd9c13bfda076687652279ab5af2cabca36d961855dc4094768c",
+  "edits": [
+    {
+      "location": "jo9_traits_combat",
+      "field": "body",
+      "old": " dynamic 'if <<$args[1]>>[\"jo9_real_wins\"] >= 10 and <<$args[1]>>[\"jo9_combat_trait\"] = 0: <<$args[1]>>[\"jo9_combat_trait\"] = rand(1,3)'",
+      "new": " ! JO9 MOD START COMBAT_TRAIT_CHECKPOINT_ROLL | 2026-10-19_combat_trait_probability\r\n ! Existing wins remain cumulative. Only 10,15,20... wins draw once for an unassigned trait.\r\n dynamic 'jo9_trait_combat_wins = <<$args[1]>>[\"jo9_real_wins\"] & jo9_trait_combat_class = <<$args[1]>>[\"jo9_combat_trait\"]'\r\n if jo9_trait_combat_wins >= 10 and jo9_trait_combat_wins mod 5 = 0 and jo9_trait_combat_class = 0:\r\n  jo9_trait_combat_roll = rand(1,100)\r\n  if jo9_trait_combat_roll <= 3:\r\n   dynamic '<<$args[1]>>[\"jo9_combat_trait\"] = 1'\r\n  elseif jo9_trait_combat_roll <= 6:\r\n   dynamic '<<$args[1]>>[\"jo9_combat_trait\"] = 2'\r\n  elseif jo9_trait_combat_roll <= 9:\r\n   dynamic '<<$args[1]>>[\"jo9_combat_trait\"] = 3'\r\n  end\r\n end\r\n ! JO9 MOD END COMBAT_TRAIT_CHECKPOINT_ROLL",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits_combat",
+      "field": "body",
+      "old": " killvar 'jo9_trait_combat_constitution'",
+      "new": " ! JO9 MOD START COMBAT_TRAIT_ROLL_CLEANUP | 2026-10-19_combat_trait_probability\r\n killvar 'jo9_trait_combat_wins'\r\n killvar 'jo9_trait_combat_roll'\r\n ! JO9 MOD END COMBAT_TRAIT_ROLL_CLEANUP\r\n killvar 'jo9_trait_combat_constitution'",
+      "count": 1
+    },
+    {
+      "location": "jo9_fog_relay",
+      "field": "body",
+      "old": "   dynamic $replace($dyn_calc_slave_attrs, 'dyn'+'slave', 'slave')",
+      "new": "   ! JO9 MOD START FOG_VICTORY_GROWTH_SLAVE | 2026-10-19_combat_trait_probability\r\n   if $итог_боя = 'победа':\r\n    slave_rate['ego'] += 5\r\n    slave_rate['temper'] += 5\r\n   end\r\n   ! JO9 MOD END FOG_VICTORY_GROWTH_SLAVE\r\n   dynamic $replace($dyn_calc_slave_attrs, 'dyn'+'slave', 'slave')",
+      "count": 1
+    },
+    {
+      "location": "jo9_fog_relay",
+      "field": "body",
+      "old": "   dynamic $replace($dyn_calc_slave_attrs, 'dyn'+'slave', 'assistant')",
+      "new": "   ! JO9 MOD START FOG_VICTORY_GROWTH_ASSISTANT | 2026-10-19_combat_trait_probability\r\n   if $итог_боя = 'победа':\r\n    assistant_rate['ego'] += 5\r\n    assistant_rate['temper'] += 5\r\n   end\r\n   ! JO9 MOD END FOG_VICTORY_GROWTH_ASSISTANT\r\n   dynamic $replace($dyn_calc_slave_attrs, 'dyn'+'slave', 'assistant')",
+      "count": 1
+    }
+  ]
+}

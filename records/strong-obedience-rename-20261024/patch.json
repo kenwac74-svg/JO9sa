@@ -1,0 +1,37 @@
+{
+  "id": "2026-10-24_strong_obedience_name",
+  "description": "완전한 사육→강한 복종심. 목록/편집기 명칭과 공통/여주인 설명만 변경. 기존 meekness 숫자축·반대 자유로운영혼·효과·생성·발견·세이브·배제규칙 유지.",
+  "target": "game\\jack.qsp",
+  "before_sha256": "afb2b9eccbe02193f77fefea4a990081616a79eb84ed14fe2d8f0bbd3cf2d1fc",
+  "after_sha256": "f2d5a9c2970bd7cbc7479f80901204b8fcdcaeab6cff83019a4a3ece6f8a9775",
+  "edits": [
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "\t\t$setting_display += '완전한 사육 ' + slave[\"meekness\"]",
+      "new": "! JO9 MOD START STRONG_OBEDIENCE_EDITOR | 2026-10-24_strong_obedience_name\r\n\t\t$setting_display += '강한 복종심 ' + slave[\"meekness\"]\r\n! JO9 MOD END STRONG_OBEDIENCE_EDITOR",
+      "count": 1
+    },
+    {
+      "location": "#static_base",
+      "field": "body",
+      "old": "            $dynslave_features_list += '<a href=\"EXEC: msg $Дисциплинированная\"><<dyneval($vb_cycle_skill, 5, \"완전한 사육\")>></a><br>'",
+      "new": "! JO9 MOD START STRONG_OBEDIENCE_LIST | 2026-10-24_strong_obedience_name\r\n            $dynslave_features_list += '<a href=\"EXEC: msg $Дисциплинированная\"><<dyneval($vb_cycle_skill, 5, \"강한 복종심\")>></a><br>'\r\n! JO9 MOD END STRONG_OBEDIENCE_LIST",
+      "count": 1
+    },
+    {
+      "location": "#static_txt",
+      "field": "body",
+      "old": "$Дисциплинированная = ' 보아하니 당신 노예는 엄격한 규율에 익숙하고, 자기 욕망을 무시한 채 복종할 준비가 되어 있다. 노예에게는 분명 유용한 특성이다.'",
+      "new": "! JO9 MOD START STRONG_OBEDIENCE_DESC_COMMON | 2026-10-24_strong_obedience_name\r\n$Дисциплинированная = '강한 복종심: 엄격한 규율이 몸에 배어 자신의 욕구보다 주인의 지시를 우선한다. 복종 판정에 지속적인 보너스를 받으며, 특정 일일 규칙을 따를 때의 기분 부담도 줄어든다. 마차를 몰 때 지시에 잘 따르고, 이 성향이 드러나면 경매에서 좋은 평가를 받는다. 기초 복종훈련의 완료 여부는 별개다.'\r\n! JO9 MOD END STRONG_OBEDIENCE_DESC_COMMON",
+      "count": 1
+    },
+    {
+      "location": "#txt_woman",
+      "field": "body",
+      "old": "$Дисциплинированная = ' 보아하니 당신 노예는 엄격한 규율에 익숙하고, 자기 욕망을 무시한 채 복종할 준비가 되어 있다. 노예에게는 분명 유용한 특성이다.'",
+      "new": "! JO9 MOD START STRONG_OBEDIENCE_DESC_WOMAN | 2026-10-24_strong_obedience_name\r\n$Дисциплинированная = '강한 복종심: 엄격한 규율이 몸에 배어 자신의 욕구보다 주인의 지시를 우선한다. 복종 판정에 지속적인 보너스를 받으며, 특정 일일 규칙을 따를 때의 기분 부담도 줄어든다. 마차를 몰 때 지시에 잘 따르고, 이 성향이 드러나면 경매에서 좋은 평가를 받는다. 기초 복종훈련의 완료 여부는 별개다.'\r\n! JO9 MOD END STRONG_OBEDIENCE_DESC_WOMAN",
+      "count": 1
+    }
+  ]
+}

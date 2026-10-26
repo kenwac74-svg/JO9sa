@@ -1,0 +1,21 @@
+{
+  "before": "060295923fd646e87148dc0e900ef7acce92e1086b6376e1f1fc9d12298513b7",
+  "after": "f2433bf3bbb887f00a0a319130bf06cb0bfdaeaa091b113d831c701407f1b07a",
+  "edits": 8,
+  "changedLocations": [
+    "#options",
+    "#static_txt",
+    "#txt_woman",
+    "$ongload"
+  ],
+  "oldCondition": "IF slave_state = CONST_INT['slave_exist'] and slave[\"energy\"] >= 2 and sparks >= 100:",
+  "newCondition": "IF slave_state = CONST_INT['slave_exist'] and (slave[\"energy\"] * 2 - slave[\"half_action\"]) >= 6 and sparks >= 100:",
+  "loadBlock": "! JO9 MOD START RALLY_AP_STATUS_CACHE_20261026 | 2026-10-26_rally_ap_status_text\r\n$erosalon_options[4] = replace($erosalon_options[4], 'IF slave_state = CONST_INT[''slave_exist''] and slave[\"energy\"] >= 2 and sparks >= 100:', 'IF slave_state = CONST_INT[''slave_exist''] and (slave[\"energy\"] * 2 - slave[\"half_action\"]) >= 6 and sparks >= 100:')\r\nif $place = 'erosalon': $display_options[4] = replace($display_options[4], 'IF slave_state = CONST_INT[''slave_exist''] and slave[\"energy\"] >= 2 and sparks >= 100:', 'IF slave_state = CONST_INT[''slave_exist''] and (slave[\"energy\"] * 2 - slave[\"half_action\"]) >= 6 and sparks >= 100:')\r\n$Нет_клейма = '[상표 없음]<br>노예에게 낙인이 없어 일부 거래가 제한된다. 새로운 생활을 받아들이는 데도 시간이 더 걸릴 수 있다. 필요하다면 표식을 새길 방법을 찾아보자.'\r\n$sanity_broken = '[정신분열]<br>정신이 크게 손상되어 스스로 의욕을 보이지 않는다. 지시에는 저항하지 않지만 평가와 여러 활동에 불이익을 받을 수 있다. 안정을 찾고 자아와 기질을 회복할 수 있는 여건을 마련해 주자.'\r\n$sanity_low = '[신경 쇠약]<br>정신 상태가 불안정해지고 있다. 자존심이 상하거나 자아와 기질이 약해지면 더욱 흔들릴 수 있다. 상태를 주의 깊게 살피고 회복할 여건을 마련해 주자.'\r\n! JO9 MOD END RALLY_AP_STATUS_CACHE_20261026",
+  "descriptions": {
+    "$Нет_клейма": "[상표 없음]<br>노예에게 낙인이 없어 일부 거래가 제한된다. 새로운 생활을 받아들이는 데도 시간이 더 걸릴 수 있다. 필요하다면 표식을 새길 방법을 찾아보자.",
+    "$sanity_broken": "[정신분열]<br>정신이 크게 손상되어 스스로 의욕을 보이지 않는다. 지시에는 저항하지 않지만 평가와 여러 활동에 불이익을 받을 수 있다. 안정을 찾고 자아와 기질을 회복할 수 있는 여건을 마련해 주자.",
+    "$sanity_low": "[신경 쇠약]<br>정신 상태가 불안정해지고 있다. 자존심이 상하거나 자아와 기질이 약해지면 더욱 흔들릴 수 있다. 상태를 주의 깊게 살피고 회복할 여건을 마련해 주자."
+  },
+  "newLocations": 0,
+  "newPersistentKeys": 0
+}

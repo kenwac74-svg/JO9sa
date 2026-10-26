@@ -1,0 +1,505 @@
+{
+  "source": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+  "sourceHash": "256293ff14b41ac19efd1bfb412f21066b227f86e1b61ea0e523820a86ebcb3a",
+  "nativeFactory": true,
+  "root": "G:/Codex/tmp/bankruptcy-ui-saves-20261025-r2",
+  "recipes": [
+    {
+      "index": 1,
+      "id": "full-chain",
+      "file": "01_full-chain.sav",
+      "titleKo": "장식부터 파산 엔딩까지 네 단계",
+      "baseSave": "11_assets-and-quick.sav",
+      "setup": [
+        "is_home=1 & city_form=0 & city_district=-1 & menu_form=0",
+        "$place='home_lux' & $return_lock='menu_form'",
+        "end_of_the_day=0 & end_day_phase=0 & snk_room_target=0 & snk_room_inventory=0",
+        "$info_text='' & $equip_choice=''",
+        "sparks=0 & final_payment=50000 & master_energy=5",
+        "jo9_lq['active']=0 & jo9_lq['settled']=0 & jo9_lq['manual']=0",
+        "gs 'jo9_liquidation','begin'"
+      ],
+      "entry": "gt 'jo9_liquidation','view'",
+      "checkpoint": "jo9_liquidation",
+      "how": [
+        "실내장식을 정리한다 → 빈민가로 이주하고 시설을 정리한다 → 에게야 급매 → 이사벨라 급매 순서로 선택한다.",
+        "각 단계는 처분 후 자동으로 다음 남은 자산으로 넘어간다. 마지막까지 돈이 모자라면 기존 파산 엔딩으로 간다."
+      ],
+      "expect": [
+        "장식 환급 460, 쿨라 개인실 4칸 정산 4400, 자가 주택 7500. 빈 임대시설 해지 금액은 0이다.",
+        "활동 노예와 조수는 이주 때 남아 있다가 각자 차례에만 급매된다.",
+        "50000은 전체 순서를 보기 위한 시험 청구다. 정상 플레이의 월 비용을 재현하는 값이 아니다."
+      ],
+      "limits": [
+        "이 파일은 마지막까지 선택하면 파산 엔딩이 난다. 독립적인 다른 검사는 각 파일을 다시 불러온다."
+      ],
+      "guard": "jo9_lq['active']=1 and jo9_lq['bill']=50000 and jo9_lq['page']=0 and sparks=0 and slave_state=1 and assistant_state=1 and slave_type=2579 and assistant_type=2571 and slave['age']=2 and assistant['age']=2",
+      "expected": {
+        "location": "jo9_liquidation",
+        "numeric": {
+          "JO9_LQ.active": 1,
+          "SPARKS": 0,
+          "JO9_LQ.bill": 50000,
+          "JO9_LQ.page": 0,
+          "MASTER_ENERGY": 5
+        },
+        "strings": {
+          "ESTATE": "white_house"
+        }
+      },
+      "input": "G:/Codex/tmp/bankruptcy-ui-saves-20261025-r2/factory/inputs/01_full-chain.sav",
+      "source": "G:/somi/Jack O Nine Tails v2.4_work/game/save/JO9_MANUAL_20261025/01_검사완료재확인/11_assets-and-quick.sav",
+      "sourceHash": "c6a45839fb254947406207b1c1a6d75a1d3c973fc224bd61addd6f2706c0fc4e"
+    },
+    {
+      "index": 2,
+      "id": "occupied-relocation",
+      "file": "02_occupied-relocation.sav",
+      "titleKo": "입주 개인실·외부 크라이오 급매와 이주",
+      "baseSave": "13_occupied-assets.sav",
+      "setup": [
+        "is_home=1 & city_form=0 & city_district=-1 & menu_form=0",
+        "$place='home_lux' & $return_lock='menu_form'",
+        "end_of_the_day=0 & end_day_phase=0 & snk_room_target=0 & snk_room_inventory=0",
+        "$info_text='' & $equip_choice=''",
+        "gs 'jo9_liquidation_assets','sell','decor'",
+        "npc_progress['black_arhangel']=1 & npc_reveal['black_arhangel']=1",
+        "jo9_lq_failed_quest['black_arhangel']=0",
+        "sparks=0 & final_payment=1000 & master_energy=5",
+        "jo9_lq['active']=0 & jo9_lq['settled']=0 & jo9_lq['manual']=0",
+        "gs 'jo9_liquidation','begin'"
+      ],
+      "entry": "gt 'jo9_liquidation','view'",
+      "checkpoint": "jo9_liquidation",
+      "how": [
+        "첫 화면은 장식을 처분한 뒤의 빈민가 이주다. 우측의 입주 노예·증축 개인실·자가 주택·시설 해지 금액을 본다.",
+        "이주 선택을 확정한다. 개인실4의 에게야와 외부 동면 셀1의 이사벨라가 함께 급매되고 시설이 모두 비는지 확인한다.",
+        "검은 대천사에게 에게야를 전달하는 의뢰는 실패하며 성공 보상이나 다음 의뢰 해금이 생기지 않아야 한다."
+      ],
+      "expect": [
+        "쿨라 4칸은 4400, 주택은 7500, 임대시설 해지는 0. 두 입주자의 급매액은 화면에 표시한 기존 평가액의 절반이다.",
+        "기준 표본의 전체 이주 대금은 12306, 청구 1000을 한 번 내고 11306이 남는다. 제작 시 실제 견적을 재확인한다.",
+        "이주 뒤 estate=slum_house, kulaconstruct=0, room4_state=0, iced_1_state=0, 모든 임대시설=0, jo9_lq active=0.",
+        "npc_progress black_arhangel은 성공값 2가 되지 않고 실패 표식이 켜진다."
+      ],
+      "limits": [
+        "이 표본은 활동 노예·조수가 비어 있고 개인실·외부 보관에 각각 한 명만 있다. 27칸 동시 입주는 자동 기능 검사에서 확인한 범위이며 이 수동 파일의 입주 수는 2명이다."
+      ],
+      "guard": "jo9_lq['active']=1 and jo9_lq['bill']=1000 and jo9_lq['page']=1 and sparks=0 and room4_state=1 and iced_1_state=1 and room4['age']=2 and iced_1['age']=2 and kulaconstruct=4 and jo9_lq_value['relocation_rooms']=4400",
+      "expected": {
+        "location": "jo9_liquidation",
+        "numeric": {
+          "JO9_LQ.active": 1,
+          "SPARKS": 0,
+          "JO9_LQ.bill": 1000,
+          "JO9_LQ.page": 1,
+          "MASTER_ENERGY": 5,
+          "ROOM4_STATE": 1,
+          "ICED_1_STATE": 1,
+          "ROOM4_TYPE": 2579,
+          "ICED_1_TYPE": 2571,
+          "ROOM4.age": 2,
+          "ICED_1.age": 2,
+          "KULACONSTRUCT": 4,
+          "JO9_LQ_VALUE.relocation_rooms": 4400,
+          "NPC_PROGRESS.black_arhangel": 1,
+          "JO9_LQ_FAILED_QUEST.black_arhangel": 0
+        },
+        "strings": {
+          "ESTATE": "white_house"
+        }
+      },
+      "input": "G:/Codex/tmp/bankruptcy-ui-saves-20261025-r2/factory/inputs/02_occupied-relocation.sav",
+      "source": "G:/somi/Jack O Nine Tails v2.4_work/game/save/JO9_MANUAL_20261025/01_검사완료재확인/13_occupied-assets.sav",
+      "sourceHash": "3042e987a29c00619712f788a3988f404d9b1a0d508a71a98385925fa3190b77"
+    },
+    {
+      "index": 3,
+      "id": "slum-slave",
+      "file": "03_slum-slave.sav",
+      "titleKo": "이미 빈민가일 때 노예부터 처분",
+      "baseSave": "11_assets-and-quick.sav",
+      "setup": [
+        "is_home=1 & city_form=0 & city_district=-1 & menu_form=0",
+        "$place='home_lux' & $return_lock='menu_form'",
+        "end_of_the_day=0 & end_day_phase=0 & snk_room_target=0 & snk_room_inventory=0",
+        "$info_text='' & $equip_choice=''",
+        "gs 'jo9_liquidation_assets','sell','decor'",
+        "gs 'jo9_liquidation_assets','move_slums'",
+        "sparks=0 & final_payment=100 & master_energy=5",
+        "jo9_lq['active']=0 & jo9_lq['settled']=0 & jo9_lq['manual']=0",
+        "gs 'jo9_liquidation','begin'"
+      ],
+      "entry": "gt 'jo9_liquidation','view'",
+      "checkpoint": "jo9_liquidation",
+      "how": [
+        "장식과 주거를 이미 정리했으므로 노예 급매가 바로 나온다. 에게야를 급매한다.",
+        "집 화면으로 돌아온 뒤 조수가 그대로 남아 있는지 확인한다."
+      ],
+      "expect": [
+        "장식·이주 선택을 다시 요구하지 않는다.",
+        "기준 표본 급매 202에서 청구 100을 한 번 내면 102가 남는다.",
+        "slave_state=0, assistant_state=1, jo9_lq active=0. 돈이 해결됐으므로 조수를 연달아 팔지 않는다."
+      ],
+      "limits": [
+        "장식·이주를 마친 다음 위기를 준비한 시험 상태다. 이전 처분으로 얻었을 돈은 새 위기를 만들기 위해 0으로 맞췄다."
+      ],
+      "guard": "jo9_lq['active']=1 and jo9_lq['bill']=100 and jo9_lq['page']=2 and sparks=0 and $estate='slum_house' and kulaconstruct=0 and slave_state=1 and assistant_state=1 and slave_type=2579 and assistant_type=2571 and slave['age']=2 and assistant['age']=2",
+      "expected": {
+        "location": "jo9_liquidation",
+        "numeric": {
+          "JO9_LQ.active": 1,
+          "SPARKS": 0,
+          "JO9_LQ.bill": 100,
+          "JO9_LQ.page": 2,
+          "MASTER_ENERGY": 5,
+          "KULACONSTRUCT": 0,
+          "BARN": 0,
+          "DUNGEON": 0,
+          "LAB": 0,
+          "BOUDOIR": 0,
+          "PEN": 0,
+          "STASIS_TANK": 0,
+          "SLAVE_STATE": 1,
+          "ASSISTANT_STATE": 1
+        },
+        "strings": {
+          "ESTATE": "slum_house"
+        }
+      },
+      "input": "G:/Codex/tmp/bankruptcy-ui-saves-20261025-r2/factory/inputs/03_slum-slave.sav",
+      "source": "G:/somi/Jack O Nine Tails v2.4_work/game/save/JO9_MANUAL_20261025/01_검사완료재확인/11_assets-and-quick.sav",
+      "sourceHash": "c6a45839fb254947406207b1c1a6d75a1d3c973fc224bd61addd6f2706c0fc4e"
+    },
+    {
+      "index": 4,
+      "id": "slum-assistant",
+      "file": "04_slum-assistant.sav",
+      "titleKo": "집·활동 노예가 없으면 조수 처분",
+      "baseSave": "11_assets-and-quick.sav",
+      "setup": [
+        "is_home=1 & city_form=0 & city_district=-1 & menu_form=0",
+        "$place='home_lux' & $return_lock='menu_form'",
+        "end_of_the_day=0 & end_day_phase=0 & snk_room_target=0 & snk_room_inventory=0",
+        "$info_text='' & $equip_choice=''",
+        "gs 'jo9_liquidation_assets','sell','decor'",
+        "gs 'jo9_liquidation_assets','move_slums'",
+        "dynamic $clear_slave_instance,'slave'",
+        "sparks=0 & final_payment=100 & master_energy=5",
+        "jo9_lq['active']=0 & jo9_lq['settled']=0 & jo9_lq['manual']=0",
+        "gs 'jo9_liquidation','begin'"
+      ],
+      "entry": "gt 'jo9_liquidation','view'",
+      "checkpoint": "jo9_liquidation",
+      "how": [
+        "이사벨라 조수 급매가 바로 나오는지 본다. 급매를 확정한다."
+      ],
+      "expect": [
+        "빈 자산 단계를 다시 표시하지 않는다.",
+        "기준 표본 급매 204에서 청구 100을 한 번 내면 104가 남는다.",
+        "assistant_state=0, jo9_lq active=0. 청구를 해결했으므로 자산이 없어도 파산 엔딩은 나오지 않는다."
+      ],
+      "limits": [
+        "조수만 남은 상태를 만든 시험 파일이며 이전 활동 노예를 팔아 얻은 돈을 검사하는 파일은 아니다."
+      ],
+      "guard": "jo9_lq['active']=1 and jo9_lq['bill']=100 and jo9_lq['page']=3 and sparks=0 and $estate='slum_house' and kulaconstruct=0 and slave_state=0 and assistant_state=1 and assistant_type=2571 and assistant['age']=2",
+      "expected": {
+        "location": "jo9_liquidation",
+        "numeric": {
+          "JO9_LQ.active": 1,
+          "SPARKS": 0,
+          "JO9_LQ.bill": 100,
+          "JO9_LQ.page": 3,
+          "MASTER_ENERGY": 5,
+          "KULACONSTRUCT": 0,
+          "BARN": 0,
+          "DUNGEON": 0,
+          "LAB": 0,
+          "BOUDOIR": 0,
+          "PEN": 0,
+          "STASIS_TANK": 0,
+          "SLAVE_STATE": 0,
+          "ASSISTANT_STATE": 1
+        },
+        "strings": {
+          "ESTATE": "slum_house"
+        }
+      },
+      "input": "G:/Codex/tmp/bankruptcy-ui-saves-20261025-r2/factory/inputs/04_slum-assistant.sav",
+      "source": "G:/somi/Jack O Nine Tails v2.4_work/game/save/JO9_MANUAL_20261025/01_검사완료재확인/11_assets-and-quick.sav",
+      "sourceHash": "c6a45839fb254947406207b1c1a6d75a1d3c973fc224bd61addd6f2706c0fc4e"
+    },
+    {
+      "index": 5,
+      "id": "single-settlement",
+      "file": "05_single-settlement.sav",
+      "titleKo": "장식 한 번으로 청구 정산·중복 차감 확인",
+      "baseSave": "12_bill-settle-once.sav",
+      "setup": [
+        "is_home=1 & city_form=0 & city_district=-1 & menu_form=0",
+        "$place='home_lux' & $return_lock='menu_form'",
+        "end_of_the_day=0 & end_day_phase=0 & snk_room_target=0 & snk_room_inventory=0",
+        "$info_text='' & $equip_choice=''",
+        "sparks=0 & final_payment=100 & master_energy=5",
+        "jo9_lq['active']=0 & jo9_lq['settled']=0 & jo9_lq['manual']=0",
+        "gs 'jo9_liquidation','begin'"
+      ],
+      "entry": "gt 'jo9_liquidation','view'",
+      "checkpoint": "jo9_liquidation",
+      "how": [
+        "실내장식을 정리한다를 한 번 누른다.",
+        "집으로 돌아오면 자금 360과 기본 장식 이미지를 본다. 새 이름으로 저장하고 그 저장을 다시 불러 자금이 360인지 확인할 수 있다."
+      ],
+      "expect": [
+        "460을 환급하고 고정 청구 100을 한 번만 차감한다.",
+        "노예·조수·주택·증축 개인실은 남는다. 같은 장식이 중복 환급되거나 재로드로 100이 또 빠지지 않는다."
+      ],
+      "limits": [
+        "이 원본 테스트 파일을 다시 불러오면 처분 이전 자금 0으로 돌아오는 것이 정상이다. 중복 청구 검사는 처분 후 사용자가 별도로 저장한 파일을 불러와 확인한다."
+      ],
+      "guard": "jo9_lq['active']=1 and jo9_lq['bill']=100 and jo9_lq['page']=0 and sparks=0 and jo9_lq_value['decor']=460 and slave_state=1 and assistant_state=1 and slave['age']=2 and assistant['age']=2",
+      "expected": {
+        "location": "jo9_liquidation",
+        "numeric": {
+          "JO9_LQ.active": 1,
+          "SPARKS": 0,
+          "JO9_LQ.bill": 100,
+          "JO9_LQ.page": 0,
+          "MASTER_ENERGY": 5,
+          "JO9_LQ_VALUE.decor": 460
+        },
+        "strings": {
+          "ESTATE": "white_house"
+        }
+      },
+      "input": "G:/Codex/tmp/bankruptcy-ui-saves-20261025-r2/factory/inputs/05_single-settlement.sav",
+      "source": "G:/somi/Jack O Nine Tails v2.4_work/game/save/JO9_MANUAL_20261025/01_검사완료재확인/12_bill-settle-once.sav",
+      "sourceHash": "fc4876720e0058c5a1ed2b21c78ed0a9474dfe3841d9dbdc4ded2132cbdf6854"
+    },
+    {
+      "index": 6,
+      "id": "manual-opportunity",
+      "file": "06_manual-opportunity.sav",
+      "titleKo": "직접 방법 찾기·남은 행동력·날짜 차단",
+      "baseSave": "13_occupied-assets.sav",
+      "setup": [
+        "is_home=1 & city_form=0 & city_district=-1 & menu_form=0",
+        "$place='home_lux' & $return_lock='menu_form'",
+        "end_of_the_day=0 & end_day_phase=0 & snk_room_target=0 & snk_room_inventory=0",
+        "$info_text='' & $equip_choice=''",
+        "gs 'jo9_liquidation_assets','sell','decor'",
+        "sparks=0 & final_payment=50000 & master_energy=3",
+        "jo9_lq['active']=0 & jo9_lq['settled']=0 & jo9_lq['manual']=0",
+        "gs 'jo9_liquidation','begin'"
+      ],
+      "entry": "gt 'jo9_liquidation','view'",
+      "checkpoint": "jo9_liquidation",
+      "how": [
+        "직접 방법을 찾는다를 누른다. 집으로 돌아온 뒤 개인실4와 외부 동면 셀1의 두 사람이 그대로인지 확인한다.",
+        "기존 배치·거래·대출 메뉴를 남은 행동력 안에서 이용할 수 있다. 이주 확정 전에는 일괄 급매가 실행되지 않아야 한다.",
+        "돈을 해결하지 않고 하루 종료를 누르면 같은 날의 파산 위기 화면으로 돌아와야 한다."
+      ],
+      "expect": [
+        "수동 복귀 자체는 돈·행동력·날짜·배치를 바꾸지 않는다.",
+        "기존 일반 거래가 요구하는 행동력과 조건은 그대로 적용된다. 미납 중 날짜 진행으로 청구를 피할 수 없다."
+      ],
+      "limits": [
+        "불러올 때는 파산 선택창이 먼저 나온다. 현재 원래 로드 콜백이 미납 세이브를 정산 화면으로 복원하므로 집에 나가 있는 상태로 저장해도 재로드하면 이 화면이 먼저 나온다.",
+        "50000은 날짜 차단과 수동 해결 기회를 확인하기 위한 시험 청구다."
+      ],
+      "guard": "jo9_lq['active']=1 and jo9_lq['bill']=50000 and jo9_lq['page']=1 and sparks=0 and master_energy=3 and room4_state=1 and iced_1_state=1 and room4['age']=2 and iced_1['age']=2",
+      "expected": {
+        "location": "jo9_liquidation",
+        "numeric": {
+          "JO9_LQ.active": 1,
+          "SPARKS": 0,
+          "JO9_LQ.bill": 50000,
+          "JO9_LQ.page": 1,
+          "MASTER_ENERGY": 3,
+          "ROOM4_STATE": 1,
+          "ICED_1_STATE": 1,
+          "ROOM4.age": 2,
+          "ICED_1.age": 2
+        },
+        "strings": {
+          "ESTATE": "white_house"
+        }
+      },
+      "input": "G:/Codex/tmp/bankruptcy-ui-saves-20261025-r2/factory/inputs/06_manual-opportunity.sav",
+      "source": "G:/somi/Jack O Nine Tails v2.4_work/game/save/JO9_MANUAL_20261025/01_검사완료재확인/13_occupied-assets.sav",
+      "sourceHash": "3042e987a29c00619712f788a3988f404d9b1a0d508a71a98385925fa3190b77"
+    },
+    {
+      "index": 7,
+      "id": "slave-trait-ui",
+      "file": "07_slave-trait-ui.sav",
+      "titleKo": "노예 특성 UI·색·간격·칭호·설명",
+      "baseSave": "20_traits_overflow_merge.sav",
+      "setup": [
+        "usehtml=1 & is_home=1 & city_district=-1 & menu_form=0",
+        "jo9_lq['active']=0 & jo9_lq['manual']=0 & end_of_the_day=0 & end_day_phase=0",
+        "snk_room_target=0 & snk_room_inventory=0 & exam_in_progress=0",
+        "$place='home_lux' & $return_lock='menu_form' & $info_text='' & $equip_choice=''",
+        "slave_stat_screen=0 & assistant_stat_screen=0",
+        "slave['jo9_learning_trait']=-1 & slave['jo9_gag_reflex']=1",
+        "slave['jo9_focus']=-1 & slave['jo9_focus_known']=1",
+        "slave['jo9_grudge']=1 & slave['jo9_grudge_known']=1",
+        "slave['jo9_constitution']=1 & slave['jo9_combat_trait']=3",
+        "slave['jo9_versatile']=1 & slave['grace']=1 & slave['arena_level']=5 & slave['has_ride_win']=4",
+        "jo9_profile_text_revision=0"
+      ],
+      "entry": "gt 'slave_stat'",
+      "checkpoint": "slave_stat",
+      "how": [
+        "좌측 상단 금속 테두리, 기본 속성 묶음 간격, 목록 맨 아래 특성 전체보기를 확인한다.",
+        "노예의 특성 제목이나 하단 링크를 누르면 기존 중앙 3열 창이 열린다. 상태·특성은 앞 두 열, 칭호는 마지막 열에 있어야 한다.",
+        "백치·산만함·옹졸함·건강체질·역전의 용사·다재다능 등을 눌러 하단 설명을 읽는다."
+      ],
+      "expect": [
+        "강한 부정은 빨강, 가벼운 부정은 분홍, 좋은 특성은 등급색이며 최고 긍정은 녹색이다. 칭호는 짙은 갈색이다.",
+        "링크 문구는 특성 전체보기이며 묶음 간격은 5px 기준이다. 중앙 창은 기존 배치·글꼴을 유지한다.",
+        "특성 설명은 효과를 암시하며 정확한 배율·퍼센트·효과 수치를 직접 쓰지 않는다. 현재 상태의 회복 일수·임신 진행 표시는 이 변경의 대상이 아니다."
+      ],
+      "limits": [
+        "한 화면에서 넘침·색·여러 설명을 보기 위해 특성과 상태를 인위적으로 많이 넣은 표시용 표본이다. 장기 육성용이 아니며 성장 배율을 검증하는 파일도 아니다.",
+        "기존 성인 나이·인물 이미지 ID는 보존한다."
+      ],
+      "guard": "jo9_lq['active']=0 and slave_state=1 and assistant_state=1 and slave_type=2579 and assistant_type=2571 and slave['age']=2 and assistant['age']=2 and slave['jo9_learning_trait']=-1 and slave['jo9_gag_reflex']=1 and slave['jo9_constitution']=1 and slave['jo9_combat_trait']=3 and slave['jo9_versatile']=1",
+      "expected": {
+        "location": "slave_stat",
+        "numeric": {
+          "JO9_LQ.active": 0,
+          "SPARKS": 20000,
+          "SLAVE.jo9_learning_trait": -1,
+          "SLAVE.jo9_gag_reflex": 1,
+          "SLAVE.jo9_constitution": 1,
+          "SLAVE.jo9_combat_trait": 3,
+          "SLAVE.jo9_versatile": 1,
+          "MASTER_ENERGY": 5
+        },
+        "strings": {
+          "ESTATE": "white_house"
+        }
+      },
+      "input": "G:/Codex/tmp/bankruptcy-ui-saves-20261025-r2/factory/inputs/07_slave-trait-ui.sav",
+      "source": "G:/somi/Jack O Nine Tails v2.4_work/game/save/JO9_MANUAL_20261025/01_검사완료재확인/20_traits_overflow_merge.sav",
+      "sourceHash": "604a607fc3f94c58d69cfe79566da77bf4a0b093c7f49d9699a6eaeed6c52bba"
+    },
+    {
+      "index": 8,
+      "id": "assistant-trait-ui",
+      "file": "08_assistant-trait-ui.sav",
+      "titleKo": "조수 특성 UI·색·간격·칭호·설명",
+      "baseSave": "20_traits_overflow_merge.sav",
+      "setup": [
+        "usehtml=1 & is_home=1 & city_district=-1 & menu_form=0",
+        "jo9_lq['active']=0 & jo9_lq['manual']=0 & end_of_the_day=0 & end_day_phase=0",
+        "snk_room_target=0 & snk_room_inventory=0 & exam_in_progress=0",
+        "$place='home_lux' & $return_lock='menu_form' & $info_text='' & $equip_choice=''",
+        "slave_stat_screen=0 & assistant_stat_screen=0",
+        "assistant['jo9_learning_trait']=-1 & assistant['jo9_gag_reflex']=1",
+        "assistant['jo9_focus']=-1 & assistant['jo9_focus_known']=1",
+        "assistant['jo9_grudge']=1 & assistant['jo9_grudge_known']=1",
+        "assistant['jo9_constitution']=1 & assistant['jo9_combat_trait']=3",
+        "assistant['jo9_versatile']=1 & assistant['grace']=1 & assistant['arena_level']=5 & assistant['has_ride_win']=4",
+        "jo9_profile_text_revision=0"
+      ],
+      "entry": "gt 'assistant_stat'",
+      "checkpoint": "assistant_stat",
+      "how": [
+        "조수 프로필이 바로 열린다. 조수의 특성 제목과 하단 특성 전체보기 링크를 각각 눌러 본다.",
+        "07번과 같은 간격·테두리·색·칭호·하단 설명 규칙이 조수에도 적용되는지 확인한다."
+      ],
+      "expect": [
+        "전체보기는 특성 두 열·칭호 한 열이다. 칭호의 내부 글자 색도 짙은 갈색이어야 한다.",
+        "특성 링크를 누르면 기존 하단 설명 영역이 갱신되고, 별도 뒤쪽 팝업 때문에 조작이 막히지 않는다."
+      ],
+      "limits": [
+        "07번과 같은 표시용 인위적 상태다. 원래 인물의 성인 나이와 이미지 ID를 유지한다."
+      ],
+      "guard": "jo9_lq['active']=0 and slave_state=1 and assistant_state=1 and slave_type=2579 and assistant_type=2571 and slave['age']=2 and assistant['age']=2 and assistant['jo9_learning_trait']=-1 and assistant['jo9_gag_reflex']=1 and assistant['jo9_constitution']=1 and assistant['jo9_combat_trait']=3 and assistant['jo9_versatile']=1",
+      "expected": {
+        "location": "assistant_stat",
+        "numeric": {
+          "JO9_LQ.active": 0,
+          "SPARKS": 20000,
+          "ASSISTANT.jo9_learning_trait": -1,
+          "ASSISTANT.jo9_gag_reflex": 1,
+          "ASSISTANT.jo9_constitution": 1,
+          "ASSISTANT.jo9_combat_trait": 3,
+          "ASSISTANT.jo9_versatile": 1,
+          "MASTER_ENERGY": 5
+        },
+        "strings": {
+          "ESTATE": "white_house"
+        }
+      },
+      "input": "G:/Codex/tmp/bankruptcy-ui-saves-20261025-r2/factory/inputs/08_assistant-trait-ui.sav",
+      "source": "G:/somi/Jack O Nine Tails v2.4_work/game/save/JO9_MANUAL_20261025/01_검사완료재확인/20_traits_overflow_merge.sav",
+      "sourceHash": "604a607fc3f94c58d69cfe79566da77bf4a0b093c7f49d9699a6eaeed6c52bba"
+    },
+    {
+      "index": 9,
+      "id": "contract-return",
+      "file": "09_contract-return.sav",
+      "titleKo": "시설 계약 인물의 실패 반환",
+      "baseSave": "13_occupied-assets.sav",
+      "setup": [
+        "is_home=1 & city_form=0 & city_district=-1 & menu_form=0",
+        "$place='home_lux' & $return_lock='menu_form'",
+        "end_of_the_day=0 & end_day_phase=0 & snk_room_target=0 & snk_room_inventory=0",
+        "$info_text='' & $equip_choice=''",
+        "gs 'jo9_liquidation_assets','sell','decor'",
+        "room4['brand']=4 & $room4['contractor']=''",
+        "npc_progress['black_arhangel']=0 & jo9_lq_failed_quest['black_arhangel']=0",
+        "killvar 'contract'",
+        "contract['active']=1 & contract['level']=1 & contract['time']=0",
+        "$contract['specialisation']='servant'",
+        "active[$quest[10]]=1",
+        "sparks=0 & final_payment=1000 & master_energy=5",
+        "jo9_lq['active']=0 & jo9_lq['settled']=0 & jo9_lq['manual']=0",
+        "gs 'jo9_liquidation','begin'"
+      ],
+      "entry": "gt 'jo9_liquidation','view'",
+      "checkpoint": "jo9_liquidation",
+      "how": [
+        "이주 안내에서 교육 의뢰 인물 1명을 보상 없이 실패 반환한다는 설명을 본다.",
+        "이주를 확정한 뒤 개인실4와 동면 셀1이 비고 길드 교육계약이 끝났는지 확인한다."
+      ],
+      "expect": [
+        "개인실4의 길드 인물에게는 급매 대금을 지급하지 않는다. 본인 소유인 동면 셀1의 이사벨라만 기존 기본가의 50%로 급매된다.",
+        "기준 표본은 개인실 4400+주택7500+동면 인물204=12104를 회수하고 청구1000 정산 후 11104가 남는다. 제작 시 실제 견적을 재확인한다.",
+        "contract active=0, active quest10=0. 성공 보상·새 벌금·길드 의뢰 완료 보상이 생기지 않는다."
+      ],
+      "limits": [
+        "기존 성인 개인실 입주자를 길드 소유 교육 표본으로 바꾼 인위적 시험 상태다. 실제 스토리에서 에게야를 길드가 맡긴다는 설정을 새로 추가한 것은 아니다.",
+        "펠리시티 의뢰를 사용하지 않으므로 원본의 의뢰 실패 암살 엔딩을 이 파일에서 의도적으로 재현하지 않는다."
+      ],
+      "guard": "jo9_lq['active']=1 and jo9_lq['bill']=1000 and jo9_lq['page']=1 and sparks=0 and room4_state=1 and iced_1_state=1 and room4['brand']=4 and room4['age']=2 and iced_1['age']=2 and contract['active']=1 and active[$quest[10]]=1 and jo9_lq_move_returns=1 and jo9_lq_value['relocation_rooms']=4400",
+      "expected": {
+        "location": "jo9_liquidation",
+        "numeric": {
+          "JO9_LQ.active": 1,
+          "SPARKS": 0,
+          "JO9_LQ.bill": 1000,
+          "JO9_LQ.page": 1,
+          "MASTER_ENERGY": 5,
+          "ROOM4_STATE": 1,
+          "ICED_1_STATE": 1,
+          "ROOM4.brand": 4,
+          "ROOM4.age": 2,
+          "ICED_1.age": 2,
+          "CONTRACT.active": 1,
+          "JO9_LQ_MOVE_RETURNS": 1,
+          "JO9_LQ_VALUE.relocation_rooms": 4400
+        },
+        "strings": {
+          "ESTATE": "white_house"
+        }
+      },
+      "input": "G:/Codex/tmp/bankruptcy-ui-saves-20261025-r2/factory/inputs/09_contract-return.sav",
+      "source": "G:/somi/Jack O Nine Tails v2.4_work/game/save/JO9_MANUAL_20261025/01_검사완료재확인/13_occupied-assets.sav",
+      "sourceHash": "3042e987a29c00619712f788a3988f404d9b1a0d508a71a98385925fa3190b77"
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "id": "2026-10-24_dealer_economy",
+  "description": "옵션창 difficulty_setting 일반매입: 기존속성평가와등급표중높은정가. 쉬움1=90%,보통0=75%,하드2=기존산식. 불복종20%1회·다재다능1회. 잡파/웡 견적·지급동일화,중복확정/대상교체/이전확인세이브보호.",
+  "before_sha256": "c362bde0e8cf814e3e28efd594e27482ef33ea0fa3a5b142f95c96164c5ea3eb",
+  "after_sha256": "5102bad2f3142d064c8927207c90bdae41fe88a77c792ef038c39c2ba0e8b129",
+  "edits": [
+    {
+      "location": "jo9_traits_value",
+      "field": "body",
+      "old": "! JO9 MOD START TBV_HELPER | 2026-10-17_trait_value",
+      "new": "! JO9 MOD START DEALER_QUOTE | 2026-10-24_dealer_economy\r\n! In-game difficulty_setting: 1 easy, 0 normal, 2 original hard; creation difficulty does not select the payout.\r\nif $args[0] = 'dealer_quote':\r\n local $jo9_dealer_vendor = $args[1]\r\n result = 0\r\n killvar 'is_stock'\r\n if $jo9_dealer_vendor ! 'farid' and $jo9_dealer_vendor ! 'wong': exit\r\n if slave_state ! CONST_INT['slave_exist'] and slave_state ! CONST_INT['slave_faint']: exit\r\n if snk_room_target > 0: exit\r\n if difficulty_setting = 2 and $jo9_dealer_vendor = 'farid' and slave['brand'] = 0: is_stock = 1\r\n gs '$slave_price'\r\n if difficulty_setting = 0 or difficulty_setting = 1:\r\n  ! Native attribute price already includes versatile; apply it once to the independent grade candidate too.\r\n  local jo9_dealer_grade_price = func('jo9_traits_value', 'base_price', 'slave', common_price[rating])\r\n  local jo9_dealer_value = max(30, slave_base_price * 3 / 2, jo9_dealer_grade_price)\r\n  if slave['obedience'] < 1: jo9_dealer_value = jo9_dealer_value * 20 / 100\r\n  ! Keep the original Wong broken-state depreciation, separate from current obedience.\r\n  if $jo9_dealer_vendor = 'wong' and $slave_psy_status = 'broken': jo9_dealer_value -= 4 * jo9_dealer_value / 5\r\n  result = jo9_dealer_value * iif(difficulty_setting = 1, 90, 75) / 100\r\n else\r\n  if $jo9_dealer_vendor = 'farid': result = max(10, slaveprice / 2)\r\n  if $jo9_dealer_vendor = 'wong':\r\n   local jo9_dealer_value = auction_price[rating]\r\n   if $slave_psy_status = 'broken': jo9_dealer_value -= 4 * auction_price[rating] / 5\r\n   result = func('jo9_traits_value', 'base_price', 'slave', jo9_dealer_value)\r\n  end\r\n end\r\n exit\r\nend\r\n! JO9 MOD END DEALER_QUOTE\r\n\r\n! JO9 MOD START DEALER_WONG_FINISH | 2026-10-24_dealer_economy\r\nif $args[0] = 'dealer_wong_finish':\r\n local jo9_dealer_expected_id = args[1]\r\n if slave_state ! CONST_INT['slave_exist'] and slave_state ! CONST_INT['slave_faint']: gt 'guild'\r\n if slave['id'] ! jo9_dealer_expected_id or slave['brand'] < 1 or snk_room_target > 0: gt 'guild'\r\n if $jo9_dealer_wong_name ! '' and $jo9_dealer_wong_name ! $slave_name: gt 'guild'\r\n if jo9_dealer_wong_type ! 0 and jo9_dealer_wong_type ! slave_type: gt 'guild'\r\n local jo9_dealer_payment = func('jo9_traits_value', 'dealer_quote', 'wong')\r\n if jo9_dealer_wong_quote > 0 and jo9_dealer_payment ! jo9_dealer_wong_quote: gt 'guild'\r\n if difficulty_setting = 2 and rating < 1: gt 'guild'\r\n if jo9_dealer_payment < 1: gt 'guild'\r\n if guild_reputation <= rating / 2: guild_reputation_rate += func('jo9_traits_value', 'reward', 'slave', 5 + rating)\r\n if sound_on = 1: play $large_money_sound, sound_volume\r\n if slave['ill'] > 0: gave_guild_ill_slave = 1\r\n if slave['parasite'] > 0: gave_guild_parasite_slave = 1\r\n dynamic $clear_slave_instance, 'slave'\r\n sparks += jo9_dealer_payment\r\n killvar '$jo9_dealer_wong_name'\r\n killvar 'jo9_dealer_wong_type'\r\n killvar 'jo9_dealer_wong_quote'\r\n master_moodlet['pos_deal'] = 3\r\n gt 'guild'\r\nend\r\n! JO9 MOD END DEALER_WONG_FINISH\r\n\r\n! JO9 MOD START TBV_HELPER | 2026-10-17_trait_value",
+      "count": 1,
+      "patchId": "DEALER_HELPERS"
+    },
+    {
+      "location": "slave_auction_sell",
+      "field": "body",
+      "old": "if slave['brand'] = 0: is_stock = 1 &! stock ratings are based purely on attribute_sum and the greater of beauty or fame, ignoring skills, obedience and stamina\r\ngs '$slave_price'\r\n\r\nsell_price = slaveprice/2",
+      "new": "! JO9 MOD START DEALER_FARID_OFFER | 2026-10-24_dealer_economy\r\nif slave_state ! CONST_INT['slave_exist'] and slave_state ! CONST_INT['slave_faint']: gt 'city_menu_form'\r\nsell_price = func('jo9_traits_value', 'dealer_quote', 'farid')\r\njo9_dealer_farid_id = slave['id']\r\n$jo9_dealer_farid_name = $slave_name\r\njo9_dealer_farid_type = slave_type\r\njo9_dealer_farid_quote = sell_price\r\n! JO9 MOD END DEALER_FARID_OFFER",
+      "count": 1,
+      "patchId": "DEALER_FARID_OFFER"
+    },
+    {
+      "location": "slave_auction_sell",
+      "field": "body",
+      "old": "if sell_price < 10: sell_price = 10",
+      "new": "! JO9 MOD START DEALER_FARID_FLOOR | 2026-10-24_dealer_economy\r\nif difficulty_setting = 2 and sell_price < 10: sell_price = 10\r\n! JO9 MOD END DEALER_FARID_FLOOR",
+      "count": 1,
+      "patchId": "DEALER_FARID_FLOOR"
+    },
+    {
+      "location": "slave_auction_sell",
+      "field": "body",
+      "old": "end\r\n\r\nif nsfw = 1:",
+      "new": "end\r\n! JO9 MOD START DEALER_FARID_TEXT | 2026-10-24_dealer_economy\r\nif difficulty_setting = 0 or difficulty_setting = 1:\r\n if slave['brand'] = 0: $text[3] = '[잡파]<br>낙인은 없군. 몸 상태와 배운 솜씨를 함께 살펴보겠소. 아직 말을 듣지 않는다면 그만큼 값은 낮아질 거요.'\r\n $text[4] = '[잡파]<br>몸 상태와 배운 솜씨를 따져 보니, 내가 줄 수 있는 금액은 <<sell_price>> 스파크요. 직접 구매자를 찾아다닐 수고는 덜 수 있을 거요.'\r\nend\r\n! JO9 MOD END DEALER_FARID_TEXT\r\n\r\nif nsfw = 1:",
+      "count": 1,
+      "patchId": "DEALER_FARID_TEXT"
+    },
+    {
+      "location": "slave_auction_sell_end",
+      "field": "body",
+      "old": "! JO9 MOD START TBV_FARID_REWARD",
+      "new": "! JO9 MOD START DEALER_FARID_FINISH | 2026-10-24_dealer_economy\r\nif slave_state ! CONST_INT['slave_exist'] and slave_state ! CONST_INT['slave_faint']: gt 'city_menu_form'\r\nif snk_room_target > 0: gt 'city_menu_form'\r\nif slave['brand'] > 0 and brand_reputation <= 3: gt 'city_menu_form'\r\nif farid_debt > 0 or farid_potential_debt > 0: gt 'city_menu_form'\r\nif jo9_dealer_farid_id ! 0 and jo9_dealer_farid_id ! slave['id']: gt 'city_menu_form'\r\nif $jo9_dealer_farid_name ! '' and $jo9_dealer_farid_name ! $slave_name: gt 'city_menu_form'\r\nif jo9_dealer_farid_type ! 0 and jo9_dealer_farid_type ! slave_type: gt 'city_menu_form'\r\nsell_price = func('jo9_traits_value', 'dealer_quote', 'farid')\r\nif jo9_dealer_farid_quote > 0 and sell_price ! jo9_dealer_farid_quote: gt 'city_menu_form'\r\nif txt >= 6 and txt <= 7: sell_price = func('jo9_traits_value', 'market', 'slave', sell_price)\r\nif sell_price < 1: gt 'city_menu_form'\r\n! JO9 MOD END DEALER_FARID_FINISH\r\n! JO9 MOD START TBV_FARID_REWARD",
+      "count": 1,
+      "patchId": "DEALER_FARID_FINISH"
+    },
+    {
+      "location": "slave_auction_sell_end",
+      "field": "body",
+      "old": "sparks += sell_price",
+      "new": "! JO9 MOD START DEALER_FARID_PAID | 2026-10-24_dealer_economy\r\nsparks += sell_price\r\nkillvar 'jo9_dealer_farid_id'\r\nkillvar '$jo9_dealer_farid_name'\r\nkillvar 'jo9_dealer_farid_type'\r\nkillvar 'jo9_dealer_farid_quote'\r\nkillvar 'sell_price'\r\n! JO9 MOD END DEALER_FARID_PAID",
+      "count": 1,
+      "patchId": "DEALER_FARID_PAID"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "if interaction_city = menu_subpurchaser:\r\n\tgs '$slave_price'\r\n\t$place = 'guild_hall'\r\n\t$return_lock = 'guild'\r\n\tnpc = 1\r\n\t$npc_id = 'master_vong'\r\n! JO9 MOD START J9M0738 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included\r\n\t$text[1] = '[마스터 봉]<br>&nbsp;여주인 안젤리카가 받지 않는 잡것들은 대부분 내가 맡지. 그래도 길드 계약을 이행하고 싶다면, 그녀를 찾아가 네가 준비한 노예를 넘겨야 한다. 꾸중 듣는 걸 좋아하지 않는다면, 먼저 모든 요구 사항을 충족했는지 확실히 해 둬라.'\r\n! JO9 MOD END J9M0738\r\n\t$text[2] = $speculator_text[rating]\r\n\tif $slave_psy_status = 'broken': $text[2] = $replace($text[2], $str(auction_price[rating]), $str(auction_price[rating] - (4*auction_price[rating])/5)) &! subtract 80% from value if mind-broken\r\n\tif rating > 0:\r\n\t\t$special_action[2] = { gt 'choice_screen' }\r\n\t\t$yes = {\r\n! JO9 MOD START TBV_SUBPURCHASER_REWARD | 2026-10-17_trait_value\r\n\t\t\tgs '$slave_price' &! make sure we are still using the correct rating\r\n\t\t\tif guild_reputation <= rating/2: guild_reputation_rate += func('jo9_traits_value', 'reward', 'slave', 5 + rating)\r\n! JO9 MOD END TBV_SUBPURCHASER_REWARD\r\n! JO9 MOD START TBV_SUBPURCHASER_BASE | 2026-10-17_trait_value\r\n\t\t\tjo9_trait_value_subprice = auction_price[rating]\r\n\t\t\tif $slave_psy_status = 'broken': jo9_trait_value_subprice -= (4*auction_price[rating])/5 &! original 80% penalty\r\n\t\t\tsparks += func('jo9_traits_value', 'base_price', 'slave', jo9_trait_value_subprice)\r\n\t\t\tkillvar 'jo9_trait_value_subprice'\r\n! JO9 MOD END TBV_SUBPURCHASER_BASE\r\n\t\t\tif sound_on = 1: play $large_money_sound, sound_volume\r\n\t\t\tif slave['ill'] > 0: gave_guild_ill_slave = 1 &! trigger follow-up event\r\n\t\t\tif slave['parasite'] > 0: gave_guild_parasite_slave = 1 &! trigger follow-up event\r\n\t\t\tdynamic $clear_slave_instance, 'slave'\r\n\t\t\tmaster_moodlet['pos_deal'] = 3\r\n\t\t\tgt 'guild'\r\n\t\t}\r\n\t\t$no = {\r\n\t\t\tgt 'guild'\r\n\t\t}\r\n\tend\r\nend\r\n\r\n",
+      "new": "! JO9 MOD START DEALER_WONG_OFFER | 2026-10-24_dealer_economy\r\nif interaction_city = menu_subpurchaser:\r\n local jo9_dealer_offer = func('jo9_traits_value', 'dealer_quote', 'wong')\r\n $place = 'guild_hall'\r\n $return_lock = 'guild'\r\n npc = 1\r\n $npc_id = 'master_vong'\r\n $text[1] = '[마스터 봉]<br>길드 계약의 조건에 맞지 않는 노예도 몸 상태와 배운 솜씨에 따라 매입하지. 다만 특정 구매자의 취향에 맞춰 직접 거래하는 것보다는 값이 낮다.'\r\n $text[2] = $speculator_text[rating]\r\n if difficulty_setting = 2 and rating > 0: $text[2] = $replace($text[2], $str(auction_price[rating]), $str(jo9_dealer_offer))\r\n if difficulty_setting = 0 or difficulty_setting = 1: $text[2] = '[마스터 봉]<br>현재 몸 상태와 교육 정도를 기준으로 <<jo9_dealer_offer>> 스파크에 매입하겠네. 이 조건으로 넘기겠나?'\r\n if (rating > 0 or difficulty_setting = 0 or difficulty_setting = 1) and jo9_dealer_offer > 0 and slave['brand'] > 0:\r\n  $jo9_dealer_wong_name = $slave_name\r\n  jo9_dealer_wong_type = slave_type\r\n  jo9_dealer_wong_quote = jo9_dealer_offer\r\n  $special_action[2] = { gt 'choice_screen' }\r\n  $yes = 'gs ''jo9_traits_value'', ''dealer_wong_finish'', ' + str(slave['id'])\r\n  $no = { gt 'guild' }\r\n end\r\nend\r\n! JO9 MOD END DEALER_WONG_OFFER\r\n\r\n",
+      "count": 1,
+      "patchId": "DEALER_WONG_OFFER"
+    },
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "! JO9 MOD START CONST_CLINIC_LOAD_CACHE | 2026-10-24_constitution_unification",
+      "new": "! JO9 MOD START DEALER_OLD_CONFIRM_LOAD | 2026-10-24_dealer_economy\r\n! Re-issue only an obsolete Wong confirmation after native cache refresh and load restoration.\r\nif $npc_id = 'master_vong' and instr($yes, 'TBV_SUBPURCHASER_BASE') > 0:\r\n jo9_dealer_old_confirm = 1\r\nend\r\nif $curloc = 'slave_auction_sell': jo9_dealer_old_confirm = 2\r\n! JO9 MOD END DEALER_OLD_CONFIRM_LOAD\r\n! JO9 MOD START CONST_CLINIC_LOAD_CACHE | 2026-10-24_constitution_unification",
+      "count": 1,
+      "patchId": "DEALER_OLD_CONFIRM_LOAD"
+    },
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "if $curloc = 'main_screen': gt 'menu_form'",
+      "new": "! JO9 MOD START DEALER_OLD_CONFIRM_REFRESH | 2026-10-24_dealer_economy\r\nif jo9_dealer_old_confirm = 1:\r\n killvar 'jo9_dealer_old_confirm'\r\n gs 'refresh_database'\r\n killobj\r\n interaction_city = menu_subpurchaser\r\n txt = 2\r\n gt 'interaction_city'\r\nend\r\nif jo9_dealer_old_confirm = 2:\r\n killvar 'jo9_dealer_old_confirm'\r\n gs 'refresh_database'\r\n killobj\r\n gt 'slave_auction_sell'\r\nend\r\n! JO9 MOD END DEALER_OLD_CONFIRM_REFRESH\r\nif $curloc = 'main_screen': gt 'menu_form'",
+      "count": 1,
+      "patchId": "DEALER_OLD_CONFIRM_REFRESH"
+    }
+  ]
+}

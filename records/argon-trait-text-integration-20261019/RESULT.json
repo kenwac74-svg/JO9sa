@@ -1,0 +1,546 @@
+{
+  "createdAt": "2026-10-19T06:17:09.051Z",
+  "status": "APPLIED_WORK_ONLY",
+  "work": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+  "before": "f69637e965af4489a7328eee91864df3e0b3dc22c4ab948c4913b106a68fb753",
+  "after": "545a59dda6374a1e79fac283cebb80b00cc8892bf23d145bd8ac9c1c6ea76ff2",
+  "backupDirectory": "G:/somi/JO9_work_backups/argon_trait_text_applied_20261019",
+  "officialPatchLog": "G:/somi/JO9_work_backups/argon_trait_text_applied_20261019/apply.log",
+  "release": {
+    "schema": 1,
+    "createdAt": "2026-10-19T06:12:17.455Z",
+    "profile": "release",
+    "checks": [
+      {
+        "name": "inputs-readable",
+        "required": true,
+        "status": "PASS",
+        "detail": {
+          "candidate": "545a59dda6374a1e79fac283cebb80b00cc8892bf23d145bd8ac9c1c6ea76ff2"
+        }
+      },
+      {
+        "name": "world-structure-and-line-endings",
+        "required": true,
+        "status": "PASS",
+        "detail": {
+          "sha256": "545a59dda6374a1e79fac283cebb80b00cc8892bf23d145bd8ac9c1c6ea76ff2",
+          "bytes": 47942522,
+          "locations": 261,
+          "roundtrip": true,
+          "lineEndingIssues": 0
+        }
+      },
+      {
+        "name": "distribution-byte-match",
+        "required": false,
+        "status": "SKIP",
+        "reason": "No mirror specified; this run does not verify the distribution copy"
+      },
+      {
+        "name": "patch-replay-and-idempotence",
+        "required": true,
+        "status": "PASS",
+        "detail": {
+          "patches": [
+            "2026-10-19_argon_trait_text_integration"
+          ],
+          "byteExact": true,
+          "idempotent": true
+        }
+      },
+      {
+        "name": "installed-client-smoke",
+        "required": true,
+        "status": "PASS",
+        "detail": {
+          "passed": 9,
+          "expected": 9
+        }
+      },
+      {
+        "name": "input-hashes-unchanged",
+        "required": true,
+        "status": "PASS",
+        "detail": {
+          "files": 3
+        }
+      }
+    ],
+    "limits": [
+      "No GUI clicks or visual layout verification.",
+      "Save data is used only to prime representative state. GUI save-file loading, CRC compatibility and full saved script restoration are NOT tested.",
+      "Start is replaced only in diagnostic copies. Smoke covers lifecycle calls, not the character-selection UI or every gameplay branch.",
+      "No complete QSP syntax checker: dynamic code and all game logic are not statically proved.",
+      "Battle smoke instruments the menu dispatch only; full combat outcomes and balance are not tested."
+    ],
+    "client": {
+      "engineSha256": "f75032d79ecb58eeb7b969cd3f774d66b091fca38a360acdabd782e03a46c6e6",
+      "stateAssignments": 43315,
+      "probes": [
+        {
+          "name": "home",
+          "checkpoint": "main_screen",
+          "pass": true,
+          "reason": "",
+          "durationMs": 7578
+        },
+        {
+          "name": "newgame",
+          "checkpoint": "main_screen",
+          "pass": true,
+          "reason": "",
+          "durationMs": 7522
+        },
+        {
+          "name": "editor-slave",
+          "checkpoint": "main_screen",
+          "pass": true,
+          "reason": "",
+          "durationMs": 7273
+        },
+        {
+          "name": "editor-assistant",
+          "checkpoint": "main_screen",
+          "pass": true,
+          "reason": "",
+          "durationMs": 6998
+        },
+        {
+          "name": "cache",
+          "checkpoint": "main_screen",
+          "pass": true,
+          "reason": "",
+          "durationMs": 7525
+        },
+        {
+          "name": "daily",
+          "checkpoint": "end_day_screen",
+          "pass": true,
+          "reason": "",
+          "durationMs": 7763
+        },
+        {
+          "name": "city-weapons",
+          "checkpoint": "interaction_screen_city",
+          "pass": true,
+          "reason": "",
+          "durationMs": 8036
+        },
+        {
+          "name": "city-beauty",
+          "checkpoint": "interaction_screen_city",
+          "pass": true,
+          "reason": "",
+          "durationMs": 7514
+        },
+        {
+          "name": "battle-entry",
+          "checkpoint": "боевое_меню",
+          "pass": true,
+          "reason": "",
+          "durationMs": 7516
+        }
+      ]
+    },
+    "verdict": "PASS",
+    "output": "G:\\somi\\JO9_work_backups\\argon_trait_text_release_20261019\\run-5ZN4to"
+  },
+  "releaseDirectory": "G:/somi/JO9_work_backups/argon_trait_text_release_20261019/run-5ZN4to",
+  "nativeEvidence": [
+    {
+      "directory": "G:/somi/JO9_work_backups/argon_traits_ui_final_20261019",
+      "passed": 3,
+      "results": [
+        {
+          "name": "registry-list",
+          "checkpoint": "All seven condition keys and exact EXEC ids through real list and shared feature list; six actors, zero states, and mutually exclusive values.",
+          "pass": true,
+          "reason": "",
+          "durationMs": 7310
+        },
+        {
+          "name": "registry-describe",
+          "checkpoint": "Real describe dispatch; only msg is intercepted in diagnostic QSP and captured output must byte-match the full supplied Argon string.",
+          "pass": true,
+          "reason": "",
+          "durationMs": 7532
+        },
+        {
+          "name": "registry-edit-swap",
+          "checkpoint": "Existing editor toggle API and full private-room bridge enter/leave preserve fields and actual names with the shared slave display.",
+          "pass": true,
+          "reason": "",
+          "durationMs": 8790
+        }
+      ],
+      "prepared": {
+        "input": "outputs/argon-trait-text-integration-20261019/build/candidate.qsp",
+        "originalHash": "545a59dda6374a1e79fac283cebb80b00cc8892bf23d145bd8ac9c1c6ea76ff2",
+        "inputHash": "545a59dda6374a1e79fac283cebb80b00cc8892bf23d145bd8ac9c1c6ea76ff2",
+        "transformation": null,
+        "ids": [
+          "oral_pref",
+          "gag_reflex",
+          "anal_pref",
+          "anal_averse",
+          "defiant",
+          "innate_mute",
+          "tongue_loss"
+        ],
+        "fields": [
+          "oral_affinity",
+          "jo9_gag_reflex",
+          "anal_affinity",
+          "anal_affinity",
+          "defiant",
+          "jo9_voice_trait",
+          "jo9_voice_trait"
+        ],
+        "values": [
+          1,
+          1,
+          1,
+          -1,
+          1,
+          1,
+          2
+        ],
+        "roles": [
+          "slave",
+          "assistant",
+          "room1",
+          "room2",
+          "room3",
+          "room4"
+        ],
+        "probes": 3,
+        "limits": [
+          "Diagnostic msg interception proves actual describe dispatch/expression, not native popup visual layout.",
+          "Zero flags and editor/bridge serialization use original execution paths, but no save UI load or player navigation is simulated.",
+          "Does not verify gameplay XP, acceptance, or voice interaction blocking; these have separate probes."
+        ]
+      }
+    },
+    {
+      "directory": "G:/somi/JO9_work_backups/argon_trait_effects_combined_20261019",
+      "passed": 4,
+      "results": [
+        {
+          "name": "traits-effect-helpers",
+          "checkpoint": "All six roles; zero flags, +50% exact carry, unrelated/negative neutrality, oral/gag/anal acceptance and actual subskill-expression normalization.",
+          "pass": true,
+          "reason": "",
+          "durationMs": 7873
+        },
+        {
+          "name": "traits-live-callers",
+          "checkpoint": "Original #dynamic acceptance and primary/secondary lesson XP code executed with actual role substitution, not replacement formulas.",
+          "pass": true,
+          "reason": "",
+          "durationMs": 7781
+        },
+        {
+          "name": "traits-devotion",
+          "checkpoint": "Six roles preserve existing moral and negative changes, resolve on pride/broken, then original stat-recalculation path blocks actual positive devotion progression.",
+          "pass": true,
+          "reason": "",
+          "durationMs": 7520
+        },
+        {
+          "name": "traits-seeds-generation",
+          "checkpoint": "Actual get_stock_seed restores configured keys and absent keys to zero; stock generation produces bounded variants and preserves an existing slave.",
+          "pass": true,
+          "reason": "",
+          "durationMs": 7774
+        }
+      ],
+      "prepared": {
+        "input": "C:/Users/User/.codex/.chatgpt-projects/g-p-6aad063c991081918e27b6675f290be7/outputs/argon-trait-text-integration-20261019/build/candidate.qsp",
+        "originalHash": "545a59dda6374a1e79fac283cebb80b00cc8892bf23d145bd8ac9c1c6ea76ff2",
+        "inputHash": "545a59dda6374a1e79fac283cebb80b00cc8892bf23d145bd8ac9c1c6ea76ff2",
+        "probes": 4,
+        "limits": [
+          "Primed actual save-state symbols in diagnostic worlds; no GUI save load or navigation.",
+          "Generation bounded sampling verifies presence and bounds, not exact probability distribution.",
+          "Original game text is executed only as data; no new narrative is authored in tests."
+        ]
+      }
+    },
+    {
+      "directory": "G:/somi/JO9_work_backups/argon_voice_final_20261019",
+      "passed": 9,
+      "results": [
+        {
+          "name": "main-voice",
+          "checkpoint": "24 actual interaction entries for main-voice",
+          "pass": true,
+          "reason": "",
+          "durationMs": 8330
+        },
+        {
+          "name": "assistant-voice",
+          "checkpoint": "12 actual interaction entries for assistant-voice",
+          "pass": true,
+          "reason": "",
+          "durationMs": 8563
+        },
+        {
+          "name": "normal-voice",
+          "checkpoint": "16 actual interaction entries for normal-voice",
+          "pass": true,
+          "reason": "",
+          "durationMs": 8799
+        },
+        {
+          "name": "orders-remain",
+          "checkpoint": "20 actual interaction entries for orders-remain",
+          "pass": true,
+          "reason": "",
+          "durationMs": 8291
+        },
+        {
+          "name": "orders-assistant",
+          "checkpoint": "6 actual interaction entries for orders-assistant",
+          "pass": true,
+          "reason": "",
+          "durationMs": 8302
+        },
+        {
+          "name": "bridge-one",
+          "checkpoint": "4 actual interaction entries for bridge-one",
+          "pass": true,
+          "reason": "",
+          "durationMs": 8047
+        },
+        {
+          "name": "bridge-two",
+          "checkpoint": "4 actual interaction entries for bridge-two",
+          "pass": true,
+          "reason": "",
+          "durationMs": 8053
+        },
+        {
+          "name": "bridge-three",
+          "checkpoint": "4 actual interaction entries for bridge-three",
+          "pass": true,
+          "reason": "",
+          "durationMs": 7780
+        },
+        {
+          "name": "bridge-four",
+          "checkpoint": "4 actual interaction entries for bridge-four",
+          "pass": true,
+          "reason": "",
+          "durationMs": 8052
+        }
+      ],
+      "prepared": {
+        "input": "C:/Users/User/.codex/.chatgpt-projects/g-p-6aad063c991081918e27b6675f290be7/outputs/argon-trait-text-integration-20261019/build/candidate.qsp",
+        "originalHash": "545a59dda6374a1e79fac283cebb80b00cc8892bf23d145bd8ac9c1c6ea76ff2",
+        "inputHash": "545a59dda6374a1e79fac283cebb80b00cc8892bf23d145bd8ac9c1c6ea76ff2",
+        "transformed": false,
+        "probes": 9,
+        "limits": [
+          "Actual interaction setup and speech-dependent branch guard are executed; result/screen are intercepted to observe route and prohibit rewards.",
+          "Orders are verified to reach ordinary processing, not to rerun all existing side effects.",
+          "Private-room bridge is the real engine implementation.",
+          "No normal save loading or production writes."
+        ]
+      }
+    },
+    {
+      "directory": "G:/somi/JO9_work_backups/argon_lesson_final_20261019",
+      "passed": 10,
+      "results": [
+        {
+          "name": "slave",
+          "checkpoint": "22 actual #static_txt values through original interaction_result delayed consumer for slave",
+          "pass": true,
+          "reason": "",
+          "durationMs": 7840
+        },
+        {
+          "name": "assistant",
+          "checkpoint": "22 actual #static_txt values through original interaction_result delayed consumer for assistant",
+          "pass": true,
+          "reason": "",
+          "durationMs": 7761
+        },
+        {
+          "name": "roomone",
+          "checkpoint": "22 actual #static_txt values through original interaction_result delayed consumer for room1",
+          "pass": true,
+          "reason": "",
+          "durationMs": 8034
+        },
+        {
+          "name": "roomtwo",
+          "checkpoint": "22 actual #static_txt values through original interaction_result delayed consumer for room2",
+          "pass": true,
+          "reason": "",
+          "durationMs": 7765
+        },
+        {
+          "name": "roomthree",
+          "checkpoint": "22 actual #static_txt values through original interaction_result delayed consumer for room3",
+          "pass": true,
+          "reason": "",
+          "durationMs": 7775
+        },
+        {
+          "name": "roomfour",
+          "checkpoint": "22 actual #static_txt values through original interaction_result delayed consumer for room4",
+          "pass": true,
+          "reason": "",
+          "durationMs": 8061
+        },
+        {
+          "name": "bridge-roomone",
+          "checkpoint": "22 actual #static_txt values through original interaction_result delayed consumer for room1",
+          "pass": true,
+          "reason": "",
+          "durationMs": 7767
+        },
+        {
+          "name": "bridge-roomtwo",
+          "checkpoint": "22 actual #static_txt values through original interaction_result delayed consumer for room2",
+          "pass": true,
+          "reason": "",
+          "durationMs": 7525
+        },
+        {
+          "name": "bridge-roomthree",
+          "checkpoint": "22 actual #static_txt values through original interaction_result delayed consumer for room3",
+          "pass": true,
+          "reason": "",
+          "durationMs": 7509
+        },
+        {
+          "name": "bridge-roomfour",
+          "checkpoint": "22 actual #static_txt values through original interaction_result delayed consumer for room4",
+          "pass": true,
+          "reason": "",
+          "durationMs": 7539
+        }
+      ],
+      "prepared": {
+        "input": "C:/Users/User/.codex/.chatgpt-projects/g-p-6aad063c991081918e27b6675f290be7/outputs/argon-trait-text-integration-20261019/build/candidate.qsp",
+        "originalHash": "545a59dda6374a1e79fac283cebb80b00cc8892bf23d145bd8ac9c1c6ea76ff2",
+        "inputHash": "545a59dda6374a1e79fac283cebb80b00cc8892bf23d145bd8ac9c1c6ea76ff2",
+        "transformed": false,
+        "keys": [
+          "$cast_spell[66]",
+          "$cast_spell[69]",
+          "$oratory_lesson_description[0]",
+          "$oratory_lesson_description[1]",
+          "$music_lesson_description[0]",
+          "$music_lesson_description[2]",
+          "$cast_spell[70000]",
+          "$oratory_lesson_description[3]",
+          "$oratory_lesson_description[4]",
+          "$oratory_lesson_description[5]",
+          "$music_lesson_description[3]",
+          "$music_lesson_description[4]",
+          "$music_lesson_description[5]",
+          "$slave_foreplay_anal[0]",
+          "$slave_seduction[4]",
+          "$hj_lesson_description[0]",
+          "$rimming_lesson_description[0]",
+          "$vaginalsex_lesson_description[4]",
+          "$vaginalsex_lesson_description[5]",
+          "$pigsex_lesson_description[0]",
+          "$pigsex_lesson_description[2]",
+          "$pigsex_lesson_description[4]"
+        ],
+        "roles": [
+          "slave",
+          "assistant",
+          "room1",
+          "room2",
+          "room3",
+          "room4"
+        ],
+        "consumer": " dynamic $replace(\"$text[i] = '<<$text[i]>>'\", 'dyn'+'slave', 'slave') &! evaluate sub-expressions with substitution, after $special_part",
+        "limits": [
+          "Rendering statement executed from original interaction_result; complete training rewards and navigation are not re-run.",
+          "Values changed after refresh_database prove lookup is not stale.",
+          "Diagnostic copies only; no production or save writes."
+        ]
+      }
+    },
+    {
+      "directory": "G:/somi/JO9_work_backups/argon_menus_green_20261019",
+      "passed": 2,
+      "results": [
+        {
+          "name": "menu-active",
+          "checkpoint": "Seven actual assistant shop menu arrays; Korean names, active/gray branches, unchanged money and energy.",
+          "pass": true,
+          "reason": "",
+          "durationMs": 7314
+        },
+        {
+          "name": "menu-gray",
+          "checkpoint": "Seven actual assistant shop menu arrays; Korean names, active/gray branches, unchanged money and energy.",
+          "pass": true,
+          "reason": "",
+          "durationMs": 7258
+        }
+      ],
+      "prepared": {
+        "input": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+        "hash": "c56c9767d95c68d3f5d2cf37a545fe2cfd8bb0a47c6c33fca09713a8c56873c2",
+        "groups": [
+          "$jeweler_a_options[2]",
+          "$jeweler_a_options[3]",
+          "$boutic_a_options[1]",
+          "$boutic_a_options[2]",
+          "$boutic_a_options[3]",
+          "$boutic_a_options[4]",
+          "$boutic_a_options[5]"
+        ],
+        "occurrences": 103,
+        "limits": [
+          "Actual menu generation only; purchases not executed because IDs and conditionals are unchanged.",
+          "Diagnostic copies; production and save untouched."
+        ]
+      }
+    }
+  ],
+  "existingKoreanTraitDescriptionOverwrites": 0,
+  "newTraits": 7,
+  "newQspLocations": 0,
+  "changedLocations": [
+    "$newloc",
+    "get_stock_seed",
+    "interaction",
+    "interaction_result",
+    "interaction_city",
+    "#dynamic",
+    "#options",
+    "#variative",
+    "#static_base",
+    "#static_txt",
+    "sex_interaction",
+    "get_special_assistant_quest",
+    "jo9_traits"
+  ],
+  "full": {
+    "path": "G:/somi/Jack O Nine Tails v2.4 Kor_Full/game/jack.qsp",
+    "hashBefore": "84e978d5b06bf9a3fb6ed6a030160c7761cfbec5cfa54d2fd90102f25552fc3a",
+    "hashAfter": "84e978d5b06bf9a3fb6ed6a030160c7761cfbec5cfa54d2fd90102f25552fc3a",
+    "unchanged": true
+  },
+  "representativeSave": {
+    "hashBefore": "ba73a7a5ea3020280b4f1a2e2a5b91ee89300e86d151ea50d149e7b610d01bab",
+    "hashAfter": "ba73a7a5ea3020280b4f1a2e2a5b91ee89300e86d151ea50d149e7b610d01bab",
+    "unchanged": true
+  },
+  "commitPush": false,
+  "limitations": [
+    "GUI save selection and visual layout not tested; representative state used in native probes.",
+    "Voice traits cover common questions and rhetoric; not every independent event rewritten.",
+    "Long-term balance not verified."
+  ]
+}

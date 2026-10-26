@@ -1,0 +1,120 @@
+{
+  "id": "2026-10-19_room_appearance_routing",
+  "description": "Use current Indie actor appearance in private/assistant rooms, room menus and other live displays; keep static previews keyed to their own template, custom fallback and old random Isabella2323.",
+  "before_sha256": "3611e194a385d0ed992e9f0ca45aca033e834dda9de901cb237c36439aba828f",
+  "after_sha256": "14afbacfd7a6fdbca918598b67d84c696999bdce3df5a9f24f7c09f540c98fd7",
+  "edits": [
+    {
+      "location": "display_fullimage",
+      "field": "body",
+      "old": "! JO9 MOD START J9M1256 | 2026-10-10_restore_private_room_ui | changed block; context may be included\r\nif snk_room_target > 0 and $curloc = 'display_fullimage': gs 'snk_room_bridge', 'guard', 'display_fullimage'\r\n! JO9 MOD END J9M1256\r\n! func('display_fullimage', 'slavetype', 'divtype', 'psy') -- parameters are optional except the slavetype\r\n\r\nif $args[1] = '': $args[1] = 'bg'\r\n\r\n!$result = '<div id=\"bg\"><img src=\"content\\pic\\<<$slave[\"fullimage\"]>>.png\"></div>'\r\n\r\n! fainted (or otherwise indisposed) slaves currently have no display (TODO: maybe apply a sepia filter?)\r\nif dyneval('result = <<$args[0]>>_state') ! CONST_INT['slave_exist']: $result = '' & exit\r\n\r\n$actor_name = $args[0]\r\n$outfit_game = dyneval('$result = $<<$args[0]>>[\"cloth\"]')\r\n\r\nif $outfit_game = 'голая': $outfit_patch = 'naked'\r\nif $outfit_game = 'common_apron': $outfit_patch = 'apron'\r\nif $outfit_game = 'maid_dress': $outfit_patch = 'maid'\r\nif $outfit_game = 'nurse_dress': $outfit_patch = 'nurse'\r\nif $outfit_game = 'sailor_foku': $outfit_patch = 'school'\r\nif $outfit_game = 'enchanter_robe': $outfit_patch = 'sorc'\r\nif $outfit_game = 'leotard': $outfit_patch = 'leotard'\r\nif $outfit_game = 'chainmail_bikini': $outfit_patch = 'chainmail'\r\nif $outfit_game = 'ukata': $outfit_patch = 'kimono'\r\nif $outfit_game = 'sun_dress': $outfit_patch = 'sundress'\r\nif $outfit_game = 'laced_underwear': $outfit_patch = 'lace'\r\nif $outfit_game = 'cocktail_dress': $outfit_patch = 'cocktail'\r\nif $outfit_game = 'rubber_dress': $outfit_patch = 'latex'\r\nif $outfit_game = 'bellydance': $outfit_patch = 'exotic'\r\nif $outfit_game = 'leather_corset': $outfit_patch = 'corset'\r\nif $outfit_game = 'rich_dress': $outfit_patch = 'gorgeous'\r\nif $outfit_game = 'wedding_dress': $outfit_patch = 'bride'\r\nif $outfit_game = 'anal_tail': $outfit_patch = 'tail'\r\nif $outfit_game = 'cow_gear': $outfit_patch = 'cow'\r\nif $outfit_game = 'petsuit': $outfit_patch = 'pet'\r\nif $outfit_game = 'deprivation_suit': $outfit_patch = 'restrain'\r\n\r\n$def_img_key = 'fullimage'\r\n$patch_img_arr_name = ''\r\n$patch_image_path = ''\r\n$patch_mood_image_path = ''\r\n$def_image_path = ''\r\n\r\nif $outfit_patch <> '' :\r\n    $patch_img_arr_name = 'indpack_' + $outfit_patch\r\n\r\n    actor_type = 0\r\n    actor_moral = 0\r\n    actor_arousal = 0\r\n\r\n    if $actor_name = 'slave':\r\n        actor_type = slave_type\r\n        $def_image_path = $slave[ $def_img_key ]\r\n        actor_moral = slave['moral']\r\n        actor_arousal = slave['arousal']\r\n    elseif $actor_name = 'assistant':\r\n        $assistant_img_key = ''\r\n\t\tif assistant['image_mode'] = 1:\r\n\t\t\t$assistant_img_key = 'fullmistress'\r\n            $patch_img_arr_name = 'indpack_dom'\r\n\t\tend\r\n\t\tif assistant['image_mode'] = 2:\r\n            $assistant_img_key = 'fullmade'\r\n\t\t\t$patch_img_arr_name = 'indpack_maid'\r\n\t\tend\r\n\t\tif assistant['image_mode'] = 3:\r\n\t\t\t$assistant_img_key = 'fullsecretary'\r\n            $patch_img_arr_name = 'indpack_secr'\r\n\t\tend\r\n        actor_type = assistant_type\r\n        actor_moral = assistant['moral']\r\n        actor_arousal = assistant['arousal']\r\n\r\n        $assistant_image_path = $assistant[ $assistant_img_key ]\r\n        if $assistant_image_path <> '':\r\n            $def_image_path = $assistant_image_path\r\n        else\r\n            $def_image_path = $assistant[ $def_img_key ]\r\n        end\r\n\r\n    elseif $actor_name = 'cow':\r\n        $patch_img_arr_name = 'indpack_cow'\r\n        actor_type = cow_type\r\n        $def_image_path = $cow[ $def_img_key ]\r\n        actor_moral = cow['moral']\r\n        actor_arousal = cow['arousal']\r\n    elseif $actor_name = 'prisoner':\r\n        actor_type = prisoner_type\r\n        $def_image_path = $prisoner[ $def_img_key ]\r\n        actor_moral = prisoner['moral']\r\n        actor_arousal = prisoner['arousal']\r\n    elseif $actor_name = 'stock':\r\n        $patch_img_arr_name = 'indpack_title'\r\n        actor_type = stock_type\r\n        $def_image_path = $stock[ $def_img_key ]\r\n    elseif $actor_name = 'farmhand':\r\n        actor_type = farmhand_type\r\n        $def_image_path = $farmhand[ $def_img_key ]\r\n    end\r\nend\r\n\r\n$patch_image_path = dyneval('$result = $<<$patch_img_arr_name>>[actor_type]')\r\n\r\nif $patch_image_path = '':\r\n    $res_image_path = $def_image_path\r\nelse\r\n    $patch_mood_suffix = ''\r\n    if actor_arousal > 3:\r\n        $patch_mood_suffix = '_horny'\r\n    elseif actor_moral < 3:\r\n        $patch_mood_suffix = '_rebel'\r\n    end\r\n\r\n    $patch_mood_tagname = $patch_img_arr_name+$patch_mood_suffix\r\n    \r\n    if $patch_mood_suffix <> '':\r\n        $patch_mood_image_path = dyneval('$result = $<<$patch_mood_tagname>>[actor_type]')\r\n    end\r\n\r\n    if $patch_mood_image_path <> '':\r\n        $res_image_path = $patch_mood_image_path\r\n    else\r\n        $res_image_path = $patch_image_path\r\n    end\r\n\r\nend\r\n\r\n! JO9 MOD START J9M1255 | 2026-10-08_persistent_image_cycle | changed block; context may be included\r\n$result = '<div id=\"<<$args[1]>>\"><img src=\"content\\pic\\<<$res_image_path>>.png\"></div>'\r\nif $args[1] = 'bg' or $args[1] = 'large_image': $result = func('interior_change', 'jo9_html', $result)\r\n! JO9 MOD END J9M1255\r\n",
+      "new": "! JO9 MOD START ROOM_IMAGE_ACTOR_RESOLVER | 2026-10-19_room_appearance_routing\r\n! JO9 MOD START J9M1256 | 2026-10-10_restore_private_room_ui | changed block; context may be included\r\nif snk_room_target > 0 and $curloc = 'display_fullimage': gs 'snk_room_bridge', 'guard', 'display_fullimage'\r\n! JO9 MOD END J9M1256\r\n! func('display_fullimage', 'slavetype', 'divtype', 'psy') -- parameters are optional except the slavetype\r\n\r\nif $args[1] = '': $args[1] = 'bg'\r\n\r\n!$result = '<div id=\"bg\"><img src=\"content\\pic\\<<$slave[\"fullimage\"]>>.png\"></div>'\r\n\r\n! fainted (or otherwise indisposed) slaves currently have no display (TODO: maybe apply a sepia filter?)\r\nif dyneval('result = <<$args[0]>>_state') ! CONST_INT['slave_exist']: $result = '' & exit\r\n\r\n$actor_name = $args[0]\r\n$outfit_game = dyneval('$result = $<<$args[0]>>[\"cloth\"]')\r\n$outfit_patch = ''\r\n\r\nif $outfit_game = 'голая': $outfit_patch = 'naked'\r\nif $outfit_game = 'common_apron': $outfit_patch = 'apron'\r\nif $outfit_game = 'maid_dress': $outfit_patch = 'maid'\r\nif $outfit_game = 'nurse_dress': $outfit_patch = 'nurse'\r\nif $outfit_game = 'sailor_foku': $outfit_patch = 'school'\r\nif $outfit_game = 'enchanter_robe': $outfit_patch = 'sorc'\r\nif $outfit_game = 'leotard': $outfit_patch = 'leotard'\r\nif $outfit_game = 'chainmail_bikini': $outfit_patch = 'chainmail'\r\nif $outfit_game = 'ukata': $outfit_patch = 'kimono'\r\nif $outfit_game = 'sun_dress': $outfit_patch = 'sundress'\r\nif $outfit_game = 'laced_underwear': $outfit_patch = 'lace'\r\nif $outfit_game = 'cocktail_dress': $outfit_patch = 'cocktail'\r\nif $outfit_game = 'rubber_dress': $outfit_patch = 'latex'\r\nif $outfit_game = 'bellydance': $outfit_patch = 'exotic'\r\nif $outfit_game = 'leather_corset': $outfit_patch = 'corset'\r\nif $outfit_game = 'rich_dress': $outfit_patch = 'gorgeous'\r\nif $outfit_game = 'wedding_dress': $outfit_patch = 'bride'\r\nif $outfit_game = 'anal_tail': $outfit_patch = 'tail'\r\nif $outfit_game = 'cow_gear': $outfit_patch = 'cow'\r\nif $outfit_game = 'petsuit': $outfit_patch = 'pet'\r\nif $outfit_game = 'deprivation_suit': $outfit_patch = 'restrain'\r\n\r\n$def_img_key = 'fullimage'\r\n$patch_img_arr_name = 'indpack_title'\r\n$patch_image_path = ''\r\n$patch_mood_image_path = ''\r\nactor_type = dyneval('result = <<$actor_name>>_type')\r\nactor_moral = dyneval('result = <<$actor_name>>[\"moral\"]')\r\nactor_arousal = dyneval('result = <<$actor_name>>[\"arousal\"]')\r\n$def_image_path = dyneval('$result = $<<$actor_name>>[\"fullimage\"]')\r\n\r\nif $outfit_patch <> '' :\r\n    $patch_img_arr_name = 'indpack_' + $outfit_patch\r\nend\r\n\r\n    if $actor_name = 'slave':\r\n        actor_type = slave_type\r\n        $def_image_path = $slave[ $def_img_key ]\r\n        actor_moral = slave['moral']\r\n        actor_arousal = slave['arousal']\r\n    elseif $actor_name = 'assistant':\r\n        $assistant_img_key = ''\r\n\t\tif assistant['image_mode'] = 1:\r\n\t\t\t$assistant_img_key = 'fullmistress'\r\n            $patch_img_arr_name = 'indpack_dom'\r\n\t\tend\r\n\t\tif assistant['image_mode'] = 2:\r\n            $assistant_img_key = 'fullmade'\r\n\t\t\t$patch_img_arr_name = 'indpack_maid'\r\n\t\tend\r\n\t\tif assistant['image_mode'] = 3:\r\n\t\t\t$assistant_img_key = 'fullsecretary'\r\n            $patch_img_arr_name = 'indpack_secr'\r\n\t\tend\r\n        actor_type = assistant_type\r\n        actor_moral = assistant['moral']\r\n        actor_arousal = assistant['arousal']\r\n\r\n        $assistant_image_path = $assistant[ $assistant_img_key ]\r\n        if $assistant_image_path <> '':\r\n            $def_image_path = $assistant_image_path\r\n        else\r\n            $def_image_path = $assistant[ $def_img_key ]\r\n        end\r\n\r\n    elseif $actor_name = 'cow':\r\n        $patch_img_arr_name = 'indpack_cow'\r\n        actor_type = cow_type\r\n        $def_image_path = $cow[ $def_img_key ]\r\n        actor_moral = cow['moral']\r\n        actor_arousal = cow['arousal']\r\n    elseif $actor_name = 'prisoner':\r\n        actor_type = prisoner_type\r\n        $def_image_path = $prisoner[ $def_img_key ]\r\n        actor_moral = prisoner['moral']\r\n        actor_arousal = prisoner['arousal']\r\n    elseif $actor_name = 'stock':\r\n        $patch_img_arr_name = 'indpack_title'\r\n        actor_type = stock_type\r\n        $def_image_path = $stock[ $def_img_key ]\r\n    elseif $actor_name = 'farmhand':\r\n        actor_type = farmhand_type\r\n        $def_image_path = $farmhand[ $def_img_key ]\r\n    end\r\n\r\n$patch_image_path = dyneval('$result = $<<$patch_img_arr_name>>[actor_type]')\r\n\r\nif $patch_image_path = '':\r\n    $res_image_path = $def_image_path\r\nelse\r\n    $patch_mood_suffix = ''\r\n    if actor_arousal > 3:\r\n        $patch_mood_suffix = '_horny'\r\n    elseif actor_moral < 3:\r\n        $patch_mood_suffix = '_rebel'\r\n    end\r\n\r\n    $patch_mood_tagname = $patch_img_arr_name+$patch_mood_suffix\r\n    \r\n    if $patch_mood_suffix <> '':\r\n        $patch_mood_image_path = dyneval('$result = $<<$patch_mood_tagname>>[actor_type]')\r\n    end\r\n\r\n    if $patch_mood_image_path <> '':\r\n        $res_image_path = $patch_mood_image_path\r\n    else\r\n        $res_image_path = $patch_image_path\r\n    end\r\n\r\nend\r\n\r\n! JO9 MOD START J9M1255 | 2026-10-08_persistent_image_cycle | changed block; context may be included\r\n$result = '<div id=\"<<$args[1]>>\"><img src=\"content\\pic\\<<$res_image_path>>.png\"></div>'\r\nif $args[1] = 'bg' or $args[1] = 'large_image': $result = func('interior_change', 'jo9_html', $result)\r\n! JO9 MOD END J9M1255\r\n\r\n! JO9 MOD END ROOM_IMAGE_ACTOR_RESOLVER",
+      "count": 1
+    },
+    {
+      "location": "$addon_custom_data",
+      "field": "body",
+      "old": "\t*p func('interior_change', 'jo9_html', '<div id = \"bg\"><img src=\"content\\pic\\<<$fullimage[args[1]]>>.png\"></div>')",
+      "new": "! JO9 MOD START ROOM_IMAGE_LINK_0 | 2026-10-19_room_appearance_routing\r\n\t*p func('interior_change', 'jo9_html', '<div id = \"bg\"><img src=\"content\\pic\\<<$iif($indpack_title[args[1]] ! \"\", $indpack_title[args[1]], $fullimage[args[1]])>>.png\"></div>')\r\n! JO9 MOD END ROOM_IMAGE_LINK_0",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "\tif nsfw = 0 and $assistant['fullimage'] ! '': $text_display += '<div id=\"center_image_home\"><img src=\"content\\pic\\<<$assistant[\"fullimage\"]>>.png\"></div>'",
+      "new": "! JO9 MOD START ROOM_IMAGE_LINK_1 | 2026-10-19_room_appearance_routing\r\n\tif nsfw = 0 and $assistant['fullimage'] ! '': $text_display += func('display_fullimage', 'assistant', 'center_image_home')\r\n! JO9 MOD END ROOM_IMAGE_LINK_1",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "\tif nsfw = 0: $text_display += '<div id=\"center_image_home\"><img src=\"content\\pic\\<<$assistant[''fullimage'']>>.png\"></div>'",
+      "new": "! JO9 MOD START ROOM_IMAGE_LINK_2 | 2026-10-19_room_appearance_routing\r\n\tif nsfw = 0: $text_display += func('display_fullimage', 'assistant', 'center_image_home')\r\n! JO9 MOD END ROOM_IMAGE_LINK_2",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "    IF nsfw = 0: $text_display += '<div id=\"center_image_home\"><img src=\"content\\pic\\<<$assistant[\"fullimage\"]>>.png\"></div>'",
+      "new": "! JO9 MOD START ROOM_IMAGE_LINK_3 | 2026-10-19_room_appearance_routing\r\n    IF nsfw = 0: $text_display += func('display_fullimage', 'assistant', 'center_image_home')\r\n! JO9 MOD END ROOM_IMAGE_LINK_3",
+      "count": 1
+    },
+    {
+      "location": "prison_cell",
+      "field": "body",
+      "old": "        *p '<div style=\"position:absolute;top:3px;left:150px;\"><img src=\"content\\pic\\<<$prisoner[\"fullimage\"]>>.png\"></div>'",
+      "new": "! JO9 MOD START ROOM_IMAGE_LINK_4 | 2026-10-19_room_appearance_routing\r\n        *p $replace(func('display_fullimage', 'prisoner', 'jo9_inline_actor'), 'id=\"jo9_inline_actor\"', 'style=\"position:absolute;top:3px;left:150px;\"')\r\n! JO9 MOD END ROOM_IMAGE_LINK_4",
+      "count": 1
+    },
+    {
+      "location": "barn",
+      "field": "body",
+      "old": "if cow_state = CONST_INT['slave_exist'] and nsfw = 0: *p '<div style=\"position:absolute;top:3px;left:150px;\"><img src=\"content\\pic\\<<$cow[\"fullimage\"]>>.png\"></div>'",
+      "new": "! JO9 MOD START ROOM_IMAGE_LINK_5 | 2026-10-19_room_appearance_routing\r\nif cow_state = CONST_INT['slave_exist'] and nsfw = 0: *p $replace(func('display_fullimage', 'cow', 'jo9_inline_actor'), 'id=\"jo9_inline_actor\"', 'style=\"position:absolute;top:3px;left:150px;\"')\r\n! JO9 MOD END ROOM_IMAGE_LINK_5",
+      "count": 1
+    },
+    {
+      "location": "special_screen",
+      "field": "body",
+      "old": "  if assistant['image_mode'] = 0: *p func('interior_change', 'jo9_html', '<div id = \"bg\"><img src=\"content\\pic\\<<$fullimage[assistant_type]>>.png\"></div>')",
+      "new": "! JO9 MOD START ROOM_IMAGE_LINK_6 | 2026-10-19_room_appearance_routing\r\n  if assistant['image_mode'] = 0: *p func('display_fullimage', 'assistant', 'bg')\r\n! JO9 MOD END ROOM_IMAGE_LINK_6",
+      "count": 1
+    },
+    {
+      "location": "assistant_private_room",
+      "field": "body",
+      "old": "if assistant_state = CONST_INT['slave_exist'] and nsfw = 0: *p func('interior_change', 'jo9_html', '<div style=\"position:absolute;top:3px;left:150px;\"><img src=\"content\\pic\\<<$assistant[\"fullimage\"]>>.png\"></div>')",
+      "new": "! JO9 MOD START ROOM_IMAGE_LINK_7 | 2026-10-19_room_appearance_routing\r\nif assistant_state = CONST_INT['slave_exist'] and nsfw = 0: *p func('interior_change', 'jo9_html', $replace(func('display_fullimage', 'assistant', 'jo9_inline_actor'), 'id=\"jo9_inline_actor\"', 'style=\"position:absolute;top:3px;left:150px;\"'))\r\n! JO9 MOD END ROOM_IMAGE_LINK_7",
+      "count": 1
+    },
+    {
+      "location": "slave_private_room1",
+      "field": "body",
+      "old": "*p func('interior_change', 'jo9_html', '<div id=\"snk_room_character\"><img src=\"content/pic/<<$room1[\"fullimage\"]>>.png\"></div>')",
+      "new": "! JO9 MOD START ROOM_IMAGE_LINK_8 | 2026-10-19_room_appearance_routing\r\n*p func('interior_change', 'jo9_html', func('display_fullimage', 'room1', 'snk_room_character'))\r\n! JO9 MOD END ROOM_IMAGE_LINK_8",
+      "count": 1
+    },
+    {
+      "location": "slave_private_room2",
+      "field": "body",
+      "old": "*p func('interior_change', 'jo9_html', '<div id=\"snk_room_character\"><img src=\"content/pic/<<$room2[\"fullimage\"]>>.png\"></div>')",
+      "new": "! JO9 MOD START ROOM_IMAGE_LINK_9 | 2026-10-19_room_appearance_routing\r\n*p func('interior_change', 'jo9_html', func('display_fullimage', 'room2', 'snk_room_character'))\r\n! JO9 MOD END ROOM_IMAGE_LINK_9",
+      "count": 1
+    },
+    {
+      "location": "slave_private_room3",
+      "field": "body",
+      "old": "*p func('interior_change', 'jo9_html', '<div id=\"snk_room_character\"><img src=\"content/pic/<<$room3[\"fullimage\"]>>.png\"></div>')",
+      "new": "! JO9 MOD START ROOM_IMAGE_LINK_10 | 2026-10-19_room_appearance_routing\r\n*p func('interior_change', 'jo9_html', func('display_fullimage', 'room3', 'snk_room_character'))\r\n! JO9 MOD END ROOM_IMAGE_LINK_10",
+      "count": 1
+    },
+    {
+      "location": "slave_private_room4",
+      "field": "body",
+      "old": "*p func('interior_change', 'jo9_html', '<div id=\"snk_room_character\"><img src=\"content/pic/<<$room4[\"fullimage\"]>>.png\"></div>')",
+      "new": "! JO9 MOD START ROOM_IMAGE_LINK_11 | 2026-10-19_room_appearance_routing\r\n*p func('interior_change', 'jo9_html', func('display_fullimage', 'room4', 'snk_room_character'))\r\n! JO9 MOD END ROOM_IMAGE_LINK_11",
+      "count": 1
+    },
+    {
+      "location": "stasis_cell",
+      "field": "body",
+      "old": "\t\t\t*p func('interior_change', 'jo9_html', '<div id = \"bg\"><img src=\"content\\pic\\<<$dynslave[\"fullimage\"]>>.png\"></div>')",
+      "new": "! JO9 MOD START ROOM_IMAGE_LINK_12 | 2026-10-19_room_appearance_routing\r\n\t\t\t*p func('interior_change', 'jo9_html', '<div id = \"bg\"><img src=\"content\\pic\\<<$iif($indpack_title[dynslave_type] ! \"\", $indpack_title[dynslave_type], $dynslave[\"fullimage\"])>>.png\"></div>')\r\n! JO9 MOD END ROOM_IMAGE_LINK_12",
+      "count": 1
+    },
+    {
+      "location": "black_market_interface",
+      "field": "body",
+      "old": "*p func('interior_change', 'jo9_html', '<div id = \"bg\"><img src=\"content\\pic\\<<$fullimage[s_type]>>.png\"></div>')",
+      "new": "! JO9 MOD START ROOM_IMAGE_LINK_13 | 2026-10-19_room_appearance_routing\r\n*p func('interior_change', 'jo9_html', '<div id = \"bg\"><img src=\"content\\pic\\<<$iif($indpack_title[s_type] ! \"\", $indpack_title[s_type], $fullimage[s_type])>>.png\"></div>')\r\n! JO9 MOD END ROOM_IMAGE_LINK_13",
+      "count": 1
+    },
+    {
+      "location": "snk_room_menu_screen",
+      "field": "body",
+      "old": "*p func('interior_change', 'jo9_html', '<div id=\"snk_room_character\"><img src=\"content/pic/<<$slave[\"fullimage\"]>>.png\"></div>')",
+      "new": "! JO9 MOD START ROOM_IMAGE_LINK_14 | 2026-10-19_room_appearance_routing\r\n*p func('interior_change', 'jo9_html', func('display_fullimage', 'slave', 'snk_room_character'))\r\n! JO9 MOD END ROOM_IMAGE_LINK_14",
+      "count": 1
+    }
+  ]
+}

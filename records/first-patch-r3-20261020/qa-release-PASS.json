@@ -1,0 +1,142 @@
+{
+  "schema": 1,
+  "createdAt": "2026-10-19T15:18:32.326Z",
+  "profile": "release",
+  "checks": [
+    {
+      "name": "inputs-readable",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "candidate": "20137b7336f2ec27c419605cbd2ada1a6fab459919c6ceaaedad89a9152f40f5"
+      }
+    },
+    {
+      "name": "world-structure-and-line-endings",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "sha256": "20137b7336f2ec27c419605cbd2ada1a6fab459919c6ceaaedad89a9152f40f5",
+        "bytes": 48236660,
+        "locations": 262,
+        "roundtrip": true,
+        "lineEndingIssues": 0
+      }
+    },
+    {
+      "name": "distribution-byte-match",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "sha256": "20137b7336f2ec27c419605cbd2ada1a6fab459919c6ceaaedad89a9152f40f5"
+      }
+    },
+    {
+      "name": "patch-replay-and-idempotence",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "patches": [
+          "2026-10-20_first_patch_r3_cumulative"
+        ],
+        "byteExact": true,
+        "idempotent": true
+      }
+    },
+    {
+      "name": "installed-client-smoke",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "passed": 9,
+        "expected": 9
+      }
+    },
+    {
+      "name": "input-hashes-unchanged",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "files": 4
+      }
+    }
+  ],
+  "limits": [
+    "No GUI clicks or visual layout verification.",
+    "Save data is used only to prime representative state. GUI save-file loading, CRC compatibility and full saved script restoration are NOT tested.",
+    "Start is replaced only in diagnostic copies. Smoke covers lifecycle calls, not the character-selection UI or every gameplay branch.",
+    "No complete QSP syntax checker: dynamic code and all game logic are not statically proved.",
+    "Battle smoke instruments the menu dispatch only; full combat outcomes and balance are not tested."
+  ],
+  "client": {
+    "engineSha256": "f75032d79ecb58eeb7b969cd3f774d66b091fca38a360acdabd782e03a46c6e6",
+    "stateAssignments": 43315,
+    "probes": [
+      {
+        "name": "home",
+        "checkpoint": "main_screen",
+        "pass": true,
+        "reason": "",
+        "durationMs": 7530
+      },
+      {
+        "name": "newgame",
+        "checkpoint": "main_screen",
+        "pass": true,
+        "reason": "",
+        "durationMs": 7753
+      },
+      {
+        "name": "editor-slave",
+        "checkpoint": "main_screen",
+        "pass": true,
+        "reason": "",
+        "durationMs": 7512
+      },
+      {
+        "name": "editor-assistant",
+        "checkpoint": "main_screen",
+        "pass": true,
+        "reason": "",
+        "durationMs": 7245
+      },
+      {
+        "name": "cache",
+        "checkpoint": "main_screen",
+        "pass": true,
+        "reason": "",
+        "durationMs": 7222
+      },
+      {
+        "name": "daily",
+        "checkpoint": "end_day_screen",
+        "pass": true,
+        "reason": "",
+        "durationMs": 7231
+      },
+      {
+        "name": "city-weapons",
+        "checkpoint": "interaction_screen_city",
+        "pass": true,
+        "reason": "",
+        "durationMs": 7238
+      },
+      {
+        "name": "city-beauty",
+        "checkpoint": "interaction_screen_city",
+        "pass": true,
+        "reason": "",
+        "durationMs": 7499
+      },
+      {
+        "name": "battle-entry",
+        "checkpoint": "боевое_меню",
+        "pass": true,
+        "reason": "",
+        "durationMs": 7502
+      }
+    ]
+  },
+  "verdict": "PASS",
+  "output": "G:\\somi\\JO9_2.4_FirstPatch_20261020_r3\\qa\\run-KZI56P"
+}

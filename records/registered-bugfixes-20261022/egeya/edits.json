@@ -1,0 +1,806 @@
+{
+  "id": "2026-10-22_egeya_stale_role_images",
+  "source_sha256": "c6701e3ab130b1a762d0b1a523d52cd53cee846f71c3d7899a4c369389aa853d",
+  "edits": [
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "! JO9 canonical resource paths: saved scene caches",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\ngs 'jo9_seed_role_images'\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022\r\n! JO9 canonical resource paths: saved scene caches",
+      "count": 1
+    },
+    {
+      "location": "$newloc",
+      "field": "body",
+      "old": "! JO9 MOD START COG_CACHE | 2026-10-16_innate_learning_traits",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\ngs 'jo9_seed_role_images'\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022\r\n! JO9 MOD START COG_CACHE | 2026-10-16_innate_learning_traits",
+      "count": 1
+    },
+    {
+      "location": "display_fullimage",
+      "field": "body",
+      "old": "$patch_image_path = dyneval('$result = $<<$patch_img_arr_name>>[actor_type]')",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n$def_image_path = func('jo9_seed_role_images', 'resolve', actor_type, $def_image_path, $iif($actor_name = 'assistant', $assistant_img_key, 'fullimage'))\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022\r\n$patch_image_path = dyneval('$result = $<<$patch_img_arr_name>>[actor_type]')",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "\r\n\t$bg_path = $assistant[\"fullimage\"]\r\n",
+      "new": "\r\n! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$bg_path = func(\"jo9_seed_role_images\", \"resolve\", assistant_type, $assistant[\"fullimage\"], \"fullimage\")\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022\r\n",
+      "count": 3
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "\r\n\t$bg_path = $slave[\"fullimage\"]\r\n",
+      "new": "\r\n! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$bg_path = func(\"jo9_seed_role_images\", \"resolve\", slave_type, $slave[\"fullimage\"], \"fullimage\")\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022\r\n",
+      "count": 3
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "\r\n\t$bg_path = $cow[\"fullimage\"]\r\n",
+      "new": "\r\n! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$bg_path = func(\"jo9_seed_role_images\", \"resolve\", cow_type, $cow[\"fullimage\"], \"fullimage\")\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022\r\n",
+      "count": 3
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "\r\n\t$bg_path = $slave[\"fullimage\"] &! retrieve image before clear_slave_instance\r\n",
+      "new": "\r\n! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$bg_path = func(\"jo9_seed_role_images\", \"resolve\", slave_type, $slave[\"fullimage\"], \"fullimage\") &! retrieve image before clear_slave_instance\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022\r\n",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "\r\n\t$bg_path = $assistant[\"fullimage\"] &! retrieve image before clear_slave_instance\r\n",
+      "new": "\r\n! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$bg_path = func(\"jo9_seed_role_images\", \"resolve\", assistant_type, $assistant[\"fullimage\"], \"fullimage\") &! retrieve image before clear_slave_instance\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022\r\n",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "\r\n\t$bg_path = $prisoner[\"fullimage\"] &! retrieve image before clear_slave_instance\r\n",
+      "new": "\r\n! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$bg_path = func(\"jo9_seed_role_images\", \"resolve\", prisoner_type, $prisoner[\"fullimage\"], \"fullimage\") &! retrieve image before clear_slave_instance\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022\r\n",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "\r\n\t$bg_path = $farmhand[\"fullimage\"] &! retrieve image before clear_slave_instance\r\n",
+      "new": "\r\n! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$bg_path = func(\"jo9_seed_role_images\", \"resolve\", farmhand_type, $farmhand[\"fullimage\"], \"fullimage\") &! retrieve image before clear_slave_instance\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022\r\n",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "\r\n\t$bg_path = $cow[\"fullimage\"] &! retrieve image before clear_slave_instance\r\n",
+      "new": "\r\n! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$bg_path = func(\"jo9_seed_role_images\", \"resolve\", cow_type, $cow[\"fullimage\"], \"fullimage\") &! retrieve image before clear_slave_instance\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022\r\n",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "\r\n\t$bg_path = $harpy[\"fullimage\"] &! retrieve image before clear_slave_instance\r\n",
+      "new": "\r\n! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$bg_path = func(\"jo9_seed_role_images\", \"resolve\", harpy_type, $harpy[\"fullimage\"], \"fullimage\") &! retrieve image before clear_slave_instance\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022\r\n",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "\r\n\t$bg_path = $pig[\"fullimage\"] &! retrieve image before clear_slave_instance\r\n",
+      "new": "\r\n! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$bg_path = func(\"jo9_seed_role_images\", \"resolve\", pig_type, $pig[\"fullimage\"], \"fullimage\") &! retrieve image before clear_slave_instance\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022\r\n",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "\r\n\t$bg_path = $farmhand[\"fullimage\"]\r\n",
+      "new": "\r\n! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$bg_path = func(\"jo9_seed_role_images\", \"resolve\", farmhand_type, $farmhand[\"fullimage\"], \"fullimage\")\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022\r\n",
+      "count": 2
+    },
+    {
+      "location": "interaction_screen_city",
+      "field": "body",
+      "old": "\r\nif $interaction_type ! 'hunting_trophy': $special_image[3] = '<<$stock[\"fullimage\"]>>.png'\r\n",
+      "new": "\r\n! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\nif $interaction_type ! 'hunting_trophy': $special_image[3] = '<<func(\"jo9_seed_role_images\", \"resolve\", stock_type, $stock[\"fullimage\"], \"fullimage\")>>.png'\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022\r\n",
+      "count": 1
+    },
+    {
+      "location": "stasis_cell",
+      "field": "body",
+      "old": "\r\n\t\t\t*p func('interior_change', 'jo9_html', '<div id = \"bg\"><img src=\"content\\pic\\<<$iif($indpack_title[dynslave_type] ! \"\", $indpack_title[dynslave_type], $dynslave[\"fullimage\"])>>.png\"></div>')\r\n",
+      "new": "\r\n! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t\t\t*p func('interior_change', 'jo9_html', '<div id = \"bg\"><img src=\"content\\pic\\<<$iif($indpack_title[dynslave_type] ! \"\", $indpack_title[dynslave_type], func(\"jo9_seed_role_images\", \"resolve\", dynslave_type, $dynslave[\"fullimage\"], \"fullimage\"))>>.png\"></div>')\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022\r\n",
+      "count": 1
+    },
+    {
+      "location": "display_pic",
+      "field": "body",
+      "old": "\r\n\t\t$result = $slave['fullimage']\r\n",
+      "new": "\r\n! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t\t$result = func(\"jo9_seed_role_images\", \"resolve\", slave_type, $slave['fullimage'], \"fullimage\")\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022\r\n",
+      "count": 1
+    },
+    {
+      "location": "display_pic",
+      "field": "body",
+      "old": "\r\n\t\t$result = $assistant['fullimage']\r\n",
+      "new": "\r\n! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t\t$result = func(\"jo9_seed_role_images\", \"resolve\", assistant_type, $assistant['fullimage'], \"fullimage\")\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022\r\n",
+      "count": 1
+    },
+    {
+      "location": "display_pic",
+      "field": "body",
+      "old": "\r\n\t\t$result = $cow['fullimage']\r\n",
+      "new": "\r\n! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t\t$result = func(\"jo9_seed_role_images\", \"resolve\", cow_type, $cow['fullimage'], \"fullimage\")\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022\r\n",
+      "count": 1
+    },
+    {
+      "location": "display_pic",
+      "field": "body",
+      "old": "\r\n\t\t$result = $prisoner['fullimage']\r\n",
+      "new": "\r\n! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t\t$result = func(\"jo9_seed_role_images\", \"resolve\", prisoner_type, $prisoner['fullimage'], \"fullimage\")\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022\r\n",
+      "count": 1
+    },
+    {
+      "location": "display_pic",
+      "field": "body",
+      "old": "\r\n\t\t$result = $stock['fullimage']\r\n",
+      "new": "\r\n! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t\t$result = func(\"jo9_seed_role_images\", \"resolve\", stock_type, $stock['fullimage'], \"fullimage\")\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022\r\n",
+      "count": 1
+    },
+    {
+      "location": "display_pic",
+      "field": "body",
+      "old": "\r\n\t\t$result = $farmhand['fullimage']\r\n",
+      "new": "\r\n! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t\t$result = func(\"jo9_seed_role_images\", \"resolve\", farmhand_type, $farmhand['fullimage'], \"fullimage\")\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022\r\n",
+      "count": 1
+    },
+    {
+      "location": "display_pic",
+      "field": "body",
+      "old": "\r\n\t\t$result = $room1['fullimage']\r\n",
+      "new": "\r\n! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t\t$result = func(\"jo9_seed_role_images\", \"resolve\", room1_type, $room1['fullimage'], \"fullimage\")\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022\r\n",
+      "count": 1
+    },
+    {
+      "location": "display_pic",
+      "field": "body",
+      "old": "\r\n\t\t$result = $room2['fullimage']\r\n",
+      "new": "\r\n! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t\t$result = func(\"jo9_seed_role_images\", \"resolve\", room2_type, $room2['fullimage'], \"fullimage\")\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022\r\n",
+      "count": 1
+    },
+    {
+      "location": "display_pic",
+      "field": "body",
+      "old": "\r\n\t\t$result = $room3['fullimage']\r\n",
+      "new": "\r\n! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t\t$result = func(\"jo9_seed_role_images\", \"resolve\", room3_type, $room3['fullimage'], \"fullimage\")\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022\r\n",
+      "count": 1
+    },
+    {
+      "location": "display_pic",
+      "field": "body",
+      "old": "\r\n\t\t$result = $room4['fullimage']\r\n",
+      "new": "\r\n! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t\t$result = func(\"jo9_seed_role_images\", \"resolve\", room4_type, $room4['fullimage'], \"fullimage\")\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "\r\n\t$special_action[1] = '$bg_path = \"' + $slave['fullimage'] + '\"'\r\n",
+      "new": "\r\n! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$special_action[1] = '$bg_path = \"' + func(\"jo9_seed_role_images\", \"resolve\", slave_type, $slave['fullimage'], \"fullimage\") + '\"'\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "\r\n\t$special_action[2] = '$bg_path = \"' + $slave['fullimage'] + '\"'\r\n",
+      "new": "\r\n! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$special_action[2] = '$bg_path = \"' + func(\"jo9_seed_role_images\", \"resolve\", slave_type, $slave['fullimage'], \"fullimage\") + '\"'\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "\r\n\t$special_action[1] = '$bg_path = \"' + $assistant['fullimage'] + '\"'\r\n",
+      "new": "\r\n! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$special_action[1] = '$bg_path = \"' + func(\"jo9_seed_role_images\", \"resolve\", assistant_type, $assistant['fullimage'], \"fullimage\") + '\"'\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "\r\n\t$special_action[2] = '$bg_path = \"' + $assistant['fullimage'] + '\"'\r\n",
+      "new": "\r\n! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$special_action[2] = '$bg_path = \"' + func(\"jo9_seed_role_images\", \"resolve\", assistant_type, $assistant['fullimage'], \"fullimage\") + '\"'\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "\r\n\t$special_action[1] = '$bg_path = \"' + $prisoner['fullimage'] + '\"'\r\n",
+      "new": "\r\n! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$special_action[1] = '$bg_path = \"' + func(\"jo9_seed_role_images\", \"resolve\", prisoner_type, $prisoner['fullimage'], \"fullimage\") + '\"'\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "\r\n\t$special_action[2] = '$bg_path = \"' + $prisoner['fullimage'] + '\"'\r\n",
+      "new": "\r\n! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$special_action[2] = '$bg_path = \"' + func(\"jo9_seed_role_images\", \"resolve\", prisoner_type, $prisoner['fullimage'], \"fullimage\") + '\"'\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\r\n\t$special_image[2] = '<<$stock[\"fullimage\"]>>.png'\r\n",
+      "new": "\r\n! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$special_image[2] = '<<func(\"jo9_seed_role_images\", \"resolve\", stock_type, $stock[\"fullimage\"], \"fullimage\")>>.png'\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\r\n\t$special_image[2] = '<<$slave[\"fullimage\"]>>.png'\r\n",
+      "new": "\r\n! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$special_image[2] = '<<func(\"jo9_seed_role_images\", \"resolve\", slave_type, $slave[\"fullimage\"], \"fullimage\")>>.png'\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\r\n\t$special_image[1] = '<<$stock[\"fullimage\"]>>.png'\r\n",
+      "new": "\r\n! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$special_image[1] = '<<func(\"jo9_seed_role_images\", \"resolve\", stock_type, $stock[\"fullimage\"], \"fullimage\")>>.png'\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022\r\n",
+      "count": 2
+    },
+    {
+      "location": "sex_interaction_result",
+      "field": "body",
+      "old": "\r\n\t$bg_path = $iif($sex['partner'] = '', $slave[\"fullimage\"], $assistant[\"fullimage\"])\r\n",
+      "new": "\r\n! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$bg_path = $iif($sex['partner'] = '', func(\"jo9_seed_role_images\", \"resolve\", slave_type, $slave[\"fullimage\"], \"fullimage\"), func(\"jo9_seed_role_images\", \"resolve\", assistant_type, $assistant[\"fullimage\"], \"fullimage\"))\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022\r\n",
+      "count": 1
+    }
+  ],
+  "add_locations": [
+    {
+      "name": "jo9_seed_role_images",
+      "desc": "",
+      "body": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n! Global cleanup and non-mutating read resolver; keep actor cache markers across ONGLOAD -> JSON.\r\nlocal $jo9_seed_role_stem, $jo9_seed_role_keys, $jo9_seed_role_dirs, $jo9_seed_role_old, $jo9_seed_role_wanted, $jo9_seed_role_new\r\nlocal jo9_seed_role_id, jo9_seed_role_k, jo9_seed_role_known\r\n$jo9_seed_role_stem[0]='medico'\r\n$jo9_seed_role_stem[1]='por'\r\n$jo9_seed_role_stem[2]='kirakira'\r\n$jo9_seed_role_stem[3]='tsuina'\r\n$jo9_seed_role_stem[4]='yammy'\r\n$jo9_seed_role_stem[5]='antenna'\r\n$jo9_seed_role_stem[6]='alyce'\r\n$jo9_seed_role_stem[7]='mist'\r\n$jo9_seed_role_stem[8]='joker'\r\n$jo9_seed_role_stem[9]='Inui'\r\n$jo9_seed_role_stem[10]='zion'\r\n$jo9_seed_role_stem[11]='rin'\r\n$jo9_seed_role_stem[12]='kikuchiyo'\r\n$jo9_seed_role_stem[13]='Ririe'\r\n$jo9_seed_role_stem[14]='Kyoka'\r\n$jo9_seed_role_stem[15]='Noelle'\r\n$jo9_seed_role_stem[16]='Miruki'\r\n$jo9_seed_role_stem[17]='Tamaki'\r\n$jo9_seed_role_stem[18]='Chiharu'\r\n$jo9_seed_role_stem[19]='Fumi'\r\n$jo9_seed_role_stem[20]='Sana'\r\n$jo9_seed_role_stem[21]='Nanami'\r\n$jo9_seed_role_stem[22]='Shuko'\r\n$jo9_seed_role_stem[23]='celestine'\r\n$jo9_seed_role_stem[24]='olga'\r\n$jo9_seed_role_keys[0]='fullmade'\r\n$jo9_seed_role_keys[1]='fullsecretary'\r\n$jo9_seed_role_keys[2]='fullmistress'\r\n$jo9_seed_role_keys[3]='fullpregnant'\r\n$jo9_seed_role_dirs[0]='maid'\r\n$jo9_seed_role_dirs[1]='secretary'\r\n$jo9_seed_role_dirs[2]='mistress'\r\n$jo9_seed_role_dirs[3]='pregnant'\r\nif $args[0]='resolve':\r\n $result=$args[2]\r\n jo9_seed_role_id=args[1]\r\n $jo9_seed_role_wanted=$args[3]\r\n if jo9_seed_role_id>=2577 and jo9_seed_role_id<=2601:\r\n  for jo9_seed_role_k=0 to 3:\r\n   jo9_seed_role_known=1\r\n   if jo9_seed_role_k=3 and (jo9_seed_role_id=2585 or jo9_seed_role_id=2597 or jo9_seed_role_id=2600 or jo9_seed_role_id=2601): jo9_seed_role_known=0\r\n   if jo9_seed_role_known=1:\r\n    $jo9_seed_role_old='girls/full/'+$jo9_seed_role_dirs[jo9_seed_role_k]+'/'+$jo9_seed_role_stem[jo9_seed_role_id-2577]\r\n    if $args[2]=$jo9_seed_role_old:\r\n     $result=$fullimage[jo9_seed_role_id]\r\n     if $jo9_seed_role_wanted='fullmade' or $jo9_seed_role_wanted='fullsecretary' or $jo9_seed_role_wanted='fullmistress' or $jo9_seed_role_wanted='fullpregnant':\r\n      $jo9_seed_role_new=dyneval('$result = $<<$jo9_seed_role_wanted>>[jo9_seed_role_id]')\r\n      if $jo9_seed_role_new ! '': $result=$jo9_seed_role_new\r\n     end\r\n     exit\r\n    end\r\n   end\r\n  end\r\n end\r\n exit\r\nend\r\n! Original25 role values are absent/empty. Four absent legacy pregnancy keys are never inferred.\r\nfor jo9_seed_role_id=2577 to 2601:\r\n for jo9_seed_role_k=0 to 3:\r\n  jo9_seed_role_known=1\r\n  if jo9_seed_role_k=3 and (jo9_seed_role_id=2585 or jo9_seed_role_id=2597 or jo9_seed_role_id=2600 or jo9_seed_role_id=2601): jo9_seed_role_known=0\r\n  if jo9_seed_role_known=1:\r\n   $jo9_seed_role_old='girls/full/'+$jo9_seed_role_dirs[jo9_seed_role_k]+'/'+$jo9_seed_role_stem[jo9_seed_role_id-2577]\r\n   dynamic \"if $<<$jo9_seed_role_keys[jo9_seed_role_k]>>[jo9_seed_role_id]=$jo9_seed_role_old: $<<$jo9_seed_role_keys[jo9_seed_role_k]>>[jo9_seed_role_id]=''\"\r\n  end\r\n end\r\nend\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "actions": []
+    }
+  ],
+  "consumer_inventory": [
+    {
+      "location": "end_day_screen",
+      "line": 176,
+      "old": "\t$bg_path = $assistant[\"fullimage\"]",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$bg_path = func(\"jo9_seed_role_images\", \"resolve\", assistant_type, $assistant[\"fullimage\"], \"fullimage\")\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "assistant",
+          "old": "$assistant[\"fullimage\"]",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", assistant_type, $assistant[\"fullimage\"], \"fullimage\")"
+        }
+      ]
+    },
+    {
+      "location": "end_day_screen",
+      "line": 660,
+      "old": "\t$bg_path = $slave[\"fullimage\"]",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$bg_path = func(\"jo9_seed_role_images\", \"resolve\", slave_type, $slave[\"fullimage\"], \"fullimage\")\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "slave",
+          "old": "$slave[\"fullimage\"]",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", slave_type, $slave[\"fullimage\"], \"fullimage\")"
+        }
+      ]
+    },
+    {
+      "location": "end_day_screen",
+      "line": 668,
+      "old": "\t$bg_path = $assistant[\"fullimage\"]",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$bg_path = func(\"jo9_seed_role_images\", \"resolve\", assistant_type, $assistant[\"fullimage\"], \"fullimage\")\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "assistant",
+          "old": "$assistant[\"fullimage\"]",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", assistant_type, $assistant[\"fullimage\"], \"fullimage\")"
+        }
+      ]
+    },
+    {
+      "location": "end_day_screen",
+      "line": 829,
+      "old": "\t$bg_path = $cow[\"fullimage\"]",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$bg_path = func(\"jo9_seed_role_images\", \"resolve\", cow_type, $cow[\"fullimage\"], \"fullimage\")\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "cow",
+          "old": "$cow[\"fullimage\"]",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", cow_type, $cow[\"fullimage\"], \"fullimage\")"
+        }
+      ]
+    },
+    {
+      "location": "end_day_screen",
+      "line": 841,
+      "old": "\t$bg_path = $cow[\"fullimage\"]",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$bg_path = func(\"jo9_seed_role_images\", \"resolve\", cow_type, $cow[\"fullimage\"], \"fullimage\")\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "cow",
+          "old": "$cow[\"fullimage\"]",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", cow_type, $cow[\"fullimage\"], \"fullimage\")"
+        }
+      ]
+    },
+    {
+      "location": "end_day_screen",
+      "line": 865,
+      "old": "\t$bg_path = $cow[\"fullimage\"]",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$bg_path = func(\"jo9_seed_role_images\", \"resolve\", cow_type, $cow[\"fullimage\"], \"fullimage\")\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "cow",
+          "old": "$cow[\"fullimage\"]",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", cow_type, $cow[\"fullimage\"], \"fullimage\")"
+        }
+      ]
+    },
+    {
+      "location": "end_day_screen",
+      "line": 959,
+      "old": "\t$bg_path = $slave[\"fullimage\"]",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$bg_path = func(\"jo9_seed_role_images\", \"resolve\", slave_type, $slave[\"fullimage\"], \"fullimage\")\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "slave",
+          "old": "$slave[\"fullimage\"]",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", slave_type, $slave[\"fullimage\"], \"fullimage\")"
+        }
+      ]
+    },
+    {
+      "location": "end_day_screen",
+      "line": 970,
+      "old": "\t$bg_path = $slave[\"fullimage\"]",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$bg_path = func(\"jo9_seed_role_images\", \"resolve\", slave_type, $slave[\"fullimage\"], \"fullimage\")\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "slave",
+          "old": "$slave[\"fullimage\"]",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", slave_type, $slave[\"fullimage\"], \"fullimage\")"
+        }
+      ]
+    },
+    {
+      "location": "end_day_screen",
+      "line": 979,
+      "old": "\t$bg_path = $assistant[\"fullimage\"]",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$bg_path = func(\"jo9_seed_role_images\", \"resolve\", assistant_type, $assistant[\"fullimage\"], \"fullimage\")\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "assistant",
+          "old": "$assistant[\"fullimage\"]",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", assistant_type, $assistant[\"fullimage\"], \"fullimage\")"
+        }
+      ]
+    },
+    {
+      "location": "end_day_screen",
+      "line": 1097,
+      "old": "\t$bg_path = $slave[\"fullimage\"] &! retrieve image before clear_slave_instance",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$bg_path = func(\"jo9_seed_role_images\", \"resolve\", slave_type, $slave[\"fullimage\"], \"fullimage\") &! retrieve image before clear_slave_instance\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "slave",
+          "old": "$slave[\"fullimage\"]",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", slave_type, $slave[\"fullimage\"], \"fullimage\")"
+        }
+      ]
+    },
+    {
+      "location": "end_day_screen",
+      "line": 1107,
+      "old": "\t$bg_path = $assistant[\"fullimage\"] &! retrieve image before clear_slave_instance",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$bg_path = func(\"jo9_seed_role_images\", \"resolve\", assistant_type, $assistant[\"fullimage\"], \"fullimage\") &! retrieve image before clear_slave_instance\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "assistant",
+          "old": "$assistant[\"fullimage\"]",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", assistant_type, $assistant[\"fullimage\"], \"fullimage\")"
+        }
+      ]
+    },
+    {
+      "location": "end_day_screen",
+      "line": 1117,
+      "old": "\t$bg_path = $prisoner[\"fullimage\"] &! retrieve image before clear_slave_instance",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$bg_path = func(\"jo9_seed_role_images\", \"resolve\", prisoner_type, $prisoner[\"fullimage\"], \"fullimage\") &! retrieve image before clear_slave_instance\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "prisoner",
+          "old": "$prisoner[\"fullimage\"]",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", prisoner_type, $prisoner[\"fullimage\"], \"fullimage\")"
+        }
+      ]
+    },
+    {
+      "location": "end_day_screen",
+      "line": 1127,
+      "old": "\t$bg_path = $farmhand[\"fullimage\"] &! retrieve image before clear_slave_instance",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$bg_path = func(\"jo9_seed_role_images\", \"resolve\", farmhand_type, $farmhand[\"fullimage\"], \"fullimage\") &! retrieve image before clear_slave_instance\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "farmhand",
+          "old": "$farmhand[\"fullimage\"]",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", farmhand_type, $farmhand[\"fullimage\"], \"fullimage\")"
+        }
+      ]
+    },
+    {
+      "location": "end_day_screen",
+      "line": 1137,
+      "old": "\t$bg_path = $cow[\"fullimage\"] &! retrieve image before clear_slave_instance",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$bg_path = func(\"jo9_seed_role_images\", \"resolve\", cow_type, $cow[\"fullimage\"], \"fullimage\") &! retrieve image before clear_slave_instance\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "cow",
+          "old": "$cow[\"fullimage\"]",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", cow_type, $cow[\"fullimage\"], \"fullimage\")"
+        }
+      ]
+    },
+    {
+      "location": "end_day_screen",
+      "line": 1147,
+      "old": "\t$bg_path = $harpy[\"fullimage\"] &! retrieve image before clear_slave_instance",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$bg_path = func(\"jo9_seed_role_images\", \"resolve\", harpy_type, $harpy[\"fullimage\"], \"fullimage\") &! retrieve image before clear_slave_instance\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "harpy",
+          "old": "$harpy[\"fullimage\"]",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", harpy_type, $harpy[\"fullimage\"], \"fullimage\")"
+        }
+      ]
+    },
+    {
+      "location": "end_day_screen",
+      "line": 1157,
+      "old": "\t$bg_path = $pig[\"fullimage\"] &! retrieve image before clear_slave_instance",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$bg_path = func(\"jo9_seed_role_images\", \"resolve\", pig_type, $pig[\"fullimage\"], \"fullimage\") &! retrieve image before clear_slave_instance\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "pig",
+          "old": "$pig[\"fullimage\"]",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", pig_type, $pig[\"fullimage\"], \"fullimage\")"
+        }
+      ]
+    },
+    {
+      "location": "end_day_screen",
+      "line": 1167,
+      "old": "\t$bg_path = $farmhand[\"fullimage\"]",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$bg_path = func(\"jo9_seed_role_images\", \"resolve\", farmhand_type, $farmhand[\"fullimage\"], \"fullimage\")\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "farmhand",
+          "old": "$farmhand[\"fullimage\"]",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", farmhand_type, $farmhand[\"fullimage\"], \"fullimage\")"
+        }
+      ]
+    },
+    {
+      "location": "end_day_screen",
+      "line": 1175,
+      "old": "\t$bg_path = $farmhand[\"fullimage\"]",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$bg_path = func(\"jo9_seed_role_images\", \"resolve\", farmhand_type, $farmhand[\"fullimage\"], \"fullimage\")\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "farmhand",
+          "old": "$farmhand[\"fullimage\"]",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", farmhand_type, $farmhand[\"fullimage\"], \"fullimage\")"
+        }
+      ]
+    },
+    {
+      "location": "interaction_screen_city",
+      "line": 160,
+      "old": "if $interaction_type ! 'hunting_trophy': $special_image[3] = '<<$stock[\"fullimage\"]>>.png'",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\nif $interaction_type ! 'hunting_trophy': $special_image[3] = '<<func(\"jo9_seed_role_images\", \"resolve\", stock_type, $stock[\"fullimage\"], \"fullimage\")>>.png'\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "stock",
+          "old": "$stock[\"fullimage\"]",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", stock_type, $stock[\"fullimage\"], \"fullimage\")"
+        }
+      ]
+    },
+    {
+      "location": "stasis_cell",
+      "line": 32,
+      "old": "\t\t\t*p func('interior_change', 'jo9_html', '<div id = \"bg\"><img src=\"content\\pic\\<<$iif($indpack_title[dynslave_type] ! \"\", $indpack_title[dynslave_type], $dynslave[\"fullimage\"])>>.png\"></div>')",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t\t\t*p func('interior_change', 'jo9_html', '<div id = \"bg\"><img src=\"content\\pic\\<<$iif($indpack_title[dynslave_type] ! \"\", $indpack_title[dynslave_type], func(\"jo9_seed_role_images\", \"resolve\", dynslave_type, $dynslave[\"fullimage\"], \"fullimage\"))>>.png\"></div>')\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "dynslave",
+          "old": "$dynslave[\"fullimage\"]",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", dynslave_type, $dynslave[\"fullimage\"], \"fullimage\")"
+        }
+      ]
+    },
+    {
+      "location": "display_pic",
+      "line": 76,
+      "old": "\t\t$result = $slave['fullimage']",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t\t$result = func(\"jo9_seed_role_images\", \"resolve\", slave_type, $slave['fullimage'], \"fullimage\")\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "slave",
+          "old": "$slave['fullimage']",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", slave_type, $slave['fullimage'], \"fullimage\")"
+        }
+      ]
+    },
+    {
+      "location": "display_pic",
+      "line": 87,
+      "old": "\t\t$result = $assistant['fullimage']",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t\t$result = func(\"jo9_seed_role_images\", \"resolve\", assistant_type, $assistant['fullimage'], \"fullimage\")\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "assistant",
+          "old": "$assistant['fullimage']",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", assistant_type, $assistant['fullimage'], \"fullimage\")"
+        }
+      ]
+    },
+    {
+      "location": "display_pic",
+      "line": 98,
+      "old": "\t\t$result = $cow['fullimage']",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t\t$result = func(\"jo9_seed_role_images\", \"resolve\", cow_type, $cow['fullimage'], \"fullimage\")\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "cow",
+          "old": "$cow['fullimage']",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", cow_type, $cow['fullimage'], \"fullimage\")"
+        }
+      ]
+    },
+    {
+      "location": "display_pic",
+      "line": 110,
+      "old": "\t\t$result = $prisoner['fullimage']",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t\t$result = func(\"jo9_seed_role_images\", \"resolve\", prisoner_type, $prisoner['fullimage'], \"fullimage\")\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "prisoner",
+          "old": "$prisoner['fullimage']",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", prisoner_type, $prisoner['fullimage'], \"fullimage\")"
+        }
+      ]
+    },
+    {
+      "location": "display_pic",
+      "line": 121,
+      "old": "\t\t$result = $stock['fullimage']",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t\t$result = func(\"jo9_seed_role_images\", \"resolve\", stock_type, $stock['fullimage'], \"fullimage\")\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "stock",
+          "old": "$stock['fullimage']",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", stock_type, $stock['fullimage'], \"fullimage\")"
+        }
+      ]
+    },
+    {
+      "location": "display_pic",
+      "line": 133,
+      "old": "\t\t$result = $farmhand['fullimage']",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t\t$result = func(\"jo9_seed_role_images\", \"resolve\", farmhand_type, $farmhand['fullimage'], \"fullimage\")\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "farmhand",
+          "old": "$farmhand['fullimage']",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", farmhand_type, $farmhand['fullimage'], \"fullimage\")"
+        }
+      ]
+    },
+    {
+      "location": "display_pic",
+      "line": 144,
+      "old": "\t\t$result = $room1['fullimage']",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t\t$result = func(\"jo9_seed_role_images\", \"resolve\", room1_type, $room1['fullimage'], \"fullimage\")\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "room1",
+          "old": "$room1['fullimage']",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", room1_type, $room1['fullimage'], \"fullimage\")"
+        }
+      ]
+    },
+    {
+      "location": "display_pic",
+      "line": 157,
+      "old": "\t\t$result = $room2['fullimage']",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t\t$result = func(\"jo9_seed_role_images\", \"resolve\", room2_type, $room2['fullimage'], \"fullimage\")\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "room2",
+          "old": "$room2['fullimage']",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", room2_type, $room2['fullimage'], \"fullimage\")"
+        }
+      ]
+    },
+    {
+      "location": "display_pic",
+      "line": 170,
+      "old": "\t\t$result = $room3['fullimage']",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t\t$result = func(\"jo9_seed_role_images\", \"resolve\", room3_type, $room3['fullimage'], \"fullimage\")\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "room3",
+          "old": "$room3['fullimage']",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", room3_type, $room3['fullimage'], \"fullimage\")"
+        }
+      ]
+    },
+    {
+      "location": "display_pic",
+      "line": 183,
+      "old": "\t\t$result = $room4['fullimage']",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t\t$result = func(\"jo9_seed_role_images\", \"resolve\", room4_type, $room4['fullimage'], \"fullimage\")\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "room4",
+          "old": "$room4['fullimage']",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", room4_type, $room4['fullimage'], \"fullimage\")"
+        }
+      ]
+    },
+    {
+      "location": "interaction",
+      "line": 10172,
+      "old": "\t$special_action[1] = '$bg_path = \"' + $slave['fullimage'] + '\"'",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$special_action[1] = '$bg_path = \"' + func(\"jo9_seed_role_images\", \"resolve\", slave_type, $slave['fullimage'], \"fullimage\") + '\"'\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "slave",
+          "old": "$slave['fullimage']",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", slave_type, $slave['fullimage'], \"fullimage\")"
+        }
+      ]
+    },
+    {
+      "location": "interaction",
+      "line": 10173,
+      "old": "\t$special_action[2] = '$bg_path = \"' + $slave['fullimage'] + '\"'",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$special_action[2] = '$bg_path = \"' + func(\"jo9_seed_role_images\", \"resolve\", slave_type, $slave['fullimage'], \"fullimage\") + '\"'\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "slave",
+          "old": "$slave['fullimage']",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", slave_type, $slave['fullimage'], \"fullimage\")"
+        }
+      ]
+    },
+    {
+      "location": "interaction",
+      "line": 10183,
+      "old": "\t$special_action[1] = '$bg_path = \"' + $assistant['fullimage'] + '\"'",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$special_action[1] = '$bg_path = \"' + func(\"jo9_seed_role_images\", \"resolve\", assistant_type, $assistant['fullimage'], \"fullimage\") + '\"'\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "assistant",
+          "old": "$assistant['fullimage']",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", assistant_type, $assistant['fullimage'], \"fullimage\")"
+        }
+      ]
+    },
+    {
+      "location": "interaction",
+      "line": 10184,
+      "old": "\t$special_action[2] = '$bg_path = \"' + $assistant['fullimage'] + '\"'",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$special_action[2] = '$bg_path = \"' + func(\"jo9_seed_role_images\", \"resolve\", assistant_type, $assistant['fullimage'], \"fullimage\") + '\"'\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "assistant",
+          "old": "$assistant['fullimage']",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", assistant_type, $assistant['fullimage'], \"fullimage\")"
+        }
+      ]
+    },
+    {
+      "location": "interaction",
+      "line": 10194,
+      "old": "\t$special_action[1] = '$bg_path = \"' + $prisoner['fullimage'] + '\"'",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$special_action[1] = '$bg_path = \"' + func(\"jo9_seed_role_images\", \"resolve\", prisoner_type, $prisoner['fullimage'], \"fullimage\") + '\"'\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "prisoner",
+          "old": "$prisoner['fullimage']",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", prisoner_type, $prisoner['fullimage'], \"fullimage\")"
+        }
+      ]
+    },
+    {
+      "location": "interaction",
+      "line": 10195,
+      "old": "\t$special_action[2] = '$bg_path = \"' + $prisoner['fullimage'] + '\"'",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$special_action[2] = '$bg_path = \"' + func(\"jo9_seed_role_images\", \"resolve\", prisoner_type, $prisoner['fullimage'], \"fullimage\") + '\"'\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "prisoner",
+          "old": "$prisoner['fullimage']",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", prisoner_type, $prisoner['fullimage'], \"fullimage\")"
+        }
+      ]
+    },
+    {
+      "location": "interaction_city",
+      "line": 1473,
+      "old": "\t$special_image[2] = '<<$stock[\"fullimage\"]>>.png'",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$special_image[2] = '<<func(\"jo9_seed_role_images\", \"resolve\", stock_type, $stock[\"fullimage\"], \"fullimage\")>>.png'\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "stock",
+          "old": "$stock[\"fullimage\"]",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", stock_type, $stock[\"fullimage\"], \"fullimage\")"
+        }
+      ]
+    },
+    {
+      "location": "interaction_city",
+      "line": 1694,
+      "old": "\t$special_image[2] = '<<$slave[\"fullimage\"]>>.png'",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$special_image[2] = '<<func(\"jo9_seed_role_images\", \"resolve\", slave_type, $slave[\"fullimage\"], \"fullimage\")>>.png'\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "slave",
+          "old": "$slave[\"fullimage\"]",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", slave_type, $slave[\"fullimage\"], \"fullimage\")"
+        }
+      ]
+    },
+    {
+      "location": "interaction_city",
+      "line": 10747,
+      "old": "\t$special_image[1] = '<<$stock[\"fullimage\"]>>.png'",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$special_image[1] = '<<func(\"jo9_seed_role_images\", \"resolve\", stock_type, $stock[\"fullimage\"], \"fullimage\")>>.png'\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "stock",
+          "old": "$stock[\"fullimage\"]",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", stock_type, $stock[\"fullimage\"], \"fullimage\")"
+        }
+      ]
+    },
+    {
+      "location": "interaction_city",
+      "line": 10828,
+      "old": "\t$special_image[1] = '<<$stock[\"fullimage\"]>>.png'",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$special_image[1] = '<<func(\"jo9_seed_role_images\", \"resolve\", stock_type, $stock[\"fullimage\"], \"fullimage\")>>.png'\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "stock",
+          "old": "$stock[\"fullimage\"]",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", stock_type, $stock[\"fullimage\"], \"fullimage\")"
+        }
+      ]
+    },
+    {
+      "location": "sex_interaction_result",
+      "line": 19,
+      "old": "\t$bg_path = $iif($sex['partner'] = '', $slave[\"fullimage\"], $assistant[\"fullimage\"])",
+      "new": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n\t$bg_path = $iif($sex['partner'] = '', func(\"jo9_seed_role_images\", \"resolve\", slave_type, $slave[\"fullimage\"], \"fullimage\"), func(\"jo9_seed_role_images\", \"resolve\", assistant_type, $assistant[\"fullimage\"], \"fullimage\"))\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+      "expressions": [
+        {
+          "actor": "slave",
+          "old": "$slave[\"fullimage\"]",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", slave_type, $slave[\"fullimage\"], \"fullimage\")"
+        },
+        {
+          "actor": "assistant",
+          "old": "$assistant[\"fullimage\"]",
+          "new": "func(\"jo9_seed_role_images\", \"resolve\", assistant_type, $assistant[\"fullimage\"], \"fullimage\")"
+        }
+      ]
+    }
+  ]
+}

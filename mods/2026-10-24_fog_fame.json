@@ -1,0 +1,32 @@
+{
+  "id": "2026-10-24_fog_fame",
+  "description": "승인한 안개경계15전투의 개인명성:20%목격,40/80감쇠,80상한,실제승리동료만한번지급. 새영구저장키없음.",
+  "before_sha256": "738443e5e33db32bb42495a1cd6cfe89ecef9d16f3a164517f1ff0bfa46aa3dc",
+  "after_sha256": "da6b23880a93e5850c981ed74e668f34dc7fd247b1913e2adcb5b6df19eaa1c9",
+  "edits": [
+    {
+      "location": "jo9_fog_relay",
+      "field": "body",
+      "old": " jo9_fog['settled'] = 1",
+      "new": " jo9_fog['settled'] = 1\r\n ! JO9 MOD START FOG_FAME_TIER | 2026-10-24_fog_fame\r\n ! 안개경계 승리의 실제 적 목록에서 가장 높은 보상만 선택한다. 전투당 한 번 정산한다.\r\n local jo9_fame_low = 0\r\n local jo9_fame_high = 0\r\n if $place = 'edge_patrol' and $итог_боя = 'победа' and jo9_fog['switched'] = 0:\r\n  local jo9_fame_i = 1\r\n  local $jo9_fame_enemy = ''\r\n  :jo9_fame_scan\r\n  if jo9_fame_i <= количество_врагов:\r\n   $jo9_fame_enemy = '|' + $враг[jo9_fame_i] + '|'\r\n   if instr('|исчадие|черный_медик|паладин|козлорогий|свинорылый|жабован|крысолюд|goblin|orc|', $jo9_fame_enemy) > 0:\r\n    jo9_fame_low = max(jo9_fame_low, 1)\r\n   end\r\n   if instr('|чудовщиное_исчадие|вервольф|вампир|лич|ogre|warg|', $jo9_fame_enemy) > 0:\r\n    jo9_fame_low = max(jo9_fame_low, 3)\r\n    jo9_fame_high = max(jo9_fame_high, 1)\r\n   end\r\n   if $враг[jo9_fame_i] = 'garsid':\r\n    jo9_fame_low = 5\r\n    jo9_fame_high = 2\r\n   end\r\n   jo9_fame_i += 1\r\n   jump 'jo9_fame_scan'\r\n  end\r\n end\r\n ! JO9 MOD END FOG_FAME_TIER",
+      "count": 1,
+      "patchId": "FOG_FAME_TIER"
+    },
+    {
+      "location": "jo9_fog_relay",
+      "field": "body",
+      "old": "   ! JO9 MOD END FOG_VICTORY_GROWTH_SLAVE",
+      "new": "   ! JO9 MOD END FOG_VICTORY_GROWTH_SLAVE\r\n   ! JO9 MOD START FOG_FAME_SLAVE | 2026-10-24_fog_fame\r\n   ! 기존 settled 방어 안에서만 지급. 이미80이상인 명성과 다른 역할은 변경하지 않는다.\r\n   local jo9_fame_gain = 0\r\n   if slave_state = CONST_INT['slave_exist'] and slave_rate['fame'] < 80:\r\n    if slave_rate['fame'] < 40:\r\n     jo9_fame_gain = jo9_fame_low\r\n    else\r\n     jo9_fame_gain = jo9_fame_high\r\n    end\r\n    if jo9_fame_gain > 0:\r\n     if rand(1, 100) <= 20:\r\n      jo9_fame_gain = min(jo9_fame_gain, 80 - slave_rate['fame'])\r\n      slave_rate['fame'] += jo9_fame_gain\r\n      msg '안개 너머에서 싸움을 지켜보던 여행자가 감탄하며 고개를 끄덕였다.<br>“이런 상대를 쓰러뜨리다니. 도시로 돌아가면 이 싸움 이야기를 전해야겠군.”<br><br><<$slave_name>>의 무용담이 퍼지기 시작했다. (개인 명성 +<<jo9_fame_gain>>)'\r\n     end\r\n    end\r\n   end\r\n   ! JO9 MOD END FOG_FAME_SLAVE",
+      "count": 1,
+      "patchId": "FOG_FAME_SLAVE"
+    },
+    {
+      "location": "jo9_fog_relay",
+      "field": "body",
+      "old": "   ! JO9 MOD END FOG_VICTORY_GROWTH_ASSISTANT",
+      "new": "   ! JO9 MOD END FOG_VICTORY_GROWTH_ASSISTANT\r\n   ! JO9 MOD START FOG_FAME_ASSISTANT | 2026-10-24_fog_fame\r\n   ! 기존 settled 방어 안에서만 지급. 이미80이상인 명성과 다른 역할은 변경하지 않는다.\r\n   local jo9_fame_gain = 0\r\n   if assistant_state = CONST_INT['slave_exist'] and assistant_rate['fame'] < 80:\r\n    if assistant_rate['fame'] < 40:\r\n     jo9_fame_gain = jo9_fame_low\r\n    else\r\n     jo9_fame_gain = jo9_fame_high\r\n    end\r\n    if jo9_fame_gain > 0:\r\n     if rand(1, 100) <= 20:\r\n      jo9_fame_gain = min(jo9_fame_gain, 80 - assistant_rate['fame'])\r\n      assistant_rate['fame'] += jo9_fame_gain\r\n      msg '안개 너머에서 싸움을 지켜보던 여행자가 감탄하며 고개를 끄덕였다.<br>“이런 상대를 쓰러뜨리다니. 도시로 돌아가면 이 싸움 이야기를 전해야겠군.”<br><br><<$assistant_name>>의 무용담이 퍼지기 시작했다. (개인 명성 +<<jo9_fame_gain>>)'\r\n     end\r\n    end\r\n   end\r\n   ! JO9 MOD END FOG_FAME_ASSISTANT",
+      "count": 1,
+      "patchId": "FOG_FAME_ASSISTANT"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+const fs=require('fs'),a=require('assert/strict'),c=require('G:/somi/JO9sa/tools/text-workshop/core.cjs'),qa=require('G:/somi/JO9sa/tools/qa/release-check.cjs');
+const root='G:/Codex/tmp/jo9-golden-collar-fix-20261025',rec='G:/somi/JO9sa/records/golden-collar-fix-20261025',raw=fs.readFileSync(root+'/candidate.qsp'),d=c.parse(raw),b=c.parse(fs.readFileSync(root+'/before.qsp'));
+a.equal(c.hash(raw),'c058aa4f9cdfa594f3c098b8d8b396a250765fcdbb8ffc2bd00797055341d708');
+const l=d.locations.find(l=>l.name==='#item_base'),src=c.shift(d.lines[l.body],5),orig=c.shift(b.lines[b.locations.find(l=>l.name==='#item_base').body],5),s=orig.indexOf('$yes = {',orig.indexOf("$item_property['golden_collar'] = {")),e=orig.indexOf("\r\n\t\t\tgt 'choice_screen'",s),callbacks=orig.slice(s,e);
+const old="! JO9 MOD END GOLDEN_COLLAR_REFUSAL_RETURN_20261025\r\n\t\t\tgt 'choice_screen'";
+a.equal(src.split(old).length-1,1);
+const block="! JO9 MOD START GOLDEN_COLLAR_OTHER_ROLES_PRESERVED_20261025\r\nif instr('|slave|assistant|prisoner|cow|room1|room2|room3|room4|', '|' + 'dynslave' + '|') = 0:\r\n"+callbacks+"\r\nend\r\n! JO9 MOD END GOLDEN_COLLAR_OTHER_ROLES_PRESERVED_20261025\r\n";
+const nw=old.replace("\r\n\t\t\tgt 'choice_screen'",'\r\n'+block+"\t\t\tgt 'choice_screen'");
+d.lines[l.body]=c.shift(src.replace(old,()=>nw),-5);const bytes=c.serialize(d);qa.inspectWorld(bytes);
+const patch={id:'2026-10-25_golden_collar_scope_preserve',description:'금장 목줄 거부 A안 대상 8종 이외 역할의 기존 콜백을 그대로 보존.',before_sha256:c.hash(raw),after_sha256:c.hash(bytes),edits:[{location:'#item_base',field:'body',old,new:nw,count:1}]};
+for(const p of [root+'/mods/'+patch.id+'.json',rec+'/'+patch.id+'.json'])fs.writeFileSync(p,JSON.stringify(patch,null,2)+'\n');fs.writeFileSync(root+'/candidate.qsp',bytes);
+console.log(patch.after_sha256);

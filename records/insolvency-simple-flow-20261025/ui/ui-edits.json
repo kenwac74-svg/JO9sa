@@ -1,0 +1,208 @@
+{
+  "id": "PROFILE_DISPLAY_REFINEMENT_20261025",
+  "edits": [
+    {
+      "location": "slave_stat",
+      "field": "body",
+      "old": "*p '<div id=\"left_column\"><br>'\r\n*nl '호 칭 : &nbsp<<$slave_name>>'\r\n*nl '연 령 대 : &nbsp;<<$slave_age_name[slave[\"age\"]]>>'\r\nif slave['age_count'] = 1:\r\n\t*nl '소 유 일 수 : &nbsp;1 일'\r\nelseif slave['age_count'] < 1000:\r\n\t*nl '소 유 일 수 : &nbsp;<<slave[\"age_count\"]>> 일'\r\nelse\r\n\t*nl '소 유 주 기 : &nbsp;<<slave[\"age_count\"]/10>> 주기'\r\nend\r\n*nl ''\r\n*nl '<a style=\"font-size:30px\" class=\"tooltip-right\" tooltip-data=\"등급을 올리는 방법\" href=\"EXEC: msg $rating_help\"><<$rating[rating]>></a>  노예 속성정보 <a class=\"tooltip-right\" tooltip-data=\"속성에 대하여\" style=\"color:black\" href = \"EXEC: msg $rank_help & msg $rank_help_2\"><img style=\"width:15px;height:15px;\" src=\"content/pic/chart.png\"></a><br>' \r\n$tooltip_text = func('$addon', 'no_rate_stat_tooltip_text', 'beauty', slave['beauty'], 1)\r\n*nl '<font style=\"font-size:12px;\">외모 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $красота_справка & dynamic $msg, $красота_справка_2 & $info_text = $красота_совет & gt $curloc\"><<$beauty[slave[\"beauty\"]]>></a>'\r\n$tooltip_text = func('$addon', 'stat_tooltip_text', 'stamina')\r\n*nl '<font style=\"font-size:12px;\">체력 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $здоровье_справка & dynamic $msg, $здоровье_справка_2 & $info_text = $здоровье_совет & gt $curloc\"><<$stamina[slave[\"stamina\"]]>></a>'\r\n$tooltip_text = func('$addon', 'stat_tooltip_text', 'sensitivity')\r\n*nl '<font style=\"font-size:12px;\">감수성 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $чувствительность_справка & dynamic $msg, $чувствительность_справка_2 & $info_text = $чувствительность_совет & gt $curloc\"><<$sensitivity[slave[\"sensitivity\"]]>></a><div style=\"line-height:25%\"><br></div>'\r\n$tooltip_text = func('$addon', 'stat_tooltip_text', 'temper')\r\n*nl '<font style=\"font-size:12px;\">성격 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $темперамент_справка & dynamic $msg, $темперамент_справка_2 & $info_text = $темперамент_совет & gt $curloc\"><<$temper[slave[\"temper\"]]>></a>'\r\n$tooltip_text = func('$addon', 'stat_tooltip_text', 'intellect')\r\n*nl '<font style=\"font-size:12px;\">지성 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $ум_справка & dynamic $msg, $ум_справка_2 & $info_text = $ум_совет & gt $curloc\"><<$intellect[slave[\"intellect\"]]>></a>'\r\n$tooltip_text = func('$addon', 'stat_tooltip_text', 'ego')\r\n*nl '<font style=\"font-size:12px;\">자아 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $характер_справка & dynamic $msg, $характер_справка_2 & $info_text = $характер_совет & gt $curloc\"><<$ego[slave[\"ego\"]]>></a><div style=\"line-height:25%\"><br></div>'\r\n$tooltip_text = func('$addon', 'stat_tooltip_text', 'pride', -1)\r\n*nl '<font style=\"font-size:12px;\">태도 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $гордыня_справка & dynamic $msg, $гордыня_справка_2 & $info_text = $гордыня_совет & gt $curloc\"><<$pride[slave[\"pride\"]]>></a>'\r\n$tooltip_text = func('$addon', 'no_rate_stat_tooltip_text', 'exotic', slave['exotic'], 1)\r\n*nl '<font style=\"font-size:12px;\">독특함 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $экзотичность_справка & dynamic $msg, $экзотичность_справка_2 & $info_text = $экзотичность_совет & gt $curloc\"><<$exotic[slave[\"exotic\"]]>></a>'\r\n$tooltip_text = func('$addon', 'physique_tooltip_text', 'fat', slave['fat'])\r\n*nl '<font style=\"font-size:12px;\">체형 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $жыр_справка & dynamic $msg, $жыр_справка_2 & $info_text = $жыр_совет & gt $curloc\"><<$fat[slave[\"fat\"]]>></a><div style=\"line-height:25%\"><br></div>'\r\n$tooltip_text = func('$addon', 'no_rate_stat_tooltip_text', 'style', slave['style'], 1)\r\n*nl '<font style=\"font-size:12px;\">세련됨 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $стиль_справка & dynamic $msg, $стиль_справка_2 & $info_text = $стиль_совет & gt $curloc\"><<$style[slave[\"style\"]]>></a>'\r\n$tooltip_text = func('$addon', 'no_rate_stat_tooltip_text', 'fame', slave['fame'], 1)\r\n*nl '<font style=\"font-size:12px;\">인지도 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $слава_справка & dynamic $msg, $слава_справка_2 & $info_text = $слава_совет & gt $curloc\"><<$girl_fame[slave[\"fame\"]]>></a>'\r\n$tooltip_text = func('$addon', 'no_rate_full_grade_tooltip_text', 'mood', slave['mood'], 1)\r\n*nl '<font style=\"font-size:12px;\">기분 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: msg $mood_chart & $info_text = $slave_mood_help & gt $curloc\"><<$mood[slave_mood_plus]>></a><div style=\"line-height:25%\"><br></div>'\r\n! JO9 MOD START UI_TRAIT_OVERVIEW_20261025\r\n*p '<div style=\"line-height:25%\"><br></div>'\r\ngs 'jo9_traits_view', 'sidebar', 'slave', $slave_features_list\r\n*p '</div>'\r\n! JO9 MOD END UI_TRAIT_OVERVIEW_20261025",
+      "new": "! JO9 MOD START PROFILE_GROUP_SPACING_20261025\r\n*p '<div id=\"left_column\"><br>'\r\n*nl '호 칭 : &nbsp<<$slave_name>>'\r\n*nl '연 령 대 : &nbsp;<<$slave_age_name[slave[\"age\"]]>>'\r\nif slave['age_count'] = 1:\r\n\t*nl '소 유 일 수 : &nbsp;1 일'\r\nelseif slave['age_count'] < 1000:\r\n\t*nl '소 유 일 수 : &nbsp;<<slave[\"age_count\"]>> 일'\r\nelse\r\n\t*nl '소 유 주 기 : &nbsp;<<slave[\"age_count\"]/10>> 주기'\r\nend\r\n*nl ''\r\n*nl '<a style=\"font-size:30px\" class=\"tooltip-right\" tooltip-data=\"등급을 올리는 방법\" href=\"EXEC: msg $rating_help\"><<$rating[rating]>></a>  노예 속성정보 <a class=\"tooltip-right\" tooltip-data=\"속성에 대하여\" style=\"color:black\" href = \"EXEC: msg $rank_help & msg $rank_help_2\"><img style=\"width:15px;height:15px;\" src=\"content/pic/chart.png\"></a><br>' \r\n$tooltip_text = func('$addon', 'no_rate_stat_tooltip_text', 'beauty', slave['beauty'], 1)\r\n*nl '<font style=\"font-size:12px;\">외모 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $красота_справка & dynamic $msg, $красота_справка_2 & $info_text = $красота_совет & gt $curloc\"><<$beauty[slave[\"beauty\"]]>></a>'\r\n$tooltip_text = func('$addon', 'stat_tooltip_text', 'stamina')\r\n*nl '<font style=\"font-size:12px;\">체력 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $здоровье_справка & dynamic $msg, $здоровье_справка_2 & $info_text = $здоровье_совет & gt $curloc\"><<$stamina[slave[\"stamina\"]]>></a>'\r\n$tooltip_text = func('$addon', 'stat_tooltip_text', 'sensitivity')\r\n*nl '<font style=\"font-size:12px;\">감수성 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $чувствительность_справка & dynamic $msg, $чувствительность_справка_2 & $info_text = $чувствительность_совет & gt $curloc\"><<$sensitivity[slave[\"sensitivity\"]]>></a><span class=\"jo9_profile_group_gap\"></span>'\r\n$tooltip_text = func('$addon', 'stat_tooltip_text', 'temper')\r\n*p '<font style=\"font-size:12px;\">성격 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $темперамент_справка & dynamic $msg, $темперамент_справка_2 & $info_text = $темперамент_совет & gt $curloc\"><<$temper[slave[\"temper\"]]>></a>'\r\n$tooltip_text = func('$addon', 'stat_tooltip_text', 'intellect')\r\n*nl '<font style=\"font-size:12px;\">지성 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $ум_справка & dynamic $msg, $ум_справка_2 & $info_text = $ум_совет & gt $curloc\"><<$intellect[slave[\"intellect\"]]>></a>'\r\n$tooltip_text = func('$addon', 'stat_tooltip_text', 'ego')\r\n*nl '<font style=\"font-size:12px;\">자아 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $характер_справка & dynamic $msg, $характер_справка_2 & $info_text = $характер_совет & gt $curloc\"><<$ego[slave[\"ego\"]]>></a><span class=\"jo9_profile_group_gap\"></span>'\r\n$tooltip_text = func('$addon', 'stat_tooltip_text', 'pride', -1)\r\n*p '<font style=\"font-size:12px;\">태도 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $гордыня_справка & dynamic $msg, $гордыня_справка_2 & $info_text = $гордыня_совет & gt $curloc\"><<$pride[slave[\"pride\"]]>></a>'\r\n$tooltip_text = func('$addon', 'no_rate_stat_tooltip_text', 'exotic', slave['exotic'], 1)\r\n*nl '<font style=\"font-size:12px;\">독특함 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $экзотичность_справка & dynamic $msg, $экзотичность_справка_2 & $info_text = $экзотичность_совет & gt $curloc\"><<$exotic[slave[\"exotic\"]]>></a>'\r\n$tooltip_text = func('$addon', 'physique_tooltip_text', 'fat', slave['fat'])\r\n*nl '<font style=\"font-size:12px;\">체형 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $жыр_справка & dynamic $msg, $жыр_справка_2 & $info_text = $жыр_совет & gt $curloc\"><<$fat[slave[\"fat\"]]>></a><span class=\"jo9_profile_group_gap\"></span>'\r\n$tooltip_text = func('$addon', 'no_rate_stat_tooltip_text', 'style', slave['style'], 1)\r\n*p '<font style=\"font-size:12px;\">세련됨 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $стиль_справка & dynamic $msg, $стиль_справка_2 & $info_text = $стиль_совет & gt $curloc\"><<$style[slave[\"style\"]]>></a>'\r\n$tooltip_text = func('$addon', 'no_rate_stat_tooltip_text', 'fame', slave['fame'], 1)\r\n*nl '<font style=\"font-size:12px;\">인지도 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $слава_справка & dynamic $msg, $слава_справка_2 & $info_text = $слава_совет & gt $curloc\"><<$girl_fame[slave[\"fame\"]]>></a>'\r\n$tooltip_text = func('$addon', 'no_rate_full_grade_tooltip_text', 'mood', slave['mood'], 1)\r\n*nl '<font style=\"font-size:12px;\">기분 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: msg $mood_chart & $info_text = $slave_mood_help & gt $curloc\"><<$mood[slave_mood_plus]>></a><span class=\"jo9_profile_group_gap\"></span>'\r\n! JO9 MOD START UI_TRAIT_OVERVIEW_20261025\r\ngs 'jo9_traits_view', 'sidebar', 'slave', $slave_features_list\r\n*p '</div>'\r\n! JO9 MOD END UI_TRAIT_OVERVIEW_20261025\r\n! JO9 MOD END PROFILE_GROUP_SPACING_20261025",
+      "count": 1
+    },
+    {
+      "location": "assistant_stat",
+      "field": "body",
+      "old": "*p '<div id=\"left_column_assistant\"><br>'\r\n*nl '호 칭 : &nbsp<<$assistant_name>>'\r\n*nl '연 령 대 : &nbsp;<<$assistant_age_name[assistant[\"age\"]]>>'\r\nif assistant['age_count'] = 1:\r\n\t*nl '소 유 일 수 : &nbsp;1 일'\r\nelseif assistant['age_count'] < 1000:\r\n\t*nl '소 유 일 수 : &nbsp;<<assistant[\"age_count\"]>> 일'\r\nelse\r\n\t*nl '소 유 주 기 : &nbsp;<<assistant[\"age_count\"]/10>> 주기'\r\nend\r\ngs '$slave_price', 'assistant' &! update $rating and rating to represent assistant so we can display the correct rank and populate $rating_help for the assistant when the rank is clicked\r\n*nl ''\r\n*nl '<a style=\"font-size:30px\" class=\"tooltip-right\" tooltip-data=\"등급을 올리는 방법\" href=\"EXEC: msg $rating_help\"><<$rating[rating]>></a>  조수 속성정보 <a class=\"tooltip-right\" tooltip-data=\"속성에 대하여\" style=\"color:black\" href = \"EXEC: msg $rank_help & msg $rank_help_2\"><img style=\"width:15px;height:15px;\" src=\"content/pic/chart.png\"></a><br>'\r\n$tooltip_text = func('$addon', 'no_rate_stat_tooltip_text', 'beauty', assistant['beauty'], 1)\r\n*nl '<font style=\"font-size:12px;\">외모 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $красота_справка & dynamic $msg, $красота_справка_2 & $info_text = $красота_совет & gt $curloc\"><<$beauty[assistant[\"beauty\"]]>></a>'\r\n$tooltip_text = func('$addon', 'assistant_stat_tooltip_text', 'stamina')\r\n*nl '<font style=\"font-size:12px;\">체력 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $здоровье_справка & dynamic $msg, $здоровье_справка_2 & $info_text = $здоровье_совет & gt $curloc\"><<$stamina[assistant[\"stamina\"]]>></a>'\r\n$tooltip_text = func('$addon', 'assistant_stat_tooltip_text', 'sensitivity')\r\n*nl '<font style=\"font-size:12px;\">감수성 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $чувствительность_справка & dynamic $msg, $чувствительность_справка_2 & $info_text = $чувствительность_совет & gt $curloc\"><<$sensitivity[assistant[\"sensitivity\"]]>></a><br>'\r\n$tooltip_text = func('$addon', 'assistant_stat_tooltip_text', 'temper')\r\n*nl '<font style=\"font-size:12px;\">성격 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $темперамент_справка & dynamic $msg, $темперамент_справка_2 & $info_text = $темперамент_совет & gt $curloc\"><<$temper[assistant[\"temper\"]]>></a>'\r\n$tooltip_text = func('$addon', 'assistant_stat_tooltip_text', 'intellect')\r\n*nl '<font style=\"font-size:12px;\">지성 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $ум_справка & dynamic $msg, $ум_справка_2 & $info_text = $ум_совет & gt $curloc\"><<$intellect[assistant[\"intellect\"]]>></a>'\r\n$tooltip_text = func('$addon', 'assistant_stat_tooltip_text', 'ego')\r\n*nl '<font style=\"font-size:12px;\">자아 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $характер_справка & dynamic $msg, $характер_справка_2 & $info_text = $характер_совет & gt $curloc\"><<$ego[assistant[\"ego\"]]>></a><br>'\r\n$tooltip_text = func('$addon', 'assistant_stat_tooltip_text', 'pride', -1)\r\n*nl '<font style=\"font-size:12px;\">태도 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $гордыня_справка & dynamic $msg, $гордыня_справка_2 & $info_text = $гордыня_совет & gt $curloc\"><<$pride[assistant[\"pride\"]]>></a>'\r\n$tooltip_text = func('$addon', 'no_rate_stat_tooltip_text', 'exotic', assistant['exotic'], 1)\r\n*nl '<font style=\"font-size:12px;\">독특함 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $экзотичность_справка & dynamic $msg, $экзотичность_справка_2 & $info_text = $экзотичность_совет & gt $curloc\"><<$exotic[assistant[\"exotic\"]]>></a>'\r\n$tooltip_text = func('$addon', 'assistant_physique_tooltip_text', 'fat', assistant['fat'])\r\n*nl '<font style=\"font-size:12px;\">체형 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $жыр_справка & dynamic $msg, $жыр_справка_2 & $info_text = $жыр_совет & gt $curloc\"><<$fat[assistant[\"fat\"]]>></a><br>'\r\n$tooltip_text = func('$addon', 'no_rate_stat_tooltip_text', 'style', assistant['style'], 1)\r\n*nl '<font style=\"font-size:12px;\">세련됨 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $стиль_справка & dynamic $msg, $стиль_справка_2 & $info_text = $стиль_совет & gt $curloc\"><<$style[assistant[\"style\"]]>></a>'\r\n$tooltip_text = func('$addon', 'no_rate_stat_tooltip_text', 'fame', assistant['fame'], 1)\r\n*nl '<font style=\"font-size:12px;\">인지도 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $слава_справка & dynamic $msg, $слава_справка_2 & $info_text = $слава_совет & gt $curloc\"><<$girl_fame[assistant[\"fame\"]]>></a>'\r\n$tooltip_text = func('$addon', 'no_rate_full_grade_tooltip_text', 'mood', assistant['mood'], 1)\r\n*nl '<font style=\"font-size:12px;\">기분 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: msg $mood_chart & $info_text = $slave_mood_help & gt $curloc\"><<$mood[assistant_mood_plus]>></a><br>'\r\n! JO9 MOD START UI_TRAIT_OVERVIEW_20261025\r\ngs 'jo9_traits_view', 'sidebar', 'assistant', $assistant_features_list\r\n! JO9 MOD END UI_TRAIT_OVERVIEW_20261025\r\n*p '</div>'",
+      "new": "! JO9 MOD START PROFILE_GROUP_SPACING_20261025\r\n*p '<div id=\"left_column_assistant\"><br>'\r\n*nl '호 칭 : &nbsp<<$assistant_name>>'\r\n*nl '연 령 대 : &nbsp;<<$assistant_age_name[assistant[\"age\"]]>>'\r\nif assistant['age_count'] = 1:\r\n\t*nl '소 유 일 수 : &nbsp;1 일'\r\nelseif assistant['age_count'] < 1000:\r\n\t*nl '소 유 일 수 : &nbsp;<<assistant[\"age_count\"]>> 일'\r\nelse\r\n\t*nl '소 유 주 기 : &nbsp;<<assistant[\"age_count\"]/10>> 주기'\r\nend\r\ngs '$slave_price', 'assistant' &! update $rating and rating to represent assistant so we can display the correct rank and populate $rating_help for the assistant when the rank is clicked\r\n*nl ''\r\n*nl '<a style=\"font-size:30px\" class=\"tooltip-right\" tooltip-data=\"등급을 올리는 방법\" href=\"EXEC: msg $rating_help\"><<$rating[rating]>></a>  조수 속성정보 <a class=\"tooltip-right\" tooltip-data=\"속성에 대하여\" style=\"color:black\" href = \"EXEC: msg $rank_help & msg $rank_help_2\"><img style=\"width:15px;height:15px;\" src=\"content/pic/chart.png\"></a><br>'\r\n$tooltip_text = func('$addon', 'no_rate_stat_tooltip_text', 'beauty', assistant['beauty'], 1)\r\n*nl '<font style=\"font-size:12px;\">외모 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $красота_справка & dynamic $msg, $красота_справка_2 & $info_text = $красота_совет & gt $curloc\"><<$beauty[assistant[\"beauty\"]]>></a>'\r\n$tooltip_text = func('$addon', 'assistant_stat_tooltip_text', 'stamina')\r\n*nl '<font style=\"font-size:12px;\">체력 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $здоровье_справка & dynamic $msg, $здоровье_справка_2 & $info_text = $здоровье_совет & gt $curloc\"><<$stamina[assistant[\"stamina\"]]>></a>'\r\n$tooltip_text = func('$addon', 'assistant_stat_tooltip_text', 'sensitivity')\r\n*nl '<font style=\"font-size:12px;\">감수성 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $чувствительность_справка & dynamic $msg, $чувствительность_справка_2 & $info_text = $чувствительность_совет & gt $curloc\"><<$sensitivity[assistant[\"sensitivity\"]]>></a><span class=\"jo9_profile_group_gap\"></span>'\r\n$tooltip_text = func('$addon', 'assistant_stat_tooltip_text', 'temper')\r\n*p '<font style=\"font-size:12px;\">성격 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $темперамент_справка & dynamic $msg, $темперамент_справка_2 & $info_text = $темперамент_совет & gt $curloc\"><<$temper[assistant[\"temper\"]]>></a>'\r\n$tooltip_text = func('$addon', 'assistant_stat_tooltip_text', 'intellect')\r\n*nl '<font style=\"font-size:12px;\">지성 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $ум_справка & dynamic $msg, $ум_справка_2 & $info_text = $ум_совет & gt $curloc\"><<$intellect[assistant[\"intellect\"]]>></a>'\r\n$tooltip_text = func('$addon', 'assistant_stat_tooltip_text', 'ego')\r\n*nl '<font style=\"font-size:12px;\">자아 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $характер_справка & dynamic $msg, $характер_справка_2 & $info_text = $характер_совет & gt $curloc\"><<$ego[assistant[\"ego\"]]>></a><span class=\"jo9_profile_group_gap\"></span>'\r\n$tooltip_text = func('$addon', 'assistant_stat_tooltip_text', 'pride', -1)\r\n*p '<font style=\"font-size:12px;\">태도 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $гордыня_справка & dynamic $msg, $гордыня_справка_2 & $info_text = $гордыня_совет & gt $curloc\"><<$pride[assistant[\"pride\"]]>></a>'\r\n$tooltip_text = func('$addon', 'no_rate_stat_tooltip_text', 'exotic', assistant['exotic'], 1)\r\n*nl '<font style=\"font-size:12px;\">독특함 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $экзотичность_справка & dynamic $msg, $экзотичность_справка_2 & $info_text = $экзотичность_совет & gt $curloc\"><<$exotic[assistant[\"exotic\"]]>></a>'\r\n$tooltip_text = func('$addon', 'assistant_physique_tooltip_text', 'fat', assistant['fat'])\r\n*nl '<font style=\"font-size:12px;\">체형 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $жыр_справка & dynamic $msg, $жыр_справка_2 & $info_text = $жыр_совет & gt $curloc\"><<$fat[assistant[\"fat\"]]>></a><span class=\"jo9_profile_group_gap\"></span>'\r\n$tooltip_text = func('$addon', 'no_rate_stat_tooltip_text', 'style', assistant['style'], 1)\r\n*p '<font style=\"font-size:12px;\">세련됨 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $стиль_справка & dynamic $msg, $стиль_справка_2 & $info_text = $стиль_совет & gt $curloc\"><<$style[assistant[\"style\"]]>></a>'\r\n$tooltip_text = func('$addon', 'no_rate_stat_tooltip_text', 'fame', assistant['fame'], 1)\r\n*nl '<font style=\"font-size:12px;\">인지도 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: dynamic $msg, $слава_справка & dynamic $msg, $слава_справка_2 & $info_text = $слава_совет & gt $curloc\"><<$girl_fame[assistant[\"fame\"]]>></a>'\r\n$tooltip_text = func('$addon', 'no_rate_full_grade_tooltip_text', 'mood', assistant['mood'], 1)\r\n*nl '<font style=\"font-size:12px;\">기분 </font><a class=\"tooltip-right\" tooltip-data=\"<<$tooltip_text>>\" href=\"EXEC: msg $mood_chart & $info_text = $slave_mood_help & gt $curloc\"><<$mood[assistant_mood_plus]>></a><span class=\"jo9_profile_group_gap\"></span>'\r\n! JO9 MOD START UI_TRAIT_OVERVIEW_20261025\r\ngs 'jo9_traits_view', 'sidebar', 'assistant', $assistant_features_list\r\n! JO9 MOD END UI_TRAIT_OVERVIEW_20261025\r\n*p '</div>'\r\n! JO9 MOD END PROFILE_GROUP_SPACING_20261025",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits_view",
+      "field": "body",
+      "old": "  *nl '<a class=\"jo9_tv_heading\"",
+      "new": "  *p '<a class=\"jo9_tv_heading\"",
+      "count": 1
+    },
+    {
+      "location": "slave_stat",
+      "field": "body",
+      "old": "*p '<link rel=\"stylesheet\" href=\"css/jo9_traits_view.css\"><script src=\"content/js/jo9_traits_view.js\"></script>'",
+      "new": "*p '<link rel=\"stylesheet\" href=\"css/jo9_traits_view.css?v=20261025r2\"><script src=\"content/js/jo9_traits_view.js?v=20261025r2\"></script>'",
+      "count": 1
+    },
+    {
+      "location": "assistant_stat",
+      "field": "body",
+      "old": "*p '<link rel=\"stylesheet\" href=\"css/jo9_traits_view.css\"><script src=\"content/js/jo9_traits_view.js\"></script>'",
+      "new": "*p '<link rel=\"stylesheet\" href=\"css/jo9_traits_view.css?v=20261025r2\"><script src=\"content/js/jo9_traits_view.js?v=20261025r2\"></script>'",
+      "count": 1
+    },
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "! JO9 MOD START CONTEST_FAME_LOAD_HELP | 2026-10-24_contest_fame",
+      "new": "! JO9 MOD START PROFILE_TEXT_CACHE_20261025\r\nif jo9_profile_text_revision < 1:\r\n gs '#static_txt'\r\n jo9_profile_text_revision = 1\r\nend\r\n! JO9 MOD END PROFILE_TEXT_CACHE_20261025\r\n! JO9 MOD START CONTEST_FAME_LOAD_HELP | 2026-10-24_contest_fame",
+      "count": 1
+    },
+    {
+      "location": "$newloc",
+      "field": "body",
+      "old": "! JO9 MOD START TRAIT_MERGE_EXCLUSIONS_20261025",
+      "new": "! JO9 MOD START PROFILE_TEXT_CACHE_20261025\r\nif jo9_profile_text_revision < 1:\r\n gs '#static_txt'\r\n jo9_profile_text_revision = 1\r\nend\r\n! JO9 MOD END PROFILE_TEXT_CACHE_20261025\r\n! JO9 MOD START TRAIT_MERGE_EXCLUSIONS_20261025",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": " if $args[1] = 'ambitious': $result = '야심가: 기술 등급이 오른 날 처음 칭찬받으면 기분 누적값 +5. 응석은 추가하지 않습니다.'",
+      "new": " if $args[1] = 'ambitious': $result = '야심가: 기술이 성장한 뒤 받는 칭찬을 특히 기뻐한다. 성취를 인정해 주면 기분이 좋아지지만, 그 칭찬 때문에 더 응석을 부리지는 않는다.'",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": " if $args[1] = 'workaholic': $result = '일벌레: 하루 첫 업무·교육은 보통과 같고, 두 번째부터 수행할 때마다 기분 누적값 +2.'",
+      "new": " if $args[1] = 'workaholic': $result = '일벌레: 일이 이어져도 쉽게 싫증내지 않는다. 업무나 교육을 거듭할수록 오히려 기분이 좋아진다.'",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": " if $args[1] = 'content': $result = '안분지족: 하루 첫 업무·교육은 보통과 같고, 두 번째부터 수행할 때마다 기분 누적값 -2.'",
+      "new": " if $args[1] = 'content': $result = '안분지족: 바쁘게 지내기보다는 현재에 만족하며 여유를 즐긴다. 업무나 교육이 이어지면 기분이 가라앉는다.'",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": "  if $args[1] = 'activity_active': $result = '활동적: 하루 두 번째 업무·교육부터 수행할 때마다 기분 누적값 +2. 휴식 보상과 노예 마사지의 보상 효과는 절반이며, 휴식 보상을 탐탁지 않게 여긴다. 성향을 발견한 뒤에는 푹 쉰 기분 효과를 얻지 않는다.'",
+      "new": "  if $args[1] = 'activity_active': $result = '활동적: 업무나 교육이 이어지면 오히려 활기를 얻는다. 쉬게 하거나 마사지를 해 주어도 보상으로 받아들이는 정도는 작다. 성향이 드러난 뒤에는 휴식만으로 푹 쉰 기분 효과를 얻지 않는다.'",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": "  if $args[1] = 'activity_passive': $result = '휴식 선호: 하루 두 번째 업무·교육부터 수행할 때마다 기분 누적값 -2. 휴식 보상과 노예 마사지의 보상 효과는 두 배이며, 휴식 보상을 기꺼이 받아들인다.'",
+      "new": "  if $args[1] = 'activity_passive': $result = '휴식 선호: 업무나 교육이 이어지면 지치고 기분이 가라앉는다. 반면 휴식이나 마사지에는 특히 만족하며, 그런 보상을 기꺼이 받아들인다.'",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": " if $args[1] = 'persevering': $result = '끈기: 같은 업무·교육을 연속 수행하면 두 번째부터 기분 +2, 양의 경험치 +10%. 고정 규칙 업무는 제외합니다.'",
+      "new": " if $args[1] = 'persevering': $result = '끈기: 같은 업무나 교육을 꾸준히 반복하면 기분이 좋아지고, 배우는 속도도 빨라진다. 고정 규칙에 따른 업무에는 이 효과가 적용되지 않는다.'",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": " if $args[1] = 'distracted': $result = '산만함: 같은 업무·교육을 연속 수행하면 두 번째부터 양의 경험치와 업무 성과 -10%. 고정 규칙 업무는 제외합니다.'",
+      "new": " if $args[1] = 'distracted': $result = '산만함: 같은 업무나 교육이 계속되면 집중력이 흐트러진다. 배우는 속도와 업무 성과가 떨어지지만, 고정 규칙에 따른 업무에는 영향을 주지 않는다.'",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": " if $args[1] = 'petty': $result = '옹졸함: 사건으로 생긴 부정적 기억이 약 1.5배 오래갑니다. 최초 기분 손실은 그대로입니다.'",
+      "new": " if $args[1] = 'petty': $result = '옹졸함: 좋지 않은 사건을 오래 마음에 담아 둔다. 처음 받은 충격은 같아도 부정적인 기억에서 벗어나는 데 더 오랜 시간이 걸린다.'",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": " if $args[1] = 'generous': $result = '너그러움: 사건으로 생긴 부정적 기억이 약 0.7배 동안 유지됩니다. 최초 기분 손실은 그대로입니다.'",
+      "new": " if $args[1] = 'generous': $result = '너그러움: 좋지 않은 일을 겪어도 비교적 빨리 털어 낸다. 처음 받은 충격은 같지만 부정적인 기억이 오래 남지는 않는다.'",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": " if $args[1] = 'healthy': $result = '건강체질: 전투 최대 체력·스태미나 +20%. 운동 관련 교육 경험치와 식사·보조식품·충분한 휴식으로 얻는 체력 성장량 +50%. 기존 성장 조건과 상한은 유지됩니다. 선천적으로 타고나거나 의료센터의 체질개선 시술로 얻습니다. 약골과 양립하지 않습니다.'",
+      "new": " if $args[1] = 'healthy': $result = '건강체질: 전투에서 버틸 체력과 지구력이 좋으며 운동도 빠르게 익힌다. 식사와 보조식품, 충분한 휴식으로 체력을 기르는 데도 유리하다. 타고나기도 하고 의료센터의 체질개선 시술로 얻기도 한다. 약골과 양립하지 않는다.'",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": " if $args[1] = 'frail': $result = '약골: 전투 최대 체력·스태미나 및 운동 관련 교육의 양의 경험치 ×0.5. 건강체질과 양립하지 않습니다.'",
+      "new": " if $args[1] = 'frail': $result = '약골: 전투에서 버틸 체력과 지구력이 부족하고, 운동 관련 교육을 익히는 속도도 더디다. 건강체질과 양립하지 않는다.'",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": " if $args[1] = 'berserker': $result = '광전사: 최대 스태미나·사기 ×1.5. 체력이 최종 최대치의 30% 이하이면 공격 피해 ×2. 세 전투 특성 중 하나만 가집니다.'",
+      "new": " if $args[1] = 'berserker': $result = '광전사: 지구력과 투지가 뛰어나다. 크게 다쳐 궁지에 몰리면 강렬한 저력을 발휘해 적에게 훨씬 큰 피해를 준다. 다른 전투 특성과 함께 가질 수 없다.'",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": " if $args[1] = 'paladin': $result = '성기사: 현재 스태미나와 사기가 모두 최종 최대치의 50% 이상이면 받는 피해를 절반으로 줄입니다. 기존 최소 피해는 유지합니다.'",
+      "new": " if $args[1] = 'paladin': $result = '성기사: 지구력과 사기를 충분히 유지하고 있을 때 적의 공격을 훨씬 잘 견딘다. 아무리 단단히 버텨도 피해가 완전히 사라지지는 않는다.'",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": " if $args[1] = 'veteran': $result = '역전의 용사: 전투 최대 체력·스태미나·사기 ×1.5. 세 전투 특성 중 하나만 가집니다.'",
+      "new": " if $args[1] = 'veteran': $result = '역전의 용사: 숱한 싸움을 이겨 낸 경험 덕분에 전투 체력과 지구력, 사기가 모두 뛰어나다. 다른 전투 특성과 함께 가질 수 없다.'",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": " if $args[1] = 'versatile': $result = '다재다능: 표시되는 지식·기술과 성애기술·ST가 모두 A(4) 이상이면 영구 획득. 기본 가치 +25%. 새로 부여되는 순간 명성이 한 단계 오른다(최고 등급 유지). 편집기로 해제하면 자동 재획득을 보류합니다.'",
+      "new": " if $args[1] = 'versatile': $result = '다재다능: 지식과 기술, 성애기술을 두루 높은 수준까지 익히면 영구적으로 얻는 칭호다. 상품 가치가 높아지고, 처음 칭호를 얻을 때 명성도 오른다. 이미 최고의 명성을 얻었다면 더 높아지지는 않는다.'",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": " if $args[1] = 'peerless': $result = '절세미인: 기본 외모에 한 단계를 더하여 최대 S++(6). 기존 흉터·체형 불이익은 유지합니다. 특별 판매·경매·흥정 우대 및 기존 양의 호감도·명성 보상 +50%.'",
+      "new": " if $args[1] = 'peerless': $result = '절세미인: 타고난 아름다움이 한층 돋보이며 외모가 일반적인 한계를 넘어설 수 있다. 흉터와 체형의 불이익은 그대로 남는다. 특별 판매와 경매, 흥정에서 좋은 대우를 받으며 긍정적인 호감과 명성도 더 크게 얻는다.'",
+      "count": 1
+    },
+    {
+      "location": "#static_txt",
+      "field": "body",
+      "old": "$jo9_genius_text = '당신의 노예는 천재적인 학습 능력을 타고났다. 생성 시 지성은 최고 등급이며, 육체단련을 제외한 분야에서 새로 얻는 성장 경험치가 두 배가 된다. 다만 애완녀·망아지·젖소녀 기술의 성장 경험치는 일반의 75%이며, 소수점 나머지는 인물과 기술별로 누적된다. 지성은 이후 기존 규칙에 따라 변할 수 있다.'",
+      "new": "$jo9_genius_text = '당신의 노예는 천재적인 학습 능력을 타고났다. 처음부터 지성이 매우 뛰어나며, 육체단련을 제외한 여러 분야를 놀라울 만큼 빠르게 익힌다. 다만 애완녀·망아지·젖소녀 역할을 배우는 속도는 남들보다 더디다. 지성은 이후 변할 수 있다.'",
+      "count": 1
+    },
+    {
+      "location": "#static_txt",
+      "field": "body",
+      "old": "$jo9_idiot_text = '당신의 노예는 새로운 지식과 기술을 익히는 데 남들보다 오랜 시간이 걸린다. 생성 시 지성은 최저 등급이며, 육체단련을 제외한 분야에서 새로 얻는 성장 경험치가 절반이 된다. 양수 경험치는 소수점 이하를 버리되 최소 1을 얻는다. 지성은 이후 기존 규칙에 따라 변할 수 있다.'",
+      "new": "$jo9_idiot_text = '당신의 노예는 새로운 지식과 기술을 익히는 데 남들보다 오랜 시간이 걸린다. 처음에는 지성이 매우 낮으며, 육체단련을 제외한 분야의 성장도 더디다. 그래도 경험이 완전히 헛되지는 않으며, 지성은 이후 변할 수 있다.'",
+      "count": 1
+    },
+    {
+      "location": "#static_txt",
+      "field": "body",
+      "old": "젖소 적성으로 하루 우유 생산량이 최종 계산값의 1.5배가 된다.",
+      "new": "젖소 적성 덕분에 하루 우유 생산량도 눈에 띄게 늘어난다.",
+      "count": 1
+    },
+    {
+      "location": "#txt_woman",
+      "field": "body",
+      "old": "$jo9_genius_text = '당신의 노예는 천재적인 학습 능력을 타고났다. 생성 시 지성은 최고 등급이며, 육체단련을 제외한 분야에서 새로 얻는 성장 경험치가 두 배가 된다. 다만 애완녀·망아지·젖소녀 기술의 성장 경험치는 일반의 75%이며, 소수점 나머지는 인물과 기술별로 누적된다. 지성은 이후 기존 규칙에 따라 변할 수 있다.'",
+      "new": "$jo9_genius_text = '당신의 노예는 천재적인 학습 능력을 타고났다. 처음부터 지성이 매우 뛰어나며, 육체단련을 제외한 여러 분야를 놀라울 만큼 빠르게 익힌다. 다만 애완녀·망아지·젖소녀 역할을 배우는 속도는 남들보다 더디다. 지성은 이후 변할 수 있다.'",
+      "count": 1
+    },
+    {
+      "location": "#txt_woman",
+      "field": "body",
+      "old": "$jo9_idiot_text = '당신의 노예는 새로운 지식과 기술을 익히는 데 남들보다 오랜 시간이 걸린다. 생성 시 지성은 최저 등급이며, 육체단련을 제외한 분야에서 새로 얻는 성장 경험치가 절반이 된다. 양수 경험치는 소수점 이하를 버리되 최소 1을 얻는다. 지성은 이후 기존 규칙에 따라 변할 수 있다.'",
+      "new": "$jo9_idiot_text = '당신의 노예는 새로운 지식과 기술을 익히는 데 남들보다 오랜 시간이 걸린다. 처음에는 지성이 매우 낮으며, 육체단련을 제외한 분야의 성장도 더디다. 그래도 경험이 완전히 헛되지는 않으며, 지성은 이후 변할 수 있다.'",
+      "count": 1
+    },
+    {
+      "location": "#txt_woman",
+      "field": "body",
+      "old": "젖소 적성으로 하루 우유 생산량이 최종 계산값의 1.5배가 된다.",
+      "new": "젖소 적성 덕분에 하루 우유 생산량도 눈에 띄게 늘어난다.",
+      "count": 1
+    }
+  ]
+}

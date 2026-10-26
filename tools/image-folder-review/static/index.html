@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>이미지 폴더 비교</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <header class="app-header">
+    <div><p class="eyebrow">FOLDER REVIEW</p><h1>이미지 폴더 비교</h1><p class="intro">같은 이름의 장면을 모아 비교하고, 남길 이미지를 선택하세요.</p></div>
+    <div id="save-state" class="save-state" data-state="idle" role="status">선택은 자동 저장됩니다</div>
+  </header>
+  <main>
+    <section class="project-panel" aria-label="폴더 등록과 프로젝트">
+      <div class="project-heading">
+        <label class="project-selector">등록한 폴더쌍<select id="projects"><option value="">등록된 폴더쌍 없음</option></select></label>
+        <button id="new-project" class="quiet">새 폴더쌍 등록</button>
+      </div>
+      <details id="registration" open>
+        <summary>폴더 선택 · 등록</summary>
+        <form id="register-form">
+          <div class="folder-fields">
+            <label class="folder-field original-field"><span><i class="side-dot original-dot"></i>원본 폴더</span><span class="path-input"><input id="original-root" required placeholder="원본 이미지 폴더의 경로"><button type="button" data-pick="original">폴더 선택</button></span></label>
+            <label class="folder-field comparison-field"><span><i class="side-dot comparison-dot"></i>비교 폴더</span><span class="path-input"><input id="comparison-root" required placeholder="비교할 이미지 폴더의 경로"><button type="button" data-pick="comparison">폴더 선택</button></span></label>
+          </div>
+          <div class="register-bottom"><label>폴더쌍 이름<input id="project-name" placeholder="예: 장면팩과 현재 작업본"></label><button type="submit" id="register-button" class="primary">폴더쌍 등록 · 검사</button></div>
+          <p class="hint">하위폴더도 함께 검사합니다. 이미지 파일은 그대로 두고 선택 기록과 썸네일만 별도로 저장합니다.</p>
+        </form>
+      </details>
+      <div id="project-roots" class="project-roots" hidden></div>
+    </section>
+
+    <div id="notice" class="notice" role="status" hidden></div>
+    <div id="status" class="status" role="status" hidden></div>
+    <section id="empty" class="empty-state"><span class="empty-icon">⇄</span><h2>두 폴더를 등록하면 비교가 시작됩니다</h2><p><code>장면_3.png</code>, <code>장면_4.png</code>처럼 끝 번호가 다른 파일은 한 그룹으로 모입니다.</p><p>각 파일을 선택하거나 그룹 전체에 같은 선택을 적용할 수 있습니다.</p></section>
+
+    <section id="review-workspace" hidden>
+      <div class="overview" id="overview"></div>
+      <div class="toolbar">
+        <label class="search-field"><span class="sr-only">파일명 또는 그룹 검색</span><input id="search" type="search" placeholder="파일명 · 그룹 · 하위폴더 검색"></label>
+        <label><span class="sr-only">파일 존재 상태</span><select id="presence"><option value="all">모든 파일</option><option value="both">양쪽에 있는 파일</option><option value="original">원본에만 있는 파일</option><option value="comparison">비교본에만 있는 파일</option></select></label>
+        <label><span class="sr-only">검토 상태</span><select id="review-filter"><option value="all">모든 선택 상태</option><option value="unreviewed">미검토</option><option value="review">재검토 필요</option><option value="defer">보류</option><option value="completed">선택 완료</option></select></label>
+        <button id="rescan" class="quiet">폴더 다시 검사</button>
+      </div>
+      <div class="progress-row"><div><span id="thumb-progress">썸네일 준비 중</span><progress id="thumbnail-progress" max="1" value="0"></progress></div><button id="show-issues" class="text-button">검사 알림</button><a id="export-json" href="#">JSON 내보내기</a><a id="export-csv" href="#">CSV 내보내기</a></div>
+      <div class="list-heading"><span id="result-count"></span><span class="hint">필터에 맞는 그룹을 찾으며, 그룹 안의 파일은 모두 표시합니다.</span></div>
+      <div id="groups"></div>
+      <nav class="pagination" aria-label="그룹 페이지"><button id="previous-page">이전</button><span id="page-count"></span><button id="next-page">다음</button></nav>
+    </section>
+    <footer>이미지는 읽기 전용으로 비교합니다. 선택 기록은 등록한 폴더쌍별로 보관됩니다.</footer>
+  </main>
+
+  <dialog id="viewer">
+    <div class="viewer-heading"><h2 id="viewer-title">이미지 비교</h2><div><button id="fit-view">화면 맞춤</button><button id="natural-view">100% 보기</button><button id="close-viewer" aria-label="확대 닫기">닫기 ✕</button></div></div>
+    <div id="viewer-images" class="viewer-images">
+      <section><h3><i class="side-dot original-dot"></i>원본</h3><div class="viewer-canvas"><img id="viewer-original" alt="원본 확대 이미지"><span id="viewer-original-missing">파일 없음</span></div><p id="viewer-original-path" class="full-path"></p></section>
+      <section><h3><i class="side-dot comparison-dot"></i>비교본</h3><div class="viewer-canvas"><img id="viewer-comparison" alt="비교본 확대 이미지"><span id="viewer-comparison-missing">파일 없음</span></div><p id="viewer-comparison-path" class="full-path"></p></section>
+    </div>
+    <div id="viewer-choices"></div>
+  </dialog>
+  <dialog id="issues-dialog"><div class="viewer-heading"><h2>검사 알림</h2><button id="close-issues">닫기</button></div><p id="issues-summary"></p><div id="issues-list"></div></dialog>
+</body>
+</html>

@@ -1,0 +1,136 @@
+{
+  "status": "PASS",
+  "candidateSha256": "c6ba9600e78f38ae1adeb9cf5c09a53115254ec40f666e48b53b912ab3e0195e",
+  "workSha256AtReview": "498e7fcaa2c116e382ab73ffe38549762297cce945247c2b8ad27509ba874fe0",
+  "productFilesModifiedByReviewer": false,
+  "engine": "G:/somi/Jack O Nine Tails v2.4_work/game/engine/jack.exe",
+  "functionalProbeCount": 9,
+  "functionalPasses": [
+    {
+      "name": "header",
+      "checkpoint": "Start",
+      "pass": true,
+      "reason": "",
+      "durationMs": 6824
+    },
+    {
+      "name": "empathy",
+      "checkpoint": "Start",
+      "pass": true,
+      "reason": "",
+      "durationMs": 1821
+    },
+    {
+      "name": "pair-table",
+      "checkpoint": "Start",
+      "pass": true,
+      "reason": "",
+      "durationMs": 1819
+    },
+    {
+      "name": "names",
+      "checkpoint": "Start",
+      "pass": true,
+      "reason": "",
+      "durationMs": 7072
+    },
+    {
+      "name": "special-paths",
+      "checkpoint": "Start",
+      "pass": true,
+      "reason": "",
+      "durationMs": 7258
+    },
+    {
+      "name": "directions",
+      "checkpoint": "Start",
+      "pass": true,
+      "reason": "",
+      "durationMs": 6399
+    },
+    {
+      "name": "source-and-numbers",
+      "checkpoint": "Start",
+      "pass": true,
+      "reason": "",
+      "durationMs": 6655
+    },
+    {
+      "name": "cache-refresh",
+      "checkpoint": "Start",
+      "pass": true,
+      "reason": "",
+      "durationMs": 1803
+    },
+    {
+      "name": "fallbacks-corrected",
+      "checkpoint": "Start",
+      "pass": true,
+      "reason": "",
+      "durationMs": 11419
+    }
+  ],
+  "sourceAndNumberScenarios": [
+    "raw-rel2",
+    "refusal-rel2",
+    "isolate-rel2",
+    "kinship-rel2",
+    "raw-rel1",
+    "refusal-rel1",
+    "isolate-rel1",
+    "kinship-rel1",
+    "dedicated-forward-rel2",
+    "dedicated-reverse-rel2"
+  ],
+  "numericTupleFields": [
+    "sa_relations",
+    "sa_relations1",
+    "sa_relations2",
+    "sa_relations3",
+    "sa_relations4",
+    "int_index",
+    "int_index2",
+    "slave.id",
+    "assistant.id",
+    "slave[102]",
+    "assistant[101]"
+  ],
+  "cacheScope": "Executes the exact production interaction V9 refresh guard from the frozen candidate against a V8-marked loaded helper; confirms it reloads V9. Does not run a complete live interaction UI.",
+  "exportObservations": {
+    "count": 4,
+    "kind": "Data collection, not functional tests",
+    "plan": "edges/export-plan.json",
+    "logs": [
+      "baseline-normal-stderr.log",
+      "baseline-long-stderr.log",
+      "candidate-normal-stderr.log",
+      "candidate-long-stderr.log"
+    ],
+    "note": "Runner exact completion regex intentionally rejects marker+payload. Layout agent extracted JO9_PAGE payloads separately."
+  },
+  "historicalFixtureFailures": [
+    {
+      "plan": "edges/client-results.json",
+      "probe": "fallbacks",
+      "cause": "Old fixture omitted _core from lookup key and reloaded data without resetting revision, so mixed native path was not actually forced.",
+      "resolution": "edge-export.cjs and review-edge.cjs corrected; isolated corrected native run passed."
+    },
+    {
+      "plan": "reviewtest/client-results.json",
+      "probe": "fallbacks-corrected",
+      "cause": "First corrected attempt used the right key, but the bank reload still skipped because revision=7 and ids remained loaded.",
+      "resolution": "Forced revision=0 before immutable bank reload; reviewtest-mixed/client-results.json passed."
+    }
+  ],
+  "reproduce": [
+    "node component/probe.cjs component/candidate.qsp green",
+    "node component/edge-export.cjs",
+    "node component/review-edge.cjs",
+    "Run tools/qa/run-client-smoke.ps1 with the engine above and component/green/plan.json, component/edges/plan.json, component/reviewtest/plan.json. Run export-plan separately for observation logs."
+  ],
+  "limitations": [
+    "Names test covers apostrophe, double quote, colon in target, identical names, string zero, and empty names. Empty actual speaker renders [] by design.",
+    "All tests run disposable QSP copies under component. No original save was loaded.",
+    "Source comparison runs baseline origins code and candidate origins in the same candidate diagnostic engine with the native bank disabled; independent static diff confirms untouched relation and bank code."
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "id": "FAME_EXPANSION_RULES_20261024",
+  "date": "2026-10-24",
+  "status": "FOG_IMPLEMENTED_WORK_RALLY_CATFIGHT_PENDING",
+  "sourceWorkSha256": "da6b23880a93e5850c981ed74e668f34dc7fd247b1913e2adcb5b6df19eaa1c9",
+  "unit": "actor_rate[fame] personal fame points; not display grade or protagonist reputation",
+  "approved": {
+    "rally": {
+      "firstWin": 10,
+      "repeatBelow80": 1,
+      "repeatAtLeast80": 0.25,
+      "threshold": 80
+    },
+    "catfight": {
+      "firstWin": 10,
+      "subsequentWin": 3,
+      "maxRewardedWins": 3,
+      "maxPoints": 16,
+      "entryLimitInterpretation": "3wins",
+      "defeatDoesNotReduceLifetimeWins": true
+    },
+    "fog": {
+      "scope": "approved all Fog Border encounter table 2026-10-24",
+      "triggerOnVictory": true,
+      "witnessProbabilityPercent": 20,
+      "thresholds": [
+        40,
+        80
+      ],
+      "maximumFromFog": 80,
+      "preserveExistingAbove80": true,
+      "perFightOnce": true,
+      "actualWinningCompanionOnly": true,
+      "groupReward": "maximum enemy tier once; not per-enemy sum",
+      "encounters": "../fog-fame-20261024/approved-encounters.json",
+      "legacyRuleSupersededBy": "User approved full 15-encounter proposal"
+    },
+    "redlightPublicService": "unchanged"
+  },
+  "proposedInterpretations": {
+    "rallyFirstWinOverridesThreshold": true,
+    "quarterAccounting": "Per-actor0..3 quarters; four repeat victories above80 settle1 point. No fractional loss.",
+    "legacyRally": "No per-person historic wins available. Preserve existing fame; recommend first newly recorded victory after update for new bonus.",
+    "legacyCatfight": "Do not infer by halving catfight_level or global result visits. Exact personal history unavailable. No unapproved rewrite.",
+    "fogActor": "Only the companion who actually won; no fame for a defeated companion after protagonist takeover.",
+    "fogResult": "Existing battle victory semantics, including routed opponents; no extra mandatory-kill requirement."
+  },
+  "answeredQuestions": [
+    {
+      "id": "catfight_limit",
+      "answer": "3승 달성 후 출전 금지"
+    },
+    {
+      "id": "fog_scope",
+      "answer": "직접 대상 몬스터를 정하겠다"
+    }
+  ],
+  "pendingQuestions": [],
+  "otherPending": [
+    "Legacy first-win and catfight counter policy"
+  ],
+  "implementation": {
+    "runtimeApplied": true,
+    "appliedFeatures": [
+      "fog"
+    ],
+    "unimplementedFeatures": [
+      "rally",
+      "catfight"
+    ],
+    "qspWritten": true,
+    "savesWritten": false,
+    "commitPush": false
+  },
+  "witnessDialogue": [
+    "안개 너머에서 싸움을 지켜보던 여행자가 감탄하며 고개를 끄덕였다.",
+    "“이런 상대를 쓰러뜨리다니. 도시로 돌아가면 이 싸움 이야기를 전해야겠군.”",
+    "[출전자 이름]의 무용담이 퍼지기 시작했다. (개인 명성 +[실제 증가량])"
+  ],
+  "supersededFogRule": {
+    "onlyUniqueOrBoss": true,
+    "triggerOnVictory": true,
+    "witnessProbabilityPercent": 20,
+    "famePoints": 5,
+    "ordinaryFightsExcluded": true,
+    "eligibleIds": null,
+    "targetSelectionOwner": "user",
+    "targetSelectionStatus": "awaiting_user_named_targets"
+  }
+}

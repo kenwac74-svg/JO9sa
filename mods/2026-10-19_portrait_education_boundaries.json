@@ -1,0 +1,29 @@
+{
+  "id": "2026-10-19_portrait_education_boundaries",
+  "description": "Restore missing line boundaries between existing education commands and JO9 provenance comments; preserve expressions, lessons, costs and actors.",
+  "before_sha256": "b0c40f46bc020c9d372e72e490ccde28894d31797bcf1653a7b7aac1e3490f71",
+  "after_sha256": "414928de0b36f05a95dd442232fdd0c2b19ee5d903120041448e071c6c1e47f9",
+  "edits": [
+    {
+      "location": "interaction_result",
+      "field": "body",
+      "old": "\t\tif assistant['ego'] <= slave['ego']: assistant_rate['ego'] += 1! JO9 MOD START J9TP_NATIVE_TEXT_LOOP_5 | 2026-10-17_traits_personality",
+      "new": "! JO9 MOD START PORTRAIT_EDUCATION_BOUNDARY | 2026-10-19_portrait_education_boundaries\r\n\t\tif assistant['ego'] <= slave['ego']: assistant_rate['ego'] += 1\r\n! JO9 MOD START J9TP_NATIVE_TEXT_LOOP_5 | 2026-10-17_traits_personality\r\n! JO9 MOD END PORTRAIT_EDUCATION_BOUNDARY",
+      "count": 1
+    },
+    {
+      "location": "interaction_result",
+      "field": "body",
+      "old": "\t\t\tdynamic $special_part &! note: may modify diligence! JO9 MOD START J9TP_NATIVE_TEXT_LOOP_4 | 2026-10-17_traits_personality",
+      "new": "! JO9 MOD START PORTRAIT_EDUCATION_BOUNDARY | 2026-10-19_portrait_education_boundaries\r\n\t\t\tdynamic $special_part &! note: may modify diligence\r\n! JO9 MOD START J9TP_NATIVE_TEXT_LOOP_4 | 2026-10-17_traits_personality\r\n! JO9 MOD END PORTRAIT_EDUCATION_BOUNDARY",
+      "count": 1
+    },
+    {
+      "location": "interaction_result",
+      "field": "body",
+      "old": "\t\tdynamic $special_part! JO9 MOD START J9TP_NATIVE_TEXT_LOOP_2 | 2026-10-17_traits_personality",
+      "new": "! JO9 MOD START PORTRAIT_EDUCATION_BOUNDARY | 2026-10-19_portrait_education_boundaries\r\n\t\tdynamic $special_part\r\n! JO9 MOD START J9TP_NATIVE_TEXT_LOOP_2 | 2026-10-17_traits_personality\r\n! JO9 MOD END PORTRAIT_EDUCATION_BOUNDARY",
+      "count": 1
+    }
+  ]
+}

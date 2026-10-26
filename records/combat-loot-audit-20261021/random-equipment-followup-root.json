@@ -1,0 +1,52 @@
+{
+  "date": "2026-10-21",
+  "source": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+  "sha256": "a2e0265881bebd8a72b3fcbb214ddaf831106cfe50e9c96da8e0b6e7d692707a",
+  "question": "Generic random weapon/armor/accessory drops after combat",
+  "genericRandomEquipmentDrop": false,
+  "verifiedPaths": [
+    "выход_из_боя",
+    "jo9_fog_relay",
+    "interaction_result_city",
+    "item_change"
+  ],
+  "evidence": [
+    {
+      "location": "выход_из_боя",
+      "finding": "Normal victory callbacks have fixed material/quest/artifact rewards and trophy flags. Random rolls found here affect wounds, XP and captive-character generation, not a random equipment item selection."
+    },
+    {
+      "location": "interaction_result_city",
+      "lines": [
+        606,
+        615,
+        616,
+        633,
+        642,
+        643,
+        672,
+        681,
+        682
+      ],
+      "finding": "Generic inventory/item-id equipment grants are purchase handlers gated by sparks and price deduction."
+    },
+    {
+      "location": "item_change",
+      "finding": "Positive generic equipment counts return an already-equipped item when switching equipment. They are not loot rolls."
+    },
+    {
+      "location": "special_screen",
+      "lines": [
+        21,
+        48,
+        49
+      ],
+      "finding": "Fire staff is fixed conditional artifact ownership, not a random equipment-table roll."
+    }
+  ],
+  "combatItemDefinitionKeys": 41,
+  "gameModified": false,
+  "limitations": [
+    "Read-only source and callback inspection; no simulated combat or playthrough executed."
+  ]
+}

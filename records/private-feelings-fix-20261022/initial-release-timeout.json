@@ -1,0 +1,149 @@
+{
+  "schema": 1,
+  "createdAt": "2026-10-22T12:40:07.012Z",
+  "profile": "release",
+  "checks": [
+    {
+      "name": "inputs-readable",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "candidate": "a54283107b35e69ad50e23c528a13b499c62e7839aa77dde7ebbdf3b47023214"
+      }
+    },
+    {
+      "name": "world-structure-and-line-endings",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "sha256": "a54283107b35e69ad50e23c528a13b499c62e7839aa77dde7ebbdf3b47023214",
+        "bytes": 48377986,
+        "locations": 263,
+        "roundtrip": true,
+        "lineEndingIssues": 0
+      }
+    },
+    {
+      "name": "slave-template-registry",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "files": 1126,
+        "numericIds": 1126,
+        "collisions": 0,
+        "invalidJson": 0,
+        "embeddedIdMismatches": 0
+      }
+    },
+    {
+      "name": "distribution-byte-match",
+      "required": false,
+      "status": "SKIP",
+      "reason": "No mirror specified; this run does not verify the distribution copy"
+    },
+    {
+      "name": "patch-replay-and-idempotence",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "patches": [
+          "2026-10-22_peer_relation_zero_id_and_variants"
+        ],
+        "byteExact": true,
+        "idempotent": true
+      }
+    },
+    {
+      "name": "installed-client-smoke",
+      "required": true,
+      "status": "FAIL",
+      "error": "PowerShell check failed; see client-runner.log"
+    },
+    {
+      "name": "input-hashes-unchanged",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "files": 3
+      }
+    }
+  ],
+  "limits": [
+    "No GUI clicks or visual layout verification.",
+    "Save data is used only to prime representative state. GUI save-file loading, CRC compatibility and full saved script restoration are NOT tested.",
+    "Start is replaced only in diagnostic copies. Smoke covers lifecycle calls, not the character-selection UI or every gameplay branch.",
+    "No complete QSP syntax checker: dynamic code and all game logic are not statically proved.",
+    "Battle smoke instruments the menu dispatch only; full combat outcomes and balance are not tested."
+  ],
+  "client": {
+    "engineSha256": "f75032d79ecb58eeb7b969cd3f774d66b091fca38a360acdabd782e03a46c6e6",
+    "stateAssignments": 200133,
+    "probes": [
+      {
+        "name": "home",
+        "checkpoint": "main_screen",
+        "pass": false,
+        "reason": "Completion marker timeout",
+        "durationMs": 12200
+      },
+      {
+        "name": "newgame",
+        "checkpoint": "main_screen",
+        "pass": false,
+        "reason": "Completion marker timeout",
+        "durationMs": 12177
+      },
+      {
+        "name": "editor-slave",
+        "checkpoint": "main_screen",
+        "pass": false,
+        "reason": "Completion marker timeout",
+        "durationMs": 12183
+      },
+      {
+        "name": "editor-assistant",
+        "checkpoint": "main_screen",
+        "pass": false,
+        "reason": "Completion marker timeout",
+        "durationMs": 12185
+      },
+      {
+        "name": "cache",
+        "checkpoint": "main_screen",
+        "pass": false,
+        "reason": "Completion marker timeout",
+        "durationMs": 12162
+      },
+      {
+        "name": "daily",
+        "checkpoint": "end_day_screen",
+        "pass": false,
+        "reason": "Completion marker timeout",
+        "durationMs": 12150
+      },
+      {
+        "name": "city-weapons",
+        "checkpoint": "interaction_screen_city",
+        "pass": false,
+        "reason": "Completion marker timeout",
+        "durationMs": 12139
+      },
+      {
+        "name": "city-beauty",
+        "checkpoint": "interaction_screen_city",
+        "pass": false,
+        "reason": "Completion marker timeout",
+        "durationMs": 12189
+      },
+      {
+        "name": "battle-entry",
+        "checkpoint": "боевое_меню",
+        "pass": false,
+        "reason": "Completion marker timeout",
+        "durationMs": 12201
+      }
+    ]
+  },
+  "verdict": "FAIL",
+  "output": "G:\\Codex\\tmp\\jo9-private-feelings-release-20261022\\run-t2HVw2"
+}

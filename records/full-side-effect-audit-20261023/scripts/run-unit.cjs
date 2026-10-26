@@ -1,0 +1,12 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process');
+const repo='G:/somi/JO9sa',tmp='G:/Codex/tmp/jo9-full-audit-20261023/unit-temp';
+const out=repo+'/records/full-side-effect-audit-20261023';
+const files=['tools/qa','tools/state-editor'].flatMap(dir=>fs.readdirSync(repo+'/'+dir).filter(n=>n.endsWith('.test.cjs')).map(n=>dir+'/'+n));
+fs.mkdirSync(tmp,{recursive:true});fs.mkdirSync(out,{recursive:true});
+const r=cp.spawnSync(process.execPath,['--test','--test-reporter=tap',...files],{cwd:repo,env:{...process.env,TEMP:tmp,TMP:tmp},encoding:'utf8',maxBuffer:25*1024*1024,timeout:180000,windowsHide:true});
+const log=(r.stdout||'')+'\n'+(r.stderr||'');
+fs.writeFileSync(out+'/unit-tests.log',log);
+const summary={exitCode:r.status,error:r.error&&r.error.message,files,failures:log.split(/\r?\n/).filter(s=>s.startsWith('not ok ')),totals:log.split(/\r?\n/).filter(s=>/^# (tests|suites|pass|fail|cancelled|skipped|todo|duration_ms)\b/.test(s))};
+fs.writeFileSync(out+'/unit-tests.json',JSON.stringify(summary,null,2)+'\n');
+console.log(JSON.stringify(summary,null,2));process.exitCode=r.status===0?0:1;

@@ -1,0 +1,49 @@
+{
+  "schema": 1,
+  "sourceHash": "320ade3b114cb11cdee1c5da493f0fda7ef01e7563ab74adfe8f739410dbeda2",
+  "baselineHash": "da6b23880a93e5850c981ed74e668f34dc7fd247b1913e2adcb5b6df19eaa1c9",
+  "scenarios": 17,
+  "assertions": 46,
+  "native": [
+    {
+      "name": "flows",
+      "checkpoint": "Manual exit, unpaid day/load/finish guards, exhaustion and original one-time ledger helpers",
+      "pass": true,
+      "reason": "",
+      "durationMs": 7323
+    }
+  ],
+  "red": {
+    "expectedFailure": true,
+    "result": [
+      {
+        "name": "flows",
+        "checkpoint": "Manual exit, unpaid day/load/finish guards, exhaustion and original one-time ledger helpers",
+        "pass": false,
+        "reason": "Unexpected message before completion",
+        "durationMs": 7586
+      }
+    ]
+  },
+  "productionUnchanged": {
+    "jo9_liquidation_assets": true,
+    "jo9_liquidation_sale": true,
+    "exit": true
+  },
+  "ending": {
+    "originalDeathMacroPreserved": true,
+    "scene": "exit",
+    "image": "content/pic/bg/game_over.png"
+  },
+  "limits": [
+    "No personal saves or installed game files are written.",
+    "Direct native load handler execution verifies preserved ledger re-entry; actual GUI SAVEGAME/OPENGAME serialization is not claimed.",
+    "No pixel/UI click validation is claimed."
+  ],
+  "masks": [
+    "GT liquidation view/finish becomes GS of the same production location plus return; terminal menu GT records destination.",
+    "Only existing death macro GT exit becomes a recorder; preceding production day=0 and ending text remain.",
+    "next_day/menu_form/main_screen stop immediately after the original pending-bill guard.",
+    "load handler keeps production body but redirects terminal pending-bill GT to GS and recorder."
+  ]
+}

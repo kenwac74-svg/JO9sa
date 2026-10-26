@@ -1,0 +1,14 @@
+{
+  "id": "2026-10-26_anes_rumor_voice",
+  "before_sha256": "79f17f61720224779583bdbb6d974ec432f2da7423fdd4d89b38b0cd3c387b21",
+  "after_sha256": "9a0a5509e01c5473326e48a281b78112b5e54cda0916bcf8844a6b15fcc6ab8e",
+  "edits": [
+    {
+      "location": "jo9_buyer_rumors",
+      "field": "body",
+      "old": "*p '<div id=\"text\" style=\"color:#20160e;overflow:auto;\">[<<$npc_name[$jo9_rm_npc]>>]<br><<$jo9_rumor_pages[jo9_rumor_page]>></div>'",
+      "new": "! JO9 MOD START ANES_RUMOR_VOICE_20261026 | 2026-10-26_anes_rumor_voice\r\n! Render Anes in her established polite voice, including pages restored from an earlier save.\r\nlocal $jo9_rm_page_text = $jo9_rumor_pages[jo9_rumor_page]\r\nif $jo9_rm_provider = 'anes':\r\n $jo9_rm_page_text = replace($jo9_rm_page_text, '내가 듣기로는 ', '제가 듣기로는 ')\r\n $jo9_rm_page_text = replace($jo9_rm_page_text, '의 상태가 잘 맞는군. 이 근방에서도 눈여겨볼 만한 상대들이지. 직접 찾아가 이야기를 들어 보게.', '의 상태가 잘 맞아요. 이 근방에서도 눈여겨볼 만한 분들이에요. 직접 찾아가 이야기를 들어 보세요.')\r\n $jo9_rm_page_text = replace($jo9_rm_page_text, '에게는 지금 이 지역에서 권할 만한 고정 구매처가 떠오르지 않는군. 몸 상태나 낙인, 교육 정도를 다시 살펴보게.', '에게는 지금 이 지역에서 권할 만한 고정 구매처가 떠오르지 않네요. 몸 상태나 낙인, 교육 정도를 다시 살펴보세요.')\r\nend\r\n*p '<div id=\"text\" style=\"color:#20160e;overflow:auto;\">[<<$npc_name[$jo9_rm_npc]>>]<br><<$jo9_rm_page_text>></div>'\r\n! JO9 MOD END ANES_RUMOR_VOICE_20261026",
+      "count": 1
+    }
+  ]
+}

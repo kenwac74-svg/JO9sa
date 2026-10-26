@@ -1,0 +1,671 @@
+{
+  "id": "2026-10-23_insolvency_asset_liquidation",
+  "before_sha256": "81201e0eb964124b71fe0862ffca30e589a74d1578d7c140296574b3362760e0",
+  "after_sha256": "c50b33e24f302e949399171ef79550d770bb844b7a51f434adb85e94ae4b4bcf",
+  "edits": [
+    {
+      "location": "main_screen",
+      "field": "body",
+      "old": "ui_style = 2\r\n! JO9_SINGLE_GRIMDARK_UI_20261014",
+      "new": "! JO9 MOD START INSOLVENCY_MAIN_REENTRY_20261023 | 2026-10-23_insolvency_asset_liquidation\r\nif jo9_lq['active'] = 1:\r\n if sparks >= jo9_lq['bill']: gt 'jo9_liquidation', 'finish'\r\n if jo9_lq['manual'] = 0: gt 'jo9_liquidation', 'view'\r\nend\r\n! JO9 MOD END INSOLVENCY_MAIN_REENTRY_20261023\r\nui_style = 2\r\n! JO9_SINGLE_GRIMDARK_UI_20261014",
+      "count": 1
+    },
+    {
+      "location": "main_screen",
+      "field": "body",
+      "old": "\t\tdynamic $death, '당신은 청구서를 낼 수 없었고, 재정 문제를 해결하지 못한 탓에 조련사 길드에서 추방되었다.'",
+      "new": "! JO9 MOD START INSOLVENCY_BILL_BEGIN_20261023 | 2026-10-23_insolvency_asset_liquidation\r\n\t\tgs 'jo9_liquidation', 'begin'\r\n\t\tgt 'jo9_liquidation', 'view'\r\n! JO9 MOD END INSOLVENCY_BILL_BEGIN_20261023",
+      "count": 1
+    },
+    {
+      "location": "main_screen",
+      "field": "body",
+      "old": "if decadecount >= 10:",
+      "new": "if decadecount >= 10 and jo9_lq['active'] = 0:",
+      "count": 1
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "gs 'snk_room_diet_migrate'\r\n! JO9 MOD END J9M1558",
+      "new": "gs 'snk_room_diet_migrate'\r\n! JO9 MOD END J9M1558\r\n! JO9 MOD START INSOLVENCY_DAY_BOUNDARY_20261023 | 2026-10-23_insolvency_asset_liquidation\r\nif jo9_lq['active'] = 1:\r\n if sparks >= jo9_lq['bill']: gt 'jo9_liquidation', 'finish'\r\n gt 'jo9_liquidation', 'view'\r\nend\r\n! JO9 MOD END INSOLVENCY_DAY_BOUNDARY_20261023",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "! JO9 MOD END J9M2805",
+      "new": "! JO9 MOD END J9M2805\r\n! JO9 MOD START INSOLVENCY_MENU_SETTLEMENT_20261023 | 2026-10-23_insolvency_asset_liquidation\r\nif jo9_lq['active'] = 1 and sparks >= jo9_lq['bill']: gt 'jo9_liquidation', 'finish'\r\n! JO9 MOD END INSOLVENCY_MENU_SETTLEMENT_20261023",
+      "count": 1
+    },
+    {
+      "location": "city_menu_form",
+      "field": "body",
+      "old": "! JO9 MOD END J9M0005",
+      "new": "! JO9 MOD END J9M0005\r\n! JO9 MOD START INSOLVENCY_CITY_SETTLEMENT_20261023 | 2026-10-23_insolvency_asset_liquidation\r\nif jo9_lq['active'] = 1 and sparks >= jo9_lq['bill']: gt 'jo9_liquidation', 'finish'\r\n! JO9 MOD END INSOLVENCY_CITY_SETTLEMENT_20261023",
+      "count": 1
+    },
+    {
+      "location": "#dynamic",
+      "field": "body",
+      "old": "\tif master_energy <= -5: is_home = 1 & gt 'next_day' &! is_home = 1 to bypass menu_form ESC intercept",
+      "new": "! JO9 MOD START INSOLVENCY_PENDING_FUNDING_TURN_20261023 | 2026-10-23_insolvency_asset_liquidation\r\n\tif master_energy <= -5 and jo9_lq['active'] ! 1: is_home = 1 & gt 'next_day'\r\n\t! Keep manual funding reachable until the frozen invoice is resolved; ordinary overwork death above is unchanged.\r\n! JO9 MOD END INSOLVENCY_PENDING_FUNDING_TURN_20261023",
+      "count": 1
+    },
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "if $curloc = 'main_screen': gt 'menu_form'",
+      "new": "! JO9 MOD START INSOLVENCY_LOAD_RESTORE_20261023 | 2026-10-23_insolvency_asset_liquidation\r\nif jo9_lq['active'] = 1:\r\n gs 'interior_storage'\r\n gs 'refresh_database'\r\n gs 'interior_restore'\r\n gt 'jo9_liquidation', 'view'\r\nend\r\n! JO9 MOD END INSOLVENCY_LOAD_RESTORE_20261023\r\nif $curloc = 'main_screen': gt 'menu_form'",
+      "count": 1
+    },
+    {
+      "location": "init_game",
+      "field": "body",
+      "old": "! JO9 MOD START J9M2809 | 2026-10-10_restore_private_room_ui | changed block; context may be included",
+      "new": "! JO9 MOD START INSOLVENCY_NEW_GAME_RESET_20261023 | 2026-10-23_insolvency_asset_liquidation\r\nkillvar 'jo9_lq'\r\nkillvar 'jo9_lq_decor_state'\r\n! JO9 MOD END INSOLVENCY_NEW_GAME_RESET_20261023\r\n! JO9 MOD START J9M2809 | 2026-10-10_restore_private_room_ui | changed block; context may be included",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$study = 'basic'\r\n",
+      "new": "\t\t$study = 'basic'\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'study'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$study = 'econom'\r\n\t\tsparks -= 20\r\n",
+      "new": "\t\t$study = 'econom'\r\n\t\tsparks -= 20\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'study'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$study = 'japan'\r\n\t\tsparks -= 25\r\n",
+      "new": "\t\t$study = 'japan'\r\n\t\tsparks -= 25\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'study'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$study = 'comfy'\r\n\t\tsparks -= 25\r\n",
+      "new": "\t\t$study = 'comfy'\r\n\t\tsparks -= 25\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'study'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$study = 'fort'\r\n\t\tsparks -= 50\r\n",
+      "new": "\t\t$study = 'fort'\r\n\t\tsparks -= 50\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'study'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$study = 'modern'\r\n\t\tsparks -= 50\r\n",
+      "new": "\t\t$study = 'modern'\r\n\t\tsparks -= 50\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'study'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$study = 'classic'\r\n\t\tsparks -= 50\r\n",
+      "new": "\t\t$study = 'classic'\r\n\t\tsparks -= 50\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'study'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$study = 'victorian'\r\n\t\tsparks -= 100\r\n",
+      "new": "\t\t$study = 'victorian'\r\n\t\tsparks -= 100\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'study'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$study = 'gothic'\r\n\t\tsparks -= 100\r\n",
+      "new": "\t\t$study = 'gothic'\r\n\t\tsparks -= 100\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'study'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$study = 'elite'\r\n\t\tsparks -= 100\r\n",
+      "new": "\t\t$study = 'elite'\r\n\t\tsparks -= 100\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'study'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$study = 'slaver'\r\n\t\tsparks -= 150\r\n",
+      "new": "\t\t$study = 'slaver'\r\n\t\tsparks -= 150\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'study'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$study = 'lux'\r\n\t\tsparks -= 200\r\n",
+      "new": "\t\t$study = 'lux'\r\n\t\tsparks -= 200\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'study'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$bed = 'basic'\r\n",
+      "new": "\t\t$bed = 'basic'\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'bed'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$bed = 'econom'\r\n\t\tsparks -= 15\r\n",
+      "new": "\t\t$bed = 'econom'\r\n\t\tsparks -= 15\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'bed'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$bed = 'japan'\r\n\t\tsparks -= 25\r\n",
+      "new": "\t\t$bed = 'japan'\r\n\t\tsparks -= 25\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'bed'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$bed = 'comfy'\r\n\t\tsparks -= 25\r\n",
+      "new": "\t\t$bed = 'comfy'\r\n\t\tsparks -= 25\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'bed'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$bed = 'fort'\r\n\t\tsparks -= 30\r\n",
+      "new": "\t\t$bed = 'fort'\r\n\t\tsparks -= 30\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'bed'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$bed = 'modern'\r\n\t\tsparks -= 50\r\n",
+      "new": "\t\t$bed = 'modern'\r\n\t\tsparks -= 50\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'bed'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$bed = 'classic'\r\n\t\tsparks -= 100\r\n",
+      "new": "\t\t$bed = 'classic'\r\n\t\tsparks -= 100\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'bed'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$bed = 'slaver'\r\n\t\tsparks -= 100\r\n",
+      "new": "\t\t$bed = 'slaver'\r\n\t\tsparks -= 100\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'bed'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$bed = 'stylish'\r\n\t\tsparks -= 150\r\n",
+      "new": "\t\t$bed = 'stylish'\r\n\t\tsparks -= 150\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'bed'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$bed = 'gothic'\r\n\t\tsparks -= 150\r\n",
+      "new": "\t\t$bed = 'gothic'\r\n\t\tsparks -= 150\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'bed'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$bed = 'elite'\r\n\t\tsparks -= 150\r\n",
+      "new": "\t\t$bed = 'elite'\r\n\t\tsparks -= 150\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'bed'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$bed = 'lux'\r\n\t\tsparks -= 200\r\n",
+      "new": "\t\t$bed = 'lux'\r\n\t\tsparks -= 200\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'bed'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$kitchen = 'basic'\r\n\t\tsparks -= 20\r\n",
+      "new": "\t\t$kitchen = 'basic'\r\n\t\tsparks -= 20\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'kitchen'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$kitchen = 'econom'\r\n\t\tsparks -= 20\r\n",
+      "new": "\t\t$kitchen = 'econom'\r\n\t\tsparks -= 20\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'kitchen'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$kitchen = 'fort'\r\n\t\tsparks -= 20\r\n",
+      "new": "\t\t$kitchen = 'fort'\r\n\t\tsparks -= 20\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'kitchen'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$kitchen = 'gothic'\r\n\t\tsparks -= 50\r\n",
+      "new": "\t\t$kitchen = 'gothic'\r\n\t\tsparks -= 50\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'kitchen'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$kitchen = 'elite'\r\n\t\tsparks -= 50\r\n",
+      "new": "\t\t$kitchen = 'elite'\r\n\t\tsparks -= 50\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'kitchen'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$bath = 'basic'\r\n",
+      "new": "\t\t$bath = 'basic'\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'bath'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$bath = 'econom'\r\n\t\tsparks -= 20\r\n",
+      "new": "\t\t$bath = 'econom'\r\n\t\tsparks -= 20\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'bath'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$bath = 'fort'\r\n\t\tsparks -= 20\r\n",
+      "new": "\t\t$bath = 'fort'\r\n\t\tsparks -= 20\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'bath'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$bath = 'classic'\r\n\t\tsparks -= 50\r\n",
+      "new": "\t\t$bath = 'classic'\r\n\t\tsparks -= 50\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'bath'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$bath = 'japan'\r\n\t\tsparks -= 50\r\n",
+      "new": "\t\t$bath = 'japan'\r\n\t\tsparks -= 50\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'bath'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$bath = 'gothic'\r\n\t\tsparks -= 50\r\n",
+      "new": "\t\t$bath = 'gothic'\r\n\t\tsparks -= 50\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'bath'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$bath = 'elite'\r\n\t\tsparks -= 50\r\n",
+      "new": "\t\t$bath = 'elite'\r\n\t\tsparks -= 50\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'bath'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$bath = 'lux'\r\n\t\tsparks -= 100\r\n",
+      "new": "\t\t$bath = 'lux'\r\n\t\tsparks -= 100\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'bath'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$dungeon = 'basic'\r\n\t\tsparks -= 0\r\n",
+      "new": "\t\t$dungeon = 'basic'\r\n\t\tsparks -= 0\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'dungeon'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$dungeon = 'econom'\r\n\t\tsparks -= 20\r\n",
+      "new": "\t\t$dungeon = 'econom'\r\n\t\tsparks -= 20\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'dungeon'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$dungeon = 'fort'\r\n\t\tsparks -= 10\r\n",
+      "new": "\t\t$dungeon = 'fort'\r\n\t\tsparks -= 10\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'dungeon'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$dungeon = 'entomb'\r\n\t\tsparks -= 10\r\n",
+      "new": "\t\t$dungeon = 'entomb'\r\n\t\tsparks -= 10\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'dungeon'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$dungeon = 'classic'\r\n\t\tsparks -= 20\r\n",
+      "new": "\t\t$dungeon = 'classic'\r\n\t\tsparks -= 20\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'dungeon'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$dungeon = 'pastoral'\r\n\t\tsparks -= 20\r\n",
+      "new": "\t\t$dungeon = 'pastoral'\r\n\t\tsparks -= 20\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'dungeon'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$dungeon = 'gothic'\r\n\t\tsparks -= 20\r\n",
+      "new": "\t\t$dungeon = 'gothic'\r\n\t\tsparks -= 20\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'dungeon'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$dungeon = 'executor'\r\n\t\tsparks -= 25\r\n",
+      "new": "\t\t$dungeon = 'executor'\r\n\t\tsparks -= 25\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'dungeon'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$dungeon = 'slaver'\r\n\t\tsparks -= 25\r\n",
+      "new": "\t\t$dungeon = 'slaver'\r\n\t\tsparks -= 25\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'dungeon'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$dungeon = 'victorian'\r\n\t\tsparks -= 50\r\n",
+      "new": "\t\t$dungeon = 'victorian'\r\n\t\tsparks -= 50\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'dungeon'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$dungeon = 'elite'\r\n\t\tsparks -= 50\r\n",
+      "new": "\t\t$dungeon = 'elite'\r\n\t\tsparks -= 50\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'dungeon'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$dungeon = 'lux'\r\n\t\tsparks -= 50\r\n",
+      "new": "\t\t$dungeon = 'lux'\r\n\t\tsparks -= 50\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'dungeon'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$boudoir = 'basic'\r\n\t\tsparks -= 0\r\n",
+      "new": "\t\t$boudoir = 'basic'\r\n\t\tsparks -= 0\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'boudoir'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$boudoir = 'econom'\r\n\t\tsparks -= 10\r\n",
+      "new": "\t\t$boudoir = 'econom'\r\n\t\tsparks -= 10\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'boudoir'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$boudoir = 'modern'\r\n\t\tsparks -= 20\r\n",
+      "new": "\t\t$boudoir = 'modern'\r\n\t\tsparks -= 20\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'boudoir'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$boudoir = 'comfy'\r\n\t\tsparks -= 20\r\n",
+      "new": "\t\t$boudoir = 'comfy'\r\n\t\tsparks -= 20\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'boudoir'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$boudoir = 'magic'\r\n\t\tsparks -= 50\r\n",
+      "new": "\t\t$boudoir = 'magic'\r\n\t\tsparks -= 50\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'boudoir'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$boudoir = 'victorian'\r\n\t\tsparks -= 50\r\n",
+      "new": "\t\t$boudoir = 'victorian'\r\n\t\tsparks -= 50\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'boudoir'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$boudoir = 'slaver'\r\n\t\tsparks -= 50\r\n",
+      "new": "\t\t$boudoir = 'slaver'\r\n\t\tsparks -= 50\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'boudoir'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$boudoir = 'fort'\r\n\t\tsparks -= 100\r\n",
+      "new": "\t\t$boudoir = 'fort'\r\n\t\tsparks -= 100\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'boudoir'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$boudoir = 'elite'\r\n\t\tsparks -= 150\r\n",
+      "new": "\t\t$boudoir = 'elite'\r\n\t\tsparks -= 150\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'boudoir'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$boudoir = 'gothic'\r\n\t\tsparks -= 200\r\n",
+      "new": "\t\t$boudoir = 'gothic'\r\n\t\tsparks -= 200\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'boudoir'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$boudoir = 'lux'\r\n\t\tsparks -= 250\r\n",
+      "new": "\t\t$boudoir = 'lux'\r\n\t\tsparks -= 250\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'boudoir'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$lab = 'econom'\r\n\t\tsparks -= 20\r\n",
+      "new": "\t\t$lab = 'econom'\r\n\t\tsparks -= 20\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'lab'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$lab = 'basic'\r\n\t\tsparks -= 20\r\n",
+      "new": "\t\t$lab = 'basic'\r\n\t\tsparks -= 20\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'lab'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$lab = 'fort'\r\n\t\tsparks -= 50\r\n",
+      "new": "\t\t$lab = 'fort'\r\n\t\tsparks -= 50\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'lab'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$lab = 'gothic'\r\n\t\tsparks -= 100\r\n",
+      "new": "\t\t$lab = 'gothic'\r\n\t\tsparks -= 100\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'lab'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$lab = 'slaver'\r\n\t\tsparks -= 100\r\n",
+      "new": "\t\t$lab = 'slaver'\r\n\t\tsparks -= 100\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'lab'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$lab = 'victorian'\r\n\t\tsparks -= 100\r\n",
+      "new": "\t\t$lab = 'victorian'\r\n\t\tsparks -= 100\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'lab'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$lab = 'elite'\r\n\t\tsparks -= 100\r\n",
+      "new": "\t\t$lab = 'elite'\r\n\t\tsparks -= 100\r\n\t\t! JO9 MOD START INSOLVENCY_DECOR_CHANGE_20261023\r\n\t\tgs 'jo9_liquidation_assets', 'decor_change', 'lab'\r\n\t\t! JO9 MOD END INSOLVENCY_DECOR_CHANGE_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\tdungeon = 0\r\n\t\tif cell_state = 1",
+      "new": "\t\t! JO9 MOD START INSOLVENCY_OCCUPIED_GUARD_20261023\r\n\t\tif jo9_lq['active'] = 1:\r\n\t\t gs 'jo9_liquidation_assets', 'quote'\r\n\t\t if jo9_lq_available['dungeon'] ! 1:\r\n\t\t  msg $jo9_lq_reason['dungeon']\r\n\t\t  gt 'shop_general'\r\n\t\t end\r\n\t\tend\r\n\t\t! JO9 MOD END INSOLVENCY_OCCUPIED_GUARD_20261023\r\n\t\tdungeon = 0\r\n\t\tif cell_state = 1",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\tboudoir = 0\r\n\t\tgt 'shop_general'",
+      "new": "\t\t! JO9 MOD START INSOLVENCY_OCCUPIED_GUARD_20261023\r\n\t\tif jo9_lq['active'] = 1:\r\n\t\t gs 'jo9_liquidation_assets', 'quote'\r\n\t\t if jo9_lq_available['boudoir'] ! 1:\r\n\t\t  msg $jo9_lq_reason['boudoir']\r\n\t\t  gt 'shop_general'\r\n\t\t end\r\n\t\tend\r\n\t\t! JO9 MOD END INSOLVENCY_OCCUPIED_GUARD_20261023\r\n\t\tboudoir = 0\r\n\t\tgt 'shop_general'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\tlab = 0\r\n\t\tgt 'shop_general'",
+      "new": "\t\t! JO9 MOD START INSOLVENCY_OCCUPIED_GUARD_20261023\r\n\t\tif jo9_lq['active'] = 1:\r\n\t\t gs 'jo9_liquidation_assets', 'quote'\r\n\t\t if jo9_lq_available['lab'] ! 1:\r\n\t\t  msg $jo9_lq_reason['lab']\r\n\t\t  gt 'shop_general'\r\n\t\t end\r\n\t\tend\r\n\t\t! JO9 MOD END INSOLVENCY_OCCUPIED_GUARD_20261023\r\n\t\tlab = 0\r\n\t\tgt 'shop_general'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\tpen = 0\r\n\t\tpet_tentacle = 0",
+      "new": "\t\t! JO9 MOD START INSOLVENCY_OCCUPIED_GUARD_20261023\r\n\t\tif jo9_lq['active'] = 1:\r\n\t\t gs 'jo9_liquidation_assets', 'quote'\r\n\t\t if jo9_lq_available['pen'] ! 1:\r\n\t\t  msg $jo9_lq_reason['pen']\r\n\t\t  gt 'shop_general'\r\n\t\t end\r\n\t\tend\r\n\t\t! JO9 MOD END INSOLVENCY_OCCUPIED_GUARD_20261023\r\n\t\tpen = 0\r\n\t\tpet_tentacle = 0",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\tif farmhand_state = CONST_INT['no_slave'] and harpy_state = CONST_INT['no_slave'] and _",
+      "new": "\t\t! JO9 MOD START INSOLVENCY_OCCUPIED_GUARD_20261023\r\n\t\tif jo9_lq['active'] = 1:\r\n\t\t gs 'jo9_liquidation_assets', 'quote'\r\n\t\t if jo9_lq_available['barn'] ! 1:\r\n\t\t  msg $jo9_lq_reason['barn']\r\n\t\t  gt 'shop_general'\r\n\t\t end\r\n\t\tend\r\n\t\t! JO9 MOD END INSOLVENCY_OCCUPIED_GUARD_20261023\r\n\t\tif farmhand_state = CONST_INT['no_slave'] and harpy_state = CONST_INT['no_slave'] and _",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\tstasis_tank = 0\r\n\t\tif cell_state = 3",
+      "new": "\t\t! JO9 MOD START INSOLVENCY_OCCUPIED_GUARD_20261023\r\n\t\tif jo9_lq['active'] = 1:\r\n\t\t gs 'jo9_liquidation_assets', 'quote'\r\n\t\t if jo9_lq_available['stasis'] ! 1:\r\n\t\t  msg $jo9_lq_reason['stasis']\r\n\t\t  gt 'shop_general'\r\n\t\t end\r\n\t\tend\r\n\t\t! JO9 MOD END INSOLVENCY_OCCUPIED_GUARD_20261023\r\n\t\tstasis_tank = 0\r\n\t\tif cell_state = 3",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "if owner = 1:\r\n\t\t\tsparks += (25 * estate_cost_main[$estate])",
+      "new": "\t\t! JO9 MOD START INSOLVENCY_OCCUPIED_GUARD_20261023\r\n\t\tif jo9_lq['active'] = 1:\r\n\t\t gs 'jo9_liquidation_assets', 'quote'\r\n\t\t if jo9_lq_available['house'] ! 1:\r\n\t\t  msg $jo9_lq_reason['house']\r\n\t\t  gt 'shop_general'\r\n\t\t end\r\n\t\tend\r\n\t\t! JO9 MOD END INSOLVENCY_OCCUPIED_GUARD_20261023\r\n\t\t! JO9 MOD START INSOLVENCY_PENDING_HOUSE_PRICE_20261023\r\n\t\tif jo9_lq['active'] = 1:\r\n\t\t gs 'jo9_liquidation_assets', 'sell', 'house'\r\n\t\t gt 'shop_general'\r\n\t\tend\r\n\t\t! JO9 MOD END INSOLVENCY_PENDING_HOUSE_PRICE_20261023\r\nif owner = 1:\r\n\t\t\tsparks += (25 * estate_cost_main[$estate])",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "if interaction_city = 13211:\r\n",
+      "new": "if interaction_city = 13211:\r\n\t! JO9 MOD START INSOLVENCY_OCCUPIED_GUARD_20261023\r\n\tif jo9_lq['active'] = 1:\r\n\t gs 'jo9_liquidation_assets', 'quote'\r\n\t if jo9_lq_available['move'] ! 1:\r\n\t  msg $jo9_lq_reason['move']\r\n\t  gt 'shop_general'\r\n\t end\r\n\tend\r\n\t! JO9 MOD END INSOLVENCY_OCCUPIED_GUARD_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "if interaction_city = 13221:\r\n",
+      "new": "if interaction_city = 13221:\r\n\t! JO9 MOD START INSOLVENCY_OCCUPIED_GUARD_20261023\r\n\tif jo9_lq['active'] = 1:\r\n\t gs 'jo9_liquidation_assets', 'quote'\r\n\t if jo9_lq_available['move'] ! 1:\r\n\t  msg $jo9_lq_reason['move']\r\n\t  gt 'shop_general'\r\n\t end\r\n\tend\r\n\t! JO9 MOD END INSOLVENCY_OCCUPIED_GUARD_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "if interaction_city = 13231:\r\n",
+      "new": "if interaction_city = 13231:\r\n\t! JO9 MOD START INSOLVENCY_OCCUPIED_GUARD_20261023\r\n\tif jo9_lq['active'] = 1:\r\n\t gs 'jo9_liquidation_assets', 'quote'\r\n\t if jo9_lq_available['move'] ! 1:\r\n\t  msg $jo9_lq_reason['move']\r\n\t  gt 'shop_general'\r\n\t end\r\n\tend\r\n\t! JO9 MOD END INSOLVENCY_OCCUPIED_GUARD_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "if interaction_city = 13241:\r\n",
+      "new": "if interaction_city = 13241:\r\n\t! JO9 MOD START INSOLVENCY_OCCUPIED_GUARD_20261023\r\n\tif jo9_lq['active'] = 1:\r\n\t gs 'jo9_liquidation_assets', 'quote'\r\n\t if jo9_lq_available['move'] ! 1:\r\n\t  msg $jo9_lq_reason['move']\r\n\t  gt 'shop_general'\r\n\t end\r\n\tend\r\n\t! JO9 MOD END INSOLVENCY_OCCUPIED_GUARD_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "if interaction_city = 13251:\r\n",
+      "new": "if interaction_city = 13251:\r\n\t! JO9 MOD START INSOLVENCY_OCCUPIED_GUARD_20261023\r\n\tif jo9_lq['active'] = 1:\r\n\t gs 'jo9_liquidation_assets', 'quote'\r\n\t if jo9_lq_available['move'] ! 1:\r\n\t  msg $jo9_lq_reason['move']\r\n\t  gt 'shop_general'\r\n\t end\r\n\tend\r\n\t! JO9 MOD END INSOLVENCY_OCCUPIED_GUARD_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "IF interaction_city = 13261:\r\n",
+      "new": "IF interaction_city = 13261:\r\n\t! JO9 MOD START INSOLVENCY_OCCUPIED_GUARD_20261023\r\n\tif jo9_lq['active'] = 1:\r\n\t gs 'jo9_liquidation_assets', 'quote'\r\n\t if jo9_lq_available['move'] ! 1:\r\n\t  msg $jo9_lq_reason['move']\r\n\t  gt 'shop_general'\r\n\t end\r\n\tend\r\n\t! JO9 MOD END INSOLVENCY_OCCUPIED_GUARD_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "IF interaction_city = 13271:\r\n",
+      "new": "IF interaction_city = 13271:\r\n\t! JO9 MOD START INSOLVENCY_OCCUPIED_GUARD_20261023\r\n\tif jo9_lq['active'] = 1:\r\n\t gs 'jo9_liquidation_assets', 'quote'\r\n\t if jo9_lq_available['move'] ! 1:\r\n\t  msg $jo9_lq_reason['move']\r\n\t  gt 'shop_general'\r\n\t end\r\n\tend\r\n\t! JO9 MOD END INSOLVENCY_OCCUPIED_GUARD_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "IF interaction_city = 13281:\r\n",
+      "new": "IF interaction_city = 13281:\r\n\t! JO9 MOD START INSOLVENCY_OCCUPIED_GUARD_20261023\r\n\tif jo9_lq['active'] = 1:\r\n\t gs 'jo9_liquidation_assets', 'quote'\r\n\t if jo9_lq_available['move'] ! 1:\r\n\t  msg $jo9_lq_reason['move']\r\n\t  gt 'shop_general'\r\n\t end\r\n\tend\r\n\t! JO9 MOD END INSOLVENCY_OCCUPIED_GUARD_20261023\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "IF interaction_city = 13301:\r\n",
+      "new": "IF interaction_city = 13301:\r\n\t! JO9 MOD START INSOLVENCY_OCCUPIED_GUARD_20261023\r\n\tif jo9_lq['active'] = 1:\r\n\t gs 'jo9_liquidation_assets', 'quote'\r\n\t if jo9_lq_available['move'] ! 1:\r\n\t  msg $jo9_lq_reason['move']\r\n\t  gt 'shop_general'\r\n\t end\r\n\tend\r\n\t! JO9 MOD END INSOLVENCY_OCCUPIED_GUARD_20261023\r\n",
+      "count": 1
+    }
+  ],
+  "add_locations": [
+    {
+      "name": "jo9_liquidation",
+      "desc": "",
+      "body": "! JO9 MOD START INSOLVENCY_FLOW_20261023\r\n! A pending bill is a snapshot; only settle may deduct it.\r\nlocal $jo9_lq_action = $args[0]\r\nif jo9_lq['active'] = 1 and snk_room_target > 0: gs 'snk_room_bridge', 'leave'\r\nif $jo9_lq_action = 'begin':\r\n if jo9_lq['active'] = 0 and final_payment > sparks:\r\n  jo9_lq['active'] = 1\r\n  jo9_lq['bill'] = max(0, final_payment)\r\n  jo9_lq['day'] = day\r\n  jo9_lq['page'] = 0\r\n  jo9_lq['manual'] = 0\r\n  jo9_lq['settled'] = 0\r\n  $jo9_lq_notice = ''\r\n end\r\n exit\r\nend\r\nif $jo9_lq_action = 'settle':\r\n if jo9_lq['active'] = 1 and sparks >= jo9_lq['bill']:\r\n  sparks -= jo9_lq['bill']\r\n  jo9_lq['active'] = 0\r\n  jo9_lq['manual'] = 0\r\n  jo9_lq['settled'] = 1\r\n end\r\n exit\r\nend\r\nif $jo9_lq_action = 'finish':\r\n gs 'jo9_liquidation', 'settle'\r\n if jo9_lq['active'] = 1: gt 'jo9_liquidation', 'view'\r\n if jo9_lq['settled'] = 1:\r\n  jo9_lq['settled'] = 0\r\n  gs 'interior_storage'\r\n  gs 'refresh_database'\r\n  gs 'interior_restore'\r\n end\r\n gt 'menu_form'\r\nend\r\nif jo9_lq['active'] ! 1: gt 'menu_form'\r\nif $jo9_lq_action = 'manual':\r\n jo9_lq['manual'] = 1\r\n is_home = 1\r\n city_form = estate_location[$estate]\r\n city_district = -1\r\n menu_form = 0\r\n gt 'menu_form'\r\nend\r\nif $jo9_lq_action = 'next': jo9_lq['page'] = min(14, jo9_lq['page'] + 1)\r\nif $jo9_lq_action = 'previous': jo9_lq['page'] = max(0, jo9_lq['page'] - 1)\r\nif $jo9_lq_action = 'restart': jo9_lq['page'] = 0\r\nif $jo9_lq_action = 'dispose':\r\n gs 'jo9_liquidation_assets', 'sell', $args[1]\r\n if jo9_lq_sold = 1:\r\n  $jo9_lq_notice = '정리를 마쳤다. <<jo9_lq_paid>>스파크를 회수했다.'\r\n else\r\n  $jo9_lq_notice = '지금은 정리할 수 없다. 자산과 입주 상태를 다시 확인하자.'\r\n end\r\nend\r\nif $jo9_lq_action = 'sell_person':\r\n gs 'jo9_liquidation_sale', 'sell', $args[1], args[2], args[3], $args[4], $args[5]\r\n if jo9_lq_sale_sold = 1:\r\n  $jo9_lq_notice = '거래를 마쳤다. 이제 남은 비용을 확인하자.'\r\n else\r\n  $jo9_lq_notice = '거래 조건이 달라졌다. 팔 수 있는 상대와 금액을 다시 살펴보자.'\r\n end\r\nend\r\nif $jo9_lq_action = 'abandon' and jo9_lq['page'] = 14:\r\n dynamic $death, '당신은 남은 자산으로도 자금을 마련하지 못했고, 결국 청구서를 해결하지 못한 채 조련사 길드에서 추방되었다.'\r\n exit\r\nend\r\nif sparks >= jo9_lq['bill'] and ($jo9_lq_action = 'dispose' or $jo9_lq_action = 'sell_person'): gt 'jo9_liquidation', 'finish'\r\njo9_lq['manual'] = 0\r\njo9_lq['page'] = max(0, min(14, jo9_lq['page']))\r\ngs 'jo9_liquidation_assets', 'quote'\r\nlocal $jo9_lq_key\r\nlocal $jo9_lq_title\r\nlocal $jo9_lq_prose\r\nlocal $jo9_lq_choice\r\nlocal jo9_lq_missing = max(0, jo9_lq['bill'] - sparks)\r\nif jo9_lq['page'] = 0:\r\n $jo9_lq_key = 'decor'\r\n $jo9_lq_title = '실내장식'\r\n $jo9_lq_prose = '이번 비용을 낼 돈이 모자란다. 그렇다고 여기서 모든 것을 포기할 수는 없다. 가지고 있는 장식부터 팔아 자금을 마련해 보자. 장식을 정리하면 각 방은 가장 검소한 모습으로 돌아간다.'\r\n $jo9_lq_choice = '실내장식을 정리한다'\r\nelseif jo9_lq['page'] = 1:\r\n $jo9_lq_key = 'lab'\r\n $jo9_lq_title = '연구실'\r\n $jo9_lq_prose = '당분간 연구실을 쓰지 않는 편이 낫겠다. 임대 계약을 끝내면 앞으로 이곳의 유지비를 내지 않아도 된다. 가지고 있는 재료까지 버릴 필요는 없다.'\r\n $jo9_lq_choice = '연구실 임대를 해지한다'\r\nelseif jo9_lq['page'] = 2:\r\n $jo9_lq_key = 'boudoir'\r\n $jo9_lq_title = '별실'\r\n $jo9_lq_prose = '별실도 잠시 포기할 수 있다. 이미 사용한 기간의 비용은 남지만, 앞으로의 지출은 줄일 수 있을 것이다.'\r\n $jo9_lq_choice = '별실 임대를 해지한다'\r\nelseif jo9_lq['page'] = 3:\r\n $jo9_lq_key = 'pen'\r\n $jo9_lq_title = '안개괴물 사육장'\r\n $jo9_lq_prose = '비어 있는 사육장이라면 정리해도 괜찮겠다. 안에 안개괴물이 남아 있다면 먼저 어떻게 할지 직접 결정해야 한다.'\r\n $jo9_lq_choice = '비어 있는 사육장을 정리한다'\r\nelseif jo9_lq['page'] >= 4 and jo9_lq['page'] <= 7:\r\n local jo9_lq_room = 8 - jo9_lq['page']\r\n $jo9_lq_key = 'room' + str(jo9_lq_room)\r\n $jo9_lq_title = '개인실 ' + str(jo9_lq_room)\r\n $jo9_lq_prose = '비어 있는 개인실을 한 칸 철거하면 공사비의 절반을 돌려받을 수 있다. 입주자가 있는 방은 건드릴 수 없다. 방을 정리하려면 먼저 입주자를 직접 옮겨야 한다.'\r\n $jo9_lq_choice = '비어 있는 개인실을 철거한다'\r\nelseif jo9_lq['page'] = 8:\r\n $jo9_lq_key = 'stasis'\r\n $jo9_lq_title = '동면 장치'\r\n $jo9_lq_prose = '동면 장치도 반납할 수 있다. 다만 보관 중인 인물이 있다면 여기서 임의로 꺼내거나 장치를 정리할 수는 없다. 먼저 직접 보관 상태를 정리해야 한다.'\r\n $jo9_lq_choice = '빈 동면 장치를 반납한다'\r\nelseif jo9_lq['page'] = 9:\r\n $jo9_lq_key = 'dungeon'\r\n $jo9_lq_title = '감옥'\r\n $jo9_lq_prose = '감옥을 유지하는 데도 돈이 든다. 안이 완전히 비어 있다면 임대를 끝낼 수 있다. 누군가 남아 있다면 먼저 직접 옮겨야 한다.'\r\n $jo9_lq_choice = '비어 있는 감옥의 임대를 해지한다'\r\nelseif jo9_lq['page'] = 10:\r\n $jo9_lq_key = 'barn'\r\n $jo9_lq_title = '축사'\r\n $jo9_lq_prose = '축사도 아무도 남아 있지 않을 때만 정리할 수 있다. 안의 인물들을 어디로 보낼지는 내가 직접 결정해야 한다.'\r\n $jo9_lq_choice = '비어 있는 축사의 임대를 해지한다'\r\nelseif jo9_lq['page'] = 11:\r\n $jo9_lq_key = 'house'\r\n $jo9_lq_title = '현재 거처'\r\n if owner = 1:\r\n  $jo9_lq_prose = '이 집을 팔고 빈민가로 돌아가는 방법도 있다. 집값은 이 지역의 매매 시세를 따를 것이다. 부속 시설과 개인실에 남아 있는 인물부터 직접 정리해야 한다.'\r\n  $jo9_lq_choice = '집을 팔고 빈민가로 이주한다'\r\n else\r\n  $jo9_lq_prose = '지금 집의 임대를 끝내고 빈민가로 돌아가면 앞으로의 주거비를 줄일 수 있다. 내 소유의 집은 아니니 집값을 받을 수는 없다. 부속 시설과 개인실부터 비워 두어야 한다.'\r\n  $jo9_lq_choice = '주택 임대를 끝내고 빈민가로 이주한다'\r\n end\r\nelseif jo9_lq['page'] = 12 or jo9_lq['page'] = 13:\r\n if jo9_lq['page'] = 12:\r\n  $jo9_lq_key = 'slave'\r\n  $jo9_lq_title = '노예 매각'\r\n else\r\n  $jo9_lq_key = 'assistant'\r\n  $jo9_lq_title = '조수 매각'\r\n end\r\n gs 'jo9_liquidation_sale', 'query', $jo9_lq_key\r\n $jo9_lq_prose = $jo9_lq_sale_reason[$jo9_lq_key]\r\n if jo9_lq_sale_price[$jo9_lq_key] > 0:\r\n  $jo9_lq_prose = '노예 납품 의뢰를 노리는 경쟁 노예상에게 <<$jo9_lq_sale_actor[$jo9_lq_key]>>를 급히 넘길 수는 있겠다. 제값의 절반밖에 못 받겠지만, 지금은 당장 쓸 돈이 필요하다.'\r\n  $jo9_lq_choice = '<<$jo9_lq_sale_actor[$jo9_lq_key]>>를 경쟁 노예상에게 급매한다 (<<jo9_lq_sale_price[$jo9_lq_key]>>스파크)'\r\n end\r\nelse\r\n $jo9_lq_title = '남은 방법'\r\n $jo9_lq_prose = '살펴본 것만으로 돈이 마련되지 않는다면 직접 다른 방법을 찾아야 한다. 기존 대출이나 다른 거래를 알아보자. 이 비용을 해결하기 전에는 다음 날로 넘어갈 수 없다.'\r\nend\r\n*clr & cla & killobj\r\nkillvar '$menu_links'\r\ngs 'main_layout'\r\n*p '<div style=\"position:absolute;left:48px;top:58px;width:690px;height:658px;overflow:auto;color:#20160e;font-size:20px;line-height:1.6;\"><h2>당장의 고비</h2><p><b><<$jo9_lq_title>></b> · <<jo9_lq[\"page\"] + 1>> / 15</p>'\r\n*p '<p>이번 비용 <<jo9_lq[\"bill\"]>>스파크 · 가진 돈 <<sparks>>스파크<br>아직 <<jo9_lq_missing>>스파크가 모자란다.</p>'\r\nif $jo9_lq_notice ! '': *p '<p><<$jo9_lq_notice>></p>'\r\n*p '<p><<$jo9_lq_prose>></p>'\r\nif sparks >= jo9_lq['bill']: *p '<p>▶ <a style=\"color:#6a2904;\" href=\"EXEC:gt ''jo9_liquidation'',''finish''\">청구액을 지불하고 돌아간다</a></p>'\r\nif jo9_lq['page'] <= 11:\r\n if jo9_lq_available[$jo9_lq_key] = 1:\r\n  *p '<p>지금 정리하면 <<jo9_lq_value[$jo9_lq_key]>>스파크를 회수할 수 있다.</p>'\r\n  if jo9_lq_value[$jo9_lq_key] = 0: *p '<p>이번에 이미 청구된 비용은 줄지 않지만, 다음 결산부터 유지비가 들지 않는다.</p>'\r\n  *p '<p>▶ <a style=\"color:#6a2904;\" href=\"EXEC:gt ''jo9_liquidation'',''dispose'',''<<$jo9_lq_key>>''\"><<$jo9_lq_choice>></a></p>'\r\n else\r\n  *p '<p><<$jo9_lq_reason[$jo9_lq_key]>></p>'\r\n end\r\nelseif jo9_lq['page'] = 12 or jo9_lq['page'] = 13:\r\n if jo9_lq_sale_price[$jo9_lq_key] > 0: *p '<p>▶ <a style=\"color:#6a2904;\" href=\"EXEC:gt ''jo9_liquidation'',''sell_person'',''<<$jo9_lq_key>>'',<<jo9_lq_sale_price[$jo9_lq_key]>>,<<jo9_lq_sale_type[$jo9_lq_key]>>,''<<$jo9_lq_sale_id[$jo9_lq_key]>>'',$jo9_lq_sale_actor[''<<$jo9_lq_key>>'']\"><<$jo9_lq_choice>></a></p>'\r\nend\r\nif jo9_lq['page'] < 14: *p '<p>▶ <a style=\"color:#6a2904;\" href=\"EXEC:gt ''jo9_liquidation'',''next''\">다음 자산을 살펴본다</a></p>'\r\nif jo9_lq['page'] > 0: *p '<p>▶ <a style=\"color:#6a2904;\" href=\"EXEC:gt ''jo9_liquidation'',''previous''\">이전 자산을 다시 살펴본다</a></p>'\r\n*p '<p>▶ <a style=\"color:#6a2904;\" href=\"EXEC:gt ''jo9_liquidation'',''manual''\">다른 방법으로 자금을 마련한다</a></p>'\r\nif jo9_lq['page'] = 14:\r\n *p '<p>▶ <a style=\"color:#6a2904;\" href=\"EXEC:gt ''jo9_liquidation'',''restart''\">처분할 자산을 처음부터 다시 살펴본다</a></p>'\r\n *p '<p>▶ <a style=\"color:#6a2904;\" href=\"EXEC:gt ''jo9_liquidation'',''abandon''\">끝내 자금을 마련하지 못했다</a></p>'\r\nend\r\n*p '</div>'\r\n! JO9 MOD END INSOLVENCY_FLOW_20261023\r\n",
+      "actions": []
+    },
+    {
+      "name": "jo9_liquidation_assets",
+      "desc": "",
+      "body": "! JO9 MOD START INSOLVENCY_ASSETS_20261023\r\n! quote is read-only; sell always re-quotes immediately before mutation.\r\n! decor_state: 0 current installed decor remains, 1 already recovered.\r\nlocal $jo9_ls_action = $args[0]\r\nlocal $jo9_ls_target = $args[1]\r\nlocal jo9_ls_amount = 0\r\nlocal jo9_ls_iced = 0\r\n\r\nif $jo9_ls_action = 'decor_change':\r\n jo9_lq_decor_state[$jo9_ls_target] = 0\r\n exit\r\nend\r\n\r\nif $jo9_ls_action = 'sell':\r\n jo9_lq_sold = 0\r\n jo9_lq_paid = 0\r\n gs 'jo9_liquidation_assets', 'quote'\r\n if jo9_lq_available[$jo9_ls_target] ! 1: exit\r\n jo9_ls_amount = jo9_lq_value[$jo9_ls_target]\r\n if $jo9_ls_target = 'decor':\r\n  if jo9_lq_value['decor_study'] > 0:\r\n   $study = 'basic'\r\n   jo9_lq_decor_state['study'] = 1\r\n   $bg['study'] = $interior_study[$study]\r\n   $bg['home_lux'] = $interior_study_large[$study]\r\n   $place_info['study'] = $interior_study_info[$study]\r\n  end\r\n  if jo9_lq_value['decor_bed'] > 0:\r\n   $bed = 'basic'\r\n   jo9_lq_decor_state['bed'] = 1\r\n   $bg['bedroom'] = $interior_bed[$bed]\r\n   $bg['bedroom_lux'] = $interior_bed_large[$bed]\r\n   $place_info['bedroom'] = $interior_bed_info[$bed]\r\n  end\r\n  if jo9_lq_value['decor_kitchen'] > 0:\r\n   $kitchen = 'basic'\r\n   jo9_lq_decor_state['kitchen'] = 1\r\n   $bg['kitchen'] = $interior_kitchen[$kitchen]\r\n   $bg['kitchen_lux'] = $interior_kitchen_large[$kitchen]\r\n   $place_info['kitchen'] = $interior_kitchen_info[$kitchen]\r\n  end\r\n  if jo9_lq_value['decor_bath'] > 0:\r\n   $bath = 'basic'\r\n   jo9_lq_decor_state['bath'] = 1\r\n   $bg['bathroom'] = $interior_bath[$bath]\r\n   $bg['bathroom_lux'] = $interior_bath_large[$bath]\r\n   $place_info['bathroom'] = $interior_bath_info[$bath]\r\n  end\r\n  if jo9_lq_value['decor_dungeon'] > 0:\r\n   $dungeon = 'basic'\r\n   jo9_lq_decor_state['dungeon'] = 1\r\n   $bg['dungeon'] = $interior_dungeon[$dungeon]\r\n   $bg['dungeon_lux'] = $interior_dungeon_large[$dungeon]\r\n   $place_info['dungeon'] = $interior_dungeon_info[$dungeon]\r\n  end\r\n  if jo9_lq_value['decor_boudoir'] > 0:\r\n   $boudoir = 'basic'\r\n   jo9_lq_decor_state['boudoir'] = 1\r\n   $bg['boudoir'] = $interior_boudoir[$boudoir]\r\n   $bg['boudoir_lux'] = $interior_boudoir_large[$boudoir]\r\n   $place_info['boudoir'] = $interior_boudoir_info[$boudoir]\r\n  end\r\n  if jo9_lq_value['decor_lab'] > 0:\r\n   $lab = 'basic'\r\n   jo9_lq_decor_state['lab'] = 1\r\n   $bg['lab'] = $interior_lab[$lab]\r\n   $bg['lab_lux'] = $interior_lab_large[$lab]\r\n   $place_info['lab'] = $interior_lab_info[$lab]\r\n  end\r\n elseif $jo9_ls_target = 'room4':\r\n  kulaconstruct = 3\r\n elseif $jo9_ls_target = 'room3':\r\n  kulaconstruct = 2\r\n elseif $jo9_ls_target = 'room2':\r\n  kulaconstruct = 1\r\n elseif $jo9_ls_target = 'room1':\r\n  kulaconstruct = 0\r\n elseif $jo9_ls_target = 'lab':\r\n  lab = 0\r\n elseif $jo9_ls_target = 'boudoir':\r\n  boudoir = 0\r\n elseif $jo9_ls_target = 'dungeon':\r\n  dungeon = 0\r\n  if cell_state = 1: cell_state = 0\r\n elseif $jo9_ls_target = 'barn':\r\n  barn = 0\r\n  if cell_state = 2: cell_state = 0\r\n elseif $jo9_ls_target = 'pen':\r\n  pen = 0\r\n elseif $jo9_ls_target = 'stasis':\r\n  stasis_tank = 0\r\n  if cell_state = 3: cell_state = 0\r\n elseif $jo9_ls_target = 'house':\r\n  owner = 0\r\n  if slums_shakedown ! 0 and day > slums_shakedown + 100: slums_shakedown = day - 100\r\n  $estate = 'slum_house'\r\n  $interior = 'slum_house'\r\n  gs 'new_estate'\r\n else\r\n  exit\r\n end\r\n sparks += jo9_ls_amount\r\n jo9_lq_paid = jo9_ls_amount\r\n jo9_lq_sold = 1\r\n exit\r\nend\r\n\r\nif $jo9_ls_action ! 'quote': exit\r\nkillvar 'jo9_lq_value'\r\nkillvar 'jo9_lq_available'\r\nkillvar '$jo9_lq_reason'\r\njo9_ls_amount = 0\r\nif ($estate ! '' and $estate ! 'slum_house') and jo9_lq_decor_state['study'] = 0:\r\n if $study = 'basic': jo9_ls_amount = 0\r\n if $study = 'econom': jo9_ls_amount = 20\r\n if $study = 'japan': jo9_ls_amount = 25\r\n if $study = 'comfy': jo9_ls_amount = 25\r\n if $study = 'fort': jo9_ls_amount = 50\r\n if $study = 'modern': jo9_ls_amount = 50\r\n if $study = 'classic': jo9_ls_amount = 50\r\n if $study = 'victorian': jo9_ls_amount = 100\r\n if $study = 'gothic': jo9_ls_amount = 100\r\n if $study = 'elite': jo9_ls_amount = 100\r\n if $study = 'slaver': jo9_ls_amount = 150\r\n if $study = 'lux': jo9_ls_amount = 200\r\nend\r\njo9_lq_value['decor_study'] = max(0, jo9_ls_amount / 2)\r\njo9_lq_value['decor'] += jo9_lq_value['decor_study']\r\njo9_ls_amount = 0\r\nif ($estate ! '' and $estate ! 'slum_house') and jo9_lq_decor_state['bed'] = 0:\r\n if $bed = 'basic': jo9_ls_amount = 0\r\n if $bed = 'econom': jo9_ls_amount = 15\r\n if $bed = 'japan': jo9_ls_amount = 25\r\n if $bed = 'comfy': jo9_ls_amount = 25\r\n if $bed = 'fort': jo9_ls_amount = 30\r\n if $bed = 'modern': jo9_ls_amount = 50\r\n if $bed = 'classic': jo9_ls_amount = 100\r\n if $bed = 'slaver': jo9_ls_amount = 100\r\n if $bed = 'stylish': jo9_ls_amount = 150\r\n if $bed = 'gothic': jo9_ls_amount = 150\r\n if $bed = 'elite': jo9_ls_amount = 150\r\n if $bed = 'lux': jo9_ls_amount = 200\r\nend\r\njo9_lq_value['decor_bed'] = max(0, jo9_ls_amount / 2)\r\njo9_lq_value['decor'] += jo9_lq_value['decor_bed']\r\njo9_ls_amount = 0\r\nif (kitchen > 0) and jo9_lq_decor_state['kitchen'] = 0:\r\n if $kitchen = 'basic': jo9_ls_amount = 20\r\n if $kitchen = 'econom': jo9_ls_amount = 20\r\n if $kitchen = 'fort': jo9_ls_amount = 20\r\n if $kitchen = 'gothic': jo9_ls_amount = 50\r\n if $kitchen = 'elite': jo9_ls_amount = 50\r\nend\r\njo9_lq_value['decor_kitchen'] = max(0, jo9_ls_amount / 2)\r\njo9_lq_value['decor'] += jo9_lq_value['decor_kitchen']\r\njo9_ls_amount = 0\r\nif (bath > 0) and jo9_lq_decor_state['bath'] = 0:\r\n if $bath = 'basic': jo9_ls_amount = 0\r\n if $bath = 'econom': jo9_ls_amount = 20\r\n if $bath = 'fort': jo9_ls_amount = 20\r\n if $bath = 'classic': jo9_ls_amount = 50\r\n if $bath = 'japan': jo9_ls_amount = 50\r\n if $bath = 'gothic': jo9_ls_amount = 50\r\n if $bath = 'elite': jo9_ls_amount = 50\r\n if $bath = 'lux': jo9_ls_amount = 100\r\nend\r\njo9_lq_value['decor_bath'] = max(0, jo9_ls_amount / 2)\r\njo9_lq_value['decor'] += jo9_lq_value['decor_bath']\r\njo9_ls_amount = 0\r\nif (dungeon > 0) and jo9_lq_decor_state['dungeon'] = 0:\r\n if $dungeon = 'basic': jo9_ls_amount = 0\r\n if $dungeon = 'econom': jo9_ls_amount = 20\r\n if $dungeon = 'fort': jo9_ls_amount = 10\r\n if $dungeon = 'entomb': jo9_ls_amount = 10\r\n if $dungeon = 'classic': jo9_ls_amount = 20\r\n if $dungeon = 'pastoral': jo9_ls_amount = 20\r\n if $dungeon = 'gothic': jo9_ls_amount = 20\r\n if $dungeon = 'executor': jo9_ls_amount = 25\r\n if $dungeon = 'slaver': jo9_ls_amount = 25\r\n if $dungeon = 'victorian': jo9_ls_amount = 50\r\n if $dungeon = 'elite': jo9_ls_amount = 50\r\n if $dungeon = 'lux': jo9_ls_amount = 50\r\nend\r\njo9_lq_value['decor_dungeon'] = max(0, jo9_ls_amount / 2)\r\njo9_lq_value['decor'] += jo9_lq_value['decor_dungeon']\r\njo9_ls_amount = 0\r\nif (boudoir > 0) and jo9_lq_decor_state['boudoir'] = 0:\r\n if $boudoir = 'basic': jo9_ls_amount = 0\r\n if $boudoir = 'econom': jo9_ls_amount = 10\r\n if $boudoir = 'modern': jo9_ls_amount = 20\r\n if $boudoir = 'comfy': jo9_ls_amount = 20\r\n if $boudoir = 'magic': jo9_ls_amount = 50\r\n if $boudoir = 'victorian': jo9_ls_amount = 50\r\n if $boudoir = 'slaver': jo9_ls_amount = 50\r\n if $boudoir = 'fort': jo9_ls_amount = 100\r\n if $boudoir = 'elite': jo9_ls_amount = 150\r\n if $boudoir = 'gothic': jo9_ls_amount = 200\r\n if $boudoir = 'lux': jo9_ls_amount = 250\r\nend\r\njo9_lq_value['decor_boudoir'] = max(0, jo9_ls_amount / 2)\r\njo9_lq_value['decor'] += jo9_lq_value['decor_boudoir']\r\njo9_ls_amount = 0\r\nif (lab > 0) and jo9_lq_decor_state['lab'] = 0:\r\n if $lab = 'econom': jo9_ls_amount = 20\r\n if $lab = 'basic': jo9_ls_amount = 20\r\n if $lab = 'fort': jo9_ls_amount = 50\r\n if $lab = 'gothic': jo9_ls_amount = 100\r\n if $lab = 'slaver': jo9_ls_amount = 100\r\n if $lab = 'victorian': jo9_ls_amount = 100\r\n if $lab = 'elite': jo9_ls_amount = 100\r\nend\r\njo9_lq_value['decor_lab'] = max(0, jo9_ls_amount / 2)\r\njo9_lq_value['decor'] += jo9_lq_value['decor_lab']\r\njo9_lq_available['decor'] = iif(jo9_lq_value['decor'] > 0, 1, 0)\r\nif jo9_lq_available['decor'] = 0: $jo9_lq_reason['decor'] = '지금 처분해서 돈을 마련할 수 있는 실내장식은 없다.'\r\n\r\nif kulaconstruct >= 1:\r\n if room1_state ! CONST_INT['no_slave']:\r\n  $jo9_lq_reason['room1'] = '개인실 1에는 아직 입주자가 있다. 직접 방을 비운 뒤에 철거해야 한다.'\r\n elseif kulaconstruct ! 1:\r\n  $jo9_lq_reason['room1'] = '가장 나중에 증축한 개인실부터 차례로 철거해야 한다.'\r\n else\r\n  jo9_lq_available['room1'] = 1\r\n  jo9_lq_value['room1'] = 2500\r\n end\r\nelse\r\n $jo9_lq_reason['room1'] = '아직 증축하지 않은 개인실이다.'\r\nend\r\n\r\nif kulaconstruct >= 2:\r\n if room2_state ! CONST_INT['no_slave']:\r\n  $jo9_lq_reason['room2'] = '개인실 2에는 아직 입주자가 있다. 직접 방을 비운 뒤에 철거해야 한다.'\r\n elseif kulaconstruct ! 2:\r\n  $jo9_lq_reason['room2'] = '가장 나중에 증축한 개인실부터 차례로 철거해야 한다.'\r\n else\r\n  jo9_lq_available['room2'] = 1\r\n  jo9_lq_value['room2'] = 1000\r\n end\r\nelse\r\n $jo9_lq_reason['room2'] = '아직 증축하지 않은 개인실이다.'\r\nend\r\n\r\nif kulaconstruct >= 3:\r\n if room3_state ! CONST_INT['no_slave']:\r\n  $jo9_lq_reason['room3'] = '개인실 3에는 아직 입주자가 있다. 직접 방을 비운 뒤에 철거해야 한다.'\r\n elseif kulaconstruct ! 3:\r\n  $jo9_lq_reason['room3'] = '가장 나중에 증축한 개인실부터 차례로 철거해야 한다.'\r\n else\r\n  jo9_lq_available['room3'] = 1\r\n  jo9_lq_value['room3'] = 2500\r\n end\r\nelse\r\n $jo9_lq_reason['room3'] = '아직 증축하지 않은 개인실이다.'\r\nend\r\n\r\nif kulaconstruct >= 4:\r\n if room4_state ! CONST_INT['no_slave']:\r\n  $jo9_lq_reason['room4'] = '개인실 4에는 아직 입주자가 있다. 직접 방을 비운 뒤에 철거해야 한다.'\r\n elseif kulaconstruct ! 4:\r\n  $jo9_lq_reason['room4'] = '가장 나중에 증축한 개인실부터 차례로 철거해야 한다.'\r\n else\r\n  jo9_lq_available['room4'] = 1\r\n  jo9_lq_value['room4'] = 5000\r\n end\r\nelse\r\n $jo9_lq_reason['room4'] = '아직 증축하지 않은 개인실이다.'\r\nend\r\n\r\n! Facilities are rentals billed for the previous decade, not owned buildings.\r\n! At the failed billing boundary there is no unused prepaid period to refund.\r\nif lab > 0:\r\n jo9_lq_available['lab'] = 1\r\nelse\r\n $jo9_lq_reason['lab'] = '사용 중인 연구실이 없다.'\r\nend\r\nif boudoir > 0:\r\n jo9_lq_available['boudoir'] = 1\r\nelse\r\n $jo9_lq_reason['boudoir'] = '사용 중인 별실이 없다.'\r\nend\r\nif dungeon > 0:\r\n if prisoner_state = CONST_INT['no_slave']:\r\n  jo9_lq_available['dungeon'] = 1\r\n else\r\n  $jo9_lq_reason['dungeon'] = '감옥에 사람이 남아 있다. 직접 비운 뒤에 시설을 정리해야 한다.'\r\n end\r\nelse\r\n $jo9_lq_reason['dungeon'] = '사용 중인 감옥이 없다.'\r\nend\r\nif barn > 0:\r\n if farmhand_state = CONST_INT['no_slave'] and cow_state = CONST_INT['no_slave'] and harpy_state = CONST_INT['no_slave'] and pig_state = CONST_INT['no_slave']:\r\n  jo9_lq_available['barn'] = 1\r\n else\r\n  $jo9_lq_reason['barn'] = '외양간에 사람이 남아 있다. 직접 비운 뒤에 시설을 정리해야 한다.'\r\n end\r\nelse\r\n $jo9_lq_reason['barn'] = '사용 중인 외양간이 없다.'\r\nend\r\nif pen > 0:\r\n if pet_tentacle = 0:\r\n  jo9_lq_available['pen'] = 1\r\n else\r\n  $jo9_lq_reason['pen'] = '우리 안에 안개 괴물이 남아 있다. 직접 우리를 비운 뒤에 정리해야 한다.'\r\n end\r\nelse\r\n $jo9_lq_reason['pen'] = '사용 중인 괴물 우리가 없다.'\r\nend\r\nif iced_1_state ! CONST_INT['no_slave']: jo9_ls_iced = 1\r\nif iced_2_state ! CONST_INT['no_slave']: jo9_ls_iced = 1\r\nif iced_3_state ! CONST_INT['no_slave']: jo9_ls_iced = 1\r\nif iced_4_state ! CONST_INT['no_slave']: jo9_ls_iced = 1\r\nif iced_5_state ! CONST_INT['no_slave']: jo9_ls_iced = 1\r\nif iced_6_state ! CONST_INT['no_slave']: jo9_ls_iced = 1\r\nif iced_7_state ! CONST_INT['no_slave']: jo9_ls_iced = 1\r\nif iced_8_state ! CONST_INT['no_slave']: jo9_ls_iced = 1\r\nif iced_9_state ! CONST_INT['no_slave']: jo9_ls_iced = 1\r\nif iced_10_state ! CONST_INT['no_slave']: jo9_ls_iced = 1\r\nif iced_11_state ! CONST_INT['no_slave']: jo9_ls_iced = 1\r\nif iced_12_state ! CONST_INT['no_slave']: jo9_ls_iced = 1\r\nif iced_13_state ! CONST_INT['no_slave']: jo9_ls_iced = 1\r\nif iced_14_state ! CONST_INT['no_slave']: jo9_ls_iced = 1\r\nif iced_15_state ! CONST_INT['no_slave']: jo9_ls_iced = 1\r\nif iced_16_state ! CONST_INT['no_slave']: jo9_ls_iced = 1\r\nif iced_17_state ! CONST_INT['no_slave']: jo9_ls_iced = 1\r\nif iced_18_state ! CONST_INT['no_slave']: jo9_ls_iced = 1\r\nif stasis_tank > 0:\r\n if jo9_ls_iced = 0:\r\n  jo9_lq_available['stasis'] = 1\r\n else\r\n  $jo9_lq_reason['stasis'] = '냉동 보관 중인 사람이 있다. 직접 모두 꺼낸 뒤에 장치를 반납해야 한다.'\r\n end\r\nelse\r\n $jo9_lq_reason['stasis'] = '집에 대여한 냉동 보관 장치가 없다.'\r\nend\r\n\r\nif $estate = '' or $estate = 'slum_house':\r\n $jo9_lq_reason['house'] = '현재 처분할 주택이 없다.'\r\nelseif kulaconstruct > 0:\r\n $jo9_lq_reason['house'] = '증축한 개인실을 먼저 비우고 철거해야 한다.'\r\nelseif room1_state ! CONST_INT['no_slave'] or room2_state ! CONST_INT['no_slave'] or room3_state ! CONST_INT['no_slave'] or room4_state ! CONST_INT['no_slave']:\r\n $jo9_lq_reason['house'] = '개인실에 사람이 남아 있다. 직접 방을 비운 뒤에 주거를 정리해야 한다.'\r\nelseif prisoner_state ! CONST_INT['no_slave'] or farmhand_state ! CONST_INT['no_slave'] or cow_state ! CONST_INT['no_slave'] or harpy_state ! CONST_INT['no_slave'] or pig_state ! CONST_INT['no_slave'] or pet_tentacle ! 0:\r\n $jo9_lq_reason['house'] = '부속 시설에 사람이 있거나 괴물이 남아 있다. 직접 시설을 비운 뒤에 주거를 정리해야 한다.'\r\nelseif lab > 0 or pen > 0 or stasis_tank > 0:\r\n $jo9_lq_reason['house'] = '별도로 대여한 시설부터 정리해야 한다.'\r\nelseif (dungeon > 0 and estate_cost_dungeon[$estate] > 0) or (boudoir > 0 and estate_cost_boudoir[$estate] > 0) or (barn > 0 and estate_cost_barn[$estate] > 0):\r\n $jo9_lq_reason['house'] = '별도로 대여한 시설부터 정리해야 한다.'\r\nelse\r\n jo9_lq_available['house'] = 1\r\n if owner = 1: jo9_lq_value['house'] = max(0, 75 * estate_cost_main[$estate] / 2)\r\nend\r\n\r\n! During a pending bill, ordinary relocation must not empty occupied facilities.\r\nif room1_state ! CONST_INT['no_slave'] or room2_state ! CONST_INT['no_slave'] or room3_state ! CONST_INT['no_slave'] or room4_state ! CONST_INT['no_slave'] or prisoner_state ! CONST_INT['no_slave'] or farmhand_state ! CONST_INT['no_slave'] or cow_state ! CONST_INT['no_slave'] or harpy_state ! CONST_INT['no_slave'] or pig_state ! CONST_INT['no_slave'] or pet_tentacle ! 0:\r\n $jo9_lq_reason['move'] = '시설 안에 남아 있는 인물을 먼저 직접 옮겨야 한다.'\r\nelseif stasis_tank > 0 and jo9_ls_iced ! 0:\r\n $jo9_lq_reason['move'] = '냉동 보관 중인 인물을 먼저 직접 옮겨야 한다.'\r\nelse\r\n jo9_lq_available['move'] = 1\r\nend\r\n! JO9 MOD END INSOLVENCY_ASSETS_20261023\r\n",
+      "actions": []
+    },
+    {
+      "name": "jo9_liquidation_sale",
+      "desc": "",
+      "body": "! JO9 MOD START LIQUIDATION_SALE_V1 | 2026-10-23_asset_liquidation\r\n! Emergency sale: half of current valuation, independent from named NPC orders.\r\nlocal $jo9_lqs_mode = $args[0]\r\nlocal $jo9_lqs_slot = $args[1]\r\nlocal jo9_lqs_expected_price = args[2]\r\nlocal jo9_lqs_expected_type = args[3]\r\nlocal $jo9_lqs_expected_buyer = $args[4]\r\nlocal $jo9_lqs_expected_name = $args[5]\r\nresult = 0\r\njo9_lq_sale_sold = 0\r\nif $jo9_lqs_slot ! 'slave' and $jo9_lqs_slot ! 'assistant': exit\r\nif $jo9_lqs_mode ! 'query' and $jo9_lqs_mode ! 'sell': exit\r\nif $jo9_lqs_mode = 'sell' and jo9_lq['active'] ! 1: exit\r\njo9_lq_sale_price[$jo9_lqs_slot] = 0\r\n$jo9_lq_sale_buyer[$jo9_lqs_slot] = ''\r\n$jo9_lq_sale_id[$jo9_lqs_slot] = ''\r\n$jo9_lq_sale_scheme[$jo9_lqs_slot] = ''\r\n$jo9_lq_sale_reason[$jo9_lqs_slot] = '급매로 내놓을 인물이 없다.'\r\nif snk_room_target > 0:\r\n $jo9_lq_sale_reason[$jo9_lqs_slot] = '개인실 인물창을 닫은 뒤, 실제 노예와 조수를 다시 확인하자.'\r\n exit\r\nend\r\n! Nested GS/FUNC reads globals in the bundled engine; this clone is temporary.\r\nkillvar 'jo9_lq_probe'\r\nkillvar 'jo9_lq_probe_rate'\r\nkillvar 'jo9_lq_probe_state'\r\nkillvar 'jo9_lq_probe_type'\r\nkillvar '$jo9_lq_probe_psy_status'\r\nkillvar '$jo9_lq_probe_name'\r\ncopyarr 'jo9_lq_probe', $jo9_lqs_slot\r\ncopyarr '$jo9_lq_probe', '$' + $jo9_lqs_slot\r\ncopyarr 'jo9_lq_probe_rate', $jo9_lqs_slot + '_rate'\r\ndynamic 'jo9_lq_probe_state = <<$jo9_lqs_slot>>_state & jo9_lq_probe_type = <<$jo9_lqs_slot>>_type & $jo9_lq_probe_psy_status = $<<$jo9_lqs_slot>>_psy_status & $jo9_lq_probe_name = $<<$jo9_lqs_slot>>_name'\r\njo9_lq_sale_type[$jo9_lqs_slot] = jo9_lq_probe_type\r\n$jo9_lq_sale_actor[$jo9_lqs_slot] = $jo9_lq_probe_name\r\nif jo9_lq_probe_state ! CONST_INT['slave_exist'] and jo9_lq_probe_state ! CONST_INT['slave_faint']: jump 'jo9_lqs_cleanup'\r\nif jo9_lq_probe['brand'] = 4:\r\n $jo9_lq_sale_reason[$jo9_lqs_slot] = '내 소유가 아닌 인물은 처분할 수 없다.'\r\n jump 'jo9_lqs_cleanup'\r\nend\r\n! Existing valuation dependencies read the temporary clone and local scratch.\r\nlocal slave_specialisation\r\nlocal slave_obedience_bonus\r\nlocal slaveprice\r\nlocal haggling_limit\r\nlocal relative_rating\r\nlocal rating\r\nlocal $rating_help\r\nlocal is_stock\r\nlocal slave_mood_bonus\r\nlocal slave_nature\r\nlocal slave_fear_bonus\r\nlocal slave_obedience_penalty\r\nlocal attribute_sum\r\nlocal max_skill\r\nlocal max_sex\r\nlocal skill_sum\r\nlocal maxsum\r\nlocal slave_base_price\r\nlocal base_meat_gain\r\nlocal mince_gain\r\nlocal mince_bonus\r\nlocal meat_max\r\nlocal meat_gain\r\nlocal virgin_meat_gain\r\nlocal meat_price\r\nlocal skill_adv_mul\r\nlocal overnight_rules_count\r\nlocal relative_fat\r\nlocal charm_from_aura\r\nlocal charm\r\nlocal $charm_stat\r\nlocal $jo9_trait_value_mode\r\nlocal $jo9_trait_value_actor\r\nlocal jo9_trait_value_amount\r\nlocal jo9_trait_value_saved_peerless\r\nlocal jo9_trait_value_rate\r\nlocal jo9_trait_value_grade\r\ngs 'jo9_traits_value', 'refresh', 'jo9_lq_probe'\r\ndynamic $replace($update_slave_price, 'dyn'+'slave', 'jo9_lq_probe')\r\n! Apply the emergency discount once to slaveprice, before any merchant cut.\r\nlocal jo9_lqs_price = slaveprice / 2\r\nif jo9_lqs_price <= 0: jump 'jo9_lqs_cleanup'\r\njo9_lq_sale_price[$jo9_lqs_slot] = jo9_lqs_price\r\n$jo9_lq_sale_id[$jo9_lqs_slot] = 'quick_sale'\r\n$jo9_lq_sale_scheme[$jo9_lqs_slot] = 'quick_sale'\r\n$jo9_lq_sale_buyer[$jo9_lqs_slot] = '다른 노예상'\r\n$jo9_lq_sale_reason[$jo9_lqs_slot] = ''\r\nif $jo9_lqs_mode = 'query': jump 'jo9_lqs_cleanup'\r\nif jo9_lqs_price ! jo9_lqs_expected_price or jo9_lq_probe_type ! jo9_lqs_expected_type or $jo9_lqs_expected_buyer ! 'quick_sale' or $jo9_lq_probe_name ! $jo9_lqs_expected_name: jump 'jo9_lqs_cleanup'\r\n! Only the selected actor and worn equipment are transferred; NPC state is untouched.\r\njo9_lq_sale_price[$jo9_lqs_slot] = 0\r\ndynamic $replace($sold_clothing, '$slave[', '$' + $jo9_lqs_slot + '[')\r\ndynamic $clear_slave_instance, $jo9_lqs_slot\r\nsparks += jo9_lqs_price\r\njo9_lq_sale_sold = 1\r\nresult = 1\r\n:jo9_lqs_cleanup\r\nkillvar 'jo9_lq_probe'\r\nkillvar 'jo9_lq_probe_rate'\r\nkillvar 'jo9_lq_probe_state'\r\nkillvar 'jo9_lq_probe_type'\r\nkillvar '$jo9_lq_probe_psy_status'\r\nkillvar '$jo9_lq_probe_name'\r\n! JO9 MOD END LIQUIDATION_SALE_V1\r\n",
+      "actions": []
+    }
+  ]
+}

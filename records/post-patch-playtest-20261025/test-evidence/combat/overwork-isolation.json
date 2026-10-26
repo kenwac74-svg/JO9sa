@@ -1,0 +1,181 @@
+{
+  "classification": "DIAGNOSTIC_DRIVER_LIMIT_NOT_REPRODUCED_PRODUCT_DEFECT",
+  "observation": {
+    "candidate": "a70bd177d8e7ade58243578b2f04745ff00cec3884d26d3b924dfffc8a8d007a",
+    "exit": 0,
+    "result": [
+      {
+        "name": "zero",
+        "checkpoint": "Original current main_screen complete -> native DOM selector observation atAP0",
+        "pass": true,
+        "reason": "",
+        "durationMs": 10897
+      },
+      {
+        "name": "one",
+        "checkpoint": "Original current main_screen complete -> native DOM selector observation atAP1",
+        "pass": true,
+        "reason": "",
+        "durationMs": 10866
+      }
+    ],
+    "cases": [
+      {
+        "name": "zero",
+        "snapshots": {
+          "before-main": {
+            "energy": 0,
+            "stamina": 5,
+            "menu": 17,
+            "mainCompleted": 0,
+            "domMatches": 0,
+            "domActive": 0
+          },
+          "after-main": {
+            "energy": 0,
+            "stamina": 5,
+            "menu": 17,
+            "mainCompleted": 1,
+            "domMatches": 0,
+            "domActive": 0
+          },
+          "dom": {
+            "energy": 0,
+            "stamina": 5,
+            "menu": 17,
+            "mainCompleted": 1,
+            "domMatches": 1,
+            "domActive": 1
+          }
+        }
+      },
+      {
+        "name": "one",
+        "snapshots": {
+          "before-main": {
+            "energy": 1,
+            "stamina": 5,
+            "menu": 17,
+            "mainCompleted": 0,
+            "domMatches": 0,
+            "domActive": 0
+          },
+          "after-main": {
+            "energy": 1,
+            "stamina": 5,
+            "menu": 17,
+            "mainCompleted": 1,
+            "domMatches": 0,
+            "domActive": 0
+          },
+          "dom": {
+            "energy": 1,
+            "stamina": 5,
+            "menu": 17,
+            "mainCompleted": 1,
+            "domMatches": 1,
+            "domActive": 1
+          }
+        }
+      }
+    ],
+    "scope": "Original main_screen body and GT targets retained. Existing failed fixture state reused, AP is the single changed actor field. Full resource junctions supplied; previous partial-resource environment differs and is recorded as a confounder."
+  },
+  "actualMenuActions": {
+    "candidate": "a70bd177d8e7ade58243578b2f04745ff00cec3884d26d3b924dfffc8a8d007a",
+    "exit": 0,
+    "result": [
+      {
+        "name": "zero",
+        "checkpoint": "Original current main_screen complete -> native DOM selector observation atAP0",
+        "pass": true,
+        "reason": "",
+        "durationMs": 12191
+      },
+      {
+        "name": "one",
+        "checkpoint": "Original current main_screen complete -> native DOM selector observation atAP1",
+        "pass": true,
+        "reason": "",
+        "durationMs": 13199
+      }
+    ],
+    "cases": [
+      {
+        "name": "zero",
+        "snapshots": {
+          "before-main": {
+            "energy": -1,
+            "stamina": 5,
+            "menu": 0,
+            "mainCompleted": 1,
+            "domMatches": 0,
+            "domActive": 0
+          },
+          "after-main": {
+            "energy": 0,
+            "stamina": 5,
+            "menu": 17,
+            "mainCompleted": 1,
+            "domMatches": 0,
+            "domActive": 0
+          },
+          "dom": {
+            "energy": -1,
+            "stamina": 5,
+            "menu": 0,
+            "mainCompleted": 2,
+            "domMatches": 0,
+            "domActive": 0
+          }
+        }
+      },
+      {
+        "name": "one",
+        "snapshots": {
+          "before-main": {
+            "energy": 0,
+            "stamina": 5,
+            "menu": 0,
+            "mainCompleted": 1,
+            "domMatches": 0,
+            "domActive": 0
+          },
+          "after-main": {
+            "energy": 1,
+            "stamina": 5,
+            "menu": 17,
+            "mainCompleted": 1,
+            "domMatches": 0,
+            "domActive": 0
+          },
+          "dom": {
+            "energy": 0,
+            "stamina": 5,
+            "menu": 0,
+            "mainCompleted": 2,
+            "domMatches": 0,
+            "domActive": 0
+          }
+        }
+      }
+    ],
+    "scope": "Original main_screen body and GT targets retained. Existing failed fixture state reused, AP is the single changed actor field. Full resource junctions supplied; previous partial-resource environment differs and is recorded as a confounder."
+  },
+  "oldFixtureFullResourcesControl": [
+    {
+      "name": "original",
+      "checkpoint": "Byte-identical earlier fixture with complete native resource tree only",
+      "pass": false,
+      "reason": "Completion marker timeout",
+      "durationMs": 35252
+    }
+  ],
+  "unchangedControlHash": "da941263a66744407f1977219d413190dc7cbc47a40e0903bbe911c79edea7a3",
+  "oldFixtureHash": "da941263a66744407f1977219d413190dc7cbc47a40e0903bbe911c79edea7a3",
+  "limits": [
+    "Exact cause of the old initial driver stall is not established. Full resources alone do not resolve it.",
+    "Fresh actual original AP0/AP1 menu and action routes pass; no product main-screen stall reproduced.",
+    "Old two-action protocol also attempts the second tutor label after original return sets menu_form0, without navigating back to tutor17. This is an additional diagnostic protocol flaw, not a confirmed explanation of the initial stall."
+  ]
+}

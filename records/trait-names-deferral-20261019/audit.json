@@ -1,0 +1,62 @@
+{
+  "before": "545a59dda6374a1e79fac283cebb80b00cc8892bf23d145bd8ac9c1c6ea76ff2",
+  "after": "ae591ef904a5fe0f4cbac3454815ac36cd1475464689869bb75c94e3e7fe7826",
+  "locations": [
+    "jo9_traits",
+    "interaction",
+    "get_stock_seed",
+    "get_special_assistant_quest"
+  ],
+  "audit": [
+    {
+      "location": "jo9_traits",
+      "renames": [
+        [
+          "구강 선호",
+          "펠라 중독"
+        ],
+        [
+          "구역반사",
+          "반사적 구역질"
+        ],
+        [
+          "항문 선호",
+          "애널섹스 중독"
+        ],
+        [
+          "항문 기피",
+          "애널섹스 혐오"
+        ],
+        [
+          "불복종",
+          "거센 반항심"
+        ],
+        [
+          "선천적 발화 불가",
+          "선천적 벙어리"
+        ]
+      ],
+      "removed": [
+        "describe/tongue_loss",
+        "list/tongue_loss",
+        "editor/voice2",
+        "random generation/voice2"
+      ]
+    },
+    {
+      "location": "interaction",
+      "removedVoiceTwoConditions": 6,
+      "preserved": "voice1 question/training/nod effects"
+    },
+    {
+      "location": "get_stock_seed",
+      "old": "stock['jo9_voice_trait'] = seed_jo9_voice_trait[stock_type]",
+      "new": "stock['jo9_voice_trait'] = iif(seed_jo9_voice_trait[stock_type]=1,1,0)"
+    },
+    {
+      "location": "get_special_assistant_quest",
+      "old": "assistant[\"jo9_voice_trait\"] = seed_jo9_voice_trait[assistant_type]",
+      "new": "assistant[\"jo9_voice_trait\"] = iif(seed_jo9_voice_trait[assistant_type]=1,1,0)"
+    }
+  ]
+}

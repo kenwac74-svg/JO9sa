@@ -1,0 +1,88 @@
+{
+  "scope": "Equipment tooltip patch/test artifacts only; no Work/Full/repository/save writes by this agent.",
+  "baselineSha256": "1e911ced3798826e8cd1f35ed1e4115e9fd6450a9fdecaeb231b5f6885c1abb4",
+  "candidateSha256": "b4aac51a0654c8344066c8277b54118ec5d219fe5ba473c7ca61137bae51506f",
+  "patch": "patches/2026-10-21_equipment_tooltip_restore.json",
+  "workHashAtHandoff": "1e911ced3798826e8cd1f35ed1e4115e9fd6450a9fdecaeb231b5f6885c1abb4",
+  "nativeEngine": "G:/somi/Jack O Nine Tails v2.4_work/game/engine/jack.exe",
+  "nativeRed": {
+    "directory": "red-complete",
+    "cases": 4,
+    "passed": 0,
+    "expectedFailures": [
+      "equip-master:MISSING_TOOLTIP",
+      "equip-common:MISSING_TOOLTIP",
+      "equip-cache:STALE_REVISION",
+      "equip-current:STALE_COMBAT_DESCRIPTION"
+    ]
+  },
+  "nativeGreen": {
+    "directory": "green-complete",
+    "cases": 4,
+    "passed": 4,
+    "note": "Equipment-only final candidate. Parent owns combined final candidate verification."
+  },
+  "greenScenarioContracts": {
+    "equip-master": [
+      "special characters and raw interpolation sequence safely escaped",
+      "exact original item_change href",
+      "inventory quantity label"
+    ],
+    "equip-common": [
+      "safe current description",
+      "force label and item_change quantity argument",
+      "no-aura argument preserved",
+      "default item label and aura tooltip count1/4",
+      "scratch variables absent after call",
+      "empty description remains safe empty tooltip"
+    ],
+    "equip-cache": [
+      "old revision upgraded214348873to214348874",
+      "stale list/helper definitions replaced",
+      "formatter defined",
+      "current revision prevents repeated refresh"
+    ],
+    "equip-current": [
+      "actual current combat description preserves current numbers",
+      "source description retains markup while tooltip removes tags",
+      "actual current maid_dress description visible"
+    ]
+  },
+  "structure": {
+    "coreRoundtrip": true,
+    "qspDumpIndependentRead": true,
+    "locationCount": 262,
+    "otherFieldsUnchanged": true,
+    "onlyLocations": [
+      "#dynamic",
+      "$newloc"
+    ],
+    "existingCommentsPreserved": true,
+    "allActiveItemChangeHrefsPreserved": true,
+    "cssUnchanged": true
+  },
+  "limitations": [
+    "No actual saved-game UI loading or mouse-hover visual check.",
+    "No actual item_change wearing transition was invoked; original href/conditions and handlers are byte-preserved.",
+    "Existing item_description HTML entities are not decoded; no encoded entities occur in current source definitions.",
+    "Full official release gate and combined meiki+equipment candidate are parent responsibilities."
+  ],
+  "supersededAttempts": [
+    {
+      "directory": "green",
+      "result": "not PASS; native formatter evaluation timed out; supplemental old nativeDLL reportedUnknownaction119forLOCAL/CHR; removed both unsupported constructs"
+    },
+    {
+      "directory": "green-compatible",
+      "result": "not PASS; test fixture normal quoted assignment evaluated<<6+7>>before formatter; corrected input construction without weakening expected output"
+    },
+    {
+      "directory": "green-raw",
+      "result": "not PASS; raw brace fixture contained unmatched apostrophe; replaced with safe quoted concatenation to keep raw<<sequence literal"
+    }
+  ],
+  "cleanup": {
+    "owner": "parent agent",
+    "instruction": "Remove regenerable per-run diagnostic QSP files, copied config/JSON if any, and superseded candidate copies; retain scripts, patch, reports, logs and manifest. Root has already frozen combined final candidate separately."
+  }
+}

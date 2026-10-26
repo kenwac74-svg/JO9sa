@@ -1,0 +1,63 @@
+{
+  "id": "2026-10-26_meiki_discovery_popup",
+  "before_sha256": "e4110fb537108326d0de680efa4a87d286f9b3a6e5bc0b6073e83d13e1ee97f0",
+  "after_sha256": "060295923fd646e87148dc0e900ef7acce92e1086b6376e1f1fc9d12298513b7",
+  "edits": [
+    {
+      "location": "jo9_meiki_state",
+      "field": "body",
+      "old": "! JO9_STATE_V2: state bookkeeping only; args[1]=1 permits the first-transition roll.\r\n",
+      "new": "! JO9_STATE_V2: state bookkeeping only; args[1]=1 permits the first-transition roll.\r\n! JO9 MOD START MEIKI_DISCOVERY_POPUP_LOCAL_20261026 | 2026-10-26_meiki_discovery_popup\r\nlocal jo9_meiki_found = 0\r\nlocal $jo9_meiki_found_name = ''\r\n! JO9 MOD END MEIKI_DISCOVERY_POPUP_LOCAL_20261026\r\n",
+      "count": 1
+    },
+    {
+      "location": "jo9_meiki_state",
+      "field": "body",
+      "old": "   if rand(1, 100) <= 5:\r\n    slave['jo9_meiki_known'] = 1",
+      "new": "   if rand(1, 100) <= 5:\r\n! JO9 MOD START MEIKI_DISCOVERY_POPUP_SLAVE_20261026 | 2026-10-26_meiki_discovery_popup\r\n    if slave['jo9_meiki_known'] = 0:\r\n     jo9_meiki_found = 1\r\n     $jo9_meiki_found_name = $slave_name\r\n    end\r\n! JO9 MOD END MEIKI_DISCOVERY_POPUP_SLAVE_20261026\r\n    slave['jo9_meiki_known'] = 1",
+      "count": 1
+    },
+    {
+      "location": "jo9_meiki_state",
+      "field": "body",
+      "old": "   if rand(1, 100) <= 5:\r\n    assistant['jo9_meiki_known'] = 1",
+      "new": "   if rand(1, 100) <= 5:\r\n! JO9 MOD START MEIKI_DISCOVERY_POPUP_ASSISTANT_20261026 | 2026-10-26_meiki_discovery_popup\r\n    if assistant['jo9_meiki_known'] = 0:\r\n     jo9_meiki_found = 1\r\n     $jo9_meiki_found_name = $assistant_name\r\n    end\r\n! JO9 MOD END MEIKI_DISCOVERY_POPUP_ASSISTANT_20261026\r\n    assistant['jo9_meiki_known'] = 1",
+      "count": 1
+    },
+    {
+      "location": "jo9_meiki_state",
+      "field": "body",
+      "old": "   if rand(1, 100) <= 5:\r\n    room1['jo9_meiki_known'] = 1",
+      "new": "   if rand(1, 100) <= 5:\r\n! JO9 MOD START MEIKI_DISCOVERY_POPUP_ROOM1_20261026 | 2026-10-26_meiki_discovery_popup\r\n    if room1['jo9_meiki_known'] = 0:\r\n     jo9_meiki_found = 1\r\n     $jo9_meiki_found_name = $room1_name\r\n    end\r\n! JO9 MOD END MEIKI_DISCOVERY_POPUP_ROOM1_20261026\r\n    room1['jo9_meiki_known'] = 1",
+      "count": 1
+    },
+    {
+      "location": "jo9_meiki_state",
+      "field": "body",
+      "old": "   if rand(1, 100) <= 5:\r\n    room2['jo9_meiki_known'] = 1",
+      "new": "   if rand(1, 100) <= 5:\r\n! JO9 MOD START MEIKI_DISCOVERY_POPUP_ROOM2_20261026 | 2026-10-26_meiki_discovery_popup\r\n    if room2['jo9_meiki_known'] = 0:\r\n     jo9_meiki_found = 1\r\n     $jo9_meiki_found_name = $room2_name\r\n    end\r\n! JO9 MOD END MEIKI_DISCOVERY_POPUP_ROOM2_20261026\r\n    room2['jo9_meiki_known'] = 1",
+      "count": 1
+    },
+    {
+      "location": "jo9_meiki_state",
+      "field": "body",
+      "old": "   if rand(1, 100) <= 5:\r\n    room3['jo9_meiki_known'] = 1",
+      "new": "   if rand(1, 100) <= 5:\r\n! JO9 MOD START MEIKI_DISCOVERY_POPUP_ROOM3_20261026 | 2026-10-26_meiki_discovery_popup\r\n    if room3['jo9_meiki_known'] = 0:\r\n     jo9_meiki_found = 1\r\n     $jo9_meiki_found_name = $room3_name\r\n    end\r\n! JO9 MOD END MEIKI_DISCOVERY_POPUP_ROOM3_20261026\r\n    room3['jo9_meiki_known'] = 1",
+      "count": 1
+    },
+    {
+      "location": "jo9_meiki_state",
+      "field": "body",
+      "old": "   if rand(1, 100) <= 5:\r\n    room4['jo9_meiki_known'] = 1",
+      "new": "   if rand(1, 100) <= 5:\r\n! JO9 MOD START MEIKI_DISCOVERY_POPUP_ROOM4_20261026 | 2026-10-26_meiki_discovery_popup\r\n    if room4['jo9_meiki_known'] = 0:\r\n     jo9_meiki_found = 1\r\n     $jo9_meiki_found_name = $room4_name\r\n    end\r\n! JO9 MOD END MEIKI_DISCOVERY_POPUP_ROOM4_20261026\r\n    room4['jo9_meiki_known'] = 1",
+      "count": 1
+    },
+    {
+      "location": "jo9_meiki_state",
+      "field": "body",
+      "old": "! JO9 MOD END J9M3027",
+      "new": "! JO9 MOD START MEIKI_DISCOVERY_POPUP_MESSAGE_20261026 | 2026-10-26_meiki_discovery_popup\r\nif jo9_meiki_found = 1:\r\n if $jo9_meiki_found_name = '': $jo9_meiki_found_name = '이 인물'\r\n msg '[명기]<br><<$jo9_meiki_found_name>>의 숨겨진 재능을 발견했다. 관련 기술에 두각을 드러내며, 일부 거래와 특정 작업에서 남다른 강점을 보인다.'\r\nend\r\n! JO9 MOD END MEIKI_DISCOVERY_POPUP_MESSAGE_20261026\r\n! JO9 MOD END J9M3027",
+      "count": 1
+    }
+  ]
+}

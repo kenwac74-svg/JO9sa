@@ -1,0 +1,91 @@
+{
+  "verdict": "PASS",
+  "sequence": [
+    "baseline: RED for all three tones",
+    "candidate: GREEN for all three tones"
+  ],
+  "engine": "G:/somi/Jack O Nine Tails v2.4_work/game/engine/jack.exe",
+  "engineSha256": "f75032d79ecb58eeb7b969cd3f774d66b091fca38a360acdabd782e03a46c6e6",
+  "baselineFailures": [
+    {
+      "tone": "tone-one",
+      "expectedRed": true,
+      "idsRotated": true,
+      "failure": "JO9_QA_FAIL_core_distinct_after_three_distinct_ids_one"
+    },
+    {
+      "tone": "tone-two",
+      "expectedRed": true,
+      "idsRotated": true,
+      "failure": "JO9_QA_FAIL_core_distinct_after_three_distinct_ids_two"
+    },
+    {
+      "tone": "tone-three",
+      "expectedRed": true,
+      "idsRotated": true,
+      "failure": "JO9_QA_FAIL_core_distinct_after_three_distinct_ids_three"
+    }
+  ],
+  "candidate": [
+    {
+      "name": "tone-one",
+      "checkpoint": "Actual picker + exact relation cue removal, three rotating IDs, distinct spoken cores; candidate tone 1",
+      "pass": true,
+      "reason": "",
+      "durationMs": 321
+    },
+    {
+      "name": "tone-two",
+      "checkpoint": "Actual picker + exact relation cue removal, three rotating IDs, distinct spoken cores; candidate tone 2",
+      "pass": true,
+      "reason": "",
+      "durationMs": 523
+    },
+    {
+      "name": "tone-three",
+      "checkpoint": "Actual picker + exact relation cue removal, three rotating IDs, distinct spoken cores; candidate tone 3",
+      "pass": true,
+      "reason": "",
+      "durationMs": 276
+    }
+  ],
+  "coverage": {
+    "source": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+    "sourceSha256": "baaa39836b905e748a6ec8f356494b0260160a364164bc3684812394e4a9dbc9",
+    "pickerSha256": "20b590a1fa2ad2e60084e38dfcab9e99ae717dcc01a7ad09728f04407cb91331",
+    "relationCueBlockSha256": "af5bbb9b2fa172bff1fc13ec935a460926c439908395779a6b9dce7e11cb404f",
+    "candidateTextEntries": 9,
+    "groupIndexCounts": 27,
+    "groupIndexItems": 81,
+    "typesExercised": [
+      "plain"
+    ],
+    "tonesExercised": [
+      1,
+      2,
+      3
+    ],
+    "callsPerTone": 3,
+    "fixtureLocations": [
+      "Start"
+    ],
+    "formattingStubs": [],
+    "description": "Exact production picker, exact production relation cue-removal block, exact nine assignments and metadata, exact all-group index lines. History last2/last1 advances from actual picker signature. No game-world, JSON, saves, or production modifications.",
+    "planByMode": {
+      "baseline": "G:\\Codex\\tmp\\jo9-private-feelings-fix-20261022\\editorial\\native-baseline/plan.json",
+      "candidate": "G:\\Codex\\tmp\\jo9-private-feelings-fix-20261022\\editorial\\native-candidate/plan.json"
+    }
+  },
+  "inputHashUnchanged": true,
+  "limits": [
+    "Single representative type plain, all three tones; all 27 count declarations and 81 item references included unchanged.",
+    "Tiny fixture executes exact production picker and exact relation cue-removal block. It does not drive the live GUI or test the full relation presentation flow.",
+    "The diagnostic wrapper only receives the selected text, applies the unmodified production cue block, and returns its body. No production picker or formatting behavior changed."
+  ],
+  "rootCandidate": {
+    "file": "G:/Codex/tmp/jo9-private-feelings-fix-20261022/candidate.qsp",
+    "sha256": "de04a1a622f0051d87efd31f98a009d3dadfa0865b26a1b5a1d42c883b0a93d9",
+    "exactAuthoredBlockPresent": true,
+    "productionPickerMatchesFixture": true
+  }
+}

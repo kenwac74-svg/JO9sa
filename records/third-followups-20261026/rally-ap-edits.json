@@ -1,0 +1,21 @@
+{
+  "id": "2026-10-26_rally_ap_gate",
+  "status": "DRAFT_NOT_APPLIED",
+  "description": "Approved rally AP gate fix: require effective AP 3 for the existing direct cost of 3. Shared menu only; route, cost, discount/cheat behavior and refusal remain unchanged.",
+  "before_sha256": "060295923fd646e87148dc0e900ef7acce92e1086b6376e1f1fc9d12298513b7",
+  "after_sha256": "259a2a920635f12ceac7beebd49147787a2208164fd0248812ed7c96bac9d480",
+  "edits": [
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "IF slave_state = CONST_INT['slave_exist'] and slave[\"energy\"] >= 2 and sparks >= 100:",
+      "new": "! JO9 MOD START RALLY_AP_GATE_20261026 | 2026-10-26_third_followups\r\nIF slave_state = CONST_INT['slave_exist'] and (slave[\"energy\"] * 2 - slave[\"half_action\"]) >= 6 and sparks >= 100:\r\n! JO9 MOD END RALLY_AP_GATE_20261026",
+      "count": 1
+    }
+  ],
+  "notes": [
+    "The gate compares integer half-AP units, matching main_screen jo9_ap_units=2*energy-half_action; energy=3,half_action=1 (2.5 AP) is rejected without integer division.",
+    "The shared $erosalon_options[4] serves both hero_choice branches.",
+    "No QSP, game directory, Full, save, mod directory, or existing report is written."
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "status": "UNIFIED_DIRECTION_CONFIRMED_NUMBERS_PROPOSED_NOT_APPLIED",
+  "date": "2026-10-24",
+  "work": "5560055182d40dd856791dc948429beb7ba636e118e20b748ce0ad91d2546ea7",
+  "gameEdits": 0,
+  "saveEdits": 0,
+  "nativeExecution": false,
+  "structureAndRoundtrip": "PASS",
+  "userDirection": {
+    "instantGradeRaiseSuperseded": true,
+    "growthAcceleration": true,
+    "lateGameOption": true,
+    "oneTimeTreatmentConcept": true,
+    "priceAndMultiplierApproved": false,
+    "intelligenceApDiscountRemainsDeferred": true,
+    "unifiedWithHealthyTrait": true
+  },
+  "existingHealthyTrait": {
+    "key": "jo9_constitution",
+    "value": 1,
+    "classification": "innate",
+    "battleHpMultiplier": 1.5,
+    "battleStaminaMultiplier": 1.5,
+    "positiveEducationXpMultiplier": 1.5,
+    "subjects": [
+      "stamina",
+      "calisthenics",
+      "gladiatrix",
+      "dressage"
+    ],
+    "directDailyApMultiplier": 1,
+    "nutritionalXpMultiplier": 1,
+    "evidence": "jo9_traits_combat:24-28,106-119"
+  },
+  "existingClinic": {
+    "slaveMenu": "#options:1330 $hospital_options[2]",
+    "assistantMenu": "#options:1393 $hospital_options[3]",
+    "entry": "exam completed, conscious present actor, no current rehabilitation; existing submenu entry has its own price check",
+    "oneTimeCosmeticFlag": "beauty_enhanced",
+    "cosmeticPrice": 250,
+    "cosmeticEffects": "energy=-4, stamina_rate-=20, rehabilitation=20 and beauty change; do not reuse effects for new feature",
+    "growthAccelerationTreatmentFound": false,
+    "resuscitation": "Existing fainted/unwell recovery route can set stamina=2; escalating costs50/100/250/500/1000. Separate from natural growth treatment."
+  },
+  "growth": {
+    "upThresholds": [
+      10,
+      20,
+      40,
+      80,
+      160
+    ],
+    "rankUpResetsProgress": true,
+    "foodBelowGrade": 3,
+    "foodGain": "min(positive calories, metabolism)",
+    "supplements": "main slave only, +1/day or +2 with diet_portion=4; stamina<3",
+    "rest": "well_rested>=stamina and stamina<3 =>+2",
+    "highFatCap": "fat>3 caps stamina at4",
+    "evidence": [
+      "#variative:62-73",
+      "#static_base:510-562",
+      "next_day:1283,1426-1441,1591-1616,1791-1794"
+    ]
+  },
+  "illustrativeTiming": {
+    "assumptions": "grade1 progress0; no losses; constant positive gain2/day; no other caps; no stage overflow",
+    "untreatedDays": 30,
+    "proposedTreatedDays": 15,
+    "guaranteedInGame": false
+  },
+  "risks": [
+    "Repeatedly multiplying stamina_rate in common recalculation would amplify old progress again.",
+    "Scope must distinguish new growth from fixed grade/rate assignments and neutralizing a negative counter.",
+    "Natural food/rest limits remain stamina<3.",
+    "Positive gain doubling does not imply net progress doubles when negative losses are present.",
+    "Physical training includes several independent helpers and direct paths; do not claim full coverage from one helper change."
+  ],
+  "next": "REVIEW_RECOMMENDED_NUMERIC_PACKAGE_WITH_USER",
+  "fullSync": false,
+  "packaged": false,
+  "committed": false,
+  "pushed": false,
+  "supersededSeparateProposal": {
+    "price": 500,
+    "usesPerCharacter": 1,
+    "duration": "permanent",
+    "positiveNewStaminaXpMultiplier": 2,
+    "scope": "nutrition, supplements, adequate rest and selected physical training; exact path inventory and stacking rules still require approval",
+    "storage": "separate per-character treatment history, not healthy-trait grant or an extra trait slot",
+    "existingProgress": "preserve, do not multiply accumulated rate",
+    "negativeXp": "preserve",
+    "instantGradeChanges": "preserve",
+    "stacking": "apply after current positive XP modifiers if this candidate is adopted; healthy training may become approximately3x before rounding",
+    "newUsesOrRepeatedPayment": "reject after treatment history set"
+  },
+  "unificationProposal": "unification-proposal.json"
+}

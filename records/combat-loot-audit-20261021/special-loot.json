@@ -1,0 +1,675 @@
+{
+  "kind": "read-only-special-combat-loot-audit",
+  "workQsp": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+  "sha256": "a2e0265881bebd8a72b3fcbb214ddaf831106cfe50e9c96da8e0b6e7d692707a",
+  "scope": "Special fights, city callbacks, arena, catfight and battle-linked quest item rewards; core fog14/molar/firestaff are delegated",
+  "directSpecialCombatItems": [
+    {
+      "id": "chimera_earring",
+      "screenName": "키메라 귀걸이",
+      "narrativeAlias": "키메라 보석",
+      "ownership": "Global chimera_earring=1; not inventory[]",
+      "conditions": [
+        "active[$quest[8]]=1",
+        "Edge patrol generated patrol_num=14",
+        "Equipped master headgear=raven_crown, amulet=snake_amulet, ring=bull_ring",
+        "Patrol remaps to61115; enemy[5]=garsid; normal surviving battle completion reaches reward handler"
+      ],
+      "exactHandlerGuard": "$враг[5]='garsid'; no extra victory comparison inside this handler. Earlier failed master fights call $death -> gt exit.",
+      "sources": [
+        {
+          "location": "interaction_city",
+          "line": 10497
+        },
+        {
+          "location": "interaction_city",
+          "line": 10726
+        },
+        {
+          "location": "interaction_city",
+          "line": 10734
+        },
+        {
+          "location": "выход_из_боя",
+          "line": 294
+        },
+        {
+          "location": "выход_из_боя",
+          "line": 306
+        },
+        {
+          "location": "#dynamic",
+          "line": 3326
+        }
+      ],
+      "postAward": [
+        "active[$quest[8]]=3",
+        "get_girl=0",
+        "fog_battle=0",
+        "enemy array cleared; no beastmen trophy or firestaff discovery from this encounter"
+      ],
+      "consumers": [
+        {
+          "location": "#item_base",
+          "line": 266
+        },
+        {
+          "location": "#item_base",
+          "line": 269
+        },
+        {
+          "location": "#dynamic",
+          "line": 2389
+        }
+      ],
+      "reachability": "static gate/setup/normal result connected; no live play performed",
+      "alternativeNoncombatAcquisition": {
+        "condition": "Garsid normal quest delivery; existing slave and eight specified skill fields all5",
+        "rewardLine": {
+          "location": "interaction_city",
+          "line": 4844
+        },
+        "qualificationLine": {
+          "location": "interaction_city",
+          "line": 4828
+        },
+        "note": "Same owned item, not an additional combat drop"
+      }
+    }
+  ],
+  "battleLinkedQuestItems": [
+    {
+      "id": "bull_ring",
+      "screenName": "황소 반지",
+      "ownership": "Global bull_ring=1",
+      "condition": "Aramus quest delivery after active[$quest[6]]!=0, slave_state=slave_exist and slave[arena_level]>4; delivered character is removed",
+      "sources": [
+        {
+          "location": "interaction_city",
+          "line": 4764
+        },
+        {
+          "location": "interaction_city",
+          "line": 4777
+        },
+        {
+          "location": "interaction_city",
+          "line": 4780
+        },
+        {
+          "location": "interaction_city",
+          "line": 4783
+        },
+        {
+          "location": "#item_base",
+          "line": 294
+        },
+        {
+          "location": "#dynamic",
+          "line": 2413
+        }
+      ],
+      "reachability": "static quest qualification/result connected; not a direct battle drop",
+      "requiresActualCombatRecord": true
+    },
+    {
+      "id": "obereg",
+      "screenName": "오베레그",
+      "ownership": "Global obereg=1",
+      "condition": "Grakh quest delivery: slave arena_level>=2, has_ride_win>=1, existing slave and brand<4; current quest routing in1536 admits15363, then character is removed",
+      "sources": [
+        {
+          "location": "interaction_city",
+          "line": 22494
+        },
+        {
+          "location": "interaction_city",
+          "line": 22506
+        },
+        {
+          "location": "interaction_city",
+          "line": 22510
+        },
+        {
+          "location": "interaction_city",
+          "line": 22511
+        },
+        {
+          "location": "#item_base",
+          "line": 308
+        },
+        {
+          "location": "#dynamic",
+          "line": 2426
+        }
+      ],
+      "reachability": "static quest qualification/result connected; not a direct battle drop",
+      "requiresActualCombatRecord": true,
+      "alsoRequiresRaceRecord": true
+    }
+  ],
+  "arenaTrophies": [
+    {
+      "flag": "trophy_corvus",
+      "screenName": "코르부스 챔피언",
+      "category": "display_trophy_not_inventory",
+      "condition": "Slave arena victory routed to interaction_city=1294; $ge='champion_corvus'",
+      "sources": [
+        {
+          "location": "interaction_city",
+          "line": 1808
+        },
+        {
+          "location": "trophy_room",
+          "line": 27
+        },
+        {
+          "location": "$gladiator_setup",
+          "line": 51
+        }
+      ],
+      "reachability": "static menu/setup/result connected; not played"
+    },
+    {
+      "flag": "trophy_camira",
+      "screenName": "카미라 챔피언",
+      "category": "display_trophy_not_inventory",
+      "condition": "Slave arena victory routed to interaction_city=1294; $ge='champion_kamira'",
+      "sources": [
+        {
+          "location": "interaction_city",
+          "line": 1807
+        },
+        {
+          "location": "trophy_room",
+          "line": 28
+        },
+        {
+          "location": "$gladiator_setup",
+          "line": 51
+        }
+      ],
+      "reachability": "static menu/setup/result connected; not played"
+    },
+    {
+      "flag": "trophy_serpis",
+      "screenName": "세르피스 챔피언",
+      "category": "display_trophy_not_inventory",
+      "condition": "Slave arena victory routed to interaction_city=1294; $ge='champion_serpis'",
+      "sources": [
+        {
+          "location": "interaction_city",
+          "line": 1809
+        },
+        {
+          "location": "trophy_room",
+          "line": 29
+        },
+        {
+          "location": "$gladiator_setup",
+          "line": 51
+        }
+      ],
+      "reachability": "static menu/setup/result connected; not played"
+    },
+    {
+      "flag": "trophy_taurus",
+      "screenName": "타우루스 챔피언",
+      "category": "display_trophy_not_inventory",
+      "condition": "Slave arena victory routed to interaction_city=1294; $ge='champion_taurus'",
+      "sources": [
+        {
+          "location": "interaction_city",
+          "line": 1810
+        },
+        {
+          "location": "trophy_room",
+          "line": 30
+        },
+        {
+          "location": "$gladiator_setup",
+          "line": 51
+        }
+      ],
+      "reachability": "static menu/setup/result connected; not played"
+    },
+    {
+      "flag": "trophy_vatican",
+      "screenName": "바티칸 챔피언",
+      "category": "display_trophy_not_inventory",
+      "condition": "Slave arena victory routed to interaction_city=1294; $ge='champion_vatican'",
+      "sources": [
+        {
+          "location": "interaction_city",
+          "line": 1811
+        },
+        {
+          "location": "trophy_room",
+          "line": 33
+        },
+        {
+          "location": "$gladiator_setup",
+          "line": 51
+        }
+      ],
+      "reachability": "static menu/setup/result connected; not played"
+    },
+    {
+      "flag": "trophy_slaves_x",
+      "screenName": "아레나 노예들",
+      "category": "display_trophy_not_inventory",
+      "condition": "Arena result1294, challenge_type=2 and slave[c2done]=0; sets first-clear flag",
+      "sources": [
+        {
+          "location": "interaction_city",
+          "line": 1816
+        },
+        {
+          "location": "interaction_city",
+          "line": 1819
+        },
+        {
+          "location": "trophy_room",
+          "line": 35
+        }
+      ],
+      "reachability": "static menu/setup/result connected; not played"
+    },
+    {
+      "flag": "trophy_arenafiend",
+      "screenName": "투기장 괴물",
+      "category": "display_trophy_not_inventory",
+      "condition": "Arena result1294, challenge_type=3 and slave[c3done]=0",
+      "sources": [
+        {
+          "location": "interaction_city",
+          "line": 1821
+        },
+        {
+          "location": "interaction_city",
+          "line": 1824
+        },
+        {
+          "location": "trophy_room",
+          "line": 36
+        }
+      ],
+      "reachability": "static menu/setup/result connected; not played"
+    },
+    {
+      "flag": "trophy_absolute",
+      "screenName": "앱솔루트 챔피언",
+      "category": "display_trophy_not_inventory",
+      "condition": "Arena result1294 and challenge_type=4; slave arena_level becomes9",
+      "menuCondition": "trademark armor equipped and either arena_level>=8 or c1done=c2done=c3done=1; c4done=0",
+      "sources": [
+        {
+          "location": "interaction_city",
+          "line": 1826
+        },
+        {
+          "location": "interaction_city",
+          "line": 1829
+        },
+        {
+          "location": "#options",
+          "line": 3884
+        },
+        {
+          "location": "trophy_room",
+          "line": 34
+        }
+      ],
+      "reachability": "static menu/setup/result connected; not played"
+    }
+  ],
+  "raceTrophiesExcludedFromCombat": [
+    {
+      "flag": "trophy_racechampion",
+      "screenName": "레이스 챔피언",
+      "condition": "dynslave[has_ride_win]>3; remains set at>6",
+      "sources": [
+        {
+          "location": "#static_base",
+          "line": 1963
+        },
+        {
+          "location": "#static_base",
+          "line": 1965
+        },
+        {
+          "location": "#static_base",
+          "line": 1969
+        },
+        {
+          "location": "trophy_room",
+          "line": 37
+        }
+      ]
+    },
+    {
+      "flag": "trophy_racegrandchampion",
+      "screenName": "그랜드 챔피언",
+      "condition": "dynslave[has_ride_win]>6",
+      "sources": [
+        {
+          "location": "#static_base",
+          "line": 1967
+        },
+        {
+          "location": "#static_base",
+          "line": 1970
+        },
+        {
+          "location": "trophy_room",
+          "line": 38
+        }
+      ]
+    }
+  ],
+  "nonItemRewards": [
+    {
+      "event": "Normal gladiator arena victory",
+      "reward": "Purse currency, character skill/status/fame progression; arena8 flags above. No additional standalone inventory item found.",
+      "sources": [
+        {
+          "location": "interaction_city",
+          "line": 1760
+        },
+        {
+          "location": "interaction_city",
+          "line": 1831
+        },
+        {
+          "location": "interaction_city",
+          "line": 1836
+        }
+      ]
+    },
+    {
+      "event": "Normal catfight victory",
+      "reward": "300 sparks plus character combat rank/skills/status; no standalone item",
+      "sources": [
+        {
+          "location": "выход_из_боя",
+          "line": 95
+        },
+        {
+          "location": "выход_из_боя",
+          "line": 98
+        },
+        {
+          "location": "interaction_city",
+          "line": 17325
+        },
+        {
+          "location": "interaction_city",
+          "line": 17334
+        },
+        {
+          "location": "interaction_city",
+          "line": 17553
+        },
+        {
+          "location": "interaction_city",
+          "line": 17562
+        }
+      ]
+    },
+    {
+      "event": "Colosseum sparring, player/slave/assistant",
+      "reward": "Skill/strength/dominance/status progression; no standalone inventory item",
+      "sources": [
+        {
+          "location": "выход_из_боя",
+          "line": 125
+        },
+        {
+          "location": "interaction_city",
+          "line": 1884
+        },
+        {
+          "location": "interaction_city",
+          "line": 1923
+        },
+        {
+          "location": "interaction_city",
+          "line": 1980
+        }
+      ]
+    },
+    {
+      "event": "Egeya city duel",
+      "reward": "Character template2579 plus50000 sparks; character equipment armor=полудоспех,left_wpn=кнут,right_wpn=гладиус is assigned to the acquired character, not separate master ownership flags",
+      "sources": [
+        {
+          "location": "выход_из_боя",
+          "line": 541
+        },
+        {
+          "location": "выход_из_боя",
+          "line": 548
+        },
+        {
+          "location": "interaction_city",
+          "line": 17200
+        },
+        {
+          "location": "interaction_city",
+          "line": 17214
+        },
+        {
+          "location": "interaction_city",
+          "line": 17232
+        }
+      ],
+      "reachability": "victory callback has immediate gt to interaction_city; male/female duplicated handlers exist, no path modified"
+    },
+    {
+      "event": "Erza city duel",
+      "reward": "Surviving opponent becomes character template2624; lethal enemy HP result gets no character. Acquired character armor=полудоспех/right_wpn=гладиус are attached equipment, not independent weapon drops",
+      "sources": [
+        {
+          "location": "выход_из_боя",
+          "line": 563
+        },
+        {
+          "location": "выход_из_боя",
+          "line": 570
+        },
+        {
+          "location": "interaction_city",
+          "line": 31587
+        },
+        {
+          "location": "interaction_city",
+          "line": 31603
+        },
+        {
+          "location": "interaction_city",
+          "line": 31614
+        }
+      ],
+      "reachability": "victory callback has immediate gt; not played"
+    },
+    {
+      "event": "Grinch city battle",
+      "reward": "Event progression to state10, no standalone item in10385 result block",
+      "sources": [
+        {
+          "location": "выход_из_боя",
+          "line": 553
+        },
+        {
+          "location": "выход_из_боя",
+          "line": 558
+        },
+        {
+          "location": "interaction_city",
+          "line": 23988
+        },
+        {
+          "location": "interaction_city",
+          "line": 24017
+        }
+      ]
+    },
+    {
+      "event": "St razhnik/final guard battle",
+      "reward": "Final-event state in6220, no standalone item there",
+      "sources": [
+        {
+          "location": "выход_из_боя",
+          "line": 529
+        },
+        {
+          "location": "выход_из_боя",
+          "line": 537
+        },
+        {
+          "location": "interaction_city",
+          "line": 22425
+        },
+        {
+          "location": "interaction_city",
+          "line": 22429
+        }
+      ]
+    }
+  ],
+  "referenceNoncombatQuestItems": [
+    {
+      "id": "кольчуга",
+      "screenName": "미스릴 갑옷",
+      "classification": "Complex training/delivery reward, not a battle-drop item",
+      "condition": "Lord Spectre quest12 completion has extensive training/body/equipment requirements and has_ride_win>6, but no actual arena victory gate is used in this completion predicate",
+      "sources": [
+        {
+          "location": "interaction_city",
+          "line": 4895
+        },
+        {
+          "location": "interaction_city",
+          "line": 4929
+        },
+        {
+          "location": "interaction_city",
+          "line": 4932
+        },
+        {
+          "location": "#боевые_предметы",
+          "line": 1274
+        },
+        {
+          "location": "#dynamic",
+          "line": 2227
+        }
+      ]
+    },
+    {
+      "id": "snake_amulet",
+      "screenName": "뱀모양 목걸이",
+      "classification": "Race-record delivery reward; not combat",
+      "sources": [
+        {
+          "location": "interaction_city",
+          "line": 4796
+        },
+        {
+          "location": "interaction_city",
+          "line": 4812
+        }
+      ]
+    },
+    {
+      "id": "raven_crown",
+      "screenName": "큰까마귀 관",
+      "classification": "Pet-growth delivery reward; not combat",
+      "sources": [
+        {
+          "location": "interaction_city",
+          "line": 4860
+        },
+        {
+          "location": "interaction_city",
+          "line": 4876
+        }
+      ]
+    },
+    {
+      "event": "Fyrgin/Tsyuansu deliveries",
+      "classification": "Noncombat training-delivery consumables; excluded from combat loot",
+      "sources": [
+        {
+          "location": "interaction_city",
+          "line": 16870
+        },
+        {
+          "location": "interaction_city",
+          "line": 16887
+        },
+        {
+          "location": "interaction_city",
+          "line": 16895
+        },
+        {
+          "location": "interaction_city",
+          "line": 31293
+        },
+        {
+          "location": "interaction_city",
+          "line": 31323
+        },
+        {
+          "location": "interaction_city",
+          "line": 31332
+        }
+      ]
+    }
+  ],
+  "randomEquipmentDropTable": {
+    "found": false,
+    "claim": "No additional random weapon/armor drop table was found in the inspected combat results, callbacks and positive ownership writes.",
+    "evidenceScope": {
+      "registeredItemIds": 119,
+      "combatItemNameKeys": 41,
+      "methods": [
+        "Follow actual $fight_return and immediate city result callbacks",
+        "Search direct owned-flag writes, including Cyrillic weapon/armor identifiers",
+        "Check acquired-character equipment assignments separately",
+        "Search inventory/item-id randomization statements"
+      ],
+      "notLootAssignmentExamples": [
+        {
+          "location": "hard_return",
+          "line": 190,
+          "note": "Restoration/reset equipment setup, not a battle result"
+        },
+        {
+          "location": "#masters_base",
+          "line": 482,
+          "note": "Initial/template equipment setup, not a battle result"
+        }
+      ]
+    }
+  },
+  "callbackNaming": {
+    "battle_return_IDOccurrences": 0,
+    "actualVariable": "$fight_return",
+    "generalConsume": {
+      "location": "выход_из_боя",
+      "line": 278
+    },
+    "finalReturn": {
+      "location": "выход_из_боя",
+      "line": 625
+    },
+    "note": "Several later city handlers perform immediate gt; no callback or game behavior changed."
+  },
+  "limits": [
+    "Read-only static audit; no game launch, native execution or actual-screen reachability claim.",
+    "No QSP diagnostic copy was created.",
+    "The core fog14 trophies, guaranteed molar and firestaff are covered by the other audit agent; this report avoids duplicating their full catalogue."
+  ],
+  "gameFilesWritten": false
+}

@@ -1,0 +1,152 @@
+{
+  "status": "PASS",
+  "reviewedAt": "2026-10-21T05:46:36.070658+00:00",
+  "sourceDirectory": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\outputs\\second-patch-split-20261021\\utility",
+  "sourceFiles": {
+    "dona-json-delete-allowlist.json": {
+      "bytes": 7349,
+      "sha256": "0b97fff90434e4758705a3e8e82975efd722c6f6e3f835a5a2b64788b087ca42"
+    },
+    "Remove-Old-Dona-Json.cmd": {
+      "bytes": 196,
+      "sha256": "172c2c8f57b1cbe42e556de47e29e337bd8457d1f9c04d0dc09e83275ecdbb9d"
+    },
+    "Remove-Old-Dona-Json.ps1": {
+      "bytes": 8898,
+      "sha256": "21b9f494f5ff11cf8fba1135f6a8bc4c934fd6b4fc0cb8df707043bd9d6e0136"
+    }
+  },
+  "checks": {
+    "exactOriginal25Rows": true,
+    "pinnedAllowlistHashMatches": true,
+    "scriptUTF8BOM": true,
+    "fixedOldAndKeepRanges": true,
+    "allPairsPreflightBeforeRemoval": true,
+    "immediateOldHashRecheck": true,
+    "immediateKeepRecheck": true,
+    "nonrecursiveLiteralRemoveOnly": true,
+    "reparseAncestorsAndTargetsRejected": true,
+    "pathStaysInsideGameRoot": true,
+    "dryRunAndWhatIfSupported": true,
+    "testReportAfterFinalScript": true,
+    "powershellASTZeroErrors": true,
+    "singleRemovalASTInvocation": true,
+    "otherMutatingASTCommandNamesAbsent": true,
+    "operationalSuiteAtLeast16Pass": true
+  },
+  "parserEvidence": {
+    "parseErrors": 0,
+    "removeInvocationCount": 1,
+    "removeInvocationText": "Remove-Item -LiteralPath $entry.Path -ErrorAction Stop",
+    "otherMutatingCommandNames": []
+  },
+  "operationalTests": {
+    "status": "PASS",
+    "timestamp": "2026-10-21T14:45:37.631312+09:00",
+    "fixtureRoot": "G:\\Codex\\tmp\\second-patch-split-20261021\\cleanup-tests\\run-20261021-144523-890436",
+    "runtime": "Windows PowerShell 5.1 via powershell.exe -File",
+    "total": 18,
+    "passed": 18,
+    "failed": 0,
+    "tests": [
+      {
+        "name": "canonical-removal-and-idempotence",
+        "passed": true,
+        "reason": ""
+      },
+      {
+        "name": "dry-run",
+        "passed": true,
+        "reason": ""
+      },
+      {
+        "name": "what-if",
+        "passed": true,
+        "reason": ""
+      },
+      {
+        "name": "partial-absence",
+        "passed": true,
+        "reason": ""
+      },
+      {
+        "name": "tampered-old-atomic-refusal",
+        "passed": true,
+        "reason": ""
+      },
+      {
+        "name": "missing-keep-atomic-refusal",
+        "passed": true,
+        "reason": ""
+      },
+      {
+        "name": "tampered-keep-atomic-refusal",
+        "passed": true,
+        "reason": ""
+      },
+      {
+        "name": "absent-old-validates-keep",
+        "passed": true,
+        "reason": ""
+      },
+      {
+        "name": "wrong-directory",
+        "passed": true,
+        "reason": ""
+      },
+      {
+        "name": "old-path-is-directory",
+        "passed": true,
+        "reason": ""
+      },
+      {
+        "name": "junction-root",
+        "passed": true,
+        "reason": ""
+      },
+      {
+        "name": "junction-ancestor",
+        "passed": true,
+        "reason": ""
+      },
+      {
+        "name": "junction-target",
+        "passed": true,
+        "reason": ""
+      },
+      {
+        "name": "auto-install",
+        "passed": true,
+        "reason": ""
+      },
+      {
+        "name": "auto-game",
+        "passed": true,
+        "reason": ""
+      },
+      {
+        "name": "tampered-allowlist",
+        "passed": true,
+        "reason": ""
+      },
+      {
+        "name": "incomplete-extraction-not-auto-selected",
+        "passed": true,
+        "reason": ""
+      },
+      {
+        "name": "cmd-launcher-korean-spaces-dry-run",
+        "passed": true,
+        "reason": ""
+      }
+    ]
+  },
+  "approvedScope": "Exact 25 legacy Dona JSON paths only; explicit user authorization overrides earlier no-cleanup-script packaging preference for this utility alone.",
+  "reviewNotes": [
+    "Final code rechecks old and retained JSON hashes immediately before each removal.",
+    "Preflight mismatch stops before any deletion. A later permission/lock/race failure stops and reports partial completion; no transactional rollback or automatic backup.",
+    "Review did not execute the operational suite again or run utility against Work/Full.",
+    "Operational suite expanded from planned16 to18 tests; all18 passed, adding incomplete-extraction auto-selection refusal and CMD launcher with Korean/spaced paths. Immediate-predelete hash rechecks were statically verified."
+  ],
+  "noGameOrFullWrites": true
+}

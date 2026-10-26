@@ -1,0 +1,133 @@
+# jo9_traits_view
+! JO9 MOD START UI_TRAIT_OVERVIEW_20261025
+! Read-only profile view. Existing builders supply the already-rendered list.
+if $args[0] = 'escape':
+ $result = $replace($args[1], '&', '&amp;')
+ $result = $replace($result, '<', '&lt;')
+ $result = $replace($result, '>', '&gt;')
+ $result = $replace($result, '"', '&quot;')
+ $result = $replace($result, "'", '&#39;')
+ exit
+end
+if $args[0] = 'meta':
+ local $j9_action = $func('jo9_traits_view', 'escape', $args[2])
+ local $j9_desc = $func('jo9_traits_view', 'escape', $args[3])
+ $result = '<textarea class="jo9_tv_meta" id="jo9_tv_desc_<<args[1]>>" data-index="<<args[1]>>" data-action="<<$j9_action>>" style="display:none"><!--J9TV_DESC_<<args[1]>>_BEGIN--><<$j9_desc>><!--J9TV_DESC_<<args[1]>>_END--></textarea>'
+ exit
+end
+if $args[0] = 'remember':
+ local $j9_html = $maintxt
+ local $j9_role = $strfind($j9_html, 'id="jo9_tv_root" data-role="(slave|assistant)" data-open="1"', 1)
+ if $j9_role ! '':
+  local $j9_name = $dyneval('$result = $' + $j9_role + '_name')
+  $jo9_tv_reopen_key = $j9_role + ':' + $j9_name
+ end
+ exit
+end
+if $args[0] = 'sidebar':
+ local $j9_role = $args[1]
+ if $j9_role ! 'slave' and $j9_role ! 'assistant': exit
+ local $j9_raw = $args[2]
+ local $j9_title = '노예의 특성'
+ if $j9_role = 'assistant': $j9_title = '조수의 특성'
+ local $j9_open = '0'
+ local $j9_name = $dyneval('$result = $' + $j9_role + '_name')
+ if $jo9_tv_reopen_key = $j9_role + ':' + $j9_name: $j9_open = '1'
+ $jo9_tv_reopen_key = ''
+ local $j9_meta = $func('jo9_traits_view', 'meta', 0, '__return__', $info_text)
+ local $j9_scan = $j9_raw
+ local $j9_pattern = '(?i)href\s*=\s*"([^"]*)"'
+ local $j9_match = $strfind($j9_scan, $j9_pattern)
+ local j9_index = 0
+ local $j9_href, $j9_action, $j9_expr, $j9_key, $j9_desc
+ local j9_at
+ :j9_tv_scan
+ if $j9_match ! '':
+  $j9_href = $strfind($j9_scan, $j9_pattern, 1)
+  $j9_action = ''
+  $j9_desc = ''
+  if $lcase($mid($j9_href, 1, 5)) = 'exec:':
+   $j9_action = $trim($mid($j9_href, 6))
+   $j9_expr = $strfind($j9_action, '(?i)^\s*msg\s+(\$[A-Za-z_А-Яа-яЁё가-힣][A-Za-z_А-Яа-яЁё가-힣0-9]*)\s*$', 1)
+   if $j9_expr ! '': $j9_desc = $dyneval('$result = ' + $j9_expr)
+   $j9_key = $strfind($j9_action, "(?i)^\s*gs\s*'jo9_traits'\s*,\s*'describe'\s*,\s*'([a-z_]+)'\s*$", 1)
+   if $j9_key ! '': $j9_desc = $func('jo9_traits', 'text', $j9_key)
+   if $j9_expr ! '' or $j9_key ! '':
+    j9_index += 1
+    $j9_meta += $func('jo9_traits_view', 'meta', j9_index, $j9_action, $j9_desc)
+   end
+  end
+  j9_at = instr($j9_scan, $j9_match)
+  $j9_scan = $mid($j9_scan, j9_at + len($j9_match))
+  $j9_match = $strfind($j9_scan, $j9_pattern)
+  jump 'j9_tv_scan'
+ end
+ j9_index += 1
+ $j9_meta += $func('jo9_traits_view', 'meta', j9_index, '__rehab__', '현재 회복 중임을 표시하는 상태입니다.')
+ j9_index += 1
+ $j9_meta += $func('jo9_traits_view', 'meta', j9_index, '__pregnancy__', '현재 확인된 임신 상태를 표시합니다.')
+ j9_index += 1
+ $j9_meta += $func('jo9_traits_view', 'meta', j9_index, '__arena__', '투기장에서 획득한 우승 경력을 나타내는 칭호입니다.')
+ j9_index += 1
+ $j9_meta += $func('jo9_traits_view', 'meta', j9_index, '__race__', '경주에서 획득한 우승 경력을 나타내는 칭호입니다.')
+ *p '<div id="jo9_tv_root" data-role="<<$j9_role>>" data-open="<<$j9_open>>">'
+ if $j9_role = 'assistant':
+  *nl '<a class="jo9_tv_heading" id="jo9_tv_heading" href="EXEC:gs ''jo9_traits_view'',''open''"><u><<$j9_title>></u></a>'
+  *nl '<div style="line-height:5%"><br></div><div id="jo9_tv_source"><<$j9_raw>></div>'
+ else
+  *p '<a class="jo9_tv_heading" id="jo9_tv_heading" href="EXEC:gs ''jo9_traits_view'',''open''"><u><<$j9_title>></u></a><div style="line-height:5%"><br></div><div id="jo9_tv_source"><<$j9_raw>></div>'
+ end
+ *p '<<$j9_meta>></div>'
+ exit
+end
+if $args[0] = 'open' or $args[0] = 'close' or $args[0] = 'info':
+ local $j9_html = $maintxt
+ if instr($j9_html, 'id="jo9_tv_root"') = 0: exit
+ if $args[0] = 'open':
+  $j9_html = $replace($j9_html, 'id="jo9_tv_root" data-role="slave" data-open="0"', 'id="jo9_tv_root" data-role="slave" data-open="1"')
+  $j9_html = $replace($j9_html, 'id="jo9_tv_root" data-role="assistant" data-open="0"', 'id="jo9_tv_root" data-role="assistant" data-open="1"')
+ end
+ if $args[0] = 'close':
+  $j9_html = $replace($j9_html, 'id="jo9_tv_root" data-role="slave" data-open="1"', 'id="jo9_tv_root" data-role="slave" data-open="0"')
+  $j9_html = $replace($j9_html, 'id="jo9_tv_root" data-role="assistant" data-open="1"', 'id="jo9_tv_root" data-role="assistant" data-open="0"')
+ end
+ if $args[0] = 'info' or $args[0] = 'close':
+  local j9_chosen = args[1]
+  if $args[0] = 'close': j9_chosen = 0
+  if j9_chosen < 0: exit
+  local $j9_begin = '<!--J9TV_DESC_<<j9_chosen>>_BEGIN-->'
+  local $j9_end = '<!--J9TV_DESC_<<j9_chosen>>_END-->'
+  local j9_start = instr($j9_html, $j9_begin)
+  local j9_end_at
+  local $j9_tail, $j9_text
+  if j9_start > 0:
+   $j9_tail = $mid($j9_html, j9_start + len($j9_begin))
+   j9_end_at = instr($j9_tail, $j9_end)
+   if j9_end_at > 0:
+    $j9_text = $mid($j9_tail, 1, j9_end_at - 1)
+    $j9_text = $replace($j9_text, '&quot;', '"')
+    $j9_text = $replace($j9_text, '&#39;', "'")
+    $j9_text = $replace($j9_text, '&gt;', '>')
+    $j9_text = $replace($j9_text, '&lt;', '<')
+    $j9_text = $replace($j9_text, '&amp;', '&')
+    $j9_begin = '<!--J9TV_INFO_BEGIN-->'
+    $j9_end = '<!--J9TV_INFO_END-->'
+    j9_start = instr($j9_html, $j9_begin)
+    if j9_start > 0:
+     j9_start += len($j9_begin)
+     $j9_tail = $mid($j9_html, j9_start)
+     j9_end_at = instr($j9_tail, $j9_end)
+     if j9_end_at > 0:
+      $info_text = $j9_text
+      $j9_html = $mid($j9_html, 1, j9_start - 1) + $j9_text + $mid($j9_tail, j9_end_at)
+     end
+    end
+   end
+  end
+ end
+ *clr
+ *p $j9_html
+ exit
+end
+! JO9 MOD END UI_TRAIT_OVERVIEW_20261025
+--- jo9_traits_view ---------------------------------

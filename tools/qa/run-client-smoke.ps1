@@ -1,4 +1,4 @@
-﻿param([Parameter(Mandatory=$true)][string]$Engine,[Parameter(Mandatory=$true)][string]$Plan)
+﻿param([Parameter(Mandatory=$true)][string]$Engine,[Parameter(Mandatory=$true)][string]$Plan,[ValidateRange(1,60)][int]$TimeoutSeconds=12)
 $ErrorActionPreference='Stop'
 $probeRoot=Split-Path -Parent ([IO.Path]::GetFullPath($Plan))
 $probePlan=ConvertFrom-Json -InputObject ([IO.File]::ReadAllText($Plan))
@@ -13,7 +13,7 @@ foreach($probe in $probePlan){
   $probeStderr=Join-Path $probeRoot ($probe.name+'-stderr.log')
   $probeStdout=Join-Path $probeRoot ($probe.name+'-stdout.log')
   $probeProcess=Start-Process -FilePath $Engine -ArgumentList ('"'+$probe.file+'"') -WorkingDirectory $probeRoot -WindowStyle Hidden -PassThru -RedirectStandardOutput $probeStdout -RedirectStandardError $probeStderr
-  $probeDeadline=(Get-Date).AddSeconds(12)
+  $probeDeadline=(Get-Date).AddSeconds($TimeoutSeconds)
   $probePattern='showMessage\(\), str:\s*"'+[regex]::Escape($probe.marker)+'"'
   do{
    Start-Sleep -Milliseconds 250

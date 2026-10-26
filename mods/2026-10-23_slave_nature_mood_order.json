@@ -1,0 +1,21 @@
+{
+  "id": "2026-10-23_slave_nature_mood_order",
+  "before_sha256": "5aeff11fffe6e5f2523749987577f42dab870f4d0adee0df385375f9eefb074f",
+  "after_sha256": "81201e0eb964124b71fe0862ffca30e589a74d1578d7c140296574b3362760e0",
+  "edits": [
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": "    $jo9born_psy_status = 'reluctant'\r\n    local jo9born_mood_steps = 0",
+      "new": "    $jo9born_psy_status = 'reluctant'\r\n! JO9 MOD START SLAVE_NATURE_INITIAL_MOOD_ORDER_20261023 | 2026-10-23_slave_nature_mood_order\r\n    ! Build current appearance, hygiene and household moodlets before initial mood compensation.\r\n    dynamic $replace($newloc_update_slave,'dyn'+'slave','jo9born')\r\n    $jo9born_psy_status = 'reluctant'\r\n! JO9 MOD END SLAVE_NATURE_INITIAL_MOOD_ORDER_20261023\r\n    local jo9born_mood_steps = 0",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": "    dynamic $replace($newloc_update_slave,'dyn'+'slave','jo9born')\r\n    dynamic $replace($newloc_update_slave,'dyn'+'slave','jo9born')",
+      "new": "! JO9 MOD START SLAVE_NATURE_FINAL_REFRESH_20261023 | 2026-10-23_slave_nature_mood_order\r\n    dynamic $replace($newloc_update_slave,'dyn'+'slave','jo9born')\r\n! JO9 MOD END SLAVE_NATURE_FINAL_REFRESH_20261023",
+      "count": 1
+    }
+  ]
+}

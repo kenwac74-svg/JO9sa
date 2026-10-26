@@ -1,0 +1,36 @@
+{
+  "id": "2026-10-21_peerless_display_name",
+  "description": "Display-only rename to 절세미인; jo9_peerless/peerless, numeric effects and saves unchanged.",
+  "before_sha256": "404b57f83893e6fc06ff69260b654de770de09a75c3709570c0eaa2d23411365",
+  "after_sha256": "698513ebb8e0383f0fc2a6eb9b7bdc433a944e516a6f44ad9353689fdda4c000",
+  "edits": [
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "  $setting_display_r += '<div id=\"under_gray_cheats\">경국지색: 기본 외모 5이면 S++</div>'",
+      "new": "! JO9 MOD START PEERLESS_DISPLAY_NAME_01 | 2026-10-21_peerless_display_name\r\n  $setting_display_r += '<div id=\"under_gray_cheats\">절세미인: 기본 외모 5이면 S++</div>'\r\n! JO9 MOD END PEERLESS_DISPLAY_NAME_01",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": " if $args[1] = 'peerless': msg '경국지색: 기본 외모에 한 단계를 더하여 최대 S++(6). 기존 흉터·체형 불이익은 유지합니다. 특별 판매·경매·흥정 우대 및 기존 양의 호감도·명성 보상 +50%.'",
+      "new": "! JO9 MOD START PEERLESS_DISPLAY_NAME_02 | 2026-10-21_peerless_display_name\r\n if $args[1] = 'peerless': msg '절세미인: 기본 외모에 한 단계를 더하여 최대 S++(6). 기존 흉터·체형 불이익은 유지합니다. 특별 판매·경매·흥정 우대 및 기존 양의 호감도·명성 보상 +50%.'\r\n! JO9 MOD END PEERLESS_DISPLAY_NAME_02",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": "  if dynslave['jo9_peerless'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''peerless''\">경국지색</a><br>'",
+      "new": "! JO9 MOD START PEERLESS_DISPLAY_NAME_03 | 2026-10-21_peerless_display_name\r\n  if dynslave['jo9_peerless'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''peerless''\">절세미인</a><br>'\r\n! JO9 MOD END PEERLESS_DISPLAY_NAME_03",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": "  $setting_display_r += '<div id=\"under_cheats\"><a href=\"EXEC: gs ''jo9_traits'', ''edit'', ''dynslave'', ''jo9_peerless'', 1 & gt ''menu_form''\">경국지색: '",
+      "new": "! JO9 MOD START PEERLESS_DISPLAY_NAME_04 | 2026-10-21_peerless_display_name\r\n  $setting_display_r += '<div id=\"under_cheats\"><a href=\"EXEC: gs ''jo9_traits'', ''edit'', ''dynslave'', ''jo9_peerless'', 1 & gt ''menu_form''\">절세미인: '\r\n! JO9 MOD END PEERLESS_DISPLAY_NAME_04",
+      "count": 1
+    }
+  ]
+}

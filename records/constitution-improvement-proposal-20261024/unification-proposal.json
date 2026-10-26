@@ -1,0 +1,109 @@
+{
+  "status": "USER_APPROVED_2026_10_24",
+  "date": "2026-10-24",
+  "sourceWork": "5560055182d40dd856791dc948429beb7ba636e118e20b748ce0ad91d2546ea7",
+  "userDirection": "체질개선을 후천적으로 건강체질을 획득하는 시술로 정의한다. 양쪽 효과를 통합하고 과도한 위력을 줄이도록 수치를 검토한다.",
+  "confirmed": {
+    "singleEffectKey": "jo9_constitution",
+    "healthyValue": 1,
+    "innateAndMedicalSameEffect": true,
+    "noSeparateMedicalMultiplier": true,
+    "numericPackageApproved": true
+  },
+  "recommendation": {
+    "id": "A_growth_focused",
+    "battleHpMultiplier": 1.2,
+    "battleStaminaMultiplier": 1.2,
+    "physicalEducationXpMultiplier": 1.5,
+    "physicalSubjects": [
+      "stamina",
+      "calisthenics",
+      "gladiatrix",
+      "dressage"
+    ],
+    "nutritionSupplementsRestNewStaminaXpMultiplier": 1.5,
+    "physicalTrainingStaminaMultipliedOnce": true,
+    "existingNaturalGrowthGradeLimitsPreserved": true,
+    "instantGradeChange": false,
+    "dailyApDirectChange": false,
+    "price": 1000,
+    "usesPerCharacter": 1,
+    "positiveHealthyAlreadyPresent": "disable procedure without payment",
+    "frailToHealthy": "replace -1 with +1 in the existing constitution axis",
+    "postProcedureHistory": "separate actor treatment-history flag; no independent effect, acquired-title flag or second trait slot",
+    "newNaturalGrowthFraction": "retain half-point remainder per character so repeated+1 nutrition/rest gains produce1,2,1,2 rather than losing the bonus",
+    "existingPhysicalEducationRounding": "retain current rounding; do not silently improve all four subjects",
+    "unhealthyPenalty": "unchanged unless separately approved"
+  },
+  "alternative": {
+    "id": "B_uniform25",
+    "battleHpMultiplier": 1.25,
+    "battleStaminaMultiplier": 1.25,
+    "physicalEducationXpMultiplier": 1.25,
+    "naturalStaminaGrowthMultiplier": 1.25,
+    "tradeoff": "Simpler visible percentages, but existing low-XP physical lessons are reduced sharply by integer truncation, and quarter-point accumulation is needed for small natural gains."
+  },
+  "pricingReason": "At1000 the permanent targeted replacement of frail with a positive healthy trait costs more than900 chaotic essence which removes one random negative trait.500 was considered for the narrower separate-growth proposal and is not recommended for this expanded unified effect.",
+  "oldSavePolicy": "Keep every existing character trait value and progress. New shared balance values also apply to previously healthy characters. No reroll, trait deletion or AP refill.",
+  "stateRules": [
+    "Use an actor-specific treatment history to block another paid treatment even if the trait is later removed.",
+    "Natural healthy actors are not marked as medically treated automatically; their current+1 blocks treatment.",
+    "Role swaps and saves carry actor fields; fresh direct constructors need initialization if new fields are added.",
+    "Existing8+3 slot enforcement is not implemented; do not add it silently. This remains one general trait.",
+    "Never multiply an existing accumulated stamina_rate during generic recalculation."
+  ],
+  "excludedFromGrowthBonus": [
+    "negative stamina losses",
+    "old accumulated progress",
+    "fixed grade/rate assignments",
+    "steroids or other instant stage changes",
+    "duplicate application after existing healthy training bonus"
+  ],
+  "arithmeticPreview": {
+    "base100": {
+      "oldHealthy": 150,
+      "recommendedHealthy": 120,
+      "oldHealthyAndVeteran": 225,
+      "recommendedHealthyAndVeteran": 180
+    },
+    "educationBase2": {
+      "old": 3,
+      "recommended": 3,
+      "alternative": 2
+    },
+    "foodOnePointEvents": [
+      {
+        "gain": 1,
+        "carry": 1,
+        "totalGain": 1
+      },
+      {
+        "gain": 2,
+        "carry": 0,
+        "totalGain": 3
+      },
+      {
+        "gain": 1,
+        "carry": 1,
+        "totalGain": 4
+      },
+      {
+        "gain": 2,
+        "carry": 0,
+        "totalGain": 6
+      }
+    ]
+  },
+  "previewMode": "Pure arithmetic only; no game code or engine run",
+  "reviewers": [
+    "/root/overwork_rounding_review",
+    "/root/muscular_overwork_paths"
+  ],
+  "gameEdits": 0,
+  "saveEdits": 0,
+  "fullSync": false,
+  "packaged": false,
+  "committed": false,
+  "pushed": false,
+  "next": "IMPLEMENT_AND_TEST_WORK_ONLY"
+}

@@ -1,0 +1,88 @@
+{
+  "id": "2026-10-24_muscular_overwork",
+  "description": "근육질 음수AP 과로 체력손실50% 완화. 인물별 반점부채 누적, 로드 캐시 보완, 신규 직접생성 초기화, 도움말. AP소비/근육통/회복/일반등급 불변.",
+  "before_sha256": "30f5f2e9458a7c10c4852270ee42203d0501ed705845509512043969836a04ae",
+  "after_sha256": "5560055182d40dd856791dc948429beb7ba636e118e20b748ce0ad91d2546ea7",
+  "edits": [
+    {
+      "location": "#dynamic",
+      "field": "body",
+      "old": "if slave['energy'] < 0: slave_rate['stamina'] += slave['energy']",
+      "new": "if slave['energy'] < 0:\r\n ! JO9 MOD START MUSCULAR_OVERWORK_50_SLAVE | 2026-10-24_muscular_overwork\r\n if slave['stamina'] = 5:\r\n  local jo9_overwork_total = -slave['energy'] + max(0, min(1, slave['jo9_overwork_half']))\r\n  slave_rate['stamina'] -= jo9_overwork_total / 2\r\n  slave['jo9_overwork_half'] = jo9_overwork_total mod 2\r\n else\r\n  slave_rate['stamina'] += slave['energy']\r\n end\r\n ! JO9 MOD END MUSCULAR_OVERWORK_50_SLAVE\r\nend",
+      "count": 1,
+      "patchId": "MUSCULAR_OVERWORK_50_SLAVE"
+    },
+    {
+      "location": "#dynamic",
+      "field": "body",
+      "old": "if assistant['energy'] < 0: assistant_rate['stamina'] += assistant['energy']",
+      "new": "if assistant['energy'] < 0:\r\n ! JO9 MOD START MUSCULAR_OVERWORK_50_ASSISTANT | 2026-10-24_muscular_overwork\r\n if assistant['stamina'] = 5:\r\n  local jo9_overwork_total = -assistant['energy'] + max(0, min(1, assistant['jo9_overwork_half']))\r\n  assistant_rate['stamina'] -= jo9_overwork_total / 2\r\n  assistant['jo9_overwork_half'] = jo9_overwork_total mod 2\r\n else\r\n  assistant_rate['stamina'] += assistant['energy']\r\n end\r\n ! JO9 MOD END MUSCULAR_OVERWORK_50_ASSISTANT\r\nend",
+      "count": 1,
+      "patchId": "MUSCULAR_OVERWORK_50_ASSISTANT"
+    },
+    {
+      "location": "#dynamic",
+      "field": "body",
+      "old": "if prisoner['energy'] < 0: prisoner_rate['stamina'] += prisoner['energy']",
+      "new": "if prisoner['energy'] < 0:\r\n ! JO9 MOD START MUSCULAR_OVERWORK_50_PRISONER | 2026-10-24_muscular_overwork\r\n if prisoner['stamina'] = 5:\r\n  local jo9_overwork_total = -prisoner['energy'] + max(0, min(1, prisoner['jo9_overwork_half']))\r\n  prisoner_rate['stamina'] -= jo9_overwork_total / 2\r\n  prisoner['jo9_overwork_half'] = jo9_overwork_total mod 2\r\n else\r\n  prisoner_rate['stamina'] += prisoner['energy']\r\n end\r\n ! JO9 MOD END MUSCULAR_OVERWORK_50_PRISONER\r\nend",
+      "count": 1,
+      "patchId": "MUSCULAR_OVERWORK_50_PRISONER"
+    },
+    {
+      "location": "#dynamic",
+      "field": "body",
+      "old": "if cow['energy'] < 0: cow_rate['stamina'] += cow['energy']",
+      "new": "if cow['energy'] < 0:\r\n ! JO9 MOD START MUSCULAR_OVERWORK_50_COW | 2026-10-24_muscular_overwork\r\n if cow['stamina'] = 5:\r\n  local jo9_overwork_total = -cow['energy'] + max(0, min(1, cow['jo9_overwork_half']))\r\n  cow_rate['stamina'] -= jo9_overwork_total / 2\r\n  cow['jo9_overwork_half'] = jo9_overwork_total mod 2\r\n else\r\n  cow_rate['stamina'] += cow['energy']\r\n end\r\n ! JO9 MOD END MUSCULAR_OVERWORK_50_COW\r\nend",
+      "count": 1,
+      "patchId": "MUSCULAR_OVERWORK_50_COW"
+    },
+    {
+      "location": "#dynamic",
+      "field": "body",
+      "old": "if dynslave['energy'] < 0: dynslave_rate['stamina'] += dynslave['energy']",
+      "new": "if dynslave['energy'] < 0:\r\n ! JO9 MOD START MUSCULAR_OVERWORK_50_DYNAMIC | 2026-10-24_muscular_overwork\r\n if dynslave['stamina'] = 5:\r\n  local jo9_overwork_total = -dynslave['energy'] + max(0, min(1, dynslave['jo9_overwork_half']))\r\n  dynslave_rate['stamina'] -= jo9_overwork_total / 2\r\n  dynslave['jo9_overwork_half'] = jo9_overwork_total mod 2\r\n else\r\n  dynslave_rate['stamina'] += dynslave['energy']\r\n end\r\n ! JO9 MOD END MUSCULAR_OVERWORK_50_DYNAMIC\r\nend",
+      "count": 1,
+      "patchId": "MUSCULAR_OVERWORK_50_DYNAMIC"
+    },
+    {
+      "location": "get_demo_slave",
+      "field": "body",
+      "old": "! JO9 MOD END AP_CURVE_INIT_GET_DEMO_SLAVE",
+      "new": "! JO9 MOD END AP_CURVE_INIT_GET_DEMO_SLAVE\r\n! JO9 MOD START MUSCULAR_OVERWORK_INIT_GET_DEMO_SLAVE | 2026-10-24_muscular_overwork\r\nslave['jo9_overwork_half'] = 0\r\n! JO9 MOD END MUSCULAR_OVERWORK_INIT_GET_DEMO_SLAVE",
+      "count": 1,
+      "patchId": "MUSCULAR_OVERWORK_INIT_GET_DEMO_SLAVE"
+    },
+    {
+      "location": "get_special_slave",
+      "field": "body",
+      "old": "! JO9 MOD END AP_CURVE_INIT_GET_SPECIAL_SLAVE",
+      "new": "! JO9 MOD END AP_CURVE_INIT_GET_SPECIAL_SLAVE\r\n! JO9 MOD START MUSCULAR_OVERWORK_INIT_GET_SPECIAL_SLAVE | 2026-10-24_muscular_overwork\r\nslave['jo9_overwork_half'] = 0\r\n! JO9 MOD END MUSCULAR_OVERWORK_INIT_GET_SPECIAL_SLAVE",
+      "count": 1,
+      "patchId": "MUSCULAR_OVERWORK_INIT_GET_SPECIAL_SLAVE"
+    },
+    {
+      "location": "get_special_assistant_quest",
+      "field": "body",
+      "old": "assistant_state = 1\r\nassistant[\"bcheck\"] = 0",
+      "new": "assistant_state = 1\r\nassistant[\"bcheck\"] = 0\r\n! JO9 MOD START MUSCULAR_OVERWORK_INIT_GET_SPECIAL_ASSISTANT_QUEST | 2026-10-24_muscular_overwork\r\nassistant['jo9_overwork_half'] = 0\r\n! JO9 MOD END MUSCULAR_OVERWORK_INIT_GET_SPECIAL_ASSISTANT_QUEST",
+      "count": 1,
+      "patchId": "MUSCULAR_OVERWORK_INIT_GET_SPECIAL_ASSISTANT_QUEST"
+    },
+    {
+      "location": "#help_msg",
+      "field": "body",
+      "old": "! JO9 MOD END J9M1755",
+      "new": "! JO9 MOD END J9M1755\r\n! JO9 MOD START MUSCULAR_OVERWORK_HELP | 2026-10-24_muscular_overwork\r\n$здоровье_совет += '<br>근육질은 행동력이 음수일 때 과로로 인한 체력 손실이 50% 줄어듭니다.'\r\n! JO9 MOD END MUSCULAR_OVERWORK_HELP",
+      "count": 1,
+      "patchId": "MUSCULAR_OVERWORK_HELP"
+    },
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "! JO9 MOD START CHAOTIC_ESSENCE_LOAD_CACHE | 2026-10-24_chaotic_essence",
+      "new": "! JO9 MOD START MUSCULAR_OVERWORK_LOAD_CACHE | 2026-10-24_muscular_overwork\r\nif instr($slave_energy_drop, 'MUSCULAR_OVERWORK_50_SLAVE') = 0 or instr($assistant_energy_drop, 'MUSCULAR_OVERWORK_50_ASSISTANT') = 0 or instr($prisoner_energy_drop, 'MUSCULAR_OVERWORK_50_PRISONER') = 0 or instr($cow_energy_drop, 'MUSCULAR_OVERWORK_50_COW') = 0 or instr($dynamic_energy_drop, 'MUSCULAR_OVERWORK_50_DYNAMIC') = 0: gs '#dynamic'\r\nif instr($здоровье_совет, '근육질은 행동력이 음수일 때 과로로 인한 체력 손실이 50% 줄어듭니다.') = 0: gs '#help_msg'\r\n! JO9 MOD END MUSCULAR_OVERWORK_LOAD_CACHE\r\n! JO9 MOD START CHAOTIC_ESSENCE_LOAD_CACHE | 2026-10-24_chaotic_essence",
+      "count": 1,
+      "patchId": "MUSCULAR_OVERWORK_LOAD_CACHE"
+    }
+  ]
+}

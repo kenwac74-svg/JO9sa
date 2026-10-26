@@ -1,0 +1,15 @@
+{
+  "id": "2026-10-19_combat_trait_innate",
+  "description": "Approved new random heroine-background combat traits: amazon/viking 50% berserker, knight 50% paladin, other family 25% veteran; preserve existing traits and omit presets/clones.",
+  "before_sha256": "7f4edf1b21d7bd9c13bfda076687652279ab5af2cabca36d961855dc4094768c",
+  "after_sha256": "81a4198501a45faa6c4f21f25894b0963dcdbb8d70ee3fe9bdbed5d963d2dab4",
+  "edits": [
+    {
+      "location": "generate_stock",
+      "field": "body",
+      "old": "if special_stock = 0: gs 'jo9_traits', 'generate'\r\n",
+      "new": "if special_stock = 0: gs 'jo9_traits', 'generate'\r\n\r\n! JO9 MOD START COMBAT_TRAIT_INNATE_BACKGROUND | 2026-10-19_combat_trait_innate\r\n! Only a newly generated heroine background qualifies. Clone generation replaces this provisional history later.\r\nif special_stock = 0 and creating_clone = 0 and stock['jo9_combat_trait'] = 0 and $stock_occupation = 'heroine':\r\n jo9_trait_innate_roll = rand(1,100)\r\n if $stock_family = 'amazon' or $stock_family = 'viking':\r\n  if jo9_trait_innate_roll <= 50: stock['jo9_combat_trait'] = 1\r\n elseif $stock_family = 'knight':\r\n  if jo9_trait_innate_roll <= 50: stock['jo9_combat_trait'] = 2\r\n else\r\n  if jo9_trait_innate_roll <= 25: stock['jo9_combat_trait'] = 3\r\n end\r\nend\r\nkillvar 'jo9_trait_innate_roll'\r\n! JO9 MOD END COMBAT_TRAIT_INNATE_BACKGROUND\r\n",
+      "count": 1
+    }
+  ]
+}

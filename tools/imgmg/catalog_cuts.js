@@ -5,7 +5,7 @@
   const r=await fetch(host+'api/catalog/cuts/'+action,{method:'POST',headers:{'Content-Type':'application/json',...(config?{'X-JO9-Token':config.token}:{'X-JO9-Cut-Token':cutToken})},body:JSON.stringify(input)});const v=await r.json();if(!r.ok)throw Error(v.error);return v;
  }
  const label=p=>p.replaceAll('\\','/').replace(/^content\/pic\//i,'');
- const eligible=p=>/^(?:content\/pic\/)?(?:bg|characters|scene|reserve)\/.+\.png$/i.test(p.replaceAll('\\','/'));
+ const eligible=p=>/^(?:content\/pic\/)?(?:bg|characters|scene|reserve|mob)\/.+\.png$/i.test(p.replaceAll('\\','/'));
  const encode=async blob=>{const b=new Uint8Array(await blob.arrayBuffer());let s='';for(let n=0;n<b.length;n+=32768)s+=String.fromCharCode(...b.subarray(n,n+32768));return btoa(s);};
  async function open(base,row){try{if(!window.JO9Workshop?.beginCut)await new Promise((resolve,reject)=>{const until=Date.now()+30000;function ready(){if(window.JO9Workshop?.beginCut)return resolve();if(Date.now()>until)return reject(Error('이미지 작업실을 다시 열어 주세요.'));setTimeout(ready,100);}ready();});return window.JO9Workshop.beginCut(base,row);}catch(e){const status=document.getElementById('save')||document.getElementById('message');if(status)status.textContent=e.message;}}
  window.JO9_CUTS={open,call,encode};

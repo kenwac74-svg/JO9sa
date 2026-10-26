@@ -1,0 +1,43 @@
+{
+  "id": "2026-10-25_golden_collar_refusal_return",
+  "description": "금장목줄 거부 A안: 재계산 전 복귀 주소, 대상·질문 검증 및 1회 처리, 구형 저장 질문 복구. WORK전용.",
+  "before_sha256": "be2c993d24911fec5edfc0efceee9d4bd570c2d9e3a511975a69e29e383ba898",
+  "after_sha256": "c058aa4f9cdfa594f3c098b8d8b396a250765fcdbb8ffc2bd00797055341d708",
+  "edits": [
+    {
+      "location": "#item_base",
+      "field": "body",
+      "old": "! JO9 MOD START J9M2251 | 2026-10-10_restore_private_room_ui | changed block; context may be included",
+      "new": "! JO9 MOD START GOLDEN_COLLAR_REFUSAL_RETURN_20261025\r\nif $args[0] = 'golden_collar_choice':\r\n local $gc_role = $args[1]\r\n if instr('|slave|assistant|prisoner|cow|room1|room2|room3|room4|', '|' + $gc_role + '|') = 0: exit\r\n if $curloc ! 'choice_screen' or args[4] ! jo9_gc_seq or instr($yes, 'GC_CHOICE_20261025') = 0 or instr($no, 'GC_CHOICE_20261025') = 0: exit\r\n local $gc_resolve = {\r\n  local $gc_return = $return_lock\r\n  if $gc_return = '' or $gc_return = 'choice_screen' or $gc_return = 'next_day' or $gc_return = 'end_day_screen' or loc($gc_return) = 0: $gc_return = 'menu_form'\r\n  $yes = '' & $no = ''\r\n  if dynslave['id'] = args[0] and dynslave_type = args[1] and $dynslave['collar'] = 'golden_collar' and dynslave_state = CONST_INT['slave_exist']:\r\n   if dynslave['passion_luxury'] = 0 and rebell[$dynslave_psy_status] > 0 and dynslave['obedience'] < 0 and dynslave['beaten_ever'] = 0 and dynslave['domini_dictum'] = 0:\r\n    if args[2] = 1:\r\n     if 'dynslave' = 'slave' and dynslave['gladiatrix'] > max(0, master_supermacy - master_style):\r\n      dynamic $slave_fights_back\r\n     else\r\n      dynamic $replace($dyn_slave_forced, 'dyn'+'slave', 'dynslave')\r\n     end\r\n    else\r\n     $dynslave['collar'] = 'пусто'\r\n     dynslave_inventory['golden_collar'] += 1\r\n    end\r\n   end\r\n  end\r\n  dynslave_stat_screen = 2 & menu_form = 0\r\n  gt iif('dynslave' = 'slave' or 'dynslave' = 'assistant', 'dynslave_stat', $gc_return)\r\n }\r\n dynamic $replace($gc_resolve, 'dyn'+'slave', $gc_role), args[2], args[3], args[5]\r\n exit\r\nend\r\nif $args[0] = 'golden_collar_load':\r\n local $gc_role = ''\r\n if $curloc = 'choice_screen' and instr($yes, 'GC_CHOICE_20261025') = 0:\r\n  local gc_i, $gc_candidate\r\n  for gc_i = 0 to 7:\r\n   $gc_candidate = $iif(gc_i = 0, 'slave', $iif(gc_i = 1, 'assistant', $iif(gc_i = 2, 'prisoner', $iif(gc_i = 3, 'cow', 'room' + $str(gc_i - 3)))))\r\n   if instr($no, '$' + $gc_candidate + \"['collar'] = 'пусто'\") > 0 and instr($no, $gc_candidate + \"_inventory['golden_collar'] += 1\") > 0 and instr($yes, '$dyn_slave_forced') > 0 and instr($yes, $gc_candidate + '_stat_screen = 2') > 0: $gc_role = $gc_candidate\r\n  end\r\n end\r\n if instr($item_property['golden_collar'], 'GC_CHOICE_20261025') = 0: gs '#item_base'\r\n if $gc_role ! '':\r\n  $yes = '' & $no = '' & $return_lock = 'menu_form'\r\n  local $gc_resume = {\r\n   if $dynslave['collar'] = 'golden_collar' and dynslave_state = CONST_INT['slave_exist'] and dynslave['passion_luxury'] = 0 and rebell[$dynslave_psy_status] > 0 and dynslave['obedience'] < 0 and dynslave['beaten_ever'] = 0 and dynslave['domini_dictum'] = 0:\r\n    dynamic $replace($item_property['golden_collar'], 'dyn'+'slave', 'dynslave')\r\n   end\r\n   menu_form = 0\r\n   gt 'menu_form'\r\n  }\r\n  dynamic $replace($gc_resume, 'dyn'+'slave', $gc_role)\r\n end\r\n exit\r\nend\r\n! JO9 MOD END GOLDEN_COLLAR_REFUSAL_RETURN_20261025\r\n! JO9 MOD START J9M2251 | 2026-10-10_restore_private_room_ui | changed block; context may be included",
+      "count": 1
+    },
+    {
+      "location": "#item_base",
+      "field": "body",
+      "old": "$item_property['golden_collar'] = {\r\n\tif dynslave['passion_luxury'] = 0:\r\n\t\tif dynslave_state = CONST_INT['slave_exist'] and rebell[$dynslave_psy_status] > 0 and dynslave['obedience'] < 0 and dynslave['beaten_ever'] = 0 and dynslave['domini_dictum'] = 0:\r\n\t\t\t$place = 'study'\r\n\t\t\t$picture_type = 'dynslave_picture'\r\n\t\t\tnpc = 0 & txt = 1 & $text[1] = '  <<$dynslave_name>>는 장식 목걸이 착용을 거부한다. 그래도 강제로 잠가 버릴까?'\r\n\t\t\t$yes = {\r\n\t\t\t\tif 'dynslave' = 'slave' and dynslave['gladiatrix'] > max(0, master_supermacy - master_style):\r\n\t\t\t\t\tdynamic $slave_fights_back\r\n\t\t\t\telse\r\n\t\t\t\t\tdynamic $replace($dyn_slave_forced, 'dyn'+'slave', 'dynslave')\r\n\t\t\t\t\tdynslave_stat_screen = 2 & menu_form = 0 & gt iif('dynslave' = 'slave' or 'dynslave' = 'assistant', 'dynslave_stat', $return_lock)\r\n\t\t\t\tend\r\n\t\t\t}\r\n\t\t\t$no = {\r\n\t\t\t\t$dynslave['collar'] = 'пусто' &! empty\r\n\t\t\t\tdynslave_inventory['golden_collar'] += 1\r\n\t\t\t\tdynslave_stat_screen = 2 & menu_form = 0 & gt iif('dynslave' = 'slave' or 'dynslave' = 'assistant', 'dynslave_stat', $return_lock)\r\n\t\t\t}",
+      "new": "$item_property['golden_collar'] = {\r\n\tif dynslave['passion_luxury'] = 0:\r\n\t\tif dynslave_state = CONST_INT['slave_exist'] and rebell[$dynslave_psy_status] > 0 and dynslave['obedience'] < 0 and dynslave['beaten_ever'] = 0 and dynslave['domini_dictum'] = 0:\r\n\t\t\t$place = 'study'\r\n\t\t\t$picture_type = 'dynslave_picture'\r\n\t\t\tnpc = 0 & txt = 1 & $text[1] = '  <<$dynslave_name>>는 금장 목줄 착용을 거부한다. 그래도 강제로 잠가 버릴까?'\r\n\t\t\t! JO9 MOD START GOLDEN_COLLAR_REFUSAL_RETURN_20261025\r\njo9_gc_seq += 1\r\n            $yes = \"gs '#item_base', 'golden_collar_choice', 'dynslave', \" + $str(dynslave['id']) + ', ' + $str(dynslave_type) + ', ' + $str(jo9_gc_seq) + ', 1 &! GC_CHOICE_20261025'\r\n            $no = \"gs '#item_base', 'golden_collar_choice', 'dynslave', \" + $str(dynslave['id']) + ', ' + $str(dynslave_type) + ', ' + $str(jo9_gc_seq) + ', 0 &! GC_CHOICE_20261025'\r\n! JO9 MOD END GOLDEN_COLLAR_REFUSAL_RETURN_20261025",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "killobj &! remove any left-over clickable objects (usually arrows from a previous screen exited using ESC)\r\ngs '$newloc'",
+      "new": "! JO9 MOD START GOLDEN_COLLAR_REFUSAL_RETURN_20261025\r\n$return_lock = 'menu_form'\r\nif instr($item_property['golden_collar'], 'GC_CHOICE_20261025') = 0: gs '#item_base'\r\n! JO9 MOD END GOLDEN_COLLAR_REFUSAL_RETURN_20261025\r\nkillobj &! remove any left-over clickable objects (usually arrows from a previous screen exited using ESC)\r\ngs '$newloc'",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "$return_lock  = 'menu_form'\r\n",
+      "new": "! JO9 MOD START GOLDEN_COLLAR_REFUSAL_RETURN_20261025\r\n! Return is set before equipment recalculation above.\r\n! JO9 MOD END GOLDEN_COLLAR_REFUSAL_RETURN_20261025\r\n",
+      "count": 1
+    },
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "saved_game_loaded = 1 &! do-once flag for $newloc",
+      "new": "saved_game_loaded = 1 &! do-once flag for $newloc\r\n! JO9 MOD START GOLDEN_COLLAR_REFUSAL_RETURN_20261025\r\ngs '#item_base', 'golden_collar_load'\r\n! JO9 MOD END GOLDEN_COLLAR_REFUSAL_RETURN_20261025\r\n",
+      "count": 1
+    }
+  ]
+}

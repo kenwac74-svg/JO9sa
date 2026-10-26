@@ -1,0 +1,57 @@
+{
+  "id": "2026-10-19_portrait_assistant_cow_followup",
+  "description": "Keep assistant cow lessons on their own actor through the existing cow transition, refusal and restoration routes; reuse the canonical helper and preserve individual rules. No authored text changes.",
+  "before_sha256": "414928de0b36f05a95dd442232fdd0c2b19ee5d903120041448e071c6c1e47f9",
+  "after_sha256": "987940a392c78571ef2dde4800a235775fbc8d0645bfa8f9ff8675c3c11e7638",
+  "edits": [
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "if interaction = 5026:\r\n\tif assistant['cowSK'] > 2 and (assistant['lactation'] = 0 or $assistant['cloth'] ! 'cow_gear' or barn = 0):\r\n\t\t$interaction_type = 'special' &! bypass interaction_result, skip to interaction_screen\r\n\t\tshow_assistant_fullimage = 1\r\n\t\t$text[1] = '  <<$assistant_name>>는 젖소 흉내를 완벽하게 낼 수 있다. 이 기술을 더 끌어올려 진짜 젖소로 만들려면, 그녀에게 수유 증강 수술을 해 두고, 추방자 구역의 동물 농장에서 산 젖소 장비를 갖춰 주고, 훈련할 축사를 빌려야 한다.'\r\n\telse\r\n\t\t$interaction_type = 'master_teaches_assistant'\r\n\t\tdynamic $interaction_cow_setup\r\n",
+      "new": "! JO9 MOD START PORTRAIT_COW_ASSISTANT_SETUP | 2026-10-19_portrait_assistant_cow_followup\r\nif interaction = 5026:\r\n\tif assistant['cowSK'] > 2 and (assistant['lactation'] = 0 or $assistant['cloth'] ! 'cow_gear' or barn = 0):\r\n\t\t$interaction_type = 'special' &! bypass interaction_result, skip to interaction_screen\r\n\t\tshow_assistant_fullimage = 1\r\n\t\t$text[1] = '  <<$assistant_name>>는 젖소 흉내를 완벽하게 낼 수 있다. 이 기술을 더 끌어올려 진짜 젖소로 만들려면, 그녀에게 수유 증강 수술을 해 두고, 추방자 구역의 동물 농장에서 산 젖소 장비를 갖춰 주고, 훈련할 축사를 빌려야 한다.'\r\n\telse\r\n\t\t$interaction_type = 'master_teaches_assistant'\r\n\t\tdynamic $replace($interaction_cow_setup, 'slave', 'assistant')\r\n\r\n! JO9 MOD END PORTRAIT_COW_ASSISTANT_SETUP\r\n",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "\t\t\t\t$special_action[3] = { cow_lesson_in_progress = 1 & interaction = iif(assistant['cowSK'] > 3 and assistant['milk_summ'] > 10, menu_C_milking, menu_cow_impregnate) & gs 'assistant_to_cow' } &! segue into \"impregnate cow\" or milking interaction in barn",
+      "new": "! JO9 MOD START PORTRAIT_COW_ASSISTANT_CONTINUE | 2026-10-19_portrait_assistant_cow_followup\r\n\t\t\t\t$special_action[3] = { cow_lesson_in_progress = 2 & interaction = iif(assistant['cowSK'] > 3 and assistant['milk_summ'] > 10, menu_C_milking, menu_cow_impregnate) & gs 'slave_to_cow' } &! segue into \"impregnate cow\" or milking interaction in barn\r\n! JO9 MOD END PORTRAIT_COW_ASSISTANT_CONTINUE",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "if interaction = menu_deny_barn:\r\n\t$interaction_type = 'special'\r\n\tshow_slave_fullimage = 1\r\n\t$place = 'study'\r\n\tif slave['obedience'] < -4:\r\n\t\t$text[1] = '  당신의 노예는 자신을 무슨 짐승이라도 되는 줄 아느냐며 당신을 바보라고 부르고, 외양간에 들어가기를 완강히 거부한다.'\r\n\telseif slave['obedience'] < 1:\r\n\t\t$text[1] = '  <<$slave_name>>는 외양간을 한번 들여다보지만, 끝내 단호하게 들어가기를 거부한다.'\r\n\telseif slave['courage'] ! 2:\r\n\t\t$text[1] = '  눈에 공포를 담은 채, <<$slave_name>>는 외양간으로 돌아가기를 거부한다. 지금은.'\r\n\telse\r\n\t\t$text[1] = '  <<$slave_name>>는 외양간으로 돌아가기를 거부한다. 지금은.'\r\n\tend\r\n\tdynamic $sin_gained_now, 'slave'\r\nend",
+      "new": "! JO9 MOD START PORTRAIT_COW_DENY_ACTOR | 2026-10-19_portrait_assistant_cow_followup\r\nif interaction = menu_deny_barn:\r\n dynamic $replace({\r\n\t$interaction_type = 'special'\r\n\tshow_slave_fullimage = 1\r\n\t$place = 'study'\r\n\tif slave['obedience'] < -4:\r\n\t\t$text[1] = '  당신의 노예는 자신을 무슨 짐승이라도 되는 줄 아느냐며 당신을 바보라고 부르고, 외양간에 들어가기를 완강히 거부한다.'\r\n\telseif slave['obedience'] < 1:\r\n\t\t$text[1] = '  <<$slave_name>>는 외양간을 한번 들여다보지만, 끝내 단호하게 들어가기를 거부한다.'\r\n\telseif slave['courage'] ! 2:\r\n\t\t$text[1] = '  눈에 공포를 담은 채, <<$slave_name>>는 외양간으로 돌아가기를 거부한다. 지금은.'\r\n\telse\r\n\t\t$text[1] = '  <<$slave_name>>는 외양간으로 돌아가기를 거부한다. 지금은.'\r\n\tend\r\n\tdynamic $sin_gained_now, 'slave'\r\n }, 'slave', iif(cow_lesson_in_progress = 2, 'assistant', 'slave'))\r\n if cow_lesson_in_progress = 2: cow_lesson_in_progress = 0\r\nend\r\n! JO9 MOD END PORTRAIT_COW_DENY_ACTOR",
+      "count": 1
+    },
+    {
+      "location": "slave_to_cow",
+      "field": "body",
+      "old": "if slave_state = CONST_INT['slave_exist'] and slave['cowSK_affinity'] < 1 and slave['domini_dictum'] = 0:\r\n\tif (slave['obedience'] + slave['fear'] < 0) or _ \r\n\t(slave['neg_barn'] > 0 and slave['obedience'] + slave['fear'] < 4) or _ \r\n\t(slave['neg_barn_plus'] > 0 and slave['obedience'] + slave['fear'] < 6):\r\n\t\tcow_lesson_in_progress = 0\r\n\t\tinteraction = menu_deny_barn \r\n\t\tgt 'interaction'\r\n\tend\r\nend\r\n\r\ndynamic $swap_slave_instances, 'slave', 'cow'\r\n\r\nif interaction = menu_cow_impregnate or interaction = menu_C_milking: gt 'interaction'",
+      "new": "! JO9 MOD START PORTRAIT_COW_TEMPORARY_ACTOR | 2026-10-19_portrait_assistant_cow_followup\r\nif cow_lesson_in_progress = 2:\r\nif assistant_state = CONST_INT['slave_exist'] and assistant['cowSK_affinity'] < 1 and assistant['domini_dictum'] = 0:\r\n\tif (assistant['obedience'] + assistant['fear'] < 0) or _ \r\n\t(assistant['neg_barn'] > 0 and assistant['obedience'] + assistant['fear'] < 4) or _ \r\n\t(assistant['neg_barn_plus'] > 0 and assistant['obedience'] + assistant['fear'] < 6):\r\n\t\tinteraction = menu_deny_barn \r\n\t\tgt 'interaction'\r\n\tend\r\nend\r\n\r\ndynamic $swap_slave_instances, 'assistant', 'cow'\r\n\r\nif interaction = menu_cow_impregnate or interaction = menu_C_milking: gt 'interaction'\r\n exit\r\nend\r\n\r\nif slave_state = CONST_INT['slave_exist'] and slave['cowSK_affinity'] < 1 and slave['domini_dictum'] = 0:\r\n\tif (slave['obedience'] + slave['fear'] < 0) or _ \r\n\t(slave['neg_barn'] > 0 and slave['obedience'] + slave['fear'] < 4) or _ \r\n\t(slave['neg_barn_plus'] > 0 and slave['obedience'] + slave['fear'] < 6):\r\n\t\tcow_lesson_in_progress = 0\r\n\t\tinteraction = menu_deny_barn \r\n\t\tgt 'interaction'\r\n\tend\r\nend\r\n\r\ndynamic $swap_slave_instances, 'slave', 'cow'\r\n\r\nif interaction = menu_cow_impregnate or interaction = menu_C_milking: gt 'interaction'\r\n! JO9 MOD END PORTRAIT_COW_TEMPORARY_ACTOR",
+      "count": 1
+    },
+    {
+      "location": "interaction_result",
+      "field": "body",
+      "old": "\tif cow_lesson_in_progress = 1 and $interaction_type = 'milking_cow':\r\n\t\tif show_cow_fullimage = 1: show_slave_fullimage = 1 & show_cow_fullimage = 0\r\n\t\tdynamic $swap_slave_instances, 'slave', 'cow'\r\n\t\t$interaction_partner = 'slave' &! apply energy drop and increment counters for the correct slave instance\r\n\t\t$return_lock = 'menu_form'\r\n\t\tcow_lesson_in_progress = 0\r\n\tend",
+      "new": "! JO9 MOD START PORTRAIT_COW_RESTORE_MILKING | 2026-10-19_portrait_assistant_cow_followup\r\n\tif (cow_lesson_in_progress = 1 or cow_lesson_in_progress = 2) and $interaction_type = 'milking_cow':\r\n\t\tif cow_lesson_in_progress = 2:\r\n\t\t\tif show_cow_fullimage = 1: show_assistant_fullimage = 1 & show_cow_fullimage = 0\r\n\t\t\tdynamic $swap_slave_instances, 'assistant', 'cow'\r\n\t\t\t$interaction_partner = 'assistant'\r\n\t\telse\r\n\t\t\tif show_cow_fullimage = 1: show_slave_fullimage = 1 & show_cow_fullimage = 0\r\n\t\t\tdynamic $swap_slave_instances, 'slave', 'cow'\r\n\t\t\t$interaction_partner = 'slave' &! apply energy drop and increment counters for the correct slave instance\r\n\t\tend\r\n\t\t$return_lock = 'menu_form'\r\n\t\tcow_lesson_in_progress = 0\r\n\tend\r\n! JO9 MOD END PORTRAIT_COW_RESTORE_MILKING",
+      "count": 1
+    },
+    {
+      "location": "interaction_result",
+      "field": "body",
+      "old": "\tif cow_lesson_in_progress = 1:\r\n\t\tif show_cow_fullimage = 1: show_slave_fullimage = 1 & show_cow_fullimage = 0\r\n\t\tdynamic $swap_slave_instances, 'slave', 'cow'\r\n\t\t$interaction_partner = 'slave' &! apply energy drop and increment counters for the correct slave instance\r\n\t\t$return_lock = 'menu_form'\r\n\t\tcow_lesson_in_progress = 0\r\n\tend",
+      "new": "! JO9 MOD START PORTRAIT_COW_RESTORE_OTHER | 2026-10-19_portrait_assistant_cow_followup\r\n\tif cow_lesson_in_progress = 1 or cow_lesson_in_progress = 2:\r\n\t\tif cow_lesson_in_progress = 2:\r\n\t\t\tif show_cow_fullimage = 1: show_assistant_fullimage = 1 & show_cow_fullimage = 0\r\n\t\t\tdynamic $swap_slave_instances, 'assistant', 'cow'\r\n\t\t\t$interaction_partner = 'assistant'\r\n\t\telse\r\n\t\t\tif show_cow_fullimage = 1: show_slave_fullimage = 1 & show_cow_fullimage = 0\r\n\t\t\tdynamic $swap_slave_instances, 'slave', 'cow'\r\n\t\t\t$interaction_partner = 'slave' &! apply energy drop and increment counters for the correct slave instance\r\n\t\tend\r\n\t\t$return_lock = 'menu_form'\r\n\t\tcow_lesson_in_progress = 0\r\n\tend\r\n! JO9 MOD END PORTRAIT_COW_RESTORE_OTHER",
+      "count": 1
+    },
+    {
+      "location": "#dynamic",
+      "field": "body",
+      "old": "\t\tif dynslave['no_orgasm_rule'] = 0 or dynslave_state = CONST_INT['slave_faint'] or ('dynslave' ! 'assistant' and 'dynslave' ! 'slave' and cow_lesson_in_progress ! 1):",
+      "new": "! JO9 MOD START PORTRAIT_COW_PRESERVE_RULE | 2026-10-19_portrait_assistant_cow_followup\r\n\t\tif dynslave['no_orgasm_rule'] = 0 or dynslave_state = CONST_INT['slave_faint'] or ('dynslave' ! 'assistant' and 'dynslave' ! 'slave' and cow_lesson_in_progress ! 1 and cow_lesson_in_progress ! 2):\r\n! JO9 MOD END PORTRAIT_COW_PRESERVE_RULE",
+      "count": 1
+    }
+  ]
+}

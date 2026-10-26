@@ -1,0 +1,140 @@
+{
+  "qspSha256": "c6701e3ab130b1a762d0b1a523d52cd53cee846f71c3d7899a4c369389aa853d",
+  "saveSha256": "c63b85e85b6c43ab5109d37376207484f4bc57cd9efd81e2bc9d8d5b3da4059f",
+  "saveRoleImageValues": {
+    "FULLIMAGE": "girls/full/egeya_blond_long",
+    "FULLMADE": "girls/full/maid/kirakira",
+    "FULLSECRETARY": "girls/full/secretary/kirakira",
+    "FULLMISTRESS": "girls/full/mistress/kirakira",
+    "FULLPREGNANT": "girls/full/pregnant/kirakira"
+  },
+  "jsonRoleFieldsPresent": {
+    "fullimage": true,
+    "fullmade": false,
+    "fullsecretary": false,
+    "fullmistress": false,
+    "fullpregnant": false
+  },
+  "cases": [
+    {
+      "name": "default-egeya",
+      "mode": 0,
+      "key": "FULLIMAGE",
+      "expected": "girls/full/egeya_blond_long"
+    },
+    {
+      "name": "maid-stale",
+      "mode": 2,
+      "key": "FULLMADE",
+      "expected": "girls/full/maid/kirakira"
+    },
+    {
+      "name": "secretary-stale",
+      "mode": 3,
+      "key": "FULLSECRETARY",
+      "expected": "girls/full/secretary/kirakira"
+    },
+    {
+      "name": "domina-stale",
+      "mode": 1,
+      "key": "FULLMISTRESS",
+      "expected": "girls/full/mistress/kirakira"
+    }
+  ],
+  "scope": "Only selected image strings read from existing save; fixtures contain no full save. Original image resolver used; actual save-load UI and full role transfer not executed.",
+  "issue_id": "EGEYA_STALE_ROLE_IMAGES_20261022",
+  "date": "2026-10-22",
+  "status": "CONFIRMED_FIX_PENDING",
+  "native_results": [
+    {
+      "name": "default-egeya",
+      "checkpoint": "Original display_fullimage resolves the saved role array path after the actual selection assignment.",
+      "pass": true,
+      "reason": "",
+      "durationMs": 593
+    },
+    {
+      "name": "maid-stale",
+      "checkpoint": "Original display_fullimage resolves the saved role array path after the actual selection assignment.",
+      "pass": true,
+      "reason": "",
+      "durationMs": 275
+    },
+    {
+      "name": "secretary-stale",
+      "checkpoint": "Original display_fullimage resolves the saved role array path after the actual selection assignment.",
+      "pass": true,
+      "reason": "",
+      "durationMs": 265
+    },
+    {
+      "name": "domina-stale",
+      "checkpoint": "Original display_fullimage resolves the saved role array path after the actual selection assignment.",
+      "pass": true,
+      "reason": "",
+      "durationMs": 268
+    }
+  ],
+  "confirmed": "Existing save retains Kirakira role-image paths at original Egeya ID2579, while its base fullimage is Egeya. Actual selection assignments plus original display_fullimage reproduce all three wrong role paths.",
+  "source_locations": {
+    "assistant_stat": [
+      188,
+      192,
+      196,
+      200,
+      203,
+      207
+    ],
+    "display_fullimage": [
+      60,
+      65,
+      69,
+      76,
+      78,
+      80
+    ],
+    "slave_to_assistant": [
+      30
+    ]
+  },
+  "related_risk": {
+    "original_ids_missing_all_four_role_keys": [
+      2577,
+      2579,
+      2580,
+      2581,
+      2582,
+      2583,
+      2584,
+      2585,
+      2586,
+      2587,
+      2588,
+      2589,
+      2590,
+      2591,
+      2592,
+      2593,
+      2594,
+      2595,
+      2596,
+      2597
+    ],
+    "original_ids_missing_pregnant_only": [
+      2578,
+      2598,
+      2599,
+      2600,
+      2601
+    ],
+    "note": "Schema-based exposure, not proof every saved character is affected."
+  },
+  "limits": [
+    "No complete save-load UI or actual slave-to-assistant transfer replay was executed.",
+    "No engine JSON-loader implementation was changed or fully audited.",
+    "New-game registration must be distinguished from stale saved arrays."
+  ],
+  "runtime_files_modified": false,
+  "save_files_modified": false,
+  "commit_push": false
+}

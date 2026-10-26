@@ -1,0 +1,15 @@
+{
+  "sourceSha256": "a70bd177d8e7ade58243578b2f04745ff00cec3884d26d3b924dfffc8a8d007a",
+  "host": "Byte-identical WORK QSP in a temporary resource host",
+  "engine": "Existing WORK FastQSP / saved format 5.7.0",
+  "gameLogicModifiedForFinalLoadChecks": false,
+  "workNativeCrc": "-1461046873",
+  "nativePreparation": {"total": 28, "normalMenuLoad": true, "originalScenes": true, "nativeSaveAtGuardedCheckpoint": true},
+  "checks": [
+    {"file": "12_bill-settle-once.sav", "crcIgnored": true, "actions": ["Load staged save", "Sell interior decoration", "Save to a separate verification filename", "Load that new save"], "observed": ["Bill 100 / recoverable decoration 460", "Money 360 after payment", "Basic interior picture", "Money still 360 after native Save and Load"], "pass": true},
+    {"file": "20_traits_overflow_merge.sav", "crcIgnored": false, "installedPath": true, "actions": ["Load", "Click full trait list", "Click strong obedience"], "observed": ["No CRC warning", "Three columns including titles", "Description in lower section"], "pass": true},
+    {"file": "24_isabella_notice.sav", "crcIgnored": false, "installedPath": true, "actions": ["Load", "Click original forward object"], "observed": ["Current Isabella title portrait", "Correct luxury study background", "Normal main menu and luxury home background after forward"], "pass": true},
+    {"file": "28_collar_refusal.sav", "crcIgnored": false, "installedPath": true, "actions": ["Load", "Click X"], "observed": ["Original refusal question over proper study background", "Return to original main menu", "Day 102 and money 20000 preserved"], "pass": true}
+  ],
+  "limits": ["The new pack's 28 starting states were loaded/prepared by the native engine, but every subsequent gameplay branch was not replayed in this artifact task.", "Earlier full regression evidence remains in post-patch-playtest-20261025 and collar-runtime-test-20261025.", "Strict CRC actual Load was checked for three representative installed files, not all 28.", "Known game bugs are documented as unresolved; this task changes no product code."]
+}

@@ -1,0 +1,48 @@
+{
+  "createdAt": "2026-10-23T12:11:50.249Z",
+  "verdict": "NATIVE_LOAD_UNVERIFIED",
+  "officialCommand": "OPENGAME is saved-state loader; OPENQST is world loader",
+  "officialSource": "https://dev.qsp.org/docs/language/qsp-keywords/qsp-keywords-statements/#opengame",
+  "results": [
+    {
+      "name": "load-control",
+      "checkpoint": "actual saved-state restore via OPENGAME; diagnostic onload, no live code",
+      "pass": false,
+      "reason": "Completion marker timeout",
+      "durationMs": 12263
+    },
+    {
+      "name": "load-relative",
+      "checkpoint": "actual saved-state restore via OPENGAME; diagnostic onload, no live code",
+      "pass": false,
+      "reason": "Completion marker timeout",
+      "durationMs": 12145
+    },
+    {
+      "name": "load-absolute",
+      "checkpoint": "actual saved-state restore via OPENGAME; diagnostic onload, no live code",
+      "pass": false,
+      "reason": "Completion marker timeout",
+      "durationMs": 12160
+    }
+  ],
+  "control": {
+    "bytes": 820,
+    "sha256": "f110d5809cdad63a928e86883a8f3c18e673eac7f4e57fd222de381a9b3b9d62",
+    "version": "5.7.0",
+    "parseRoundTrip": true,
+    "location": "Start"
+  },
+  "baseline": {
+    "bytes": 49422776,
+    "sha256": "f73e975b5a98cff3f8f6c59560da5ec3349609fefbd702164e583af4f0d50ac6",
+    "copyUnchanged": true
+  },
+  "sourceQspUnchanged": true,
+  "originalSaves": {
+    "checked": 57,
+    "changed": []
+  },
+  "conclusion": "Even native SAVEGAME output could not be reopened by code-level OPENGAME in installed FastQSP. Baseline format or size alone does not explain failure. No successful native save restoration was observed.",
+  "scope": "Three hidden bounded probes only. Diagnostic onload replaces normal game callback. No live input writes."
+}

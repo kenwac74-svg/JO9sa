@@ -1,0 +1,33 @@
+{
+  "patchId": "BCUT_MOB_RESTORE_20261021",
+  "status": "PASS",
+  "cause": "현재 목록의 mob폴더가 기존 전환컷 허용목록에서 제외되어 버튼·API·등록스캔이 작동하지 않음. bg/characters/scene/reserve 기존 기능은 남아있었음.",
+  "sourceFrontChanged": 8,
+  "sourceBackendChanged": 3,
+  "runtimeFilesChanged": 8,
+  "syntaxScriptsParsed": 21,
+  "regressions": {
+    "pass": 14,
+    "fail": 0
+  },
+  "uiEvidence": {
+    "checklist": "기존3813/catalog 탭에서Warg 검색→전환컷추가→mob/Warg (2).png 편집모드 확인. 새이미지0,실저장0.",
+    "standalone": "기존1057 탭에서bg/teatr1 전환컷추가→bg/teatr1 (2).png 편집모드 확인. 새이미지0,실저장0. mob eligibility는회귀로검사.",
+    "screenshot": "checklist-bcut.png"
+  },
+  "gameQspSha256": "a2e0265881bebd8a72b3fcbb214ddaf831106cfe50e9c96da8e0b6e7d692707a",
+  "gameQspChanged": false,
+  "liveImagesChanged": false,
+  "fullOrZipChanged": false,
+  "commitPush": false,
+  "limits": [
+    "실제 게임·세이브의플레이검증은수행하지않음. 실저장은격리fixture에서만검사",
+    "전투UI(fight_bg 등)의 기존 B컷전환 제외조건은미변경. 도시조우그림의기존전환훅은사용가능",
+    "기존일반형제symlink/원본등록부모junction/등록스캔rootjunction의잠재경계는별도검토사항으로보존. 본수리는mob허용목록확장에한정"
+  ],
+  "backups": [
+    "G:/somi/JO9_work_backups/bcut-mob-repair-20261021/frontend-source-before.json.gz",
+    "G:/somi/JO9_work_backups/bcut-mob-repair-20261021/runtime-before.json.gz"
+  ],
+  "independentReview": "source8+runtimefront5는eligibility1회치환역변환해시복원; runtimebackend3는mob허용목록/등록및관련오류문구변경만. PLAY_URL/sync/레이아웃보존 확인."
+}

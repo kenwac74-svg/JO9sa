@@ -1,0 +1,114 @@
+{
+  "schema": "jo9-exact-body-edits-v1",
+  "patch": "2026-10-24_chaotic_essence",
+  "baseline": {
+    "path": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+    "sha256": "f2d5a9c2970bd7cbc7479f80901204b8fcdcaeab6cff83019a4a3ece6f8a9775"
+  },
+  "constraints": {
+    "price": 900,
+    "quantityPerPurchase": 1,
+    "effect": "random_one_negative_trait_only",
+    "preserveAchievementTraits": true,
+    "noNegativeCandidateConsumesItem": false
+  },
+  "verification": {
+    "exactAnchorCounts": true,
+    "sequentialReplay": true,
+    "purchaseIncrementOccurrences": 1,
+    "shopExact900Enabled": true,
+    "runtime": "not_run_fragment_only"
+  },
+  "edits": [
+    {
+      "location": "pharmacy",
+      "field": "body",
+      "old": "! JO9 MOD END J9M1480\r\n END\r\n FUNC('$menu', 'exec_options', $menu_item_Backarmoy, 'sp_txt = 1 & gt $curloc', '다른 상품')\r\n FUNC('$menu', '===END===')\r\nEND",
+      "new": "! JO9 MOD END J9M1480\r\n END\r\n! JO9 MOD START CHAOTIC_ESSENCE_SHOP_MENU | 2026-10-24_chaotic_essence\r\n IF sparks >= 900:\r\n  FUNC('$menu', 'exec', '<li style=\"background: url(''content/pic/ui overhaul/chaotic essence.png'') no-repeat left top;\">', 'sp_txt = 125 & gt $curloc', '카오틱 에센스 (900$)', '900스파크에 1회분. 부정 특성 중 무작위 1개를 삭제합니다. 성취 특성과 그 외 특성·상태는 보존합니다.')\r\n ELSE\r\n  FUNC('$menu', 'exec', '<li id=\"grey\" style=\"background: url(''content/pic/ui overhaul/chaotic essence_gray.png'') no-repeat left top;\">', empty, '카오틱 에센스 (900$)', '스파크가 부족합니다. 900스파크에 1회분. 부정 특성 중 무작위 1개를 삭제합니다. 성취 특성과 그 외 특성·상태는 보존합니다.')\r\n END\r\n! JO9 MOD END CHAOTIC_ESSENCE_SHOP_MENU\r\n FUNC('$menu', 'exec_options', $menu_item_Backarmoy, 'sp_txt = 1 & gt $curloc', '다른 상품')\r\n FUNC('$menu', '===END===')\r\nEND",
+      "count": 1,
+      "patchId": "CHAOTIC_ESSENCE_SHOP_MENU",
+      "anchorLine": 247
+    },
+    {
+      "location": "pharmacy",
+      "field": "body",
+      "old": "$text[txt] = $pharmacy[sp_txt]",
+      "new": "! JO9 MOD START CHAOTIC_ESSENCE_SHOP_PURCHASE | 2026-10-24_chaotic_essence\r\nIF sp_txt = 125:\r\n IF sparks >= 900:\r\n  sparks -= 900\r\n  chaotic_essence += 1\r\n  $pharmacy[125] = $pharmacy_accept\r\n  dynamic $get_lab_space\r\n ELSE\r\n  $pharmacy[125] = $pharmacy_deny\r\n END\r\n FUNC('$menu', 'spacer', 4)\r\n FUNC('$menu', '===BEGIN===', 'column_0')\r\n FUNC('$menu', 'exec_options', $menu_item_Backarmoy, 'sp_txt = 12 & gt $curloc', '다른 상품')\r\n FUNC('$menu', 'city_form', $menu_item_centralkvartal, menu_leavecentralkvartal_district, '가게 나가기')\r\n FUNC('$menu', '===END===')\r\nEND\r\n! JO9 MOD END CHAOTIC_ESSENCE_SHOP_PURCHASE\r\n\r\n$text[txt] = $pharmacy[sp_txt]",
+      "count": 1,
+      "patchId": "CHAOTIC_ESSENCE_SHOP_PURCHASE",
+      "anchorLine": 317
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "if menu_form = menu_potion_S_assistant:\r\n\t\r\n\tFUNC('$menu', '===BEGIN===', 'column_1')\r\n!각인의 물약\t - 사용\r\n\tif brainwashing_potion > 0:\r\n\t\tfunc('$menu', 'goto', $menu_item_brainwashing_slave, menu_brainwashing_slave, 'interaction', 'interaction', '각인의 물약', '각인의 물약 음용:(<<brainwashing_potion>>)/모든 충성심 등급 증가')\r\n\telse\r\n\t\tfunc('$menu', 'exec', $menu_item_brainwashing_slave_gray, empty, '각인의 물약', '각인의 물약이 없다')\r\n\tend\r\n\tIF метаболизм_плюс > 0:\r\n\t\tFUNC('$menu', 'goto', $menu_item_metabolismplus, menu_metabolismplus_slave, 'interaction', 'interaction', '대사+', '노예에게 마시게 한다.')\r\n\tELSE\r\n\t\tFUNC('$menu', 'exec', $menu_item_metabolismplus_gray, empty, '대사+', '대사+가 남아 있지 않습니다')\r\n\tEND\r\n\tIF метаболизм_минус > 0:\r\n\t\tFUNC('$menu', 'goto', $menu_item_metabolismminus, menu_metabolismminus_slave, 'interaction', 'interaction', '대사-', '노예에게 마시게 한다.')\r\n\tELSE\r\n\t\tFUNC('$menu', 'exec', $menu_item_metabolismminus_gray, empty, '대사-', '대사-가 남아 있지 않습니다.')\r\n\tEND\r\n\tIF жир_плюс > 0:\r\n\t\tFUNC('$menu', 'goto', $menu_item_zhirplus, menu_zhirplus_slave, 'interaction', 'interaction', '지방+', '노예에게 마시게 한다.')\r\n\tELSE\r\n\t\tFUNC('$menu', 'exec', $menu_item_zhirplus_gray, empty, '지방+', '지방+는 남아 있지 않습니다.')\r\n\tEND\r\n\tIF жир_минус > 0:\r\n\t\tFUNC('$menu', 'goto', $menu_item_zhirminus, menu_zhirminus_slave, 'interaction', 'interaction', '지방-', '노예에게 마시게 한다.')\r\n\tELSE\r\n\t\tFUNC('$menu', 'exec', $menu_item_zhirminus_gray, empty, '지방-', '지방-는 남아 있지 않습니다.')\r\n\tEND\r\n\tfunc('$menu', '===END===')\r\nend",
+      "new": "if menu_form = menu_potion_S_assistant:\r\n\t\r\n\tFUNC('$menu', '===BEGIN===', 'column_1')\r\n!각인의 물약\t - 사용\r\n\tif brainwashing_potion > 0:\r\n\t\tfunc('$menu', 'goto', $menu_item_brainwashing_slave, menu_brainwashing_slave, 'interaction', 'interaction', '각인의 물약', '각인의 물약 음용:(<<brainwashing_potion>>)/모든 충성심 등급 증가')\r\n\telse\r\n\t\tfunc('$menu', 'exec', $menu_item_brainwashing_slave_gray, empty, '각인의 물약', '각인의 물약이 없다')\r\n\tend\r\n\tIF метаболизм_плюс > 0:\r\n\t\tFUNC('$menu', 'goto', $menu_item_metabolismplus, menu_metabolismplus_slave, 'interaction', 'interaction', '대사+', '노예에게 마시게 한다.')\r\n\tELSE\r\n\t\tFUNC('$menu', 'exec', $menu_item_metabolismplus_gray, empty, '대사+', '대사+가 남아 있지 않습니다')\r\n\tEND\r\n\tIF метаболизм_минус > 0:\r\n\t\tFUNC('$menu', 'goto', $menu_item_metabolismminus, menu_metabolismminus_slave, 'interaction', 'interaction', '대사-', '노예에게 마시게 한다.')\r\n\tELSE\r\n\t\tFUNC('$menu', 'exec', $menu_item_metabolismminus_gray, empty, '대사-', '대사-가 남아 있지 않습니다.')\r\n\tEND\r\n\tIF жир_плюс > 0:\r\n\t\tFUNC('$menu', 'goto', $menu_item_zhirplus, menu_zhirplus_slave, 'interaction', 'interaction', '지방+', '노예에게 마시게 한다.')\r\n\tELSE\r\n\t\tFUNC('$menu', 'exec', $menu_item_zhirplus_gray, empty, '지방+', '지방+는 남아 있지 않습니다.')\r\n\tEND\r\n\tIF жир_минус > 0:\r\n\t\tFUNC('$menu', 'goto', $menu_item_zhirminus, menu_zhirminus_slave, 'interaction', 'interaction', '지방-', '노예에게 마시게 한다.')\r\n\tELSE\r\n\t\tFUNC('$menu', 'exec', $menu_item_zhirminus_gray, empty, '지방-', '지방-는 남아 있지 않습니다.')\r\n\tEND\r\n! JO9 MOD START CHAOTIC_ESSENCE_USE_ASSISTANT | 2026-10-24_chaotic_essence\r\n\tif chaotic_essence > 0 and func('jo9_chaotic', 'count', 'assistant') > 0:\r\n\t\tfunc('$menu', 'exec', '<li style=\"background: url(''content/pic/ui overhaul/chaotic essence.png'') no-repeat left top;\">', 'gs ''jo9_chaotic'', ''use'', ''assistant'' & gt ''menu_form''', '카오틱 에센스', '보유량: <<chaotic_essence>>회분. 부정 특성 중 무작위 1개를 삭제합니다. 성취 특성과 그 외 특성·상태는 보존합니다.')\r\n\telseif chaotic_essence <= 0:\r\n\t\tfunc('$menu', 'exec', '<li id=\"grey\" style=\"background: url(''content/pic/ui overhaul/chaotic essence_gray.png'') no-repeat left top;\">', empty, '카오틱 에센스', '카오틱 에센스가 없습니다. 중앙 구역 물약 상점에서 구매할 수 있습니다.')\r\n\telse\r\n\t\tfunc('$menu', 'exec', '<li id=\"grey\" style=\"background: url(''content/pic/ui overhaul/chaotic essence_gray.png'') no-repeat left top;\">', empty, '카오틱 에센스', '삭제할 부정 특성이 없습니다. 아이템을 소모하지 않습니다.')\r\n\tend\r\n! JO9 MOD END CHAOTIC_ESSENCE_USE_ASSISTANT\r\n\tfunc('$menu', '===END===')\r\nend",
+      "count": 1,
+      "patchId": "CHAOTIC_ESSENCE_USE_ASSISTANT",
+      "anchorLine": 1447
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "if menu_form = menu_potion_S:\r\n\tFUNC('$menu', '===BEGIN===', 'column_1')\r\n!각인의 물약\t - 사용\r\n\tif brainwashing_potion > 0:\r\n\t\tfunc('$menu', 'goto', $menu_item_brainwashing_slave, menu_brainwashing_slave, 'interaction', 'interaction', '각인의 물약', '각인의 물약 음용:(<<brainwashing_potion>>)/모든 충성심 등급 증가')\r\n\telse\r\n\t\tfunc('$menu', 'exec', $menu_item_brainwashing_slave_gray, empty, '각인의 물약', '각인의 물약이 없다')\r\n\tend\r\n\tIF метаболизм_плюс > 0:\r\n\t\tFUNC('$menu', 'goto', $menu_item_metabolismplus, menu_metabolismplus_slave, 'interaction', 'interaction', '대사+', '노예에게 마시게 한다.')\r\n\tELSE\r\n\t\tFUNC('$menu', 'exec', $menu_item_metabolismplus_gray, empty, '대사+', '대사+가 남아 있지 않습니다')\r\n\tEND\r\n\tIF метаболизм_минус > 0:\r\n\t\tFUNC('$menu', 'goto', $menu_item_metabolismminus, menu_metabolismminus_slave, 'interaction', 'interaction', '대사-', '노예에게 마시게 한다.')\r\n\tELSE\r\n\t\tFUNC('$menu', 'exec', $menu_item_metabolismminus_gray, empty, '대사-', '대사-가 남아 있지 않습니다.')\r\n\tEND\r\n\tIF жир_плюс > 0:\r\n\t\tFUNC('$menu', 'goto', $menu_item_zhirplus, menu_zhirplus_slave, 'interaction', 'interaction', '지방+', '노예에게 마시게 한다.')\r\n\tELSE\r\n\t\tFUNC('$menu', 'exec', $menu_item_zhirplus_gray, empty, '지방+', '지방+는 남아 있지 않습니다.')\r\n\tEND\r\n\tIF жир_минус > 0:\r\n\t\tFUNC('$menu', 'goto', $menu_item_zhirminus, menu_zhirminus_slave, 'interaction', 'interaction', '지방-', '노예에게 마시게 한다.')\r\n\tELSE\r\n\t\tFUNC('$menu', 'exec', $menu_item_zhirminus_gray, empty, '지방-', '지방-는 남아 있지 않습니다.')\r\n\tEND\r\n\tfunc('$menu', '===END===')\r\nend",
+      "new": "if menu_form = menu_potion_S:\r\n\tFUNC('$menu', '===BEGIN===', 'column_1')\r\n!각인의 물약\t - 사용\r\n\tif brainwashing_potion > 0:\r\n\t\tfunc('$menu', 'goto', $menu_item_brainwashing_slave, menu_brainwashing_slave, 'interaction', 'interaction', '각인의 물약', '각인의 물약 음용:(<<brainwashing_potion>>)/모든 충성심 등급 증가')\r\n\telse\r\n\t\tfunc('$menu', 'exec', $menu_item_brainwashing_slave_gray, empty, '각인의 물약', '각인의 물약이 없다')\r\n\tend\r\n\tIF метаболизм_плюс > 0:\r\n\t\tFUNC('$menu', 'goto', $menu_item_metabolismplus, menu_metabolismplus_slave, 'interaction', 'interaction', '대사+', '노예에게 마시게 한다.')\r\n\tELSE\r\n\t\tFUNC('$menu', 'exec', $menu_item_metabolismplus_gray, empty, '대사+', '대사+가 남아 있지 않습니다')\r\n\tEND\r\n\tIF метаболизм_минус > 0:\r\n\t\tFUNC('$menu', 'goto', $menu_item_metabolismminus, menu_metabolismminus_slave, 'interaction', 'interaction', '대사-', '노예에게 마시게 한다.')\r\n\tELSE\r\n\t\tFUNC('$menu', 'exec', $menu_item_metabolismminus_gray, empty, '대사-', '대사-가 남아 있지 않습니다.')\r\n\tEND\r\n\tIF жир_плюс > 0:\r\n\t\tFUNC('$menu', 'goto', $menu_item_zhirplus, menu_zhirplus_slave, 'interaction', 'interaction', '지방+', '노예에게 마시게 한다.')\r\n\tELSE\r\n\t\tFUNC('$menu', 'exec', $menu_item_zhirplus_gray, empty, '지방+', '지방+는 남아 있지 않습니다.')\r\n\tEND\r\n\tIF жир_минус > 0:\r\n\t\tFUNC('$menu', 'goto', $menu_item_zhirminus, menu_zhirminus_slave, 'interaction', 'interaction', '지방-', '노예에게 마시게 한다.')\r\n\tELSE\r\n\t\tFUNC('$menu', 'exec', $menu_item_zhirminus_gray, empty, '지방-', '지방-는 남아 있지 않습니다.')\r\n\tEND\r\n! JO9 MOD START CHAOTIC_ESSENCE_USE_SLAVE | 2026-10-24_chaotic_essence\r\n\tif chaotic_essence > 0 and func('jo9_chaotic', 'count', 'slave') > 0:\r\n\t\tfunc('$menu', 'exec', '<li style=\"background: url(''content/pic/ui overhaul/chaotic essence.png'') no-repeat left top;\">', 'gs ''jo9_chaotic'', ''use'', ''slave'' & gt ''menu_form''', '카오틱 에센스', '보유량: <<chaotic_essence>>회분. 부정 특성 중 무작위 1개를 삭제합니다. 성취 특성과 그 외 특성·상태는 보존합니다.')\r\n\telseif chaotic_essence <= 0:\r\n\t\tfunc('$menu', 'exec', '<li id=\"grey\" style=\"background: url(''content/pic/ui overhaul/chaotic essence_gray.png'') no-repeat left top;\">', empty, '카오틱 에센스', '카오틱 에센스가 없습니다. 중앙 구역 물약 상점에서 구매할 수 있습니다.')\r\n\telse\r\n\t\tfunc('$menu', 'exec', '<li id=\"grey\" style=\"background: url(''content/pic/ui overhaul/chaotic essence_gray.png'') no-repeat left top;\">', empty, '카오틱 에센스', '삭제할 부정 특성이 없습니다. 아이템을 소모하지 않습니다.')\r\n\tend\r\n! JO9 MOD END CHAOTIC_ESSENCE_USE_SLAVE\r\n\tfunc('$menu', '===END===')\r\nend",
+      "count": 1,
+      "patchId": "CHAOTIC_ESSENCE_USE_SLAVE",
+      "anchorLine": 1709
+    },
+    {
+      "location": "#dynamic",
+      "field": "body",
+      "old": "\tlab_items = lab_store['slime'] + lab_store['kanabis'] + lab_store['koffe'] + lab_store['meth'] + lab_store['opium'] + вакхический_нектар + тонизируюзщий_эликсир + целительный_бальзам + афродизиак + мощный_афодизиак + приворотное_зелье + вода_леты + метаболизм_плюс + метаболизм_минус + жир_плюс + жир_минус + brainwashing_potion + potion_of_mystra + molar_of_wolf",
+      "new": "! JO9 MOD START CHAOTIC_ESSENCE_LAB_DYNAMIC | 2026-10-24_chaotic_essence\r\n\tlab_items = lab_store['slime'] + lab_store['kanabis'] + lab_store['koffe'] + lab_store['meth'] + lab_store['opium'] + вакхический_нектар + тонизируюзщий_эликсир + целительный_бальзам + афродизиак + мощный_афодизиак + приворотное_зелье + вода_леты + метаболизм_плюс + метаболизм_минус + жир_плюс + жир_минус + brainwashing_potion + potion_of_mystra + molar_of_wolf + chaotic_essence\r\n! JO9 MOD END CHAOTIC_ESSENCE_LAB_DYNAMIC",
+      "count": 1,
+      "patchId": "CHAOTIC_ESSENCE_LAB_DYNAMIC",
+      "anchorLine": 297
+    },
+    {
+      "location": "$newloc",
+      "field": "body",
+      "old": "lab_items = lab_store['slime'] + lab_store['kanabis'] + lab_store['koffe'] + lab_store['meth'] + lab_store['opium'] + вакхический_нектар + тонизируюзщий_эликсир + целительный_бальзам + афродизиак + мощный_афодизиак + приворотное_зелье + вода_леты + метаболизм_плюс + метаболизм_минус + жир_плюс + жир_минус",
+      "new": "! JO9 MOD START CHAOTIC_ESSENCE_LAB_REFRESH | 2026-10-24_chaotic_essence\r\nlab_items = lab_store['slime'] + lab_store['kanabis'] + lab_store['koffe'] + lab_store['meth'] + lab_store['opium'] + вакхический_нектар + тонизируюзщий_эликсир + целительный_бальзам + афродизиак + мощный_афодизиак + приворотное_зелье + вода_леты + метаболизм_плюс + метаболизм_минус + жир_плюс + жир_минус + chaotic_essence\r\n! JO9 MOD END CHAOTIC_ESSENCE_LAB_REFRESH",
+      "count": 1,
+      "patchId": "CHAOTIC_ESSENCE_LAB_REFRESH",
+      "anchorLine": 435
+    },
+    {
+      "location": "master_stat",
+      "field": "body",
+      "old": "\t$middle_text_list += '<u><img src=\"content/pic/ui/dialogue_emoji/potion.png\" width=\"24\" height=\"24\" style=\"vertical-align:-5px\">연구실</u> [<<lab_items>>]:<br>' + _\r\n\t'안개 괴물 점액질 *<<lab_store[\"slime\"]>><br>' + _\r\n\t'삼나무 진액 *<<lab_store[\"koffe\"]>><br>' + _\r\n\t'낙원의 독말풀 *<<lab_store[\"kanabis\"]>><br>' + _\r\n\t'요정의 가루 *<<lab_store[\"meth\"]>><br>' + _\r\n\t'망각의 정수 *<<lab_store[\"opium\"]>><br><br>' + _\r\n\t'바커스의 술 *<<вакхический_нектар>><br>' + _\r\n\t'자양 강장제 *<<тонизируюзщий_эликсир>><br>' + _\r\n\t'기적의 향유 *<<целительный_бальзам>><br>' + _\r\n\t'최음제 *<<афродизиак>><br>' + _\r\n\t'배란 유발제 *<<мощный_афодизиак>><br>' + _\r\n\t'순애의 미약 *<<приворотное_зелье>><br>' + _\r\n\t'저승의 강물 *<<вода_леты>><br>' + _\r\n\t'각인의 물약 *<<brainwashing_potion>><br>' + _\t\t\r\n\t'미스트라의 비약 *<<potion_of_mystra>><br>' + _\r\n\t'와그의 어금니 *<<molar_of_wolf>><br>' + _\r\n\t'지방+ *<<жир_плюс>><br>' + _\r\n\t'지방- *<<xжир_минус>><br>' + _\r\n\t'대사+ *<<метаболизм_плюс>><br>' + _\r\n\t'대사- *<<метаболизм_минус>>'",
+      "new": "! JO9 MOD START CHAOTIC_ESSENCE_INVENTORY_LAB | 2026-10-24_chaotic_essence\r\n\t$middle_text_list += '<u><img src=\"content/pic/ui/dialogue_emoji/potion.png\" width=\"24\" height=\"24\" style=\"vertical-align:-5px\">연구실</u> [<<lab_items>>]:<br>' + _\r\n\t'안개 괴물 점액질 *<<lab_store[\"slime\"]>><br>' + _\r\n\t'삼나무 진액 *<<lab_store[\"koffe\"]>><br>' + _\r\n\t'낙원의 독말풀 *<<lab_store[\"kanabis\"]>><br>' + _\r\n\t'요정의 가루 *<<lab_store[\"meth\"]>><br>' + _\r\n\t'망각의 정수 *<<lab_store[\"opium\"]>><br><br>' + _\r\n\t'바커스의 술 *<<вакхический_нектар>><br>' + _\r\n\t'자양 강장제 *<<тонизируюзщий_эликсир>><br>' + _\r\n\t'기적의 향유 *<<целительный_бальзам>><br>' + _\r\n\t'최음제 *<<афродизиак>><br>' + _\r\n\t'배란 유발제 *<<мощный_афодизиак>><br>' + _\r\n\t'순애의 미약 *<<приворотное_зелье>><br>' + _\r\n\t'저승의 강물 *<<вода_леты>><br>' + _\r\n\t'각인의 물약 *<<brainwashing_potion>><br>' + _\t\t\r\n\t'미스트라의 비약 *<<potion_of_mystra>><br>' + _\r\n\t'와그의 어금니 *<<molar_of_wolf>><br>' + _\r\n\t'지방+ *<<жир_плюс>><br>' + _\r\n\t'지방- *<<xжир_минус>><br>' + _\r\n\t'대사+ *<<метаболизм_плюс>><br>' + _\r\n\t'대사- *<<метаболизм_минус>><br>' + _\r\n\t'카오틱 에센스 *<<chaotic_essence>>'\r\n! JO9 MOD END CHAOTIC_ESSENCE_INVENTORY_LAB",
+      "count": 1,
+      "patchId": "CHAOTIC_ESSENCE_INVENTORY_LAB",
+      "anchorLine": 55
+    },
+    {
+      "location": "master_stat",
+      "field": "body",
+      "old": "\t$middle_text_list += '<u>물질:</u><br>' + _\r\n\t'안개 괴물 점액질 *<<lab_store[\"slime\"]>><br>' + _\r\n\t'삼나무 진액 *<<lab_store[\"koffe\"]>><br>' + _\r\n\t'낙원의 독말풀 *<<lab_store[\"kanabis\"]>><br>' + _\r\n\t'요정의 가루 *<<lab_store[\"meth\"]>><br>' + _\r\n\t'망각의 정수 *<<lab_store[\"opium\"]>><br><br>' + _\r\n\t'바커스의 술 *<<вакхический_нектар>><br>' + _\r\n\t'자양 강장제 *<<тонизируюзщий_эликсир>><br>' + _\r\n\t'기적의 향유 *<<целительный_бальзам>><br>' + _\r\n\t'최음제 *<<афродизиак>><br>' + _\r\n\t'배란 유발제 *<<мощный_афодизиак>><br>' + _\r\n\t'순애의 미약 *<<приворотное_зелье>><br>' + _\r\n\t'저승의 강물 *<<вода_леты>><br>' + _\r\n\t'각인의 물약 *<<brainwashing_potion>><br>' + _\t\t\r\n\t'미스트라의 비약 *<<potion_of_mystra>><br>' + _\r\n\t'와그의 어금니 *<<molar_of_wolf>><br>' + _\r\n\t'지방+ *<<жир_плюс>><br>' + _\r\n\t'지방- *<<xжир_минус>><br>' + _\r\n\t'대사+ *<<метаболизм_плюс>><br>' + _\r\n\t'대사- *<<метаболизм_минус>>'",
+      "new": "! JO9 MOD START CHAOTIC_ESSENCE_INVENTORY_NO_LAB | 2026-10-24_chaotic_essence\r\n\t$middle_text_list += '<u>물질:</u><br>' + _\r\n\t'안개 괴물 점액질 *<<lab_store[\"slime\"]>><br>' + _\r\n\t'삼나무 진액 *<<lab_store[\"koffe\"]>><br>' + _\r\n\t'낙원의 독말풀 *<<lab_store[\"kanabis\"]>><br>' + _\r\n\t'요정의 가루 *<<lab_store[\"meth\"]>><br>' + _\r\n\t'망각의 정수 *<<lab_store[\"opium\"]>><br><br>' + _\r\n\t'바커스의 술 *<<вакхический_нектар>><br>' + _\r\n\t'자양 강장제 *<<тонизируюзщий_эликсир>><br>' + _\r\n\t'기적의 향유 *<<целительный_бальзам>><br>' + _\r\n\t'최음제 *<<афродизиак>><br>' + _\r\n\t'배란 유발제 *<<мощный_афодизиак>><br>' + _\r\n\t'순애의 미약 *<<приворотное_зелье>><br>' + _\r\n\t'저승의 강물 *<<вода_леты>><br>' + _\r\n\t'각인의 물약 *<<brainwashing_potion>><br>' + _\t\t\r\n\t'미스트라의 비약 *<<potion_of_mystra>><br>' + _\r\n\t'와그의 어금니 *<<molar_of_wolf>><br>' + _\r\n\t'지방+ *<<жир_плюс>><br>' + _\r\n\t'지방- *<<xжир_минус>><br>' + _\r\n\t'대사+ *<<метаболизм_плюс>><br>' + _\r\n\t'대사- *<<метаболизм_минус>><br>' + _\r\n\t'카오틱 에센스 *<<chaotic_essence>>'\r\n! JO9 MOD END CHAOTIC_ESSENCE_INVENTORY_NO_LAB",
+      "count": 1,
+      "patchId": "CHAOTIC_ESSENCE_INVENTORY_NO_LAB",
+      "anchorLine": 77
+    },
+    {
+      "location": "init_custom_game",
+      "field": "body",
+      "old": "метаболизм_плюс = 0\r\nметаболизм_минус = 0\r\nжир_плюс = 0\r\nжир_минус = 0",
+      "new": "метаболизм_плюс = 0\r\nметаболизм_минус = 0\r\nжир_плюс = 0\r\nжир_минус = 0\r\n! JO9 MOD START CHAOTIC_ESSENCE_INIT_CUSTOM | 2026-10-24_chaotic_essence\r\nchaotic_essence = 0\r\n! JO9 MOD END CHAOTIC_ESSENCE_INIT_CUSTOM",
+      "count": 1,
+      "patchId": "CHAOTIC_ESSENCE_INIT_CUSTOM",
+      "anchorLine": 217
+    },
+    {
+      "location": "init_story_mode",
+      "field": "body",
+      "old": "метаболизм_плюс = 0\r\nметаболизм_минус = 0\r\nжир_плюс = 0\r\nжир_минус = 0",
+      "new": "метаболизм_плюс = 0\r\nметаболизм_минус = 0\r\nжир_плюс = 0\r\nжир_минус = 0\r\n! JO9 MOD START CHAOTIC_ESSENCE_INIT_STORY | 2026-10-24_chaotic_essence\r\nchaotic_essence = 0\r\n! JO9 MOD END CHAOTIC_ESSENCE_INIT_STORY",
+      "count": 1,
+      "patchId": "CHAOTIC_ESSENCE_INIT_STORY",
+      "anchorLine": 68
+    }
+  ]
+}

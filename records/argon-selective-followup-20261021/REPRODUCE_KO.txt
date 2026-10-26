@@ -1,0 +1,21 @@
+재현 안내 — ARGON_SELECTIVE_FOLLOWUP_20261021
+
+이 폴더의 스크립트는 검사/후보 생성용이며 자동으로 Work에 적용하지 않는다.
+Node: C:/Users/User/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node.exe
+
+1. inputs-and-recovery.json의 복구ZIP에서 jack.qsp만 읽어 G:/Codex/tmp/argon-selective-followup-20261021/inputs/baseline.qsp로 만든다.
+   그 SHA256이 a2e0265881bebd8a72b3fcbb214ddaf831106cfe50e9c96da8e0b6e7d692707a인지 확인한다.
+2. build.cjs를 실행한다. 후보는 temp/build, 이번 한 패치는 temp/mods에만 생긴다.
+3. npc-format-regression.cjs --candidate <후보QSP> <출력JSON>으로6개 표시를 검사한다.
+4. prepare-focused.cjs에 --baseline/--candidate/--state-save/--out을 지정한다.
+   --out은 temp/focused 등 입력 디렉터리 밖으로 둔다. 입력 세이브 해시는 스크립트가 명시적으로 고정한다.
+   보존된 대표 세이브가 바뀌었으면 임의로 옛 PASS를 재사용하지 말고 상태를 다시 검토한다.
+5. tools/qa/run-client-smoke.ps1로 focused/baseline-plan.json을 실행한다. 종료1이 예상되지만,
+   prepare-focused.cjs --verify baseline --out <focused>가 정확한 의도된 실패2개인지 확인해야 한다.
+   다음 candidate-plan.json은 종료0이어야 하며 --verify candidate로 두 완료 메시지를 확인한다.
+   두 결과를 각각 보관한 뒤 다른 모드가 shared client-results.json을 덮도록 한다.
+6. tools/qa/release-check.cjs에 이번 한 mods-dir와 baseline/candidate, 현재 엔진/게임/대표 세이브,
+   cache-revision2, temp/release 출력을 지정한다. PASS만 실제 출고 검사 통과다.
+7. 상태 원문이 들어간 진단 QSP/복제 JSON/로그는 공개하지 않는다. 보고서만 남기고 임시 경로를 확인한 뒤 정리한다.
+
+Work 쓰기는 별도 승인된 적용 단계다. Full/ZIP/커밋/푸시는 자동 실행하지 않는다.

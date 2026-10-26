@@ -1,0 +1,78 @@
+{
+  "status": "PASS",
+  "candidateSha256": "e4110fb537108326d0de680efa4a87d286f9b3a6e5bc0b6073e83d13e1ee97f0",
+  "baselineSha256": "b8de16b088051eea5e51d8636f9ca3cc3975974129adf950ce122260ba2b5cf1",
+  "expectedOutcomes": 17,
+  "candidateNativePass": 14,
+  "baselineExpectedRed": 3,
+  "unexpectedFailures": 0,
+  "engine": "G:/somi/Jack O Nine Tails v2.4_work/game/engine/jack.exe",
+  "tested": {
+    "quotePaths": [
+      911,
+      912,
+      913
+    ],
+    "quoteUpperCap": 8000,
+    "belowCapQuotes": [
+      3920,
+      3500,
+      2400
+    ],
+    "oldQuotePayout": {
+      "input": 15000,
+      "house": 8000,
+      "repeat": 8000
+    },
+    "belowCapPayout": 6000,
+    "composedQuoteAndPayout": "8000 once, actor clear once, clothing accounting once",
+    "fixedOrders": {
+      "simple": 10000,
+      "complex": 10000
+    },
+    "npcMoneyUnchanged": 100000
+  },
+  "staticPreservation": {
+    "commonBasePriceBlock": true,
+    "fixedOrderSimpleBlock": true,
+    "fixedOrderComplexBothHeroBranches": true,
+    "dormantSlaveSellDone": true,
+    "emergencyLiquidation": true
+  },
+  "protectedInputs": [
+    {
+      "path": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+      "sha256": "b8de16b088051eea5e51d8636f9ca3cc3975974129adf950ce122260ba2b5cf1",
+      "after": "b8de16b088051eea5e51d8636f9ca3cc3975974129adf950ce122260ba2b5cf1"
+    },
+    {
+      "path": "G:/somi/Jack O Nine Tails v2.4_work/game/FastQSP.ini",
+      "sha256": "2727339cc7ff5b49aa7fce65e91c21279e93dd66ad2669a3c57768042ccc43ac",
+      "after": "2727339cc7ff5b49aa7fce65e91c21279e93dd66ad2669a3c57768042ccc43ac"
+    },
+    {
+      "path": "G:/somi/Jack O Nine Tails v2.4 Kor_Full/game/jack.qsp",
+      "sha256": "c6701e3ab130b1a762d0b1a523d52cd53cee846f71c3d7899a4c369389aa853d",
+      "after": "c6701e3ab130b1a762d0b1a523d52cd53cee846f71c3d7899a4c369389aa853d"
+    }
+  ],
+  "productionFilesWritten": false,
+  "physicalGuiPerformed": false,
+  "existingUserSaveLoadPerformed": false,
+  "limits": [
+    "Numeric fixture execution in hidden installed engine; no GUI clicks or full save loading.",
+    "Production quote/payment blocks are exact source slices; display boundary and actor-clear/clothing code are counter stubs.",
+    "Fixed-order tests stub eligibility/appraisal only; real common base-price helper and payout branch are retained.",
+    "High discount fixture intentionally injects oversized premium 5000 to exercise the cap boundary; normal discount fixture is also tested.",
+    "No repeated execution of an already paid result; composed tests require exactly one payout and one clear."
+  ],
+  "evidence": "RESULT.json and per-case stderr/stdout logs",
+  "temporaryCleanup": {
+    "status": "CLEANED",
+    "root": "G:\\Codex\\tmp\\sale-cap-b-private-20261026",
+    "files": 68,
+    "bytes": 829821100.0,
+    "linksFollowed": false,
+    "rootAbsent": true
+  }
+}

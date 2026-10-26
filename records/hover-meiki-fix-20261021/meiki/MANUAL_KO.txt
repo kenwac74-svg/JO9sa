@@ -1,0 +1,77 @@
+﻿명기 방 역할 라우팅 수정 — 패치·검증 자료
+2026-10-21
+
+결과
+실제 Work에는 쓰지 않았다. 변경 명세는 meiki-room-role-routing.json이다.
+기준 QSP SHA256: 1e911ced3798826e8cd1f35ed1e4115e9fd6450a9fdecaeb231b5f6885c1abb4
+이 패치만 적용한 재생성 가능 후보 SHA256: a45ee01d7601e5aba277ed9052ade454ab7aa4cdc50f7df338dd4385d724afd5
+통합 후보의 출고 검사는 상위 작업에서 별도 실행한다.
+
+변경 위치와 비용
+jo9_meiki_willing의 body 한 필드에 네 역할 분기를 덧붙였다.
+기존 slave/assistant 본문 1110문자와 261개 다른 location 본문은 그대로다.
+새 location, 상태 키, 마이그레이션, 저장 파일 변경은 0개다.
+JO9 MOD 경계 ID: MEIKI_ROOM_ROLE_ROUTING_20261021.
+후보 helper-after.txt 기준 새 경계는 33~91행이다. 역할 시작은 room1 35행, room2 49행, room3 63행, room4 77행이다.
+기존 helper-before.txt와 helper-after.txt를 직접 비교할 수 있다.
+
+입력과 반환
+args[0]은 slave, assistant, room1, room2, room3, room4 중 대상 역할 이름이다.
+역할의 ROLE_state가 CONST_INT['slave_exist']일 때만 기본 반환값은 1이다. 그 외 상태나 알 수 없는 역할은 0이다.
+args[1]이 정확히 1이면 추가로 기존 발견 조건을 요구한다: virginity=4, 또는 jo9_meiki_known=1이며 virginity=2/3.
+args[1]이 0, -1, 2 등 정확히 1이 아닌 값이면 발견 이력 조건을 요구하지 않는 기존 동작을 그대로 따른다.
+이 helper 자체는 인물 상태, 배열, 세션, 난수에 쓰지 않고 숫자 0/1만 반환한다.
+나이·공포·성향·행동력 등의 새 자격 조건을 넣지 않았다.
+
+호출 흐름과 의존성
+필수 의존성은 기존 jo9_meiki_checks의 actor 판정과 CONST_INT['slave_exist'], 해당 역할의 state 및 기존 virginity/jo9_meiki_known 값이다.
+#dynamic의 기존 $vaginally_penetrated 템플릿은 전환 전 jo9_meiki_state(인수0), 상태 변경, transition 검사, 허용 여부에 따른 jo9_meiki_state(인수1/0)를 수행한다.
+이 템플릿에 역할 이름을 치환하는 직접 개인실 interaction 1027~1030 및 next_day의 room1~4 경로가 이번 추가 분기를 사용한다. 실제 줄과 코드는 source-map.json에 있다.
+현재 transition 판정은 비어 있지 않은 interaction_type 및 actor 판정1을 사용한다. diligence 값의 양수 여부는 이 transition 판정에 추가 조건이 아니다. 빈 interaction_type이 추첨 없이 기회를 소비하는 기존 동작도 유지한다.
+개인실 교육은 snk_room_bridge의 enter에서 실제 방 인물을 slave로 교환한다. 교육 중에는 기존 slave 분기가 사용되므로 브리지 본문과 호출 방식은 바꾸지 않았다.
+sex_initiate/sex_end, jo9_meiki_state, 직접 interaction/next_day, snk_room_bridge는 바이트 그대로다.
+
+상태와 재추첨
+jo9_meiki_state의 기존 rand(1,100)<=5와 여섯 역할 분기는 수정하지 않았다.
+처음 상태0에서 2 이상으로 전환되고 checked=0일 때만 checked를1로 기록한다. 그 호출의 인수1이 정확히1이면 기존 난수를 한 번 쓴다.
+실패 또는 인수0/2로 기회를 소비한 뒤 다시 호출해도 재추첨하지 않는다.
+기존 상태2/3 인물의 초기 이력 인식, 상태4의 known 인식, 복원 상태1과 이미 checked인 인물의 처리도 유지한다.
+기존의 일회성 기술 보정은 상태 helper의 그대로인 코드에 속하며 이번 패치의 새 동작이 아니다.
+
+제거·분리의 영향
+새 MEIKI_ROOM_ROLE_ROUTING_20261021 경계 전체를 제거하면 문법 구조는 유지되지만 네 직접 방 역할은 다시0을 반환하며 첫 전환 기회를 추첨 없이 소비한다.
+각 역할 분기 안의 actor 검사와 args[1] 발견 조건은 기존 역할과 같은 의미를 이루므로 일부만 제거하면 승인한 동일 조건이 달라진다.
+helper location 자체나 jo9_meiki_checks/jo9_meiki_state를 제거하면 기존 호출도 의존성을 잃는다. 새 분기만의 독립 기능으로 보아 관련 기존 location을 지우면 안 된다.
+JO9 MOD 경계는 변경 출처를 찾기 위한 주석이다.
+
+검증 근거
+패치 전 설치된 FastQSP에서 baseline-reproduction이 통과했다: room1~4 모두 helper0, 전환 후 checked1/known0/state2, 명기 난수 호출0회.
+정상 동작을 요구하는 role-eligibility는 패치 전 JO9_QA_FAIL_eligibility_400_room1에서 기대대로 실패했다.
+최종 패치 후보의 엔진 프로세스5개가 모두 통과했다. 1094개 사례 행, 명시 assertion2213개다.
+- 역할·상태·발견 인수 및 무변경: 960사례 / 1920 assertion
+- 여섯 역할의 강제 난수1~6 및 반복 호출: 36사례 / 72 assertion
+- 기존/복원/checked/known 상태와 인수0/2 소비: 48사례 / 96 assertion
+- 직접 템플릿의 비정상 actor 상태·빈/비어 있지 않은 transition·diligence: 42사례와 알 수 없는 역할 / 61 assertion
+- 방1~4 × 최초 난수5/6의 교육 브리지 진입·복귀·직접 재호출·브리지 재진입: 8사례 / 64 assertion
+최종 판정 집합은 RED2개+GREEN5개, 고유 엔진 프로세스7개다. 초기 GREEN5개를 확장 전 별도로 실행했으므로 실제 총 실행 횟수는12개다. 이를 사례 수나 assertion 수와 혼동하지 않는다.
+브리지는 원래 slave와 방 인물의 숫자 sentinel/virginity/checked/known 및 inventory/rate 배열이 돌아오고 parked 배열이 비는지 검사했다. 실패6 뒤 강제값을1로 바꾸어 직접 경로와 브리지로 반복해도 난수 호출은1회였다.
+도구 apply_mods.ps1의 DryRun은 기준본에 정확히1회 적용됐고 후보에는 이미 적용됐다고 판정했다. 둘 다 디스크에 QSP를 쓰지 않았다. 역패치 해시는 기준본과 같았다.
+
+난수 진단의 범위
+진단 QSP에서만 jo9_meiki_state의 rand(1,100) 여섯 발생을 func('qa_rng')로 바꿨다. qa_rng는 호출 횟수를 올리고 지정 숫자를 반환한다. 비교식 <=5는 실제 코드를 그대로 실행했다.
+새 qa_rng location은 진단 파일에만 있다. 배포용 패치에는 없다. 실제 PRNG 분포를 표본 추정한 검사는 아니다.
+진단은 실제 helper/checks/state/전환 템플릿/bridge/swap 코드를 추출한 최소 QSP다. 전체 interaction 또는 next_day 일과를 끝까지 실행한 결과는 아니다.
+브리지의 무관한 텍스트 갱신 의존성 #var_base/#txt_man/#txt_2_man만 진단에서 빈 location으로 두었고 update-feature text를 비웠다. 실제 교환 배열과 enter/leave 코드는 실행했다.
+실제 세이브 불러오기·저장·화면·전체 게임 플레이는 실행하지 않았고, 사용자의 세이브를 읽거나 쓰지 않았다.
+
+재현
+node build-patch.cjs [해시가 같은 기준.qsp] [G:/Codex/tmp/hover-meiki-fix-20261021/meiki 아래 출력 폴더]
+인수를 생략하면 지정된 Work의 기준 해시를 확인하고 이 작업의 임시 폴더에만 후보와 패치를 만든다. 해시가 달라지면 중단한다.
+node native-tests.cjs [검사할 전체.qsp] [동일 임시 트리의 진단 폴더] role-eligibility,first-transition-boundaries,history-and-arguments,direct-daily-actor-gates,bridge-alias-preserved
+상위 도구 tools/qa/run-client-smoke.ps1에 설치된 game/engine/jack.exe와 생성된 plan.json을 전달한다. 마커는 도구가 요구하는 정규식에 맞고 QSP는 plan.json과 같은 폴더에 생성된다.
+RED는 native-tests.cjs의 역할 목록 대신 baseline-reproduction,role-eligibility를 지정해 기준본에서 재생성한다.
+verify-patch.ps1은 실제 apply_mods 도구로 기준/후보 DryRun 및 멱등성을 확인한다.
+
+임시자료
+생성된 QSP와 후보는 재생성할 수 있으므로 통합 검사 종료 후 상위 작업이 정리한다. 변경 명세·원문/변경 helper·재현 스크립트·수치 보고서·로그는 보존한다.
+Work/Full/저장소/세이브/커밋·푸시에는 변경이 없다.

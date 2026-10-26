@@ -1,0 +1,901 @@
+! Diagnostic Start fragment for jo9_rumor_match.
+! Run only in an isolated candidate after refresh_database.
+! This fragment deliberately replaces diagnostic actor and metadata fixtures.
+! Parent appends the success marker after this fragment.
+jo9_rumor_qa_failed = 0
+jo9_rumor_qa_count = 0
+jo9_rumor_qa_native_count = 0
+$jo9_rumor_qa_reset = {
+ killvar 'jo9_rumor_probe'
+ killvar '$jo9_rumor_probe'
+ killvar 'jo9_rumor_probe_rate'
+ killvar '$jo9_rumor_probe_rate'
+ killvar 'jo9_rumor_spec'
+ jo9_rumor_probe_state = CONST_INT['slave_exist']
+ jo9_rumor_probe_type = 99999
+ $jo9_rumor_probe_name = 'QA'
+ $jo9_rumor_probe_psy_status = 'obedient'
+ jo9_rumor_probe['age'] = CONST_INT['young_age']
+ jo9_rumor_probe['fat'] = 2
+ jo9_rumor_probe['exotic'] = 2
+ jo9_rumor_probe['beauty'] = 5
+ jo9_rumor_probe['base_beauty'] = 5
+ jo9_rumor_probe['stamina'] = 5
+ jo9_rumor_probe['energy'] = 0
+ jo9_rumor_probe['virginity'] = 1
+ jo9_rumor_probe['style'] = 5
+ jo9_rumor_probe['moral'] = 5
+ jo9_rumor_probe['instinct'] = 5
+ jo9_rumor_probe['custom'] = 5
+ jo9_rumor_probe['rational'] = 5
+ jo9_rumor_probe['mood'] = 5
+ jo9_rumor_probe['meekness'] = 5
+ jo9_rumor_probe['jo9_versatile'] = 1
+ jo9_rumor_probe_rate['beauty'] = 200
+ jo9_rumor_probe['sub_selfpain'] = 5
+ jo9_rumor_qa_seed_i = 0
+ loop while jo9_rumor_qa_seed_i < arrsize('$jo9_rumor_qa_stat_keys'):
+  jo9_rumor_probe[$jo9_rumor_qa_stat_keys[jo9_rumor_qa_seed_i]] = 5
+  jo9_rumor_qa_seed_i += 1
+ end
+ jo9_rumor_probe['pride'] = 0
+ jo9_rumor_spec['servant'] = 5
+ jo9_rumor_rating = 5
+ jo9_rumor_charm = 100
+ demand_rating['qa_fixed'] = 2
+ $interesting_specialisation['qa_fixed'] = 'servant'
+ $buyer_demand['qa_fixed'] = ''
+ $npc_preferences['qa_fixed'] = ''
+ day = 100
+ no_loli = 0
+ game_difficulty = 2
+ is_stock = 0
+ brand_reputation = 0
+ wizard_mode = 0
+ snk_room_target = 0
+ killvar 'demand'
+ killvar '$demand'
+ killvar 'stat_importance'
+ killvar '$stat_importance'
+ demand['qa_keep'] = 731
+ demand['qa_keep2'] = 732
+ $demand['qa_keep'] = 'demand_string_sentinel'
+ stat_importance['qa_keep'] = 741
+ stat_importance['qa_keep2'] = 742
+ $stat_importance['qa_keep'] = 'importance_string_sentinel'
+ $npc_id = 'qa_original_npc'
+ brand_rate = 751
+ buyer_interested = 752
+ sl_txt = 753
+ jo9_meiki_max_sale = 754
+ virgin_price = 755
+ $virgin_price = 'virgin_string_sentinel'
+ charm_demand = 756
+ rating = 757
+ charm = 758
+ buyer_from_house = 759
+ slaveprice = 760
+ haggling_limit = 761
+ relative_rating = 762
+ slave_state = 763
+ slave_type = 764
+ $slave_name = 'slave_name_sentinel'
+ $slave_psy_status = 'slave_psy_sentinel'
+ slave['qa_actor_keep'] = 765
+ $slave['qa_actor_keep'] = 'slave_array_sentinel'
+ slave_rate['qa_rate_keep'] = 766
+}
+$jo9_rumor_qa_snapshot = {
+ jo9_rumor_qa_before_demand_size = arrsize('demand')
+ jo9_rumor_qa_before_demand_string_size = arrsize('$demand')
+ jo9_rumor_qa_before_importance_size = arrsize('stat_importance')
+ jo9_rumor_qa_before_importance_string_size = arrsize('$stat_importance')
+ jo9_rumor_qa_before_state = jo9_rumor_probe_state
+ jo9_rumor_qa_before_type = jo9_rumor_probe_type
+ $jo9_rumor_qa_before_name = $jo9_rumor_probe_name
+ $jo9_rumor_qa_before_psy = $jo9_rumor_probe_psy_status
+ jo9_rumor_qa_before_grade_demand = demand_rating['qa_fixed']
+ $jo9_rumor_qa_before_interesting_spec = $interesting_specialisation['qa_fixed']
+ copyarr 'jo9_rumor_qa_before_probe', 'jo9_rumor_probe'
+ copyarr '$jo9_rumor_qa_before_probe', '$jo9_rumor_probe'
+ copyarr 'jo9_rumor_qa_before_rate', 'jo9_rumor_probe_rate'
+ copyarr 'jo9_rumor_qa_before_spec', 'jo9_rumor_spec'
+ $jo9_rumor_qa_before_demand = $buyer_demand['qa_fixed']
+ $jo9_rumor_qa_before_preferences = $npc_preferences['qa_fixed']
+ jo9_rumor_qa_before_rating = jo9_rumor_rating
+ jo9_rumor_qa_before_charm = jo9_rumor_charm
+}
+$jo9_rumor_qa_guard = {
+ if jo9_rumor_probe_state ! jo9_rumor_qa_before_state or jo9_rumor_probe_type ! jo9_rumor_qa_before_type or $jo9_rumor_probe_name ! $jo9_rumor_qa_before_name or $jo9_rumor_probe_psy_status ! $jo9_rumor_qa_before_psy: jo9_rumor_qa_failed = 1 & msg 'FAIL_RUMOR_PROBE_IDENTITY_<<$jo9_rumor_qa_label>>' & exit
+ if demand_rating['qa_fixed'] ! jo9_rumor_qa_before_grade_demand or $interesting_specialisation['qa_fixed'] ! $jo9_rumor_qa_before_interesting_spec: jo9_rumor_qa_failed = 1 & msg 'FAIL_RUMOR_BUYER_METADATA_<<$jo9_rumor_qa_label>>' & exit
+ if arrsize('demand') ! jo9_rumor_qa_before_demand_size or demand['qa_keep'] ! 731 or demand['qa_keep2'] ! 732: jo9_rumor_qa_failed = 1 & msg 'FAIL_RUMOR_DEMAND_STATE_<<$jo9_rumor_qa_label>>' & exit
+ if arrsize('$demand') ! jo9_rumor_qa_before_demand_string_size or $demand['qa_keep'] ! 'demand_string_sentinel': jo9_rumor_qa_failed = 1 & msg 'FAIL_RUMOR_DEMAND_STRING_<<$jo9_rumor_qa_label>>' & exit
+ if arrsize('stat_importance') ! jo9_rumor_qa_before_importance_size or stat_importance['qa_keep'] ! 741 or stat_importance['qa_keep2'] ! 742: jo9_rumor_qa_failed = 1 & msg 'FAIL_RUMOR_IMPORTANCE_STATE_<<$jo9_rumor_qa_label>>' & exit
+ if arrsize('$stat_importance') ! jo9_rumor_qa_before_importance_string_size or $stat_importance['qa_keep'] ! 'importance_string_sentinel': jo9_rumor_qa_failed = 1 & msg 'FAIL_RUMOR_IMPORTANCE_STRING_<<$jo9_rumor_qa_label>>' & exit
+ if $npc_id ! 'qa_original_npc' or brand_rate ! 751 or buyer_interested ! 752 or sl_txt ! 753: jo9_rumor_qa_failed = 1 & msg 'FAIL_RUMOR_CUSTOMER_GLOBAL_<<$jo9_rumor_qa_label>>' & exit
+ if jo9_meiki_max_sale ! 754 or virgin_price ! 755 or $virgin_price ! 'virgin_string_sentinel' or charm_demand ! 756: jo9_rumor_qa_failed = 1 & msg 'FAIL_RUMOR_PRICE_GLOBAL_<<$jo9_rumor_qa_label>>' & exit
+ if rating ! 757 or charm ! 758 or buyer_from_house ! 759 or slaveprice ! 760 or haggling_limit ! 761 or relative_rating ! 762: jo9_rumor_qa_failed = 1 & msg 'FAIL_RUMOR_APPRAISAL_GLOBAL_<<$jo9_rumor_qa_label>>' & exit
+ if slave_state ! 763 or slave_type ! 764 or $slave_name ! 'slave_name_sentinel' or $slave_psy_status ! 'slave_psy_sentinel': jo9_rumor_qa_failed = 1 & msg 'FAIL_RUMOR_SELECTED_ACTOR_<<$jo9_rumor_qa_label>>' & exit
+ if slave['qa_actor_keep'] ! 765 or $slave['qa_actor_keep'] ! 'slave_array_sentinel' or slave_rate['qa_rate_keep'] ! 766: jo9_rumor_qa_failed = 1 & msg 'FAIL_RUMOR_SELECTED_ARRAY_<<$jo9_rumor_qa_label>>' & exit
+ if day ! 100 or no_loli ! 0 or game_difficulty ! 2 or is_stock ! 0 or brand_reputation ! 0: jo9_rumor_qa_failed = 1 & msg 'FAIL_RUMOR_WORLD_GLOBAL_<<$jo9_rumor_qa_label>>' & exit
+ if arrsize('jo9_rumor_match_demand') ! 0 or arrsize('$jo9_rumor_match_demand') ! 0 or arrsize('jo9_rumor_match_importance') ! 0 or arrsize('$jo9_rumor_match_importance') ! 0: jo9_rumor_qa_failed = 1 & msg 'FAIL_RUMOR_TEMP_CLEANUP_<<$jo9_rumor_qa_label>>' & exit
+ if arrsize('jo9_rumor_probe') ! arrsize('jo9_rumor_qa_before_probe') or arrsize('$jo9_rumor_probe') ! arrsize('$jo9_rumor_qa_before_probe'): jo9_rumor_qa_failed = 1 & msg 'FAIL_RUMOR_PROBE_SIZE_<<$jo9_rumor_qa_label>>' & exit
+ jo9_rumor_qa_guard_i = 0
+ loop while jo9_rumor_qa_guard_i < arrsize('jo9_rumor_probe'):
+  if jo9_rumor_probe[jo9_rumor_qa_guard_i] ! jo9_rumor_qa_before_probe[jo9_rumor_qa_guard_i]: jo9_rumor_qa_failed = 1 & msg 'FAIL_RUMOR_PROBE_VALUE_<<$jo9_rumor_qa_label>>' & exit
+  jo9_rumor_qa_guard_i += 1
+ end
+ jo9_rumor_qa_guard_i = 0
+ loop while jo9_rumor_qa_guard_i < arrsize('$jo9_rumor_probe'):
+  if $jo9_rumor_probe[jo9_rumor_qa_guard_i] ! $jo9_rumor_qa_before_probe[jo9_rumor_qa_guard_i]: jo9_rumor_qa_failed = 1 & msg 'FAIL_RUMOR_PROBE_STRING_<<$jo9_rumor_qa_label>>' & exit
+  jo9_rumor_qa_guard_i += 1
+ end
+ if arrsize('jo9_rumor_probe_rate') ! arrsize('jo9_rumor_qa_before_rate') or arrsize('jo9_rumor_spec') ! arrsize('jo9_rumor_qa_before_spec'): jo9_rumor_qa_failed = 1 & msg 'FAIL_RUMOR_RATE_SPEC_SIZE_<<$jo9_rumor_qa_label>>' & exit
+ jo9_rumor_qa_guard_i = 0
+ loop while jo9_rumor_qa_guard_i < arrsize('jo9_rumor_probe_rate'):
+  if jo9_rumor_probe_rate[jo9_rumor_qa_guard_i] ! jo9_rumor_qa_before_rate[jo9_rumor_qa_guard_i]: jo9_rumor_qa_failed = 1 & msg 'FAIL_RUMOR_RATE_VALUE_<<$jo9_rumor_qa_label>>' & exit
+  jo9_rumor_qa_guard_i += 1
+ end
+ jo9_rumor_qa_guard_i = 0
+ loop while jo9_rumor_qa_guard_i < arrsize('jo9_rumor_spec'):
+  if jo9_rumor_spec[jo9_rumor_qa_guard_i] ! jo9_rumor_qa_before_spec[jo9_rumor_qa_guard_i]: jo9_rumor_qa_failed = 1 & msg 'FAIL_RUMOR_SPEC_VALUE_<<$jo9_rumor_qa_label>>' & exit
+  jo9_rumor_qa_guard_i += 1
+ end
+ if $buyer_demand['qa_fixed'] ! $jo9_rumor_qa_before_demand or $npc_preferences['qa_fixed'] ! $jo9_rumor_qa_before_preferences: jo9_rumor_qa_failed = 1 & msg 'FAIL_RUMOR_METADATA_<<$jo9_rumor_qa_label>>' & exit
+ if jo9_rumor_rating ! jo9_rumor_qa_before_rating or jo9_rumor_charm ! jo9_rumor_qa_before_charm: jo9_rumor_qa_failed = 1 & msg 'FAIL_RUMOR_INPUT_GLOBAL_<<$jo9_rumor_qa_label>>' & exit
+}
+$jo9_rumor_qa_run = {
+ dynamic $jo9_rumor_qa_snapshot
+ jo9_rumor_qa_got = func('jo9_rumor_match', 'qa_fixed', $jo9_rumor_qa_mode, jo9_rumor_qa_no_charm)
+ if jo9_rumor_qa_got ! jo9_rumor_qa_expect: jo9_rumor_qa_failed = 1 & msg 'FAIL_RUMOR_MATCH_<<$jo9_rumor_qa_label>>' & exit
+ dynamic $jo9_rumor_qa_guard
+ if jo9_rumor_qa_failed = 1: exit
+ jo9_rumor_qa_count += 1
+}
+! Native comparison appraises its isolated actor first and then copies the
+! actual resulting rating, charm and specialisation into matcher inputs.
+! This separate phase permits known native checker mutations.
+$jo9_rumor_qa_native = {
+ killvar 'slave'
+ killvar '$slave'
+ killvar 'slave_rate'
+ killvar '$slave_rate'
+ copyarr 'slave', 'jo9_rumor_probe'
+ copyarr '$slave', '$jo9_rumor_probe'
+ copyarr 'slave_rate', 'jo9_rumor_probe_rate'
+ slave_state = jo9_rumor_probe_state
+ slave_type = jo9_rumor_probe_type
+ $slave_name = $jo9_rumor_probe_name
+ $slave_psy_status = $jo9_rumor_probe_psy_status
+ gs '$slave_price'
+ copyarr 'jo9_rumor_probe', 'slave'
+ copyarr '$jo9_rumor_probe', '$slave'
+ copyarr 'jo9_rumor_probe_rate', 'slave_rate'
+ copyarr 'jo9_rumor_spec', 'slave_specialisation'
+ jo9_rumor_rating = rating
+ jo9_rumor_charm = charm
+ jo9_rumor_qa_native_match = func('jo9_rumor_match', 'qa_fixed', 'full', 0)
+ $npc_id = 'qa_fixed'
+ buyer_from_house = 0
+ sl_txt = 1
+ gs 'slave_sell_chek'
+ if buyer_interested ! jo9_rumor_qa_native_match: jo9_rumor_qa_failed = 1 & msg 'FAIL_RUMOR_NATIVE_PARITY_<<$jo9_rumor_qa_label>>' & exit
+ if jo9_rumor_qa_native_match ! jo9_rumor_qa_expect: jo9_rumor_qa_failed = 1 & msg 'FAIL_RUMOR_NATIVE_EXPECT_<<$jo9_rumor_qa_label>>' & exit
+ jo9_rumor_qa_native_count += 1
+}
+$jo9_rumor_qa_stat_keys[0] = 'sensitivity'
+$jo9_rumor_qa_stat_keys[1] = 'temper'
+$jo9_rumor_qa_stat_keys[2] = 'intellect'
+$jo9_rumor_qa_stat_keys[3] = 'ego'
+$jo9_rumor_qa_stat_keys[4] = 'pride'
+$jo9_rumor_qa_stat_keys[5] = 'service'
+$jo9_rumor_qa_stat_keys[6] = 'cook'
+$jo9_rumor_qa_stat_keys[7] = 'secretary'
+$jo9_rumor_qa_stat_keys[8] = 'expression'
+$jo9_rumor_qa_stat_keys[9] = 'nurse'
+$jo9_rumor_qa_stat_keys[10] = 'alchemy'
+$jo9_rumor_qa_stat_keys[11] = 'enchanter'
+$jo9_rumor_qa_stat_keys[12] = 'gladiatrix'
+$jo9_rumor_qa_stat_keys[13] = 'calisthenics'
+$jo9_rumor_qa_stat_keys[14] = 'music'
+$jo9_rumor_qa_stat_keys[15] = 'art'
+$jo9_rumor_qa_stat_keys[16] = 'pet'
+$jo9_rumor_qa_stat_keys[17] = 'cowSK'
+$jo9_rumor_qa_stat_keys[18] = 'dressage'
+$jo9_rumor_qa_stat_keys[19] = 'animal'
+$jo9_rumor_qa_stat_keys[20] = 'petting'
+$jo9_rumor_qa_stat_keys[21] = 'oral'
+$jo9_rumor_qa_stat_keys[22] = 'penetration'
+$jo9_rumor_qa_stat_keys[23] = 'orgy'
+$jo9_rumor_qa_stat_keys[24] = 'roleplay'
+$jo9_rumor_qa_stat_keys[25] = 'fetishism'
+$jo9_rumor_qa_stat_keys[26] = 'xenophily'
+
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'BASE_FULL'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 1
+dynamic $jo9_rumor_qa_run
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_native
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'BASE_SIMPLE'
+$jo9_rumor_qa_mode = 'simple'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 1
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'BASE_HOUSE'
+$jo9_rumor_qa_mode = 'house'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 1
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'GRADE_BELOW'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 0
+jo9_rumor_rating = 1
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'GRADE_EQUAL'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 1
+jo9_rumor_rating = 2
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'GRADE_ABOVE'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 1
+jo9_rumor_rating = 3
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'CHARM_2_BELOW'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 0
+demand_rating['qa_fixed'] = 2
+jo9_rumor_rating = 2
+jo9_rumor_charm = 5
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'CHARM_2_EQUAL'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 1
+demand_rating['qa_fixed'] = 2
+jo9_rumor_rating = 2
+jo9_rumor_charm = 6
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'CHARM_3_BELOW'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 0
+demand_rating['qa_fixed'] = 3
+jo9_rumor_rating = 3
+jo9_rumor_charm = 11
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'CHARM_3_EQUAL'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 1
+demand_rating['qa_fixed'] = 3
+jo9_rumor_rating = 3
+jo9_rumor_charm = 12
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'CHARM_5_BELOW'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 0
+demand_rating['qa_fixed'] = 5
+jo9_rumor_rating = 5
+jo9_rumor_charm = 17
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'CHARM_5_EQUAL'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 1
+demand_rating['qa_fixed'] = 5
+jo9_rumor_rating = 5
+jo9_rumor_charm = 18
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'CHARM_7_BELOW'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 0
+demand_rating['qa_fixed'] = 7
+jo9_rumor_rating = 7
+jo9_rumor_charm = 23
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'CHARM_7_EQUAL'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 1
+demand_rating['qa_fixed'] = 7
+jo9_rumor_rating = 7
+jo9_rumor_charm = 24
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'CHARM_9_BELOW'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 0
+demand_rating['qa_fixed'] = 9
+jo9_rumor_rating = 9
+jo9_rumor_charm = 37
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'CHARM_9_EQUAL'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 1
+demand_rating['qa_fixed'] = 9
+jo9_rumor_rating = 9
+jo9_rumor_charm = 38
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'SIMPLE_SPEC_BELOW'
+$jo9_rumor_qa_mode = 'simple'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 0
+demand_rating['qa_fixed'] = 4 & jo9_rumor_spec['servant'] = 1
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'SIMPLE_SPEC_EQUAL'
+$jo9_rumor_qa_mode = 'simple'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 1
+demand_rating['qa_fixed'] = 4 & jo9_rumor_spec['servant'] = 2
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'HOUSE_SPEC_BELOW'
+$jo9_rumor_qa_mode = 'house'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 0
+demand_rating['qa_fixed'] = 4 & jo9_rumor_spec['servant'] = 1
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'HOUSE_SPEC_EQUAL'
+$jo9_rumor_qa_mode = 'house'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 1
+demand_rating['qa_fixed'] = 4 & jo9_rumor_spec['servant'] = 2
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'FULL_SPEC_OPTIONAL'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 1
+jo9_rumor_spec['servant'] = 0
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'FULL_SPEC_FLAG_EQUAL'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 1
+$buyer_demand['qa_fixed'] = "demand['specialisation'] = 1"
+jo9_rumor_spec['servant'] = 1
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'SIMPLE_NO_CHARM'
+$jo9_rumor_qa_mode = 'simple'
+jo9_rumor_qa_no_charm = 1
+jo9_rumor_qa_expect = 1
+jo9_rumor_charm = 0
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'HOUSE_NO_CHARM'
+$jo9_rumor_qa_mode = 'house'
+jo9_rumor_qa_no_charm = 1
+jo9_rumor_qa_expect = 1
+jo9_rumor_charm = 0
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'FULL_IGNORES_NO_CHARM'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 1
+jo9_rumor_qa_expect = 0
+jo9_rumor_charm = 0
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'SIMPLE_METADATA_SKIPPED'
+$jo9_rumor_qa_mode = 'simple'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 1
+$buyer_demand['qa_fixed'] = "demand['min_beauty'] = 99"
+$npc_preferences['qa_fixed'] = "stat_importance['service'] = 99"
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'HOUSE_METADATA_USED'
+$jo9_rumor_qa_mode = 'house'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 0
+$buyer_demand['qa_fixed'] = "demand['min_beauty'] = 99"
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'SIMPLE_LOCK_ACTIVE'
+$jo9_rumor_qa_mode = 'simple'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 0
+jo9_rumor_probe['qa_fixed'] = 91
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'SIMPLE_LOCK_EXPIRES'
+$jo9_rumor_qa_mode = 'simple'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 1
+jo9_rumor_probe['qa_fixed'] = 90
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'HOUSE_LOCK_ACTIVE'
+$jo9_rumor_qa_mode = 'house'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 0
+jo9_rumor_probe['qa_fixed'] = 91
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'HOUSE_LOCK_EXPIRES'
+$jo9_rumor_qa_mode = 'house'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 1
+jo9_rumor_probe['qa_fixed'] = 90
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'FULL_LOCK_ACTIVE'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 1
+jo9_rumor_probe['qa_fixed'] = 91
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'FULL_LOCK_EXPIRES'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 1
+jo9_rumor_probe['qa_fixed'] = 90
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'WOUNDS'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 0
+jo9_rumor_probe['wounds'] = 1
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'ENERGY'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 0
+jo9_rumor_probe['energy'] = -1
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'STAMINA'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 0
+jo9_rumor_probe['stamina'] = 1
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'REHABILITATION'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 0
+jo9_rumor_probe['rehabilitation'] = 1
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'BROKEN'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 0
+$jo9_rumor_probe_psy_status = 'broken'
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'REVEALED_PREGNANCY'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 0
+jo9_rumor_probe['pregnant'] = 1 & jo9_rumor_probe['pregnant_revealed'] = 1
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'HYGIENE'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 0
+jo9_rumor_probe['hygiene'] = 4
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'DEFAULT_MIN_FAT'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 0
+jo9_rumor_probe['fat'] = 0
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'DEFAULT_REFUSE_AGE'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 0
+jo9_rumor_probe['age'] = 99
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'NO_ACTOR'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 0
+jo9_rumor_probe_state = CONST_INT['no_slave']
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'ENERGY_ZERO_STAMINA_TWO'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 1
+jo9_rumor_probe['energy'] = 0 & jo9_rumor_probe['stamina'] = 2
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'HIDDEN_PREGNANCY'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 1
+jo9_rumor_probe['pregnant'] = 1 & jo9_rumor_probe['pregnant_revealed'] = 0
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'SIMPLE_HYGIENE_SKIPPED'
+$jo9_rumor_qa_mode = 'simple'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 1
+jo9_rumor_probe['hygiene'] = 4
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'DEFAULT_MAX_EXOTIC_99'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 1
+jo9_rumor_probe['exotic'] = 99
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'DEFAULT_MAX_EXOTIC_100'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 0
+jo9_rumor_probe['exotic'] = 100
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'DEFAULT_MAX_FAT_99'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 1
+jo9_rumor_probe['fat'] = 99
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'DEFAULT_MAX_FAT_100'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 0
+jo9_rumor_probe['fat'] = 100
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'INVALID_MODE'
+$jo9_rumor_qa_mode = 'invalid'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 0
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+! Each native demand key fails alone after a fresh passing fixture.
+$jo9_rumor_qa_demand_keys[0] = 'refuse_age'
+$jo9_rumor_qa_demand_code[0] = "demand['refuse_age'] = CONST_INT['young_age']"
+$jo9_rumor_qa_demand_setup[0] = ""
+$jo9_rumor_qa_demand_keys[1] = 'agree_age'
+$jo9_rumor_qa_demand_code[1] = "demand['agree_age'] = 99"
+$jo9_rumor_qa_demand_setup[1] = ""
+$jo9_rumor_qa_demand_keys[2] = 'nowitches'
+$jo9_rumor_qa_demand_code[2] = "demand['nowitches'] = 1"
+$jo9_rumor_qa_demand_setup[2] = ""
+$jo9_rumor_qa_demand_keys[3] = 'pure'
+$jo9_rumor_qa_demand_code[3] = "demand['pure'] = 1"
+$jo9_rumor_qa_demand_setup[3] = ""
+$jo9_rumor_qa_demand_keys[4] = 'noperversion'
+$jo9_rumor_qa_demand_code[4] = "demand['noperversion'] = 1"
+$jo9_rumor_qa_demand_setup[4] = ""
+$jo9_rumor_qa_demand_keys[5] = 'notattoos'
+$jo9_rumor_qa_demand_code[5] = "demand['notattoos'] = 1"
+$jo9_rumor_qa_demand_setup[5] = "jo9_rumor_probe['tattoo'] = 2"
+$jo9_rumor_qa_demand_keys[6] = 'virginity'
+$jo9_rumor_qa_demand_code[6] = "demand['virginity'] = 1"
+$jo9_rumor_qa_demand_setup[6] = "jo9_rumor_probe['virginity'] = 2"
+$jo9_rumor_qa_demand_keys[7] = 'selftorture'
+$jo9_rumor_qa_demand_code[7] = "demand['selftorture'] = 6"
+$jo9_rumor_qa_demand_setup[7] = ""
+$jo9_rumor_qa_demand_keys[8] = 'specialisation'
+$jo9_rumor_qa_demand_code[8] = "demand['specialisation'] = 1"
+$jo9_rumor_qa_demand_setup[8] = "jo9_rumor_spec['servant'] = 0 & jo9_rumor_probe['service'] = 0 & jo9_rumor_probe['cook'] = 0"
+$jo9_rumor_qa_demand_keys[9] = 'artist'
+$jo9_rumor_qa_demand_code[9] = "demand['artist'] = 6"
+$jo9_rumor_qa_demand_setup[9] = ""
+$jo9_rumor_qa_demand_keys[10] = 'slave_name_for_Marquis_de_s'
+$jo9_rumor_qa_demand_code[10] = "demand['slave_name_for_Marquis_de_s'] = 1"
+$jo9_rumor_qa_demand_setup[10] = ""
+$jo9_rumor_qa_demand_keys[11] = 'max_exotic'
+$jo9_rumor_qa_demand_code[11] = "demand['max_exotic'] = 1"
+$jo9_rumor_qa_demand_setup[11] = ""
+$jo9_rumor_qa_demand_keys[12] = 'min_exotic'
+$jo9_rumor_qa_demand_code[12] = "demand['min_exotic'] = 3"
+$jo9_rumor_qa_demand_setup[12] = ""
+$jo9_rumor_qa_demand_keys[13] = 'min_beauty'
+$jo9_rumor_qa_demand_code[13] = "demand['min_beauty'] = 6"
+$jo9_rumor_qa_demand_setup[13] = ""
+$jo9_rumor_qa_demand_keys[14] = 'min_fat'
+$jo9_rumor_qa_demand_code[14] = "demand['min_fat'] = 3"
+$jo9_rumor_qa_demand_setup[14] = ""
+$jo9_rumor_qa_demand_keys[15] = 'max_fat'
+$jo9_rumor_qa_demand_code[15] = "demand['max_fat'] = 1"
+$jo9_rumor_qa_demand_setup[15] = ""
+jo9_rumor_qa_case_i = 0
+loop while jo9_rumor_qa_case_i < arrsize('$jo9_rumor_qa_demand_keys'):
+ dynamic $jo9_rumor_qa_reset
+ $jo9_rumor_qa_label = 'DEMAND_' + $jo9_rumor_qa_demand_keys[jo9_rumor_qa_case_i]
+ $jo9_rumor_qa_mode = 'full'
+ jo9_rumor_qa_no_charm = 0
+ jo9_rumor_qa_expect = 0
+ $buyer_demand['qa_fixed'] = $jo9_rumor_qa_demand_code[jo9_rumor_qa_case_i]
+ dynamic $jo9_rumor_qa_demand_setup[jo9_rumor_qa_case_i]
+ dynamic $jo9_rumor_qa_run
+ if jo9_rumor_qa_failed = 1: exit
+ dynamic $jo9_rumor_qa_native
+ if jo9_rumor_qa_failed = 1: exit
+ jo9_rumor_qa_case_i += 1
+end
+! All 27 native preference keys fail independently.
+jo9_rumor_qa_case_i = 0
+loop while jo9_rumor_qa_case_i < arrsize('$jo9_rumor_qa_stat_keys'):
+ dynamic $jo9_rumor_qa_reset
+ $jo9_rumor_qa_label = 'STAT_' + $jo9_rumor_qa_stat_keys[jo9_rumor_qa_case_i]
+ $jo9_rumor_qa_mode = 'full'
+ jo9_rumor_qa_no_charm = 0
+ jo9_rumor_qa_expect = 0
+ $npc_preferences['qa_fixed'] = "stat_importance['" + $jo9_rumor_qa_stat_keys[jo9_rumor_qa_case_i] + "'] = 6"
+ if $jo9_rumor_qa_stat_keys[jo9_rumor_qa_case_i] = 'pride':
+  $npc_preferences['qa_fixed'] = "stat_importance['pride'] = 1"
+  jo9_rumor_probe['pride'] = 2
+ end
+ dynamic $jo9_rumor_qa_run
+ if jo9_rumor_qa_failed = 1: exit
+ dynamic $jo9_rumor_qa_native
+ if jo9_rumor_qa_failed = 1: exit
+ jo9_rumor_qa_case_i += 1
+end
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'ARTIST_MAX_INCLUSIVE'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 1
+$buyer_demand['qa_fixed'] = "demand['artist'] = 5"
+jo9_rumor_probe['music'] = 0 & jo9_rumor_probe['art'] = 0
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'ANIMAL_MAX_INCLUSIVE'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 1
+$npc_preferences['qa_fixed'] = "stat_importance['animal'] = 5"
+jo9_rumor_probe['dressage'] = 0 & jo9_rumor_probe['cowSK'] = 0
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'PRIDE_CAP_INCLUSIVE'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 1
+$npc_preferences['qa_fixed'] = "stat_importance['pride'] = 2"
+jo9_rumor_probe['pride'] = 2
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'PRIDE_ZERO_DISABLED'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 1
+$npc_preferences['qa_fixed'] = "stat_importance['pride'] = 0"
+jo9_rumor_probe['pride'] = 5
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'TATTOO_NATIVE_BOUNDARY'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 1
+$buyer_demand['qa_fixed'] = "demand['notattoos'] = 1"
+jo9_rumor_probe['tattoo'] = 1
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'PURE_NATIVE_BOUNDARY'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 1
+$buyer_demand['qa_fixed'] = "demand['pure'] = 1"
+jo9_rumor_probe['oral'] = 1 & jo9_rumor_probe['penetration'] = 1 & jo9_rumor_probe['roleplay'] = 1 & jo9_rumor_probe['fetishism'] = 1 & jo9_rumor_probe['orgy'] = 1 & jo9_rumor_probe['xenophily'] = 1
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'HIDDEN_TRAIT_NATIVE_BOUNDARY'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 1
+$buyer_demand['qa_fixed'] = "demand['noperversion'] = 1"
+jo9_rumor_probe['fetishism'] = 1 & jo9_rumor_probe['xenophily'] = 1 & jo9_rumor_probe['perversion'] = 1 & jo9_rumor_probe['perversion_revealed'] = 0
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'REVEALED_TRAIT_NATIVE_BOUNDARY'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 0
+$buyer_demand['qa_fixed'] = "demand['noperversion'] = 1"
+jo9_rumor_probe['fetishism'] = 1 & jo9_rumor_probe['xenophily'] = 1 & jo9_rumor_probe['perversion'] = 1 & jo9_rumor_probe['perversion_revealed'] = 1
+dynamic $jo9_rumor_qa_run
+
+if jo9_rumor_qa_failed = 1: exit
+! Native full accepts active locks but clears expired locks in its actor.
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'NATIVE_ACTIVE_LOCK'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 1
+jo9_rumor_probe['qa_fixed'] = 91
+dynamic $jo9_rumor_qa_run
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_native
+if jo9_rumor_qa_failed = 1: exit
+if slave['qa_fixed'] ! 91 or jo9_rumor_probe['qa_fixed'] ! 91: msg 'FAIL_RUMOR_NATIVE_ACTIVE_LOCK_DELTA' & exit
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'NATIVE_EXPIRED_LOCK'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 1
+jo9_rumor_probe['qa_fixed'] = 90
+dynamic $jo9_rumor_qa_run
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_native
+if jo9_rumor_qa_failed = 1: exit
+if slave['qa_fixed'] ! 0 or jo9_rumor_probe['qa_fixed'] ! 90: msg 'FAIL_RUMOR_NATIVE_EXPIRED_LOCK_DELTA' & exit
+! Low charm rejection is pure in matcher and mutates native lock and brand.
+dynamic $jo9_rumor_qa_reset
+$jo9_rumor_qa_label = 'NATIVE_LOW_CHARM'
+$jo9_rumor_qa_mode = 'full'
+jo9_rumor_qa_no_charm = 0
+jo9_rumor_qa_expect = 0
+jo9_rumor_charm = 0
+jo9_rumor_probe['style'] = 0
+jo9_rumor_probe['exotic'] = 0
+jo9_rumor_probe['moral'] = 0
+jo9_rumor_probe['angst'] = 5
+jo9_rumor_probe['spoil'] = 5
+jo9_rumor_probe['meekness'] = 100
+dynamic $jo9_rumor_qa_run
+if jo9_rumor_qa_failed = 1: exit
+dynamic $jo9_rumor_qa_native
+if jo9_rumor_qa_failed = 1: exit
+if slave['qa_fixed'] ! 100 or jo9_rumor_probe['qa_fixed'] ! 0 or brand_rate ! 750: msg 'FAIL_RUMOR_NATIVE_CHARM_DELTA' & exit
+
+! Counts remain available for the parent success marker.
+if jo9_rumor_qa_count ! 105 or jo9_rumor_qa_native_count ! 47: jo9_rumor_qa_failed = 1 & msg 'FAIL_RUMOR_CASE_COUNT' & exit
+! Diagnostic fixture data is intentionally left for failure inspection.
+

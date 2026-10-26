@@ -1,0 +1,38 @@
+'use strict';
+// Isolated browser presentation check. No game execution or state-changing EXEC navigation.
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');
+const {pathToFileURL}=require('node:url');
+const {chromium}=require('C:/Users/User/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const core=require('G:/somi/JO9sa/tools/text-workshop/core.cjs');
+const game='G:/somi/Jack O Nine Tails v2.4_work/game', repo='G:/somi/JO9sa';
+const out=process.argv[2],mode=process.argv[3]||'probe';
+if(!out||!['probe','installed'].includes(mode))throw Error('Usage: verify.cjs OUTPUT_JSON probe|installed');
+const fix='/* JO9 MOD START EDITOR_LINK_COLOR | 2026-10-21_trait_editor_link_color */\r\n/* Text links inherit the existing gold panel color in editor columns and navigation. */\r\n.jo9-slave-editor #under_cheats > a,\r\n.jo9-editor-nav #under_cheats > a { color:inherit; }\r\n/* JO9 MOD END EDITOR_LINK_COLOR */\r\n';
+const raw=fs.readFileSync(path.join(game,'jack.qsp')),doc=core.parse(raw),body=name=>core.shift(doc.lines[doc.locations.find(l=>l.name===name).body],5);
+const traits=body('jo9_traits'),menu=body('menu_form');
+const section=menu.slice(menu.indexOf('if menu_form = 2107:'),menu.indexOf('! JO9 MOD END TRAITS_EDITOR_PAGE'));
+const extract=s=>Array.from(s.matchAll(/\$setting_display(_r|_c2|_c)? \+= '(<div id="under_cheats"><a href="EXEC:[^\r\n]*?">)([^'\r\n]*)'/g),m=>({column:m[1]||'',html:(m[2]+m[3]+(m[3].endsWith(': ')?'없음':'')+'</a></div>').replaceAll("''","'")}));
+const t=extract(traits.slice(traits.indexOf("if $args[0] = 'editor':"))),s=extract(section);
+assert.equal(t.length,20);assert.equal(s.length,4);
+const wrap=(c,rows)=>'<div class="'+c+'">'+rows.map(x=>x.html).join('')+'</div>';
+const main='<div class="jo9-slave-editor"><div id="under_gray_cheats">신규 특성 편집기</div></div>'+wrap('jo9-slave-editor',s.filter(x=>x.column===''))+wrap('jo9-slave-editor',t.filter(x=>x.column===''));
+const right='<div class="jo9-slave-editor"><div id="under_gray_cheats">항목을 누르면 추가 / 해제</div></div>'+wrap('jo9-slave-editor',s.filter(x=>x.column==='_r'))+wrap('jo9-slave-editor',t.filter(x=>x.column==='_r'));
+const entry=extract(menu).find(x=>x.html.includes('신규 특성 편집 (노예 / 조수)'));assert(entry);
+const cssSource=fs.readFileSync(path.join(repo,'assets/css-2.4/base.css'),'utf8'),cssWork=fs.readFileSync(path.join(game,'css/base.css'),'utf8');assert.equal(cssSource,cssWork);
+const html='<!doctype html><html><head><meta charset="utf-8"><base href="'+pathToFileURL(game+'/').href+'"><style>'+cssWork+'</style><style>html,body{margin:0;background:#251a12;min-height:800px}#qa-left{position:absolute;left:30px;top:30px}#qa-right{position:absolute;left:580px;top:30px}#qa-nav1{position:absolute;left:100px;top:700px}#qa-nav2{position:absolute;left:580px;top:700px}#qa-other{position:absolute;left:30px;top:770px}</style></head><body><section id="qa-left">'+main+'</section><section id="qa-right">'+right+'</section><section id="qa-nav1">'+wrap('jo9-editor-nav',s.filter(x=>x.column==='_c'))+'</section><section id="qa-nav2">'+wrap('jo9-editor-nav',s.filter(x=>x.column==='_c2'))+'</section><section style="display:none">'+wrap('jo9-cheat-menu jo9-editor-nav',[entry])+'</section><section id="qa-other"><div id="under_cheats"><a href="#outside">outside editor control</a></div><div class="jo9-slave-editor"><div id="under_gray_cheats">gray control</div></div></section></body></html>';
+(async()=>{let browser;try{
+ browser=await chromium.launch({executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',headless:true,args:['--allow-file-access-from-files','--no-first-run']});
+ const page=await browser.newPage({viewport:{width:1100,height:850}});await page.setContent(html);await page.waitForTimeout(200);
+ const selector='.jo9-slave-editor #under_cheats > a, .jo9-editor-nav #under_cheats > a';
+ const state=()=>page.evaluate(sel=>{const nodes=Array.from(document.querySelectorAll(sel));return{links:nodes.map(a=>{const r=a.getBoundingClientRect(),st=getComputedStyle(a);return{text:a.textContent,color:st.color,href:a.getAttribute('href'),rect:[r.x,r.y,r.width,r.height],parentColor:getComputedStyle(a.parentElement).color}}),outside:getComputedStyle(document.querySelector('#qa-other a')).color,gray:getComputedStyle(document.querySelector('#qa-other #under_gray_cheats')).color,cssRules:Array.from(document.styleSheets[0].cssRules).length}},selector);
+ const before=await state();assert.equal(before.links.length,25);
+ if(mode==='probe'){assert(before.links.every(l=>l.color==='rgb(0, 0, 238)'));await page.addStyleTag({content:fix});}else assert(before.links.every(l=>l.color==='rgb(255, 215, 0)'));
+ const after=await state();assert(after.links.every(l=>l.color==='rgb(255, 215, 0)'&&l.color===l.parentColor));assert.equal(after.outside,'rgb(0, 0, 238)');assert.equal(after.gray,'rgb(192, 192, 192)');
+ assert.deepEqual(before.links.map(x=>[x.href,x.rect]),after.links.map(x=>[x.href,x.rect]));
+ await page.locator(selector).first().hover();assert.equal(await page.locator(selector).first().evaluate(a=>getComputedStyle(a).color),'rgb(255, 215, 0)');await page.locator(selector).first().focus();assert.equal(await page.locator(selector).first().evaluate(a=>getComputedStyle(a).color),'rgb(255, 215, 0)');
+ const parsed=await page.evaluate(()=>Array.from(document.styleSheets).flatMap(s=>Array.from(s.cssRules)).filter(r=>r.selectorText&&r.selectorText.includes('.jo9-editor-nav #under_cheats > a')).map(r=>({selector:r.selectorText,color:r.style.color,declarations:r.style.length})));
+ assert(parsed.some(r=>r.color==='inherit'&&r.declarations===1));
+ const sha=b=>crypto.createHash('sha256').update(b).digest('hex');assert.equal(sha(fs.readFileSync(path.join(game,'jack.qsp'))),sha(raw));
+ const result={status:'PASS',mode,links:25,traits:20,normalHoverFocus:'gold',outsideLinkUnchanged:true,grayTextUnchanged:true,hrefsAndGeometryUnchanged:true,cssRuleParsed:true,qspUnchanged:true,qspSha256:sha(raw),cssSha256:sha(cssWork),beforeColors:[...new Set(before.links.map(x=>x.color))],afterColors:[...new Set(after.links.map(x=>x.color))],parsed,limits:['Isolated HTML made from current QSP link literals and current CSS; not native game client rendering.','Visited state verified by author-rule scope; computedStyle does not expose private visited history.']};
+ fs.mkdirSync(path.dirname(out),{recursive:true});fs.writeFileSync(out,JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result));
+ }finally{if(browser)await browser.close()}})().catch(e=>{console.error(e);process.exitCode=1});

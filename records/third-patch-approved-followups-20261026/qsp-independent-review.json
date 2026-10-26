@@ -1,0 +1,89 @@
+{
+  "schema": 1,
+  "status": "PASS",
+  "observedAtUtc": "2026-10-25T21:06:51.086Z",
+  "reviewType": "Independent read-only candidate review; only this JSON report written",
+  "beforeSha256": "f2433bf3bbb887f00a0a319130bf06cb0bfdaeaa091b113d831c701407f1b07a",
+  "afterSha256": "eafdc1a2ffcc3f5806735617c2eec88c79449c9aca0ce1dabee6e78d835a2574",
+  "issues": [],
+  "findings": {
+    "locationCount": 273,
+    "changedLocations": [
+      "interaction_city"
+    ],
+    "changedContainerRecords": [
+      427
+    ],
+    "executableLinesReplaced": 8,
+    "refusalLines": 2,
+    "highTierLines": 6,
+    "markerCommentLinesAdded": 16,
+    "physicalBodyLineDelta": 16,
+    "unrelatedContainerRecordsChanged": 0,
+    "unrelatedBodyLinesChanged": 0,
+    "patchReplayMatchesCandidate": true,
+    "newLocationCount": 0,
+    "newSavedStatAssignments": 0
+  },
+  "checks": {
+    "structureAndByteRoundtrip": "PASS",
+    "CRLFAndMarkerBoundaries": "PASS",
+    "exactScopeReverseComparison": "PASS",
+    "unchangedNormalClassificationPairs": 72,
+    "checkedThresholdClassificationPairs": 128,
+    "checkedRefusalCases": 512,
+    "feesActionPointsDrawAndRewards": "Byte-identical outside the approved eight executable lines",
+    "preparedClaims": "All compared claims match the actual before/candidate difference"
+  },
+  "anchors": [
+    {
+      "kind": "refusal",
+      "beforeLine": 18160,
+      "candidateLine": 18161
+    },
+    {
+      "kind": "upper-bound-removal",
+      "beforeLine": 18161,
+      "candidateLine": 18164
+    },
+    {
+      "kind": "upper-bound-removal",
+      "beforeLine": 18163,
+      "candidateLine": 18168
+    },
+    {
+      "kind": "upper-bound-removal",
+      "beforeLine": 18164,
+      "candidateLine": 18171
+    },
+    {
+      "kind": "refusal",
+      "beforeLine": 18556,
+      "candidateLine": 18565
+    },
+    {
+      "kind": "upper-bound-removal",
+      "beforeLine": 18557,
+      "candidateLine": 18568
+    },
+    {
+      "kind": "upper-bound-removal",
+      "beforeLine": 18559,
+      "candidateLine": 18572
+    },
+    {
+      "kind": "upper-bound-removal",
+      "beforeLine": 18560,
+      "candidateLine": 18575
+    }
+  ],
+  "runtimeReview": {
+    "probeScope": "Two roles, isolated dispatch/refusal fragments; actual-GT probes retain dispatch GT and existing refusal result",
+    "normalClassifier": "36 normal skill pairs per role remain unchanged by static predicate evaluation",
+    "limitation": "Classifier probes replace GT with exit for observation; actual-GT probes cover recursion separately. Draw/reward paths are established unchanged by exact code comparison, not by these isolated probes."
+  },
+  "limits": [
+    "This review did not run the native engine, load saves or perform GUI play; native6 and release gate are owned by root.",
+    "Executable differences are eight replacements plus sixteen separate marker-comment lines, not eight newly inserted physical lines."
+  ]
+}

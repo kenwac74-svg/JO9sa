@@ -1,0 +1,21 @@
+{
+  "id": "2026-10-26_egeya_outfits_profile",
+  "before_sha256": "9a0a5509e01c5473326e48a281b78112b5e54cda0916bcf8844a6b15fcc6ab8e",
+  "edits": [
+    {
+      "location": "generate_stock",
+      "field": "body",
+      "old": "! JO9 MOD END COMBAT_TRAIT_INNATE_BACKGROUND\r\ngs 'jo9_traits_value', 'refresh', 'stock'",
+      "new": "! JO9 MOD END COMBAT_TRAIT_INNATE_BACKGROUND\r\n! JO9 MOD START EGEYA_PRESET_PROFILE_20261026 | 2026-10-26_egeya_outfits_profile\r\nif stock_type = 2579 and creating_clone = 0:\r\n stock['jo9_constitution'] = 1\r\n stock['jo9_combat_trait'] = 3\r\n $stock_name = '에게야'\r\nend\r\n! JO9 MOD END EGEYA_PRESET_PROFILE_20261026\r\ngs 'jo9_traits_value', 'refresh', 'stock'",
+      "count": 1
+    },
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "! JO9 MOD END PROFILE_TEXT_CACHE_20261025",
+      "new": "! JO9 MOD END PROFILE_TEXT_CACHE_20261025\r\n! JO9 MOD START EGEYA_DEFAULT_NAME_LOAD_20261026 | 2026-10-26_egeya_outfits_profile\r\nlocal jo9_egeya_name_i\r\nlocal $jo9_egeya_name_role, $jo9_egeya_name_old\r\nfor jo9_egeya_name_i = 0 to arrsize('$all_slave_characters') - 1:\r\n $jo9_egeya_name_role = $all_slave_characters[jo9_egeya_name_i]\r\n if dyneval('result = <<$jo9_egeya_name_role>>_type') = 2579:\r\n  $jo9_egeya_name_old = dyneval('$result = $<<$jo9_egeya_name_role>>_name')\r\n  if $jo9_egeya_name_old = 'Egeya' or $jo9_egeya_name_old = 'egeya' or $jo9_egeya_name_old = 'Egeaya' or $jo9_egeya_name_old = 'egeaya' or $jo9_egeya_name_old = 'Эгея':\r\n   dynamic '$<<$jo9_egeya_name_role>>_name = ''에게야'''\r\n  end\r\n end\r\nend\r\n! JO9 MOD END EGEYA_DEFAULT_NAME_LOAD_20261026",
+      "count": 1
+    }
+  ],
+  "after_sha256": "ed7f14b5a892f2dc695e8b90a29dfd1331c31536b604911fb2fddd9af8107648"
+}

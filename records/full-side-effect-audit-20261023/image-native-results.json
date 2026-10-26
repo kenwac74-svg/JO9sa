@@ -1,0 +1,271 @@
+{
+  "status": "PASS",
+  "nativeEngine": "G:/somi/Jack O Nine Tails v2.4_work/game/engine/jack.exe",
+  "engineSha256": "f75032d79ecb58eeb7b969cd3f774d66b091fca38a360acdabd782e03a46c6e6",
+  "inputSha256": "5aeff11fffe6e5f2523749987577f42dab870f4d0adee0df385375f9eefb074f",
+  "probes": [
+    {
+      "name": "all-current-templates",
+      "checkpoint": "All-template image path and state assertions; all-current-templates",
+      "pass": true,
+      "reason": "",
+      "durationMs": 3949
+    },
+    {
+      "name": "explicit-role-requests",
+      "checkpoint": "All-template image path and state assertions; explicit-role-requests",
+      "pass": true,
+      "reason": "",
+      "durationMs": 4691
+    },
+    {
+      "name": "missing-role-packs",
+      "checkpoint": "All-template image path and state assertions; missing-role-packs",
+      "pass": true,
+      "reason": "",
+      "durationMs": 3892
+    },
+    {
+      "name": "all-packs-empty",
+      "checkpoint": "All-template image path and state assertions; all-packs-empty",
+      "pass": true,
+      "reason": "",
+      "durationMs": 3634
+    },
+    {
+      "name": "packs-absent",
+      "checkpoint": "All-template image path and state assertions; packs-absent",
+      "pass": true,
+      "reason": "",
+      "durationMs": 3387
+    },
+    {
+      "name": "dona-legacy-read-resolver",
+      "checkpoint": "All-template image path and state assertions; dona-legacy-read-resolver",
+      "pass": true,
+      "reason": "",
+      "durationMs": 3132
+    },
+    {
+      "name": "cleanup-before-and-after-registry",
+      "checkpoint": "All-template image path and state assertions; cleanup-before-and-after-registry",
+      "pass": true,
+      "reason": "",
+      "durationMs": 273
+    },
+    {
+      "name": "registry-after-cleanup",
+      "checkpoint": "All-template image path and state assertions; registry-after-cleanup",
+      "pass": true,
+      "reason": "",
+      "durationMs": 3653
+    },
+    {
+      "name": "cleanup-after-registry",
+      "checkpoint": "All-template image path and state assertions; cleanup-after-registry",
+      "pass": true,
+      "reason": "",
+      "durationMs": 4431
+    },
+    {
+      "name": "unknown-ids",
+      "checkpoint": "All-template image path and state assertions; unknown-ids",
+      "pass": true,
+      "reason": "",
+      "durationMs": 3124
+    },
+    {
+      "name": "synthetic-alias-precedence",
+      "checkpoint": "All-template image path and state assertions; synthetic-alias-precedence",
+      "pass": true,
+      "reason": "",
+      "durationMs": 11674
+    },
+    {
+      "name": "all-callsite-contexts",
+      "checkpoint": "All-template image path and state assertions; all-callsite-contexts",
+      "pass": true,
+      "reason": "",
+      "durationMs": 532
+    }
+  ],
+  "materializedCases": 55685,
+  "repeatCasesAfterCleanup": 7882,
+  "totalResolverLoopCalls": 63567,
+  "counts": {
+    "all-current-templates": {
+      "cases": 7882,
+      "bytes": 3110346
+    },
+    "explicit-role-requests": {
+      "cases": 18016,
+      "bytes": 6038972
+    },
+    "missing-role-packs": {
+      "cases": 4504,
+      "bytes": 2434034
+    },
+    "all-packs-empty": {
+      "cases": 4504,
+      "bytes": 2490284
+    },
+    "packs-absent": {
+      "cases": 4504,
+      "bytes": 2277142
+    },
+    "dona-legacy-read-resolver": {
+      "cases": 480,
+      "bytes": 1217442,
+      "knownLegacyAliases": 96
+    },
+    "cleanup-before-and-after-registry": {
+      "cases": 0,
+      "bytes": 974626,
+      "knownLegacyAliases": 96,
+      "excludedPregnancyAliases": 4
+    },
+    "registry-after-cleanup": {
+      "cases": 7882,
+      "bytes": 3969680,
+      "order": "legacy registry -> cleanup -> current JSON registry -> reads"
+    },
+    "cleanup-after-registry": {
+      "cases": 7882,
+      "bytes": 3111030,
+      "order": "current JSON registry -> reads -> cleanup -> reads"
+    },
+    "unknown-ids": {
+      "cases": 30,
+      "bytes": 1087052
+    },
+    "synthetic-alias-precedence": {
+      "cases": 1,
+      "bytes": 1081042
+    },
+    "all-callsite-contexts": {
+      "cases": 0,
+      "bytes": 1162536,
+      "sourceLines": 31,
+      "executions": 124,
+      "displayPicCalls": 40,
+      "displayFullimageCalls": 52,
+      "sexPartnerBranches": 8
+    },
+    "baseline-detection-control": {
+      "cases": 1,
+      "bytes": 1078464
+    }
+  },
+  "sources": {
+    "jo9_seed_role_images": {
+      "sha256": "f29d8b5a98d906a951ab4fe997a6aff412c19412985123961f1a32fb878fdef8",
+      "lines": 91
+    },
+    "display_pic": {
+      "sha256": "d9ec4c18ce16886ab341c4651eeff8776250f1d7a9f6814e01c55238526b77a8",
+      "lines": 471
+    },
+    "display_fullimage": {
+      "sha256": "5e70491a65e0baa183065b82c0a8e1ca7d278798bcce4a27348103f38e2a4c3e",
+      "lines": 137
+    }
+  },
+  "limits": [
+    "Registry is materialized from all JSON string image fields; custom engine JSON deserialization is covered separately by official client smoke tests.",
+    "All registered aliases and explicit role requests are bounded exhaustive over the current 1126 JSON records. Arbitrary future IDs, filenames and player-edited paths cannot be exhaustively enumerated.",
+    "Exact resolver/display source is preserved; event conditions and narrative branches are not replayed as whole events.",
+    "Caller statements test immediate and deferred path composition; native screenshot pixels and existing-save load UI are outside this fixture.",
+    "No engine is started by this generator. Baseline detection control intentionally fails the current desired result."
+  ],
+  "harnessCorrections": [
+    {
+      "issue": "Missing colon on generated FOR header",
+      "effect": "Initial test harness timed out before assertions; no product result inferred",
+      "resolution": "Colon added, checkSyntax guard added; 30-case control and all 12 probes pass"
+    },
+    {
+      "issue": "Tiny world header fields generic",
+      "effect": "Fixture compatibility concern",
+      "resolution": "All three header fields now copied from actual Work"
+    },
+    {
+      "issue": "Two exploratory launcher paths were incorrect",
+      "effect": "First path did not exist; outer launcher did not execute fixture",
+      "resolution": "Actual native engine path found and SHA256 matches previous validated engine"
+    }
+  ],
+  "fixtureManifest": [
+    {
+      "name": "all-current-templates",
+      "marker": "JO9_QA_ALLIMAGES_all_current_templates_COMPLETE",
+      "sha256": "4a270ea1e5aed5292e28292bdb4a4d570ea357b9a545cddfe54ecba42626d0fa",
+      "bytes": 3110346
+    },
+    {
+      "name": "explicit-role-requests",
+      "marker": "JO9_QA_ALLIMAGES_explicit_role_requests_COMPLETE",
+      "sha256": "25403bf5a2c85460d7ec9cd6afe41b75452dda12e842e77771cc02725c89fe7b",
+      "bytes": 6038972
+    },
+    {
+      "name": "missing-role-packs",
+      "marker": "JO9_QA_ALLIMAGES_missing_role_packs_COMPLETE",
+      "sha256": "502cccd2924e26310ea089b408e3daf328df549f1602a8db080fdd0f1d4975af",
+      "bytes": 2434034
+    },
+    {
+      "name": "all-packs-empty",
+      "marker": "JO9_QA_ALLIMAGES_all_packs_empty_COMPLETE",
+      "sha256": "be331cd418e7e1b8badef4b146395c0082e626fd92a7d59d22e88b229b515454",
+      "bytes": 2490284
+    },
+    {
+      "name": "packs-absent",
+      "marker": "JO9_QA_ALLIMAGES_packs_absent_COMPLETE",
+      "sha256": "de26ab0a39b96e893e36a13f4891d06ace4786d5ef09b8ec9baef968397134b4",
+      "bytes": 2277142
+    },
+    {
+      "name": "dona-legacy-read-resolver",
+      "marker": "JO9_QA_ALLIMAGES_dona_legacy_read_resolver_COMPLETE",
+      "sha256": "bf4602f652724270d9d53caa152ddee93e92fcbfdf62e88d783560f821e7652b",
+      "bytes": 1217442
+    },
+    {
+      "name": "cleanup-before-and-after-registry",
+      "marker": "JO9_QA_ALLIMAGES_cleanup_before_and_after_registry_COMPLETE",
+      "sha256": "06a9116dfb65cc2ed7603243c2e24d4b026f1c9bf44fb7d58533e059dc010144",
+      "bytes": 974626
+    },
+    {
+      "name": "registry-after-cleanup",
+      "marker": "JO9_QA_ALLIMAGES_registry_after_cleanup_COMPLETE",
+      "sha256": "328ac2bda1c928dd061065391c974f1ada515d3391ca291c90813f956a6597e0",
+      "bytes": 3969680
+    },
+    {
+      "name": "cleanup-after-registry",
+      "marker": "JO9_QA_ALLIMAGES_cleanup_after_registry_COMPLETE",
+      "sha256": "544ec884bacb703128941d15964ad8947657174adb58a5d8f1412a9bbcc4bf4a",
+      "bytes": 3111030
+    },
+    {
+      "name": "unknown-ids",
+      "marker": "JO9_QA_ALLIMAGES_unknown_ids_COMPLETE",
+      "sha256": "b72bb9ca74cec69d9417f0e2bba61a7a26109fa77ea665d13148be2e1b2718f3",
+      "bytes": 1087052
+    },
+    {
+      "name": "synthetic-alias-precedence",
+      "marker": "JO9_QA_ALLIMAGES_synthetic_alias_precedence_COMPLETE",
+      "sha256": "112e4e8ae7625391cef91d1a77ec8675bb4e65cd1dfd5d88b98953e9825663c6",
+      "bytes": 1081042
+    },
+    {
+      "name": "all-callsite-contexts",
+      "marker": "JO9_QA_ALLIMAGES_all_callsite_contexts_COMPLETE",
+      "sha256": "06b29ad8e5ba6060b691c0ddf8c726945e57782bd07b8d08fb233128c6f79c4c",
+      "bytes": 1162536
+    }
+  ]
+}

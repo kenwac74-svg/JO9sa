@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "recordedAt": "2026-10-21T04:02:54.283Z",
+  "scope": "prepare-focused.cjs verifyResults only; no engine invocation, game modification, or fixture modification by verifier repair",
+  "originalVerification": {
+    "status": "FAIL",
+    "classification": "Verifier false negative; not a candidate or baseline engine failure",
+    "failedCheck": "Baseline did not fail at the intended assertion",
+    "rootCause": "Exact substring required one space after str:, while actual FastQSP stderr used two spaces.",
+    "oldMatcher": "stderr.includes(str: plus one space plus quoted marker)",
+    "actualMessages": [
+      "showMessage(), str:  \"JO9_QA_ARGONSEL_NPC_001\"",
+      "showMessage(), str:  \"JO9_QA_ARGONSEL_EDITORIAL_001\""
+    ],
+    "notReportedAsPass": true
+  },
+  "repair": {
+    "newMatcher": "Anchored showMessage(), str: followed by whitespace and a quoted marker; require exactly the intended single message.",
+    "sourceFile": "prepare-focused.cjs",
+    "onlyResultVerifierChanged": true
+  },
+  "verification": {
+    "nodeSyntaxCheck": "PASS",
+    "retainedActualBaselineLogChecks": {
+      "logs": 2,
+      "oldMatcherFalse": 2,
+      "correctedExactMessageMatches": 2,
+      "wrongMarkerRejected": 2
+    },
+    "syntheticWhitespaceCasesPassed": 3,
+    "unrelatedLineRejected": true,
+    "candidateActualRunnerVerified": true,
+    "candidateActualRunnerResultCount": 2,
+    "candidateResultFile": "native-focused-candidate-results.json",
+    "baselineActualRunnerMetadata": "Original baseline client-results.json was overwritten by candidate execution; no baseline metadata reconstructed. Root will rerun baseline-plan.json and corrected verifier against fresh native runner metadata.",
+    "engineRerunByRepairAgent": false
+  },
+  "rootFollowup": {
+    "freshBaselineRerunVerified": true,
+    "intendedFailures": 2,
+    "candidateVerified": true,
+    "baselineEvidence": "native-focused-baseline-results.json",
+    "candidateEvidence": "native-focused-candidate-results.json"
+  }
+}

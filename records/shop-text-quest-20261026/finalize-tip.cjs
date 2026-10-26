@@ -1,0 +1,24 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),c=require('G:/somi/JO9sa/tools/text-workshop/core.cjs');
+const json=p=>JSON.parse(fs.readFileSync(p,'utf8').replace(/^\uFEFF/,'')),tip=json(__dirname+'/tip-final.json'),record=tip.record,game='G:/somi/Jack O Nine Tails v2.4_work/game',mode=process.argv[2],patchDest='G:/somi/JO9sa/mods/'+tip.id+'.json';
+if(mode==='stage'){
+ const release='G:/Codex/tmp/shop-text-quest-tip-release-20261026/run-uMOKBs',report=json(release+'/report.json');assert.equal(report.verdict,'PASS');assert.equal(report.client.probes.length,9);assert(report.client.probes.every(x=>x.pass));assert.equal(report.checks.find(x=>x.name==='inputs-readable').detail.candidate,tip.after);
+ const cache=json(tip.task+'/final-cache/client-results.json');assert.equal(cache.length,1);assert(cache[0].pass);assert.equal(json(tip.task+'/final-cache/prepared.json').sourceHash,tip.after);
+ assert.equal(c.hash(fs.readFileSync(game+'/jack.qsp')),tip.before);assert.equal(c.hash(fs.readFileSync(tip.candidate)),tip.after);assert(fs.existsSync(__dirname+'/TIP_PLACE_REVIEW.md'));assert(!fs.existsSync(patchDest));fs.copyFileSync(tip.mods+'/'+tip.id+'.json',patchDest);
+ for(const n of ['tip-final.json','tip-place-only.cjs','TIP_PLACE_REVIEW.md','native-cache.cjs','finalize-tip.cjs'])fs.copyFileSync(__dirname+'/'+n,record+'/'+n);
+ fs.mkdirSync(record+'/official-tip');for(const n of ['report.json','report.md'])fs.copyFileSync(release+'/'+n,record+'/official-tip/'+n);fs.mkdirSync(record+'/tip-cache');for(const e of fs.readdirSync(tip.task+'/final-cache',{withFileTypes:true}))if(e.isFile()&&/\.(?:json|log)$/.test(e.name))fs.copyFileSync(tip.task+'/final-cache/'+e.name,record+'/tip-cache/'+e.name);
+ console.log(JSON.stringify({status:'TIP_VERIFIED_READY',before:tip.before,after:tip.after,patch:patchDest}));
+}else if(mode==='finish'){
+ assert.equal(c.hash(fs.readFileSync(game+'/jack.qsp')),tip.after);const r=json(record+'/FINAL_RESULT.json');assert.equal(r.runtimeFiles[0].after,tip.before);
+ const original=c.parse(fs.readFileSync(r.backup+'/jack.qsp')),first=json(r.patch);for(const e of first.edits){const l=original.locations.find(x=>x.name===e.location),s=c.shift(original.lines[l.body],5);assert.equal(s.split(e.old).length-1,1);original.lines[l.body]=c.shift(s.replace(e.old,()=>e.new),-5);}const recovered=c.serialize(original);assert.equal(c.hash(recovered),tip.before);
+ r.runtimeFiles[0].after=tip.after;for(const f of r.runtimeFiles)assert.equal(c.hash(fs.readFileSync(f.path)),f.after);
+ const changed=new Set(r.runtimeFiles.map(x=>path.resolve(x.path).toLowerCase()));for(const x of json(__dirname+'/inputs.json'))if(!changed.has(path.resolve(x.path).toLowerCase()))assert.equal(c.hash(fs.readFileSync(x.path)),x.sha256,x.path);
+ const ownBackup=process.argv[3];assert(ownBackup&&/^jack\.qsp\.bak_20261026_\d{6}$/.test(path.basename(ownBackup)));assert.equal(path.resolve(path.dirname(ownBackup)).toLowerCase(),path.resolve(game).toLowerCase());assert(!fs.lstatSync(ownBackup).isSymbolicLink());assert(fs.readFileSync(ownBackup).equals(recovered));fs.unlinkSync(ownBackup);
+ const oldParagraph='명성 TIP은 장소·정성적인 반복 보상 안내만 남기고 정확한 명성 지급량을 숨긴다. 출전3승 제한은 보상 수치와 다른 참가 규칙으로 유지한다.';
+ let manual=fs.readFileSync(__dirname+'/MANUAL_KO.md','utf8');assert(manual.includes(oldParagraph));manual=manual.replace('QSP 후: `'+tip.before+'`','QSP 후: `'+tip.after+'`').replace(oldParagraph,'명성 TIP은 기존 서두와 장소 목록에서 끝낸다. 보상 수치·반복 보상·출전 승수 설명은 안내문에서 제외하며 실제 출전 제한과 보상 코드는 그대로다.').replace('QSP 조각 패치는 약9KB이며 문구·코드 주변 줄만 포함한다.','QSP 조각 패치들은 문구·코드 주변 줄만 포함한다.');
+ manual+='\n최종 명성 안내의 추가 패치 ID는 `'+tip.id+'`다. 중간8d 기준은 최초8b 백업과 첫 패치로 바이트 동일하게 복원됨을 확인했다. 최종 TIP도 공식 엔진9경로와 중간 저장 안내 캐시 갱신1경로를 통과했다.\n';fs.writeFileSync(__dirname+'/MANUAL_KO.md',manual);fs.writeFileSync(record+'/MANUAL_KO.md',manual);
+ for(const n of ['TEXT_REVIEW_KO.md','RALLY_FORMULA_KO.md']){const p=record+'/'+n,old=fs.readFileSync(p,'utf8');fs.writeFileSync(p,'> 최종 추가 정리: 명성 TIP은 기존 서두와 장소 목록에서 끝난다. 초기 문구안의 반복 보상·승수 설명은 후속 패치로 제거했다. 실제 산식과 제한은 그대로다.\n\n'+old);}
+ r.patchChain=[r.patch,patchDest];r.checks.finalTipOnlyPlaces=true;r.checks.officialNativeFinal=9;r.checks.finalTipCache=1;r.tipIntermediateBaselineRecoveredExactly=true;r.tipCleanup='pending';fs.writeFileSync(record+'/FINAL_RESULT.json',JSON.stringify(r,null,2)+'\n');fs.writeFileSync(__dirname+'/FINAL_RESULT.json',JSON.stringify(r,null,2)+'\n');
+ const bundle='G:/somi/JO9sa/docs/SECOND_PATCH_WORK_BUNDLE_20261021.md';fs.appendFileSync(bundle,'\r\n최종 안내 문구 확정: 명성 TIP은 장소 목록에서 끝내며 반복 보상·출전 승수 설명도 제거했다. 후속패치 '+tip.id+', 최종 QSP '+tip.after+'. 공식 엔진9·저장 안내캐시1 재검사 PASS.\r\n');
+ console.log(JSON.stringify({status:r.status,after:tip.after,patchChain:r.patchChain,baselineRecovered:true,existingSavesUnchanged:r.checks.existingSavesUnchanged}));
+}else throw new Error('Use stage or finish');

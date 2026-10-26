@@ -1,0 +1,30 @@
+{
+  "sourceHash": "e4d6c65839939761ff6921029492a7e2ec704627e78717db4372edee13d12f4f",
+  "results": [
+    {
+      "name": "quick-half",
+      "checkpoint": "Actual generic half-base quick sale; no NPC predicates or rewards",
+      "pass": false,
+      "reason": "Unexpected message before completion",
+      "durationMs": 8101
+    },
+    {
+      "name": "quick-eligibility",
+      "checkpoint": "Actual generic half-base quick sale; no NPC predicates or rewards",
+      "pass": true,
+      "reason": "",
+      "durationMs": 7547
+    },
+    {
+      "name": "quick-pure-sale",
+      "checkpoint": "Actual generic half-base quick sale; no NPC predicates or rewards",
+      "pass": true,
+      "reason": "",
+      "durationMs": 7497
+    }
+  ],
+  "numericEvidence": "Qt: Untested Windows version 10.0 detected!\r\nsuccess\r\nCompiling...\r\n\t .qproj file not found. Skipping.\r\nshowMessage(), str:  \"JO9_QA_ASSERT_QUICK_BASE_HALF_assistant|base=1630;quote=131;assistant_quote=652;assistant_id=quick_sale;brand=0\"\r\n",
+  "scopeControl": "Qt: Untested Windows version 10.0 detected!\r\nsuccess\r\nCompiling...\r\n\t .qproj file not found. Skipping.\r\nshowMessage(), str:  \"JO9_QA_ASSERT_LOCAL_SCOPE|direct=25;gs=0;func=1;dyneval=25\"\r\n",
+  "cause": "A nested native FUNC reads the global array, not the caller LOCAL actor copy, losing the 25 percent versatile bonus.",
+  "repair": "Use a short-lived globally visible valuation clone; cleanup on every return. Exact original-role price half and complete clone cleanup now pass."
+}

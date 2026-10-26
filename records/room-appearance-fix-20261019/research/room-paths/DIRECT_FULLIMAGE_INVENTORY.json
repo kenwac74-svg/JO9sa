@@ -1,0 +1,279 @@
+{
+  "inputHash": "3611e194a385d0ed992e9f0ca45aca033e834dda9de901cb237c36439aba828f",
+  "count": 16,
+  "locations": 14,
+  "items": [
+    {
+      "location": "$addon_custom_data",
+      "line": 517,
+      "source": "\t*p func('interior_change', 'jo9_html', '<div id = \"bg\"><img src=\"content\\pic\\<<$fullimage[args[1]]>>.png\"></div>')",
+      "contextBefore": [
+        "",
+        "\tcls",
+        "\tgs '_layout'",
+        "! JO9 MOD START J9M1253 | 2026-10-08_persistent_image_cycle | changed block; context may be included"
+      ],
+      "contextAfter": [
+        "! JO9 MOD END J9M1253",
+        "\tif $args[4] ! '':",
+        "\t\t*p '<div id = \"close_far\"><a href = \"EXEC: <<$args[2]>> = <<args[3]>> & gt ''<<$args[4]>>''\"><img src = \"content\\pic\\buttons\\close_button.png\"></a></div>'",
+        "\telse"
+      ]
+    },
+    {
+      "location": "menu_form",
+      "line": 255,
+      "source": "\tif nsfw = 0 and $assistant['fullimage'] ! '': $text_display += '<div id=\"center_image_home\"><img src=\"content\\pic\\<<$assistant[\"fullimage\"]>>.png\"></div>'",
+      "contextBefore": [
+        "",
+        "!개인실",
+        "if menu_form = 30010:",
+        ""
+      ],
+      "contextAfter": [
+        "\tfunc('$menu', '===BEGIN===', 'column_0')",
+        "!\t    if assistant_state = CONST_INT['no_slave']:",
+        "!\t\t    func('$menu', 'goto', $menu_item_kikuboudoir, menu_kikuboudoir, 'interaction', 'interaction','조수개인실',  '조수랑 노는곳')",
+        "!\t\telse"
+      ]
+    },
+    {
+      "location": "menu_form",
+      "line": 330,
+      "source": "\tif nsfw = 0: $text_display += '<div id=\"center_image_home\"><img src=\"content\\pic\\<<$assistant[''fullimage'']>>.png\"></div>'",
+      "contextBefore": [
+        "end",
+        "",
+        "!main menu - Assistant assignments",
+        "if menu_form = 4:"
+      ],
+      "contextAfter": [
+        "",
+        "\tfunc('$menu', 'spacer', -1)",
+        "\tfunc('$menu', '===BEGIN===', 'column_0')",
+        ""
+      ]
+    },
+    {
+      "location": "menu_form",
+      "line": 2703,
+      "source": "    IF nsfw = 0: $text_display += '<div id=\"center_image_home\"><img src=\"content\\pic\\<<$assistant[\"fullimage\"]>>.png\"></div>'",
+      "contextBefore": [
+        "END",
+        "",
+        "\t\t!Главное меню - Заняться воспитуемой - Секс-обучение - Lesbian Sex",
+        "IF menu_form = 239:"
+      ],
+      "contextAfter": [
+        "    FUNC('$menu', '===BEGIN===', 'column_0')",
+        "",
+        "    IF slave_state = CONST_INT['no_slave'] and hero_choice < 100:",
+        "        FUNC('$menu', 'exec', $menu_item_lesbiansex1_gray, empty, '레즈비언', $no_slave)"
+      ]
+    },
+    {
+      "location": "slavebase_test",
+      "line": 109,
+      "source": "if txt = 0: *p func('interior_change', 'jo9_html', '<div id = \"bg\"><img src=\"content\\pic\\<<$fullimage[slave_type]>>.png\"></div>')",
+      "contextBefore": [
+        "$text[87] = 'DoubleGym'",
+        "",
+        "",
+        "! JO9 MOD START J9M1257 | 2026-10-08_persistent_image_cycle | changed block; context may be included"
+      ],
+      "contextAfter": [
+        "if txt = 1: *p func('interior_change', 'jo9_html', '<div id = \"bg\"><img src=\"content\\pic\\<<$fullmade[slave_type]>>.png\"></div>')",
+        "if txt = 2: *p func('interior_change', 'jo9_html', '<div id = \"bg\"><img src=\"content\\pic\\<<$fullmistress[slave_type]>>.png\"></div>')",
+        "if txt = 3: *p func('interior_change', 'jo9_html', '<div id = \"bg\"><img src=\"content\\pic\\<<$fullsecretary[slave_type]>>.png\"></div>')",
+        "if txt = 4: *p func('interior_change', 'jo9_html', '<div id = \"bg\"><img src=\"content\\pic\\<<$bathing_alone[slave_type]>>.png\"></div>')"
+      ]
+    },
+    {
+      "location": "prison_cell",
+      "line": 65,
+      "source": "        *p '<div style=\"position:absolute;top:3px;left:150px;\"><img src=\"content\\pic\\<<$prisoner[\"fullimage\"]>>.png\"></div>'",
+      "contextBefore": [
+        "\t\t*p func('interior_change', 'jo9_html', '<div id = \"bg\"><img src=\"content\\pic\\<<$bg_path>>.png\"></div>')",
+        "! JO9 MOD END J9M1307",
+        "\telse",
+        "!\t\t*p '<div id = \"bg\"><img src=\"content\\pic\\<<$prisoner[\"fullimage\"]>>.png\"></div>'"
+      ],
+      "contextAfter": [
+        "\tend",
+        "\tif master_excitement >= 0:",
+        "\t\t*p '<div id =\"impregnate_button_cell\"><a class=\"tooltip-bottom\" tooltip-data=\"죄수를 강간한다\" href = \"EXEC: interaction = 1486 & gt ''interaction''\"><img src=\"content\\pic\\buttons\\impregnate_cell.png\"></a></div>'",
+        "\tend"
+      ]
+    },
+    {
+      "location": "barn",
+      "line": 26,
+      "source": "if cow_state = CONST_INT['slave_exist'] and nsfw = 0: *p '<div style=\"position:absolute;top:3px;left:150px;\"><img src=\"content\\pic\\<<$cow[\"fullimage\"]>>.png\"></div>'",
+      "contextBefore": [
+        "",
+        "! JO9 MOD START J9M1318 | 2026-10-08_persistent_image_cycle | changed block; context may be included",
+        "*p func('interior_change', 'jo9_html', '<div id = \"bg\"><img src=\"content\\pic\\bg\\<<$bg[$place]>>.png\"></div>')",
+        "! JO9 MOD END J9M1318"
+      ],
+      "contextAfter": [
+        "!*p '<div id = \"text\"><<$text>></div>'",
+        "",
+        "",
+        "$text_display = ''"
+      ]
+    },
+    {
+      "location": "special_screen",
+      "line": 85,
+      "source": "  if assistant['image_mode'] = 0: *p func('interior_change', 'jo9_html', '<div id = \"bg\"><img src=\"content\\pic\\<<$fullimage[assistant_type]>>.png\"></div>')",
+      "contextBefore": [
+        " npc = 1",
+        " $npc_id = 'assistant'",
+        " IF nsfw = 0:",
+        "! JO9 MOD START J9M1416 | 2026-10-08_persistent_image_cycle | changed block; context may be included"
+      ],
+      "contextAfter": [
+        "! JO9 MOD END J9M1416",
+        " END",
+        "END",
+        ""
+      ]
+    },
+    {
+      "location": "assistant_private_room",
+      "line": 25,
+      "source": "if assistant_state = CONST_INT['slave_exist'] and nsfw = 0: *p func('interior_change', 'jo9_html', '<div style=\"position:absolute;top:3px;left:150px;\"><img src=\"content\\pic\\<<$assistant[\"fullimage\"]>>.png\"></div>')",
+      "contextBefore": [
+        "end",
+        "",
+        "! JO9 MOD START J9M1422 | 2026-10-08_persistent_image_cycle | changed block; context may be included",
+        "*p func('interior_change', 'jo9_html', '<div id = \"bg\"><img src=\"content\\pic\\bg\\kikuboudoir.png\"></div>')"
+      ],
+      "contextAfter": [
+        "! JO9 MOD END J9M1422",
+        "!*p '<div id = \"text\"><<$text>></div>'",
+        "",
+        ""
+      ]
+    },
+    {
+      "location": "slave_private_room1",
+      "line": 48,
+      "source": "*p func('interior_change', 'jo9_html', '<div id=\"snk_room_character\"><img src=\"content/pic/<<$room1[\"fullimage\"]>>.png\"></div>')",
+      "contextBefore": [
+        "$return_lock = 'slave_private_room1'",
+        "*p '<div id=\"snk_private_room\">'",
+        "*p func('interior_change', 'jo9_html', '<div id=\"snk_room_bg\"><img src=\"content/pic/bg/sboudoir.png\"></div>')",
+        "if room1_state = CONST_INT['slave_exist'] and nsfw = 0:"
+      ],
+      "contextAfter": [
+        "end",
+        "! JO9 MOD START J9M2971 | 2026-10-15_css24_qsp_titles | changed block; context may be included",
+        "*p '<div id=\"jo9_master_card\"><span class=\"jo9_card_title\">주인공</span></div><div id=\"jo9_slave_card\"><span class=\"jo9_card_title\"></span></div>'",
+        "! JO9 MOD END J9M2971"
+      ]
+    },
+    {
+      "location": "slave_private_room2",
+      "line": 48,
+      "source": "*p func('interior_change', 'jo9_html', '<div id=\"snk_room_character\"><img src=\"content/pic/<<$room2[\"fullimage\"]>>.png\"></div>')",
+      "contextBefore": [
+        "$return_lock = 'slave_private_room2'",
+        "*p '<div id=\"snk_private_room\">'",
+        "*p func('interior_change', 'jo9_html', '<div id=\"snk_room_bg\"><img src=\"content/pic/bg/sboudoir.png\"></div>')",
+        "if room2_state = CONST_INT['slave_exist'] and nsfw = 0:"
+      ],
+      "contextAfter": [
+        "end",
+        "! JO9 MOD START J9M2983 | 2026-10-15_css24_qsp_titles | changed block; context may be included",
+        "*p '<div id=\"jo9_master_card\"><span class=\"jo9_card_title\">주인공</span></div><div id=\"jo9_slave_card\"><span class=\"jo9_card_title\"></span></div>'",
+        "! JO9 MOD END J9M2983"
+      ]
+    },
+    {
+      "location": "slave_private_room3",
+      "line": 48,
+      "source": "*p func('interior_change', 'jo9_html', '<div id=\"snk_room_character\"><img src=\"content/pic/<<$room3[\"fullimage\"]>>.png\"></div>')",
+      "contextBefore": [
+        "$return_lock = 'slave_private_room3'",
+        "*p '<div id=\"snk_private_room\">'",
+        "*p func('interior_change', 'jo9_html', '<div id=\"snk_room_bg\"><img src=\"content/pic/bg/sboudoir.png\"></div>')",
+        "if room3_state = CONST_INT['slave_exist'] and nsfw = 0:"
+      ],
+      "contextAfter": [
+        "end",
+        "! JO9 MOD START J9M2995 | 2026-10-15_css24_qsp_titles | changed block; context may be included",
+        "*p '<div id=\"jo9_master_card\"><span class=\"jo9_card_title\">주인공</span></div><div id=\"jo9_slave_card\"><span class=\"jo9_card_title\"></span></div>'",
+        "! JO9 MOD END J9M2995"
+      ]
+    },
+    {
+      "location": "slave_private_room4",
+      "line": 48,
+      "source": "*p func('interior_change', 'jo9_html', '<div id=\"snk_room_character\"><img src=\"content/pic/<<$room4[\"fullimage\"]>>.png\"></div>')",
+      "contextBefore": [
+        "$return_lock = 'slave_private_room4'",
+        "*p '<div id=\"snk_private_room\">'",
+        "*p func('interior_change', 'jo9_html', '<div id=\"snk_room_bg\"><img src=\"content/pic/bg/sboudoir.png\"></div>')",
+        "if room4_state = CONST_INT['slave_exist'] and nsfw = 0:"
+      ],
+      "contextAfter": [
+        "end",
+        "! JO9 MOD START J9M3007 | 2026-10-15_css24_qsp_titles | changed block; context may be included",
+        "*p '<div id=\"jo9_master_card\"><span class=\"jo9_card_title\">주인공</span></div><div id=\"jo9_slave_card\"><span class=\"jo9_card_title\"></span></div>'",
+        "! JO9 MOD END J9M3007"
+      ]
+    },
+    {
+      "location": "stasis_cell",
+      "line": 31,
+      "source": "\t\t\t*p func('interior_change', 'jo9_html', '<div id = \"bg\"><img src=\"content\\pic\\<<$dynslave[\"fullimage\"]>>.png\"></div>')",
+      "contextBefore": [
+        "",
+        "\tif dynslave_state ! CONST_INT['no_slave']:",
+        "\t\tif nsfw = 0:",
+        "! JO9 MOD START J9M1424 | 2026-10-08_persistent_image_cycle, 2026-10-15_z_inline_text_prefix | changed block; context may be included"
+      ],
+      "contextAfter": [
+        "\t\t\t! JO9_INLINE_TEXT_PREFIX_20261015",
+        "local $jo9_leading_empty = $strfind($text, '^(\\s|&nbsp;|<[bB][rR]\\s*/?>)+')",
+        "if $jo9_leading_empty ! '': $text = $mid($text, len($jo9_leading_empty) + 1, len($text))",
+        "! JO9 MOD END J9M1424"
+      ]
+    },
+    {
+      "location": "black_market_interface",
+      "line": 98,
+      "source": "*p func('interior_change', 'jo9_html', '<div id = \"bg\"><img src=\"content\\pic\\<<$fullimage[s_type]>>.png\"></div>')",
+      "contextBefore": [
+        "!<u>ОСОБЕННОСТИ</u>",
+        "!<<$stock_features_list>>",
+        "",
+        "! JO9 MOD START J9M1471 | 2026-10-08_persistent_image_cycle | changed block; context may be included"
+      ],
+      "contextAfter": [
+        "! JO9 MOD END J9M1471",
+        "if txt > min_txt:",
+        "   addobj '<img src = \"content\\pic\\buttons\\back_button.png\">'",
+        "else"
+      ]
+    },
+    {
+      "location": "snk_room_menu_screen",
+      "line": 14,
+      "source": "*p func('interior_change', 'jo9_html', '<div id=\"snk_room_character\"><img src=\"content/pic/<<$slave[\"fullimage\"]>>.png\"></div>')",
+      "contextBefore": [
+        "slave_mood_plus = iif(slave['mood'] < 0, 5 - slave['mood'], slave['mood'])",
+        "*p '<div id=\"snk_private_room\">'",
+        "*p func('interior_change', 'jo9_html', '<div id=\"snk_room_bg\"><img src=\"content/pic/bg/sboudoir.png\"></div>')",
+        "if slave_state = CONST_INT['slave_exist'] and nsfw = 0:"
+      ],
+      "contextAfter": [
+        "end",
+        "! JO9 MOD START J9M3022 | 2026-10-15_css24_qsp_titles | changed block; context may be included",
+        "*p '<div id=\"jo9_master_card\"><span class=\"jo9_card_title\">주인공</span></div><div id=\"jo9_slave_card\"><span class=\"jo9_card_title\"></span></div>'",
+        "! JO9 MOD END J9M3022"
+      ]
+    }
+  ]
+}

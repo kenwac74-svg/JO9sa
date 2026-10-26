@@ -89,8 +89,11 @@ async function applyAndNotify(){
 `$('apply').onclick=applyAndNotify;
 `$('wsclose').onclick=()=>{if(S.busy)return msg('작업이 끝난 뒤 닫아 주세요.',true);`$('wsdialog').close()};
 `$('wsdialog').addEventListener('cancel',e=>{if(S.busy)e.preventDefault()});
+`$('wsdialog').addEventListener('close',()=>window.JO9Workshop?.resetCutMode());
 window.JO9WS={
  open(list){
+  if(S.busy)return msg('작업이 끝난 뒤 대상을 바꿔 주세요.',true);
+  window.JO9Workshop?.resetCutMode();
   for(const s of S.inputs){try{URL.revokeObjectURL(s.url)}catch(_e){}}S.inputs=[];
   ScreenContext.status='ok';ScreenContext.resources=list;ScreenContext.hiddenFolders=[];ScreenContext.hiddenFilePatterns=[];SelectedScreenPaths.clear();for(const r of list)SelectedScreenPaths.add(r.path);ScreenDetailPath=list[0]?list[0].path:'';
   (S.root?rebuild():Promise.resolve()).then(()=>{renderScreenResources();msg(window.JO9PIC.state.busy?window.JO9PIC.state.message:S.root?'체크리스트의 PIC 연결 사용 중 · 새 이미지를 넣으세요.':'체크리스트 상단의 「PIC 폴더 등록」을 먼저 완료하세요.')}).catch(e=>msg('교체 화면 갱신 실패: '+e.message,true));

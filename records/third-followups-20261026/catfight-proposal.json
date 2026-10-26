@@ -1,0 +1,71 @@
+{
+  "schema": 1,
+  "date": "2026-10-26",
+  "status": "NO_CONFIRMED_CURRENT_DEFECT_NO_PATCH",
+  "draftOnly": true,
+  "applied": false,
+  "workSha256": "060295923fd646e87148dc0e900ef7acce92e1086b6376e1f1fc9d12298513b7",
+  "currentFindings": {
+    "staleAssignments": [
+      "выход_из_боя:93",
+      "выход_из_боя:111"
+    ],
+    "targetExists": false,
+    "resultOverrideMale": [
+      "interaction_city:17733",
+      "interaction_city:17749"
+    ],
+    "resultOverrideFemale": [
+      "interaction_city:17963",
+      "interaction_city:17979"
+    ],
+    "actualForward": "$objsel:34-57; $return_lock -> gt $return_lock at47-48",
+    "validDestination": "city_menu_form, city_form121 = eastern district",
+    "otherArenas": "Only Start1 catfight block contains the two goto_loc assignments; Start colosseum and colosseum_fight sparring branches are separate."
+  },
+  "oldEvidenceCorrection": {
+    "report": "records/post-patch-playtest-20261025/TECHNICAL_REPORT_KO.md PT03",
+    "oldTest": "records/post-patch-playtest-20261025/test-evidence/combat/native-playtest.cjs:122",
+    "problem": "The completion marker was attached only to shop_general. The original result deliberately returns to city_menu_form121, so absence of that marker did not prove goto_loc was actually called.",
+    "logEvidence": "Old log records two result forward object clicks but never records return_lock or destination."
+  },
+  "nativeVerification": {
+    "pass": true,
+    "engine": "WORK/game/engine/jack.exe",
+    "durationMs": 10619,
+    "cases": [
+      {
+        "hero_choice": 1,
+        "event": 103004,
+        "forwards": 1
+      },
+      {
+        "hero_choice": 1,
+        "event": 103005,
+        "forwards": 2
+      },
+      {
+        "hero_choice": 101,
+        "event": 103004,
+        "forwards": 1
+      },
+      {
+        "hero_choice": 101,
+        "event": 103005,
+        "forwards": 2
+      }
+    ],
+    "verified": "Incoming goto_loc is replaced by city_menu_form121 in original result routing; four native destination entry checkpoints and six original object-forward callbacks passed.",
+    "marker": "JO9_QA_CFRETURN_results_COMPLETE",
+    "evidence": "catfight-evidence/client-results.json",
+    "reproduction": "catfight-return-diagnostic.cjs",
+    "limits": [
+      "No battle was played",
+      "Original normal-save Load/legacy stored callbacks not tested",
+      "city_menu_form body and screen rendering stop at entry checkpoint",
+      "Not a release validation PASS"
+    ]
+  },
+  "patches": [],
+  "decision": "Do not patch a presumed reachable goto_loc failure. Optional cleanup of overwritten assignments is separate from a bugfix. If a real user save fails after result forward, collect that save and actual destination/callback before preparing a functional patch."
+}

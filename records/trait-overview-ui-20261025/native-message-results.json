@@ -1,0 +1,47 @@
+{
+  "status": "PASS",
+  "method": "Actual installed native QtWebKit executes exact production CSS/ES5 from isolated copied resources; delayed DOM diagnostic validates and synthetically clicks original EXEC links; QSP-only callback confirms flags and actual info helper.",
+  "results": [
+    {
+      "name": "slave-msg",
+      "checkpoint": "Real native production ES5 DOM: sidebar overflow, status order, positive descriptions, 3-column overview, exact geometry, font parity, two actual native MSG dialogs acknowledged only when close control is topmost and remembered profile reopens",
+      "pass": true,
+      "reason": "",
+      "durationMs": 8582
+    },
+    {
+      "name": "assistant-msg",
+      "checkpoint": "Real native production ES5 DOM: sidebar overflow, status order, positive descriptions, 3-column overview, exact geometry, font parity, two actual native MSG dialogs acknowledged only when close control is topmost and remembered profile reopens",
+      "pass": true,
+      "reason": "",
+      "durationMs": 8579
+    }
+  ],
+  "stdout": "slave-msg: True\r\nassistant-msg: True\r\n",
+  "stderr": "",
+  "productionJsSha256": "4490307a6ae62e68e4341473c82ae6e8201e9695742521dcf437b622b2e6c7b3",
+  "productionCssSha256": "b525759a63acb7373a959ff9fd727c282aebe8f9315bf98b829d7d80585de728",
+  "workUntouched": true,
+  "actualNativeMessages": true,
+  "limits": [
+    "Two real MSG dialogs use synthetic close clicks gated by native elementFromPoint; final native profile must reopen after remember.",
+    "Representative known-overflow actors only; full callback/actor snapshot coverage is in focused-native.cjs."
+  ],
+  "testOnlyRunnerOverride": "Copied run-client-smoke.ps1 into isolated output; unexpected-message guard matches only showMessage FAIL_ so two known QA help messages can be acknowledged. Completion marker and timeout checks stay unchanged.",
+  "messageEvidence": [
+    {
+      "role": "slave",
+      "firstMessages": 1,
+      "secondMessages": 1,
+      "refreshedOpenProfileCallback": true,
+      "completion": true
+    },
+    {
+      "role": "assistant",
+      "firstMessages": 1,
+      "secondMessages": 1,
+      "refreshedOpenProfileCallback": true,
+      "completion": true
+    }
+  ]
+}

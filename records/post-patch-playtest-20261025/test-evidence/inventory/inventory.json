@@ -1,0 +1,1214 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "scope": "last_shipped_qsp_build_to_current_WORK_all_player_facing_changes",
+  "read_only_game": true,
+  "baseline": {
+    "archive": "G:/somi/JO9_2.4_SecondPatch_20261021_Split/JO9_2.4_SecondPatch_20261021.zip",
+    "archive_sha256": "901e666b5590686edcc5ec9cf787a9f2a758771ca343ddb8fce167df171cdfe8",
+    "qsp_sha256": "c6701e3ab130b1a762d0b1a523d52cd53cee846f71c3d7899a4c369389aa853d",
+    "qsp_bytes": 48344750,
+    "revision": "r4-user-dialogue-editor-sync",
+    "manifest": "G:/somi/JO9_2.4_SecondPatch_20261021_Split/LATEST_SPLIT_BUILD.json",
+    "manifest_archive_names_are_stale": true
+  },
+  "current": {
+    "path": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+    "qsp_sha256": "a70bd177d8e7ade58243578b2f04745ff00cec3884d26d3b924dfffc8a8d007a",
+    "qsp_bytes": 48772632,
+    "Full_qsp_sha256": "c6701e3ab130b1a762d0b1a523d52cd53cee846f71c3d7899a4c369389aa853d"
+  },
+  "count_features": 32,
+  "metadata_chain": {
+    "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\artifacts\\post-patch-playtest-20261025\\inventory\\change-chain.json",
+    "complete": true,
+    "stages": 42,
+    "kinds": {
+      "collar_patch": 2,
+      "editor_edit": 11,
+      "editor_restore": 2,
+      "mod": 27
+    }
+  },
+  "priority_groups": [
+    {
+      "id": "combat",
+      "priority": 1,
+      "title": "전투·경기: 실제 진입부터 결과 복귀",
+      "features": [
+        "F02",
+        "F03",
+        "F13",
+        "F18",
+        "F20",
+        "F26",
+        "F27"
+      ],
+      "note": "02/03는기존표본.그외대회/조우표본은기존재현스크립트를참고해격리준비.난수제어결과와실제랜덤플레이구분."
+    },
+    {
+      "id": "growth",
+      "priority": 1,
+      "title": "행동력·과로·의료·일일정산",
+      "features": [
+        "F21",
+        "F22",
+        "F23",
+        "F30"
+      ],
+      "note": "실제메뉴확인과일일전환/저장로드가핵심.목줄8경로직접검사는기완료."
+    },
+    {
+      "id": "traits",
+      "priority": 1,
+      "title": "특성·편집·약품·전체보기",
+      "features": [
+        "F08",
+        "F15",
+        "F16",
+        "F17",
+        "F28",
+        "F29"
+      ],
+      "note": "획득→설명/전체보기→효과→삭제/충돌→저장로드의연속사용흐름.일반8칸은검토종료."
+    },
+    {
+      "id": "economy",
+      "priority": 1,
+      "title": "판매·유료소문·파산정산",
+      "features": [
+        "F10",
+        "F24",
+        "F25"
+      ],
+      "note": "견적과실제돈/인물변화,구확인저장,서비스할인과원래납품복귀.파산07은교정본만엔딩판정에사용."
+    },
+    {
+      "id": "production",
+      "priority": 2,
+      "title": "생산·성장·수량·지연보고",
+      "features": [
+        "F11",
+        "F12",
+        "F14",
+        "F19"
+      ],
+      "note": "11~19의일반/특성비교는매회같은파일재로드.이미클릭한16/17만으로전체행렬통과금지."
+    },
+    {
+      "id": "visual",
+      "priority": 2,
+      "title": "외형·번역·관계·주인공 표시",
+      "features": [
+        "F01",
+        "F04",
+        "F05",
+        "F06",
+        "F07",
+        "F09",
+        "F31",
+        "F32"
+      ],
+      "note": "01/04/05/06 실제Load와다음화면복귀.에게야역할그림없음은정상.종합정보MSG레이어기존제보함께관찰."
+    }
+  ],
+  "features": [
+    {
+      "id": "F01",
+      "group": "visual",
+      "title": "에드워드 세피아 초상",
+      "status": "APPLIED_WORK_UNRELEASED",
+      "change": "원래 편집기의 sepia(0.8),150x150/알파/구도 보존",
+      "records": [
+        "G:/somi/JO9sa/records/edward-sepia-fix-20261021"
+      ],
+      "manuals": [],
+      "reproduction_scripts": [
+        "G:/somi/JO9sa/records/edward-sepia-fix-20261021/fix.cjs"
+      ],
+      "existing_evidence_historical": "이미지 결과 기록; 전체 게임 화면 확인 별도",
+      "required_player_flow_scenarios": [
+        "에드워드 세피아/컬러 초상 전환",
+        " 테두리·얼굴·색 확인"
+      ],
+      "prepared_save_numbers": [],
+      "current_run_status": "NOT_RUN_BY_INVENTORY_AGENT"
+    },
+    {
+      "id": "F02",
+      "group": "combat",
+      "title": "안개 동료 행동력 정산",
+      "status": "APPLIED_WORK_UNRELEASED",
+      "change": "출전 노예/조수 최소1AP; 큰 피로와 settled 방어 유지",
+      "records": [
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022"
+      ],
+      "manuals": [
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022/MANUAL_KO.md"
+      ],
+      "reproduction_scripts": [
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022/egeya/test-egeya.cjs",
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022/fog/tests.cjs",
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022/milk/verify-milk-layout.cjs",
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022/reproduce/finalize-records.cjs",
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022/reproduce/integrate.cjs",
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022/reproduce/root-patches.cjs",
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022/reproduce/root-tests.cjs"
+      ],
+      "existing_evidence_historical": "엔진18시나리오/200경계; 연속 실제 전투 별도",
+      "required_player_flow_scenarios": [
+        "02_FOG 로드 후 노예/조수 각각 전투 종료",
+        " 미출전자 AP 보존",
+        " 교대/취소/반복정산",
+        " 승리 뒤 원래 메뉴 복귀"
+      ],
+      "prepared_save_numbers": [
+        "02"
+      ],
+      "current_run_status": "NOT_RUN_BY_INVENTORY_AGENT"
+    },
+    {
+      "id": "F03",
+      "group": "combat",
+      "title": "그린치 전용 전투 메뉴",
+      "status": "APPLIED_WORK_UNRELEASED",
+      "change": "14 대신10384, 승리10385 복귀; 구형 전투직전 저장 보정",
+      "records": [
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022"
+      ],
+      "manuals": [
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022/MANUAL_KO.md"
+      ],
+      "reproduction_scripts": [
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022/egeya/test-egeya.cjs",
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022/fog/tests.cjs",
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022/milk/verify-milk-layout.cjs",
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022/reproduce/finalize-records.cjs",
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022/reproduce/integrate.cjs",
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022/reproduce/root-patches.cjs",
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022/reproduce/root-tests.cjs"
+      ],
+      "existing_evidence_historical": "선택지/그린치 엔진10검사; 전체 퀘스트 연속 GUI 별도",
+      "required_player_flow_scenarios": [
+        "03_GRINCH 로드",
+        " 전투 준비→무기 선택→전투 시작→승리→10385와 보상",
+        " 구형14 저장에서 같은 흐름"
+      ],
+      "prepared_save_numbers": [
+        "03"
+      ],
+      "current_run_status": "NOT_RUN_BY_INVENTORY_AGENT"
+    },
+    {
+      "id": "F04",
+      "group": "visual",
+      "title": "에게야·구 도나 충돌 역할 외형",
+      "status": "APPLIED_WORK_UNRELEASED",
+      "change": "확인된96 역할경로 해석; 사용자경로 보존; 역할그림 없으면 기본 전신/외형란 숨김 정상",
+      "records": [
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022"
+      ],
+      "manuals": [
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022/MANUAL_KO.md"
+      ],
+      "reproduction_scripts": [
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022/egeya/test-egeya.cjs",
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022/fog/tests.cjs",
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022/milk/verify-milk-layout.cjs",
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022/reproduce/finalize-records.cjs",
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022/reproduce/integrate.cjs",
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022/reproduce/root-patches.cjs",
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022/reproduce/root-tests.cjs"
+      ],
+      "existing_evidence_historical": "13통합검사와 후속63567조회; 모든 실제 저장 GUI 별도",
+      "required_player_flow_scenarios": [
+        "01_HOME 에게야 기본/조수 전환",
+        " 이사벨라 하녀/비서/도미나",
+        " 구충돌 경로와 사용자 지정 경로 로드",
+        " 초상/전신/일일 그림 확인"
+      ],
+      "prepared_save_numbers": [
+        "01"
+      ],
+      "current_run_status": "NOT_RUN_BY_INVENTORY_AGENT"
+    },
+    {
+      "id": "F05",
+      "group": "visual",
+      "title": "조건부 선택지·툴팁 번역",
+      "status": "APPLIED_WORK_UNRELEASED",
+      "change": "선택지/링크8,툴팁4,이름안내1,러시아어 흡혈4분기와Tip8 정리",
+      "records": [
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022"
+      ],
+      "manuals": [
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022/MANUAL_KO.md"
+      ],
+      "reproduction_scripts": [
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022/egeya/test-egeya.cjs",
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022/fog/tests.cjs",
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022/milk/verify-milk-layout.cjs",
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022/reproduce/finalize-records.cjs",
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022/reproduce/integrate.cjs",
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022/reproduce/root-patches.cjs",
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022/reproduce/root-tests.cjs"
+      ],
+      "existing_evidence_historical": "조건/콜백 보존 및 엔진검사; 동적 선택지 전수 GUI 별도",
+      "required_player_flow_scenarios": [
+        "기존 번역목록의 조건을 맞춰 메뉴 열기",
+        " 표시/툴팁/이름입력 확인",
+        " 각 원래 콜백의 다음 화면 확인"
+      ],
+      "prepared_save_numbers": [],
+      "current_run_status": "NOT_RUN_BY_INVENTORY_AGENT"
+    },
+    {
+      "id": "F06",
+      "group": "visual",
+      "title": "우유 협동조합 가격판·숫자·보유금",
+      "status": "APPLIED_WORK_UNRELEASED",
+      "change": "최종 가격판 우측정보 하단; 실제가격 검정굵게 정렬; 보유금 원위치",
+      "records": [
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022",
+        "G:/somi/JO9sa/records/milk-panel-layout-20261024",
+        "G:/somi/JO9sa/records/milk-price-label-20261024"
+      ],
+      "manuals": [
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022/MANUAL_KO.md",
+        "G:/somi/JO9sa/records/milk-panel-layout-20261024/MANUAL_KO.md",
+        "G:/somi/JO9sa/records/milk-price-label-20261024/MANUAL_KO.md"
+      ],
+      "reproduction_scripts": [
+        "G:/somi/JO9sa/records/milk-panel-layout-20261024/scripts/reproduce.cjs",
+        "G:/somi/JO9sa/records/milk-price-label-20261024/scripts/reproduce.cjs",
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022/egeya/test-egeya.cjs",
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022/fog/tests.cjs",
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022/milk/verify-milk-layout.cjs",
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022/reproduce/finalize-records.cjs",
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022/reproduce/integrate.cjs",
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022/reproduce/root-patches.cjs",
+        "G:/somi/JO9sa/records/registered-bugfixes-20261022/reproduce/root-tests.cjs"
+      ],
+      "existing_evidence_historical": "브라우저20상태,가격1~7/2축척14; 네이티브 Qt 최종 확인 별도",
+      "required_player_flow_scenarios": [
+        "04_MILK 실제 로드",
+        " 메뉴·가격판·보유금·판매선택지 겹침",
+        " 재고/자격/소지품 변화",
+        " 숫자 가격과 실제 거래액",
+        " 다른 창크기"
+      ],
+      "prepared_save_numbers": [
+        "04"
+      ],
+      "current_run_status": "NOT_RUN_BY_INVENTORY_AGENT"
+    },
+    {
+      "id": "F07",
+      "group": "social",
+      "title": "0ID 관계 판정·반복 답변",
+      "status": "APPLIED_WORK_UNRELEASED",
+      "change": "0/미지정 연애대상 오판 차단; 반복9문장; 구캐시 갱신",
+      "records": [
+        "G:/somi/JO9sa/records/private-feelings-fix-20261022"
+      ],
+      "manuals": [
+        "G:/somi/JO9sa/records/private-feelings-fix-20261022/MANUAL_KO.md"
+      ],
+      "reproduction_scripts": [
+        "G:/somi/JO9sa/records/private-feelings-fix-20261022/build.cjs",
+        "G:/somi/JO9sa/records/private-feelings-fix-20261022/editorial/native-picker-regression.cjs",
+        "G:/somi/JO9sa/records/private-feelings-fix-20261022/finalize.cjs",
+        "G:/somi/JO9sa/records/private-feelings-fix-20261022/mechanics-tests/mechanics-tests.cjs",
+        "G:/somi/JO9sa/records/private-feelings-fix-20261022/update-qa.cjs"
+      ],
+      "existing_evidence_historical": "관계52경계/일일31/말투캐시; 실제 파일 연속 대화 별도",
+      "required_player_flow_scenarios": [
+        "01_HOME 미지정과05_RELATION 양수ID 비교",
+        " 같은 질문 반복시 핵심답변/화자",
+        " 저장로드와 개인실 투영 뒤 재확인"
+      ],
+      "prepared_save_numbers": [
+        "01",
+        "05"
+      ],
+      "current_run_status": "NOT_RUN_BY_INVENTORY_AGENT"
+    },
+    {
+      "id": "F08",
+      "group": "traits",
+      "title": "노예근성·거센 반항심·초기기분 순서",
+      "status": "APPLIED_WORK_UNRELEASED",
+      "change": "적격 노예근성10%,거센반항2%; 자아/태도 제한; 영입 즉시복종 준비; 현재환경 반영 뒤 일회 기분보정",
+      "records": [
+        "G:/somi/JO9sa/records/disposition-traits-20261023",
+        "G:/somi/JO9sa/records/full-side-effect-audit-20261023"
+      ],
+      "manuals": [
+        "G:/somi/JO9sa/records/disposition-traits-20261023/MANUAL_KO.md",
+        "G:/somi/JO9sa/records/full-side-effect-audit-20261023/REPORT_KO.md"
+      ],
+      "reproduction_scripts": [
+        "G:/somi/JO9sa/records/disposition-traits-20261023/scripts/build.cjs",
+        "G:/somi/JO9sa/records/disposition-traits-20261023/scripts/check-acquisition.cjs",
+        "G:/somi/JO9sa/records/disposition-traits-20261023/scripts/check-generation.cjs",
+        "G:/somi/JO9sa/records/disposition-traits-20261023/scripts/finalize.cjs",
+        "G:/somi/JO9sa/records/full-side-effect-audit-20261023/scripts/build-mood-fix.cjs",
+        "G:/somi/JO9sa/records/full-side-effect-audit-20261023/scripts/build-static-probes.cjs",
+        "G:/somi/JO9sa/records/full-side-effect-audit-20261023/scripts/check-all-images.cjs",
+        "G:/somi/JO9sa/records/full-side-effect-audit-20261023/scripts/finalize-audit.cjs",
+        "G:/somi/JO9sa/records/full-side-effect-audit-20261023/scripts/prepare-mood-gap.cjs",
+        "G:/somi/JO9sa/records/full-side-effect-audit-20261023/scripts/run-unit.cjs",
+        "G:/somi/JO9sa/records/full-side-effect-audit-20261023/scripts/static-audit.cjs"
+      ],
+      "existing_evidence_historical": "생성3601조합,영입42+환경8; 확률표본과 GUI 동선 구분",
+      "required_player_flow_scenarios": [
+        "일반/전문가 영입에서 특성·복종·기분",
+        " 지저분한 집/위생/외형에서도 초기 정상",
+        " 재계산/역할교환 후 강제리셋 없음",
+        " 편집기 적격/반대조건"
+      ],
+      "prepared_save_numbers": [
+        "01"
+      ],
+      "current_run_status": "NOT_RUN_BY_INVENTORY_AGENT"
+    },
+    {
+      "id": "F09",
+      "group": "visual",
+      "title": "이사벨라 일일 알림 그림·06복귀",
+      "status": "APPLIED_WORK_UNRELEASED",
+      "change": "2571 현인디팩과2323 구랜덤 분리; 구경로 해석;06의 복귀슬롯8개 교정",
+      "records": [
+        "G:/somi/JO9sa/records/isabella-event-image-20261023",
+        "G:/somi/JO9sa/records/asset-event-ui-20261024"
+      ],
+      "manuals": [
+        "G:/somi/JO9sa/records/isabella-event-image-20261023/MANUAL_KO.md",
+        "G:/somi/JO9sa/records/asset-event-ui-20261024/MANUAL_KO.md"
+      ],
+      "reproduction_scripts": [
+        "G:/somi/JO9sa/records/asset-event-ui-20261024/runtime-test/scripts/archive.cjs",
+        "G:/somi/JO9sa/records/asset-event-ui-20261024/runtime-test/scripts/capture.cjs",
+        "G:/somi/JO9sa/records/asset-event-ui-20261024/runtime-test/scripts/cleanup.cjs",
+        "G:/somi/JO9sa/records/asset-event-ui-20261024/runtime-test/scripts/prepare.cjs",
+        "G:/somi/JO9sa/records/asset-event-ui-20261024/runtime-test/scripts/repair-fixture.cjs",
+        "G:/somi/JO9sa/records/asset-event-ui-20261024/scripts/asset-event-finish.cjs",
+        "G:/somi/JO9sa/records/asset-event-ui-20261024/scripts/asset-event-ui.cjs",
+        "G:/somi/JO9sa/records/asset-event-ui-20261024/scripts/asset-flow-tests.cjs",
+        "G:/somi/JO9sa/records/asset-event-ui-20261024/scripts/cleanup.cjs",
+        "G:/somi/JO9sa/records/asset-event-ui-20261024/scripts/isabella-save-repair.cjs",
+        "G:/somi/JO9sa/records/asset-event-ui-20261024/scripts/reproduce.cjs",
+        "G:/somi/JO9sa/records/isabella-event-image-20261023/scripts/build.cjs",
+        "G:/somi/JO9sa/records/isabella-event-image-20261023/scripts/check-events.cjs",
+        "G:/somi/JO9sa/records/isabella-event-image-20261023/scripts/finalize.cjs"
+      ],
+      "existing_evidence_historical": "엔진207사례;06 교정 후 전체 GUI 복귀 별도",
+      "required_player_flow_scenarios": [
+        "06_ISABELLA 실제 로드→현재전신→앞으로→다음알림/메인 복귀",
+        "2571/2323/사용자지정 그림",
+        " 저장로드"
+      ],
+      "prepared_save_numbers": [
+        "06"
+      ],
+      "current_run_status": "NOT_RUN_BY_INVENTORY_AGENT"
+    },
+    {
+      "id": "F10",
+      "group": "economy",
+      "title": "파산 전 자산 처분·이벤트 UI",
+      "status": "APPLIED_WORK_UNRELEASED",
+      "change": "장식→빈시설/개인실→주택→급매;정가50%;미납고정/다음날차단;점유보호;압류배경",
+      "records": [
+        "G:/somi/JO9sa/records/insolvency-asset-liquidation-20261023",
+        "G:/somi/JO9sa/records/asset-event-ui-20261024"
+      ],
+      "manuals": [
+        "G:/somi/JO9sa/records/insolvency-asset-liquidation-20261023/MANUAL_KO.md",
+        "G:/somi/JO9sa/records/asset-event-ui-20261024/MANUAL_KO.md"
+      ],
+      "reproduction_scripts": [
+        "G:/somi/JO9sa/records/asset-event-ui-20261024/runtime-test/scripts/archive.cjs",
+        "G:/somi/JO9sa/records/asset-event-ui-20261024/runtime-test/scripts/capture.cjs",
+        "G:/somi/JO9sa/records/asset-event-ui-20261024/runtime-test/scripts/cleanup.cjs",
+        "G:/somi/JO9sa/records/asset-event-ui-20261024/runtime-test/scripts/prepare.cjs",
+        "G:/somi/JO9sa/records/asset-event-ui-20261024/runtime-test/scripts/repair-fixture.cjs",
+        "G:/somi/JO9sa/records/asset-event-ui-20261024/scripts/asset-event-finish.cjs",
+        "G:/somi/JO9sa/records/asset-event-ui-20261024/scripts/asset-event-ui.cjs",
+        "G:/somi/JO9sa/records/asset-event-ui-20261024/scripts/asset-flow-tests.cjs",
+        "G:/somi/JO9sa/records/asset-event-ui-20261024/scripts/cleanup.cjs",
+        "G:/somi/JO9sa/records/asset-event-ui-20261024/scripts/isabella-save-repair.cjs",
+        "G:/somi/JO9sa/records/asset-event-ui-20261024/scripts/reproduce.cjs",
+        "G:/somi/JO9sa/records/insolvency-asset-liquidation-20261023/scripts/assets-gen.cjs",
+        "G:/somi/JO9sa/records/insolvency-asset-liquidation-20261023/scripts/build-sales.cjs",
+        "G:/somi/JO9sa/records/insolvency-asset-liquidation-20261023/scripts/build.cjs",
+        "G:/somi/JO9sa/records/insolvency-asset-liquidation-20261023/scripts/check-final.cjs",
+        "G:/somi/JO9sa/records/insolvency-asset-liquidation-20261023/scripts/install-and-record.cjs",
+        "G:/somi/JO9sa/records/insolvency-asset-liquidation-20261023/scripts/native-pin-final-source.cjs",
+        "G:/somi/JO9sa/records/insolvency-asset-liquidation-20261023/scripts/native-prepare-assets.cjs",
+        "G:/somi/JO9sa/records/insolvency-asset-liquidation-20261023/scripts/native-prepare-full.cjs",
+        "G:/somi/JO9sa/records/insolvency-asset-liquidation-20261023/scripts/native-prepare-lifecycle.cjs",
+        "G:/somi/JO9sa/records/insolvency-asset-liquidation-20261023/scripts/native-prepare-local-scope.cjs",
+        "G:/somi/JO9sa/records/insolvency-asset-liquidation-20261023/scripts/native-prepare-native.cjs",
+        "G:/somi/JO9sa/records/insolvency-asset-liquidation-20261023/scripts/native-prepare-quick.cjs",
+        "G:/somi/JO9sa/records/insolvency-asset-liquidation-20261023/scripts/native-prepare-semantics-followup.cjs",
+        "G:/somi/JO9sa/records/insolvency-asset-liquidation-20261023/scripts/native-prepare-semantics.cjs",
+        "G:/somi/JO9sa/records/insolvency-asset-liquidation-20261023/scripts/prepare-insolvency.cjs",
+        "G:/somi/JO9sa/records/insolvency-asset-liquidation-20261023/scripts/run-unit.cjs"
+      ],
+      "existing_evidence_historical": "실제 GUI7~10/15페이지·정산·점유·급매·저장로드 완료; 현재통합/임대료특수경우 별도",
+      "required_player_flow_scenarios": [
+        "교정07~10 사용",
+        "장식460/basic·시설/방·주택7500/이사·인물202/204",
+        "미납탈출/날짜차단",
+        "이중환급/청구 방지",
+        "점유·동면보호",
+        "급매 퀘스트보존",
+        "자산소진 엔딩"
+      ],
+      "prepared_save_numbers": [
+        "07",
+        "08",
+        "09",
+        "10"
+      ],
+      "current_run_status": "NOT_RUN_BY_INVENTORY_AGENT"
+    },
+    {
+      "id": "F11",
+      "group": "production",
+      "title": "수동·자동 성공문 통일",
+      "status": "APPLIED_WORK_UNRELEASED",
+      "change": "후속 크기별 지급문 포함 최종9문구;placeholder 교체",
+      "records": [
+        "G:/somi/JO9sa/records/milking-success-text-20261023"
+      ],
+      "manuals": [
+        "G:/somi/JO9sa/records/milking-success-text-20261023/MANUAL_KO.md"
+      ],
+      "reproduction_scripts": [
+        "G:/somi/JO9sa/records/milking-success-text-20261023/scripts/install-and-record.cjs",
+        "G:/somi/JO9sa/records/milking-success-text-20261023/scripts/prepare.cjs"
+      ],
+      "existing_evidence_historical": "후속 원문/엔진대조;옛 QA placeholder 실패는 기대값 문제",
+      "required_player_flow_scenarios": [
+        "수동/자동 각 성공문과 실제 지급량 일치",
+        "일일보상·지연보고에서 문구1회",
+        "기존 실패/거부 분기 유지"
+      ],
+      "prepared_save_numbers": [
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19"
+      ],
+      "current_run_status": "NOT_RUN_BY_INVENTORY_AGENT"
+    },
+    {
+      "id": "F12",
+      "group": "production",
+      "title": "크기별 특성 생산 보너스",
+      "status": "APPLIED_WORK_UNRELEASED",
+      "change": "크기0~4:1.2/1.3/1.4/1.5/1.6배;실제 지급·지연보고 동일",
+      "records": [
+        "G:/somi/JO9sa/records/meiki-size-yield-20261023"
+      ],
+      "manuals": [
+        "G:/somi/JO9sa/records/meiki-size-yield-20261023/MANUAL_KO.md"
+      ],
+      "reproduction_scripts": [
+        "G:/somi/JO9sa/records/meiki-size-yield-20261023/scripts/build-native.cjs",
+        "G:/somi/JO9sa/records/meiki-size-yield-20261023/scripts/independent-review.cjs",
+        "G:/somi/JO9sa/records/meiki-size-yield-20261023/scripts/install-and-record.cjs",
+        "G:/somi/JO9sa/records/meiki-size-yield-20261023/scripts/prepare.cjs"
+      ],
+      "existing_evidence_historical": "엔진1575수량/45집중;GUI 전체크기×역할×저장로드 별도",
+      "required_player_flow_scenarios": [
+        "11~15 각각 재로드하여 일반12/18/24/64/126,특성14/23/33/96/201",
+        "16노예/17조수/18개인실 자동201",
+        "19AP0 성장전14 지연보고",
+        "지급/보고1회",
+        "저장로드"
+      ],
+      "prepared_save_numbers": [
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19"
+      ],
+      "current_run_status": "NOT_RUN_BY_INVENTORY_AGENT"
+    },
+    {
+      "id": "F13",
+      "group": "combat",
+      "title": "전투 컬러 초상",
+      "status": "APPLIED_WORK_UNRELEASED",
+      "change": "일반전투2/콜로세움/캣파이트 ava_clear",
+      "records": [
+        "G:/somi/JO9sa/records/combat-color-portrait-20261024"
+      ],
+      "manuals": [
+        "G:/somi/JO9sa/records/combat-color-portrait-20261024/MANUAL_KO.md"
+      ],
+      "reproduction_scripts": [
+        "G:/somi/JO9sa/records/combat-color-portrait-20261024/scripts/reproduce.cjs"
+      ],
+      "existing_evidence_historical": "엔진5사례;화면픽셀 확인 별도;진행중 구전투 저장 초상은 남을 수 있음",
+      "required_player_flow_scenarios": [
+        "새 일반전투(양 동료)·콜로세움·캣파이트 진입",
+        "컬러초상 실제픽셀",
+        "화면갱신/종료복귀"
+      ],
+      "prepared_save_numbers": [
+        "02"
+      ],
+      "current_run_status": "NOT_RUN_BY_INVENTORY_AGENT"
+    },
+    {
+      "id": "F14",
+      "group": "production",
+      "title": "미련한 소 생산·천재 동물기술 성장",
+      "status": "APPLIED_WORK_UNRELEASED",
+      "change": "최종milk_gain1.5배;천재 pet/dressage/cowSK 양수XP75%,나머지 기존2배;분수개인보존",
+      "records": [
+        "G:/somi/JO9sa/records/cow-genius-balance-20261024"
+      ],
+      "manuals": [
+        "G:/somi/JO9sa/records/cow-genius-balance-20261024/MANUAL_KO.md"
+      ],
+      "reproduction_scripts": [
+        "G:/somi/JO9sa/records/cow-genius-balance-20261024/scripts/reproduce.cjs"
+      ],
+      "existing_evidence_historical": "XP799/생산74/통합71;구실행중3인자호출 한 번 분수이월 한계",
+      "required_player_flow_scenarios": [
+        "다음날 미련한소/비보유 같은조건 생산",
+        "천재 세기술 작은XP4회=기본XP의3회분",
+        "다른분야2배",
+        "개인실/조수 교환·저장로드 후 분수 유지"
+      ],
+      "prepared_save_numbers": [],
+      "current_run_status": "NOT_RUN_BY_INVENTORY_AGENT"
+    },
+    {
+      "id": "F15",
+      "group": "traits",
+      "title": "다재다능 신규획득 명성1등급",
+      "status": "APPLIED_WORK_UNRELEASED",
+      "change": "새 부여 때 다음 표시등급 최소원천값으로 상승;상한5;기존보유 소급 없음",
+      "records": [
+        "G:/somi/JO9sa/records/versatile-fame-20261024"
+      ],
+      "manuals": [
+        "G:/somi/JO9sa/records/versatile-fame-20261024/MANUAL_KO.md"
+      ],
+      "reproduction_scripts": [
+        "G:/somi/JO9sa/records/versatile-fame-20261024/scripts/reproduce.cjs"
+      ],
+      "existing_evidence_historical": "엔진313검사;GUI 실제 신규획득 별도",
+      "required_player_flow_scenarios": [
+        "자동24기술A달성/편집기0→1",
+        "표시등급과원천값",
+        "반복조회/가격평가 중복없음",
+        "기존보유로드 무소급",
+        "해제후재부여는새부여"
+      ],
+      "prepared_save_numbers": [],
+      "current_run_status": "NOT_RUN_BY_INVENTORY_AGENT"
+    },
+    {
+      "id": "F16",
+      "group": "traits",
+      "title": "강한 복종심 명칭·설명",
+      "status": "APPLIED_WORK_UNRELEASED",
+      "change": "완전한 사육 표시를 강한 복종심으로;지속복종보정과훈련완료 구분",
+      "records": [
+        "G:/somi/JO9sa/records/strong-obedience-rename-20261024"
+      ],
+      "manuals": [
+        "G:/somi/JO9sa/records/strong-obedience-rename-20261024/MANUAL_KO.md"
+      ],
+      "reproduction_scripts": [
+        "G:/somi/JO9sa/records/strong-obedience-rename-20261024/scripts/reproduce.cjs"
+      ],
+      "existing_evidence_historical": "출력2/패치4블록;실제 UI 확인 별도",
+      "required_player_flow_scenarios": [
+        "기존보유/편집기/프로필/전체보기 설명",
+        "옛명칭 잔류와노예근성 혼동 확인",
+        "수치보정 유지"
+      ],
+      "prepared_save_numbers": [],
+      "current_run_status": "NOT_RUN_BY_INVENTORY_AGENT"
+    },
+    {
+      "id": "F17",
+      "group": "traits",
+      "title": "카오틱 에센스",
+      "status": "APPLIED_WORK_UNRELEASED",
+      "change": "중앙물약상점900/1회분;부정일반1개랜덤삭제;통합별칭1회;긍정/성취/상태보호",
+      "records": [
+        "G:/somi/JO9sa/records/chaotic-essence-20261024",
+        "G:/somi/JO9sa/records/trait-merger-20261025"
+      ],
+      "manuals": [
+        "G:/somi/JO9sa/records/chaotic-essence-20261024/MANUAL_KO.md",
+        "G:/somi/JO9sa/records/trait-merger-20261025/MANUAL_KO.md"
+      ],
+      "reproduction_scripts": [
+        "G:/somi/JO9sa/records/chaotic-essence-20261024/scripts/generate-helper.cjs",
+        "G:/somi/JO9sa/records/chaotic-essence-20261024/scripts/reproduce.cjs",
+        "G:/somi/JO9sa/records/trait-merger-20261025/scripts/activity/implement.cjs",
+        "G:/somi/JO9sa/records/trait-merger-20261025/scripts/activity/inventory.cjs",
+        "G:/somi/JO9sa/records/trait-merger-20261025/scripts/activity/tests.cjs",
+        "G:/somi/JO9sa/records/trait-merger-20261025/scripts/attention/implement.cjs",
+        "G:/somi/JO9sa/records/trait-merger-20261025/scripts/attention/inventory.cjs",
+        "G:/somi/JO9sa/records/trait-merger-20261025/scripts/build.cjs",
+        "G:/somi/JO9sa/records/trait-merger-20261025/scripts/exclusions/implement.cjs",
+        "G:/somi/JO9sa/records/trait-merger-20261025/scripts/exclusions/inventory.cjs",
+        "G:/somi/JO9sa/records/trait-merger-20261025/scripts/finish.cjs",
+        "G:/somi/JO9sa/records/trait-merger-20261025/scripts/native.cjs"
+      ],
+      "existing_evidence_historical": "기존915검증+통합/메시지;실제 구매→사용→저장로드 연속 GUI 별도",
+      "required_player_flow_scenarios": [
+        "상점구매900/재고1→연구실목록→노예/조수사용",
+        "후보1개와혼합/통합별칭",
+        "1개만삭제/소모1",
+        "긍정·성취·상태보존",
+        "무후보/무재고/빈대상무소모",
+        "구약국저장로드"
+      ],
+      "prepared_save_numbers": [],
+      "current_run_status": "NOT_RUN_BY_INVENTORY_AGENT"
+    },
+    {
+      "id": "F18",
+      "group": "combat",
+      "title": "안개 개인 명성·목격담",
+      "status": "APPLIED_WORK_UNRELEASED",
+      "change": "15전투표;20%목격;40미만1/3/5,40~79 0/1/2,상한80;실제승리동료만1회",
+      "records": [
+        "G:/somi/JO9sa/records/fog-fame-20261024"
+      ],
+      "manuals": [
+        "G:/somi/JO9sa/records/fog-fame-20261024/MANUAL_KO.md"
+      ],
+      "reproduction_scripts": [
+        "G:/somi/JO9sa/records/fog-fame-20261024/scripts/reproduce.cjs"
+      ],
+      "existing_evidence_historical": "엔진216상황1480단언/실제난수목격2;전투전과정 GUI 별도",
+      "required_player_flow_scenarios": [
+        "일반/강적/고유/약체 조우",
+        "노예/조수 승리",
+        "목격이름/실제증가량",
+        "39/40/79/80 경계",
+        "다수전합산없음",
+        "주인공대타/사망제외",
+        "중복정산"
+      ],
+      "prepared_save_numbers": [
+        "02"
+      ],
+      "current_run_status": "NOT_RUN_BY_INVENTORY_AGENT"
+    },
+    {
+      "id": "F19",
+      "group": "production",
+      "title": "전용 단축 그림 버튼 복구",
+      "status": "APPLIED_WORK_UNRELEASED",
+      "change": "녹색공용2참조→기존Fer_Tentacle.png;콜백/조건/효과 유지",
+      "records": [
+        "G:/somi/JO9sa/records/restore-button-art-20261024"
+      ],
+      "manuals": [
+        "G:/somi/JO9sa/records/restore-button-art-20261024/MANUAL_KO.md"
+      ],
+      "reproduction_scripts": [
+        "G:/somi/JO9sa/records/restore-button-art-20261024/runtime-test/scripts/cleanup.cjs",
+        "G:/somi/JO9sa/records/restore-button-art-20261024/runtime-test/scripts/prepare.cjs",
+        "G:/somi/JO9sa/records/restore-button-art-20261024/runtime-test/scripts/verify-and-archive.cjs",
+        "G:/somi/JO9sa/records/restore-button-art-20261024/scripts/reproduce.cjs"
+      ],
+      "existing_evidence_historical": "실제Qt16/17로드·표시·클릭·저장;콜백59/45와AP5→4 확인 완료",
+      "required_player_flow_scenarios": [
+        "16/17 실제원래버튼 표시/클릭",
+        "현재통합에서 AP차감과다음화면",
+        "새이미지누락으로분류하지 않음"
+      ],
+      "prepared_save_numbers": [
+        "16",
+        "17"
+      ],
+      "current_run_status": "NOT_RUN_BY_INVENTORY_AGENT"
+    },
+    {
+      "id": "F20",
+      "group": "combat",
+      "title": "캣파이트 누적3승 제한",
+      "status": "APPLIED_WORK_UNRELEASED",
+      "change": "승리당1회/생존패배승수보존/3승뒤금지;구준비링크가드",
+      "records": [
+        "G:/somi/JO9sa/records/catfight-win-limit-20261024"
+      ],
+      "manuals": [
+        "G:/somi/JO9sa/records/catfight-win-limit-20261024/MANUAL_KO.md"
+      ],
+      "reproduction_scripts": [
+        "G:/somi/JO9sa/records/catfight-win-limit-20261024/scripts/finalize.cjs",
+        "G:/somi/JO9sa/records/catfight-win-limit-20261024/scripts/reproduce.cjs"
+      ],
+      "existing_evidence_historical": "엔진62상황464조건+37회귀;후속명성 통합 GUI 별도",
+      "required_player_flow_scenarios": [
+        "0→1→2→3 승리와각화면출전가능",
+        "생존패배승수불변",
+        "3승후설명/준비/시작차단",
+        "구저장승수초기화/역산없음",
+        "명성10+3+3 함께확인"
+      ],
+      "prepared_save_numbers": [],
+      "current_run_status": "NOT_RUN_BY_INVENTORY_AGENT"
+    },
+    {
+      "id": "F21",
+      "group": "growth",
+      "title": "체력별 기본 행동력",
+      "status": "APPLIED_WORK_UNRELEASED",
+      "change": "체력0~5 AP0/2/3/4/5/5;상한/회복/4생성/영입/UI9연결;로드리필없음",
+      "records": [
+        "G:/somi/JO9sa/records/ap-curve-20261024"
+      ],
+      "manuals": [
+        "G:/somi/JO9sa/records/ap-curve-20261024/MANUAL_KO.md"
+      ],
+      "reproduction_scripts": [
+        "G:/somi/JO9sa/records/ap-curve-20261024/scripts/finalize.cjs",
+        "G:/somi/JO9sa/records/ap-curve-20261024/scripts/reproduce.cjs"
+      ],
+      "existing_evidence_historical": "엔진999상황3867조건;실제기존파일 GUI로드 별도",
+      "required_player_flow_scenarios": [
+        "6등급 프로필/도시/개인실 AP잠금",
+        "일반다음날 현재잔량+기본-부상",
+        "0/음수/반칸/보너스 저장로드 무충전",
+        "새생성/영입 최종체력 상한",
+        "주인공별도 유지"
+      ],
+      "prepared_save_numbers": [],
+      "current_run_status": "NOT_RUN_BY_INVENTORY_AGENT"
+    },
+    {
+      "id": "F22",
+      "group": "growth",
+      "title": "근육질 과로50% 완화",
+      "status": "APPLIED_WORK_UNRELEASED",
+      "change": "체력5 음수AP 체력XP손실 누적절반;개인0.5잔여;근육통별도",
+      "records": [
+        "G:/somi/JO9sa/records/muscular-overwork-20261024"
+      ],
+      "manuals": [
+        "G:/somi/JO9sa/records/muscular-overwork-20261024/MANUAL_KO.md"
+      ],
+      "reproduction_scripts": [
+        "G:/somi/JO9sa/records/muscular-overwork-20261024/scripts/reproduce.cjs"
+      ],
+      "existing_evidence_historical": "엔진2477상황8226조건/native저장9역할;실제기존파일 GUI로드 별도",
+      "required_player_flow_scenarios": [
+        "근육질1점손실2회=총1/5점반복2,3",
+        "비근육질기존손실",
+        "음수AP행동·일일회복",
+        "역할교환·체력등급변화·저장로드 뒤0.5잔여",
+        "첫로드첫행동 구캐시"
+      ],
+      "prepared_save_numbers": [],
+      "current_run_status": "NOT_RUN_BY_INVENTORY_AGENT"
+    },
+    {
+      "id": "F23",
+      "group": "growth",
+      "title": "건강체질·의료센터 체질개선",
+      "status": "APPLIED_WORK_UNRELEASED",
+      "change": "노예/조수1000/1회 건강체질획득/약골대체;HP·스태미나1.2배;운동/자연성장1.5배",
+      "records": [
+        "G:/somi/JO9sa/records/constitution-unification-20261024"
+      ],
+      "manuals": [
+        "G:/somi/JO9sa/records/constitution-unification-20261024/MANUAL_KO.md"
+      ],
+      "reproduction_scripts": [
+        "G:/somi/JO9sa/records/constitution-unification-20261024/scripts/reproduce.cjs"
+      ],
+      "existing_evidence_historical": "엔진1899상황5627조건;콜백은마지막MSG억제진단;실제GUI별도",
+      "required_player_flow_scenarios": [
+        "노예/조수 검진→신체개조→확인/취소/성공1000",
+        "돈부족/이미건강/기시술/대상변경/재클릭 무결제",
+        "현재AP/성장보존",
+        "식이·보조식품·충분휴식 분수저장",
+        "전투최대치"
+      ],
+      "prepared_save_numbers": [],
+      "current_run_status": "NOT_RUN_BY_INVENTORY_AGENT"
+    },
+    {
+      "id": "F24",
+      "group": "economy",
+      "title": "잡파·웡 매입가격/옵션 난이도",
+      "status": "APPLIED_WORK_UNRELEASED",
+      "change": "옵션쉬움90/보통75/하드기존;현속성평가/등급표max;불복종20%1회;다재다능1회",
+      "records": [
+        "G:/somi/JO9sa/records/dealer-economy-20261024"
+      ],
+      "manuals": [
+        "G:/somi/JO9sa/records/dealer-economy-20261024/MANUAL_KO.md"
+      ],
+      "reproduction_scripts": [
+        "G:/somi/JO9sa/records/dealer-economy-20261024/scripts/reproduce.cjs"
+      ],
+      "existing_evidence_historical": "엔진695상황3103조건;자동OPENGAME미완료 제외;실제GUI로드별도",
+      "required_player_flow_scenarios": [
+        "옵션3난도에서양상인 견적→확인→대금/인물정리",
+        "불복종/F/다재다능/웡정신붕괴/잡파우대",
+        "확인중대상/난도/가격변화",
+        "구확인저장로드 재견적",
+        "재클릭중복지급없음"
+      ],
+      "prepared_save_numbers": [],
+      "current_run_status": "NOT_RUN_BY_INVENTORY_AGENT"
+    },
+    {
+      "id": "F25",
+      "group": "economy",
+      "title": "지역별 구매자 소문",
+      "status": "APPLIED_WORK_UNRELEASED",
+      "change": "스컵스/작크/아네스10,정상납품후5;현재보유29역할/고정구매처98명;가격노출없음",
+      "records": [
+        "G:/somi/JO9sa/records/buyer-rumors-20261024"
+      ],
+      "manuals": [
+        "G:/somi/JO9sa/records/buyer-rumors-20261024/MANUAL_KO.md"
+      ],
+      "reproduction_scripts": [
+        "G:/somi/JO9sa/records/buyer-rumors-20261024/scripts/reproduce.cjs"
+      ],
+      "existing_evidence_historical": "matcher105/결제보존87/가용성23/29역할×3/납품12;GUI연속동선별도",
+      "required_player_flow_scenarios": [
+        "3안내자 대화→결제→단일/복수/0추천→페이지/복귀 무추가비",
+        "돈부족/소유인물0무소모",
+        "추천지역·실제납품조건일치",
+        "정상납품뒤해당서비스5",
+        "저장로드 할인/인물보존"
+      ],
+      "prepared_save_numbers": [],
+      "current_run_status": "NOT_RUN_BY_INVENTORY_AGENT"
+    },
+    {
+      "id": "F26",
+      "group": "combat",
+      "title": "랠리·캣파이트 명성",
+      "status": "APPLIED_WORK_UNRELEASED",
+      "change": "랠리첫10/반복40미만1,40~790.25/상한80;캣파이트1/2/3승10/3/3",
+      "records": [
+        "G:/somi/JO9sa/records/contest-fame-20261024"
+      ],
+      "manuals": [
+        "G:/somi/JO9sa/records/contest-fame-20261024/MANUAL_KO.md"
+      ],
+      "reproduction_scripts": [
+        "G:/somi/JO9sa/records/contest-fame-20261024/scripts/contest-catfight-tests.cjs",
+        "G:/somi/JO9sa/records/contest-fame-20261024/scripts/contest-rally-flow-tests.cjs",
+        "G:/somi/JO9sa/records/contest-fame-20261024/scripts/reproduce.cjs"
+      ],
+      "existing_evidence_historical": "엔진587상황2173조건/분수저장;실제마우스대회/GUI로드별도",
+      "required_player_flow_scenarios": [
+        "랠리입장→추첨→우승/패배→복귀",
+        "첫10/반복1/40이상4승1점/79.75→80",
+        "기존결과로드무소급",
+        "참가취소/대상교체/재진입무명성",
+        "캣파이트승수별10/3/3 및3승차단"
+      ],
+      "prepared_save_numbers": [],
+      "current_run_status": "NOT_RUN_BY_INVENTORY_AGENT"
+    },
+    {
+      "id": "F27",
+      "group": "combat",
+      "title": "안개 전투준비 위험도·상성 대사",
+      "status": "APPLIED_WORK_UNRELEASED",
+      "change": "15조우/고블린2변형 총16;원래선택전설명에승인문구",
+      "records": [
+        "G:/somi/JO9sa/records/combat-danger-dialogue-20261025"
+      ],
+      "manuals": [
+        "G:/somi/JO9sa/records/combat-danger-dialogue-20261025/APPLICATION_MANUAL_KO.md"
+      ],
+      "reproduction_scripts": [
+        "G:/somi/JO9sa/records/combat-danger-dialogue-20261025/scripts/apply-and-verify.cjs"
+      ],
+      "existing_evidence_historical": "엔진16변형337조건;구조/선택지보존;전체실플레이별도",
+      "required_player_flow_scenarios": [
+        "새61101~61115 조우 전투선택전 대사",
+        "늑대인간/와그/리치/오우거 힌트",
+        "고블린2/3인치환",
+        "가르시드85%태그",
+        "물러남/전투원래선택지",
+        "옛조우저장문구유지허용"
+      ],
+      "prepared_save_numbers": [
+        "02"
+      ],
+      "current_run_status": "NOT_RUN_BY_INVENTORY_AGENT"
+    },
+    {
+      "id": "F28",
+      "group": "traits",
+      "title": "기존 UI 특성 전체보기",
+      "status": "APPLIED_WORK_UNRELEASED",
+      "change": "제목링크/실측넘침링크;상태우선;특성2열+칭호1열;하단설명/닫기복원",
+      "records": [
+        "G:/somi/JO9sa/records/trait-overview-ui-20261025"
+      ],
+      "manuals": [
+        "G:/somi/JO9sa/records/trait-overview-ui-20261025/MANUAL_KO.md"
+      ],
+      "reproduction_scripts": [
+        "G:/somi/JO9sa/records/trait-overview-ui-20261025/scripts/application.cjs",
+        "G:/somi/JO9sa/records/trait-overview-ui-20261025/scripts/browser-qa.cjs",
+        "G:/somi/JO9sa/records/trait-overview-ui-20261025/scripts/finish.cjs",
+        "G:/somi/JO9sa/records/trait-overview-ui-20261025/scripts/focused-native.cjs",
+        "G:/somi/JO9sa/records/trait-overview-ui-20261025/scripts/native-dom.cjs"
+      ],
+      "existing_evidence_historical": "실제엔진5기능/2역할DOM·MSG와브라우저10사례;모든기존파일GUI별도",
+      "required_player_flow_scenarios": [
+        "노예/조수/개인실인물 제목→전체보기→각특성하단설명→도움말MSG닫기→같은창복원→닫기",
+        "짧은목록/넘침/장문스크롤/초과보유/숨은특성비노출",
+        "다른해상도"
+      ],
+      "prepared_save_numbers": [
+        "01"
+      ],
+      "current_run_status": "NOT_RUN_BY_INVENTORY_AGENT"
+    },
+    {
+      "id": "F29",
+      "group": "traits",
+      "title": "특성 통합·배제·긍정우선",
+      "status": "APPLIED_WORK_UNRELEASED",
+      "change": "주목욕구/활동적·휴식선호 통합;5배제;기존충돌부정만정리;긍정끼리기존공존보존",
+      "records": [
+        "G:/somi/JO9sa/records/trait-merger-20261025"
+      ],
+      "manuals": [
+        "G:/somi/JO9sa/records/trait-merger-20261025/MANUAL_KO.md"
+      ],
+      "reproduction_scripts": [
+        "G:/somi/JO9sa/records/trait-merger-20261025/scripts/activity/implement.cjs",
+        "G:/somi/JO9sa/records/trait-merger-20261025/scripts/activity/inventory.cjs",
+        "G:/somi/JO9sa/records/trait-merger-20261025/scripts/activity/tests.cjs",
+        "G:/somi/JO9sa/records/trait-merger-20261025/scripts/attention/implement.cjs",
+        "G:/somi/JO9sa/records/trait-merger-20261025/scripts/attention/inventory.cjs",
+        "G:/somi/JO9sa/records/trait-merger-20261025/scripts/build.cjs",
+        "G:/somi/JO9sa/records/trait-merger-20261025/scripts/exclusions/implement.cjs",
+        "G:/somi/JO9sa/records/trait-merger-20261025/scripts/exclusions/inventory.cjs",
+        "G:/somi/JO9sa/records/trait-merger-20261025/scripts/finish.cjs",
+        "G:/somi/JO9sa/records/trait-merger-20261025/scripts/native.cjs"
+      ],
+      "existing_evidence_historical": "엔진121사례573조건;전역갱신revision3;실제모든구세이브별도",
+      "required_player_flow_scenarios": [
+        "구별칭중복1표시/설명/칭찬1회",
+        "반복활동기분±2/휴식반응",
+        "긍정+부정5충돌 정리",
+        "비표준/무관특성보존",
+        "미련한소+운동/활동 기존유지/신규충돌차단/숫자감소허용",
+        "카오틱별칭삭제후재등장없음",
+        "저장로드"
+      ],
+      "prepared_save_numbers": [
+        "01"
+      ],
+      "current_run_status": "NOT_RUN_BY_INVENTORY_AGENT"
+    },
+    {
+      "id": "F30",
+      "group": "growth",
+      "title": "금장 목줄 거부 질문 A안",
+      "status": "APPLIED_WORK_UNRELEASED",
+      "change": "재계산전복귀주소;역할/ID/순번/현재목줄검사;Y/X먼저소비;구질문복구;장비명정정",
+      "records": [
+        "G:/somi/JO9sa/records/golden-collar-fix-20261025",
+        "G:/somi/JO9sa/records/collar-runtime-test-20261025"
+      ],
+      "manuals": [
+        "G:/somi/JO9sa/records/golden-collar-fix-20261025/MANUAL_KO.md",
+        "G:/somi/JO9sa/records/golden-collar-fix-20261025/REPORT_KO.md",
+        "G:/somi/JO9sa/records/collar-runtime-test-20261025/REPORT_KO.md"
+      ],
+      "reproduction_scripts": [
+        "G:/somi/JO9sa/records/collar-runtime-test-20261025/scripts/audit.cjs",
+        "G:/somi/JO9sa/records/collar-runtime-test-20261025/scripts/collect-evidence.cjs",
+        "G:/somi/JO9sa/records/collar-runtime-test-20261025/scripts/collect.cjs",
+        "G:/somi/JO9sa/records/collar-runtime-test-20261025/scripts/full-day-tests.cjs",
+        "G:/somi/JO9sa/records/collar-runtime-test-20261025/scripts/prepare-gui.cjs",
+        "G:/somi/JO9sa/records/collar-runtime-test-20261025/scripts/save-load.cjs",
+        "G:/somi/JO9sa/records/golden-collar-fix-20261025/scripts/build.cjs",
+        "G:/somi/JO9sa/records/golden-collar-fix-20261025/scripts/finish.cjs",
+        "G:/somi/JO9sa/records/golden-collar-fix-20261025/scripts/install.cjs",
+        "G:/somi/JO9sa/records/golden-collar-fix-20261025/scripts/other-roles-test.cjs",
+        "G:/somi/JO9sa/records/golden-collar-fix-20261025/scripts/preserve-scope.cjs",
+        "G:/somi/JO9sa/records/golden-collar-fix-20261025/scripts/tests-native.cjs",
+        "G:/somi/JO9sa/records/golden-collar-fix-20261025/scripts/ui-load-tests.cjs"
+      ],
+      "existing_evidence_historical": "엔진86+원래링크6+범위밖3;추가일일4/실제메뉴Load4 완료",
+      "required_player_flow_scenarios": [
+        "일반일/청구일 정산→Y/X→원메뉴",
+        "날짜/청구1회/반환1개",
+        "재클릭/재표시무추가",
+        "구미응답/이미강제/반환저장로드",
+        "무관질문보존",
+        "연속거부자",
+        "최신실제GUI검증은이미완료로유지"
+      ],
+      "prepared_save_numbers": [],
+      "current_run_status": "NOT_RUN_BY_INVENTORY_AGENT"
+    },
+    {
+      "id": "F31",
+      "group": "visual",
+      "title": "사용자 나노분자 첨가제 문장 정리",
+      "status": "APPLIED_WORK_UNRELEASED",
+      "change": "10/22 대사편집기 저장1건,문장연결 유지",
+      "records": [
+        "G:/somi/JO9sa/records/post-patch-audit-20261024"
+      ],
+      "manuals": [],
+      "reproduction_scripts": [
+        "G:/somi/JO9sa/records/post-patch-audit-20261024/scripts/finalize.cjs",
+        "G:/somi/JO9sa/records/post-patch-audit-20261024/scripts/prepare.cjs"
+      ],
+      "existing_evidence_historical": "감사에서현문구1/옛문구0;실제해당설명화면별도",
+      "required_player_flow_scenarios": [
+        "나노분자 첨가제 실제설명/툴팁 열어줄바꿈·문장연결·원래기능메뉴확인"
+      ],
+      "prepared_save_numbers": [],
+      "current_run_status": "NOT_RUN_BY_INVENTORY_AGENT"
+    },
+    {
+      "id": "F32",
+      "group": "visual",
+      "title": "사용자 주인공 종합정보 표시 편집",
+      "status": "APPLIED_WORK_UNRELEASED",
+      "change": "10/25KST 수동저장12건/되돌리기2;최종master_stat 제목5곳의문자접두·밑줄정리/속성question19px",
+      "records": [
+        "G:/somi/JO9sa/records/trait-overview-ui-20261025"
+      ],
+      "manuals": [
+        "G:/somi/JO9sa/records/trait-overview-ui-20261025/MANUAL_KO.md"
+      ],
+      "reproduction_scripts": [
+        "G:/somi/JO9sa/records/trait-overview-ui-20261025/scripts/application.cjs",
+        "G:/somi/JO9sa/records/trait-overview-ui-20261025/scripts/browser-qa.cjs",
+        "G:/somi/JO9sa/records/trait-overview-ui-20261025/scripts/finish.cjs",
+        "G:/somi/JO9sa/records/trait-overview-ui-20261025/scripts/focused-native.cjs",
+        "G:/somi/JO9sa/records/trait-overview-ui-20261025/scripts/native-dom.cjs"
+      ],
+      "existing_evidence_historical": "편집기해시12단계 연속성확인;기존감사에없던추가항목;현재GUI별도",
+      "required_player_flow_scenarios": [
+        "주인공종합정보에서이름/속성/자동마법/교육·성적기술 제목",
+        "question.png19px 아이콘과속성도움말클릭/닫기/입력복귀",
+        "사용자최종문구보존"
+      ],
+      "prepared_save_numbers": [],
+      "current_run_status": "NOT_RUN_BY_INVENTORY_AGENT"
+    }
+  ],
+  "excluded_or_unimplemented": [
+    {
+      "id": "X01",
+      "title": "일반8칸/만석획득규칙",
+      "status": "DROPPED_NOT_A_TODO",
+      "source": "records/trait-scope-decision-20261025/DECISION_KO.md"
+    },
+    {
+      "id": "X02",
+      "title": "칭호구성/세번째칭호",
+      "status": "USER_DEFERRED",
+      "source": "records/deferred-discussions-20261024/index.json:D08"
+    },
+    {
+      "id": "X03",
+      "title": "지성AP할인",
+      "status": "USER_DEFERRED",
+      "source": "records/deferred-discussions-20261024/index.json:D03"
+    },
+    {
+      "id": "X04",
+      "title": "아이템/전리품·4차부동산32문구·혀손실·다재다능XP·상인신규서비스/재매입·한글식별자이관",
+      "status": "USER_DEFERRED",
+      "source": "records/deferred-discussions-20261024/index.json"
+    },
+    {
+      "id": "X05",
+      "title": "전투/전차 원본난도주석불일치",
+      "status": "USER_DEFERRED",
+      "source": "records/deferred-discussions-20261024/index.json:D01,D02"
+    },
+    {
+      "id": "X06",
+      "title": "마법낙인 특수이벤트 제보 재현",
+      "status": "USER_DEFERRED_REPRODUCTION",
+      "source": "records/deferred-discussions-20261024/index.json:D12"
+    },
+    {
+      "id": "X07",
+      "title": "명기전용알림/X명시확인·쉬움복종+8/+10·납품상세안내·희귀가격상한·하드50%",
+      "status": "REVIEWED_NOT_APPROVED_NOT_IMPLEMENTED",
+      "source": "records/proposals-review-20261025/"
+    },
+    {
+      "id": "X08",
+      "title": "종합정보MSG레이어/이미지0접두2경로/모유량6링크/개인실135",
+      "status": "CONFIRMED_STATIC_FINDINGS_NOT_FIXED",
+      "source": "records/bug-report-review-20261025/REPORT_KO.md"
+    },
+    {
+      "id": "X09",
+      "title": "아르곤F1/F3/F4 기능후보 등 기존승인대기",
+      "status": "NOT_APPROVED_NOT_IMPLEMENTED",
+      "source": "docs/POST_PATCH_STATUS_AUDIT_20261024.md"
+    },
+    {
+      "id": "X10",
+      "title": "ImageWorkshop/B컷/모딩도구",
+      "status": "EXCLUDED_NOT_GAME_FEATURES",
+      "source": "docs/POST_PATCH_STATUS_AUDIT_20261024.md"
+    }
+  ],
+  "global_limits": [
+    "기존 집중엔진 PASS는 현재 실제 플레이 PASS와 다름",
+    "기존시험19개는10/23표본으로 이후기능전부를포괄하지않음",
+    "시험생성기의 DEATH긴함수/인덱스 누락 때문에 원본07의 빈엔딩을게임전체결함으로판정하지않음",
+    "일반생성기수리는미결;교정07~10 ZIP은 asset-event-ui-20261024/runtime-test에보존",
+    "엄격CRC/모든기존파일로드는미증명;ignoreCRC 진단과제품로드분리",
+    "재현스크립트의 install/finish/apply 등은실행하지않음;상수와단계를검토후격리본만사용",
+    "목줄추가검증의 실제 메뉴Load4/일일4와 자산GUI15페이지·단축버튼Qt클릭은기완료로유지"
+  ],
+  "resource_delta": [
+    "master/master_edward_sepia.png",
+    "bg/jo9_bankruptcy_seizure.png",
+    "ui overhaul의 카오틱 활성/비활성PNG2",
+    "css/jo9_traits_view.css",
+    "content/js/jo9_traits_view.js",
+    "css/base.css 최종가격판/숫자표시"
+  ],
+  "sources": [
+    "G:/somi/JO9sa/docs/POST_PATCH_STATUS_AUDIT_20261024.md",
+    "G:/somi/JO9sa/docs/SECOND_PATCH_WORK_BUNDLE_20261021.md",
+    "G:/somi/JO9sa/docs/SESSION_HANDOFF_INDEX.md",
+    "G:/somi/JO9sa/records/deferred-discussions-20261024/index.json"
+  ]
+}

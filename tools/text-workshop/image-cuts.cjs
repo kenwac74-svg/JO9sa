@@ -12,7 +12,7 @@ function create(game,catalogRoot,catalog,runtime){
  }
  function imagePath(input){
   const rel=pngPath(String(input||'').replaceAll('\\','/').replace(/^content\/pic\//i,''));
-  if(!/^(bg|characters|scene|reserve)\/.+\.png$/i.test(rel))throw Error('배경·캐릭터·장면·보관 폴더의 PNG를 선택하세요.');
+  if(!/^(bg|characters|scene|mob|reserve)\/.+\.png$/i.test(rel))throw Error('배경·캐릭터·장면·전투 인물·보관 폴더의 PNG를 선택하세요.');
   return rel;
  }
  function originalFile(entry){
@@ -59,7 +59,7 @@ function create(game,catalogRoot,catalog,runtime){
  function reservations(){originals();return reservationCache;}
  function resolveAlias(input){
   if(!/ \(2\)\.png$/i.test(String(input||'')))return null;
-  if(!/^(?:content[\\/]pic[\\/])?(?:bg|characters|scene|reserve)[\\/]/i.test(String(input||'')))return null;
+  if(!/^(?:content[\\/]pic[\\/])?(?:bg|characters|scene|mob|reserve)[\\/]/i.test(String(input||'')))return null;
   const alias=imagePath(input),base=alias.replace(/ \(2\)(\.png)$/i,'$1'),entry=originals()[base.toLowerCase()];
   if(!entry||alias.toLowerCase()!==entry.alias.toLowerCase())return null;
   return physicalOriginal(entry);
@@ -86,7 +86,7 @@ function create(game,catalogRoot,catalog,runtime){
  }
  // JO9 MOD END WINDOWS_IMAGE_SLOTS_20261018_INFO
  function registry(){const groups=[],originalEntries=originals(),bases=new Map(),variantGroups=new Map();function walk(dir){return fs.existsSync(dir)?fs.readdirSync(dir,{withFileTypes:true}).flatMap(e=>e.isSymbolicLink()?[]:e.isDirectory()?walk(path.join(dir,e.name)):e.isFile()?[path.join(dir,e.name)]:[]):[];}
-  for(const category of ['bg','characters','scene','reserve'])for(const p of walk(path.join(pic,category))){
+  for(const category of ['bg','characters','scene','mob','reserve'])for(const p of walk(path.join(pic,category))){
    if(!/\.png$/i.test(p))continue;const variant=p.match(/^(.*) \(([2-9]|[1-9][0-9]+)\)\.png$/i);
    if(variant){const key=(variant[1]+'.png').toLowerCase(),list=variantGroups.get(key)||[];list.push({n:+variant[2],p});variantGroups.set(key,list);}else bases.set(p.toLowerCase(),p);
   }
@@ -114,7 +114,7 @@ function create(game,catalogRoot,catalog,runtime){
   }
   if(group)invalid();originals();let changed=false;
   function walk(dir){return fs.existsSync(dir)?fs.readdirSync(dir,{withFileTypes:true}).flatMap(e=>e.isSymbolicLink()?[]:e.isDirectory()?walk(path.join(dir,e.name)):e.isFile()?[path.join(dir,e.name)]:[]):[];}
-  const files=['bg','characters','scene','reserve'].flatMap(category=>walk(path.join(pic,category))),byName=new Map(files.map(p=>[p.toLowerCase(),p]));
+  const files=['bg','characters','scene','mob','reserve'].flatMap(category=>walk(path.join(pic,category))),byName=new Map(files.map(p=>[p.toLowerCase(),p]));
   for(const full of files.sort()){
    const m=full.match(/^(.*) \(([5-9]|[1-9][0-9]+)\)\.png$/i);if(!m||!Number.isSafeInteger(+m[2])||+m[2]>2147473647)continue;const actualBase=byName.get((m[1]+'.png').toLowerCase());if(!actualBase)continue;
    const base=path.relative(game,actualBase).replaceAll('\\','/'),key=base.toLowerCase(),rel=path.relative(game,full).replaceAll('\\','/');let g=groups.get(key);if(!g){g={base:key,paths:[base],ids:[0]};groups.set(key,g);}

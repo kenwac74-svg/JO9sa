@@ -1,0 +1,64 @@
+{
+  "schema": 1,
+  "file": "G:/Codex/tmp/jo9-full-audit-20261023/candidate.qsp",
+  "sha256": "81201e0eb964124b71fe0862ffca30e589a74d1578d7c140296574b3362760e0",
+  "baselineSha256": "5aeff11fffe6e5f2523749987577f42dab870f4d0adee0df385375f9eefb074f",
+  "changedLocations": [
+    {
+      "location": "jo9_traits",
+      "bodyChanged": true,
+      "descChanged": false
+    }
+  ],
+  "world": {
+    "status": "PASS",
+    "sha256": "81201e0eb964124b71fe0862ffca30e589a74d1578d7c140296574b3362760e0",
+    "bytes": 48392426,
+    "locations": 263,
+    "roundtrip": true,
+    "lineEndingIssues": 0
+  },
+  "coverage": {
+    "locations": 263,
+    "scripts": 263,
+    "compiledActions": 0,
+    "physicalLines": 328090,
+    "logicalLines": 291912,
+    "preformatGroupingFailures": 0,
+    "calls": 5240,
+    "dynamic": 41,
+    "jumps": 206,
+    "missingJumps": 0,
+    "callbackAssignments": 7,
+    "missingCallbacks": 0
+  },
+  "comparison": {
+    "syntaxDiagnostics": {
+      "current": 14,
+      "baseline": 14,
+      "added": [],
+      "removed": []
+    },
+    "bracketIssues": {
+      "current": 1,
+      "baseline": 1,
+      "added": [],
+      "removed": []
+    },
+    "missingLiteralCalls": {
+      "current": 79,
+      "baseline": 79,
+      "added": [],
+      "removed": []
+    }
+  },
+  "verdict": "NO_NEW_STATIC_FINDINGS",
+  "limits": [
+    "No whole-language compiler exists in these tools. Source-derived checks cover preprocessing/grouping and standalone multiline blocks only; expression grammar is not proved.",
+    "LEX_BRACKET checks are an independent balanced-delimiter screen, not expression type checking.",
+    "Direct literal call inventory excludes quoted text, comments and brace-quoted strings. Embedded candidates are reported separately and may be inactive or assembled at runtime.",
+    "No arbitrary locations were run. Reachability, semantic side effects, save compatibility, branch behavior, rendered HTML and dynamically generated calls require focused engine or GUI tests.",
+    "Top-level END and ELSE diagnostics need engine-semantic triage; static warnings alone are not runtime failures."
+  ],
+  "nativeWarningTriage": "See native-static-results.json. Existing bracket, END, duplicate ELSE and duplicate-label warning skeletons are accepted by installed engine; do not classify static warning count as fatal errors."
+}

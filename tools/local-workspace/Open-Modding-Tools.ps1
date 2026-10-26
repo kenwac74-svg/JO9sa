@@ -109,9 +109,15 @@ function Open-ConfiguredTools {
   }
   if (!$workshopUrl) {throw 'Workshop startup timed out. No additional server was launched.'}
  }
- Write-Output ('Dialogue: '+$editorUrl+' | Checklist: '+$editorUrl+'catalog | Workshop: '+$workshopUrl)
+ # JO9 MOD START MOD_TOOLS_IMAGE_REVIEW_20261021
+ $reviewLauncher=Join-Path (Split-Path -Parent $PSScriptRoot) 'image-folder-review\Start-Image-Folder-Review.ps1'
+ $reviewInfo=(& $reviewLauncher -DataDir (Join-Path $config.catalog 'folder-review') -NoOpen | Select-Object -Last 1) | ConvertFrom-Json
+ if ($reviewInfo.app -ne 'image-folder-review' -or [string]$reviewInfo.url -notmatch '^http://127\.0\.0\.1:\d+/$') {throw 'The image folder comparison launcher did not return its verified local URL.'}
+ $reviewUrl=[string]$reviewInfo.url
+ Write-Output ('Dialogue: '+$editorUrl+' | Checklist: '+$editorUrl+'catalog | Workshop: '+$workshopUrl+' | ImageReview: '+$reviewUrl)
+ # JO9 MOD END MOD_TOOLS_IMAGE_REVIEW_20261021
  if (!$NoBrowser) {
-  foreach ($url in @($editorUrl,($editorUrl+'catalog'),$workshopUrl,'https://huggingface.co/spaces/fancyfeast/joy-caption-beta-one','https://translate.google.co.kr/?sl=en&tl=ko&op=translate','https://www.mage.space/advanced','https://gamma.app/design/01M48RXZSYBT1HBN8BFGAQ09AS?from=designs')) {Start-Process $url}
+  foreach ($url in @($editorUrl,($editorUrl+'catalog'),$workshopUrl,$reviewUrl,'https://huggingface.co/spaces/fancyfeast/joy-caption-beta-one','https://translate.google.co.kr/?sl=en&tl=ko&op=translate','https://www.mage.space/advanced','https://gamma.app/design/01M48RXZSYBT1HBN8BFGAQ09AS?from=designs')) {Start-Process $url}
  }
 }
 

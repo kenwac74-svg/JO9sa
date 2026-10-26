@@ -1,0 +1,21 @@
+{
+  "id": "2026-10-26_gold_balance_exchange",
+  "before_sha256": "ed7f14b5a892f2dc695e8b90a29dfd1331c31536b604911fb2fddd9af8107648",
+  "after_sha256": "b8de16b088051eea5e51d8636f9ca3cc3975974129adf950ce122260ba2b5cf1",
+  "edits": [
+    {
+      "location": "shop_general",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$jo9_shop_narrative>></div>'",
+      "new": "! JO9 MOD START GOLD_BALANCE_MENU_20261026 | 2026-10-26_gold_balance_exchange\r\nif $place = 'balsam_boutique' and sp_txt = 2: $jo9_shop_narrative = '보유 금화: <<gold>>개'\r\n*p '<div id = \"text\"><<$jo9_shop_narrative>></div>'\r\n! JO9 MOD END GOLD_BALANCE_MENU_20261026",
+      "count": 1
+    },
+    {
+      "location": "interaction_screen_city",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "new": "! JO9 MOD START GOLD_BALANCE_RESULT_20261026 | 2026-10-26_gold_balance_exchange\r\nlocal $jo9_gold_result_text = $text[txt]\r\nif $place = 'balsam_boutique' and interaction_city >= 302110 and interaction_city <= 302114:\r\n $jo9_gold_result_text += '<br><br>보유 금화: <<gold>>개'\r\nend\r\n*p '<div id = \"text\"><<$jo9_gold_result_text>></div>'\r\n! JO9 MOD END GOLD_BALANCE_RESULT_20261026",
+      "count": 1
+    }
+  ]
+}

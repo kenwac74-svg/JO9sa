@@ -1,0 +1,5 @@
+const fs=require('fs');const root='G:/Codex/tmp/jo9-insolvency-20261023';
+for(const p of ['native/final-assets/client-results.json','native/final-full/client-results.json','native/final-lifecycle/client-results.json']){const a=JSON.parse(fs.readFileSync(root+'/'+p,'utf8').replace(/^\uFEFF/,''));console.log(JSON.stringify({file:p,tests:a.length,pass:a.filter(x=>x.pass).length,fail:a.filter(x=>!x.pass)}));}
+const src=fs.readFileSync(root+'/source/#estate_base.txt','utf8');const names=['study','bed','bath','boudoir','kitchen','dungeon','lab'];const list=[];
+for(const n of names)for(const t of ['', '_large']){const re=new RegExp('\\$interior_'+n+t+"\\['basic'\\] = '([^']+)'");const m=src.match(re);if(!m)throw Error(n+t);const p='G:/somi/Jack O Nine Tails v2.4_work/game/content/pic/bg/'+m[1].replaceAll('\\','/')+'.png';list.push({room:n,large:!!t,exists:fs.existsSync(p)});}
+fs.writeFileSync(root+'/basic-image-check.json',JSON.stringify(list,null,2));console.log(JSON.stringify({basicImages:list.length,missing:list.filter(x=>!x.exists)}));

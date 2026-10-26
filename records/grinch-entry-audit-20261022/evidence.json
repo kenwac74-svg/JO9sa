@@ -1,0 +1,72 @@
+{
+  "issue_id": "GRINCH_FOG_MENU_COLLISION_20261022",
+  "date": "2026-10-22",
+  "status": "CONFIRMED_FIX_PENDING",
+  "work_qsp": "G:\\somi\\Jack O Nine Tails v2.4_work\\game\\jack.qsp",
+  "work_sha256_before": "c6701e3ab130b1a762d0b1a523d52cd53cee846f71c3d7899a4c369389aa853d",
+  "work_sha256_after": "c6701e3ab130b1a762d0b1a523d52cd53cee846f71c3d7899a4c369389aa853d",
+  "cause": "Grinch event 10384 uses skip_to=14; menu 14 now invokes fog-only relay; relay begin exits outside edge_patrol.",
+  "source_locations": {
+    "interaction_city": [
+      23970,
+      23979,
+      23984
+    ],
+    "#options": [
+      240,
+      247,
+      254,
+      259
+    ],
+    "jo9_fog_relay": [
+      6,
+      15,
+      16
+    ],
+    "$menu": [
+      82,
+      84
+    ]
+  },
+  "historical_comparison": "The same Grinch skip_to=14 used a direct join_battle link in the 2026-09-29 preserved QSP; dedicated menu 10384 exists in both versions.",
+  "native_results": [
+    {
+      "name": "grinch-fog-gate",
+      "checkpoint": "combat entry marker; combat body replaced for diagnosis",
+      "pass": false,
+      "reason": "Completion marker timeout",
+      "durationMs": 12233
+    },
+    {
+      "name": "fog-control",
+      "checkpoint": "combat entry marker; combat body replaced for diagnosis",
+      "pass": true,
+      "reason": "",
+      "durationMs": 540
+    },
+    {
+      "name": "grinch-direct-control",
+      "checkpoint": "combat entry marker; combat body replaced for diagnosis",
+      "pass": true,
+      "reason": "",
+      "durationMs": 273
+    }
+  ],
+  "expected_results_match": true,
+  "verification_scope": "Original jo9_fog_relay body in minimal diagnostic fixtures; combat body is a marker only; no saves or runtime files modified.",
+  "limitations": [
+    "Entry guard was tested in minimal QSP fixtures using the original relay body.",
+    "Combat body was replaced with a completion marker.",
+    "Full Grinch fight, victory rewards, quest completion, GUI save loading were not tested."
+  ],
+  "static_structure": {
+    "bytes": 48344750,
+    "locations": 262,
+    "roundtrip": true,
+    "line_ending_issues": 0,
+    "marker_boundary_issues": 0
+  },
+  "runtime_files_modified": false,
+  "save_files_modified": false,
+  "commit_push": false
+}

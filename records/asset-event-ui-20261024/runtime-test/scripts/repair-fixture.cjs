@@ -1,0 +1,8 @@
+const fs=require('node:fs'),z=require('node:zlib'),a=require('node:assert/strict'),c=require('G:/somi/JO9sa/tools/text-workshop/core.cjs'),s=require('G:/somi/JO9sa/tools/qa/save-codec.cjs');
+const input=z.gunzipSync(fs.readFileSync('.asset-runtime-proof/07-exhausted.sav.gz')),doc=s.parse(input),base=s.parse(fs.readFileSync('G:/somi/Jack O Nine Tails v2.4_work/game/save/auto_day_end.sav'));
+const cache=doc.vars.find(v=>v.name==='DEATH'),macro=s.value(base,'death')[1];a(macro.includes('day = 0')&&macro.includes("gt 'exit'"));a.equal(cache.idx.find(x=>x[1]==='EGEYA')[0],0);a(!cache.values[0][1].includes("gt 'exit'"));
+cache.values.unshift(['0',macro]);for(const x of cache.idx)x[0]++;
+const candidate=s.serialize(doc),after=s.parse(candidate),changed=[];a.deepEqual(after.lines.slice(0,after.start),doc.lines.slice(0,doc.start));
+const before=s.parse(input);a.equal(after.vars.length,before.vars.length);for(let i=0;i<after.vars.length;i++)if(JSON.stringify(before.vars[i])!==JSON.stringify(after.vars[i]))changed.push(after.vars[i].name);a.deepEqual(changed,['DEATH']);
+const dest='G:/Codex/tmp/jo9-asset-runtime-20261024/game/save/ASSET_07_FIXED_ENDING.sav';fs.writeFileSync(dest,candidate);
+const record={purpose:'Diagnostic save copy only; restore omitted macro to numeric index0 and retain named EGEYA alias at1. WORK and source saves unchanged.',sourceSnapshotSha256:c.hash(input),candidateSha256:c.hash(candidate),changedVariables:changed,unchangedSaveHeader:true,newGameLocations:0,productionChanges:0,destination:dest};fs.writeFileSync('.asset-runtime-proof/fixture-repair.json',JSON.stringify(record,null,2));console.log(JSON.stringify(record));

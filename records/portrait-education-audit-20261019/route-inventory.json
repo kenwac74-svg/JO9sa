@@ -1,0 +1,4840 @@
+{
+  "baseline": "b0c40f46bc020c9d372e72e490ccde28894d31797bcf1653a7b7aac1e3490f71",
+  "scope": "Portrait skill sidebars, assistant teach-slave buttons, their immediate menus and interaction dispatches. Read-only static call inventory; actual-state testing delegated to root.",
+  "buttons": [
+    {
+      "location": "slave_stat",
+      "line": 712,
+      "sourceRole": "slave",
+      "targetRole": "self",
+      "skill": "service",
+      "actionField": "interaction",
+      "actionId": 1211,
+      "targetLocation": "interaction",
+      "code": "interaction = 1211 & gt 'interaction'",
+      "gateContext": [
+        "if slave_state = CONST_INT['slave_exist'] and is_home = 1:"
+      ]
+    },
+    {
+      "location": "slave_stat",
+      "line": 713,
+      "sourceRole": "slave",
+      "targetRole": "self",
+      "skill": "cook",
+      "actionField": "interaction",
+      "actionId": 1212,
+      "targetLocation": "interaction",
+      "code": "interaction = 1212 & gt 'interaction'",
+      "gateContext": [
+        "if slave_state = CONST_INT['slave_exist'] and is_home = 1:"
+      ]
+    },
+    {
+      "location": "slave_stat",
+      "line": 714,
+      "sourceRole": "slave",
+      "targetRole": "self",
+      "skill": "secretary",
+      "actionField": "interaction",
+      "actionId": 1214,
+      "targetLocation": "interaction",
+      "code": "interaction = 1214 & gt 'interaction'",
+      "gateContext": [
+        "if slave_state = CONST_INT['slave_exist'] and is_home = 1:"
+      ]
+    },
+    {
+      "location": "slave_stat",
+      "line": 715,
+      "sourceRole": "slave",
+      "targetRole": "self",
+      "skill": "expression",
+      "actionField": "interaction",
+      "actionId": 1231,
+      "targetLocation": "interaction",
+      "code": "interaction = 1231 & gt 'interaction'",
+      "gateContext": [
+        "if slave_state = CONST_INT['slave_exist'] and is_home = 1:"
+      ]
+    },
+    {
+      "location": "slave_stat",
+      "line": 716,
+      "sourceRole": "slave",
+      "targetRole": "self",
+      "skill": "nurse",
+      "actionField": "interaction",
+      "actionId": 1213,
+      "targetLocation": "interaction",
+      "code": "interaction = 1213 & gt 'interaction'",
+      "gateContext": []
+    },
+    {
+      "location": "slave_stat",
+      "line": 718,
+      "sourceRole": "slave",
+      "targetRole": "self",
+      "skill": "alchemy",
+      "actionId": null,
+      "targetLocation": "$curloc",
+      "code": "msg $no_services_exam & gt $curloc",
+      "gateContext": [
+        "\tif exam_in_progress = 1:"
+      ]
+    },
+    {
+      "location": "slave_stat",
+      "line": 720,
+      "sourceRole": "slave",
+      "targetRole": "self",
+      "skill": "alchemy",
+      "actionId": null,
+      "targetLocation": "$curloc",
+      "code": "msg $no_lab & gt $curloc",
+      "gateContext": [
+        "\tif exam_in_progress = 1:",
+        "\telseif lab < 1:"
+      ]
+    },
+    {
+      "location": "slave_stat",
+      "line": 722,
+      "sourceRole": "slave",
+      "targetRole": "self",
+      "skill": "alchemy",
+      "actionField": "interaction",
+      "actionId": 1243,
+      "targetLocation": "interaction",
+      "code": "interaction = 1243 & gt 'interaction'",
+      "gateContext": [
+        "\tif exam_in_progress = 1:",
+        "\telseif lab < 1:",
+        "\telse"
+      ]
+    },
+    {
+      "location": "slave_stat",
+      "line": 725,
+      "sourceRole": "slave",
+      "targetRole": "self",
+      "skill": "enchanter",
+      "actionField": "interaction",
+      "actionId": 1244,
+      "targetLocation": "interaction",
+      "code": "interaction = 1244 & gt 'interaction'",
+      "gateContext": [
+        "\telseif lab < 1:",
+        "\telse",
+        "\tif library >= 0:"
+      ]
+    },
+    {
+      "location": "slave_stat",
+      "line": 727,
+      "sourceRole": "slave",
+      "targetRole": "self",
+      "skill": "stamina",
+      "actionField": "interaction",
+      "actionId": 1221,
+      "targetLocation": "interaction",
+      "code": "interaction = 1221 & gt 'interaction'",
+      "gateContext": [
+        "\telse",
+        "\tif library >= 0:"
+      ]
+    },
+    {
+      "location": "slave_stat",
+      "line": 729,
+      "sourceRole": "slave",
+      "targetRole": "self",
+      "skill": "gladiatrix",
+      "actionField": "interaction",
+      "actionId": 1223,
+      "targetLocation": "interaction",
+      "code": "interaction = 1223 & gt 'interaction'",
+      "gateContext": [
+        "\tif library >= 0:",
+        "\tif slave['stamina'] >= 2:"
+      ]
+    },
+    {
+      "location": "slave_stat",
+      "line": 731,
+      "sourceRole": "slave",
+      "targetRole": "self",
+      "skill": "gladiatrix",
+      "actionId": null,
+      "targetLocation": "$curloc",
+      "code": "msg $no_slave_stamina & gt $curloc",
+      "gateContext": [
+        "\tif slave['stamina'] >= 2:",
+        "\telse"
+      ]
+    },
+    {
+      "location": "slave_stat",
+      "line": 734,
+      "sourceRole": "slave",
+      "targetRole": "self",
+      "skill": "calisthenics",
+      "actionField": "interaction",
+      "actionId": 1222,
+      "targetLocation": "interaction",
+      "code": "interaction = 1222 & gt 'interaction'",
+      "gateContext": [
+        "\tif slave['stamina'] >= 2:",
+        "\telse",
+        "\tif slave['stamina'] >= 2:"
+      ]
+    },
+    {
+      "location": "slave_stat",
+      "line": 736,
+      "sourceRole": "slave",
+      "targetRole": "self",
+      "skill": "calisthenics",
+      "actionId": null,
+      "targetLocation": "$curloc",
+      "code": "msg $no_slave_stamina & gt $curloc",
+      "gateContext": [
+        "\telse",
+        "\tif slave['stamina'] >= 2:",
+        "\telse"
+      ]
+    },
+    {
+      "location": "slave_stat",
+      "line": 738,
+      "sourceRole": "slave",
+      "targetRole": "self",
+      "skill": "music",
+      "actionField": "menu_form",
+      "actionId": 1233,
+      "targetLocation": "menu_form",
+      "code": "menu_form = 1233 & $place = 'home_lux' & gt 'menu_form'",
+      "gateContext": [
+        "\tif slave['stamina'] >= 2:",
+        "\telse"
+      ]
+    },
+    {
+      "location": "slave_stat",
+      "line": 739,
+      "sourceRole": "slave",
+      "targetRole": "self",
+      "skill": "art",
+      "actionField": "interaction",
+      "actionId": 1234,
+      "targetLocation": "interaction",
+      "code": "interaction = 1234 & gt 'interaction'",
+      "gateContext": [
+        "\tif slave['stamina'] >= 2:",
+        "\telse"
+      ]
+    },
+    {
+      "location": "slave_stat",
+      "line": 740,
+      "sourceRole": "slave",
+      "targetRole": "self",
+      "skill": "pet",
+      "actionField": "interaction",
+      "actionId": 1241,
+      "targetLocation": "interaction",
+      "code": "interaction = 1241 & gt 'interaction'",
+      "gateContext": [
+        "\telse"
+      ]
+    },
+    {
+      "location": "slave_stat",
+      "line": 742,
+      "sourceRole": "slave",
+      "targetRole": "self",
+      "skill": "dressage",
+      "actionField": "interaction",
+      "actionId": 1224,
+      "targetLocation": "interaction",
+      "code": "interaction = 1224 & gt 'interaction'",
+      "gateContext": [
+        "\tif slave['stamina'] >= iif(slave['dressage'] < 3, 2, 3):"
+      ]
+    },
+    {
+      "location": "slave_stat",
+      "line": 744,
+      "sourceRole": "slave",
+      "targetRole": "self",
+      "skill": "dressage",
+      "actionId": null,
+      "targetLocation": "$curloc",
+      "code": "msg $no_slave_stamina & gt $curloc",
+      "gateContext": [
+        "\tif slave['stamina'] >= iif(slave['dressage'] < 3, 2, 3):",
+        "\telse"
+      ]
+    },
+    {
+      "location": "slave_stat",
+      "line": 747,
+      "sourceRole": "slave",
+      "targetRole": "self",
+      "skill": "cowSK",
+      "actionField": "interaction",
+      "actionId": 1226,
+      "targetLocation": "interaction",
+      "code": "interaction = 1226 & gt 'interaction'",
+      "gateContext": [
+        "\tif slave['stamina'] >= iif(slave['dressage'] < 3, 2, 3):",
+        "\telse",
+        "\tif slave['stamina'] >= 2:"
+      ]
+    },
+    {
+      "location": "slave_stat",
+      "line": 749,
+      "sourceRole": "slave",
+      "targetRole": "self",
+      "skill": "cowSK",
+      "actionId": null,
+      "targetLocation": "$curloc",
+      "code": "msg $no_slave_stamina & gt $curloc",
+      "gateContext": [
+        "\telse",
+        "\tif slave['stamina'] >= 2:",
+        "\telse"
+      ]
+    },
+    {
+      "location": "slave_stat",
+      "line": 755,
+      "sourceRole": "slave",
+      "targetRole": "self",
+      "skill": "petting",
+      "actionField": "menu_form",
+      "actionId": 131,
+      "targetLocation": "menu_form",
+      "code": "menu_form = 131 & $place = 'home_lux' & gt 'menu_form'",
+      "gateContext": []
+    },
+    {
+      "location": "slave_stat",
+      "line": 756,
+      "sourceRole": "slave",
+      "targetRole": "self",
+      "skill": "oral",
+      "actionField": "menu_form",
+      "actionId": 132,
+      "targetLocation": "menu_form",
+      "code": "menu_form = 132 & $place = 'home_lux' & gt 'menu_form'",
+      "gateContext": []
+    },
+    {
+      "location": "slave_stat",
+      "line": 757,
+      "sourceRole": "slave",
+      "targetRole": "self",
+      "skill": "penetration",
+      "actionField": "menu_form",
+      "actionId": 133,
+      "targetLocation": "menu_form",
+      "code": "menu_form = 133 & $place = 'home_lux' & gt 'menu_form'",
+      "gateContext": []
+    },
+    {
+      "location": "slave_stat",
+      "line": 759,
+      "sourceRole": "slave",
+      "targetRole": "self",
+      "skill": "orgy",
+      "actionId": null,
+      "targetLocation": "$curloc",
+      "code": "msg $no_services_exam & gt $curloc",
+      "gateContext": [
+        "\t\tif exam_in_progress = 1:"
+      ]
+    },
+    {
+      "location": "slave_stat",
+      "line": 761,
+      "sourceRole": "slave",
+      "targetRole": "self",
+      "skill": "orgy",
+      "actionField": "menu_form",
+      "actionId": 134,
+      "targetLocation": "menu_form",
+      "code": "menu_form = 134 & $place = 'home_lux' & gt 'menu_form'",
+      "gateContext": [
+        "\t\tif exam_in_progress = 1:",
+        "\t\telse"
+      ]
+    },
+    {
+      "location": "slave_stat",
+      "line": 763,
+      "sourceRole": "slave",
+      "targetRole": "self",
+      "skill": "roleplay",
+      "actionField": "menu_form",
+      "actionId": 137,
+      "targetLocation": "menu_form",
+      "code": "menu_form = 137 & $place = 'home_lux' & gt 'menu_form'",
+      "gateContext": [
+        "\t\tif exam_in_progress = 1:",
+        "\t\telse"
+      ]
+    },
+    {
+      "location": "slave_stat",
+      "line": 764,
+      "sourceRole": "slave",
+      "targetRole": "self",
+      "skill": "fetishism",
+      "actionField": "menu_form",
+      "actionId": 136,
+      "targetLocation": "menu_form",
+      "code": "menu_form = 136 & $place = 'home_lux' & gt 'menu_form'",
+      "gateContext": [
+        "\t\tif exam_in_progress = 1:",
+        "\t\telse"
+      ]
+    },
+    {
+      "location": "slave_stat",
+      "line": 766,
+      "sourceRole": "slave",
+      "targetRole": "self",
+      "skill": "xenophily",
+      "actionId": null,
+      "targetLocation": "$curloc",
+      "code": "msg $no_services_exam & gt $curloc",
+      "gateContext": [
+        "\t\telse",
+        "\t\tif exam_in_progress = 1:"
+      ]
+    },
+    {
+      "location": "slave_stat",
+      "line": 767,
+      "sourceRole": "slave",
+      "targetRole": "self",
+      "skill": "nipplefuck",
+      "actionId": null,
+      "targetLocation": "$curloc",
+      "code": "msg $no_services_exam & gt $curloc",
+      "gateContext": [
+        "\t\tif exam_in_progress = 1:"
+      ]
+    },
+    {
+      "location": "slave_stat",
+      "line": 768,
+      "sourceRole": "slave",
+      "targetRole": "self",
+      "skill": "lesbiansex",
+      "actionId": null,
+      "targetLocation": "$curloc",
+      "code": "msg $no_services_exam & gt $curloc",
+      "gateContext": [
+        "\t\tif exam_in_progress = 1:"
+      ]
+    },
+    {
+      "location": "slave_stat",
+      "line": 770,
+      "sourceRole": "slave",
+      "targetRole": "self",
+      "skill": "xenophily",
+      "actionField": "menu_form",
+      "actionId": 135,
+      "targetLocation": "menu_form",
+      "code": "menu_form = 135 & $place = 'home_lux' & gt 'menu_form'",
+      "gateContext": [
+        "\t\tif exam_in_progress = 1:",
+        "\t\telse"
+      ]
+    },
+    {
+      "location": "slave_stat",
+      "line": 771,
+      "sourceRole": "slave",
+      "targetRole": "self",
+      "skill": "nipplefuck",
+      "actionField": "menu_form",
+      "actionId": 138,
+      "targetLocation": "menu_form",
+      "code": "menu_form = 138 & $place = 'home_lux' & gt 'menu_form'",
+      "gateContext": [
+        "\t\tif exam_in_progress = 1:",
+        "\t\telse"
+      ]
+    },
+    {
+      "location": "slave_stat",
+      "line": 772,
+      "sourceRole": "slave",
+      "targetRole": "self",
+      "skill": "lesbiansex",
+      "actionField": "menu_form",
+      "actionId": 139,
+      "targetLocation": "menu_form",
+      "code": "menu_form = 139 & $place = 'home_lux' & gt 'menu_form'",
+      "gateContext": [
+        "\t\telse"
+      ]
+    },
+    {
+      "location": "assistant_stat",
+      "line": 578,
+      "sourceRole": "assistant",
+      "targetRole": "slave",
+      "skill": "service",
+      "actionField": "interaction",
+      "actionId": 4111,
+      "targetLocation": "interaction",
+      "code": "interaction = 4111 & gt 'interaction'",
+      "gateContext": [
+        "if assistant_state = CONST_INT['slave_exist'] and is_home = 1:",
+        "\tif slave_state = CONST_INT['slave_exist'] and house_mess > 0 and assistant['service'] > slave['service'] and assistant['stamina'] >= 0:"
+      ]
+    },
+    {
+      "location": "assistant_stat",
+      "line": 583,
+      "sourceRole": "assistant",
+      "targetRole": "slave",
+      "skill": "cook",
+      "actionField": "interaction",
+      "actionId": 4112,
+      "targetLocation": "interaction",
+      "code": "interaction = 4112 & gt 'interaction'",
+      "gateContext": [
+        "\tif slave_state = CONST_INT['slave_exist'] and house_mess > 0 and assistant['service'] > slave['service'] and assistant['stamina'] >= 0:",
+        "\telse",
+        "\tif slave_state = CONST_INT['slave_exist'] and kitchen > 0 and assistant['cook'] > slave['cook'] and assistant['stamina'] >= 0:"
+      ]
+    },
+    {
+      "location": "assistant_stat",
+      "line": 588,
+      "sourceRole": "assistant",
+      "targetRole": "slave",
+      "skill": "secretary",
+      "actionField": "interaction",
+      "actionId": 4114,
+      "targetLocation": "interaction",
+      "code": "interaction = 4114 & gt 'interaction'",
+      "gateContext": [
+        "\tif slave_state = CONST_INT['slave_exist'] and kitchen > 0 and assistant['cook'] > slave['cook'] and assistant['stamina'] >= 0:",
+        "\telse",
+        "\tif slave_state = CONST_INT['slave_exist'] and assistant['secretary'] > slave['secretary'] and assistant['stamina'] >= 0:"
+      ]
+    },
+    {
+      "location": "assistant_stat",
+      "line": 593,
+      "sourceRole": "assistant",
+      "targetRole": "slave",
+      "skill": "expression",
+      "actionField": "interaction",
+      "actionId": 4131,
+      "targetLocation": "interaction",
+      "code": "interaction = 4131 & gt 'interaction'",
+      "gateContext": [
+        "\tif slave_state = CONST_INT['slave_exist'] and assistant['secretary'] > slave['secretary'] and assistant['stamina'] >= 0:",
+        "\telse",
+        "\tif slave_state = CONST_INT['slave_exist'] and assistant['expression'] > slave['expression'] and assistant['stamina'] >= 0:"
+      ]
+    },
+    {
+      "location": "assistant_stat",
+      "line": 598,
+      "sourceRole": "assistant",
+      "targetRole": "slave",
+      "skill": "nurse",
+      "actionField": "interaction",
+      "actionId": 4113,
+      "targetLocation": "interaction",
+      "code": "interaction = 4113 & gt 'interaction'",
+      "gateContext": [
+        "\tif slave_state = CONST_INT['slave_exist'] and assistant['expression'] > slave['expression'] and assistant['stamina'] >= 0:",
+        "\telse",
+        "\tif slave_state = CONST_INT['slave_exist'] and assistant['nurse'] > slave['nurse'] and assistant['stamina'] >= 0:"
+      ]
+    },
+    {
+      "location": "assistant_stat",
+      "line": 603,
+      "sourceRole": "assistant",
+      "targetRole": "slave",
+      "skill": "alchemy",
+      "actionField": "interaction",
+      "actionId": 4142,
+      "targetLocation": "interaction",
+      "code": "interaction = 4142 & gt 'interaction'",
+      "gateContext": [
+        "\tif slave_state = CONST_INT['slave_exist'] and assistant['nurse'] > slave['nurse'] and assistant['stamina'] >= 0:",
+        "\telse",
+        "\tif slave_state = CONST_INT['slave_exist'] and lab = 1 and assistant['alchemy'] > slave['alchemy'] and assistant['stamina'] >= 0:"
+      ]
+    },
+    {
+      "location": "assistant_stat",
+      "line": 608,
+      "sourceRole": "assistant",
+      "targetRole": "slave",
+      "skill": "enchanter",
+      "actionField": "interaction",
+      "actionId": 41421,
+      "targetLocation": "interaction",
+      "code": "interaction = 41421 & gt 'interaction'",
+      "gateContext": [
+        "\tif slave_state = CONST_INT['slave_exist'] and lab = 1 and assistant['alchemy'] > slave['alchemy'] and assistant['stamina'] >= 0:",
+        "\telse",
+        "\tif slave_state = CONST_INT['slave_exist'] and assistant['enchanter'] > slave['enchanter'] and assistant['stamina'] >= 0:"
+      ]
+    },
+    {
+      "location": "assistant_stat",
+      "line": 613,
+      "sourceRole": "assistant",
+      "targetRole": "slave",
+      "skill": "stamina",
+      "actionField": "interaction",
+      "actionId": 4121,
+      "targetLocation": "interaction",
+      "code": "interaction = 4121 & gt 'interaction'",
+      "gateContext": [
+        "\tif slave_state = CONST_INT['slave_exist'] and assistant['enchanter'] > slave['enchanter'] and assistant['stamina'] >= 0:",
+        "\telse",
+        "\tif slave_state = CONST_INT['slave_exist'] and slave['stamina'] >= 1 and assistant['stamina'] >= slave['stamina'] and assistant['stamina'] >= 0:"
+      ]
+    },
+    {
+      "location": "assistant_stat",
+      "line": 618,
+      "sourceRole": "assistant",
+      "targetRole": "slave",
+      "skill": "gladiatrix",
+      "actionField": "interaction",
+      "actionId": 4123,
+      "targetLocation": "interaction",
+      "code": "interaction = 4123 & gt 'interaction'",
+      "gateContext": [
+        "\tif slave_state = CONST_INT['slave_exist'] and slave['stamina'] >= 1 and assistant['stamina'] >= slave['stamina'] and assistant['stamina'] >= 0:",
+        "\telse",
+        "\tif slave_state = CONST_INT['slave_exist'] and slave['stamina'] >= 2 and assistant['gladiatrix'] > slave['gladiatrix'] and assistant['stamina'] >= 0:"
+      ]
+    },
+    {
+      "location": "assistant_stat",
+      "line": 623,
+      "sourceRole": "assistant",
+      "targetRole": "slave",
+      "skill": "calisthenics",
+      "actionField": "interaction",
+      "actionId": 4122,
+      "targetLocation": "interaction",
+      "code": "interaction = 4122 & gt 'interaction'",
+      "gateContext": [
+        "\tif slave_state = CONST_INT['slave_exist'] and slave['stamina'] >= 2 and assistant['gladiatrix'] > slave['gladiatrix'] and assistant['stamina'] >= 0:",
+        "\telse",
+        "\tif slave_state = CONST_INT['slave_exist'] and slave['stamina'] >= 2 and assistant['calisthenics'] > slave['calisthenics'] and assistant['stamina'] >= 0:"
+      ]
+    },
+    {
+      "location": "assistant_stat",
+      "line": 628,
+      "sourceRole": "assistant",
+      "targetRole": "slave",
+      "skill": "music",
+      "actionField": "interaction",
+      "actionId": 4132,
+      "targetLocation": "interaction",
+      "code": "interaction = 4132 & gt 'interaction'",
+      "gateContext": [
+        "\tif slave_state = CONST_INT['slave_exist'] and slave['stamina'] >= 2 and assistant['calisthenics'] > slave['calisthenics'] and assistant['stamina'] >= 0:",
+        "\telse",
+        "\tif slave_state = CONST_INT['slave_exist'] and assistant['music'] > slave['music'] and assistant['stamina'] >= 0:"
+      ]
+    },
+    {
+      "location": "assistant_stat",
+      "line": 633,
+      "sourceRole": "assistant",
+      "targetRole": "slave",
+      "skill": "art",
+      "actionField": "interaction",
+      "actionId": 4133,
+      "targetLocation": "interaction",
+      "code": "interaction = 4133 & gt 'interaction'",
+      "gateContext": [
+        "\tif slave_state = CONST_INT['slave_exist'] and assistant['music'] > slave['music'] and assistant['stamina'] >= 0:",
+        "\telse",
+        "\tif slave_state = CONST_INT['slave_exist'] and assistant['art'] > slave['art'] and assistant['stamina'] >= 0:"
+      ]
+    },
+    {
+      "location": "assistant_stat",
+      "line": 638,
+      "sourceRole": "assistant",
+      "targetRole": "slave",
+      "skill": "pet",
+      "actionField": "interaction",
+      "actionId": 4141,
+      "targetLocation": "interaction",
+      "code": "interaction = 4141 & gt 'interaction'",
+      "gateContext": [
+        "\tif slave_state = CONST_INT['slave_exist'] and assistant['art'] > slave['art'] and assistant['stamina'] >= 0:",
+        "\telse",
+        "\tif slave_state = CONST_INT['slave_exist'] and slave['stamina'] >= 2 and assistant['pet'] > slave['pet'] and assistant['stamina'] >= 0:"
+      ]
+    },
+    {
+      "location": "assistant_stat",
+      "line": 643,
+      "sourceRole": "assistant",
+      "targetRole": "slave",
+      "skill": "dressage",
+      "actionField": "interaction",
+      "actionId": 4143,
+      "targetLocation": "interaction",
+      "code": "interaction = 4143 & gt 'interaction'",
+      "gateContext": [
+        "\tif slave_state = CONST_INT['slave_exist'] and slave['stamina'] >= 2 and assistant['pet'] > slave['pet'] and assistant['stamina'] >= 0:",
+        "\telse",
+        "\tif slave_state = CONST_INT['slave_exist'] and slave['stamina'] >= IIF(slave['dressage'] < 3, 2, 3) and assistant['dressage'] > slave['dressage'] and assistant['stamina'] >= 0:"
+      ]
+    },
+    {
+      "location": "assistant_stat",
+      "line": 648,
+      "sourceRole": "assistant",
+      "targetRole": "slave",
+      "skill": "cowSK",
+      "actionField": "interaction",
+      "actionId": 4134,
+      "targetLocation": "interaction",
+      "code": "interaction = 4134 & gt 'interaction'",
+      "gateContext": [
+        "\tif slave_state = CONST_INT['slave_exist'] and slave['stamina'] >= IIF(slave['dressage'] < 3, 2, 3) and assistant['dressage'] > slave['dressage'] and assistant['stamina'] >= 0:",
+        "\telse",
+        "\tif slave_state = CONST_INT['slave_exist'] and slave['stamina'] >= 2 and assistant['cowSK'] > slave['cowSK'] and assistant['stamina'] >= 0: "
+      ]
+    },
+    {
+      "location": "assistant_stat",
+      "line": 658,
+      "sourceRole": "assistant",
+      "targetRole": "self",
+      "skill": "service",
+      "actionField": "interaction",
+      "actionId": 5011,
+      "targetLocation": "interaction",
+      "code": "interaction = 5011 & gt 'interaction'",
+      "gateContext": []
+    },
+    {
+      "location": "assistant_stat",
+      "line": 659,
+      "sourceRole": "assistant",
+      "targetRole": "self",
+      "skill": "cook",
+      "actionField": "interaction",
+      "actionId": 5012,
+      "targetLocation": "interaction",
+      "code": "interaction = 5012 & gt 'interaction'",
+      "gateContext": []
+    },
+    {
+      "location": "assistant_stat",
+      "line": 661,
+      "sourceRole": "assistant",
+      "targetRole": "self",
+      "skill": "secretary",
+      "actionField": "interaction",
+      "actionId": 5014,
+      "targetLocation": "interaction",
+      "code": "interaction = 5014 & gt 'interaction'",
+      "gateContext": []
+    },
+    {
+      "location": "assistant_stat",
+      "line": 662,
+      "sourceRole": "assistant",
+      "targetRole": "self",
+      "skill": "expression",
+      "actionField": "interaction",
+      "actionId": 5015,
+      "targetLocation": "interaction",
+      "code": "interaction = 5015 & gt 'interaction'",
+      "gateContext": []
+    },
+    {
+      "location": "assistant_stat",
+      "line": 664,
+      "sourceRole": "assistant",
+      "targetRole": "self",
+      "skill": "nurse",
+      "actionField": "interaction",
+      "actionId": 5013,
+      "targetLocation": "interaction",
+      "code": "interaction = 5013 & gt 'interaction'",
+      "gateContext": []
+    },
+    {
+      "location": "assistant_stat",
+      "line": 665,
+      "sourceRole": "assistant",
+      "targetRole": "self",
+      "skill": "alchemy",
+      "actionField": "interaction",
+      "actionId": 5016,
+      "targetLocation": "interaction",
+      "code": "interaction = 5016 & gt 'interaction'",
+      "gateContext": []
+    },
+    {
+      "location": "assistant_stat",
+      "line": 666,
+      "sourceRole": "assistant",
+      "targetRole": "self",
+      "skill": "enchanter",
+      "actionField": "interaction",
+      "actionId": 5017,
+      "targetLocation": "interaction",
+      "code": "interaction = 5017 & gt 'interaction'",
+      "gateContext": []
+    },
+    {
+      "location": "assistant_stat",
+      "line": 668,
+      "sourceRole": "assistant",
+      "targetRole": "self",
+      "skill": "stamina",
+      "actionField": "interaction",
+      "actionId": 5018,
+      "targetLocation": "interaction",
+      "code": "interaction = 5018 & gt 'interaction'",
+      "gateContext": []
+    },
+    {
+      "location": "assistant_stat",
+      "line": 669,
+      "sourceRole": "assistant",
+      "targetRole": "self",
+      "skill": "gladiatrix",
+      "actionField": "interaction",
+      "actionId": 5019,
+      "targetLocation": "interaction",
+      "code": "interaction = 5019 & gt 'interaction'",
+      "gateContext": []
+    },
+    {
+      "location": "assistant_stat",
+      "line": 671,
+      "sourceRole": "assistant",
+      "targetRole": "self",
+      "skill": "calisthenics",
+      "actionField": "interaction",
+      "actionId": 5020,
+      "targetLocation": "interaction",
+      "code": "interaction = 5020 & gt 'interaction'",
+      "gateContext": []
+    },
+    {
+      "location": "assistant_stat",
+      "line": 672,
+      "sourceRole": "assistant",
+      "targetRole": "self",
+      "skill": "music",
+      "actionField": "menu_form",
+      "actionId": 5021,
+      "targetLocation": "menu_form",
+      "code": "menu_form = 5021 & $place = 'home_lux' & gt 'menu_form'",
+      "gateContext": []
+    },
+    {
+      "location": "assistant_stat",
+      "line": 673,
+      "sourceRole": "assistant",
+      "targetRole": "self",
+      "skill": "art",
+      "actionField": "interaction",
+      "actionId": 5022,
+      "targetLocation": "interaction",
+      "code": "interaction = 5022 & gt 'interaction'",
+      "gateContext": []
+    },
+    {
+      "location": "assistant_stat",
+      "line": 675,
+      "sourceRole": "assistant",
+      "targetRole": "self",
+      "skill": "pet",
+      "actionField": "interaction",
+      "actionId": 5023,
+      "targetLocation": "interaction",
+      "code": "interaction = 5023 & gt 'interaction'",
+      "gateContext": []
+    },
+    {
+      "location": "assistant_stat",
+      "line": 676,
+      "sourceRole": "assistant",
+      "targetRole": "self",
+      "skill": "dressage",
+      "actionField": "interaction",
+      "actionId": 5025,
+      "targetLocation": "interaction",
+      "code": "interaction = 5025 & gt 'interaction'",
+      "gateContext": []
+    },
+    {
+      "location": "assistant_stat",
+      "line": 677,
+      "sourceRole": "assistant",
+      "targetRole": "self",
+      "skill": "cowSK",
+      "actionField": "interaction",
+      "actionId": 5026,
+      "targetLocation": "interaction",
+      "code": "interaction = 5026 & gt 'interaction'",
+      "gateContext": []
+    },
+    {
+      "location": "assistant_stat",
+      "line": 681,
+      "sourceRole": "assistant",
+      "targetRole": "self",
+      "skill": "petting",
+      "actionField": "menu_form",
+      "actionId": 231,
+      "targetLocation": "menu_form",
+      "code": "menu_form = 231 & $place = 'home_lux' & gt 'menu_form'",
+      "gateContext": []
+    },
+    {
+      "location": "assistant_stat",
+      "line": 682,
+      "sourceRole": "assistant",
+      "targetRole": "self",
+      "skill": "oral",
+      "actionField": "menu_form",
+      "actionId": 232,
+      "targetLocation": "menu_form",
+      "code": "menu_form = 232 & $place = 'home_lux' & gt 'menu_form'",
+      "gateContext": []
+    },
+    {
+      "location": "assistant_stat",
+      "line": 683,
+      "sourceRole": "assistant",
+      "targetRole": "self",
+      "skill": "penetration",
+      "actionField": "menu_form",
+      "actionId": 233,
+      "targetLocation": "menu_form",
+      "code": "menu_form = 233 & $place = 'home_lux' & gt 'menu_form'",
+      "gateContext": []
+    },
+    {
+      "location": "assistant_stat",
+      "line": 684,
+      "sourceRole": "assistant",
+      "targetRole": "self",
+      "skill": "orgy",
+      "actionField": "menu_form",
+      "actionId": 234,
+      "targetLocation": "menu_form",
+      "code": "menu_form = 234 & $place = 'home_lux' & gt 'menu_form'",
+      "gateContext": []
+    },
+    {
+      "location": "assistant_stat",
+      "line": 685,
+      "sourceRole": "assistant",
+      "targetRole": "self",
+      "skill": "roleplay",
+      "actionField": "menu_form",
+      "actionId": 237,
+      "targetLocation": "menu_form",
+      "code": "menu_form = 237 & $place = 'home_lux' & gt 'menu_form'",
+      "gateContext": []
+    },
+    {
+      "location": "assistant_stat",
+      "line": 686,
+      "sourceRole": "assistant",
+      "targetRole": "self",
+      "skill": "fetishism",
+      "actionField": "menu_form",
+      "actionId": 236,
+      "targetLocation": "menu_form",
+      "code": "menu_form = 236 & $place = 'home_lux' & gt 'menu_form'",
+      "gateContext": []
+    },
+    {
+      "location": "assistant_stat",
+      "line": 687,
+      "sourceRole": "assistant",
+      "targetRole": "self",
+      "skill": "xenophily",
+      "actionField": "menu_form",
+      "actionId": 235,
+      "targetLocation": "menu_form",
+      "code": "menu_form = 235 & $place = 'home_lux' & gt 'menu_form'",
+      "gateContext": []
+    },
+    {
+      "location": "assistant_stat",
+      "line": 688,
+      "sourceRole": "assistant",
+      "targetRole": "self",
+      "skill": "nipplefuck",
+      "actionField": "menu_form",
+      "actionId": 238,
+      "targetLocation": "menu_form",
+      "code": "menu_form = 238 & $place = 'home_lux' & gt 'menu_form'",
+      "gateContext": []
+    },
+    {
+      "location": "assistant_stat",
+      "line": 689,
+      "sourceRole": "assistant",
+      "targetRole": "self",
+      "skill": "lesbiansex",
+      "actionField": "menu_form",
+      "actionId": 239,
+      "targetLocation": "menu_form",
+      "code": "menu_form = 239 & $place = 'home_lux' & gt 'menu_form'",
+      "gateContext": []
+    }
+  ],
+  "menus": [
+    {
+      "menuId": 1233,
+      "line": 1970,
+      "children": [
+        {
+          "line": 1979,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_percussion",
+          "unresolved": true
+        },
+        {
+          "line": 1984,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_singing",
+          "unresolved": true
+        },
+        {
+          "line": 1991,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_woodwind",
+          "unresolved": true
+        },
+        {
+          "line": 1998,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_Piano",
+          "unresolved": true
+        },
+        {
+          "line": 2005,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_strings",
+          "unresolved": true
+        }
+      ]
+    },
+    {
+      "menuId": 131,
+      "line": 2019,
+      "children": [
+        {
+          "line": 2028,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_Handjob",
+          "unresolved": true
+        },
+        {
+          "line": 2033,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_Footjob",
+          "unresolved": true
+        },
+        {
+          "line": 2038,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_Rubbing",
+          "unresolved": true
+        },
+        {
+          "line": 2043,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_Paizuri",
+          "unresolved": true
+        }
+      ]
+    },
+    {
+      "menuId": 132,
+      "line": 2054,
+      "children": [
+        {
+          "line": 2062,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_Kissing",
+          "unresolved": true
+        },
+        {
+          "line": 2067,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_Licking",
+          "unresolved": true
+        },
+        {
+          "line": 2072,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_Blowjob",
+          "unresolved": true
+        },
+        {
+          "line": 2077,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_Deepthroat",
+          "unresolved": true
+        },
+        {
+          "line": 2082,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_Rimming",
+          "unresolved": true
+        }
+      ]
+    },
+    {
+      "menuId": 133,
+      "line": 2093,
+      "children": [
+        {
+          "line": 2101,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_Vaginal",
+          "unresolved": true
+        },
+        {
+          "line": 2106,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_Fisting",
+          "unresolved": true
+        },
+        {
+          "line": 2111,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_Anal",
+          "unresolved": true
+        },
+        {
+          "line": 2116,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_AnalFisting",
+          "unresolved": true
+        }
+      ]
+    },
+    {
+      "menuId": 134,
+      "line": 2127,
+      "children": [
+        {
+          "line": 2136,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_Threesome_personal",
+          "unresolved": true
+        },
+        {
+          "line": 2139,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_Threesome_noassistant_personal",
+          "unresolved": true
+        },
+        {
+          "line": 2147,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_Bukkake",
+          "unresolved": true
+        },
+        {
+          "line": 2149,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_Bukkake",
+          "unresolved": true
+        },
+        {
+          "line": 2156,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_Double",
+          "unresolved": true
+        },
+        {
+          "line": 2158,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_Double",
+          "unresolved": true
+        },
+        {
+          "line": 2165,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_Triple",
+          "unresolved": true
+        },
+        {
+          "line": 2167,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_Triple",
+          "unresolved": true
+        },
+        {
+          "line": 2174,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_Gangbang",
+          "unresolved": true
+        },
+        {
+          "line": 2176,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_Gangbang",
+          "unresolved": true
+        }
+      ]
+    },
+    {
+      "menuId": 137,
+      "line": 2291,
+      "children": [
+        {
+          "line": 2300,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_Seduction",
+          "unresolved": true
+        },
+        {
+          "line": 2305,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_Masturbation",
+          "unresolved": true
+        },
+        {
+          "line": 2310,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_Dildo",
+          "unresolved": true
+        },
+        {
+          "line": 2315,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_Worship",
+          "unresolved": true
+        },
+        {
+          "line": 2320,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_Exhibitionism",
+          "unresolved": true
+        }
+      ]
+    },
+    {
+      "menuId": 136,
+      "line": 2245,
+      "children": [
+        {
+          "line": 2256,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_Enema",
+          "unresolved": true
+        },
+        {
+          "line": 2261,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_Masochism",
+          "unresolved": true
+        },
+        {
+          "line": 2266,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_selfpain",
+          "unresolved": true
+        },
+        {
+          "line": 2273,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_Golden",
+          "unresolved": true
+        },
+        {
+          "line": 2280,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_Scat",
+          "unresolved": true
+        }
+      ]
+    },
+    {
+      "menuId": 135,
+      "line": 2188,
+      "children": [
+        {
+          "line": 2199,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_Dog",
+          "unresolved": true
+        },
+        {
+          "line": 2204,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_Pig",
+          "unresolved": true
+        },
+        {
+          "line": 2209,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_Horse",
+          "unresolved": true
+        },
+        {
+          "line": 2218,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_Spider",
+          "unresolved": true
+        },
+        {
+          "line": 2227,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_polypus",
+          "unresolved": true
+        },
+        {
+          "line": 2234,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_Fiend",
+          "unresolved": true
+        }
+      ]
+    },
+    {
+      "menuId": 138,
+      "line": 2331,
+      "children": [
+        {
+          "line": 2339,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "value": 1335
+        },
+        {
+          "line": 2341,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "value": 1335
+        }
+      ]
+    },
+    {
+      "menuId": 139,
+      "line": 2357,
+      "children": [
+        {
+          "line": 2366,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "value": 1336
+        },
+        {
+          "line": 2367,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "value": 1337
+        },
+        {
+          "line": 2368,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "value": 1338
+        },
+        {
+          "line": 2369,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "value": 1339
+        },
+        {
+          "line": 2371,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "value": 1336
+        },
+        {
+          "line": 2372,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "value": 1337
+        },
+        {
+          "line": 2373,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "value": 1338
+        },
+        {
+          "line": 2374,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "value": 1339
+        }
+      ]
+    },
+    {
+      "menuId": 5021,
+      "line": 5180,
+      "children": [
+        {
+          "line": 5187,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "value": 502111
+        },
+        {
+          "line": 5192,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "value": 502112
+        },
+        {
+          "line": 5199,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "value": 502113
+        },
+        {
+          "line": 5206,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "value": 502114
+        },
+        {
+          "line": 5213,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "value": 502115
+        }
+      ]
+    },
+    {
+      "menuId": 231,
+      "line": 2387,
+      "children": [
+        {
+          "line": 2393,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_handjob_assistant",
+          "unresolved": true
+        },
+        {
+          "line": 2398,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_footjob_assistant",
+          "unresolved": true
+        },
+        {
+          "line": 2403,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_rubbing_assistant",
+          "unresolved": true
+        },
+        {
+          "line": 2408,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_paizuri_assistant",
+          "unresolved": true
+        }
+      ]
+    },
+    {
+      "menuId": 232,
+      "line": 2419,
+      "children": [
+        {
+          "line": 2425,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_kissing_assistant",
+          "unresolved": true
+        },
+        {
+          "line": 2430,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_licking_assistant",
+          "unresolved": true
+        },
+        {
+          "line": 2435,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_blowjob_assistant",
+          "unresolved": true
+        },
+        {
+          "line": 2440,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_deepthroat_assistant",
+          "unresolved": true
+        },
+        {
+          "line": 2445,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_rimming_assistant",
+          "unresolved": true
+        }
+      ]
+    },
+    {
+      "menuId": 233,
+      "line": 2456,
+      "children": [
+        {
+          "line": 2462,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_vaginal_assistant",
+          "unresolved": true
+        },
+        {
+          "line": 2467,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_fisting_assistant",
+          "unresolved": true
+        },
+        {
+          "line": 2472,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_anal_assistant",
+          "unresolved": true
+        },
+        {
+          "line": 2477,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_analfisting_assistant",
+          "unresolved": true
+        }
+      ]
+    },
+    {
+      "menuId": 234,
+      "line": 2488,
+      "children": [
+        {
+          "line": 2495,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_threesome_assistant",
+          "unresolved": true
+        },
+        {
+          "line": 2498,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_threesome_assistant_noslave",
+          "unresolved": true
+        },
+        {
+          "line": 2506,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_bukkake_assistant",
+          "unresolved": true
+        },
+        {
+          "line": 2508,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_bukkake_assistant",
+          "unresolved": true
+        },
+        {
+          "line": 2515,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_double_assistant",
+          "unresolved": true
+        },
+        {
+          "line": 2517,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_double_assistant",
+          "unresolved": true
+        },
+        {
+          "line": 2524,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_triple_assistant",
+          "unresolved": true
+        },
+        {
+          "line": 2526,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_triple_assistant",
+          "unresolved": true
+        },
+        {
+          "line": 2533,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_gangbang_assistant",
+          "unresolved": true
+        },
+        {
+          "line": 2535,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_gangbang_assistant",
+          "unresolved": true
+        }
+      ]
+    },
+    {
+      "menuId": 237,
+      "line": 2646,
+      "children": [
+        {
+          "line": 2653,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_seduction_assistant",
+          "unresolved": true
+        },
+        {
+          "line": 2658,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_masturbation_assistant",
+          "unresolved": true
+        },
+        {
+          "line": 2663,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_dildo_assistant",
+          "unresolved": true
+        },
+        {
+          "line": 2668,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_worship_assistant",
+          "unresolved": true
+        },
+        {
+          "line": 2673,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_exhibitionism_assistant",
+          "unresolved": true
+        }
+      ]
+    },
+    {
+      "menuId": 236,
+      "line": 2602,
+      "children": [
+        {
+          "line": 2611,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_enema_assistant",
+          "unresolved": true
+        },
+        {
+          "line": 2616,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_masochism_assistant",
+          "unresolved": true
+        },
+        {
+          "line": 2621,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_selfpain_assistant",
+          "unresolved": true
+        },
+        {
+          "line": 2628,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_golden_assistant",
+          "unresolved": true
+        },
+        {
+          "line": 2635,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_scat_assistant",
+          "unresolved": true
+        }
+      ]
+    },
+    {
+      "menuId": 235,
+      "line": 2547,
+      "children": [
+        {
+          "line": 2556,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_dog_assistant",
+          "unresolved": true
+        },
+        {
+          "line": 2561,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_pig_assistant",
+          "unresolved": true
+        },
+        {
+          "line": 2566,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_horse_assistant",
+          "unresolved": true
+        },
+        {
+          "line": 2575,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_spider_assistant",
+          "unresolved": true
+        },
+        {
+          "line": 2584,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_polypus_assistant",
+          "unresolved": true
+        },
+        {
+          "line": 2591,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "expression": "menu_fiend_assistant",
+          "unresolved": true
+        }
+      ]
+    },
+    {
+      "menuId": 238,
+      "line": 2683,
+      "children": [
+        {
+          "line": 2691,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "value": 7035
+        },
+        {
+          "line": 2693,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "value": 7035
+        }
+      ]
+    },
+    {
+      "menuId": 239,
+      "line": 2706,
+      "children": [
+        {
+          "line": 2718,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "value": 7036
+        },
+        {
+          "line": 2719,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "value": 7037
+        },
+        {
+          "line": 2720,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "value": 7038
+        },
+        {
+          "line": 2721,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "value": 7039
+        },
+        {
+          "line": 2723,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "value": 7036
+        },
+        {
+          "line": 2724,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "value": 7037
+        },
+        {
+          "line": 2725,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "value": 7038
+        },
+        {
+          "line": 2726,
+          "targetLocation": "interaction",
+          "targetField": "interaction",
+          "value": 7039
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": 1211,
+      "line": 2660,
+      "endLine": 2683,
+      "interactionType": {
+        "value": "'master_teaches_slave'",
+        "line": 2664
+      },
+      "coachSkill": {
+        "value": "'master_butler'",
+        "line": 2667
+      },
+      "targetSkill": {
+        "value": "'service'",
+        "line": 2668
+      },
+      "targetAffinity": {
+        "value": "'service_affinity'",
+        "line": 2669
+      },
+      "calls": [
+        {
+          "target": "slave_stat",
+          "line": 2663,
+          "exists": true
+        },
+        {
+          "target": "display_pic",
+          "line": 2673,
+          "exists": true
+        }
+      ],
+      "templates": [
+        {
+          "name": "$service_lesson_description",
+          "indexExpression": "[slave['service']",
+          "line": 2674
+        }
+      ],
+      "cachedCalls": [
+        {
+          "variable": "$house_cleaning",
+          "line": 2676
+        }
+      ]
+    },
+    {
+      "id": 1212,
+      "line": 2752,
+      "endLine": 2777,
+      "interactionType": {
+        "value": "'master_teaches_slave'",
+        "line": 2756
+      },
+      "coachSkill": {
+        "value": "'master_butler'",
+        "line": 2759
+      },
+      "targetSkill": {
+        "value": "'cook'",
+        "line": 2760
+      },
+      "targetAffinity": {
+        "value": "'cook_affinity'",
+        "line": 2761
+      },
+      "calls": [
+        {
+          "target": "slave_stat",
+          "line": 2755,
+          "exists": true
+        },
+        {
+          "target": "display_pic",
+          "line": 2766,
+          "exists": true
+        },
+        {
+          "target": "$food_choice",
+          "line": 2768,
+          "exists": true
+        }
+      ],
+      "templates": [
+        {
+          "name": "$cook_lesson_description",
+          "indexExpression": "[slave_skill]",
+          "line": 2767
+        }
+      ],
+      "cachedCalls": []
+    },
+    {
+      "id": 1214,
+      "line": 2933,
+      "endLine": 2955,
+      "interactionType": {
+        "value": "'master_teaches_slave'",
+        "line": 2933
+      },
+      "coachSkill": {
+        "value": "'master_butler'",
+        "line": 2936
+      },
+      "targetSkill": {
+        "value": "'secretary'",
+        "line": 2937
+      },
+      "targetAffinity": {
+        "value": "'secretary_affinity'",
+        "line": 2938
+      },
+      "calls": [
+        {
+          "target": "display_pic",
+          "line": 2942,
+          "exists": true
+        },
+        {
+          "target": "jo9_traits_personality",
+          "line": 2947,
+          "exists": true
+        },
+        {
+          "target": "jo9_learning_xp",
+          "line": 2947,
+          "exists": true
+        }
+      ],
+      "templates": [
+        {
+          "name": "$secretary_lesson_description",
+          "indexExpression": "[slave['secretary']",
+          "line": 2943
+        }
+      ],
+      "cachedCalls": []
+    },
+    {
+      "id": 1231,
+      "line": 3387,
+      "endLine": 3410,
+      "interactionType": {
+        "value": "'master_teaches_slave'",
+        "line": 3387
+      },
+      "coachSkill": {
+        "value": "'master_artdirector'",
+        "line": 3390
+      },
+      "targetSkill": {
+        "value": "'expression'",
+        "line": 3391
+      },
+      "targetAffinity": {
+        "value": "'expression_affinity'",
+        "line": 3392
+      },
+      "calls": [
+        {
+          "target": "display_pic",
+          "line": 3396,
+          "exists": true
+        },
+        {
+          "target": "jo9_traits_personality",
+          "line": 3401,
+          "exists": true
+        },
+        {
+          "target": "jo9_learning_xp",
+          "line": 3401,
+          "exists": true
+        }
+      ],
+      "templates": [
+        {
+          "name": "$oratory_lesson_description",
+          "indexExpression": "[slave['expression']",
+          "line": 3397
+        }
+      ],
+      "cachedCalls": []
+    },
+    {
+      "id": 1213,
+      "line": 2845,
+      "endLine": 2868,
+      "interactionType": {
+        "value": "'master_teaches_slave'",
+        "line": 2845
+      },
+      "coachSkill": {
+        "value": "'master_medic'",
+        "line": 2848
+      },
+      "targetSkill": {
+        "value": "'nurse'",
+        "line": 2849
+      },
+      "targetAffinity": {
+        "value": "'nurse_affinity'",
+        "line": 2850
+      },
+      "calls": [
+        {
+          "target": "display_pic",
+          "line": 2854,
+          "exists": true
+        },
+        {
+          "target": "jo9_traits_personality",
+          "line": 2859,
+          "exists": true
+        },
+        {
+          "target": "jo9_learning_xp",
+          "line": 2859,
+          "exists": true
+        }
+      ],
+      "templates": [
+        {
+          "name": "$nurse_lesson_description",
+          "indexExpression": "[slave['nurse']",
+          "line": 2855
+        }
+      ],
+      "cachedCalls": []
+    },
+    {
+      "id": 1243,
+      "line": 3816,
+      "endLine": 3839,
+      "interactionType": {
+        "value": "'master_teaches_slave'",
+        "line": 3816
+      },
+      "coachSkill": {
+        "value": "'master_mage'",
+        "line": 3819
+      },
+      "targetSkill": {
+        "value": "'alchemy'",
+        "line": 3820
+      },
+      "targetAffinity": {
+        "value": "'enchanter_affinity'",
+        "line": 3821
+      },
+      "calls": [
+        {
+          "target": "display_pic",
+          "line": 3825,
+          "exists": true
+        },
+        {
+          "target": "jo9_traits_personality",
+          "line": 3830,
+          "exists": true
+        },
+        {
+          "target": "jo9_learning_xp",
+          "line": 3830,
+          "exists": true
+        }
+      ],
+      "templates": [
+        {
+          "name": "$alchemy_lesson_description",
+          "indexExpression": "[slave['alchemy']",
+          "line": 3826
+        }
+      ],
+      "cachedCalls": []
+    },
+    {
+      "id": 1244,
+      "line": 3904,
+      "endLine": 3927,
+      "interactionType": {
+        "value": "'master_teaches_slave'",
+        "line": 3904
+      },
+      "coachSkill": {
+        "value": "'master_mage'",
+        "line": 3907
+      },
+      "targetSkill": {
+        "value": "'enchanter'",
+        "line": 3908
+      },
+      "targetAffinity": {
+        "value": "'enchanter_affinity'",
+        "line": 3909
+      },
+      "calls": [
+        {
+          "target": "display_pic",
+          "line": 3913,
+          "exists": true
+        },
+        {
+          "target": "jo9_traits_personality",
+          "line": 3918,
+          "exists": true
+        },
+        {
+          "target": "jo9_learning_xp",
+          "line": 3918,
+          "exists": true
+        }
+      ],
+      "templates": [
+        {
+          "name": "$enchanting_lesson_description",
+          "indexExpression": "[slave['enchanter']",
+          "line": 3914
+        }
+      ],
+      "cachedCalls": []
+    },
+    {
+      "id": 1221,
+      "line": 3021,
+      "endLine": 3042,
+      "interactionType": {
+        "value": "'master_teaches_slave'",
+        "line": 3021
+      },
+      "coachSkill": {
+        "value": "'master_str'",
+        "line": 3024
+      },
+      "targetSkill": {
+        "value": "'stamina'",
+        "line": 3025
+      },
+      "targetAffinity": {
+        "value": "'sport_affinity'",
+        "line": 3027
+      },
+      "calls": [
+        {
+          "target": "display_pic",
+          "line": 3030,
+          "exists": true
+        }
+      ],
+      "templates": [
+        {
+          "name": "$gym_lesson_description",
+          "indexExpression": "[slave['stamina']",
+          "line": 3031
+        }
+      ],
+      "cachedCalls": []
+    },
+    {
+      "id": 1223,
+      "line": 3181,
+      "endLine": 3202,
+      "interactionType": {
+        "value": "'master_teaches_slave'",
+        "line": 3181
+      },
+      "coachSkill": {
+        "value": "'master_fighter'",
+        "line": 3184
+      },
+      "targetSkill": {
+        "value": "'gladiatrix'",
+        "line": 3185
+      },
+      "targetAffinity": {
+        "value": "'gladiatrix_affinity'",
+        "line": 3186
+      },
+      "calls": [
+        {
+          "target": "display_pic",
+          "line": 3190,
+          "exists": true
+        }
+      ],
+      "templates": [
+        {
+          "name": "$martial_lesson_description",
+          "indexExpression": "[slave['gladiatrix']",
+          "line": 3191
+        }
+      ],
+      "cachedCalls": [
+        {
+          "variable": "$replace",
+          "line": 3194
+        }
+      ]
+    },
+    {
+      "id": 1222,
+      "line": 3102,
+      "endLine": 3123,
+      "interactionType": {
+        "value": "'master_teaches_slave'",
+        "line": 3102
+      },
+      "coachSkill": {
+        "value": "'master_artdirector'",
+        "line": 3105
+      },
+      "targetSkill": {
+        "value": "'calisthenics'",
+        "line": 3106
+      },
+      "targetAffinity": {
+        "value": "'calisthenics_affinity'",
+        "line": 3107
+      },
+      "calls": [
+        {
+          "target": "display_pic",
+          "line": 3111,
+          "exists": true
+        }
+      ],
+      "templates": [
+        {
+          "name": "$dance_lesson_description",
+          "indexExpression": "[slave['calisthenics']",
+          "line": 3112
+        }
+      ],
+      "cachedCalls": []
+    },
+    {
+      "id": 1234,
+      "line": 3478,
+      "endLine": 3501,
+      "interactionType": {
+        "value": "'master_teaches_slave'",
+        "line": 3478
+      },
+      "coachSkill": {
+        "value": "'master_artdirector'",
+        "line": 3481
+      },
+      "targetSkill": {
+        "value": "'art'",
+        "line": 3482
+      },
+      "targetAffinity": {
+        "value": "'art_affinity'",
+        "line": 3483
+      },
+      "calls": [
+        {
+          "target": "display_pic",
+          "line": 3488,
+          "exists": true
+        },
+        {
+          "target": "jo9_traits_personality",
+          "line": 3493,
+          "exists": true
+        },
+        {
+          "target": "jo9_learning_xp",
+          "line": 3493,
+          "exists": true
+        }
+      ],
+      "templates": [
+        {
+          "name": "$art_lesson_description",
+          "indexExpression": "[slave_skill]",
+          "line": 3489
+        }
+      ],
+      "cachedCalls": []
+    },
+    {
+      "id": 1241,
+      "line": 3702,
+      "endLine": 3726,
+      "interactionType": {
+        "value": "'master_teaches_slave'",
+        "line": 3702
+      },
+      "coachSkill": {
+        "value": "'master_artdirector'",
+        "line": 3705
+      },
+      "targetSkill": {
+        "value": "'pet'",
+        "line": 3706
+      },
+      "targetAffinity": {
+        "value": "'pet_affinity'",
+        "line": 3707
+      },
+      "calls": [
+        {
+          "target": "display_pic",
+          "line": 3712,
+          "exists": true
+        }
+      ],
+      "templates": [
+        {
+          "name": "$catplay_lesson_description",
+          "indexExpression": "[slave_skill]",
+          "line": 3713
+        }
+      ],
+      "cachedCalls": []
+    },
+    {
+      "id": 1224,
+      "line": 3260,
+      "endLine": 3289,
+      "interactionType": {
+        "value": "'master_teaches_slave'",
+        "line": 3260
+      },
+      "coachSkill": {
+        "value": "'master_flagelation'",
+        "line": 3263
+      },
+      "targetSkill": {
+        "value": "'dressage'",
+        "line": 3264
+      },
+      "targetAffinity": {
+        "value": "'dressage_affinity'",
+        "line": 3265
+      },
+      "calls": [
+        {
+          "target": "display_pic",
+          "line": 3269,
+          "exists": true
+        }
+      ],
+      "templates": [
+        {
+          "name": "$dressage_lesson_description",
+          "indexExpression": "[slave['dressage']",
+          "line": 3271
+        },
+        {
+          "name": "$draft_lesson_description",
+          "indexExpression": "[slave['dressage']",
+          "line": 3273
+        }
+      ],
+      "cachedCalls": [
+        {
+          "variable": "$replace",
+          "line": 3279
+        }
+      ]
+    },
+    {
+      "id": 1226,
+      "line": 3586,
+      "endLine": 3621,
+      "interactionType": {
+        "value": "'special'",
+        "line": 3587
+      },
+      "coachSkill": {
+        "value": "'master_domination'",
+        "line": 3593
+      },
+      "targetSkill": null,
+      "targetAffinity": null,
+      "calls": [
+        {
+          "target": "display_pic",
+          "line": 3597,
+          "exists": true
+        },
+        {
+          "target": "slave_to_cow",
+          "line": 3612,
+          "exists": true
+        }
+      ],
+      "templates": [
+        {
+          "name": "$cowSK_lesson_description",
+          "indexExpression": "[slave_skill]",
+          "line": 3598
+        }
+      ],
+      "cachedCalls": [
+        {
+          "variable": "$interaction_cow_setup",
+          "line": 3593
+        }
+      ]
+    },
+    {
+      "id": 4111,
+      "line": 2684,
+      "endLine": 2707,
+      "interactionType": {
+        "value": "'assistant_teaches_slave'",
+        "line": 2690
+      },
+      "coachSkill": {
+        "value": "'assistant[\"service\"]'",
+        "line": 2693
+      },
+      "targetSkill": {
+        "value": "'service'",
+        "line": 2694
+      },
+      "targetAffinity": {
+        "value": "'service_affinity'",
+        "line": 2695
+      },
+      "calls": [
+        {
+          "target": "assistant_stat",
+          "line": 2689,
+          "exists": true
+        }
+      ],
+      "templates": [],
+      "cachedCalls": [
+        {
+          "variable": "$house_cleaning",
+          "line": 2700
+        }
+      ]
+    },
+    {
+      "id": 4112,
+      "line": 2778,
+      "endLine": 2800,
+      "interactionType": {
+        "value": "'assistant_teaches_slave'",
+        "line": 2782
+      },
+      "coachSkill": {
+        "value": "'assistant[\"cook\"]'",
+        "line": 2785
+      },
+      "targetSkill": {
+        "value": "'cook'",
+        "line": 2786
+      },
+      "targetAffinity": {
+        "value": "'cook_affinity'",
+        "line": 2787
+      },
+      "calls": [
+        {
+          "target": "assistant_stat",
+          "line": 2781,
+          "exists": true
+        },
+        {
+          "target": "$food_choice",
+          "line": 2792,
+          "exists": true
+        }
+      ],
+      "templates": [],
+      "cachedCalls": []
+    },
+    {
+      "id": 4114,
+      "line": 2956,
+      "endLine": 2975,
+      "interactionType": {
+        "value": "'assistant_teaches_slave'",
+        "line": 2956
+      },
+      "coachSkill": {
+        "value": "'assistant[\"secretary\"]'",
+        "line": 2959
+      },
+      "targetSkill": {
+        "value": "'secretary'",
+        "line": 2960
+      },
+      "targetAffinity": {
+        "value": "'secretary_affinity'",
+        "line": 2961
+      },
+      "calls": [
+        {
+          "target": "jo9_traits_personality",
+          "line": 2967,
+          "exists": true
+        },
+        {
+          "target": "jo9_learning_xp",
+          "line": 2967,
+          "exists": true
+        }
+      ],
+      "templates": [],
+      "cachedCalls": []
+    },
+    {
+      "id": 4131,
+      "line": 3411,
+      "endLine": 3431,
+      "interactionType": {
+        "value": "'assistant_teaches_slave'",
+        "line": 3411
+      },
+      "coachSkill": {
+        "value": "'assistant[\"expression\"]'",
+        "line": 3414
+      },
+      "targetSkill": {
+        "value": "'expression'",
+        "line": 3415
+      },
+      "targetAffinity": {
+        "value": "'expression_affinity'",
+        "line": 3416
+      },
+      "calls": [
+        {
+          "target": "jo9_traits_personality",
+          "line": 3422,
+          "exists": true
+        },
+        {
+          "target": "jo9_learning_xp",
+          "line": 3422,
+          "exists": true
+        }
+      ],
+      "templates": [],
+      "cachedCalls": []
+    },
+    {
+      "id": 4113,
+      "line": 2869,
+      "endLine": 2888,
+      "interactionType": {
+        "value": "'assistant_teaches_slave'",
+        "line": 2869
+      },
+      "coachSkill": {
+        "value": "'assistant[\"nurse\"]'",
+        "line": 2872
+      },
+      "targetSkill": {
+        "value": "'nurse'",
+        "line": 2873
+      },
+      "targetAffinity": {
+        "value": "'nurse_affinity'",
+        "line": 2874
+      },
+      "calls": [
+        {
+          "target": "jo9_traits_personality",
+          "line": 2880,
+          "exists": true
+        },
+        {
+          "target": "jo9_learning_xp",
+          "line": 2880,
+          "exists": true
+        }
+      ],
+      "templates": [],
+      "cachedCalls": []
+    },
+    {
+      "id": 4142,
+      "line": 3840,
+      "endLine": 3859,
+      "interactionType": {
+        "value": "'assistant_teaches_slave'",
+        "line": 3840
+      },
+      "coachSkill": {
+        "value": "'assistant[\"alchemy\"]'",
+        "line": 3843
+      },
+      "targetSkill": {
+        "value": "'alchemy'",
+        "line": 3844
+      },
+      "targetAffinity": {
+        "value": "'enchanter_affinity'",
+        "line": 3845
+      },
+      "calls": [
+        {
+          "target": "jo9_traits_personality",
+          "line": 3851,
+          "exists": true
+        },
+        {
+          "target": "jo9_learning_xp",
+          "line": 3851,
+          "exists": true
+        }
+      ],
+      "templates": [],
+      "cachedCalls": []
+    },
+    {
+      "id": 41421,
+      "line": 3928,
+      "endLine": 3947,
+      "interactionType": {
+        "value": "'assistant_teaches_slave'",
+        "line": 3928
+      },
+      "coachSkill": {
+        "value": "'assistant[\"enchanter\"]'",
+        "line": 3931
+      },
+      "targetSkill": {
+        "value": "'enchanter'",
+        "line": 3932
+      },
+      "targetAffinity": {
+        "value": "'enchanter_affinity'",
+        "line": 3933
+      },
+      "calls": [
+        {
+          "target": "jo9_traits_personality",
+          "line": 3939,
+          "exists": true
+        },
+        {
+          "target": "jo9_learning_xp",
+          "line": 3939,
+          "exists": true
+        }
+      ],
+      "templates": [],
+      "cachedCalls": []
+    },
+    {
+      "id": 4121,
+      "line": 3043,
+      "endLine": 3060,
+      "interactionType": {
+        "value": "'assistant_teaches_slave'",
+        "line": 3043
+      },
+      "coachSkill": null,
+      "targetSkill": {
+        "value": "'stamina'",
+        "line": 3046
+      },
+      "targetAffinity": {
+        "value": "'sport_affinity'",
+        "line": 3047
+      },
+      "calls": [],
+      "templates": [],
+      "cachedCalls": []
+    },
+    {
+      "id": 4123,
+      "line": 3203,
+      "endLine": 3220,
+      "interactionType": {
+        "value": "'assistant_teaches_slave'",
+        "line": 3203
+      },
+      "coachSkill": {
+        "value": "'assistant[\"gladiatrix\"]'",
+        "line": 3206
+      },
+      "targetSkill": {
+        "value": "'gladiatrix'",
+        "line": 3207
+      },
+      "targetAffinity": {
+        "value": "'gladiatrix_affinity'",
+        "line": 3208
+      },
+      "calls": [],
+      "templates": [],
+      "cachedCalls": [
+        {
+          "variable": "$replace",
+          "line": 3213
+        },
+        {
+          "variable": "$replace",
+          "line": 3214
+        }
+      ]
+    },
+    {
+      "id": 4122,
+      "line": 3124,
+      "endLine": 3141,
+      "interactionType": {
+        "value": "'assistant_teaches_slave'",
+        "line": 3124
+      },
+      "coachSkill": {
+        "value": "'assistant[\"calisthenics\"]'",
+        "line": 3127
+      },
+      "targetSkill": {
+        "value": "'calisthenics'",
+        "line": 3128
+      },
+      "targetAffinity": {
+        "value": "'calisthenics_affinity'",
+        "line": 3129
+      },
+      "calls": [],
+      "templates": [],
+      "cachedCalls": []
+    },
+    {
+      "id": 4132,
+      "line": 4134,
+      "endLine": 4153,
+      "interactionType": {
+        "value": "'assistant_teaches_slave'",
+        "line": 4134
+      },
+      "coachSkill": {
+        "value": "'assistant[\"music\"]'",
+        "line": 4137
+      },
+      "targetSkill": {
+        "value": "'music'",
+        "line": 4138
+      },
+      "targetAffinity": {
+        "value": "'music_affinity'",
+        "line": 4139
+      },
+      "calls": [
+        {
+          "target": "jo9_traits_personality",
+          "line": 4145,
+          "exists": true
+        },
+        {
+          "target": "jo9_learning_xp",
+          "line": 4145,
+          "exists": true
+        }
+      ],
+      "templates": [],
+      "cachedCalls": []
+    },
+    {
+      "id": 4133,
+      "line": 3502,
+      "endLine": 3521,
+      "interactionType": {
+        "value": "'assistant_teaches_slave'",
+        "line": 3502
+      },
+      "coachSkill": {
+        "value": "'assistant[\"art\"]'",
+        "line": 3505
+      },
+      "targetSkill": {
+        "value": "'art'",
+        "line": 3506
+      },
+      "targetAffinity": {
+        "value": "'art_affinity'",
+        "line": 3507
+      },
+      "calls": [
+        {
+          "target": "jo9_traits_personality",
+          "line": 3513,
+          "exists": true
+        },
+        {
+          "target": "jo9_learning_xp",
+          "line": 3513,
+          "exists": true
+        }
+      ],
+      "templates": [],
+      "cachedCalls": []
+    },
+    {
+      "id": 4141,
+      "line": 3751,
+      "endLine": 3770,
+      "interactionType": {
+        "value": "'assistant_teaches_slave'",
+        "line": 3751
+      },
+      "coachSkill": {
+        "value": "'assistant[\"pet\"]'",
+        "line": 3754
+      },
+      "targetSkill": {
+        "value": "'pet'",
+        "line": 3755
+      },
+      "targetAffinity": {
+        "value": "'pet_affinity'",
+        "line": 3756
+      },
+      "calls": [],
+      "templates": [],
+      "cachedCalls": []
+    },
+    {
+      "id": 4143,
+      "line": 3316,
+      "endLine": 3337,
+      "interactionType": {
+        "value": "'assistant_teaches_slave'",
+        "line": 3316
+      },
+      "coachSkill": {
+        "value": "'assistant[\"dressage\"]'",
+        "line": 3319
+      },
+      "targetSkill": {
+        "value": "'dressage'",
+        "line": 3320
+      },
+      "targetAffinity": {
+        "value": "'dressage_affinity'",
+        "line": 3321
+      },
+      "calls": [],
+      "templates": [],
+      "cachedCalls": [
+        {
+          "variable": "$replace",
+          "line": 3328
+        }
+      ]
+    },
+    {
+      "id": 4134,
+      "line": 3622,
+      "endLine": 3646,
+      "interactionType": {
+        "value": "'special'",
+        "line": 3623
+      },
+      "coachSkill": {
+        "value": "'assistant[\"pet\"]'",
+        "line": 3629
+      },
+      "targetSkill": null,
+      "targetAffinity": null,
+      "calls": [],
+      "templates": [],
+      "cachedCalls": [
+        {
+          "variable": "$interaction_cow_setup",
+          "line": 3629
+        }
+      ]
+    },
+    {
+      "id": 5011,
+      "line": 11539,
+      "endLine": 11565,
+      "interactionType": {
+        "value": "'master_teaches_assistant'",
+        "line": 11543
+      },
+      "coachSkill": {
+        "value": "'master_butler'",
+        "line": 11546
+      },
+      "targetSkill": {
+        "value": "'service'",
+        "line": 11547
+      },
+      "targetAffinity": {
+        "value": "'service_affinity'",
+        "line": 11548
+      },
+      "calls": [
+        {
+          "target": "assistant_stat",
+          "line": 11542,
+          "exists": true
+        },
+        {
+          "target": "display_pic",
+          "line": 11552,
+          "exists": true
+        }
+      ],
+      "templates": [
+        {
+          "name": "$service_lesson_description",
+          "indexExpression": "[assistant['service']",
+          "line": 11553
+        }
+      ],
+      "cachedCalls": [
+        {
+          "variable": "$house_cleaning",
+          "line": 11555
+        }
+      ]
+    },
+    {
+      "id": 5012,
+      "line": 11566,
+      "endLine": 11595,
+      "interactionType": {
+        "value": "'master_teaches_assistant'",
+        "line": 11570
+      },
+      "coachSkill": {
+        "value": "'master_butler'",
+        "line": 11573
+      },
+      "targetSkill": {
+        "value": "'cook'",
+        "line": 11574
+      },
+      "targetAffinity": {
+        "value": "'cook_affinity'",
+        "line": 11575
+      },
+      "calls": [
+        {
+          "target": "assistant_stat",
+          "line": 11569,
+          "exists": true
+        },
+        {
+          "target": "display_pic",
+          "line": 11580,
+          "exists": true
+        },
+        {
+          "target": "$food_choice",
+          "line": 11582,
+          "exists": true
+        }
+      ],
+      "templates": [
+        {
+          "name": "$cook_lesson_description",
+          "indexExpression": "[assistant_skill]",
+          "line": 11581
+        }
+      ],
+      "cachedCalls": []
+    },
+    {
+      "id": 5014,
+      "line": 11623,
+      "endLine": 11648,
+      "interactionType": {
+        "value": "'master_teaches_assistant'",
+        "line": 11623
+      },
+      "coachSkill": {
+        "value": "'master_butler'",
+        "line": 11626
+      },
+      "targetSkill": {
+        "value": "'secretary'",
+        "line": 11627
+      },
+      "targetAffinity": {
+        "value": "'secretary_affinity'",
+        "line": 11628
+      },
+      "calls": [
+        {
+          "target": "display_pic",
+          "line": 11632,
+          "exists": true
+        },
+        {
+          "target": "jo9_traits_personality",
+          "line": 11637,
+          "exists": true
+        },
+        {
+          "target": "jo9_learning_xp",
+          "line": 11637,
+          "exists": true
+        }
+      ],
+      "templates": [
+        {
+          "name": "$secretary_lesson_description",
+          "indexExpression": "[assistant['secretary']",
+          "line": 11633
+        }
+      ],
+      "cachedCalls": []
+    },
+    {
+      "id": 5015,
+      "line": 11758,
+      "endLine": 11784,
+      "interactionType": {
+        "value": "'master_teaches_assistant'",
+        "line": 11758
+      },
+      "coachSkill": {
+        "value": "'master_artdirector'",
+        "line": 11761
+      },
+      "targetSkill": {
+        "value": "'expression'",
+        "line": 11762
+      },
+      "targetAffinity": {
+        "value": "'expression_affinity'",
+        "line": 11763
+      },
+      "calls": [
+        {
+          "target": "display_pic",
+          "line": 11767,
+          "exists": true
+        },
+        {
+          "target": "jo9_traits_personality",
+          "line": 11772,
+          "exists": true
+        },
+        {
+          "target": "jo9_learning_xp",
+          "line": 11772,
+          "exists": true
+        }
+      ],
+      "templates": [
+        {
+          "name": "$oratory_lesson_description",
+          "indexExpression": "[assistant['expression']",
+          "line": 11768
+        }
+      ],
+      "cachedCalls": []
+    },
+    {
+      "id": 5013,
+      "line": 11596,
+      "endLine": 11622,
+      "interactionType": {
+        "value": "'master_teaches_assistant'",
+        "line": 11596
+      },
+      "coachSkill": {
+        "value": "'master_medic'",
+        "line": 11599
+      },
+      "targetSkill": {
+        "value": "'nurse'",
+        "line": 11600
+      },
+      "targetAffinity": {
+        "value": "'nurse_affinity'",
+        "line": 11601
+      },
+      "calls": [
+        {
+          "target": "display_pic",
+          "line": 11605,
+          "exists": true
+        },
+        {
+          "target": "jo9_traits_personality",
+          "line": 11610,
+          "exists": true
+        },
+        {
+          "target": "jo9_learning_xp",
+          "line": 11610,
+          "exists": true
+        }
+      ],
+      "templates": [
+        {
+          "name": "$nurse_lesson_description",
+          "indexExpression": "[assistant['nurse']",
+          "line": 11606
+        }
+      ],
+      "cachedCalls": []
+    },
+    {
+      "id": 5016,
+      "line": 11924,
+      "endLine": 11955,
+      "interactionType": {
+        "value": "'master_teaches_assistant'",
+        "line": 11928
+      },
+      "coachSkill": {
+        "value": "'master_mage'",
+        "line": 11931
+      },
+      "targetSkill": {
+        "value": "'alchemy'",
+        "line": 11932
+      },
+      "targetAffinity": {
+        "value": "'enchanter_affinity'",
+        "line": 11933
+      },
+      "calls": [
+        {
+          "target": "assistant_stat",
+          "line": 11927,
+          "exists": true
+        },
+        {
+          "target": "display_pic",
+          "line": 11937,
+          "exists": true
+        },
+        {
+          "target": "jo9_traits_personality",
+          "line": 11942,
+          "exists": true
+        },
+        {
+          "target": "jo9_learning_xp",
+          "line": 11942,
+          "exists": true
+        }
+      ],
+      "templates": [
+        {
+          "name": "$alchemy_lesson_description",
+          "indexExpression": "[assistant['alchemy']",
+          "line": 11938
+        }
+      ],
+      "cachedCalls": []
+    },
+    {
+      "id": 5017,
+      "line": 11956,
+      "endLine": 11985,
+      "interactionType": {
+        "value": "'master_teaches_assistant'",
+        "line": 11960
+      },
+      "coachSkill": {
+        "value": "'master_mage'",
+        "line": 11963
+      },
+      "targetSkill": {
+        "value": "'enchanter'",
+        "line": 11964
+      },
+      "targetAffinity": {
+        "value": "'enchanter_affinity'",
+        "line": 11965
+      },
+      "calls": [
+        {
+          "target": "assistant_stat",
+          "line": 11959,
+          "exists": true
+        },
+        {
+          "target": "display_pic",
+          "line": 11969,
+          "exists": true
+        },
+        {
+          "target": "jo9_traits_personality",
+          "line": 11974,
+          "exists": true
+        },
+        {
+          "target": "jo9_learning_xp",
+          "line": 11974,
+          "exists": true
+        }
+      ],
+      "templates": [
+        {
+          "name": "$enchanting_lesson_description",
+          "indexExpression": "[assistant['enchanter']",
+          "line": 11970
+        }
+      ],
+      "cachedCalls": []
+    },
+    {
+      "id": 5018,
+      "line": 11649,
+      "endLine": 11673,
+      "interactionType": {
+        "value": "'master_teaches_assistant'",
+        "line": 11649
+      },
+      "coachSkill": {
+        "value": "'master_str'",
+        "line": 11652
+      },
+      "targetSkill": {
+        "value": "'stamina'",
+        "line": 11653
+      },
+      "targetAffinity": {
+        "value": "'sport_affinity'",
+        "line": 11655
+      },
+      "calls": [
+        {
+          "target": "display_pic",
+          "line": 11658,
+          "exists": true
+        }
+      ],
+      "templates": [
+        {
+          "name": "$gym_lesson_description",
+          "indexExpression": "[assistant['stamina']",
+          "line": 11659
+        }
+      ],
+      "cachedCalls": []
+    },
+    {
+      "id": 5019,
+      "line": 11699,
+      "endLine": 11724,
+      "interactionType": {
+        "value": "'master_teaches_assistant'",
+        "line": 11699
+      },
+      "coachSkill": {
+        "value": "'master_fighter'",
+        "line": 11702
+      },
+      "targetSkill": {
+        "value": "'gladiatrix'",
+        "line": 11703
+      },
+      "targetAffinity": {
+        "value": "'gladiatrix_affinity'",
+        "line": 11704
+      },
+      "calls": [
+        {
+          "target": "display_pic",
+          "line": 11708,
+          "exists": true
+        }
+      ],
+      "templates": [
+        {
+          "name": "$martial_lesson_description",
+          "indexExpression": "[assistant['gladiatrix']",
+          "line": 11709
+        }
+      ],
+      "cachedCalls": [
+        {
+          "variable": "$replace",
+          "line": 11712
+        }
+      ]
+    },
+    {
+      "id": 5020,
+      "line": 11674,
+      "endLine": 11698,
+      "interactionType": {
+        "value": "'master_teaches_assistant'",
+        "line": 11674
+      },
+      "coachSkill": {
+        "value": "'master_artdirector'",
+        "line": 11677
+      },
+      "targetSkill": {
+        "value": "'calisthenics'",
+        "line": 11678
+      },
+      "targetAffinity": {
+        "value": "'calisthenics_affinity'",
+        "line": 11679
+      },
+      "calls": [
+        {
+          "target": "display_pic",
+          "line": 11683,
+          "exists": true
+        }
+      ],
+      "templates": [
+        {
+          "name": "$dance_lesson_description",
+          "indexExpression": "[assistant['calisthenics']",
+          "line": 11684
+        }
+      ],
+      "cachedCalls": []
+    },
+    {
+      "id": 5022,
+      "line": 11785,
+      "endLine": 11832,
+      "interactionType": {
+        "value": "'master_teaches_assistant'",
+        "line": 11785
+      },
+      "coachSkill": {
+        "value": "'master_artdirector'",
+        "line": 11788
+      },
+      "targetSkill": {
+        "value": "'art'",
+        "line": 11789
+      },
+      "targetAffinity": {
+        "value": "'art_affinity'",
+        "line": 11790
+      },
+      "calls": [
+        {
+          "target": "display_pic",
+          "line": 11795,
+          "exists": true
+        },
+        {
+          "target": "jo9_traits_personality",
+          "line": 11800,
+          "exists": true
+        },
+        {
+          "target": "jo9_learning_xp",
+          "line": 11800,
+          "exists": true
+        }
+      ],
+      "templates": [
+        {
+          "name": "$art_lesson_description",
+          "indexExpression": "[assistant_skill]",
+          "line": 11796
+        }
+      ],
+      "cachedCalls": []
+    },
+    {
+      "id": 5023,
+      "line": 11872,
+      "endLine": 11896,
+      "interactionType": {
+        "value": "'master_teaches_assistant'",
+        "line": 11872
+      },
+      "coachSkill": {
+        "value": "'master_artdirector'",
+        "line": 11875
+      },
+      "targetSkill": {
+        "value": "'pet'",
+        "line": 11876
+      },
+      "targetAffinity": {
+        "value": "'pet_affinity'",
+        "line": 11877
+      },
+      "calls": [
+        {
+          "target": "display_pic",
+          "line": 11882,
+          "exists": true
+        }
+      ],
+      "templates": [
+        {
+          "name": "$catplay_lesson_description",
+          "indexExpression": "[assistant_skill]",
+          "line": 11883
+        }
+      ],
+      "cachedCalls": []
+    },
+    {
+      "id": 5025,
+      "line": 11725,
+      "endLine": 11757,
+      "interactionType": {
+        "value": "'master_teaches_assistant'",
+        "line": 11725
+      },
+      "coachSkill": {
+        "value": "'master_flagelation'",
+        "line": 11728
+      },
+      "targetSkill": {
+        "value": "'dressage'",
+        "line": 11729
+      },
+      "targetAffinity": {
+        "value": "'dressage_affinity'",
+        "line": 11730
+      },
+      "calls": [
+        {
+          "target": "display_pic",
+          "line": 11734,
+          "exists": true
+        }
+      ],
+      "templates": [
+        {
+          "name": "$dressage_lesson_description",
+          "indexExpression": "[assistant['dressage']",
+          "line": 11736
+        },
+        {
+          "name": "$draft_lesson_description",
+          "indexExpression": "[assistant['dressage']",
+          "line": 11738
+        }
+      ],
+      "cachedCalls": [
+        {
+          "variable": "$replace",
+          "line": 11744
+        }
+      ]
+    },
+    {
+      "id": 5026,
+      "line": 11833,
+      "endLine": 11871,
+      "interactionType": {
+        "value": "'special'",
+        "line": 11834
+      },
+      "coachSkill": {
+        "value": "'master_domination'",
+        "line": 11840
+      },
+      "targetSkill": null,
+      "targetAffinity": null,
+      "calls": [
+        {
+          "target": "display_pic",
+          "line": 11844,
+          "exists": true
+        },
+        {
+          "target": "assistant_to_cow",
+          "line": 11859,
+          "exists": false
+        }
+      ],
+      "templates": [
+        {
+          "name": "$cowSK_lesson_description",
+          "indexExpression": "[assistant_skill]",
+          "line": 11845
+        }
+      ],
+      "cachedCalls": [
+        {
+          "variable": "$interaction_cow_setup",
+          "line": 11840
+        }
+      ]
+    },
+    {
+      "id": 1335,
+      "line": 5772,
+      "endLine": 5772,
+      "interactionType": null,
+      "coachSkill": null,
+      "targetSkill": null,
+      "targetAffinity": null,
+      "calls": [],
+      "templates": [],
+      "cachedCalls": [
+        {
+          "variable": "$replace",
+          "line": 5772
+        }
+      ]
+    },
+    {
+      "id": 1336,
+      "line": 5924,
+      "endLine": 5924,
+      "interactionType": null,
+      "coachSkill": null,
+      "targetSkill": null,
+      "targetAffinity": null,
+      "calls": [],
+      "templates": [],
+      "cachedCalls": [
+        {
+          "variable": "$replace",
+          "line": 5924
+        }
+      ]
+    },
+    {
+      "id": 1337,
+      "line": 5927,
+      "endLine": 5927,
+      "interactionType": null,
+      "coachSkill": null,
+      "targetSkill": null,
+      "targetAffinity": null,
+      "calls": [],
+      "templates": [],
+      "cachedCalls": [
+        {
+          "variable": "$replace",
+          "line": 5927
+        }
+      ]
+    },
+    {
+      "id": 1338,
+      "line": 5930,
+      "endLine": 5930,
+      "interactionType": null,
+      "coachSkill": null,
+      "targetSkill": null,
+      "targetAffinity": null,
+      "calls": [],
+      "templates": [],
+      "cachedCalls": [
+        {
+          "variable": "$replace",
+          "line": 5930
+        }
+      ]
+    },
+    {
+      "id": 1339,
+      "line": 5933,
+      "endLine": 5933,
+      "interactionType": null,
+      "coachSkill": null,
+      "targetSkill": null,
+      "targetAffinity": null,
+      "calls": [],
+      "templates": [],
+      "cachedCalls": [
+        {
+          "variable": "$replace",
+          "line": 5933
+        }
+      ]
+    },
+    {
+      "id": 502111,
+      "line": 11993,
+      "endLine": 12015,
+      "interactionType": {
+        "value": "'master_teaches_assistant'",
+        "line": 11993
+      },
+      "coachSkill": {
+        "value": "'master_artdirector'",
+        "line": 11996
+      },
+      "targetSkill": {
+        "value": "'music'",
+        "line": 11997
+      },
+      "targetAffinity": {
+        "value": "'music_affinity'",
+        "line": 11998
+      },
+      "calls": [
+        {
+          "target": "display_pic",
+          "line": 12003,
+          "exists": true
+        },
+        {
+          "target": "jo9_traits_personality",
+          "line": 12007,
+          "exists": true
+        },
+        {
+          "target": "jo9_learning_xp",
+          "line": 12007,
+          "exists": true
+        }
+      ],
+      "templates": [
+        {
+          "name": "$music_lesson_description",
+          "indexExpression": "[assistant_skill]",
+          "line": 12004
+        }
+      ],
+      "cachedCalls": []
+    },
+    {
+      "id": 502112,
+      "line": 12016,
+      "endLine": 12058,
+      "interactionType": {
+        "value": "'master_teaches_assistant'",
+        "line": 12016
+      },
+      "coachSkill": {
+        "value": "'master_artdirector'",
+        "line": 12019
+      },
+      "targetSkill": {
+        "value": "'music'",
+        "line": 12020
+      },
+      "targetAffinity": {
+        "value": "'music_affinity'",
+        "line": 12021
+      },
+      "calls": [
+        {
+          "target": "display_pic",
+          "line": 12026,
+          "exists": true
+        },
+        {
+          "target": "jo9_traits_personality",
+          "line": 12050,
+          "exists": true
+        },
+        {
+          "target": "jo9_learning_xp",
+          "line": 12050,
+          "exists": true
+        }
+      ],
+      "templates": [
+        {
+          "name": "$music_lesson_description",
+          "indexExpression": "[assistant_skill]",
+          "line": 12027
+        }
+      ],
+      "cachedCalls": []
+    },
+    {
+      "id": 502113,
+      "line": 12059,
+      "endLine": 12081,
+      "interactionType": {
+        "value": "'master_teaches_assistant'",
+        "line": 12059
+      },
+      "coachSkill": {
+        "value": "'master_artdirector'",
+        "line": 12062
+      },
+      "targetSkill": {
+        "value": "'music'",
+        "line": 12063
+      },
+      "targetAffinity": {
+        "value": "'music_affinity'",
+        "line": 12064
+      },
+      "calls": [
+        {
+          "target": "display_pic",
+          "line": 12069,
+          "exists": true
+        },
+        {
+          "target": "jo9_traits_personality",
+          "line": 12073,
+          "exists": true
+        },
+        {
+          "target": "jo9_learning_xp",
+          "line": 12073,
+          "exists": true
+        }
+      ],
+      "templates": [
+        {
+          "name": "$music_lesson_description",
+          "indexExpression": "[assistant_skill]",
+          "line": 12070
+        }
+      ],
+      "cachedCalls": []
+    },
+    {
+      "id": 502114,
+      "line": 12082,
+      "endLine": 12105,
+      "interactionType": {
+        "value": "'master_teaches_assistant'",
+        "line": 12082
+      },
+      "coachSkill": {
+        "value": "'master_artdirector'",
+        "line": 12085
+      },
+      "targetSkill": {
+        "value": "'music'",
+        "line": 12086
+      },
+      "targetAffinity": {
+        "value": "'music_affinity'",
+        "line": 12087
+      },
+      "calls": [
+        {
+          "target": "display_pic",
+          "line": 12092,
+          "exists": true
+        },
+        {
+          "target": "jo9_traits_personality",
+          "line": 12096,
+          "exists": true
+        },
+        {
+          "target": "jo9_learning_xp",
+          "line": 12096,
+          "exists": true
+        }
+      ],
+      "templates": [
+        {
+          "name": "$music_lesson_description",
+          "indexExpression": "[assistant_skill]",
+          "line": 12093
+        }
+      ],
+      "cachedCalls": []
+    },
+    {
+      "id": 502115,
+      "line": 12106,
+      "endLine": 12130,
+      "interactionType": {
+        "value": "'master_teaches_assistant'",
+        "line": 12106
+      },
+      "coachSkill": {
+        "value": "'master_artdirector'",
+        "line": 12109
+      },
+      "targetSkill": {
+        "value": "'music'",
+        "line": 12110
+      },
+      "targetAffinity": {
+        "value": "'music_affinity'",
+        "line": 12111
+      },
+      "calls": [
+        {
+          "target": "display_pic",
+          "line": 12116,
+          "exists": true
+        },
+        {
+          "target": "jo9_traits_personality",
+          "line": 12120,
+          "exists": true
+        },
+        {
+          "target": "jo9_learning_xp",
+          "line": 12120,
+          "exists": true
+        }
+      ],
+      "templates": [
+        {
+          "name": "$music_lesson_description",
+          "indexExpression": "[assistant_skill]",
+          "line": 12117
+        }
+      ],
+      "cachedCalls": []
+    },
+    {
+      "id": 7035,
+      "line": 5773,
+      "endLine": 5923,
+      "interactionType": null,
+      "coachSkill": {
+        "value": "'master_artdirector'",
+        "line": 5788
+      },
+      "targetSkill": null,
+      "targetAffinity": {
+        "value": "'homosexualism'",
+        "line": 5791
+      },
+      "calls": [
+        {
+          "target": "display_pic",
+          "line": 5797,
+          "exists": true
+        },
+        {
+          "target": "display_pic",
+          "line": 5834,
+          "exists": true
+        },
+        {
+          "target": "display_pic",
+          "line": 5871,
+          "exists": true
+        },
+        {
+          "target": "display_pic",
+          "line": 5911,
+          "exists": true
+        }
+      ],
+      "templates": [
+        {
+          "name": "$sub_lesbiansex1_lesson_description",
+          "indexExpression": "[dynslave['sub_lesbiansex1']",
+          "line": 5799
+        },
+        {
+          "name": "$sub_lesbiansex2_lesson_description",
+          "indexExpression": "[dynslave['sub_lesbiansex2']",
+          "line": 5836
+        },
+        {
+          "name": "$sub_lesbiansex3_lesson_description",
+          "indexExpression": "[dynslave['sub_lesbiansex3']",
+          "line": 5873
+        },
+        {
+          "name": "$sub_lesbiansex4_lesson_description",
+          "indexExpression": "[dynslave['sub_lesbiansex4']",
+          "line": 5913
+        }
+      ],
+      "cachedCalls": [
+        {
+          "variable": "$replace",
+          "line": 5773
+        },
+        {
+          "variable": "$replace",
+          "line": 5808
+        },
+        {
+          "variable": "$replace",
+          "line": 5809
+        },
+        {
+          "variable": "$replace",
+          "line": 5845
+        },
+        {
+          "variable": "$replace",
+          "line": 5846
+        },
+        {
+          "variable": "$replace",
+          "line": 5882
+        },
+        {
+          "variable": "$replace",
+          "line": 5883
+        }
+      ]
+    },
+    {
+      "id": 7036,
+      "line": 5925,
+      "endLine": 5926,
+      "interactionType": null,
+      "coachSkill": null,
+      "targetSkill": null,
+      "targetAffinity": null,
+      "calls": [],
+      "templates": [],
+      "cachedCalls": [
+        {
+          "variable": "$replace",
+          "line": 5925
+        }
+      ]
+    },
+    {
+      "id": 7037,
+      "line": 5928,
+      "endLine": 5929,
+      "interactionType": null,
+      "coachSkill": null,
+      "targetSkill": null,
+      "targetAffinity": null,
+      "calls": [],
+      "templates": [],
+      "cachedCalls": [
+        {
+          "variable": "$replace",
+          "line": 5928
+        }
+      ]
+    },
+    {
+      "id": 7038,
+      "line": 5931,
+      "endLine": 5932,
+      "interactionType": null,
+      "coachSkill": null,
+      "targetSkill": null,
+      "targetAffinity": null,
+      "calls": [],
+      "templates": [],
+      "cachedCalls": [
+        {
+          "variable": "$replace",
+          "line": 5931
+        }
+      ]
+    },
+    {
+      "id": 7039,
+      "line": 5934,
+      "endLine": 5939,
+      "interactionType": null,
+      "coachSkill": null,
+      "targetSkill": null,
+      "targetAffinity": null,
+      "calls": [],
+      "templates": [],
+      "cachedCalls": [
+        {
+          "variable": "$replace",
+          "line": 5934
+        }
+      ]
+    }
+  ],
+  "portraitLinks": [
+    {
+      "location": "main_screen",
+      "line": 270,
+      "element": "assistant_short_ava",
+      "handlers": [
+        "assistant_stat_screen = 0 & gt 'assistant_stat'"
+      ]
+    },
+    {
+      "location": "main_screen",
+      "line": 304,
+      "element": "assistant_short_ava",
+      "handlers": []
+    },
+    {
+      "location": "main_screen",
+      "line": 307,
+      "element": "assistant_short_ava",
+      "handlers": [
+        "assistant_stat_screen = 0 & gt 'assistant_stat'"
+      ]
+    },
+    {
+      "location": "main_screen",
+      "line": 310,
+      "element": "assistant_short_ava",
+      "handlers": [
+        "assistant_stat_screen = 0 & gt 'assistant_stat'"
+      ]
+    },
+    {
+      "location": "main_screen",
+      "line": 373,
+      "element": "slave_short_ava",
+      "handlers": [
+        "slave_stat_screen = 0 & gt 'slave_stat'"
+      ]
+    },
+    {
+      "location": "main_screen",
+      "line": 434,
+      "element": "slave_short_ava",
+      "handlers": [
+        "menu_form = 3000 & gt 'menu_form'"
+      ]
+    },
+    {
+      "location": "main_screen",
+      "line": 437,
+      "element": "slave_short_ava",
+      "handlers": [
+        "slave_stat_screen = 0 & gt 'slave_stat'"
+      ]
+    },
+    {
+      "location": "main_screen",
+      "line": 440,
+      "element": "slave_short_ava",
+      "handlers": [
+        "slave_stat_screen = 0 & gt 'slave_stat'"
+      ]
+    },
+    {
+      "location": "city_screen",
+      "line": 90,
+      "element": "assistant_short_ava",
+      "handlers": [
+        "assistant_stat_screen = 0 & gt 'assistant_stat'"
+      ]
+    },
+    {
+      "location": "city_screen",
+      "line": 124,
+      "element": "assistant_short_ava",
+      "handlers": []
+    },
+    {
+      "location": "city_screen",
+      "line": 127,
+      "element": "assistant_short_ava",
+      "handlers": [
+        "assistant_stat_screen = 0 & gt 'assistant_stat'"
+      ]
+    },
+    {
+      "location": "city_screen",
+      "line": 130,
+      "element": "assistant_short_ava",
+      "handlers": [
+        "assistant_stat_screen = 0 & gt 'assistant_stat'"
+      ]
+    },
+    {
+      "location": "city_screen",
+      "line": 162,
+      "element": "slave_short_ava",
+      "handlers": [
+        "slave_stat_screen = 0 & gt 'slave_stat'"
+      ]
+    },
+    {
+      "location": "city_screen",
+      "line": 211,
+      "element": "slave_short_ava",
+      "handlers": []
+    },
+    {
+      "location": "city_screen",
+      "line": 214,
+      "element": "slave_short_ava",
+      "handlers": [
+        "slave_stat_screen = 0 & gt 'slave_stat'"
+      ]
+    },
+    {
+      "location": "city_screen",
+      "line": 217,
+      "element": "slave_short_ava",
+      "handlers": [
+        "slave_stat_screen = 0 & gt 'slave_stat'"
+      ]
+    },
+    {
+      "location": "slave_private_room1",
+      "line": 115,
+      "element": "slave_short_ava",
+      "handlers": [
+        "gs 'snk_room_bridge', 'portrait', 1"
+      ]
+    },
+    {
+      "location": "slave_private_room1",
+      "line": 169,
+      "element": "slave_short_ava",
+      "handlers": []
+    },
+    {
+      "location": "slave_private_room1",
+      "line": 171,
+      "element": "slave_short_ava",
+      "handlers": []
+    },
+    {
+      "location": "slave_private_room1",
+      "line": 173,
+      "element": "slave_short_ava",
+      "handlers": []
+    },
+    {
+      "location": "slave_private_room2",
+      "line": 115,
+      "element": "slave_short_ava",
+      "handlers": [
+        "gs 'snk_room_bridge', 'portrait', 2"
+      ]
+    },
+    {
+      "location": "slave_private_room2",
+      "line": 169,
+      "element": "slave_short_ava",
+      "handlers": []
+    },
+    {
+      "location": "slave_private_room2",
+      "line": 171,
+      "element": "slave_short_ava",
+      "handlers": []
+    },
+    {
+      "location": "slave_private_room2",
+      "line": 173,
+      "element": "slave_short_ava",
+      "handlers": []
+    },
+    {
+      "location": "slave_private_room3",
+      "line": 115,
+      "element": "slave_short_ava",
+      "handlers": [
+        "gs 'snk_room_bridge', 'portrait', 3"
+      ]
+    },
+    {
+      "location": "slave_private_room3",
+      "line": 169,
+      "element": "slave_short_ava",
+      "handlers": []
+    },
+    {
+      "location": "slave_private_room3",
+      "line": 171,
+      "element": "slave_short_ava",
+      "handlers": []
+    },
+    {
+      "location": "slave_private_room3",
+      "line": 173,
+      "element": "slave_short_ava",
+      "handlers": []
+    },
+    {
+      "location": "slave_private_room4",
+      "line": 115,
+      "element": "slave_short_ava",
+      "handlers": [
+        "gs 'snk_room_bridge', 'portrait', 4"
+      ]
+    },
+    {
+      "location": "slave_private_room4",
+      "line": 169,
+      "element": "slave_short_ava",
+      "handlers": []
+    },
+    {
+      "location": "slave_private_room4",
+      "line": 171,
+      "element": "slave_short_ava",
+      "handlers": []
+    },
+    {
+      "location": "slave_private_room4",
+      "line": 173,
+      "element": "slave_short_ava",
+      "handlers": []
+    },
+    {
+      "location": "snk_room_menu_screen",
+      "line": 81,
+      "element": "slave_short_ava",
+      "handlers": [
+        "gs 'snk_room_bridge', 'portrait', snk_room_target"
+      ]
+    },
+    {
+      "location": "snk_room_menu_screen",
+      "line": 135,
+      "element": "slave_short_ava",
+      "handlers": []
+    },
+    {
+      "location": "snk_room_menu_screen",
+      "line": 137,
+      "element": "slave_short_ava",
+      "handlers": []
+    },
+    {
+      "location": "snk_room_menu_screen",
+      "line": 139,
+      "element": "slave_short_ava",
+      "handlers": []
+    }
+  ],
+  "cacheDefinitions": [
+    {
+      "location": "interaction",
+      "line": 1542,
+      "key": "interaction_serve_clean_house",
+      "codeVariable": "$interaction_serve_clean_house",
+      "definitionLine": 1545
+    },
+    {
+      "location": "interaction",
+      "line": 1571,
+      "key": "interaction_serve_prepare_meal",
+      "codeVariable": "$interaction_serve_prepare_meal",
+      "definitionLine": 1574
+    },
+    {
+      "location": "interaction",
+      "line": 1694,
+      "key": "interaction_serve_wash_master",
+      "codeVariable": "$interaction_serve_wash_master",
+      "definitionLine": 1697
+    },
+    {
+      "location": "interaction",
+      "line": 1735,
+      "key": "interaction_serve_massage",
+      "codeVariable": "$interaction_serve_massage",
+      "definitionLine": 1738
+    },
+    {
+      "location": "interaction",
+      "line": 1775,
+      "key": "interaction_entertain_concert",
+      "codeVariable": "$interaction_entertain_concert",
+      "definitionLine": 1778
+    },
+    {
+      "location": "interaction",
+      "line": 1821,
+      "key": "interaction_entertain_acrobatics",
+      "codeVariable": "$interaction_entertain_acrobatics",
+      "definitionLine": 1824
+    },
+    {
+      "location": "interaction",
+      "line": 1869,
+      "key": "interaction_entertain_striptease",
+      "codeVariable": "$interaction_entertain_striptease",
+      "definitionLine": 1872
+    },
+    {
+      "location": "interaction",
+      "line": 1925,
+      "key": "interaction_entertain_erotic_show",
+      "codeVariable": "$interaction_entertain_erotic_show",
+      "definitionLine": 1928
+    },
+    {
+      "location": "interaction",
+      "line": 1980,
+      "key": "interaction_entertain_lesbian_show",
+      "codeVariable": "$interaction_entertain_lesbian_show",
+      "definitionLine": 1983
+    },
+    {
+      "location": "interaction",
+      "line": 2081,
+      "key": "interaction_relaxed_vaginal",
+      "codeVariable": "$interaction_relaxed_vaginal",
+      "definitionLine": 2084
+    },
+    {
+      "location": "interaction",
+      "line": 2131,
+      "key": "interaction_relaxed_anal",
+      "codeVariable": "$interaction_relaxed_anal",
+      "definitionLine": 2134
+    },
+    {
+      "location": "interaction",
+      "line": 2184,
+      "key": "interaction_relaxed_oral",
+      "codeVariable": "$interaction_relaxed_oral",
+      "definitionLine": 2187
+    },
+    {
+      "location": "interaction",
+      "line": 2234,
+      "key": "interaction_active_sex",
+      "codeVariable": "$interaction_active_sex",
+      "definitionLine": 2237
+    },
+    {
+      "location": "interaction",
+      "line": 3565,
+      "key": "interaction_cow_setup",
+      "codeVariable": "$interaction_cow_setup",
+      "definitionLine": 3568
+    },
+    {
+      "location": "interaction",
+      "line": 4196,
+      "key": "interaction_lesson_threesome",
+      "codeVariable": "$interaction_lesson_threesome",
+      "definitionLine": 4199
+    },
+    {
+      "location": "interaction",
+      "line": 4286,
+      "key": "interaction_lesson_threesome_noassist",
+      "codeVariable": "$interaction_lesson_threesome_noassist",
+      "definitionLine": 4289
+    },
+    {
+      "location": "interaction",
+      "line": 4355,
+      "key": "interaction_lesson_hj",
+      "codeVariable": "$interaction_lesson_hj",
+      "definitionLine": 4358
+    },
+    {
+      "location": "interaction",
+      "line": 4387,
+      "key": "interaction_lesson_fj",
+      "codeVariable": "$interaction_lesson_fj",
+      "definitionLine": 4390
+    },
+    {
+      "location": "interaction",
+      "line": 4419,
+      "key": "interaction_lesson_hug",
+      "codeVariable": "$interaction_lesson_hug",
+      "definitionLine": 4422
+    },
+    {
+      "location": "interaction",
+      "line": 4453,
+      "key": "interaction_lesson_paizuri",
+      "codeVariable": "$interaction_lesson_paizuri",
+      "definitionLine": 4456
+    },
+    {
+      "location": "interaction",
+      "line": 4488,
+      "key": "interaction_lesson_kiss",
+      "codeVariable": "$interaction_lesson_kiss",
+      "definitionLine": 4491
+    },
+    {
+      "location": "interaction",
+      "line": 4522,
+      "key": "interaction_lesson_tongue",
+      "codeVariable": "$interaction_lesson_tongue",
+      "definitionLine": 4525
+    },
+    {
+      "location": "interaction",
+      "line": 4556,
+      "key": "interaction_lesson_bj",
+      "codeVariable": "$interaction_lesson_bj",
+      "definitionLine": 4559
+    },
+    {
+      "location": "interaction",
+      "line": 4593,
+      "key": "interaction_lesson_dt",
+      "codeVariable": "$interaction_lesson_dt",
+      "definitionLine": 4596
+    },
+    {
+      "location": "interaction",
+      "line": 4631,
+      "key": "interaction_lesson_asslik",
+      "codeVariable": "$interaction_lesson_asslik",
+      "definitionLine": 4634
+    },
+    {
+      "location": "interaction",
+      "line": 4667,
+      "key": "interaction_lesson_vaginal",
+      "codeVariable": "$interaction_lesson_vaginal",
+      "definitionLine": 4670
+    },
+    {
+      "location": "interaction",
+      "line": 4705,
+      "key": "interaction_lesson_anal",
+      "codeVariable": "$interaction_lesson_anal",
+      "definitionLine": 4708
+    },
+    {
+      "location": "interaction",
+      "line": 4747,
+      "key": "interaction_lesson_fisting",
+      "codeVariable": "$interaction_lesson_fisting",
+      "definitionLine": 4750
+    },
+    {
+      "location": "interaction",
+      "line": 4780,
+      "key": "interaction_lesson_anal_stretch",
+      "codeVariable": "$interaction_lesson_anal_stretch",
+      "definitionLine": 4783
+    },
+    {
+      "location": "interaction",
+      "line": 4814,
+      "key": "interaction_lesson_dp",
+      "codeVariable": "$interaction_lesson_dp",
+      "definitionLine": 4817
+    },
+    {
+      "location": "interaction",
+      "line": 4862,
+      "key": "interaction_lesson_tp",
+      "codeVariable": "$interaction_lesson_tp",
+      "definitionLine": 4865
+    },
+    {
+      "location": "interaction",
+      "line": 4904,
+      "key": "interaction_lesson_gangbang",
+      "codeVariable": "$interaction_lesson_gangbang",
+      "definitionLine": 4907
+    },
+    {
+      "location": "interaction",
+      "line": 4972,
+      "key": "interaction_lesson_bukkake",
+      "codeVariable": "$interaction_lesson_bukkake",
+      "definitionLine": 4975
+    },
+    {
+      "location": "interaction",
+      "line": 5010,
+      "key": "interaction_lesson_zoosex",
+      "codeVariable": "$interaction_lesson_zoosex",
+      "definitionLine": 5013
+    },
+    {
+      "location": "interaction",
+      "line": 5059,
+      "key": "interaction_lesson_pigsex",
+      "codeVariable": "$interaction_lesson_pigsex",
+      "definitionLine": 5062
+    },
+    {
+      "location": "interaction",
+      "line": 5099,
+      "key": "interaction_lesson_horsesex",
+      "codeVariable": "$interaction_lesson_horsesex",
+      "definitionLine": 5102
+    },
+    {
+      "location": "interaction",
+      "line": 5142,
+      "key": "interaction_lesson_tentacles",
+      "codeVariable": "$interaction_lesson_tentacles",
+      "definitionLine": 5145
+    },
+    {
+      "location": "interaction",
+      "line": 5207,
+      "key": "interaction_lesson_arachnidSpider",
+      "codeVariable": "$interaction_lesson_arachnidSpider",
+      "definitionLine": 5210
+    },
+    {
+      "location": "interaction",
+      "line": 5259,
+      "key": "interaction_lesson_polypusvermin",
+      "codeVariable": "$interaction_lesson_polypusvermin",
+      "definitionLine": 5262
+    },
+    {
+      "location": "interaction",
+      "line": 5304,
+      "key": "interaction_lesson_masochism",
+      "codeVariable": "$interaction_lesson_masochism",
+      "definitionLine": 5307
+    },
+    {
+      "location": "interaction",
+      "line": 5406,
+      "key": "interaction_lesson_selfpain",
+      "codeVariable": "$interaction_lesson_selfpain",
+      "definitionLine": 5409
+    },
+    {
+      "location": "interaction",
+      "line": 5441,
+      "key": "interaction_lesson_piss",
+      "codeVariable": "$interaction_lesson_piss",
+      "definitionLine": 5444
+    },
+    {
+      "location": "interaction",
+      "line": 5474,
+      "key": "interaction_lesson_scat",
+      "codeVariable": "$interaction_lesson_scat",
+      "definitionLine": 5477
+    },
+    {
+      "location": "interaction",
+      "line": 5508,
+      "key": "interaction_lesson_enema",
+      "codeVariable": "$interaction_lesson_enema",
+      "definitionLine": 5511
+    },
+    {
+      "location": "interaction",
+      "line": 5545,
+      "key": "interaction_lesson_seduction",
+      "codeVariable": "$interaction_lesson_seduction",
+      "definitionLine": 5548
+    },
+    {
+      "location": "interaction",
+      "line": 5590,
+      "key": "interaction_lesson_masturbation",
+      "codeVariable": "$interaction_lesson_masturbation",
+      "definitionLine": 5593
+    },
+    {
+      "location": "interaction",
+      "line": 5624,
+      "key": "interaction_lesson_dildo",
+      "codeVariable": "$interaction_lesson_dildo",
+      "definitionLine": 5627
+    },
+    {
+      "location": "interaction",
+      "line": 5676,
+      "key": "interaction_lesson_exhibitionism",
+      "codeVariable": "$interaction_lesson_exhibitionism",
+      "definitionLine": 5679
+    },
+    {
+      "location": "interaction",
+      "line": 5710,
+      "key": "interaction_lesson_humiliation",
+      "codeVariable": "$interaction_lesson_humiliation",
+      "definitionLine": 5713
+    },
+    {
+      "location": "interaction",
+      "line": 11812,
+      "key": "interaction_cow_setup",
+      "codeVariable": "$interaction_cow_setup",
+      "definitionLine": 11815
+    },
+    {
+      "location": "interaction_result",
+      "line": 606,
+      "key": "interaction_result_get_drug",
+      "codeVariable": "$interaction_result_get_drug",
+      "definitionLine": 609
+    },
+    {
+      "location": "interaction_result",
+      "line": 631,
+      "key": "interaction_result_make_slave_do",
+      "codeVariable": "$interaction_result_make_slave_do",
+      "definitionLine": 634
+    },
+    {
+      "location": "interaction_result",
+      "line": 833,
+      "key": "interaction_result_self_sex_lesson",
+      "codeVariable": "$interaction_result_self_sex_lesson",
+      "definitionLine": 836
+    },
+    {
+      "location": "interaction_result",
+      "line": 1410,
+      "key": "interaction_result_rape",
+      "codeVariable": "$interaction_result_rape",
+      "definitionLine": 1413
+    },
+    {
+      "location": "interaction_result",
+      "line": 1520,
+      "key": "interaction_result_milking_slave",
+      "codeVariable": "$interaction_result_milking_slave",
+      "definitionLine": 1523
+    }
+  ],
+  "functionDefinitions": [
+    {
+      "variable": "$dyn_skill_rise",
+      "location": "#dynamic",
+      "line": 1120
+    },
+    {
+      "variable": "$dyn_stamina_rise",
+      "location": "#dynamic",
+      "line": 1489
+    },
+    {
+      "variable": "$dyn_advance_sex_skills_nolesson",
+      "location": "#dynamic",
+      "line": 926
+    },
+    {
+      "variable": "$dyn_erotic_stimulation",
+      "location": "#dynamic",
+      "line": 796
+    },
+    {
+      "variable": "$reset_interaction_variables",
+      "location": "interaction",
+      "line": 81
+    }
+  ],
+  "textDictionaries": [
+    {
+      "variable": "$martial_lesson_description",
+      "location": "#static_txt",
+      "entries": [
+        {
+          "index": 0,
+          "line": 610
+        },
+        {
+          "index": 1,
+          "line": 612
+        },
+        {
+          "index": 2,
+          "line": 613
+        },
+        {
+          "index": 3,
+          "line": 614
+        },
+        {
+          "index": 4,
+          "line": 615
+        },
+        {
+          "index": 5,
+          "line": 616
+        }
+      ]
+    },
+    {
+      "variable": "$enchanting_lesson_description",
+      "location": "#static_txt",
+      "entries": [
+        {
+          "index": 0,
+          "line": 688
+        },
+        {
+          "index": 1,
+          "line": 690
+        },
+        {
+          "index": 2,
+          "line": 691
+        },
+        {
+          "index": 3,
+          "line": 692
+        },
+        {
+          "index": 4,
+          "line": 693
+        },
+        {
+          "index": 5,
+          "line": 694
+        }
+      ]
+    }
+  ],
+  "sharedPath": [
+    {
+      "location": "interaction",
+      "line": 20,
+      "call": "gs '#var_base'"
+    },
+    {
+      "location": "interaction",
+      "line": 21,
+      "call": "gs '#txt'"
+    },
+    {
+      "location": "interaction",
+      "line": 22,
+      "call": "gs '#txt_2'"
+    },
+    {
+      "location": "interaction",
+      "line": 12938,
+      "call": "gt 'interaction_result'"
+    },
+    {
+      "location": "interaction_result",
+      "line": 693,
+      "type": "master_teaches_slave"
+    },
+    {
+      "location": "interaction_result",
+      "line": 764,
+      "type": "master_teaches_assistant"
+    },
+    {
+      "location": "interaction_result",
+      "line": 1886,
+      "call": "gt 'interaction_screen'"
+    }
+  ],
+  "watchpoints": [
+    {
+      "location": "interaction_result",
+      "line": 796,
+      "issue": "Confirmed independently by parent on native QSP 5.7: joined dynamic $special_part! JO9 MOD START gives code119 Unknown action and special body does not execute."
+    },
+    {
+      "location": "#static_txt",
+      "line": 612,
+      "issue": "Martial description dictionary defines indices 0..5 only; current actor skill and loaded dictionary state should be inspected."
+    },
+    {
+      "location": "#static_txt",
+      "line": 690,
+      "issue": "Enchanting description dictionary defines indices 0..5 only; current actor skill and loaded dictionary state should be inspected."
+    }
+  ],
+  "runtimeTestsPerformed": false,
+  "sourceWrites": false,
+  "additionalFindings": [
+    {
+      "location": "interaction_result",
+      "line": 398,
+      "kind": "joinedCodeStart",
+      "code": "assistant_rate['ego'] += 1! JO9 MOD START",
+      "confirmation": "Executable code joined to marker; parent handles game repair."
+    },
+    {
+      "location": "interaction_result",
+      "line": 659,
+      "kind": "markerInsideExistingComment",
+      "code": "dynamic $special_part &! note: may modify diligence! JO9 MOD START",
+      "confirmation": "START is inside an already valid &! comment; not classified as the same engine failure."
+    },
+    {
+      "location": "interaction",
+      "line": 11859,
+      "kind": "missingDeferredCallTarget",
+      "target": "assistant_to_cow",
+      "actionId": 5026,
+      "confirmation": "Name absent from all 261 locations; this delayed branch was not executed in this read-only audit."
+    }
+  ],
+  "unresolvedMenuChildCount": 83,
+  "nativeEvidenceSource": "Parent independent execution, not performed by this audit"
+}

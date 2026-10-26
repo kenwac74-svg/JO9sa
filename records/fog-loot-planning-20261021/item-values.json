@@ -1,0 +1,1587 @@
+{
+  "schema": "jo9-fog-loot-item-value-planning-v1",
+  "status": "proposal only; no game/source/save changes",
+  "source": {
+    "path": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+    "sha256": "a2e0265881bebd8a72b3fcbb214ddaf831106cfe50e9c96da8e0b6e7d692707a",
+    "lineConvention": "one-based decoded location body lines"
+  },
+  "facts": {
+    "armoryCatalog": {
+      "weapons": 23,
+      "armor": 6,
+      "total": 29
+    },
+    "pricing": {
+      "armory": "shop_wpn sets wpn_price. interaction_city:96-101 selects buy_item_personal. interaction_result_city:672/681 compares and deducts max(item_price[$item_id],wpn_price) in sparks.",
+      "ordinaryItems": "#item_base:83 assigns item_price=args[2]; interaction_result_city:606/615 deducts item_price and :616 increases inventory. No multiplier occurs in these verified purchase paths.",
+      "personalClothes": "Personal clothes use buy_item_personal, e.g. interaction_city:467-472 and :516-521; max formula applies, with item_price from #item_base.",
+      "qualification": "Prices below are current code purchase amounts, not resale prices or a multiplier unit. For armory items exact charged formula remains max(...) to preserve any loaded-state item_price. Standard #item_base definitions inspected have no matching29 armory IDs.",
+      "standardArmoryDefinitionOverlap": []
+    },
+    "performanceLimits": [
+      "Damage formulas depend on master_str/base_str or flagelation; a single final damage number cannot rank every build.",
+      "Armor modifiers are recorded as signed code values, not percentages.",
+      "Elven armor effect is overwritten by an empty block at #боевые_предметы:1163, so preceding +3 evasion block is not counted as active.",
+      "This is a bounded static inspection, not an exhaustive consumer simulation or runtime test."
+    ]
+  },
+  "armory": [
+    {
+      "id": "стилет",
+      "name": "스틸레토",
+      "kind": "weapon",
+      "price": {
+        "menu": 10,
+        "formula": "max(item_price[$item_id], wpn_price)",
+        "wpn_price": 10,
+        "noMultiplierFound": true,
+        "evidence": [
+          {
+            "location": "shop_wpn",
+            "line": 60
+          },
+          {
+            "location": "interaction_result_city",
+            "line": 681
+          }
+        ]
+      },
+      "stats": {
+        "baseDamage": {
+          "line": 129,
+          "code": "базовый_вред['стилет'] = 4"
+        },
+        "damageType": {
+          "line": 130,
+          "code": "$тип_вреда['стилет'] = 'колющий'"
+        },
+        "weaponClass": {
+          "line": 131,
+          "code": "$класс_оружия['стилет'] = 'легкое_оружие'"
+        },
+        "secondaryAvailable": {
+          "line": 151,
+          "code": "вторичная_атака['стилет'] = 1"
+        }
+      },
+      "statsLocation": "#боевые_предметы",
+      "proposedQuality": 1
+    },
+    {
+      "id": "кастет",
+      "name": "황동 장갑",
+      "kind": "weapon",
+      "price": {
+        "menu": 10,
+        "formula": "max(item_price[$item_id], wpn_price)",
+        "wpn_price": 10,
+        "noMultiplierFound": true,
+        "evidence": [
+          {
+            "location": "shop_wpn",
+            "line": 61
+          },
+          {
+            "location": "interaction_result_city",
+            "line": 681
+          }
+        ]
+      },
+      "stats": {
+        "baseDamage": {
+          "line": 51,
+          "code": "базовый_вред['кастет'] = base_str + 1"
+        },
+        "damageType": {
+          "line": 52,
+          "code": "$тип_вреда['кастет'] = 'дробящий'"
+        },
+        "weaponClass": {
+          "line": 53,
+          "code": "$класс_оружия['кастет'] = 'легкое_оружие'"
+        },
+        "secondaryAvailable": {
+          "line": 73,
+          "code": "вторичная_атака['кастет'] = 1"
+        }
+      },
+      "statsLocation": "#боевые_предметы",
+      "proposedQuality": 1
+    },
+    {
+      "id": "глушилка",
+      "name": "목검",
+      "kind": "weapon",
+      "price": {
+        "menu": 10,
+        "formula": "max(item_price[$item_id], wpn_price)",
+        "wpn_price": 10,
+        "noMultiplierFound": true,
+        "evidence": [
+          {
+            "location": "shop_wpn",
+            "line": 62
+          },
+          {
+            "location": "interaction_result_city",
+            "line": 681
+          }
+        ]
+      },
+      "stats": {
+        "baseDamage": {
+          "line": 237,
+          "code": "базовый_вред['глушилка'] = base_str + 1"
+        },
+        "damageType": {
+          "line": 238,
+          "code": "$тип_вреда['глушилка'] = 'дробящий'"
+        },
+        "weaponClass": {
+          "line": 239,
+          "code": "$класс_оружия['глушилка'] = 'легкое_оружие'"
+        },
+        "secondaryAvailable": {
+          "line": 253,
+          "code": "вторичная_атака['глушилка'] = 1"
+        }
+      },
+      "statsLocation": "#боевые_предметы",
+      "proposedQuality": 1
+    },
+    {
+      "id": "нагайка",
+      "name": "갈래 채찍",
+      "kind": "weapon",
+      "price": {
+        "menu": 10,
+        "formula": "max(item_price[$item_id], wpn_price)",
+        "wpn_price": 10,
+        "noMultiplierFound": true,
+        "evidence": [
+          {
+            "location": "shop_wpn",
+            "line": 63
+          },
+          {
+            "location": "interaction_result_city",
+            "line": 681
+          }
+        ]
+      },
+      "stats": {
+        "baseDamage": {
+          "line": 165,
+          "code": "базовый_вред['нагайка'] = 1 + base_flagelation"
+        },
+        "damageType": {
+          "line": 166,
+          "code": "$тип_вреда['нагайка'] = 'психический'"
+        },
+        "weaponClass": {
+          "line": 167,
+          "code": "$класс_оружия['нагайка'] = 'легкое_оружие'"
+        },
+        "secondaryAvailable": {
+          "line": 181,
+          "code": "вторичная_атака['нагайка'] = 1"
+        }
+      },
+      "statsLocation": "#боевые_предметы",
+      "proposedQuality": 1
+    },
+    {
+      "id": "кинжал",
+      "name": "단검",
+      "kind": "weapon",
+      "price": {
+        "menu": 15,
+        "formula": "max(item_price[$item_id], wpn_price)",
+        "wpn_price": 15,
+        "noMultiplierFound": true,
+        "evidence": [
+          {
+            "location": "shop_wpn",
+            "line": 64
+          },
+          {
+            "location": "interaction_result_city",
+            "line": 681
+          }
+        ]
+      },
+      "stats": {
+        "baseDamage": {
+          "line": 89,
+          "code": "базовый_вред['кинжал'] = base_str + 2"
+        },
+        "damageType": {
+          "line": 90,
+          "code": "$тип_вреда['кинжал'] = 'колющий'"
+        },
+        "weaponClass": {
+          "line": 91,
+          "code": "$класс_оружия['кинжал'] = 'легкое_оружие'"
+        },
+        "secondaryAvailable": {
+          "line": 107,
+          "code": "вторичная_атака['кинжал'] = 1"
+        }
+      },
+      "statsLocation": "#боевые_предметы",
+      "proposedQuality": 2
+    },
+    {
+      "id": "тесак",
+      "name": "도축칼",
+      "kind": "weapon",
+      "price": {
+        "menu": 20,
+        "formula": "max(item_price[$item_id], wpn_price)",
+        "wpn_price": 20,
+        "noMultiplierFound": true,
+        "evidence": [
+          {
+            "location": "shop_wpn",
+            "line": 65
+          },
+          {
+            "location": "interaction_result_city",
+            "line": 681
+          }
+        ]
+      },
+      "stats": {
+        "baseDamage": {
+          "line": 201,
+          "code": "базовый_вред['тесак'] = max(1, (min(base_str,4)*2) - 1) &! 1 to 7"
+        },
+        "damageType": {
+          "line": 202,
+          "code": "$тип_вреда['тесак'] = 'рубящий'"
+        },
+        "weaponClass": {
+          "line": 203,
+          "code": "$класс_оружия['тесак'] = 'легкое_оружие'"
+        },
+        "secondaryAvailable": {
+          "line": 223,
+          "code": "вторичная_атака['тесак'] = 1"
+        }
+      },
+      "statsLocation": "#боевые_предметы",
+      "proposedQuality": 2
+    },
+    {
+      "id": "демократизатор",
+      "name": "경봉",
+      "kind": "weapon",
+      "price": {
+        "menu": 25,
+        "formula": "max(item_price[$item_id], wpn_price)",
+        "wpn_price": 25,
+        "noMultiplierFound": true,
+        "evidence": [
+          {
+            "location": "shop_wpn",
+            "line": 76
+          },
+          {
+            "location": "interaction_result_city",
+            "line": 681
+          }
+        ]
+      },
+      "stats": {
+        "baseDamage": {
+          "line": 674,
+          "code": "базовый_вред['демократизатор'] = max(2, (min(base_str,4)*2) - 1) &! 2 to 7"
+        },
+        "damageType": {
+          "line": 675,
+          "code": "$тип_вреда['демократизатор'] = 'дробящий'"
+        },
+        "weaponClass": {
+          "line": 676,
+          "code": "$класс_оружия['демократизатор'] = 'легкое_оружие'"
+        },
+        "secondaryAvailable": {
+          "line": 694,
+          "code": "вторичная_атака['демократизатор'] = 1"
+        }
+      },
+      "statsLocation": "#боевые_предметы",
+      "proposedQuality": 2
+    },
+    {
+      "id": "рапира",
+      "name": "레이피어",
+      "kind": "weapon",
+      "price": {
+        "menu": 50,
+        "formula": "max(item_price[$item_id], wpn_price)",
+        "wpn_price": 50,
+        "noMultiplierFound": true,
+        "evidence": [
+          {
+            "location": "shop_wpn",
+            "line": 77
+          },
+          {
+            "location": "interaction_result_city",
+            "line": 681
+          }
+        ]
+      },
+      "stats": {
+        "baseDamage": {
+          "line": 422,
+          "code": "базовый_вред['рапира'] = 6"
+        },
+        "damageType": {
+          "line": 423,
+          "code": "$тип_вреда['рапира'] = 'колющий'"
+        },
+        "weaponClass": {
+          "line": 424,
+          "code": "$класс_оружия['рапира'] = 'легкое_оружие'"
+        },
+        "secondaryAvailable": {
+          "line": 442,
+          "code": "вторичная_атака['рапира'] = 1"
+        }
+      },
+      "statsLocation": "#боевые_предметы",
+      "proposedQuality": 2
+    },
+    {
+      "id": "кончар",
+      "name": "콘체쉬",
+      "kind": "weapon",
+      "price": {
+        "menu": 50,
+        "formula": "max(item_price[$item_id], wpn_price)",
+        "wpn_price": 50,
+        "noMultiplierFound": true,
+        "evidence": [
+          {
+            "location": "shop_wpn",
+            "line": 78
+          },
+          {
+            "location": "interaction_result_city",
+            "line": 681
+          }
+        ]
+      },
+      "stats": {
+        "baseDamage": {
+          "line": 506,
+          "code": "базовый_вред['кончар'] = base_str + 3"
+        },
+        "damageType": {
+          "line": 507,
+          "code": "$тип_вреда['кончар'] = 'колющий'"
+        },
+        "weaponClass": {
+          "line": 508,
+          "code": "$класс_оружия['кончар'] = 'легкое_оружие'"
+        },
+        "secondaryAvailable": {
+          "line": 524,
+          "code": "вторичная_атака['кончар'] = 1"
+        }
+      },
+      "statsLocation": "#боевые_предметы",
+      "proposedQuality": 2
+    },
+    {
+      "id": "кнут",
+      "name": "채찍",
+      "kind": "weapon",
+      "price": {
+        "menu": 50,
+        "formula": "max(item_price[$item_id], wpn_price)",
+        "wpn_price": 50,
+        "noMultiplierFound": true,
+        "evidence": [
+          {
+            "location": "shop_wpn",
+            "line": 79
+          },
+          {
+            "location": "interaction_result_city",
+            "line": 681
+          }
+        ]
+      },
+      "stats": {
+        "baseDamage": {
+          "line": 310,
+          "code": "базовый_вред['кнут'] = 3 + base_flagelation"
+        },
+        "damageType": {
+          "line": 311,
+          "code": "$тип_вреда['кнут'] = 'психический'"
+        },
+        "weaponClass": {
+          "line": 312,
+          "code": "$класс_оружия['кнут'] = 'легкое_оружие'"
+        },
+        "secondaryAvailable": {
+          "line": 326,
+          "code": "вторичная_атака['кнут'] = 1"
+        }
+      },
+      "statsLocation": "#боевые_предметы",
+      "proposedQuality": 2
+    },
+    {
+      "id": "шпага",
+      "name": "에페",
+      "kind": "weapon",
+      "price": {
+        "menu": 50,
+        "formula": "max(item_price[$item_id], wpn_price)",
+        "wpn_price": 50,
+        "noMultiplierFound": true,
+        "evidence": [
+          {
+            "location": "shop_wpn",
+            "line": 80
+          },
+          {
+            "location": "interaction_result_city",
+            "line": 681
+          }
+        ]
+      },
+      "stats": {
+        "baseDamage": {
+          "line": 384,
+          "code": "базовый_вред['шпага'] = base_str + 3"
+        },
+        "damageType": {
+          "line": 385,
+          "code": "$тип_вреда['шпага'] = 'колющий'"
+        },
+        "weaponClass": {
+          "line": 386,
+          "code": "$класс_оружия['шпага'] = 'легкое_оружие'"
+        },
+        "secondaryAvailable": {
+          "line": 400,
+          "code": "вторичная_атака['шпага'] = 1"
+        }
+      },
+      "statsLocation": "#боевые_предметы",
+      "proposedQuality": 2
+    },
+    {
+      "id": "гладиус",
+      "name": "글라디우스",
+      "kind": "weapon",
+      "price": {
+        "menu": 50,
+        "formula": "max(item_price[$item_id], wpn_price)",
+        "wpn_price": 50,
+        "noMultiplierFound": true,
+        "evidence": [
+          {
+            "location": "shop_wpn",
+            "line": 87
+          },
+          {
+            "location": "interaction_result_city",
+            "line": 681
+          }
+        ]
+      },
+      "stats": {
+        "baseDamage": {
+          "line": 346,
+          "code": "базовый_вред['гладиус'] = base_str + 3"
+        },
+        "damageType": {
+          "line": 347,
+          "code": "$тип_вреда['гладиус'] = 'рубящий'"
+        },
+        "weaponClass": {
+          "line": 348,
+          "code": "$класс_оружия['гладиус'] = 'легкое_оружие'"
+        },
+        "secondaryAvailable": {
+          "line": 362,
+          "code": "вторичная_атака['гладиус'] = 1"
+        }
+      },
+      "statsLocation": "#боевые_предметы",
+      "proposedQuality": 2
+    },
+    {
+      "id": "мачете",
+      "name": "마체테",
+      "kind": "weapon",
+      "price": {
+        "menu": 50,
+        "formula": "max(item_price[$item_id], wpn_price)",
+        "wpn_price": 50,
+        "noMultiplierFound": true,
+        "evidence": [
+          {
+            "location": "shop_wpn",
+            "line": 88
+          },
+          {
+            "location": "interaction_result_city",
+            "line": 681
+          }
+        ]
+      },
+      "stats": {
+        "baseDamage": {
+          "line": 582,
+          "code": "базовый_вред['мачете'] = base_str + 3"
+        },
+        "damageType": {
+          "line": 583,
+          "code": "$тип_вреда['мачете'] = 'рубящий'"
+        },
+        "weaponClass": {
+          "line": 584,
+          "code": "$класс_оружия['мачете'] = 'легкое_оружие'"
+        },
+        "secondaryAvailable": {
+          "line": 600,
+          "code": "вторичная_атака['мачете'] = 1"
+        }
+      },
+      "statsLocation": "#боевые_предметы",
+      "proposedQuality": 2
+    },
+    {
+      "id": "бастард",
+      "name": "바스타드 소드",
+      "kind": "weapon",
+      "price": {
+        "menu": 100,
+        "formula": "max(item_price[$item_id], wpn_price)",
+        "wpn_price": 100,
+        "noMultiplierFound": true,
+        "evidence": [
+          {
+            "location": "shop_wpn",
+            "line": 89
+          },
+          {
+            "location": "interaction_result_city",
+            "line": 681
+          }
+        ]
+      },
+      "stats": {
+        "baseDamage": {
+          "line": 546,
+          "code": "базовый_вред['бастард'] = base_str + 4"
+        },
+        "damageType": {
+          "line": 547,
+          "code": "$тип_вреда['бастард'] = 'рубящий'"
+        },
+        "weaponClass": {
+          "line": 548,
+          "code": "$класс_оружия['бастард'] = 'легкое_оружие'"
+        },
+        "secondaryAvailable": {
+          "line": 562,
+          "code": "вторичная_атака['бастард'] = 1"
+        }
+      },
+      "statsLocation": "#боевые_предметы",
+      "proposedQuality": 3
+    },
+    {
+      "id": "катана",
+      "name": "카타나",
+      "kind": "weapon",
+      "price": {
+        "menu": 100,
+        "formula": "max(item_price[$item_id], wpn_price)",
+        "wpn_price": 100,
+        "noMultiplierFound": true,
+        "evidence": [
+          {
+            "location": "shop_wpn",
+            "line": 90
+          },
+          {
+            "location": "interaction_result_city",
+            "line": 681
+          }
+        ]
+      },
+      "stats": {
+        "baseDamage": {
+          "line": 622,
+          "code": "базовый_вред['катана'] = base_str + 4"
+        },
+        "damageType": {
+          "line": 623,
+          "code": "$тип_вреда['катана'] = 'рубящий'"
+        },
+        "weaponClass": {
+          "line": 624,
+          "code": "$класс_оружия['катана'] = 'легкое_оружие'"
+        },
+        "secondaryAvailable": {
+          "line": 638,
+          "code": "вторичная_атака['катана'] = 1"
+        }
+      },
+      "statsLocation": "#боевые_предметы",
+      "proposedQuality": 3
+    },
+    {
+      "id": "трезубец",
+      "name": "트라이던트",
+      "kind": "weapon",
+      "price": {
+        "menu": 100,
+        "formula": "max(item_price[$item_id], wpn_price)",
+        "wpn_price": 100,
+        "noMultiplierFound": true,
+        "evidence": [
+          {
+            "location": "shop_wpn",
+            "line": 91
+          },
+          {
+            "location": "interaction_result_city",
+            "line": 681
+          }
+        ]
+      },
+      "stats": {
+        "baseDamage": {
+          "line": 468,
+          "code": "базовый_вред['трезубец'] = base_str + 4"
+        },
+        "damageType": {
+          "line": 469,
+          "code": "$тип_вреда['трезубец'] = 'колющий'"
+        },
+        "weaponClass": {
+          "line": 470,
+          "code": "$класс_оружия['трезубец'] = 'легкое_оружие'"
+        },
+        "secondaryAvailable": {
+          "line": 484,
+          "code": "вторичная_атака['трезубец'] = 1"
+        }
+      },
+      "statsLocation": "#боевые_предметы",
+      "proposedQuality": 3
+    },
+    {
+      "id": "мулава",
+      "name": "메이스",
+      "kind": "weapon",
+      "price": {
+        "menu": 100,
+        "formula": "max(item_price[$item_id], wpn_price)",
+        "wpn_price": 100,
+        "noMultiplierFound": true,
+        "evidence": [
+          {
+            "location": "shop_wpn",
+            "line": 92
+          },
+          {
+            "location": "interaction_result_city",
+            "line": 681
+          }
+        ]
+      },
+      "stats": {
+        "baseDamage": {
+          "line": 718,
+          "code": "базовый_вред['мулава'] = base_str + 4"
+        },
+        "damageType": {
+          "line": 719,
+          "code": "$тип_вреда['мулава'] = 'дробящий'"
+        },
+        "weaponClass": {
+          "line": 720,
+          "code": "$класс_оружия['мулава'] = 'легкое_оружие'"
+        },
+        "secondaryAvailable": {
+          "line": 734,
+          "code": "вторичная_атака['мулава'] = 1"
+        }
+      },
+      "statsLocation": "#боевые_предметы",
+      "proposedQuality": 3
+    },
+    {
+      "id": "бита",
+      "name": "야구방망이",
+      "kind": "weapon",
+      "price": {
+        "menu": 100,
+        "formula": "max(item_price[$item_id], wpn_price)",
+        "wpn_price": 100,
+        "noMultiplierFound": true,
+        "evidence": [
+          {
+            "location": "shop_wpn",
+            "line": 100
+          },
+          {
+            "location": "interaction_result_city",
+            "line": 681
+          }
+        ]
+      },
+      "stats": {
+        "baseDamage": {
+          "line": 850,
+          "code": "базовый_вред['бита'] = base_str + 4"
+        },
+        "damageType": {
+          "line": 851,
+          "code": "$тип_вреда['бита'] = 'дробящий'"
+        },
+        "weaponClass": {
+          "line": 852,
+          "code": "$класс_оружия['бита'] = 'тяжелое_оружие'"
+        }
+      },
+      "statsLocation": "#боевые_предметы",
+      "proposedQuality": 3
+    },
+    {
+      "id": "скотобой",
+      "name": "소몰이 막대",
+      "kind": "weapon",
+      "price": {
+        "menu": 150,
+        "formula": "max(item_price[$item_id], wpn_price)",
+        "wpn_price": 150,
+        "noMultiplierFound": true,
+        "evidence": [
+          {
+            "location": "shop_wpn",
+            "line": 101
+          },
+          {
+            "location": "interaction_result_city",
+            "line": 681
+          }
+        ]
+      },
+      "stats": {
+        "baseDamage": {
+          "line": 932,
+          "code": "базовый_вред['скотобой'] = base_str + 5"
+        },
+        "damageType": {
+          "line": 933,
+          "code": "$тип_вреда['скотобой'] = 'психический'"
+        },
+        "weaponClass": {
+          "line": 934,
+          "code": "$класс_оружия['скотобой'] = 'тяжелое_оружие'"
+        }
+      },
+      "statsLocation": "#боевые_предметы",
+      "proposedQuality": 4
+    },
+    {
+      "id": "грейтекс",
+      "name": "그레이트 액스",
+      "kind": "weapon",
+      "price": {
+        "menu": 150,
+        "formula": "max(item_price[$item_id], wpn_price)",
+        "wpn_price": 150,
+        "noMultiplierFound": true,
+        "evidence": [
+          {
+            "location": "shop_wpn",
+            "line": 102
+          },
+          {
+            "location": "interaction_result_city",
+            "line": 681
+          }
+        ]
+      },
+      "stats": {
+        "baseDamage": {
+          "line": 906,
+          "code": "базовый_вред['грейтекс'] = base_str + 5"
+        },
+        "damageType": {
+          "line": 907,
+          "code": "$тип_вреда['грейтекс'] = 'рубящий'"
+        },
+        "weaponClass": {
+          "line": 908,
+          "code": "$класс_оружия['грейтекс'] = 'тяжелое_оружие'"
+        }
+      },
+      "statsLocation": "#боевые_предметы",
+      "proposedQuality": 4
+    },
+    {
+      "id": "фламберг",
+      "name": "플람베르그",
+      "kind": "weapon",
+      "price": {
+        "menu": 200,
+        "formula": "max(item_price[$item_id], wpn_price)",
+        "wpn_price": 200,
+        "noMultiplierFound": true,
+        "evidence": [
+          {
+            "location": "shop_wpn",
+            "line": 103
+          },
+          {
+            "location": "interaction_result_city",
+            "line": 681
+          }
+        ]
+      },
+      "stats": {
+        "baseDamage": {
+          "line": 793,
+          "code": "базовый_вред['фламберг'] = base_str + 6"
+        },
+        "damageType": {
+          "line": 794,
+          "code": "$тип_вреда['фламберг'] = 'рубящий'"
+        },
+        "weaponClass": {
+          "line": 795,
+          "code": "$класс_оружия['фламберг'] = 'тяжелое_оружие'"
+        }
+      },
+      "statsLocation": "#боевые_предметы",
+      "proposedQuality": 4
+    },
+    {
+      "id": "нагината",
+      "name": "치도",
+      "kind": "weapon",
+      "price": {
+        "menu": 200,
+        "formula": "max(item_price[$item_id], wpn_price)",
+        "wpn_price": 200,
+        "noMultiplierFound": true,
+        "evidence": [
+          {
+            "location": "shop_wpn",
+            "line": 104
+          },
+          {
+            "location": "interaction_result_city",
+            "line": 681
+          }
+        ]
+      },
+      "stats": {
+        "baseDamage": {
+          "line": 822,
+          "code": "базовый_вред['нагината'] = base_str + 6"
+        },
+        "damageType": {
+          "line": 823,
+          "code": "$тип_вреда['нагината'] = 'колющий'"
+        },
+        "weaponClass": {
+          "line": 824,
+          "code": "$класс_оружия['нагината'] = 'тяжелое_оружие'"
+        }
+      },
+      "statsLocation": "#боевые_предметы",
+      "proposedQuality": 4
+    },
+    {
+      "id": "моргенштерн",
+      "name": "모닝스타",
+      "kind": "weapon",
+      "price": {
+        "menu": 200,
+        "formula": "max(item_price[$item_id], wpn_price)",
+        "wpn_price": 200,
+        "noMultiplierFound": true,
+        "evidence": [
+          {
+            "location": "shop_wpn",
+            "line": 105
+          },
+          {
+            "location": "interaction_result_city",
+            "line": 681
+          }
+        ]
+      },
+      "stats": {
+        "baseDamage": {
+          "line": 878,
+          "code": "базовый_вред['моргенштерн'] = base_str + 6"
+        },
+        "damageType": {
+          "line": 879,
+          "code": "$тип_вреда['моргенштерн'] = 'дробящий'"
+        },
+        "weaponClass": {
+          "line": 880,
+          "code": "$класс_оружия['моргенштерн'] = 'тяжелое_оружие'"
+        }
+      },
+      "statsLocation": "#боевые_предметы",
+      "proposedQuality": 4
+    },
+    {
+      "id": "комбез",
+      "name": "아라미드 전투복",
+      "kind": "armor",
+      "price": {
+        "menu": 100,
+        "formula": "max(item_price[$item_id], wpn_price)",
+        "wpn_price": 100,
+        "noMultiplierFound": true,
+        "evidence": [
+          {
+            "location": "shop_wpn",
+            "line": 116
+          },
+          {
+            "location": "interaction_result_city",
+            "line": 681
+          }
+        ]
+      },
+      "stats": {
+        "onEquip": [
+          {
+            "line": 1083,
+            "code": "модификатор_колющий -= 1"
+          },
+          {
+            "line": 1084,
+            "code": "модификатор_рубящий -= 1"
+          },
+          {
+            "line": 1085,
+            "code": "модификатор_дробящий -= 1"
+          },
+          {
+            "line": 1086,
+            "code": "модификатор_холод -= 1"
+          },
+          {
+            "line": 1087,
+            "code": "модификатор_молния -= 1"
+          },
+          {
+            "line": 1088,
+            "code": "модификатор_огонь -= 1"
+          }
+        ],
+        "extraEffect": {
+          "line": 1099,
+          "code": "верткость += 3"
+        }
+      },
+      "statsLocation": "#боевые_предметы",
+      "proposedQuality": 3
+    },
+    {
+      "id": "кожан",
+      "name": "상어가죽 갑옷",
+      "kind": "armor",
+      "price": {
+        "menu": 200,
+        "formula": "max(item_price[$item_id], wpn_price)",
+        "wpn_price": 200,
+        "noMultiplierFound": true,
+        "evidence": [
+          {
+            "location": "shop_wpn",
+            "line": 117
+          },
+          {
+            "location": "interaction_result_city",
+            "line": 681
+          }
+        ]
+      },
+      "stats": {
+        "onEquip": [
+          {
+            "line": 1116,
+            "code": "модификатор_колющий -= 3"
+          },
+          {
+            "line": 1117,
+            "code": "модификатор_рубящий -= 2"
+          },
+          {
+            "line": 1118,
+            "code": "модификатор_дробящий -= 2"
+          },
+          {
+            "line": 1119,
+            "code": "модификатор_холод -= 3"
+          },
+          {
+            "line": 1120,
+            "code": "модификатор_молния -= 4"
+          },
+          {
+            "line": 1121,
+            "code": "модификатор_огонь -= 5"
+          }
+        ],
+        "extraEffect": null
+      },
+      "statsLocation": "#боевые_предметы",
+      "proposedQuality": 4
+    },
+    {
+      "id": "эльчуга",
+      "name": "요정족 사슬갑옷",
+      "kind": "armor",
+      "price": {
+        "menu": 250,
+        "formula": "max(item_price[$item_id], wpn_price)",
+        "wpn_price": 250,
+        "noMultiplierFound": true,
+        "evidence": [
+          {
+            "location": "shop_wpn",
+            "line": 118
+          },
+          {
+            "location": "interaction_result_city",
+            "line": 681
+          }
+        ]
+      },
+      "stats": {
+        "onEquip": [
+          {
+            "line": 1147,
+            "code": "модификатор_колющий -= 4"
+          },
+          {
+            "line": 1148,
+            "code": "модификатор_рубящий -= 4"
+          },
+          {
+            "line": 1149,
+            "code": "модификатор_холод += 2"
+          },
+          {
+            "line": 1150,
+            "code": "модификатор_огонь += 2"
+          },
+          {
+            "line": 1151,
+            "code": "модификатор_молния += 2"
+          }
+        ],
+        "extraEffect": {
+          "line": 1163,
+          "code": "$броня_эффект[эльчуга] = {} (overwrites preceding effect block)"
+        }
+      },
+      "statsLocation": "#боевые_предметы",
+      "proposedQuality": 4
+    },
+    {
+      "id": "ячуга",
+      "name": "기사 사슬갑옷",
+      "kind": "armor",
+      "price": {
+        "menu": 300,
+        "formula": "max(item_price[$item_id], wpn_price)",
+        "wpn_price": 300,
+        "noMultiplierFound": true,
+        "evidence": [
+          {
+            "location": "shop_wpn",
+            "line": 119
+          },
+          {
+            "location": "interaction_result_city",
+            "line": 681
+          }
+        ]
+      },
+      "stats": {
+        "onEquip": [
+          {
+            "line": 1179,
+            "code": "модификатор_колющий -= 4"
+          },
+          {
+            "line": 1180,
+            "code": "модификатор_рубящий -= 5"
+          },
+          {
+            "line": 1181,
+            "code": "модификатор_дробящий -= 1"
+          },
+          {
+            "line": 1182,
+            "code": "модификатор_холод += 1"
+          },
+          {
+            "line": 1183,
+            "code": "модификатор_огонь += 2"
+          },
+          {
+            "line": 1184,
+            "code": "модификатор_молния += 1"
+          }
+        ],
+        "extraEffect": null
+      },
+      "statsLocation": "#боевые_предметы",
+      "proposedQuality": 4
+    },
+    {
+      "id": "полудоспех",
+      "name": "아라미드 복합 갑옷",
+      "kind": "armor",
+      "price": {
+        "menu": 800,
+        "formula": "max(item_price[$item_id], wpn_price)",
+        "wpn_price": 800,
+        "noMultiplierFound": true,
+        "evidence": [
+          {
+            "location": "shop_wpn",
+            "line": 120
+          },
+          {
+            "location": "interaction_result_city",
+            "line": 681
+          }
+        ]
+      },
+      "stats": {
+        "onEquip": [
+          {
+            "line": 1210,
+            "code": "модификатор_колющий -= 4"
+          },
+          {
+            "line": 1211,
+            "code": "модификатор_рубящий -= 4"
+          },
+          {
+            "line": 1212,
+            "code": "модификатор_дробящий -= 3"
+          },
+          {
+            "line": 1213,
+            "code": "модификатор_холод += 1"
+          },
+          {
+            "line": 1214,
+            "code": "модификатор_огонь += 1"
+          },
+          {
+            "line": 1215,
+            "code": "модификатор_молния += 1"
+          }
+        ],
+        "extraEffect": {
+          "line": 1226,
+          "code": "скованность += 2"
+        }
+      },
+      "statsLocation": "#боевые_предметы",
+      "proposedQuality": 5
+    },
+    {
+      "id": "плейт",
+      "name": "고딕 플레이트",
+      "kind": "armor",
+      "price": {
+        "menu": 1000,
+        "formula": "max(item_price[$item_id], wpn_price)",
+        "wpn_price": 1000,
+        "noMultiplierFound": true,
+        "evidence": [
+          {
+            "location": "shop_wpn",
+            "line": 121
+          },
+          {
+            "location": "interaction_result_city",
+            "line": 681
+          }
+        ]
+      },
+      "stats": {
+        "onEquip": [
+          {
+            "line": 1243,
+            "code": "модификатор_колющий -= 5"
+          },
+          {
+            "line": 1244,
+            "code": "модификатор_рубящий -= 5"
+          },
+          {
+            "line": 1245,
+            "code": "модификатор_дробящий -= 5"
+          },
+          {
+            "line": 1246,
+            "code": "модификатор_холод += 5"
+          },
+          {
+            "line": 1247,
+            "code": "модификатор_огонь += 5"
+          },
+          {
+            "line": 1248,
+            "code": "модификатор_молния += 5"
+          }
+        ],
+        "extraEffect": {
+          "line": 1259,
+          "code": "скованность += 5"
+        }
+      },
+      "statsLocation": "#боевые_предметы",
+      "proposedQuality": 5
+    }
+  ],
+  "selectedBoutiqueJewelerEffects": [
+    {
+      "id": "common_apron",
+      "name": "주름 앞치마",
+      "price": 5,
+      "effects": [
+        {
+          "line": 350,
+          "code": "learn_bonus['cook'] += 2"
+        }
+      ],
+      "definitionLine": 343,
+      "marketMenuLine": 2741,
+      "proposedQuality": 2,
+      "reason": "저가지만 단일 교육 보너스+2; 장식품보다 별도 평가",
+      "definitionLocation": "#item_base",
+      "marketMenuLocation": "#options",
+      "priceFormula": "item_price[$item_id] (ordinary) or max(item_price[$item_id],wpn_price) (personal clothes)"
+    },
+    {
+      "id": "enchanter_robe",
+      "name": "마법 망토",
+      "price": 5,
+      "effects": [
+        {
+          "line": 411,
+          "code": "learn_bonus['enchanter'] += 3"
+        },
+        {
+          "line": 412,
+          "code": "learn_bonus['alchemy'] += 2"
+        },
+        {
+          "line": 413,
+          "code": "dynslave['st_plus'] -= 1"
+        },
+        {
+          "line": 414,
+          "code": "dynslave['ex_plus'] += 2"
+        }
+      ],
+      "definitionLine": 405,
+      "marketMenuLine": 2744,
+      "proposedQuality": 3,
+      "reason": "가격5$만 보면 낮게 분류되지만 교육 두 계열에 높은 효과",
+      "definitionLocation": "#item_base",
+      "marketMenuLocation": "#options",
+      "priceFormula": "item_price[$item_id] (ordinary) or max(item_price[$item_id],wpn_price) (personal clothes)"
+    },
+    {
+      "id": "leather_gloves",
+      "name": "가죽 장갑",
+      "price": 5,
+      "effects": [
+        {
+          "line": 563,
+          "code": "learn_bonus['gladiatrix'] += 1"
+        },
+        {
+          "line": 564,
+          "code": "learn_bonus['alchemy'] += 1"
+        },
+        {
+          "line": 565,
+          "code": "dynslave['st_plus'] += 1"
+        }
+      ],
+      "definitionLine": 559,
+      "marketMenuLine": 2783,
+      "proposedQuality": 2,
+      "reason": "다계열 소형 교육 보너스",
+      "definitionLocation": "#item_base",
+      "marketMenuLocation": "#options",
+      "priceFormula": "item_price[$item_id] (ordinary) or max(item_price[$item_id],wpn_price) (personal clothes)"
+    },
+    {
+      "id": "plastic_bracers",
+      "name": "탄소섬유 장갑",
+      "price": 10,
+      "effects": [
+        {
+          "line": 574,
+          "code": "learn_bonus['gladiatrix'] += 2"
+        },
+        {
+          "line": 575,
+          "code": "dynslave['st_plus'] -= 1"
+        }
+      ],
+      "definitionLine": 570,
+      "marketMenuLine": 2785,
+      "proposedQuality": 2,
+      "reason": "가격10$이지만 전투교육+2이므로 최저단계에서 분리",
+      "definitionLocation": "#item_base",
+      "marketMenuLocation": "#options",
+      "priceFormula": "item_price[$item_id] (ordinary) or max(item_price[$item_id],wpn_price) (personal clothes)"
+    },
+    {
+      "id": "plain_pendant",
+      "name": "장식 목걸이",
+      "price": 5,
+      "effects": [
+        {
+          "line": 934,
+          "code": "dynslave['st_plus'] += 1"
+        }
+      ],
+      "definitionLine": 930,
+      "marketMenuLine": 2891,
+      "proposedQuality": 1,
+      "reason": "기초 장식품 비교 기준",
+      "definitionLocation": "#item_base",
+      "marketMenuLocation": "#options",
+      "priceFormula": "item_price[$item_id] (ordinary) or max(item_price[$item_id],wpn_price) (personal clothes)"
+    },
+    {
+      "id": "incrusted_tiara",
+      "name": "날개장식 티아라",
+      "price": 20,
+      "effects": [
+        {
+          "line": 907,
+          "code": "passion_luxury > 0: worn_bonus['mood_rate'] += 5"
+        },
+        {
+          "line": 908,
+          "code": "dynslave['st_plus'] += 3"
+        },
+        {
+          "line": 909,
+          "code": "dynslave['ex_plus'] += 1"
+        }
+      ],
+      "definitionLine": 903,
+      "marketMenuLine": 2895,
+      "proposedQuality": 3,
+      "reason": "20$이지만 높은 스타일 보너스와 조건부 기분 효과",
+      "definitionLocation": "#item_base",
+      "marketMenuLocation": "#options",
+      "priceFormula": "item_price[$item_id] (ordinary) or max(item_price[$item_id],wpn_price) (personal clothes)"
+    },
+    {
+      "id": "wizard_robes",
+      "name": "마법사 예복",
+      "price": 40,
+      "effects": [
+        {
+          "line": 218,
+          "code": "boost_up['master_mage'] = 1"
+        }
+      ],
+      "definitionLine": 213,
+      "marketMenuLine": 2828,
+      "proposedQuality": 3,
+      "reason": "주인공 직업 효과를 주므로 일반40$의복과 구분",
+      "definitionLocation": "#item_base",
+      "marketMenuLocation": "#options",
+      "priceFormula": "item_price[$item_id] (ordinary) or max(item_price[$item_id],wpn_price) (personal clothes)"
+    },
+    {
+      "id": "miracle_robes",
+      "name": "광휘의 예복",
+      "price": 3000,
+      "effects": [
+        {
+          "line": 229,
+          "code": "style_modifer['miracle_robes'] = 2"
+        },
+        {
+          "line": 231,
+          "code": "master_moodlet['pos_master_cloth'] = 100"
+        },
+        {
+          "line": 233,
+          "code": "boost_up['master_mage'] = 1"
+        },
+        {
+          "line": 234,
+          "code": "boost_up['master_medic'] = 1"
+        },
+        {
+          "line": 235,
+          "code": "boost_up['master_butler'] = 1"
+        },
+        {
+          "line": 236,
+          "code": "boost_up['master_fighter'] = 1"
+        },
+        {
+          "line": 237,
+          "code": "boost_up['master_artdirector'] = 1"
+        }
+      ],
+      "definitionLine": 227,
+      "marketMenuLine": 2860,
+      "proposedQuality": 5,
+      "reason": "최고가이며 여러 직업 boost를 함께 부여",
+      "definitionLocation": "#item_base",
+      "marketMenuLocation": "#options",
+      "priceFormula": "item_price[$item_id] (ordinary) or max(item_price[$item_id],wpn_price) (personal clothes)"
+    }
+  ],
+  "proposal": {
+    "principle": "각 물품은 정확히 한 품질 단계에 등록한다. 가격 단계와 효과 최소 단계를 따로 산정한 뒤 더 높은 단계를 사용한다. 단순 최저가라고 최저 품질로 판정하지 않는다.",
+    "qualityBands": [
+      {
+        "quality": 1,
+        "label": "기초",
+        "economicBand": "기본 구매액10$ 이하를 출발점으로 하되 효과 예외는 상향",
+        "armoryIds": [
+          "стилет",
+          "кастет",
+          "глушилка",
+          "нагайка"
+        ],
+        "otherExamples": [
+          "plain_pendant"
+        ],
+        "hardCeiling": "적 품질1이면 등록품질1만; 품질2~5 물품 확률0%"
+      },
+      {
+        "quality": 2,
+        "label": "보통",
+        "economicBand": "15~50$ 일반 장비; 강한 효과 예외는 상향",
+        "armoryIds": [
+          "кинжал",
+          "тесак",
+          "демократизатор",
+          "рапира",
+          "кончар",
+          "кнут",
+          "шпага",
+          "гладиус",
+          "мачете"
+        ],
+        "otherExamples": [
+          "common_apron",
+          "leather_gloves",
+          "plastic_bracers"
+        ],
+        "hardCeiling": "적 품질2이면 등록품질1~2만; 품질3~5 확률0%"
+      },
+      {
+        "quality": 3,
+        "label": "숙련",
+        "economicBand": "100$급 무기/아라미드 전투복 + 저가 고효과 품목의 최소 단계",
+        "armoryIds": [
+          "бастард",
+          "катана",
+          "трезубец",
+          "мулава",
+          "бита",
+          "комбез"
+        ],
+        "otherExamples": [
+          "enchanter_robe",
+          "incrusted_tiara",
+          "wizard_robes"
+        ],
+        "hardCeiling": "적 품질3이면 등록품질1~3만; 품질4~5 확률0%"
+      },
+      {
+        "quality": 4,
+        "label": "상급",
+        "economicBand": "150~300$급 무기·방어구",
+        "armoryIds": [
+          "скотобой",
+          "грейтекс",
+          "фламберг",
+          "нагината",
+          "моргенштерн",
+          "кожан",
+          "эльчуга",
+          "ячуга"
+        ],
+        "otherExamples": [],
+        "hardCeiling": "적 품질4이면 등록품질1~4만; 품질5 확률0%"
+      },
+      {
+        "quality": 5,
+        "label": "최상급",
+        "economicBand": "800~3000$ 대표 최상위 장비",
+        "armoryIds": [
+          "полудоспех",
+          "плейт"
+        ],
+        "otherExamples": [
+          "miracle_robes"
+        ],
+        "hardCeiling": "최상위 적에게만 품질5 후보를 열 수 있음; 실제 개별 가중치는 미정"
+      }
+    ],
+    "eligibility": "적 품질d의 추첨 후보는 itemQuality<=d AND 승인된 적 분류의 후보집합. 품질상한을 넘는 결과를 굴린 뒤 보정하는 방식이 아니라 추첨 전 후보에서 제외해 상위품질 확률을0으로 고정한다.",
+    "notDecided": [
+      "적별 품질1~5 배정",
+      "단계 안 물품별 가중치/돈 액수/실제 지급 수량",
+      "괴물 소재·소모품·희귀 고유품의 새 가격과 효과",
+      "조건부50%와 구출인물 지급 흐름 결합 방식"
+    ],
+    "scopeBoundary": "식료품 외 임의제외 승인 없음. 본 초안은 확인한29 무구점 품목과8 대표 양품/패물 예시에 대한 배분안이며 나머지 허용 물품을 금지하지 않는다.",
+    "parentTentativeCaps": {
+      "caps": [
+        25,
+        100,
+        300,
+        800,
+        1000
+      ],
+      "status": "parent deliberation, not adopted",
+      "warning": "양품점 miracle_robes=3000$가 상한1000보다 높음. 마법망토5$, 티아라20$, 장갑10$는 가격만으로 최저단계가 되므로 효과최소단계 상향이 필요함. 본 독립초안 품질배분은 부모의 최종5단계표로 확정된 것이 아님."
+    }
+  },
+  "limits": [
+    "기획 보고서만 작성; 구현·전체 QSP 복제·원문 덤프 없음",
+    "효과 수치는 code assignment이며 일부 의복의 긍정/부정 조건 전체를 전재하지 않음",
+    "가격은 현재 로컬 소스 기준이며 실제 실행·세이브 오버라이드 상태는 시험하지 않음"
+  ]
+}

@@ -1,0 +1,590 @@
+{
+  "source": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+  "hash": "ae591ef904a5fe0f4cbac3454815ac36cd1475464689869bb75c94e3e7fe7826",
+  "locations": 261,
+  "hits": [
+    {
+      "location": "city_menu_form",
+      "line": 520,
+      "text": "\tIF npc_progress['Rafael'] = 2: FUNC('$menu', 'interaction_city', $menu_item_Black_bazar, menu_Black_bazar, '암시장')\r",
+      "context": [
+        "\tfunc('$menu', 'interaction_city', $menu_item_Moneylender, menu_Moneylender, '고리대금업자의 집')\r",
+        "\tIF npc_progress['Rafael'] = 2: FUNC('$menu', 'interaction_city', $menu_item_Black_bazar, menu_Black_bazar, '암시장')\r",
+        "\tFUNC('$menu', 'interaction_city', $menu_item_jo9_slum_residential, 6031, '주거 구역')\r",
+        "\tIF Байкер_квест < 1 and npc_progress['biker'] ! 2: FUNC('$menu', 'interaction_city', $menu_item_jo9_biker_garage, 9210, '차고')\r"
+      ]
+    },
+    {
+      "location": "city_menu_form",
+      "line": 732,
+      "text": "!\tIF npc_progress['Rafael'] = 2: FUNC('$menu', 'interaction_city', $menu_item_Black_bazar, menu_Black_bazar, '\"Black Market\"')\r",
+      "context": [
+        "\tFUNC('$menu', 'city_form', $menu_item_border_regions, 15111, '변경 지대')\r",
+        "!\tIF npc_progress['Rafael'] = 2: FUNC('$menu', 'interaction_city', $menu_item_Black_bazar, menu_Black_bazar, '\"Black Market\"')\r",
+        "\tfunc('$menu', 'interaction_city', $menu_item_camp, menu_camp, '베이스캠프')\r",
+        "\tFUNC('$menu', 'interaction_city', $menu_item_teatr, 791, '살아 있는 인형극장')\r"
+      ]
+    },
+    {
+      "location": "interaction_city",
+      "line": 20426,
+      "text": "!Рафаэль\r",
+      "context": [
+        "END\r",
+        "!Рафаэль\r",
+        "IF interaction_city = 10405:\r",
+        " npc = 1\r"
+      ]
+    },
+    {
+      "location": "interaction_city",
+      "line": 20429,
+      "text": " $npc_id = 'Rafael'\r",
+      "context": [
+        " npc = 1\r",
+        " $npc_id = 'Rafael'\r",
+        " $place = 'port'\r",
+        " $return_lock = 'shop_general'\r"
+      ]
+    },
+    {
+      "location": "interaction_city",
+      "line": 20433,
+      "text": " if npc_progress['Rafael'] = 0 or (npc_progress[$npc_id] < 2 and slave['brand'] > 3):\r",
+      "context": [
+        " sp_txt = 1\r",
+        " if npc_progress['Rafael'] = 0 or (npc_progress[$npc_id] < 2 and slave['brand'] > 3):\r",
+        "  interaction_city = 104051\r",
+        "  else\r"
+      ]
+    },
+    {
+      "location": "interaction_city",
+      "line": 20441,
+      "text": " txt_count = arrsize('$Rafael_quest') - 1\r",
+      "context": [
+        "IF interaction_city = 104051:\r",
+        " txt_count = arrsize('$Rafael_quest') - 1\r",
+        " copyarr '$text', '$Rafael_quest'\r",
+        " npc_progress['Rafael'] = 1\r"
+      ]
+    },
+    {
+      "location": "interaction_city",
+      "line": 20442,
+      "text": " copyarr '$text', '$Rafael_quest'\r",
+      "context": [
+        " txt_count = arrsize('$Rafael_quest') - 1\r",
+        " copyarr '$text', '$Rafael_quest'\r",
+        " npc_progress['Rafael'] = 1\r",
+        "END\r"
+      ]
+    },
+    {
+      "location": "interaction_city",
+      "line": 20443,
+      "text": " npc_progress['Rafael'] = 1\r",
+      "context": [
+        " copyarr '$text', '$Rafael_quest'\r",
+        " npc_progress['Rafael'] = 1\r",
+        "END\r",
+        "IF interaction_city = 104052:\r"
+      ]
+    },
+    {
+      "location": "interaction_city",
+      "line": 20447,
+      "text": "  txt_count = arrsize('$Rafael_fail') - 1\r",
+      "context": [
+        " if slave_state = CONST_INT['slave_exist']:\r",
+        "  txt_count = arrsize('$Rafael_fail') - 1\r",
+        "  copyarr '$text', '$Rafael_fail'\r",
+        "  else\r"
+      ]
+    },
+    {
+      "location": "interaction_city",
+      "line": 20448,
+      "text": "  copyarr '$text', '$Rafael_fail'\r",
+      "context": [
+        "  txt_count = arrsize('$Rafael_fail') - 1\r",
+        "  copyarr '$text', '$Rafael_fail'\r",
+        "  else\r",
+        "  txt_count = arrsize('$Rafael_quest') - 1\r"
+      ]
+    },
+    {
+      "location": "interaction_city",
+      "line": 20450,
+      "text": "  txt_count = arrsize('$Rafael_quest') - 1\r",
+      "context": [
+        "  else\r",
+        "  txt_count = arrsize('$Rafael_quest') - 1\r",
+        "  copyarr '$text', '$Rafael_quest'\r",
+        " end\r"
+      ]
+    },
+    {
+      "location": "interaction_city",
+      "line": 20451,
+      "text": "  copyarr '$text', '$Rafael_quest'\r",
+      "context": [
+        "  txt_count = arrsize('$Rafael_quest') - 1\r",
+        "  copyarr '$text', '$Rafael_quest'\r",
+        " end\r",
+        "END\r"
+      ]
+    },
+    {
+      "location": "interaction_city",
+      "line": 20456,
+      "text": " $npc_id = 'Rafael'\r",
+      "context": [
+        " npc = 1\r",
+        " $npc_id = 'Rafael'\r",
+        " $place = 'port'\r",
+        " txt_count = arrsize('$Rafael_win') - 1\r"
+      ]
+    },
+    {
+      "location": "interaction_city",
+      "line": 20458,
+      "text": " txt_count = arrsize('$Rafael_win') - 1\r",
+      "context": [
+        " $place = 'port'\r",
+        " txt_count = arrsize('$Rafael_win') - 1\r",
+        " npc_progress['Rafael'] = 2\r",
+        " gs 'killslave'\r"
+      ]
+    },
+    {
+      "location": "interaction_city",
+      "line": 20459,
+      "text": " npc_progress['Rafael'] = 2\r",
+      "context": [
+        " txt_count = arrsize('$Rafael_win') - 1\r",
+        " npc_progress['Rafael'] = 2\r",
+        " gs 'killslave'\r",
+        " sparks += 4500\r"
+      ]
+    },
+    {
+      "location": "interaction_city",
+      "line": 20819,
+      "text": "!Рафаэль\r",
+      "context": [
+        "END\r",
+        "!Рафаэль\r",
+        "IF interaction_city = 10405:\r",
+        " npc = 1\r"
+      ]
+    },
+    {
+      "location": "interaction_city",
+      "line": 20822,
+      "text": " $npc_id = 'Rafael'\r",
+      "context": [
+        " npc = 1\r",
+        " $npc_id = 'Rafael'\r",
+        " $place = 'port'\r",
+        " $return_lock = 'shop_general'\r"
+      ]
+    },
+    {
+      "location": "interaction_city",
+      "line": 20826,
+      "text": " if npc_progress['Rafael'] = 0 or (npc_progress[$npc_id] < 2 and slave['brand'] > 3):\r",
+      "context": [
+        " sp_txt = 1\r",
+        " if npc_progress['Rafael'] = 0 or (npc_progress[$npc_id] < 2 and slave['brand'] > 3):\r",
+        "  interaction_city = 104051\r",
+        "  else\r"
+      ]
+    },
+    {
+      "location": "interaction_city",
+      "line": 20834,
+      "text": " txt_count = arrsize('$Rafael_quest') - 1\r",
+      "context": [
+        "IF interaction_city = 104051:\r",
+        " txt_count = arrsize('$Rafael_quest') - 1\r",
+        " copyarr '$text', '$Rafael_quest'\r",
+        " npc_progress['Rafael'] = 1\r"
+      ]
+    },
+    {
+      "location": "interaction_city",
+      "line": 20835,
+      "text": " copyarr '$text', '$Rafael_quest'\r",
+      "context": [
+        " txt_count = arrsize('$Rafael_quest') - 1\r",
+        " copyarr '$text', '$Rafael_quest'\r",
+        " npc_progress['Rafael'] = 1\r",
+        "END\r"
+      ]
+    },
+    {
+      "location": "interaction_city",
+      "line": 20836,
+      "text": " npc_progress['Rafael'] = 1\r",
+      "context": [
+        " copyarr '$text', '$Rafael_quest'\r",
+        " npc_progress['Rafael'] = 1\r",
+        "END\r",
+        "IF interaction_city = 104052:\r"
+      ]
+    },
+    {
+      "location": "interaction_city",
+      "line": 20840,
+      "text": "  txt_count = arrsize('$Rafael_fail') - 1\r",
+      "context": [
+        " if slave_state = CONST_INT['slave_exist']:\r",
+        "  txt_count = arrsize('$Rafael_fail') - 1\r",
+        "  copyarr '$text', '$Rafael_fail'\r",
+        "  else\r"
+      ]
+    },
+    {
+      "location": "interaction_city",
+      "line": 20841,
+      "text": "  copyarr '$text', '$Rafael_fail'\r",
+      "context": [
+        "  txt_count = arrsize('$Rafael_fail') - 1\r",
+        "  copyarr '$text', '$Rafael_fail'\r",
+        "  else\r",
+        "  txt_count = arrsize('$Rafael_quest') - 1\r"
+      ]
+    },
+    {
+      "location": "interaction_city",
+      "line": 20843,
+      "text": "  txt_count = arrsize('$Rafael_quest') - 1\r",
+      "context": [
+        "  else\r",
+        "  txt_count = arrsize('$Rafael_quest') - 1\r",
+        "  copyarr '$text', '$Rafael_quest'\r",
+        " end\r"
+      ]
+    },
+    {
+      "location": "interaction_city",
+      "line": 20844,
+      "text": "  copyarr '$text', '$Rafael_quest'\r",
+      "context": [
+        "  txt_count = arrsize('$Rafael_quest') - 1\r",
+        "  copyarr '$text', '$Rafael_quest'\r",
+        " end\r",
+        "END\r"
+      ]
+    },
+    {
+      "location": "interaction_city",
+      "line": 20849,
+      "text": " $npc_id = 'Rafael'\r",
+      "context": [
+        " npc = 1\r",
+        " $npc_id = 'Rafael'\r",
+        " $place = 'port'\r",
+        " txt_count = arrsize('$Rafael_win') - 1\r"
+      ]
+    },
+    {
+      "location": "interaction_city",
+      "line": 20851,
+      "text": " txt_count = arrsize('$Rafael_win') - 1\r",
+      "context": [
+        " $place = 'port'\r",
+        " txt_count = arrsize('$Rafael_win') - 1\r",
+        " npc_progress['Rafael'] = 2\r",
+        " gs 'killslave'\r"
+      ]
+    },
+    {
+      "location": "interaction_city",
+      "line": 20852,
+      "text": " npc_progress['Rafael'] = 2\r",
+      "context": [
+        " txt_count = arrsize('$Rafael_win') - 1\r",
+        " npc_progress['Rafael'] = 2\r",
+        " gs 'killslave'\r",
+        " sparks += 4500\r"
+      ]
+    },
+    {
+      "location": "#npc_base",
+      "line": 5331,
+      "text": "$npc_image['rafael'] = 'rafael'\r",
+      "context": [
+        "!Eastern Quarter Buyers\r",
+        "$npc_image['rafael'] = 'rafael'\r",
+        "$npc_name['rafael'] = '라파엘'\r",
+        "$npc_status['rafael'] = '(중립파)'\r"
+      ]
+    },
+    {
+      "location": "#npc_base",
+      "line": 5332,
+      "text": "$npc_name['rafael'] = '라파엘'\r",
+      "context": [
+        "$npc_image['rafael'] = 'rafael'\r",
+        "$npc_name['rafael'] = '라파엘'\r",
+        "$npc_status['rafael'] = '(중립파)'\r",
+        "$npc_info['rafael'] = '선원이자 항구 대장의 아들이다. 항구 업무를 실질적으로 관리하면서 자기 사업도 운영하고 있다.'\r"
+      ]
+    },
+    {
+      "location": "#npc_base",
+      "line": 5333,
+      "text": "$npc_status['rafael'] = '(중립파)'\r",
+      "context": [
+        "$npc_name['rafael'] = '라파엘'\r",
+        "$npc_status['rafael'] = '(중립파)'\r",
+        "$npc_info['rafael'] = '선원이자 항구 대장의 아들이다. 항구 업무를 실질적으로 관리하면서 자기 사업도 운영하고 있다.'\r",
+        "npc_attitude['rafael'] = 11\r"
+      ]
+    },
+    {
+      "location": "#npc_base",
+      "line": 5334,
+      "text": "$npc_info['rafael'] = '선원이자 항구 대장의 아들이다. 항구 업무를 실질적으로 관리하면서 자기 사업도 운영하고 있다.'\r",
+      "context": [
+        "$npc_status['rafael'] = '(중립파)'\r",
+        "$npc_info['rafael'] = '선원이자 항구 대장의 아들이다. 항구 업무를 실질적으로 관리하면서 자기 사업도 운영하고 있다.'\r",
+        "npc_attitude['rafael'] = 11\r",
+        "\r"
+      ]
+    },
+    {
+      "location": "#npc_base",
+      "line": 5335,
+      "text": "npc_attitude['rafael'] = 11\r",
+      "context": [
+        "$npc_info['rafael'] = '선원이자 항구 대장의 아들이다. 항구 업무를 실질적으로 관리하면서 자기 사업도 운영하고 있다.'\r",
+        "npc_attitude['rafael'] = 11\r",
+        "\r",
+        "$npc_image['ledy_karina'] = 'ledy_karina'\r"
+      ]
+    },
+    {
+      "location": "#options",
+      "line": 6698,
+      "text": "IF port_service = 1 and npc_progress['rafael'] < 2: FUNC('$menu', 'interaction_city', $menu_item_rafael, 10405, '라파엘과 이야기한다')\r",
+      "context": [
+        "FUNC('$menu', 'exec_options', $menu_item_kap, 'sp_txt = 2 & gt $curloc', '선장과 이야기한다')\r",
+        "IF port_service = 1 and npc_progress['rafael'] < 2: FUNC('$menu', 'interaction_city', $menu_item_rafael, 10405, '라파엘과 이야기한다')\r",
+        "\r",
+        "IF slave_state = CONST_INT['slave_exist'] and slave['energy'] >= 3:\r"
+      ]
+    },
+    {
+      "location": "#static_txt",
+      "line": 3280,
+      "text": "!$Rafael_quest[1] = '   [Рафаэль]\r",
+      "context": [
+        "! JO9 MOD END J9M2530\r",
+        "!$Rafael_quest[1] = '   [Рафаэль]\r",
+        "  - Ну, присаживайся, <<$master_name>>!\r",
+        "  Я, вообще-то, не привык вести дела с врагами. Но в данном случае, отец очень настаивал, чтобы я встретился с тобой. Говорит, ты можешь быть крайне полезен мне. Ну, посмотрим, что ты за фрукт!...\r"
+      ]
+    },
+    {
+      "location": "#static_txt",
+      "line": 3284,
+      "text": "!$Rafael_quest[2] = '   [Рафаэль]\r",
+      "context": [
+        "  Давай не будем тратить время и перейдём сразу к делу!  '\r",
+        "!$Rafael_quest[2] = '   [Рафаэль]\r",
+        "  - Ты уже в курсе, что я моряк. И, наверное, ждёшь от меня заказа на обычную портовую шлюху?! Но нет... Конечно, мне нужны девочки, которые могут ублажить мою команду. Но от тебя я хочу другого...\r",
+        "  Мне нужна первоклассная <font color=\"#008080\"><b>знахарка</b></font>. В море мы часто вступаем в бой. Раны и прочие неприятности поджидают нас повсеместно. И мне нужна <font color=\"#0000CD\"><b>девочка</b></font>, которая быстро и качественно сможет подлечить. '\r"
+      ]
+    },
+    {
+      "location": "#static_txt",
+      "line": 3287,
+      "text": "!$Rafael_quest[3] = '  [Рафаэль]\r",
+      "context": [
+        "  Мне нужна первоклассная <font color=\"#008080\"><b>знахарка</b></font>. В море мы часто вступаем в бой. Раны и прочие неприятности поджидают нас повсеместно. И мне нужна <font color=\"#0000CD\"><b>девочка</b></font>, которая быстро и качественно сможет подлечить. '\r",
+        "!$Rafael_quest[3] = '  [Рафаэль]\r",
+        "  - Было бы неплохо, чтобы она была хорошим <font color=\"#008080\"><b>магом</b></font> и <font color=\"#008080\"><b>кухаркой</b></font>. Сытно и вкусно покушать никогда не мешает. И навык чародея может быть иногда полезен в море. О том, что она должна быть аккуратной и чистоплотной должно быть итак понятно. На корабле должна быть <font color=\"#008080\"><b>кристальная чистота и порядок</b></font>.  '\r",
+        "!$Rafael_quest[4] = '  [Рафаэль]\r"
+      ]
+    },
+    {
+      "location": "#static_txt",
+      "line": 3289,
+      "text": "!$Rafael_quest[4] = '  [Рафаэль]\r",
+      "context": [
+        "  - Было бы неплохо, чтобы она была хорошим <font color=\"#008080\"><b>магом</b></font> и <font color=\"#008080\"><b>кухаркой</b></font>. Сытно и вкусно покушать никогда не мешает. И навык чародея может быть иногда полезен в море. О том, что она должна быть аккуратной и чистоплотной должно быть итак понятно. На корабле должна быть <font color=\"#008080\"><b>кристальная чистота и порядок</b></font>.  '\r",
+        "!$Rafael_quest[4] = '  [Рафаэль]\r",
+        "  - Красота меня не интересует, так же, как и всё остальное. Хотя... Лучше всего, чтобы она была зрелой, <font color=\"#008080\"><b>умной</b></font> и <font color=\"#008080\"><b>выносливой</b></font>, так как пахать она будет, как лошадь, и не должна отвлекать меня по пустякам.\r",
+        "  Вот и всё. Если выполнишь мою просьбу, я подумаю о дальнейшем сотрудничестве с тобой.'\r"
+      ]
+    },
+    {
+      "location": "#static_txt",
+      "line": 3292,
+      "text": "!$Rafael_win[1] = '  [Рафаэль]\r",
+      "context": [
+        "  Вот и всё. Если выполнишь мою просьбу, я подумаю о дальнейшем сотрудничестве с тобой.'\r",
+        "!$Rafael_win[1] = '  [Рафаэль]\r",
+        "  - Хм! А ничего так, девочка! Сразу видно руки из нужного места растут и навыками не обделена. То, что нужно! Я её забираю! Вот твои искры.\r",
+        "  И да... Ты доказал мне свою заинтересованность. С тобой можно иметь дело, <<$master_name>>! Так и быть, я дам тебе координаты точки, где ты сможешь покупать шикарных девочек по доступной цене. '\r"
+      ]
+    },
+    {
+      "location": "#static_txt",
+      "line": 3295,
+      "text": "!$Rafael_win[2] = '  [Рафаэль]\r",
+      "context": [
+        "  И да... Ты доказал мне свою заинтересованность. С тобой можно иметь дело, <<$master_name>>! Так и быть, я дам тебе координаты точки, где ты сможешь покупать шикарных девочек по доступной цене. '\r",
+        "!$Rafael_win[2] = '  [Рафаэль]\r",
+        "  - В качестве товара можешь быть уверен. Это мой товар. А я знаю в нём толк. Если и попадается брак, то мы его устраняем, прежде чем пускать в продажу. Пользуйся! Надеюсь, и мне и тебе сотрудничество пойдёт на пользу...  '\r",
+        "!$Rafael_fail[1] = '  [Рафаэль]\r"
+      ]
+    },
+    {
+      "location": "#static_txt",
+      "line": 3297,
+      "text": "!$Rafael_fail[1] = '  [Рафаэль]\r",
+      "context": [
+        "  - В качестве товара можешь быть уверен. Это мой товар. А я знаю в нём толк. Если и попадается брак, то мы его устраняем, прежде чем пускать в продажу. Пользуйся! Надеюсь, и мне и тебе сотрудничество пойдёт на пользу...  '\r",
+        "!$Rafael_fail[1] = '  [Рафаэль]\r",
+        "  - И где та, которую я просил подготовить для себя? Так и знал, что ты ни на что не годен!'\r",
+        "!Театр живых кукол\r"
+      ]
+    },
+    {
+      "location": "#static_txt",
+      "line": 3427,
+      "text": "$Rafael_quest[1] = '[라파엘]<br>&nbsp;자, 앉아라, <<$master_name>>! 난 원래 적들과 상대하는 데 익숙하진 않다. 하지만 이번만큼은 아버지께서 굳이 너를 만나 보라고 하셨지. 네가 내게 아주 쓸모 있을 수 있다고 하시더군. 어디 한번 어떤 놈인지 보자고!... 시간 끌지 말고 본론으로 들어가자!'\r",
+      "context": [
+        "! JO9 MOD START J9M2518 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included\r",
+        "$Rafael_quest[1] = '[라파엘]<br>&nbsp;자, 앉아라, <<$master_name>>! 난 원래 적들과 상대하는 데 익숙하진 않다. 하지만 이번만큼은 아버지께서 굳이 너를 만나 보라고 하셨지. 네가 내게 아주 쓸모 있을 수 있다고 하시더군. 어디 한번 어떤 놈인지 보자고!... 시간 끌지 말고 본론으로 들어가자!'\r",
+        "$Rafael_quest[2] = '[라파엘]<br>&nbsp;내가 선원이라는 건 이미 알고 있겠지. 그러니 내가 흔한 항구 창녀나 주문할 거라 생각했나?! 하지만 아니야... 물론 선원들을 즐겁게 해 줄 여자애들도 내겐 필요하지. 하지만 네게 원하는 건 그게 아니다... 내겐 일류 <font color=\"#008080\"><b>치유사</b></font>가 필요하다. 바다에선 싸움이 흔하고, 상처와 온갖 문제들이 늘 우리를 기다리고 있어. 그러니 빠르고 정확하게 치료할 수 있는 <font color=\"#0000CD\"><b>여자애</b></font>가 필요해.'\r",
+        "$Rafael_quest[3] = '[라파엘]<br>&nbsp;훌륭한 <font color=\"#008080\"><b>마법사</b></font>이면서 <font color=\"#008080\"><b>요리사</b></font>라면 더 좋겠지. 든든하고 맛있는 식사는 언제나 도움이 되니까. 마법사의 재주도 바다에서 가끔은 쓸모가 있다. 그리고 당연히 깔끔하고 단정해야 해. 배 안은 반짝일 정도로 깨끗하고 정돈돼 있어야 하니까.'\r"
+      ]
+    },
+    {
+      "location": "#static_txt",
+      "line": 3428,
+      "text": "$Rafael_quest[2] = '[라파엘]<br>&nbsp;내가 선원이라는 건 이미 알고 있겠지. 그러니 내가 흔한 항구 창녀나 주문할 거라 생각했나?! 하지만 아니야... 물론 선원들을 즐겁게 해 줄 여자애들도 내겐 필요하지. 하지만 네게 원하는 건 그게 아니다... 내겐 일류 <font color=\"#008080\"><b>치유사</b></font>가 필요하다. 바다에선 싸움이 흔하고, 상처와 온갖 문제들이 늘 우리를 기다리고 있어. 그러니 빠르고 정확하게 치료할 수 있는 <font color=\"#0000CD\"><b>여자애</b></font>가 필요해.'\r",
+      "context": [
+        "$Rafael_quest[1] = '[라파엘]<br>&nbsp;자, 앉아라, <<$master_name>>! 난 원래 적들과 상대하는 데 익숙하진 않다. 하지만 이번만큼은 아버지께서 굳이 너를 만나 보라고 하셨지. 네가 내게 아주 쓸모 있을 수 있다고 하시더군. 어디 한번 어떤 놈인지 보자고!... 시간 끌지 말고 본론으로 들어가자!'\r",
+        "$Rafael_quest[2] = '[라파엘]<br>&nbsp;내가 선원이라는 건 이미 알고 있겠지. 그러니 내가 흔한 항구 창녀나 주문할 거라 생각했나?! 하지만 아니야... 물론 선원들을 즐겁게 해 줄 여자애들도 내겐 필요하지. 하지만 네게 원하는 건 그게 아니다... 내겐 일류 <font color=\"#008080\"><b>치유사</b></font>가 필요하다. 바다에선 싸움이 흔하고, 상처와 온갖 문제들이 늘 우리를 기다리고 있어. 그러니 빠르고 정확하게 치료할 수 있는 <font color=\"#0000CD\"><b>여자애</b></font>가 필요해.'\r",
+        "$Rafael_quest[3] = '[라파엘]<br>&nbsp;훌륭한 <font color=\"#008080\"><b>마법사</b></font>이면서 <font color=\"#008080\"><b>요리사</b></font>라면 더 좋겠지. 든든하고 맛있는 식사는 언제나 도움이 되니까. 마법사의 재주도 바다에서 가끔은 쓸모가 있다. 그리고 당연히 깔끔하고 단정해야 해. 배 안은 반짝일 정도로 깨끗하고 정돈돼 있어야 하니까.'\r",
+        "$Rafael_quest[4] = '[라파엘]<br>&nbsp;아름다움 같은 건 관심 없다. 다른 것들도 마찬가지고. 굳이 따지자면... 성숙하고, <font color=\"#008080\"><b>영리하고</b></font>, <font color=\"#008080\"><b>튼튼한</b></font> 편이 좋겠군. 말처럼 일하게 될 테니, 하찮은 걸로 내 신경을 분산시켜선 안 되니까. 그게 전부다. 내 부탁을 완수하면, 앞으로도 더 협력할 생각을 해 보지.'\r"
+      ]
+    },
+    {
+      "location": "#static_txt",
+      "line": 3429,
+      "text": "$Rafael_quest[3] = '[라파엘]<br>&nbsp;훌륭한 <font color=\"#008080\"><b>마법사</b></font>이면서 <font color=\"#008080\"><b>요리사</b></font>라면 더 좋겠지. 든든하고 맛있는 식사는 언제나 도움이 되니까. 마법사의 재주도 바다에서 가끔은 쓸모가 있다. 그리고 당연히 깔끔하고 단정해야 해. 배 안은 반짝일 정도로 깨끗하고 정돈돼 있어야 하니까.'\r",
+      "context": [
+        "$Rafael_quest[2] = '[라파엘]<br>&nbsp;내가 선원이라는 건 이미 알고 있겠지. 그러니 내가 흔한 항구 창녀나 주문할 거라 생각했나?! 하지만 아니야... 물론 선원들을 즐겁게 해 줄 여자애들도 내겐 필요하지. 하지만 네게 원하는 건 그게 아니다... 내겐 일류 <font color=\"#008080\"><b>치유사</b></font>가 필요하다. 바다에선 싸움이 흔하고, 상처와 온갖 문제들이 늘 우리를 기다리고 있어. 그러니 빠르고 정확하게 치료할 수 있는 <font color=\"#0000CD\"><b>여자애</b></font>가 필요해.'\r",
+        "$Rafael_quest[3] = '[라파엘]<br>&nbsp;훌륭한 <font color=\"#008080\"><b>마법사</b></font>이면서 <font color=\"#008080\"><b>요리사</b></font>라면 더 좋겠지. 든든하고 맛있는 식사는 언제나 도움이 되니까. 마법사의 재주도 바다에서 가끔은 쓸모가 있다. 그리고 당연히 깔끔하고 단정해야 해. 배 안은 반짝일 정도로 깨끗하고 정돈돼 있어야 하니까.'\r",
+        "$Rafael_quest[4] = '[라파엘]<br>&nbsp;아름다움 같은 건 관심 없다. 다른 것들도 마찬가지고. 굳이 따지자면... 성숙하고, <font color=\"#008080\"><b>영리하고</b></font>, <font color=\"#008080\"><b>튼튼한</b></font> 편이 좋겠군. 말처럼 일하게 될 테니, 하찮은 걸로 내 신경을 분산시켜선 안 되니까. 그게 전부다. 내 부탁을 완수하면, 앞으로도 더 협력할 생각을 해 보지.'\r",
+        "$Rafael_win[1] = '[라파엘]<br>&nbsp;흠! 나쁘지 않군, 여자애! 보아하니 재주도 있고 기술도 충분해. 딱 내가 원하던 거야! 내가 데려가지! 여기 네 스파크다. 그리고 그래... 당신은 내 관심을 끌 만한 놈이라는 걸 증명했어. 진짜 장사꾼이군, <<$master_name>>! 좋아, 그럼 괜찮은 가격에 끝내주는 여자애들을 살 수 있는 장소 좌표를 알려 주지.'\r"
+      ]
+    },
+    {
+      "location": "#static_txt",
+      "line": 3430,
+      "text": "$Rafael_quest[4] = '[라파엘]<br>&nbsp;아름다움 같은 건 관심 없다. 다른 것들도 마찬가지고. 굳이 따지자면... 성숙하고, <font color=\"#008080\"><b>영리하고</b></font>, <font color=\"#008080\"><b>튼튼한</b></font> 편이 좋겠군. 말처럼 일하게 될 테니, 하찮은 걸로 내 신경을 분산시켜선 안 되니까. 그게 전부다. 내 부탁을 완수하면, 앞으로도 더 협력할 생각을 해 보지.'\r",
+      "context": [
+        "$Rafael_quest[3] = '[라파엘]<br>&nbsp;훌륭한 <font color=\"#008080\"><b>마법사</b></font>이면서 <font color=\"#008080\"><b>요리사</b></font>라면 더 좋겠지. 든든하고 맛있는 식사는 언제나 도움이 되니까. 마법사의 재주도 바다에서 가끔은 쓸모가 있다. 그리고 당연히 깔끔하고 단정해야 해. 배 안은 반짝일 정도로 깨끗하고 정돈돼 있어야 하니까.'\r",
+        "$Rafael_quest[4] = '[라파엘]<br>&nbsp;아름다움 같은 건 관심 없다. 다른 것들도 마찬가지고. 굳이 따지자면... 성숙하고, <font color=\"#008080\"><b>영리하고</b></font>, <font color=\"#008080\"><b>튼튼한</b></font> 편이 좋겠군. 말처럼 일하게 될 테니, 하찮은 걸로 내 신경을 분산시켜선 안 되니까. 그게 전부다. 내 부탁을 완수하면, 앞으로도 더 협력할 생각을 해 보지.'\r",
+        "$Rafael_win[1] = '[라파엘]<br>&nbsp;흠! 나쁘지 않군, 여자애! 보아하니 재주도 있고 기술도 충분해. 딱 내가 원하던 거야! 내가 데려가지! 여기 네 스파크다. 그리고 그래... 당신은 내 관심을 끌 만한 놈이라는 걸 증명했어. 진짜 장사꾼이군, <<$master_name>>! 좋아, 그럼 괜찮은 가격에 끝내주는 여자애들을 살 수 있는 장소 좌표를 알려 주지.'\r",
+        "$Rafael_win[2] = '[라파엘]<br>&nbsp;물건의 질은 확실히 믿어도 된다. 내 물건이니까. 난 내 일을 안다. 결함이 있으면 팔기 전에 전부 손본다. 잘 써라! 이 협력이 우리 둘 모두에게 이득이 되길 바라지...'\r"
+      ]
+    },
+    {
+      "location": "#static_txt",
+      "line": 3431,
+      "text": "$Rafael_win[1] = '[라파엘]<br>&nbsp;흠! 나쁘지 않군, 여자애! 보아하니 재주도 있고 기술도 충분해. 딱 내가 원하던 거야! 내가 데려가지! 여기 네 스파크다. 그리고 그래... 당신은 내 관심을 끌 만한 놈이라는 걸 증명했어. 진짜 장사꾼이군, <<$master_name>>! 좋아, 그럼 괜찮은 가격에 끝내주는 여자애들을 살 수 있는 장소 좌표를 알려 주지.'\r",
+      "context": [
+        "$Rafael_quest[4] = '[라파엘]<br>&nbsp;아름다움 같은 건 관심 없다. 다른 것들도 마찬가지고. 굳이 따지자면... 성숙하고, <font color=\"#008080\"><b>영리하고</b></font>, <font color=\"#008080\"><b>튼튼한</b></font> 편이 좋겠군. 말처럼 일하게 될 테니, 하찮은 걸로 내 신경을 분산시켜선 안 되니까. 그게 전부다. 내 부탁을 완수하면, 앞으로도 더 협력할 생각을 해 보지.'\r",
+        "$Rafael_win[1] = '[라파엘]<br>&nbsp;흠! 나쁘지 않군, 여자애! 보아하니 재주도 있고 기술도 충분해. 딱 내가 원하던 거야! 내가 데려가지! 여기 네 스파크다. 그리고 그래... 당신은 내 관심을 끌 만한 놈이라는 걸 증명했어. 진짜 장사꾼이군, <<$master_name>>! 좋아, 그럼 괜찮은 가격에 끝내주는 여자애들을 살 수 있는 장소 좌표를 알려 주지.'\r",
+        "$Rafael_win[2] = '[라파엘]<br>&nbsp;물건의 질은 확실히 믿어도 된다. 내 물건이니까. 난 내 일을 안다. 결함이 있으면 팔기 전에 전부 손본다. 잘 써라! 이 협력이 우리 둘 모두에게 이득이 되길 바라지...'\r",
+        "$Rafael_fail[1] = '[라파엘]<br>&nbsp;내가 준비해 오라고 한 건 대체 어디 있지? 역시 당신은 아무짝에도 쓸모없군!'\r"
+      ]
+    },
+    {
+      "location": "#static_txt",
+      "line": 3432,
+      "text": "$Rafael_win[2] = '[라파엘]<br>&nbsp;물건의 질은 확실히 믿어도 된다. 내 물건이니까. 난 내 일을 안다. 결함이 있으면 팔기 전에 전부 손본다. 잘 써라! 이 협력이 우리 둘 모두에게 이득이 되길 바라지...'\r",
+      "context": [
+        "$Rafael_win[1] = '[라파엘]<br>&nbsp;흠! 나쁘지 않군, 여자애! 보아하니 재주도 있고 기술도 충분해. 딱 내가 원하던 거야! 내가 데려가지! 여기 네 스파크다. 그리고 그래... 당신은 내 관심을 끌 만한 놈이라는 걸 증명했어. 진짜 장사꾼이군, <<$master_name>>! 좋아, 그럼 괜찮은 가격에 끝내주는 여자애들을 살 수 있는 장소 좌표를 알려 주지.'\r",
+        "$Rafael_win[2] = '[라파엘]<br>&nbsp;물건의 질은 확실히 믿어도 된다. 내 물건이니까. 난 내 일을 안다. 결함이 있으면 팔기 전에 전부 손본다. 잘 써라! 이 협력이 우리 둘 모두에게 이득이 되길 바라지...'\r",
+        "$Rafael_fail[1] = '[라파엘]<br>&nbsp;내가 준비해 오라고 한 건 대체 어디 있지? 역시 당신은 아무짝에도 쓸모없군!'\r",
+        "! JO9 MOD END J9M2518\r"
+      ]
+    },
+    {
+      "location": "#static_txt",
+      "line": 3433,
+      "text": "$Rafael_fail[1] = '[라파엘]<br>&nbsp;내가 준비해 오라고 한 건 대체 어디 있지? 역시 당신은 아무짝에도 쓸모없군!'\r",
+      "context": [
+        "$Rafael_win[2] = '[라파엘]<br>&nbsp;물건의 질은 확실히 믿어도 된다. 내 물건이니까. 난 내 일을 안다. 결함이 있으면 팔기 전에 전부 손본다. 잘 써라! 이 협력이 우리 둘 모두에게 이득이 되길 바라지...'\r",
+        "$Rafael_fail[1] = '[라파엘]<br>&nbsp;내가 준비해 오라고 한 건 대체 어디 있지? 역시 당신은 아무짝에도 쓸모없군!'\r",
+        "! JO9 MOD END J9M2518\r",
+        "\r"
+      ]
+    },
+    {
+      "location": "#npc_base_woman",
+      "line": 5712,
+      "text": "$npc_image['rafael'] = 'rafael'\r",
+      "context": [
+        "!1.7.7.3 доп. квесты\r",
+        "$npc_image['rafael'] = 'rafael'\r",
+        "$npc_name['rafael'] = '라파엘'\r",
+        "$npc_status['rafael'] = '(중립)'\r"
+      ]
+    },
+    {
+      "location": "#npc_base_woman",
+      "line": 5713,
+      "text": "$npc_name['rafael'] = '라파엘'\r",
+      "context": [
+        "$npc_image['rafael'] = 'rafael'\r",
+        "$npc_name['rafael'] = '라파엘'\r",
+        "$npc_status['rafael'] = '(중립)'\r",
+        "$npc_info['rafael'] = '항구 선장의 아들인 선원이다. 자기 사업을 굴리면서도 항구 업무를 실질적으로 관리하고 있다.'\r"
+      ]
+    },
+    {
+      "location": "#npc_base_woman",
+      "line": 5714,
+      "text": "$npc_status['rafael'] = '(중립)'\r",
+      "context": [
+        "$npc_name['rafael'] = '라파엘'\r",
+        "$npc_status['rafael'] = '(중립)'\r",
+        "$npc_info['rafael'] = '항구 선장의 아들인 선원이다. 자기 사업을 굴리면서도 항구 업무를 실질적으로 관리하고 있다.'\r",
+        "npc_attitude['rafael'] = 11\r"
+      ]
+    },
+    {
+      "location": "#npc_base_woman",
+      "line": 5715,
+      "text": "$npc_info['rafael'] = '항구 선장의 아들인 선원이다. 자기 사업을 굴리면서도 항구 업무를 실질적으로 관리하고 있다.'\r",
+      "context": [
+        "$npc_status['rafael'] = '(중립)'\r",
+        "$npc_info['rafael'] = '항구 선장의 아들인 선원이다. 자기 사업을 굴리면서도 항구 업무를 실질적으로 관리하고 있다.'\r",
+        "npc_attitude['rafael'] = 11\r",
+        "\r"
+      ]
+    },
+    {
+      "location": "#npc_base_woman",
+      "line": 5716,
+      "text": "npc_attitude['rafael'] = 11\r",
+      "context": [
+        "$npc_info['rafael'] = '항구 선장의 아들인 선원이다. 자기 사업을 굴리면서도 항구 업무를 실질적으로 관리하고 있다.'\r",
+        "npc_attitude['rafael'] = 11\r",
+        "\r",
+        "$npc_image['ledy_karina'] = 'ledy_karina'\r"
+      ]
+    }
+  ]
+}

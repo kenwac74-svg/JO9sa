@@ -235,11 +235,14 @@ function Fail([string]$Message) {
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName UIAutomationClient
 Add-Type -AssemblyName UIAutomationTypes
+Add-Type -AssemblyName Accessibility
 
 Add-Type @'
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
+using Accessibility;
 
 public static class JO9Win32 {
     public delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
@@ -274,6 +277,89 @@ public static class JO9Win32 {
     public const uint SWP_NOZORDER = 0x0004;
     public const uint SWP_NOACTIVATE = 0x0010;
 
+    // JO9 MOD START WORKSHOP_MSAA_CAPTURE_20261024
+    [DllImport("oleacc.dll", PreserveSig=true)]
+    private static extern int AccessibleObjectFromWindow(IntPtr hwnd, uint id, ref Guid iid,
+        [MarshalAs(UnmanagedType.Interface)] out IAccessible acc);
+    [DllImport("oleacc.dll", PreserveSig=true)]
+    private static extern int AccessibleChildren([MarshalAs(UnmanagedType.Interface)] IAccessible parent,
+        int start, int count,
+        [Out, MarshalAs(UnmanagedType.LPArray, ArraySubType=UnmanagedType.Struct, SizeParamIndex=2)] object[] children,
+        out int obtained);
+    [DllImport("user32.dll")]
+    public static extern IntPtr GetForegroundWindow();
+
+    private static IAccessible AccessibleRoot(IntPtr hwnd) {
+        Guid iid = new Guid("618736E0-3C3D-11CF-810C-00AA00389B71");
+        IAccessible root;
+        return AccessibleObjectFromWindow(hwnd, unchecked((uint)-4), ref iid, out root) >= 0 ? root : null;
+    }
+
+    private static IEnumerable<IAccessible> AccessibleNodes(IAccessible root, int depth, HashSet<long> seen) {
+        if (root == null || depth > 10 || seen.Count >= 512) yield break;
+        IntPtr pointer = Marshal.GetIUnknownForObject(root);
+        long identity = pointer.ToInt64();
+        Marshal.Release(pointer);
+        if (!seen.Add(identity)) yield break;
+        yield return root;
+        int count;
+        try { count = Math.Min(128, root.accChildCount); } catch { yield break; }
+        if (count <= 0) yield break;
+        object[] children = new object[count];
+        int obtained;
+        if (AccessibleChildren(root, 0, count, children, out obtained) < 0) yield break;
+        for (int i = 0; i < obtained; i++) {
+            IAccessible child = children[i] as IAccessible;
+            if (child == null && children[i] is int) {
+                try { child = root.get_accChild(children[i]) as IAccessible; } catch { }
+            }
+            if (child != null)
+                foreach (IAccessible nested in AccessibleNodes(child, depth + 1, seen)) yield return nested;
+        }
+    }
+
+    private static string ActionName(IAccessible node) {
+        try {
+            string name = node.get_accName(0) ?? "";
+            return name.Split('\t')[0].Replace("&", "").Trim();
+        } catch { return ""; }
+    }
+
+    public static bool InvokeShowHtml(IntPtr main, out string reason) {
+        reason = "";
+        try {
+            IAccessible root = AccessibleRoot(main), bar = null, other = null;
+            foreach (IAccessible node in AccessibleNodes(root, 0, new HashSet<long>())) {
+                if (Convert.ToInt32(node.get_accRole(0)) == 2) { bar = node; break; }
+            }
+            foreach (IAccessible node in AccessibleNodes(bar, 0, new HashSet<long>())) {
+                if (ActionName(node).Equals("Other", StringComparison.OrdinalIgnoreCase)) { other = node; break; }
+            }
+            foreach (IAccessible node in AccessibleNodes(other, 0, new HashSet<long>())) {
+                if (ActionName(node).Equals("Show html", StringComparison.OrdinalIgnoreCase)) {
+                    // Qt's MSAA implementation requires the action object's CHILDID_SELF.
+                    node.accDoDefaultAction(0);
+                    return true;
+                }
+            }
+            reason = "Named Other/Show html action unavailable";
+        } catch (Exception e) { reason = e.GetType().Name + ":" + Marshal.GetHRForException(e).ToString("X8"); }
+        return false;
+    }
+
+    public static string ReadMsaaHtml(IntPtr hwnd) {
+        try {
+            foreach (IAccessible node in AccessibleNodes(AccessibleRoot(hwnd), 0, new HashSet<long>())) {
+                if (Convert.ToInt32(node.get_accRole(0)) != 42) continue;
+                string value = node.get_accValue(0);
+                if (!String.IsNullOrEmpty(value) && Regex.IsMatch(value, "<head|<body|content[\\\\/]pic[\\\\/]", RegexOptions.IgnoreCase))
+                    return value;
+            }
+        } catch { }
+        return "";
+    }
+    // JO9 MOD END WORKSHOP_MSAA_CAPTURE_20261024
+
     public static IntPtr[] ProcessWindows(uint pid) {
         var list = new List<IntPtr>();
         EnumWindows((h, l) => {
@@ -300,9 +386,23 @@ public static class JO9Win32 {
         System.Threading.Thread.Sleep(80);
     }
 }
-'@
+'@ -ReferencedAssemblies @('System.dll',[Accessibility.IAccessible].Assembly.Location)
 
-function Invoke-ShowHtml {
+function Invoke-ShowHtml([IntPtr]$Target) {
+    if ($Target -eq [IntPtr]::Zero -or -not [JO9Win32]::IsWindow($Target)) {
+        throw 'Game window is not available; no keyboard input was sent'
+    }
+    $reason=''
+    if ([JO9Win32]::InvokeShowHtml($Target,[ref]$reason)) {
+        Log 'Show html action invoked by MSAA name'
+        return
+    }
+    Log ('Named Show html unavailable: '+$reason)
+    [JO9Win32]::SetForegroundWindow($Target) | Out-Null
+    Start-Sleep -Milliseconds 100
+    if ([JO9Win32]::GetForegroundWindow() -ne $Target) {
+        throw 'Game window could not be activated; no keyboard input was sent'
+    }
     $map=@{
         'ALT'=0x12
         'RIGHT'=0x27
@@ -324,8 +424,11 @@ function Invoke-ShowHtml {
 }
 
 function Read-ViewerByUIA([IntPtr]$Hwnd) {
+    # Keep the existing helper name for callers; Qt 5.4 exposes this value through MSAA.
     try {
         if (-not [JO9Win32]::IsWindow($Hwnd)) { return '' }
+        $native=[JO9Win32]::ReadMsaaHtml($Hwnd)
+        if (Is-HTML $native) { return $native }
         $ae=[System.Windows.Automation.AutomationElement]::FromHandle($Hwnd)
         if ($null -eq $ae) { return '' }
 
@@ -357,6 +460,7 @@ function Read-ViewerByClipboard([IntPtr]$Hwnd) {
         if (-not [JO9Win32]::IsWindow($Hwnd)) { return '' }
         [JO9Win32]::SetForegroundWindow($Hwnd) | Out-Null
         Start-Sleep -Milliseconds 80
+        if ([JO9Win32]::GetForegroundWindow() -ne $Hwnd) { return '' }
         [System.Windows.Forms.Clipboard]::Clear()
         [JO9Win32]::CtrlKey(0x41)
         [JO9Win32]::CtrlKey(0x43)
@@ -447,7 +551,7 @@ try {
     # Exact keys are externalized in config.json.
     [JO9Win32]::SetForegroundWindow($MainHwnd) | Out-Null
     Start-Sleep -Milliseconds 140
-    Invoke-ShowHtml
+    Invoke-ShowHtml $MainHwnd
 
     # Reuse the static QTextEdit HWND if known.
     $Html=''
@@ -458,7 +562,7 @@ try {
             $raw=(Get-Content -LiteralPath $ViewerFile -Raw).Trim()
             if ($raw -match '^\d+$') {
                 $saved=[IntPtr]([int64]$raw)
-                if ([JO9Win32]::IsWindow($saved)) {
+                if ([JO9Win32]::IsWindow($saved) -and [JO9Win32]::IsWindowVisible($saved)) {
                     $pidCheck=[uint32]0
                     [void][JO9Win32]::GetWindowThreadProcessId($saved,[ref]$pidCheck)
                     if ($pidCheck -eq $PidTarget) {
@@ -468,7 +572,7 @@ try {
                         if (Is-HTML $Text) {
                             $Viewer=$saved
                             $Html=$Text
-                            Log 'Cached viewer read by UIA'
+                            Log 'Cached viewer read by accessibility'
                         } else {
                             $Text=Read-ViewerByClipboard $saved
                             if (Is-HTML $Text) {
@@ -490,13 +594,13 @@ try {
             $Wins=[JO9Win32]::ProcessWindows($PidTarget)
 
             foreach ($w in $Wins) {
-                if ($w -eq $MainHwnd) { continue }
+                if ($w -eq $MainHwnd -or -not [JO9Win32]::IsWindowVisible($w)) { continue }
 
                 $Text=Read-ViewerByUIA $w
                 if (Is-HTML $Text) {
                     $Viewer=$w
                     $Html=$Text
-                    Log ("Viewer found by UIA HWND="+$w)
+                    Log ("Viewer found by accessibility HWND="+$w)
                     break
                 }
 
@@ -519,18 +623,18 @@ try {
             Start-Sleep -Milliseconds ([int]$ToolConfig.retryDelayMilliseconds)
             [JO9Win32]::SetForegroundWindow($MainHwnd) | Out-Null
             Start-Sleep -Milliseconds 100
-            Invoke-ShowHtml
+            Invoke-ShowHtml $MainHwnd
 
             for ($Try=0; $Try -lt 35 -and -not $Html; $Try++) {
                 Start-Sleep -Milliseconds 80
                 $Wins=[JO9Win32]::ProcessWindows($PidTarget)
                 foreach ($w in $Wins) {
-                    if ($w -eq $MainHwnd) { continue }
+                    if ($w -eq $MainHwnd -or -not [JO9Win32]::IsWindowVisible($w)) { continue }
                     $Text=Read-ViewerByUIA $w
                     if (Is-HTML $Text) {
                         $Viewer=$w
                         $Html=$Text
-                        Log ("Retry found viewer by UIA HWND="+$w)
+                        Log ("Retry found viewer by accessibility HWND="+$w)
                         break
                     }
                     if ([JO9Win32]::IsWindowVisible($w)) {
@@ -548,7 +652,7 @@ try {
     }
 
     if (-not $Html) {
-        Fail 'Show html was invoked, but the reused QTextEdit could not be read'
+        Fail 'HTML source could not be captured from the current game window'
     }
 
     Log ("HTML captured, chars="+$Html.Length)

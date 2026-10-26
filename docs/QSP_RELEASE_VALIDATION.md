@@ -91,3 +91,18 @@ node --test tools/qa/release-check.test.cjs tools/qa/qsp-line-endings.test.cjs t
 ## 2026-10-17 후속: 완전히 누락된 줄 경계
 
 기존 단독 CR/LF 검사가 놓친 END 주석+명령 결합을 `check-qsp-marker-boundaries.cjs`로 추가 검사한다. `apply_mods.ps1`도 쓰기 전에 거부한다. 기본 실제 엔진 경로는 기존6개에 도시 대화2개·전투 진입1개를 더해9개다. [원인과 복구](CITY_SCENE_MARKER_FIX_20261017.md), [검증 결과](qa/2026-10-17_city-scene-marker-fix.json). 일반 주석과 모든 QSP 문법을 완전히 검사하는 도구는 아니다.
+
+## 2026-10-19 교육 검사 누락 보완
+
+기본9경로 PASS는 포트레이트 교육까지 검사한 결과가 아니다. 기존 조수 교육 성공 분기의 코드+START 주석 결합을 누락했으므로 검사기와13개 회귀검사를 보완했다. 이번 교육133경로/메뉴20+경계6/특수후속6/구형pending3을 별도 실제 FastQSP로 검사했으며 [기록](PORTRAIT_EDUCATION_FIX_20261019.md)에 입력·선택콜백주입·한계를 명시한다. native5.7의 지원 명령을 FastQSP와 동일하다고 가정하지 않는다. 완전한 QSP 문법 검사나 모든 동적 분기 증명이라는 표현을 사용하지 않는다.
+
+2026-10-20 최종 교육 조건 검사: 빈 노예/기절/사망/정상 존재/보유금 없음의 버튼 상태를 실제 엔진에서 전후 비교하고, 기존 초기화 helper로 빈 슬롯을 만든 6999 수업의 비용·대상·페이지·복귀를 확인했다. 최종 Work 20137b7336f2ec27c419605cbd2ada1a6fab459919c6ceaaedad89a9152f40f5에 공식 9경로·정확 패치 재생·멱등성 검사를 다시 통과했다. 배포본과 ZIP 검증/갱신은 사용자 보류 범위다.
+
+## 2026-10-20 인물 JSON 번호·문법 검사
+
+출고 총괄은 `--game-dir`의 `json/slaves`에 `check-slave-template-ids.cjs`를 호출한다. 같은 숫자 접두사·JSON 문법·내부 girl_id 불일치 등을 실패 처리한다. release에서 game-dir가 없으면 필수 SKIP으로 INCOMPLETE이다. 원본 0_template 및 서로 다른 번호의 별칭은 허용한다. [이번 수정과 검사 한계](SEED_NAMESPACE_FIX_20261020.md), [입출력·부작용 설명](../records/seed-namespace-fix-20261020/MANUAL_KO.md). 정적 검사나 기능별 native 검사만으로 전체 출고 PASS를 주장하지 않는다.
+
+
+## 기존 대사 캐시 갱신 검사 시간 (PEER_RELATION_ZERO_ID_AND_VARIANTS_20261022)
+
+--client-timeout-seconds 30으로 경로별 제한시간을 명시할 수 있다. 생략하면 기존12초이고 정수1~60만 허용한다. 전체 PowerShell 예산도 (경로수×설정초+12)초로 계산한다. 2026-10-22의 revision7→8 대사은행 재구축 검사에서 동일 홈 진단본이12.708초에 정상 완료하여 추가했다. 성공 기준은 여전히 실제 완료마커9개이며 예상하지 않은 메시지·시간초과는 실패다. 게임 동작을 바꾸는 옵션이 아니다. [검사·시간 측정 기록](../records/private-feelings-fix-20261022/MANUAL_KO.md).

@@ -1,0 +1,361 @@
+! JO9 MOD START INSOLVENCY_ASSETS_20261023
+! quote is read-only; sell always re-quotes immediately before mutation.
+! decor_state: 0 current installed decor remains, 1 already recovered.
+local $jo9_ls_action = $args[0]
+local $jo9_ls_target = $args[1]
+local jo9_ls_amount = 0
+local jo9_ls_iced = 0
+
+if $jo9_ls_action = 'decor_change':
+ jo9_lq_decor_state[$jo9_ls_target] = 0
+ exit
+end
+
+if $jo9_ls_action = 'sell':
+ jo9_lq_sold = 0
+ jo9_lq_paid = 0
+ gs 'jo9_liquidation_assets', 'quote'
+ if jo9_lq_available[$jo9_ls_target] ! 1: exit
+ jo9_ls_amount = jo9_lq_value[$jo9_ls_target]
+ if $jo9_ls_target = 'decor':
+  if jo9_lq_value['decor_study'] > 0:
+   $study = 'basic'
+   jo9_lq_decor_state['study'] = 1
+   $bg['study'] = $interior_study[$study]
+   $bg['home_lux'] = $interior_study_large[$study]
+   $place_info['study'] = $interior_study_info[$study]
+  end
+  if jo9_lq_value['decor_bed'] > 0:
+   $bed = 'basic'
+   jo9_lq_decor_state['bed'] = 1
+   $bg['bedroom'] = $interior_bed[$bed]
+   $bg['bedroom_lux'] = $interior_bed_large[$bed]
+   $place_info['bedroom'] = $interior_bed_info[$bed]
+  end
+  if jo9_lq_value['decor_kitchen'] > 0:
+   $kitchen = 'basic'
+   jo9_lq_decor_state['kitchen'] = 1
+   $bg['kitchen'] = $interior_kitchen[$kitchen]
+   $bg['kitchen_lux'] = $interior_kitchen_large[$kitchen]
+   $place_info['kitchen'] = $interior_kitchen_info[$kitchen]
+  end
+  if jo9_lq_value['decor_bath'] > 0:
+   $bath = 'basic'
+   jo9_lq_decor_state['bath'] = 1
+   $bg['bathroom'] = $interior_bath[$bath]
+   $bg['bathroom_lux'] = $interior_bath_large[$bath]
+   $place_info['bathroom'] = $interior_bath_info[$bath]
+  end
+  if jo9_lq_value['decor_dungeon'] > 0:
+   $dungeon = 'basic'
+   jo9_lq_decor_state['dungeon'] = 1
+   $bg['dungeon'] = $interior_dungeon[$dungeon]
+   $bg['dungeon_lux'] = $interior_dungeon_large[$dungeon]
+   $place_info['dungeon'] = $interior_dungeon_info[$dungeon]
+  end
+  if jo9_lq_value['decor_boudoir'] > 0:
+   $boudoir = 'basic'
+   jo9_lq_decor_state['boudoir'] = 1
+   $bg['boudoir'] = $interior_boudoir[$boudoir]
+   $bg['boudoir_lux'] = $interior_boudoir_large[$boudoir]
+   $place_info['boudoir'] = $interior_boudoir_info[$boudoir]
+  end
+  if jo9_lq_value['decor_lab'] > 0:
+   $lab = 'basic'
+   jo9_lq_decor_state['lab'] = 1
+   $bg['lab'] = $interior_lab[$lab]
+   $bg['lab_lux'] = $interior_lab_large[$lab]
+   $place_info['lab'] = $interior_lab_info[$lab]
+  end
+ elseif $jo9_ls_target = 'room4':
+  kulaconstruct = 3
+ elseif $jo9_ls_target = 'room3':
+  kulaconstruct = 2
+ elseif $jo9_ls_target = 'room2':
+  kulaconstruct = 1
+ elseif $jo9_ls_target = 'room1':
+  kulaconstruct = 0
+ elseif $jo9_ls_target = 'lab':
+  lab = 0
+ elseif $jo9_ls_target = 'boudoir':
+  boudoir = 0
+ elseif $jo9_ls_target = 'dungeon':
+  dungeon = 0
+  if cell_state = 1: cell_state = 0
+ elseif $jo9_ls_target = 'barn':
+  barn = 0
+  if cell_state = 2: cell_state = 0
+ elseif $jo9_ls_target = 'pen':
+  pen = 0
+ elseif $jo9_ls_target = 'stasis':
+  stasis_tank = 0
+  if cell_state = 3: cell_state = 0
+ elseif $jo9_ls_target = 'house':
+  owner = 0
+  if slums_shakedown ! 0 and day > slums_shakedown + 100: slums_shakedown = day - 100
+  $estate = 'slum_house'
+  $interior = 'slum_house'
+  gs 'new_estate'
+ else
+  exit
+ end
+ sparks += jo9_ls_amount
+ jo9_lq_paid = jo9_ls_amount
+ jo9_lq_sold = 1
+ exit
+end
+
+if $jo9_ls_action ! 'quote': exit
+killvar 'jo9_lq_value'
+killvar 'jo9_lq_available'
+killvar '$jo9_lq_reason'
+jo9_ls_amount = 0
+if ($estate ! '' and $estate ! 'slum_house') and jo9_lq_decor_state['study'] = 0:
+ if $study = 'basic': jo9_ls_amount = 0
+ if $study = 'econom': jo9_ls_amount = 20
+ if $study = 'japan': jo9_ls_amount = 25
+ if $study = 'comfy': jo9_ls_amount = 25
+ if $study = 'fort': jo9_ls_amount = 50
+ if $study = 'modern': jo9_ls_amount = 50
+ if $study = 'classic': jo9_ls_amount = 50
+ if $study = 'victorian': jo9_ls_amount = 100
+ if $study = 'gothic': jo9_ls_amount = 100
+ if $study = 'elite': jo9_ls_amount = 100
+ if $study = 'slaver': jo9_ls_amount = 150
+ if $study = 'lux': jo9_ls_amount = 200
+end
+jo9_lq_value['decor_study'] = max(0, jo9_ls_amount / 2)
+jo9_lq_value['decor'] += jo9_lq_value['decor_study']
+jo9_ls_amount = 0
+if ($estate ! '' and $estate ! 'slum_house') and jo9_lq_decor_state['bed'] = 0:
+ if $bed = 'basic': jo9_ls_amount = 0
+ if $bed = 'econom': jo9_ls_amount = 15
+ if $bed = 'japan': jo9_ls_amount = 25
+ if $bed = 'comfy': jo9_ls_amount = 25
+ if $bed = 'fort': jo9_ls_amount = 30
+ if $bed = 'modern': jo9_ls_amount = 50
+ if $bed = 'classic': jo9_ls_amount = 100
+ if $bed = 'slaver': jo9_ls_amount = 100
+ if $bed = 'stylish': jo9_ls_amount = 150
+ if $bed = 'gothic': jo9_ls_amount = 150
+ if $bed = 'elite': jo9_ls_amount = 150
+ if $bed = 'lux': jo9_ls_amount = 200
+end
+jo9_lq_value['decor_bed'] = max(0, jo9_ls_amount / 2)
+jo9_lq_value['decor'] += jo9_lq_value['decor_bed']
+jo9_ls_amount = 0
+if (kitchen > 0) and jo9_lq_decor_state['kitchen'] = 0:
+ if $kitchen = 'basic': jo9_ls_amount = 20
+ if $kitchen = 'econom': jo9_ls_amount = 20
+ if $kitchen = 'fort': jo9_ls_amount = 20
+ if $kitchen = 'gothic': jo9_ls_amount = 50
+ if $kitchen = 'elite': jo9_ls_amount = 50
+end
+jo9_lq_value['decor_kitchen'] = max(0, jo9_ls_amount / 2)
+jo9_lq_value['decor'] += jo9_lq_value['decor_kitchen']
+jo9_ls_amount = 0
+if (bath > 0) and jo9_lq_decor_state['bath'] = 0:
+ if $bath = 'basic': jo9_ls_amount = 0
+ if $bath = 'econom': jo9_ls_amount = 20
+ if $bath = 'fort': jo9_ls_amount = 20
+ if $bath = 'classic': jo9_ls_amount = 50
+ if $bath = 'japan': jo9_ls_amount = 50
+ if $bath = 'gothic': jo9_ls_amount = 50
+ if $bath = 'elite': jo9_ls_amount = 50
+ if $bath = 'lux': jo9_ls_amount = 100
+end
+jo9_lq_value['decor_bath'] = max(0, jo9_ls_amount / 2)
+jo9_lq_value['decor'] += jo9_lq_value['decor_bath']
+jo9_ls_amount = 0
+if (dungeon > 0) and jo9_lq_decor_state['dungeon'] = 0:
+ if $dungeon = 'basic': jo9_ls_amount = 0
+ if $dungeon = 'econom': jo9_ls_amount = 20
+ if $dungeon = 'fort': jo9_ls_amount = 10
+ if $dungeon = 'entomb': jo9_ls_amount = 10
+ if $dungeon = 'classic': jo9_ls_amount = 20
+ if $dungeon = 'pastoral': jo9_ls_amount = 20
+ if $dungeon = 'gothic': jo9_ls_amount = 20
+ if $dungeon = 'executor': jo9_ls_amount = 25
+ if $dungeon = 'slaver': jo9_ls_amount = 25
+ if $dungeon = 'victorian': jo9_ls_amount = 50
+ if $dungeon = 'elite': jo9_ls_amount = 50
+ if $dungeon = 'lux': jo9_ls_amount = 50
+end
+jo9_lq_value['decor_dungeon'] = max(0, jo9_ls_amount / 2)
+jo9_lq_value['decor'] += jo9_lq_value['decor_dungeon']
+jo9_ls_amount = 0
+if (boudoir > 0) and jo9_lq_decor_state['boudoir'] = 0:
+ if $boudoir = 'basic': jo9_ls_amount = 0
+ if $boudoir = 'econom': jo9_ls_amount = 10
+ if $boudoir = 'modern': jo9_ls_amount = 20
+ if $boudoir = 'comfy': jo9_ls_amount = 20
+ if $boudoir = 'magic': jo9_ls_amount = 50
+ if $boudoir = 'victorian': jo9_ls_amount = 50
+ if $boudoir = 'slaver': jo9_ls_amount = 50
+ if $boudoir = 'fort': jo9_ls_amount = 100
+ if $boudoir = 'elite': jo9_ls_amount = 150
+ if $boudoir = 'gothic': jo9_ls_amount = 200
+ if $boudoir = 'lux': jo9_ls_amount = 250
+end
+jo9_lq_value['decor_boudoir'] = max(0, jo9_ls_amount / 2)
+jo9_lq_value['decor'] += jo9_lq_value['decor_boudoir']
+jo9_ls_amount = 0
+if (lab > 0) and jo9_lq_decor_state['lab'] = 0:
+ if $lab = 'econom': jo9_ls_amount = 20
+ if $lab = 'basic': jo9_ls_amount = 20
+ if $lab = 'fort': jo9_ls_amount = 50
+ if $lab = 'gothic': jo9_ls_amount = 100
+ if $lab = 'slaver': jo9_ls_amount = 100
+ if $lab = 'victorian': jo9_ls_amount = 100
+ if $lab = 'elite': jo9_ls_amount = 100
+end
+jo9_lq_value['decor_lab'] = max(0, jo9_ls_amount / 2)
+jo9_lq_value['decor'] += jo9_lq_value['decor_lab']
+jo9_lq_available['decor'] = iif(jo9_lq_value['decor'] > 0, 1, 0)
+if jo9_lq_available['decor'] = 0: $jo9_lq_reason['decor'] = '지금 처분해서 돈을 마련할 수 있는 실내장식은 없다.'
+
+if kulaconstruct >= 1:
+ if room1_state ! CONST_INT['no_slave']:
+  $jo9_lq_reason['room1'] = '개인실 1에는 아직 입주자가 있다. 직접 방을 비운 뒤에 철거해야 한다.'
+ elseif kulaconstruct ! 1:
+  $jo9_lq_reason['room1'] = '가장 나중에 증축한 개인실부터 차례로 철거해야 한다.'
+ else
+  jo9_lq_available['room1'] = 1
+  jo9_lq_value['room1'] = 2500
+ end
+else
+ $jo9_lq_reason['room1'] = '아직 증축하지 않은 개인실이다.'
+end
+
+if kulaconstruct >= 2:
+ if room2_state ! CONST_INT['no_slave']:
+  $jo9_lq_reason['room2'] = '개인실 2에는 아직 입주자가 있다. 직접 방을 비운 뒤에 철거해야 한다.'
+ elseif kulaconstruct ! 2:
+  $jo9_lq_reason['room2'] = '가장 나중에 증축한 개인실부터 차례로 철거해야 한다.'
+ else
+  jo9_lq_available['room2'] = 1
+  jo9_lq_value['room2'] = 1000
+ end
+else
+ $jo9_lq_reason['room2'] = '아직 증축하지 않은 개인실이다.'
+end
+
+if kulaconstruct >= 3:
+ if room3_state ! CONST_INT['no_slave']:
+  $jo9_lq_reason['room3'] = '개인실 3에는 아직 입주자가 있다. 직접 방을 비운 뒤에 철거해야 한다.'
+ elseif kulaconstruct ! 3:
+  $jo9_lq_reason['room3'] = '가장 나중에 증축한 개인실부터 차례로 철거해야 한다.'
+ else
+  jo9_lq_available['room3'] = 1
+  jo9_lq_value['room3'] = 2500
+ end
+else
+ $jo9_lq_reason['room3'] = '아직 증축하지 않은 개인실이다.'
+end
+
+if kulaconstruct >= 4:
+ if room4_state ! CONST_INT['no_slave']:
+  $jo9_lq_reason['room4'] = '개인실 4에는 아직 입주자가 있다. 직접 방을 비운 뒤에 철거해야 한다.'
+ elseif kulaconstruct ! 4:
+  $jo9_lq_reason['room4'] = '가장 나중에 증축한 개인실부터 차례로 철거해야 한다.'
+ else
+  jo9_lq_available['room4'] = 1
+  jo9_lq_value['room4'] = 5000
+ end
+else
+ $jo9_lq_reason['room4'] = '아직 증축하지 않은 개인실이다.'
+end
+
+! Facilities are rentals billed for the previous decade, not owned buildings.
+! At the failed billing boundary there is no unused prepaid period to refund.
+if lab > 0:
+ jo9_lq_available['lab'] = 1
+else
+ $jo9_lq_reason['lab'] = '사용 중인 연구실이 없다.'
+end
+if boudoir > 0:
+ jo9_lq_available['boudoir'] = 1
+else
+ $jo9_lq_reason['boudoir'] = '사용 중인 별실이 없다.'
+end
+if dungeon > 0:
+ if prisoner_state = CONST_INT['no_slave']:
+  jo9_lq_available['dungeon'] = 1
+ else
+  $jo9_lq_reason['dungeon'] = '감옥에 사람이 남아 있다. 직접 비운 뒤에 시설을 정리해야 한다.'
+ end
+else
+ $jo9_lq_reason['dungeon'] = '사용 중인 감옥이 없다.'
+end
+if barn > 0:
+ if farmhand_state = CONST_INT['no_slave'] and cow_state = CONST_INT['no_slave'] and harpy_state = CONST_INT['no_slave'] and pig_state = CONST_INT['no_slave']:
+  jo9_lq_available['barn'] = 1
+ else
+  $jo9_lq_reason['barn'] = '외양간에 사람이 남아 있다. 직접 비운 뒤에 시설을 정리해야 한다.'
+ end
+else
+ $jo9_lq_reason['barn'] = '사용 중인 외양간이 없다.'
+end
+if pen > 0:
+ if pet_tentacle = 0:
+  jo9_lq_available['pen'] = 1
+ else
+  $jo9_lq_reason['pen'] = '우리 안에 안개 괴물이 남아 있다. 직접 우리를 비운 뒤에 정리해야 한다.'
+ end
+else
+ $jo9_lq_reason['pen'] = '사용 중인 괴물 우리가 없다.'
+end
+if iced_1_state ! CONST_INT['no_slave']: jo9_ls_iced = 1
+if iced_2_state ! CONST_INT['no_slave']: jo9_ls_iced = 1
+if iced_3_state ! CONST_INT['no_slave']: jo9_ls_iced = 1
+if iced_4_state ! CONST_INT['no_slave']: jo9_ls_iced = 1
+if iced_5_state ! CONST_INT['no_slave']: jo9_ls_iced = 1
+if iced_6_state ! CONST_INT['no_slave']: jo9_ls_iced = 1
+if iced_7_state ! CONST_INT['no_slave']: jo9_ls_iced = 1
+if iced_8_state ! CONST_INT['no_slave']: jo9_ls_iced = 1
+if iced_9_state ! CONST_INT['no_slave']: jo9_ls_iced = 1
+if iced_10_state ! CONST_INT['no_slave']: jo9_ls_iced = 1
+if iced_11_state ! CONST_INT['no_slave']: jo9_ls_iced = 1
+if iced_12_state ! CONST_INT['no_slave']: jo9_ls_iced = 1
+if iced_13_state ! CONST_INT['no_slave']: jo9_ls_iced = 1
+if iced_14_state ! CONST_INT['no_slave']: jo9_ls_iced = 1
+if iced_15_state ! CONST_INT['no_slave']: jo9_ls_iced = 1
+if iced_16_state ! CONST_INT['no_slave']: jo9_ls_iced = 1
+if iced_17_state ! CONST_INT['no_slave']: jo9_ls_iced = 1
+if iced_18_state ! CONST_INT['no_slave']: jo9_ls_iced = 1
+if stasis_tank > 0:
+ if jo9_ls_iced = 0:
+  jo9_lq_available['stasis'] = 1
+ else
+  $jo9_lq_reason['stasis'] = '냉동 보관 중인 사람이 있다. 직접 모두 꺼낸 뒤에 장치를 반납해야 한다.'
+ end
+else
+ $jo9_lq_reason['stasis'] = '집에 대여한 냉동 보관 장치가 없다.'
+end
+
+if $estate = '' or $estate = 'slum_house':
+ $jo9_lq_reason['house'] = '현재 처분할 주택이 없다.'
+elseif kulaconstruct > 0:
+ $jo9_lq_reason['house'] = '증축한 개인실을 먼저 비우고 철거해야 한다.'
+elseif room1_state ! CONST_INT['no_slave'] or room2_state ! CONST_INT['no_slave'] or room3_state ! CONST_INT['no_slave'] or room4_state ! CONST_INT['no_slave']:
+ $jo9_lq_reason['house'] = '개인실에 사람이 남아 있다. 직접 방을 비운 뒤에 주거를 정리해야 한다.'
+elseif prisoner_state ! CONST_INT['no_slave'] or farmhand_state ! CONST_INT['no_slave'] or cow_state ! CONST_INT['no_slave'] or harpy_state ! CONST_INT['no_slave'] or pig_state ! CONST_INT['no_slave'] or pet_tentacle ! 0:
+ $jo9_lq_reason['house'] = '부속 시설에 사람이 있거나 괴물이 남아 있다. 직접 시설을 비운 뒤에 주거를 정리해야 한다.'
+elseif lab > 0 or pen > 0 or stasis_tank > 0:
+ $jo9_lq_reason['house'] = '별도로 대여한 시설부터 정리해야 한다.'
+elseif (dungeon > 0 and estate_cost_dungeon[$estate] > 0) or (boudoir > 0 and estate_cost_boudoir[$estate] > 0) or (barn > 0 and estate_cost_barn[$estate] > 0):
+ $jo9_lq_reason['house'] = '별도로 대여한 시설부터 정리해야 한다.'
+else
+ jo9_lq_available['house'] = 1
+ if owner = 1: jo9_lq_value['house'] = max(0, 75 * estate_cost_main[$estate] / 2)
+end
+
+! During a pending bill, ordinary relocation must not empty occupied facilities.
+if room1_state ! CONST_INT['no_slave'] or room2_state ! CONST_INT['no_slave'] or room3_state ! CONST_INT['no_slave'] or room4_state ! CONST_INT['no_slave'] or prisoner_state ! CONST_INT['no_slave'] or farmhand_state ! CONST_INT['no_slave'] or cow_state ! CONST_INT['no_slave'] or harpy_state ! CONST_INT['no_slave'] or pig_state ! CONST_INT['no_slave'] or pet_tentacle ! 0:
+ $jo9_lq_reason['move'] = '시설 안에 남아 있는 인물을 먼저 직접 옮겨야 한다.'
+elseif stasis_tank > 0 and jo9_ls_iced ! 0:
+ $jo9_lq_reason['move'] = '냉동 보관 중인 인물을 먼저 직접 옮겨야 한다.'
+else
+ jo9_lq_available['move'] = 1
+end
+! JO9 MOD END INSOLVENCY_ASSETS_20261023

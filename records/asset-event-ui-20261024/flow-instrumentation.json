@@ -1,0 +1,102 @@
+{
+  "schema": 1,
+  "source": "G:/Codex/tmp/jo9-asset-event-ui-20261024/inputs/candidate.qsp",
+  "sourceHash": "320ade3b114cb11cdee1c5da493f0fda7ef01e7563ab74adfe8f739410dbeda2",
+  "fixtureHash": "6b9678e0981360a83fb2108151dc4fccb82f43a33bb79ffedb8284804e0e378b",
+  "cases": [
+    {
+      "name": "invoice-snapshot",
+      "assertions": 2
+    },
+    {
+      "name": "manual-day-finish-load",
+      "assertions": 5
+    },
+    {
+      "name": "manual-loan-settle-once",
+      "assertions": 2
+    },
+    {
+      "name": "empty-view",
+      "assertions": 1
+    },
+    {
+      "name": "empty-manual",
+      "assertions": 1
+    },
+    {
+      "name": "empty-abandon",
+      "assertions": 1
+    },
+    {
+      "name": "zero-refund-rental",
+      "assertions": 4
+    },
+    {
+      "name": "occupied-room",
+      "assertions": 3
+    },
+    {
+      "name": "occupied-dungeon",
+      "assertions": 3
+    },
+    {
+      "name": "occupied-barn",
+      "assertions": 3
+    },
+    {
+      "name": "occupied-pen",
+      "assertions": 3
+    },
+    {
+      "name": "occupied-stasis",
+      "assertions": 3
+    },
+    {
+      "name": "owned-slave",
+      "assertions": 5
+    },
+    {
+      "name": "owned-assistant",
+      "assertions": 5
+    },
+    {
+      "name": "not-owned-or-dead",
+      "assertions": 1
+    },
+    {
+      "name": "refund-settle-once",
+      "assertions": 3
+    },
+    {
+      "name": "stale-abandon-assets-remain",
+      "assertions": 1
+    }
+  ],
+  "assertions": 46,
+  "unchangedBodies": [
+    {
+      "name": "jo9_liquidation_assets",
+      "sha256": "4e2d9db6518a38298fc0def1a7949672bc42b56828969f12427143f69c60fbf0"
+    },
+    {
+      "name": "jo9_liquidation_sale",
+      "sha256": "e6427a823477fad493a561c78484113642d36611c318667d1c45b26d88bf1f3c"
+    },
+    {
+      "name": "exit",
+      "sha256": "4e1f1ad919c6bec9e3d663813320467f72a7e19dbe612b4056a909b7359608c7"
+    }
+  ],
+  "masks": [
+    "GT liquidation view/finish becomes GS of the same production location plus return; terminal menu GT records destination.",
+    "Only existing death macro GT exit becomes a recorder; preceding production day=0 and ending text remain.",
+    "next_day/menu_form/main_screen stop immediately after the original pending-bill guard.",
+    "load handler keeps production body but redirects terminal pending-bill GT to GS and recorder."
+  ],
+  "limits": [
+    "No personal saves or installed game files are written.",
+    "Direct native load handler execution verifies preserved ledger re-entry; actual GUI SAVEGAME/OPENGAME serialization is not claimed.",
+    "No pixel/UI click validation is claimed."
+  ]
+}

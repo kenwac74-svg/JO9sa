@@ -1,0 +1,15 @@
+B컷 추가 mob 폴더 복구 — BCUT_MOB_RESTORE_20261021
+
+원인: B컷 기능 전체가 삭제된 것은 아니다. UI와 서버 허용목록/등록스캔이 bg·characters·scene·reserve에만 연결되어, 현재 보고 있던 mob 이미지 카드에는 버튼이 없고 API도 경로를 거부했다.
+변경: 도구 소스의 폴더 허용목록에 mob을 추가하고 활성 IMGMG 및 Work/modtools에 좁게 반영했다. 각 front 사본의 PLAY_URL, 원본동기화 모듈, 레이아웃은 보존했다. 게임 QSP·이미지·세이브·Full·ZIP은 변경하지 않았다.
+
+사용: 체크리스트 카드의 전환 컷 추가(B·C…) 또는 독립 이미지 교체기의 현재 화면 이미지 카드 아래 같은 버튼을 누른다. 기존 드롭박스에서 새 이미지를 넣고 구도·비교/규격 맞추기 후 결과 카드로 저장한다. 확인 예시는 mob/Warg.png → mob/Warg (2).png이다.
+
+입출력: JO9_CUTS.open(base,row)는 기존 JO9Workshop.beginCut에 전달한다. cuts/info 입력 base는 PIC 상대 PNG경로이며 다음 파일명·기준해시·치수·기존컷목록을 반환한다. families는 목록, file은 이미지읽기, add는새번호저장, replace는기존번호교체이다. UI 열기만으로 이미지를 저장하지 않는다.
+부작용과 의존: 실제 사용자가 저장하면 기존 추가컷 기록/백업/카탈로그 등록기를 사용한다. Windows(2)~(4)는기존동적슬롯, (5)이상은기존ID를보존하는등록기로QSP를갱신하므로그때는게임재시작이필요할수있다. image-cuts.cjs, original-cuts.cjs, pic-local.cjs, apply_mods.ps1와 QSP의Windows슬롯등록표식을유지한다. 기존원본B는읽기전용이다.
+분리/제거 영향: UI만 mob을 허용하고 서버/등록목록을 되돌리면 버튼은보이나읽기/저장에실패한다. 서버만허용하면버튼이숨겨진다. 복구할때는source/runtime-changes.json과압축원본백업을함께보고현재파일해시를대조한후변경블록만복원한다. 현재설치본에새편집이있으면전체덮어쓰지않는다.
+
+검증: 수정 전UI3건과backend6건의mob실패재현. 수정후최종14건통과/0실패, 변경된JS·HTML스크립트21개문법확인. 격리fixture에서B추가/교체/A보존/원본B보호/5번10005등록/기존ID·기타QSP필드보존/일부경로거부를확인했다. 실제두브라우저의B편집모드진입을확인했으며실제게임그림은저장하지않았다.
+한계: 전투진행화면의기존전환제외조건은변경하지않았다. 기록된기존symlink/junction잠재경계3건은본허용목록수리의검증범위밖이며 RESULT.json과backend-report.json에분리보관했다.
+
+상세위치/해시: frontend-changes.json, runtime-changes.json, backend-report.json. 회귀재현: tools/imgmg/tests/catalog-cuts.test.cjs, tools/cut-addition/workshop-cut-editor.test.cjs, tools/text-workshop/mob-image-cuts.test.cjs. 임시fixture는G:/Codex/tmp/bcut-mob-repair-20261021 아래에서만생성되며검사후정리된다.

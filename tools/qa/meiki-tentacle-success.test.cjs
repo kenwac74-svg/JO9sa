@@ -47,14 +47,31 @@ for (const [location, count, actors] of [['interaction', 3, ['dynslave', 'assist
   });
 }
 
-test('dedicated placeholder exists in all nine dialogue branches and is searchable as dialogue', () => {
-  assert.equal((body('interaction').match(/'%명기착정성공'/g) || []).length, 3);
-  assert.equal((body('end_day_screen').match(/'%명기착정성공'/g) || []).length, 6);
-  const entries = core.entries(doc).filter(e => e.text === '%명기착정성공');
-  assert.equal(entries.length, 9);
-  assert(entries.every(e => e.dialogue), 'Every placeholder must appear in dialogue-only workshop search');
-  assert.equal((body('interaction').match(/if (?:dynslave|assistant|slave)\['virginity'\] = 4:\s*\r?\n?\s*\$text\[1\] = '%명기착정성공'/g) || []).length, 3);
-  assert.equal((body('end_day_screen').match(/if (?:slave|assistant|room[1-4])\['virginity'\] = 4:\s*\r?\n?\s*\$text = '%명기착정성공'/g) || []).length, 6);
+test('current meiki success dialogue binds each role to its displayed amount and bonus', () => {
+  const entries = core.entries(doc);
+  const manualAmount = 'semen_gain[max(0, tentacle_size - spawn_milked)] * (12 + tentacle_size) / 10';
+  const manualBonus = '20 + tentacle_size * 10';
+  const bindings = [
+    ...['dynslave', 'assistant', 'slave'].map(role => ['interaction', role, manualAmount, manualBonus]),
+    ...roles.map(role => ['end_day_screen', role, `jo9_tentacle_report['${role}_gain']`, `jo9_tentacle_report['${role}_bonus']`]),
+  ];
+  const executable = new Map(['interaction', 'end_day_screen'].map(location => [location,
+    body(location).split(/\r?\n/).filter(line => !/^\s*!\s*JO9 MOD (?:START|END)\b/.test(line)).join('\n')]));
+  const escapePattern = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  for (const [location, role, amount, bonus] of bindings) {
+    const tokens = ['$' + role + '_name', amount, bonus];
+    const matches = entries.filter(entry => entry.location === location && tokens.every(token => entry.text.includes('<<' + token + '>>')));
+    assert.equal(matches.length, 1, `${location}: ${role} has one success dialogue with its own amount and bonus`);
+    const entry = matches[0];
+    assert.equal(entry.dialogue, true, `${location}: ${role} is searchable as dialogue`);
+    assert.deepEqual(Array.from(entry.text.matchAll(/<<([\s\S]*?)>>/g), match => match[1]), tokens,
+      `${location}: ${role} has no mismatched role or unresolved interpolation`);
+    assert.doesNotThrow(() => core.validateMarkup(entry.text), `${location}: ${role} has valid QSP interpolation and markup`);
+    const guard = location === 'interaction' ? `if ${role}['virginity'] = 4:` : `if jo9_tentacle_report['${role}_bonus'] > 0:`;
+    const assignment = (location === 'interaction' ? '$text[1]' : '$text') + " = '" + entry.text.replaceAll("'", "''") + "'";
+    assert.match(executable.get(location), new RegExp(escapePattern(guard) + '\\s*' + escapePattern(assignment)),
+      `${location}: ${role} success dialogue stays directly under its current success guard`);
+  }
 });
 
 test('saved lesson definition is refreshed before it is reused', () => {

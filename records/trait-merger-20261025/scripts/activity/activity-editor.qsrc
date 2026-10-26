@@ -1,0 +1,25 @@
+   if func('jo9_traits', 'activity_compatible', 'dynslave') = 1:
+    $setting_display += '<div id="under_cheats"><a href="EXEC: gs ''jo9_traits'', ''edit'', ''dynslave'', ''jo9_work_ethic'', 1 & gt ''menu_form''">활동적: '
+    if func('jo9_traits', 'activity_sign', 'dynslave') = 1: $setting_display += '있음'
+    if func('jo9_traits', 'activity_sign', 'dynslave') ! 1: $setting_display += '없음'
+    $setting_display += '</a></div>'
+    $setting_display += '<div id="under_cheats"><a href="EXEC: gs ''jo9_traits'', ''edit'', ''dynslave'', ''jo9_work_ethic'', -1 & gt ''menu_form''">휴식 선호: '
+    if func('jo9_traits', 'activity_sign', 'dynslave') = -1: $setting_display += '있음'
+    if func('jo9_traits', 'activity_sign', 'dynslave') ! -1: $setting_display += '없음'
+    $setting_display += '</a></div>'
+   else
+    if dynslave['jo9_work_ethic'] ! 0:
+     $setting_display += '<div id="under_cheats"><a href="EXEC: gs ''jo9_traits'', ''activity_remove'', ''dynslave'', ''jo9_work_ethic'' & gt ''menu_form''">'
+     if dynslave['jo9_work_ethic'] = 1: $setting_display += '일벌레'
+     if dynslave['jo9_work_ethic'] = -1: $setting_display += '안분지족'
+     if dynslave['jo9_work_ethic'] ! 1 and dynslave['jo9_work_ethic'] ! -1: $setting_display += '이전 업무 성향'
+     $setting_display += ': 해제</a></div>'
+    end
+    if dynslave['passion_comfort'] ! 0:
+     $setting_display += '<div id="under_cheats"><a href="EXEC: gs ''jo9_traits'', ''activity_remove'', ''dynslave'', ''passion_comfort'' & gt ''menu_form''">'
+     if dynslave['passion_comfort'] = 1: $setting_display += '무기력증'
+     if dynslave['passion_comfort'] = -1: $setting_display += '과다행동장애'
+     if dynslave['passion_comfort'] ! 1 and dynslave['passion_comfort'] ! -1: $setting_display += '이전 휴식 성향'
+     $setting_display += ': 해제</a></div>'
+    end
+   end

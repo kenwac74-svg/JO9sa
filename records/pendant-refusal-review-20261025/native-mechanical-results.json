@@ -1,0 +1,69 @@
+{
+  "status": "REPRODUCED_MECHANICALLY",
+  "workSha256": "be2c993d24911fec5edfc0efceee9d4bd570c2d9e3a511975a69e29e383ba898",
+  "method": "Installed native engine executes exact golden_collar property and generated No callback. Only GT is intercepted to inspect the exact requested return without stopping diagnostic execution.",
+  "cases": [
+    {
+      "role": "prisoner",
+      "ret": "",
+      "dest": ""
+    },
+    {
+      "role": "prisoner",
+      "ret": "prison_cell",
+      "dest": "prison_cell"
+    },
+    {
+      "role": "slave",
+      "ret": "",
+      "dest": "slave_stat"
+    },
+    {
+      "role": "assistant",
+      "ret": "",
+      "dest": "assistant_stat"
+    }
+  ],
+  "results": [
+    {
+      "name": "prisoner-empty",
+      "checkpoint": "Exact current golden_collar source creates role-specific yes/no; intercept only GT to inspect its destination, then execute original No mutation twice. Expected prisoner destination <empty>.",
+      "pass": true,
+      "reason": "",
+      "durationMs": 556
+    },
+    {
+      "name": "prisoner-return",
+      "checkpoint": "Exact current golden_collar source creates role-specific yes/no; intercept only GT to inspect its destination, then execute original No mutation twice. Expected prisoner destination prison_cell.",
+      "pass": true,
+      "reason": "",
+      "durationMs": 265
+    },
+    {
+      "name": "slave-empty",
+      "checkpoint": "Exact current golden_collar source creates role-specific yes/no; intercept only GT to inspect its destination, then execute original No mutation twice. Expected slave destination slave_stat.",
+      "pass": true,
+      "reason": "",
+      "durationMs": 273
+    },
+    {
+      "name": "assistant-empty",
+      "checkpoint": "Exact current golden_collar source creates role-specific yes/no; intercept only GT to inspect its destination, then execute original No mutation twice. Expected assistant destination assistant_stat.",
+      "pass": true,
+      "reason": "",
+      "durationMs": 535
+    }
+  ],
+  "observations": [
+    "With post-day empty return, prisoner callback requests empty destination; direct prisoner page return and slave/assistant role page are nonempty.",
+    "Original No callback returns inventory once, but executing unchanged cached callback a second time returns it again."
+  ],
+  "limits": [
+    "Synthetic representative equipment/refusal state, not the user save or full day transition.",
+    "Actual X pointer hitbox, native force/bruising MSG acknowledgment, and unmodified failing GT not exercised.",
+    "No product fix, balance change, save migration, or current game process manipulation."
+  ],
+  "workUnchanged": true,
+  "stdout": "prisoner-empty: True\r\nprisoner-return: True\r\nslave-empty: True\r\nassistant-empty: True\r\n",
+  "stderr": ""
+}

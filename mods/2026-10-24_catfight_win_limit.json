@@ -1,0 +1,48 @@
+{
+  "id": "2026-10-24_catfight_win_limit",
+  "description": "누적3승달성후출전금지:승리1회한번가산,패배승수보존,결과화면중복/5승분기제거,낡은준비세이브재확인. 기존승수이관/명성변경없음.",
+  "before_sha256": "bf3c77ae27fde193c2ca3e2f7733c96f99b75bb40eeb22a61c3491f6db618d9f",
+  "after_sha256": "05257a003f3984f8a8ceeca534b7a459ae0e501ecf3d9bff983519a251f03a44",
+  "edits": [
+    {
+      "location": "выход_из_боя",
+      "field": "body",
+      "old": "        if slave['catfight_level'] > 0: slave['catfight_level'] -= 1",
+      "new": "        ! JO9 MOD START CATFIGHT_CUMULATIVE_LOSS | 2026-10-24_catfight_win_limit\r\n        ! catfight_level은 누적 승수이므로 패배로 감소하지 않는다.\r\n        ! JO9 MOD END CATFIGHT_CUMULATIVE_LOSS",
+      "count": 1,
+      "patchId": "CATFIGHT_CUMULATIVE_LOSS"
+    },
+    {
+      "location": "выход_из_боя",
+      "field": "body",
+      "old": "        if slave['catfight_level'] < 5:\r\n            slave['catfight_level'] += 1\r\n            if slave['catfight_level'] = 5:\r\n                if slave['loser_rating'] = 0:\r\n                    interaction_city = 103004\r\n                else\r\n                    interaction_city = 103005\r\n                end\r\n            end\r\n        end\r\n        if slave['catfight_level'] >= 5 and $slave['trademark_style'] = '': $slave['trademark_style'] = $g_type",
+      "new": "        ! JO9 MOD START CATFIGHT_SINGLE_WIN | 2026-10-24_catfight_win_limit\r\n        ! 전투 종료에서만 승리당 한 번 가산한다. 기존 저장 승수는 역산하지 않는다.\r\n        slave['catfight_level'] += 1\r\n        ! JO9 MOD END CATFIGHT_SINGLE_WIN",
+      "count": 1,
+      "patchId": "CATFIGHT_SINGLE_WIN"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t slave['catfight_level'] += 1",
+      "new": "\t ! JO9 MOD START CATFIGHT_RESULT_NO_DUPLICATE | 2026-10-24_catfight_win_limit\r\n\t ! 승수는 выход_из_боя에서 이미 정산했다. 결과 화면에서 다시 가산하지 않는다.\r\n\t ! JO9 MOD END CATFIGHT_RESULT_NO_DUPLICATE",
+      "count": 2,
+      "patchId": "CATFIGHT_RESULT_NO_DUPLICATE"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "우리 투기장에서 세 번 넘게 이긴 여자를",
+      "new": "우리 투기장에서 세 번 이상 이긴 여자를",
+      "count": 2,
+      "patchId": "CATFIGHT_RULE_TEXT"
+    },
+    {
+      "location": "$catfight_fight_start",
+      "field": "body",
+      "old": "$fight_return = 'Start1'",
+      "new": "! JO9 MOD START CATFIGHT_ENTRY_LIMIT | 2026-10-24_catfight_win_limit\r\n! 저장된 경기 직전 링크도 전투 초기화 전에 누적3승 제한을 다시 확인한다.\r\nif slave['catfight_level'] >= 3:\r\n sp_txt = 1\r\n skip_to = 0\r\n interaction_city = 10201\r\n gt 'interaction_city'\r\nend\r\n! JO9 MOD END CATFIGHT_ENTRY_LIMIT\r\n$fight_return = 'Start1'",
+      "count": 1,
+      "patchId": "CATFIGHT_ENTRY_LIMIT"
+    }
+  ]
+}

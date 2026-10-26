@@ -1,0 +1,99 @@
+! JO9 MOD START BUYER_RUMORS_SERVICE | 2026-10-24_buyer_rumors
+local $jo9_rm_mode = $args[0]
+local $jo9_rm_provider = $args[1]
+local jo9_rm_token = args[2]
+result = 0
+if $jo9_rm_mode = 'refreshmenus':
+ __MENU_DEFINITIONS__
+ exit
+end
+if $jo9_rm_mode = 'discount':
+ if $jo9_rm_provider = 'skups' or $jo9_rm_provider = 'barman' or $jo9_rm_provider = 'anes': jo9_rumor_discount[$jo9_rm_provider] = 1
+ exit
+end
+if $jo9_rm_mode = 'fee':
+ if $jo9_rm_provider = 'skups' or $jo9_rm_provider = 'barman' or $jo9_rm_provider = 'anes': result = iif(jo9_rumor_discount[$jo9_rm_provider] = 1, 5, 10)
+ exit
+end
+if $jo9_rm_mode = 'menu':
+ local jo9_rm_fee = func('jo9_buyer_rumors', 'fee', $jo9_rm_provider)
+ if jo9_rm_fee = 0: exit
+ jo9_rumor_serial += 1
+ jo9_rumor_pending = jo9_rumor_serial
+ $jo9_rumor_pending_provider = $jo9_rm_provider
+ func('$menu', 'exec_options', $menu_item_services, 'gt ''jo9_buyer_rumors'', ''consult'', ''<<$jo9_rm_provider>>'', <<jo9_rumor_pending>>', '구매자 소문을 듣는다 (<<jo9_rm_fee>>스파크)')
+ exit
+end
+if $jo9_rm_mode = 'buy' or $jo9_rm_mode = 'consult':
+ if jo9_rm_token < 1 or jo9_rm_token ! jo9_rumor_pending or $jo9_rm_provider ! $jo9_rumor_pending_provider:
+  if $jo9_rm_mode = 'consult': gt 'jo9_buyer_rumors', 'back', $jo9_rm_provider
+  exit
+ end
+ jo9_rumor_pending = 0
+ $jo9_rumor_pending_provider = ''
+ local jo9_rm_fee = func('jo9_buyer_rumors', 'fee', $jo9_rm_provider)
+ if jo9_rm_fee = 0 or snk_room_target > 0:
+  if $jo9_rm_mode = 'consult': gt 'menu_form'
+  exit
+ end
+ if ($jo9_rm_provider = 'skups' and $place ! 'guild_hall') or ($jo9_rm_provider = 'barman' and $place ! 'tavern') or ($jo9_rm_provider = 'anes' and $place ! 'kafe'):
+  if $jo9_rm_mode = 'consult': gt 'menu_form'
+  exit
+ end
+ $jo9_rumor_notice = ''
+ if sparks < jo9_rm_fee:
+  $jo9_rumor_notice = '소문값을 치를 스파크가 부족하다.'
+ else
+  gs 'jo9_rumor_scan', $jo9_rm_provider
+  if jo9_rumor_actor_count > 0:
+   sparks -= jo9_rm_fee
+   $jo9_rumor_provider = $jo9_rm_provider
+   jo9_rumor_page = 0
+   result = 1
+  else
+   $jo9_rumor_notice = '지금은 조건을 살펴볼 보유 인물이 없다. 소문값은 내지 않았다.'
+  end
+ end
+ if $jo9_rm_mode = 'buy': exit
+ if result = 0:
+  msg $jo9_rumor_notice
+  gt 'jo9_buyer_rumors', 'back', $jo9_rm_provider
+ end
+ gt 'jo9_buyer_rumors', 'view', $jo9_rm_provider
+end
+if $jo9_rm_mode = 'back':
+ jo9_rumor_pending = 0
+ $jo9_rumor_pending_provider = ''
+ if $jo9_rm_provider = 'skups': sp_txt = 1 & interaction_city = 95 & gt 'interaction_city'
+ if $jo9_rm_provider = 'barman':
+  copyarr '$display_options', '$tavern_options'
+  sp_txt = 2
+  $place = 'tavern'
+  gt 'shop_general'
+ end
+ if $jo9_rm_provider = 'anes': sp_txt = 1 & interaction_city = 2991 & gt 'interaction_city'
+ exit
+end
+if $jo9_rm_mode ! 'view': exit
+if $jo9_rm_provider ! $jo9_rumor_provider: exit
+if jo9_rumor_page < 0: jo9_rumor_page = 0
+if jo9_rumor_page >= arrsize('$jo9_rumor_pages'): jo9_rumor_page = max(0, arrsize('$jo9_rumor_pages') - 1)
+gs '_layout'
+local $jo9_rm_npc = 'master_skups'
+local $jo9_rm_region = '백색도시 · 네크로폴리스 · 황소구역 · 중앙구역'
+if $jo9_rm_provider = 'barman': $jo9_rm_npc = 'barman' & $jo9_rm_region = '뱀자리구역 · 추방자구역 · 동부구역'
+if $jo9_rm_provider = 'anes': $jo9_rm_npc = 'anes' & $jo9_rm_region = '홍등가 · 도시관문'
+*p func('interior_change', 'jo9_html', '<div id="bg"><img src="content/pic/bg/<<$bg[$place]>>.png"></div>')
+if nsfw = 0 and $npc_image[$jo9_rm_npc] ! '': *p func('interior_change', 'jo9_html', '<div id="bg"><img src="content/pic/characters/<<$npc_image[$jo9_rm_npc]>>.png"></div>')
+*p '<div id="side_panel_text" style="color:#20160e;font-size:20px;line-height:1.3;"><b>구매자 소문</b><br><<$jo9_rm_region>><br><br>주거지와 상점의 고정 요구사항을 바탕으로 한 소문이다. 퀘스트와 특수 의뢰는 다루지 않는다.<br><br>여러 명이 비슷하게 맞으면 함께 알려 준다. 실제 거래 전에는 상대의 요구를 다시 확인하자.</div>'
+*p '<div id="text" style="color:#20160e;overflow:auto;">[<<$npc_name[$jo9_rm_npc]>>]<br><<$jo9_rumor_pages[jo9_rumor_page]>></div>'
+$text_display = ''
+func('$menu', '===BEGIN===', 'column_0')
+if jo9_rumor_page > 0: func('$menu', 'exec_options', $menu_item_services, 'jo9_rumor_page -= 1 & gt ''jo9_buyer_rumors'', ''view'', ''<<$jo9_rm_provider>>''', '이전 소문')
+if jo9_rumor_page + 1 < arrsize('$jo9_rumor_pages'): func('$menu', 'exec_options', $menu_item_services, 'jo9_rumor_page += 1 & gt ''jo9_buyer_rumors'', ''view'', ''<<$jo9_rm_provider>>''', '다음 소문')
+func('$menu', 'exec_options', $menu_item_end_conv, 'gt ''jo9_buyer_rumors'', ''back'', ''<<$jo9_rm_provider>>''', '대화로 돌아간다')
+func('$menu', '===END===')
+*p func('$menu', 'layout_style')
+*p '<div id="jo9_scene_menu" class="jo9_menu_scene"><<$text_display>></div>'
+*p '<div id="sparks_display"><<sparks>>$</div>'
+! JO9 MOD END BUYER_RUMORS_SERVICE

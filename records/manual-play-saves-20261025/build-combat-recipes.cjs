@@ -1,0 +1,151 @@
+'use strict';
+// Save-state recipes only. Does not launch or modify the game or existing saves.
+const fs = require('node:fs');
+const path = require('node:path');
+const c = require('G:/somi/JO9sa/tools/text-workshop/core.cjs');
+const world = c.parse(fs.readFileSync('G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp'));
+const expectedHash = 'a70bd177d8e7ade58243578b2f04745ff00cec3884d26d3b924dfffc8a8d007a';
+if (world.hash !== expectedHash) throw new Error('WORK changed: recheck recipes against current code.');
+const recipes = [];
+const safe = [
+  'autosave=0 & decadesave=0 & autosave_day=0 & autosave_decade=0 & sound_on=0',
+  'snk_room_target=0 & get_weapon=0 & colosseum_fight=0',
+  'sp_txt_is_set_from_save=0 & txt_is_set_from_save=0 & skip_to=0',
+  'day=102 & sparks=10000 & master_energy=5 & master_half_action=0',
+  'game_difficulty=0 & cheat_inf_en=0 & cheat_inst_revo=0',
+  "slave['half_action']=0 & assistant['half_action']=0",
+  "slave['cooks_rule']=0 & slave['cleans_rule']=0 & slave['washes_master_rule']=0 & slave['blowjob_rule']=0",
+  "assistant['cooks_rule']=0 & assistant['cleans_rule']=0 & assistant['washes_master_rule']=0 & assistant['blowjob_rule']=0"
+];
+const production = [
+  ...safe,
+  "is_home=1 & city_district=-1 & menu_form=0 & cheat_fight_dif=1",
+  "pet_tentacle=1 & tentacle_state=1 & spawn_milked=0 & spawn_semen=0 & decade_semen=0",
+  "slave['sub_tentacles']=5 & assistant['sub_tentacles']=5",
+  "slave['energy']=5 & assistant['energy']=5",
+  "slave['tentacle_rule']=1 & assistant['tentacle_rule']=0",
+  "slave['virginity']=4 & assistant['virginity']=3",
+  "tentacle_grow[0]=12 & tentacle_grow[1]=24 & tentacle_grow[2]=40 & tentacle_grow[3]=60"
+];
+const actorText = '기존 성인 Egeya(유형2579, age=2)와 이사벨라(유형2571, age=2)를 사용한다. 이름·초상·이력은 원본 성인 세이브에서 이어진다.';
+const productionSettings = '게임 설정 시험값: 난이도0, 전투 무적 해제(cheat_fight_dif=1), 무한 행동력 해제(cheat_inf_en=0), 즉시 진화 해제(cheat_inst_revo=0), 자동 저장 해제. 금액10000, 102일차.';
+const productionLimits = [
+  '결과 문장은 게임의 원래 출력을 그대로 확인한다. 이 레시피는 생산 문장이나 결과 문자열을 작성·대체하지 않는다.',
+  '한 번 생산하면 갈망 상태가 종료되므로 다른 역할과 비교할 때 반드시 같은 배포 파일을 다시 불러온다.',
+  '생산량 비교는 시험값(훈련5, stock0, spawn_milked0)을 기준으로 하며 저장 후 다른 행동을 하면 달라질 수 있다.'
+];
+for (let size = 0; size <= 4; size++) {
+  const bonus = [14,23,33,96,201][size];
+  const ordinary = [12,18,24,64,126][size];
+  const baseSave = size === 0 ? 'JO9_TEST_20261023_19_AUTO-ZERO.sav' : `JO9_TEST_20261023_${11+size}_SIZE${size}.sav`;
+  const setup = [...production, `tentacle_size=${size} & tentacle_hp=${size === 0 ? 10 : 5}`];
+  const how = [
+    actorText,
+    productionSettings,
+    `크기${size}, 훈련5. 노예는 최고 등급(virginity=4), 조수는 일반 등급(virginity=3). 최초 stock0, 노예/조수 행동력${size===0?'0/5':'5/5'}.`,
+    '집 화면 노예 카드의 Fer_Tentacle 그림 버튼을 눌러 한 번 수동 생산한다. 원래 결과의 생산량·보너스와 행동력 소모, 그림과 클릭 반응을 확인한 뒤 원래 다음 버튼으로 집에 돌아온다.',
+    '같은 파일을 다시 불러온다. 노예 능력창의 생활 규칙에서 안개 괴물 업무 체크를 해제하고 집에 돌아오면 조수 카드에 원래 Fer_Tentacle 버튼이 나타난다. 이 버튼으로 조수 수동 생산을 한 번 실행한다.'
+  ];
+  const expect = [
+    `노예 수동 생산 +${bonus}, 보너스 +${20+size*10}%; 조수 일반 생산 +${ordinary}, 별도 등급 보너스 없음.`,
+    `수동 선택 역할만 행동력 ${size===0?'노예0→-1, 조수5→4':'5→4'}; 선택하지 않은 역할 행동력은 그대로. 원래 결과→다음→집 복귀 후 생산량이 다시 지급되지 않는다.`,
+    'Fer_Tentacle.png가 원래 그림으로 보이고 노예는 interaction59, 조수는 interaction45에 대응하는 원래 버튼이 동작한다.'
+  ];
+  const limits = [...productionLimits];
+  if (size === 0) {
+    setup.push("slave['energy']=0");
+    how.push('zeroAP 분기: 같은 파일을 다시 불러온 뒤 수동 생산을 누르지 말고 그대로 하루 종료한다. 원래 성장/보고 화면을 다음 버튼으로 끝까지 진행한다.');
+    expect.push('zeroAP 자동 분기는 시작 시 노예 행동력0이다. 원래 지연 보고에서 생산량14/보너스20%를 한 번 지급하며 stock과 decade_semen 모두14이다. 원래 성장 처리로 보고 시 크기1이 될 수 있어도 금액은 시작 크기0의14이다.');
+    limits.push('zeroAP 분기의 원래 성장 페이지는 남겨 둔다. 성장 메시지가 끼어드는 것은 오류가 아니며, 원래 다음 버튼으로 끝까지 진행한다.');
+  }
+  if (size === 4) {
+    setup.push(
+      "for manual_copy_i=0 to arrsize('$slave_vars')-1 step 1:\n $manual_copy_from=replace($slave_vars[manual_copy_i],'instance','slave')\n $manual_copy_to=replace($slave_vars[manual_copy_i],'instance','room1')\n killvar $manual_copy_to\n copyarr $manual_copy_to,$manual_copy_from\nend",
+      "killvar 'manual_copy_i' & killvar '$manual_copy_from' & killvar '$manual_copy_to'",
+      "room1['id']=9251001 & $room1_name='시험용 Egeya 개인실' & room1['energy']=5 & room1['half_action']=0 & room1['tentacle_rule']=1",
+      "gs '#var_base' & gs '#txt_man' & gs '#txt_2_man'"
+    );
+    how.push(
+      '자동 노예 분기: 같은 파일을 다시 불러온 뒤 그대로 하루 종료한다. 노예가 담당한 원래 생산 보고를 끝까지 진행한다.',
+      '자동 조수 분기: 다시 불러온 뒤 노예 능력창에서 안개 괴물 업무를 해제하고 조수 능력창에서 같은 업무를 체크한다. 수동 생산을 누르지 말고 집에서 하루 종료한다.',
+      '자동 개인실 분기: 다시 불러온 뒤 노예의 안개 괴물 업무를 해제한다. 조수 업무는 초기값 해제 상태로 둔다. 개인실1의 시험용 Egeya는 업무가 이미 체크되어 있으므로 집에서 하루 종료하면 개인실 역할이 담당한다.',
+      '개인실 시험용은 기존 성인 Egeya 배열 전체를 복제한 별도 시험 인스턴스(type2579, age2, id9251001)이며 게임 코드에 새 캐릭터를 추가한 것이 아니다. 각 자동 분기는 다른 분기와 별도로 같은 파일을 불러온다.'
+    );
+    expect.push(
+      '자동 노예: gain201/bonus60; 자동 조수(일반 등급): gain126/bonus0; 자동 개인실1: gain201/bonus60. 선택된 한 역할만 지급하며 stock과 decade 합계도 각각 그 값이다.',
+      '원래 자동 보고와 원래 다음 버튼을 끝까지 진행한 뒤 집에 돌아와도 stock/decade 값이 재가산되지 않는다.',
+      '가사 우선순위는 체크된 상위 역할부터 노예→조수→개인실이다. 개인실 테스트 전 노예·조수의 해당 체크가 모두 해제되어 있어야 한다.'
+    );
+    limits.push('자동 조수는 일반 등급 비교를 보존하므로 이 파일에서는126/0%가 정상이다. 기존 진단의 별도 최고 등급 조수201/60%와 시험값이 다르다.');
+  }
+  const guard = [
+    'is_home=1', 'menu_form=0', 'snk_room_target=0', 'tentacle_state=1', `tentacle_size=${size}`,
+    'spawn_semen=0', "slave_type=2579", "assistant_type=2571", "slave['age']=2", "assistant['age']=2",
+    `slave['energy']=${size===0?0:5}`, "assistant['energy']=5"
+  ];
+  if (size===4) guard.push("room1_type=2579", "room1['age']=2", "room1['id']=9251001");
+  recipes.push({id:`prod-size${size}`,titleKo:`생산 크기${size} 수동 비교${size===0?'·zeroAP':size===4?'·자동3역할':''}`,group:'checked',baseSave,setup,entry:"gt 'menu_form'",checkpoint:'main_screen',checkpointGuard:guard.join(' and '),how,expect,limits});
+}
+const combat = [
+  ...safe,
+  "gs '$combat_variable_reset'",
+  'is_home=0 & city_form=121 & city_district=121 & hero_choice=13',
+  "slave_state=CONST_INT['slave_exist'] & assistant_state=CONST_INT['slave_exist']",
+  "slave['energy']=5 & assistant['energy']=5 & slave['half_action']=0 & assistant['half_action']=0",
+  "slave['stamina']=5 & assistant['stamina']=5 & slave_rate['stamina']=0 & assistant_rate['stamina']=0",
+  "slave['gladiatrix']=5 & assistant['gladiatrix']=5 & slave_rate['gladiatrix']=0 & assistant_rate['gladiatrix']=0",
+  "slave['ego']=5 & assistant['ego']=5 & slave_rate['ego']=200 & assistant_rate['ego']=200",
+  "slave_rate['wounds']=0 & assistant_rate['wounds']=0 & slave['calories']=500 & assistant['calories']=500",
+  "slave['arena_level']=0 & slave['catfight_level']=0 & slave['loser_rating']=0 & slave['temper']=5",
+  "slave['tentacle_rule']=0 & assistant['tentacle_rule']=0",
+  "master_str=5 & master_fighter=5 & master_cha=5 & master_domination=5 & master_wounds_rate=0",
+  "$master_armor='без_брони' & $master_back_wpn='тесак' & $master_left_wpn='' & $master_right_wpn='' & $master_arm_wpn='' & $master_leg_wpn=''",
+  "$slave['armor']='без_брони' & $slave['back_wpn']='тесак' & $slave['left_wpn']='' & $slave['right_wpn']='' & $slave['arm_wpn']='' & $slave['leg_wpn']=''",
+  "$assistant['armor']='без_брони' & $assistant['back_wpn']='тесак' & $assistant['left_wpn']='' & $assistant['right_wpn']='' & $assistant['arm_wpn']='' & $assistant['leg_wpn']=''",
+  'cheat_fight_dif=0 & cheat_inf_en=0'
+];
+const combatSettings = '게임 설정 시험값: 난이도0, 원래 전투 무적 활성(cheat_fight_dif=0), 무한 행동력 해제(cheat_inf_en=0), 자동 저장 해제. 성인 기존 유형 유지, 노예/조수 행동력5/5, 전투 기술·지구력5. 적 데이터·승패 판정·목격 확률은 원래 코드 그대로다.';
+recipes.push({
+  id:'fog-hint-ap-fame',titleKo:'안개 거대괴물 힌트·출전자AP·컬러·목격명성',group:'checked',baseSave:'JO9_TEST_20261023_01_HOME.sav',
+  setup:[...combat,"slave_rate['fame']=39 & assistant_rate['fame']=79", "city_form=61 & city_district=6 & $place='edge_patrol' & interaction_city=61103"],
+  entry:"gt 'interaction_city'",checkpoint:'shop_general',checkpointGuard:"$place='edge_patrol' and interaction_city=61103 and sp_txt=3 and get_weapon=0 and $fight_return='city_menu_form' and slave_type=2579 and assistant_type=2571 and slave['age']=2 and assistant['age']=2 and slave['energy']=5 and assistant['energy']=5",
+  how:[actorText,combatSettings,'선택 전 소개문에 거대 괴물의 덩치·촉수·위험을 알리는 추가 원문이 보이는지 확인하고 혼자/노예/조수의 원래 전투 선택지가 모두 나오는지 확인한다.','노예 출전을 선택하고 등 장비의 원래 무기를 선택해 전투한다. 출전자 초상이 흑백·세피아가 아닌 컬러인지 확인한다. 휴식과 공격을 사용해 원래 적을 쓰러뜨리고 결과의 원래 복귀 버튼으로 나간다.','같은 파일을 다시 불러와 조수 출전으로 비교한다. 목격자 메시지가 없으면 정상적인20% 확률 결과일 수 있으므로 같은 파일에서 다시 싸워 관찰한다.','행동력의 정확한4를 보려면 마지막 공격 뒤 잔여 지구력이75 이상인 상태로 승리한다. 다른 잔여 지구력이면 원래 환산표를 따른다.'],
+  expect:['출전 전 master/slave/assistant AP는5/5/5이며 메뉴를 읽고 출전자만 선택하는 단계에서는 미리 차감되지 않는다.','출전 동료는 승리 정산 시 최소1AP 소모: min(잔여 지구력 환산값,4). 마지막 지구력75 이상이면5→4. 비출전 동료와 주인 AP는5를 유지한다. 정산·복귀를 눌러도 같은 전투에서 중복 차감하지 않는다.','거대 괴물 목격 보상은 노예 명성39에서+3→42, 조수 명성79에서+1→80이다. 목격 메시지 없는 승리는39/79 유지이며 반대 역할의 명성도 그대로다.','정상 원래 복귀는 city_menu_form이다. 컬러 초상은 Egeya2579 또는 이사벨라2571의 ava_clear 원래 이미지다.'],
+  limits:['목격 확률20%를 고정하지 않는다. 몇 번 메시지가 없다는 이유만으로 고장으로 판정하지 않는다.','전투 무적은 피해를 줄여 수동 동작을 확인하는 게임 내 시험 설정이다. 일반 전투 난이도·피해·패배 밸런스를 확인하는 파일은 아니다.','출전자 교대·패배·사망 결과는 이 파일의 성공 기준에 포함하지 않는다.','전투 후 추가 도시 이동은 별도 행동력 비용을 낼 수 있으므로 복귀 직후 값을 비교한다.']
+});
+recipes.push({
+  id:'grinch-native-menu',titleKo:'그린치 전용 소개·전투·원래 퀘스트 복귀',group:'checked',baseSave:'JO9_TEST_20261023_01_HOME.sav',
+  setup:[...combat,"active[$event['спасение_рождества']]=9 & $place='Grinch_battle' & interaction_city=10383"],entry:"gt 'interaction_city'",checkpoint:'shop_general',
+  checkpointGuard:"$place='Grinch_battle' and interaction_city=10384 and sp_txt=10384 and get_weapon=0 and combatant=0 and $fight_return='city_menu_form' and active[$event['спасение_рождества']]=9",
+  how:[actorText,combatSettings,'그린치·맥스와 전용 소개가 표시되는지 확인한다. 일반 안개 순찰의 해골 소개나 잘못된14번 메뉴가 섞이지 않는지 확인한다.','원래 전투 진입을 누르고 등 무기를 선택한 뒤 직접 공격·휴식하여 승리한다. 원래 전투 종료/이후 이야기의 다음 버튼을 끝까지 진행한다.'],
+  expect:['준비 화면의 전용 메뉴/소개 인덱스는10384, 적은grinch1명, 출전자는주인공0이다.','원래 승리 후 interaction_city10385로 가며 퀘스트 단계가10으로 진행한다. 해당 이야기 종료의 원래 return_lock은next_day다.','전투 메뉴와 원래 퀘스트 진행 사이에 일반 안개 소개가 삽입되지 않는다.'],
+  limits:['퀘스트9단계에서 시작하는 독립 시험 상태이다. 원래 HOME의 퀘스트를 진행·덮어쓰는 파일이 아니다.','전투 무적을 사용하며 원래 적 스탯·전투 결과·퀘스트 복귀 코드는 변경하지 않는다.']
+});
+recipes.push({
+  id:'catfight-third-return',titleKo:'캣파이트2승→최종3승·명성·기존 복귀 결함',group:'checked',baseSave:'JO9_TEST_20261023_01_HOME.sav',
+  setup:[...combat,"slave['catfight_level']=2 & slave['arena_level']=0 & slave_rate['fame']=36 & assistant_rate['fame']=61", "$slave['trademark_style']='' & sp_txt=1 & $place='catfightclub' & interaction_city=10201"],entry:"gt 'interaction_city'",checkpoint:'shop_general',
+  checkpointGuard:"$place='catfightclub' and interaction_city=10201 and sp_txt=1 and get_weapon=0 and slave['catfight_level']=2 and slave['energy']=5 and slave_rate['fame']=36 and $return_lock='shop_general'",
+  how:[actorText,combatSettings,'누적2승 상태로 노예를 싸움에 내보낸다. 원래 스타일 선택에서 쌍수 등 하나를 고르고 소개를 원래 다음 버튼으로 진행한 뒤 직접 싸운다.','승리 결과에서 누적 승수3, 명성39를 확인한다. 원래 다음 버튼을 끝까지 눌렀을 때 클럽으로 정상 복귀하지 않는 기존 현상을 확인한다.','결과 화면에서 원래 ESC 메뉴로 도시 메뉴를 연 뒤 동부의 캣파이트 클럽을 다시 방문할 수 있다면 입장 선택지가 사라진 것을 확인한다. ESC 경로까지 막히면 시험 파일을 다시 불러오고 복귀 결함으로 기록한다.'],
+  expect:['세 번째 승리에서 누적2→3과 개인 명성36→39(+3)가 전투 종료에서각각한번만 적용된다. 첫 우승+10은 이 파일 이전 상태이며 이 세 번째 시합에서 다시 지급되지 않는다.','누적3승이면 원래 클럽 입장 메뉴에서 출전 선택이 없고 저장된 경기 시작 링크도 전투 초기화 전에 차단한다.','기존 결함 재현: 승리 결과의 return_lock이goto_loc인데 해당 로케이션이 없으므로 원래 다음 버튼으로 클럽에 복귀하지 못한다. 이 문제는 r4부터 남아 있는 미수정 사항이다.'],
+  limits:['goto_loc를 만들거나 return_lock을 우회/교정하지 않는다. 기존 복귀 결함을 수정 완료라고 표시하지 않는다.','정상 세 번째 승리·명성 정산과 결과 뒤 복귀 결함은 별도로 판정한다. 결과 복귀가 막혀도 앞의 정산 자체는 확인할 수 있다.','원래 결과가 노예 AP를-3으로 바꾸는 것은 캣파이트 고유 처리다. 안개 AP 최소비용 규칙과 비교하지 않는다.']
+});
+for (const cap of [false,true]) {
+  recipes.push({
+    id:cap?'rally-79-cap':'rally-first-win',titleKo:cap?'랠리 반복79.75→80 상한':'랠리 첫 우승+10',group:'checked',baseSave:'JO9_TEST_20261023_01_HOME.sav',
+    setup:[...safe,'is_home=0 & city_form=121 & city_district=121 & cheat_fight_dif=1',"slave['energy']=5 & assistant['energy']=5 & slave['obedience']=5 & slave_rate['obedience']=200 & slave['oral']=3 & slave['xenophily']=3 & slave['half_action']=0",`slave_rate['fame']=${cap?79:23} & assistant_rate['fame']=61 & slave['jo9_rally_won']=${cap?1:0} & slave['jo9_rally_fame_quarter']=${cap?3:0}`,"killvar 'jo9_rally_ticket' & killvar '$jo9_rally_ticket'", "$place='erosalon' & sp_txt=4 & copyarr '$display_options','$erosalon_options'"],
+    entry:"gt 'shop_general'",checkpoint:'shop_general',checkpointGuard:`$place='erosalon' and sp_txt=4 and get_weapon=0 and slave_type=2579 and slave['age']=2 and slave['energy']=5 and slave_rate['fame']=${cap?79:23} and slave['jo9_rally_won']=${cap?1:0} and slave['jo9_rally_fame_quarter']=${cap?3:0}`,
+    how:[actorText,productionSettings,`시작 시험값: 노예 행동력5, 복종5, oral3/xenophily3, 개인 명성${cap?'79+3/4, 우승 이력 있음':'23, 우승 이력 없음'}; 조수 명성61/행동력5.`,`원래 랠리 참가 선택을 누르고 원래 결과를 끝까지 읽는다. 패배하면 원래 파일을 다시 불러와 재시도한다. 승리하면 ${cap?'명성80 상한':'첫 우승10점'}과 원래 AP·금액 변화를 확인한다.`,...(cap?['첫 승리 직후 행동력이2면 원래 메뉴에서 한 번 더 참가할 수 있다. 다시 이겼을 때80을 넘거나 소수 누적이 되살아나지 않는지 확인한다.']:[])],
+    expect:[cap?'승리 시 명성79+3/4→80, quarter3→0. 이미80에서 다음 반복 우승은80을 유지하고 quarter0을 유지한다.':'첫 승리 시 개인 명성23→33(+10), rally_won0→1, quarter0. 이 한 번의 승리에서 정산은 한 번이다.','승리 시 sparks10000→10300, 패배 시10000→9900. 첫 참가 후 노예AP5→2, 주인/조수AP5유지, 조수 명성61유지.','패배 시 fame/rally_won/quarter는 참가 전 값 유지. 우승이력이나 명성을 패배로 먼저 바꾸지 않는다.','승패가 판정된 뒤 원래 랠리 티켓은 소모된다. 결과 다음 버튼으로 복귀한 것만으로 보상이 또 지급되지 않는다.'],
+    limits:['원래 랠리 무작위 판정을 유지한다. 이 능력 조합은2/3승리이며 저장 때 승리 결과를 주입하지 않는다.','표시되는 정수 명성과 내부quarter는 구분한다. 79.75의시작정수는79이고 보조값3이다.','여기서 시험하는 상한80은 랠리·안개 반복 명성 전용이다. 다른 출처로80이상인 명성을 강제로낮추는 규칙이아니다.']
+  });
+}
+const ids = new Set();
+for (const r of recipes) {
+  if (!/^[a-z0-9-]{1,24}$/.test(r.id) || ids.has(r.id)) throw new Error('Bad ID '+r.id);
+  ids.add(r.id);
+  if (!world.locations.some(l=>l.name===r.checkpoint)) throw new Error('Bad checkpoint '+r.id);
+  if (r.setup.some(s=>/FAIL_|qa_|<script|setTimeout|dispatchEvent|базовое_здоровье\[|здоровье_врага\[|\$итог_боя\s*=\s*['\"]победа/.test(s))) throw new Error('Forbidden instrumentation '+r.id);
+}
+const out=path.join(__dirname,'combat-recipes.json');
+fs.writeFileSync(out,JSON.stringify(recipes,null,2)+'\n');
+console.log(JSON.stringify({recipes:recipes.length,hash:world.hash,output:out,ids:[...ids]}));

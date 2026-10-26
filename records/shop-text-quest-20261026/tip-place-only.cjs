@@ -1,0 +1,11 @@
+'use strict';
+const fs=require('node:fs'),assert=require('node:assert/strict'),c=require('G:/somi/JO9sa/tools/text-workshop/core.cjs'),qa=require('G:/somi/JO9sa/tools/qa/release-check.cjs');
+const game='G:/somi/Jack O Nine Tails v2.4_work/game',task='G:/Codex/tmp/shop-text-quest-tip-20261026',record='G:/somi/JO9sa/records/shop-text-quest-20261026';
+const raw=fs.readFileSync(game+'/jack.qsp'),before=c.hash(raw);assert.equal(before,'8d388588aaebe33ba34dbcdde66f55a4b29beeb12467ba48b3638cda9802238c');assert(!fs.existsSync(task));
+const source=c.parse(raw),doc=c.parse(raw),text=require('./text-edits.cjs');
+const afterText=text.fameAfter.split('<br><br>랠리는')[0].replace('명성을 쌓을 수 있는 곳:','명성을 알릴 수 있는 곳:');assert(!afterText.includes('3승')&&!afterText.includes('랠리는'));
+const afterGuard="if instr($слава_совет, '명성을 알릴 수 있는 곳:') = 0: gs '#help_msg'";
+const edits=[];for(const [name,old,next]of [['#help_msg',text.fameAfter,afterText],['$ongload',text.cacheAfter,afterGuard]]){const l=doc.locations.find(x=>x.name===name),b=c.shift(doc.lines[l.body],5);assert.equal(b.split(old).length-1,1);const at=b.indexOf(old),line=b.lastIndexOf('\r\n',at-1),start=line<0?0:line+2,end=b.indexOf('\r\n',at+old.length),context=b.slice(start,end<0?b.length:end);const marker='FAME_PLACES_ONLY_20261026_'+edits.length,value='! JO9 MOD START '+marker+'\r\n'+context.replace(old,()=>next)+'\r\n! JO9 MOD END '+marker;doc.lines[l.body]=c.shift(b.replace(context,()=>value),-5);edits.push({location:name,field:'body',old:context,new:value,count:1});}
+const bytes=c.serialize(doc);qa.inspectWorld(bytes);assert(c.serialize(c.parse(bytes)).equals(bytes));const after=c.hash(bytes),id='2026-10-26_fame_tip_places_only';
+fs.mkdirSync(task+'/mods',{recursive:true});fs.writeFileSync(task+'/baseline.qsp',raw);fs.writeFileSync(task+'/candidate.qsp',bytes);const patch={id,before_sha256:before,after_sha256:after,edits};fs.writeFileSync(task+'/mods/'+id+'.json',JSON.stringify(patch,null,2)+'\n');fs.writeFileSync(__dirname+'/tip-patch.json',JSON.stringify(patch,null,2)+'\n');
+const manifest={id,task,record,before,after,candidate:task+'/candidate.qsp',baseline:task+'/baseline.qsp',mods:task+'/mods',oldTip:text.fameAfter,newTip:afterText,newGuard:afterGuard};fs.writeFileSync(__dirname+'/tip-final.json',JSON.stringify(manifest,null,2)+'\n');console.log(JSON.stringify(manifest));

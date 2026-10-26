@@ -1,0 +1,42 @@
+{
+  "id": "2026-10-26_sale_cap_b_private_draft",
+  "before_sha256": "b8de16b088051eea5e51d8636f9ca3cc3975974129adf950ce122260ba2b5cf1",
+  "after_sha256": "8005351940251d2e421fda0cd00d6c788263d62ef9124a08ab99cb84fa03e93c",
+  "edits": [
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\tif jo9_meiki_max_sale = 1: sell_price = func('jo9_traits_value', 'haggle', 'slave', sell_price)\r\n\t! JO9_MEIKI_BARGAIN_TEXT_V1",
+      "new": "\tif jo9_meiki_max_sale = 1: sell_price = func('jo9_traits_value', 'haggle', 'slave', sell_price)\r\n! JO9 MOD START SALE_CAP_B_PRIVATE_HAGGLE_20261026 | 2026-10-26_sale_cap_b\r\n\tsell_price = min(sell_price, 8000)\r\n! JO9 MOD END SALE_CAP_B_PRIVATE_HAGGLE_20261026\r\n\t! JO9_MEIKI_BARGAIN_TEXT_V1",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\tsell_price = common_price[demand_rating[$npc_id]] + virgin_price\r\n! JO9 MOD START J9M0748",
+      "new": "\tsell_price = common_price[demand_rating[$npc_id]] + virgin_price\r\n! JO9 MOD START SALE_CAP_B_PRIVATE_DIRECT_20261026 | 2026-10-26_sale_cap_b\r\n\tsell_price = min(sell_price, 8000)\r\n! JO9 MOD END SALE_CAP_B_PRIVATE_DIRECT_20261026\r\n! JO9 MOD START J9M0748",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\tsell_price -= sell_discount\r\n! JO9 MOD START J9M0747",
+      "new": "\tsell_price -= sell_discount\r\n! JO9 MOD START SALE_CAP_B_PRIVATE_DISCOUNT_20261026 | 2026-10-26_sale_cap_b\r\n\tsell_price = min(sell_price, 8000)\r\n! JO9 MOD END SALE_CAP_B_PRIVATE_DISCOUNT_20261026\r\n! JO9 MOD START J9M0747",
+      "count": 1
+    },
+    {
+      "location": "interaction_result_city",
+      "field": "body",
+      "old": "! JO9 MOD END TBV_SALE_REWARD_1_0\r\n\tend\r\n\tsparks += sell_price",
+      "new": "! JO9 MOD END TBV_SALE_REWARD_1_0\r\n\tend\r\n! JO9 MOD START SALE_CAP_B_PRIVATE_HOUSE_PAY_20261026 | 2026-10-26_sale_cap_b\r\n\tsell_price = min(sell_price, 8000)\r\n! JO9 MOD END SALE_CAP_B_PRIVATE_HOUSE_PAY_20261026\r\n\tsparks += sell_price",
+      "count": 1
+    },
+    {
+      "location": "interaction_result_city",
+      "field": "body",
+      "old": "\t$return_lock = $return_lock_transfer\r\n\tsparks += sell_price",
+      "new": "\t$return_lock = $return_lock_transfer\r\n! JO9 MOD START SALE_CAP_B_PRIVATE_REPEAT_PAY_20261026 | 2026-10-26_sale_cap_b\r\n\tsell_price = min(sell_price, 8000)\r\n! JO9 MOD END SALE_CAP_B_PRIVATE_REPEAT_PAY_20261026\r\n\tsparks += sell_price",
+      "count": 1
+    }
+  ]
+}

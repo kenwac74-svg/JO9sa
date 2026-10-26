@@ -1,0 +1,9 @@
+const fs=require('fs'),p='G:/somi/JO9sa/records/trait-ui-capacity-20261024',a=require(p+'/scripts/status-audit.cjs');
+const labels=[];for(const l of a.locs)for(let i=0;i<l.lines.length;i++){const line=l.lines[i];if(/^\s*\$(?:wounds|scars|bruises|starvation)\s*\[/.test(line))labels.push({source:l.name+':'+(i+1),line});}
+console.log(JSON.stringify(labels,null,2));
+const inv=JSON.parse(fs.readFileSync(p+'/status-inventory.json','utf8'));
+const labelMap={sanity:['정신분열','신경 쇠약'],brand:['상표 없음'],wounds:['가벼운 상처','경상','중간 부상','중상','치명상'],scars:['작은 흉터','흉터','커다란 흉터','심각한 흉터','끔찍한 흉터'],bruises:['멍자국','여러개의 멍자국','구타 흔적','심한 구타 흔적','끔찍한 구타 흔적'],starvation:['속쓰림','갈증과 허기','고통스러운 허기','영양실조','기아'],rehabilitation:['회복 [1]','회복 [30]'],pregnancy_stage:['임신 확인','임신 중기','임신 후기','만삭']};
+for(const r of inv.normal.rows)r.labels=labelMap[r.id];
+inv.exactEightRowFixture={purpose:'Eight simultaneous status rows, using long display labels where available. No game changes.',state:{ego:1,temper:1,pride:1,brand:0,wounds:1,scars:5,bruises:5,days_without_food:2,neg_hungry:1,rehabilitation:30,pregnant:120,pregnant_revealed:1,fertility:0,vaginal_modification:0,parasite:0},globals:{cheat_no_starve:0,master_medic:4},plainLabels:['신경 쇠약','상표 없음','가벼운 상처','끔찍한 흉터','끔찍한 구타 흔적','고통스러운 허기','회복 [30]','임신 중기'],html:'<a style="color:#EA0090">신경 쇠약</a><br><a><font color="#cd0000">상표 없음</font></a><br><a>가벼운 상처</a><br><a>끔찍한 흉터</a><br><a>끔찍한 구타 흔적</a><br><a>고통스러운 허기</a><br><font color="#cd0000">회복</font> [30]<br><span><b>임신 중기</b></span><br>',rehabilitationUpperBound:{max:30,source:'#static_base:951-952'},labelSources:labels.map(x=>({source:x.source,label:(x.line.match(/dyneval\([^]*?,\s*-?\d+,\s*'([^']+)'/)||[])[1]})).filter(x=>x.label)};
+fs.writeFileSync(p+'/status-inventory.json',JSON.stringify(inv,null,2)+'\n');
+console.log(JSON.stringify(inv.exactEightRowFixture,null,2));

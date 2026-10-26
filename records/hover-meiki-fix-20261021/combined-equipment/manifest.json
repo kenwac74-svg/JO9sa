@@ -1,0 +1,37 @@
+{
+  "input": "G:/Codex/tmp/hover-meiki-fix-20261021/candidate.qsp",
+  "sha256": "498e7fcaa2c116e382ab73ffe38549762297cce945247c2b8ad27509ba874fe0",
+  "scenarios": [
+    {
+      "name": "equip-master",
+      "assertions": [
+        " if instr($equip_choice, 'class=\"tooltip-left\" tooltip-data=\"Live &quot;quoted&quot; &amp; bold next &#39; apostrophe; 3 &lt; 5 &gt; 2 &lt;&lt;6+7&gt;&gt;\"') = 0: msg 'JO9_QA_EQUIP_master_MISSING_TOOLTIP' & exit",
+        " if instr($equip_choice, 'href = \"EXEC: $new_item = ''комбез'' & slot = 1 & gt ''item_change''\"') = 0: msg 'JO9_QA_EQUIP_master_CHANGED_HREF' & exit",
+        " if instr($equip_choice, '[2]</a><br>') = 0: msg 'JO9_QA_EQUIP_master_CHANGED_COUNT' & exit"
+      ]
+    },
+    {
+      "name": "equip-common",
+      "assertions": [
+        "if instr($equip_choice, 'class=\"tooltip-left\" tooltip-data=\"Live &quot;quoted&quot; &amp; bold next &#39; apostrophe; 3 &lt; 5 &gt; 2 &lt;&lt;6+7&gt;&gt;\"') = 0: msg 'JO9_QA_EQUIP_common_MISSING_TOOLTIP' & exit",
+        "if instr($equip_choice, 'href = \"EXEC: $new_item = ''maid_dress'' & slot = 24 & gt ''item_change'', 2\">Forced label</a>') = 0: msg 'JO9_QA_EQUIP_common_CHANGED_HREF' & exit",
+        "if instr($equip_choice, 'aurabound.png') > 0: msg 'JO9_QA_EQUIP_common_CHANGED_AURA_FLAG' & exit",
+        "if instr($equip_choice, '>Actual label</a>') = 0 or instr($equip_choice, 'tooltip-right') = 0 or instr($equip_choice, '(1/4)') = 0: msg 'JO9_QA_EQUIP_common_CHANGED_AURA_OR_LABEL' & exit",
+        "if instr($equip_choice, 'tooltip-data=\"\"') = 0 or instr($equip_choice, 'Unknown label') = 0: msg 'JO9_QA_EQUIP_common_CHANGED_EMPTY_DESCRIPTION' & exit"
+      ]
+    },
+    {
+      "name": "equip-cache",
+      "assertions": []
+    },
+    {
+      "name": "equip-current",
+      "assertions": [
+        "if instr($qa_description, '방어: 참격/관통/둔기/추위/번개/불+1, 회피+3') = 0: msg 'JO9_QA_EQUIP_current_STALE_COMBAT_DESCRIPTION' & exit",
+        "if instr($item_description['комбез'], '<br>') = 0 or instr($qa_description, '<br>') > 0: msg 'JO9_QA_EQUIP_current_MUTATED_SOURCE_OR_TAGS' & exit",
+        "if instr($equip_choice, '잡일과 청소 교육효율 Up, 세련됨 +1') = 0: msg 'JO9_QA_EQUIP_current_STALE_CLOTHING_DESCRIPTION' & exit"
+      ]
+    }
+  ],
+  "purpose": "Native regression: removed tooltip attributes fail; current descriptions must be rendered as safe plain attribute text while href, item count, force label, quantity and aura suppression remain intact."
+}

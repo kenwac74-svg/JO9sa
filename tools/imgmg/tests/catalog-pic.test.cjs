@@ -8,6 +8,7 @@ function node(id='',parent=null){return {
  classList:{toggle(){},add(){},remove(){}},addEventListener(){},setAttribute(){},
  insertAdjacentHTML(position,html){parse(html,this)},
  insertAdjacentElement(position,n){n.parent=this.parent;register(n)},
+ before(n){n.parent=this.parent;register(n)},
  after(n){n.parent=this.parent;register(n)},
  querySelector(selector){const m=/^\[id=(".*")\]$/.exec(selector);return m?nodes.find(n=>n.id===JSON.parse(m[1])&&descendant(n,this))||null:null},
  querySelectorAll(){return[]},showModal(){this.open=true},close(){this.open=false},
@@ -28,7 +29,7 @@ const appended=[];body.appendChild=n=>{appended.push(n);return n};
 // The host has overlapping IDs. Tool lookups must stay in the dialog.
 for(const id of ['src','q','sub','frame','message','save'])register(node(id,body));
 for(const id of ['catalogPicConnect','catalogPicChoose','catalogPicRescan','catalogPicStatus'])register(node(id,body));
-const document={body,head:{appendChild(){}},getElementById:id=>byId.get(id)||null,createElement:()=>node(),querySelectorAll(){return[]}};
+const document={addEventListener(){},body,head:{appendChild(){}},getElementById:id=>byId.get(id)||null,createElement:()=>node(),querySelectorAll(){return[]}};
 class Worker {addEventListener(){}postMessage(){}}
 const scenario=process.argv[4]||'hang';let pickerCalls=0,enumerations=0,persisted;
 const file=name=>({kind:'file',name});
@@ -51,7 +52,7 @@ const indexedDB={open(){
   }}};return tx}};req.onsuccess?.();
  });return req;
 }};
-const sandbox={document,Worker,Blob,URL,TextEncoder,TextDecoder,Uint8Array,Uint8ClampedArray,ArrayBuffer,DataView,Set,Map,Promise,console,location:{protocol:'file:'},navigator:{},crypto:require('node:crypto').webcrypto,setTimeout:(fn,ms,...args)=>setTimeout(fn,ms>=5000?80:ms,...args),clearTimeout,addEventListener(){},indexedDB,showDirectoryPicker(){pickerCalls++;return Promise.resolve(root)}};
+const sandbox={document,Worker,Blob,URL,TextEncoder,TextDecoder,Uint8Array,Uint8ClampedArray,ArrayBuffer,DataView,Set,Map,Promise,console,location:{protocol:'file:'},navigator:{},crypto:require('node:crypto').webcrypto,setTimeout:(fn,ms,...args)=>setTimeout(fn,ms>=5000?80:ms,...args),clearTimeout,setInterval(){},addEventListener(){},dispatchEvent(){return true;},CustomEvent:class {constructor(type,options={}){this.type=type;this.detail=options.detail;}},indexedDB,showDirectoryPicker(){pickerCalls++;return Promise.resolve(root)}};
 sandbox.window=sandbox;sandbox.self=sandbox;
 async function waitFor(fn){for(let i=0;i<100;i++){if(fn())return;await new Promise(r=>setTimeout(r,2))}assert.fail('fixture operation did not complete')}
 (async()=>{
@@ -62,6 +63,7 @@ async function waitFor(fn){for(let i=0;i<100;i++){if(fn())return;await new Promi
  if(scenario==='denied')await waitFor(()=>nodes.find(n=>n.id==='catalogPicConnect').textContent==='저장된 PIC 연결');
  vm.runInContext(fs.readFileSync(process.argv[2]||require('node:path').join(__dirname,'../../local-workspace/catalog-seed/catalog_editor.js'),'utf8'),sandbox);
  assert.equal(typeof sandbox.JO9WS.open,'function');
+ await waitFor(()=>!sandbox.JO9WS.state.busy);
  const host=fs.readFileSync(process.argv[3]||require('node:path').join(__dirname,'../../local-workspace/catalog-seed/catalog_merge_vs_original.html'),'utf8');
  const scripts=Array.from(host.matchAll(/<script>([\s\S]*?)<\/script>/g),m=>m[1]);
  for(const script of scripts)new vm.Script(script);

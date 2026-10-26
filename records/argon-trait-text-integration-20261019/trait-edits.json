@@ -1,0 +1,393 @@
+[
+  {
+    "location": "jo9_traits",
+    "patchId": "ARGON_RESTORED_DESCRIPTIONS",
+    "before": "if $args[0] = 'describe':",
+    "after": "! JO9 MOD START ARGON_RESTORED_DESCRIPTIONS | 2026-10-19_argon_trait_text_integration\nif $args[0] = 'describe':\n if $args[1] = 'oral_pref': msg ' 당신의 노예는 자지를 입에 물고 빠는 행위 자체에 탐닉하는 펠라치오 중독자다. 구강 성교 기술을 훨씬 빠르게 습득할 뿐 아니라, 입으로 봉사하라는 명령에 거부감도 덜 보이는 매우 유용한 특성이다.'\n if $args[1] = 'gag_reflex': msg ' 노예의 입안에 이물질이 깊이 들어오면 목구멍이 반사적으로 구역질을 일으킨다. 물론 그렇다고 해서 자지를 빨아야 하는 노예의 의무가 면제되는 것은 아니며, 오직 그녀 자신의 고통과 불쾌감만 늘어날 뿐이다.'\n if $args[1] = 'anal_pref': msg ' 당신의 노예는 뒷구멍으로 박히는 쾌락을 천성적으로 즐기는 항문 음란증이다. 애널 조교 속도가 비약적으로 빨라지고 거친 뒷구멍 사용에도 쉽게 순응하니, 상품 가치가 높은 특성이다.'\n if $args[1] = 'anal_averse': msg ' 신체적 구조 때문이든 심리적 거부감 때문이든, 이 노예는 항문 성교를 극도로 혐오한다. 하지만 불멸의 로마에서 노예의 뒷구멍은 주인이 원하면 언제든 쑤시는 공용 통로일 뿐이니, 찢어지든 말든 참아 내야 할 것이다.'\n if $args[1] = 'defiant': msg ' 뼛속까지 반항기가 박힌 노예다. 그녀의 자존심을 완전히 꺾어 놓을 방법을 찾아내기 전까지는 조교에 애를 먹을 것이며, 굴복하기 전까지 충성도는 오르지 않는다.'\n if $args[1] = 'innate_mute': msg ' 선천적인 벙어리 노예다. 주인의 명령은 완벽히 알아듣지만 말로 대답할 수는 없다. 쓸데없는 말대꾸나 비명을 듣지 않아도 되고 다른 노예들과 작당 모의를 할 수도 없다는 점에서는 오히려 장점이 될 수도 있다.'\n if $args[1] = 'tongue_loss': msg ' 과거에 저지른 어떤 중죄의 대가로 혀가 뿌리째 뽑혀 나간 노예다. 당신이 직접 뽑은 게 아니라면 그 사연은 영원히 알 수 없겠지만, 적어도 주인에게 말대꾸를 하거나 다른 노예들과 수군거릴 일만큼은 절대 없다.'\n! JO9 MOD END ARGON_RESTORED_DESCRIPTIONS",
+    "why": "아르곤의 원문 그대로 7종 설명 등록; 기존 한국어 설명 교체 없음",
+    "count": 1
+  },
+  {
+    "location": "jo9_traits",
+    "patchId": "ARGON_RESTORED_LIST",
+    "before": "  if dynslave['jo9_ambition'] = 1 and dynslave['jo9_ambition_known'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''ambitious''\">야심가</a><br>'",
+    "after": "! JO9 MOD START ARGON_RESTORED_LIST | 2026-10-19_argon_trait_text_integration\n  if dynslave['oral_affinity'] > 0: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''oral_pref''\">구강 선호</a><br>'\n  if dynslave['jo9_gag_reflex'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''gag_reflex''\">구역반사</a><br>'\n  if dynslave['anal_affinity'] > 0: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''anal_pref''\">항문 선호</a><br>'\n  if dynslave['anal_affinity'] < 0: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''anal_averse''\">항문 기피</a><br>'\n  if dynslave['defiant'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''defiant''\">불복종</a><br>'\n  if dynslave['jo9_voice_trait'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''innate_mute''\">선천적 발화 불가</a><br>'\n  if dynslave['jo9_voice_trait'] = 2: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''tongue_loss''\">혀 손실</a><br>'\n  if dynslave['jo9_ambition'] = 1 and dynslave['jo9_ambition_known'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''ambitious''\">야심가</a><br>'\n! JO9 MOD END ARGON_RESTORED_LIST",
+    "why": "특성 목록에 보유한 7종을 즉시 표시",
+    "count": 1
+  },
+  {
+    "location": "jo9_traits",
+    "patchId": "ARGON_RESTORED_LIST_RETURN",
+    "before": "if $args[0] = 'list':\n $result = ''\n dynamic $replace({\n! JO9 MOD START ARGON_RESTORED_LIST | 2026-10-19_argon_trait_text_integration\n  if dynslave['oral_affinity'] > 0: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''oral_pref''\">구강 선호</a><br>'\n  if dynslave['jo9_gag_reflex'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''gag_reflex''\">구역반사</a><br>'\n  if dynslave['anal_affinity'] > 0: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''anal_pref''\">항문 선호</a><br>'\n  if dynslave['anal_affinity'] < 0: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''anal_averse''\">항문 기피</a><br>'\n  if dynslave['defiant'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''defiant''\">불복종</a><br>'\n  if dynslave['jo9_voice_trait'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''innate_mute''\">선천적 발화 불가</a><br>'\n  if dynslave['jo9_voice_trait'] = 2: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''tongue_loss''\">혀 손실</a><br>'\n  if dynslave['jo9_ambition'] = 1 and dynslave['jo9_ambition_known'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''ambitious''\">야심가</a><br>'\n! JO9 MOD END ARGON_RESTORED_LIST\n  if dynslave['jo9_work_ethic'] = 1 and dynslave['jo9_work_ethic_known'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''workaholic''\">일벌레</a><br>'\n  if dynslave['jo9_work_ethic'] = -1 and dynslave['jo9_work_ethic_known'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''content''\">안분지족</a><br>'\n  if dynslave['jo9_focus'] = 1 and dynslave['jo9_focus_known'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''persevering''\">끈기</a><br>'\n  if dynslave['jo9_focus'] = -1 and dynslave['jo9_focus_known'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''distracted''\">산만함</a><br>'\n  if dynslave['jo9_grudge'] = 1 and dynslave['jo9_grudge_known'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''petty''\">옹졸함</a><br>'\n  if dynslave['jo9_grudge'] = -1 and dynslave['jo9_grudge_known'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''generous''\">너그러움</a><br>'\n  if dynslave['jo9_constitution'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''healthy''\">건강체질</a><br>'\n  if dynslave['jo9_constitution'] = -1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''frail''\">약골</a><br>'\n  if dynslave['jo9_combat_trait'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''berserker''\">광전사</a><br>'\n  if dynslave['jo9_combat_trait'] = 2: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''paladin''\">성기사</a><br>'\n  if dynslave['jo9_combat_trait'] = 3: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''veteran''\">역전의 용사</a><br>'\n  if dynslave['jo9_versatile'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''versatile''\">다재다능</a><br>'\n  if dynslave['jo9_peerless'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''peerless''\">경국지색</a><br>'\n }, 'dynslave', $args[1])\nend",
+    "after": "! JO9 MOD START ARGON_RESTORED_LIST_RETURN | 2026-10-19_argon_trait_text_integration\nif $args[0] = 'list':\n $result = $dyneval($replace({\n  $result = ''\n! JO9 MOD START ARGON_RESTORED_LIST | 2026-10-19_argon_trait_text_integration\n  if dynslave['oral_affinity'] > 0: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''oral_pref''\">구강 선호</a><br>'\n  if dynslave['jo9_gag_reflex'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''gag_reflex''\">구역반사</a><br>'\n  if dynslave['anal_affinity'] > 0: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''anal_pref''\">항문 선호</a><br>'\n  if dynslave['anal_affinity'] < 0: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''anal_averse''\">항문 기피</a><br>'\n  if dynslave['defiant'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''defiant''\">불복종</a><br>'\n  if dynslave['jo9_voice_trait'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''innate_mute''\">선천적 발화 불가</a><br>'\n  if dynslave['jo9_voice_trait'] = 2: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''tongue_loss''\">혀 손실</a><br>'\n  if dynslave['jo9_ambition'] = 1 and dynslave['jo9_ambition_known'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''ambitious''\">야심가</a><br>'\n! JO9 MOD END ARGON_RESTORED_LIST\n  if dynslave['jo9_work_ethic'] = 1 and dynslave['jo9_work_ethic_known'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''workaholic''\">일벌레</a><br>'\n  if dynslave['jo9_work_ethic'] = -1 and dynslave['jo9_work_ethic_known'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''content''\">안분지족</a><br>'\n  if dynslave['jo9_focus'] = 1 and dynslave['jo9_focus_known'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''persevering''\">끈기</a><br>'\n  if dynslave['jo9_focus'] = -1 and dynslave['jo9_focus_known'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''distracted''\">산만함</a><br>'\n  if dynslave['jo9_grudge'] = 1 and dynslave['jo9_grudge_known'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''petty''\">옹졸함</a><br>'\n  if dynslave['jo9_grudge'] = -1 and dynslave['jo9_grudge_known'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''generous''\">너그러움</a><br>'\n  if dynslave['jo9_constitution'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''healthy''\">건강체질</a><br>'\n  if dynslave['jo9_constitution'] = -1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''frail''\">약골</a><br>'\n  if dynslave['jo9_combat_trait'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''berserker''\">광전사</a><br>'\n  if dynslave['jo9_combat_trait'] = 2: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''paladin''\">성기사</a><br>'\n  if dynslave['jo9_combat_trait'] = 3: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''veteran''\">역전의 용사</a><br>'\n  if dynslave['jo9_versatile'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''versatile''\">다재다능</a><br>'\n  if dynslave['jo9_peerless'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''peerless''\">경국지색</a><br>'\n }, 'dynslave', $args[1]))\nend\n! JO9 MOD END ARGON_RESTORED_LIST_RETURN",
+    "why": "원래 dynamic 내부 결과가 버려지는 문제를 실제 문자열 반환으로 수정; 기존 등록 특성도 함께 표시",
+    "count": 1
+  },
+  {
+    "location": "jo9_traits",
+    "patchId": "ARGON_RESTORED_GENERATE",
+    "before": " stock['jo9_ambition'] = 0",
+    "after": "! JO9 MOD START ARGON_RESTORED_GENERATE | 2026-10-19_argon_trait_text_integration\n stock['oral_affinity'] = 0\n if rand(1,100) <= 10: stock['oral_affinity'] = 1\n stock['jo9_gag_reflex'] = 0\n if rand(1,100) <= 10: stock['jo9_gag_reflex'] = 1\n stock['anal_affinity'] = 0\n jo9_trait_registry_roll = rand(1,100)\n if jo9_trait_registry_roll <= 10: stock['anal_affinity'] = 1\n if jo9_trait_registry_roll > 10 and jo9_trait_registry_roll <= 20: stock['anal_affinity'] = -1\n stock['defiant'] = 0\n if rand(1,100) <= 10: stock['defiant'] = 1\n stock['jo9_voice_trait'] = 0\n jo9_trait_registry_roll = rand(1,100)\n if jo9_trait_registry_roll = 1: stock['jo9_voice_trait'] = 1\n if jo9_trait_registry_roll = 2: stock['jo9_voice_trait'] = 2\n stock['jo9_oral_xp_credit'] = 0\n stock['jo9_anal_xp_credit'] = 0\n stock['jo9_defiant_resolved'] = 0\n stock['jo9_ambition'] = 0\n! JO9 MOD END ARGON_RESTORED_GENERATE",
+    "why": "기존 새 무작위 인물 생성 호출에서만 추첨; 기존 세이브 재추첨 없음",
+    "count": 1
+  },
+  {
+    "location": "jo9_traits",
+    "patchId": "ARGON_RESTORED_EDIT_RESET",
+    "before": "  if $args[0] = 'jo9_ambition':",
+    "after": "! JO9 MOD START ARGON_RESTORED_EDIT_RESET | 2026-10-19_argon_trait_text_integration\n  if $args[0] = 'oral_affinity': dynslave['jo9_oral_xp_credit'] = 0\n  if $args[0] = 'anal_affinity': dynslave['jo9_anal_xp_credit'] = 0\n  if $args[0] = 'defiant': dynslave['jo9_defiant_resolved'] = 0\n  if $args[0] = 'jo9_ambition':\n! JO9 MOD END ARGON_RESTORED_EDIT_RESET",
+    "why": "편집 시 해당 경험치 나머지와 불복종 해소 기록만 초기화",
+    "count": 1
+  },
+  {
+    "location": "jo9_traits",
+    "patchId": "ARGON_RESTORED_EDITOR",
+    "before": "  $setting_display += '<div id=\"under_cheats\"><a href=\"EXEC: gs ''jo9_traits'', ''edit'', ''dynslave'', ''jo9_ambition'', 1 & gt ''menu_form''\">야심가: '",
+    "after": "! JO9 MOD START ARGON_RESTORED_EDITOR | 2026-10-19_argon_trait_text_integration\n  $setting_display += '<div id=\"under_cheats\"><a href=\"EXEC: gs ''jo9_traits'', ''edit'', ''dynslave'', ''oral_affinity'', 1 & gt ''menu_form''\">구강 선호: '\n  if dynslave['oral_affinity'] = 1: $setting_display += '있음'\n  if dynslave['oral_affinity'] ! 1: $setting_display += '없음'\n  $setting_display += '</a></div>'\n  $setting_display += '<div id=\"under_cheats\"><a href=\"EXEC: gs ''jo9_traits'', ''edit'', ''dynslave'', ''jo9_gag_reflex'', 1 & gt ''menu_form''\">구역반사: '\n  if dynslave['jo9_gag_reflex'] = 1: $setting_display += '있음'\n  if dynslave['jo9_gag_reflex'] ! 1: $setting_display += '없음'\n  $setting_display += '</a></div>'\n  $setting_display += '<div id=\"under_cheats\"><a href=\"EXEC: gs ''jo9_traits'', ''edit'', ''dynslave'', ''anal_affinity'', 1 & gt ''menu_form''\">항문 선호: '\n  if dynslave['anal_affinity'] = 1: $setting_display += '있음'\n  if dynslave['anal_affinity'] ! 1: $setting_display += '없음'\n  $setting_display += '</a></div>'\n  $setting_display += '<div id=\"under_cheats\"><a href=\"EXEC: gs ''jo9_traits'', ''edit'', ''dynslave'', ''anal_affinity'', -1 & gt ''menu_form''\">항문 기피: '\n  if dynslave['anal_affinity'] = -1: $setting_display += '있음'\n  if dynslave['anal_affinity'] ! -1: $setting_display += '없음'\n  $setting_display += '</a></div>'\n  $setting_display_r += '<div id=\"under_cheats\"><a href=\"EXEC: gs ''jo9_traits'', ''edit'', ''dynslave'', ''defiant'', 1 & gt ''menu_form''\">불복종: '\n  if dynslave['defiant'] = 1: $setting_display_r += '있음'\n  if dynslave['defiant'] ! 1: $setting_display_r += '없음'\n  $setting_display_r += '</a></div>'\n  $setting_display_r += '<div id=\"under_cheats\"><a href=\"EXEC: gs ''jo9_traits'', ''edit'', ''dynslave'', ''jo9_voice_trait'', 1 & gt ''menu_form''\">선천적 발화 불가: '\n  if dynslave['jo9_voice_trait'] = 1: $setting_display_r += '있음'\n  if dynslave['jo9_voice_trait'] ! 1: $setting_display_r += '없음'\n  $setting_display_r += '</a></div>'\n  $setting_display_r += '<div id=\"under_cheats\"><a href=\"EXEC: gs ''jo9_traits'', ''edit'', ''dynslave'', ''jo9_voice_trait'', 2 & gt ''menu_form''\">혀 손실: '\n  if dynslave['jo9_voice_trait'] = 2: $setting_display_r += '있음'\n  if dynslave['jo9_voice_trait'] ! 2: $setting_display_r += '없음'\n  $setting_display_r += '</a></div>'\n  $setting_display += '<div id=\"under_cheats\"><a href=\"EXEC: gs ''jo9_traits'', ''edit'', ''dynslave'', ''jo9_ambition'', 1 & gt ''menu_form''\">야심가: '\n! JO9 MOD END ARGON_RESTORED_EDITOR",
+    "why": "기존 신규 특성 편집기에 7개 선택을 두 열로 추가",
+    "count": 1
+  },
+  {
+    "location": "jo9_traits",
+    "patchId": "ARGON_RESTORED_EFFECTS",
+    "before": "",
+    "after": "! JO9 MOD START ARGON_RESTORED_EFFECTS | 2026-10-19_argon_trait_text_integration\n\nif $args[0] = 'restored_xp' or $args[0] = 'restored_acceptance':\n local $jo9_rt_subject = $lcase($args[2])\n if instr($jo9_rt_subject, '[') > 0: $jo9_rt_subject = $mid($jo9_rt_subject, instr($jo9_rt_subject, '[') + 1, len($jo9_rt_subject))\n $jo9_rt_subject = $replace($replace($replace($jo9_rt_subject, ']', ''), '\"', ''), \"'\", '')\n if $args[0] = 'restored_xp':\n  result = dyneval($replace({\n   result = args[1]\n   if args[1] > 0:\n    local $jo9_rt_credit = ''\n    if instr('|oral|sub_kiss|sub_tongue|sub_bj|sub_dt|sub_asslik|', '|' + $args[0] + '|') > 0 and jo9restored['oral_affinity'] > 0: $jo9_rt_credit = 'jo9_oral_xp_credit'\n    if instr('|sub_anal|anal_stretch|', '|' + $args[0] + '|') > 0 and jo9restored['anal_affinity'] > 0: $jo9_rt_credit = 'jo9_anal_xp_credit'\n    if $jo9_rt_credit ! '':\n     jo9restored[$jo9_rt_credit] += args[1]\n     result += jo9restored[$jo9_rt_credit] / 2\n     jo9restored[$jo9_rt_credit] = jo9restored[$jo9_rt_credit] mod 2\n    end\n   end\n  }, 'jo9restored', $args[1]), $jo9_rt_subject, args[3])\n else\n  result = dyneval($replace({\n   result = 0\n   if instr('|oral|sub_kiss|sub_tongue|sub_bj|sub_dt|sub_asslik|', '|' + $args[0] + '|') > 0:\n    if jo9restored['oral_affinity'] > 0: result += 2\n    if instr('|sub_bj|sub_dt|', '|' + $args[0] + '|') > 0 and jo9restored['jo9_gag_reflex'] = 1: result -= 2\n   end\n   if instr('|sub_anal|anal_stretch|', '|' + $args[0] + '|') > 0:\n    if jo9restored['anal_affinity'] > 0: result += 2\n    if jo9restored['anal_affinity'] < 0: result -= 2\n   end\n  }, 'jo9restored', $args[1]), $jo9_rt_subject)\n end\nend\nif $args[0] = 'restored_refresh':\n dynamic $replace({\n  if jo9restored['defiant'] = 1:\n   if jo9restored['pride'] = 0 or $jo9restored_psy_status = 'broken':\n    jo9restored['defiant'] = 0\n    jo9restored['jo9_defiant_resolved'] = 1\n   elseif jo9restored_rate['moral'] > 0:\n    jo9restored_rate['moral'] = 0\n   end\n  end\n }, 'jo9restored', $args[1])\nend\n! JO9 MOD END ARGON_RESTORED_EFFECTS",
+    "why": "역할 분리 경험치·수용 보정·불복종 효과 함수",
+    "count": 1
+  },
+  {
+    "location": "get_stock_seed",
+    "patchId": "ARGON_RESTORED_SEED",
+    "before": "stock['sport_affinity'] = seed_sport_affinity[stock_type]",
+    "after": "! JO9 MOD START ARGON_RESTORED_SEED | 2026-10-19_argon_trait_text_integration\nstock['oral_affinity'] = seed_oral_affinity[stock_type]\nstock['anal_affinity'] = seed_anal_affinity[stock_type]\nstock['defiant'] = seed_defiant[stock_type]\nstock['jo9_gag_reflex'] = seed_jo9_gag_reflex[stock_type]\nstock['jo9_voice_trait'] = seed_jo9_voice_trait[stock_type]\nstock['jo9_oral_xp_credit'] = 0\nstock['jo9_anal_xp_credit'] = 0\nstock['jo9_defiant_resolved'] = 0\nstock['sport_affinity'] = seed_sport_affinity[stock_type]\n! JO9 MOD END ARGON_RESTORED_SEED",
+    "why": "기존 고정 seed 설정 복원 및 새 필드 복사; 음수 oral도 그대로 보존",
+    "count": 1
+  },
+  {
+    "location": "get_special_assistant_quest",
+    "patchId": "ARGON_RESTORED_ASSISTANT_SEED",
+    "before": "assistant[\"oral_affinity\"] = seed_oral_affinity[slave_type]\nassistant[\"anal_affinity\"] = seed_anal_affinity[slave_type]",
+    "after": "! JO9 MOD START ARGON_RESTORED_ASSISTANT_SEED | 2026-10-19_argon_trait_text_integration\nassistant[\"oral_affinity\"] = seed_oral_affinity[assistant_type]\nassistant[\"anal_affinity\"] = seed_anal_affinity[assistant_type]\nassistant[\"jo9_gag_reflex\"] = seed_jo9_gag_reflex[assistant_type]\nassistant[\"jo9_voice_trait\"] = seed_jo9_voice_trait[assistant_type]\nassistant[\"jo9_oral_xp_credit\"] = 0\nassistant[\"jo9_anal_xp_credit\"] = 0\nassistant[\"jo9_defiant_resolved\"] = 0\n! JO9 MOD END ARGON_RESTORED_ASSISTANT_SEED",
+    "why": "같은 특수 조수의 템플릿 번호로 해당 특성 및 새 필드를 복사",
+    "count": 1
+  },
+  {
+    "location": "get_special_assistant_quest",
+    "patchId": "ARGON_RESTORED_ASSISTANT_DEFIANT",
+    "before": "assistant[\"defiant\"] = seed_defiant[slave_type]",
+    "after": "! JO9 MOD START ARGON_RESTORED_ASSISTANT_DEFIANT | 2026-10-19_argon_trait_text_integration\nassistant[\"defiant\"] = seed_defiant[assistant_type]\n! JO9 MOD END ARGON_RESTORED_ASSISTANT_DEFIANT",
+    "why": "옛 복사 줄의 대상 번호를 해당 조수로 수정",
+    "count": 1
+  },
+  {
+    "location": "get_special_assistant_quest",
+    "patchId": "ARGON_RESTORED_ASSISTANT_REVEALED",
+    "before": "assistant[\"oral_affinity_revealed\"] = seed_oral_affinity_revealed[slave_type]\nassistant[\"anal_affinity_revealed\"] = seed_anal_affinity_revealed[slave_type]",
+    "after": "! JO9 MOD START ARGON_RESTORED_ASSISTANT_REVEALED | 2026-10-19_argon_trait_text_integration\nassistant[\"oral_affinity_revealed\"] = seed_oral_affinity_revealed[assistant_type]\nassistant[\"anal_affinity_revealed\"] = seed_anal_affinity_revealed[assistant_type]\n! JO9 MOD END ARGON_RESTORED_ASSISTANT_REVEALED",
+    "why": "옛 발견 상태 복사도 같은 조수의 seed를 사용",
+    "count": 1
+  },
+  {
+    "location": "get_special_assistant_quest",
+    "patchId": "ARGON_RESTORED_ASSISTANT_DEFIANT_REVEALED",
+    "before": "assistant[\"defiant_revealed\"] = seed_defiant_revealed[slave_type]",
+    "after": "! JO9 MOD START ARGON_RESTORED_ASSISTANT_DEFIANT_REVEALED | 2026-10-19_argon_trait_text_integration\nassistant[\"defiant_revealed\"] = seed_defiant_revealed[assistant_type]\n! JO9 MOD END ARGON_RESTORED_ASSISTANT_DEFIANT_REVEALED",
+    "why": "옛 발견 상태의 인물 참조 일치",
+    "count": 1
+  },
+  {
+    "location": "#static_base",
+    "patchId": "ARGON_RESTORED_DEFIANT_BEFORE",
+    "before": "\t\t!Discrete, field independence (stats - range and interpretation of rate variable depends on current primary value)",
+    "after": "! JO9 MOD START ARGON_RESTORED_DEFIANT_BEFORE | 2026-10-19_argon_trait_text_integration\n\t\tgs 'jo9_traits', 'restored_refresh', 'dynslave'\n\t\t!Discrete, field independence (stats - range and interpretation of rate variable depends on current primary value)\n! JO9 MOD END ARGON_RESTORED_DEFIANT_BEFORE",
+    "why": "기존 레이트 계산 전 양의 헌신 증가 억제; 보유 헌신과 음수 변화는 유지",
+    "count": 1
+  },
+  {
+    "location": "#static_base",
+    "patchId": "ARGON_RESTORED_DEFIANT_AFTER",
+    "before": "\t\t!for master moodlets",
+    "after": "! JO9 MOD START ARGON_RESTORED_DEFIANT_AFTER | 2026-10-19_argon_trait_text_integration\n\t\tgs 'jo9_traits', 'restored_refresh', 'dynslave'\n\t\t!for master moodlets\n! JO9 MOD END ARGON_RESTORED_DEFIANT_AFTER",
+    "why": "기존 자존심·정신 상태 계산 후 해소 조건을 영구 기록",
+    "count": 1
+  },
+  {
+    "location": "interaction_city",
+    "patchId": "ARGON_RESTORED_DIRECT_MORAL_227581",
+    "before": " if slave[\"moral\"] < 2: slave[\"moral\"] = 2",
+    "after": "! JO9 MOD START ARGON_RESTORED_DIRECT_MORAL_227581 | 2026-10-19_argon_trait_text_integration\n if slave[\"moral\"] < 2 and (slave['defiant'] ! 1 or slave['pride'] = 0 or $slave_psy_status = 'broken'): slave[\"moral\"] = 2\n! JO9 MOD END ARGON_RESTORED_DIRECT_MORAL_227581",
+    "scope": "IF interaction_city = 227581:",
+    "why": "기존 유료 교육의 직접 헌신 증가도 불복종 조건을 따름; 자존심0 완료 서비스와 초기 생성은 유지",
+    "count": 1
+  },
+  {
+    "location": "interaction_city",
+    "patchId": "ARGON_RESTORED_DIRECT_MORAL_227582",
+    "before": " if slave[\"moral\"] < 3: slave[\"moral\"] = 3",
+    "after": "! JO9 MOD START ARGON_RESTORED_DIRECT_MORAL_227582 | 2026-10-19_argon_trait_text_integration\n if slave[\"moral\"] < 3 and (slave['defiant'] ! 1 or slave['pride'] = 0 or $slave_psy_status = 'broken'): slave[\"moral\"] = 3\n! JO9 MOD END ARGON_RESTORED_DIRECT_MORAL_227582",
+    "scope": "IF interaction_city = 227582:",
+    "why": "기존 유료 교육의 직접 헌신 증가도 불복종 조건을 따름; 자존심0 완료 서비스와 초기 생성은 유지",
+    "count": 1
+  },
+  {
+    "location": "interaction_city",
+    "patchId": "ARGON_RESTORED_DIRECT_MORAL_227583",
+    "before": " if slave[\"moral\"] < 3: slave[\"moral\"] = 3",
+    "after": "! JO9 MOD START ARGON_RESTORED_DIRECT_MORAL_227583 | 2026-10-19_argon_trait_text_integration\n if slave[\"moral\"] < 3 and (slave['defiant'] ! 1 or slave['pride'] = 0 or $slave_psy_status = 'broken'): slave[\"moral\"] = 3\n! JO9 MOD END ARGON_RESTORED_DIRECT_MORAL_227583",
+    "scope": "IF interaction_city = 227583:",
+    "why": "기존 유료 교육의 직접 헌신 증가도 불복종 조건을 따름; 자존심0 완료 서비스와 초기 생성은 유지",
+    "count": 1
+  },
+  {
+    "location": "#dynamic",
+    "patchId": "ARGON_RESTORED_ACCEPTANCE",
+    "before": "\t\t\tinteraction_dynslave['sex_acceptance'] /= 2 &! final value is in range [-30, +48] but usually single digits",
+    "after": "! JO9 MOD START ARGON_RESTORED_ACCEPTANCE | 2026-10-19_argon_trait_text_integration\n\t\t\tinteraction_dynslave['sex_acceptance'] /= 2 &! final value is in range [-30, +48] but usually single digits\n\t\t\tinteraction_dynslave['sex_acceptance'] += func('jo9_traits', 'restored_acceptance', 'dynslave', $subskill)\n! JO9 MOD END ARGON_RESTORED_ACCEPTANCE",
+    "why": "현재 행동의 실제 기술로만 수용 보정; 기존 stimulating/orgastic 분기 안에서 적용",
+    "count": 1
+  },
+  {
+    "location": "#dynamic",
+    "patchId": "ARGON_RESTORED_PRIMARY_XP",
+    "before": "     jo9_learning_gain = func('jo9_traits_personality', 'xp', 'dynslave', 'subskill', func('jo9_learning_xp', (jo9_learning_gain), dynslave['jo9_learning_trait'], 'subskill'))",
+    "after": "! JO9 MOD START ARGON_RESTORED_PRIMARY_XP | 2026-10-19_argon_trait_text_integration\n     jo9_learning_gain = func('jo9_traits_personality', 'xp', 'dynslave', 'subskill', func('jo9_learning_xp', (jo9_learning_gain), dynslave['jo9_learning_trait'], 'subskill'))\n     jo9_learning_gain = func('jo9_traits', 'restored_xp', 'dynslave', $subskill, jo9_learning_gain)\n! JO9 MOD END ARGON_RESTORED_PRIMARY_XP",
+    "why": "기존 주 기술 경험치에 실제 $subskill로 한 번만 +50% 적용",
+    "count": 1
+  },
+  {
+    "location": "#dynamic",
+    "patchId": "ARGON_RESTORED_SECONDARY_XP_1",
+    "before": "\t\t\t\t\t\tdynamic $replace('if <<$subskill_two>> < 5: <<$subskill_two_xp>> += func(''jo9_traits_personality'', ''xp'', ''dynslave'', ''subskill'', func(''jo9_learning_xp'', (1), dynslave[''jo9_learning_trait''], ''subskill''))', 'slave', 'dynslave') &! secondary skills get a small xp boost (line order here is important - add xp before level-up/reset, not after)",
+    "after": "! JO9 MOD START ARGON_RESTORED_SECONDARY_XP_1 | 2026-10-19_argon_trait_text_integration\n\t\t\t\t\t\tdynamic $replace('if <<$subskill_two>> < 5: <<$subskill_two_xp>> += func(''jo9_traits'', ''restored_xp'', ''dynslave'', $subskill_two, func(''jo9_traits_personality'', ''xp'', ''dynslave'', ''subskill'', func(''jo9_learning_xp'', (1), dynslave[''jo9_learning_trait''], ''subskill'')))', 'slave', 'dynslave') &! secondary skills get a small xp boost (line order here is important - add xp before level-up/reset, not after)\n! JO9 MOD END ARGON_RESTORED_SECONDARY_XP_1",
+    "why": "실제 보조 기술 $subskill_two에 한 번만 보정",
+    "count": 1
+  },
+  {
+    "location": "#dynamic",
+    "patchId": "ARGON_RESTORED_SECONDARY_XP_2",
+    "before": "\t\t\t\t\tif $subskill_two_xp ! '': dynamic $replace('if <<$subskill_two>> < 5: <<$subskill_two_xp>> += func(''jo9_traits_personality'', ''xp'', ''dynslave'', ''subskill'', func(''jo9_learning_xp'', (1), dynslave[''jo9_learning_trait''], ''subskill''))', 'slave', 'dynslave') &! secondary skills get a small xp boost",
+    "after": "! JO9 MOD START ARGON_RESTORED_SECONDARY_XP_2 | 2026-10-19_argon_trait_text_integration\n\t\t\t\t\tif $subskill_two_xp ! '': dynamic $replace('if <<$subskill_two>> < 5: <<$subskill_two_xp>> += func(''jo9_traits'', ''restored_xp'', ''dynslave'', $subskill_two, func(''jo9_traits_personality'', ''xp'', ''dynslave'', ''subskill'', func(''jo9_learning_xp'', (1), dynslave[''jo9_learning_trait''], ''subskill'')))', 'slave', 'dynslave') &! secondary skills get a small xp boost\n! JO9 MOD END ARGON_RESTORED_SECONDARY_XP_2",
+    "why": "실제 보조 기술 $subskill_two에 한 번만 보정",
+    "count": 1
+  },
+  {
+    "location": "sex_interaction",
+    "patchId": "ARGON_RESTORED_DIRECT_XP_001",
+    "line": 209,
+    "before": "\t\t\tif sex['girl_attention'] > slave['sub_kiss'] and sex_done_today[$str(sex_interaction)] = 0: slave['sub_kiss_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), slave['jo9_learning_trait'], 'sub_kiss')",
+    "after": "! JO9 MOD START ARGON_RESTORED_DIRECT_XP_001 | 2026-10-19_argon_trait_text_integration\n\t\t\tif sex['girl_attention'] > slave['sub_kiss'] and sex_done_today[$str(sex_interaction)] = 0: slave['sub_kiss_xp'] += func('jo9_traits', 'restored_xp', 'slave', 'sub_kiss', func('jo9_learning_xp', (sex['girl_attention'] - 2), slave['jo9_learning_trait'], 'sub_kiss'))\n! JO9 MOD END ARGON_RESTORED_DIRECT_XP_001",
+    "why": "역할과 기술이 명시된 기존 경험치 지급을 한 번 보정",
+    "count": 1,
+    "calls": 1
+  },
+  {
+    "location": "sex_interaction",
+    "patchId": "ARGON_RESTORED_DIRECT_XP_002",
+    "line": 219,
+    "before": "\t\t\tif sex['girl_attention'] > assistant['sub_kiss'] and sex_done_today[$str(sex_interaction)] = 0: assistant['sub_kiss_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), assistant['jo9_learning_trait'], 'sub_kiss')",
+    "after": "! JO9 MOD START ARGON_RESTORED_DIRECT_XP_002 | 2026-10-19_argon_trait_text_integration\n\t\t\tif sex['girl_attention'] > assistant['sub_kiss'] and sex_done_today[$str(sex_interaction)] = 0: assistant['sub_kiss_xp'] += func('jo9_traits', 'restored_xp', 'assistant', 'sub_kiss', func('jo9_learning_xp', (sex['girl_attention'] - 2), assistant['jo9_learning_trait'], 'sub_kiss'))\n! JO9 MOD END ARGON_RESTORED_DIRECT_XP_002",
+    "why": "역할과 기술이 명시된 기존 경험치 지급을 한 번 보정",
+    "count": 1,
+    "calls": 1
+  },
+  {
+    "location": "sex_interaction",
+    "patchId": "ARGON_RESTORED_DIRECT_XP_003",
+    "line": 261,
+    "before": "\t\t\tif diligence > slave['sub_tongue'] and sex_done_today[$str(sex_interaction)] = 0: slave['sub_tongue_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), slave['jo9_learning_trait'], 'sub_tongue')",
+    "after": "! JO9 MOD START ARGON_RESTORED_DIRECT_XP_003 | 2026-10-19_argon_trait_text_integration\n\t\t\tif diligence > slave['sub_tongue'] and sex_done_today[$str(sex_interaction)] = 0: slave['sub_tongue_xp'] += func('jo9_traits', 'restored_xp', 'slave', 'sub_tongue', func('jo9_learning_xp', (sex['girl_attention'] - 2), slave['jo9_learning_trait'], 'sub_tongue'))\n! JO9 MOD END ARGON_RESTORED_DIRECT_XP_003",
+    "why": "역할과 기술이 명시된 기존 경험치 지급을 한 번 보정",
+    "count": 1,
+    "calls": 1
+  },
+  {
+    "location": "sex_interaction",
+    "patchId": "ARGON_RESTORED_DIRECT_XP_004",
+    "line": 285,
+    "before": "\t\t\tif diligence > assistant['sub_tongue'] and sex_done_today[$str(sex_interaction)] = 0: assistant['sub_tongue_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), assistant['jo9_learning_trait'], 'sub_tongue')",
+    "after": "! JO9 MOD START ARGON_RESTORED_DIRECT_XP_004 | 2026-10-19_argon_trait_text_integration\n\t\t\tif diligence > assistant['sub_tongue'] and sex_done_today[$str(sex_interaction)] = 0: assistant['sub_tongue_xp'] += func('jo9_traits', 'restored_xp', 'assistant', 'sub_tongue', func('jo9_learning_xp', (sex['girl_attention'] - 2), assistant['jo9_learning_trait'], 'sub_tongue'))\n! JO9 MOD END ARGON_RESTORED_DIRECT_XP_004",
+    "why": "역할과 기술이 명시된 기존 경험치 지급을 한 번 보정",
+    "count": 1,
+    "calls": 1
+  },
+  {
+    "location": "sex_interaction",
+    "patchId": "ARGON_RESTORED_DIRECT_XP_005",
+    "line": 332,
+    "before": "\t\t\tif diligence > slave['sub_tongue'] and sex_done_today[$str(sex_interaction)] = 0: slave['sub_tongue_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), slave['jo9_learning_trait'], 'sub_tongue')",
+    "after": "! JO9 MOD START ARGON_RESTORED_DIRECT_XP_005 | 2026-10-19_argon_trait_text_integration\n\t\t\tif diligence > slave['sub_tongue'] and sex_done_today[$str(sex_interaction)] = 0: slave['sub_tongue_xp'] += func('jo9_traits', 'restored_xp', 'slave', 'sub_tongue', func('jo9_learning_xp', (sex['girl_attention'] - 2), slave['jo9_learning_trait'], 'sub_tongue'))\n! JO9 MOD END ARGON_RESTORED_DIRECT_XP_005",
+    "why": "역할과 기술이 명시된 기존 경험치 지급을 한 번 보정",
+    "count": 1,
+    "calls": 1
+  },
+  {
+    "location": "sex_interaction",
+    "patchId": "ARGON_RESTORED_DIRECT_XP_006",
+    "line": 356,
+    "before": "\t\t\tif diligence > assistant['sub_tongue'] and sex_done_today[$str(sex_interaction)] = 0: assistant['sub_tongue_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), assistant['jo9_learning_trait'], 'sub_tongue')",
+    "after": "! JO9 MOD START ARGON_RESTORED_DIRECT_XP_006 | 2026-10-19_argon_trait_text_integration\n\t\t\tif diligence > assistant['sub_tongue'] and sex_done_today[$str(sex_interaction)] = 0: assistant['sub_tongue_xp'] += func('jo9_traits', 'restored_xp', 'assistant', 'sub_tongue', func('jo9_learning_xp', (sex['girl_attention'] - 2), assistant['jo9_learning_trait'], 'sub_tongue'))\n! JO9 MOD END ARGON_RESTORED_DIRECT_XP_006",
+    "why": "역할과 기술이 명시된 기존 경험치 지급을 한 번 보정",
+    "count": 1,
+    "calls": 1
+  },
+  {
+    "location": "sex_interaction",
+    "patchId": "ARGON_RESTORED_DIRECT_XP_007",
+    "line": 402,
+    "before": "\t\t\tif diligence > slave['sub_tongue'] and sex_done_today[$str(sex_interaction)] = 0: slave['sub_tongue_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), slave['jo9_learning_trait'], 'sub_tongue')",
+    "after": "! JO9 MOD START ARGON_RESTORED_DIRECT_XP_007 | 2026-10-19_argon_trait_text_integration\n\t\t\tif diligence > slave['sub_tongue'] and sex_done_today[$str(sex_interaction)] = 0: slave['sub_tongue_xp'] += func('jo9_traits', 'restored_xp', 'slave', 'sub_tongue', func('jo9_learning_xp', (sex['girl_attention'] - 2), slave['jo9_learning_trait'], 'sub_tongue'))\n! JO9 MOD END ARGON_RESTORED_DIRECT_XP_007",
+    "why": "역할과 기술이 명시된 기존 경험치 지급을 한 번 보정",
+    "count": 1,
+    "calls": 1
+  },
+  {
+    "location": "sex_interaction",
+    "patchId": "ARGON_RESTORED_DIRECT_XP_008",
+    "line": 426,
+    "before": "\t\t\tif diligence > assistant['sub_tongue'] and sex_done_today[$str(sex_interaction)] = 0: assistant['sub_tongue_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), assistant['jo9_learning_trait'], 'sub_tongue')",
+    "after": "! JO9 MOD START ARGON_RESTORED_DIRECT_XP_008 | 2026-10-19_argon_trait_text_integration\n\t\t\tif diligence > assistant['sub_tongue'] and sex_done_today[$str(sex_interaction)] = 0: assistant['sub_tongue_xp'] += func('jo9_traits', 'restored_xp', 'assistant', 'sub_tongue', func('jo9_learning_xp', (sex['girl_attention'] - 2), assistant['jo9_learning_trait'], 'sub_tongue'))\n! JO9 MOD END ARGON_RESTORED_DIRECT_XP_008",
+    "why": "역할과 기술이 명시된 기존 경험치 지급을 한 번 보정",
+    "count": 1,
+    "calls": 1
+  },
+  {
+    "location": "sex_interaction",
+    "patchId": "ARGON_RESTORED_DIRECT_XP_009",
+    "line": 473,
+    "before": "\t\t\tif diligence > slave['sub_tongue'] and sex_done_today[$str(sex_interaction)] = 0: slave['sub_tongue_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), slave['jo9_learning_trait'], 'sub_tongue')",
+    "after": "! JO9 MOD START ARGON_RESTORED_DIRECT_XP_009 | 2026-10-19_argon_trait_text_integration\n\t\t\tif diligence > slave['sub_tongue'] and sex_done_today[$str(sex_interaction)] = 0: slave['sub_tongue_xp'] += func('jo9_traits', 'restored_xp', 'slave', 'sub_tongue', func('jo9_learning_xp', (sex['girl_attention'] - 2), slave['jo9_learning_trait'], 'sub_tongue'))\n! JO9 MOD END ARGON_RESTORED_DIRECT_XP_009",
+    "why": "역할과 기술이 명시된 기존 경험치 지급을 한 번 보정",
+    "count": 1,
+    "calls": 1
+  },
+  {
+    "location": "sex_interaction",
+    "patchId": "ARGON_RESTORED_DIRECT_XP_010",
+    "line": 497,
+    "before": "\t\t\tif diligence > assistant['sub_tongue'] and sex_done_today[$str(sex_interaction)] = 0: assistant['sub_tongue_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), assistant['jo9_learning_trait'], 'sub_tongue')",
+    "after": "! JO9 MOD START ARGON_RESTORED_DIRECT_XP_010 | 2026-10-19_argon_trait_text_integration\n\t\t\tif diligence > assistant['sub_tongue'] and sex_done_today[$str(sex_interaction)] = 0: assistant['sub_tongue_xp'] += func('jo9_traits', 'restored_xp', 'assistant', 'sub_tongue', func('jo9_learning_xp', (sex['girl_attention'] - 2), assistant['jo9_learning_trait'], 'sub_tongue'))\n! JO9 MOD END ARGON_RESTORED_DIRECT_XP_010",
+    "why": "역할과 기술이 명시된 기존 경험치 지급을 한 번 보정",
+    "count": 1,
+    "calls": 1
+  },
+  {
+    "location": "sex_interaction",
+    "patchId": "ARGON_RESTORED_DIRECT_XP_011",
+    "line": 544,
+    "before": "\t\t\tif diligence > slave['sub_tongue'] and sex_done_today[$str(sex_interaction)] = 0: slave['sub_tongue_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), slave['jo9_learning_trait'], 'sub_tongue')",
+    "after": "! JO9 MOD START ARGON_RESTORED_DIRECT_XP_011 | 2026-10-19_argon_trait_text_integration\n\t\t\tif diligence > slave['sub_tongue'] and sex_done_today[$str(sex_interaction)] = 0: slave['sub_tongue_xp'] += func('jo9_traits', 'restored_xp', 'slave', 'sub_tongue', func('jo9_learning_xp', (sex['girl_attention'] - 2), slave['jo9_learning_trait'], 'sub_tongue'))\n! JO9 MOD END ARGON_RESTORED_DIRECT_XP_011",
+    "why": "역할과 기술이 명시된 기존 경험치 지급을 한 번 보정",
+    "count": 1,
+    "calls": 1
+  },
+  {
+    "location": "sex_interaction",
+    "patchId": "ARGON_RESTORED_DIRECT_XP_012",
+    "line": 568,
+    "before": "\t\t\tif diligence > assistant['sub_tongue'] and sex_done_today[$str(sex_interaction)] = 0: assistant['sub_tongue_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), assistant['jo9_learning_trait'], 'sub_tongue')",
+    "after": "! JO9 MOD START ARGON_RESTORED_DIRECT_XP_012 | 2026-10-19_argon_trait_text_integration\n\t\t\tif diligence > assistant['sub_tongue'] and sex_done_today[$str(sex_interaction)] = 0: assistant['sub_tongue_xp'] += func('jo9_traits', 'restored_xp', 'assistant', 'sub_tongue', func('jo9_learning_xp', (sex['girl_attention'] - 2), assistant['jo9_learning_trait'], 'sub_tongue'))\n! JO9 MOD END ARGON_RESTORED_DIRECT_XP_012",
+    "why": "역할과 기술이 명시된 기존 경험치 지급을 한 번 보정",
+    "count": 1,
+    "calls": 1
+  },
+  {
+    "location": "sex_interaction",
+    "patchId": "ARGON_RESTORED_DIRECT_XP_013",
+    "line": 943,
+    "before": "\t\t\tif slave['sub_anal'] > 0: slave['sub_anal_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), slave['jo9_learning_trait'], 'sub_anal')",
+    "after": "! JO9 MOD START ARGON_RESTORED_DIRECT_XP_013 | 2026-10-19_argon_trait_text_integration\n\t\t\tif slave['sub_anal'] > 0: slave['sub_anal_xp'] += func('jo9_traits', 'restored_xp', 'slave', 'sub_anal', func('jo9_learning_xp', (sex['girl_attention'] - 2), slave['jo9_learning_trait'], 'sub_anal'))\n! JO9 MOD END ARGON_RESTORED_DIRECT_XP_013",
+    "why": "역할과 기술이 명시된 기존 경험치 지급을 한 번 보정",
+    "count": 1,
+    "calls": 1
+  },
+  {
+    "location": "sex_interaction",
+    "patchId": "ARGON_RESTORED_DIRECT_XP_014",
+    "line": 949,
+    "before": "\t\t\tif assistant['sub_anal'] > 0: assistant['sub_anal_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), assistant['jo9_learning_trait'], 'sub_anal')",
+    "after": "! JO9 MOD START ARGON_RESTORED_DIRECT_XP_014 | 2026-10-19_argon_trait_text_integration\n\t\t\tif assistant['sub_anal'] > 0: assistant['sub_anal_xp'] += func('jo9_traits', 'restored_xp', 'assistant', 'sub_anal', func('jo9_learning_xp', (sex['girl_attention'] - 2), assistant['jo9_learning_trait'], 'sub_anal'))\n! JO9 MOD END ARGON_RESTORED_DIRECT_XP_014",
+    "why": "역할과 기술이 명시된 기존 경험치 지급을 한 번 보정",
+    "count": 1,
+    "calls": 1
+  },
+  {
+    "location": "sex_interaction",
+    "patchId": "ARGON_RESTORED_DIRECT_XP_015",
+    "line": 1022,
+    "before": "\t\tif slave['sub_bj'] > 0: slave['sub_bj_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), slave['jo9_learning_trait'], 'sub_bj')",
+    "after": "! JO9 MOD START ARGON_RESTORED_DIRECT_XP_015 | 2026-10-19_argon_trait_text_integration\n\t\tif slave['sub_bj'] > 0: slave['sub_bj_xp'] += func('jo9_traits', 'restored_xp', 'slave', 'sub_bj', func('jo9_learning_xp', (sex['girl_attention'] - 2), slave['jo9_learning_trait'], 'sub_bj'))\n! JO9 MOD END ARGON_RESTORED_DIRECT_XP_015",
+    "why": "역할과 기술이 명시된 기존 경험치 지급을 한 번 보정",
+    "count": 1,
+    "calls": 1
+  },
+  {
+    "location": "sex_interaction",
+    "patchId": "ARGON_RESTORED_DIRECT_XP_016",
+    "line": 1030,
+    "before": "\t\tif assistant['sub_bj'] > 0: assistant['sub_bj_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), assistant['jo9_learning_trait'], 'sub_bj')",
+    "after": "! JO9 MOD START ARGON_RESTORED_DIRECT_XP_016 | 2026-10-19_argon_trait_text_integration\n\t\tif assistant['sub_bj'] > 0: assistant['sub_bj_xp'] += func('jo9_traits', 'restored_xp', 'assistant', 'sub_bj', func('jo9_learning_xp', (sex['girl_attention'] - 2), assistant['jo9_learning_trait'], 'sub_bj'))\n! JO9 MOD END ARGON_RESTORED_DIRECT_XP_016",
+    "why": "역할과 기술이 명시된 기존 경험치 지급을 한 번 보정",
+    "count": 1,
+    "calls": 1
+  },
+  {
+    "location": "sex_interaction",
+    "patchId": "ARGON_RESTORED_DIRECT_XP_017",
+    "line": 1073,
+    "before": "\t\tif slave['sub_dt'] > 0: slave['sub_dt_xp'] += func('jo9_learning_xp', (sex['girl_sub_dt'] - 2), slave['jo9_learning_trait'], 'sub_dt')",
+    "after": "! JO9 MOD START ARGON_RESTORED_DIRECT_XP_017 | 2026-10-19_argon_trait_text_integration\n\t\tif slave['sub_dt'] > 0: slave['sub_dt_xp'] += func('jo9_traits', 'restored_xp', 'slave', 'sub_dt', func('jo9_learning_xp', (sex['girl_sub_dt'] - 2), slave['jo9_learning_trait'], 'sub_dt'))\n! JO9 MOD END ARGON_RESTORED_DIRECT_XP_017",
+    "why": "역할과 기술이 명시된 기존 경험치 지급을 한 번 보정",
+    "count": 1,
+    "calls": 1
+  },
+  {
+    "location": "sex_interaction",
+    "patchId": "ARGON_RESTORED_DIRECT_XP_018",
+    "line": 1083,
+    "before": "\t\tif assistant['sub_dt'] > 0: assistant['sub_dt_xp'] += func('jo9_learning_xp', (sex['girl_sub_dt'] - 2), assistant['jo9_learning_trait'], 'sub_dt')",
+    "after": "! JO9 MOD START ARGON_RESTORED_DIRECT_XP_018 | 2026-10-19_argon_trait_text_integration\n\t\tif assistant['sub_dt'] > 0: assistant['sub_dt_xp'] += func('jo9_traits', 'restored_xp', 'assistant', 'sub_dt', func('jo9_learning_xp', (sex['girl_sub_dt'] - 2), assistant['jo9_learning_trait'], 'sub_dt'))\n! JO9 MOD END ARGON_RESTORED_DIRECT_XP_018",
+    "why": "역할과 기술이 명시된 기존 경험치 지급을 한 번 보정",
+    "count": 1,
+    "calls": 1
+  },
+  {
+    "location": "sex_interaction",
+    "patchId": "ARGON_RESTORED_DIRECT_XP_019",
+    "line": 1939,
+    "before": "\t\tif slave['anal_stretch'] > 0: slave['anal_stretch_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), slave['jo9_learning_trait'], 'anal_stretch')",
+    "after": "! JO9 MOD START ARGON_RESTORED_DIRECT_XP_019 | 2026-10-19_argon_trait_text_integration\n\t\tif slave['anal_stretch'] > 0: slave['anal_stretch_xp'] += func('jo9_traits', 'restored_xp', 'slave', 'anal_stretch', func('jo9_learning_xp', (sex['girl_attention'] - 2), slave['jo9_learning_trait'], 'anal_stretch'))\n! JO9 MOD END ARGON_RESTORED_DIRECT_XP_019",
+    "why": "역할과 기술이 명시된 기존 경험치 지급을 한 번 보정",
+    "count": 1,
+    "calls": 1
+  },
+  {
+    "location": "sex_interaction",
+    "patchId": "ARGON_RESTORED_DIRECT_XP_020",
+    "line": 1945,
+    "before": "\t\tif assistant['anal_stretch'] > 0: assistant['anal_stretch_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), assistant['jo9_learning_trait'], 'anal_stretch')",
+    "after": "! JO9 MOD START ARGON_RESTORED_DIRECT_XP_020 | 2026-10-19_argon_trait_text_integration\n\t\tif assistant['anal_stretch'] > 0: assistant['anal_stretch_xp'] += func('jo9_traits', 'restored_xp', 'assistant', 'anal_stretch', func('jo9_learning_xp', (sex['girl_attention'] - 2), assistant['jo9_learning_trait'], 'anal_stretch'))\n! JO9 MOD END ARGON_RESTORED_DIRECT_XP_020",
+    "why": "역할과 기술이 명시된 기존 경험치 지급을 한 번 보정",
+    "count": 1,
+    "calls": 1
+  },
+  {
+    "location": "sex_interaction",
+    "patchId": "ARGON_RESTORED_DIRECT_XP_021",
+    "line": 2004,
+    "before": "\t\tif slave['sub_bj'] > 0: slave['sub_bj_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), slave['jo9_learning_trait'], 'sub_bj')",
+    "after": "! JO9 MOD START ARGON_RESTORED_DIRECT_XP_021 | 2026-10-19_argon_trait_text_integration\n\t\tif slave['sub_bj'] > 0: slave['sub_bj_xp'] += func('jo9_traits', 'restored_xp', 'slave', 'sub_bj', func('jo9_learning_xp', (sex['girl_attention'] - 2), slave['jo9_learning_trait'], 'sub_bj'))\n! JO9 MOD END ARGON_RESTORED_DIRECT_XP_021",
+    "why": "역할과 기술이 명시된 기존 경험치 지급을 한 번 보정",
+    "count": 1,
+    "calls": 1
+  },
+  {
+    "location": "sex_interaction",
+    "patchId": "ARGON_RESTORED_DIRECT_XP_022",
+    "line": 2011,
+    "before": "\t\tif assistant['sub_bj'] > 0: assistant['sub_bj_xp'] += func('jo9_learning_xp', (sex['girl_attention'] - 2), assistant['jo9_learning_trait'], 'sub_bj')",
+    "after": "! JO9 MOD START ARGON_RESTORED_DIRECT_XP_022 | 2026-10-19_argon_trait_text_integration\n\t\tif assistant['sub_bj'] > 0: assistant['sub_bj_xp'] += func('jo9_traits', 'restored_xp', 'assistant', 'sub_bj', func('jo9_learning_xp', (sex['girl_attention'] - 2), assistant['jo9_learning_trait'], 'sub_bj'))\n! JO9 MOD END ARGON_RESTORED_DIRECT_XP_022",
+    "why": "역할과 기술이 명시된 기존 경험치 지급을 한 번 보정",
+    "count": 1,
+    "calls": 1
+  }
+]

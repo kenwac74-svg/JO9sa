@@ -1,0 +1,36 @@
+'use strict';
+const fs=require('fs'),path=require('path'),c=require('G:/somi/JO9sa/tools/text-workshop/core.cjs');
+const root=__dirname,read=n=>JSON.parse(fs.readFileSync(path.join(root,n),'utf8').replace(/^\uFEFF/,''));
+const files=['clinic-report.json','dealers-report.json','essence-report.json','guards-report.json','daily-report.json','daily-ap-map-report.json','training-report.json','lowobed-report.json','versatile-report.json','overwork-entry-report.json','training-muscular-report.json','muscular-render-report.json','rumors-dom-report.json'];
+const cases=[];
+for(const file of files){
+ if(!fs.existsSync(path.join(root,file)))continue;
+ const r=read(file);
+ for(const original of r.cases){
+  if(file==='daily-report.json'&&original.id==='daily-ap-map')continue;
+  if(file==='training-report.json'&&original.id==='training-muscular-overwork')continue;
+  const x={...original,sourceReport:file};
+  if(x.expectedDefect){
+   const log=fs.readFileSync(path.join(root,x.evidence),'utf8');
+   x.defectObserved=/Link clicked "exec:gt"/.test(log);
+   x.status=x.defectObserved?'FAIL':'GAP';
+   x.failure=x.defectObserved?'VISIBLE_RUMOR_LINK_TRUNCATED_TO_EXEC_GT':x.failure;
+   x.observedOriginalClicks=(log.match(/Link clicked "exec:gt"/g)||[]).length;
+   x.detail='Actual original visible rumor anchor clicked in installed FastQSP. Its href is parsed as exec:gt; consultation and view cannot be reached. Native callback entry failure confirmed in all three NPC menus. Timeout is the defect reproduction endpoint, not a feature pass.';
+  }
+  cases.push(x);
+ }
+}
+cases.push({id:'rumor-results-ties-and-delivery-discount-flow',status:'GAP',detail:'Original paid rumor links fail before consultation at all three NPCs. The 10/5 fee helper was checked while rendering base/discount fixture menus, but result pages, multiple buyer matches, and actual delivery->discount->paid consultation were not reached through working native menus in this playtest. Prior helper/stub reports are not counted as current native play coverage.',blockedBy:['rumor-dom-skups','rumor-dom-barman','rumor-dom-anes']});
+const work='G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp',save='G:/somi/Jack O Nine Tails v2.4_work/game/save/JO9_TEST_20261023_01_HOME.sav';
+for(const x of cases)if(x.id==='training-muscular-overwork')x.detail+=' Follow-up muscular-render-only passes the same numeric muscular/AP0 fixture through unmodified tutor17 and main_screen with no helper/DOM-driver instrumentation. This narrows the gap to the diagnostic instrumentation/driver; it is not evidence of a normal-player product bug.';
+const digest={pass:cases.filter(x=>x.status==='PASS').length,fail:cases.filter(x=>x.status==='FAIL').length,gap:cases.filter(x=>x.status==='GAP').length};
+const report={status:digest.fail?'FAIL':digest.gap?'GAP':'PASS',candidate:c.hash(fs.readFileSync(work)),expectedCandidate:'a70bd177d8e7ade58243578b2f04745ff00cec3884d26d3b924dfffc8a8d007a',sourceSaveHash:c.hash(fs.readFileSync(save)),digest,cases,confirmedDefects:[{id:'RUMOR_NATIVE_HREF_QUOTING',impact:'All three new buyer-rumor NPC entries are visible but their original links cannot enter consultation.',locations:[{name:'jo9_buyer_rumors',branch:'menu',statement:"func('$menu', 'exec_options', ..., \"gt 'jo9_buyer_rumors', 'consult', ...\", ...)"},{name:'$menu',branch:'exec_options',bodyLines:[68,70],statement:"$text_display += $args[1] + '<a href =''EXEC:' + $args[2] + '''>' + $args[3] + '</a></li>'"}],evidence:['evidence/rumor-dom-skups.log','evidence/rumor-dom-barman.log','evidence/rumor-dom-anes.log'],cause:'exec_options surrounds href with single quotes but the new callback contains unescaped single quoted location/mode/provider arguments. WebKit parses the href only through exec:gt.',productChanged:false}],coverageNotes:['Native installed engine with actual current Work source locations, GT destinations, caller functions, callbacks and menu rendering; original source bodies are retained.','Deterministic adult fixtures are established only by replacing Start. Other additions are counters, assertions, native SAVEGAME snapshots, and ES5 scripts that synthetically click original DOM anchors/objects.','Full daily processing executes next_day -> original end-day forward objects -> original reset -> menu/main. Native nutrition test observed2rest->3,2food->3,1supplement->1+half credit, total5->7.','Actual nursing minimum recovery initially affected the0-AP fixture. Basic AP map was rerun with all nurse skills0 and passed0/2/3/4/5/5.','The muscular initial tutor-menu fixture reaches original main_screen entry but stalls before appended rendering driver; cause remains unconfirmed. Separate original interaction-entry cases isolate the actual overwork computation without extracted helper bodies.','Main native SAVEGAME/LOADGAME and no-load-refill testing are coordinated by parent, not claimed as completed by this subtask.','Constitution battle+20% actual battle-entry checks are delegated to combat subtask, not counted here.','MSG is asynchronous. Numeric state and route assertions are evidence; a completion marker alone does not prove every notice was physically closed.','No product code, source save, Full, ZIP, commit, or push is changed. Source Work and HOME hashes remain pinned.'],reproduce:{script:path.join(root,'playtest.cjs'),command:'node <absolute playtest.cjs> <suite> --run',suites:['clinic','dealers','essence','guards','daily','training','lowobed','versatile','overwork-entry','rumors-dom'],selectors:'Optional --only=<case-name-substring> limits execution while preserving fixture generation.',runnerTimeoutSeconds:35,tempRoot:'G:/Codex/tmp/jo9-post-patch-playtest-20261025/economy'},cleanup:{regenerableTempCopies:'Diagnostic QSPs, copied JSON/CSS/fonts/button images and native test snapshots under economy temp root. No user originals are stored there.',parentCoordinatesDeletion:true}};
+fs.writeFileSync(path.join(root,'report.json'),JSON.stringify(report,null,2));
+let md='경제·성장 실제 플레이테스트\n\n현재 Work '+report.candidate+'\n\n'+digest.pass+' PASS / '+digest.fail+' FAIL / '+digest.gap+' GAP\n\n';
+md+='확정 결함: 스컵스·작크·아네스의 구매자 소문 항목은 표시되지만 원래 링크 href가 exec:gt로 잘려 상담 화면으로 이동하지 않는다. jo9_buyer_rumors의 menu가 작은따옴표를 포함한 콜백을 $menu exec_options에 전달하고, exec_options도 href를 작은따옴표로 감싸기 때문이다. 세 실제 메뉴의 원래 링크를 클릭한 엔진 로그에 같은 결과가 남았다. 제품 수정은 하지 않았다.\n\n';
+md+='통과한 범위: 병원 두 역할 승인/취소/대상교체/중복결제, 자금·기존건강 차단, 두 판매상 세 난이도와 저복종 감가·표시가/지급가·인물제거·낙인/평판 재검사, 에센스 구매900/재고1/두 역할 사용/상태보호/대상·특성·재고·자금 가드, AP 일일회복표, 실제 운동/천재 교육XP, 전체 하루 영양/휴식/보조식품 및 우유1.5배, 다재다능 명성1회 지급. 세부 수치와 경로는 report.json 및 개별 suite 보고서에 보존했다.\n\n';
+md+='미도달: 소문 결과·복수 추천·실제 납품 후 할인 상담은 위 링크 결함 때문에 native 메뉴 흐름에서 검증하지 못했다. 근육질의 초기 가정교사 메뉴 fixture는 main_screen 입구 뒤에서 진행이 멎어 원인이 미확정이다. 별도 원래 interaction 진입 검증 결과는 report.json에서 구분했다. 원래 위치나 GT를 stub로 바꾼 이전 검사를 이번 플레이테스트의 PASS로 재사용하지 않았다.\n\n';
+md+='재현: node '+path.join(root,'playtest.cjs')+' <suite> --run. 생성·실행 대상은 G:/Codex/tmp/jo9-post-patch-playtest-20261025/economy. 원래 Work와 사용자 HOME 세이브는 읽기만 한다. 설치 엔진의 원래 EXEC/forward 링크를 DOM synthetic click으로 실행했고, 실제 물리 마우스 검증은 아니다. 알림 MSG의 실제 닫힘은 완료 마커만으로 보증하지 않는다.\n';
+fs.writeFileSync(path.join(root,'REPORT_KO.md'),md);
+console.log(JSON.stringify({status:report.status,digest,candidate:report.candidate,sourceSaveHash:report.sourceSaveHash}));

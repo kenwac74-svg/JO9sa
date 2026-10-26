@@ -1,0 +1,101 @@
+{
+  "input": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+  "inputSha256": "5aeff11fffe6e5f2523749987577f42dab870f4d0adee0df385375f9eefb074f",
+  "baselineSha256": "daa953cd391d8268a57724d27b54194e71378dc9ef54ad1e79279cce6897d7db",
+  "templateCount": 1126,
+  "imageFieldCount": 74,
+  "resolverCallLines": 42,
+  "resolverCallExpressions": 43,
+  "cleanupCalls": 2,
+  "titlePacks": 52,
+  "aliasesNonempty": 2789,
+  "sameIdAliasCollisions": 0,
+  "sharedAliasPathsAcrossIds": 144,
+  "changedSelectionCases": 108,
+  "missingSelectedPng": 0,
+  "sources": {
+    "jo9_seed_role_images": {
+      "sha256": "f29d8b5a98d906a951ab4fe997a6aff412c19412985123961f1a32fb878fdef8",
+      "lines": 91
+    },
+    "display_pic": {
+      "sha256": "d9ec4c18ce16886ab341c4651eeff8776250f1d7a9f6814e01c55238526b77a8",
+      "lines": 471
+    },
+    "display_fullimage": {
+      "sha256": "5e70491a65e0baa183065b82c0a8e1ca7d278798bcce4a27348103f38e2a4c3e",
+      "lines": 137
+    }
+  },
+  "coverage": {
+    "all-current-templates": {
+      "cases": 7882,
+      "bytes": 3110346
+    },
+    "explicit-role-requests": {
+      "cases": 18016,
+      "bytes": 6038972
+    },
+    "missing-role-packs": {
+      "cases": 4504,
+      "bytes": 2434034
+    },
+    "all-packs-empty": {
+      "cases": 4504,
+      "bytes": 2490284
+    },
+    "packs-absent": {
+      "cases": 4504,
+      "bytes": 2277142
+    },
+    "dona-legacy-read-resolver": {
+      "cases": 480,
+      "bytes": 1217442,
+      "knownLegacyAliases": 96
+    },
+    "cleanup-before-and-after-registry": {
+      "cases": 0,
+      "bytes": 974626,
+      "knownLegacyAliases": 96,
+      "excludedPregnancyAliases": 4
+    },
+    "registry-after-cleanup": {
+      "cases": 7882,
+      "bytes": 3969680,
+      "order": "legacy registry -> cleanup -> current JSON registry -> reads"
+    },
+    "cleanup-after-registry": {
+      "cases": 7882,
+      "bytes": 3111030,
+      "order": "current JSON registry -> reads -> cleanup -> reads"
+    },
+    "unknown-ids": {
+      "cases": 30,
+      "bytes": 1087052
+    },
+    "synthetic-alias-precedence": {
+      "cases": 1,
+      "bytes": 1081042
+    },
+    "all-callsite-contexts": {
+      "cases": 0,
+      "bytes": 1162536,
+      "sourceLines": 31,
+      "executions": 124,
+      "displayPicCalls": 40,
+      "displayFullimageCalls": 52,
+      "sexPartnerBranches": 8
+    },
+    "baseline-detection-control": {
+      "cases": 1,
+      "bytes": 1078464
+    }
+  },
+  "limits": [
+    "Registry is materialized from all JSON string image fields; custom engine JSON deserialization is covered separately by official client smoke tests.",
+    "All registered aliases and explicit role requests are bounded exhaustive over the current 1126 JSON records. Arbitrary future IDs, filenames and player-edited paths cannot be exhaustively enumerated.",
+    "Exact resolver/display source is preserved; event conditions and narrative branches are not replayed as whole events.",
+    "Caller statements test immediate and deferred path composition; native screenshot pixels and existing-save load UI are outside this fixture.",
+    "No engine is started by this generator. Baseline detection control intentionally fails the current desired result."
+  ]
+}

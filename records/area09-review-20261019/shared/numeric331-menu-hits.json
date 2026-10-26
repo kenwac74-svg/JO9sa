@@ -1,0 +1,1987 @@
+[
+  {
+    "location": "init_game",
+    "line": 33,
+    "text": "master_penetration = 0"
+  },
+  {
+    "location": "init_custom_game",
+    "line": 62,
+    "text": "master_penetration = 0"
+  },
+  {
+    "location": "init_custom_game",
+    "line": 67,
+    "text": "master_penetration_rate = 0"
+  },
+  {
+    "location": "init_story_mode",
+    "line": 38,
+    "text": "master_penetration = 0"
+  },
+  {
+    "location": "hero_creation",
+    "line": 321,
+    "text": "\t\tmaster_penetration = 5"
+  },
+  {
+    "location": "menu_form",
+    "line": 684,
+    "text": "\tfunc('$menu', 'menu_form', $menu_item_Penetration, menu_Penetration, '<<$slave_penetration[slave[\"penetration\"]]>>', '<<$slave_name>> 삽입 교육')"
+  },
+  {
+    "location": "menu_form",
+    "line": 686,
+    "text": "\tfunc('$menu', 'menu_form', $menu_item_Demonstration, menu_Demonstration, '<<$slave_roleplay[slave[\"roleplay\"]]>>', '<<$slave_name>> 조교')"
+  },
+  {
+    "location": "menu_form",
+    "line": 1288,
+    "text": "\tfunc('$menu', 'menu_form', $menu_item_Penetration, menu_Penetration_assistant, '<<$slave_penetration[assistant[\"penetration\"]]>>', '<<$assistant_name>>에게 삽입 기술을 가르친다')"
+  },
+  {
+    "location": "menu_form",
+    "line": 1290,
+    "text": "\tfunc('$menu', 'menu_form', $menu_item_Demonstration, menu_Demonstration_assistant, '<<$slave_roleplay[assistant[\"roleplay\"]]>>', '<<$assistant_name>>에게 노출 기술을 가르친다')"
+  },
+  {
+    "location": "menu_form",
+    "line": 2840,
+    "text": "\tfunc('$menu', 'menu_form', $menu_item_DemonstrationTorture, menu_DemonstrationTorture, '시범 체험', '고문기구 체험시키기')"
+  },
+  {
+    "location": "menu_form",
+    "line": 4591,
+    "text": "\t\tif master_penetration > 0: $setting_display_r += '<a href = \"EXEC: master_penetration_rate = master_penetration_rate_cap[master_penetration - 2] & gt ''menu_form''\"><img src=\"content/pic/buttons/Minus_small.png\"></a>'"
+  },
+  {
+    "location": "menu_form",
+    "line": 4593,
+    "text": "\t\tif master_penetration < 5: $setting_display_r += '<a href = \"EXEC: master_penetration_rate = master_penetration_rate_cap[master_penetration] & gt ''menu_form''\"><img src=\"content/pic/buttons/Plus_small.png\"></a><a href = \"EXEC: master_penetration_rate = master_penetration_rate_cap[4] & gt ''menu_form''\"><img src=\"content/pic/buttons/teach_s.png\"></a>'"
+  },
+  {
+    "location": "city_menu_form",
+    "line": 522,
+    "text": "\tIF Байкер_квест < 1 and npc_progress['biker'] ! 2: FUNC('$menu', 'interaction_city', $menu_item_jo9_biker_garage, 9210, '차고')"
+  },
+  {
+    "location": "city_menu_form",
+    "line": 523,
+    "text": "\tIF Байкер_квест = 1 and Байкер_квест ! 2: FUNC('$menu', 'interaction_city', $menu_item_jo9_biker_garage, 9214, '차고')"
+  },
+  {
+    "location": "city_menu_form",
+    "line": 524,
+    "text": "\tIF Байкер_квест = 2 and Байкер_квест ! 3: FUNC('$menu', 'interaction_city', $menu_item_jo9_biker_garage, 9218, '차고')"
+  },
+  {
+    "location": "city_menu_form",
+    "line": 525,
+    "text": "\tIF slave_state = CONST_INT['no_slave'] and npc_progress['tsyuansu'] = 0 or npc_progress['tsyuansu'] > 0 and npc_progress['tsyuansu'] ! 2: FUNC('$menu', 'interaction_city', $menu_item_tsyuansu, 9223, '주안수 연구소')"
+  },
+  {
+    "location": "city_menu_form",
+    "line": 527,
+    "text": "\tIF npc_progress['Hotorn_voice'] ! 2: FUNC('$menu', 'interaction_city', $menu_item_red_secta, 9227, '붉은 교단')"
+  },
+  {
+    "location": "city_menu_form",
+    "line": 528,
+    "text": "\tIF slave_state = CONST_INT['no_slave'] and npc_progress['Hotorn_aliman'] = 0 and npc_progress['Hotorn_voice'] = 2 or npc_progress['Hotorn_aliman'] > 0 and npc_progress['Hotorn_aliman'] ! 2: FUNC('$menu', 'interaction_city', $menu_item_red_secta, 9231, '붉은 교단')"
+  },
+  {
+    "location": "city_menu_form",
+    "line": 536,
+    "text": "\t!if npc_progress['Ledy_Karina'] > 0 and npc_progress['Veineut'] < 2: FUNC('$menu', 'interaction_city', $menu_item_veineut, 9200, 'Veineut’s Dwelling')"
+  },
+  {
+    "location": "sjm_UI_UIadds",
+    "line": 108,
+    "text": "\t\t\t\t\t*p '<div id = \"slinfo_pregnant\" class=\"tooltip-left-small-button\" tooltip-data=\"<<$slave_name>>: 임신함\"><a href = \"EXEC: interaction_city = 331 & gt ''interaction_city''\"><img src=\"content\\pic\\buttons\\z_pregnant.png\" height=\"32px\"></a></div>'"
+  },
+  {
+    "location": "sjm_UI_UIadds",
+    "line": 115,
+    "text": "\t\t*p '<div id=\"slinfo_pregnant\" class=\"tooltip-left-small-button\" tooltip-data=\"<<$slave_name>>: <<$jo9_preg_label>>\"><a href=\"EXEC: interaction_city = 331 & gt ''interaction_city''\"><img src=\"content\\pic\\buttons\\z_pregnant.png\" alt=\"<<$jo9_preg_label>>\"></a></div>'"
+  },
+  {
+    "location": "sjm_UI_UIadds",
+    "line": 121,
+    "text": "\t\t\t\t*p '<div id = \"slinfo_ill\" class=\"tooltip-left-small-button\" tooltip-data=\"<<$slave_name>>: 질병\"><a href = \"EXEC: interaction_city = 331 & gt ''interaction_city''\"><img src=\"content\\pic\\buttons\\z_ill.png\"></a></div>'"
+  },
+  {
+    "location": "sjm_UI_UIadds",
+    "line": 126,
+    "text": "\t\t*p '<div id = \"slinfo_wounds\" class=\"tooltip-left-small-button\" tooltip-data=\"<<$slave_name>>: 상처\"><a href = \"EXEC: interaction_city = 331 & gt ''interaction_city''\"><img src=\"content\\pic\\buttons\\z_wounds.png\"></a></div>'"
+  },
+  {
+    "location": "sjm_UI_UIadds",
+    "line": 214,
+    "text": "\t\t\t\t*p '<div id = \"asinfo_pregnant\" class=\"tooltip-left-small-button\" tooltip-data=\"<<$assistant_name>>: 임신\"><a href = \"EXEC: interaction_city = 331 & gt ''interaction_city''\"><img src=\"content\\pic\\buttons\\z_pregnant.png\" height=\"32px\"></a></div>'"
+  },
+  {
+    "location": "sjm_UI_UIadds",
+    "line": 221,
+    "text": "\t\t*p '<div id=\"asinfo_pregnant\" class=\"tooltip-left-small-button\" tooltip-data=\"<<$assistant_name>>: <<$jo9_preg_label>>\"><a href=\"EXEC: interaction_city = 331 & gt ''interaction_city''\"><img src=\"content\\pic\\buttons\\z_pregnant.png\" alt=\"<<$jo9_preg_label>>\"></a></div>'"
+  },
+  {
+    "location": "sjm_UI_UIadds",
+    "line": 227,
+    "text": "\t\t\t\t*p '<div id = \"asinfo_ill\" class=\"tooltip-left-small-button\" tooltip-data=\"<<$assistant_name>>: 질병\"><a href = \"EXEC: interaction_city = 331 & gt ''interaction_city''\"><img src=\"content\\pic\\buttons\\z_ill.png\"></a></div>'"
+  },
+  {
+    "location": "sjm_UI_UIadds",
+    "line": 232,
+    "text": "\t\t*p '<div id = \"asinfo_wounds\" class=\"tooltip-left-small-button\" tooltip-data=\"<<$assistant_name>>: 상처\"><a href = \"EXEC: interaction_city = 331 & gt ''interaction_city''\"><img src=\"content\\pic\\buttons\\z_wounds.png\"></a></div>'"
+  },
+  {
+    "location": "sjm_UI_UIadds",
+    "line": 245,
+    "text": "\t*p '<div id = \"master_info_wounds\" class=\"tooltip-left-small-button\" tooltip-data=\"<<$master_name>>: 상처\"><a href = \"EXEC: interaction_city = 331 & gt ''interaction_city''\"><img src=\"content\\pic\\buttons\\z_wounds.png\"></a></div>'"
+  },
+  {
+    "location": "sjm_UI_UIadds",
+    "line": 249,
+    "text": "\t\t*p '<div id = \"master_info_wounds\" class=\"tooltip-left-small-button\" tooltip-data=\"<<$master_name>>: 질병\"><a href = \"EXEC: interaction_city = 331 & gt ''interaction_city''\"><img src=\"content\\pic\\buttons\\z_ill.png\"></a></div>'"
+  },
+  {
+    "location": "$calculate_attributes",
+    "line": 133,
+    "text": "\tif master_penetration = 1 and master_penetration_rate < master_penetration_rate_cap[0]: master_penetration_rate = master_penetration_rate_cap[0]"
+  },
+  {
+    "location": "$calculate_attributes",
+    "line": 134,
+    "text": "\tif master_penetration = 2 and master_penetration_rate < master_penetration_rate_cap[1]: master_penetration_rate = master_penetration_rate_cap[1]"
+  },
+  {
+    "location": "$calculate_attributes",
+    "line": 135,
+    "text": "\tif master_penetration = 3 and master_penetration_rate < master_penetration_rate_cap[2]: master_penetration_rate = master_penetration_rate_cap[2]"
+  },
+  {
+    "location": "$calculate_attributes",
+    "line": 136,
+    "text": "\tif master_penetration = 4 and master_penetration_rate < master_penetration_rate_cap[3]: master_penetration_rate = master_penetration_rate_cap[3]"
+  },
+  {
+    "location": "$calculate_attributes",
+    "line": 137,
+    "text": "\tif master_penetration = 5 and master_penetration_rate < master_penetration_rate_cap[4]: master_penetration_rate = master_penetration_rate_cap[4]"
+  },
+  {
+    "location": "$calculate_attributes",
+    "line": 365,
+    "text": "master_penetration = 0"
+  },
+  {
+    "location": "$calculate_attributes",
+    "line": 366,
+    "text": "if master_penetration_rate >= master_penetration_rate_cap[0]: master_penetration = 1"
+  },
+  {
+    "location": "$calculate_attributes",
+    "line": 367,
+    "text": "if master_penetration_rate >= master_penetration_rate_cap[1]: master_penetration = 2"
+  },
+  {
+    "location": "$calculate_attributes",
+    "line": 368,
+    "text": "if master_penetration_rate >= master_penetration_rate_cap[2]: master_penetration = 3"
+  },
+  {
+    "location": "$calculate_attributes",
+    "line": 369,
+    "text": "if master_penetration_rate >= master_penetration_rate_cap[3]: master_penetration = 4"
+  },
+  {
+    "location": "$calculate_attributes",
+    "line": 370,
+    "text": "if master_penetration_rate >= master_penetration_rate_cap[4]: master_penetration = 5"
+  },
+  {
+    "location": "$calculate_attributes",
+    "line": 453,
+    "text": "if master_penetration > 5: master_penetration = 5"
+  },
+  {
+    "location": "$calculate_attributes",
+    "line": 454,
+    "text": "if master_penetration < 0: master_penetration = 0"
+  },
+  {
+    "location": "$calculate_attributes",
+    "line": 455,
+    "text": "if master_penetration_rate < 0: master_penetration_rate = 0"
+  },
+  {
+    "location": "$city_random_event",
+    "line": 77,
+    "text": " interaction_city = 301192"
+  },
+  {
+    "location": "next_day",
+    "line": 1626,
+    "text": "!if special_food = 1: - eliminated need for special_food, main_slave_ration, and slave_ration = 100 - ImperatorAugustus"
+  },
+  {
+    "location": "next_day",
+    "line": 1627,
+    "text": "!\tmain_slave_ration = slave_ration"
+  },
+  {
+    "location": "next_day",
+    "line": 1628,
+    "text": "!\tslave_ration = 100"
+  },
+  {
+    "location": "next_day",
+    "line": 1706,
+    "text": "!replaced slave_ration = 100 with slave_already_done_today['1515'] (went to restaurant) - ImperatorAugustus"
+  },
+  {
+    "location": "next_day",
+    "line": 1707,
+    "text": "!if slave_ration = 100: slave['pos_cookie'] = 2 - moved this code to interaction 1515 - AugustusImperator"
+  },
+  {
+    "location": "next_day",
+    "line": 1708,
+    "text": "!slave_ration = 0 - no longer needed - AugustusImperator"
+  },
+  {
+    "location": "next_day",
+    "line": 3287,
+    "text": "\tif cow_ration = -1 or (cow_state = CONST_INT['slave_faint'] and farmhand_state ! CONST_INT['slave_exist']):"
+  },
+  {
+    "location": "next_day",
+    "line": 3298,
+    "text": "\telseif cow_ration = 1:"
+  },
+  {
+    "location": "next_day",
+    "line": 3305,
+    "text": "\telseif cow_ration = 0:"
+  },
+  {
+    "location": "next_day",
+    "line": 3311,
+    "text": "\telseif cow_ration = 2:"
+  },
+  {
+    "location": "next_day",
+    "line": 3563,
+    "text": " if room1_ration = 0:"
+  },
+  {
+    "location": "next_day",
+    "line": 3570,
+    "text": "  if room1_ration = 1:"
+  },
+  {
+    "location": "next_day",
+    "line": 3573,
+    "text": "  elseif room1_ration = 2:"
+  },
+  {
+    "location": "next_day",
+    "line": 3578,
+    "text": " if room1_ration = 2:"
+  },
+  {
+    "location": "next_day",
+    "line": 3601,
+    "text": " if room2_ration = 0:"
+  },
+  {
+    "location": "next_day",
+    "line": 3608,
+    "text": "  if room2_ration = 1:"
+  },
+  {
+    "location": "next_day",
+    "line": 3611,
+    "text": "  elseif room2_ration = 2:"
+  },
+  {
+    "location": "next_day",
+    "line": 3616,
+    "text": " if room2_ration = 2:"
+  },
+  {
+    "location": "next_day",
+    "line": 3639,
+    "text": " if room3_ration = 0:"
+  },
+  {
+    "location": "next_day",
+    "line": 3646,
+    "text": "  if room3_ration = 1:"
+  },
+  {
+    "location": "next_day",
+    "line": 3649,
+    "text": "  elseif room3_ration = 2:"
+  },
+  {
+    "location": "next_day",
+    "line": 3654,
+    "text": " if room3_ration = 2:"
+  },
+  {
+    "location": "next_day",
+    "line": 3677,
+    "text": " if room4_ration = 0:"
+  },
+  {
+    "location": "next_day",
+    "line": 3684,
+    "text": "  if room4_ration = 1:"
+  },
+  {
+    "location": "next_day",
+    "line": 3687,
+    "text": "  elseif room4_ration = 2:"
+  },
+  {
+    "location": "next_day",
+    "line": 3692,
+    "text": " if room4_ration = 2:"
+  },
+  {
+    "location": "slave_stat",
+    "line": 130,
+    "text": "!if slave_ration = -2: food_cost = 1 - slave_ration is never non-zero, so this is always false - ImperatorAugustus"
+  },
+  {
+    "location": "slave_stat",
+    "line": 132,
+    "text": "!if slave_ration = 1: food_cost = 5 - slave_ration is never non-zero, so this is always false"
+  },
+  {
+    "location": "slave_stat",
+    "line": 133,
+    "text": "!if double_ration = 1: food_cost += food_cost - double_ration is never set, so this is always false"
+  },
+  {
+    "location": "barn",
+    "line": 154,
+    "text": "\tif cow_ration = 1:"
+  },
+  {
+    "location": "barn",
+    "line": 155,
+    "text": "\t\t*p '<div id=\"chekbox_1s\" style=\"left:1230px;top:140px;\"><a class=\"tooltip-left-small-button\" tooltip-data=\"일반 소먹이\" href = \"EXEC: cow_ration = -1 & $cow_info_text = $cow_ration[1] & gt $curloc\"><img src=\"content\\pic\\buttons\\sel_button.png\"></a></div>'  "
+  },
+  {
+    "location": "barn",
+    "line": 157,
+    "text": "\t\t*p '<div id=\"chekbox_1s\"><a class=\"tooltip-left-small-button\" tooltip-data=\"일반 소먹이\" href = \"EXEC: cow_ration = 1 & $cow_info_text = $cow_ration[2] & gt $curloc\"><img src=\"content\\pic\\buttons\\unsel_button.png\"></a></div>'  "
+  },
+  {
+    "location": "barn",
+    "line": 159,
+    "text": "\tif cow_ration = 0:"
+  },
+  {
+    "location": "barn",
+    "line": 160,
+    "text": "\t\t*p '<div id=\"chekbox_2s\" style=\"left:1230px;top:166px;\"><a class=\"tooltip-left-small-button\" tooltip-data=\"고열량 식단\" href = \"EXEC: cow_ration = -1 & $cow_info_text = $cow_ration[1] & gt $curloc\"><img src=\"content\\pic\\buttons\\sel_button.png\"></a></div>'  "
+  },
+  {
+    "location": "barn",
+    "line": 162,
+    "text": "\t\t*p '<div id=\"chekbox_2s\"><a class=\"tooltip-left-small-button\" tooltip-data=\"고열량 식단\" href = \"EXEC: cow_ration = 0 & $cow_info_text = $cow_ration[3] & gt $curloc\"><img src=\"content\\pic\\buttons\\unsel_button.png\"></a></div>'  "
+  },
+  {
+    "location": "barn",
+    "line": 166,
+    "text": "\telseif cow_ration = 2:"
+  },
+  {
+    "location": "barn",
+    "line": 167,
+    "text": "\t\t*p '<div id=\"chekbox_3s\" style=\"left:1230px;top:191px;\"><a class=\"tooltip-left-small-button\" tooltip-data=\"촉수 산란액\" href = \"EXEC: cow_ration = -1 & $cow_info_text = $cow_ration[1] & gt $curloc\"><img src=\"content\\pic\\buttons\\sel_button.png\"></a></div>'  "
+  },
+  {
+    "location": "barn",
+    "line": 169,
+    "text": "\t\t*p '<div id=\"chekbox_3s\"><a class=\"tooltip-left-small-button\" tooltip-data=\"촉수 산란액\" href = \"EXEC: cow_ration = 2 & $cow_info_text = $cow_ration[4] & gt $curloc\"><img src=\"content\\pic\\buttons\\unsel_button.png\"></a></div>'  "
+  },
+  {
+    "location": "interaction",
+    "line": 1209,
+    "text": "if interaction = 331:"
+  },
+  {
+    "location": "interaction",
+    "line": 1210,
+    "text": "\tslave_ration = -3"
+  },
+  {
+    "location": "interaction",
+    "line": 1213,
+    "text": "if interaction = 332:"
+  },
+  {
+    "location": "interaction",
+    "line": 1214,
+    "text": "\tslave_ration = -2"
+  },
+  {
+    "location": "interaction",
+    "line": 1218,
+    "text": "if interaction = 333:"
+  },
+  {
+    "location": "interaction",
+    "line": 1219,
+    "text": "\tslave_ration = -1"
+  },
+  {
+    "location": "interaction",
+    "line": 1223,
+    "text": "if interaction = 334:"
+  },
+  {
+    "location": "interaction",
+    "line": 1224,
+    "text": "\tslave_ration = 0"
+  },
+  {
+    "location": "interaction",
+    "line": 1228,
+    "text": "if interaction = 335:"
+  },
+  {
+    "location": "interaction",
+    "line": 1229,
+    "text": "\tslave_ration = 1"
+  },
+  {
+    "location": "interaction",
+    "line": 1233,
+    "text": "if interaction = 336:"
+  },
+  {
+    "location": "interaction",
+    "line": 1234,
+    "text": "\tslave_ration = 2"
+  },
+  {
+    "location": "interaction",
+    "line": 1238,
+    "text": "if interaction = 337:"
+  },
+  {
+    "location": "interaction",
+    "line": 1243,
+    "text": "if interaction = 338:"
+  },
+  {
+    "location": "interaction",
+    "line": 4196,
+    "text": "\t\tif dynslave['virginity'] < 1 and dynslave['sub_threesome'] >= 3 and confirmed_threesome_defloration = 0:"
+  },
+  {
+    "location": "interaction",
+    "line": 4201,
+    "text": "\t\t\t\tconfirmed_threesome_defloration = 1"
+  },
+  {
+    "location": "interaction",
+    "line": 4210,
+    "text": "\t\telseif otherslave['virginity'] < 1 and dynslave['sub_threesome'] >= 2 and confirmed_threesome_defloration = 0:"
+  },
+  {
+    "location": "interaction",
+    "line": 4215,
+    "text": "\t\t\t\tconfirmed_threesome_defloration = 1"
+  },
+  {
+    "location": "interaction",
+    "line": 4286,
+    "text": "\t\tif dynslave['virginity'] < 1 and dynslave['sub_threesome'] >= 3 and confirmed_threesome_defloration = 0:"
+  },
+  {
+    "location": "interaction",
+    "line": 4291,
+    "text": "\t\t\t\tconfirmed_threesome_defloration = 1"
+  },
+  {
+    "location": "interaction",
+    "line": 5624,
+    "text": "\t\tif dynslave['virginity'] < 1 and dynslave['sub_dildo'] > 0 and confirmed_dildo_defloration = 0:"
+  },
+  {
+    "location": "interaction",
+    "line": 5629,
+    "text": "\t\t\t\tconfirmed_dildo_defloration = 1"
+  },
+  {
+    "location": "interaction",
+    "line": 7832,
+    "text": "\tif slave['virginity'] < 1 and confirmed_erotic_bondage_defloration = 0:"
+  },
+  {
+    "location": "interaction",
+    "line": 7837,
+    "text": "\t\t\tconfirmed_erotic_bondage_defloration = 1"
+  },
+  {
+    "location": "interaction",
+    "line": 11438,
+    "text": "         rational_rise = max (praise_potence, master_supermacy)"
+  },
+  {
+    "location": "interaction_city",
+    "line": 193,
+    "text": "IF interaction_city = 100192:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 979,
+    "text": "if interaction_city = 11592:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 1491,
+    "text": "if interaction_city = 1192:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 1718,
+    "text": "if interaction_city = 1292:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 5105,
+    "text": "!if interaction_city = 192:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 5115,
+    "text": "if interaction_city = 192:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 6452,
+    "text": "if interaction_city = 331:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 8753,
+    "text": "if interaction_city = 332:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 8832,
+    "text": "if interaction_city = 333:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 11083,
+    "text": "if interaction_city = 95992:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 12243,
+    "text": "if interaction_city = 92:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 12482,
+    "text": "if interaction_city = menu_subpurchaser:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 13047,
+    "text": "\tif slave_state = CONST_INT['slave_exist'] and npc_progress['kotshey_2nd'] = 2 and slave['brand'] > 0: interaction_city = 120392"
+  },
+  {
+    "location": "interaction_city",
+    "line": 13066,
+    "text": "IF interaction_city = 120392:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 13286,
+    "text": "IF interaction_city = 8992:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 13294,
+    "text": "  interaction_city = 89924"
+  },
+  {
+    "location": "interaction_city",
+    "line": 13296,
+    "text": "  if (slave[\"age\"] = CONST_INT['loli_age'] and slave[\"boobs\"] > 3) or ((slave[\"age\"] = CONST_INT['young_age'] or slave[\"age\"] = CONST_INT['milf_age']) and (slave[\"boobs\"] < 1 or slave[\"boobs\"] > 3)): interaction_city = 89923"
+  },
+  {
+    "location": "interaction_city",
+    "line": 13297,
+    "text": "  if ((slave[\"age\"] = CONST_INT['loli_age'] and slave[\"boobs\"] < 4) or ((slave[\"age\"] = CONST_INT['young_age'] or slave[\"age\"] = CONST_INT['milf_age']) and (slave[\"boobs\"] > 0 and slave[\"boobs\"] < 4))) and slave['beauty'] > 2 and slave['stamina'] > 2 and slave[\"intellect\"] > 1: interaction_city = 89921"
+  },
+  {
+    "location": "interaction_city",
+    "line": 13298,
+    "text": "  if slave['beauty'] < 3 or slave['stamina'] < 3 or slave[\"intellect\"] < 2: interaction_city = 89922"
+  },
+  {
+    "location": "interaction_city",
+    "line": 13302,
+    "text": "IF interaction_city = 89921:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 13324,
+    "text": "IF interaction_city = 89922:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 13335,
+    "text": "IF interaction_city = 89923:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 13346,
+    "text": "IF interaction_city = 89924:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 13647,
+    "text": "IF interaction_city = 99211:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 13658,
+    "text": "IF interaction_city = 99212:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 13669,
+    "text": "IF interaction_city = 99213:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 13680,
+    "text": "IF interaction_city = 99214:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 13691,
+    "text": "IF interaction_city = 99215:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 13810,
+    "text": "IF interaction_city = 6792:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 16019,
+    "text": "\t if a = 10: interaction_city = 227192"
+  },
+  {
+    "location": "interaction_city",
+    "line": 16165,
+    "text": "\tIF interaction_city = 227192:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 16600,
+    "text": "  interaction_city = 9092"
+  },
+  {
+    "location": "interaction_city",
+    "line": 16609,
+    "text": "IF interaction_city = 9092:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 17014,
+    "text": "  interaction_city = 9192"
+  },
+  {
+    "location": "interaction_city",
+    "line": 17023,
+    "text": "IF interaction_city = 9192:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 17045,
+    "text": "IF interaction_city = 9200:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 17052,
+    "text": "  interaction_city = 9201"
+  },
+  {
+    "location": "interaction_city",
+    "line": 17054,
+    "text": "  interaction_city = 9202"
+  },
+  {
+    "location": "interaction_city",
+    "line": 17055,
+    "text": "  if slave_state = CONST_INT['slave_exist'] and slave['brand'] < 4 and slave[\"age\"] = CONST_INT['young_age'] and slave[\"intellect\"] >= 3 and slave[\"secretary\"] >= 3 and slave[\"expression\"] >= 3 and slave[\"fetishism\"] >= 3: interaction_city = 9203"
+  },
+  {
+    "location": "interaction_city",
+    "line": 17058,
+    "text": "IF interaction_city = 9201:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 17063,
+    "text": "IF interaction_city = 9202:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 17072,
+    "text": "IF interaction_city = 9203:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 18525,
+    "text": "IF interaction_city = 9992:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 19424,
+    "text": "IF interaction_city = 3992:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 19503,
+    "text": "IF interaction_city = 39920:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 19509,
+    "text": "IF interaction_city = 39921:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 19515,
+    "text": "IF interaction_city = 39922:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 19521,
+    "text": "IF interaction_city = 39923:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 19527,
+    "text": "IF interaction_city = 39924:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 19533,
+    "text": "IF interaction_city = 39925:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 19539,
+    "text": "IF interaction_city = 39926:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 19545,
+    "text": "IF interaction_city = 39927:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 19551,
+    "text": "IF interaction_city = 39928:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 19557,
+    "text": "IF interaction_city = 39929:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 19601,
+    "text": "IF interaction_city = 2992:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 22107,
+    "text": "IF interaction_city = 7921:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 22114,
+    "text": "  interaction_city = 79211"
+  },
+  {
+    "location": "interaction_city",
+    "line": 22116,
+    "text": "  interaction_city = 79212"
+  },
+  {
+    "location": "interaction_city",
+    "line": 22117,
+    "text": "  if slave_state = CONST_INT['slave_exist'] and slave['brand'] < 4 and slave[\"sex_sum\"] >= 35 and slave[\"intellect\"] >= 4 and slave[\"stamina\"] >= 4 : interaction_city = 79213"
+  },
+  {
+    "location": "interaction_city",
+    "line": 22120,
+    "text": "IF interaction_city = 79211:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 22125,
+    "text": "IF interaction_city = 79212:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 22134,
+    "text": "IF interaction_city = 79213:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 22146,
+    "text": "IF interaction_city = 7922:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 22153,
+    "text": "  interaction_city = 79221"
+  },
+  {
+    "location": "interaction_city",
+    "line": 22155,
+    "text": "  interaction_city = 79222"
+  },
+  {
+    "location": "interaction_city",
+    "line": 22156,
+    "text": "  if slave_state = CONST_INT['slave_exist'] and slave['brand'] < 4 and assistant['brand'] < 4 and slave['arena_level'] > 4 and slave[\"stamina\"] >= 4 and assistant[\"intellect\"] >= 4 and assistant[\"expression\"] >= 3 and assistant[\"music\"] >= 3 and assistant[\"petting\"] >= 4 and assistant[\"oral\"] >= 4 and assistant[\"penetration\"] >= 4 and assistant[\"orgy\"] >= 4 and assistant[\"fetishism\"] >= 4 and assistant[\"xenophily\"] >= 4: interaction_city = 79223"
+  },
+  {
+    "location": "interaction_city",
+    "line": 22159,
+    "text": "IF interaction_city = 79221:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 22164,
+    "text": "IF interaction_city = 79222:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 22173,
+    "text": "IF interaction_city = 79223:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 22187,
+    "text": "IF interaction_city = 7923:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 22194,
+    "text": "  interaction_city = 79231"
+  },
+  {
+    "location": "interaction_city",
+    "line": 22196,
+    "text": "  interaction_city = 79232"
+  },
+  {
+    "location": "interaction_city",
+    "line": 22197,
+    "text": "  if slave_type = 2579 and slave[\"enchanter\"] >= 4: interaction_city = 79233"
+  },
+  {
+    "location": "interaction_city",
+    "line": 22200,
+    "text": "IF interaction_city = 79231:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 22212,
+    "text": "IF interaction_city = 79232:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 22221,
+    "text": "IF interaction_city = 79233:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 25601,
+    "text": "IF interaction_city = 301192:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 30978,
+    "text": "IF interaction_city = 10392:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31068,
+    "text": "IF interaction_city = 9210:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31075,
+    "text": "  interaction_city = 9211"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31077,
+    "text": "  interaction_city = 9212"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31078,
+    "text": "  if slave_state = CONST_INT['slave_exist'] and slave['brand'] < 4 and (slave[\"age\"] = CONST_INT['milf_age'] or slave[\"age\"] = CONST_INT['young_age']) and slave['has_ride_win'] >= 1 and slave['dressage'] >= 4 and slave[\"calisthenics\"] >= 4 and slave[\"stamina\"] >= 4: interaction_city = 9213"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31082,
+    "text": "IF interaction_city = 9211:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31092,
+    "text": "IF interaction_city = 9212:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31103,
+    "text": "IF interaction_city = 9213:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31120,
+    "text": "IF interaction_city = 9214:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31127,
+    "text": "  interaction_city = 9215"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31129,
+    "text": "  interaction_city = 9216"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31130,
+    "text": "  if slave_state = CONST_INT['slave_exist'] and slave['brand'] < 4 and (slave[\"age\"] = CONST_INT['milf_age'] or slave[\"age\"] = CONST_INT['young_age']) and slave['has_ride_win'] > 1 and slave[\"oral\"] >= 4 and slave['dressage'] >= 4 and slave[\"calisthenics\"] >= 4 and slave[\"stamina\"] >= 4: interaction_city = 9217  "
+  },
+  {
+    "location": "interaction_city",
+    "line": 31134,
+    "text": "IF interaction_city = 9215:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31144,
+    "text": "IF interaction_city = 9216:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31155,
+    "text": "IF interaction_city = 9217:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31172,
+    "text": "IF interaction_city = 9218:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31179,
+    "text": "  interaction_city = 9219"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31181,
+    "text": "  interaction_city = 9220"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31182,
+    "text": "  if slave_state = CONST_INT['slave_exist'] and slave['brand'] < 4 and slave[\"beauty\"] >= 4 and slave[\"penetration\"] >= 4 and slave[\"fetishism\"] >= 3 and (slave[\"age\"] = CONST_INT['milf_age'] or slave[\"age\"] = CONST_INT['young_age']) and slave['has_ride_win'] >= 1 and slave[\"oral\"] >= 4 and slave['dressage'] >= 4 and slave[\"calisthenics\"] >= 4 and slave[\"stamina\"] >= 4: interaction_city = 9221  "
+  },
+  {
+    "location": "interaction_city",
+    "line": 31187,
+    "text": "IF interaction_city = 9219:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31194,
+    "text": "IF interaction_city = 9220:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31205,
+    "text": "IF interaction_city = 9221:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31224,
+    "text": "IF interaction_city = 9222:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31248,
+    "text": "IF interaction_city = 9223:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31255,
+    "text": "  interaction_city = 9224"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31257,
+    "text": "  interaction_city = 9225"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31258,
+    "text": "  if slave_state = CONST_INT['slave_exist'] and slave_type = 2619 and slave[\"boobs\"] > 1 and slave[\"music\"] > 2: interaction_city = 9226  "
+  },
+  {
+    "location": "interaction_city",
+    "line": 31261,
+    "text": "IF interaction_city = 9224:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31277,
+    "text": "IF interaction_city = 9225:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31288,
+    "text": "IF interaction_city = 9226:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31311,
+    "text": "IF interaction_city = 9227:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31318,
+    "text": "  interaction_city = 9228"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31320,
+    "text": "  interaction_city = 9229"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31321,
+    "text": "  if slave_state = CONST_INT['slave_exist'] and slave['brand'] < 4 and slave[\"age\"] = CONST_INT['young_age'] and slave[\"nymphomania\"] = 1 and slave[\"beauty\"] > 3: interaction_city = 9230  "
+  },
+  {
+    "location": "interaction_city",
+    "line": 31324,
+    "text": "IF interaction_city = 9228:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31333,
+    "text": "IF interaction_city = 9229:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31345,
+    "text": "IF interaction_city = 9230:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31360,
+    "text": "IF interaction_city = 9231:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31367,
+    "text": "  interaction_city = 9232"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31369,
+    "text": "  interaction_city = 9233"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31370,
+    "text": "  if slave_state = CONST_INT['slave_exist'] and slave_type = 10911 and (virginity = 0 or virginity = 1) and slave['brand'] = 0 and slave[\"gladiatrix\"] > 4 and slave[\"beauty\"] > 4 and slave[\"intellect\"] > 3 and slave[\"stamina\"] > 4: interaction_city = 9235  "
+  },
+  {
+    "location": "interaction_city",
+    "line": 31373,
+    "text": "IF interaction_city = 9232:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31394,
+    "text": "IF interaction_city = 9233:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31397,
+    "text": "  interaction_city = 9234"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31406,
+    "text": "IF interaction_city = 9234:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31556,
+    "text": "   interaction_city = 6667792"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31588,
+    "text": "IF interaction_city = 6667792:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31682,
+    "text": "IF interaction_city = 809233 and hero_choice = 101:"
+  },
+  {
+    "location": "interaction_city",
+    "line": 31693,
+    "text": "IF interaction_city = 809234 and hero_choice = 101:"
+  },
+  {
+    "location": "guild",
+    "line": 23,
+    "text": "\t\tfunc('$menu', 'interaction_city', $menu_item_subpurchaser, menu_subpurchaser, '재매입상과 대화')"
+  },
+  {
+    "location": "guild",
+    "line": 30,
+    "text": "\t\t\tfunc('$menu', 'interaction_city', $menu_item_Auction_slaves, menu_Auction_slaves, '낙인 노예 경매')"
+  },
+  {
+    "location": "slave_auction_buy",
+    "line": 7,
+    "text": "\tif slave_state > CONST_INT['no_slave']: interaction_city = 1192"
+  },
+  {
+    "location": "slave_auction_sell",
+    "line": 7,
+    "text": "\tif slave_state ! CONST_INT['no_slave']: interaction_city = 1192"
+  },
+  {
+    "location": "epic_win",
+    "line": 17,
+    "text": "if master_petting = 5 and master_penetration = 5 and master_oral = 5 and master_fetish = 5: score += 1"
+  },
+  {
+    "location": "slave_private_room1",
+    "line": 15,
+    "text": "  room1_ration = args[1]"
+  },
+  {
+    "location": "slave_private_room1",
+    "line": 20,
+    "text": " if room1_ration = 1: $room1_info_text = $room1_ration[2]"
+  },
+  {
+    "location": "slave_private_room1",
+    "line": 21,
+    "text": " if room1_ration = 0: $room1_info_text = $room1_ration[3]"
+  },
+  {
+    "location": "slave_private_room1",
+    "line": 22,
+    "text": " if room1_ration = 2: $room1_info_text = $room1_ration[4]"
+  },
+  {
+    "location": "slave_private_room1",
+    "line": 107,
+    "text": "\t*p '<div id = \"master_info_wounds\" class=\"tooltip-left-small-button\" tooltip-data=\"<<$master_name>>: 상처\"><a href = \"EXEC: interaction_city = 331 & gt ''interaction_city''\"><img src=\"content/pic/buttons/z_wounds.png\"></a></div>'"
+  },
+  {
+    "location": "slave_private_room1",
+    "line": 111,
+    "text": "\t\t*p '<div id = \"master_info_ill\" class=\"tooltip-left-small-button\" tooltip-data=\"<<$master_name>>: 질병\"><a href = \"EXEC: interaction_city = 331 & gt ''interaction_city''\"><img src=\"content/pic/buttons/z_ill.png\"></a></div>'"
+  },
+  {
+    "location": "slave_private_room1",
+    "line": 355,
+    "text": "if room1_ration = 1:"
+  },
+  {
+    "location": "slave_private_room1",
+    "line": 366,
+    "text": "if room1_ration = 0:"
+  },
+  {
+    "location": "slave_private_room1",
+    "line": 377,
+    "text": "if room1_ration = 2:"
+  },
+  {
+    "location": "slave_private_room2",
+    "line": 15,
+    "text": "  room2_ration = args[1]"
+  },
+  {
+    "location": "slave_private_room2",
+    "line": 20,
+    "text": " if room2_ration = 1: $room2_info_text = $room2_ration[2]"
+  },
+  {
+    "location": "slave_private_room2",
+    "line": 21,
+    "text": " if room2_ration = 0: $room2_info_text = $room2_ration[3]"
+  },
+  {
+    "location": "slave_private_room2",
+    "line": 22,
+    "text": " if room2_ration = 2: $room2_info_text = $room2_ration[4]"
+  },
+  {
+    "location": "slave_private_room2",
+    "line": 107,
+    "text": "\t*p '<div id = \"master_info_wounds\" class=\"tooltip-left-small-button\" tooltip-data=\"<<$master_name>>: 상처\"><a href = \"EXEC: interaction_city = 331 & gt ''interaction_city''\"><img src=\"content/pic/buttons/z_wounds.png\"></a></div>'"
+  },
+  {
+    "location": "slave_private_room2",
+    "line": 111,
+    "text": "\t\t*p '<div id = \"master_info_ill\" class=\"tooltip-left-small-button\" tooltip-data=\"<<$master_name>>: 질병\"><a href = \"EXEC: interaction_city = 331 & gt ''interaction_city''\"><img src=\"content/pic/buttons/z_ill.png\"></a></div>'"
+  },
+  {
+    "location": "slave_private_room2",
+    "line": 355,
+    "text": "if room2_ration = 1:"
+  },
+  {
+    "location": "slave_private_room2",
+    "line": 366,
+    "text": "if room2_ration = 0:"
+  },
+  {
+    "location": "slave_private_room2",
+    "line": 377,
+    "text": "if room2_ration = 2:"
+  },
+  {
+    "location": "slave_private_room3",
+    "line": 15,
+    "text": "  room3_ration = args[1]"
+  },
+  {
+    "location": "slave_private_room3",
+    "line": 20,
+    "text": " if room3_ration = 1: $room3_info_text = $room3_ration[2]"
+  },
+  {
+    "location": "slave_private_room3",
+    "line": 21,
+    "text": " if room3_ration = 0: $room3_info_text = $room3_ration[3]"
+  },
+  {
+    "location": "slave_private_room3",
+    "line": 22,
+    "text": " if room3_ration = 2: $room3_info_text = $room3_ration[4]"
+  },
+  {
+    "location": "slave_private_room3",
+    "line": 107,
+    "text": "\t*p '<div id = \"master_info_wounds\" class=\"tooltip-left-small-button\" tooltip-data=\"<<$master_name>>: 상처\"><a href = \"EXEC: interaction_city = 331 & gt ''interaction_city''\"><img src=\"content/pic/buttons/z_wounds.png\"></a></div>'"
+  },
+  {
+    "location": "slave_private_room3",
+    "line": 111,
+    "text": "\t\t*p '<div id = \"master_info_ill\" class=\"tooltip-left-small-button\" tooltip-data=\"<<$master_name>>: 질병\"><a href = \"EXEC: interaction_city = 331 & gt ''interaction_city''\"><img src=\"content/pic/buttons/z_ill.png\"></a></div>'"
+  },
+  {
+    "location": "slave_private_room3",
+    "line": 355,
+    "text": "if room3_ration = 1:"
+  },
+  {
+    "location": "slave_private_room3",
+    "line": 366,
+    "text": "if room3_ration = 0:"
+  },
+  {
+    "location": "slave_private_room3",
+    "line": 377,
+    "text": "if room3_ration = 2:"
+  },
+  {
+    "location": "slave_private_room4",
+    "line": 15,
+    "text": "  room4_ration = args[1]"
+  },
+  {
+    "location": "slave_private_room4",
+    "line": 20,
+    "text": " if room4_ration = 1: $room4_info_text = $room4_ration[2]"
+  },
+  {
+    "location": "slave_private_room4",
+    "line": 21,
+    "text": " if room4_ration = 0: $room4_info_text = $room4_ration[3]"
+  },
+  {
+    "location": "slave_private_room4",
+    "line": 22,
+    "text": " if room4_ration = 2: $room4_info_text = $room4_ration[4]"
+  },
+  {
+    "location": "slave_private_room4",
+    "line": 107,
+    "text": "\t*p '<div id = \"master_info_wounds\" class=\"tooltip-left-small-button\" tooltip-data=\"<<$master_name>>: 상처\"><a href = \"EXEC: interaction_city = 331 & gt ''interaction_city''\"><img src=\"content/pic/buttons/z_wounds.png\"></a></div>'"
+  },
+  {
+    "location": "slave_private_room4",
+    "line": 111,
+    "text": "\t\t*p '<div id = \"master_info_ill\" class=\"tooltip-left-small-button\" tooltip-data=\"<<$master_name>>: 질병\"><a href = \"EXEC: interaction_city = 331 & gt ''interaction_city''\"><img src=\"content/pic/buttons/z_ill.png\"></a></div>'"
+  },
+  {
+    "location": "slave_private_room4",
+    "line": 355,
+    "text": "if room4_ration = 1:"
+  },
+  {
+    "location": "slave_private_room4",
+    "line": 366,
+    "text": "if room4_ration = 0:"
+  },
+  {
+    "location": "slave_private_room4",
+    "line": 377,
+    "text": "if room4_ration = 2:"
+  },
+  {
+    "location": "#help_msg",
+    "line": 437,
+    "text": "$master_penetration_chart = '<br><center>삽입 기술 -<br><br>'"
+  },
+  {
+    "location": "#help_msg",
+    "line": 446,
+    "text": "$master_penetration_help = '[삽입 기술 TIPS]<br>&nbsp;기술 숙련도가 삽입 훈련에서 두각을 나타냅니다.<br>노예의 구멍을 사용하는 여러 수단에 영향을 줍니다.<br> 일반적인 섹스부터 집단 난교까지, 인간과의 삽입 행위에 익숙해지면 저항감도 줄어듭니다.<br> 섹스와 같은 훈련시 자연스레 오릅니다.'"
+  },
+  {
+    "location": "#dynamic",
+    "line": 4546,
+    "text": "$rise_penetration = {"
+  },
+  {
+    "location": "#dynamic",
+    "line": 4547,
+    "text": "\tif master_penetration = 4:"
+  },
+  {
+    "location": "#dynamic",
+    "line": 4549,
+    "text": "\t\t\tmaster_penetration = 5"
+  },
+  {
+    "location": "#dynamic",
+    "line": 4555,
+    "text": "\tif master_penetration = 3:"
+  },
+  {
+    "location": "#dynamic",
+    "line": 4557,
+    "text": "\t\t\tmaster_penetration = 4"
+  },
+  {
+    "location": "#dynamic",
+    "line": 4563,
+    "text": "\tif master_penetration = 2:"
+  },
+  {
+    "location": "#dynamic",
+    "line": 4565,
+    "text": "\t\t\tmaster_penetration = 3"
+  },
+  {
+    "location": "#dynamic",
+    "line": 4571,
+    "text": "\tif master_penetration = 1:"
+  },
+  {
+    "location": "#dynamic",
+    "line": 4573,
+    "text": "\t\t\tmaster_penetration = 2"
+  },
+  {
+    "location": "#dynamic",
+    "line": 4579,
+    "text": "\tif master_penetration = 0:"
+  },
+  {
+    "location": "#dynamic",
+    "line": 4581,
+    "text": "\t\t\tmaster_penetration = 1"
+  },
+  {
+    "location": "#dynamic",
+    "line": 4589,
+    "text": "$lower_penetration = {"
+  },
+  {
+    "location": "#dynamic",
+    "line": 4590,
+    "text": "\tif master_penetration = 1:"
+  },
+  {
+    "location": "#dynamic",
+    "line": 4591,
+    "text": "\t\tmaster_penetration = 0"
+  },
+  {
+    "location": "#dynamic",
+    "line": 4594,
+    "text": "\tif master_penetration = 2:"
+  },
+  {
+    "location": "#dynamic",
+    "line": 4595,
+    "text": "\t\tmaster_penetration = 1"
+  },
+  {
+    "location": "#dynamic",
+    "line": 4598,
+    "text": "\tif master_penetration = 3:"
+  },
+  {
+    "location": "#dynamic",
+    "line": 4599,
+    "text": "\t\tmaster_penetration = 2"
+  },
+  {
+    "location": "#dynamic",
+    "line": 4602,
+    "text": "\tif master_penetration = 4:"
+  },
+  {
+    "location": "#dynamic",
+    "line": 4603,
+    "text": "\t\tmaster_penetration = 3"
+  },
+  {
+    "location": "#dynamic",
+    "line": 4606,
+    "text": "\tif master_penetration = 5:"
+  },
+  {
+    "location": "#dynamic",
+    "line": 4607,
+    "text": "\t\tmaster_penetration = 4"
+  },
+  {
+    "location": "#options",
+    "line": 717,
+    "text": "\t\tinteraction_city = 331"
+  },
+  {
+    "location": "#options",
+    "line": 823,
+    "text": "\t\tinteraction_city = 331"
+  },
+  {
+    "location": "#options",
+    "line": 929,
+    "text": "\t\tinteraction_city = 331"
+  },
+  {
+    "location": "#options",
+    "line": 1035,
+    "text": "\t\tinteraction_city = 331"
+  },
+  {
+    "location": "#options",
+    "line": 1110,
+    "text": "\t\tinteraction_city = 331"
+  },
+  {
+    "location": "#options",
+    "line": 1217,
+    "text": "\t\tinteraction_city = 331"
+  },
+  {
+    "location": "#options",
+    "line": 1324,
+    "text": "\t\tinteraction_city = 331"
+  },
+  {
+    "location": "#options",
+    "line": 1345,
+    "text": "\t\tfunc('$menu', 'interaction_city', $menu_item_SVirginity_restoration, menu_SVirginity_restoration, '처녀성 복원 (25$)')"
+  },
+  {
+    "location": "#options",
+    "line": 1347,
+    "text": "\t\tfunc('$menu', 'exec', $menu_item_SVirginity_restoration_gray, empty, '처녀성 복원 (25$)', iif(sparks < 25, '스파크가 부족하다. ', '') + iif(slave['virginity'] < 2, '이미 처녀다. ', '') + iif(slave['rehabilitation'] > 0, '다른 시술에서 회복 중이다. ', ''))"
+  },
+  {
+    "location": "#options",
+    "line": 1407,
+    "text": "\t\tfunc('$menu', 'interaction_city', $menu_item_AVirginity_restoration, menu_AVirginity_restoration, '처녀성 복원 (25$)')"
+  },
+  {
+    "location": "#options",
+    "line": 1409,
+    "text": "\t\tfunc('$menu', 'exec', $menu_item_AVirginity_restoration_gray, empty, '처녀성 복원 (25$)', iif(sparks < 25, '스파크가 부족하다. ', '') + iif(assistant['virginity'] < 2, '이미 처녀다. ', '') + iif(assistant['rehabilitation'] > 0, '다른 시술에서 회복 중이다. ', ''))"
+  },
+  {
+    "location": "#options",
+    "line": 4815,
+    "text": " FUNC('$menu', 'interaction_city', $menu_item_employeecamp, 8992, '노예를 제안한다')"
+  },
+  {
+    "location": "#options",
+    "line": 4875,
+    "text": " FUNC('$menu', 'interaction_city', $menu_item_studfarm, 99211, '포니걸을 제안한다')"
+  },
+  {
+    "location": "#options",
+    "line": 4881,
+    "text": " FUNC('$menu', 'interaction_city', $menu_item_studfarm, 99212, '생산용 암말을 제안한다')"
+  },
+  {
+    "location": "#options",
+    "line": 4887,
+    "text": " FUNC('$menu', 'interaction_city', $menu_item_studfarm, 99213, '승용마를 제안한다')"
+  },
+  {
+    "location": "#options",
+    "line": 4893,
+    "text": " FUNC('$menu', 'interaction_city', $menu_item_studfarm, 99214, '마차용 말을 제안한다')"
+  },
+  {
+    "location": "#options",
+    "line": 4899,
+    "text": " FUNC('$menu', 'interaction_city', $menu_item_studfarm, 99215, '경주마를 제안한다')"
+  },
+  {
+    "location": "#options",
+    "line": 4966,
+    "text": "IF slave_state = CONST_INT['no_slave'] and sparks >= 2000: FUNC('$menu', 'interaction_city', $menu_item_Buytsypochka, 6792, '치포치카를 산다 (2000$)')"
+  },
+  {
+    "location": "#options",
+    "line": 5373,
+    "text": "FUNC('$menu', 'interaction_city', $menu_item_ermelinda, 9992, '요구 사항을 묻는다')"
+  },
+  {
+    "location": "#options",
+    "line": 5842,
+    "text": " FUNC('$menu', 'interaction_city', $menu_item_Women_sexshop, 3992, '노예를 꾸민다')"
+  },
+  {
+    "location": "#options",
+    "line": 5986,
+    "text": "      FUNC('$menu', 'interaction_city', $menu_item_kimono, 39920, '기모노 (50$)')"
+  },
+  {
+    "location": "#options",
+    "line": 5996,
+    "text": "      FUNC('$menu', 'interaction_city', $menu_item_charcostume, 39921, '마녀 복장 (30$)')"
+  },
+  {
+    "location": "#options",
+    "line": 6006,
+    "text": "      FUNC('$menu', 'interaction_city', $menu_item_tunika, 39922, '튜닉 (40$)')"
+  },
+  {
+    "location": "#options",
+    "line": 6026,
+    "text": "      FUNC('$menu', 'interaction_city', $menu_item_toga, 39923, '토가 (50$)')"
+  },
+  {
+    "location": "#options",
+    "line": 6036,
+    "text": "      FUNC('$menu', 'interaction_city', $menu_item_paradtunika, 39924, '고급 튜닉 (70$)')"
+  },
+  {
+    "location": "#options",
+    "line": 6064,
+    "text": "      FUNC('$menu', 'interaction_city', $menu_item_brasletyboho, 39925, '보헤미안 팔찌 (10$)')"
+  },
+  {
+    "location": "#options",
+    "line": 6074,
+    "text": "      FUNC('$menu', 'interaction_city', $menu_item_encrustedbracelet, 39926, '보석 박힌 팔찌 (20$)')"
+  },
+  {
+    "location": "#options",
+    "line": 6084,
+    "text": "      FUNC('$menu', 'interaction_city', $menu_item_kaffs, 39927, '커프 (20$)')"
+  },
+  {
+    "location": "#options",
+    "line": 6094,
+    "text": "      FUNC('$menu', 'interaction_city', $menu_item_sleivbraslety, 39928, '노예 팔찌 (30$)')"
+  },
+  {
+    "location": "#options",
+    "line": 6104,
+    "text": "      FUNC('$menu', 'interaction_city', $menu_item_sandalii, 39929, '샌들 (30$)')"
+  },
+  {
+    "location": "#options",
+    "line": 6322,
+    "text": "FUNC('$menu', 'interaction_city', $menu_item_anes, 2992, '요구 사항을 묻는다')"
+  },
+  {
+    "location": "#options",
+    "line": 6764,
+    "text": "  if active[$quest[17]] = 1 and npc_progress['angel'] < 2:FUNC('$menu', 'interaction_city', $menu_item_angel, 7921, '천사와 만난다')"
+  },
+  {
+    "location": "#options",
+    "line": 6765,
+    "text": "  if npc_progress['angel'] = 2 and npc_progress['arhangel'] < 2:FUNC('$menu', 'interaction_city', $menu_item_arhangel, 7922, '대천사를 만난다')"
+  },
+  {
+    "location": "#options",
+    "line": 6766,
+    "text": "  if npc_progress['arhangel'] = 2 and npc_progress['black_arhangel'] < 2:FUNC('$menu', 'interaction_city', $menu_item_black_arhangel, 7923, '검은 대천사를 만난다')"
+  },
+  {
+    "location": "#options",
+    "line": 6842,
+    "text": "\tif npc_progress['Ledy_Karina'] > 0 and npc_progress['Veineut'] < 2: FUNC('$menu', 'interaction_city', $menu_item_veineut, 9200, '베이뉴트의 거처')"
+  },
+  {
+    "location": "#options",
+    "line": 7171,
+    "text": "IF npc_progress['Jane'] = 1 and sparks >= 6000 and assistant_state = 0: FUNC('$menu', 'interaction_city', $menu_item_buy_kyaru, 10392, '캬루를 산다 (6000$)')"
+  },
+  {
+    "location": "#options",
+    "line": 7187,
+    "text": "FUNC('$menu', 'interaction_city', $menu_item_acceptIsabella, 9222, '데려간다')"
+  },
+  {
+    "location": "#options",
+    "line": 7254,
+    "text": "FUNC('$menu', 'interaction_city', $menu_item_acceptIsabella, 809234, '데려간다')"
+  },
+  {
+    "location": "#masters_base",
+    "line": 32,
+    "text": "\tmaster_penetration = 4"
+  },
+  {
+    "location": "#masters_base",
+    "line": 75,
+    "text": "\tmaster_penetration = 4"
+  },
+  {
+    "location": "#masters_base",
+    "line": 118,
+    "text": "\tmaster_penetration = 4"
+  },
+  {
+    "location": "#masters_base",
+    "line": 161,
+    "text": "\tmaster_penetration = 5"
+  },
+  {
+    "location": "#masters_base",
+    "line": 205,
+    "text": "\tmaster_penetration = 4"
+  },
+  {
+    "location": "#masters_base",
+    "line": 250,
+    "text": "\tmaster_penetration = 3"
+  },
+  {
+    "location": "#masters_base",
+    "line": 292,
+    "text": "\tmaster_penetration = 2"
+  },
+  {
+    "location": "#masters_base",
+    "line": 335,
+    "text": "\tmaster_penetration = 3"
+  },
+  {
+    "location": "#masters_base",
+    "line": 381,
+    "text": "\tmaster_penetration = 1"
+  },
+  {
+    "location": "#masters_base",
+    "line": 428,
+    "text": "\tmaster_penetration = 0"
+  },
+  {
+    "location": "#masters_base",
+    "line": 471,
+    "text": "\tmaster_penetration = 4"
+  },
+  {
+    "location": "#masters_base",
+    "line": 532,
+    "text": "\tmaster_penetration = 3"
+  },
+  {
+    "location": "#masters_base",
+    "line": 574,
+    "text": "master_penetration = 5"
+  },
+  {
+    "location": "#masters_base",
+    "line": 630,
+    "text": "master_penetration = 3"
+  },
+  {
+    "location": "#masters_base",
+    "line": 670,
+    "text": "master_penetration = 5"
+  },
+  {
+    "location": "#masters_base",
+    "line": 707,
+    "text": "master_penetration = 3"
+  },
+  {
+    "location": "#masters_base",
+    "line": 746,
+    "text": "master_penetration = 3"
+  },
+  {
+    "location": "#masters_base",
+    "line": 785,
+    "text": "master_penetration = 3"
+  },
+  {
+    "location": "#masters_base",
+    "line": 826,
+    "text": "master_penetration = 3"
+  },
+  {
+    "location": "#masters_base",
+    "line": 865,
+    "text": "master_penetration = 4"
+  },
+  {
+    "location": "#masters_base",
+    "line": 904,
+    "text": "master_penetration = 2"
+  },
+  {
+    "location": "#masters_base",
+    "line": 943,
+    "text": "master_penetration = 3"
+  },
+  {
+    "location": "#masters_base",
+    "line": 983,
+    "text": "master_penetration = 3"
+  },
+  {
+    "location": "#masters_base",
+    "line": 1023,
+    "text": "master_penetration = 0"
+  },
+  {
+    "location": "#masters_base",
+    "line": 1062,
+    "text": "master_penetration = 1"
+  },
+  {
+    "location": "#masters_base",
+    "line": 1120,
+    "text": "master_penetration = 2"
+  },
+  {
+    "location": "#masters_base",
+    "line": 1161,
+    "text": "master_penetration = 2"
+  },
+  {
+    "location": "#masters_base",
+    "line": 1201,
+    "text": "master_penetration = 4"
+  },
+  {
+    "location": "#masters_base",
+    "line": 1241,
+    "text": "master_penetration = 4"
+  },
+  {
+    "location": "#masters_base",
+    "line": 1281,
+    "text": "master_penetration = 3"
+  },
+  {
+    "location": "#masters_base",
+    "line": 1323,
+    "text": "master_penetration = 3"
+  },
+  {
+    "location": "#masters_base",
+    "line": 1364,
+    "text": "master_penetration = 3"
+  },
+  {
+    "location": "#masters_base",
+    "line": 1404,
+    "text": "master_penetration = 1"
+  },
+  {
+    "location": "#masters_base",
+    "line": 1446,
+    "text": "master_penetration = 2"
+  },
+  {
+    "location": "#masters_base",
+    "line": 1488,
+    "text": "master_penetration = 3"
+  },
+  {
+    "location": "#masters_base",
+    "line": 1530,
+    "text": "master_penetration = 2"
+  },
+  {
+    "location": "#masters_base",
+    "line": 1575,
+    "text": "master_penetration = 3"
+  },
+  {
+    "location": "#masters_base",
+    "line": 1621,
+    "text": "master_penetration = 3"
+  },
+  {
+    "location": "#masters_base",
+    "line": 1667,
+    "text": "master_penetration = 2"
+  },
+  {
+    "location": "#masters_base",
+    "line": 1711,
+    "text": "master_penetration = 4"
+  },
+  {
+    "location": "#masters_base",
+    "line": 1755,
+    "text": "master_penetration = 2"
+  },
+  {
+    "location": "#masters_base",
+    "line": 1801,
+    "text": "master_penetration = 3"
+  },
+  {
+    "location": "выход_из_боя",
+    "line": 30,
+    "text": "\t\t\tinteraction_city = 1292"
+  },
+  {
+    "location": "#sex_texts",
+    "line": 183,
+    "text": "\t$sex_insert_defloration = ' 당신이 그녀의 다리를 벌리는 동안 <<$sex[\"girl_name\"]>>(은)는 몸을 떨며 당신의 기둥을 자신의 꽉 다물린 보지로 이끌었다. 이 <<$slave_body7_txt[sex[\"girl_age\"]]>> 노예는 당신의 문지름에 처음으로 침을 흘리며 숨쉬었고, 잠깐 듬을 들인 후 밀어넣었다. <<$slave_body13_txt[sex[\"girl_age\"]]>>' + _"
+  },
+  {
+    "location": "#sex_texts",
+    "line": 471,
+    "text": "\t$sex_insert_defloration = '  <<$sex[\"girl_name\"]>>는 당신이 다리를 벌리고 딜도를 그녀의 단단한 처녀 틈에 곧장 겨누자 몸을 떤다. 입구를 막고 있던 탄력 있는 막을 뚫는 순간, 소녀가 작은 고통의 비명을 내지르는 소리가 들린다.'"
+  },
+  {
+    "location": "#sex_options",
+    "line": 35,
+    "text": "\t\tfunc('$menu', 'exec_sex_options', $menu_item_Defloration, 'sex_num = 11 & sex_interaction = 11 & gt \"sex_interaction\"', '처녀막 파괴')"
+  },
+  {
+    "location": "init_demo_game",
+    "line": 29,
+    "text": "master_penetration = 3"
+  },
+  {
+    "location": "epic_win_marsjinn",
+    "line": 17,
+    "text": "if master_petting = 5 and master_penetration = 5 and master_oral = 5 and master_fetish = 5: score += 1"
+  },
+  {
+    "location": "#sex_options_woman",
+    "line": 32,
+    "text": "        FUNC('$menu', 'exec_sex_options', $menu_item_Defloration, 'sex_num = 11 & sex_interaction = 11 & gt \"sex_interaction_woman\" ', '처녀막 파괴')"
+  },
+  {
+    "location": "goto_loc1",
+    "line": 4,
+    "text": "interaction_city = 331"
+  },
+  {
+    "location": "#sex_texts_woman",
+    "line": 161,
+    "text": "$sex_insert_defloration = '  <<$sex[\"girl_name\"]>>는 당신이 그녀 다리를 벌리고 딜도를 곧바로 조이는 처녀 틈새에 겨누자 몸을 떤다. 당신은, 진입을 막고 있던 탄력 있는 막을 뚫는 순간 소녀가 작게 고통의 비명을 내는 걸 듣는다.'"
+  },
+  {
+    "location": "snk_room_menu_screen",
+    "line": 73,
+    "text": "\t*p '<div id = \"master_info_wounds\" class=\"tooltip-left-small-button\" tooltip-data=\"<<$master_name>>: 상처\"><a href = \"EXEC: interaction_city = 331 & gt ''interaction_city''\"><img src=\"content/pic/buttons/z_wounds.png\"></a></div>'"
+  },
+  {
+    "location": "snk_room_menu_screen",
+    "line": 77,
+    "text": "\t\t*p '<div id = \"master_info_ill\" class=\"tooltip-left-small-button\" tooltip-data=\"<<$master_name>>: 질병\"><a href = \"EXEC: interaction_city = 331 & gt ''interaction_city''\"><img src=\"content/pic/buttons/z_ill.png\"></a></div>'"
+  },
+  {
+    "location": "snk_room_diet_migrate",
+    "line": 2,
+    "text": " if room1_ration = -1 or room1_ration = 2: room1_ration = 1"
+  },
+  {
+    "location": "snk_room_diet_migrate",
+    "line": 4,
+    "text": " if room2_ration = -1 or room2_ration = 2: room2_ration = 1"
+  },
+  {
+    "location": "snk_room_diet_migrate",
+    "line": 6,
+    "text": " if room3_ration = -1 or room3_ration = 2: room3_ration = 1"
+  },
+  {
+    "location": "snk_room_diet_migrate",
+    "line": 8,
+    "text": " if room4_ration = -1 or room4_ration = 2: room4_ration = 1"
+  },
+  {
+    "location": "snk_room_diet_migrate",
+    "line": 33,
+    "text": "if room1_ration = -1: room1_ration = 1"
+  },
+  {
+    "location": "snk_room_diet_migrate",
+    "line": 34,
+    "text": "if room2_ration = -1: room2_ration = 1"
+  },
+  {
+    "location": "snk_room_diet_migrate",
+    "line": 35,
+    "text": "if room3_ration = -1: room3_ration = 1"
+  },
+  {
+    "location": "snk_room_diet_migrate",
+    "line": 36,
+    "text": "if room4_ration = -1: room4_ration = 1"
+  }
+]

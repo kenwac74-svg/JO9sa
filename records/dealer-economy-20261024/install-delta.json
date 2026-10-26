@@ -1,0 +1,16 @@
+{
+  "id": "2026-10-24_dealer_economy_hard_quote_display",
+  "description": "하드 웡 실제지급 산식은 보존하고 표시금액만 실제견적과 일치",
+  "before_sha256": "7bf959d1ec5c938ba4ac7b758ebd2b70ce66499ebf36c0ae0c65bc6fd78e8a57",
+  "after_sha256": "5102bad2f3142d064c8927207c90bdae41fe88a77c792ef038c39c2ba0e8b129",
+  "edits": [
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "if difficulty_setting = 2 and $slave_psy_status = 'broken': $text[2] = $replace($text[2], $str(auction_price[rating]), $str(auction_price[rating] - (4*auction_price[rating])/5))",
+      "new": "if difficulty_setting = 2 and rating > 0: $text[2] = $replace($text[2], $str(auction_price[rating]), $str(jo9_dealer_offer))",
+      "count": 1,
+      "patchId": "DEALER_HARD_DISPLAY"
+    }
+  ]
+}

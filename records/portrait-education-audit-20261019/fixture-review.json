@@ -1,0 +1,273 @@
+{
+  "scope": "Only workspace prepare-probes.cjs modified; generated diagnostic fixtures/logs remain in workspace. No G/game/Full/save/git writes.",
+  "script": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\outputs\\portrait-education-audit-20261019\\prepare-probes.cjs",
+  "scriptSha256": "309494379e223383d0a6bd2bfbbb5233ad9f26abd267ee5c031536fb7500d757",
+  "fixtureRootCauses": [
+    {
+      "cause": "First service case had house_mess<1 after setup; original condition returns to slave_stat before end-of-interaction checkpoint.",
+      "proof": "fixture-bisection/service-guard-stderr.log",
+      "marker": "JO9_QA_BISECT_service_clean_COMPLETE",
+      "source": "interaction:2661-2663"
+    },
+    {
+      "cause": "Original test searched $maintxt for forward_button.png, but interaction_screen adds navigation to object list through ADDOBJ.",
+      "proof": "before-ready-r1/slave-stderr.log",
+      "source": "interaction_screen:130",
+      "correction": "COUNTOBJ/$GETOBJ validated independently in fastqsp-local-probe/object-stderr.log"
+    }
+  ],
+  "prerequisites": {
+    "shared": {
+      "house_mess": 2,
+      "kitchen": 1,
+      "lab": 1,
+      "library": 1,
+      "hall": 1,
+      "barn": 1,
+      "master_str": 5,
+      "otherTeachers": 5,
+      "actorStamina": 4,
+      "otherLessonSkills": 1,
+      "actorEnergy": 10,
+      "masterEnergy": 10,
+      "actorVoiceTrait": 0
+    },
+    "cases": [
+      {
+        "skill": "service",
+        "slave": 1211,
+        "assistant": 5011,
+        "preconditions": [
+          "house_mess=2 before each case; original clean-house return remains intact"
+        ]
+      },
+      {
+        "skill": "cook",
+        "slave": 1212,
+        "assistant": 5012,
+        "preconditions": [
+          "kitchen=1",
+          "all loaded recipe ingredients stocked via existing dictionaries"
+        ]
+      },
+      {
+        "skill": "secretary",
+        "slave": 1214,
+        "assistant": 5014,
+        "preconditions": [
+          "teacher5 > target skill1; energy10"
+        ]
+      },
+      {
+        "skill": "expression",
+        "slave": 1231,
+        "assistant": 5015,
+        "preconditions": [
+          "both actor jo9_voice_trait=0 for positive fixture"
+        ]
+      },
+      {
+        "skill": "nurse",
+        "slave": 1213,
+        "assistant": 5013,
+        "preconditions": [
+          "teacher5 > target skill1; energy10"
+        ]
+      },
+      {
+        "skill": "alchemy",
+        "slave": 1243,
+        "assistant": 5016,
+        "preconditions": [
+          "lab=1",
+          "library=1"
+        ]
+      },
+      {
+        "skill": "enchanter",
+        "slave": 1244,
+        "assistant": 5017,
+        "preconditions": [
+          "lab=1",
+          "library=1"
+        ]
+      },
+      {
+        "skill": "stamina",
+        "slave": 1221,
+        "assistant": 5018,
+        "preconditions": [
+          "actor stamina4 < master_str5"
+        ]
+      },
+      {
+        "skill": "gladiatrix",
+        "slave": 1223,
+        "assistant": 5019,
+        "preconditions": [
+          "teacher5 > target skill1; energy10"
+        ]
+      },
+      {
+        "skill": "calisthenics",
+        "slave": 1222,
+        "assistant": 5020,
+        "preconditions": [
+          "teacher5 > target skill1; energy10"
+        ]
+      },
+      {
+        "skill": "art",
+        "slave": 1234,
+        "assistant": 5022,
+        "preconditions": [
+          "teacher5 > target skill1; energy10"
+        ]
+      },
+      {
+        "skill": "pet",
+        "slave": 1241,
+        "assistant": 5023,
+        "preconditions": [
+          "teacher5 > target skill1; energy10"
+        ]
+      },
+      {
+        "skill": "dressage",
+        "slave": 1224,
+        "assistant": 5025,
+        "preconditions": [
+          "teacher5 > target skill1; energy10"
+        ]
+      },
+      {
+        "skill": "cowSK",
+        "slave": 1226,
+        "assistant": 5026,
+        "preconditions": [
+          "cowSK1 uses original introductory branch; no advanced transformation path"
+        ]
+      }
+    ],
+    "normalGuardDiagnostic": "Unexpected slave_stat or assistant_stat return emits JO9_QA_GUARD_<step>_<interaction>_<location> in diagnostic QSP only."
+  },
+  "before": {
+    "input": {
+      "input": "outputs/portrait-education-audit-20261019/before.qsp",
+      "sha256": "b0c40f46bc020c9d372e72e490ccde28894d31797bcf1653a7b7aac1e3490f71",
+      "tag": "before-ready-r2",
+      "roleCases": 28,
+      "staticResults": [
+        {
+          "role": "slave",
+          "status": "EXPECTED_KNOWN_BEFORE_FAILURE",
+          "issues": [
+            {
+              "location": "interaction_result",
+              "field": "body",
+              "line": 398,
+              "marker": "J9TP_NATIVE_TEXT_LOOP_5",
+              "prefix": "\t\tif assistant['ego'] <= slave['ego']: assistant_rate['ego'] += 1",
+              "kind": "joinedMarkerStart"
+            },
+            {
+              "location": "interaction_result",
+              "field": "body",
+              "line": 796,
+              "marker": "J9TP_NATIVE_TEXT_LOOP_2",
+              "prefix": "\t\tdynamic $special_part",
+              "kind": "joinedMarkerStart"
+            }
+          ]
+        },
+        {
+          "role": "assistant",
+          "status": "EXPECTED_KNOWN_BEFORE_FAILURE",
+          "issues": [
+            {
+              "location": "interaction_result",
+              "field": "body",
+              "line": 398,
+              "marker": "J9TP_NATIVE_TEXT_LOOP_5",
+              "prefix": "\t\tif assistant['ego'] <= slave['ego']: assistant_rate['ego'] += 1",
+              "kind": "joinedMarkerStart"
+            },
+            {
+              "location": "interaction_result",
+              "field": "body",
+              "line": 796,
+              "marker": "J9TP_NATIVE_TEXT_LOOP_2",
+              "prefix": "\t\tdynamic $special_part",
+              "kind": "joinedMarkerStart"
+            }
+          ]
+        }
+      ],
+      "limits": "Isolated representative state; actual result and rendering, no GUI save load. Known broken BEFORE is explicitly reported, never silently marked static PASS."
+    },
+    "results": [
+      {
+        "name": "slave",
+        "checkpoint": "14 direct portrait lessons: actual interaction/result/render navigation",
+        "pass": true,
+        "reason": "",
+        "durationMs": 7585
+      },
+      {
+        "name": "assistant",
+        "checkpoint": "14 direct portrait lessons: actual interaction/result/render navigation",
+        "pass": false,
+        "reason": "Completion marker timeout",
+        "durationMs": 30218
+      }
+    ],
+    "interpretation": "Slave14 completes. Assistant bundle times out without completion under the original joined START defect; it is not mislabeled as success."
+  },
+  "candidate": {
+    "input": {
+      "input": "outputs/portrait-education-audit-20261019/candidate.qsp",
+      "sha256": "414928de0b36f05a95dd442232fdd0c2b19ee5d903120041448e071c6c1e47f9",
+      "tag": "candidate-ready-r2",
+      "roleCases": 28,
+      "staticResults": [
+        {
+          "role": "slave",
+          "status": "PASS"
+        },
+        {
+          "role": "assistant",
+          "status": "PASS"
+        }
+      ],
+      "limits": "Isolated representative state; actual result and rendering, no GUI save load. Known broken BEFORE is explicitly reported, never silently marked static PASS."
+    },
+    "results": [
+      {
+        "name": "slave",
+        "checkpoint": "14 direct portrait lessons: actual interaction/result/render navigation",
+        "pass": true,
+        "reason": "",
+        "durationMs": 7319
+      },
+      {
+        "name": "assistant",
+        "checkpoint": "14 direct portrait lessons: actual interaction/result/render navigation",
+        "pass": true,
+        "reason": "",
+        "durationMs": 7251
+      }
+    ],
+    "process": {
+      "exitCode": 0,
+      "invocation": "fresh child powershell.exe"
+    },
+    "roleCasesPassed": 28
+  },
+  "processNote": "The first combined direct PowerShell-script invocation retained LASTEXITCODE=1 from BEFORE even after candidate results were true. A fresh child powershell.exe rerun of candidate independently returned0; both records are retained.",
+  "limits": [
+    "Each case executes actual interaction -> interaction_result -> interaction_screen, asserts requested skill/type/nonempty text/nonnegative resistance, and checks forward navigation ADDOBJ presence.",
+    "The diagnostic callback advances to the next case; it does not click the real forward button or exercise every later page/special action.",
+    "Positive representative state only; the complete matrix of low facilities/refusal/advanced cow transformation guards is outside this run.",
+    "Native5.7 LOCAL error114 was independently shown not to reproduce in actual FastQSP."
+  ]
+}

@@ -1,0 +1,30 @@
+[
+  {
+    "location": "#options",
+    "field": "body",
+    "old": "\t\tfunc('$menu', 'interaction_city', $menu_item_milk_tip, menu_milk_tip, '내일의 우유 가격을 묻는다 ($0~5)')",
+    "new": "! JO9 MOD START MILK_TIP_LABEL_FIT_20261026\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_milk_tip, menu_milk_tip, '내일의 우유 가격을 묻는다')\r\n! JO9 MOD END MILK_TIP_LABEL_FIT_20261026",
+    "count": 1
+  },
+  {
+    "location": "shop_general",
+    "field": "body",
+    "old": "*p func('$menu', 'layout_style')",
+    "new": "! JO9 MOD START MILK_TIP_SAVED_LABEL_20261026\r\n! Old saves may retain the former label in $display_options; preserve the existing question link.\r\nif $place = 'milk_cooperative': $text_display = replace($text_display, '내일의 우유 가격을 묻는다 ($0~5)', '내일의 우유 가격을 묻는다')\r\n! JO9 MOD END MILK_TIP_SAVED_LABEL_20261026\r\n*p func('$menu', 'layout_style')",
+    "count": 1
+  },
+  {
+    "location": "main_screen",
+    "field": "body",
+    "old": "*p '<div id = \"main_screen\"><<$text_display>></div>'",
+    "new": "! JO9 MOD START HOME_POTION_COLUMNS_20261026\r\nif menu_form = menu_potion_S or menu_form = menu_potion_S_assistant:\r\n *p '<div id=\"main_screen\" class=\"jo9_home_potions\"><<$text_display>></div>'\r\nelse\r\n*p '<div id = \"main_screen\"><<$text_display>></div>'\r\nend\r\n! JO9 MOD END HOME_POTION_COLUMNS_20261026",
+    "count": 1
+  },
+  {
+    "location": "$menu",
+    "field": "body",
+    "old": "! Creates a link to something",
+    "new": "! JO9 MOD START PHARMACY_GRAY_HTML_20261026\r\n! Native saves may restore old icon HTML; repair only the missing style attribute at the common input.\r\nif instr($args[1], '<li id=\"grey\" =\"background:') > 0: $args[1] = replace($args[1], '<li id=\"grey\" =\"background:', '<li id=\"grey\" style=\"background:')\r\n! JO9 MOD END PHARMACY_GRAY_HTML_20261026\r\n\r\n! Creates a link to something",
+    "count": 1
+  }
+]

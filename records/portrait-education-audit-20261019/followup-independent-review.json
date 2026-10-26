@@ -1,0 +1,105 @@
+{
+  "verdict": "PASS_WITH_NOTED_SAVE_SCOPE",
+  "blockingFindings": [],
+  "beforeSha256": "414928de0b36f05a95dd442232fdd0c2b19ee5d903120041448e071c6c1e47f9",
+  "afterSha256": "987940a392c78571ef2dde4800a235775fbc8d0645bfa8f9ff8675c3c11e7638",
+  "checks": {
+    "exactPatchReplay": true,
+    "edits": 7,
+    "changedBodyFields": [
+      "interaction",
+      "interaction_result",
+      "slave_to_cow",
+      "#dynamic"
+    ],
+    "locationCount": 261,
+    "newLocations": 0,
+    "otherFieldsByteIdentical": true,
+    "visibleTextMultisetIdentical": true,
+    "addedLiteralArrayKeys": [],
+    "fullStatic": {
+      "sha256": "987940a392c78571ef2dde4800a235775fbc8d0645bfa8f9ff8675c3c11e7638",
+      "bytes": 48235972,
+      "locations": 261,
+      "roundtrip": true,
+      "lineEndingIssues": 0
+    }
+  },
+  "actorReview": {
+    "setup": "5026 now reuses canonical helper with slave→assistant replacement. Existing cached setup function remains the same schema.",
+    "transition": "Existing cow_lesson_in_progress=2 selects assistant↔cow; flag1 slave branch is preserved. Unknown assistant_to_cow call removed without adding a location.",
+    "deny": "Before swap, eligibility reads the selected assistant; refusal text/state/effect target is substituted to assistant and flag2 clears to0.",
+    "restore": "Both milking and other result paths swap back assistant↔cow, set interaction_partner=assistant before common energy/counter logic, map full-image flag to assistant, and clear flag.",
+    "rule": "The existing no_orgasm_rule clause treats temporary flag2 the same as existing flag1, preserving the actor rule while represented as cow.",
+    "balance": "No reward rates, skill thresholds or random draws added. Original resistance formulas retained for the selected actor."
+  },
+  "saveReview": {
+    "newPersistentVariableNames": 0,
+    "existingFlagExtension": "cow_lesson_in_progress uses value2 for assistant; normal tested success/denial ends at0.",
+    "normalReloadCachePath": [
+      {
+        "location": "$ongload",
+        "line": 39,
+        "operation": "saved_game_loaded=1"
+      },
+      {
+        "location": "$newloc",
+        "line": 91,
+        "operation": "saved_game_loaded triggers $addon update full"
+      },
+      {
+        "location": "$addon",
+        "line": 9,
+        "operation": "refresh_database"
+      },
+      {
+        "location": "refresh_database",
+        "line": 7,
+        "operation": "code_defined/first_visit reset"
+      },
+      {
+        "location": "refresh_database",
+        "line": 21,
+        "operation": "#dynamic helper refresh"
+      }
+    ],
+    "noSaveMigrationAdded": true,
+    "midLessonOldSaveLimit": "No explicit rewrite of an already serialized $special_action[3]. A pre-patch save taken inside old assistant advanced lesson may retain the missing assistant_to_cow call until the lesson is re-entered. This edge was not runtime save/load tested; ordinary existing saves that start a new lesson use the corrected source."
+  },
+  "providedRuntimeEvidence": {
+    "source": "Parent-created green-b diagnostics, reviewed here rather than independently rerun.",
+    "cases": [
+      {
+        "name": "slave-milking",
+        "pass": true
+      },
+      {
+        "name": "slave-other",
+        "pass": true
+      },
+      {
+        "name": "slave-deny",
+        "pass": true
+      },
+      {
+        "name": "assistant-milking",
+        "pass": true
+      },
+      {
+        "name": "assistant-other",
+        "pass": true
+      },
+      {
+        "name": "assistant-deny",
+        "pass": true
+      }
+    ],
+    "coverage": "Both actors × milking/other/denial: original IDs and selected full-instance sentinel fields, subject XP/energy, return subject and flag cleanup."
+  },
+  "knownCanonicalSideEffect": {
+    "source": "Parent independent diagnosis of green-arrays failures",
+    "finding": "Original #item_base empty item_property resolves nothing, and canonical swap refresh can increment inert *_rate[nothing]. This is not a real skill XP leak and production code is not changed for it.",
+    "wholeArrayVerification": "Raw green-arrays experiment remains FAIL at placeholder index3; parent is separately normalizing only this original placeholder and rerunning the remaining full arrays. No all-array byte equality claim in this review."
+  },
+  "scope": "Read-only input/candidate and patch review. Only this workspace review.json written; no game/repo/Full/git writes."
+}

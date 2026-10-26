@@ -1,0 +1,42 @@
+[
+  {
+    "location": "interaction",
+    "patchId": "ARGON_VOICE_ACTION_GUARD",
+    "before": "$place = 'study'\r\n$interaction_type = 'basic'",
+    "after": "$place = 'study'\r\n$interaction_type = 'basic'\r\n\r\n! JO9 MOD START ARGON_VOICE_ACTION_GUARD | 2026-10-19_argon_trait_text_integration\r\n! 발화가 필요한 질문과 수사학 수업만 제한. 명령 이해·일반 업무·음악 연주는 유지.\r\nlocal $jo9_voice_block_actor=''\r\nlocal $jo9_voice_block_reason=''\r\nif (slave['jo9_voice_trait']=1 or slave['jo9_voice_trait']=2):\r\n if (interaction>=1111 and interaction<=1117):\r\n  $jo9_voice_block_actor='slave'\r\n  $jo9_voice_block_reason='말을 할 수 없어 이 대화에 답할 수 없습니다.'\r\n elseif interaction=1231 or interaction=4131 or interaction=1731 or interaction=5610:\r\n  $jo9_voice_block_actor='slave'\r\n  $jo9_voice_block_reason='말을 할 수 없어 수사학 교육에 참여할 수 없습니다.'\r\n elseif interaction=854:\r\n  $jo9_voice_block_actor='slave'\r\n  $jo9_voice_block_reason='말을 할 수 없어 이 대화에 참여할 수 없습니다.'\r\n end\r\nend\r\nif $jo9_voice_block_actor='' and (assistant['jo9_voice_trait']=1 or assistant['jo9_voice_trait']=2):\r\n if interaction=1118 or interaction=1126 or interaction=1138:\r\n  $jo9_voice_block_actor='assistant'\r\n  $jo9_voice_block_reason='말을 할 수 없어 이 대화에 답할 수 없습니다.'\r\n elseif interaction=5015 or interaction=4131:\r\n  $jo9_voice_block_actor='assistant'\r\n  $jo9_voice_block_reason='말을 할 수 없어 수사학 교육에 참여할 수 없습니다.'\r\n elseif interaction=854:\r\n  $jo9_voice_block_actor='assistant'\r\n  $jo9_voice_block_reason='말을 할 수 없어 이 대화에 참여할 수 없습니다.'\r\n end\r\nend\r\nif $jo9_voice_block_actor!'':\r\n interaction_no_auto_energy_drop=1\r\n if $jo9_voice_block_actor='slave':\r\n  show_slave_fullimage=1\r\n  $text[1]='['+$slave_name+']<br>'+$jo9_voice_block_reason\r\n else\r\n  show_assistant_fullimage=1\r\n  $text[1]='['+$assistant_name+']<br>'+$jo9_voice_block_reason\r\n end\r\n gt 'interaction_screen'\r\nend\r\n! JO9 MOD END ARGON_VOICE_ACTION_GUARD",
+    "reason": "발화 불가 대상의 질문 답변·수사학 교육을 실행 전에 안내하고 종료",
+    "stateEffects": "해당 차단 행동의 비용·보상·관계 변화 없음. 기존 상태초기화 후 기존 화면으로 안내."
+  },
+  {
+    "location": "interaction",
+    "patchId": "ARGON_VOICE_ACK_SLAVE_1",
+    "before": "\t\t$text[1] = '당신은 노예에게 조수와 개인적인 주제로 소통하는 것을 금하고, 대화를 일상생활과 교육으로만 제한하라고 명령한다. <<$slave_name>>는 고개를 숙이며 당신의 뜻을 따르겠다고 말한다. 당신도 이 금지가 며칠 이상 지속되지는 않을 것임을 잘 알고 있지만, 적어도 한동안은 조수와 노예의 관계를 얼어붙게 만들 수 있다.'",
+    "after": "\t\t$text[1] = '당신은 노예에게 조수와 개인적인 주제로 소통하는 것을 금하고, 대화를 일상생활과 교육으로만 제한하라고 명령한다. <<IIF((slave[\"jo9_voice_trait\"]=1 or slave[\"jo9_voice_trait\"]=2), $slave_name + \"는 당신의 말을 이해했다는 듯 고개를 끄덕인다.\", \"\" + $slave_name + \"는 고개를 숙이며 당신의 뜻을 따르겠다고 말한다.\")>> 당신도 이 금지가 며칠 이상 지속되지는 않을 것임을 잘 알고 있지만, 적어도 한동안은 조수와 노예의 관계를 얼어붙게 만들 수 있다.'",
+    "reason": "명령 효과는 유지하고 발화 불가 인물만 말 대신 고개로 확인",
+    "stateEffects": "없음; 기존 명령과 관계 변화 그대로"
+  },
+  {
+    "location": "interaction",
+    "patchId": "ARGON_VOICE_ACK_SLAVE_2",
+    "before": "\t\t$text[1] = '당신은 노예가 조수와 어떤 개인적인 주제로든 소통하는 것을 허락한다. <<$slave_name>>는 고개를 숙이며 당신의 뜻을 따르겠다고 말한다. 어디로 이어질지 두고 보자.'",
+    "after": "\t\t$text[1] = '당신은 노예가 조수와 어떤 개인적인 주제로든 소통하는 것을 허락한다. <<IIF((slave[\"jo9_voice_trait\"]=1 or slave[\"jo9_voice_trait\"]=2), $slave_name + \"는 당신의 말을 이해했다는 듯 고개를 끄덕인다.\", \"\" + $slave_name + \"는 고개를 숙이며 당신의 뜻을 따르겠다고 말한다.\")>> 어디로 이어질지 두고 보자.'",
+    "reason": "명령 효과는 유지하고 발화 불가 인물만 말 대신 고개로 확인",
+    "stateEffects": "없음; 기존 명령과 관계 변화 그대로"
+  },
+  {
+    "location": "interaction",
+    "patchId": "ARGON_VOICE_ACK_ASSISTANT_1",
+    "before": "\t\t$text[1] = '당신은 조수에게 노예와 개인적인 주제로 소통하는 것을 금하고, 대화를 일상생활과 교육으로만 제한하라고 명령한다. <<$assistant_name>>는 고개를 숙이며 당신의 뜻을 따르겠다고 말한다. 이 금지가 영원히 지속되지는 않겠지만, 적어도 한동안은 조수와 노예의 관계를 얼어붙게 만들 수 있다.'",
+    "after": "\t\t$text[1] = '당신은 조수에게 노예와 개인적인 주제로 소통하는 것을 금하고, 대화를 일상생활과 교육으로만 제한하라고 명령한다. <<IIF((assistant[\"jo9_voice_trait\"]=1 or assistant[\"jo9_voice_trait\"]=2), $assistant_name + \"는 당신의 말을 이해했다는 듯 고개를 끄덕인다.\", \"\" + $assistant_name + \"는 고개를 숙이며 당신의 뜻을 따르겠다고 말한다.\")>> 이 금지가 영원히 지속되지는 않겠지만, 적어도 한동안은 조수와 노예의 관계를 얼어붙게 만들 수 있다.'",
+    "reason": "명령 효과는 유지하고 발화 불가 인물만 말 대신 고개로 확인",
+    "stateEffects": "없음; 기존 명령과 관계 변화 그대로"
+  },
+  {
+    "location": "interaction",
+    "patchId": "ARGON_VOICE_ACK_ASSISTANT_2",
+    "before": "\t\t$text[1] = '당신은 조수가 노예와 어떤 개인적인 주제로든 소통하는 것을 허락한다. <<$assistant_name>>는 고개를 숙이며 당신의 뜻을 따르겠다고 말한다. 어디로 이어질지 두고 보자.'",
+    "after": "\t\t$text[1] = '당신은 조수가 노예와 어떤 개인적인 주제로든 소통하는 것을 허락한다. <<IIF((assistant[\"jo9_voice_trait\"]=1 or assistant[\"jo9_voice_trait\"]=2), $assistant_name + \"는 당신의 말을 이해했다는 듯 고개를 끄덕인다.\", \"\" + $assistant_name + \"는 고개를 숙이며 당신의 뜻을 따르겠다고 말한다.\")>> 어디로 이어질지 두고 보자.'",
+    "reason": "명령 효과는 유지하고 발화 불가 인물만 말 대신 고개로 확인",
+    "stateEffects": "없음; 기존 명령과 관계 변화 그대로"
+  }
+]

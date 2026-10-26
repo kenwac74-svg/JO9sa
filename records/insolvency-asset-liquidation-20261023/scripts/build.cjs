@@ -1,0 +1,36 @@
+'use strict';
+const fs=require('fs'),path=require('path');
+const root='G:/Codex/tmp/jo9-insolvency-20261023',repo='G:/somi/JO9sa';
+const core=require(repo+'/tools/text-workshop/core.cjs'),qa=require(repo+'/tools/qa/release-check.cjs');
+const raw=fs.readFileSync(root+'/before.qsp'),doc=core.parse(raw);const before=doc.hash;
+if(before!=='81201e0eb964124b71fe0862ffca30e589a74d1578d7c140296574b3362760e0')throw Error('baseline drift');
+const id='2026-10-23_insolvency_asset_liquidation',edits=[];
+const nl=s=>s.replace(/^\uFEFF/,'').replace(/\r?\n/g,'\r\n').replace(/\r\r\n/g,'\r\n');
+const body=n=>{const l=doc.locations.find(l=>l.name===n);if(!l)throw Error(n);return core.shift(doc.lines[l.body],5)};
+function edit(location,old,neu,count=1){let b=body(location);old=nl(old);neu=nl(neu);if(b.split(old).length-1!==count)throw Error('anchor '+location+' '+old.slice(0,80));b=b.split(old).join(neu);doc.lines[doc.locations.find(l=>l.name===location).body]=core.shift(b,-5);edits.push({location,field:'body',old,new:neu,count});}
+function prepend(location,code){const b=body(location);let end=b.indexOf('\r\n');let first=b.slice(0,end);while(b.split(first).length!==2){end=b.indexOf('\r\n',end+2);if(end<0)throw Error('prefix not unique');first=b.slice(0,end);}edit(location,first,nl(code)+'\r\n'+first);}
+const marker=(name,b)=>`! JO9 MOD START ${name} | ${id}\n${b}\n! JO9 MOD END ${name}`;
+prepend('main_screen',marker('INSOLVENCY_MAIN_REENTRY_20261023',`if jo9_lq['active'] = 1:\n if sparks >= jo9_lq['bill']: gt 'jo9_liquidation', 'finish'\n if jo9_lq['manual'] = 0: gt 'jo9_liquidation', 'view'\nend`));
+const fail="\t\tdynamic $death, '당신은 청구서를 낼 수 없었고, 재정 문제를 해결하지 못한 탓에 조련사 길드에서 추방되었다.'";
+edit('main_screen',fail,marker('INSOLVENCY_BILL_BEGIN_20261023',"\t\tgs 'jo9_liquidation', 'begin'\n\t\tgt 'jo9_liquidation', 'view'"));
+edit('main_screen','if decadecount >= 10:',"if decadecount >= 10 and jo9_lq['active'] = 0:");
+const nextAnchor="gs 'snk_room_diet_migrate'\r\n! JO9 MOD END J9M1558";
+edit('next_day',nextAnchor,nextAnchor+'\n'+marker('INSOLVENCY_DAY_BOUNDARY_20261023',"if jo9_lq['active'] = 1:\n if sparks >= jo9_lq['bill']: gt 'jo9_liquidation', 'finish'\n gt 'jo9_liquidation', 'view'\nend"));
+const menuAnchor="! JO9 MOD END J9M2805";
+edit('menu_form',menuAnchor,menuAnchor+'\n'+marker('INSOLVENCY_MENU_SETTLEMENT_20261023',"if jo9_lq['active'] = 1 and sparks >= jo9_lq['bill']: gt 'jo9_liquidation', 'finish'"));
+const cityAnchor="! JO9 MOD END J9M0005";
+edit('city_menu_form',cityAnchor,cityAnchor+'\n'+marker('INSOLVENCY_CITY_SETTLEMENT_20261023',"if jo9_lq['active'] = 1 and sparks >= jo9_lq['bill']: gt 'jo9_liquidation', 'finish'"));
+const sleep="\tif master_energy <= -5: is_home = 1 & gt 'next_day' &! is_home = 1 to bypass menu_form ESC intercept";
+edit('#dynamic',sleep,marker('INSOLVENCY_PENDING_FUNDING_TURN_20261023',"\tif master_energy <= -5 and jo9_lq['active'] ! 1: is_home = 1 & gt 'next_day'\n\t! Keep manual funding reachable until the frozen invoice is resolved; ordinary overwork death above is unchanged."));
+const loadAnchor="if $curloc = 'main_screen': gt 'menu_form'";
+edit('$ongload',loadAnchor,marker('INSOLVENCY_LOAD_RESTORE_20261023',"if jo9_lq['active'] = 1:\n gs 'interior_storage'\n gs 'refresh_database'\n gs 'interior_restore'\n gt 'jo9_liquidation', 'view'\nend")+'\n'+loadAnchor);
+prepend('init_game',marker('INSOLVENCY_NEW_GAME_RESET_20261023',"killvar 'jo9_lq'\nkillvar 'jo9_lq_decor_state'"));
+const ar=JSON.parse(fs.readFileSync(root+'/assets-replacements.json','utf8').replace(/^\uFEFF/,''));
+for(const e of Array.isArray(ar)?ar:ar.edits)edit(e.location,e.old,e.new,e.count||1);
+const add_locations=[['jo9_liquidation','flow-body.txt'],['jo9_liquidation_assets','assets-body.txt'],['jo9_liquidation_sale','sales-body.txt']].map(([name,file])=>({name,desc:'',body:nl(fs.readFileSync(root+'/'+file,'utf8')),actions:[]}));
+const lines=doc.lines.slice();lines.pop();for(const l of add_locations)lines.push(core.shift(l.name,-5),core.shift(l.desc,-5),core.shift(l.body,-5),core.shift('0',-5));lines.push('');lines[3]=core.shift(String(doc.locations.length+add_locations.length),-5);
+const candidate=core.serialize({lines}),after=core.hash(candidate);const patch={id,before_sha256:before,after_sha256:after,edits,add_locations};
+qa.inspectWorld(candidate);qa.validatePatchSet([patch],before,after);
+fs.mkdirSync(root+'/mods',{recursive:true});fs.writeFileSync(root+'/candidate.qsp',candidate);fs.writeFileSync(root+'/mods/'+id+'.json',JSON.stringify(patch,null,2));
+fs.writeFileSync(root+'/candidate-summary.json',JSON.stringify({id,before,after,edits:edits.length,added:add_locations.map(x=>x.name),changed:[...new Set(edits.map(x=>x.location))]},null,2));
+console.log(JSON.stringify({before,after,edits:edits.length,candidate:root+'/candidate.qsp'}));

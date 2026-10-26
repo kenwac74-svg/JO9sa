@@ -8137,15 +8137,18 @@ width:75px;
 height:75px;
 }
 
+/* JO9 MOD START MILK_STOCK_CENTER_20261026 */
 #barn_milk_can_stock {
     position:absolute;
-left:1183px;
+left:1125px;
+width:85px;
 top:697px;
 font-size:30px;
 font-family:경기천년제목 Medium;
 color:white;
 text-align:center;
 }
+/* JO9 MOD END MILK_STOCK_CENTER_20261026 */
 
 #milkcan_masterstat_2 {
     position:absolute;
@@ -8176,24 +8179,31 @@ color:white;
 text-align:center;
 }
 
+/* JO9 MOD START MILK_PANEL_LAYOUT_20261024 | Price board below the right reference text. */
 #milk_sign_board {
     position:absolute;
-left:33px;
-top:0px;
-width:350px;
+left:930px;
+top:400px;
+width:200px;
 height:143px;
 }
 
+/* JO9 MOD START MILK_PRICE_LABEL_20261024 | Center the dark price digit in the blank between baked labels. */
 #milk_sign_writing {
     position:absolute;
-left:35px;
-top:90px;
-width:350px;
-height:20px;
-font-size:32px;
+left:1005px;
+top:486px;
+width:56px;
+height:40px;
+font-size:36px;
+line-height:38px;
+font-weight:bold;
+text-align:center;
 font-family:Sandoll 미생;
-color:white;
+color:#000000;
 }
+/* JO9 MOD END MILK_PRICE_LABEL_20261024 */
+/* JO9 MOD END MILK_PANEL_LAYOUT_20261024 */
 
 .menu_column_0_1 {
     position: absolute;
@@ -10042,6 +10052,11 @@ body:after{left:0;top:792px;width:1003px;height:8px;background-size:1280px 400px
 .jo9-editor-nav #clear img { display:block; width:400px; height:40px; margin:0; }
 .jo9-editor-nav #under_cheats { line-height:40px; background-size:418px 51px; background-repeat:no-repeat; }
 .jo9-editor-nav #under_cheats > br { display:none; }
+/* JO9 MOD START EDITOR_LINK_COLOR | 2026-10-21_trait_editor_link_color */
+/* Text links inherit the existing gold panel color in editor columns and navigation. */
+.jo9-slave-editor #under_cheats > a,
+.jo9-editor-nav #under_cheats > a { color:inherit; }
+/* JO9 MOD END EDITOR_LINK_COLOR */
 /* JO9 MOD END SLAVE_EDITOR_LAYOUT */
 
 /* JO9 MOD START CHEAT_MENU_LAYOUT | 2026-10-17_zzz_cheat_master_layout */
@@ -10092,3 +10107,28 @@ body:after{left:0;top:792px;width:1003px;height:8px;background-size:1280px 400px
 /* Center the 32px monster icon on the existing 29px status column (1243 + 29/2). */
 #jo9_house_monster { left:1241.5px; }
 /* JO9 MOD END MONSTER_STATUS_COLUMN_ALIGN */
+
+/* JO9 MOD START ROOM_TUTOR_LAYOUT | 2026-10-19_room_tutor_layout */
+/* Scope both tutor columns to the room scene; the engine centers table divs. */
+#snk_room_menu.snk_room_tutor{display:block!important;width:799px!important;margin:0!important;padding:0!important}
+#snk_room_menu.snk_room_tutor > .menu_column_0,
+#snk_room_menu.snk_room_tutor > .menu_column_1{position:absolute!important;top:65px!important;float:none!important;width:330px!important;margin:0!important;padding:0!important}
+#snk_room_menu.snk_room_tutor > .menu_column_0{left:27px!important}
+#snk_room_menu.snk_room_tutor > .menu_column_1{left:411px!important}
+/* JO9 MOD END ROOM_TUTOR_LAYOUT */
+
+/* JO9 MOD START HOME_POTION_COLUMNS_20261026 */
+/* The slave and assistant potion columns share the left column's existing 63px offset. */
+#main_screen.jo9_home_potions > .menu_column_0,
+#main_screen.jo9_home_potions > .menu_column_1{position:absolute;top:63px;}
+/* JO9 MOD END HOME_POTION_COLUMNS_20261026 */
+
+/* JO9 MOD START PREGNANCY_STATUS_COLUMN | 2026-10-19_pregnancy_status_icon */
+/* Five 29px rows, then pregnancy; the assistant monster slot starts at 757px. */
+#slinfo_block > div,#asinfo_block > div,#slinfo_block > a,#asinfo_block > a{margin-bottom:0!important}
+#slinfo_pregnant,#asinfo_pregnant{left:1243px!important;width:29px!important;height:29px!important;line-height:0!important}
+#slinfo_pregnant{top:478px!important}
+#asinfo_pregnant{top:728px!important}
+#slinfo_pregnant > a,#asinfo_pregnant > a{display:block!important;width:29px!important;height:29px!important;margin:0!important;padding:0!important;line-height:0!important}
+#slinfo_pregnant img,#asinfo_pregnant img{display:block!important;width:auto!important;height:auto!important;max-width:29px!important;max-height:29px!important;margin:0 auto!important;padding:0!important;border:0!important}
+/* JO9 MOD END PREGNANCY_STATUS_COLUMN */

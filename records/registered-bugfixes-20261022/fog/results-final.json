@@ -1,0 +1,203 @@
+{
+  "source": "G:\\Codex\\tmp\\jo9-bugfixes-20261022\\candidate.qsp",
+  "sourceHash": "ba2210ecc9df7159ccee4355120fab07f180b67a00c01458fdcb33e0d0113956",
+  "sourceHashAfter": "ba2210ecc9df7159ccee4355120fab07f180b67a00c01458fdcb33e0d0113956",
+  "label": "final",
+  "engine": "G:/somi/Jack O Nine Tails v2.4_work/game/engine/jack.exe",
+  "runnerStatus": 0,
+  "structure": {
+    "sha256": "ba2210ecc9df7159ccee4355120fab07f180b67a00c01458fdcb33e0d0113956",
+    "bytes": 48361214,
+    "locations": 263,
+    "roundtrip": true,
+    "lineEndingIssues": 0
+  },
+  "results": [
+    {
+      "name": "cost-slave",
+      "checkpoint": "jo9_fog_relay settle full stamina",
+      "pass": true,
+      "reason": "",
+      "durationMs": 1880,
+      "assertions": [],
+      "engineErrors": [],
+      "assertionCount": 1
+    },
+    {
+      "name": "cost-assistant",
+      "checkpoint": "jo9_fog_relay settle full stamina",
+      "pass": true,
+      "reason": "",
+      "durationMs": 1825,
+      "assertions": [],
+      "engineErrors": [],
+      "assertionCount": 1
+    },
+    {
+      "name": "matrix-slave",
+      "checkpoint": "100 stamina/energy combinations and repeated finish/settle",
+      "pass": true,
+      "reason": "",
+      "durationMs": 2096,
+      "assertions": [],
+      "engineErrors": [],
+      "assertionCount": 200
+    },
+    {
+      "name": "exit-slave",
+      "checkpoint": "actual exit combatant>0 through close",
+      "pass": true,
+      "reason": "",
+      "durationMs": 2056,
+      "assertions": [],
+      "engineErrors": [],
+      "assertionCount": 1
+    },
+    {
+      "name": "cancel-slave",
+      "checkpoint": "begin -> original weapon-selection entry -> reset before combat",
+      "pass": true,
+      "reason": "",
+      "durationMs": 1794,
+      "assertions": [],
+      "engineErrors": [],
+      "assertionCount": 1
+    },
+    {
+      "name": "handoff-slave",
+      "checkpoint": "actual handoff settles once and preserves enemies for master",
+      "pass": true,
+      "reason": "",
+      "durationMs": 1823,
+      "assertions": [],
+      "engineErrors": [],
+      "assertionCount": 1
+    },
+    {
+      "name": "matrix-assistant",
+      "checkpoint": "100 stamina/energy combinations and repeated finish/settle",
+      "pass": true,
+      "reason": "",
+      "durationMs": 2098,
+      "assertions": [],
+      "engineErrors": [],
+      "assertionCount": 200
+    },
+    {
+      "name": "exit-assistant",
+      "checkpoint": "actual exit combatant>0 through close",
+      "pass": true,
+      "reason": "",
+      "durationMs": 1821,
+      "assertions": [],
+      "engineErrors": [],
+      "assertionCount": 1
+    },
+    {
+      "name": "cancel-assistant",
+      "checkpoint": "begin -> original weapon-selection entry -> reset before combat",
+      "pass": true,
+      "reason": "",
+      "durationMs": 1569,
+      "assertions": [],
+      "engineErrors": [],
+      "assertionCount": 1
+    },
+    {
+      "name": "handoff-assistant",
+      "checkpoint": "actual handoff settles once and preserves enemies for master",
+      "pass": true,
+      "reason": "",
+      "durationMs": 1817,
+      "assertions": [],
+      "engineErrors": [],
+      "assertionCount": 1
+    },
+    {
+      "name": "exhaust-slave",
+      "checkpoint": "zero stamina retains original injury and fatigue result",
+      "pass": true,
+      "reason": "",
+      "durationMs": 1800,
+      "assertions": [],
+      "engineErrors": [],
+      "assertionCount": 1
+    },
+    {
+      "name": "snapshot-slave",
+      "checkpoint": "victory spirit snapshot avoids false morale loss",
+      "pass": true,
+      "reason": "",
+      "durationMs": 1803,
+      "assertions": [],
+      "engineErrors": [],
+      "assertionCount": 1
+    },
+    {
+      "name": "death-slave",
+      "checkpoint": "original death branch clears only the actor",
+      "pass": true,
+      "reason": "",
+      "durationMs": 6983,
+      "assertions": [],
+      "engineErrors": [],
+      "assertionCount": 1
+    },
+    {
+      "name": "exhaust-assistant",
+      "checkpoint": "zero stamina retains original injury and fatigue result",
+      "pass": true,
+      "reason": "",
+      "durationMs": 2088,
+      "assertions": [],
+      "engineErrors": [],
+      "assertionCount": 1
+    },
+    {
+      "name": "snapshot-assistant",
+      "checkpoint": "victory spirit snapshot avoids false morale loss",
+      "pass": true,
+      "reason": "",
+      "durationMs": 1824,
+      "assertions": [],
+      "engineErrors": [],
+      "assertionCount": 1
+    },
+    {
+      "name": "death-assistant",
+      "checkpoint": "original death branch clears only the actor",
+      "pass": true,
+      "reason": "",
+      "durationMs": 6470,
+      "assertions": [],
+      "engineErrors": [],
+      "assertionCount": 1
+    },
+    {
+      "name": "guard-solo",
+      "checkpoint": "inactive finish and settled state do not charge",
+      "pass": true,
+      "reason": "",
+      "durationMs": 1822,
+      "assertions": [],
+      "engineErrors": [],
+      "assertionCount": 1
+    },
+    {
+      "name": "solo-exit",
+      "checkpoint": "actual solo exit retains original master energy cap",
+      "pass": true,
+      "reason": "",
+      "durationMs": 1815,
+      "assertions": [],
+      "engineErrors": [],
+      "assertionCount": 1
+    }
+  ],
+  "limits": [
+    "No GUI selection or rendered combat UI check.",
+    "Core/entry/exit/handoff logic is real source; expected helper messages use *pl instead of msg in disposable diagnostics.",
+    "Begin/cancel/handoff cases intercept interaction_city at the weapon-screen boundary; exit cases stop immediately after the original close call.",
+    "Combat damage/balance/loot generation and save UI loading are outside this component test."
+  ]
+}

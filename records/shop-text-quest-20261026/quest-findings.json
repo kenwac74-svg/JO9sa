@@ -1,0 +1,839 @@
+{
+  "schema": 1,
+  "investigationDate": "2026-10-26",
+  "status": "CONFIRMED_ORIGINAL_ASSIGNMENT_BUG; EXACT_ONE_CHARACTER_FRAGMENT_PROVIDED; NO_RUNTIME_WRITE_BY_THIS_AGENT",
+  "sources": {
+    "work": {
+      "path": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+      "sha256": "8b9cf39fe2327079b0823f6e474c93151538a512fa8738ed5f330749a0940db5",
+      "currentSha256": "8b9cf39fe2327079b0823f6e474c93151538a512fa8738ed5f330749a0940db5",
+      "unchanged": true
+    },
+    "original": {
+      "path": "G:/somi/JO9O/game/jack.qsp",
+      "sha256": "26e15aaf30b6226a2883c6b532a6ee4eed34791110618597d234bb7d6fa3e052",
+      "currentSha256": "26e15aaf30b6226a2883c6b532a6ee4eed34791110618597d234bb7d6fa3e052",
+      "unchanged": true
+    }
+  },
+  "engine": {
+    "path": "G:/somi/Jack O Nine Tails v2.4_work/game/engine/jack.exe",
+    "sha256": "f75032d79ecb58eeb7b969cd3f774d66b091fca38a360acdabd782e03a46c6e6",
+    "runner": "G:/somi/JO9sa/tools/qa/run-client-smoke.ps1",
+    "timeoutSeconds": 15
+  },
+  "findings": [
+    {
+      "id": "Q01",
+      "classification": "EXISTING_REQUIREMENT_NOT_A_NEW_REGRESSION",
+      "summaryKo": "자파르는 보이는 속성/기술 외에 네 관용값 각각 16 이상을 요구한다.",
+      "evidence": [
+        "WORK interaction_city:25549-25575",
+        "ORIGINAL interaction_city:24322-24348"
+      ],
+      "requirements": {
+        "slaveState": "CONST_INT[slave_exist]",
+        "slaveType": 2617,
+        "intellectMin": 3,
+        "expressionMin": 3,
+        "lesbiansexMin": 5,
+        "tolerantMinEach": 16
+      },
+      "hiddenFields": [
+        "tolerant_world",
+        "tolerant_nation",
+        "tolerant_family",
+        "tolerant_work"
+      ]
+    },
+    {
+      "id": "Q02",
+      "classification": "EXISTING_TRAINING_PATH",
+      "summaryKo": "영향 주기112 → 관용 교육946 → 기존 강의5535~5538로 상승. 사회화900과 구분.",
+      "evidence": [
+        "WORK main_screen:440",
+        "WORK menu_form:1822",
+        "WORK menu_form:4868-4893",
+        "WORK interaction_result:1758-1791",
+        "WORK get_stock_seed:283-290",
+        "game/json/slaves/2617_jasmine.json"
+      ],
+      "baseGrowth": "max(0,master_tutor+slave.intellect-slave.world_index)",
+      "refusal": "slave.obedience+slave.fear<0",
+      "templateWorldIndex": 4,
+      "initialToleranceRange": [
+        0,
+        8
+      ],
+      "menuCompleteMin": 20
+    },
+    {
+      "id": "Q03",
+      "classification": "ORIGINAL_INHERITED_SYNTAX_BUG",
+      "summaryKo": "파멜라 완료 후 재방문30045의 $text[2] 대입기호 = 누락.",
+      "workLocation": "interaction_city:25195",
+      "originalLocation": "interaction_city:23793",
+      "buggyShape": "$text[2] 'existing text'",
+      "fixedShape": "$text[2]= 'existing text'",
+      "onlyInsertedCharacter": "=",
+      "addedRuntimeState": [],
+      "changedConditions": [],
+      "changedDialogueContent": false,
+      "expectedFailure": "No completion marker within 15 seconds",
+      "controlledResult": "Both source variants fail unchanged; both pass with only equals inserted."
+    },
+    {
+      "id": "Q04",
+      "classification": "AGGREGATE_SKILL_DISTINCTION",
+      "summaryKo": "lesbiansex는 네 sub_lesbiansex 기술의 정수 평균이다. 정상0~5에서 묶음5는 네 세부기술5를 모두 요구한다.",
+      "evidence": [
+        "WORK #static_base:671"
+      ],
+      "nativeAverageCheck": {
+        "expression": "(5+5+5+4)/4",
+        "result": 4
+      },
+      "notSameAs": [
+        "homosexualism",
+        "sub_lesbiansex2 alone"
+      ]
+    },
+    {
+      "id": "Q05",
+      "classification": "NATION_RACE_LABEL_CLARIFICATION",
+      "summaryKo": "실제 저장 키는 tolerant_nation. tolerant_race 별도키 없음. 국가 평등 버튼과 민족/인종 문구가 같은 수치를 지칭한다.",
+      "evidence": [
+        "WORK menu_form:4875-4878",
+        "WORK relations_fastcalc:64-76",
+        "WORK #static_txt:2743-2748"
+      ],
+      "unresolvedTerm": "키오타: exact identifier not found in current QSP or person JSON; no key substituted by inference."
+    }
+  ],
+  "probeDesign": {
+    "realSaveLoaded": false,
+    "sourceWrites": false,
+    "renderedNarrative": false,
+    "visualImages": false,
+    "description": "Original quest branch, original city result processing, original city screen initialization. Narrative/images replaced at screen boundary; synthetic state only.",
+    "unrelatedSentinel": 24681357,
+    "checked": [
+      "branch id",
+      "page count",
+      "txt=1",
+      "Jasmine progress",
+      "Jafar progress",
+      "quest stage",
+      "slave type/state",
+      "return-lock location",
+      "two navigation objects",
+      "four tolerance boundary values",
+      "skill aggregate boundary",
+      "original stage/person menu callback gates",
+      "lecture growth/refusal/zero/genius/integer average"
+    ],
+    "limits": [
+      "No real user save values read",
+      "No save/load UI validation",
+      "No manual visual layout or image check",
+      "No full composite release claim",
+      "Return-lock value and original forward callback statically traced; no claim of all return UI clicks"
+    ]
+  },
+  "cases": [
+    {
+      "source": "work",
+      "name": "pamela-first",
+      "inputSha256": "8b9cf39fe2327079b0823f6e474c93151538a512fa8738ed5f330749a0940db5",
+      "branch": 30042,
+      "pages": 15,
+      "diagnosticEqualsRepair": false,
+      "expected": {
+        "jasmine": 2,
+        "jafar": 1,
+        "stage": 12,
+        "returnLock": "shop_general"
+      },
+      "fixtureSha256": "721cfbb6c73bffdbd2aa9089560a0affea407f7877672f8d287060336baf9147"
+    },
+    {
+      "source": "work",
+      "name": "pamela-met",
+      "inputSha256": "8b9cf39fe2327079b0823f6e474c93151538a512fa8738ed5f330749a0940db5",
+      "branch": 30044,
+      "pages": 7,
+      "diagnosticEqualsRepair": false,
+      "expected": {
+        "jasmine": 3,
+        "jafar": 1,
+        "stage": 12,
+        "returnLock": "shop_general"
+      },
+      "fixtureSha256": "dd4e60471d2640a5f413901643d06a3627bf50f5bad9bc6d4762ae4c153fc384"
+    },
+    {
+      "source": "work",
+      "name": "pamela-pride-unmet",
+      "inputSha256": "8b9cf39fe2327079b0823f6e474c93151538a512fa8738ed5f330749a0940db5",
+      "branch": 30043,
+      "pages": 3,
+      "diagnosticEqualsRepair": false,
+      "expected": {
+        "jasmine": 2,
+        "jafar": 1,
+        "stage": 12,
+        "returnLock": "shop_general"
+      },
+      "fixtureSha256": "adfb3a6d9cfeef467c85b837ed8295083f7fa6af64a0c0143d251ac309d708ef"
+    },
+    {
+      "source": "work",
+      "name": "pamela-other-person-direct",
+      "inputSha256": "8b9cf39fe2327079b0823f6e474c93151538a512fa8738ed5f330749a0940db5",
+      "branch": 30043,
+      "pages": 3,
+      "diagnosticEqualsRepair": false,
+      "expected": {
+        "jasmine": 2,
+        "jafar": 1,
+        "stage": 12,
+        "returnLock": "shop_general"
+      },
+      "fixtureSha256": "ba2ef6cbffe014c339a23cd50946d5d576d5d6cc62883898ade19a105389b493"
+    },
+    {
+      "source": "work",
+      "name": "pamela-postdone",
+      "inputSha256": "8b9cf39fe2327079b0823f6e474c93151538a512fa8738ed5f330749a0940db5",
+      "branch": 30045,
+      "pages": 3,
+      "diagnosticEqualsRepair": false,
+      "expected": {
+        "jasmine": 3,
+        "jafar": 1,
+        "stage": 12,
+        "returnLock": "shop_general"
+      },
+      "fixtureSha256": "9e0a862e26dbc99ceba3ce5e4dee7538846178bbe350d6ba8e7c73a784adb8f2"
+    },
+    {
+      "source": "work",
+      "name": "pamela-postdone-equals-only",
+      "inputSha256": "8b9cf39fe2327079b0823f6e474c93151538a512fa8738ed5f330749a0940db5",
+      "branch": 30045,
+      "pages": 3,
+      "diagnosticEqualsRepair": true,
+      "expected": {
+        "jasmine": 3,
+        "jafar": 1,
+        "stage": 12,
+        "returnLock": "shop_general"
+      },
+      "fixtureSha256": "3e03e2326fb5f75c1a191ceffa5ff21601bc6a65abbbee9f461bcdc8b514216d"
+    },
+    {
+      "source": "work",
+      "name": "jafar-first",
+      "inputSha256": "8b9cf39fe2327079b0823f6e474c93151538a512fa8738ed5f330749a0940db5",
+      "branch": 301160,
+      "pages": 8,
+      "diagnosticEqualsRepair": false,
+      "expected": {
+        "jasmine": 2,
+        "jafar": 1,
+        "stage": 12,
+        "returnLock": "shop_general"
+      },
+      "fixtureSha256": "a62bec954a457152edc2cc5e471cb45021c4e10c6f3b70c07a6932e8613df328"
+    },
+    {
+      "source": "work",
+      "name": "jafar-met",
+      "inputSha256": "8b9cf39fe2327079b0823f6e474c93151538a512fa8738ed5f330749a0940db5",
+      "branch": 301162,
+      "pages": 10,
+      "diagnosticEqualsRepair": false,
+      "expected": {
+        "jasmine": 2,
+        "jafar": 2,
+        "stage": 13,
+        "returnLock": "city_menu_form"
+      },
+      "fixtureSha256": "375ee7306b55a6af632fce7776211330df6e835b57b0e80bad8b7b14f9e9ebab"
+    },
+    {
+      "source": "work",
+      "name": "jafar-tolerance-zero",
+      "inputSha256": "8b9cf39fe2327079b0823f6e474c93151538a512fa8738ed5f330749a0940db5",
+      "branch": 301161,
+      "pages": 1,
+      "diagnosticEqualsRepair": false,
+      "expected": {
+        "jasmine": 2,
+        "jafar": 1,
+        "stage": 12,
+        "returnLock": "shop_general"
+      },
+      "fixtureSha256": "ac04e83a96f3a73d915b65b2624828ca3dac56abf3b7113024d9e85788463630"
+    },
+    {
+      "source": "work",
+      "name": "jafar-world-fifteen",
+      "inputSha256": "8b9cf39fe2327079b0823f6e474c93151538a512fa8738ed5f330749a0940db5",
+      "branch": 301161,
+      "pages": 1,
+      "diagnosticEqualsRepair": false,
+      "expected": {
+        "jasmine": 2,
+        "jafar": 1,
+        "stage": 12,
+        "returnLock": "shop_general"
+      },
+      "fixtureSha256": "af0d46506388471d6fa9ff11c52f84acd49b098128d532e3e8cc7bd101b12679"
+    },
+    {
+      "source": "work",
+      "name": "jafar-nation-fifteen",
+      "inputSha256": "8b9cf39fe2327079b0823f6e474c93151538a512fa8738ed5f330749a0940db5",
+      "branch": 301161,
+      "pages": 1,
+      "diagnosticEqualsRepair": false,
+      "expected": {
+        "jasmine": 2,
+        "jafar": 1,
+        "stage": 12,
+        "returnLock": "shop_general"
+      },
+      "fixtureSha256": "1c9ff760c7fe404b59766b1d6e3dc4677383925eec09df1c72a35d65952811dd"
+    },
+    {
+      "source": "work",
+      "name": "jafar-family-fifteen",
+      "inputSha256": "8b9cf39fe2327079b0823f6e474c93151538a512fa8738ed5f330749a0940db5",
+      "branch": 301161,
+      "pages": 1,
+      "diagnosticEqualsRepair": false,
+      "expected": {
+        "jasmine": 2,
+        "jafar": 1,
+        "stage": 12,
+        "returnLock": "shop_general"
+      },
+      "fixtureSha256": "9461757058715baa0b6bc88b3c12b62c801e4813a9857dea7d3d4d1403163f1b"
+    },
+    {
+      "source": "work",
+      "name": "jafar-work-fifteen",
+      "inputSha256": "8b9cf39fe2327079b0823f6e474c93151538a512fa8738ed5f330749a0940db5",
+      "branch": 301161,
+      "pages": 1,
+      "diagnosticEqualsRepair": false,
+      "expected": {
+        "jasmine": 2,
+        "jafar": 1,
+        "stage": 12,
+        "returnLock": "shop_general"
+      },
+      "fixtureSha256": "0be407c775df4b24066db74df8c11200b413b7430fae671c186f42e17466bf06"
+    },
+    {
+      "source": "work",
+      "name": "jafar-skill-four",
+      "inputSha256": "8b9cf39fe2327079b0823f6e474c93151538a512fa8738ed5f330749a0940db5",
+      "branch": 301161,
+      "pages": 1,
+      "diagnosticEqualsRepair": false,
+      "expected": {
+        "jasmine": 2,
+        "jafar": 1,
+        "stage": 12,
+        "returnLock": "shop_general"
+      },
+      "fixtureSha256": "675941798915a40d94ccb705dbdb1ff7ada997c5ababc137b9c7dc3dada24135"
+    },
+    {
+      "source": "work",
+      "name": "jafar-other-person",
+      "inputSha256": "8b9cf39fe2327079b0823f6e474c93151538a512fa8738ed5f330749a0940db5",
+      "branch": 301161,
+      "pages": 8,
+      "diagnosticEqualsRepair": false,
+      "expected": {
+        "jasmine": 2,
+        "jafar": 1,
+        "stage": 12,
+        "returnLock": "shop_general"
+      },
+      "fixtureSha256": "de408c67366413ac40c40da128050be523e5045808cb1483c75d703c6f1220f1"
+    },
+    {
+      "source": "work",
+      "name": "jafar-no-slave",
+      "inputSha256": "8b9cf39fe2327079b0823f6e474c93151538a512fa8738ed5f330749a0940db5",
+      "branch": 301161,
+      "pages": 8,
+      "diagnosticEqualsRepair": false,
+      "expected": {
+        "jasmine": 2,
+        "jafar": 1,
+        "stage": 12,
+        "returnLock": "shop_general"
+      },
+      "fixtureSha256": "d43760f90babd95bdd4b09ec9c7970000f5ee9d15aef73f27a368e21ad287f96"
+    },
+    {
+      "source": "original",
+      "name": "pamela-first",
+      "inputSha256": "26e15aaf30b6226a2883c6b532a6ee4eed34791110618597d234bb7d6fa3e052",
+      "branch": 30042,
+      "pages": 15,
+      "diagnosticEqualsRepair": false,
+      "expected": {
+        "jasmine": 2,
+        "jafar": 1,
+        "stage": 12,
+        "returnLock": "shop_general"
+      },
+      "fixtureSha256": "963bb0a9f152525a790ebd88039d5cae18fe88e01f9c966f90005e5ec99af632"
+    },
+    {
+      "source": "original",
+      "name": "pamela-met",
+      "inputSha256": "26e15aaf30b6226a2883c6b532a6ee4eed34791110618597d234bb7d6fa3e052",
+      "branch": 30044,
+      "pages": 7,
+      "diagnosticEqualsRepair": false,
+      "expected": {
+        "jasmine": 3,
+        "jafar": 1,
+        "stage": 12,
+        "returnLock": "shop_general"
+      },
+      "fixtureSha256": "74fe642d68dcafc859f6244312a969f2c6ad81cab013ea80654b1dd9d036e4ce"
+    },
+    {
+      "source": "original",
+      "name": "pamela-pride-unmet",
+      "inputSha256": "26e15aaf30b6226a2883c6b532a6ee4eed34791110618597d234bb7d6fa3e052",
+      "branch": 30043,
+      "pages": 3,
+      "diagnosticEqualsRepair": false,
+      "expected": {
+        "jasmine": 2,
+        "jafar": 1,
+        "stage": 12,
+        "returnLock": "shop_general"
+      },
+      "fixtureSha256": "964d1ae558be141032a5f313426bf30ded5dc9c97682276d213c550d289be0bd"
+    },
+    {
+      "source": "original",
+      "name": "pamela-postdone",
+      "inputSha256": "26e15aaf30b6226a2883c6b532a6ee4eed34791110618597d234bb7d6fa3e052",
+      "branch": 30045,
+      "pages": 3,
+      "diagnosticEqualsRepair": false,
+      "expected": {
+        "jasmine": 3,
+        "jafar": 1,
+        "stage": 12,
+        "returnLock": "shop_general"
+      },
+      "fixtureSha256": "1607025fe41dad0a11c3daa873638feb0dcdad9725d2d55d6e171b9f15158a21"
+    },
+    {
+      "source": "original",
+      "name": "pamela-postdone-equals-only",
+      "inputSha256": "26e15aaf30b6226a2883c6b532a6ee4eed34791110618597d234bb7d6fa3e052",
+      "branch": 30045,
+      "pages": 3,
+      "diagnosticEqualsRepair": true,
+      "expected": {
+        "jasmine": 3,
+        "jafar": 1,
+        "stage": 12,
+        "returnLock": "shop_general"
+      },
+      "fixtureSha256": "cb81496f8f0916dc760fc659d6f36d69d8b9f1bf419c2f6e3903a0624bc49a9d"
+    },
+    {
+      "source": "original",
+      "name": "jafar-met",
+      "inputSha256": "26e15aaf30b6226a2883c6b532a6ee4eed34791110618597d234bb7d6fa3e052",
+      "branch": 301162,
+      "pages": 10,
+      "diagnosticEqualsRepair": false,
+      "expected": {
+        "jasmine": 2,
+        "jafar": 2,
+        "stage": 13,
+        "returnLock": "city_menu_form"
+      },
+      "fixtureSha256": "abe5c287f48d5939747408708649843c37e36c75e7c1cc9136913b4d6276b4c3"
+    },
+    {
+      "source": "original",
+      "name": "jafar-tolerance-zero",
+      "inputSha256": "26e15aaf30b6226a2883c6b532a6ee4eed34791110618597d234bb7d6fa3e052",
+      "branch": 301161,
+      "pages": 1,
+      "diagnosticEqualsRepair": false,
+      "expected": {
+        "jasmine": 2,
+        "jafar": 1,
+        "stage": 12,
+        "returnLock": "shop_general"
+      },
+      "fixtureSha256": "eaac40f23319a9c60c3a116563af061c8d379d0f6d789390cd5f2d00de600d44"
+    }
+  ],
+  "auxiliary": {
+    "lectureRange": [
+      1758,
+      1793
+    ],
+    "menuCases": [
+      {
+        "setup": "",
+        "callback": "Russiankvartal_forest",
+        "want": 30041,
+        "not": [
+          30045
+        ]
+      },
+      {
+        "setup": "npc_progress['jasmine']=3",
+        "callback": "Russiankvartal_forest",
+        "want": 30045,
+        "not": [
+          30041
+        ]
+      },
+      {
+        "setup": "active['QA']=13\nnpc_progress['Jafar']=2",
+        "callback": "Russiankvartal_forest",
+        "want": 1200,
+        "not": [
+          30041,
+          30045
+        ]
+      },
+      {
+        "setup": "active['QA']=12\nnpc_progress['jasmine']=2\nnpc_progress['Jafar']=0\nslave_type=1",
+        "callback": "Russiankvartal_forest",
+        "want": 30040,
+        "not": [
+          30041,
+          30045
+        ]
+      },
+      {
+        "setup": "active['QA']=12",
+        "callback": "Agraba_castle",
+        "want": 30116,
+        "not": []
+      },
+      {
+        "setup": "active['QA']=13",
+        "callback": "Agraba_castle",
+        "want": 3000,
+        "not": [
+          30116
+        ]
+      }
+    ],
+    "harnessCorrection": "Initial reduced full-options fixture omitted unrelated jo9_buyer_rumors refresh helper. Retested only exact original forest/castle callbacks; passed. Not classified as a product defect."
+  },
+  "runs": [
+    {
+      "name": "baseline",
+      "results": [
+        {
+          "name": "work-pamela-first",
+          "checkpoint": "neutral interaction_screen_city completion",
+          "pass": true,
+          "reason": "",
+          "durationMs": 550,
+          "expectedPass": true,
+          "matchedExpectation": true
+        },
+        {
+          "name": "work-pamela-met",
+          "checkpoint": "neutral interaction_screen_city completion",
+          "pass": true,
+          "reason": "",
+          "durationMs": 522,
+          "expectedPass": true,
+          "matchedExpectation": true
+        },
+        {
+          "name": "work-pamela-pride-unmet",
+          "checkpoint": "neutral interaction_screen_city completion",
+          "pass": true,
+          "reason": "",
+          "durationMs": 529,
+          "expectedPass": true,
+          "matchedExpectation": true
+        },
+        {
+          "name": "work-pamela-other-person-direct",
+          "checkpoint": "neutral interaction_screen_city completion",
+          "pass": true,
+          "reason": "",
+          "durationMs": 542,
+          "expectedPass": true,
+          "matchedExpectation": true
+        },
+        {
+          "name": "work-pamela-postdone",
+          "checkpoint": "neutral interaction_screen_city completion",
+          "pass": false,
+          "reason": "Completion marker timeout",
+          "durationMs": 15222,
+          "expectedPass": false,
+          "matchedExpectation": true
+        },
+        {
+          "name": "work-jafar-first",
+          "checkpoint": "neutral interaction_screen_city completion",
+          "pass": true,
+          "reason": "",
+          "durationMs": 552,
+          "expectedPass": true,
+          "matchedExpectation": true
+        },
+        {
+          "name": "work-jafar-met",
+          "checkpoint": "neutral interaction_screen_city completion",
+          "pass": true,
+          "reason": "",
+          "durationMs": 525,
+          "expectedPass": true,
+          "matchedExpectation": true
+        },
+        {
+          "name": "work-jafar-tolerance-zero",
+          "checkpoint": "neutral interaction_screen_city completion",
+          "pass": true,
+          "reason": "",
+          "durationMs": 531,
+          "expectedPass": true,
+          "matchedExpectation": true
+        },
+        {
+          "name": "work-jafar-world-fifteen",
+          "checkpoint": "neutral interaction_screen_city completion",
+          "pass": true,
+          "reason": "",
+          "durationMs": 535,
+          "expectedPass": true,
+          "matchedExpectation": true
+        },
+        {
+          "name": "work-jafar-nation-fifteen",
+          "checkpoint": "neutral interaction_screen_city completion",
+          "pass": true,
+          "reason": "",
+          "durationMs": 543,
+          "expectedPass": true,
+          "matchedExpectation": true
+        },
+        {
+          "name": "work-jafar-family-fifteen",
+          "checkpoint": "neutral interaction_screen_city completion",
+          "pass": true,
+          "reason": "",
+          "durationMs": 540,
+          "expectedPass": true,
+          "matchedExpectation": true
+        },
+        {
+          "name": "work-jafar-work-fifteen",
+          "checkpoint": "neutral interaction_screen_city completion",
+          "pass": true,
+          "reason": "",
+          "durationMs": 522,
+          "expectedPass": true,
+          "matchedExpectation": true
+        },
+        {
+          "name": "work-jafar-skill-four",
+          "checkpoint": "neutral interaction_screen_city completion",
+          "pass": true,
+          "reason": "",
+          "durationMs": 530,
+          "expectedPass": true,
+          "matchedExpectation": true
+        },
+        {
+          "name": "work-jafar-other-person",
+          "checkpoint": "neutral interaction_screen_city completion",
+          "pass": true,
+          "reason": "",
+          "durationMs": 525,
+          "expectedPass": true,
+          "matchedExpectation": true
+        },
+        {
+          "name": "work-jafar-no-slave",
+          "checkpoint": "neutral interaction_screen_city completion",
+          "pass": true,
+          "reason": "",
+          "durationMs": 519,
+          "expectedPass": true,
+          "matchedExpectation": true
+        },
+        {
+          "name": "original-pamela-first",
+          "checkpoint": "neutral interaction_screen_city completion",
+          "pass": true,
+          "reason": "",
+          "durationMs": 538,
+          "expectedPass": true,
+          "matchedExpectation": true
+        },
+        {
+          "name": "original-pamela-met",
+          "checkpoint": "neutral interaction_screen_city completion",
+          "pass": true,
+          "reason": "",
+          "durationMs": 538,
+          "expectedPass": true,
+          "matchedExpectation": true
+        },
+        {
+          "name": "original-pamela-pride-unmet",
+          "checkpoint": "neutral interaction_screen_city completion",
+          "pass": true,
+          "reason": "",
+          "durationMs": 534,
+          "expectedPass": true,
+          "matchedExpectation": true
+        },
+        {
+          "name": "original-jafar-met",
+          "checkpoint": "neutral interaction_screen_city completion",
+          "pass": true,
+          "reason": "",
+          "durationMs": 534,
+          "expectedPass": true,
+          "matchedExpectation": true
+        },
+        {
+          "name": "original-jafar-tolerance-zero",
+          "checkpoint": "neutral interaction_screen_city completion",
+          "pass": true,
+          "reason": "",
+          "durationMs": 523,
+          "expectedPass": true,
+          "matchedExpectation": true
+        }
+      ]
+    },
+    {
+      "name": "equals-comparison",
+      "results": [
+        {
+          "name": "work-pamela-postdone-equals-only",
+          "checkpoint": "neutral interaction_screen_city completion",
+          "pass": true,
+          "reason": "",
+          "durationMs": 547,
+          "expectedPass": true,
+          "matchedExpectation": true
+        },
+        {
+          "name": "original-pamela-postdone",
+          "checkpoint": "neutral interaction_screen_city completion",
+          "pass": false,
+          "reason": "Completion marker timeout",
+          "durationMs": 15108,
+          "expectedPass": false,
+          "matchedExpectation": true
+        },
+        {
+          "name": "original-pamela-postdone-equals-only",
+          "checkpoint": "neutral interaction_screen_city completion",
+          "pass": true,
+          "reason": "",
+          "durationMs": 521,
+          "expectedPass": true,
+          "matchedExpectation": true
+        }
+      ]
+    },
+    {
+      "name": "auxiliary",
+      "results": [
+        {
+          "name": "lecture-growth",
+          "checkpoint": "original lecture block: four fields, refusal, zero growth, genius multiplier, integer average",
+          "pass": true,
+          "reason": "",
+          "durationMs": 553,
+          "expectedPass": true,
+          "matchedExpectation": true
+        },
+        {
+          "name": "menu-gates",
+          "checkpoint": "six original menu callback stage/person gates",
+          "pass": true,
+          "reason": "",
+          "durationMs": 532,
+          "expectedPass": true,
+          "matchedExpectation": true
+        }
+      ]
+    },
+    {
+      "name": "exact-final-one-character",
+      "results": [
+        {
+          "name": "work-pamela-postdone-equals-only",
+          "checkpoint": "neutral interaction_screen_city completion",
+          "pass": true,
+          "reason": "",
+          "durationMs": 302,
+          "expectedPass": true,
+          "matchedExpectation": true
+        },
+        {
+          "name": "original-pamela-postdone-equals-only",
+          "checkpoint": "neutral interaction_screen_city completion",
+          "pass": true,
+          "reason": "",
+          "durationMs": 527,
+          "expectedPass": true,
+          "matchedExpectation": true
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "executions": 27,
+    "expectedFailures": 2,
+    "allOutcomesMatched": true
+  },
+  "fragment": {
+    "module": "quest-edits.cjs",
+    "export": "buildQuestEdits",
+    "fragmentCount": 1,
+    "location": "interaction_city",
+    "field": "body",
+    "scope": "exact 30045 block",
+    "insertedCharacters": 1,
+    "insertedText": "=",
+    "standaloneAfterSha256": "3830581ba3fbb34cc68b84ed0b376f09f89114205332284071da0f088a03a3e3",
+    "idempotent": true,
+    "rootIntegrationPending": true
+  },
+  "cleanup": {
+    "diagnosticDirectory": "G:/Codex/tmp/shop-text-quest-20261026/quest",
+    "regenerableFilesOnly": true,
+    "status": "COMPLETE",
+    "removedDiagnosticFiles": 81,
+    "targetExistsAfter": false,
+    "checkedNoReparsePoints": true,
+    "checkedSaveDirectoryEmpty": true
+  }
+}

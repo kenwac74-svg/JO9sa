@@ -1,0 +1,54 @@
+{
+  "schema": 1,
+  "source": "G:\\Codex\\tmp\\jo9-disposition-20261023\\candidate.qsp",
+  "sourceSha256": "daa953cd391d8268a57724d27b54194e71378dc9ef54ad1e79279cce6897d7db",
+  "stateSave": "G:\\somi\\Jack O Nine Tails v2.4_work\\game\\save\\UI_TEST_MENU.sav",
+  "stateSaveSha256": "430e8eabc5c483db23440082c46df7fbde021c592f893de779afb9bd795a0ed5",
+  "primedAssignments": 37548,
+  "output": "G:\\Codex\\tmp\\jo9-disposition-20261023\\green-verified",
+  "actualLocationSha256": {
+    "stock_to_slave_nogt": "0e77fb42046b6119c37404581b8243ed7758b113ed8df71c79331c6a2eb51d51",
+    "expert_to_slave": "c3e827fa6cf5960b9a39624cec10e6e13a2e42c241bea83989b607c876490460",
+    "jo9_traits": "eace18dd2ff48d21edc99e2410c2c1eeb367e0354d8fa048e9610f9cc3084902"
+  },
+  "fixtures": [
+    {
+      "name": "stock-acquisition",
+      "cases": 12,
+      "sha256": "b9f0a288baead9fa784ccedf255195d252a32beea3c60d57e561533d919119b8"
+    },
+    {
+      "name": "expert-acquisition",
+      "cases": 12,
+      "sha256": "2f6c61b6c91f8dfdbf44c1f7079f741f1b3a0c903702e281eb6817461e4577b8"
+    },
+    {
+      "name": "acquisition-guards",
+      "cases": 8,
+      "sha256": "7c80cbdbd5f1639cf9f138eece7e8b9ba3d6736f98db90eed2738eeea6ac4e7f"
+    },
+    {
+      "name": "trait-ui",
+      "cases": 10,
+      "sha256": "b75f97ba4458e42a300425afab411d9dc3b249347f70272b591c35407ddcc59c"
+    }
+  ],
+  "descriptionProbe": {
+    "file": "G:\\Codex\\tmp\\jo9-disposition-20261023\\green-verified\\trait-description.qsp",
+    "expectedMessage": "천성적으로 노예 생활을 받아들이며, 새 주인의 기본 명령에도 순순히 따른다. 획득할 때부터 기초 복종훈련이 되어 있어 복종시키는 시간을 들이지 않아도 된다. 다만 일에 필요한 기술과 체력은 별개다.",
+    "actualSourceUnmodified": true,
+    "standardRunnerCompatible": false,
+    "reason": "Expected native description MSG, not a JO9_QA completion marker."
+  },
+  "engine": "G:\\somi\\Jack O Nine Tails v2.4_work\\game\\engine\\jack.exe",
+  "runner": "G:/somi/JO9sa/tools/qa/run-client-smoke.ps1",
+  "limits": [
+    "Preparation only. Native completion markers are required before claiming PASS.",
+    "Only Start is replaced in disposable complete-world copies; product acquisition/trait source is unmodified.",
+    "Savecodec and qa.primeState reconstruct representative state; this does not test GUI saved-script restoration or CRC loading.",
+    "Randomized probability and general JSON seed defaults require separate probes; broken-basic explicitly loads get_stock_seed with a controlled basic personality.",
+    "UI probe executes list and editor code for six roles, plus eligible editor toggles. Description MSG has a separate raw-message fixture; no invalid-editor popup is invoked.",
+    "Ordinary professional/health sale requirements remain separate from initial obedient state.",
+    "No source QSP, JSON or existing save is written. Reinit and no-flag comparisons cover explicit economic/personality/skill sentinels, not every possible array key."
+  ]
+}

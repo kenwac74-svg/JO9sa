@@ -1,0 +1,76 @@
+{
+  "status": "PASS",
+  "nativeSaves": [
+    {
+      "name": "decor",
+      "baseFile": "05_single-settlement.sav",
+      "deltaFile": "native-decor.json.gz",
+      "compressedBytes": 150852,
+      "targetSha256": "56a3cb22003a8536e6ef8b0aa9e4277f50e87d993859a839a7babfcf28d5271b",
+      "observed": {
+        "money": 360,
+        "day": 102,
+        "pending": 0,
+        "estate": "white_house"
+      },
+      "exactReconstruction": true
+    },
+    {
+      "name": "relocation",
+      "baseFile": "02_occupied-relocation.sav",
+      "deltaFile": "native-relocation.json.gz",
+      "compressedBytes": 148944,
+      "targetSha256": "9964e6bcc073a347e9392d6a0f4dcc653070033fac5b19f5acbeb52a97ed3802",
+      "observed": {
+        "money": 11306,
+        "day": 102,
+        "pending": 0,
+        "estate": "slum_house",
+        "facilitiesAndResidentsCleared": true,
+        "actorQuestFailed": true,
+        "actorQuestSucceeded": false
+      },
+      "exactReconstruction": true
+    },
+    {
+      "name": "contract",
+      "baseFile": "09_contract-return.sav",
+      "deltaFile": "native-contract.json.gz",
+      "compressedBytes": 149675,
+      "targetSha256": "124a555cf9de325f582cb3dcd936a7476f1a33953566da4cd616cbc5dfccf4fc",
+      "observed": {
+        "money": 11104,
+        "day": 102,
+        "pending": 0,
+        "estate": "slum_house",
+        "facilitiesAndResidentsCleared": true,
+        "contractClosed": true,
+        "questActive": false
+      },
+      "exactReconstruction": true
+    }
+  ],
+  "strictLoad": {
+    "unmodifiedWork": true,
+    "ignoreCRC": false,
+    "files": [
+      "05_single-settlement.sav",
+      "07_slave-trait-ui.sav",
+      "08_assistant-trait-ui.sav",
+      "02_occupied-relocation.sav",
+      "09_contract-return.sav"
+    ],
+    "crcWarnings": 0
+  },
+  "visualChecks": [
+    "07: profile loaded; continuous upper-left frame, compact groups, footer text and grade colors visible.",
+    "07: footer opens two trait columns plus brown title column; healthy constitution click updates lower description without exact effect numbers.",
+    "08: assistant heading opens same three-column view; versatile title click updates lower description without blocking popup.",
+    "05: decor click returns to home with money360; 02: relocation click returns to slum with11306;09: failure-return relocation returns to slum with11104."
+  ],
+  "limits": [
+    "All nine were created through native Game Load and SAVEGAME and independently inspected. Final strict-load interactions covered five representative files, not all gameplay paths.",
+    "No game runtime or personal save was edited. UI07/08 are artificial display fixtures, not growth-balance fixtures."
+  ],
+  "restore": "node native-evidence.cjs --restore delta.json.gz installed-base.sav unique-output.sav"
+}

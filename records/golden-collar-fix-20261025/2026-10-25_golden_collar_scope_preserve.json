@@ -1,0 +1,15 @@
+{
+  "id": "2026-10-25_golden_collar_scope_preserve",
+  "description": "금장 목줄 거부 A안 대상 8종 이외 역할의 기존 콜백을 그대로 보존.",
+  "before_sha256": "c058aa4f9cdfa594f3c098b8d8b396a250765fcdbb8ffc2bd00797055341d708",
+  "after_sha256": "a70bd177d8e7ade58243578b2f04745ff00cec3884d26d3b924dfffc8a8d007a",
+  "edits": [
+    {
+      "location": "#item_base",
+      "field": "body",
+      "old": "! JO9 MOD END GOLDEN_COLLAR_REFUSAL_RETURN_20261025\r\n\t\t\tgt 'choice_screen'",
+      "new": "! JO9 MOD END GOLDEN_COLLAR_REFUSAL_RETURN_20261025\r\n! JO9 MOD START GOLDEN_COLLAR_OTHER_ROLES_PRESERVED_20261025\r\nif instr('|slave|assistant|prisoner|cow|room1|room2|room3|room4|', '|' + 'dynslave' + '|') = 0:\r\n$yes = {\r\n\t\t\t\tif 'dynslave' = 'slave' and dynslave['gladiatrix'] > max(0, master_supermacy - master_style):\r\n\t\t\t\t\tdynamic $slave_fights_back\r\n\t\t\t\telse\r\n\t\t\t\t\tdynamic $replace($dyn_slave_forced, 'dyn'+'slave', 'dynslave')\r\n\t\t\t\t\tdynslave_stat_screen = 2 & menu_form = 0 & gt iif('dynslave' = 'slave' or 'dynslave' = 'assistant', 'dynslave_stat', $return_lock)\r\n\t\t\t\tend\r\n\t\t\t}\r\n\t\t\t$no = {\r\n\t\t\t\t$dynslave['collar'] = 'пусто' &! empty\r\n\t\t\t\tdynslave_inventory['golden_collar'] += 1\r\n\t\t\t\tdynslave_stat_screen = 2 & menu_form = 0 & gt iif('dynslave' = 'slave' or 'dynslave' = 'assistant', 'dynslave_stat', $return_lock)\r\n\t\t\t}\r\nend\r\n! JO9 MOD END GOLDEN_COLLAR_OTHER_ROLES_PRESERVED_20261025\r\n\t\t\tgt 'choice_screen'",
+      "count": 1
+    }
+  ]
+}

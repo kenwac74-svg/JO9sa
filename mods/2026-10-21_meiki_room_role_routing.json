@@ -1,0 +1,16 @@
+{
+  "id": "2026-10-21_meiki_room_role_routing",
+  "description": "Extend existing role routing to room1..4 with the current slave/assistant conditions; no new state, probability, reset, migration, or retroactive roll.",
+  "target": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+  "before_sha256": "b4aac51a0654c8344066c8277b54118ec5d219fe5ba473c7ca61137bae51506f",
+  "after_sha256": "498e7fcaa2c116e382ab73ffe38549762297cce945247c2b8ad27509ba874fe0",
+  "edits": [
+    {
+      "location": "jo9_meiki_willing",
+      "field": "body",
+      "old": "! JO9 MOD END J9M3026\r\n",
+      "new": "! JO9 MOD END J9M3026\r\n! JO9 MOD START MEIKI_ROOM_ROLE_ROUTING_20261021\r\n! room1..4 use the existing slave/assistant actor and args[1] trait checks.\r\nif $args[0] = 'room1':\r\n\t! JO9 MOD START CHECK_CALL_ROOM1\r\n\t! actor check returns 0 or 1; enclosing result/trait logic follows.\r\n\tif func('jo9_meiki_checks', 'actor', room1_state) = 1:\r\n\t\tresult = 1\r\n\t\tif args[1] = 1:\r\n\t\t\tresult = 0\r\n\t\t\tif room1['virginity'] = 4 or (room1['jo9_meiki_known'] = 1 and (room1['virginity'] = 2 or room1['virginity'] = 3)):\r\n\t\t\t\tresult = 1\r\n\t\t\tend\r\n\t\tend\r\n\tend\r\n\t! JO9 MOD END CHECK_CALL_ROOM1\r\nend\r\nif $args[0] = 'room2':\r\n\t! JO9 MOD START CHECK_CALL_ROOM2\r\n\t! actor check returns 0 or 1; enclosing result/trait logic follows.\r\n\tif func('jo9_meiki_checks', 'actor', room2_state) = 1:\r\n\t\tresult = 1\r\n\t\tif args[1] = 1:\r\n\t\t\tresult = 0\r\n\t\t\tif room2['virginity'] = 4 or (room2['jo9_meiki_known'] = 1 and (room2['virginity'] = 2 or room2['virginity'] = 3)):\r\n\t\t\t\tresult = 1\r\n\t\t\tend\r\n\t\tend\r\n\tend\r\n\t! JO9 MOD END CHECK_CALL_ROOM2\r\nend\r\nif $args[0] = 'room3':\r\n\t! JO9 MOD START CHECK_CALL_ROOM3\r\n\t! actor check returns 0 or 1; enclosing result/trait logic follows.\r\n\tif func('jo9_meiki_checks', 'actor', room3_state) = 1:\r\n\t\tresult = 1\r\n\t\tif args[1] = 1:\r\n\t\t\tresult = 0\r\n\t\t\tif room3['virginity'] = 4 or (room3['jo9_meiki_known'] = 1 and (room3['virginity'] = 2 or room3['virginity'] = 3)):\r\n\t\t\t\tresult = 1\r\n\t\t\tend\r\n\t\tend\r\n\tend\r\n\t! JO9 MOD END CHECK_CALL_ROOM3\r\nend\r\nif $args[0] = 'room4':\r\n\t! JO9 MOD START CHECK_CALL_ROOM4\r\n\t! actor check returns 0 or 1; enclosing result/trait logic follows.\r\n\tif func('jo9_meiki_checks', 'actor', room4_state) = 1:\r\n\t\tresult = 1\r\n\t\tif args[1] = 1:\r\n\t\t\tresult = 0\r\n\t\t\tif room4['virginity'] = 4 or (room4['jo9_meiki_known'] = 1 and (room4['virginity'] = 2 or room4['virginity'] = 3)):\r\n\t\t\t\tresult = 1\r\n\t\t\tend\r\n\t\tend\r\n\tend\r\n\t! JO9 MOD END CHECK_CALL_ROOM4\r\nend\r\n! JO9 MOD END MEIKI_ROOM_ROLE_ROUTING_20261021\r\n",
+      "count": 1
+    }
+  ]
+}
