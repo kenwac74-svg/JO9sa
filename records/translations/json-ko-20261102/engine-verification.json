@@ -1,0 +1,94 @@
+{
+  "schema": 1,
+  "profile": "scoped-json-display-compatibility",
+  "qa_ref": "origin/main",
+  "checks": [
+    {
+      "name": "export-current-qa-dependencies",
+      "status": "PASS",
+      "detail": {
+        "commit": "49458e65c6f3ee9d3d072e976fc4fe5a43b1013a",
+        "files": [
+          "tools/text-workshop/core.cjs",
+          "tools/qa/check-qsp-line-endings.cjs",
+          "tools/qa/check-qsp-marker-boundaries.cjs",
+          "tools/qa/run-client-smoke.ps1",
+          "tools/apply_mods.ps1"
+        ]
+      }
+    },
+    {
+      "name": "candidate-and-markers",
+      "status": "PASS",
+      "detail": {
+        "schema": 1,
+        "id": "JSON_HISTORY_KO_DISPLAY_20261102",
+        "before_sha256": "6cc7066736cae7fc428d58f89fbf659f06ee6feae8c710d810ee67c99467d505",
+        "after_sha256": "86e1e6d79ed7c46f680672029a28dce224b15f7705f0258257516211c8ba5474",
+        "mappings": 244,
+        "locations_before": 277,
+        "locations_after": 278,
+        "changed_locations": [
+          "#dynamic",
+          "interaction",
+          "origins_relations"
+        ],
+        "added_locations": [
+          "jo9_json_ko"
+        ],
+        "roundtrip": true,
+        "crlf": true,
+        "unrelated_locations_preserved": true,
+        "live_apply": false
+      }
+    },
+    {
+      "name": "official-patch-replay-idempotence",
+      "status": "PASS",
+      "detail": {
+        "byteExact": true,
+        "idempotent": true
+      }
+    },
+    {
+      "name": "prepare-isolated-synthetic-probe",
+      "status": "PASS",
+      "detail": {
+        "assertions": 263,
+        "checkpoint": "synthetic-old-history-cache-and-relation",
+        "marker": "JO9_QA_0DCF7758BC5625F9254B_json_ko_COMPLETE"
+      }
+    },
+    {
+      "name": "current-installed-engine-synthetic-path",
+      "status": "PASS",
+      "detail": {
+        "assertions": 263,
+        "completionMarker": true,
+        "isolatedEngineSha256": "f75032d79ecb58eeb7b969cd3f774d66b091fca38a360acdabd782e03a46c6e6"
+      }
+    },
+    {
+      "name": "input-files-unchanged",
+      "status": "PASS",
+      "detail": {
+        "files": 4
+      }
+    }
+  ],
+  "limits": [
+    "No personal saves, GUI save loading, or visual layout inspected.",
+    "Only edited voice-cache guard and complete relation code are exercised; this is not a full release or gameplay test."
+  ],
+  "qa_commit": "49458e65c6f3ee9d3d072e976fc4fe5a43b1013a",
+  "client": [
+    {
+      "name": "json-ko",
+      "checkpoint": "synthetic-old-history-cache-and-relation",
+      "pass": true,
+      "reason": "",
+      "durationMs": 2947
+    }
+  ],
+  "verdict": "SCOPED_NATIVE_PASS"
+}
