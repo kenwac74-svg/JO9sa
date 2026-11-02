@@ -1,0 +1,75 @@
+{
+  "status": "PASS",
+  "scope": "Regex constructor only; no migration execution or runtime write.",
+  "originalScript": "G:/somi/JO9sa/records/ui-live-consolidation-20261027/scripts/prepare-migration.cjs",
+  "correctedScript": "G:/somi/JO9sa/records/battle-effect-isolation-20261027/prepare-migration-corrected.cjs",
+  "regex": "(?:content[\\\\/]+pic[\\\\/]+milk_can\\.png|content[\\\\/]+pic[\\\\/]+milk_can|content[\\\\/]+pic[\\\\/]+bg\\.png|content[\\\\/]+pic[\\\\/]+bg)(?![\\/])(?=$|[\\s\"'<>?#,)\\]+])",
+  "cases": [
+    {
+      "input": "content/pic/bg.png",
+      "expected": "content/pic/ui/frames/legacy/bg.png",
+      "actual": "content/pic/ui/frames/legacy/bg.png",
+      "pass": true
+    },
+    {
+      "input": "content/pic/bg",
+      "expected": "content/pic/ui/frames/legacy/bg",
+      "actual": "content/pic/ui/frames/legacy/bg",
+      "pass": true
+    },
+    {
+      "input": "content/pic/bg/beach.png",
+      "expected": "content/pic/bg/beach.png",
+      "actual": "content/pic/bg/beach.png",
+      "pass": true
+    },
+    {
+      "input": "content\\pic\\bg\\beach.png",
+      "expected": "content\\pic\\bg\\beach.png",
+      "actual": "content\\pic\\bg\\beach.png",
+      "pass": true
+    },
+    {
+      "input": "content/pic/bg/<<$bg[$place]>>.png",
+      "expected": "content/pic/bg/<<$bg[$place]>>.png",
+      "actual": "content/pic/bg/<<$bg[$place]>>.png",
+      "pass": true
+    },
+    {
+      "input": "content/pic/bg_other.png",
+      "expected": "content/pic/bg_other.png",
+      "actual": "content/pic/bg_other.png",
+      "pass": true
+    },
+    {
+      "input": "content/pic/background.png",
+      "expected": "content/pic/background.png",
+      "actual": "content/pic/background.png",
+      "pass": true
+    },
+    {
+      "input": "content/pic/bg.jpg",
+      "expected": "content/pic/bg.jpg",
+      "actual": "content/pic/bg.jpg",
+      "pass": true
+    },
+    {
+      "input": "content/pic/bg.png?revision=1",
+      "expected": "content/pic/ui/frames/legacy/bg.png?revision=1",
+      "actual": "content/pic/ui/frames/legacy/bg.png?revision=1",
+      "pass": true
+    },
+    {
+      "input": "content/pic/bg.png/trailing",
+      "expected": "content/pic/bg.png/trailing",
+      "actual": "content/pic/bg.png/trailing",
+      "pass": true
+    },
+    {
+      "input": "<img src=\"content/pic/milk_can.png\">",
+      "expected": "<img src=\"content/pic/ui/icons/legacy/milk_can.png\">",
+      "actual": "<img src=\"content/pic/ui/icons/legacy/milk_can.png\">",
+      "pass": true
+    }
+  ]
+}

@@ -1,0 +1,163 @@
+{
+  "task": "241 conditions adversarial QA",
+  "fixtureRoot": "G:/Codex/tmp/qa-bounty-241-conditions-1793506411806-45688",
+  "cleanup": true,
+  "tests": 22,
+  "passed": 22,
+  "failed": 0,
+  "results": [
+    {
+      "name": "TC-C01 six families/alternate spellings resolve independently",
+      "pass": true
+    },
+    {
+      "name": "TC-C02 vanished B cannot be saved and QSP stays exact",
+      "pass": true
+    },
+    {
+      "name": "TC-C03 newly added C is accepted under unchanged QSP snapshot",
+      "pass": true
+    },
+    {
+      "name": "TC-C04 deleted configured B does not prevent independent family save",
+      "pass": true
+    },
+    {
+      "name": "TC-C05 clearing a family removes only its metadata and hooks remain coherent",
+      "pass": true
+    },
+    {
+      "name": "TC-C06 sequential edits invalidate other open family snapshots",
+      "pass": true
+    },
+    {
+      "name": "TC-C07 invalid mixed rules do not partially replace existing data",
+      "pass": true
+    },
+    {
+      "name": "TC-C08 unchanged second save creates no additional transaction",
+      "pass": true
+    },
+    {
+      "name": "TC-C09 actual refresh registers owned fifth/sixth cuts and preserves condition bytes",
+      "pass": true,
+      "evidence": {
+        "conditionBlocksPreserved": 8
+      }
+    },
+    {
+      "name": "TC-C10 unauthenticated condition save cannot write QSP",
+      "pass": true
+    },
+    {
+      "name": "TC-C11 HTTP save creates complete applied backup and reproducible export",
+      "pass": true,
+      "evidence": {
+        "recordId": "2026-11-01T04-13-33-513Z_56aad8"
+      }
+    },
+    {
+      "name": "TC-C12 HTTP independent-family commit preserves first rule and invalidates stale restore",
+      "pass": true
+    },
+    {
+      "name": "TC-C13 restore latest family commit returns exact previous QSP",
+      "pass": true
+    },
+    {
+      "name": "TC-C14 restore first condition commit returns byte-exact prefeature fixture",
+      "pass": true
+    },
+    {
+      "name": "TC-C15 request body limit rejects oversized JSON without writes",
+      "pass": true
+    },
+    {
+      "name": "TC-C16 same-snapshot competing family saves yield one winner and one conflict",
+      "pass": true,
+      "evidence": {
+        "statuses": [
+          200,
+          400
+        ]
+      }
+    },
+    {
+      "name": "TC-C17 closing pending info request prevents stale dialog resurrection",
+      "pass": true
+    },
+    {
+      "name": "TC-C18 out-of-order info responses cannot overwrite latest family",
+      "pass": true
+    },
+    {
+      "name": "TC-C19 malformed JSON info fails closed with save disabled",
+      "pass": true
+    },
+    {
+      "name": "TC-C20 rejected network save preserves fields and enables retry",
+      "pass": true
+    },
+    {
+      "name": "TC-C21 stale hash conflict retains draft and retries with unchanged original hash",
+      "pass": true
+    },
+    {
+      "name": "TC-C22 source protected paths have unchanged SHA256 after all fixture mutations",
+      "pass": true
+    }
+  ],
+  "findings": [
+    {
+      "id": "P2-conditions-real-toggle-reset",
+      "priority": "P2",
+      "confirmed": true,
+      "title": "Automatic mode0 cut selection prevents real manual toggle from reaching A/D",
+      "sourceSha256": "78835089f1dc8d0d5272f991926f35fa40e7e26dede5970a3fc03612967c130d",
+      "nativeEvidence": "../toggle-native-report.json",
+      "rootCaseAssertions": 15,
+      "rootCaseFailures": 4,
+      "notes": "The 22 service/HTTP/browser tests remain a separate passing suite. This finding is confirmed by additional root-owned native tests; no production fix applied."
+    }
+  ],
+  "protected": [
+    {
+      "path": "G:/somi/JO9sa/tools/text-workshop/image-cut-condition-rules.cjs",
+      "sha256": "d53272fa5ed53e48cb0ca431a340424f9f81774428ffab9ae01bd77d80e74d22"
+    },
+    {
+      "path": "G:/somi/JO9sa/tools/text-workshop/image-cut-conditions.cjs",
+      "sha256": "1db08118fc1fbb7710d3d5c4541e17ba6fab9a0fd11f7dc647e68e89269678bc"
+    },
+    {
+      "path": "G:/somi/JO9sa/tools/text-workshop/catalog-cut-conditions.js",
+      "sha256": "6653c842c5338423f5d553d11ad6614fa52e96f7d01e1d81e8751638c326f109"
+    },
+    {
+      "path": "G:/somi/JO9sa/tools/text-workshop/server.cjs",
+      "sha256": "84d213ee7a693e61c9d7c44ded5a93a6eec9284c55377ef1e99644cd63587079"
+    },
+    {
+      "path": "G:/somi/JO9sa/tools/text-workshop/image-cuts.cjs",
+      "sha256": "08d28584ad681cf081f562d1865aa68b71f0cfe719bba6966806eb3f3016ddc8"
+    }
+  ],
+  "limits": [
+    "No engine was executed by this child test suite. Root independently executed the original jo9_html and four original jo9_toggle calls in isolated fixtures and confirmed the P2 regression.",
+    "No live API save, WORK write, Full write, or private SAV access."
+  ],
+  "externalNativeVerification": {
+    "report": "../toggle-native-report.json",
+    "cases": 3,
+    "assertions": 15,
+    "failedAssertions": 4,
+    "confirmedRegression": true,
+    "workUnchanged": true
+  },
+  "finalSourceVerification": {
+    "workSha256": "78835089f1dc8d0d5272f991926f35fa40e7e26dede5970a3fc03612967c130d",
+    "trackedSourceFiles": 5,
+    "allHashesUnchanged": true,
+    "productionWrites": false
+  }
+}

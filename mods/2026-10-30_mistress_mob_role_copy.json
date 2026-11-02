@@ -1,0 +1,22 @@
+{
+  "id": "2026-10-30_mistress_mob_role_copy",
+  "description": "Use independent MOB portrait/body copies for Morrigan training opponent; retain character assets and legacy saved-path defeat compatibility",
+  "before_sha256": "fbb12f860322f10621cb62b3728d4701a8bc213c66a865a8946bd252a94e79bf",
+  "after_sha256": "f18fcee393330747f693f0388ef5c0364b926a34e64ea25b659e68ca9b6aa652",
+  "edits": [
+    {
+      "location": "colosseum_fight",
+      "field": "body",
+      "old": "\tif g = 1:$силуэт_моба['госпожа'] = \"content/pic/characters/mistress_morrigan.png\" & $аватара_моба['госпожа'] = \"content/pic/characters/mistress_ava.png\"",
+      "new": "\t! JO9 MOD START MISTRESS_MOB_ROLE_COPY_20261030\r\n\tif g = 1:$силуэт_моба['госпожа'] = \"content/pic/mob/mistress_morrigan.png\" & $аватара_моба['госпожа'] = \"content/pic/mob/mistress_ava.png\"\r\n\t! JO9 MOD END MISTRESS_MOB_ROLE_COPY_20261030",
+      "count": 1
+    },
+    {
+      "location": "jo9_battle_fate",
+      "field": "body",
+      "old": " if $jo9_bv_standing = 'content/pic/characters/mistress_morrigan.png': $jo9_bv_image = 'content/pic/mob/defeated/mistress_morrigan.png'",
+      "new": " ! JO9 MOD START MISTRESS_MOB_DEFEAT_COMPAT_20261030\r\n if $jo9_bv_standing = 'content/pic/mob/mistress_morrigan.png' or $jo9_bv_standing = 'content/pic/characters/mistress_morrigan.png': $jo9_bv_image = 'content/pic/mob/defeated/mistress_morrigan.png'\r\n ! JO9 MOD END MISTRESS_MOB_DEFEAT_COMPAT_20261030",
+      "count": 1
+    }
+  ]
+}

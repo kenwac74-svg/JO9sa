@@ -1,0 +1,145 @@
+{
+  "source": "G:/Codex/tmp/cruel-mercy-rules-20261101/candidate.qsp",
+  "sourceSha256": "8077ef72d85445cef68bcfd4b05bef0180399c413a368afd49f2984ca1f9bd67",
+  "fixtureSha256": "1cd6a26c70d95bcb3b492872161cc4b90ccc340d0bb6be2fbf942c0bb75482dc",
+  "diagnosticRoot": "G:/Codex/tmp/cruel-mercy-rules-20261101-pig-native",
+  "cases": [
+    {
+      "name": "fog-broken",
+      "origin": 61131,
+      "psy": "broken",
+      "intellect": 3,
+      "state": 1,
+      "moral": 5,
+      "pig": 0,
+      "flags": [
+        1,
+        0
+      ],
+      "half": -1
+    },
+    {
+      "name": "fog-low-intellect",
+      "origin": 61131,
+      "psy": "normal",
+      "intellect": 1,
+      "state": 1,
+      "moral": 5,
+      "pig": 0,
+      "flags": [
+        1,
+        0
+      ],
+      "half": -1
+    },
+    {
+      "name": "fog-faint",
+      "origin": 61131,
+      "psy": "normal",
+      "intellect": 3,
+      "state": 2,
+      "moral": 0,
+      "pig": 0,
+      "flags": [
+        0,
+        0
+      ],
+      "half": -1
+    },
+    {
+      "name": "fog-other",
+      "origin": 61131,
+      "psy": "normal",
+      "intellect": 3,
+      "state": 1,
+      "moral": 5,
+      "pig": 0,
+      "flags": [
+        1,
+        0
+      ],
+      "half": -1
+    },
+    {
+      "name": "ordinary-stale-hunting",
+      "origin": 0,
+      "psy": "normal",
+      "intellect": 3,
+      "state": 1,
+      "moral": 5,
+      "pig": 0,
+      "flags": [
+        1,
+        0
+      ],
+      "half": 0
+    },
+    {
+      "name": "ordinary-occupied-back-navigation",
+      "origin": 0,
+      "psy": "normal",
+      "intellect": 3,
+      "state": 1,
+      "moral": 5,
+      "pig": 1,
+      "flags": [
+        1,
+        0
+      ],
+      "half": 0
+    },
+    {
+      "name": "fog-fight-back-gt",
+      "origin": 61131,
+      "psy": "normal",
+      "intellect": 3,
+      "state": 1,
+      "moral": 0,
+      "pig": 0,
+      "flags": [
+        0,
+        0
+      ],
+      "half": 0,
+      "resistance": true
+    }
+  ],
+  "checks": [
+    "resistance_must_gt_before_callback",
+    "origin_consumed",
+    "no_early_commit",
+    "actual_swap_once",
+    "subject_and_former_pig_swapped",
+    "actual_pig_state",
+    "correct_half_point_commit",
+    "initial_display_flags",
+    "pending_callback_consumed",
+    "three_redraws_no_repeat_commit",
+    "three_redraws_restore_flags",
+    "ordinary_second_page_retained",
+    "ordinary_back_no_fog_score",
+    "ordinary_back_flags",
+    "real_gt_resistance_boundary",
+    "resistance_no_score_or_swap",
+    "resistance_subject_unchanged",
+    "resistance_origin_already_consumed"
+  ],
+  "exactCopiedProductionCode": [
+    "Complete6007 conditional block including original delayed callbacks/resistance/effects",
+    "jo9_cruel_mercy_apply body",
+    "swap_slave_instances primitive with one diagnostic call-counter prefix"
+  ],
+  "diagnosticReplacements": [
+    "Standalone minimal Start/bootstrap and fixed subjects",
+    "#var_base/#txt_man/#txt_2_man no-op dependency stubs",
+    "Empty update_features dynamic; dragging/forced effect counters; fight-back GT intercept instead of actual battle"
+  ],
+  "limitations": [
+    "No normal interaction initialization or rendered narrative/image.",
+    "No full private-room/trait-derived-text recalculation.",
+    "The native test checks the requested callback/bookkeeping boundary; it is not a full gameplay UI test."
+  ],
+  "correctedDiagnosticIssue": "The first fixture redundantly listed instance and $instance in the swap-variable list. QSP numeric/string access shares a variable, so this swapped the subject array twice. The corrected list uses the actual distinct $instance_name field. This was a fixture issue, not a candidate failure.",
+  "productionWrites": false,
+  "savedGamesReadOrWritten": false
+}

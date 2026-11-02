@@ -1,0 +1,102 @@
+{
+  "status": "PLAN_ONLY",
+  "currentHashes": {
+    "qsp": "7c366e1ae35a5922e32052847bceb28737ddab32c3861b19bbefd7661b45c2b7",
+    "css": "4121a2175e61a9c99fb7032735bf292a60b7a14a476311ed384987df06629774",
+    "logJS": "b4656fe77009e0df0d3eef45f2c8d2c96d9454cd98e1d6bb8cab7aa5070f8eb7"
+  },
+  "currentFxAnimationSelectors": 2,
+  "currentFxAnimationDeclarations": 4,
+  "currentFxKeyframeBlocks": 4,
+  "rules": [
+    {
+      "name": "jo9-battle-hit",
+      "rule": ".jo9-battle-v01 .jo9-battle-hit{position:absolute;left:390px;top:70px;width:500px;height:460px;z-index:5;pointer-events:none;opacity:0;-webkit-animation:jo9-battle-slash .6s ease-out;animation:jo9-battle-slash .6s ease-out;}"
+    },
+    {
+      "name": "jo9-battle-player-hit",
+      "rule": ".jo9-battle-v01 .jo9-battle-player-hit{position:absolute;left:1037px;top:0;width:243px;height:440px;background:#b31717;opacity:0;z-index:6;pointer-events:none;-webkit-animation:jo9-battle-flash .5s ease-out;animation:jo9-battle-flash .5s ease-out;}"
+    }
+  ],
+  "computedEvidence": {
+    "source": "records/battle-effect-isolation-20261027/candidate-native-results.json",
+    "currentFxRulesUnchanged": true,
+    "samples": [
+      {
+        "ms": 25,
+        "enemy": {
+          "animationName": "jo9-battle-slash",
+          "transform": "matrix(0.7926962386458988, 0, 0, 0.7926962386458988, 0, 0)",
+          "opacity": 0.9999992847442627
+        },
+        "player": {
+          "animationName": "jo9-battle-flash",
+          "transform": "none",
+          "opacity": 0.3928687870502472
+        }
+      },
+      {
+        "ms": 120,
+        "enemy": {
+          "animationName": "jo9-battle-slash",
+          "transform": "matrix(0.8797715972931757, 0, 0, 0.8797715972931757, 0, 0)",
+          "opacity": 0.9999997615814209
+        },
+        "player": {
+          "animationName": "jo9-battle-flash",
+          "transform": "none",
+          "opacity": 0.27839943766593933
+        }
+      },
+      {
+        "ms": 350,
+        "enemy": {
+          "animationName": "jo9-battle-slash",
+          "transform": "matrix(1.0630535557465468, 0, 0, 1.0630535557465468, 0, 0)",
+          "opacity": 0.4597513973712921
+        },
+        "player": {
+          "animationName": "jo9-battle-flash",
+          "transform": "none",
+          "opacity": 0.0539618656039238
+        }
+      },
+      {
+        "ms": 650,
+        "enemy": {
+          "animationName": "jo9-battle-slash",
+          "transform": "none",
+          "opacity": 0
+        },
+        "player": {
+          "animationName": "jo9-battle-flash",
+          "transform": "none",
+          "opacity": 0
+        }
+      },
+      {
+        "ms": 1100,
+        "enemy": {
+          "animationName": "jo9-battle-slash",
+          "transform": "none",
+          "opacity": 0
+        },
+        "player": {
+          "animationName": "jo9-battle-flash",
+          "transform": "none",
+          "opacity": 0
+        }
+      }
+    ]
+  },
+  "limits": [
+    "Historical computed evidence is reused because current FX CSS rules are unchanged; this task has not started a new engine process.",
+    "Computed CSS can verify removal of animation/transform/opacity transitions; it cannot prove the absence of internal compositor layers or a Windows repaint artifact.",
+    "Native DOM geometry invariance must not be reported as successful paint repair."
+  ],
+  "plannedCases": [
+    "enemy-hit: static slash appears once, asset/coordinates intact, no animation/transform/transition triggers, visibility lifetime expires.",
+    "player-hit: static red cue using RGBA if transparency is wanted, computed opacity 1, lifetime expires, no animated alpha.",
+    "both-hit plus second real renderer call before first lifetime expires: independent new-node lifetime, old timer cannot hide new render, both effects cleaned up, command/skill/thumb input remains available."
+  ]
+}

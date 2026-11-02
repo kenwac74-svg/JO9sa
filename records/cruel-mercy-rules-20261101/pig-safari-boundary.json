@@ -1,0 +1,227 @@
+{
+  "schema": 1,
+  "status": "READ_ONLY_STATIC_AUDIT",
+  "sourceSha256": "4d0715391e7ace44aec2c75bfd0bcd7df0b58e813b200778ee06bc636d744659",
+  "productionWrites": false,
+  "nativeExecuted": false,
+  "safari8998": {
+    "wrapperBody": "! JO9 MOD START J9M2880 | 2026-10-10_restore_private_room_ui | changed block; context may be included\r\nif snk_room_target > 0 and $curloc = 'stock_to_slave': gs 'snk_room_bridge', 'guard', 'stock_to_slave'\r\n! JO9 MOD END J9M2880\r\n!move stock slave to master and change location after\r\n\r\n! JO9 MOD START STOCK_TO_SLAVE_CHECK_SUCCESS_20261028\r\nif func('stock_to_slave_nogt') ! 1: exit\r\n! JO9 MOD END STOCK_TO_SLAVE_CHECK_SUCCESS_20261028\r\n\r\nif hunting_prize = 0 and farid_potential_debt <= 0: gt 'hard_return'\r\n! hard_return handles get_initial_slave for starting with an assistant on easy game difficulty, and either way ends with gt $return_lock\r\n",
+    "preserve": [
+      "Call existing func(stock_to_slave_nogt) exactly once; it provides the same source guard, acquisition reset, swap, trait initialization, new-slave mood, optional testing and return contract.",
+      "On return1, append the approved +0.5 entry before retaining the original condition: hunting_prize=0 and farid_potential_debt<=0 -> gt hard_return.",
+      "If that condition is false, fall through to original8998 continuation; do not unconditionally return to a different screen.",
+      "hard_return also sets sbros and may run initial-slave/new-estate/assistant setup; retain the call instead of replacing it with gt $return_lock.",
+      "The existing private-room guard in stock_to_slave only applies when curloc is that location. Keep the acquisition local to8998; do not change the shared wrappers."
+    ],
+    "successOnlyConsumption": "Using existing safari.slave=-1 and empty slave slot is enough to guard the pending trophy. Consume to1 and award only after successful conversion; generate_stock has no safari.slave reference in this baseline.",
+    "failureNote": "The old wrapper exits its own GS on result0; original8998 can then continue. A local stop/reopen on failed conversion is a separate failure-path repair, not byte-identical old flow.",
+    "evidence": [
+      {
+        "location": "stock_to_slave",
+        "matches": [
+          {
+            "line": 1,
+            "text": "! JO9 MOD START J9M2880 | 2026-10-10_restore_private_room_ui | changed block; context may be included"
+          },
+          {
+            "line": 2,
+            "text": "if snk_room_target > 0 and $curloc = 'stock_to_slave': gs 'snk_room_bridge', 'guard', 'stock_to_slave'"
+          },
+          {
+            "line": 3,
+            "text": "! JO9 MOD END J9M2880"
+          },
+          {
+            "line": 4,
+            "text": "!move stock slave to master and change location after"
+          },
+          {
+            "line": 6,
+            "text": "! JO9 MOD START STOCK_TO_SLAVE_CHECK_SUCCESS_20261028"
+          },
+          {
+            "line": 7,
+            "text": "if func('stock_to_slave_nogt') ! 1: exit"
+          },
+          {
+            "line": 8,
+            "text": "! JO9 MOD END STOCK_TO_SLAVE_CHECK_SUCCESS_20261028"
+          },
+          {
+            "line": 10,
+            "text": "if hunting_prize = 0 and farid_potential_debt <= 0: gt 'hard_return'"
+          },
+          {
+            "line": 11,
+            "text": "! hard_return handles get_initial_slave for starting with an assistant on easy game difficulty, and either way ends with gt $return_lock"
+          }
+        ]
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "matches": [
+          {
+            "line": 6,
+            "text": "result = 0"
+          },
+          {
+            "line": 7,
+            "text": "if stock_state ! CONST_INT['slave_exist']:"
+          },
+          {
+            "line": 92,
+            "text": "dynamic $swap_slave_instances, 'slave', 'stock'"
+          },
+          {
+            "line": 93,
+            "text": "gs 'jo9_traits','init_slave_nature','slave'"
+          },
+          {
+            "line": 95,
+            "text": "master_moodlet['pos_new_slave'] = 6 - brand_reputation"
+          },
+          {
+            "line": 98,
+            "text": "if (cheat_h = 1 or cheat_j = 1) and get_girl = 0: gs 'stock_to_slave_testing'"
+          },
+          {
+            "line": 99,
+            "text": "if cheat_k = 1 and get_girl = 0: gs 'stock_to_slave_testing2'"
+          },
+          {
+            "line": 102,
+            "text": "result = 1"
+          }
+        ]
+      },
+      {
+        "location": "hard_return",
+        "matches": [
+          {
+            "line": 7,
+            "text": "sbros = 1"
+          },
+          {
+            "line": 9,
+            "text": "if get_initial_slave = 1:"
+          },
+          {
+            "line": 277,
+            "text": "gs 'new_estate'"
+          },
+          {
+            "line": 303,
+            "text": "gs 'slave_to_assistant'"
+          },
+          {
+            "line": 306,
+            "text": "gt $return_lock"
+          }
+        ]
+      }
+    ]
+  },
+  "pig6007": {
+    "newPersistentPendingVariableRequired": false,
+    "scoreBoundary": "Actual delayed slave/pig swap inside special_action1, never initial61131 conversion or generic interaction_result.",
+    "approved61131Preflight": "stock_state=slave_exist; hunting_prize>0; slave_state=no_slave; pig_state=no_slave; func(stock_to_slave_nogt)=1.",
+    "originPreservedAcrossRoutes": {
+      "locations": [
+        "interaction",
+        "interaction_result",
+        "interaction_screen",
+        "stock_to_slave_nogt"
+      ],
+      "interactionCityAssignmentsFound": []
+    },
+    "staleOriginRisk": "barn does not clear hunting_prize; normal barn6007 links set interaction only. The approved origin-consumption statement is necessary to prevent unrelated later pig assignments scoring.",
+    "delayedExecution": "interaction_screen executes special_action[txt] each render without clearing it. Rewriting action1 after commit, not deleting its array element, prevents repeated score and preserves action2 indexing.",
+    "keepExistingFlags": [
+      {
+        "branch": 1,
+        "flags": [
+          "show_pig_fullimage = 1"
+        ]
+      },
+      {
+        "branch": 2,
+        "flags": [
+          "show_pig_fullimage = 0",
+          "show_slave_fullimage = 0"
+        ]
+      },
+      {
+        "branch": 3,
+        "flags": [
+          "show_pig_fullimage = 1",
+          "show_slave_fullimage = 0"
+        ]
+      }
+    ],
+    "resistance": "6007 can GT through slave_fights_back before interaction_screen. Built-but-never-executed action must not score.",
+    "legacySaveBoundary": "Old saved callback strings are not migrated and do not retroactively gain ledger code.",
+    "evidence": [
+      {
+        "location": "interaction_city",
+        "matches": [
+          {
+            "line": 11326,
+            "text": "if interaction_city = 61131:"
+          },
+          {
+            "line": 11327,
+            "text": "gs 'stock_to_slave_nogt' &! this option is only available if there is no current slave, so we can safely do this"
+          },
+          {
+            "line": 11329,
+            "text": "interaction = 6007 &! try to put slave into barn as a pig (can be resisted)"
+          },
+          {
+            "line": 11343,
+            "text": "gs 'stock_to_slave_nogt' &! this option is only available if there is no current slave, so we can safely do this"
+          }
+        ]
+      },
+      {
+        "location": "interaction_screen",
+        "matches": [
+          {
+            "line": 7,
+            "text": "if $special_action[txt] ! '':"
+          },
+          {
+            "line": 8,
+            "text": "dynamic $special_action[txt]"
+          }
+        ]
+      },
+      {
+        "location": "barn",
+        "matches": [
+          {
+            "line": 69,
+            "text": "func('$menu', 'goto', $menu_item_Pig, 6007, 'interaction', 'interaction', '노예 ⇔ 돼지', '<<$slave_name>>와 <<$pig_name>>(을)를 교체시킨다')"
+          },
+          {
+            "line": 71,
+            "text": "func('$menu', 'goto', $menu_item_Pig, 6007, 'interaction', 'interaction', '노예 ⇒ 돼지', '<<$slave_name>>(을)를 돼지로 만든다')"
+          }
+        ]
+      },
+      {
+        "location": "main_screen",
+        "matches": [
+          {
+            "line": 999,
+            "text": "hunting_prize = 0"
+          }
+        ]
+      }
+    ]
+  },
+  "cautions": [
+    "No indexed killvar on special_action: removing an element can shift action2.",
+    "The only intentional origin-state change in the proposal is61131 ->0; retain hunting_prize and all unrelated city IDs.",
+    "All proposals are templates; parent owns final syntax and native behavior checks."
+  ]
+}

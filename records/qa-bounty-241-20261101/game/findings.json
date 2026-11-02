@@ -1,0 +1,98 @@
+{
+  "status": "PASS_WITH_EXPLICIT_INTEGRATION_GAPS",
+  "source": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+  "sourceHash": "78835089f1dc8d0d5272f991926f35fa40e7e26dede5970a3fc03612967c130d",
+  "engine": "G:/somi/Jack O Nine Tails v2.4_work/game/engine/jack.exe",
+  "native": {
+    "runs": [
+      {
+        "name": "bounty-game",
+        "pass": true,
+        "sourceHash": "78835089f1dc8d0d5272f991926f35fa40e7e26dede5970a3fc03612967c130d",
+        "diagnosticHash": "0d7b272f47f4f57ae69ae53f07902e3214fb5c7fd4ee1168eba01cfaf80da144",
+        "cases": 739,
+        "assertions": 2862,
+        "assertionFailures": 0,
+        "completionMarker": "JO9_QA_BOUNTY_game_COMPLETE",
+        "completionMarkerObserved": true,
+        "engineExecutionOwner": "Root agent, serial invocation of tools/qa/run-client-smoke.ps1 against actual WORK engine.",
+        "evidence": [
+          "bounty-game-stderr.log",
+          "native-prepared.json",
+          "native-cases.json"
+        ],
+        "families": {
+          "arithmetic": 329,
+          "formal-arena": 160,
+          "catfight": 24,
+          "practice": 160,
+          "fog": 56,
+          "invalid-input": 4,
+          "invalid-phase": 3,
+          "non-victory": 3
+        },
+        "limits": [
+          "Synthetic isolated state; no private SAV reads or writes.",
+          "This tests real decision/helper code but not complete turn processing or reward return UI."
+        ]
+      },
+      {
+        "name": "bounty-quests",
+        "pass": true,
+        "sourceHash": "78835089f1dc8d0d5272f991926f35fa40e7e26dede5970a3fc03612967c130d",
+        "diagnosticHash": "f60445352c191fc510731ea84259c71b8b02b9252c12d69e4bf1b011de0f2717",
+        "cases": 410,
+        "assertions": 11165,
+        "assertionFailures": 0,
+        "completionMarker": "JO9_QA_BOUNTY_quests_COMPLETE",
+        "completionMarkerObserved": true,
+        "engineExecutionOwner": "Root agent, serial invocation of tools/qa/run-client-smoke.ps1 against actual WORK engine.",
+        "evidence": [
+          "bounty-quests-stderr.log",
+          "native-quests-prepared.json",
+          "native-quest-cases.json"
+        ],
+        "families": {
+          "actorQuestFailure": 410
+        },
+        "limits": [
+          "No private SAV or game resources loaded; synthetic actor type and quest dictionaries.",
+          "Contract-level failure marking only; actual liquidation sale and move flow is a separate integration gap."
+        ]
+      }
+    ],
+    "cases": 1149,
+    "assertions": 14027,
+    "failures": 0
+  },
+  "static": {
+    "checks": 11,
+    "failures": 0,
+    "evidence": "static-test-results.json"
+  },
+  "confirmedFindings": [],
+  "unconfirmedCandidates": [],
+  "productionWrites": 0,
+  "privateSavesRead": 0,
+  "privateSavesWritten": 0,
+  "fixesApplied": 0,
+  "humanTCs": "human-play-tests.json",
+  "scopeExclusions": [
+    "Full is intentionally behind WORK by a latest image feature; no synchronization or production write.",
+    "Known deferred difficulty/chariot comment-vs-formula questions are not counted as new regressions.",
+    "Champion liberation event1295 retains original prize rules and page structure by approved scope.",
+    "Erza +3/-1 hooks are separately approved and are not an unauthorized-writer finding."
+  ],
+  "gaps": [
+    "Full battle turn processing, battle renderer DOM and actual player mouse interaction were not covered by these two new native runs.",
+    "Payout amount and one-page structure were checked against exact current source; these two runs do not newly execute settlement -> result UI -> repeated forward -> return.",
+    "Full insolvency asset liquidation, valuation, actor clearing and relocation are not executed by the direct fail_quests contract test.",
+    "No personal SAV loading, CRC behavior or all old-save UI caches were tested.",
+    "The 8 group PNG files and single-image renderer source passed static/resource checks; this work does not claim a fresh native run of all 8 event return flows."
+  ],
+  "cleanup": {
+    "diagnosticsOutsideWorkspace": "G:/Codex/tmp/qa-bounty-241-game-20261101",
+    "pendingRootSafeCleanup": true,
+    "reproductionScriptsRetained": true
+  }
+}

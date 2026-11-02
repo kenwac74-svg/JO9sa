@@ -1,0 +1,118 @@
+{
+  "status": "FAIL",
+  "candidate": "G:/Codex/tmp/battle-followup-20261028/jack.candidate.qsp",
+  "game": "G:\\Codex\\tmp\\battle-followup-20261028\\candidate-game",
+  "stateSave": "G:/somi/Jack O Nine Tails v2.4_work/game/save/JO9_GOLD_AP_CHECK_20261026.sav",
+  "inputHashes": {
+    "G:/Codex/tmp/battle-followup-20261028/jack.candidate.qsp": "2f93a1bfbdf26717c04bf7d97cc16266035fb79b57befb00405760991f6300d6",
+    "G:/somi/Jack O Nine Tails v2.4_work/game/save/JO9_GOLD_AP_CHECK_20261026.sav": "581fc472bfa5aedcbca85c379d0061ad8d28a9b928ef948a259dee7c800ad2ec",
+    "G:\\Codex\\tmp\\battle-followup-20261028\\candidate-game/css/base.css": "30d552cde203405469c7536fe6dc6b24271fde3f454056339eb64e76ae1040eb",
+    "G:\\Codex\\tmp\\battle-followup-20261028\\candidate-game/content/js/jo9_battle_log.js": "991352c844709b3374f24172cb25afbb05062c2ce40298516361509aee8fc6c1"
+  },
+  "caseCount": 12,
+  "plan": "G:\\Codex\\tmp\\battle-followup-qa-20261028\\hit-native-v4/plan.json",
+  "dom": false,
+  "observeLegacySecondary": false,
+  "engineExecuted": true,
+  "diagnosticSeams": [
+    "Start state fixtures",
+    "renderer prefix observes pending event state and tail redirects to terminal assertions",
+    "two-target case replaces damage calculator with deterministic returned 4 damage and no modifiers",
+    "synthetic no-op enemy AI only for two-target deterministic player-attack path",
+    "native checkpoint location"
+  ],
+  "limits": [
+    "This verifies actual native round damage routing and generated renderer HTML, not SVG art quality or every desktop resolution.",
+    "Modifier zero is a normal hit in original calculation, not a miss. The zero-damage and total-immunity cases test absent effect.",
+    "Opponent attack fixture sets indexed enemy attack data, preserving scalar player-damage type by original array convention.",
+    "Auto-switch case uses the existing dynamic next-enemy hook with a deterministic index transition.",
+    "The two-target skill currently exits its original secondary path without applying extra damage. Those two cases verify unchanged behavior and absence of false effects, not successful secondary damage. The original combat mechanic is not repaired here."
+  ],
+  "client": [
+    {
+      "name": "pierce-normal-modifier-zero",
+      "checkpoint": "Actual round damage and actual original renderer; observational marker capture and native assertions.",
+      "pass": true,
+      "reason": "",
+      "durationMs": 9189
+    },
+    {
+      "name": "slash-normal",
+      "checkpoint": "Actual round damage and actual original renderer; observational marker capture and native assertions.",
+      "pass": true,
+      "reason": "",
+      "durationMs": 10179
+    },
+    {
+      "name": "impact-stamina-only",
+      "checkpoint": "Actual round damage and actual original renderer; observational marker capture and native assertions.",
+      "pass": true,
+      "reason": "",
+      "durationMs": 9888
+    },
+    {
+      "name": "whip-spirit-only",
+      "checkpoint": "Actual round damage and actual original renderer; observational marker capture and native assertions.",
+      "pass": true,
+      "reason": "",
+      "durationMs": 8823
+    },
+    {
+      "name": "total-immunity-no-hit",
+      "checkpoint": "Actual round damage and actual original renderer; observational marker capture and native assertions.",
+      "pass": true,
+      "reason": "",
+      "durationMs": 9161
+    },
+    {
+      "name": "zero-damage-no-hit",
+      "checkpoint": "Actual round damage and actual original renderer; observational marker capture and native assertions.",
+      "pass": true,
+      "reason": "",
+      "durationMs": 8888
+    },
+    {
+      "name": "opponent-psychic-preserves-player-pierce",
+      "checkpoint": "Actual round damage and actual original renderer; observational marker capture and native assertions.",
+      "pass": false,
+      "reason": "Unexpected message before completion",
+      "durationMs": 8924
+    },
+    {
+      "name": "companion-whip-spirit-only",
+      "checkpoint": "Actual round damage and actual original renderer; observational marker capture and native assertions.",
+      "pass": true,
+      "reason": "",
+      "durationMs": 8898
+    },
+    {
+      "name": "dead-target-auto-switch-no-false-hit",
+      "checkpoint": "Actual round damage and actual original renderer; observational marker capture and native assertions.",
+      "pass": true,
+      "reason": "",
+      "durationMs": 8927
+    },
+    {
+      "name": "secondary-legacy-early-exit-no-extra-damage",
+      "checkpoint": "Actual round damage and actual original renderer; observational marker capture and native assertions.",
+      "pass": false,
+      "reason": "Unexpected message before completion",
+      "durationMs": 8920
+    },
+    {
+      "name": "secondary-legacy-immune-no-false-cue",
+      "checkpoint": "Actual round damage and actual original renderer; observational marker capture and native assertions.",
+      "pass": false,
+      "reason": "Unexpected message before completion",
+      "durationMs": 8890
+    },
+    {
+      "name": "pawn-status-defeat-hit",
+      "checkpoint": "Actual round damage and actual original renderer; observational marker capture and native assertions.",
+      "pass": true,
+      "reason": "",
+      "durationMs": 9137
+    }
+  ],
+  "inputsUnchanged": true
+}

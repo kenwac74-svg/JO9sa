@@ -1,0 +1,222 @@
+{
+  "pass": true,
+  "sourceSha256": "c57bb947ee78ac90473ae6a13a4f21f77744c02fc2f39a16637d1124f0d810c7",
+  "cases": [
+    {
+      "name": "single-victory",
+      "pass": true,
+      "observations": [
+        {
+          "key": "single_victory",
+          "phase": 0,
+          "repeated": 0,
+          "groupCount": 0,
+          "fallbackCount": 0,
+          "monsterCount": 1,
+          "image": {
+            "src": "content/pic/mob/defeated/ogre.png",
+            "complete": true,
+            "width": 795,
+            "height": 596,
+            "visible": true
+          },
+          "filter": null,
+          "executeHref": null,
+          "spareHref": null,
+          "spareDisabled": false,
+          "ok": true
+        }
+      ]
+    },
+    {
+      "name": "single-defeat",
+      "pass": true,
+      "observations": [
+        {
+          "key": "single_defeat",
+          "phase": 0,
+          "repeated": 0,
+          "groupCount": 0,
+          "fallbackCount": 0,
+          "monsterCount": 1,
+          "image": {
+            "src": "content/pic/mob/ogre.png",
+            "complete": true,
+            "width": 795,
+            "height": 596,
+            "visible": true
+          },
+          "filter": null,
+          "executeHref": null,
+          "spareHref": null,
+          "spareDisabled": false,
+          "ok": true
+        }
+      ]
+    },
+    {
+      "name": "unmatched-victory",
+      "pass": true,
+      "observations": [
+        {
+          "key": "unmatched_victory",
+          "phase": 0,
+          "repeated": 0,
+          "groupCount": 0,
+          "fallbackCount": 0,
+          "monsterCount": 1,
+          "image": {
+            "src": "content/pic/mob/defeated/ogre.png",
+            "complete": true,
+            "width": 795,
+            "height": 596,
+            "visible": true
+          },
+          "filter": null,
+          "executeHref": null,
+          "spareHref": null,
+          "spareDisabled": false,
+          "ok": true
+        }
+      ]
+    },
+    {
+      "name": "paladin-execution",
+      "pass": true,
+      "observations": [
+        {
+          "key": "paladin_execution",
+          "phase": 1,
+          "repeated": 0,
+          "groupCount": 1,
+          "fallbackCount": 0,
+          "monsterCount": 0,
+          "image": {
+            "src": "content/pic/mob/defeated/groups/paladin_group.png",
+            "complete": true,
+            "width": 795,
+            "height": 596,
+            "visible": true
+          },
+          "filter": null,
+          "executeHref": "EXEC: gt 'jo9_battle_fate', 'apply', 1",
+          "spareHref": null,
+          "spareDisabled": true,
+          "ok": true
+        },
+        {
+          "key": "paladin_execution",
+          "phase": 2,
+          "repeated": 0,
+          "groupCount": 1,
+          "fallbackCount": 0,
+          "monsterCount": 0,
+          "image": {
+            "src": "content/pic/mob/defeated/groups/paladin_group.png",
+            "complete": true,
+            "width": 795,
+            "height": 596,
+            "visible": true
+          },
+          "filter": {
+            "visible": true,
+            "opacity": "0.30000001192092896"
+          },
+          "executeHref": null,
+          "spareHref": null,
+          "spareDisabled": false,
+          "ok": true
+        },
+        {
+          "key": "paladin_execution",
+          "phase": 2,
+          "repeated": 1,
+          "groupCount": 1,
+          "fallbackCount": 0,
+          "monsterCount": 0,
+          "image": {
+            "src": "content/pic/mob/defeated/groups/paladin_group.png",
+            "complete": true,
+            "width": 795,
+            "height": 596,
+            "visible": true
+          },
+          "filter": {
+            "visible": true,
+            "opacity": "0.30000001192092896"
+          },
+          "executeHref": null,
+          "spareHref": null,
+          "spareDisabled": false,
+          "ok": true,
+          "explicitErrorHandlerCheck": {
+            "invoked": true,
+            "actual404Requested": false,
+            "visibility": "hidden",
+            "wrapperBefore": [
+              795,
+              596
+            ],
+            "wrapperAfter": [
+              795,
+              596
+            ],
+            "fallbackDomCount": 0,
+            "groupImageCount": 1
+          }
+        }
+      ]
+    }
+  ],
+  "baselineFilter": {
+    "sourceSha256": "7387b91d809cdcf60b1b6a786f0e0066935fcbc3e0feb6001e682d8a201a1b40",
+    "cases": 1,
+    "observations": [
+      {
+        "phase": 1,
+        "repeated": 0,
+        "ok": true
+      },
+      {
+        "phase": 2,
+        "repeated": 0,
+        "opacity": "0.30000001192092896",
+        "ok": true
+      },
+      {
+        "phase": 2,
+        "repeated": 1,
+        "opacity": "0.30000001192092896",
+        "ok": true
+      }
+    ]
+  },
+  "candidateNativeCases": 4,
+  "candidateNativeObservations": 6,
+  "groupErrorHandlerCheck": {
+    "invoked": true,
+    "actual404Requested": false,
+    "visibility": "hidden",
+    "wrapperBefore": [
+      795,
+      596
+    ],
+    "wrapperAfter": [
+      795,
+      596
+    ],
+    "fallbackDomCount": 0,
+    "groupImageCount": 1
+  },
+  "productionFilesChanged": false,
+  "diagnosticCorrections": {
+    "initialReport": "initial-controls-opacity-expectation-report.json",
+    "reason": "The first paladin assertion expected opacity 0.7; unchanged baseline uses opacity 0.3, representing 70% transparency.",
+    "initialNonPaladinPassesReused": 3,
+    "paladinOnlyReexecuted": true
+  },
+  "limits": [
+    "Synthetic post-combat fixtures exercise installed engine result and fate UI; no full combat rounds or personal-save GUI loading.",
+    "The error-handler display function was directly invoked after a successful image load. No file was removed and no actual 404 request was tested."
+  ]
+}

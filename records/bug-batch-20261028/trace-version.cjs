@@ -1,0 +1,2 @@
+const fs=require('node:fs'),c=require('G:/somi/JO9sa/tools/text-workshop/core.cjs');const d=c.parse(fs.readFileSync('G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp'));
+for(const l of d.locations){const lines=c.shift(d.lines[l.body],5).split(/\r?\n/);for(let i=0;i<lines.length;i++)if(/게임이<br>|로 업데이트되었습니다|game_version\s*[=!]/i.test(lines[i]))console.log(l.name,(i+1),lines.slice(Math.max(0,i-4),i+5).map((s,n)=>(Math.max(0,i-4)+n+1)+': '+s).join('\n'));}

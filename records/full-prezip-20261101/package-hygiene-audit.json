@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "scope": "Bounded read-only final Full development-file hygiene audit. No personal SAV contents opened, no production mutation.",
+  "full": "G:/somi/Jack O Nine Tails v2.4 Kor_Full",
+  "releaseOnlyExclusions": [
+    {
+      "path": "game/json/slaves/check_json.sh",
+      "bytes": 73,
+      "sha256": "7b0f06715b1e03a1eaab7d077f9e8300185a34a90b27a953dd13ac4e511df704",
+      "status": "ARCHIVE_SAFE_RELEASE_ONLY",
+      "reason": "Bash loop iterating files in current directory and piping each into external json_verify validation command. It is a developer JSON checker, not runtime JSON data or executable-game support.",
+      "activeReferences": 0,
+      "historicalReferences": [
+        "G:/somi/JO9sa/reference/vanilla_manifest.json:91072",
+        "G:/somi/JO9sa/records/full-client-build-20261031/input-plan.json:257379",
+        "G:/somi/JO9sa/records/full-client-preparation-20261029/full-client-input-plan.json:214442"
+      ],
+      "preserveWorkOriginal": true,
+      "action": "Parent may preserve exact Full file at K and omit it from standalone release. Do not remove WORK developer utility. Record input-filter change so later synchronization does not restore it."
+    }
+  ],
+  "otherDevelopmentExtensionCandidates": [],
+  "checkedExtensions": [".sh", ".py", ".ps1", ".cjs", ".mjs", ".bak", ".bak_*", ".log", ".tmp", ".map", ".ts", ".zip", ".7z", ".rar", ".pdb", ".db", ".sqlite"],
+  "keep": [
+    {"path": "FastQSP.ini", "reason": "Runtime settings."},
+    {"path": "game/FastQSP.ini", "reason": "Runtime settings."},
+    {"path": "게임 실행.cmd", "reason": "Launches game/engine/jack.exe with game/jack.qsp from correct working directory."},
+    {"path": "game/content/js/jo9_word_wrap.js", "reason": "Approved runtime presentation script."},
+    {"path": "game/content/js/jo9_traits_view.js", "reason": "Approved runtime presentation script."},
+    {"path": "game/content/js/jo9_battle_log.js", "reason": "Approved runtime presentation script."},
+    {"path": "LICENSES", "reason": "Distribution license/notice texts are required, not development residue."},
+    {"path": "game/content/pic/ui/dialogue_emoji/LICENSE-fluent.txt", "reason": "Asset license notice."},
+    {"path": "game/content/pic/ui/dialogue_emoji/manifest.json", "reason": "Existing approved image metadata; name alone is not exclusion evidence."},
+    {"path": "game/content/pic/reserve/jo9mod/manifest.csv", "reason": "Reserved image source/provenance metadata; no new retirement proof."},
+    {"path": "game/content/pic/**/test*.png and debug*.png", "reason": "Filename alone does not prove unused. Runtime/debug controls and legacy image aliases were approved earlier; no blanket removal."}
+  ],
+  "limits": [
+    "No blanket rule excludes TXT, HTML, HTM, JS, licenses, font data or engine files.",
+    "picMax or other expected runtime HTML resources, when present, must not be excluded by extension; no HTML/HTM file was returned by this bounded current Full inventory.",
+    "No new resource-pruning decision was made from test/debug names. Only the one verified validation utility is proposed for release exclusion.",
+    "All archive removals remain parent actions; this audit wrote only this workspace report."
+  ]
+}

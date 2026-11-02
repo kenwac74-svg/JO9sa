@@ -33,6 +33,9 @@ function current() {
 const pic=path.join(game,'content','pic');
 const isWorkshopOrigin=require('./workshop-origin.cjs').create(game);
 const imageCuts=require('./image-cuts.cjs').create(game,catalogRoot,catalog,runtime);
+// JO9 MOD START IMAGE_CUT_CONDITION_EDITOR_20261101
+const imageCutConditions=require('./image-cut-conditions.cjs').create(game,(before,after,details)=>transact(before,after,details));
+// JO9 MOD END IMAGE_CUT_CONDITION_EDITOR_20261101
 const originalCutRegistrar=require('./original-cuts.cjs');
 const localPic=require('./pic-local.cjs').create(game,catalogRoot,catalog,imageCuts);
 function syncSavedOriginals(paths,reconcile=false){
@@ -128,7 +131,7 @@ const server=http.createServer(async(req,res)=>{
       res.end(fs.readFileSync(path.join(__dirname,'index.html'),'utf8').replace('__SESSION_TOKEN__',token));return;
     }
     // JO9 MOD START: text-batch-replace-20261018-static
-    if(req.method==='GET'&&['/dialogue-ai.js','/editing-tools.js','/variable-inspector.js','/batch-replace.js'].includes(url.pathname)){res.writeHead(200,{'Content-Type':'text/javascript; charset=utf-8','Cache-Control':'no-store'});res.end(fs.readFileSync(path.join(__dirname,url.pathname.slice(1)),'utf8'));return;}
+    if(req.method==='GET'&&['/dialogue-ai.js','/editing-tools.js','/variable-inspector.js','/batch-replace.js','/catalog-cut-conditions.js'].includes(url.pathname)){res.writeHead(200,{'Content-Type':'text/javascript; charset=utf-8','Cache-Control':'no-store'});res.end(fs.readFileSync(path.join(__dirname,url.pathname.slice(1)),'utf8'));return;}
     // JO9 MOD END: text-batch-replace-20261018-static
     const catalogRoute=url.pathname.startsWith('/api/catalog/');
     if(catalogRoute&&req.headers.origin==='null'){
@@ -144,7 +147,7 @@ const server=http.createServer(async(req,res)=>{
       html=html.replace(/<head(?:\s[^>]*)?>/i,head=>head+'<script>window.JO9_CATALOG_BRIDGE='+cfg+';</script>');
       // file:// cannot be displayed inside HTTP pages. Serve only allowlisted catalog images.
       html=html.replace("function url(p){", "function url(p){if(p.indexOf(MR+'\\\\')===0||p.indexOf(OR+'\\\\')===0){var orig=p.indexOf(OR+'\\\\')===0;return '/api/catalog-asset?t='+"+JSON.stringify(token)+"+'&original='+(orig?'1':'0')+'&p='+encodeURIComponent(p.substring((orig?OR:MR).length+1));}");
-      html=html.replace(/<\/body>/i,'<script src="catalog_grok.js"></script><script src="catalog_cuts.js"></script></body>');
+      html=html.replace(/<\/body>/i,'<script src="catalog_grok.js"></script><script src="catalog_cuts.js"></script><script src="catalog-cut-conditions.js"></script></body>');
       res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store'});res.end(html);return;
     }
     const catalogFiles=['catalog_cuts.js','catalog_status.js','catalog_work_codes.js','catalog_workshop.js','catalog_editor.js','catalog_pic.js','catalog_local_pic.js','catalog_grok.js'];
@@ -208,6 +211,16 @@ const server=http.createServer(async(req,res)=>{
 
     if(req.headers['x-jo9-token']!==token) {json(res,403,{error:'편집기를 다시 열어 주세요.'});return;}
     if(req.headers.origin && req.headers.origin!=='http://'+host && !(catalogRoute&&req.headers.origin==='null')){json(res,403,{error:'다른 사이트에서는 사용할 수 없습니다.'});return;}
+    // JO9 MOD START IMAGE_CUT_CONDITION_EDITOR_API_20261101
+    if(url.pathname.startsWith('/api/catalog/cut-conditions/')){
+      const action=url.pathname.slice('/api/catalog/cut-conditions/'.length);
+      if(req.method!=='POST'||!['info','save'].includes(action)){json(res,400,{error:'등장조건 요청을 확인하세요.'});return;}
+      const input=await body(req,1000000);
+      const result=action==='info'?imageCutConditions.info(input):imageCutConditions.save(input);
+      if(action==='save'){cache=null;preview=null;}
+      json(res,200,result);return;
+    }
+    // JO9 MOD END IMAGE_CUT_CONDITION_EDITOR_API_20261101
     if(url.pathname.startsWith('/api/catalog/pic/')){
       const action=url.pathname.slice('/api/catalog/pic/'.length);let result;
       if(req.method==='GET'&&action==='index')result={index:localPic.scan(url.searchParams.get('rescan')==='1')};

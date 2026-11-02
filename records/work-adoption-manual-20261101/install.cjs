@@ -1,0 +1,15 @@
+'use strict';
+const fs=require('fs'),a=require('assert/strict'),cp=require('child_process'),z=require('zlib');
+const R='G:/somi/JO9sa',W='G:/somi/Jack O Nine Tails v2.4_work/game',F='G:/somi/Jack O Nine Tails v2.4 Kor_Full/game',T='G:/Codex/tmp/work-adoption-build-20261101',D=R+'/records/work-adoption-manual-20261101';
+const c=require(R+'/tools/text-workshop/core.cjs'),qa=require(R+'/tools/qa/release-check.cjs');
+const mod=JSON.parse(fs.readFileSync(T+'/mods/2026-11-01_image_cut_conditions_toggle_mode3.json','utf8')),before=fs.readFileSync(W+'/jack.qsp'),full=c.hash(fs.readFileSync(F+'/jack.qsp'));
+a.equal(c.hash(before),mod.before_sha256,'Latest manual edit differs; stop without writing');
+const release=JSON.parse(fs.readFileSync('G:/Codex/tmp/work-adoption-release-20261101/run-MpxZvx/report.json','utf8'));a.equal(release.verdict,'PASS');a.equal(release.checks.find(x=>x.name==='inputs-readable').detail.candidate,mod.after_sha256);
+fs.mkdirSync(D,{recursive:true});a(!fs.existsSync(D+'/before.qsp.gz'));const backup=z.gzipSync(before);a(z.gunzipSync(backup).equals(before));fs.writeFileSync(D+'/before.qsp.gz',backup);
+const command="[Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false); & '"+R+"/tools/apply_mods.ps1' -Qsp '"+W+"/jack.qsp' -ModsDir '"+T+"/mods'";
+const run=cp.spawnSync('powershell.exe',['-NoProfile','-ExecutionPolicy','Bypass','-Command',command],{encoding:'utf8',windowsHide:true,timeout:120000});fs.writeFileSync(D+'/apply.log',(run.stdout||'')+(run.stderr||''));a.equal(run.status,0);
+const after=fs.readFileSync(W+'/jack.qsp');a.equal(c.hash(after),mod.after_sha256);a(after.equals(fs.readFileSync(T+'/candidate.qsp')));qa.inspectWorld(after);
+fs.copyFileSync(T+'/mods/'+mod.id+'.json',R+'/mods/'+mod.id+'.json');fs.copyFileSync(__dirname+'/edge/mode3-regression.test.cjs',R+'/tools/text-workshop/image-cut-condition-toggle.test.cjs');
+a.equal(c.hash(fs.readFileSync(F+'/jack.qsp')),full);
+const report={installed:true,before:mod.before_sha256,after:mod.after_sha256,byteMatchesVerifiedCandidate:true,world:qa.inspectWorld(after),fullUnchanged:full,privateSavesChanged:false,newSaveVariables:0,newLocations:0,patch:R+'/mods/'+mod.id+'.json'};
+fs.writeFileSync(__dirname+'/installed.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report));

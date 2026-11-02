@@ -1,0 +1,776 @@
+{
+  "schema": 1,
+  "status": "READ_ONLY_STATIC_AUDIT",
+  "source": {
+    "path": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+    "sha256": "dd8c2a70c51e45e3bd46eda517cd21af32ef2fff4097a4b232253b5b5dd5e870",
+    "jsonPath": "G:/somi/Jack O Nine Tails v2.4_work/game/json/slaves/2624_erza.json",
+    "jsonSha256": "42310fe23b744c38dd68f9a2719ca9826fb778a31ba3415ca238764c3293f336"
+  },
+  "productionWrites": false,
+  "savedGamesReadOrWritten": false,
+  "nativeExecuted": false,
+  "newNarrativeOrImages": false,
+  "identity": {
+    "type": 2624,
+    "jsonSeedName": "Erza",
+    "stockId": 1149261182,
+    "normalAcquisitionEvent": 6667791,
+    "uniqueQuestFlag": "unique_slave[erza]",
+    "seedAge": 0,
+    "ageConstants": {
+      "young": 0,
+      "loli": 1,
+      "milf": 2
+    },
+    "adultClassification": "seed_age0 is the existing adult young category; no specific numeric years are present in this JSON.",
+    "seedFieldsPreserve": {
+      "seed_virginity": 0,
+      "seed_sub_vaginal": 0,
+      "seed_sub_anal": 0,
+      "seed_beauty": 5,
+      "seed_bruises": 1,
+      "seed_scars": 0,
+      "seed_fertility": 0,
+      "seed_fertility_revealed": 1
+    },
+    "evidence": [
+      {
+        "location": "#static_base",
+        "lineBasis": "1-based decoded body",
+        "lines": [
+          {
+            "line": 131,
+            "text": "CONST_INT['young_age'] = 0"
+          },
+          {
+            "line": 132,
+            "text": "CONST_INT['loli_age'] = 1"
+          },
+          {
+            "line": 133,
+            "text": "CONST_INT['milf_age'] = 2"
+          }
+        ]
+      },
+      {
+        "location": "get_stock_seed",
+        "lineBasis": "1-based decoded body",
+        "lines": [
+          {
+            "line": 11,
+            "text": "stock['age'] = seed_age[stock_type]"
+          },
+          {
+            "line": 14,
+            "text": "stock['beauty'] = seed_beauty[stock_type]"
+          },
+          {
+            "line": 260,
+            "text": "stock['bruises'] = seed_bruises[stock_type]"
+          },
+          {
+            "line": 265,
+            "text": "stock['virginity'] = seed_virginity[stock_type]"
+          },
+          {
+            "line": 270,
+            "text": "$stock_name = $seed_name[stock_type]"
+          },
+          {
+            "line": 280,
+            "text": "stock[\"id\"] = stock_id[stock_type]"
+          }
+        ]
+      },
+      {
+        "location": "interaction_city",
+        "lineBasis": "1-based decoded body",
+        "lines": [
+          {
+            "line": 32341,
+            "text": "IF interaction_city = 6667791:"
+          },
+          {
+            "line": 32347,
+            "text": "special_stock = 2624"
+          },
+          {
+            "line": 32352,
+            "text": "gs 'generate_stock'"
+          },
+          {
+            "line": 32353,
+            "text": "gs 'stock_to_slave_nogt'"
+          },
+          {
+            "line": 32356,
+            "text": "slave[\"id\"] = 1149261182"
+          },
+          {
+            "line": 32362,
+            "text": "unique_slave[\"erza\"] = 1"
+          }
+        ]
+      }
+    ]
+  },
+  "acquisition": {
+    "route": [
+      "interaction_city6667791 sets special_stock2624",
+      "generate_stock clears stock and selects stock_type=special_stock",
+      "get_stock_seed copies seed arrays into stock including age/virginity/background/id",
+      "generate_stock completes normal preset calculation and shared trait refresh",
+      "stock_to_slave_nogt swaps complete stock instance into slave",
+      "event retains original equipment, arena level, unique flag and final $newloc"
+    ],
+    "generationAndRegeneration": "Repeat generation of type2624 follows the same shared generate_stock/get_stock_seed route. Calling get_stock_seed directly after ownership would overwrite many live attributes and must not be used as a save migration.",
+    "randomFeatures": "generate_stock calls jo9_traits generate only when special_stock0. Erza acquired as special_stock2624 skips that random personality/peerless initialization. Random sexual-state/experience diversification at generate_stock1156 onward is also conditional special_stock0.",
+    "jsonOnlyLimit": "There is no current seed_jo9_peerless mapping in get_stock_seed and no latent-meiki seed field in this preset. Merely adding either JSON key does not make existing game code apply it.",
+    "evidence": [
+      {
+        "location": "generate_stock",
+        "lineBasis": "1-based decoded body",
+        "lines": [
+          {
+            "line": 8,
+            "text": "dynamic $clear_slave_instance, 'stock' &! clear any previous stock - ImperatorAugustus"
+          },
+          {
+            "line": 9,
+            "text": "stock_state = CONST_INT['slave_exist'] &! this is the only place in the game where this state change occurs for stock - ImperatorAugustus"
+          },
+          {
+            "line": 18,
+            "text": "if special_stock > 0:"
+          },
+          {
+            "line": 20,
+            "text": "stock_type = special_stock"
+          },
+          {
+            "line": 78,
+            "text": "gs 'get_stock_seed'"
+          },
+          {
+            "line": 81,
+            "text": "if special_stock > 0 and $special_age ! '': stock['age'] = age_code[$special_age]"
+          },
+          {
+            "line": 1156,
+            "text": "if special_stock = 0:"
+          },
+          {
+            "line": 1743,
+            "text": "gs 'jo9_traits_value', 'refresh', 'stock'"
+          },
+          {
+            "line": 1747,
+            "text": "if special_stock = 0: gs 'jo9_traits', 'generate'"
+          },
+          {
+            "line": 1764,
+            "text": "if stock_type = 2579 and creating_clone = 0:"
+          },
+          {
+            "line": 1770,
+            "text": "gs 'jo9_traits_value', 'refresh', 'stock'"
+          },
+          {
+            "line": 1771,
+            "text": "gs 'jo9_traits_personality', 'gradecheck', 'stock'"
+          },
+          {
+            "line": 1791,
+            "text": "special_stock = 0"
+          }
+        ]
+      },
+      {
+        "location": "get_stock_seed",
+        "lineBasis": "1-based decoded body",
+        "lines": [
+          {
+            "line": 11,
+            "text": "stock['age'] = seed_age[stock_type]"
+          },
+          {
+            "line": 14,
+            "text": "stock['beauty'] = seed_beauty[stock_type]"
+          },
+          {
+            "line": 94,
+            "text": "local jo9x_draw_defiant = seed_defiant[stock_type]"
+          },
+          {
+            "line": 99,
+            "text": "stock['jo9_gag_reflex'] = seed_jo9_gag_reflex[stock_type]"
+          },
+          {
+            "line": 100,
+            "text": "local jo9x_draw_jo9_voice_trait = iif(seed_jo9_voice_trait[stock_type]=1,1,0)"
+          },
+          {
+            "line": 265,
+            "text": "stock['virginity'] = seed_virginity[stock_type]"
+          }
+        ]
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "lineBasis": "1-based decoded body",
+        "lines": [
+          {
+            "line": 6,
+            "text": "result = 0"
+          },
+          {
+            "line": 7,
+            "text": "if stock_state ! CONST_INT['slave_exist']:"
+          },
+          {
+            "line": 92,
+            "text": "dynamic $swap_slave_instances, 'slave', 'stock'"
+          },
+          {
+            "line": 93,
+            "text": "gs 'jo9_traits','init_slave_nature','slave'"
+          },
+          {
+            "line": 102,
+            "text": "result = 1"
+          }
+        ]
+      }
+    ]
+  },
+  "peerless": {
+    "exactRuntimeField": "actor[jo9_peerless]",
+    "enabledValue": 1,
+    "currentErzaSeedContainsField": false,
+    "visibility": "This is directly listed when actor[jo9_peerless]=1; it has no separate discovery/known flag.",
+    "existingRandomRule": "jo9_traits generate sets stock[jo9_peerless]=0; only appearance>=5 gets a 1-in-100 generation roll. Existing surgery uses its separate5% rule and is outside this request.",
+    "appearanceEffect": "jo9_traits_value refresh recomputes appearance from existing rates then adds one grade with cap6 for peerless. Retain original bruises/scars/body penalties; do not directly force beauty6 or alter the JSON seed_beauty5.",
+    "bestExistingHook": "Inside the existing generic jo9_traits_value refresh dynamic block, normalize jo9_peerless1 only for dynslave_type2624 before applying the existing appearance bonus.",
+    "whyCoversOldInstances": [
+      "generate_stock calls refresh before and after trait setup.",
+      "$newloc invokes generic refresh in the normal update pipeline.",
+      "#static_base calculated-attribute path invokes refresh.",
+      "$slave_price invokes refresh using its supplied role name."
+    ],
+    "whyNotInitSlaveNature": "init_slave_nature is acquisition-only for stock_to_slave/expert_to_slave and manual trait editor; it does not reliably run on an already-owned loaded Erza or every private-room update.",
+    "saveImpact": "Existing character arrays gain only the already-existing jo9_peerless property. No new latent seed, persistent pending flag or character-array schema is required.",
+    "manualOverrideCaution": "Forcing the innate flag on every refresh also restores it after a manual cheat sets it0. If manual off must remain authoritative, that requires a separately specified once-only override policy; no such policy is implemented here.",
+    "evidence": [
+      {
+        "location": "jo9_traits",
+        "lineBasis": "1-based decoded body",
+        "lines": [
+          {
+            "line": 336,
+            "text": "stock['jo9_peerless'] = 0"
+          },
+          {
+            "line": 337,
+            "text": "if stock['beauty'] >= 5:"
+          },
+          {
+            "line": 338,
+            "text": "if rand(1,100) = 1: stock['jo9_peerless'] = 1"
+          },
+          {
+            "line": 339,
+            "text": "end"
+          },
+          {
+            "line": 602,
+            "text": "if $args[0] = 'init_slave_nature':"
+          },
+          {
+            "line": 604,
+            "text": "if jo9born['jo9_slave_nature'] = 1 and jo9born['jo9_slave_nature_initialized'] = 0:"
+          }
+        ]
+      },
+      {
+        "location": "jo9_traits_value",
+        "lineBasis": "1-based decoded body",
+        "lines": [
+          {
+            "line": 100,
+            "text": "if $jo9_trait_value_mode = 'refresh':"
+          },
+          {
+            "line": 101,
+            "text": "dynamic $replace({"
+          },
+          {
+            "line": 102,
+            "text": "jo9_trait_value_rate = max(cont_atr_min, min(cont_atr_max, dynslave_rate['beauty'])) + dynslave_rate['temp_beauty']"
+          },
+          {
+            "line": 109,
+            "text": "dynslave['beauty'] = jo9_trait_value_grade"
+          },
+          {
+            "line": 110,
+            "text": "if dynslave['jo9_peerless'] = 1: dynslave['beauty'] = min(6, dynslave['beauty'] + 1)"
+          },
+          {
+            "line": 126,
+            "text": "if $jo9_trait_value_mode = 'surgery':"
+          },
+          {
+            "line": 129,
+            "text": "if dynslave['beauty'] = 5 and dynslave['jo9_peerless'] = 0 and rand(1,100) <= 5:"
+          },
+          {
+            "line": 130,
+            "text": "dynslave['jo9_peerless'] = 1"
+          },
+          {
+            "line": 131,
+            "text": "dynslave['beauty'] = 6"
+          }
+        ]
+      },
+      {
+        "location": "$newloc",
+        "lineBasis": "1-based decoded body",
+        "lines": [
+          {
+            "line": 46,
+            "text": "gs 'jo9_traits_value', 'refresh', 'dynslave'"
+          }
+        ]
+      },
+      {
+        "location": "$slave_price",
+        "lineBasis": "1-based decoded body",
+        "lines": [
+          {
+            "line": 11,
+            "text": "gs 'jo9_traits_value', 'refresh', $args[0]"
+          }
+        ]
+      },
+      {
+        "location": "#static_base",
+        "lineBasis": "1-based decoded body",
+        "lines": [
+          {
+            "line": 680,
+            "text": "gs 'jo9_traits_value', 'refresh', 'dynslave'"
+          }
+        ]
+      }
+    ]
+  },
+  "meiki": {
+    "runtimeFields": {
+      "virginity": "0 initial/unexperienced;1 restored state;>=2 experienced;4 visible discovered form",
+      "jo9_meiki_initialized": "0 uninitialized;1 snapshot initialized;2 one-time training grant applied",
+      "jo9_meiki_prev": "Previous state snapshot used to detect the0→>=2 transition",
+      "jo9_meiki_checked": "One-time random check consumed, including missed/ineligible transitions",
+      "jo9_meiki_known": "Already discovered; do not reset this history"
+    },
+    "roles": [
+      "slave",
+      "assistant",
+      "room1",
+      "room2",
+      "room3",
+      "room4"
+    ],
+    "currentAlgorithm": [
+      "Initialize previous-state snapshot once; if the actor is already experienced when first initialized, set checked1.",
+      "Existing visible state4 promotes known1/checked1. State1 consumes checked but does not discover.",
+      "Only prev0→current>=2 with checked0 can reach the first-transition check; it marks checked1 regardless.",
+      "If args1=1, roll rand1..100<=5, then set known1 and existing popup-local fields.",
+      "Known1 with current>=2 maps to visible state4. If initialized<2, apply existing max-based training floors once and set initialized2.",
+      "Update prev to the final current state."
+    ],
+    "firstDiscoveryProbabilityPercent": 5,
+    "latentRuleRecommendation": "Use existing type2624 identity, not a new JSON latent trait. At jo9_meiki_state entry, for one of the existing six roles with type2624, currentvirginity>=2 and known0, join the existing found/known pathway regardless of old prev/checked/args1. Keep0 and1 hidden. Let the existing state4/training/popup code finish as before.",
+    "oldSaveCases": [
+      {
+        "state": "virginity0 or1, unknown",
+        "effect": "Remain hidden and preserve state/skills; no early exposure."
+      },
+      {
+        "state": "virginity>=2, unknown, checked1 from prior missed5% or old initialization",
+        "effect": "Would discover on the next existing state refresh under the proposed unique rule, rather than requiring an impossible second first-transition."
+      },
+      {
+        "state": "known1 already",
+        "effect": "Preserve known/checked/initialized and stronger existing skill values; do not issue a second discovery popup."
+      }
+    ],
+    "popupAndSkillPreservation": "Reuse existing local jo9_meiki_found/name and final popup; reuse current max-based one-time grant rather than duplicating rewards. Native validation is needed for popup once and role swaps.",
+    "genericProbabilityPreservation": "All non2624 paths retain their current5% gating and bookkeeping; surgery, other innate traits, other actor IDs, prices and quest states remain unchanged.",
+    "noInitialExposure": "Do not seed virginity4, known1 or elevated discovery-granted skills at generation. These would expose the latent trait before the requested experience boundary.",
+    "evidence": [
+      {
+        "location": "jo9_meiki_state",
+        "lineBasis": "1-based decoded body",
+        "lines": [
+          {
+            "line": 4,
+            "text": "local jo9_meiki_found = 0"
+          },
+          {
+            "line": 5,
+            "text": "local $jo9_meiki_found_name = ''"
+          },
+          {
+            "line": 7,
+            "text": "if $args[0] = 'slave' and func('jo9_meiki_checks', 'age', slave['age']) = 1:"
+          },
+          {
+            "line": 8,
+            "text": "if slave['jo9_meiki_initialized'] = 0:"
+          },
+          {
+            "line": 9,
+            "text": "slave['jo9_meiki_initialized'] = 1"
+          },
+          {
+            "line": 10,
+            "text": "slave['jo9_meiki_prev'] = slave['virginity']"
+          },
+          {
+            "line": 11,
+            "text": "if slave['virginity'] > 0:"
+          },
+          {
+            "line": 12,
+            "text": "slave['jo9_meiki_checked'] = 1"
+          },
+          {
+            "line": 15,
+            "text": "if slave['virginity'] = 4:"
+          },
+          {
+            "line": 16,
+            "text": "slave['jo9_meiki_known'] = 1"
+          },
+          {
+            "line": 17,
+            "text": "slave['jo9_meiki_checked'] = 1"
+          },
+          {
+            "line": 19,
+            "text": "if slave['virginity'] = 1:"
+          },
+          {
+            "line": 20,
+            "text": "slave['jo9_meiki_checked'] = 1"
+          },
+          {
+            "line": 22,
+            "text": "if slave['jo9_meiki_prev'] = 0 and slave['virginity'] >= 2 and slave['jo9_meiki_checked'] = 0:"
+          },
+          {
+            "line": 23,
+            "text": "slave['jo9_meiki_checked'] = 1"
+          },
+          {
+            "line": 24,
+            "text": "if args[1] = 1:"
+          },
+          {
+            "line": 25,
+            "text": "if rand(1, 100) <= 5:"
+          },
+          {
+            "line": 27,
+            "text": "if slave['jo9_meiki_known'] = 0:"
+          },
+          {
+            "line": 28,
+            "text": "jo9_meiki_found = 1"
+          },
+          {
+            "line": 29,
+            "text": "$jo9_meiki_found_name = $slave_name"
+          },
+          {
+            "line": 32,
+            "text": "slave['jo9_meiki_known'] = 1"
+          },
+          {
+            "line": 36,
+            "text": "if slave['jo9_meiki_known'] = 1 and slave['virginity'] >= 2:"
+          },
+          {
+            "line": 37,
+            "text": "slave['virginity'] = 4"
+          },
+          {
+            "line": 39,
+            "text": "if slave['jo9_meiki_initialized'] < 2:"
+          },
+          {
+            "line": 40,
+            "text": "slave['sub_vaginal'] = max(slave['sub_vaginal'], 5)"
+          },
+          {
+            "line": 41,
+            "text": "slave['sub_threesome'] = max(slave['sub_threesome'], 3)"
+          },
+          {
+            "line": 42,
+            "text": "slave['sub_dp'] = max(slave['sub_dp'], 3)"
+          },
+          {
+            "line": 43,
+            "text": "slave['sub_tp'] = max(slave['sub_tp'], 3)"
+          },
+          {
+            "line": 44,
+            "text": "slave['sub_gangbang'] = max(slave['sub_gangbang'], 3)"
+          },
+          {
+            "line": 45,
+            "text": "slave['sub_bukkake'] = max(slave['sub_bukkake'], 3)"
+          },
+          {
+            "line": 46,
+            "text": "slave['jo9_meiki_initialized'] = 2"
+          },
+          {
+            "line": 49,
+            "text": "slave['jo9_meiki_prev'] = slave['virginity']"
+          }
+        ]
+      },
+      {
+        "location": "$newloc",
+        "lineBasis": "1-based decoded body",
+        "lines": [
+          {
+            "line": 87,
+            "text": "gs 'jo9_meiki_state', 'slave', 0"
+          },
+          {
+            "line": 88,
+            "text": "gs 'jo9_meiki_state', 'assistant', 0"
+          },
+          {
+            "line": 89,
+            "text": "gs 'jo9_meiki_state', 'room1', 0"
+          },
+          {
+            "line": 90,
+            "text": "gs 'jo9_meiki_state', 'room2', 0"
+          },
+          {
+            "line": 91,
+            "text": "gs 'jo9_meiki_state', 'room3', 0"
+          },
+          {
+            "line": 92,
+            "text": "gs 'jo9_meiki_state', 'room4', 0"
+          }
+        ]
+      },
+      {
+        "location": "#dynamic",
+        "lineBasis": "1-based decoded body",
+        "lines": [
+          {
+            "line": 5004,
+            "text": "$vaginally_penetrated = {"
+          },
+          {
+            "line": 5006,
+            "text": "gs 'jo9_meiki_state', 'dynslave', 0"
+          },
+          {
+            "line": 5012,
+            "text": "if dynslave['virginity'] < 2:"
+          },
+          {
+            "line": 5025,
+            "text": "dynslave['virginity'] = 2"
+          },
+          {
+            "line": 5028,
+            "text": "if func('jo9_meiki_checks', 'transition', $interaction_type, interaction_dynslave['diligence'], func('jo9_meiki_willing', 'dynslave', 0)) = 1:"
+          },
+          {
+            "line": 5029,
+            "text": "gs 'jo9_meiki_state', 'dynslave', 1"
+          },
+          {
+            "line": 5031,
+            "text": "gs 'jo9_meiki_state', 'dynslave', 0"
+          }
+        ]
+      },
+      {
+        "location": "sex_end",
+        "lineBasis": "1-based decoded body",
+        "lines": [
+          {
+            "line": 30,
+            "text": "if deflorated = 1:"
+          },
+          {
+            "line": 32,
+            "text": "gs 'jo9_meiki_state', 'slave', 0"
+          },
+          {
+            "line": 33,
+            "text": "slave['virginity'] = 2"
+          },
+          {
+            "line": 34,
+            "text": "gs 'jo9_meiki_state', 'slave', sex['jo9_meiki_discovery_eligible']"
+          }
+        ]
+      }
+    ]
+  },
+  "cache": {
+    "seedDatabase": "get_stock_seed reads runtime seed_*[type] arrays from JSON-loaded definitions. JSON loader implementation is in the closed native engine, not inspected here; no assertion is made that changing JSON rewrites existing live actors automatically.",
+    "existingOwnedInstances": "Owned/slave/assistant/private-room/iced instances hold independent array values, type and history. Updating JSON seeds by itself does not run get_stock_seed on those actors.",
+    "qspDefinitionCache": "$newloc refreshes #static_base/#dynamic only when jo9_meiki_revision is below214348874. Existing saves at that revision may retain old dynamic helper strings; direct calls target the newly installed jo9_meiki_state location, but cached caller routing must still be considered.",
+    "whyMinimalHooksAvoidSeedStaleness": "Type-based runtime enforcement in the existing refresh/state locations does not depend on newly loaded seed keys and does not regenerate or overwrite an owned character.",
+    "refreshCoverageLimit": "Displayed/updated active roles are corrected on their normal refresh. An iced or other inactive slot may retain old fields until its role is next priced/refreshed/activated; do not claim immediate all-slot migration without testing or an explicit existing-role loop.",
+    "noMigrationImplementation": "No save file, JSON, role cache, revision number or production QSP was written by this audit.",
+    "evidence": [
+      {
+        "location": "$newloc",
+        "lineBasis": "1-based decoded body",
+        "lines": [
+          {
+            "line": 18,
+            "text": "if jo9_traits_revision < 3:"
+          },
+          {
+            "line": 19,
+            "text": "jo9_traits_revision = 3"
+          },
+          {
+            "line": 20,
+            "text": "gs '#static_base'"
+          },
+          {
+            "line": 21,
+            "text": "gs '#dynamic'"
+          },
+          {
+            "line": 45,
+            "text": "gs 'jo9_traits_personality', 'gradecheck', 'dynslave'"
+          },
+          {
+            "line": 46,
+            "text": "gs 'jo9_traits_value', 'refresh', 'dynslave'"
+          },
+          {
+            "line": 74,
+            "text": "if jo9_meiki_revision < 214348874:"
+          },
+          {
+            "line": 75,
+            "text": "jo9_meiki_revision = 214348874"
+          },
+          {
+            "line": 78,
+            "text": "gs '#static_base'"
+          },
+          {
+            "line": 79,
+            "text": "gs '#dynamic'"
+          },
+          {
+            "line": 87,
+            "text": "gs 'jo9_meiki_state', 'slave', 0"
+          },
+          {
+            "line": 88,
+            "text": "gs 'jo9_meiki_state', 'assistant', 0"
+          },
+          {
+            "line": 89,
+            "text": "gs 'jo9_meiki_state', 'room1', 0"
+          },
+          {
+            "line": 90,
+            "text": "gs 'jo9_meiki_state', 'room2', 0"
+          },
+          {
+            "line": 91,
+            "text": "gs 'jo9_meiki_state', 'room3', 0"
+          },
+          {
+            "line": 92,
+            "text": "gs 'jo9_meiki_state', 'room4', 0"
+          }
+        ]
+      },
+      {
+        "location": "refresh_database",
+        "lineBasis": "1-based decoded body",
+        "lines": [
+          {
+            "line": 18,
+            "text": "gs '#static_base' &! no load order dependencies"
+          },
+          {
+            "line": 21,
+            "text": "gs '#dynamic' &! no load order dependencies"
+          },
+          {
+            "line": 35,
+            "text": "gs '#var_base' &! must load after #static_base, refreshed by main_screen, city_screen, choice_screen, next_day, contains conditional text and subexpressions"
+          }
+        ]
+      },
+      {
+        "location": "$ongload",
+        "lineBasis": "1-based decoded body",
+        "lines": [
+          {
+            "line": 11,
+            "text": "if jo9_profile_text_revision < 2:"
+          },
+          {
+            "line": 12,
+            "text": "gs '#static_base'"
+          },
+          {
+            "line": 15,
+            "text": "jo9_profile_text_revision = 2"
+          },
+          {
+            "line": 115,
+            "text": "saved_game_loaded = 1 &! do-once flag for $newloc"
+          }
+        ]
+      }
+    ]
+  },
+  "minimumScopeRecommendation": {
+    "newLocations": 0,
+    "newPersistentFields": 0,
+    "jsonChangesNeeded": false,
+    "existingLocations": [
+      "jo9_traits_value refresh: unique peerless normalization before appearance bonus",
+      "jo9_meiki_state: unique unknown+experienced shortcut reusing existing found/known/one-time grant handling"
+    ],
+    "why": "This covers normal acquisition and old active actors without replaying acquisition or duplicating six role rewards. It preserves the initial state, generic probability and existing history.",
+    "futureTests": [
+      "FreshErza generated via6667791 retains seedvirginity0/known0 and exposes only peerless.",
+      "All six role state updates discover Erza after state>=2 once, including checked miss histories.",
+      "State0/1 stays hidden; alreadyknown1 produces no repeat popup/grant.",
+      "Another type retains deterministic forced-random boundary tests for original5% branch.",
+      "Old stored actor keeps original id/equipment/traits/skills/quest fields and only receives intended trait/discovery change.",
+      "Inactive storage restoration and old saved dynamic definitions are tested separately."
+    ]
+  },
+  "sourceAfterSha256": "dd8c2a70c51e45e3bd46eda517cd21af32ef2fff4097a4b232253b5b5dd5e870",
+  "sourceChangedDuringAudit": false,
+  "jsonAfterSha256": "42310fe23b744c38dd68f9a2719ca9826fb778a31ba3415ca238764c3293f336"
+}

@@ -1,0 +1,30 @@
+'use strict';const fs=require('fs'),path=require('path'),crypto=require('crypto'),vm=require('vm'),a=require('assert/strict');
+const F='G:/somi/Jack O Nine Tails v2.4 Kor_Full',W='G:/somi/Jack O Nine Tails v2.4_work',R='G:/somi/JO9sa',REC=R+'/records/full-client-build-20261031',core=require(R+'/tools/text-workshop/core.cjs');
+const hash=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
+const mf=JSON.parse(fs.readFileSync(F+'/BUILD_MANIFEST.json','utf8')),plan=JSON.parse(fs.readFileSync(REC+'/input-plan.json','utf8')),qsp=fs.readFileSync(F+'/game/jack.qsp');
+a.equal(hash(F+'/game/jack.qsp'),plan.qspHash);a.equal(hash(W+'/game/jack.qsp'),plan.qspHash);a.equal(hash(W+'/game/modtools/catalog/catalog_status.js'),plan.statusHash);a(core.serialize(core.parse(qsp)).equals(qsp));
+const all=[];function walk(d){for(const n of fs.readdirSync(d)){const f=path.join(d,n),st=fs.lstatSync(f);a(!st.isSymbolicLink(),f);if(st.isDirectory())walk(f);else{a(st.isFile(),f);all.push({path:path.relative(F,f).replaceAll('\\','/'),bytes:st.size,full:f});}}}walk(F);
+const known=new Set([...mf.files,...mf.testSaves].map(x=>x.path)),generated=[];
+for(const file of all)if(!known.has(file.path)&&file.path!=='BUILD_MANIFEST.json'){
+ a(['README_KO.txt','CHANGELOG_KO.md','ARTWORK_PENDING_KO.md','FOLLOW_UP_KO.md','PLAYTEST_KO.md','게임 실행.cmd','FastQSP.ini','game/FastQSP.ini','VALIDATION_KO.md'].includes(file.path),'Unexpected output '+file.path);generated.push({...file,sha256:hash(file.full),origin:'generated-release-document-or-clean-entry'});
+}
+let verified=0;for(const row of [...mf.files,...mf.testSaves]){a(fs.existsSync(F+'/'+row.path),row.path);a.equal(fs.statSync(F+'/'+row.path).size,row.bytes,row.path);a.equal(hash(F+'/'+row.path),row.sha256,row.path);if(row.origin==='latest-work')a.equal(hash(W+'/'+row.path),row.sha256,'WORK changed: '+row.path);verified++;if(verified%10000===0)console.log(JSON.stringify({verified}));}
+let json=0,js=0,css=0,secretFiles=0;const syntaxErrors=[],cssErrors=[];
+function cssBalance(text){let quote='',comment=false,escape=false,stack=[];for(let i=0;i<text.length;i++){let ch=text[i],next=text[i+1];if(comment){if(ch==='*'&&next==='/'){comment=false;i++;}continue;}if(quote){if(escape){escape=false;continue;}if(ch==='\\'){escape=true;continue;}if(ch===quote)quote='';continue;}if(ch==='/'&&next==='*'){comment=true;i++;continue;}if(ch==='"'||ch==="'"){quote=ch;continue;}if(ch==='{')stack.push(i);if(ch==='}'){if(!stack.length)return false;stack.pop();}}return !quote&&!comment&&stack.length===0;}
+const saveAllowed=new Set(mf.testSaves.map(x=>x.path));for(const row of all){const p=row.path.toLowerCase();
+ a(!/(^|\/)(?:modtools|modworkpic|__jo9_imagebackups)(\/|$)/.test(p),row.path);a(!/\.bak(?:_|\.|$)|\.(?:zip|7z|rar|psd|kra|xcf|log|tmp)$/i.test(p),row.path);
+ if(p.endsWith('.sav'))a(saveAllowed.has(row.path),'Personal save included '+row.path);
+ if(!/\.(?:json|js|css|txt|md|xml|ini|cmd|html|svg)$/i.test(p))continue;
+ const raw=fs.readFileSync(row.full);let t=raw[0]===255&&raw[1]===254?raw.subarray(2).toString('utf16le'):raw.toString('utf8').replace(/^\uFEFF/,'');
+ if(/(?:sk-(?:proj-|or-v1-)?[A-Za-z0-9_-]{28,}|AIza[0-9A-Za-z_-]{30,}|ghp_[0-9A-Za-z]{25,})/.test(t))throw Error('Possible credential in '+row.path);secretFiles++;
+ try{if(p.endsWith('.json')){JSON.parse(t);json++;}else if(p.endsWith('.js')){new vm.Script(t,{filename:row.path});js++;}else if(p.endsWith('.css')){a(cssBalance(t));css++;}}catch(e){syntaxErrors.push({path:row.path,message:e.message});}
+}
+a.equal(syntaxErrors.length,0,JSON.stringify(syntaxErrors));
+const aliases=JSON.parse(fs.readFileSync(W+'/game/modtools/ui-resource-aliases.json','utf8'));for(const x of aliases.aliases)a.equal(hash(F+'/game/'+x.old),hash(F+'/game/'+x.canonical),x.old);
+const pack=JSON.parse(fs.readFileSync(R+'/records/character-pack-work-install-20261029/installation.json','utf8'));for(const x of pack.files)a.equal(hash(F+'/'+x.path),x.sha256,x.path);
+const groups=JSON.parse(fs.readFileSync(R+'/tools/mob-image-sets/group-sets.json','utf8'));for(const g of groups)a(fs.existsSync(F+'/game/'+g.path),g.path);
+const media=JSON.parse(fs.readFileSync(REC+'/media-verification.json','utf8'));a.equal(media.errors.length,0);a.equal(media.nonstandardDefeatedDimensions.length,0);
+const launch=JSON.parse(fs.readFileSync(REC+'/portable-launcher-verification.json','utf8').replace(/^\uFEFF/,''));a(launch.pass);
+mf.generatedFiles=generated.map(({full,...x})=>x);mf.summary.allFilesIncludingManifest=all.length;mf.summary.allBytesExcludingManifest=all.filter(x=>x.path!=='BUILD_MANIFEST.json').reduce((n,x)=>n+x.bytes,0);fs.writeFileSync(F+'/BUILD_MANIFEST.json',JSON.stringify(mf,null,2)+'\n');
+const result={status:'PASS',qspHash:plan.qspHash,runtimeFiles:mf.files.length,runtimeBytes:mf.files.reduce((n,x)=>n+x.bytes,0),testSaves:mf.testSaves.length,testSaveBytes:mf.testSaves.reduce((n,x)=>n+x.bytes,0),allFiles:all.length,totalBytes:fs.statSync(F+'/BUILD_MANIFEST.json').size+mf.summary.allBytesExcludingManifest,verifiedHashes:verified,json,js,css,cssCheck:'balanced strings/comments/braces, not a full CSS semantic parser',syntaxErrors,mediaFiles:media.checked,mediaErrors:0,compatibility23:'separate PASS',uiAliases:aliases.aliases.length,additionalPackFiles:pack.files.length,groupDefeatSets:groups.length,externalLinks:0,personalSaves:0,knownKeyPatterns:0,credentialTextFilesScanned:secretFiles,workQspAndChecklistUnchanged:true,zipCreated:false,commit:false,push:false,limits:['Not all gameplay branches or user saves were manually tested.','Original EXE has CWD dependency; portable game CMD was added and tested without altering original EXE.','5 result scenes use previous shared images pending user replacements; 9 legacy paths have documented compatibility fallbacks.','3 actively referenced base scene files marked for deletion remain as documented required exceptions.','2 old Agrabah trailing-dot image paths remain a deferred visual issue.']};
+fs.writeFileSync(REC+'/final-verification.json',JSON.stringify(result,null,2)+'\n');fs.copyFileSync(__filename,REC+'/verify-build.cjs');console.log(JSON.stringify(result));

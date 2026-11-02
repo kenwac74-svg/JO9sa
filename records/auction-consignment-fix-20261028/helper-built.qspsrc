@@ -1,0 +1,174 @@
+! JO9 MOD START FARID_CONSIGNMENT_STORAGE_20261028
+! Stored actors use the existing complete instance variable schema.
+! They are not added to owned actor, daily update or liquidation rosters.
+local $jo9_fc_mode = $args[0]
+local $jo9_fc_source = $args[1]
+local $jo9_fc_target = $args[2]
+local jo9_fc_i, $jo9_fc_from_var, $jo9_fc_to_var, jo9_fc_ok, jo9_fc_amount, $jo9_fc_panel
+result = 0
+if arrsize('$slave_vars') < 1: exit
+
+if $jo9_fc_mode = 'copy':
+ if ($jo9_fc_source = 'stock' and $jo9_fc_target = 'jo9_farid_stored') or ($jo9_fc_source = 'jo9_farid_stored' and ($jo9_fc_target = 'slave' or $jo9_fc_target = 'jo9_farid_viewprobe')):
+  if dyneval('result = ' + $jo9_fc_source + '_state') ! CONST_INT['slave_exist']: exit
+  for jo9_fc_i = 0 to arrsize('$slave_vars') - 1:
+   $jo9_fc_from_var = replace($slave_vars[jo9_fc_i], 'instance', $jo9_fc_source)
+   $jo9_fc_to_var = replace($slave_vars[jo9_fc_i], 'instance', $jo9_fc_target)
+   killvar $jo9_fc_to_var
+   copyarr $jo9_fc_to_var, $jo9_fc_from_var
+  end
+  if dyneval('result = ' + $jo9_fc_target + '_state') ! CONST_INT['slave_exist']: exit
+  if dyneval('result = ' + $jo9_fc_target + "['id']") ! dyneval('result = ' + $jo9_fc_source + "['id']"): exit
+  if dyneval('result = ' + $jo9_fc_target + '_type') ! dyneval('result = ' + $jo9_fc_source + '_type'): exit
+  if $dyneval('$result = $' + $jo9_fc_target + '_name') ! $dyneval('$result = $' + $jo9_fc_source + '_name'): exit
+  result = 1
+ end
+ exit
+end
+
+if $jo9_fc_mode = 'clear':
+ if $jo9_fc_source ! 'stock' and $jo9_fc_source ! 'jo9_farid_stored' and $jo9_fc_source ! 'jo9_farid_viewprobe': exit
+ for jo9_fc_i = 0 to arrsize('$slave_vars') - 1:
+  $jo9_fc_to_var = replace($slave_vars[jo9_fc_i], 'instance', $jo9_fc_source)
+  killvar $jo9_fc_to_var
+ end
+ if $jo9_fc_source = 'jo9_farid_stored': jo9_farid_stored_valid = 0
+ if $jo9_fc_source = 'jo9_farid_viewprobe': killvar '$jo9_farid_viewprobe_features_list'
+ result = 1
+ exit
+end
+
+if $jo9_fc_mode = 'deposit':
+ if stock_state ! CONST_INT['slave_exist']: exit
+ gs '$slave_price', 'stock'
+ jo9_fc_amount = slaveprice / 2
+ if jo9_fc_amount < 1: exit
+ jo9_fc_ok = func('jo9_farid_consignment', 'copy', 'stock', 'jo9_farid_stored')
+ if jo9_fc_ok ! 1: exit
+ ! Keep the original latest-one-returnable rule for repeated deposits.
+ farid_debt += farid_potential_debt
+ farid_potential_debt = jo9_fc_amount
+ jo9_farid_stored_valid = 1
+ jo9_fc_ok = func('jo9_farid_consignment', 'clear', 'stock')
+ result = 1
+ exit
+end
+
+if $jo9_fc_mode = 'return':
+ if farid_potential_debt <= 0: result = -1 & exit
+ if slave_state ! CONST_INT['no_slave']: result = -2 & exit
+ ! Legacy saves have no receipt proving the identity of shared stock.
+ if jo9_farid_stored_valid ! 1 or jo9_farid_stored_state ! CONST_INT['slave_exist']: result = -3 & exit
+ jo9_fc_ok = func('jo9_farid_consignment', 'copy', 'jo9_farid_stored', 'slave')
+ if jo9_fc_ok ! 1: exit
+ sparks -= 5
+ farid_potential_debt = 0
+ jo9_fc_ok = func('jo9_farid_consignment', 'clear', 'jo9_farid_stored')
+ master_moodlet['pos_new_slave'] = 6 - brand_reputation
+ result = 1
+ exit
+end
+
+if $jo9_fc_mode = 'settle':
+ if farid_potential_debt < 0: exit
+ jo9_fc_amount = farid_potential_debt
+ farid_debt += jo9_fc_amount
+ farid_potential_debt = 0
+ jo9_fc_ok = func('jo9_farid_consignment', 'clear', 'jo9_farid_stored')
+ result = jo9_fc_amount
+ exit
+end
+
+if $jo9_fc_mode = 'collect':
+ if farid_debt <= 0: exit
+ jo9_fc_amount = farid_debt
+ sparks += jo9_fc_amount
+ farid_debt = 0
+ ! An older payment must not erase a newer pending consignment.
+ if farid_potential_debt <= 0: jo9_fc_ok = func('jo9_farid_consignment', 'clear', 'jo9_farid_stored')
+ result = jo9_fc_amount
+ exit
+end
+if $jo9_fc_mode = 'panel':
+ $info_bar = '위탁 인물의 보관 기록을 확인할 수 없습니다.'
+ if jo9_farid_stored_valid ! 1 or jo9_farid_stored_state ! CONST_INT['slave_exist']: exit
+ jo9_fc_ok = func('jo9_farid_consignment', 'copy', 'jo9_farid_stored', 'jo9_farid_viewprobe')
+ if jo9_fc_ok ! 1: exit
+ !Stock Traits
+! JO9 MOD START COG_STOCK_DISPLAY | 2026-10-16_innate_learning_traits
+$jo9_farid_viewprobe_features_list = ''
+if jo9_farid_viewprobe['jo9_learning_trait'] = 1: $jo9_farid_viewprobe_features_list += '<a href="EXEC: msg $jo9_genius_text"><<dyneval($vb_cycle_skill, 5, "천재")>></a><br>'
+if jo9_farid_viewprobe['jo9_learning_trait'] = -1: $jo9_farid_viewprobe_features_list += '<a href="EXEC: msg $jo9_idiot_text"><<dyneval($vb_cycle_skill, 0, "백치")>></a><br>'
+! JO9 MOD END COG_STOCK_DISPLAY
+! JO9 MOD START TRAITS_DISPLAY_STOCK_COG_STOCK_DISPLAY | 2026-10-17_traits_batch
+ $jo9_farid_viewprobe_features_list += $func('jo9_traits', 'list', 'jo9_farid_viewprobe')
+! JO9 MOD END TRAITS_DISPLAY_STOCK_COG_STOCK_DISPLAY
+sanity = jo9_farid_viewprobe['ego'] + jo9_farid_viewprobe['temper'] + jo9_farid_viewprobe['pride']
+if sanity < 3:
+	$jo9_farid_viewprobe_features_list += '<a style = "color: #cd0000;" href="EXEC: msg $sanity_broken">정신 상태</a><br>'
+elseif sanity < 5:
+	$jo9_farid_viewprobe_features_list += '<a style = "color: #ea0090;" href="EXEC: msg $sanity_low">정신 상태</a><br>'
+end
+!if jo9_farid_viewprobe['brand'] = 0:  $jo9_farid_viewprobe_features_list += '<a style = "color: #cd0000;" href = "EXEC: msg $Нет_клейма">Not Branded</a><br>'
+if jo9_farid_viewprobe['wounds'] > 0:  $jo9_farid_viewprobe_features_list += '<a href="EXEC: msg $wounds_chart"><<$wounds[jo9_farid_viewprobe["wounds"]]>></a><br>'
+if jo9_farid_viewprobe['scars'] > 0:   $jo9_farid_viewprobe_features_list += '<a href="EXEC: msg $scars_chart"><<$scars[jo9_farid_viewprobe["scars"]]>></a><br>'
+if jo9_farid_viewprobe['bruises'] > 0: $jo9_farid_viewprobe_features_list += '<a href="EXEC: msg $bruises_chart"><<$bruises[jo9_farid_viewprobe["bruises"]]>></a><br>'
+if cheat_no_starve = 0 and master_medic >= 4:
+	if jo9_farid_viewprobe['days_without_food'] = 0 and jo9_farid_viewprobe['neg_hungry'] > 0:
+		$jo9_farid_viewprobe_features_list += '<a href="EXEC: msg $starvation_chart"><<$starvation[1]>></a><br>'
+	elseif jo9_farid_viewprobe['days_without_food'] = 1:
+		$jo9_farid_viewprobe_features_list += '<a href="EXEC: msg $starvation_chart"><<$starvation[2]>></a><br>'
+	elseif jo9_farid_viewprobe['days_without_food'] = 2:
+		$jo9_farid_viewprobe_features_list += '<a href="EXEC: msg $starvation_chart"><<$starvation[3]>></a><br>'
+	elseif jo9_farid_viewprobe['days_without_food'] = 3 or jo9_farid_viewprobe['days_without_food'] < 0:
+		$jo9_farid_viewprobe_features_list += '<a href="EXEC: msg $starvation_chart"><<$starvation[4]>></a><br>'
+	elseif jo9_farid_viewprobe['days_without_food'] > 3:
+		$jo9_farid_viewprobe_features_list += '<a href="EXEC: msg $starvation_chart"><<$starvation[5]>></a><br>'
+	end
+end
+if jo9_farid_viewprobe['rehabilitation'] > 0: $jo9_farid_viewprobe_features_list += '<font color="#cd0000">회복</font> [<<jo9_farid_viewprobe["rehabilitation"]>>]<br>'
+if jo9_farid_viewprobe['virginity'] < 2: $jo9_farid_viewprobe_features_list += '처녀<br>'
+if jo9_farid_viewprobe['grace'] > 0: $jo9_farid_viewprobe_features_list += '<a href="EXEC: msg $NaturalGrace">우아함</a><br>'
+if jo9_farid_viewprobe['grace'] < 0: $jo9_farid_viewprobe_features_list += '<font color="#cd0000">어설픔</font><br>'
+if jo9_farid_viewprobe['dexterity'] > 0: $jo9_farid_viewprobe_features_list += '<a href="EXEC: msg $Dexterity">손재주 좋음</a><br>'
+if jo9_farid_viewprobe['dexterity'] < 0: $jo9_farid_viewprobe_features_list += '<font color="#cd0000">서투름</font><br>'
+if jo9_farid_viewprobe['arena_level'] > 8:
+	$jo9_farid_viewprobe_features_list += '투기장 그랜드 챔피언<br>'
+elseif jo9_farid_viewprobe['arena_level'] > 4:
+	$jo9_farid_viewprobe_features_list += '투기장 챔피언<br>'
+end
+!if jo9_farid_viewprobe['fertility'] = -2: $jo9_farid_viewprobe_features_list += 'Immature<br>'
+
+ $jo9_fc_panel = '<br>	 속성정보<br><div style="line-height:25%">
+</div><font style="font-size:12px;"> 외모		</font><<$beauty[jo9_farid_viewprobe["beauty"]]>>
+<font style="font-size:12px;"> 체력	</font><<$stamina[jo9_farid_viewprobe["stamina"]]>>
+<font style="font-size:12px;"> 감수성	</font><<$sensitivity[jo9_farid_viewprobe["sensitivity"]]>>
+<a style="line-height:25%"><br></a><font style="font-size:12px;"> 성격		</font>	<<$temper[jo9_farid_viewprobe["temper"]]>>
+<font style="font-size:12px;"> 지성		</font><<$intellect[jo9_farid_viewprobe["intellect"]]>>
+<font style="font-size:12px;"> 자아	</font><<$ego[jo9_farid_viewprobe["ego"]]>><br><a style="line-height:25%">
+</a><font style="font-size:12px;"> 태도	</font><<$pride[jo9_farid_viewprobe["pride"]]>>
+<font style="font-size:12px;"> 독특함	</font><<$exotic[jo9_farid_viewprobe["exotic"]]>>
+<font style="font-size:12px;"> 체형	</font><<$fat[jo9_farid_viewprobe["fat"]]>><br><a style="line-height:25%">
+</a><font style="font-size:12px;"> 화려함	</font><<$style[jo9_farid_viewprobe["style"]]>><br></a>'
+! JO9 MOD END J9M1332
+
+if $master_head_gear = 'raven_crown':
+$jo9_fc_panel += '<br><font style="color:#000000">노예의 특성</font><a style="line-height:25%"><br>
+</a><<$ucase($mid($stock_boobs2_txt[jo9_farid_viewprobe["boobs"]],1,1))+mid($stock_boobs2_txt[jo9_farid_viewprobe["boobs"]],2)>><a style="line-height:25%"><br></a><<$jo9_farid_viewprobe_features_list>>'
+	is_stock = 1
+	gs '$slave_price', 'jo9_farid_viewprobe'
+	$info_bar = '노예 등급: <<$rating[rating]>><br>연 령 대: <<$slave_age_name[jo9_farid_viewprobe["age"]]>><br></a>'
+	$info_bar += '<<$jo9_fc_panel>>'
+else
+	$info_bar = '<<$jo9_fc_panel>>'
+end
+
+
+ ! Trait links must refer to the retained actor, not the disposable probe.
+ $info_bar = replace($info_bar, 'jo9_farid_viewprobe', 'jo9_farid_stored')
+ $special_image[3] = '<<func("jo9_seed_role_images", "resolve", jo9_farid_stored_type, $jo9_farid_stored["fullimage"], "fullimage")>>.png'
+ jo9_fc_ok = func('jo9_farid_consignment', 'clear', 'jo9_farid_viewprobe')
+ result = 1
+ exit
+end
+! JO9 MOD END FARID_CONSIGNMENT_STORAGE_20261028

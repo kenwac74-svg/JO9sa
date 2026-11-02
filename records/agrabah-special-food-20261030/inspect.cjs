@@ -1,0 +1,4 @@
+'use strict';
+const fs=require('fs'),c=require('G:/somi/JO9sa/tools/text-workshop/core.cjs'),raw=fs.readFileSync('G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp'),d=c.parse(raw);console.log('QSP '+c.hash(raw));
+for(const [name,start,end]of [['master_stat',30,78],['shop_general',65,118],['#options',7080,7097],['#options',7109,7126]]){const l=d.locations.find(x=>x.name===name),b=c.shift(d.lines[l.body],5).split('\r\n');console.log('---'+name);console.log(b.slice(start-1,end).map((s,i)=>(start+i)+':'+s).join('\n'));}
+const l=d.locations.find(x=>x.name==='interaction_city'),b=c.shift(d.lines[l.body],5).split('\r\n');for(const id of [30212,30213,30411,30412]){const start=b.findIndex(s=>s.trim().toLowerCase()==='if interaction_city = '+id+':'),end=b.findIndex((s,i)=>i>start&&/^IF interaction_city = /i.test(s));console.log('---interaction_city '+id);console.log(b.slice(start,end).filter(s=>!/^\s*\$text\[|^! JO9 MOD /.test(s)).map((s,i)=>s).join('\n'));}

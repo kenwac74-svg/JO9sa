@@ -1,0 +1,50 @@
+{
+  "records": [
+    {
+      "name": "image-cut-condition-rules.cjs",
+      "before": "d53272fa5ed53e48cb0ca431a340424f9f81774428ffab9ae01bd77d80e74d22",
+      "after": "fa9c8b1ec2a3c8874797c1e85c47bd179a2df75bfab2ae7a3423ff04d1d49e98",
+      "changes": [
+        [
+          "moralityMin:-10,moralityMax:10,moralityStep:0.5,moneyMax:2147483647,",
+          "moralityMin:-10,moralityMax:10,moralityStep:0.5,moralityExtremes:Object.freeze([-9999,9999]),moneyMax:2147483647,"
+        ],
+        [
+          "function normalizeRules(input){",
+          "function moralityValue(value){\n return Number.isFinite(value)&&(OPTIONS.moralityExtremes.includes(value)||(value>=OPTIONS.moralityMin&&value<=OPTIONS.moralityMax&&Number.isInteger(value*2)));\n}\nfunction normalizeRules(input){"
+        ],
+        [
+          "if(!Number.isFinite(min)||!Number.isFinite(max)||min<-10||max>10||min>max||!Number.isInteger(min*2)||!Number.isInteger(max*2))throw Error('cruel & mercy는 -10~+10 사이의 0.5 단위 범위로 지정하세요.');",
+          "if(!moralityValue(min)||!moralityValue(max)||min>max)throw Error('cruel & mercy는 -9999, -10~+10 사이의 0.5 단위 값, +9999 중에서 최솟값과 최댓값을 지정하세요.');"
+        ]
+      ]
+    },
+    {
+      "name": "catalog-cut-conditions.js",
+      "before": "6653c842c5338423f5d553d11ad6614fa52e96f7d01e1d81e8751638c326f109",
+      "after": "05212c868bc4df4480fc4950d25ce5a43537f376062d942e90bbe110045b24a1",
+      "changes": [
+        [
+          "  function collectRules(base, rows) {",
+          "  const MORALITY_EXTREMES = Object.freeze([-9999,9999]);\n  function moralityValue(value) {\n    return Number.isFinite(value) && (MORALITY_EXTREMES.includes(value) || (value >= -10 && value <= 10 && Number.isInteger(value * 2)));\n  }\n  function moralityChoices(options = {}) {\n    const min = Number(options.moralityMin ?? -10), max = Number(options.moralityMax ?? 10), step = Number(options.moralityStep ?? .5);\n    const extremes = options.moralityExtremes ?? MORALITY_EXTREMES;\n    if (min !== -10 || max !== 10 || step !== .5 || !Array.isArray(extremes) || extremes.length !== 2 || extremes[0] !== -9999 || extremes[1] !== 9999) throw Error('cruel & mercy 선택 범위를 확인할 수 없습니다.');\n    const values = [extremes[0]];\n    for (let x = min; x <= max; x += step) values.push(x);\n    values.push(extremes[1]);\n    return values;\n  }\n  function collectRules(base, rows) {"
+        ],
+        [
+          "if (!Number.isFinite(min) || !Number.isFinite(max) || min < -10 || max > 10 || min > max || !Number.isInteger(min * 2) || !Number.isInteger(max * 2)) {",
+          "if (!moralityValue(min) || !moralityValue(max) || min > max) {"
+        ],
+        [
+          "throw Error(row.file + ': cruel & mercy 범위는 -10~+10 안에서 최솟값이 최댓값 이하여야 합니다.');",
+          "throw Error(row.file + ': cruel & mercy 범위는 -9999, -10~+10의 0.5 단위 값, +9999 중에서 최솟값이 최댓값 이하여야 합니다.');"
+        ],
+        [
+          "const helpers = {eligible, normalize, escape, collectRules};",
+          "const helpers = {eligible, normalize, escape, collectRules, moralityChoices};"
+        ],
+        [
+          "    if (min !== -10 || max !== 10 || step !== .5) throw Error('cruel & mercy 선택 범위를 확인할 수 없습니다.');\n    for (let x = min; x <= max; x += step) { const label = x > 0 ? '+' + x : String(x); option(row.moralityMin,x,label); option(row.moralityMax,x,label); }",
+          "    for (const x of moralityChoices(options)) { const label = x > 0 ? '+' + x : String(x); option(row.moralityMin,x,label); option(row.moralityMax,x,label); }"
+        ]
+      ]
+    }
+  ]
+}

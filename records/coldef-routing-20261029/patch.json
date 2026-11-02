@@ -1,0 +1,29 @@
+{
+  "id": "2026-10-29_coldef_result_paths",
+  "description": "Colosseum owned-slave defeat art routing:1291 coldef1,1292 coldef2,1293 coldef3; exact single PNG paths; no outcome or save-state changes",
+  "before_sha256": "5d7c16b17d9aa0c1bb9c818c67521b2693a32a2db068742fbe7072f2dd8343cd",
+  "after_sha256": "1e8e489eb4a2c6412f81af0e50b69d409bc9ffd5d5edb69e2308cd3e9f71bc7c",
+  "edits": [
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "if interaction_city = 1291:\r\n\t$place = 'colosseum_arena'\r\n\t$picture_type = 'pic_png'\r\n\t$bg_path = 'scene/kikudef'\r\n\tg = rand(1, picMax['arena_end'])\r\n\tif g > 1: $bg_path += '_' + $str(g)",
+      "new": "if interaction_city = 1291:\r\n\t$place = 'colosseum_arena'\r\n\t$picture_type = 'pic_png'\r\n\t! JO9 MOD START COLDEF_RESULT_PATHS_20261029\r\n\t$bg_path = 'scene/coldef1'\r\n\t! JO9 MOD END COLDEF_RESULT_PATHS_20261029",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "if interaction_city = 1292:\r\n\t$place = 'colosseum_arena'\r\n\t$picture_type = 'pic_png'\r\n\t$bg_path = 'scene/kikudef'\r\n\tg = rand(1, picMax['arena_end'])\r\n\tif g > 1: $bg_path += '_' + $str(g)",
+      "new": "if interaction_city = 1292:\r\n\t$place = 'colosseum_arena'\r\n\t$picture_type = 'pic_png'\r\n\t! JO9 MOD START COLDEF_RESULT_PATHS_20261029\r\n\t$bg_path = 'scene/coldef2'\r\n\t! JO9 MOD END COLDEF_RESULT_PATHS_20261029",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "if interaction_city = 1293:\r\n\t$place = 'colosseum_arena'\r\n\t$return_lock = 'city_menu_form' & city_form = 1\r\n\t$picture_type = 'pic_png'\r\n\t$bg_path = 'scene/kikudef'\r\n\tg = rand(1, picMax['arena_end'])\r\n\tif g > 1: $bg_path += '_' + $str(g) ",
+      "new": "if interaction_city = 1293:\r\n\t$place = 'colosseum_arena'\r\n\t$return_lock = 'city_menu_form' & city_form = 1\r\n\t$picture_type = 'pic_png'\r\n\t! JO9 MOD START COLDEF_RESULT_PATHS_20261029\r\n\t$bg_path = 'scene/coldef3'\r\n\t! JO9 MOD END COLDEF_RESULT_PATHS_20261029",
+      "count": 1
+    }
+  ]
+}

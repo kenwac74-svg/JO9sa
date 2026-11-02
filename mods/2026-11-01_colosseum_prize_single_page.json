@@ -1,0 +1,15 @@
+{
+  "id": "2026-11-01_colosseum_prize_single_page",
+  "description": "Double the original step-based standard Colosseum victory reward after applying its original minimum, raising $50 to $100; append the receipt to the growth/results page. Preserve once-only settlement, champion liberation and sparring.",
+  "before_sha256": "94ba085a0b5dda03297009e12c28572e2d808671b9db97f3bb4f44f64dbcb805",
+  "after_sha256": "d9e6d8d10548ed3fe165b062b02497c683c18866e44fafdcdaad5ece399e1215",
+  "edits": [
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\tpurse = (slave['arena_level']*12) + ((48271 * (day + slave_type)) mod 65537)/(65537/13) &! max 108 to 120 sparks per battle, max 4 battles = 432-480 sparks per decade (with 225-250 from race, 657-730 sparks per decade)\r\n\tif purse < 50: purse = 50\r\n! JO9 MOD START J9M1208 | 2026-10-15_trim_leading_body_blank_lines | changed block; context may be included\r\n\t$text[2] = '<center>우승 상금 : $<<purse>> !</center>'\r\n! JO9 MOD END J9M1208",
+      "new": "! JO9 MOD START COLOSSEUM_PRIZE_SINGLE_PAGE_20261101\r\n\tpurse = (slave['arena_level']*12) + ((48271 * (day + slave_type)) mod 65537)/(65537/13) &! max 108 to 120 sparks per battle, max 4 battles = 432-480 sparks per decade (with 225-250 from race, 657-730 sparks per decade)\r\n\tif purse < 50: purse = 50\r\n\tpurse *= 2\r\n\ttxt_count = 1\r\n\t$text[1] += '<br>우승 상금: $<<purse>>'\r\n! JO9 MOD END COLOSSEUM_PRIZE_SINGLE_PAGE_20261101\r\n",
+      "count": 1
+    }
+  ]
+}

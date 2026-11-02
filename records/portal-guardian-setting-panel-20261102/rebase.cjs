@@ -1,0 +1,13 @@
+'use strict';
+const fs=require('fs'),z=require('zlib'),a=require('assert/strict'),c=require('G:/somi/JO9sa/tools/text-workshop/core.cjs'),qa=require('G:/somi/JO9sa/tools/qa/release-check.cjs');
+const O=__dirname,s=JSON.parse(fs.readFileSync(O+'/session.json')),T=s.tempRoot,W='G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp',latest=fs.readFileSync(W),old=z.gunzipSync(fs.readFileSync(O+'/before.qsp.gz')),expected='377bdeb56f83b0d8487fed722d12b34beb768566bc7fe0696425316d7427fa4a';
+a.equal(c.hash(latest),expected);a.equal(c.hash(old),s.baselineSha256);qa.inspectWorld(latest);a(c.serialize(c.parse(latest)).equals(latest));
+const b=c.parse(old),d=c.parse(latest),loc=x=>x.locations.find(l=>l.name==='#options');
+const oldLabel="62172, '경비와 싸운다')",newLabel="62172, '가디언과 싸운다')",body=c.shift(b.lines[loc(b).body],5);a.equal(body.split(oldLabel).length-1,1);b.lines[loc(b).body]=c.shift(body.replace(oldLabel,newLabel),-5);a(c.serialize(b).equals(latest),'Concurrent delta must be exactly the retained Guardian menu-label edit');
+const delta={id:'preserved-concurrent-guardian-menu-label',before_sha256:s.baselineSha256,after_sha256:expected,edits:[{location:'#options',field:'body',old:oldLabel,new:newLabel,count:1}],origin:'Only the existing Guardian entry label changed. Authorship is not inferable from bytes or mtime.'};
+fs.writeFileSync(O+'/preserved-concurrent-delta.json',JSON.stringify(delta,null,2)+'\n');
+const previous={prepared:JSON.parse(fs.readFileSync(O+'/prepared.json')),validation:JSON.parse(fs.readFileSync(O+'/final-validation.json')),patch:JSON.parse(fs.readFileSync(O+'/patch.json'))};fs.writeFileSync(O+'/previous-validation.json',JSON.stringify(previous,null,2)+'\n');
+fs.copyFileSync(O+'/before.qsp.gz',T+'/previous-before.qsp.gz');fs.copyFileSync(O+'/patch.json',T+'/previous-patch.json');
+const gz=z.gzipSync(latest);a(z.gunzipSync(gz).equals(latest));fs.writeFileSync(O+'/before.qsp.gz',gz);fs.writeFileSync(T+'/before.qsp',latest);
+for(const row of s.protectedInputs){const hash=c.hash(fs.readFileSync(row.file));if(row.file===W){a.equal(hash,expected);row.sha256=hash;row.bytes=latest.length;}else a.equal(hash,row.sha256,'Protected input changed during rebase: '+row.file);}
+s.previousBaselineSha256=s.baselineSha256;s.baselineSha256=expected;s.rebaseDelta=O+'/preserved-concurrent-delta.json';s.rebaseSourceModified=fs.statSync(W).mtime.toISOString();fs.writeFileSync(O+'/session.json',JSON.stringify(s,null,2)+'\n');console.log(JSON.stringify({baseline:s.baseline,previousBaseline:s.previousBaselineSha256,latestBaseline:s.baselineSha256,retainedConcurrentEdit:delta.edits[0],protectedInputsPreserved:true}));

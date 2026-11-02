@@ -1,0 +1,70 @@
+{
+  "purpose": "Diagnostic variable sets only; not applied to WORK or saves. Keep a valid existing residence/actor state.",
+  "probes": [
+    "guild_reputation_rate",
+    "guild_reputation",
+    "gave_guild_ill_slave",
+    "gave_guild_parasite_slave",
+    "end_day_guild_visit",
+    "parasite_slave_warned_before",
+    "$curloc",
+    "end_day_phase",
+    "$npc_id",
+    "snk_room_target",
+    "contract['active']",
+    "contract['time']",
+    "contract['level']",
+    "slave_escape"
+  ],
+  "cases": [
+    {
+      "id": "sick-visit",
+      "set": {
+        "guild_reputation_rate": 30,
+        "guild_reputation": 3,
+        "gave_guild_ill_slave": 1,
+        "gave_guild_parasite_slave": 0,
+        "end_day_guild_visit": 0,
+        "parasite_slave_warned_before": 0
+      },
+      "expectedAfterCompletedNormalVisit": {
+        "guild_reputation_rate": 20,
+        "gave_guild_ill_slave": 0,
+        "gave_guild_parasite_slave": 0,
+        "end_day_guild_visit": 1,
+        "parasite_slave_warned_before": 0
+      },
+      "derivedGradeAfterRecalculation": 2
+    },
+    {
+      "id": "next-day-no-new-delivery",
+      "set": {
+        "guild_reputation_rate": 30,
+        "guild_reputation": 3,
+        "gave_guild_ill_slave": 0,
+        "gave_guild_parasite_slave": 0,
+        "end_day_guild_visit": 0
+      },
+      "expected": "No Wong follow-up visit; no deduction from this event."
+    },
+    {
+      "id": "parasite-visit",
+      "set": {
+        "guild_reputation_rate": 100,
+        "guild_reputation": 4,
+        "gave_guild_ill_slave": 0,
+        "gave_guild_parasite_slave": 1,
+        "end_day_guild_visit": 0,
+        "parasite_slave_warned_before": 0
+      },
+      "expectedAfterCompletedNormalVisit": {
+        "guild_reputation_rate": 20,
+        "gave_guild_ill_slave": 0,
+        "gave_guild_parasite_slave": 0,
+        "end_day_guild_visit": 1,
+        "parasite_slave_warned_before": 1
+      },
+      "derivedGradeAfterRecalculation": 2
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "id": "2026-10-28_julia_meeting_npc_images",
+  "description": "줄리아 재회 장면의 NPC 참조5곳 교정과 기존 중간저장 표시 복구. 이벤트 인물 재생성 없이 renderer만 갱신.",
+  "before_sha256": "3fbdb2cca0e3eb2d4a70c2f9b442f2fb39bb756f1aefe6217cf8c10668f1106c",
+  "after_sha256": "f0911bef8f53ef1464edc3d107beccaca3af90c7f0368a4b7df92f7a6082e1b2",
+  "edits": [
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$special_action[3] = {\r\n\t\tnpc = 1\r\n\t\t$npc_id = 'alyce'\r\n\t\t$place = 'church'\r\n\t\t$bg['vatican_bedroom'] = $interior_boudoir['gothic']\r\n\t}",
+      "new": "! JO9 MOD START JULIA_MEETING_NPC_3_20261028\r\n\t$special_action[3] = {\r\n\t\tnpc = 1\r\n\t\t$npc_id = 'julia'\r\n\t\t$place = 'church'\r\n\t\t$bg['vatican_bedroom'] = $interior_boudoir['gothic']\r\n\t}\r\n! JO9 MOD END JULIA_MEETING_NPC_3_20261028",
+      "count": 1,
+      "patchId": "JULIA_MEETING_NPC_3_20261028"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$special_action[15] = {\r\n\t\tnpc = 1\r\n\t\t$npc_id = 'kuma'\r\n\t\t$place = 'church'\r\n\t}",
+      "new": "! JO9 MOD START JULIA_MEETING_NPC_15_20261028\r\n\t$special_action[15] = {\r\n\t\tnpc = 1\r\n\t\t$npc_id = 'julia'\r\n\t\t$place = 'church'\r\n\t}\r\n! JO9 MOD END JULIA_MEETING_NPC_15_20261028",
+      "count": 1,
+      "patchId": "JULIA_MEETING_NPC_15_20261028"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$special_action[16] = {\r\n\t\tnpc = 1\r\n\t\tshow_slave_fullimage = 0\r\n\t\t$npc_id = 'alyce'\r\n\t\t$place = 'church'\r\n\t}",
+      "new": "! JO9 MOD START JULIA_MEETING_NPC_16_20261028\r\n\t$special_action[16] = {\r\n\t\tnpc = 1\r\n\t\tshow_slave_fullimage = 0\r\n\t\t$npc_id = 'johanna'\r\n\t\t$place = 'church'\r\n\t}\r\n! JO9 MOD END JULIA_MEETING_NPC_16_20261028",
+      "count": 1,
+      "patchId": "JULIA_MEETING_NPC_16_20261028"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$special_action[17] = {\r\n\t\tnpc = 1\r\n\t\tshow_slave_fullimage = 0\r\n\t\t$npc_id = 'kuma'\r\n\t\t$place = 'church'\r\n\t}",
+      "new": "! JO9 MOD START JULIA_MEETING_NPC_17_20261028\r\n\t$special_action[17] = {\r\n\t\tnpc = 1\r\n\t\tshow_slave_fullimage = 0\r\n\t\t$npc_id = 'johanna'\r\n\t\t$place = 'church'\r\n\t}\r\n! JO9 MOD END JULIA_MEETING_NPC_17_20261028",
+      "count": 1,
+      "patchId": "JULIA_MEETING_NPC_17_20261028"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$special_action[18] = {\r\n\t\t! show julia on small white town background\r\n\t\tnpc = 1\r\n\t\t$npc_id = 'alyce'\r\n\t\t$place = 'church'\r\n\t}",
+      "new": "! JO9 MOD START JULIA_MEETING_NPC_18_20261028\r\n\t$special_action[18] = {\r\n\t\t! show julia on small white town background\r\n\t\tnpc = 1\r\n\t\t$npc_id = 'julia'\r\n\t\t$place = 'church'\r\n\t}\r\n! JO9 MOD END JULIA_MEETING_NPC_18_20261028",
+      "count": 1,
+      "patchId": "JULIA_MEETING_NPC_18_20261028"
+    },
+    {
+      "location": "interaction_screen_city",
+      "field": "body",
+      "old": "gs '_layout'\r\nif $special_action[txt] ! '':",
+      "new": "gs '_layout'\r\n! JO9 MOD START JULIA_MEETING_SAVED_ACTIONS_20261028\r\nif interaction_city = 163:\r\n $special_action[3] = replace($special_action[3], \"$npc_id = 'alyce'\", \"$npc_id = 'julia'\")\r\n $special_action[15] = replace($special_action[15], \"$npc_id = 'kuma'\", \"$npc_id = 'julia'\")\r\n $special_action[16] = replace($special_action[16], \"$npc_id = 'alyce'\", \"$npc_id = 'johanna'\")\r\n $special_action[17] = replace($special_action[17], \"$npc_id = 'kuma'\", \"$npc_id = 'johanna'\")\r\n $special_action[18] = replace($special_action[18], \"$npc_id = 'alyce'\", \"$npc_id = 'julia'\")\r\n if $npc_id = 'alyce' or $npc_id = 'kuma':\r\n  if (txt >= 3 and txt <= 15) or txt = 18: $npc_id = 'julia'\r\n  if txt = 16 or txt = 17: $npc_id = 'johanna'\r\n end\r\nend\r\n! JO9 MOD END JULIA_MEETING_SAVED_ACTIONS_20261028\r\nif $special_action[txt] ! '':",
+      "count": 1,
+      "patchId": "JULIA_MEETING_SAVED_ACTIONS_20261028"
+    },
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "! JO9 MOD END PROFILE_POLISH_20261025_R3\r\n! JO9 MOD END UI_RESOURCE_PATHS_20261027",
+      "new": "! JO9 MOD END PROFILE_POLISH_20261025_R3\r\n! JO9 MOD END UI_RESOURCE_PATHS_20261027\r\n! JO9 MOD START JULIA_MEETING_LOAD_REDRAW_20261028\r\n! Redraw only the obsolete saved NPC page; never regenerate the event actor.\r\nif $curloc = 'interaction_screen_city' and interaction_city = 163 and txt >= 3 and txt <= 18 and ($npc_id = 'alyce' or $npc_id = 'kuma'): gt 'interaction_screen_city'\r\n! JO9 MOD END JULIA_MEETING_LOAD_REDRAW_20261028",
+      "count": 1,
+      "patchId": "JULIA_MEETING_LOAD_REDRAW_20261028"
+    }
+  ]
+}

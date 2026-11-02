@@ -1,0 +1,11 @@
+'use strict';
+const fs=require('fs'),a=require('assert/strict'),path=require('path');
+const H=__dirname,v=JSON.parse(fs.readFileSync(H+'/path.json')),c=require(v.repo+'/tools/text-workshop/core.cjs'),qa=require(v.repo+'/tools/qa/release-check.cjs');
+const read=p=>fs.readFileSync(p),j=p=>JSON.parse(read(p).toString('utf8').replace(/^\uFEFF/,'')),i=j(H+'/installation.json'),patch=j(i.patch),raw=read(i.workQsp),before=read(i.backup),d=c.parse(raw),b=c.parse(before);
+a.equal(c.hash(raw),i.after);a.equal(c.hash(before),i.before);a(c.serialize(d).equals(raw));a.equal(qa.inspectWorld(raw).locations,275);
+const changed=[];a.equal(d.lines.length,b.lines.length);for(let k=0;k<d.lines.length;k++)if(d.lines[k]!==b.lines[k])changed.push(k);a.deepEqual(changed,[d.locations.find(x=>x.name==='#options').body]);
+const e=patch.edits[0],body=c.shift(b.lines[changed[0]],5);b.lines[changed[0]]=c.shift(body.replace(e.old,e.new),-5);a(c.serialize(b).equals(raw));
+const markers=require(v.repo+'/tools/qa/check-qsp-marker-boundaries.cjs').inspectMarkerBoundaries(raw),endings=require(v.repo+'/tools/qa/check-qsp-line-endings.cjs').inspect(raw);a.equal(markers.issues.length,0);a.equal(endings.issues.length,0);
+const rel=j(H+'/release-check/report.json');a.equal(rel.verdict,'PASS');a.equal(rel.client.probes.length,9);a(rel.client.probes.every(x=>x.pass));const green=j(H+'/green-results.json');a.equal(green.length,6);a(green.every(x=>x.pass));
+a.equal(c.hash(read(v.stateSave)),v.saveSha256);const plan=j(v.repo+'/records/full-client-preparation-20261029/full-client-input-plan.json');a.equal(plan.qspSha256,i.after);a.equal(plan.files.find(x=>x.path==='game/jack.qsp').sha256,i.after);
+const r={pass:true,workSha256:i.after,backupSha256:i.before,changedFields:['#options.body'],byteExactPatchReplay:true,locations:275,lineEndingIssues:0,markerBoundaryIssues:0,nativeMenuCases:6,releaseEngineCases:9,sourceSaveUnchanged:true,inputPlanCurrent:true,distributionWritten:false,commitPush:false};fs.writeFileSync(H+'/post-install-verification.json',JSON.stringify(r,null,2));fs.copyFileSync(H+'/post-install-verification.json',v.repo+'/records/'+v.id+'/post-install-verification.json');console.log(JSON.stringify(r));

@@ -1,0 +1,50 @@
+{
+  "id": "2026-11-01_erza_branches_traits",
+  "description": "Separate Erza result image references, settle each completed choice once using the existing half-point helper, and give unique Erza fixed peerless appearance with latent guaranteed discovery through existing state handling.",
+  "before_sha256": "890659604c66979bda6e1f391be6f7824fb347c36baa87b5aa8bd3fe45b964de",
+  "after_sha256": "9a4bba2496616517fa4cbd8d791293ad413c5475efcf135039df4da68e869f39",
+  "edits": [
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": ">\n[",
+      "new": ">\r\n[",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "IF interaction_city = 66677921:\r\n npc = 0\r\n $npc_id = ''\r\n $place = 'erza_battle'\r\n $return_lock = 'menu_form'\r\n $special_image[1] = 'scene\\others\\erza_dead_after.png'",
+      "new": "IF interaction_city = 66677921:\r\n npc = 0\r\n $npc_id = ''\r\n $place = 'erza_battle'\r\n $return_lock = 'menu_form'\r\n $special_image[1] = 'scene\\others\\erza_dead_after_1.png'\r\n! JO9 MOD START ERZA_BRANCH_IMAGES_TRAITS_20261101\r\n ! The two result counters together identify an already completed mutually exclusive choice.\r\n if city_already_done_ever['66677921'] = 0 and city_already_done_ever['66677922'] = 0:\r\n  gs 'jo9_cruel_mercy_apply', 6\r\n end\r\n! JO9 MOD END ERZA_BRANCH_IMAGES_TRAITS_20261101",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "IF interaction_city = 66677922:\r\n npc = 0\r\n $npc_id = ''\r\n $place = 'erza_battle'\r\n $return_lock = 'menu_form'\r\n $special_image[1] = 'scene\\others\\erza_dead_after.png'",
+      "new": "IF interaction_city = 66677922:\r\n npc = 0\r\n $npc_id = ''\r\n $place = 'erza_battle'\r\n $return_lock = 'menu_form'\r\n $special_image[1] = 'scene\\others\\erza_dead_after_2.png'\r\n! JO9 MOD START ERZA_BRANCH_IMAGES_TRAITS_20261101\r\n ! The two result counters together identify an already completed mutually exclusive choice.\r\n if city_already_done_ever['66677921'] = 0 and city_already_done_ever['66677922'] = 0:\r\n  gs 'jo9_cruel_mercy_apply', -2\r\n end\r\n! JO9 MOD END ERZA_BRANCH_IMAGES_TRAITS_20261101",
+      "count": 1
+    },
+    {
+      "location": "interaction_screen_city",
+      "field": "body",
+      "old": "! JO9 MOD START BG_DIRECTORY_PREFIX_FIX_20261027",
+      "new": "! JO9 MOD START ERZA_BRANCH_IMAGES_TRAITS_20261101\r\n! Repair only the retired shared reference in cached result pages; do not replay choices.\r\nif $replace($special_image[1], '\\', '/') = 'scene/others/erza_dead_after.png':\r\n if interaction_city = 66677921: $special_image[1] = 'scene\\others\\erza_dead_after_1.png'\r\n if interaction_city = 66677922: $special_image[1] = 'scene\\others\\erza_dead_after_2.png'\r\nend\r\n! JO9 MOD END ERZA_BRANCH_IMAGES_TRAITS_20261101\r\n! JO9 MOD START BG_DIRECTORY_PREFIX_FIX_20261027",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits_value",
+      "field": "body",
+      "old": "if $jo9_trait_value_mode = 'refresh':\r\n dynamic $replace({\r\n  jo9_trait_value_rate",
+      "new": "if $jo9_trait_value_mode = 'refresh':\r\n dynamic $replace({\r\n! JO9 MOD START ERZA_BRANCH_IMAGES_TRAITS_20261101\r\n  if dynslave_type = 2624: dynslave['jo9_peerless'] = 1\r\n! JO9 MOD END ERZA_BRANCH_IMAGES_TRAITS_20261101\r\n  jo9_trait_value_rate",
+      "count": 1
+    },
+    {
+      "location": "jo9_meiki_state",
+      "field": "body",
+      "old": "local $jo9_meiki_found_name = ''\r\n! JO9 MOD END MEIKI_DISCOVERY_POPUP_LOCAL_20261026",
+      "new": "local $jo9_meiki_found_name = ''\r\n! JO9 MOD END MEIKI_DISCOVERY_POPUP_LOCAL_20261026\r\n! JO9 MOD START ERZA_BRANCH_IMAGES_TRAITS_20261101\r\n! Erza has a fixed latent trait; unexperienced states stay unchanged and hidden.\r\nlocal $jo9_erza_meiki_role = $args[0]\r\nif instr('|slave|assistant|room1|room2|room3|room4|', '|' + $jo9_erza_meiki_role + '|') > 0:\r\n if dyneval('result = ' + $jo9_erza_meiki_role + '_type') = 2624:\r\n  if func('jo9_meiki_checks', 'age', dyneval('result = ' + $jo9_erza_meiki_role + \"['age']\")) = 1:\r\n   if dyneval('result = ' + $jo9_erza_meiki_role + \"['virginity']\") >= 2 and dyneval('result = ' + $jo9_erza_meiki_role + \"['virginity']\") ! 4 and dyneval('result = ' + $jo9_erza_meiki_role + \"['jo9_meiki_known']\") = 0:\r\n    dynamic $jo9_erza_meiki_role + \"['jo9_meiki_known'] = 1\"\r\n    jo9_meiki_found = 1\r\n    $jo9_meiki_found_name = $dyneval('$result = $' + $jo9_erza_meiki_role + '_name')\r\n   end\r\n  end\r\n end\r\nend\r\n! JO9 MOD END ERZA_BRANCH_IMAGES_TRAITS_20261101",
+      "count": 1
+    }
+  ]
+}

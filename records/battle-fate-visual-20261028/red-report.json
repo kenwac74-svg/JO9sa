@@ -1,0 +1,325 @@
+{
+  "status": "FAIL",
+  "candidate": "G:\\somi\\Jack O Nine Tails v2.4_work\\game\\jack.qsp",
+  "game": "G:\\somi\\Jack O Nine Tails v2.4_work\\game",
+  "stateSave": "G:\\somi\\Jack O Nine Tails v2.4_work\\game\\save\\JO9_GOLD_AP_CHECK_20261026.sav",
+  "inputHashes": {
+    "G:\\somi\\Jack O Nine Tails v2.4_work\\game\\jack.qsp": "97c275cf3b51ec24962432b5664487ba80951c0898f26710d2222820ab4df1f8",
+    "G:\\somi\\Jack O Nine Tails v2.4_work\\game\\save\\JO9_GOLD_AP_CHECK_20261026.sav": "581fc472bfa5aedcbca85c379d0061ad8d28a9b928ef948a259dee7c800ad2ec",
+    "G:\\somi\\Jack O Nine Tails v2.4_work\\game\\css\\base.css": "fc9cd21182fea78c0756b917f5d7149de5e3496088e99bb54d0de571f09eaf72",
+    "G:\\somi\\Jack O Nine Tails v2.4_work\\game\\content\\js\\jo9_battle_log.js": "76a00e4c99b189ea108fa33cc2a1366a499be70085c8bd3e5613d471dff7b5a8",
+    "G:\\somi\\Jack O Nine Tails v2.4_work\\game\\engine\\jack.exe": "f75032d79ecb58eeb7b969cd3f774d66b091fca38a360acdabd782e03a46c6e6"
+  },
+  "engineExecuted": true,
+  "caseCount": 1,
+  "fixtureCount": 2,
+  "resourcesLinked": [
+    {
+      "directory": "css",
+      "target": "G:\\somi\\Jack O Nine Tails v2.4_work\\game\\css",
+      "writtenThroughLink": false
+    },
+    {
+      "directory": "content",
+      "target": "G:\\somi\\Jack O Nine Tails v2.4_work\\game\\content",
+      "writtenThroughLink": false
+    },
+    {
+      "directory": "fonts",
+      "target": "G:\\somi\\Jack O Nine Tails v2.4_work\\game\\fonts",
+      "writtenThroughLink": false
+    },
+    {
+      "directory": "json",
+      "target": "G:\\somi\\Jack O Nine Tails v2.4_work\\game\\json",
+      "writtenThroughLink": false
+    }
+  ],
+  "plan": "G:\\Codex\\tmp\\battle-fate-visual-qa-20261028\\ui-red\\plan.json",
+  "poseAssets": [
+    {
+      "caseName": "fate-ui-colosseum-armored-execute",
+      "exists": false,
+      "file": "G:\\somi\\Jack O Nine Tails v2.4_work\\game\\content\\pic\\mob\\defeated\\glad_armored.png"
+    }
+  ],
+  "expectedAssets": [
+    {
+      "path": "content/pic/ui/jo9_battle_test_v01/arena.png",
+      "exists": false
+    },
+    {
+      "path": "content/pic/ui/jo9_battle_test_v01/execution_red.png",
+      "exists": false
+    }
+  ],
+  "fixtures": [
+    {
+      "name": "fate-ui-colosseum-armored-execute-pending",
+      "mode": 2,
+      "choice": 1,
+      "diagnosticSeams": [
+        "Start",
+        "конец_боя append-only DOM sentinel/cache tail",
+        "jo9_battle_fate observational entry counters",
+        "independent pending-only terminal fixture / final fixture with no intermediate EXEC metrics",
+        "qa_fate_ui_done native-state assertions"
+      ],
+      "htmlBytes": 12186,
+      "rendererOriginalSha256": "aed85d6fa1710cc0340ee617ed00303d9a44baa0845e09600add5017710c9a1e",
+      "helperOriginalSha256": "9fa664a47008c53e8d688d4d82ce9ead9bb9746bc9d12b2c4138d87af73ca14b"
+    },
+    {
+      "name": "fate-ui-colosseum-armored-execute-final",
+      "mode": 2,
+      "choice": 1,
+      "diagnosticSeams": [
+        "Start",
+        "конец_боя append-only DOM sentinel/cache tail",
+        "jo9_battle_fate observational entry counters",
+        "independent pending-only terminal fixture / final fixture with no intermediate EXEC metrics",
+        "qa_fate_ui_done native-state assertions"
+      ],
+      "htmlBytes": 12182,
+      "rendererOriginalSha256": "aed85d6fa1710cc0340ee617ed00303d9a44baa0845e09600add5017710c9a1e",
+      "helperOriginalSha256": "9fa664a47008c53e8d688d4d82ce9ead9bb9746bc9d12b2c4138d87af73ca14b"
+    }
+  ],
+  "limits": [
+    "대표단일적5설정(안개,일반투기장,콜로세움3외형)에pending-only/final을분리한10fixture입니다. 모든전투/스토리분기를검사하지않습니다.",
+    "pending와final은별도프로세스입니다. 같은후보·설정·리소스의root상대좌표를대조하며동일연속프레임비교로보고하지않습니다.",
+    "final내부효과수명과좌표불변은동일프로세스25~1400ms실측입니다. 중간QSP EXEC계측은전혀없습니다.",
+    "세이브는대표값초기화에만사용합니다. 실제GUI세이브불러오기/CRC호환은검사하지않습니다.",
+    "원본결과renderer와helper apply/render분기를실행하며진단Start/tail/카운터만추가합니다.",
+    "생산/후보/원본세이브를쓰지않습니다. 효과시간은네이티브타이머허용오차를포함하고수동미술검토는별도입니다."
+  ],
+  "client": [
+    {
+      "name": "fate-ui-colosseum-armored-execute-pending",
+      "checkpoint": "원본결과renderer의pendingDOM/비활성thumb를검사하고nativephase1/count1/미정산MSG로종료. 선택없음.",
+      "pass": false,
+      "reason": "Unexpected message before completion",
+      "durationMs": 10063
+    },
+    {
+      "name": "fate-ui-colosseum-armored-execute-final",
+      "checkpoint": "pendingDOMlocalgate통과시원래href무수정클릭. 중간EXEC계측없이phase2와1000ms효과/finalDOM/정산1회MSG검사.",
+      "pass": false,
+      "reason": "Unexpected message before completion",
+      "durationMs": 9459
+    }
+  ],
+  "cases": [
+    {
+      "name": "fate-ui-colosseum-armored-execute",
+      "pendingFixture": "fate-ui-colosseum-armored-execute-pending",
+      "finalFixture": "fate-ui-colosseum-armored-execute-final",
+      "pending": null,
+      "final": {
+        "caseName": "fate-ui-colosseum-armored-execute",
+        "fixtureName": "fate-ui-colosseum-armored-execute-final",
+        "fixturePhase": "final",
+        "mode": 2,
+        "choice": 1,
+        "ok": false,
+        "error": "PENDING_CONTRACT_FAILED",
+        "samples": [
+          {
+            "sample": "pending",
+            "elapsed": 315,
+            "viewport": [
+              1280,
+              800
+            ],
+            "rootClass": "jo9-battle-v01 jo9-battle-result jo9-battle-fate-active",
+            "geometry": {
+              "root": {
+                "x": 1,
+                "y": 1,
+                "width": 1280,
+                "height": 800,
+                "right": 1281,
+                "bottom": 801
+              },
+              "stage": {
+                "x": 243,
+                "y": 1,
+                "width": 795,
+                "height": 596,
+                "right": 1038,
+                "bottom": 597
+              },
+              "log": {
+                "x": 259,
+                "y": 647,
+                "width": 763,
+                "height": 84,
+                "right": 1022,
+                "bottom": 731
+              },
+              "logSkin": {
+                "x": 243,
+                "y": 597,
+                "width": 795,
+                "height": 204,
+                "right": 1038,
+                "bottom": 801
+              },
+              "choices": {
+                "x": 259,
+                "y": 737,
+                "width": 763,
+                "height": 60,
+                "right": 1022,
+                "bottom": 797
+              },
+              "rows": [
+                {
+                  "x": 259,
+                  "y": 737,
+                  "width": 763,
+                  "height": 28,
+                  "right": 1022,
+                  "bottom": 765
+                },
+                {
+                  "x": 259,
+                  "y": 769,
+                  "width": 763,
+                  "height": 28,
+                  "right": 1022,
+                  "bottom": 797
+                }
+              ],
+              "thumb": {
+                "x": 1086,
+                "y": 541,
+                "width": 147,
+                "height": 160,
+                "right": 1233,
+                "bottom": 701
+              },
+              "ally": {
+                "x": 1038,
+                "y": 1,
+                "width": 243,
+                "height": 440,
+                "right": 1281,
+                "bottom": 441
+              },
+              "enemy": {
+                "x": 1,
+                "y": 1,
+                "width": 242,
+                "height": 440,
+                "right": 243,
+                "bottom": 441
+              }
+            },
+            "logFont": {
+              "family": "'Sandoll 미생'",
+              "size": "23px",
+              "lineHeight": "normal"
+            },
+            "monster": {
+              "src": "content/pic/mob/glad_armored.png",
+              "loaded": true,
+              "width": 795,
+              "height": 596,
+              "expected": false,
+              "rect": {
+                "x": 243,
+                "y": 1,
+                "width": 795,
+                "height": 596,
+                "right": 1038,
+                "bottom": 597
+              },
+              "wrapZ": "2"
+            },
+            "background": {
+              "src": "content\\pic\\ui\\grimdark\\bg\\fight.png",
+              "loaded": true,
+              "expected": false,
+              "rect": {
+                "x": 243,
+                "y": 1,
+                "width": 795,
+                "height": 596,
+                "right": 1038,
+                "bottom": 597
+              },
+              "z": "1"
+            },
+            "choices": [
+              {
+                "tag": "A",
+                "text": "[가차 없이 상대를 처형한다]",
+                "href": "EXEC: gt 'jo9_battle_fate', 'apply', 1",
+                "ariaDisabled": null,
+                "rect": {
+                  "x": 259,
+                  "y": 737,
+                  "width": 763,
+                  "height": 28,
+                  "right": 1022,
+                  "bottom": 765
+                },
+                "hit": true,
+                "pointerEvents": "auto",
+                "display": "block",
+                "visibility": "visible",
+                "fontFamily": "'경기천년제목 Medium', 'Malgun Gothic', '맑은 고딕', sans-serif",
+                "fontSize": "22px",
+                "lineHeight": "26px",
+                "color": "rgb(104, 25, 35)"
+              },
+              {
+                "tag": "A",
+                "text": "[죽일 필요까지는 없다. 상대를 살려준다]",
+                "href": "EXEC: gt 'jo9_battle_fate', 'apply', 2",
+                "ariaDisabled": null,
+                "rect": {
+                  "x": 259,
+                  "y": 769,
+                  "width": 763,
+                  "height": 28,
+                  "right": 1022,
+                  "bottom": 797
+                },
+                "hit": true,
+                "pointerEvents": "auto",
+                "display": "block",
+                "visibility": "visible",
+                "fontFamily": "'경기천년제목 Medium', 'Malgun Gothic', '맑은 고딕', sans-serif",
+                "fontSize": "22px",
+                "lineHeight": "26px",
+                "color": "rgb(56, 37, 27)"
+              }
+            ],
+            "choiceAnchors": 2,
+            "thumbAnchors": 0,
+            "thumbDisabled": true,
+            "thumbReady": [],
+            "enemyHP": "0",
+            "enemyStamina": "90",
+            "logChoicesOverlap": false,
+            "rowsOverlap": false,
+            "effect": null
+          }
+        ],
+        "visibilityTransitions": []
+      },
+      "assessment": {
+        "checks": {
+          "pendingReceived": false,
+          "finalReceived": true
+        },
+        "pass": false
+      }
+    }
+  ],
+  "alphaAssetsPass": false,
+  "requiredAssetsPass": false,
+  "inputsUnchanged": true
+}

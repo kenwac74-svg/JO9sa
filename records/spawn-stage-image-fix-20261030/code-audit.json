@@ -1,0 +1,453 @@
+{
+  "date": "2026-10-30",
+  "source": {
+    "path": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+    "sha256": "a5f9dcb31acac6160836d0f420a1ef0d697bf1e259619be4187ef8e5b1a829cc",
+    "locationCount": 275,
+    "lineConvention": "1-based decoded QSP location body lines",
+    "parser": "G:/somi/JO9sa/tools/text-workshop/core.cjs"
+  },
+  "scope": {
+    "readOnly": true,
+    "gameOrRepoCodeWritten": false,
+    "engineExecuted": false,
+    "sourceSnapshotTakenBeforeRootImplementation": true
+  },
+  "causeKo": "성장기·보통·거대는 서로 다른 MOB ID와 능력치를 갖지만, #противники의 전신·아바타 값이 완전히 같은 두 이미지 경로로 하드코딩되어 있다. 현재 외형 동일 현상은 캐시나 랜덤 선택을 가정하지 않아도 재현되는 데이터 원인이다.",
+  "stages": [
+    {
+      "id": "исчадие_молодь",
+      "name": "성장기",
+      "encounter": 61101,
+      "encounterAssignmentLine": 10937,
+      "nameLine": 982,
+      "avatarLine": 983,
+      "standingLine": 984,
+      "hp": 70,
+      "endurance": 60,
+      "spirit": 90,
+      "baseDamage": 9,
+      "avatar": "content/pic/mob/spawn_ava.png",
+      "standing": "content/pic/mob/spawn.png",
+      "defeated": "content/pic/mob/defeated/spawn.png"
+    },
+    {
+      "id": "исчадие",
+      "name": "보통/성숙",
+      "encounter": 61102,
+      "encounterAssignmentLine": 10947,
+      "nameLine": 1049,
+      "avatarLine": 1050,
+      "standingLine": 1051,
+      "hp": 120,
+      "endurance": 120,
+      "spirit": 160,
+      "baseDamage": 15,
+      "avatar": "content/pic/mob/spawn_ava.png",
+      "standing": "content/pic/mob/spawn.png",
+      "defeated": "content/pic/mob/defeated/spawn.png"
+    },
+    {
+      "id": "чудовщиное_исчадие",
+      "name": "거대",
+      "encounter": 61103,
+      "encounterAssignmentLine": 10967,
+      "nameLine": 1134,
+      "avatarLine": 1135,
+      "standingLine": 1136,
+      "hp": 200,
+      "endurance": 300,
+      "spirit": 300,
+      "baseDamage": 20,
+      "avatar": "content/pic/mob/spawn_ava.png",
+      "standing": "content/pic/mob/spawn.png",
+      "defeated": "content/pic/mob/defeated/spawn.png"
+    }
+  ],
+  "routes": {
+    "normalCombat": {
+      "definitionLoader": {
+        "location": "начать_бой",
+        "line": 121
+      },
+      "standingRenderer": {
+        "location": "боевой_интерфейс",
+        "line": 126,
+        "expression": "$силуэт_моба[$враг[текущий]]"
+      },
+      "avatarRenderer": {
+        "location": "боевой_интерфейс",
+        "line": 237,
+        "expression": "$аватара_моба[$враг[текущий]]"
+      }
+    },
+    "results": {
+      "callerLocation": "конец_боя",
+      "lines": [
+        78,
+        99
+      ],
+      "defeatedCondition": "$итог_боя = 'победа'",
+      "spriteResolver": "jo9_battle_fate sprite",
+      "sharedSpawnRuleLine": 67,
+      "missingRuleBehavior": "Returns the standing image because local image is initialized from $силуэт_моба and unchanged if no map matches.",
+      "fileErrorFallback": "Result img onerror falls back to data-standing."
+    },
+    "arena": {
+      "id": "исчадие_арены",
+      "definitionLocation": "#противники",
+      "avatarLine": 3214,
+      "avatar": "content/pic/mob/spawn_ava.png",
+      "standingLine": 3215,
+      "standing": "content/pic/mob/gladiator_spawn.png",
+      "defeated": "content/pic/mob/defeated/gladiator_spawn.png",
+      "defeatedRule": {
+        "location": "jo9_battle_fate",
+        "line": 75
+      },
+      "selection": {
+        "location": "$gladiator_setup",
+        "lines": [
+          77,
+          79
+        ],
+        "condition": "challenge_type = 3"
+      },
+      "noteKo": "아레나 전신·패배는 별도, 아바타만 세 성장단계와 공유한다. spawn_ava.png를 덮어쓰면 아레나 UI도 영향받는다."
+    },
+    "trophies": {
+      "location": "trophy_room",
+      "sharedAvatar": "content/pic/mob/spawn_ava.png",
+      "entries": [
+        {
+          "line": 12,
+          "flag": "trophy_hugefiend",
+          "stage": "거대"
+        },
+        {
+          "line": 14,
+          "flag": "trophy_maturefiend",
+          "stage": "성숙"
+        },
+        {
+          "line": 22,
+          "flag": "trophy_youngfiend",
+          "stage": "어린"
+        },
+        {
+          "line": 36,
+          "flag": "trophy_arenafiend",
+          "stage": "아레나"
+        }
+      ],
+      "noteKo": "사전 배열을 참조하지 않고 파일명을 직접 쓰므로 #противники만 수정하면 전리품실은 그대로 같은 그림이다."
+    }
+  },
+  "saveCache": {
+    "storedData": "$силуэт_моба/$аватара_моба are state arrays; screen HTML may also retain old rendered src.",
+    "normalRefreshChain": [
+      {
+        "location": "$ongload",
+        "line": 115,
+        "action": "saved_game_loaded=1"
+      },
+      {
+        "location": "$newloc",
+        "lines": [
+          111,
+          113
+        ],
+        "action": "next location transition invokes $addon update full"
+      },
+      {
+        "location": "$addon",
+        "lines": [
+          7,
+          11
+        ],
+        "action": "refresh_database"
+      },
+      {
+        "location": "refresh_database",
+        "line": 46,
+        "action": "#противники"
+      }
+    ],
+    "newBattleRefresh": {
+      "location": "начать_бой",
+      "line": 121
+    },
+    "arenaRefresh": {
+      "location": "$gladiator_fight_start",
+      "line": 23
+    },
+    "catfightRefresh": {
+      "location": "$catfight_fight_start",
+      "line": 32
+    },
+    "immediateLoadLimitKo": "$ongload에는 일반적인 전투/결과 페이지 재렌더나 이 이미지 배열 직접 갱신이 없다. 다음 전환이나 새 전투에서는 사전 갱신 경로가 있지만 로드 직후 정지한 옛 HTML 화면의 즉시 변경은 별도로 검증해야 한다.",
+    "redrawRisks": [
+      {
+        "location": "конец_боя",
+        "lines": [
+          1,
+          18
+        ],
+        "detailKo": "재진입은 jo9_battle_fate result, fog handoff, arena reset, armor removal을 다시 실행한다. 이미지 갱신 목적으로 무조건 GT하면 안 된다."
+      },
+      {
+        "location": "боевой_интерфейс",
+        "lines": [
+          73,
+          80
+        ],
+        "detailKo": "다중 적 전투에서는 이전 공격 문구를 잘라내며, 뒤쪽에서 hit effect 캐시도 소비한다. 순수한 무상태 renderer는 아니다."
+      }
+    ]
+  },
+  "minimumChangesKo": [
+    "보통을 기존 spawn.png/spawn_ava.png로 유지하고 성장기·거대에 각각 고유 전신·아바타 경로를 주면 공유 경로의 다른 호출처를 덜 흔든다. 파일명과 이미지 선택은 루트가 결정한다.",
+    "새 전신 파일에 대응하는 jo9_battle_fate sprite 패배 매핑을 함께 추가해야 한다. 매핑이 없으면 승리 화면에도 새 전신이 서 있다.",
+    "전리품실까지 단계 구분할 범위라면 trophy_room의 성장기·거대 직접 경로도 바꾼다. 아레나 전신/패배는 유지 가능하다.",
+    "로드 직후 옛 HTML 즉시 갱신이 요구되면 기존 battle/result 로직을 다시 실행하지 않는 좁은 갱신을 설계하고 세이브 부작용을 검증한다. 단순 신규 전투 기준 수정에는 별도의 성장 상태·신규 MOB ID·능력치 변경이 필요 없다."
+  ],
+  "recommendedTests": [
+    {
+      "type": "static",
+      "detailKo": "3개 MOB의 전신·아바타 경로가 서로 구분되고 모든 실제 파일이 존재하는지, 원본 spawn/arena 호환 경로를 덮어쓰지 않았는지 확인한다."
+    },
+    {
+      "type": "native_isolated_sprite",
+      "setup": "gs '#противники' & количество_врагов=1 & $враг[1]='исчадие_молодь'",
+      "calls": [
+        "$func('jo9_battle_fate','sprite',1,0)",
+        "$func('jo9_battle_fate','sprite',1,1)"
+      ],
+      "detailKo": "성장3단계+아레나 4 ID 각각 standing/defeated 8개 반환값을 기대 경로와 비교한다."
+    },
+    {
+      "type": "native_isolated_render",
+      "detailKo": "전투 UI 전신·아바타 및 전리품 4종 HTML src를 검사하고, 신규 이미지 missing 시 결과 img fallback이 올바른 해당 단계 standing으로 가는지 확인한다."
+    },
+    {
+      "type": "native_save_compatibility",
+      "detailKo": "구 경로를 캐시한 격리 진단 세이브를 로드하여 선택한 갱신 지점 뒤 신규 경로를 확인한다. HP/지구력/정신력·현재 적·경과 턴·승패/보상/장비 상태가 갱신 전후 그대로인지 비교한다. 사용자 세이브를 덮어쓰지 않는다."
+    },
+    {
+      "type": "release",
+      "detailKo": "루트 구현 후 구조·주석 경계·mods 재생 및 지정 출고 검사. 정적/도우미 경로 PASS와 실제 플레이 화면 미검증을 구분한다."
+    }
+  ],
+  "evidence": [
+    {
+      "location": "#противники",
+      "start": 982,
+      "end": 995,
+      "lines": [
+        "$название_моба['исчадие_молодь'] = \"성장기 안개 괴물\"",
+        "$аватара_моба['исчадие_молодь'] = \"content/pic/mob/spawn_ava.png\"",
+        "$силуэт_моба['исчадие_молодь'] = \"content/pic/mob/spawn.png\"",
+        "$описание_моба['исчадие_молодь'] = \"<br>성장기 안개 괴물\"",
+        "$склонение_моб['исчадие_молодь'] = \"성장기 안개 괴물\"",
+        "$склонение_моба['исчадие_молодь'] = \"성장기 안개 괴물\"",
+        "$склонение_мобу['исчадие_молодь'] = \"성장기 안개 괴물\"",
+        "$класс_моба['исчадие_молодь'] = \"элитный\"",
+        "базовое_здоровье['исчадие_молодь'] = 70",
+        "базовая_выносливость['исчадие_молодь'] = 60",
+        "базовый_дух['исчадие_молодь'] = 90",
+        "$интеллект['исчадие_молодь'] = 'искусственный_идиот'",
+        "",
+        "базовый_вред['исчадие_молодь'] = 9"
+      ]
+    },
+    {
+      "location": "#противники",
+      "start": 1049,
+      "end": 1062,
+      "lines": [
+        "$название_моба['исчадие'] = \"안개 괴물\"",
+        "$аватара_моба['исчадие'] = \"content/pic/mob/spawn_ava.png\"",
+        "$силуэт_моба['исчадие'] = \"content/pic/mob/spawn.png\"",
+        "$описание_моба['исчадие'] = \"<br>성숙한 안개 괴물\"",
+        "$склонение_моб['исчадие'] = \"안개 괴물\"",
+        "$склонение_моба['исчадие'] = \"안개 괴물\"",
+        "$склонение_мобу['исчадие'] = \"안개 괴물\"",
+        "$класс_моба['исчадие'] = \"элитный\"",
+        "базовое_здоровье['исчадие'] = 120",
+        "базовая_выносливость['исчадие'] = 120",
+        "базовый_дух['исчадие'] = 160",
+        "$интеллект['исчадие'] = 'искусственный_идиот'",
+        "",
+        "базовый_вред['исчадие'] = 15"
+      ]
+    },
+    {
+      "location": "#противники",
+      "start": 1134,
+      "end": 1147,
+      "lines": [
+        "$название_моба['чудовщиное_исчадие'] = \"거대 안개 괴물\"",
+        "$аватара_моба['чудовщиное_исчадие'] = \"content/pic/mob/spawn_ava.png\"",
+        "$силуэт_моба['чудовщиное_исчадие'] = \"content/pic/mob/spawn.png\"",
+        "$описание_моба['чудовщиное_исчадие'] = \"<br>한층 더 강해진 안개 괴물\"",
+        "$склонение_моб['чудовщиное_исчадие'] = \"거대 안개 괴물\"",
+        "$склонение_моба['чудовщиное_исчадие'] = \"거대 안개 괴물\"",
+        "$склонение_мобу['чудовщиное_исчадие'] = \"거대 안개 괴물\"",
+        "$класс_моба['чудовщиное_исчадие'] = \"элитный\"",
+        "базовое_здоровье['чудовщиное_исчадие'] = 200",
+        "базовая_выносливость['чудовщиное_исчадие'] = 300",
+        "базовый_дух['чудовщиное_исчадие'] = 300",
+        "$интеллект['чудовщиное_исчадие'] = 'искусственный_идиот'",
+        "",
+        "базовый_вред['чудовщиное_исчадие'] = 20"
+      ]
+    },
+    {
+      "location": "#противники",
+      "start": 3212,
+      "end": 3215,
+      "lines": [
+        "!ARENA FIEND ['исчадие_арены']",
+        "$название_моба['исчадие_арены'] = \"아레나 안개 괴물\"",
+        "$аватара_моба['исчадие_арены'] = \"content/pic/mob/spawn_ava.png\"",
+        "$силуэт_моба['исчадие_арены'] = \"content/pic/mob/gladiator_spawn.png\""
+      ]
+    },
+    {
+      "location": "боевой_интерфейс",
+      "start": 126,
+      "end": 126,
+      "lines": [
+        "if $силуэт_моба[$враг[текущий]] ! '': *p '<div class=\"jo9-battle-monster-wrap\"><img id=\"jo9-battle-monster\" src=\"<<$силуэт_моба[$враг[текущий]]>>\" onerror=\"this.style.display=String.fromCharCode(110,111,110,101)\"></div>'"
+      ]
+    },
+    {
+      "location": "боевой_интерфейс",
+      "start": 237,
+      "end": 237,
+      "lines": [
+        "\t*p '<div id = \"combat_ui_pic\"><img src = \"<<$аватара_моба[$враг[текущий]]>>\"></div>'"
+      ]
+    },
+    {
+      "location": "jo9_battle_fate",
+      "start": 31,
+      "end": 37,
+      "lines": [
+        "if $args[0] = 'sprite':",
+        " local jo9_bv_slot = args[1]",
+        " $result = ''",
+        " if jo9_bv_slot < 1 or jo9_bv_slot > количество_врагов: exit",
+        "local $jo9_bv_standing = $replace($силуэт_моба[$враг[jo9_bv_slot]], '\\', '/')",
+        "local $jo9_bv_image = $силуэт_моба[$враг[jo9_bv_slot]]",
+        "if args[2] = 1:"
+      ]
+    },
+    {
+      "location": "jo9_battle_fate",
+      "start": 67,
+      "end": 67,
+      "lines": [
+        " if $jo9_bv_standing = 'content/pic/mob/spawn.png': $jo9_bv_image = 'content/pic/mob/defeated/spawn.png'"
+      ]
+    },
+    {
+      "location": "jo9_battle_fate",
+      "start": 75,
+      "end": 75,
+      "lines": [
+        " if $jo9_bv_standing = 'content/pic/mob/gladiator_spawn.png': $jo9_bv_image = 'content/pic/mob/defeated/gladiator_spawn.png'"
+      ]
+    },
+    {
+      "location": "jo9_battle_fate",
+      "start": 120,
+      "end": 123,
+      "lines": [
+        "end",
+        " $result = $jo9_bv_image",
+        " exit",
+        "end"
+      ]
+    },
+    {
+      "location": "trophy_room",
+      "start": 12,
+      "end": 12,
+      "lines": [
+        "if trophy_hugefiend > 0: *p '<div id = \"trophy_room_hugefiend\"><img src=\"content\\pic\\mob\\spawn_ava.png\"><br><center>거대 핀드</center></div>'"
+      ]
+    },
+    {
+      "location": "trophy_room",
+      "start": 14,
+      "end": 14,
+      "lines": [
+        "if trophy_maturefiend > 0: *p '<div id = \"trophy_room_maturefiend\"><img src=\"content\\pic\\mob\\spawn_ava.png\"><br><center>성숙한 괴물</center></div>'"
+      ]
+    },
+    {
+      "location": "trophy_room",
+      "start": 22,
+      "end": 22,
+      "lines": [
+        "if trophy_youngfiend > 0: *p '<div id = \"trophy_room_youngfiend\"><img src=\"content\\pic\\mob\\spawn_ava.png\"><br><center>어린 괴물</center></div>'"
+      ]
+    },
+    {
+      "location": "trophy_room",
+      "start": 36,
+      "end": 36,
+      "lines": [
+        "if trophy_arenafiend > 0: *p '<div id = \"trophy_room_arenafiend\"><img src=\"content\\pic\\mob\\spawn_ava.png\"><br><center>투기장 괴물</center></div>'"
+      ]
+    },
+    {
+      "location": "$ongload",
+      "start": 115,
+      "end": 115,
+      "lines": [
+        "saved_game_loaded = 1 &! do-once flag for $newloc"
+      ]
+    },
+    {
+      "location": "$newloc",
+      "start": 111,
+      "end": 113,
+      "lines": [
+        "if saved_game_loaded > 0 or $ongload = '' or $game_ver ! $title_fix:",
+        "\tkillvar 'saved_game_loaded'",
+        "\tgs '$addon', 'update', 'full'"
+      ]
+    },
+    {
+      "location": "$addon",
+      "start": 7,
+      "end": 11,
+      "lines": [
+        "\tif $args[1] = 'full':",
+        "\t\t!Reload databases",
+        "\t\tgs 'interior_storage'",
+        "\t\tgs 'refresh_database'",
+        "\t\tgs 'interior_restore'"
+      ]
+    },
+    {
+      "location": "refresh_database",
+      "start": 44,
+      "end": 48,
+      "lines": [
+        "!fight engine",
+        "gs '#тексты_движка'",
+        "gs '#противники'",
+        "gs '#суперудары'",
+        "gs '#боевые_предметы'"
+      ]
+    }
+  ],
+  "limitationsKo": [
+    "이 하위 감사에서는 원본/게임/코드/이미지를 수정하지 않았다.",
+    "신규 이미지 파일의 외형·크기는 루트/별도 이미지 담당 범위다.",
+    "현재 세이브를 실제 로드하지 않았고 게임 전투·엔진 회귀를 실행하지 않았다."
+  ]
+}

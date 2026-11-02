@@ -1,0 +1,20 @@
+'use strict';
+const fs=require('fs'),crypto=require('crypto'),a=require('assert/strict'),{chromium}=require('C:/Users/User/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const H=__dirname,R='G:/somi/JO9sa',G='G:/somi/Jack O Nine Tails v2.4_work/game',read=p=>fs.readFileSync(p),sha=b=>crypto.createHash('sha256').update(b).digest('hex'),j=p=>JSON.parse(read(p));
+const install=j(H+'/installation.json');
+(async()=>{const browser=await chromium.launch({headless:true,executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'}),page=await browser.newPage({viewport:{width:1280,height:900}});let applyRequests=0;const errors=[];page.on('request',r=>{if(r.url().includes('/api/catalog/pic/apply'))applyRequests++;});page.on('pageerror',e=>errors.push(e.message));
+try{
+ await page.goto('http://127.0.0.1:3813/catalog?mobsets=1',{waitUntil:'domcontentloaded'});await page.waitForFunction(()=>typeof window.JO9MobPortraitCrop?.open==='function'&&document.querySelector('#jo9-mob-sets'));
+ const meta=await page.evaluate(()=>{const entry=window.JO9_MOB_SETS.entries.find(x=>x.portrait?.path==='content/pic/mob/toadman_ava.png');return{entry,frames:Object.keys(window.JO9_MOB_PORTRAIT_FRAMES.frames),frameData:JSON.stringify(window.JO9_MOB_PORTRAIT_FRAMES)};});a(meta.entry);a.equal(meta.frameData,JSON.stringify(j(H+'/frame-data.json')));
+ await page.locator('#jo9-mob-sets input[placeholder="이름 / 파일명 검색"]').fill('toadman_ava.png');
+ const card=page.locator('#jo9-mob-sets section').filter({has:page.getByRole('heading',{name:meta.entry.name+' · '+meta.entry.key,exact:true})});
+ const chooser=page.waitForEvent('filechooser');await card.locator('div[style*="grid-template-columns"] > div').nth(0).getByRole('button',{name:'PNG 교체',exact:true}).click();await(await chooser).setFiles(G+'/content/pic/mob/toadman_ava.png');
+ const canvas=page.locator('dialog canvas[aria-label="프레임 적용 미리보기"]');await canvas.waitFor();a.deepEqual(await canvas.evaluate(c=>[c.width,c.height]),[150,150]);a.equal(await page.locator('dialog').getByText('프레임: 기본',{exact:true}).count(),1);
+ const editorDialog=page.getByRole('dialog',{name:'MOB 포트레이트 얼굴 영역 선택',exact:true});
+ await editorDialog.getByRole('slider',{name:'얼굴 선택 범위 크기'}).fill('75');await editorDialog.getByRole('slider',{name:'얼굴 선택 범위 크기'}).dispatchEvent('input');await page.screenshot({path:H+'/live-crop-preview.png'});
+ await editorDialog.getByRole('button',{name:'취소',exact:true}).click();a.equal(await page.locator('dialog[aria-label="MOB 포트레이트 얼굴 영역 선택"]').count(),0);a.equal(applyRequests,0);
+ for(const [p,h]of Object.entries(install.preserved))a.equal(sha(read(p)),h,'Protected file changed: '+p);
+ for(const [name,h]of Object.entries(install.sourceHashes))a.equal(sha(read(R+'/tools/mob-image-sets/'+name)),h);
+ for(const row of install.catalogs)a.equal(sha(read(row.path)),row.after);
+ a.equal(errors.length,0,JSON.stringify(errors));const report={pass:true,url:'http://127.0.0.1:3813/catalog?mobsets=1',actualCatalogOpened:true,actualPngChooserOpened:true,frameClasses:meta.frames,previewSize:[150,150],rangeAdjusted:true,cancelTested:true,applyRequests,portraitHashesPreserved:75,qspAndChecklistStatusPreserved:true,pageErrors:errors,sourceAndCatalogHashesMatch:true,gameImagesReplaced:false};fs.writeFileSync(H+'/live-results.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report));
+}finally{await browser.close();}})().catch(e=>{console.error(e.stack);process.exitCode=1;});

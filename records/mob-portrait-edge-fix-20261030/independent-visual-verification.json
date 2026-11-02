@@ -1,0 +1,49 @@
+{
+  "pass": true,
+  "visualPass": true,
+  "technicalPass": true,
+  "manifestSha256": "8abff80d74d3d815df15cce95eed46800cbd1128e32f2de24d4cb660d1f91d21",
+  "nativePngFilesReviewed": 30,
+  "contactSheetsReviewed": ["comparison-1.png", "comparison-2.png"],
+  "enlargedDetailFilesReviewed": [
+    "glad_amason_ava-detail.png",
+    "gladiator_hoplite_1_ava-detail.png",
+    "gladiator_champion_corvus_ava-detail.png",
+    "glad_mistress_ava_3-detail.png",
+    "warg_ava-detail.png",
+    "ride_morrigan-detail.png"
+  ],
+  "originalRgbaSources": 27,
+  "estimatedOpaqueSources": 3,
+  "unaffectedPortraitHashesVerified": 68,
+  "allCandidatePngHashesAndSizesVerified": true,
+  "allFramesExact": true,
+  "allProtectedCoresExact": true,
+  "allChangesInsideReportedChangeBand": true,
+  "qspUnchanged": true,
+  "runtimeWrites": false,
+  "observations": [
+    "The 27 registered original RGBA sources remove the former binary-mask dots while preserving fine hair, fur-like edges and equipment outlines at the intended 150x150 display size.",
+    "No new holes, black matte fringes or apparent subject damage were observed in the 30 native-size saved PNG candidates.",
+    "The opaque-source estimates for warg, ride_morrigan and the newly supplied glad_mistress portrait improve the earlier hard boundaries; they are estimates and not lossless recovery of original alpha."
+  ],
+  "resolvedFindings": [
+    {
+      "file": "content/pic/mob/warg_ava.png",
+      "finding": "A neutral black background fragment remained in the upper-right portrait gap, visible around x105-145 and y5-16.",
+      "resolution": "Compared the original RGB crop to current and candidate. Confirmed the area is background rather than fur. The root refined that neutral region, then the saved candidate was reviewed again at native size and 3x. No conspicuous black fragment or yellow hole remains there.",
+      "status": "resolved"
+    },
+    {
+      "file": "content/pic/mob/warg_ava.png",
+      "finding": "A new sure-background replacement was initially outside the saved change-band mask.",
+      "resolution": "The explicit upper-gap modification was included in the reported change band. Independent pixel verification now confirms all changes are inside that band.",
+      "status": "resolved"
+    }
+  ],
+  "limitations": [
+    "This is independent saved-image visual and pixel verification, not a game playtest.",
+    "Opaque-source edge alpha remains estimated; high-resolution true cutouts would provide stronger source information for those three portraits.",
+    "The normal raster pixel grid visible at 3x enlargement was distinguished from the unwanted disconnected dots and matte edges reported by the user."
+  ]
+}

@@ -1,0 +1,10 @@
+'use strict';
+const fs=require('fs'),path=require('path'),crypto=require('crypto');
+const root=__dirname,game='G:/somi/Jack O Nine Tails v2.4_work/game';
+const sha=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
+const games=[game+'/jack.qsp','G:/somi/Jack O Nine Tails v2.4 Kor_Full/game/jack.qsp','G:/somi/JO9O/game/jack.qsp'];
+const before={at:new Date().toISOString(),games:games.map(p=>({path:p,sha256:sha(p)})),existingSaves:fs.readdirSync(game+'/save').filter(n=>fs.statSync(game+'/save/'+n).isFile()).map(name=>{const s=fs.statSync(game+'/save/'+name);return{name,bytes:s.size,mtimeMs:s.mtimeMs};})};
+const file=path.join(root,'root-snapshot.json');
+if(fs.existsSync(file))throw Error('Snapshot already exists; refusing overwrite');
+fs.writeFileSync(file,JSON.stringify(before,null,2)+'\n');
+console.log(JSON.stringify({games:before.games,existingFiles:before.existingSaves.length}));

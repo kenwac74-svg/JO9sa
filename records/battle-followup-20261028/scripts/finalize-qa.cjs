@@ -1,0 +1,13 @@
+'use strict';
+const fs=require('node:fs'),a=require('node:assert/strict');
+const root='G:/Codex/tmp/battle-followup-qa-20261028',read=p=>JSON.parse(fs.readFileSync(p,'utf8').replace(/^\uFEFF/,''));
+const x=read(root+'/hit-native-v4/report.json'),y=read(root+'/hit-opponent-v5/report.json'),candidate=read(__dirname+'/candidate.json');
+const selected=x.client.filter(t=>t.pass),extra=y.client.filter(t=>t.pass);
+a.equal(selected.length,9);a.equal(extra.length,1);a.equal(y.status,'PASS');
+a.equal(x.inputHashes[x.candidate],candidate.qspAfter);a.equal(y.inputHashes[y.candidate],candidate.qspAfter);
+a.equal(x.inputsUnchanged,true);a.equal(y.inputsUnchanged,true);
+const cases=[...selected.map(t=>({...t,source:root+'/hit-native-v4/report.json'})),...extra.map(t=>({...t,source:root+'/hit-opponent-v5/report.json'}))];a.equal(new Set(cases.map(t=>t.name)).size,10);
+const report={status:'PASS',candidate:candidate.candidate,candidateHash:candidate.qspAfter,engineExecuted:true,caseCount:cases.length,cases,inputHashes:x.inputHashes,inputsUnchanged:true,sourceReports:[{path:root+'/hit-native-v4/report.json',wholeReportStatus:x.status,selectedExplicitPassedCases:9},{path:root+'/hit-opponent-v5/report.json',wholeReportStatus:y.status,selectedExplicitPassedCases:1}],limits:['This scoped summary covers ten explicit passing core hit cases only. It does not relabel the full twelve-case attempt as PASS.','Two-target secondary paths were observed unchanged in baseline and candidate, and their mechanic was not repaired or certified as successful here.','The corrected opponent case was rerun alone after matching original spirit restoration. Earlier failed expectations remain preserved.']};
+fs.writeFileSync(__dirname+'/hit-core-report.json',JSON.stringify(report,null,2)+'\n');
+const qa={official:root+'/release-v1/run-3QFexR/report.json',ui:root+'/ui-green-v2/fate-ui-native-results.json',logic:root+'/logic-v2/fate-native-results.json',group:root+'/group-roster-v1/report.json',scenes:root+'/scenes-green-v1/followup-scene-ui-native-results.json',hit:__dirname+'/hit-core-report.json',hitdom:root+'/hit-dom-v1/report.json'};
+fs.writeFileSync(__dirname+'/qa-reports.json',JSON.stringify(qa,null,2)+'\n');console.log(JSON.stringify({status:report.status,hitCoreCases:cases.length,reports:qa},null,2));

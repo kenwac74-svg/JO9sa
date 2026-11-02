@@ -1,0 +1,502 @@
+{
+  "paths": {
+    "work": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+    "original": "G:/somi/JO9O/game/jack.qsp",
+    "save": "G:/somi/Jack O Nine Tails v2.4_work/game/save/JO9_MANUAL_20261025/02_수동확인_문제재현/27_private_reports.sav"
+  },
+  "hashes": {
+    "work": "dbe2948f7c827d8fc82ccd32b2c3453626d181a59eb744e015fa66a3846280ae",
+    "original": "26e15aaf30b6226a2883c6b532a6ee4eed34791110618597d234bb7d6fa3e052",
+    "save": "e0c874b89fc1935e505264d0df53c2e8bc578eda60fb5284b928dd773951ab35"
+  },
+  "scope": "READ_ONLY_STATIC_MECHANICS_NO_RUNTIME_OR_SAVE_MUTATIONS",
+  "design": {
+    "path": "G:/somi/JO9sa/records/maid-trainee-priority-20261019/MANUAL_KO.md",
+    "lines": [
+      12,
+      34
+    ],
+    "meaning": "Approved private-room residence ignores stored ordinary sleep/diet settings and uses private-room rest/diet effects; current private profile disables ordinary sleep inputs."
+  },
+  "sources": {
+    "work": {
+      "mainScreenActors": [
+        {
+          "line": 338,
+          "text": "$main_screen_slave_characters[] = 'slave'"
+        },
+        {
+          "line": 339,
+          "text": "$main_screen_slave_characters[] = 'assistant'"
+        },
+        {
+          "line": 340,
+          "text": "$main_screen_slave_characters[] = 'prisoner'"
+        },
+        {
+          "line": 341,
+          "text": "$main_screen_slave_characters[] = 'cow'"
+        },
+        {
+          "line": 342,
+          "text": "$main_screen_slave_characters[] = 'room1'"
+        },
+        {
+          "line": 343,
+          "text": "$main_screen_slave_characters[] = 'room2'"
+        },
+        {
+          "line": 344,
+          "text": "$main_screen_slave_characters[] = 'room3'"
+        },
+        {
+          "line": 345,
+          "text": "$main_screen_slave_characters[] = 'room4'"
+        }
+      ],
+      "pregnancyCalls": [
+        {
+          "line": 2054,
+          "text": "dynamic $do_for_each_slave_in_list, '$next_day_menses_preg_egglaying_update', '$main_screen_slave_characters' &! slave, assistant, prisoner, cow"
+        },
+        {
+          "line": 2057,
+          "text": "dynamic $replace($next_day_menses_preg_egglaying_update,'dyn'+'slave','farmhand')"
+        },
+        {
+          "line": 2058,
+          "text": "dynamic $replace($next_day_menses_preg_egglaying_update,'dyn'+'slave','pig')"
+        }
+      ],
+      "sleep": {
+        "ordinary": {
+          "start": 2716,
+          "end": 2791,
+          "moralWrites": [
+            {
+              "line": 2763,
+              "text": "slave_rate['moral'] += 1"
+            },
+            {
+              "line": 2769,
+              "text": "slave_rate['moral'] -= 1"
+            }
+          ]
+        },
+        "private": {
+          "start": 4727,
+          "end": 4785,
+          "checksStoredCondition": false,
+          "moralWrites": [],
+          "blockHash": "75370f019a41968b82c6c48df6ff58af379166480bf062962a48dde72078264a"
+        }
+      },
+      "inseminate": [
+        {
+          "line": 5000,
+          "text": "dynamic \"<<$args[0]>>['inseminated'] = rand(3,5) & <<$args[0]>>['cum_load'] += ejaculation_intensity * (1 + master_libido/5)\" &! added libido bonus (2x at S+) - ImperatorAugustus"
+        }
+      ],
+      "conception": [
+        {
+          "line": 1959,
+          "text": "if dynslave['inseminated'] > 0: dynslave['inseminated'] -= 1 &! inseminated represents remaining lifespan of live sperm (should be set to 3-5 when insemination occurs)"
+        },
+        {
+          "line": 1987,
+          "text": "dynslave['cycle_day'] -= 1 &! countdown to beginning of the next cycle"
+        },
+        {
+          "line": 1991,
+          "text": "dynslave['cycle_day'] = rand(21,35) &! duration of next cycle varies from 21 to 35 days, averaging 28 (synchronization of women living together is a myth)"
+        },
+        {
+          "line": 1993,
+          "text": "dynslave['ovulation'] -= 1 &! countdown to ovulation day"
+        },
+        {
+          "line": 1994,
+          "text": "if dynslave['ovulation'] = 0 and dynslave['fertility'] = 0 and dynslave['inseminated'] > iif(dynslave_type = 2572, 1, rand(1,5)):"
+        },
+        {
+          "line": 2034,
+          "text": "if female['ovulation'] > 0: female['ovulation'] -= 1"
+        },
+        {
+          "line": 4794,
+          "text": "if room1['ovulation'] > 0 and room1['pregnant'] > 0: room1['ovulation'] -= 1"
+        },
+        {
+          "line": 4808,
+          "text": "if room2['ovulation'] > 0 and room2['pregnant'] > 0: room2['ovulation'] -= 1"
+        },
+        {
+          "line": 4823,
+          "text": "if room3['ovulation'] > 0 and room3['pregnant'] > 0: room3['ovulation'] -= 1"
+        },
+        {
+          "line": 4838,
+          "text": "if room4['ovulation'] > 0 and room4['pregnant'] > 0: room4['ovulation'] -= 1"
+        }
+      ],
+      "display": [
+        {
+          "line": 15,
+          "text": "if args[2] <= 0 and args[1] < 120: exit"
+        }
+      ],
+      "overnightEquipment": [
+        {
+          "line": 4171,
+          "text": "dynamic $do_for_each_slave_in_list, '$next_day_apply_overnight_item_bonuses', '$main_screen_slave_characters' &! slave, assistant, prisoner, cow"
+        }
+      ],
+      "bridge": {
+        "enter": [],
+        "leave": [],
+        "nativeRoomRoute": [
+          {
+            "line": 114,
+            "text": "snk_room_original_interaction = 1026 + snk_room_target"
+          },
+          {
+            "line": 115,
+            "text": "gs 'snk_room_bridge', 'leave'"
+          },
+          {
+            "line": 116,
+            "text": "interaction = snk_room_original_interaction"
+          }
+        ]
+      },
+      "privatePregnancyCalls": [
+        {
+          "line": 8405,
+          "text": "dynamic $replace($vaginally_penetrated, 'dyn'+'slave', 'room1') &! includes $master_ejaculate and raises master_penetration_rate"
+        },
+        {
+          "line": 8451,
+          "text": "dynamic $replace($vaginally_penetrated, 'dyn'+'slave', 'room2') &! includes $master_ejaculate and raises master_penetration_rate"
+        },
+        {
+          "line": 8497,
+          "text": "dynamic $replace($vaginally_penetrated, 'dyn'+'slave', 'room3') &! includes $master_ejaculate and raises master_penetration_rate"
+        },
+        {
+          "line": 8543,
+          "text": "dynamic $replace($vaginally_penetrated, 'dyn'+'slave', 'room4') &! includes $master_ejaculate and raises master_penetration_rate"
+        }
+      ],
+      "inseminationCall": [
+        {
+          "line": 5041,
+          "text": "if hero_choice < 100 or $current_sub = '$interaction_lesson_dp' or $interaction_type = 'impregnate_cow':"
+        },
+        {
+          "line": 5042,
+          "text": "dynamic $inseminate, 'dynslave'"
+        }
+      ],
+      "reveal": [
+        {
+          "line": 1979,
+          "text": "if dynslave['pregnant'] >= 120 or (dynslave['pregnant'] > 90 and inventory['stethoscope'] ! 0 and (master_medic > 2 or assistant['nurse'] > 2) and rand(1,21) = 8):"
+        },
+        {
+          "line": 1980,
+          "text": "dynslave['pregnant_revealed'] = 1"
+        }
+      ],
+      "clinicRoom1": [
+        {
+          "line": 7691,
+          "text": "if room1['pregnant'] > 9 and room1['fertility'] ! -2 and room1['fertility'] ! 1:"
+        },
+        {
+          "line": 7694,
+          "text": "room1['pregnant_revealed'] = 2"
+        }
+      ]
+    },
+    "original": {
+      "mainScreenActors": [
+        {
+          "line": 333,
+          "text": "$main_screen_slave_characters[] = 'slave'"
+        },
+        {
+          "line": 334,
+          "text": "$main_screen_slave_characters[] = 'assistant'"
+        },
+        {
+          "line": 335,
+          "text": "$main_screen_slave_characters[] = 'prisoner'"
+        },
+        {
+          "line": 336,
+          "text": "$main_screen_slave_characters[] = 'cow'"
+        },
+        {
+          "line": 337,
+          "text": "$main_screen_slave_characters[] = 'room1'"
+        },
+        {
+          "line": 338,
+          "text": "$main_screen_slave_characters[] = 'room2'"
+        },
+        {
+          "line": 339,
+          "text": "$main_screen_slave_characters[] = 'room3'"
+        },
+        {
+          "line": 340,
+          "text": "$main_screen_slave_characters[] = 'room4'"
+        }
+      ],
+      "pregnancyCalls": [
+        {
+          "line": 1880,
+          "text": "dynamic $do_for_each_slave_in_list, '$next_day_menses_preg_egglaying_update', '$main_screen_slave_characters' &! slave, assistant, prisoner, cow"
+        },
+        {
+          "line": 1883,
+          "text": "dynamic $replace($next_day_menses_preg_egglaying_update,'dyn'+'slave','farmhand')"
+        },
+        {
+          "line": 1884,
+          "text": "dynamic $replace($next_day_menses_preg_egglaying_update,'dyn'+'slave','pig')"
+        }
+      ],
+      "sleep": {
+        "ordinary": {
+          "start": 2413,
+          "end": 2488,
+          "moralWrites": [
+            {
+              "line": 2460,
+              "text": "slave_rate['moral'] += 1"
+            },
+            {
+              "line": 2466,
+              "text": "slave_rate['moral'] -= 1"
+            }
+          ]
+        },
+        "private": {
+          "start": 4367,
+          "end": 4425,
+          "checksStoredCondition": false,
+          "moralWrites": [],
+          "blockHash": "75370f019a41968b82c6c48df6ff58af379166480bf062962a48dde72078264a"
+        }
+      },
+      "inseminate": [
+        {
+          "line": 4728,
+          "text": "dynamic \"<<$args[0]>>['inseminated'] = rand(3,5) & <<$args[0]>>['cum_load'] += ejaculation_intensity * (1 + master_libido/5)\" &! added libido bonus (2x at S+) - ImperatorAugustus"
+        }
+      ],
+      "conception": [
+        {
+          "line": 1787,
+          "text": "if dynslave['inseminated'] > 0: dynslave['inseminated'] -= 1 &! inseminated represents remaining lifespan of live sperm (should be set to 3-5 when insemination occurs)"
+        },
+        {
+          "line": 1815,
+          "text": "dynslave['cycle_day'] -= 1 &! countdown to beginning of the next cycle"
+        },
+        {
+          "line": 1819,
+          "text": "dynslave['cycle_day'] = rand(21,35) &! duration of next cycle varies from 21 to 35 days, averaging 28 (synchronization of women living together is a myth)"
+        },
+        {
+          "line": 1821,
+          "text": "dynslave['ovulation'] -= 1 &! countdown to ovulation day"
+        },
+        {
+          "line": 1822,
+          "text": "if dynslave['ovulation'] = 0 and dynslave['fertility'] = 0 and dynslave['inseminated'] > iif(dynslave_type = 2572, 1, rand(1,5)):"
+        },
+        {
+          "line": 1860,
+          "text": "if female['ovulation'] > 0: female['ovulation'] -= 1"
+        },
+        {
+          "line": 4434,
+          "text": "if room1['ovulation'] > 0 and room1['pregnant'] > 0: room1['ovulation'] -= 1"
+        },
+        {
+          "line": 4448,
+          "text": "if room2['ovulation'] > 0 and room2['pregnant'] > 0: room2['ovulation'] -= 1"
+        },
+        {
+          "line": 4463,
+          "text": "if room3['ovulation'] > 0 and room3['pregnant'] > 0: room3['ovulation'] -= 1"
+        },
+        {
+          "line": 4478,
+          "text": "if room4['ovulation'] > 0 and room4['pregnant'] > 0: room4['ovulation'] -= 1"
+        }
+      ],
+      "display": [],
+      "overnightEquipment": [
+        {
+          "line": 3818,
+          "text": "dynamic $do_for_each_slave_in_list, '$next_day_apply_overnight_item_bonuses', '$main_screen_slave_characters' &! slave, assistant, prisoner, cow"
+        }
+      ]
+    }
+  },
+  "sample27": {
+    "day": "102",
+    "hero": "13",
+    "target": "0",
+    "mainScreenActors": [
+      "slave",
+      "assistant",
+      "prisoner",
+      "cow",
+      "room1",
+      "room2",
+      "room3",
+      "room4"
+    ],
+    "roles": {
+      "slave": {
+        "state": "1",
+        "type": "2579",
+        "age": "2",
+        "moral": "5",
+        "pride": "3",
+        "angst": "0",
+        "sleep_condition": "0",
+        "fertility": "-1",
+        "fertility_revealed": "1",
+        "ovulation": "0",
+        "cycle_day": "22",
+        "menstruation": "0",
+        "pregnant": "0",
+        "pregnant_revealed": "0",
+        "inseminated": "0",
+        "vaginal_modification": "0",
+        "parasite": "0"
+      },
+      "assistant": {
+        "state": "1",
+        "type": "2571",
+        "age": "2",
+        "moral": "5",
+        "pride": "0",
+        "angst": "0",
+        "sleep_condition": "0",
+        "fertility": "-1",
+        "fertility_revealed": "1",
+        "ovulation": "0",
+        "cycle_day": "4",
+        "menstruation": "0",
+        "pregnant": "0",
+        "pregnant_revealed": "0",
+        "inseminated": "5",
+        "vaginal_modification": "0",
+        "parasite": "0"
+      },
+      "room1": {
+        "state": "1",
+        "type": "2579",
+        "age": "2",
+        "moral": "5",
+        "pride": "3",
+        "angst": "0",
+        "sleep_condition": "0",
+        "fertility": "-1",
+        "fertility_revealed": "1",
+        "ovulation": "0",
+        "cycle_day": "22",
+        "menstruation": "0",
+        "pregnant": "0",
+        "pregnant_revealed": "0",
+        "inseminated": "0",
+        "vaginal_modification": "0",
+        "parasite": "0"
+      },
+      "room2": {
+        "state": "0",
+        "type": "0",
+        "age": "0",
+        "moral": "0",
+        "pride": "0",
+        "angst": "0",
+        "sleep_condition": "0",
+        "fertility": "0",
+        "fertility_revealed": "0",
+        "ovulation": "0",
+        "cycle_day": "0",
+        "menstruation": "0",
+        "pregnant": "0",
+        "pregnant_revealed": "0",
+        "inseminated": "0",
+        "vaginal_modification": "0",
+        "parasite": "0"
+      },
+      "room3": {
+        "state": "0",
+        "type": "0",
+        "age": "0",
+        "moral": "0",
+        "pride": "0",
+        "angst": "0",
+        "sleep_condition": "0",
+        "fertility": "0",
+        "fertility_revealed": "0",
+        "ovulation": "0",
+        "cycle_day": "0",
+        "menstruation": "0",
+        "pregnant": "0",
+        "pregnant_revealed": "0",
+        "inseminated": "0",
+        "vaginal_modification": "0",
+        "parasite": "0"
+      },
+      "room4": {
+        "state": "0",
+        "type": "0",
+        "age": "0",
+        "moral": "0",
+        "pride": "0",
+        "angst": "0",
+        "sleep_condition": "0",
+        "fertility": "0",
+        "fertility_revealed": "0",
+        "ovulation": "0",
+        "cycle_day": "0",
+        "menstruation": "0",
+        "pregnant": "0",
+        "pregnant_revealed": "0",
+        "inseminated": "0",
+        "vaginal_modification": "0",
+        "parasite": "0"
+      }
+    }
+  },
+  "probability": {
+    "meaning": "Source-derived conditional enumeration, not measured engine RNG or a diagnosis of user save",
+    "assumptions": [
+      "Male protagonist (hero_choice<100), successful qualifying interaction and positive ejaculation_intensity",
+      "fertility=0, non-special type (not2572), no existing pregnancy or active menstruation",
+      "Fresh inseminated=rand(3,5) before each night, then one daily decay before ovulation check",
+      "Cycle crosses ovulation before resetting cycle_day; no other modifying actions"
+    ],
+    "uniformPairs": 15,
+    "successPairs": 6,
+    "perEligibleOvulation": 0.4,
+    "notPerDailyInteraction": true,
+    "nonConceptionAfterOneEligibleOvulation": 0.6,
+    "nonConceptionAfterTwoIndependentEligibleOvulations": 0.36
+  },
+  "limits": [
+    "No newly reported user save was supplied to this audit. The old27 room1 is infertile (fertility=-1).",
+    "Static call-path verification does not prove every native engine branch or saved dynamic cache executes correctly.",
+    "Generic item support was traced; unnamed item-specific effect claims cannot be confirmed."
+  ],
+  "protectedInputsUnchanged": true
+}

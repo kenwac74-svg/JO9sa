@@ -1,0 +1,19 @@
+'use strict';
+const fs=require('fs'),path=require('path'),a=require('assert/strict'),c=require('G:/somi/JO9sa/tools/text-workshop/core.cjs'),sc=require('G:/somi/JO9sa/tools/qa/save-codec.cjs');
+const O=__dirname,m=JSON.parse(fs.readFileSync(O+'/created.json','utf8')),v=JSON.parse(fs.readFileSync(O+'/validation.json','utf8'));a.equal(v.status,'PASS');a.equal(m.created.length,2);a.equal(c.hash(fs.readFileSync(m.source)),m.sourceSha256);
+const installed=JSON.parse(fs.readFileSync(O+'/FINAL_RESULT.json','utf8'));a.equal(installed.status,'INSTALLED');
+const B=path.resolve('G:/Codex/tmp'),prefix='portal-paladin-event-saves-20261102-';
+const roots=fs.readdirSync(B,{withFileTypes:true}).filter(e=>e.isDirectory()&&e.name.startsWith(prefix)).map(e=>path.resolve(B,e.name));
+const files=[],links=[],dirs=[];function contained(root,p){const rel=path.relative(root,p);a(rel&&!rel.startsWith('..')&&!path.isAbsolute(rel));}
+function walk(root,dir){for(const e of fs.readdirSync(dir,{withFileTypes:true})){const p=path.resolve(dir,e.name);contained(root,p);const st=fs.lstatSync(p);if(st.isSymbolicLink()){a(['json','css','fonts','content'].includes(e.name));links.push(p);}else if(st.isDirectory()){walk(root,p);dirs.push(p);}else{a(st.isFile());files.push({path:p,bytes:st.size});}}}
+for(const root of roots){a(root.toLowerCase().startsWith((B+path.sep+prefix).toLowerCase()));a(!fs.lstatSync(root).isSymbolicLink());a.equal(fs.realpathSync(root).toLowerCase(),root.toLowerCase());walk(root,root);}
+const recovery=[];for(const spec of m.created){const native=fs.readFileSync(spec.nativeOriginal),target=installed.files.find(x=>path.basename(x.file)===spec.name);a(target);const installedFinal=fs.readFileSync(target.file),final=fs.existsSync(spec.file)?fs.readFileSync(spec.file):installedFinal;a.equal(c.hash(installedFinal),spec.sha256);a.equal(c.hash(final),spec.sha256);a(final.equals(installedFinal));const s=sc.parse(installedFinal);s.lines[2]=sc.enc(spec.nativeCrc);a(sc.serialize(s).equals(native));recovery.push({file:spec.file,installedFile:target.file,installedSaveNativeRecoveryVerified:true,finalSha256:spec.sha256,nativeSha256:c.hash(native),nativeBytes:native.length,nativeCrc:spec.nativeCrc,restore:'Parse final SAV; replace encoded header line2 with saveCodec.enc(nativeCrc); serialize. All other native bytes and slots are already preserved.'});}
+fs.writeFileSync(O+'/native-recovery.json',JSON.stringify(recovery,null,2)+'\n');
+const plan={roots,files,links,directories:dirs,bytes:files.reduce((n,x)=>n+x.bytes,0),finalFiles:installed.files.map(x=>({file:x.file,sha256:x.sha256})),junctionTargetsWillNotBeTraversed:true};fs.writeFileSync(O+'/cleanup-plan.json',JSON.stringify(plan,null,2)+'\n');
+if(!process.argv.includes('--execute')){console.log(JSON.stringify({status:'DRY_RUN',roots:roots.length,files:files.length,links:links.length,bytes:plan.bytes}));process.exit(0);}
+for(const x of files)fs.unlinkSync(x.path);
+// RemoveDirectory on a Windows junction removes that link itself; it does not recurse.
+for(const p of links){a(fs.lstatSync(p).isSymbolicLink());fs.rmdirSync(p);}
+for(const p of dirs)fs.rmdirSync(p);for(const p of roots)fs.rmdirSync(p);
+for(const spec of m.created)if(fs.existsSync(spec.file))a.equal(c.hash(fs.readFileSync(spec.file)),spec.sha256);for(const spec of installed.files)a.equal(c.hash(fs.readFileSync(spec.file)),spec.sha256);a.equal(c.hash(fs.readFileSync(m.source)),m.sourceSha256);
+const result={status:'PASS',removedRoots:roots,removedRegularFiles:files.length,removedJunctionLinks:links.length,removedBytes:plan.bytes,finalFilesPreserved:true,nativeOriginalRecoverableFromFinalAndHeader:true,sourceUnchanged:true,junctionTargetsTraversed:false,remainingMatchingRoots:fs.readdirSync(B).filter(n=>n.startsWith(prefix))};a.equal(result.remainingMatchingRoots.length,0);fs.writeFileSync(O+'/cleanup.json',JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result));

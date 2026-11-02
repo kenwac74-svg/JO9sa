@@ -1,0 +1,45 @@
+{
+  "repository": "https://gitgud.io/jack-o-nine-tails/engine-base",
+  "commit": "9bb0276be5f94f94f911fab0daeb225cc3c559ec",
+  "files": [
+    {
+      "source": "qsp/jack.cpp",
+      "sha256": "4d06dec5adb2c00b40400a982a540019cc7e89dce3825a97dd76eeb1c7e67f16",
+      "excerpts": [
+        {
+          "startLine": 15,
+          "endLine": 40,
+          "code": "void Jack::executeJSON() {\n    if (!styleSheetDone) { setStylesheet(); } //Yeah not good place, I know.\n    QDirIterator dir_iterator(*qspGameDirectory + \"json\", QDirIterator::Subdirectories);\n\n    while (dir_iterator.hasNext()) {\n        dir_iterator.next();\n\n        QFileInfo file_info(dir_iterator.filePath());\n\n        if (file_info.isFile()) {\n            if (file_info.suffix() == \"json\") {\n                if (file_info.baseName() == \"save_config\") { continue; }\n\n                QFile file(dir_iterator.filePath());\n                file.open(QIODevice::ReadOnly | QIODevice::Text);\n                QByteArray json_data = file.readAll();\n                file.close();\n\n                QJsonDocument doc = QJsonDocument::fromJson(json_data);\n\n                QStringList part = file_info.baseName().split(\"_\");\n\n                iterateKeys(doc, part[0].toInt());\n            }\n        }\n    }"
+        },
+        {
+          "startLine": 106,
+          "endLine": 132,
+          "code": "void Jack::iterateKeys(const QJsonDocument& doc, int array_indice)\n{\n    QJsonObject obj = doc.object();\n\n    for (QString key : obj.keys())\n    {\n        if (obj.value(key).isString())\n        {\n            QString value = obj.value(key).toString();\n            if (array_indice == 0)\n            {\n                if (key.at(0) != '$')\n                    key = \"$\" + key;\n                setStringVariable(key, value);\n            }\n            else\n                setStringVariable(key, array_indice, value);\n        }\n        else if (obj.value(key).isDouble() || obj.value(key).isBool())\n        {\n            int value = obj.value(key).toInt();\n            if (array_indice == 0)\n                setNumericVariable(key, value);\n            else\n                setNumericVariable(key, array_indice, value);\n        }\n        else if (obj.value(key).isArray())"
+        }
+      ]
+    },
+    {
+      "source": "qsp/variables.cpp",
+      "sha256": "a4d5e8ff51ef2f5d1f0c4048fe2560d368fe998597d3cefcada945d8721d04ff",
+      "excerpts": [
+        {
+          "startLine": 199,
+          "endLine": 207,
+          "code": "static int qspGetVarTextIndex(QSPVar *var, QSP_CHAR *str, QSP_BOOL isCreate) {\n  QSP_CHAR *uStr;\n  QSPVarIndex *ind;\n  int i, n = var->IndsCount;\n  qspUpperStr(uStr = qspGetNewText(str, -1));\n  if (n > 0) {\n    ind = (QSPVarIndex *)bsearch(uStr, var->Indices, n, sizeof(QSPVarIndex),\n                                 qspIndStringCompare);\n    if (ind) {"
+        },
+        {
+          "startLine": 254,
+          "endLine": 267,
+          "code": "      else\n        *index = (var->ValsCount ? var->ValsCount - 1 : 0);\n    } else {\n      oldRefreshCount = qspRefreshCount;\n      *rPos = 0;\n      ind = qspExprValue(temp);\n      *rPos = QSP_RSBRACK[0];\n      if (qspRefreshCount != oldRefreshCount || qspErrorNum)\n        return nullptr;\n      if (ind.IsStr) {\n        *index = qspGetVarTextIndex(var, QSP_STR(ind), isSet);\n        free(QSP_STR(ind));\n      } else\n        *index = QSP_NUM(ind);"
+        },
+        {
+          "startLine": 275,
+          "endLine": 291,
+          "code": "void qspSetVarValueByReference(QSPVar *var, int ind, QSPVariant *val) {\n  int count, oldCount = var->ValsCount;\n  if (ind >= oldCount) {\n    count = var->ValsCount = ind + 1;\n    var->Values =\n        (QSPVarValue *)realloc(var->Values, count * sizeof(QSPVarValue));\n    while (oldCount < count) {\n      var->Values[oldCount].Num = 0;\n      var->Values[oldCount].Str = nullptr;\n      ++oldCount;\n    }\n  }\n  if (ind >= 0) {\n    if (val->IsStr)\n      var->Values[ind].Str =\n          qspGetAddText(var->Values[ind].Str, QSP_PSTR(val), 0, -1);\n    else"
+        }
+      ]
+    }
+  ],
+  "runtimeBinariesMatched": false,
+  "runtimeImplemented": false
+}

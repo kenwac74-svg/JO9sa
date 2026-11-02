@@ -1,0 +1,15 @@
+'use strict';
+const fs=require('fs'),zlib=require('zlib'),a=require('assert/strict');
+const here=__dirname,repo='G:/somi/JO9sa',c=require(repo+'/tools/text-workshop/core.cjs'),qa=require(repo+'/tools/qa/release-check.cjs');
+const r=JSON.parse(fs.readFileSync(here+'/installation.json')),read=p=>fs.readFileSync(p),hash=p=>c.hash(read(p));
+a(['INSTALLED','VERIFIED'].includes(r.status));a.equal(hash(r.workQsp),r.after);a.equal(hash(r.backup),r.before);a.equal(hash(r.sourceSave),r.saveBeforeSha256);
+const world=qa.inspectWorld(read(r.workQsp));a.equal(world.locations,275);
+const old=JSON.parse(zlib.gunzipSync(read(r.planBackup))),now=JSON.parse(read(repo+'/records/full-client-preparation-20261029/full-client-input-plan.json'));
+const restored=JSON.parse(JSON.stringify(now));restored.qspSha256=old.qspSha256;restored.summary.includedBytes=old.summary.includedBytes;
+const oi=old.files.findIndex(x=>x.path==='game/jack.qsp'),ni=now.files.findIndex(x=>x.path==='game/jack.qsp');a.equal(oi,ni);a.equal(now.files[ni].sha256,r.after);a.equal(now.files[ni].bytes,fs.statSync(r.workQsp).size);a.equal(now.qspSha256,r.after);
+restored.files[ni]=old.files[oi];a.deepEqual(restored,old,'Input-plan changes outside the QSP row/hash/byte total');
+a.equal(now.summary.includedBytes,now.files.reduce((n,x)=>n+x.bytes,0));
+const review=JSON.parse(read(here+'/independent-review.json')),release=JSON.parse(read(here+'/release-check/report.json')),native=JSON.parse(read(here+'/native/results-final.json'));
+a(review.pass);a.equal(release.verdict,'PASS');a.equal(release.client.probes.length,9);a(release.client.probes.every(x=>x.pass));a(native.allRequiredCasesPass);a(native.fatalCase.pass);a(native.normalCases.every(x=>x.pass));
+const result={pass:true,installedSha256:r.after,backupSha256:r.before,sourceSaveUnchanged:true,world,independentReviewChecks:review.checks.length,targetedNativeCases:6,mainNativeCases:9,otherPlanDataPreserved:true,newLocations:0,newPersistentVariables:0};
+fs.writeFileSync(here+'/post-install-verification.json',JSON.stringify(result,null,2));console.log(JSON.stringify(result));

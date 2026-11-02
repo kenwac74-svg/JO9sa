@@ -1,0 +1,12 @@
+'use strict';
+const fs=require('fs'),path=require('path'),cp=require('child_process'),a=require('assert/strict');
+const R='G:/somi/JO9sa',O=__dirname,T=process.env.JO9_PALADIN_QA_ROOT||'G:/Codex/tmp/vatican-paladin-scene-fix-20261102-native',W='G:/somi/Jack O Nine Tails v2.4_work/game';
+const c=require(R+'/tools/text-workshop/core.cjs'),sc=require(R+'/tools/qa/save-codec.cjs'),p=JSON.parse(fs.readFileSync(O+'/prepared.json'));
+const source=W+'/save/TC_09_PORTAL_GUARDIAN_EVENT.sav',raw=fs.readFileSync(source),save=sc.parse(raw);a(sc.serialize(save).equals(raw));
+const d=c.parse(fs.readFileSync(p.candidate)),get=n=>c.shift(d.lines[d.locations.find(x=>x.name===n).body],5),version=get('main_menu').match(/\$code_rev\s*=\s*'([^']+)'/)[1],v=save.vars.find(x=>x.name==='GAME_VER');a(v);
+const before=v.values[0][1],after='잭 오 나인 테일 v'+version+' Kor Ver';v.values[0][1]=after;const fixture=T+'/release-state.sav';fs.writeFileSync(fixture,sc.serialize(save));a.equal(c.hash(fs.readFileSync(source)),c.hash(raw));
+const revision=+get('$newloc').match(/if jo9_traits_revision < (\d+):/)[1];a.equal(revision,3);
+fs.writeFileSync(O+'/release-fixture.json',JSON.stringify({source,sourceSha256:c.hash(raw),diagnostic:fixture,onlyAdjustedField:'$GAME_VER[0]',before,after,sourceSaveUnchanged:true},null,2)+'\n');
+const r=cp.spawnSync(process.execPath,[R+'/tools/qa/release-check.cjs','--candidate',p.candidate,'--baseline',p.baseline,'--mods-dir',p.modsDir,'--engine',W+'/engine/jack.exe','--game-dir',W,'--state-save',fixture,'--cache-revision',String(revision),'--client-timeout-seconds','30','--out',T+'-release-text-only'],{encoding:'utf8',windowsHide:true,timeout:350000,maxBuffer:4*1024*1024});
+fs.writeFileSync(O+'/release-runner.log',(r.stdout||'')+(r.stderr||''));console.log(r.stdout);if(r.stderr)console.error(r.stderr);const m=(r.stdout||'').match(/(?:PASS|FAIL|INCOMPLETE|STATIC_PASS) ([^\r\n]+report\.json)/);a(m,'No release report path');
+const file=m[1],report=JSON.parse(fs.readFileSync(file));fs.writeFileSync(O+'/release-report.json',JSON.stringify(report,null,2)+'\n');fs.copyFileSync(path.dirname(file)+'/report.md',O+'/release-report.md');fs.writeFileSync(O+'/release-location.json',JSON.stringify({report:file,exitCode:r.status,cacheRevision:revision},null,2)+'\n');a.equal(report.verdict,'PASS');process.exitCode=r.status;

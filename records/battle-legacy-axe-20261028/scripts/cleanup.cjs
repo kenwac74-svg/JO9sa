@@ -1,0 +1,12 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),a=require('node:assert/strict'),c=require('G:/somi/JO9sa/tools/text-workshop/core.cjs');
+const read=p=>JSON.parse(fs.readFileSync(p,'utf8')),r=read(__dirname+'/candidate.json'),installation=read(__dirname+'/installation.json'),qa=path.resolve('G:/Codex/tmp/battle-legacy-axe-qa-20261028'),hash=p=>c.hash(fs.readFileSync(p));
+const protectedFiles=new Map([[r.work+'/jack.qsp',r.qspAfter],[r.baseline,r.qspBefore],...Object.entries(r.protected).map(([p,h])=>[r.work+'/'+p,h]),...installation.backups.automatic.map(x=>[x.path,x.sha256])]);
+for(const [p,h]of protectedFiles)a.equal(hash(p),h);
+const selected=[],skipped=[],marker=Buffer.from(c.shift('JO9_QA_',-5),'utf16le');
+const inside=(p,root)=>{const x=path.relative(root,p);return x&&!x.startsWith('..')&&!path.isAbsolute(x);};
+function add(p,why){const abs=path.resolve(p),st=fs.lstatSync(abs);a(st.isFile()&&!st.isSymbolicLink());a(inside(fs.realpathSync(abs),qa)||abs===path.resolve(r.candidate));a(!/\.bak|\.sav$|before/i.test(path.basename(p)));const b=fs.readFileSync(abs),h=c.hash(b);a.notEqual(h,r.qspBefore);a(b.toString('utf16le',0,14)==='QSPGAME');a(b.includes(marker)||h===r.qspAfter);selected.push({path:abs,sha256:h,bytes:st.size,reason:why});}
+function walk(dir){for(const ent of fs.readdirSync(dir,{withFileTypes:true})){const p=path.join(dir,ent.name),st=fs.lstatSync(p);if(st.isSymbolicLink()){skipped.push(p);continue;}if(st.isDirectory()){walk(p);continue;}if(st.isFile()&&ent.name.endsWith('.qsp')){const b=fs.readFileSync(p),h=c.hash(b);if(h!==r.qspBefore&&(b.includes(marker)||h===r.qspAfter))add(p,'reproducible task diagnostic');else skipped.push(p);}}}
+walk(qa);if(fs.existsSync(r.candidate))add(r.candidate,'exact installed candidate, mod replay retained');
+const apply=process.argv.includes('--apply');if(apply)for(const x of selected){a.equal(hash(x.path),x.sha256);fs.unlinkSync(x.path);}for(const [p,h]of protectedFiles)a.equal(hash(p),h);
+const out={mode:apply?'applied':'dry-run',files:selected.length,bytes:selected.reduce((n,x)=>n+x.bytes,0),selected,skipped,allProtectedHashesUnchanged:true,note:'Only regular generated QSP files removed; all backups, before snapshots, resources, saves, directories and links preserved.'};fs.writeFileSync(__dirname+'/cleanup'+(apply?'':'.plan')+'.json',JSON.stringify(out,null,2)+'\n');console.log(JSON.stringify({...out,selected:selected.length,skipped:skipped.length},null,2));

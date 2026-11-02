@@ -1,0 +1,49 @@
+{
+  "status": "EXPECTED_RED",
+  "createdUTC": "2026-10-27T18:03:39.427Z",
+  "cases": [
+    "baseline-real-round-defers-fatal-ledger"
+  ],
+  "candidate": "G:\\Codex\\tmp\\battle-fate-20261028\\jack.before.qsp",
+  "stateSave": "G:\\somi\\Jack O Nine Tails v2.4_work\\game\\save\\1.sav",
+  "inputHashes": {
+    "candidate": "7c366e1ae35a5922e32052847bceb28737ddab32c3861b19bbefd7661b45c2b7",
+    "stateSave": "f1017c082ef5c8edcc6b5ba59d2909b582492c52abe2ed7e52f08979dc53455e"
+  },
+  "hasProductionHelper": false,
+  "fixturePath": "G:\\Codex\\tmp\\battle-fate-20261028\\native-red-v1\\fate-native.qsp",
+  "diagnosticSeams": [
+    "Start",
+    "end-render completion tail",
+    "render-only helper branch for pending-exit sentinel",
+    "trait/fog finish counters",
+    "$newloc return counter",
+    "interior_change HTML passthrough"
+  ],
+  "productionBodiesUnderTest": [
+    "jo9_battle_fate mutation branches",
+    "конец_раунда",
+    "выход_из_боя",
+    "$combat_variable_reset"
+  ],
+  "limits": [
+    "No production or original-save writes.",
+    "Not the official nine-path release gate.",
+    "Not a visual effects/timing or GUI save-load test.",
+    "Native PASS is claimed only after the real engine completion marker."
+  ],
+  "engineExecuted": true,
+  "baselineRed": true,
+  "expectedFailure": "FAIL_FATE_BASELINE_EAGER_CORPSE_1_TROPHY_1",
+  "client": [
+    {
+      "name": "fate-native",
+      "checkpoint": "actual helper mutations, round staging, exit guard; downstream/display seams instrumented",
+      "pass": false,
+      "reason": "Unexpected message before completion",
+      "durationMs": 2680
+    }
+  ],
+  "expectedFailureObserved": true,
+  "inputHashesUnchanged": true
+}

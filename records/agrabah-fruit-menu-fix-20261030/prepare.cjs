@@ -1,0 +1,15 @@
+'use strict';
+const fs=require('fs'),a=require('assert/strict');
+const H=__dirname,R='G:/somi/JO9sa',G='G:/somi/Jack O Nine Tails v2.4_work/game',T='G:/Codex/tmp/agrabah-fruit-menu-fix-20261030';
+const c=require(R+'/tools/text-workshop/core.cjs'),qa=require(R+'/tools/qa/release-check.cjs');
+const raw=fs.readFileSync(T+'/before.qsp'),d=c.parse(raw),loc=d.locations.find(x=>x.name==='#options');a(c.serialize(d).equals(raw));
+const body=c.shift(d.lines[loc.body],5),line=body.split('\r\n').find(x=>x.includes("'연회용 과일 (1000)'")&&x.includes("'location_gray'"));a(line);a(line.includes("IF active[$event['Akabur_quest']] = 11 and gold < 1000 and sparks < 10000 or fruits_maxibox = 1:"));
+const fixed=line.replace("IF active[$event['Akabur_quest']] = 11 and gold < 1000 and sparks < 10000 or fruits_maxibox = 1:","IF active[$event['Akabur_quest']] ! 11 or (gold < 1000 and sparks < 10000) or fruits_maxibox = 1:");
+const indent=line.match(/^\s*/)[0],replacement=indent+'! JO9 MOD START AGRABAH_FRUIT_DISABLED_MENU_20261030\r\n'+fixed+'\r\n'+indent+'! JO9 MOD END AGRABAH_FRUIT_DISABLED_MENU_20261030';
+a.equal(body.split(line).length-1,1);d.lines[loc.body]=c.shift(body.replace(line,replacement),-5);const bytes=c.serialize(d);qa.inspectWorld(bytes);a(c.serialize(c.parse(bytes)).equals(bytes));
+const patch={id:'2026-10-30_agrabah_fruit_disabled_menu',description:'Show the unavailable banquet-fruit item in gray outside its quest stage; preserve active purchase conditions, all currency math, flags and saves',before_sha256:c.hash(raw),after_sha256:c.hash(bytes),edits:[{location:'#options',field:'body',old:line,new:replacement,count:1}]};
+fs.mkdirSync(H+'/mods',{recursive:true});fs.writeFileSync(H+'/mods/'+patch.id+'.json',JSON.stringify(patch,null,2));fs.writeFileSync(T+'/candidate.qsp',bytes,{flag:'wx'});
+fs.copyFileSync(T+'/client-results.json',H+'/red-results.json');fs.copyFileSync(T+'/red-wrong-stage-stderr.log',H+'/red-stderr.log');a(fs.readFileSync(H+'/red-stderr.log','utf8').includes('FAIL_FRUITMENU_red_wrong_stage_n=0_enabled=false'));
+const original=c.parse(raw),changed=d.locations.filter(l=>d.lines[l.body]!==original.lines[l.body]).map(x=>x.name);a.deepEqual(changed,['#options']);
+const path={id:'agrabah-fruit-menu-fix-20261030',tmp:T,game:G,repo:R,before:T+'/before.qsp',candidate:T+'/candidate.qsp',beforeSha256:c.hash(raw),candidateSha256:c.hash(bytes),mods:H+'/mods',patch:H+'/mods/'+patch.id+'.json',stateSave:G+'/save/JO9_GOLD_AP_CHECK_20261026.sav',saveSha256:c.hash(fs.readFileSync(G+'/save/JO9_GOLD_AP_CHECK_20261026.sav')),cacheRevision:Number(c.shift(d.lines[d.locations.find(x=>x.name==='$newloc').body],5).match(/jo9_traits_revision\s*=\s*(\d+)/)[1]),changed,oldLine:body.split('\r\n').indexOf(line)+1};
+fs.writeFileSync(H+'/path.json',JSON.stringify(path,null,2));a.equal(c.hash(fs.readFileSync(G+'/jack.qsp')),c.hash(raw));console.log(JSON.stringify(path));

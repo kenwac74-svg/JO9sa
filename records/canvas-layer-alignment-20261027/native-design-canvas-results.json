@@ -1,0 +1,91 @@
+{
+  "verdict": "PASS",
+  "scope": "Actual native QtWebKit viewport and fixed 1280x800 canvas alignment; unchanged product exit mode/SHOWOBJS settings.",
+  "baselineInputHashes": {
+    "qsp": "7187b15d31a45ff3a17f1b9b6fa5a525782a9488dc00294a8c6ac4cefdd6b862",
+    "css": "0bbe0f37dd38df9a8951b1517c0fbfa618a566d17e4c87e9a14fecf8289caab6"
+  },
+  "candidateInputHashes": {
+    "qsp": "1f43f75af8df075be2e44779744c9ae30ec2a49a91f4f593205baabb00420814",
+    "css": "a782d60e119299da06700d4b27e1928784dbb1afd765f84dc433a7add8c00a98"
+  },
+  "sourceRenderBodiesUnchangedInDiagnostics": true,
+  "baselineImageBefore": {
+    "x": 5,
+    "y": 4,
+    "w": 1280,
+    "h": 800,
+    "right": 1285,
+    "bottom": 804
+  },
+  "baselineImageAfter": {
+    "x": 24,
+    "y": 16,
+    "w": 1280,
+    "h": 800,
+    "right": 1304,
+    "bottom": 816
+  },
+  "baselineMovement": {
+    "dx": 19,
+    "dy": 12
+  },
+  "candidateStageBefore": {
+    "x": 0,
+    "y": 0,
+    "w": 1280,
+    "h": 800,
+    "right": 1280,
+    "bottom": 800
+  },
+  "candidateStageAfter": {
+    "x": 0,
+    "y": 0,
+    "w": 1280,
+    "h": 800,
+    "right": 1280,
+    "bottom": 800
+  },
+  "candidateImageMatchesStage": true,
+  "relativeTextAndMenuCoordinatesStable": true,
+  "diagnosticOnlyIntegratedAndHiddenPanelOverrides": false,
+  "physicalViewportVerification": true,
+  "configEvidence": [
+    {
+      "fixture": "baseline-valid-config-final/gameover-native",
+      "encoding": "UTF-16LE",
+      "bom": "FF FE",
+      "width": 1280,
+      "height": 800
+    },
+    {
+      "fixture": "baseline-valid-config-final/gameover-drift",
+      "encoding": "UTF-16LE",
+      "bom": "FF FE",
+      "width": 1280,
+      "height": 800
+    },
+    {
+      "fixture": "candidate-valid-config-final/gameover-native",
+      "encoding": "UTF-16LE",
+      "bom": "FF FE",
+      "width": 1280,
+      "height": 800
+    },
+    {
+      "fixture": "candidate-valid-config-final/gameover-drift",
+      "encoding": "UTF-16LE",
+      "bom": "FF FE",
+      "width": 1280,
+      "height": 800
+    }
+  ],
+  "cases": 4,
+  "limits": [
+    "Two samples per fixture check layout before/after the existing delayed word-wrap script; the test does not certify every game screen or operating-system display scaling."
+  ],
+  "correction": {
+    "supersedes": "Earlier native-design-canvas-results.json with PASS_DESIGN_CANVAS and 0x600 limitation",
+    "reason": "The first diagnostic bootstrap read UTF-16LE config.xml as UTF-8, then rewrote corrupted diagnostic config. This was a diagnostic preparation error, not an engine limitation. The corrected final four cases preserve UTF-16LE and its BOM, use original product exit mode, and measure 1280x800."
+  }
+}

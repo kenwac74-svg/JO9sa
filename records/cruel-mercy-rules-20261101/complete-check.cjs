@@ -1,0 +1,12 @@
+'use strict';
+const fs=require('fs'),a=require('assert/strict'),c=require('G:/somi/JO9sa/tools/text-workshop/core.cjs'),qa=require('G:/somi/JO9sa/tools/qa/release-check.cjs');
+const R='G:/somi/JO9sa/records/cruel-mercy-rules-20261101',O='G:/Codex/tmp/cruel-mercy-rules-20261101-release',W='G:/somi/Jack O Nine Tails v2.4_work/game';
+const installed=JSON.parse(fs.readFileSync(R+'/installed.json')),candidate=fs.readFileSync('G:/Codex/tmp/cruel-mercy-rules-20261101/candidate.qsp');a.equal(c.hash(candidate),installed.after);
+const reports=fs.readdirSync(O,{withFileTypes:true}).filter(x=>x.isDirectory()&&x.name.startsWith('run-')).map(x=>O+'/'+x.name+'/report.json').filter(p=>fs.existsSync(p)).map(path=>({path,data:JSON.parse(fs.readFileSync(path,'utf8').replace(/^\uFEFF/,''))})).filter(x=>x.data.verdict==='PASS'&&x.data.checks[0].detail.candidate===installed.after);a(reports.length,'final exact-hash release check');
+const report=reports.at(-1);a.equal(report.data.checks.find(x=>x.name==='installed-client-smoke').detail.passed,9);fs.copyFileSync(report.path,R+'/release-report.json');
+const current=fs.readFileSync(W+'/jack.qsp'),d=c.parse(current),p=c.parse(candidate);qa.inspectWorld(current);
+for(const n of ['jo9_battle_fate','jo9_cruel_mercy_apply','interaction'])a.equal(d.lines[d.locations.find(x=>x.name===n).body],p.lines[p.locations.find(x=>x.name===n).body],'installed tested function '+n);
+for(const x of installed.protectedHashes)a.equal(c.hash(fs.readFileSync(x.path)),x.sha256,'protected input '+x.path);
+for(const n of fs.readdirSync(__dirname))if(/\.(cjs|json|md|txt)$/.test(n))fs.copyFileSync(__dirname+'/'+n,R+'/'+n);
+fs.writeFileSync(R+'/installed.json',JSON.stringify({...installed,releaseVerdict:'PASS',finalReleaseCandidate:installed.after,finalReleaseReport:report.path,mandatoryNativePaths:9,verifiedWorkHash:c.hash(current),currentWorkSameAsInstalled:c.hash(current)===installed.after},null,2)+'\n');
+console.log(JSON.stringify({installed:true,finalReleaseVerdict:'PASS',nativePaths:9,verifiedWorkHash:c.hash(current),protectedInputsUnchanged:installed.protectedHashes.length}));

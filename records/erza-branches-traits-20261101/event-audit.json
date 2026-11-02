@@ -1,0 +1,80 @@
+{
+  "schema": 1,
+  "generatedAt": "2026-10-31T21:52:13.989Z",
+  "scope": "Read-only technical branch/reference/counter audit; sensitive narrative and image content omitted.",
+  "sourceSha256": "dd8c2a70c51e45e3bd46eda517cd21af32ef2fff4097a4b232253b5b5dd5e870",
+  "flow": [
+    {
+      "id": 666779,
+      "action": "Routes to6667792 when enemy HP<=0; otherwise6667791."
+    },
+    {
+      "id": 6667792,
+      "action": "Initial terminal-state scene sets unique_slave[erza]=1 before either follow-up selection. The ordinary interaction_city tail calls interaction_result_city before first display."
+    },
+    {
+      "id": 66677921,
+      "currentImage": "scene/others/erza_dead_after.png",
+      "requestedImage": "scene/others/erza_dead_after_1.png",
+      "requestedScore": 3,
+      "deltaHalfUnits": 6
+    },
+    {
+      "id": 66677922,
+      "currentImage": "scene/others/erza_dead_after.png",
+      "requestedImage": "scene/others/erza_dead_after_2.png",
+      "requestedScore": -1,
+      "deltaHalfUnits": -2
+    }
+  ],
+  "existingState": {
+    "uniqueErza": "The city entry menu permits the encounter only when unique_slave[erza]=0. Both surviving and terminal branches set it to1. It cannot distinguish pending follow-up from selected follow-up.",
+    "genericCompletion": "interaction_city tail GT interaction_result_city; its common final block increments city_already_done_today[$str(interaction_city)] and city_already_done_ever[$str(interaction_city)] before GT interaction_screen_city.",
+    "currentlyHasFollowupScoreHook": false,
+    "currentlyHasCrossChoiceScoreGuard": false
+  },
+  "recommendedOnceBoundary": {
+    "requiresNewField": false,
+    "guard": "Only award when both city_already_done_ever string keys66677921 and66677922 are0.",
+    "commit": "Use the existing unconditional interaction_result_city completion increment in the same event execution. Do not manually increment a second time.",
+    "keyType": "Use string keys as the existing $str(interaction_city) writer does; do not substitute huge numeric array positions.",
+    "uniqueRole": "Optional prerequisite validation can use unique_slave[erza], but that value alone is not a completed-selection flag.",
+    "repeatDisplay": "Gate only the score side effect; a repeated handler may still configure its image/text and proceed to the ordinary renderer without another score. An early EXIT after the controller cleared text arrays can leave an unusable old display.",
+    "crossChoice": "The combined two-key guard prevents a later opposite selection from adding another score. Currently no independent persistent cross-choice outcome lock exists.",
+    "legacyCounters": "Any existing positive counter for either follow-up means no retroactive award."
+  },
+  "cachedSaveCases": [
+    {
+      "case": "First-page save with embedded choice links",
+      "result": "Cached links call the current interaction_city handler. A first selection can use the new score guard and complete the existing counter transaction."
+    },
+    {
+      "case": "Legacy first page without choice links",
+      "result": "The current scene renderer checks cached text for its choice marker; no marker retains the ordinary forward exit instead of locking the page."
+    },
+    {
+      "case": "Save already on a follow-up result",
+      "result": "Saved $text and $special_image arrays can retain the previous shared image until a fresh event execution. Do not rerun settlement merely to refresh graphics or award retroactive score."
+    },
+    {
+      "case": "Stale/returned first-page links after a selection",
+      "result": "Ordinary UI replaces the choice page, but direct stale-link invocation is not blocked by either existing follow-up handler. Combined ever-counter guards make both same/opposite subsequent score additions zero."
+    },
+    {
+      "case": "Both old follow-up counters already positive",
+      "result": "Existing counters establish completion but not historical choice order. Do not guess or migrate an old choice; award zero."
+    }
+  ],
+  "preservedValues": [
+    "unique_slave[erza] values and timing",
+    "all narrative strings",
+    "all other event rewards and state",
+    "existing generic today/ever completion counts",
+    "existing half-point helper and threshold readers"
+  ],
+  "remainingChecks": [
+    "Run the actual two handlers and common completion counters in an isolated native engine with scene renderer stubbed.",
+    "Verify same/opposite repeats and legacy-counter cases without rendering sensitive text or images."
+  ],
+  "productionWrites": 0
+}

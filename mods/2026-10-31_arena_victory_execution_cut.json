@@ -1,0 +1,29 @@
+{
+  "id": "2026-10-31_arena_victory_execution_cut",
+  "description": "Formal arena execution victory: dedicated user cut and completed-execution prose for 1294, same first-page cut in champion 1295, and actor-correct execution confirmation. Existing outcomes/rewards/save schema unchanged.",
+  "before_sha256": "6afcd54e7486816822587eb2a9bc4e82507c7ce8c64dfc535a8429cbfea26331",
+  "after_sha256": "90af7f9115544ef1ec83048212ee283ba00f78119b9522a58c122a2ab1300617",
+  "edits": [
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '최후의 일격이 가해진 후 상대는 바닥에 쓰러졌다. <<$slave_name>>(은)는 무기를 높게 들어 관중에게 화답했다. 이번 승리로 그녀는 관중의 사랑을 한 몸에 받았고, 당신은 조교사로서 영광을 얻게 되었다.<br><br> 성격+10 자아+10 태도+5 체력+10 기분/인식/평판Up 불안Dn 기타+a'",
+      "new": "\t$text[1] = '최후의 일격이 가해진 후 상대는 바닥에 쓰러졌다. <<$slave_name>>(은)는 무기를 높게 들어 관중에게 화답했다. 이번 승리로 그녀는 관중의 사랑을 한 몸에 받았고, 당신은 조교사로서 영광을 얻게 되었다.<br><br> 성격+10 자아+10 태도+5 체력+10 기분/인식/평판Up 불안Dn 기타+a'\r\n! JO9 MOD START ARENA_EXECUTION_VICTORY_RESULT_20261031\r\n if jo9_fate['mode'] = 2 and jo9_fate['phase'] = 3 and jo9_fate['choice'] = 1:\r\n  $bg_path = ''\r\n  $special_image_full[1] = 'content/pic/scene/arena_victory_execute.png'\r\n  $special_image_full[2] = $special_image_full[1]\r\n  $text[1] = '처형을 마친 <<$slave_name>>(이)가 상대의 머리를 높이 들어 관중석에 내보였다. 승부의 끝을 확인한 관중들의 함성이 경기장을 뒤흔들었다. 당신이 길러 낸 투사는 그 환호 속에서 승리를 알렸고, 당신에게도 주인으로서의 자부심이 차올랐다.<br><br> 성격+10 자아+10 태도+5 체력+10 기분/인식/평판Up 불안Dn 기타+a'\r\n end\r\n! JO9 MOD END ARENA_EXECUTION_VICTORY_RESULT_20261031",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "if interaction_city = 1295:\r\n\t$place = 'colosseum_arena'\r\n\tcity_form = 1\r\n\t$return_lock = 'city_menu_form'",
+      "new": "if interaction_city = 1295:\r\n\t$place = 'colosseum_arena'\r\n\tcity_form = 1\r\n\t$return_lock = 'city_menu_form'\r\n! JO9 MOD START ARENA_EXECUTION_CHAMPION_FIRST_CUT_20261031\r\n if jo9_fate['mode'] = 2 and jo9_fate['phase'] = 3 and jo9_fate['choice'] = 1:\r\n  $bg_path = ''\r\n  $special_image_full[1] = 'content/pic/scene/arena_victory_execute.png'\r\n end\r\n! JO9 MOD END ARENA_EXECUTION_CHAMPION_FIRST_CUT_20261031",
+      "count": 1
+    },
+    {
+      "location": "jo9_battle_fate",
+      "field": "body",
+      "old": "! JO9 MOD END CATFIGHT_FATE_INSTRUCTION_20261030",
+      "new": "! JO9 MOD END CATFIGHT_FATE_INSTRUCTION_20261030\r\n! JO9 MOD START ARENA_SLAVE_EXECUTION_INSTRUCTION_20261031\r\n  if jo9_fate['mode'] = 2 and $place = 'colosseum_arena' and $fight_return = 'Start' and jo9_fate['choice'] = 1:\r\n   $jo9_bf_message = '당신의 지시에 <<$slave_name>>(이)가 상대의 처형을 마쳤다.'\r\n  end\r\n! JO9 MOD END ARENA_SLAVE_EXECUTION_INSTRUCTION_20261031",
+      "count": 1
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "2026-10-30_agrabah_fruit_disabled_menu",
+  "description": "Show the unavailable banquet-fruit item in gray outside its quest stage; preserve active purchase conditions, all currency math, flags and saves",
+  "before_sha256": "2b81e781d0ab56f10cb77aa340db27ee4dab7d707bafe857853ad600d474417e",
+  "after_sha256": "fbb12f860322f10621cb62b3728d4701a8bc213c66a865a8946bd252a94e79bf",
+  "edits": [
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "IF active[$event['Akabur_quest']] = 11 and gold < 1000 and sparks < 10000 or fruits_maxibox = 1: FUNC('$menu', 'location_gray', $menu_item_balsam_gray, empty, '연회용 과일 (1000)')",
+      "new": "! JO9 MOD START AGRABAH_FRUIT_DISABLED_MENU_20261030\r\nIF active[$event['Akabur_quest']] ! 11 or (gold < 1000 and sparks < 10000) or fruits_maxibox = 1: FUNC('$menu', 'location_gray', $menu_item_balsam_gray, empty, '연회용 과일 (1000)')\r\n! JO9 MOD END AGRABAH_FRUIT_DISABLED_MENU_20261030",
+      "count": 1
+    }
+  ]
+}

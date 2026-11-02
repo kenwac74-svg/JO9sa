@@ -1,0 +1,22 @@
+{
+  "id": "2026-11-02_vatican_paladin_setting_panel",
+  "description": "Fill only the Vatican Paladin preparation title, role, affiliation and three setting paragraphs, and repaint loaded event6215 preparation screens. Preserve all image paths/output, combat, quests, callbacks, actor data, rewards and all other scenes.",
+  "before_sha256": "8a3c7604d713b4ec254a90331d65f08ffc5ef8032ae6f7132106f96cfb432b6c",
+  "after_sha256": "6424dbe8fab07f77d5e402c6832fe03a2f9f867308ddb0e9f0087aad7c98abb7",
+  "edits": [
+    {
+      "location": "shop_general",
+      "field": "body",
+      "old": "elseif npc = 0:",
+      "new": "! JO9 MOD START VATICAN_PALADIN_SETTING_PANEL_20261102\r\nelseif $place = 'fogs_battle1' and interaction_city = 6215 and sp_txt = 6215 and get_weapon = 0 and $враг[1] = 'vatican_paladin':\r\n $info_bar = ''\r\n *p '<div id=\"side_panel_main\"><center><div style=\"font-size:40px;\">바티칸 팔라딘</div>교황청 직속 관문 수호자<br>바티칸</center></div>'\r\n *p func('jo9_reference_panel', '바티칸의 명을 받들어 차원 관문을 지키는 정예 성기사. 관문을 지나는 물자와 사람, 노예의 행렬은 모두 그녀의 허락 아래 움직인다. 허가 없는 접근자와 안개에서 밀려드는 이계의 괴물 앞에, 축복받은 검은 망설임 없이 내려온다.<br><br>성유물로 강화한 갑옷과 끝없는 금욕 훈련은 공포와 고통마저 신앙 아래 짓누른다. 회유와 뇌물로 길을 열려는 자는 차가운 침묵과 검날을 마주할 뿐이다.<br><br>팔라딘이 수호하는 것은 교황청이 정한 신성한 질서다. 관문 너머에서 누가 쇠사슬에 묶여 오든, 바티칸의 인가와 통행세가 갖춰진 행렬은 방해받지 않는다.')\r\n! JO9 MOD END VATICAN_PALADIN_SETTING_PANEL_20261102\r\nelseif npc = 0:",
+      "count": 1
+    },
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "if $curloc = 'main_screen': gt 'menu_form'",
+      "new": "! JO9 MOD START VATICAN_PALADIN_SETTING_PANEL_20261102\r\n! Repaint a saved preparation page without resetting combat, actors, quest progress or rewards.\r\nif $curloc = 'shop_general' and $place = 'fogs_battle1' and interaction_city = 6215 and get_weapon = 0 and (skip_to = 6215 or sp_txt = 6215) and $враг[1] = 'vatican_paladin': gt 'shop_general'\r\n! JO9 MOD END VATICAN_PALADIN_SETTING_PANEL_20261102\r\nif $curloc = 'main_screen': gt 'menu_form'",
+      "count": 1
+    }
+  ]
+}

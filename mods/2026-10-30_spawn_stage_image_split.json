@@ -1,0 +1,64 @@
+{
+  "id": "2026-10-30_spawn_stage_image_split",
+  "description": "Separate young and giant mist-fiend portraits, battle and defeat assets, including trophy portraits. Mature and arena assets and all combat stats unchanged. Normalize one preexisting lone LF inside the billing produce string to CRLF; preserve its text and calculations.",
+  "before_sha256": "5744713ff8de303d7524a033996565f5315498bec72ac69f0a9db7364648bf18",
+  "after_sha256": "6106de161136062c21c1de3fe0a4a706fa45c9a9daade3459cd770a2282a9d1c",
+  "edits": [
+    {
+      "location": "#противники",
+      "field": "body",
+      "old": "$аватара_моба['исчадие_молодь'] = \"content/pic/mob/spawn_ava.png\"",
+      "new": "! JO9 MOD START SPAWN_STAGE_YOUNG_PORTRAIT_20261030\r\n$аватара_моба['исчадие_молодь'] = \"content/pic/mob/spawn_young_ava.png\"\r\n! JO9 MOD END SPAWN_STAGE_YOUNG_PORTRAIT_20261030",
+      "count": 1
+    },
+    {
+      "location": "#противники",
+      "field": "body",
+      "old": "$силуэт_моба['исчадие_молодь'] = \"content/pic/mob/spawn.png\"",
+      "new": "! JO9 MOD START SPAWN_STAGE_YOUNG_BODY_20261030\r\n$силуэт_моба['исчадие_молодь'] = \"content/pic/mob/spawn_young.png\"\r\n! JO9 MOD END SPAWN_STAGE_YOUNG_BODY_20261030",
+      "count": 1
+    },
+    {
+      "location": "#противники",
+      "field": "body",
+      "old": "$аватара_моба['чудовщиное_исчадие'] = \"content/pic/mob/spawn_ava.png\"",
+      "new": "! JO9 MOD START SPAWN_STAGE_GIANT_PORTRAIT_20261030\r\n$аватара_моба['чудовщиное_исчадие'] = \"content/pic/mob/spawn_giant_ava.png\"\r\n! JO9 MOD END SPAWN_STAGE_GIANT_PORTRAIT_20261030",
+      "count": 1
+    },
+    {
+      "location": "#противники",
+      "field": "body",
+      "old": "$силуэт_моба['чудовщиное_исчадие'] = \"content/pic/mob/spawn.png\"",
+      "new": "! JO9 MOD START SPAWN_STAGE_GIANT_BODY_20261030\r\n$силуэт_моба['чудовщиное_исчадие'] = \"content/pic/mob/spawn_giant.png\"\r\n! JO9 MOD END SPAWN_STAGE_GIANT_BODY_20261030",
+      "count": 1
+    },
+    {
+      "location": "jo9_battle_fate",
+      "field": "body",
+      "old": " if $jo9_bv_standing = 'content/pic/mob/spawn.png': $jo9_bv_image = 'content/pic/mob/defeated/spawn.png'",
+      "new": "! JO9 MOD START SPAWN_STAGE_DEFEAT_20261030\r\n if $jo9_bv_standing = 'content/pic/mob/spawn.png': $jo9_bv_image = 'content/pic/mob/defeated/spawn.png'\r\n if $jo9_bv_standing = 'content/pic/mob/spawn_young.png': $jo9_bv_image = 'content/pic/mob/defeated/spawn_young.png'\r\n if $jo9_bv_standing = 'content/pic/mob/spawn_giant.png': $jo9_bv_image = 'content/pic/mob/defeated/spawn_giant.png'\r\n! JO9 MOD END SPAWN_STAGE_DEFEAT_20261030",
+      "count": 1
+    },
+    {
+      "location": "trophy_room",
+      "field": "body",
+      "old": "if trophy_youngfiend > 0: *p '<div id = \"trophy_room_youngfiend\"><img src=\"content\\pic\\mob\\spawn_ava.png\"><br><center>어린 괴물</center></div>'",
+      "new": "! JO9 MOD START SPAWN_STAGE_TROPHY_YOUNG_20261030\r\nif trophy_youngfiend > 0: *p '<div id = \"trophy_room_youngfiend\"><img src=\"content\\pic\\mob\\spawn_young_ava.png\"><br><center>어린 괴물</center></div>'\r\n! JO9 MOD END SPAWN_STAGE_TROPHY_YOUNG_20261030",
+      "count": 1
+    },
+    {
+      "location": "trophy_room",
+      "field": "body",
+      "old": "if trophy_hugefiend > 0: *p '<div id = \"trophy_room_hugefiend\"><img src=\"content\\pic\\mob\\spawn_ava.png\"><br><center>거대 핀드</center></div>'",
+      "new": "! JO9 MOD START SPAWN_STAGE_TROPHY_GIANT_20261030\r\nif trophy_hugefiend > 0: *p '<div id = \"trophy_room_hugefiend\"><img src=\"content\\pic\\mob\\spawn_giant_ava.png\"><br><center>거대 핀드</center></div>'\r\n! JO9 MOD END SPAWN_STAGE_TROPHY_GIANT_20261030",
+      "count": 1
+    },
+    {
+      "location": "billing",
+      "field": "body",
+      "old": "\tif decade_mince > 0: $produce_msg += '<img src=\"content/pic/ui/dialogue_emoji/meat.png\" width=\"19\" height=\"19\" style=\"vertical-align:-4px\">육류<br>\n다진육: <<decade_mince>><br>안심살: <<decade_meat>><br>처녀육: <<decade_virgin>>'",
+      "new": "! JO9 MOD START BILLING_LITERAL_CRLF_20261030\r\n\tif decade_mince > 0: $produce_msg += '<img src=\"content/pic/ui/dialogue_emoji/meat.png\" width=\"19\" height=\"19\" style=\"vertical-align:-4px\">육류<br>\r\n다진육: <<decade_mince>><br>안심살: <<decade_meat>><br>처녀육: <<decade_virgin>>'\r\n! JO9 MOD END BILLING_LITERAL_CRLF_20261030",
+      "count": 1
+    }
+  ]
+}

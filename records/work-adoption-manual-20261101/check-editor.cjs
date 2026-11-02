@@ -1,0 +1,4 @@
+'use strict';
+const fs=require('fs'),a=require('assert/strict'),c=require('G:/somi/JO9sa/tools/text-workshop/core.cjs');
+(async()=>{const expected=c.hash(fs.readFileSync('G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp')),base='http://127.0.0.1:3813/',html=await(await fetch(base+'catalog')).text(),cfg=JSON.parse(html.match(/window\.JO9_CATALOG_BRIDGE=(\{[^<]+\});<\/script>/)[1]);
+const r=await fetch(base+'api/catalog/cut-conditions/info',{method:'POST',headers:{'Content-Type':'application/json','X-JO9-Token':cfg.token},body:JSON.stringify({path:'bg/beach.png'})}),info=await r.json();a.equal(r.status,200);a.equal(info.qspHash,expected);const report={pass:true,editorSeesInstalledQsp:true,qspHash:expected,readOnlyRequests:1,saveRequests:0,existingFamily:info.family.items.map(x=>x.file)};fs.writeFileSync(__dirname+'/editor-readback.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report));})().catch(e=>{console.error(e);process.exitCode=1;});

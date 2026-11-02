@@ -1,0 +1,14 @@
+'use strict';
+const fs=require('fs'),path=require('path'),cp=require('child_process'),url=require('url');
+const R='G:/somi/JO9sa',G='G:/somi/Jack O Nine Tails v2.4_work/game',O=__dirname,sc=require(R+'/tools/qa/save-codec.cjs');
+const source=process.argv[2],name=process.argv[3],bg=process.argv[4];if(!source||!/^[a-z-]+$/.test(name)||!/^content\/pic\/ui\//.test(bg))throw Error('Expected input, safe name, UI background');
+let html;if(source.endsWith('.sav')){const s=sc.parse(fs.readFileSync(source));const v=s.vars.find(v=>v.name==='QA_HTML');html=v?.values.find(x=>x[1])?.[1]||sc.dec(s.lines[8]);}else html=fs.readFileSync(source,'utf8');
+const dest=O+'/preview';fs.mkdirSync(dest,{recursive:true});
+const css=fs.readFileSync(O+'/css/candidate-base.css','utf8');
+const fonts=[['경기천년제목 Medium','경기천년제목 Medium.ttf'],['Sandoll 미생','Sandoll 미생.ttf'],['코트라 손글씨체','코트라 손글씨체.ttf'],['Kaushan Script','KaushanScript-Regular.otf'],['Segoe Print','Segoe Print.ttf'],['Philosopher','Philosopher-Regular.ttf']].map(([n,f])=>'@font-face{font-family:"'+n+'";src:url("'+url.pathToFileURL(G+'/fonts/'+f).href+'");}').join('');
+const text='<!doctype html><html><head><meta charset="utf-8"><base href="'+url.pathToFileURL(G+'/').href+'"><style>'+fonts+css+'</style><style>html,body{margin:0;padding:0;width:1280px;height:800px;overflow:hidden;}body{font-family:"경기천년제목 Medium";font-size:18px;background:#100d08 url("'+bg+'") 0 0 no-repeat;}</style></head><body>'+html+'</body></html>';
+const file=dest+'/'+name+'.html';fs.writeFileSync(file,text);
+const profile='G:/Codex/tmp/tutorial-ui-preview-20261102-'+name+'-'+Date.now();fs.mkdirSync(profile,{recursive:true});
+const r=cp.spawnSync('C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',['--headless','--disable-gpu','--disable-background-networking','--hide-scrollbars','--no-first-run','--force-device-scale-factor=1','--window-size=1280,800','--user-data-dir='+profile,'--screenshot='+dest+'/'+name+'.png',url.pathToFileURL(file).href],{encoding:'utf8',windowsHide:true,timeout:20000});
+fs.writeFileSync(dest+'/'+name+'-edge.log',(r.stdout||'')+(r.stderr||''));
+const report={name,input:source,file,image:dest+'/'+name+'.png',profile,exit:r.status,error:r.error?.message||null,exists:fs.existsSync(dest+'/'+name+'.png'),scope:'Static Edge rendering of actual native HTML; native Qt measurements remain authoritative'};fs.writeFileSync(dest+'/'+name+'.json',JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report));

@@ -1,0 +1,101 @@
+{
+  "status": "STATIC_REVIEW_COMPLETE_RUNTIME_PAINT_PENDING",
+  "created": "2026-10-27T12:16:11.747Z",
+  "operatingFilesModified": 0,
+  "hashes": {
+    "qsp": "7c366e1ae35a5922e32052847bceb28737ddab32c3861b19bbefd7661b45c2b7",
+    "css": "4121a2175e61a9c99fb7032735bf292a60b7a14a476311ed384987df06629774",
+    "profileCss": "4c0be3abd432779e32c993042d37aad617b93850ce3442ed1b202f82a8d43f50",
+    "js": "b4656fe77009e0df0d3eef45f2c8d2c96d9454cd98e1d6bb8cab7aa5070f8eb7"
+  },
+  "confirmed": [
+    {
+      "source": "css/base.css:10168-10173",
+      "fact": "Enemy hit runs transform scale(.75 to 1.15) and opacity 1 to 0 over .6s; player hit runs opacity .45 to 0 over .5s. Both -webkit and standard keyframes remain active."
+    },
+    {
+      "source": "css/base.css:10287",
+      "fact": "Effect wrapper is absolute, clipped and pointer-events:none, z-index:5. This separates DOM/stacking but does not remove animated properties or prove independent QtWebKit repaint."
+    },
+    {
+      "source": "QSP раскладка_бой:11-13; image content/pic/ui/grimdark/bg_fight.png",
+      "fact": "The existing body background still contains the old entire battle UI frame including the central lower skull. Broad old frames could be from this artwork; this is a fingerprint to compare, not proven causality."
+    },
+    {
+      "source": "css/base.css:10000-10004; css/jo9_traits_view.css:32",
+      "fact": "Global body pseudos draw fixed outer 8px left/bottom metal strips at z900. Profile stylesheet globally changes body:before y/height. They cannot by themselves draw the broad central skull frame."
+    },
+    {
+      "source": "records/ui-position-rules-audit-20261027/runtime-stylesheet-scope.json",
+      "fact": "Earlier actual non-profile CSSOM confirmed the profile body:before rule loads globally. Current renderers do not explicitly hide these pseudos; latest computed pseudo state during a visible symptom remains to be captured."
+    },
+    {
+      "source": "records/battle-effect-isolation-20261027/native-effects-results.json",
+      "fact": "Earlier samples had body/html rect(0,0,1280,800), battle root rect(1,1,1280,800), unchanged during FX. This 1px inherited native origin is preexisting and does not explain a transient effect by itself. Latest final CSS uses newer fonts; do not call those old metrics current visual proof."
+    },
+    {
+      "source": "content/js/jo9_battle_log.js",
+      "fact": "Current JS only normalizes redundant BRs. It does not animate, change styles, modify frames or recalculate game state."
+    },
+    {
+      "source": "content/pic/ui/jo9_battle_test_v01/slash.svg",
+      "fact": "SVG has static paths and gradient stops; no script, CSS animation, SMIL or external resource."
+    }
+  ],
+  "hypotheses": [
+    {
+      "priority": 1,
+      "status": "UNPROVEN",
+      "text": "Animated transform/opacity changes WebKit layer composition or invalidation while old body artwork/outer pseudos participate in repaint. Disappearance at animation end is consistent with this but not sufficient proof."
+    },
+    {
+      "priority": 2,
+      "status": "UNPROVEN",
+      "text": "The inherited 1px native origin exposes edges or amplifies raster rounding during repaint. Static DOM rectangles alone cannot distinguish paint artifacts."
+    }
+  ],
+  "proposedMinimalExperiment": {
+    "type": "DISPLAY_ONLY_CANDIDATE_NOT_APPLIED",
+    "steps": [
+      "Keep the existing wrapper, all QSP output conditions and all geometry. Set both FX animations/transforms to none, slash opacity to1 and player flash opacity to1 with equivalent RGBA background.",
+      "Reuse the existing battle JS script loaded by both renderers. Hide only the existing effect nodes once with visibility:hidden after their .6/.5 second lifetime. No opacity/transform stepping, CSS transitions, intervals, persistent state, QSP changes or new assets.",
+      "Capture effect-off, CSS-animated baseline and static timed candidate at matching 25/120/350/650ms and during rapid repeated turns. Compare pixels outside the effect rectangles and report actual observed transient frames separately from DOM invariants.",
+      "Only as separate diagnosis, test hiding body pseudos or replacing body background with a solid reference color; do not combine these with the animation A/B or adopt a global border removal without scope review."
+    ],
+    "preserves": [
+      "UI20 and names26",
+      "Sandoll23 log",
+      "side parchment skins",
+      "native log scrolling",
+      "all combat calculations and output triggers",
+      "all command links/click regions"
+    ],
+    "limits": [
+      "Visibility toggling still repaints; it avoids the particular CSS animation path but is not a promise of no compositor or OS issues.",
+      "Using JS opacity/transform animation or promoting the root with translateZ/will-change would not cleanly isolate the suspected route.",
+      "Static slash loses growth/fade interpolation; image and visible lifetime can stay the same. Static player flash can be more visually abrupt.",
+      "Animated GIF/sprite assets introduce frame decoding/asset changes and are not the smallest controlled test."
+    ]
+  },
+  "runtimeNeeded": [
+    "Current getComputedStyle(body,::before/::after) content/display/position/size/z-index",
+    "Exact screenshot pixels during live effect, not only after .6s",
+    "Root/body/native viewport rect and scroll metrics at those same times",
+    "Confirm slash and flash cause symptom independently or only together",
+    "Observe clicks and next-turn redraw after timer hides a detached old node"
+  ],
+  "references": [
+    {
+      "url": "https://qtwebkit.github.io/doc/qtwebkit/qwebsettings.html",
+      "scope": "QtWebKit reference: AcceleratedCompositingEnabled describes caching/composition of transform/opacity CSS animations when used with QGraphicsWebView. Actual installed rendering mode/flag is not established here."
+    },
+    {
+      "url": "https://bugs.webkit.org/show_bug.cgi?id=115107",
+      "scope": "Historical Qt WebKit bug describes platform-dependent opacity compositing and software transparency layers. This is mechanism evidence, not proof of this game defect."
+    },
+    {
+      "url": "https://trac.webkit.org/wiki/Accelerated%20rendering%20and%20compositing",
+      "scope": "WebKit documentation describes composition/clip handling during transform or opacity animations. No version/binary equivalence asserted."
+    }
+  ]
+}

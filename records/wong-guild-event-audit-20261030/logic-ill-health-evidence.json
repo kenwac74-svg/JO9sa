@@ -1,0 +1,1007 @@
+[
+  {
+    "location": "sjm_UI_UIadds",
+    "line": 122,
+    "text": "\tend"
+  },
+  {
+    "location": "sjm_UI_UIadds",
+    "line": 123,
+    "text": "\tif inventory['stethoscope'] ! 0:"
+  },
+  {
+    "location": "sjm_UI_UIadds",
+    "line": 124,
+    "text": "! JO9 MOD END J9M2686"
+  },
+  {
+    "location": "sjm_UI_UIadds",
+    "line": 125,
+    "text": "\t\tif slave['ill'] ! 0:"
+  },
+  {
+    "location": "sjm_UI_UIadds",
+    "line": 126,
+    "text": "\t\t\tif master_medic > 2 or assistant['nurse'] > 2:"
+  },
+  {
+    "location": "sjm_UI_UIadds",
+    "line": 127,
+    "text": "\t\t\t\t*p '<div id = \"slinfo_ill\" class=\"tooltip-left-small-button\" tooltip-data=\"<<$slave_name>>: 질병\"><a href = \"EXEC: interaction_city = 331 & gt ''interaction_city''\"><img src=\"content/pic/ui/buttons/legacy/z_ill.png\"></a></div>'"
+  },
+  {
+    "location": "sjm_UI_UIadds",
+    "line": 128,
+    "text": "\t\t\tend"
+  },
+  {
+    "location": "sjm_UI_UIadds",
+    "line": 129,
+    "text": "\t\tend"
+  },
+  {
+    "location": "sjm_UI_UIadds",
+    "line": 130,
+    "text": "\tend"
+  },
+  {
+    "location": "sjm_UI_UIadds",
+    "line": 232,
+    "text": "\tend"
+  },
+  {
+    "location": "sjm_UI_UIadds",
+    "line": 233,
+    "text": "\tif inventory['stethoscope'] ! 0:"
+  },
+  {
+    "location": "sjm_UI_UIadds",
+    "line": 234,
+    "text": "! JO9 MOD END J9M2682"
+  },
+  {
+    "location": "sjm_UI_UIadds",
+    "line": 235,
+    "text": "\t\tif assistant['ill'] ! 0:"
+  },
+  {
+    "location": "sjm_UI_UIadds",
+    "line": 236,
+    "text": "\t\t\tif master_medic > 2 or assistant['nurse'] > 2:"
+  },
+  {
+    "location": "sjm_UI_UIadds",
+    "line": 237,
+    "text": "\t\t\t\t*p '<div id = \"asinfo_ill\" class=\"tooltip-left-small-button\" tooltip-data=\"<<$assistant_name>>: 질병\"><a href = \"EXEC: interaction_city = 331 & gt ''interaction_city''\"><img src=\"content/pic/ui/buttons/legacy/z_ill.png\"></a></div>'"
+  },
+  {
+    "location": "sjm_UI_UIadds",
+    "line": 238,
+    "text": "\t\t\tend"
+  },
+  {
+    "location": "sjm_UI_UIadds",
+    "line": 239,
+    "text": "\t\tend"
+  },
+  {
+    "location": "sjm_UI_UIadds",
+    "line": 240,
+    "text": "\tend"
+  },
+  {
+    "location": "#dynamic",
+    "line": 5042,
+    "text": "\t\t\t\tdynamic $inseminate, 'dynslave'"
+  },
+  {
+    "location": "#dynamic",
+    "line": 5043,
+    "text": "\t\t\tend"
+  },
+  {
+    "location": "#dynamic",
+    "line": 5044,
+    "text": "\t\t\tmaster_penetration_rate += (skill_adv_mul * 1)"
+  },
+  {
+    "location": "#dynamic",
+    "line": 5045,
+    "text": "\t\t\tif master_ill = 0 and dynslave['ill'] > 0 and rand(1,6) > master_str and obereg_on = 0: master_ill += 1 &! venereal disease transmission to master"
+  },
+  {
+    "location": "#dynamic",
+    "line": 5046,
+    "text": "\t\t\tif master_ill > 0 and dynslave['ill'] = 0 and rand(1,6) > dynslave['stamina']: dynslave['ill'] += 1 &! venereal disease transmission to slave"
+  },
+  {
+    "location": "#dynamic",
+    "line": 5047,
+    "text": "\t\tend"
+  },
+  {
+    "location": "#dynamic",
+    "line": 5048,
+    "text": "\tend"
+  },
+  {
+    "location": "#dynamic",
+    "line": 5049,
+    "text": "}"
+  },
+  {
+    "location": "#dynamic",
+    "line": 5050,
+    "text": ""
+  },
+  {
+    "location": "#dynamic",
+    "line": 5051,
+    "text": "$plastics_get_image_range = {"
+  },
+  {
+    "location": "#static_base",
+    "line": 951,
+    "text": "\t\t\tif dynslave['makeup'] = 0 and dynslave['beauty'] > 1: dynslave['makeup'] = 2 &! natural beauty (on par with tattoo makeup)"
+  },
+  {
+    "location": "#static_base",
+    "line": 952,
+    "text": "\t\tend"
+  },
+  {
+    "location": "#static_base",
+    "line": 953,
+    "text": "\t\t!characteristic alignment for slave - crushboss"
+  },
+  {
+    "location": "#static_base",
+    "line": 954,
+    "text": "\t\tif dynslave['ill'] < 0: dynslave['ill'] = 0"
+  },
+  {
+    "location": "#static_base",
+    "line": 955,
+    "text": "\t\tif dynslave['ill'] > 7: dynslave['ill'] = 7"
+  },
+  {
+    "location": "#static_base",
+    "line": 956,
+    "text": "\t\tif dynslave['issues'] < 0: dynslave['issues'] = 0"
+  },
+  {
+    "location": "#static_base",
+    "line": 957,
+    "text": "\t\tif dynslave['issues'] > 5: dynslave['issues'] = 5"
+  },
+  {
+    "location": "#static_base",
+    "line": 958,
+    "text": "\t\tif dynslave['rehabilitation'] < 0: dynslave['rehabilitation'] = 0"
+  },
+  {
+    "location": "#static_base",
+    "line": 959,
+    "text": "\t\tif dynslave['rehabilitation'] > 30: dynslave['rehabilitation'] = 30"
+  },
+  {
+    "location": "#static_base",
+    "line": 960,
+    "text": "\t\tif dynslave['metabolism'] < 1: dynslave['metabolism'] = 1"
+  },
+  {
+    "location": "#static_base",
+    "line": 1058,
+    "text": ""
+  },
+  {
+    "location": "#static_base",
+    "line": 1059,
+    "text": "\t\t! sanity check for inapplicable moodlets"
+  },
+  {
+    "location": "#static_base",
+    "line": 1060,
+    "text": "\t\tif dynslave['wounds'] = 0: dynslave['neg_slave_wounded'] = 0"
+  },
+  {
+    "location": "#static_base",
+    "line": 1061,
+    "text": "\t\tif dynslave['ill'] = 0: dynslave['neg_slave_ill'] = 0"
+  },
+  {
+    "location": "#static_base",
+    "line": 1062,
+    "text": "\t\tif dynslave['angst'] = 0: dynslave['neg_angst'] = 0"
+  },
+  {
+    "location": "#static_base",
+    "line": 1063,
+    "text": "\t\tif cheat_no_starve = 1 or (dynslave['days_without_food'] = 0 and dynslave['fat'] > 0): dynslave['neg_hungry'] = 0"
+  },
+  {
+    "location": "#static_base",
+    "line": 1064,
+    "text": "\t\tif dynslave['spoil'] = 0 or max(dynslave['neg_hungry'], dynslave['neg_starvation'], dynslave['neg_raped'], dynslave['neg_defloration'], dynslave['neg_angst']) > 0: dynslave['neg_spoil'] = 0"
+  },
+  {
+    "location": "#static_base",
+    "line": 1065,
+    "text": "\t\tif rebell[$dynslave_psy_status] > 0: dynslave['pos_moral'] = 0"
+  },
+  {
+    "location": "#static_base",
+    "line": 1066,
+    "text": ""
+  },
+  {
+    "location": "snk_room_menu_screen",
+    "line": 225,
+    "text": "\t*p '<<$tmpbrand_s>>'"
+  },
+  {
+    "location": "snk_room_menu_screen",
+    "line": 226,
+    "text": "gs '$slave_price', 'slave'"
+  },
+  {
+    "location": "snk_room_menu_screen",
+    "line": 227,
+    "text": "*p '<div id=\"slinfo_rank\" tooltip-data=\"등급\"><<$rating[rating]>></div>'"
+  },
+  {
+    "location": "snk_room_menu_screen",
+    "line": 228,
+    "text": "if slave['ill'] ! 0 and (master_medic > 2 or assistant['nurse'] > 2):"
+  },
+  {
+    "location": "snk_room_menu_screen",
+    "line": 229,
+    "text": "*p '<div id=\"slinfo_ill\" tooltip-data=\"질병\"><img src=\"content/pic/ui/buttons/legacy/z_ill.png\"></div>'"
+  },
+  {
+    "location": "snk_room_menu_screen",
+    "line": 230,
+    "text": "end"
+  },
+  {
+    "location": "snk_room_menu_screen",
+    "line": 231,
+    "text": "if slave['wounds'] ! 0:"
+  },
+  {
+    "location": "snk_room_menu_screen",
+    "line": 232,
+    "text": "*p '<div id=\"slinfo_wounds\" tooltip-data=\"상처\"><img src=\"content/pic/ui/buttons/legacy/z_wounds.png\"></div>'"
+  },
+  {
+    "location": "snk_room_menu_screen",
+    "line": 233,
+    "text": "end"
+  },
+  {
+    "location": "next_day",
+    "line": 1905,
+    "text": "\t\tend"
+  },
+  {
+    "location": "next_day",
+    "line": 1906,
+    "text": "\t\tkillvar 'a'"
+  },
+  {
+    "location": "next_day",
+    "line": 1907,
+    "text": ""
+  },
+  {
+    "location": "next_day",
+    "line": 1908,
+    "text": "\t\tif dynslave['ill'] > 0:"
+  },
+  {
+    "location": "next_day",
+    "line": 1909,
+    "text": "\t\t\tdynslave['ill'] += 1"
+  },
+  {
+    "location": "next_day",
+    "line": 1910,
+    "text": "\t\t\tif ((48271 * (day + dynslave_type)) mod 65537)/(65537/60) < dynslave['stamina']: dynslave['ill'] = 0 &! chance of natural recovery: 5% at B+ endurance, 8.3% at S+ endurance - ImperatorAugustus"
+  },
+  {
+    "location": "next_day",
+    "line": 1911,
+    "text": "\t\t\tif dynslave['ill'] > dynslave['stamina']: dynslave_rate['stamina'] -= 1"
+  },
+  {
+    "location": "next_day",
+    "line": 1912,
+    "text": "\t\t\tif dynslave['ill'] > 6: dynslave['neg_slave_ill'] = 1000 &! large magnitude to survive mood rise or Lethe potions - ImperatorAugustus"
+  },
+  {
+    "location": "next_day",
+    "line": 1913,
+    "text": "\t\tend"
+  },
+  {
+    "location": "next_day",
+    "line": 1914,
+    "text": ""
+  },
+  {
+    "location": "next_day",
+    "line": 1915,
+    "text": "\t\tif dynslave['parasite'] > 0:"
+  },
+  {
+    "location": "next_day",
+    "line": 1916,
+    "text": "\t\t\tdynslave_rate['arousal'] += dynslave['parasite'] * 10 &! this effect was not applied for prisoners before - ImperatorAugustus"
+  },
+  {
+    "location": "next_day",
+    "line": 1917,
+    "text": "\t\t\tdynslave['parasite'] += 1"
+  },
+  {
+    "location": "next_day",
+    "line": 2633,
+    "text": "\t\tslave_rate['pride'] -= 4"
+  },
+  {
+    "location": "next_day",
+    "line": 2634,
+    "text": "\t\tslave_rate['hygiene'] += 40"
+  },
+  {
+    "location": "next_day",
+    "line": 2635,
+    "text": "\t\tslave_rate['angst'] += 2*(slave['ego'] + slave['pride'] + slave['temper']) - (slave['perversion'] + slave['sub_kopro'] + slave['moral'] + slave['instinct'])"
+  },
+  {
+    "location": "next_day",
+    "line": 2636,
+    "text": "\t\tif master_ill > 0 and rand(1,5) = 1: slave['ill'] += 1 &! added 20% chance to become ill (consuming faeces bacteria orally represents a vector of infection) - ImperatorAugustus"
+  },
+  {
+    "location": "next_day",
+    "line": 2637,
+    "text": "\t\t$subskill = 'slave[\"sub_kopro\"]'"
+  },
+  {
+    "location": "next_day",
+    "line": 2638,
+    "text": "\t\t$subskill_xp = 'slave[\"sub_kopro_xp\"]'"
+  },
+  {
+    "location": "next_day",
+    "line": 2639,
+    "text": "\t\tdynamic $replace($dyn_advance_sex_skills_nolesson, 'dyn'+'slave', 'slave')"
+  },
+  {
+    "location": "next_day",
+    "line": 2640,
+    "text": "\tend"
+  },
+  {
+    "location": "next_day",
+    "line": 2641,
+    "text": "\tif slave['v_balls_rule'] = 1 and slave['v_balls_rule_broken'] = 0:"
+  },
+  {
+    "location": "next_day",
+    "line": 3263,
+    "text": "\t\t\tif dynslave['fat'] = 3: dynslave['milk_gain'] += 2"
+  },
+  {
+    "location": "next_day",
+    "line": 3264,
+    "text": "\t\t\tif dynslave['fat'] > 3: dynslave['milk_gain'] += 4"
+  },
+  {
+    "location": "next_day",
+    "line": 3265,
+    "text": "\t\t\tif dynslave['fat'] = 0: dynslave['milk_gain'] = dynslave['milk_gain']/2"
+  },
+  {
+    "location": "next_day",
+    "line": 3266,
+    "text": "\t\t\tif dynslave['ill'] > 0: dynslave['milk_gain'] = (dynslave['milk_gain']/3)*2"
+  },
+  {
+    "location": "next_day",
+    "line": 3267,
+    "text": "! JO9 MOD START COW_APTITUDE_MILK_150 | 2026-10-24_cow_genius_balance"
+  },
+  {
+    "location": "next_day",
+    "line": 3268,
+    "text": "\t\t\tif $dynslave_psy_status = 'broken': dynslave['milk_gain'] = (dynslave['milk_gain']/3)*2"
+  },
+  {
+    "location": "next_day",
+    "line": 3269,
+    "text": "\t\t\tif dynslave['cowSK_affinity'] > 0: dynslave['milk_gain'] = max(0, dynslave['milk_gain']) * 3 / 2"
+  },
+  {
+    "location": "next_day",
+    "line": 3270,
+    "text": "\t\t\t! Base production comments below exclude this aptitude bonus; base37 becomes55, before lactation grade and existing food costs."
+  },
+  {
+    "location": "next_day",
+    "line": 3271,
+    "text": "! JO9 MOD END COW_APTITUDE_MILK_150"
+  },
+  {
+    "location": "next_day",
+    "line": 4295,
+    "text": "! JO9 MOD END COG_DIRECT_19"
+  },
+  {
+    "location": "next_day",
+    "line": 4296,
+    "text": "\t\t\tEND"
+  },
+  {
+    "location": "next_day",
+    "line": 4297,
+    "text": "\t\t\tassistant['jealousy'] -= 5"
+  },
+  {
+    "location": "next_day",
+    "line": 4298,
+    "text": "\t\t\tIF slave['ill'] > 0:"
+  },
+  {
+    "location": "next_day",
+    "line": 4299,
+    "text": "\t\t\t\ta = RAND (1,6)"
+  },
+  {
+    "location": "next_day",
+    "line": 4300,
+    "text": "\t\t\t\tif a >  assistant[\"stamina\"] and  assistant[\"ill\"] = 0:  assistant[\"ill\"] = 1"
+  },
+  {
+    "location": "next_day",
+    "line": 4301,
+    "text": "\t\t\tEND"
+  },
+  {
+    "location": "next_day",
+    "line": 4302,
+    "text": "\t\t\tIF assistant[\"ill\"] > 0:"
+  },
+  {
+    "location": "next_day",
+    "line": 4303,
+    "text": "\t\t\t\ta = RAND (1,6)"
+  },
+  {
+    "location": "next_day",
+    "line": 4304,
+    "text": "\t\t\t\tif a > slave['stamina'] and slave['ill'] = 0: slave['ill'] = 1"
+  },
+  {
+    "location": "next_day",
+    "line": 4305,
+    "text": "\t\t\tEND"
+  },
+  {
+    "location": "next_day",
+    "line": 4306,
+    "text": "\t\t\tif slave['<<assistant[\"id\"]>>'] > acc_rel[\"good1\"] and slave[\"arousal\"] > 2:"
+  },
+  {
+    "location": "next_day",
+    "line": 4307,
+    "text": "\t\t\t\tslave_assistant_rape = 1"
+  },
+  {
+    "location": "next_day",
+    "line": 4308,
+    "text": "\t\t\t\tassistant['<<slave[\"id\"]>>'] += 5"
+  },
+  {
+    "location": "next_day",
+    "line": 4309,
+    "text": "\t\t\t\ta = RAND(1,3)"
+  },
+  {
+    "location": "next_day",
+    "line": 4484,
+    "text": ""
+  },
+  {
+    "location": "next_day",
+    "line": 4485,
+    "text": "! Изменение настроения в зависимости от отношений"
+  },
+  {
+    "location": "next_day",
+    "line": 4486,
+    "text": "if slave_state = CONST_INT['slave_exist'] and assistant_state = CONST_INT['slave_exist'] :"
+  },
+  {
+    "location": "next_day",
+    "line": 4487,
+    "text": "\tif slave['<<assistant[\"id\"]>>'] >= acc_rel['good1'] and assistant['ill'] > 6: slave['neg_sa_ill'] = 1\t"
+  },
+  {
+    "location": "next_day",
+    "line": 4488,
+    "text": "\tif slave['<<assistant[\"id\"]>>'] >= acc_rel['good2']: slave['pos_sa_friendship'] = 1"
+  },
+  {
+    "location": "next_day",
+    "line": 4489,
+    "text": "! JO9 MOD START PEER_VALID_LOVE_MOOD_SLAVE | 2026-10-22_peer_relation_zero_id_and_variants"
+  },
+  {
+    "location": "next_day",
+    "line": 4490,
+    "text": "\tslave['pos_sa_love'] = 0"
+  },
+  {
+    "location": "next_day",
+    "line": 4491,
+    "text": "\tif assistant['id'] > 0 and slave['<<assistant[\"id\"]>>'] >= acc_rel['good4'] and slave['love'] = assistant['id']: slave['pos_sa_love'] = 1"
+  },
+  {
+    "location": "next_day",
+    "line": 4492,
+    "text": "! JO9 MOD END PEER_VALID_LOVE_MOOD_SLAVE"
+  },
+  {
+    "location": "next_day",
+    "line": 4578,
+    "text": ""
+  },
+  {
+    "location": "next_day",
+    "line": 4579,
+    "text": "! Изменение настроения в зависимости от отношений - mrross"
+  },
+  {
+    "location": "next_day",
+    "line": 4580,
+    "text": "if assistant_state = CONST_INT['slave_exist'] and slave_state = CONST_INT['slave_exist']:"
+  },
+  {
+    "location": "next_day",
+    "line": 4581,
+    "text": "\tif assistant['<<slave[\"id\"]>>'] >= acc_rel['good1'] and slave['ill'] > 6: assistant['neg_sa_ill'] = 1\t"
+  },
+  {
+    "location": "next_day",
+    "line": 4582,
+    "text": "\tif assistant['<<slave[\"id\"]>>'] >= acc_rel['good2']: assistant['pos_sa_friendship'] = 1"
+  },
+  {
+    "location": "next_day",
+    "line": 4583,
+    "text": "! JO9 MOD START PEER_VALID_LOVE_MOOD_ASSISTANT | 2026-10-22_peer_relation_zero_id_and_variants"
+  },
+  {
+    "location": "next_day",
+    "line": 4584,
+    "text": "\tassistant['pos_sa_love'] = 0"
+  },
+  {
+    "location": "next_day",
+    "line": 4585,
+    "text": "\tif slave['id'] > 0 and assistant['<<slave[\"id\"]>>'] >= acc_rel['good4'] and assistant['love'] = slave['id']: assistant['pos_sa_love'] = 1"
+  },
+  {
+    "location": "next_day",
+    "line": 4586,
+    "text": "! JO9 MOD END PEER_VALID_LOVE_MOOD_ASSISTANT"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 85,
+    "text": "\t\tsparks += func('jo9_traits_value', 'base_price', 'slave', common_price[demand_rating[$npc_id]])"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 86,
+    "text": "! JO9 MOD END TBV_FIXED_PRICE_78"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 87,
+    "text": "\t\tif sound_on = 1: play $large_money_sound, sound_volume"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 88,
+    "text": "\t\tif slave['ill'] > 0: sold_ill_slave += 1 &! trigger follow-up event"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 89,
+    "text": "\t\tif slave['parasite'] > 0: sold_parasite_slave += 1 &! trigger follow-up event"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 90,
+    "text": "\t\tdynamic $clear_slave_instance, 'slave'"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 91,
+    "text": "\t\tmaster_moodlet['pos_deal'] = 5"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 92,
+    "text": "! JO9 MOD START TBV_SALE_REWARD_0_2 | 2026-10-17_trait_value"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 93,
+    "text": "\t\tif fixed_brand_rise = 0:"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 184,
+    "text": "! JO9 MOD END SALE_CAP_B_PRIVATE_HOUSE_PAY_20261026"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 185,
+    "text": "\tsparks += sell_price"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 186,
+    "text": "\tif sound_on = 1: play $large_money_sound, sound_volume"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 187,
+    "text": "\tif slave['ill'] > 0: sold_ill_slave = 1 &! trigger follow-up event"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 188,
+    "text": "\tif slave['parasite'] > 0: sold_parasite_slave = 1 &! trigger follow-up event"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 189,
+    "text": "\tdynamic $sold_clothing"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 190,
+    "text": "\tdynamic $clear_slave_instance, 'slave'"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 191,
+    "text": "\tmaster_moodlet['pos_deal'] = 5"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 192,
+    "text": "\tcity_form = city_form_transfer"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 207,
+    "text": "\t\t\t\tif sound_on = 1: play $large_money_sound, sound_volume"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 208,
+    "text": "\t\t\t\tmaster_moodlet['pos_deal'] = 5"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 209,
+    "text": "\t\t\tend"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 210,
+    "text": "\t\t\tif slave['ill'] > 0: sold_ill_slave = 1 &! trigger follow-up event"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 211,
+    "text": "\t\t\tif slave['parasite'] > 0: sold_parasite_slave = 1 &! trigger follow-up event"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 212,
+    "text": "\t\t\tdynamic $clear_slave_instance, 'slave'"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 213,
+    "text": "\t\t!fixed code for kings"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 214,
+    "text": "\t\t\tif demand_rating[$npc_id] = 10:"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 215,
+    "text": "! JO9 MOD START TBV_SALE_REWARD_2_3 | 2026-10-17_trait_value"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 253,
+    "text": "\t\t\t\tif sound_on = 1: play $large_money_sound, sound_volume"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 254,
+    "text": "\t\t\t\tmaster_moodlet['pos_deal'] = 5"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 255,
+    "text": "\t\t\tend"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 256,
+    "text": "\t\t\tif slave['ill'] > 0: sold_ill_slave = 1 &! trigger follow-up event"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 257,
+    "text": "\t\t\tif slave['parasite'] > 0: sold_parasite_slave = 1 &! trigger follow-up event"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 258,
+    "text": "\t\t\tdynamic $clear_slave_instance, 'slave'"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 259,
+    "text": "\t\t!fixed code for kings"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 260,
+    "text": "\t\t\tif demand_rating[$npc_id] = 10:"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 261,
+    "text": "\t\t\t\tbrand_rate += func('jo9_traits_value', 'reward', '', 20, jo9_trait_value_sold_peerless)"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 296,
+    "text": "\t\t\tnpc_progress[$npc_id] = 2"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 297,
+    "text": "\t\t\tsparks += cowprice"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 298,
+    "text": "\t\t\tif sound_on = 1: play $large_money_sound, sound_volume"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 299,
+    "text": "\t\t\tif cow['ill'] > 0: sold_ill_slave += 1 &! trigger follow-up event"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 300,
+    "text": "\t\t\tif cow['parasite'] > 0: sold_parasite_slave += 1 &! trigger follow-up event"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 301,
+    "text": "\t\t\tdynamic $clear_slave_instance, 'cow'"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 302,
+    "text": "\t\t\tmaster_moodlet['pos_deal'] = 5"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 303,
+    "text": "\t\t\tgt 'shop_general'"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 304,
+    "text": "\t\t}"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 418,
+    "text": "! JO9 MOD START BUYER_RUMOR_SHOP_DELIVERY | 2026-10-24_buyer_rumors"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 419,
+    "text": "if client_satisfaction > 0 and ($npc_id = 'barman' or $npc_id = 'anes'): gs 'jo9_buyer_rumors', 'discount', $npc_id"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 420,
+    "text": "! JO9 MOD END BUYER_RUMOR_SHOP_DELIVERY"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 421,
+    "text": "\tif slave['ill'] > 0: sold_ill_slave = 1 &! trigger follow-up event"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 422,
+    "text": "\tif slave['parasite'] > 0: sold_parasite_slave = 1 &! trigger follow-up event"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 423,
+    "text": "\tdynamic $sold_clothing"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 424,
+    "text": "\tdynamic $clear_slave_instance, 'slave'"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 425,
+    "text": "\tmaster_moodlet['pos_deal'] = 5"
+  },
+  {
+    "location": "interaction_result_city",
+    "line": 426,
+    "text": "\trr = rand(0,10)"
+  },
+  {
+    "location": "get_stock_seed",
+    "line": 254,
+    "text": "stock['passion_luxury_revealed'] = seed_passion_luxury_revealed[stock_type]"
+  },
+  {
+    "location": "get_stock_seed",
+    "line": 255,
+    "text": ""
+  },
+  {
+    "location": "get_stock_seed",
+    "line": 256,
+    "text": "!Illness, Parasite, Scars, Bruises, Starvation"
+  },
+  {
+    "location": "get_stock_seed",
+    "line": 257,
+    "text": "stock['ill'] = seed_ill[stock_type]"
+  },
+  {
+    "location": "get_stock_seed",
+    "line": 258,
+    "text": "stock['parasite'] = seed_parasite[stock_type]"
+  },
+  {
+    "location": "get_stock_seed",
+    "line": 259,
+    "text": "stock['scars'] = seed_scars[stock_type]"
+  },
+  {
+    "location": "get_stock_seed",
+    "line": 260,
+    "text": "stock['bruises'] = seed_bruises[stock_type]"
+  },
+  {
+    "location": "get_stock_seed",
+    "line": 261,
+    "text": "stock['starvation'] = seed_starvation[stock_type]"
+  },
+  {
+    "location": "get_stock_seed",
+    "line": 262,
+    "text": ""
+  },
+  {
+    "location": "generate_stock",
+    "line": 1400,
+    "text": "\tif rand(1, 6) = 1: stock['compassion'] = rand(-1,2)"
+  },
+  {
+    "location": "generate_stock",
+    "line": 1401,
+    "text": ""
+  },
+  {
+    "location": "generate_stock",
+    "line": 1402,
+    "text": "\t!ILLNESS"
+  },
+  {
+    "location": "generate_stock",
+    "line": 1403,
+    "text": "\tif rand(1, 5) = 1: stock['ill'] = 1"
+  },
+  {
+    "location": "generate_stock",
+    "line": 1404,
+    "text": ""
+  },
+  {
+    "location": "generate_stock",
+    "line": 1405,
+    "text": "\t!CHARACTERISTICS THAT ARE DERIVED FROM RATE (BRUISES, SCARS, HYGIENE, AROUSAL, WOUNDS, FAME)"
+  },
+  {
+    "location": "generate_stock",
+    "line": 1406,
+    "text": "\tif rand(1, 15) = 8:"
+  },
+  {
+    "location": "generate_stock",
+    "line": 1407,
+    "text": "\t\tchance = rand(1,15)"
+  },
+  {
+    "location": "generate_stock",
+    "line": 1408,
+    "text": "\t\tif chance > 0: s = 10"
+  },
+  {
+    "location": "generate_stock",
+    "line": 1562,
+    "text": ""
+  },
+  {
+    "location": "generate_stock",
+    "line": 1563,
+    "text": ""
+  },
+  {
+    "location": "generate_stock",
+    "line": 1564,
+    "text": "!$slave_name = $seed_name[slave_type]"
+  },
+  {
+    "location": "generate_stock",
+    "line": 1565,
+    "text": "!slave['ill'] = 0"
+  },
+  {
+    "location": "generate_stock",
+    "line": 1566,
+    "text": "!slave['parasite'] = 0"
+  },
+  {
+    "location": "generate_stock",
+    "line": 1567,
+    "text": "!$slave['boobs_img'] = $seed_boobs_img[slave_type]"
+  },
+  {
+    "location": "generate_stock",
+    "line": 1568,
+    "text": "!$slave['pussy_img'] = $seed_pussy_img[slave_type]"
+  },
+  {
+    "location": "generate_stock",
+    "line": 1569,
+    "text": "!slave['brand'] = 4"
+  },
+  {
+    "location": "generate_stock",
+    "line": 1570,
+    "text": "!tattoo_brand = slave['brand']"
+  }
+]

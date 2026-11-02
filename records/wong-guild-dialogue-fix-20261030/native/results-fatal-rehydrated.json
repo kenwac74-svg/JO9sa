@@ -1,0 +1,82 @@
+{
+  "before": {
+    "workQsp": "1e8e489eb4a2c6412f81af0e50b69d409bc9ffd5d5edb69e2308cd3e9f71bc7c",
+    "candidate": "2b81e781d0ab56f10cb77aa340db27ee4dab7d707bafe857853ad600d474417e",
+    "save": "581fc472bfa5aedcbca85c379d0061ad8d28a9b928ef948a259dee7c800ad2ec"
+  },
+  "after": {
+    "workQsp": "1e8e489eb4a2c6412f81af0e50b69d409bc9ffd5d5edb69e2308cd3e9f71bc7c",
+    "candidate": "2b81e781d0ab56f10cb77aa340db27ee4dab7d707bafe857853ad600d474417e",
+    "save": "581fc472bfa5aedcbca85c379d0061ad8d28a9b928ef948a259dee7c800ad2ec"
+  },
+  "sourceUnchanged": true,
+  "exit": 0,
+  "results": [
+    {
+      "name": "parasite-repeat-fatal",
+      "checkpoint": "Current repair candidate; actual Wong original fatal dynamic death/exit renderer",
+      "pass": true,
+      "reason": "",
+      "marker": "JO9_QA_WONGFIX_parasite_repeat_fatal_COMPLETE|REP=20|ILL=0|PARA=1|GUARD=0|WARN=1|NPC=master_vong|DAY=0|EVENTS=0|DOMLEN=52|WONG=0|INTRO=0|SPEAKER=0|ILLTEXT=0|PARATEXT=0|EXTRA=0|EXPEL=1|GAMEOVER=1|CLIENTHEIGHT=127|SCROLLHEIGHT=127|CLIENTWIDTH=830|SCROLLWIDTH=830",
+      "durationMs": 9119,
+      "overflow": false,
+      "rawMarker": "JO9_QA_WONGFIX_parasite_repeat_fatal_COMPLETE%7CREP=20%7CILL=0%7CPARA=1%7CGUARD=0%7CWARN=1%7CNPC=master_vong%7CDAY=0%7CEVENTS=0%7CDOMLEN=52%7CWONG=0%7CINTRO=0%7CSPEAKER=0%7CILLTEXT=0%7CPARATEXT=0%7CEXTRA=0%7CEXPEL=1%7CGAMEOVER=1%7CCLIENTHEIGHT=127%7CSCROLLHEIGHT=127%7CCLIENTWIDTH=830%7CSCROLLWIDTH=830",
+      "observed": {
+        "REP": "20",
+        "ILL": "0",
+        "PARA": "1",
+        "GUARD": "0",
+        "WARN": "1",
+        "NPC": "master_vong",
+        "DAY": "0",
+        "EVENTS": "0",
+        "DOMLEN": "52",
+        "WONG": "0",
+        "INTRO": "0",
+        "SPEAKER": "0",
+        "ILLTEXT": "0",
+        "PARATEXT": "0",
+        "EXTRA": "0",
+        "EXPEL": "1",
+        "GAMEOVER": "1",
+        "CLIENTHEIGHT": "127",
+        "SCROLLHEIGHT": "127",
+        "CLIENTWIDTH": "830",
+        "SCROLLWIDTH": "830"
+      },
+      "issues": []
+    }
+  ],
+  "instrumentation": [
+    {
+      "name": "parasite-repeat-fatal",
+      "ill": 0,
+      "para": 1,
+      "warn": 1,
+      "rate": 100,
+      "after": 20,
+      "fatal": true,
+      "qspSha": "14c8336d1b59f46010d4739aaf4eaba77dc9790bf16adfa2b431117c4b493031",
+      "candidateHelpersUnchanged": true,
+      "fixtureDynamicRehydrated": true,
+      "source": "2b81e781d0ab56f10cb77aa340db27ee4dab7d707bafe857853ad600d474417e",
+      "changes": [
+        "Start read-only seed and case fixture",
+        "Diagnostic Start calls original #dynamic after refresh_database and verifies $death contains day=0 / gt exit; product helper code is not changed",
+        "Jump after original first 22 lines over unrelated earlier daily events",
+        "qaWong entry label",
+        "Tail-only exit DOM observer"
+      ]
+    }
+  ],
+  "limits": [
+    "No WORK, QSP helper, source save or user settings writes.",
+    "Candidate is copied into isolated diagnostic QSP fixtures; actual native FastQSP renders their original event/loop/footer or fatal death/exit.",
+    "No OS mouse, no saved game output; native page DOM callback only.",
+    "Healthy or previously-cleared no-event gating is source-diff validated by parent, not an extra native run.",
+    "Fatal fixture explicitly rehydrates the original #dynamic after database refresh; its previous refresh-only fixture held a battle description in $death and could not reach exit. Actual loaded-save global death-namespace restoration is not verified by this corrected fixture."
+  ],
+  "nativeRuns": 1,
+  "allPass": true,
+  "failures": 0
+}

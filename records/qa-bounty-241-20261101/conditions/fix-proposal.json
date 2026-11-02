@@ -1,0 +1,89 @@
+{
+  "id": "2026-11-01_image_cut_conditions_manual_toggle_mode3_proposal",
+  "status": "proposal-only-not-applied",
+  "priority": "P2",
+  "description": "수동 이미지 전환의 현재 선택 검증에서 자동 조건 컷 우선 선택을 생략하도록 mode3 지정",
+  "target": "game/jack.qsp",
+  "source": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+  "sourceSha256": "78835089f1dc8d0d5272f991926f35fa40e7e26dede5970a3fc03612967c130d",
+  "before_sha256": "78835089f1dc8d0d5272f991926f35fa40e7e26dede5970a3fc03612967c130d",
+  "after_sha256": "05f5726d813a883805c81c794f08de129c047c04b030ee6e0c37c27f5d8735ef",
+  "edits": [
+    {
+      "location": "interior_change",
+      "field": "body",
+      "old": " $jo9_after = func('interior_change', 'jo9_path', $jo9_visible_top)",
+      "new": " $jo9_after = func('interior_change', 'jo9_path', $jo9_visible_top, 3)",
+      "count": 1
+    }
+  ],
+  "scope": {
+    "changedLocations": 1,
+    "changedCalls": 1,
+    "newVariables": 0,
+    "newLocations": 0,
+    "saveMigration": false,
+    "productionWrites": false,
+    "candidateQspWritten": false
+  },
+  "contract": {
+    "mode0": "Fresh rendering still selects the lowest matching configured cut; unchanged.",
+    "mode1": "Cycles among all existing eligible active paths with original IDs; unchanged.",
+    "mode2": "Returns the saved already-rendered path even if the candidate was removed or became ineligible; called before validation and unchanged.",
+    "mode3": "Existing jo9_path fallthrough when mode is neither 0, 1 nor 2: discovers and filters candidates, keeps the current eligible selection, otherwise normalizes to A or first surviving path, updates choice and image count, and does not automatically prefer a configured cut or advance.",
+    "whySafe": "The full current jo9_path has only mode2 early return and mode1 increment. Generated conditions add only a mode0 preference. Thus mode3 uses the same candidate and fallback logic while bypassing precisely that preference. With no configured rules, mode0 and mode3 run identical branches."
+  },
+  "rootCause": "Real jo9_toggle first invokes jo9_path to normalize selection. Its implicit mode0 now forces B, so a previous C differs from normalized B and the following mode1 advance is skipped. Explicit mode3 avoids the automatic preference during this manual validation step.",
+  "expectedNativeChecks": [
+    {
+      "case": "No rules, A/B/C/D exist",
+      "expected": "0 -> 10002 -> 10003 -> 10004 -> 0, unchanged legacy cycle."
+    },
+    {
+      "case": "One matching B rule",
+      "expected": "Initial auto B -> manual C -> D -> A -> B."
+    },
+    {
+      "case": "Matching B and C rules",
+      "expected": "Initial auto B -> manual C -> D -> A -> B; lowest matching rule still wins only fresh mode0 rendering."
+    },
+    {
+      "case": "Current B becomes ineligible before click; A/C/D survive",
+      "expected": "mode2 identifies rendered B; mode3 falls back to A, saved-ID difference skips mode1, and HTML changes B to A. Next click advances to C."
+    },
+    {
+      "case": "Current C remains eligible but B becomes eligible",
+      "expected": "Manual click advances from C to D; a fresh mode0 render still auto-selects B."
+    },
+    {
+      "case": "Current selected file is removed",
+      "expected": "mode2 identifies the old rendered path; mode3 uses unchanged A/first-survivor fallback and HTML replacement can find the old path."
+    },
+    {
+      "case": "A absent but another eligible file survives",
+      "expected": "Unchanged first-surviving-path fallback and its existing selection ID."
+    },
+    {
+      "case": "Registered legacy candidate uses compact ID 1 rather than 10002",
+      "expected": "Original registered IDs remain intact through validation, cycling and mode2 lookup."
+    },
+    {
+      "case": "Clean overlay currently active",
+      "expected": "Original jo9_toggle overlay removal/rebuild and last matching attribute replacement remain unchanged."
+    }
+  ],
+  "verification": {
+    "staticSyntaxBase": true,
+    "staticSyntaxWithTwoRules": true,
+    "qspRoundTrip": true,
+    "onlyOneBodyChanged": true,
+    "generatedConditionBlocksUnchanged": true,
+    "ruleRemovalPreservesFixedBase": true,
+    "engineRunByThisProposal": false,
+    "productionHashesUnchanged": true
+  },
+  "limits": [
+    "Static checks do not establish engine correctness; root must run the original jo9_html/jo9_toggle pipeline against an isolated candidate before claiming the fix passes.",
+    "If zero active paths remain, this proposal retains the existing base-path return behavior; it does not add a new fallback contract."
+  ]
+}

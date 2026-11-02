@@ -1,0 +1,201 @@
+{
+  "pass": true,
+  "type": "arithmetic-and-flag-model-only",
+  "actualQSPExecution": false,
+  "cases": [
+    {
+      "name": "ill_1_darkblue_30_to_purple_20",
+      "pass_": true,
+      "actual": {
+        "visited": true,
+        "rate": 20,
+        "grade": 2,
+        "ill": 0,
+        "parasite": 0,
+        "guard": 1,
+        "warned": 0,
+        "gameOver": false
+      },
+      "expected": {
+        "visited": true,
+        "rate": 20,
+        "grade": 2,
+        "ill": 0,
+        "parasite": 0,
+        "guard": 1
+      }
+    },
+    {
+      "name": "parasite_1_lightblue_100_to_purple_20",
+      "pass_": true,
+      "actual": {
+        "visited": true,
+        "rate": 20,
+        "grade": 2,
+        "ill": 0,
+        "parasite": 0,
+        "guard": 1,
+        "warned": 1,
+        "gameOver": false
+      },
+      "expected": {
+        "visited": true,
+        "rate": 20,
+        "grade": 2,
+        "ill": 0,
+        "parasite": 0,
+        "guard": 1,
+        "warned": 1
+      }
+    },
+    {
+      "name": "equal_ill_parasite_penalty90",
+      "pass_": true,
+      "actual": {
+        "visited": true,
+        "rate": 20,
+        "grade": 2,
+        "ill": 0,
+        "parasite": 0,
+        "guard": 1,
+        "warned": 1,
+        "gameOver": false
+      },
+      "expected": {
+        "rate": 20,
+        "grade": 2,
+        "warned": 1
+      }
+    },
+    {
+      "name": "unequal_ill_parasite_uses_parasite80_branch",
+      "pass_": true,
+      "actual": {
+        "visited": true,
+        "rate": 30,
+        "grade": 3,
+        "ill": 0,
+        "parasite": 0,
+        "guard": 1,
+        "warned": 1,
+        "gameOver": false
+      },
+      "expected": {
+        "rate": 30,
+        "grade": 3
+      }
+    },
+    {
+      "name": "floor_zero",
+      "pass_": true,
+      "actual": {
+        "visited": true,
+        "rate": 0,
+        "grade": 0,
+        "ill": 0,
+        "parasite": 0,
+        "guard": 1,
+        "warned": 0,
+        "gameOver": false
+      },
+      "expected": {
+        "rate": 0,
+        "grade": 0
+      }
+    },
+    {
+      "name": "same_day_guard_prevents_second_visit",
+      "pass_": true,
+      "actual": {
+        "visited": false,
+        "rate": 30,
+        "grade": 3,
+        "ill": 1,
+        "parasite": 0,
+        "guard": 1,
+        "warned": 0,
+        "gameOver": false
+      },
+      "expected": {
+        "visited": false,
+        "rate": 30,
+        "ill": 1
+      }
+    },
+    {
+      "name": "next_day_no_new_delivery_no_visit",
+      "pass_": true,
+      "actual": {
+        "visited": false,
+        "rate": 20,
+        "grade": 2,
+        "ill": 0,
+        "parasite": 0,
+        "guard": 0,
+        "warned": 0,
+        "gameOver": false
+      },
+      "expected": {
+        "visited": false,
+        "rate": 20
+      }
+    },
+    {
+      "name": "restore_base_rate_without_rearming_does_not_repeat",
+      "pass_": true,
+      "actual": {
+        "visited": false,
+        "rate": 30,
+        "grade": 3,
+        "ill": 0,
+        "parasite": 0,
+        "guard": 0,
+        "warned": 0,
+        "gameOver": false
+      },
+      "expected": {
+        "visited": false,
+        "rate": 30,
+        "grade": 3
+      }
+    },
+    {
+      "name": "new_infected_delivery_rearms_visit",
+      "pass_": true,
+      "actual": {
+        "visited": true,
+        "rate": 20,
+        "grade": 2,
+        "ill": 0,
+        "parasite": 0,
+        "guard": 1,
+        "warned": 0,
+        "gameOver": false
+      },
+      "expected": {
+        "visited": true,
+        "rate": 20,
+        "grade": 2
+      }
+    },
+    {
+      "name": "repeat_parasite_after_warning_is_gameover",
+      "pass_": true,
+      "actual": {
+        "visited": true,
+        "rate": 20,
+        "grade": 2,
+        "ill": 0,
+        "parasite": 1,
+        "guard": 0,
+        "warned": 1,
+        "gameOver": true
+      },
+      "expected": {
+        "visited": true,
+        "gameOver": true
+      }
+    }
+  ],
+  "limit": "Demonstrates formulas and intended re-arm/reset flow. Does not reproduce the reported repeating in-game visit or diagnose engine/UI control transfer."
+}

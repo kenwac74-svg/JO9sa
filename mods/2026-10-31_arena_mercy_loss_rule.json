@@ -1,0 +1,64 @@
+{
+  "id": "2026-10-31_arena_mercy_loss_rule",
+  "description": "Approved design change: one point per new knockout loss; existing signed protagonist reputation forces execution at <=-5 or mercy at >=5 only after lethal-injury survival, in formal arena and Catfight. Conditional narrative in six hero/result branches. Existing saved history retained.",
+  "before_sha256": "6f253c066d8d5d6c24e8e0c14bd9acfb9ceb674045b7c8494608031b751d1a7f",
+  "after_sha256": "94ba085a0b5dda03297009e12c28572e2d808671b9db97f3bb4f44f64dbcb805",
+  "edits": [
+    {
+      "location": "выход_из_боя",
+      "field": "body",
+      "old": "\t\tslave['loser_rating'] += 100",
+      "new": "! JO9 MOD START ARENA_KNOCKOUT_LOSS_POINT_20261031\r\n\t\tslave['loser_rating'] += 1\r\n! JO9 MOD END ARENA_KNOCKOUT_LOSS_POINT_20261031",
+      "count": 1
+    },
+    {
+      "location": "выход_из_боя",
+      "field": "body",
+      "old": "\t\tgladiator_valor = slave['temper'] - slave['loser_rating']\r\n\t\tif b > gladiator_valor:",
+      "new": "\t\tgladiator_valor = slave['temper'] - slave['loser_rating']\r\n! JO9 MOD START ARENA_REPUTATION_LOSS_JUDGMENT_20261031\r\n\t\tif jo9_cruel_mercy <= -5 or (jo9_cruel_mercy < 5 and b > gladiator_valor):\r\n! JO9 MOD END ARENA_REPUTATION_LOSS_JUDGMENT_20261031",
+      "count": 1
+    },
+    {
+      "location": "выход_из_боя",
+      "field": "body",
+      "old": "        gladiator_valor = slave['temper'] - slave['loser_rating']\r\n        if b > gladiator_valor:",
+      "new": "        gladiator_valor = slave['temper'] - slave['loser_rating']\r\n! JO9 MOD START CATFIGHT_REPUTATION_LOSS_JUDGMENT_20261031\r\n        if jo9_cruel_mercy <= -5 or (jo9_cruel_mercy < 5 and b > gladiator_valor):\r\n! JO9 MOD END CATFIGHT_REPUTATION_LOSS_JUDGMENT_20261031",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\r\nif interaction_city = 1292:\r\n\t$place = 'colosseum_arena'\r\n\t$picture_type = 'pic_png'\r\n\t! JO9 MOD START COLDEF_RESULT_PATHS_20261029\r\n\t$bg_path = 'scene/coldef2'\r\n\t! JO9 MOD END COLDEF_RESULT_PATHS_20261029\r\n\tsparks += 5\r\n\tcity_form = 1\r\n\t$return_lock = 'city_menu_form'\r\n! JO9 MOD START J9M1211 | 2026-10-15_trim_leading_body_blank_lines | changed block; context may be included\r\n\t$text[1] = '관중들은 몸을 가누지 못하는 노예를 향해 야유를 보내며 발을 쿵쿵 댔다. 그들은 <<$slave_name>>(이)가 최선을 다해 싸우지 않는다고 생각하는 듯했다. 관중들의 뜻은 곧 받아들여졌고, 그녀의 고기는 상원의회 요리사에게 건네졌다.<br><br> 기분-5 계급-2'",
+      "new": "\r\nif interaction_city = 1292:\r\n\t$place = 'colosseum_arena'\r\n\t$picture_type = 'pic_png'\r\n\t! JO9 MOD START COLDEF_RESULT_PATHS_20261029\r\n\t$bg_path = 'scene/coldef2'\r\n\t! JO9 MOD END COLDEF_RESULT_PATHS_20261029\r\n\tsparks += 5\r\n\tcity_form = 1\r\n\t$return_lock = 'city_menu_form'\r\n! JO9 MOD START J9M1211 | 2026-10-15_trim_leading_body_blank_lines | changed block; context may be included\r\n\t$text[1] = '관중들은 몸을 가누지 못하는 노예를 향해 야유를 보내며 발을 쿵쿵 댔다. 그들은 <<$slave_name>>(이)가 최선을 다해 싸우지 않는다고 생각하는 듯했다. 관중들의 뜻은 곧 받아들여졌고, 그녀의 고기는 상원의회 요리사에게 건네졌다.<br><br> 기분-5 계급-2'\r\n! JO9 MOD START DEFEAT_REPUTATION_PROSE_1292_20261031\r\n if jo9_cruel_mercy <= -5: $text[1] = '당신은 결투에서 진 노예를 잔인하게 처형하는 것으로 소문이 자자했고, 상대방도 당신의 노예에게 자비를 베풀지 않았다. 승자의 무기가 쓰러진 <<$slave_name>>에게 내려왔다. 경기가 끝난 뒤, 당신은 그녀를 잃은 채 경기장을 떠났다.<br><br> 기분-5 계급-2'\r\n! JO9 MOD END DEFEAT_REPUTATION_PROSE_1292_20261031",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\r\nif interaction_city = 1293:\r\n\t$place = 'colosseum_arena'\r\n\t$return_lock = 'city_menu_form' & city_form = 1\r\n\t$picture_type = 'pic_png'\r\n\t! JO9 MOD START COLDEF_RESULT_PATHS_20261029\r\n\t$bg_path = 'scene/coldef3'\r\n\t! JO9 MOD END COLDEF_RESULT_PATHS_20261029\r\n! JO9 MOD START J9M1210 | 2026-10-15_trim_leading_body_blank_lines | changed block; context may be included\r\n\t$text[1] = '<<$slave_name>>(은)는 가까스로 살아남았지만, 패배했다. 하지만 그녀가 열심히 싸운 것을 근거로 관중은 그녀를 살려내는 것에 동의했다. 도우미들은 응급구호를 하기 위해 들것에 노예를 싣고 노예 우리로 향했다.<br><br> 기분-3 계급-1, 노예 태도-5'",
+      "new": "\r\nif interaction_city = 1293:\r\n\t$place = 'colosseum_arena'\r\n\t$return_lock = 'city_menu_form' & city_form = 1\r\n\t$picture_type = 'pic_png'\r\n\t! JO9 MOD START COLDEF_RESULT_PATHS_20261029\r\n\t$bg_path = 'scene/coldef3'\r\n\t! JO9 MOD END COLDEF_RESULT_PATHS_20261029\r\n! JO9 MOD START J9M1210 | 2026-10-15_trim_leading_body_blank_lines | changed block; context may be included\r\n\t$text[1] = '<<$slave_name>>(은)는 가까스로 살아남았지만, 패배했다. 하지만 그녀가 열심히 싸운 것을 근거로 관중은 그녀를 살려내는 것에 동의했다. 도우미들은 응급구호를 하기 위해 들것에 노예를 싣고 노예 우리로 향했다.<br><br> 기분-3 계급-1, 노예 태도-5'\r\n! JO9 MOD START DEFEAT_REPUTATION_PROSE_1293_20261031\r\n if jo9_cruel_mercy >= 5: $text[1] = '당신은 결투에서 진 노예를 처형하지 않는 자비로운 주인으로 인정받고 있었고, 상대도 당신의 노예에게 자비를 베풀어 목숨을 살려주었다. 진행 요원들은 <<$slave_name>>(을)를 들것에 싣고 응급 처치를 위해 노예 우리로 향했다.<br><br> 기분-3 계급-1, 노예 태도-5'\r\n! JO9 MOD END DEFEAT_REPUTATION_PROSE_1293_20261031",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\r\n\tIF interaction_city = 103003:\r\n\t ! JO9 MOD START CATFIGHT_LOSS_CUT_103003_20261031\r\n\t $place = 'catfightclub'\r\n\t $picture_type = 'untyped'\r\n\t $special_bg = 'content/pic/scene/catfight_loss_death.png'\r\n\t $special_image_full[1] = $special_bg\r\n\t $return_lock = 'city_menu_form' & city_form = 121\r\n\t sparks -= 300\r\n\t city_form = 121\r\n\t $return_lock = 'city_menu_form'\r\n\t $text[1] = ' 상대의 마지막 일격에 <<$slave_name>>의 몸이 격투장 바닥으로 무너졌다. 승자가 무기를 거둔 뒤에도 그녀는 다시 일어나지 못했다. 진행 요원들이 시신 위로 거친 천을 덮는 동안, 당신은 말없이 지켜보았다.'",
+      "new": "\r\n\tIF interaction_city = 103003:\r\n\t ! JO9 MOD START CATFIGHT_LOSS_CUT_103003_20261031\r\n\t $place = 'catfightclub'\r\n\t $picture_type = 'untyped'\r\n\t $special_bg = 'content/pic/scene/catfight_loss_death.png'\r\n\t $special_image_full[1] = $special_bg\r\n\t $return_lock = 'city_menu_form' & city_form = 121\r\n\t sparks -= 300\r\n\t city_form = 121\r\n\t $return_lock = 'city_menu_form'\r\n\t $text[1] = ' 상대의 마지막 일격에 <<$slave_name>>의 몸이 격투장 바닥으로 무너졌다. 승자가 무기를 거둔 뒤에도 그녀는 다시 일어나지 못했다. 진행 요원들이 시신 위로 거친 천을 덮는 동안, 당신은 말없이 지켜보았다.'\r\n! JO9 MOD START DEFEAT_REPUTATION_PROSE_103003_20261031\r\n if jo9_cruel_mercy <= -5: $text[1] = '당신은 결투에서 진 노예를 잔인하게 처형하는 것으로 소문이 자자했고, 상대방도 당신의 노예에게 자비를 베풀지 않았다. 승자는 쓰러진 <<$slave_name>>에게 마지막 일격을 가했다. 진행 요원들이 그녀의 시신을 수습하는 동안, 당신은 말없이 지켜보았다.'\r\n! JO9 MOD END DEFEAT_REPUTATION_PROSE_103003_20261031",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\r\n\tIF interaction_city = 103003:\r\n\t ! JO9 MOD START CATFIGHT_LOSS_CUT_103003_20261031\r\n\t $place = 'catfightclub'\r\n\t $picture_type = 'untyped'\r\n\t $special_bg = 'content/pic/scene/catfight_loss_death.png'\r\n\t $special_image_full[1] = $special_bg\r\n\t $return_lock = 'city_menu_form' & city_form = 121\r\n\t sparks -= 300\r\n\t $return_lock = 'city_menu_form'\r\n\t $text[1] = ' 상대의 마지막 일격에 <<$slave_name>>의 몸이 격투장 바닥으로 무너졌다. 승자가 무기를 거둔 뒤에도 그녀는 다시 일어나지 못했다. 진행 요원들이 시신 위로 거친 천을 덮는 동안, 당신은 말없이 지켜보았다.'",
+      "new": "\r\n\tIF interaction_city = 103003:\r\n\t ! JO9 MOD START CATFIGHT_LOSS_CUT_103003_20261031\r\n\t $place = 'catfightclub'\r\n\t $picture_type = 'untyped'\r\n\t $special_bg = 'content/pic/scene/catfight_loss_death.png'\r\n\t $special_image_full[1] = $special_bg\r\n\t $return_lock = 'city_menu_form' & city_form = 121\r\n\t sparks -= 300\r\n\t $return_lock = 'city_menu_form'\r\n\t $text[1] = ' 상대의 마지막 일격에 <<$slave_name>>의 몸이 격투장 바닥으로 무너졌다. 승자가 무기를 거둔 뒤에도 그녀는 다시 일어나지 못했다. 진행 요원들이 시신 위로 거친 천을 덮는 동안, 당신은 말없이 지켜보았다.'\r\n! JO9 MOD START DEFEAT_REPUTATION_PROSE_103003_20261031\r\n if jo9_cruel_mercy <= -5: $text[1] = '당신은 결투에서 진 노예를 잔인하게 처형하는 것으로 소문이 자자했고, 상대방도 당신의 노예에게 자비를 베풀지 않았다. 승자는 쓰러진 <<$slave_name>>에게 마지막 일격을 가했다. 진행 요원들이 그녀의 시신을 수습하는 동안, 당신은 말없이 지켜보았다.'\r\n! JO9 MOD END DEFEAT_REPUTATION_PROSE_103003_20261031",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\r\n\tIF interaction_city = 103004:\r\n\t ! JO9 MOD START CATFIGHT_LOSS_CUT_103004_20261031\r\n\t $place = 'catfightclub'\r\n\t $picture_type = 'untyped'\r\n\t $special_bg = 'content/pic/scene/catfight_loss_survive.png'\r\n\t $special_image_full[1] = $special_bg\r\n\t $return_lock = 'city_menu_form' & city_form = 121\r\n\t $text[1] = ' 상대의 자비로 <<$slave_name>>의 목숨은 붙어 있었다. 승자가 무기를 거두고 물러서자, 진행 요원들이 피투성이의 그녀를 들것에 눕혀 격투장 밖으로 옮겼다. 당신은 그녀를 따라 자리를 떴다.'",
+      "new": "\r\n\tIF interaction_city = 103004:\r\n\t ! JO9 MOD START CATFIGHT_LOSS_CUT_103004_20261031\r\n\t $place = 'catfightclub'\r\n\t $picture_type = 'untyped'\r\n\t $special_bg = 'content/pic/scene/catfight_loss_survive.png'\r\n\t $special_image_full[1] = $special_bg\r\n\t $return_lock = 'city_menu_form' & city_form = 121\r\n\t $text[1] = ' 상대의 자비로 <<$slave_name>>의 목숨은 붙어 있었다. 승자가 무기를 거두고 물러서자, 진행 요원들이 피투성이의 그녀를 들것에 눕혀 격투장 밖으로 옮겼다. 당신은 그녀를 따라 자리를 떴다.'\r\n! JO9 MOD START DEFEAT_REPUTATION_PROSE_103004_20261031\r\n if jo9_cruel_mercy >= 5: $text[1] = '당신은 결투에서 진 노예를 처형하지 않는 자비로운 주인으로 인정받고 있었고, 상대도 당신의 노예에게 자비를 베풀어 목숨을 살려주었다. 승자가 무기를 거두고 물러서자, 진행 요원들이 피투성이의 <<$slave_name>>(을)를 들것에 눕혀 격투장 밖으로 옮겼다. 당신은 그녀를 따라 자리를 떴다.'\r\n! JO9 MOD END DEFEAT_REPUTATION_PROSE_103004_20261031",
+      "count": 2
+    }
+  ]
+}

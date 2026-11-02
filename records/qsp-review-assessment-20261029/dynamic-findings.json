@@ -1,0 +1,162 @@
+{
+  "reviewOnly": true,
+  "modifiedRuntime": false,
+  "verifiedAt": "2026-10-29",
+  "baseline": {
+    "qsp": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+    "sha256": "5d7c16b17d9aa0c1bb9c818c67521b2693a32a2db068742fbe7072f2dd8343cd",
+    "document": "G:/somi/Jack O Nine Tails v2.4_work/game/content/modworkpic/qsp.md",
+    "documentSha256": "9ddf0dc2928bb2f76db1c45f995dfd6a6a3f0826b8aa1027a7a0d732f0eb9fa3",
+    "menuMap": "G:/somi/Jack O Nine Tails v2.4_work/game/json/menu_item.json",
+    "menuMapSha256": "708931f9119f61547ecae6083c24719969fd0bcaa7c7d43766f2e1606068ccee"
+  },
+  "lineConvention": "QSP decoded location body, 1-based; CRLF body split by newline",
+  "findings": [
+    {
+      "section": "3.1",
+      "verdict": "REWRITE_EXAMPLE_BEFORE_USE",
+      "summary": "25 entity copies are repetitive, but supplied replacement omits the actual data-update middle and does not preserve the API as a whole.",
+      "evidence": [
+        "$addon_custom_data:24-103 update_active checks state=CONST_INT[slave_exist] and type>0 for assistant/slave/prisoner, iced_1..18, cow/farmhand/harpy/pig (25 total).",
+        "$addon_custom_data:106-260 imports numeric and string arrays and resets default names from $seed_name[type].",
+        "$addon_custom_data:262-273 updates age, conditional fertility, boobs, boobs_img, pussy_img, fullimage, ava, ava_gray, ava_clear.",
+        "$addon_custom_data:275-377 exports changed arrays and clears temporaries.",
+        "#static_base:296-372 $all_slave_characters additionally contains room1..room4; substituting that entire list changes the original 25-target scope."
+      ],
+      "issues": [
+        "Example imports and immediately exports without the 262-273 updates; this alone does not refresh template data.",
+        "New args[2] direction flag is only a comment and has no current API equivalent; current update_current does both import and export around mutations.",
+        "Nonempty $target alone broadens accepted names beyond the existing 25 names; retain explicit accepted targets and existing state/type checks.",
+        "Preserve root names and both numeric/string data, scalar _state/_type/name semantics, default-name override, all 18 iced slots, and cleanup. This routine is a template refresh, not the general character swap method."
+      ],
+      "languageCompatibility": "Named COPYARR arguments, interpolated strings, DYNEVAL numeric result and DYNAMIC assignment are supported patterns already present in current code (#static_base:456-466, $ongload:23-26); no syntax error can be asserted from the dynamic form alone. Actual proposed replacement was not run in the engine.",
+      "saveImpact": "No new character field or save migration is inherently needed if existing variable roots and values remain. Use LOCAL/cleanup for a temporary $target rather than adding persistent state.",
+      "validationNeeded": [
+        "Compare import/update/export results for all 25 target names and no-entity/type=0 cases.",
+        "Check numeric and string keyed values, names, state/type, portraits, unrelated properties, and private-room swap context remain equal.",
+        "Do not infer speedup from shorter source."
+      ]
+    },
+    {
+      "section": "3.2",
+      "verdict": "CONCEPT_VALID_EXAMPLE_WRONG",
+      "summary": "Lookup tables can preserve output, but the supplied sample changes real displayed ranges and addresses nonexistent variables.",
+      "evidence": [
+        "$addon:106-120 existing values: (+10/-10), (+20/-10), (+40/-10), (+80/-20), (+160/-40), (+10/-80).",
+        "$addon:208-220 and 324-337 use room1[$args[1]] plus room1_rate[$args[1]], labels, and room-format separators (+10 ~ -10).",
+        "$addon:44-104 includes normal/reversed grade mappings, stage 6 S++, and -5..5 full grades."
+      ],
+      "issues": [
+        "Document table entries (+20/-15), (+25/-15), (+25/-20), (+30/-20) do not match current behavior.",
+        "Sample $room1_rate / room1_stat / fixed denominator 100 are not the current callable tooltip contract; it must still return $result for the specific requested attribute.",
+        "Preserve separate ordinary/room text formatting, labels, reversed grade flags, ranges, and stage-6 behavior; one six-entry suffix array cannot replace every branch indiscriminately.",
+        "Actual location is #var_base, not $var_base. New immutable tables fit a static initializer better than a conditionally regenerated text database."
+      ],
+      "saveImpact": "A new global lookup array becomes saved cache data, but is fully derivable and needs initialization before first use for old saves, not a new character-schema migration. A local table/helper also avoids persistent data. Do not rely only on a new-game initializer.",
+      "performance": "Current source contains repeated callable condition chains. No per-frame execution frequency or frame-drop measurement was made, so those claims remain unverified."
+    },
+    {
+      "section": "3.4",
+      "verdict": "OPTIONAL_REDESIGN_NOT_DIRECT_OPTIMIZATION",
+      "summary": "The cited assignment dynamically selects an existing entity array; it is not a fixed simple assignment.",
+      "evidence": [
+        "$menu:206-220 hlink forms $text_prev = $args[2] + [skill key], evaluates entity attribute, selects $<lesson>_lesson or $<entity>_<lesson>, then generates links.",
+        "$menu:263-275 hlink_sex repeats dynamic entity and lesson-array access.",
+        "$menu:223-227 and 278-282 cheat links write back through $text_prev.",
+        "#static_base:412-446 defines associated per-entity arrays and scalar metadata; 452-480 swap method exchanges that schema."
+      ],
+      "issues": [
+        "Replacing canonical arrays with skill_val[$skill_name] collapses entity identity unless keyed by both entity and skill.",
+        "Changing canonical storage requires producers/readers, swap and clear paths, lesson text arrays, cheat writes, and saved data to change together.",
+        "A smaller refactor may select slave/assistant/etc. with bounded branches while preserving current arrays; no full storage redesign is required merely to remove one DYNAMIC."
+      ],
+      "saveImpact": "No new save field is inherently needed for temporary reads or renderer extraction. If skill_val becomes canonical persistent state, old-save conversion and every role/swap path become necessary; a derived transient lookup does not.",
+      "performance": "No dynamic parsing cost was benchmarked. Fewer dynamic calls may improve cost but cannot establish a measurable gameplay gain."
+    },
+    {
+      "section": "2.4",
+      "verdict": "USE_EXISTING_JSON_MAP_FIRST",
+      "summary": "The game already loads 2331 menu constant keys from json/menu_item.json; putting all definitions into $var_base misdescribes current architecture.",
+      "evidence": [
+        "json/menu_item.json menu_talk=11, menu_ask=111, menu_xenophily_assistant=235; menu_employeeestate=138 belongs to another menu context.",
+        "start_refresh:8 explicitly states killall is followed by engine JSON reload.",
+        "menu_form:1777 uses 111, 2380 uses 138, 2598 uses 235.",
+        "main_screen:451, slave_stat:779, snk_room_bridge:126-158, and snk_room_menu_screen:259 embed menu numbers."
+      ],
+      "issues": [
+        "Keep numeric values unchanged and map by menu meaning; equal values are reused across city/interactions/home and do not prove aliases have the same meaning.",
+        "Review missing aliases instead of overwriting existing JSON-defined names; include saved links, private-room guards, demo menu, and input paths in the replacement inventory."
+      ],
+      "saveImpact": "Aliasing unchanged numbers preserves existing saved MENU_FORM and links. New aliases must be available after old-save load/JSON refresh before comparisons. Renumbering requires explicit migration and invalidation or refresh of saved executable/HTML menu caches; it is unnecessary for this cleanup."
+    },
+    {
+      "section": "1.2",
+      "verdict": "STRUCTURAL_OPTION_WITH_COMPATIBILITY_CONDITIONS",
+      "summary": "Location extraction can be save-compatible; loading-only migration relocation is not semantically equivalent to current callers.",
+      "evidence": [
+        "menu_form:1-134 common guards, $newloc call, status and renderer resets precede many independent IF branches.",
+        "menu_form:464 and 597 both test state 6; 1405/1457 and 1678/1732 also repeat a state, so converting blindly into a single exclusive route may drop behavior.",
+        "menu_form:5266-5289 shared postprocessing precedes final gt main_screen at 5291.",
+        "$addon:6-42 update/full refreshes interior/database and version fields.",
+        "$newloc:108-114 invokes update/full after load, missing load handler, or version mismatch; $addon_custom_data:18 invokes it when custom data is toggled off."
+      ],
+      "conditions": [
+        "Retain menu_form entry name, current state numbers, prelude and postlude order, generated link targets and existing global variable roots. GS helper extraction can preserve the current direct location and public entry route.",
+        "Retain private-room bridge context and restore/return behavior; keep common side effects running once.",
+        "Preserve repeated independent branch behavior unless explicitly reviewed as a separate behavior change.",
+        "Extract migration helper while preserving current update/full callers and version gating; do not restrict all refresh work to ONGLOAD."
+      ],
+      "saveImpact": "No new persistent bookkeeping is inherently required for pure extraction or identical migrations. If changing variable schema, entry names or numbering, specific migration/cache repair is needed. Native saved screen/HTML/action caches must be checked after loading existing saves."
+    },
+    {
+      "section": "1.3",
+      "verdict": "OPTIONAL_RENDERER_EXTRACTION",
+      "summary": "CSS/HTML extraction is feasible with existing caller and rendering contracts retained; it is not automatically a save-schema change.",
+      "evidence": [
+        "$menu:4-7 already provides layout_style return mode.",
+        "$menu:11-12 repairs a saved malformed menu HTML attribute at the common input.",
+        "$ongload:91-103 refreshes saved message layout; 149-153 re-enters selected saved screens."
+      ],
+      "saveImpact": "Pure renderer/style extraction can retain all variable roots and saved state numbers. Keep layout_style and other public modes returning equivalent strings, preserve CSS cascade/DOM IDs and load order, and refresh saved HTML only when needed. New global render caches would be new persisted derived variables unless local/cleared; no new gameplay field is inherently necessary."
+    }
+  ],
+  "readOnlySaveEvidence": [
+    {
+      "file": "game/save/1.sav",
+      "sha256": "f1017c082ef5c8edcc6b5ba59d2909b582492c52abe2ed7e52f08979dc53455e",
+      "codecRoundtrip": true,
+      "menuForm": 0,
+      "menuTalk": 11,
+      "menuAsk": 111,
+      "hasLookup": false,
+      "hasSkillVal": false
+    },
+    {
+      "file": "game/save/0000000.sav",
+      "sha256": "bacfb3ee26d9543280446122fde6996c172908767209a1b3304e9ae16d950429",
+      "codecRoundtrip": true,
+      "menuForm": 111,
+      "menuTalk": 11,
+      "menuAsk": 111,
+      "hasRoom1": true,
+      "hasRoom1Rate": true,
+      "hasLookup": false,
+      "hasSkillVal": false
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://dev.qsp.org/docs/language/qsp-keywords/qsp-keywords-statements/",
+      "usedFor": "COPYARR accepts variable/interpolated array names; DYNAMIC evaluates string subexpressions and restores caller ARGS; GS returns without direct transition."
+    },
+    {
+      "url": "https://wiki.qsp.org/help:dynamical",
+      "usedFor": "DYNEVAL numeric/string result and separate dynamic ARGS."
+    }
+  ],
+  "limits": [
+    "Static review only; no runtime/QSP/SAV/Full/source modifications.",
+    "Two save files were parsed in memory and byte-roundtrip checked, not opened through native load UI.",
+    "No candidate engine execution, performance benchmark, cross-player or Android verification performed."
+  ]
+}

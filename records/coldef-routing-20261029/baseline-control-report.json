@@ -1,0 +1,82 @@
+{
+  "schema": 1,
+  "status": "PREEXISTING_MESSAGE_REPRODUCED",
+  "scope": "Two matching failed diagnostic probes with only the coldef body restored from pre-patch baseline",
+  "root": "G:/Codex/tmp/coldef-routing-baseline-control-20261029",
+  "source": "G:/Codex/tmp/coldef-routing-finalgate-20261029/run-xWgL6V/client",
+  "baselineSha256": "5d7c16b17d9aa0c1bb9c818c67521b2693a32a2db068742fbe7072f2dd8343cd",
+  "protectedInputs": [
+    {
+      "path": "G:/Codex/tmp/coldef-routing-20261029/baseline.qsp",
+      "sha256": "5d7c16b17d9aa0c1bb9c818c67521b2693a32a2db068742fbe7072f2dd8343cd"
+    },
+    {
+      "path": "G:/Codex/tmp/coldef-routing-finalgate-20261029/run-xWgL6V/client/plan.json",
+      "sha256": "78837665e4480d73a40fc39cc7f9e16e2419064c6a5b74449ee8bfa3fade3738"
+    },
+    {
+      "path": "G:/Codex/tmp/coldef-routing-finalgate-20261029/run-xWgL6V/client/config.xml",
+      "sha256": "887728f8fe34c78835203924d6a1c528962779358173fe7d9a96010173e3fa35"
+    },
+    {
+      "path": "G:/Codex/tmp/coldef-routing-finalgate-20261029/run-xWgL6V/client/FastQSP.ini",
+      "sha256": "4791f931f6f36fb94989084c2596fcd6554812746e2c78bc469d2ecf380906c1"
+    },
+    {
+      "path": "G:/Codex/tmp/coldef-routing-finalgate-20261029/run-xWgL6V/client/newgame.qsp",
+      "sha256": "5b633a3839b35659cc37414d770372cb6c1b931c43d8166944d183dac58bd358"
+    },
+    {
+      "path": "G:/Codex/tmp/coldef-routing-finalgate-20261029/run-xWgL6V/client/cache.qsp",
+      "sha256": "9afc8e9f1b6a16f4d3952c0f2749b28a621dba71b5b427c43c03d72af5b0191c"
+    }
+  ],
+  "fixtures": [
+    {
+      "name": "newgame",
+      "sourceSha256": "5b633a3839b35659cc37414d770372cb6c1b931c43d8166944d183dac58bd358",
+      "controlSha256": "61a6cada8d978a084ee9ffd275cc01c7d7b2f1193f562ca296e43b125a5f7d50",
+      "onlyChangedField": "interaction_city.body",
+      "baselineBodyExact": true,
+      "allDiagnosticInstrumentationPreserved": true
+    },
+    {
+      "name": "cache",
+      "sourceSha256": "9afc8e9f1b6a16f4d3952c0f2749b28a621dba71b5b427c43c03d72af5b0191c",
+      "controlSha256": "ddb421f1b00dfa67289b832e5dadef2004701c57351265970d7544047903a9ad",
+      "onlyChangedField": "interaction_city.body",
+      "baselineBodyExact": true,
+      "allDiagnosticInstrumentationPreserved": true
+    }
+  ],
+  "limits": [
+    "Does not change the candidate, game, user saves, feature, smoke tool, or expected completion criteria.",
+    "Expected version notice is still a smoke failure; this control only establishes whether it predates the patch."
+  ],
+  "diagnosisConfirmed": true,
+  "results": [
+    {
+      "name": "newgame",
+      "checkpoint": "main_screen",
+      "pass": false,
+      "reason": "Unexpected message before completion",
+      "durationMs": 7035,
+      "sameUnexpectedMessageAsCandidate": true,
+      "versionUpdateNotice": "<br><center>������<br>(�� �� ���� ���� v2.3.2.5 Kor Ver)<br>����<br>(�� �� ���� ���� v2.4.0.0 Kor Ver)<br>�� ������Ʈ�Ǿ����ϴ�",
+      "completionReached": false
+    },
+    {
+      "name": "cache",
+      "checkpoint": "main_screen",
+      "pass": false,
+      "reason": "Unexpected message before completion",
+      "durationMs": 6739,
+      "sameUnexpectedMessageAsCandidate": true,
+      "versionUpdateNotice": "<br><center>������<br>(�� �� ���� ���� v2.3.2.5 Kor Ver)<br>����<br>(�� �� ���� ���� v2.4.0.0 Kor Ver)<br>�� ������Ʈ�Ǿ����ϴ�",
+      "completionReached": false
+    }
+  ],
+  "protectedInputsUnchanged": true,
+  "initialCandidateGateStatusRemains": "FAIL",
+  "conclusion": "The two initial candidate smoke failures reproduce with the original interaction_city body and identical test instrumentation. Both stop on the same legacy version update notice, before completion. No completion criterion or code was changed to suppress it."
+}

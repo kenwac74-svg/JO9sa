@@ -1,0 +1,103 @@
+{
+  "before": {
+    "qsp": "1e8e489eb4a2c6412f81af0e50b69d409bc9ffd5d5edb69e2308cd3e9f71bc7c",
+    "save": "581fc472bfa5aedcbca85c379d0061ad8d28a9b928ef948a259dee7c800ad2ec"
+  },
+  "after": {
+    "qsp": "1e8e489eb4a2c6412f81af0e50b69d409bc9ffd5d5edb69e2308cd3e9f71bc7c",
+    "save": "581fc472bfa5aedcbca85c379d0061ad8d28a9b928ef948a259dee7c800ad2ec"
+  },
+  "sourceUnchanged": true,
+  "exit": 0,
+  "results": [
+    {
+      "name": "baseline",
+      "checkpoint": "Real end_day_screen initial layout+reset, original Wong illness branch, loop+footer; unaltered event logic",
+      "pass": true,
+      "reason": "",
+      "marker": "JO9_QA_WONG_baseline_COMPLETE|REP=40|ILL=0|PARA=0|GUARD=1|NPC=master_vong|TXT2LEN=3|EVENTS=1|DOMLEN=0|WONG=1|LINE1=0|LINE2=0|CLIENTHEIGHT=0|SCROLLHEIGHT=0|CLIENTWIDTH=740|SCROLLWIDTH=740",
+      "durationMs": 10708,
+      "rawMarker": "JO9_QA_WONG_baseline_COMPLETE%7CREP=40%7CILL=0%7CPARA=0%7CGUARD=1%7CNPC=master_vong%7CTXT2LEN=3%7CEVENTS=1%7CDOMLEN=0%7CWONG=1%7CLINE1=0%7CLINE2=0%7CCLIENTHEIGHT=0%7CSCROLLHEIGHT=0%7CCLIENTWIDTH=740%7CSCROLLWIDTH=740",
+      "observed": {
+        "REP": "40",
+        "ILL": "0",
+        "PARA": "0",
+        "GUARD": "1",
+        "NPC": "master_vong",
+        "TXT2LEN": "3",
+        "EVENTS": "1",
+        "DOMLEN": "0",
+        "WONG": "1",
+        "LINE1": "0",
+        "LINE2": "0",
+        "CLIENTHEIGHT": "0",
+        "SCROLLHEIGHT": "0",
+        "CLIENTWIDTH": "740",
+        "SCROLLWIDTH": "740"
+      }
+    },
+    {
+      "name": "candidate",
+      "checkpoint": "Real end_day_screen initial layout+reset, original Wong illness branch, loop+footer; one-line dialogue assembly candidate",
+      "pass": true,
+      "reason": "",
+      "marker": "JO9_QA_WONG_candidate_COMPLETE|REP=40|ILL=0|PARA=0|GUARD=1|NPC=master_vong|TXT2LEN=3|EVENTS=1|DOMLEN=129|WONG=1|LINE1=1|LINE2=1|CLIENTHEIGHT=185|SCROLLHEIGHT=185|CLIENTWIDTH=740|SCROLLWIDTH=740",
+      "durationMs": 9120,
+      "rawMarker": "JO9_QA_WONG_candidate_COMPLETE%7CREP=40%7CILL=0%7CPARA=0%7CGUARD=1%7CNPC=master_vong%7CTXT2LEN=3%7CEVENTS=1%7CDOMLEN=129%7CWONG=1%7CLINE1=1%7CLINE2=1%7CCLIENTHEIGHT=185%7CSCROLLHEIGHT=185%7CCLIENTWIDTH=740%7CSCROLLWIDTH=740",
+      "observed": {
+        "REP": "40",
+        "ILL": "0",
+        "PARA": "0",
+        "GUARD": "1",
+        "NPC": "master_vong",
+        "TXT2LEN": "3",
+        "EVENTS": "1",
+        "DOMLEN": "129",
+        "WONG": "1",
+        "LINE1": "1",
+        "LINE2": "1",
+        "CLIENTHEIGHT": "185",
+        "SCROLLHEIGHT": "185",
+        "CLIENTWIDTH": "740",
+        "SCROLLWIDTH": "740"
+      }
+    }
+  ],
+  "instrumentation": [
+    {
+      "name": "baseline",
+      "qspSha": "b58dea008239e354bc2a9b7a59f66edda63a4d264a8803171fbf5c08ae82897e",
+      "candidateDialogueAssembly": false,
+      "savesWritten": false,
+      "originalLocationRetained": true,
+      "changes": [
+        "Start seed and state fixture",
+        "jump over unrelated earlier daily events after original first 22 lines",
+        "qaWong entry label",
+        "footer DOM observer"
+      ]
+    },
+    {
+      "name": "candidate",
+      "qspSha": "9eaf5a8f3ec017a695099c8a9598a505478bc08142fecb76d81282b04b8f9efd",
+      "candidateDialogueAssembly": true,
+      "savesWritten": false,
+      "originalLocationRetained": true,
+      "changes": [
+        "Start seed and state fixture",
+        "jump over unrelated earlier daily events after original first 22 lines",
+        "qaWong entry label",
+        "footer DOM observer",
+        "one-line text[1]+text[2] assembly before native jump loop"
+      ]
+    }
+  ],
+  "limits": [
+    "Existing user save is read-only input; no savegame command is added.",
+    "No OS mouse; DOM observer executes in actual native FastQSP page and sends marker through native EXEC/msg.",
+    "Initial real layout/reset, Wong illness event body, common loop and footer execute. Unrelated earlier daily events are skipped explicitly.",
+    "Candidate is diagnostic only and does not write WORK or repository code."
+  ],
+  "nativeRuns": 2,
+  "analysisCorrection": "The native EXEC URL encoded separators as %7C. Both original showMessage markers were captured; decodeURIComponent is applied before assertion. No native rerun or alternate evidence is used."
+}

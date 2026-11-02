@@ -1,0 +1,130 @@
+{
+  "pass": true,
+  "created": "2026-10-30T01:56:37.056570+00:00",
+  "before": "G:\\Codex\\tmp\\jo9-wong-fix-20261030\\before.qsp",
+  "beforeSha256": "1e8e489eb4a2c6412f81af0e50b69d409bc9ffd5d5edb69e2308cd3e9f71bc7c",
+  "candidate": "G:\\Codex\\tmp\\jo9-wong-fix-20261030\\candidate.qsp",
+  "candidateSha256": "2b81e781d0ab56f10cb77aa340db27ee4dab7d707bafe857853ad600d474417e",
+  "checks": [
+    {
+      "name": "QSP_structure_and_single_location_scope",
+      "pass": true,
+      "detail": {
+        "locations": 275,
+        "changedBodies": [
+          "end_day_screen"
+        ],
+        "newLocations": 0,
+        "actionsAndDescriptionsPreserved": true
+      }
+    },
+    {
+      "name": "Wong_only_block_boundary",
+      "pass": true,
+      "detail": {
+        "beforeBlockPreserved": true,
+        "AngelikaAndFollowingCodePreserved": true,
+        "oldWongLines": [
+          1364,
+          1414
+        ],
+        "newWongLines": [
+          1364,
+          1421
+        ]
+      }
+    },
+    {
+      "name": "only_text_merge_and_provenance_insertions",
+      "pass": true,
+      "detail": {
+        "onlyTextMergeInsertionsAndOneFatalDisplayArgumentRepair": true,
+        "existingNumberedDialogueBytePreserved": true,
+        "fatalDisplayArgumentRepairs": 1,
+        "insertedLines": 7,
+        "newPersistentVariables": 0
+      }
+    },
+    {
+      "name": "normalized_conditions_penalties_states_unchanged",
+      "pass": true,
+      "detail": {
+        "controlSha256": "f3258114ca8dd039363584b6bbbfd2618d3f27e8960b64d0020a55ccb1d96863",
+        "conditionsPenaltiesCountersAndCallDestinationsIdentical": true,
+        "fatalArgumentOnlyChangesDisplayedTextToExistingIndex3": true,
+        "newPersistentVariables": 0,
+        "newLocations": 0
+      }
+    },
+    {
+      "name": "normal_and_gameover_dialogue_transfer_paths",
+      "pass": true,
+      "detail": {
+        "gameOverDirectExistingIndex3Line": 1401,
+        "normal": [
+          1418,
+          1419
+        ]
+      }
+    },
+    {
+      "name": "inserted_QSP_quotes_and_required_original_statements",
+      "pass": true,
+      "detail": {
+        "insertedQSPQuotesClosed": true,
+        "originalCounterAndPenaltyStatementsPreserved": true,
+        "fullEngineSyntaxCheck": "Parent performs separate compiler/native-engine validation."
+      }
+    },
+    {
+      "name": "review_inputs_unchanged",
+      "pass": true,
+      "detail": "Reviewer did not modify either QSP input"
+    }
+  ],
+  "details": {
+    "insertedLines": [
+      {
+        "line": 1400,
+        "text": "\t\t\t! JO9 MOD START WONG_GUILD_NOTICE_FATAL_TEXT_20261030"
+      },
+      {
+        "line": 1402,
+        "text": "\t\t\t! JO9 MOD END WONG_GUILD_NOTICE_FATAL_TEXT_20261030"
+      },
+      {
+        "line": 1416,
+        "text": "\t\t! JO9 MOD START WONG_GUILD_NOTICE_TEXT_20261030"
+      },
+      {
+        "line": 1417,
+        "text": "\t\t! Render the existing notice before the daily footer clears its array slots."
+      },
+      {
+        "line": 1418,
+        "text": "\t\t$text = $text[1] + '<br><br>' + $replace($text[2], '</div>', '')"
+      },
+      {
+        "line": 1419,
+        "text": "\t\tif $text[3] ! '': $text += '<br><br>' + $text[3]"
+      },
+      {
+        "line": 1420,
+        "text": "\t\t! JO9 MOD END WONG_GUILD_NOTICE_TEXT_20261030"
+      }
+    ],
+    "terminalMergeLines": {
+      "gameOverDirectExistingIndex3Line": 1401,
+      "normal": [
+        1418,
+        1419
+      ]
+    },
+    "unifiedDiff": "--- before/end_day_screen\n+++ candidate/end_day_screen\n@@ -1397,7 +1397,9 @@\n ! JO9 MOD START J9M1275 | 2026-10-15_trim_leading_body_blank_lines | changed block; context may be included\n \t\t\t$text[3] = '당신은 조합 훈련사로써 전문성이 없다 간주되어, 조합에서 방출되었다.<br><br><center>~ Game Over ~ </center>'\n ! JO9 MOD END J9M1275\n-\t\t\tdynamic $death, $text\n+\t\t\t! JO9 MOD START WONG_GUILD_NOTICE_FATAL_TEXT_20261030\n+\t\t\tdynamic $death, $text[3]\n+\t\t\t! JO9 MOD END WONG_GUILD_NOTICE_FATAL_TEXT_20261030\n \t\telseif gave_guild_parasite_slave > 0:\n \t\t\t$text[2] += '<br> 다시는 이딴 실수 저지르지 마!.</div>'\n ! JO9 MOD START J9M1274 | 2026-10-15_trim_leading_body_blank_lines | changed block; context may be included\n@@ -1411,6 +1413,11 @@\n \t\tgave_guild_ill_slave = 0\n \t\tgave_guild_parasite_slave = 0\n \t\tend_day_guild_visit = 1\n+\t\t! JO9 MOD START WONG_GUILD_NOTICE_TEXT_20261030\n+\t\t! Render the existing notice before the daily footer clears its array slots.\n+\t\t$text = $text[1] + '<br><br>' + $replace($text[2], '</div>', '')\n+\t\tif $text[3] ! '': $text += '<br><br>' + $text[3]\n+\t\t! JO9 MOD END WONG_GUILD_NOTICE_TEXT_20261030\n \t\tjump 'loop' &! assistant_quiet_rule does not suppress this - ImperatorAugustus\n \telseif sold_ill_slave > 0 or sold_parasite_slave > 0:\n \t\t$place = $replace($estate, 'house', 'street_rental')"
+  },
+  "limits": [
+    "Independent read-only code review and static scope checks; no WORK/save/catalog writes.",
+    "Engine grammar and actual visual execution are verified separately by the parent.",
+    "No gameplay-policy, illness-policy, reputation-value or repeat-trigger changes are authorized by this review."
+  ]
+}

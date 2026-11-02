@@ -1,0 +1,134 @@
+! JO9 MOD START BG_DIRECTORY_PREFIX_FIX_20261027
+! JO9 MOD START UI_RESOURCE_PATHS_20261027
+! JO9 MOD START PROFILE_POLISH_20261025_R3
+! JO9 MOD START J9M1413 | 2026-10-10_restore_private_room_ui | changed block; context may be included
+if snk_room_target > 0 and $curloc = 'slave_auction_sell': gs 'snk_room_bridge', 'guard', 'slave_auction_sell'
+! JO9 MOD END J9M1413
+!Sell ​​slave to Farid
+if farid_potential_debt > 0:
+	if slave_state = CONST_INT['no_slave']: interaction_city = 1191
+	if slave_state ! CONST_INT['no_slave']: interaction_city = 1192
+	gt 'interaction_city'
+end
+if farid_debt > 0: interaction_city = 1193 & gt 'interaction_city'
+
+$place = 'slave_stage'
+gs '_layout'
+! JO9 MOD START DEALER_FARID_OFFER | 2026-10-24_dealer_economy
+if slave_state ! CONST_INT['slave_exist'] and slave_state ! CONST_INT['slave_faint']: gt 'city_menu_form'
+sell_price = func('jo9_traits_value', 'dealer_quote', 'farid')
+jo9_dealer_farid_id = slave['id']
+$jo9_dealer_farid_name = $slave_name
+jo9_dealer_farid_type = slave_type
+jo9_dealer_farid_quote = sell_price
+! JO9 MOD END DEALER_FARID_OFFER
+! JO9 MOD START J9M1412 | 2026-10-16_meiki_market_auction_dialogue | changed block; context may be included
+! JO9 MOD START DEALER_FARID_FLOOR | 2026-10-24_dealer_economy
+if difficulty_setting = 2 and sell_price < 10: sell_price = 10
+! JO9 MOD END DEALER_FARID_FLOOR
+! JO9 MOD START TBV_MARKET_PREMIUM | 2026-10-17_trait_value
+if txt >= 6 and txt <= 7: sell_price = func('jo9_traits_value', 'market', 'slave', sell_price)
+! JO9 MOD START SALE_CAP_B_FARID_OFFER_20261026
+sell_price = min(6000, sell_price)
+! JO9 MOD END SALE_CAP_B_FARID_OFFER_20261026
+! JO9 MOD END TBV_MARKET_PREMIUM
+! JO9 MOD END J9M1412
+
+$npc_id = 'фарид_аукционщик'
+npc = 1
+txt = max(1, txt)
+
+killvar '$text'
+! JO9 MOD START J9M1411 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included
+$text[1] = '[잡파]<br>&nbsp;<font color="#660000">오! 내 좋은 친구 <<$master_name>> 아니십니까!!! 언제 봐도 반갑군요, 내 친구! 자, 이번엔 누굴 데리고 오셨습니까? 제자라도 되는 겁니까? 와, 정말 사랑스럽군요!<br></font>'
+$text[2] = '[<<$master_name>>]<br>&nbsp;<font color="#191970">안녕, 잡파. 친구 좋다는 게 뭐야, 이 아이 진짜 값이 어느 정도인지 좀 봐주겠나? 차액을 나눠 갖는 조건으로 네게 판매를 맡기고 싶어.<br></font>'
+! JO9 MOD END J9M1411
+if slave['brand'] > 0 and brand_reputation <= 3:
+! JO9 MOD START J9M1410 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included
+	$text[3] = '[잡파]<br>&nbsp;<font color="#660000">이건 곤란하군… 이 아이는 낙인이 찍혀 있잖소! 내 취급 품목이 아니오. 받을 수 없소, 친구. 그러고 싶어도 안 돼. 이런 걸 다뤘다간 길드가 내 가죽을 벗겨 버릴 거요.<br></font>'
+! JO9 MOD END J9M1410
+else
+	if slave['brand'] = 0:
+! JO9 MOD START J9M1409 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included
+		$text[3] = '[잡파]<br>&nbsp;<font color="#660000">낙인이 없다고? 그럼 내 취급 품목은 맞소, 그래. 하지만 큰돈은 못 주오, 알다시피. 난 외모만 평가할 거요… 자, 어서 네 모습을 보여 보렴, 아가…<br></font>'
+! JO9 MOD END J9M1409
+	elseif brand_reputation > 3:
+! JO9 MOD START J9M1408 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included
+		$text[3] = '[잡파]<br>&nbsp;<font color="#660000">오! 이 아이는 낙인이 있군! 완전히 내 취급 품목은 아니지만, 친구를 위해서라면 팔 방법을 찾아 보겠소. 친구, 이 아이에게 뭘 가르쳤소? 얌전한 편이오?<br></font>'
+! JO9 MOD END J9M1408
+	end
+! JO9 MOD START J9M1407 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included
+	$text[4] = '[잡파]<br>&nbsp;<font color="#660000">그래… 그래… 좋아, 알겠소. 빈털터리로 돌려보내진 않기 위해 $<<sell_price>>를 주겠소. 더 많은 스파크? 안 되오, 친구, 그건 못 하오.<br></font>'
+	$text[5] = '[<<$master_name>>]<br>&nbsp;<a href = ''EXEC: killobj & gt "slave_auction_sell_end"''><font color="#228B22">대낮부터 강도질이군, 잡파. 뭐, 좋다… 거래하지!</font></a><br>' + _
+	'<a href = ''EXEC: killobj & gt "city_menu_form"''><font color="#B22222">이건 너무하군! 윤활제도 없이 뒤로 박히는 기분이야, 더 나은 구매자를 찾겠어.</font></a>'
+! JO9 MOD END J9M1407
+	! JO9_MEIKI_MARKET_V1
+! JO9 MOD START TBV_MARKET_CHOICE | 2026-10-17_trait_value
+	if func('jo9_traits_value', 'premium', 'slave') = 1:
+! JO9 MOD END TBV_MARKET_CHOICE
+! JO9 MOD START J9M1406 | 2026-10-16_meiki_market_choice_color | changed block; context may be included
+! JO9 MOD START TBV_MARKET_OLD_LINK | 2026-10-17_trait_value
+		if slave['virginity'] = 4 and slave['jo9_peerless'] = 0: $text[5] += '<br><a href = ''EXEC: killobj & txt = 6 & gt "slave_auction_sell"''><font color="#7B1FA2">이 노예는 희귀한 명기인데, 그런 헐값에 팔 수는 없지. 적절한 가격을 제시해 봐.</font></a>'
+! JO9 MOD END TBV_MARKET_OLD_LINK
+! JO9 MOD END J9M1406
+! JO9 MOD START SALE_CAP_B_FARID_TEXT_20261026
+		$text[6] = '[잡파]<br>&nbsp;<font color="#660000">명기라고?! 아니, 친구! 그런 귀한 상품을 데려왔으면 진작 말했어야지! 이건 평범한 상품과는 차원이 다르잖소! 좋소, 그 희소성을 인정해 $<<sell_price>>를 주겠소. 이만한 거래를 다른 상인에게 넘길 수야 없지!<br></font>'
+! JO9 MOD END SALE_CAP_B_FARID_TEXT_20261026
+		$text[7] = '[<<$master_name>>]<br>&nbsp;<a href = ''EXEC: killobj & gt "slave_auction_sell_end"''><font color="#228B22">좋아. 그 정도는 받아야지. 거래하자!</font></a><br>' + _
+		'<a href = ''EXEC: killobj & gt "city_menu_form"''><font color="#B22222">아직 마음에 들지 않아. 다른 구매자를 찾아보겠어.</font></a>'
+	end
+! JO9 MOD START TBV_MARKET_TEXT | 2026-10-17_trait_value
+	if slave['jo9_peerless'] = 1:
+		$text[5] += '<br><a href = ''EXEC: killobj & txt = 6 & gt "slave_auction_sell"''><font color="#7B1FA2">절세의 미모에 걸맞은 가격을 제시해 봐.</font></a>'
+		$text[6] = '[잡파]<br>&nbsp;보기 드문 절세의 미모군! $<<sell_price>>를 주겠소.'
+	end
+	! JO9_MEIKI_MARKET_END
+! JO9 MOD END TBV_MARKET_TEXT
+end
+! JO9 MOD START DEALER_FARID_TEXT | 2026-10-24_dealer_economy
+if difficulty_setting = 0 or difficulty_setting = 1:
+ if slave['brand'] = 0: $text[3] = '[잡파]<br>낙인은 없군. 몸 상태와 배운 솜씨를 함께 살펴보겠소. 아직 말을 듣지 않는다면 그만큼 값은 낮아질 거요.'
+ $text[4] = '[잡파]<br>몸 상태와 배운 솜씨를 따져 보니, 내가 줄 수 있는 금액은 $<<sell_price>>요. 직접 구매자를 찾아다닐 수고는 덜 수 있을 거요.'
+end
+! JO9 MOD END DEALER_FARID_TEXT
+
+if nsfw = 1:
+	not_safe = 1
+! JO9 MOD START J9M1405 | 2026-10-08_persistent_image_cycle | changed block; context may be included
+	*p func('interior_change', 'jo9_html', '<div id = "bg"><img src="content/pic/bg/empty.png"></div>')
+! JO9 MOD END J9M1405
+else
+! JO9 MOD START J9M1404 | 2026-10-08_persistent_image_cycle | changed block; context may be included
+	*p func('interior_change', 'jo9_html', '<div id = "bg"><img src="content/pic/bg/<<$bg[$place]>>.png"></div>')
+! JO9 MOD END J9M1404
+end
+! JO9 MOD START J9M1403 | 2026-10-15_z_inline_text_prefix | changed block; context may be included
+! JO9_INLINE_TEXT_PREFIX_20261015
+local $jo9_leading_empty = $strfind($text[txt], '^(\s|&nbsp;|<[bB][rR]\s*/?>)+')
+if $jo9_leading_empty ! '': $text[txt] = $mid($text[txt], len($jo9_leading_empty) + 1, len($text[txt]))
+! JO9 MOD END J9M1403
+*p '<div id = "text"><<$text[txt]>></div>'
+
+if npc = 1:
+! JO9 MOD START J9M1402 | 2026-10-08_persistent_image_cycle | changed block; context may be included
+	if nsfw = 0 and $npc_image[$npc_id] ! '': *p func('interior_change', 'jo9_html', '<div id = "bg"><img src="content\pic\characters\<<$npc_image[$npc_id]>>.png"></div>')
+! JO9 MOD END J9M1402
+	*p '<div id = "side_panel_main"><center><div style="font-size: 40px;"><<$npc_name[$npc_id]>></div><<$npc_status[$npc_id]>><br>'
+	*nl '참고 정보:</center></div>'
+	*p '<div id = "side_panel_text"><<$npc_attitude[npc_attitude[$npc_id]]>>'
+	*nl '<span class="jo9-reference-body"><<$npc_info[$npc_id]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>'
+else
+	*p '<div id = "side_panel_main"><center><div style="font-size: 40px;"><<$place_name[$place]>></div><<$place_location[$place]>><br>'
+	*nl '참고 정보:</center></div>'
+	*p '<div id = "side_panel_text"><span class="jo9-reference-body"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style><br></div>'
+end
+
+if txt > 1: addobj '<img src = "content/pic/ui/buttons/legacy/back_button.png">'
+! JO9 MOD START J9M1401 | 2026-10-16_meiki_market_auction_dialogue | changed block; context may be included
+if txt ! 5 and txt ! 7: addobj '<img src = "content/pic/ui/buttons/legacy/forward_button.png">' &! add forward button last so spacebar activates it
+! JO9 MOD END J9M1401
+
+! JO9 MOD END PROFILE_POLISH_20261025_R3
+! JO9 MOD END UI_RESOURCE_PATHS_20261027
+
+! JO9 MOD END BG_DIRECTORY_PREFIX_FIX_20261027

@@ -1,0 +1,23 @@
+{
+  "id": "2026-10-29_qsp_review_equivalent_cleanup",
+  "status": "USER_DEFERRED_NOT_APPLIED_NOT_ENGINE_TESTED",
+  "before_sha256": "5d7c16b17d9aa0c1bb9c818c67521b2693a32a2db068742fbe7072f2dd8343cd",
+  "after_sha256": "8ad431b8bb06486bc47d4cab8385897e3a402a246d02a8c9b9732de0f40ad61c",
+  "description": "Only a redundant estate conjunct and repeated quest initializations; values/variable names/location names unchanged. Requires engine and existing-save validation before applying.",
+  "edits": [
+    {
+      "location": "hero_creation",
+      "old": "\tif $estate = 'korvus_house' and faction_fame['korvus'] = 1 and faction_purchase_korvus = 0 and $estate ! 'white_house':",
+      "new": "! JO9 MOD START REVIEW_EQUIV_20261029_ESTATE\r\n\tif $estate = 'korvus_house' and faction_fame['korvus'] = 1 and faction_purchase_korvus = 0:\r\n! JO9 MOD END REVIEW_EQUIV_20261029_ESTATE",
+      "count": 1
+    },
+    {
+      "location": "init_game",
+      "old": "active[$quest[304]] = 1\r\nactive[$quest[18]] = 1\r\n!Квесты\r\nactive[$quest[1]] = 1\r\nactive[$quest[3]] = 1\r\nactive[$quest[11]] = 1",
+      "new": "! JO9 MOD START REVIEW_EQUIV_20261029_QUESTS\r\nactive[$quest[304]] = 1\r\nactive[$quest[18]] = 1\r\n! Repeated assignments for quest[1], quest[3], quest[11] are already present immediately above.\r\n! JO9 MOD END REVIEW_EQUIV_20261029_QUESTS",
+      "count": 1
+    }
+  ],
+  "userDecision": "decision.json",
+  "resumeRequiresExplicitUserInstruction": true
+}

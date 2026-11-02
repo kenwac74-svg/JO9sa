@@ -1,0 +1,22 @@
+{
+  "id": "2026-10-31_catfight_prize_single_page",
+  "description": "Pay $100 for Catfight wins and include the receipt in the execution/spare follow-up page, without creating the second text slot. Preserve once-only settlement and all other rewards.",
+  "before_sha256": "c6aac7a30cba85c0beb9500341d93fc2aed7196f10785157e6d3753e1616c2b5",
+  "after_sha256": "eaab3297ea76e4f8b8f640462e66a14c07f1f8dbf9eece76c75be45dc5d45e28",
+  "edits": [
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t purse = 300\r\n\t txt_count = 2\r\n\t $text[2] = ' 상금: $<<purse>>!'",
+      "new": "\t ! JO9 MOD START CATFIGHT_PRIZE_SINGLE_PAGE_20261031_HERO\r\n\t purse = 100\r\n\t txt_count = 1\r\n\t $text[1] += '<br><br>상금: $<<purse>>'\r\n\t ! JO9 MOD END CATFIGHT_PRIZE_SINGLE_PAGE_20261031_HERO",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t purse = 300\r\n\t txt_count = 2\r\n! JO9 MOD START CATFIGHT_PRIZE_LABEL_20261030\r\n\t $text[2] = ' 상금: $<<purse>>!'\r\n! JO9 MOD END CATFIGHT_PRIZE_LABEL_20261030",
+      "new": "\t ! JO9 MOD START CATFIGHT_PRIZE_SINGLE_PAGE_20261031_LEGACY\r\n\t purse = 100\r\n\t txt_count = 1\r\n\t $text[1] += '<br><br>상금: $<<purse>>'\r\n\t ! JO9 MOD END CATFIGHT_PRIZE_SINGLE_PAGE_20261031_LEGACY",
+      "count": 1
+    }
+  ]
+}

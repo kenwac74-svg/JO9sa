@@ -1,0 +1,33 @@
+{
+  "id": "2026-10-28_mob_set_slots",
+  "status": "APPROVED",
+  "description": "Complete same-name defeat image slots; absent files fall back to original standing image. Display only.",
+  "before_sha256": "e830028463ab3ca675e5e931110182883bb773e9a9403a1385d1d968114b9c98",
+  "after_sha256": "d6b079a67cc4096861176c4a0f56f07ca0afaf6177c438c00d357193f6cc8534",
+  "edits": [
+    {
+      "location": "jo9_battle_fate",
+      "old": "if args[2] = 1:",
+      "new": "if args[2] = 1:\r\n! JO9 MOD START MOB_SET_SLOTS_20261028\r\n if $jo9_bv_standing = 'content/pic/mob/gladiator_prisoners.png': $jo9_bv_image = 'content/pic/mob/defeated/gladiator_prisoners.png'\r\n if $jo9_bv_standing = 'content/pic/mob/gladiator_dimaha_2.png': $jo9_bv_image = 'content/pic/mob/defeated/gladiator_dimaha_2.png'\r\n if $jo9_bv_standing = 'content/pic/mob/gladiator_dimaha_3.png': $jo9_bv_image = 'content/pic/mob/defeated/gladiator_dimaha_3.png'\r\n if $jo9_bv_standing = 'content/pic/mob/gladiator_dimaha_4.png': $jo9_bv_image = 'content/pic/mob/defeated/gladiator_dimaha_4.png'\r\n if $jo9_bv_standing = 'content/pic/mob/gladiator_hoplite_1.png': $jo9_bv_image = 'content/pic/mob/defeated/gladiator_hoplite_1.png'\r\n if $jo9_bv_standing = 'content/pic/mob/gladiator_hoplite_2.png': $jo9_bv_image = 'content/pic/mob/defeated/gladiator_hoplite_2.png'\r\n if $jo9_bv_standing = 'content/pic/mob/gladiator_hoplite_4.png': $jo9_bv_image = 'content/pic/mob/defeated/gladiator_hoplite_4.png'\r\n if $jo9_bv_standing = 'content/pic/mob/gladiator_kimerian_2.png': $jo9_bv_image = 'content/pic/mob/defeated/gladiator_kimerian_2.png'\r\n if $jo9_bv_standing = 'content/pic/mob/gladiator_kimerian_4.png': $jo9_bv_image = 'content/pic/mob/defeated/gladiator_kimerian_4.png'\r\n if $jo9_bv_standing = 'content/pic/mob/gladiator_champion_sepris.png': $jo9_bv_image = 'content/pic/mob/defeated/gladiator_champion_sepris.png'\r\n if $jo9_bv_standing = 'content/pic/mob/gladiatrix1.png': $jo9_bv_image = 'content/pic/mob/defeated/gladiatrix1.png'\r\n if $jo9_bv_standing = 'content/pic/mob/glad_naked_2.png': $jo9_bv_image = 'content/pic/mob/defeated/glad_naked_2.png'\r\n if $jo9_bv_standing = 'content/pic/mob/glad_naked_3.png': $jo9_bv_image = 'content/pic/mob/defeated/glad_naked_3.png'\r\n if $jo9_bv_standing = 'content/pic/characters/mistress_morrigan.png': $jo9_bv_image = 'content/pic/mob/defeated/mistress_morrigan.png'\r\n if $jo9_bv_standing = 'content/pic/mob/glad_mistress_3.png': $jo9_bv_image = 'content/pic/mob/defeated/glad_mistress_3.png'\r\n if $jo9_bv_standing = 'content/pic/mob/glad_amason_2.png': $jo9_bv_image = 'content/pic/mob/defeated/glad_amason_2.png'\r\n! JO9 MOD END MOB_SET_SLOTS_20261028",
+      "field": "body",
+      "count": 1,
+      "patchId": "MOB_SET_SLOTS_20261028"
+    },
+    {
+      "location": "конец_боя",
+      "old": "<img class=\"jo9-group-slot-<<jo9_bv_slot>>\" src=\"<<$jo9_bv_image>>\" onerror=\"this.style.display=String.fromCharCode(110,111,110,101)\">",
+      "new": "<img class=\"jo9-group-slot-<<jo9_bv_slot>>\" src=\"<<$jo9_bv_image>>\" data-standing=\"<<$силуэт_моба[$враг[jo9_bv_slot]]>>\" onerror=\"this.onerror=null;this.src=this.getAttribute(&quot;data-standing&quot;)\">",
+      "field": "body",
+      "count": 1,
+      "patchId": "MOB_SET_SLOTS_20261028"
+    },
+    {
+      "location": "конец_боя",
+      "old": "<img id=\"jo9-battle-monster\" src=\"<<$jo9_bv_image>>\" onerror=\"this.style.display=String.fromCharCode(110,111,110,101)\">",
+      "new": "<img id=\"jo9-battle-monster\" src=\"<<$jo9_bv_image>>\" data-standing=\"<<$силуэт_моба[$враг[текущий]]>>\" onerror=\"this.onerror=null;this.src=this.getAttribute(&quot;data-standing&quot;)\">",
+      "field": "body",
+      "count": 1,
+      "patchId": "MOB_SET_SLOTS_20261028"
+    }
+  ]
+}

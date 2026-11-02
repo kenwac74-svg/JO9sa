@@ -1,0 +1,177 @@
+{
+  "date": "2026-10-31T20:56:33.301Z",
+  "source": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+  "sourceHash": "b7e5b385dcbd5d8e4b4ac18c9556e18bf371f25f6368c3eba729c9374d1cc07b",
+  "sourceAfterHash": "b7e5b385dcbd5d8e4b4ac18c9556e18bf371f25f6368c3eba729c9374d1cc07b",
+  "engine": "G:/somi/Jack O Nine Tails v2.4_work/game/engine/jack.exe",
+  "engineHash": "f75032d79ecb58eeb7b969cd3f774d66b091fca38a360acdabd782e03a46c6e6",
+  "runner": "G:/somi/JO9sa/tools/qa/run-client-smoke.ps1",
+  "fixtureHash": "5def3e3aa5b86b2e5581c33e98f247f1094f1ed4674597f8afa37d7ed772a9f2",
+  "diagnosticRoot": "G:/Codex/tmp/cruel-mercy-rules-20261101-math",
+  "helperName": "jo9_cruel_mercy_apply",
+  "helperBodyFile": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\output\\cruel-mercy-rules-20261101\\cm-half-helper.qsp.txt",
+  "helperHash": "dd2cf5ba0c1b473807cf8afdb448108298cdfd7f58b0cbc746c6d6ff3daa3d37",
+  "marker": "JO9_QA_CMHALF20261101_math_COMPLETE",
+  "cases": [
+    {
+      "name": "old-save-positive-integer",
+      "before": {
+        "whole": 4,
+        "half": null
+      },
+      "deltaHalf": 2,
+      "after": {
+        "whole": 5,
+        "half": 0
+      }
+    },
+    {
+      "name": "old-save-negative-integer",
+      "before": {
+        "whole": -4,
+        "half": null
+      },
+      "deltaHalf": -2,
+      "after": {
+        "whole": -5,
+        "half": 0
+      }
+    },
+    {
+      "name": "zero-to-positive-half",
+      "before": {
+        "whole": 0,
+        "half": 0
+      },
+      "deltaHalf": 1,
+      "after": {
+        "whole": 0,
+        "half": 1
+      }
+    },
+    {
+      "name": "zero-to-negative-half",
+      "before": {
+        "whole": 0,
+        "half": 0
+      },
+      "deltaHalf": -1,
+      "after": {
+        "whole": 0,
+        "half": -1
+      }
+    },
+    {
+      "name": "cross-negative-to-positive",
+      "before": {
+        "whole": 0,
+        "half": -1
+      },
+      "deltaHalf": 2,
+      "after": {
+        "whole": 0,
+        "half": 1
+      }
+    },
+    {
+      "name": "cross-positive-to-negative",
+      "before": {
+        "whole": 0,
+        "half": 1
+      },
+      "deltaHalf": -2,
+      "after": {
+        "whole": 0,
+        "half": -1
+      }
+    },
+    {
+      "name": "mercy-enter",
+      "before": {
+        "whole": 4,
+        "half": 1
+      },
+      "deltaHalf": 1,
+      "after": {
+        "whole": 5,
+        "half": 0
+      }
+    },
+    {
+      "name": "mercy-leave",
+      "before": {
+        "whole": 5,
+        "half": 0
+      },
+      "deltaHalf": -1,
+      "after": {
+        "whole": 4,
+        "half": 1
+      }
+    },
+    {
+      "name": "cruel-enter",
+      "before": {
+        "whole": -4,
+        "half": -1
+      },
+      "deltaHalf": -1,
+      "after": {
+        "whole": -5,
+        "half": 0
+      }
+    },
+    {
+      "name": "cruel-leave",
+      "before": {
+        "whole": -5,
+        "half": 0
+      },
+      "deltaHalf": 1,
+      "after": {
+        "whole": -4,
+        "half": -1
+      }
+    }
+  ],
+  "sourceAssertionCount": 21,
+  "executedAssertions": 63,
+  "nativeResults": [
+    {
+      "name": "cm-half-math",
+      "checkpoint": "Ten native half-point arithmetic cases, old-save default0, zero crossing, thresholds, caller-local restoration and helper-local cleanup",
+      "pass": true,
+      "reason": "",
+      "durationMs": 1843
+    }
+  ],
+  "durationMs": 2517,
+  "runnerStatus": 0,
+  "runnerStdout": "cm-half-math: True\r\n",
+  "runnerStderr": "",
+  "engineMessages": [
+    "showMessage(), str:  \"JO9_QA_CMHALF20261101_math_COMPLETE\""
+  ],
+  "sentinels": {
+    "originalWhole": 731,
+    "originalHalf": 1,
+    "callerLoopIndex": 445,
+    "helperLocalPriorValue": 98765,
+    "localArrayRestoredToAbsent": true,
+    "scorePreservedByExplicitLocalCopiesAndRestore": true,
+    "savedWholeBackupNamePriorValue": 2222,
+    "savedHalfBackupNamePriorValue": 3333
+  },
+  "nativeLocalScopeFinding": {
+    "detail": "GS sees global score fields rather than a caller local shadow of the same name. A diagnostic must use distinct local savedWhole/savedHalf names and explicit restore. This does not affect the intended production-global helper.",
+    "observedFailedDiagnostic": [
+      "caller local whole0/half0 remained unchanged",
+      "global sentinel whole731/half1 became whole732/half0 after deltaHalf1",
+      "helper local jo9_cm_total prior sentinel98765 remained unchanged"
+    ],
+    "corrected": true
+  },
+  "productionWrites": 0,
+  "savedGamesReadOrWritten": 0,
+  "pass": true
+}

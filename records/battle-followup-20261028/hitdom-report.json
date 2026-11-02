@@ -1,0 +1,831 @@
+{
+  "status": "PASS",
+  "candidate": "G:/Codex/tmp/battle-followup-20261028/jack.candidate.qsp",
+  "game": "G:\\Codex\\tmp\\battle-followup-20261028\\candidate-game",
+  "stateSave": "G:/somi/Jack O Nine Tails v2.4_work/game/save/JO9_GOLD_AP_CHECK_20261026.sav",
+  "inputHashes": {
+    "G:/Codex/tmp/battle-followup-20261028/jack.candidate.qsp": "2f93a1bfbdf26717c04bf7d97cc16266035fb79b57befb00405760991f6300d6",
+    "G:/somi/Jack O Nine Tails v2.4_work/game/save/JO9_GOLD_AP_CHECK_20261026.sav": "581fc472bfa5aedcbca85c379d0061ad8d28a9b928ef948a259dee7c800ad2ec",
+    "G:\\Codex\\tmp\\battle-followup-20261028\\candidate-game/css/base.css": "30d552cde203405469c7536fe6dc6b24271fde3f454056339eb64e76ae1040eb",
+    "G:\\Codex\\tmp\\battle-followup-20261028\\candidate-game/content/js/jo9_battle_log.js": "991352c844709b3374f24172cb25afbb05062c2ce40298516361509aee8fc6c1"
+  },
+  "caseCount": 4,
+  "plan": "G:\\Codex\\tmp\\battle-followup-qa-20261028\\hit-dom-v1/plan.json",
+  "dom": true,
+  "engineExecuted": true,
+  "diagnosticSeams": [
+    "Start state fixtures",
+    "renderer prefix observes pending event state and tail redirects to terminal assertions",
+    "two-target case replaces damage calculator with deterministic returned 4 damage and no modifiers",
+    "synthetic no-op enemy AI only for two-target deterministic player-attack path",
+    "native checkpoint location",
+    "append-only DOM samples25/200/750ms and one terminal callback at850ms; no intermediate EXEC metrics"
+  ],
+  "limits": [
+    "This verifies actual native round damage routing and generated renderer HTML, not SVG art quality or every desktop resolution.",
+    "Modifier zero is a normal hit in original calculation, not a miss. The zero-damage and total-immunity cases test absent effect.",
+    "Opponent attack fixture sets indexed enemy attack data, preserving scalar player-damage type by original array convention.",
+    "Auto-switch case uses the existing dynamic next-enemy hook with a deterministic index transition."
+  ],
+  "client": [
+    {
+      "name": "pierce-normal-modifier-zero",
+      "checkpoint": "Actual round damage and actual original renderer; observational marker capture and native assertions.",
+      "pass": true,
+      "reason": "",
+      "durationMs": 11494
+    },
+    {
+      "name": "slash-normal",
+      "checkpoint": "Actual round damage and actual original renderer; observational marker capture and native assertions.",
+      "pass": true,
+      "reason": "",
+      "durationMs": 11173
+    },
+    {
+      "name": "impact-stamina-only",
+      "checkpoint": "Actual round damage and actual original renderer; observational marker capture and native assertions.",
+      "pass": true,
+      "reason": "",
+      "durationMs": 11374
+    },
+    {
+      "name": "whip-spirit-only",
+      "checkpoint": "Actual round damage and actual original renderer; observational marker capture and native assertions.",
+      "pass": true,
+      "reason": "",
+      "durationMs": 11142
+    }
+  ],
+  "domCases": [
+    {
+      "name": "pierce-normal-modifier-zero",
+      "checks": {
+        "samples": true,
+        "loaded": true,
+        "correctType": true,
+        "visibleEarly": true,
+        "hiddenLate": true,
+        "geometryStable": true,
+        "fixedEffect": true
+      },
+      "samples": [
+        {
+          "scheduled": 25,
+          "elapsed": 25,
+          "boxes": {
+            "root": {
+              "x": 1,
+              "y": 1,
+              "width": 1280,
+              "height": 800
+            },
+            "fight_bg": {
+              "x": 243,
+              "y": 1,
+              "width": 795,
+              "height": 596
+            },
+            "fight_txt": {
+              "x": 259,
+              "y": 613,
+              "width": 763,
+              "height": 172
+            },
+            "enemy_combat_ui": {
+              "x": 1,
+              "y": 1,
+              "width": 242,
+              "height": 440
+            },
+            "ally_combat_ui": {
+              "x": 1038,
+              "y": 1,
+              "width": 243,
+              "height": 440
+            },
+            "jo9_battle_fx_layer": {
+              "x": 1,
+              "y": 1,
+              "width": 1280,
+              "height": 800
+            }
+          },
+          "effect": {
+            "src": "content/pic/ui/jo9_battle_test_v01/fx/pierce.svg",
+            "complete": true,
+            "naturalWidth": 500,
+            "naturalHeight": 460,
+            "rect": {
+              "x": 391,
+              "y": 71,
+              "width": 500,
+              "height": 460
+            },
+            "visibility": "visible",
+            "pointerEvents": "none",
+            "parent": "jo9_battle_fx_layer",
+            "opacity": "1",
+            "transform": "none"
+          }
+        },
+        {
+          "scheduled": 200,
+          "elapsed": 218,
+          "boxes": {
+            "root": {
+              "x": 1,
+              "y": 1,
+              "width": 1280,
+              "height": 800
+            },
+            "fight_bg": {
+              "x": 243,
+              "y": 1,
+              "width": 795,
+              "height": 596
+            },
+            "fight_txt": {
+              "x": 259,
+              "y": 613,
+              "width": 763,
+              "height": 172
+            },
+            "enemy_combat_ui": {
+              "x": 1,
+              "y": 1,
+              "width": 242,
+              "height": 440
+            },
+            "ally_combat_ui": {
+              "x": 1038,
+              "y": 1,
+              "width": 243,
+              "height": 440
+            },
+            "jo9_battle_fx_layer": {
+              "x": 1,
+              "y": 1,
+              "width": 1280,
+              "height": 800
+            }
+          },
+          "effect": {
+            "src": "content/pic/ui/jo9_battle_test_v01/fx/pierce.svg",
+            "complete": true,
+            "naturalWidth": 500,
+            "naturalHeight": 460,
+            "rect": {
+              "x": 391,
+              "y": 71,
+              "width": 500,
+              "height": 460
+            },
+            "visibility": "visible",
+            "pointerEvents": "none",
+            "parent": "jo9_battle_fx_layer",
+            "opacity": "1",
+            "transform": "none"
+          }
+        },
+        {
+          "scheduled": 750,
+          "elapsed": 750,
+          "boxes": {
+            "root": {
+              "x": 1,
+              "y": 1,
+              "width": 1280,
+              "height": 800
+            },
+            "fight_bg": {
+              "x": 243,
+              "y": 1,
+              "width": 795,
+              "height": 596
+            },
+            "fight_txt": {
+              "x": 259,
+              "y": 613,
+              "width": 763,
+              "height": 172
+            },
+            "enemy_combat_ui": {
+              "x": 1,
+              "y": 1,
+              "width": 242,
+              "height": 440
+            },
+            "ally_combat_ui": {
+              "x": 1038,
+              "y": 1,
+              "width": 243,
+              "height": 440
+            },
+            "jo9_battle_fx_layer": {
+              "x": 1,
+              "y": 1,
+              "width": 1280,
+              "height": 800
+            }
+          },
+          "effect": {
+            "src": "content/pic/ui/jo9_battle_test_v01/fx/pierce.svg",
+            "complete": true,
+            "naturalWidth": 500,
+            "naturalHeight": 460,
+            "rect": {
+              "x": 391,
+              "y": 71,
+              "width": 500,
+              "height": 460
+            },
+            "visibility": "hidden",
+            "pointerEvents": "none",
+            "parent": "jo9_battle_fx_layer",
+            "opacity": "1",
+            "transform": "none"
+          }
+        }
+      ],
+      "pass": true
+    },
+    {
+      "name": "slash-normal",
+      "checks": {
+        "samples": true,
+        "loaded": true,
+        "correctType": true,
+        "visibleEarly": true,
+        "hiddenLate": true,
+        "geometryStable": true,
+        "fixedEffect": true
+      },
+      "samples": [
+        {
+          "scheduled": 25,
+          "elapsed": 26,
+          "boxes": {
+            "root": {
+              "x": 1,
+              "y": 1,
+              "width": 1280,
+              "height": 800
+            },
+            "fight_bg": {
+              "x": 243,
+              "y": 1,
+              "width": 795,
+              "height": 596
+            },
+            "fight_txt": {
+              "x": 259,
+              "y": 613,
+              "width": 763,
+              "height": 172
+            },
+            "enemy_combat_ui": {
+              "x": 1,
+              "y": 1,
+              "width": 242,
+              "height": 440
+            },
+            "ally_combat_ui": {
+              "x": 1038,
+              "y": 1,
+              "width": 243,
+              "height": 440
+            },
+            "jo9_battle_fx_layer": {
+              "x": 1,
+              "y": 1,
+              "width": 1280,
+              "height": 800
+            }
+          },
+          "effect": {
+            "src": "content/pic/ui/jo9_battle_test_v01/fx/slash.svg",
+            "complete": true,
+            "naturalWidth": 500,
+            "naturalHeight": 460,
+            "rect": {
+              "x": 391,
+              "y": 71,
+              "width": 500,
+              "height": 460
+            },
+            "visibility": "visible",
+            "pointerEvents": "none",
+            "parent": "jo9_battle_fx_layer",
+            "opacity": "1",
+            "transform": "none"
+          }
+        },
+        {
+          "scheduled": 200,
+          "elapsed": 212,
+          "boxes": {
+            "root": {
+              "x": 1,
+              "y": 1,
+              "width": 1280,
+              "height": 800
+            },
+            "fight_bg": {
+              "x": 243,
+              "y": 1,
+              "width": 795,
+              "height": 596
+            },
+            "fight_txt": {
+              "x": 259,
+              "y": 613,
+              "width": 763,
+              "height": 172
+            },
+            "enemy_combat_ui": {
+              "x": 1,
+              "y": 1,
+              "width": 242,
+              "height": 440
+            },
+            "ally_combat_ui": {
+              "x": 1038,
+              "y": 1,
+              "width": 243,
+              "height": 440
+            },
+            "jo9_battle_fx_layer": {
+              "x": 1,
+              "y": 1,
+              "width": 1280,
+              "height": 800
+            }
+          },
+          "effect": {
+            "src": "content/pic/ui/jo9_battle_test_v01/fx/slash.svg",
+            "complete": true,
+            "naturalWidth": 500,
+            "naturalHeight": 460,
+            "rect": {
+              "x": 391,
+              "y": 71,
+              "width": 500,
+              "height": 460
+            },
+            "visibility": "visible",
+            "pointerEvents": "none",
+            "parent": "jo9_battle_fx_layer",
+            "opacity": "1",
+            "transform": "none"
+          }
+        },
+        {
+          "scheduled": 750,
+          "elapsed": 751,
+          "boxes": {
+            "root": {
+              "x": 1,
+              "y": 1,
+              "width": 1280,
+              "height": 800
+            },
+            "fight_bg": {
+              "x": 243,
+              "y": 1,
+              "width": 795,
+              "height": 596
+            },
+            "fight_txt": {
+              "x": 259,
+              "y": 613,
+              "width": 763,
+              "height": 172
+            },
+            "enemy_combat_ui": {
+              "x": 1,
+              "y": 1,
+              "width": 242,
+              "height": 440
+            },
+            "ally_combat_ui": {
+              "x": 1038,
+              "y": 1,
+              "width": 243,
+              "height": 440
+            },
+            "jo9_battle_fx_layer": {
+              "x": 1,
+              "y": 1,
+              "width": 1280,
+              "height": 800
+            }
+          },
+          "effect": {
+            "src": "content/pic/ui/jo9_battle_test_v01/fx/slash.svg",
+            "complete": true,
+            "naturalWidth": 500,
+            "naturalHeight": 460,
+            "rect": {
+              "x": 391,
+              "y": 71,
+              "width": 500,
+              "height": 460
+            },
+            "visibility": "hidden",
+            "pointerEvents": "none",
+            "parent": "jo9_battle_fx_layer",
+            "opacity": "1",
+            "transform": "none"
+          }
+        }
+      ],
+      "pass": true
+    },
+    {
+      "name": "impact-stamina-only",
+      "checks": {
+        "samples": true,
+        "loaded": true,
+        "correctType": true,
+        "visibleEarly": true,
+        "hiddenLate": true,
+        "geometryStable": true,
+        "fixedEffect": true
+      },
+      "samples": [
+        {
+          "scheduled": 25,
+          "elapsed": 26,
+          "boxes": {
+            "root": {
+              "x": 1,
+              "y": 1,
+              "width": 1280,
+              "height": 800
+            },
+            "fight_bg": {
+              "x": 243,
+              "y": 1,
+              "width": 795,
+              "height": 596
+            },
+            "fight_txt": {
+              "x": 259,
+              "y": 613,
+              "width": 763,
+              "height": 172
+            },
+            "enemy_combat_ui": {
+              "x": 1,
+              "y": 1,
+              "width": 242,
+              "height": 440
+            },
+            "ally_combat_ui": {
+              "x": 1038,
+              "y": 1,
+              "width": 243,
+              "height": 440
+            },
+            "jo9_battle_fx_layer": {
+              "x": 1,
+              "y": 1,
+              "width": 1280,
+              "height": 800
+            }
+          },
+          "effect": {
+            "src": "content/pic/ui/jo9_battle_test_v01/fx/impact.svg",
+            "complete": true,
+            "naturalWidth": 500,
+            "naturalHeight": 460,
+            "rect": {
+              "x": 391,
+              "y": 71,
+              "width": 500,
+              "height": 460
+            },
+            "visibility": "visible",
+            "pointerEvents": "none",
+            "parent": "jo9_battle_fx_layer",
+            "opacity": "1",
+            "transform": "none"
+          }
+        },
+        {
+          "scheduled": 200,
+          "elapsed": 218,
+          "boxes": {
+            "root": {
+              "x": 1,
+              "y": 1,
+              "width": 1280,
+              "height": 800
+            },
+            "fight_bg": {
+              "x": 243,
+              "y": 1,
+              "width": 795,
+              "height": 596
+            },
+            "fight_txt": {
+              "x": 259,
+              "y": 613,
+              "width": 763,
+              "height": 172
+            },
+            "enemy_combat_ui": {
+              "x": 1,
+              "y": 1,
+              "width": 242,
+              "height": 440
+            },
+            "ally_combat_ui": {
+              "x": 1038,
+              "y": 1,
+              "width": 243,
+              "height": 440
+            },
+            "jo9_battle_fx_layer": {
+              "x": 1,
+              "y": 1,
+              "width": 1280,
+              "height": 800
+            }
+          },
+          "effect": {
+            "src": "content/pic/ui/jo9_battle_test_v01/fx/impact.svg",
+            "complete": true,
+            "naturalWidth": 500,
+            "naturalHeight": 460,
+            "rect": {
+              "x": 391,
+              "y": 71,
+              "width": 500,
+              "height": 460
+            },
+            "visibility": "visible",
+            "pointerEvents": "none",
+            "parent": "jo9_battle_fx_layer",
+            "opacity": "1",
+            "transform": "none"
+          }
+        },
+        {
+          "scheduled": 750,
+          "elapsed": 751,
+          "boxes": {
+            "root": {
+              "x": 1,
+              "y": 1,
+              "width": 1280,
+              "height": 800
+            },
+            "fight_bg": {
+              "x": 243,
+              "y": 1,
+              "width": 795,
+              "height": 596
+            },
+            "fight_txt": {
+              "x": 259,
+              "y": 613,
+              "width": 763,
+              "height": 172
+            },
+            "enemy_combat_ui": {
+              "x": 1,
+              "y": 1,
+              "width": 242,
+              "height": 440
+            },
+            "ally_combat_ui": {
+              "x": 1038,
+              "y": 1,
+              "width": 243,
+              "height": 440
+            },
+            "jo9_battle_fx_layer": {
+              "x": 1,
+              "y": 1,
+              "width": 1280,
+              "height": 800
+            }
+          },
+          "effect": {
+            "src": "content/pic/ui/jo9_battle_test_v01/fx/impact.svg",
+            "complete": true,
+            "naturalWidth": 500,
+            "naturalHeight": 460,
+            "rect": {
+              "x": 391,
+              "y": 71,
+              "width": 500,
+              "height": 460
+            },
+            "visibility": "hidden",
+            "pointerEvents": "none",
+            "parent": "jo9_battle_fx_layer",
+            "opacity": "1",
+            "transform": "none"
+          }
+        }
+      ],
+      "pass": true
+    },
+    {
+      "name": "whip-spirit-only",
+      "checks": {
+        "samples": true,
+        "loaded": true,
+        "correctType": true,
+        "visibleEarly": true,
+        "hiddenLate": true,
+        "geometryStable": true,
+        "fixedEffect": true
+      },
+      "samples": [
+        {
+          "scheduled": 25,
+          "elapsed": 26,
+          "boxes": {
+            "root": {
+              "x": 1,
+              "y": 1,
+              "width": 1280,
+              "height": 800
+            },
+            "fight_bg": {
+              "x": 243,
+              "y": 1,
+              "width": 795,
+              "height": 596
+            },
+            "fight_txt": {
+              "x": 259,
+              "y": 613,
+              "width": 763,
+              "height": 172
+            },
+            "enemy_combat_ui": {
+              "x": 1,
+              "y": 1,
+              "width": 242,
+              "height": 440
+            },
+            "ally_combat_ui": {
+              "x": 1038,
+              "y": 1,
+              "width": 243,
+              "height": 440
+            },
+            "jo9_battle_fx_layer": {
+              "x": 1,
+              "y": 1,
+              "width": 1280,
+              "height": 800
+            }
+          },
+          "effect": {
+            "src": "content/pic/ui/jo9_battle_test_v01/fx/whip.svg",
+            "complete": true,
+            "naturalWidth": 500,
+            "naturalHeight": 460,
+            "rect": {
+              "x": 391,
+              "y": 71,
+              "width": 500,
+              "height": 460
+            },
+            "visibility": "visible",
+            "pointerEvents": "none",
+            "parent": "jo9_battle_fx_layer",
+            "opacity": "1",
+            "transform": "none"
+          }
+        },
+        {
+          "scheduled": 200,
+          "elapsed": 216,
+          "boxes": {
+            "root": {
+              "x": 1,
+              "y": 1,
+              "width": 1280,
+              "height": 800
+            },
+            "fight_bg": {
+              "x": 243,
+              "y": 1,
+              "width": 795,
+              "height": 596
+            },
+            "fight_txt": {
+              "x": 259,
+              "y": 613,
+              "width": 763,
+              "height": 172
+            },
+            "enemy_combat_ui": {
+              "x": 1,
+              "y": 1,
+              "width": 242,
+              "height": 440
+            },
+            "ally_combat_ui": {
+              "x": 1038,
+              "y": 1,
+              "width": 243,
+              "height": 440
+            },
+            "jo9_battle_fx_layer": {
+              "x": 1,
+              "y": 1,
+              "width": 1280,
+              "height": 800
+            }
+          },
+          "effect": {
+            "src": "content/pic/ui/jo9_battle_test_v01/fx/whip.svg",
+            "complete": true,
+            "naturalWidth": 500,
+            "naturalHeight": 460,
+            "rect": {
+              "x": 391,
+              "y": 71,
+              "width": 500,
+              "height": 460
+            },
+            "visibility": "visible",
+            "pointerEvents": "none",
+            "parent": "jo9_battle_fx_layer",
+            "opacity": "1",
+            "transform": "none"
+          }
+        },
+        {
+          "scheduled": 750,
+          "elapsed": 750,
+          "boxes": {
+            "root": {
+              "x": 1,
+              "y": 1,
+              "width": 1280,
+              "height": 800
+            },
+            "fight_bg": {
+              "x": 243,
+              "y": 1,
+              "width": 795,
+              "height": 596
+            },
+            "fight_txt": {
+              "x": 259,
+              "y": 613,
+              "width": 763,
+              "height": 172
+            },
+            "enemy_combat_ui": {
+              "x": 1,
+              "y": 1,
+              "width": 242,
+              "height": 440
+            },
+            "ally_combat_ui": {
+              "x": 1038,
+              "y": 1,
+              "width": 243,
+              "height": 440
+            },
+            "jo9_battle_fx_layer": {
+              "x": 1,
+              "y": 1,
+              "width": 1280,
+              "height": 800
+            }
+          },
+          "effect": {
+            "src": "content/pic/ui/jo9_battle_test_v01/fx/whip.svg",
+            "complete": true,
+            "naturalWidth": 500,
+            "naturalHeight": 460,
+            "rect": {
+              "x": 391,
+              "y": 71,
+              "width": 500,
+              "height": 460
+            },
+            "visibility": "hidden",
+            "pointerEvents": "none",
+            "parent": "jo9_battle_fx_layer",
+            "opacity": "1",
+            "transform": "none"
+          }
+        }
+      ],
+      "pass": true
+    }
+  ],
+  "inputsUnchanged": true
+}

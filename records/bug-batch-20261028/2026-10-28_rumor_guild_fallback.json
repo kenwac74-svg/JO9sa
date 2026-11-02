@@ -1,0 +1,48 @@
+{
+  "id": "2026-10-28_rumor_guild_fallback",
+  "description": "가격을 드러내지 않는 지역 구매자 소문: 실제 정가와 길드 재매입 견적을 비교하고 길드 우선 안내. 일반 거래 견적과 상태·금액 보존.",
+  "before_sha256": "dbe2948f7c827d8fc82ccd32b2c3453626d181a59eb744e015fa66a3846280ae",
+  "after_sha256": "2e552163187e89d98ff4caf3313b3ed7662b7576da89119791e09ea91f3a5b1d",
+  "edits": [
+    {
+      "location": "jo9_traits_value",
+      "field": "body",
+      "old": "! JO9 MOD START DEALER_QUOTE | 2026-10-24_dealer_economy\r\n! In-game difficulty_setting: 1 easy, 0 normal, 2 original hard; creation difficulty does not select the payout.\r\nif $args[0] = 'dealer_quote':\r\n local $jo9_dealer_vendor = $args[1]\r\n result = 0\r\n killvar 'is_stock'\r\n if $jo9_dealer_vendor ! 'farid' and $jo9_dealer_vendor ! 'wong': exit\r\n if slave_state ! CONST_INT['slave_exist'] and slave_state ! CONST_INT['slave_faint']: exit\r\n if snk_room_target > 0: exit\r\n if difficulty_setting = 2 and $jo9_dealer_vendor = 'farid' and slave['brand'] = 0: is_stock = 1\r\n gs '$slave_price'\r\n if difficulty_setting = 0 or difficulty_setting = 1:\r\n  ! Native attribute price already includes versatile; apply it once to the independent grade candidate too.\r\n  local jo9_dealer_grade_price = func('jo9_traits_value', 'base_price', 'slave', common_price[rating])\r\n  local jo9_dealer_value = max(30, slave_base_price * 3 / 2, jo9_dealer_grade_price)\r\n  if slave['obedience'] < 1: jo9_dealer_value = jo9_dealer_value * 20 / 100\r\n  ! Keep the original Wong broken-state depreciation, separate from current obedience.\r\n  if $jo9_dealer_vendor = 'wong' and $slave_psy_status = 'broken': jo9_dealer_value -= 4 * jo9_dealer_value / 5\r\n  result = jo9_dealer_value * iif(difficulty_setting = 1, 90, 75) / 100\r\n else\r\n  if $jo9_dealer_vendor = 'farid': result = max(10, slaveprice / 2)\r\n  if $jo9_dealer_vendor = 'wong':\r\n   local jo9_dealer_value = auction_price[rating]\r\n   if $slave_psy_status = 'broken': jo9_dealer_value -= 4 * auction_price[rating] / 5\r\n   result = func('jo9_traits_value', 'base_price', 'slave', jo9_dealer_value)\r\n  end\r\n end\r\n ! JO9 MOD START SALE_CAP_B_DEALER_QUOTE_20261026\r\n result = min(6000, result)\r\n ! JO9 MOD END SALE_CAP_B_DEALER_QUOTE_20261026\r\n exit\r\nend\r\n",
+      "new": "! JO9 MOD START DEALER_QUOTE | 2026-10-24_dealer_economy\r\n! In-game difficulty_setting: 1 easy, 0 normal, 2 original hard; creation difficulty does not select the payout.\r\n! JO9 MOD START RUMOR_GUILD_QUOTE_SHARED_20261028\r\nif $args[0] = 'dealer_quote':\r\n local $jo9_dealer_vendor = $args[1]\r\n ! JO9 MOD START RUMOR_GUILD_QUOTE_ACTOR_20261028\r\n local $jo9_dealer_actor = $args[2]\r\n if $jo9_dealer_actor = '': $jo9_dealer_actor = 'slave'\r\n if $jo9_dealer_actor ! 'slave' and $jo9_dealer_actor ! 'jo9_rumor_probe': result = 0 & exit\r\n local jo9_dealer_rating = args[3]\r\n local jo9_dealer_base = args[4]\r\n local jo9_dealer_price = args[5]\r\n local jo9_dealer_state = dyneval('result = ' + $jo9_dealer_actor + '_state')\r\n local jo9_dealer_brand = dyneval('result = ' + $jo9_dealer_actor + \"['brand']\")\r\n ! JO9 MOD END RUMOR_GUILD_QUOTE_ACTOR_20261028\r\n result = 0\r\n if $jo9_dealer_actor = 'slave': killvar 'is_stock'\r\n if $jo9_dealer_vendor ! 'farid' and $jo9_dealer_vendor ! 'wong': exit\r\n if jo9_dealer_state ! CONST_INT['slave_exist'] and jo9_dealer_state ! CONST_INT['slave_faint']: exit\r\n if snk_room_target > 0: exit\r\n if difficulty_setting = 2 and $jo9_dealer_vendor = 'farid' and jo9_dealer_brand = 0: is_stock = 1\r\n ! The rumor probe receives explicit appraisal inputs from the isolated scan.\r\n if $jo9_dealer_actor = 'slave':\r\n  gs '$slave_price', $jo9_dealer_actor\r\n  jo9_dealer_rating = rating\r\n  jo9_dealer_base = slave_base_price\r\n  jo9_dealer_price = slaveprice\r\n end\r\n ! Read derived values after the existing appraisal recalculates them.\r\n local jo9_dealer_obedience = dyneval('result = ' + $jo9_dealer_actor + \"['obedience']\")\r\n local $jo9_dealer_psy = $dyneval('$result = $' + $jo9_dealer_actor + '_psy_status')\r\n if difficulty_setting = 0 or difficulty_setting = 1:\r\n  ! Native attribute price already includes versatile; apply it once to the independent grade candidate too.\r\n  local jo9_dealer_grade_price = func('jo9_traits_value', 'base_price', $jo9_dealer_actor, common_price[jo9_dealer_rating])\r\n  local jo9_dealer_value = max(30, jo9_dealer_base * 3 / 2, jo9_dealer_grade_price)\r\n  if jo9_dealer_obedience < 1: jo9_dealer_value = jo9_dealer_value * 20 / 100\r\n  ! Keep the original Wong broken-state depreciation, separate from current obedience.\r\n  if $jo9_dealer_vendor = 'wong' and $jo9_dealer_psy = 'broken': jo9_dealer_value -= 4 * jo9_dealer_value / 5\r\n  result = jo9_dealer_value * iif(difficulty_setting = 1, 90, 75) / 100\r\n else\r\n  if $jo9_dealer_vendor = 'farid': result = max(10, jo9_dealer_price / 2)\r\n  if $jo9_dealer_vendor = 'wong':\r\n   local jo9_dealer_value = auction_price[jo9_dealer_rating]\r\n   if $jo9_dealer_psy = 'broken': jo9_dealer_value -= 4 * auction_price[jo9_dealer_rating] / 5\r\n   result = func('jo9_traits_value', 'base_price', $jo9_dealer_actor, jo9_dealer_value)\r\n  end\r\n end\r\n ! JO9 MOD START SALE_CAP_B_DEALER_QUOTE_20261026\r\n result = min(6000, result)\r\n ! JO9 MOD END SALE_CAP_B_DEALER_QUOTE_20261026\r\n exit\r\nend\r\n! JO9 MOD END RUMOR_GUILD_QUOTE_SHARED_20261028\r\n",
+      "count": 1,
+      "patchId": "RUMOR_GUILD_QUOTE_ACTOR_20261028"
+    },
+    {
+      "location": "jo9_rumor_scan",
+      "field": "body",
+      "old": "   jo9_rs_best = -1",
+      "new": "   ! JO9 MOD START RUMOR_COMPARE_GUILD_20261028\r\n   local jo9_rs_guild_quote = 0\r\n   local jo9_rs_virgin_bonus = 0\r\n   if jo9_rumor_probe['virginity'] < 2: jo9_rs_virgin_bonus = 50 * relative_rating\r\n   if jo9_rumor_probe['virginity'] < 1: jo9_rs_virgin_bonus *= 2\r\n   if jo9_rumor_probe_state = CONST_INT['slave_exist'] and jo9_rumor_probe['brand'] > 0:\r\n    if difficulty_setting ! 2 or rating > 0: jo9_rs_guild_quote = func('jo9_traits_value', 'dealer_quote', 'wong', 'jo9_rumor_probe', rating, slave_base_price, slaveprice)\r\n   end\r\n   jo9_rs_best = -1\r\n   ! JO9 MOD END RUMOR_COMPARE_GUILD_20261028",
+      "count": 1,
+      "patchId": "RUMOR_COMPARE_GUILD_20261028"
+    },
+    {
+      "location": "jo9_rumor_scan",
+      "field": "body",
+      "old": "       jo9_rs_rank = demand_rating[$jo9_rumor_buyer[jo9_rs_b]]",
+      "new": "       ! JO9 MOD START RUMOR_CURRENT_PRICE_ORDER_20261028\r\n       if $jo9_rumor_mode[jo9_rs_b] = 'simple':\r\n        jo9_rs_rank = func('jo9_traits_value', 'base_price', 'jo9_rumor_probe', common_price[demand_rating[$jo9_rumor_buyer[jo9_rs_b]]])\r\n       else\r\n        jo9_rs_rank = min(8000, common_price[demand_rating[$jo9_rumor_buyer[jo9_rs_b]]] + jo9_rs_virgin_bonus)\r\n       end\r\n       ! JO9 MOD END RUMOR_CURRENT_PRICE_ORDER_20261028",
+      "count": 1,
+      "patchId": "RUMOR_CURRENT_PRICE_ORDER_20261028"
+    },
+    {
+      "location": "jo9_rumor_scan",
+      "field": "body",
+      "old": "   if arrsize('$jo9_rs_hits') = 0:\r\n    $jo9_rs_sentence = '<<$jo9_rs_actor>>에게는 지금 이 지역에서 권할 만한 고정 구매처가 떠오르지 않는군. 몸 상태나 낙인, 교육 정도를 다시 살펴보게.'\r\n    $jo9_rumor_pages[arrsize('$jo9_rumor_pages')] = $jo9_rs_sentence\r\n   else",
+      "new": "   ! JO9 MOD START RUMOR_GUILD_FALLBACK_20261028\r\n   if jo9_rs_guild_quote > 0 and jo9_rs_guild_quote >= jo9_rs_best:\r\n    if arrsize('$jo9_rs_hits') = 0:\r\n     $jo9_rs_sentence = '지금 이 근방에선 <<$jo9_rs_actor>>를 특별히 찾는 손님은 없군. 돈이 급하다면 길드의 재매입상에게 가보게.'\r\n    else\r\n     $jo9_rs_sentence = '<<$jo9_rs_actor>>라면 지금은 길드의 재매입상을 찾아가는 편이 낫겠군. 돈이 급하다면 그쪽과 이야기해 보게.'\r\n    end\r\n    $jo9_rumor_pages[arrsize('$jo9_rumor_pages')] = $jo9_rs_sentence\r\n   elseif arrsize('$jo9_rs_hits') = 0:\r\n    $jo9_rs_sentence = '<<$jo9_rs_actor>>에게는 지금 이 지역에서 권할 만한 고정 구매처가 떠오르지 않는군. 몸 상태나 낙인, 교육 정도를 다시 살펴보게.'\r\n    $jo9_rumor_pages[arrsize('$jo9_rumor_pages')] = $jo9_rs_sentence\r\n   else\r\n   ! JO9 MOD END RUMOR_GUILD_FALLBACK_20261028",
+      "count": 1,
+      "patchId": "RUMOR_GUILD_FALLBACK_20261028"
+    },
+    {
+      "location": "jo9_buyer_rumors",
+      "field": "body",
+      "old": " $jo9_rm_page_text = replace($jo9_rm_page_text, '내가 듣기로는 ', '제가 듣기로는 ')",
+      "new": " $jo9_rm_page_text = replace($jo9_rm_page_text, '내가 듣기로는 ', '제가 듣기로는 ')\r\n ! JO9 MOD START RUMOR_GUILD_ANES_VOICE_20261028\r\n $jo9_rm_page_text = replace($jo9_rm_page_text, '를 특별히 찾는 손님은 없군. 돈이 급하다면 길드의 재매입상에게 가보게.', '를 특별히 찾는 손님은 없네요. 돈이 급하시다면 길드의 재매입상에게 가보세요.')\r\n $jo9_rm_page_text = replace($jo9_rm_page_text, '라면 지금은 길드의 재매입상을 찾아가는 편이 낫겠군. 돈이 급하다면 그쪽과 이야기해 보게.', '라면 지금은 길드의 재매입상을 찾아가는 편이 낫겠어요. 돈이 급하시다면 그쪽과 이야기해 보세요.')\r\n ! JO9 MOD END RUMOR_GUILD_ANES_VOICE_20261028",
+      "count": 1,
+      "patchId": "RUMOR_GUILD_ANES_VOICE_20261028"
+    }
+  ]
+}

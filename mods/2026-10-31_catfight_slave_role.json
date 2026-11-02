@@ -1,0 +1,15 @@
+{
+  "id": "2026-10-31_catfight_slave_role",
+  "description": "Normalize the slave-only Catfight entry to combatant=1; fixes existing diagnostic and saved entry paths without changing save format or combat values.",
+  "before_sha256": "ca4e09ef66c4044e415e2c543d008eeaad7a666df54b314dec0f8d5ef8bb412a",
+  "after_sha256": "c6aac7a30cba85c0beb9500341d93fc2aed7196f10785157e6d3753e1616c2b5",
+  "edits": [
+    {
+      "location": "$catfight_fight_start",
+      "field": "body",
+      "old": "$fight_return = 'Start1'\r\narena_mode = 1",
+      "new": "$fight_return = 'Start1'\r\n! JO9 MOD START CATFIGHT_SLAVE_ROLE_20261031\r\ncombatant = 1\r\n! JO9 MOD END CATFIGHT_SLAVE_ROLE_20261031\r\narena_mode = 1",
+      "count": 1
+    }
+  ]
+}

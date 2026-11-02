@@ -1,0 +1,18 @@
+{
+  "id": "2026-10-28_assistant_default_image_lookup",
+  "status": "APPROVED",
+  "description": "조수 mode0의 빈 역할 키를 기본 fullimage 조회로 해석한다. 의복·모드·저장값을 변경하지 않는 표시 수정.",
+  "before_sha256": "e620353d0db6374ae293c6919d511966c31e2bb68ebd1763bb5a956bec069ba0",
+  "after_sha256": "f6520ef11a720f6d15127738032be960acc1153eb653e2760495b880e85cef97",
+  "edits": [
+    {
+      "location": "display_fullimage",
+      "field": "body",
+      "old": "$def_image_path = func('jo9_seed_role_images', 'resolve', actor_type, $def_image_path, $iif($actor_name = 'assistant', $assistant_img_key, 'fullimage'))",
+      "new": "! JO9 MOD START ASSISTANT_DEFAULT_IMAGE_LOOKUP_20261028\r\n$def_image_path = func('jo9_seed_role_images', 'resolve', actor_type, $def_image_path, $iif($actor_name = 'assistant' and $assistant_img_key ! '', $assistant_img_key, 'fullimage'))\r\n! JO9 MOD END ASSISTANT_DEFAULT_IMAGE_LOOKUP_20261028",
+      "count": 1,
+      "patchId": "ASSISTANT_DEFAULT_IMAGE_LOOKUP_20261028"
+    }
+  ],
+  "user_approval": "2026-10-28: WORK에 반영"
+}

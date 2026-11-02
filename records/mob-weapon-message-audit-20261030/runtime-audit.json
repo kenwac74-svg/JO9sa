@@ -1,0 +1,3861 @@
+{
+  "schemaVersion": 1,
+  "auditDate": "2026-10-30",
+  "source": {
+    "path": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+    "sha256": "f18fcee393330747f693f0388ef5c0364b926a34e64ea25b659e68ca9b6aa652",
+    "parser": "G:/somi/JO9sa/tools/text-workshop/core.cjs",
+    "locationCount": 275,
+    "lineConvention": "1-based lines within decoded QSP location body"
+  },
+  "scope": {
+    "mode": "read-only static control/data-flow audit plus one root-executed isolated native damage-calculator diagnostic",
+    "engineExecuted": true,
+    "artCompared": false,
+    "originalFilesWritten": false,
+    "fullQspDumpWritten": false,
+    "engineExecutedBy": "root agent",
+    "engineScope": "One isolated damage-calculator diagnostic using a full WORK copy with only Start replaced; no full battle or user save test.",
+    "fullBattleExecuted": false
+  },
+  "summary": {
+    "fixedMobCount": 70,
+    "fixedMobsUsingGenericAI": 69,
+    "fixedMobAttackDefinitions": 185,
+    "genericNormallySelectableAttackSlots": 145,
+    "selectedSlotsWithMissingTypeDamageOrText": 0,
+    "genericDefinedButNormallyUnselectedSlots": 34,
+    "unselectedNormalAttackSlots": 7,
+    "unselectedSuperAttackSlots": 27,
+    "mobWithMissingAILocation": 1,
+    "dynamicTrainingOpponentExtra": true,
+    "nativeCalculatorCases": 1
+  },
+  "dispatch": {
+    "enemyKey": "$враг[i]",
+    "aiSelector": "$интеллект[$враг[i]]",
+    "textSelector": "$атака_N_текст[$враг[i]] / $суператака_N_текст[$враг[i]]",
+    "damageSelector": "$атака_N_тип_вреда[$враг[i]] / $суператака_N_тип_вреда[$враг[i]]",
+    "weaponItemIdBinding": false,
+    "normalSelection": {
+      "пешка": [
+        1
+      ],
+      "рядовой": [
+        1,
+        2
+      ],
+      "элитный": [
+        1,
+        2,
+        3
+      ]
+    },
+    "normalSuperAttackSelection": false
+  },
+  "findings": [
+    {
+      "id": "MISSING_AI_LOCATION",
+      "classification": "proven_static_dispatch_defect",
+      "mobIds": [
+        "безумный_архимаг"
+      ],
+      "detailKo": "MOB AI 값은 ии_безумный_архимаг이나 현재 jack.qsp 로케이션 275개에 그 이름이 없다. 일반 적 차례는 그 값을 그대로 GS한다. 실제 엔진 오류 화면은 재현하지 않았다.",
+      "references": [
+        {
+          "location": "#противники",
+          "lines": [
+            887
+          ]
+        },
+        {
+          "location": "ход_противников",
+          "lines": [
+            7,
+            8,
+            9,
+            10
+          ]
+        }
+      ],
+      "libraryBoundary": "Only inclib in main QSP is optional jack_custom.qsp; immediately freelib after custom-slave loaders. File absent in inspected WORK game directory."
+    },
+    {
+      "id": "UNDEFINED_DAMAGE_MODIFIER_NAME",
+      "classification": "proven_static_damage_taxonomy_gap_and_one_native_calculator_regression",
+      "mobIds": [
+        "крысолюд",
+        "вервольф"
+      ],
+      "detailKo": "режущий 피해가 4개 공격 정의에 있지만 전체 jack.qsp에 модификатор_режущий 정의가 없다. расчёт_вреда는 피해 문자열로 modifier 변수명을 조립한다. 따라서 이 경로는 рубящий modifier를 읽지 않는다. 저장 상태에 임의 값이 없다면 QSP 미정의 수치 변수 기본값에 의존한다. 어느 기존 피해로 바꿔야 하는지는 승인된 설계로 간주하지 않는다. 부모 에이전트가 전체 WORK 진단 사본의 Start만 교체해 실제 피해 계산기를 1건 실행했다. 동일한 기본 피해 20과 рубящий modifier -7에서 рубящий=13, режущий=20이 저장값으로 확인되어 표준 베기 modifier를 읽지 않는 결과를 재현했다. 전체 전투 검증은 아니다.",
+      "instances": [
+        {
+          "mobId": "крысолюд",
+          "slot": 1,
+          "damageLine": 719,
+          "textLine": 724,
+          "normallySelected": true
+        },
+        {
+          "mobId": "крысолюд",
+          "slot": 2,
+          "damageLine": 727,
+          "textLine": 732,
+          "normallySelected": true
+        },
+        {
+          "mobId": "вервольф",
+          "slot": 3,
+          "damageLine": 1319,
+          "textLine": 1323,
+          "normallySelected": true
+        },
+        {
+          "mobId": "вервольф",
+          "slot": 4,
+          "damageLine": 1327,
+          "textLine": 1328,
+          "normallySelected": false
+        }
+      ],
+      "references": [
+        {
+          "location": "рассчет_вреда",
+          "lines": [
+            54,
+            55,
+            56,
+            70
+          ]
+        }
+      ],
+      "nativeVerificationRef": "nativeVerification"
+    },
+    {
+      "id": "DORMANT_ATTACK_DEFINITIONS",
+      "classification": "proven_static_selection_limit_intent_unresolved",
+      "detailKo": "일반 AI는 클래스마다 1 또는 1~2 또는 1~3만 선택하므로, 일반 AI에 연결된 슈퍼공격 27개와 일부 3번 공격 7개는 정상 호출에서 선택되지 않는다. 전체 게임에서 별도 AI가 선택한다는 근거는 현재 jack.qsp에 없다. 설계 의도나 수정 필요성은 별도 결정 대상이다.",
+      "instances": [
+        {
+          "id": "голая_рабыня",
+          "name": "헐벗은 노예",
+          "slot": 3,
+          "damage": "рубящий",
+          "line": 230
+        },
+        {
+          "id": "исчадие_молодь",
+          "name": "성장기 안개 괴물",
+          "slot": 4,
+          "damage": "психический",
+          "line": 1013
+        },
+        {
+          "id": "исчадие",
+          "name": "안개 괴물",
+          "slot": 4,
+          "damage": "психический",
+          "line": 1079
+        },
+        {
+          "id": "исчадие",
+          "name": "안개 괴물",
+          "slot": 5,
+          "damage": "дробящий",
+          "line": 1089
+        },
+        {
+          "id": "чудовщиное_исчадие",
+          "name": "거대 안개 괴물",
+          "slot": 4,
+          "damage": "психический",
+          "line": 1164
+        },
+        {
+          "id": "чудовщиное_исчадие",
+          "name": "거대 안개 괴물",
+          "slot": 5,
+          "damage": "дробящий",
+          "line": 1174
+        },
+        {
+          "id": "чудовщиное_исчадие",
+          "name": "거대 안개 괴물",
+          "slot": 6,
+          "damage": "колющий",
+          "line": 1192
+        },
+        {
+          "id": "вампир",
+          "name": "흡혈귀",
+          "slot": 4,
+          "damage": "психический",
+          "line": 1259
+        },
+        {
+          "id": "вервольф",
+          "name": "늑대인간",
+          "slot": 4,
+          "damage": "режущий",
+          "line": 1328
+        },
+        {
+          "id": "лич",
+          "name": "리치",
+          "slot": 4,
+          "damage": "психический",
+          "line": 1397
+        },
+        {
+          "id": "ogre",
+          "name": "오우거",
+          "slot": 4,
+          "damage": "дробящий",
+          "line": 1462
+        },
+        {
+          "id": "warg",
+          "name": "와그",
+          "slot": 4,
+          "damage": "психический",
+          "line": 1577
+        },
+        {
+          "id": "orc",
+          "name": "오크 전사",
+          "slot": 3,
+          "damage": "дробящий",
+          "line": 1640
+        },
+        {
+          "id": "champion_corvus",
+          "name": "특급 투사",
+          "slot": 4,
+          "damage": "психический",
+          "line": 2819
+        },
+        {
+          "id": "champion_kamira",
+          "name": "특급 투사",
+          "slot": 4,
+          "damage": "дробящий",
+          "line": 2890
+        },
+        {
+          "id": "champion_serpis",
+          "name": "특급 투사",
+          "slot": 4,
+          "damage": "рубящий",
+          "line": 2958
+        },
+        {
+          "id": "champion_taurus",
+          "name": "특급 투사",
+          "slot": 4,
+          "damage": "дробящий",
+          "line": 3026
+        },
+        {
+          "id": "champion_vatican",
+          "name": "특급 투사",
+          "slot": 4,
+          "damage": "рубящий",
+          "line": 3096
+        },
+        {
+          "id": "champion_absolute",
+          "name": "최후의 심판자",
+          "slot": 4,
+          "damage": "рубящий",
+          "line": 3163
+        },
+        {
+          "id": "исчадие_арены",
+          "name": "아레나 안개 괴물",
+          "slot": 4,
+          "damage": "психический",
+          "line": 3233
+        },
+        {
+          "id": "исчадие_арены",
+          "name": "아레나 안개 괴물",
+          "slot": 5,
+          "damage": "дробящий",
+          "line": 3243
+        },
+        {
+          "id": "gladiatrix1",
+          "name": "여검투사",
+          "slot": 3,
+          "damage": "рубящий",
+          "line": 3314
+        },
+        {
+          "id": "gladiatrix1",
+          "name": "여검투사",
+          "slot": 4,
+          "damage": "рубящий",
+          "line": 3318
+        },
+        {
+          "id": "gladiatrix2",
+          "name": "여검투사",
+          "slot": 3,
+          "damage": "рубящий",
+          "line": 3378
+        },
+        {
+          "id": "gladiatrix2",
+          "name": "여검투사",
+          "slot": 4,
+          "damage": "дробящий",
+          "line": 3382
+        },
+        {
+          "id": "gladiatrix3",
+          "name": "여검투사",
+          "slot": 3,
+          "damage": "огонь",
+          "line": 3442
+        },
+        {
+          "id": "gladiatrix3",
+          "name": "여검투사",
+          "slot": 4,
+          "damage": "рубящий",
+          "line": 3446
+        },
+        {
+          "id": "egeya",
+          "name": "에게야",
+          "slot": 3,
+          "damage": "рубящий",
+          "line": 3514
+        },
+        {
+          "id": "egeya",
+          "name": "에게야",
+          "slot": 4,
+          "damage": "рубящий",
+          "line": 3520
+        },
+        {
+          "id": "vatican_paladin",
+          "name": "성기사",
+          "slot": 4,
+          "damage": "рубящий",
+          "line": 3594
+        },
+        {
+          "id": "strazhnik",
+          "name": "포탈 가디언",
+          "slot": 4,
+          "damage": "дробящий",
+          "line": 3659
+        },
+        {
+          "id": "grinch",
+          "name": "그린치",
+          "slot": 3,
+          "damage": "рубящий",
+          "line": 3722
+        },
+        {
+          "id": "grinch",
+          "name": "그린치",
+          "slot": 4,
+          "damage": "рубящий",
+          "line": 3726
+        },
+        {
+          "id": "erza",
+          "name": "엘자",
+          "slot": 4,
+          "damage": "рубящий",
+          "line": 3792
+        }
+      ],
+      "references": [
+        {
+          "location": "искусственный_идиот",
+          "lines": [
+            17,
+            18,
+            21,
+            22,
+            25,
+            26,
+            27
+          ]
+        }
+      ]
+    },
+    {
+      "id": "LICH_LITERAL_ELEMENT_VS_DAMAGE",
+      "classification": "proven_text_and_value_divergence_intent_unresolved",
+      "mobIds": [
+        "лич"
+      ],
+      "detailKo": "실제로 선택되는 1번 문구는 번개지만 피해값은 колющий(관통), 3번 문구는 화염구지만 피해값은 дробящий(타격)다. 3번은 엔진에서 체력 감소 대신 지구력·정신력 감소 분기를 탄다. 이 사실은 그림을 보지 않아도 확인된다.",
+      "instances": [
+        {
+          "slot": 1,
+          "textLine": 1374,
+          "damageLine": 1370,
+          "damage": "колющий"
+        },
+        {
+          "slot": 3,
+          "textLine": 1388,
+          "damageLine": 1384,
+          "damage": "дробящий"
+        }
+      ]
+    },
+    {
+      "id": "MORNINGSTAR_ITEM_CATEGORY_DIFFERS",
+      "classification": "proven_explicit_weapon_category_difference_intent_unresolved",
+      "mobIds": [
+        "kimerian_d"
+      ],
+      "detailKo": "킴메르 D의 실제 선택 1·2번 문구는 모닝스타이며 두 피해값은 рубящий(베기)다. 장비 사전의 моргенштерн 기본 피해는 дробящий(타격)다. MOB는 장비 사전을 참조하지 않으므로 코드 실행 누락으로 단정하지 않는다.",
+      "references": [
+        {
+          "location": "#противники",
+          "lines": [
+            2692,
+            2696,
+            2698,
+            2702
+          ]
+        },
+        {
+          "location": "#боевые_предметы",
+          "lines": [
+            879
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GRINCH_THROW_AND_DORMANT_POKER",
+      "classification": "proven_text_and_value_pairing_semantic_review",
+      "mobIds": [
+        "grinch"
+      ],
+      "detailKo": "실제 선택되는 2번은 의자·접시 투척 문구지만 рубящий(베기)로 처리한다. 3번 부지깽이 문구도 베기이나 클래스가 рядовой라 평상 선택되지 않는다. 던지는 접시의 파편 등 해석 여지가 있어 무기 오배정 확정으로 분류하지 않는다.",
+      "instances": [
+        {
+          "slot": 2,
+          "textLine": 3716,
+          "damageLine": 3712,
+          "normallySelected": true
+        },
+        {
+          "slot": 3,
+          "textLine": 3722,
+          "damageLine": 3718,
+          "normallySelected": false
+        }
+      ]
+    }
+  ],
+  "exceptions": {
+    "dynamicTrainingOpponent": {
+      "id": "воспитуемая",
+      "sourceLocation": "начать_бой",
+      "weaponRuleLines": [
+        263,
+        293
+      ],
+      "attackDefinitionLines": [
+        297,
+        330
+      ],
+      "defaultDamage": "дробящий",
+      "weaponRules": [
+        {
+          "line": 266,
+          "weaponIds": [
+            "глушилка"
+          ],
+          "damage": "дробящий",
+          "baseDamageBonus": 1,
+          "source": "if $slave['left_wpn'] = 'глушилка' or $slave['right_wpn'] = 'глушилка': slave_base_dmg = 1+slave['gladiatrix'] & $slave_dmg_type = 'дробящий'"
+        },
+        {
+          "line": 267,
+          "weaponIds": [
+            "кастет"
+          ],
+          "damage": "дробящий",
+          "baseDamageBonus": 1,
+          "source": "if $slave['left_wpn'] = 'кастет' or $slave['right_wpn'] = 'кастет': slave_base_dmg = 1+slave['gladiatrix'] & $slave_dmg_type = 'дробящий'"
+        },
+        {
+          "line": 268,
+          "weaponIds": [
+            "кинжал"
+          ],
+          "damage": "колющий",
+          "baseDamageBonus": 1,
+          "source": "if $slave['left_wpn'] = 'кинжал' or $slave['right_wpn'] = 'кинжал': slave_base_dmg = 1+slave['gladiatrix'] & $slave_dmg_type = 'колющий'"
+        },
+        {
+          "line": 269,
+          "weaponIds": [
+            "стилет"
+          ],
+          "damage": "колющий",
+          "baseDamageBonus": 1,
+          "source": "if $slave['left_wpn'] = 'стилет' or $slave['right_wpn'] = 'стилет': slave_base_dmg = 1+slave['gladiatrix'] & $slave_dmg_type = 'колющий'"
+        },
+        {
+          "line": 270,
+          "weaponIds": [
+            "нагайка"
+          ],
+          "damage": "психический",
+          "baseDamageBonus": 1,
+          "source": "if $slave['left_wpn'] = 'нагайка' or $slave['right_wpn'] = 'нагайка': slave_base_dmg = 1+slave['gladiatrix'] & $slave_dmg_type = 'психический'"
+        },
+        {
+          "line": 271,
+          "weaponIds": [
+            "тесак"
+          ],
+          "damage": "рубящий",
+          "baseDamageBonus": 1,
+          "source": "if $slave['left_wpn'] = 'тесак' or $slave['right_wpn'] = 'тесак': slave_base_dmg = 1+slave['gladiatrix'] & $slave_dmg_type = 'рубящий'"
+        },
+        {
+          "line": 273,
+          "weaponIds": [
+            "кнут"
+          ],
+          "damage": "психический",
+          "baseDamageBonus": 3,
+          "source": "if $slave['back_wpn'] = 'кнут' or $slave['left_wpn'] = 'кнут' or $slave['right_wpn'] = 'кнут': slave_base_dmg = 3+slave['gladiatrix'] & $slave_dmg_type = 'психический'"
+        },
+        {
+          "line": 274,
+          "weaponIds": [
+            "демократизатор"
+          ],
+          "damage": "дробящий",
+          "baseDamageBonus": 3,
+          "source": "if $slave['back_wpn'] = 'демократизатор' or $slave['left_wpn'] = 'демократизатор' or $slave['right_wpn'] = 'демократизатор': slave_base_dmg = 3+slave['gladiatrix'] & $slave_dmg_type = 'дробящий'"
+        },
+        {
+          "line": 275,
+          "weaponIds": [
+            "мулава"
+          ],
+          "damage": "дробящий",
+          "baseDamageBonus": 4,
+          "source": "if $slave['back_wpn'] = 'мулава' or $slave['left_wpn'] = 'мулава' or $slave['right_wpn'] = 'мулава': slave_base_dmg = 4+slave['gladiatrix'] & $slave_dmg_type = 'дробящий'"
+        },
+        {
+          "line": 276,
+          "weaponIds": [
+            "шпага"
+          ],
+          "damage": "колющий",
+          "baseDamageBonus": 3,
+          "source": "if $slave['back_wpn'] = 'шпага' or $slave['left_wpn'] = 'шпага' or $slave['right_wpn'] = 'шпага': slave_base_dmg = 3+slave['gladiatrix'] & $slave_dmg_type = 'колющий'"
+        },
+        {
+          "line": 277,
+          "weaponIds": [
+            "рапира"
+          ],
+          "damage": "колющий",
+          "baseDamageBonus": 3,
+          "source": "if $slave['back_wpn'] = 'рапира' or $slave['left_wpn'] = 'рапира' or $slave['right_wpn'] = 'рапира': slave_base_dmg = 3+slave['gladiatrix'] & $slave_dmg_type = 'колющий'"
+        },
+        {
+          "line": 278,
+          "weaponIds": [
+            "кончар"
+          ],
+          "damage": "колющий",
+          "baseDamageBonus": 3,
+          "source": "if $slave['back_wpn'] = 'кончар' or $slave['left_wpn'] = 'кончар' or $slave['right_wpn'] = 'кончар': slave_base_dmg = 3+slave['gladiatrix'] & $slave_dmg_type = 'колющий'"
+        },
+        {
+          "line": 279,
+          "weaponIds": [
+            "гладиус"
+          ],
+          "damage": "колющий",
+          "baseDamageBonus": 3,
+          "source": "if $slave['back_wpn'] = 'гладиус' or $slave['left_wpn'] = 'гладиус' or $slave['right_wpn'] = 'гладиус': slave_base_dmg = 3+slave['gladiatrix'] & $slave_dmg_type = 'колющий'"
+        },
+        {
+          "line": 280,
+          "weaponIds": [
+            "трезубец"
+          ],
+          "damage": "колющий",
+          "baseDamageBonus": 3,
+          "source": "if $slave['back_wpn'] = 'трезубец' or $slave['left_wpn'] = 'трезубец' or $slave['right_wpn'] = 'трезубец': slave_base_dmg = 3+slave['gladiatrix'] & $slave_dmg_type = 'колющий'"
+        },
+        {
+          "line": 281,
+          "weaponIds": [
+            "бастард"
+          ],
+          "damage": "рубящий",
+          "baseDamageBonus": 3,
+          "source": "if $slave['back_wpn'] = 'бастард' or $slave['left_wpn'] = 'бастард' or $slave['right_wpn'] = 'бастард': slave_base_dmg = 3+slave['gladiatrix'] & $slave_dmg_type = 'рубящий'"
+        },
+        {
+          "line": 282,
+          "weaponIds": [
+            "мачете"
+          ],
+          "damage": "рубящий",
+          "baseDamageBonus": 3,
+          "source": "if $slave['back_wpn'] = 'мачете' or $slave['left_wpn'] = 'мачете' or $slave['right_wpn'] = 'мачете': slave_base_dmg = 3+slave['gladiatrix'] & $slave_dmg_type = 'рубящий'"
+        },
+        {
+          "line": 283,
+          "weaponIds": [
+            "катана"
+          ],
+          "damage": "рубящий",
+          "baseDamageBonus": 3,
+          "source": "if $slave['back_wpn'] = 'катана' or $slave['left_wpn'] = 'катана' or $slave['right_wpn'] = 'катана': slave_base_dmg = 3+slave['gladiatrix'] & $slave_dmg_type = 'рубящий'"
+        },
+        {
+          "line": 285,
+          "weaponIds": [
+            "бита"
+          ],
+          "damage": "дробящий",
+          "baseDamageBonus": 5,
+          "source": "if $slave['back_wpn'] = 'бита': slave_base_dmg = 5+slave['gladiatrix'] & $slave_dmg_type = 'дробящий'"
+        },
+        {
+          "line": 286,
+          "weaponIds": [
+            "скотобой"
+          ],
+          "damage": "психический",
+          "baseDamageBonus": 5,
+          "source": "if $slave['back_wpn'] = 'скотобой': slave_base_dmg = 5+slave['gladiatrix'] & $slave_dmg_type = 'психический'"
+        },
+        {
+          "line": 287,
+          "weaponIds": [
+            "фламберг"
+          ],
+          "damage": "рубящий",
+          "baseDamageBonus": 5,
+          "source": "if $slave['back_wpn'] = 'фламберг': slave_base_dmg = 5+slave['gladiatrix'] & $slave_dmg_type = 'рубящий'"
+        },
+        {
+          "line": 288,
+          "weaponIds": [
+            "нагината"
+          ],
+          "damage": "колющий",
+          "baseDamageBonus": 5,
+          "source": "if $slave['back_wpn'] = 'нагината': slave_base_dmg = 5+slave['gladiatrix'] & $slave_dmg_type = 'колющий'"
+        },
+        {
+          "line": 289,
+          "weaponIds": [
+            "моргенштерн"
+          ],
+          "damage": "дробящий",
+          "baseDamageBonus": 5,
+          "source": "if $slave['back_wpn'] = 'моргенштерн': slave_base_dmg = 5+slave['gladiatrix'] & $slave_dmg_type = 'дробящий'"
+        },
+        {
+          "line": 290,
+          "weaponIds": [
+            "грейтекс"
+          ],
+          "damage": "рубящий",
+          "baseDamageBonus": 5,
+          "source": "if $slave['back_wpn'] = 'грейтекс': slave_base_dmg = 5+slave['gladiatrix'] & $slave_dmg_type = 'рубящий'"
+        }
+      ],
+      "orderedRules": true,
+      "lastMatchingRuleWins": true,
+      "forcedAttackOverride": {
+        "condition": "slave_attack = 1",
+        "line": 293,
+        "damage": "колющий",
+        "bonus": 1
+      },
+      "messageWeaponSpecificity": "Generic melee lines with optional 무기로 suffix; no item name or item attack-text lookup.",
+      "normallySelectedSlots": [
+        1,
+        2,
+        3
+      ],
+      "itemTypesNotExplicitlyHandled": [
+        {
+          "id": "безоружный",
+          "damage": "дробящий",
+          "line": 21
+        },
+        {
+          "id": "пилохлыст",
+          "damage": "рубящий",
+          "line": 273
+        },
+        {
+          "id": "табуретка",
+          "damage": "дробящий",
+          "line": 756
+        },
+        {
+          "id": "посох_огня",
+          "damage": "огонь",
+          "line": 961
+        },
+        {
+          "id": "образец",
+          "damage": "дробящий",
+          "line": 987
+        },
+        {
+          "id": "святой_талисман",
+          "damage": "свет",
+          "line": 1026
+        }
+      ],
+      "unhandledItemCaveat": "These IDs use default/unmatched handling if they reach these slots. Equipment eligibility was not established, so this is not classified as a proven player-visible defect."
+    },
+    "colosseumRandomImages": {
+      "location": "colosseum_fight",
+      "ranges": [
+        {
+          "mobId": "голая_рабыня",
+          "lines": [
+            6,
+            12
+          ],
+          "variants": 3
+        },
+        {
+          "mobId": "госпожа",
+          "lines": [
+            14,
+            22
+          ],
+          "variants": 3
+        },
+        {
+          "mobId": "шиноби",
+          "lines": [
+            24,
+            30
+          ],
+          "variants": 3
+        },
+        {
+          "mobId": "латница",
+          "lines": [
+            32,
+            38
+          ],
+          "variants": 3
+        },
+        {
+          "mobId": "амазонка",
+          "lines": [
+            40,
+            45
+          ],
+          "variants": 2
+        }
+      ],
+      "effect": "Only $силуэт_моба and $аватара_моба mutate. Attack definitions and assigned weapon IDs do not change."
+    },
+    "randomMobWeaponPools": "No fixed MOB item-weapon binding or random weapon pool was found. Enemy-ID/portrait randomization must not be described as random item-weapon assignment.",
+    "gladiatorPlayerStyleWeapons": {
+      "definitionLocation": "#static_base",
+      "lines": [
+        157,
+        180
+      ],
+      "useLocation": "$gladiator_fight_start",
+      "useLines": [
+        34,
+        36
+      ],
+      "note": "$style_wpn/$style_freehand equip the player-controlled slave side, not the MOB whose turn is executed by искусственный_идиот."
+    }
+  },
+  "evidence": [
+    {
+      "location": "ход_противников",
+      "start": 5,
+      "end": 13,
+      "code": [
+        "i = 0",
+        ":loop",
+        "if i < количество_врагов:",
+        "\ti += 1",
+        " \tif враг[i] = 1:",
+        "  \t\tgs '<<$интеллект[$враг[i]]>>'",
+        "\tend",
+        "\tjump 'loop'",
+        "end"
+      ]
+    },
+    {
+      "location": "искусственный_идиот",
+      "start": 14,
+      "end": 42,
+      "code": [
+        "вред_на_рассчет = базовый_вред[$враг[i]]",
+        "",
+        "!determine the action",
+        "if $класс_моба[$враг[i]] = \"пешка\":",
+        "\tам = 1",
+        "end",
+        "",
+        "if $класс_моба[$враг[i]] = \"рядовой\":",
+        "\tам = 1 + ((day + sparks + rand(1,6)) mod 2) &! pseudo-rand(1,2) using current spirit value of defender (player) plus this enemy as offset - ImperatorAugustus",
+        "end",
+        "",
+        ":loop",
+        "if $класс_моба[$враг[i]] = \"элитный\":",
+        "\tам = 1 + ((day + sparks + rand(1,6)) mod 3) &! pseudo-rand(1,3) using current spirit value of defender (player) plus this enemy as offset - ImperatorAugustus",
+        "end",
+        "",
+        "if ам = 1:",
+        "\t$атака[i] = '<<$атака_1_тип[$враг[i]]>>'",
+        "\t$рассчетный_тип_вреда = '<<$атака_1_тип_вреда[$враг[i]]>>'",
+        "end",
+        "",
+        "if ам = 2:",
+        "\t$атака[i] = '<<$атака_2_тип[$враг[i]]>>'",
+        "\t$рассчетный_тип_вреда = '<<$атака_2_тип_вреда[$враг[i]]>>'",
+        "end",
+        "",
+        "if ам = 3:",
+        "\t$атака[i] = '<<$атака_3_тип[$враг[i]]>>'",
+        "\t$рассчетный_тип_вреда = '<<$атака_3_тип_вреда[$враг[i]]>>'"
+      ]
+    },
+    {
+      "location": "искусственный_идиот",
+      "start": 78,
+      "end": 88,
+      "code": [
+        "gs 'рассчет_вреда'",
+        "",
+        "$действия_врага[i] = '<br>'",
+        "if  ам = 1: $действия_врага[i] += \"<<$атака_1_текст[$враг[i]]>>\"",
+        "if  ам = 2: $действия_врага[i] += \"<<$атака_2_текст[$враг[i]]>>\"",
+        "if  ам = 3: $действия_врага[i] += \"<<$атака_3_текст[$враг[i]]>>\"",
+        "if  ам = 4: $действия_врага[i] += \"<<$суператака_1_текст[$враг[i]]>>\"",
+        "if  ам = 5: $действия_врага[i] += \"<<$суператака_2_текст[$враг[i]]>>\"",
+        "if  ам = 6: $действия_врага[i] += \"<<$суператака_3_текст[$враг[i]]>>\"",
+        "",
+        "$действия_врага[i] += \" [<<нанесенный_вред[atk]>>] \""
+      ]
+    },
+    {
+      "location": "рассчет_вреда",
+      "start": 53,
+      "end": 56,
+      "code": [
+        "",
+        "if def = 0: dynamic 'модифер = модификатор_<<$рассчетный_тип_вреда>>'",
+        "if def > 0: dynamic 'модифер = модификатор_<<$рассчетный_тип_вреда>>[$враг[def]]'",
+        "нанесенный_вред[atk] += модифер"
+      ]
+    },
+    {
+      "location": "рассчет_вреда",
+      "start": 70,
+      "end": 70,
+      "code": [
+        "$тип_нанесенного_вреда[atk] = $рассчетный_тип_вреда"
+      ]
+    },
+    {
+      "location": "конец_раунда",
+      "start": 115,
+      "end": 135,
+      "code": [
+        "\t\tif $тип_нанесенного_вреда[i] = 'психический':",
+        "\t\t\tдух_игрока -= cheat_fight_dif * нанесенный_вред[i]",
+        "\t\t\tдух_врага[i] += нанесенный_вред[i]/2",
+        "\t\t\tjump 'loop2'",
+        "\t\tend",
+        "\t\tif $тип_нанесенного_вреда[i] = 'дробящий':",
+        "\t\t\tвыносливость_игрока -= cheat_fight_dif * нанесенный_вред[i]",
+        "\t\t\tдух_игрока -= cheat_fight_dif * нанесенный_вред[i]",
+        "\t\t\tдух_врага[i] += нанесенный_вред[i]/2",
+        "\t\t\tjump 'loop2'",
+        "\t\tend",
+        "\t\t!Vatican Champion damage bug fix/hack - crushboss (disabled by ImperatorAugustus)",
+        "\t\t!if challenge_type = 1 and $ge = 'champion_vatican' and нанесенный_вред[i] > 36:",
+        "\t\t!\tнанесенный_вред[i] = rand(10,24)",
+        "\t\t!end",
+        "\t\tздоровье_игрока -= cheat_fight_dif * нанесенный_вред[i]",
+        "\t\t&! master wearing chimera gem recovers 3-16 health after every hit (amount derived from master_supermacy, excluding allure, charisma and slave-specific factors)",
+        "\t\tif chimera_gem_on = 1: здоровье_игрока = min(макс_здоровье_игрока, здоровье_игрока + min(нанесенный_вред[i], master_domination + master_str + magna_magnifika + item_supermacy_bonus)) &! healing is capped by max health and by amount of damage received",
+        "\t\tвыносливость_игрока -= cheat_fight_dif * нанесенный_вред[i]",
+        "\t\tдух_игрока -= cheat_fight_dif * нанесенный_вред[i]",
+        "\t\tдух_врага[i] += нанесенный_вред[i]/2"
+      ]
+    }
+  ],
+  "mobs": [
+    {
+      "id": "подручный",
+      "name": "하인",
+      "class": "пешка",
+      "ai": "искусственный_идиот",
+      "description": "<br>고무 몽둥이로 무장한 검은 의사의 보조",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "сильная",
+          "damage": "дробящий",
+          "text": "보조는 고무 몽둥이에 <font color='red'>온 힘</font>을 실어서 당신을 가격했다",
+          "line": 48,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 43,
+          "damageLine": 44
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "канибал",
+      "name": "식인종",
+      "class": "пешка",
+      "ai": "искусственный_идиот",
+      "description": "<br>쿠루병 걸린 식인종, 병들어서 몸을 부르르 떨고 있다",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "сильная",
+          "damage": "дробящий",
+          "text": "병걸린 식인종이 부들대는 손에 <font color='red'>힘</font>을 주어 당신을 교살하려고 했다",
+          "line": 84,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 79,
+          "damageLine": 80
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "калека",
+      "name": "불구자",
+      "class": "пешка",
+      "ai": "искусственный_идиот",
+      "description": "<br>목발짚은 불구자",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "сильная",
+          "damage": "дробящий",
+          "text": "불구는 놀랄만한 <font color='red'>힘</font>의 목발로 당신을 후려쳤다",
+          "line": 108,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 103,
+          "damageLine": 104
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "нищеброд",
+      "name": "거지",
+      "class": "пешка",
+      "ai": "искусственный_идиот",
+      "description": "<br>걸레만도 못한 차림의 거지",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "дробящий",
+          "text": "거지는 놀라운 <font color='purple'>정확성</font>으로 당신에게 돌을 집어 던졌다",
+          "line": 132,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 127,
+          "damageLine": 128
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "безумец",
+      "name": "미치광이",
+      "class": "пешка",
+      "ai": "искусственный_идиот",
+      "description": "<br>묘한 표정의 미치광이",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "рубящий",
+          "text": "이 미치광이는 당신의 <font color='purple'>목덜미</font>를 물어 뜯으려 한다.",
+          "line": 165,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 159,
+          "damageLine": 160
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "изможденный",
+      "name": "말라깽이",
+      "class": "пешка",
+      "ai": "искусственный_идиот",
+      "description": "<br>초췌한 늙은이",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "быстрая",
+          "damage": "колющий",
+          "text": "초췌한 늙은이는 손수 연마한 무기를 사용해 놀라운 <font color='green'>속도</font>로 휘두르며 당신을 그었다",
+          "line": 192,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 187,
+          "damageLine": 188
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "голая_рабыня",
+      "name": "헐벗은 노예",
+      "class": "рядовой",
+      "ai": "искусственный_идиот",
+      "description": "<br> 투사 훈련소 학생들은 전투시 비무장 알몸으로 보내진다. 투사가 되기위한 훈련 필수 과정이기에, 늘 이렇게 대중에게 즐거움을 준다.",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "дробящий",
+          "text": "헐벗은 노예가 당신의 사타구니를 <font color='purple'>정확하게</font> 걷어찬다",
+          "line": 218,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 213,
+          "damageLine": 214
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "헐벗은 노예가 당신을 손톱으로 <font color='green'>미친 듯이</font> 긁어댔다",
+          "line": 224,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 219,
+          "damageLine": 220
+        },
+        {
+          "slot": 3,
+          "type": "сильная",
+          "damage": "рубящий",
+          "text": "헐벗은 노예가 당신을 이빨로 <font color='red'>사납게</font> 물었다",
+          "line": 230,
+          "normallySelected": false,
+          "selectionStatus": "defined-but-not-normally-selected",
+          "typeLine": 225,
+          "damageLine": 226
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "госпожа",
+      "name": "여교관",
+      "class": "рядовой",
+      "ai": "искусственный_идиот",
+      "description": "<br> 채찍이 치명상용 무기는 아니지만, 투사들의 경기에 애용 된다. 모든 투사 훈련소 졸업생은 이걸 쓸 줄 알고, 받아낼 줄도 안다.",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "психический",
+          "text": "여교관이 휘두르는 척 <font color='purple'>속임수</font>를 쓰고, 예상 않던 방향으로 당신을 쳤다",
+          "line": 274,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 269,
+          "damageLine": 270
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "психический",
+          "text": "여교관이 채찍으로 당신을 <font color='green'>맹렬하게</font> 여기 저기 후려댔다",
+          "line": 280,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 275,
+          "damageLine": 276
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "шиноби",
+      "name": "여닌자",
+      "class": "рядовой",
+      "ai": "искусственный_идиот",
+      "description": "<br> 여닌자들은, 강한 공격력이나 단단한 갑옷을 쓰지 않고, 짧은 검과 민첩한 기동성에 의존한다.",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "колющий",
+          "text": "여닌자가 예상치 못한 순간을 노려 당신을 <font color='purple'>정확히</font> 찔렀다.",
+          "line": 324,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 319,
+          "damageLine": 320
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "여닌자는 손에 들린 단검을 프로펠러 돌리듯 <font color='green'>빠르게</font>돌렸다",
+          "line": 330,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 325,
+          "damageLine": 326
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "амазонка",
+      "name": "여전사",
+      "class": "рядовой",
+      "ai": "искусственный_идиот",
+      "description": "<br> 강한 육체의 노예는 종종 야만적인 여전사같은 결투방법을 택한다. 거의 알몸상태이지만 무거운 양손무기를 사용한다.",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "сильная",
+          "damage": "дробящий",
+          "text": "여전사는 양손 무기를 당신을 향해 <font color='red'>전력으로</font> 휘둘렀다",
+          "line": 372,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 367,
+          "damageLine": 368
+        },
+        {
+          "slot": 2,
+          "type": "сильная",
+          "damage": "колющий",
+          "text": "여전사는 망치 뒤 쪽의 가시를 사용해 당신에게 <font color='red'>치명상</font>을 주려고 했다",
+          "line": 378,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 373,
+          "damageLine": 374
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "латница",
+      "name": "철갑투사",
+      "class": "рядовой",
+      "ai": "искусственный_идиот",
+      "description": "<br> 검투사들이 갑옷을 입는다 해도, 이 갑옷은 주요부위를 개방하게끔 디자인 되었다. 결국 결투의 주요 목적은 관중을 즐겁게 하기 위한 오락이기 때문이다.",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "сильная",
+          "damage": "рубящий",
+          "text": "철갑투사는 칼을 들고, 당신의 머리를 있는 <font color='red'>힘껏</font> 내려쳤다",
+          "line": 420,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 415,
+          "damageLine": 416
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "철갑투사는 당신의 중심을 흐트리려고 <font color='green'>수 차례</font> 속공을 퍼부었다",
+          "line": 426,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 421,
+          "damageLine": 422
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "паладин",
+      "name": "성기사",
+      "class": "рядовой",
+      "ai": "искусственный_идиот",
+      "description": "<br>타우루스 가문에 복무중인 성기사",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "сильная",
+          "damage": "рубящий",
+          "text": "성기사는 칼로 당신의 머리를 <font color='red'>강하게</font> 내려쳤다",
+          "line": 471,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 466,
+          "damageLine": 467
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "성기사는 양손검의 방향을 <font color='green'>빠르게</font> 바꿔가며 예상치 못한 방향으로 공격했다",
+          "line": 477,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 472,
+          "damageLine": 473
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "пехотинец",
+      "name": "병사",
+      "class": "рядовой",
+      "ai": "искусственный_идиот",
+      "description": "<br>타우루스 가문에 복무중인 병사",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "колющий",
+          "text": "병사는 달려들어 <font color='purple'>정확하게</font> 창을 찔렀다",
+          "line": 521,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 516,
+          "damageLine": 517
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "колющий",
+          "text": "병사는 창으로 당신을 <font color='green'>재빠르게</font> 찔러 왔다",
+          "line": 528,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 522,
+          "damageLine": 523
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "козлорогий",
+      "name": "염소 머리",
+      "class": "рядовой",
+      "ai": "искусственный_идиот",
+      "description": "<br>염소 머리 짐승",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "сильная",
+          "damage": "рубящий",
+          "text": "염소 머리는 양손도끼로 당신을 <font color='red'>무식하게</font> 내려쳤다",
+          "line": 573,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 568,
+          "damageLine": 569
+        },
+        {
+          "slot": 2,
+          "type": "сильная",
+          "damage": "дробящий",
+          "text": "이 짐승놈은 자기 뿔로 당신을 <font color='green'>빠르게</font> 들이 받았다.",
+          "line": 579,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 574,
+          "damageLine": 575
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "свинорылый",
+      "name": "돼지낯짝",
+      "class": "рядовой",
+      "ai": "искусственный_идиот",
+      "description": "<br>돼지낯 짐승",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "сильная",
+          "damage": "дробящий",
+          "text": "돼지낯짝은 웩웩대며 당신을 나무 곤봉으로 <font color='red'>강하게</font> 후려 갈겼다",
+          "line": 623,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 618,
+          "damageLine": 619
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "дробящий",
+          "text": "돼지낯짝은 <font color='green'>빠른</font> 돌진으로 당신을 바닥에 넘어뜨렸다",
+          "line": 629,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 624,
+          "damageLine": 625
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "жабован",
+      "name": "두꺼비인간",
+      "class": "рядовой",
+      "ai": "искусственный_идиот",
+      "description": "<br>두꺼비 짐승",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "дробящий",
+          "text": "두꺼비인간은 끈적이는 보라색 혀를 뱉어 당신의 얼굴을 <font color='purple'>정확히</font> 핥았다",
+          "line": 673,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 668,
+          "damageLine": 669
+        },
+        {
+          "slot": 2,
+          "type": "сильная",
+          "damage": "дробящий",
+          "text": "두꺼비인간은 빠르게 뛰며 당신을 <font color='red'>덮치고</font> 짓누른다",
+          "line": 679,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 674,
+          "damageLine": 675
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "крысолюд",
+      "name": "쥐인간",
+      "class": "рядовой",
+      "ai": "искусственный_идиот",
+      "description": "<br>쥐 짐승",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "режущий",
+          "text": "쥐인간은 곡선형 톱날 칼로 당신의 힘줄을 <font color='purple'>자르려고</font> 했다",
+          "line": 724,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 718,
+          "damageLine": 719
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "режущий",
+          "text": "쥐인간은 길다란 칼로 당신을 <font color='green'>푹 찔렀다</font>",
+          "line": 732,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 726,
+          "damageLine": 727
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "garsid",
+      "name": "가르시드",
+      "class": "рядовой",
+      "ai": "искусственный_идиот",
+      "description": "   수수께끼의 생물.",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "психический",
+          "text": "가르시드가 살려 달라고 <font color='purple'>애원</font>하려 든다.",
+          "line": 777,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 772,
+          "damageLine": 773
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "психический",
+          "text": "가르시드가 <font color='green'>도망치려</font> 한다.",
+          "line": 783,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 778,
+          "damageLine": 779
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "черный_медик",
+      "name": "검은 의사",
+      "class": "рядовой",
+      "ai": "искусственный_идиот",
+      "description": "<br>이 남자는 싱싱한 장기를 찾아다닌다",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "колющий",
+          "text": "검은 의사는 기계로 만든 주사기로, 당신의 아픈 부분만 <font color='purple'>골라</font> 찔렀다",
+          "line": 829,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 824,
+          "damageLine": 825
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "암흑가 의사는 부검용 둥근 톱을 <font color='green'>미친듯이</font> 휘둘렀다",
+          "line": 835,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 830,
+          "damageLine": 831
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "безумный_архимаг",
+      "name": "광기의 대마법사",
+      "class": "элитный",
+      "ai": "ии_безумный_архимаг",
+      "description": "산발한 머리카락 사이로 광기 어린 안광을 번뜩이는 노마법사다. 극도로 공격적이며 위험하기 짝이 없다.",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "быстрая",
+          "damage": "огонь",
+          "text": "광인이 <font color='green'>재빠르게</font> 구상 번개를 던졌다.",
+          "line": 896,
+          "normallySelected": false,
+          "selectionStatus": "missing-ai-location",
+          "typeLine": 890,
+          "damageLine": 891
+        },
+        {
+          "slot": 2,
+          "type": "сильная",
+          "damage": "огонь",
+          "text": "미친 듯이 폭소하며 노인이 <font color='red'>강력한</font> 화염 줄기를 뿜어냈다.",
+          "line": 904,
+          "normallySelected": false,
+          "selectionStatus": "missing-ai-location",
+          "typeLine": 898,
+          "damageLine": 899
+        },
+        {
+          "slot": 3,
+          "type": "точная",
+          "damage": "колющий",
+          "text": "노인의 마력탄이 당신의 가슴에 <font color='purple'>정확히</font> 꽂혔다.",
+          "line": 912,
+          "normallySelected": false,
+          "selectionStatus": "missing-ai-location",
+          "typeLine": 906,
+          "damageLine": 907
+        },
+        {
+          "slot": 4,
+          "type": "быстрая",
+          "damage": "холод",
+          "text": "노인이 주문을 중얼거리자, 당신의 몸이 <font color='green'>순식간에</font> 얼음으로 뒤덮였다.",
+          "line": 919,
+          "normallySelected": false,
+          "selectionStatus": "missing-ai-location",
+          "typeLine": 916,
+          "damageLine": 917
+        },
+        {
+          "slot": 5,
+          "type": "сильная",
+          "damage": "огонь",
+          "text": "노인이 주문을 외우자 머리 위에서 <font color='red'>거대한 화염구</font>가 폭발했다.",
+          "line": 931,
+          "normallySelected": false,
+          "selectionStatus": "missing-ai-location",
+          "typeLine": 928,
+          "damageLine": 929
+        },
+        {
+          "slot": 6,
+          "type": "точная",
+          "damage": "молния",
+          "text": "광인의 벼락이 당신의 가슴 한복판을 <font color='purple'>정통으로</font> 강타했다.",
+          "line": 941,
+          "normallySelected": false,
+          "selectionStatus": "missing-ai-location",
+          "typeLine": 938,
+          "damageLine": 939
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "исчадие_молодь",
+      "name": "성장기 안개 괴물",
+      "class": "элитный",
+      "ai": "искусственный_идиот",
+      "description": "<br>성장기 안개 괴물",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "колющий",
+          "text": "안개 괴물은 입을 벌려, 그 안의 입벌린 끈적한 촉수로 <font color='purple'>정확히</font> 당신의 머릴 쳤다",
+          "line": 995,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 990,
+          "damageLine": 991
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "안개 괴물은 채찍같은 촉수들로 당신을 <font color='green'>빠르게</font> 타작했다",
+          "line": 1001,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 996,
+          "damageLine": 997
+        },
+        {
+          "slot": 3,
+          "type": "сильная",
+          "damage": "дробящий",
+          "text": "안개 괴물은 머리에 있는 딱딱한 돌출형 외골격으로 당신을 <font color='red'>강하게</font> 들이받았다",
+          "line": 1007,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 1002,
+          "damageLine": 1003
+        },
+        {
+          "slot": 4,
+          "type": "точная",
+          "damage": "психический",
+          "text": "어린 안개 괴물이 촉수를 당신 쪽으로 <font color='purple'>향하게</font> 하더니 끈적한 점액을 얼굴에 뿌린다.",
+          "line": 1013,
+          "normallySelected": false,
+          "selectionStatus": "defined-but-not-normally-selected",
+          "typeLine": 1011,
+          "damageLine": 1012
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "исчадие",
+      "name": "안개 괴물",
+      "class": "элитный",
+      "ai": "искусственный_идиот",
+      "description": "<br>성숙한 안개 괴물",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "колющий",
+          "text": "안개 괴물은 입을 벌려, 그 안의 끈적한 촉수로 <font color='purple'>정확히</font> 당신의 머릴 쳤다",
+          "line": 1062,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 1057,
+          "damageLine": 1058
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "안개 괴물은 채찍같은 촉수들로 당신을 <font color='green'>빠르게</font> 타작했다",
+          "line": 1068,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 1063,
+          "damageLine": 1064
+        },
+        {
+          "slot": 3,
+          "type": "сильная",
+          "damage": "дробящий",
+          "text": "안개 괴물은 머리에 있는 딱딱한 돌출형 외골격으로 당신을 <font color='red'>강하게</font> 들이받았다",
+          "line": 1074,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 1069,
+          "damageLine": 1070
+        },
+        {
+          "slot": 4,
+          "type": "точная",
+          "damage": "психический",
+          "text": "안개 괴물은 당신의 얼굴 쪽으로 <font color='purple'>정확히</font> 촉수를 들이대고, 끈적한 액체를 뿌려댔다",
+          "line": 1079,
+          "normallySelected": false,
+          "selectionStatus": "defined-but-not-normally-selected",
+          "typeLine": 1077,
+          "damageLine": 1078
+        },
+        {
+          "slot": 5,
+          "type": "сильная",
+          "damage": "дробящий",
+          "text": "괴물은 잠시 멈추고, 당신의 전투 스타일에 대응하기 위해 눈앞에서 <font color='red'>돌연변이를</font> 일으킨다",
+          "line": 1089,
+          "normallySelected": false,
+          "selectionStatus": "defined-but-not-normally-selected",
+          "typeLine": 1087,
+          "damageLine": 1088
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "чудовщиное_исчадие",
+      "name": "거대 안개 괴물",
+      "class": "элитный",
+      "ai": "искусственный_идиот",
+      "description": "<br>한층 더 강해진 안개 괴물",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "колющий",
+          "text": "안개 괴물은 입을 벌려, 그 안의 끈적한 촉수로 <font color='purple'>정확히</font> 당신의 머릴 쳤다",
+          "line": 1147,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 1142,
+          "damageLine": 1143
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "안개 괴물은 채찍같은 촉수들로 당신을 <font color='green'>빠르게</font> 타작했다",
+          "line": 1153,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 1148,
+          "damageLine": 1149
+        },
+        {
+          "slot": 3,
+          "type": "сильная",
+          "damage": "дробящий",
+          "text": "가시곤봉 같은 골격의, <font color='red'>묵직한</font> 촉수로 당신을 들이받았다",
+          "line": 1159,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 1154,
+          "damageLine": 1155
+        },
+        {
+          "slot": 4,
+          "type": "точная",
+          "damage": "психический",
+          "text": "안개 괴물은 당신의 얼굴 <font color='purple'>쪽으로</font> 촉수를 들이대고, 끈적한 액체를 뿌려댔다",
+          "line": 1164,
+          "normallySelected": false,
+          "selectionStatus": "defined-but-not-normally-selected",
+          "typeLine": 1162,
+          "damageLine": 1163
+        },
+        {
+          "slot": 5,
+          "type": "сильная",
+          "damage": "дробящий",
+          "text": "괴물은 잠시 멈추고, 당신의 전투 스타일에 대응하기 위해 눈앞에서 <font color='red'>돌연변이를</font> 일으킨다",
+          "line": 1174,
+          "normallySelected": false,
+          "selectionStatus": "defined-but-not-normally-selected",
+          "typeLine": 1172,
+          "damageLine": 1173
+        },
+        {
+          "slot": 6,
+          "type": "быстрая",
+          "damage": "колющий",
+          "text": "안개 괴물은 가시를 길게 늘려 당신을 찌르고, <font color='purple'>고속 확산</font> 독을 혈류로 뿜었다",
+          "line": 1192,
+          "normallySelected": false,
+          "selectionStatus": "defined-but-not-normally-selected",
+          "typeLine": 1190,
+          "damageLine": 1191
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "вампир",
+      "name": "흡혈귀",
+      "class": "элитный",
+      "ai": "искусственный_идиот",
+      "description": "<br>사냥중인 흡혈귀",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "колющий",
+          "text": "흡혈귀는 짧고 <font color='purple'>간결한</font> 동작으로 당신을 칼로 푹 찔렀다",
+          "line": 1242,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 1237,
+          "damageLine": 1238
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "흡혈귀가 사람은 불가능한 <font color='green'>속도</font>로 다가와, 우박처럼 당신을 연타했다",
+          "line": 1248,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 1243,
+          "damageLine": 1244
+        },
+        {
+          "slot": 3,
+          "type": "сильная",
+          "damage": "рубящий",
+          "text": "흡혈귀는 카타나를 머리 뒤로 넘기더니, <font color='red'>초강력</font> 베기로 당신을 내리쳤다",
+          "line": 1254,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 1249,
+          "damageLine": 1250
+        },
+        {
+          "slot": 4,
+          "type": "точная",
+          "damage": "психический",
+          "text": "흡혈귀의 차갑고 빛나는 눈이 <font color='purple'>쏘아보자</font>, 의욕이 떨어진 느낌이 든다",
+          "line": 1259,
+          "normallySelected": false,
+          "selectionStatus": "defined-but-not-normally-selected",
+          "typeLine": 1257,
+          "damageLine": 1258
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "вервольф",
+      "name": "늑대인간",
+      "class": "элитный",
+      "ai": "искусственный_идиот",
+      "description": "<br>사냥중인 늑대인간",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "рубящий",
+          "text": "늑대인간이 당신의 <font color='purple'>두 눈을</font> 노리고 길고 날카로운 발톱으로 할퀴었다",
+          "line": 1310,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 1304,
+          "damageLine": 1305
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "늑대인간은 <font color='green'>번개같이</font> 당신에게 옮겨와, 발톱으로 그어댔다",
+          "line": 1317,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 1312,
+          "damageLine": 1313
+        },
+        {
+          "slot": 3,
+          "type": "сильная",
+          "damage": "режущий",
+          "text": "늑대인간은 <font color='red'>넓고 강력한</font> 턱에 당신의 몸을 욱여 넣었다",
+          "line": 1323,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 1318,
+          "damageLine": 1319
+        },
+        {
+          "slot": 4,
+          "type": "сильная",
+          "damage": "режущий",
+          "text": "늑대 인간은 송곳니와 발톱으로 당신의 몸을 <font color='red'>맹렬하게</font> 파헤쳤다",
+          "line": 1328,
+          "normallySelected": false,
+          "selectionStatus": "defined-but-not-normally-selected",
+          "typeLine": 1326,
+          "damageLine": 1327
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "лич",
+      "name": "리치",
+      "class": "элитный",
+      "ai": "искусственный_идиот",
+      "description": "강령술사 리치",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "колющий",
+          "text": "리치가 당신을 <font color='purple'>조준해</font> 번개를 내리쳤다",
+          "line": 1374,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 1369,
+          "damageLine": 1370
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "리치는 당신에게 여러 마법 발사체를 <font color='green'>난사했다</font>",
+          "line": 1381,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 1375,
+          "damageLine": 1376
+        },
+        {
+          "slot": 3,
+          "type": "сильная",
+          "damage": "дробящий",
+          "text": "리치가 <font color='red'>이글대는</font> 화염구로 당신을 맞추었다",
+          "line": 1388,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 1383,
+          "damageLine": 1384
+        },
+        {
+          "slot": 4,
+          "type": "точная",
+          "damage": "психический",
+          "text": "리치는 손가락으로 <font color='purple'>마법</font> 동작을 취하더니, 당신은 지옥같은 고통에 휩싸였다",
+          "line": 1397,
+          "normallySelected": false,
+          "selectionStatus": "defined-but-not-normally-selected",
+          "typeLine": 1395,
+          "damageLine": 1396
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "ogre",
+      "name": "오우거",
+      "class": "элитный",
+      "ai": "искусственный_идиот",
+      "description": "크고 못생긴 인간같은 것",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "дробящий",
+          "text": "오우거는 무기를 안 든 손으로 당신에게 <font color='purple'>피할수 없는 주먹질</font>을 했다",
+          "line": 1445,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 1440,
+          "damageLine": 1441
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "дробящий",
+          "text": "오우거는 곤봉으로 당신의 머리에 <font color='green'>커다란 일격</font>을 가했다",
+          "line": 1451,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 1446,
+          "damageLine": 1447
+        },
+        {
+          "slot": 3,
+          "type": "сильная",
+          "damage": "дробящий",
+          "text": "오우거는 거대한 곤봉을 강하게 휘두르더니 당신을 <font color='red'>패대기</font> 쳤다",
+          "line": 1457,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 1452,
+          "damageLine": 1453
+        },
+        {
+          "slot": 4,
+          "type": "сильная",
+          "damage": "дробящий",
+          "text": "오우거는 짐승처럼 길게 으르렁대더니, 머리 위로 곤봉을 들고, 전력으로 당신을 <font color='red'>후려쳤다</font>",
+          "line": 1462,
+          "normallySelected": false,
+          "selectionStatus": "defined-but-not-normally-selected",
+          "typeLine": 1460,
+          "damageLine": 1461
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "goblin",
+      "name": "고블린",
+      "class": "рядовой",
+      "ai": "искусственный_идиот",
+      "description": "<br>작은 사람보다 더 작은, 주름많은 초록빛깔 생물체. 녹슬어 보이는 단검을 휘두른다",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "колющий",
+          "text": "고블린은 당신의 방어의 약한 부분을 <font color='purple'>골라 찔렀다</font>",
+          "line": 1508,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 1503,
+          "damageLine": 1504
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "고블린은 이를 빠득 갈더니, 단검의 녹슨 부분으로 당신을 <font color='green'>베었다</font>",
+          "line": 1514,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 1509,
+          "damageLine": 1510
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "warg",
+      "name": "와그",
+      "class": "элитный",
+      "ai": "искусственный_идиот",
+      "description": "<br>커다랗고 지능을 가진, 늑대같이 생긴 생물체",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "колющий",
+          "text": "와그는 앞으로 뛰어들어 당신의 관절을 <font color='purple'>정확히</font> 물었다.",
+          "line": 1559,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 1553,
+          "damageLine": 1554
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "와그는 당신에게 <font color='green'>급속히</font> 달려왔고, 발을 물고 흔들며 넘어뜨리려 했다",
+          "line": 1566,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 1561,
+          "damageLine": 1562
+        },
+        {
+          "slot": 3,
+          "type": "сильная",
+          "damage": "рубящий",
+          "text": "와그는 당신의 쪽으로 크게 한 번 구르더니, 당신의 몸을 <font color='red'>세차게</font> 물어 씹어댔다",
+          "line": 1572,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 1567,
+          "damageLine": 1568
+        },
+        {
+          "slot": 4,
+          "type": "сильная",
+          "damage": "психический",
+          "text": "와그는 거리감 있게 뛰어와서, 당신의 몸 전체를 <font color='purple'>물고 할퀴었다</font>",
+          "line": 1577,
+          "normallySelected": false,
+          "selectionStatus": "defined-but-not-normally-selected",
+          "typeLine": 1575,
+          "damageLine": 1576
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "orc",
+      "name": "오크 전사",
+      "class": "рядовой",
+      "ai": "искусственный_идиот",
+      "description": "<br>무거운 장비로 무장한 커다란 인간형 생물체",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "сильная",
+          "damage": "рубящий",
+          "text": "오크 전사는 거대한 도끼로 당신을 <font color='red'>매섭게 내리쳤다</font>",
+          "line": 1627,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 1621,
+          "damageLine": 1622
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "오크 전사가 도끼로 당신의 발을 <font color='green'>크게 휩쓸었다</font>",
+          "line": 1634,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 1629,
+          "damageLine": 1630
+        },
+        {
+          "slot": 3,
+          "type": "точная",
+          "damage": "дробящий",
+          "text": "오크 전사가 도끼로 치는 척, 당신의 안면에 <font color='purple'>정확히</font> 박치기를 했다.",
+          "line": 1640,
+          "normallySelected": false,
+          "selectionStatus": "defined-but-not-normally-selected",
+          "typeLine": 1635,
+          "damageLine": 1636
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "fugituive_a",
+      "name": "전투적인 탈옥수",
+      "class": "пешка",
+      "ai": "искусственный_идиот",
+      "description": "[경기 진행자]<br>&nbsp;오늘 그녀의 희생양은 다섯 탈옥 노예입니다. 하지만 이건 처형이 아닙니다, 시민 여러분들, 아니에요. 각 탈옥 노예들은 무기를 지급받습니다. 만에 하나 특급 투사가 지면, 탈옥수는 살아 남은채로 경기장을 떠나, 투사로 다시 태어날 겁니다!</div>",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "сильная",
+          "damage": "дробящий",
+          "text": "탈옥수가 황동 장갑으로 당신을 <font color='red'>맹렬하게</font> 공격했다",
+          "line": 1688,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 1683,
+          "damageLine": 1684
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "fugituive_b",
+      "name": "음침한 탈옥수",
+      "class": "пешка",
+      "ai": "искусственный_идиот",
+      "description": "[경기 진행자]<br>&nbsp;오늘 그녀의 희생양은 다섯 탈옥 노예입니다. 하지만 이건 처형이 아닙니다, 시민 여러분들, 아니에요. 각 탈옥 노예들은 무기를 지급받습니다. 만에 하나 특급 투사가 지면, 탈옥수는 살아 남은채로 경기장을 떠나, 투사로 다시 태어날 겁니다!</div>",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "колющий",
+          "text": "음침한 탈옥수가 짧은 창으로 당신을 <font color='purple'>최선을 다 해</font> 찔렀다",
+          "line": 1714,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 1709,
+          "damageLine": 1710
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "fugituive_c",
+      "name": "겁에 질린 탈옥수",
+      "class": "пешка",
+      "ai": "искусственный_идиот",
+      "description": "[경기 진행자]<br>&nbsp;오늘 그녀의 희생양은 다섯 탈옥 노예입니다. 하지만 이건 처형이 아닙니다, 시민 여러분들, 아니에요. 각 탈옥 노예들은 무기를 지급받습니다. 만에 하나 특급 투사가 지면, 탈옥수는 살아 남은채로 경기장을 떠나, 투사로 다시 태어날 겁니다!</div>",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "겁에 질린 탈옥수가 가벼운 사브레를 <font color='green'>필사적으로</font> 휘둘렀다",
+          "line": 1742,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 1737,
+          "damageLine": 1738
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "fugituive_d",
+      "name": "키 큰 탈옥수",
+      "class": "пешка",
+      "ai": "искусственный_идиот",
+      "description": "[경기 진행자]<br>&nbsp;오늘 그녀의 희생양은 다섯 탈옥 노예입니다. 하지만 이건 처형이 아닙니다, 시민 여러분들, 아니에요. 각 탈옥 노예들은 무기를 지급받습니다. 만에 하나 특급 투사가 지면, 탈옥수는 살아 남은채로 경기장을 떠나, 투사로 다시 태어날 겁니다!</div>",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "сильная",
+          "damage": "дробящий",
+          "text": "키 큰 탈옥수가 무거운 철제 곤봉으로 당신을 <font color='red'>내려쳤다</font>",
+          "line": 1768,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 1763,
+          "damageLine": 1764
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "fugituive_e",
+      "name": "어린 탈옥수",
+      "class": "пешка",
+      "ai": "искусственный_идиот",
+      "description": "[경기 진행자]<br>&nbsp;오늘 그녀의 희생양은 다섯 탈옥 노예입니다. 하지만 이건 처형이 아닙니다, 시민 여러분들, 아니에요. 각 탈옥 노예들은 무기를 지급받습니다. 만에 하나 특급 투사가 지면, 탈옥수는 살아 남은채로 경기장을 떠나, 투사로 다시 태어날 겁니다!</div>",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "колющий",
+          "text": "어린 탈옥수는 당신에게 수리검을 <font color='purple'>던졌다</font>",
+          "line": 1794,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 1789,
+          "damageLine": 1790
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "dimaher_a",
+      "name": "쌍수 투사A",
+      "class": "рядовой",
+      "ai": "искусственный_идиот",
+      "description": "[경기 진행자]<br> 그리고 그녀 상대는, 신선하네요. 우리가 제일 좋아하는 쌍수로 싸웁니다! 그래도 이 경기에 처음 모습을 드러낼 어린 소녀가, 양 손에 검을 쥐고 싸울수 있을까요? 한 번 봅시다!</div>",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "колющий",
+          "text": "여성 투사는 양 칼을 동시에 사용해서 <font color='purple'>찔렀다</font>",
+          "line": 1821,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 1816,
+          "damageLine": 1817
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "여검투사가 두 자루 칼날을 <font color='green'>회전시키며</font> 죽음의 맷돌을 떠올리게 한다.",
+          "line": 1827,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 1822,
+          "damageLine": 1823
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "dimaher_b",
+      "name": "쌍수 투사B",
+      "class": "рядовой",
+      "ai": "искусственный_идиот",
+      "description": "[경기 진행자]<br>&nbsp;그녀 상대는 우리 모두 좋아하는 쌍수로 싸울겁니다. 그리고 봐요 저, 저 큰... 크흠, 칼들! 그녀가 충분히 쓸수 있을까요? 한 번 봅시다!</div>",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "колющий",
+          "text": "여성 투사는 양 칼을 동시에 사용해서 <font color='purple'>찔렀다</font>",
+          "line": 1857,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 1852,
+          "damageLine": 1853
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "여성 투사는 양 칼을 뱅글뱅글 <font color='green'>교차</font>시켰다. 죽음의 풍차같다!",
+          "line": 1863,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 1858,
+          "damageLine": 1859
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "dimaher_c",
+      "name": "쌍수 투사C",
+      "class": "рядовой",
+      "ai": "искусственный_идиот",
+      "description": "[경기 진행자]<br>&nbsp;그녀에게 대항할 여성 투사의 전투 방법은, 이미 대중의 사랑을 얻은 쌍수전사입니다. 그녀가 얼마나 능숙히 휘두르나 우린 이미 알고 있지요. 자 그럼, 우리 대단한 적님은 뭘 보여주나 한 번 봅시다!</div>",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "колющий",
+          "text": "여성 투사는 양 칼을 동시에 사용해서 <font color='purple'>찔렀다</font>",
+          "line": 1909,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 1904,
+          "damageLine": 1905
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "여성 투사는 양 칼을 뱅글뱅글 <font color='green'>교차</font>시켰다. 죽음의 풍차같다!",
+          "line": 1915,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 1910,
+          "damageLine": 1911
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "dimaher_d",
+      "name": "쌍수 투사D",
+      "class": "рядовой",
+      "ai": "искусственный_идиот",
+      "description": "[경기 진행자]<br>&nbsp;그리고 이 노란 머리는 많이들 알고 계실겁니다. 맞습니다, 이 여자 경기에서 쌍수로 많은 명성을 얻어왔지요. 흥미진진한 전투가 보장되어 있으니, 지켜봐 봅시다!</div>",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "колющий",
+          "text": "여성 투사는 양손의 칼을 동시에 사용해 <font color='purple'>찔렀다</font>",
+          "line": 1962,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 1956,
+          "damageLine": 1957
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "여성 투사는 양 칼을 뱅글뱅글 <font color='green'>교차</font>시켰다. 죽음의 풍차같다!",
+          "line": 1969,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 1964,
+          "damageLine": 1965
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "dimaher_e",
+      "name": "쌍수 투사E",
+      "class": "рядовой",
+      "ai": "искусственный_идиот",
+      "description": "[경기 진행자]<br>&nbsp;그리고 오늘 그녀의 상대는, 이 쌍수 무기 결전에서 최고로 손꼽히는 자. 최고라는 이름을 걸고 싸울만 한 상대! 여러분은 제가 이걸 보고싶어 초조해하는 것이 보이십니까? 이제 시작합니다!</div>",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "колющий",
+          "text": "여성 투사는 양손의 칼을 동시에 사용해 <font color='purple'>찔렀다</font>",
+          "line": 2018,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2012,
+          "damageLine": 2013
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "여성 투사는 양 칼을 뱅글뱅글 <font color='green'>교차</font>시켰다. 죽음의 풍차같다!",
+          "line": 2025,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2020,
+          "damageLine": 2021
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "hoplite_a",
+      "name": "보병 투사A",
+      "class": "рядовой",
+      "ai": "искусственный_идиот",
+      "description": "[경기 진행자]<br>&nbsp;그녀에게 대항할 자는 우리 경기장의 신예지만, 보십시오! 갑옷과 톱날 채찍, 네 맞습니다. 여러분이 생각하는 그것, 철로 만든 채찍입니다. 피튀기는 싸움이 예상됩니다. 자, 어떤 전투가 우릴 기다리고 있을까요?!</div>",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "сильная",
+          "damage": "рубящий",
+          "text": "여성 투사는 톱날 채찍을 <font color='red'>크게 휘둘러</font> 당신을 후렸다",
+          "line": 2072,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2067,
+          "damageLine": 2068
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "여검투사가 톱니 달린 채찍으로 <font color='green'>재빠른</font> 일격을 가한다.",
+          "line": 2078,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2073,
+          "damageLine": 2074
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "hoplite_b",
+      "name": "보병 투사B",
+      "class": "рядовой",
+      "ai": "искусственный_идиот",
+      "description": "[경기 진행자]<br>&nbsp;그리고 그녀의 상대는, 혹독한 세상에서 온 가차없는 여성으로... 하늘에서 출현한, 잔인한 무기를 택 하였습니다. 톱날 채찍으로 하는 이 전투는 절대 지루하지 않을 겁니다, 아아주!</div>",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "сильная",
+          "damage": "рубящий",
+          "text": "여성 투사는 톱날 채찍을 <font color='red'>크게 휘둘러</font> 당신을 후렸다",
+          "line": 2106,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2101,
+          "damageLine": 2102
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "여성 투사는 가시달린 채찍으로 당신을 <font color='green'>잽싸게</font> 휩쓸어 공격했다",
+          "line": 2112,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2107,
+          "damageLine": 2108
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "hoplite_c",
+      "name": "보병 투사C",
+      "class": "рядовой",
+      "ai": "искусственный_идиот",
+      "description": "[경기 진행자]<br>&nbsp;그리고 그녀의 상대는, 톱날 채찍으로 싸우게 될 겁니다. 보십시오, 저 검고 가시박힌, 뚫리지 않을 것 같은 갑옷을. 저게 그녀의 유하고, 부드러운 뱃살을 타격에서 보호해 준 걸까요? 그래왔습니다, 지금 까지는!</div>",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "сильная",
+          "damage": "рубящий",
+          "text": "여성 투사는 톱날 채찍을 <font color='red'>크게 휘둘러</font> 당신을 후렸다",
+          "line": 2158,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2153,
+          "damageLine": 2154
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "여성 투사는 가시달린 채찍으로 당신을 <font color='green'>잽싸게</font> 휩쓸어 공격했다",
+          "line": 2164,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2159,
+          "damageLine": 2160
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "hoplite_d",
+      "name": "보병 투사D",
+      "class": "рядовой",
+      "ai": "искусственный_идиот",
+      "description": "[경기 진행자]<br>&nbsp;그리고 오늘 여자의 상대는, 잔인한 철 채찍질로 아주 잘 알려져 있습니다. 여러분과 저는 봤습니다, 저 여자의 톱날 채찍이 얼마나 가차없는지, 수 차례나. 하지만 오늘은 서로가 팽팽해 보입니다!</div>",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "сильная",
+          "damage": "рубящий",
+          "text": "여성 투사는 톱날 채찍을 <font color='red'>크게 휘둘러</font> 당신을 후렸다",
+          "line": 2210,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2205,
+          "damageLine": 2206
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "여성 투사는 가시달린 채찍으로 당신을 <font color='green'>잽싸게</font> 휩쓸어 공격했다",
+          "line": 2216,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2211,
+          "damageLine": 2212
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "hoplite_e",
+      "name": "보병 투사E",
+      "class": "рядовой",
+      "ai": "искусственный_идиот",
+      "description": "[경기 진행자]<br>&nbsp;강한 여성 투사에겐, 그에 맞는 적이 따라오길 마련입니다. 드디어 만났습니다, 이 경기장의 명성과 실력 서로가. 아름답고 치명적이군요. 피를 뿜어봅시다!</div>",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "сильная",
+          "damage": "рубящий",
+          "text": "여성 투사는 톱날 채찍을 <font color='red'>크게 휘둘러</font> 당신을 후렸다",
+          "line": 2262,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2257,
+          "damageLine": 2258
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "여성 투사는 가시달린 채찍으로 당신을 <font color='green'>잽싸게</font> 휩쓸어 공격했다",
+          "line": 2268,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2263,
+          "damageLine": 2264
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "secutor_a",
+      "name": "여성 검투사A",
+      "class": "рядовой",
+      "ai": "искусственный_идиот",
+      "description": "[경기 진행자]<br>&nbsp;경기장 한 켠에, 어리지만 매력적인 검투 신예가 있습니다. 보십시오, 저 육감적인 몸을! 적의 공격을 방패로 막아낼 수나 있을까요? 확인해봅시다!</div>",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "сильная",
+          "damage": "рубящий",
+          "text": "여성 검투사는, 부족한 기술을 넘치는 분노로 보충하듯, 당신을 <font color='red'>혼신의 힘으로</font> 내려 찍었다",
+          "line": 2315,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2310,
+          "damageLine": 2311
+        },
+        {
+          "slot": 2,
+          "type": "точная",
+          "damage": "колющий",
+          "text": "여검투사가 <font color='purple'>서툰</font> 반격으로 당신 공격을 받아친다. 기술 부족은 순전히 운으로 메우는 셈이다.",
+          "line": 2321,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2316,
+          "damageLine": 2317
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "secutor_b",
+      "name": "여성 검투사B",
+      "class": "рядовой",
+      "ai": "искусственный_идиот",
+      "description": "[경기 진행자]<br>&nbsp;저기 순수해 보이는 외모를 보십시오! 마치 천사가 아닙니까? 그래도 저 금발의 인형이, 이 죽음의 전장에서도 이겨내는 걸 이전에 보여 주었습니다. 이번에도 무사히 넘어갈 수 있을까요?</div>",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "сильная",
+          "damage": "рубящий",
+          "text": "여성 검투사는 자신의 <font color='red'>온 무게를</font> 실어서 한 방에 내리쳤다",
+          "line": 2349,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2344,
+          "damageLine": 2345
+        },
+        {
+          "slot": 2,
+          "type": "точная",
+          "damage": "колющий",
+          "text": "여성 검투사는 당신의 공격을 <font color='purple'>신중하게 계산해서</font> 되받아 찔렀다",
+          "line": 2355,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2350,
+          "damageLine": 2351
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "secutor_c",
+      "name": "여성 검투사C",
+      "class": "рядовой",
+      "ai": "искусственный_идиот",
+      "description": "[경기 진행자]<br>&nbsp;그리고 오늘 그녀 상대는, 강인함과 참을수 없는 흥분으로 유명한, 땅의 요정 세계에서 왔습니다! 그럼 검투 방식을 골라 주십시오! 이거 볼만 하겠는데요!</div>",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "сильная",
+          "damage": "рубящий",
+          "text": "여성 검투사는 자신의 <font color='red'>온 무게를</font> 실어서 한 방에 내리쳤다",
+          "line": 2401,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2396,
+          "damageLine": 2397
+        },
+        {
+          "slot": 2,
+          "type": "точная",
+          "damage": "колющий",
+          "text": "여성 검투사는 당신의 공격을 <font color='purple'>신중하게 계산해서</font> 되받아 찔렀다",
+          "line": 2407,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2402,
+          "damageLine": 2403
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "secutor_d",
+      "name": "여성 검투사D",
+      "class": "рядовой",
+      "ai": "искусственный_идиот",
+      "description": "[경기 진행자]<br>&nbsp;그리고 오늘 그녀의 상대는 검투 방식, 외모가 절대 왕좌 시절 브리나를 연상시킵니다. 하지만 머리색 만이 아닙니다, 제가 보장하겠습니다 여러분. 굽히지 않는 힘과 기술을 가졌습니다. 더 요란떨 것 없이 바로 시작하겠습니다!</div>",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "сильная",
+          "damage": "рубящий",
+          "text": "여성 검투사는 자신의 <font color='red'>온 무게를</font> 실어서 한 방에 내리쳤다",
+          "line": 2453,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2448,
+          "damageLine": 2449
+        },
+        {
+          "slot": 2,
+          "type": "точная",
+          "damage": "колющий",
+          "text": "여성 검투사는 당신의 공격을 <font color='purple'>신중하게 계산해서</font> 되받아 찔렀다",
+          "line": 2459,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2454,
+          "damageLine": 2455
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "secutor_e",
+      "name": "여성 검투사E",
+      "class": "рядовой",
+      "ai": "искусственный_идиот",
+      "description": "[경기 진행자]<br>&nbsp;오늘 경기는 기권해도 이상하지 않을 겁니다! 이 중무장한 상대가 보이십니까, 여러분? 우리 모두가 알고 있습니다. 검투 경기에선 최고로 꼽히는 자. 반드시 우리를 열광케 할겁니다.</div>",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "сильная",
+          "damage": "рубящий",
+          "text": "여성 검투사는 자신의 <font color='red'>온 무게를</font> 실어서 한 방에 내리쳤다",
+          "line": 2505,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2500,
+          "damageLine": 2501
+        },
+        {
+          "slot": 2,
+          "type": "точная",
+          "damage": "колющий",
+          "text": "여성 검투사는 당신의 공격을 <font color='purple'>신중하게 계산해서</font> 되받아 찔렀다",
+          "line": 2511,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2506,
+          "damageLine": 2507
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "kimerian_a",
+      "name": "킴메르 투사A",
+      "class": "рядовой",
+      "ai": "искусственный_идиот",
+      "description": "[경기 진행자]<br>그녀 상대는 꽤 어린 소녀로군요, 하지만 무거운 킴메르 방식입니다. 얼마나 귀여운지 보십시오! 저 몸집에 커다란 도끼를 잘 다루기나 할런지? 지켜 봅시다!</div>",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "сильная",
+          "damage": "рубящий",
+          "text": "소녀는 양손 무기를 마치 <font color='red'>갈대처럼</font> 휘둘렀다",
+          "line": 2556,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2551,
+          "damageLine": 2552
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "소녀가 도끼를 <font color='green'>넓은</font> 궤적으로 회전시킨다.",
+          "line": 2562,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2557,
+          "damageLine": 2558
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "kimerian_b",
+      "name": "킴메르 투사B",
+      "class": "рядовой",
+      "ai": "искусственный_идиот",
+      "description": "[경기 진행자]<br>&nbsp;그녀의 오늘 상대가, 바로 지난날 경기에서 보여줬습니다. 많은 사람이 기억하는 것은 이 킴메르 방식 양손검의 치명적인 힘, 그리고 출렁대는 아름다움. 그 예쁜 얼굴이 일그러지지 않길 바래봅시다!</div>",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "сильная",
+          "damage": "рубящий",
+          "text": "금발녀는 양손 무기를 마치 <font color='red'>갈대처럼</font> 휘둘렀다",
+          "line": 2590,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2585,
+          "damageLine": 2586
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "금발녀는 도끼로 <font color='green'>넓게</font> 원을 그렸다",
+          "line": 2596,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2591,
+          "damageLine": 2592
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "kimerian_c",
+      "name": "킴메르 투사C",
+      "class": "рядовой",
+      "ai": "искусственный_идиот",
+      "description": "[경기 진행자]<br>&nbsp;그리고 오늘 그녀는, 아주 특이한 백발 킴메르 투사를 적으로 할 겁니다. 저 검의 크기를 보십시오. 저토록 강력한 무기의 공격을 무엇이 막아 낼 수 있을까요? 확인해 봅시다!</div>",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "сильная",
+          "damage": "рубящий",
+          "text": "백발 소녀가 큰 검을 마치 <font color='red'>갈대처럼</font> 휘둘렀다.",
+          "line": 2644,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2639,
+          "damageLine": 2640
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "백발 소녀는 거대한 검을 <font color='green'>넓게</font> 휘둘러 당신의 머리를 내리쳤다",
+          "line": 2650,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2645,
+          "damageLine": 2646
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "kimerian_d",
+      "name": "킴메르 투사D",
+      "class": "рядовой",
+      "ai": "искусственный_идиот",
+      "description": "[경기 진행자]<br>&nbsp;그리고 그녀의 적은 우리의 사랑, 아름다운 굴곡짐과 매력적인 웃음의 멋진 여자! 이 킴메르 방식 무기는, 사용하는 어떤 투사에도 명예를 가져다 줍니다. 양손무기 철퇴를 지배하는 자!</div>",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "сильная",
+          "damage": "рубящий",
+          "text": "가슴 큰 여성 투사는 모닝스타로 당신에게 <font color='red'>거대한</font> 일격을 가했다",
+          "line": 2696,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2691,
+          "damageLine": 2692
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "가슴 큰 여성 투사는 모닝스타로 <font color='green'>넓게</font> 원을 그렸다",
+          "line": 2702,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2697,
+          "damageLine": 2698
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "kimerian_e",
+      "name": "킴메르 투사E",
+      "class": "рядовой",
+      "ai": "искусственный_идиот",
+      "description": "[경기 진행자]<br>&nbsp;이 강철같은 근육의 소유자, 더 소개할 필요도 없습니다! 가장 강한 두 여성 투사가 만났고, 킴메르 방식으로 싸웁니다. 이런 무적과도 같은 힘을 쓰러뜨리는게 가능 할 것인가? 기대해 주십시오!</div>",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "сильная",
+          "damage": "рубящий",
+          "text": "근육질의 여성은 거대한 도끼를 <font color='red'>갈대처럼</font> 휘둘렀다",
+          "line": 2748,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2743,
+          "damageLine": 2744
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "근육질의 여성은 무거운 도끼로 당신에게 <font color='green'>놀라운 속도로</font> 엄청난 연타를 가했다",
+          "line": 2754,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2749,
+          "damageLine": 2750
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "champion_corvus",
+      "name": "특급 투사",
+      "class": "элитный",
+      "ai": "искусственный_идиот",
+      "description": "[경기 진행자]<br>&nbsp;도전에 답하는 자는, 까마귀자리 특급 투사로 불리는, 아름다운 유혈 숙녀! 도전자의 주인은 이 여성이 패자에게 무슨 짓을 하는지 알테니, 패배하지 않길 기도함이 좋을 겁니다!</div>",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "колющий",
+          "text": "이 흡혈귀가 왼손에 든 검으로 당신을 <font color='purple'>정밀하게</font> 찔렀다",
+          "line": 2802,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2797,
+          "damageLine": 2798
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "피칠갑한 숙녀가 양손검을 사용해 <font color='green'>놀라운 속도로</font> 비내리는 듯한 타격을 가했다.",
+          "line": 2808,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2803,
+          "damageLine": 2804
+        },
+        {
+          "slot": 3,
+          "type": "сильная",
+          "damage": "рубящий",
+          "text": "이 특급 투사는 양손검을 가위처럼 사용해 엄청나게 강한 <font color='red'>힘</font>으로 당신을 썰었다.",
+          "line": 2814,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2809,
+          "damageLine": 2810
+        },
+        {
+          "slot": 4,
+          "type": "точная",
+          "damage": "психический",
+          "text": "유혈 숙녀는 차가운 눈빛으로 당신을 <font color='purple'>쏘아봤다</font>. 당신은 의지가 약해지는 것을 느꼈다.",
+          "line": 2819,
+          "normallySelected": false,
+          "selectionStatus": "defined-but-not-normally-selected",
+          "typeLine": 2817,
+          "damageLine": 2818
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "champion_kamira",
+      "name": "특급 투사",
+      "class": "элитный",
+      "ai": "искусственный_идиот",
+      "description": "[경기 진행자]<br>&nbsp;도전에 답하는 자는, 키메라 특급 투사로 불리우는, 위력적이고 통제할 수 없는 식인 여성! 식인 여성은 이 도전자를 다진 고기로 만들 계획일까요? 네에, 확실히 그럴겁니다!</div>",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "дробящий",
+          "text": "식인 여성이 철곤봉을 당신의 명치에 <font color='purple'>꽂았다</font>",
+          "line": 2871,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2866,
+          "damageLine": 2867
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "дробящий",
+          "text": "이 오우거 여자가 고중량 곤봉을 당신의 머리위로 <font color='green'>쉽사리도</font> 휘둘러 댔다",
+          "line": 2877,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2872,
+          "damageLine": 2873
+        },
+        {
+          "slot": 3,
+          "type": "сильная",
+          "damage": "дробящий",
+          "text": "인간 같지도 않은 이 투사의 철곤봉이 당신을 세차게 <font color='red'>후려쳤다</font>",
+          "line": 2884,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2878,
+          "damageLine": 2879
+        },
+        {
+          "slot": 4,
+          "type": "сильная",
+          "damage": "дробящий",
+          "text": "식인 여성이 바닥을 <font color='red'>강한</font> 힘으로 때렸다. 당신은 지진을 만난 것처럼 쓰러졌다",
+          "line": 2890,
+          "normallySelected": false,
+          "selectionStatus": "defined-but-not-normally-selected",
+          "typeLine": 2888,
+          "damageLine": 2889
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "champion_serpis",
+      "name": "특급 투사",
+      "class": "элитный",
+      "ai": "искусственный_идиот",
+      "description": "[경기 진행자]<br>&nbsp;도전에 답하는 자는, 뱀자리 특급 투사로 불리우는, 냉혹한 해적 공주. 그녀의 카타나는 빗나간 적이 없으며, 그 목숨들을 빠짐없이 앗아갔습니다. 거기에 하나 더 추가 될런지? 이제부터 알아 볼 것입니다!</div>",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "колющий",
+          "text": "해적 공주가 살인적인 카타나 끝으로 당신을 <font color='purple'>찔렀다</font>",
+          "line": 2941,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2936,
+          "damageLine": 2937
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "해적 공주가 당신을 <font color='green'>쏜살같이</font> 내려쳤고, 질풍같은 쇳소리가 들려왔다",
+          "line": 2947,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2942,
+          "damageLine": 2943
+        },
+        {
+          "slot": 3,
+          "type": "сильная",
+          "damage": "рубящий",
+          "text": "해적 공주가 <font color='red'>강한 위력</font>으로 당신을 난도질 했다",
+          "line": 2953,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 2948,
+          "damageLine": 2949
+        },
+        {
+          "slot": 4,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "해적 공주의 <font color='red'>신속한</font> 베기가, 당신의 몸에 길쭉한 출혈상을 내었다",
+          "line": 2958,
+          "normallySelected": false,
+          "selectionStatus": "defined-but-not-normally-selected",
+          "typeLine": 2956,
+          "damageLine": 2957
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "champion_taurus",
+      "name": "특급 투사",
+      "class": "элитный",
+      "ai": "искусственный_идиот",
+      "description": "[경기 진행자]<br>&nbsp;도전에 답하는 자는, 황소자리 특급 투사로 불리우는, 부숴지지 않는 강철 여왕! 그녀 방패는 뚫을 수 없음을 보여 왔습니다, 그리고 그녀 의지는 어떠한 영웅이던 부끄럽게 만들었습니다. 하지만 오늘은 누군가가 패배해야 하는 일! 과연 누가 될 것인지 봅시다!</div>",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "колющий",
+          "text": "강철 여왕이 광채나는 검을 <font color='purple'>의도적으로</font> 찔렀다",
+          "line": 3009,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 3004,
+          "damageLine": 3005
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "강철 여왕이 당신을 무너뜨릴 기세로 <font color='green'>수 차례</font> 공격했다",
+          "line": 3015,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 3010,
+          "damageLine": 3011
+        },
+        {
+          "slot": 3,
+          "type": "сильная",
+          "damage": "рубящий",
+          "text": "강철 여왕이 칼을 들어 당신을 <font color='red'>전력으로</font> 내리쳤다",
+          "line": 3021,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 3016,
+          "damageLine": 3017
+        },
+        {
+          "slot": 4,
+          "type": "сильная",
+          "damage": "дробящий",
+          "text": "강철 여왕이 비브라늄 방패로 당신을 <font color='red'>쳐박았다</font>",
+          "line": 3026,
+          "normallySelected": false,
+          "selectionStatus": "defined-but-not-normally-selected",
+          "typeLine": 3024,
+          "damageLine": 3025
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "champion_vatican",
+      "name": "특급 투사",
+      "class": "элитный",
+      "ai": "искусственный_идиот",
+      "description": "[경기 진행자]<br>&nbsp;도전에 답하는 자는, 사도궁 특급 투사로 불리우는 그녀, 성하의 친위대! 그녀의 검이 빛나는 걸 보십시오! 저 홍염은 창조의 불꽃입니다. 수 백년을 기억할 전투가 될 겁니다!</div>",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "огонь",
+          "text": "여기사는 창을 던지듯 불꽃이 타오르는 검으로 당신을 <font color='purple'>찔렀다</font>.",
+          "line": 3079,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 3074,
+          "damageLine": 3075
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "огонь",
+          "text": "여기사는 불타오르는 검으로 허공에 치명적이지만 아름다운 패턴을 <font color='green'>그렸다</font>.",
+          "line": 3085,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 3080,
+          "damageLine": 3081
+        },
+        {
+          "slot": 3,
+          "type": "сильная",
+          "damage": "огонь",
+          "text": "여기사는 마법검으로 남자 10명분의 <font color='red'>힘</font>으로 공격 했다.",
+          "line": 3091,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 3086,
+          "damageLine": 3087
+        },
+        {
+          "slot": 4,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "마법검에 타격을 당하자, 요란한 소리의 불꽃이 당신의 전신을 <font color='red'>휘감았다</font>.",
+          "line": 3096,
+          "normallySelected": false,
+          "selectionStatus": "defined-but-not-normally-selected",
+          "typeLine": 3094,
+          "damageLine": 3095
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "champion_absolute",
+      "name": "최후의 심판자",
+      "class": "элитный",
+      "ai": "искусственный_идиот",
+      "description": "[경기 진행자]<br>&nbsp;그녀의 상대는 로마의 거주자라면 누구나 알고 있는 사람입니다. 그녀는 지하세계의 악마와 같이 무자비 하고 강합니다. 뚫을 수 없는 갑옷에 그녀의 톱니 채찍은 신체를 반으로 갈라버립니다. 우리는 모두 그녀의 광팬이죠! 바로 완전한 챔피언인 [최후의 심판자]입니다!</div>",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "рубящий",
+          "text": "심판자는 아다만티움 톱니채찍으로 <font color='purple'>교묘히</font> 당신의 다릴 베어냈다",
+          "line": 3146,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 3141,
+          "damageLine": 3142
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "심판자의 톱니채찍이 <font color='green'>태풍같은</font> 먼지 구름을 일으켰다",
+          "line": 3152,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 3147,
+          "damageLine": 3148
+        },
+        {
+          "slot": 3,
+          "type": "сильная",
+          "damage": "рубящий",
+          "text": "묵직한 아다만티움 톱니가 당신을 반으로 쪼갤 기세로 <font color='red'>습격</font>했다",
+          "line": 3158,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 3153,
+          "damageLine": 3154
+        },
+        {
+          "slot": 4,
+          "type": "сильная",
+          "damage": "рубящий",
+          "text": "심판자의 아다만티움 톱니가 당신의 몸을 <font color='red'>뜯어내</font> 몸 깊이 상처 입혔다",
+          "line": 3163,
+          "normallySelected": false,
+          "selectionStatus": "defined-but-not-normally-selected",
+          "typeLine": 3161,
+          "damageLine": 3162
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "исчадие_арены",
+      "name": "아레나 안개 괴물",
+      "class": "элитный",
+      "ai": "искусственный_идиот",
+      "description": "[경기 진행자]<br>&nbsp;그리고 오늘 그녀의 상대는, 안개 괴물입니다. 이 안개 괴물이 우리에서 촉수들이 꾸물럭거리는 것을 보십시오. 맞습니다, 여성의 냄새를 맡은겁니다. 이제 누구도 막을 수 없습니다!</div>",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "психический",
+          "text": "안개 괴물은 입을 벌려, 그 안의 입벌린 끈적한 촉수로 <font color='purple'>정확히</font> 당신의 머릴 쳤다",
+          "line": 3216,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 3211,
+          "damageLine": 3212
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "психический",
+          "text": "안개 괴물은 촉수들로 당신을 <font color='green'>휘감고</font>, 구멍을 찾고 있다!",
+          "line": 3222,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 3217,
+          "damageLine": 3218
+        },
+        {
+          "slot": 3,
+          "type": "сильная",
+          "damage": "дробящий",
+          "text": "안개 괴물은 당신의 얼굴 <font color='purple'>쪽으로</font> 촉수를 들이대고, 끈적한 액체를 뿌려댔다",
+          "line": 3228,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 3223,
+          "damageLine": 3224
+        },
+        {
+          "slot": 4,
+          "type": "точная",
+          "damage": "психический",
+          "text": "안개 괴물은 당신의 얼굴 <font color='purple'>쪽으로</font> 촉수를 들이대고, 끈적한 액체를 뿌려댔다",
+          "line": 3233,
+          "normallySelected": false,
+          "selectionStatus": "defined-but-not-normally-selected",
+          "typeLine": 3231,
+          "damageLine": 3232
+        },
+        {
+          "slot": 5,
+          "type": "сильная",
+          "damage": "дробящий",
+          "text": "괴물은 잠시 멈추고, 당신의 전투 스타일에 대응하기 위해 눈앞에서 <font color='red'>돌연변이를</font> 일으킨다",
+          "line": 3243,
+          "normallySelected": false,
+          "selectionStatus": "defined-but-not-normally-selected",
+          "typeLine": 3241,
+          "damageLine": 3242
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "gladiatrix1",
+      "name": "여검투사",
+      "class": "рядовой",
+      "ai": "искусственный_идиот",
+      "description": "[에게야]<br>&nbsp;클럽 손님 한 명이 당신의 도전에 응해, 자기 노예를 결투에 내세웠다. 자, 누가 더 승리에 걸맞은 노예를 가졌는지 한번 보자. 모두 준비됐으면, 여자 싸움은 지금 바로 시작된다!",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "колющий",
+          "text": "여검투사는 카타나로 당신을 <font color='purple'>찔렀다</font>.",
+          "line": 3302,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 3297,
+          "damageLine": 3298
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "여검투사는 무기를 <font color='green'>잽싸게</font> 휘둘렀다.",
+          "line": 3308,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 3303,
+          "damageLine": 3304
+        },
+        {
+          "slot": 3,
+          "type": "сильная",
+          "damage": "рубящий",
+          "text": "여검투사는 카타나를 <font color='red'>강하게</font> 휘둘렀다.",
+          "line": 3314,
+          "normallySelected": false,
+          "selectionStatus": "defined-but-not-normally-selected",
+          "typeLine": 3309,
+          "damageLine": 3310
+        },
+        {
+          "slot": 4,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "<font color='red'>신속한</font> 일격이 당신의 몸에 거대한 출혈상을 남겼다.",
+          "line": 3318,
+          "normallySelected": false,
+          "selectionStatus": "defined-but-not-normally-selected",
+          "typeLine": 3316,
+          "damageLine": 3317
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "gladiatrix2",
+      "name": "여검투사",
+      "class": "рядовой",
+      "ai": "искусственный_идиот",
+      "description": "[에게야]<br>&nbsp;클럽 손님 한 명이 당신의 도전에 응해, 자기 노예를 결투에 내세웠다. 자, 누가 더 승리에 걸맞은 노예를 가졌는지 한번 보자. 모두 준비됐으면, 캣파이트는 지금 바로 시작된다!",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "колющий",
+          "text": "여검투사는 검으로 당신을 <font color='purple'>정확히</font> 찔렀다.",
+          "line": 3366,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 3361,
+          "damageLine": 3362
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "여검투사는 <font color='green'>빗발치는</font> 공격을 퍼부었다.",
+          "line": 3372,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 3367,
+          "damageLine": 3368
+        },
+        {
+          "slot": 3,
+          "type": "сильная",
+          "damage": "рубящий",
+          "text": "여검투사는 <font color='red'>재빠르게</font> 방패로 당신을 들이받았다.",
+          "line": 3378,
+          "normallySelected": false,
+          "selectionStatus": "defined-but-not-normally-selected",
+          "typeLine": 3373,
+          "damageLine": 3374
+        },
+        {
+          "slot": 4,
+          "type": "сильная",
+          "damage": "дробящий",
+          "text": "여검투사는 <font color='red'>재빠르게</font> 방패로 당신을 들이받았다",
+          "line": 3382,
+          "normallySelected": false,
+          "selectionStatus": "defined-but-not-normally-selected",
+          "typeLine": 3380,
+          "damageLine": 3381
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "gladiatrix3",
+      "name": "여검투사",
+      "class": "рядовой",
+      "ai": "искусственный_идиот",
+      "description": "[에게야]<br>&nbsp;클럽 손님 한 명이 당신의 도전에 응해, 자기 노예를 결투에 내세웠다. 자, 누가 더 승리에 걸맞은 노예를 가졌는지 한번 보자. 모두 준비됐으면, 캣파이트는 지금 바로 시작된다!",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "огонь",
+          "text": "여검투사는 창을 던지듯 불꽃이 타오르는 검으로 당신을 <font color='purple'>찔렀다</font>.",
+          "line": 3430,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 3425,
+          "damageLine": 3426
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "огонь",
+          "text": "여검투사는 불타오르는 검으로 허공에 치명적이지만 아름다운 패턴을 <font color='green'>그렸다</font>.",
+          "line": 3436,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 3431,
+          "damageLine": 3432
+        },
+        {
+          "slot": 3,
+          "type": "сильная",
+          "damage": "огонь",
+          "text": "여검투사는 마법검으로 남자 10명분의 <font color='red'>힘</font>으로 공격 했다.",
+          "line": 3442,
+          "normallySelected": false,
+          "selectionStatus": "defined-but-not-normally-selected",
+          "typeLine": 3437,
+          "damageLine": 3438
+        },
+        {
+          "slot": 4,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "마법검에 타격을 당하자, 요란한 소리의 불꽃이 당신의 전신을 <font color='red'>휘감았다</font>.",
+          "line": 3446,
+          "normallySelected": false,
+          "selectionStatus": "defined-but-not-normally-selected",
+          "typeLine": 3444,
+          "damageLine": 3445
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "egeya",
+      "name": "에게야",
+      "class": "рядовой",
+      "ai": "искусственный_идиот",
+      "description": "[에게야]<br>&nbsp;불멸의 로마의 거의 모든 주민이 내 힘을 알고 있다. 이제 너도 직접 느끼게 될 거다, <<$master_name>>! 내겐 자비가 없다. 게다가 이번 건의 대가는 아주 크지. 그러니 살아서 전투를 빠져나갈 생각은 아예 버리는 편이 좋을 거다!",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "рубящий",
+          "text": "에게야는 글라디우스로 당신의 다리를 <font color='purple'>날카롭게</font> 베었다.",
+          "line": 3498,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 3492,
+          "damageLine": 3493
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "에게야는 글라디우스를 <font color='green'>빠르게</font> 휘둘러 연달아 베어 왔다.",
+          "line": 3506,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 3500,
+          "damageLine": 3501
+        },
+        {
+          "slot": 3,
+          "type": "сильная",
+          "damage": "рубящий",
+          "text": "에게야는 글라디우스를 치켜들고 당신을 향해 <font color='red'>힘껏</font> 내리쳤다.",
+          "line": 3514,
+          "normallySelected": false,
+          "selectionStatus": "defined-but-not-normally-selected",
+          "typeLine": 3508,
+          "damageLine": 3509
+        },
+        {
+          "slot": 4,
+          "type": "сильная",
+          "damage": "рубящий",
+          "text": "에게야가 글라디우스로 <font color='red'>강력한</font> 일격을 가해 당신의 몸을 깊이 베었다.",
+          "line": 3520,
+          "normallySelected": false,
+          "selectionStatus": "defined-but-not-normally-selected",
+          "typeLine": 3517,
+          "damageLine": 3518
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "vatican_paladin",
+      "name": "성기사",
+      "class": "элитный",
+      "ai": "искусственный_идиот",
+      "description": "<br>교황의 아뎁타 소로리타스에서도 가장 뛰어난 성기사입니다. 상대를 향한 연민과 자비 따위는 그녀에게 존재하지 않습니다.",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "рубящий",
+          "text": "성기사는 톱니채찍으로 당신의 다리를 <font color='purple'>날카롭게</font> 베어냈다.",
+          "line": 3578,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 3573,
+          "damageLine": 3574
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "성기사의 톱니채찍이 <font color='green'>태풍같은</font> 먼지 구름을 일으켰다.",
+          "line": 3584,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 3579,
+          "damageLine": 3580
+        },
+        {
+          "slot": 3,
+          "type": "сильная",
+          "damage": "рубящий",
+          "text": "묵직한 톱니채찍이 당신을 반으로 쪼갤 기세로 <font color='red'>습격</font>했다.",
+          "line": 3590,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 3585,
+          "damageLine": 3586
+        },
+        {
+          "slot": 4,
+          "type": "сильная",
+          "damage": "рубящий",
+          "text": "성기사의 <font color='red'>파괴적인</font> 톱니채찍이 당신의 몸을 깊고 거칠게 찢어놓았다.",
+          "line": 3594,
+          "normallySelected": false,
+          "selectionStatus": "defined-but-not-normally-selected",
+          "typeLine": 3592,
+          "damageLine": 3593
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "strazhnik",
+      "name": "포탈 가디언",
+      "class": "элитный",
+      "ai": "искусственный_идиот",
+      "description": "거대하고, 역겨운, 인간형상의 괴물.",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "дробящий",
+          "text": "포탈 가디언이 거대한 손으로 당신을 <font color='purple'>후려쳤다</font>.",
+          "line": 3643,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 3638,
+          "damageLine": 3639
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "дробящий",
+          "text": "포탈 가디언이 몽둥이로 당신의 머리를 <font color='green'>크게 휘둘러</font> 내려쳤다.",
+          "line": 3649,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 3644,
+          "damageLine": 3645
+        },
+        {
+          "slot": 3,
+          "type": "сильная",
+          "damage": "дробящий",
+          "text": "포탈 가디언은 크게 휘두른 몽둥이를 당신에게 <font color='red'>내려쳤다</font>.",
+          "line": 3655,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 3650,
+          "damageLine": 3651
+        },
+        {
+          "slot": 4,
+          "type": "сильная",
+          "damage": "дробящий",
+          "text": "포탈 가디언은 몽둥이를 머리 위로 치켜들고 <font color='red'>온 힘을 다해</font> 내리쳤다.",
+          "line": 3659,
+          "normallySelected": false,
+          "selectionStatus": "defined-but-not-normally-selected",
+          "typeLine": 3657,
+          "damageLine": 3658
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "grinch",
+      "name": "그린치",
+      "class": "рядовой",
+      "ai": "искусственный_идиот",
+      "description": "[그린치]<br>&nbsp;— 네 계략에 넘어간 게 내 실수였어! 처음 만났을 때 끝장을 냈어야 했는데! 하지만 이제야말로 그 실수를 바로잡을 절호의 기회다!",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "рубящий",
+          "text": "그린치의 개가 당신을 <font color='purple'>공격</font>했다. 녀석은 당신의 다리에 달라붙어 움직임을 방해했다.",
+          "line": 3710,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 3705,
+          "damageLine": 3706
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "그린치는 손에 잡히는 모든 것을 집어 던졌다. 의자와 접시, 온갖 물건들이 <font color='green'>태풍처럼</font> 당신에게 쏟아졌다.",
+          "line": 3716,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 3711,
+          "damageLine": 3712
+        },
+        {
+          "slot": 3,
+          "type": "сильная",
+          "damage": "рубящий",
+          "text": "그린치는 무거운 화덕 부지깽이로 <font color='red'>전력을 다해</font> 당신을 후려쳤다. 육중한 강철의 일격이 당신의 뼈를 시험했다.",
+          "line": 3722,
+          "normallySelected": false,
+          "selectionStatus": "defined-but-not-normally-selected",
+          "typeLine": 3717,
+          "damageLine": 3718
+        },
+        {
+          "slot": 4,
+          "type": "сильная",
+          "damage": "рубящий",
+          "text": "<font color='red'>파괴적인</font> 크리스마스트리의 일격이 당신을 쓰러뜨렸고, 온몸에 깊은 열상을 남겼다.",
+          "line": 3726,
+          "normallySelected": false,
+          "selectionStatus": "defined-but-not-normally-selected",
+          "typeLine": 3724,
+          "damageLine": 3725
+        }
+      ],
+      "weaponItemId": null
+    },
+    {
+      "id": "erza",
+      "name": "엘자",
+      "class": "элитный",
+      "ai": "искусственный_идиот",
+      "description": "강철 갑옷과 톱니채찍으로 무장한 채 매서운 눈초리로 맞서는 여전사 엘자다.",
+      "attacks": [
+        {
+          "slot": 1,
+          "type": "точная",
+          "damage": "рубящий",
+          "text": "엘자는 톱니채찍으로 당신의 다리를 <font color='purple'>날카롭게</font> 베어냈다.",
+          "line": 3776,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 3771,
+          "damageLine": 3772
+        },
+        {
+          "slot": 2,
+          "type": "быстрая",
+          "damage": "рубящий",
+          "text": "엘자의 톱니채찍이 <font color='green'>태풍같은</font> 먼지 구름을 일으켰다.",
+          "line": 3782,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 3777,
+          "damageLine": 3778
+        },
+        {
+          "slot": 3,
+          "type": "сильная",
+          "damage": "рубящий",
+          "text": "묵직한 톱니채찍이 당신을 반으로 쪼갤 기세로 <font color='red'>습격</font>했다.",
+          "line": 3788,
+          "normallySelected": true,
+          "selectionStatus": "normally-selectable",
+          "typeLine": 3783,
+          "damageLine": 3784
+        },
+        {
+          "slot": 4,
+          "type": "сильная",
+          "damage": "рубящий",
+          "text": "엘자의 <font color='red'>파괴적인</font> 톱니채찍이 당신의 몸을 깊고 거칠게 찢어놓았다.",
+          "line": 3792,
+          "normallySelected": false,
+          "selectionStatus": "defined-but-not-normally-selected",
+          "typeLine": 3790,
+          "damageLine": 3791
+        }
+      ],
+      "weaponItemId": null
+    }
+  ],
+  "limits": [
+    "Static audit of specified WORK jack.qsp plus one isolated native damage-calculator diagnostic executed by root; no full battle or user save was exercised.",
+    "No live save values were inspected; unexpected preexisting variables could affect results.",
+    "No visual-art mismatch was concluded; MOB identifier names alone do not prove weapon types.",
+    "Reports are evidence, not approval to change gameplay, images, release files, or packages."
+  ],
+  "baselineComparison": {
+    "source": {
+      "path": "G:/somi/JO9O/game/jack.qsp",
+      "sha256": "26e15aaf30b6226a2883c6b532a6ee4eed34791110618597d234bb7d6fa3e052",
+      "locationCount": 248
+    },
+    "comparisons": [
+      {
+        "id": "MISSING_AI_LOCATION",
+        "location": "#противники",
+        "originalLines": [
+          853
+        ],
+        "workLines": [
+          887
+        ],
+        "conclusionKo": "원본과 동일한 AI 이름, 원본에도 해당 로케이션 없음"
+      },
+      {
+        "id": "UNDEFINED_DAMAGE_MODIFIER_NAME",
+        "location": "#противники",
+        "originalLines": [
+          699,
+          705,
+          1261,
+          1269
+        ],
+        "workLines": [
+          719,
+          727,
+          1319,
+          1327
+        ],
+        "conclusionKo": "4개 피해 문자열 동일. 원본에도 модификатор_режущий 정의 없음"
+      },
+      {
+        "id": "DORMANT_ATTACK_DEFINITIONS",
+        "location": "искусственный_идиот",
+        "originalLines": [
+          15,
+          16,
+          19,
+          20,
+          24,
+          25
+        ],
+        "workLines": [
+          17,
+          18,
+          21,
+          22,
+          26,
+          27
+        ],
+        "conclusionKo": "1/1~2/1~3 선택 규칙 원본과 동일. 현 34개 집계는 현 정의 기준"
+      },
+      {
+        "id": "LICH_LITERAL_ELEMENT_VS_DAMAGE",
+        "location": "#противники",
+        "originalLines": [
+          1312,
+          1316,
+          1324,
+          1328
+        ],
+        "workLines": [
+          1370,
+          1374,
+          1384,
+          1388
+        ],
+        "conclusionKo": "번개=관통, 화염구=타격 문구와 값 모두 원본에 이미 존재"
+      },
+      {
+        "id": "MORNINGSTAR_ITEM_CATEGORY_DIFFERS",
+        "location": "#противники",
+        "originalLines": [
+          2572,
+          2576,
+          2578,
+          2582
+        ],
+        "workLines": [
+          2692,
+          2696,
+          2698,
+          2702
+        ],
+        "conclusionKo": "모닝스타 문구 두 곳과 베기값 원본 동일"
+      },
+      {
+        "id": "GRINCH_THROW_AND_DORMANT_POKER",
+        "location": "#противники",
+        "originalLines": [
+          3539,
+          3543,
+          3545,
+          3549
+        ],
+        "workLines": [
+          3712,
+          3716,
+          3718,
+          3722
+        ],
+        "conclusionKo": "투척·부지깽이 문구와 베기값 모두 원본 동일"
+      },
+      {
+        "id": "RESULT-02_STATUS_HTML_PREFIX",
+        "location": "искусственный_идиот",
+        "originalLines": [
+          103,
+          107,
+          111,
+          118,
+          122,
+          126
+        ],
+        "workLines": [
+          105,
+          109,
+          113,
+          120,
+          124,
+          128
+        ],
+        "conclusionKo": "<br>를 포함한 기계 상태 키 저장은 원본부터 존재. 원본 상태 라벨/부여 분기도 raw key 비교"
+      }
+    ],
+    "statusTargetDirection": {
+      "workLocation": "конец_раунда",
+      "debuffToPlayerLines": [
+        138,
+        160
+      ],
+      "buffToEnemyLines": [
+        162,
+        184
+      ],
+      "originalDebuffToPlayerLines": [
+        124,
+        146
+      ],
+      "originalBuffToEnemyLines": [
+        148,
+        170
+      ],
+      "conclusionKo": "키에 HTML이 섞인 문제와 별도로, raw 키 기준 디버프는 플레이어[0], 버프는 해당 적[i]에 적용되어 방향 역전은 확인되지 않았다."
+    }
+  },
+  "nativeRegressionSuggestion": {
+    "engineExecuted": true,
+    "callableHelper": "рассчет_вреда",
+    "dependency": "jo9_traits_combat damage branch (WORK only)",
+    "isolation": "Fresh test state / temporary in-memory QSP clone only. Do not execute this setup in a live save.",
+    "setup": [
+      "snk_room_target = 0",
+      "$jo9_trait_combat_actor = ''",
+      "atk = 1 & def = 0 & вред_на_рассчет = 20",
+      "$атака[1] = 'точная' & $защита[0] = 'блок'",
+      "меткость[1] = 0 & рассеянность[0] = 0 & боль[1] = 0 & внимание[0] = 0",
+      "модификатор_рубящий = -7",
+      "killvar 'модификатор_режущий'"
+    ],
+    "run": [
+      "$рассчетный_тип_вреда = 'рубящий' & gs 'рассчет_вреда' & jo9_test_slash = нанесенный_вред[1]",
+      "$рассчетный_тип_вреда = 'режущий' & gs 'рассчет_вреда' & jo9_test_cut = нанесенный_вред[1]"
+    ],
+    "expected": {
+      "jo9_test_slash": 13,
+      "jo9_test_cut": 20
+    },
+    "why": "Same base damage and stance/status inputs. Only damage-key string changes. Known рубящий modifier is sentinel -7; missing режущий is expected default 0.",
+    "executedBy": "root agent",
+    "executionScope": "One isolated calculator case, not a full battle",
+    "actual": {
+      "jo9_test_slash": 13,
+      "jo9_test_cut": 20
+    },
+    "result": "PASS"
+  },
+  "nativeVerification": {
+    "executedBy": "root agent",
+    "pass": true,
+    "engineCases": 1,
+    "calculator": "рассчет_вреда",
+    "inputDamage": 20,
+    "slashModifier": -7,
+    "actual": {
+      "slash": 13,
+      "cut": 20
+    },
+    "expected": {
+      "slash": 13,
+      "cut": 20
+    },
+    "diagnosticBoundary": "Full WORK diagnostic copy, only Start replaced. Native SAVEGAME damage.sav parsed by root; no full battle was exercised.",
+    "sourceUnchanged": true,
+    "userSaveLoaded": false,
+    "evidenceFiles": [
+      "native-results.json",
+      "native-prepared.json",
+      "damage-modifier-stderr.log"
+    ]
+  }
+}

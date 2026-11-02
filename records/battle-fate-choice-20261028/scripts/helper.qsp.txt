@@ -1,0 +1,182 @@
+! JO9 MOD START BATTLE_FATE_CHOICE_20261028
+! Ordinary fog/arena opponents: defer corpse/KO bookkeeping until a guarded choice.
+result = 0
+if $args[0] = 'init':
+ killvar 'jo9_fate'
+ killvar 'jo9_fate_enemy'
+ local $jo9_bf_source = $args[1]
+ local $jo9_bf_fog = '|исчадие_молодь|исчадие|чудовщиное_исчадие|черный_медик|подручный|паладин|пехотинец|козлорогий|свинорылый|жабован|крысолюд|вервольф|вампир|лич|канибал|калека|нищеброд|безумец|изможденный|ogre|goblin|warg|orc|'
+ local $jo9_bf_arena = '|dimaher_a|dimaher_b|dimaher_c|dimaher_d|dimaher_e|hoplite_a|hoplite_b|hoplite_c|hoplite_d|hoplite_e|secutor_a|secutor_b|secutor_c|secutor_d|secutor_e|kimerian_a|kimerian_b|kimerian_c|kimerian_d|kimerian_e|'
+ local $jo9_bf_colosseum = '|голая_рабыня|госпожа|шиноби|латница|амазонка|'
+ if количество_врагов < 1 or количество_врагов > 5: exit
+ if $jo9_bf_source = 'normal' and $place = 'edge_patrol':
+  jo9_fate['mode'] = 1
+  local jo9_bf_i = 1
+  :jo9_bf_init_fog
+  if jo9_bf_i <= количество_врагов:
+   if instr($jo9_bf_fog, '|' + $враг[jo9_bf_i] + '|') = 0: jo9_fate['mode'] = 0
+   jo9_bf_i += 1
+   jump 'jo9_bf_init_fog'
+  end
+ end
+ if $jo9_bf_source = 'normal' and $place = 'colosseum' and количество_врагов = 1:
+  if (colosseum_fight >= 1 and colosseum_fight <= 5) or (colosseum_fight >= 11 and colosseum_fight <= 15) or (colosseum_fight >= 21 and colosseum_fight <= 25) or (colosseum_fight >= 31 and colosseum_fight <= 35):
+   if instr($jo9_bf_colosseum, '|' + $враг[1] + '|') > 0: jo9_fate['mode'] = 2
+  end
+ end
+ if $jo9_bf_source = 'arena' and arena_mode = 1 and $fight_return = 'Start' and количество_врагов = 1:
+  if instr($jo9_bf_arena, '|' + $враг[1] + '|') > 0: jo9_fate['mode'] = 2
+ end
+ result = jo9_fate['mode']
+ exit
+end
+
+if $args[0] = 'stage':
+ local jo9_bf_slot = args[1]
+ local jo9_bf_cause = args[2]
+ if jo9_fate['mode'] < 1 or jo9_fate['phase'] > 0: exit
+ if jo9_bf_slot < 1 or jo9_bf_slot > количество_врагов: exit
+ if jo9_bf_cause < 1 or jo9_bf_cause > 4: exit
+ if враг[jo9_bf_slot] ! 1 or jo9_fate_enemy[jo9_bf_slot] ! 0: exit
+ jo9_fate_enemy[jo9_bf_slot] = jo9_bf_cause
+ jo9_fate['count'] += 1
+ враг[jo9_bf_slot] = 0
+ поверженные_враги += 1
+ local $jo9_bf_text = ''
+ if jo9_fate['mode'] = 1:
+  if jo9_bf_cause = 1 or jo9_bf_cause = 3:
+   $jo9_bf_text = '적이 치명상을 입고 피를 쏟으며 바닥에 쓰러졌다. 이대로 두면 죽을 것 같다.'
+  else
+   $jo9_bf_text = '적이 힘없이 바닥에 쓰러져 기절했다. 더 이상 싸울 수 없어 보인다.'
+  end
+ else
+  if jo9_bf_cause = 1 or jo9_bf_cause = 3:
+   $jo9_bf_text = '상대는 치명타를 맞고 피를 흘리며 주저 앉았다. 결투를 포기하고 죽음을 각오한 것 같다'
+  else
+   $jo9_bf_text = '상대는 더 이상 버티지 못하고 바닥에 주저 앉았다. 싸울 의지가 없어 보인다.'
+  end
+ end
+ $действия_врага[jo9_bf_slot] += '<br>' + $jo9_bf_text + '<br>'
+ result = 1
+ exit
+end
+
+if $args[0] = 'fallback':
+ if jo9_fate['mode'] < 1 or jo9_fate['phase'] >= 2: exit
+ local jo9_bf_i = 1
+ :jo9_bf_fallback
+ if jo9_bf_i <= количество_врагов:
+  if jo9_fate_enemy[jo9_bf_i] = 1 or jo9_fate_enemy[jo9_bf_i] = 3:
+   $трофей[тр] = $труп_моба_в_локацию[$враг[jo9_bf_i]]
+   труп[$враг[jo9_bf_i]] += 1
+   тр += 1
+  elseif jo9_fate_enemy[jo9_bf_i] = 2:
+   $трофей[тр] = $вырубленный_моб_в_локацию[$враг[jo9_bf_i]]
+   в_отключке[$враг[jo9_bf_i]] += 1
+   тр += 1
+  end
+  jo9_fate_enemy[jo9_bf_i] = 0
+  jo9_bf_i += 1
+  jump 'jo9_bf_fallback'
+ end
+ jo9_fate['count'] = 0
+ jo9_fate['mode'] = 0
+ jo9_fate['phase'] = 0
+ result = 1
+ exit
+end
+
+if $args[0] = 'result':
+ if jo9_fate['mode'] < 1: exit
+ if $итог_боя ! 'победа': gs 'jo9_battle_fate', 'fallback' & exit
+ if jo9_fate['count'] < 1 or jo9_fate['phase'] ! 0: exit
+ jo9_fate['phase'] = 1
+ jo9_fate['hp_before'] = здоровье_врага[текущий]
+ jo9_fate['stamina_before'] = выносливость_врага[текущий]
+ result = 1
+ exit
+end
+
+if $args[0] = 'choose':
+ local jo9_bf_choice = args[1]
+ if jo9_fate['mode'] < 1 or jo9_fate['phase'] ! 1 or jo9_fate['count'] < 1: exit
+ if $итог_боя ! 'победа': exit
+ if jo9_bf_choice ! 1 and jo9_bf_choice ! 2: exit
+ if jo9_bf_choice = 2 and jo9_fate['mode'] ! 2: exit
+ jo9_fate['phase'] = 2
+ jo9_fate['choice'] = jo9_bf_choice
+ local jo9_bf_i = 1
+ :jo9_bf_choose
+ if jo9_bf_i <= количество_врагов:
+  if jo9_fate_enemy[jo9_bf_i] > 0:
+   if jo9_bf_choice = 1:
+    здоровье_врага[jo9_bf_i] = min(0, здоровье_врага[jo9_bf_i])
+    $трофей[тр] = $труп_моба_в_локацию[$враг[jo9_bf_i]]
+    труп[$враг[jo9_bf_i]] += 1
+   else
+    здоровье_врага[jo9_bf_i] = max(1, здоровье_врага[jo9_bf_i])
+    выносливость_врага[jo9_bf_i] = 0
+    $состояние[jo9_bf_i] = ''
+    $трофей[тр] = $вырубленный_моб_в_локацию[$враг[jo9_bf_i]]
+    в_отключке[$враг[jo9_bf_i]] += 1
+   end
+   тр += 1
+   jo9_fate_enemy[jo9_bf_i] = 0
+  end
+  jo9_bf_i += 1
+  jump 'jo9_bf_choose'
+ end
+ jo9_fate['count'] = 0
+ result = 1
+ exit
+end
+
+if $args[0] = 'choices':
+ $result = ''
+ if jo9_fate['mode'] < 1 or jo9_fate['phase'] ! 1: exit
+ local $jo9_bf_execute = '가차 없이 적을 처형한다'
+ local $jo9_bf_spare = '죽일 필요까지는 없다. 적을 살려준다'
+ if jo9_fate['mode'] = 2:
+  $jo9_bf_execute = '가차 없이 상대를 처형한다'
+  $jo9_bf_spare = '죽일 필요까지는 없다. 상대를 살려준다'
+ end
+ $jo9_fate['choices'] = '<div class="jo9-battle-fate-choices" id="jo9_fate_choices"><div class="jo9-battle-fate-row"><a class="jo9-battle-fate-execute" href="EXEC: gt ''jo9_battle_fate'', ''apply'', 1">[' + $jo9_bf_execute + ']</a></div><div class="jo9-battle-fate-row">'
+ if jo9_fate['mode'] = 2:
+  $jo9_fate['choices'] += '<a href="EXEC: gt ''jo9_battle_fate'', ''apply'', 2">[' + $jo9_bf_spare + ']</a>'
+ else
+  $jo9_fate['choices'] += '<span class="is-disabled" aria-disabled="true">[' + $jo9_bf_spare + ']</span>'
+ end
+ $jo9_fate['choices'] += '</div></div>'
+ $result = $jo9_fate['choices']
+ exit
+end
+
+if $args[0] = 'apply':
+ gs 'jo9_battle_fate', 'choose', args[1]
+ if jo9_fate['phase'] = 1 or jo9_fate['phase'] = 2: gt 'jo9_battle_fate', 'render'
+ exit
+end
+
+if $args[0] = 'render':
+ if $jo9_fate['page'] = '': exit
+ local $jo9_bf_page = $jo9_fate['page']
+ if $jo9_fate['last_fx'] ! '': $jo9_bf_page = $replace($jo9_bf_page, $jo9_fate['last_fx'], '')
+ if jo9_fate['phase'] = 2:
+  local $jo9_bf_message = '당신은 쓰러진 적에게 최후의 일격을 가했다.'
+  if jo9_fate['mode'] = 2: $jo9_bf_message = '당신은 쓰러진 상대에게 최후의 일격을 가했다.'
+  if jo9_fate['choice'] = 2: $jo9_bf_message = '당신은 무기를 거두고 상대를 살려주었다.'
+  local $jo9_bf_choices = '<div class="jo9-battle-fate-choices" id="jo9_fate_choices"><div class="jo9-battle-fate-row"><span class="jo9-battle-fate-message">' + $jo9_bf_message + '</span></div><div class="jo9-battle-fate-row"><a href="EXEC: gt ''выход_из_боя''">[계속]</a></div></div>'
+  $jo9_bf_page = $replace($jo9_bf_page, $jo9_fate['choices'], $jo9_bf_choices)
+  $jo9_bf_page = $replace($jo9_bf_page, $jo9_fate['thumb_pending'], $jo9_fate['thumb_ready'])
+  $jo9_bf_page = $replace($jo9_bf_page, '<div id = "combat_ui_health"><center>' + $str(jo9_fate['hp_before']) + '</center></div>', '<div id = "combat_ui_health"><center>' + $str(здоровье_врага[текущий]) + '</center></div>')
+  $jo9_bf_page = $replace($jo9_bf_page, '<div id = "combat_ui_stamina"><center>' + $str(jo9_fate['stamina_before']) + '</center></div>', '<div id = "combat_ui_stamina"><center>' + $str(выносливость_врага[текущий]) + '</center></div>')
+  if jo9_fate['choice'] = 1 and jo9_fate['fx_played'] = 0:
+   $jo9_bf_page = $replace($jo9_bf_page, '<div id="jo9_battle_fx_layer" class="jo9-battle-fx-layer" aria-hidden="true">', '<div id="jo9_battle_fx_layer" class="jo9-battle-fx-layer" aria-hidden="true"><div class="jo9-battle-execution"><img src="content/pic/ui/jo9_battle_test_v01/execution.svg"></div>')
+   jo9_fate['fx_played'] = 1
+  end
+ end
+ *clr
+ *p $jo9_bf_page
+ exit
+end
+! JO9 MOD END BATTLE_FATE_CHOICE_20261028

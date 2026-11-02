@@ -1,0 +1,1086 @@
+{
+  "schema": 1,
+  "kind": "read-only event weapon-message audit",
+  "date": "2026-10-30",
+  "source": {
+    "path": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+    "sha256": "f18fcee393330747f693f0388ef5c0364b926a34e64ea25b659e68ca9b6aa652",
+    "sha256After": "f18fcee393330747f693f0388ef5c0364b926a34e64ea25b659e68ca9b6aa652",
+    "locationCount": 275,
+    "codec": "G:/somi/JO9sa/tools/text-workshop/core.cjs",
+    "lineConvention": "decoded QSP location body; one-based physical lines"
+  },
+  "scope": {
+    "primaryEventMobIds": [
+      "egeya",
+      "vatican_paladin",
+      "strazhnik",
+      "grinch",
+      "erza"
+    ],
+    "decodedAllLocations": true,
+    "inspectedCurrentFullBodyImages": 5,
+    "nativeEngineExecuted": false,
+    "runtimeEdits": false,
+    "limits": [
+      "정적 코드와 현재 PNG 시각 대조. 실제 플레이·저장 복원·분기 실행은 하지 않음.",
+      "일반 MOB는 적 ID별 고정 공격문이며 독립적인 장비 무기 슬롯으로 메시지가 자동 생성되는 구조가 아님.",
+      "같은 문장 안의 실제 무기명 불일치와 맨손/즉석도구 연출 가능성을 구별함."
+    ],
+    "totalCurrentFullBodyImagesVisuallyInspected": 9
+  },
+  "summary": {
+    "confirmedMismatchMobs": 1,
+    "confirmedMismatchStrings": 5,
+    "matches": [
+      "egeya",
+      "erza",
+      "strazhnik"
+    ],
+    "designReviewOnly": [
+      "grinch",
+      "воспитуемая"
+    ]
+  },
+  "findings": [
+    {
+      "id": "EVENT-01",
+      "status": "CONFIRMED_MISMATCH",
+      "mob": "vatican_paladin",
+      "actual": "승인된 검 계열 이미지. 현재 전신은 장검.",
+      "messageWeapon": "톱니채찍",
+      "evidence": [
+        {
+          "location": "#противники",
+          "line": 3578,
+          "text": "$атака_1_текст['vatican_paladin'] = \"성기사는 톱니채찍으로 당신의 다리를 <font color='purple'>날카롭게</font> 베어냈다.\""
+        },
+        {
+          "location": "#противники",
+          "line": 3584,
+          "text": "$атака_2_текст['vatican_paladin'] = \"성기사의 톱니채찍이 <font color='green'>태풍같은</font> 먼지 구름을 일으켰다.\""
+        },
+        {
+          "location": "#противники",
+          "line": 3590,
+          "text": "$атака_3_текст['vatican_paladin'] = \"묵직한 톱니채찍이 당신을 반으로 쪼갤 기세로 <font color='red'>습격</font>했다.\""
+        },
+        {
+          "location": "#противники",
+          "line": 3594,
+          "text": "$суператака_1_текст['vatican_paladin'] = \"성기사의 <font color='red'>파괴적인</font> 톱니채찍이 당신의 몸을 깊고 거칠게 찢어놓았다.\""
+        },
+        {
+          "location": "#противники",
+          "line": 3596,
+          "text": "$суператака_1_кратко['vatican_paladin'] = \"[톱니채찍 강타]\""
+        }
+      ],
+      "minimumCorrection": "현행 5문장의 톱니채찍을 장검 또는 합의한 검 명칭으로 교정. 문자열 5개만 수정하며 피해/공격유형/효과/변수/로케이션 변경 불필요.",
+      "optionalEditorial": "두 번째 먼지 구름 문장과 네 번째 찢어놓았다 문장을 검격에 맞게 다듬는 것은 별도 문구 정리."
+    },
+    {
+      "id": "EVENT-02",
+      "status": "MATCH_CURRENT",
+      "mob": "egeya",
+      "actual": "승인 글라디우스",
+      "evidence": [
+        {
+          "location": "#противники",
+          "line": 3498,
+          "text": "$атака_1_текст['egeya'] = \"에게야는 글라디우스로 당신의 다리를 <font color='purple'>날카롭게</font> 베었다.\""
+        },
+        {
+          "location": "#противники",
+          "line": 3506,
+          "text": "$атака_2_текст['egeya'] = \"에게야는 글라디우스를 <font color='green'>빠르게</font> 휘둘러 연달아 베어 왔다.\""
+        },
+        {
+          "location": "#противники",
+          "line": 3514,
+          "text": "$атака_3_текст['egeya'] = \"에게야는 글라디우스를 치켜들고 당신을 향해 <font color='red'>힘껏</font> 내리쳤다.\""
+        },
+        {
+          "location": "#противники",
+          "line": 3520,
+          "text": "$суператака_1_текст['egeya'] = \"에게야가 글라디우스로 <font color='red'>강력한</font> 일격을 가해 당신의 몸을 깊이 베었다.\""
+        },
+        {
+          "location": "#противники",
+          "line": 3524,
+          "text": "$суператака_1_кратко['egeya'] = \"[글라디우스 강타]\""
+        }
+      ],
+      "note": "EGEYA_GLADIUS_TEXT_20261029 적용 확인. 세 일반공격+특수공격+기술명 5곳 모두 글라디우스."
+    },
+    {
+      "id": "EVENT-03",
+      "status": "MATCH_CURRENT",
+      "mob": "erza",
+      "actual": "톱니채찍",
+      "evidence": [
+        {
+          "location": "#противники",
+          "line": 3760,
+          "text": "$описание_моба['erza'] = \"강철 갑옷과 톱니채찍으로 무장한 채 매서운 눈초리로 맞서는 여전사 엘자다.\""
+        },
+        {
+          "location": "#противники",
+          "line": 3776,
+          "text": "$атака_1_текст['erza'] = \"엘자는 톱니채찍으로 당신의 다리를 <font color='purple'>날카롭게</font> 베어냈다.\""
+        },
+        {
+          "location": "#противники",
+          "line": 3782,
+          "text": "$атака_2_текст['erza'] = \"엘자의 톱니채찍이 <font color='green'>태풍같은</font> 먼지 구름을 일으켰다.\""
+        },
+        {
+          "location": "#противники",
+          "line": 3788,
+          "text": "$атака_3_текст['erza'] = \"묵직한 톱니채찍이 당신을 반으로 쪼갤 기세로 <font color='red'>습격</font>했다.\""
+        },
+        {
+          "location": "#противники",
+          "line": 3792,
+          "text": "$суператака_1_текст['erza'] = \"엘자의 <font color='red'>파괴적인</font> 톱니채찍이 당신의 몸을 깊고 거칠게 찢어놓았다.\""
+        },
+        {
+          "location": "#противники",
+          "line": 3794,
+          "text": "$суператака_1_кратко['erza'] = \"[톱니채찍 강타]\""
+        }
+      ],
+      "note": "소개문과 5개 공격문 모두 톱니채찍. 톱니채찍 잔존을 일괄 오타로 취급하면 현재 그림/정의와 어긋남."
+    },
+    {
+      "id": "EVENT-04",
+      "status": "MATCH_CURRENT",
+      "mob": "strazhnik",
+      "actual": "대형 몽둥이",
+      "evidence": [
+        {
+          "location": "#противники",
+          "line": 3643,
+          "text": "$атака_1_текст['strazhnik'] = \"포탈 가디언이 거대한 손으로 당신을 <font color='purple'>후려쳤다</font>.\""
+        },
+        {
+          "location": "#противники",
+          "line": 3649,
+          "text": "$атака_2_текст['strazhnik'] = \"포탈 가디언이 몽둥이로 당신의 머리를 <font color='green'>크게 휘둘러</font> 내려쳤다.\""
+        },
+        {
+          "location": "#противники",
+          "line": 3655,
+          "text": "$атака_3_текст['strazhnik'] = \"포탈 가디언은 크게 휘두른 몽둥이를 당신에게 <font color='red'>내려쳤다</font>.\""
+        },
+        {
+          "location": "#противники",
+          "line": 3659,
+          "text": "$суператака_1_текст['strazhnik'] = \"포탈 가디언은 몽둥이를 머리 위로 치켜들고 <font color='red'>온 힘을 다해</font> 내리쳤다.\""
+        },
+        {
+          "location": "#противники",
+          "line": 3660,
+          "text": "$суператака_1_кратко['strazhnik'] = \"[강타]\""
+        }
+      ],
+      "note": "손으로 후려치는 첫 공격과 몽둥이 공격을 함께 사용. 무장 중 맨손 공격은 무기명 모순이 아님."
+    },
+    {
+      "id": "EVENT-05",
+      "status": "DESIGN_CONSISTENCY_REVIEW_ONLY",
+      "mob": "grinch",
+      "actual": "전신은 빈손/발톱. 환경에 크리스마스트리.",
+      "evidence": [
+        {
+          "location": "#противники",
+          "line": 3710,
+          "text": "$атака_1_текст['grinch'] = \"그린치의 개가 당신을 <font color='purple'>공격</font>했다. 녀석은 당신의 다리에 달라붙어 움직임을 방해했다.\""
+        },
+        {
+          "location": "#противники",
+          "line": 3716,
+          "text": "$атака_2_текст['grinch'] = \"그린치는 손에 잡히는 모든 것을 집어 던졌다. 의자와 접시, 온갖 물건들이 <font color='green'>태풍처럼</font> 당신에게 쏟아졌다.\""
+        },
+        {
+          "location": "#противники",
+          "line": 3722,
+          "text": "$атака_3_текст['grinch'] = \"그린치는 무거운 화덕 부지깽이로 <font color='red'>전력을 다해</font> 당신을 후려쳤다. 육중한 강철의 일격이 당신의 뼈를 시험했다.\""
+        },
+        {
+          "location": "#противники",
+          "line": 3726,
+          "text": "$суператака_1_текст['grinch'] = \"<font color='red'>파괴적인</font> 크리스마스트리의 일격이 당신을 쓰러뜨렸고, 온몸에 깊은 열상을 남겼다.\""
+        },
+        {
+          "location": "#противники",
+          "line": 3728,
+          "text": "$суператака_1_кратко['grinch'] = \"[크리스마스트리 강타]\""
+        },
+        {
+          "location": "interaction_city",
+          "line": 24503,
+          "text": " $sp_text[10384] = '[그린치]<br>&nbsp;첫 만남 때 네 속임수에 넘어가 널 끝장내지 않은 게 실수였어! 하지만 이제 그 불행한 실수를 바로잡을 멋진 기회가 생겼군! 맥스, 물어!!! <i>그린치의 수중 도구들이 즉시 당신에게 날아들었고, 크리스마스 도둑의 개가 덮쳐 왔다. 기습 공격을 가까스로 피한 당신은 상대의 도전을 받아들인다.</i>'"
+        }
+      ],
+      "note": "공격은 개, 던지는 가구/그릇, 부지깽이, 크리스마스트리를 사용. 전투 전 대사도 개와 수중 도구를 명시하므로 즉석 도구 연출로 읽을 수 있음. 정지 이미지에 개/부지깽이가 없다는 이유만으로 고장 판정하지 않음.",
+      "minimumCorrection": "필수 수정 없음. 손톱 전투로 바꿀 경우 기존 이벤트 연출을 변경하므로 별도 디자인 결정."
+    },
+    {
+      "id": "EVENT-06",
+      "status": "HARD_CODED_RESULT_SPECIFICITY_REVIEW_ONLY",
+      "mob": "воспитуемая",
+      "evidence": [
+        {
+          "location": "end_day_screen",
+          "line": 964,
+          "text": "if slave_attack = 1:"
+        },
+        {
+          "location": "end_day_screen",
+          "line": 971,
+          "text": "\t$враг[1] = 'воспитуемая'"
+        },
+        {
+          "location": "end_day_screen",
+          "line": 976,
+          "text": "\tmsg '  위협을 느끼며 잠에서 깬 당신은 본능적으로 침대 밖으로 몸을 굴린다. 방금 전까지 당신이 누워 있던 자리에 칼이 꽂혀 있다! <<$slave_name>>가 부엌에서 그 칼을 훔쳐 당신을 죽이기로 결심한 모양이다!'"
+        },
+        {
+          "location": "end_day_screen",
+          "line": 979,
+          "text": "\tgt 'начать_бой'"
+        },
+        {
+          "location": "начать_бой",
+          "line": 291,
+          "text": ""
+        },
+        {
+          "location": "начать_бой",
+          "line": 292,
+          "text": "\tif slave_attack = 1:"
+        },
+        {
+          "location": "начать_бой",
+          "line": 293,
+          "text": "\t\tslave_base_dmg = 1+slave['gladiatrix'] & $slave_dmg_type = 'колющий'"
+        },
+        {
+          "location": "начать_бой",
+          "line": 318,
+          "text": "\t$атака_1_текст['воспитуемая'] = '<<$slave_name>>가 당신의 사타구니를 <font color=\"purple\">정확히</font> 가격한다' + iif(slave_base_dmg > slave['gladiatrix'], ' (무기로)', '')"
+        },
+        {
+          "location": "начать_бой",
+          "line": 324,
+          "text": "\t$атака_2_текст['воспитуемая'] = '<<$slave_name>>가 당신에게 <font color=\"green\">미친 듯이</font> 난타를 퍼붓는다' + iif(slave_base_dmg > slave['gladiatrix'], ' 무기로', '')"
+        },
+        {
+          "location": "начать_бой",
+          "line": 330,
+          "text": "\t$атака_3_текст['воспитуемая'] = '<<$slave_name>>가 당신을 <font color=\"red\">온 힘을 다해</font> 후려친다' + iif(slave_base_dmg > slave['gladiatrix'], ' 무기로', '')"
+        },
+        {
+          "location": "выход_из_боя",
+          "line": 202,
+          "text": "if $итог_боя = 'вырубился' and $враг[1] = 'воспитуемая':"
+        },
+        {
+          "location": "выход_из_боя",
+          "line": 203,
+          "text": "\tdynamic $death, '당신은 노예의 주먹을 감당하지 못하고 무릎을 꿇었다. 그 모습을 본 노예는 미소를 지으며 다가와 발차기로 당신의 얼굴을 후려쳐 기절시켰다. 불행히도, 당신은 그 뒤 다시는 깨어나지 못했다…'"
+        }
+      ],
+      "note": "무장 공격문을 만들 수 있는 동일 상대의 기절 패배문이 항상 주먹/발차기를 명시. 무장 중 맨손 마무리 가능성 때문에 확정 불일치로 세지 않음.",
+      "minimumCorrection": "특정 타격 수단을 고정하지 않으려면 기존 1문장의 주먹을 공격으로 바꾸는 문구 정리. 분기/변수 추가 불필요."
+    }
+  ],
+  "images": {
+    "egeya": {
+      "path": "G:/somi/Jack O Nine Tails v2.4_work/game/content/pic/mob/egeya.png",
+      "sha256": "5d1b885818ff903066ffe00516c50f2b9d60bcf99c21b789b3bcc3732cf4a4e3",
+      "bytes": 682657,
+      "width": 795,
+      "height": 596,
+      "visuallyInspected": true,
+      "observedWeapon": "직선 도검. 승인된 명칭은 글라디우스."
+    },
+    "vatican_paladin": {
+      "path": "G:/somi/Jack O Nine Tails v2.4_work/game/content/pic/mob/vatican_paladin.png",
+      "sha256": "2a42137ca6d1e6bb9dbbd861bde04b8b30043a1688dd53438cbb4222a2e04a6d",
+      "bytes": 1055948,
+      "width": 795,
+      "height": 596,
+      "visuallyInspected": true,
+      "observedWeapon": "긴 직선 장검. 톱니채찍 없음."
+    },
+    "strazhnik": {
+      "path": "G:/somi/Jack O Nine Tails v2.4_work/game/content/pic/mob/strazhnik.png",
+      "sha256": "0d2d34280672198869543f291b74b2c86697743bdd0b27635187f2990c7a8629",
+      "bytes": 943737,
+      "width": 795,
+      "height": 596,
+      "visuallyInspected": true,
+      "observedWeapon": "철띠와 못이 달린 대형 목제 몽둥이."
+    },
+    "grinch": {
+      "path": "G:/somi/Jack O Nine Tails v2.4_work/game/content/pic/mob/grinch_full.png",
+      "sha256": "200e89a08c34d981c0ac31a53825bc89a444a82ef5b69d28720d326e23293c7c",
+      "bytes": 971327,
+      "width": 795,
+      "height": 596,
+      "visuallyInspected": true,
+      "observedWeapon": "빈손과 긴 발톱. 방 안에 크리스마스트리 존재."
+    },
+    "erza": {
+      "path": "G:/somi/Jack O Nine Tails v2.4_work/game/content/pic/mob/erza.png",
+      "sha256": "f2327ef1a92ccf0e7b1453e5cafbf90826589270fbc6e551d39f92668aaeafa2",
+      "bytes": 1009483,
+      "width": 795,
+      "height": 596,
+      "visuallyInspected": true,
+      "observedWeapon": "가시가 달린 길고 유연한 톱니채찍."
+    }
+  },
+  "eventAssignments": [
+    {
+      "location": "interaction_city",
+      "line": 17651,
+      "text": "\t $враг[1] = 'egeya'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 17884,
+      "text": "\t $враг[1] = 'egeya'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 22986,
+      "text": " $враг[1] = 'vatican_paladin'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 22998,
+      "text": " $враг[1] = 'strazhnik'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 24507,
+      "text": " $враг[1] = 'grinch'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 32108,
+      "text": " $враг[1] = 'erza'"
+    }
+  ],
+  "definitions": [
+    {
+      "location": "#противники",
+      "line": 3471,
+      "text": "$название_моба['egeya'] = \"에게야\""
+    },
+    {
+      "location": "#противники",
+      "line": 3472,
+      "text": "$аватара_моба['egeya'] = \"content/pic/mob/egeya_ava.png\""
+    },
+    {
+      "location": "#противники",
+      "line": 3473,
+      "text": "$силуэт_моба['egeya'] = \"content/pic/mob/egeya.png\""
+    },
+    {
+      "location": "#противники",
+      "line": 3475,
+      "text": "$описание_моба['egeya'] = \"[에게야]<br>&nbsp;불멸의 로마의 거의 모든 주민이 내 힘을 알고 있다. 이제 너도 직접 느끼게 될 거다, <<$master_name>>! 내겐 자비가 없다. 게다가 이번 건의 대가는 아주 크지. 그러니 살아서 전투를 빠져나갈 생각은 아예 버리는 편이 좋을 거다!\""
+    },
+    {
+      "location": "#противники",
+      "line": 3498,
+      "text": "$атака_1_текст['egeya'] = \"에게야는 글라디우스로 당신의 다리를 <font color='purple'>날카롭게</font> 베었다.\""
+    },
+    {
+      "location": "#противники",
+      "line": 3506,
+      "text": "$атака_2_текст['egeya'] = \"에게야는 글라디우스를 <font color='green'>빠르게</font> 휘둘러 연달아 베어 왔다.\""
+    },
+    {
+      "location": "#противники",
+      "line": 3514,
+      "text": "$атака_3_текст['egeya'] = \"에게야는 글라디우스를 치켜들고 당신을 향해 <font color='red'>힘껏</font> 내리쳤다.\""
+    },
+    {
+      "location": "#противники",
+      "line": 3520,
+      "text": "$суператака_1_текст['egeya'] = \"에게야가 글라디우스로 <font color='red'>강력한</font> 일격을 가해 당신의 몸을 깊이 베었다.\""
+    },
+    {
+      "location": "#противники",
+      "line": 3524,
+      "text": "$суператака_1_кратко['egeya'] = \"[글라디우스 강타]\""
+    },
+    {
+      "location": "#противники",
+      "line": 3533,
+      "text": "$смерть['egeya'] = '피를 흘리며 생사의 경계에 선 에게야가 바닥에 쓰러진다. 여기서 숨통을 끊어 놓는 건 당신에게도 손해다. 그녀는 산 채로 챙겨야 한다...'"
+    },
+    {
+      "location": "#противники",
+      "line": 3534,
+      "text": "$отключка['egeya'] = '기력이 다한 에게야는 더 이상 싸움을 이어 갈 수 없다. 당신이 원하던 바를 이루었다. 이제 이 일류 여검투사는 당신의 노예다.'"
+    },
+    {
+      "location": "#противники",
+      "line": 3535,
+      "text": "$бегство['egeya'] = '에게야가 무기를 버리고 항복하며 자비를 구걸한다. 당신이 원하던 바를 이루었다. 이제 이 일류 여검투사는 당신의 노예다.'"
+    },
+    {
+      "location": "#противники",
+      "line": 3536,
+      "text": "$death['egeya'] = $смерть['egeya']"
+    },
+    {
+      "location": "#противники",
+      "line": 3537,
+      "text": "$disconnect['egeya'] = $отключка['egeya']"
+    },
+    {
+      "location": "#противники",
+      "line": 3538,
+      "text": "$escape['egeya'] = $бегство['egeya']"
+    },
+    {
+      "location": "#противники",
+      "line": 3560,
+      "text": "$название_моба['vatican_paladin'] = \"성기사\""
+    },
+    {
+      "location": "#противники",
+      "line": 3561,
+      "text": "$аватара_моба['vatican_paladin'] = \"content/pic/mob/vatican_paladin_ava.png\""
+    },
+    {
+      "location": "#противники",
+      "line": 3562,
+      "text": "$силуэт_моба['vatican_paladin'] = \"content/pic/mob/vatican_paladin.png\""
+    },
+    {
+      "location": "#противники",
+      "line": 3563,
+      "text": "$описание_моба['vatican_paladin'] = \"<br>교황의 아뎁타 소로리타스에서도 가장 뛰어난 성기사입니다. 상대를 향한 연민과 자비 따위는 그녀에게 존재하지 않습니다.\""
+    },
+    {
+      "location": "#противники",
+      "line": 3578,
+      "text": "$атака_1_текст['vatican_paladin'] = \"성기사는 톱니채찍으로 당신의 다리를 <font color='purple'>날카롭게</font> 베어냈다.\""
+    },
+    {
+      "location": "#противники",
+      "line": 3584,
+      "text": "$атака_2_текст['vatican_paladin'] = \"성기사의 톱니채찍이 <font color='green'>태풍같은</font> 먼지 구름을 일으켰다.\""
+    },
+    {
+      "location": "#противники",
+      "line": 3590,
+      "text": "$атака_3_текст['vatican_paladin'] = \"묵직한 톱니채찍이 당신을 반으로 쪼갤 기세로 <font color='red'>습격</font>했다.\""
+    },
+    {
+      "location": "#противники",
+      "line": 3594,
+      "text": "$суператака_1_текст['vatican_paladin'] = \"성기사의 <font color='red'>파괴적인</font> 톱니채찍이 당신의 몸을 깊고 거칠게 찢어놓았다.\""
+    },
+    {
+      "location": "#противники",
+      "line": 3596,
+      "text": "$суператака_1_кратко['vatican_paladin'] = \"[톱니채찍 강타]\""
+    },
+    {
+      "location": "#противники",
+      "line": 3604,
+      "text": "$смерть['vatican_paladin'] = '<br>온몸이 난도질당한 성기사의 시체가 땅에 쓰러졌다.'"
+    },
+    {
+      "location": "#противники",
+      "line": 3605,
+      "text": "$отключка['vatican_paladin'] = '<br>힘이 다한 성기사는 얼굴부터 땅에 쓰러졌다.'"
+    },
+    {
+      "location": "#противники",
+      "line": 3606,
+      "text": "$бегство['vatican_paladin'] = '<br>오만했던 성기사는 항복하고 자비를 구하고 있다.'"
+    },
+    {
+      "location": "#противники",
+      "line": 3625,
+      "text": "$название_моба['strazhnik'] = \"포탈 가디언\""
+    },
+    {
+      "location": "#противники",
+      "line": 3626,
+      "text": "$аватара_моба['strazhnik'] = \"content/pic/mob/strazhnik_ava.png\""
+    },
+    {
+      "location": "#противники",
+      "line": 3627,
+      "text": "$силуэт_моба['strazhnik'] = \"content/pic/mob/strazhnik.png\""
+    },
+    {
+      "location": "#противники",
+      "line": 3628,
+      "text": "$описание_моба['strazhnik'] = \"거대하고, 역겨운, 인간형상의 괴물.\""
+    },
+    {
+      "location": "#противники",
+      "line": 3643,
+      "text": "$атака_1_текст['strazhnik'] = \"포탈 가디언이 거대한 손으로 당신을 <font color='purple'>후려쳤다</font>.\""
+    },
+    {
+      "location": "#противники",
+      "line": 3649,
+      "text": "$атака_2_текст['strazhnik'] = \"포탈 가디언이 몽둥이로 당신의 머리를 <font color='green'>크게 휘둘러</font> 내려쳤다.\""
+    },
+    {
+      "location": "#противники",
+      "line": 3655,
+      "text": "$атака_3_текст['strazhnik'] = \"포탈 가디언은 크게 휘두른 몽둥이를 당신에게 <font color='red'>내려쳤다</font>.\""
+    },
+    {
+      "location": "#противники",
+      "line": 3659,
+      "text": "$суператака_1_текст['strazhnik'] = \"포탈 가디언은 몽둥이를 머리 위로 치켜들고 <font color='red'>온 힘을 다해</font> 내리쳤다.\""
+    },
+    {
+      "location": "#противники",
+      "line": 3660,
+      "text": "$суператака_1_кратко['strazhnik'] = \"[강타]\""
+    },
+    {
+      "location": "#противники",
+      "line": 3666,
+      "text": "$смерть['strazhnik'] = '<br>포탈 가디언의 시체가 땅에 쓰러졌다.'"
+    },
+    {
+      "location": "#противники",
+      "line": 3667,
+      "text": "$отключка['strazhnik'] = '<br>포탈 가디언이 땅에 쓰러졌다.'"
+    },
+    {
+      "location": "#противники",
+      "line": 3668,
+      "text": "$бегство['strazhnik'] = '<br>포탈 가디언은 길을 비켜주었다.'"
+    },
+    {
+      "location": "#противники",
+      "line": 3688,
+      "text": "$название_моба['grinch'] = \"그린치\""
+    },
+    {
+      "location": "#противники",
+      "line": 3689,
+      "text": "$аватара_моба['grinch'] = \"content/pic/mob/grinch.png\""
+    },
+    {
+      "location": "#противники",
+      "line": 3691,
+      "text": "$силуэт_моба['grinch'] = \"content/pic/mob/grinch_full.png\""
+    },
+    {
+      "location": "#противники",
+      "line": 3694,
+      "text": "$описание_моба['grinch'] = \"[그린치]<br>&nbsp;— 네 계략에 넘어간 게 내 실수였어! 처음 만났을 때 끝장을 냈어야 했는데! 하지만 이제야말로 그 실수를 바로잡을 절호의 기회다!\""
+    },
+    {
+      "location": "#противники",
+      "line": 3710,
+      "text": "$атака_1_текст['grinch'] = \"그린치의 개가 당신을 <font color='purple'>공격</font>했다. 녀석은 당신의 다리에 달라붙어 움직임을 방해했다.\""
+    },
+    {
+      "location": "#противники",
+      "line": 3716,
+      "text": "$атака_2_текст['grinch'] = \"그린치는 손에 잡히는 모든 것을 집어 던졌다. 의자와 접시, 온갖 물건들이 <font color='green'>태풍처럼</font> 당신에게 쏟아졌다.\""
+    },
+    {
+      "location": "#противники",
+      "line": 3722,
+      "text": "$атака_3_текст['grinch'] = \"그린치는 무거운 화덕 부지깽이로 <font color='red'>전력을 다해</font> 당신을 후려쳤다. 육중한 강철의 일격이 당신의 뼈를 시험했다.\""
+    },
+    {
+      "location": "#противники",
+      "line": 3726,
+      "text": "$суператака_1_текст['grinch'] = \"<font color='red'>파괴적인</font> 크리스마스트리의 일격이 당신을 쓰러뜨렸고, 온몸에 깊은 열상을 남겼다.\""
+    },
+    {
+      "location": "#противники",
+      "line": 3728,
+      "text": "$суператака_1_кратко['grinch'] = \"[크리스마스트리 강타]\""
+    },
+    {
+      "location": "#противники",
+      "line": 3735,
+      "text": "$смерть['grinch'] = '<br>그린치의 시체가 땅에 쓰러졌다.'"
+    },
+    {
+      "location": "#противники",
+      "line": 3736,
+      "text": "$отключка['grinch'] = '<br>그린치가 땅에 쓰러졌다.'"
+    },
+    {
+      "location": "#противники",
+      "line": 3737,
+      "text": "$бегство['grinch'] = '<br>그린치는 항복하고 자비를 구하고 있다.'"
+    },
+    {
+      "location": "#противники",
+      "line": 3756,
+      "text": "$название_моба['erza'] = \"엘자\""
+    },
+    {
+      "location": "#противники",
+      "line": 3757,
+      "text": "$аватара_моба['erza'] = \"content/pic/mob/erza_ava.png\""
+    },
+    {
+      "location": "#противники",
+      "line": 3758,
+      "text": "$силуэт_моба['erza'] = \"content/pic/mob/erza.png\""
+    },
+    {
+      "location": "#противники",
+      "line": 3760,
+      "text": "$описание_моба['erza'] = \"강철 갑옷과 톱니채찍으로 무장한 채 매서운 눈초리로 맞서는 여전사 엘자다.\""
+    },
+    {
+      "location": "#противники",
+      "line": 3776,
+      "text": "$атака_1_текст['erza'] = \"엘자는 톱니채찍으로 당신의 다리를 <font color='purple'>날카롭게</font> 베어냈다.\""
+    },
+    {
+      "location": "#противники",
+      "line": 3782,
+      "text": "$атака_2_текст['erza'] = \"엘자의 톱니채찍이 <font color='green'>태풍같은</font> 먼지 구름을 일으켰다.\""
+    },
+    {
+      "location": "#противники",
+      "line": 3788,
+      "text": "$атака_3_текст['erza'] = \"묵직한 톱니채찍이 당신을 반으로 쪼갤 기세로 <font color='red'>습격</font>했다.\""
+    },
+    {
+      "location": "#противники",
+      "line": 3792,
+      "text": "$суператака_1_текст['erza'] = \"엘자의 <font color='red'>파괴적인</font> 톱니채찍이 당신의 몸을 깊고 거칠게 찢어놓았다.\""
+    },
+    {
+      "location": "#противники",
+      "line": 3794,
+      "text": "$суператака_1_кратко['erza'] = \"[톱니채찍 강타]\""
+    },
+    {
+      "location": "#противники",
+      "line": 3803,
+      "text": "$смерть['erza'] = '엘자가 결투장 바닥에 쓰러져 숨을 거둔다.'"
+    },
+    {
+      "location": "#противники",
+      "line": 3804,
+      "text": "$отключка['erza'] = '기력이 바닥난 엘자가 무릎을 꿇고 의식을 잃은 채 쓰러진다.'"
+    },
+    {
+      "location": "#противники",
+      "line": 3805,
+      "text": "$бегство['erza'] = '엘자가 입술을 깨물며 패배를 인정하고 당신에게 항복한다.'"
+    }
+  ],
+  "engineSelectionEvidence": [
+    {
+      "location": "начать_бой",
+      "line": 121,
+      "text": "gs '#противники'"
+    },
+    {
+      "location": "начать_бой",
+      "line": 433,
+      "text": "\t$труп_врага[i] = $смерть[$враг[i]]"
+    },
+    {
+      "location": "начать_бой",
+      "line": 434,
+      "text": "\t$тело_врага[i] = $отключка[$враг[i]]"
+    },
+    {
+      "location": "начать_бой",
+      "line": 435,
+      "text": "\t$беглец[i] = $бегство[$враг[i]]"
+    },
+    {
+      "location": "искусственный_идиот",
+      "line": 81,
+      "text": "if  ам = 1: $действия_врага[i] += \"<<$атака_1_текст[$враг[i]]>>\""
+    },
+    {
+      "location": "искусственный_идиот",
+      "line": 82,
+      "text": "if  ам = 2: $действия_врага[i] += \"<<$атака_2_текст[$враг[i]]>>\""
+    },
+    {
+      "location": "искусственный_идиот",
+      "line": 83,
+      "text": "if  ам = 3: $действия_врага[i] += \"<<$атака_3_текст[$враг[i]]>>\""
+    },
+    {
+      "location": "искусственный_идиот",
+      "line": 84,
+      "text": "if  ам = 4: $действия_врага[i] += \"<<$суператака_1_текст[$враг[i]]>>\""
+    },
+    {
+      "location": "искусственный_идиот",
+      "line": 85,
+      "text": "if  ам = 5: $действия_врага[i] += \"<<$суператака_2_текст[$враг[i]]>>\""
+    },
+    {
+      "location": "искусственный_идиот",
+      "line": 86,
+      "text": "if  ам = 6: $действия_врага[i] += \"<<$суператака_3_текст[$враг[i]]>>\""
+    }
+  ],
+  "resultWeaponMentionCandidatesOutsidePrimaryFive": [
+    {
+      "location": "#противники",
+      "line": 282,
+      "text": "$смерть['госпожа'] = '<br> 여교관은 자신이 흘린 피 웅덩이 속에 죽어있다. 그녀의 힘 없는 손가락 사이로 채찍이 떨어졌다...'"
+    },
+    {
+      "location": "#противники",
+      "line": 284,
+      "text": "$бегство['госпожа'] = '<br> 여교관은 채찍을 내던지고 당신에게 자비를 바라며 무릎을 꿇었다.'"
+    }
+  ],
+  "identityNotes": [
+    {
+      "status": "IDENTITY_NOT_WEAPON_MISMATCH",
+      "note": "Elsa/엘사는 별도 NPC. 현재 전체 QSP에서 Elsa/elsa MOB 정의 및 적 배정 검색 0건. erza/엘자 전투와 구별.",
+      "evidence": [
+        {
+          "location": "interaction_city",
+          "line": 31337,
+          "text": " $npc_id = 'Elsa'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 31341,
+          "text": " !Elsa stats customization"
+        },
+        {
+          "location": "interaction_city",
+          "line": 32108,
+          "text": " $враг[1] = 'erza'"
+        }
+      ]
+    },
+    {
+      "status": "SPELLING_ONLY",
+      "note": "포탈 가디언/포털 가디언 표기 혼용. 무기 불일치와 별개."
+    }
+  ],
+  "sourceRecordsConsulted": [
+    "G:/somi/JO9sa/records/egeya-gladius-20261029/REPORT_KO.md",
+    "G:/somi/JO9sa/records/mob-corrections-review-20261029/REPORT_KO.md",
+    "G:/somi/JO9sa/records/mob-corrections-adopted-20261029/REPORT_KO.md",
+    "G:/somi/JO9sa/records/deferred-discussions-20261024/index.json"
+  ],
+  "followupFourImageAddendum": {
+    "scope": "bounded four-image follow-up; no new/cropped images",
+    "sourceSha256AtFollowup": "f18fcee393330747f693f0388ef5c0364b926a34e64ea25b659e68ca9b6aa652",
+    "totalVisuallyInspected": 9,
+    "newConfirmedArtWeaponMismatches": 0,
+    "images": {
+      "kimerian_d": {
+        "path": "G:/somi/Jack O Nine Tails v2.4_work/game/content/pic/mob/gladiator_kimerian_4.png",
+        "sha256": "5f130828ddeb97279337fbdc429d2ddd3d7f70cd205892cf2079c4582f581311",
+        "bytes": 746252,
+        "width": 795,
+        "height": 596,
+        "visuallyInspected": true,
+        "observedWeapon": "양손으로 잡은 짧은 고정 손잡이의 구형 가시 철퇴. 공격문의 모닝스타와 무기 계열이 일치. 아이템 설명의 사슬형 변형과 형태는 다르므로 동일 아이템 외형까지 일치한다고 단정하지 않음."
+      },
+      "лич": {
+        "path": "G:/somi/Jack O Nine Tails v2.4_work/game/content/pic/mob/lich.png",
+        "sha256": "22dd45079519382ae3908851bc37e64adbef98f7e70c5308ef3420c57c608461",
+        "bytes": 973205,
+        "width": 795,
+        "height": 596,
+        "visuallyInspected": true,
+        "observedWeapon": "왕관과 로브를 입은 해골 마법사. 양손에 푸른 마법 에너지. 마법 공격 전반과 양립하며 정지 그림에 특정 화염구가 없다는 이유로 그림-공격 불일치로 보지 않음."
+      },
+      "крысолюд": {
+        "path": "G:/somi/Jack O Nine Tails v2.4_work/game/content/pic/mob/ratman.png",
+        "sha256": "2d53da16566ac3be1518b832c24cab48bca6fba9261657f860cc14c2119c6236",
+        "bytes": 956624,
+        "width": 795,
+        "height": 596,
+        "visuallyInspected": true,
+        "observedWeapon": "오른손에 긴 곡선형 톱날 검을 든 쥐 수인. 곡선형 톱날 칼/길다란 칼 공격문과 일치."
+      },
+      "вервольф": {
+        "path": "G:/somi/Jack O Nine Tails v2.4_work/game/content/pic/mob/werewolf.png",
+        "sha256": "90a5663b6bb11b437b0a83f9a13808e9043162d92612cfa30158daefe93075f0",
+        "bytes": 909984,
+        "width": 795,
+        "height": 596,
+        "visuallyInspected": true,
+        "observedWeapon": "긴 손발톱과 드러난 송곳니를 가진 늑대인간. 발톱·턱·송곳니 공격문과 일치."
+      }
+    },
+    "definitions": [
+      {
+        "location": "#противники",
+        "line": 705,
+        "text": "$аватара_моба['крысолюд'] = \"content/pic/mob/ratman_ava.png\""
+      },
+      {
+        "location": "#противники",
+        "line": 706,
+        "text": "$силуэт_моба['крысолюд'] = \"content/pic/mob/ratman.png\""
+      },
+      {
+        "location": "#противники",
+        "line": 707,
+        "text": "$описание_моба['крысолюд'] = \"<br>쥐 짐승\""
+      },
+      {
+        "location": "#противники",
+        "line": 719,
+        "text": "$атака_1_тип_вреда['крысолюд'] = 'режущий'"
+      },
+      {
+        "location": "#противники",
+        "line": 724,
+        "text": "$атака_1_текст['крысолюд'] = \"쥐인간은 곡선형 톱날 칼로 당신의 힘줄을 <font color='purple'>자르려고</font> 했다\""
+      },
+      {
+        "location": "#противники",
+        "line": 727,
+        "text": "$атака_2_тип_вреда['крысолюд'] = 'режущий'"
+      },
+      {
+        "location": "#противники",
+        "line": 732,
+        "text": "$атака_2_текст['крысолюд'] = \"쥐인간은 길다란 칼로 당신을 <font color='green'>푹 찔렀다</font>\""
+      },
+      {
+        "location": "#противники",
+        "line": 1291,
+        "text": "$аватара_моба['вервольф'] = \"content/pic/mob/werewolf_ava.png\""
+      },
+      {
+        "location": "#противники",
+        "line": 1292,
+        "text": "$силуэт_моба['вервольф'] = \"content/pic/mob/werewolf.png\""
+      },
+      {
+        "location": "#противники",
+        "line": 1293,
+        "text": "$описание_моба['вервольф'] = \"<br>사냥중인 늑대인간\""
+      },
+      {
+        "location": "#противники",
+        "line": 1305,
+        "text": "$атака_1_тип_вреда['вервольф'] = 'рубящий'"
+      },
+      {
+        "location": "#противники",
+        "line": 1310,
+        "text": "$атака_1_текст['вервольф'] = \"늑대인간이 당신의 <font color='purple'>두 눈을</font> 노리고 길고 날카로운 발톱으로 할퀴었다\""
+      },
+      {
+        "location": "#противники",
+        "line": 1313,
+        "text": "$атака_2_тип_вреда['вервольф'] = 'рубящий'"
+      },
+      {
+        "location": "#противники",
+        "line": 1317,
+        "text": "$атака_2_текст['вервольф'] = \"늑대인간은 <font color='green'>번개같이</font> 당신에게 옮겨와, 발톱으로 그어댔다\""
+      },
+      {
+        "location": "#противники",
+        "line": 1319,
+        "text": "$атака_3_тип_вреда['вервольф'] = 'режущий'"
+      },
+      {
+        "location": "#противники",
+        "line": 1323,
+        "text": "$атака_3_текст['вервольф'] = \"늑대인간은 <font color='red'>넓고 강력한</font> 턱에 당신의 몸을 욱여 넣었다\""
+      },
+      {
+        "location": "#противники",
+        "line": 1327,
+        "text": "$суператака_1_тип_вреда['вервольф'] = 'режущий'"
+      },
+      {
+        "location": "#противники",
+        "line": 1328,
+        "text": "$суператака_1_текст['вервольф'] = \"늑대 인간은 송곳니와 발톱으로 당신의 몸을 <font color='red'>맹렬하게</font> 파헤쳤다\""
+      },
+      {
+        "location": "#противники",
+        "line": 1329,
+        "text": "$суператака_1_кратко['вервольф'] = \"[강타]\""
+      },
+      {
+        "location": "#противники",
+        "line": 1356,
+        "text": "$аватара_моба['лич'] = \"content/pic/mob/lich_ava.png\""
+      },
+      {
+        "location": "#противники",
+        "line": 1357,
+        "text": "$силуэт_моба['лич'] = \"content/pic/mob/lich.png\""
+      },
+      {
+        "location": "#противники",
+        "line": 1358,
+        "text": "$описание_моба['лич'] = \"강령술사 리치\""
+      },
+      {
+        "location": "#противники",
+        "line": 1370,
+        "text": "$атака_1_тип_вреда['лич'] = 'колющий'"
+      },
+      {
+        "location": "#противники",
+        "line": 1374,
+        "text": "$атака_1_текст['лич'] = \"리치가 당신을 <font color='purple'>조준해</font> 번개를 내리쳤다\""
+      },
+      {
+        "location": "#противники",
+        "line": 1376,
+        "text": "$атака_2_тип_вреда['лич'] = 'рубящий'"
+      },
+      {
+        "location": "#противники",
+        "line": 1381,
+        "text": "$атака_2_текст['лич'] = \"리치는 당신에게 여러 마법 발사체를 <font color='green'>난사했다</font>\""
+      },
+      {
+        "location": "#противники",
+        "line": 1384,
+        "text": "$атака_3_тип_вреда['лич'] = 'дробящий'"
+      },
+      {
+        "location": "#противники",
+        "line": 1388,
+        "text": "$атака_3_текст['лич'] = \"리치가 <font color='red'>이글대는</font> 화염구로 당신을 맞추었다\""
+      },
+      {
+        "location": "#противники",
+        "line": 1396,
+        "text": "$суператака_1_тип_вреда['лич'] = 'психический'"
+      },
+      {
+        "location": "#противники",
+        "line": 1397,
+        "text": "$суператака_1_текст['лич'] = \"리치는 손가락으로 <font color='purple'>마법</font> 동작을 취하더니, 당신은 지옥같은 고통에 휩싸였다\""
+      },
+      {
+        "location": "#противники",
+        "line": 1398,
+        "text": "$суператака_1_кратко['лич'] = \"[시야 흐림]\""
+      },
+      {
+        "location": "#противники",
+        "line": 2676,
+        "text": "$аватара_моба['kimerian_d'] = \"content/pic/mob/gladiator_kimerian_4_ava.png\""
+      },
+      {
+        "location": "#противники",
+        "line": 2677,
+        "text": "$силуэт_моба['kimerian_d'] = \"content/pic/mob/gladiator_kimerian_4.png\""
+      },
+      {
+        "location": "#противники",
+        "line": 2679,
+        "text": "$описание_моба['kimerian_d'] = \"[경기 진행자]<br>&nbsp;그리고 그녀의 적은 우리의 사랑, 아름다운 굴곡짐과 매력적인 웃음의 멋진 여자! 이 킴메르 방식 무기는, 사용하는 어떤 투사에도 명예를 가져다 줍니다. 양손무기 철퇴를 지배하는 자!</div>\""
+      },
+      {
+        "location": "#противники",
+        "line": 2692,
+        "text": "$атака_1_тип_вреда['kimerian_d'] = 'рубящий'"
+      },
+      {
+        "location": "#противники",
+        "line": 2696,
+        "text": "$атака_1_текст['kimerian_d'] = \"가슴 큰 여성 투사는 모닝스타로 당신에게 <font color='red'>거대한</font> 일격을 가했다\""
+      },
+      {
+        "location": "#противники",
+        "line": 2698,
+        "text": "$атака_2_тип_вреда['kimerian_d'] = 'рубящий'"
+      },
+      {
+        "location": "#противники",
+        "line": 2702,
+        "text": "$атака_2_текст['kimerian_d'] = \"가슴 큰 여성 투사는 모닝스타로 <font color='green'>넓게</font> 원을 그렸다\""
+      }
+    ],
+    "damageVsArt": [
+      {
+        "mob": "kimerian_d",
+        "artWeaponStatus": "MATCH_WEAPON_FAMILY",
+        "issueKind": "DAMAGE_TYPE_INCONSISTENCY",
+        "evidence": [
+          {
+            "location": "#противники",
+            "line": 2692,
+            "text": "$атака_1_тип_вреда['kimerian_d'] = 'рубящий'"
+          },
+          {
+            "location": "#противники",
+            "line": 2696,
+            "text": "$атака_1_текст['kimerian_d'] = \"가슴 큰 여성 투사는 모닝스타로 당신에게 <font color='red'>거대한</font> 일격을 가했다\""
+          },
+          {
+            "location": "#противники",
+            "line": 2698,
+            "text": "$атака_2_тип_вреда['kimerian_d'] = 'рубящий'"
+          },
+          {
+            "location": "#противники",
+            "line": 2702,
+            "text": "$атака_2_текст['kimerian_d'] = \"가슴 큰 여성 투사는 모닝스타로 <font color='green'>넓게</font> 원을 그렸다\""
+          },
+          {
+            "location": "#боевые_предметы",
+            "line": 874,
+            "text": "$item_description['моргенштерн'] = '<br> 가시 돋힌 작은 철구가 달린 사슬과 손잡이. 무서운 무기다.<br><br> 둔기류 무기, 피해량 : 힘 + 6'"
+          },
+          {
+            "location": "#боевые_предметы",
+            "line": 879,
+            "text": "$тип_вреда['моргенштерн'] = 'дробящий'"
+          }
+        ],
+        "note": "모닝스타/철퇴 그림과 공격 명칭은 일치. 참격 рубящий 값은 아이템의 타격 дробящий 값과 별도 코드 정합성 문제. 그림은 고정 손잡이 가시 철퇴이며 아이템 설명은 사슬형 변형이다."
+      },
+      {
+        "mob": "лич",
+        "artWeaponStatus": "COMPATIBLE_STATIC_MAGIC_ART",
+        "issueKind": "MESSAGE_VS_DAMAGE_TYPE",
+        "note": "번개/마법 발사체/화염구 문장과 колющий/рубящий/дробящий 값은 코드-문구 문제. 주문 시전자 그림 자체를 다른 무기라고 판정하지 않음."
+      },
+      {
+        "mob": "крысолюд",
+        "artWeaponStatus": "MATCH_CURRENT",
+        "issueKind": "DAMAGE_TYPE_KEY",
+        "note": "곡선 톱날 칼 그림과 문구는 일치. режущий 두 값은 그림 오류가 아니라 피해유형 키 문제."
+      },
+      {
+        "mob": "вервольф",
+        "artWeaponStatus": "MATCH_CURRENT",
+        "issueKind": "DAMAGE_TYPE_KEY",
+        "note": "발톱/송곳니 그림과 문구는 일치. режущий 값은 그림 오류가 아니라 피해유형 키 문제."
+      }
+    ]
+  }
+}

@@ -32,12 +32,31 @@ function create(game,catalogRoot,catalog,originalCuts={}){
   const progressFile=path.join(work,'progress.json');if(fs.existsSync(progressFile)){fs.copyFileSync(progressFile,path.join(dir,'progress.json'));const progress=JSON.parse(fs.readFileSync(progressFile,'utf8').replace(/^\uFEFF/,''));for(const f of files){const rel='content\\pic\\'+f.path.replaceAll('/','\\'),meta=catalog.meta(rel),v={relative_path:rel,work_code:meta?.code,catalog_tags:meta?.flags||[],work_status:'placed',completed_at:record.created,sha256_before:f.before,sha256_after:f.after,game_path:resolve(f.path),backup_paths:[path.join(root,backupName,record.id)],gameplay_verified_by_user:false};const i=progress.items.findIndex(x=>x.relative_path===rel);if(i<0)progress.items.push(v);else progress.items[i]={...progress.items[i],...v};}progress.updated_at=record.created;catalogModuleAtomic(progressFile,JSON.stringify(progress,null,2)+'\n');}
  }
  function catalogModuleAtomic(p,text){const temp=p+'.'+crypto.randomBytes(6).toString('hex')+'.tmp';fs.writeFileSync(temp,text,{flag:'wx'});fs.renameSync(temp,p);}
+ // JO9 MOD START MOB_STANDARD_SIZE_20261029: opt-in only; generic image writes retain their prior-size rule.
+ function mobSize(j){
+  if(j.mobSlot===undefined)return null;
+  if(!['portrait','standing','defeat'].includes(j.mobSlot))fail('MOB 슬롯 종류를 확인하세요.');
+  if(!j.path.startsWith('mob/')&&!(j.mobSlot==='portrait'&&j.path==='characters/mistress_ava.png'))fail('MOB 슬롯 이외의 이미지 크기는 변경할 수 없습니다.');
+  const manifestText=fs.readFileSync(path.join(catalogRoot,'catalog_merge_vs_original.html'),'utf8');
+  const manifestMatch=manifestText.match(/window\.JO9_MOB_SETS\s*=\s*(.*?);<\/script>/);
+  if(!manifestMatch)fail('MOB 슬롯 등록 정보를 확인하세요.');
+  const manifest=JSON.parse(manifestMatch[1]),roles=new Map();
+  const add=(slot,kind)=>{if(!slot||typeof slot.path!=='string')return;const rel=slot.path.replace(/^content\/pic\//,'').toLowerCase();if(!roles.has(rel))roles.set(rel,new Set());roles.get(rel).add(kind);};
+  for(const entry of manifest.entries||[])for(const kind of ['portrait','standing','defeat'])add(entry[kind],kind);
+  for(const group of manifest.groups||[])add(group.defeat,'defeat');
+  const actualRoles=roles.get(j.path.toLowerCase());
+  if(actualRoles&&actualRoles.has('portrait')&&actualRoles.size>1&&j.mobSlot!=='portrait')fail('초상 공용 경로입니다. 별도 전신 경로를 먼저 연결하세요.');
+  if(!actualRoles||!actualRoles.has(j.mobSlot))fail('등록된 MOB 이미지 경로와 슬롯 종류가 다릅니다.');
+  const size=j.mobSlot==='portrait'?{width:150,height:150}:{width:795,height:596};
+  if(j.width!==size.width||j.height!==size.height)fail('MOB 표준 크기를 확인하세요.');return size;
+ }
+ // JO9 MOD END MOB_STANDARD_SIZE_20261029
  function apply(jobs,operation='replace'){
   if(locked)fail('다른 이미지 반영이 진행 중입니다.');if(!Array.isArray(jobs)||!jobs.length||jobs.length>200)fail('교체 목록을 확인하세요.');locked=true;
   let record,dir;try{
    // JO9 MOD START WINDOWS_IMAGE_SLOTS_20261018_PIC_WRITE: missing-original metadata does not reserve an ordinary B.
    const protectedAliases=new Set([...Object.values(originalCuts.originals?.()||{}),...Object.values(originalCuts.reservations?.()||{}).filter(e=>e.status==='linked')].map(e=>e.alias.toLowerCase()));
-   const seen=new Set(),prepared=jobs.map(j=>{if(protectedAliases.has(String(j.path).toLowerCase()))fail('B컷은 JO9O 원본용으로 예약되어 있습니다. 새 그림은 전환 컷 추가로 저장하세요.');const full=resolve(j.path);if(!/\.png$/i.test(j.path)||seen.has(j.path.toLowerCase()))fail('중복되거나 잘못된 이미지 경로입니다.');seen.add(j.path.toLowerCase());const old=fs.existsSync(full)?fs.readFileSync(full):null;if((old?sha(old):null)!==j.before)fail('이미지가 바뀌었습니다. 다시 선택하세요: '+j.path);if(!old&&!j.createMissing)fail('새 파일 생성 승인이 필요합니다.');if(typeof j.data!=='string'||!/^[A-Za-z0-9+/]*={0,2}$/.test(j.data))fail('파일 데이터 형식이 다릅니다.');const data=Buffer.from(j.data,'base64'),size=png(data),prior=old?png(old):{width:j.width,height:j.height};if(size.width!==prior.width||size.height!==prior.height||!Number.isSafeInteger(j.cap)||j.cap<1||j.cap>60*1024*1024||data.length>j.cap)fail('이미지 크기 또는 용량 한도를 확인하세요.');return{...j,full,old,data,after:sha(data)};});
+   const seen=new Set(),prepared=jobs.map(j=>{if(protectedAliases.has(String(j.path).toLowerCase()))fail('B컷은 JO9O 원본용으로 예약되어 있습니다. 새 그림은 전환 컷 추가로 저장하세요.');const full=resolve(j.path);if(!/\.png$/i.test(j.path)||seen.has(j.path.toLowerCase()))fail('중복되거나 잘못된 이미지 경로입니다.');seen.add(j.path.toLowerCase());const old=fs.existsSync(full)?fs.readFileSync(full):null;if((old?sha(old):null)!==j.before)fail('이미지가 바뀌었습니다. 다시 선택하세요: '+j.path);if(!old&&!j.createMissing)fail('새 파일 생성 승인이 필요합니다.');if(typeof j.data!=='string'||!/^[A-Za-z0-9+/]*={0,2}$/.test(j.data))fail('파일 데이터 형식이 다릅니다.');const data=Buffer.from(j.data,'base64'),size=png(data),oldSize=old?png(old):{width:j.width,height:j.height},mob=mobSize(j),prior=operation==='restore'?{width:j.width,height:j.height}:mob||oldSize;if(size.width!==prior.width||size.height!==prior.height||!Number.isSafeInteger(j.cap)||j.cap<1||j.cap>60*1024*1024||data.length>j.cap)fail('이미지 크기 또는 용량 한도를 확인하세요.');return{...j,full,old,data,after:sha(data)};});
    // JO9 MOD END WINDOWS_IMAGE_SLOTS_20261018_PIC_WRITE
    const id=new Date().toISOString().replace(/[:.]/g,'-')+'_'+crypto.randomBytes(4).toString('hex');dir=path.join(root,backupName,id);fs.mkdirSync(dir,{recursive:true});record={version:2,id,created:new Date().toISOString(),status:'prepared',files:prepared.map(j=>({path:j.path,before:j.before,after:j.after,existed:j.old!==null}))};
    for(const j of prepared)if(j.old){const dest=path.join(dir,'original',...j.path.split('/'));fs.mkdirSync(path.dirname(dest),{recursive:true});fs.writeFileSync(dest,j.old,{flag:'wx'});if(sha(fs.readFileSync(dest))!==j.before)fail('백업 확인 실패');}

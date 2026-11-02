@@ -1,0 +1,14 @@
+'use strict';
+const fs=require('fs'),a=require('assert/strict'),path=require('path');
+const R='G:/somi/JO9sa',O=__dirname,c=require(R+'/tools/text-workshop/core.cjs'),sc=require(R+'/tools/qa/save-codec.cjs'),crc=require('../colosseum-slave-death-save-20261029/native-helper/fastqsp-crc.cjs');
+const final=JSON.parse(fs.readFileSync(O+'/FINAL_RESULT.json','utf8')),v=JSON.parse(fs.readFileSync(O+'/validation.json','utf8')),clean=JSON.parse(fs.readFileSync(O+'/cleanup.json','utf8')),recover=JSON.parse(fs.readFileSync(O+'/native-recovery.json','utf8')),baseline=JSON.parse(fs.readFileSync(O+'/root-snapshot.json','utf8'));
+a.equal(final.status,'INSTALLED');a.equal(v.status,'PASS');a.equal(clean.status,'PASS');a.equal(final.files.length,2);
+for(const f of final.files){const b=fs.readFileSync(f.file);a.equal(c.hash(b),f.sha256);a.equal(b.length,f.bytes);a(crc.verify(baseline.games[0].path,f.file).pass);const r=recover.find(x=>x.installedFile===f.file);a(r);const s=sc.parse(b);a(sc.serialize(s).equals(b));s.lines[2]=sc.enc(r.nativeCrc);a.equal(c.hash(sc.serialize(s)),r.nativeSha256);}
+for(const g of baseline.games)a.equal(c.hash(fs.readFileSync(g.path)),g.sha256);
+for(const t of clean.removedRoots){const abs=path.resolve(t);a(abs.startsWith('G:\\Codex\\tmp\\portal-paladin-event-saves-20261102-'));a(!fs.existsSync(abs));}
+final.finalVerification={at:new Date().toISOString(),checksumsMatch:true,nativePayloadRecoverable:true,sourceHashesUnchanged:true,ownedTemporaryRootsAbsent:true,removedTemporaryBytes:clean.removedBytes,manualGuide:'TEST_KO.md'};
+fs.writeFileSync(O+'/FINAL_RESULT.json',JSON.stringify(final,null,2)+'\n');
+const rec=R+'/records/portal-paladin-event-saves-20261102';fs.mkdirSync(rec,{recursive:true});for(const name of fs.readdirSync(O)){const p=O+'/'+name;if(fs.statSync(p).isFile()&&/\.(?:cjs|json|md|log)$/.test(name))fs.copyFileSync(p,rec+'/'+name);}
+const docName='PORTAL_PALADIN_EVENT_TEST_SAVES_20261102.md';fs.writeFileSync(R+'/docs/'+docName,fs.readFileSync(O+'/TEST_KO.md','utf8')+'\n검수 기록: `../records/portal-paladin-event-saves-20261102/FINAL_RESULT.json`, `QA_REVIEW_KO.md`, `validation.json`, `cleanup.json`.\n');
+const index=R+'/docs/SESSION_HANDOFF_INDEX.md',old=fs.readFileSync(index,'utf8');if(!old.includes(docName))fs.writeFileSync(index,old+'\r\n## 2026-11-02 포털 가디언·바티칸 성기사 이벤트 세이브\r\n\r\n[테스트 저장과 동선]('+docName+'): WORK/save에 TC_09_PORTAL_GUARDIAN_EVENT.sav와 TC_10_VATICAN_PALADIN_EVENT.sav를 생성했다. 두 파일 모두 안개 지역 일반 메뉴·이벤트 활성 상태이며 아직 상대를 만나지 않았다. 실제 엔진으로 포털 도입3쪽·상대별 준비·무기 메뉴를 확인했고 GUI 불러오기/전투 승패는 수동 항목이다. WORK QSP6bb939…와 일치, 원본 native 슬롯 전체 보존, Full/기존SAV 덮어쓰기 없음. 임시6루트 약2.06GB 정리. 전체 빌드 최종점검·배포 동기화 중단 상태는 유지한다.\r\n');
+console.log(JSON.stringify({status:'PASS',files:final.files.map(x=>x.file),worldSha256:final.worldSha256,nativeRoutes:2,removedTemporaryBytes:clean.removedBytes,documentation:R+'/docs/'+docName}));

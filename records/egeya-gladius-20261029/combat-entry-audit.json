@@ -1,0 +1,87 @@
+[
+  {
+    "location": "$menu",
+    "line": 92,
+    "context": "\t$sex_menu += $args[1] + '<a href =''EXEC:' + $args[2] + '''>' + $args[3] + '</a></li>'\r\n\r\n\tdynamic $save_link, menu_item_counter, $args[2]\r\nend\r\n\r\nif $args[0] = 'join_battle':\r\n\t$text_display += $args[1]\r\n\t$text_display += {<a href = 'EXEC: gt \"начать_бой\"'>}\r\n\t$text_display += $args[2] + '</a></li>'\r\nend\r\nIF $ARGS[0] = 'join_battle1' :\r\n  $text_display += $args[1]\r"
+  },
+  {
+    "location": "$menu",
+    "line": 97,
+    "context": "if $args[0] = 'join_battle':\r\n\t$text_display += $args[1]\r\n\t$text_display += {<a href = 'EXEC: gt \"начать_бой\"'>}\r\n\t$text_display += $args[2] + '</a></li>'\r\nend\r\nIF $ARGS[0] = 'join_battle1' :\r\n  $text_display += $args[1]\r\n  $text_display +={<a href ='EXEC: & gt \"начать_бой\"'>}\r\n  $text_display +=$args[2] + '</a></li>'\r\n  sparks -=50000\r\nEND\r\n\r"
+  },
+  {
+    "location": "end_day_screen",
+    "line": 979,
+    "context": "\tslave['beaten'] = 1\r\n\tslave['beaten_ever'] = 1\r\n\t$fight_return = 'end_day_screen'\r\n\tfighting_experience = slave['gladiatrix']\r\n\tmsg '  위협을 느끼며 잠에서 깬 당신은 본능적으로 침대 밖으로 몸을 굴린다. 방금 전까지 당신이 누워 있던 자리에 칼이 꽂혀 있다! <<$slave_name>>가 부엌에서 그 칼을 훔쳐 당신을 죽이기로 결심한 모양이다!'\r\n\tcombatant = 0 &! master is in the defending slot\r\n\t$toplay = 'girl'\r\n\tgt 'начать_бой'\r\nend\r\n\r\nif slave['menstruation'] = 1:\r\n\t$text = $menstrual_anounce\r"
+  },
+  {
+    "location": "#dynamic",
+    "line": 1606,
+    "context": "\tslave['beaten'] = 1\r\n\tslave['beaten_ever'] = 1\r\n\tslave['calories'] -= 5\r\n\tslave_rate['stamina'] += 2\r\n\t$fight_return = 'menu_form'\r\n\tcombatant = 0 &! master is in the defending slot\r\n\t$toplay = 'girl'\r\n\tgt 'начать_бой'\r\n}\r\n\r\n$dyn_slave_forced = {\r\n\t! expects to be called with dynamic $replace($dyn_slave_forced, 'dyn'+'slave', 'a slave instance variable')\r"
+  },
+  {
+    "location": "#options",
+    "line": 4547,
+    "context": "\t\t$text_display += \"<br><div id=\"\"under\"\">직전 전투와 같은 장비<br><div id = \"\"clear\"\"><a href = 'EXEC: nogoto = 0 & a = 1 & killvar \"\"no_wpn\"\" & gt \"\"начать_бой\"\"'><img src = \"\"content/pic/ui/icons/legacy/clear.png\"\"></a></div></div>\"\r\n\telseif combatant = 1 and $slave['prev_primary_wpn'] ! '' and ($slave['back_wpn'] = $slave['prev_primary_wpn'] or $slave['left_wpn'] = $slave['prev_primary_wpn'] or $slave['right_wpn'] = $slave['prev_primary_wpn'] or $slave['arm_wpn'] = $slave['prev_primary_wpn'] or $slave['leg_wpn'] = $slave['prev_primary_wpn']):\r\n\t\t$text_display += \"<br><div id=\"\"under\"\">직전 전투와 같은 장비<br><div id = \"\"clear\"\"><a href = 'EXEC: nogoto = 0 & a = 1 & killvar \"\"no_wpn\"\" & gt \"\"начать_бой\"\"'><img src = \"\"content/pic/ui/icons/legacy/clear.png\"\"></a></div></div>\"\r\n\telseif combatant = 2 and $assistant['prev_primary_wpn'] ! '' and ($assistant['back_wpn'] = $assistant['prev_primary_wpn'] or $assistant['left_wpn'] = $assistant['prev_primary_wpn'] or $assistant['right_wpn'] = $assistant['prev_primary_wpn'] or $assistant['arm_wpn'] = $assistant['prev_primary_wpn'] or $assistant['leg_wpn'] = $assistant['prev_primary_wpn']):\r\n\t\t$text_display += \"<br><div id=\"\"under\"\">직전 전투와 같은 장비<br><div id = \"\"clear\"\"><a href = 'EXEC: nogoto = 0 & a = 1 & killvar \"\"no_wpn\"\" & gt \"\"начать_бой\"\"'><img src = \"\"content/pic/ui/icons/legacy/clear.png\"\"></a></div></div>\" \r\n\tend\r\n\r\n\t$text_display += '<br><div id=\"under\">전투 시작<br><div id = \"clear\"><a href = ''EXEC: nogoto = 0 & gt \"начать_бой\"''><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>'\r\n}\r\n\r\n$get_weapon[2] = {\r\n\r"
+  },
+  {
+    "location": "#options",
+    "line": 4552,
+    "context": "\tend\r\n\r\n\t$text_display += '<br><div id=\"under\">전투 시작<br><div id = \"clear\"><a href = ''EXEC: nogoto = 0 & gt \"начать_бой\"''><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>'\r\n}\r\n\r\n$get_weapon[2] = {\r\n\r\n\tif no_wpn[\"за_спиной\"] = 1: nogoto = 0 & gt \"начать_бой\"\r\n\r\n\t$text_display = '<br>'\r\n\r\n\t!Shoulder slot will always be greyed out when selecting a secondary/off-hand weapon since all shoulder slot items are two-handed - crushboss\r"
+  },
+  {
+    "location": "#options",
+    "line": 4564,
+    "context": "\tif $за_спиной ! '' and no_wpn[\"за_спиной\"] = 0:\r\n\t\t$text_display += \"<br><div id=\"\"under_gray\"\">등 뒤 : <<$item_name[$за_спиной]>><br></div>\"\r\n\telseif $за_спиной = '':\r\n\t\t$text_display += '<br><div id=\"under_gray\">등 뒤에 아무것도 없다!<br></div>'\r\n\tend\r\n\r\n\tif $слева ! '' and no_wpn[\"слева\"] = 0:\r\n\t\t$text_display += '<br><div id=\"under\">왼 손 : <<$item_name[$слева]>><br><div id = \"clear\"><a href = ''EXEC: no_wpn[\"слева\"] = 2 & nogoto = 0 & gt \"начать_бой\"''><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>'\r\n\telseif no_wpn[\"слева\"] = 1 or no_wpn[\"слева\"] = 2:\r\n\t\t$text_display += '<br><div id=\"under_gray\">왼 손 : <<$item_name[$слева]>><br></div>'\r\n\telseif $слева = '':\r\n\t\t$text_display += '<br><div id=\"under_gray\">왼 손에 아무것도 없다!<br></div>'\r"
+  },
+  {
+    "location": "#options",
+    "line": 4572,
+    "context": "\telseif no_wpn[\"слева\"] = 1 or no_wpn[\"слева\"] = 2:\r\n\t\t$text_display += '<br><div id=\"under_gray\">왼 손 : <<$item_name[$слева]>><br></div>'\r\n\telseif $слева = '':\r\n\t\t$text_display += '<br><div id=\"under_gray\">왼 손에 아무것도 없다!<br></div>'\r\n\tend\r\n\r\n\tif $справа ! '' and no_wpn[\"справа\"] = 0:\r\n\t\t$text_display += '<br><div id=\"under\">오른손 : <<$item_name[$справа]>><br><div id = \"clear\"><a href = ''EXEC: no_wpn[\"справа\"] = 2 & nogoto = 0 & gt \"начать_бой\"''><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>'\r\n\telseif no_wpn[\"справа\"] = 1 or no_wpn[\"справа\"] = 2:\r\n\t\t$text_display += '<br><div id=\"under_gray\">오른손 : <<$item_name[$справа]>><br></div>'\r\n\telseif $справа = '':\r\n\t\t$text_display += '<br><div id=\"under_gray\">오른손에 아무것도 없다!<br></div>'\r"
+  },
+  {
+    "location": "#options",
+    "line": 4580,
+    "context": "\telseif no_wpn[\"справа\"] = 1 or no_wpn[\"справа\"] = 2:\r\n\t\t$text_display += '<br><div id=\"under_gray\">오른손 : <<$item_name[$справа]>><br></div>'\r\n\telseif $справа = '':\r\n\t\t$text_display += '<br><div id=\"under_gray\">오른손에 아무것도 없다!<br></div>'\r\n\tend\r\n\r\n\tif $предплечье ! '' and no_wpn[\"предплечье\"] = 0:\r\n\t\t$text_display += '<br><div id=\"under\">팔뚝 : <<$item_name[$предплечье]>><br><div id = \"clear\"><a href = ''EXEC: no_wpn[\"предплечье\"] = 2 & nogoto = 0 & gt \"начать_бой\"''><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>'\r\n\telseif no_wpn[\"предплечье\"] = 1 or no_wpn[\"предплечье\"] = 2:\r\n\t\t$text_display += '<br><div id=\"under_gray\">팔뚝 : <<$item_name[$предплечье]>><br></div>'\r\n\telseif $предплечье = '' and combatant = 0:\r\n\t\t$text_display += '<br><div id=\"under_gray\">팔뚝에 아무것도 없다!<br></div>'\r"
+  },
+  {
+    "location": "#options",
+    "line": 4588,
+    "context": "\telseif no_wpn[\"предплечье\"] = 1 or no_wpn[\"предплечье\"] = 2:\r\n\t\t$text_display += '<br><div id=\"under_gray\">팔뚝 : <<$item_name[$предплечье]>><br></div>'\r\n\telseif $предплечье = '' and combatant = 0:\r\n\t\t$text_display += '<br><div id=\"under_gray\">팔뚝에 아무것도 없다!<br></div>'\r\n\tend\r\n\r\n\tif $в_сапоге ! '' and no_wpn[\"в_сапоге\"] = 0:\r\n\t\t$text_display += '<br><div id=\"under\">허벅지 : <<$item_name[$в_сапоге]>><br><div id = \"clear\"><a href = ''EXEC: no_wpn[\"в_сапоге\"] = 2 & nogoto = 0 & gt \"начать_бой\"''><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>'\r\n\telseif no_wpn[\"в_сапоге\"] = 1 or no_wpn[\"в_сапоге\"] = 2:\r\n\t\t$text_display += '<br><div id=\"under_gray\">허벅지 : <<$item_name[$в_сапоге]>><br></div>'\r\n\telseif $в_сапоге = '' and combatant = 0:\r\n\t\t$text_display += '<br><div id=\"under_gray\">허벅지에 아무것도 없다!<br></div>'\r"
+  },
+  {
+    "location": "#options",
+    "line": 4595,
+    "context": "\t\t$text_display += '<br><div id=\"under\">허벅지 : <<$item_name[$в_сапоге]>><br><div id = \"clear\"><a href = ''EXEC: no_wpn[\"в_сапоге\"] = 2 & nogoto = 0 & gt \"начать_бой\"''><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>'\r\n\telseif no_wpn[\"в_сапоге\"] = 1 or no_wpn[\"в_сапоге\"] = 2:\r\n\t\t$text_display += '<br><div id=\"under_gray\">허벅지 : <<$item_name[$в_сапоге]>><br></div>'\r\n\telseif $в_сапоге = '' and combatant = 0:\r\n\t\t$text_display += '<br><div id=\"under_gray\">허벅지에 아무것도 없다!<br></div>'\r\n\tend\r\n\r\n\t$text_display += '<br><div id=\"under\">전투 시작<br><div id = \"clear\"><a href = ''EXEC: nogoto = 0 & gt \"начать_бой\"''><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>'\r\n}\r\n\r\n$get_weapon[3] = {\r\n\tif no_wpn[\"за_спиной\"] = 0 and no_wpn[\"слева\"] = 0 and no_wpn[\"справа\"] = 0 and no_wpn[\"предплечье\"] = 0 and no_wpn[\"в_сапоге\"] = 0:\r"
+  },
+  {
+    "location": "#options",
+    "line": 4601,
+    "context": "\r\n\t$text_display += '<br><div id=\"under\">전투 시작<br><div id = \"clear\"><a href = ''EXEC: nogoto = 0 & gt \"начать_бой\"''><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>'\r\n}\r\n\r\n$get_weapon[3] = {\r\n\tif no_wpn[\"за_спиной\"] = 0 and no_wpn[\"слева\"] = 0 and no_wpn[\"справа\"] = 0 and no_wpn[\"предплечье\"] = 0 and no_wpn[\"в_сапоге\"] = 0:\r\n\t\t$text_display = '<br><br><br>'\r\n\t\t$text_display += '<br><div id=\"under\">의자 <br><div id = \"clear\"><a href = ''EXEC: $оружие = \"табуретка\" & nogoto = 0 & gt \"начать_бой\"''><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>'\r\n\t\t$text_display += '<br><div id=\"under\">단검 <br><div id = \"clear\"><a href = ''EXEC: $оружие = \"кинжал\" & nogoto = 0 & gt \"начать_бой\"''><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>'\r\n\t\tdynamic $toolsequipped\r\n\t\tif lashequipped = 1 or нагайка > 0: $text_display += '<br><div id=\"under\">갈래 채찍 <br><div id = \"clear\"><a href = ''EXEC: $оружие = \"нагайка\" & nogoto = 0 & gt \"начать_бой\"''><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>'\r\n\t\t$text_display += '<br><div id=\"under\">전투에 참가한다<br><div id = \"clear\"><a href = ''EXEC: nogoto = 0 & gt \"начать_бой\"''><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>'\r"
+  },
+  {
+    "location": "#options",
+    "line": 4602,
+    "context": "\t$text_display += '<br><div id=\"under\">전투 시작<br><div id = \"clear\"><a href = ''EXEC: nogoto = 0 & gt \"начать_бой\"''><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>'\r\n}\r\n\r\n$get_weapon[3] = {\r\n\tif no_wpn[\"за_спиной\"] = 0 and no_wpn[\"слева\"] = 0 and no_wpn[\"справа\"] = 0 and no_wpn[\"предплечье\"] = 0 and no_wpn[\"в_сапоге\"] = 0:\r\n\t\t$text_display = '<br><br><br>'\r\n\t\t$text_display += '<br><div id=\"under\">의자 <br><div id = \"clear\"><a href = ''EXEC: $оружие = \"табуретка\" & nogoto = 0 & gt \"начать_бой\"''><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>'\r\n\t\t$text_display += '<br><div id=\"under\">단검 <br><div id = \"clear\"><a href = ''EXEC: $оружие = \"кинжал\" & nogoto = 0 & gt \"начать_бой\"''><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>'\r\n\t\tdynamic $toolsequipped\r\n\t\tif lashequipped = 1 or нагайка > 0: $text_display += '<br><div id=\"under\">갈래 채찍 <br><div id = \"clear\"><a href = ''EXEC: $оружие = \"нагайка\" & nogoto = 0 & gt \"начать_бой\"''><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>'\r\n\t\t$text_display += '<br><div id=\"under\">전투에 참가한다<br><div id = \"clear\"><a href = ''EXEC: nogoto = 0 & gt \"начать_бой\"''><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>'\r\n\tend\r"
+  },
+  {
+    "location": "#options",
+    "line": 4604,
+    "context": "\r\n$get_weapon[3] = {\r\n\tif no_wpn[\"за_спиной\"] = 0 and no_wpn[\"слева\"] = 0 and no_wpn[\"справа\"] = 0 and no_wpn[\"предплечье\"] = 0 and no_wpn[\"в_сапоге\"] = 0:\r\n\t\t$text_display = '<br><br><br>'\r\n\t\t$text_display += '<br><div id=\"under\">의자 <br><div id = \"clear\"><a href = ''EXEC: $оружие = \"табуретка\" & nogoto = 0 & gt \"начать_бой\"''><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>'\r\n\t\t$text_display += '<br><div id=\"under\">단검 <br><div id = \"clear\"><a href = ''EXEC: $оружие = \"кинжал\" & nogoto = 0 & gt \"начать_бой\"''><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>'\r\n\t\tdynamic $toolsequipped\r\n\t\tif lashequipped = 1 or нагайка > 0: $text_display += '<br><div id=\"under\">갈래 채찍 <br><div id = \"clear\"><a href = ''EXEC: $оружие = \"нагайка\" & nogoto = 0 & gt \"начать_бой\"''><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>'\r\n\t\t$text_display += '<br><div id=\"under\">전투에 참가한다<br><div id = \"clear\"><a href = ''EXEC: nogoto = 0 & gt \"начать_бой\"''><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>'\r\n\tend\r\n}\r\n\r"
+  },
+  {
+    "location": "#options",
+    "line": 4605,
+    "context": "$get_weapon[3] = {\r\n\tif no_wpn[\"за_спиной\"] = 0 and no_wpn[\"слева\"] = 0 and no_wpn[\"справа\"] = 0 and no_wpn[\"предплечье\"] = 0 and no_wpn[\"в_сапоге\"] = 0:\r\n\t\t$text_display = '<br><br><br>'\r\n\t\t$text_display += '<br><div id=\"under\">의자 <br><div id = \"clear\"><a href = ''EXEC: $оружие = \"табуретка\" & nogoto = 0 & gt \"начать_бой\"''><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>'\r\n\t\t$text_display += '<br><div id=\"under\">단검 <br><div id = \"clear\"><a href = ''EXEC: $оружие = \"кинжал\" & nogoto = 0 & gt \"начать_бой\"''><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>'\r\n\t\tdynamic $toolsequipped\r\n\t\tif lashequipped = 1 or нагайка > 0: $text_display += '<br><div id=\"under\">갈래 채찍 <br><div id = \"clear\"><a href = ''EXEC: $оружие = \"нагайка\" & nogoto = 0 & gt \"начать_бой\"''><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>'\r\n\t\t$text_display += '<br><div id=\"under\">전투에 참가한다<br><div id = \"clear\"><a href = ''EXEC: nogoto = 0 & gt \"начать_бой\"''><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>'\r\n\tend\r\n}\r\n\r\n\r"
+  },
+  {
+    "location": "jo9_fog_relay",
+    "line": 32,
+    "context": " combatant = args[1]\r\n jo9_fog['actor'] = combatant\r\n if combatant > 0: jo9_fog['active'] = 1\r\n a = 0\r\n killvar 'no_wpn'\r\n get_weapon = 0\r\n $итог_боя = ''\r\n gt 'начать_бой'\r\nend\r\n\r\nif $args[0] = 'handoff':\r\n if jo9_fog['active'] ! 1 or jo9_fog['switched'] ! 0 or combatant < 1: exit\r"
+  },
+  {
+    "location": "jo9_fog_relay",
+    "line": 48,
+    "context": " jo9_fog['resuming'] = 1\r\n combatant = 0\r\n get_weapon = 0\r\n a = 0\r\n killvar 'no_wpn'\r\n $итог_боя = ''\r\n msg '주인공이 전투를 이어받습니다. 사용할 장비를 선택하세요. 적의 남은 체력과 상태는 유지됩니다.'\r\n gt 'начать_бой'\r\nend\r\n\r\nif $args[0] = 'finish':\r\n if jo9_fog['active'] = 1 and combatant > 0: gs 'jo9_fog_relay', 'settle'\r"
+  }
+]

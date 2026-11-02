@@ -1,0 +1,48 @@
+{
+  "id": "2026-10-28_rumor_provider_icons",
+  "description": "스컵스·바텐더·아네스별 기존 소문 메뉴 아이콘 연결. 구 결과화면은 추가 구매 없이 재표시.",
+  "before_sha256": "f0911bef8f53ef1464edc3d107beccaca3af90c7f0368a4b7df92f7a6082e1b2",
+  "after_sha256": "e620353d0db6374ae293c6919d511966c31e2bb68ebd1763bb5a956bec069ba0",
+  "edits": [
+    {
+      "location": "jo9_buyer_rumors",
+      "field": "body",
+      "old": "local $jo9_rm_provider = $args[1]",
+      "new": "local $jo9_rm_provider = $args[1]\r\n! JO9 MOD START RUMOR_PROVIDER_ICON_SELECT_20261028\r\nlocal $jo9_rm_icon = $menu_item_services\r\nif $jo9_rm_provider = 'barman': $jo9_rm_icon = $menu_item_preferencesbar\r\nif $jo9_rm_provider = 'anes': $jo9_rm_icon = $menu_item_anes\r\n! JO9 MOD END RUMOR_PROVIDER_ICON_SELECT_20261028",
+      "count": 1,
+      "patchId": "RUMOR_PROVIDER_ICON_SELECT_20261028"
+    },
+    {
+      "location": "jo9_buyer_rumors",
+      "field": "body",
+      "old": " func('$menu', 'exec', $menu_item_services, 'gt ''jo9_buyer_rumors'', ''consult'', ''<<$jo9_rm_provider>>'', <<jo9_rumor_pending>>', '구매자 소문을 듣는다 ($<<jo9_rm_fee>>)')",
+      "new": "! JO9 MOD START RUMOR_PROVIDER_ICON_BUY_20261028\r\n func('$menu', 'exec', $jo9_rm_icon, 'gt ''jo9_buyer_rumors'', ''consult'', ''<<$jo9_rm_provider>>'', <<jo9_rumor_pending>>', '구매자 소문을 듣는다 ($<<jo9_rm_fee>>)')\r\n! JO9 MOD END RUMOR_PROVIDER_ICON_BUY_20261028",
+      "count": 1,
+      "patchId": "RUMOR_PROVIDER_ICON_BUY_20261028"
+    },
+    {
+      "location": "jo9_buyer_rumors",
+      "field": "body",
+      "old": "if jo9_rumor_page > 0: func('$menu', 'exec', $menu_item_services, 'jo9_rumor_page -= 1 & gt ''jo9_buyer_rumors'', ''view'', ''<<$jo9_rm_provider>>''', '이전 소문')",
+      "new": "! JO9 MOD START RUMOR_PROVIDER_ICON_PREVIOUS_20261028\r\nif jo9_rumor_page > 0: func('$menu', 'exec', $jo9_rm_icon, 'jo9_rumor_page -= 1 & gt ''jo9_buyer_rumors'', ''view'', ''<<$jo9_rm_provider>>''', '이전 소문')\r\n! JO9 MOD END RUMOR_PROVIDER_ICON_PREVIOUS_20261028",
+      "count": 1,
+      "patchId": "RUMOR_PROVIDER_ICON_PREVIOUS_20261028"
+    },
+    {
+      "location": "jo9_buyer_rumors",
+      "field": "body",
+      "old": "if jo9_rumor_page + 1 < arrsize('$jo9_rumor_pages'): func('$menu', 'exec', $menu_item_services, 'jo9_rumor_page += 1 & gt ''jo9_buyer_rumors'', ''view'', ''<<$jo9_rm_provider>>''', '다음 소문')",
+      "new": "! JO9 MOD START RUMOR_PROVIDER_ICON_NEXT_20261028\r\nif jo9_rumor_page + 1 < arrsize('$jo9_rumor_pages'): func('$menu', 'exec', $jo9_rm_icon, 'jo9_rumor_page += 1 & gt ''jo9_buyer_rumors'', ''view'', ''<<$jo9_rm_provider>>''', '다음 소문')\r\n! JO9 MOD END RUMOR_PROVIDER_ICON_NEXT_20261028",
+      "count": 1,
+      "patchId": "RUMOR_PROVIDER_ICON_NEXT_20261028"
+    },
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "! JO9 MOD END JULIA_MEETING_LOAD_REDRAW_20261028",
+      "new": "! JO9 MOD END JULIA_MEETING_LOAD_REDRAW_20261028\r\n! JO9 MOD START RUMOR_PROVIDER_ICON_LOAD_20261028\r\n! Repaint the saved result only; no consultation or new charge is made.\r\nif $curloc = 'jo9_buyer_rumors' and ($jo9_rumor_provider = 'barman' or $jo9_rumor_provider = 'anes'): gt 'jo9_buyer_rumors', 'view', $jo9_rumor_provider\r\n! JO9 MOD END RUMOR_PROVIDER_ICON_LOAD_20261028",
+      "count": 1,
+      "patchId": "RUMOR_PROVIDER_ICON_LOAD_20261028"
+    }
+  ]
+}

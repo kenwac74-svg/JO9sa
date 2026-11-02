@@ -1,0 +1,2852 @@
+{
+  "schema": "jo9-mob-fog-background-contexts-v1",
+  "checkedAt": "2026-10-29",
+  "mode": "read-only code audit; no QSP, save, image, or catalog edits",
+  "source": {
+    "world": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+    "sha256": "5d7c16b17d9aa0c1bb9c818c67521b2693a32a2db068742fbe7072f2dd8343cd"
+  },
+  "scope": "Verified fog patrol selectors 61101..61115 plus shared spawn portrait audit. Other event battles are audited separately; absence here does not prove a MOB never appears elsewhere.",
+  "contextEvidence": {
+    "placeSetup": {
+      "location": "interaction_city",
+      "lines": [
+        10898,
+        10900,
+        10905,
+        10910,
+        10912
+      ],
+      "facts": [
+        "interaction611 sets $place=edge_patrol",
+        "Normal patrol chooses1..14",
+        "Patrol14 can be replaced by special15 under verified quest/equipment condition"
+      ]
+    },
+    "prebattleEntry": "Every61101..61115 branch copies $edge_of_mists and goes to shop_general; battle UI uses $place edge_patrol.",
+    "battleBackground": {
+      "path": "content/pic/bg/battle_mist_forest.png",
+      "location": "боевой_интерфейс",
+      "lines": [
+        105,
+        108
+      ]
+    },
+    "resultBackground": {
+      "path": "content/pic/bg/battle_mist_forest.png",
+      "location": "конец_боя",
+      "lines": [
+        57,
+        60
+      ]
+    }
+  },
+  "counts": {
+    "encounters": 15,
+    "uniqueEnemyKeys": 24,
+    "groupDefeatSelectors": 7
+  },
+  "cases": [
+    {
+      "interactionCity": 61101,
+      "context": "fog_border_battle",
+      "place": "edge_patrol",
+      "status": "verified selector in current compiled WORK",
+      "source": {
+        "location": "interaction_city",
+        "lineStart": 10928,
+        "lineEnd": 10942
+      },
+      "fixedSlots": [
+        {
+          "slot": 1,
+          "key": "исчадие_молодь"
+        }
+      ],
+      "randomPools": [],
+      "selection": "fixed",
+      "counts": [
+        {
+          "count": 1,
+          "line": 10936
+        }
+      ],
+      "evidence": [
+        {
+          "line": 10936,
+          "code": "количество_врагов = 1"
+        },
+        {
+          "line": 10937,
+          "code": "$враг[1] = 'исчадие_молодь'"
+        },
+        {
+          "line": 10938,
+          "code": "copyarr '$display_options', '$edge_of_mists'"
+        },
+        {
+          "line": 10939,
+          "code": "gt 'shop_general'"
+        }
+      ]
+    },
+    {
+      "interactionCity": 61102,
+      "context": "fog_border_battle",
+      "place": "edge_patrol",
+      "status": "verified selector in current compiled WORK",
+      "source": {
+        "location": "interaction_city",
+        "lineStart": 10943,
+        "lineEnd": 10957
+      },
+      "fixedSlots": [
+        {
+          "slot": 1,
+          "key": "исчадие"
+        }
+      ],
+      "randomPools": [],
+      "selection": "fixed",
+      "counts": [
+        {
+          "count": 1,
+          "line": 10946
+        }
+      ],
+      "evidence": [
+        {
+          "line": 10946,
+          "code": "количество_врагов = 1"
+        },
+        {
+          "line": 10947,
+          "code": "$враг[1] = 'исчадие'"
+        },
+        {
+          "line": 10953,
+          "code": "copyarr '$display_options', '$edge_of_mists'"
+        },
+        {
+          "line": 10954,
+          "code": "gt 'shop_general'"
+        }
+      ]
+    },
+    {
+      "interactionCity": 61103,
+      "context": "fog_border_battle",
+      "place": "edge_patrol",
+      "status": "verified selector in current compiled WORK",
+      "source": {
+        "location": "interaction_city",
+        "lineStart": 10958,
+        "lineEnd": 10972
+      },
+      "fixedSlots": [
+        {
+          "slot": 1,
+          "key": "чудовщиное_исчадие"
+        }
+      ],
+      "randomPools": [],
+      "selection": "fixed",
+      "counts": [
+        {
+          "count": 1,
+          "line": 10966
+        }
+      ],
+      "evidence": [
+        {
+          "line": 10966,
+          "code": "количество_врагов = 1"
+        },
+        {
+          "line": 10967,
+          "code": "$враг[1] = 'чудовщиное_исчадие'"
+        },
+        {
+          "line": 10968,
+          "code": "copyarr '$display_options', '$edge_of_mists'"
+        },
+        {
+          "line": 10969,
+          "code": "gt 'shop_general'"
+        }
+      ]
+    },
+    {
+      "interactionCity": 61104,
+      "context": "fog_border_battle",
+      "place": "edge_patrol",
+      "status": "verified selector in current compiled WORK",
+      "source": {
+        "location": "interaction_city",
+        "lineStart": 10973,
+        "lineEnd": 10990
+      },
+      "fixedSlots": [
+        {
+          "slot": 1,
+          "key": "черный_медик"
+        },
+        {
+          "slot": 2,
+          "key": "подручный"
+        },
+        {
+          "slot": 3,
+          "key": "подручный"
+        },
+        {
+          "slot": 4,
+          "key": "подручный"
+        }
+      ],
+      "randomPools": [],
+      "selection": "fixed",
+      "counts": [
+        {
+          "count": 4,
+          "line": 10981
+        }
+      ],
+      "evidence": [
+        {
+          "line": 10981,
+          "code": "количество_врагов = 4"
+        },
+        {
+          "line": 10982,
+          "code": "$враг[1] = 'черный_медик'"
+        },
+        {
+          "line": 10983,
+          "code": "$враг[2] = 'подручный'"
+        },
+        {
+          "line": 10984,
+          "code": "$враг[3] = 'подручный'"
+        },
+        {
+          "line": 10985,
+          "code": "$враг[4] = 'подручный'"
+        },
+        {
+          "line": 10986,
+          "code": "copyarr '$display_options', '$edge_of_mists'"
+        },
+        {
+          "line": 10987,
+          "code": "gt 'shop_general'"
+        }
+      ]
+    },
+    {
+      "interactionCity": 61105,
+      "context": "fog_border_battle",
+      "place": "edge_patrol",
+      "status": "verified selector in current compiled WORK",
+      "source": {
+        "location": "interaction_city",
+        "lineStart": 10991,
+        "lineEnd": 11007
+      },
+      "fixedSlots": [
+        {
+          "slot": 1,
+          "key": "паладин"
+        },
+        {
+          "slot": 2,
+          "key": "пехотинец"
+        },
+        {
+          "slot": 3,
+          "key": "пехотинец"
+        }
+      ],
+      "randomPools": [],
+      "selection": "fixed",
+      "counts": [
+        {
+          "count": 3,
+          "line": 10999
+        }
+      ],
+      "evidence": [
+        {
+          "line": 10999,
+          "code": "количество_врагов = 3"
+        },
+        {
+          "line": 11000,
+          "code": "$враг[1] = 'паладин'"
+        },
+        {
+          "line": 11001,
+          "code": "$враг[2] = 'пехотинец'"
+        },
+        {
+          "line": 11002,
+          "code": "$враг[3] = 'пехотинец'"
+        },
+        {
+          "line": 11003,
+          "code": "copyarr '$display_options', '$edge_of_mists'"
+        },
+        {
+          "line": 11004,
+          "code": "gt 'shop_general'"
+        }
+      ]
+    },
+    {
+      "interactionCity": 61106,
+      "context": "fog_border_battle",
+      "place": "edge_patrol",
+      "status": "verified selector in current compiled WORK",
+      "source": {
+        "location": "interaction_city",
+        "lineStart": 11008,
+        "lineEnd": 11030
+      },
+      "fixedSlots": [],
+      "randomPools": [
+        {
+          "array": "$зверолюд",
+          "index": 1,
+          "key": "козлорогий"
+        },
+        {
+          "array": "$зверолюд",
+          "index": 2,
+          "key": "свинорылый"
+        },
+        {
+          "array": "$зверолюд",
+          "index": 3,
+          "key": "жабован"
+        },
+        {
+          "array": "$зверолюд",
+          "index": 4,
+          "key": "крысолюд"
+        }
+      ],
+      "selection": "Independent random draw per enemy slot; duplicates possible",
+      "counts": [
+        {
+          "count": 4,
+          "line": 11016
+        }
+      ],
+      "evidence": [
+        {
+          "line": 11016,
+          "code": "количество_врагов = 4"
+        },
+        {
+          "line": 11017,
+          "code": "$зверолюд[1] = 'козлорогий'"
+        },
+        {
+          "line": 11018,
+          "code": "$зверолюд[2] = 'свинорылый'"
+        },
+        {
+          "line": 11019,
+          "code": "$зверолюд[3] = 'жабован'"
+        },
+        {
+          "line": 11020,
+          "code": "$зверолюд[4] = 'крысолюд'"
+        },
+        {
+          "line": 11021,
+          "code": "$враг[1] = $зверолюд[rand(1,4)]"
+        },
+        {
+          "line": 11022,
+          "code": "$враг[2] = $зверолюд[rand(1,4)]"
+        },
+        {
+          "line": 11023,
+          "code": "$враг[3] = $зверолюд[rand(1,4)]"
+        },
+        {
+          "line": 11024,
+          "code": "$враг[4] = $зверолюд[rand(1,4)]"
+        },
+        {
+          "line": 11026,
+          "code": "copyarr '$display_options', '$edge_of_mists'"
+        },
+        {
+          "line": 11027,
+          "code": "gt 'shop_general'"
+        }
+      ]
+    },
+    {
+      "interactionCity": 61107,
+      "context": "fog_border_battle",
+      "place": "edge_patrol",
+      "status": "verified selector in current compiled WORK",
+      "source": {
+        "location": "interaction_city",
+        "lineStart": 11031,
+        "lineEnd": 11045
+      },
+      "fixedSlots": [
+        {
+          "slot": 1,
+          "key": "вервольф"
+        }
+      ],
+      "randomPools": [],
+      "selection": "fixed",
+      "counts": [
+        {
+          "count": 1,
+          "line": 11039
+        }
+      ],
+      "evidence": [
+        {
+          "line": 11039,
+          "code": "количество_врагов = 1"
+        },
+        {
+          "line": 11040,
+          "code": "$враг[1] = 'вервольф'"
+        },
+        {
+          "line": 11041,
+          "code": "copyarr '$display_options', '$edge_of_mists'"
+        },
+        {
+          "line": 11042,
+          "code": "gt 'shop_general'"
+        }
+      ]
+    },
+    {
+      "interactionCity": 61108,
+      "context": "fog_border_battle",
+      "place": "edge_patrol",
+      "status": "verified selector in current compiled WORK",
+      "source": {
+        "location": "interaction_city",
+        "lineStart": 11046,
+        "lineEnd": 11060
+      },
+      "fixedSlots": [
+        {
+          "slot": 1,
+          "key": "вампир"
+        }
+      ],
+      "randomPools": [],
+      "selection": "fixed",
+      "counts": [
+        {
+          "count": 1,
+          "line": 11049
+        }
+      ],
+      "evidence": [
+        {
+          "line": 11049,
+          "code": "количество_врагов = 1"
+        },
+        {
+          "line": 11050,
+          "code": "$враг[1] = 'вампир'"
+        },
+        {
+          "line": 11056,
+          "code": "copyarr '$display_options', '$edge_of_mists'"
+        },
+        {
+          "line": 11057,
+          "code": "gt 'shop_general'"
+        }
+      ]
+    },
+    {
+      "interactionCity": 61109,
+      "context": "fog_border_battle",
+      "place": "edge_patrol",
+      "status": "verified selector in current compiled WORK",
+      "source": {
+        "location": "interaction_city",
+        "lineStart": 11061,
+        "lineEnd": 11075
+      },
+      "fixedSlots": [
+        {
+          "slot": 1,
+          "key": "лич"
+        }
+      ],
+      "randomPools": [],
+      "selection": "fixed",
+      "counts": [
+        {
+          "count": 1,
+          "line": 11064
+        }
+      ],
+      "evidence": [
+        {
+          "line": 11064,
+          "code": "количество_врагов = 1"
+        },
+        {
+          "line": 11065,
+          "code": "$враг[1] = 'лич'"
+        },
+        {
+          "line": 11071,
+          "code": "copyarr '$display_options', '$edge_of_mists'"
+        },
+        {
+          "line": 11072,
+          "code": "gt 'shop_general'"
+        }
+      ]
+    },
+    {
+      "interactionCity": 61110,
+      "context": "fog_border_battle",
+      "place": "edge_patrol",
+      "status": "verified selector in current compiled WORK",
+      "source": {
+        "location": "interaction_city",
+        "lineStart": 11076,
+        "lineEnd": 11100
+      },
+      "fixedSlots": [],
+      "randomPools": [
+        {
+          "array": "$вт",
+          "index": 1,
+          "key": "канибал"
+        },
+        {
+          "array": "$вт",
+          "index": 2,
+          "key": "калека"
+        },
+        {
+          "array": "$вт",
+          "index": 3,
+          "key": "нищеброд"
+        },
+        {
+          "array": "$вт",
+          "index": 4,
+          "key": "безумец"
+        },
+        {
+          "array": "$вт",
+          "index": 5,
+          "key": "изможденный"
+        }
+      ],
+      "selection": "Independent random draw per enemy slot; duplicates possible",
+      "counts": [
+        {
+          "count": 5,
+          "line": 11089
+        }
+      ],
+      "evidence": [
+        {
+          "line": 11084,
+          "code": "$вт[1] = 'канибал'"
+        },
+        {
+          "line": 11085,
+          "code": "$вт[2] = 'калека'"
+        },
+        {
+          "line": 11086,
+          "code": "$вт[3] = 'нищеброд'"
+        },
+        {
+          "line": 11087,
+          "code": "$вт[4] = 'безумец'"
+        },
+        {
+          "line": 11088,
+          "code": "$вт[5] = 'изможденный'"
+        },
+        {
+          "line": 11089,
+          "code": "количество_врагов = 5"
+        },
+        {
+          "line": 11090,
+          "code": "$враг[1] = $вт[rand(1,5)]"
+        },
+        {
+          "line": 11091,
+          "code": "$враг[2] = $вт[rand(1,5)]"
+        },
+        {
+          "line": 11092,
+          "code": "$враг[3] = $вт[rand(1,5)]"
+        },
+        {
+          "line": 11093,
+          "code": "$враг[4] = $вт[rand(1,5)]"
+        },
+        {
+          "line": 11094,
+          "code": "$враг[5] = $вт[rand(1,5)]"
+        },
+        {
+          "line": 11096,
+          "code": "copyarr '$display_options', '$edge_of_mists'"
+        },
+        {
+          "line": 11097,
+          "code": "gt 'shop_general'"
+        }
+      ]
+    },
+    {
+      "interactionCity": 61111,
+      "context": "fog_border_battle",
+      "place": "edge_patrol",
+      "status": "verified selector in current compiled WORK",
+      "source": {
+        "location": "interaction_city",
+        "lineStart": 11101,
+        "lineEnd": 11115
+      },
+      "fixedSlots": [
+        {
+          "slot": 1,
+          "key": "ogre"
+        }
+      ],
+      "randomPools": [],
+      "selection": "fixed",
+      "counts": [
+        {
+          "count": 1,
+          "line": 11109
+        }
+      ],
+      "evidence": [
+        {
+          "line": 11109,
+          "code": "количество_врагов = 1"
+        },
+        {
+          "line": 11110,
+          "code": "$враг[1] = 'ogre'"
+        },
+        {
+          "line": 11111,
+          "code": "copyarr '$display_options', '$edge_of_mists'"
+        },
+        {
+          "line": 11112,
+          "code": "gt 'shop_general'"
+        }
+      ]
+    },
+    {
+      "interactionCity": 61112,
+      "context": "fog_border_battle",
+      "place": "edge_patrol",
+      "status": "verified selector in current compiled WORK",
+      "source": {
+        "location": "interaction_city",
+        "lineStart": 11116,
+        "lineEnd": 11136
+      },
+      "fixedSlots": [
+        {
+          "slot": 1,
+          "key": "goblin"
+        },
+        {
+          "slot": 2,
+          "key": "goblin"
+        },
+        {
+          "slot": 3,
+          "key": "goblin"
+        }
+      ],
+      "randomPools": [],
+      "selection": "2 goblins; deterministic day/visit condition adds a third",
+      "counts": [
+        {
+          "count": 2,
+          "line": 11124
+        },
+        {
+          "count": 3,
+          "line": 11129
+        }
+      ],
+      "evidence": [
+        {
+          "line": 11124,
+          "code": "количество_врагов = 2"
+        },
+        {
+          "line": 11125,
+          "code": "$враг[1] = 'goblin'"
+        },
+        {
+          "line": 11126,
+          "code": "$враг[2] = 'goblin'"
+        },
+        {
+          "line": 11129,
+          "code": "количество_врагов = 3"
+        },
+        {
+          "line": 11130,
+          "code": "$враг[3] = 'goblin'"
+        },
+        {
+          "line": 11132,
+          "code": "copyarr '$display_options', '$edge_of_mists'"
+        },
+        {
+          "line": 11133,
+          "code": "gt 'shop_general'"
+        }
+      ]
+    },
+    {
+      "interactionCity": 61113,
+      "context": "fog_border_battle",
+      "place": "edge_patrol",
+      "status": "verified selector in current compiled WORK",
+      "source": {
+        "location": "interaction_city",
+        "lineStart": 11137,
+        "lineEnd": 11151
+      },
+      "fixedSlots": [
+        {
+          "slot": 1,
+          "key": "warg"
+        }
+      ],
+      "randomPools": [],
+      "selection": "fixed",
+      "counts": [
+        {
+          "count": 1,
+          "line": 11140
+        }
+      ],
+      "evidence": [
+        {
+          "line": 11140,
+          "code": "количество_врагов = 1"
+        },
+        {
+          "line": 11141,
+          "code": "$враг[1] = 'warg'"
+        },
+        {
+          "line": 11147,
+          "code": "copyarr '$display_options', '$edge_of_mists'"
+        },
+        {
+          "line": 11148,
+          "code": "gt 'shop_general'"
+        }
+      ]
+    },
+    {
+      "interactionCity": 61114,
+      "context": "fog_border_battle",
+      "place": "edge_patrol",
+      "status": "verified selector in current compiled WORK",
+      "source": {
+        "location": "interaction_city",
+        "lineStart": 11152,
+        "lineEnd": 11166
+      },
+      "fixedSlots": [
+        {
+          "slot": 1,
+          "key": "orc"
+        }
+      ],
+      "randomPools": [],
+      "selection": "fixed",
+      "counts": [
+        {
+          "count": 1,
+          "line": 11155
+        }
+      ],
+      "evidence": [
+        {
+          "line": 11155,
+          "code": "количество_врагов = 1"
+        },
+        {
+          "line": 11156,
+          "code": "$враг[1] = 'orc'"
+        },
+        {
+          "line": 11162,
+          "code": "copyarr '$display_options', '$edge_of_mists'"
+        },
+        {
+          "line": 11163,
+          "code": "gt 'shop_general'"
+        }
+      ]
+    },
+    {
+      "interactionCity": 61115,
+      "context": "fog_border_battle",
+      "place": "edge_patrol",
+      "status": "verified selector in current compiled WORK",
+      "source": {
+        "location": "interaction_city",
+        "lineStart": 11167,
+        "lineEnd": 11183
+      },
+      "fixedSlots": [
+        {
+          "slot": 1,
+          "key": "козлорогий"
+        },
+        {
+          "slot": 2,
+          "key": "свинорылый"
+        },
+        {
+          "slot": 3,
+          "key": "жабован"
+        },
+        {
+          "slot": 4,
+          "key": "крысолюд"
+        },
+        {
+          "slot": 5,
+          "key": "garsid"
+        }
+      ],
+      "randomPools": [],
+      "selection": "fixed",
+      "counts": [
+        {
+          "count": 5,
+          "line": 11170
+        }
+      ],
+      "evidence": [
+        {
+          "line": 11170,
+          "code": "количество_врагов = 5"
+        },
+        {
+          "line": 11171,
+          "code": "$враг[1] = 'козлорогий'"
+        },
+        {
+          "line": 11172,
+          "code": "$враг[2] = 'свинорылый'"
+        },
+        {
+          "line": 11173,
+          "code": "$враг[3] = 'жабован'"
+        },
+        {
+          "line": 11174,
+          "code": "$враг[4] = 'крысолюд'"
+        },
+        {
+          "line": 11175,
+          "code": "$враг[5] = 'garsid'"
+        },
+        {
+          "line": 11179,
+          "code": "copyarr '$display_options', '$edge_of_mists'"
+        },
+        {
+          "line": 11180,
+          "code": "gt 'shop_general'"
+        }
+      ]
+    }
+  ],
+  "entries": [
+    {
+      "key": "исчадие_молодь",
+      "name": "성장기 안개 괴물",
+      "contexts": [
+        "fog_border_battle"
+      ],
+      "encounters": [
+        61101
+      ],
+      "portrait": {
+        "path": "content/pic/mob/spawn_ava.png",
+        "sourceLocation": "#противники",
+        "line": 977
+      },
+      "standing": {
+        "path": "content/pic/mob/spawn.png",
+        "sourceLocation": "#противники",
+        "line": 978
+      },
+      "defeat": {
+        "path": "content/pic/mob/defeated/spawn.png",
+        "line": 65,
+        "sourceLocation": "jo9_battle_fate"
+      }
+    },
+    {
+      "key": "исчадие",
+      "name": "안개 괴물",
+      "contexts": [
+        "fog_border_battle"
+      ],
+      "encounters": [
+        61102
+      ],
+      "portrait": {
+        "path": "content/pic/mob/spawn_ava.png",
+        "sourceLocation": "#противники",
+        "line": 1044
+      },
+      "standing": {
+        "path": "content/pic/mob/spawn.png",
+        "sourceLocation": "#противники",
+        "line": 1045
+      },
+      "defeat": {
+        "path": "content/pic/mob/defeated/spawn.png",
+        "line": 65,
+        "sourceLocation": "jo9_battle_fate"
+      }
+    },
+    {
+      "key": "чудовщиное_исчадие",
+      "name": "거대 안개 괴물",
+      "contexts": [
+        "fog_border_battle"
+      ],
+      "encounters": [
+        61103
+      ],
+      "portrait": {
+        "path": "content/pic/mob/spawn_ava.png",
+        "sourceLocation": "#противники",
+        "line": 1129
+      },
+      "standing": {
+        "path": "content/pic/mob/spawn.png",
+        "sourceLocation": "#противники",
+        "line": 1130
+      },
+      "defeat": {
+        "path": "content/pic/mob/defeated/spawn.png",
+        "line": 65,
+        "sourceLocation": "jo9_battle_fate"
+      }
+    },
+    {
+      "key": "черный_медик",
+      "name": "검은 의사",
+      "contexts": [
+        "fog_border_battle"
+      ],
+      "encounters": [
+        61104
+      ],
+      "portrait": {
+        "path": "content/pic/mob/medic_ava.png",
+        "sourceLocation": "#противники",
+        "line": 811
+      },
+      "standing": {
+        "path": "content/pic/mob/medic.png",
+        "sourceLocation": "#противники",
+        "line": 812
+      },
+      "defeat": {
+        "path": "content/pic/mob/defeated/medic.png",
+        "line": 82,
+        "sourceLocation": "jo9_battle_fate"
+      }
+    },
+    {
+      "key": "подручный",
+      "name": "하인",
+      "contexts": [
+        "fog_border_battle"
+      ],
+      "encounters": [
+        61104
+      ],
+      "portrait": {
+        "path": "content/pic/mob/minion_ava.png",
+        "sourceLocation": "#противники",
+        "line": 30
+      },
+      "standing": {
+        "path": "content/pic/mob/minion.png",
+        "sourceLocation": "#противники",
+        "line": 31
+      },
+      "defeat": {
+        "path": "content/pic/mob/defeated/minion.png",
+        "line": 74,
+        "sourceLocation": "jo9_battle_fate"
+      }
+    },
+    {
+      "key": "паладин",
+      "name": "성기사",
+      "contexts": [
+        "fog_border_battle"
+      ],
+      "encounters": [
+        61105
+      ],
+      "portrait": {
+        "path": "content/pic/mob/paladin_ava.png",
+        "sourceLocation": "#противники",
+        "line": 453
+      },
+      "standing": {
+        "path": "content/pic/mob/paladin.png",
+        "sourceLocation": "#противники",
+        "line": 454
+      },
+      "defeat": {
+        "path": "content/pic/mob/defeated/paladin.png",
+        "line": 80,
+        "sourceLocation": "jo9_battle_fate"
+      }
+    },
+    {
+      "key": "пехотинец",
+      "name": "병사",
+      "contexts": [
+        "fog_border_battle"
+      ],
+      "encounters": [
+        61105
+      ],
+      "portrait": {
+        "path": "content/pic/mob/footman_ava.png",
+        "sourceLocation": "#противники",
+        "line": 503
+      },
+      "standing": {
+        "path": "content/pic/mob/footman.png",
+        "sourceLocation": "#противники",
+        "line": 504
+      },
+      "defeat": {
+        "path": "content/pic/mob/defeated/footman.png",
+        "line": 81,
+        "sourceLocation": "jo9_battle_fate"
+      }
+    },
+    {
+      "key": "козлорогий",
+      "name": "염소 머리",
+      "contexts": [
+        "fog_border_battle"
+      ],
+      "encounters": [
+        61106,
+        61115
+      ],
+      "portrait": {
+        "path": "content/pic/mob/goathead_ava.png",
+        "sourceLocation": "#противники",
+        "line": 555
+      },
+      "standing": {
+        "path": "content/pic/mob/goathead.png",
+        "sourceLocation": "#противники",
+        "line": 556
+      },
+      "defeat": {
+        "path": "content/pic/mob/defeated/goathead.png",
+        "line": 60,
+        "sourceLocation": "jo9_battle_fate"
+      }
+    },
+    {
+      "key": "свинорылый",
+      "name": "돼지낯짝",
+      "contexts": [
+        "fog_border_battle"
+      ],
+      "encounters": [
+        61106,
+        61115
+      ],
+      "portrait": {
+        "path": "content/pic/mob/swine_ava.png",
+        "sourceLocation": "#противники",
+        "line": 605
+      },
+      "standing": {
+        "path": "content/pic/mob/swine.png",
+        "sourceLocation": "#противники",
+        "line": 606
+      },
+      "defeat": {
+        "path": "content/pic/mob/defeated/swine.png",
+        "line": 61,
+        "sourceLocation": "jo9_battle_fate"
+      }
+    },
+    {
+      "key": "жабован",
+      "name": "두꺼비인간",
+      "contexts": [
+        "fog_border_battle"
+      ],
+      "encounters": [
+        61106,
+        61115
+      ],
+      "portrait": {
+        "path": "content/pic/mob/toadman_ava.png",
+        "sourceLocation": "#противники",
+        "line": 655
+      },
+      "standing": {
+        "path": "content/pic/mob/toadman.png",
+        "sourceLocation": "#противники",
+        "line": 656
+      },
+      "defeat": {
+        "path": "content/pic/mob/defeated/toadman.png",
+        "line": 58,
+        "sourceLocation": "jo9_battle_fate"
+      }
+    },
+    {
+      "key": "крысолюд",
+      "name": "쥐인간",
+      "contexts": [
+        "fog_border_battle"
+      ],
+      "encounters": [
+        61106,
+        61115
+      ],
+      "portrait": {
+        "path": "content/pic/mob/ratman_ava.png",
+        "sourceLocation": "#противники",
+        "line": 705
+      },
+      "standing": {
+        "path": "content/pic/mob/ratman.png",
+        "sourceLocation": "#противники",
+        "line": 706
+      },
+      "defeat": {
+        "path": "content/pic/mob/defeated/ratman.png",
+        "line": 57,
+        "sourceLocation": "jo9_battle_fate"
+      }
+    },
+    {
+      "key": "вервольф",
+      "name": "늑대인간",
+      "contexts": [
+        "fog_border_battle"
+      ],
+      "encounters": [
+        61107
+      ],
+      "portrait": {
+        "path": "content/pic/mob/werewolf_ava.png",
+        "sourceLocation": "#противники",
+        "line": 1291
+      },
+      "standing": {
+        "path": "content/pic/mob/werewolf.png",
+        "sourceLocation": "#противники",
+        "line": 1292
+      },
+      "defeat": {
+        "path": "content/pic/mob/defeated/werewolf.png",
+        "line": 56,
+        "sourceLocation": "jo9_battle_fate"
+      }
+    },
+    {
+      "key": "вампир",
+      "name": "흡혈귀",
+      "contexts": [
+        "fog_border_battle"
+      ],
+      "encounters": [
+        61108
+      ],
+      "portrait": {
+        "path": "content/pic/mob/vampire_ava.png",
+        "sourceLocation": "#противники",
+        "line": 1224
+      },
+      "standing": {
+        "path": "content/pic/mob/vampire.png",
+        "sourceLocation": "#противники",
+        "line": 1225
+      },
+      "defeat": {
+        "path": "content/pic/mob/defeated/vampire.png",
+        "line": 62,
+        "sourceLocation": "jo9_battle_fate"
+      }
+    },
+    {
+      "key": "лич",
+      "name": "리치",
+      "contexts": [
+        "fog_border_battle"
+      ],
+      "encounters": [
+        61109
+      ],
+      "portrait": {
+        "path": "content/pic/mob/lich_ava.png",
+        "sourceLocation": "#противники",
+        "line": 1356
+      },
+      "standing": {
+        "path": "content/pic/mob/lich.png",
+        "sourceLocation": "#противники",
+        "line": 1357
+      },
+      "defeat": {
+        "path": "content/pic/mob/defeated/lich.png",
+        "line": 59,
+        "sourceLocation": "jo9_battle_fate"
+      }
+    },
+    {
+      "key": "канибал",
+      "name": "식인종",
+      "contexts": [
+        "fog_border_battle"
+      ],
+      "encounters": [
+        61110
+      ],
+      "portrait": {
+        "path": "content/pic/mob/canibal_ava.png",
+        "sourceLocation": "#противники",
+        "line": 66
+      },
+      "standing": {
+        "path": "content/pic/mob/canibal.png",
+        "sourceLocation": "#противники",
+        "line": 67
+      },
+      "defeat": {
+        "path": "content/pic/mob/defeated/canibal.png",
+        "line": 75,
+        "sourceLocation": "jo9_battle_fate"
+      }
+    },
+    {
+      "key": "калека",
+      "name": "불구자",
+      "contexts": [
+        "fog_border_battle"
+      ],
+      "encounters": [
+        61110
+      ],
+      "portrait": {
+        "path": "content/pic/mob/cripple_ava.png",
+        "sourceLocation": "#противники",
+        "line": 90
+      },
+      "standing": {
+        "path": "content/pic/mob/cripple.png",
+        "sourceLocation": "#противники",
+        "line": 91
+      },
+      "defeat": {
+        "path": "content/pic/mob/defeated/cripple.png",
+        "line": 76,
+        "sourceLocation": "jo9_battle_fate"
+      }
+    },
+    {
+      "key": "нищеброд",
+      "name": "거지",
+      "contexts": [
+        "fog_border_battle"
+      ],
+      "encounters": [
+        61110
+      ],
+      "portrait": {
+        "path": "content/pic/mob/homeless_ava.png",
+        "sourceLocation": "#противники",
+        "line": 114
+      },
+      "standing": {
+        "path": "content/pic/mob/homeless.png",
+        "sourceLocation": "#противники",
+        "line": 115
+      },
+      "defeat": {
+        "path": "content/pic/mob/defeated/homeless.png",
+        "line": 77,
+        "sourceLocation": "jo9_battle_fate"
+      }
+    },
+    {
+      "key": "безумец",
+      "name": "미치광이",
+      "contexts": [
+        "fog_border_battle"
+      ],
+      "encounters": [
+        61110
+      ],
+      "portrait": {
+        "path": "content/pic/mob/madman_ava.png",
+        "sourceLocation": "#противники",
+        "line": 140
+      },
+      "standing": {
+        "path": "content/pic/mob/madman.png",
+        "sourceLocation": "#противники",
+        "line": 141
+      },
+      "defeat": {
+        "path": "content/pic/mob/defeated/madman.png",
+        "line": 78,
+        "sourceLocation": "jo9_battle_fate"
+      }
+    },
+    {
+      "key": "изможденный",
+      "name": "말라깽이",
+      "contexts": [
+        "fog_border_battle"
+      ],
+      "encounters": [
+        61110
+      ],
+      "portrait": {
+        "path": "content/pic/mob/starving_ava.png",
+        "sourceLocation": "#противники",
+        "line": 174
+      },
+      "standing": {
+        "path": "content/pic/mob/starving.png",
+        "sourceLocation": "#противники",
+        "line": 175
+      },
+      "defeat": {
+        "path": "content/pic/mob/defeated/starving.png",
+        "line": 79,
+        "sourceLocation": "jo9_battle_fate"
+      }
+    },
+    {
+      "key": "ogre",
+      "name": "오우거",
+      "contexts": [
+        "fog_border_battle"
+      ],
+      "encounters": [
+        61111
+      ],
+      "portrait": {
+        "path": "content/pic/mob/ogre_ava.png",
+        "sourceLocation": "#противники",
+        "line": 1427
+      },
+      "standing": {
+        "path": "content/pic/mob/ogre.png",
+        "sourceLocation": "#противники",
+        "line": 1428
+      },
+      "defeat": {
+        "path": "content/pic/mob/defeated/ogre.png",
+        "line": 66,
+        "sourceLocation": "jo9_battle_fate"
+      }
+    },
+    {
+      "key": "goblin",
+      "name": "고블린",
+      "contexts": [
+        "fog_border_battle"
+      ],
+      "encounters": [
+        61112
+      ],
+      "portrait": {
+        "path": "content/pic/mob/goblin_ava.png",
+        "sourceLocation": "#противники",
+        "line": 1490
+      },
+      "standing": {
+        "path": "content/pic/mob/goblin.png",
+        "sourceLocation": "#противники",
+        "line": 1491
+      },
+      "defeat": {
+        "path": "content/pic/mob/defeated/goblin.png",
+        "line": 67,
+        "sourceLocation": "jo9_battle_fate"
+      }
+    },
+    {
+      "key": "warg",
+      "name": "와그",
+      "contexts": [
+        "fog_border_battle"
+      ],
+      "encounters": [
+        61113
+      ],
+      "portrait": {
+        "path": "content/pic/mob/warg_ava.png",
+        "sourceLocation": "#противники",
+        "line": 1540
+      },
+      "standing": {
+        "path": "content/pic/mob/warg.png",
+        "sourceLocation": "#противники",
+        "line": 1541
+      },
+      "defeat": {
+        "path": "content/pic/mob/defeated/warg.png",
+        "line": 69,
+        "sourceLocation": "jo9_battle_fate"
+      }
+    },
+    {
+      "key": "orc",
+      "name": "오크 전사",
+      "contexts": [
+        "fog_border_battle"
+      ],
+      "encounters": [
+        61114
+      ],
+      "portrait": {
+        "path": "content/pic/mob/orc_ava.png",
+        "sourceLocation": "#противники",
+        "line": 1608
+      },
+      "standing": {
+        "path": "content/pic/mob/orc.png",
+        "sourceLocation": "#противники",
+        "line": 1609
+      },
+      "defeat": {
+        "path": "content/pic/mob/defeated/orc.png",
+        "line": 68,
+        "sourceLocation": "jo9_battle_fate"
+      }
+    },
+    {
+      "key": "garsid",
+      "name": "가르시드",
+      "contexts": [
+        "fog_border_battle"
+      ],
+      "encounters": [
+        61115
+      ],
+      "portrait": {
+        "path": "content/pic/mob/garsid_ava.png",
+        "sourceLocation": "#противники",
+        "line": 759
+      },
+      "standing": {
+        "path": "content/pic/mob/garsid.png",
+        "sourceLocation": "#противники",
+        "line": 760
+      },
+      "defeat": {
+        "path": "content/pic/mob/defeated/garsid.png",
+        "line": 64,
+        "sourceLocation": "jo9_battle_fate"
+      }
+    }
+  ],
+  "groupDefeats": [
+    {
+      "code": "if количество_врагов = 4 and (jo9_mg_counts['черный_медик'] = 1 and jo9_mg_counts['подручный'] = 3): $result = 'content/pic/mob/defeated/groups/medic_group.png' & exit",
+      "line": 20
+    },
+    {
+      "code": "if количество_врагов = 3 and (jo9_mg_counts['паладин'] = 1 and jo9_mg_counts['пехотинец'] = 2): $result = 'content/pic/mob/defeated/groups/paladin_group.png' & exit",
+      "line": 21
+    },
+    {
+      "code": "if количество_врагов = 2 and (jo9_mg_counts['goblin'] = 2): $result = 'content/pic/mob/defeated/groups/goblin_pair.png' & exit",
+      "line": 22
+    },
+    {
+      "code": "if количество_врагов = 3 and (jo9_mg_counts['goblin'] = 3): $result = 'content/pic/mob/defeated/groups/goblin_trio.png' & exit",
+      "line": 23
+    },
+    {
+      "code": "if количество_врагов = 5 and (jo9_mg_counts['garsid'] = 1 and jo9_mg_counts['козлорогий'] = 1 and jo9_mg_counts['свинорылый'] = 1 and jo9_mg_counts['жабован'] = 1 and jo9_mg_counts['крысолюд'] = 1): $result = 'content/pic/mob/defeated/groups/garsid_group.png' & exit",
+      "line": 24
+    },
+    {
+      "code": "if количество_врагов = 4 and (jo9_mg_counts['козлорогий'] + jo9_mg_counts['свинорылый'] + jo9_mg_counts['жабован'] + jo9_mg_counts['крысолюд'] = 4): $result = 'content/pic/mob/defeated/groups/beastmen_group.png' & exit",
+      "line": 26
+    },
+    {
+      "code": "if количество_врагов = 5 and (jo9_mg_counts['канибал'] + jo9_mg_counts['калека'] + jo9_mg_counts['нищеброд'] + jo9_mg_counts['безумец'] + jo9_mg_counts['изможденный'] = 5): $result = 'content/pic/mob/defeated/groups/vagrants_group.png' & exit",
+      "line": 27
+    }
+  ],
+  "sharedSpawn": {
+    "portraitPath": "content/pic/mob/spawn_ava.png",
+    "entries": [
+      {
+        "key": "исчадие_молодь",
+        "name": "성장기 안개 괴물",
+        "context": "fog_border_battle",
+        "portrait": [
+          {
+            "key": "исчадие_молодь",
+            "value": "content/pic/mob/spawn_ava.png",
+            "line": 977
+          }
+        ],
+        "standing": [
+          {
+            "key": "исчадие_молодь",
+            "value": "content/pic/mob/spawn.png",
+            "line": 978
+          }
+        ],
+        "defeat": {
+          "path": "content/pic/mob/defeated/spawn.png",
+          "line": 65
+        }
+      },
+      {
+        "key": "исчадие",
+        "name": "안개 괴물",
+        "context": "fog_border_battle",
+        "portrait": [
+          {
+            "key": "исчадие",
+            "value": "content/pic/mob/spawn_ava.png",
+            "line": 1044
+          }
+        ],
+        "standing": [
+          {
+            "key": "исчадие",
+            "value": "content/pic/mob/spawn.png",
+            "line": 1045
+          }
+        ],
+        "defeat": {
+          "path": "content/pic/mob/defeated/spawn.png",
+          "line": 65
+        }
+      },
+      {
+        "key": "чудовщиное_исчадие",
+        "name": "거대 안개 괴물",
+        "context": "fog_border_battle",
+        "portrait": [
+          {
+            "key": "чудовщиное_исчадие",
+            "value": "content/pic/mob/spawn_ava.png",
+            "line": 1129
+          }
+        ],
+        "standing": [
+          {
+            "key": "чудовщиное_исчадие",
+            "value": "content/pic/mob/spawn.png",
+            "line": 1130
+          }
+        ],
+        "defeat": {
+          "path": "content/pic/mob/defeated/spawn.png",
+          "line": 65
+        }
+      },
+      {
+        "key": "исчадие_арены",
+        "name": "아레나 안개 괴물",
+        "context": "colosseum_arena",
+        "portrait": [
+          {
+            "key": "исчадие_арены",
+            "value": "content/pic/mob/spawn_ava.png",
+            "line": 3196
+          }
+        ],
+        "standing": [
+          {
+            "key": "исчадие_арены",
+            "value": "content/pic/mob/gladiator_spawn.png",
+            "line": 3197
+          }
+        ],
+        "defeat": {
+          "path": "content/pic/mob/defeated/gladiator_spawn.png",
+          "line": 73
+        }
+      }
+    ],
+    "nonBattleUses": [
+      {
+        "location": "trophy_room",
+        "lines": [
+          12,
+          14,
+          22,
+          36
+        ],
+        "role": "Trophy icons; not proof of battle environment"
+      }
+    ],
+    "finding": "Only the150px portrait is shared across fog and arena. Standing and defeat are already separate spawn.png versus gladiator_spawn.png. The current code renders a different parent battle background for fog and arena, but an opaque per-MOB scene can conceal it.",
+    "futureMinimalOption": {
+      "status": "proposal only; not applied",
+      "portrait": "Keep spawn_ava.png for fog and trophy compatibility; add a separate arena portrait PNG and change only #противники arena enemy portrait binding at3196.",
+      "standingAndDefeat": "No new context variable or migration required: existing arena key исчадие_арены already uses gladiator_spawn.png and defeated/gladiator_spawn.png, while3fog keys share spawn.png and defeated/spawn.png.",
+      "saveCompatibility": "Persistent enemy keys and gameplay values stay unchanged. Native new-fight initialization reloads #противники. Already-open battle saves can retain old cached portrait/header until an explicit refresh/redraw; verify that case before claiming full compatibility."
+    }
+  },
+  "imageFileMetadata": {
+    "interpretation": "Pixel opacity is verified only; opaque does not by itself prove the depicted background fits its gameplay location. No images were edited.",
+    "files": [
+      {
+        "path": "content/pic/mob/canibal.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 353066,
+        "partialAlphaPixels": 119325,
+        "sha256": "5b3152f48c2985d1b6d355e8479ef6fe7f5b1aebfcca858717dbf33a2d0a7913"
+      },
+      {
+        "path": "content/pic/mob/canibal_ava.png",
+        "exists": true,
+        "size": [
+          150,
+          150
+        ],
+        "mode": "RGB",
+        "alphaExtrema": [
+          255,
+          255
+        ],
+        "fullyOpaque": true,
+        "transparentPixels": 0,
+        "partialAlphaPixels": 0,
+        "sha256": "591ebfecd2a43acf3af5bb1eae091046c148fec332c61b15da7dcd465cba04fa"
+      },
+      {
+        "path": "content/pic/mob/cripple.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 379798,
+        "partialAlphaPixels": 92808,
+        "sha256": "6b57dac8e73debba3fdd95b35e48b8a25ea98008b2c5e310491cc0f8807466da"
+      },
+      {
+        "path": "content/pic/mob/cripple_ava.png",
+        "exists": true,
+        "size": [
+          150,
+          150
+        ],
+        "mode": "RGB",
+        "alphaExtrema": [
+          255,
+          255
+        ],
+        "fullyOpaque": true,
+        "transparentPixels": 0,
+        "partialAlphaPixels": 0,
+        "sha256": "1e5b8659d70432533f2332ff3a11340e32ae29bcad761fbb146aadd7cb1cbb3d"
+      },
+      {
+        "path": "content/pic/mob/defeated/canibal.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 334630,
+        "partialAlphaPixels": 137829,
+        "sha256": "4f2b984cfa8e35db41ab978d10258cd309e44c5628844b9df19b326d8b10130e"
+      },
+      {
+        "path": "content/pic/mob/defeated/cripple.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 332794,
+        "partialAlphaPixels": 139393,
+        "sha256": "5d5eccbd6bd8b25a999ae2c61885f33aaa083a8357429694c31cf80948b4f269"
+      },
+      {
+        "path": "content/pic/mob/defeated/footman.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 353843,
+        "partialAlphaPixels": 117836,
+        "sha256": "4cc6f36f3420d07f4c0eca7a7c484c968107372f59c8cf469164f7c95cb2ae3d"
+      },
+      {
+        "path": "content/pic/mob/defeated/garsid.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 333089,
+        "partialAlphaPixels": 139609,
+        "sha256": "c51b8f8c71d6abca143c4e822e80c0ec02c7c768282a3e9e8a278dd4236d45a7"
+      },
+      {
+        "path": "content/pic/mob/defeated/gladiator_spawn.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 262951,
+        "partialAlphaPixels": 209707,
+        "sha256": "fd5b7ae4e0b3635502129ae9642aad754a905131d7acc7a2d84553be41379433"
+      },
+      {
+        "path": "content/pic/mob/defeated/goathead.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 283192,
+        "partialAlphaPixels": 189260,
+        "sha256": "4aa10d2059b3c9c3e751ec6f87e7ff14c7535e4b06f8d5c280244887d5a7c471"
+      },
+      {
+        "path": "content/pic/mob/defeated/goblin.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 331966,
+        "partialAlphaPixels": 139667,
+        "sha256": "9498f4f5c877f92960bb3420df47d4e527b2f8b61280f0e21f25555f75a92c65"
+      },
+      {
+        "path": "content/pic/mob/defeated/homeless.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 342575,
+        "partialAlphaPixels": 130332,
+        "sha256": "05e28cbb67d706c3cab8e832980c1783a7f45c282fb68657b5a700674f47096d"
+      },
+      {
+        "path": "content/pic/mob/defeated/lich.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 263907,
+        "partialAlphaPixels": 209354,
+        "sha256": "3824bbb41503c878cf679edcdcf535192fe09a881b1a904ca0a163b28a64851a"
+      },
+      {
+        "path": "content/pic/mob/defeated/madman.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 301279,
+        "partialAlphaPixels": 171700,
+        "sha256": "876c74511d0a2c6cfe940bac724a8327e0bcc3719390ecae369ba1222951772d"
+      },
+      {
+        "path": "content/pic/mob/defeated/medic.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 289170,
+        "partialAlphaPixels": 182923,
+        "sha256": "681ed4f3d342ec24e7db82a6928cbc12b43501562c60cc10c32c8477aab4b5f1"
+      },
+      {
+        "path": "content/pic/mob/defeated/minion.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 312290,
+        "partialAlphaPixels": 159771,
+        "sha256": "f1bd956eb4cb33a702fad67b71368bb58deac71ba274a0c04f091dd8f1af765b"
+      },
+      {
+        "path": "content/pic/mob/defeated/ogre.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 257641,
+        "partialAlphaPixels": 214166,
+        "sha256": "058ffb97103fefec757b5bdcd036f5d0075cc71cda48c9c5e454ec6bc36c8e80"
+      },
+      {
+        "path": "content/pic/mob/defeated/orc.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 290168,
+        "partialAlphaPixels": 181842,
+        "sha256": "693538a7a8ecc5548181c3bfe41f7188896a76240d076953a4d32a0010388919"
+      },
+      {
+        "path": "content/pic/mob/defeated/paladin.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 317500,
+        "partialAlphaPixels": 154530,
+        "sha256": "28203c50c390bb4b6dec3010f1189f5889d97213499d405663235abb106a8fde"
+      },
+      {
+        "path": "content/pic/mob/defeated/ratman.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 298494,
+        "partialAlphaPixels": 174050,
+        "sha256": "79797ecb19192dc2a4521750fe5e2684da647d9e76ba0ee0fd6b8ec59c7b4ad4"
+      },
+      {
+        "path": "content/pic/mob/defeated/spawn.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 259918,
+        "partialAlphaPixels": 212324,
+        "sha256": "990d1e280a79868ffc0c7c3fa729f486e78100a578dff78a88701e006713a1a3"
+      },
+      {
+        "path": "content/pic/mob/defeated/starving.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 348368,
+        "partialAlphaPixels": 123717,
+        "sha256": "4deb74817018b2f59d58229442e09266717cb879b1f6cebcd8fa686659802807"
+      },
+      {
+        "path": "content/pic/mob/defeated/swine.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 292532,
+        "partialAlphaPixels": 180248,
+        "sha256": "6f9520d5a81ee67ef009f5eaa99281095ca1ceee436fe15075ea1736adf8b964"
+      },
+      {
+        "path": "content/pic/mob/defeated/toadman.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 334680,
+        "partialAlphaPixels": 138420,
+        "sha256": "995cbcb8b7d6b6dc59da3e0f190077c1dd6d55ffd6987fafb2d35c11300061fc"
+      },
+      {
+        "path": "content/pic/mob/defeated/vampire.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 234553,
+        "partialAlphaPixels": 238677,
+        "sha256": "04c882bb66b745ae5c9cb43ffeda62d8eea1e3773df4a77fc66eaeae36a2b2d3"
+      },
+      {
+        "path": "content/pic/mob/defeated/warg.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 328883,
+        "partialAlphaPixels": 144467,
+        "sha256": "e3b8d0f1a0110260cfd6f88db9ff44236f2086eedf1097f5fe4ac7090c2a74fc"
+      },
+      {
+        "path": "content/pic/mob/defeated/werewolf.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 261326,
+        "partialAlphaPixels": 211295,
+        "sha256": "045c10198ab22a992824a9dce4e705ad59d40d6e286db29a6e8146675dba3518"
+      },
+      {
+        "path": "content/pic/mob/footman.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 370018,
+        "partialAlphaPixels": 102030,
+        "sha256": "7652f40f49e5274e9db51294bd9801cf11a0f395686a8c05ce456d1d95d90738"
+      },
+      {
+        "path": "content/pic/mob/footman_ava.png",
+        "exists": true,
+        "size": [
+          150,
+          150
+        ],
+        "mode": "RGB",
+        "alphaExtrema": [
+          255,
+          255
+        ],
+        "fullyOpaque": true,
+        "transparentPixels": 0,
+        "partialAlphaPixels": 0,
+        "sha256": "8ddaaad92d403afc17a9e9c3dcdabbcb04899cdd8af8b60efb97ca2b85527dbc"
+      },
+      {
+        "path": "content/pic/mob/garsid.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 375517,
+        "partialAlphaPixels": 96547,
+        "sha256": "681aeab8a080e8870da4ad9ac77a697367d7732718b47e049e04a7b5fd245a44"
+      },
+      {
+        "path": "content/pic/mob/garsid_ava.png",
+        "exists": true,
+        "size": [
+          150,
+          150
+        ],
+        "mode": "RGB",
+        "alphaExtrema": [
+          255,
+          255
+        ],
+        "fullyOpaque": true,
+        "transparentPixels": 0,
+        "partialAlphaPixels": 0,
+        "sha256": "511cac49dc0c1ed64642ca0419bd80b4c596ee3203466ba2b126effe1144d7cc"
+      },
+      {
+        "path": "content/pic/mob/gladiator_spawn.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGB",
+        "alphaExtrema": [
+          255,
+          255
+        ],
+        "fullyOpaque": true,
+        "transparentPixels": 0,
+        "partialAlphaPixels": 0,
+        "sha256": "dab4113b28f017daa7f14bb09a4b8013cd0a34fd4461eed1e4b18bad5cdaace6"
+      },
+      {
+        "path": "content/pic/mob/goathead.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 287661,
+        "partialAlphaPixels": 184569,
+        "sha256": "7e5eb3d9adf595deff73795fa34e8a80086e63ef6ccc56cd1a5d5bebe22e67c2"
+      },
+      {
+        "path": "content/pic/mob/goathead_ava.png",
+        "exists": true,
+        "size": [
+          150,
+          150
+        ],
+        "mode": "RGB",
+        "alphaExtrema": [
+          255,
+          255
+        ],
+        "fullyOpaque": true,
+        "transparentPixels": 0,
+        "partialAlphaPixels": 0,
+        "sha256": "a8155742abdf5df7905991777715572f1e7fd09ea329503a97e4963e26c35ccf"
+      },
+      {
+        "path": "content/pic/mob/goblin.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 336134,
+        "partialAlphaPixels": 135282,
+        "sha256": "01a0d76cabfb2b4bdfd1dbe6ee7e9038653d2c21cfa63046a57508a0cd9e8541"
+      },
+      {
+        "path": "content/pic/mob/goblin_ava.png",
+        "exists": true,
+        "size": [
+          150,
+          150
+        ],
+        "mode": "RGB",
+        "alphaExtrema": [
+          255,
+          255
+        ],
+        "fullyOpaque": true,
+        "transparentPixels": 0,
+        "partialAlphaPixels": 0,
+        "sha256": "c9f1ec2b95163924d1bc9e79741f416a345131dfab234aaaa4f0e3d79917f84a"
+      },
+      {
+        "path": "content/pic/mob/homeless.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 347238,
+        "partialAlphaPixels": 125527,
+        "sha256": "59e063d26ce5803c099e1fd77aff41329391521221a56c9abd0bc495530190d3"
+      },
+      {
+        "path": "content/pic/mob/homeless_ava.png",
+        "exists": true,
+        "size": [
+          150,
+          150
+        ],
+        "mode": "RGB",
+        "alphaExtrema": [
+          255,
+          255
+        ],
+        "fullyOpaque": true,
+        "transparentPixels": 0,
+        "partialAlphaPixels": 0,
+        "sha256": "dc896a6861b49ed0a48e41077579578f5d4822cd5e7badc0bb949ae752a037b2"
+      },
+      {
+        "path": "content/pic/mob/lich.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 229239,
+        "partialAlphaPixels": 243516,
+        "sha256": "eaba4b59d6cae9d330f93d9cd24693b62ad5ce0bb44492bf106402bdff2b5865"
+      },
+      {
+        "path": "content/pic/mob/lich_ava.png",
+        "exists": true,
+        "size": [
+          150,
+          150
+        ],
+        "mode": "RGB",
+        "alphaExtrema": [
+          255,
+          255
+        ],
+        "fullyOpaque": true,
+        "transparentPixels": 0,
+        "partialAlphaPixels": 0,
+        "sha256": "816566823b59c6ce6d379d48e9cf47d470d296a20f0b0b4418f07ad5a3d96670"
+      },
+      {
+        "path": "content/pic/mob/madman.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 271820,
+        "partialAlphaPixels": 200481,
+        "sha256": "f13b151b7d489836d948dd0b75acbcabee475fb88bf99952572c66d01253cc78"
+      },
+      {
+        "path": "content/pic/mob/madman_ava.png",
+        "exists": true,
+        "size": [
+          150,
+          150
+        ],
+        "mode": "RGB",
+        "alphaExtrema": [
+          255,
+          255
+        ],
+        "fullyOpaque": true,
+        "transparentPixels": 0,
+        "partialAlphaPixels": 0,
+        "sha256": "13c75c2832abe55040b6ec4f8f3094094f6741780c94c3000adc9df2e386b495"
+      },
+      {
+        "path": "content/pic/mob/medic.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 303284,
+        "partialAlphaPixels": 168768,
+        "sha256": "a8b54f261fe8e06a6eaa67cb39debb96e3f2c3a52843ad46840a71853a78a971"
+      },
+      {
+        "path": "content/pic/mob/medic_ava.png",
+        "exists": true,
+        "size": [
+          150,
+          150
+        ],
+        "mode": "RGB",
+        "alphaExtrema": [
+          255,
+          255
+        ],
+        "fullyOpaque": true,
+        "transparentPixels": 0,
+        "partialAlphaPixels": 0,
+        "sha256": "632d8c642c2bbdf5eb85010e1011ddf7e9c19078772a566a2f31ad8c474425d8"
+      },
+      {
+        "path": "content/pic/mob/minion.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 375496,
+        "partialAlphaPixels": 96921,
+        "sha256": "697b10edd91e8086fe27b256dee30d0332b4ff588c628eb0a01e589f7b2c05b9"
+      },
+      {
+        "path": "content/pic/mob/minion_ava.png",
+        "exists": true,
+        "size": [
+          150,
+          150
+        ],
+        "mode": "RGB",
+        "alphaExtrema": [
+          255,
+          255
+        ],
+        "fullyOpaque": true,
+        "transparentPixels": 0,
+        "partialAlphaPixels": 0,
+        "sha256": "99aca7541750a75414a43bede974f8aa32982280e0434c98c4aeeb4efd60ee82"
+      },
+      {
+        "path": "content/pic/mob/ogre.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 247604,
+        "partialAlphaPixels": 224375,
+        "sha256": "324265c0f60c9f4fb75dea2e39801a423fc99a416da2e957c6836827a360e9ab"
+      },
+      {
+        "path": "content/pic/mob/ogre_ava.png",
+        "exists": true,
+        "size": [
+          150,
+          150
+        ],
+        "mode": "RGB",
+        "alphaExtrema": [
+          255,
+          255
+        ],
+        "fullyOpaque": true,
+        "transparentPixels": 0,
+        "partialAlphaPixels": 0,
+        "sha256": "bfb21a04a6148dd6f348864c7a21e2cece37c0f0dc06522ec775ffdd67e02e9c"
+      },
+      {
+        "path": "content/pic/mob/orc.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 360402,
+        "partialAlphaPixels": 109510,
+        "sha256": "e9182358a3158cbd37e98314084fc607e1dd367e7de9e4ee62cfb53ea22fa5fc"
+      },
+      {
+        "path": "content/pic/mob/orc_ava.png",
+        "exists": true,
+        "size": [
+          150,
+          150
+        ],
+        "mode": "RGB",
+        "alphaExtrema": [
+          255,
+          255
+        ],
+        "fullyOpaque": true,
+        "transparentPixels": 0,
+        "partialAlphaPixels": 0,
+        "sha256": "547c2feaf308ac98855412782ea2e1d301a7fa829b2cd139ccd5b09dd172e649"
+      },
+      {
+        "path": "content/pic/mob/paladin.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 336045,
+        "partialAlphaPixels": 136037,
+        "sha256": "7e9118389b21dc664e77de96d816678d72c48282cf6a2918baa8e44991acf9c3"
+      },
+      {
+        "path": "content/pic/mob/paladin_ava.png",
+        "exists": true,
+        "size": [
+          150,
+          150
+        ],
+        "mode": "RGB",
+        "alphaExtrema": [
+          255,
+          255
+        ],
+        "fullyOpaque": true,
+        "transparentPixels": 0,
+        "partialAlphaPixels": 0,
+        "sha256": "5b73aff54e670c768f46ef76466ea4abd667d9daa5f71e2fb1e7b2b224e7906c"
+      },
+      {
+        "path": "content/pic/mob/ratman.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 256860,
+        "partialAlphaPixels": 215354,
+        "sha256": "2f5ddd548c5923acd7b6f35f14d7a86be8ee6a2dc82eadba3cb07363f392deea"
+      },
+      {
+        "path": "content/pic/mob/ratman_ava.png",
+        "exists": true,
+        "size": [
+          150,
+          150
+        ],
+        "mode": "RGB",
+        "alphaExtrema": [
+          255,
+          255
+        ],
+        "fullyOpaque": true,
+        "transparentPixels": 0,
+        "partialAlphaPixels": 0,
+        "sha256": "a2d0ef26bec4fe0fccd9be901a7f32672b5fb42472bba0fc12bb4c546e737eeb"
+      },
+      {
+        "path": "content/pic/mob/spawn.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 246652,
+        "partialAlphaPixels": 225603,
+        "sha256": "2500c6d9edd5960478044e5b9d67e4e0fc3ba437be0c07f5e024964a5f3d1738"
+      },
+      {
+        "path": "content/pic/mob/spawn_ava.png",
+        "exists": true,
+        "size": [
+          150,
+          150
+        ],
+        "mode": "RGB",
+        "alphaExtrema": [
+          255,
+          255
+        ],
+        "fullyOpaque": true,
+        "transparentPixels": 0,
+        "partialAlphaPixels": 0,
+        "sha256": "1c547ef4d04f137a1812b5541aaedcadad83b2cd9762ab5e37bfc56397159035"
+      },
+      {
+        "path": "content/pic/mob/starving.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 377155,
+        "partialAlphaPixels": 95383,
+        "sha256": "ae3fce93894e320b1a5873ab86226d4dcd80029a352ef2c816d24222adb02ef9"
+      },
+      {
+        "path": "content/pic/mob/starving_ava.png",
+        "exists": true,
+        "size": [
+          150,
+          150
+        ],
+        "mode": "RGB",
+        "alphaExtrema": [
+          255,
+          255
+        ],
+        "fullyOpaque": true,
+        "transparentPixels": 0,
+        "partialAlphaPixels": 0,
+        "sha256": "296b9205d6ee4138774ca0d7ea01587edd840860e044d0eee597ed9f4609decc"
+      },
+      {
+        "path": "content/pic/mob/swine.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 271079,
+        "partialAlphaPixels": 201226,
+        "sha256": "0c99fa15f409a6f6f42963f791290379fc7544180fc6faa529d9b02950acbbec"
+      },
+      {
+        "path": "content/pic/mob/swine_ava.png",
+        "exists": true,
+        "size": [
+          150,
+          150
+        ],
+        "mode": "RGB",
+        "alphaExtrema": [
+          255,
+          255
+        ],
+        "fullyOpaque": true,
+        "transparentPixels": 0,
+        "partialAlphaPixels": 0,
+        "sha256": "ad79b023ef715e675667b2196d4d0f12b2d32b3652b29ef1d1a1b488202b061e"
+      },
+      {
+        "path": "content/pic/mob/toadman.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 315809,
+        "partialAlphaPixels": 156505,
+        "sha256": "774757159a54e5b7e84a3774701b4ffb9c4e105f19de50c9e87758e7e6895c1a"
+      },
+      {
+        "path": "content/pic/mob/toadman_ava.png",
+        "exists": true,
+        "size": [
+          150,
+          150
+        ],
+        "mode": "RGB",
+        "alphaExtrema": [
+          255,
+          255
+        ],
+        "fullyOpaque": true,
+        "transparentPixels": 0,
+        "partialAlphaPixels": 0,
+        "sha256": "fc9b5b92a94aba555fe4e44bf1d648621bb6fa10eacfd8f438221ec30b83d97b"
+      },
+      {
+        "path": "content/pic/mob/vampire.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 280348,
+        "partialAlphaPixels": 191317,
+        "sha256": "a8e791ad631fa25b25111ed8e9d0a97322829e12f6623b286d1c2cfa6387718f"
+      },
+      {
+        "path": "content/pic/mob/vampire_ava.png",
+        "exists": true,
+        "size": [
+          150,
+          150
+        ],
+        "mode": "RGB",
+        "alphaExtrema": [
+          255,
+          255
+        ],
+        "fullyOpaque": true,
+        "transparentPixels": 0,
+        "partialAlphaPixels": 0,
+        "sha256": "dd840765bb7d39b35f2e6b1521df2ba7de1393dc12c232f19a1aa8c1b6c7a1fb"
+      },
+      {
+        "path": "content/pic/mob/warg.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 245061,
+        "partialAlphaPixels": 228072,
+        "sha256": "d5647ca94f2763246d6b0f5b0060d96a0b4c2a34b66736c88db49a445d5a7415"
+      },
+      {
+        "path": "content/pic/mob/warg_ava.png",
+        "exists": true,
+        "size": [
+          150,
+          150
+        ],
+        "mode": "RGB",
+        "alphaExtrema": [
+          255,
+          255
+        ],
+        "fullyOpaque": true,
+        "transparentPixels": 0,
+        "partialAlphaPixels": 0,
+        "sha256": "afd263cbc7854ec555c226731aa4bfab210e4ce3e86f48e04e29f617a6cc7621"
+      },
+      {
+        "path": "content/pic/mob/werewolf.png",
+        "exists": true,
+        "size": [
+          795,
+          596
+        ],
+        "mode": "RGBA",
+        "alphaExtrema": [
+          0,
+          255
+        ],
+        "fullyOpaque": false,
+        "transparentPixels": 282986,
+        "partialAlphaPixels": 190350,
+        "sha256": "21d8b8dc162d4127db3677407b5f883b21360bcf6c1e079ab7338c8b26f6c25d"
+      },
+      {
+        "path": "content/pic/mob/werewolf_ava.png",
+        "exists": true,
+        "size": [
+          150,
+          150
+        ],
+        "mode": "RGB",
+        "alphaExtrema": [
+          255,
+          255
+        ],
+        "fullyOpaque": true,
+        "transparentPixels": 0,
+        "partialAlphaPixels": 0,
+        "sha256": "d8c4981af2a497b3e8f7b67df8958d342a5f22cac6c26ddfa67d195a4106cf06"
+      }
+    ]
+  },
+  "initializationEvidence": [
+    {
+      "location": "начать_бой",
+      "line": 121,
+      "code": "gs '#противники'"
+    },
+    {
+      "location": "$gladiator_fight_start",
+      "line": 23,
+      "code": "gs '#противники'"
+    },
+    {
+      "location": "#options",
+      "lines": [
+        46,
+        53,
+        61,
+        68,
+        76,
+        83,
+        91,
+        98,
+        106,
+        113,
+        121,
+        128,
+        136,
+        143,
+        151,
+        158,
+        166,
+        173,
+        181,
+        188,
+        197,
+        204,
+        213,
+        220,
+        229,
+        236,
+        245,
+        252
+      ],
+      "meaning": "Fog encounter options1..14 invoke jo9_fog_relay menu (special15 reuses option14)."
+    }
+  ]
+}

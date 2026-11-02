@@ -1,0 +1,75 @@
+{
+  "qsp": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+  "sha256": "78835089f1dc8d0d5272f991926f35fa40e7e26dede5970a3fc03612967c130d",
+  "location": "interior_change",
+  "locationBodyLines": [
+    {
+      "line": 1967,
+      "text": "if $args[0] = 'jo9_toggle':"
+    },
+    {
+      "line": 1968,
+      "text": " local $jo9_before, $jo9_after, $jo9_current_html, $jo9_before_attr, $jo9_after_attr, jo9_match, jo9_searchpos, jo9_last_match, jo9_before_choice, jo9_saved_choice, $jo9_before_button"
+    },
+    {
+      "line": 1969,
+      "text": " if $jo9_visible_top = '': exit"
+    },
+    {
+      "line": 1970,
+      "text": " jo9_saved_choice = jo9_cut_choice[$jo9_visible_top]"
+    },
+    {
+      "line": 1971,
+      "text": " $jo9_before = func('interior_change', 'jo9_path', $jo9_visible_top, 2)"
+    },
+    {
+      "line": 1972,
+      "text": " $jo9_after = func('interior_change', 'jo9_path', $jo9_visible_top)"
+    },
+    {
+      "line": 1973,
+      "text": " jo9_before_choice = jo9_cut_choice[$jo9_visible_top]"
+    },
+    {
+      "line": 1974,
+      "text": " if jo9_saved_choice = jo9_before_choice and jo9_image_count > 1:"
+    },
+    {
+      "line": 1975,
+      "text": "  $jo9_after = func('interior_change', 'jo9_path', $jo9_visible_top, 1)"
+    },
+    {
+      "line": 1976,
+      "text": " end"
+    },
+    {
+      "line": 1977,
+      "text": " $jo9_current_html = $replace($maintxt, $jo9_clean_overlay, '')"
+    },
+    {
+      "line": 1978,
+      "text": " $jo9_before_attr = 'src=\"' + $jo9_before + '\"'"
+    },
+    {
+      "line": 1979,
+      "text": " $jo9_after_attr = 'src=\"' + $jo9_after + '\"'"
+    },
+    {
+      "line": 1980,
+      "text": " jo9_searchpos = 1"
+    },
+    {
+      "line": 1981,
+      "text": " jo9_last_match = 0"
+    },
+    {
+      "line": 1982,
+      "text": " :jo9_find_top_attribute"
+    }
+  ],
+  "compiler": {
+    "file": "G:/somi/JO9sa/tools/text-workshop/image-cut-condition-rules.cjs",
+    "line": 211
+  }
+}

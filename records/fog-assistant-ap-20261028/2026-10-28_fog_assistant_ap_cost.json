@@ -1,0 +1,26 @@
+{
+  "id": "2026-10-28_fog_assistant_ap_cost",
+  "status": "APPROVED",
+  "description": "조수 선봉 안개전투의 최소 행동력2와 단독 승리 주인공 기본 행동1회 정산. 기존 반지·반행동·치트 보정 및 교대 비용을 보존한다.",
+  "before_sha256": "f6520ef11a720f6d15127738032be960acc1153eb653e2760495b880e85cef97",
+  "after_sha256": "e830028463ab3ca675e5e931110182883bb773e9a9403a1385d1d968114b9c98",
+  "edits": [
+    {
+      "location": "jo9_fog_relay",
+      "field": "body",
+      "old": "   jo9_fog['energy_before'] = assistant['energy']",
+      "new": "   ! JO9 MOD START FOG_ASSISTANT_MASTER_ACTION_20261028\r\n   ! 교대 없이 조수가 이긴 경우에만 기존 주인공 행동 비용을 단회 정산한다.\r\n   if $place = 'edge_patrol' and combatant = 2 and $итог_боя = 'победа' and jo9_fog['switched'] = 0:\r\n    dynamic $master_energy_drop\r\n   end\r\n   ! JO9 MOD END FOG_ASSISTANT_MASTER_ACTION_20261028\r\n   jo9_fog['energy_before'] = assistant['energy']",
+      "count": 1,
+      "patchId": "FOG_ASSISTANT_MASTER_ACTION_20261028"
+    },
+    {
+      "location": "jo9_fog_relay",
+      "field": "body",
+      "old": "   ! 출전 동료의 최소 1 행동력 비용을 보장하고 더 큰 잔여 지구력 손실은 유지한다.\r\n   assistant['energy'] = min(assistant['energy'], jo9_fog['energy_before'] - 1)",
+      "new": "   ! JO9 MOD START FOG_ASSISTANT_MIN_TWO_20261028\r\n   ! 조수의 최소 2 행동력 비용과 더 큰 잔여 지구력 손실 중 큰 쪽을 적용한다.\r\n   assistant['energy'] = min(assistant['energy'], jo9_fog['energy_before'] - 2)\r\n   ! JO9 MOD END FOG_ASSISTANT_MIN_TWO_20261028",
+      "count": 1,
+      "patchId": "FOG_ASSISTANT_MIN_TWO_20261028"
+    }
+  ],
+  "user_request": "2026-10-28: 10/28 제보부터 다 해결하자. 기존 주인공1·조수2 제안 범위."
+}

@@ -1,0 +1,64 @@
+{
+  "id": "2026-10-31_colosseum_victory_dialogue_flow",
+  "description": "Colosseum victory prose: replace defeated opponent actions with aftermath text, use the current slave/assistant name, and rewrite role-specific post-practice narration and growth explanations; numeric effects unchanged.",
+  "before_sha256": "c961af0a11e61e2c1682318863de6c5ddcd6174755476c558ff6155940f34474",
+  "after_sha256": "96290bbc1dd444695809f7a3a98a62eb995b5ce0ee29e59dfec7b90883a9ff5b",
+  "edits": [
+    {
+      "location": "jo9_battle_fate",
+      "field": "body",
+      "old": "$jo9_bf_text = '매섭게 파고든 마지막 일격에 상대가 모래바닥에 주저앉았다. 간신히 몸을 지탱한 채 거친 숨을 몰아쉬지만, 다시 맞설 기세는 꺾인 듯하다. 목숨을 거는 결투가 아닌 연습이니, 더 몰아붙일 이유는 없다.'",
+      "new": "$jo9_bf_text = '상대는 모래바닥에 주저앉은 채 거친 숨을 몰아쉰다. 간신히 몸을 지탱하고 있지만, 다시 일어설 기세는 꺾였다. 목숨을 거는 결투가 아닌 연습이니, 더 몰아붙일 이유는 없다.'",
+      "count": 1
+    },
+    {
+      "location": "jo9_battle_fate",
+      "field": "body",
+      "old": "$jo9_bf_text = '상대는 더 이상 버티지 못하고 모래바닥에 쓰러졌다. 방금까지 이어지던 반격도 멎고, 다시 일어설 기색은 보이지 않는다. 승부는 이미 끝났으니, 더 몰아붙이지 않고 연습을 마무리할 때다.'",
+      "new": "$jo9_bf_text = '상대는 모래바닥에 쓰러진 채 움직이지 않는다. 거친 숨결만이 겨우 들려올 뿐, 다시 일어설 기색은 보이지 않는다. 승부는 이미 끝났으니, 더 몰아붙이지 않고 연습을 마무리할 때다.'",
+      "count": 1
+    },
+    {
+      "location": "jo9_battle_fate",
+      "field": "body",
+      "old": " else\r\n  if jo9_bf_cause = 1 or jo9_bf_cause = 3:\r\n   $jo9_bf_text = '상대는 치명타를 맞고 피를 흘리며 주저 앉았다. 결투를 포기하고 죽음을 각오한 것 같다'",
+      "new": " elseif $place = 'colosseum_arena' and $fight_return = 'Start':\r\n! JO9 MOD START COLOSSEUM_ARENA_AFTERMATH_20261031\r\n  if jo9_bf_cause = 1 or jo9_bf_cause = 3:\r\n   $jo9_bf_text = '상대는 피를 흘리며 모래바닥에 주저앉아 있다. 무기를 쥔 손에도 힘이 풀렸고, 고개를 떨군 모습에는 다시 싸울 기색이 없다. 이제 당신의 결정을 기다릴 뿐이다.'\r\n  else\r\n   $jo9_bf_text = '상대는 모래바닥에 주저앉은 채 거친 숨만 몰아쉰다. 무기를 들어 올릴 기력도, 더 싸울 의지도 남지 않은 듯하다. 경기장은 다음 결정을 기다리는 함성으로 술렁인다.'\r\n  end\r\n! JO9 MOD END COLOSSEUM_ARENA_AFTERMATH_20261031\r\n else\r\n  if jo9_bf_cause = 1 or jo9_bf_cause = 3:\r\n   $jo9_bf_text = '상대는 치명타를 맞고 피를 흘리며 주저 앉았다. 결투를 포기하고 죽음을 각오한 것 같다'",
+      "count": 1
+    },
+    {
+      "location": "jo9_battle_fate",
+      "field": "body",
+      "old": " $действия_врага[jo9_bf_slot] += '<br>' + $jo9_bf_text + '<br>'",
+      "new": "! JO9 MOD START COLOSSEUM_DEFEATED_ACTION_TEXT_20261031\r\n if ($place = 'colosseum' and colosseum_fight > 0) or ($place = 'colosseum_arena' and $fight_return = 'Start'):\r\n  $действия_врага[jo9_bf_slot] = $jo9_bf_text + '<br>'\r\n else\r\n  $действия_врага[jo9_bf_slot] += '<br>' + $jo9_bf_text + '<br>'\r\n end\r\n! JO9 MOD END COLOSSEUM_DEFEATED_ACTION_TEXT_20261031",
+      "count": 1
+    },
+    {
+      "location": "jo9_battle_fate",
+      "field": "body",
+      "old": "   if combatant ! 0: $jo9_bf_message = '당신의 신호에 승리한 투사가 물러섰다. 오늘 연습은 여기까지다.'",
+      "new": "! JO9 MOD START COLOSSEUM_PRACTICE_WINNER_NAME_20261031\r\n   if combatant = 1: $jo9_bf_message = '당신의 신호에 승리한 <<$slave_name>>(이)가 물러섰다. 오늘 연습은 여기까지다.'\r\n   if combatant = 2: $jo9_bf_message = '당신의 신호에 승리한 <<$assistant_name>>(이)가 물러섰다. 오늘 연습은 여기까지다.'\r\n! JO9 MOD END COLOSSEUM_PRACTICE_WINNER_NAME_20261031",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$text[1] = '당신의 마지막 일격을 버티지 못한 상대가 모래바닥에 주저앉았다. 더는 맞서지 못하는 모습을 확인하고서야 공격을 멈춘 당신은, 한 발 물러나 거칠어진 숨을 골랐다.' + iif(fighting_experience = 0, ' 안타깝게도, 이런 상대를 쓰러뜨린다고 해서 전투 실력이 단련되지는 않으며, <<iif(colosseum_fight >= master_str, \"그래도\", \"힘도\")>> 늘지는 않는다.', iif(colosseum_fight < master_str, ' 안타깝게도, 이런 상대를 이긴다고 해서 전투 실력이 다듬어질 수는 있어도 힘이 늘지는 않는다.', ''))",
+      "new": "! JO9 MOD START COLOSSEUM_VICTORY_AFTERMATH_1296_20261031\r\n\t\t$text[1] = '모래바닥에 쓰러진 상대는 더 이상 맞설 기색이 없다. 당신은 상대가 숨을 고르는 모습을 잠시 지켜보다가 무기를 내려놓았다. 승부의 열기가 가라앉자, 방금 끝난 대련을 차분히 되짚어 본다.' + iif(fighting_experience = 0, iif(colosseum_fight >= master_str, ' 승리는 거두었지만 익숙한 공방을 되풀이해 전투술에서 새로 배울 것은 없었다. 그래도 끝까지 힘을 쏟은 만큼 육체를 단련하는 데는 보탬이 되었다.', ' 익숙한 공방을 되풀이했을 뿐, 전투술에서 새로 배울 것도 힘을 더 기를 만한 부담도 없었다.'), iif(colosseum_fight < master_str, ' 상대와 수를 겨루며 전투술은 다듬을 수 있었다. 다만 힘을 더 기르기에는 몸에 걸리는 부담이 부족했다.', ''))\r\n! JO9 MOD END COLOSSEUM_VICTORY_AFTERMATH_1296_20261031",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$text[1] = '<<$slave_name>>의 마지막 공격에 상대가 균형을 잃고 모래바닥에 쓰러졌다. 그녀는 더 쫓아가지 않고 당신을 돌아보았고, 대련이 끝났음을 확인한 뒤에야 숨을 고르며 물러섰다.' + iif(fighting_experience = 0, ' 안타깝게도, 이런 상대를 이긴다고 해서 그녀의 전투 실력이 단련되지는 않으며, <<iif((colosseum_fight mod 10) >= slave[\"stamina\"], \"그래도\", \"지구력도\")>> 늘지는 않는다.', iif((colosseum_fight mod 10) < slave[\"stamina\"], ' 안타깝게도, 이런 상대를 이긴다고 해서 그녀의 전투 실력이 다듬어질 수는 있어도 지구력이 늘지는 않는다.', ''))",
+      "new": "! JO9 MOD START COLOSSEUM_VICTORY_AFTERMATH_1297_20261031\r\n\t\t$text[1] = '상대를 남겨 두고 돌아온 <<$slave_name>>의 어깨가 가쁜 숨에 맞춰 들썩인다. 그녀는 무기를 내린 채 당신의 반응을 살핀다. 당신은 방금 끝난 대련에서 드러난 그녀의 움직임을 되짚어 본다.' + iif(fighting_experience = 0, iif((colosseum_fight mod 10) >= slave['stamina'], ' 이미 익숙한 공방이라 전투술에서 새로 배울 것은 없었다. 다만 끝까지 버텨야 하는 상대였으니, 여력이 남아 있다면 지구력을 단련할 만한 연습이었다.', ' 그녀에게는 이미 익숙한 공방이었다. 전투술을 새로 다듬을 기회도, 지구력을 더 기를 만한 부담도 없었다.'), iif((colosseum_fight mod 10) < slave['stamina'], ' 수를 주고받으며 그녀의 전투술은 한층 다듬어졌다. 다만 몸을 오래 버티게 할 만큼 벅찬 상대는 아니어서 지구력 단련으로 이어지지는 않았다.', ''))\r\n! JO9 MOD END COLOSSEUM_VICTORY_AFTERMATH_1297_20261031",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$text[1] = '<<$assistant_name>>의 마지막 일격에 상대의 반격이 끊겼다. 그녀는 곧바로 공격을 멈추고 물러나, 거친 숨을 가다듬으며 당신에게 대련이 끝났음을 알렸다.' + iif(fighting_experience = 0, ' 안타깝게도, 이런 상대를 이긴다고 해서 그녀의 전투 실력이 단련되지는 않으며, <<iif((colosseum_fight mod 10) >= assistant[\"stamina\"], \"그래도\", \"또한\")>> 지구력이 늘지도 않는다.', iif((colosseum_fight mod 10) < assistant[\"stamina\"], ' 안타깝게도, 이런 상대를 이긴다고 해서 그녀의 전투 실력이 다듬어질 수는 있어도 지구력이 늘지는 않는다.', ''))",
+      "new": "! JO9 MOD START COLOSSEUM_VICTORY_AFTERMATH_1298_20261031\r\n\t\t$text[1] = '상대를 남겨 두고 돌아온 <<$assistant_name>>의 이마에 땀이 맺혀 있다. 그녀는 거친 숨을 가다듬으며 당신과 눈을 맞춘다. 당신은 그녀와 짧게 이야기를 나누며 방금 끝난 대련을 되짚어 본다.' + iif(fighting_experience = 0, iif((colosseum_fight mod 10) >= assistant['stamina'], ' 이미 익숙한 공방이라 전투술에서 새로 배울 것은 없었다. 다만 끝까지 버텨야 하는 상대였으니, 여력이 남아 있다면 지구력을 단련할 만한 연습이었다.', ' 그녀에게는 이미 익숙한 공방이었다. 전투술을 새로 다듬을 기회도, 지구력을 더 기를 만한 부담도 없었다.'), iif((colosseum_fight mod 10) < assistant['stamina'], ' 수를 주고받으며 그녀의 전투술은 한층 다듬어졌다. 다만 몸을 오래 버티게 할 만큼 벅찬 상대는 아니어서 지구력 단련으로 이어지지는 않았다.', ''))\r\n! JO9 MOD END COLOSSEUM_VICTORY_AFTERMATH_1298_20261031",
+      "count": 1
+    }
+  ]
+}

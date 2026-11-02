@@ -1,0 +1,32 @@
+'use strict';
+// Read-only source/link assertions; never a substitute for native or manual gameplay.
+const fs=require('fs'),path=require('path'),assert=require('assert/strict');
+const R='G:/somi/JO9sa',W='G:/somi/Jack O Nine Tails v2.4_work/game';
+const c=require(R+'/tools/text-workshop/core.cjs'),qa=require(R+'/tools/qa/release-check.cjs');
+const file=process.argv[2]||W+'/jack.qsp',raw=fs.readFileSync(file),doc=c.parse(raw),get=n=>c.shift(doc.lines[doc.locations.find(x=>x.name===n).body],5);
+if(process.argv[3])assert.equal(c.hash(raw),process.argv[3]);
+const checks=[],A=(name,pass,evidence,limit)=>checks.push({name,pass:!!pass,evidence,limit});
+A('source-structure',!!qa.inspectWorld(raw),{file,sha256:c.hash(raw),locations:doc.locations.length},'Structure, line/marker boundaries and byte roundtrip only; native execution is separate.');
+const city=get('interaction_city'),result=get('interaction_result_city'),exit=get('выход_из_боя'),fate=get('jo9_battle_fate'),end=get('конец_боя'),helper=get('jo9_traits_value');
+A('catfight-start-three-win-guard',/catfight_level'\]\s*>=\s*3/.test(get('$catfight_fight_start')),{location:'$catfight_fight_start'},'Old prepared entry callback must be intercepted before battle initialization.');
+A('catfight-single-win-counter',/slave\['catfight_level'\]\s*\+=\s*1/.test(exit)&&!/slave\['catfight_level'\]\s*\+=\s*1/.test(city),{locations:['выход_из_боя','interaction_city']},'Source-level ownership only; full exit/result native suite is separate.');
+A('catfight-receipt-single-page',/CATFIGHT_PRIZE_SINGLE_PAGE_20261031/.test(city)&&((city.match(/purse\s*=\s*100/g)||[]).length>=2),{location:'interaction_city',purse100Assignments:(city.match(/purse\s*=\s*100/g)||[]).length},'Actual actor reward, one-page text and rendering paths are native checked separately.');
+A('dealer-current-cap',/result\s*=\s*min\(6000,\s*result\)/.test(helper)&&/sell_price\s*=\s*min\(6000,\s*sell_price\)/.test(get('slave_auction_sell_end')),{locations:['jo9_traits_value','slave_auction_sell_end']},'Final payout cap, not a claim about every intermediate bid narration.');
+A('private-current-cap',/min\(sell_price,\s*8000\)/.test(city)&&/min\(sell_price,\s*8000\)/.test(result),{locations:['interaction_city','interaction_result_city'],cityCalls:(city.match(/min\(sell_price,\s*8000\)/g)||[]).length,resultCalls:(result.match(/min\(sell_price,\s*8000\)/g)||[]).length},'Exact buyer dialogue/complete customer traversal is not executed here.');
+A('auction-custody-helper-present',/jo9_farid_stored_valid/.test(get('jo9_farid_consignment'))&&/jo9_farid_consignment/.test(city),{locations:['jo9_farid_consignment','interaction_city']},'Current helper and source caller link; native transactional tests carry the behavioral evidence.');
+A('gold-special-stock-present',/jo9_agraba_stock\['fruit'\]/.test(city)&&/jo9_agraba_stock\['wine'\]/.test(city)&&/jo9_agraba_stock/.test(get('master_stat')),{locations:['interaction_city','master_stat']},'No daily food consumption implementation is expected for these special stocks.');
+const varbase=get('#var_base'),bridge=get('snk_room_bridge');
+A('milk-report-template',['slave','assistant','room1','room2','room3','room4'].every(role=>varbase.includes(role+'_milk_quantity')),{location:'#var_base',roles:['slave','assistant','room1','room2','room3','room4']},'Macro definitions only. Native popup close/DOM behavior and all room report clicks are not rerun in this narrow source check.');
+A('room-role-restore-hooks',/snk_parked_slave/.test(bridge)&&/leave/.test(bridge)&&/enter/.test(bridge),{location:'snk_room_bridge'},'Existing bridge and restore references are present; complete persona-array restoration needs dedicated native fixture or manual TC.');
+A('monster-stage-specific-paths',/spawn_young/.test(get('#противники'))&&/spawn_giant/.test(get('#противники'))&&/spawn_young/.test(fate)&&/spawn_giant/.test(fate),{locations:['#противники','jo9_battle_fate']},'Stage lookup is additionally included in isolated native suite.');
+A('group-single-cut-marker',/GROUP_DEFEAT_SINGLE_CUT_20261101/.test(end),{location:'конец_боя'},'Only current implementation marker presence; renderer branch and all group file references also checked below.');
+const groupManifest=JSON.parse(fs.readFileSync(R+'/tools/mob-image-sets/group-sets.json','utf8'));
+const groupFiles=groupManifest.map(g=>({name:g.name,path:g.path,exists:fs.existsSync(path.dirname(file)+'/'+g.path)}));
+A('group-eight-representatives-exist',groupFiles.length===8&&groupFiles.every(x=>x.exists),{manifest:R+'/tools/mob-image-sets/group-sets.json',groups:groupFiles},'Image existence and roster count; no visual composition judgment.');
+const weaponSetup=get('$gladiator_setup')+get('$catfighter_setup'),weaponFiles=['net','whip','dual','shield','heavy'].flatMap(k=>['active','used'].map(mode=>'content/pic/ui/buttons/legacy/'+k+'_'+mode+'.png'));
+A('special-weapon-current-paths',weaponFiles.every(p=>fs.existsSync(path.dirname(file)+'/'+p))&&/extra_special_active/.test(weaponSetup)&&/extra_special_used/.test(weaponSetup),{locations:['$gladiator_setup','$catfighter_setup'],paths:weaponFiles},'No GUI click/hit-box or animation test; previous DOM probe is preserved as historical evidence only.');
+const liquidation=get('jo9_liquidation_assets');
+A('bankruptcy-relocation-helper',/quote_move/.test(liquidation)&&/move_slums/.test(liquidation)&&/relocation_people/.test(liquidation),{location:'jo9_liquidation_assets'},'Full multi-day bankruptcy lifecycle and quest-specific failure prose are not rendered.');
+const registry=require(R+'/tools/qa/check-slave-template-ids.cjs');let registryResult;try{registryResult=registry.assertRegistry(path.dirname(file)+'/json/slaves');A('character-registry',true,{files:registryResult.files,numericIds:registryResult.numericIds,issues:registryResult.issues.length},'Registry validity only; no assertion that every external image is loaded in all old saves.');}catch(e){A('character-registry',false,{error:e.message},'Static registry validation failure.');}
+const report={file,sourceSha256:c.hash(raw),mode:'READ_ONLY_STATIC',pass:checks.every(x=>x.pass),checks,sourceUnchanged:c.hash(fs.readFileSync(file))===c.hash(raw),productionWrites:false,imagesRendered:false};
+fs.writeFileSync(__dirname+'/historical-static-report.json',JSON.stringify(report,null,2));console.log(JSON.stringify({pass:report.pass,sourceSha256:report.sourceSha256,checks:checks.length,failed:checks.filter(x=>!x.pass).map(x=>x.name)}));

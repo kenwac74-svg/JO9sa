@@ -1,0 +1,15 @@
+{
+  "id": "2026-11-01_group_defeat_single_cut",
+  "description": "When a defeated group image is selected, render exactly that image without emitting the individual-image fallback collage. Leave single/unmatched/defeat branches and fate bookkeeping untouched; hide only the image if it fails to load.",
+  "before_sha256": "7387b91d809cdcf60b1b6a786f0e0066935fcbc3e0feb6001e682d8a201a1b40",
+  "after_sha256": "c57bb947ee78ac90473ae6a13a4f21f77744c02fc2f39a16637d1124f0d810c7",
+  "edits": [
+    {
+      "location": "конец_боя",
+      "field": "body",
+      "old": "if $jo9_mg_image ! '':\r\n *p '<div class=\"jo9-battle-monster-wrap\" id=\"jo9-group-defeat\"><img id=\"jo9-battle-group-image\" style=\"width:100%;height:100%;object-fit:contain;border:0\" src=\"<<$jo9_mg_image>>\" onload=\"this.parentNode.nextElementSibling.style.display=String.fromCharCode(110,111,110,101)\" onerror=\"this.parentNode.style.display=String.fromCharCode(110,111,110,101)\"></div>'\r\n *p '<div class=\"jo9-battle-monster-wrap jo9-battle-defeated-group jo9-group-count-<<количество_врагов>>\">'\r\n local jo9_bv_slot = 1\r\n :jo9_bv_group_loop\r\n if jo9_bv_slot <= количество_врагов:\r\n  local $jo9_bv_image = $func('jo9_battle_fate', 'sprite', jo9_bv_slot, 1)\r\n  if $jo9_bv_image ! '': *p '<img class=\"jo9-group-slot-<<jo9_bv_slot>>\" src=\"<<$jo9_bv_image>>\" data-standing=\"<<$силуэт_моба[$враг[jo9_bv_slot]]>>\" onerror=\"this.onerror=null;this.src=this.getAttribute(&quot;data-standing&quot;)\">'\r\n  jo9_bv_slot += 1\r\n  jump 'jo9_bv_group_loop'\r\n end\r\n *p '</div>'",
+      "new": "if $jo9_mg_image ! '':\r\n! JO9 MOD START GROUP_DEFEAT_SINGLE_CUT_20261101\r\n *p '<div class=\"jo9-battle-monster-wrap\" id=\"jo9-group-defeat\"><img id=\"jo9-battle-group-image\" style=\"width:100%;height:100%;object-fit:contain;border:0\" src=\"<<$jo9_mg_image>>\" onerror=\"this.style.visibility=String.fromCharCode(104,105,100,100,101,110)\"></div>'\r\n! JO9 MOD END GROUP_DEFEAT_SINGLE_CUT_20261101",
+      "count": 1
+    }
+  ]
+}

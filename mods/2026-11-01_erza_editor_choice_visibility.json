@@ -1,0 +1,29 @@
+{
+  "id": "2026-11-01_erza_editor_choice_visibility",
+  "description": "Define complete, editable Erza death choice anchors in the owning event so the dialogue editor discovers both labels and result destinations. Remove renderer-only assembly and retain normal navigation for cached legacy pages without choices.",
+  "before_sha256": "0efd1092d910301d26d0354588c5a904195c7ee58542f389b6b2c66209e69222",
+  "after_sha256": "b7e5b385dcbd5d8e4b4ac18c9556e18bf371f25f6368c3eba729c9374d1cc07b",
+  "edits": [
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "IF interaction_city = 6667792:\r\n npc = 0\r\n $npc_id = ''\r\n $place = 'erza_battle'\r\n $return_lock  = 'menu_form'\r\n $special_image[1] = 'scene\\others\\erza_dead.png'\r\n txt_count = 1\r\n! JO9 MOD START J9M0147 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included\r\n $text[1] = \"  당신은 패배한 상대의 생기 없는 몸을 실망스러운 눈으로 바라본다. 그녀는 네 노예가 될 수도 있었고, 꽤 괜찮은 노예가 되었을 텐데, 그래서 당신은 아쉬움을 느낀다.\"\r\n! JO9 MOD END J9M0147\r\n unique_slave[\"erza\"] = 1\r\n gs '$newloc'\r\nEND\r\n! JO9 MOD START ERZA_DEATH_CHOICES_20261101\r\nIF interaction_city = 66677921:\r\n npc = 0\r\n $npc_id = ''\r\n $place = 'erza_battle'\r\n $return_lock = 'menu_form'\r\n $special_image[1] = 'scene\\others\\erza_dead_after.png'\r\n txt_count = 1\r\n $text[1] = '#긍정적 선택 결과'\r\nEND\r\n\r\nIF interaction_city = 66677922:\r\n npc = 0\r\n $npc_id = ''\r\n $place = 'erza_battle'\r\n $return_lock = 'menu_form'\r\n $special_image[1] = 'scene\\others\\erza_dead_after.png'\r\n txt_count = 1\r\n $text[1] = '#부정적 선택 결과'\r\nEND\r\n! JO9 MOD END ERZA_DEATH_CHOICES_20261101",
+      "new": "IF interaction_city = 6667792:\r\n npc = 0\r\n $npc_id = ''\r\n $place = 'erza_battle'\r\n $return_lock  = 'menu_form'\r\n $special_image[1] = 'scene\\others\\erza_dead.png'\r\n txt_count = 1\r\n! JO9 MOD START J9M0147 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included\r\n! JO9 MOD START ERZA_EDITOR_CHOICE_VISIBILITY_20261101\r\n! One event-owned literal keeps source-editor preview, editable text and both destinations together.\r\n $text[1] = '  당신은 패배한 상대의 생기 없는 몸을 실망스러운 눈으로 바라본다. 그녀는 네 노예가 될 수도 있었고, 꽤 괜찮은 노예가 되었을 텐데, 그래서 당신은 아쉬움을 느낀다.<br><br><a id=\"jo9-erza-positive-choice\" href=\"EXEC: interaction_city = 66677921 & gt ''interaction_city''\">#긍정적 선택지</a><br><a id=\"jo9-erza-negative-choice\" href=\"EXEC: interaction_city = 66677922 & gt ''interaction_city''\">#부정적 선택지</a>'\r\n! JO9 MOD END ERZA_EDITOR_CHOICE_VISIBILITY_20261101\r\n! JO9 MOD END J9M0147\r\n unique_slave[\"erza\"] = 1\r\n gs '$newloc'\r\nEND\r\n! JO9 MOD START ERZA_DEATH_CHOICES_20261101\r\nIF interaction_city = 66677921:\r\n npc = 0\r\n $npc_id = ''\r\n $place = 'erza_battle'\r\n $return_lock = 'menu_form'\r\n $special_image[1] = 'scene\\others\\erza_dead_after.png'\r\n txt_count = 1\r\n $text[1] = '#긍정적 선택 결과'\r\nEND\r\n\r\nIF interaction_city = 66677922:\r\n npc = 0\r\n $npc_id = ''\r\n $place = 'erza_battle'\r\n $return_lock = 'menu_form'\r\n $special_image[1] = 'scene\\others\\erza_dead_after.png'\r\n txt_count = 1\r\n $text[1] = '#부정적 선택 결과'\r\nEND\r\n! JO9 MOD END ERZA_DEATH_CHOICES_20261101",
+      "count": 1
+    },
+    {
+      "location": "interaction_screen_city",
+      "field": "body",
+      "old": "! JO9 MOD START ERZA_DEATH_CHOICES_20261101\r\nif interaction_city = 6667792:\r\n ! Append choices to the rendered local copy; keep saved dialogue and author edits intact.\r\n $jo9_gold_result_text += '<br><br><a id=\"jo9-erza-positive-choice\" href=\"EXEC: interaction_city = 66677921 & gt ''interaction_city''\">'\r\n $jo9_gold_result_text += '#긍정적 선택지'\r\n $jo9_gold_result_text += '</a><br><a id=\"jo9-erza-negative-choice\" href=\"EXEC: interaction_city = 66677922 & gt ''interaction_city''\">'\r\n $jo9_gold_result_text += '#부정적 선택지'\r\n $jo9_gold_result_text += '</a>'\r\nend\r\n! JO9 MOD END ERZA_DEATH_CHOICES_20261101\r\n*p '<div id = \"text\"><<$jo9_gold_result_text>></div>'",
+      "new": "! JO9 MOD START ERZA_EDITOR_CHOICE_VISIBILITY_20261101\r\n! Event-owned choices are already part of $text[1]; do not append a second copy here.\r\n! JO9 MOD END ERZA_EDITOR_CHOICE_VISIBILITY_20261101\r\n*p '<div id = \"text\"><<$jo9_gold_result_text>></div>'",
+      "count": 1
+    },
+    {
+      "location": "interaction_screen_city",
+      "field": "body",
+      "old": "! JO9 MOD START ERZA_DEATH_CHOICES_20261101\r\nif interaction_city = 6667792:\r\n killobj\r\nelse\r\nif txt > 1:\r\n\taddobj '<img src = \"content/pic/ui/buttons/legacy/back_button.png\">'\r\nelse\r\n\taddobj '<img src = \"content/pic/ui/buttons/legacy/noback_button.png\">'\r\nend\r\naddobj '<img src = \"content/pic/ui/buttons/legacy/forward_button.png\">'\r\nend\r\n! JO9 MOD END ERZA_DEATH_CHOICES_20261101",
+      "new": "! JO9 MOD START ERZA_EDITOR_CHOICE_VISIBILITY_20261101\r\n! Cached legacy dialogue without choices keeps its normal exit instead of becoming a dead end.\r\n! JO9 MOD END ERZA_EDITOR_CHOICE_VISIBILITY_20261101\r\n! JO9 MOD START ERZA_DEATH_CHOICES_20261101\r\nif interaction_city = 6667792 and instr($text[txt], 'id=\"jo9-erza-positive-choice\"') > 0 and instr($text[txt], 'id=\"jo9-erza-negative-choice\"') > 0:\r\n killobj\r\nelse\r\nif txt > 1:\r\n\taddobj '<img src = \"content/pic/ui/buttons/legacy/back_button.png\">'\r\nelse\r\n\taddobj '<img src = \"content/pic/ui/buttons/legacy/noback_button.png\">'\r\nend\r\naddobj '<img src = \"content/pic/ui/buttons/legacy/forward_button.png\">'\r\nend\r\n! JO9 MOD END ERZA_DEATH_CHOICES_20261101",
+      "count": 1
+    }
+  ]
+}

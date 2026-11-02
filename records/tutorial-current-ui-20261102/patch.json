@@ -1,0 +1,78 @@
+{
+  "id": "2026-11-02_tutorial_current_ui",
+  "description": "Use current common tutorial frames and modern scoped menu presentation while preserving all story, choices, callbacks, stats, progress and saved actors. Refresh only layout for loaded intro/selection screens.",
+  "before_sha256": "6bb939464a7370526ced33c6b51fcb4f0b5023b94bbe1d1bd78dba6bec44398d",
+  "after_sha256": "8a3c7604d713b4ec254a90331d65f08ffc5ef8032ae6f7132106f96cfb432b6c",
+  "edits": [
+    {
+      "location": "demo_layout",
+      "field": "body",
+      "old": "INTEGRATED_ACTIONS = 0\r\n$backimage = 'content/pic/ui/old/bg_old.png'\r\n\r\nSHOWOBJS 1\r\nSHOWSTAT 0\r\nSHOWACTS 0\r\n\r\n!$onnewloc = ''\r\n\r\nLCOLOR = rgb(0,0,255)\r\nFCOLOR = rgb(0,0,0)\r\n\r\n$MAINDESC_BACKIMAGE = ''\r\n! removed non-existent path 'content/.png' -ImperatorAugustus\r\nMAINDESC_X = 1\r\nMAINDESC_Y = 1\r\nMAINDESC_W = 1280\r\nMAINDESC_H = 800\r\n\r\n$OBJECTS_BACKIMAGE = ''\r\n! removed non-existent path 'content/c.png' -ImperatorAugustus\r\nOBJECTS_X = 780\t\r\nOBJECTS_Y = 660\t\r\nOBJECTS_W = 50\t\r\nOBJECTS_H = 100\r\n",
+      "new": "! JO9 MOD START TUTORIAL_CURRENT_UI_20261102\r\ngs '_layout'\r\n! JO9 MOD END TUTORIAL_CURRENT_UI_20261102\r\n",
+      "count": 1
+    },
+    {
+      "location": "init_demo_game",
+      "field": "body",
+      "old": "ui_style = 1",
+      "new": "! JO9 MOD START TUTORIAL_CURRENT_UI_20261102\r\nui_style = 2\r\n! JO9 MOD END TUTORIAL_CURRENT_UI_20261102",
+      "count": 1
+    },
+    {
+      "location": "start_demo_game",
+      "field": "body",
+      "old": "ui_style = 1",
+      "new": "! JO9 MOD START TUTORIAL_CURRENT_UI_20261102\r\nui_style = 2\r\n! JO9 MOD END TUTORIAL_CURRENT_UI_20261102",
+      "count": 1
+    },
+    {
+      "location": "choose_the_girl",
+      "field": "body",
+      "old": "ui_style = 1",
+      "new": "! JO9 MOD START TUTORIAL_CURRENT_UI_20261102\r\nui_style = 2\r\ngs 'demo_layout'\r\n! JO9 MOD END TUTORIAL_CURRENT_UI_20261102",
+      "count": 1
+    },
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "if $curloc = 'main_screen': gt 'menu_form'",
+      "new": "! JO9 MOD START TUTORIAL_CURRENT_UI_20261102\r\nif $curloc = 'demo_intro' or $curloc = 'choose_the_girl': gs 'demo_layout'\r\nif $curloc = 'demo_intro' and lecture = 100 and instr($maintxt, 'jo9_tutorial_menu') = 0:\r\n local $jo9_tutorial_saved_html = $maintxt\r\n *clr\r\n *p '<div class=\"jo9_tutorial_menu\">' + $jo9_tutorial_saved_html + '</div>'\r\nend\r\n! JO9 MOD END TUTORIAL_CURRENT_UI_20261102\r\nif $curloc = 'main_screen': gt 'menu_form'",
+      "count": 1
+    },
+    {
+      "location": "demo_intro",
+      "field": "body",
+      "old": "\t\t*p '<div id = \"bg\">'",
+      "new": "\t\t! JO9 MOD START TUTORIAL_CURRENT_UI_20261102\r\n*p '<div id = \"bg\" class=\"jo9_tutorial_menu jo9_tutorial_lecture\">'\r\n! JO9 MOD END TUTORIAL_CURRENT_UI_20261102",
+      "count": 1
+    },
+    {
+      "location": "demo_intro",
+      "field": "body",
+      "old": "\t\t*p '<div id = \"bg\"><br>'",
+      "new": "\t\t! JO9 MOD START TUTORIAL_CURRENT_UI_20261102\r\n*p '<div id = \"bg\" class=\"jo9_tutorial_menu jo9_tutorial_lecture\"><br>'\r\n! JO9 MOD END TUTORIAL_CURRENT_UI_20261102",
+      "count": 1
+    },
+    {
+      "location": "demo_menu_form",
+      "field": "body",
+      "old": "\r\n!main menu\r\nif menu_form = 0:",
+      "new": "\r\n! JO9 MOD START TUTORIAL_CURRENT_UI_20261102\r\nif menu_form ! menu_Drink_potion and menu_form ! menu_potion_S and menu_form ! menu_potion_S_assistant:\r\n if menu_form = 17:\r\n $text_display += '<div class=\"jo9_tutorial_menu jo9_tutorial_practical jo9_tutorial_long\">'\r\nelse\r\n $text_display += '<div class=\"jo9_tutorial_menu jo9_tutorial_practical\">'\r\n end\r\nend\r\n! JO9 MOD END TUTORIAL_CURRENT_UI_20261102\r\n!main menu\r\nif menu_form = 0:",
+      "count": 1
+    },
+    {
+      "location": "demo_menu_form",
+      "field": "body",
+      "old": "gt 'main_screen'",
+      "new": "! JO9 MOD START TUTORIAL_CURRENT_UI_20261102\r\nif menu_form ! menu_Drink_potion and menu_form ! menu_potion_S and menu_form ! menu_potion_S_assistant:\r\n if instr($text_display, 'jo9_tutorial_menu') = 0: $text_display = '<div class=\"jo9_tutorial_menu jo9_tutorial_practical\">' + $text_display\r\n $text_display += '</div>'\r\nend\r\nif $setting_display ! '': $setting_display = '<div class=\"jo9_tutorial_menu jo9_tutorial_settings\">' + $setting_display + '</div>'\r\nif $setting_display_c ! '': $setting_display_c = '<div class=\"jo9_tutorial_menu jo9_tutorial_settings\">' + $setting_display_c + '</div>'\r\nif $setting_display_c2 ! '': $setting_display_c2 = '<div class=\"jo9_tutorial_menu jo9_tutorial_settings\">' + $setting_display_c2 + '</div>'\r\nif $setting_display_r ! '': $setting_display_r = '<div class=\"jo9_tutorial_menu jo9_tutorial_settings\">' + $setting_display_r + '</div>'\r\n! JO9 MOD END TUTORIAL_CURRENT_UI_20261102\r\ngt 'main_screen'",
+      "count": 1
+    },
+    {
+      "location": "main_screen",
+      "field": "body",
+      "old": "\t*p '<div id=\"options_icon\"><a class=\"tooltip-bottom\" tooltip-data=\"게임 설정\" href = \"EXEC: menu_form = 2000 & gt ''demo_menu_form''\"><img src=\"content/pic/ui/buttons/legacy/gear.png\"></a></div>'",
+      "new": "! JO9 MOD START TUTORIAL_CURRENT_UI_20261102\r\n\t*p '<div id=\"options_icon\"><a class=\"tooltip-bottom\" tooltip-data=\"게임 설정\" href = \"EXEC: menu_form = 2000 & gt ''demo_menu_form''\"><img src=\"content\\pic\\ui\\grimdark\\buttons\\gear.png\"></a></div>'\r\n! JO9 MOD END TUTORIAL_CURRENT_UI_20261102",
+      "count": 1
+    }
+  ]
+}

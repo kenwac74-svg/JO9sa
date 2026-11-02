@@ -1,0 +1,1010 @@
+{
+  "schema_version": "1.0",
+  "audit_date": "2026-11-01",
+  "source_qsp": {
+    "work": "78835089f1dc8d0d5272f991926f35fa40e7e26dede5970a3fc03612967c130d",
+    "full": "f87363c3050547ae6b7a5387ae9870425fdc4d68cb2e07855e4550df29664168"
+  },
+  "scope": {
+    "integration_only": true,
+    "engines_run_by_this_integrator": 0,
+    "private_sav_read": false,
+    "new_sav_manufactured": false,
+    "production_edits": false,
+    "baseline_make_plan_script_untouched": true
+  },
+  "summary": {
+    "original_planned_cases": 46,
+    "original_auto_cases": 38,
+    "original_human_cases": 8,
+    "added_confirmed_regression_cases": 1,
+    "total_cases": 47,
+    "entire_original_planned_case_pass_claims": 0,
+    "status_counts": {
+      "static_pass_only": 5,
+      "not_run_current": 18,
+      "partial_engine_pass": 12,
+      "source_snapshot_only": 1,
+      "confirmed_fail_partial_scope": 1,
+      "service_contract_pass_only": 1,
+      "human_not_run": 8,
+      "confirmed_fail": 1
+    },
+    "manual_fixture_gap_groups_unready": 9
+  },
+  "counting_rules": [
+    "Suite 수는 각 보고서의 실제 수행 수다. 여러 TC에 연결된 같은 suite의 assertion을 다시 합산하지 않는다.",
+    "partial_engine_pass는 지정 helper/분기만 통과했다는 뜻이며 TC 전체 UI·renderer·통합 흐름 PASS가 아니다.",
+    "이번 301판정은 최신 WORK에서 새로 수행한 결과다. 예전 301판정과 합산하지 않는다.",
+    "새 조건 결함1건은 CUT-001과 CUT-003에 연결되어도1건으로 센다.",
+    "후보5probe29assert 통과는 현 생산 결함이 해결됐다는 의미가 아니다."
+  ],
+  "suites": [
+    {
+      "id": "S-GAME",
+      "report": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\output\\qa-bounty-241-20261101/game/native-final-results.json",
+      "report_sha256": "195ec3151f7510c46e1d9bb2e987652e6bcc56d150bfbad7d075a935ace707d4",
+      "kind": "root_serial_native",
+      "result": "pass_within_reported_contract",
+      "counts": {
+        "cases": 1149,
+        "assertions": 14027,
+        "failed_assertions": 0
+      },
+      "limits": [
+        "실제 성향 helper/전투 선택 및 파산 fail_quests 계약. 전체 전투 턴·보상 UI·급매/이주 전체 연쇄는 실행하지 않았다."
+      ]
+    },
+    {
+      "id": "S-HIST",
+      "report": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\output\\qa-bounty-241-20261101/historical/native-historical-report.json",
+      "report_sha256": "938e3a6ce301982eb648d6ed8d672b1cca9a6ca8ef82bfc582080ebd6532ba98",
+      "kind": "root_serial_native",
+      "result": "pass_within_reported_contract",
+      "counts": {
+        "cases": 6,
+        "assertions": 301,
+        "failed_assertions": 0
+      },
+      "limits": [
+        "최신 WORK 입력에서 새 실행. 결과 renderer/종료점을 대체했으며 imagesRendered=false.",
+        "공개 TC를 priming한 소유 진단 사본의 GAME_VER만 2.4.1로 맞췄다. 원래 공개 SAV는 변경하지 않았다."
+      ]
+    },
+    {
+      "id": "S-STATIC",
+      "report": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\output\\qa-bounty-241-20261101/game/static-test-results.json",
+      "report_sha256": "9cf9d6222524c9a4c87ce6b7355e62ee59cb9eea18a20d020290d913e1d7e2ba",
+      "kind": "read_only_static_and_PNG",
+      "result": "pass_static_only",
+      "counts": {
+        "checks": 11,
+        "failed": 0
+      },
+      "limits": [
+        "실제 QSP 문장과 PNG 바이트 확인. QSP 실행·DOM·픽셀 배치 검사와 구분한다."
+      ]
+    },
+    {
+      "id": "S-SERVICE",
+      "report": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\output\\qa-bounty-241-20261101/conditions/adversarial-report.json",
+      "report_sha256": "61d9925fcfe8dd25fc34398ba8df149b56982c1ca03a0fbc937354868f0be1f1",
+      "kind": "isolated_service_HTTP_browser_contract",
+      "result": "pass_within_reported_contract",
+      "counts": {
+        "checks": 22,
+        "failed": 0
+      },
+      "limits": [
+        "격리 서버·도구·모달 계약. 실제 WORK 저장 0. 추가 native 전환 결함은 별도 S-TOGGLE이다."
+      ]
+    },
+    {
+      "id": "S-PACKAGE",
+      "report": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\output\\qa-bounty-241-20261101/package/package-report.json",
+      "report_sha256": "7c8a88835b68ffd701c40ef5f7da956f694ffe77d162f0ef859bb33de2e9404a",
+      "kind": "read_only_package_integrity",
+      "result": "manifest_pass_with_reference_candidate",
+      "counts": {
+        "payload_files": 42941,
+        "payload_bytes": 17167244409,
+        "all_files_including_manifest": 42942,
+        "sha256_mismatches": 0
+      },
+      "limits": [
+        "배포 명세와 전체 payload 일치. 실제 실행·깨끗한 PC·GUI 저장/로드는 미실행.",
+        "CSS content/a.jpg 정적 부재 후보를 별도 유지하며 전체 런타임 무결함으로 확대하지 않는다."
+      ]
+    },
+    {
+      "id": "S-TOGGLE",
+      "report": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\output\\qa-bounty-241-20261101/toggle-native-report.json",
+      "report_sha256": "d3d719428b6833007cd6a8bc57c89cbd3069638185fc02bae327122291e2c47b",
+      "kind": "root_serial_native_original_pipeline",
+      "result": "confirmed_fail",
+      "counts": {
+        "probes": 3,
+        "assertions": 15,
+        "failed_assertions": 4
+      },
+      "limits": [
+        "현재 WORK의 원래 jo9_html과 jo9_toggle 4회를 실행했다. client.pass는 완료 marker 성공이며 assertion 통과를 뜻하지 않는다.",
+        "무조건 대조군은 통과, 조건 1개/2개 그룹에서만 각 2개 기대가 실패했다."
+      ]
+    },
+    {
+      "id": "S-CANDIDATE",
+      "report": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\output\\qa-bounty-241-20261101/toggle-fix-native-report.json",
+      "report_sha256": "4337fc868e5b4f7c91825980b5e90ccca158a2c97eadd454472187beb5f8c96c",
+      "kind": "root_serial_native_isolated_candidate",
+      "result": "isolated_contract_pass_not_applied",
+      "counts": {
+        "probes": 5,
+        "assertions": 29,
+        "failed_assertions": 0
+      },
+      "limits": [
+        "05f5726d… 격리 후보만 검사했다. WORK/Full 생산 반영 0. 전체 출고/모든 fallback/실제 GUI 픽셀 검증은 별도 gate다."
+      ]
+    }
+  ],
+  "mappings": [
+    {
+      "tc_id": "Q241-REL-001",
+      "owner": "auto",
+      "planned_target": "WORK_and_Full_separately",
+      "status": "static_pass_only",
+      "full_planned_case_pass": false,
+      "current_evidence": [
+        {
+          "suite_id": "S-STATIC",
+          "covered_scope": "현재 QSP 입력 해시·파싱 왕복"
+        },
+        {
+          "suite_id": "S-PACKAGE",
+          "covered_scope": "현재 Full QSP/명세 해시와 payload 일치"
+        }
+      ],
+      "remaining_scope": [
+        "이 감사의 최신 입력 대상 공식 native 9경로·최소 패치 재현/멱등성 전체 실행 증거는 이 매핑에 없다.",
+        "WORK와 Full의 서로 다른 입력을 각각 실행한 전체 출고 판정은 아니다."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-RES-001",
+      "owner": "auto",
+      "planned_target": "WORK_and_Full_separately",
+      "status": "static_pass_only",
+      "full_planned_case_pass": false,
+      "current_evidence": [
+        {
+          "suite_id": "S-PACKAGE",
+          "covered_scope": "전신23쌍·UI2694쌍·Full 전용9경로와 전체 명세의 새 해시 대조"
+        }
+      ],
+      "remaining_scope": [
+        "모든 동적 QSP/JSON 선택 분기의 실제 파일 로딩·WORK 전체 경로 런타임 검증은 미실행."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-RES-002",
+      "owner": "auto",
+      "planned_target": "WORK_and_Full_separately",
+      "status": "not_run_current",
+      "full_planned_case_pass": false,
+      "current_evidence": [],
+      "remaining_scope": [
+        "이번 실행 보고에서 이 TC 전체의 실행 증거를 확인하지 못했다."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-RES-003",
+      "owner": "auto",
+      "planned_target": "WORK_and_Full_separately",
+      "status": "not_run_current",
+      "full_planned_case_pass": false,
+      "current_evidence": [],
+      "remaining_scope": [
+        "이번 실행 보고에서 이 TC 전체의 실행 증거를 확인하지 못했다."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-SCN-001",
+      "owner": "auto",
+      "planned_target": "WORK_and_Full_separately",
+      "status": "not_run_current",
+      "full_planned_case_pass": false,
+      "current_evidence": [],
+      "remaining_scope": [
+        "이번 실행 보고에서 이 TC 전체의 실행 증거를 확인하지 못했다."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-SCN-002",
+      "owner": "auto",
+      "planned_target": "WORK_and_Full_separately",
+      "status": "not_run_current",
+      "full_planned_case_pass": false,
+      "current_evidence": [],
+      "remaining_scope": [
+        "이번 실행 보고에서 이 TC 전체의 실행 증거를 확인하지 못했다."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-CAT-001",
+      "owner": "auto",
+      "planned_target": "WORK_and_Full_separately",
+      "status": "partial_engine_pass",
+      "full_planned_case_pass": false,
+      "current_evidence": [
+        {
+          "suite_id": "S-HIST",
+          "covered_scope": "current/legacy 주인공 × 승수0/2/3/9 메뉴 참가 조건 및 실제 slave 승수 증가"
+        }
+      ],
+      "remaining_scope": [
+        "현재 이름/옛 소개 캐시 교정과 실제 참가자 패널의 시각 판단은 별도 미실행."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-CAT-002",
+      "owner": "auto",
+      "planned_target": "WORK_and_Full_separately",
+      "status": "partial_engine_pass",
+      "full_planned_case_pass": false,
+      "current_evidence": [
+        {
+          "suite_id": "S-HIST",
+          "covered_scope": "정산 4상황: $100·정확 인물 승수·1페이지 텍스트·이미지 경로 변수"
+        },
+        {
+          "suite_id": "S-STATIC",
+          "covered_scope": "두 주인공 분기 $100 단일 지급/페이지 구조"
+        },
+        {
+          "suite_id": "S-GAME",
+          "covered_scope": "선택 함수의 성향 1회·무효/반복 콜백 차단"
+        }
+      ],
+      "remaining_scope": [
+        "최종 renderer를 대체했다. 그림 로딩·실제 다음 버튼·클럽 복귀 전체·다음 생활 장면 수명은 통과로 계산하지 않는다."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-CAT-003",
+      "owner": "auto",
+      "planned_target": "WORK_and_Full_separately",
+      "status": "not_run_current",
+      "full_planned_case_pass": false,
+      "current_evidence": [],
+      "remaining_scope": [
+        "이번 실행 보고에서 이 TC 전체의 실행 증거를 확인하지 못했다."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-ARE-001",
+      "owner": "auto",
+      "planned_target": "WORK_and_Full_separately",
+      "status": "static_pass_only",
+      "full_planned_case_pass": false,
+      "current_evidence": [
+        {
+          "suite_id": "S-STATIC",
+          "covered_scope": "1294 최저/단계별 산식 뒤 ×2·단일 지급·1페이지·1295 미변경"
+        }
+      ],
+      "remaining_scope": [
+        "실제 단계1/9 지급 $100/$224와 renderer→다음 버튼→복귀 전체는 미실행."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-ARE-002",
+      "owner": "auto",
+      "planned_target": "WORK_and_Full_separately",
+      "status": "partial_engine_pass",
+      "full_planned_case_pass": false,
+      "current_evidence": [
+        {
+          "suite_id": "S-GAME",
+          "covered_scope": "연습20번호 × 4원인 × 2선택: 처형 무효·종료 성향0·반복 정산 방어"
+        }
+      ],
+      "remaining_scope": [
+        "실제 choices의 회색 span/옛 pending 캐시·3역할의 컷/문구/XP/복귀는 미실행."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-ARE-003",
+      "owner": "auto",
+      "planned_target": "WORK_and_Full_separately",
+      "status": "static_pass_only",
+      "full_planned_case_pass": false,
+      "current_evidence": [
+        {
+          "suite_id": "S-STATIC",
+          "covered_scope": "양 무대 signed 임계식·KO+1·완료 guard 존재"
+        },
+        {
+          "suite_id": "S-GAME",
+          "covered_scope": "반점 helper와 ±5 조기 임계 방지 산술"
+        }
+      ],
+      "remaining_scope": [
+        "실제 패배 출구·제어 난수·치명상 즉사 우선·옛 loser_rating100·결과 대사 native 행렬은 미실행."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-GRP-001",
+      "owner": "auto",
+      "planned_target": "WORK_and_Full_separately",
+      "status": "static_pass_only",
+      "full_planned_case_pass": false,
+      "current_evidence": [
+        {
+          "suite_id": "S-STATIC",
+          "covered_scope": "단체 PNG8개 서명·795×596 및 공용 출력부에 개별 sprite/onload 없음"
+        }
+      ],
+      "remaining_scope": [
+        "8그룹의 실제 DOM 단일 장면·onerror·성기사 controls·정상/처형 필터·이벤트 복귀는 미실행.",
+        "S-GAME의 안개7로스터 선택 검사와 이8그룹 시각 검사는 범위가 다르다."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-COM-001",
+      "owner": "auto",
+      "planned_target": "WORK_and_Full_separately",
+      "status": "partial_engine_pass",
+      "full_planned_case_pass": false,
+      "current_evidence": [
+        {
+          "suite_id": "S-HIST",
+          "covered_scope": "실제 DB/sprite 4단계/context의 경로·원래 수치·전투 상태 sentinel37판정"
+        }
+      ],
+      "remaining_scope": [
+        "전투 PNG/초상/트로피 전체 실제 렌더 및 기존 SAV의 새 전투 진입은 미실행."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-COM-002",
+      "owner": "auto",
+      "planned_target": "WORK_and_Full_separately",
+      "status": "not_run_current",
+      "full_planned_case_pass": false,
+      "current_evidence": [],
+      "remaining_scope": [
+        "이번 실행 보고에서 이 TC 전체의 실행 증거를 확인하지 못했다."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-FOG-001",
+      "owner": "auto",
+      "planned_target": "WORK_and_Full_separately",
+      "status": "not_run_current",
+      "full_planned_case_pass": false,
+      "current_evidence": [],
+      "remaining_scope": [
+        "이번 실행 보고에서 이 TC 전체의 실행 증거를 확인하지 못했다."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-SCORE-001",
+      "owner": "auto",
+      "planned_target": "WORK_and_Full_separately",
+      "status": "partial_engine_pass",
+      "full_planned_case_pass": false,
+      "current_evidence": [
+        {
+          "suite_id": "S-GAME",
+          "covered_scope": "산술329행·구 remainder 누락 상태·부호 교차·정규화·±5·local 복원"
+        }
+      ],
+      "remaining_scope": [
+        "이미지 조건 편집기의 합산 비교값과 런타임 연결 전체는 별도이다."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-SCORE-002",
+      "owner": "auto",
+      "planned_target": "WORK_and_Full_separately",
+      "status": "partial_engine_pass",
+      "full_planned_case_pass": false,
+      "current_evidence": [
+        {
+          "suite_id": "S-GAME",
+          "covered_scope": "정식160/캣파이트24/안개56 및 무효입력/phase/비승리·반복 선택 점수/전리품 guard"
+        }
+      ],
+      "remaining_scope": [
+        "도시 처분·획득·식품점·사파리 성공/취소/비용부족/같은 외형 새 전리품 분기는 이번에 실행하지 않았다."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-SCORE-003",
+      "owner": "auto",
+      "planned_target": "WORK_and_Full_separately",
+      "status": "not_run_current",
+      "full_planned_case_pass": false,
+      "current_evidence": [],
+      "remaining_scope": [
+        "이번 실행 보고에서 이 TC 전체의 실행 증거를 확인하지 못했다."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-ERZ-001",
+      "owner": "auto",
+      "planned_target": "WORK_and_Full_separately",
+      "status": "not_run_current",
+      "full_planned_case_pass": false,
+      "current_evidence": [],
+      "remaining_scope": [
+        "이번 실행 보고에서 이 TC 전체의 실행 증거를 확인하지 못했다."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-ERZ-002",
+      "owner": "auto",
+      "planned_target": "WORK_and_Full_separately",
+      "status": "not_run_current",
+      "full_planned_case_pass": false,
+      "current_evidence": [],
+      "remaining_scope": [
+        "이번 실행 보고에서 이 TC 전체의 실행 증거를 확인하지 못했다."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-TRT-001",
+      "owner": "auto",
+      "planned_target": "WORK_and_Full_separately",
+      "status": "not_run_current",
+      "full_planned_case_pass": false,
+      "current_evidence": [],
+      "remaining_scope": [
+        "이번 실행 보고에서 이 TC 전체의 실행 증거를 확인하지 못했다."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-TRT-002",
+      "owner": "auto",
+      "planned_target": "WORK_and_Full_separately",
+      "status": "not_run_current",
+      "full_planned_case_pass": false,
+      "current_evidence": [],
+      "remaining_scope": [
+        "이번 실행 보고에서 이 TC 전체의 실행 증거를 확인하지 못했다."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-TRT-003",
+      "owner": "auto",
+      "planned_target": "WORK_and_Full_separately",
+      "status": "not_run_current",
+      "full_planned_case_pass": false,
+      "current_evidence": [],
+      "remaining_scope": [
+        "이번 실행 보고에서 이 TC 전체의 실행 증거를 확인하지 못했다."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-CUS-001",
+      "owner": "auto",
+      "planned_target": "WORK_and_Full_separately",
+      "status": "partial_engine_pass",
+      "full_planned_case_pass": false,
+      "current_evidence": [
+        {
+          "suite_id": "S-HIST",
+          "covered_scope": "stock 교체 후 위탁 당사자 반환·대표 숫자/문자열/교육/장비 sentinel 및 $5 차감14판정의 일부"
+        }
+      ],
+      "remaining_scope": [
+        "모든23묶음 전체 동등성·ID0·슬롯 점유·현금0·실제 상세 renderer는 이 배치의 검증 전체와 같지 않다."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-CUS-002",
+      "owner": "auto",
+      "planned_target": "WORK_and_Full_separately",
+      "status": "partial_engine_pass",
+      "full_planned_case_pass": false,
+      "current_evidence": [
+        {
+          "suite_id": "S-HIST",
+          "covered_scope": "return/settle/collect 반복0·옛 전용보관 없는 반환 차단"
+        }
+      ],
+      "remaining_scope": [
+        "당일 다수 위탁·새 위탁+옛 채권 공존·실제 하루 진행/상세 viewprobe 전체는 미실행."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-SAL-001",
+      "owner": "auto",
+      "planned_target": "WORK_and_Full_separately",
+      "status": "partial_engine_pass",
+      "full_planned_case_pass": false,
+      "current_evidence": [
+        {
+          "suite_id": "S-HIST",
+          "covered_scope": "dealer_quote 5999/6000/6001 및 복종 감액4판정; appraisal 제어"
+        }
+      ],
+      "remaining_scope": [
+        "실제 상인 지급·경매·개인8000·구 고액 콜백·비대상 지급 전체는 미실행."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-BNK-001",
+      "owner": "auto",
+      "planned_target": "WORK_and_Full_separately",
+      "status": "partial_engine_pass",
+      "full_planned_case_pass": false,
+      "current_evidence": [
+        {
+          "suite_id": "S-HIST",
+          "covered_scope": "TC05 기반 장식/이주 자산 helper·재환급 차단·27시설/입주자 정리38판정"
+        },
+        {
+          "suite_id": "S-GAME",
+          "covered_scope": "29역할 × 고유type/의뢰 상태의 fail_quests 계약410사례"
+        },
+        {
+          "suite_id": "S-STATIC",
+          "covered_scope": "청구 active guard·실제 급매의 신원확인→의뢰실패→clear 순서"
+        }
+      ],
+      "remaining_scope": [
+        "전체 파산 UI 단계·실제 급매/계약 소유 처리·직접 방법 찾기·날짜 회피·최종 청구 지불의 전체 연쇄는 미실행."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-BIL-001",
+      "owner": "auto",
+      "planned_target": "WORK_and_Full_separately",
+      "status": "not_run_current",
+      "full_planned_case_pass": false,
+      "current_evidence": [],
+      "remaining_scope": [
+        "이번 실행 보고에서 이 TC 전체의 실행 증거를 확인하지 못했다."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-AGR-001",
+      "owner": "auto",
+      "planned_target": "WORK_and_Full_separately",
+      "status": "partial_engine_pass",
+      "full_planned_case_pass": false,
+      "current_evidence": [
+        {
+          "suite_id": "S-HIST",
+          "covered_scope": "실제 메뉴·구매 handler의 통화/자금 경계·반복 구매·기존 플래그 보존180판정의 일부"
+        }
+      ],
+      "remaining_scope": [
+        "결과/상점 종료점을 대체했다. 네이티브 툴팁·시각 배치·실제 상점 복귀 전체는 미실행."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-AGR-002",
+      "owner": "auto",
+      "planned_target": "WORK_and_Full_separately",
+      "status": "partial_engine_pass",
+      "full_planned_case_pass": false,
+      "current_evidence": [
+        {
+          "suite_id": "S-HIST",
+          "covered_scope": "특수 재고 및 일반 fridge 분리·저장고 HTML의 상태 계약180판정의 일부"
+        }
+      ],
+      "remaining_scope": [
+        "사용자가 Game→Save/Load로 신규 재고를 복원하는 GUI/CRC 시험과 실제 목록 픽셀은 미실행."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-ROM-001",
+      "owner": "auto",
+      "planned_target": "WORK_and_Full_separately",
+      "status": "source_snapshot_only",
+      "full_planned_case_pass": false,
+      "current_evidence": [],
+      "remaining_scope": [
+        "source_snapshot S02에서 지급 대상 한 토큰만 읽어 확인했다. 실제 성장/하루 진행 엔진은 이번에 실행하지 않았다."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-NPC-001",
+      "owner": "auto",
+      "planned_target": "WORK_and_Full_separately",
+      "status": "not_run_current",
+      "full_planned_case_pass": false,
+      "current_evidence": [],
+      "remaining_scope": [
+        "이번 실행 보고에서 이 TC 전체의 실행 증거를 확인하지 못했다."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-NPC-002",
+      "owner": "auto",
+      "planned_target": "WORK_and_Full_separately",
+      "status": "not_run_current",
+      "full_planned_case_pass": false,
+      "current_evidence": [],
+      "remaining_scope": [
+        "이번 실행 보고에서 이 TC 전체의 실행 증거를 확인하지 못했다."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-NPC-003",
+      "owner": "auto",
+      "planned_target": "WORK_and_Full_separately",
+      "status": "not_run_current",
+      "full_planned_case_pass": false,
+      "current_evidence": [],
+      "remaining_scope": [
+        "이번 실행 보고에서 이 TC 전체의 실행 증거를 확인하지 못했다."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-UI-001",
+      "owner": "auto",
+      "planned_target": "WORK_and_Full_separately",
+      "status": "not_run_current",
+      "full_planned_case_pass": false,
+      "current_evidence": [],
+      "remaining_scope": [
+        "이번 실행 보고에서 이 TC 전체의 실행 증거를 확인하지 못했다."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-CUT-001",
+      "owner": "auto",
+      "planned_target": "WORK_only",
+      "status": "confirmed_fail_partial_scope",
+      "full_planned_case_pass": false,
+      "current_evidence": [
+        {
+          "suite_id": "S-TOGGLE",
+          "covered_scope": "실제 jo9_html→jo9_toggle 파이프라인에서 수동 C 다음 D/A에 도달하지 못함; 상세는 Q241-CUT-003"
+        }
+      ],
+      "remaining_scope": [
+        "결함은 수동 전환 보존 기대를 위반한다. AND/계급/평판/모든 경계/직접renderer10곳 전체를 새로 실행했다는 뜻은 아니다."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-CUT-002",
+      "owner": "auto",
+      "planned_target": "WORK_tool_in_isolation_only",
+      "status": "service_contract_pass_only",
+      "full_planned_case_pass": false,
+      "current_evidence": [
+        {
+          "suite_id": "S-SERVICE",
+          "covered_scope": "격리22검사: 가족/경로·삭제/추가 컷·동시 hash충돌·저장/복원·본문제한·인증·모달 응답/재시도·보호해시"
+        }
+      ],
+      "remaining_scope": [
+        "22개에 명시된 HTTP/서비스/브라우저 계약의 통과이다. 조건 QSP의 모든 런타임 분기·실제 게임 수동 컷 순환/픽셀까지 포함하지 않는다."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-H01",
+      "owner": "human",
+      "planned_target": "Full_2.4.1_visual_play",
+      "status": "human_not_run",
+      "full_planned_case_pass": false,
+      "current_evidence": [],
+      "remaining_scope": [
+        "사람의 GUI/육안 실행 전이다."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-H02",
+      "owner": "human",
+      "planned_target": "Full_2.4.1_visual_play",
+      "status": "human_not_run",
+      "full_planned_case_pass": false,
+      "current_evidence": [],
+      "remaining_scope": [
+        "사람의 GUI/육안 실행 전이다."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-H03",
+      "owner": "human",
+      "planned_target": "Full_2.4.1_visual_play",
+      "status": "human_not_run",
+      "full_planned_case_pass": false,
+      "current_evidence": [],
+      "remaining_scope": [
+        "사람의 GUI/육안 실행 전이다."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-H04",
+      "owner": "human",
+      "planned_target": "Full_2.4.1_visual_play",
+      "status": "human_not_run",
+      "full_planned_case_pass": false,
+      "current_evidence": [],
+      "remaining_scope": [
+        "사람의 GUI/육안 실행 전이다."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-H05",
+      "owner": "human",
+      "planned_target": "Full_2.4.1_visual_play",
+      "status": "human_not_run",
+      "full_planned_case_pass": false,
+      "current_evidence": [],
+      "remaining_scope": [
+        "사람의 GUI/육안 실행 전이다."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-H06",
+      "owner": "human",
+      "planned_target": "Full_2.4.1_visual_play",
+      "status": "human_not_run",
+      "full_planned_case_pass": false,
+      "current_evidence": [],
+      "remaining_scope": [
+        "사람의 GUI/육안 실행 전이다."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-H07",
+      "owner": "human",
+      "planned_target": "Full_2.4.1_visual_play",
+      "status": "human_not_run",
+      "full_planned_case_pass": false,
+      "current_evidence": [],
+      "remaining_scope": [
+        "사람의 GUI/육안 실행 전이다."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-H08",
+      "owner": "human",
+      "planned_target": "Full_2.4.1_visual_play",
+      "status": "human_not_run",
+      "full_planned_case_pass": false,
+      "current_evidence": [],
+      "remaining_scope": [
+        "사람의 GUI/육안 실행 전이다."
+      ],
+      "counts_are_suite_level": true
+    },
+    {
+      "tc_id": "Q241-CUT-003",
+      "owner": "auto",
+      "planned_target": "WORK_only_current_78835089",
+      "status": "confirmed_fail",
+      "full_planned_case_pass": false,
+      "current_evidence": [
+        {
+          "suite_id": "S-TOGGLE",
+          "covered_scope": "조건1개/2개와 무조건 대조군의 실제 출력→4회 수동 전환 재현"
+        }
+      ],
+      "remaining_scope": [
+        "현 생산 WORK는 미수정. 격리 수정 후보의 통과는 아래 gate와 분리한다."
+      ],
+      "counts_are_suite_level": true,
+      "fix_candidate_gate": "GATE-CUT-003"
+    }
+  ],
+  "candidate_gates": [
+    {
+      "id": "GATE-CUT-003",
+      "bug_tc_id": "Q241-CUT-003",
+      "proposal": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\output\\qa-bounty-241-20261101/conditions/fix-proposal.json",
+      "status": "isolated_candidate_contract_pass_not_production_fixed",
+      "before_sha256": "78835089f1dc8d0d5272f991926f35fa40e7e26dede5970a3fc03612967c130d",
+      "candidate_sha256": "05f5726d813a883805c81c794f08de129c047c04b030ee6e0c37c27f5d8735ef",
+      "production_applied": false,
+      "full_synced": false,
+      "scope": {
+        "changed_locations": 1,
+        "changed_calls": 1,
+        "new_variables": 0,
+        "new_locations": 0,
+        "save_migration": false
+      },
+      "change": {
+        "location": "interior_change",
+        "old": " $jo9_after = func('interior_change', 'jo9_path', $jo9_visible_top)",
+        "new": " $jo9_after = func('interior_change', 'jo9_path', $jo9_visible_top, 3)",
+        "reason": "수동 선택 검증의 implicit mode0 자동 우선선택을 건너뛰고 기존 mode3의 유지/필터/fallback을 사용한다."
+      },
+      "passed_gate": {
+        "suite_id": "S-CANDIDATE",
+        "probes": 5,
+        "assertions": 29,
+        "failed_assertions": 0,
+        "contracts": [
+          "무조건 대조군 순환 유지",
+          "조건1/2개가 일치할 때 B→C→D→A→B",
+          "조건 소실시 A/남은 후보 fallback",
+          "새 mode0 출력은 여전히 B 자동 우선"
+        ]
+      },
+      "remaining_gates": [
+        {
+          "id": "candidate-extra-edges",
+          "state": "not_run",
+          "scope": "선택 파일 삭제, A 부재, 기존 compact ID, overlay 실제 전환의 별도 native 경계."
+        },
+        {
+          "id": "candidate-official-release",
+          "state": "not_run",
+          "scope": "후보의 구조/CRLF/주석·정확 패치 재생/멱등성·공식 native9경로와 원문 보존."
+        },
+        {
+          "id": "candidate-visual-click",
+          "state": "not_run_fixture_unready",
+          "fixture_gap": "G09",
+          "scope": "실제 B/C컷 전환 버튼·레이어·조건 상실 이후 육안 확인."
+        },
+        {
+          "id": "production-integration",
+          "state": "not_authorized_this_audit",
+          "scope": "현재 감사는 생산 반영·Full 동기화·ZIP·커밋·푸시를 하지 않는다. 현재 입력 해시가 달라지면 후보를 그대로 적용하지 않는다."
+        }
+      ]
+    }
+  ],
+  "manual_fixture_gaps": [
+    {
+      "id": "G01",
+      "cases": [
+        "Q241-ARE-001",
+        "Q241-ARE-002",
+        "Q241-ARE-003"
+      ],
+      "need": "정식 단계 1/9 양 승리·3역할 연습 직전·패배 생사 3종",
+      "trigger": "정식 1294/1291~1293, 연습 1296~1298, phase1 옛 pending",
+      "reason": "TC02/03은 캣파이트이므로 콜로세움 수동 분기를 대표하지 않는다.",
+      "readiness": "unready_no_new_fixture_prepared"
+    },
+    {
+      "id": "G02",
+      "cases": [
+        "Q241-CUS-001",
+        "Q241-CUS-002"
+      ],
+      "need": "위탁 당일·stock 교체 후·다수 위탁·옛 전용 보관 없음",
+      "trigger": "잡파 119 → 1191/1193",
+      "reason": "공개 TC 7개에 위탁 상태가 없다.",
+      "readiness": "unready_no_new_fixture_prepared"
+    },
+    {
+      "id": "G03",
+      "cases": [
+        "Q241-ERZ-001",
+        "Q241-ERZ-002"
+      ],
+      "need": "엘자 사망 선택 직전/양 완료 옛 캐시·6역할 경험 전후",
+      "trigger": "6667792 → 66677921/22, 기존 상태 갱신",
+      "reason": "공개 TC 7개에는 type2624·해당 퀘스트 상태가 없다.",
+      "readiness": "unready_no_new_fixture_prepared"
+    },
+    {
+      "id": "G04",
+      "cases": [
+        "Q241-ROM-001"
+      ],
+      "need": "개인실 2만 입주, ego2와 성장치 sentinel, 4방 동시",
+      "trigger": "하루 진행 next_day",
+      "reason": "TC01은 정보 UI 표본이며 성장 지급 대상을 증명할 표본이 아니다.",
+      "readiness": "unready_no_new_fixture_prepared"
+    },
+    {
+      "id": "G05",
+      "cases": [
+        "Q241-BIL-001",
+        "Q241-NPC-003"
+      ],
+      "need": "육류 단독 기간 결산 직전·웡 항의/재범 직전",
+      "trigger": "billing / end_day_screen",
+      "reason": "실제 팝업 순서·줄바꿈·종료까지 육안 검증이 필요하다.",
+      "readiness": "unready_no_new_fixture_prepared"
+    },
+    {
+      "id": "G06",
+      "cases": [
+        "Q241-SAL-001"
+      ],
+      "need": "실제 평가 6000/8000 경계와 옛 고액 확인 화면",
+      "trigger": "상인/공개경매/개인 고객의 최종 판매 확인",
+      "reason": "TC05 급매는 일반 판매 상한 대상이 아니다.",
+      "readiness": "unready_no_new_fixture_prepared"
+    },
+    {
+      "id": "G07",
+      "cases": [
+        "Q241-SCN-002",
+        "Q241-CAT-003"
+      ],
+      "need": "캣파이트 관람 2페이지와 노예 치명상 생존/처형/즉사",
+      "trigger": "103002/103003/103004 및 관람 2페이지",
+      "reason": "TC03은 플레이어 승리 결과만 제공한다.",
+      "readiness": "unready_no_new_fixture_prepared"
+    },
+    {
+      "id": "G08",
+      "cases": [
+        "Q241-RES-003",
+        "Q241-NPC-001"
+      ],
+      "need": "3021~3026 정보·줄리아 재회 5장면·옛 중간 캐시",
+      "trigger": "각 인물 프로필 / event163",
+      "reason": "인코딩과 NPC 그림을 사람이 바로 볼 공개 재현 상태가 없다.",
+      "readiness": "unready_no_new_fixture_prepared"
+    },
+    {
+      "id": "G09",
+      "cases": [
+        "Q241-CUT-001",
+        "Q241-CUT-002"
+      ],
+      "need": "WORK 격리 A/B/C 조건 샘플과 경계별 합성값",
+      "trigger": "/catalog 조건 창 → 격리 QSP 실행 후 해당 그림 재출력",
+      "reason": "Full 미포함 WORK 전용 기능이다. 실제 사용자 WORK에 시험 조건을 저장하지 않는다.",
+      "readiness": "unready_no_new_fixture_prepared"
+    }
+  ],
+  "findings_summary": {
+    "confirmed_new_runtime_bug": 1,
+    "confirmed_document_inconsistency": 1,
+    "static_reference_candidate_runtime_unproven": 1,
+    "held_items_resolved": 0
+  }
+}

@@ -1,0 +1,124 @@
+{
+  "checkedUtc": "2026-11-01T04:22:00.125Z",
+  "qspSha256": "f87363c3050547ae6b7a5387ae9870425fdc4d68cb2e07855e4550df29664168",
+  "id": "PKG-C01",
+  "classification": "CONFIRMED_STATIC_DANGLING_BACKGROUND_REFERENCE",
+  "runtimeImpact": "UNPROVEN",
+  "path": "game/content/a.jpg",
+  "exists": false,
+  "declarations": [
+    {
+      "file": "game/css/base.css",
+      "line": 3285,
+      "selector": "#rider1_pic {",
+      "text": "background-image:url('content/a.jpg');"
+    },
+    {
+      "file": "game/css/base.css",
+      "line": 3295,
+      "selector": "#rider2_pic {",
+      "text": "background-image:url('content/a.jpg');"
+    },
+    {
+      "file": "game/css/base.css",
+      "line": 3305,
+      "selector": "#rider3_pic {",
+      "text": "background-image:url('content/a.jpg');"
+    },
+    {
+      "file": "game/css/base.css",
+      "line": 3315,
+      "selector": "#rider4_pic {",
+      "text": "background-image:url('content/a.jpg');"
+    },
+    {
+      "file": "game/css/base.css",
+      "line": 3325,
+      "selector": "#rider5_pic {",
+      "text": "background-image:url('content/a.jpg');"
+    },
+    {
+      "file": "game/css/base.css",
+      "line": 3335,
+      "selector": "#rider6_pic {",
+      "text": "background-image:url('content/a.jpg');"
+    },
+    {
+      "file": "game/css/base.css",
+      "line": 3485,
+      "selector": "#combat_ui_pic {",
+      "text": "background-image:url('content/a.jpg');"
+    },
+    {
+      "file": "game/css/base.css",
+      "line": 7958,
+      "selector": "#ally_pic {",
+      "text": "background-image:url('content/a.jpg');"
+    },
+    {
+      "file": "game/css/base.css",
+      "line": 7968,
+      "selector": "#enemy_pic {",
+      "text": "background-image:url('content/a.jpg');"
+    },
+    {
+      "file": "game/css/base.css",
+      "line": 7978,
+      "selector": "#enemy_maxpic {",
+      "text": "background-image:url('content/a.jpg');"
+    }
+  ],
+  "currentQspSelectorGenerators": [
+    {
+      "location": "ride_interface",
+      "locationBodyLine": 185,
+      "text": "*p '<div id = \"rider1_pic\"><a href = \"EXEC: msg $rider_description[$participant[1]]\"><img src = \"<<$rider_ava[$participant[1]]>>\"></a></div>'"
+    },
+    {
+      "location": "ride_interface",
+      "locationBodyLine": 186,
+      "text": "*p '<div id = \"rider2_pic\"><a href = \"EXEC: msg $rider_description[$participant[2]]\"><img src = \"<<$rider_ava[$participant[2]]>>\"></a></div>'"
+    },
+    {
+      "location": "ride_interface",
+      "locationBodyLine": 187,
+      "text": "*p '<div id = \"rider3_pic\"><a href = \"EXEC: msg $rider_description[$participant[3]]\"><img src = \"<<$rider_ava[$participant[3]]>>\"></a></div>'"
+    },
+    {
+      "location": "ride_interface",
+      "locationBodyLine": 188,
+      "text": "*p '<div id = \"rider4_pic\"><a href = \"EXEC: msg $rider_description[$participant[4]]\"><img src = \"<<$rider_ava[$participant[4]]>>\"></a></div>'"
+    },
+    {
+      "location": "ride_interface",
+      "locationBodyLine": 189,
+      "text": "*p '<div id = \"rider5_pic\"><a href = \"EXEC: msg $rider_description[$participant[5]]\"><img src = \"<<$rider_ava[$participant[5]]>>\"></a></div>'"
+    },
+    {
+      "location": "ride_interface",
+      "locationBodyLine": 190,
+      "text": "*p '<div id = \"rider6_pic\"><a href = \"EXEC: msg $rider_description[$participant[6]]\"><img src = \"<<$rider_ava[$participant[6]]>>\"></a></div>'"
+    },
+    {
+      "location": "конец_боя",
+      "locationBodyLine": 182,
+      "text": "\t*p '<div id = \"combat_ui_pic\"><img src = \"<<$combatant_ava>>\"></div>'"
+    },
+    {
+      "location": "конец_боя",
+      "locationBodyLine": 195,
+      "text": "\t*p '<div id = \"combat_ui_pic\"><img src = \"<<$аватара_моба[$враг[текущий]]>>\"></div>'"
+    },
+    {
+      "location": "боевой_интерфейс",
+      "locationBodyLine": 223,
+      "text": "\t*p '<div id = \"combat_ui_pic\"><img src = \"<<$combatant_ava>>\"></div>'"
+    },
+    {
+      "location": "боевой_интерфейс",
+      "locationBodyLine": 237,
+      "text": "\t*p '<div id = \"combat_ui_pic\"><img src = \"<<$аватара_моба[$враг[текущий]]>>\"></div>'"
+    }
+  ],
+  "interpretation": "Rider and combat portrait containers are reachable, but their foreground img elements load separate actor portrait variables. Missing background does not establish missing actor art or visible damage. ally_pic/enemy_pic/enemy_maxpic have no current literal selector generators. No production fix proposed without native/visual reproduction."
+}

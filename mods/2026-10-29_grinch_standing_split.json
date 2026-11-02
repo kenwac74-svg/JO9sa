@@ -1,0 +1,22 @@
+{
+  "id": "2026-10-29_grinch_standing_split",
+  "description": "Grinch battle standing art has a dedicated full path; portrait remains old150 path; defeat resolver uses the Grinch key for cached old/new silhouette paths.",
+  "before_sha256": "ea9a02151917f6ddf416553c0b409862b47efcd877937c515cecd502a5b922b3",
+  "after_sha256": "5d7c16b17d9aa0c1bb9c818c67521b2693a32a2db068742fbe7072f2dd8343cd",
+  "edits": [
+    {
+      "location": "#противники",
+      "field": "body",
+      "old": "$силуэт_моба['grinch'] = \"content/pic/mob/grinch.png\"",
+      "new": "! JO9 MOD START GRINCH_STANDING_SPLIT_20261029\r\n$силуэт_моба['grinch'] = \"content/pic/mob/grinch_full.png\"\r\n! JO9 MOD END GRINCH_STANDING_SPLIT_20261029",
+      "count": 1
+    },
+    {
+      "location": "jo9_battle_fate",
+      "field": "body",
+      "old": " if $jo9_bv_standing = 'content/pic/mob/grinch.png': $jo9_bv_image = 'content/pic/mob/defeated/grinch.png'",
+      "new": "! JO9 MOD START GRINCH_STANDING_SPLIT_20261029\r\n if $враг[jo9_bv_slot] = 'grinch': $jo9_bv_image = 'content/pic/mob/defeated/grinch.png'\r\n! JO9 MOD END GRINCH_STANDING_SPLIT_20261029",
+      "count": 1
+    }
+  ]
+}

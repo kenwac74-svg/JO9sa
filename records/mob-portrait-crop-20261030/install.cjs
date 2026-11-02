@@ -1,0 +1,28 @@
+'use strict';
+const fs=require('fs'),path=require('path'),crypto=require('crypto'),zlib=require('zlib'),a=require('assert/strict');
+const H=__dirname,R='G:/somi/JO9sa',G='G:/somi/Jack O Nine Tails v2.4_work/game',id='mob-portrait-crop-20261030',backup='G:/somi/JO9_work_backups/'+id,rec=R+'/records/'+id;
+const read=p=>fs.readFileSync(p),sha=b=>crypto.createHash('sha256').update(b).digest('hex'),json=p=>JSON.parse(read(p).toString('utf8').replace(/^\uFEFF/,'')),atomic=require(R+'/tools/text-workshop/catalog.cjs').atomic;
+const frame=json(H+'/frame-data.json'),browser=json(H+'/browser-results.json');a(browser.pass);a.equal(browser.checks.length,12);
+const main=read(H+'/catalog-mob-sets.js').toString(),editor=read(H+'/portrait-crop.js').toString(),oldMain=read(H+'/catalog-before.js').toString(),normalize=s=>s.replace(/\r\n/g,'\n').trim();
+const pattern=/\/\* JO9 MOD START MOB_SET_CATALOG_20261028[\s\S]*?\/\* JO9 MOD END MOB_SET_CATALOG_20261028 \*\//;
+const assetBlock=main.match(/\/\* JO9 MOD START MOB_PORTRAIT_CROP_ASSETS_20261030[\s\S]*?\/\* JO9 MOD END MOB_PORTRAIT_CROP_ASSETS_20261030 \*\//);a(assetBlock,'Canonical MOB UI must include its portrait dependencies');
+const targets=[G+'/modtools/catalog/catalog_merge_vs_original.html',R+'/tools/local-workspace/catalog-seed/catalog_merge_vs_original.html'];
+const planned=targets.map(file=>{const raw=read(file),html=raw.toString('utf8'),match=html.match(pattern);a(match);a.equal(normalize(match[0]),normalize(oldMain),'Catalog has a manual MOB UI edit: '+file);a(!html.includes('MOB_PORTRAIT_CROP_ASSETS_20261030'));const after=html.replace(pattern,()=>main.trim());const dataPattern=/var D\s*=\s*(\[[\s\S]*?\]);\s*\r?\nvar MR/;a.equal(after.match(dataPattern)[1],html.match(dataPattern)[1]);const manifestPattern=/window\.JO9_MOB_SETS\s*=\s*(.*?);<\/script>/;a.equal(after.match(manifestPattern)[1],html.match(manifestPattern)[1]);return{file,raw,after:Buffer.from(after),before:sha(raw)};});
+a.equal(normalize(read(R+'/tools/mob-image-sets/catalog-mob-sets.js').toString()),normalize(oldMain));
+const liveManifest=JSON.parse(planned[0].raw.toString().match(/window\.JO9_MOB_SETS\s*=\s*(.*?);<\/script>/)[1]);const portraits=[...new Set(liveManifest.entries.map(e=>e.portrait&&e.portrait.path).filter(Boolean))];
+const protectedFiles=[G+'/jack.qsp',G+'/modtools/catalog/catalog_status.js',...portraits.map(p=>G+'/'+p)].filter(fs.existsSync);const protectedHashes=Object.fromEntries(protectedFiles.map(p=>[p,sha(read(p))]));
+a.equal(portraits.length,75);for(const e of liveManifest.entries)if(e.portrait)a(frame.frames[e.portrait.frameClass||'default']);a(!fs.existsSync(backup),'Already installed or backed up; inspect before repeating');
+if(!process.argv.includes('--apply')){console.log(JSON.stringify({status:'PREFLIGHT_PASS',portraits:75,frameClasses:Object.keys(frame.frames),browserChecks:12,targets:targets.length}));process.exit(0);}
+fs.mkdirSync(backup,{recursive:true});a.equal(fs.realpathSync(backup).toLowerCase(),path.resolve(backup).toLowerCase());
+for(const [n,x]of planned.entries())fs.writeFileSync(backup+'/'+(n?'seed':'live')+'-catalog.before.html.gz',zlib.gzipSync(x.raw,{level:9}),{flag:'wx'});
+fs.writeFileSync(backup+'/catalog-mob-sets.before.js',read(R+'/tools/mob-image-sets/catalog-mob-sets.js'),{flag:'wx'});
+for(const n of ['portrait-crop.js','frame-data.json','geometry.test.cjs'])a(!fs.existsSync(R+'/tools/mob-image-sets/'+n),'Existing new source path');
+for(const x of planned)a.equal(sha(read(x.file)),x.before,'Concurrent catalog change');for(const [p,h]of Object.entries(protectedHashes))a.equal(sha(read(p)),h,'Protected file changed');
+atomic(R+'/tools/mob-image-sets/catalog-mob-sets.js',main);
+for(const n of ['portrait-crop.js','frame-data.json','geometry.test.cjs'])fs.copyFileSync(H+'/'+n,R+'/tools/mob-image-sets/'+n,fs.constants.COPYFILE_EXCL);
+for(const x of planned)atomic(x.file,x.after);
+for(const [p,h]of Object.entries(protectedHashes))a.equal(sha(read(p)),h,'Game image, QSP or status changed');
+const result={status:'INSTALLED',dateKST:'2026-10-30',request:'MOB portrait replacement with face selection and automatic existing frame classification',backup,source:R+'/tools/mob-image-sets',catalogs:planned.map(x=>({path:x.file,before:x.before,after:sha(read(x.file))})),sourceHashes:Object.fromEntries(['catalog-mob-sets.js','portrait-crop.js','frame-data.json'].map(n=>[n,sha(read(R+'/tools/mob-image-sets/'+n))])),preserved:protectedHashes,portraitFiles:75,browserChecks:12,geometryAndWriterTests:7,serverChanged:false,serverRestarted:false,gameImagesChanged:false,qspChanged:false,saveFilesWritten:false,distributionChanged:false,zipBuilt:false,commitPush:false};
+fs.writeFileSync(H+'/installation.json',JSON.stringify(result,null,2));fs.mkdirSync(rec,{recursive:true});for(const n of fs.readdirSync(H))fs.cpSync(H+'/'+n,rec+'/'+n,{recursive:true});
+fs.appendFileSync(R+'/tools/text-workshop/VERIFICATION.md','\n## 2026-10-30 MOB 포트레이트 얼굴 선택·자동 프레임\n\nMOB 초상 PNG 교체에서 정사각형 얼굴 선택·이동·모서리/슬라이더 조절·150×150 프레임 미리보기·최종 반영을 추가했다. 기존 원본 프레임 5종과 frameClass를 재사용하며 전신·패배 교체와 PIC writer는 유지한다. 격리 브라우저 12개 확인·기하/기존 writer 7개 테스트 통과. 취소/ESC 미저장, 5종 프레임 픽셀 동일, PNG 인코딩 중 편집 잠금, 원본 변경 거부, 기존 백업·패치 기록, 795×596 흐름 보존을 검사했다. WORK/seed 카탈로그 도구만 반영하며 운영 초상75개·QSP·상태 체크는 해시 보존했다. 실제 운영 페이지 점검은 records/mob-portrait-crop-20261030/live-results.json의 최종 결과 참조. 서버 재시작 불필요.\n');
+console.log(JSON.stringify({status:'INSTALLED',catalogs:2,portraitFilesPreserved:75,qspPreserved:true,backup,serverRestartRequired:false}));

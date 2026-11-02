@@ -1,0 +1,24 @@
+'use strict';
+const fs=require('fs'),path=require('path'),vm=require('vm'),zlib=require('zlib'),a=require('assert/strict'),c=require('G:/somi/JO9sa/tools/text-workshop/core.cjs'),catalog=require('G:/somi/JO9sa/tools/text-workshop/catalog.cjs'),H=__dirname,R='G:/somi/JO9sa',G='G:/somi/Jack O Nine Tails v2.4_work/game',id='mistress-patchlist-refresh-20261030',backup='G:/somi/JO9_work_backups/'+id;
+const read=p=>fs.readFileSync(p),sha=p=>c.hash(read(p)),j=p=>JSON.parse(read(p)),slots=['content/pic/mob/mistress_ava.png','content/pic/mob/mistress_morrigan.png','content/pic/mob/defeated/mistress_morrigan.png'];
+const preserved=Object.fromEntries([G+'/jack.qsp',...slots.map(p=>G+'/'+p),G+'/content/pic/characters/mistress_ava.png',G+'/content/pic/characters/mistress_morrigan.png'].map(p=>[p,sha(p)]));
+const writes=[],counts=[];for(const dir of [G+'/modtools/catalog',R+'/tools/local-workspace/catalog-seed']){
+ const hp=dir+'/catalog_merge_vs_original.html',sp=dir+'/catalog_status.js',ip=dir+'/catalog_work_ids.json',cp=dir+'/catalog_work_codes.js',html=read(hp).toString(),dm=html.match(/var D\s*=\s*(\[[\s\S]*?\]);\s*\r?\nvar MR/),rows=JSON.parse(dm[1]),mm=html.match(/window\.JO9_MOB_SETS\s*=\s*(.*?);<\/script>/),manifest=JSON.parse(mm[1]),entry=manifest.entries.find(x=>x.key==='variant:mistress_morrigan'),status=catalog.parseStatus(read(sp).toString()),ids=j(ip),beforeFlags=JSON.parse(JSON.stringify(status.items));a(entry);a.deepEqual([entry.portrait.path,entry.standing.path,entry.defeat.path],slots);
+ let changedRows=0;for(const [index,p]of slots.entries()){
+  const key=p.replaceAll('/','\\'),row=rows.find(x=>x[0]===key),bytes=read(G+'/'+p),slot=entry[['portrait','standing','defeat'][index]];a(row);const size=[bytes.readUInt32BE(16),bytes.readUInt32BE(20)];if(row[3]!==bytes.length||row[5]!==size[0]||row[6]!==size[1])changedRows++;row[3]=bytes.length;row[5]=size[0];row[6]=size[1];slot.width=size[0];slot.height=size[1];if('exists'in slot)slot.exists=true;
+  status.items[key]=[...new Set([...(status.items[key]||[]).filter(f=>!['wip','todo','delete'].includes(f)),'done'])];a(ids.items[key]);
+ }
+ for(const [p,flags]of Object.entries(beforeFlags))if(!slots.some(s=>s.replaceAll('/','\\')===p))a.deepEqual(status.items[p],flags,'Unrelated flags changed');
+ let next=html.replace(dm[1],()=>JSON.stringify(rows)).replace(mm[0],()=> 'window.JO9_MOB_SETS='+JSON.stringify(manifest).replaceAll('<','\\u003c')+';</script>');
+ const codes=Object.fromEntries(rows.map(row=>[row[0],ids.items[row[0]]])),units=Object.fromEntries(rows.filter(row=>row[7]&&codes[row[7]]).map(row=>[row[0],codes[row[7]]]));a(Object.values(codes).every(Boolean));
+ const oldWindow={};vm.runInNewContext(read(cp).toString(),{window:oldWindow},{timeout:3000});const oldCodes=oldWindow.JO9_WORK_CODES||oldWindow.CATALOG_WORK_CODES||{},added=Object.keys(codes).filter(p=>!(p in oldCodes));
+ // Supply current bridge names and aliases used by old standalone catalog copies.
+ const js='window.JO9_WORK_CODES='+JSON.stringify(codes)+';window.JO9_WORK_UNITS='+JSON.stringify(units)+';window.CATALOG_WORK_CODES=window.JO9_WORK_CODES;window.CATALOG_WORK_UNITS=window.JO9_WORK_UNITS;\n';new vm.Script(js);
+ const statusChanged=JSON.stringify(status.items)!==JSON.stringify(beforeFlags);if(statusChanged)status.savedAt=Math.max(Date.now(),Number(status.savedAt||0)+1);
+ for(const [p,data]of [[hp,next],[sp,statusChanged?'window.CATALOG_STATUS='+JSON.stringify(status)+';\n':read(sp)],[cp,js]]){const before=read(p),after=Buffer.isBuffer(data)?data:Buffer.from(data);if(!before.equals(after))writes.push({path:p,before,after});}
+ counts.push({dir,addedStaticCodes:added,changedRows,doneSlots:slots.map(s=>s.replaceAll('/','\\')),idSha256:sha(ip),codeCount:Object.keys(codes).length});
+}
+a(!fs.existsSync(backup));if(!process.argv.includes('--apply')){console.log(JSON.stringify({status:'PREFLIGHT_PASS',writes:writes.length,counts},null,2));process.exit(0);}
+fs.mkdirSync(backup,{recursive:true});a.equal(fs.realpathSync(backup).toLowerCase(),path.resolve(backup).toLowerCase());const backups=[];for(const [n,x]of writes.entries()){const dest=backup+'/metadata-'+n+'.gz';fs.writeFileSync(dest,zlib.gzipSync(x.before,{level:9}),{flag:'wx'});backups.push({path:x.path,backup:dest,before:c.hash(x.before)});a(read(x.path).equals(x.before),'Concurrent catalog change');catalog.atomic(x.path,x.after);}
+for(const [p,h]of Object.entries(preserved))a.equal(sha(p),h);
+const out={status:'UPDATED',dateKST:'2026-10-30',backups,files:writes.map(x=>({path:x.path,sha256:sha(x.path)})),counts,preserved,gameImagesChanged:false,qspChanged:false,saveFilesWritten:false,distributionChanged:false,commitPush:false};fs.writeFileSync(H+'/installation.json',JSON.stringify(out,null,2));console.log(JSON.stringify({status:'UPDATED',files:writes.length,liveAddedCodes:counts[0].addedStaticCodes,seedChangedRows:counts[1].changedRows,gameImagesPreserved:true,qspPreserved:true}));

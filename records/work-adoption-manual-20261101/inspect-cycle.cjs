@@ -1,0 +1,1 @@
+'use strict';const fs=require('fs'),c=require('G:/somi/JO9sa/tools/text-workshop/core.cjs'),d=c.parse(fs.readFileSync('G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp')),b=c.shift(d.lines[d.locations.find(x=>x.name==='interior_change').body],5);let at=b.indexOf("if $args[0] = 'jo9_html':");console.log(b.slice(at,at+4900));

@@ -1,0 +1,1224 @@
+{
+  "schema": 1,
+  "created": "2026-10-31T05:39:09.365Z",
+  "purpose": "Read-only audit of saved dialogue-editor transactions. No dialogue source text, API settings, full QSP or save payload is included.",
+  "game": "G:/somi/Jack O Nine Tails v2.4_work/game",
+  "target": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+  "workSha256": "554e35702f9380054846ce6649f14bbcbda806e025fb414de295b0c9b18b1a15",
+  "latestTransactionMatchesCurrentWork": true,
+  "historyDirectory": "G:/somi/Jack O Nine Tails v2.4_work/game/modtools/text-workshop/runtime/backups",
+  "transactionJsonFiles": 46,
+  "qspBeforeBackups": 46,
+  "totalEditPieces": 44,
+  "kindCounts": {
+    "edit": 44,
+    "restore": 2
+  },
+  "locationCounts": {
+    "#npc_base": 13,
+    "interaction_city": 4,
+    "city_menu_form": 1,
+    "hero_creation": 1,
+    "#variative": 1,
+    "#options": 3,
+    "#static_txt": 1,
+    "#simple_npc": 2,
+    "#txt_man": 1,
+    "master_stat": 12,
+    "billing": 6,
+    "jo9_liquidation": 1
+  },
+  "currentContextCounts": {
+    "new-context-present": 33,
+    "absent-or-superseded": 11,
+    "restore-operation": 2
+  },
+  "firstTransaction": "2026-10-14T17:31:39.994Z",
+  "lastTransaction": "2026-10-31T05:33:53.173Z",
+  "source": {
+    "server": "G:/somi/Jack O Nine Tails v2.4_work/game/modtools/text-workshop/server.cjs",
+    "transactionFunction": "transact",
+    "apiApply": "/api/apply",
+    "history": "/api/history",
+    "restore": "/api/restore",
+    "runtime": "G:/somi/Jack O Nine Tails v2.4_work/game/modtools/text-workshop/runtime",
+    "targetConfiguredToWork": true
+  },
+  "semantics": {
+    "savedChanges": "Approved apply immediately backs up the current WORK QSP, records before/after hashes, validates a temporary QSP, and atomically replaces WORK jack.qsp.",
+    "export": "mod objects can be exported from transaction records; the editor does not automatically register them in repository mods.",
+    "drafts": "Unapplied editor drafts live in browser sessionStorage, keys jo9-text-drafts and jo9-addition-drafts; they are not persisted as QSP transactions.",
+    "restore": "A restore appends a new applied transaction with kind restore and restores=<original transaction ID>. The original edit record remains status applied.",
+    "sequentialEdits": "Changes to the same field must be interpreted chronologically using before/after hashes and restores, then compared to final WORK. New-context absence alone cannot distinguish a subsequent rewrite from a missing change."
+  },
+  "warnings": [
+    "All 46 records have status applied, but two are restore operations. Replaying every applied record would reintroduce reverted or superseded edits.",
+    "33 edit contexts are still present in final WORK; 11 edit contexts differ. This is a context-presence audit, not proof that 11 user edits were lost.",
+    "Current WORK final bytes are the approved synchronization authority; historical transactions should not be blindly replayed onto it."
+  ],
+  "restores": [
+    {
+      "id": "2026-10-24T21-43-36-783Z_1290e6",
+      "restores": "2026-10-24T21-41-43-502Z_873ce2",
+      "location": "master_stat",
+      "targetRecordFound": true,
+      "restoreAfterMatchesTargetBefore": true
+    },
+    {
+      "id": "2026-10-24T21-49-43-525Z_4e2136",
+      "restores": "2026-10-24T21-48-46-592Z_1847e9",
+      "location": "master_stat",
+      "targetRecordFound": true,
+      "restoreAfterMatchesTargetBefore": true
+    }
+  ],
+  "records": [
+    {
+      "file": "2026-10-14T17-31-39-993Z_4437c1.json",
+      "id": "2026-10-14T17-31-39-993Z_4437c1",
+      "date": "2026-10-14T17:31:39.994Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "#npc_base",
+      "field": "body",
+      "line": 5049,
+      "before": "a0807556e9d3c1c9d9c208cdfa702af6c1319223302468e223ad8baab91c803e",
+      "after": "fb3e9738cd99331c38b65a77731a6484abfac972ac5e7bbb6f0d1d62f2a5a54f",
+      "chainFromPrevious": false,
+      "restores": null,
+      "currentContext": "new-context-present",
+      "edits": [
+        {
+          "location": "#npc_base",
+          "field": "body",
+          "oldCharacters": 34,
+          "newCharacters": 13,
+          "fullOldContextMatches": 0,
+          "fullNewContextMatches": 1
+        }
+      ]
+    },
+    {
+      "file": "2026-10-14T17-32-52-314Z_d027c3.json",
+      "id": "2026-10-14T17-32-52-314Z_d027c3",
+      "date": "2026-10-14T17:32:52.314Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "interaction_city",
+      "field": "body",
+      "line": 16184,
+      "before": "fb3e9738cd99331c38b65a77731a6484abfac972ac5e7bbb6f0d1d62f2a5a54f",
+      "after": "d5563847ddb282f03a3b3b3ffadbb279d29a75794c2cfd507d08d4f53c0c040f",
+      "chainFromPrevious": true,
+      "restores": null,
+      "currentContext": "new-context-present",
+      "edits": [
+        {
+          "location": "interaction_city",
+          "field": "body",
+          "oldCharacters": 205,
+          "newCharacters": 201,
+          "fullOldContextMatches": 0,
+          "fullNewContextMatches": 1
+        }
+      ]
+    },
+    {
+      "file": "2026-10-14T17-33-37-661Z_cad973.json",
+      "id": "2026-10-14T17-33-37-661Z_cad973",
+      "date": "2026-10-14T17:33:37.661Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "interaction_city",
+      "field": "body",
+      "line": 16537,
+      "before": "d5563847ddb282f03a3b3b3ffadbb279d29a75794c2cfd507d08d4f53c0c040f",
+      "after": "9c84e2ba35a2a238321ce9c3d8906f972a2d3b3d823d10b1909da5f8bf48d376",
+      "chainFromPrevious": true,
+      "restores": null,
+      "currentContext": "new-context-present",
+      "edits": [
+        {
+          "location": "interaction_city",
+          "field": "body",
+          "oldCharacters": 202,
+          "newCharacters": 202,
+          "fullOldContextMatches": 0,
+          "fullNewContextMatches": 1
+        }
+      ]
+    },
+    {
+      "file": "2026-10-15T03-40-59-365Z_c0f86e.json",
+      "id": "2026-10-15T03-40-59-365Z_c0f86e",
+      "date": "2026-10-15T03:40:59.365Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "city_menu_form",
+      "field": "body",
+      "line": 511,
+      "before": "4871fdc513bf286c473b8c6c811311dec095e535a1245ce5b8aebfa2c2a51a2a",
+      "after": "ccc61f74cbda5fe5c55de394225e0135fa646d3ef4bdf79480311aa142eb8671",
+      "chainFromPrevious": false,
+      "restores": null,
+      "currentContext": "new-context-present",
+      "edits": [
+        {
+          "location": "city_menu_form",
+          "field": "body",
+          "oldCharacters": 7,
+          "newCharacters": 9,
+          "fullOldContextMatches": 1,
+          "fullNewContextMatches": 1
+        }
+      ]
+    },
+    {
+      "file": "2026-10-15T06-55-06-735Z_9a491f.json",
+      "id": "2026-10-15T06-55-06-735Z_9a491f",
+      "date": "2026-10-15T06:55:06.735Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "hero_creation",
+      "field": "body",
+      "line": 490,
+      "before": "467e5c5dc133b217633cf8de4ffe796886e1cf61f12ebd68254e51971be5bee8",
+      "after": "2df4f2ec533f012c84a465679afefd22d5cb16f8ef17b4bbe76068ca157fbdb6",
+      "chainFromPrevious": false,
+      "restores": null,
+      "currentContext": "absent-or-superseded",
+      "edits": [
+        {
+          "location": "hero_creation",
+          "field": "body",
+          "oldCharacters": 63,
+          "newCharacters": 61,
+          "fullOldContextMatches": 1,
+          "fullNewContextMatches": 0
+        }
+      ]
+    },
+    {
+      "file": "2026-10-15T09-51-50-017Z_902d5e.json",
+      "id": "2026-10-15T09-51-50-017Z_902d5e",
+      "date": "2026-10-15T09:51:50.017Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "#variative",
+      "field": "body",
+      "line": 1525,
+      "before": "2df4f2ec533f012c84a465679afefd22d5cb16f8ef17b4bbe76068ca157fbdb6",
+      "after": "9bd9ff1d4e485bf8f6ae7d7037c3380da47d707aa04139ab96f13e77e1da462c",
+      "chainFromPrevious": true,
+      "restores": null,
+      "currentContext": "new-context-present",
+      "edits": [
+        {
+          "location": "#variative",
+          "field": "body",
+          "oldCharacters": 6,
+          "newCharacters": 6,
+          "fullOldContextMatches": 0,
+          "fullNewContextMatches": 1
+        }
+      ]
+    },
+    {
+      "file": "2026-10-18T21-38-33-853Z_7d70a1.json",
+      "id": "2026-10-18T21-38-33-853Z_7d70a1",
+      "date": "2026-10-18T21:38:33.853Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "#options",
+      "field": "body",
+      "line": 4392,
+      "before": "84e978d5b06bf9a3fb6ed6a030160c7761cfbec5cfa54d2fd90102f25552fc3a",
+      "after": "a66235595464fe9830c09ffdb02c55b9fb7f5475c9312a9361e4d3c412ac4138",
+      "chainFromPrevious": false,
+      "restores": null,
+      "currentContext": "absent-or-superseded",
+      "edits": [
+        {
+          "location": "#options",
+          "field": "body",
+          "oldCharacters": 54,
+          "newCharacters": 53,
+          "fullOldContextMatches": 0,
+          "fullNewContextMatches": 0
+        }
+      ]
+    },
+    {
+      "file": "2026-10-18T21-38-55-523Z_013f53.json",
+      "id": "2026-10-18T21-38-55-523Z_013f53",
+      "date": "2026-10-18T21:38:55.523Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "#options",
+      "field": "body",
+      "line": 4429,
+      "before": "a66235595464fe9830c09ffdb02c55b9fb7f5475c9312a9361e4d3c412ac4138",
+      "after": "d16e925e79794a21d9fc5597543092f35035695e2cf7e077785ee1a6299937d5",
+      "chainFromPrevious": true,
+      "restores": null,
+      "currentContext": "absent-or-superseded",
+      "edits": [
+        {
+          "location": "#options",
+          "field": "body",
+          "oldCharacters": 13,
+          "newCharacters": 12,
+          "fullOldContextMatches": 0,
+          "fullNewContextMatches": 0
+        }
+      ]
+    },
+    {
+      "file": "2026-10-20T16-59-05-590Z_02bd3a.json",
+      "id": "2026-10-20T16-59-05-590Z_02bd3a",
+      "date": "2026-10-20T16:59:05.590Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "#static_txt",
+      "field": "body",
+      "line": 463,
+      "before": "20137b7336f2ec27c419605cbd2ada1a6fab459919c6ceaaedad89a9152f40f5",
+      "after": "873abaac19edb69e75d022c0277e1a9d3dbc036d506e44bd27c4527da372d2a3",
+      "chainFromPrevious": false,
+      "restores": null,
+      "currentContext": "new-context-present",
+      "edits": [
+        {
+          "location": "#static_txt",
+          "field": "body",
+          "oldCharacters": 380,
+          "newCharacters": 346,
+          "fullOldContextMatches": 0,
+          "fullNewContextMatches": 1
+        }
+      ]
+    },
+    {
+      "file": "2026-10-21T06-44-25-772Z_7e03ed.json",
+      "id": "2026-10-21T06-44-25-772Z_7e03ed",
+      "date": "2026-10-21T06:44:25.772Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "#npc_base",
+      "field": "body",
+      "line": 2764,
+      "before": "698513ebb8e0383f0fc2a6eb9b7bdc433a944e516a6f44ad9353689fdda4c000",
+      "after": "07367c428b88420139309cd887ce1624d75788827794a480cfe409af85023e08",
+      "chainFromPrevious": false,
+      "restores": null,
+      "currentContext": "new-context-present",
+      "edits": [
+        {
+          "location": "#npc_base",
+          "field": "body",
+          "oldCharacters": 132,
+          "newCharacters": 127,
+          "fullOldContextMatches": 0,
+          "fullNewContextMatches": 1
+        }
+      ]
+    },
+    {
+      "file": "2026-10-21T06-44-48-024Z_891e64.json",
+      "id": "2026-10-21T06-44-48-024Z_891e64",
+      "date": "2026-10-21T06:44:48.024Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "interaction_city",
+      "field": "body",
+      "line": 9677,
+      "before": "07367c428b88420139309cd887ce1624d75788827794a480cfe409af85023e08",
+      "after": "6508075f048efe9e0f74cf7f8caa4e01157f10e7f4a84ebedd24aa1f5665b3dc",
+      "chainFromPrevious": true,
+      "restores": null,
+      "currentContext": "new-context-present",
+      "edits": [
+        {
+          "location": "interaction_city",
+          "field": "body",
+          "oldCharacters": 48,
+          "newCharacters": 49,
+          "fullOldContextMatches": 0,
+          "fullNewContextMatches": 1
+        }
+      ]
+    },
+    {
+      "file": "2026-10-21T06-49-51-764Z_27fb3f.json",
+      "id": "2026-10-21T06-49-51-764Z_27fb3f",
+      "date": "2026-10-21T06:49:51.764Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "#npc_base",
+      "field": "body",
+      "line": 2767,
+      "before": "6508075f048efe9e0f74cf7f8caa4e01157f10e7f4a84ebedd24aa1f5665b3dc",
+      "after": "88e816197c5760038417239155d735679891ebb9efc7edd36bea1b68a91315a7",
+      "chainFromPrevious": true,
+      "restores": null,
+      "currentContext": "new-context-present",
+      "edits": [
+        {
+          "location": "#npc_base",
+          "field": "body",
+          "oldCharacters": 23,
+          "newCharacters": 126,
+          "fullOldContextMatches": 0,
+          "fullNewContextMatches": 1
+        }
+      ]
+    },
+    {
+      "file": "2026-10-21T06-53-04-317Z_81a0c8.json",
+      "id": "2026-10-21T06-53-04-317Z_81a0c8",
+      "date": "2026-10-21T06:53:04.317Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "#npc_base",
+      "field": "body",
+      "line": 2770,
+      "before": "88e816197c5760038417239155d735679891ebb9efc7edd36bea1b68a91315a7",
+      "after": "d6c79a9d031e842ce4e12926b3fe37cf22a5cbf520444d76c80e6ae51f9774e7",
+      "chainFromPrevious": true,
+      "restores": null,
+      "currentContext": "new-context-present",
+      "edits": [
+        {
+          "location": "#npc_base",
+          "field": "body",
+          "oldCharacters": 121,
+          "newCharacters": 149,
+          "fullOldContextMatches": 0,
+          "fullNewContextMatches": 1
+        }
+      ]
+    },
+    {
+      "file": "2026-10-21T06-59-49-337Z_562c2e.json",
+      "id": "2026-10-21T06-59-49-337Z_562c2e",
+      "date": "2026-10-21T06:59:49.337Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "#npc_base",
+      "field": "body",
+      "line": 2771,
+      "before": "d6c79a9d031e842ce4e12926b3fe37cf22a5cbf520444d76c80e6ae51f9774e7",
+      "after": "2b7e9af94e07cfdf348208562e6953729e988059c47051cb2367fd07d79a3a94",
+      "chainFromPrevious": true,
+      "restores": null,
+      "currentContext": "new-context-present",
+      "edits": [
+        {
+          "location": "#npc_base",
+          "field": "body",
+          "oldCharacters": 201,
+          "newCharacters": 216,
+          "fullOldContextMatches": 0,
+          "fullNewContextMatches": 1
+        }
+      ]
+    },
+    {
+      "file": "2026-10-21T07-00-49-139Z_adf065.json",
+      "id": "2026-10-21T07-00-49-139Z_adf065",
+      "date": "2026-10-21T07:00:49.139Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "#npc_base",
+      "field": "body",
+      "line": 2772,
+      "before": "2b7e9af94e07cfdf348208562e6953729e988059c47051cb2367fd07d79a3a94",
+      "after": "505224635a242cfd454e6e02d6b6662db7035166d3517a22beafb70d8753f744",
+      "chainFromPrevious": true,
+      "restores": null,
+      "currentContext": "new-context-present",
+      "edits": [
+        {
+          "location": "#npc_base",
+          "field": "body",
+          "oldCharacters": 108,
+          "newCharacters": 121,
+          "fullOldContextMatches": 0,
+          "fullNewContextMatches": 1
+        }
+      ]
+    },
+    {
+      "file": "2026-10-21T07-02-36-604Z_3e49b1.json",
+      "id": "2026-10-21T07-02-36-604Z_3e49b1",
+      "date": "2026-10-21T07:02:36.604Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "#npc_base",
+      "field": "body",
+      "line": 2774,
+      "before": "505224635a242cfd454e6e02d6b6662db7035166d3517a22beafb70d8753f744",
+      "after": "8ae736c7367340f41413dcbe21a6eceb588beccee895024f164e3ff32e205d92",
+      "chainFromPrevious": true,
+      "restores": null,
+      "currentContext": "new-context-present",
+      "edits": [
+        {
+          "location": "#npc_base",
+          "field": "body",
+          "oldCharacters": 97,
+          "newCharacters": 98,
+          "fullOldContextMatches": 0,
+          "fullNewContextMatches": 1
+        }
+      ]
+    },
+    {
+      "file": "2026-10-21T07-04-00-914Z_eb651e.json",
+      "id": "2026-10-21T07-04-00-914Z_eb651e",
+      "date": "2026-10-21T07:04:00.914Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "#npc_base",
+      "field": "body",
+      "line": 2775,
+      "before": "8ae736c7367340f41413dcbe21a6eceb588beccee895024f164e3ff32e205d92",
+      "after": "7332d683b2702c1835f094fae69eff51a9b26107e9e67ce1ab30cd50ce350b43",
+      "chainFromPrevious": true,
+      "restores": null,
+      "currentContext": "new-context-present",
+      "edits": [
+        {
+          "location": "#npc_base",
+          "field": "body",
+          "oldCharacters": 115,
+          "newCharacters": 141,
+          "fullOldContextMatches": 0,
+          "fullNewContextMatches": 1
+        }
+      ]
+    },
+    {
+      "file": "2026-10-21T07-06-03-798Z_a15a52.json",
+      "id": "2026-10-21T07-06-03-798Z_a15a52",
+      "date": "2026-10-21T07:06:03.798Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "#npc_base",
+      "field": "body",
+      "line": 2773,
+      "before": "7332d683b2702c1835f094fae69eff51a9b26107e9e67ce1ab30cd50ce350b43",
+      "after": "a846c8b94eff8c2cc32acf7700f89de5ecf13a90174d6c79a4b598e4e401a291",
+      "chainFromPrevious": true,
+      "restores": null,
+      "currentContext": "new-context-present",
+      "edits": [
+        {
+          "location": "#npc_base",
+          "field": "body",
+          "oldCharacters": 111,
+          "newCharacters": 137,
+          "fullOldContextMatches": 0,
+          "fullNewContextMatches": 1
+        }
+      ]
+    },
+    {
+      "file": "2026-10-21T07-06-42-701Z_f86fb6.json",
+      "id": "2026-10-21T07-06-42-701Z_f86fb6",
+      "date": "2026-10-21T07:06:42.701Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "#npc_base",
+      "field": "body",
+      "line": 2776,
+      "before": "a846c8b94eff8c2cc32acf7700f89de5ecf13a90174d6c79a4b598e4e401a291",
+      "after": "390cd63d7d74e4c8ef91ced8f3ad332e2a36874def6b66cb4bebe92a83d573cf",
+      "chainFromPrevious": true,
+      "restores": null,
+      "currentContext": "new-context-present",
+      "edits": [
+        {
+          "location": "#npc_base",
+          "field": "body",
+          "oldCharacters": 113,
+          "newCharacters": 114,
+          "fullOldContextMatches": 0,
+          "fullNewContextMatches": 1
+        }
+      ]
+    },
+    {
+      "file": "2026-10-21T07-07-07-875Z_166a25.json",
+      "id": "2026-10-21T07-07-07-875Z_166a25",
+      "date": "2026-10-21T07:07:07.876Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "#simple_npc",
+      "field": "body",
+      "line": 39,
+      "before": "390cd63d7d74e4c8ef91ced8f3ad332e2a36874def6b66cb4bebe92a83d573cf",
+      "after": "caf402460a0faf5682df1493c91c66037b230cfcc1a23b4340225139225dad3b",
+      "chainFromPrevious": true,
+      "restores": null,
+      "currentContext": "absent-or-superseded",
+      "edits": [
+        {
+          "location": "#simple_npc",
+          "field": "body",
+          "oldCharacters": 7,
+          "newCharacters": 8,
+          "fullOldContextMatches": 1,
+          "fullNewContextMatches": 0
+        }
+      ]
+    },
+    {
+      "file": "2026-10-21T07-07-32-107Z_9aa8b9.json",
+      "id": "2026-10-21T07-07-32-107Z_9aa8b9",
+      "date": "2026-10-21T07:07:32.107Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "#simple_npc",
+      "field": "body",
+      "line": 39,
+      "before": "caf402460a0faf5682df1493c91c66037b230cfcc1a23b4340225139225dad3b",
+      "after": "390cd63d7d74e4c8ef91ced8f3ad332e2a36874def6b66cb4bebe92a83d573cf",
+      "chainFromPrevious": true,
+      "restores": null,
+      "currentContext": "new-context-present",
+      "edits": [
+        {
+          "location": "#simple_npc",
+          "field": "body",
+          "oldCharacters": 8,
+          "newCharacters": 7,
+          "fullOldContextMatches": 0,
+          "fullNewContextMatches": 1
+        }
+      ]
+    },
+    {
+      "file": "2026-10-21T07-09-58-664Z_5841b5.json",
+      "id": "2026-10-21T07-09-58-664Z_5841b5",
+      "date": "2026-10-21T07:09:58.664Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "#npc_base",
+      "field": "body",
+      "line": 2779,
+      "before": "390cd63d7d74e4c8ef91ced8f3ad332e2a36874def6b66cb4bebe92a83d573cf",
+      "after": "a8aaea875d5b26518fd736920d2057bfc16f8b484791770d887939895f06a508",
+      "chainFromPrevious": true,
+      "restores": null,
+      "currentContext": "new-context-present",
+      "edits": [
+        {
+          "location": "#npc_base",
+          "field": "body",
+          "oldCharacters": 51,
+          "newCharacters": 57,
+          "fullOldContextMatches": 0,
+          "fullNewContextMatches": 1
+        }
+      ]
+    },
+    {
+      "file": "2026-10-21T07-11-06-657Z_3cd51e.json",
+      "id": "2026-10-21T07-11-06-657Z_3cd51e",
+      "date": "2026-10-21T07:11:06.657Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "#npc_base",
+      "field": "body",
+      "line": 2777,
+      "before": "a8aaea875d5b26518fd736920d2057bfc16f8b484791770d887939895f06a508",
+      "after": "f30690efe47a0e3147d4fc5d7cfc7837fa89d1c61fd9efdd3c7f774a2c7554fb",
+      "chainFromPrevious": true,
+      "restores": null,
+      "currentContext": "new-context-present",
+      "edits": [
+        {
+          "location": "#npc_base",
+          "field": "body",
+          "oldCharacters": 57,
+          "newCharacters": 101,
+          "fullOldContextMatches": 0,
+          "fullNewContextMatches": 1
+        }
+      ]
+    },
+    {
+      "file": "2026-10-21T07-12-48-272Z_742df0.json",
+      "id": "2026-10-21T07-12-48-272Z_742df0",
+      "date": "2026-10-21T07:12:48.272Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "#npc_base",
+      "field": "body",
+      "line": 2778,
+      "before": "f30690efe47a0e3147d4fc5d7cfc7837fa89d1c61fd9efdd3c7f774a2c7554fb",
+      "after": "c6701e3ab130b1a762d0b1a523d52cd53cee846f71c3d7899a4c369389aa853d",
+      "chainFromPrevious": true,
+      "restores": null,
+      "currentContext": "new-context-present",
+      "edits": [
+        {
+          "location": "#npc_base",
+          "field": "body",
+          "oldCharacters": 69,
+          "newCharacters": 126,
+          "fullOldContextMatches": 0,
+          "fullNewContextMatches": 1
+        }
+      ]
+    },
+    {
+      "file": "2026-10-22T13-24-09-881Z_a241ae.json",
+      "id": "2026-10-22T13-24-09-881Z_a241ae",
+      "date": "2026-10-22T13:24:09.882Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "#txt_man",
+      "field": "body",
+      "line": 672,
+      "before": "a54283107b35e69ad50e23c528a13b499c62e7839aa77dde7ebbdf3b47023214",
+      "after": "26115873b7cfbe72cc35531345fa319cfd759a5704b46bf80378e8fe1da59796",
+      "chainFromPrevious": false,
+      "restores": null,
+      "currentContext": "absent-or-superseded",
+      "edits": [
+        {
+          "location": "#txt_man",
+          "field": "body",
+          "oldCharacters": 199,
+          "newCharacters": 180,
+          "fullOldContextMatches": 0,
+          "fullNewContextMatches": 0
+        }
+      ]
+    },
+    {
+      "file": "2026-10-24T21-36-47-379Z_448975.json",
+      "id": "2026-10-24T21-36-47-379Z_448975",
+      "date": "2026-10-24T21:36:47.380Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "master_stat",
+      "field": "body",
+      "line": 131,
+      "before": "80a2956303fc41083a1df46280695b993d0970c29c2ad7b1a5d94b8c32011239",
+      "after": "686e1c3f8904a76371e2303fd754672d512e079a8f1880dcf8d16e15e978a04a",
+      "chainFromPrevious": false,
+      "restores": null,
+      "currentContext": "absent-or-superseded",
+      "edits": [
+        {
+          "location": "master_stat",
+          "field": "body",
+          "oldCharacters": 108,
+          "newCharacters": 104,
+          "fullOldContextMatches": 0,
+          "fullNewContextMatches": 0
+        }
+      ]
+    },
+    {
+      "file": "2026-10-24T21-41-43-502Z_873ce2.json",
+      "id": "2026-10-24T21-41-43-502Z_873ce2",
+      "date": "2026-10-24T21:41:43.503Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "master_stat",
+      "field": "body",
+      "line": 131,
+      "before": "686e1c3f8904a76371e2303fd754672d512e079a8f1880dcf8d16e15e978a04a",
+      "after": "c071d63fd9e013082850129b4f610ff5ea79372c421e40201957836a0564f529",
+      "chainFromPrevious": true,
+      "restores": null,
+      "currentContext": "absent-or-superseded",
+      "edits": [
+        {
+          "location": "master_stat",
+          "field": "body",
+          "oldCharacters": 104,
+          "newCharacters": 205,
+          "fullOldContextMatches": 0,
+          "fullNewContextMatches": 0
+        }
+      ]
+    },
+    {
+      "file": "2026-10-24T21-43-36-783Z_1290e6.json",
+      "id": "2026-10-24T21-43-36-783Z_1290e6",
+      "date": "2026-10-24T21:43:36.788Z",
+      "status": "applied",
+      "kind": "restore",
+      "location": "master_stat",
+      "field": "body",
+      "line": null,
+      "before": "c071d63fd9e013082850129b4f610ff5ea79372c421e40201957836a0564f529",
+      "after": "686e1c3f8904a76371e2303fd754672d512e079a8f1880dcf8d16e15e978a04a",
+      "chainFromPrevious": true,
+      "restores": "2026-10-24T21-41-43-502Z_873ce2",
+      "currentContext": "restore-operation",
+      "edits": []
+    },
+    {
+      "file": "2026-10-24T21-44-36-851Z_bf1d80.json",
+      "id": "2026-10-24T21-44-36-851Z_bf1d80",
+      "date": "2026-10-24T21:44:36.851Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "master_stat",
+      "field": "body",
+      "line": 131,
+      "before": "686e1c3f8904a76371e2303fd754672d512e079a8f1880dcf8d16e15e978a04a",
+      "after": "9a5608a104dbee3e0fa780172ee2719496240566fc1d3d0eef45f5149ea8fca1",
+      "chainFromPrevious": true,
+      "restores": null,
+      "currentContext": "absent-or-superseded",
+      "edits": [
+        {
+          "location": "master_stat",
+          "field": "body",
+          "oldCharacters": 104,
+          "newCharacters": 103,
+          "fullOldContextMatches": 0,
+          "fullNewContextMatches": 0
+        }
+      ]
+    },
+    {
+      "file": "2026-10-24T21-47-25-108Z_67e2ed.json",
+      "id": "2026-10-24T21-47-25-108Z_67e2ed",
+      "date": "2026-10-24T21:47:25.108Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "master_stat",
+      "field": "body",
+      "line": 131,
+      "before": "9a5608a104dbee3e0fa780172ee2719496240566fc1d3d0eef45f5149ea8fca1",
+      "after": "5a560215792b3932960cbd5f0eae569f810676ff46681340e44b439a45158f7f",
+      "chainFromPrevious": true,
+      "restores": null,
+      "currentContext": "new-context-present",
+      "edits": [
+        {
+          "location": "master_stat",
+          "field": "body",
+          "oldCharacters": 103,
+          "newCharacters": 97,
+          "fullOldContextMatches": 0,
+          "fullNewContextMatches": 1
+        }
+      ]
+    },
+    {
+      "file": "2026-10-24T21-48-46-592Z_1847e9.json",
+      "id": "2026-10-24T21-48-46-592Z_1847e9",
+      "date": "2026-10-24T21:48:46.592Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "master_stat",
+      "field": "body",
+      "line": 132,
+      "before": "5a560215792b3932960cbd5f0eae569f810676ff46681340e44b439a45158f7f",
+      "after": "eb68cecd28d87c364c6501c931f38cb2c0718e34a7300e9defc1c914e28b4e29",
+      "chainFromPrevious": true,
+      "restores": null,
+      "currentContext": "absent-or-superseded",
+      "edits": [
+        {
+          "location": "master_stat",
+          "field": "body",
+          "oldCharacters": 128,
+          "newCharacters": 119,
+          "fullOldContextMatches": 0,
+          "fullNewContextMatches": 0
+        }
+      ]
+    },
+    {
+      "file": "2026-10-24T21-49-43-525Z_4e2136.json",
+      "id": "2026-10-24T21-49-43-525Z_4e2136",
+      "date": "2026-10-24T21:49:43.533Z",
+      "status": "applied",
+      "kind": "restore",
+      "location": "master_stat",
+      "field": "body",
+      "line": null,
+      "before": "eb68cecd28d87c364c6501c931f38cb2c0718e34a7300e9defc1c914e28b4e29",
+      "after": "5a560215792b3932960cbd5f0eae569f810676ff46681340e44b439a45158f7f",
+      "chainFromPrevious": true,
+      "restores": "2026-10-24T21-48-46-592Z_1847e9",
+      "currentContext": "restore-operation",
+      "edits": []
+    },
+    {
+      "file": "2026-10-24T21-50-13-801Z_d98bbb.json",
+      "id": "2026-10-24T21-50-13-801Z_d98bbb",
+      "date": "2026-10-24T21:50:13.801Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "master_stat",
+      "field": "body",
+      "line": 132,
+      "before": "5a560215792b3932960cbd5f0eae569f810676ff46681340e44b439a45158f7f",
+      "after": "8e1e951d850120d9aa6518f5e89104118c28f0f075d64a624290ee99721988e1",
+      "chainFromPrevious": true,
+      "restores": null,
+      "currentContext": "new-context-present",
+      "edits": [
+        {
+          "location": "master_stat",
+          "field": "body",
+          "oldCharacters": 128,
+          "newCharacters": 231,
+          "fullOldContextMatches": 0,
+          "fullNewContextMatches": 1
+        }
+      ]
+    },
+    {
+      "file": "2026-10-24T21-52-35-952Z_f048bf.json",
+      "id": "2026-10-24T21-52-35-952Z_f048bf",
+      "date": "2026-10-24T21:52:35.952Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "master_stat",
+      "field": "body",
+      "line": 158,
+      "before": "8e1e951d850120d9aa6518f5e89104118c28f0f075d64a624290ee99721988e1",
+      "after": "84723fe578389be1560c0996f0683a138a4ad61c5d92433f6c0a7672da4e6d74",
+      "chainFromPrevious": true,
+      "restores": null,
+      "currentContext": "new-context-present",
+      "edits": [
+        {
+          "location": "master_stat",
+          "field": "body",
+          "oldCharacters": 59,
+          "newCharacters": 50,
+          "fullOldContextMatches": 0,
+          "fullNewContextMatches": 1
+        }
+      ]
+    },
+    {
+      "file": "2026-10-24T21-53-17-247Z_cfd4f4.json",
+      "id": "2026-10-24T21-53-17-247Z_cfd4f4",
+      "date": "2026-10-24T21:53:17.247Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "master_stat",
+      "field": "body",
+      "line": 200,
+      "before": "84723fe578389be1560c0996f0683a138a4ad61c5d92433f6c0a7672da4e6d74",
+      "after": "8fd3f2eb70ad83e8894b8101364d6821dd345af2a7051d1734ad2108bb2458cd",
+      "chainFromPrevious": true,
+      "restores": null,
+      "currentContext": "absent-or-superseded",
+      "edits": [
+        {
+          "location": "master_stat",
+          "field": "body",
+          "oldCharacters": 69,
+          "newCharacters": 59,
+          "fullOldContextMatches": 0,
+          "fullNewContextMatches": 0
+        }
+      ]
+    },
+    {
+      "file": "2026-10-24T21-53-54-068Z_cdb54a.json",
+      "id": "2026-10-24T21-53-54-068Z_cdb54a",
+      "date": "2026-10-24T21:53:54.068Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "master_stat",
+      "field": "body",
+      "line": 219,
+      "before": "8fd3f2eb70ad83e8894b8101364d6821dd345af2a7051d1734ad2108bb2458cd",
+      "after": "d748df8eecd6c1c3ab02e70eb5b92e43255cd8412bf5720a3d183b95ae8fee0f",
+      "chainFromPrevious": true,
+      "restores": null,
+      "currentContext": "new-context-present",
+      "edits": [
+        {
+          "location": "master_stat",
+          "field": "body",
+          "oldCharacters": 62,
+          "newCharacters": 52,
+          "fullOldContextMatches": 0,
+          "fullNewContextMatches": 1
+        }
+      ]
+    },
+    {
+      "file": "2026-10-24T21-55-06-871Z_45e073.json",
+      "id": "2026-10-24T21-55-06-871Z_45e073",
+      "date": "2026-10-24T21:55:06.871Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "master_stat",
+      "field": "body",
+      "line": 200,
+      "before": "d748df8eecd6c1c3ab02e70eb5b92e43255cd8412bf5720a3d183b95ae8fee0f",
+      "after": "c05e014ba262505ce5c8b118df61118db7f3e28ba94214975395d2ae32a7ec05",
+      "chainFromPrevious": true,
+      "restores": null,
+      "currentContext": "new-context-present",
+      "edits": [
+        {
+          "location": "master_stat",
+          "field": "body",
+          "oldCharacters": 59,
+          "newCharacters": 52,
+          "fullOldContextMatches": 0,
+          "fullNewContextMatches": 1
+        }
+      ]
+    },
+    {
+      "file": "2026-10-30T09-56-56-907Z_5fc871.json",
+      "id": "2026-10-30T09-56-56-907Z_5fc871",
+      "date": "2026-10-30T09:56:56.907Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "billing",
+      "field": "body",
+      "line": 117,
+      "before": "a5f9dcb31acac6160836d0f420a1ef0d697bf1e259619be4187ef8e5b1a829cc",
+      "after": "00a567abbc5cae48edd50bd6283af4489797cbbb12e017912fd0de414bec7d1a",
+      "chainFromPrevious": false,
+      "restores": null,
+      "currentContext": "new-context-present",
+      "edits": [
+        {
+          "location": "billing",
+          "field": "body",
+          "oldCharacters": 27,
+          "newCharacters": 128,
+          "fullOldContextMatches": 0,
+          "fullNewContextMatches": 1
+        }
+      ]
+    },
+    {
+      "file": "2026-10-30T09-58-27-678Z_ca2300.json",
+      "id": "2026-10-30T09-58-27-678Z_ca2300",
+      "date": "2026-10-30T09:58:27.678Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "billing",
+      "field": "body",
+      "line": 122,
+      "before": "00a567abbc5cae48edd50bd6283af4489797cbbb12e017912fd0de414bec7d1a",
+      "after": "451af7f27a423b857fa108815155975d0c15b792a83b72f5be8a88bc56a5eb4b",
+      "chainFromPrevious": true,
+      "restores": null,
+      "currentContext": "new-context-present",
+      "edits": [
+        {
+          "location": "billing",
+          "field": "body",
+          "oldCharacters": 27,
+          "newCharacters": 135,
+          "fullOldContextMatches": 1,
+          "fullNewContextMatches": 1
+        }
+      ]
+    },
+    {
+      "file": "2026-10-30T10-02-07-851Z_4f5d2f.json",
+      "id": "2026-10-30T10-02-07-851Z_4f5d2f",
+      "date": "2026-10-30T10:02:07.851Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "billing",
+      "field": "body",
+      "line": 121,
+      "before": "451af7f27a423b857fa108815155975d0c15b792a83b72f5be8a88bc56a5eb4b",
+      "after": "6ac418119ceb33de155db8fc7f42080dfbda44a904045e475f28921c1ac394fb",
+      "chainFromPrevious": true,
+      "restores": null,
+      "currentContext": "absent-or-superseded",
+      "edits": [
+        {
+          "location": "billing",
+          "field": "body",
+          "oldCharacters": 71,
+          "newCharacters": 179,
+          "fullOldContextMatches": 1,
+          "fullNewContextMatches": 0
+        }
+      ]
+    },
+    {
+      "file": "2026-10-30T10-04-59-068Z_23d80b.json",
+      "id": "2026-10-30T10-04-59-068Z_23d80b",
+      "date": "2026-10-30T10:04:59.068Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "billing",
+      "field": "body",
+      "line": 120,
+      "before": "6ac418119ceb33de155db8fc7f42080dfbda44a904045e475f28921c1ac394fb",
+      "after": "bae9d22b0c10fd8b8bc3dc38dd547a1b439b55f7d0402bb9c656c96ba4a0ad6e",
+      "chainFromPrevious": true,
+      "restores": null,
+      "currentContext": "new-context-present",
+      "edits": [
+        {
+          "location": "billing",
+          "field": "body",
+          "oldCharacters": 84,
+          "newCharacters": 192,
+          "fullOldContextMatches": 1,
+          "fullNewContextMatches": 1
+        }
+      ]
+    },
+    {
+      "file": "2026-10-30T10-05-18-355Z_9eb3e1.json",
+      "id": "2026-10-30T10-05-18-355Z_9eb3e1",
+      "date": "2026-10-30T10:05:18.355Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "billing",
+      "field": "body",
+      "line": 119,
+      "before": "bae9d22b0c10fd8b8bc3dc38dd547a1b439b55f7d0402bb9c656c96ba4a0ad6e",
+      "after": "6d5936ecec4792d8957f92b9284bbcd2fd90fcae6f19e665f6772081b573cedc",
+      "chainFromPrevious": true,
+      "restores": null,
+      "currentContext": "new-context-present",
+      "edits": [
+        {
+          "location": "billing",
+          "field": "body",
+          "oldCharacters": 81,
+          "newCharacters": 182,
+          "fullOldContextMatches": 1,
+          "fullNewContextMatches": 1
+        }
+      ]
+    },
+    {
+      "file": "2026-10-30T10-05-54-224Z_b39b4b.json",
+      "id": "2026-10-30T10-05-54-224Z_b39b4b",
+      "date": "2026-10-30T10:05:54.225Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "billing",
+      "field": "body",
+      "line": 118,
+      "before": "6d5936ecec4792d8957f92b9284bbcd2fd90fcae6f19e665f6772081b573cedc",
+      "after": "5744713ff8de303d7524a033996565f5315498bec72ac69f0a9db7364648bf18",
+      "chainFromPrevious": true,
+      "restores": null,
+      "currentContext": "new-context-present",
+      "edits": [
+        {
+          "location": "billing",
+          "field": "body",
+          "oldCharacters": 25,
+          "newCharacters": 133,
+          "fullOldContextMatches": 1,
+          "fullNewContextMatches": 1
+        }
+      ]
+    },
+    {
+      "file": "2026-10-31T03-09-30-478Z_dd2c2c.json",
+      "id": "2026-10-31T03-09-30-478Z_dd2c2c",
+      "date": "2026-10-31T03:09:30.478Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "jo9_liquidation",
+      "field": "body",
+      "line": 60,
+      "before": "cb89e76ef53db13b71986abe263bea6147fa6a57c2d6dd993194931400493a26",
+      "after": "db7bf6710b4b658960c443cbb32a8124b757bd46e5e924c3ab3a8efc14e31191",
+      "chainFromPrevious": false,
+      "restores": null,
+      "currentContext": "new-context-present",
+      "edits": [
+        {
+          "location": "jo9_liquidation",
+          "field": "body",
+          "oldCharacters": 171,
+          "newCharacters": 174,
+          "fullOldContextMatches": 0,
+          "fullNewContextMatches": 1
+        }
+      ]
+    },
+    {
+      "file": "2026-10-31T05-33-36-101Z_fa764c.json",
+      "id": "2026-10-31T05-33-36-101Z_fa764c",
+      "date": "2026-10-31T05:33:36.101Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "interaction_city",
+      "field": "body",
+      "line": 1571,
+      "before": "fe441237ec3dc132ec630e7119ef8d353d7aa91aab9bc89e8145c93a7df02b97",
+      "after": "e437a4db96e8580ffa161211eba25100899135c7ad3c62d9c72961acf0e0fe57",
+      "chainFromPrevious": false,
+      "restores": null,
+      "currentContext": "new-context-present",
+      "edits": [
+        {
+          "location": "interaction_city",
+          "field": "body",
+          "oldCharacters": 110,
+          "newCharacters": 113,
+          "fullOldContextMatches": 0,
+          "fullNewContextMatches": 1
+        }
+      ]
+    },
+    {
+      "file": "2026-10-31T05-33-53-173Z_5fe36b.json",
+      "id": "2026-10-31T05-33-53-173Z_5fe36b",
+      "date": "2026-10-31T05:33:53.173Z",
+      "status": "applied",
+      "kind": "edit",
+      "location": "#options",
+      "field": "body",
+      "line": 3747,
+      "before": "e437a4db96e8580ffa161211eba25100899135c7ad3c62d9c72961acf0e0fe57",
+      "after": "554e35702f9380054846ce6649f14bbcbda806e025fb414de295b0c9b18b1a15",
+      "chainFromPrevious": true,
+      "restores": null,
+      "currentContext": "new-context-present",
+      "edits": [
+        {
+          "location": "#options",
+          "field": "body",
+          "oldCharacters": 111,
+          "newCharacters": 114,
+          "fullOldContextMatches": 0,
+          "fullNewContextMatches": 1
+        }
+      ]
+    }
+  ],
+  "plannedFullSync": {
+    "strategy": "Preserve current WORK final state; copy only confirmed missing latest edits into Full, then compare both final QSP files byte-for-byte.",
+    "transactionIds": [
+      "2026-10-31T03-09-30-478Z_dd2c2c",
+      "2026-10-31T05-33-36-101Z_fa764c",
+      "2026-10-31T05-33-53-173Z_5fe36b"
+    ],
+    "locations": [
+      "jo9_liquidation",
+      "interaction_city",
+      "#options"
+    ],
+    "approvedByParent": true
+  },
+  "runtimeOriginalsWritten": false
+}

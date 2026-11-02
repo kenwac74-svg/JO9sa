@@ -1,0 +1,249 @@
+{
+  "id": "CHAMPION_LIBERATION_IMAGES_AND_CATALOG_20261102",
+  "status": "PASS",
+  "completedAt": "2026-11-01T16:49:34.560Z",
+  "scope": "Approved two original-byte PNG adoptions and incremental WORK/seed catalog registration only",
+  "images": [
+    {
+      "role": "return",
+      "path": "content/pic/scene/champion_return.png",
+      "dimensions": [
+        795,
+        596
+      ],
+      "bytes": 1248463,
+      "sha256": "72c7719b28d9d4a16f224f0ab8f6bdb616a198b54020ab7c4efa3dbaa4c0f333",
+      "sourceOriginal": false,
+      "code": "SC-1696"
+    },
+    {
+      "role": "departure",
+      "path": "content/pic/scene/champion_departure.png",
+      "dimensions": [
+        795,
+        596
+      ],
+      "bytes": 1230881,
+      "sha256": "bb8ed0773f9f936c2ff9706b741e1544f0842444a126449dc0f820cd28583eb8",
+      "sourceOriginal": false,
+      "code": "SC-1697"
+    }
+  ],
+  "personalEvent": "CHAMPION_LIBERATION_IMAGES_ADOPTED_20261102:replace",
+  "personalEventsAdded": 1,
+  "beforeNullForBoth": true,
+  "originalArtworkAndReviewRecordsPreserved": true,
+  "catalogFilesWritten": 8,
+  "preservation": [
+    {
+      "root": "G:/somi/Jack O Nine Tails v2.4_work/game/modtools/catalog",
+      "rowsBefore": 41254,
+      "rowsAfter": 41256,
+      "oldRowsAndOrderUnchanged": true,
+      "oldIdKeysUnchanged": 45532,
+      "oldCodeKeysUnchanged": 41253,
+      "oldStatusKeysUnchanged": 1821,
+      "oldSceneEntriesUnchanged": 1125,
+      "priorNotesBCConditionsAndAliasesUnchanged": true,
+      "autoDoneUnchanged": true,
+      "htmlOutsideDAndMetadataUnchanged": true,
+      "hiddenPathsStillAbsent": 82,
+      "inlineScripts": 9
+    },
+    {
+      "root": "G:/somi/JO9sa/tools/local-workspace/catalog-seed",
+      "rowsBefore": 41253,
+      "rowsAfter": 41255,
+      "oldRowsAndOrderUnchanged": true,
+      "oldIdKeysUnchanged": 45531,
+      "oldCodeKeysUnchanged": 41253,
+      "oldStatusKeysUnchanged": 1808,
+      "oldSceneEntriesUnchanged": 1125,
+      "priorNotesBCConditionsAndAliasesUnchanged": true,
+      "autoDoneUnchanged": true,
+      "htmlOutsideDAndMetadataUnchanged": true,
+      "hiddenPathsStillAbsent": 82,
+      "inlineScripts": 9
+    }
+  ],
+  "source": {
+    "path": "G:\\Codex\\tmp\\champion-liberation-fix-20261102-20261102T1630b\\candidate.qsp",
+    "sha256": "6bb939464a7370526ced33c6b51fcb4f0b5023b94bbe1d1bd78dba6bec44398d",
+    "entries": {
+      "content/pic/scene/champion_return.png": {
+        "path": "content/pic/scene/champion_return.png",
+        "status": "direct",
+        "summary": "이벤트: interaction_city = 1295 · 장면 2페이지 · 해방 후 귀환",
+        "references": [
+          {
+            "location": "interaction_city",
+            "line": 1963,
+            "conditions": [
+              "interaction_city = 1295",
+              "slave['moral'] > slave['fear']"
+            ],
+            "placeCandidates": [
+              "colosseum_arena"
+            ],
+            "entry": {
+              "variable": "interaction_city",
+              "value": "1295"
+            },
+            "menus": [],
+            "upstream": [
+              {
+                "location": "выход_из_боя",
+                "line": 57,
+                "conditions": [
+                  "$fight_return = 'Start'",
+                  "$итог_боя = 'победа'",
+                  "slave['arena_level'] < 5",
+                  "slave['arena_level'] = 5",
+                  "slave['loser_rating'] = 0"
+                ]
+              }
+            ],
+            "slot": 2,
+            "lhs": "$special_image_full[2]",
+            "kind": "direct",
+            "selection": "fixed",
+            "note": "2026-11-02 승인한 해방 결과 전용 컷. slave['moral'] > slave['fear']이면 귀환.",
+            "pathExpression": "scene/champion_return.png"
+          }
+        ],
+        "alternates": [],
+        "sourceOriginal": false,
+        "sourceQspSha256": "6bb939464a7370526ced33c6b51fcb4f0b5023b94bbe1d1bd78dba6bec44398d",
+        "adoptionId": "CHAMPION_LIBERATION_CATALOG_ADOPTION_20261102"
+      },
+      "content/pic/scene/champion_departure.png": {
+        "path": "content/pic/scene/champion_departure.png",
+        "status": "direct",
+        "summary": "이벤트: interaction_city = 1295 · 장면 2페이지 · 해방 후 영구 이탈",
+        "references": [
+          {
+            "location": "interaction_city",
+            "line": 1984,
+            "conditions": [
+              "interaction_city = 1295",
+              "그 외 (else)"
+            ],
+            "placeCandidates": [
+              "colosseum_arena"
+            ],
+            "entry": {
+              "variable": "interaction_city",
+              "value": "1295"
+            },
+            "menus": [],
+            "upstream": [
+              {
+                "location": "выход_из_боя",
+                "line": 57,
+                "conditions": [
+                  "$fight_return = 'Start'",
+                  "$итог_боя = 'победа'",
+                  "slave['arena_level'] < 5",
+                  "slave['arena_level'] = 5",
+                  "slave['loser_rating'] = 0"
+                ]
+              }
+            ],
+            "slot": 2,
+            "lhs": "$special_image_full[2]",
+            "kind": "direct",
+            "selection": "fixed",
+            "note": "2026-11-02 승인한 해방 결과 전용 컷. 귀환 조건의 ELSE 분기이며 moral = fear도 영구 이탈.",
+            "pathExpression": "scene/champion_departure.png"
+          }
+        ],
+        "alternates": [],
+        "sourceOriginal": false,
+        "sourceQspSha256": "6bb939464a7370526ced33c6b51fcb4f0b5023b94bbe1d1bd78dba6bec44398d",
+        "adoptionId": "CHAMPION_LIBERATION_CATALOG_ADOPTION_20261102"
+      }
+    }
+  },
+  "verification": {
+    "httpImages": [
+      {
+        "path": "content/pic/scene/champion_return.png",
+        "status": 200,
+        "contentType": "image/png",
+        "bytes": 1248463,
+        "sha256": "72c7719b28d9d4a16f224f0ab8f6bdb616a198b54020ab7c4efa3dbaa4c0f333",
+        "sourceOriginal": false
+      },
+      {
+        "path": "content/pic/scene/champion_departure.png",
+        "status": 200,
+        "contentType": "image/png",
+        "bytes": 1230881,
+        "sha256": "bb8ed0773f9f936c2ff9706b741e1544f0842444a126449dc0f820cd28583eb8",
+        "sourceOriginal": false
+      }
+    ],
+    "httpCards": [
+      {
+        "path": "content/pic/scene/champion_return.png",
+        "code": "SC-1696",
+        "flags": [
+          "done"
+        ],
+        "dimensions": [
+          795,
+          596
+        ],
+        "metadataConditions": [
+          "interaction_city = 1295",
+          "slave['moral'] > slave['fear']"
+        ],
+        "page": 2,
+        "sourceOriginal": false
+      },
+      {
+        "path": "content/pic/scene/champion_departure.png",
+        "code": "SC-1697",
+        "flags": [
+          "done"
+        ],
+        "dimensions": [
+          795,
+          596
+        ],
+        "metadataConditions": [
+          "interaction_city = 1295",
+          "그 외 (else)"
+        ],
+        "page": 2,
+        "sourceOriginal": false
+      }
+    ],
+    "sourceAndRuntimeHashesMatch": true,
+    "protectedFilesUnchanged": true,
+    "browserStateUnchanged": true,
+    "nativeEngine": "Not executed by this catalog task; see implementation task results"
+  },
+  "cleanup": {
+    "temporaryRootRemoved": true,
+    "removedFiles": 9,
+    "removedBytes": 37793713,
+    "retainedRecovery": {
+      "path": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\output\\champion-liberation-fix-20261102\\catalog/catalog-20261101164802241-be99b9-before.json.gz",
+      "sha256": "f94ddd4617fad841feb582078cdefdfb3d45c7a24daa309af7af5e40db64c1d0",
+      "bytes": 13447824
+    }
+  },
+  "reports": {
+    "assets": "C:/Users/User/.codex/.chatgpt-projects/g-p-6aad063c991081918e27b6675f290be7/output/champion-liberation-fix-20261102/catalog/assets-installed.json",
+    "installation": "C:/Users/User/.codex/.chatgpt-projects/g-p-6aad063c991081918e27b6675f290be7/output/champion-liberation-fix-20261102/catalog/catalog-20261101164802241-be99b9-installation.json",
+    "http": "C:/Users/User/.codex/.chatgpt-projects/g-p-6aad063c991081918e27b6675f290be7/output/champion-liberation-fix-20261102/catalog/catalog-20261101164802241-be99b9-http.json",
+    "cleanup": "C:/Users/User/.codex/.chatgpt-projects/g-p-6aad063c991081918e27b6675f290be7/output/champion-liberation-fix-20261102/catalog/catalog-20261101164802241-be99b9-cleanup.json"
+  },
+  "qspWrites": false,
+  "fullWrites": false,
+  "saveWrites": false,
+  "browserWrites": false,
+  "zipCreated": false,
+  "commitPush": false
+}

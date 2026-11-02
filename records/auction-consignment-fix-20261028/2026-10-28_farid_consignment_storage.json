@@ -1,0 +1,112 @@
+{
+  "id": "2026-10-28_farid_consignment_storage",
+  "description": "잡파 위탁 전용 인물 보관·성공 확인 후 회수/수수료·중복 정산 방지·구저장 금전 정산 보존",
+  "before_sha256": "efdff96228e6cd77b59808c22b3391947e1682918480aea55c89b0a0bb3adebb",
+  "after_sha256": "972d1b7a8719c9b44e6aca4bfaf5a6f73908240762ce65061a7d298d0aa82679",
+  "edits": [
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\tgs '$slave_price', 'stock'\r\n\tfarid_debt += farid_potential_debt &! accumulate debt when dropping off multiple slaves on the same day - ImperatorAugustus\r\n\tfarid_potential_debt = slaveprice/2",
+      "new": "\t! JO9 MOD START FARID_DEPOSIT_20261028\r\n\tlocal jo9_farid_deposited = func('jo9_farid_consignment', 'deposit')\r\n\tif jo9_farid_deposited ! 1:\r\n\t $interaction_type = ''\r\n\t $npc_id = 'фарид_аукционщик'\r\n\t $place = 'slave_stage'\r\n\t $text[1] = '[잡파]<br>지금은 위탁할 인물을 확인할 수 없군. 맡겨 둔 거래는 그대로 둘 테니 다시 살펴보게.'\r\n\t gt 'interaction_screen_city'\r\n\tend\r\n\t! JO9 MOD END FARID_DEPOSIT_20261028",
+      "count": 1,
+      "patchId": "FARID_DEPOSIT_20261028"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$special_image[2] = '<<func(\"jo9_seed_role_images\", \"resolve\", stock_type, $stock[\"fullimage\"], \"fullimage\")>>.png'\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022\r\n\tif slave_state ! CONST_INT['no_slave']: $text[2] += ' 다만 이미 가진 노예를 어떻게 할지는 정해야 한다…'",
+      "new": "\t! JO9 MOD START FARID_STORED_PICTURE_20261028\r\n\t$special_image[2] = '<<func(\"jo9_seed_role_images\", \"resolve\", jo9_farid_stored_type, $jo9_farid_stored[\"fullimage\"], \"fullimage\")>>.png'\r\n\t! JO9 MOD END FARID_STORED_PICTURE_20261028\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022\r\n\tif slave_state ! CONST_INT['no_slave']: $text[2] += ' 다만 이미 가진 노예를 어떻게 할지는 정해야 한다…'",
+      "count": 1,
+      "patchId": "FARID_STORED_PICTURE_20261028"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\tsparks -= 5\r\n\tgs 'stock_to_slave'\r\n\tfarid_potential_debt = 0 &! reset only after calling stock_to_slave to avoid triggering hard_return - ImperatorAugustus",
+      "new": "\t! JO9 MOD START FARID_RETURN_20261028\r\n\tlocal jo9_farid_returned = func('jo9_farid_consignment', 'return')\r\n\tif jo9_farid_returned ! 1:\r\n\t $npc_id = 'фарид_аукционщик'\r\n\t $place = 'slave_stage'\r\n\t if jo9_farid_returned = -2:\r\n\t  $text[1] = '[잡파]<br>이미 데리고 다니는 노예가 있군. 자리를 마련한 뒤 다시 오게. 맡긴 거래는 그대로 두겠네.'\r\n\t elseif jo9_farid_returned = -1:\r\n\t  $text[1] = '[잡파]<br>지금은 되돌려 줄 위탁 인물이 없군. 같은 거래를 다시 취소할 수는 없네.'\r\n\t else\r\n\t  $text[1] = '[잡파]<br>위탁 인물의 기록을 확인할 수 없어 지금은 돌려줄 수 없군. 수수료는 받지 않겠네. 맡긴 거래의 대금은 예정대로 정산하겠어.'\r\n\t end\r\n\t gt 'interaction_screen_city'\r\n\tend\r\n\t! JO9 MOD END FARID_RETURN_20261028",
+      "count": 1,
+      "patchId": "FARID_RETURN_20261028"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\tsparks += farid_debt\r\n\t$place = 'slave_stage'",
+      "new": "\t! JO9 MOD START FARID_COLLECT_20261028\r\n\tlocal jo9_farid_payment = func('jo9_farid_consignment', 'collect')\r\n\t! JO9 MOD END FARID_COLLECT_20261028\r\n\t$place = 'slave_stage'",
+      "count": 1,
+      "patchId": "FARID_COLLECT_20261028"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '<font color=\"#660000\">[잡파]<br>&nbsp;어이, <<$master_name>>! 네가 맡긴 소녀 팔았어, 꽤 잘 팔린듯해. 경매 시작하자마자 팔렸다니까! 자, 여기 자네 몫: $<<farid_debt>>, 수수료는 50%야!</font>'",
+      "new": "\t! JO9 MOD START FARID_COLLECT_TEXT_20261028\r\n\tif jo9_farid_payment > 0:\r\n\t $text[1] = '<font color=\"#660000\">[잡파]<br>&nbsp;어이, <<$master_name>>! 네가 맡긴 노예를 팔았네. 자, 여기 자네 몫인 $<<jo9_farid_payment>>일세. 약속한 중개료는 이미 제했어.</font>'\r\n\telse\r\n\t $text[1] = '[잡파]<br>지금은 더 지급할 대금이 없군. 같은 거래를 두 번 정산할 수는 없네.'\r\n\tend\r\n\t! JO9 MOD END FARID_COLLECT_TEXT_20261028",
+      "count": 1,
+      "patchId": "FARID_COLLECT_TEXT_20261028"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\tfarid_debt = 0\r\n\tdynamic $clear_slave_instance, 'stock'\r\nend",
+      "new": "\t! JO9 MOD START FARID_COLLECT_KEEP_STOCK_20261028\r\n\t! Collection updates only consignment money and its stored actor.\r\n\t! JO9 MOD END FARID_COLLECT_KEEP_STOCK_20261028\r\nend",
+      "count": 1,
+      "patchId": "FARID_COLLECT_KEEP_STOCK_20261028"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "farid_debt += farid_potential_debt\r\nfarid_potential_debt = 0",
+      "new": "! JO9 MOD START FARID_DAILY_SETTLE_20261028\r\ngs 'jo9_farid_consignment', 'settle'\r\n! JO9 MOD END FARID_DAILY_SETTLE_20261028",
+      "count": 1,
+      "patchId": "FARID_DAILY_SETTLE_20261028"
+    },
+    {
+      "location": "interaction_screen_city",
+      "field": "body",
+      "old": "if ($interaction_type = 'drop_to_farid' and txt = 2) or interaction_city = 61120 or interaction_city = 61121:",
+      "new": "! JO9 MOD START FARID_STORED_INFO_PANEL_20261028\r\nif $interaction_type = 'drop_to_farid' and txt = 2:\r\n npc = 0\r\n gs 'jo9_farid_consignment', 'panel'\r\n jump 'second_point'\r\nend\r\n! JO9 MOD END FARID_STORED_INFO_PANEL_20261028\r\nif interaction_city = 61120 or interaction_city = 61121:",
+      "count": 1,
+      "patchId": "FARID_STORED_INFO_PANEL_20261028"
+    },
+    {
+      "location": "stock_to_slave_nogt",
+      "field": "body",
+      "old": "!move stock slave to master without changing location (to be called with 'gs')",
+      "new": "!move stock slave to master without changing location (to be called with 'gs')\r\n! JO9 MOD START STOCK_TO_SLAVE_EARLY_GUARD_20261028\r\nresult = 0\r\nif stock_state ! CONST_INT['slave_exist']:\r\n msg '오류: stock_to_slave_nogt 상태가 예상과 다릅니다. 이 메시지를 보기 직전에 무엇을 했는지 제보해 주세요'\r\n exit\r\nend\r\n! JO9 MOD END STOCK_TO_SLAVE_EARLY_GUARD_20261028",
+      "count": 1,
+      "patchId": "STOCK_TO_SLAVE_EARLY_GUARD_20261028"
+    },
+    {
+      "location": "stock_to_slave_nogt",
+      "field": "body",
+      "old": "if stock_state ! CONST_INT['slave_exist']: msg '오류: stock_to_slave_nogt 상태가 예상과 다릅니다. 이 메시지를 보기 직전에 무엇을 했는지 제보해 주세요'",
+      "new": "! JO9 MOD START STOCK_TO_SLAVE_OLD_GUARD_REMOVED_20261028\r\n! Invalid source is rejected before any acquisition resets.\r\n! JO9 MOD END STOCK_TO_SLAVE_OLD_GUARD_REMOVED_20261028",
+      "count": 1,
+      "patchId": "STOCK_TO_SLAVE_OLD_GUARD_REMOVED_20261028"
+    },
+    {
+      "location": "stock_to_slave_nogt",
+      "field": "body",
+      "old": "!End of Testing Code",
+      "new": "!End of Testing Code\r\n! JO9 MOD START STOCK_TO_SLAVE_SUCCESS_20261028\r\nresult = 1\r\n! JO9 MOD END STOCK_TO_SLAVE_SUCCESS_20261028",
+      "count": 1,
+      "patchId": "STOCK_TO_SLAVE_SUCCESS_20261028"
+    },
+    {
+      "location": "stock_to_slave",
+      "field": "body",
+      "old": "gs 'stock_to_slave_nogt'",
+      "new": "! JO9 MOD START STOCK_TO_SLAVE_CHECK_SUCCESS_20261028\r\nif func('stock_to_slave_nogt') ! 1: exit\r\n! JO9 MOD END STOCK_TO_SLAVE_CHECK_SUCCESS_20261028",
+      "count": 1,
+      "patchId": "STOCK_TO_SLAVE_CHECK_SUCCESS_20261028"
+    }
+  ],
+  "add_locations": [
+    {
+      "name": "jo9_farid_consignment",
+      "desc": "",
+      "body": "! JO9 MOD START FARID_CONSIGNMENT_STORAGE_20261028\r\n! Stored actors use the existing complete instance variable schema.\r\n! They are not added to owned actor, daily update or liquidation rosters.\r\nlocal $jo9_fc_mode = $args[0]\r\nlocal $jo9_fc_source = $args[1]\r\nlocal $jo9_fc_target = $args[2]\r\nlocal jo9_fc_i, $jo9_fc_from_var, $jo9_fc_to_var, jo9_fc_ok, jo9_fc_amount, $jo9_fc_panel\r\nresult = 0\r\nif arrsize('$slave_vars') < 1: exit\r\n\r\nif $jo9_fc_mode = 'copy':\r\n if ($jo9_fc_source = 'stock' and $jo9_fc_target = 'jo9_farid_stored') or ($jo9_fc_source = 'jo9_farid_stored' and ($jo9_fc_target = 'slave' or $jo9_fc_target = 'jo9_farid_viewprobe')):\r\n  if dyneval('result = ' + $jo9_fc_source + '_state') ! CONST_INT['slave_exist']: exit\r\n  for jo9_fc_i = 0 to arrsize('$slave_vars') - 1:\r\n   $jo9_fc_from_var = replace($slave_vars[jo9_fc_i], 'instance', $jo9_fc_source)\r\n   $jo9_fc_to_var = replace($slave_vars[jo9_fc_i], 'instance', $jo9_fc_target)\r\n   killvar $jo9_fc_to_var\r\n   copyarr $jo9_fc_to_var, $jo9_fc_from_var\r\n  end\r\n  if dyneval('result = ' + $jo9_fc_target + '_state') ! CONST_INT['slave_exist']: exit\r\n  if dyneval('result = ' + $jo9_fc_target + \"['id']\") ! dyneval('result = ' + $jo9_fc_source + \"['id']\"): exit\r\n  if dyneval('result = ' + $jo9_fc_target + '_type') ! dyneval('result = ' + $jo9_fc_source + '_type'): exit\r\n  if $dyneval('$result = $' + $jo9_fc_target + '_name') ! $dyneval('$result = $' + $jo9_fc_source + '_name'): exit\r\n  result = 1\r\n end\r\n exit\r\nend\r\n\r\nif $jo9_fc_mode = 'clear':\r\n if $jo9_fc_source ! 'stock' and $jo9_fc_source ! 'jo9_farid_stored' and $jo9_fc_source ! 'jo9_farid_viewprobe': exit\r\n for jo9_fc_i = 0 to arrsize('$slave_vars') - 1:\r\n  $jo9_fc_to_var = replace($slave_vars[jo9_fc_i], 'instance', $jo9_fc_source)\r\n  killvar $jo9_fc_to_var\r\n end\r\n if $jo9_fc_source = 'jo9_farid_stored': jo9_farid_stored_valid = 0\r\n if $jo9_fc_source = 'jo9_farid_viewprobe': killvar '$jo9_farid_viewprobe_features_list'\r\n result = 1\r\n exit\r\nend\r\n\r\nif $jo9_fc_mode = 'deposit':\r\n if stock_state ! CONST_INT['slave_exist']: exit\r\n gs '$slave_price', 'stock'\r\n jo9_fc_amount = slaveprice / 2\r\n if jo9_fc_amount < 1: exit\r\n jo9_fc_ok = func('jo9_farid_consignment', 'copy', 'stock', 'jo9_farid_stored')\r\n if jo9_fc_ok ! 1: exit\r\n ! Keep the original latest-one-returnable rule for repeated deposits.\r\n farid_debt += farid_potential_debt\r\n farid_potential_debt = jo9_fc_amount\r\n jo9_farid_stored_valid = 1\r\n jo9_fc_ok = func('jo9_farid_consignment', 'clear', 'stock')\r\n result = 1\r\n exit\r\nend\r\n\r\nif $jo9_fc_mode = 'return':\r\n if farid_potential_debt <= 0: result = -1 & exit\r\n if slave_state ! CONST_INT['no_slave']: result = -2 & exit\r\n ! Legacy saves have no receipt proving the identity of shared stock.\r\n if jo9_farid_stored_valid ! 1 or jo9_farid_stored_state ! CONST_INT['slave_exist']: result = -3 & exit\r\n jo9_fc_ok = func('jo9_farid_consignment', 'copy', 'jo9_farid_stored', 'slave')\r\n if jo9_fc_ok ! 1: exit\r\n sparks -= 5\r\n farid_potential_debt = 0\r\n jo9_fc_ok = func('jo9_farid_consignment', 'clear', 'jo9_farid_stored')\r\n master_moodlet['pos_new_slave'] = 6 - brand_reputation\r\n result = 1\r\n exit\r\nend\r\n\r\nif $jo9_fc_mode = 'settle':\r\n if farid_potential_debt < 0: exit\r\n jo9_fc_amount = farid_potential_debt\r\n farid_debt += jo9_fc_amount\r\n farid_potential_debt = 0\r\n jo9_fc_ok = func('jo9_farid_consignment', 'clear', 'jo9_farid_stored')\r\n result = jo9_fc_amount\r\n exit\r\nend\r\n\r\nif $jo9_fc_mode = 'collect':\r\n if farid_debt <= 0: exit\r\n jo9_fc_amount = farid_debt\r\n sparks += jo9_fc_amount\r\n farid_debt = 0\r\n ! An older payment must not erase a newer pending consignment.\r\n if farid_potential_debt <= 0: jo9_fc_ok = func('jo9_farid_consignment', 'clear', 'jo9_farid_stored')\r\n result = jo9_fc_amount\r\n exit\r\nend\r\nif $jo9_fc_mode = 'panel':\r\n $info_bar = '위탁 인물의 보관 기록을 확인할 수 없습니다.'\r\n if jo9_farid_stored_valid ! 1 or jo9_farid_stored_state ! CONST_INT['slave_exist']: exit\r\n jo9_fc_ok = func('jo9_farid_consignment', 'copy', 'jo9_farid_stored', 'jo9_farid_viewprobe')\r\n if jo9_fc_ok ! 1: exit\r\n !Stock Traits\r\n! JO9 MOD START COG_STOCK_DISPLAY | 2026-10-16_innate_learning_traits\r\n$jo9_farid_viewprobe_features_list = ''\r\nif jo9_farid_viewprobe['jo9_learning_trait'] = 1: $jo9_farid_viewprobe_features_list += '<a href=\"EXEC: msg $jo9_genius_text\"><<dyneval($vb_cycle_skill, 5, \"천재\")>></a><br>'\r\nif jo9_farid_viewprobe['jo9_learning_trait'] = -1: $jo9_farid_viewprobe_features_list += '<a href=\"EXEC: msg $jo9_idiot_text\"><<dyneval($vb_cycle_skill, 0, \"백치\")>></a><br>'\r\n! JO9 MOD END COG_STOCK_DISPLAY\r\n! JO9 MOD START TRAITS_DISPLAY_STOCK_COG_STOCK_DISPLAY | 2026-10-17_traits_batch\r\n $jo9_farid_viewprobe_features_list += $func('jo9_traits', 'list', 'jo9_farid_viewprobe')\r\n! JO9 MOD END TRAITS_DISPLAY_STOCK_COG_STOCK_DISPLAY\r\nsanity = jo9_farid_viewprobe['ego'] + jo9_farid_viewprobe['temper'] + jo9_farid_viewprobe['pride']\r\nif sanity < 3:\r\n\t$jo9_farid_viewprobe_features_list += '<a style = \"color: #cd0000;\" href=\"EXEC: msg $sanity_broken\">정신 상태</a><br>'\r\nelseif sanity < 5:\r\n\t$jo9_farid_viewprobe_features_list += '<a style = \"color: #ea0090;\" href=\"EXEC: msg $sanity_low\">정신 상태</a><br>'\r\nend\r\n!if jo9_farid_viewprobe['brand'] = 0:  $jo9_farid_viewprobe_features_list += '<a style = \"color: #cd0000;\" href = \"EXEC: msg $Нет_клейма\">Not Branded</a><br>'\r\nif jo9_farid_viewprobe['wounds'] > 0:  $jo9_farid_viewprobe_features_list += '<a href=\"EXEC: msg $wounds_chart\"><<$wounds[jo9_farid_viewprobe[\"wounds\"]]>></a><br>'\r\nif jo9_farid_viewprobe['scars'] > 0:   $jo9_farid_viewprobe_features_list += '<a href=\"EXEC: msg $scars_chart\"><<$scars[jo9_farid_viewprobe[\"scars\"]]>></a><br>'\r\nif jo9_farid_viewprobe['bruises'] > 0: $jo9_farid_viewprobe_features_list += '<a href=\"EXEC: msg $bruises_chart\"><<$bruises[jo9_farid_viewprobe[\"bruises\"]]>></a><br>'\r\nif cheat_no_starve = 0 and master_medic >= 4:\r\n\tif jo9_farid_viewprobe['days_without_food'] = 0 and jo9_farid_viewprobe['neg_hungry'] > 0:\r\n\t\t$jo9_farid_viewprobe_features_list += '<a href=\"EXEC: msg $starvation_chart\"><<$starvation[1]>></a><br>'\r\n\telseif jo9_farid_viewprobe['days_without_food'] = 1:\r\n\t\t$jo9_farid_viewprobe_features_list += '<a href=\"EXEC: msg $starvation_chart\"><<$starvation[2]>></a><br>'\r\n\telseif jo9_farid_viewprobe['days_without_food'] = 2:\r\n\t\t$jo9_farid_viewprobe_features_list += '<a href=\"EXEC: msg $starvation_chart\"><<$starvation[3]>></a><br>'\r\n\telseif jo9_farid_viewprobe['days_without_food'] = 3 or jo9_farid_viewprobe['days_without_food'] < 0:\r\n\t\t$jo9_farid_viewprobe_features_list += '<a href=\"EXEC: msg $starvation_chart\"><<$starvation[4]>></a><br>'\r\n\telseif jo9_farid_viewprobe['days_without_food'] > 3:\r\n\t\t$jo9_farid_viewprobe_features_list += '<a href=\"EXEC: msg $starvation_chart\"><<$starvation[5]>></a><br>'\r\n\tend\r\nend\r\nif jo9_farid_viewprobe['rehabilitation'] > 0: $jo9_farid_viewprobe_features_list += '<font color=\"#cd0000\">회복</font> [<<jo9_farid_viewprobe[\"rehabilitation\"]>>]<br>'\r\nif jo9_farid_viewprobe['virginity'] < 2: $jo9_farid_viewprobe_features_list += '처녀<br>'\r\nif jo9_farid_viewprobe['grace'] > 0: $jo9_farid_viewprobe_features_list += '<a href=\"EXEC: msg $NaturalGrace\">우아함</a><br>'\r\nif jo9_farid_viewprobe['grace'] < 0: $jo9_farid_viewprobe_features_list += '<font color=\"#cd0000\">어설픔</font><br>'\r\nif jo9_farid_viewprobe['dexterity'] > 0: $jo9_farid_viewprobe_features_list += '<a href=\"EXEC: msg $Dexterity\">손재주 좋음</a><br>'\r\nif jo9_farid_viewprobe['dexterity'] < 0: $jo9_farid_viewprobe_features_list += '<font color=\"#cd0000\">서투름</font><br>'\r\nif jo9_farid_viewprobe['arena_level'] > 8:\r\n\t$jo9_farid_viewprobe_features_list += '투기장 그랜드 챔피언<br>'\r\nelseif jo9_farid_viewprobe['arena_level'] > 4:\r\n\t$jo9_farid_viewprobe_features_list += '투기장 챔피언<br>'\r\nend\r\n!if jo9_farid_viewprobe['fertility'] = -2: $jo9_farid_viewprobe_features_list += 'Immature<br>'\r\n\r\n $jo9_fc_panel = '<br>\t 속성정보<br><div style=\"line-height:25%\">\r\n</div><font style=\"font-size:12px;\"> 외모\t\t</font><<$beauty[jo9_farid_viewprobe[\"beauty\"]]>>\r\n<font style=\"font-size:12px;\"> 체력\t</font><<$stamina[jo9_farid_viewprobe[\"stamina\"]]>>\r\n<font style=\"font-size:12px;\"> 감수성\t</font><<$sensitivity[jo9_farid_viewprobe[\"sensitivity\"]]>>\r\n<a style=\"line-height:25%\"><br></a><font style=\"font-size:12px;\"> 성격\t\t</font>\t<<$temper[jo9_farid_viewprobe[\"temper\"]]>>\r\n<font style=\"font-size:12px;\"> 지성\t\t</font><<$intellect[jo9_farid_viewprobe[\"intellect\"]]>>\r\n<font style=\"font-size:12px;\"> 자아\t</font><<$ego[jo9_farid_viewprobe[\"ego\"]]>><br><a style=\"line-height:25%\">\r\n</a><font style=\"font-size:12px;\"> 태도\t</font><<$pride[jo9_farid_viewprobe[\"pride\"]]>>\r\n<font style=\"font-size:12px;\"> 독특함\t</font><<$exotic[jo9_farid_viewprobe[\"exotic\"]]>>\r\n<font style=\"font-size:12px;\"> 체형\t</font><<$fat[jo9_farid_viewprobe[\"fat\"]]>><br><a style=\"line-height:25%\">\r\n</a><font style=\"font-size:12px;\"> 화려함\t</font><<$style[jo9_farid_viewprobe[\"style\"]]>><br></a>'\r\n! JO9 MOD END J9M1332\r\n\r\nif $master_head_gear = 'raven_crown':\r\n$jo9_fc_panel += '<br><font style=\"color:#000000\">노예의 특성</font><a style=\"line-height:25%\"><br>\r\n</a><<$ucase($mid($stock_boobs2_txt[jo9_farid_viewprobe[\"boobs\"]],1,1))+mid($stock_boobs2_txt[jo9_farid_viewprobe[\"boobs\"]],2)>><a style=\"line-height:25%\"><br></a><<$jo9_farid_viewprobe_features_list>>'\r\n\tis_stock = 1\r\n\tgs '$slave_price', 'jo9_farid_viewprobe'\r\n\t$info_bar = '노예 등급: <<$rating[rating]>><br>연 령 대: <<$slave_age_name[jo9_farid_viewprobe[\"age\"]]>><br></a>'\r\n\t$info_bar += '<<$jo9_fc_panel>>'\r\nelse\r\n\t$info_bar = '<<$jo9_fc_panel>>'\r\nend\r\n\r\n\r\n ! Trait links must refer to the retained actor, not the disposable probe.\r\n $info_bar = replace($info_bar, 'jo9_farid_viewprobe', 'jo9_farid_stored')\r\n $special_image[3] = '<<func(\"jo9_seed_role_images\", \"resolve\", jo9_farid_stored_type, $jo9_farid_stored[\"fullimage\"], \"fullimage\")>>.png'\r\n jo9_fc_ok = func('jo9_farid_consignment', 'clear', 'jo9_farid_viewprobe')\r\n result = 1\r\n exit\r\nend\r\n! JO9 MOD END FARID_CONSIGNMENT_STORAGE_20261028\r\n",
+      "actions": []
+    }
+  ]
+}

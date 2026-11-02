@@ -1,0 +1,3 @@
+'use strict';
+const fs=require('fs'),R='G:/somi/JO9sa',G='G:/somi/Jack O Nine Tails v2.4_work/game',c=require(R+'/tools/text-workshop/core.cjs'),d=c.parse(fs.readFileSync(G+'/jack.qsp')),l=d.locations.find(x=>x.name==='#противники'),rows=c.shift(d.lines[l.body],5).split('\r\n');
+const selected=rows.map((text,i)=>({line:i+1,text})).filter(x=>/\['(?:vatican_paladin|kimerian_d|лич|крысолюд|вервольф)'\]/.test(x.text)&&/текст|кратко|тип_вреда/.test(x.text));fs.writeFileSync(__dirname+'/before-fields.json',JSON.stringify({sha256:d.hash,selected},null,2));console.log(JSON.stringify({hash:d.hash,selected},null,2));

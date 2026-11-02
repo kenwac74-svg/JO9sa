@@ -1,0 +1,767 @@
+
+LOCATION display_fullimage | body lines 12-18
+12: if dyneval('result = <<$args[0]>>_state') ! CONST_INT['slave_exist']: $result = '' & exit
+13: 
+14: $actor_name = $args[0]
+15: $outfit_game = dyneval('$result = $<<$args[0]>>["cloth"]')
+16: $outfit_patch = ''
+17: 
+18: if $outfit_game = 'голая': $outfit_patch = 'naked'
+
+LOCATION display_fullimage | body lines 40-106
+40: $def_img_key = 'fullimage'
+41: $patch_img_arr_name = 'indpack_title'
+42: $patch_image_path = ''
+43: $patch_mood_image_path = ''
+44: actor_type = dyneval('result = <<$actor_name>>_type')
+45: actor_moral = dyneval('result = <<$actor_name>>["moral"]')
+46: actor_arousal = dyneval('result = <<$actor_name>>["arousal"]')
+47: $def_image_path = dyneval('$result = $<<$actor_name>>["fullimage"]')
+48: 
+49: if $outfit_patch <> '' :
+50:     $patch_img_arr_name = 'indpack_' + $outfit_patch
+51: end
+52: 
+53:     if $actor_name = 'slave':
+54:         actor_type = slave_type
+55:         $def_image_path = $slave[ $def_img_key ]
+56:         actor_moral = slave['moral']
+57:         actor_arousal = slave['arousal']
+58:     elseif $actor_name = 'assistant':
+59:         $assistant_img_key = ''
+60: 		if assistant['image_mode'] = 1:
+61: 			$assistant_img_key = 'fullmistress'
+62:             $patch_img_arr_name = 'indpack_dom'
+63: 		end
+64: 		if assistant['image_mode'] = 2:
+65:             $assistant_img_key = 'fullmade'
+66: 			$patch_img_arr_name = 'indpack_maid'
+67: 		end
+68: 		if assistant['image_mode'] = 3:
+69: 			$assistant_img_key = 'fullsecretary'
+70:             $patch_img_arr_name = 'indpack_secr'
+71: 		end
+72:         actor_type = assistant_type
+73:         actor_moral = assistant['moral']
+74:         actor_arousal = assistant['arousal']
+75: 
+76:         $assistant_image_path = $assistant[ $assistant_img_key ]
+77:         if $assistant_image_path <> '':
+78:             $def_image_path = $assistant_image_path
+79:         else
+80:             $def_image_path = $assistant[ $def_img_key ]
+81:         end
+82: 
+83:     elseif $actor_name = 'cow':
+84:         $patch_img_arr_name = 'indpack_cow'
+85:         actor_type = cow_type
+86:         $def_image_path = $cow[ $def_img_key ]
+87:         actor_moral = cow['moral']
+88:         actor_arousal = cow['arousal']
+89:     elseif $actor_name = 'prisoner':
+90:         actor_type = prisoner_type
+91:         $def_image_path = $prisoner[ $def_img_key ]
+92:         actor_moral = prisoner['moral']
+93:         actor_arousal = prisoner['arousal']
+94:     elseif $actor_name = 'stock':
+95:         $patch_img_arr_name = 'indpack_title'
+96:         actor_type = stock_type
+97:         $def_image_path = $stock[ $def_img_key ]
+98:     elseif $actor_name = 'farmhand':
+99:         actor_type = farmhand_type
+100:         $def_image_path = $farmhand[ $def_img_key ]
+101:     end
+102: 
+103: ! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022
+104: $def_image_path = func('jo9_seed_role_images', 'resolve', actor_type, $def_image_path, $iif($actor_name = 'assistant', $assistant_img_key, 'fullimage'))
+105: ! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022
+106: $patch_image_path = dyneval('$result = $<<$patch_img_arr_name>>[actor_type]')
+
+LOCATION display_fullimage | body lines 108-134
+108: if $patch_image_path = '':
+109:     $res_image_path = $def_image_path
+110: else
+111:     $patch_mood_suffix = ''
+112:     if actor_arousal > 3:
+113:         $patch_mood_suffix = '_horny'
+114:     elseif actor_moral < 3:
+115:         $patch_mood_suffix = '_rebel'
+116:     end
+117: 
+118:     $patch_mood_tagname = $patch_img_arr_name+$patch_mood_suffix
+119:     
+120:     if $patch_mood_suffix <> '':
+121:         $patch_mood_image_path = dyneval('$result = $<<$patch_mood_tagname>>[actor_type]')
+122:     end
+123: 
+124:     if $patch_mood_image_path <> '':
+125:         $res_image_path = $patch_mood_image_path
+126:     else
+127:         $res_image_path = $patch_image_path
+128:     end
+129: 
+130: end
+131: 
+132: ! JO9 MOD START J9M1255 | 2026-10-08_persistent_image_cycle | changed block; context may be included
+133: $result = '<div id="<<$args[1]>>"><img src="content\pic\<<$res_image_path>>.png"></div>'
+134: if $args[1] = 'bg' or $args[1] = 'large_image': $result = func('interior_change', 'jo9_html', $result)
+
+LOCATION display_pic | body lines 19-48
+19: 	$init_slave_image_characteristics = {
+20: 		! Getting slave info for showing pics lokplart
+21: 		if $dynslave['hairColor'] = '' and dynslave_state ! CONST_INT['no_slave']:
+22: 			if instr($dynslave['fullimage'], 'white') ! 0: 
+23: 				$dynslave['hairColor'] = 'white'
+24: 			elseif instr($dynslave['fullimage'], 'red') ! 0: 
+25: 				$dynslave['hairColor'] = 'red'
+26: 			elseif instr($dynslave['fullimage'], 'purple') ! 0: 
+27: 				$dynslave['hairColor'] = 'purple'
+28: 			elseif instr($dynslave['fullimage'], 'pink') ! 0: 
+29: 				$dynslave['hairColor'] = 'pink'
+30: 			elseif instr($dynslave['fullimage'], 'green') ! 0: 
+31: 				$dynslave['hairColor'] = 'green'
+32: 			elseif instr($dynslave['fullimage'], 'brown') ! 0: 
+33: 				$dynslave['hairColor'] = 'brown'
+34: 			elseif instr($dynslave['fullimage'], 'blue') ! 0: 
+35: 				$dynslave['hairColor'] = 'blue'
+36: 			elseif instr($dynslave['fullimage'], 'blond') ! 0: 
+37: 				$dynslave['hairColor'] = 'blond'
+38: 			elseif instr($dynslave['fullimage'], 'black') ! 0: 
+39: 				$dynslave['hairColor'] = 'black'
+40: 			end
+41: 			if instr($dynslave['fullimage'], 'short') ! 0:
+42: 				$dynslave['hairLen'] = 'short'
+43: 			else
+44: 				$dynslave['hairLen'] = 'long'
+45: 			end
+46: 		end
+47: 	}
+48: end
+
+LOCATION display_pic | body lines 73-93
+73: ! getting main subject info
+74: if $main_actor = 'slave':
+75: 	if $args[1] = 'fullimage':
+76: ! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022
+77: 		$result = func("jo9_seed_role_images", "resolve", slave_type, $slave['fullimage'], "fullimage")
+78: ! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022
+79: 		exit
+80: 	else
+81: 		dynamic $replace($init_slave_image_characteristics, 'dyn'+'slave', 'slave')
+82: 		$main_spec_noNr = $slave['hairColor'] + '_' + $slave['hairLen'] + '_' + $age[slave['age']]
+83: 		$main_gen_noNr = 'general_' + $age[slave['age']]
+84: 		$unique_scene_tag = $slave_scene_tag    &!고유씬이미지태그
+85: 		main_actor_type = slave_type
+86: 	end
+87: elseif $main_actor = 'assistant':
+88: 	if $args[1] = 'fullimage':
+89: ! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022
+90: 		$result = func("jo9_seed_role_images", "resolve", assistant_type, $assistant['fullimage'], "fullimage")
+91: ! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022
+92: 		exit
+93: 	else
+
+LOCATION display_pic | body lines 127-132
+127: elseif $main_actor = 'stock':
+128: 	if $args[1] = 'fullimage':
+129: ! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022
+130: 		$result = func("jo9_seed_role_images", "resolve", stock_type, $stock['fullimage'], "fullimage")
+131: ! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022
+132: 		exit
+
+LOCATION jo9_seed_role_images | body lines 38-91
+38: if $args[0]='resolve':
+39:  $result=$args[2]
+40:  jo9_seed_role_id=args[1]
+41:  $jo9_seed_role_wanted=$args[3]
+42: ! JO9 MOD START INDIE_EVENT_FULLIMAGE_20261023 | 2026-10-23_indie_event_fullimage
+43:  ! Resolve only a known default/role alias for this ID; do not rewrite actor caches.
+44:  if $jo9_seed_role_wanted='fullimage' and $args[2] ! '':
+45:   $jo9_seed_role_new=''
+46:   if $args[2]=$fullimage[jo9_seed_role_id]:
+47:    $jo9_seed_role_new=$indpack_title[jo9_seed_role_id]
+48:   elseif $args[2]=$fullmade[jo9_seed_role_id]:
+49:    $jo9_seed_role_new=$indpack_maid[jo9_seed_role_id]
+50:    if $jo9_seed_role_new='': $jo9_seed_role_new=$indpack_title[jo9_seed_role_id]
+51:   elseif $args[2]=$fullsecretary[jo9_seed_role_id]:
+52:    $jo9_seed_role_new=$indpack_secr[jo9_seed_role_id]
+53:    if $jo9_seed_role_new='': $jo9_seed_role_new=$indpack_title[jo9_seed_role_id]
+54:   elseif $args[2]=$fullmistress[jo9_seed_role_id]:
+55:    $jo9_seed_role_new=$indpack_dom[jo9_seed_role_id]
+56:    if $jo9_seed_role_new='': $jo9_seed_role_new=$indpack_title[jo9_seed_role_id]
+57:   end
+58:   if $jo9_seed_role_new ! '': $result=$jo9_seed_role_new & exit
+59:  end
+60: ! JO9 MOD END INDIE_EVENT_FULLIMAGE_20261023
+61:  if jo9_seed_role_id>=2577 and jo9_seed_role_id<=2601:
+62:   for jo9_seed_role_k=0 to 3:
+63:    jo9_seed_role_known=1
+64:    if jo9_seed_role_k=3 and (jo9_seed_role_id=2585 or jo9_seed_role_id=2597 or jo9_seed_role_id=2600 or jo9_seed_role_id=2601): jo9_seed_role_known=0
+65:    if jo9_seed_role_known=1:
+66:     $jo9_seed_role_old='girls/full/'+$jo9_seed_role_dirs[jo9_seed_role_k]+'/'+$jo9_seed_role_stem[jo9_seed_role_id-2577]
+67:     if $args[2]=$jo9_seed_role_old:
+68:      $result=$fullimage[jo9_seed_role_id]
+69:      if $jo9_seed_role_wanted='fullmade' or $jo9_seed_role_wanted='fullsecretary' or $jo9_seed_role_wanted='fullmistress' or $jo9_seed_role_wanted='fullpregnant':
+70:       $jo9_seed_role_new=dyneval('$result = $<<$jo9_seed_role_wanted>>[jo9_seed_role_id]')
+71:       if $jo9_seed_role_new ! '': $result=$jo9_seed_role_new
+72:      end
+73:      exit
+74:     end
+75:    end
+76:   end
+77:  end
+78:  exit
+79: end
+80: ! Original25 role values are absent/empty. Four absent legacy pregnancy keys are never inferred.
+81: for jo9_seed_role_id=2577 to 2601:
+82:  for jo9_seed_role_k=0 to 3:
+83:   jo9_seed_role_known=1
+84:   if jo9_seed_role_k=3 and (jo9_seed_role_id=2585 or jo9_seed_role_id=2597 or jo9_seed_role_id=2600 or jo9_seed_role_id=2601): jo9_seed_role_known=0
+85:   if jo9_seed_role_known=1:
+86:    $jo9_seed_role_old='girls/full/'+$jo9_seed_role_dirs[jo9_seed_role_k]+'/'+$jo9_seed_role_stem[jo9_seed_role_id-2577]
+87:    dynamic "if $<<$jo9_seed_role_keys[jo9_seed_role_k]>>[jo9_seed_role_id]=$jo9_seed_role_old: $<<$jo9_seed_role_keys[jo9_seed_role_k]>>[jo9_seed_role_id]=''"
+88:   end
+89:  end
+90: end
+91: ! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022
+
+LOCATION jo9_buyer_rumors | body lines 10-66
+10: if $jo9_rm_mode = 'refreshmenus':
+11:  $expert_options[1] = {
+12: 	npc = 1 & $npc_id = 'master_skups'
+13: ! JO9 MOD START J9M2442 | 2026-10-15_trim_leading_body_blank_lines | changed block; context may be included
+14: 	$sp_text[1] = '당신은 노예 조사부의 대표자를 만났다. 이 조교사들은 노예를 평가하는 일과 시장에서 고급 노예들을 찾는데의 전문가들이다.'
+15: ! JO9 MOD END J9M2442
+16: 	$text_display = '<br><br>'
+17: 	func('$menu', 'spacer', 2)
+18: 	func('$menu', '===BEGIN===', 'column_0')
+19: 	func('$menu', 'interaction_city', $menu_item_services, menu_services, '이곳의 업무에 대하여 묻는다')
+20: 	if search['active'] = 0: func('$menu', 'exec_options', $menu_item_Order_slave, 'sp_txt = 11 & gt $curloc', '노예탐색 의뢰')
+21: 	if search['active'] = 1: func('$menu', 'interaction_city', $menu_item_Cancelservices, menu_Cancelservices, '의뢰 취소')
+22: 	if search['active'] = 3: func('$menu', 'interaction_city', $menu_item_Pickservices, menu_Pickservices, '노예를 데려간다')
+23: ! JO9 MOD START BUYER_RUMOR_MENU_SKUPS | 2026-10-24_buyer_rumors
+24: gs 'jo9_buyer_rumors', 'menu', 'skups'
+25: ! JO9 MOD END BUYER_RUMOR_MENU_SKUPS
+26: ! JO9 MOD START J9M2441 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included
+27: 	func('$menu', 'goto_city', $menu_item_end_conv, guild, '#options', 'guild', '대화 종료')
+28: ! JO9 MOD END J9M2441
+29: 	func('$menu', '===END===')
+30: }
+31: $tavern_options[2] = {
+32: 	npc = 1 & $npc_id = 'barman'
+33: 	$text_display = '<br>'
+34: 	!func('$menu', 'spacer', 1)
+35: 
+36: 	func('$menu', '===BEGIN===', 'column_0')
+37: 	!$text_display += {<br><div id="under_gray">Check out the news (1 sparks)<br></div>}
+38: 	func('$menu', 'interaction_city', $menu_item_preferencesbar, menu_preferencesbar, '채용조건을 확인한다')
+39: 	if slave_state = CONST_INT['slave_exist'] and slave['brand'] > 0 and slave['brand'] ! 4:
+40: 		func('$menu', 'interaction_city', $menu_item_Offerbar, menu_Offerbar, '노예를 제안한다')
+41: 	else
+42: 		func('$menu', 'location_gray_tooltip', $menu_item_Offerbar_gray, empty, '노예를 제안한다', '거래 가능한 노예가 없다')
+43: 	end
+44: ! JO9 MOD START BUYER_RUMOR_MENU_BARMAN | 2026-10-24_buyer_rumors
+45: gs 'jo9_buyer_rumors', 'menu', 'barman'
+46: ! JO9 MOD END BUYER_RUMOR_MENU_BARMAN
+47: 	func('$menu', 'exec_options', $menu_item_Leavebar, 'sp_txt = 1 & gt $curloc', '대화를 끝낸다')
+48: 	func('$menu', '===END===')
+49: }
+50: $kafe_options[1] = {
+51: FUNC('$menu', 'spacer', 1)
+52: FUNC('$menu', '===BEGIN===', 'column_0')
+53: ! FUNC('$menu', 'exec_options', $menu_item_Fashonmen, 'sp_txt = 2 & gt $curloc', 'Men’s Goods')
+54: FUNC('$menu', 'interaction_city', $menu_item_anes, 2992, '요구 사항을 묻는다')
+55: 
+56: IF slave_state = CONST_INT['slave_exist'] and slave['brand'] > 0 and slave['brand'] < 4 and credit = 0:
+57: 	FUNC('$menu', 'interaction_city', $menu_item_kafe, 2993, '노예를 제안한다')
+58: ELSE
+59: 	FUNC('$menu', 'location_gray', $menu_item_offer_employee_gray, empty, '노예를 제안한다')
+60: END
+61: 
+62: ! JO9 MOD START BUYER_RUMOR_MENU_ANES | 2026-10-24_buyer_rumors
+63: gs 'jo9_buyer_rumors', 'menu', 'anes'
+64: ! JO9 MOD END BUYER_RUMOR_MENU_ANES
+65: FUNC('$menu', 'city_form', $menu_item_redlight, menu_leaveredlight_district, '카페를 떠난다')
+66: FUNC('$menu', '===END===')
+
+LOCATION jo9_buyer_rumors | body lines 79-87
+79: if $jo9_rm_mode = 'menu':
+80:  local jo9_rm_fee = func('jo9_buyer_rumors', 'fee', $jo9_rm_provider)
+81:  if jo9_rm_fee = 0: exit
+82:  jo9_rumor_serial += 1
+83:  jo9_rumor_pending = jo9_rumor_serial
+84:  $jo9_rumor_pending_provider = $jo9_rm_provider
+85: ! JO9 MOD START RUMOR_ANCHOR_CONSULT_20261025
+86:  func('$menu', 'exec', $menu_item_services, 'gt ''jo9_buyer_rumors'', ''consult'', ''<<$jo9_rm_provider>>'', <<jo9_rumor_pending>>', '구매자 소문을 듣는다 ($<<jo9_rm_fee>>)')
+87: ! JO9 MOD END RUMOR_ANCHOR_CONSULT_20261025
+
+LOCATION jo9_buyer_rumors | body lines 144-171
+144: gs '_layout'
+145: local $jo9_rm_npc = 'master_skups'
+146: local $jo9_rm_region = '백색도시 · 네크로폴리스 · 황소구역 · 중앙구역'
+147: if $jo9_rm_provider = 'barman': $jo9_rm_npc = 'barman' & $jo9_rm_region = '뱀자리구역 · 추방자구역 · 동부구역'
+148: if $jo9_rm_provider = 'anes': $jo9_rm_npc = 'anes' & $jo9_rm_region = '홍등가 · 도시관문'
+149: *p func('interior_change', 'jo9_html', '<div id="bg"><img src="content/pic/bg/<<$bg[$place]>>.png"></div>')
+150: if nsfw = 0 and $npc_image[$jo9_rm_npc] ! '': *p func('interior_change', 'jo9_html', '<div id="bg"><img src="content/pic/characters/<<$npc_image[$jo9_rm_npc]>>.png"></div>')
+151: *p '<div id="side_panel_text" style="color:#20160e;font-size:20px;line-height:1.3;"><b>구매자 소문</b><br><<$jo9_rm_region>><br><br>주거지와 상점의 고정 요구사항을 바탕으로 한 소문이다. 퀘스트와 특수 의뢰는 다루지 않는다.<br><br>여러 명이 비슷하게 맞으면 함께 알려 준다. 실제 거래 전에는 상대의 요구를 다시 확인하자.</div>'
+152: ! JO9 MOD START ANES_RUMOR_VOICE_20261026 | 2026-10-26_anes_rumor_voice
+153: ! Render Anes in her established polite voice, including pages restored from an earlier save.
+154: local $jo9_rm_page_text = $jo9_rumor_pages[jo9_rumor_page]
+155: if $jo9_rm_provider = 'anes':
+156:  $jo9_rm_page_text = replace($jo9_rm_page_text, '내가 듣기로는 ', '제가 듣기로는 ')
+157:  $jo9_rm_page_text = replace($jo9_rm_page_text, '의 상태가 잘 맞는군. 이 근방에서도 눈여겨볼 만한 상대들이지. 직접 찾아가 이야기를 들어 보게.', '의 상태가 잘 맞아요. 이 근방에서도 눈여겨볼 만한 분들이에요. 직접 찾아가 이야기를 들어 보세요.')
+158:  $jo9_rm_page_text = replace($jo9_rm_page_text, '에게는 지금 이 지역에서 권할 만한 고정 구매처가 떠오르지 않는군. 몸 상태나 낙인, 교육 정도를 다시 살펴보게.', '에게는 지금 이 지역에서 권할 만한 고정 구매처가 떠오르지 않네요. 몸 상태나 낙인, 교육 정도를 다시 살펴보세요.')
+159: end
+160: *p '<div id="text" style="color:#20160e;overflow:auto;">[<<$npc_name[$jo9_rm_npc]>>]<br><<$jo9_rm_page_text>></div>'
+161: ! JO9 MOD END ANES_RUMOR_VOICE_20261026
+162: $text_display = ''
+163: func('$menu', '===BEGIN===', 'column_0')
+164: ! JO9 MOD START RUMOR_ANCHOR_PREVIOUS_20261025
+165: if jo9_rumor_page > 0: func('$menu', 'exec', $menu_item_services, 'jo9_rumor_page -= 1 & gt ''jo9_buyer_rumors'', ''view'', ''<<$jo9_rm_provider>>''', '이전 소문')
+166: ! JO9 MOD END RUMOR_ANCHOR_PREVIOUS_20261025
+167: ! JO9 MOD START RUMOR_ANCHOR_NEXT_20261025
+168: if jo9_rumor_page + 1 < arrsize('$jo9_rumor_pages'): func('$menu', 'exec', $menu_item_services, 'jo9_rumor_page += 1 & gt ''jo9_buyer_rumors'', ''view'', ''<<$jo9_rm_provider>>''', '다음 소문')
+169: ! JO9 MOD END RUMOR_ANCHOR_NEXT_20261025
+170: ! JO9 MOD START RUMOR_ANCHOR_BACK_20261025
+171: func('$menu', 'exec', $menu_item_end_conv, 'gt ''jo9_buyer_rumors'', ''back'', ''<<$jo9_rm_provider>>''', '대화로 돌아간다')
+
+LOCATION get_stock_seed | body lines 290-300
+290: 	if stock['tolerant_work'] <0: stock['tolerant_work'] = 0
+291: end
+292: 
+293: !Images
+294: $stock['fullimage'] = $fullimage[stock_type]
+295: $stock['ava'] = $seed_ava[stock_type]
+296: $stock['ava_gray'] = $seed_ava_gray[stock_type]
+297: $stock['ava_clear'] = $seed_ava_clear[stock_type]
+298: 
+299: !Equipment
+300: $stock['wpn'] = 'безоружный'
+
+LOCATION #static_base | body lines 442-510
+442: $slave_vars[] = 'instance_already_sex_today'          &! replaced 'today_sex_curslave'                      &! array var, each index corresponds to an interaction id, with a count as the value
+443: $slave_vars[] = 'instance_already_sex_total'          &! replaced 'already_sex_curslave'                    &! array var, each index corresponds to an interaction id, with a count as the value
+444: 
+445: $slave_vars[] = 'interaction_instance'                &! per-slave-instance reset-for-each-interaction keys &! array var, each string index corresponds to a "key" name, with an integer value
+446: $slave_vars[] = '$instance_scene_tag'                &!고유씬이미지태그 tag for print unique-scene-images of mod-characters
+447: $slave_vars[] = '$instance_dohna_tag'                &!도나도나 캐릭터
+448: 
+449: !swap two slave instances together with all associated variables
+450: !call with: dynamic $swap_slave_instances, 'instance1', 'instance2'  where each instance is e.g., 'slave', 'iced_1', 'prisoner', 'farmhand', etc.
+451: 
+452: $swap_slave_instances = {
+453: 	_counter = arrsize('$slave_vars')
+454: 	:_swap_slave_instance_loop
+455: 		_counter -= 1
+456: 		$from_var = $replace($slave_vars[_counter], 'instance', $args[0])
+457: 		$to_var = $replace($slave_vars[_counter], 'instance', $args[1])
+458: 		! from -> _temp
+459: 		killvar '_temp'
+460: 		copyarr '_temp', $from_var
+461: 		! to   -> from
+462: 		killvar $from_var
+463: 		copyarr $from_var, $to_var
+464: 		! temp -> to
+465: 		killvar $to_var
+466: 		copyarr $to_var, '_temp'
+467: 	if _counter > 0: jump '_swap_slave_instance_loop'
+468: 
+469: 	killvar '$from_var'
+470: 	killvar '$to_var'
+471: 	killvar '_temp'
+472: 	killvar '_counter'
+473: 
+474: 	! update strings that may contain if statements or subexpressions referring to these slave instances
+475: 	dynamic $replace($update_slave_features_list, 'dyn'+'slave', $args[0])
+476: 	dynamic $replace($update_slave_features_list, 'dyn'+'slave', $args[1])
+477: 	gs '#var_base'
+478: 	gs '#txt_man'   &! after #var_base
+479: 	gs '#txt_2_man' &! after #var_base
+480: }
+481: 
+482: $clear_slave_instance = {
+483: 	_counter = arrsize('$slave_vars')
+484: 	:_clear_slave_instance_loop
+485: 		_counter -= 1
+486: 		killvar $replace($slave_vars[_counter], 'instance', $args[0])
+487: 	if _counter > 0: jump '_clear_slave_instance_loop'
+488: 	killvar '_counter'
+489: 
+490: 	dynamic "
+491: 		$<<$args[0]>>['wpn'] = 'безоружный' &! fists
+492: 		$<<$args[0]>>['right_wpn'] = 'безоружный' &! fists
+493: 		$<<$args[0]>>['left_wpn'] = 'безоружный' &! fists
+494: 		$<<$args[0]>>['armor'] = 'без_брони' &! without armor
+495: 		$<<$args[0]>>['cloth'] = 'голая' &! naked
+496: 	"
+497: 	
+498: 	! update strings that may contain if statements or subexpressions referring to the cleared slave instance
+499: 
+500: !	if hero_choice > 100: gs '#var_base_woman'
+501: 	
+502: 	gs '#var_base'
+503: 	gs '#txt_man'   &! after #var_base
+504: 	gs '#txt_2_man' &! after #var_base
+505: !	if hero_choice > 100: gs '#txt_woman' &! after #var_base
+506: !	if hero_choice > 100: gs '#txt_2_woman' &! after #var_base
+507: end
+508: end
+509: }
+510: 
+
+LOCATION $gladiator_fight_start | body lines 24-34
+24: gs '#суперудары'
+25: gs '#боевые_предметы'
+26: 
+27: !Interface
+28: gs 'раскладка_бой'
+29: 
+30: ! JO9 MOD START COMBAT_COLOR_ARENA_SLAVE | 2026-10-24_combat_color_portraits
+31: $combatant_ava = '<<$slave[''ava_clear'']>>.png'
+32: ! JO9 MOD END COMBAT_COLOR_ARENA_SLAVE
+33: $combatant_name = $slave_name
+34: $броня = $armor[$g_type]
+
+LOCATION interaction_city | body lines 1706-1724
+1706: if interaction_city = 12801:
+1707: 	$place = 'colosseum_arena'
+1708: 	$return_lock = '$gladiator_fight_start'
+1709: 	$toplay = 'arena'
+1710: 	$special_image[1] = 'characters\games_superviser.png'
+1711: ! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022
+1712: 	$special_image[2] = '<<func("jo9_seed_role_images", "resolve", slave_type, $slave["fullimage"], "fullimage")>>.png'
+1713: ! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022
+1714: 	$special_image_full[3] = $силуэт_моба[$ge]
+1715: 	$text[1] = $superviser_message[superviser_message]
+1716: ! JO9 MOD START ARENA_INTRO_COPY_REFRESH_20261028
+1717: gs '#txt_man', 'jo9_arena_intro'
+1718: ! JO9 MOD END ARENA_INTRO_COPY_REFRESH_20261028
+1719: 	$text[2] = $arena_slave_presentation[1]
+1720: 	$text[3] = $описание_моба[$ge]
+1721: end
+1722: 
+1723: !slave dies on arena
+1724: if interaction_city = 1291:
+
+LOCATION interaction_city | body lines 5405-5460
+5405: if interaction_city = 163:
+5406: 	! end of conversation exits to White Town instead of Vatican gate
+5407: 	city_form = 1
+5408: 	$return_lock = 'city_menu_form'
+5409: 
+5410: 	! generate julia and put her in slave slot
+5411: 	special_stock = 2576
+5412: 	if no_loli ! 1: $special_age = 'loli'
+5413: 	gs 'generate_stock'
+5414: 	dynamic $swap_slave_instances, 'stock', 'slave'
+5415: 	slave['beauty_enhanced'] = 1
+5416: 	slave['neg_slave'] = 0
+5417: 	$slave['cloth'] = 'sun_dress'
+5418: 	slave['newness'] = 1
+5419: 
+5420: 	! match visuals with text
+5421: 	copyarr '$text', '$julia_meeting'
+5422: 	$special_action[1] = {
+5423: 		npc = 0
+5424: 		$place = 'vatican_gate'
+5425: 	}
+5426: 	$special_action[2] = {
+5427: 		npc = 1
+5428: 		$npc_id = 'johanna'
+5429: 		$place = 'church'
+5430: 	}
+5431: 	$special_action[3] = {
+5432: 		npc = 1
+5433: 		$npc_id = 'alyce'
+5434: 		$place = 'church'
+5435: 		$bg['vatican_bedroom'] = $interior_boudoir['gothic']
+5436: 	}
+5437: 	$special_action[15] = {
+5438: 		npc = 1
+5439: 		$npc_id = 'kuma'
+5440: 		$place = 'church'
+5441: 	}
+5442: 	$special_action[16] = {
+5443: 		npc = 1
+5444: 		show_slave_fullimage = 0
+5445: 		$npc_id = 'alyce'
+5446: 		$place = 'church'
+5447: 	}
+5448: 	$special_action[17] = {
+5449: 		npc = 1
+5450: 		show_slave_fullimage = 0
+5451: 		$npc_id = 'kuma'
+5452: 		$place = 'church'
+5453: 	}
+5454: 	$special_action[18] = {
+5455: 		! show julia on small white town background
+5456: 		npc = 1
+5457: 		$npc_id = 'alyce'
+5458: 		$place = 'church'
+5459: 	}
+5460: end
+
+LOCATION interaction_city | body lines 11144-11155
+11144: if interaction_city = 61120:
+11145: 	$place = 'edge_patrol'
+11146: 	$return_lock = 'shop_general'
+11147: 	$interaction_type = 'hunting_trophy'
+11148: 	$attackers_txt = ' 흉물들로 부터'
+11149: 	if $враг[2] = '': $attackers_txt = ''
+11150: ! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022
+11151: 	$special_image[1] = '<<func("jo9_seed_role_images", "resolve", stock_type, $stock["fullimage"], "fullimage")>>.png'
+11152: ! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022
+11153: ! JO9 MOD START J9M0817 | 2026-10-15_trim_leading_body_blank_lines | changed block; context may be included
+11154: 	$text[1] = '적은 발밑에 쓰러져 죽었고, 당신은 공포에 질려있는 <<$stock_noun2[stock["age"]]>>를 바라봤다.'
+11155: ! JO9 MOD END J9M0817
+
+LOCATION interaction_city | body lines 11226-11237
+11226: if interaction_city = 61132:
+11227: 	city_form = 61
+11228: 	$return_lock = 'city_menu_form'
+11229: 	$place = 'edge_patrol'
+11230: ! JO9 MOD START J9M0815 | 2026-10-15_trim_leading_body_blank_lines | changed block; context may be included
+11231: 	$text[1] = '당신은 이 여자를 데려가기로 마음 먹었다. 이제 당신의 노예다. 이 여자에 대한 처우는 이제 온전히 당신의 것이다.'
+11232: ! JO9 MOD END J9M0815
+11233: ! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022
+11234: 	$special_image[1] = '<<func("jo9_seed_role_images", "resolve", stock_type, $stock["fullimage"], "fullimage")>>.png'
+11235: ! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022
+11236: 	gs 'stock_to_slave_nogt' &! this option is only available if there is no current slave, so we can safely do this
+11237: end
+
+LOCATION interaction_screen_city | body lines 9-11
+9: if $special_action[txt] ! '':
+10: 	dynamic $special_action[txt]
+11: end
+
+LOCATION interaction_screen_city | body lines 40-47
+40: if $special_image_full[txt] ! '':
+41: ! JO9 MOD START J9M1343 | 2026-10-08_persistent_image_cycle | changed block; context may be included
+42: 	if nsfw = 0: *p func('interior_change', 'jo9_html', '<div id = "bg"><img src="<<$special_image_full[txt]>>"></div>')
+43: ! JO9 MOD END J9M1343
+44: elseif $special_image[txt] ! '':
+45: ! JO9 MOD START J9M1342 | 2026-10-08_persistent_image_cycle | changed block; context may be included
+46: 	if nsfw = 0: *p func('interior_change', 'jo9_html', '<div id = "bg"><img src="content\pic\<<$special_image[txt]>>"></div>')
+47: ! JO9 MOD END J9M1342
+
+LOCATION interaction_screen_city | body lines 136-142
+136: 		*p func('interior_change', 'jo9_html', '<div id = "bg"><img src="content/pic/bg/empty.png"></div>')
+137: ! JO9 MOD END J9M1334
+138: 	elseif $npc_image[$npc_id] ! '':
+139: ! JO9 MOD START J9M1333 | 2026-10-08_persistent_image_cycle | changed block; context may be included
+140: 		*p func('interior_change', 'jo9_html', '<div id = "bg"><img src="content\pic\characters\<<$npc_image[$npc_id]>>.png"></div>')
+141: ! JO9 MOD END J9M1333
+142: 	end
+
+LOCATION interaction_screen_city | body lines 174-181
+174: else
+175: 	$info_bar = '<<$for_inter_screen_city>>'
+176: end
+177: 
+178: ! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022
+179: if $interaction_type ! 'hunting_trophy': $special_image[3] = '<<func("jo9_seed_role_images", "resolve", stock_type, $stock["fullimage"], "fullimage")>>.png'
+180: ! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022
+181: if interaction_city = 61120 or interaction_city = 61121:
+
+LOCATION #npc_base | body lines 414-418
+414: npc_attitude['zappa'] = 30
+415: 
+416: $npc_image['master_skups'] = 'master_scoops'
+417: $npc_name['master_skups'] = '마스터 스컵스'
+418: $npc_status['master_skups'] = '노예상 조합 중역<br>중립'
+
+LOCATION #npc_base | body lines 655-678
+655: $npc_image['kuma'] = 'kuma'
+656: $npc_name['kuma'] = '쿠마'
+657: ! JO9 MOD START J9M2156 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included
+658: $npc_status['kuma'] = '나유타 -<br>노예상'
+659: ! JO9 MOD END J9M2156
+660: $npc_info['kuma'] = '<br> 나유타의 멤버이자 현 노예상.<br><br> 로마에 도착한 그는 살아남기도 버거운 상태였다.<br><br>운명인지 그는 다시 여자를 다루는 직업을 얻었고 과거의 경험을 살려 로마에 안정적으로 정착하는데 성공했다.<br><br> 그가 어떤 인물이 될지는 당신에게 달려있다.'
+661: npc_attitude['kuma'] = 22
+662: 
+663: $npc_image['kuma1'] = 'kuma1'
+664: $npc_name['kuma1'] = '쿠마'
+665: ! JO9 MOD START J9M2155 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included
+666: $npc_status['kuma1'] = '나유타 -<br>노예상'
+667: ! JO9 MOD END J9M2155
+668: $npc_info['kuma1'] = '<br> 나유타의 멤버이자 현 노예상.<br><br> 로마에 도착한 그는 살아남기도 버거운 상태였다.<br><br>운명인지 그는 다시 여자를 다루는 직업을 얻었고 과거의 경험을 살려 로마에 안정적으로 정착하는데 성공했다.<br><br> 그가 어떤 인물이 될지는 당신에게 달려있다.'
+669: npc_attitude['kuma1'] = 22
+670: 
+671: !아리스
+672: $npc_image['alyce'] = 'alyce'
+673: $npc_name['alyce'] = '아리스'
+674: ! JO9 MOD START J9M2154 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included
+675: $npc_status['alyce'] = '나유타 -<br>저격수'
+676: ! JO9 MOD END J9M2154
+677: $npc_info['alyce'] = '<br> 정체불명의 세력에 의해 실험체가 된 소녀.<br><br> 독보적인 사격술을 가진 그녀지만 정신상태는 매우 천연.<br><br> 나유타에 거둬진 이후로 쿠마를 오빠처럼 따른다.'
+678: npc_attitude['alyce'] = 30
+
+LOCATION #npc_base | body lines 1126-1129
+1126: $npc_image['johanna'] = 'johanna'
+1127: $npc_name['johanna'] = '요한나'
+1128: $npc_status['johanna'] = '교황 이오안 1세의 비서<br>바티칸'
+1129: ! JO9 MOD START J9M2137 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included
+
+LOCATION #npc_base | body lines 1215-1220
+1215: $npc_image['julia'] = 'julia'
+1216: $npc_id = 'julia'
+1217: $npc_name['julia'] = '줄리아'
+1218: $npc_status['julia'] = '어린 여자아이<br>중립파'
+1219: $npc_info['julia'] = '<br> 로마에서 아무런 권력도 힘도 없다.<Br><Br> 초췌한데다가 굶주리기 까지 해, 살아남기 위해선 누군가의 보호가 필요하다.'
+1220: npc_attitude['julia'] = 30
+
+LOCATION #npc_base | body lines 2531-2537
+2531: }
+2532: 
+2533: $npc_image['barman'] = 'barman'
+2534: $npc_name['barman'] = '작크'
+2535: $npc_status['barman'] = '바텐더<br>세르피스 가문 (반역파)'
+2536: $npc_alignment['barman'] = 'serpis'
+2537: $npc_info['barman'] = '<br> 엄청난 근조직을 가진 위협적인 드워프.<br><br> 그가 자신보다도 커다란 도끼를 카운터 밑에 숨기고 있다는 사실은, 그다지 비밀도 아니다. 덕분에 경비원도 이 술집에는 필요 없을 정도다.<br><br>물론 평상시의 작크는 좋은 남자이다.<br><br> 불평이 좀 많긴 하지만, 종업원 채용도 제안할 수 있다.'
+
+LOCATION #npc_base | body lines 7155-7161
+7155: 
+7156: 
+7157: $npc_image['anes'] = 'anes'
+7158: $npc_name['anes'] = '아네스'
+7159: $npc_status['anes'] = '카페 주인 (중립파)'
+7160: $npc_alignment['anes'] = 'redlight'
+7161: $npc_info['anes'] = '"신들의 선물" 카페의 주인으로, 정성스러운 플레이팅과 함께 정교한 요리들을 내놓는다. 몇몇 경쟁자들은 아네스가 미모와 몸매를 유지하기 위해 여러 엘릭서를 쓴다고 소문내지만, 그녀는 진정한 미식가는 자기 음식을 즐기면서도 건강하고 우아하며 활력이 넘친다고 주장한다.'
+
+LOCATION #txt_2_man | body lines 348-368
+348: 	$julia_meeting[1] = '[듀어드 대장]<br>&nbsp;자네를 기다리고 있었다. 요한나가 바로 저쪽에서 기다리고 있네.'
+349: 	$julia_meeting[2] = '[여자]<br>&nbsp;어서 오세요, <<$master_name>>. 저는 요한나예요. 그 아이는 깨어 있고, 당신을 만날 준비도 됐어요. 따라오세요, 길을 안내해 드릴게요.'
+350: ! JO9 MOD END J9M2671
+351: 	$julia_meeting[3] = '  그녀를 따라 방으로 들어서자, 어린 소녀 하나가 당신을 올려다본다. 얼굴에 환한 미소가 번지더니, 두 팔을 활짝 벌리고 당신에게 달려들어 안기며 울기 시작한다. 당신의 여동생, 줄리아다!'
+352: ! JO9 MOD START J9M2670 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included
+353: 	$julia_meeting[4] = '[줄리아]<br>&nbsp;정말 오빠였어… 설마, 그럴 리 없어, 불가능해… 그렇게 생각했는데… 진짜 오빠였어. 너무 무서웠는데, 그러다 그 얘길 들었고, 그래서 여기로 왔어…'
+354: 	$julia_meeting[5] = '[<<$master_name>>]<br>&nbsp;괜찮아, 이제 괜찮아. 아빠랑 엄마한테 무슨 일이 있었던 거야? 넌 왜 여기 있는 거고?'
+355: 	$julia_meeting[6] = '[줄리아]<br>&nbsp;오빠가 떠난 뒤에, 엄마랑 아빠가… 너무 화가 나 있었어. 그 화를 나한테 풀었어. 그러다 내가 자는 줄 알고 얘기하는 걸 들었는데… 나를 팔아버리려 했어! 그래서 도망쳤어. 하지만… 하지만, 어둠은… 혼자 견디기 힘들었어.'
+356: 	$julia_meeting[7] = '[<<$master_name>>]<br>&nbsp;그런데 넌 어떻게 나를 찾은 거야? 그리고 언제 도망친 거지?'
+357: 	$julia_meeting[8] = '[줄리아]<br>&nbsp;나도 잘 모르겠어… 오빠가 떠난 지 일주일쯤 지나서 나도 떠났어. 오빠가 전에 해 준 얘기가 조금 기억났고, 오빠가 떠난 뒤 오빠 책들도 읽었으니까, 그래서 해 보려고 했어… 하지만 망쳤어, 로마엔 가지 못했어.'
+358: 	$julia_meeting[9] = '[줄리아]<br>&nbsp;그 뒤엔 너무 지쳐서 다시 시도할 수가 없었어. 그래서 도와줄 사람을 찾아보려 했는데… 사람들은 다 너무 불친절했어. 닥치는 대로 찾아먹고, 훔치기도 하고, 쓰레기통에서도 주워 먹으면서 겨우 살아남았어…'
+359: 	$julia_meeting[10] = '[줄리아]<br>&nbsp;그 세계는 정말 좋은 곳이 아니었어… 그래서 다시 한 번 로마로 가 보려고 했어. 하지만 또 실패했지… 그러다 일주일 전쯤, 완전히 희망을 놓고 있었을 때 누군가 이야기하는 걸 엿들었어. <<$master_name>>라는 젊은 소년이 로마의 귀족이 되었다고 하더라. 난 내 귀를 의심했어. 그래서 그 사람들한테 다가가서…'
+360: 	$julia_meeting[11] = '[줄리아]<br>&nbsp;이렇게 말했어. "<<$master_name>>? 그게 정말이에요? 제 오빠예요! 저를 불멸의 로마로 데려다주시면, 분명 보답해 줄 거예요." 하지만 그 사람들은 날 믿지 않았고, 비웃었어. 난 완전히 무너졌지.'
+361: 	$julia_meeting[12] = '[줄리아]<br>&nbsp;그때 누군가 내 어깨에 손을 얹었어. 남자의 손이었어. 너무 무서웠어… 그런데 알고 보니 그 사람은 친절한 사람이었어. 자기는 로마에서 왔고, 오빠를 안다고 말했어…'
+362: 	$julia_meeting[13] = '[줄리아]<br>&nbsp;그 사람이 내게 몇 가지를 물었고, 아마 내가 그를 납득시킨 것 같아. 먹을 것도 주고, 그다음엔 안개를 지나 함께 나를 여기, 바티칸으로 데려왔어. 여기서 요한나가 나를 돌봐 줬어.'
+363: 	$julia_meeting[14] = '[줄리아]<br>&nbsp;드디어 오빠를 찾았고, 먹을 것도 있고, 따뜻한 곳도 있어서 너무 행복해… 오빠, 다시는 나 두고 가지 마!'
+364: 	$julia_meeting[15] = '[<<$master_name>>]<br>&nbsp;안 떠날게. 네 짐 챙겨. 내가 널 집으로 데려갈 거야. 난 밖에서 기다릴게. 요한나와 얘기할 일이 있어.'
+365: 	$julia_meeting[16] = '[<<$master_name>>]<br>&nbsp;요한나, 그 애를 도와줘서 고마워요. 누가 그 애를 여기 데려왔는지, 그리고 도착했을 때 상태가 어땠는지 아나요?'
+366: 	$julia_meeting[17] = '[요한나]<br>&nbsp;그 애는 맨헌터가 우리에게 데려왔어요. 굶주렸고 더러웠고 조금 야생 같았지만, 그래도 아직 남자의 손길은 닿지 않은 상태였죠. 그 아이가 발견된 세계는 질 좋은 광물로 유명한데, 마침 그날 그가 거기에 있었어요. 그 애는 운이 좋았어요, 정말 아주 운이 좋았죠. 당신의 새로운 지위를 듣고 딱 알맞은 순간에 나서지 않았다면, 분명 비참한 운명을 맞았을 거예요. 이제 그 애를 데려가세요. 그리고 우리의 관대함을 기억해 주세요.'
+367: ! JO9 MOD END J9M2670
+368: 	$julia_meeting[18] = '요한나에게 존중과 사색이 섞인 고갯짓을 하고 물러서자, 방에서 나온 줄리아가 얼마 안 되는 소지품을 들고 있는 것이 보인다. 작은 가방 하나에 다 들어갈 정도다. 당신이 그녀를 집으로 데려가는 동안, 그녀는 자신에겐 처음이고 당신에겐 익숙한 광경들을 신이 나서 둘러본다. 자신이 아는 옛 소년으로부터 당신이 얼마나 높이 올라왔는지, 그리고 로마가 당신을 얼마나 바꾸어 놓았는지 그녀는 거의 깨닫지 못한다. 머지않아 알게 되겠지만…'
+
+LOCATION $ongload | body lines 17-30
+17: ! JO9 MOD END PROFILE_TEXT_CACHE_20261025
+18: ! JO9 MOD START EGEYA_DEFAULT_NAME_LOAD_20261026 | 2026-10-26_egeya_outfits_profile
+19: local jo9_egeya_name_i
+20: local $jo9_egeya_name_role, $jo9_egeya_name_old
+21: for jo9_egeya_name_i = 0 to arrsize('$all_slave_characters') - 1:
+22:  $jo9_egeya_name_role = $all_slave_characters[jo9_egeya_name_i]
+23:  if dyneval('result = <<$jo9_egeya_name_role>>_type') = 2579:
+24:   $jo9_egeya_name_old = dyneval('$result = $<<$jo9_egeya_name_role>>_name')
+25:   if $jo9_egeya_name_old = 'Egeya' or $jo9_egeya_name_old = 'egeya' or $jo9_egeya_name_old = 'Egeaya' or $jo9_egeya_name_old = 'egeaya' or $jo9_egeya_name_old = 'Эгея':
+26:    dynamic '$<<$jo9_egeya_name_role>>_name = ''에게야'''
+27:   end
+28:  end
+29: end
+30: ! JO9 MOD END EGEYA_DEFAULT_NAME_LOAD_20261026
+
+LOCATION $ongload | body lines 38-43
+38: ! JO9 MOD START BUYER_RUMOR_LOAD | 2026-10-24_buyer_rumors
+39: gs 'jo9_buyer_rumors', 'refreshmenus'
+40: if $place = 'guild_hall' and interaction_city = 95: $display_options[1] = $expert_options[1]
+41: if $place = 'tavern': $display_options[2] = $tavern_options[2]
+42: if $place = 'kafe': $display_options[1] = $kafe_options[1]
+43: ! JO9 MOD END BUYER_RUMOR_LOAD
+
+LOCATION $ongload | body lines 75-90
+75: gs 'jo9_seed_role_images'
+76: ! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022
+77: ! JO9 canonical resource paths: saved scene caches
+78: local $jo9_legacy_prefix = 'SNK' + 'mod\'
+79: $bg_path = replace($bg_path, $jo9_legacy_prefix, '')
+80: $special_bg = replace($special_bg, $jo9_legacy_prefix, '')
+81: local jo9_legacy_i
+82: if arrsize('$special_image') > 0:
+83: 	for jo9_legacy_i = 0 to arrsize('$special_image') - 1:
+84: 		$special_image[jo9_legacy_i] = replace($special_image[jo9_legacy_i], $jo9_legacy_prefix, '')
+85: 	end
+86: end
+87: 
+88: if snk_room_target > 0 and $curloc = '$ongload': gs 'snk_room_bridge', 'guard', '$ongload'
+89: !Game load handler (will run after game state is loaded)
+90: 
+
+LOCATION refresh_database | body lines 28-40
+28: gs '#simple_npc' &! before #npc_base until conflicts are resolved (TODO)
+29: gs '#npc_base' &! no load order dependencies
+30: gs '#options' &! no load order dependencies
+31: gs '#place_base' &! no load order dependencies
+32: 
+33: !locations that are refreshed elsewhere
+34: gs '#estate_base' &! refreshed by Adverto Servili special event
+35: gs '#var_base' &! must load after #static_base, refreshed by main_screen, city_screen, choice_screen, next_day, contains conditional text and subexpressions
+36: !if hero_choice > 100: gs '#var_base_woman'
+37: 
+38: gs '#txt_man' &! must load after #static_base and #var_base, refreshed when slave instances are swapped or cleared, contains conditional text and subexpressions
+39: gs '#txt_2_man' &! must load after #static_base and #var_base, refreshed when slave instances are swapped or cleared, contains conditional text and subexpressions
+40: gs '#chariots_base' &! refreshed by $ride_start before each race
+
+ORIGINAL 2026-10-01 | SHA256 59e1a1afb4fdd2e9bf9b1ffdcb12c10f2f4cc15d4cd3d890e21f8cb652f5958e | interaction_city body lines 4613-4668
+4613: if interaction_city = 163:
+4614: 	! end of conversation exits to White Town instead of Vatican gate
+4615: 	city_form = 1
+4616: 	$return_lock = 'city_menu_form'
+4617: 
+4618: 	! generate julia and put her in slave slot
+4619: 	special_stock = 2576
+4620: 	if no_loli ! 1: $special_age = 'loli'
+4621: 	gs 'generate_stock'
+4622: 	dynamic $swap_slave_instances, 'stock', 'slave'
+4623: 	slave['beauty_enhanced'] = 1
+4624: 	slave['neg_slave'] = 0
+4625: 	$slave['cloth'] = 'sun_dress'
+4626: 	slave['newness'] = 1
+4627: 
+4628: 	! match visuals with text
+4629: 	copyarr '$text', '$julia_meeting'
+4630: 	$special_action[1] = {
+4631: 		npc = 0
+4632: 		$place = 'vatican_gate'
+4633: 	}
+4634: 	$special_action[2] = {
+4635: 		npc = 1
+4636: 		$npc_id = 'johanna'
+4637: 		$place = 'church'
+4638: 	}
+4639: 	$special_action[3] = {
+4640: 		npc = 1
+4641: 		$npc_id = 'alyce'
+4642: 		$place = 'church'
+4643: 		$bg['vatican_bedroom'] = $interior_boudoir['gothic']
+4644: 	}
+4645: 	$special_action[15] = {
+4646: 		npc = 1
+4647: 		$npc_id = 'kuma'
+4648: 		$place = 'church'
+4649: 	}
+4650: 	$special_action[16] = {
+4651: 		npc = 1
+4652: 		show_slave_fullimage = 0
+4653: 		$npc_id = 'alyce'
+4654: 		$place = 'church'
+4655: 	}
+4656: 	$special_action[17] = {
+4657: 		npc = 1
+4658: 		show_slave_fullimage = 0
+4659: 		$npc_id = 'kuma'
+4660: 		$place = 'church'
+4661: 	}
+4662: 	$special_action[18] = {
+4663: 		! show julia on small white town background
+4664: 		npc = 1
+4665: 		$npc_id = 'alyce'
+4666: 		$place = 'church'
+4667: 	}
+4668: end

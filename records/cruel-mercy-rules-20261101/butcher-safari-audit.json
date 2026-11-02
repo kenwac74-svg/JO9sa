@@ -1,0 +1,1357 @@
+{
+  "task": "Approved cruel/mercy butcher and safari branch audit",
+  "readOnlyInvestigation": true,
+  "source": {
+    "path": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+    "sha256": "b7e5b385dcbd5d8e4b4ac18c9556e18bf371f25f6368c3eba729c9374d1cc07b",
+    "bytes": 49057634,
+    "lineBasis": "All QSP references use 1-based decoded location-body line numbers.",
+    "menuJson": "G:/somi/Jack O Nine Tails v2.4_work/game/json/menu_item.json",
+    "menuJsonSha256": "708931f9119f61547ecae6083c24719969fd0bcaa7c7d43766f2e1606068ccee"
+  },
+  "approvedRulesOnly": [
+    {
+      "key": "butcher_sell_for_slaughter",
+      "delta": -1
+    },
+    {
+      "key": "butcher_keep_processed_meat",
+      "delta": -1
+    },
+    {
+      "key": "safari_release_loot",
+      "delta": 1
+    },
+    {
+      "key": "safari_sell_loot",
+      "delta": 0
+    },
+    {
+      "key": "safari_kill_loot",
+      "delta": -1
+    },
+    {
+      "key": "safari_take_loot",
+      "delta": 0.5
+    }
+  ],
+  "actions": [
+    {
+      "key": "butcher_sell_for_slaughter",
+      "approvedDelta": -1,
+      "menuLabel": "푼 돈 받고 노예 도살",
+      "menuVariable": "menu_Slaughter_slave",
+      "entryId": 11544,
+      "confirmationYesId": 115441,
+      "menuLocation": "#options:3181-3184",
+      "entryLocation": "interaction_city:892-912",
+      "commitLocation": "interaction_city:914-927",
+      "entryAllowedByMenu": "slave_state = CONST_INT['slave_exist'] or slave_state = CONST_INT['slave_faint']",
+      "cancel": "$no: sp_txt = 4; gt shop_general. No completion, no payout, no proposed score.",
+      "commit": "sparks += meat_price; clear_slave_instance(slave); then common interaction_result_city.",
+      "failureAndDuplicate": "Execution 115441 has no own slave-state/pending-confirmation check. Re-entering 115441 can repay stale meat_price even after the slave is cleared. Add score only to a valid confirmed commit, never 11544 or generic rendering.",
+      "evidence": [
+        {
+          "location": "#options",
+          "lineBasis": "1-based decoded location body",
+          "lines": [
+            {
+              "line": 3181,
+              "text": "if slave_state = CONST_INT['slave_exist'] or slave_state = CONST_INT['slave_faint']:"
+            },
+            {
+              "line": 3182,
+              "text": "func('$menu', 'interaction_city', $menu_item_Slaughter_slave, menu_Slaughter_slave, '푼 돈 받고 노예 도살')"
+            },
+            {
+              "line": 3183,
+              "text": "else"
+            },
+            {
+              "line": 3184,
+              "text": "func('$menu', 'location_gray_tooltip', $menu_item_Slaughter_slave_gray, empty, '푼 돈 받고 노예 도살', '노예가 없다')"
+            }
+          ]
+        },
+        {
+          "location": "interaction_city",
+          "lineBasis": "1-based decoded location body",
+          "lines": [
+            {
+              "line": 892,
+              "text": "if interaction_city = 11544:"
+            },
+            {
+              "line": 898,
+              "text": "slave['threat_death'] = 0"
+            },
+            {
+              "line": 899,
+              "text": "dynamic $replace($dyn_meat_evaluation, 'dyn'+'slave', 'slave')"
+            },
+            {
+              "line": 903,
+              "text": "$yes = {"
+            },
+            {
+              "line": 904,
+              "text": "interaction_city = 115441"
+            },
+            {
+              "line": 905,
+              "text": "gt 'interaction_city'"
+            },
+            {
+              "line": 907,
+              "text": "$no = {"
+            },
+            {
+              "line": 908,
+              "text": "sp_txt = 4"
+            },
+            {
+              "line": 909,
+              "text": "gt 'shop_general'"
+            },
+            {
+              "line": 911,
+              "text": "gt 'choice_screen'"
+            },
+            {
+              "line": 914,
+              "text": "if interaction_city = 115441:"
+            },
+            {
+              "line": 920,
+              "text": "sparks += meat_price"
+            },
+            {
+              "line": 926,
+              "text": "dynamic $clear_slave_instance, 'slave'"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "butcher_keep_processed_meat",
+      "approvedDelta": -1,
+      "menuLabel": "노예 도축후 손질 ($5)",
+      "menuVariable": "menu_butcher_slave",
+      "entryId": 11545,
+      "confirmationYesId": 115451,
+      "menuLocation": "#options:3186-3194",
+      "entryLocation": "interaction_city:930-950",
+      "commitLocation": "interaction_city:952-985",
+      "entryAllowedByMenu": "slave_state >= CONST_INT['slave_exist']; kitchen >= 0; sparks >= 5 (existing kitchen < 0 disabled check preserved)",
+      "cancel": "$no: sp_txt = 4; gt shop_general. No proposed score.",
+      "commit": "sparks -= 5; decade_mince/meat/virgin counters updated; clear_slave_instance(slave); get_meat; then common interaction_result_city.",
+      "failureAndDuplicate": "Execution 115451 has no own subject/funds recheck. Re-entering can charge again and reuse prior yield variables. The actual destructive action, not refrigerator capacity or merely opening confirmation, is the score point.",
+      "evidence": [
+        {
+          "location": "#options",
+          "lineBasis": "1-based decoded location body",
+          "lines": [
+            {
+              "line": 3186,
+              "text": "if slave_state < CONST_INT['slave_exist']:"
+            },
+            {
+              "line": 3187,
+              "text": "func('$menu', 'location_gray_tooltip', $menu_item_butcher_slave_gray, empty, '노예 도축후 손질 ($5)', '노예가 없다')"
+            },
+            {
+              "line": 3188,
+              "text": "elseif kitchen < 0:"
+            },
+            {
+              "line": 3189,
+              "text": "func('$menu', 'location_gray_tooltip', $menu_item_butcher_slave_gray, empty, '노예 도축후 손질 ($5)', '고기를 더이상 보관할 수 없다')"
+            },
+            {
+              "line": 3190,
+              "text": "elseif sparks < 5:"
+            },
+            {
+              "line": 3191,
+              "text": "func('$menu', 'location_gray_tooltip', $menu_item_butcher_slave_gray, empty, '노예 도축후 손질 ($5)', '손질을 요청할 스파크가 부족하다')"
+            },
+            {
+              "line": 3193,
+              "text": "func('$menu', 'interaction_city', $menu_item_butcher_slave, menu_butcher_slave, '노예 도축후 손질 ($5)')"
+            }
+          ]
+        },
+        {
+          "location": "interaction_city",
+          "lineBasis": "1-based decoded location body",
+          "lines": [
+            {
+              "line": 930,
+              "text": "if interaction_city = 11545:"
+            },
+            {
+              "line": 936,
+              "text": "slave['threat_death'] = 0"
+            },
+            {
+              "line": 937,
+              "text": "dynamic $replace($dyn_meat_evaluation, 'dyn'+'slave', 'slave')"
+            },
+            {
+              "line": 941,
+              "text": "$yes = {"
+            },
+            {
+              "line": 942,
+              "text": "interaction_city = 115451"
+            },
+            {
+              "line": 943,
+              "text": "gt 'interaction_city'"
+            },
+            {
+              "line": 945,
+              "text": "$no = {"
+            },
+            {
+              "line": 946,
+              "text": "sp_txt = 4"
+            },
+            {
+              "line": 947,
+              "text": "gt 'shop_general'"
+            },
+            {
+              "line": 949,
+              "text": "gt 'choice_screen'"
+            },
+            {
+              "line": 952,
+              "text": "if interaction_city = 115451:"
+            },
+            {
+              "line": 958,
+              "text": "sparks -= 5"
+            },
+            {
+              "line": 968,
+              "text": "decade_mince += mince_gain"
+            },
+            {
+              "line": 969,
+              "text": "decade_meat += meat_gain"
+            },
+            {
+              "line": 970,
+              "text": "decade_virgin += virgin_meat_gain"
+            },
+            {
+              "line": 983,
+              "text": "dynamic $clear_slave_instance, 'slave'"
+            },
+            {
+              "line": 984,
+              "text": "dynamic $get_meat"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "safari_release_loot",
+      "approvedDelta": 1,
+      "menuLabel": "전리품을 풀어 준다",
+      "entryId": 8994,
+      "menuLocation": "#options:4826-4827",
+      "commitLocation": "interaction_city:13937-13946",
+      "entryAllowedByMenu": "safari.slave = -1",
+      "commit": "safari.slave = 0; one-page narrative; common result counter/render.",
+      "failureAndDuplicate": "No execution-level pending-loot check; repeated direct entry can currently render again. Existing safari.slave is a suitable already-consumed sentinel for score guard.",
+      "evidence": [
+        {
+          "location": "#options",
+          "lineBasis": "1-based decoded location body",
+          "lines": [
+            {
+              "line": 4826,
+              "text": "IF safari.slave = -1:"
+            },
+            {
+              "line": 4827,
+              "text": "FUNC('$menu', 'interaction_city', $menu_item_employeecamp, 8994, '전리품을 풀어 준다')"
+            }
+          ]
+        },
+        {
+          "location": "interaction_city",
+          "lineBasis": "1-based decoded location body",
+          "lines": [
+            {
+              "line": 13937,
+              "text": "IF interaction_city = 8994:"
+            },
+            {
+              "line": 13940,
+              "text": "$place = 'safari_itog'"
+            },
+            {
+              "line": 13941,
+              "text": "$return_lock  = 'shop_general'"
+            },
+            {
+              "line": 13942,
+              "text": "copyarr '$display_options', '$safari_options'"
+            },
+            {
+              "line": 13943,
+              "text": "txt_count = 1"
+            },
+            {
+              "line": 13944,
+              "text": "safari.slave = 0"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "safari_sell_loot",
+      "approvedDelta": 0,
+      "menuLabel": "전리품을 판다 (~$100)",
+      "entryId": 8995,
+      "menuLocation": "#options:4826,4829",
+      "commitLocation": "interaction_city:13947-13958",
+      "entryAllowedByMenu": "safari.slave = -1",
+      "commit": "safari.slave = 0; sparks.res = rand(80,120); sparks += sparks.res; common result counter/render.",
+      "failureAndDuplicate": "No execution-level pending-loot check; direct repeated entry currently pays again. Score delta remains exactly zero. Report this existing repeat-entry risk rather than altering unrelated prices.",
+      "evidence": [
+        {
+          "location": "#options",
+          "lineBasis": "1-based decoded location body",
+          "lines": [
+            {
+              "line": 4826,
+              "text": "IF safari.slave = -1:"
+            },
+            {
+              "line": 4829,
+              "text": "FUNC('$menu', 'interaction_city', $menu_item_employeecamp, 8995, '전리품을 판다 (~$100)')"
+            }
+          ]
+        },
+        {
+          "location": "interaction_city",
+          "lineBasis": "1-based decoded location body",
+          "lines": [
+            {
+              "line": 13947,
+              "text": "IF interaction_city = 8995:"
+            },
+            {
+              "line": 13950,
+              "text": "$place = 'safari_itog'"
+            },
+            {
+              "line": 13953,
+              "text": "txt_count = 1"
+            },
+            {
+              "line": 13954,
+              "text": "safari.slave = 0"
+            },
+            {
+              "line": 13955,
+              "text": "sparks.res = rand (80,120)"
+            },
+            {
+              "line": 13956,
+              "text": "sparks += sparks.res"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "safari_kill_loot",
+      "approvedDelta": -1,
+      "menuLabel": "전리품을 죽인다",
+      "entryId": 8996,
+      "menuLocation": "#options:4826,4831",
+      "commitLocation": "interaction_city:13959-13968",
+      "entryAllowedByMenu": "safari.slave = -1",
+      "commit": "safari.slave = 0; one-page narrative; common result counter/render. No refrigerator gain or meat-handling helper is called here.",
+      "failureAndDuplicate": "No execution-level pending-loot check. Apply score only while pending value is -1; repeat render must not score.",
+      "evidence": [
+        {
+          "location": "#options",
+          "lineBasis": "1-based decoded location body",
+          "lines": [
+            {
+              "line": 4826,
+              "text": "IF safari.slave = -1:"
+            },
+            {
+              "line": 4831,
+              "text": "FUNC('$menu', 'interaction_city', $menu_item_employeecamp, 8996, '전리품을 죽인다')"
+            }
+          ]
+        },
+        {
+          "location": "interaction_city",
+          "lineBasis": "1-based decoded location body",
+          "lines": [
+            {
+              "line": 13959,
+              "text": "IF interaction_city = 8996:"
+            },
+            {
+              "line": 13962,
+              "text": "$place = 'safari_itog'"
+            },
+            {
+              "line": 13963,
+              "text": "$return_lock  = 'shop_general'"
+            },
+            {
+              "line": 13964,
+              "text": "copyarr '$display_options', '$safari_options'"
+            },
+            {
+              "line": 13965,
+              "text": "txt_count = 1"
+            },
+            {
+              "line": 13966,
+              "text": "safari.slave = 0"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "safari_take_loot",
+      "approvedDelta": 0.5,
+      "menuLabel": "전리품을 데려간다",
+      "entryId": 8998,
+      "menuLocation": "#options:4826,4832-4835",
+      "commitLocation": "interaction_city:13980-13994",
+      "entryAllowedByMenu": "safari.slave = -1 and slave_state = CONST_INT['no_slave']",
+      "commit": "safari.slave = 1; generate_stock; stock_to_slave. The shared stock_to_slave succeeds through stock_to_slave_nogt, then normally gt hard_return and gt $return_lock.",
+      "failureAndDuplicate": "No execution-level pending-loot or empty-main-slot recheck. safari.slave is set 1 before generation/transfer success. A score line appended after gs stock_to_slave is not guaranteed to execute. Award only after successful transfer and retain original navigation; failure must not award.",
+      "evidence": [
+        {
+          "location": "#options",
+          "lineBasis": "1-based decoded location body",
+          "lines": [
+            {
+              "line": 4826,
+              "text": "IF safari.slave = -1:"
+            },
+            {
+              "line": 4832,
+              "text": "IF slave_state = CONST_INT['no_slave']:"
+            },
+            {
+              "line": 4833,
+              "text": "FUNC('$menu', 'interaction_city', $menu_item_employeecamp, 8998, '전리품을 데려간다')"
+            },
+            {
+              "line": 4834,
+              "text": "ELSE:"
+            },
+            {
+              "line": 4835,
+              "text": "FUNC('$menu', 'location_gray', $menu_item_employeecamp_gray, empty, '전리품을 데려간다')"
+            }
+          ]
+        },
+        {
+          "location": "interaction_city",
+          "lineBasis": "1-based decoded location body",
+          "lines": [
+            {
+              "line": 13980,
+              "text": "IF interaction_city = 8998:"
+            },
+            {
+              "line": 13983,
+              "text": "$place = 'safari_itog'"
+            },
+            {
+              "line": 13984,
+              "text": "$return_lock  = 'shop_general'"
+            },
+            {
+              "line": 13986,
+              "text": "slave['brand'] = 0"
+            },
+            {
+              "line": 13987,
+              "text": "tattoo_brand = slave['brand']"
+            },
+            {
+              "line": 13988,
+              "text": "sparks -= 0"
+            },
+            {
+              "line": 13989,
+              "text": "txt_count = 1"
+            },
+            {
+              "line": 13990,
+              "text": "safari.slave = 1"
+            },
+            {
+              "line": 13991,
+              "text": "gs 'generate_stock'"
+            },
+            {
+              "line": 13992,
+              "text": "gs 'stock_to_slave'"
+            }
+          ]
+        },
+        {
+          "location": "generate_stock",
+          "lineBasis": "1-based decoded location body",
+          "lines": [
+            {
+              "line": 8,
+              "text": "dynamic $clear_slave_instance, 'stock' &! clear any previous stock - ImperatorAugustus"
+            },
+            {
+              "line": 9,
+              "text": "stock_state = CONST_INT['slave_exist'] &! this is the only place in the game where this state change occurs for stock - ImperatorAugustus"
+            }
+          ]
+        },
+        {
+          "location": "stock_to_slave",
+          "lineBasis": "1-based decoded location body",
+          "lines": [
+            {
+              "line": 6,
+              "text": "! JO9 MOD START STOCK_TO_SLAVE_CHECK_SUCCESS_20261028"
+            },
+            {
+              "line": 7,
+              "text": "if func('stock_to_slave_nogt') ! 1: exit"
+            },
+            {
+              "line": 10,
+              "text": "if hunting_prize = 0 and farid_potential_debt <= 0: gt 'hard_return'"
+            }
+          ]
+        },
+        {
+          "location": "stock_to_slave_nogt",
+          "lineBasis": "1-based decoded location body",
+          "lines": [
+            {
+              "line": 6,
+              "text": "result = 0"
+            },
+            {
+              "line": 7,
+              "text": "if stock_state ! CONST_INT['slave_exist']:"
+            },
+            {
+              "line": 8,
+              "text": "msg '오류: stock_to_slave_nogt 상태가 예상과 다릅니다. 이 메시지를 보기 직전에 무엇을 했는지 제보해 주세요'"
+            },
+            {
+              "line": 9,
+              "text": "exit"
+            },
+            {
+              "line": 92,
+              "text": "dynamic $swap_slave_instances, 'slave', 'stock'"
+            },
+            {
+              "line": 93,
+              "text": "gs 'jo9_traits','init_slave_nature','slave'"
+            },
+            {
+              "line": 102,
+              "text": "result = 1"
+            }
+          ]
+        },
+        {
+          "location": "hard_return",
+          "lineBasis": "1-based decoded location body",
+          "lines": [
+            {
+              "line": 306,
+              "text": "gt $return_lock"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "lifecycle": {
+    "safariEntryId": 8991,
+    "participateId": 8993,
+    "watchId": 8997,
+    "outsideApprovedScopeIds": [
+      8992,
+      89921,
+      89922,
+      89923,
+      89924
+    ],
+    "note": "Selling the player-owned main slave through 8992/89921 is a different menu action from selling safari loot through 8995, and is outside the requested zero-delta loot-sale rule.",
+    "pending": "safari.info sets safari.slave = -1 only on a win and main slave_state equal to exist or no_slave.",
+    "consumed": "8994/8995/8996 set 0; 8998 sets 1; watch8997 sets 0.",
+    "evidence": [
+      {
+        "location": "city_menu_form",
+        "lineBasis": "1-based decoded location body",
+        "lines": [
+          {
+            "line": 569,
+            "text": "FUNC('$menu', 'interaction_city', $menu_item_threaten_sale, 8991, '노예 사파리')"
+          }
+        ]
+      },
+      {
+        "location": "interaction_city",
+        "lineBasis": "1-based decoded location body",
+        "lines": [
+          {
+            "line": 13823,
+            "text": "IF interaction_city = 8991:"
+          },
+          {
+            "line": 13828,
+            "text": "copyarr '$display_options', '$safari_options'"
+          },
+          {
+            "line": 13908,
+            "text": "IF interaction_city = 8993:"
+          },
+          {
+            "line": 13909,
+            "text": "sparks -= 350"
+          },
+          {
+            "line": 13917,
+            "text": "master_energy -= 2"
+          },
+          {
+            "line": 13920,
+            "text": "safari.play = rand(0,100)"
+          },
+          {
+            "line": 13921,
+            "text": "GS 'safari.info'"
+          },
+          {
+            "line": 13922,
+            "text": "IF safari.play >= 60:"
+          },
+          {
+            "line": 13969,
+            "text": "IF interaction_city = 8997:"
+          },
+          {
+            "line": 13976,
+            "text": "safari.slave = 0"
+          }
+        ]
+      },
+      {
+        "location": "safari.info",
+        "lineBasis": "1-based decoded location body",
+        "lines": [
+          {
+            "line": 5,
+            "text": "IF safari.play >= 60:"
+          },
+          {
+            "line": 14,
+            "text": "IF slave_state = CONST_INT['slave_exist']:"
+          },
+          {
+            "line": 15,
+            "text": "sparks += sparks.res"
+          },
+          {
+            "line": 16,
+            "text": "safari.slave = -1"
+          },
+          {
+            "line": 18,
+            "text": "ELSEIF slave_state = CONST_INT['no_slave']:"
+          },
+          {
+            "line": 19,
+            "text": "sparks += sparks.res"
+          },
+          {
+            "line": 20,
+            "text": "safari.slave = -1"
+          }
+        ]
+      }
+    ]
+  },
+  "duplicateGuardAssessment": {
+    "existingGuard": "No target action currently has a common execution-level duplicate guard. Menu availability is not a sufficient guard for stale EXEC links or direct event re-entry.",
+    "existingBookkeeping": "interaction_result_city increments city_already_done_today and city_already_done_ever at the end; these are completion counters, not target-action locks. The only visible <=0 check here is inside the unrelated hit_on_patron branch.",
+    "repeatedContent": "Using ever/daily completion for these repeatable services would suppress legitimate later slaves or safari rounds. Prefer the current subject/pending sentinel plus success boundary.",
+    "rendering": "interaction_screen_city rerenders the existing $text and should never award score. Confirm yes and actual pending-loot resolution are the appropriate commit boundaries.",
+    "acquisition": "8998 normally exits through stock_to_slave/hard_return before common result rendering; do not rely on result counters or a line placed after that gs.",
+    "evidence": [
+      {
+        "location": "interaction_city",
+        "lineBasis": "1-based decoded location body",
+        "lines": [
+          {
+            "line": 32838,
+            "text": "gt 'interaction_result_city'"
+          }
+        ]
+      },
+      {
+        "location": "interaction_result_city",
+        "lineBasis": "1-based decoded location body",
+        "lines": [
+          {
+            "line": 13,
+            "text": "if $interaction_type = 'standart':"
+          },
+          {
+            "line": 14,
+            "text": "dynamic $special_part"
+          },
+          {
+            "line": 738,
+            "text": "if $interaction_type = 'hit_on_patron':"
+          },
+          {
+            "line": 740,
+            "text": "if city_already_done_today[$str(interaction_city)] <= 0:"
+          },
+          {
+            "line": 899,
+            "text": "city_already_done_today[$str(interaction_city)] += 1"
+          },
+          {
+            "line": 900,
+            "text": "city_already_done_ever[$str(interaction_city)] += 1"
+          },
+          {
+            "line": 904,
+            "text": "if txt_is_set_from_save = 0: txt = 1"
+          },
+          {
+            "line": 905,
+            "text": "gt 'interaction_screen_city'"
+          }
+        ]
+      },
+      {
+        "location": "$menu",
+        "lineBasis": "1-based decoded location body",
+        "lines": [
+          {
+            "line": 20,
+            "text": "if $args[0] = 'get_link':"
+          },
+          {
+            "line": 21,
+            "text": "$menu_exec = '<a href = ''EXEC: ' + $args[2] + '='"
+          },
+          {
+            "line": 22,
+            "text": "$menu_goto_form = ' & gt \"' + $args[3] + '\"''>'"
+          },
+          {
+            "line": 23,
+            "text": "$result = $menu_exec + args[1] + $menu_goto_form"
+          },
+          {
+            "line": 128,
+            "text": "if $args[0] = 'interaction_city':"
+          },
+          {
+            "line": 129,
+            "text": "func('$menu', 'goto_city',  $args[1], args[2], 'interaction_city', 'interaction_city', $args[3])"
+          }
+        ]
+      },
+      {
+        "location": "choice_screen",
+        "lineBasis": "1-based decoded location body",
+        "lines": [
+          {
+            "line": 129,
+            "text": "*p '<div id = \"approve\"><a href = \"EXEC: dynamic $yes\"><img src=\"content/pic/ui/buttons/legacy/approve.png\"></a></div>'"
+          },
+          {
+            "line": 130,
+            "text": "*p '<div id = \"deny\"><a href = \"EXEC: dynamic $no\"><img src=\"content/pic/ui/buttons/legacy/deny.png\"></a></div>'"
+          }
+        ]
+      }
+    ]
+  },
+  "sharedHandlers": {
+    "guidance": "Do not attach these action-specific deltas to clear_slave_instance, get_meat, killslave, stock_to_slave or interaction_result_city globally. They are reused by unrelated acquisition, sale, death, daily processing, contracts and liquidation.",
+    "helpers": [
+      {
+        "token": "$clear_slave_instance",
+        "kind": "textual mentions including definition/comments, not a runtime call count",
+        "mentions": 82,
+        "locationCount": 19,
+        "locations": [
+          {
+            "location": "$newloc",
+            "lines": [
+              301,
+              322
+            ]
+          },
+          {
+            "location": "$expert_search",
+            "lines": [
+              64
+            ]
+          },
+          {
+            "location": "$ride_finish",
+            "lines": [
+              28
+            ]
+          },
+          {
+            "location": "end_contract",
+            "lines": [
+              30
+            ]
+          },
+          {
+            "location": "generate_stock",
+            "lines": [
+              8
+            ]
+          },
+          {
+            "location": "slave_sell_done",
+            "lines": [
+              37
+            ]
+          },
+          {
+            "location": "next_day",
+            "lines": [
+              31,
+              34,
+              35,
+              36,
+              37,
+              4062
+            ]
+          },
+          {
+            "location": "end_day_screen",
+            "lines": [
+              1093,
+              1108,
+              1186,
+              1198,
+              1210,
+              1222,
+              1234,
+              1246,
+              1258
+            ]
+          },
+          {
+            "location": "interaction",
+            "lines": [
+              2514,
+              2550,
+              2588,
+              2658,
+              8211,
+              8611,
+              8669,
+              8690,
+              10232,
+              10247,
+              10262
+            ]
+          },
+          {
+            "location": "interaction_result",
+            "lines": [
+              1516
+            ]
+          },
+          {
+            "location": "interaction_city",
+            "lines": [
+              926,
+              983,
+              1620,
+              1666,
+              1768,
+              1789,
+              1965,
+              4637,
+              4677,
+              4717,
+              4757,
+              4797,
+              4837,
+              4877,
+              4917,
+              4957,
+              4997,
+              5074,
+              5148,
+              5244,
+              5276,
+              5308,
+              5402,
+              11370,
+              11413,
+              11671,
+              12853,
+              12877,
+              12958
+            ]
+          },
+          {
+            "location": "interaction_result_city",
+            "lines": [
+              90,
+              190,
+              212,
+              258,
+              301,
+              424
+            ]
+          },
+          {
+            "location": "slave_auction_sell_end",
+            "lines": [
+              24
+            ]
+          },
+          {
+            "location": "#dynamic",
+            "lines": [
+              334,
+              359,
+              383,
+              411,
+              422
+            ]
+          },
+          {
+            "location": "#static_base",
+            "lines": [
+              482
+            ]
+          },
+          {
+            "location": "jo9_fog_relay",
+            "lines": [
+              90,
+              147
+            ]
+          },
+          {
+            "location": "jo9_traits_value",
+            "lines": [
+              71
+            ]
+          },
+          {
+            "location": "jo9_liquidation_assets",
+            "lines": [
+              100,
+              122
+            ]
+          },
+          {
+            "location": "jo9_liquidation_sale",
+            "lines": [
+              160
+            ]
+          }
+        ]
+      },
+      {
+        "token": "$dyn_meat_evaluation",
+        "kind": "textual mentions including definition/comments, not a runtime call count",
+        "mentions": 13,
+        "locationCount": 4,
+        "locations": [
+          {
+            "location": "next_day",
+            "lines": [
+              4032,
+              4058
+            ]
+          },
+          {
+            "location": "interaction_city",
+            "lines": [
+              899,
+              937,
+              11368,
+              11390
+            ]
+          },
+          {
+            "location": "#dynamic",
+            "lines": [
+              245,
+              330,
+              355,
+              379,
+              409,
+              418
+            ]
+          },
+          {
+            "location": "#static_base",
+            "lines": [
+              1249
+            ]
+          }
+        ]
+      },
+      {
+        "token": "$get_meat",
+        "kind": "textual mentions including definition/comments, not a runtime call count",
+        "mentions": 3,
+        "locationCount": 2,
+        "locations": [
+          {
+            "location": "interaction_city",
+            "lines": [
+              984,
+              11414
+            ]
+          },
+          {
+            "location": "#dynamic",
+            "lines": [
+              270
+            ]
+          }
+        ]
+      },
+      {
+        "token": "stock_to_slave",
+        "kind": "literal gs/gt/func call sites; dynamic strings may add callers",
+        "callSiteCount": 5,
+        "locations": [
+          "menu_form",
+          "slave_auction_pass",
+          "slave_to_train_get",
+          "interaction_city"
+        ],
+        "sampleCallSites": [
+          {
+            "location": "menu_form",
+            "line": 107,
+            "text": "gs 'stock_to_slave'"
+          },
+          {
+            "location": "slave_auction_pass",
+            "line": 21,
+            "text": "gt 'stock_to_slave'"
+          },
+          {
+            "location": "slave_to_train_get",
+            "line": 16,
+            "text": "gs 'stock_to_slave'"
+          },
+          {
+            "location": "interaction_city",
+            "line": 11423,
+            "text": "gs 'stock_to_slave'"
+          },
+          {
+            "location": "interaction_city",
+            "line": 13992,
+            "text": "gs 'stock_to_slave'"
+          }
+        ]
+      },
+      {
+        "token": "stock_to_slave_nogt",
+        "kind": "literal gs/gt/func call sites; dynamic strings may add callers",
+        "callSiteCount": 72,
+        "locations": [
+          "menu_form",
+          "interaction_city",
+          "stock_to_slave",
+          "choose_the_girl",
+          "black_market_get_comm_slave"
+        ],
+        "sampleCallSites": [
+          {
+            "location": "menu_form",
+            "line": 117,
+            "text": "gs 'stock_to_slave_nogt'"
+          },
+          {
+            "location": "interaction_city",
+            "line": 4620,
+            "text": "gs 'stock_to_slave_nogt'"
+          },
+          {
+            "location": "interaction_city",
+            "line": 4660,
+            "text": "gs 'stock_to_slave_nogt'"
+          },
+          {
+            "location": "interaction_city",
+            "line": 4700,
+            "text": "gs 'stock_to_slave_nogt'"
+          },
+          {
+            "location": "interaction_city",
+            "line": 4740,
+            "text": "gs 'stock_to_slave_nogt'"
+          },
+          {
+            "location": "interaction_city",
+            "line": 4780,
+            "text": "gs 'stock_to_slave_nogt'"
+          },
+          {
+            "location": "interaction_city",
+            "line": 4820,
+            "text": "gs 'stock_to_slave_nogt'"
+          },
+          {
+            "location": "interaction_city",
+            "line": 4860,
+            "text": "gs 'stock_to_slave_nogt'"
+          },
+          {
+            "location": "interaction_city",
+            "line": 4900,
+            "text": "gs 'stock_to_slave_nogt'"
+          },
+          {
+            "location": "interaction_city",
+            "line": 4940,
+            "text": "gs 'stock_to_slave_nogt'"
+          }
+        ]
+      },
+      {
+        "token": "killslave",
+        "kind": "literal gs/gt/func call sites; dynamic strings may add callers",
+        "callSiteCount": 58,
+        "locations": [
+          "interaction_city"
+        ],
+        "sampleCallSites": [
+          {
+            "location": "interaction_city",
+            "line": 13586,
+            "text": "gs 'killslave'"
+          },
+          {
+            "location": "interaction_city",
+            "line": 13866,
+            "text": "gs 'killslave'"
+          },
+          {
+            "location": "interaction_city",
+            "line": 14272,
+            "text": "! gs 'killslave'"
+          },
+          {
+            "location": "interaction_city",
+            "line": 14943,
+            "text": "gs 'killslave'"
+          },
+          {
+            "location": "interaction_city",
+            "line": 14999,
+            "text": "gs 'killslave'"
+          },
+          {
+            "location": "interaction_city",
+            "line": 16713,
+            "text": "gs 'killslave'"
+          },
+          {
+            "location": "interaction_city",
+            "line": 16740,
+            "text": "gs 'killslave'"
+          },
+          {
+            "location": "interaction_city",
+            "line": 16791,
+            "text": "gs 'killslave'"
+          },
+          {
+            "location": "interaction_city",
+            "line": 16840,
+            "text": "gs 'killslave'"
+          },
+          {
+            "location": "interaction_city",
+            "line": 16879,
+            "text": "gs 'killslave'"
+          }
+        ]
+      }
+    ],
+    "directTargetIdReferences": [
+      {
+        "location": "interaction_city",
+        "line": 892,
+        "ids": [
+          11544
+        ],
+        "text": "if interaction_city = 11544:"
+      },
+      {
+        "location": "interaction_city",
+        "line": 904,
+        "ids": [
+          115441
+        ],
+        "text": "interaction_city = 115441"
+      },
+      {
+        "location": "interaction_city",
+        "line": 914,
+        "ids": [
+          115441
+        ],
+        "text": "if interaction_city = 115441:"
+      },
+      {
+        "location": "interaction_city",
+        "line": 930,
+        "ids": [
+          11545
+        ],
+        "text": "if interaction_city = 11545:"
+      },
+      {
+        "location": "interaction_city",
+        "line": 942,
+        "ids": [
+          115451
+        ],
+        "text": "interaction_city = 115451"
+      },
+      {
+        "location": "interaction_city",
+        "line": 952,
+        "ids": [
+          115451
+        ],
+        "text": "if interaction_city = 115451:"
+      },
+      {
+        "location": "interaction_city",
+        "line": 13937,
+        "ids": [
+          8994
+        ],
+        "text": "IF interaction_city = 8994:"
+      },
+      {
+        "location": "interaction_city",
+        "line": 13947,
+        "ids": [
+          8995
+        ],
+        "text": "IF interaction_city = 8995:"
+      },
+      {
+        "location": "interaction_city",
+        "line": 13959,
+        "ids": [
+          8996
+        ],
+        "text": "IF interaction_city = 8996:"
+      },
+      {
+        "location": "interaction_city",
+        "line": 13980,
+        "ids": [
+          8998
+        ],
+        "text": "IF interaction_city = 8998:"
+      },
+      {
+        "location": "#options",
+        "line": 4827,
+        "ids": [
+          8994
+        ],
+        "text": "FUNC('$menu', 'interaction_city', $menu_item_employeecamp, 8994, '전리품을 풀어 준다')"
+      },
+      {
+        "location": "#options",
+        "line": 4829,
+        "ids": [
+          8995
+        ],
+        "text": "FUNC('$menu', 'interaction_city', $menu_item_employeecamp, 8995, '전리품을 판다 (~$100)')"
+      },
+      {
+        "location": "#options",
+        "line": 4831,
+        "ids": [
+          8996
+        ],
+        "text": "FUNC('$menu', 'interaction_city', $menu_item_employeecamp, 8996, '전리품을 죽인다')"
+      },
+      {
+        "location": "#options",
+        "line": 4833,
+        "ids": [
+          8998
+        ],
+        "text": "FUNC('$menu', 'interaction_city', $menu_item_employeecamp, 8998, '전리품을 데려간다')"
+      }
+    ]
+  },
+  "implementationCautions": [
+    {
+      "issue": "fractional +0.5 persistence",
+      "status": "Unverified by this static investigation",
+      "detail": "Verify actual QSP numeric handling before storing a direct decimal in jo9_cruel_mercy; parent owns native validation and the storage choice."
+    },
+    {
+      "issue": "original butcher handoff checks",
+      "status": "Existing behavior, not silently corrected by this audit",
+      "detail": "The menu uses kitchen < 0 rather than actual remaining capacity in one disabled branch; preserve pricing/yield/availability unless separately included."
+    },
+    {
+      "issue": "8998 success and routing",
+      "status": "Confirmed static control-flow risk",
+      "detail": "Use the existing stock_to_slave_nogt return contract locally if restructuring acquisition; preserve successful hard_return navigation and avoid globally changing shared transfer behavior."
+    }
+  ],
+  "verification": {
+    "nativeEngineExecuted": false,
+    "productionQspWrites": false,
+    "fullWrites": false,
+    "saveWrites": false,
+    "codeChanges": false,
+    "artifactOnly": "output/cruel-mercy-rules-20261101/butcher-safari-audit.json"
+  },
+  "sourceSha256AfterRead": "b7e5b385dcbd5d8e4b4ac18c9556e18bf371f25f6368c3eba729c9374d1cc07b",
+  "sourceChangedDuringAudit": false
+}

@@ -1,0 +1,38 @@
+{
+  "task": "arena-mercy-loss-rule-20261031",
+  "candidateSha256": "94ba085a0b5dda03297009e12c28572e2d808671b9db97f3bb4f44f64dbcb805",
+  "baselineSha256": "6f253c066d8d5d6c24e8e0c14bd9acfb9ceb674045b7c8494608031b751d1a7f",
+  "red": {
+    "cases": 3,
+    "nativeCompleted": true,
+    "redReproduced": true,
+    "scope": "pre-change rules demonstrably differ from approved new behavior"
+  },
+  "greenSingle": {
+    "cases": 3,
+    "pass": true
+  },
+  "green": {
+    "cases": 32,
+    "nativeProcesses": 3,
+    "pass": true,
+    "originalProseExactCases": 18,
+    "maxTextBottom": 734,
+    "minBoxBottom": 807
+  },
+  "harnessDiagnostic": {
+    "initialAttempt": "All three groups timed out before payload because generated JavaScript missed a closing function-expression parenthesis. This is a diagnostic harness assembly defect, not a QSP rule failure.",
+    "correction": "Closing parenthesis corrected; every generated script parsed by vm.Script after substituting QSP interpolation placeholders only for this preflight. Fixed candidate is unchanged.",
+    "preservedInitialReport": "green-initial-harness-error.json"
+  },
+  "productionFilesUnchangedAtNativeCompletion": true,
+  "tempRoots": [
+    "G:/Codex/tmp/arena-mercy-loss-rule-20261031-native",
+    "G:/Codex/tmp/arena-mercy-loss-rule-20261031-green-native"
+  ],
+  "limits": [
+    "Synthetic actor resets between cases; user saves are not loaded or modified.",
+    "Only diagnostic copies replace random a/b draws with exact boundary values.",
+    "Original-text cases are compared with the pinned pre-change QSP narrative after known-name and HTML normalization."
+  ]
+}

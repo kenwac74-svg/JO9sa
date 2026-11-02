@@ -1,0 +1,64 @@
+{
+  "id": "2026-10-28_revelio_new_traits",
+  "description": "리벨리스·오베레그 활성 중 신규 숨은 특성 및 구형 활동 특성 표시. 실제 보유값·발견기록·확률·효과는 유지.",
+  "before_sha256": "972d1b7a8719c9b44e6aca4bfaf5a6f73908240762ce65061a7d298d0aa82679",
+  "after_sha256": "3fbdb2cca0e3eb2d4a70c2f9b442f2fb39bb756f1aefe6217cf8c10668f1106c",
+  "edits": [
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": "  if dynslave['jo9_ambition'] = 1 and dynslave['jo9_ambition_known'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''ambitious''\">야심가</a><br>'",
+      "new": "! JO9 MOD START REVELIO_NEW_AMBITION_20261028\r\n  if dynslave['jo9_ambition'] = 1 and (dynslave['jo9_ambition_known'] = 1 or spell_revelio = 1): $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''ambitious''\">야심가</a><br>'\r\n! JO9 MOD END REVELIO_NEW_AMBITION_20261028",
+      "count": 1,
+      "patchId": "REVELIO_NEW_AMBITION_20261028"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": "  if dynslave['jo9_work_ethic'] = 1 and dynslave['jo9_work_ethic_known'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''workaholic''\">일벌레</a><br>'",
+      "new": "! JO9 MOD START REVELIO_NEW_LEGACY_WORK_ACTIVE_20261028\r\n  if dynslave['jo9_work_ethic'] = 1 and (dynslave['jo9_work_ethic_known'] = 1 or spell_revelio = 1): $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''workaholic''\">일벌레</a><br>'\r\n! JO9 MOD END REVELIO_NEW_LEGACY_WORK_ACTIVE_20261028",
+      "count": 1,
+      "patchId": "REVELIO_NEW_LEGACY_WORK_ACTIVE_20261028"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": "  if dynslave['jo9_work_ethic'] = -1 and dynslave['jo9_work_ethic_known'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''content''\">안분지족</a><br>'",
+      "new": "! JO9 MOD START REVELIO_NEW_LEGACY_WORK_PASSIVE_20261028\r\n  if dynslave['jo9_work_ethic'] = -1 and (dynslave['jo9_work_ethic_known'] = 1 or spell_revelio = 1): $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''content''\">안분지족</a><br>'\r\n! JO9 MOD END REVELIO_NEW_LEGACY_WORK_PASSIVE_20261028",
+      "count": 1,
+      "patchId": "REVELIO_NEW_LEGACY_WORK_PASSIVE_20261028"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": "  if dynslave['jo9_focus'] = 1 and dynslave['jo9_focus_known'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''persevering''\">끈기</a><br>'",
+      "new": "! JO9 MOD START REVELIO_NEW_FOCUS_POSITIVE_20261028\r\n  if dynslave['jo9_focus'] = 1 and (dynslave['jo9_focus_known'] = 1 or spell_revelio = 1): $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''persevering''\">끈기</a><br>'\r\n! JO9 MOD END REVELIO_NEW_FOCUS_POSITIVE_20261028",
+      "count": 1,
+      "patchId": "REVELIO_NEW_FOCUS_POSITIVE_20261028"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": "  if dynslave['jo9_focus'] = -1 and dynslave['jo9_focus_known'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''distracted''\">산만함</a><br>'",
+      "new": "! JO9 MOD START REVELIO_NEW_FOCUS_NEGATIVE_20261028\r\n  if dynslave['jo9_focus'] = -1 and (dynslave['jo9_focus_known'] = 1 or spell_revelio = 1): $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''distracted''\">산만함</a><br>'\r\n! JO9 MOD END REVELIO_NEW_FOCUS_NEGATIVE_20261028",
+      "count": 1,
+      "patchId": "REVELIO_NEW_FOCUS_NEGATIVE_20261028"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": "  if dynslave['jo9_grudge'] = 1 and dynslave['jo9_grudge_known'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''petty''\">옹졸함</a><br>'",
+      "new": "! JO9 MOD START REVELIO_NEW_GRUDGE_POSITIVE_20261028\r\n  if dynslave['jo9_grudge'] = 1 and (dynslave['jo9_grudge_known'] = 1 or spell_revelio = 1): $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''petty''\">옹졸함</a><br>'\r\n! JO9 MOD END REVELIO_NEW_GRUDGE_POSITIVE_20261028",
+      "count": 1,
+      "patchId": "REVELIO_NEW_GRUDGE_POSITIVE_20261028"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": "  if dynslave['jo9_grudge'] = -1 and dynslave['jo9_grudge_known'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''generous''\">너그러움</a><br>'",
+      "new": "! JO9 MOD START REVELIO_NEW_GRUDGE_NEGATIVE_20261028\r\n  if dynslave['jo9_grudge'] = -1 and (dynslave['jo9_grudge_known'] = 1 or spell_revelio = 1): $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''generous''\">너그러움</a><br>'\r\n! JO9 MOD END REVELIO_NEW_GRUDGE_NEGATIVE_20261028",
+      "count": 1,
+      "patchId": "REVELIO_NEW_GRUDGE_NEGATIVE_20261028"
+    }
+  ]
+}

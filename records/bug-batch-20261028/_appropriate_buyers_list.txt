@@ -1,0 +1,41 @@
+! JO9 MOD START J9M2845 | 2026-10-10_restore_private_room_ui | changed block; context may be included
+if snk_room_target > 0 and $curloc = '$appropriate_buyers_list': gs 'snk_room_bridge', 'guard', '$appropriate_buyers_list'
+! JO9 MOD END J9M2845
+!Draw up a list of the best customers for the current slave
+gs '$slave_price'
+$appropriate_buyers_list = ''
+$appropriate_buyers_list_2 = ''
+$appropriate_buyers_list_3 = ''
+
+n = arrsize('$basic_buyer') - 1
+i = 0
+z = 0
+:loop
+i += 1
+
+if rating >= demand_rating[$basic_buyer[i]] and slave_specialisation[$interesting_specialisation[$basic_buyer[i]]] >= rating/2 and npc_progress[$basic_buyer[i]] < 2:
+ 	if z < 15:
+		$appropriate_buyers_list += '<div align="left" style="font-size: 85%;"><<$diary_mark[$basic_buyer[i]]>><br></div>'
+		z += 1
+  	elseif z < 34:
+		$appropriate_buyers_list_2 += '<div align="left" style="font-size: 85%;"><<$diary_mark[$basic_buyer[i]]>><br></div>'
+		z += 1
+	elseif z < 55:
+		$appropriate_buyers_list_3 += '<div align="left" style="font-size: 85%;"><<$diary_mark[$basic_buyer[i]]>><br></div>'
+		z += 1
+ 	end
+end
+
+if i < n: jump 'loop'
+
+if $appropriate_buyers_list = '' and $appropriate_buyers_list_2 = '' and $appropriate_buyers_list_3 = '': $appropriate_buyers_list = '<br>  내 노예에게 알맞은 구매자를 찾기 어려울 것 같다. 그녀는 아직 배워야 할 게 많다.<br>'
+
+if buyers_list = 0:
+	$quest_description[2] = '<<$appropriate_buyers_list>><br><a href = "EXEC: quest_description_mode = 0 & gt $curloc">뒤로</a>'
+	if z > 15: $quest_description[2] = '<<$appropriate_buyers_list>><br><a href = "EXEC: quest_description_mode = 0 & gt $curloc">뒤로</a>&nbsp<a href = "EXEC: quest_description_mode = 1 & buyers_list = 1 & gs ''$appropriate_buyers_list'' & gt $curloc">→</a>'
+elseif buyers_list = 1:
+	$quest_description[2] = '<<$appropriate_buyers_list_2>><br><a href = "EXEC: quest_description_mode = 0 & gt $curloc">뒤로</a>&nbsp<a href = "EXEC: quest_description_mode = 1 & buyers_list = 0 & gs ''$appropriate_buyers_list'' & gt $curloc">←</a>'
+	if z > 34: $quest_description[2] = '<<$appropriate_buyers_list_2>><br><a href = "EXEC: quest_description_mode = 0 & gt $curloc">뒤로</a>&nbsp<a href = "EXEC: quest_description_mode = 1 & buyers_list = 0 & gs ''$appropriate_buyers_list'' & gt $curloc">←</a>&nbsp<a href = "EXEC: quest_description_mode = 1 & buyers_list = 2 & gs ''$appropriate_buyers_list'' & gt $curloc">→</a>'
+elseif buyers_list = 2:
+	$quest_description[2] = '<<$appropriate_buyers_list_3>><br><a href = "EXEC: quest_description_mode = 0 & gt $curloc">뒤로</a>&nbsp<a href = "EXEC: quest_description_mode = 1 & buyers_list = 1 & gs ''$appropriate_buyers_list'' & gt $curloc">←</a>'
+end

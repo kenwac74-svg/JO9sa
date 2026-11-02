@@ -1,0 +1,114 @@
+{
+  "schema": 1,
+  "generatedAt": "2026-10-31T21:03:32.173Z",
+  "status": "BUILD_REVIEW_PENDING_CANDIDATE",
+  "reviewMode": "read-only static build-script review; no build executed",
+  "sourceQspSha256": "4d0715391e7ace44aec2c75bfd0bcd7df0b58e813b200778ee06bc636d744659",
+  "buildSha256": "fd56b8002f0259bf3ead01175266b25eceb72449ea1d1f74c6f6608f4cc8475a",
+  "criticalFindings": [
+    {
+      "id": "EXACT_PIG_ANCHOR_MISMATCH",
+      "effect": "The current 61131 replacement cannot find its exact old string and sub() will assert before emitting a candidate.",
+      "buildExpected": "\tgs 'stock_to_slave_nogt' &! only if no current slave",
+      "actualExactSource": "\tgs 'stock_to_slave_nogt' &! this option is only available if there is no current slave, so we can safely do this",
+      "leadingWhitespace": "One tab U+0009; the mismatch is the comment text."
+    },
+    {
+      "id": "EXACT_CLEAR_STOCK_ANCHOR_MISMATCH",
+      "effect": "The 61134/61135 hook cannot match because the actual comma is followed by a space.",
+      "buildExpected": "\tdynamic $clear_slave_instance,'stock'",
+      "actualExactSource": "\tdynamic $clear_slave_instance, 'stock'",
+      "alsoMatches61135": true
+    },
+    {
+      "id": "PIG_SNIPPET_SCHEMA_MISMATCH",
+      "effect": "The reviewed build loops over pig.edits, but the delivered snippet file has callbackReplacements and originConsumption, with old/newTemplate rather than location/old/new.",
+      "actualFields": [
+        "schema",
+        "proposalOnly",
+        "productionWrites",
+        "sourceSha256",
+        "sourceChangedExternallySinceEarlierAudit",
+        "scope",
+        "helperPlaceholder",
+        "callbackReplacements",
+        "originConsumption",
+        "reasons",
+        "testsRequiredByParent"
+      ],
+      "requiredReview": "Convert/consume the supplied structure with event6007-scoped exact anchors before compiling."
+    }
+  ],
+  "ledgerReview": {
+    "helperSource": "local jo9_cm_total = 2 * jo9_cruel_mercy + jo9_cruel_mercy_half + args[0]\nif jo9_cm_total < 0:\n jo9_cruel_mercy = -((-jo9_cm_total) / 2)\nelse\n jo9_cruel_mercy = jo9_cm_total / 2\nend\njo9_cruel_mercy_half = jo9_cm_total - 2 * jo9_cruel_mercy",
+    "referenceCases": 615,
+    "referenceFailures": 0,
+    "legacyWholeScorePreserved": true,
+    "missingLegacyRemainder": "Existing numeric-field default zero is assumed; no reset of existing whole score is added.",
+    "thresholdCompatibility": "Canonical whole plus signed half remainder preserves existing >=5/<=-5 threshold readers exactly.",
+    "scopeLimit": "Arithmetic checked by JS-equivalent integer reference only, not native QSP execution."
+  },
+  "actionReview": [
+    {
+      "id": 61121,
+      "result": "State-1 entry guard plus existing state-2 transition provides an operation-level once-per-trophy boundary for the added bookkeeping; no narrative/effect code is replaced.",
+      "sensitiveScope": "Existing age-specific sexual branches are shared; sensitive source text is not reproduced or modified by this review."
+    },
+    {
+      "id": 61132,
+      "result": "Requires existing stock and no current slave; +1 half-point only when stock_to_slave_nogt returns1. No positive effect is added to the common conversion helper."
+    },
+    {
+      "id": 61134,
+      "result": "Requires valid pending stock; -2 half-points intended immediately after stock clear; current hook anchor must be corrected first."
+    },
+    {
+      "id": 61135,
+      "result": "Same disposition boundary as61134; preserves the existing fee, production counters and get_meat order if anchor is corrected."
+    },
+    {
+      "ids": [
+        119,
+        61136,
+        61133
+      ],
+      "result": "No build scene rewrite or common conversion rewrite targets these zero/unassigned routes. Their current behavior should remain unchanged."
+    }
+  ],
+  "pending": [
+    {
+      "topic": "Candidate proof",
+      "reason": "No candidate was generated or decoded in this review; exact source replay, inverse recovery, zero-route byte preservation, narrative preservation and native repeat tests remain to be verified on the final candidate."
+    }
+  ],
+  "noncriticalCautions": [
+    {
+      "topic": "Guard failure navigation",
+      "note": "guard() emits exit after interaction_city has cleared current text arrays. Invalid/repeated-entry tests should check UI remains usable as well as score unchanged."
+    },
+    {
+      "topic": "Narrative protection check",
+      "note": "The script uses presence checks for original display literals. Final patch replay and untouched-region comparison remain necessary to establish exact source preservation."
+    },
+    {
+      "topic": "Additional rule scope",
+      "note": "The build also contains owned-slave butcher and safari rules; this report checks their guard shape but the root owns validation against the latest approved rule list."
+    }
+  ],
+  "productionWritten": false,
+  "workspaceWrittenOnly": "review-fog.json",
+  "nativeOrGuiClaim": false,
+  "pigSnippetReview": {
+    "sourceSha256": "4d0715391e7ace44aec2c75bfd0bcd7df0b58e813b200778ee06bc636d744659",
+    "branches": 3,
+    "assessment": "Read-only shape review: ordinary callbacks are retained; only captured61131+trophy origin replaces action1, successful swap is followed by the half-step helper and a display-only replacement callback. Origin is consumed at construction to avoid a later ordinary6007 action inheriting it.",
+    "newPersistentPendingFields": 0,
+    "unverified": "Actual QSP delayed callback expansion, repeated render, resistance GT and page1/page2/back behavior still require the parent native tests."
+  },
+  "sceneGatePlacement": {
+    "testedSceneCount": 11,
+    "allSelectorsUnique": true,
+    "allSceneStartsAtIfHeader": true,
+    "guardInsideSceneHeader": true
+  }
+}

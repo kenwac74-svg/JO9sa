@@ -1,0 +1,24 @@
+'use strict';
+const fs=require('fs'),a=require('assert/strict'),src=__dirname.replace('spare-cut','execution-cut');
+let install=fs.readFileSync(src+'/install.cjs','utf8').replaceAll('execution-cut','spare-cut').replaceAll('native.client.length,6','native.client.length,7').replaceAll('nativePaths:6','nativePaths:7');
+install=install.replace('/(coldef[123]|practice_', '/(arena_victory_execute|coldef[123]|practice_');fs.writeFileSync(__dirname+'/install.cjs',install);
+let finish=fs.readFileSync(src+'/finish.cjs','utf8').replaceAll('execution-cut','spare-cut').replaceAll('execution-release','spare-release').replaceAll('ARENA_VICTORY_EXECUTION_CUT_20261031','ARENA_VICTORY_SPARE_CUT_20261031').replaceAll('nativePaths:6','nativePaths:7');
+const ni=finish.indexOf('for(const [n,note]of ['),ne=finish.indexOf(']){const f=F',ni);a(ni>0&&ne>ni);
+finish=finish.slice(0,ni)+`for(const [n,note]of [['CHANGELOG_KO.md','- 콜로세움에서 노예가 승리 후 상대를 살려준 결과의 그림과 설명을 구분했습니다.'],['PLAYTEST_KO.md','정식 경기 승리·생존 확인: 내 노예로 정식 콜로세움 경기에서 승리하고 살려주기를 선택한 뒤 오른쪽 엄지를 누릅니다. 승리한 검투사와 후송되는 상대의 새 컷신, 이미 끝난 승부를 정리하는 설명이 나와야 합니다. 다음 상금 페이지에도 같은 그림을 유지하며 상금은 한 번만 지급되어야 합니다. 처형을 선택한 결과는 별도 처형 컷신을 유지해야 합니다. 챔피언 우승으로 이어지면 첫 발표 장면에 해당 선택의 승리 그림이 나오고 이후 해방·귀환·떠남 흐름은 유지됩니다.']]`+finish.slice(ne+1);
+// Replace the manual and trailing summary as a whole, retaining the shared manifest/release safeguards above.
+const mi=finish.indexOf("fs.writeFileSync(REC+'/MANUAL_KO.md'");a(mi>0);finish=finish.slice(0,mi)+`fs.writeFileSync(REC+'/MANUAL_KO.md',${JSON.stringify([
+'# 내 노예 승리 후 상대를 살려준 컷신',
+'사용자 제공 승리의 검투사와 콜로세움_795x596.png를 content/pic/scene/arena_victory_spare.png로 바이트 그대로 등록했다. WORK·현재 Full 테스트 빌드·resources/new에 같은 SHA256의 795×596 원본이 들어간다. 생성·크롭·재인코딩을 하지 않았고 사용자 원본도 유지한다.',
+'입력은 기존 jo9_fate의 mode=2, phase=3, choice=2다. 정식 경기 일반 승리 interaction_city1294의 설명과 상금 페이지에 새 그림을 유지한다. bg_path를 비워 옛 그림이 겹치지 않게 하고 special_image_full[1]/[2]로 표시한다. 처형과 살려줌은 상호 배타적이므로 앞서 연결한 처형 그림과 대사는 그대로 유지된다. 선택 없는 특수 경기의 기존 그림·설명도 유지한다.',
+'1294의 살려줌 문장은 승부가 끝나고 상대가 들것으로 후송된 장면에 맞췄다. 원래 성장 설명 접미사는 보존한다. phase2 확인은 현재 slave_name이 당신의 신호에 무기를 거두는 것으로 맞췄다. 챔피언 우승1295에서는 선택에 맞는 새 승리 그림을 첫 페이지만 표시하며, 이어지는 해방·귀환·이탈·상금의 원래 조건과 대사는 바꾸지 않는다.',
+'그림과 문장만 추가했다. 상금·성장·명성·승수·도덕값·확률·생사·소유권·재진입 방지는 기존 코드를 사용한다. 새 영구 변수·로케이션·저장 형식·세이브 이관은 없다. 기존 처형 블록3개는 바이트 그대로 보존했다. 연습·캣파이트·안개 분기는 이번 대상이 아니다.',
+'실제 설치 엔진의 격리 검사7경로는 일반 처형·살려줌·선택 없는 승리, 챔피언 처형 및 살려줌 각각 귀환·이탈을 실행한다. 기존 선택 콜백·전투 복귀·페이지 전진·재표시를 거쳐 그림과 완료 대사, 795×596, 하단 설명 범위, 상금·승수·도덕값 중복 여부를 확인했다. 공식 구조·줄바꿈·주석경계·패치재생·재적용·WORK/Full 일치와 엔진9경로도 PASS다. 실제 사용자 마우스 플레이나 모든 기존 SAV 불러오기 검증이라는 뜻은 아니다.',
+'이미 결과 화면으로 저장된 옛 SAV의 표시 캐시는 당시 내용을 유지할 수 있다. 새 승리 선택부터 확인하고 그림을 갱신하려고 정산을 재실행하지 않는다. 원본·기존TC SAV7개·패배3컷·연습4컷·처형 승리컷의 해시는 보존했다. 변경을 제거하면 살려준 승리도 옛 arena_end로 돌아가며 수치 결과는 달라지지 않는다.',
+'mods/2026-10-31_arena_victory_spare_cut.json의3조각을 apply_mods.ps1로 WORK와 현재 Full에 각각 적용했다. 이미지 목록·등장조건·배포 명세·플레이어 릴리즈노트·간단TC도 갱신했다. 다른 고유 챔피언 해방 전용 아트까지 완성했다는 뜻은 아니다. ZIP·커밋·푸시는 하지 않았다.'
+])}.join('\\n\\n')+'\\n');
+fs.appendFileSync(BUILD+'/REPORT_KO.md','\\n## 2026-10-31 내 노예 승리 후 상대 생존 컷신\\n\\n사용자795×596원본을 정식 콜로세움 생존 승리1294의 두 페이지와 챔피언 우승1295의 첫 페이지에 연결했다. 처형 그림과 별도로 표시하며 기존 보상·해방 이야기·다른 분기를 보존했다. 기능7/공식출고9경로PASS. WORK·Full '+v.after+'.\\n');
+console.log(JSON.stringify({status:'PASS',qsp:v.after,nativePaths:7,enginePaths:9,image:asset.path,runtimeFiles:mf.summary.runtimeFiles,fullFiles:mf.summary.allFilesIncludingManifest}));
+`;
+fs.writeFileSync(__dirname+'/finish.cjs',finish);
+let cleanup=fs.readFileSync(src+'/cleanup.cjs','utf8').replaceAll('execution-cut','spare-cut').replaceAll('execution-release','spare-release');cleanup=cleanup.replace(/,priorAttempt:'[^']*'/,'');fs.writeFileSync(__dirname+'/cleanup.cjs',cleanup);
+console.log('Prepared spare install/finish/cleanup scripts.');

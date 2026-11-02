@@ -1,0 +1,15 @@
+{
+  "id": "2026-11-01_room2_ego_growth",
+  "description": "Correct the original daily private-room2 ego growth target from room1_rate to room2_rate. Keep all growth conditions, amounts, other rooms and existing save values unchanged.",
+  "before_sha256": "9a4bba2496616517fa4cbd8d791293ad413c5475efcf135039df4da68e869f39",
+  "after_sha256": "a11ecde65897ab9c3d7bf736d0f539a35caa243c379e61a73ba6191241ef7755",
+  "edits": [
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "\tif room2['ego'] < 3: room1_rate['ego'] += 1 ",
+      "new": "! JO9 MOD START ROOM2_EGO_GROWTH_20261101\r\n\tif room2['ego'] < 3: room2_rate['ego'] += 1 \r\n! JO9 MOD END ROOM2_EGO_GROWTH_20261101",
+      "count": 1
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+/* JO9 MOD START MOB_SET_CATALOG_20261028: existing PIC writer owns backup and patch history. */
+(function(){
+ 'use strict';
+ const manifest=window.JO9_MOB_SETS,cfg=window.JO9_CATALOG_BRIDGE;
+ if(!manifest||!cfg||document.getElementById('jo9-mob-sets'))return;
+ const node=(tag,text)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n;};
+ const root=node('details');root.id='jo9-mob-sets';root.style.cssText='padding:14px 14px 80px;margin:14px;border:2px solid #987445;background:#181b20;color:#eee';
+ root.append(node('summary','전투 MOB 이미지 세트 · 초상 / 전신 / 패배'));
+ root.append(node('p','각 칸은 실제 게임 조회 파일입니다. 같은 이름의 전신과 defeated 폴더의 패배 컷신을 관리합니다. 탈옥수의 기존 개별 파일명 예외는 유지합니다. 공유 표시는 여러 적이 같은 파일을 사용한다는 뜻입니다. 누락 패배 컷신은 준비 전까지 기존 전신으로 표시합니다. 전신도 없는 경우에는 전신을 먼저 추가하세요. 경주 전용 초상은 제외합니다.'));
+ const exclusions=node('details');exclusions.append(node('summary','경주 전용 · 전투 컷신 불필요'),node('p',(manifest.excludedRaceFiles||[]).join(', ')));root.append(exclusions);
+ const controls=node('div'),search=node('input'),missing=node('input'),label=node('label'),refresh=node('button','파일 상태 새로고침'),status=node('p'),list=node('div');
+ search.placeholder='이름 / 파일명 검색';missing.type='checkbox';label.append(missing,document.createTextNode(' 부족한 세트만'));controls.append(search,label,refresh);root.append(controls,status,list);
+ (document.getElementById('main')||document.body).prepend(root);
+ let loaded=false,busy=false,paths=new Set(),revision=Date.now();
+ const relative=p=>p.replace(/^content\/pic\//,'');
+ async function call(action,data){const r=await fetch(cfg.url+'api/catalog/pic/'+action,{method:data?'POST':'GET',headers:{'X-JO9-Token':cfg.token,...(data?{'Content-Type':'application/json'}:{})},body:data?JSON.stringify(data):undefined,cache:'no-store'});const v=await r.json();if(!r.ok)throw Error(v.error||'서버 오류');return v;}
+ function present(s){return s&&paths.has(relative(s.path));}
+ async function sync(){refresh.disabled=true;try{const r=await call('index?rescan=1');paths=new Set(r.index.map(e=>e.path));revision=Date.now();loaded=true;render();}catch(e){status.textContent=e.message;}finally{refresh.disabled=false;}}
+ async function sha(b){return [...new Uint8Array(await crypto.subtle.digest('SHA-256',b))].map(n=>n.toString(16).padStart(2,'0')).join('');}
+ const un64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+ async function replace(slot,role){
+  if(busy)return;
+  const input=node('input');input.type='file';input.accept='image/png';
+  input.onchange=async()=>{if(!input.files[0])return;busy=true;let url;
+   try{
+    const file=input.files[0];if(file.size>60*1024*1024)throw Error('PNG 용량은 60MB 이하로 선택하세요.');
+    const data=new Uint8Array(await file.arrayBuffer());if(data.length<33||[137,80,78,71,13,10,26,10].some((v,i)=>data[i]!==v))throw Error('PNG만 사용할 수 있습니다.');
+    const view=new DataView(data.buffer),w=view.getUint32(16),h=view.getUint32(20);if(!w||!h||w*h>32000000)throw Error('이미지 크기를 확인하세요.');
+    const old=await call('file',{path:relative(slot.path)}),prior=old.missing?null:un64(old.data),before=prior?await sha(prior):null;
+    const expected=prior?{width:new DataView(prior.buffer).getUint32(16),height:new DataView(prior.buffer).getUint32(20)}:{width:w,height:h};
+    if(w!==expected.width||h!==expected.height)throw Error('이 슬롯은 '+expected.width+'×'+expected.height+' PNG가 필요합니다. 선택 파일은 '+w+'×'+h+'입니다.');
+    url=URL.createObjectURL(file);const img=node('img');img.src=url;await img.decode();img.style.cssText='max-width:75vw;max-height:60vh;object-fit:contain;background:#555';
+    const dialog=node('dialog'),yes=node('button','WORK에 반영'),no=node('button','취소');dialog.style.cssText='background:#222;color:white;max-width:85vw';
+    dialog.append(node('h3',role+' '+(old.missing?'추가':'교체')),node('p',slot.path+(slot.shared?' · 공유 파일: 연결된 모든 적에 적용됩니다.':'')),img,node('p','원본 백업과 이미지 패치 기록을 남깁니다.'),yes,no);document.body.append(dialog);
+    const approved=await new Promise(resolve=>{yes.onclick=()=>{dialog.close();resolve(true);};no.onclick=()=>{dialog.close();resolve(false);};dialog.oncancel=()=>resolve(false);dialog.showModal();});dialog.remove();if(!approved)return;
+    let binary='';for(let i=0;i<data.length;i+=32768)binary+=String.fromCharCode(...data.subarray(i,i+32768));
+    const result=await call('apply',{jobs:[{path:relative(slot.path),before,data:btoa(binary),cap:60*1024*1024,createMissing:!prior,width:w,height:h}]});
+    if(result.patchWarning||result.catalogWarning)throw Error('파일은 반영되었지만 기록 확인 필요: '+(result.patchWarning||result.catalogWarning));
+    window.dispatchEvent(new CustomEvent('jo9-local-images-changed'));await sync();status.textContent='반영 완료: '+slot.path+' · 새 전투 또는 화면을 다시 표시하면 적용됩니다.';
+   }catch(e){status.textContent=e.message;}finally{busy=false;if(url)URL.revokeObjectURL(url);}
+  };input.click();
+ }
+ function render(){
+  list.replaceChildren();const term=search.value.trim().toLowerCase();const rows=manifest.entries.filter(e=>(!term||JSON.stringify(e).toLowerCase().includes(term))&&(!missing.checked||!present(e.standing)||!present(e.defeat)));
+  status.textContent=rows.length+'개 표시 / 전체 '+manifest.entries.length+'개 역할·변형 · 전신 부족 '+manifest.entries.filter(e=>!present(e.standing)).length+' · 패배 부족 '+manifest.entries.filter(e=>!present(e.defeat)).length+' (공유 슬롯 중복 집계 가능)';
+  for(const e of rows){const card=node('section');card.style.cssText='border-top:1px solid #66543b;margin-top:16px;padding-top:10px';card.append(node('h3',e.name+' · '+e.key));
+   const grid=node('div');grid.style.cssText='display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px';card.append(grid);
+   for(const [key,title] of [['portrait','초상화'],['standing','전투 전신'],['defeat','패배 컷신']]){const slot=e[key],box=node('div');grid.append(box);box.append(node('h4',title));if(!slot){box.append(node('p','고정 초상 연결 없음'));continue;}
+    box.append(node('p',slot.path));const ok=present(slot);box.append(node('strong',(ok?'파일 있음':'추가 필요')+(slot.shared?' · 공유':'')));if(slot.width)box.append(node('p',slot.width+'×'+slot.height));if(!ok&&slot.reviewSource)box.append(node('p','기존 제작 시안: '+slot.reviewSource));
+    if(ok){const img=node('img');img.loading='lazy';img.style.cssText='display:block;width:100%;height:190px;object-fit:contain;background:#3b3b3b';img.src=cfg.url+'api/pic?t='+encodeURIComponent(cfg.token)+'&p='+encodeURIComponent(relative(slot.path))+'&v='+revision;img.onerror=()=>{img.alt='파일 미리보기 실패 — 상태를 새로고침하세요.';};box.append(img);}
+    const button=node('button',ok?'PNG 교체':'PNG 추가');button.onclick=()=>replace(slot,title);box.append(button);if(!ok)box.append(node('small',' · 권장 4:3 투명 PNG, 원본 크기로 추가'));
+   }list.append(card);
+  }
+ }
+ root.addEventListener('toggle',()=>{if(root.open&&!loaded)sync();});refresh.onclick=sync;search.oninput=render;missing.onchange=render;
+ if(new URLSearchParams(location.search).get('mobsets')==='1')root.open=true;
+}());
+/* JO9 MOD END MOB_SET_CATALOG_20261028 */

@@ -1,0 +1,17 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),a=require('node:assert/strict');
+const repo='G:/somi/JO9sa',work='G:/somi/Jack O Nine Tails v2.4_work/game',tmp='G:/Codex/tmp/battle-log-scroll-20261027',rec=repo+'/records/battle-log-scroll-20261027';
+const c=require(repo+'/tools/text-workshop/core.cjs'),hash=p=>c.hash(fs.readFileSync(p)),cr=s=>s.replace(/\r?\n/g,'\r\n');
+const qsp=hash(work+'/jack.qsp');a.equal(qsp,'7c366e1ae35a5922e32052847bceb28737ddab32c3861b19bbefd7661b45c2b7');
+const beforeCss=hash(work+'/css/base.css'),beforeJs=hash(work+'/content/js/jo9_battle_log.js');
+a.equal(beforeCss,'f8844167776c4c98ea93966f5743f241c2e832dbd40f4043bb2ace37f21d9c0c');a.equal(beforeJs,'4449ecbf3d2794979573622a3b53759ab341eaca8d305f07d4533c85b201dfb5');
+const stamp=new Date().toISOString().replace(/[-:TZ.]/g,'').slice(0,14),backup='G:/somi/JO9_work_backups/battle_log_scroll_'+stamp;
+for(const rel of ['css/base.css','content/js/jo9_battle_log.js']){a.equal(hash(repo+'/'+(rel.startsWith('css/')?'assets/css-2.4/'+rel.slice(4):'assets/'+rel)),hash(work+'/'+rel));fs.mkdirSync(path.dirname(backup+'/'+rel),{recursive:true});fs.copyFileSync(work+'/'+rel,backup+'/'+rel);}
+let css=fs.readFileSync(work+'/css/base.css','utf8');const from=cr('.jo9-battle-v01 #fight_txt{\n font-size:22px;\n line-height:28px;\n white-space:normal;\n overflow:hidden;\n}');
+a.equal(css.split(from).length-1,1);css=css.replace(from,from.replace(' overflow:hidden;',' overflow-x:hidden;\r\n overflow-y:auto;'));
+const paging=/\/\* JO9 MOD START BATTLE_LOG_PAGING_20261027 \*\/[\s\S]*?\/\* JO9 MOD END BATTLE_LOG_PAGING_20261027 \*\//g;a.equal([...css.matchAll(paging)].length,1);
+css=css.replace(paging,cr('/* JO9 MOD START BATTLE_LOG_SCROLL_20261027 */\n.jo9-battle-v01 #fight_txt{word-wrap:break-word;}\n.jo9-battle-v01 #fight_txt font[size]{font-size:inherit;}\n/* JO9 MOD END BATTLE_LOG_SCROLL_20261027 */'));
+const js=cr('/* JO9 MOD START BATTLE_LOG_SCROLL_20261027\n   Display-only: retain the complete log and its native vertical scrolling. */\n(function () {\n \'use strict\';\n var root=document.getElementById(\'jo9_battle_test_v01\'),log=root&&root.querySelector(\'#fight_txt\');\n if(!log)return;\n var brs=log.querySelectorAll(\'br\'),i,node,after;\n /* Remove only consecutive BR elements separated by whitespace-only text. */\n for(i=0;i<brs.length;i++)if(brs[i].parentNode){\n  node=brs[i].nextSibling;\n  while(node){\n   if(node.nodeType===3&&!/\\S/.test(node.nodeValue)){node=node.nextSibling;continue;}\n   if(node.nodeType===1&&node.tagName===\'BR\'){after=node.nextSibling;node.parentNode.removeChild(node);node=after;continue;}\n   break;\n  }\n }\n}());\n/* JO9 MOD END BATTLE_LOG_SCROLL_20261027 */\n');
+for(const [rel,content] of [['css/base.css',css],['content/js/jo9_battle_log.js',js]]){fs.mkdirSync(path.dirname(tmp+'/candidate/'+rel),{recursive:true});fs.writeFileSync(tmp+'/candidate/'+rel,content);}
+fs.mkdirSync(rec+'/scripts',{recursive:true});const report={status:'CANDIDATE',qspUnchanged:qsp,backup,cssBefore:beforeCss,cssAfter:hash(tmp+'/candidate/css/base.css'),jsBefore:beforeJs,jsAfter:hash(tmp+'/candidate/content/js/jo9_battle_log.js'),scope:'Battle log only: native vertical scroll, no pagination. Duplicate BR cleanup retained; actions/skills/FX unchanged.'};
+fs.writeFileSync(rec+'/candidate.json',JSON.stringify(report,null,2)+'\n');fs.copyFileSync(__filename,rec+'/scripts/prepare.cjs');console.log(JSON.stringify(report));

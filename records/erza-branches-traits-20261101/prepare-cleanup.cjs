@@ -1,0 +1,5 @@
+'use strict';
+const fs=require('fs'),a=require('assert/strict');
+let s=fs.readFileSync(__dirname+'/../cruel-mercy-rules-20261101/cleanup.cjs','utf8').replaceAll('cruel-mercy-rules-20261101','erza-branches-traits-20261101');
+a(s.includes("const roots=[T,T+'-actions',T+'-pig-native',T+'-release'];"));s=s.replace("const roots=[T,T+'-actions',T+'-pig-native',T+'-release'];","const roots=[T,T+'-events',T+'-traits-native',T+'-release'];");
+fs.writeFileSync(__dirname+'/cleanup.cjs',s);

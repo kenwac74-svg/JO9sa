@@ -1,0 +1,1206 @@
+{
+  "schema": "jo9-mob-event-background-contexts-v1",
+  "source": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+  "sourceSha256": "5d7c16b17d9aa0c1bb9c818c67521b2693a32a2db068742fbe7072f2dd8343cd",
+  "scope": "Read-only compiled QSP event and non-fog encounter audit; no runtime, art, save, or catalog edits.",
+  "verification": "Static source reachability and asset existence only; no live event playtest in this audit.",
+  "renderer": {
+    "uiStyle": 2,
+    "descriptionKo": "전용 장소 배경은 전투 준비/도시 화면의 선언값이다. 현재 전투·종료 렌더러는 edge_patrol 및 콜로세움만 별도 선택하고, 나머지 이벤트는 공통 fight.png로 표시한다.",
+    "battleEvidence": [
+      {
+        "location": "боевой_интерфейс",
+        "line": 105,
+        "text": "if $place = 'edge_patrol':"
+      },
+      {
+        "location": "боевой_интерфейс",
+        "line": 108,
+        "text": "\t*p func('interior_change', 'jo9_html', '<div id = \"fight_bg\"><img src = \"content/pic/bg/battle_mist_forest.png\"></div>')"
+      },
+      {
+        "location": "боевой_интерфейс",
+        "line": 111,
+        "text": "elseif ($place = 'colosseum' and colosseum_fight > 0) or ($place = 'colosseum_arena' and $fight_return = 'Start'):"
+      },
+      {
+        "location": "боевой_интерфейс",
+        "line": 113,
+        "text": "*p '<div id = \"fight_bg\"><img src = \"content/pic/ui/jo9_battle_test_v01/arena.png\"></div>'"
+      },
+      {
+        "location": "боевой_интерфейс",
+        "line": 115,
+        "text": "elseif ui_style = 2:"
+      },
+      {
+        "location": "боевой_интерфейс",
+        "line": 117,
+        "text": "\t*p func('interior_change', 'jo9_html', '<div id = \"fight_bg\"><img src = \"content\\pic\\ui\\grimdark\\bg\\fight.png\"></div>')"
+      },
+      {
+        "location": "боевой_интерфейс",
+        "line": 121,
+        "text": "\t*p func('interior_change', 'jo9_html', '<div id = \"fight_bg\"><img src = \"content/pic/bg/fight.png\"></div>')"
+      }
+    ],
+    "resultEvidence": [
+      {
+        "location": "конец_боя",
+        "line": 57,
+        "text": "if $place = 'edge_patrol':"
+      },
+      {
+        "location": "конец_боя",
+        "line": 60,
+        "text": "\t*p func('interior_change', 'jo9_html', '<div id = \"fight_bg\"><img src = \"content/pic/bg/battle_mist_forest.png\"></div>')"
+      },
+      {
+        "location": "конец_боя",
+        "line": 63,
+        "text": "elseif ($place = 'colosseum' and colosseum_fight > 0) or ($place = 'colosseum_arena' and $fight_return = 'Start'):"
+      },
+      {
+        "location": "конец_боя",
+        "line": 65,
+        "text": "*p '<div id = \"fight_bg\"><img src = \"content/pic/ui/jo9_battle_test_v01/arena.png\"></div>'"
+      },
+      {
+        "location": "конец_боя",
+        "line": 67,
+        "text": "elseif ui_style = 2:"
+      },
+      {
+        "location": "конец_боя",
+        "line": 69,
+        "text": "\t*p func('interior_change', 'jo9_html', '<div id = \"fight_bg\"><img src = \"content\\pic\\ui\\grimdark\\bg\\fight.png\"></div>')"
+      },
+      {
+        "location": "конец_боя",
+        "line": 73,
+        "text": "\t*p func('interior_change', 'jo9_html', '<div id = \"fight_bg\"><img src = \"content/pic/bg/fight.png\"></div>')"
+      }
+    ],
+    "weaponPrepEvidence": [
+      {
+        "location": "начать_бой",
+        "line": 10,
+        "text": "if get_weapon = 0:"
+      },
+      {
+        "location": "начать_бой",
+        "line": 11,
+        "text": "\t$memplace = $place"
+      },
+      {
+        "location": "начать_бой",
+        "line": 17,
+        "text": "\tinteraction_city = 901"
+      },
+      {
+        "location": "начать_бой",
+        "line": 20,
+        "text": "\tgt 'interaction_city'"
+      },
+      {
+        "location": "начать_бой",
+        "line": 26,
+        "text": "\tcolosseum_fight = memcf"
+      },
+      {
+        "location": "interaction_city",
+        "line": 13112,
+        "text": "if interaction_city = 901:"
+      },
+      {
+        "location": "interaction_city",
+        "line": 13113,
+        "text": "\t$place = $memplace"
+      },
+      {
+        "location": "interaction_city",
+        "line": 13120,
+        "text": "\tgs '$weapon_assignments'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 13121,
+        "text": "\tcopyarr '$display_options', '$get_weapon'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 13122,
+        "text": "\tgt 'shop_general'"
+      }
+    ],
+    "futureGuidanceKo": "이벤트별 배경을 붙일 때는 place/전투 문맥을 분리 키로 사용한다. $edge_of_mists 옵션 배열을 재사용한다는 사실만으로 안개숲 배경을 적용하지 않는다."
+  },
+  "entries": [
+    {
+      "enemyKey": "egeya",
+      "contextId": "event:egeya_duel",
+      "category": "event",
+      "labelKo": "캣파이트 클럽 주인 에게야와의 이벤트 결투",
+      "place": "egeya_battle",
+      "entryInteractions": [
+        102015,
+        102016
+      ],
+      "sceneBackground": {
+        "place": "egeya_battle",
+        "declaredPath": "content/pic/bg/egeya.png",
+        "exists": true,
+        "definitions": [
+          {
+            "location": "#place_base",
+            "line": 132,
+            "text": "$bg['egeya_battle'] = 'egeya'"
+          }
+        ]
+      },
+      "art": {
+        "nameKo": {
+          "value": "에게야",
+          "evidence": {
+            "location": "#противники",
+            "line": 3471,
+            "text": "$название_моба['egeya'] = \"에게야\""
+          }
+        },
+        "portrait": {
+          "value": "content/pic/mob/egeya_ava.png",
+          "evidence": {
+            "location": "#противники",
+            "line": 3472,
+            "text": "$аватара_моба['egeya'] = \"content/pic/mob/egeya_ava.png\""
+          }
+        },
+        "standing": {
+          "value": "content/pic/mob/egeya.png",
+          "evidence": {
+            "location": "#противники",
+            "line": 3473,
+            "text": "$силуэт_моба['egeya'] = \"content/pic/mob/egeya.png\""
+          }
+        }
+      },
+      "actualBattleBackground": "content/pic/ui/grimdark/bg/fight.png",
+      "actualResultBackground": "content/pic/ui/grimdark/bg/fight.png",
+      "runtimeSelector": {
+        "$place": "egeya_battle",
+        "$fight_return": "city_menu_form",
+        "colosseum_fight": 0,
+        "combatant": 0
+      },
+      "evidence": [
+        {
+          "location": "interaction_city",
+          "line": 17637,
+          "text": "\tIF interaction_city = 102015:"
+        },
+        {
+          "location": "interaction_city",
+          "line": 17638,
+          "text": "\t gs '$combat_variable_reset'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 17639,
+          "text": "\t $place = 'egeya_battle'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 17640,
+          "text": "\t $return_lock  = 'city_menu_form'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 17641,
+          "text": "\t combatant = 0"
+        },
+        {
+          "location": "interaction_city",
+          "line": 17642,
+          "text": "\t interaction_city = 102016"
+        },
+        {
+          "location": "interaction_city",
+          "line": 17644,
+          "text": "\tIF interaction_city = 102016:"
+        },
+        {
+          "location": "interaction_city",
+          "line": 17645,
+          "text": "\t $fight_return  = 'city_menu_form'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 17650,
+          "text": "\t количество_врагов = 1"
+        },
+        {
+          "location": "interaction_city",
+          "line": 17651,
+          "text": "\t $враг[1] = 'egeya'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 17652,
+          "text": "\t copyarr '$display_options', '$edge_of_mists'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 17653,
+          "text": "\t GT 'shop_general'"
+        }
+      ],
+      "duplicateRouteEvidence": [
+        {
+          "location": "interaction_city",
+          "line": 17871,
+          "text": "\tIF interaction_city = 102015:"
+        },
+        {
+          "location": "interaction_city",
+          "line": 17872,
+          "text": "\t gs '$combat_variable_reset'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 17873,
+          "text": "\t $place = 'egeya_battle'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 17875,
+          "text": "\t combatant = 0"
+        },
+        {
+          "location": "interaction_city",
+          "line": 17876,
+          "text": "\t interaction_city = 102016"
+        },
+        {
+          "location": "interaction_city",
+          "line": 17878,
+          "text": "\tIF interaction_city = 102016:"
+        },
+        {
+          "location": "interaction_city",
+          "line": 17879,
+          "text": "\t $fight_return  = 'city_menu_form'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 17884,
+          "text": "\t $враг[1] = 'egeya'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 17885,
+          "text": "\t copyarr '$display_options', '$edge_of_mists'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 17886,
+          "text": "\t GT 'shop_general'"
+        }
+      ],
+      "notes": [
+        "캣파이트 클럽에서 시작하지만 일반 캣파이트 참가전과 분리된 주인공 이벤트 결투이다.",
+        "같은 분기가 현재 interaction_city 본문에 두 번 존재한다. 공통 장소/적 연결은 동일하다."
+      ]
+    },
+    {
+      "enemyKey": "vatican_paladin",
+      "contextId": "event:vatican_paladin",
+      "category": "event",
+      "labelKo": "포털 접근권을 위한 바티칸 성기사 이벤트 결투",
+      "place": "fogs_battle1",
+      "entryInteractions": [
+        62171,
+        6215
+      ],
+      "sceneBackground": {
+        "place": "fogs_battle1",
+        "declaredPath": "content/pic/bg/vatican_paladin.png",
+        "exists": true,
+        "definitions": [
+          {
+            "location": "#place_base",
+            "line": 130,
+            "text": "$bg['fogs_battle1'] = 'vatican_paladin'"
+          },
+          {
+            "location": "#place_base",
+            "line": 205,
+            "text": "$bg['fogs_battle1'] = 'vatican_paladin'"
+          }
+        ]
+      },
+      "art": {
+        "nameKo": {
+          "value": "성기사",
+          "evidence": {
+            "location": "#противники",
+            "line": 3560,
+            "text": "$название_моба['vatican_paladin'] = \"성기사\""
+          }
+        },
+        "portrait": {
+          "value": "content/pic/mob/vatican_paladin_ava.png",
+          "evidence": {
+            "location": "#противники",
+            "line": 3561,
+            "text": "$аватара_моба['vatican_paladin'] = \"content/pic/mob/vatican_paladin_ava.png\""
+          }
+        },
+        "standing": {
+          "value": "content/pic/mob/vatican_paladin.png",
+          "evidence": {
+            "location": "#противники",
+            "line": 3562,
+            "text": "$силуэт_моба['vatican_paladin'] = \"content/pic/mob/vatican_paladin.png\""
+          }
+        }
+      },
+      "actualBattleBackground": "content/pic/ui/grimdark/bg/fight.png",
+      "actualResultBackground": "content/pic/ui/grimdark/bg/fight.png",
+      "runtimeSelector": {
+        "$place": "fogs_battle1",
+        "$fight_return": "city_menu_form",
+        "colosseum_fight": 0,
+        "combatant": 0
+      },
+      "evidence": [
+        {
+          "location": "interaction_city",
+          "line": 22966,
+          "text": "IF interaction_city = 62171:"
+        },
+        {
+          "location": "interaction_city",
+          "line": 22967,
+          "text": " gs '$combat_variable_reset'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 22968,
+          "text": " $place = 'fogs_battle1'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 22969,
+          "text": " $return_lock  = 'city_menu_form'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 22970,
+          "text": " combatant = 0"
+        },
+        {
+          "location": "interaction_city",
+          "line": 22971,
+          "text": " interaction_city = 6215"
+        },
+        {
+          "location": "interaction_city",
+          "line": 22980,
+          "text": "IF interaction_city = 6215:"
+        },
+        {
+          "location": "interaction_city",
+          "line": 22981,
+          "text": " $fight_return  = 'city_menu_form'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 22982,
+          "text": " skip_to = 6215"
+        },
+        {
+          "location": "interaction_city",
+          "line": 22983,
+          "text": " $special_image[1] = 'scene\\vatican_paladin.png'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 22985,
+          "text": " количество_врагов = 1"
+        },
+        {
+          "location": "interaction_city",
+          "line": 22986,
+          "text": " $враг[1] = 'vatican_paladin'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 22987,
+          "text": " copyarr '$display_options', '$edge_of_mists'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 22988,
+          "text": " GT 'shop_general'"
+        }
+      ],
+      "duplicateRouteEvidence": [],
+      "notes": [
+        "안개구역 이야기 이벤트이며 무작위 안개경계 순찰(edge_patrol)과 구분된다.",
+        "일반 안개순찰 성기사 무리의 적 키 паладин과는 별개 키/이미지다."
+      ]
+    },
+    {
+      "enemyKey": "strazhnik",
+      "contextId": "event:portal_guardian",
+      "category": "event",
+      "labelKo": "포털 가디언 최종 이벤트 전투",
+      "place": "fogs_battle2",
+      "entryInteractions": [
+        62172,
+        6216
+      ],
+      "sceneBackground": {
+        "place": "fogs_battle2",
+        "declaredPath": "content/pic/bg/strazhnik.png",
+        "exists": true,
+        "definitions": [
+          {
+            "location": "#place_base",
+            "line": 131,
+            "text": "$bg['fogs_battle2'] = 'strazhnik'"
+          },
+          {
+            "location": "#place_base",
+            "line": 206,
+            "text": "$bg['fogs_battle2'] = 'strazhnik'"
+          }
+        ]
+      },
+      "art": {
+        "nameKo": {
+          "value": "포탈 가디언",
+          "evidence": {
+            "location": "#противники",
+            "line": 3625,
+            "text": "$название_моба['strazhnik'] = \"포탈 가디언\""
+          }
+        },
+        "portrait": {
+          "value": "content/pic/mob/strazhnik_ava.png",
+          "evidence": {
+            "location": "#противники",
+            "line": 3626,
+            "text": "$аватара_моба['strazhnik'] = \"content/pic/mob/strazhnik_ava.png\""
+          }
+        },
+        "standing": {
+          "value": "content/pic/mob/strazhnik.png",
+          "evidence": {
+            "location": "#противники",
+            "line": 3627,
+            "text": "$силуэт_моба['strazhnik'] = \"content/pic/mob/strazhnik.png\""
+          }
+        }
+      },
+      "actualBattleBackground": "content/pic/ui/grimdark/bg/fight.png",
+      "actualResultBackground": "content/pic/ui/grimdark/bg/fight.png",
+      "runtimeSelector": {
+        "$place": "fogs_battle2",
+        "$fight_return": "city_menu_form",
+        "colosseum_fight": 0,
+        "combatant": 0
+      },
+      "evidence": [
+        {
+          "location": "interaction_city",
+          "line": 22973,
+          "text": "IF interaction_city = 62172:"
+        },
+        {
+          "location": "interaction_city",
+          "line": 22974,
+          "text": " gs '$combat_variable_reset'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 22975,
+          "text": " $place = 'fogs_battle2'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 22976,
+          "text": " $return_lock  = 'city_menu_form'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 22977,
+          "text": " combatant = 0"
+        },
+        {
+          "location": "interaction_city",
+          "line": 22978,
+          "text": " interaction_city = 6216"
+        },
+        {
+          "location": "interaction_city",
+          "line": 22990,
+          "text": "IF interaction_city = 6216:"
+        },
+        {
+          "location": "interaction_city",
+          "line": 22991,
+          "text": " $fight_return  = 'city_menu_form'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 22992,
+          "text": " skip_to = 6216"
+        },
+        {
+          "location": "interaction_city",
+          "line": 22993,
+          "text": " $special_image[1] = 'scene\\strazhnik.png'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 22997,
+          "text": " количество_врагов = 1"
+        },
+        {
+          "location": "interaction_city",
+          "line": 22998,
+          "text": " $враг[1] = 'strazhnik'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 22999,
+          "text": " copyarr '$display_options', '$edge_of_mists'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 23000,
+          "text": " GT 'shop_general'"
+        }
+      ],
+      "duplicateRouteEvidence": [],
+      "notes": [
+        "포털 가디언 이야기 이벤트로 무작위 안개경계 순찰(edge_patrol)과 구분된다."
+      ]
+    },
+    {
+      "enemyKey": "grinch",
+      "contextId": "event:grinch_christmas",
+      "category": "event",
+      "labelKo": "겨울 동화 그린치 이벤트 전투",
+      "place": "Grinch_battle",
+      "entryInteractions": [
+        10383,
+        10384
+      ],
+      "sceneBackground": {
+        "place": "Grinch_battle",
+        "declaredPath": "content/pic/bg/Grinch_battle.png",
+        "exists": true,
+        "definitions": [
+          {
+            "location": "#place_base",
+            "line": 142,
+            "text": "$bg['Grinch_battle'] = 'Grinch_battle'"
+          }
+        ]
+      },
+      "art": {
+        "nameKo": {
+          "value": "그린치",
+          "evidence": {
+            "location": "#противники",
+            "line": 3688,
+            "text": "$название_моба['grinch'] = \"그린치\""
+          }
+        },
+        "portrait": {
+          "value": "content/pic/mob/grinch.png",
+          "evidence": {
+            "location": "#противники",
+            "line": 3689,
+            "text": "$аватара_моба['grinch'] = \"content/pic/mob/grinch.png\""
+          }
+        },
+        "standing": {
+          "value": "content/pic/mob/grinch_full.png",
+          "evidence": {
+            "location": "#противники",
+            "line": 3691,
+            "text": "$силуэт_моба['grinch'] = \"content/pic/mob/grinch_full.png\""
+          }
+        }
+      },
+      "actualBattleBackground": "content/pic/ui/grimdark/bg/fight.png",
+      "actualResultBackground": "content/pic/ui/grimdark/bg/fight.png",
+      "runtimeSelector": {
+        "$place": "Grinch_battle",
+        "$fight_return": "city_menu_form",
+        "colosseum_fight": 0,
+        "combatant": 0
+      },
+      "evidence": [
+        {
+          "location": "interaction_city",
+          "line": 24489,
+          "text": "IF interaction_city = 10383:"
+        },
+        {
+          "location": "interaction_city",
+          "line": 24490,
+          "text": " gs '$combat_variable_reset'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 24491,
+          "text": " $place = 'Grinch_battle'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 24492,
+          "text": " $return_lock  = 'city_menu_form'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 24493,
+          "text": " combatant = 0"
+        },
+        {
+          "location": "interaction_city",
+          "line": 24494,
+          "text": " interaction_city = 10384"
+        },
+        {
+          "location": "interaction_city",
+          "line": 24497,
+          "text": "IF interaction_city = 10384:"
+        },
+        {
+          "location": "interaction_city",
+          "line": 24498,
+          "text": " $fight_return  = 'city_menu_form'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 24499,
+          "text": " skip_to = 10384"
+        },
+        {
+          "location": "interaction_city",
+          "line": 24506,
+          "text": " количество_врагов = 1"
+        },
+        {
+          "location": "interaction_city",
+          "line": 24507,
+          "text": " $враг[1] = 'grinch'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 24508,
+          "text": " copyarr '$display_options', '$edge_of_mists'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 24509,
+          "text": " GT 'shop_general'"
+        }
+      ],
+      "duplicateRouteEvidence": [],
+      "notes": [
+        "전투용 전신은 grinch_full.png이고 초상은 grinch.png이다. 두 역할을 동일 파일로 추정하지 않는다."
+      ]
+    },
+    {
+      "enemyKey": "erza",
+      "contextId": "event:erza_duel",
+      "category": "event",
+      "labelKo": "엘자 영입 관련 이벤트 결투",
+      "place": "erza_battle",
+      "entryInteractions": [
+        666777,
+        6667770,
+        666778
+      ],
+      "sceneBackground": {
+        "place": "erza_battle",
+        "declaredPath": "content/pic/bg/erza.png",
+        "exists": true,
+        "definitions": [
+          {
+            "location": "#place_base",
+            "line": 209,
+            "text": "$bg['erza_battle'] = 'erza'"
+          }
+        ]
+      },
+      "art": {
+        "nameKo": {
+          "value": "엘자",
+          "evidence": {
+            "location": "#противники",
+            "line": 3756,
+            "text": "$название_моба['erza'] = \"엘자\""
+          }
+        },
+        "portrait": {
+          "value": "content/pic/mob/erza_ava.png",
+          "evidence": {
+            "location": "#противники",
+            "line": 3757,
+            "text": "$аватара_моба['erza'] = \"content/pic/mob/erza_ava.png\""
+          }
+        },
+        "standing": {
+          "value": "content/pic/mob/erza.png",
+          "evidence": {
+            "location": "#противники",
+            "line": 3758,
+            "text": "$силуэт_моба['erza'] = \"content/pic/mob/erza.png\""
+          }
+        }
+      },
+      "actualBattleBackground": "content/pic/ui/grimdark/bg/fight.png",
+      "actualResultBackground": "content/pic/ui/grimdark/bg/fight.png",
+      "runtimeSelector": {
+        "$place": "erza_battle",
+        "$fight_return": "city_menu_form",
+        "colosseum_fight": 0,
+        "combatant": 0
+      },
+      "evidence": [
+        {
+          "location": "interaction_city",
+          "line": 32082,
+          "text": "IF interaction_city = 666777:"
+        },
+        {
+          "location": "interaction_city",
+          "line": 32085,
+          "text": " $place = 'erza_battle'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 32086,
+          "text": " $return_lock  = 'shop_general'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 32087,
+          "text": " copyarr '$display_options', '$erza_battle_options'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 32094,
+          "text": "IF interaction_city = 6667770:"
+        },
+        {
+          "location": "interaction_city",
+          "line": 32095,
+          "text": " gs '$combat_variable_reset'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 32096,
+          "text": " $place = 'erza_battle'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 32097,
+          "text": " $return_lock  = 'city_menu_form'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 32098,
+          "text": " combatant = 0"
+        },
+        {
+          "location": "interaction_city",
+          "line": 32099,
+          "text": " interaction_city = 666778"
+        },
+        {
+          "location": "interaction_city",
+          "line": 32101,
+          "text": "IF interaction_city = 666778:"
+        },
+        {
+          "location": "interaction_city",
+          "line": 32102,
+          "text": " $fight_return  = 'city_menu_form'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 32103,
+          "text": " skip_to = 10385"
+        },
+        {
+          "location": "interaction_city",
+          "line": 32107,
+          "text": " количество_врагов = 1"
+        },
+        {
+          "location": "interaction_city",
+          "line": 32108,
+          "text": " $враг[1] = 'erza'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 32109,
+          "text": " copyarr '$display_options', '$edge_of_mists'"
+        },
+        {
+          "location": "interaction_city",
+          "line": 32110,
+          "text": " GT 'shop_general'"
+        }
+      ],
+      "duplicateRouteEvidence": [],
+      "notes": [
+        "전용 이벤트 장소이며 콜로세움 경기장으로 분류하지 않는다."
+      ]
+    }
+  ],
+  "dynamicContexts": [
+    {
+      "enemyKey": "воспитуемая",
+      "category": "event",
+      "contextId": "event:owned_slave_night_attack",
+      "labelKo": "소유 노예의 야간 습격",
+      "place": "bedroom",
+      "fixedMobArt": false,
+      "actualBattleBackground": "content/pic/ui/grimdark/bg/fight.png",
+      "notes": [
+        "고정 MOB 그림이 아닌 현재 소유 노예 인물 정보로 전투 상대를 구성한다."
+      ],
+      "evidence": [
+        {
+          "location": "end_day_screen",
+          "line": 964,
+          "text": "if slave_attack = 1:"
+        },
+        {
+          "location": "end_day_screen",
+          "line": 965,
+          "text": "\t$place = 'bedroom'"
+        },
+        {
+          "location": "end_day_screen",
+          "line": 970,
+          "text": "\tколичество_врагов = 1"
+        },
+        {
+          "location": "end_day_screen",
+          "line": 971,
+          "text": "\t$враг[1] = 'воспитуемая'"
+        },
+        {
+          "location": "end_day_screen",
+          "line": 974,
+          "text": "\t$fight_return = 'end_day_screen'"
+        },
+        {
+          "location": "end_day_screen",
+          "line": 977,
+          "text": "\tcombatant = 0 &! master is in the defending slot"
+        },
+        {
+          "location": "end_day_screen",
+          "line": 979,
+          "text": "\tgt 'начать_бой'"
+        }
+      ],
+      "weaponPrepEvidence": [
+        {
+          "location": "interaction_city",
+          "line": 13137,
+          "text": "if interaction_city = 903:"
+        },
+        {
+          "location": "interaction_city",
+          "line": 13138,
+          "text": "\t$place = 'bedroom'"
+        }
+      ]
+    },
+    {
+      "enemyKey": "воспитуемая",
+      "category": "event",
+      "contextId": "event:owned_slave_fights_back",
+      "labelKo": "교육/상호작용 중 소유 노예의 반격",
+      "place": "caller-dependent",
+      "fixedMobArt": false,
+      "actualBattleBackground": "content/pic/ui/grimdark/bg/fight.png",
+      "notes": [
+        "#dynamic의 $slave_fights_back은 장소를 새로 지정하지 않는다. 호출 장소를 물려받으며 개인실은 snk_room_bridge 복귀 문맥이 추가된다.",
+        "배경을 고정 장소 하나로 분류하면 안 된다."
+      ],
+      "evidence": [
+        {
+          "location": "#dynamic",
+          "line": 1591,
+          "text": "$slave_fights_back = {"
+        },
+        {
+          "location": "#dynamic",
+          "line": 1597,
+          "text": "\tколичество_врагов = 1"
+        },
+        {
+          "location": "#dynamic",
+          "line": 1598,
+          "text": "\t$враг[1] = 'воспитуемая'"
+        },
+        {
+          "location": "#dynamic",
+          "line": 1603,
+          "text": "\t$fight_return = 'menu_form'"
+        },
+        {
+          "location": "#dynamic",
+          "line": 1604,
+          "text": "\tcombatant = 0 &! master is in the defending slot"
+        },
+        {
+          "location": "#dynamic",
+          "line": 1606,
+          "text": "\tgt 'начать_бой'"
+        }
+      ],
+      "privateRoomEvidence": [
+        {
+          "location": "snk_room_bridge",
+          "line": 165,
+          "text": " ! An original lesson refusal can start combat. Keep that original consequence"
+        },
+        {
+          "location": "snk_room_bridge",
+          "line": 166,
+          "text": " ! attached to the room subject until its original return to menu_form."
+        },
+        {
+          "location": "snk_room_bridge",
+          "line": 167,
+          "text": " if $fight_return = 'menu_form' and $враг[1] = 'воспитуемая':"
+        },
+        {
+          "location": "snk_room_bridge",
+          "line": 168,
+          "text": "  if $args[1] = 'начать_бой' or $args[1] = 'боевой_интерфейс' or $args[1] = 'атака_игрока' or $args[1] = 'ход_противников' or $args[1] = 'конец_раунда' or $args[1] = 'конец_боя' or $args[1] = 'выход_из_боя' or $args[1] = 'передышка' or $args[1] = 'сменить_оружие' or $args[1] = 'сменить_оружие_основное' or $args[1] = 'сменить_оружие_вторичное' or $args[1] = 'суперудары' or $args[1] = 'инвентарь': exit"
+        }
+      ]
+    }
+  ],
+  "coverage": {
+    "eventFixedEnemyKeys": [
+      "egeya",
+      "vatican_paladin",
+      "strazhnik",
+      "grinch",
+      "erza"
+    ],
+    "allLiteralEnemyAssignmentsScanned": [
+      {
+        "location": "end_day_screen",
+        "line": 971,
+        "text": "\t$враг[1] = 'воспитуемая'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 10913,
+        "text": "\t$враг[2] = ''"
+      },
+      {
+        "location": "interaction_city",
+        "line": 10937,
+        "text": "\t$враг[1] = 'исчадие_молодь'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 10947,
+        "text": "\t$враг[1] = 'исчадие'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 10967,
+        "text": "\t$враг[1] = 'чудовщиное_исчадие'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 10982,
+        "text": "\t$враг[1] = 'черный_медик'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 10983,
+        "text": "\t$враг[2] = 'подручный'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 10984,
+        "text": "\t$враг[3] = 'подручный'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 10985,
+        "text": "\t$враг[4] = 'подручный'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 11000,
+        "text": "\t$враг[1] = 'паладин'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 11001,
+        "text": "\t$враг[2] = 'пехотинец'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 11002,
+        "text": "\t$враг[3] = 'пехотинец'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 11040,
+        "text": "\t$враг[1] = 'вервольф'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 11050,
+        "text": "\t$враг[1] = 'вампир'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 11065,
+        "text": "\t$враг[1] = 'лич'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 11110,
+        "text": "\t$враг[1] = 'ogre'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 11125,
+        "text": "\t$враг[1] = 'goblin'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 11126,
+        "text": "\t$враг[2] = 'goblin'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 11130,
+        "text": "\t\t$враг[3] = 'goblin'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 11141,
+        "text": "\t$враг[1] = 'warg'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 11156,
+        "text": "\t$враг[1] = 'orc'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 11171,
+        "text": "\t$враг[1] = 'козлорогий'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 11172,
+        "text": "\t$враг[2] = 'свинорылый'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 11173,
+        "text": "\t$враг[3] = 'жабован'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 11174,
+        "text": "\t$враг[4] = 'крысолюд'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 11175,
+        "text": "\t$враг[5] = 'garsid'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 17651,
+        "text": "\t $враг[1] = 'egeya'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 17884,
+        "text": "\t $враг[1] = 'egeya'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 22986,
+        "text": " $враг[1] = 'vatican_paladin'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 22998,
+        "text": " $враг[1] = 'strazhnik'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 24507,
+        "text": " $враг[1] = 'grinch'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 32108,
+        "text": " $враг[1] = 'erza'"
+      },
+      {
+        "location": "colosseum_fight",
+        "line": 11,
+        "text": "\t$враг[1] = 'голая_рабыня'"
+      },
+      {
+        "location": "colosseum_fight",
+        "line": 19,
+        "text": "\t$враг[1] = 'госпожа'"
+      },
+      {
+        "location": "colosseum_fight",
+        "line": 27,
+        "text": "\t$враг[1] = 'шиноби'"
+      },
+      {
+        "location": "colosseum_fight",
+        "line": 35,
+        "text": "\t$враг[1] = 'латница'"
+      },
+      {
+        "location": "colosseum_fight",
+        "line": 42,
+        "text": "\t$враг[1] = 'амазонка'"
+      },
+      {
+        "location": "#dynamic",
+        "line": 1598,
+        "text": "\t$враг[1] = 'воспитуемая'"
+      }
+    ],
+    "exclusions": [
+      "$gladiator_setup arena opponent selection handled by root",
+      "colosseum_fight sparring variants handled by root",
+      "edge_patrol random/quest patrol selection handled by fog agent",
+      "race-only portrait tables are not combat enemy assignments"
+    ]
+  }
+}

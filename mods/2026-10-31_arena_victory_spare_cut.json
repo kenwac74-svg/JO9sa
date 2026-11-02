@@ -1,0 +1,29 @@
+{
+  "id": "2026-10-31_arena_victory_spare_cut",
+  "description": "Formal arena spared-opponent victory: user cut and completed victory prose in 1294; first-page cut only in champion1295, actor-correct spare confirmation. Existing numeric effects/save schema unchanged.",
+  "before_sha256": "90af7f9115544ef1ec83048212ee283ba00f78119b9522a58c122a2ab1300617",
+  "after_sha256": "6f253c066d8d5d6c24e8e0c14bd9acfb9ceb674045b7c8494608031b751d1a7f",
+  "edits": [
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '최후의 일격이 가해진 후 상대는 바닥에 쓰러졌다. <<$slave_name>>(은)는 무기를 높게 들어 관중에게 화답했다. 이번 승리로 그녀는 관중의 사랑을 한 몸에 받았고, 당신은 조교사로서 영광을 얻게 되었다.<br><br> 성격+10 자아+10 태도+5 체력+10 기분/인식/평판Up 불안Dn 기타+a'",
+      "new": "\t$text[1] = '최후의 일격이 가해진 후 상대는 바닥에 쓰러졌다. <<$slave_name>>(은)는 무기를 높게 들어 관중에게 화답했다. 이번 승리로 그녀는 관중의 사랑을 한 몸에 받았고, 당신은 조교사로서 영광을 얻게 되었다.<br><br> 성격+10 자아+10 태도+5 체력+10 기분/인식/평판Up 불안Dn 기타+a'\r\n! JO9 MOD START ARENA_SPARE_VICTORY_RESULT_20261031\r\n if jo9_fate['mode'] = 2 and jo9_fate['phase'] = 3 and jo9_fate['choice'] = 2:\r\n  $bg_path = ''\r\n  $special_image_full[1] = 'content/pic/scene/arena_victory_spare.png'\r\n  $special_image_full[2] = $special_image_full[1]\r\n  $text[1] = '당신이 상대를 살려주겠다는 뜻을 전하자 <<$slave_name>>(은)는 무기를 거두고 물러섰다. 대기하던 일꾼들이 쓰러진 상대를 들것에 옮겨 경기장 밖으로 나갔다. 관중석의 함성이 채 잦아들지 않은 가운데, 그녀는 고개를 들어 당신이 있는 쪽을 바라보았다. 오늘의 승리는 그녀의 이름과 당신의 명예를 관중들의 기억에 남겼다.<br><br> 성격+10 자아+10 태도+5 체력+10 기분/인식/평판Up 불안Dn 기타+a'\r\n end\r\n! JO9 MOD END ARENA_SPARE_VICTORY_RESULT_20261031",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "if interaction_city = 1295:\r\n\t$place = 'colosseum_arena'\r\n\tcity_form = 1\r\n\t$return_lock = 'city_menu_form'",
+      "new": "if interaction_city = 1295:\r\n\t$place = 'colosseum_arena'\r\n\tcity_form = 1\r\n\t$return_lock = 'city_menu_form'\r\n! JO9 MOD START ARENA_SPARE_CHAMPION_FIRST_CUT_20261031\r\n if jo9_fate['mode'] = 2 and jo9_fate['phase'] = 3 and jo9_fate['choice'] = 2:\r\n  $bg_path = ''\r\n  $special_image_full[1] = 'content/pic/scene/arena_victory_spare.png'\r\n end\r\n! JO9 MOD END ARENA_SPARE_CHAMPION_FIRST_CUT_20261031",
+      "count": 1
+    },
+    {
+      "location": "jo9_battle_fate",
+      "field": "body",
+      "old": "! JO9 MOD END ARENA_SLAVE_EXECUTION_INSTRUCTION_20261031",
+      "new": "! JO9 MOD END ARENA_SLAVE_EXECUTION_INSTRUCTION_20261031\r\n! JO9 MOD START ARENA_SLAVE_SPARE_INSTRUCTION_20261031\r\n  if jo9_fate['mode'] = 2 and $place = 'colosseum_arena' and $fight_return = 'Start' and jo9_fate['choice'] = 2:\r\n   $jo9_bf_message = '당신의 신호에 승리한 <<$slave_name>>(이)가 무기를 거두고 물러섰다. 일꾼들이 쓰러진 상대를 들것에 옮긴다.'\r\n  end\r\n! JO9 MOD END ARENA_SLAVE_SPARE_INSTRUCTION_20261031",
+      "count": 1
+    }
+  ]
+}

@@ -1,5 +1,8 @@
 # QSP 출고 전 자동 검사
 
+> 2026-11-02 사용자 확정: 저위험 수정 검사 최소화 — 아래 전체 출고 절차를 매 텍스트·이미지 교체마다 실행하지 않는다. 동작을 바꾸지 않는 문구 수정은 변경 범위와 문자열/파일 구조, 같은 경로의 이미지 교체는 파일 열림·경로·필요 크기만 확인한다. 해당 장면의 외형은 일반 EXE에서 사용자가 확인하도록 짧은 경로와 확인 항목을 안내한다. 로직·조회 경로·레이어·저장/CSS 동작을 바꾸면 관련 범위를 검사하며, 전체 검사는 배포 전 점검에 적용한다. 자동 검사 생략과 사용자 육안 확인 대기는 정확히 구분한다.
+
+
 2026-10-17 사용자 요청으로 추가했다. 이번 빈 화면 회귀처럼 파일로 확인할 수 있는 오류를 먼저 막고, 실제 FastQSP 엔진의 주요 실행 경로까지 확인한다. 게임 전체에 버그가 없다는 인증은 아니다.
 
 ## 실행 담당
@@ -106,3 +109,23 @@ node --test tools/qa/release-check.test.cjs tools/qa/qsp-line-endings.test.cjs t
 ## 기존 대사 캐시 갱신 검사 시간 (PEER_RELATION_ZERO_ID_AND_VARIANTS_20261022)
 
 --client-timeout-seconds 30으로 경로별 제한시간을 명시할 수 있다. 생략하면 기존12초이고 정수1~60만 허용한다. 전체 PowerShell 예산도 (경로수×설정초+12)초로 계산한다. 2026-10-22의 revision7→8 대사은행 재구축 검사에서 동일 홈 진단본이12.708초에 정상 완료하여 추가했다. 성공 기준은 여전히 실제 완료마커9개이며 예상하지 않은 메시지·시간초과는 실패다. 게임 동작을 바꾸는 옵션이 아니다. [검사·시간 측정 기록](../records/private-feelings-fix-20261022/MANUAL_KO.md).
+
+
+## 2026-11-01 장면 전환 후 이전 컷신 잔류 회귀
+
+결과 컷신·전체 화면 배열을 수정했을 때는 기본 9경로와 결과 페이지 단독 검사에 더해 **같은 상태로 이벤트를 나간 뒤 다음 행동까지** 확인한다. `interaction_screen_city`를 빈 검사 지점으로 대체한 변수 검사는 이 회귀의 완료 증거가 아니다.
+
+필수 순서: 현행/옛 주인공 × 처형/생존 결과 → 같은 결과 재표시 → 실제 앞으로 가기 처리 → 도시 → 집 → 목욕·요리·청소 → 일반 도시 대화. 현재 장면 그림이 있다는 확인과 함께 이전 결과 그림이 없고 장면 레이어 수가 맞는지도 검사한다. 같은 이벤트 2페이지·재출력의 전체 그림은 유지돼야 한다.
+
+실제 출력 로케이션을 유지하는 재현 도구와 red/green 결과는 `records/catfight-image-leak-20261101`에 있다. 기본 실행기는 고유한 새 임시 폴더로 지정한다. 엔진 검사는 다른 엔진 진단과 동시에 실행하지 않는다.
+
+```powershell
+$env:JO9_IMAGE_LEAK_QA_ROOT = 'G:/Codex/tmp/<이번 검사의 새 고유 폴더>'
+$env:JO9_IMAGE_LEAK_QA_GAME_DIR = 'G:/somi/Jack O Nine Tails v2.4 Kor_Full/game'
+node records/catfight-image-leak-20261101/native.cjs prepare green '<현재 검사할 jack.qsp>'
+node records/catfight-image-leak-20261101/native.cjs run green
+node records/catfight-image-leak-20261101/dom.cjs prepare
+node records/catfight-image-leak-20261101/dom.cjs run
+```
+
+동봉 엔진과 공개 TC 상태를 사용한다. DOM 확장 결과는 native 판정을 포함하므로 합산하지 않는다. DOM 장면 수는 `#bg > img`, 이전 그림 부재 검색은 모든 `#bg img`를 검사한다. 중첩 앵커 안의 UI 아이콘은 장면 그림에 합산하지 않는다. 개인 세이브 GUI 불러오기·전체 스크립트 복원·육안 픽셀 정렬 검증으로 표현하지 않는다. 재현 도구 실행에 필요한 Node/PowerShell과 기존 QA 코덱은 유지한다.

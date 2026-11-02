@@ -1,0 +1,2 @@
+const fs=require('fs'),c=require('G:/somi/JO9sa/tools/text-workshop/core.cjs');
+for(const p of ['G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp','G:/Codex/tmp/image-cut-number-probe-20261101/intmax.qsp','G:/Codex/tmp/image-cut-conditions-native-20261101/green/diagnostic.qsp']){const d=c.parse(fs.readFileSync(p));console.log(p,JSON.stringify(d.locations.slice(0,3).map(l=>l.name)));const l=d.locations.find(l=>l.name==='Start');console.log('START index',l.index,JSON.stringify(c.shift(d.lines[l.body],5).slice(0,600)));}

@@ -1,0 +1,12 @@
+'use strict';
+const fs=require('node:fs'),a=require('node:assert/strict');
+const source=__dirname+'/../battle-fate-20261028/fate-native.cjs';
+let s=fs.readFileSync(source,'utf8');
+const old="check(`instr($MAINTXT, ${q('class=\"jo9-battle-execution\"')}) = 0 and jo9_fate['fx_played'] = 1`, 'render_execution_no_replay')";
+const rep="check(`instr($MAINTXT, ${q('class=\"jo9-battle-execution\"')}) > 0 and jo9_fate['fx_played'] = 1 and instr($mid($MAINTXT, instr($MAINTXT, ${q('class=\"jo9-battle-execution\"')}) + 1), ${q('class=\"jo9-battle-execution\"')}) = 0`, 'render_execution_filter_persists_once')";
+a.equal(s.split(old).length-1,1);s=s.replace(old,rep);
+const markerSeed='\"$jo9_bui_enemy_id = \'hoplite_b\'\", \'jo9_bui_enemy_hp = 10\', \'jo9_bui_player_hp = 110\',';
+a.equal(s.split(markerSeed).length-1,1);
+s=s.replace(markerSeed,markerSeed+'\n    \'jo9_bui_hit[1] = 1\', \"$jo9_bui_hit_type[1] = \'рубящий\'\", \"$jo9_bui_hit_id[1] = \'hoplite_b\'\",');
+fs.writeFileSync(__dirname+'/fate-native.cjs',s);
+console.log('Prepared existing 58 cases with the newly approved persistent-filter expectation only.');

@@ -1,0 +1,88 @@
+{
+  "status": "proposal-fragments-only",
+  "baselineSha256": "a6e32f71c9e360b91dbd6087e9d551b8df1ca98a85fd13f232d0ec23f16e8cd7",
+  "edits": [
+    {
+      "location": "раскладка_бой",
+      "field": "body",
+      "old": "jo9_bui_ready = 0",
+      "new": "! JO9 MOD START BATTLE_HIT_TYPES_20261028\r\nkillvar 'jo9_bui_hit'\r\nkillvar 'jo9_bui_hit_type'\r\nkillvar 'jo9_bui_hit_id'\r\n! JO9 MOD END BATTLE_HIT_TYPES_20261028\r\njo9_bui_ready = 0",
+      "count": 1
+    },
+    {
+      "location": "конец_раунда",
+      "field": "body",
+      "old": "!make damage and create status effect",
+      "new": "! JO9 MOD START BATTLE_HIT_TYPES_20261028\r\nlocal jo9_bh_hp = здоровье_врага[текущий]\r\nlocal jo9_bh_stamina = выносливость_врага[текущий]\r\nlocal jo9_bh_spirit = дух_врага[текущий]\r\n! JO9 MOD END BATTLE_HIT_TYPES_20261028\r\n!make damage and create status effect",
+      "count": 1
+    },
+    {
+      "location": "конец_раунда",
+      "field": "body",
+      "old": "if $наложение = 'слабость':",
+      "new": "! JO9 MOD START BATTLE_HIT_TYPES_20261028\r\nif jo9_bh_hp > здоровье_врага[текущий] or jo9_bh_stamina > выносливость_врага[текущий] or jo9_bh_spirit > дух_врага[текущий] or ($класс_врага[текущий] = 'пешка' and $состояние[текущий] = 'повержен' and враг[текущий] = 1 and модификатор > 0):\r\n jo9_bui_hit[текущий] = 1\r\n $jo9_bui_hit_type[текущий] = $тип_нанесенного_вреда\r\n $jo9_bui_hit_id[текущий] = $враг[текущий]\r\nend\r\n! JO9 MOD END BATTLE_HIT_TYPES_20261028\r\nif $наложение = 'слабость':",
+      "count": 1
+    },
+    {
+      "location": "атака_игрока",
+      "field": "body",
+      "old": "\t\t\tgs 'рассчет_вреда'\r\n\r\n\t\t\tif $класс_врага[вторцель] = 'пешка':",
+      "new": "\t\t\tgs 'рассчет_вреда'\r\n! JO9 MOD START BATTLE_HIT_TYPES_20261028\r\nlocal jo9_bh_secondary_hp = здоровье_врага[вторцель]\r\nlocal jo9_bh_secondary_stamina = выносливость_врага[вторцель]\r\nlocal jo9_bh_secondary_spirit = дух_врага[вторцель]\r\n! JO9 MOD END BATTLE_HIT_TYPES_20261028\r\n\t\t\tif $класс_врага[вторцель] = 'пешка':",
+      "count": 1
+    },
+    {
+      "location": "атака_игрока",
+      "field": "body",
+      "old": "\r\n\t\tend\r\n\t}\r\n\t$атака[0] = 'быстрая'\r\n\t$рассчетный_тип_вреда = 'рубящий'",
+      "new": "\r\n! JO9 MOD START BATTLE_HIT_TYPES_20261028\r\nif jo9_bh_secondary_hp > здоровье_врага[вторцель] or jo9_bh_secondary_stamina > выносливость_врага[вторцель] or jo9_bh_secondary_spirit > дух_врага[вторцель] or ($класс_врага[вторцель] = 'пешка' and $состояние[вторцель] = 'повержен' and враг[вторцель] = 1 and модификатор > 0):\r\n jo9_bui_hit[вторцель] = 1\r\n $jo9_bui_hit_type[вторцель] = $тип_нанесенного_вреда\r\n $jo9_bui_hit_id[вторцель] = $враг[вторцель]\r\nend\r\n! JO9 MOD END BATTLE_HIT_TYPES_20261028\r\n\t\tend\r\n\t}\r\n\t$атака[0] = 'быстрая'\r\n\t$рассчетный_тип_вреда = 'рубящий'",
+      "count": 1
+    },
+    {
+      "location": "боевой_интерфейс",
+      "field": "body",
+      "old": "if jo9_bui_ready = 1 and jo9_bui_enemy_index = текущий and $jo9_bui_enemy_id = $враг[текущий]:\r\n if jo9_bui_enemy_hp > здоровье_врага[текущий]: $jo9_bui_fx = '<img class=\"jo9-battle-hit\" src=\"content/pic/ui/jo9_battle_test_v01/slash.svg\">'\r\nend",
+      "new": "! JO9 MOD START BATTLE_HIT_TYPES_20261028\r\nlocal $jo9_bh_svg = ''\r\nif jo9_bui_hit[текущий] = 1 and $jo9_bui_hit_id[текущий] = $враг[текущий]:\r\n if $jo9_bui_hit_type[текущий] = 'колющий': $jo9_bh_svg = 'pierce'\r\n if $jo9_bui_hit_type[текущий] = 'рубящий': $jo9_bh_svg = 'slash'\r\n if $jo9_bui_hit_type[текущий] = 'дробящий': $jo9_bh_svg = 'impact'\r\n if $jo9_bui_hit_type[текущий] = 'психический': $jo9_bh_svg = 'whip'\r\nend\r\nif $jo9_bh_svg ! '': $jo9_bui_fx = '<img class=\"jo9-battle-hit\" src=\"content/pic/ui/jo9_battle_test_v01/fx/<<$jo9_bh_svg>>.svg\">'\r\nkillvar 'jo9_bui_hit'\r\nkillvar 'jo9_bui_hit_type'\r\nkillvar 'jo9_bui_hit_id'\r\n! JO9 MOD END BATTLE_HIT_TYPES_20261028",
+      "count": 1
+    },
+    {
+      "location": "конец_боя",
+      "field": "body",
+      "old": "if jo9_bui_ready = 1 and jo9_bui_enemy_index = текущий and $jo9_bui_enemy_id = $враг[текущий]:\r\n if jo9_bui_enemy_hp > здоровье_врага[текущий]: $jo9_bui_fx = '<img class=\"jo9-battle-hit\" src=\"content/pic/ui/jo9_battle_test_v01/slash.svg\">'\r\nend",
+      "new": "! JO9 MOD START BATTLE_HIT_TYPES_20261028\r\nlocal $jo9_bh_svg = ''\r\nif jo9_bui_hit[текущий] = 1 and $jo9_bui_hit_id[текущий] = $враг[текущий]:\r\n if $jo9_bui_hit_type[текущий] = 'колющий': $jo9_bh_svg = 'pierce'\r\n if $jo9_bui_hit_type[текущий] = 'рубящий': $jo9_bh_svg = 'slash'\r\n if $jo9_bui_hit_type[текущий] = 'дробящий': $jo9_bh_svg = 'impact'\r\n if $jo9_bui_hit_type[текущий] = 'психический': $jo9_bh_svg = 'whip'\r\nend\r\nif $jo9_bh_svg ! '': $jo9_bui_fx = '<img class=\"jo9-battle-hit\" src=\"content/pic/ui/jo9_battle_test_v01/fx/<<$jo9_bh_svg>>.svg\">'\r\nkillvar 'jo9_bui_hit'\r\nkillvar 'jo9_bui_hit_type'\r\nkillvar 'jo9_bui_hit_id'\r\n! JO9 MOD END BATTLE_HIT_TYPES_20261028",
+      "count": 1
+    }
+  ],
+  "assetSources": [
+    "fx/pierce.svg",
+    "fx/slash.svg",
+    "fx/impact.svg",
+    "fx/whip.svg"
+  ],
+  "assetDestinations": [
+    "content/pic/ui/jo9_battle_test_v01/fx/pierce.svg",
+    "content/pic/ui/jo9_battle_test_v01/fx/slash.svg",
+    "content/pic/ui/jo9_battle_test_v01/fx/impact.svg",
+    "content/pic/ui/jo9_battle_test_v01/fx/whip.svg"
+  ],
+  "limitations": [
+    "FX is shown for the currently displayed target only; an auto-switched survivor is not hit by a dead target's cue. Pending markers are then cleared once.",
+    "Pawn enemies have status defeat rather than resource decrease; their successful defeat is explicitly included.",
+    "Flame, lightning, cold and light are existing nonphysical damage types without a new visual in this four-type scope."
+  ],
+  "structuralCost": {
+    "newLocations": 0,
+    "newDependencies": 0,
+    "transientArrays": [
+      "jo9_bui_hit",
+      "jo9_bui_hit_type",
+      "jo9_bui_hit_id"
+    ],
+    "modifiedLocations": [
+      "раскладка_бой",
+      "конец_раунда",
+      "атака_игрока",
+      "боевой_интерфейс",
+      "конец_боя"
+    ]
+  }
+}

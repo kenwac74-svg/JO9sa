@@ -1,0 +1,247 @@
+{
+  "audit_date": "2026-10-30",
+  "source": {
+    "path": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+    "sha256": "f18fcee393330747f693f0388ef5c0364b926a34e64ea25b659e68ca9b6aa652",
+    "codec": "G:/somi/JO9sa/tools/text-workshop/core.cjs"
+  },
+  "scope": "전투 결과/처형 선택/승패 상태/무기 종류에 따른 결과문. 이벤트 하드코딩 대사는 다른 담당 범위.",
+  "method": {
+    "mode": "read-only static decoded-location trace",
+    "game_process_started": false,
+    "qsp_runtime_invoked": false,
+    "runtime_files_modified": false,
+    "line_numbers": "decoded location body, one-based; not global file line numbers"
+  },
+  "findings": [
+    {
+      "id": "RESULT-01",
+      "classification": "confirmed_display_mismatch",
+      "priority": "P2",
+      "title_ko": "안개 전투의 사기 패배를 기절로 표시",
+      "trigger_ko": "선택 모드 1에서 생명력과 지구력이 남아 있고 사기만 0 이하가 된 적.",
+      "actual_ko": "cause=4이지만 cause=2와 같은 “기절했다” 문장을 출력한다. stage는 지구력을 0으로 만들지 않는다.",
+      "expected_ko": "사기 상실/전의 상실에 맞는 문장을 사용하거나, 기절을 의도한다면 실제 상태와 함께 설계 결정을 해야 한다.",
+      "evidence": [
+        {
+          "location": "конец_раунда",
+          "line_start": 199,
+          "line_end": 206,
+          "excerpt": " if здоровье_врага[i] <= 0 and $класс_врага[i] ! 'пешка':\n  jo9_bf_cause = 1\n elseif выносливость_врага[i] <= 0 and $класс_врага[i] ! 'пешка':\n  jo9_bf_cause = 2\n elseif дух_врага[i] <= 0 and $класс_врага[i] ! 'пешка':\n  jo9_bf_cause = 4\n elseif $состояние[i] = 'повержен':\n  jo9_bf_cause = 3"
+        },
+        {
+          "location": "jo9_battle_fate",
+          "line_start": 161,
+          "line_end": 180,
+          "excerpt": " if враг[jo9_bf_slot] ! 1 or jo9_fate_enemy[jo9_bf_slot] ! 0: exit\n jo9_fate_enemy[jo9_bf_slot] = jo9_bf_cause\n jo9_fate['count'] += 1\n враг[jo9_bf_slot] = 0\n поверженные_враги += 1\n local $jo9_bf_text = ''\n if jo9_fate['mode'] = 1:\n  if jo9_bf_cause = 1 or jo9_bf_cause = 3:\n   $jo9_bf_text = '적이 치명상을 입고 피를 쏟으며 바닥에 쓰러졌다. 이대로 두면 죽을 것 같다.'\n  else\n   $jo9_bf_text = '적이 힘없이 바닥에 쓰러져 기절했다. 더 이상 싸울 수 없어 보인다.'\n  end\n else\n  if jo9_bf_cause = 1 or jo9_bf_cause = 3:\n   $jo9_bf_text = '상대는 치명타를 맞고 피를 흘리며 주저 앉았다. 결투를 포기하고 죽음을 각오한 것 같다'\n  else\n   $jo9_bf_text = '상대는 더 이상 버티지 못하고 바닥에 주저 앉았다. 싸울 의지가 없어 보인다.'\n  end\n end\n $действия_врага[jo9_bf_slot] += '<br>' + $jo9_bf_text + '<br>'"
+        }
+      ],
+      "example_ko": "검은 의사: рядовой, HP/지구력/사기 60, бесстрашный=0. 심리 피해는 사기를 깎고 지구력은 보존하므로 해당 결과에 도달할 수 있다.",
+      "example_refs": [
+        {
+          "location": "#противники",
+          "lines": [
+            817,
+            818,
+            819,
+            820,
+            845
+          ]
+        },
+        {
+          "location": "конец_раунда",
+          "lines": [
+            33,
+            34,
+            35
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RESULT-02",
+      "classification": "confirmed_functional_key_mismatch",
+      "priority": "P2",
+      "title_ko": "MOB 일반 공격의 상태이상 키에 HTML이 섞임",
+      "trigger_ko": "искусственный_идиот 경로의 일반 공격이 бонус 또는 штраф를 판정받음.",
+      "actual_ko": "$наложение[i]에 <br>를 붙인 키를 저장하므로 같은 함수의 상태 라벨과 конец_раунда의 실제 상태 부여 분기가 raw key와 일치하지 않는다.",
+      "expected_ko": "기계 판정 키는 raw key를 유지하고 줄바꿈은 표시 문자열에 넣어야 한다.",
+      "evidence": [
+        {
+          "location": "искусственный_идиот",
+          "line_start": 102,
+          "line_end": 128,
+          "excerpt": "if $эффект = 'бонус':\n\tналожение[i] = 1\n\tif ам = 1:\n\t\t$наложение[i] = '<br><<$атака_1_бонус[$враг[i]]>>'\n\t\tдлительность[i] = атака_1_длительность[$враг[i]]\n\tend\n\tif ам = 2:\n\t\t$наложение[i] = '<br><<$атака_2_бонус[$враг[i]]>>'\n\t\tдлительность[i] = атака_2_длительность[$враг[i]]\n\tend\n\tif ам = 3:\n\t\t$наложение[i] = '<br><<$атака_3_бонус[$враг[i]]>>'\n\t\tдлительность[i] = атака_3_длительность[$враг[i]]\n\tend\nend\nif $эффект = 'штраф':\n\tналожение[i] = 2\n\tif ам = 1:\n\t\t$наложение[i] = '<br><<$атака_1_штраф[$враг[i]]>>'\n\t\tдлительность[i] = атака_1_длительность[$враг[i]]\n\tend\n\tif ам = 2:\n\t\t$наложение[i] = '<br><<$атака_2_штраф[$враг[i]]>>'\n\t\tдлительность[i] = атака_2_длительность[$враг[i]]\n\tend\n\tif ам = 3:\n\t\t$наложение[i] = '<br><<$атака_3_штраф[$враг[i]]>>'"
+        },
+        {
+          "location": "искусственный_идиот",
+          "line_start": 137,
+          "line_end": 151,
+          "excerpt": "!status inflict translation\nif $наложение[i] = 'слабость': $действия_врага[i] += \"[<font color='red'>약화</font>]<br>\"\nif $наложение[i] = 'шаткость': $действия_врага[i] += \"[<font color='red'>탈력</font>]<br>\"\nif $наложение[i] = 'бешенство': $действия_врага[i] += \"[<font color='red'>분노</font>]<br>\"\nif $наложение[i] = 'адреналин': $действия_врага[i] += \"[<font color='red'>흥분</font>]<br>\"\n\nif $наложение[i] = 'скованность': $действия_врага[i] += \"[<font color='green'>경직</font>]<br>\"\nif $наложение[i] = 'ошеломление': $действия_врага[i] += \"[<font color='green'>충격</font>]<br>\"\nif $наложение[i] = 'разгон': $действия_врага[i] += \"[<font color='green'>가속</font>]<br>\"\nif $наложение[i] = 'верткость': $действия_врага[i] += \"[<font color='green'>회피</font>]<br>\"\n\nif $наложение[i] = 'боль': $действия_врага[i] += \"[<font color='purple'>고통</font>]<br>\"\nif $наложение[i] = 'рассеянность': $действия_врага[i] += \"[<font color='purple'>방심</font>]<br>\"\nif $наложение[i] = 'меткость': $действия_врага[i] += \"[<font color='purple'>명중</font>]<br>\"\nif $наложение[i] = 'внимание': $действия_врага[i] += \"[<font color='purple'>집중</font>]<br>\""
+        },
+        {
+          "location": "конец_раунда",
+          "line_start": 138,
+          "line_end": 145,
+          "excerpt": "\t\tif $наложение[i] = 'слабость':\n\t\t\tif слабость[0] <= длительность[i]: слабость[0] = длительность[i]\n\t\t\tif слабость[0] > длительность[i]: слабость[0] += 1\n\t\tend\n\t\tif $наложение[i] = 'скованность':\n\t\t\tif скованность[0] <= длительность[i]: скованность[0] = длительность[i]\n\t\t\tif скованность[0] > длительность[i]: скованность[0] += 1\n\t\tend"
+        }
+      ],
+      "scope_note_ko": "MOB 무기명 오류가 아닌 공통 상태이상 처리 결함. 보너스/페널티 대상 인덱스 문제는 별도 공격 감사 담당의 검토 범위."
+    },
+    {
+      "id": "RESULT-03",
+      "classification": "confirmed_display_mismatch",
+      "priority": "P3",
+      "title_ko": "플레이어 패배 화면에서도 살아 있는 적을 무방비로 표시",
+      "trigger_ko": "$итог_боя가 убит/вырубился/бегство인 결과 화면.",
+      "actual_ko": "конец_боя의 적 방어 상태 칸이 모든 결과에서 “무방비 상태”로 고정되어 있다. 실제 적의 $защита[текущий]는 초기/마지막 AI 방어 자세를 유지한다.",
+      "expected_ko": "적이 쓰러진 승리 결과에만 무방비 문구를 사용하거나 결과 화면의 의도에 맞는 중립 라벨을 사용.",
+      "evidence": [
+        {
+          "location": "конец_боя",
+          "line_start": 202,
+          "line_end": 205,
+          "excerpt": "*p '<div id = \"enemy_combat_ui\">'\n\t*p '<div id = \"combat_ui_pic\"><img src = \"<<$аватара_моба[$враг[текущий]]>>\"></div>'\n\t*p '<div id = \"combat_ui_name\"><<$имя_врага[текущий]>></div>'\n\t*p '<div id = \"combat_ui_def\">무방비 상태</div>'"
+        },
+        {
+          "location": "искусственный_идиот",
+          "line_start": 8,
+          "line_end": 12,
+          "excerpt": "!change defensive stance\nслучай = rand(1,3) & !if data over 44489, answer overflow and only send error // 1 + ((48271 * (day + master_energy + master_half_energy + sparks + дух_врага[i])) mod 65537)/(65537/3) &! pseudo-rand(1,3) using current spirit value of this enemy as offset - ImperatorAugustus\nif случай = 1: $защита[i] = 'блок'\nif случай = 2: $защита[i] = 'уклонение'\nif случай = 3: $защита[i] = 'контратака'"
+        },
+        {
+          "location": "конец_раунда",
+          "line_start": 264,
+          "line_end": 274,
+          "excerpt": "if здоровье_игрока <= 0:\n\t$итог_боя = 'убит'\n\tgt 'конец_боя'\nend\nif выносливость_игрока <= 0:\n\t$итог_боя = 'вырубился'\n\tgt 'конец_боя'\nend\nif дух_игрока <= 0:\n\t$итог_боя = 'бегство'\n\tgt 'конец_боя'"
+        }
+      ]
+    }
+  ],
+  "observations": [
+    {
+      "id": "RESULT-COVERAGE-01",
+      "classification": "coverage_observation_not_confirmed_bug",
+      "title_ko": "가르시드 무리는 선택 흐름 대상에서 제외됨",
+      "detail_ko": "안개 init 화이트리스트에는 garsid가 없다. 61115의 5인 무리 중 하나라도 비대상이므로 mode=0이 되어 무리 전체가 기존 사망/기절/도주 문구를 사용한다. 특수 전투 제외 의도일 수 있으므로 결함으로 단정하지 않았다.",
+      "refs": [
+        {
+          "location": "jo9_battle_fate",
+          "lines": [
+            129,
+            133,
+            134,
+            137,
+            138
+          ]
+        },
+        {
+          "location": "interaction_city",
+          "lines": [
+            11167,
+            11170,
+            11171,
+            11172,
+            11173,
+            11174,
+            11175
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RESULT-WORDING-01",
+      "classification": "wording_only",
+      "title_ko": "성기사 사망 문구는 피해 유형과 무관하게 난도질 묘사",
+      "detail_ko": "vatican_paladin의 고정 사망 문구가 “난도질당한”이다. 플레이어 찌르기/마법 피해로 생명력을 소진해도 같은 문구를 사용한다. 무기 클래스 분기 오접속은 아니며 피해별 문구를 원하는 경우의 서술 개선 항목.",
+      "refs": [
+        {
+          "location": "#противники",
+          "lines": [
+            3604,
+            3608,
+            3609,
+            3610,
+            3611,
+            3612
+          ]
+        },
+        {
+          "location": "начать_бой",
+          "lines": [
+            433
+          ]
+        },
+        {
+          "location": "конец_раунда",
+          "lines": [
+            213,
+            219
+          ]
+        }
+      ]
+    },
+    {
+      "id": "RESULT-WORDING-02",
+      "classification": "wording_only",
+      "title_ko": "범용 결과문이 개별 무기를 읽지 않는 것은 정상 구조",
+      "detail_ko": "처형의 “최후의 일격”, 살려주기의 “무기를 거두고”는 무기 종류별 동작을 주장하지 않는 범용 문구다. 여교관 기존 사망/도주문에서 채찍이 떨어지는 묘사는 그녀의 채찍 공격과 일치한다.",
+      "refs": [
+        {
+          "location": "jo9_battle_fate",
+          "lines": [
+            291,
+            292,
+            293
+          ]
+        },
+        {
+          "location": "#противники",
+          "lines": [
+            270,
+            274,
+            276,
+            280,
+            282,
+            284
+          ]
+        }
+      ]
+    }
+  ],
+  "verified": [
+    {
+      "id": "RESULT-OK-01",
+      "title_ko": "선택 모드가 활성화된 적에게 기존 즉사 문구가 중복 추가되지 않음",
+      "evidence": [
+        {
+          "location": "конец_раунда",
+          "line_start": 197,
+          "line_end": 211,
+          "excerpt": "if jo9_fate['mode'] > 0:\n local jo9_bf_cause = 0\n if здоровье_врага[i] <= 0 and $класс_врага[i] ! 'пешка':\n  jo9_bf_cause = 1\n elseif выносливость_врага[i] <= 0 and $класс_врага[i] ! 'пешка':\n  jo9_bf_cause = 2\n elseif дух_врага[i] <= 0 and $класс_врага[i] ! 'пешка':\n  jo9_bf_cause = 4\n elseif $состояние[i] = 'повержен':\n  jo9_bf_cause = 3\n end\n if jo9_bf_cause > 0:\n  if func('jo9_battle_fate', 'stage', i, jo9_bf_cause) = 1: jump 'loop5'\n end\nend"
+        },
+        {
+          "location": "конец_раунда",
+          "line_start": 213,
+          "line_end": 220,
+          "excerpt": "\t\tif здоровье_врага[i] <= 0 and $класс_врага[i]!'пешка':\n\t\t\tвраг[i] = 0\n\t\t\tповерженные_враги += 1\n\t\t\t$трофей[тр] = $труп_моба_в_локацию[$враг[i]]\n\t\t\tтруп[$враг[i]] += 1\n\t\t\tтр += 1\n\t\t\t$действия_врага[i] += '<<$труп_врага[i]>><br>' &! append defeat text to last combat round text to show the final action - ImperatorAugustus\n\t\t\tjump 'loop5'"
+        }
+      ],
+      "detail_ko": "stage 성공 시 loop5로 건너뛰어 기존 사망/기절/도주 문구 추가 구간에 진입하지 않는다. 선택 후 render도 기존 로그의 선택 칸만 바꾸므로 즉사 템플릿을 재호출하지 않는다."
+    },
+    {
+      "id": "RESULT-OK-02",
+      "title_ko": "결과 라우팅에서 MOB 무기 클래스의 잘못된 인덱스는 발견되지 않음",
+      "detail_ko": "#противники에는 장착 무기 ID/$класс_оружия 할당이 없고, MOB 공격마다 자체 тип_вреда와 텍스트를 가진다. $класс_оружия는 플레이어 장비 자료다. 결과 경로는 $класс_врага[i]/[текущий]와 피해 결과/선택 cause를 읽으며 검사한 결과 라우팅에 잘못된 무기 인덱스는 없다.",
+      "counts": {
+        "enemy_weapon_class_refs": 0,
+        "result_locations_weapon_type_or_class_refs": 0
+      }
+    }
+  ],
+  "limits_ko": [
+    "실제 QSP 런타임/GUI 재현을 하지 않았다.",
+    "실행 상태가 저장 파일에 남은 경우와 문자열 치환 렌더링의 브라우저 동작은 범위 밖.",
+    "화이트리스트 제외를 고칠지는 기존 기획 범위를 확인해야 한다."
+  ]
+}

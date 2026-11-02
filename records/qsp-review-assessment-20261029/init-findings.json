@@ -1,0 +1,264 @@
+{
+  "schema": 1,
+  "reviewedAt": "2026-10-29",
+  "scope": "READ_ONLY_REVIEW_NO_APPLICATION",
+  "target": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+  "sha256": "5d7c16b17d9aa0c1bb9c818c67521b2693a32a2db068742fbe7072f2dd8343cd",
+  "lineConvention": "1-based physical body lines after core.shift(...,5); location indexes are 0-based",
+  "locations": [
+    {
+      "name": "Start",
+      "index": 0,
+      "bodyLines": 28
+    },
+    {
+      "name": "start_refresh",
+      "index": 1,
+      "bodyLines": 86
+    },
+    {
+      "name": "main_menu",
+      "index": 4,
+      "bodyLines": 56
+    },
+    {
+      "name": "refresh_database",
+      "index": 2,
+      "bodyLines": 61
+    },
+    {
+      "name": "#var_base",
+      "index": 144,
+      "bodyLines": 2823
+    },
+    {
+      "name": "$ongload",
+      "index": 41,
+      "bodyLines": 165
+    },
+    {
+      "name": "$newloc",
+      "index": 39,
+      "bodyLines": 615
+    },
+    {
+      "name": "$addon",
+      "index": 21,
+      "bodyLines": 465
+    },
+    {
+      "name": "init_game",
+      "index": 9,
+      "bodyLines": 269
+    }
+  ],
+  "checks": {
+    "qspHashMatchesInitial": true,
+    "startIsEntryLocation": true,
+    "onlyCommonUiBlockEqual": true,
+    "refreshDatabaseActiveVarBaseCalls": 1,
+    "refreshDatabaseActiveWomanCalls": 0,
+    "quickStartAbsent": true
+  },
+  "findings": [
+    {
+      "docSection": "1.1",
+      "verdict": "REJECT_PROPOSED_DIRECT_DELEGATION",
+      "claimAccuracy": "Start and start_refresh are not 100 percent identical. Start has 28 physical body lines; start_refresh has 86. Only Start 8-23 and start_refresh 11-26 match (13 nonblank lines).",
+      "facts": [
+        {
+          "location": "Start",
+          "bodyLine": 6,
+          "text": "killall &! THIS DELETES EVERY VARIABLE IN THE GAME"
+        },
+        {
+          "location": "Start",
+          "bodyLine": 27,
+          "text": "gt 'main_menu'"
+        },
+        {
+          "location": "start_refresh",
+          "bodyLine": 8,
+          "text": "killall &! THIS DELETES EVERY VARIABLE IN THE GAME (the engine has been updated to reload json files afterwards)"
+        },
+        {
+          "location": "start_refresh",
+          "bodyLine": 9,
+          "text": "warning_pass = 1 &! only display warning the first time main menu is displayed"
+        },
+        {
+          "location": "start_refresh",
+          "bodyLine": 29,
+          "text": "$onobjsel = '$objsel' &! object selector handler"
+        },
+        {
+          "location": "start_refresh",
+          "bodyLine": 30,
+          "text": "$ongload = '$ongload' &! after load game handler"
+        },
+        {
+          "location": "start_refresh",
+          "bodyLine": 75,
+          "text": "gs '$end_day_variable_reset'"
+        },
+        {
+          "location": "start_refresh",
+          "bodyLine": 76,
+          "text": "gs '$combat_variable_reset'"
+        },
+        {
+          "location": "main_menu",
+          "bodyLine": 8,
+          "text": "if warning_pass = 0: gt 'warning' &! before start_refresh"
+        },
+        {
+          "location": "main_menu",
+          "bodyLine": 27,
+          "text": "gs 'start_refresh' &! ERASES ALL VARIABLES IN THE GAME, MUST BE DONE AFTER MENU DISPLAY ABOVE FOR CORRECT RENDERING"
+        },
+        {
+          "location": "main_menu",
+          "bodyLine": 37,
+          "text": "gs 'refresh_database'"
+        },
+        {
+          "location": "main_menu",
+          "bodyLine": 38,
+          "text": "gs 'init_game'"
+        }
+      ],
+      "controlFlow": "Cold game enters Start (index 0), clears variables, then GT main_menu. main_menu checks warning_pass before rendering. After accepted warning, main_menu renders menu first, then GS start_refresh and returns to initialization. GS start_refresh in Start before GT main_menu would set warning_pass=1 before the warning check and run the expanded reset twice. Document Quick_Start branch and location do not exist in current WORK.",
+      "stateEffects": "start_refresh sets handler names, options, cheats, counters, UI style, slave/assistant values and invokes two reset locations in addition to common UI defaults. It is not a pure common-settings helper. KILLALL clears all variables and objects; GS does not become GT or change CURLOC.",
+      "safeMinimum": "Correct the review document. No executable deletion or direct delegation is verified safe. Comment wording can be reviewed separately; no runtime optimization claimed."
+    },
+    {
+      "docSection": "3.3",
+      "verdict": "NO_ACTIVE_DUPLICATE_TO_REMOVE",
+      "claimAccuracy": "Current refresh_database invokes #var_base once at body line 35. The three #var_base_woman call-like lines 10,36,51 are comments; that location is absent. $var_base and $var_base_woman locations are absent. #var_base calls in refresh_database lines 11,20,50 are comments.",
+      "facts": [
+        {
+          "location": "refresh_database",
+          "bodyLine": 7,
+          "text": "killvar 'code_defined' &! do-once reset"
+        },
+        {
+          "location": "refresh_database",
+          "bodyLine": 8,
+          "text": "killvar 'first_visit' &! do-once reset"
+        },
+        {
+          "location": "refresh_database",
+          "bodyLine": 18,
+          "text": "gs '#static_base' &! no load order dependencies"
+        },
+        {
+          "location": "refresh_database",
+          "bodyLine": 19,
+          "text": "gs '#static_txt' &! must load after #static_base"
+        },
+        {
+          "location": "refresh_database",
+          "bodyLine": 35,
+          "text": "gs '#var_base' &! must load after #static_base, refreshed by main_screen, city_screen, choice_screen, next_day, contains conditional text and subexpressions"
+        },
+        {
+          "location": "refresh_database",
+          "bodyLine": 38,
+          "text": "gs '#txt_man' &! must load after #static_base and #var_base, refreshed when slave instances are swapped or cleared, contains conditional text and subexpressions"
+        },
+        {
+          "location": "refresh_database",
+          "bodyLine": 39,
+          "text": "gs '#txt_2_man' &! must load after #static_base and #var_base, refreshed when slave instances are swapped or cleared, contains conditional text and subexpressions"
+        },
+        {
+          "location": "refresh_database",
+          "bodyLine": 50,
+          "text": "!if hero_choice < 100: gs '#var_base'"
+        },
+        {
+          "location": "refresh_database",
+          "bodyLine": 51,
+          "text": "!if hero_choice > 100: gs '#var_base_woman'"
+        },
+        {
+          "location": "$newloc",
+          "bodyLine": 111,
+          "text": "if saved_game_loaded > 0 or $ongload = '' or $game_ver ! $title_fix:"
+        },
+        {
+          "location": "$newloc",
+          "bodyLine": 112,
+          "text": "\tkillvar 'saved_game_loaded'"
+        },
+        {
+          "location": "$newloc",
+          "bodyLine": 113,
+          "text": "\tgs '$addon', 'update', 'full'"
+        },
+        {
+          "location": "$ongload",
+          "bodyLine": 115,
+          "text": "saved_game_loaded = 1 &! do-once flag for $newloc"
+        }
+      ],
+      "dependencyOrder": "refresh_database loads #static_base first, then #static_txt and other bases; #var_base precedes #txt_man/#txt_2_man because they consume conditional/interpolated strings. Moving #var_base to the top or bottom changes its dependency order. #static_base lines 477 and 502 are inside deferred code values $swap_slave_instances (452-480) and $clear_slave_instance (482-509); they are not extra immediate calls merely because text search finds them.",
+      "mutuallyExclusiveLoadPaths": [
+        {
+          "condition": "jo9_lq['active'] = 1",
+          "call": "$ongload:128",
+          "then": "GT jo9_liquidation at 130 stops remaining ongload code"
+        },
+        {
+          "condition": "jo9_dealer_old_confirm = 1",
+          "call": "$ongload:136",
+          "then": "flag cleared, GT interaction_city at 140"
+        },
+        {
+          "condition": "jo9_dealer_old_confirm = 2",
+          "call": "$ongload:144",
+          "then": "flag cleared, GT slave_auction_sell at 146"
+        }
+      ],
+      "otherCallContexts": [
+        "main_menu:37 (before init_game:38 which itself invokes #var_base:23)",
+        "main_screen:854 after billing and between interior_storage/interior_restore",
+        "jo9_liquidation:35 after settlement",
+        "addon:update/full:10 between interior_storage/interior_restore",
+        "newloc:111-113 triggers addon:update/full after load, missing load handler, or version mismatch"
+      ],
+      "stateEffects": "refresh_database clears code_defined and first_visit do-once arrays, restores handlers, reloads code/text/cache data. #var_base is state dependent (for example sound options, entity state, hero_choice split at 2359/2573), clears $tmp at 2311, writes acc_rel at 2814-2821, and can draw RAND at 2799. Repeated calls in different contexts cannot be assumed semantically redundant.",
+      "safeMinimum": "Correct the review document or optionally remove obsolete comment-only call examples after separate approval. No active repeated call exists to delete within refresh_database.",
+      "performance": "No runtime timings or frame measurements were performed. The document assertion of load/frame lag is not verified."
+    }
+  ],
+  "verificationLimits": [
+    "Static parse and control-flow review only; no live engine, existing-save UI, or performance benchmark run.",
+    "No WORK/Full/source/SAV changes, no game launch, no extracted temporary QSP copies.",
+    "Numeric save-compatibility risk cannot be justified from static comparison. A zero-impact claim is not established for either proposed runtime change."
+  ],
+  "futureValidationPlan": [
+    "Cold start and warning acceptance; compare menu HTML and default variables.",
+    "New game and custom game creation, plus restart and active private-room guard.",
+    "Existing-save load with current and older cache/version markers; compare persistent arrays, handlers, current location and rendered UI.",
+    "Check conditional liquidation and dealer load redirects independently.",
+    "If optimizing calls is later approved, compare before/after cache values and RNG behavior at every caller, then measure timings separately."
+  ],
+  "primaryLanguageReferences": [
+    {
+      "url": "https://dev.qsp.org/docs/language/qsp-keywords/qsp-keywords-statements/",
+      "supports": "GS returns after called code; GT transitions; KILLALL destroys variables and objects."
+    },
+    {
+      "url": "https://dev.qsp.org/docs/language/qsp-keywords/qsp-keywords-functions/",
+      "supports": "CURLOC changes on direct transition/first location, not GOSUB."
+    }
+  ],
+  "memoryUsed": [
+    {
+      "path": "MEMORY.md",
+      "lines": "75-78",
+      "purpose": "Preserve manual edits, provenance and approval scope; verified current AGENTS controls."
+    }
+  ]
+}

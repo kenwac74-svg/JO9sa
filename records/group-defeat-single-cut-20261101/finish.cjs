@@ -1,0 +1,17 @@
+'use strict';
+const fs=require('fs'),path=require('path'),z=require('zlib'),a=require('assert/strict');
+const R='G:/somi/JO9sa',W='G:/somi/Jack O Nine Tails v2.4_work/game',F='G:/somi/Jack O Nine Tails v2.4 Kor_Full/game',REC=R+'/records/group-defeat-single-cut-20261101';
+const T='G:/Codex/tmp/group-defeat-single-cut-20261101',N='G:/Codex/tmp/group-defeat-single-cut-20261101-native',REL='G:/Codex/tmp/group-defeat-single-cut-release-20261101';
+const c=require(R+'/tools/text-workshop/core.cjs'),qa=require(R+'/tools/qa/release-check.cjs'),j=p=>JSON.parse(fs.readFileSync(p,'utf8').replace(/^\uFEFF/,'')),hash=p=>c.hash(fs.readFileSync(p));
+const v=j(REC+'/verification.json'),p=j(REC+'/prepared.json'),raw=fs.readFileSync(W+'/jack.qsp'),old=z.gunzipSync(fs.readFileSync(v.backup));
+a.equal(c.hash(raw),v.after);a.equal(c.hash(old),v.before);a.equal(hash(W+'/css/base.css'),v.cssUnchanged);a.equal(hash(F+'/jack.qsp'),v.fullQspUnchanged);
+const world=qa.inspectWorld(raw),before=c.parse(old),after=c.parse(raw),changed=[];a.equal(before.lines.length,after.lines.length);for(let i=0;i<after.lines.length;i++)if(after.lines[i]!==before.lines[i])changed.push(i);a.deepEqual(changed,[after.locations.find(x=>x.name==='конец_боя').body]);
+const green=j(REC+'/green-report.json'),reg=j(REC+'/regression-report.json'),gate=j(REC+'/release-report.json');a(green.pass&&reg.pass);a.equal(green.singleGroupOnly,8);a.equal(gate.verdict,'PASS');a.equal(gate.checks.find(x=>x.name==='inputs-readable').detail.candidate,v.after);
+for(const name of fs.readdirSync(__dirname))if(fs.statSync(path.join(__dirname,name)).isFile())fs.copyFileSync(path.join(__dirname,name),path.join(REC,name));
+const cleanup={files:0,bytes:0,junctions:0,roots:[]},parent=path.resolve('G:/Codex/tmp'),allowed=new Set(['content','css','fonts','json'].map(n=>fs.realpathSync(W+'/'+n).toLowerCase()));
+function clean(p,root){const resolved=path.resolve(p);a(resolved===root||resolved.startsWith(root+path.sep));const s=fs.lstatSync(resolved);if(s.isSymbolicLink()){a(allowed.has(fs.realpathSync(resolved).toLowerCase()),'Unexpected link');try{fs.unlinkSync(resolved);}catch(e){if(!['EPERM','EISDIR'].includes(e.code))throw e;fs.rmdirSync(resolved);}cleanup.junctions++;return;}if(s.isDirectory()){for(const n of fs.readdirSync(resolved))clean(path.join(resolved,n),root);fs.rmdirSync(resolved);}else{cleanup.files++;cleanup.bytes+=s.size;fs.unlinkSync(resolved);}}
+for(const target of [T,N,REL]){const root=path.resolve(target);a.equal(path.dirname(root),parent);a(root.includes('group-defeat-single-cut'));if(fs.existsSync(root)){a(!fs.lstatSync(root).isSymbolicLink());clean(root,root);cleanup.roots.push(root);}}
+for(const name of v.createdInGameBackups){a(/^jack\.qsp\.bak_\d{8}_\d{6}$/.test(name));const file=W+'/'+name;a.equal(hash(file),v.before);a.equal(c.hash(z.gunzipSync(fs.readFileSync(v.backup))),v.before);cleanup.files++;cleanup.bytes+=fs.statSync(file).size;fs.unlinkSync(file);}
+a.equal(hash(W+'/jack.qsp'),v.after);a.equal(hash(W+'/css/base.css'),v.cssUnchanged);a.equal(hash(F+'/jack.qsp'),v.fullQspUnchanged);
+const report={status:'PASS',qspSha256:v.after,groups:8,individualFallbackElements:0,regressionCases:reg.cases.length,enginePaths:v.enginePaths,world,changedCodeLines:changed.length,npcEditsPreserved:true,saveFormatChanged:false,cssUnchanged:true,fullQspUnchanged:true,cleanup};
+fs.writeFileSync(REC+'/final-verification.json',JSON.stringify(report,null,2)+'\n');fs.writeFileSync(REC+'/cleanup.json',JSON.stringify(cleanup,null,2)+'\n');console.log(JSON.stringify(report));

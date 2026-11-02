@@ -129,7 +129,7 @@
         for (i = 0; i < titles.length; i += 1) { bodies[2].appendChild(link(titles[i])); }
         panel.appendChild(columns); document.body.appendChild(panel);
         var close = document.createElement('a'); close.id = 'jo9_tv_close'; close.href = exec('close');
-        var image = document.createElement('img'); image.src = 'content/pic/buttons/close_button.png'; image.alt = '닫기';
+        var image = document.createElement('img'); image.src = 'content/pic/ui/buttons/legacy/close_button.png'; image.alt = '닫기';
         close.appendChild(image); document.body.appendChild(close);
         var open = root.getAttribute('data-open') === '1';
         panel.hidden = !open; close.hidden = !open;

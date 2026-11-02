@@ -1,0 +1,5 @@
+'use strict';
+const fs=require('fs'),path=require('path'),a=require('assert/strict');const base='G:/Codex/tmp',prefix='tutorial-ui-preview-20261102-';let files=0,bytes=0,links=0;
+function walk(p,scope){const abs=path.resolve(p);a(abs===scope||abs.startsWith(scope+path.sep));const s=fs.lstatSync(p);if(s.isSymbolicLink()){links++;fs.unlinkSync(p);return;}if(s.isDirectory()){for(const n of fs.readdirSync(p))walk(path.join(p,n),scope);fs.rmdirSync(p);}else{bytes+=s.size;files++;fs.unlinkSync(p);}}
+const roots=fs.readdirSync(base).filter(n=>/^tutorial-ui-preview-20261102-(intro|lessons)-\d+$/.test(n)).map(n=>path.resolve(base,n));for(const p of roots){a(path.dirname(p).toLowerCase()===path.resolve(base).toLowerCase());a(path.basename(p).startsWith(prefix));a(!fs.lstatSync(p).isSymbolicLink());walk(p,p);}
+const report={roots,files,bytes,links,remaining:roots.filter(p=>fs.existsSync(p)),nativeTempTouched:false};fs.writeFileSync(__dirname+'/preview-cleanup.json',JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report));

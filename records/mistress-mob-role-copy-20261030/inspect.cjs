@@ -1,0 +1,7 @@
+'use strict';
+const fs=require('fs'),a=require('assert/strict'),R='G:/somi/JO9sa',G='G:/somi/Jack O Nine Tails v2.4_work/game',H=__dirname,c=require(R+'/tools/text-workshop/core.cjs');
+const p=G+'/modtools/catalog/catalog_merge_vs_original.html',html=fs.readFileSync(p,'utf8'),manifest=JSON.parse(html.match(/window\.JO9_MOB_SETS\s*=\s*(.*?);<\/script>/)[1]),matches=manifest.entries.filter(e=>/mistress/i.test(e.key));
+const d=c.parse(fs.readFileSync(G+'/jack.qsp')),hits=[];
+for(const l of d.locations){const b=c.shift(d.lines[l.body],5).split('\r\n');for(let i=0;i<b.length;i++)if(/glad_mistress|mistress_morrigan|mistress_ava/i.test(b[i]))hits.push({location:l.name,line:i+1,text:b.slice(Math.max(0,i-2),i+3).join('\n')});}
+const files=['content/pic/mob/glad_mistress_2.png','content/pic/mob/glad_mistress_ava_2.png','content/pic/characters/mistress_morrigan.png','content/pic/characters/mistress_ava.png'].map(p=>({path:p,exists:fs.existsSync(G+'/'+p),sha256:fs.existsSync(G+'/'+p)?c.hash(fs.readFileSync(G+'/'+p)):null}));
+const r={qspSha256:d.hash,entries:matches.map(e=>({key:e.key,name:e.name,portrait:e.portrait,standing:e.standing,defeat:e.defeat})),hits,files};fs.writeFileSync(H+'/inspection.json',JSON.stringify(r,null,2));console.log(JSON.stringify({qsp:r.qspSha256,entries:matches.map(e=>({key:e.key,portrait:e.portrait?.path,standing:e.standing?.path,defeat:e.defeat?.path})),hits,files},null,2));

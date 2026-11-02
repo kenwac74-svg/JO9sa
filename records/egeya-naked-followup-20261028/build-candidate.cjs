@@ -1,0 +1,11 @@
+'use strict';
+const fs=require('fs'),path=require('path'),a=require('assert/strict'),c=require('G:/somi/JO9sa/tools/text-workshop/core.cjs');
+const raw=fs.readFileSync(process.argv[2]||'G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp'),d=c.parse(raw),before='e620353d0db6374ae293c6919d511966c31e2bb68ebd1763bb5a956bec069ba0';a.equal(d.hash,before);
+const l=d.locations.find(x=>x.name==='display_fullimage'),body=c.shift(d.lines[l.body],5);
+const old="$def_image_path = func('jo9_seed_role_images', 'resolve', actor_type, $def_image_path, $iif($actor_name = 'assistant', $assistant_img_key, 'fullimage'))";
+const statement="$def_image_path = func('jo9_seed_role_images', 'resolve', actor_type, $def_image_path, $iif($actor_name = 'assistant' and $assistant_img_key ! '', $assistant_img_key, 'fullimage'))";
+const id='ASSISTANT_DEFAULT_IMAGE_LOOKUP_20261028',now='! JO9 MOD START '+id+'\r\n'+statement+'\r\n! JO9 MOD END '+id;
+a.equal(body.split(old).length-1,1);d.lines[l.body]=c.shift(body.replace(old,()=>now),-5);const bytes=c.serialize(d);
+const reverse=c.parse(bytes),rl=reverse.locations.find(x=>x.name==='display_fullimage');reverse.lines[rl.body]=c.shift(c.shift(reverse.lines[rl.body],5).replace(now,()=>old),-5);a(c.serialize(reverse).equals(raw));
+const patch={id:'2026-10-28_assistant_default_image_lookup',status:'CANDIDATE_NOT_APPLIED',description:'조수mode0의빈역할키를기본fullimage조회로해석. 의복/모드/저장값을변경하지않는읽기시표시수정후보.',before_sha256:before,after_sha256:c.hash(bytes),edits:[{location:'display_fullimage',field:'body',old,new:now,count:1,patchId:id}]};
+fs.writeFileSync(path.join(__dirname,patch.id+'.json'),JSON.stringify(patch,null,2)+'\n');console.log(JSON.stringify({before,after:patch.after_sha256,edits:1,newLocations:0,newPersistentKeys:0,workWritten:false}));

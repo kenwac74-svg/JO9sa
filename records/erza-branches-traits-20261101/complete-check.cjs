@@ -1,0 +1,10 @@
+'use strict';
+const fs=require('fs'),a=require('assert/strict'),c=require('G:/somi/JO9sa/tools/text-workshop/core.cjs'),qa=require('G:/somi/JO9sa/tools/qa/release-check.cjs');
+const R='G:/somi/JO9sa/records/erza-branches-traits-20261101',T='G:/Codex/tmp/erza-branches-traits-20261101',W='G:/somi/Jack O Nine Tails v2.4_work/game';
+const installed=JSON.parse(fs.readFileSync(R+'/installed.json')),releasePath=process.argv[2],release=JSON.parse(fs.readFileSync(releasePath,'utf8').replace(/^\uFEFF/,''));
+a.equal(release.verdict,'PASS');a.equal(release.checks[0].detail.candidate,installed.after);a.equal(release.checks.find(x=>x.name==='installed-client-smoke').detail.passed,9);
+const current=fs.readFileSync(W+'/jack.qsp');a.equal(c.hash(current),installed.after,'WORK changed after final candidate');const world=qa.inspectWorld(current);
+for(const p of installed.protectedHashes)a.equal(c.hash(fs.readFileSync(p.path)),p.sha256,'protected input '+p.path);
+for(const n of fs.readdirSync(__dirname))if(/\.(cjs|json|md|txt)$/.test(n))fs.copyFileSync(__dirname+'/'+n,R+'/'+n);
+fs.copyFileSync(releasePath,R+'/release-report.json');fs.writeFileSync(R+'/installed.json',JSON.stringify({...installed,releaseVerdict:'PASS',mandatoryNativePaths:9,verifiedWorkHash:c.hash(current),world},null,2)+'\n');
+console.log(JSON.stringify({installed:true,qsp:c.hash(current),releaseVerdict:'PASS',mandatoryNativePaths:9,protectedFiles:installed.protectedHashes.length}));

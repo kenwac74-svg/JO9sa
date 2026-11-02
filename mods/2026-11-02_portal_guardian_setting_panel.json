@@ -1,0 +1,22 @@
+{
+  "id": "2026-11-02_portal_guardian_setting_panel",
+  "description": "Fill only the Portal Guardian preparation right title, role, location and three setting paragraphs; redraw the matching old preparation page on load. Preserve Paladin and all original image, dialogue, choice, combat, quest, actor and reward definitions.",
+  "before_sha256": "377bdeb56f83b0d8487fed722d12b34beb768566bc7fe0696425316d7427fa4a",
+  "after_sha256": "6cc7066736cae7fc428d58f89fbf659f06ee6feae8c710d810ee67c99467d505",
+  "edits": [
+    {
+      "location": "shop_general",
+      "field": "body",
+      "old": "elseif npc = 0:",
+      "new": "! JO9 MOD START PORTAL_GUARDIAN_SETTING_PANEL_20261102 | 2026-11-02_portal_guardian_setting_panel\r\nelseif $place = 'fogs_battle2' and interaction_city = 6216 and sp_txt = 6216 and get_weapon = 0 and $враг[1] = 'strazhnik':\r\n $info_bar = ''\r\n *p '<div id=\"side_panel_main\"><center><div style=\"font-size:40px;\">포털 가디언</div>차원 관문의 수호자<br>안개경계 · 포털 지대</center></div>'\r\n *p func('jo9_reference_panel', '영원의 로마와 이계가 맞닿는 문턱을 지키는 수호자. 교황청의 기사가 명령을 집행한다면, 이 존재는 관문에 새겨진 금제 그 자체다. 허가받지 않은 발길은 도시를 향하든 고향을 향하든 똑같이 가로막힌다.<br><br>관문 아래 흐르는 마력은 그 육신의 고대 술식을 끊임없이 깨운다. 건립기의 유산인지, 누군가를 깎아 만든 병기인지는 전해지지 않는다. 다만 문 너머의 재앙을 막는 힘이 도망자의 희망도 함께 짓누른다는 사실만은 분명하다.<br><br>관문을 여는 인가와 제어의 열쇠는 교황과 도시의 지배자들이 쥐고 있다. 수호자에게 애원과 협박, 황금은 아무런 통행증이 되지 못한다. 돌아갈 세계가 문 너머에 보여도, 허락 없는 자에게 이 문은 영원히 닫혀 있다.')\r\n! JO9 MOD END PORTAL_GUARDIAN_SETTING_PANEL_20261102\r\nelseif npc = 0:",
+      "count": 1
+    },
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "if $curloc = 'main_screen': gt 'menu_form'",
+      "new": "! JO9 MOD START PORTAL_GUARDIAN_SETTING_PANEL_20261102 | 2026-11-02_portal_guardian_setting_panel\r\n! Repaint only the saved Guardian preparation page using its existing actors, options, progress and rewards.\r\nif $curloc = 'shop_general' and $place = 'fogs_battle2' and interaction_city = 6216 and get_weapon = 0 and (skip_to = 6216 or sp_txt = 6216) and $враг[1] = 'strazhnik': gt 'shop_general'\r\n! JO9 MOD END PORTAL_GUARDIAN_SETTING_PANEL_20261102\r\nif $curloc = 'main_screen': gt 'menu_form'",
+      "count": 1
+    }
+  ]
+}

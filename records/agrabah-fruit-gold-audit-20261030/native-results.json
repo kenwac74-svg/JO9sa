@@ -1,0 +1,106 @@
+{
+  "pass": true,
+  "nativeCases": 6,
+  "transactions": {
+    "qa_gold_after_exchange": 25,
+    "qa_minibox_gold_bought": 1,
+    "qa_minibox_sparks_bought": 1,
+    "qa_banquet_gold_before": 1000,
+    "qa_banquet_gold_bought": 1,
+    "qa_banquet_sparks_bought": 1,
+    "qa_first_job_gold": 85,
+    "qa_after_repeat": 143,
+    "qa_after_refresh": 143,
+    "gold": 143,
+    "sparks": 5000
+  },
+  "menus": [
+    {
+      "name": "menu-ready",
+      "gold": 1000,
+      "sparks": 0,
+      "questStage": 11,
+      "minibox": 0,
+      "maxibox": 0,
+      "observed": {
+        "mini": true,
+        "maxi": true,
+        "raw": "%7B\"mini\":true,\"maxi\":true,\"links\":[%7B\"text\":\"과일 바구니 (25)\",\"href\":\"EXEC: interaction_city=30212 & gt /\"interaction_city/\"\"%7D,%7B\"text\":\"연회용 과일 (1000)\",\"href\":\"EXEC: interaction_city=30213 & gt /\"interaction_city/\"\"%7D]%7D",
+        "metadataNote": "Boolean fields are intact. Native URL handling changes quotes inside nested href strings, so raw text is retained rather than treated as valid JSON."
+      },
+      "pass": true
+    },
+    {
+      "name": "menu-wrong-stage",
+      "gold": 2000,
+      "sparks": 20000,
+      "questStage": 12,
+      "minibox": 0,
+      "maxibox": 0,
+      "observed": {
+        "mini": false,
+        "maxi": false,
+        "raw": "%7B\"mini\":false,\"maxi\":false,\"links\":[%7B\"text\":\"과일 바구니 (25)\",\"href\":\"EXEC: =0 & gt /\"/\"\"%7D]%7D",
+        "metadataNote": "Boolean fields are intact. Native URL handling changes quotes inside nested href strings, so raw text is retained rather than treated as valid JSON."
+      },
+      "pass": true
+    },
+    {
+      "name": "menu-owned",
+      "gold": 2000,
+      "sparks": 0,
+      "questStage": 11,
+      "minibox": 1,
+      "maxibox": 1,
+      "observed": {
+        "mini": false,
+        "maxi": false,
+        "raw": "%7B\"mini\":false,\"maxi\":false,\"links\":[%7B\"text\":\"과일 바구니 (25)\",\"href\":\"EXEC: =0 & gt /\"/\"\"%7D,%7B\"text\":\"연회용 과일 (1000)\",\"href\":\"EXEC: =0 & gt /\"/\"\"%7D]%7D",
+        "metadataNote": "Boolean fields are intact. Native URL handling changes quotes inside nested href strings, so raw text is retained rather than treated as valid JSON."
+      },
+      "pass": true
+    },
+    {
+      "name": "menu-low-gold",
+      "gold": 100,
+      "sparks": 0,
+      "questStage": 11,
+      "minibox": 0,
+      "maxibox": 0,
+      "observed": {
+        "mini": true,
+        "maxi": false,
+        "raw": "%7B\"mini\":true,\"maxi\":false,\"links\":[%7B\"text\":\"과일 바구니 (25)\",\"href\":\"EXEC: interaction_city=30212 & gt /\"interaction_city/\"\"%7D,%7B\"text\":\"연회용 과일 (1000)\",\"href\":\"EXEC: =0 & gt /\"/\"\"%7D]%7D",
+        "metadataNote": "Boolean fields are intact. Native URL handling changes quotes inside nested href strings, so raw text is retained rather than treated as valid JSON."
+      },
+      "pass": true
+    },
+    {
+      "name": "menu-sparks",
+      "gold": 0,
+      "sparks": 10000,
+      "questStage": 11,
+      "minibox": 0,
+      "maxibox": 0,
+      "observed": {
+        "mini": true,
+        "maxi": true,
+        "raw": "%7B\"mini\":true,\"maxi\":true,\"links\":[%7B\"text\":\"과일 바구니 (25)\",\"href\":\"EXEC: interaction_city=30212 & gt /\"interaction_city/\"\"%7D,%7B\"text\":\"연회용 과일 (1000)\",\"href\":\"EXEC: interaction_city=30213 & gt /\"interaction_city/\"\"%7D]%7D",
+        "metadataNote": "Boolean fields are intact. Native URL handling changes quotes inside nested href strings, so raw text is retained rather than treated as valid JSON."
+      },
+      "pass": true
+    }
+  ],
+  "workUnchanged": true,
+  "sourceSaveUnchanged": true,
+  "qspSha256": "2b81e781d0ab56f10cb77aa340db27ee4dab7d707bafe857853ad600d474417e",
+  "sourceSaveSha256": "581fc472bfa5aedcbca85c379d0061ad8d28a9b928ef948a259dee7c800ad2ec",
+  "reporterSaveAvailable": false,
+  "fullReporterGuiLoadTested": false,
+  "fixtureQuestStage": "12",
+  "limitations": [
+    "Original SAV variable values are primed into diagnostic worlds, not a full GUI Load of the reporter SAV.",
+    "Transaction fixture skips actor-specific employment scenes by setting actor types to zero.",
+    "Only diagnostic QSP copies are changed; original WORK and SAV remain untouched."
+  ]
+}

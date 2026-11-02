@@ -1,0 +1,14 @@
+'use strict';
+const fs=require('fs'),crypto=require('crypto'),assert=require('assert/strict');
+const ROOT=fs.existsSync(__dirname+'/manifest.json')?__dirname:'C:/Users/User/.codex/.chatgpt-projects/g-p-6aad063c991081918e27b6675f290be7/output/mob-background-composites-20261029',game='G:/somi/Jack O Nine Tails v2.4_work/game',html=fs.readFileSync(game+'/modtools/catalog/catalog_merge_vs_original.html','utf8');
+const review=JSON.parse(fs.readFileSync(ROOT+'/manifest.json','utf8'));
+const server=JSON.parse(fs.readFileSync(game+'/modtools/text-workshop/runtime/server.json','utf8'));
+let cfg,base=new URL(server.url);assert(['127.0.0.1','localhost'].includes(base.hostname));assert.equal(base.protocol,'http:');
+const files=review.files.filter(f=>f.status==='composited'),checks=[];let cursor=0;
+async function worker(){while(cursor<files.length){const f=files[cursor++],url=new URL('api/pic',base);url.searchParams.set('t',cfg.token);url.searchParams.set('p',f.path.replace(/^content\/pic\//,''));url.searchParams.set('v',Date.now());
+ try{const response=await fetch(url,{signal:AbortSignal.timeout(12000),cache:'no-store'});assert(response.ok,'HTTP '+response.status);const bytes=Buffer.from(await response.arrayBuffer()),sha=crypto.createHash('sha256').update(bytes).digest('hex');assert.equal(sha,f.outputSha256);assert.equal(bytes.readUInt32BE(16),795);assert.equal(bytes.readUInt32BE(20),596);checks.push({path:f.path,pass:true,sha256:sha});}
+ catch(e){checks.push({path:f.path,pass:false,error:e.message});}
+}}
+(async()=>{const page=await fetch(new URL('catalog',base),{signal:AbortSignal.timeout(12000),cache:'no-store'});assert(page.ok);const liveHtml=await page.text(),match=liveHtml.match(/window\.JO9_CATALOG_BRIDGE\s*=\s*(\{[^;]+\});/);assert(match,'Live injected catalog bridge absent');cfg=JSON.parse(match[1]);const liveBase=new URL(cfg.url);assert.equal(liveBase.origin,base.origin);base=liveBase;
+ await Promise.all(Array.from({length:4},worker));const manifest=JSON.parse(liveHtml.match(/window.JO9_MOB_SETS=(.*?);<\/script>/)[1]);const plan=JSON.parse(fs.readFileSync('G:/somi/JO9sa/records/full-client-preparation-20261029/full-client-input-plan.json','utf8'));for(const f of files){const p=plan.files.find(x=>x.path.toLowerCase()===('game/'+f.path).toLowerCase());assert(p,'Build plan missing '+f.path);assert.equal(p.sha256,f.outputSha256);}
+ const report={pass:checks.every(x=>x.pass),httpPngFiles:checks.length,matchingPngFiles:checks.filter(x=>x.pass).length,fullClientPlanMatches:128,slots:manifest.workUpdate.lastBackgroundComposition.slots,checks};fs.writeFileSync(ROOT+'/adoption/live-verification.json',JSON.stringify(report,null,2));console.log(JSON.stringify({pass:report.pass,httpPngFiles:report.httpPngFiles,matchingPngFiles:report.matchingPngFiles,fullClientPlanMatches:report.fullClientPlanMatches,slots:report.slots}));if(!report.pass)process.exitCode=1;})().catch(e=>{console.error(e.message);process.exitCode=1;});

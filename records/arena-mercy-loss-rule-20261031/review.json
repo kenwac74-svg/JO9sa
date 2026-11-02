@@ -1,0 +1,163 @@
+{
+  "status": "STATIC_REVIEW_PASS",
+  "reviewScope": "Independent code/diff and threshold review. This is not an engine or mouse-play test.",
+  "inputs": {
+    "baseline": "G:/somi/JO9_work_backups/arena-mercy-loss-rule-20261031/before.qsp",
+    "baselineSha256": "6f253c066d8d5d6c24e8e0c14bd9acfb9ceb674045b7c8494608031b751d1a7f",
+    "patch": "G:/Codex/tmp/arena-mercy-loss-rule-20261031/mods/2026-10-31_arena_mercy_loss_rule.json",
+    "candidate": "G:/Codex/tmp/arena-mercy-loss-rule-20261031/candidate.qsp",
+    "candidateOrigin": "read-existing-candidate",
+    "candidateSha256": "94ba085a0b5dda03297009e12c28572e2d808671b9db97f3bb4f44f64dbcb805"
+  },
+  "changes": {
+    "locations": [
+      "interaction_city",
+      "выход_из_боя"
+    ],
+    "patchEdits": 8,
+    "proseOverrides": 6,
+    "reverseToExactBaseline": true,
+    "unrelatedLocationsUnchanged": true
+  },
+  "predicates": {
+    "expression": "jo9_cruel_mercy <= -5 or (jo9_cruel_mercy < 5 and b > gladiator_valor)",
+    "sites": [
+      "formal-arena",
+      "catfight"
+    ],
+    "reputations": [
+      -100,
+      -6,
+      -5,
+      -4,
+      -1,
+      0,
+      1,
+      4,
+      5,
+      6,
+      100
+    ],
+    "valors": [
+      -100,
+      -1,
+      0,
+      1,
+      2,
+      3,
+      5
+    ],
+    "rolls": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "inputCases": 308,
+    "predicateEvaluations": 616,
+    "failures": 0,
+    "thresholdsInclusive": true,
+    "neutralRulePreserved": true
+  },
+  "ordering": {
+    "lethalRollAndEarlyDeathPreserved": true,
+    "deathBeforeReputationJudgment": true,
+    "knockoutIncrementAfterJudgment": true,
+    "randomCallsAndOrderPreserved": true
+  },
+  "knockoutPoints": {
+    "formalNewEventsBefore": 100,
+    "formalNewEventsAfter": 1,
+    "catfightNewEvents": 1,
+    "existingHistoryMigrated": false
+  },
+  "prose": [
+    {
+      "event": 1292,
+      "branch": 1,
+      "condition": "jo9_cruel_mercy <= -5",
+      "neutralLinePreserved": true,
+      "suffixPreserved": true
+    },
+    {
+      "event": 1293,
+      "branch": 1,
+      "condition": "jo9_cruel_mercy >= 5",
+      "neutralLinePreserved": true,
+      "suffixPreserved": true
+    },
+    {
+      "event": 103003,
+      "branch": 1,
+      "condition": "jo9_cruel_mercy <= -5",
+      "neutralLinePreserved": true,
+      "suffixPreserved": true
+    },
+    {
+      "event": 103003,
+      "branch": 2,
+      "condition": "jo9_cruel_mercy <= -5",
+      "neutralLinePreserved": true,
+      "suffixPreserved": true
+    },
+    {
+      "event": 103004,
+      "branch": 1,
+      "condition": "jo9_cruel_mercy >= 5",
+      "neutralLinePreserved": true,
+      "suffixPreserved": true
+    },
+    {
+      "event": 103004,
+      "branch": 2,
+      "condition": "jo9_cruel_mercy >= 5",
+      "neutralLinePreserved": true,
+      "suffixPreserved": true
+    }
+  ],
+  "duplicateHeaderEdits": [
+    {
+      "event": 1292,
+      "count": 1,
+      "originalPrefixStillPresent": true
+    },
+    {
+      "event": 1293,
+      "count": 1,
+      "originalPrefixStillPresent": true
+    },
+    {
+      "event": 103003,
+      "count": 1,
+      "originalPrefixStillPresent": true
+    },
+    {
+      "event": 103003,
+      "count": 1,
+      "originalPrefixStillPresent": true
+    },
+    {
+      "event": 103004,
+      "count": 2,
+      "originalPrefixStillPresent": true
+    }
+  ],
+  "saveCompatibility": {
+    "newPersistentFields": 0,
+    "schemaChanged": false,
+    "signedVariable": "jo9_cruel_mercy",
+    "existingLoserRatingPreserved": true,
+    "missingReputationUsesExistingDefaultZero": true,
+    "noPersonalSaveReadOrWritten": true
+  },
+  "notes": [
+    "Reputation is one signed protagonist value, not separate cruel/mercy counters.",
+    "Mercy does not resurrect a character who fails the earlier lethal-injury survival roll.",
+    "Saved loser_rating values such as 100 remain unchanged and still penalize neutral judgment. Mercy >=5 overrides that judgment only while its threshold is met.",
+    "The existing loser_rating=0 requirement for champion liberation is not changed.",
+    "Formal arena and Catfight share the same per-person loser_rating history; role swaps preserve the person array.",
+    "Conditional extreme-reputation prose keeps the original neutral line and existing suffix; lethal-injury death messages are unchanged."
+  ],
+  "productionWritten": false,
+  "engineExecuted": false
+}

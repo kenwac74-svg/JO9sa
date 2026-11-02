@@ -1,0 +1,208 @@
+{
+  "schema": 1,
+  "generatedAt": "2026-10-31T20:48:40.645Z",
+  "status": "READ_ONLY_STATIC_AUDIT",
+  "qspSha256": "b7e5b385dcbd5d8e4b4ac18c9556e18bf371f25f6368c3eba729c9374d1cc07b",
+  "sourceRoot": "G:/somi/Jack O Nine Tails v2.4_work/game",
+  "sources": [
+    {
+      "path": "json/menu_item.json",
+      "purpose": "Actual numeric menu IDs"
+    },
+    {
+      "location": "#options",
+      "lines": "270-358",
+      "purpose": "Current hunting_prize menu and visibility rules"
+    },
+    {
+      "location": "interaction_city",
+      "lines": "11255-11428",
+      "purpose": "Trophy landing and disposition branches"
+    },
+    {
+      "location": "stock_to_slave_nogt",
+      "purpose": "Shared conversion success guard"
+    },
+    {
+      "location": "interaction",
+      "event": 6007,
+      "purpose": "Delayed pig assignment and resistance branch"
+    },
+    {
+      "location": "jo9_farid_consignment",
+      "lines": "41-54",
+      "purpose": "Escrow validation/copy/clear"
+    },
+    {
+      "location": "выход_из_боя",
+      "lines": "611-633",
+      "purpose": "Shared generated stock and trophy landing"
+    },
+    {
+      "location": "jo9_fog_relay",
+      "purpose": "Slave/assistant battle settlement shares the same later trophy flow"
+    }
+  ],
+  "actions": [
+    {
+      "menu": "menu_prize_rape",
+      "id": 61121,
+      "label": "전리품을 강간한다",
+      "requestedDelta": -0.5,
+      "kind": "nonterminal",
+      "menuGate": "hunting_prize=1 plus existing mood/excitement conditions",
+      "handler": "interaction_city",
+      "guard": "The menu removes this choice after hunting_prize becomes 2; the handler itself has no matching entry guard.",
+      "successState": "hunting_prize = 2",
+      "shared": "Only this trophy menu directly references this menu key. Existing age branches share this handler.",
+      "excerpt": "hunting_prize = 2",
+      "scopeNote": "Sensitive narrative and sexual/age-effect implementation details are deliberately omitted; this audit records only bookkeeping entry and existing repeat-state behavior."
+    },
+    {
+      "menu": "menu_enslave",
+      "id": 61132,
+      "label": "데리고 간다",
+      "requestedDelta": 0.5,
+      "kind": "terminal",
+      "menuGate": "slave_state = CONST_INT['no_slave']",
+      "handler": "interaction_city -> stock_to_slave_nogt",
+      "guard": "stock_to_slave_nogt returns 0 and exits if stock_state is not slave_exist; current 61132 ignores its return value.",
+      "successState": "stock/slave swap succeeds and stock is consumed in the expected empty-slave case.",
+      "shared": "stock_to_slave_nogt is shared by ordinary acquisitions and by trophy pig, prison and cryo routes.",
+      "excerpt": "gs 'stock_to_slave_nogt'",
+      "recommendation": "Count only this selected route after conversion success. Do not attach the positive delta globally to stock_to_slave_nogt."
+    },
+    {
+      "menu": "menu_prize_pig",
+      "id": 61131,
+      "label": "외양간 돼지로 만든다",
+      "requestedDelta": -0.5,
+      "kind": "terminal-delayed",
+      "menuGate": "No current slave; barn=1; pig_state=no_slave",
+      "handler": "interaction_city61131 -> stock_to_slave_nogt -> interaction6007 -> special_action callback",
+      "guard": "No trophy-handler preflight beyond the menu. interaction6007 can transfer control to a resistance fight before the delayed swap.",
+      "successState": "The actual slave-to-pig swap is deferred to $special_action[1].",
+      "shared": "interaction6007 is also normal barn management for owned slaves.",
+      "excerpt": "interaction = 6007",
+      "recommendation": "Distinguish successful pig assignment from click/initial stock conversion. Bind any pending trophy transaction to its origin and consume it once at the real successful assignment."
+    },
+    {
+      "menu": "menu_prize_cryo",
+      "id": 61136,
+      "label": "크라이오 보관소에 넣는다",
+      "requestedDelta": 0,
+      "kind": "terminal",
+      "menuGate": "prize_cryo_nr>0; first free permitted external-storage cell selected by the menu.",
+      "handler": "interaction_city -> optional slave_to_iced -> stock_to_slave -> slave_to_iced",
+      "guard": "stock_to_slave checks stock_to_slave_nogt success, but 61136 has no own occupancy/provenance recheck.",
+      "successState": "Prize is stored in the selected cell; any previous current slave is restored.",
+      "shared": "Both conversion and cryo-swap helpers are shared across normal game acquisition/storage.",
+      "excerpt": "cryo_cell_selected = prize_cryo_nr",
+      "recommendation": "Keep the zero change; do not inherit the positive take-home effect from the shared conversion helper."
+    },
+    {
+      "menu": "menu_prize_slaughter",
+      "id": 61134,
+      "label": "스파크용으로 도축한다",
+      "requestedDelta": -1,
+      "kind": "terminal",
+      "menuGate": "Always shown in the current trophy menu.",
+      "handler": "interaction_city -> existing meat evaluation -> money -> clear stock",
+      "guard": "No stock/hunting_prize preflight in this handler.",
+      "successState": "sparks += meat_price, then clear stock.",
+      "shared": "The meat-evaluation and stock-clear dependencies are general helpers, not unique moral-action boundaries.",
+      "excerpt": "sparks += meat_price",
+      "recommendation": "Validate a still-pending existing stock before any payout; account only once with the actual terminal disposition, not in meat valuation."
+    },
+    {
+      "menu": "menu_prize_butcher",
+      "id": 61135,
+      "label": "고기용 도축하기 ($5)",
+      "requestedDelta": -1,
+      "kind": "terminal",
+      "menuGate": "Always shown, without a menu balance gate.",
+      "handler": "interaction_city -> charge/evaluate -> production counters -> clear stock -> get_meat",
+      "guard": "No stock/hunting_prize/balance preflight in this handler.",
+      "successState": "$5 charged; meat production counters updated; stock cleared; inventory meat awarded.",
+      "shared": "Evaluation and get_meat are common production helpers.",
+      "excerpt": "sparks -= 5",
+      "recommendation": "Keep the existing accounting sequence and award the disposition effect once after a valid pending-stock transaction. Repainting result pages must not execute settlement again."
+    },
+    {
+      "menu": "menu_prize_sell",
+      "id": 119,
+      "label": "경매에 부친다",
+      "requestedDelta": 0,
+      "kind": "terminal",
+      "menuGate": "Always shown in the trophy menu.",
+      "handler": "interaction_city119 -> jo9_farid_consignment('deposit')",
+      "guard": "Deposit validates existing stock, positive valuation and successful escrow copy before clearing stock. Handler branches to a failure screen when result is not 1.",
+      "successState": "Escrow gets a preserved copy; stock is cleared; deposit result=1.",
+      "shared": "Escrow return/collect/next-day settlement/panel are general auction facilities. Numeric city_form119 is an unrelated route namespace.",
+      "excerpt": "if jo9_farid_deposited ! 1:",
+      "recommendation": "Keep zero effect and existing escrow success checks. Do not assign moral effects to the common escrow helper."
+    },
+    {
+      "menu": "menu_prize_prisoner",
+      "id": 61133,
+      "label": "감방에 가둔다",
+      "requestedDelta": null,
+      "kind": "terminal-unassigned",
+      "menuGate": "A current slave exists; dungeon=1; prisoner_state=no_slave.",
+      "handler": "Temporary current-slave/prisoner swap -> stock_to_slave_nogt -> slave_to_cage",
+      "guard": "Only menu capacity conditions; slave_to_cage resets hunting_prize after recognizing the trophy.",
+      "successState": "Prize is in the prison and original current slave restored.",
+      "shared": "slave_to_cage is general imprisonment functionality.",
+      "excerpt": "gs 'slave_to_cage'",
+      "recommendation": "No value was specified in the user-approved list; do not implicitly grant the take-home bonus through the common acquisition helper."
+    }
+  ],
+  "acquisitionFlow": {
+    "battleActors": {
+      "0": "protagonist",
+      "1": "current slave",
+      "2": "assistant"
+    },
+    "sharedFlow": "выход_из_боя settles the companion via jo9_fog_relay.finish, later closes relay state, then get_girl=1 generates stock and enters interaction_city61120. Companion victories use the same stock disposition menu.",
+    "generationIsNotOwnership": "get_girl=1/generate_stock/61120 only produce a pending trophy; ownership begins after a selected route succeeds.",
+    "trophyFlagLifecycle": [
+      "61120 sets hunting_prize=1",
+      "61121 changes it to2 for its existing nonterminal-menu state",
+      "slave_to_cage resets it to0 for that transfer",
+      "main_screen resets it to0"
+    ],
+    "conversionResult": "stock_to_slave_nogt uses result=0, rejects absent stock, swaps only a valid stock, then returns result=1.",
+    "stockTypeIsNotEpisodeId": "Do not use stock_type alone to deduplicate a trophy: repeated trophies may have the same template ID."
+  },
+  "release": {
+    "inGeneralFogTrophyMenu": false,
+    "existingMenu": {
+      "source": "#options:$safari_options[1]",
+      "id": 8994,
+      "label": "전리품을 풀어 준다",
+      "gate": "safari.slave=-1",
+      "handler": "interaction_city8994 sets safari.slave=0 and returns the safari result menu"
+    },
+    "currentMercyGrant": false,
+    "proof": "All current jo9_cruel_mercy writes are init_game=0 and jo9_battle_fate choice -1/+1. No release handler adds to it.",
+    "scope": "This release belongs to the Exclusion Zone safari content, not the standard edge_patrol hunting_prize menu."
+  },
+  "duplicationRisks": [
+    "Menu visibility is not an operation-level success guard; direct/cached action re-entry can still reach several handlers.",
+    "Shared stock_to_slave_nogt cannot identify the selected disposition: take-home, pig, prison and cryo all call it.",
+    "interaction_screen and interaction_screen_city execute $special_action[txt] whenever nonempty and do not clear it immediately. A delayed pig action requires a one-time transaction check, not an assumption that render callbacks are once-only.",
+    "The pig conversion may be interrupted by resistance; initial click or stock-to-slave conversion alone does not prove final pig assignment.",
+    "Keep separate accounting for any allowed nonterminal action and a later terminal disposition; a single already-awarded flag would incorrectly suppress the second approved effect.",
+    "Do not clear hunting_prize early solely as a duplicate flag: stock_to_slave and slave_to_cage already use it for existing return/transfer behavior.",
+    "Several handlers clear stock only after applying cash/cost/production; missing-stock preflight is needed before a repeat settlement could award another value."
+  ],
+  "recommendedBoundary": "For nonzero terminal values, use the explicitly selected trophy route, validate current pending stock and successful destination transition, then settle once. Preserve shared helpers, return flow, ordinary purchases/storage and zero-value routes.",
+  "numericNote": "The existing jo9_cruel_mercy field is currently updated in integer units. Representing user-approved half-points requires an explicit compatible numeric strategy; this audit does not implement or choose one.",
+  "sensitiveScope": "The existing 61121 handler shares age-specific branches including the loli_age constant. No sensitive narrative, image code, sexual mechanics or age rules were reproduced in this artifact or changed.",
+  "limits": [
+    "Static compiled-QSP and menu-JSON inspection only; not a native execution, GUI test, save replay or proof that every repeated-entry risk occurs during ordinary mouse play.",
+    "No production QSP/image/save file was changed.",
+    "The prison disposition has no approved score; this audit leaves it unassigned."
+  ],
+  "productionQspUnchangedDuringAudit": true
+}

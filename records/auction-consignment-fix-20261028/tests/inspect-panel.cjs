@@ -1,0 +1,1 @@
+const fs=require('fs'),c=require('G:/somi/JO9sa/tools/text-workshop/core.cjs');const d=c.parse(fs.readFileSync('G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp'));const l=d.locations.find(l=>l.name==='interaction_screen_city'),a=c.shift(d.lines[l.body],5).split(/\r?\n/);console.log(a.slice(125,205).map((s,i)=>126+i+':'+s).join('\n'));

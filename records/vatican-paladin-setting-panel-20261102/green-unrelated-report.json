@@ -1,0 +1,114 @@
+{
+  "name": "unrelated",
+  "client": [
+    {
+      "name": "paladin-unrelated",
+      "checkpoint": "Original preparation/weapon/combat renderer and native Qt DOM",
+      "pass": true,
+      "reason": "",
+      "durationMs": 10418
+    }
+  ],
+  "processExit": 0,
+  "completed": true,
+  "checks": [
+    {
+      "label": "all-rendered-images-loaded",
+      "pass": true
+    },
+    {
+      "label": "no-paladin-intro-or-lore",
+      "pass": true
+    },
+    {
+      "label": "unrelated-shop",
+      "pass": true
+    }
+  ],
+  "dom": {
+    "images": [
+      {
+        "src": "content/pic/bg/gastronom.png",
+        "naturalW": 795,
+        "naturalH": 596,
+        "box": {
+          "x": 5,
+          "y": 4,
+          "w": 795,
+          "h": 596,
+          "scrollH": 596,
+          "fontSize": "40px"
+        }
+      },
+      {
+        "src": "content/pic/ui/approved_main_v1/tool_room.png",
+        "naturalW": 28,
+        "naturalH": 28,
+        "box": {
+          "x": 12,
+          "y": 8,
+          "w": 26,
+          "h": 26,
+          "scrollH": 26,
+          "fontSize": "40px"
+        }
+      }
+    ],
+    "missingImages": [],
+    "panel": {
+      "text": "현재 재고 [120/250]:신선한 달걀 x10신선한 우유 x10농축된 크림 x10숙성 치즈/버터 x10신선한 야채류 х10시리얼/곡물류 х10허브류/향신료 x10도수높은 주류 x20고기/간 고기 x10안심 살코기 x20처녀 고깃살 x0",
+      "box": {
+        "x": 848,
+        "y": 204,
+        "w": 385,
+        "h": 585,
+        "scrollH": 585,
+        "fontSize": "20px"
+      }
+    },
+    "heading": {
+      "text": "식품점 -미식가들-백색 도시",
+      "box": {
+        "x": 848,
+        "y": 68,
+        "w": 400,
+        "h": 125,
+        "scrollH": 125,
+        "fontSize": "24px"
+      }
+    },
+    "bg": {
+      "x": 5,
+      "y": 4,
+      "w": 795,
+      "h": 596,
+      "scrollH": 596,
+      "fontSize": "40px"
+    },
+    "combat": null,
+    "allText": "◉#bg>#center_Isabella{left:0;top:0;width:795px;height:595px;overflow:hidden;pointer-events:none;}#bg>#center_Isabella>img{position:absolute;left:50%;top:auto;bottom:0;max-width:795px;max-height:595px;width:auto;height:auto;display:block;transform:translateX(-50%);-webkit-transform:translateX(-50%);}식품점 -미식가들-백색 도시현재 재고 [120/250]:신선한 달걀 x10신선한 우유 x10농축된 크림 x10숙성 치즈/버터 x10신선한 야채류 х10시리얼/곡물류 х10허브류/향신료 x10도수높은 주류 x20고기/간 고기 x10안심 살코기 x20처녀 고깃살 x0백색 도시의 부유층이 드나드는 고급 식료품점 ‘미식가들’.안개 너머에서 들여온 진귀한 식재료부터 노예에게 먹일 값싼 통조림 사료까지 취급한다. 하지만 단골 귀족들이 뒷문을 통해 찾는 진짜 별미는 따로 있다.#jo9_scene_menu>.menu,#main_screen.jo9_menu_city>.menu{background:transparent!important;}#jo9_scene_menu,#main_screen.jo9_menu_city{position:absolute!important;left:36px!important;width:724px!important;margin:0!important;padding:0!important;text-align:left!important;}#jo9_scene_menu{top:64px!important;height:524px!important;}#main_screen.jo9_menu_city{top:96px!important;height:684px!important;}#jo9_scene_menu>.menu_column_0,#jo9_scene_menu>.menu_column_1,#main_screen.jo9_menu_city>.menu_column_0,#main_screen.jo9_menu_city>.menu_column_1{position:absolute!important;top:0!important;float:none!important;width:330px!important;margin:0!important;padding:0!important;}#jo9_scene_menu>.menu_column_0,#main_screen.jo9_menu_city>.menu_column_0{left:0!important;}#jo9_scene_menu>.menu_column_1,#main_screen.jo9_menu_city>.menu_column_1{left:384px!important;}#jo9_scene_menu #under,#jo9_scene_menu #under_gray{text-align:center!important;}#jo9_scene_menu>.menu>ul,#main_screen.jo9_menu_city>.menu>ul{margin:0!important;padding:0!important;}#jo9_scene_menu>div[style*=\"pointer-events:none\"],#main_screen.jo9_menu_city>div[style*=\"pointer-events:none\"]{display:none!important;}계란과 우유 가판대식재료와 주류 가판대도축장으로채용조건을 물어본다종업원을 제공한다매장 밖으로$10000(function(){  function box(n){if(!n)return null;var r=n.getBoundingClientRect();return{x:r.left,y:r.top,w:r.width,h:r.height,scrollH:n.scrollHeight,fontSize:getComputedStyle(n).fontSize};}  function observe(retry){   var imgs=document.querySelectorAll('img'),wait=0,bad=[],out=[];   for(var i=0;i<imgs.length;i++){var im=imgs[i];if(!im.complete)wait++;if(im.complete&&!im.naturalWidth)bad.push(im.getAttribute('src'));out.push({src:im.getAttribute('src'),naturalW:im.naturalWidth,naturalH:im.naturalHeight,box:box(im)});}   if(wait&&retry<40){setTimeout(function(){observe(retry+1);},50);return;}   var p=document.querySelector('#side_panel_text'),head=document.querySelector('#side_panel_main'),bg=document.querySelector('#bg'),combat=document.querySelector('#jo9-battle-monster');   var result={images:out,missingImages:bad,panel:p?{text:p.textContent,box:box(p)}:null,heading:head?{text:head.textContent,box:box(head)}:null,bg:box(bg),combat:box(combat),allText:document.body.textContent};   var callback=document.getElementById('qa_dom_callback'),data=encodeURIComponent(JSON.stringify(result)).replace(/'/g,'%27');   callback.setAttribute('href',\"EXEC: $qa_dom='\"+data+\"' & gs 'qa_finish'\");var e=document.createEvent('MouseEvents');e.initMouseEvent('click',true,true,window,1,0,0,0,0,false,false,false,false,0,null);callback.dispatchEvent(e);  }  setTimeout(function(){observe(0);},100); })();"
+  },
+  "html": "\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n<div id = \"bg\"><img src=\"content/pic/bg/gastronom.png\"><div id=\"jo9_image_cycle\" style=\"position:absolute;left:7px;right:auto;top:4px;width:62px;height:28px;z-index:2147483600;\"><a class=\"tooltip-right\" tooltip-data=\"이미지 전환 · 추가 컷 없음\" title=\"이미지 전환 · 추가 컷 없음\" style=\"display:block;position:relative;width:26px;height:26px;opacity:0.45;\" aria-disabled=\"true\"><img style=\"width:26px;height:26px;\" src=\"content/pic/ui/approved_main_v1/tool_room.png\"></a><a id=\"jo9_cutscene_view\" class=\"tooltip-right\" tooltip-data=\"컷신만 보기 / UI 복원\" title=\"컷신만 보기 / UI 복원\" style=\"display:block;position:absolute;left:32px;top:0;width:26px;height:26px;line-height:26px;text-align:center;background:#202820;color:#e8d39c;border:1px solid #b59d62;border-radius:3px;font-size:20px;\" href=\"EXEC: gs 'interior_change', 'jo9_clean_toggle'\">◉</a></div></div><style id=\"jo9_menu_foreground_fit\">#bg>#center_Isabella{left:0;top:0;width:795px;height:595px;overflow:hidden;pointer-events:none;}#bg>#center_Isabella>img{position:absolute;left:50%;top:auto;bottom:0;max-width:795px;max-height:595px;width:auto;height:auto;display:block;transform:translateX(-50%);-webkit-transform:translateX(-50%);}</style><div id = \"side_panel_main\"><center><div style=\"font-size: 40px;\">식품점 -미식가들-</div>백색 도시<br>\r\n</center></div><div id=\"side_panel_text\" class=\"jo9-reference-panel\"><span class=\"jo9-reference-body\">현재 재고 [120/250]:<br><br>신선한 달걀 x10<br>신선한 우유 x10<br>농축된 크림 x10<br>숙성 치즈/버터 x10<br><br>신선한 야채류 х10<br>시리얼/곡물류 х10<br>허브류/향신료 x10<br>도수높은 주류 x20<br><br>고기/간 고기 x10<br>안심 살코기 x20<br>처녀 고깃살 x0</span></div><div id = \"text\">백색 도시의 부유층이 드나드는 고급 식료품점 ‘미식가들’.<br><br>안개 너머에서 들여온 진귀한 식재료부터 노예에게 먹일 값싼 통조림 사료까지 취급한다. 하지만 단골 귀족들이 뒷문을 통해 찾는 진짜 별미는 따로 있다.<!-- #nwtx --></div><style id=\"jo9_menu_layout_style\">#jo9_scene_menu>.menu,#main_screen.jo9_menu_city>.menu{background:transparent!important;}#jo9_scene_menu,#main_screen.jo9_menu_city{position:absolute!important;left:36px!important;width:724px!important;margin:0!important;padding:0!important;text-align:left!important;}#jo9_scene_menu{top:64px!important;height:524px!important;}#main_screen.jo9_menu_city{top:96px!important;height:684px!important;}#jo9_scene_menu>.menu_column_0,#jo9_scene_menu>.menu_column_1,#main_screen.jo9_menu_city>.menu_column_0,#main_screen.jo9_menu_city>.menu_column_1{position:absolute!important;top:0!important;float:none!important;width:330px!important;margin:0!important;padding:0!important;}#jo9_scene_menu>.menu_column_0,#main_screen.jo9_menu_city>.menu_column_0{left:0!important;}#jo9_scene_menu>.menu_column_1,#main_screen.jo9_menu_city>.menu_column_1{left:384px!important;}#jo9_scene_menu #under,#jo9_scene_menu #under_gray{text-align:center!important;}#jo9_scene_menu>.menu>ul,#main_screen.jo9_menu_city>.menu>ul{margin:0!important;padding:0!important;}#jo9_scene_menu>div[style*=\"pointer-events:none\"],#main_screen.jo9_menu_city>div[style*=\"pointer-events:none\"]{display:none!important;}</style><div id=\"jo9_scene_menu\" class=\"jo9_menu_scene\"><br><div style=\"pointer-events:none;margin-bottom: 63px;\"></div><div class=\"menu menu_column_0\"><ul><li style=\"background: url('content/pic/ui/legacy_overhaul/eggs and milk.png'); background-repeat: no-repeat;\"><a href ='EXEC:sp_txt = 2 & gt $curloc'>계란과 우유 가판대</a></li><li style=\"background: url('content/pic/ui/legacy_overhaul/groceries and alcohol.png'); background-repeat: no-repeat;\"><a href ='EXEC:sp_txt = 3 & gt $curloc'>식재료와 주류 가판대</a></li><li style=\"background: url('content/pic/ui/legacy_overhaul/butchery.png'); background-repeat: no-repeat;\"><a href ='EXEC:sp_txt = 4 & gt $curloc'>도축장으로</a></li><li style=\"background: url('content/pic/ui/legacy_overhaul/check preferences grocery.png'); background-repeat: no-repeat;\"><a href = 'EXEC: interaction_city=11591 & gt \"interaction_city\"'>채용조건을 물어본다</a></li><li style=\"background: url('content/pic/ui/legacy_overhaul/offer an employee grocery.png'); background-repeat: no-repeat;\"><a href = 'EXEC: interaction_city=11592 & gt \"interaction_city\"'>종업원을 제공한다</a></li><li style=\"background: url('content/pic/ui/legacy_overhaul/square.png'); background-repeat: no-repeat;\"><a href = 'EXEC: city_form=11 & gt \"city_menu_form\"'>매장 밖으로</a></li></ul></div></div><div id = \"sparks_display\">$10000</div><a id=\"qa_dom_callback\" style=\"display:none\" href=\"#\"></a><script>(function(){  function box(n){if(!n)return null;var r=n.getBoundingClientRect();return{x:r.left,y:r.top,w:r.width,h:r.height,scrollH:n.scrollHeight,fontSize:getComputedStyle(n).fontSize};}  function observe(retry){   var imgs=document.querySelectorAll('img'),wait=0,bad=[],out=[];   for(var i=0;i<imgs.length;i++){var im=imgs[i];if(!im.complete)wait++;if(im.complete&&!im.naturalWidth)bad.push(im.getAttribute('src'));out.push({src:im.getAttribute('src'),naturalW:im.naturalWidth,naturalH:im.naturalHeight,box:box(im)});}   if(wait&&retry<40){setTimeout(function(){observe(retry+1);},50);return;}   var p=document.querySelector('#side_panel_text'),head=document.querySelector('#side_panel_main'),bg=document.querySelector('#bg'),combat=document.querySelector('#jo9-battle-monster');   var result={images:out,missingImages:bad,panel:p?{text:p.textContent,box:box(p)}:null,heading:head?{text:head.textContent,box:box(head)}:null,bg:box(bg),combat:box(combat),allText:document.body.textContent};   var callback=document.getElementById('qa_dom_callback'),data=encodeURIComponent(JSON.stringify(result)).replace(/'/g,'%27');   callback.setAttribute('href',\"EXEC: $qa_dom='\"+data+\"' & gs 'qa_finish'\");var e=document.createEvent('MouseEvents');e.initMouseEvent('click',true,true,window,1,0,0,0,0,false,false,false,false,0,null);callback.dispatchEvent(e);  }  setTimeout(function(){observe(0);},100); })();</script>",
+  "state": {
+    "place": "gastronom",
+    "interactionCity": 115,
+    "spTxt": 1,
+    "getWeapon": 0,
+    "enemy": "vatican_paladin",
+    "masterName": "잭",
+    "slaveEnergy": 5,
+    "assistantMoral": 5,
+    "inventory": 0,
+    "sparks": 10000,
+    "paladin": 1,
+    "experience": 0,
+    "strRate": 360,
+    "fogBattle": 0,
+    "weapon": "",
+    "enemyCount": 1,
+    "defeat": "",
+    "stage": 0
+  },
+  "failures": 0,
+  "pass": true
+}

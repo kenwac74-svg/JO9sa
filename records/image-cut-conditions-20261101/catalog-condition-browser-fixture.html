@@ -1,0 +1,37 @@
+<!doctype html><html lang="ko"><meta charset="utf-8"><title>JO9 image condition fixture</title>
+<button id="launch">원래 포커스</button><main id="cards"></main><pre id="qa-result">RUNNING</pre>
+<script>
+window.JO9_CATALOG_BRIDGE={url:'http://fixture.invalid/',token:'fixture-only'};
+window.rowHtml=function(d){return '<div class="row"><span>기존 버튼 유지</span></div>';};
+window.render=function(){document.getElementById('cards').innerHTML=['content/pic/bg/test.jpg','content/pic/characters/test.png','content/pic/scene/test.webp','content/pic/mob/test.png'].map(p=>window.rowHtml([p])).join('');};
+window.qaCalls=[];window.qaEmpty=false;window.qaSaveResolve=null;
+window.fetch=async function(url,options){var action=url.split('/').pop(),payload=JSON.parse(options.body);window.qaCalls.push({action:action,payload:payload,headers:options.headers});if(action==='save')return new Promise(resolve=>window.qaSaveResolve=resolve);return{ok:true,status:200,json:async()=>({base:'content/pic/scene/test.png',qspHash:'hash-one',family:{base:'content/pic/scene/test.png',items:window.qaEmpty?[{path:'content/pic/scene/test.png',file:'test.png',cutIndex:1}]:[{path:'content/pic/scene/test.png',file:'test.png',cutIndex:1},{path:'content/pic/scene/test (2).png',file:'test (2).png <img onerror=alert(1)>',cutIndex:2},{path:'content/pic/scene/test (3).png',file:'test (3).png',cutIndex:3}]},rules:[],options:{moralityMin:-10,moralityMax:10,moralityStep:.5,ranks:[0,1,2,3,4,5].map(n=>({value:n,label:'계급 '+n})),reputations:[0,1,2,3,4,5].map(n=>({value:n,label:'평판 '+n}))}})};};
+</script>
+<script src="catalog-cut-conditions.js"></script>
+<script>
+(async function(){var checks=0;function ok(value,message){checks++;if(!value)throw Error(message);}function change(node,value){if(node.type==='checkbox')node.checked=value;else node.value=value;node.dispatchEvent(new Event('change',{bubbles:true}));}function response(status,value){return{ok:status<400,status:status,json:async()=>value};}function turns(){return new Promise(resolve=>setTimeout(resolve,30));}
+try{
+ok(document.querySelectorAll('[data-jo9-image-condition]').length===3,'requested folders button count');
+ok(document.querySelectorAll('.row span').length===4,'prior card contents preserved');
+document.getElementById('launch').focus();await JO9_IMAGE_CONDITIONS.open('content/pic/scene/test.png');
+ok(JO9_IMAGE_CONDITIONS.state().rows===2,'two variant rows');
+ok(document.querySelector('[role=dialog]').getAttribute('aria-modal')==='true','modal semantics');
+ok(document.querySelectorAll('.jo9-image-condition-card img').length===0,'untrusted file text is escaped');
+ok(window.qaCalls[0].headers['X-JO9-Token']==='fixture-only','main token');
+var cards=document.querySelectorAll('.jo9-image-condition-card'),first=cards[0],cbs=first.querySelectorAll('input[type=checkbox]'),sels=first.querySelectorAll('select'),number=first.querySelector('input[type=number]');
+ok(cbs[1].disabled===true,'inactive row fields disabled');change(cbs[0],true);change(cbs[1],true);change(cbs[2],true);
+change(sels[0],'5');change(sels[1],'-5');await JO9_IMAGE_CONDITIONS.save();ok(window.qaCalls.filter(x=>x.action==='save').length===0,'invalid range not sent');ok(JO9_IMAGE_CONDITIONS.state().status.includes('최솟값'),'validation text');
+change(sels[0],'-5');change(sels[1],'3');change(number,'0');change(sels[2],'le');change(sels[3],'0');change(sels[4],'5');
+var saving=JO9_IMAGE_CONDITIONS.save();await turns();await JO9_IMAGE_CONDITIONS.save();ok(window.qaCalls.filter(x=>x.action==='save').length===1,'duplicate submit prevented');
+ok(document.querySelector('.jo9-image-condition-foot button').disabled,'close disabled while saving');
+document.getElementById('launch').focus();document.dispatchEvent(new KeyboardEvent('keydown',{key:'Tab',bubbles:true,cancelable:true}));ok(document.activeElement.getAttribute('role')==='dialog','focus stays in modal while all controls disabled');
+var submitted=window.qaCalls.at(-1).payload;ok(submitted.before==='hash-one'&&submitted.rules.length===1,'snapshot hash and family rules');ok(submitted.rules[0].rank===0&&submitted.rules[0].reputation===5&&submitted.rules[0].money.value===0,'zero values preserved');
+window.qaSaveResolve(response(409,{error:'QSP 해시가 바뀌었습니다.'}));await saving;
+ok(number.value==='0'&&sels[0].value==='-5'&&cbs[0].checked,'conflict preserves draft');ok(JO9_IMAGE_CONDITIONS.state().status.includes('남아'),'conflict guidance');
+saving=JO9_IMAGE_CONDITIONS.save();await turns();window.qaSaveResolve(response(200,{qspHash:'hash-two'}));await saving;ok(JO9_IMAGE_CONDITIONS.state().status.includes('다시 실행'),'restart guidance after successful save');
+change(cbs[0],false);saving=JO9_IMAGE_CONDITIONS.save();await turns();submitted=window.qaCalls.at(-1).payload;ok(submitted.before==='hash-two'&&submitted.rules.length===0,'clear row persists no rule and new hash');window.qaSaveResolve(response(200,{qspHash:'hash-three'}));await saving;
+document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}));ok(!JO9_IMAGE_CONDITIONS.state().open,'escape closes');ok(document.activeElement.id==='launch','focus restored');
+window.qaEmpty=true;await JO9_IMAGE_CONDITIONS.open('content/pic/bg/test.jpg');ok(JO9_IMAGE_CONDITIONS.state().rows===0&&document.querySelector('.jo9-image-condition-foot button:last-child').disabled,'empty family cannot save');ok(document.querySelector('[role=dialog]').textContent.includes('전환 컷 추가'),'empty family guidance');JO9_IMAGE_CONDITIONS.close();
+var result=document.getElementById('qa-result');result.dataset.status='PASS';result.textContent=JSON.stringify({pass:true,checks:checks,saveCalls:window.qaCalls.filter(x=>x.action==='save').length});
+}catch(error){var result=document.getElementById('qa-result');result.dataset.status='FAIL';result.textContent=JSON.stringify({pass:false,checks:checks,error:String(error.stack||error)});}})();
+</script></html>

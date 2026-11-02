@@ -1,0 +1,766 @@
+{
+  "baseline": "e620353d0db6374ae293c6919d511966c31e2bb68ebd1763bb5a956bec069ba0",
+  "evidence": [
+    {
+      "location": "assistant_stat",
+      "start": 156,
+      "end": 168,
+      "lines": [
+        {
+          "line": 156,
+          "text": "\tif nsfw = 0 and assistant_alt_appearance_count > 0 and CONST_INT['slave_exist']:"
+        },
+        {
+          "line": 157,
+          "text": "\t\t$assistant_appearance = '알몸 : &nbsp<br><span style=\"display:block; height:8px;\"></span>' + $assistant_appearance"
+        },
+        {
+          "line": 158,
+          "text": "! JO9 MOD START J9M1579 | 2026-10-10_restore_ui_format_after_dialogue_normalization | changed block; context may be included"
+        },
+        {
+          "line": 159,
+          "text": "\t\t*p '<div id=\"right_padding\">- 임무 -<br><br><br><br><br><br><br><br><br><br><br><br><br>- 외형 -<br><br><br><br><br><br><br><span style=\"display:block; height:8px;\"></span>- 보고 -</div>'"
+        },
+        {
+          "line": 160,
+          "text": "! JO9 MOD END J9M1579"
+        },
+        {
+          "line": 161,
+          "text": "\t\t*p '<div id=\"assistant_appear\"><br><<$assistant_appearance>></div>'"
+        },
+        {
+          "line": 162,
+          "text": ""
+        },
+        {
+          "line": 163,
+          "text": "\t\tif assistant['image_mode'] = 0:"
+        },
+        {
+          "line": 164,
+          "text": "\t\t\tassistant['nude'] = 1"
+        },
+        {
+          "line": 165,
+          "text": "\t\t\tassistant['maido'] = 0"
+        },
+        {
+          "line": 166,
+          "text": "\t\t\tassistant['domina'] = 0"
+        },
+        {
+          "line": 167,
+          "text": "\t\t\tassistant['executive'] = 0"
+        },
+        {
+          "line": 168,
+          "text": "\t\tend"
+        }
+      ]
+    },
+    {
+      "location": "assistant_stat",
+      "start": 188,
+      "end": 213,
+      "lines": [
+        {
+          "line": 188,
+          "text": "\t\tif assistant['nude'] = 1:"
+        },
+        {
+          "line": 189,
+          "text": "\t\t\t*p '<div id=\"chekbox_10r\"><img src=\"content/pic/ui/buttons/legacy/sel_button.png\"></div>'"
+        },
+        {
+          "line": 190,
+          "text": "\t\telse"
+        },
+        {
+          "line": 191,
+          "text": "\t\t\t*p '<div id=\"chekbox_10r\"><a href = \"EXEC: assistant[''image_mode''] = 0 & $assistant[''fullimage''] = $fullimage[assistant_type] & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/unsel_button.png\"></a></div>'"
+        },
+        {
+          "line": 192,
+          "text": "\t\tend"
+        },
+        {
+          "line": 193,
+          "text": ""
+        },
+        {
+          "line": 194,
+          "text": "\t\tIF $fullmade[assistant_type] ! '':"
+        },
+        {
+          "line": 195,
+          "text": "\t\t\tif assistant['maido'] = 1:"
+        },
+        {
+          "line": 196,
+          "text": "\t\t\t\t*p '<div id=\"chekbox_11r\"><img src=\"content/pic/ui/buttons/legacy/sel_button.png\"></div>'"
+        },
+        {
+          "line": 197,
+          "text": "\t\t\telse"
+        },
+        {
+          "line": 198,
+          "text": "\t\t\t\t*p '<div id=\"chekbox_11r\"><a href = \"EXEC: assistant[''image_mode''] = 2 & $assistant[''fullimage''] = $fullmade[assistant_type] & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/unsel_button.png\"></a></div>'"
+        },
+        {
+          "line": 199,
+          "text": "\t\t\tend"
+        },
+        {
+          "line": 200,
+          "text": "\t\tend"
+        },
+        {
+          "line": 201,
+          "text": ""
+        },
+        {
+          "line": 202,
+          "text": "\t\tif $fullsecretary[assistant_type] ! '':"
+        },
+        {
+          "line": 203,
+          "text": "\t\t\tif assistant['executive'] = 1:"
+        },
+        {
+          "line": 204,
+          "text": "\t\t\t\t*p '<div id=\"chekbox_12r\"><img src=\"content/pic/ui/buttons/legacy/sel_button.png\"></div>'"
+        },
+        {
+          "line": 205,
+          "text": "\t\t\telse"
+        },
+        {
+          "line": 206,
+          "text": "\t\t\t\t*p '<div id=\"chekbox_12r\"><a href = \"EXEC: assistant[''image_mode''] = 3 & $assistant[''fullimage''] = $fullsecretary[assistant_type] & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/unsel_button.png\"></a></div>'"
+        },
+        {
+          "line": 207,
+          "text": "\t\t\tend"
+        },
+        {
+          "line": 208,
+          "text": ""
+        },
+        {
+          "line": 209,
+          "text": "\t\tif $fullmistress[assistant_type] ! '':"
+        },
+        {
+          "line": 210,
+          "text": "\t\t\tif assistant['domina'] = 1:"
+        },
+        {
+          "line": 211,
+          "text": "\t\t\t\t*p '<div id=\"chekbox_13r\"><img src=\"content/pic/ui/buttons/legacy/sel_button.png\"></div>'"
+        },
+        {
+          "line": 212,
+          "text": "\t\t\telse"
+        },
+        {
+          "line": 213,
+          "text": "\t\t\t\t*p '<div id=\"chekbox_13r\"><a href = \"EXEC: assistant[''image_mode''] = 1 & $assistant[''fullimage''] = $fullmistress[assistant_type] & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/unsel_button.png\"></a></div>'"
+        }
+      ]
+    },
+    {
+      "location": "display_fullimage",
+      "start": 14,
+      "end": 20,
+      "lines": [
+        {
+          "line": 14,
+          "text": "$actor_name = $args[0]"
+        },
+        {
+          "line": 15,
+          "text": "$outfit_game = dyneval('$result = $<<$args[0]>>[\"cloth\"]')"
+        },
+        {
+          "line": 16,
+          "text": "$outfit_patch = ''"
+        },
+        {
+          "line": 17,
+          "text": ""
+        },
+        {
+          "line": 18,
+          "text": "if $outfit_game = 'голая': $outfit_patch = 'naked'"
+        },
+        {
+          "line": 19,
+          "text": "if $outfit_game = 'common_apron': $outfit_patch = 'apron'"
+        },
+        {
+          "line": 20,
+          "text": "if $outfit_game = 'maid_dress': $outfit_patch = 'maid'"
+        }
+      ]
+    },
+    {
+      "location": "display_fullimage",
+      "start": 40,
+      "end": 81,
+      "lines": [
+        {
+          "line": 40,
+          "text": "$def_img_key = 'fullimage'"
+        },
+        {
+          "line": 41,
+          "text": "$patch_img_arr_name = 'indpack_title'"
+        },
+        {
+          "line": 42,
+          "text": "$patch_image_path = ''"
+        },
+        {
+          "line": 43,
+          "text": "$patch_mood_image_path = ''"
+        },
+        {
+          "line": 44,
+          "text": "actor_type = dyneval('result = <<$actor_name>>_type')"
+        },
+        {
+          "line": 45,
+          "text": "actor_moral = dyneval('result = <<$actor_name>>[\"moral\"]')"
+        },
+        {
+          "line": 46,
+          "text": "actor_arousal = dyneval('result = <<$actor_name>>[\"arousal\"]')"
+        },
+        {
+          "line": 47,
+          "text": "$def_image_path = dyneval('$result = $<<$actor_name>>[\"fullimage\"]')"
+        },
+        {
+          "line": 48,
+          "text": ""
+        },
+        {
+          "line": 49,
+          "text": "if $outfit_patch <> '' :"
+        },
+        {
+          "line": 50,
+          "text": "    $patch_img_arr_name = 'indpack_' + $outfit_patch"
+        },
+        {
+          "line": 51,
+          "text": "end"
+        },
+        {
+          "line": 52,
+          "text": ""
+        },
+        {
+          "line": 53,
+          "text": "    if $actor_name = 'slave':"
+        },
+        {
+          "line": 54,
+          "text": "        actor_type = slave_type"
+        },
+        {
+          "line": 55,
+          "text": "        $def_image_path = $slave[ $def_img_key ]"
+        },
+        {
+          "line": 56,
+          "text": "        actor_moral = slave['moral']"
+        },
+        {
+          "line": 57,
+          "text": "        actor_arousal = slave['arousal']"
+        },
+        {
+          "line": 58,
+          "text": "    elseif $actor_name = 'assistant':"
+        },
+        {
+          "line": 59,
+          "text": "        $assistant_img_key = ''"
+        },
+        {
+          "line": 60,
+          "text": "\t\tif assistant['image_mode'] = 1:"
+        },
+        {
+          "line": 61,
+          "text": "\t\t\t$assistant_img_key = 'fullmistress'"
+        },
+        {
+          "line": 62,
+          "text": "            $patch_img_arr_name = 'indpack_dom'"
+        },
+        {
+          "line": 63,
+          "text": "\t\tend"
+        },
+        {
+          "line": 64,
+          "text": "\t\tif assistant['image_mode'] = 2:"
+        },
+        {
+          "line": 65,
+          "text": "            $assistant_img_key = 'fullmade'"
+        },
+        {
+          "line": 66,
+          "text": "\t\t\t$patch_img_arr_name = 'indpack_maid'"
+        },
+        {
+          "line": 67,
+          "text": "\t\tend"
+        },
+        {
+          "line": 68,
+          "text": "\t\tif assistant['image_mode'] = 3:"
+        },
+        {
+          "line": 69,
+          "text": "\t\t\t$assistant_img_key = 'fullsecretary'"
+        },
+        {
+          "line": 70,
+          "text": "            $patch_img_arr_name = 'indpack_secr'"
+        },
+        {
+          "line": 71,
+          "text": "\t\tend"
+        },
+        {
+          "line": 72,
+          "text": "        actor_type = assistant_type"
+        },
+        {
+          "line": 73,
+          "text": "        actor_moral = assistant['moral']"
+        },
+        {
+          "line": 74,
+          "text": "        actor_arousal = assistant['arousal']"
+        },
+        {
+          "line": 75,
+          "text": ""
+        },
+        {
+          "line": 76,
+          "text": "        $assistant_image_path = $assistant[ $assistant_img_key ]"
+        },
+        {
+          "line": 77,
+          "text": "        if $assistant_image_path <> '':"
+        },
+        {
+          "line": 78,
+          "text": "            $def_image_path = $assistant_image_path"
+        },
+        {
+          "line": 79,
+          "text": "        else"
+        },
+        {
+          "line": 80,
+          "text": "            $def_image_path = $assistant[ $def_img_key ]"
+        },
+        {
+          "line": 81,
+          "text": "        end"
+        }
+      ]
+    },
+    {
+      "location": "display_fullimage",
+      "start": 103,
+      "end": 130,
+      "lines": [
+        {
+          "line": 103,
+          "text": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022"
+        },
+        {
+          "line": 104,
+          "text": "$def_image_path = func('jo9_seed_role_images', 'resolve', actor_type, $def_image_path, $iif($actor_name = 'assistant', $assistant_img_key, 'fullimage'))"
+        },
+        {
+          "line": 105,
+          "text": "! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022"
+        },
+        {
+          "line": 106,
+          "text": "$patch_image_path = dyneval('$result = $<<$patch_img_arr_name>>[actor_type]')"
+        },
+        {
+          "line": 107,
+          "text": ""
+        },
+        {
+          "line": 108,
+          "text": "if $patch_image_path = '':"
+        },
+        {
+          "line": 109,
+          "text": "    $res_image_path = $def_image_path"
+        },
+        {
+          "line": 110,
+          "text": "else"
+        },
+        {
+          "line": 111,
+          "text": "    $patch_mood_suffix = ''"
+        },
+        {
+          "line": 112,
+          "text": "    if actor_arousal > 3:"
+        },
+        {
+          "line": 113,
+          "text": "        $patch_mood_suffix = '_horny'"
+        },
+        {
+          "line": 114,
+          "text": "    elseif actor_moral < 3:"
+        },
+        {
+          "line": 115,
+          "text": "        $patch_mood_suffix = '_rebel'"
+        },
+        {
+          "line": 116,
+          "text": "    end"
+        },
+        {
+          "line": 117,
+          "text": ""
+        },
+        {
+          "line": 118,
+          "text": "    $patch_mood_tagname = $patch_img_arr_name+$patch_mood_suffix"
+        },
+        {
+          "line": 119,
+          "text": "    "
+        },
+        {
+          "line": 120,
+          "text": "    if $patch_mood_suffix <> '':"
+        },
+        {
+          "line": 121,
+          "text": "        $patch_mood_image_path = dyneval('$result = $<<$patch_mood_tagname>>[actor_type]')"
+        },
+        {
+          "line": 122,
+          "text": "    end"
+        },
+        {
+          "line": 123,
+          "text": ""
+        },
+        {
+          "line": 124,
+          "text": "    if $patch_mood_image_path <> '':"
+        },
+        {
+          "line": 125,
+          "text": "        $res_image_path = $patch_mood_image_path"
+        },
+        {
+          "line": 126,
+          "text": "    else"
+        },
+        {
+          "line": 127,
+          "text": "        $res_image_path = $patch_image_path"
+        },
+        {
+          "line": 128,
+          "text": "    end"
+        },
+        {
+          "line": 129,
+          "text": ""
+        },
+        {
+          "line": 130,
+          "text": "end"
+        }
+      ]
+    },
+    {
+      "location": "jo9_seed_role_images",
+      "start": 38,
+      "end": 78,
+      "lines": [
+        {
+          "line": 38,
+          "text": "if $args[0]='resolve':"
+        },
+        {
+          "line": 39,
+          "text": " $result=$args[2]"
+        },
+        {
+          "line": 40,
+          "text": " jo9_seed_role_id=args[1]"
+        },
+        {
+          "line": 41,
+          "text": " $jo9_seed_role_wanted=$args[3]"
+        },
+        {
+          "line": 42,
+          "text": "! JO9 MOD START INDIE_EVENT_FULLIMAGE_20261023 | 2026-10-23_indie_event_fullimage"
+        },
+        {
+          "line": 43,
+          "text": " ! Resolve only a known default/role alias for this ID; do not rewrite actor caches."
+        },
+        {
+          "line": 44,
+          "text": " if $jo9_seed_role_wanted='fullimage' and $args[2] ! '':"
+        },
+        {
+          "line": 45,
+          "text": "  $jo9_seed_role_new=''"
+        },
+        {
+          "line": 46,
+          "text": "  if $args[2]=$fullimage[jo9_seed_role_id]:"
+        },
+        {
+          "line": 47,
+          "text": "   $jo9_seed_role_new=$indpack_title[jo9_seed_role_id]"
+        },
+        {
+          "line": 48,
+          "text": "  elseif $args[2]=$fullmade[jo9_seed_role_id]:"
+        },
+        {
+          "line": 49,
+          "text": "   $jo9_seed_role_new=$indpack_maid[jo9_seed_role_id]"
+        },
+        {
+          "line": 50,
+          "text": "   if $jo9_seed_role_new='': $jo9_seed_role_new=$indpack_title[jo9_seed_role_id]"
+        },
+        {
+          "line": 51,
+          "text": "  elseif $args[2]=$fullsecretary[jo9_seed_role_id]:"
+        },
+        {
+          "line": 52,
+          "text": "   $jo9_seed_role_new=$indpack_secr[jo9_seed_role_id]"
+        },
+        {
+          "line": 53,
+          "text": "   if $jo9_seed_role_new='': $jo9_seed_role_new=$indpack_title[jo9_seed_role_id]"
+        },
+        {
+          "line": 54,
+          "text": "  elseif $args[2]=$fullmistress[jo9_seed_role_id]:"
+        },
+        {
+          "line": 55,
+          "text": "   $jo9_seed_role_new=$indpack_dom[jo9_seed_role_id]"
+        },
+        {
+          "line": 56,
+          "text": "   if $jo9_seed_role_new='': $jo9_seed_role_new=$indpack_title[jo9_seed_role_id]"
+        },
+        {
+          "line": 57,
+          "text": "  end"
+        },
+        {
+          "line": 58,
+          "text": "  if $jo9_seed_role_new ! '': $result=$jo9_seed_role_new & exit"
+        },
+        {
+          "line": 59,
+          "text": " end"
+        },
+        {
+          "line": 60,
+          "text": "! JO9 MOD END INDIE_EVENT_FULLIMAGE_20261023"
+        },
+        {
+          "line": 61,
+          "text": " if jo9_seed_role_id>=2577 and jo9_seed_role_id<=2601:"
+        },
+        {
+          "line": 62,
+          "text": "  for jo9_seed_role_k=0 to 3:"
+        },
+        {
+          "line": 63,
+          "text": "   jo9_seed_role_known=1"
+        },
+        {
+          "line": 64,
+          "text": "   if jo9_seed_role_k=3 and (jo9_seed_role_id=2585 or jo9_seed_role_id=2597 or jo9_seed_role_id=2600 or jo9_seed_role_id=2601): jo9_seed_role_known=0"
+        },
+        {
+          "line": 65,
+          "text": "   if jo9_seed_role_known=1:"
+        },
+        {
+          "line": 66,
+          "text": "    $jo9_seed_role_old='girls/full/'+$jo9_seed_role_dirs[jo9_seed_role_k]+'/'+$jo9_seed_role_stem[jo9_seed_role_id-2577]"
+        },
+        {
+          "line": 67,
+          "text": "    if $args[2]=$jo9_seed_role_old:"
+        },
+        {
+          "line": 68,
+          "text": "     $result=$fullimage[jo9_seed_role_id]"
+        },
+        {
+          "line": 69,
+          "text": "     if $jo9_seed_role_wanted='fullmade' or $jo9_seed_role_wanted='fullsecretary' or $jo9_seed_role_wanted='fullmistress' or $jo9_seed_role_wanted='fullpregnant':"
+        },
+        {
+          "line": 70,
+          "text": "      $jo9_seed_role_new=dyneval('$result = $<<$jo9_seed_role_wanted>>[jo9_seed_role_id]')"
+        },
+        {
+          "line": 71,
+          "text": "      if $jo9_seed_role_new ! '': $result=$jo9_seed_role_new"
+        },
+        {
+          "line": 72,
+          "text": "     end"
+        },
+        {
+          "line": 73,
+          "text": "     exit"
+        },
+        {
+          "line": 74,
+          "text": "    end"
+        },
+        {
+          "line": 75,
+          "text": "   end"
+        },
+        {
+          "line": 76,
+          "text": "  end"
+        },
+        {
+          "line": 77,
+          "text": " end"
+        },
+        {
+          "line": 78,
+          "text": " exit"
+        }
+      ]
+    },
+    {
+      "location": "get_stock_seed",
+      "start": 290,
+      "end": 310,
+      "lines": [
+        {
+          "line": 290,
+          "text": "\tif stock['tolerant_work'] <0: stock['tolerant_work'] = 0"
+        },
+        {
+          "line": 291,
+          "text": "end"
+        },
+        {
+          "line": 292,
+          "text": ""
+        },
+        {
+          "line": 293,
+          "text": "!Images"
+        },
+        {
+          "line": 294,
+          "text": "$stock['fullimage'] = $fullimage[stock_type]"
+        },
+        {
+          "line": 295,
+          "text": "$stock['ava'] = $seed_ava[stock_type]"
+        },
+        {
+          "line": 296,
+          "text": "$stock['ava_gray'] = $seed_ava_gray[stock_type]"
+        },
+        {
+          "line": 297,
+          "text": "$stock['ava_clear'] = $seed_ava_clear[stock_type]"
+        },
+        {
+          "line": 298,
+          "text": ""
+        },
+        {
+          "line": 299,
+          "text": "!Equipment"
+        },
+        {
+          "line": 300,
+          "text": "$stock['wpn'] = 'безоружный'"
+        },
+        {
+          "line": 301,
+          "text": "$stock['armor'] = 'без_брони'"
+        },
+        {
+          "line": 302,
+          "text": "$stock['scnd'] = ''"
+        },
+        {
+          "line": 303,
+          "text": ""
+        },
+        {
+          "line": 304,
+          "text": "$stock['back_wpn'] = ''"
+        },
+        {
+          "line": 305,
+          "text": "$stock['left_wpn'] = ''"
+        },
+        {
+          "line": 306,
+          "text": "$stock['right_wpn'] = ''"
+        },
+        {
+          "line": 307,
+          "text": "$stock['arm_wpn'] = ''"
+        },
+        {
+          "line": 308,
+          "text": "$stock['leg_wpn'] = ''"
+        },
+        {
+          "line": 309,
+          "text": ""
+        },
+        {
+          "line": 310,
+          "text": "$stock['cloth'] = 'голая'"
+        }
+      ]
+    }
+  ]
+}

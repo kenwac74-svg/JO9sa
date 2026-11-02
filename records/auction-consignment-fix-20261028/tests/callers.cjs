@@ -1,0 +1,43 @@
+'use strict';
+const h=require('./harness.cjs');const {fs,assert,c,sc,rec,tmp,game,write,get,set,section,loadCandidate,instrumentMessages,isolate,actor,runFixture,roleView}=h;
+const p=loadCandidate(process.argv[2]||h.root+'/2026-10-28_farid_consignment_storage.json'),d=c.parse(p.bytes),liveBefore=c.hash(fs.readFileSync(game+'/jack.qsp'));isolate(d);
+set(d,'$slave_price','qa_appraisal_calls+=1\nslaveprice=qa_appraisal');set(d,'jo9_seed_role_images',"$result=$args[2]");
+const city=get(d,'interaction_city'),deposit=section(city,'if interaction_city = 119:','if interaction_city = 1191:'),reclaim=section(city,'if interaction_city = 1191:','if interaction_city = 1192:'),collect=section(city,'if interaction_city = 1193:','if interaction_city = 12:');
+const daily=p.patch.edits.find(e=>e.location==='next_day'&&e.patchId==='FARID_DAILY_SETTLE_20261028');assert(daily&&daily.new.includes("'settle'"));
+const renderReturn=s=>instrumentMessages(s).replaceAll("gt 'interaction_screen_city'",'qa_render_return+=1 & exit');
+set(d,'slave_auction_buyout',renderReturn(deposit));set(d,'slave_auction_rise',renderReturn(reclaim));set(d,'slave_auction_pass',renderReturn(collect));set(d,'slave_auction_next',daily.new);
+const wrapper=get(d,'stock_to_slave');assert(wrapper.includes("if func('stock_to_slave_nogt') ! 1: exit"));set(d,'stock_to_slave',wrapper.replaceAll("gt 'hard_return'",'qa_hard_return_called+=1'));
+let checks=0;const check=(s,n)=>{checks++;return `if (${s})=0: msg 'FAIL_CONSIGNMENT_CALLER_${n}' & exit\n`;},snap=n=>`savegame 'caller-${n}.sav'\n`;
+const reset=()=>"dynamic $clear_slave_instance,'slave'\ndynamic $clear_slave_instance,'stock'\ndynamic $clear_slave_instance,'jo9_farid_stored'\njo9_farid_stored_valid=0\nfarid_debt=0\nfarid_potential_debt=0\nsparks=100\nqa_appraisal=200\nqa_render_return=0\nqa_hard_return_called=0\n";
+let code=reset()+actor('stock',43001,1)+snap('expected')+"interaction_city=119\ngs 'slave_auction_buyout'\n";
+code+=check("farid_potential_debt=100 and jo9_farid_stored_valid=1 and jo9_farid_stored['id']=43001 and stock_state=0",'deposit_hook');
+code+=check("instr($special_image[2],'QA_IMAGE_43001')>0",'picture_uses_stored_actor');
+code+=actor('stock',43002,0)+"dynamic $clear_slave_instance,'stock'\n"+actor('stock',43003,0)+snap('unrelated')+"interaction_city=1191\ngs 'slave_auction_rise'\n";
+code+=check("slave_state=1 and slave['id']=43001 and slave['jo9_learning_trait']=1 and sparks=95 and farid_potential_debt=0 and jo9_farid_stored_valid=0",'return_hook')+snap('returned');
+code+="interaction_city=1191\ngs 'slave_auction_rise'\n"+check("sparks=95 and qa_render_return=1 and slave['id']=43001",'duplicate_ui_no_fee');
+code+=reset()+"farid_potential_debt=100\n"+actor('stock',43011,1)+snap('legacy-before')+"interaction_city=1191\ngs 'slave_auction_rise'\n";
+code+=check("sparks=100 and farid_potential_debt=100 and stock['id']=43011 and slave_state=0 and jo9_farid_stored_valid=0 and qa_render_return=1",'legacy_ui_preserves_claim');
+code+=check("instr($text[1],'수수료는 받지 않겠네')>0",'legacy_ui_explains_no_fee')+snap('legacy-after');
+code+=reset()+actor('stock',43021,1)+"interaction_city=119\ngs 'slave_auction_buyout'\n"+actor('slave',43999,0)+snap('occupied-before')+"interaction_city=1191\ngs 'slave_auction_rise'\n";
+code+=check("sparks=100 and farid_potential_debt=100 and slave['id']=43999 and jo9_farid_stored['id']=43021 and qa_render_return=1",'occupied_ui_no_fee')+snap('occupied-after');
+code+=reset()+actor('stock',43031,1)+"interaction_city=119\ngs 'slave_auction_buyout'\n"+actor('stock',43032,0)+"stock_state=0\n"+snap('invalid-deposit-before')+"interaction_city=119\ngs 'slave_auction_buyout'\n";
+code+=check("farid_potential_debt=100 and farid_debt=0 and jo9_farid_stored['id']=43031 and stock_state=0 and qa_render_return=1",'invalid_deposit_ui_preserves_old')+snap('invalid-deposit-after');
+code+=reset()+"farid_debt=25\n"+actor('stock',43041,1)+"interaction_city=119\ngs 'slave_auction_buyout'\n"+actor('stock',43042,0)+snap('payment-stock-before')+"gs 'slave_auction_next'\n";
+code+=check("farid_debt=125 and farid_potential_debt=0 and jo9_farid_stored_valid=0 and jo9_farid_stored_state=0",'next_day_hook');
+code+="gs 'slave_auction_next'\n"+check('farid_debt=125','next_day_hook_idempotent');
+code+="interaction_city=1193\ngs 'slave_auction_pass'\n"+check("sparks=225 and farid_debt=0 and stock['id']=43042",'collect_hook_keeps_stock')+check("instr($text[1],'125')>0",'collect_text_uses_paid_amount');
+code+="interaction_city=1193\ngs 'slave_auction_pass'\n"+check("sparks=225 and farid_debt=0 and stock['id']=43042",'collect_hook_idempotent')+snap('payment-stock-after');
+code+=reset()+"farid_debt=25\n"+actor('stock',43051,1)+"interaction_city=119\ngs 'slave_auction_buyout'\n"+actor('stock',43052,0)+snap('new-pending-before')+"interaction_city=1193\ngs 'slave_auction_pass'\n";
+code+=check("sparks=125 and farid_debt=0 and farid_potential_debt=100 and jo9_farid_stored_valid=1 and jo9_farid_stored['id']=43051 and stock['id']=43052",'collect_ui_keeps_new_pending')+snap('new-pending-after');
+code+=reset()+actor('slave',43991,0)+actor('stock',43992,1)+"stock_state=0\nhunting_prize=0\nfarid_potential_debt=0\n"+snap('wrapper-invalid-before')+"gs 'stock_to_slave'\n";
+code+=check("qa_hard_return_called=0 and slave['id']=43991 and stock['id']=43992 and stock_state=0",'wrapper_stops_on_failure')+snap('wrapper-invalid-after');
+code+=reset()+actor('stock',43993,1)+"hunting_prize=0\nfarid_potential_debt=0\ngs 'stock_to_slave'\n"+check("qa_hard_return_called=1 and slave['id']=43993 and slave_state=1",'wrapper_keeps_valid_path');
+const native=runFixture(d,'green-callers',code),comparisons=[];
+const saved=n=>sc.parse(fs.readFileSync(tmp+'/caller-'+n+'.sav'));
+function equal(a,ar,b,br,label){assert.deepEqual(roleView(saved(a),ar),roleView(saved(b),br),label);comparisons.push(label);}
+if(native.results.every(r=>r.pass)){
+ equal('expected','stock','returned','slave','caller_preserves_all23');equal('unrelated','stock','returned','stock','caller_return_keeps_other_stock');
+ for(const name of ['legacy','occupied','invalid-deposit','new-pending','wrapper-invalid'])for(const role of ['slave','stock','jo9_farid_stored'])equal(name+'-before',role,name+'-after',role,name+'_'+role);
+ equal('payment-stock-before','stock','payment-stock-after','stock','caller_collect_keeps_stock');
+}
+const report={baseline:h.baseline,candidate:p.patch.after_sha256,checks,native,canonicalComparisons:comparisons,worldUnchanged:c.hash(fs.readFileSync(game+'/jack.qsp'))===liveBefore,noOriginalSaveLoadedOrWritten:true,instrumentation:['Actual interaction_city119/1191/1193 fragments and exact next_day patched settlement hook.','Only final rendering goto targets replaced with diagnostic return; transaction branches otherwise unchanged.','Appraisal fixed200; post-transfer display refresh3locations stubbed; image resolver returns supplied image argument to observe selected source.','stock_to_slave final navigation instrumented with counter to test valid and invalid transfer branching.']};write(rec+'/green-callers-results.json',report);console.log(JSON.stringify(report));assert(native.results.every(r=>r.pass)&&report.worldUnchanged);

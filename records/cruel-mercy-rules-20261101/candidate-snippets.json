@@ -1,0 +1,62 @@
+{
+  "schema": 1,
+  "proposalOnly": true,
+  "productionWrites": false,
+  "sourceSha256": "4d0715391e7ace44aec2c75bfd0bcd7df0b58e813b200778ee06bc636d744659",
+  "sourceChangedExternallySinceEarlierAudit": {
+    "before": "b7e5b385dcbd5d8e4b4ac18c9556e18bf371f25f6368c3eba729c9374d1cc07b",
+    "now": "4d0715391e7ace44aec2c75bfd0bcd7df0b58e813b200778ee06bc636d744659",
+    "ownProductionWrites": 0
+  },
+  "scope": "interaction event6007 only; match every old block inside that event, not globally",
+  "helperPlaceholder": {
+    "token": "{{LEDGER_MINUS_HALF}}",
+    "requiredMeaning": "Exactly the parent-approved -0.5 through the canonical half-step helper. This template is not executable until substituted."
+  },
+  "callbackReplacements": [
+    {
+      "branchIndex": 1,
+      "old": "\t\t$special_action[1] = {\r\n\t\t\tif $text[2] = '' or $text[2] = 'placeholder': dynamic $swap_slave_instances, 'slave', 'pig'\r\n\t\t\tshow_pig_fullimage = 1\r\n\t\t}",
+      "newTemplate": "\t\t$special_action[1] = {\r\n\t\t\tif $text[2] = '' or $text[2] = 'placeholder': dynamic $swap_slave_instances, 'slave', 'pig'\r\n\t\t\tshow_pig_fullimage = 1\r\n\t\t}\r\n\t\tif interaction_city = 61131 and hunting_prize > 0:\r\n\t\t\t$special_action[1] = {\r\n\t\t\t\tif $text[2] = '' or $text[2] = 'placeholder':\r\n\t\t\t\t\tdynamic $swap_slave_instances, 'slave', 'pig'\r\n\t\t\t\t\t{{LEDGER_MINUS_HALF}}\r\n\t\t\t\t\t$special_action[1] = 'show_pig_fullimage = 1'\r\n\t\t\t\tend\r\n\t\t\t\tshow_pig_fullimage = 1\r\n\t\t\t}\r\n\t\tend",
+      "flags": [
+        "show_pig_fullimage = 1"
+      ]
+    },
+    {
+      "branchIndex": 2,
+      "old": "\t\t$special_action[1] = {\r\n\t\t\tif $text[2] = '' or $text[2] = 'placeholder': dynamic $swap_slave_instances, 'slave', 'pig'\r\n\t\t\tshow_pig_fullimage = 0\r\n\t\t\tshow_slave_fullimage = 0\r\n\t\t}",
+      "newTemplate": "\t\t$special_action[1] = {\r\n\t\t\tif $text[2] = '' or $text[2] = 'placeholder': dynamic $swap_slave_instances, 'slave', 'pig'\r\n\t\t\tshow_pig_fullimage = 0\r\n\t\t\tshow_slave_fullimage = 0\r\n\t\t}\r\n\t\tif interaction_city = 61131 and hunting_prize > 0:\r\n\t\t\t$special_action[1] = {\r\n\t\t\t\tif $text[2] = '' or $text[2] = 'placeholder':\r\n\t\t\t\t\tdynamic $swap_slave_instances, 'slave', 'pig'\r\n\t\t\t\t\t{{LEDGER_MINUS_HALF}}\r\n\t\t\t\t\t$special_action[1] = 'show_pig_fullimage = 0 & show_slave_fullimage = 0'\r\n\t\t\t\tend\r\n\t\t\t\tshow_pig_fullimage = 0\r\n\t\t\t\tshow_slave_fullimage = 0\r\n\t\t\t}\r\n\t\tend",
+      "flags": [
+        "show_pig_fullimage = 0",
+        "show_slave_fullimage = 0"
+      ]
+    },
+    {
+      "branchIndex": 3,
+      "old": "\t\t$special_action[1] = {\r\n\t\t\tif $text[2] = '' or $text[2] = 'placeholder': dynamic $swap_slave_instances, 'slave', 'pig'\r\n\t\t\tshow_pig_fullimage = 1\r\n\t\t\tshow_slave_fullimage = 0\r\n\t\t}",
+      "newTemplate": "\t\t$special_action[1] = {\r\n\t\t\tif $text[2] = '' or $text[2] = 'placeholder': dynamic $swap_slave_instances, 'slave', 'pig'\r\n\t\t\tshow_pig_fullimage = 1\r\n\t\t\tshow_slave_fullimage = 0\r\n\t\t}\r\n\t\tif interaction_city = 61131 and hunting_prize > 0:\r\n\t\t\t$special_action[1] = {\r\n\t\t\t\tif $text[2] = '' or $text[2] = 'placeholder':\r\n\t\t\t\t\tdynamic $swap_slave_instances, 'slave', 'pig'\r\n\t\t\t\t\t{{LEDGER_MINUS_HALF}}\r\n\t\t\t\t\t$special_action[1] = 'show_pig_fullimage = 1 & show_slave_fullimage = 0'\r\n\t\t\t\tend\r\n\t\t\t\tshow_pig_fullimage = 1\r\n\t\t\t\tshow_slave_fullimage = 0\r\n\t\t\t}\r\n\t\tend",
+      "flags": [
+        "show_pig_fullimage = 1",
+        "show_slave_fullimage = 0"
+      ]
+    }
+  ],
+  "originConsumption": {
+    "old": "\tend\r\n\tif pig_state > CONST_INT['no_slave']:",
+    "new": "\tend\r\n\tif interaction_city = 61131: interaction_city = 0\r\n\tif pig_state > CONST_INT['no_slave']:",
+    "position": "After the three conditional action1 definitions, before the existing occupied-pig/action2 block."
+  },
+  "reasons": [
+    "The existing action1 string is the pending commit token; rewriting it to display-only source consumes the swap and ledger once without a new pending field.",
+    "Display-only callbacks retain original page1 flags after page2/back navigation. Emptying the callback entirely can lose this restoration.",
+    "Consuming interaction_city61131 at callback construction prevents subsequent ordinary barn6007 from inheriting a stale fog origin.",
+    "Ordinary6007 callbacks, all original narrative, action2, resistance, action/energy/hygiene/house effects stay unchanged."
+  ],
+  "testsRequiredByParent": [
+    "fog cooperative/faint/defiant success; redraw score once",
+    "fight-back GT before callback gives no score",
+    "ordinary empty and occupied pig controls give no fog score",
+    "page1/page2/back restores original flags",
+    "failed61131 preflight/conversion does not reach6007 or score"
+  ]
+}

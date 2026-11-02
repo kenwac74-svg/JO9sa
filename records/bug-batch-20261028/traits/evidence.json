@@ -1,0 +1,2541 @@
+{
+  "inputs": {
+    "work": {
+      "path": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+      "sha256": "dbe2948f7c827d8fc82ccd32b2c3453626d181a59eb744e015fa66a3846280ae"
+    },
+    "original": {
+      "path": "G:/somi/JO9O/game/jack.qsp",
+      "sha256": "26e15aaf30b6226a2883c6b532a6ee4eed34791110618597d234bb7d6fa3e052"
+    },
+    "source": {
+      "path": "G:/somi/JO9sa/source/jack_2026-10-01.qsp",
+      "sha256": "59e1a1afb4fdd2e9bf9b1ffdcb12c10f2f4cc15d4cd3d890e21f8cb652f5958e"
+    }
+  },
+  "current": [
+    {
+      "location": "#item_base",
+      "line": 364,
+      "code": "$item_property[\"obereg\"] = {"
+    },
+    {
+      "location": "#item_base",
+      "line": 365,
+      "code": "\tspell_revelio = 1"
+    },
+    {
+      "location": "#item_base",
+      "line": 366,
+      "code": "    obereg_on = 1"
+    },
+    {
+      "location": "#item_base",
+      "line": 367,
+      "code": "    item_supermacy_bonus += 2"
+    },
+    {
+      "location": "#item_base",
+      "line": 368,
+      "code": "}"
+    },
+    {
+      "location": "#item_base",
+      "line": 369,
+      "code": "$item_property_off[\"obereg\"] = {"
+    },
+    {
+      "location": "#item_base",
+      "line": 370,
+      "code": "\tspell_revelio = 0"
+    },
+    {
+      "location": "#item_base",
+      "line": 371,
+      "code": "    obereg_on = 0"
+    },
+    {
+      "location": "#item_base",
+      "line": 372,
+      "code": "    item_supermacy_bonus -= 2"
+    },
+    {
+      "location": "#item_base",
+      "line": 373,
+      "code": "}"
+    },
+    {
+      "location": "$newloc",
+      "line": 369,
+      "code": "if raven_crown_on = 1: auspex = 1 & magna_magnifika = 10 &! S+ level (highest achievable through casting)"
+    },
+    {
+      "location": "$newloc",
+      "line": 370,
+      "code": "if obereg_on = 1: spell_revelio = 1"
+    },
+    {
+      "location": "next_day",
+      "line": 4702,
+      "code": "spell_revelio = 0"
+    },
+    {
+      "location": "interaction",
+      "line": 440,
+      "code": "!Revelis"
+    },
+    {
+      "location": "interaction",
+      "line": 441,
+      "code": "IF interaction = 81:"
+    },
+    {
+      "location": "interaction",
+      "line": 442,
+      "code": " $interaction_type = 'spell_cast'"
+    },
+    {
+      "location": "interaction",
+      "line": 443,
+      "code": " sparks -= 40"
+    },
+    {
+      "location": "interaction",
+      "line": 444,
+      "code": " if master_mage < 5: master_mage_rate += 6 - master_mage"
+    },
+    {
+      "location": "interaction",
+      "line": 445,
+      "code": " spell_revelio = 1"
+    },
+    {
+      "location": "interaction",
+      "line": 446,
+      "code": " npc = 0"
+    },
+    {
+      "location": "interaction",
+      "line": 447,
+      "code": "END"
+    },
+    {
+      "location": "menu_form",
+      "line": 599,
+      "code": "  IF spell_revelio = 0 and sparks >= 40 and master_mage >= 3:"
+    },
+    {
+      "location": "menu_form",
+      "line": 600,
+      "code": "    FUNC('$menu', 'goto', $menu_item_Revelio, menu_Revelio, 'interaction', 'interaction', '리벨리스($40)', '다른 이들의 숨겨진 성격 특성을 드러낸다')"
+    },
+    {
+      "location": "menu_form",
+      "line": 601,
+      "code": "  ELSEIF master_mage < 3:"
+    },
+    {
+      "location": "menu_form",
+      "line": 602,
+      "code": "    FUNC('$menu', 'exec', $menu_item_Revelio_gray, empty, '리벨리스', '마법력이 부족합니다')"
+    },
+    {
+      "location": "menu_form",
+      "line": 603,
+      "code": "  ELSEIF sparks < 40:"
+    },
+    {
+      "location": "menu_form",
+      "line": 604,
+      "code": "    FUNC('$menu', 'exec', $menu_item_Revelio_gray, empty, '리벨리스', '스파크가 부족합니다')"
+    },
+    {
+      "location": "menu_form",
+      "line": 605,
+      "code": "  ELSEIF spell_revelio = 1:"
+    },
+    {
+      "location": "menu_form",
+      "line": 606,
+      "code": "    FUNC('$menu', 'exec', $menu_item_Revelio_gray, empty, '리벨리스', '이미 시전 중 입니다.')"
+    },
+    {
+      "location": "menu_form",
+      "line": 607,
+      "code": "  ELSEIF $master_karman = 'obereg':"
+    },
+    {
+      "location": "menu_form",
+      "line": 608,
+      "code": "\tFUNC('$menu', 'exec', $menu_item_Revelio_gray, empty, '리벨리스', '오베레그에서 이미 시전중 입니다.')"
+    },
+    {
+      "location": "menu_form",
+      "line": 1486,
+      "code": "! JO9 MOD START CHAOTIC_ESSENCE_USE_ASSISTANT | 2026-10-24_chaotic_essence"
+    },
+    {
+      "location": "menu_form",
+      "line": 1487,
+      "code": "\tif chaotic_essence > 0 and func('jo9_chaotic', 'count', 'assistant') > 0:"
+    },
+    {
+      "location": "menu_form",
+      "line": 1488,
+      "code": "\t\tfunc('$menu', 'exec', '<li style=\"background: url(''content/pic/ui/legacy_overhaul/chaotic essence.png'') no-repeat left top;\">', 'gs ''jo9_chaotic'', ''use'', ''assistant'' & gt ''menu_form''', '카오틱 에센스', '보유량: <<chaotic_essence>>회분. 부정 특성 중 무작위 1개를 삭제합니다. 성취 특성과 그 외 특성·상태는 보존합니다.')"
+    },
+    {
+      "location": "menu_form",
+      "line": 1489,
+      "code": "\telseif chaotic_essence <= 0:"
+    },
+    {
+      "location": "menu_form",
+      "line": 1490,
+      "code": "\t\tfunc('$menu', 'exec', '<li id=\"grey\" style=\"background: url(''content/pic/ui/legacy_overhaul/chaotic essence_gray.png'') no-repeat left top;\">', empty, '카오틱 에센스', '카오틱 에센스가 없습니다. 중앙 구역 물약 상점에서 구매할 수 있습니다.')"
+    },
+    {
+      "location": "menu_form",
+      "line": 1491,
+      "code": "\telse"
+    },
+    {
+      "location": "menu_form",
+      "line": 1492,
+      "code": "\t\tfunc('$menu', 'exec', '<li id=\"grey\" style=\"background: url(''content/pic/ui/legacy_overhaul/chaotic essence_gray.png'') no-repeat left top;\">', empty, '카오틱 에센스', '삭제할 부정 특성이 없습니다. 아이템을 소모하지 않습니다.')"
+    },
+    {
+      "location": "menu_form",
+      "line": 1493,
+      "code": "\tend"
+    },
+    {
+      "location": "menu_form",
+      "line": 1494,
+      "code": "! JO9 MOD END CHAOTIC_ESSENCE_USE_ASSISTANT"
+    },
+    {
+      "location": "menu_form",
+      "line": 1756,
+      "code": "! JO9 MOD START CHAOTIC_ESSENCE_USE_SLAVE | 2026-10-24_chaotic_essence"
+    },
+    {
+      "location": "menu_form",
+      "line": 1757,
+      "code": "\tif chaotic_essence > 0 and func('jo9_chaotic', 'count', 'slave') > 0:"
+    },
+    {
+      "location": "menu_form",
+      "line": 1758,
+      "code": "\t\tfunc('$menu', 'exec', '<li style=\"background: url(''content/pic/ui/legacy_overhaul/chaotic essence.png'') no-repeat left top;\">', 'gs ''jo9_chaotic'', ''use'', ''slave'' & gt ''menu_form''', '카오틱 에센스', '보유량: <<chaotic_essence>>회분. 부정 특성 중 무작위 1개를 삭제합니다. 성취 특성과 그 외 특성·상태는 보존합니다.')"
+    },
+    {
+      "location": "menu_form",
+      "line": 1759,
+      "code": "\telseif chaotic_essence <= 0:"
+    },
+    {
+      "location": "menu_form",
+      "line": 1760,
+      "code": "\t\tfunc('$menu', 'exec', '<li id=\"grey\" style=\"background: url(''content/pic/ui/legacy_overhaul/chaotic essence_gray.png'') no-repeat left top;\">', empty, '카오틱 에센스', '카오틱 에센스가 없습니다. 중앙 구역 물약 상점에서 구매할 수 있습니다.')"
+    },
+    {
+      "location": "menu_form",
+      "line": 1761,
+      "code": "\telse"
+    },
+    {
+      "location": "menu_form",
+      "line": 1762,
+      "code": "\t\tfunc('$menu', 'exec', '<li id=\"grey\" style=\"background: url(''content/pic/ui/legacy_overhaul/chaotic essence_gray.png'') no-repeat left top;\">', empty, '카오틱 에센스', '삭제할 부정 특성이 없습니다. 아이템을 소모하지 않습니다.')"
+    },
+    {
+      "location": "menu_form",
+      "line": 1763,
+      "code": "\tend"
+    },
+    {
+      "location": "menu_form",
+      "line": 1764,
+      "code": "! JO9 MOD END CHAOTIC_ESSENCE_USE_SLAVE"
+    },
+    {
+      "location": "pharmacy",
+      "line": 252,
+      "code": "! JO9 MOD START CHAOTIC_ESSENCE_SHOP_MENU | 2026-10-24_chaotic_essence"
+    },
+    {
+      "location": "pharmacy",
+      "line": 253,
+      "code": " IF sparks >= 900:"
+    },
+    {
+      "location": "pharmacy",
+      "line": 254,
+      "code": "  FUNC('$menu', 'exec', '<li style=\"background: url(''content/pic/ui/legacy_overhaul/chaotic essence.png'') no-repeat left top;\">', 'sp_txt = 125 & gt $curloc', '카오틱 에센스 ($900)', '$900에 1회분. 부정 특성 중 무작위 1개를 삭제합니다. 성취 특성과 그 외 특성·상태는 보존합니다.')"
+    },
+    {
+      "location": "pharmacy",
+      "line": 255,
+      "code": " ELSE"
+    },
+    {
+      "location": "pharmacy",
+      "line": 256,
+      "code": "  FUNC('$menu', 'exec', '<li id=\"grey\" style=\"background: url(''content/pic/ui/legacy_overhaul/chaotic essence_gray.png'') no-repeat left top;\">', empty, '카오틱 에센스 ($900)', '스파크가 부족합니다. $900에 1회분. 부정 특성 중 무작위 1개를 삭제합니다. 성취 특성과 그 외 특성·상태는 보존합니다.')"
+    },
+    {
+      "location": "pharmacy",
+      "line": 257,
+      "code": " END"
+    },
+    {
+      "location": "pharmacy",
+      "line": 258,
+      "code": "! JO9 MOD END CHAOTIC_ESSENCE_SHOP_MENU"
+    },
+    {
+      "location": "pharmacy",
+      "line": 327,
+      "code": "! JO9 MOD START CHAOTIC_ESSENCE_SHOP_PURCHASE | 2026-10-24_chaotic_essence"
+    },
+    {
+      "location": "pharmacy",
+      "line": 328,
+      "code": "IF sp_txt = 125:"
+    },
+    {
+      "location": "pharmacy",
+      "line": 329,
+      "code": " IF sparks >= 900:"
+    },
+    {
+      "location": "pharmacy",
+      "line": 330,
+      "code": "  sparks -= 900"
+    },
+    {
+      "location": "pharmacy",
+      "line": 331,
+      "code": "  chaotic_essence += 1"
+    },
+    {
+      "location": "pharmacy",
+      "line": 332,
+      "code": "  $pharmacy[125] = $pharmacy_accept"
+    },
+    {
+      "location": "pharmacy",
+      "line": 333,
+      "code": "  dynamic $get_lab_space"
+    },
+    {
+      "location": "pharmacy",
+      "line": 334,
+      "code": " ELSE"
+    },
+    {
+      "location": "pharmacy",
+      "line": 335,
+      "code": "  $pharmacy[125] = $pharmacy_deny"
+    },
+    {
+      "location": "pharmacy",
+      "line": 336,
+      "code": " END"
+    },
+    {
+      "location": "pharmacy",
+      "line": 337,
+      "code": " FUNC('$menu', 'spacer', 4)"
+    },
+    {
+      "location": "pharmacy",
+      "line": 338,
+      "code": " FUNC('$menu', '===BEGIN===', 'column_0')"
+    },
+    {
+      "location": "pharmacy",
+      "line": 339,
+      "code": " FUNC('$menu', 'exec_options', $menu_item_Backarmoy, 'sp_txt = 12 & gt $curloc', '다른 상품')"
+    },
+    {
+      "location": "pharmacy",
+      "line": 340,
+      "code": " FUNC('$menu', 'city_form', $menu_item_centralkvartal, menu_leavecentralkvartal_district, '가게 나가기')"
+    },
+    {
+      "location": "pharmacy",
+      "line": 341,
+      "code": " FUNC('$menu', '===END===')"
+    },
+    {
+      "location": "pharmacy",
+      "line": 342,
+      "code": "END"
+    },
+    {
+      "location": "pharmacy",
+      "line": 343,
+      "code": "! JO9 MOD END CHAOTIC_ESSENCE_SHOP_PURCHASE"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 229,
+      "code": "  if dynslave['jo9_slave_nature'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''slave_nature''\">노예근성</a><br>'"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 230,
+      "code": "! JO9 MOD END SLAVE_NATURE_LIST"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 231,
+      "code": "  if dynslave['jo9_voice_trait'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''innate_mute''\">선천적 벙어리</a><br>'"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 232,
+      "code": "  if dynslave['jo9_ambition'] = 1 and dynslave['jo9_ambition_known'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''ambitious''\">야심가</a><br>'"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 233,
+      "code": "! JO9 MOD END ARGON_RESTORED_LIST"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 234,
+      "code": "   if func('jo9_traits', 'activity_compatible', 'dynslave') = 1:"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 235,
+      "code": "    if func('jo9_traits', 'activity_known', 'dynslave') = 1 or spell_revelio = 1:"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 236,
+      "code": "     if func('jo9_traits', 'activity_sign', 'dynslave') = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''activity_active''\">활동적</a><br>'"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 237,
+      "code": "     if func('jo9_traits', 'activity_sign', 'dynslave') = -1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''activity_passive''\">휴식 선호</a><br>'"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 238,
+      "code": "    end"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 239,
+      "code": "   else"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 240,
+      "code": "  if dynslave['jo9_work_ethic'] = 1 and dynslave['jo9_work_ethic_known'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''workaholic''\">일벌레</a><br>'"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 241,
+      "code": "  if dynslave['jo9_work_ethic'] = -1 and dynslave['jo9_work_ethic_known'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''content''\">안분지족</a><br>'"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 242,
+      "code": "   end"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 243,
+      "code": "  if dynslave['jo9_focus'] = 1 and dynslave['jo9_focus_known'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''persevering''\">끈기</a><br>'"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 244,
+      "code": "  if dynslave['jo9_focus'] = -1 and dynslave['jo9_focus_known'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''distracted''\">산만함</a><br>'"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 245,
+      "code": "  if dynslave['jo9_grudge'] = 1 and dynslave['jo9_grudge_known'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''petty''\">옹졸함</a><br>'"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 246,
+      "code": "  if dynslave['jo9_grudge'] = -1 and dynslave['jo9_grudge_known'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''generous''\">너그러움</a><br>'"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 305,
+      "code": " stock['jo9_work_ethic'] = 0"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 306,
+      "code": " jo9_trait_registry_roll = rand(1,100)"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 307,
+      "code": " if jo9_trait_registry_roll <= 10 and func('jo9_traits', 'allow', 'stock', 'jo9_work_ethic', 1) = 1: stock['jo9_work_ethic'] = 1"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 308,
+      "code": " if jo9_trait_registry_roll > 10 and jo9_trait_registry_roll <= 20: stock['jo9_work_ethic'] = -1"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 309,
+      "code": " gs 'jo9_traits', 'activity_generate', 'stock'"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 310,
+      "code": " stock['jo9_focus'] = 0"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 311,
+      "code": " jo9_trait_registry_roll = rand(1,100)"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 312,
+      "code": " if jo9_trait_registry_roll <= 10: stock['jo9_focus'] = 1"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 313,
+      "code": " if jo9_trait_registry_roll > 10 and jo9_trait_registry_roll <= 20: stock['jo9_focus'] = -1"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 314,
+      "code": " stock['jo9_grudge'] = 0"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 315,
+      "code": " jo9_trait_registry_roll = rand(1,100)"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 316,
+      "code": " if jo9_trait_registry_roll <= 10: stock['jo9_grudge'] = 1"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 317,
+      "code": " if jo9_trait_registry_roll > 10 and jo9_trait_registry_roll <= 20: stock['jo9_grudge'] = -1"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 318,
+      "code": " stock['jo9_constitution'] = 0"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 319,
+      "code": " jo9_trait_registry_roll = rand(1,100)"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 320,
+      "code": " if jo9_trait_registry_roll <= 3: stock['jo9_constitution'] = 1"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 321,
+      "code": " if jo9_trait_registry_roll > 3 and jo9_trait_registry_roll <= 6: stock['jo9_constitution'] = -1"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 322,
+      "code": " stock['jo9_peerless'] = 0"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 323,
+      "code": " if stock['beauty'] >= 5:"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 324,
+      "code": "  if rand(1,100) = 1: stock['jo9_peerless'] = 1"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 325,
+      "code": " end"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 326,
+      "code": " stock['jo9_ambition_known'] = 0"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 327,
+      "code": " stock['jo9_work_ethic_known'] = 0"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 328,
+      "code": " stock['jo9_focus_known'] = 0"
+    },
+    {
+      "location": "jo9_traits",
+      "line": 329,
+      "code": " stock['jo9_grudge_known'] = 0"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 91,
+      "code": "elseif $jo9_trait_personality_mode = 'praise':"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 92,
+      "code": " if jo9actor['jo9_ambition'] = 1 and jo9actor['jo9_ambition_grade_day'] = day + 1 and jo9actor['jo9_ambition_used_day'] ! day + 1:"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 93,
+      "code": "  jo9actor_rate['mood'] += 5"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 94,
+      "code": "  jo9actor['jo9_ambition_used_day'] = day + 1"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 95,
+      "code": "  jo9actor['jo9_ambition_known'] = 1"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 96,
+      "code": " end"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 97,
+      "code": "elseif $jo9_trait_personality_mode = 'activity':"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 98,
+      "code": " if jo9actor['jo9_focus_active'] ! 0: jo9actor['jo9_focus_active'] = 0"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 99,
+      "code": " local j9av_work = func('jo9_traits', 'activity_value', 'jo9actor', 'jo9_work_ethic')"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 100,
+      "code": " if j9av_work = 1 or j9av_work = -1:"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 101,
+      "code": "  if jo9actor['jo9_activity_day'] ! day + 1:"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 102,
+      "code": "   jo9actor['jo9_activity_day'] = day + 1"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 103,
+      "code": "   jo9actor['jo9_activity_count'] = 0"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 104,
+      "code": "  end"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 105,
+      "code": "  jo9actor['jo9_activity_count'] += 1"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 106,
+      "code": "  if jo9actor['jo9_activity_count'] > 1:"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 107,
+      "code": "   jo9actor_rate['mood'] += 2 * j9av_work"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 108,
+      "code": "   jo9actor['jo9_work_ethic_known'] = 1"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 109,
+      "code": "  end"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 110,
+      "code": " end"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 111,
+      "code": " if jo9_trait_personality_amount = 0 and (jo9actor['jo9_focus'] = 1 or jo9actor['jo9_focus'] = -1):"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 112,
+      "code": "  if $jo9_trait_personality_subject = '' or $mid($jo9_trait_personality_subject, len($jo9_trait_personality_subject), 1) = ':': $jo9_trait_personality_subject += 'interaction:' + $str(interaction)"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 113,
+      "code": "  $jo9_trait_personality_subject = $replace($replace($jo9_trait_personality_subject, 'slave_rate[', ''), 'slave[', '')"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 114,
+      "code": "  $jo9_trait_personality_subject = $replace($replace($jo9_trait_personality_subject, 'assistant_rate[', ''), 'assistant[', '')"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 115,
+      "code": "  $jo9_trait_personality_subject = $replace($replace($jo9_trait_personality_subject, 'dynslave_rate[', ''), 'dynslave[', '')"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 116,
+      "code": "  $jo9_trait_personality_subject = $replace($replace($jo9_trait_personality_subject, 'cow_rate[', ''), 'cow[', '')"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 117,
+      "code": "  $jo9_trait_personality_subject = $replace($replace($jo9_trait_personality_subject, 'prisoner_rate[', ''), 'prisoner[', '')"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 118,
+      "code": "  $jo9_trait_personality_subject = $replace($replace($jo9_trait_personality_subject, 'room1_rate[', ''), 'room1[', '')"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 119,
+      "code": "  $jo9_trait_personality_subject = $replace($replace($jo9_trait_personality_subject, 'room2_rate[', ''), 'room2[', '')"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 120,
+      "code": "  $jo9_trait_personality_subject = $replace($replace($jo9_trait_personality_subject, 'room3_rate[', ''), 'room3[', '')"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 121,
+      "code": "  $jo9_trait_personality_subject = $replace($replace($jo9_trait_personality_subject, 'room4_rate[', ''), 'room4[', '')"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 122,
+      "code": "  $jo9_trait_personality_subject = $replace($replace($jo9_trait_personality_subject, 'farmhand_rate[', ''), 'farmhand[', '')"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 123,
+      "code": "  $jo9_trait_personality_subject = $replace($replace($replace($jo9_trait_personality_subject, ']', ''), '\"', ''), \"'\", '')"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 124,
+      "code": "  if $jo9actor['jo9_focus_subject'] = $jo9_trait_personality_subject:"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 125,
+      "code": "   jo9actor['jo9_focus_active'] = jo9actor['jo9_focus']"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 126,
+      "code": "   jo9actor['jo9_focus_known'] = 1"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 127,
+      "code": "   if jo9actor['jo9_focus'] = 1: jo9actor_rate['mood'] += 2"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 128,
+      "code": "  end"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 129,
+      "code": "  $jo9actor['jo9_focus_subject'] = $jo9_trait_personality_subject"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 130,
+      "code": " end"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 131,
+      "code": "elseif $jo9_trait_personality_mode = 'xp':"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 133,
+      "code": "  jo9actor['jo9_focus_xp_credit'] += jo9_trait_personality_amount * jo9actor['jo9_focus_active']"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 134,
+      "code": "  result += jo9actor['jo9_focus_xp_credit'] / 10"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 135,
+      "code": "  jo9actor['jo9_focus_xp_credit'] = jo9actor['jo9_focus_xp_credit'] mod 10"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 136,
+      "code": " end"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 137,
+      "code": "elseif $jo9_trait_personality_mode = 'performance':"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 138,
+      "code": " if jo9_trait_personality_amount > 0 and jo9actor['jo9_focus_active'] = -1: result = jo9_trait_personality_amount * 9 / 10"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 139,
+      "code": "elseif $jo9_trait_personality_mode = 'finish':"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 148,
+      "code": "  jo9_trait_personality_step = 1"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 149,
+      "code": "  if jo9actor[$jo9_trait_personality_key] > 0 and instr('|neg_pain|neg_abuse|neg_disgust|neg_no_praise|neg_shame|neg_prisoner|neg_job|neg_forced|neg_raped|neg_defloration|neg_artifact|neg_cheap_gift|neg_cheap_reward|neg_pony_died|neg_sa_catfight|neg_sa_love_lost2|neg_sa_demote|neg_sa_friend_prisoned|neg_sa_friend_punished|neg_sa_love_lost1|neg_another_sleep_together|', '|' + $jo9_trait_personality_key + '|') > 0:"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 150,
+      "code": "   if jo9actor['jo9_grudge'] = 1:"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 151,
+      "code": "    jo9actor[$jo9_trait_personality_credit] += 2"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 152,
+      "code": "    jo9_trait_personality_step = jo9actor[$jo9_trait_personality_credit] / 3"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 153,
+      "code": "    jo9actor[$jo9_trait_personality_credit] = jo9actor[$jo9_trait_personality_credit] mod 3"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 154,
+      "code": "    jo9actor['jo9_grudge_known'] = 1"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 155,
+      "code": "   elseif jo9actor['jo9_grudge'] = -1:"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 156,
+      "code": "    jo9actor[$jo9_trait_personality_credit] += 10"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 157,
+      "code": "    jo9_trait_personality_step = jo9actor[$jo9_trait_personality_credit] / 7"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 158,
+      "code": "    jo9actor[$jo9_trait_personality_credit] = jo9actor[$jo9_trait_personality_credit] mod 7"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 159,
+      "code": "    jo9actor['jo9_grudge_known'] = 1"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 160,
+      "code": "   else"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 161,
+      "code": "    if jo9actor[$jo9_trait_personality_credit] ! 0: jo9actor[$jo9_trait_personality_credit] = 0"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "line": 162,
+      "code": "   end"
+    },
+    {
+      "location": "#static_base",
+      "line": 1569,
+      "code": "\t\tif dynslave['nymphomania'] > 0 and dynslave['nymphomania_revealed'] > 0: dynslave['prestige'] += 1      &! nympho"
+    },
+    {
+      "location": "#static_base",
+      "line": 1570,
+      "code": "\t\tif dynslave['nymphomania'] < 0 and dynslave['nymphomania_revealed'] > 0: dynslave['prestige'] -= 2      &! frigid"
+    },
+    {
+      "location": "#static_base",
+      "line": 1571,
+      "code": "\t\tif dynslave['masochism'] > 0 and dynslave['masochism_revealed'] > 0: dynslave['prestige'] += 1          &! accustomed to pain or masochist"
+    },
+    {
+      "location": "#static_base",
+      "line": 1572,
+      "code": "\t\tif dynslave['masochism'] < 0 and dynslave['masochism_revealed'] > 0: dynslave['prestige'] -= 1          &! afraid of pain"
+    },
+    {
+      "location": "#static_base",
+      "line": 1573,
+      "code": "\t\tif dynslave['exhibitionism'] = 2 and dynslave['exhibitionism_revealed'] > 0: dynslave['prestige'] += 1  &! exhibitionist"
+    },
+    {
+      "location": "#static_base",
+      "line": 1574,
+      "code": "\t\tif dynslave['exhibitionism'] < 0 and dynslave['exhibitionism_revealed'] > 0: dynslave['prestige'] -= 1  &! shy"
+    },
+    {
+      "location": "#static_base",
+      "line": 1575,
+      "code": "\t\tif dynslave['perversion'] = 2 and dynslave['perversion_revealed'] > 0: dynslave['prestige'] += 1        &! perverted"
+    },
+    {
+      "location": "#static_base",
+      "line": 1576,
+      "code": "\t\tif dynslave['perversion'] < 0 and dynslave['perversion_revealed'] > 0:                                  &! purist"
+    },
+    {
+      "location": "#static_base",
+      "line": 1577,
+      "code": "\t\t\tif dynslave['virginity'] < 2 and dynslave['rehabilitation'] = 0:"
+    },
+    {
+      "location": "#static_base",
+      "line": 1578,
+      "code": "\t\t\t\tdynslave['prestige'] += 2"
+    },
+    {
+      "location": "#static_base",
+      "line": 1579,
+      "code": "\t\t\telse"
+    },
+    {
+      "location": "#static_base",
+      "line": 1580,
+      "code": "\t\t\t\tdynslave['prestige'] += 1"
+    },
+    {
+      "location": "#static_base",
+      "line": 1581,
+      "code": "\t\t\tend"
+    },
+    {
+      "location": "#static_base",
+      "line": 1582,
+      "code": "\t\tend"
+    },
+    {
+      "location": "#static_base",
+      "line": 1621,
+      "code": "$check_slave_for_revealed_traits = {"
+    },
+    {
+      "location": "#static_base",
+      "line": 1622,
+      "code": "\tif dynslave_state > CONST_INT['no_slave']:"
+    },
+    {
+      "location": "#static_base",
+      "line": 1623,
+      "code": "\t\t!Check for habit - slave"
+    },
+    {
+      "location": "#static_base",
+      "line": 1624,
+      "code": "\t\tif dynslave['masochism_xp'] > 50 and dynslave['masochism'] = 0: dynslave['masochism'] = 1 &! Accustomed to Pain (cannot replace Afraid of Pain, can grow into Masochist)"
+    },
+    {
+      "location": "#static_base",
+      "line": 1625,
+      "code": "\t\tif dynslave['masochism_xp'] > 100 and dynslave['masochism'] = 1: dynslave['masochism'] = 2 &! Masochist (replaces Accustomed to Pain, cannot replace Afraid of Pain)"
+    },
+    {
+      "location": "#static_base",
+      "line": 1626,
+      "code": "\t\tif dynslave['exhibitionism_xp'] > 75 and dynslave['exhibitionism'] < 2: dynslave['exhibitionism'] = 2 &! Exhibitionist (can replace opposite Shy)"
+    },
+    {
+      "location": "#static_base",
+      "line": 1627,
+      "code": "\t\tif dynslave['nymphomania_xp'] > 200 and dynslave['nymphomania'] < 1: dynslave['nymphomania'] = 1 &! Nymphomaniac (can replace opposite Frigid)"
+    },
+    {
+      "location": "#static_base",
+      "line": 1628,
+      "code": "\t\tif dynslave['perversion_xp'] > 150 and dynslave['perversion'] < 2: dynslave['perversion'] = 2 &! Pervert (can replace opposite Purist)"
+    },
+    {
+      "location": "#static_base",
+      "line": 1629,
+      "code": "\t\tif dynslave['lesbian_xp'] > 50 and dynslave['homosexualism'] = 0: dynslave['homosexualism'] = 1 &! Bi-sexual (cannot replace Homophobic or Lesbian)"
+    },
+    {
+      "location": "#static_base",
+      "line": 1925,
+      "code": "$update_slave_features_list = {"
+    },
+    {
+      "location": "#static_base",
+      "line": 1926,
+      "code": "\tif dynslave_state > CONST_INT['no_slave']:"
+    },
+    {
+      "location": "#static_base",
+      "line": 1927,
+      "code": "\t\tgs 'jo9_traits', 'repair', 'dynslave'"
+    },
+    {
+      "location": "#static_base",
+      "line": 1928,
+      "code": ""
+    },
+    {
+      "location": "#static_base",
+      "line": 1929,
+      "code": "\t\t!Slave Traits"
+    },
+    {
+      "location": "#static_base",
+      "line": 1930,
+      "code": "! JO9 MOD START COG_DISPLAY | 2026-10-16_innate_learning_traits"
+    },
+    {
+      "location": "#static_base",
+      "line": 1931,
+      "code": "\t\t$dynslave_features_list = ''"
+    },
+    {
+      "location": "#static_base",
+      "line": 1932,
+      "code": "  ! jo9_learning_trait: 1 천재, -1 백치, 0 일반. 선천 특성은 보유 즉시 표시한다."
+    },
+    {
+      "location": "#static_base",
+      "line": 1933,
+      "code": "  if dynslave['jo9_learning_trait'] = 1: $dynslave_features_list += '<a href=\"EXEC: msg $jo9_genius_text\"><<dyneval($vb_cycle_skill, 5, \"천재\")>></a><br>'"
+    },
+    {
+      "location": "#static_base",
+      "line": 1934,
+      "code": "  if dynslave['jo9_learning_trait'] = -1: $dynslave_features_list += '<a href=\"EXEC: msg $jo9_idiot_text\"><<dyneval($vb_cycle_skill, 0, \"백치\")>></a><br>'"
+    },
+    {
+      "location": "#static_base",
+      "line": 1935,
+      "code": "! JO9 MOD END COG_DISPLAY"
+    },
+    {
+      "location": "#static_base",
+      "line": 1936,
+      "code": "! JO9 MOD START TRAITS_DISPLAY_DYNSLAVE_COG_DISPLAY | 2026-10-17_traits_batch"
+    },
+    {
+      "location": "#static_base",
+      "line": 1937,
+      "code": " $dynslave_features_list += $func('jo9_traits', 'list', 'dynslave')"
+    },
+    {
+      "location": "#static_base",
+      "line": 2058,
+      "code": "        if dynslave['nymphomania'] > 0 and (dynslave['nymphomania_revealed'] = 2 or spell_revelio = 1):"
+    },
+    {
+      "location": "#static_base",
+      "line": 2059,
+      "code": "            $dynslave_features_list += '<a href=\"EXEC: msg $Нимфоманка\"><<dyneval($vb_cycle_skill, 5, \"색정광\")>></a><br>'"
+    },
+    {
+      "location": "#static_base",
+      "line": 2060,
+      "code": "        end"
+    },
+    {
+      "location": "#static_base",
+      "line": 2061,
+      "code": "        if dynslave['nymphomania'] < 0 and (dynslave['nymphomania_revealed'] = 2 or spell_revelio = 1):"
+    },
+    {
+      "location": "#static_base",
+      "line": 2062,
+      "code": "            $dynslave_features_list += '<a href=\"EXEC: msg $Фригидная\"><<dyneval($vb_cycle_skill, 0, \"불감증\")>></a><br>'"
+    },
+    {
+      "location": "#static_base",
+      "line": 2063,
+      "code": "        end"
+    },
+    {
+      "location": "#static_base",
+      "line": 2084,
+      "code": "        if dynslave['perversion'] = 2 and (dynslave['perversion_revealed'] = 2 or spell_revelio = 1):"
+    },
+    {
+      "location": "#static_base",
+      "line": 2085,
+      "code": "            $dynslave_features_list += '<a href=\"EXEC: msg $Извращенка\"><<dyneval($vb_cycle_skill, 5, \"이상성욕 선호\")>></a><br>'"
+    },
+    {
+      "location": "#static_base",
+      "line": 2086,
+      "code": "        end"
+    },
+    {
+      "location": "#static_base",
+      "line": 2087,
+      "code": "        if dynslave['perversion'] = -1 and (dynslave['perversion_revealed'] = 2 or spell_revelio = 1):"
+    },
+    {
+      "location": "#static_base",
+      "line": 2088,
+      "code": "            $dynslave_features_list += '<a href=\"EXEC: msg $Пуристка\"><<dyneval($vb_cycle_skill, 0, \"순수한 영혼\")>></a><br>'"
+    },
+    {
+      "location": "#static_base",
+      "line": 2089,
+      "code": "        end"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 6,
+      "code": "result = 0"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 7,
+      "code": "local $jo9_chaotic_mode = $args[0]"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 8,
+      "code": "local $jo9_chaotic_role = $args[1]"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 9,
+      "code": "if $jo9_chaotic_mode = 'apply': $jo9_chaotic_removed = ''"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 10,
+      "code": "if $jo9_chaotic_mode ! 'count' and $jo9_chaotic_mode ! 'apply' and $jo9_chaotic_mode ! 'use': exit"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 11,
+      "code": "if $jo9_chaotic_role ! 'slave' and $jo9_chaotic_role ! 'assistant': exit"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 12,
+      "code": "local jo9_chaotic_state = dyneval('result = ' + $jo9_chaotic_role + '_state')"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 13,
+      "code": "if jo9_chaotic_state <= CONST_INT['no_slave']:"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 14,
+      "code": " if $jo9_chaotic_mode = 'use': msg '사용할 대상이 없습니다.'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 15,
+      "code": " exit"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 16,
+      "code": "end"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 17,
+      "code": "if $jo9_chaotic_mode = 'use':"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 18,
+      "code": " if chaotic_essence < 1:"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 19,
+      "code": "  msg '카오틱 에센스가 없습니다.'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 20,
+      "code": "  exit"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 21,
+      "code": " end"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 22,
+      "code": " local jo9_chaotic_used = func('jo9_chaotic', 'apply', $jo9_chaotic_role)"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 23,
+      "code": " if jo9_chaotic_used = 1:"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 24,
+      "code": "  msg '카오틱 에센스를 사용해 <<$jo9_chaotic_removed>> 특성을 제거했습니다. 남은 수량: <<chaotic_essence>>개.'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 25,
+      "code": " else"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 26,
+      "code": "  msg '제거할 부정 특성이 없습니다. 카오틱 에센스는 소모되지 않았습니다.'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 27,
+      "code": " end"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 28,
+      "code": " result = jo9_chaotic_used"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 29,
+      "code": " exit"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 30,
+      "code": "end"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 31,
+      "code": "if $jo9_chaotic_mode = 'apply' and chaotic_essence < 1: exit"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 32,
+      "code": "local jo9_chaotic_count = 0"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 33,
+      "code": "local $jo9_chaotic_keys = ''"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 34,
+      "code": "local $jo9_chaotic_labels = ''"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 35,
+      "code": "local $jo9_chaotic_xps = ''"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 36,
+      "code": "dynamic $replace({"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 37,
+      "code": " if jo9ceactor['grace'] < 0:"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 38,
+      "code": "  $jo9_chaotic_keys[jo9_chaotic_count] = 'grace'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 39,
+      "code": "  $jo9_chaotic_labels[jo9_chaotic_count] = '촌뜨기'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 40,
+      "code": "  $jo9_chaotic_xps[jo9_chaotic_count] = ''"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 41,
+      "code": "  jo9_chaotic_count += 1"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 42,
+      "code": " end"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 43,
+      "code": " if jo9ceactor['dexterity'] < 0:"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 44,
+      "code": "  $jo9_chaotic_keys[jo9_chaotic_count] = 'dexterity'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 45,
+      "code": "  $jo9_chaotic_labels[jo9_chaotic_count] = '투박한 손놀림'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 46,
+      "code": "  $jo9_chaotic_xps[jo9_chaotic_count] = ''"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 47,
+      "code": "  jo9_chaotic_count += 1"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 48,
+      "code": " end"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 49,
+      "code": " if jo9ceactor['sport_affinity'] = -1:"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 50,
+      "code": "  $jo9_chaotic_keys[jo9_chaotic_count] = 'sport_affinity'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 51,
+      "code": "  $jo9_chaotic_labels[jo9_chaotic_count] = '게으름'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 52,
+      "code": "  $jo9_chaotic_xps[jo9_chaotic_count] = ''"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 53,
+      "code": "  jo9_chaotic_count += 1"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 54,
+      "code": " end"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 55,
+      "code": " if jo9ceactor['masochism'] = -1:"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 56,
+      "code": "  $jo9_chaotic_keys[jo9_chaotic_count] = 'masochism'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 57,
+      "code": "  $jo9_chaotic_labels[jo9_chaotic_count] = '통증 공포증'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 58,
+      "code": "  $jo9_chaotic_xps[jo9_chaotic_count] = 'masochism_xp'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 59,
+      "code": "  jo9_chaotic_count += 1"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 60,
+      "code": " end"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 61,
+      "code": " if jo9ceactor['exhibitionism'] = -1:"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 62,
+      "code": "  $jo9_chaotic_keys[jo9_chaotic_count] = 'exhibitionism'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 63,
+      "code": "  $jo9_chaotic_labels[jo9_chaotic_count] = '노출 기피'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 64,
+      "code": "  $jo9_chaotic_xps[jo9_chaotic_count] = 'exhibitionism_xp'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 65,
+      "code": "  jo9_chaotic_count += 1"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 66,
+      "code": " end"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 67,
+      "code": " if jo9ceactor['meekness'] < 0:"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 68,
+      "code": "  $jo9_chaotic_keys[jo9_chaotic_count] = 'meekness'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 69,
+      "code": "  $jo9_chaotic_labels[jo9_chaotic_count] = '자유로운 영혼'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 70,
+      "code": "  $jo9_chaotic_xps[jo9_chaotic_count] = ''"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 71,
+      "code": "  jo9_chaotic_count += 1"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 72,
+      "code": " end"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 73,
+      "code": " if jo9ceactor['selfesteem'] < 0:"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 74,
+      "code": "  $jo9_chaotic_keys[jo9_chaotic_count] = 'selfesteem'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 75,
+      "code": "  $jo9_chaotic_labels[jo9_chaotic_count] = '자책망상'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 76,
+      "code": "  $jo9_chaotic_xps[jo9_chaotic_count] = ''"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 77,
+      "code": "  jo9_chaotic_count += 1"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 78,
+      "code": " end"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 79,
+      "code": " if func('jo9_traits', 'attention_has', 'jo9ceactor') = 1:"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 80,
+      "code": "  $jo9_chaotic_keys[jo9_chaotic_count] = 'jo9_attention'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 81,
+      "code": "  $jo9_chaotic_labels[jo9_chaotic_count] = '관심종자'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 82,
+      "code": "  $jo9_chaotic_xps[jo9_chaotic_count] = ''"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 83,
+      "code": "  jo9_chaotic_count += 1"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 84,
+      "code": " end"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 85,
+      "code": " if jo9ceactor['darkness_attitude'] = -1:"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 86,
+      "code": "  $jo9_chaotic_keys[jo9_chaotic_count] = 'darkness_attitude'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 87,
+      "code": "  $jo9_chaotic_labels[jo9_chaotic_count] = '암흑 공포증'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 88,
+      "code": "  $jo9_chaotic_xps[jo9_chaotic_count] = 'darkness_xp'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 89,
+      "code": "  jo9_chaotic_count += 1"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 90,
+      "code": " end"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 91,
+      "code": " if jo9ceactor['blood_attitude'] = -1:"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 92,
+      "code": "  $jo9_chaotic_keys[jo9_chaotic_count] = 'blood_attitude'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 93,
+      "code": "  $jo9_chaotic_labels[jo9_chaotic_count] = '혈액 공포증'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 94,
+      "code": "  $jo9_chaotic_xps[jo9_chaotic_count] = 'blood_xp'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 95,
+      "code": "  jo9_chaotic_count += 1"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 96,
+      "code": " end"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 97,
+      "code": " if jo9ceactor['fire_attitude'] = -1:"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 98,
+      "code": "  $jo9_chaotic_keys[jo9_chaotic_count] = 'fire_attitude'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 99,
+      "code": "  $jo9_chaotic_labels[jo9_chaotic_count] = '발화 공포증'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 100,
+      "code": "  $jo9_chaotic_xps[jo9_chaotic_count] = 'fire_xp'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 101,
+      "code": "  jo9_chaotic_count += 1"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 102,
+      "code": " end"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 103,
+      "code": " if jo9ceactor['water_attitude'] = -1:"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 104,
+      "code": "  $jo9_chaotic_keys[jo9_chaotic_count] = 'water_attitude'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 105,
+      "code": "  $jo9_chaotic_labels[jo9_chaotic_count] = '물 공포증'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 106,
+      "code": "  $jo9_chaotic_xps[jo9_chaotic_count] = 'water_xp'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 107,
+      "code": "  jo9_chaotic_count += 1"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 108,
+      "code": " end"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 109,
+      "code": " if jo9ceactor['vermin_attitude'] = -1:"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 110,
+      "code": "  $jo9_chaotic_keys[jo9_chaotic_count] = 'vermin_attitude'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 111,
+      "code": "  $jo9_chaotic_labels[jo9_chaotic_count] = '벌레 공포증'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 112,
+      "code": "  $jo9_chaotic_xps[jo9_chaotic_count] = 'vermin_xp'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 113,
+      "code": "  jo9_chaotic_count += 1"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 114,
+      "code": " end"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 115,
+      "code": " if jo9ceactor['deprivation_attitude'] = -1:"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 116,
+      "code": "  $jo9_chaotic_keys[jo9_chaotic_count] = 'deprivation_attitude'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 117,
+      "code": "  $jo9_chaotic_labels[jo9_chaotic_count] = '폐소 공포증'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 118,
+      "code": "  $jo9_chaotic_xps[jo9_chaotic_count] = 'deprivation_xp'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 119,
+      "code": "  jo9_chaotic_count += 1"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 120,
+      "code": " end"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 121,
+      "code": " if jo9ceactor['jo9_gag_reflex'] = 1:"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 122,
+      "code": "  $jo9_chaotic_keys[jo9_chaotic_count] = 'jo9_gag_reflex'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 123,
+      "code": "  $jo9_chaotic_labels[jo9_chaotic_count] = '반사적 구역질'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 124,
+      "code": "  $jo9_chaotic_xps[jo9_chaotic_count] = ''"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 125,
+      "code": "  jo9_chaotic_count += 1"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 126,
+      "code": " end"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 127,
+      "code": " if jo9ceactor['anal_affinity'] < 0:"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 128,
+      "code": "  $jo9_chaotic_keys[jo9_chaotic_count] = 'anal_affinity'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 129,
+      "code": "  $jo9_chaotic_labels[jo9_chaotic_count] = '애널섹스 혐오'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 130,
+      "code": "  $jo9_chaotic_xps[jo9_chaotic_count] = ''"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 131,
+      "code": "  jo9_chaotic_count += 1"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 132,
+      "code": " end"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 133,
+      "code": " if jo9ceactor['defiant'] = 1:"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 134,
+      "code": "  $jo9_chaotic_keys[jo9_chaotic_count] = 'defiant'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 135,
+      "code": "  $jo9_chaotic_labels[jo9_chaotic_count] = '거센 반항심'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 136,
+      "code": "  $jo9_chaotic_xps[jo9_chaotic_count] = ''"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 137,
+      "code": "  jo9_chaotic_count += 1"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 138,
+      "code": " end"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 139,
+      "code": " if jo9ceactor['jo9_voice_trait'] = 1:"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 140,
+      "code": "  $jo9_chaotic_keys[jo9_chaotic_count] = 'jo9_voice_trait'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 141,
+      "code": "  $jo9_chaotic_labels[jo9_chaotic_count] = '선천적 벙어리'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 142,
+      "code": "  $jo9_chaotic_xps[jo9_chaotic_count] = ''"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 143,
+      "code": "  jo9_chaotic_count += 1"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 144,
+      "code": " end"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 145,
+      "code": " if func('jo9_traits', 'activity_compatible', 'jo9ceactor') = 1 and func('jo9_traits', 'activity_sign', 'jo9ceactor') = -1:"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 146,
+      "code": "  $jo9_chaotic_keys[jo9_chaotic_count] = 'jo9_activity'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 147,
+      "code": "  $jo9_chaotic_labels[jo9_chaotic_count] = '휴식 선호'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 148,
+      "code": "  $jo9_chaotic_xps[jo9_chaotic_count] = ''"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 149,
+      "code": "  jo9_chaotic_count += 1"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 150,
+      "code": " elseif func('jo9_traits', 'activity_compatible', 'jo9ceactor') = 0 and jo9ceactor['jo9_work_ethic'] = -1:"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 151,
+      "code": "  $jo9_chaotic_keys[jo9_chaotic_count] = 'jo9_work_ethic'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 152,
+      "code": "  $jo9_chaotic_labels[jo9_chaotic_count] = '안분지족'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 153,
+      "code": "  $jo9_chaotic_xps[jo9_chaotic_count] = ''"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 154,
+      "code": "  jo9_chaotic_count += 1"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 155,
+      "code": " end"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 156,
+      "code": " if jo9ceactor['jo9_focus'] = -1:"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 157,
+      "code": "  $jo9_chaotic_keys[jo9_chaotic_count] = 'jo9_focus'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 158,
+      "code": "  $jo9_chaotic_labels[jo9_chaotic_count] = '산만함'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 159,
+      "code": "  $jo9_chaotic_xps[jo9_chaotic_count] = ''"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 160,
+      "code": "  jo9_chaotic_count += 1"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 161,
+      "code": " end"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 162,
+      "code": " if jo9ceactor['jo9_grudge'] = 1:"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 163,
+      "code": "  $jo9_chaotic_keys[jo9_chaotic_count] = 'jo9_grudge'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 164,
+      "code": "  $jo9_chaotic_labels[jo9_chaotic_count] = '옹졸함'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 165,
+      "code": "  $jo9_chaotic_xps[jo9_chaotic_count] = ''"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 166,
+      "code": "  jo9_chaotic_count += 1"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 167,
+      "code": " end"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 168,
+      "code": " if jo9ceactor['jo9_constitution'] = -1:"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 169,
+      "code": "  $jo9_chaotic_keys[jo9_chaotic_count] = 'jo9_constitution'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 170,
+      "code": "  $jo9_chaotic_labels[jo9_chaotic_count] = '약골'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 171,
+      "code": "  $jo9_chaotic_xps[jo9_chaotic_count] = ''"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 172,
+      "code": "  jo9_chaotic_count += 1"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 173,
+      "code": " end"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 174,
+      "code": " if jo9ceactor['jo9_learning_trait'] = -1:"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 175,
+      "code": "  $jo9_chaotic_keys[jo9_chaotic_count] = 'jo9_learning_trait'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 176,
+      "code": "  $jo9_chaotic_labels[jo9_chaotic_count] = '백치'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 177,
+      "code": "  $jo9_chaotic_xps[jo9_chaotic_count] = ''"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 178,
+      "code": "  jo9_chaotic_count += 1"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 179,
+      "code": " end"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 180,
+      "code": "}, 'jo9ceactor', $jo9_chaotic_role)"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 181,
+      "code": "if $jo9_chaotic_mode = 'count': result = jo9_chaotic_count & exit"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 182,
+      "code": "if jo9_chaotic_count < 1: exit"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 183,
+      "code": "local jo9_chaotic_pick = rand(0, jo9_chaotic_count - 1)"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 184,
+      "code": "local $jo9_chaotic_selected = $jo9_chaotic_keys[jo9_chaotic_pick]"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 194,
+      "code": " end"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 195,
+      "code": " end"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 196,
+      "code": " if $args[1] ! '': jo9ceactor[$args[1]] = 0"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 197,
+      "code": " if instr('|grace|dexterity|sport_affinity|masochism|exhibitionism|meekness|selfesteem|abuse_attitude|darkness_attitude|blood_attitude|fire_attitude|water_attitude|vermin_attitude|deprivation_attitude|', '|' + $args[0] + '|') > 0: jo9ceactor[$args[0] + '_revealed'] = 0"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 225,
+      "code": "  jo9ceactor['jo9_memory_neg_another_sleep_together'] = 0"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 226,
+      "code": " end"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 227,
+      "code": "}, 'jo9ceactor', $jo9_chaotic_role), $jo9_chaotic_selected, $jo9_chaotic_selected_xp"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 228,
+      "code": "$jo9_chaotic_removed = $jo9_chaotic_labels[jo9_chaotic_pick]"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 229,
+      "code": "chaotic_essence -= 1"
+    },
+    {
+      "location": "jo9_chaotic",
+      "line": 230,
+      "code": "if $get_lab_space ! '': dynamic $get_lab_space"
+    }
+  ],
+  "reference": [
+    {
+      "reference": "original",
+      "location": "#item_base",
+      "line": 278,
+      "code": "$item_property[\"obereg\"] = {"
+    },
+    {
+      "reference": "original",
+      "location": "#item_base",
+      "line": 279,
+      "code": "\tspell_revelio = 1"
+    },
+    {
+      "reference": "original",
+      "location": "#item_base",
+      "line": 280,
+      "code": "    obereg_on = 1"
+    },
+    {
+      "reference": "original",
+      "location": "#item_base",
+      "line": 281,
+      "code": "    item_supermacy_bonus += 2"
+    },
+    {
+      "reference": "original",
+      "location": "#item_base",
+      "line": 282,
+      "code": "}"
+    },
+    {
+      "reference": "original",
+      "location": "#item_base",
+      "line": 283,
+      "code": "$item_property_off[\"obereg\"] = {"
+    },
+    {
+      "reference": "original",
+      "location": "#item_base",
+      "line": 284,
+      "code": "\tspell_revelio = 0"
+    },
+    {
+      "reference": "original",
+      "location": "#item_base",
+      "line": 285,
+      "code": "    obereg_on = 0"
+    },
+    {
+      "reference": "original",
+      "location": "#item_base",
+      "line": 286,
+      "code": "    item_supermacy_bonus -= 2"
+    },
+    {
+      "reference": "original",
+      "location": "#item_base",
+      "line": 287,
+      "code": "}"
+    },
+    {
+      "reference": "original",
+      "location": "$newloc",
+      "line": 270,
+      "code": "if obereg_on = 1: spell_revelio = 1"
+    },
+    {
+      "reference": "original",
+      "location": "$newloc",
+      "line": 271,
+      "code": ""
+    },
+    {
+      "reference": "original",
+      "location": "#static_base",
+      "line": 1987,
+      "code": "            if (dynslave['nymphomania'] > 0 and (dynslave['nymphomania_revealed'] > 0 or spell_revelio = 1)) or (dynslave['perversion'] > 0 and (dynslave['perversion_revealed'] > 0 or spell_revelio = 1)):"
+    },
+    {
+      "reference": "original",
+      "location": "#static_base",
+      "line": 1988,
+      "code": "                if dynslave['calisthenics_affinity_revealed'] = 2 or spell_revelio = 1: "
+    },
+    {
+      "reference": "original",
+      "location": "#static_base",
+      "line": 2012,
+      "code": "        if dynslave['nymphomania'] > 0 and (dynslave['nymphomania_revealed'] = 2 or spell_revelio = 1):"
+    },
+    {
+      "reference": "original",
+      "location": "#static_base",
+      "line": 2013,
+      "code": "            $dynslave_features_list += '<a href=\"EXEC: msg $Нимфоманка\"><<dyneval($vb_cycle_skill, 5, \"색정광\")>></a><br>'"
+    },
+    {
+      "reference": "original",
+      "location": "#static_base",
+      "line": 2015,
+      "code": "        if dynslave['nymphomania'] < 0 and (dynslave['nymphomania_revealed'] = 2 or spell_revelio = 1):"
+    },
+    {
+      "reference": "original",
+      "location": "#static_base",
+      "line": 2016,
+      "code": "            $dynslave_features_list += '<a href=\"EXEC: msg $Фригидная\"><<dyneval($vb_cycle_skill, 0, \"불감증\")>></a><br>'"
+    },
+    {
+      "reference": "original",
+      "location": "#static_base",
+      "line": 2038,
+      "code": "        if dynslave['perversion'] = 2 and (dynslave['perversion_revealed'] = 2 or spell_revelio = 1):"
+    },
+    {
+      "reference": "original",
+      "location": "#static_base",
+      "line": 2039,
+      "code": "            $dynslave_features_list += '<a href=\"EXEC: msg $Извращенка\"><<dyneval($vb_cycle_skill, 5, \"이상성욕 선호\")>></a><br>'"
+    },
+    {
+      "reference": "original",
+      "location": "#static_base",
+      "line": 2041,
+      "code": "        if dynslave['perversion'] = -1 and (dynslave['perversion_revealed'] = 2 or spell_revelio = 1):"
+    },
+    {
+      "reference": "original",
+      "location": "#static_base",
+      "line": 2042,
+      "code": "            $dynslave_features_list += '<a href=\"EXEC: msg $Пуристка\"><<dyneval($vb_cycle_skill, 0, \"순수한 영혼\")>></a><br>'"
+    },
+    {
+      "reference": "source",
+      "location": "#item_base",
+      "line": 278,
+      "code": "$item_property[\"obereg\"] = {"
+    },
+    {
+      "reference": "source",
+      "location": "#item_base",
+      "line": 279,
+      "code": "\tspell_revelio = 1"
+    },
+    {
+      "reference": "source",
+      "location": "#item_base",
+      "line": 280,
+      "code": "    obereg_on = 1"
+    },
+    {
+      "reference": "source",
+      "location": "#item_base",
+      "line": 281,
+      "code": "    item_supermacy_bonus += 2"
+    },
+    {
+      "reference": "source",
+      "location": "#item_base",
+      "line": 282,
+      "code": "}"
+    },
+    {
+      "reference": "source",
+      "location": "#item_base",
+      "line": 283,
+      "code": "$item_property_off[\"obereg\"] = {"
+    },
+    {
+      "reference": "source",
+      "location": "#item_base",
+      "line": 284,
+      "code": "\tspell_revelio = 0"
+    },
+    {
+      "reference": "source",
+      "location": "#item_base",
+      "line": 285,
+      "code": "    obereg_on = 0"
+    },
+    {
+      "reference": "source",
+      "location": "#item_base",
+      "line": 286,
+      "code": "    item_supermacy_bonus -= 2"
+    },
+    {
+      "reference": "source",
+      "location": "#item_base",
+      "line": 287,
+      "code": "}"
+    },
+    {
+      "reference": "source",
+      "location": "$newloc",
+      "line": 270,
+      "code": "if obereg_on = 1: spell_revelio = 1"
+    },
+    {
+      "reference": "source",
+      "location": "$newloc",
+      "line": 271,
+      "code": ""
+    },
+    {
+      "reference": "source",
+      "location": "#static_base",
+      "line": 1987,
+      "code": "            if (dynslave['nymphomania'] > 0 and (dynslave['nymphomania_revealed'] > 0 or spell_revelio = 1)) or (dynslave['perversion'] > 0 and (dynslave['perversion_revealed'] > 0 or spell_revelio = 1)):"
+    },
+    {
+      "reference": "source",
+      "location": "#static_base",
+      "line": 1988,
+      "code": "                if dynslave['calisthenics_affinity_revealed'] = 2 or spell_revelio = 1: "
+    },
+    {
+      "reference": "source",
+      "location": "#static_base",
+      "line": 2012,
+      "code": "        if dynslave['nymphomania'] > 0 and (dynslave['nymphomania_revealed'] = 2 or spell_revelio = 1):"
+    },
+    {
+      "reference": "source",
+      "location": "#static_base",
+      "line": 2013,
+      "code": "            $dynslave_features_list += '<a href=\"EXEC: msg $Нимфоманка\"><<dyneval($vb_cycle_skill, 5, \"색정광\")>></a><br>'"
+    },
+    {
+      "reference": "source",
+      "location": "#static_base",
+      "line": 2015,
+      "code": "        if dynslave['nymphomania'] < 0 and (dynslave['nymphomania_revealed'] = 2 or spell_revelio = 1):"
+    },
+    {
+      "reference": "source",
+      "location": "#static_base",
+      "line": 2016,
+      "code": "            $dynslave_features_list += '<a href=\"EXEC: msg $Фригидная\"><<dyneval($vb_cycle_skill, 0, \"불감증\")>></a><br>'"
+    },
+    {
+      "reference": "source",
+      "location": "#static_base",
+      "line": 2038,
+      "code": "        if dynslave['perversion'] = 2 and (dynslave['perversion_revealed'] = 2 or spell_revelio = 1):"
+    },
+    {
+      "reference": "source",
+      "location": "#static_base",
+      "line": 2039,
+      "code": "            $dynslave_features_list += '<a href=\"EXEC: msg $Извращенка\"><<dyneval($vb_cycle_skill, 5, \"이상성욕 선호\")>></a><br>'"
+    },
+    {
+      "reference": "source",
+      "location": "#static_base",
+      "line": 2041,
+      "code": "        if dynslave['perversion'] = -1 and (dynslave['perversion_revealed'] = 2 or spell_revelio = 1):"
+    },
+    {
+      "reference": "source",
+      "location": "#static_base",
+      "line": 2042,
+      "code": "            $dynslave_features_list += '<a href=\"EXEC: msg $Пуристка\"><<dyneval($vb_cycle_skill, 0, \"순수한 영혼\")>></a><br>'"
+    }
+  ],
+  "historicalDecisions": [
+    {
+      "file": "G:/somi/JO9sa/records/trait-system-review-20261024/ORIGINAL_KO.md",
+      "line": 3,
+      "text": "읽기 전용이며 게임·세이브를 변경하지 않았다. 현재 WORK afb2b9eccbe02193f77fefea4a990081616a79eb84ed14fe2d8f0bbd3cf2d1fc와 보호 JO9O 26e15aaf30b6226a2883c6b532a6ee4eed34791110618597d234bb7d6fa3e052를 비교했다. 기존 목록의 **39개 key 축, 72개 표시 변형**을 정리했고 모든 key는 보호 참조에도 존재한다. 현재 번역문·추가 수치가 모두 순정과 동일하다는 뜻은 아니다. 특히 cowSK 증산×1.5와 용기 전투 사기 배율은 현재 모드 보완이다."
+    },
+    {
+      "file": "G:/somi/JO9sa/records/trait-system-review-20261024/ORIGINAL_KO.md",
+      "line": 30,
+      "text": "| nymphomania | 색정광 (>0) / 불감증 (<0) | 상황형 | 밤흥분누적/해당수행의수용·기분·prestige조건에사용. 양수는흥분성향증가,음수는흥분누적감소와특정수용문턱불리. |"
+    },
+    {
+      "file": "G:/somi/JO9sa/records/trait-system-review-20261024/ORIGINAL_KO.md",
+      "line": 33,
+      "text": "| perversion | 이상성욕 선호 (=2) / 순수한 영혼 (=-1) | 상황형 | 해당식단·규칙·수행의혐오/기분문턱및prestige조건.2는일부neg_disgust기억예외. |"
+    },
+    {
+      "file": "G:/somi/JO9sa/records/trait-system-review-20261024/ORIGINAL_KO.md",
+      "line": 51,
+      "text": "## 최신 사용자 기준: 선천 / 성취"
+    },
+    {
+      "file": "G:/somi/JO9sa/records/trait-system-review-20261024/ORIGINAL_KO.md",
+      "line": 53,
+      "text": "초기 생성·입수 시 이미 보유한 값은 나중에 발견되어도 선천이다. 초기에는 없었고 보유 중 랜덤 발생·조건 달성으로 새로 생긴 특성은 성취다. 별도 후천 분류는 사용하지 않는다. 성취 슬롯을2→3으로확정하지않았다."
+    },
+    {
+      "file": "G:/somi/JO9sa/records/trait-system-review-20261024/ORIGINAL_KO.md",
+      "line": 59,
+      "text": "| arena_level | 성취 전용 후보 | 0 |"
+    },
+    {
+      "file": "G:/somi/JO9sa/records/trait-system-review-20261024/ORIGINAL_KO.md",
+      "line": 60,
+      "text": "| has_ride_win | 성취 전용 후보 | 0 |"
+    },
+    {
+      "file": "G:/somi/JO9sa/records/trait-system-review-20261024/ORIGINAL_KO.md",
+      "line": 75,
+      "text": "| metabolism | 양경로 검토: 초기보유 선천 / 약물로 새 비중립값 성취 해당 여부 결정 | 89 |"
+    },
+    {
+      "file": "G:/somi/JO9sa/records/trait-system-review-20261024/ORIGINAL_KO.md",
+      "line": 76,
+      "text": "| nymphomania | 양경로: 초기보유는 선천 / 보유중 새 획득은 성취 | 38 |"
+    },
+    {
+      "file": "G:/somi/JO9sa/records/trait-system-review-20261024/ORIGINAL_KO.md",
+      "line": 77,
+      "text": "| masochism | 양경로: 초기보유는 선천 / 보유중 새 획득은 성취 | 54 |"
+    },
+    {
+      "file": "G:/somi/JO9sa/records/trait-system-review-20261024/ORIGINAL_KO.md",
+      "line": 78,
+      "text": "| exhibitionism | 양경로: 초기보유는 선천 / 보유중 새 획득은 성취 | 8 |"
+    },
+    {
+      "file": "G:/somi/JO9sa/records/trait-system-review-20261024/ORIGINAL_KO.md",
+      "line": 79,
+      "text": "| perversion | 양경로: 초기보유는 선천 / 보유중 새 획득은 성취 | 46 |"
+    },
+    {
+      "file": "G:/somi/JO9sa/records/trait-system-review-20261024/ORIGINAL_KO.md",
+      "line": 80,
+      "text": "| homosexualism | 양경로: 초기보유는 선천 / 보유중 새 획득은 성취 | 57 |"
+    },
+    {
+      "file": "G:/somi/JO9sa/records/trait-system-review-20261024/ORIGINAL_KO.md",
+      "line": 84,
+      "text": "| compassion | 양경로: 초기보유는 선천 / 보유중 새 획득은 성취 | 55 |"
+    },
+    {
+      "file": "G:/somi/JO9sa/records/trait-system-review-20261024/ORIGINAL_KO.md",
+      "line": 85,
+      "text": "| abuse_attitude | 양경로: 초기보유는 선천 / 보유중 새 획득은 성취 | 2 |"
+    },
+    {
+      "file": "G:/somi/JO9sa/records/trait-system-review-20261024/ORIGINAL_KO.md",
+      "line": 86,
+      "text": "| darkness_attitude | 양경로: 초기보유는 선천 / 보유중 새 획득은 성취 | 4 |"
+    },
+    {
+      "file": "G:/somi/JO9sa/records/trait-system-review-20261024/ORIGINAL_KO.md",
+      "line": 87,
+      "text": "| blood_attitude | 양경로: 초기보유는 선천 / 보유중 새 획득은 성취 | 9 |"
+    },
+    {
+      "file": "G:/somi/JO9sa/records/trait-system-review-20261024/ORIGINAL_KO.md",
+      "line": 88,
+      "text": "| fire_attitude | 양경로: 초기보유는 선천 / 보유중 새 획득은 성취 | 1 |"
+    },
+    {
+      "file": "G:/somi/JO9sa/records/trait-system-review-20261024/ORIGINAL_KO.md",
+      "line": 89,
+      "text": "| water_attitude | 양경로: 초기보유는 선천 / 보유중 새 획득은 성취 | 0 |"
+    },
+    {
+      "file": "G:/somi/JO9sa/records/trait-system-review-20261024/ORIGINAL_KO.md",
+      "line": 90,
+      "text": "| vermin_attitude | 양경로: 초기보유는 선천 / 보유중 새 획득은 성취 | 3 |"
+    },
+    {
+      "file": "G:/somi/JO9sa/records/trait-system-review-20261024/ORIGINAL_KO.md",
+      "line": 91,
+      "text": "| deprivation_attitude | 양경로: 초기보유는 선천 / 보유중 새 획득은 성취 | 3 |"
+    },
+    {
+      "file": "G:/somi/JO9sa/records/trait-system-review-20261024/ORIGINAL_KO.md",
+      "line": 97,
+      "text": "명확한누적XP획득은 **13개 key 축 / 14개 전이**이며한공통동적블록에들어있다. 14축/13호출이아니다. masochism만0→1과1→2의두전이다. 13축모두생성랜덤부여가가능해축전체를성취전용으로분류할수없다. currentJSON에서도대부분nonzero시드가있으며water_attitude만직접시드항목이없지만생성랜덤1289행이있다. 초기음수→다른양수,중간단계→상위단계가같은슬롯교체인지새성취인지결정이필요하다."
+    },
+    {
+      "file": "G:/somi/JO9sa/records/trait-system-review-20261024/ORIGINAL_KO.md",
+      "line": 99,
+      "text": "두순수승리칭호key는신규입수시stock_to_slave_nogt:24-25에서0으로리셋되고현재JSON시드필드는없다. 기존원본성취후보로명확하다. metabolism은생성선천외에약물로중립3에서새표시값4/2가될수있어성취해당여부를별도로결정해야한다. hard_return의일부적성부여는get_initial_slave=1의초기지급보정이며보유중자연성장으로세지않았다."
+    },
+    {
+      "file": "G:/somi/JO9sa/records/trait-system-review-20261024/ORIGINAL_KO.md",
+      "line": 125,
+      "text": "중요정정: 아레나칭호는순수성취전용이라고단정할수없다. 에게야영입시arena_level=9가초기커스터마이즈로부여된다(interaction_city17567/17797). 사용자기준에서는입수시보유칭호=선천,보유중승급=성취인양경로다. 위쪽의두칭호를성취전용으로묶은초기설명보다이정정과JSON의현재pathClassification을우선한다. 경주칭호만이번범위에서초기시드없는성취전용후보로남는다."
+    },
+    {
+      "file": "G:/somi/JO9sa/records/chaotic-essence-20261024/MANUAL_KO.md",
+      "line": 5,
+      "text": "중앙구역 물약상점 → 스테로이드와 탕제에서900스파크로1회분을 산다. 노예 또는 조수의 같은 약품 메뉴에서 사용한다. 보유량은 연구실 물약 목록에도 표시한다. 성공하면 실제 부정 일반 특성 중 하나가 같은 확률로 삭제되고1회분을 소모한다. 숨은 부정 보유도 후보이며, 후보0·재고0·대상없음은 무소모다."
+    },
+    {
+      "file": "G:/somi/JO9sa/records/chaotic-essence-20261024/MANUAL_KO.md",
+      "line": 7,
+      "text": "성취(다재다능·투기장·경주), 긍정 특성, 기본 능력치·명성·임신·문신 없음·상처 등 상태는 후보에 없다. 원본14개+추가9개, 총23종의 정확한 키/값은 helper-meta.json에 있다.8칸 제한·경기 칭호통합·새 배제/발생률은 이번 구현에 포함하지 않았다."
+    },
+    {
+      "file": "G:/somi/JO9sa/records/chaotic-essence-20261024/MANUAL_KO.md",
+      "line": 15,
+      "text": "pharmacy sp_txt125가900을 차감하고 재고1개를 더한다. $get_lab_space와 $newloc의 합계, master_stat의 두 보유 목록, 새 게임 초기화2곳을 연결했다. $ongload의 단독 계산식 갱신 guard는 약국 화면을 저장한 옛 세이브에서도 연구실 합계가 즉시 맞도록 한다. 새 revision 키는 없다."
+    },
+    {
+      "file": "G:/somi/JO9sa/records/chaotic-essence-20261024/MANUAL_KO.md",
+      "line": 31,
+      "text": "실제 엔진 부정23종×두 역할의 선택·보존·발현 누적 처리, 혼합 후보60회에서정확히1종 제거, 무재고/무부정/유효하지않은 역할, 보류값 보존을 검사했다. 집중915개 검증과14개 통합 검사(14는915에포함), 실제 사용 메시지5경로, 진단 저장의재고/성취 유지, 공식9경로·구조·줄/주석 경계·정확 패치 재생/재적용이 PASS다. 아이콘 두 파일은 실제 크기로시각검사했다. 독립검토에서 발견한옛약국캐시 누락도수정후검증했다."
+    },
+    {
+      "file": "G:/somi/JO9sa/records/deferred-discussions-20261024/index.json",
+      "line": 120,
+      "text": "      \"trigger\": \"창관 업데이트의 칭호·성취 구성을 검토할 때\","
+    },
+    {
+      "file": "G:/somi/JO9sa/records/deferred-discussions-20261024/index.json",
+      "line": 131,
+      "text": "        \"카오틱 에센스는 부정 일반특성만 랜덤삭제/900/1회분으로 적용 완료이며 올랜덤안으로 되돌리지 않음\","
+    },
+    {
+      "file": "G:/somi/JO9sa/records/trait-merger-20261025/MANUAL_KO.md",
+      "line": 3,
+      "text": "사용자가 승인한 통합2묶음·배제5묶음과 후속 '긍정 부정이 충돌하면 긍정만 남기고 부정은 삭제'를 반영한다. 일반8칸 상한, 칭호 수/세번째 칭호, 다재다능XP와 혀손실은 변경하지 않는다."
+    },
+    {
+      "file": "G:/somi/JO9sa/records/trait-merger-20261025/MANUAL_KO.md",
+      "line": 9,
+      "text": "일벌레/안분지족과 과다행동장애/무기력증은 활동적/휴식 선호로 묶는다. 활동적은 기존 둘째 이후 활동의 기분+2와 기존 활동형 휴식 반응, 휴식 선호는 반복 활동의 기분-2와 기존 편안한 보상 반응을 합친다. 같은 효과를 두 번 적용하거나 XP 배율·행동력·비용을 새로 추가하지 않는다. 구형의 알려진 반대 조합은 활동적으로 정리한다. 구형 comfort=2처럼 통상 범위 밖인 값은 자동 정규화하지 않는다."
+    },
+    {
+      "file": "G:/somi/JO9sa/records/trait-merger-20261025/MANUAL_KO.md",
+      "line": 11,
+      "text": "무모함과6환경 공포증, 노예근성과 자유로운 영혼/거센 반항심, 강한 복종심과 거센 반항심, 달변가와 선천적 벙어리는 긍정 쪽이 우선한다. 이 조합이 이미 있으면 승인된 부정 특성값과 그 발견값만 제거한다. 체력·기술·경험치·인물·관계·문신·상태·자금을 함께 초기화하지 않는다. 과거 부정 기억을 보상으로 바꾸거나 소급 보상을 지급하지 않는다."
+    },
+    {
+      "file": "G:/somi/JO9sa/records/trait-merger-20261025/MANUAL_KO.md",
+      "line": 13,
+      "text": "미련한 소와 운동광/활동적은 모두 이점이 있는 조합이다. 기존 동시 보유는 유지하고 앞으로 충돌하는 새 부여는 막는다. 명백한 긍정·부정 충돌에서는 긍정 신규 부여를 허용해 부정을 정리하고 부정 신규 부여를 차단한다. 이미 가진 숫자형 특성의 수동 감소는 허용하여 cow2→1→0 같은 제거가 막히지 않는다."
+    },
+    {
+      "file": "G:/somi/JO9sa/records/trait-merger-20261025/MANUAL_KO.md",
+      "line": 15,
+      "text": "기존 프로필·전체보기의 한 줄 목록과 하단 설명을 사용한다. 통합 특성은 한 번 표시하고 편집과 카오틱 에센스 삭제도 한 번만 처리한다. 별칭을 함께 정리하여 삭제한 특성이 다시 나타나는 것을 막는다. 카오틱 에센스 가격900/1회분과 대상 없는 경우 무소모 규칙은 그대로다."
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+const fs=require('fs'),z=require('zlib'),cp=require('child_process'),a=require('assert/strict');
+const R='G:/somi/JO9sa',O=R+'/records/final-prezip-20261102',T='G:/Codex/tmp/final-prezip-20261102',W='G:/somi/Jack O Nine Tails v2.4_work/game',F='G:/somi/Jack O Nine Tails v2.4 Kor_Full/game',c=require(R+'/tools/text-workshop/core.cjs'),sc=require(R+'/tools/qa/save-codec.cjs');
+fs.mkdirSync(T+'/mods',{recursive:true});
+const patch=JSON.parse(fs.readFileSync(R+'/mods/2026-11-02_portal_guardian_setting_panel.json','utf8'));
+const gz=__dirname+'/guardian-setting-panel-20261102/implementation/before.qsp.gz';
+fs.writeFileSync(T+'/before.qsp',z.gunzipSync(fs.readFileSync(gz)));
+a.equal(c.hash(fs.readFileSync(F+'/jack.qsp')),patch.after_sha256);a.equal(c.hash(fs.readFileSync(W+'/jack.qsp')),patch.after_sha256);
+fs.writeFileSync(T+'/mods/guardian.json',JSON.stringify(patch));
+const raw=fs.readFileSync(W+'/save/TC_09_PORTAL_GUARDIAN_EVENT.sav'),s=sc.parse(raw),d=c.parse(fs.readFileSync(F+'/jack.qsp'));const l=d.locations.find(x=>x.name==='main_menu'),version=c.shift(d.lines[l.body],5).match(/\$code_rev\s*=\s*'([^']+)'/)[1];
+s.vars.find(x=>x.name==='GAME_VER').values[0][1]='잭 오 나인 테일 v'+version+' Kor Ver';fs.writeFileSync(T+'/state.sav',sc.serialize(s));
+const r=cp.spawnSync(process.execPath,[R+'/tools/qa/release-check.cjs','--candidate',F+'/jack.qsp','--baseline',T+'/before.qsp','--mods-dir',T+'/mods','--engine',F+'/engine/jack.exe','--game-dir',F,'--state-save',T+'/state.sav','--cache-revision','3','--mirror',W+'/jack.qsp','--client-timeout-seconds','30','--out',T+'-release'],{encoding:'utf8',windowsHide:true,timeout:350000,maxBuffer:4e6});
+fs.writeFileSync(O+'/release-runner.log',(r.stdout||'')+(r.stderr||''));const m=(r.stdout||'').match(/(?:PASS|FAIL|INCOMPLETE|STATIC_PASS) ([^\r\n]+report\.json)/);a(m,'release report absent');const report=JSON.parse(fs.readFileSync(m[1]));fs.copyFileSync(m[1],O+'/release-report.json');fs.copyFileSync(require('path').dirname(m[1])+'/report.md',O+'/release-report.md');a.equal(report.verdict,'PASS');console.log(JSON.stringify({verdict:report.verdict,probes:report.client.probes.length,source:patch.after_sha256,version,saveSourceUnchanged:c.hash(raw)===c.hash(fs.readFileSync(W+'/save/TC_09_PORTAL_GUARDIAN_EVENT.sav'))}));process.exitCode=r.status;

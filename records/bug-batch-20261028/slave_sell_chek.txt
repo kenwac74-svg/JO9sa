@@ -1,0 +1,160 @@
+! JO9 MOD START J9M2864 | 2026-10-10_restore_private_room_ui | changed block; context may be included
+if snk_room_target > 0 and $curloc = 'slave_sell_chek': gs 'snk_room_bridge', 'guard', 'slave_sell_chek'
+! JO9 MOD END J9M2864
+!Slave Sell Check
+!Overhauled by crushboss
+!Testing for failure to meet the demands of the customer
+! JO9 MOD START J9M2863 | 2026-10-16_meiki_customer_max_price | changed block; context may be included
+buyer_interested = 0
+jo9_meiki_max_sale = 0
+! JO9 MOD END J9M2863
+
+killvar 'stat_importance'
+
+gs '$slave_price'
+
+if rating < demand_rating[$npc_id]: sl_txt = 101 & exit
+
+killvar 'demand'
+demand['refuse_age'] = 99
+demand['max_exotic'] = 99
+demand['max_fat'] = 99
+demand['min_fat'] = 1
+dynamic $buyer_demand[$npc_id]
+if slave['age'] = demand['refuse_age']: sl_txt = 100 & $refuse_txt = '나는 <<$age[demand["refuse_age"]]>> 노예는 원하지 않는다.' & exit
+if demand['agree_age'] ! 0:
+	if slave['age'] ! iif(no_loli = 1 and demand['agree_age'] = CONST_INT['loli_age'], CONST_INT['young_age'], demand['agree_age']): sl_txt = 100 & $refuse_txt = '나는 <<$age[demand["agree_age"]]>> 노예만 원한다.' & exit
+end
+
+if demand['nowitches'] = 1:
+	if slave['alchemy'] > 0:
+		sl_txt = 100 & $refuse_txt = '나는 마녀는 원하지 않는다!' & exit
+	elseif slave['enchanter'] > 0:
+		sl_txt = 100 & $refuse_txt = '나는 마녀는 원하지 않는다!' & exit
+	end
+end
+
+if demand['pure'] = 1:
+	if slave['oral'] > 1 or slave['penetration'] > 1 or slave['roleplay'] > 1 or slave['fetishism'] > 1 or slave['orgy'] > 1 or slave['xenophily'] > 1:
+		sl_txt = 100 & $refuse_txt = '나는 성적으로 순결한 노예를 원한다.' & exit
+	end
+end
+
+if demand['noperversion'] = 1:
+	if slave['fetishism'] > 1 or slave['xenophily'] > 1 or (slave['perversion'] > 0 and slave['perversion_revealed'] > 0):
+		sl_txt = 100 & $refuse_txt = '나는 변태성이 없는 노예를 원한다.' & exit
+	end
+end
+
+if demand['notattoos'] = 1:
+	if slave['tattoo'] > 1:
+		sl_txt = 100 & $refuse_txt = '나는 문신이 전혀 없는 노예를 원한다.' & exit
+	end
+end
+
+killvar 'virgin_price'
+if demand['virginity'] = 1:
+	if slave['virginity'] > 1:
+		sl_txt = 100 & $refuse_txt = '나는 처녀를 원한다.' & exit
+	end
+end
+
+if demand['selftorture'] > 0:
+	if slave['sub_selfpain'] < demand['selftorture']:
+		sl_txt = 100 & $refuse_txt = '나는 자학에 더 숙련된 노예를 원한다.' & exit
+	end
+end
+
+if demand['specialisation'] = 1 or buyer_from_house = 1:
+	if slave_specialisation[$interesting_specialisation[$npc_id]] < demand_rating[$npc_id]/2:
+		sl_txt = 102 & $refuse_txt = '나는 요구되는 전문화를 갖춘 노예를 원한다.' & exit
+	end
+end
+
+if demand['artist'] > 0:
+	if max(slave['calisthenics'], slave['music'], slave['art']) < demand['artist']:
+		sl_txt = 102 & $refuse_txt = '나는 예술 훈련을 더 받은 노예를 원한다.' & exit
+	end
+end
+IF demand['slave_name_for_Marquis_de_s'] = 1:
+	IF slave_state = CONST_INT['slave_exist'] and $slave_name ! "줄리엣":
+		sl_txt = 100 & $refuse_txt = '그녀의 이름은 줄리엣이 아니다.' & exit
+	END
+END
+
+if slave['exotic'] > demand['max_exotic']: sl_txt = 100 & $refuse_txt = '나는 덜 이국적인 노예를 원한다.' & exit
+if slave['exotic'] < demand['min_exotic']: sl_txt = 100 & $refuse_txt = '나는 더 이국적인 노예를 원한다.' & exit
+if slave['beauty'] < demand['min_beauty']: sl_txt = 100 & $refuse_txt = '나는 더 아름다운 노예를 원한다.' & exit
+!if slave['brand'] = 0: sl_txt = 100 & $refuse_txt = 'She does not have your brand.' & exit
+if slave['fat'] < demand['min_fat']: sl_txt = 100 & $refuse_txt = '그녀는 너무 말랐다.' & exit
+if slave['fat'] > demand['max_fat']: sl_txt = 100 & $refuse_txt = '그녀는 너무 뚱뚱하다.' & exit
+
+if slave['wounds'] > 0 or slave['energy'] < 0 or slave['stamina'] < 2: sl_txt = 104 & exit
+! or slave['parasite'] > 0 &! removed from line above because how would the buyer know? - ImperatorAugustus
+if slave['rehabilitation'] > 0 or $slave_psy_status = 'broken': sl_txt = 104 & exit
+if slave['pregnant'] > 0 and slave['pregnant_revealed'] > 0: sl_txt = 105 & exit
+
+if slave[$npc_id] > 0 and (day - slave[$npc_id]) >= 10: slave[$npc_id] = 0
+if slave['hygiene'] > 3:
+	sl_txt = 103 & exit
+elseif buyer_from_house = 0:
+	!charm_demand_max = 15 + demand_rating[$npc_id]
+	!charm_demand = rand(5,charm_demand_max)
+									charm_demand = 6  &! require D- charm ( 6+) at F-/D-/D+ rating    (0-2)
+	if demand_rating[$npc_id] >= 3: charm_demand = 12 &! require C- charm (12+) at C-/C+ rating       (3-4)
+	if demand_rating[$npc_id] >= 5: charm_demand = 18 &! require B+ charm (18+) at B-/B+ rating       (5-6)
+	if demand_rating[$npc_id] >= 7: charm_demand = 24 &! require A+ charm (24+) at A-/A+ rating       (7-8)
+	if demand_rating[$npc_id] >= 9: charm_demand = 38 &! require S+ charm (38+) at S-/S+ rating       (9-10)
+	if charm_demand > charm:
+		if game_difficulty = 2: slave[$npc_id] = day &! 10-day lockout now only on extreme game difficulty - ImperatorAugustus
+		brand_rate -= demand_rating[$npc_id]/2 &! charm refusals now lower brand rep for all difficulties - ImperatorAugustus
+		sl_txt = 103 & exit
+	end
+end
+
+if wizard_mode = 1:
+	msg 'charm_demand_max = <<charm_demand_max>>' + _
+	'charm_demand = <<charm_demand>>' + _
+	'charm = <<charm>>' + _
+	'slave[$npc_id] = <<slave[$npc_id]>>'
+end
+
+dynamic $npc_preferences[$npc_id]
+if stat_importance['sensitivity'] > slave['sensitivity']: sl_txt = 102 & exit
+if stat_importance['temper'] > slave['temper']: sl_txt = 102 & exit
+if stat_importance['intellect'] > slave['intellect']: sl_txt = 102 & exit
+if stat_importance['ego'] > slave['ego']: sl_txt = 102 & exit
+if stat_importance['pride'] > 0 and stat_importance['pride'] < slave['pride']: sl_txt = 102 & exit
+
+if stat_importance['service'] > slave['service']: sl_txt = 102 & exit
+if stat_importance['cook'] > slave['cook']: sl_txt = 102 & exit
+if stat_importance['secretary'] > slave['secretary']: sl_txt = 102 & exit
+if stat_importance['expression'] > slave['expression']: sl_txt = 102 & exit
+if stat_importance['nurse'] > slave['nurse']: sl_txt = 102 & exit
+if stat_importance['alchemy'] > slave['alchemy']: sl_txt = 102 & exit
+if stat_importance['enchanter'] > slave['enchanter']: sl_txt = 102 & exit
+if stat_importance['gladiatrix'] > slave['gladiatrix']: sl_txt = 102 & exit
+if stat_importance['calisthenics'] > slave['calisthenics']: sl_txt = 102 & exit
+if stat_importance['music'] > slave['music']: sl_txt = 102 & exit
+if stat_importance['art'] > slave['art']: sl_txt = 102 & exit
+if stat_importance['pet'] > slave['pet']: sl_txt = 102 & exit
+if stat_importance['cowSK'] > slave['cowSK']: sl_txt = 102 & exit
+if stat_importance['dressage'] > slave['dressage']: sl_txt = 102 & exit
+if stat_importance['animal'] > max(slave['pet'], slave['dressage'], slave['cowSK']): sl_txt = 102 & exit &! alternative condition satisfied by pet OR pony OR cow skill, currently used by Hip chef
+
+if stat_importance['petting'] > slave['petting']: sl_txt = 102 & exit
+if stat_importance['oral'] > slave['oral']: sl_txt = 102 & exit
+if stat_importance['penetration'] > slave['penetration']: sl_txt = 102 & exit
+if stat_importance['orgy'] > slave['orgy']: sl_txt = 102 & exit
+if stat_importance['roleplay'] > slave['roleplay']: sl_txt = 102 & exit
+if stat_importance['fetishism'] > slave['fetishism']: sl_txt = 102 & exit
+if stat_importance['xenophily'] > slave['xenophily']: sl_txt = 102 & exit
+
+if slave['virginity'] < 2: virgin_price += (50*relative_rating)
+if slave['virginity'] < 1: virgin_price *= 2 &! natural virgin
+
+if virgin_price > 0: $virgin_price = ' 처녀성에 <<virgin_price>> 추가'
+
+if rating > demand_rating[$npc_id] and sl_txt = 1: sl_txt = 2
+
+if sl_txt < 3: buyer_interested = 1

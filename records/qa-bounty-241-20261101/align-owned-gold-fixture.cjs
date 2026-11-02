@@ -1,0 +1,10 @@
+'use strict';
+const fs=require('fs'),a=require('assert/strict'),R='G:/somi/JO9sa',T='G:/Codex/tmp/qa-bounty-241-historical-78835089';
+const c=require(R+'/tools/text-workshop/core.cjs'),sc=require(R+'/tools/qa/save-codec.cjs'),qa=require(R+'/tools/qa/release-check.cjs');
+const pub=sc.parse(fs.readFileSync('G:/somi/Jack O Nine Tails v2.4 Kor_Full/game/save/TC_01_HOME_TRAITS.sav')),oldVersion=sc.value(pub,'GAME_VER')[1],q=s=>"'"+s.replaceAll("'","''")+"'";
+const file=T+'/gold-special-food/gold-special-food.qsp',d=c.parse(fs.readFileSync(file)),l=d.locations.find(x=>x.name==='Start'),old=c.shift(d.lines[l.body],5),assignment='$GAME_VER[0]='+q(oldVersion);
+a.equal(old.split(assignment).length-1,1);d.lines[l.body]=c.shift(old.replace(assignment,()=>'$GAME_VER[0]='+q('잭 오 나인 테일 v2.4.1 Kor Ver')),-5);
+const raw=c.serialize(d);qa.inspectWorld(raw);fs.writeFileSync(file,raw);
+const meta=JSON.parse(fs.readFileSync(T+'/prepared.json','utf8'));meta.cases.find(x=>x.name==='gold-special-food').diagnosticSha256=c.hash(raw);meta.fixtureCorrections=['Public TC version stamp '+oldVersion+' caused an expected game update MSG; aligned only the owned primed GAME_VER to 2.4.1 before rerunning gold-special-food. Original public SAV and production files unchanged.'];fs.writeFileSync(T+'/prepared.json',JSON.stringify(meta,null,2));
+fs.copyFileSync(T+'/gold-special-food/client-results.json',__dirname+'/historical/gold-initial-version-message.json');fs.copyFileSync(T+'/gold-special-food/gold-special-food-stderr.log',__dirname+'/historical/gold-initial-version-message.log');
+console.log('Owned fixture version aligned; public input remains unchanged');

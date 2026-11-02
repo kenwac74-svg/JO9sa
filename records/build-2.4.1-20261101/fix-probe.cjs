@@ -1,0 +1,2 @@
+const fs=require('fs'),c=require('G:/somi/JO9sa/tools/text-workshop/core.cjs'),qa=require('G:/somi/JO9sa/tools/qa/release-check.cjs');
+const p='G:/Codex/tmp/build-2.4.1-20261101/credits-probe/credits.qsp',d=c.parse(fs.readFileSync(p)),s=d.locations.find(x=>x.name==='Start');d.lines[s.body]=c.shift(c.shift(d.lines[s.body],5).replaceAll('instr(mid(','instr($mid('),-5);const b=c.serialize(d);qa.inspectWorld(b);fs.writeFileSync(p,b);console.log('Diagnostic string-function spelling corrected');

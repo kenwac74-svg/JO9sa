@@ -1,0 +1,442 @@
+{
+  "date": "2026-10-31T20:57:53.631Z",
+  "source": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+  "qspSha256": "b7e5b385dcbd5d8e4b4ac18c9556e18bf371f25f6368c3eba729c9374d1cc07b",
+  "productionWrites": 0,
+  "proposalOnly": true,
+  "confirmedScopePolicy": {
+    "fogForcedExecuteTargetDelta": 0,
+    "practiceFinishTargetDelta": 0,
+    "implementationByParentStillSeparateFromThisReadOnlyAudit": true
+  },
+  "currentReferenceSummary": {
+    "writes": 3,
+    "reads": 8,
+    "locations": [
+      "init_game",
+      "interaction_city",
+      "выход_из_боя",
+      "jo9_battle_fate"
+    ],
+    "references": [
+      {
+        "location": "init_game",
+        "line": 15,
+        "operation": "write",
+        "text": "jo9_cruel_mercy = 0"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1784,
+        "operation": "read",
+        "text": " if jo9_cruel_mercy <= -5: $text[1] = '당신은 결투에서 진 노예를 잔인하게 처형하는 것으로 소문이 자자했고, 상대방도 당신의 노예에게 자비를 베풀지 않았다. 승자의 무기가 쓰러진 <<$slave_name>>에게 내려왔다. 경기가 끝난 뒤, 당신은 그녀를 잃은 채 경기장을 떠났다.<br><br> 기분-5 계급-2'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1803,
+        "operation": "read",
+        "text": " if jo9_cruel_mercy >= 5: $text[1] = '당신은 결투에서 진 노예를 처형하지 않는 자비로운 주인으로 인정받고 있었고, 상대도 당신의 노예에게 자비를 베풀어 목숨을 살려주었다. 진행 요원들은 <<$slave_name>>(을)를 들것에 싣고 응급 처치를 위해 노예 우리로 향했다.<br><br> 기분-3 계급-1, 노예 태도-5'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 17846,
+        "operation": "read",
+        "text": " if jo9_cruel_mercy <= -5: $text[1] = '당신은 결투에서 진 노예를 잔인하게 처형하는 것으로 소문이 자자했고, 상대방도 당신의 노예에게 자비를 베풀지 않았다. 승자는 쓰러진 <<$slave_name>>에게 마지막 일격을 가했다. 진행 요원들이 그녀의 시신을 수습하는 동안, 당신은 말없이 지켜보았다.'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 17862,
+        "operation": "read",
+        "text": " if jo9_cruel_mercy >= 5: $text[1] = '당신은 결투에서 진 노예를 처형하지 않는 자비로운 주인으로 인정받고 있었고, 상대도 당신의 노예에게 자비를 베풀어 목숨을 살려주었다. 승자가 무기를 거두고 물러서자, 진행 요원들이 피투성이의 <<$slave_name>>(을)를 들것에 눕혀 격투장 밖으로 옮겼다. 당신은 그녀를 따라 자리를 떴다.'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 18111,
+        "operation": "read",
+        "text": " if jo9_cruel_mercy <= -5: $text[1] = '당신은 결투에서 진 노예를 잔인하게 처형하는 것으로 소문이 자자했고, 상대방도 당신의 노예에게 자비를 베풀지 않았다. 승자는 쓰러진 <<$slave_name>>에게 마지막 일격을 가했다. 진행 요원들이 그녀의 시신을 수습하는 동안, 당신은 말없이 지켜보았다.'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 18127,
+        "operation": "read",
+        "text": " if jo9_cruel_mercy >= 5: $text[1] = '당신은 결투에서 진 노예를 처형하지 않는 자비로운 주인으로 인정받고 있었고, 상대도 당신의 노예에게 자비를 베풀어 목숨을 살려주었다. 승자가 무기를 거두고 물러서자, 진행 요원들이 피투성이의 <<$slave_name>>(을)를 들것에 눕혀 격투장 밖으로 옮겼다. 당신은 그녀를 따라 자리를 떴다.'"
+      },
+      {
+        "location": "выход_из_боя",
+        "line": 37,
+        "operation": "read",
+        "text": "\t\tif jo9_cruel_mercy <= -5 or (jo9_cruel_mercy < 5 and b > gladiator_valor):"
+      },
+      {
+        "location": "выход_из_боя",
+        "line": 98,
+        "operation": "read",
+        "text": "        if jo9_cruel_mercy <= -5 or (jo9_cruel_mercy < 5 and b > gladiator_valor):"
+      },
+      {
+        "location": "jo9_battle_fate",
+        "line": 265,
+        "operation": "write",
+        "text": " if jo9_bf_choice = 1: jo9_cruel_mercy -= 1"
+      },
+      {
+        "location": "jo9_battle_fate",
+        "line": 266,
+        "operation": "write",
+        "text": " if jo9_bf_choice = 2: jo9_cruel_mercy += 1"
+      }
+    ]
+  },
+  "currentEffects": {
+    "newGame": {
+      "location": "init_game",
+      "line": 15,
+      "value": 0
+    },
+    "mutation": {
+      "location": "jo9_battle_fate",
+      "lines": [
+        265,
+        266
+      ],
+      "execute": -1,
+      "spare": 1,
+      "oncePerDecision": true,
+      "outsideEnemyLoop": true,
+      "appliesRegardlessOfCombatant": true
+    },
+    "guards": {
+      "location": "jo9_battle_fate",
+      "lines": [
+        254,
+        255,
+        256,
+        257,
+        259,
+        261,
+        262
+      ],
+      "requiredMode": ">=1",
+      "requiredPhase": 1,
+      "requiredEnemyCount": ">=1 staged opponent",
+      "requiredResult": "victory",
+      "validChoice": [
+        1,
+        2
+      ],
+      "spareRequiresMode": 2,
+      "executionBlockedInPractice": true,
+      "phaseSetTo2BeforeMutation": true,
+      "duplicateApplyDoesNotMutate": true
+    },
+    "regularArena": {
+      "source": "arena",
+      "mode": 2,
+      "fightReturn": "Start",
+      "arenaMode": 1,
+      "enemyCount": 1,
+      "eligibleEnemies": "dimaher_a..e, hoplite_a..e, secutor_a..e, kimerian_a..e",
+      "initLines": [
+        134,
+        152,
+        153
+      ]
+    },
+    "catfight": {
+      "source": "catfight",
+      "mode": 2,
+      "fightReturn": "Start1",
+      "place": "catfightclub",
+      "arenaMode": 1,
+      "enemyCount": 1,
+      "eligibleEnemies": [
+        "gladiatrix1",
+        "gladiatrix2",
+        "gladiatrix3"
+      ],
+      "initLines": [
+        156,
+        157
+      ]
+    },
+    "fog": {
+      "source": "normal",
+      "mode": 1,
+      "place": "edge_patrol",
+      "eligibleEnemyCount": "1..5 and every enemy in fog allowlist",
+      "initLines": [
+        133,
+        136,
+        137,
+        138,
+        142
+      ],
+      "spareDisabled": true,
+      "forcedExecuteCurrentlyChangesScore": -1,
+      "repeatsCanAccumulate": true
+    },
+    "practice": {
+      "source": "normal",
+      "mode": 2,
+      "place": "colosseum",
+      "enemyCount": 1,
+      "colosseumFightRanges": [
+        "1..5",
+        "11..15",
+        "21..25",
+        "31..35"
+      ],
+      "eligibleEnemies": [
+        "голая_рабыня",
+        "госпожа",
+        "шиноби",
+        "латница",
+        "амазонка"
+      ],
+      "initLines": [
+        135,
+        147,
+        148,
+        149
+      ],
+      "executionBlocked": true,
+      "finishPracticeChoice": 2,
+      "finishPracticeCurrentlyChangesScore": 1,
+      "repeatsCanAccumulate": true
+    },
+    "otherCases": "No mutation on defeated player, flee/fallback, unsupported enemy rosters or special quest battles outside init allowlists. No current noncombat/free-captive writer exists.",
+    "lossJudgment": {
+      "location": "выход_из_боя",
+      "lines": [
+        37,
+        98
+      ],
+      "cruel": "whole <= -5 => execution branch",
+      "mercy": "whole >= 5 => survival branch",
+      "neutral": "otherwise retain b > gladiator_valor test",
+      "lethalFailureException": "Initial lethal stamina checks can reach 1291/103002 before reputation judgment; mercy does not suppress that existing death check."
+    }
+  },
+  "halfPointProposal": {
+    "existingWholeVariable": "jo9_cruel_mercy",
+    "newSavedScalarCount": 1,
+    "proposedHalfVariable": "jo9_cruel_mercy_half",
+    "halfDefaultForNewAndUnsetOldSaves": 0,
+    "actualScore": "whole + half / 2",
+    "update": [
+      "T = 2 * whole + half + deltaHalf",
+      "whole = truncTowardZero(T / 2)",
+      "half = T - 2 * whole"
+    ],
+    "equivalentSignedRemainder": "half = T mod 2 only when native QSP MOD returns the signed remainder with truncation toward zero",
+    "recommendedRemainderExpression": "T - 2 * whole avoids reliance on negative-MOD convention while preserving the same canonical signed remainder.",
+    "canonicalHalfRange": [
+      -1,
+      0,
+      1
+    ],
+    "canonicalInvariant": "2*whole+half=T; nonzero half has same sign as T; zero whole may carry either half sign.",
+    "existingBattleMutations": "Route execute -1 through deltaHalf=-2, spare +1 through deltaHalf=+2 exactly once at current guarded point; do not keep the old direct +=/-= alongside helper.",
+    "thresholdCompatibility": "Keep existing <=-5, >=5, <5 whole-variable reads unchanged after every update canonicalizes. At 4.5 the whole is4; at-4.5 the whole is-4.",
+    "saveCompatibility": "Do not rename/rescale old whole values. Existing whole integer with missing half becomes the same exact score with half0. New games should explicitly reset half0.",
+    "noAdditionalRules": "No extra clamp, stat effect, remote state, actor-specific tally or automatic retroactive award is proposed. Confirmed fog/practice score0 policy is separately implemented by the parent.",
+    "nativeQspArithmeticVerifiedByThisAudit": true,
+    "nativeEvidence": {
+      "report": "C:\\Users\\User\\.codex\\.chatgpt-projects\\g-p-6aad063c991081918e27b6675f290be7\\output\\cruel-mercy-rules-20261101\\math-report.json",
+      "helperName": "jo9_cruel_mercy_apply",
+      "helperHash": "dd2cf5ba0c1b473807cf8afdb448108298cdfd7f58b0cbc746c6d6ff3daa3d37",
+      "cases": 10,
+      "executedAssertions": 63,
+      "pass": true
+    },
+    "verificationLimit": "The isolated native helper arithmetic, old-save default, zero crossings, threshold boundaries and variable restoration passed. Full gameplay scope/choice guards are audited from source only here and are tested separately by the parent."
+  },
+  "modelVerification": {
+    "pass": true,
+    "exhaustiveCases": 44033,
+    "legacyIntegerCases": 402,
+    "comparisonsTested": [
+      "<=-5",
+      ">=5",
+      "<5"
+    ],
+    "crossZeroAndBoundarySamples": [
+      {
+        "beforeScore": 0,
+        "before": {
+          "whole": 0,
+          "half": 0
+        },
+        "delta": 0.5,
+        "deltaHalf": 1,
+        "afterScore": 0.5,
+        "after": {
+          "whole": 0,
+          "half": 1
+        },
+        "cruelThreshold": false,
+        "mercyThreshold": false
+      },
+      {
+        "beforeScore": 0.5,
+        "before": {
+          "whole": 0,
+          "half": 1
+        },
+        "delta": -1,
+        "deltaHalf": -2,
+        "afterScore": -0.5,
+        "after": {
+          "whole": 0,
+          "half": -1
+        },
+        "cruelThreshold": false,
+        "mercyThreshold": false
+      },
+      {
+        "beforeScore": -0.5,
+        "before": {
+          "whole": 0,
+          "half": -1
+        },
+        "delta": 1,
+        "deltaHalf": 2,
+        "afterScore": 0.5,
+        "after": {
+          "whole": 0,
+          "half": 1
+        },
+        "cruelThreshold": false,
+        "mercyThreshold": false
+      },
+      {
+        "beforeScore": 0.5,
+        "before": {
+          "whole": 0,
+          "half": 1
+        },
+        "delta": -0.5,
+        "deltaHalf": -1,
+        "afterScore": 0,
+        "after": {
+          "whole": 0,
+          "half": 0
+        },
+        "cruelThreshold": false,
+        "mercyThreshold": false
+      },
+      {
+        "beforeScore": -0.5,
+        "before": {
+          "whole": 0,
+          "half": -1
+        },
+        "delta": 0.5,
+        "deltaHalf": 1,
+        "afterScore": 0,
+        "after": {
+          "whole": 0,
+          "half": 0
+        },
+        "cruelThreshold": false,
+        "mercyThreshold": false
+      },
+      {
+        "beforeScore": 4.5,
+        "before": {
+          "whole": 4,
+          "half": 1
+        },
+        "delta": 0.5,
+        "deltaHalf": 1,
+        "afterScore": 5,
+        "after": {
+          "whole": 5,
+          "half": 0
+        },
+        "cruelThreshold": false,
+        "mercyThreshold": true
+      },
+      {
+        "beforeScore": -4.5,
+        "before": {
+          "whole": -4,
+          "half": -1
+        },
+        "delta": -0.5,
+        "deltaHalf": -1,
+        "afterScore": -5,
+        "after": {
+          "whole": -5,
+          "half": 0
+        },
+        "cruelThreshold": true,
+        "mercyThreshold": false
+      },
+      {
+        "beforeScore": 5,
+        "before": {
+          "whole": 5,
+          "half": 0
+        },
+        "delta": -0.5,
+        "deltaHalf": -1,
+        "afterScore": 4.5,
+        "after": {
+          "whole": 4,
+          "half": 1
+        },
+        "cruelThreshold": false,
+        "mercyThreshold": false
+      },
+      {
+        "beforeScore": -5,
+        "before": {
+          "whole": -5,
+          "half": 0
+        },
+        "delta": 0.5,
+        "deltaHalf": 1,
+        "afterScore": -4.5,
+        "after": {
+          "whole": -4,
+          "half": -1
+        },
+        "cruelThreshold": false,
+        "mercyThreshold": false
+      },
+      {
+        "beforeScore": 5.5,
+        "before": {
+          "whole": 5,
+          "half": 1
+        },
+        "delta": -1,
+        "deltaHalf": -2,
+        "afterScore": 4.5,
+        "after": {
+          "whole": 4,
+          "half": 1
+        },
+        "cruelThreshold": false,
+        "mercyThreshold": false
+      },
+      {
+        "beforeScore": -5.5,
+        "before": {
+          "whole": -5,
+          "half": -1
+        },
+        "delta": 1,
+        "deltaHalf": 2,
+        "afterScore": -4.5,
+        "after": {
+          "whole": -4,
+          "half": -1
+        },
+        "cruelThreshold": false,
+        "mercyThreshold": false
+      }
+    ]
+  }
+}

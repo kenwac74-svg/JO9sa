@@ -1,0 +1,78 @@
+{
+  "id": "2026-10-30_agrabah_special_food",
+  "description": "Always sell small Agrabah fruit and wine as independent storage-only stock; retain banquet quest orders, prices, currency and legacy quest flags; reuse existing tooltip helpers.",
+  "before_sha256": "6106de161136062c21c1de3fe0a4a706fa45c9a9daade3459cd770a2282a9d1c",
+  "after_sha256": "098d3503c2b82acc31e570ee01cfa68f45a19edc1c5211e27b3c5e2e9903a6ad",
+  "edits": [
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "$balsam_boutique_options[3] = {\r\n$sp_text[3] = '  '\r\n$text_display = '<br><br>'\r\nFUNC('$menu', 'spacer', 3)\r\nFUNC('$menu', '===BEGIN===', 'column_0')\r\nIF active[$event['Akabur_quest']] = 11 and fruits_minibox = 0 and (gold >= 25 or sparks >=250): FUNC('$menu', 'interaction_city', $menu_item_balsam, 30212, '과일 바구니 (25)')\r\nIF active[$event['Akabur_quest']] ! 11 or (gold < 25 and sparks < 250) or fruits_minibox = 1: FUNC('$menu', 'location_gray', $menu_item_balsam_gray, empty, '과일 바구니 (25)')\r\nIF active[$event['Akabur_quest']] = 11 and fruits_maxibox = 0 and (gold >= 1000 or sparks >= 10000): FUNC('$menu', 'interaction_city', $menu_item_balsam, 30213, '연회용 과일 (1000)')\r\n! JO9 MOD START AGRABAH_FRUIT_DISABLED_MENU_20261030\r\nIF active[$event['Akabur_quest']] ! 11 or (gold < 1000 and sparks < 10000) or fruits_maxibox = 1: FUNC('$menu', 'location_gray', $menu_item_balsam_gray, empty, '연회용 과일 (1000)')\r\n! JO9 MOD END AGRABAH_FRUIT_DISABLED_MENU_20261030\r\nFUNC('$menu', 'exec_options', $menu_item_nobuy, 'sp_txt = 1 & gt $curloc', '뒤로')\r\nFUNC('$menu', '===END===')\r\n}",
+      "new": "! JO9 MOD START AGRABA_SPECIAL_FRUIT_MENU_20261030\r\n$balsam_boutique_options[3] = {\r\n$sp_text[3] = '  '\r\nlocal $jo9_fruit_order_tip = '연회 준비 의뢰를 받은 뒤 주문할 수 있다.'\r\nif active[$event['Akabur_quest']] = 11: $jo9_fruit_order_tip = '금화나 스파크가 부족하다.'\r\nif fruits_maxibox = 1: $jo9_fruit_order_tip = '이미 주문했다.'\r\n$text_display = '<br><br>'\r\nFUNC('$menu', 'spacer', 3)\r\nFUNC('$menu', '===BEGIN===', 'column_0')\r\nIF gold >= 25 or sparks >= 250: FUNC('$menu', 'goto', $menu_item_balsam, 30212, 'interaction_city', 'interaction_city', '신선한 과일 (25)', '아그라바산 고급 과일. 금화가 부족하면 스파크로 결제한다.')\r\nIF gold < 25 and sparks < 250: FUNC('$menu', 'location_gray_tooltip', $menu_item_balsam_gray, empty, '신선한 과일 (25)', '금화나 스파크가 부족하다.')\r\nIF active[$event['Akabur_quest']] = 11 and fruits_maxibox = 0 and (gold >= 1000 or sparks >= 10000): FUNC('$menu', 'goto', $menu_item_balsam, 30213, 'interaction_city', 'interaction_city', '연회용 과일 (1000)', '자파르의 연회를 위한 대량 주문이다.')\r\n! JO9 MOD START AGRABAH_FRUIT_DISABLED_MENU_20261030\r\nIF active[$event['Akabur_quest']] ! 11 or (gold < 1000 and sparks < 10000) or fruits_maxibox = 1: FUNC('$menu', 'location_gray_tooltip', $menu_item_balsam_gray, empty, '연회용 과일 (1000)', $jo9_fruit_order_tip)\r\n! JO9 MOD END AGRABAH_FRUIT_DISABLED_MENU_20261030\r\nFUNC('$menu', 'exec_options', $menu_item_nobuy, 'sp_txt = 1 & gt $curloc', '뒤로')\r\nFUNC('$menu', '===END===')\r\n}\r\n! JO9 MOD END AGRABA_SPECIAL_FRUIT_MENU_20261030",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "$maslab_tabern_options[1] = {\r\n$sp_text[1] = '  '\r\n$text_display = '<br><br>'\r\nFUNC('$menu', 'spacer', 3)\r\nFUNC('$menu', '===BEGIN===', 'column_0')\r\nFUNC('$menu', 'interaction_city', $menu_item_maslab, 3041, '마슬랍과 이야기한다')\r\nIF active[$event['Akabur_quest']] = 11 and vine_butle = 0 and gold >= 25: FUNC('$menu', 'interaction_city', $menu_item_maslab, 30411, '와인 병을 산다 (25)')\r\nIF active[$event['Akabur_quest']] ! 11 or gold < 25 or vine_butle = 1: FUNC('$menu', 'location_gray', $menu_item_maslab_gray, empty, '와인 병을 산다 (25)')\r\nIF active[$event['Akabur_quest']] = 11 and vine_box = 0 and gold >= 1000: FUNC('$menu', 'interaction_city', $menu_item_maslab, 30412, '연회용 와인 (1000)')\r\nIF active[$event['Akabur_quest']] = 11 and gold < 1000 or vine_box = 1: FUNC('$menu', 'location_gray', $menu_item_maslab_gray, empty, '연회용 와인 (1000)')\r\n!FUNC('$menu', 'interaction_city', $menu_item_iris, 3042, 'Поговорить с Айрис')\r\nIF active[$event['Akabur_quest']] >= 11 and active[$event['Akabur_quest']] < 13 and prisoner_type ! 2617 and iced_1_type ! 2617 and iced_2_type ! 2617 and iced_3_type ! 2617 and iced_4_type ! 2617 and iced_5_type ! 2617 and iced_6_type ! 2617 and iced_7_type ! 2617 and iced_8_type ! 2617 and iced_9_type ! 2617 and Jasmine_job = 0: FUNC('$menu', 'interaction_city', $menu_item_jasmine, 3043, '자스민에게 일을 시킨다')\r\nFUNC('$menu', 'interaction_city', $menu_item_agraba, 3000, '떠난다')\r\nFUNC('$menu', '===END===')\r\n}",
+      "new": "! JO9 MOD START AGRABA_SPECIAL_WINE_MENU_20261030\r\n$maslab_tabern_options[1] = {\r\n$sp_text[1] = '  '\r\nlocal $jo9_wine_order_tip = '연회 준비 의뢰를 받은 뒤 주문할 수 있다.'\r\nif active[$event['Akabur_quest']] = 11: $jo9_wine_order_tip = '금화가 부족하다.'\r\nif vine_box = 1: $jo9_wine_order_tip = '이미 주문했다.'\r\n$text_display = '<br><br>'\r\nFUNC('$menu', 'spacer', 3)\r\nFUNC('$menu', '===BEGIN===', 'column_0')\r\nFUNC('$menu', 'interaction_city', $menu_item_maslab, 3041, '마슬랍과 이야기한다')\r\nIF gold >= 25: FUNC('$menu', 'goto', $menu_item_maslab, 30411, 'interaction_city', 'interaction_city', '아그라바 와인 (25)', '아그라바산 특제 와인. 금화로 구입해 따로 보관한다.')\r\nIF gold < 25: FUNC('$menu', 'location_gray_tooltip', $menu_item_maslab_gray, empty, '아그라바 와인 (25)', '환전소에서 금화를 마련해야 한다.')\r\nIF active[$event['Akabur_quest']] = 11 and vine_box = 0 and gold >= 1000: FUNC('$menu', 'goto', $menu_item_maslab, 30412, 'interaction_city', 'interaction_city', '연회용 와인 (1000)', '자파르의 연회를 위한 대량 주문이다.')\r\nIF active[$event['Akabur_quest']] ! 11 or gold < 1000 or vine_box = 1: FUNC('$menu', 'location_gray_tooltip', $menu_item_maslab_gray, empty, '연회용 와인 (1000)', $jo9_wine_order_tip)\r\n!FUNC('$menu', 'interaction_city', $menu_item_iris, 3042, 'Поговорить с Айрис')\r\nIF active[$event['Akabur_quest']] >= 11 and active[$event['Akabur_quest']] < 13 and prisoner_type ! 2617 and iced_1_type ! 2617 and iced_2_type ! 2617 and iced_3_type ! 2617 and iced_4_type ! 2617 and iced_5_type ! 2617 and iced_6_type ! 2617 and iced_7_type ! 2617 and iced_8_type ! 2617 and iced_9_type ! 2617 and Jasmine_job = 0: FUNC('$menu', 'interaction_city', $menu_item_jasmine, 3043, '자스민에게 일을 시킨다')\r\nFUNC('$menu', 'interaction_city', $menu_item_agraba, 3000, '떠난다')\r\nFUNC('$menu', '===END===')\r\n}\r\n! JO9 MOD END AGRABA_SPECIAL_WINE_MENU_20261030",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "IF interaction_city = 30212:",
+      "new": "! JO9 MOD START AGRABA_FRUIT_PAYMENT_GUARD_20261030\r\nIF interaction_city = 30212:\r\n if gold < 25 and sparks < 250: sp_txt = 3 & gt 'shop_general'\r\n! JO9 MOD END AGRABA_FRUIT_PAYMENT_GUARD_20261030",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": " Fruits_minibox = 1\r\nEND",
+      "new": "! JO9 MOD START AGRABA_FRUIT_STOCK_20261030\r\n Fruits_minibox = 1\r\n jo9_agraba_stock['fruit'] += 1\r\nEND\r\n! JO9 MOD END AGRABA_FRUIT_STOCK_20261030",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "IF interaction_city = 30411:",
+      "new": "! JO9 MOD START AGRABA_WINE_PAYMENT_GUARD_20261030\r\nIF interaction_city = 30411:\r\n if gold < 25: sp_txt = 1 & gt 'shop_general'\r\n! JO9 MOD END AGRABA_WINE_PAYMENT_GUARD_20261030",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": " vine_butle = 1\r\nEND",
+      "new": "! JO9 MOD START AGRABA_WINE_STOCK_20261030\r\n vine_butle = 1\r\n jo9_agraba_stock['wine'] += 1\r\nEND\r\n! JO9 MOD END AGRABA_WINE_STOCK_20261030",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": " $text[1] = '[발삼]<br>&nbsp;어떤 미녀를 맛있는 간식으로 기쁘게 해 주고 싶으신가요, <<$master_name>>?!... 아, 이 짓궂은 분 같으니!... 농담입니다!... 특별히 당신만을 위해 잘 익고 육즙 가득한 과일이 든 바구니에, 아그라바 최고의 단것들까지 담아 놨습니다! 이런 선물을 마다할 숙녀는 없죠! 즐거운 명절 보내세요, <<$master_name>>!'",
+      "new": "! JO9 MOD START AGRABA_SPECIAL_FRUIT_RECEIPT_20261030\r\n $text[1] = '[발삼]<br>&nbsp;신선하고 향이 좋은 아그라바 과일입니다. 로마에 가져가시면 귀한 선물이 될 겁니다.'\r\n! JO9 MOD END AGRABA_SPECIAL_FRUIT_RECEIPT_20261030",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": " $text[1] = '[당신]<br>&nbsp;네 최고급 와인 한 병이 필요하다, 마슬랍!<br>[마슬랍]<br>&nbsp;수수께끼 같은 낯선 여자의 치마 밑으로 기어들 생각이신가요, <<$master_name>>?! 이해합니다!... 여기 \"불알 줄게\" 5일 숙성짜리 가져가세요... 은은한 라즈베리 향이 감도는 이 신성한 술을 한 모금 마시고도 남자를 거절한 여자는, 내 기억엔 단 한 명도 없었거든요...'",
+      "new": "! JO9 MOD START AGRABA_SPECIAL_WINE_RECEIPT_20261030\r\n $text[1] = '[마슬랍]<br>&nbsp;아그라바산 특제 와인입니다. 깊은 향을 즐길 만한 자리에 가져가시죠.'\r\n! JO9 MOD END AGRABA_SPECIAL_WINE_RECEIPT_20261030",
+      "count": 1
+    },
+    {
+      "location": "master_stat",
+      "field": "body",
+      "old": "! JO9 MOD END J9M1564\r\nend",
+      "new": "! JO9 MOD END J9M1564\r\nend\r\n! JO9 MOD START AGRABA_SPECIAL_FOOD_STORAGE_20261030\r\nif kitchen > 0 or jo9_agraba_stock['fruit'] > 0 or jo9_agraba_stock['wine'] > 0:\r\n if kitchen > 0: $left_text_list += '<br>'\r\n $left_text_list += '신선한 과일 *<<jo9_agraba_stock[\"fruit\"]>><br>아그라바 와인 *<<jo9_agraba_stock[\"wine\"]>><br>'\r\nend\r\n! JO9 MOD END AGRABA_SPECIAL_FOOD_STORAGE_20261030",
+      "count": 1
+    },
+    {
+      "location": "master_stat",
+      "field": "body",
+      "old": "\t*p '<div id = \"left_text\"><<$left_text_list>></div>'",
+      "new": "! JO9 MOD START AGRABA_SPECIAL_FOOD_STORAGE_CLASS_20261030\r\n\t*p '<div id = \"left_text\" class=\"jo9-agraba-food-storage\"><<$left_text_list>></div>'\r\n! JO9 MOD END AGRABA_SPECIAL_FOOD_STORAGE_CLASS_20261030",
+      "count": 1
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "id": "2026-10-31_colosseum_practice_result_cuts",
+  "description": "Practice result only: choose four user-provided cutscenes by role and outcome before original outcome reset; no changes to narrative, experience or rewards.",
+  "before_sha256": "00c55e5d33174d3e39c5756248d4a6e5e9aaf7c7e4c46d15c1cbbb4067f1e499",
+  "after_sha256": "c961af0a11e61e2c1682318863de6c5ddcd6174755476c558ff6155940f34474",
+  "edits": [
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "if interaction_city = 1296:\r\n\t$place = 'colosseum'\r\n\t$return_lock = 'shop_general'\r\n\t$picture_type = 'pic_png'\r\n\t$bg_path = 'scene/arena_end'\r\n\tg = rand(1, picMax['arena_end'])\r\n\tif g > 1: $bg_path += '_' + $str(g) \r\n\tif $итог_боя = 'бегство' or $итог_боя = 'вырубился' or $итог_боя = 'убит':",
+      "new": "if interaction_city = 1296:\r\n\t$place = 'colosseum'\r\n\t$return_lock = 'shop_general'\r\n\t$picture_type = 'pic_png'\r\n! JO9 MOD START COLOSSEUM_PRACTICE_CUT_1296_20261031\r\n\t$bg_path = ''\r\n\t$special_image_full[1] = 'content/pic/scene/practice_master_win.png'\r\n! JO9 MOD END COLOSSEUM_PRACTICE_CUT_1296_20261031\r\n\tif $итог_боя = 'бегство' or $итог_боя = 'вырубился' or $итог_боя = 'убит':\r\n! JO9 MOD START COLOSSEUM_PRACTICE_LOSS_CUT_1296_20261031\r\n\t\t$special_image_full[1] = 'content/pic/scene/practice_master_loss.png'\r\n! JO9 MOD END COLOSSEUM_PRACTICE_LOSS_CUT_1296_20261031",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "if interaction_city = 1297:\r\n! JO9 MOD START J9TP_SPARRING_BEGIN_1297 | 2026-10-17_traits_personality\r\ngs 'jo9_traits_personality', 'activity', 'slave', 'learn:' + 'gladiatrix', 0\r\n! JO9 MOD END J9TP_SPARRING_BEGIN_1297\r\n\t$place = 'colosseum'\r\n\t$return_lock = 'shop_general'\r\n\t$picture_type = 'pic_png'\r\n\t$bg_path = 'scene/arena_end'\r\n\tg = rand(1, picMax['arena_end'])\r\n\tif g > 1: $bg_path += '_' + $str(g) \r\n\tif $итог_боя = 'бегство' or $итог_боя = 'вырубился' or $итог_боя = 'убит':",
+      "new": "if interaction_city = 1297:\r\n! JO9 MOD START J9TP_SPARRING_BEGIN_1297 | 2026-10-17_traits_personality\r\ngs 'jo9_traits_personality', 'activity', 'slave', 'learn:' + 'gladiatrix', 0\r\n! JO9 MOD END J9TP_SPARRING_BEGIN_1297\r\n\t$place = 'colosseum'\r\n\t$return_lock = 'shop_general'\r\n\t$picture_type = 'pic_png'\r\n! JO9 MOD START COLOSSEUM_PRACTICE_CUT_1297_20261031\r\n\t$bg_path = ''\r\n\t$special_image_full[1] = 'content/pic/scene/practice_slave_win.png'\r\n! JO9 MOD END COLOSSEUM_PRACTICE_CUT_1297_20261031\r\n\tif $итог_боя = 'бегство' or $итог_боя = 'вырубился' or $итог_боя = 'убит':\r\n! JO9 MOD START COLOSSEUM_PRACTICE_LOSS_CUT_1297_20261031\r\n\t\t$special_image_full[1] = 'content/pic/scene/practice_slave_loss.png'\r\n! JO9 MOD END COLOSSEUM_PRACTICE_LOSS_CUT_1297_20261031",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "if interaction_city = 1298:\r\n! JO9 MOD START J9TP_SPARRING_BEGIN_1298 | 2026-10-17_traits_personality\r\ngs 'jo9_traits_personality', 'activity', 'assistant', 'learn:' + 'gladiatrix', 0\r\n! JO9 MOD END J9TP_SPARRING_BEGIN_1298\r\n\t$place = 'colosseum'\r\n\t$return_lock = 'shop_general'\r\n\t$picture_type = 'pic_png'\r\n\t$bg_path = 'scene/arena_end'\r\n\tg = rand(1, picMax['arena_end'])\r\n\tif g > 1: $bg_path += '_' + $str(g) \r\n\tif $итог_боя = 'бегство' or $итог_боя = 'вырубился' or $итог_боя = 'убит':",
+      "new": "if interaction_city = 1298:\r\n! JO9 MOD START J9TP_SPARRING_BEGIN_1298 | 2026-10-17_traits_personality\r\ngs 'jo9_traits_personality', 'activity', 'assistant', 'learn:' + 'gladiatrix', 0\r\n! JO9 MOD END J9TP_SPARRING_BEGIN_1298\r\n\t$place = 'colosseum'\r\n\t$return_lock = 'shop_general'\r\n\t$picture_type = 'pic_png'\r\n! JO9 MOD START COLOSSEUM_PRACTICE_CUT_1298_20261031\r\n\t$bg_path = ''\r\n\t$special_image_full[1] = 'content/pic/scene/practice_slave_win.png'\r\n! JO9 MOD END COLOSSEUM_PRACTICE_CUT_1298_20261031\r\n\tif $итог_боя = 'бегство' or $итог_боя = 'вырубился' or $итог_боя = 'убит':\r\n! JO9 MOD START COLOSSEUM_PRACTICE_LOSS_CUT_1298_20261031\r\n\t\t$special_image_full[1] = 'content/pic/scene/practice_slave_loss.png'\r\n! JO9 MOD END COLOSSEUM_PRACTICE_LOSS_CUT_1298_20261031",
+      "count": 1
+    }
+  ]
+}

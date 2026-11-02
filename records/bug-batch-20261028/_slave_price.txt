@@ -1,0 +1,13 @@
+! JO9 MOD START J9M2827 | 2026-10-10_restore_private_room_ui | changed block; context may be included
+if snk_room_target > 0 and $curloc = '$slave_price': gs 'snk_room_bridge', 'guard', '$slave_price'
+! JO9 MOD END J9M2827
+!Slave Price Calculation
+!Overhauled by crushboss
+!Converted to dynamic and merged with $slave_price_stock and $assistant_rank_stats - ImperatorAugustus
+
+if $args[0] = '': $args[0] = 'slave' &! update slave if not specified - ImperatorAugustus
+
+! JO9 MOD START TBV_PRICE_REFRESH | 2026-10-17_trait_value
+gs 'jo9_traits_value', 'refresh', $args[0]
+dynamic $replace($update_slave_price, 'dyn'+'slave', $args[0]) &! see #static_base
+! JO9 MOD END TBV_PRICE_REFRESH

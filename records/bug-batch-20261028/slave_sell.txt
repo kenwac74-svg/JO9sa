@@ -1,0 +1,205 @@
+! JO9 MOD START BG_DIRECTORY_PREFIX_FIX_20261027
+! JO9 MOD START UI_RESOURCE_PATHS_20261027
+! JO9 MOD START PROFILE_POLISH_20261025_R3
+! JO9 MOD START J9M1523 | 2026-10-10_restore_private_room_ui | changed block; context may be included
+if snk_room_target > 0 and $curloc = 'slave_sell': gs 'snk_room_bridge', 'guard', 'slave_sell'
+! JO9 MOD END J9M1523
+!DIALOGUE FOR SLAVE SALE TO INDIVIDUAL
+gs '_layout'
+price_bonus = 0
+virgin_price = 0
+$virgin_price = ''
+$text_display = ''
+sp_txt = 1
+txt = 1
+if sl_txt = 0: sl_txt = 1
+
+if $special_text = '':
+	gs 'slave_sell_chek'
+	$special_text = '!'
+end
+
+if sl_txt = 100:
+! JO9 MOD START J9M1522 | 2026-10-15_trim_leading_body_blank_lines | changed block; context may be included
+	$text[1] = '고객은 노예를 검사하더니 가격을 부르는 것을 듣지도 않고 거절했다. 당신은 고객 개개인의 취향과 요구에 신경을 써야한다.'
+! JO9 MOD END J9M1522
+	func('$menu', 'spacer', 6)
+
+	func('$menu', '===BEGIN===', 'column_0')
+! JO9 MOD START J9M1521 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included
+	func('$menu', 'exec_options', $menu_item_Cancel_deal, 'gt $return_lock', '거절 당함')
+! JO9 MOD END J9M1521
+	func('$menu', '===END===')
+end
+
+if sl_txt = 101:
+! JO9 MOD START J9M1520 | 2026-10-15_trim_leading_body_blank_lines | changed block; context may be included
+	$text[1] = '고객은 노예를 검사하더니 가격을 부르는 것을 듣지도 않고 거절했다. 고객의 흥미를 끌기 위해선, 당신은 노예의 등급을 <<$rating[demand_rating[$npc_id]]>>등급보다 높게 올려야 한다.'
+! JO9 MOD END J9M1520
+	func('$menu', 'spacer', 6)
+
+	func('$menu', '===BEGIN===', 'column_0')
+! JO9 MOD START J9M1519 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included
+	func('$menu', 'exec_options', $menu_item_Cancel_deal, 'gt $return_lock', '거절 당함')
+! JO9 MOD END J9M1519
+	func('$menu', '===END===')
+end
+
+if sl_txt = 103 or sl_txt = 104 or sl_txt = 105:
+! JO9 MOD START J9M1518 | 2026-10-15_trim_leading_body_blank_lines | changed block; context may be included
+	$text[1] = '고객은 노예를 검사하더니 가격을 부르는 것을 듣지도 않고 거절했다. 당신의 조교의 품질의 문제가 아니라, 고객은 그저 <<$slave_name>>(이)가 마음에 들지 않는 것 같다. 음, 고객은 노예를 고를 권리가 있다.'
+! JO9 MOD END J9M1518
+	func('$menu', 'spacer', 6)
+
+	func('$menu', '===BEGIN===', 'column_0')
+! JO9 MOD START J9M1517 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included
+	func('$menu', 'exec_options', $menu_item_Cancel_deal, 'gt $return_lock', '거절 당함')
+! JO9 MOD END J9M1517
+	func('$menu', '===END===')
+end
+
+if sl_txt = 102:
+! JO9 MOD START J9M1516 | 2026-10-15_trim_leading_body_blank_lines | changed block; context may be included
+	$text[1] = '고객은 노예가 조건에 충분히 부합하는지 알기위해 당신에게 노예의 능력에 관해서 캐물었다. 물론 당신은 <<$slave_name>>(이)가 그렇지 않다는 건 알지만. 당신은 그녀를 조금 미화시킬 수도 있다...'
+! JO9 MOD END J9M1516
+	func('$menu', 'spacer', 4)
+
+	func('$menu', '===BEGIN===', 'column_0')
+	func('$menu', 'exec_options', $menu_item_Lie_about_slave, 'sl_txt = 3 & gt $curloc', '밀어 붙인다')
+! JO9 MOD START J9M1515 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included
+	func('$menu', 'exec_options', $menu_item_Cancel_deal, 'gt $return_lock', '거절 당함')
+! JO9 MOD END J9M1515
+	func('$menu', '===END===')
+	if wizard_mode = 1: msg 'Disability: <<$flaw_msg>>'
+end
+
+if sl_txt = 1:
+	client_satisfaction = 1
+! JO9 MOD START J9M1514 | 2026-10-15_trim_leading_body_blank_lines | changed block; context may be included
+	$text[1] = '당신의 노예는 고객이 말한 요구사항을 완벽하게 만족하므로, 당신은 노예의 현재 능력과 품질에 대해서 솔직하게 말했다. <<$rating[rating]>> 랭크의 노예들은 시장에서 대개 $<<common_price[rating]>>에 팔리지만, 당신은 좀 더 높은 가격을 불러 볼 수 있다.'
+! JO9 MOD END J9M1514
+	func('$menu', 'spacer', 3)
+
+	func('$menu', '===BEGIN===', 'column_0')
+	func('$menu', 'exec_options', $menu_item_Bargain, 'sl_txt = 11 & gt $curloc', '흥정한다')
+	func('$menu', 'exec_options', $menu_item_Hold_price, 'sl_txt = 12 & gt $curloc', '정가 판매')
+	func('$menu', 'exec_options', $menu_item_Make_discount, 'sl_txt = 13 & gt $curloc', '할인 판매')
+! JO9 MOD START J9M1513 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included
+	func('$menu', 'exec_options', $menu_item_Cancel_deal, 'gt $return_lock', '거래 취소')
+! JO9 MOD END J9M1513
+	func('$menu', '===END===')
+end
+
+if sl_txt = 2:
+	client_satisfaction = 1 + (rating - demand_rating[$npc_id])/2 &! [1,5] (1 + 1 for each full grade difference)
+! JO9 MOD START J9M1512 | 2026-10-15_trim_leading_body_blank_lines | changed block; context may be included
+	$text[1] = '당신의 노예가 고객의 생각보다 더 품질이 좋다. 하지만 가격은 요구하던 <<$rating[demand_rating[$npc_id]]>> 등급에 맞춰서 결정되고, 시장에서의 이 등급의 가격은 약 $<<common_price[demand_rating[$npc_id]]>>이다. 흥정으로 조금은 더 가격을 받을 수 있을지도 모른다. '
+! JO9 MOD END J9M1512
+	func('$menu', 'spacer', 3)
+
+	func('$menu', '===BEGIN===', 'column_0')
+	func('$menu', 'exec_options', $menu_item_Bargain, 'sl_txt = 11 & gt $curloc', '흥정한다')
+	func('$menu', 'exec_options', $menu_item_Hold_price, 'sl_txt = 12 & gt $curloc', '정가 판매')
+	func('$menu', 'exec_options', $menu_item_Make_discount, 'sl_txt = 13 & gt $curloc', '할인 판매')
+! JO9 MOD START J9M1511 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included
+	func('$menu', 'exec_options', $menu_item_Cancel_deal, 'gt $return_lock', '거래 취소')
+! JO9 MOD END J9M1511
+	func('$menu', '===END===')
+end
+
+if sl_txt = 3:
+	client_satisfaction = -3
+! JO9 MOD START J9M1510 | 2026-10-15_trim_leading_body_blank_lines | changed block; context may be included
+	$text[1] = '고객의 요구사항에 맞도록, 당신은 노예의 스킬을 조금 미화시켜서 말했다. 고객은 <<$rating[demand_rating[$npc_id]]>> 등급의 노예를 살 준비가 됐고, 시장에서의 이 등급의 가격은 약 $<<common_price[demand_rating[$npc_id]]>>이다. 그러나 당신은 무례하긴 하지만 흥정을 해볼 수도 있다.'
+! JO9 MOD END J9M1510
+	func('$menu', 'spacer', 3)
+
+	func('$menu', '===BEGIN===', 'column_0')
+	func('$menu', 'exec_options', $menu_item_Bargain, 'sl_txt = 11 & gt $curloc', '흥정한다')
+	func('$menu', 'exec_options', $menu_item_Hold_price, 'sl_txt = 12 & gt $curloc', '정가 판매')
+	func('$menu', 'exec_options', $menu_item_Make_discount, 'sl_txt = 13 & gt $curloc', '할인 판매')
+! JO9 MOD START J9M1509 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included
+	func('$menu', 'exec_options', $menu_item_Cancel_deal, 'gt $return_lock', '거래 취소')
+! JO9 MOD END J9M1509
+	func('$menu', '===END===')
+end
+
+if sl_txt = 11:
+	interaction_city = 911
+	city_form_transfer = city_form
+	$return_lock_transfer = $return_lock
+	$place_transfer = $place
+	gt 'interaction_city'
+end
+
+if sl_txt = 12:
+	interaction_city = 912
+	city_form_transfer = city_form
+	$return_lock_transfer = $return_lock
+	$place_transfer = $place
+	gt 'interaction_city'
+end
+
+if sl_txt = 13:
+	interaction_city = 913
+	city_form_transfer = city_form
+	$return_lock_transfer = $return_lock
+	$place_transfer = $place
+	client_satisfaction += 1
+	gt 'interaction_city'
+end
+
+! JO9 MOD START J9M1508 | 2026-10-08_persistent_image_cycle, 2026-10-15_z_inline_text_prefix | changed block; context may be included
+*p func('interior_change', 'jo9_html', '<div id = "bg"><img src="content/pic/bg/<<$bg[$place]>>.png"></div>')
+! JO9_INLINE_TEXT_PREFIX_20261015
+local $jo9_leading_empty = $strfind($text[txt], '^(\s|&nbsp;|<[bB][rR]\s*/?>)+')
+if $jo9_leading_empty ! '': $text[txt] = $mid($text[txt], len($jo9_leading_empty) + 1, len($text[txt]))
+! JO9 MOD END J9M1508
+*p '<div id = "text"><<$text[txt]>></div>'
+
+$info_bar = ''
+! JO9 MOD START J9M1507 | 2026-10-08_persistent_image_cycle | changed block; context may be included
+if nsfw = 0 and $npc_image[$npc_id] ! '': *p func('interior_change', 'jo9_html', '<div id = "bg"><img src="content\pic\characters\<<$npc_image[$npc_id]>>.png"></div>')
+! JO9 MOD END J9M1507
+!*p '<div id = "side_panel_main"><center><div style="font-size: 40px;"><<$npc_name[$npc_id]>></div><<$npc_status[$npc_id]>>'
+
+!참고 정보:
+!</center></div>
+!*p '<div id = "side_panel_text"><<$npc_attitude[npc_attitude[$npc_id]]>>'
+
+! <<$npc_info[$npc_id]>>
+!</div>
+
+! JO9 MOD START J9M1506 | 2026-10-08_persistent_image_cycle | changed block; context may be included
+if nsfw = 1: *p func('interior_change', 'jo9_html', '<div id = "bg"><img src="content/pic/bg/empty.png"></div>') & not_safe = 1
+! JO9 MOD END J9M1506
+
+$master_stats = ''
+$master_stats += '<<$master_str[master_str]>><br>'
+$master_stats += '<<$master_cha[master_cha]>><br>'
+$master_stats += '<<$master_style[master_style]>><br>'
+$master_stats += '<<$master_domination[master_domination]>><br>'
+$master_stats += '<<$brand[brand_reputation]>><br>'
+
+$slave_stats = ''
+$slave_stats += '등급:&nbsp;<<$rating[rating]>><br>'
+$slave_stats += '<<$charm_stat>><br>'
+
+*p '<div id = "side_panel_location">The Bargaining<br><font size="2">~ Jack-O-Nine-Tails 2.4.0.0 & Kor Ver ~</font></div>'
+*p '<div id = "haissibaljjangggae_tkwls"><img src = "<<$master_ava_color>>"></div>'
+*p '<div id = "jeongrijotnaanhane_tkwls"><img src = "<<$slave[''ava_clear'']>>.png"></div>'
+*p '<div id = "haissibaljjangggae_dlfma"><<$master_name>></div>'
+*p '<div id = "jeongrijotnaanhane_dlfma"><<$slave_name>></div>'
+*p '<div id = "haissibaljjangggae_tjfaud"><<$master_stats>></div>'
+*p '<div id = "jeongrijotnaanhane_tjfaud"><<$slave_stats>></div>'
+
+*p '<div id = "interaction_stat_bar"><<$info_bar>></div>'
+! JO9 MOD START J9M1505 | 2026-10-09_city_scene_menu_alignment | changed block; context may be included
+*p func('$menu', 'layout_style')
+*p '<div id="jo9_scene_menu" class="jo9_menu_scene"><<$text_display>></div>'
+! JO9 MOD END J9M1505
+
+! JO9 MOD END PROFILE_POLISH_20261025_R3
+! JO9 MOD END UI_RESOURCE_PATHS_20261027
+
+! JO9 MOD END BG_DIRECTORY_PREFIX_FIX_20261027

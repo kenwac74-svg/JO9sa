@@ -1,0 +1,35 @@
+$newloc:18
+if jo9_traits_revision < 3:
+ jo9_traits_revision = 3
+ gs '#static_base'
+ gs '#dynamic'
+ gs '#static_txt'
+ gs '#variative'
+ code_defined['newloc_update_iced_features_list'] = 0
+ code_defined['interaction_result_self_sex_lesson'] = 0
+ code_defined['interaction_result_make_slave_do'] = 0
+ first_visit['interaction_result'] = 0
+
+$newloc:19
+ jo9_traits_revision = 3
+ gs '#static_base'
+ gs '#dynamic'
+ gs '#static_txt'
+ gs '#variative'
+ code_defined['newloc_update_iced_features_list'] = 0
+ code_defined['interaction_result_self_sex_lesson'] = 0
+ code_defined['interaction_result_make_slave_do'] = 0
+ first_visit['interaction_result'] = 0
+ code_defined['interaction_result_milking_slave'] = 0
+
+#dynamic:3383
+$death = {
+	! Just print the message and wait for click anything for reading verify
+	!$_d_answer = input($args[0] + ' Restart the game.')
+	!killvar '$_d_answer'
+	day = 0 &! redirect ESC key to main menu
+	gt 'exit', $args[0]
+}
+
+!assistant rule reset (replaced $assistant_purge_rules with a single function for clear all or enable all) - ImperatorAugustus
+$reset_assistant_rules = {

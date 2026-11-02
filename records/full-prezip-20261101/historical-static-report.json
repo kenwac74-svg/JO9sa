@@ -1,0 +1,229 @@
+{
+  "file": "G:/somi/Jack O Nine Tails v2.4 Kor_Full/game/jack.qsp",
+  "sourceSha256": "a11ecde65897ab9c3d7bf736d0f539a35caa243c379e61a73ba6191241ef7755",
+  "mode": "READ_ONLY_STATIC",
+  "pass": true,
+  "checks": [
+    {
+      "name": "source-structure",
+      "pass": true,
+      "evidence": {
+        "file": "G:/somi/Jack O Nine Tails v2.4 Kor_Full/game/jack.qsp",
+        "sha256": "a11ecde65897ab9c3d7bf736d0f539a35caa243c379e61a73ba6191241ef7755",
+        "locations": 277
+      },
+      "limit": "Structure, line/marker boundaries and byte roundtrip only; native execution is separate."
+    },
+    {
+      "name": "catfight-start-three-win-guard",
+      "pass": true,
+      "evidence": {
+        "location": "$catfight_fight_start"
+      },
+      "limit": "Old prepared entry callback must be intercepted before battle initialization."
+    },
+    {
+      "name": "catfight-single-win-counter",
+      "pass": true,
+      "evidence": {
+        "locations": [
+          "выход_из_боя",
+          "interaction_city"
+        ]
+      },
+      "limit": "Source-level ownership only; full exit/result native suite is separate."
+    },
+    {
+      "name": "catfight-receipt-single-page",
+      "pass": true,
+      "evidence": {
+        "location": "interaction_city",
+        "purse100Assignments": 2
+      },
+      "limit": "Actual actor reward, one-page text and rendering paths are native checked separately."
+    },
+    {
+      "name": "dealer-current-cap",
+      "pass": true,
+      "evidence": {
+        "locations": [
+          "jo9_traits_value",
+          "slave_auction_sell_end"
+        ]
+      },
+      "limit": "Final payout cap, not a claim about every intermediate bid narration."
+    },
+    {
+      "name": "private-current-cap",
+      "pass": true,
+      "evidence": {
+        "locations": [
+          "interaction_city",
+          "interaction_result_city"
+        ],
+        "cityCalls": 3,
+        "resultCalls": 2
+      },
+      "limit": "Exact buyer dialogue/complete customer traversal is not executed here."
+    },
+    {
+      "name": "auction-custody-helper-present",
+      "pass": true,
+      "evidence": {
+        "locations": [
+          "jo9_farid_consignment",
+          "interaction_city"
+        ]
+      },
+      "limit": "Current helper and source caller link; native transactional tests carry the behavioral evidence."
+    },
+    {
+      "name": "gold-special-stock-present",
+      "pass": true,
+      "evidence": {
+        "locations": [
+          "interaction_city",
+          "master_stat"
+        ]
+      },
+      "limit": "No daily food consumption implementation is expected for these special stocks."
+    },
+    {
+      "name": "milk-report-template",
+      "pass": true,
+      "evidence": {
+        "location": "#var_base",
+        "roles": [
+          "slave",
+          "assistant",
+          "room1",
+          "room2",
+          "room3",
+          "room4"
+        ]
+      },
+      "limit": "Macro definitions only. Native popup close/DOM behavior and all room report clicks are not rerun in this narrow source check."
+    },
+    {
+      "name": "room-role-restore-hooks",
+      "pass": true,
+      "evidence": {
+        "location": "snk_room_bridge"
+      },
+      "limit": "Existing bridge and restore references are present; complete persona-array restoration needs dedicated native fixture or manual TC."
+    },
+    {
+      "name": "monster-stage-specific-paths",
+      "pass": true,
+      "evidence": {
+        "locations": [
+          "#противники",
+          "jo9_battle_fate"
+        ]
+      },
+      "limit": "Stage lookup is additionally included in isolated native suite."
+    },
+    {
+      "name": "group-single-cut-marker",
+      "pass": true,
+      "evidence": {
+        "location": "конец_боя"
+      },
+      "limit": "Only current implementation marker presence; renderer branch and all group file references also checked below."
+    },
+    {
+      "name": "group-eight-representatives-exist",
+      "pass": true,
+      "evidence": {
+        "manifest": "G:/somi/JO9sa/tools/mob-image-sets/group-sets.json",
+        "groups": [
+          {
+            "name": "검은 의사와 하인 3명",
+            "path": "content/pic/mob/defeated/groups/medic_group.png",
+            "exists": true
+          },
+          {
+            "name": "타우루스 성기사와 병사 2명",
+            "path": "content/pic/mob/defeated/groups/paladin_group.png",
+            "exists": true
+          },
+          {
+            "name": "고블린 2마리",
+            "path": "content/pic/mob/defeated/groups/goblin_pair.png",
+            "exists": true
+          },
+          {
+            "name": "고블린 3마리",
+            "path": "content/pic/mob/defeated/groups/goblin_trio.png",
+            "exists": true
+          },
+          {
+            "name": "가르시드와 수인 4명",
+            "path": "content/pic/mob/defeated/groups/garsid_group.png",
+            "exists": true
+          },
+          {
+            "name": "투기장 탈옥수 5명",
+            "path": "content/pic/mob/defeated/groups/prisoners_group.png",
+            "exists": true
+          },
+          {
+            "name": "수인 4인조 · 무작위 구성 대표 컷신",
+            "path": "content/pic/mob/defeated/groups/beastmen_group.png",
+            "exists": true
+          },
+          {
+            "name": "부랑자 5인조 · 무작위 구성 대표 컷신",
+            "path": "content/pic/mob/defeated/groups/vagrants_group.png",
+            "exists": true
+          }
+        ]
+      },
+      "limit": "Image existence and roster count; no visual composition judgment."
+    },
+    {
+      "name": "special-weapon-current-paths",
+      "pass": true,
+      "evidence": {
+        "locations": [
+          "$gladiator_setup",
+          "$catfighter_setup"
+        ],
+        "paths": [
+          "content/pic/ui/buttons/legacy/net_active.png",
+          "content/pic/ui/buttons/legacy/net_used.png",
+          "content/pic/ui/buttons/legacy/whip_active.png",
+          "content/pic/ui/buttons/legacy/whip_used.png",
+          "content/pic/ui/buttons/legacy/dual_active.png",
+          "content/pic/ui/buttons/legacy/dual_used.png",
+          "content/pic/ui/buttons/legacy/shield_active.png",
+          "content/pic/ui/buttons/legacy/shield_used.png",
+          "content/pic/ui/buttons/legacy/heavy_active.png",
+          "content/pic/ui/buttons/legacy/heavy_used.png"
+        ]
+      },
+      "limit": "No GUI click/hit-box or animation test; previous DOM probe is preserved as historical evidence only."
+    },
+    {
+      "name": "bankruptcy-relocation-helper",
+      "pass": true,
+      "evidence": {
+        "location": "jo9_liquidation_assets"
+      },
+      "limit": "Full multi-day bankruptcy lifecycle and quest-specific failure prose are not rendered."
+    },
+    {
+      "name": "character-registry",
+      "pass": true,
+      "evidence": {
+        "files": 1153,
+        "numericIds": 1153,
+        "issues": 0
+      },
+      "limit": "Registry validity only; no assertion that every external image is loaded in all old saves."
+    }
+  ],
+  "sourceUnchanged": true,
+  "productionWrites": false,
+  "imagesRendered": false
+}

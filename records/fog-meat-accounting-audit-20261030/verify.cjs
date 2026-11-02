@@ -1,0 +1,18 @@
+'use strict';
+const fs=require('fs'),assert=require('assert/strict'),path=require('path');
+const root='G:/somi/JO9sa',tmp='G:/Codex/tmp/fog-meat-accounting-audit-20261030';
+const c=require(root+'/tools/text-workshop/core.cjs'),s=require(root+'/tools/qa/save-codec.cjs');
+const input=JSON.parse(fs.readFileSync(__dirname+'/inputs.json','utf8'));
+const report=s.parse(fs.readFileSync(tmp+'/report.sav')),capture=s.parse(fs.readFileSync(tmp+'/capture.sav'));
+assert.equal(+s.value(report,'qa_fail')[0],0);
+const result={productionChanged:false,qspSha256:c.hash(fs.readFileSync(input.game+'/jack.qsp')),reportCases:input.reportCases.map((x,k)=>({...x,message:s.value(report,'$qa_message',undefined)[1]})),capture:{}};
+const messages=report.vars.find(v=>v.name==='QA_MESSAGE');
+result.reportCases=input.reportCases.map((x,k)=>({...x,message:messages.values[k][1]}));
+for(const name of ['decade_mince','decade_meat','decade_virgin','sparks'])result.capture[name]=+s.value(capture,name)[0];
+result.capture.fridgeMeat=+s.value(capture,'fridge','meat')[0];
+assert.deepEqual(result.capture,{decade_mince:0,decade_meat:4,decade_virgin:0,sparks:95,fridgeMeat:4});
+assert.equal(result.qspSha256,input.qspSha256);
+assert.equal(c.hash(fs.readFileSync(input.stateSave)),input.saveSha256);
+for(const x of result.reportCases)assert.equal(x.message.includes('육류'),!x.hidden);
+fs.writeFileSync(__dirname+'/verified-results.json',JSON.stringify(result,null,2));
+console.log(JSON.stringify({verified:true,reportCases:result.reportCases.length,capture:result.capture,workAndOriginalSaveUnchanged:true}));

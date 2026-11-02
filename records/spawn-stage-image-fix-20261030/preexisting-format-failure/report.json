@@ -1,0 +1,76 @@
+{
+  "schema": 1,
+  "createdAt": "2026-10-30T10:05:58.176Z",
+  "profile": "release",
+  "checks": [
+    {
+      "name": "inputs-readable",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "candidate": "0af6a6360cd1db80ba7efe88d868b7137326b95fc5e33ca435642b65f799bb89"
+      }
+    },
+    {
+      "name": "world-structure-and-line-endings",
+      "required": true,
+      "status": "FAIL",
+      "error": "Invalid line endings: 1",
+      "issues": [
+        {
+          "location": "billing",
+          "offset": 5886,
+          "line": 121,
+          "kind": "loneLF"
+        }
+      ]
+    },
+    {
+      "name": "slave-template-registry",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "files": 1153,
+        "numericIds": 1153,
+        "collisions": 0,
+        "invalidJson": 0,
+        "embeddedIdMismatches": 0
+      }
+    },
+    {
+      "name": "distribution-byte-match",
+      "required": false,
+      "status": "SKIP",
+      "reason": "No mirror specified; this run does not verify the distribution copy"
+    },
+    {
+      "name": "patch-replay-and-idempotence",
+      "required": true,
+      "status": "SKIP",
+      "reason": "Static inspection failed"
+    },
+    {
+      "name": "installed-client-smoke",
+      "required": true,
+      "status": "SKIP",
+      "reason": "A preceding check failed"
+    },
+    {
+      "name": "input-hashes-unchanged",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "files": 3
+      }
+    }
+  ],
+  "limits": [
+    "No GUI clicks or visual layout verification.",
+    "Save data is used only to prime representative state. GUI save-file loading, CRC compatibility and full saved script restoration are NOT tested.",
+    "Start is replaced only in diagnostic copies. Smoke covers lifecycle calls, not the character-selection UI or every gameplay branch.",
+    "No complete QSP syntax checker: dynamic code and all game logic are not statically proved.",
+    "Battle smoke instruments the menu dispatch only; full combat outcomes and balance are not tested."
+  ],
+  "verdict": "FAIL",
+  "output": "G:\\Codex\\tmp\\spawn-stage-image-release-final-20261030\\run-1Y2QGK"
+}

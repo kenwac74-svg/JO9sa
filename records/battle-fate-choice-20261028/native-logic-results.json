@@ -1,0 +1,129 @@
+{
+  "status": "PASS",
+  "createdUTC": "2026-10-27T18:42:43.662Z",
+  "cases": [
+    "init-fog",
+    "init-arena-regular",
+    "init-colosseum-master-unarmed",
+    "init-colosseum-master-whip",
+    "init-colosseum-master-shinobi",
+    "init-colosseum-master-armored",
+    "init-colosseum-master-amazon",
+    "init-colosseum-slave-unarmed",
+    "init-colosseum-slave-whip",
+    "init-colosseum-slave-shinobi",
+    "init-colosseum-slave-armored",
+    "init-colosseum-slave-amazon",
+    "init-colosseum-assistant-legacy-unarmed",
+    "init-colosseum-assistant-legacy-whip",
+    "init-colosseum-assistant-legacy-shinobi",
+    "init-colosseum-assistant-legacy-armored",
+    "init-colosseum-assistant-legacy-amazon",
+    "init-colosseum-assistant-unarmed",
+    "init-colosseum-assistant-whip",
+    "init-colosseum-assistant-shinobi",
+    "init-colosseum-assistant-armored",
+    "init-colosseum-assistant-amazon",
+    "init-special-egeya",
+    "init-special-erza",
+    "init-special-owned-slave",
+    "init-special-champion-corvus",
+    "init-special-champion-kamira",
+    "init-special-champion-serpis",
+    "init-special-champion-taurus",
+    "init-special-champion-vatican",
+    "init-special-champion-absolute",
+    "init-arena-nonhuman",
+    "init-arena-mixed-outside-allowlist",
+    "stage-slot-idempotent",
+    "choose-execute-duplicate-id",
+    "choose-spare-duplicate-id",
+    "choose-spare-hp-and-morale-same-id",
+    "choose-spare-clamps-negative-health-stamina",
+    "fog-spare-invalid",
+    "fallback-original-causes-once",
+    "result-opens-only-pending-victory",
+    "result-player-loss-flushes-once",
+    "old-save-committed-slot-not-repeated",
+    "old-save-uninitialized-no-new-choice",
+    "render-clears-cached-hit-effects",
+    "round-fog-hp-over-ko",
+    "round-fog-ko-over-morale",
+    "round-fog-morale-faints",
+    "round-fog-state-defeat",
+    "round-arena-hp",
+    "round-arena-ko",
+    "round-arena-morale",
+    "render-pending-preserves-state",
+    "render-spare-preserves-state-and-hud",
+    "render-execution-once-preserves-state",
+    "exit-pending-guard",
+    "exit-confirmed-once",
+    "exit-duplicate-stopped"
+  ],
+  "candidate": "G:\\Codex\\tmp\\battle-fate-20261028\\jack.candidate.qsp",
+  "stateSave": "G:\\somi\\Jack O Nine Tails v2.4_work\\game\\save\\1.sav",
+  "inputHashes": {
+    "candidate": "97c275cf3b51ec24962432b5664487ba80951c0898f26710d2222820ab4df1f8",
+    "stateSave": "f1017c082ef5c8edcc6b5ba59d2909b582492c52abe2ed7e52f08979dc53455e"
+  },
+  "hasProductionHelper": true,
+  "fixturePath": "G:\\Codex\\tmp\\battle-fate-20261028\\native-green-v4\\fate-native.qsp",
+  "diagnosticSeams": [
+    "Start",
+    "end-render completion tail",
+    "render-only helper branch for pending-exit sentinel",
+    "trait/fog finish counters",
+    "$newloc return counter",
+    "armor-removal invocation counter",
+    "interior_change HTML passthrough"
+  ],
+  "productionBodiesUnderTest": [
+    "jo9_battle_fate mutation/render branches",
+    "конец_раунда",
+    "конец_боя",
+    "выход_из_боя",
+    "$combat_variable_reset"
+  ],
+  "limits": [
+    "No production or original-save writes.",
+    "Not the official nine-path release gate.",
+    "HUD assertions inspect actual QSP MAINTXT, not DOM geometry, effects timing or GUI save-file loading.",
+    "Native PASS is claimed only after the real engine completion marker."
+  ],
+  "engineExecuted": true,
+  "resourcesLinked": [
+    {
+      "directory": "css",
+      "target": "G:\\Codex\\tmp\\battle-fate-20261028\\candidate-game\\css",
+      "copiedBytes": 0
+    },
+    {
+      "directory": "content",
+      "target": "G:\\Codex\\tmp\\battle-fate-20261028\\candidate-game\\content",
+      "copiedBytes": 0
+    },
+    {
+      "directory": "fonts",
+      "target": "G:\\somi\\Jack O Nine Tails v2.4_work\\game\\fonts",
+      "copiedBytes": 0
+    },
+    {
+      "directory": "json",
+      "target": "G:\\somi\\Jack O Nine Tails v2.4_work\\game\\json",
+      "copiedBytes": 0
+    }
+  ],
+  "baselineRed": false,
+  "expectedFailure": null,
+  "client": [
+    {
+      "name": "fate-native",
+      "checkpoint": "actual helper mutations, round staging, exit guard; downstream/display seams instrumented",
+      "pass": true,
+      "reason": "",
+      "durationMs": 3685
+    }
+  ],
+  "inputHashesUnchanged": true
+}

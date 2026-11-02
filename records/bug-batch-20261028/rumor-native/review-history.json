@@ -1,0 +1,81 @@
+{
+  "baseline": "dbe2948f7c827d8fc82ccd32b2c3453626d181a59eb744e015fa66a3846280ae",
+  "findings": [
+    {
+      "candidate": "5636a78a02d6fe4d3ccd8522498748414a4b3cae941d6c1128269f1419e06bd3",
+      "issue": "String.replace replacement token $' expanded the entire old tail inside the new dyneval string; source structurally corrupted.",
+      "evidence": "Independent source inspection, reported before native execution.",
+      "resolution": "Root changed replace calls to callback replacements and rebuilt from pinned baseline."
+    },
+    {
+      "candidate": "9a68d9024c4856b86d2ce36d66416ef32f731b7f5f68bc65ac6413bf14478b67",
+      "issue": "Obedience was cached before existing appraisal recalculated it; first quote 70, second explicit quote354, baseline first354.",
+      "evidence": "Actual native failure FAIL_RUMOR_dealer_explicit_0_farid_docile_0_0; captured tool output70 vs354.",
+      "resolution": "Root moved derived obedience/psy getters after appraisal."
+    },
+    {
+      "candidate": "f3739bb0a89bffd42c618555729d9814c6c40be7e421c2106740c3173fd0dab9",
+      "issue": "New nested GS appraisal overwrote shared global pricing context despite caller locals.",
+      "evidence": "Baseline104selectedvariables all preserved; candidate29pricingvariables changed. First four differences preserved in preservation-f373-diffs.json; full difference list recorded in audit tool output and root message.",
+      "affected": [
+        "MAX_SEX",
+        "SLAVE_MOOD_BONUS",
+        "BASE_MEAT_GAIN",
+        "MAXSUM",
+        "RELATIVE_FAT",
+        "SLAVEPRICE",
+        "IS_STOCK",
+        "SLAVE_BASE_PRICE",
+        "RELATIVE_RATING",
+        "SLAVE_OBEDIENCE_BONUS",
+        "CHARM",
+        "RATING_HELP",
+        "SLAVE_FEAR_BONUS",
+        "SLAVE_SPECIALISATION",
+        "MINCE_GAIN",
+        "MEAT_GAIN",
+        "SLAVE_OBEDIENCE_PENALTY",
+        "CHARM_FROM_AURA",
+        "SLAVE_NATURE",
+        "MINCE_BONUS",
+        "VIRGIN_MEAT_GAIN",
+        "CHARM_STAT",
+        "MEAT_PRICE",
+        "SKILL_SUM",
+        "RATING",
+        "HAGGLING_LIMIT",
+        "MAX_SKILL",
+        "MEAT_MAX",
+        "ATTRIBUTE_SUM"
+      ],
+      "resolution": "Root removed probe nested appraisal and is_stock reset; default slave path retained."
+    },
+    {
+      "candidate": "78daa7cf19d305a37ed3b1684e174e174dabe0b5e96fa2dca6ada28629a361fd",
+      "issue": "Unpaired ASCII apostrophe in new QSP comment swallowed following source; all candidate fixtures timed out while baseline passed.",
+      "evidence": "Same code with only comment apostrophe removed executed and reached next explicit assertion failure.",
+      "resolution": "Root changed caller apostrophe comment to isolated scan context."
+    },
+    {
+      "candidate": "e3655526884c012577c76b7e4fbfe24e3a3d6a9dfef5a14f11b8ca14dd61b046",
+      "issue": "Nested FUNC cannot implicitly read caller local rating; stale global rating caused wrong guild recommendation.",
+      "evidence": "scope.cjs native proof: caller local4 vs global731, callee saw731. scan probe local rating4 with guild100 vs private500, stale global0/auction6000 incorrectly selected guild.",
+      "resolution": "Root added explicit numeric appraisal arguments."
+    },
+    {
+      "candidate": "83085eb317ae604cf204eb4a36a292b00c57c03973c1842516d2c5b0fa7bf382",
+      "issue": "Explicit args were correct but local rating/base/price declarations ended with the inner IF block. After END, rating reverted to stale global0.",
+      "evidence": "83085-local-context.log args4,315,212 versus post-END rating0. Legacy dealer48 and optional actor96 checks pass;104state preservation passes; stale-global recommendation assertion fails.",
+      "resolution": "Resolved by root final candidate2e552163: unique quote-scoped local jo9_dealer_rating/base/price populated from explicit args or after legacy slave appraisal. All native suites passed."
+    }
+  ],
+  "final": {
+    "candidate": "2e552163187e89d98ff4caf3313b3ed7662b7576da89119791e09ea91f3a5b1d",
+    "status": "PASS",
+    "defaultQuoteScenariosCompared": 48,
+    "additionalActorAssertions": 96,
+    "scanAssertions": 58,
+    "preservedScratchAndActorVariables": 104,
+    "scanMixedActorVariables": 84
+  }
+}

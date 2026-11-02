@@ -1,0 +1,310 @@
+12671: ! JO9 MOD START J9M0747 | 2026-10-15_trim_leading_body_blank_lines | changed block; context may be included
+12672: 	$text[1] = '당신은 고객의 환심을 사기 위해, $<<sell_price>>의 가격으로 낮춰 팔았다. 원하던 만큼 이윤이 나진 않았지만, 고객과 좋은 관계를 유지하는 게 단기적인 이윤보다 더 중요하다.'
+12673: ! JO9 MOD END J9M0747
+12674: end
+12675: 
+12676: 
+12677: if interaction_city = 92:
+12678: 	npc = 1
+12679: 	$npc_id = 'mistress_angelika'
+12680: 	$place = 'guild_hall'
+12681: 	$return_lock = 'guild'
+12682: 	demand_rating['mistress_angelika'] = rating
+12683: 	if rating = 0: demand_rating['mistress_angelika'] = 1
+12684: 	!TODO: test this interaction
+12685: 	if npc_reveal['mistress_angelika'] < 1:
+12686: 		npc_reveal['mistress_angelika'] = 1
+12687: 		$special_action[4] = {
+12688: 			npc = 0
+12689: 			gt 'slave_sell'
+12690: 		}
+12691: 		copyarr '$text', '$auction_intro'
+12692: 	else
+12693: 		$text[1] = $auction_intro[3]
+12694: 		$special_action[2] = {
+12695: 			npc = 0
+12696: 			gt 'slave_sell'
+12697: 		}
+12698: 	end
+12699: end
+12700: 
+12701: !Auction of Branded Slaves
+12702: if interaction_city = 93:
+12703: 	if $place ! 'guild_hall': dynamic $transport_energy_drop
+12704: 	$place = 'guild_hall'
+12705: 	$return_lock = 'guild'
+12706: ! JO9 MOD START J9M0746 | 2026-10-15_trim_leading_body_blank_lines | changed block; context may be included
+12707: 	$text[1] = '<<$slave_name>>의 몸을 경매에 붙이겠습니까? 결정은 되돌릴 수 없습니다.'
+12708: ! JO9 MOD END J9M0746
+12709: 	$yes = {
+12710: 		interaction_city = 930
+12711: 		gt 'interaction_city'
+12712: 	}
+12713: 	$no = {
+12714: 		gt 'guild'
+12715: 	}
+12716: 	gt 'choice_screen'
+12717: end
+12718: 
+12719: if interaction_city = 930:
+12720: 	$place = 'guild_hall'
+12721: 	$return_lock = '$guild_auction'
+12722: ! JO9 MOD START J9M0745 | 2026-10-15_trim_leading_body_blank_lines | changed block; context may be included
+12723: 	$text[1] = '<<$slave_name>>(은)는 경매에 올랐다. 먼저, 고객들이 미리 그녀들을 살펴보고 의견을 정할 수 있게 하기 위해 그녀는 오늘 판매 예정이던 다른 노예들과 함께 음료와 스낵을 나르며 칵테일파티에 참가했다.'
+12724: ! JO9 MOD END J9M0745
+12725: end
+12726: 
+12727: ! JO9 MOD START TBV_AUCTION_REWARD_M_0 | 2026-10-17_trait_value
+12728: ! JO9 MOD START TBV_AUCTION_REWARD_M_1 | 2026-10-17_trait_value
+12729: if interaction_city = 931 and hero_choice < 100:
+12730: 	$place = 'guild_hall'
+12731: 	$return_lock = 'guild'
+12732: 	copyarr '$text', '$auction_flow'
+12733: 	if sound_on = 1: $play_sound[arrsize('$text')-1] = 'purse'
+12734: 	gs '$slave_price'
+12735: 	if brand_reputation <= rating/2: brand_rate += func('jo9_traits_value', 'reward', 'slave', rating/2)
+12736: ! JO9 MOD END TBV_AUCTION_REWARD_M_1
+12737: 	if guild_reputation <= rating/2: guild_reputation_rate += func('jo9_traits_value', 'reward', 'slave', 5 + rating)
+12738: ! JO9 MOD END TBV_AUCTION_REWARD_M_0
+12739: 	! JO9 MOD START SALE_CAP_B_AUCTION_PAYMENT_M_20261026
+12740: 	sparks_get = min(6000, sparks_get)
+12741: 	sparks += sparks_get
+12742: 	! JO9 MOD END SALE_CAP_B_AUCTION_PAYMENT_M_20261026
+12743: 	master_moodlet['pos_deal'] = 5
+12744: 	if slave['ill'] > 0: sold_ill_slave = 1 &! trigger follow-up event
+12745: 	if slave['parasite'] > 0: sold_parasite_slave = 1 &! trigger follow-up event
+12746: 	dynamic $clear_slave_instance, 'slave'
+12747: 
+12748: 	if guild_reputation > 1 and guild_abused_slave_gift = 0 and contract['active'] = 0:
+12749: ! JO9 MOD START J9M0744 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included
+12750: 		$text[] = '[여주인 안젤리카]<br>&nbsp;가우데테(기뻐하라), <<$master_name>>! 당신에게 제안이 하나 있어요. 방금 우리는 낙인 없는 노예 하나를 확보했는데, 그 아이는 지하 감옥에 쇠사슬로 묶인 채 있다가 걸상으로 자기 조련사의 머리를 내리쳤어요. 그는 상속인도 없이 죽었고, 그래서 그녀의 소유권은 길드로 귀속되었죠. 상태는 끔찍하지만 가능성은 있어요. 경매에 올리는 대신 당신에게 훈련시켜 보라고 당신 이름을 올려 두었어요. 어때요?'
+12751: 		$text[] = '[여주인 안젤리카]<br>&nbsp;당신 솜씨를 우리에게 보여 주겠어요?'
+12752: ! JO9 MOD END J9M0744
+12753: 		$special_action[arrsize('$text')-3] = { npc = 0 }
+12754: 		$special_action[arrsize('$text')-2] = { npc = 1 & $npc_id = 'mistress_angelika' }
+12755: 		$special_action[arrsize('$text')-1] = { npc = 9999 & gt 'choice_screen' }
+12756: 		$yes = {
+12757: 			guild_abused_slave_gift = 1
+12758: 			gs 'stock_to_slave_nogt'
+12759: 			slave['parasite'] = 0
+12760: 			slave['brand'] = 4
+12761: 			contract['active'] = 1
+12762: 			active[$quest[10]] = 1
+12763: 			contract['level'] = 8
+12764: 			$contract['specialisation'] = 'concubine'
+12765: 			interaction_city = 932
+12766: 			gt 'interaction_city'
+12767: 		}
+12768: 		$no = {
+12769: 			guild_abused_slave_gift = -1
+12770: 			dynamic $clear_slave_instance, 'stock'
+12771: 			interaction_city = 932
+12772: 			gt 'interaction_city'
+12773: 		}
+12774: 		$picture_type = 'stock_picture'
+12775: 		special_stock = 1093
+12776: 		gs 'generate_stock'
+12777: 		stock['ill'] = 10
+12778: 		stock['fat'] = 0 & stock['weight_before'] = 0
+12779: 		stock['scars'] = 4 & stock_rate['scars'] = 150
+12780: 		stock['bruises'] = 5 & stock_rate['bruises'] = 150
+12781: 		stock['beauty'] = 4 & stock_rate['beauty'] = 150 & stock['base_beauty'] = 4
+12782: 		stock['exotic'] = 2 & stock_rate['exotic'] = 20 & stock['base_exotic'] = 2
+12783: 		stock['fame'] = 1 & stock_rate['fame'] = 10
+12784: 		stock['opium_addiction'] = 5
+12785: 		stock['energy'] = -4
+12786: 		stock['stamina'] = 2
+12787: 		stock['ego'] = 3
+12788: 		stock['pride'] = 2
+12789: 		stock['temper'] = 1
+12790: 		stock['intellect'] = 5
+12791: 		stock['sensitivity'] = 1
+12792: 		stock['grace'] = 1 &! Graceful
+12793: 		local jo9x_draw_meekness = -1
+12794: 		if func('jo9_traits', 'allow', 'stock', 'meekness', jo9x_draw_meekness) = 1:
+12795: 		 stock['meekness'] = jo9x_draw_meekness &! Wayward
+12796: 		 gs 'jo9_traits', 'repair_exclusions', 'stock'
+12797: 		end
+12798: 		stock['nymphomania'] = -1 &! Frigid
+12799: 		stock['compassion'] = -1 &! Sadistic
+12800: 		stock['homosexualism'] = 2 &! Lesbian
+12801: 		stock['selfesteem'] = -1 &! Guilt Complex
+12802: 		stock['abuse_attitude'] = 2 &! Psi-Masochist
+12803: 		stock['masochism'] = 1 &! Accustomed to Pain
+12804: 		local jo9x_draw_deprivation_attitude = -1
+12805: 		if func('jo9_traits', 'allow', 'stock', 'deprivation_attitude', jo9x_draw_deprivation_attitude) = 1:
+12806: 		 stock['deprivation_attitude'] = jo9x_draw_deprivation_attitude &! Claustrophobic
+12807: 		 gs 'jo9_traits', 'repair_exclusions', 'stock'
+12808: 		end
+12809: 		gs '$stock_traits' &! prepare traits list for display
+12810: 	end
+12811: end
+12812: 
+12813: if interaction_city = 932 and hero_choice < 100:
+12814: 	$place = 'guild_hall'
+12815: 	$return_lock = 'guild'
+12816: 	npc = 1
+12817: 	$npc_id = 'mistress_angelika'
+12818: 	if guild_abused_slave_gift = 1:
+12819: ! JO9 MOD START J9M0743 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included
+12820: 		$text[1] = '[여주인 안젤리카]<br>&nbsp;아주 좋아요, <<$master_name>>! 그런 태도라면 멀리까지 가겠네요. 최소한 <<$slave_type_name[$contract["specialisation"]]>>, <<$rating[contract["level"]]>> 이상으로 만들어 오세요.'
+12821: ! JO9 MOD END J9M0743
+12822: 		guild_reputation_rate += 10
+12823: 	else
+12824: ! JO9 MOD START J9M0742 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included
+12825: 		$text[1] = '[여주인 안젤리카]<br>&nbsp;실망스럽네요, <<$master_name>>! 당신이 잃을 것은 우리의 존중뿐이었는데 말이에요.'
+12826: ! JO9 MOD END J9M0742
+12827: 		guild_reputation_rate -= 10
+12828: 	end
+12829: 
+12830: end
+12831: 
+12832: if interaction_city = 931 and hero_choice > 100:
+12833: 	$place = 'guild_hall'
+12834: 	$return_lock = 'guild'
+12835: 	copyarr '$text', '$auction_flow'
+12836: 	if sound_on = 1: $play_sound[arrsize('$text')-1] = 'purse'
+12837: 	gs '$slave_price'
+12838: ! JO9 MOD START TBV_AUCTION_REWARD_F_0 | 2026-10-17_trait_value
+12839: ! JO9 MOD START TBV_AUCTION_REWARD_F_1 | 2026-10-17_trait_value
+12840: 	if brand_reputation <= rating/2: brand_rate += func('jo9_traits_value', 'reward', 'slave', rating/2)
+12841: ! JO9 MOD END TBV_AUCTION_REWARD_F_1
+12842: 	if guild_reputation <= rating/2: guild_reputation_rate += func('jo9_traits_value', 'reward', 'slave', 5 + rating)
+12843: ! JO9 MOD END TBV_AUCTION_REWARD_F_0
+12844: 	! JO9 MOD START SALE_CAP_B_AUCTION_PAYMENT_F_20261026
+12845: 	sparks_get = min(6000, sparks_get)
+12846: 	sparks += sparks_get
+12847: 	! JO9 MOD END SALE_CAP_B_AUCTION_PAYMENT_F_20261026
+12848: 	master_moodlet['pos_deal'] = 5
+12849: 	if slave['ill'] > 0: sold_ill_slave = 1 &! trigger follow-up event
+12850: 	if slave['parasite'] > 0: sold_parasite_slave = 1 &! trigger follow-up event
+12851: 	dynamic $clear_slave_instance, 'slave'
+12852: 
+12853: 	if guild_reputation > 1 and guild_abused_slave_gift = 0 and contract['active'] = 0:
+12854: ! JO9 MOD START J9M0741 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included
+12855: 		$text[] = '[여주인 안젤리카]<br>&nbsp;가우데테(기뻐하라), <<$master_name>>! 훈련시켜야 할 노예가 하나 있는데, 아무도 맡고 싶어 하지 않으니 당신이 해야겠어요. 이건 선택지가 아니에요.'
+12856: 		$text[] = '[여주인 안젤리카]<br>&nbsp;다시 말하지만, 이건 선택지가 아니에요.'
+12857: ! JO9 MOD END J9M0741
+12858: 		$special_action[arrsize('$text')-3] = { npc = 0 }
+12859: 		$special_action[arrsize('$text')-2] = { npc = 1 & $npc_id = 'mistress_angelika' }
+12860: 		$special_action[arrsize('$text')-1] = { npc = 9999 & gt 'choice_screen' }
+12861: 		$yes = {
+12862: 			guild_abused_slave_gift = 1
+12863: 			gs 'stock_to_slave_nogt'
+12864: 			slave['parasite'] = 0
+12865: 			slave['brand'] = 4
+12866: 			contract['active'] = 1
+12867: 			active[$quest[10]] = 1
+12868: 			contract['level'] = 4
+12869: 			$contract['specialisation'] = 'artist'
+12870: 			interaction_city = 932
+12871: 			gt 'interaction_city'
+12872: 		}
+12873: 		$no = {
+12874: 			guild_abused_slave_gift = 1
+12875: 			gs 'stock_to_slave_nogt'
+12876: 			slave['parasite'] = 0
+12877: 			slave['brand'] = 4
+12878: 			contract['active'] = 1
+12879: 			active[$quest[10]] = 1
+12880: 			contract['level'] = 8
+12881: 			$contract['specialisation'] = 'concubine'
+12882: 			interaction_city = 932
+12883: 			gt 'interaction_city'
+12884: 		}
+12885: 		$picture_type = 'stock_picture'
+12886: 		special_stock = 1106
+12887: 		gs 'generate_stock'
+12888: 		stock['fat'] = 0 & stock['weight_before'] = 0
+12889: 		stock['beauty'] = 4 & stock_rate['beauty'] = 150 & stock['base_beauty'] = 4
+12890: 		stock['exotic'] = 2 & stock_rate['exotic'] = 20 & stock['base_exotic'] = 2
+12891: 		stock['energy'] = 2
+12892: 		stock['stamina'] = 4
+12893: 		stock['ego'] = 3
+12894: 		stock['pride'] = 0
+12895: 		stock['temper'] = 3
+12896: 		stock['intellect'] = 4
+12897: 		stock['sensitivity'] = 5
+12898: 		stock['grace'] = 1 &! Graceful
+12899: 		local jo9x_draw_meekness = 1
+12900: 		if func('jo9_traits', 'allow', 'stock', 'meekness', jo9x_draw_meekness) = 1:
+12901: 		 stock['meekness'] = jo9x_draw_meekness &! Disciplined
+12902: 		 gs 'jo9_traits', 'repair_exclusions', 'stock'
+12903: 		end
+12904: 		stock['compassion'] = -1 &! Sadistic
+12905: 		stock['homosexualism'] = 2 &! Lesbian
+12906: 		stock['selfesteem'] = -1 &! Guilt Complex
+12907: 		local jo9x_draw_deprivation_attitude = -1
+12908: 		if func('jo9_traits', 'allow', 'stock', 'deprivation_attitude', jo9x_draw_deprivation_attitude) = 1:
+12909: 		 stock['deprivation_attitude'] = jo9x_draw_deprivation_attitude &! Claustrophobic
+12910: 		 gs 'jo9_traits', 'repair_exclusions', 'stock'
+12911: 		end
+12912: 		gs '$stock_traits' &! prepare traits list for display
+12913: 	end
+12914: end
+12915: if interaction_city = 932 and hero_choice > 100:
+12916: 	$place = 'guild_hall'
+12917: 	$return_lock = 'guild'
+12918: 	npc = 1
+12919: 	$npc_id = 'mistress_angelika'
+12920: 	if guild_abused_slave_gift = 1:
+12921: ! JO9 MOD START J9M0740 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included
+12922: 		$text[1] = '[여주인 안젤리카]<br>&nbsp;그녀를 최소한 <<$slave_type_name[$contract["specialisation"]]>>, <<$rating[contract["level"]]>> 이상으로 만들어 오세요.'
+12923: ! JO9 MOD END J9M0740
+12924: 		guild_reputation_rate += 10
+12925: 	else
+12926: 		guild_abused_slave_gift = 1:
+12927: ! JO9 MOD START J9M0739 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included
+12928: 		$text[1] = '[여주인 안젤리카]<br>&nbsp;이건 부탁이 아니었어요.'
+12929: ! JO9 MOD END J9M0739
+12930: 		guild_reputation_rate -= 10
+12931: 	end
+12932: 
+12933: end
+12934: 
+12935: 
+12936: 
+12937: 
+12938: ! JO9 MOD START DEALER_WONG_OFFER | 2026-10-24_dealer_economy
+12939: if interaction_city = menu_subpurchaser:
+12940:  local jo9_dealer_offer = func('jo9_traits_value', 'dealer_quote', 'wong')
+12941:  $place = 'guild_hall'
+12942:  $return_lock = 'guild'
+12943:  npc = 1
+12944:  $npc_id = 'master_vong'
+12945:  $text[1] = '[마스터 봉]<br>길드 계약의 조건에 맞지 않는 노예도 몸 상태와 배운 솜씨에 따라 매입하지. 다만 특정 구매자의 취향에 맞춰 직접 거래하는 것보다는 값이 낮다.'
+12946:  $text[2] = $speculator_text[rating]
+12947:  if difficulty_setting = 2 and rating > 0: $text[2] = $replace($text[2], $str(auction_price[rating]), $str(jo9_dealer_offer))
+12948:  if difficulty_setting = 0 or difficulty_setting = 1: $text[2] = '[마스터 봉]<br>현재 몸 상태와 교육 정도를 기준으로 $<<jo9_dealer_offer>>에 매입하겠네. 이 조건으로 넘기겠나?'
+12949:  if (rating > 0 or difficulty_setting = 0 or difficulty_setting = 1) and jo9_dealer_offer > 0 and slave['brand'] > 0:
+12950:   $jo9_dealer_wong_name = $slave_name
+12951:   jo9_dealer_wong_type = slave_type
+12952:   jo9_dealer_wong_quote = jo9_dealer_offer
+12953:   $special_action[2] = { gt 'choice_screen' }
+12954:   $yes = 'gs ''jo9_traits_value'', ''dealer_wong_finish'', ' + str(slave['id'])
+12955:   $no = { gt 'guild' }
+12956:  end
+12957: end
+12958: ! JO9 MOD END DEALER_WONG_OFFER
+12959: 
+12960: if interaction_city = 95:
+12961: 	$place = 'guild_hall'
+12962: 	$return_lock = 'guild'
+12963: 	copyarr '$display_options', '$expert_options'
+12964: 	gt 'shop_general'
+12965: end
+12966: 
+12967: if interaction_city = 951:
+12968: 	$place = 'guild_hall'
+12969: 	$return_lock = 'interaction_city' & interaction_city = 95
+12970: 	npc = 1
+12971: 	$npc_id = 'master_skups'
+12972: 	copyarr '$text','$expert_explanation'
+12973: end
+12974: 
+12975: if interaction_city = 9511:
+12976: 	$place = 'guild_hall'
+12977: 	$return_lock = 'guild'
+12978: 	expert_looks_for_slave = 1
+12979: 	full_search_cost = search['cost'] * 70
+12980: 	npc = 1

@@ -1,0 +1,6 @@
+'use strict';
+// Correct only the test's entry phase. Production phase3 correctly rejects repeated settlement.
+const fs=require('fs'),assert=require('assert/strict'),c=require('G:/somi/JO9sa/tools/text-workshop/core.cjs');
+const T='G:/Codex/tmp/full-prezip-20261101-historical-a11ecde6',p=T+'/catfight-settlement/catfight-settlement.qsp',raw=fs.readFileSync(p),d=c.parse(raw),l=d.locations.find(x=>x.name==='qa_cf_next');
+const b=c.shift(d.lines[l.body],5),before="jo9_fate['phase']=3",after="jo9_fate['phase']=2";assert.equal(b.split(before).length-1,4);d.lines[l.body]=c.shift(b.split(before).join(after),-5);const next=c.serialize(d);assert.equal(c.parse(next).locations.length,d.locations.length);fs.writeFileSync(p,next);
+const m=JSON.parse(fs.readFileSync(T+'/prepared.json','utf8'));m.cases.find(x=>x.name==='catfight-settlement').diagnosticSha256=c.hash(next);m.fixtureCorrections=[...(m.fixtureCorrections||[]),'Catfight probe entered already-settled phase3, correctly causing the production idempotence guard to exit; corrected synthetic entry to ready-to-settle phase2.'];fs.writeFileSync(T+'/prepared.json',JSON.stringify(m,null,2));fs.writeFileSync(__dirname+'/native-historical-prepared.json',JSON.stringify(m,null,2));console.log(JSON.stringify({diagnosticOnly:true,phaseEntriesCorrected:4,sha256:c.hash(next)}));

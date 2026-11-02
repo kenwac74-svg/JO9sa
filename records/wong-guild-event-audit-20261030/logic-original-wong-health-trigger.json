@@ -1,0 +1,220 @@
+{
+  "WORK": [],
+  "ORIGINAL": [
+    {
+      "location": "interaction_city",
+      "line": 11288,
+      "text": ""
+    },
+    {
+      "location": "interaction_city",
+      "line": 11289,
+      "text": ""
+    },
+    {
+      "location": "interaction_city",
+      "line": 11290,
+      "text": ""
+    },
+    {
+      "location": "interaction_city",
+      "line": 11291,
+      "text": "if interaction_city = menu_subpurchaser:"
+    },
+    {
+      "location": "interaction_city",
+      "line": 11292,
+      "text": "\tgs '$slave_price'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 11293,
+      "text": "\t$place = 'guild_hall'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 11294,
+      "text": "\t$return_lock = 'guild'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 11295,
+      "text": "\tnpc = 1"
+    },
+    {
+      "location": "interaction_city",
+      "line": 11296,
+      "text": "\t$npc_id = 'master_vong'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 11297,
+      "text": "\t$text[1] = '  [마스터 봉]<br>- 여주인 안젤리카가 받지 않는 잡것들은 대부분 내가 맡지. 그래도 길드 계약을 이행하고 싶다면, 그녀를 찾아가 네가 준비한 노예를 넘겨야 한다. 꾸중 듣는 걸 좋아하지 않는다면, 먼저 모든 요구 사항을 충족했는지 확실히 해 둬라.'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 11298,
+      "text": "\t$text[2] = $speculator_text[rating]"
+    },
+    {
+      "location": "interaction_city",
+      "line": 11299,
+      "text": "\tif $slave_psy_status = 'broken': $text[2] = $replace($text[2], $str(auction_price[rating]), $str(auction_price[rating] - (4*auction_price[rating])/5)) &! subtract 80% from value if mind-broken"
+    },
+    {
+      "location": "interaction_city",
+      "line": 11300,
+      "text": "\tif rating > 0:"
+    },
+    {
+      "location": "interaction_city",
+      "line": 11301,
+      "text": "\t\t$special_action[2] = { gt 'choice_screen' }"
+    },
+    {
+      "location": "interaction_city",
+      "line": 11302,
+      "text": "\t\t$yes = {"
+    },
+    {
+      "location": "interaction_city",
+      "line": 11303,
+      "text": "\t\t\tgs '$slave_price' &! make sure we are still using the correct rating"
+    },
+    {
+      "location": "interaction_city",
+      "line": 11304,
+      "text": "\t\t\tif guild_reputation <= rating/2: guild_reputation_rate += 5 + rating"
+    },
+    {
+      "location": "interaction_city",
+      "line": 11305,
+      "text": "\t\t\tsparks += auction_price[rating]"
+    },
+    {
+      "location": "interaction_city",
+      "line": 11306,
+      "text": "\t\t\tif $slave_psy_status = 'broken': sparks -= (4*auction_price[rating])/5 &! subtract 80% from value if mind-broken"
+    },
+    {
+      "location": "interaction_city",
+      "line": 11307,
+      "text": "\t\t\tif sound_on = 1: play $large_money_sound, sound_volume"
+    },
+    {
+      "location": "interaction_city",
+      "line": 11308,
+      "text": "\t\t\tif slave['ill'] > 0: gave_guild_ill_slave = 1 &! trigger follow-up event"
+    },
+    {
+      "location": "interaction_city",
+      "line": 11309,
+      "text": "\t\t\tif slave['parasite'] > 0: gave_guild_parasite_slave = 1 &! trigger follow-up event"
+    },
+    {
+      "location": "interaction_city",
+      "line": 11310,
+      "text": "\t\t\tdynamic $clear_slave_instance, 'slave'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 11311,
+      "text": "\t\t\tmaster_moodlet['pos_deal'] = 3"
+    },
+    {
+      "location": "interaction_city",
+      "line": 11312,
+      "text": "\t\t\tgt 'guild'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 11313,
+      "text": "\t\t}"
+    },
+    {
+      "location": "interaction_city",
+      "line": 11314,
+      "text": "\t\t$no = {"
+    },
+    {
+      "location": "interaction_city",
+      "line": 11315,
+      "text": "\t\t\tgt 'guild'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 11316,
+      "text": "\t\t}"
+    },
+    {
+      "location": "interaction_city",
+      "line": 11317,
+      "text": "\tend"
+    },
+    {
+      "location": "interaction_city",
+      "line": 11318,
+      "text": "end"
+    },
+    {
+      "location": "interaction_city",
+      "line": 11319,
+      "text": ""
+    },
+    {
+      "location": "interaction_city",
+      "line": 11320,
+      "text": "if interaction_city = 95:"
+    },
+    {
+      "location": "interaction_city",
+      "line": 11321,
+      "text": "\t$place = 'guild_hall'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 11322,
+      "text": "\t$return_lock = 'guild'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 11323,
+      "text": "\tcopyarr '$display_options', '$expert_options'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 11324,
+      "text": "\tgt 'shop_general'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 11325,
+      "text": "end"
+    },
+    {
+      "location": "interaction_city",
+      "line": 11326,
+      "text": ""
+    },
+    {
+      "location": "interaction_city",
+      "line": 11327,
+      "text": "if interaction_city = 951:"
+    },
+    {
+      "location": "interaction_city",
+      "line": 11328,
+      "text": "\t$place = 'guild_hall'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 11329,
+      "text": "\t$return_lock = 'interaction_city' & interaction_city = 95"
+    },
+    {
+      "location": "interaction_city",
+      "line": 11330,
+      "text": "\tnpc = 1"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "status": "confirmed-P2-by-root-native-engine",
+  "severity": "P2",
+  "sourceSha256": "78835089f1dc8d0d5272f991926f35fa40e7e26dede5970a3fc03612967c130d",
+  "title": "Qualified automatic cut resets saved selection before each real toggle",
+  "base": "content/pic/scene/qa_toggle.png",
+  "ownedFixtureFilesNeeded": [
+    "content/pic/scene/qa_toggle.png",
+    "content/pic/scene/qa_toggle (2).png",
+    "content/pic/scene/qa_toggle (3).png",
+    "content/pic/scene/qa_toggle (4).png"
+  ],
+  "rules": [
+    {"base":"content/pic/scene/qa_toggle.png","path":"content/pic/scene/qa_toggle (2).png","morality":null,"money":{"op":"ge","value":100},"rank":null,"reputation":null},
+    {"base":"content/pic/scene/qa_toggle.png","path":"content/pic/scene/qa_toggle (3).png","morality":null,"money":{"op":"ge","value":100},"rank":null,"reputation":null}
+  ],
+  "qspSetup": [
+    "sparks = 100",
+    "jo9_cut_choice['content/pic/scene/qa_toggle.png'] = 0",
+    "$qa_html = func('interior_change', 'jo9_html', '<div><img src=\"content/pic/scene/qa_toggle.png\"></div>')",
+    "*clr",
+    "*p $qa_html"
+  ],
+  "qspActions": [
+    "gs 'interior_change', 'jo9_toggle'",
+    "gs 'interior_change', 'jo9_toggle'",
+    "gs 'interior_change', 'jo9_toggle'",
+    "gs 'interior_change', 'jo9_toggle'"
+  ],
+  "expected": "With stable conditions, manual cycling traverses all four eligible images and wraps: initial B, then C, D, A, B.",
+  "actual": "Native engine confirmed initial B, then C, B, C, B: selected IDs 10002|10003|10002|10003|10002. A and D cannot be displayed through the real toggle control. Both one-rule and two-rule fixtures reproduce the failure.",
+  "nativeEvidence": {
+    "report": "../toggle-native-report.json",
+    "execution": "Original jo9_html followed by four original jo9_toggle calls in root-owned isolated native fixtures",
+    "plainControl": {"checks":5,"failures":0,"actualSequence":"0|10002|10003|10004|0"},
+    "oneRule": {"checks":5,"failures":2,"actualSequence":"10002|10003|10002|10003|10002"},
+    "twoRules": {"checks":5,"failures":2,"actualSequence":"10002|10003|10002|10003|10002"},
+    "workUnchanged": true
+  },
+  "releaseScope": "Confirmed regression in the latest WORK appearance-condition feature. The intentionally unsynchronized latest Kor_Full does not contain this feature; this finding is not a claim that every release is blocked.",
+  "rootCause": "jo9_toggle captures saved selection, then calls jo9_path without mode (numeric zero). The new SELECT hook forces the lowest qualifying cut. When saved C differs from forced B, jo9_toggle skips its mode1 call and replaces C with B. Pure mode1 tests do not execute this path.",
+  "proposedFixOnly": "Have manual toggle normalize/filter its saved candidate without applying the automatic mode0 preference, then cycle among eligible active paths; retain automatic lowest-cut preference when a scene is freshly rendered. Keep mode2's already-rendered path identification and existing saved IDs intact. Add repeated real jo9_toggle regression cases with 3+ active paths, one configured cut, multiple matching cuts, and conditions changing. No production code has been edited."
+}

@@ -1,0 +1,127 @@
+! JO9 MOD START RUMOR_MATCH_PURE | 2026-10-24_buyer_rumors
+! Inputs: buyer id, simple or house or full mode, no charm flag.
+! Probe arrays and appraised rating, charm, spec are prepared by the caller.
+! This matcher reads those inputs and returns only numeric result.
+! Native metadata writes only isolated temporary requirement arrays.
+local $jo9_rumor_match_buyer = $args[0]
+local $jo9_rumor_match_mode = $args[1]
+local jo9_rumor_match_no_charm = args[2]
+local jo9_rumor_match_charm_min = 6
+local jo9_rumor_match_lock = 0
+local $jo9_rumor_match_code = ''
+result = 0
+killvar 'jo9_rumor_match_demand'
+killvar '$jo9_rumor_match_demand'
+killvar 'jo9_rumor_match_importance'
+killvar '$jo9_rumor_match_importance'
+if $jo9_rumor_match_buyer = '': jump 'jo9_rumor_match_done'
+if $jo9_rumor_match_mode ! 'simple' and $jo9_rumor_match_mode ! 'house' and $jo9_rumor_match_mode ! 'full': jump 'jo9_rumor_match_done'
+if jo9_rumor_probe_state <= CONST_INT['no_slave']: jump 'jo9_rumor_match_done'
+if jo9_rumor_rating < demand_rating[$jo9_rumor_match_buyer]: jump 'jo9_rumor_match_done'
+
+if demand_rating[$jo9_rumor_match_buyer] >= 3: jo9_rumor_match_charm_min = 12
+if demand_rating[$jo9_rumor_match_buyer] >= 5: jo9_rumor_match_charm_min = 18
+if demand_rating[$jo9_rumor_match_buyer] >= 7: jo9_rumor_match_charm_min = 24
+if demand_rating[$jo9_rumor_match_buyer] >= 9: jo9_rumor_match_charm_min = 38
+jo9_rumor_match_lock = jo9_rumor_probe[$jo9_rumor_match_buyer]
+if jo9_rumor_match_lock > 0 and day - jo9_rumor_match_lock >= 10: jo9_rumor_match_lock = 0
+
+! Native simple and house entry checks consume no metadata.
+! An expired lock is treated as cleared without changing the probe.
+if $jo9_rumor_match_mode = 'simple' or $jo9_rumor_match_mode = 'house':
+ if jo9_rumor_match_lock ! 0: jump 'jo9_rumor_match_done'
+ if $jo9_rumor_match_mode = 'simple':
+  if jo9_rumor_spec[$interesting_specialisation[$jo9_rumor_match_buyer]] < demand_rating[$jo9_rumor_match_buyer] / 2: jump 'jo9_rumor_match_done'
+ end
+ if jo9_rumor_charm < jo9_rumor_match_charm_min and jo9_rumor_match_no_charm = 0: jump 'jo9_rumor_match_done'
+end
+if jo9_rumor_probe['wounds'] > 0 or jo9_rumor_probe['energy'] < 0 or jo9_rumor_probe['stamina'] < 2: jump 'jo9_rumor_match_done'
+if jo9_rumor_probe['rehabilitation'] > 0 or $jo9_rumor_probe_psy_status = 'broken': jump 'jo9_rumor_match_done'
+if jo9_rumor_probe['pregnant'] > 0 and jo9_rumor_probe['pregnant_revealed'] > 0: jump 'jo9_rumor_match_done'
+if $jo9_rumor_match_mode = 'simple': result = 1 & jump 'jo9_rumor_match_done'
+
+! Full matches native slave_sell_chek. House also requires its entry checks.
+! Full does not add an active lock refusal absent from the native checker.
+jo9_rumor_match_demand['refuse_age'] = 99
+jo9_rumor_match_demand['max_exotic'] = 99
+jo9_rumor_match_demand['max_fat'] = 99
+jo9_rumor_match_demand['min_fat'] = 1
+$jo9_rumor_match_code = replace($buyer_demand[$jo9_rumor_match_buyer], 'demand[', 'jo9_rumor_match_demand[')
+dynamic $jo9_rumor_match_code
+if jo9_rumor_probe['age'] = jo9_rumor_match_demand['refuse_age']: jump 'jo9_rumor_match_done'
+if jo9_rumor_match_demand['agree_age'] ! 0:
+ if jo9_rumor_probe['age'] ! iif(no_loli = 1 and jo9_rumor_match_demand['agree_age'] = CONST_INT['loli_age'], CONST_INT['young_age'], jo9_rumor_match_demand['agree_age']): jump 'jo9_rumor_match_done'
+end
+if jo9_rumor_match_demand['nowitches'] = 1:
+ if jo9_rumor_probe['alchemy'] > 0 or jo9_rumor_probe['enchanter'] > 0: jump 'jo9_rumor_match_done'
+end
+if jo9_rumor_match_demand['pure'] = 1:
+ if jo9_rumor_probe['oral'] > 1 or jo9_rumor_probe['penetration'] > 1 or jo9_rumor_probe['roleplay'] > 1 or jo9_rumor_probe['fetishism'] > 1 or jo9_rumor_probe['orgy'] > 1 or jo9_rumor_probe['xenophily'] > 1: jump 'jo9_rumor_match_done'
+end
+if jo9_rumor_match_demand['noperversion'] = 1:
+ if jo9_rumor_probe['fetishism'] > 1 or jo9_rumor_probe['xenophily'] > 1 or (jo9_rumor_probe['perversion'] > 0 and jo9_rumor_probe['perversion_revealed'] > 0): jump 'jo9_rumor_match_done'
+end
+if jo9_rumor_match_demand['notattoos'] = 1:
+ if jo9_rumor_probe['tattoo'] > 1: jump 'jo9_rumor_match_done'
+end
+if jo9_rumor_match_demand['virginity'] = 1:
+ if jo9_rumor_probe['virginity'] > 1: jump 'jo9_rumor_match_done'
+end
+if jo9_rumor_match_demand['selftorture'] > 0:
+ if jo9_rumor_probe['sub_selfpain'] < jo9_rumor_match_demand['selftorture']: jump 'jo9_rumor_match_done'
+end
+if jo9_rumor_match_demand['specialisation'] = 1 or $jo9_rumor_match_mode = 'house':
+ if jo9_rumor_spec[$interesting_specialisation[$jo9_rumor_match_buyer]] < demand_rating[$jo9_rumor_match_buyer] / 2: jump 'jo9_rumor_match_done'
+end
+if jo9_rumor_match_demand['artist'] > 0:
+ if max(jo9_rumor_probe['calisthenics'], jo9_rumor_probe['music'], jo9_rumor_probe['art']) < jo9_rumor_match_demand['artist']: jump 'jo9_rumor_match_done'
+end
+if jo9_rumor_match_demand['slave_name_for_Marquis_de_s'] = 1:
+ if jo9_rumor_probe_state = CONST_INT['slave_exist'] and $jo9_rumor_probe_name ! '줄리엣': jump 'jo9_rumor_match_done'
+end
+if jo9_rumor_probe['exotic'] > jo9_rumor_match_demand['max_exotic']: jump 'jo9_rumor_match_done'
+if jo9_rumor_probe['exotic'] < jo9_rumor_match_demand['min_exotic']: jump 'jo9_rumor_match_done'
+if jo9_rumor_probe['beauty'] < jo9_rumor_match_demand['min_beauty']: jump 'jo9_rumor_match_done'
+if jo9_rumor_probe['fat'] < jo9_rumor_match_demand['min_fat']: jump 'jo9_rumor_match_done'
+if jo9_rumor_probe['fat'] > jo9_rumor_match_demand['max_fat']: jump 'jo9_rumor_match_done'
+if jo9_rumor_probe['hygiene'] > 3: jump 'jo9_rumor_match_done'
+if $jo9_rumor_match_mode = 'full':
+ if jo9_rumor_charm < jo9_rumor_match_charm_min: jump 'jo9_rumor_match_done'
+end
+
+$jo9_rumor_match_code = replace($npc_preferences[$jo9_rumor_match_buyer], 'stat_importance[', 'jo9_rumor_match_importance[')
+dynamic $jo9_rumor_match_code
+if jo9_rumor_match_importance['sensitivity'] > jo9_rumor_probe['sensitivity']: jump 'jo9_rumor_match_done'
+if jo9_rumor_match_importance['temper'] > jo9_rumor_probe['temper']: jump 'jo9_rumor_match_done'
+if jo9_rumor_match_importance['intellect'] > jo9_rumor_probe['intellect']: jump 'jo9_rumor_match_done'
+if jo9_rumor_match_importance['ego'] > jo9_rumor_probe['ego']: jump 'jo9_rumor_match_done'
+if jo9_rumor_match_importance['pride'] > 0 and jo9_rumor_match_importance['pride'] < jo9_rumor_probe['pride']: jump 'jo9_rumor_match_done'
+if jo9_rumor_match_importance['service'] > jo9_rumor_probe['service']: jump 'jo9_rumor_match_done'
+if jo9_rumor_match_importance['cook'] > jo9_rumor_probe['cook']: jump 'jo9_rumor_match_done'
+if jo9_rumor_match_importance['secretary'] > jo9_rumor_probe['secretary']: jump 'jo9_rumor_match_done'
+if jo9_rumor_match_importance['expression'] > jo9_rumor_probe['expression']: jump 'jo9_rumor_match_done'
+if jo9_rumor_match_importance['nurse'] > jo9_rumor_probe['nurse']: jump 'jo9_rumor_match_done'
+if jo9_rumor_match_importance['alchemy'] > jo9_rumor_probe['alchemy']: jump 'jo9_rumor_match_done'
+if jo9_rumor_match_importance['enchanter'] > jo9_rumor_probe['enchanter']: jump 'jo9_rumor_match_done'
+if jo9_rumor_match_importance['gladiatrix'] > jo9_rumor_probe['gladiatrix']: jump 'jo9_rumor_match_done'
+if jo9_rumor_match_importance['calisthenics'] > jo9_rumor_probe['calisthenics']: jump 'jo9_rumor_match_done'
+if jo9_rumor_match_importance['music'] > jo9_rumor_probe['music']: jump 'jo9_rumor_match_done'
+if jo9_rumor_match_importance['art'] > jo9_rumor_probe['art']: jump 'jo9_rumor_match_done'
+if jo9_rumor_match_importance['pet'] > jo9_rumor_probe['pet']: jump 'jo9_rumor_match_done'
+if jo9_rumor_match_importance['cowSK'] > jo9_rumor_probe['cowSK']: jump 'jo9_rumor_match_done'
+if jo9_rumor_match_importance['dressage'] > jo9_rumor_probe['dressage']: jump 'jo9_rumor_match_done'
+if jo9_rumor_match_importance['animal'] > max(jo9_rumor_probe['pet'], jo9_rumor_probe['dressage'], jo9_rumor_probe['cowSK']): jump 'jo9_rumor_match_done'
+if jo9_rumor_match_importance['petting'] > jo9_rumor_probe['petting']: jump 'jo9_rumor_match_done'
+if jo9_rumor_match_importance['oral'] > jo9_rumor_probe['oral']: jump 'jo9_rumor_match_done'
+if jo9_rumor_match_importance['penetration'] > jo9_rumor_probe['penetration']: jump 'jo9_rumor_match_done'
+if jo9_rumor_match_importance['orgy'] > jo9_rumor_probe['orgy']: jump 'jo9_rumor_match_done'
+if jo9_rumor_match_importance['roleplay'] > jo9_rumor_probe['roleplay']: jump 'jo9_rumor_match_done'
+if jo9_rumor_match_importance['fetishism'] > jo9_rumor_probe['fetishism']: jump 'jo9_rumor_match_done'
+if jo9_rumor_match_importance['xenophily'] > jo9_rumor_probe['xenophily']: jump 'jo9_rumor_match_done'
+result = 1
+:jo9_rumor_match_done
+killvar 'jo9_rumor_match_demand'
+killvar '$jo9_rumor_match_demand'
+killvar 'jo9_rumor_match_importance'
+killvar '$jo9_rumor_match_importance'
+! JO9 MOD END RUMOR_MATCH_PURE

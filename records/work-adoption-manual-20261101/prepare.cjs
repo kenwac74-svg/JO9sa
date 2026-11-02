@@ -1,0 +1,11 @@
+'use strict';
+const fs=require('fs'),a=require('assert/strict'),R='G:/somi/JO9sa',W='G:/somi/Jack O Nine Tails v2.4_work/game',T='G:/Codex/tmp/work-adoption-build-20261101';
+const c=require(R+'/tools/text-workshop/core.cjs'),qa=require(R+'/tools/qa/release-check.cjs'),sc=require(R+'/tools/qa/save-codec.cjs');
+const proposal=JSON.parse(fs.readFileSync(R+'/records/qa-bounty-241-20261101/conditions/fix-proposal.json','utf8')),raw=fs.readFileSync(W+'/jack.qsp'),doc=c.parse(raw);
+qa.assertOutside(T,[R,W]);a(!fs.existsSync(T));fs.mkdirSync(T,{recursive:true});
+const e=proposal.edits[0],l=doc.locations.find(x=>x.name===e.location),body=c.shift(doc.lines[l.body],5);a.equal(body.split(e.old).length-1,1,'Exact validated old call must appear once');
+doc.lines[l.body]=c.shift(body.replace(e.old,()=>e.new),-5);const candidate=c.serialize(doc);qa.inspectWorld(candidate);if(c.hash(raw)===proposal.before_sha256)a.equal(c.hash(candidate),proposal.after_sha256);
+fs.writeFileSync(T+'/before.qsp',raw);fs.writeFileSync(T+'/candidate.qsp',candidate);fs.mkdirSync(T+'/mods');
+const mod={id:'2026-11-01_image_cut_conditions_toggle_mode3',description:'조건 이미지 자동 우선 선택과 수동 전환 검증을 분리하여 모든 적격 컷을 순환',before_sha256:c.hash(raw),after_sha256:c.hash(candidate),edits:proposal.edits};fs.writeFileSync(T+'/mods/'+mod.id+'.json',JSON.stringify(mod,null,2));
+const source='G:/somi/Jack O Nine Tails v2.4 Kor_Full/game/save/TC_01_HOME_TRAITS.sav',saveRaw=fs.readFileSync(source),state=sc.parse(saveRaw);a(sc.serialize(state).equals(saveRaw));state.vars.find(v=>v.name==='GAME_VER').values[0][1]='잭 오 나인 테일 v2.4.1 Kor Ver';fs.writeFileSync(T+'/state.sav',sc.serialize(state));
+const report={root:T,before:c.hash(raw),candidate:c.hash(candidate),modId:mod.id,world:qa.inspectWorld(candidate),sourcePublicSave:source,sourcePublicSaveHash:c.hash(saveRaw),latestManualChangesPreserved:true};fs.writeFileSync(__dirname+'/prepared.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report));

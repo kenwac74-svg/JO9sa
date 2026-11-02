@@ -1,0 +1,66 @@
+{
+  "scope": "Read-only review of qsp.md sections 2.1 and 2.3; no implementation or game/save/source modification",
+  "target": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+  "sha256": "5d7c16b17d9aa0c1bb9c818c67521b2693a32a2db068742fbe7072f2dd8343cd",
+  "review": "G:/somi/Jack O Nine Tails v2.4_work/game/content/modworkpic/qsp.md",
+  "lineConvention": "Decoded location body, CRLF split, one-based lines; core.cjs parse/shift only",
+  "findings": [
+    {
+      "id": "2.1",
+      "verdict": "Duplicate condition confirmed; proposed fix is an existing-variable behavior change, not tooltip-only. Claimed urgent normal-play impact is not demonstrated because the availability variable is derived before menu generation.",
+      "evidence": [
+        "menu_form:2598 begins menu_form=235",
+        "menu_form:2630 if dungeon=0; 2632 elseif dungeon=0; 2634 elseif assistant[sub_polypusvermin]<=5; 2635 active goto call",
+        "menu_form:53 executes gs '$newloc' before composing the menu",
+        "$newloc:191-197 forces polypusvermin=1 when dungeon=1 and 0 otherwise; extended_rental_cheat>0 also forces dungeon=1 and polypusvermin=1 at 199-210",
+        "menu_form:2267-2276 slave counterpart already uses elseif polypusvermin=0",
+        "json/menu_item.json maps menu_polypus_assistant=7024 and menu_polypus=1356",
+        "$menu:20-24 and 34-39 generate EXEC interaction=7024 & gt interaction and record its shortcut; exec branch at 68-74 uses empty command",
+        "interaction:5329 selects self_sex_lesson_assistant and dynamically substitutes assistant into cached lesson code; 5299-5301 select skill/xp progression; 5304-5324 define state effects; 13026 jumps to interaction_result",
+        "interaction_result:979-981 runs the common self-lesson result implementation; no dungeon/polypusvermin check occurs anywhere in that location"
+      ],
+      "minimumCandidate": "Replace only menu_form:2632 elseif dungeon=0 with elseif polypusvermin=0, after explicit functional-change approval.",
+      "normalStateResult": "For dungeon in {0,1}, upstream refresh makes before/after branches identical. dungeon=0 shows no-dungeon gray item; dungeon=1 permits training for skill<=5 and shows max-skill gray item for skill>5.",
+      "counterexample": "Synthetic/edited state dungeon=2, skill=0, extended_rental_cheat=0 becomes polypusvermin=0 after $newloc. Current branch yields active 7024; proposed branch yields gray no-polypus. The scan found ordinary direct numeric dungeon assignments of 0/1, not an ordinary route setting 2. This is a behavioral counterexample, not a proven player bug.",
+      "saveImpact": "No new saved variable, array, ID, migration or cached-code replacement is needed. Existing saved character/property data need not be reset. Rebuilt menu and shortcut commands can change in inconsistent dungeon/polypus states; therefore zero gameplay impact cannot be promised. Saved HTML/shortcuts may remain until redraw and need old-SAV load testing.",
+      "validationNeeded": [
+        "Isolated before/after actual-engine check of dungeon 0/1, skill 0/5/6, and optional synthetic dungeon=2",
+        "Check generated link plus keyboard shortcut; reopening menu after loading an existing SAV",
+        "If a normal no-polypus-with-dungeon state is intended, investigate the upstream derivation separately instead of expanding this one-line cleanup"
+      ]
+    },
+    {
+      "id": "2.3.hero_creation",
+      "verdict": "Confirmed logic-equivalent cleanup candidate with no new saved state and no intended change to available links, faction fame, hero_points or initialization.",
+      "evidence": [
+        "hero_creation:512 checks estate=korvus_house and faction_fame[korvus]=1 and faction_purchase_korvus=0 and estate!=white_house",
+        "hero_creation:513-519 contains faction enable/disable links and point-changing branches; removing the last conjunct preserves selection of these exact branches",
+        "estate=korvus_house necessarily implies estate!=white_house"
+      ],
+      "minimumCandidate": "Remove only the final and $estate ! 'white_house' from hero_creation:512.",
+      "excludedScope": "hero_creation:522/532/542 also contain redundant OR exclusions after a fixed estate equality; 528/538/548 contain always-true inequality OR expressions. Converting those latter ORs to AND changes generated faction links and behavior and is outside this equivalence-only candidate.",
+      "saveImpact": "No variable/ID/array changes or migration. Existing-SAV schema and values unaffected. This is creation-screen source cleanup; existing gameplay SAVs normally do not return here without starting over.",
+      "validation": "Projected Boolean comparison over 8 estate equivalence representatives x 3 fame values x 3 purchase values: 72 cases, 0 mismatches. This is static logic evidence, not QSP engine validation.",
+      "validationNeeded": ["Exact patch replay/structure/comment boundaries", "Isolated engine parse and relevant creation-screen faction-button comparison if approved"]
+    },
+    {
+      "id": "2.3.init_game",
+      "verdict": "Confirmed repeated idempotent writes; removing the later three-line set is a logic-equivalent cleanup candidate.",
+      "evidence": [
+        "init_game:237-239 assigns active[$quest[1]], active[$quest[3]], active[$quest[11]] to 1",
+        "init_game:241-242 assigns only active[$quest[304]] and active[$quest[18]] to 1",
+        "init_game:244-246 repeats the identical first three assignments; no call or quest-array change intervenes",
+        "main_menu:27 invokes start_refresh, 37 refresh_database, and 38 init_game. The only explicit code caller of init_game found in the current decoded QSP is main_menu:38."
+      ],
+      "minimumCandidate": "Delete init_game:244-246, preserving the first set and both statistics assignments. A duplicated adjacent comment may be removed with the same reviewed patch.",
+      "saveImpact": "No new or renamed saved variables, state reset, migration or data format change. Existing SAV quest progression is not the target of init_game; both versions write the same final active values when init_game is called.",
+      "validation": "Projected repeated-assignment comparison across all 3^5=243 mappings of five quest names to three keys, including aliases: 0 final-state mismatches. Static projection only.",
+      "validationNeeded": ["Exact patch replay/structure/comment boundaries", "Isolated new-game initialization and actual-engine validation if approved; existing-SAV load still belongs to overall patch verification"]
+    }
+  ],
+  "limits": [
+    "No QSP was written or exported; no SAV was read or modified; no Full/source/game file modification.",
+    "No actual QSP engine, save-load, UI, or player-path verification was performed by this read-only subtask.",
+    "The target hash was rechecked after analysis and remained identical."
+  ]
+}

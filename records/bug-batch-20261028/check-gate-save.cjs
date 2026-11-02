@@ -1,0 +1,3 @@
+const fs=require('node:fs'),sc=require('G:/somi/JO9sa/tools/qa/save-codec.cjs');
+for(const name of ['1.sav','JO9_GOLD_AP_CHECK_20261026.sav']){const d=sc.parse(fs.readFileSync('G:/somi/Jack O Nine Tails v2.4_work/game/save/'+name));console.log(name);for(const v of d.vars)if(/^(GAME_VER|TITLE_FIX|SLAVE_STATE|ASSISTANT_STATE|HERO_CHOICE)$/.test(v.name))console.log(JSON.stringify({name:v.name,value:v.values[0],count:v.values.length}));}
+const log=fs.readFileSync('G:/Codex/tmp/jo9-approved-gate-20261028/run-Y9iTNv/client/newgame-stderr.log');console.log(new TextDecoder('euc-kr').decode(log).split(/\r?\n/).filter(s=>s.includes('showMessage')).join('\n'));

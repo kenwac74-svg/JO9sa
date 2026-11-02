@@ -1,0 +1,196 @@
+! JO9 MOD START DEALER_QUOTE | 2026-10-24_dealer_economy
+! In-game difficulty_setting: 1 easy, 0 normal, 2 original hard; creation difficulty does not select the payout.
+! JO9 MOD START RUMOR_GUILD_QUOTE_SHARED_20261028
+if $args[0] = 'dealer_quote':
+ local $jo9_dealer_vendor = $args[1]
+ ! JO9 MOD START RUMOR_GUILD_QUOTE_ACTOR_20261028
+ local $jo9_dealer_actor = $args[2]
+ if $jo9_dealer_actor = '': $jo9_dealer_actor = 'slave'
+ if $jo9_dealer_actor ! 'slave' and $jo9_dealer_actor ! 'jo9_rumor_probe': result = 0 & exit
+ local jo9_dealer_rating = args[3]
+ local jo9_dealer_base = args[4]
+ local jo9_dealer_price = args[5]
+ local jo9_dealer_state = dyneval('result = ' + $jo9_dealer_actor + '_state')
+ local jo9_dealer_brand = dyneval('result = ' + $jo9_dealer_actor + "['brand']")
+ ! JO9 MOD END RUMOR_GUILD_QUOTE_ACTOR_20261028
+ result = 0
+ if $jo9_dealer_actor = 'slave': killvar 'is_stock'
+ if $jo9_dealer_vendor ! 'farid' and $jo9_dealer_vendor ! 'wong': exit
+ if jo9_dealer_state ! CONST_INT['slave_exist'] and jo9_dealer_state ! CONST_INT['slave_faint']: exit
+ if snk_room_target > 0: exit
+ if difficulty_setting = 2 and $jo9_dealer_vendor = 'farid' and jo9_dealer_brand = 0: is_stock = 1
+ ! The rumor probe receives explicit appraisal inputs from the isolated scan.
+ if $jo9_dealer_actor = 'slave':
+  gs '$slave_price', $jo9_dealer_actor
+  jo9_dealer_rating = rating
+  jo9_dealer_base = slave_base_price
+  jo9_dealer_price = slaveprice
+ end
+ ! Read derived values after the existing appraisal recalculates them.
+ local jo9_dealer_obedience = dyneval('result = ' + $jo9_dealer_actor + "['obedience']")
+ local $jo9_dealer_psy = $dyneval('$result = $' + $jo9_dealer_actor + '_psy_status')
+ if difficulty_setting = 0 or difficulty_setting = 1:
+  ! Native attribute price already includes versatile; apply it once to the independent grade candidate too.
+  local jo9_dealer_grade_price = func('jo9_traits_value', 'base_price', $jo9_dealer_actor, common_price[jo9_dealer_rating])
+  local jo9_dealer_value = max(30, jo9_dealer_base * 3 / 2, jo9_dealer_grade_price)
+  if jo9_dealer_obedience < 1: jo9_dealer_value = jo9_dealer_value * 20 / 100
+  ! Keep the original Wong broken-state depreciation, separate from current obedience.
+  if $jo9_dealer_vendor = 'wong' and $jo9_dealer_psy = 'broken': jo9_dealer_value -= 4 * jo9_dealer_value / 5
+  result = jo9_dealer_value * iif(difficulty_setting = 1, 90, 75) / 100
+ else
+  if $jo9_dealer_vendor = 'farid': result = max(10, jo9_dealer_price / 2)
+  if $jo9_dealer_vendor = 'wong':
+   local jo9_dealer_value = auction_price[jo9_dealer_rating]
+   if $jo9_dealer_psy = 'broken': jo9_dealer_value -= 4 * auction_price[jo9_dealer_rating] / 5
+   result = func('jo9_traits_value', 'base_price', $jo9_dealer_actor, jo9_dealer_value)
+  end
+ end
+ ! JO9 MOD START SALE_CAP_B_DEALER_QUOTE_20261026
+ result = min(6000, result)
+ ! JO9 MOD END SALE_CAP_B_DEALER_QUOTE_20261026
+ exit
+end
+! JO9 MOD END RUMOR_GUILD_QUOTE_SHARED_20261028
+! JO9 MOD END DEALER_QUOTE
+
+! JO9 MOD START DEALER_WONG_FINISH | 2026-10-24_dealer_economy
+if $args[0] = 'dealer_wong_finish':
+ local jo9_dealer_expected_id = args[1]
+ if slave_state ! CONST_INT['slave_exist'] and slave_state ! CONST_INT['slave_faint']: gt 'guild'
+ if slave['id'] ! jo9_dealer_expected_id or slave['brand'] < 1 or snk_room_target > 0: gt 'guild'
+ if $jo9_dealer_wong_name ! '' and $jo9_dealer_wong_name ! $slave_name: gt 'guild'
+ if jo9_dealer_wong_type ! 0 and jo9_dealer_wong_type ! slave_type: gt 'guild'
+ local jo9_dealer_payment = func('jo9_traits_value', 'dealer_quote', 'wong')
+ if jo9_dealer_wong_quote > 0 and jo9_dealer_payment ! jo9_dealer_wong_quote: gt 'guild'
+ if difficulty_setting = 2 and rating < 1: gt 'guild'
+ if jo9_dealer_payment < 1: gt 'guild'
+ if guild_reputation <= rating / 2: guild_reputation_rate += func('jo9_traits_value', 'reward', 'slave', 5 + rating)
+ if sound_on = 1: play $large_money_sound, sound_volume
+ if slave['ill'] > 0: gave_guild_ill_slave = 1
+ if slave['parasite'] > 0: gave_guild_parasite_slave = 1
+ dynamic $clear_slave_instance, 'slave'
+ sparks += jo9_dealer_payment
+ killvar '$jo9_dealer_wong_name'
+ killvar 'jo9_dealer_wong_type'
+ killvar 'jo9_dealer_wong_quote'
+ master_moodlet['pos_deal'] = 3
+ gt 'guild'
+end
+! JO9 MOD END DEALER_WONG_FINISH
+
+! JO9 MOD START TBV_HELPER | 2026-10-17_trait_value
+! Feature helper: actor arrays are addressed through the existing instance name convention.
+! refresh recomputes appearance before adding the trait, so repeated evaluation is idempotent.
+$jo9_trait_value_mode = $args[0]
+$jo9_trait_value_actor = $args[1]
+jo9_trait_value_amount = args[2]
+jo9_trait_value_saved_peerless = args[3]
+result = 0
+if $jo9_trait_value_mode = 'reward':
+ result = jo9_trait_value_amount
+ if $jo9_trait_value_actor ! '': jo9_trait_value_saved_peerless = dyneval('result = ' + $jo9_trait_value_actor + "['jo9_peerless']")
+ ! Round the added half upward; zero and negative existing awards stay unchanged.
+ if jo9_trait_value_saved_peerless = 1 and result > 0: result += (result + 1) / 2
+ jump 'jo9_trait_value_done'
+end
+! JO9 MOD START VERSATILE_GRANT_DISPATCH | 2026-10-24_versatile_fame
+if $jo9_trait_value_actor = '': jump 'jo9_trait_value_done'
+if $jo9_trait_value_mode = 'grant_versatile': jump 'jo9_trait_value_grant_versatile'
+! JO9 MOD END VERSATILE_GRANT_DISPATCH
+if $jo9_trait_value_mode = 'refresh':
+ dynamic $replace({
+  jo9_trait_value_rate = max(cont_atr_min, min(cont_atr_max, dynslave_rate['beauty'])) + dynslave_rate['temp_beauty']
+  jo9_trait_value_grade = 0
+  if jo9_trait_value_rate >= cont_atr_threshold[1]: jo9_trait_value_grade = 1
+  if jo9_trait_value_rate >= cont_atr_threshold[2]: jo9_trait_value_grade = 2
+  if jo9_trait_value_rate >= cont_atr_threshold[3]: jo9_trait_value_grade = 3
+  if jo9_trait_value_rate >= cont_atr_threshold[4]: jo9_trait_value_grade = 4
+  if jo9_trait_value_rate >= cont_atr_threshold[5]: jo9_trait_value_grade = 5
+  dynslave['beauty'] = jo9_trait_value_grade
+  if dynslave['jo9_peerless'] = 1: dynslave['beauty'] = min(6, dynslave['beauty'] + 1)
+  ! Every individual grade printed in the knowledge and ST columns must reach A (4).
+! JO9 MOD START VERSATILE_AUTO_GRANT | 2026-10-24_versatile_fame
+  if dynslave['jo9_versatile'] = 0 and dynslave['jo9_versatile_manual_off'] = 0 and min(min(dynslave['service'], dynslave['cook'], dynslave['secretary'], dynslave['expression'], dynslave['nurse'], dynslave['alchemy'], dynslave['enchanter'], dynslave['stamina']), min(dynslave['gladiatrix'], dynslave['calisthenics'], dynslave['music'], dynslave['art'], dynslave['pet'], dynslave['dressage'], dynslave['cowSK'], dynslave['petting']), min(dynslave['oral'], dynslave['penetration'], dynslave['orgy'], dynslave['roleplay'], dynslave['fetishism'], dynslave['xenophily'], dynslave['nipplefuck'], dynslave['lesbiansex'])) >= 4: $jo9_trait_value_mode = 'grant_versatile'
+! JO9 MOD END VERSATILE_AUTO_GRANT
+! JO9 MOD START VERSATILE_AUTO_DISPATCH | 2026-10-24_versatile_fame
+ }, 'dyn'+'slave', $jo9_trait_value_actor)
+ if $jo9_trait_value_mode = 'grant_versatile': jump 'jo9_trait_value_grant_versatile'
+ jump 'jo9_trait_value_done'
+end
+if $jo9_trait_value_mode = 'base_price':
+! JO9 MOD END VERSATILE_AUTO_DISPATCH
+ result = jo9_trait_value_amount
+ if dyneval('result = ' + $jo9_trait_value_actor + "['jo9_versatile']") = 1: result += result / 4
+ jump 'jo9_trait_value_done'
+end
+if $jo9_trait_value_mode = 'surgery':
+ ! Called before the original cost/history changes. Only current top appearance is eligible.
+ dynamic $replace({
+  if dynslave['beauty'] = 5 and dynslave['jo9_peerless'] = 0 and rand(1,100) <= 5:
+   dynslave['jo9_peerless'] = 1
+   dynslave['beauty'] = 6
+   msg '수술이 대성공하여, 한층 빛나는 절세의 미모를 얻었다.'
+  end
+ }, 'dyn'+'slave', $jo9_trait_value_actor)
+ jump 'jo9_trait_value_done'
+end
+if $jo9_trait_value_mode = 'premium':
+ result = dyneval($replace({
+  result = 0
+  if dynslave['virginity'] = 4 or dynslave['jo9_peerless'] = 1: result = 1
+ }, 'dyn'+'slave', $jo9_trait_value_actor))
+ jump 'jo9_trait_value_done'
+end
+if $jo9_trait_value_mode = 'haggle':
+ result = dyneval($replace({
+  result = jo9_trait_value_amount
+  if dynslave['virginity'] = 4 and dynslave['jo9_peerless'] = 1: result += result / 2
+ }, 'dyn'+'slave', $jo9_trait_value_actor))
+ jump 'jo9_trait_value_done'
+end
+if $jo9_trait_value_mode = 'market' or $jo9_trait_value_mode = 'auction':
+ result = jo9_trait_value_amount
+ result = dyneval($replace({
+  result = jo9_trait_value_amount
+  if dynslave['virginity'] = 4 or dynslave['jo9_peerless'] = 1:
+   if $jo9_trait_value_mode = 'market': result *= 10
+   if $jo9_trait_value_mode = 'auction': result *= 2
+   if dynslave['virginity'] = 4 and dynslave['jo9_peerless'] = 1: result += result / 2
+  end
+ }, 'dyn'+'slave', $jo9_trait_value_actor))
+ jump 'jo9_trait_value_done'
+end
+! JO9 MOD START VERSATILE_FAME_GRANT | 2026-10-24_versatile_fame
+jump 'jo9_trait_value_done'
+:jo9_trait_value_grant_versatile
+dynamic $replace({
+ if dynslave['jo9_versatile'] = 0:
+  dynslave['jo9_versatile'] = 1
+  ! Grant one displayed fame grade through the original continuous attribute source.
+  jo9_trait_value_rate = max(cont_atr_min, min(cont_atr_max, dynslave_rate['fame'])) + dynslave_rate['temp_fame']
+  jo9_trait_value_grade = 0
+  if jo9_trait_value_rate >= cont_atr_threshold[1]: jo9_trait_value_grade = 1
+  if jo9_trait_value_rate >= cont_atr_threshold[2]: jo9_trait_value_grade = 2
+  if jo9_trait_value_rate >= cont_atr_threshold[3]: jo9_trait_value_grade = 3
+  if jo9_trait_value_rate >= cont_atr_threshold[4]: jo9_trait_value_grade = 4
+  if jo9_trait_value_rate >= cont_atr_threshold[5]: jo9_trait_value_grade = 5
+  if jo9_trait_value_grade < 5: dynslave_rate['fame'] = max(cont_atr_min, min(cont_atr_max, max(dynslave_rate['fame'], cont_atr_threshold[jo9_trait_value_grade + 1] - dynslave_rate['temp_fame'])))
+  jo9_trait_value_rate = max(cont_atr_min, min(cont_atr_max, dynslave_rate['fame'])) + dynslave_rate['temp_fame']
+  jo9_trait_value_grade = 0
+  if jo9_trait_value_rate >= cont_atr_threshold[1]: jo9_trait_value_grade = 1
+  if jo9_trait_value_rate >= cont_atr_threshold[2]: jo9_trait_value_grade = 2
+  if jo9_trait_value_rate >= cont_atr_threshold[3]: jo9_trait_value_grade = 3
+  if jo9_trait_value_rate >= cont_atr_threshold[4]: jo9_trait_value_grade = 4
+  if jo9_trait_value_rate >= cont_atr_threshold[5]: jo9_trait_value_grade = 5
+  dynslave['fame'] = jo9_trait_value_grade
+ end
+}, 'dyn'+'slave', $jo9_trait_value_actor)
+:jo9_trait_value_done
+! JO9 MOD END VERSATILE_FAME_GRANT
+killvar '$jo9_trait_value_mode'
+killvar '$jo9_trait_value_actor'
+killvar 'jo9_trait_value_amount'
+killvar 'jo9_trait_value_saved_peerless'
+killvar 'jo9_trait_value_rate'
+killvar 'jo9_trait_value_grade'
+! JO9 MOD END TBV_HELPER

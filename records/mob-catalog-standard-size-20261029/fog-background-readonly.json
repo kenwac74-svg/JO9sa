@@ -1,0 +1,59 @@
+{
+  "readOnly": true,
+  "qspSha256": "6b6348b7009d4efb3e9e291b72217515b0f71dd523c38a6b745303d7a16a5632",
+  "assignment": {
+    "location": "#place_base",
+    "line": 47,
+    "code": "$bg['edge_patrol'] = 'edge_of_mists<<rand(1,2)>>'"
+  },
+  "fogCombat": [
+    {
+      "location": "боевой_интерфейс",
+      "conditionLine": 105,
+      "imageLine": 107
+    },
+    {
+      "location": "конец_боя",
+      "conditionLine": 57,
+      "imageLine": 59
+    }
+  ],
+  "baseAssets": [
+    {
+      "path": "content/pic/bg/edge_of_mists1.png",
+      "width": 795,
+      "height": 596,
+      "sha256": "eefe1a0f3cce3e43e573606c7088592a49fb1a2cd742ca15cbfa7c0b2fc127ba"
+    },
+    {
+      "path": "content/pic/bg/edge_of_mists2.png",
+      "width": 795,
+      "height": 596,
+      "sha256": "0d1aec3e0e8b09f89e53bab7f216754155d41059d0517df803e9987ca3b86f62"
+    }
+  ],
+  "variant": {
+    "path": "content/pic/bg/edge_of_mists2 (2).png",
+    "width": 795,
+    "height": 596,
+    "source": "interior_change:140-144"
+  },
+  "nonCombatUses": [
+    {
+      "location": "city_screen",
+      "line": 20,
+      "expression": "$bg[$place]"
+    },
+    {
+      "location": "choice_screen",
+      "line": 24,
+      "expression": "$bg[$place]"
+    }
+  ],
+  "otherCombatAssets": [
+    "content/pic/ui/jo9_battle_test_v01/arena.png",
+    "content/pic/ui/grimdark/bg/fight.png",
+    "content/pic/bg/fight.png"
+  ],
+  "conclusion": "Replacing fog A assets does not alter arena/event background files, but also changes fog exploration. A combat-only new image needs two fog-branch render-path edits."
+}

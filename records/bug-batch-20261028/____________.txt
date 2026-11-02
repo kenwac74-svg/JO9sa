@@ -1,0 +1,633 @@
+! JO9 MOD START BATTLE_FATE_CHOICE_20261028
+if jo9_fate['mode'] > 0:
+ if jo9_fate['phase'] = 1: gt 'jo9_battle_fate', 'render'
+ if jo9_fate['phase'] = 3: exit
+ if jo9_fate['phase'] = 2: jo9_fate['phase'] = 3
+end
+! JO9 MOD END BATTLE_FATE_CHOICE_20261028
+! JO9 MOD START J9M2909 | 2026-10-10_restore_private_room_ui | changed block; context may be included
+if snk_room_target > 0 and $curloc = 'выход_из_боя': gs 'snk_room_bridge', 'guard', 'выход_из_боя'
+! JO9 MOD END J9M2909
+! JO9 MOD START FOG_COMPANION_FINISH | 2026-10-17_fog_relay
+!CALCULATION OF COMBAT RESULTS
+! JO9 MOD START TRAITS_COMBAT_WIN | 2026-10-17_traits_batch
+gs 'jo9_traits_combat', 'finish'
+! JO9 MOD END TRAITS_COMBAT_WIN
+gs 'jo9_fog_relay', 'finish'
+! JO9 MOD END FOG_COMPANION_FINISH
+!resume city sounds after the fight (if not at home)
+if is_home = 0: dynamic $city_sounds
+
+!for arena fight
+if $fight_return = 'Start':
+	$fight_return = ''
+	dynamic $master_energy_drop
+	slave['energy'] = -3
+	if $итог_боя = 'убит':
+		a = rand (1,6)
+		if a > slave['stamina']: interaction_city = 1291 & gt 'interaction_city'
+		slave_rate["wounds"] += rand(80,100)
+	end
+	if $итог_боя = 'бегство' or $итог_боя = 'вырубился' or $итог_боя = 'убит':
+		slave['winning_series'] = 0
+		if slave['arena_level'] > 0: slave['arena_level'] -= 1
+		b = rand(0,3)
+		gladiator_valor = slave['temper'] - slave['loser_rating']
+		if b > gladiator_valor:
+			interaction_city = 1292
+		else
+			interaction_city = 1293
+			slave_rate["wounds"] += rand(40,80)
+		end
+	end
+	if $итог_боя = 'вырубился':
+		slave['loser_rating'] += 100
+	end
+	if $итог_боя = 'победа':
+		slave['winning_series'] += 1
+		slave_rate["wounds"] += rand(11,25)
+		interaction_city = 1294
+		if slave['arena_level'] < 5:
+			slave['arena_level'] += 1
+			if slave['arena_level'] = 5:
+				if slave['loser_rating'] = 0:
+					interaction_city = 1295
+				else
+					interaction_city = 1294
+				end
+			else
+				interaction_city = 1294
+			end
+		end
+		if slave['arena_level'] >= 5 and $slave['trademark_style'] = '': $slave['trademark_style'] = $g_type
+	end
+	gt 'interaction_city'
+end
+
+
+
+
+!Catfight Club
+if $fight_return = 'Start1':
+    $fight_return = ''
+    dynamic $master_energy_drop
+    slave['energy'] = -3
+
+    if $итог_боя = 'убит':
+        a = rand(1,6)
+        if a > slave['stamina']:
+            interaction_city = 103002 & gt 'interaction_city'
+        end
+        slave_rate["wounds"] += rand(80,100)
+    end
+
+    if $итог_боя = 'бегство' or $итог_боя = 'вырубился':
+        slave['winning_series'] = 0
+        ! JO9 MOD START CATFIGHT_CUMULATIVE_LOSS | 2026-10-24_catfight_win_limit
+        ! catfight_level은 누적 승수이므로 패배로 감소하지 않는다.
+        ! JO9 MOD END CATFIGHT_CUMULATIVE_LOSS
+        b = rand(0,3)
+        gladiator_valor = slave['temper'] - slave['loser_rating']
+        if b > gladiator_valor:
+            interaction_city = 103003
+        else
+            interaction_city = 103004
+            slave_rate["wounds"] += rand(40,80)
+        end
+        if $итог_боя = 'вырубился':
+            slave['loser_rating'] += 1
+        end
+        $return_lock = 'goto_loc'
+        gt 'interaction_city'
+    end
+
+    if $итог_боя = 'победа':
+        slave['winning_series'] += 1
+        slave_rate["wounds"] += rand(11,25)
+        interaction_city = 103005
+        ! JO9 MOD START CATFIGHT_SINGLE_WIN | 2026-10-24_catfight_win_limit
+        ! 전투 종료에서만 승리당 한 번 가산한다. 기존 저장 승수는 역산하지 않는다.
+        slave['catfight_level'] += 1
+! JO9 MOD START CATFIGHT_FAME_REWARD | 2026-10-24_contest_fame
+        local jo9_catfight_fame = 0
+        if slave['catfight_level'] = 1: jo9_catfight_fame = 10
+        if slave['catfight_level'] = 2 or slave['catfight_level'] = 3: jo9_catfight_fame = 3
+        if slave_rate['fame'] < cont_atr_max: slave_rate['fame'] += min(jo9_catfight_fame, cont_atr_max - slave_rate['fame'])
+! JO9 MOD END CATFIGHT_FAME_REWARD
+        ! JO9 MOD END CATFIGHT_SINGLE_WIN
+        $return_lock = 'goto_loc'
+        gt 'interaction_city'
+    end
+end
+
+
+
+
+
+
+
+!Increase master whip skill if used a whip (кнут) or lash (нагайка) for the battle as primary (оружие) or secondary (вторичный) weapon
+if combatant = 0 and ($оружие = 'кнут' or $оружие = 'нагайка' or $вторичный = 'кнут' or $вторичный = 'нагайка'): master_flagelation_rate += (skill_adv_mul * 1)
+
+!Sparring Practice
+if colosseum_fight > 0:
+	if combatant = 0:
+		dynamic $master_energy_drop
+		interaction_city = 1296
+	end
+	if combatant = 1:
+		dynamic $slave_energy_drop
+		interaction_city = 1297
+	end
+	if combatant = 2:
+		dynamic $assistant_energy_drop
+		interaction_city = 1298
+	end
+	copyarr '$display_options', '$colosseum_options'
+	gs '_layout'
+	gt 'interaction_city'
+	!code lines below were never executed due to gt above, commented them out for clarity - ImperatorAugustus
+	!combatant = 0
+	!colosseum_fight = 0
+	!$fight_return = ''
+	!sp_txt = 1
+	!get_initial_slave = 0
+	!gt 'shop_general'
+end
+
+!slave battle misc
+if $враг[1] = 'воспитуемая':
+	energy_max = slave['energy']
+	if выносливость_врага[1] < 5: slave['energy'] = -5 &! выносливость_врага is enemy stamina
+	if выносливость_врага[1] >= 5: slave['energy'] = -4
+	if выносливость_врага[1] >= 10: slave['energy'] = -3
+	if выносливость_врага[1] >= 15: slave['energy'] = -2
+	if выносливость_врага[1] >= 20: slave['energy'] = -1
+	if выносливость_врага[1] >= 25: slave['energy'] = 0
+	if выносливость_врага[1] >= 35: slave['energy'] = 1
+	if выносливость_врага[1] >= 45: slave['energy'] = 2
+	if выносливость_врага[1] >= 55: slave['energy'] = 3
+	if выносливость_врага[1] >= 65: slave['energy'] = 4
+	if выносливость_врага[1] >= 75: slave['energy'] = 5
+	if slave['energy'] > energy_max: slave['energy'] = energy_max
+
+	bash_damage_done = базовая_выносливость['воспитуемая'] - выносливость_врага[1]
+	house_mess_rate += bash_damage_done
+	slave_rate["hygiene"] += bash_damage_done
+	master_hygiene_rate += bash_damage_done
+
+	lethal_damage_done = базовое_здоровье['воспитуемая'] - здоровье_врага[1]
+	if lethal_damage_done > 0: slave_rate["wounds"] += 10
+	if lethal_damage_done > базовое_здоровье['воспитуемая']/4: slave_rate["wounds"] += 10
+	if lethal_damage_done > базовое_здоровье['воспитуемая']/3: slave_rate["wounds"] += 20
+	if lethal_damage_done > базовое_здоровье['воспитуемая']/2: slave_rate["wounds"] += 40
+	if lethal_damage_done > базовое_здоровье['воспитуемая'] - 2: slave_rate["wounds"] += 80
+
+	if lethal_damage_done > slave["stamina"]: slave_rate["stamina"] -= 100000
+
+	psy_damage_done = базовый_дух['воспитуемая'] - дух_врага[1]
+	slave_rate['mood'] -= min(25, psy_damage_done) &! reduced mood impact by half and capped at 2.5 - ImperatorAugustus
+
+	pure_bashing_damage = bash_damage_done - lethal_damage_done
+	if pure_bashing_damage < 0: pure_bashing_damage = 0
+	slave_rate['bruises'] += max(0, pure_bashing_damage - slave['stamina']*5) &! reduced bruising by half and added additional reduction proportional to endurance - ImperatorAugustus
+	slave_rate['stamina'] -= max(0, pure_bashing_damage/10 - dynslave['stamina']) &! reduced and revised endurance impact - ImperatorAugustus
+end
+
+!additional results of the battle for the opponents
+if $итог_боя = 'бегство' and $враг[1] = 'воспитуемая':
+	interaction_city = 143
+	gt "interaction_city"
+end
+if $итог_боя = 'вырубился' and $враг[1] = 'воспитуемая':
+	dynamic $death, '당신은 노예의 주먹을 감당하지 못하고 무릎을 꿇었다. 그 모습을 본 노예는 미소를 지으며 다가와 발차기로 당신의 얼굴을 후려쳐 기절시켰다. 불행히도, 당신은 그 뒤 다시는 깨어나지 못했다…'
+end
+if $итог_боя = 'убит' and $враг[1] = 'воспитуемая':
+	dynamic $death, '당신은 중상을 입고 피를 흘리며 바닥에 쓰러졌다. 마지막으로 본 것은 전직 노예가 거리로 뛰쳐나가는 모습뿐이었다…'
+end
+
+!general results
+if $итог_боя = 'бегство':
+	dynamic $death, '당신은 겁을 먹고 전투에서 도망치려 했다. 실패했다.'
+end
+if $итог_боя = 'вырубился':
+! JO9 MOD START J9M2908 | 2026-10-12_zzzz_gameover_layout | changed block; context may be included
+	dynamic $death, '당신의 의식은 어둠 속으로 가라앉았다.<br>불멸의 로마에서, 당신의 이야기는 여기서 끝났다.'
+! JO9 MOD END J9M2908
+end
+if $итог_боя = 'убит':
+	dynamic $death, '당신은 죽었다.'
+end
+!if $итог_боя = 'победа' check moved later in the file, see comments there for more details - ImperatorAugustus
+
+if $враг[1] = 'воспитуемая':
+	slave["beaten"] = 1
+	slave["beaten_ever"] += 1
+	slave_rate["fear"] += 10
+	slave_rate["instinct"] += 5
+	if выносливость_врага[1] <= 0: slave_state = CONST_INT['slave_faint']
+	if здоровье_врага[1] <= 0: dynamic $slave_killed
+end
+
+if combatant = 0:
+	lethal_damage_received = макс_здоровье_игрока - здоровье_игрока
+	bash_damage_received = макс_выносливость_игрока - выносливость_игрока &! выносливость_игрока is player stamina in combat
+	if дух_игрока < норм_дух_игрока:
+		psy_damage_received = норм_дух_игрока - дух_игрока
+	end
+
+	master_mood_rate -= min(25, psy_damage_received)
+
+	if lethal_damage_received > master_str_rate: master_wounds_rate += 10
+	if lethal_damage_received > макс_здоровье_игрока/4: master_wounds_rate += 10 &! макс_здоровье_игрока is max player health
+	if lethal_damage_received > макс_здоровье_игрока/3: master_wounds_rate += 20
+	if lethal_damage_received > макс_здоровье_игрока/2: master_wounds_rate += 40
+	if lethal_damage_received > макс_здоровье_игрока - 2: master_wounds_rate += 80
+	if master_wounds_rate > 0: master_moodlet['neg_wounded'] = 1
+
+	pure_bashing_damage = bash_damage_received - lethal_damage_received
+	if pure_bashing_damage < 0: pure_bashing_damage = 0
+	master_str_rate -= max(0, pure_bashing_damage/10 - master_str) &! added strength impact mirroring slave endurance impact - ImperatorAugustus
+
+	energy_max = master_energy
+	!if выносливость_игрока < 5: master_energy = -5 &! disabled this line to avoid immediate player unconsciousness after battle - ImperatorAugustus
+	if выносливость_игрока >= 5: master_energy = -4 &! выносливость_игрока is player stamina in combat
+	if выносливость_игрока >= 10: master_energy = -3
+	if выносливость_игрока >= 15: master_energy = -2
+	if выносливость_игрока >= 20: master_energy = -1
+	if выносливость_игрока >= 25: master_energy = 0
+	if выносливость_игрока >= 35: master_energy = 1
+	if выносливость_игрока >= 45: master_energy = 2
+	if выносливость_игрока >= 55: master_energy = 3
+	if выносливость_игрока >= 65: master_energy = 4
+	if выносливость_игрока >= 75: master_energy = 5
+	if master_energy > energy_max: master_energy = energy_max
+	if master_energy > 1 and $враг[1] ! 'воспитуемая': master_energy = 1 & master_half_action -= 1 &! cap master energy after Fog battles at 1.5 stars (patrolling Fogs again requires min. 3 energy) - ImperatorAugustus
+end
+
+! JO9 MOD START FOG_CLOSE | 2026-10-17_fog_relay
+gs 'jo9_fog_relay', 'close'
+if cheat_fight_dif = 0:
+! JO9 MOD END FOG_CLOSE
+	master_wounds_rate = 0
+	master_wounds = 0
+	master_moodlet['neg_wounded'] = 0
+	master_ill = 0
+	master_issues = 0
+	if master_hygiene > 1: master_hygiene = 1 & master_hygiene_rate = 15
+end
+
+if cheat_inf_en ! 0:
+	if master_energy < 5: master_energy = 5
+end
+
+menu_form = 0
+
+if $fight_return ! '':
+	$return_lock = $fight_return
+	$fight_return = ''
+end
+
+
+!Fog Battle Results and Rewards - crushboss
+!potion of mystra material quest (픽스)
+if molar_of_wolf = 0:
+	if $враг[1] = 'warg':
+		msg '<center><br>당신은 죽은 와그의 이빨이 눈에 띄었다.<br><br>가져가면 어디엔가 쓸 곳이 있지 않을까?<br><br>연금술에 해박한 사람에게 사용할 방법을 물어보도록 하자 <br><br> 와그의 어금니 획득</center>'
+		molar_of_wolf += 2
+	end
+end
+
+!Garsid with beastmen
+if $враг[5] = 'garsid':
+	fighting_experience = 15
+	get_girl = 0 &! no trophy slave
+	fog_battle = 0 &! cannot trigger fire staff discovery
+	master_str_rate += (skill_adv_mul * 4)
+	active[$quest[8]] = 3 &! Garsid murdered/escaped
+	if здоровье_врага[5] <= 0 or выносливость_врага[5] <= 0:
+		msg '   당신은 내장을 밟아 넘으며 가르시드의 시체로 다가가, 그의 귀에서 키메라의 보석을 무심하게 뽑아 낸다.'
+	else
+		msg '   불행히도, 이번 도박은 실패한 모양이다. 가르시드는 도망쳤다.<br><br>   전장을 마지막으로 한 번 훑어보던 순간, 문득 번쩍이는 빛이 눈에 들어온다. 저건 뭐지?'
+		msg '   당신은 몸을 굽혀, 검고 가죽 같은 피투성이 피부 조각 아래로 손을 뻗는다. 손가락 끝에 작은 물건이 잡히고, 꺼내어 확인해 본다. 설마 이것인가?<br><br>   맞다! 전투의 열기 속에서 키메라의 보석이 떨어져 나간 게 틀림없다. 운명의 장난이 아니었다면, 당신은 그걸 그냥 지나쳤을 것이다.'
+	end
+	chimera_earring = 1 &! gem acquired
+	killvar '$враг' &! no beastmen trophy for this battle
+end
+!young fiend with a girl
+if $враг[1] = 'исчадие_молодь':
+	fighting_experience = 5
+	won_slave_minimum_value = 100
+	get_girl = 1
+	trophy_youngfiend = 1
+	fog_battle = 1
+	master_str_rate += (skill_adv_mul * 1)
+	won_slave['parasite'] = 1
+	won_slave['deflowered'] = 1
+end
+!mature fiend with a girl
+if $враг[1] = 'исчадие':
+	fighting_experience = 10
+	won_slave_minimum_value = 200
+	get_girl = 1
+	trophy_maturefiend = 1
+	fog_battle = 1
+	master_str_rate += (skill_adv_mul * 2)
+	won_slave['parasite'] = 1
+	won_slave['deflowered'] = 1
+end
+!huge fiend with a girl
+if $враг[1] = 'чудовщиное_исчадие':
+	fighting_experience = 15
+	won_slave_minimum_value = 300
+	get_girl = 1
+	trophy_hugefiend = 1
+	fog_battle = 1
+	master_str_rate += (skill_adv_mul * 4)
+	won_slave['parasite'] = 1
+	won_slave['deflowered'] = 1
+end
+!black medic with a girl
+if $враг[1] = 'черный_медик':
+	fighting_experience = 5
+	won_slave_minimum_value = 100
+	get_girl = 1
+	trophy_blackmedic = 1
+	fog_battle = 1
+	master_str_rate += (skill_adv_mul * 1)
+	won_slave['parasite'] = 0
+	won_slave['deflowered'] = 0
+end
+!taurus paladin with a girl
+if $враг[1] = 'паладин':
+	fighting_experience = 10
+	won_slave_minimum_value = 200
+	get_girl = 1
+	fog_battle = 1
+	trophy_paladin = 1
+	master_str_rate += (skill_adv_mul * 2)
+	won_slave['parasite'] = 0
+	won_slave['deflowered'] = 0
+end
+!beastmen with a girl
+if $враг[1] = 'козлорогий' or $враг[1] = 'свинорылый' or $враг[1] = 'жабован' or $враг[1] = 'крысолюд':
+	fighting_experience = 10
+	won_slave_minimum_value = 200
+	get_girl = 1
+	trophy_beastmen = 1
+	fog_battle = 1
+	master_str_rate += (skill_adv_mul * 2)
+	won_slave['ill'] = 1
+	won_slave['deflowered'] = 1
+end
+!werewolf with a girl
+if $враг[1] = 'вервольф':
+	fighting_experience = 15
+	won_slave_minimum_value = 300
+	get_girl = 1
+	trophy_werewolf = 1
+	fog_battle = 1
+	master_str_rate += (skill_adv_mul * 4)
+	won_slave['parasite'] = 0
+	won_slave['deflowered'] = 0
+end
+!vampire with a girl
+if $враг[1] = 'вампир':
+	fighting_experience = 10
+	won_slave_minimum_value = 200
+	get_girl = 1
+	trophy_vampire = 1
+	fog_battle = 1
+	master_str_rate += (skill_adv_mul * 2)
+	won_slave['parasite'] = 0
+	won_slave['deflowered'] = 0
+end
+!Lich with a girl
+if $враг[1] = 'лич':
+	fighting_experience = 10
+	won_slave_minimum_value = 200
+	get_girl = 1
+	trophy_lich = 1
+	fog_battle = 1
+	master_str_rate += (skill_adv_mul * 2)
+	won_slave['parasite'] = 0
+	won_slave['deflowered'] = 0
+end
+!ogre with a girl
+if $враг[1] = 'ogre':
+	!fighting_experience = 15
+	won_slave_minimum_value = 300
+	get_girl = 1
+	trophy_ogre = 1
+	fog_battle = 1
+	master_str_rate += (skill_adv_mul * 4)
+	won_slave['deflowered'] = 1
+	won_slave['parasite'] = 0
+end
+!goblins with a girl
+if $враг[1] = 'goblin':
+	fighting_experience = 5
+	won_slave_minimum_value = 50 * arrsize('враг')
+	get_girl = 1
+	master_str_rate += (skill_adv_mul * 1)
+	trophy_goblins = 1
+	fog_battle = 1
+	won_slave['ill'] = 1
+	won_slave['deflowered'] = 1
+	won_slave['dp'] = 1
+	if arrsize('враг') > 2: won_slave['tp'] = 1
+end
+!warg with a girl
+if $враг[1] = 'warg':
+	fighting_experience = 15
+	won_slave_minimum_value = 300
+	get_girl = 1
+	trophy_warg = 1
+	fog_battle = 1
+	master_str_rate += (skill_adv_mul * 4)
+	won_slave['deflowered'] = 1
+	won_slave['parasite'] = 0
+end
+!orc with a girl
+if $враг[1] = 'orc':
+	fighting_experience = 10
+	won_slave_minimum_value = 200
+	get_girl = 1
+	trophy_orc = 1
+	fog_battle = 1
+	master_str_rate += (skill_adv_mul * 4)
+	won_slave['parasite'] = 0
+	won_slave['deflowered'] = 0
+end
+!scum with a girl
+if $враг[1] = 'канибал' or $враг[1] = 'калека' or $враг[1] = 'нищеброд' or $враг[1] = 'безумец' or $враг[1] = 'изможденный':
+	fighting_experience = 5
+	won_slave_minimum_value = 100
+	get_girl = 1
+	trophy_scum = 1
+	fog_battle = 1
+	master_str_rate += (skill_adv_mul * 1)
+	won_slave['ill'] = 1
+	won_slave['deflowered'] = 1
+end
+
+
+IF $враг[1] = 'vatican_paladin' and $итог_боя = 'победа':
+	fighting_expirience = 15
+	won_slave_minimum_value = RAND(20,150)
+	if won_slave_minimum_value > 120: won_slave_minimum_value = 120 + RAND(0,180)
+	fog_battle = 1
+	master_str_rate += 4
+	master_domination_rate += 2
+	бой_с_паладином = 2
+    $fight_return = 'interaction_city'
+END
+IF $враг[1] = 'strazhnik' and $итог_боя = 'победа':
+	fighting_expirience = 20
+	won_slave_minimum_value = RAND(20,150)
+	if won_slave_minimum_value > 120: won_slave_minimum_value = 120 + RAND(0,180)
+	fog_battle = 1
+	master_str_rate += 5
+	master_domination_rate += 3
+	бой_со_стражником = 1
+	interaction_city = 6220
+	$fight_return = 'interaction_city'
+END
+
+
+!общие итоги
+IF $итог_боя = 'бегство' and $враг[1] ! 'воспитуемая':
+	master_fighter_rate += RAND(0,master_fighter)
+	master_str_rate += RAND(0,master_str)
+	master_mood['neg_fight_escape'] += 2
+	if master_mood['neg_fight_escape'] > 5: master_mood['neg_fight_escape'] = 5
+	dynamic $master_energy_drop
+! JO9 MOD START ARGON08_DISPLAY_122 | 2026-10-19_argon08_combat_rm_selective
+	msg '전투에서 도망쳤다.'
+! JO9 MOD END ARGON08_DISPLAY_122
+!	dynamic $death, 'Вы сбежали из боя.'
+END
+IF $итог_боя = 'вырубился':
+! JO9 MOD START ARGON08_DISPLAY_123 | 2026-10-19_argon08_combat_rm_selective
+	dynamic $death, '의식을 잃고 쓰러져 적에게 마무리당했다.'
+! JO9 MOD END ARGON08_DISPLAY_123
+END
+IF $итог_боя = 'убит':
+! JO9 MOD START ARGON08_DISPLAY_124 | 2026-10-19_argon08_combat_rm_selective
+	dynamic $death, '전투에서 목숨을 잃었다.'
+! JO9 MOD END ARGON08_DISPLAY_124
+END
+!Флаг get_girl добавлен - можно было получить в бою новую рабыню - _DI
+IF $враг[1] = 'воспитуемая' and $итог_боя = 'победа':
+	master_str_rate += RAND(1,slave["stamina"])
+! JO9 MOD START COG_DIRECT_43 | 2026-10-16_innate_learning_traits
+	slave_rate["gladiatrix"] += func('jo9_learning_xp', (RAND(0,slave["gladiatrix"])), slave['jo9_learning_trait'], 'gladiatrix')
+! JO9 MOD END COG_DIRECT_43
+	slave_rate["stamina"] += RAND(0,slave["stamina"])
+	slave["beaten"] = 1
+	slave["beaten_ever"] += 1
+	slave_rate["fear"] += 10
+	slave_rate["instinct"] += 5
+	if выносливость_врага[1] <= 0: slave_state = CONST_INT['slave_faint']
+	if здоровье_врага[1] <= 0: dynamic $slave_killed
+	get_girl = 0
+END
+
+
+IF $враг[1] = 'strazhnik' and $итог_боя = 'победа':
+	fighting_expirience = 20
+	won_slave_minimum_value = RAND(20,150)
+	if won_slave_minimum_value > 120: won_slave_minimum_value = 120 + RAND(0,180)
+	fog_battle = 1
+	master_str_rate += 5
+	master_domination_rate += 3
+	бой_со_стражником = 1
+	interaction_city = 6220
+	$fight_return = 'interaction_city'
+END
+!Противник в клубе Кэтфайт
+IF $враг[1] = 'egeya' and $итог_боя = 'победа':
+	fighting_expirience = 20
+	won_slave_minimum_value = RAND(20,150)
+	if won_slave_minimum_value > 120: won_slave_minimum_value = 120 + RAND(0,180)
+	fog_battle = 1
+	master_str_rate += 5
+	master_domination_rate += 3
+	interaction_city = 102017
+	$fight_return = 'interaction_city'
+	gt 'interaction_city'
+END
+
+IF $враг[1] = 'grinch' and $итог_боя = 'победа':
+	fighting_expirience = 20
+	fog_battle = 1
+	master_str_rate += 2
+	master_domination_rate += 3
+	interaction_city = 10385
+	$fight_return = 'interaction_city'
+	gt 'interaction_city'
+END
+
+IF $враг[1] = 'erza' and $итог_боя = 'победа':
+	fighting_expirience = 20
+	won_slave_minimum_value = RAND(20,150)
+	if won_slave_minimum_value > 120: won_slave_minimum_value = 120 + RAND(0,180)
+	fog_battle = 1
+	master_str_rate += 5
+	master_domination_rate += 3
+	interaction_city = 666779
+	gt 'interaction_city'
+END
+
+!fighting experience for Fog battles never worked before because it was originally checking fighting_experience before it was set - now Fog battles give experience up to A+ skill, and for A+ to S+ there are one-time xp increases for each Fog trophy (see $calculate_attributes for the implementation) - ImperatorAugustus
+if $итог_боя = 'победа':
+	if fighting_experience > 0 and (master_fighter - boost_up['master_fighter']) < 4:
+		master_fighter_rate += fighting_experience
+		if fog_battle = 1: master_domination_rate += (skill_adv_mul * fighting_experience/6) &! divide by 6 to raise 0 from 5 xp, 1 from 10 xp, 2 from 15 xp
+	end
+end
+
+fighting_experience = 0 &! reset after above code block
+
+!Special Event - Dragon Fire Staff Relic - crushboss
+if trophy_fire_staff = 0 and fog_battle = 1 and посох_огня = 0:
+	if master_mage >= 5 and master_str >= 5 and master_domination >= 5:
+		if trophy_ogre >= 1 and trophy_warg >= 1 and trophy_werewolf >= 1 and trophy_hugefiend >= 1 and trophy_vampire >= 1 and trophy_lich >= 1:
+			msg '   뭔가 이상하다. 조사해 봐야겠다…'
+			gt 'special_screen'
+		end
+	end
+end
+
+!Slave won and get girl code - Overhauled - crushboss
+if get_girl = 1:
+	:won_slave_calc
+	gs 'generate_stock'
+	if slave_base_price < won_slave_minimum_value: jump 'won_slave_calc'
+	if won_slave['ill'] = 1:
+		b = rand (1,5)
+		if stock['stamina'] < b: stock['ill'] = 1
+	end
+	if won_slave['parasite'] = 1 and stock['fertility'] >= 0:
+		stock['parasite'] = 1
+		stock['virginity'] = 2 &! not a virgin
+	end
+	if won_slave['deflowered'] = 1 and stock['virginity'] < 2: stock['virginity'] = 2 &! not a virgin
+	if won_slave['dp'] = 1 and stock['sub_dp'] < 5: stock['sub_dp'] += 1
+	if won_slave['tp'] = 1 and stock['sub_tp'] < 5: stock['sub_tp'] += 1
+
+	!Increased the chance of getting a virgin slave from the fog - trophy girl - crushboss
+	if won_slave['deflowered'] = 0 and won_slave['parasite'] = 0 and won_slave['ill'] = 0 and stock['parasite'] = 0 and stock['ill'] = 0 and stock['pregnant'] = 0 and stock['age'] ! CONST_INT['milf_age']: stock['virginity'] = 0
+
+	killvar 'won_slave' &! added a reset so flags do not "leak" from prior encounters - ImperatorAugustus
+
+	$return_lock = 'interaction_city'
+	interaction_city = 61120
+end
+
+!Reset and set vars - crushboss
+gs '$combat_variable_reset'
+sbros = 1
+
+gs '$newloc'
+gt '<<$return_lock>>'

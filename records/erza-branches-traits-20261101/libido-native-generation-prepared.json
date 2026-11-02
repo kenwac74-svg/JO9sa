@@ -1,0 +1,131 @@
+{
+  "date": "2026-10-31T22:14:18.176Z",
+  "qspHash": "890659604c66979bda6e1f391be6f7824fb347c36baa87b5aa8bd3fe45b964de",
+  "source": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+  "sourceFunctionHashesUtf8": {
+    "generate_stock": "b89a7b2e0649ba27128a6d4537a8170e491edbea324b9299e1854fbc23fa193c",
+    "get_stock_seed": "e7ef3b8171b74ff94f74029de2d0c194a02e88a2d33019bb85ca2615f5211469",
+    "stock_to_slave_nogt": "60c8758a9914ed4ee004d2fd38070724025831e610ec9d5e6a155334bdc585bf",
+    "#static_base": "23a21ce702de893152c6096acd834a8dafa12431bca6bae520583534902f97d7",
+    "#dynamic": "26af619176c38950b28e165b302d7a425afa5667342b80ca96091cdebfc2b67e",
+    "#variative": "0d0826abeeae4cd82effcb774e6278445e980574505c4a73f3aee7655b73adad",
+    "jo9_traits": "ab88080e739362cb7ce528612fae9b14816b8ecb67a7ba369912e8b976613cf2",
+    "jo9_traits_value": "f92847a3ca65c5986fe09b6e75bdee4155b4d89943457f28451a312ace1a131a",
+    "jo9_meiki_state": "f49c20e8b16ae7d72bfe90c43d813684572708a54232cdf2820df258260b4e39",
+    "jo9_chaotic": "e434bf5ff26552434cfeb23dc337c682ebac27846750d8bb8f9d03b71acdb485"
+  },
+  "seed": {
+    "path": "G:/somi/Jack O Nine Tails v2.4_work/game/json/slaves/2624_erza.json",
+    "sha256": "42310fe23b744c38dd68f9a2719ca9826fb778a31ba3415ca238764c3293f336",
+    "type": 2624,
+    "seed_nymphomania": 1,
+    "seed_nymphomania_revealedPresent": false,
+    "missingNumericSeedDefault": 0,
+    "seed_age": 0,
+    "contentsEmitted": false
+  },
+  "currentDefinitionAlreadyMeetsRequest": true,
+  "productionChangesRequired": false,
+  "newSavedFieldsRequired": 0,
+  "randomOverwrite": {
+    "randomAssignmentIsInsideSpecialStockZero": true,
+    "enclosingConditions": [
+      {
+        "condition": "special_stock = 0",
+        "line": 1156
+      },
+      {
+        "condition": "rand(1, 10) = 1",
+        "line": 1285
+      }
+    ],
+    "uniqueSpecialStock": 2624,
+    "uniqueGenerationSkipsRandomAssignment": true
+  },
+  "hiddenDisplay": {
+    "location": "#static_base",
+    "gate": "nymphomania > 0 and (nymphomania_revealed = 2 or spell_revelio = 1)",
+    "initial": {
+      "value": 1,
+      "revealed": 0
+    },
+    "revealStates": {
+      "0": "hidden",
+      "1": "discovery notification pending",
+      "2": "discovered and visible"
+    },
+    "existingMagicRevealOverridePreserved": true
+  },
+  "discoveryRoutes": [
+    {
+      "location": "interaction_result",
+      "condition": "interaction result res>=0, orgastic>0, matching interaction_partner and current revealed0",
+      "effect": "set actor revealed1"
+    },
+    {
+      "location": "sex_interaction / sex_interaction_woman",
+      "condition": "specific existing activity branch",
+      "effect": "set session nymphomania_revealed1"
+    },
+    {
+      "location": "sex_end",
+      "condition": "session flag1 and actor revealed0",
+      "effect": "set slave/assistant revealed1"
+    },
+    {
+      "location": "#static_base",
+      "condition": "revealed1 and nymphomania!=0",
+      "effect": "existing notification then revealed2"
+    },
+    {
+      "location": "interaction:5609 / next_day specific branch",
+      "condition": "existing branch and nonzero trait with revealed0",
+      "effect": "set revealed1"
+    }
+  ],
+  "removal": {
+    "location": "jo9_chaotic",
+    "ambiguousPoolContainsValues": [
+      1,
+      2
+    ],
+    "negativePoolFirst": true,
+    "clearedFields": [
+      "nymphomania",
+      "nymphomania_revealed",
+      "nymphomania_xp"
+    ],
+    "afterRemoval": [
+      0,
+      0,
+      0
+    ],
+    "permanentPerActorRemovalTombstonePresent": false,
+    "currentUniqueRefreshRegrantHook": false,
+    "forceEveryRefreshWouldUndoRemoval": true,
+    "naturalLaterTrainingPreserved": "Existing nymphomania_xp>200 can independently reacquire value1; removal resets xp0 so this is not an immediate refresh resurrection."
+  },
+  "legacySaves": {
+    "latentValue1Revealed0AlreadyWorks": true,
+    "preserveCurrentValue0": true,
+    "zeroStateIsAmbiguousBetweenNeverAssignedAndRemoved": true,
+    "guaranteedRetroactiveGrantIntoAllExistingZerosWouldNeedNewPerActorProvenance": true,
+    "recommendation": "No grant or migration hook: seed already1. Preserve existing value0/removal intent; use the existing discovery path for current latent1 instances."
+  },
+  "sensitiveNarrativeEmitted": false,
+  "imagesOpenedOrRendered": false,
+  "productionWrites": 0,
+  "native": null,
+  "fixtureHash": "45a48ec09da0c149553e72e9f7da0daa0547387833a1551c77329c8416e3469f",
+  "diagnosticRoot": "G:/Codex/tmp/erza-libido-audit-20261101-native",
+  "sourceAssertions": 7,
+  "executedAssertions": 13,
+  "numericSeedFieldCount": 94,
+  "actualProductionFunctionsUnmodified": true,
+  "scriptOnlyOverrides": [
+    "Start bootstrap and added numeric test location",
+    "Actual numeric JSON seed inputs plus name/basic-state identifiers; no images or narrative displayed",
+    "Discovery visibility flag is simulated directly; no sexual activity scene runs",
+    "Removal reproduces existing three field clears; random item selection not invoked"
+  ]
+}

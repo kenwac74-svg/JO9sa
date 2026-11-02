@@ -1,0 +1,26 @@
+'use strict';
+const fs=require('fs'),crypto=require('crypto'),cp=require('child_process'),assert=require('assert/strict');
+const repo='G:/somi/JO9sa',game='G:/somi/Jack O Nine Tails v2.4_work/game',record=repo+'/records/fog-assistant-ap-20261028';
+const stage='G:/Codex/tmp/jo9-fog-assistant-ap-20261028/stage',gate='G:/Codex/tmp/jo9-fog-assistant-ap-gate-20261028/run-P1EllG';
+const hash=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
+const read=p=>JSON.parse(fs.readFileSync(p,'utf8').replace(/^\uFEFF/,''));
+const meta=read(__dirname+'/candidate.json'),name='2026-10-28_fog_assistant_ap_cost.json';
+assert.equal(hash(game+'/jack.qsp'),meta.before,'WORK changed; refresh scope');assert.equal(hash(stage+'/candidate.qsp'),meta.after);
+const official=read(gate+'/report.json');assert.equal(official.verdict,'PASS');assert.equal(official.client.probes.filter(x=>x.pass).length,9);
+for(const n of ['baseline-results.json','candidate-results.json']){const r=read(__dirname+'/tests/'+n);assert.equal(r.status,'NATIVE_ISOLATED_PASS');assert.equal(r.totalConditions,147);assert.equal(r.results.length,4);assert(r.results.every(x=>x.pass));}
+const review=fs.readFileSync(__dirname+'/REVIEW_KO.md','utf8');assert(review.includes(meta.before)&&review.includes(meta.after)&&review.includes('차단할 문제를 발견하지 못했다'),'Independent review incomplete');
+const paths=[game+'/engine/jack.exe',game+'/css/base.css',game+'/content/js/jo9_battle_log.js',game+'/save/JO9_GOLD_AP_CHECK_20261026.sav',game+'/save/JO9_MANUAL_20261025/02_수동확인_문제재현/27_private_reports.sav',game+'/save/1.sav',game+'/config.xml','G:/somi/Jack O Nine Tails v2.4 Kor_Full/game/jack.qsp','G:/somi/JO9O/game/jack.qsp'];
+const protectedFiles=paths.map(p=>({path:p,sha256:hash(p)}));
+fs.mkdirSync(record,{recursive:true});fs.writeFileSync(record+'/protected-before.json',JSON.stringify(protectedFiles,null,2)+'\n');
+for(const n of ['PLAN_KO.md','AUDIT_KO.md','REVIEW_KO.md','build-candidate.cjs','candidate.json','install.cjs'])fs.copyFileSync(__dirname+'/'+n,record+'/'+n);
+fs.copyFileSync(gate+'/report.json',record+'/official-report.json');
+const mod=read(__dirname+'/'+name);mod.status='APPROVED';mod.user_request='2026-10-28: 10/28 제보부터 다 해결하자. 기존 주인공1·조수2 제안 범위.';
+const text=JSON.stringify(mod,null,2)+'\n';assert(!fs.existsSync(repo+'/mods/'+name),'Canonical mod already exists');
+fs.writeFileSync(repo+'/mods/'+name,text,{flag:'wx'});fs.writeFileSync(stage+'/mods/'+name,text);fs.writeFileSync(record+'/'+name,text);fs.writeFileSync(__dirname+'/'+name,text);
+const previousBackups=new Set(fs.readdirSync(game).filter(x=>x.startsWith('jack.qsp.bak_')));
+const proc=cp.spawnSync('powershell.exe',['-NoProfile','-ExecutionPolicy','Bypass','-File',repo+'/tools/apply_mods.ps1','-Qsp',game+'/jack.qsp','-ModsDir',stage+'/mods'],{encoding:'utf8',maxBuffer:8*1024*1024});
+fs.writeFileSync(record+'/apply-log.txt',(proc.stdout||'')+'\n'+(proc.stderr||''));assert.equal(proc.status,0,'Apply failed; inspect record');assert.equal(hash(game+'/jack.qsp'),meta.after,'Installed candidate mismatch');
+const backups=fs.readdirSync(game).filter(x=>x.startsWith('jack.qsp.bak_')&&!previousBackups.has(x)).map(x=>({path:game+'/'+x,sha256:hash(game+'/'+x)}));assert.equal(backups.length,1);assert.equal(backups[0].sha256,meta.before);
+const preserved=protectedFiles.map(x=>({...x,unchanged:hash(x.path)===x.sha256}));assert(preserved.every(x=>x.unchanged));
+const result={status:'PASS',before:meta.before,after:meta.after,backup:backups[0],candidateByteExact:true,officialEnginePaths:9,nativeConditionsPerVersion:147,metadataOnlyChangedAfterGate:['status','user_request'],protected:preserved,userSavesWritten:false,distributionWritten:false,committed:false,pushed:false};
+fs.writeFileSync(record+'/installation.json',JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify({status:result.status,after:result.after,backup:result.backup.path,protected:preserved.length}));

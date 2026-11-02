@@ -1,0 +1,22 @@
+{
+  "id": "2026-10-30_wong_guild_notice_text",
+  "description": "Restore Wong daily notice in scalar text and forward the existing expulsion reason; no penalty, trigger, state, save or Angelika changes",
+  "before_sha256": "1e8e489eb4a2c6412f81af0e50b69d409bc9ffd5d5edb69e2308cd3e9f71bc7c",
+  "after_sha256": "2b81e781d0ab56f10cb77aa340db27ee4dab7d707bafe857853ad600d474417e",
+  "edits": [
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "\t\t\tdynamic $death, $text\r\n\t\telseif gave_guild_parasite_slave > 0:",
+      "new": "\t\t\t! JO9 MOD START WONG_GUILD_NOTICE_FATAL_TEXT_20261030\r\n\t\t\tdynamic $death, $text[3]\r\n\t\t\t! JO9 MOD END WONG_GUILD_NOTICE_FATAL_TEXT_20261030\r\n\t\telseif gave_guild_parasite_slave > 0:",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "\t\tgave_guild_ill_slave = 0\r\n\t\tgave_guild_parasite_slave = 0\r\n\t\tend_day_guild_visit = 1\r\n\t\tjump 'loop' &! assistant_quiet_rule does not suppress this - ImperatorAugustus",
+      "new": "\t\tgave_guild_ill_slave = 0\r\n\t\tgave_guild_parasite_slave = 0\r\n\t\tend_day_guild_visit = 1\r\n\t\t! JO9 MOD START WONG_GUILD_NOTICE_TEXT_20261030\r\n\t\t! Render the existing notice before the daily footer clears its array slots.\r\n\t\t$text = $text[1] + '<br><br>' + $replace($text[2], '</div>', '')\r\n\t\tif $text[3] ! '': $text += '<br><br>' + $text[3]\r\n\t\t! JO9 MOD END WONG_GUILD_NOTICE_TEXT_20261030\r\n\t\tjump 'loop' &! assistant_quiet_rule does not suppress this - ImperatorAugustus",
+      "count": 1
+    }
+  ]
+}

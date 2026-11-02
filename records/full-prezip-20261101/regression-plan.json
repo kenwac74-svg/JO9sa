@@ -1,0 +1,382 @@
+{
+  "sourceSha256": "a11ecde65897ab9c3d7bf736d0f539a35caa243c379e61a73ba6191241ef7755",
+  "status": "NATIVE_AND_STATIC_PASSED_WITH_DOCUMENTED_LIMITS",
+  "productionWrites": false,
+  "engineExecuted": true,
+  "static": {
+    "script": "output/full-prezip-20261101/historical-static-regressions.cjs",
+    "report": "output/full-prezip-20261101/historical-static-report.json",
+    "mode": "READ_ONLY_STATIC",
+    "checks": 16,
+    "pass": true,
+    "scope": [
+      {
+        "name": "source-structure",
+        "evidence": {
+          "file": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+          "sha256": "a11ecde65897ab9c3d7bf736d0f539a35caa243c379e61a73ba6191241ef7755",
+          "locations": 277
+        },
+        "limit": "Structure, line/marker boundaries and byte roundtrip only; native execution is separate."
+      },
+      {
+        "name": "catfight-start-three-win-guard",
+        "evidence": {
+          "location": "$catfight_fight_start"
+        },
+        "limit": "Old prepared entry callback must be intercepted before battle initialization."
+      },
+      {
+        "name": "catfight-single-win-counter",
+        "evidence": {
+          "locations": [
+            "выход_из_боя",
+            "interaction_city"
+          ]
+        },
+        "limit": "Source-level ownership only; full exit/result native suite is separate."
+      },
+      {
+        "name": "catfight-receipt-single-page",
+        "evidence": {
+          "location": "interaction_city",
+          "purse100Assignments": 2
+        },
+        "limit": "Actual actor reward, one-page text and rendering paths are native checked separately."
+      },
+      {
+        "name": "dealer-current-cap",
+        "evidence": {
+          "locations": [
+            "jo9_traits_value",
+            "slave_auction_sell_end"
+          ]
+        },
+        "limit": "Final payout cap, not a claim about every intermediate bid narration."
+      },
+      {
+        "name": "private-current-cap",
+        "evidence": {
+          "locations": [
+            "interaction_city",
+            "interaction_result_city"
+          ],
+          "cityCalls": 3,
+          "resultCalls": 2
+        },
+        "limit": "Exact buyer dialogue/complete customer traversal is not executed here."
+      },
+      {
+        "name": "auction-custody-helper-present",
+        "evidence": {
+          "locations": [
+            "jo9_farid_consignment",
+            "interaction_city"
+          ]
+        },
+        "limit": "Current helper and source caller link; native transactional tests carry the behavioral evidence."
+      },
+      {
+        "name": "gold-special-stock-present",
+        "evidence": {
+          "locations": [
+            "interaction_city",
+            "master_stat"
+          ]
+        },
+        "limit": "No daily food consumption implementation is expected for these special stocks."
+      },
+      {
+        "name": "milk-report-template",
+        "evidence": {
+          "location": "#var_base",
+          "roles": [
+            "slave",
+            "assistant",
+            "room1",
+            "room2",
+            "room3",
+            "room4"
+          ]
+        },
+        "limit": "Macro definitions only. Native popup close/DOM behavior and all room report clicks are not rerun in this narrow source check."
+      },
+      {
+        "name": "room-role-restore-hooks",
+        "evidence": {
+          "location": "snk_room_bridge"
+        },
+        "limit": "Existing bridge and restore references are present; complete persona-array restoration needs dedicated native fixture or manual TC."
+      },
+      {
+        "name": "monster-stage-specific-paths",
+        "evidence": {
+          "locations": [
+            "#противники",
+            "jo9_battle_fate"
+          ]
+        },
+        "limit": "Stage lookup is additionally included in isolated native suite."
+      },
+      {
+        "name": "group-single-cut-marker",
+        "evidence": {
+          "location": "конец_боя"
+        },
+        "limit": "Only current implementation marker presence; renderer branch and all group file references also checked below."
+      },
+      {
+        "name": "group-eight-representatives-exist",
+        "evidence": {
+          "manifest": "G:/somi/JO9sa/tools/mob-image-sets/group-sets.json",
+          "groups": [
+            {
+              "name": "검은 의사와 하인 3명",
+              "path": "content/pic/mob/defeated/groups/medic_group.png",
+              "exists": true
+            },
+            {
+              "name": "타우루스 성기사와 병사 2명",
+              "path": "content/pic/mob/defeated/groups/paladin_group.png",
+              "exists": true
+            },
+            {
+              "name": "고블린 2마리",
+              "path": "content/pic/mob/defeated/groups/goblin_pair.png",
+              "exists": true
+            },
+            {
+              "name": "고블린 3마리",
+              "path": "content/pic/mob/defeated/groups/goblin_trio.png",
+              "exists": true
+            },
+            {
+              "name": "가르시드와 수인 4명",
+              "path": "content/pic/mob/defeated/groups/garsid_group.png",
+              "exists": true
+            },
+            {
+              "name": "투기장 탈옥수 5명",
+              "path": "content/pic/mob/defeated/groups/prisoners_group.png",
+              "exists": true
+            },
+            {
+              "name": "수인 4인조 · 무작위 구성 대표 컷신",
+              "path": "content/pic/mob/defeated/groups/beastmen_group.png",
+              "exists": true
+            },
+            {
+              "name": "부랑자 5인조 · 무작위 구성 대표 컷신",
+              "path": "content/pic/mob/defeated/groups/vagrants_group.png",
+              "exists": true
+            }
+          ]
+        },
+        "limit": "Image existence and roster count; no visual composition judgment."
+      },
+      {
+        "name": "special-weapon-current-paths",
+        "evidence": {
+          "locations": [
+            "$gladiator_setup",
+            "$catfighter_setup"
+          ],
+          "paths": [
+            "content/pic/ui/buttons/legacy/net_active.png",
+            "content/pic/ui/buttons/legacy/net_used.png",
+            "content/pic/ui/buttons/legacy/whip_active.png",
+            "content/pic/ui/buttons/legacy/whip_used.png",
+            "content/pic/ui/buttons/legacy/dual_active.png",
+            "content/pic/ui/buttons/legacy/dual_used.png",
+            "content/pic/ui/buttons/legacy/shield_active.png",
+            "content/pic/ui/buttons/legacy/shield_used.png",
+            "content/pic/ui/buttons/legacy/heavy_active.png",
+            "content/pic/ui/buttons/legacy/heavy_used.png"
+          ]
+        },
+        "limit": "No GUI click/hit-box or animation test; previous DOM probe is preserved as historical evidence only."
+      },
+      {
+        "name": "bankruptcy-relocation-helper",
+        "evidence": {
+          "location": "jo9_liquidation_assets"
+        },
+        "limit": "Full multi-day bankruptcy lifecycle and quest-specific failure prose are not rendered."
+      },
+      {
+        "name": "character-registry",
+        "evidence": {
+          "files": 1153,
+          "numericIds": 1153,
+          "issues": 0
+        },
+        "limit": "Registry validity only; no assertion that every external image is loaded in all old saves."
+      }
+    ]
+  },
+  "native": {
+    "script": "output/full-prezip-20261101/native-historical-regressions.cjs",
+    "cases": [
+      "auction-custody",
+      "dealer-cap-obedience",
+      "catfight-settlement",
+      "monster-stages",
+      "gold-special-food",
+      "bankruptcy-assets"
+    ],
+    "commands": {
+      "prepare": "node output/full-prezip-20261101/native-historical-regressions.cjs prepare <Full/game/jack.qsp> <SHA256>",
+      "run": "node output/full-prezip-20261101/native-historical-regressions.cjs run <diagnostic/plan.json>"
+    },
+    "constraints": [
+      "Root must finish Full copy and authorize engine slot first.",
+      "Full must byte-match latest WORK at preparation time.",
+      "Only G:/Codex/tmp diagnostic subdirectory receives QSP, generated SAV and log outputs.",
+      "No personal SAV read: approved Full TC_01 and TC_05 states only.",
+      "Images are not rendered; final city renderer replaced by assertions.",
+      "No original quest/sexual narrative is generated, changed or quoted."
+    ],
+    "limitations": [
+      "Fixture adapters reuse existing exact engine tests but must be executed before they can be called PASS.",
+      "Dealer quote test controls appraisal to isolate the existing payout calculation; private8000 path is separately source checked.",
+      "No complete personal-save GUI load, manual click layout, multi-day pregnancy or all-quest traversal."
+    ],
+    "report": "output/full-prezip-20261101/native-historical-report.json",
+    "pass": true,
+    "assertions": 301,
+    "results": [
+      {
+        "name": "auction-custody",
+        "checks": 14,
+        "failures": 0,
+        "failedKeys": "",
+        "pass": true
+      },
+      {
+        "name": "dealer-cap-obedience",
+        "checks": 4,
+        "failures": 0,
+        "failedKeys": "",
+        "pass": true
+      },
+      {
+        "name": "catfight-settlement",
+        "checks": 28,
+        "failures": 0,
+        "failedKeys": "",
+        "pass": true
+      },
+      {
+        "name": "monster-stages",
+        "checks": 37,
+        "failures": 0,
+        "failedKeys": "",
+        "pass": true
+      },
+      {
+        "name": "gold-special-food",
+        "checks": 180,
+        "failures": 0,
+        "failedKeys": "",
+        "pass": true
+      },
+      {
+        "name": "bankruptcy-assets",
+        "checks": 38,
+        "failures": 0,
+        "failedKeys": "",
+        "pass": true
+      }
+    ],
+    "engineSlotReleased": true,
+    "fixtureCorrections": [
+      "Initial aggregate plan was rejected before engine launch because the official runner requires each QSP beside its plan; corrected to one plan per case directory.",
+      "Catfight probe entered already-settled phase3, correctly causing the production idempotence guard to exit; corrected synthetic entry to ready-to-settle phase2."
+    ]
+  },
+  "qaToolSafety": [
+    {
+      "path": "G:/somi/JO9sa/tools/qa/release-check.cjs",
+      "usedExports": [
+        "inspectWorld",
+        "primeState",
+        "assertOutside"
+      ],
+      "productionWrites": false,
+      "note": "Imported exports only; CLI entry not run by this agent. Native instrumented copies are created by our task wrapper."
+    },
+    {
+      "path": "G:/somi/JO9sa/tools/qa/check-slave-template-ids.cjs",
+      "usedExports": [
+        "assertRegistry"
+      ],
+      "scope": "game/json/slaves only",
+      "productionWrites": false
+    },
+    {
+      "path": "G:/somi/JO9sa/records/auction-consignment-fix-20261028/tests/harness.cjs",
+      "usedExports": [
+        "init",
+        "actor",
+        "isolate",
+        "instrumentMessages"
+      ],
+      "productionWrites": false,
+      "note": "runFixture/loadCandidate are not called; historical baseline and fixed record-output commands are not executed."
+    },
+    {
+      "path": "G:/somi/JO9sa/records/agrabah-special-food-20261030/native.cjs",
+      "usedExports": [
+        "build"
+      ],
+      "productionWrites": false,
+      "note": "prepare/CLI not called; no historical representative personal save is read."
+    },
+    {
+      "path": "G:/somi/JO9sa/records/spawn-stage-image-fix-20261030/native.cjs",
+      "usedExports": [
+        "makeCode"
+      ],
+      "productionWrites": false,
+      "note": "prepare/CLI not called; no historical temp path overwritten."
+    }
+  ],
+  "artwork": {
+    "report": "output/full-prezip-20261101/artwork-placeholder-audit.json",
+    "priorPlaceholders": 5,
+    "present": 5,
+    "dimensionsAll795x596": true,
+    "matchesPriorPlaceholder": 0,
+    "distinctHashes": 5,
+    "visualQualityChecked": false
+  },
+  "questions": [
+    {
+      "topic": "Workshop / Show HTML",
+      "status": "USER_REQUESTED_DEFERRED_FIX_LIST",
+      "source": "User explicit request to record without immediate fix",
+      "countAsPass": false
+    },
+    {
+      "topic": "Magic-brand event D12",
+      "status": "REPRODUCTION_PENDING_USER_HOLD",
+      "source": "User chose later reproduction before fix; equipment state unconfirmed",
+      "countAsPass": false
+    },
+    {
+      "topic": "Black focus/redraw afterimage",
+      "status": "ROOT_CAUSE_NOT_CONFIRMED",
+      "source": "User requested priority after this patch, not included in current patch",
+      "countAsPass": false
+    },
+    {
+      "topic": "Private-room pregnancy report",
+      "status": "FULL_USER_SEQUENCE_NOT_REPRODUCED",
+      "source": "Forwarded report cannot distinguish diagnosis from hidden early display",
+      "countAsPass": false
+    }
+  ],
+  "manualDocument": "output/full-prezip-20261101/PLAYTEST_KO.md",
+  "automaticResultsMustRemainSeparateFromManual": true,
+  "target": "G:/somi/Jack O Nine Tails v2.4 Kor_Full/game/jack.qsp"
+}

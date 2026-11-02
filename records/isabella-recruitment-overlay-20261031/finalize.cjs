@@ -1,0 +1,11 @@
+'use strict';
+const fs=require('fs');
+const R='G:/somi/JO9sa',rec=R+'/records/isabella-recruitment-overlay-20261031',build=R+'/records/full-client-build-20261031';
+const image={status:'PASS',method:'Pillow verify and RGBA channel inspection; read only',size:[795,596],mode:'RGBA',alpha:[0,255],subjectBounds:[202,24,590,596],checkedPaths:['G:/somi/Jack O Nine Tails v2.4_work/game/content/pic/girls/full/2571/2571_full_title.png','G:/somi/Jack O Nine Tails v2.4_work/game/content/pic/girls/full/isabella_black_long.png','G:/somi/Jack O Nine Tails v2.4 Kor_Full/game/content/pic/girls/full/isabella_black_long.png'],guiReplayed:false};
+fs.writeFileSync(rec+'/image-verification.json',JSON.stringify(image,null,2)+'\n');
+const patch={id:'ISABELLA_RECRUITMENT_OVERLAY_20261031',record:'../isabella-recruitment-overlay-20261031/verification.json',targetedVerification:'PASS',runtimeByteIncrease:92045,qspChanged:false,testSaveHashesVerified:7,guiReplayed:false};
+const deliveryPath=build+'/DELIVERY.json',delivery=JSON.parse(fs.readFileSync(deliveryPath,'utf8'));delivery.totalBytes=17164936683;delivery.workUnchanged=false;delivery.postBuildChanges=[...(delivery.postBuildChanges||[]),patch];fs.writeFileSync(deliveryPath,JSON.stringify(delivery,null,2)+'\n');
+const finalPath=build+'/final-verification.json',final=JSON.parse(fs.readFileSync(finalPath,'utf8'));final.runtimeBytes=16815319542;final.totalBytes=17164936683;final.postBuildChanges=[...(final.postBuildChanges||[]),patch];fs.writeFileSync(finalPath,JSON.stringify(final,null,2)+'\n');
+fs.appendFileSync(build+'/REPORT_KO.md','\n## 2026-10-31 빌드 후 이사벨라 거래 화면 수정\n\n사용자의 후속 화면 제보에 따라 WORK와 새 배포본의 `content/pic/girls/full/isabella_black_long.png`를 현재2571 title PNG로 교체했다. 배경+투명 캐릭터 오버레이 한 곳의 옛 주소를 유지하는 파일 교체이며 QSP와 세이브는 변경하지 않았다. PNG·연결·해시·목록 JS 문법 검사 통과, 배포 테스트 SAV7개 해시 유지. 실제 화면 재생은 미확인이다. 추가 용량92,045bytes, 최종42,931파일·17,164,936,683bytes. 상세는 `records/isabella-recruitment-overlay-20261031`에 보존했다.\n');
+fs.copyFileSync(__filename,rec+'/finalize.cjs');
+console.log(JSON.stringify({status:'RECORDED',deliveryBytes:delivery.totalBytes,imageChecks:image.status,qspChanged:false,saveHashesVerified:7}));

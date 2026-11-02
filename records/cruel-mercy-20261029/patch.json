@@ -1,0 +1,22 @@
+{
+  "id": "2026-10-29_cruel_mercy",
+  "description": "Hidden signed protagonist choice value. Negative cruel; positive mercy. No stat modifiers.",
+  "before_sha256": "f96e0e5edb3750ce61721e79813a169f8f95c5d394dc0d874322e1e6199c75ec",
+  "after_sha256": "f4e4b2332f05c797c71273a8e1cde0c95112a1ef645645107abfce0ace4b384a",
+  "edits": [
+    {
+      "location": "init_game",
+      "old": "!Initialize Game - this is loaded before init_custom_game, hero_creation, and hero_customization (story mode)",
+      "new": "! JO9 MOD START CRUEL_MERCY_20261029\r\njo9_cruel_mercy = 0\r\n! JO9 MOD END CRUEL_MERCY_20261029\r\n!Initialize Game - this is loaded before init_custom_game, hero_creation, and hero_customization (story mode)",
+      "field": "body",
+      "count": 1
+    },
+    {
+      "location": "jo9_battle_fate",
+      "old": " jo9_fate['choice'] = jo9_bf_choice\r\n local jo9_bf_i = 1",
+      "new": " jo9_fate['choice'] = jo9_bf_choice\r\n! JO9 MOD START CRUEL_MERCY_20261029\r\n! One protagonist decision, regardless of combatant or enemy count.\r\n if jo9_bf_choice = 1: jo9_cruel_mercy -= 1\r\n if jo9_bf_choice = 2: jo9_cruel_mercy += 1\r\n! JO9 MOD END CRUEL_MERCY_20261029\r\n local jo9_bf_i = 1",
+      "field": "body",
+      "count": 1
+    }
+  ]
+}

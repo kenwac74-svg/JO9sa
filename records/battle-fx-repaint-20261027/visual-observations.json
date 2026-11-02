@@ -1,0 +1,43 @@
+{
+  "status": "OBSERVED_PASS",
+  "method": "Windows Computer Use through @oai/sky; actual native game windows",
+  "engine": "f75032d79ecb58eeb7b969cd3f774d66b091fca38a360acdabd782e03a46c6e6",
+  "baseline": {
+    "windowId": 201270,
+    "title": "JO9 FX animated-baseline",
+    "fixture": "visual-animated-baseline/visual.qsp",
+    "diagnosticOverride": "Original scale/opacity animation held for observation with 6-second repeated animation",
+    "observation": "The additional inset legacy vertical and bottom UI frame appeared while slash/player effects were animated, matching the user symptom."
+  },
+  "candidateHeld": {
+    "windowId": 857104,
+    "title": "JO9 FX static-candidate",
+    "diagnosticOverride": "Static effects initially forced visible for a sustained comparison",
+    "observation": "Slash and player red tint were visible without the extra legacy frame. Two original attack links rendered subsequent combat states without an extra frame."
+  },
+  "candidateLive": {
+    "fixture": "visual-static-candidate/visual-live.qsp",
+    "css": "9032c426fea0ad8c011bb96dbea5c238757ed82e7becb552ac42d28cd9ef8292",
+    "js": "631f549e53c9b3870ee54592e60ee4a380b7bb2c2c04b06cc050bca4b5e4dac5",
+    "diagnosticOverride": "None on CSS or JS; the visual hold was removed and a different diagnostic filename was opened to force a fresh game load",
+    "initialEnemyHp": 100,
+    "firstAttackEnemyHp": 86,
+    "secondAttackEnemyHp": 79,
+    "firstHit": "Original attack link clicked; slash visible with normal frame, then absent on a later capture with the frame unchanged",
+    "secondHit": "Original attack link clicked again; slash visible with normal frame, then absent on a later capture with the frame unchanged",
+    "physicalFrameRecurrenceObserved": false
+  },
+  "preservation": {
+    "userGameWindowId": 23401180,
+    "userGame": "Read-only initial inspection; no save/load/attack/close input sent to that window",
+    "newSaves": 0,
+    "engineModified": false,
+    "screenshots": "Inspected from native tool output only; screenshot payloads were not saved or re-encoded"
+  },
+  "limits": [
+    "The visual baseline deliberately extends the original CSS animation to make its transient paint defect observable.",
+    "The fixed-size version removes animated scaling/fading while keeping the original images and 600/500ms production lifetimes.",
+    "Two actual GUI attack re-renders are distinct from the failed synthetic QSP re-entry harness and from the DOM timer unit test.",
+    "This does not certify every monster, battle route, graphics configuration or unrelated global UI repaint issue."
+  ]
+}

@@ -1,0 +1,164 @@
+{
+  "pass": true,
+  "redReproduced": true,
+  "greenPass": true,
+  "cases": [
+    {
+      "name": "room-two-only",
+      "states": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "egos": [
+        2,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "name": "room-one-and-two",
+      "states": [
+        1,
+        1,
+        0,
+        0
+      ],
+      "egos": [
+        2,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "name": "room-two-threshold",
+      "states": [
+        1,
+        1,
+        0,
+        0
+      ],
+      "egos": [
+        2,
+        3,
+        2,
+        2
+      ]
+    },
+    {
+      "name": "empty-room-two",
+      "states": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "egos": [
+        2,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "name": "dead-room-two",
+      "states": [
+        0,
+        -1,
+        0,
+        0
+      ],
+      "egos": [
+        2,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "name": "faint-room-two",
+      "states": [
+        0,
+        2,
+        0,
+        0
+      ],
+      "egos": [
+        2,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "name": "all-rooms-grow",
+      "states": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "egos": [
+        2,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "name": "all-rooms-at-threshold",
+      "states": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "egos": [
+        3,
+        3,
+        3,
+        3
+      ]
+    }
+  ],
+  "greenAssertions": 32,
+  "sources": {
+    "red": {
+      "qsp": "9a4bba2496616517fa4cbd8d791293ad413c5475efcf135039df4da68e869f39",
+      "roomBlockHash": "69ab96968319139096d10a7578de2889320467984f8b9ff810d82d88dc4b5516",
+      "fixture": "660a932efb9f3eda6c9c72e05a7e3d2e6b3a30f5a699a20b84aff40eef29de73",
+      "assertions": 32
+    },
+    "green": {
+      "qsp": "a11ecde65897ab9c3d7bf736d0f539a35caa243c379e61a73ba6191241ef7755",
+      "roomBlockHash": "3599daa09ed0f0816eea48179de35d82a7a73baaf9d29cd714738f3ca14b08a5",
+      "fixture": "bd22d9f402b245bf7df1a0b3f174603465d149241eebf7cc5cfd1ba80b1611a5",
+      "assertions": 32
+    }
+  },
+  "client": [
+    {
+      "name": "red",
+      "checkpoint": "Actual next_day private-room block; room independence, alive/absent/dead/faint, ego boundary and all rooms",
+      "pass": false,
+      "reason": "Unexpected message before completion",
+      "durationMs": 301
+    },
+    {
+      "name": "green",
+      "checkpoint": "Actual next_day private-room block; room independence, alive/absent/dead/faint, ego boundary and all rooms",
+      "pass": true,
+      "reason": "",
+      "durationMs": 527
+    }
+  ],
+  "runnerExit": 1,
+  "productionWrites": false,
+  "limits": [
+    "The actual complete four-room numeric block is copied unchanged into an isolated location, not the entire next_day.",
+    "The mandatory full-day flow is verified separately by the release smoke tests. No player save values are edited."
+  ]
+}

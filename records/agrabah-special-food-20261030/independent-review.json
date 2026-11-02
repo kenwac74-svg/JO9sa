@@ -1,0 +1,96 @@
+{
+  "schema": 1,
+  "pass": true,
+  "reviewer": "mob_weapon_fix_review",
+  "reviewedAt": "2026-10-30T11:21:19.883Z",
+  "reviewScope": "Independent source and CSS exact-diff review; no engine was executed by this reviewer",
+  "beforeSha256": "6106de161136062c21c1de3fe0a4a706fa45c9a9daade3459cd770a2282a9d1c",
+  "candidateSha256": "098d3503c2b82acc31e570ee01cfa68f45a19edc1c5211e27b3c5e2e9903a6ad",
+  "scope": {
+    "changedLocations": [
+      "#options",
+      "interaction_city",
+      "master_stat"
+    ],
+    "changedEncodedLineIndexes": [
+      370,
+      426,
+      606
+    ],
+    "jsonEdits": 10,
+    "editsByLocation": {
+      "#options": 2,
+      "interaction_city": 6,
+      "master_stat": 2
+    },
+    "newLocations": 0,
+    "newPersistentArray": "jo9_agraba_stock",
+    "newPersistentKeys": [
+      "fruit",
+      "wine"
+    ],
+    "newLocalTooltipVariables": [
+      "jo9_fruit_order_tip",
+      "jo9_wine_order_tip"
+    ],
+    "addedProvenanceMarkerLines": 20,
+    "cssRulesAdded": 1,
+    "imagesAdded": 0
+  },
+  "exactComparison": {
+    "sameLocationMetadata": true,
+    "sameEncodedLineCount": true,
+    "onlyThreeApprovedBodiesChanged": true,
+    "independentExpectedBodiesMatch": true,
+    "jsonReplayByteExact": true,
+    "allOtherEncodedLinesUnchanged": true,
+    "originalCommentsPreserved": true
+  },
+  "behaviorReview": {
+    "smallFruitRepeatableWithoutQuestOrLegacyFlagGate": true,
+    "smallWineRepeatableWithoutQuestOrLegacyFlagGate": true,
+    "fruitGoldPrice": 25,
+    "fruitFallbackSparksPrice": 250,
+    "fruitGoldPriorityPreserved": true,
+    "wineGoldPrice": 25,
+    "wineDoesNotSpendSparks": true,
+    "insufficientFundsCheckedBeforePurchase": true,
+    "successAddsExactlyOneToIndependentStock": true,
+    "legacyFlagsStillSetToOne": true,
+    "noStockBackfillFromLegacyFlags": true,
+    "noExplicitStockInitializationOrReset": true,
+    "missingStockUsesQspImplicitNumericZero": true,
+    "bulkEnableConditionsPreserved": true,
+    "bulkFruitPriceAndCurrencyPreserved": true,
+    "bulkWinePriceAndCurrencyPreserved": true,
+    "bulkPurchaseHandlersByteUnchanged": true,
+    "questStageAssignmentsUnchanged": true,
+    "unrelatedMerchantOptionsPreserved": true,
+    "noMealNutritionCapacityBrewingOrAbilityReferencesAdded": true,
+    "ordinaryFridgeCodeUnchanged": true,
+    "storageHasOneBlankLineAfterOrdinaryFood": true,
+    "noKitchenPositiveStockDisplaysBothSpecialRows": true
+  },
+  "markupReview": {
+    "existingMenuHelpersReused": true,
+    "gotoArgumentOrderMatchesExistingHelper": true,
+    "disabledChoicesUseExistingTooltipHelper": true,
+    "receiptHtmlUsesExistingBrAndNbsp": true,
+    "storageDivBalancedAndOnlyTargetHasNewClass": true,
+    "dynamicDisplayUsesSameQuotedAssociativeKeyStyleAsExistingFridge": true
+  },
+  "cssReview": {
+    "beforeSha256": "30d552cde203405469c7536fe6dc6b24271fde3f454056339eb64e76ae1040eb",
+    "afterSha256": "9981d15e18c07d93070847140ce22b9d4abc7c3e87c408bd61626387dde47eff",
+    "originalBytesPreserved": true,
+    "selector": "#left_text.jo9-agraba-food-storage",
+    "onlyDeclaration": "height: 540px",
+    "globalLeftTextRuleUnchanged": true
+  },
+  "findings": [],
+  "limitations": [
+    "Native purchase, menu and storage tests, actual save-load roundtrip, browser hover and layout checks are performed separately by root.",
+    "This report verifies source-level repeatability and default-zero/no-backfill design; it does not claim this reviewer ran purchases or loaded an original save.",
+    "GT exits do not necessarily resume the GS test caller; a harness continuation issue is separate from purchase-handler correctness."
+  ]
+}

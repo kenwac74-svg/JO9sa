@@ -1,0 +1,10 @@
+'use strict';
+const fs=require('fs'),a=require('assert/strict'),R='G:/somi/JO9sa',W='G:/somi/Jack O Nine Tails v2.4_work/game',T=process.argv[2]||'G:/Codex/tmp/room2-ego-growth-20261101';
+const c=require(R+'/tools/text-workshop/core.cjs'),qa=require(R+'/tools/qa/release-check.cjs'),raw=fs.readFileSync(process.argv[3]||W+'/jack.qsp'),d=c.parse(raw);a(c.serialize(d).equals(raw));
+const l=d.locations.find(x=>x.name==='next_day'),before=c.shift(d.lines[l.body],5),old="\tif room2['ego'] < 3: room1_rate['ego'] += 1 ",line=old.replace("room1_rate['ego']","room2_rate['ego']"),id='ROOM2_EGO_GROWTH_20261101';
+a.equal(before.split(old).length,2);const next='! JO9 MOD START '+id+'\r\n'+line+'\r\n! JO9 MOD END '+id;d.lines[l.body]=c.shift(before.replace(old,()=>next),-5);
+const bytes=c.serialize(d),world=qa.inspectWorld(bytes),out=c.parse(bytes),original=c.parse(raw);for(const e of original.locations.filter(x=>x.name!=='next_day'))a.equal(original.lines[e.body],out.lines[out.locations.find(x=>x.name===e.name).body]);
+const restored=c.shift(out.lines[out.locations.find(x=>x.name==='next_day').body],5).replace(next,old);a.equal(restored,before);
+const patch={id:'2026-11-01_room2_ego_growth',description:'Correct the original daily private-room2 ego growth target from room1_rate to room2_rate. Keep all growth conditions, amounts, other rooms and existing save values unchanged.',before_sha256:c.hash(raw),after_sha256:c.hash(bytes),edits:[{location:'next_day',field:'body',old,new:next,count:1}]};
+fs.mkdirSync(T+'/mods',{recursive:true});fs.writeFileSync(T+'/before.qsp',raw);fs.writeFileSync(T+'/candidate.qsp',bytes);fs.writeFileSync(T+'/mods/'+patch.id+'.json',JSON.stringify(patch,null,2)+'\n');
+const meta={before:patch.before_sha256,after:patch.after_sha256,world,changedLocations:['next_day'],changedLogicTokens:1,unchangedOtherLocations:d.locations.length-1,oldLine:before.slice(0,before.indexOf(old)).split('\r\n').length,newSaveFields:0,existingProgressRewritten:false,imagesChanged:false,cssChanged:false,jsonChanged:false,fullChanged:false};fs.writeFileSync(T+'/prepared.json',JSON.stringify(meta,null,2)+'\n');console.log(JSON.stringify(meta));

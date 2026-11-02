@@ -1,0 +1,20 @@
+'use strict';
+const fs=require('fs'),p=require('path'),a=require('assert/strict');
+const R='G:/somi/JO9sa',W='G:/somi/Jack O Nine Tails v2.4_work/game',T=process.env.JO9_IC_BUILD_ROOT||'G:/Codex/tmp/image-cut-conditions-build-20261101';
+const c=require(R+'/tools/text-workshop/core.cjs'),qa=require(R+'/tools/qa/release-check.cjs'),sc=require(R+'/tools/qa/save-codec.cjs'),rules=require('./image-cut-condition-rules.cjs');
+qa.assertOutside(T,[R,W]);a(!fs.existsSync(T));fs.mkdirSync(T,{recursive:true});
+const raw=fs.readFileSync(W+'/jack.qsp'),doc=c.parse(raw),renderer=JSON.parse(fs.readFileSync(__dirname+'/renderer-edits.json','utf8'));
+a.equal(c.hash(raw),renderer.sourceQspSha256,'Latest manual QSP changes require rebuilding the candidate');
+const loc=doc.locations.find(x=>x.name==='interior_change'),old=c.shift(doc.lines[loc.body],5),next=rules.installBaseBody(old);
+const edits=[{location:loc.name,field:'body',old,new:next,count:1},...renderer.edits];
+for(const e of edits){const l=doc.locations.find(x=>x.name===e.location),b=c.shift(doc.lines[l[e.field]],5);a.equal(b.split(e.old).length-1,e.count,e.location);doc.lines[l[e.field]]=c.shift(b.replace(e.old,()=>e.new),-5);}
+const candidate=c.serialize(doc);qa.inspectWorld(candidate);a.equal(rules.readRules(next).length,0);
+fs.writeFileSync(T+'/before.qsp',raw);fs.writeFileSync(T+'/candidate.qsp',candidate);fs.mkdirSync(T+'/mods');
+const mod={id:'2026-11-01_image_cut_conditions_core',description:'이미지별 B·C컷 조건 편집기 기본 출력 연결. 조건 미설정시 원래 이미지 유지.',before_sha256:c.hash(raw),after_sha256:c.hash(candidate),edits};
+fs.writeFileSync(T+'/mods/'+mod.id+'.json',JSON.stringify(mod,null,2));
+const savePath=W+'/save/TC_01_HOME_TRAITS.sav',fallback='G:/somi/Jack O Nine Tails v2.4 Kor_Full/game/save/TC_01_HOME_TRAITS.sav',source=fs.existsSync(savePath)?savePath:fallback;
+const saveRaw=fs.readFileSync(source),state=sc.parse(saveRaw);a(sc.serialize(state).equals(saveRaw));
+const v=state.vars.find(x=>x.name==='GAME_VER');a(v,'GAME_VER expected');v.values[0][1]='잭 오 나인 테일 v2.4.1 Kor Ver';
+fs.writeFileSync(T+'/state.sav',sc.serialize(state));
+fs.writeFileSync(__dirname+'/candidate-prepared.json',JSON.stringify({root:T,before:c.hash(raw),candidate:c.hash(candidate),changedLocations:[...new Set(edits.map(e=>e.location))],edits:edits.length,world:qa.inspectWorld(candidate),stateSource:source,stateSourceHash:c.hash(saveRaw)},null,2));
+console.log(JSON.stringify({root:T,before:c.hash(raw),candidate:c.hash(candidate),edits:edits.length}));

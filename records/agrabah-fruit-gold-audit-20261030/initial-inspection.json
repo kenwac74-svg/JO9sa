@@ -1,0 +1,640 @@
+{
+  "qspSha256": "2b81e781d0ab56f10cb77aa340db27ee4dab7d707bafe857853ad600d474417e",
+  "save": "G:/somi/Jack O Nine Tails v2.4_work/game/save/JO9_GOLD_AP_CHECK_20261026.sav",
+  "saveSha256": "581fc472bfa5aedcbca85c379d0061ad8d28a9b928ef948a259dee7c800ad2ec",
+  "fixtureValues": {
+    "gold": [
+      "0",
+      ""
+    ],
+    "sparks": [
+      "5000",
+      ""
+    ],
+    "fruits_minibox": [
+      "0",
+      ""
+    ],
+    "fruits_maxibox": [
+      "0",
+      ""
+    ],
+    "day": [
+      "102",
+      ""
+    ],
+    "$place": [
+      "0",
+      "balsam_boutique"
+    ],
+    "sp_txt": [
+      "1",
+      ""
+    ],
+    "interaction_city": [
+      "3021",
+      ""
+    ],
+    "Jasmine_job": [
+      "0",
+      ""
+    ],
+    "slave_type": [
+      "2617",
+      ""
+    ],
+    "assistant_type": [
+      "2571",
+      ""
+    ],
+    "eventKey": [
+      "0",
+      "<a href = \"EXEC:Помогаем Джинну и ведьме выйти из тупика в котором они оказались. Событие включает в себя Х уровней.</a>"
+    ],
+    "questStage": [
+      "12",
+      ""
+    ]
+  },
+  "evidence": [
+    {
+      "location": "#options",
+      "line": 7080,
+      "text": "FUNC('$menu', 'exec_options', $menu_item_nobuy, 'sp_txt = 1 & gt $curloc', '뒤로')"
+    },
+    {
+      "location": "#options",
+      "line": 7081,
+      "text": "FUNC('$menu', '===END===')"
+    },
+    {
+      "location": "#options",
+      "line": 7082,
+      "text": "}"
+    },
+    {
+      "location": "#options",
+      "line": 7083,
+      "text": "$balsam_boutique_options[3] = {"
+    },
+    {
+      "location": "#options",
+      "line": 7084,
+      "text": "$sp_text[3] = '  '"
+    },
+    {
+      "location": "#options",
+      "line": 7085,
+      "text": "$text_display = '<br><br>'"
+    },
+    {
+      "location": "#options",
+      "line": 7086,
+      "text": "FUNC('$menu', 'spacer', 3)"
+    },
+    {
+      "location": "#options",
+      "line": 7087,
+      "text": "FUNC('$menu', '===BEGIN===', 'column_0')"
+    },
+    {
+      "location": "#options",
+      "line": 7088,
+      "text": "IF active[$event['Akabur_quest']] = 11 and fruits_minibox = 0 and (gold >= 25 or sparks >=250): FUNC('$menu', 'interaction_city', $menu_item_balsam, 30212, '과일 바구니 (25)')"
+    },
+    {
+      "location": "#options",
+      "line": 7089,
+      "text": "IF active[$event['Akabur_quest']] ! 11 or (gold < 25 and sparks < 250) or fruits_minibox = 1: FUNC('$menu', 'location_gray', $menu_item_balsam_gray, empty, '과일 바구니 (25)')"
+    },
+    {
+      "location": "#options",
+      "line": 7090,
+      "text": "IF active[$event['Akabur_quest']] = 11 and fruits_maxibox = 0 and (gold >= 1000 or sparks >= 10000): FUNC('$menu', 'interaction_city', $menu_item_balsam, 30213, '연회용 과일 (1000)')"
+    },
+    {
+      "location": "#options",
+      "line": 7091,
+      "text": "IF active[$event['Akabur_quest']] = 11 and gold < 1000 and sparks < 10000 or fruits_maxibox = 1: FUNC('$menu', 'location_gray', $menu_item_balsam_gray, empty, '연회용 과일 (1000)')"
+    },
+    {
+      "location": "#options",
+      "line": 7092,
+      "text": "FUNC('$menu', 'exec_options', $menu_item_nobuy, 'sp_txt = 1 & gt $curloc', '뒤로')"
+    },
+    {
+      "location": "#options",
+      "line": 7093,
+      "text": "FUNC('$menu', '===END===')"
+    },
+    {
+      "location": "#options",
+      "line": 7094,
+      "text": "}"
+    },
+    {
+      "location": "#options",
+      "line": 7095,
+      "text": "$Jafar_academy_options[1] = {"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26838,
+      "text": " $text[1] = '[발삼]<br>&nbsp;여기 금화 25장 입니다, <<$master_name>>!... 이걸로도 부족하실까요? 금화 25개로는 아그라바에서 살 수 있는 게 많지 않거든요!'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26839,
+      "text": "! JO9 MOD END J9M0282"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26840,
+      "text": " sparks -= 250"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26841,
+      "text": " gold += 25"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26842,
+      "text": "END"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26843,
+      "text": "IF interaction_city = 302112:"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26844,
+      "text": " npc = 1"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26845,
+      "text": " $npc_id = 'Balsam'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26846,
+      "text": " $place = 'balsam_boutique'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26847,
+      "text": " $return_lock  = 'shop_general'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26848,
+      "text": " copyarr '$display_options', '$balsam_boutique_options'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26849,
+      "text": " txt_count = 1"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26850,
+      "text": "! JO9 MOD START J9M0281 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26851,
+      "text": " $text[1] = '[발삼]<br>&nbsp;여기 금화 50장 입니다, <<$master_name>>!... 금화 잘 챙기세요! 물론 주머니는 작지만, 아그라바에서 뭐라도 살 정도는 되겠네요...'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26852,
+      "text": "! JO9 MOD END J9M0281"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26853,
+      "text": " sparks -= 500"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26854,
+      "text": " gold += 50"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26855,
+      "text": "END"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26856,
+      "text": "IF interaction_city = 302113:"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26857,
+      "text": " npc = 1"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26858,
+      "text": " $npc_id = 'Balsam'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26859,
+      "text": " $place = 'balsam_boutique'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26860,
+      "text": " $return_lock  = 'shop_general'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26861,
+      "text": " copyarr '$display_options', '$balsam_boutique_options'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26862,
+      "text": " txt_count = 1"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26863,
+      "text": "! JO9 MOD START J9M0280 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26864,
+      "text": " $text[1] = '[발삼]<br>&nbsp;여기 금화 100장 입니다, <<$master_name>>!... 금화 잘 챙기세요! 그리고 아그라바에서 즐거운 쇼핑 되시길! 더 많은 금이 필요하시면 어디서 환전하는지 아시잖아요!...'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26865,
+      "text": "! JO9 MOD END J9M0280"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26866,
+      "text": " sparks -= 1000"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26867,
+      "text": " gold += 100"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26868,
+      "text": "END"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26869,
+      "text": "IF interaction_city = 302114:"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26870,
+      "text": " npc = 1"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26871,
+      "text": " $npc_id = 'Balsam'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26872,
+      "text": " $place = 'balsam_boutique'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26873,
+      "text": " $return_lock  = 'shop_general'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26874,
+      "text": " copyarr '$display_options', '$balsam_boutique_options'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26875,
+      "text": " txt_count = 1"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26876,
+      "text": "! JO9 MOD START J9M0279 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26877,
+      "text": " $text[1] = '[발삼]<br>&nbsp;비결 좀 알려 주세요, <<$master_name>>. 아그라바에 있으면서 어떻게 금을 하나도 안 쓰고 있을 수 있죠? 여기엔 맛있고 예쁘고 좋은 게 얼마나 많은데요! 아주 눈이 휘둥그레질 지경이라니까!... 에휴!... 금 좀 줘 보세요!...'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26878,
+      "text": "! JO9 MOD END J9M0279"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26879,
+      "text": " sparks += gold*10"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26880,
+      "text": " gold = 0"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26881,
+      "text": "END"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26882,
+      "text": "IF interaction_city = 30212:"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26883,
+      "text": " npc = 1"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26884,
+      "text": " $npc_id = 'Balsam'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26885,
+      "text": " $place = 'balsam_boutique'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26886,
+      "text": " $return_lock  = 'shop_general'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26887,
+      "text": " copyarr '$display_options', '$balsam_boutique_options'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26888,
+      "text": " txt_count = 1"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26889,
+      "text": "! JO9 MOD START J9M0278 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26890,
+      "text": " $text[1] = '[발삼]<br>&nbsp;어떤 미녀를 맛있는 간식으로 기쁘게 해 주고 싶으신가요, <<$master_name>>?!... 아, 이 짓궂은 분 같으니!... 농담입니다!... 특별히 당신만을 위해 잘 익고 육즙 가득한 과일이 든 바구니에, 아그라바 최고의 단것들까지 담아 놨습니다! 이런 선물을 마다할 숙녀는 없죠! 즐거운 명절 보내세요, <<$master_name>>!'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26891,
+      "text": "! JO9 MOD END J9M0278"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26892,
+      "text": " IF gold < 25:"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26893,
+      "text": "  sparks -= 250"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26894,
+      "text": " else"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26895,
+      "text": "  gold -= 25"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26896,
+      "text": " END "
+    },
+    {
+      "location": "interaction_city",
+      "line": 26897,
+      "text": " Fruits_minibox = 1"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26898,
+      "text": "END"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26899,
+      "text": "IF interaction_city = 30213:"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26900,
+      "text": " npc = 1"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26901,
+      "text": " $npc_id = 'Balsam'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26902,
+      "text": " $place = 'balsam_boutique'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26903,
+      "text": " $return_lock  = 'shop_general'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26904,
+      "text": " copyarr '$display_options', '$balsam_boutique_options'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26905,
+      "text": " txt_count = 2"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26906,
+      "text": "! JO9 MOD START J9M0277 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26907,
+      "text": " $text[1] = '[당신]<br>&nbsp;최고급 과일과 단것들이 필요하다, 발삼! 그것도 아주 많이! 술탄 궁전에서 큰 연회를 열어도 충분할 만큼 말이야!... 믿어도 되겠지?!'   "
+    },
+    {
+      "location": "interaction_city",
+      "line": 26908,
+      "text": " $text[2] = '[발삼]<br>&nbsp;걱정 마세요, <<$master_name>>?! 최고로 준비해 드리겠습니다!... 금화 1000개면, 아그라바 절반을 먹여 살릴 만큼 엄선된 과일과 단것을 받게 되실 겁니다!... 배달 걱정도 마세요! 정해 주신 시간과 날짜에 맞춰 제가 직접 궁전으로 가져다드리겠습니다!'"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26909,
+      "text": "! JO9 MOD END J9M0277"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26910,
+      "text": " IF gold < 1000:"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26911,
+      "text": "  sparks -= 10000"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26912,
+      "text": " else"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26913,
+      "text": "  gold -= 1000"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26914,
+      "text": " END "
+    },
+    {
+      "location": "interaction_city",
+      "line": 26915,
+      "text": " Fruits_maxibox = 1"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26916,
+      "text": "END"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26917,
+      "text": "IF interaction_city = 30214:"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26918,
+      "text": " interaction_city = 302141"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26919,
+      "text": " if first_job_in_a_balsam_boutique = 1: interaction_city = 302142"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26920,
+      "text": "END"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26921,
+      "text": "IF interaction_city = 302141:"
+    },
+    {
+      "location": "interaction_city",
+      "line": 26922,
+      "text": " npc = 1"
+    },
+    {
+      "location": "#event_base",
+      "line": 1,
+      "text": "! JO9 MOD START J9M2929 | 2026-10-10_restore_private_room_ui | changed block; context may be included"
+    },
+    {
+      "location": "#event_base",
+      "line": 2,
+      "text": "if snk_room_target > 0 and $curloc = '#event_base': gs 'snk_room_bridge', 'guard', '#event_base'"
+    },
+    {
+      "location": "#event_base",
+      "line": 3,
+      "text": "! JO9 MOD END J9M2929"
+    },
+    {
+      "location": "#event_base",
+      "line": 4,
+      "text": "!База событий"
+    },
+    {
+      "location": "#event_base",
+      "line": 5,
+      "text": "$event['спасение_рождества'] = '<a href = \"EXEC:Спасение рождества. Вызывается на 5 игровой день диалогом с Анжеликой. Событие включает в себя 11 уровней.</a>'"
+    },
+    {
+      "location": "#event_base",
+      "line": 6,
+      "text": ""
+    },
+    {
+      "location": "#event_base",
+      "line": 7,
+      "text": "$event['Akabur_quest'] = '<a href = \"EXEC:Помогаем Джинну и ведьме выйти из тупика в котором они оказались. Событие включает в себя Х уровней.</a>'"
+    },
+    {
+      "location": "#event_base",
+      "line": 8
+    },
+    {
+      "location": "$city_random_event",
+      "line": 64,
+      "text": "IF active[$event['Akabur_quest']] = 13 and day >= Банкет + 1 and menu_form = 0 and city_random_event[10] = 0:"
+    },
+    {
+      "location": "$city_random_event",
+      "line": 69,
+      "text": "IF active[$event['Akabur_quest']] = 14 and day >= Лампа_джинна + 1 and menu_form = 0:"
+    },
+    {
+      "location": "$city_random_event",
+      "line": 73,
+      "text": "IF active[$event['Akabur_quest']] = 15 and day >= Лампа_джинна + 5 and menu_form = 0:"
+    },
+    {
+      "location": "$city_random_event",
+      "line": 77,
+      "text": "IF active[$event['Akabur_quest']] = 16 and day >= Лампа_джинна + 7 and menu_form = 0 and ((slave_type = 2617 and slave['pregnant'] > 0) or (assistant_type = 2617 and assistant['pregnant'] > 0)):"
+    },
+    {
+      "location": "$city_random_event",
+      "line": 81,
+      "text": "IF (active[$event['Akabur_quest']] = 16 or active[$event['Akabur_quest']] = 17) and day >= Лампа_джинна + 10 and menu_form = 0 and ((slave_type = 2617 and slave['pregnant'] < 1) or (assistant_type = 2617 and assistant['pregnant'] < 1)):"
+    },
+    {
+      "location": "$city_random_event",
+      "line": 85,
+      "text": "IF active[$event['Akabur_quest']] = 20 and menu_form = 0 and ((slave_type = 2617 and slave['rehabilitation'] = 0) or (assistant_type = 2617 and assistant['rehabilitation'] = 0)):"
+    },
+    {
+      "location": "#event_base",
+      "line": 7,
+      "text": "$event['Akabur_quest'] = '<a href = \"EXEC:Помогаем Джинну и ведьме выйти из тупика в котором они оказались. Событие включает в себя Х уровней.</a>'"
+    }
+  ]
+}

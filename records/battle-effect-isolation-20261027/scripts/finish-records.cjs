@@ -1,0 +1,16 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),a=require('node:assert/strict');
+const repo='G:/somi/JO9sa',work='G:/somi/Jack O Nine Tails v2.4_work/game',rec=repo+'/records/battle-effect-isolation-20261027',root='G:/Codex/tmp/battle-effect-isolation-20261027';
+const c=require(repo+'/tools/text-workshop/core.cjs'),j=p=>JSON.parse(fs.readFileSync(p,'utf8').replace(/^\uFEFF/,'')),hash=p=>c.hash(fs.readFileSync(p));
+const install=j(rec+'/installation.json');a.equal(install.status,'complete');a.equal(hash(work+'/jack.qsp'),install.qspAfter);a.equal(hash(work+'/css/base.css'),install.cssAfter);a.equal(hash(repo+'/assets/css-2.4/base.css'),install.cssAfter);
+const saves=j(repo+'/records/ui-live-consolidation-20261027/final-preservation-check.json');a.equal(saves.status,'PASS');
+for(const s of saves.originalSaves.results)a.equal(hash(work+'/'+s.path),s.expectedSha256,s.path);
+for(const rel of install.automaticBackupPaths){a(!path.isAbsolute(rel)&&!rel.includes('..')&&rel.startsWith('jack.qsp.bak_'));const full=path.resolve(work,rel);a(full.startsWith(path.resolve(work)+path.sep));a.equal(hash(full),hash(install.backup+'/jack.qsp'));fs.unlinkSync(full);}
+const resolved=path.resolve(root);a.equal(fs.realpathSync(root).toLowerCase(),resolved.toLowerCase());a(!fs.lstatSync(root).isSymbolicLink());
+const cleanup={status:'running',root:resolved,files:0,directories:0,linksUnlinked:0,bytesRemoved:0,failures:[]};
+function remove(file){const abs=path.resolve(file);a(abs===resolved||abs.startsWith(resolved+path.sep));const stat=fs.lstatSync(abs);if(stat.isSymbolicLink()){try{fs.unlinkSync(abs)}catch(e){if(['EPERM','EISDIR'].includes(e.code))fs.rmdirSync(abs);else throw e;}cleanup.linksUnlinked++;return;}if(stat.isDirectory()){for(const n of fs.readdirSync(abs))remove(path.join(abs,n));fs.rmdirSync(abs);cleanup.directories++;}else{fs.unlinkSync(abs);cleanup.files++;cleanup.bytesRemoved+=stat.size;}}
+try{remove(root);}catch(e){cleanup.failures.push(String(e.stack||e));}
+cleanup.status=cleanup.failures.length?'INCOMPLETE':'PASS';cleanup.tempRootExists=fs.existsSync(root);fs.writeFileSync(rec+'/cleanup.json',JSON.stringify(cleanup,null,2)+'\n');
+const progress='2026-10-27 전투 이펙트: WORK 적용 완료. 최종 QSP '+install.qspAfter+', CSS '+install.cssAfter+'.\n전용 FX layer1개, 기존 효과 좌표/키프레임/전투 계산 유지. 이전/도중/종료 후 패널/글꼴/스크롤 불변과 명령 입력 투과 검사.\n잘못된 bg 디렉터리접두사280곳/44본문 복구, 진짜 bg.png 정식UI파일 참조 유지. 이전 경로감사의 byte-only 통과가 의미상 경로 정상까지 증명한 것은 아니며 이번 경계 검사를 추가함.\n공식9경로 및 native-effects-results.json 최종 결과 참조. 이전baseline 실제기하변화 미재현과 분리계약FAIL→PASS는 구분. 실제 Windows 캡처/활성화 실패로 재도색 품질은 미확인.\n기존98원본SAV SHA 불변. 배포/엔진/설정/기존ZIP 보존, 커밋푸시 없음. 백업 '+install.backup+'.\n시험복사본 정리 '+cleanup.status+'.\n';
+fs.writeFileSync(rec+'/PROGRESS_KO.txt',progress);fs.appendFileSync(repo+'/records/ui-live-consolidation-20261027/PROGRESS_KO.txt','\n후속 정정: 배경폴더경로280곳의 의미상 이관 오류를 복구하고 전투FX분리 추가. 최신 QSP/CSS와 검증은 records/battle-effect-isolation-20261027/PROGRESS_KO.txt가 기준.\n');
+fs.copyFileSync(__filename,rec+'/scripts/finish-records.cjs');console.log(JSON.stringify({status:cleanup.status,qsp:hash(work+'/jack.qsp'),css:hash(work+'/css/base.css'),originalSavesVerified:saves.originalSaves.results.length,cleanup}));if(cleanup.failures.length)process.exitCode=1;

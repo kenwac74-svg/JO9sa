@@ -1,0 +1,93 @@
+! JO9 MOD START FARID_CONSIGNMENT_STORAGE_20261028
+! Stored actors use the existing complete instance variable schema.
+! They are not added to owned actor, daily update or liquidation rosters.
+local $jo9_fc_mode = $args[0]
+local $jo9_fc_source = $args[1]
+local $jo9_fc_target = $args[2]
+local jo9_fc_i, $jo9_fc_from_var, $jo9_fc_to_var, jo9_fc_ok, jo9_fc_amount, $jo9_fc_panel
+result = 0
+if arrsize('$slave_vars') < 1: exit
+
+if $jo9_fc_mode = 'copy':
+ if ($jo9_fc_source = 'stock' and $jo9_fc_target = 'jo9_farid_stored') or ($jo9_fc_source = 'jo9_farid_stored' and ($jo9_fc_target = 'slave' or $jo9_fc_target = 'jo9_farid_viewprobe')):
+  if dyneval('result = ' + $jo9_fc_source + '_state') ! CONST_INT['slave_exist']: exit
+  for jo9_fc_i = 0 to arrsize('$slave_vars') - 1:
+   $jo9_fc_from_var = replace($slave_vars[jo9_fc_i], 'instance', $jo9_fc_source)
+   $jo9_fc_to_var = replace($slave_vars[jo9_fc_i], 'instance', $jo9_fc_target)
+   killvar $jo9_fc_to_var
+   copyarr $jo9_fc_to_var, $jo9_fc_from_var
+  end
+  if dyneval('result = ' + $jo9_fc_target + '_state') ! CONST_INT['slave_exist']: exit
+  if dyneval('result = ' + $jo9_fc_target + "['id']") ! dyneval('result = ' + $jo9_fc_source + "['id']"): exit
+  if dyneval('result = ' + $jo9_fc_target + '_type') ! dyneval('result = ' + $jo9_fc_source + '_type'): exit
+  if $dyneval('$result = $' + $jo9_fc_target + '_name') ! $dyneval('$result = $' + $jo9_fc_source + '_name'): exit
+  result = 1
+ end
+ exit
+end
+
+if $jo9_fc_mode = 'clear':
+ if $jo9_fc_source ! 'stock' and $jo9_fc_source ! 'jo9_farid_stored' and $jo9_fc_source ! 'jo9_farid_viewprobe': exit
+ for jo9_fc_i = 0 to arrsize('$slave_vars') - 1:
+  $jo9_fc_to_var = replace($slave_vars[jo9_fc_i], 'instance', $jo9_fc_source)
+  killvar $jo9_fc_to_var
+ end
+ if $jo9_fc_source = 'jo9_farid_stored': jo9_farid_stored_valid = 0
+ if $jo9_fc_source = 'jo9_farid_viewprobe': killvar '$jo9_farid_viewprobe_features_list'
+ result = 1
+ exit
+end
+
+if $jo9_fc_mode = 'deposit':
+ if stock_state ! CONST_INT['slave_exist']: exit
+ gs '$slave_price', 'stock'
+ jo9_fc_amount = slaveprice / 2
+ if jo9_fc_amount < 1: exit
+ jo9_fc_ok = func('jo9_farid_consignment', 'copy', 'stock', 'jo9_farid_stored')
+ if jo9_fc_ok ! 1: exit
+ ! Keep the original latest-one-returnable rule for repeated deposits.
+ farid_debt += farid_potential_debt
+ farid_potential_debt = jo9_fc_amount
+ jo9_farid_stored_valid = 1
+ jo9_fc_ok = func('jo9_farid_consignment', 'clear', 'stock')
+ result = 1
+ exit
+end
+
+if $jo9_fc_mode = 'return':
+ if farid_potential_debt <= 0: result = -1 & exit
+ if slave_state ! CONST_INT['no_slave']: result = -2 & exit
+ ! Legacy saves have no receipt proving the identity of shared stock.
+ if jo9_farid_stored_valid ! 1 or jo9_farid_stored_state ! CONST_INT['slave_exist']: result = -3 & exit
+ jo9_fc_ok = func('jo9_farid_consignment', 'copy', 'jo9_farid_stored', 'slave')
+ if jo9_fc_ok ! 1: exit
+ sparks -= 5
+ farid_potential_debt = 0
+ jo9_fc_ok = func('jo9_farid_consignment', 'clear', 'jo9_farid_stored')
+ master_moodlet['pos_new_slave'] = 6 - brand_reputation
+ result = 1
+ exit
+end
+
+if $jo9_fc_mode = 'settle':
+ if farid_potential_debt < 0: exit
+ jo9_fc_amount = farid_potential_debt
+ farid_debt += jo9_fc_amount
+ farid_potential_debt = 0
+ jo9_fc_ok = func('jo9_farid_consignment', 'clear', 'jo9_farid_stored')
+ result = jo9_fc_amount
+ exit
+end
+
+if $jo9_fc_mode = 'collect':
+ if farid_debt <= 0: exit
+ jo9_fc_amount = farid_debt
+ sparks += jo9_fc_amount
+ farid_debt = 0
+ ! An older payment must not erase a newer pending consignment.
+ if farid_potential_debt <= 0: jo9_fc_ok = func('jo9_farid_consignment', 'clear', 'jo9_farid_stored')
+ result = jo9_fc_amount
+ exit
+end
+! __FARID_PANEL__
+! JO9 MOD END FARID_CONSIGNMENT_STORAGE_20261028

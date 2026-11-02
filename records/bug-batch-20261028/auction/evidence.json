@@ -1,0 +1,3318 @@
+{
+  "inputs": {
+    "current": {
+      "path": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+      "sha256": "dbe2948f7c827d8fc82ccd32b2c3453626d181a59eb744e015fa66a3846280ae"
+    },
+    "original": {
+      "path": "G:/somi/JO9O/game/jack.qsp",
+      "sha256": "26e15aaf30b6226a2883c6b532a6ee4eed34791110618597d234bb7d6fa3e052"
+    }
+  },
+  "mechanics": {
+    "current": [
+      {
+        "location": "$guild_auction",
+        "line": 148,
+        "code": "! JO9 MOD END J9M1536"
+      },
+      {
+        "location": "$guild_auction",
+        "line": 149,
+        "code": "sparks_get = bank_size"
+      },
+      {
+        "location": "$guild_auction",
+        "line": 150,
+        "code": "interaction_city = 931"
+      },
+      {
+        "location": "$guild_auction",
+        "line": 151,
+        "code": "gt 'interaction_city'"
+      },
+      {
+        "location": "generate_stock",
+        "line": 1,
+        "code": "! JO9 MOD START TRAIT_MERGE_EXCLUSIONS_20261025"
+      },
+      {
+        "location": "generate_stock",
+        "line": 2,
+        "code": "! JO9 MOD START J9M2854 | 2026-10-10_restore_private_room_ui | changed block; context may be included"
+      },
+      {
+        "location": "generate_stock",
+        "line": 3,
+        "code": "if snk_room_target > 0 and $curloc = 'generate_stock': gs 'snk_room_bridge', 'guard', 'generate_stock'"
+      },
+      {
+        "location": "generate_stock",
+        "line": 4,
+        "code": "! JO9 MOD END J9M2854"
+      },
+      {
+        "location": "generate_stock",
+        "line": 5,
+        "code": "!Generate new stock/slave"
+      },
+      {
+        "location": "generate_stock",
+        "line": 6,
+        "code": "!Overhauled by crushboss"
+      },
+      {
+        "location": "generate_stock",
+        "line": 7,
+        "code": ""
+      },
+      {
+        "location": "generate_stock",
+        "line": 8,
+        "code": "dynamic $clear_slave_instance, 'stock' &! clear any previous stock - ImperatorAugustus"
+      },
+      {
+        "location": "generate_stock",
+        "line": 9,
+        "code": "stock_state = CONST_INT['slave_exist'] &! this is the only place in the game where this state change occurs for stock - ImperatorAugustus"
+      },
+      {
+        "location": "generate_stock",
+        "line": 10,
+        "code": ""
+      },
+      {
+        "location": "next_day",
+        "line": 334,
+        "code": "farid_debt += farid_potential_debt"
+      },
+      {
+        "location": "next_day",
+        "line": 335,
+        "code": "farid_potential_debt = 0"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1473,
+        "code": "if interaction_city = 119:"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1474,
+        "code": "\t$interaction_type = 'drop_to_farid'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1475,
+        "code": "\tcity_form = 11"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1476,
+        "code": "\t$return_lock = 'city_menu_form'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1477,
+        "code": "\tnpc = 1"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1478,
+        "code": "\tgs '$slave_price', 'stock'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1479,
+        "code": "\tfarid_debt += farid_potential_debt &! accumulate debt when dropping off multiple slaves on the same day - ImperatorAugustus"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1480,
+        "code": "\tfarid_potential_debt = slaveprice/2"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1481,
+        "code": "\t$npc_id = 'фарид_аукционщик'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1482,
+        "code": "\t$place = 'slave_stage'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1484,
+        "code": "! JO9 MOD START J9M1217 | 2026-10-09_dialogue_format_and_protagonist, 2026-10-15_trim_leading_body_blank_lines | changed block; context may be included"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1487,
+        "code": "! JO9 MOD END J9M1217"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1488,
+        "code": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1490,
+        "code": "! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1492,
+        "code": ""
+      },
+      {
+        "location": "interaction_city",
+        "line": 1493,
+        "code": "end"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1494,
+        "code": ""
+      },
+      {
+        "location": "interaction_city",
+        "line": 1495,
+        "code": "if interaction_city = 1191:"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1496,
+        "code": "\tcity_form = 11"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1497,
+        "code": "\t$return_lock = 'city_menu_form'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1498,
+        "code": "\tnpc = 1"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1499,
+        "code": "\tsparks -= 5"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1500,
+        "code": "\tgs 'stock_to_slave'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1501,
+        "code": "\tfarid_potential_debt = 0 &! reset only after calling stock_to_slave to avoid triggering hard_return - ImperatorAugustus"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1502,
+        "code": "\t$npc_id = 'фарид_аукционщик'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1503,
+        "code": "\t$place = 'slave_stage'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1504,
+        "code": "! JO9 MOD START J9M1216 | 2026-10-09_dialogue_format_and_protagonist, 2026-10-15_trim_leading_body_blank_lines | changed block; context may be included"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1507,
+        "code": "! JO9 MOD END J9M1216"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1508,
+        "code": "end"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1509,
+        "code": ""
+      },
+      {
+        "location": "interaction_city",
+        "line": 1521,
+        "code": "if interaction_city = 1193:"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1522,
+        "code": "\tcity_form = 11"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1523,
+        "code": "\t$return_lock = 'city_menu_form'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1524,
+        "code": "\tnpc = 1"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1525,
+        "code": "\t$npc_id = 'фарид_аукционщик'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1526,
+        "code": "\tsparks += farid_debt"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1527,
+        "code": "\t$place = 'slave_stage'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1528,
+        "code": "! JO9 MOD START J9M1214 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1530,
+        "code": "! JO9 MOD END J9M1214"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1531,
+        "code": "\tfarid_debt = 0"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1532,
+        "code": "\tdynamic $clear_slave_instance, 'stock'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1533,
+        "code": "end"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1534,
+        "code": ""
+      },
+      {
+        "location": "interaction_city",
+        "line": 1535,
+        "code": ""
+      },
+      {
+        "location": "interaction_city",
+        "line": 1536,
+        "code": ""
+      },
+      {
+        "location": "interaction_city",
+        "line": 1530,
+        "code": "! JO9 MOD END J9M1214"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1531,
+        "code": "\tfarid_debt = 0"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1532,
+        "code": "\tdynamic $clear_slave_instance, 'stock'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1533,
+        "code": "end"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1534,
+        "code": ""
+      },
+      {
+        "location": "interaction_city",
+        "line": 1535,
+        "code": ""
+      },
+      {
+        "location": "interaction_city",
+        "line": 4538,
+        "code": "\t\tcontract['active'] = 2"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4539,
+        "code": "\t\tnpc = 0"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4540,
+        "code": "\t\tdynamic $clear_slave_instance, 'stock'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4541,
+        "code": "\t\tgt 'guild'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4542,
+        "code": "\t}"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4543,
+        "code": "\tgt 'choice_screen'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4578,
+        "code": "\t\tcontract['active'] = 2"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4579,
+        "code": "\t\tnpc = 0"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4580,
+        "code": "\t\tdynamic $clear_slave_instance, 'stock'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4581,
+        "code": "\t\tgt 'guild'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4582,
+        "code": "\t}"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4583,
+        "code": "\tgt 'choice_screen'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4618,
+        "code": "\t\tcontract['active'] = 2"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4619,
+        "code": "\t\tnpc = 0"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4620,
+        "code": "\t\tdynamic $clear_slave_instance, 'stock'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4621,
+        "code": "\t\tgt 'guild'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4622,
+        "code": "\t}"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4623,
+        "code": "\tgt 'choice_screen'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4658,
+        "code": "\t\tcontract['active'] = 2"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4659,
+        "code": "\t\tnpc = 0"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4660,
+        "code": "\t\tdynamic $clear_slave_instance, 'stock'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4661,
+        "code": "\t\tgt 'guild'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4662,
+        "code": "\t}"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4663,
+        "code": "\tgt 'choice_screen'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4698,
+        "code": "\t\tcontract['active'] = 2"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4699,
+        "code": "\t\tnpc = 0"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4700,
+        "code": "\t\tdynamic $clear_slave_instance, 'stock'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4701,
+        "code": "\t\tgt 'guild'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4702,
+        "code": "\t}"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4703,
+        "code": "\tgt 'choice_screen'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4738,
+        "code": "\t\tcontract['active'] = 2"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4739,
+        "code": "\t\tnpc = 0"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4740,
+        "code": "\t\tdynamic $clear_slave_instance, 'stock'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4741,
+        "code": "\t\tgt 'guild'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4742,
+        "code": "\t}"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4743,
+        "code": "\tgt 'choice_screen'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4778,
+        "code": "\t\tcontract['active'] = 2"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4779,
+        "code": "\t\tnpc = 0"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4780,
+        "code": "\t\tdynamic $clear_slave_instance, 'stock'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4781,
+        "code": "\t\tgt 'guild'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4782,
+        "code": "\t}"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4783,
+        "code": "\tgt 'choice_screen'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4818,
+        "code": "\t\tcontract['active'] = 2"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4819,
+        "code": "\t\tnpc = 0"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4820,
+        "code": "\t\tdynamic $clear_slave_instance, 'stock'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4821,
+        "code": "\t\tgt 'guild'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4822,
+        "code": "\t}"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4823,
+        "code": "\tgt 'choice_screen'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4858,
+        "code": "\t\tcontract['active'] = 2"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4859,
+        "code": "\t\tnpc = 0"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4860,
+        "code": "\t\tdynamic $clear_slave_instance, 'stock'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4861,
+        "code": "\t\tgt 'guild'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4862,
+        "code": "\t}"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4863,
+        "code": "\tgt 'choice_screen'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4898,
+        "code": "\t\tcontract['active'] = 2"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4899,
+        "code": "\t\tnpc = 0"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4900,
+        "code": "\t\tdynamic $clear_slave_instance, 'stock'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4901,
+        "code": "\t\tgt 'guild'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4902,
+        "code": "\t}"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4903,
+        "code": "\tgt 'choice_screen'"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 1,
+        "code": "! JO9 MOD START BG_DIRECTORY_PREFIX_FIX_20261027"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 2,
+        "code": "! JO9 MOD START UI_RESOURCE_PATHS_20261027"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 3,
+        "code": "! JO9 MOD START PROFILE_POLISH_20261025_R3"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 4,
+        "code": "! JO9 MOD START J9M1400 | 2026-10-10_restore_private_room_ui | changed block; context may be included"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 5,
+        "code": "if snk_room_target > 0 and $curloc = 'slave_auction_buy': gs 'snk_room_bridge', 'guard', 'slave_auction_buy'"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 6,
+        "code": "! JO9 MOD END J9M1400"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 7,
+        "code": "!Auction. Buy untrained slaves."
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 8,
+        "code": "if farid_potential_debt > 0:"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 9,
+        "code": "\tif slave_state = CONST_INT['no_slave']: interaction_city = 1191"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 10,
+        "code": "\tif slave_state > CONST_INT['no_slave']: interaction_city = 1192"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 11,
+        "code": "\tgt 'interaction_city'"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 12,
+        "code": "end"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 13,
+        "code": ""
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 14,
+        "code": "! possible to arrive via home \"no slave\" avatar portrait without passing through city_screen, so make sure we are playing city music"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 15,
+        "code": "if noble_status = 1 or brand_reputation >= 5:"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 16,
+        "code": "\t$city_sound = 'content/snd/city_honor.wav'"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 17,
+        "code": "elseif $estate = 'slum_house':"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 18,
+        "code": "\t$city_sound = 'content/snd/city_poor.wav'"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 19,
+        "code": "else"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 20,
+        "code": "\t$city_sound = 'content/snd/city_citizen.wav'"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 21,
+        "code": "end"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 22,
+        "code": ""
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 23,
+        "code": "if farid_debt > 0: interaction_city = 1193 & gt 'interaction_city'"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 24,
+        "code": "killobj"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 25,
+        "code": ""
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 26,
+        "code": "if stock_state = CONST_INT['no_slave'] or (no_loli = 1 and stock['age'] = CONST_INT['loli_age']):"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 27,
+        "code": "\tgs 'generate_stock'"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 1,
+        "code": "! JO9 MOD START BG_DIRECTORY_PREFIX_FIX_20261027"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 2,
+        "code": "! JO9 MOD START UI_RESOURCE_PATHS_20261027"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 3,
+        "code": "! JO9 MOD START PROFILE_POLISH_20261025_R3"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 4,
+        "code": "! JO9 MOD START J9M1413 | 2026-10-10_restore_private_room_ui | changed block; context may be included"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 5,
+        "code": "if snk_room_target > 0 and $curloc = 'slave_auction_sell': gs 'snk_room_bridge', 'guard', 'slave_auction_sell'"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 6,
+        "code": "! JO9 MOD END J9M1413"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 7,
+        "code": "!Sell ​​slave to Farid"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 8,
+        "code": "if farid_potential_debt > 0:"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 9,
+        "code": "\tif slave_state = CONST_INT['no_slave']: interaction_city = 1191"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 10,
+        "code": "\tif slave_state ! CONST_INT['no_slave']: interaction_city = 1192"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 11,
+        "code": "\tgt 'interaction_city'"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 12,
+        "code": "end"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 13,
+        "code": "if farid_debt > 0: interaction_city = 1193 & gt 'interaction_city'"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 14,
+        "code": ""
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 15,
+        "code": "$place = 'slave_stage'"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 16,
+        "code": "gs '_layout'"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 17,
+        "code": "! JO9 MOD START DEALER_FARID_OFFER | 2026-10-24_dealer_economy"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 18,
+        "code": "if slave_state ! CONST_INT['slave_exist'] and slave_state ! CONST_INT['slave_faint']: gt 'city_menu_form'"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 19,
+        "code": "sell_price = func('jo9_traits_value', 'dealer_quote', 'farid')"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 20,
+        "code": "jo9_dealer_farid_id = slave['id']"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 21,
+        "code": "$jo9_dealer_farid_name = $slave_name"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 22,
+        "code": "jo9_dealer_farid_type = slave_type"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 23,
+        "code": "jo9_dealer_farid_quote = sell_price"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 24,
+        "code": "! JO9 MOD END DEALER_FARID_OFFER"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 25,
+        "code": "! JO9 MOD START J9M1412 | 2026-10-16_meiki_market_auction_dialogue | changed block; context may be included"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 26,
+        "code": "! JO9 MOD START DEALER_FARID_FLOOR | 2026-10-24_dealer_economy"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 27,
+        "code": "if difficulty_setting = 2 and sell_price < 10: sell_price = 10"
+      },
+      {
+        "location": "stock_to_slave",
+        "line": 1,
+        "code": "! JO9 MOD START J9M2880 | 2026-10-10_restore_private_room_ui | changed block; context may be included"
+      },
+      {
+        "location": "stock_to_slave",
+        "line": 2,
+        "code": "if snk_room_target > 0 and $curloc = 'stock_to_slave': gs 'snk_room_bridge', 'guard', 'stock_to_slave'"
+      },
+      {
+        "location": "stock_to_slave",
+        "line": 3,
+        "code": "! JO9 MOD END J9M2880"
+      },
+      {
+        "location": "stock_to_slave",
+        "line": 4,
+        "code": "!move stock slave to master and change location after"
+      },
+      {
+        "location": "stock_to_slave",
+        "line": 5,
+        "code": ""
+      },
+      {
+        "location": "stock_to_slave",
+        "line": 6,
+        "code": "gs 'stock_to_slave_nogt'"
+      },
+      {
+        "location": "stock_to_slave",
+        "line": 7,
+        "code": ""
+      },
+      {
+        "location": "stock_to_slave",
+        "line": 8,
+        "code": "if hunting_prize = 0 and farid_potential_debt <= 0: gt 'hard_return'"
+      },
+      {
+        "location": "stock_to_slave",
+        "line": 9,
+        "code": "! hard_return handles get_initial_slave for starting with an assistant on easy game difficulty, and either way ends with gt $return_lock"
+      },
+      {
+        "location": "stock_to_slave",
+        "line": 10,
+        "code": ""
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 1,
+        "code": "! JO9 MOD START J9M2881 | 2026-10-10_restore_private_room_ui | changed block; context may be included"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 2,
+        "code": "if snk_room_target > 0 and $curloc = 'stock_to_slave_nogt': gs 'snk_room_bridge', 'guard', 'stock_to_slave_nogt'"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 3,
+        "code": "! JO9 MOD END J9M2881"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 4,
+        "code": "!move stock slave to master without changing location (to be called with 'gs')"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 5,
+        "code": ""
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 6,
+        "code": "!Slave Rules"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 7,
+        "code": "stock['diet_portion'] = 2"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 8,
+        "code": "! stable weight diet by default, not nutritionist -ImperatorAugustus"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 9,
+        "code": ""
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 10,
+        "code": "!Loli aged stocks are not old enough to have acquired these traits - crushboss"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 11,
+        "code": "if stock['age'] = CONST_INT['loli_age'] and cheat_h ! 1 and cheat_j ! 1 and cheat_k ! 1 and cheat_l ! 1 and creating_clone ! 1:"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 12,
+        "code": "\tstock['custom'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 13,
+        "code": "\tstock_rate['custom'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 14,
+        "code": "\tstock['moral'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 15,
+        "code": "\tstock_rate['moral'] = -10"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 16,
+        "code": "\tstock['rational'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 17,
+        "code": "\tstock_rate['rational'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 18,
+        "code": "\tstock['instinct'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 19,
+        "code": "\tstock_rate['instinct'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 20,
+        "code": "end"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 21,
+        "code": ""
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 22,
+        "code": "!Ensure the stock starts out with empty arena variables - crushboss"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 23,
+        "code": "stock['catfight_level'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 24,
+        "code": "stock['has_ride_win'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 25,
+        "code": "stock['arena_level'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 26,
+        "code": "stock['c1done'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 27,
+        "code": "stock['c2done'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 28,
+        "code": "stock['c3done'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 29,
+        "code": "stock['c4done'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 30,
+        "code": "$stock['trademark_style'] = ''"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 31,
+        "code": "!$g_type = '' - gladiatrix type is a 'local' variable of the combat code, the trademark_style stores it - ImperatorAugustus"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 32,
+        "code": "!superviser_message = 0 - this variable is used only for arena announcements, it is not relevant here -ImperatorAugustus"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 33,
+        "code": "challenge_type = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 34,
+        "code": ""
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 35,
+        "code": "!Adjustments for loli aged stocks and virgin stocks - improved - crushboss"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 36,
+        "code": "if stock['virginity'] <= 0:"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 37,
+        "code": "\tstock['ill'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 38,
+        "code": "\tstock['parasite'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 39,
+        "code": "\tstock['pregnant'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 40,
+        "code": "\tstock['sub_vaginal'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 41,
+        "code": "\tstock['sub_vaginal_xp'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 42,
+        "code": "\tstock['sub_fisting'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 43,
+        "code": "\tstock['sub_fisting_xp'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 44,
+        "code": "\tstock['sub_threesome'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 45,
+        "code": "\tstock['sub_threesome_xp'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 46,
+        "code": "\tstock['sub_dp'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 47,
+        "code": "\tstock['sub_dp_xp'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 48,
+        "code": "\tstock['sub_tp'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 49,
+        "code": "\tstock['sub_tp_xp'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 50,
+        "code": "\tstock['sub_gangbang'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 51,
+        "code": "\tstock['sub_gangbang_xp'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 52,
+        "code": "\tstock['sub_bukkake'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 53,
+        "code": "\tstock['sub_bukkake_xp'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 54,
+        "code": "\tstock['sub_anal'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 55,
+        "code": "\tstock['sub_anal_xp'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 56,
+        "code": "\tstock['anal_stretch'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 57,
+        "code": "\tstock['sub_zoosex'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 58,
+        "code": "\tstock['sub_zoosex_xp'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 59,
+        "code": "\tstock['sub_bestiality'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 60,
+        "code": "\tstock['sub_bestiality_xp'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 61,
+        "code": "\tstock['sub_horse'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 62,
+        "code": "\tstock['sub_horse_xp'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 63,
+        "code": "\tstock['sub_tentacles'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 64,
+        "code": "\tstock['sub_tentacles_xp'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 65,
+        "code": "\tstock['sub_arachnidspider'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 66,
+        "code": "\tstock['sub_arachnidspider_xp'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 67,
+        "code": "\tstock['sub_polypusvermin'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 68,
+        "code": "\tstock['sub_polypusvermin_xp'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 69,
+        "code": "end"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 70,
+        "code": ""
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 71,
+        "code": "! JO9 MOD START AP_CURVE_ACQUIRE_CAP | 2026-10-24_ap_curve"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 72,
+        "code": "local jo9_acquire_ap_cap = iif(stock['stamina'] > 0, min(5, stock['stamina'] + 1), 0)"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 73,
+        "code": "if stock['energy'] > jo9_acquire_ap_cap: stock['energy'] = jo9_acquire_ap_cap"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 74,
+        "code": "! JO9 MOD END AP_CURVE_ACQUIRE_CAP"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 75,
+        "code": "stock['base_exotic'] = stock['exotic']"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 76,
+        "code": "stock_rate['stamina'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 77,
+        "code": "if stock['age'] = CONST_INT['loli_age']: stock['fertility_revealed'] = 1"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 78,
+        "code": ""
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 79,
+        "code": "stock['calories'] = stock['stamina']"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 80,
+        "code": ""
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 81,
+        "code": "if stock_state ! CONST_INT['slave_exist']: msg '오류: stock_to_slave_nogt 상태가 예상과 다릅니다. 이 메시지를 보기 직전에 무엇을 했는지 제보해 주세요'"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 82,
+        "code": "! JO9 MOD START SLAVE_NATURE_ACQUIRE_STOCK_TO_SLAVE_NOGT | 2026-10-23_disposition_traits"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 83,
+        "code": "dynamic $swap_slave_instances, 'slave', 'stock'"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 84,
+        "code": "gs 'jo9_traits','init_slave_nature','slave'"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 85,
+        "code": "! JO9 MOD END SLAVE_NATURE_ACQUIRE_STOCK_TO_SLAVE_NOGT"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 86,
+        "code": "master_moodlet['pos_new_slave'] = 6 - brand_reputation"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 87,
+        "code": ""
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 88,
+        "code": "!Testing Code - crushboss"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 89,
+        "code": "if (cheat_h = 1 or cheat_j = 1) and get_girl = 0: gs 'stock_to_slave_testing'"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 90,
+        "code": "if cheat_k = 1 and get_girl = 0: gs 'stock_to_slave_testing2'"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 91,
+        "code": "!End of Testing Code"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 92,
+        "code": ""
+      },
+      {
+        "location": "#options",
+        "line": 356,
+        "code": "\tfunc('$menu', 'interaction_city', $menu_item_marketbuy, menu_prize_sell, '경매에 부친다')"
+      },
+      {
+        "location": "#static_base",
+        "line": 452,
+        "code": "$swap_slave_instances = {"
+      },
+      {
+        "location": "#static_base",
+        "line": 453,
+        "code": "\t_counter = arrsize('$slave_vars')"
+      },
+      {
+        "location": "#static_base",
+        "line": 454,
+        "code": "\t:_swap_slave_instance_loop"
+      },
+      {
+        "location": "#static_base",
+        "line": 455,
+        "code": "\t\t_counter -= 1"
+      },
+      {
+        "location": "#static_base",
+        "line": 456,
+        "code": "\t\t$from_var = $replace($slave_vars[_counter], 'instance', $args[0])"
+      },
+      {
+        "location": "#static_base",
+        "line": 457,
+        "code": "\t\t$to_var = $replace($slave_vars[_counter], 'instance', $args[1])"
+      },
+      {
+        "location": "#static_base",
+        "line": 458,
+        "code": "\t\t! from -> _temp"
+      },
+      {
+        "location": "#static_base",
+        "line": 459,
+        "code": "\t\tkillvar '_temp'"
+      },
+      {
+        "location": "#static_base",
+        "line": 460,
+        "code": "\t\tcopyarr '_temp', $from_var"
+      },
+      {
+        "location": "#static_base",
+        "line": 461,
+        "code": "\t\t! to   -> from"
+      },
+      {
+        "location": "#static_base",
+        "line": 462,
+        "code": "\t\tkillvar $from_var"
+      },
+      {
+        "location": "#static_base",
+        "line": 463,
+        "code": "\t\tcopyarr $from_var, $to_var"
+      },
+      {
+        "location": "#static_base",
+        "line": 464,
+        "code": "\t\t! temp -> to"
+      },
+      {
+        "location": "#static_base",
+        "line": 465,
+        "code": "\t\tkillvar $to_var"
+      },
+      {
+        "location": "#static_base",
+        "line": 466,
+        "code": "\t\tcopyarr $to_var, '_temp'"
+      },
+      {
+        "location": "#static_base",
+        "line": 467,
+        "code": "\tif _counter > 0: jump '_swap_slave_instance_loop'"
+      },
+      {
+        "location": "#static_base",
+        "line": 468,
+        "code": ""
+      },
+      {
+        "location": "#static_base",
+        "line": 469,
+        "code": "\tkillvar '$from_var'"
+      },
+      {
+        "location": "#static_base",
+        "line": 470,
+        "code": "\tkillvar '$to_var'"
+      },
+      {
+        "location": "#static_base",
+        "line": 471,
+        "code": "\tkillvar '_temp'"
+      },
+      {
+        "location": "#static_base",
+        "line": 472,
+        "code": "\tkillvar '_counter'"
+      },
+      {
+        "location": "#static_base",
+        "line": 473,
+        "code": ""
+      },
+      {
+        "location": "#static_base",
+        "line": 474,
+        "code": "\t! update strings that may contain if statements or subexpressions referring to these slave instances"
+      },
+      {
+        "location": "#static_base",
+        "line": 475,
+        "code": "\tdynamic $replace($update_slave_features_list, 'dyn'+'slave', $args[0])"
+      },
+      {
+        "location": "#static_base",
+        "line": 476,
+        "code": "\tdynamic $replace($update_slave_features_list, 'dyn'+'slave', $args[1])"
+      },
+      {
+        "location": "#static_base",
+        "line": 477,
+        "code": "\tgs '#var_base'"
+      },
+      {
+        "location": "#static_base",
+        "line": 478,
+        "code": "\tgs '#txt_man'   &! after #var_base"
+      },
+      {
+        "location": "#static_base",
+        "line": 479,
+        "code": "\tgs '#txt_2_man' &! after #var_base"
+      },
+      {
+        "location": "#static_base",
+        "line": 480,
+        "code": "}"
+      },
+      {
+        "location": "#static_base",
+        "line": 481,
+        "code": ""
+      },
+      {
+        "location": "#static_base",
+        "line": 427,
+        "code": "killvar '$slave_vars'"
+      },
+      {
+        "location": "#static_base",
+        "line": 428,
+        "code": "copyarr '$slave_vars', '$playable_vars' &! $slave_vars inherits from $playable_vars"
+      },
+      {
+        "location": "#static_base",
+        "line": 429,
+        "code": ""
+      },
+      {
+        "location": "#static_base",
+        "line": 430,
+        "code": "$slave_vars[] = '$instance_psy_basic'                 &! TODO: not an array type, make this a property"
+      },
+      {
+        "location": "#static_base",
+        "line": 431,
+        "code": "$slave_vars[] = '$instance_psy_status'                &! TODO: not an array type, make this a property"
+      },
+      {
+        "location": "#static_base",
+        "line": 432,
+        "code": "$slave_vars[] = '$instance_world'                     &! TODO: not an array type, make this a property"
+      },
+      {
+        "location": "#static_base",
+        "line": 433,
+        "code": "$slave_vars[] = '$instance_world_description'         &! TODO: not an array type, make this a property"
+      },
+      {
+        "location": "#static_base",
+        "line": 434,
+        "code": "$slave_vars[] = '$instance_family'                    &! TODO: not an array type, make this a property"
+      },
+      {
+        "location": "#static_base",
+        "line": 435,
+        "code": "$slave_vars[] = '$instance_family_description'        &! TODO: not an array type, make this a property"
+      },
+      {
+        "location": "#static_base",
+        "line": 436,
+        "code": "$slave_vars[] = '$instance_occupation'                &! TODO: not an array type, make this a property"
+      },
+      {
+        "location": "#static_base",
+        "line": 437,
+        "code": "$slave_vars[] = '$instance_occupation_description'    &! TODO: not an array type, make this a property"
+      },
+      {
+        "location": "#static_base",
+        "line": 438,
+        "code": ""
+      },
+      {
+        "location": "#static_base",
+        "line": 439,
+        "code": "$slave_vars[] = 'instance_already_done_today'         &! instance-specific version of already_done_today    &! array var, each index corresponds to an interaction id, with a count as the value"
+      },
+      {
+        "location": "#static_base",
+        "line": 440,
+        "code": "$slave_vars[] = 'instance_already_done_total'         &! replaced 'already_done_curslave'                   &! array var, each index corresponds to an interaction id, with a count as the value"
+      },
+      {
+        "location": "#static_base",
+        "line": 441,
+        "code": "$slave_vars[] = 'instance_already_done_recent'        &! new in 2.2                                         &! array var, each index corresponds to an interaction id, with a count as the value"
+      },
+      {
+        "location": "#static_base",
+        "line": 442,
+        "code": "$slave_vars[] = 'instance_already_sex_today'          &! replaced 'today_sex_curslave'                      &! array var, each index corresponds to an interaction id, with a count as the value"
+      },
+      {
+        "location": "#static_base",
+        "line": 443,
+        "code": "$slave_vars[] = 'instance_already_sex_total'          &! replaced 'already_sex_curslave'                    &! array var, each index corresponds to an interaction id, with a count as the value"
+      },
+      {
+        "location": "#static_base",
+        "line": 444,
+        "code": ""
+      },
+      {
+        "location": "#static_base",
+        "line": 445,
+        "code": "$slave_vars[] = 'interaction_instance'                &! per-slave-instance reset-for-each-interaction keys &! array var, each string index corresponds to a \"key\" name, with an integer value"
+      },
+      {
+        "location": "#static_base",
+        "line": 446,
+        "code": "$slave_vars[] = '$instance_scene_tag'                &!고유씬이미지태그 tag for print unique-scene-images of mod-characters"
+      },
+      {
+        "location": "#static_base",
+        "line": 447,
+        "code": "$slave_vars[] = '$instance_dohna_tag'                &!도나도나 캐릭터"
+      },
+      {
+        "location": "#static_base",
+        "line": 448,
+        "code": ""
+      },
+      {
+        "location": "выход_из_боя",
+        "line": 603,
+        "code": "if get_girl = 1:"
+      },
+      {
+        "location": "выход_из_боя",
+        "line": 604,
+        "code": "\t:won_slave_calc"
+      },
+      {
+        "location": "выход_из_боя",
+        "line": 605,
+        "code": "\tgs 'generate_stock'"
+      },
+      {
+        "location": "выход_из_боя",
+        "line": 606,
+        "code": "\tif slave_base_price < won_slave_minimum_value: jump 'won_slave_calc'"
+      },
+      {
+        "location": "выход_из_боя",
+        "line": 607,
+        "code": "\tif won_slave['ill'] = 1:"
+      }
+    ],
+    "original": [
+      {
+        "location": "$guild_auction",
+        "line": 107,
+        "code": "end"
+      },
+      {
+        "location": "$guild_auction",
+        "line": 108,
+        "code": "sparks_get = bank_size"
+      },
+      {
+        "location": "$guild_auction",
+        "line": 109,
+        "code": "interaction_city = 931"
+      },
+      {
+        "location": "$guild_auction",
+        "line": 110,
+        "code": "gt 'interaction_city'"
+      },
+      {
+        "location": "generate_stock",
+        "line": 1,
+        "code": "if snk_room_target > 0 and $curloc = 'generate_stock': gs 'snk_room_bridge', 'guard', 'generate_stock'"
+      },
+      {
+        "location": "generate_stock",
+        "line": 2,
+        "code": "!Generate new stock/slave"
+      },
+      {
+        "location": "generate_stock",
+        "line": 3,
+        "code": "!Overhauled by crushboss"
+      },
+      {
+        "location": "generate_stock",
+        "line": 4,
+        "code": ""
+      },
+      {
+        "location": "generate_stock",
+        "line": 5,
+        "code": "dynamic $clear_slave_instance, 'stock' &! clear any previous stock - ImperatorAugustus"
+      },
+      {
+        "location": "generate_stock",
+        "line": 6,
+        "code": "stock_state = CONST_INT['slave_exist'] &! this is the only place in the game where this state change occurs for stock - ImperatorAugustus"
+      },
+      {
+        "location": "generate_stock",
+        "line": 7,
+        "code": ""
+      },
+      {
+        "location": "generate_stock",
+        "line": 8,
+        "code": "$stock_features_list = ''"
+      },
+      {
+        "location": "generate_stock",
+        "line": 9,
+        "code": ""
+      },
+      {
+        "location": "generate_stock",
+        "line": 10,
+        "code": "$stock_epithet = '값이 싼'"
+      },
+      {
+        "location": "next_day",
+        "line": 323,
+        "code": "farid_debt += farid_potential_debt"
+      },
+      {
+        "location": "next_day",
+        "line": 324,
+        "code": "farid_potential_debt = 0"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1375,
+        "code": "if interaction_city = 119:"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1376,
+        "code": "\t$interaction_type = 'drop_to_farid'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1377,
+        "code": "\tcity_form = 11"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1378,
+        "code": "\t$return_lock = 'city_menu_form'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1379,
+        "code": "\tnpc = 1"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1380,
+        "code": "\tgs '$slave_price', 'stock'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1381,
+        "code": "\tfarid_debt += farid_potential_debt &! accumulate debt when dropping off multiple slaves on the same day - ImperatorAugustus"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1382,
+        "code": "\tfarid_potential_debt = slaveprice/2"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1383,
+        "code": "\t$npc_id = 'фарид_аукционщик'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1384,
+        "code": "\t$place = 'slave_stage'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1390,
+        "code": ""
+      },
+      {
+        "location": "interaction_city",
+        "line": 1391,
+        "code": "end"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1392,
+        "code": ""
+      },
+      {
+        "location": "interaction_city",
+        "line": 1393,
+        "code": "if interaction_city = 1191:"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1394,
+        "code": "\tcity_form = 11"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1395,
+        "code": "\t$return_lock = 'city_menu_form'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1396,
+        "code": "\tnpc = 1"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1397,
+        "code": "\tsparks -= 5"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1398,
+        "code": "\tgs 'stock_to_slave'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1399,
+        "code": "\tfarid_potential_debt = 0 &! reset only after calling stock_to_slave to avoid triggering hard_return - ImperatorAugustus"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1400,
+        "code": "\t$npc_id = 'фарид_аукционщик'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1401,
+        "code": "\t$place = 'slave_stage'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1404,
+        "code": "end"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1405,
+        "code": ""
+      },
+      {
+        "location": "interaction_city",
+        "line": 1415,
+        "code": "if interaction_city = 1193:"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1416,
+        "code": "\tcity_form = 11"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1417,
+        "code": "\t$return_lock = 'city_menu_form'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1418,
+        "code": "\tnpc = 1"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1419,
+        "code": "\t$npc_id = 'фарид_аукционщик'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1420,
+        "code": "\tsparks += farid_debt"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1421,
+        "code": "\t$place = 'slave_stage'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1423,
+        "code": "\tfarid_debt = 0"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1424,
+        "code": "\tdynamic $clear_slave_instance, 'stock'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1425,
+        "code": "end"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1426,
+        "code": ""
+      },
+      {
+        "location": "interaction_city",
+        "line": 1427,
+        "code": ""
+      },
+      {
+        "location": "interaction_city",
+        "line": 1428,
+        "code": ""
+      },
+      {
+        "location": "interaction_city",
+        "line": 1423,
+        "code": "\tfarid_debt = 0"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1424,
+        "code": "\tdynamic $clear_slave_instance, 'stock'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1425,
+        "code": "end"
+      },
+      {
+        "location": "interaction_city",
+        "line": 1426,
+        "code": ""
+      },
+      {
+        "location": "interaction_city",
+        "line": 1427,
+        "code": ""
+      },
+      {
+        "location": "interaction_city",
+        "line": 3821,
+        "code": "\t\tcontract['active'] = 2"
+      },
+      {
+        "location": "interaction_city",
+        "line": 3822,
+        "code": "\t\tnpc = 0"
+      },
+      {
+        "location": "interaction_city",
+        "line": 3823,
+        "code": "\t\tdynamic $clear_slave_instance, 'stock'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 3824,
+        "code": "\t\tgt 'guild'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 3825,
+        "code": "\t}"
+      },
+      {
+        "location": "interaction_city",
+        "line": 3826,
+        "code": "\tgt 'choice_screen'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 3859,
+        "code": "\t\tcontract['active'] = 2"
+      },
+      {
+        "location": "interaction_city",
+        "line": 3860,
+        "code": "\t\tnpc = 0"
+      },
+      {
+        "location": "interaction_city",
+        "line": 3861,
+        "code": "\t\tdynamic $clear_slave_instance, 'stock'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 3862,
+        "code": "\t\tgt 'guild'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 3863,
+        "code": "\t}"
+      },
+      {
+        "location": "interaction_city",
+        "line": 3864,
+        "code": "\tgt 'choice_screen'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 3897,
+        "code": "\t\tcontract['active'] = 2"
+      },
+      {
+        "location": "interaction_city",
+        "line": 3898,
+        "code": "\t\tnpc = 0"
+      },
+      {
+        "location": "interaction_city",
+        "line": 3899,
+        "code": "\t\tdynamic $clear_slave_instance, 'stock'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 3900,
+        "code": "\t\tgt 'guild'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 3901,
+        "code": "\t}"
+      },
+      {
+        "location": "interaction_city",
+        "line": 3902,
+        "code": "\tgt 'choice_screen'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 3935,
+        "code": "\t\tcontract['active'] = 2"
+      },
+      {
+        "location": "interaction_city",
+        "line": 3936,
+        "code": "\t\tnpc = 0"
+      },
+      {
+        "location": "interaction_city",
+        "line": 3937,
+        "code": "\t\tdynamic $clear_slave_instance, 'stock'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 3938,
+        "code": "\t\tgt 'guild'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 3939,
+        "code": "\t}"
+      },
+      {
+        "location": "interaction_city",
+        "line": 3940,
+        "code": "\tgt 'choice_screen'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 3973,
+        "code": "\t\tcontract['active'] = 2"
+      },
+      {
+        "location": "interaction_city",
+        "line": 3974,
+        "code": "\t\tnpc = 0"
+      },
+      {
+        "location": "interaction_city",
+        "line": 3975,
+        "code": "\t\tdynamic $clear_slave_instance, 'stock'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 3976,
+        "code": "\t\tgt 'guild'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 3977,
+        "code": "\t}"
+      },
+      {
+        "location": "interaction_city",
+        "line": 3978,
+        "code": "\tgt 'choice_screen'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4011,
+        "code": "\t\tcontract['active'] = 2"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4012,
+        "code": "\t\tnpc = 0"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4013,
+        "code": "\t\tdynamic $clear_slave_instance, 'stock'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4014,
+        "code": "\t\tgt 'guild'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4015,
+        "code": "\t}"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4016,
+        "code": "\tgt 'choice_screen'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4049,
+        "code": "\t\tcontract['active'] = 2"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4050,
+        "code": "\t\tnpc = 0"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4051,
+        "code": "\t\tdynamic $clear_slave_instance, 'stock'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4052,
+        "code": "\t\tgt 'guild'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4053,
+        "code": "\t}"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4054,
+        "code": "\tgt 'choice_screen'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4087,
+        "code": "\t\tcontract['active'] = 2"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4088,
+        "code": "\t\tnpc = 0"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4089,
+        "code": "\t\tdynamic $clear_slave_instance, 'stock'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4090,
+        "code": "\t\tgt 'guild'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4091,
+        "code": "\t}"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4092,
+        "code": "\tgt 'choice_screen'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4125,
+        "code": "\t\tcontract['active'] = 2"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4126,
+        "code": "\t\tnpc = 0"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4127,
+        "code": "\t\tdynamic $clear_slave_instance, 'stock'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4128,
+        "code": "\t\tgt 'guild'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4129,
+        "code": "\t}"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4130,
+        "code": "\tgt 'choice_screen'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4163,
+        "code": "\t\tcontract['active'] = 2"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4164,
+        "code": "\t\tnpc = 0"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4165,
+        "code": "\t\tdynamic $clear_slave_instance, 'stock'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4166,
+        "code": "\t\tgt 'guild'"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4167,
+        "code": "\t}"
+      },
+      {
+        "location": "interaction_city",
+        "line": 4168,
+        "code": "\tgt 'choice_screen'"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 1,
+        "code": "if snk_room_target > 0 and $curloc = 'slave_auction_buy': gs 'snk_room_bridge', 'guard', 'slave_auction_buy'"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 2,
+        "code": "!Auction. Buy untrained slaves."
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 3,
+        "code": "if farid_potential_debt > 0:"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 4,
+        "code": "\tif slave_state = CONST_INT['no_slave']: interaction_city = 1191"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 5,
+        "code": "\tif slave_state > CONST_INT['no_slave']: interaction_city = 1192"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 6,
+        "code": "\tgt 'interaction_city'"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 7,
+        "code": "end"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 8,
+        "code": ""
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 9,
+        "code": "! possible to arrive via home \"no slave\" avatar portrait without passing through city_screen, so make sure we are playing city music"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 10,
+        "code": "if noble_status = 1 or brand_reputation >= 5:"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 11,
+        "code": "\t$city_sound = 'content/snd/city_honor.wav'"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 12,
+        "code": "elseif $estate = 'slum_house':"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 13,
+        "code": "\t$city_sound = 'content/snd/city_poor.wav'"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 14,
+        "code": "else"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 15,
+        "code": "\t$city_sound = 'content/snd/city_citizen.wav'"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 16,
+        "code": "end"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 17,
+        "code": ""
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 18,
+        "code": "if farid_debt > 0: interaction_city = 1193 & gt 'interaction_city'"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 19,
+        "code": "killobj"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 20,
+        "code": ""
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 21,
+        "code": "if stock_state = CONST_INT['no_slave'] or (no_loli = 1 and stock['age'] = CONST_INT['loli_age']):"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 22,
+        "code": "\tgs 'generate_stock'"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 23,
+        "code": "\tif stock['base_beauty'] = 0: stock['base_beauty'] = 1 & stock_rate['beauty'] += 10 &! no F- natural beauty slaves will be generated for the market - ImperatorAugustus"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 24,
+        "code": "else"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 25,
+        "code": "\tgs '$slave_price', 'stock'"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 26,
+        "code": "end"
+      },
+      {
+        "location": "slave_auction_buy",
+        "line": 27,
+        "code": "$place = 'slave_stage'"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 1,
+        "code": "if snk_room_target > 0 and $curloc = 'slave_auction_sell': gs 'snk_room_bridge', 'guard', 'slave_auction_sell'"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 2,
+        "code": "!Sell ​​slave to Farid"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 3,
+        "code": "if farid_potential_debt > 0:"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 4,
+        "code": "\tif slave_state = CONST_INT['no_slave']: interaction_city = 1191"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 5,
+        "code": "\tif slave_state ! CONST_INT['no_slave']: interaction_city = 1192"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 6,
+        "code": "\tgt 'interaction_city'"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 7,
+        "code": "end"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 8,
+        "code": "if farid_debt > 0: interaction_city = 1193 & gt 'interaction_city'"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 9,
+        "code": ""
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 10,
+        "code": "$place = 'slave_stage'"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 11,
+        "code": "gs '_layout'"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 12,
+        "code": "if slave['brand'] = 0: is_stock = 1 &! stock ratings are based purely on attribute_sum and the greater of beauty or fame, ignoring skills, obedience and stamina"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 13,
+        "code": "gs '$slave_price'"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 14,
+        "code": ""
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 15,
+        "code": "sell_price = slaveprice/2"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 16,
+        "code": "if sell_price < 10: sell_price = 10"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 17,
+        "code": ""
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 18,
+        "code": "$npc_id = 'фарид_аукционщик'"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 19,
+        "code": "npc = 1"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 20,
+        "code": "txt = max(1, txt)"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 21,
+        "code": ""
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 22,
+        "code": "killvar '$text'"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 25,
+        "code": "if slave['brand'] > 0 and brand_reputation <= 3:"
+      },
+      {
+        "location": "slave_auction_sell",
+        "line": 27,
+        "code": "else"
+      },
+      {
+        "location": "stock_to_slave",
+        "line": 1,
+        "code": "if snk_room_target > 0 and $curloc = 'stock_to_slave': gs 'snk_room_bridge', 'guard', 'stock_to_slave'"
+      },
+      {
+        "location": "stock_to_slave",
+        "line": 2,
+        "code": "!move stock slave to master and change location after"
+      },
+      {
+        "location": "stock_to_slave",
+        "line": 3,
+        "code": ""
+      },
+      {
+        "location": "stock_to_slave",
+        "line": 4,
+        "code": "gs 'stock_to_slave_nogt'"
+      },
+      {
+        "location": "stock_to_slave",
+        "line": 5,
+        "code": ""
+      },
+      {
+        "location": "stock_to_slave",
+        "line": 6,
+        "code": "if hunting_prize = 0 and farid_potential_debt <= 0: gt 'hard_return'"
+      },
+      {
+        "location": "stock_to_slave",
+        "line": 7,
+        "code": "! hard_return handles get_initial_slave for starting with an assistant on easy game difficulty, and either way ends with gt $return_lock"
+      },
+      {
+        "location": "stock_to_slave",
+        "line": 8,
+        "code": ""
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 1,
+        "code": "if snk_room_target > 0 and $curloc = 'stock_to_slave_nogt': gs 'snk_room_bridge', 'guard', 'stock_to_slave_nogt'"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 2,
+        "code": "!move stock slave to master without changing location (to be called with 'gs')"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 3,
+        "code": ""
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 4,
+        "code": "!Slave Rules"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 5,
+        "code": "stock['diet_portion'] = 2"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 6,
+        "code": "! stable weight diet by default, not nutritionist -ImperatorAugustus"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 7,
+        "code": ""
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 8,
+        "code": "!Loli aged stocks are not old enough to have acquired these traits - crushboss"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 9,
+        "code": "if stock['age'] = CONST_INT['loli_age'] and cheat_h ! 1 and cheat_j ! 1 and cheat_k ! 1 and cheat_l ! 1 and creating_clone ! 1:"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 10,
+        "code": "\tstock['custom'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 11,
+        "code": "\tstock_rate['custom'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 12,
+        "code": "\tstock['moral'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 13,
+        "code": "\tstock_rate['moral'] = -10"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 14,
+        "code": "\tstock['rational'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 15,
+        "code": "\tstock_rate['rational'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 16,
+        "code": "\tstock['instinct'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 17,
+        "code": "\tstock_rate['instinct'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 18,
+        "code": "end"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 19,
+        "code": ""
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 20,
+        "code": "!Ensure the stock starts out with empty arena variables - crushboss"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 21,
+        "code": "stock['catfight_level'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 22,
+        "code": "stock['has_ride_win'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 23,
+        "code": "stock['arena_level'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 24,
+        "code": "stock['c1done'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 25,
+        "code": "stock['c2done'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 26,
+        "code": "stock['c3done'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 27,
+        "code": "stock['c4done'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 28,
+        "code": "$stock['trademark_style'] = ''"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 29,
+        "code": "!$g_type = '' - gladiatrix type is a 'local' variable of the combat code, the trademark_style stores it - ImperatorAugustus"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 30,
+        "code": "!superviser_message = 0 - this variable is used only for arena announcements, it is not relevant here -ImperatorAugustus"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 31,
+        "code": "challenge_type = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 32,
+        "code": ""
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 33,
+        "code": "!Adjustments for loli aged stocks and virgin stocks - improved - crushboss"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 34,
+        "code": "if stock['virginity'] <= 0:"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 35,
+        "code": "\tstock['ill'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 36,
+        "code": "\tstock['parasite'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 37,
+        "code": "\tstock['pregnant'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 38,
+        "code": "\tstock['sub_vaginal'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 39,
+        "code": "\tstock['sub_vaginal_xp'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 40,
+        "code": "\tstock['sub_fisting'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 41,
+        "code": "\tstock['sub_fisting_xp'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 42,
+        "code": "\tstock['sub_threesome'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 43,
+        "code": "\tstock['sub_threesome_xp'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 44,
+        "code": "\tstock['sub_dp'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 45,
+        "code": "\tstock['sub_dp_xp'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 46,
+        "code": "\tstock['sub_tp'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 47,
+        "code": "\tstock['sub_tp_xp'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 48,
+        "code": "\tstock['sub_gangbang'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 49,
+        "code": "\tstock['sub_gangbang_xp'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 50,
+        "code": "\tstock['sub_bukkake'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 51,
+        "code": "\tstock['sub_bukkake_xp'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 52,
+        "code": "\tstock['sub_anal'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 53,
+        "code": "\tstock['sub_anal_xp'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 54,
+        "code": "\tstock['anal_stretch'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 55,
+        "code": "\tstock['sub_zoosex'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 56,
+        "code": "\tstock['sub_zoosex_xp'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 57,
+        "code": "\tstock['sub_bestiality'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 58,
+        "code": "\tstock['sub_bestiality_xp'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 59,
+        "code": "\tstock['sub_horse'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 60,
+        "code": "\tstock['sub_horse_xp'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 61,
+        "code": "\tstock['sub_tentacles'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 62,
+        "code": "\tstock['sub_tentacles_xp'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 63,
+        "code": "\tstock['sub_arachnidspider'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 64,
+        "code": "\tstock['sub_arachnidspider_xp'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 65,
+        "code": "\tstock['sub_polypusvermin'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 66,
+        "code": "\tstock['sub_polypusvermin_xp'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 67,
+        "code": "end"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 68,
+        "code": ""
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 69,
+        "code": "if stock['energy'] > stock['stamina']: stock['energy'] = stock['stamina']"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 70,
+        "code": "stock['base_exotic'] = stock['exotic']"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 71,
+        "code": "stock_rate['stamina'] = 0"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 72,
+        "code": "if stock['age'] = CONST_INT['loli_age']: stock['fertility_revealed'] = 1"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 73,
+        "code": ""
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 74,
+        "code": "stock['calories'] = stock['stamina']"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 75,
+        "code": ""
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 76,
+        "code": "if stock_state ! CONST_INT['slave_exist']: msg '오류: stock_to_slave_nogt 상태가 예상과 다릅니다. 이 메시지를 보기 직전에 무엇을 했는지 제보해 주세요'"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 77,
+        "code": "dynamic $swap_slave_instances, 'slave', 'stock'"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 78,
+        "code": "master_moodlet['pos_new_slave'] = 6 - brand_reputation"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 79,
+        "code": ""
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 80,
+        "code": "!Testing Code - crushboss"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 81,
+        "code": "if (cheat_h = 1 or cheat_j = 1) and get_girl = 0: gs 'stock_to_slave_testing'"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 82,
+        "code": "if cheat_k = 1 and get_girl = 0: gs 'stock_to_slave_testing2'"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 83,
+        "code": "!End of Testing Code"
+      },
+      {
+        "location": "stock_to_slave_nogt",
+        "line": 84,
+        "code": ""
+      },
+      {
+        "location": "#options",
+        "line": 287,
+        "code": "\tfunc('$menu', 'interaction_city', $menu_item_marketbuy, menu_prize_sell, '경매에 부친다')"
+      },
+      {
+        "location": "#static_base",
+        "line": 447,
+        "code": "$swap_slave_instances = {"
+      },
+      {
+        "location": "#static_base",
+        "line": 448,
+        "code": "\t_counter = arrsize('$slave_vars')"
+      },
+      {
+        "location": "#static_base",
+        "line": 449,
+        "code": "\t:_swap_slave_instance_loop"
+      },
+      {
+        "location": "#static_base",
+        "line": 450,
+        "code": "\t\t_counter -= 1"
+      },
+      {
+        "location": "#static_base",
+        "line": 451,
+        "code": "\t\t$from_var = $replace($slave_vars[_counter], 'instance', $args[0])"
+      },
+      {
+        "location": "#static_base",
+        "line": 452,
+        "code": "\t\t$to_var = $replace($slave_vars[_counter], 'instance', $args[1])"
+      },
+      {
+        "location": "#static_base",
+        "line": 453,
+        "code": "\t\t! from -> _temp"
+      },
+      {
+        "location": "#static_base",
+        "line": 454,
+        "code": "\t\tkillvar '_temp'"
+      },
+      {
+        "location": "#static_base",
+        "line": 455,
+        "code": "\t\tcopyarr '_temp', $from_var"
+      },
+      {
+        "location": "#static_base",
+        "line": 456,
+        "code": "\t\t! to   -> from"
+      },
+      {
+        "location": "#static_base",
+        "line": 457,
+        "code": "\t\tkillvar $from_var"
+      },
+      {
+        "location": "#static_base",
+        "line": 458,
+        "code": "\t\tcopyarr $from_var, $to_var"
+      },
+      {
+        "location": "#static_base",
+        "line": 459,
+        "code": "\t\t! temp -> to"
+      },
+      {
+        "location": "#static_base",
+        "line": 460,
+        "code": "\t\tkillvar $to_var"
+      },
+      {
+        "location": "#static_base",
+        "line": 461,
+        "code": "\t\tcopyarr $to_var, '_temp'"
+      },
+      {
+        "location": "#static_base",
+        "line": 462,
+        "code": "\tif _counter > 0: jump '_swap_slave_instance_loop'"
+      },
+      {
+        "location": "#static_base",
+        "line": 463,
+        "code": ""
+      },
+      {
+        "location": "#static_base",
+        "line": 464,
+        "code": "\tkillvar '$from_var'"
+      },
+      {
+        "location": "#static_base",
+        "line": 465,
+        "code": "\tkillvar '$to_var'"
+      },
+      {
+        "location": "#static_base",
+        "line": 466,
+        "code": "\tkillvar '_temp'"
+      },
+      {
+        "location": "#static_base",
+        "line": 467,
+        "code": "\tkillvar '_counter'"
+      },
+      {
+        "location": "#static_base",
+        "line": 468,
+        "code": ""
+      },
+      {
+        "location": "#static_base",
+        "line": 469,
+        "code": "\t! update strings that may contain if statements or subexpressions referring to these slave instances"
+      },
+      {
+        "location": "#static_base",
+        "line": 470,
+        "code": "\tdynamic $replace($update_slave_features_list, 'dyn'+'slave', $args[0])"
+      },
+      {
+        "location": "#static_base",
+        "line": 471,
+        "code": "\tdynamic $replace($update_slave_features_list, 'dyn'+'slave', $args[1])"
+      },
+      {
+        "location": "#static_base",
+        "line": 472,
+        "code": "\tgs '#var_base'"
+      },
+      {
+        "location": "#static_base",
+        "line": 473,
+        "code": "\tgs '#txt_man'   &! after #var_base"
+      },
+      {
+        "location": "#static_base",
+        "line": 474,
+        "code": "\tgs '#txt_2_man' &! after #var_base"
+      },
+      {
+        "location": "#static_base",
+        "line": 475,
+        "code": "}"
+      },
+      {
+        "location": "#static_base",
+        "line": 476,
+        "code": ""
+      },
+      {
+        "location": "#static_base",
+        "line": 422,
+        "code": "killvar '$slave_vars'"
+      },
+      {
+        "location": "#static_base",
+        "line": 423,
+        "code": "copyarr '$slave_vars', '$playable_vars' &! $slave_vars inherits from $playable_vars"
+      },
+      {
+        "location": "#static_base",
+        "line": 424,
+        "code": ""
+      },
+      {
+        "location": "#static_base",
+        "line": 425,
+        "code": "$slave_vars[] = '$instance_psy_basic'                 &! TODO: not an array type, make this a property"
+      },
+      {
+        "location": "#static_base",
+        "line": 426,
+        "code": "$slave_vars[] = '$instance_psy_status'                &! TODO: not an array type, make this a property"
+      },
+      {
+        "location": "#static_base",
+        "line": 427,
+        "code": "$slave_vars[] = '$instance_world'                     &! TODO: not an array type, make this a property"
+      },
+      {
+        "location": "#static_base",
+        "line": 428,
+        "code": "$slave_vars[] = '$instance_world_description'         &! TODO: not an array type, make this a property"
+      },
+      {
+        "location": "#static_base",
+        "line": 429,
+        "code": "$slave_vars[] = '$instance_family'                    &! TODO: not an array type, make this a property"
+      },
+      {
+        "location": "#static_base",
+        "line": 430,
+        "code": "$slave_vars[] = '$instance_family_description'        &! TODO: not an array type, make this a property"
+      },
+      {
+        "location": "#static_base",
+        "line": 431,
+        "code": "$slave_vars[] = '$instance_occupation'                &! TODO: not an array type, make this a property"
+      },
+      {
+        "location": "#static_base",
+        "line": 432,
+        "code": "$slave_vars[] = '$instance_occupation_description'    &! TODO: not an array type, make this a property"
+      },
+      {
+        "location": "#static_base",
+        "line": 433,
+        "code": ""
+      },
+      {
+        "location": "#static_base",
+        "line": 434,
+        "code": "$slave_vars[] = 'instance_already_done_today'         &! instance-specific version of already_done_today    &! array var, each index corresponds to an interaction id, with a count as the value"
+      },
+      {
+        "location": "#static_base",
+        "line": 435,
+        "code": "$slave_vars[] = 'instance_already_done_total'         &! replaced 'already_done_curslave'                   &! array var, each index corresponds to an interaction id, with a count as the value"
+      },
+      {
+        "location": "#static_base",
+        "line": 436,
+        "code": "$slave_vars[] = 'instance_already_done_recent'        &! new in 2.2                                         &! array var, each index corresponds to an interaction id, with a count as the value"
+      },
+      {
+        "location": "#static_base",
+        "line": 437,
+        "code": "$slave_vars[] = 'instance_already_sex_today'          &! replaced 'today_sex_curslave'                      &! array var, each index corresponds to an interaction id, with a count as the value"
+      },
+      {
+        "location": "#static_base",
+        "line": 438,
+        "code": "$slave_vars[] = 'instance_already_sex_total'          &! replaced 'already_sex_curslave'                    &! array var, each index corresponds to an interaction id, with a count as the value"
+      },
+      {
+        "location": "#static_base",
+        "line": 439,
+        "code": ""
+      },
+      {
+        "location": "#static_base",
+        "line": 440,
+        "code": "$slave_vars[] = 'interaction_instance'                &! per-slave-instance reset-for-each-interaction keys &! array var, each string index corresponds to a \"key\" name, with an integer value"
+      },
+      {
+        "location": "#static_base",
+        "line": 441,
+        "code": "$slave_vars[] = '$instance_scene_tag'                &!고유씬이미지태그 tag for print unique-scene-images of mod-characters"
+      },
+      {
+        "location": "#static_base",
+        "line": 442,
+        "code": "$slave_vars[] = '$instance_dohna_tag'                &!도나도나 캐릭터"
+      },
+      {
+        "location": "#static_base",
+        "line": 443,
+        "code": ""
+      },
+      {
+        "location": "выход_из_боя",
+        "line": 574,
+        "code": "if get_girl = 1:"
+      },
+      {
+        "location": "выход_из_боя",
+        "line": 575,
+        "code": "\t:won_slave_calc"
+      },
+      {
+        "location": "выход_из_боя",
+        "line": 576,
+        "code": "\tgs 'generate_stock'"
+      },
+      {
+        "location": "выход_из_боя",
+        "line": 577,
+        "code": "\tif slave_base_price < won_slave_minimum_value: jump 'won_slave_calc'"
+      },
+      {
+        "location": "выход_из_боя",
+        "line": 578,
+        "code": "\tif won_slave['ill'] = 1:"
+      }
+    ]
+  }
+}

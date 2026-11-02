@@ -1,0 +1,15 @@
+{
+  "id": "2026-10-29_new_character_pool",
+  "description": "Connect installed 27 characters to ordinary random generation, including old saves; keep existing ranges for appearance browser and skip intentionally absent 1450.",
+  "before_sha256": "2582f81de159909bcd67eb672d3ffe507bea75da2a3561116948a3cff902203e",
+  "after_sha256": "fbee360b38c4680afb8fcafb378d05ccb697c3a19009689d96f5140e1f11a67a",
+  "edits": [
+    {
+      "location": "generate_stock",
+      "field": "body",
+      "old": "\t\tif meta_type = 2: stock_type = rand(young_first, young_last)\r\n\t\tif meta_type = 3: stock_type = rand(milf_first, milf_last)",
+      "new": "! JO9 MOD START NEW_CHARACTER_POOL_20261029\r\n! Installed full-client additions; keep saved appearance ranges unchanged.\r\n\t\tif meta_type = 2: stock_type = rand(young_first, max(young_last,1462))\r\n\t\tif meta_type = 3: stock_type = rand(milf_first, max(milf_last,2338))\r\n! 1450 is intentionally unregistered; never generate a missing preset.\r\n\t\tif meta_type = 2 and stock_type = 1450: jump 'loop_type'\r\n! JO9 MOD END NEW_CHARACTER_POOL_20261029",
+      "count": 1
+    }
+  ]
+}

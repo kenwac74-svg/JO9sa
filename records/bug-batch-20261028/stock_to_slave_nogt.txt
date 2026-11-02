@@ -1,0 +1,91 @@
+! JO9 MOD START J9M2881 | 2026-10-10_restore_private_room_ui | changed block; context may be included
+if snk_room_target > 0 and $curloc = 'stock_to_slave_nogt': gs 'snk_room_bridge', 'guard', 'stock_to_slave_nogt'
+! JO9 MOD END J9M2881
+!move stock slave to master without changing location (to be called with 'gs')
+
+!Slave Rules
+stock['diet_portion'] = 2
+! stable weight diet by default, not nutritionist -ImperatorAugustus
+
+!Loli aged stocks are not old enough to have acquired these traits - crushboss
+if stock['age'] = CONST_INT['loli_age'] and cheat_h ! 1 and cheat_j ! 1 and cheat_k ! 1 and cheat_l ! 1 and creating_clone ! 1:
+	stock['custom'] = 0
+	stock_rate['custom'] = 0
+	stock['moral'] = 0
+	stock_rate['moral'] = -10
+	stock['rational'] = 0
+	stock_rate['rational'] = 0
+	stock['instinct'] = 0
+	stock_rate['instinct'] = 0
+end
+
+!Ensure the stock starts out with empty arena variables - crushboss
+stock['catfight_level'] = 0
+stock['has_ride_win'] = 0
+stock['arena_level'] = 0
+stock['c1done'] = 0
+stock['c2done'] = 0
+stock['c3done'] = 0
+stock['c4done'] = 0
+$stock['trademark_style'] = ''
+!$g_type = '' - gladiatrix type is a 'local' variable of the combat code, the trademark_style stores it - ImperatorAugustus
+!superviser_message = 0 - this variable is used only for arena announcements, it is not relevant here -ImperatorAugustus
+challenge_type = 0
+
+!Adjustments for loli aged stocks and virgin stocks - improved - crushboss
+if stock['virginity'] <= 0:
+	stock['ill'] = 0
+	stock['parasite'] = 0
+	stock['pregnant'] = 0
+	stock['sub_vaginal'] = 0
+	stock['sub_vaginal_xp'] = 0
+	stock['sub_fisting'] = 0
+	stock['sub_fisting_xp'] = 0
+	stock['sub_threesome'] = 0
+	stock['sub_threesome_xp'] = 0
+	stock['sub_dp'] = 0
+	stock['sub_dp_xp'] = 0
+	stock['sub_tp'] = 0
+	stock['sub_tp_xp'] = 0
+	stock['sub_gangbang'] = 0
+	stock['sub_gangbang_xp'] = 0
+	stock['sub_bukkake'] = 0
+	stock['sub_bukkake_xp'] = 0
+	stock['sub_anal'] = 0
+	stock['sub_anal_xp'] = 0
+	stock['anal_stretch'] = 0
+	stock['sub_zoosex'] = 0
+	stock['sub_zoosex_xp'] = 0
+	stock['sub_bestiality'] = 0
+	stock['sub_bestiality_xp'] = 0
+	stock['sub_horse'] = 0
+	stock['sub_horse_xp'] = 0
+	stock['sub_tentacles'] = 0
+	stock['sub_tentacles_xp'] = 0
+	stock['sub_arachnidspider'] = 0
+	stock['sub_arachnidspider_xp'] = 0
+	stock['sub_polypusvermin'] = 0
+	stock['sub_polypusvermin_xp'] = 0
+end
+
+! JO9 MOD START AP_CURVE_ACQUIRE_CAP | 2026-10-24_ap_curve
+local jo9_acquire_ap_cap = iif(stock['stamina'] > 0, min(5, stock['stamina'] + 1), 0)
+if stock['energy'] > jo9_acquire_ap_cap: stock['energy'] = jo9_acquire_ap_cap
+! JO9 MOD END AP_CURVE_ACQUIRE_CAP
+stock['base_exotic'] = stock['exotic']
+stock_rate['stamina'] = 0
+if stock['age'] = CONST_INT['loli_age']: stock['fertility_revealed'] = 1
+
+stock['calories'] = stock['stamina']
+
+if stock_state ! CONST_INT['slave_exist']: msg '오류: stock_to_slave_nogt 상태가 예상과 다릅니다. 이 메시지를 보기 직전에 무엇을 했는지 제보해 주세요'
+! JO9 MOD START SLAVE_NATURE_ACQUIRE_STOCK_TO_SLAVE_NOGT | 2026-10-23_disposition_traits
+dynamic $swap_slave_instances, 'slave', 'stock'
+gs 'jo9_traits','init_slave_nature','slave'
+! JO9 MOD END SLAVE_NATURE_ACQUIRE_STOCK_TO_SLAVE_NOGT
+master_moodlet['pos_new_slave'] = 6 - brand_reputation
+
+!Testing Code - crushboss
+if (cheat_h = 1 or cheat_j = 1) and get_girl = 0: gs 'stock_to_slave_testing'
+if cheat_k = 1 and get_girl = 0: gs 'stock_to_slave_testing2'
+!End of Testing Code

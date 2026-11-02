@@ -1,0 +1,582 @@
+
+CURRENT LOCATION jo9_fog_relay | body lines 1-57
+1: ! JO9 MOD START FOG_RELAY_HELPER | 2026-10-17_fog_relay
+2: ! 안개 순찰 전용. begin: 선봉 선택, handoff: 동료 패배 후 주인공 교대.
+3: ! settle: 출전 동료의 결과를 한 번 정산. close/reset: 전투 임시값 정리.
+4: ! 적의 배열·체력·상태는 여기서 재생성하지 않는다.
+5: if $args[0] = 'menu':
+6:  gs '$menu', 'exec_options', $menu_item_Joinbattle, 'gt "jo9_fog_relay", "begin", 0', '혼자 전투에 돌입한다'
+7:  if slave_state = CONST_INT['slave_exist'] and slave['energy'] > 0:
+8:   gs '$menu', 'exec_options', $menu_item_Joinbattle, 'gt "jo9_fog_relay", "begin", 1', '노예와 전투에 돌입한다'
+9:  end
+10:  if assistant_state = CONST_INT['slave_exist'] and assistant['energy'] > 0:
+11:   gs '$menu', 'exec_options', $menu_item_Joinbattle, 'gt "jo9_fog_relay", "begin", 2', '조수와 전투에 돌입한다'
+12:  end
+13: end
+14: 
+15: if $args[0] = 'begin':
+16:  if $place ! 'edge_patrol': exit
+17:  if args[1] < 0 or args[1] > 2: exit
+18:  if args[1] = 1 and (slave_state ! CONST_INT['slave_exist'] or slave['energy'] <= 0): exit
+19:  if args[1] = 2 and (assistant_state ! CONST_INT['slave_exist'] or assistant['energy'] <= 0): exit
+20:  killvar 'jo9_fog'
+21:  ! 사용자 승인 페널티. 누적값이며 등급을 직접 지정하지 않는다.
+22:  jo9_fog['wounds_penalty'] = 80
+23:  jo9_fog['moral_penalty'] = 10
+24:  jo9_fog['mood_penalty'] = 10
+25:  combatant = args[1]
+26:  jo9_fog['actor'] = combatant
+27:  if combatant > 0: jo9_fog['active'] = 1
+28:  a = 0
+29:  killvar 'no_wpn'
+30:  get_weapon = 0
+31:  $итог_боя = ''
+32:  gt 'начать_бой'
+33: end
+34: 
+35: if $args[0] = 'handoff':
+36:  if jo9_fog['active'] ! 1 or jo9_fog['switched'] ! 0 or combatant < 1: exit
+37:  ! 이전 출전자의 갑옷 효과를 제거한 후 결과를 정산한다.
+38:  dynamic $броня_снять[$броня]
+39:  gs 'jo9_fog_relay', 'settle'
+40:  jo9_fog['switched'] = 1
+41:  jo9_fog['resuming'] = 1
+42:  combatant = 0
+43:  get_weapon = 0
+44:  a = 0
+45:  killvar 'no_wpn'
+46:  $итог_боя = ''
+47:  msg '주인공이 전투를 이어받습니다. 사용할 장비를 선택하세요. 적의 남은 체력과 상태는 유지됩니다.'
+48:  gt 'начать_бой'
+49: end
+50: 
+51: if $args[0] = 'finish':
+52:  if jo9_fog['active'] = 1 and combatant > 0: gs 'jo9_fog_relay', 'settle'
+53: end
+54: 
+55: if $args[0] = 'settle':
+56:  if jo9_fog['active'] ! 1 or jo9_fog['settled'] ! 0: exit
+57:  jo9_fog['settled'] = 1
+
+CURRENT LOCATION jo9_fog_relay | body lines 84-116
+84:  ! 3명 이상 적 전멸 시 원본이 사기를 덮어쓰기 전의 실제 값을 정산에 사용한다.
+85:  if jo9_fog['victory_snapshot'] = 1: дух_игрока = jo9_fog['spirit_before_victory']
+86:  ! 액터별 코드는 아래에 생성된다. 죽음 > 기절 > 사기 패배 순으로 판정한다.
+87:  if jo9_fog['actor'] = 1:
+88:   if здоровье_игрока <= 0:
+89:    msg '<<$slave_name>>이(가) 전투에서 사망했습니다.'
+90:    dynamic $clear_slave_instance, 'slave'
+91:   else
+92:    ! 기존 전투의 잔여 지구력→행동력 환산을 사용하고 전투 전 행동력 이상으로 회복시키지 않는다.
+93:    jo9_fog['energy_before'] = slave['energy']
+94:    slave['energy'] = -4
+95:    if выносливость_игрока >= 10: slave['energy'] = -3
+96:    if выносливость_игрока >= 15: slave['energy'] = -2
+97:    if выносливость_игрока >= 20: slave['energy'] = -1
+98:    if выносливость_игрока >= 25: slave['energy'] = 0
+99:    if выносливость_игрока >= 35: slave['energy'] = 1
+100:    if выносливость_игрока >= 45: slave['energy'] = 2
+101:    if выносливость_игрока >= 55: slave['energy'] = 3
+102:    if выносливость_игрока >= 65: slave['energy'] = 4
+103:    if выносливость_игрока >= 75: slave['energy'] = 5
+104:    ! JO9 MOD START FOG_ENERGY_MIN_COST_SLAVE | 2026-10-22_fog_energy_cost
+105:    ! 출전 동료의 최소 1 행동력 비용을 보장하고 더 큰 잔여 지구력 손실은 유지한다.
+106:    slave['energy'] = min(slave['energy'], jo9_fog['energy_before'] - 1)
+107:    ! JO9 MOD END FOG_ENERGY_MIN_COST_SLAVE
+108:    if выносливость_игрока <= 0:
+109:     slave_rate['wounds'] += jo9_fog['wounds_penalty']
+110:     slave['neg_slave_wounded'] = 1
+111:     msg '<<$slave_name>>이(가) 부상을 입고 기절했습니다.'
+112:    elseif дух_игрока <= 0:
+113:     slave_rate['moral'] -= jo9_fog['moral_penalty']
+114:     slave_rate['mood'] -= jo9_fog['mood_penalty']
+115:     msg '<<$slave_name>>이(가) 사기를 잃고 전투에서 물러났습니다. 당신에 대한 헌신과 기분이 저하되었습니다.'
+116:    end
+
+CURRENT LOCATION jo9_fog_relay | body lines 144-173
+144:  if jo9_fog['actor'] = 2:
+145:   if здоровье_игрока <= 0:
+146:    msg '<<$assistant_name>>이(가) 전투에서 사망했습니다.'
+147:    dynamic $clear_slave_instance, 'assistant'
+148:   else
+149:    ! 기존 전투의 잔여 지구력→행동력 환산을 사용하고 전투 전 행동력 이상으로 회복시키지 않는다.
+150:    jo9_fog['energy_before'] = assistant['energy']
+151:    assistant['energy'] = -4
+152:    if выносливость_игрока >= 10: assistant['energy'] = -3
+153:    if выносливость_игрока >= 15: assistant['energy'] = -2
+154:    if выносливость_игрока >= 20: assistant['energy'] = -1
+155:    if выносливость_игрока >= 25: assistant['energy'] = 0
+156:    if выносливость_игрока >= 35: assistant['energy'] = 1
+157:    if выносливость_игрока >= 45: assistant['energy'] = 2
+158:    if выносливость_игрока >= 55: assistant['energy'] = 3
+159:    if выносливость_игрока >= 65: assistant['energy'] = 4
+160:    if выносливость_игрока >= 75: assistant['energy'] = 5
+161:    ! JO9 MOD START FOG_ENERGY_MIN_COST_ASSISTANT | 2026-10-22_fog_energy_cost
+162:    ! 출전 동료의 최소 1 행동력 비용을 보장하고 더 큰 잔여 지구력 손실은 유지한다.
+163:    assistant['energy'] = min(assistant['energy'], jo9_fog['energy_before'] - 1)
+164:    ! JO9 MOD END FOG_ENERGY_MIN_COST_ASSISTANT
+165:    if выносливость_игрока <= 0:
+166:     assistant_rate['wounds'] += jo9_fog['wounds_penalty']
+167:     assistant['neg_slave_wounded'] = 1
+168:     msg '<<$assistant_name>>이(가) 부상을 입고 기절했습니다.'
+169:    elseif дух_игрока <= 0:
+170:     assistant_rate['moral'] -= jo9_fog['moral_penalty']
+171:     assistant_rate['mood'] -= jo9_fog['mood_penalty']
+172:     msg '<<$assistant_name>>이(가) 사기를 잃고 전투에서 물러났습니다. 당신에 대한 헌신과 기분이 저하되었습니다.'
+173:    end
+
+CURRENT LOCATION jo9_fog_relay | body lines 198-211
+198:    dynamic $replace($dyn_calc_slave_attrs, 'dyn'+'slave', 'assistant')
+199:   end
+200:  end
+201: end
+202: 
+203: if $args[0] = 'close':
+204:  if jo9_fog['active'] = 1:
+205:   combatant = 0
+206:   killvar 'jo9_fog'
+207:  end
+208: end
+209: 
+210: if $args[0] = 'reset': killvar 'jo9_fog'
+211: ! JO9 MOD END FOG_RELAY_HELPER
+
+CURRENT LOCATION начать_бой | body lines 10-20
+10: if get_weapon = 0:
+11: 	$memplace = $place
+12: 	get_weapon = 1
+13: 	memcf = colosseum_fight
+14: 	colosseum_fight = 0
+15: 	$оружие = ''
+16: 	$вторичный = ''
+17: 	interaction_city = 901
+18: 	if surprise_attack = 1: interaction_city = 902
+19: 	if slave_attack = 1: interaction_city = 903
+20: 	gt 'interaction_city'
+
+CURRENT LOCATION начать_бой | body lines 142-147
+142: макс_здоровье_игрока = master_str * 14 - master_wounds_rate
+143: if макс_здоровье_игрока < 1: макс_здоровье_игрока = 1
+144: здоровье_игрока = макс_здоровье_игрока
+145: макс_выносливость_игрока = 50 + (master_energy*5)
+146: if bull_ring_on = 1: макс_выносливость_игрока *= 2
+147: выносливость_игрока = макс_выносливость_игрока
+
+CURRENT LOCATION начать_бой | body lines 192-215
+192: if combatant = 2:
+193: ! JO9 MOD START COMBAT_COLOR_GENERAL_ASSISTANT | 2026-10-24_combat_color_portraits
+194: 	$combatant_ava = '<<$assistant[''ava_clear'']>>.png'
+195: ! JO9 MOD END COMBAT_COLOR_GENERAL_ASSISTANT
+196: 	$combatant_name = $assistant_name
+197: 	$броня = $assistant['armor']
+198: 
+199: 	макс_здоровье_игрока = assistant['stamina'] * 10 - assistant_rate['wounds']
+200: 	if assistant['gladiatrix_affinity'] > 0: макс_здоровье_игрока = assistant['stamina']*10
+201: 	if assistant['age'] = CONST_INT['loli_age']: макс_здоровье_игрока -= макс_здоровье_игрока/5
+202: 	if assistant['age'] = CONST_INT['milf_age']: макс_здоровье_игрока += assistant['stamina']*2
+203: 	if макс_здоровье_игрока < 1: макс_здоровье_игрока = 1
+204: 	здоровье_игрока = макс_здоровье_игрока
+205: 	макс_выносливость_игрока = 50 + (assistant['energy']*5)
+206: 	if assistant['gladiatrix_affinity'] > 0: макс_выносливость_игрока = 75 + (assistant['energy']*5)
+207: 	if assistant['age'] = CONST_INT['loli_age']: макс_выносливость_игрока -= макс_выносливость_игрока/3
+208: 	выносливость_игрока = макс_выносливость_игрока
+209: 	норм_дух_игрока = assistant['ego']*10 + assistant['gladiatrix']*10
+210: 	if assistant['gladiatrix_affinity'] > 0: норм_дух_игрока += assistant['ego']*10
+211: 	дух_игрока = норм_дух_игрока
+212: 	сила_передышки = 10
+213: 	assistant['calories'] -= 5
+214: 	assistant_rate['hygiene'] += 40
+215: 	assistant_rate['sensitivity'] -= 5
+
+CURRENT LOCATION конец_боя | body lines 9-14
+9: ! JO9 MOD START FOG_DEFEAT_HANDOFF | 2026-10-17_fog_relay
+10: !WHEN FIGHT IS FINISHED WE WILL BE HERE
+11: if jo9_fog['active'] = 1 and jo9_fog['switched'] = 0 and combatant > 0 and $итог_боя ! 'победа':
+12:  gt 'jo9_fog_relay', 'handoff'
+13: end
+14: ! JO9 MOD END FOG_DEFEAT_HANDOFF
+
+CURRENT LOCATION выход_из_боя | body lines 1-26
+1: ! JO9 MOD START BATTLE_FATE_CHOICE_20261028
+2: if jo9_fate['mode'] > 0:
+3:  if jo9_fate['phase'] = 1: gt 'jo9_battle_fate', 'render'
+4:  if jo9_fate['phase'] = 3: exit
+5:  if jo9_fate['phase'] = 2: jo9_fate['phase'] = 3
+6: end
+7: ! JO9 MOD END BATTLE_FATE_CHOICE_20261028
+8: ! JO9 MOD START J9M2909 | 2026-10-10_restore_private_room_ui | changed block; context may be included
+9: if snk_room_target > 0 and $curloc = 'выход_из_боя': gs 'snk_room_bridge', 'guard', 'выход_из_боя'
+10: ! JO9 MOD END J9M2909
+11: ! JO9 MOD START FOG_COMPANION_FINISH | 2026-10-17_fog_relay
+12: !CALCULATION OF COMBAT RESULTS
+13: ! JO9 MOD START TRAITS_COMBAT_WIN | 2026-10-17_traits_batch
+14: gs 'jo9_traits_combat', 'finish'
+15: ! JO9 MOD END TRAITS_COMBAT_WIN
+16: gs 'jo9_fog_relay', 'finish'
+17: ! JO9 MOD END FOG_COMPANION_FINISH
+18: !resume city sounds after the fight (if not at home)
+19: if is_home = 0: dynamic $city_sounds
+20: 
+21: !for arena fight
+22: if $fight_return = 'Start':
+23: 	$fight_return = ''
+24: 	dynamic $master_energy_drop
+25: 	slave['energy'] = -3
+26: 	if $итог_боя = 'убит':
+
+CURRENT LOCATION выход_из_боя | body lines 129-149
+129: !Increase master whip skill if used a whip (кнут) or lash (нагайка) for the battle as primary (оружие) or secondary (вторичный) weapon
+130: if combatant = 0 and ($оружие = 'кнут' or $оружие = 'нагайка' or $вторичный = 'кнут' or $вторичный = 'нагайка'): master_flagelation_rate += (skill_adv_mul * 1)
+131: 
+132: !Sparring Practice
+133: if colosseum_fight > 0:
+134: 	if combatant = 0:
+135: 		dynamic $master_energy_drop
+136: 		interaction_city = 1296
+137: 	end
+138: 	if combatant = 1:
+139: 		dynamic $slave_energy_drop
+140: 		interaction_city = 1297
+141: 	end
+142: 	if combatant = 2:
+143: 		dynamic $assistant_energy_drop
+144: 		interaction_city = 1298
+145: 	end
+146: 	copyarr '$display_options', '$colosseum_options'
+147: 	gs '_layout'
+148: 	gt 'interaction_city'
+149: 	!code lines below were never executed due to gt above, commented them out for clarity - ImperatorAugustus
+
+CURRENT LOCATION выход_из_боя | body lines 209-220
+209: !general results
+210: if $итог_боя = 'бегство':
+211: 	dynamic $death, '당신은 겁을 먹고 전투에서 도망치려 했다. 실패했다.'
+212: end
+213: if $итог_боя = 'вырубился':
+214: ! JO9 MOD START J9M2908 | 2026-10-12_zzzz_gameover_layout | changed block; context may be included
+215: 	dynamic $death, '당신의 의식은 어둠 속으로 가라앉았다.<br>불멸의 로마에서, 당신의 이야기는 여기서 끝났다.'
+216: ! JO9 MOD END J9M2908
+217: end
+218: if $итог_боя = 'убит':
+219: 	dynamic $death, '당신은 죽었다.'
+220: end
+
+CURRENT LOCATION выход_из_боя | body lines 232-289
+232: if combatant = 0:
+233: 	lethal_damage_received = макс_здоровье_игрока - здоровье_игрока
+234: 	bash_damage_received = макс_выносливость_игрока - выносливость_игрока &! выносливость_игрока is player stamina in combat
+235: 	if дух_игрока < норм_дух_игрока:
+236: 		psy_damage_received = норм_дух_игрока - дух_игрока
+237: 	end
+238: 
+239: 	master_mood_rate -= min(25, psy_damage_received)
+240: 
+241: 	if lethal_damage_received > master_str_rate: master_wounds_rate += 10
+242: 	if lethal_damage_received > макс_здоровье_игрока/4: master_wounds_rate += 10 &! макс_здоровье_игрока is max player health
+243: 	if lethal_damage_received > макс_здоровье_игрока/3: master_wounds_rate += 20
+244: 	if lethal_damage_received > макс_здоровье_игрока/2: master_wounds_rate += 40
+245: 	if lethal_damage_received > макс_здоровье_игрока - 2: master_wounds_rate += 80
+246: 	if master_wounds_rate > 0: master_moodlet['neg_wounded'] = 1
+247: 
+248: 	pure_bashing_damage = bash_damage_received - lethal_damage_received
+249: 	if pure_bashing_damage < 0: pure_bashing_damage = 0
+250: 	master_str_rate -= max(0, pure_bashing_damage/10 - master_str) &! added strength impact mirroring slave endurance impact - ImperatorAugustus
+251: 
+252: 	energy_max = master_energy
+253: 	!if выносливость_игрока < 5: master_energy = -5 &! disabled this line to avoid immediate player unconsciousness after battle - ImperatorAugustus
+254: 	if выносливость_игрока >= 5: master_energy = -4 &! выносливость_игрока is player stamina in combat
+255: 	if выносливость_игрока >= 10: master_energy = -3
+256: 	if выносливость_игрока >= 15: master_energy = -2
+257: 	if выносливость_игрока >= 20: master_energy = -1
+258: 	if выносливость_игрока >= 25: master_energy = 0
+259: 	if выносливость_игрока >= 35: master_energy = 1
+260: 	if выносливость_игрока >= 45: master_energy = 2
+261: 	if выносливость_игрока >= 55: master_energy = 3
+262: 	if выносливость_игрока >= 65: master_energy = 4
+263: 	if выносливость_игрока >= 75: master_energy = 5
+264: 	if master_energy > energy_max: master_energy = energy_max
+265: 	if master_energy > 1 and $враг[1] ! 'воспитуемая': master_energy = 1 & master_half_action -= 1 &! cap master energy after Fog battles at 1.5 stars (patrolling Fogs again requires min. 3 energy) - ImperatorAugustus
+266: end
+267: 
+268: ! JO9 MOD START FOG_CLOSE | 2026-10-17_fog_relay
+269: gs 'jo9_fog_relay', 'close'
+270: if cheat_fight_dif = 0:
+271: ! JO9 MOD END FOG_CLOSE
+272: 	master_wounds_rate = 0
+273: 	master_wounds = 0
+274: 	master_moodlet['neg_wounded'] = 0
+275: 	master_ill = 0
+276: 	master_issues = 0
+277: 	if master_hygiene > 1: master_hygiene = 1 & master_hygiene_rate = 15
+278: end
+279: 
+280: if cheat_inf_en ! 0:
+281: 	if master_energy < 5: master_energy = 5
+282: end
+283: 
+284: menu_form = 0
+285: 
+286: if $fight_return ! '':
+287: 	$return_lock = $fight_return
+288: 	$fight_return = ''
+289: end
+
+CURRENT LOCATION #dynamic | body lines 1318-1350
+1318: $assistant_energy_drop = {
+1319: 	if cheat_inf_en = 0:
+1320: 		assistant['half_action'] += 2
+1321: 		if easy_for_assistant = 1: assistant['half_action'] -= 1 & easy_for_assistant = 0 &! clear the flag (used in interaction_result)
+1322: 		if assistant['half_action'] > 1: assistant['energy'] -= 1 & assistant['half_action'] -= 2
+1323: 	end
+1324: 	if assistant['energy'] < -5: assistant['energy'] = -5
+1325: 	if assistant['energy'] < 0:
+1326:  ! JO9 MOD START MUSCULAR_OVERWORK_50_ASSISTANT | 2026-10-24_muscular_overwork
+1327:  if assistant['stamina'] = 5:
+1328:   local jo9_overwork_total = -assistant['energy'] + max(0, min(1, assistant['jo9_overwork_half']))
+1329:   assistant_rate['stamina'] -= jo9_overwork_total / 2
+1330:   assistant['jo9_overwork_half'] = jo9_overwork_total mod 2
+1331:  else
+1332:   assistant_rate['stamina'] += assistant['energy']
+1333:  end
+1334:  ! JO9 MOD END MUSCULAR_OVERWORK_50_ASSISTANT
+1335: end
+1336: 	assistant['calories'] -= 1
+1337: 	!calorie counting for assistant in case she switches to slave - ImperatorAugustus
+1338: }
+1339: 
+1340: $master_energy_drop = {
+1341: 	if cheat_inf_en = 0:
+1342: 		!revised bull ring effect to double actions per day instead of infinite - ImperatorAugustus
+1343: 		master_half_action += iif(bull_ring_on = 1, 1, 2)
+1344: 		if easy_for_master = 1: master_half_action -= 1 & easy_for_master = 0 &! clear the flag (used in interaction_result)
+1345: 		if master_half_action > 1: master_energy -= 1 & master_half_action -= 2
+1346: 	end
+1347: 	if master_energy < -5: master_energy = -5
+1348: 	if master_energy < 0 and obereg_on = 0: master_str_rate += master_energy
+1349: 	! removed 'and bull_ring_on = 0' strength (master health) protection - ImperatorAugustus
+1350: }
+
+CURRENT LOCATION #dynamic | body lines 1418-1432
+1418: $transport_energy_drop = {
+1419: 	! energy drop only when traveling to a different district that is not the district where home estate is located
+1420: 	! energy drop is also skipped if called with an estate name that matches the current home estate
+1421: 	if city_form = city_district or (city_form/10) = city_district: exit &! at home, city_district is -1, so this is when not home and fast-traveling to where you already are
+1422: 	if $quick_move_action = "go" and (city_form = estate_district[$estate] or (city_form/10) = estate_district[$estate]): exit &! fast travel/enter a district from city_form = 0
+1423: 	if $args[0] = $estate: exit &! click per-decade event buttons, click empty slave avatar to go to market, click cryo button (when home capsule is rented)
+1424: 	if chariot_state > CONST_INT['no_slave'] and horse_power > 0:
+1425: 		horse_power -= 1
+1426: 	else
+1427: 		easy_for_master = 1 &! half-action or free with Bull Ring
+1428: 		dynamic $master_energy_drop
+1429: 	end
+1430: 	dynamic $city_sounds &! convenient place to handle music transition for all home shortcuts - ImperatorAugustus
+1431: 	if is_home = 1 and sound_on = 1: play 'content/snd/door.wav', sound_volume &! convenient place to handle departure sound for all home shortcuts - ImperatorAugustus
+1432: }
+
+CURRENT LOCATION city_menu_form | body lines 722-733
+722: if city_form = 61:
+723: 	city_district = 6
+724: 	$place = 'gates_of_mists'
+725: 	func('$menu', 'spacer', 1)
+726: 
+727: 	func('$menu', '===BEGIN===', 'column_0')
+728: 
+729: 	if master_energy > 2:
+730: 		func('$menu', 'interaction_city', $menu_item_Patrol, menu_Patrol, '안개 경계 순찰')
+731: 	else
+732: 		func('$menu', 'location_gray_tooltip', $menu_item_Patrol_gray, empty, '안개 경계 순찰', '너무 지쳐 있습니다')
+733: 	end
+
+CURRENT LOCATION interaction_city | body lines 10857-10885
+10857: !starting the patrol
+10858: if interaction_city = 611:
+10859: 	gs '$combat_variable_reset'
+10860: 	$place = 'edge_patrol'
+10861: 	$return_lock = 'city_menu_form'
+10862: 	$toplay = 'fog' & dynamic $play_music
+10863: 	combatant = 0 &! set master as the combatant
+10864: 	!the upper bound of this MUST equal the total number of encounters
+10865: 	patrol_num = 1 + ((48271 * (day + city_already_done_ever[$str(interaction_city)])) mod 65537)/(65537/14) &! pseudo-rand(1,14)
+10866: 	!Testing code - comment out the line above and uncomment the lines below to have all fights in order - crushboss
+10867: 	! patrol_num += 1
+10868: 	! if patrol_num > 14: patrol_num = 1
+10869: 	!End of Testing Code - crushboss
+10870: 	if active[$quest[8]] = 1 and patrol_num = 14 and $master_head_gear = 'raven_crown' and $master_amulet = 'snake_amulet' and $master_ring = 'bull_ring': patrol_num = 15
+10871: 	city_already_done_ever[$str(interaction_city)] += 1
+10872: 	interaction_city = 61100 + patrol_num
+10873: 	$враг[2] = ''
+10874: end
+10875: 
+10876: !retreat
+10877: if interaction_city = 6111:
+10878: 	$place = 'edge_patrol'
+10879: 	$return_lock = 'city_menu_form'
+10880: ! JO9 MOD START J9M0832 | 2026-10-15_trim_leading_body_blank_lines | changed block; context may be included
+10881: 	$text[1] = '당신은 상관하지 않기로 했다, 안개의 테두리에서 물러나 조용한 곳으로 갔다. 느리지만 꾸준한 것이 경주에서 이기는 방법이다.'
+10882: ! JO9 MOD END J9M0832
+10883: 	dynamic $master_energy_drop
+10884: 	city_form = 61
+10885: end
+
+CURRENT LOCATION sjm_UI_UIadds | body lines 290-298
+290: ! Action of quarters buttons
+291: if $quick_move_action = "go":
+292: 	dynamic $transport_energy_drop
+293: 	if is_home = 1 and sound_on = 1:
+294: 		play 'content/snd/door.wav'
+295: 	end
+296: 	!gs '$newloc'
+297: 	gt 'city_menu_form'
+298: end
+
+CURRENT LOCATION $calculate_attributes | body lines 468-485
+468: if code_defined['update_master_energy_stars'] = 0:
+469: 	code_defined['update_master_energy_stars'] = 1 &! do-once
+470: 
+471: 	$update_master_energy_stars = {
+472: 		$master_energy_stars = ''
+473: 		! if energy exceeds cap and a half star is missing, refill it
+474: 		if master_energy > 5 and master_half_action = 1: master_half_action = 0
+475: 		! transfer bonus energy stars (negative half_actions) to normal energy stars
+476: 		if master_half_action < 0 and master_energy < 5:
+477: 			master_energy += (-1 * master_half_action) / 2
+478: 			master_half_action = master_half_action MOD 2 - max(0, master_energy - 5)*2
+479: 		end
+480: 		! consume spent half actions (positive half_actions)
+481: 		:_process_master_half_actions_loop
+482: 			if master_half_action > 1: master_half_action -= 2 & dynamic $master_energy_drop
+483: 			if master_half_action > 1: jump '_process_master_half_actions_loop'
+484: 		! clamp value
+485: 		master_energy = max(-5, min(5, master_energy))
+
+CURRENT LOCATION $menu | body lines 53-58
+53: if $args[0] = 'goto_city':
+54: 	menu_item_counter += 1
+55: 	$text_display += $args[1] + func('$menu', 'get_link',  args[2],  $args[3], $args[4]) + $args[5] + '</a></li>'
+56: 
+57: 	dynamic $save_link, menu_item_counter, $args[3] + '=' + args[2] + ' & gt ''' + $args[4] + ''''
+58: end
+
+CURRENT LOCATION $menu | body lines 128-142
+128: if $args[0] = 'interaction_city':
+129: 	func('$menu', 'goto_city',  $args[1], args[2], 'interaction_city', 'interaction_city', $args[3])
+130: end
+131: 
+132: if $args[0] = 'interaction':
+133: 	func('$menu', 'goto_city',  $args[1], args[2], 'interaction', 'interaction', $args[3])
+134: end
+135: 
+136: if $args[0] = 'sex_interaction':
+137: 	func('$menu', 'goto_sex_options',  $args[1], args[2], 'sex_interaction', 'sex_interaction', $args[3])
+138: end
+139: 
+140: if $args[0] = 'city_form':
+141: 	func('$menu', 'goto_city',  $args[1], args[2], 'city_form', 'city_menu_form', $args[3])
+142: end
+
+ORIGINAL_20261001 LOCATION выход_из_боя | body lines 214-248
+214: if combatant = 0:
+215: 	lethal_damage_received = макс_здоровье_игрока - здоровье_игрока
+216: 	bash_damage_received = макс_выносливость_игрока - выносливость_игрока &! выносливость_игрока is player stamina in combat
+217: 	if дух_игрока < норм_дух_игрока:
+218: 		psy_damage_received = норм_дух_игрока - дух_игрока
+219: 	end
+220: 
+221: 	master_mood_rate -= min(25, psy_damage_received)
+222: 
+223: 	if lethal_damage_received > master_str_rate: master_wounds_rate += 10
+224: 	if lethal_damage_received > макс_здоровье_игрока/4: master_wounds_rate += 10 &! макс_здоровье_игрока is max player health
+225: 	if lethal_damage_received > макс_здоровье_игрока/3: master_wounds_rate += 20
+226: 	if lethal_damage_received > макс_здоровье_игрока/2: master_wounds_rate += 40
+227: 	if lethal_damage_received > макс_здоровье_игрока - 2: master_wounds_rate += 80
+228: 	if master_wounds_rate > 0: master_moodlet['neg_wounded'] = 1
+229: 
+230: 	pure_bashing_damage = bash_damage_received - lethal_damage_received
+231: 	if pure_bashing_damage < 0: pure_bashing_damage = 0
+232: 	master_str_rate -= max(0, pure_bashing_damage/10 - master_str) &! added strength impact mirroring slave endurance impact - ImperatorAugustus
+233: 
+234: 	energy_max = master_energy
+235: 	!if выносливость_игрока < 5: master_energy = -5 &! disabled this line to avoid immediate player unconsciousness after battle - ImperatorAugustus
+236: 	if выносливость_игрока >= 5: master_energy = -4 &! выносливость_игрока is player stamina in combat
+237: 	if выносливость_игрока >= 10: master_energy = -3
+238: 	if выносливость_игрока >= 15: master_energy = -2
+239: 	if выносливость_игрока >= 20: master_energy = -1
+240: 	if выносливость_игрока >= 25: master_energy = 0
+241: 	if выносливость_игрока >= 35: master_energy = 1
+242: 	if выносливость_игрока >= 45: master_energy = 2
+243: 	if выносливость_игрока >= 55: master_energy = 3
+244: 	if выносливость_игрока >= 65: master_energy = 4
+245: 	if выносливость_игрока >= 75: master_energy = 5
+246: 	if master_energy > energy_max: master_energy = energy_max
+247: 	if master_energy > 1 and $враг[1] ! 'воспитуемая': master_energy = 1 & master_half_action -= 1 &! cap master energy after Fog battles at 1.5 stars (patrolling Fogs again requires min. 3 energy) - ImperatorAugustus
+248: end
+
+ORIGINAL_20261001 LOCATION city_menu_form | body lines 705-720
+705: if city_form = 61:
+706: 	city_district = 6
+707: 	$place = 'gates_of_mists'
+708: 	func('$menu', 'spacer', 1)
+709: 
+710: 	func('$menu', '===BEGIN===', 'column_0')
+711: 
+712: 	if master_energy > 2:
+713: 		func('$menu', 'interaction_city', $menu_item_Patrol, menu_Patrol, '안개 경계 순찰')
+714: 	else
+715: 		func('$menu', 'location_gray_tooltip', $menu_item_Patrol_gray, empty, '안개 경계 순찰', '너무 지쳐 있습니다')
+716: 	end
+717: 	FUNC('$menu', 'interaction_city', $menu_item_port, 10400, '항구')
+718: 	FUNC('$menu', 'city_form', $menu_item_border_regions, 15111, '변경 지대')
+719: !	IF npc_progress['Rafael'] = 2: FUNC('$menu', 'interaction_city', $menu_item_Black_bazar, menu_Black_bazar, '"Black Market"')
+720: 	func('$menu', 'interaction_city', $menu_item_camp, menu_camp, '베이스캠프')
+
+PATCH_20261017 jo9_fog_relay | energy settlement lines
+7:  if slave_state = CONST_INT['slave_exist'] and slave['energy'] > 0:
+10:  if assistant_state = CONST_INT['slave_exist'] and assistant['energy'] > 0:
+18:  if args[1] = 1 and (slave_state ! CONST_INT['slave_exist'] or slave['energy'] <= 0): exit
+19:  if args[1] = 2 and (assistant_state ! CONST_INT['slave_exist'] or assistant['energy'] <= 0): exit
+56:  if jo9_fog['active'] ! 1 or jo9_fog['settled'] ! 0: exit
+57:  jo9_fog['settled'] = 1
+67:    jo9_fog['energy_before'] = slave['energy']
+68:    slave['energy'] = -4
+69:    if выносливость_игрока >= 10: slave['energy'] = -3
+70:    if выносливость_игрока >= 15: slave['energy'] = -2
+71:    if выносливость_игрока >= 20: slave['energy'] = -1
+72:    if выносливость_игрока >= 25: slave['energy'] = 0
+73:    if выносливость_игрока >= 35: slave['energy'] = 1
+74:    if выносливость_игрока >= 45: slave['energy'] = 2
+75:    if выносливость_игрока >= 55: slave['energy'] = 3
+76:    if выносливость_игрока >= 65: slave['energy'] = 4
+77:    if выносливость_игрока >= 75: slave['energy'] = 5
+78:    slave['energy'] = min(slave['energy'], jo9_fog['energy_before'])
+79:    if выносливость_игрока <= 0:
+97:    jo9_fog['energy_before'] = assistant['energy']
+98:    assistant['energy'] = -4
+99:    if выносливость_игрока >= 10: assistant['energy'] = -3
+100:    if выносливость_игрока >= 15: assistant['energy'] = -2
+101:    if выносливость_игрока >= 20: assistant['energy'] = -1
+102:    if выносливость_игрока >= 25: assistant['energy'] = 0
+103:    if выносливость_игрока >= 35: assistant['energy'] = 1
+104:    if выносливость_игрока >= 45: assistant['energy'] = 2
+105:    if выносливость_игрока >= 55: assistant['energy'] = 3
+106:    if выносливость_игрока >= 65: assistant['energy'] = 4
+107:    if выносливость_игрока >= 75: assistant['energy'] = 5
+108:    assistant['energy'] = min(assistant['energy'], jo9_fog['energy_before'])
+109:    if выносливость_игрока <= 0:
+
+PATCH_20261022 registered_bugfixes | energy changes
+[
+  {
+    "location": "jo9_fog_relay",
+    "field": "body",
+    "old": "   slave['energy'] = min(slave['energy'], jo9_fog['energy_before'])",
+    "new": "   ! JO9 MOD START FOG_ENERGY_MIN_COST_SLAVE | 2026-10-22_fog_energy_cost\r\n   ! 출전 동료의 최소 1 행동력 비용을 보장하고 더 큰 잔여 지구력 손실은 유지한다.\r\n   slave['energy'] = min(slave['energy'], jo9_fog['energy_before'] - 1)\r\n   ! JO9 MOD END FOG_ENERGY_MIN_COST_SLAVE",
+    "count": 1
+  },
+  {
+    "location": "jo9_fog_relay",
+    "field": "body",
+    "old": "   assistant['energy'] = min(assistant['energy'], jo9_fog['energy_before'])",
+    "new": "   ! JO9 MOD START FOG_ENERGY_MIN_COST_ASSISTANT | 2026-10-22_fog_energy_cost\r\n   ! 출전 동료의 최소 1 행동력 비용을 보장하고 더 큰 잔여 지구력 손실은 유지한다.\r\n   assistant['energy'] = min(assistant['energy'], jo9_fog['energy_before'] - 1)\r\n   ! JO9 MOD END FOG_ENERGY_MIN_COST_ASSISTANT",
+    "count": 1
+  }
+]

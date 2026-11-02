@@ -1,0 +1,36 @@
+{
+  "id": "2026-11-02_hardcore_auction_payment",
+  "description": "Public auctions retain gross quotes and pay in full on settings 0/1; setting 2 pays at most 6000 with one tax receipt on the final existing auction page. Existing legacy settlement branch follows the same payment rule; no content access restored.",
+  "edits": [
+    {
+      "location": "$guild_auction",
+      "field": "body",
+      "old": "bank_size = min(6000, bank_size)",
+      "new": "! JO9 MOD START HARDCORE_AUCTION_GROSS_20261102\r\n! The gross quote is retained; difficulty_setting = 2 is capped only at payment.\r\n! JO9 MOD END HARDCORE_AUCTION_GROSS_20261102",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t! JO9 MOD START SALE_CAP_B_AUCTION_PAYMENT_M_20261026\r\n\tsparks_get = min(6000, sparks_get)\r\n\tsparks += sparks_get\r\n\t! JO9 MOD END SALE_CAP_B_AUCTION_PAYMENT_M_20261026",
+      "new": "\t! JO9 MOD START SALE_CAP_B_AUCTION_PAYMENT_M_20261026\r\n\t! JO9 MOD START HARDCORE_AUCTION_PAYMENT_M_20261102\r\n\tif difficulty_setting = 2 and sparks_get > 6000:\r\n\t\t$text[arrsize('$text')-1] += '<br><br>악질적인 세금징수원이 낙찰가에서 이런저런 핑계로 스파크를 뜯어 가고, 내 손에는 $6,000만 쥐어졌다.'\r\n\t\tsparks_get = 6000\r\n\tend\r\n\tsparks += sparks_get\r\n\t! JO9 MOD END HARDCORE_AUCTION_PAYMENT_M_20261102\r\n\t! JO9 MOD END SALE_CAP_B_AUCTION_PAYMENT_M_20261026",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t! JO9 MOD START SALE_CAP_B_AUCTION_PAYMENT_F_20261026\r\n\tsparks_get = min(6000, sparks_get)\r\n\tsparks += sparks_get\r\n\t! JO9 MOD END SALE_CAP_B_AUCTION_PAYMENT_F_20261026",
+      "new": "\t! JO9 MOD START SALE_CAP_B_AUCTION_PAYMENT_F_20261026\r\n\t! JO9 MOD START HARDCORE_AUCTION_PAYMENT_F_20261102\r\n\tif difficulty_setting = 2 and sparks_get > 6000:\r\n\t\t$text[arrsize('$text')-1] += '<br><br>악질적인 세금징수원이 낙찰가에서 이런저런 핑계로 스파크를 뜯어 가고, 내 손에는 $6,000만 쥐어졌다.'\r\n\t\tsparks_get = 6000\r\n\tend\r\n\tsparks += sparks_get\r\n\t! JO9 MOD END HARDCORE_AUCTION_PAYMENT_F_20261102\r\n\t! JO9 MOD END SALE_CAP_B_AUCTION_PAYMENT_F_20261026",
+      "count": 1
+    },
+    {
+      "location": "interaction_screen_city",
+      "field": "body",
+      "old": "if interaction_city = 931 and sparks_get > 6000: $jo9_gold_result_text += '<br><br>공개경매의 최종 지급액은 최대 $6,000이다.'",
+      "new": "! JO9 MOD START HARDCORE_AUCTION_NOTICE_20261102\r\n! The paid receipt is part of the settled auction page.\r\n! JO9 MOD END HARDCORE_AUCTION_NOTICE_20261102",
+      "count": 1
+    }
+  ],
+  "before_sha256": "761ca75e8af614a2068918fc71c401f8774c06bd243d65415206041376d5bfd3",
+  "after_sha256": "15d02a6a1263970a1c0761483c71dbbf923fd7eee6dc92cb9978c637e7cc8d6e"
+}

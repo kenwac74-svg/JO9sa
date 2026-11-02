@@ -1,0 +1,877 @@
+{
+  "generatedUtc": "2026-10-30T01:32:57.465984+00:00",
+  "mode": "READ_ONLY_STATIC_AUDIT",
+  "scope": "Wong delayed guild complaint bottom-dialogue rendering only",
+  "status": "STATIC_CAUSE_CONFIRMED_RUNTIME_REPRODUCTION_OWNED_BY_ROOT",
+  "assertions": {
+    "work_text_cleared_on_entry": true,
+    "work_wong_has_text_one": true,
+    "work_wong_has_text_two": true,
+    "work_wong_no_scalar_text_assignment": true,
+    "work_loop_reads_scalar": true,
+    "work_loop_overwrites_text_two": true,
+    "original_clears_text": true,
+    "original_wong_one_based": true,
+    "original_loop_reads_scalar": true,
+    "original_loop_overwrites_text_two": true,
+    "forward_increments_then_reenters": true,
+    "work_event_marks_processed_before_render": true
+  },
+  "assertionsPass": true,
+  "sourceHashes": {
+    "G:\\somi\\Jack O Nine Tails v2.4_work\\game\\jack.qsp": "1e8e489eb4a2c6412f81af0e50b69d409bc9ffd5d5edb69e2308cd3e9f71bc7c",
+    "G:\\somi\\JO9O\\game\\jack.qsp": "26e15aaf30b6226a2883c6b532a6ee4eed34791110618597d234bb7d6fa3e052",
+    "G:\\somi\\Jack O Nine Tails v2.4_work\\game\\css\\base.css": "30d552cde203405469c7536fe6dc6b24271fde3f454056339eb64e76ae1040eb",
+    "G:\\somi\\Jack O Nine Tails v2.4_work\\game\\css\\mainScreen.css": "7a6c742a6ab3d73826bb3c7829a12b3ecd43c008b8f37d292b8bb80fa1027612"
+  },
+  "findings": [
+    {
+      "id": "WUI-01",
+      "confidence": "confirmed static",
+      "summaryKo": "웡 방문 분기는 1번·2번 대사만 채우지만 일일 이벤트 공통 화면은 0번 대사를 출력한다.",
+      "workRefs": [
+        "end_day_screen:13",
+        "end_day_screen:1370-1371",
+        "end_day_screen:1577"
+      ],
+      "originalRefs": [
+        "end_day_screen:7",
+        "end_day_screen:1201-1202",
+        "end_day_screen:1394"
+      ]
+    },
+    {
+      "id": "WUI-02",
+      "confidence": "confirmed static",
+      "summaryKo": "화면 마지막에서 두 번째 실제 대사를 공백으로 덮는다. 화살표는 페이지 숫자를 올린 뒤 현재 로케이션을 재실행하므로, 진입부 배열 삭제와 방문 완료 플래그 때문에 웡 대사 페이지가 이어서 나오지 않는다.",
+      "workRefs": [
+        "end_day_screen:1411-1414",
+        "end_day_screen:1610",
+        "$objsel:35-58"
+      ],
+      "originalRefs": [
+        "end_day_screen:1237-1240",
+        "end_day_screen:1421",
+        "$objsel:32-55"
+      ]
+    },
+    {
+      "id": "WUI-03",
+      "confidence": "confirmed static separation; no live DOM inspection",
+      "summaryKo": "NPC 이름·설명과 하단 대사는 각각 별도 div와 별도 변수로 출력되므로, 우측 웡 정보만 정상적으로 보이는 증상과 일치한다. 공백 데이터만으로 하단 누락이 설명되며 CSS 수정 필요성은 확인되지 않았다.",
+      "workRefs": [
+        "end_day_screen:1577",
+        "end_day_screen:1583-1598",
+        "_layout:19-20"
+      ],
+      "cssRefs": [
+        "css/base.css:628",
+        "css/base.css:663",
+        "css/base.css:795",
+        "css/base.css:812"
+      ]
+    },
+    {
+      "id": "WUI-04",
+      "confidence": "same-pattern adjacent static candidate, outside requested root-cause ownership",
+      "summaryKo": "바로 뒤 안젤리카 항의 분기도 같은 1번·2번 대사 패턴이다. 공통 화면 전체를 바꾸기보다 해당 항의 경로 두 곳을 함께 검토하는 것이 국소적이다.",
+      "workRefs": [
+        "end_day_screen:1415-1469"
+      ]
+    }
+  ],
+  "route": [
+    "end_day_screen processes phase 1, runs daily reset, sets phase 2, and reenters (1322-1327).",
+    "When end_day_guild_visit=0 and gave_guild_ill_slave>0 or gave_guild_parasite_slave>0, set npc=1/master_vong and text[1]/text[2] (1364-1371).",
+    "Apply complaint side effects and clear delivery flags; end_day_guild_visit=1; jump loop (1406-1414).",
+    "loop emits scalar text[0], then separate NPC fields; footer sets txt=1 and clobbers text[2] (1577-1610).",
+    "Forward sees txt=1 < txt_count (2 or 3), increments then gt $curloc; reentry clears text and the completed complaint is skipped ($objsel:39-58/end_day_screen:13,1364)."
+  ],
+  "workingPattern": {
+    "sameDailyScreenScalarExamples": [
+      "end_day_screen:39-44",
+      "end_day_screen:47-59",
+      "end_day_screen:1284-1290"
+    ],
+    "otherScreensUsePagedText": [
+      "interaction_screen:38",
+      "interaction_screen_city:73",
+      "special_screen:60"
+    ],
+    "comparison": "Most other daily events fill scalar $text before jumping loop; actual paged screens read $text[txt]. The Wong branch combines these incompatible contracts."
+  },
+  "cssBlocks": [
+    {
+      "line": 628,
+      "selector": "#bg",
+      "body": "position:absolute; left:4px; top:3px; width:795px; height:595px; color:#FFD700; font-size:40px; text-align:center; font-family:Sandoll 미생;"
+    },
+    {
+      "line": 663,
+      "selector": "#text",
+      "body": "position:absolute; left:30px; top:615px; width:740px; height:185px; font-size:18px; font-family:경기천년제목 Medium; margin-top:6px; line-height:130%;"
+    },
+    {
+      "line": 795,
+      "selector": "#side_panel_main",
+      "body": "position:absolute; left:847px; top:67px; width:400px; height:125px; font-weight:100; font-size:24px; font-family:경기천년제목 Medium; text-shadow: -0.1px 0 #dbd9db, 0 -0px #bfb6bd, 0.1px 0 #dbd9db, 0 -0.05px #bfb6bd; text-align:center;"
+    },
+    {
+      "line": 812,
+      "selector": "#side_panel_text",
+      "body": "position:absolute; left:847px; top:257px; width:385px; height:550px; font-size:20px; font-family:경기천년제목 Medium; font-weight:90; line-height:125%; letter-spacing:0.75px; text-shadow: -0.1px 0 #dbd9db, 0 -0px #bfb6bd, 0.1px 0 #dbd9db, 0 -0.05px #bfb6bd;"
+    }
+  ],
+  "implementationReviewNotes": [
+    "No patch applied. Keep any fix local to delayed client/guild complaint output; no evidence supports a global CSS or object-handler edit.",
+    "Either conform these event texts to the existing scalar daily-event contract, accounting for panel height, or pass them through an existing true pager with an explicit return target after effects run once.",
+    "A scalar concatenation must be checked for longest parasite complaint overflow; do not assume one 185px panel can display all pages.",
+    "The repeat-parasite game-over branch calls dynamic $death,$text while the reason is in text[3]; review its reason delivery separately if fixing this branch.",
+    "Guild blue/purple recurrence and reputation arithmetic are investigated separately by root/logic agent; this report does not claim their root cause."
+  ],
+  "evidence": {
+    "workEntry": [
+      {
+        "line": 11,
+        "code": "gs '_layout'"
+      },
+      {
+        "line": 12,
+        "code": ""
+      },
+      {
+        "line": 13,
+        "code": "killvar '$text'"
+      },
+      {
+        "line": 14,
+        "code": "menu_form = 0"
+      },
+      {
+        "line": 15,
+        "code": "$info_bar = ''"
+      },
+      {
+        "line": 16,
+        "code": "$place = ''"
+      },
+      {
+        "line": 17,
+        "code": "$npc_id = ''"
+      },
+      {
+        "line": 18,
+        "code": "$interaction_type = ''"
+      },
+      {
+        "line": 19,
+        "code": "$bg_path = ''"
+      },
+      {
+        "line": 20,
+        "code": "png = 0"
+      },
+      {
+        "line": 21,
+        "code": "npc = 0"
+      }
+    ],
+    "workWongGuards": [
+      {
+        "line": 1363,
+        "code": "!Delayed consequences of ill or parasite-infected slaves being sold to clients or given to the guild - ImperatorAugustus"
+      },
+      {
+        "line": 1364,
+        "code": "if end_day_guild_visit = 0:"
+      },
+      {
+        "line": 1365,
+        "code": "\tif gave_guild_ill_slave > 0 or gave_guild_parasite_slave > 0:"
+      },
+      {
+        "line": 1366,
+        "code": "\t\t$place = $replace($estate, 'house', 'street_rental')"
+      },
+      {
+        "line": 1367,
+        "code": "\t\tnpc = 1"
+      },
+      {
+        "line": 1368,
+        "code": "\t\t$npc_id = 'master_vong'"
+      },
+      {
+        "line": 1369,
+        "code": "! JO9 MOD START J9M1276 | 2026-10-15_trim_leading_body_blank_lines, 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included"
+      },
+      {
+        "line": 1370,
+        "code": "\t\t$text[1] = [dialogue omitted]"
+      },
+      {
+        "line": 1371,
+        "code": "\t\t$text[2] = [dialogue omitted]"
+      }
+    ],
+    "workWongConclusion": [
+      {
+        "line": 1398,
+        "code": "\t\t\t$text[3] = [dialogue omitted]"
+      },
+      {
+        "line": 1399,
+        "code": "! JO9 MOD END J9M1275"
+      },
+      {
+        "line": 1400,
+        "code": "\t\t\tdynamic $death, $text"
+      },
+      {
+        "line": 1401,
+        "code": "\t\telseif gave_guild_parasite_slave > 0:"
+      },
+      {
+        "line": 1402,
+        "code": "\t\t\t$text[2] += [dialogue omitted]"
+      },
+      {
+        "line": 1403,
+        "code": "! JO9 MOD START J9M1274 | 2026-10-15_trim_leading_body_blank_lines | changed block; context may be included"
+      },
+      {
+        "line": 1404,
+        "code": "\t\t\t$text[3] = [dialogue omitted]"
+      },
+      {
+        "line": 1405,
+        "code": "! JO9 MOD END J9M1274"
+      },
+      {
+        "line": 1406,
+        "code": "\t\t\tmaster_mood_rate -= 20"
+      },
+      {
+        "line": 1407,
+        "code": "\t\t\tgs '$mod_master_drop', 5"
+      },
+      {
+        "line": 1408,
+        "code": "\t\t\tparasite_slave_warned_before = 1"
+      },
+      {
+        "line": 1409,
+        "code": "\t\tend"
+      },
+      {
+        "line": 1410,
+        "code": "\t\tgs '$mod_master_drop', 1"
+      },
+      {
+        "line": 1411,
+        "code": "\t\tgave_guild_ill_slave = 0"
+      },
+      {
+        "line": 1412,
+        "code": "\t\tgave_guild_parasite_slave = 0"
+      },
+      {
+        "line": 1413,
+        "code": "\t\tend_day_guild_visit = 1"
+      },
+      {
+        "line": 1414,
+        "code": "\t\tjump 'loop' &! assistant_quiet_rule does not suppress this - ImperatorAugustus"
+      }
+    ],
+    "workRender": [
+      {
+        "line": 1567,
+        "code": ":loop"
+      },
+      {
+        "line": 1568,
+        "code": ""
+      },
+      {
+        "line": 1569,
+        "code": "EndOfDayEventCnt += 1 &! something noteworthy happened (suppresses 'evening passes without incident' scene when assistant quiet rule is enabled) - resets to zero in next_day"
+      },
+      {
+        "line": 1570,
+        "code": ""
+      },
+      {
+        "line": 1571,
+        "code": "! JO9 MOD START J9M1271 | 2026-10-08_persistent_image_cycle, 2026-10-15_z_inline_text_prefix | changed block; context may be included"
+      },
+      {
+        "line": 1572,
+        "code": "if $place ! '': *p func('interior_change', 'jo9_html', '<div id = \"bg\"><img src=\"content/pic/bg/<<$bg[$place]>>.png\"></div>')"
+      },
+      {
+        "line": 1573,
+        "code": "! JO9_INLINE_TEXT_PREFIX_20261015"
+      },
+      {
+        "line": 1574,
+        "code": "local $jo9_leading_empty = $strfind($text, '^(\\s|&nbsp;|<[bB][rR]\\s*/?>)+')"
+      },
+      {
+        "line": 1575,
+        "code": "if $jo9_leading_empty ! '': $text = $mid($text, len($jo9_leading_empty) + 1, len($text))"
+      },
+      {
+        "line": 1576,
+        "code": "! JO9 MOD END J9M1271"
+      },
+      {
+        "line": 1577,
+        "code": "*p '<div id = \"text\"><<$text>></div>'"
+      },
+      {
+        "line": 1578,
+        "code": ""
+      },
+      {
+        "line": 1579,
+        "code": "! JO9 MOD START J9M1270 | 2026-10-08_persistent_image_cycle | changed block; context may be included"
+      },
+      {
+        "line": 1580,
+        "code": "if nsfw = 0 and $bg_path ! '': *p func('interior_change', 'jo9_html', '<div id = \"bg\"><img src=\"content\\pic\\<<$bg_path>>.png\"></div>')"
+      },
+      {
+        "line": 1581,
+        "code": "! JO9 MOD END J9M1270"
+      },
+      {
+        "line": 1582,
+        "code": ""
+      },
+      {
+        "line": 1583,
+        "code": "if npc = 1:"
+      },
+      {
+        "line": 1584,
+        "code": "\t$info_bar = ''"
+      },
+      {
+        "line": 1585,
+        "code": "\tif nsfw = 1:"
+      },
+      {
+        "line": 1586,
+        "code": "! JO9 MOD START J9M1269 | 2026-10-08_persistent_image_cycle | changed block; context may be included"
+      },
+      {
+        "line": 1587,
+        "code": "\t\t*p func('interior_change', 'jo9_html', '<div id = \"bg\"><img src=\"content/pic/bg/empty.png\"></div>')"
+      },
+      {
+        "line": 1588,
+        "code": "! JO9 MOD END J9M1269"
+      },
+      {
+        "line": 1589,
+        "code": "\telseif $npc_image[$npc_id] ! '':"
+      },
+      {
+        "line": 1590,
+        "code": "! JO9 MOD START J9M1268 | 2026-10-08_persistent_image_cycle | changed block; context may be included"
+      },
+      {
+        "line": 1591,
+        "code": "\t\t*p func('interior_change', 'jo9_html', '<div id = \"bg\"><img src=\"content\\pic\\characters\\<<$npc_image[$npc_id]>>.png\"></div>')"
+      },
+      {
+        "line": 1592,
+        "code": "! JO9 MOD END J9M1268"
+      },
+      {
+        "line": 1593,
+        "code": "\tend"
+      },
+      {
+        "line": 1594,
+        "code": "\t*p '<div id = \"side_panel_main\"><center><div style=\"font-size: 40px;\"><<$npc_name[$npc_id]>></div><<$npc_status[$npc_id]>><br>'"
+      },
+      {
+        "line": 1595,
+        "code": "\t*nl '참고 정보:'"
+      },
+      {
+        "line": 1596,
+        "code": "\t*nl '</center></div>'"
+      },
+      {
+        "line": 1597,
+        "code": "\t*p '<div id = \"side_panel_text\"><<$npc_attitude[npc_attitude[$npc_id]]>>'"
+      },
+      {
+        "line": 1598,
+        "code": "\t*nl '<span class=\"jo9-reference-body\"><<$npc_info[$npc_id]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>'"
+      },
+      {
+        "line": 1599,
+        "code": "else"
+      },
+      {
+        "line": 1600,
+        "code": "\t$info_bar = ''"
+      },
+      {
+        "line": 1601,
+        "code": "\t*p '<div id = \"side_panel_main\"><center><div style=\"font-size: 40px;\"><<$place_name[$place]>></div><<$place_location[$place]>><br>'"
+      },
+      {
+        "line": 1602,
+        "code": "\t*nl '참고 정보:</center></div>'"
+      },
+      {
+        "line": 1603,
+        "code": "\t*nl '<div id = \"side_panel_text\"><span class=\"jo9-reference-body\"><<$place_info[$place]>></span><style>.jo9-reference-body,.jo9-reference-body *{font-size:20px !important;}</style></div>'"
+      },
+      {
+        "line": 1604,
+        "code": "end"
+      },
+      {
+        "line": 1605,
+        "code": ""
+      },
+      {
+        "line": 1606,
+        "code": "!Info bar not currently used in end_day_screen - crushboss"
+      },
+      {
+        "line": 1607,
+        "code": "!*p '<div id = \"interaction_stat_bar\"><<$info_bar>></div>'"
+      },
+      {
+        "line": 1608,
+        "code": ""
+      },
+      {
+        "line": 1609,
+        "code": "addobj '<img src = \"content/pic/ui/buttons/legacy/forward_button.png\">'"
+      },
+      {
+        "line": 1610,
+        "code": "txt = 1 & $text[2] = '   ' &! make forward button return to this location"
+      }
+    ],
+    "workForward": [
+      {
+        "line": 35,
+        "code": "if $selobj = '<img src = \"content/pic/ui/buttons/legacy/forward_button.png\">':"
+      },
+      {
+        "line": 36,
+        "code": "\tunsel"
+      },
+      {
+        "line": 37,
+        "code": "\tkillobj"
+      },
+      {
+        "line": 38,
+        "code": "\tif sound_on = 1: play 'content/snd/page_right.wav', sound_volume"
+      },
+      {
+        "line": 39,
+        "code": "\ttxt_count = arrsize('$text') - 1"
+      },
+      {
+        "line": 40,
+        "code": "\tif txt < txt_count:"
+      },
+      {
+        "line": 41,
+        "code": "\t\ttxt += 1"
+      },
+      {
+        "line": 42,
+        "code": "\telse"
+      },
+      {
+        "line": 43,
+        "code": "\t\tif $msg_txt ! '' and txt_count = txt:"
+      },
+      {
+        "line": 44,
+        "code": "\t\t\tmsg '<<$msg_txt>>'"
+      },
+      {
+        "line": 45,
+        "code": "\t\t\t$msg_txt = ''"
+      },
+      {
+        "line": 46,
+        "code": "\t\tend"
+      },
+      {
+        "line": 47,
+        "code": "\t\tkillvar '$text'"
+      },
+      {
+        "line": 48,
+        "code": "\t\tif $return_lock ! '':"
+      },
+      {
+        "line": 49,
+        "code": "\t\t\tgt $return_lock"
+      },
+      {
+        "line": 50,
+        "code": "\t\telseif exam_in_progress = 1:"
+      },
+      {
+        "line": 51,
+        "code": "\t\t\tgt 'demo_menu_form'"
+      },
+      {
+        "line": 52,
+        "code": "\t\telseif is_home ! 1:"
+      },
+      {
+        "line": 53,
+        "code": "\t\t\tgt 'city_menu_form'"
+      },
+      {
+        "line": 54,
+        "code": "\t\telse"
+      },
+      {
+        "line": 55,
+        "code": "\t\t\tgt 'menu_form'"
+      },
+      {
+        "line": 56,
+        "code": "\t\tend"
+      },
+      {
+        "line": 57,
+        "code": "\tend"
+      },
+      {
+        "line": 58,
+        "code": "\tgt $curloc"
+      },
+      {
+        "line": 59,
+        "code": "end"
+      }
+    ],
+    "originalEntry": [
+      {
+        "line": 5,
+        "code": "gs '_layout'"
+      },
+      {
+        "line": 6,
+        "code": ""
+      },
+      {
+        "line": 7,
+        "code": "killvar '$text'"
+      },
+      {
+        "line": 8,
+        "code": "menu_form = 0"
+      },
+      {
+        "line": 9,
+        "code": "$info_bar = ''"
+      },
+      {
+        "line": 10,
+        "code": "$place = ''"
+      },
+      {
+        "line": 11,
+        "code": "$npc_id = ''"
+      },
+      {
+        "line": 12,
+        "code": "$interaction_type = ''"
+      },
+      {
+        "line": 13,
+        "code": "$bg_path = ''"
+      },
+      {
+        "line": 14,
+        "code": "png = 0"
+      },
+      {
+        "line": 15,
+        "code": "npc = 0"
+      }
+    ],
+    "originalWong": [
+      {
+        "line": 1195,
+        "code": "!Delayed consequences of ill or parasite-infected slaves being sold to clients or given to the guild - ImperatorAugustus"
+      },
+      {
+        "line": 1196,
+        "code": "if end_day_guild_visit = 0:"
+      },
+      {
+        "line": 1197,
+        "code": "\tif gave_guild_ill_slave > 0 or gave_guild_parasite_slave > 0:"
+      },
+      {
+        "line": 1198,
+        "code": "\t\t$place = $replace($estate, 'house', 'street_rental')"
+      },
+      {
+        "line": 1199,
+        "code": "\t\tnpc = 1"
+      },
+      {
+        "line": 1200,
+        "code": "\t\t$npc_id = 'master_vong'"
+      },
+      {
+        "line": 1201,
+        "code": "\t\t$text[1] = [dialogue omitted]"
+      },
+      {
+        "line": 1202,
+        "code": "\t\t$text[2] = [dialogue omitted]"
+      }
+    ],
+    "originalConclusion": [
+      {
+        "line": 1227,
+        "code": "\t\t\t$text[3] = [dialogue omitted]"
+      },
+      {
+        "line": 1228,
+        "code": "\t\t\tdynamic $death, $text"
+      },
+      {
+        "line": 1229,
+        "code": "\t\telseif gave_guild_parasite_slave > 0:"
+      },
+      {
+        "line": 1230,
+        "code": "\t\t\t$text[2] += [dialogue omitted]"
+      },
+      {
+        "line": 1231,
+        "code": "\t\t\t$text[3] = [dialogue omitted]"
+      },
+      {
+        "line": 1232,
+        "code": "\t\t\tmaster_mood_rate -= 20"
+      },
+      {
+        "line": 1233,
+        "code": "\t\t\tgs '$mod_master_drop', 5"
+      },
+      {
+        "line": 1234,
+        "code": "\t\t\tparasite_slave_warned_before = 1"
+      },
+      {
+        "line": 1235,
+        "code": "\t\tend"
+      },
+      {
+        "line": 1236,
+        "code": "\t\tgs '$mod_master_drop', 1"
+      },
+      {
+        "line": 1237,
+        "code": "\t\tgave_guild_ill_slave = 0"
+      },
+      {
+        "line": 1238,
+        "code": "\t\tgave_guild_parasite_slave = 0"
+      },
+      {
+        "line": 1239,
+        "code": "\t\tend_day_guild_visit = 1"
+      },
+      {
+        "line": 1240,
+        "code": "\t\tjump 'loop' &! assistant_quiet_rule does not suppress this - ImperatorAugustus"
+      }
+    ],
+    "originalRender": [
+      {
+        "line": 1389,
+        "code": ":loop"
+      },
+      {
+        "line": 1390,
+        "code": ""
+      },
+      {
+        "line": 1391,
+        "code": "EndOfDayEventCnt += 1 &! something noteworthy happened (suppresses 'evening passes without incident' scene when assistant quiet rule is enabled) - resets to zero in next_day"
+      },
+      {
+        "line": 1392,
+        "code": ""
+      },
+      {
+        "line": 1393,
+        "code": "if $place ! '': *p '<div id = \"bg\"><img src=\"content\\pic\\bg\\<<$bg[$place]>>.png\"></div>'"
+      },
+      {
+        "line": 1394,
+        "code": "*p '<div id = \"text\"><<$text>></div>'"
+      },
+      {
+        "line": 1395,
+        "code": ""
+      },
+      {
+        "line": 1396,
+        "code": "if nsfw = 0 and $bg_path ! '': *p '<div id = \"bg\"><img src=\"content\\pic\\<<$bg_path>>.png\"></div>'"
+      },
+      {
+        "line": 1397,
+        "code": ""
+      },
+      {
+        "line": 1398,
+        "code": "if npc = 1:"
+      },
+      {
+        "line": 1399,
+        "code": "\t$info_bar = ''"
+      },
+      {
+        "line": 1400,
+        "code": "\tif nsfw = 1:"
+      },
+      {
+        "line": 1401,
+        "code": "\t\t*p '<div id = \"bg\"><img src=\"content\\pic\\bg\\empty.png\"></div>'"
+      },
+      {
+        "line": 1402,
+        "code": "\telseif $npc_image[$npc_id] ! '':"
+      },
+      {
+        "line": 1403,
+        "code": "\t\t*p '<div id = \"bg\"><img src=\"content\\pic\\characters\\<<$npc_image[$npc_id]>>.png\"></div>'"
+      },
+      {
+        "line": 1404,
+        "code": "\tend"
+      },
+      {
+        "line": 1405,
+        "code": "\t*p '<div id = \"side_panel_main\"><center><div style=\"font-size: 40px;\"><<$npc_name[$npc_id]>></div><<$npc_status[$npc_id]>><br>'"
+      },
+      {
+        "line": 1406,
+        "code": "\t*nl '참고 정보:'"
+      },
+      {
+        "line": 1407,
+        "code": "\t*nl '</center></div>'"
+      },
+      {
+        "line": 1408,
+        "code": "\t*p '<div id = \"side_panel_text\"><<$npc_attitude[npc_attitude[$npc_id]]>>'"
+      },
+      {
+        "line": 1409,
+        "code": "\t*nl '<<$npc_info[$npc_id]>></div>'"
+      },
+      {
+        "line": 1410,
+        "code": "else"
+      },
+      {
+        "line": 1411,
+        "code": "\t$info_bar = ''"
+      },
+      {
+        "line": 1412,
+        "code": "\t*p '<div id = \"side_panel_main\"><center><div style=\"font-size: 40px;\"><<$place_name[$place]>></div><<$place_location[$place]>><br>'"
+      },
+      {
+        "line": 1413,
+        "code": "\t*nl '참고 정보:</center></div>'"
+      },
+      {
+        "line": 1414,
+        "code": "\t*nl '<div id = \"side_panel_text\"><<$place_info[$place]>></div>'"
+      },
+      {
+        "line": 1415,
+        "code": "end"
+      },
+      {
+        "line": 1416,
+        "code": ""
+      },
+      {
+        "line": 1417,
+        "code": "!Info bar not currently used in end_day_screen - crushboss"
+      },
+      {
+        "line": 1418,
+        "code": "!*p '<div id = \"interaction_stat_bar\"><<$info_bar>></div>'"
+      },
+      {
+        "line": 1419,
+        "code": ""
+      },
+      {
+        "line": 1420,
+        "code": "addobj '<img src = \"content\\pic\\buttons\\forward_button.png\">'"
+      },
+      {
+        "line": 1421,
+        "code": "txt = 1 & $text[2] = '   ' &! make forward button return to this location"
+      }
+    ],
+    "scalarWorkingPattern": [
+      {
+        "line": 1284,
+        "code": "if assistant_quiet_rule = 1 and EndOfDayEventCnt = 0:"
+      },
+      {
+        "line": 1285,
+        "code": "\t$text = [dialogue omitted]"
+      },
+      {
+        "line": 1286,
+        "code": "\t$place = 'bedroom'"
+      },
+      {
+        "line": 1287,
+        "code": "!\t$bg_path = 'scene/night'"
+      },
+      {
+        "line": 1288,
+        "code": "!\tg = rand(1, picMax['night'])"
+      },
+      {
+        "line": 1289,
+        "code": "!\tif g > 1: $bg_path += '_' + $str(g)"
+      },
+      {
+        "line": 1290,
+        "code": "\tjump 'loop'"
+      }
+    ]
+  },
+  "limits": [
+    "No game UI/save execution performed by this child.",
+    "JO9O is the provided comparison installation, not a separately verified pristine upstream release.",
+    "No source dump, duplicated QSP, runtime patch, save change, CSS change, commit or push created."
+  ],
+  "sourceUnchangedDuringAudit": true,
+  "pass": true
+}
