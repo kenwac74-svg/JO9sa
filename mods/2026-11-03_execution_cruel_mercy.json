@@ -1,0 +1,15 @@
+{
+  "id": "2026-11-03_execution_cruel_mercy",
+  "description": "User rule: completed executions -1 Cruel & Mercy; banishment excluded. Guard empty/dead target and resistance exit. Existing half-point helper unchanged.",
+  "before_sha256": "d169c09f071f4a0944b33af4aaf49705ef1320365d6e255ede5b1f62419657da",
+  "after_sha256": "bd7f6defe572283867030cddf9ba39a8e52a6e746b122bdb06d9f84718308bc1",
+  "edits": [
+    {
+      "location": "interaction_result",
+      "field": "body",
+      "old": "if $interaction_type = 'execution':\r\n\twill_to_resist = torture_intensity + rebell[$slave_psy_status] + slave['spoil'] + (slave['ego'] - 3) - max(0, min(5, master_supermacy - master_style)) - slave['moral']*2 - slave['domini_dictum']*100\r\n\tif will_to_resist > 0 and slave['beaten'] = 0:\r\n\t\tif slave['gladiatrix'] > max(0, master_supermacy - master_style):\r\n\t\t\tshow_slave_fullimage = 1\r\n\t\t\t! JO9 MOD START J9MP1A09 | approved selective integration | interaction_result:1492\r\n\t\t\t$text[1] = '<<$slave_name>>(은)는 당신에게 필사적으로 저항한다. 그녀의 저항을 꺾으려면 심하게 때려야 할 것이다.'\r\n\t\t\t! JO9 MOD END J9MP1A09\r\n\t\t\tdynamic $slave_fights_back &! includes a 'gt' so it stops execution of the code below\r\n\t\telse\r\n\t\t\t! no survival from this point onward\r\n\t\t\tdynamic $replace($dyn_slave_forced, 'dyn'+'slave', 'slave')\r\n\t\tend\r\n\tend\r\n\tdynamic $special_part\r\n\tdynamic $replace($dyn_erotic_stimulation, 'dyn'+'slave', 'slave') &! should be done after $special_part - ImperatorAugustus\r\n\tdynamic $clear_slave_instance, 'slave'\r\nend\r\n",
+      "new": "if $interaction_type = 'execution':\r\n\twill_to_resist = torture_intensity + rebell[$slave_psy_status] + slave['spoil'] + (slave['ego'] - 3) - max(0, min(5, master_supermacy - master_style)) - slave['moral']*2 - slave['domini_dictum']*100\r\n\tif will_to_resist > 0 and slave['beaten'] = 0:\r\n\t\tif slave['gladiatrix'] > max(0, master_supermacy - master_style):\r\n\t\t\tshow_slave_fullimage = 1\r\n\t\t\t! JO9 MOD START J9MP1A09 | approved selective integration | interaction_result:1492\r\n\t\t\t$text[1] = '<<$slave_name>>(은)는 당신에게 필사적으로 저항한다. 그녀의 저항을 꺾으려면 심하게 때려야 할 것이다.'\r\n\t\t\t! JO9 MOD END J9MP1A09\r\n\t\t\tdynamic $slave_fights_back &! includes a 'gt' so it stops execution of the code below\r\n\t\telse\r\n\t\t\t! no survival from this point onward\r\n\t\t\tdynamic $replace($dyn_slave_forced, 'dyn'+'slave', 'slave')\r\n\t\tend\r\n\tend\r\n\tdynamic $special_part\r\n\tdynamic $replace($dyn_erotic_stimulation, 'dyn'+'slave', 'slave') &! should be done after $special_part - ImperatorAugustus\r\n\t! JO9 MOD START EXECUTION_CRUEL_MERCY_20261103\r\n\t! Half-point helper: -2 units = -1 point, only for a living or unconscious target reaching completion.\r\n\tif slave_state > CONST_INT['no_slave']: gs 'jo9_cruel_mercy_apply', -2\r\n\t! JO9 MOD END EXECUTION_CRUEL_MERCY_20261103\r\n\tdynamic $clear_slave_instance, 'slave'\r\nend\r\n",
+      "count": 1
+    }
+  ]
+}

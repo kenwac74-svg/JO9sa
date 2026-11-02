@@ -1,0 +1,739 @@
+{
+  "date": "2026-11-02",
+  "scope": "현재 QSP의 지정 성향 후보 10값. 읽기 분석만 수행. 번역/세이브/엔진/브라우저 수정 없음.",
+  "source": {
+    "path": "C:/MOVE/Jack O Nine Tails v2.4.1_Kor_Full/game/jack.qsp",
+    "sha256": "2f74d3194ee16c5400e09e06669fee39e32c851e5f03b22c188534ae3f9be9cb",
+    "locationCount": 278,
+    "lineConvention": "QSP location body의 1-based 물리 행. parse+shift로 원본 QSP에서 직접 추출."
+  },
+  "policy": {
+    "primary": "완전부정 먼저, 없으면 장단점 혼합 제거",
+    "userProtected": [
+      {
+        "key": "perversion",
+        "predicate": "=2"
+      },
+      {
+        "key": "courage",
+        "predicate": "=1"
+      },
+      {
+        "key": "nymphomania",
+        "predicate": ">0"
+      }
+    ],
+    "classificationStatus": "모든 권고는 사용자 검토용이며 새 정책을 확정하거나 적용하지 않음",
+    "completeNegativeDefinition": "직접 확인한 게임효과에서 유리한 수치/긍정 경로를 발견하지 못한 후보. 전역적 무이점의 수학적 증명은 아님."
+  },
+  "summary": {
+    "protectedRecommended": [
+      "가학성애자"
+    ],
+    "mixed": [
+      "순수한 영혼",
+      "레즈비언",
+      "평화주의자",
+      "구두쇠",
+      "사치광",
+      "까다로운 입맛",
+      "당분 중독",
+      "은둔형 외톨이"
+    ],
+    "completeNegative": [
+      "동성애 혐오자"
+    ],
+    "evidenceInsufficient": []
+  },
+  "entries": [
+    {
+      "key": "perversion",
+      "value": -1,
+      "label": "순수한 영혼",
+      "classification": "mixed",
+      "recommendation": "장단점 혼합 후보. 완전부정 우선군에 넣지 않음.",
+      "advantages": [
+        {
+          "condition": "주인 연정의 복합 조건 충족",
+          "effect": "이 값이 OR 진입 조건이 되어 긍정 moodlet pos_slave_love2=100 경로를 연다.",
+          "evidence": [
+            {
+              "location": "master_love",
+              "start": 72,
+              "end": 86,
+              "reference": "master_love:72-86",
+              "note": "복합 능력치 및 감정 조건이 필요한 연정 경로",
+              "code": "if func('jo9_traits', 'attention_value', 'slave1', 'abuse_attitude') = -1 or slave1[\"perversion\"] = -1 or slave1[\"masochism\"] = -1 or slave1[\"nymphomania\"] = -1 or slave1[\"exhibitionism\"] = -1 or slave1[\"compassion\"] = 1:\n!\tmsg \"2_1\"\n\tif master_str >= 3 and master_cha = 5 and master_style = 5 and master_domination >= 2:\n!\t\tmsg \"2_2\"\n\t\tif slave1[\"obedience\"] >= 8 and slave1[\"arousal\"] >= 3 and slave1[\"fear\"] <= 1 and slave1[\"angst\"] = 0 and slave1[\"instinct\"] >= 3 and slave1[\"custom\"] >= 3 and slave1[\"spoil\"] <= 1 and slave1[\"moral\"] >= 2:\n!\t\t\tmsg \"2_3\"\n\t\t\tif slave1[\"mood\"] >= 5 and slave1[\"sensitivity\"] >= 3 and slave1[\"temper\"] >= 3 and slave1[\"pride\"] <= 2:\n\t\t\t\tslave1[\"pos_slave_love\"] = 0\n\t\t\t\tslave1[\"pos_slave_love2\"] = 100\n\t\t\t\tslave1[\"pos_slave_love3\"] = 0\n\t\t\t\tslave1[\"pos_slave_love4\"] = 0\n\t\t\t\tslave1[\"pos_slave_love5\"] = 0\n\t\t\t\tslave1[\"pos_slave_love6\"] = 0\n!\t\t\t\tmsg \"<<sa_rel>> 1-рабыня, 2-ассист.<br><br>Влюблённость в мастера\"\n\t\t\t\tjump 'override'"
+            },
+            {
+              "location": "#moodlet_base",
+              "start": 117,
+              "end": 117,
+              "reference": "#moodlet_base:117",
+              "note": "pos_slave_love2는 good mood 목록",
+              "code": "$slave_good_mood[] = 'pos_slave_love2'         \t\t& $mood_description['pos_slave_love2'] = '[<<$dynslave_name>>]<br>&nbsp;주인님을 보면 배 속에서 나비가 날아다니기 시작해요. 절 좋아하시죠, 그렇죠?'"
+            }
+          ]
+        },
+        {
+          "condition": "sex_interaction=1045, girl_excitement<2",
+          "effect": "추가 흥분 조건 diligence > 3-nympho+perversion의 문턱을 중립값보다 1 낮춘다.",
+          "evidence": [
+            {
+              "location": "sex_interaction",
+              "start": 543,
+              "end": 554,
+              "reference": "sex_interaction:543-554",
+              "note": "연산식상 -1의 국소적 이점",
+              "code": "if sex_interaction = 1045:\n\t$interaction_type = 'foreplay'\n\tres = intensity + 3 &! one point less than licking lesson obedience threshold - ImperatorAugustus\n\tstimulating = 1\n\tdynamic $sex_diligence\n\tif diligence < 0:\n\t\t$interaction_type = 'deny' & gt 'sex_interaction_result'\n\tend\n\tskill = min(sex['girl_sub_tongue'], sex['girl_sub_hj'])\n\tquality = max(0, min(diligence, skill))\n\n\tif sex['girl_excitement'] < 2 and diligence > 3 - sex['girl_nympho'] + sex['girl_perversion']: sex['girl_excitement'] += 1"
+            }
+          ]
+        }
+      ],
+      "disadvantages": [
+        {
+          "condition": "disgusting 플래그가 있는 상호작용",
+          "effect": "sex_acceptance 가산값은 5*perversion이며, -1은 중립보다 불리하다. 혐오 규칙의 기분/불안 페널티도 커진다.",
+          "evidence": [
+            {
+              "location": "#dynamic",
+              "start": 489,
+              "end": 491,
+              "reference": "#dynamic:489-491",
+              "note": "후속 /2 전 단계 가산",
+              "code": "\t\t\tif disgusting > 0:\n\t\t\t\tinteraction_dynslave['sex_acceptance'] += 5*dynslave['perversion']\n\t\t\tend"
+            },
+            {
+              "location": "next_day",
+              "start": 2612,
+              "end": 2620,
+              "reference": "next_day:2612-2620",
+              "note": "규칙 조건별 기분/불안 계산",
+              "code": "\t\tif slave['perversion'] < 1: slave['neg_disgust'] = max(slave['neg_disgust'], 10)\n\t\tif slave['sub_piss'] > 2: master_moodlet['pos_toilet'] += 1\n\t\tslave['perversion_xp'] += 1\n\t\tslave_rate['mood'] -= max(0, 4 - slave['sub_piss'] - slave['moral'] - slave['perversion']) &! fixed sign of perversion, zero as lower bound so mood effect cannot be positive - ImperatorAugustus\n\t\tif slave['sub_piss'] < 4 and slave['perversion'] < 1: slave['neg_rules'] = 1\n\t\tslave_rate['custom'] += 2\n\t\tslave_rate['pride'] -= 3\n\t\tslave_rate['hygiene'] += 15\n\t\tslave_rate['angst'] += (slave['ego'] + slave['pride'] + slave['temper']) - (slave['perversion'] + slave['sub_piss'] + slave['moral'] + slave['instinct'])"
+            }
+          ]
+        }
+      ],
+      "uncertainty": "연정 moodlet이 생기면 동침 요구와 질투도 공통으로 활성화되므로 무조건 이득이라는 뜻은 아니다."
+    },
+    {
+      "key": "homosexualism",
+      "value": -1,
+      "label": "동성애 혐오자",
+      "classification": "complete_negative",
+      "recommendation": "관찰된 직접 수치효과 기준 완전부정 후보. 성향 이름/현실 가치판단을 근거로 하지 않음.",
+      "advantages": [],
+      "disadvantages": [
+        {
+          "condition": "동성 상호작용 또는 여성 주인",
+          "effect": "동성 활동 sex_acceptance 가산은 -5, 여성 주인에 대한 가산은 -8(둘 다 후속 /2 이전 단계).",
+          "evidence": [
+            {
+              "location": "#dynamic",
+              "start": 492,
+              "end": 511,
+              "reference": "#dynamic:492-511",
+              "note": "hero_choice와 lesbian 플래그로 분기",
+              "code": "\t\t\tif hero_choice < 100:\n\t\t\t\tif lesbian > 0:\n\t\t\t\t\tinteraction_dynslave['sex_acceptance'] += 5*dynslave['homosexualism']\n\t\t\t\telseif dynslave['homosexualism'] = 2:\n\t\t\t\t\tinteraction_dynslave['sex_acceptance'] -= 8 &! lesbians dislike non-lesbian activities\n\t\t\t\tend\n\t\t\telseif hero_choice > 100:\n\t\t\t\tif dynslave['homosexualism'] = 0:\n\t\t\t\t\tinteraction_dynslave['sex_acceptance'] -= 2 &!heterosexual slaves dislike mistress\n\t\t\t\telseif dynslave['homosexualism'] = -1:\n\t\t\t\t\tinteraction_dynslave['sex_acceptance'] -= 8 &!homophobic slaves dislike mistress\n\t\t\t\telseif dynslave['homosexualism'] = 2:\n\t\t\t\t\tinteraction_dynslave['sex_acceptance'] += 8 &!lesbians love mistress\n\t\t\t\telse\n\t\t\t\t\tinteraction_dynslave['sex_acceptance'] += 5 &!bisexual slaves like mistress\n\t\t\t\tend\n\t\t\tend\n\t\t\t! sum of all factors ranges from [-50,+70]\n! JO9 MOD START ARGON_RESTORED_ACCEPTANCE | 2026-10-19_argon_trait_text_integration\n\t\t\tinteraction_dynslave['sex_acceptance'] /= 2 &! final value is in range [-30, +48] but usually single digits"
+            }
+          ]
+        },
+        {
+          "condition": "농장 조수의 하피 산란 보조",
+          "effect": "중립 보조 120%에서 110%로 10%p 감소.",
+          "evidence": [
+            {
+              "location": "next_day",
+              "start": 3865,
+              "end": 3875,
+              "reference": "next_day:3865-3875",
+              "note": "농장 조수의 성향별 수확 배율",
+              "code": "\t\tbarn_harpy_eggs = harpy['age'] + harpy['stamina'] + harpy['fat'] + 3 + ((48271 * (day + harpy_type + barn_egg_profit)) mod 65537)/(65537/4) &! [0,2] + [0,5] + [0,5] + pseudo-rand(3,6) = [3,18]\n\t\tif farmhand_state = CONST_INT['slave_exist']:\n\t\t\tbarn_farmhand_bonus = 120 &! % yield of eggs with farmhand assistance (120 = 120% of normal yield = 20% more eggs)\n\t\t\tif farmhand['homosexualism'] = -1: barn_farmhand_bonus -= 10 &! 10% increase with homophobic farmhand\n\t\t\tif farmhand['homosexualism'] = 1: barn_farmhand_bonus += 20 &! 30% increase with bi-sexual farmhand\n\t\t\tif farmhand['homosexualism'] = 2: barn_farmhand_bonus += 30 &! 50% increase with lesbian farmhand\n\t\telse\n\t\t\tbarn_farmhand_bonus = 100 &! % yield of eggs without farmhand assistance (100 = 100% of normal yield)\n\t\tend\n\t\tbarn_harpy_eggs *= barn_farmhand_bonus &! up to +50% (min 3 -> min 4, max 18 -> max 27)\n\t\tbarn_harpy_eggs /= 100"
+            }
+          ]
+        },
+        {
+          "condition": "동료 관계가 매우 좋을 때",
+          "effect": "동료와의 새 연애 형성 분기가 비어 있어 연애를 만들지 못한다.",
+          "evidence": [
+            {
+              "location": "relations_fastcalc",
+              "start": 279,
+              "end": 295,
+              "reference": "relations_fastcalc:279-295",
+              "note": "동료 연애 형성 조건",
+              "code": "if slave2['id'] > 0 and slave1['other_rel'] > acc_rel[\"good3\"] and slave2['other_rel'] > acc_rel[\"good3\"]:\n\tif slave1[\"love\"] ! slave2[\"id\"]:\n\t\tif slave1[\"id\"] <= 0 or slave2[\"love\"] ! slave1[\"id\"]:\n\t\t\tlove_chance = RAND(1,100)\n\t\telse\n\t\t\tlove_chance = RAND(20,100)\n\t\tend\n\t\tif slave1[\"homosexualism\"] = -1:\n!\t\t\tslave1[\"homosexualism_revealed\"] = 1\n\t\telseif slave1[\"homosexualism\"] = 0 and love_chance = 98:\n\t\t\tslave1[\"homosexualism\"] = 1\n\t\t\tslave1[\"love\"] = slave2[\"id\"]\n\t\telseif slave1[\"homosexualism\"] = 1 and love_chance >= 92:\n\t\t\tslave1[\"love\"] = slave2[\"id\"]\n\t\telseif slave1[\"homosexualism\"] = 2 and love_chance >= 80:\n\t\t\tslave1[\"love\"] = slave2[\"id\"]\n\t\tend"
+            }
+          ]
+        }
+      ],
+      "uncertainty": "연애 미형성으로 운영상 유리할 수 있다는 해석은 직접 보너스로 검증하지 못했다. 잃은 연인 moodlet은 next_day:4529-4532에서 바로 지워지는 코드도 있어 그 회피를 확정 이점으로 계산하지 않았다. 보호 필요 여부는 사용자 선택."
+    },
+    {
+      "key": "homosexualism",
+      "value": 2,
+      "label": "레즈비언",
+      "classification": "mixed",
+      "recommendation": "장단점 혼합 후보. 여성 주인/동성 전문 운영이면 보호할 가치가 크다.",
+      "advantages": [
+        {
+          "condition": "동성 활동 또는 여성 주인",
+          "effect": "동성 활동 가산 +10, 여성 주인 가산 +8(후속 /2 이전 단계).",
+          "evidence": [
+            {
+              "location": "#dynamic",
+              "start": 492,
+              "end": 511,
+              "reference": "#dynamic:492-511",
+              "note": "주인 성별 및 상호작용 분기",
+              "code": "\t\t\tif hero_choice < 100:\n\t\t\t\tif lesbian > 0:\n\t\t\t\t\tinteraction_dynslave['sex_acceptance'] += 5*dynslave['homosexualism']\n\t\t\t\telseif dynslave['homosexualism'] = 2:\n\t\t\t\t\tinteraction_dynslave['sex_acceptance'] -= 8 &! lesbians dislike non-lesbian activities\n\t\t\t\tend\n\t\t\telseif hero_choice > 100:\n\t\t\t\tif dynslave['homosexualism'] = 0:\n\t\t\t\t\tinteraction_dynslave['sex_acceptance'] -= 2 &!heterosexual slaves dislike mistress\n\t\t\t\telseif dynslave['homosexualism'] = -1:\n\t\t\t\t\tinteraction_dynslave['sex_acceptance'] -= 8 &!homophobic slaves dislike mistress\n\t\t\t\telseif dynslave['homosexualism'] = 2:\n\t\t\t\t\tinteraction_dynslave['sex_acceptance'] += 8 &!lesbians love mistress\n\t\t\t\telse\n\t\t\t\t\tinteraction_dynslave['sex_acceptance'] += 5 &!bisexual slaves like mistress\n\t\t\t\tend\n\t\t\tend\n\t\t\t! sum of all factors ranges from [-50,+70]\n! JO9 MOD START ARGON_RESTORED_ACCEPTANCE | 2026-10-19_argon_trait_text_integration\n\t\t\tinteraction_dynslave['sex_acceptance'] /= 2 &! final value is in range [-30, +48] but usually single digits"
+            }
+          ]
+        },
+        {
+          "condition": "농장 조수의 하피 산란 보조",
+          "effect": "중립 120% 대신 150% 배율.",
+          "evidence": [
+            {
+              "location": "next_day",
+              "start": 3865,
+              "end": 3875,
+              "reference": "next_day:3865-3875",
+              "note": "성향별 보조 수확 배율",
+              "code": "\t\tbarn_harpy_eggs = harpy['age'] + harpy['stamina'] + harpy['fat'] + 3 + ((48271 * (day + harpy_type + barn_egg_profit)) mod 65537)/(65537/4) &! [0,2] + [0,5] + [0,5] + pseudo-rand(3,6) = [3,18]\n\t\tif farmhand_state = CONST_INT['slave_exist']:\n\t\t\tbarn_farmhand_bonus = 120 &! % yield of eggs with farmhand assistance (120 = 120% of normal yield = 20% more eggs)\n\t\t\tif farmhand['homosexualism'] = -1: barn_farmhand_bonus -= 10 &! 10% increase with homophobic farmhand\n\t\t\tif farmhand['homosexualism'] = 1: barn_farmhand_bonus += 20 &! 30% increase with bi-sexual farmhand\n\t\t\tif farmhand['homosexualism'] = 2: barn_farmhand_bonus += 30 &! 50% increase with lesbian farmhand\n\t\telse\n\t\t\tbarn_farmhand_bonus = 100 &! % yield of eggs without farmhand assistance (100 = 100% of normal yield)\n\t\tend\n\t\tbarn_harpy_eggs *= barn_farmhand_bonus &! up to +50% (min 3 -> min 4, max 18 -> max 27)\n\t\tbarn_harpy_eggs /= 100"
+            }
+          ]
+        },
+        {
+          "condition": "매우 좋은 동료 관계",
+          "effect": "love_chance>=80이면 동료 연애를 형성한다. 중립은 =98 한 값에서만 형성.",
+          "evidence": [
+            {
+              "location": "relations_fastcalc",
+              "start": 279,
+              "end": 295,
+              "reference": "relations_fastcalc:279-295",
+              "note": "연애 형성 확률 비교",
+              "code": "if slave2['id'] > 0 and slave1['other_rel'] > acc_rel[\"good3\"] and slave2['other_rel'] > acc_rel[\"good3\"]:\n\tif slave1[\"love\"] ! slave2[\"id\"]:\n\t\tif slave1[\"id\"] <= 0 or slave2[\"love\"] ! slave1[\"id\"]:\n\t\t\tlove_chance = RAND(1,100)\n\t\telse\n\t\t\tlove_chance = RAND(20,100)\n\t\tend\n\t\tif slave1[\"homosexualism\"] = -1:\n!\t\t\tslave1[\"homosexualism_revealed\"] = 1\n\t\telseif slave1[\"homosexualism\"] = 0 and love_chance = 98:\n\t\t\tslave1[\"homosexualism\"] = 1\n\t\t\tslave1[\"love\"] = slave2[\"id\"]\n\t\telseif slave1[\"homosexualism\"] = 1 and love_chance >= 92:\n\t\t\tslave1[\"love\"] = slave2[\"id\"]\n\t\telseif slave1[\"homosexualism\"] = 2 and love_chance >= 80:\n\t\t\tslave1[\"love\"] = slave2[\"id\"]\n\t\tend"
+            }
+          ]
+        }
+      ],
+      "disadvantages": [
+        {
+          "condition": "hero_choice<100이고 lesbian 플래그가 없는 성적 상호작용",
+          "effect": "sex_acceptance에서 8 차감(후속 /2 이전).",
+          "evidence": [
+            {
+              "location": "#dynamic",
+              "start": 492,
+              "end": 511,
+              "reference": "#dynamic:492-511",
+              "note": "남성 주인의 비동성 활동 페널티",
+              "code": "\t\t\tif hero_choice < 100:\n\t\t\t\tif lesbian > 0:\n\t\t\t\t\tinteraction_dynslave['sex_acceptance'] += 5*dynslave['homosexualism']\n\t\t\t\telseif dynslave['homosexualism'] = 2:\n\t\t\t\t\tinteraction_dynslave['sex_acceptance'] -= 8 &! lesbians dislike non-lesbian activities\n\t\t\t\tend\n\t\t\telseif hero_choice > 100:\n\t\t\t\tif dynslave['homosexualism'] = 0:\n\t\t\t\t\tinteraction_dynslave['sex_acceptance'] -= 2 &!heterosexual slaves dislike mistress\n\t\t\t\telseif dynslave['homosexualism'] = -1:\n\t\t\t\t\tinteraction_dynslave['sex_acceptance'] -= 8 &!homophobic slaves dislike mistress\n\t\t\t\telseif dynslave['homosexualism'] = 2:\n\t\t\t\t\tinteraction_dynslave['sex_acceptance'] += 8 &!lesbians love mistress\n\t\t\t\telse\n\t\t\t\t\tinteraction_dynslave['sex_acceptance'] += 5 &!bisexual slaves like mistress\n\t\t\t\tend\n\t\t\tend\n\t\t\t! sum of all factors ranges from [-50,+70]\n! JO9 MOD START ARGON_RESTORED_ACCEPTANCE | 2026-10-19_argon_trait_text_integration\n\t\t\tinteraction_dynslave['sex_acceptance'] /= 2 &! final value is in range [-30, +48] but usually single digits"
+            }
+          ]
+        }
+      ],
+      "uncertainty": "수확 보너스와 여성 주인 이점은 역할/주인 조건이 맞아야 발동한다."
+    },
+    {
+      "key": "compassion",
+      "value": -1,
+      "label": "가학성애자",
+      "classification": "protected_recommended",
+      "recommendation": "보호 권고. 확인한 직접 효과는 이점이고 고유 수치 손해는 찾지 못함.",
+      "advantages": [
+        {
+          "condition": "compassion>0 플래그의 수감자 처벌 관찰",
+          "effect": "mood_rise(torture_intensity), temper*torture_intensity 흥분 및 관찰자의 절정 가능 경로.",
+          "evidence": [
+            {
+              "location": "interaction_result",
+              "start": 555,
+              "end": 585,
+              "reference": "interaction_result:555-585",
+              "note": "관찰자 가학 성향 효과",
+              "code": "!interaction type - prisoner torture (demonstration of punishment on prisoner, observed by slave)\nif $interaction_type = 'prisoner_torture':\n\tif compassion > 0:\n\t\tif slave['sensitivity'] > 2: slave['compassion_xp'] += 1 &! add compassion xp here instead of in $torture_phobia - ImperatorAugustus\n\t\tif slave['compassion_revealed'] = 0: slave['compassion_revealed'] = 1\n\t\tif slave['compassion'] > 0:\n\t\t\t$text[2] = '  <<$compassion_reaction[\"goodkind\"]>>'\n\t\t\tgs '$mood_drop', 'slave', torture_intensity &! traumatic for compassionate slaves\n\t\telseif slave['compassion'] < 0:\n\t\t\t$text[2] = '  <<$compassion_reaction[\"sadistic\"]>>'\n\t\t\tgs '$mood_rise', 'slave', torture_intensity &! mood boost for sadists - ImperatorAugustus\n\t\t\tinteraction_slave['erotic_stimulation'] = slave['temper']*torture_intensity &! add arousal for sadists - ImperatorAugustus\n\t\telse\n\t\t\tgs '$mood_drop', 'slave', 1\n\t\tend\n\tend\n\tdynamic $prisoner_energy_drop\n\tdynamic $master_energy_drop &! easy_for_master is checked/reset by the function\n\tslave['half_action'] += 1 &! added half action for slave as observer - ImperatorAugustus\n\t! for masochists, set stimulating = 1 when painful > 0 (before $special_part so it can be overridden if necessary) - ImperatorAugustus\n\tif painful > 0 and prisoner['masochism'] = 2: stimulating = 1 & interaction_prisoner['erotic_stimulation'] += torture_intensity\n\tif prisoner['arousal'] = 5: orgastic = stimulating &! at max arousal, pain can trigger orgasm - ImperatorAugustus\n\tdynamic $replace($dyn_torture_result, 'dyn'+'slave', 'prisoner') &! before $special_part so texts can be selected based on modified psy status\n\tdynamic $replace($dyn_torture_result, 'dyn'+'slave', 'slave') &! before $special_part so texts can be selected based on modified psy status\n\tif torture_succeeded > 0 and slave['ego'] >= master_domination: master_domination_rate += (skill_adv_mul * 1)\n\tdynamic $special_part\n\tif torture_succeeded = 0: $text[2] += ' 그녀의 행동을 바로잡는 데 완전히 실패했다. 다행히도 다른 선택지는 있다.'\n\tif torture_succeeded = 1: $text[2] += ' 이 정도의 교정으로는 그녀의 공포가 늘어나지 않는 듯하다. 하지만 오래 남는 영향은 있을지도 모른다…'\n\tdynamic $replace($dyn_erotic_stimulation, 'dyn'+'slave', 'prisoner') &! after $special_part (in case the interaction adds erotic stimulation to the prisoner)\n\torgastic = iif(slave['compassion'] < 0, 1, 0) &! reset orgastic for slave unless sadistic\n\tdynamic $replace($dyn_erotic_stimulation, 'dyn'+'slave', 'slave') &! after $special_part"
+            }
+          ]
+        },
+        {
+          "condition": "수감자 처형 관찰",
+          "effect": "moral += ego*temper 및 mood_rise(100); 중립은 fear+1.",
+          "evidence": [
+            {
+              "location": "interaction",
+              "start": 8218,
+              "end": 8229,
+              "reference": "interaction:8218-8229",
+              "note": "관찰자의 성향별 효과",
+              "code": "\t\tif slave_already_done_total[$str(interaction)] = 0: slave['instinct'] += 2 &! slave gains two full levels of taming the first time they witness an execution\n\t\tif slave['compassion'] > 0:\n\t\t\t! compassionate slave maxes fear, clears all positive moodlets\n\t\t\tslave['fear'] = 5\n\t\t\tgs '$mood_drop', 'slave', 100 &! traumatic\n\t\telseif slave['compassion'] < 0:\n\t\t\t! sadistic slave gains devotion, clears all negative moodlets\n\t\t\tslave_rate['moral'] += slave['ego']*slave['temper']\n\t\t\tgs '$mood_rise', 'slave', 100 &! exciting\n\t\telse\n\t\t\tslave['fear'] += 1 &! non-sadist/non-compassionate slave is less affected but still gains a level of fear\n\t\tend"
+            }
+          ]
+        },
+        {
+          "condition": "주인과 특정 복합 조건 충족",
+          "effect": "pos_slave_love5=100 경로를 연다.",
+          "evidence": [
+            {
+              "location": "master_love",
+              "start": 138,
+              "end": 152,
+              "reference": "master_love:138-152",
+              "note": "BDSM형 애정 경로",
+              "code": "if slave1[\"masochism\"] = 2 or slave1[\"abuse_attitude\"] = 2 or slave1[\"deprivation_attitude\"] = 2 or slave1[\"compassion\"] = -1:\n!\tmsg \"5_1\"\n\tif master_str = 5 and master_cha >= 3 and master_domination = 5:\n!\t\tmsg \"5_2\"\n\t\tif slave1[\"obedience\"] >= 10 and slave1[\"arousal\"] >= 1 and slave1[\"fear\"] >= 1 and slave1[\"angst\"] <= 3 and slave1[\"instinct\"] >= 2 and slave1[\"custom\"] >= 2 and slave1[\"moral\"] >= 2:\n!\t\t\tmsg \"5_3\"\n\t\t\tif slave1[\"sensitivity\"] >= 2 and slave1[\"temper\"] >= 2 and slave1[\"pride\"] <= 1:\n\t\t\t\tslave1[\"pos_slave_love\"] = 0\n\t\t\t\tslave1[\"pos_slave_love2\"] = 0\n\t\t\t\tslave1[\"pos_slave_love3\"] = 0\n\t\t\t\tslave1[\"pos_slave_love4\"] = 0\n\t\t\t\tslave1[\"pos_slave_love5\"] = 100\n\t\t\t\tslave1[\"pos_slave_love6\"] = 0\n!\t\t\t\tmsg \"<<sa_rel>> 1-рабыня, 2-ассист.<br><br>Извращённая любовь к мастеру\"\n\t\t\t\tjump 'override'"
+            }
+          ]
+        }
+      ],
+      "disadvantages": [],
+      "uncertainty": "BDSM형 애정도 다른 주인 애정과 마찬가지로 질투/동침 요구를 수반할 수 있다. 확인된 고유 페널티는 없지만 모든 간접 결과의 무손실 증명은 아니다."
+    },
+    {
+      "key": "compassion",
+      "value": 1,
+      "label": "평화주의자",
+      "classification": "mixed",
+      "recommendation": "장단점 혼합 후보. 완전부정으로 분류하지 않음.",
+      "advantages": [
+        {
+          "condition": "주인 연정의 복합 조건 충족",
+          "effect": "pos_slave_love2=100 경로의 OR 진입 조건.",
+          "evidence": [
+            {
+              "location": "master_love",
+              "start": 72,
+              "end": 86,
+              "reference": "master_love:72-86",
+              "note": "연정 경로",
+              "code": "if func('jo9_traits', 'attention_value', 'slave1', 'abuse_attitude') = -1 or slave1[\"perversion\"] = -1 or slave1[\"masochism\"] = -1 or slave1[\"nymphomania\"] = -1 or slave1[\"exhibitionism\"] = -1 or slave1[\"compassion\"] = 1:\n!\tmsg \"2_1\"\n\tif master_str >= 3 and master_cha = 5 and master_style = 5 and master_domination >= 2:\n!\t\tmsg \"2_2\"\n\t\tif slave1[\"obedience\"] >= 8 and slave1[\"arousal\"] >= 3 and slave1[\"fear\"] <= 1 and slave1[\"angst\"] = 0 and slave1[\"instinct\"] >= 3 and slave1[\"custom\"] >= 3 and slave1[\"spoil\"] <= 1 and slave1[\"moral\"] >= 2:\n!\t\t\tmsg \"2_3\"\n\t\t\tif slave1[\"mood\"] >= 5 and slave1[\"sensitivity\"] >= 3 and slave1[\"temper\"] >= 3 and slave1[\"pride\"] <= 2:\n\t\t\t\tslave1[\"pos_slave_love\"] = 0\n\t\t\t\tslave1[\"pos_slave_love2\"] = 100\n\t\t\t\tslave1[\"pos_slave_love3\"] = 0\n\t\t\t\tslave1[\"pos_slave_love4\"] = 0\n\t\t\t\tslave1[\"pos_slave_love5\"] = 0\n\t\t\t\tslave1[\"pos_slave_love6\"] = 0\n!\t\t\t\tmsg \"<<sa_rel>> 1-рабыня, 2-ассист.<br><br>Влюблённость в мастера\"\n\t\t\t\tjump 'override'"
+            },
+            {
+              "location": "#moodlet_base",
+              "start": 117,
+              "end": 117,
+              "reference": "#moodlet_base:117",
+              "note": "good mood 목록",
+              "code": "$slave_good_mood[] = 'pos_slave_love2'         \t\t& $mood_description['pos_slave_love2'] = '[<<$dynslave_name>>]<br>&nbsp;주인님을 보면 배 속에서 나비가 날아다니기 시작해요. 절 좋아하시죠, 그렇죠?'"
+            }
+          ]
+        }
+      ],
+      "disadvantages": [
+        {
+          "condition": "수감자 처벌/처형 관찰",
+          "effect": "처벌에는 mood_drop(torture_intensity), 처형에는 fear=5 및 mood_drop(100).",
+          "evidence": [
+            {
+              "location": "interaction_result",
+              "start": 555,
+              "end": 568,
+              "reference": "interaction_result:555-568",
+              "note": "처벌 관찰",
+              "code": "!interaction type - prisoner torture (demonstration of punishment on prisoner, observed by slave)\nif $interaction_type = 'prisoner_torture':\n\tif compassion > 0:\n\t\tif slave['sensitivity'] > 2: slave['compassion_xp'] += 1 &! add compassion xp here instead of in $torture_phobia - ImperatorAugustus\n\t\tif slave['compassion_revealed'] = 0: slave['compassion_revealed'] = 1\n\t\tif slave['compassion'] > 0:\n\t\t\t$text[2] = '  <<$compassion_reaction[\"goodkind\"]>>'\n\t\t\tgs '$mood_drop', 'slave', torture_intensity &! traumatic for compassionate slaves\n\t\telseif slave['compassion'] < 0:\n\t\t\t$text[2] = '  <<$compassion_reaction[\"sadistic\"]>>'\n\t\t\tgs '$mood_rise', 'slave', torture_intensity &! mood boost for sadists - ImperatorAugustus\n\t\t\tinteraction_slave['erotic_stimulation'] = slave['temper']*torture_intensity &! add arousal for sadists - ImperatorAugustus\n\t\telse\n\t\t\tgs '$mood_drop', 'slave', 1"
+            },
+            {
+              "location": "interaction",
+              "start": 8218,
+              "end": 8229,
+              "reference": "interaction:8218-8229",
+              "note": "처형 관찰",
+              "code": "\t\tif slave_already_done_total[$str(interaction)] = 0: slave['instinct'] += 2 &! slave gains two full levels of taming the first time they witness an execution\n\t\tif slave['compassion'] > 0:\n\t\t\t! compassionate slave maxes fear, clears all positive moodlets\n\t\t\tslave['fear'] = 5\n\t\t\tgs '$mood_drop', 'slave', 100 &! traumatic\n\t\telseif slave['compassion'] < 0:\n\t\t\t! sadistic slave gains devotion, clears all negative moodlets\n\t\t\tslave_rate['moral'] += slave['ego']*slave['temper']\n\t\t\tgs '$mood_rise', 'slave', 100 &! exciting\n\t\telse\n\t\t\tslave['fear'] += 1 &! non-sadist/non-compassionate slave is less affected but still gains a level of fear\n\t\tend"
+            }
+          ]
+        }
+      ],
+      "uncertainty": "상호작용에 compassion 플래그가 붙거나 처형을 관찰할 때의 조건부 단점이다."
+    },
+    {
+      "key": "passion_luxury",
+      "value": -1,
+      "label": "구두쇠",
+      "classification": "mixed",
+      "recommendation": "장단점 혼합 후보. 중립보다 유리한 조건도 확인.",
+      "advantages": [
+        {
+          "condition": "선물 보상 시 virtue<interaction_reward_level",
+          "effect": "선물 potence=0이므로 potence*effective_level로 계산되는 spoil 증가도 0. 기분은 max(5,potence)라 최소 5가 남는다.",
+          "evidence": [
+            {
+              "location": "interaction_result",
+              "start": 1177,
+              "end": 1186,
+              "reference": "interaction_result:1177-1186",
+              "note": "기분 최저치 및 망가짐 증가의 실제 식",
+              "code": "\tif slave['passion_luxury'] = -1: interaction_reward_potence = 0\n\tif interaction_reward_potence = 0: $text[2] = $present_reaction_fail\n\tslave_rate['mood'] += max(5, interaction_reward_potence) &! even the cheapest gift is worth half a mood level - ImperatorAugustus\n\tslave['pos_reward'] += interaction_reward_level\n\tif slave['virtue'] < interaction_reward_level:\n\t\teffective_interaction_reward_level = interaction_reward_level - slave['virtue']\n\t\tslave_rate['spoil'] += interaction_reward_potence * effective_interaction_reward_level\n\telseif interaction_reward_potence > 0:\n\t\tslave_rate['rational'] += min(interaction_reward_level, slave['intellect'])\n\t\tslave_rate['spoil'] += (1 + interaction_reward_level)/2 &! receiving a present always spoils somewhat -ImperatorAugustus"
+            }
+          ]
+        },
+        {
+          "condition": "금장 목줄을 거부할 수 있는 반항/복종/피학대 조건",
+          "effect": "거부 분기는 passion_luxury=0일 때만 실행되므로 -1도 거부 분기를 통과하지 않는다.",
+          "evidence": [
+            {
+              "location": "#item_base",
+              "start": 1218,
+              "end": 1223,
+              "reference": "#item_base:1218-1223",
+              "note": "의도와 별개로 실제 비교값은 =0",
+              "code": "$item_property['golden_collar'] = {\n\tif dynslave['passion_luxury'] = 0:\n\t\tif dynslave_state = CONST_INT['slave_exist'] and rebell[$dynslave_psy_status] > 0 and dynslave['obedience'] < 0 and dynslave['beaten_ever'] = 0 and dynslave['domini_dictum'] = 0:\n\t\t\t$place = 'study'\n\t\t\t$picture_type = 'dynslave_picture'\n\t\t\tnpc = 0 & txt = 1 & $text[1] = '  <<$dynslave_name>>는 금장 목줄 착용을 거부한다. 그래도 강제로 잠가 버릴까?'"
+            }
+          ]
+        }
+      ],
+      "disadvantages": [
+        {
+          "condition": "선물 보상",
+          "effect": "potence가 강제로 0이 되고 선물/보상 약속이 있으면 cheap 관련 부정 moodlet=100.",
+          "evidence": [
+            {
+              "location": "interaction_result",
+              "start": 1177,
+              "end": 1205,
+              "reference": "interaction_result:1177-1205",
+              "note": "선물 보상력 제거 및 약속 반응",
+              "code": "\tif slave['passion_luxury'] = -1: interaction_reward_potence = 0\n\tif interaction_reward_potence = 0: $text[2] = $present_reaction_fail\n\tslave_rate['mood'] += max(5, interaction_reward_potence) &! even the cheapest gift is worth half a mood level - ImperatorAugustus\n\tslave['pos_reward'] += interaction_reward_level\n\tif slave['virtue'] < interaction_reward_level:\n\t\teffective_interaction_reward_level = interaction_reward_level - slave['virtue']\n\t\tslave_rate['spoil'] += interaction_reward_potence * effective_interaction_reward_level\n\telseif interaction_reward_potence > 0:\n\t\tslave_rate['rational'] += min(interaction_reward_level, slave['intellect'])\n\t\tslave_rate['spoil'] += (1 + interaction_reward_level)/2 &! receiving a present always spoils somewhat -ImperatorAugustus\n\tend\n\tif $item_id = 'plaid':\n\t\t$interaction_type = 'special'\n\t\tnpc = 0\n\telse\n\t\t$interaction_type = 'special_png'\n\tend\n\tif slave['passion_luxury'] = 1 or $slave_psy_status = 'broken':\n\t\tslave['neg_cheap_reward'] = 0\n\t\tslave['neg_cheap_gift'] = 0\n\telseif interaction_reward_potence = 0 or slave['passion_luxury'] = -1 or interaction_reward_level < min(5, min(3, slave['total_gifts']/5) + min(3, max(slave['spoil'], slave['pride'] - 2)) - max(0, slave['moral'] - 2)):\n\t\tif slave['promise_reward'] > 0: slave['neg_cheap_reward'] = 100\n\t\tif slave['promise_gift'] > 0: slave['neg_cheap_gift'] = 100\n\telse\n\t\tslave['neg_cheap_reward'] = 0\n\t\tslave['neg_cheap_gift'] = 0\n\tend\n\tslave['promise_reward'] = 0 &! promise fulfilled, even if the slave disliked it\n\tslave['promise_gift'] = 0 &! promise fulfilled, even if the slave disliked it"
+            }
+          ]
+        }
+      ],
+      "uncertainty": "구두쇠라는 이름과 달리 유지비 절감 효과는 확인하지 못했다. 금장 목줄 우회는 코드의 현행 동작으로 기록하며 설계 의도는 미확인."
+    },
+    {
+      "key": "passion_luxury",
+      "value": 1,
+      "label": "사치광",
+      "classification": "mixed",
+      "recommendation": "장단점 혼합 후보. 금장 목줄/정당한 보상 운영에서는 보호 가치가 높음.",
+      "advantages": [
+        {
+          "condition": "potence>0인 선물",
+          "effect": "potence*2, 값싼 선물/보상 실망 moodlet 해제.",
+          "evidence": [
+            {
+              "location": "interaction_result",
+              "start": 1170,
+              "end": 1172,
+              "reference": "interaction_result:1170-1172",
+              "note": "선물 보상력 2배",
+              "code": "\tif slave['passion_luxury'] = 1 and interaction_reward_potence > 0:\n\t\tinteraction_reward_potence = interaction_reward_potence*2\n\t\t$text[2] = $present_reaction_passion"
+            },
+            {
+              "location": "interaction_result",
+              "start": 1194,
+              "end": 1205,
+              "reference": "interaction_result:1194-1205",
+              "note": "보상 약속 실망 해제",
+              "code": "\tif slave['passion_luxury'] = 1 or $slave_psy_status = 'broken':\n\t\tslave['neg_cheap_reward'] = 0\n\t\tslave['neg_cheap_gift'] = 0\n\telseif interaction_reward_potence = 0 or slave['passion_luxury'] = -1 or interaction_reward_level < min(5, min(3, slave['total_gifts']/5) + min(3, max(slave['spoil'], slave['pride'] - 2)) - max(0, slave['moral'] - 2)):\n\t\tif slave['promise_reward'] > 0: slave['neg_cheap_reward'] = 100\n\t\tif slave['promise_gift'] > 0: slave['neg_cheap_gift'] = 100\n\telse\n\t\tslave['neg_cheap_reward'] = 0\n\t\tslave['neg_cheap_gift'] = 0\n\tend\n\tslave['promise_reward'] = 0 &! promise fulfilled, even if the slave disliked it\n\tslave['promise_gift'] = 0 &! promise fulfilled, even if the slave disliked it"
+            }
+          ]
+        },
+        {
+          "condition": "금장 목줄 착용",
+          "effect": "매일 worn_bonus[mood_rate]+=5. 중립에만 존재하는 거부도 우회.",
+          "evidence": [
+            {
+              "location": "#item_base",
+              "start": 1218,
+              "end": 1223,
+              "reference": "#item_base:1218-1223",
+              "note": "중립에만 거부 분기",
+              "code": "$item_property['golden_collar'] = {\n\tif dynslave['passion_luxury'] = 0:\n\t\tif dynslave_state = CONST_INT['slave_exist'] and rebell[$dynslave_psy_status] > 0 and dynslave['obedience'] < 0 and dynslave['beaten_ever'] = 0 and dynslave['domini_dictum'] = 0:\n\t\t\t$place = 'study'\n\t\t\t$picture_type = 'dynslave_picture'\n\t\t\tnpc = 0 & txt = 1 & $text[1] = '  <<$dynslave_name>>는 금장 목줄 착용을 거부한다. 그래도 강제로 잠가 버릴까?'"
+            },
+            {
+              "location": "#item_base",
+              "start": 1249,
+              "end": 1253,
+              "reference": "#item_base:1249-1253",
+              "note": "목줄 기분 보너스",
+              "code": "\tif dynslave['passion_luxury'] > 0: worn_bonus['mood_rate'] += 5 & dynslave['passion_luxury_revealed'] = max(1, dynslave['passion_luxury_revealed']) &! sybarite loves luxurious items - ImperatorAugustus\n\tdynslave['slave_collar'] = 1 &! equipped with name token\n\tdaily_bonus['instinct'] += 1 &! will not forget you are her master\n\tdynslave['ex_plus'] += 2 &! best in slot\n\tdynslave['st_plus'] += 2 &! as stylish as a gemstone necklace"
+            }
+          ]
+        }
+      ],
+      "disadvantages": [
+        {
+          "condition": "virtue<interaction_reward_level인 선물",
+          "effect": "2배 potence가 spoil += potence*effective_level에도 쓰이므로 망가짐 증가량도 커진다.",
+          "evidence": [
+            {
+              "location": "interaction_result",
+              "start": 1170,
+              "end": 1186,
+              "reference": "interaction_result:1170-1186",
+              "note": "보상력이 기분과 망가짐 양쪽에 사용됨",
+              "code": "\tif slave['passion_luxury'] = 1 and interaction_reward_potence > 0:\n\t\tinteraction_reward_potence = interaction_reward_potence*2\n\t\t$text[2] = $present_reaction_passion\n\telse\n\t\tif everlasting = 0: interaction_reward_potence -= slave_already_done_total[$str(interaction)]\n\t\tif interaction_reward_potence < 0: interaction_reward_potence = 0\n\tend\n\tif slave['passion_luxury'] = -1: interaction_reward_potence = 0\n\tif interaction_reward_potence = 0: $text[2] = $present_reaction_fail\n\tslave_rate['mood'] += max(5, interaction_reward_potence) &! even the cheapest gift is worth half a mood level - ImperatorAugustus\n\tslave['pos_reward'] += interaction_reward_level\n\tif slave['virtue'] < interaction_reward_level:\n\t\teffective_interaction_reward_level = interaction_reward_level - slave['virtue']\n\t\tslave_rate['spoil'] += interaction_reward_potence * effective_interaction_reward_level\n\telseif interaction_reward_potence > 0:\n\t\tslave_rate['rational'] += min(interaction_reward_level, slave['intellect'])\n\t\tslave_rate['spoil'] += (1 + interaction_reward_level)/2 &! receiving a present always spoils somewhat -ImperatorAugustus"
+            }
+          ]
+        }
+      ],
+      "uncertainty": "고정 추가 유지비나 강제 구매는 확인하지 못했다. 손해는 부적절한 보상일 때 더 큰 spoil 증가이다."
+    },
+    {
+      "key": "passion_sweets",
+      "value": -1,
+      "label": "까다로운 입맛",
+      "classification": "mixed",
+      "recommendation": "장단점 혼합 후보. 이점은 식당 데이트의 spoil 완화에 한정.",
+      "advantages": [
+        {
+          "condition": "식당 데이트, virtue<5, 보상력 최저치에 걸리지 않는 경우",
+          "effect": "potence가 4 줄어 mood 상승은 약해지지만 potence*(5-virtue)인 spoil 증가도 줄어든다.",
+          "evidence": [
+            {
+              "location": "interaction",
+              "start": 6067,
+              "end": 6076,
+              "reference": "interaction:6067-6076",
+              "note": "식당 potence-4",
+              "code": "!Go to a restaurant\nif interaction = 1515:\n\t$interaction_type = 'praise_date'\n\tinteraction_reward_level = 5\n\tinteraction_reward_cost = 8\n\tinteraction_reward_potence = 4 + (slave['moral']*2 + slave['rational'] + slave['instinct'] + slave['spoil'] - slave['fear'])*4 - slave_already_done_total[$str(interaction)]\n\tif slave['passion_fame'] = -1: interaction_reward_potence /= 2\n\tif slave['passion_sweets'] < 0: interaction_reward_potence -= 4\n\tif interaction_reward_potence <= 0: interaction_reward_potence = 1\n\tif slave['passion_sweets'] > 0: interaction_reward_potence *= 2"
+            },
+            {
+              "location": "interaction_result",
+              "start": 1125,
+              "end": 1131,
+              "reference": "interaction_result:1125-1131",
+              "note": "낮은 virtue에서 같은 보상력을 spoil에 사용",
+              "code": "\tslave_rate['mood'] += interaction_reward_potence\n\tif slave['virtue'] < interaction_reward_level:\n\t\teffective_interaction_reward_level = interaction_reward_level - slave['virtue']\n\t\tslave_rate['spoil'] += interaction_reward_potence * effective_interaction_reward_level\n\telse\n\t\tslave_rate['rational'] += min(interaction_reward_level, slave['intellect'])\n\t\tslave_rate['spoil'] += (1 + interaction_reward_level)/2 &! spending time together always spoils somewhat -ImperatorAugustus"
+            }
+          ]
+        }
+      ],
+      "disadvantages": [
+        {
+          "condition": "단 음식 보상이며 broken이 아닐 때",
+          "effect": "추가 mood 변화에서 potence/2를 빼며, 약속한 선물/보상에는 cheap 실망을 낳을 수 있다.",
+          "evidence": [
+            {
+              "location": "interaction_result",
+              "start": 1219,
+              "end": 1248,
+              "reference": "interaction_result:1219-1248",
+              "note": "기본 보상 후 추가 기분 반감 및 약속 처리",
+              "code": "\tif slave['prev_sweets'] = interaction or slave_already_done_today[$str(interaction)] > 0:\n\t\t$text[2] = $sweets_consume_repeat\n\t\tslave_rate['mood'] += interaction_reward_potence/2\n\t\tif slave['virtue'] < interaction_reward_level: slave_rate['spoil'] += interaction_reward_potence\n\t\tif slave['virtue'] >= interaction_reward_level: slave_rate['rational'] += 1\n\telse\n\t\t$text[2] = $sweets_consume\n\t\tslave_rate['mood'] += interaction_reward_potence\n\t\tslave['pos_dessert'] = max(slave['pos_dessert'], 1 + interaction_reward_level)\n\t\tif slave['virtue'] < interaction_reward_level: slave_rate['spoil'] += interaction_reward_potence\n\t\tif slave['virtue'] >= interaction_reward_level: slave_rate['rational'] += min(interaction_reward_level, slave['intellect'])\n\tend\n\tif slave['passion_sweets'] ! 0 and slave['passion_sweets_revealed'] = 0: slave['passion_sweets_revealed'] = 1\n\tif slave['passion_sweets'] = 1 and $slave_psy_status ! 'broken':\n\t\tslave_rate['mood'] += interaction_reward_potence\n\t\t$text[2] = $sweets_consume_passion\n\t\tslave['pos_job'] = max(slave['pos_job'], 1 + interaction_reward_level)\n\tend\n\tif slave['passion_sweets'] = -1 and $slave_psy_status ! 'broken':\n\t\tslave_rate['mood'] -= interaction_reward_potence/2\n\t\t$text[2] = $sweets_consume_hate\n\tend\n\tslave['calories'] += interaction_reward_level + 1\n\tslave['prev_sweets'] = interaction\n\tif slave['passion_sweets'] = 1 or $slave_psy_status = 'broken':\n\t\tslave['neg_cheap_reward'] = 0\n\t\tslave['neg_cheap_gift'] = 0\n\telseif slave['passion_sweets'] = -1 or interaction_reward_level < min(5, min(3, slave['total_gifts']/5) + min(3, max(slave['spoil'], slave['pride'] - 2)) - max(0, slave['moral'] - 2)):\n\t\tif slave['promise_reward'] > 0: slave['neg_cheap_reward'] = 100\n\t\tif slave['promise_gift'] > 0: slave['neg_cheap_gift'] = 100"
+            }
+          ]
+        },
+        {
+          "condition": "식당 데이트",
+          "effect": "potence-4로 기분/성공도와 특정 성공 보너스가 낮아질 수 있다.",
+          "evidence": [
+            {
+              "location": "interaction",
+              "start": 6067,
+              "end": 6076,
+              "reference": "interaction:6067-6076",
+              "note": "식당 보상력",
+              "code": "!Go to a restaurant\nif interaction = 1515:\n\t$interaction_type = 'praise_date'\n\tinteraction_reward_level = 5\n\tinteraction_reward_cost = 8\n\tinteraction_reward_potence = 4 + (slave['moral']*2 + slave['rational'] + slave['instinct'] + slave['spoil'] - slave['fear'])*4 - slave_already_done_total[$str(interaction)]\n\tif slave['passion_fame'] = -1: interaction_reward_potence /= 2\n\tif slave['passion_sweets'] < 0: interaction_reward_potence -= 4\n\tif interaction_reward_potence <= 0: interaction_reward_potence = 1\n\tif slave['passion_sweets'] > 0: interaction_reward_potence *= 2"
+            },
+            {
+              "location": "interaction_result",
+              "start": 1111,
+              "end": 1128,
+              "reference": "interaction_result:1111-1128",
+              "note": "데이트 성공도 및 기분 보너스",
+              "code": "if $interaction_type = 'praise_date':\n\tinteraction_date_success = 5\n\tif interaction_reward_potence < 40: interaction_date_success = 4\n\tif interaction_reward_potence < 10: interaction_date_success = 3\n\tif interaction_reward_potence < 5: interaction_date_success = 2\n\tif interaction_reward_potence <= 1: interaction_date_success = 1\n\tdynamic \"$text[1] = '<<$date_description[interaction_reward_level]>>'\" &! this assumes that each interaction_reward_level of this type has only a single interaction\n\tdynamic \"$text[2] = '<<$date_result[interaction_date_success]>>'\"\n\tdynamic $special_part\n\tdynamic $replace($dyn_erotic_stimulation, 'dyn'+'slave', 'slave') &! should be done after $special_part - ImperatorAugustus\n\tif interaction_date_success > 2 and interaction_slave['diligence'] > 0 and slave['domini_dictum'] = 0 and slave['pride'] < 4:\n\t\tslave_rate['temper'] += 1\n\t\tslave_rate['moral'] += max(0, min(2, (1 + interaction_reward_level)/2) - slave_already_done_today[$str(interaction)])\n\tend\n\tslave_rate['mood'] += interaction_reward_potence\n\tif slave['virtue'] < interaction_reward_level:\n\t\teffective_interaction_reward_level = interaction_reward_level - slave['virtue']\n\t\tslave_rate['spoil'] += interaction_reward_potence * effective_interaction_reward_level"
+            }
+          ]
+        }
+      ],
+      "uncertainty": "이 값은 단 음식 혐오를 뜻하며 모든 식사의 비용/영양/유지비 페널티로 해석할 근거는 찾지 못했다. 단 음식 직접 보상에서는 spoil 계산 뒤 기분만 반감하므로 spoil 절약은 없다."
+    },
+    {
+      "key": "passion_sweets",
+      "value": 1,
+      "label": "당분 중독",
+      "classification": "mixed",
+      "recommendation": "장단점 혼합 후보. 단 음식 보상 자체는 효율이 좋아 보호 가치가 높음.",
+      "advantages": [
+        {
+          "condition": "단 음식 보상이며 broken이 아닐 때",
+          "effect": "기본 mood 상승 뒤 potence만큼 추가 mood, pos_job 보너스 및 cheap 실망 제거.",
+          "evidence": [
+            {
+              "location": "interaction_result",
+              "start": 1219,
+              "end": 1248,
+              "reference": "interaction_result:1219-1248",
+              "note": "추가 기분과 약속 실망 제거",
+              "code": "\tif slave['prev_sweets'] = interaction or slave_already_done_today[$str(interaction)] > 0:\n\t\t$text[2] = $sweets_consume_repeat\n\t\tslave_rate['mood'] += interaction_reward_potence/2\n\t\tif slave['virtue'] < interaction_reward_level: slave_rate['spoil'] += interaction_reward_potence\n\t\tif slave['virtue'] >= interaction_reward_level: slave_rate['rational'] += 1\n\telse\n\t\t$text[2] = $sweets_consume\n\t\tslave_rate['mood'] += interaction_reward_potence\n\t\tslave['pos_dessert'] = max(slave['pos_dessert'], 1 + interaction_reward_level)\n\t\tif slave['virtue'] < interaction_reward_level: slave_rate['spoil'] += interaction_reward_potence\n\t\tif slave['virtue'] >= interaction_reward_level: slave_rate['rational'] += min(interaction_reward_level, slave['intellect'])\n\tend\n\tif slave['passion_sweets'] ! 0 and slave['passion_sweets_revealed'] = 0: slave['passion_sweets_revealed'] = 1\n\tif slave['passion_sweets'] = 1 and $slave_psy_status ! 'broken':\n\t\tslave_rate['mood'] += interaction_reward_potence\n\t\t$text[2] = $sweets_consume_passion\n\t\tslave['pos_job'] = max(slave['pos_job'], 1 + interaction_reward_level)\n\tend\n\tif slave['passion_sweets'] = -1 and $slave_psy_status ! 'broken':\n\t\tslave_rate['mood'] -= interaction_reward_potence/2\n\t\t$text[2] = $sweets_consume_hate\n\tend\n\tslave['calories'] += interaction_reward_level + 1\n\tslave['prev_sweets'] = interaction\n\tif slave['passion_sweets'] = 1 or $slave_psy_status = 'broken':\n\t\tslave['neg_cheap_reward'] = 0\n\t\tslave['neg_cheap_gift'] = 0\n\telseif slave['passion_sweets'] = -1 or interaction_reward_level < min(5, min(3, slave['total_gifts']/5) + min(3, max(slave['spoil'], slave['pride'] - 2)) - max(0, slave['moral'] - 2)):\n\t\tif slave['promise_reward'] > 0: slave['neg_cheap_reward'] = 100\n\t\tif slave['promise_gift'] > 0: slave['neg_cheap_gift'] = 100"
+            }
+          ]
+        },
+        {
+          "condition": "식당 데이트",
+          "effect": "potence*2.",
+          "evidence": [
+            {
+              "location": "interaction",
+              "start": 6067,
+              "end": 6076,
+              "reference": "interaction:6067-6076",
+              "note": "식당 보상력 두 배",
+              "code": "!Go to a restaurant\nif interaction = 1515:\n\t$interaction_type = 'praise_date'\n\tinteraction_reward_level = 5\n\tinteraction_reward_cost = 8\n\tinteraction_reward_potence = 4 + (slave['moral']*2 + slave['rational'] + slave['instinct'] + slave['spoil'] - slave['fear'])*4 - slave_already_done_total[$str(interaction)]\n\tif slave['passion_fame'] = -1: interaction_reward_potence /= 2\n\tif slave['passion_sweets'] < 0: interaction_reward_potence -= 4\n\tif interaction_reward_potence <= 0: interaction_reward_potence = 1\n\tif slave['passion_sweets'] > 0: interaction_reward_potence *= 2"
+            }
+          ]
+        }
+      ],
+      "disadvantages": [
+        {
+          "condition": "식당 데이트, virtue<5",
+          "effect": "2배 potence가 spoil 증가에도 사용되어 망가짐 증가가 커진다.",
+          "evidence": [
+            {
+              "location": "interaction",
+              "start": 6067,
+              "end": 6076,
+              "reference": "interaction:6067-6076",
+              "note": "식당 보상력 두 배",
+              "code": "!Go to a restaurant\nif interaction = 1515:\n\t$interaction_type = 'praise_date'\n\tinteraction_reward_level = 5\n\tinteraction_reward_cost = 8\n\tinteraction_reward_potence = 4 + (slave['moral']*2 + slave['rational'] + slave['instinct'] + slave['spoil'] - slave['fear'])*4 - slave_already_done_total[$str(interaction)]\n\tif slave['passion_fame'] = -1: interaction_reward_potence /= 2\n\tif slave['passion_sweets'] < 0: interaction_reward_potence -= 4\n\tif interaction_reward_potence <= 0: interaction_reward_potence = 1\n\tif slave['passion_sweets'] > 0: interaction_reward_potence *= 2"
+            },
+            {
+              "location": "interaction_result",
+              "start": 1125,
+              "end": 1131,
+              "reference": "interaction_result:1125-1131",
+              "note": "보상력 비례 spoil",
+              "code": "\tslave_rate['mood'] += interaction_reward_potence\n\tif slave['virtue'] < interaction_reward_level:\n\t\teffective_interaction_reward_level = interaction_reward_level - slave['virtue']\n\t\tslave_rate['spoil'] += interaction_reward_potence * effective_interaction_reward_level\n\telse\n\t\tslave_rate['rational'] += min(interaction_reward_level, slave['intellect'])\n\t\tslave_rate['spoil'] += (1 + interaction_reward_level)/2 &! spending time together always spoils somewhat -ImperatorAugustus"
+            }
+          ]
+        }
+      ],
+      "uncertainty": "중독이라는 이름만으로 강제 소비/금단/추가 유지비가 있다고 볼 근거는 확인하지 못했다. 직접 단 음식 보상의 추가 mood는 spoil 계산 뒤라 그 자체가 spoil을 두 배로 하지는 않는다."
+    },
+    {
+      "key": "passion_fame",
+      "value": -1,
+      "label": "은둔형 외톨이",
+      "classification": "mixed",
+      "recommendation": "장단점 혼합 후보. 완전부정으로 분류하지 않음.",
+      "advantages": [
+        {
+          "condition": "주인 의존 애정의 복합 조건 충족",
+          "effect": "pos_slave_love6=100 경로의 OR 진입 조건.",
+          "evidence": [
+            {
+              "location": "master_love",
+              "start": 161,
+              "end": 175,
+              "reference": "master_love:161-175",
+              "note": "의존 애정 경로",
+              "code": "if slave1[\"courage\"] = -1 or slave1[\"passion_fame\"] = -1 or slave1[\"selfesteem\"] = -1:\n!\tmsg \"6_1\"\n\tif master_str >= 3 and master_cha >= 3 and master_style >= 3 and master_domination >= 4:\n!\t\tmsg \"6_2\"\n\t\tif slave1[\"obedience\"] >= 10 and slave1[\"fear\"] <= 3 and slave1[\"angst\"] <= 3 and slave1[\"rational\"] >= 2 and slave1[\"instinct\"] = 5 and slave1[\"custom\"] = 5 and slave1[\"spoil\"] <= 1 and slave1[\"moral\"] >= 3:\n!\t\t\tmsg \"6_3\"\n\t\t\tif slave1[\"temper\"] <= 4 and slave1[\"pride\"] <= 2:\n\t\t\t\tslave1[\"pos_slave_love\"] = 0\n\t\t\t\tslave1[\"pos_slave_love2\"] = 0\n\t\t\t\tslave1[\"pos_slave_love3\"] = 0\n\t\t\t\tslave1[\"pos_slave_love4\"] = 0\n\t\t\t\tslave1[\"pos_slave_love5\"] = 0\n\t\t\t\tslave1[\"pos_slave_love6\"] = 100\n!\t\t\t\tmsg \"<<sa_rel>> 1-рабыня, 2-ассист.<br><br>Зависимость от мастера\"\n\t\t\tend"
+            },
+            {
+              "location": "#moodlet_base",
+              "start": 121,
+              "end": 121,
+              "reference": "#moodlet_base:121",
+              "note": "good mood 목록",
+              "code": "$slave_good_mood[] = 'pos_slave_love6'         \t\t& $mood_description['pos_slave_love6'] = '[<<$dynslave_name>>]<br>&nbsp;전 늘 주인님과 함께 있고 싶어요. 저를 떠나지 말아 주세요, 주인님. 주인님이 없으면 무서워요.'"
+            }
+          ]
+        },
+        {
+          "condition": "데이트 보상이며 virtue<interaction_reward_level",
+          "effect": "반감된 potence만큼 보상성 spoil 증가도 작아진다.",
+          "evidence": [
+            {
+              "location": "interaction",
+              "start": 6003,
+              "end": 6011,
+              "reference": "interaction:6003-6011",
+              "note": "산책의 보상력 반감",
+              "code": "if interaction = 1512:\n\t$interaction_type = 'praise_date'\n\tinteraction_reward_level = 2\n\tinteraction_reward_cost = 0\n\tinteraction_reward_potence = (slave['ego'] + slave['temper'])/2 + (slave['moral']*2 + slave['rational'] + slave['instinct'] + slave['spoil'])*1 - slave['fear'] - slave_already_done_total[$str(interaction)]\n\teasy_for_master = 1 &! half energy for travel only\n\teasy_for_slave = 1 &! half energy for travel only\n\tif slave['passion_fame'] = -1: interaction_reward_potence /= 2\n\tif interaction_reward_potence <= 0: interaction_reward_potence = 1"
+            },
+            {
+              "location": "interaction_result",
+              "start": 1125,
+              "end": 1131,
+              "reference": "interaction_result:1125-1131",
+              "note": "보상력 비례 spoil",
+              "code": "\tslave_rate['mood'] += interaction_reward_potence\n\tif slave['virtue'] < interaction_reward_level:\n\t\teffective_interaction_reward_level = interaction_reward_level - slave['virtue']\n\t\tslave_rate['spoil'] += interaction_reward_potence * effective_interaction_reward_level\n\telse\n\t\tslave_rate['rational'] += min(interaction_reward_level, slave['intellect'])\n\t\tslave_rate['spoil'] += (1 + interaction_reward_level)/2 &! spending time together always spoils somewhat -ImperatorAugustus"
+            }
+          ]
+        }
+      ],
+      "disadvantages": [
+        {
+          "condition": "도시 산책/해변/극장/식당 등 데이트",
+          "effect": "potence/2로 기분과 성공도가 낮아지며 공통 성공 보너스에 불리.",
+          "evidence": [
+            {
+              "location": "interaction",
+              "start": 6003,
+              "end": 6011,
+              "reference": "interaction:6003-6011",
+              "note": "산책",
+              "code": "if interaction = 1512:\n\t$interaction_type = 'praise_date'\n\tinteraction_reward_level = 2\n\tinteraction_reward_cost = 0\n\tinteraction_reward_potence = (slave['ego'] + slave['temper'])/2 + (slave['moral']*2 + slave['rational'] + slave['instinct'] + slave['spoil'])*1 - slave['fear'] - slave_already_done_total[$str(interaction)]\n\teasy_for_master = 1 &! half energy for travel only\n\teasy_for_slave = 1 &! half energy for travel only\n\tif slave['passion_fame'] = -1: interaction_reward_potence /= 2\n\tif interaction_reward_potence <= 0: interaction_reward_potence = 1"
+            },
+            {
+              "location": "interaction",
+              "start": 6024,
+              "end": 6033,
+              "reference": "interaction:6024-6033",
+              "note": "해변",
+              "code": "if interaction = 1513:\n\t$interaction_type = 'praise_date'\n\tinteraction_reward_level = 3\n\tinteraction_reward_cost = 2\n\tinteraction_reward_potence = slave['stamina'] + slave['temper'] + (slave['moral']*2 + slave['rational'] + slave['instinct'] + slave['spoil'])*2 - slave['fear'] - slave_already_done_total[$str(interaction)]\n\tif slave['passion_fame'] = -1: interaction_reward_potence /= 2\n\tif slave['water_attitude'] = -1: interaction_reward_potence = 0\n\tif interaction_reward_potence <= 0: interaction_reward_potence = 1\n\tif func('jo9_traits', 'attention_value', 'slave', 'passion_fame') > 0: interaction_reward_potence *= 2\n\tif slave['water_attitude'] = 2: interaction_reward_potence *= 2"
+            },
+            {
+              "location": "interaction",
+              "start": 6047,
+              "end": 6054,
+              "reference": "interaction:6047-6054",
+              "note": "극장",
+              "code": "if interaction = 1514:\n\t$interaction_type = 'praise_date'\n\tinteraction_reward_level = 4\n\tinteraction_reward_cost = iif(custom_game = 0 and hero_choice = 6, 0, 4) &! Maestro gets free theater tickets in story mode - ImperatorAugustus\n\tinteraction_reward_potence = 5 + (slave['moral']*2 + slave['rational'] + slave['instinct'] + slave['spoil'])*3  - slave['fear'] - slave_already_done_total[$str(interaction)]\n\tif slave['passion_fame'] = -1: interaction_reward_potence /= 2\n\tif interaction_reward_potence <= 0: interaction_reward_potence = 1\n\tif func('jo9_traits', 'attention_value', 'slave', 'passion_fame') > 0: interaction_reward_potence *= 2"
+            },
+            {
+              "location": "interaction",
+              "start": 6067,
+              "end": 6076,
+              "reference": "interaction:6067-6076",
+              "note": "식당",
+              "code": "!Go to a restaurant\nif interaction = 1515:\n\t$interaction_type = 'praise_date'\n\tinteraction_reward_level = 5\n\tinteraction_reward_cost = 8\n\tinteraction_reward_potence = 4 + (slave['moral']*2 + slave['rational'] + slave['instinct'] + slave['spoil'] - slave['fear'])*4 - slave_already_done_total[$str(interaction)]\n\tif slave['passion_fame'] = -1: interaction_reward_potence /= 2\n\tif slave['passion_sweets'] < 0: interaction_reward_potence -= 4\n\tif interaction_reward_potence <= 0: interaction_reward_potence = 1\n\tif slave['passion_sweets'] > 0: interaction_reward_potence *= 2"
+            },
+            {
+              "location": "interaction_result",
+              "start": 1111,
+              "end": 1128,
+              "reference": "interaction_result:1111-1128",
+              "note": "성공도/기분/성장 처리",
+              "code": "if $interaction_type = 'praise_date':\n\tinteraction_date_success = 5\n\tif interaction_reward_potence < 40: interaction_date_success = 4\n\tif interaction_reward_potence < 10: interaction_date_success = 3\n\tif interaction_reward_potence < 5: interaction_date_success = 2\n\tif interaction_reward_potence <= 1: interaction_date_success = 1\n\tdynamic \"$text[1] = '<<$date_description[interaction_reward_level]>>'\" &! this assumes that each interaction_reward_level of this type has only a single interaction\n\tdynamic \"$text[2] = '<<$date_result[interaction_date_success]>>'\"\n\tdynamic $special_part\n\tdynamic $replace($dyn_erotic_stimulation, 'dyn'+'slave', 'slave') &! should be done after $special_part - ImperatorAugustus\n\tif interaction_date_success > 2 and interaction_slave['diligence'] > 0 and slave['domini_dictum'] = 0 and slave['pride'] < 4:\n\t\tslave_rate['temper'] += 1\n\t\tslave_rate['moral'] += max(0, min(2, (1 + interaction_reward_level)/2) - slave_already_done_today[$str(interaction)])\n\tend\n\tslave_rate['mood'] += interaction_reward_potence\n\tif slave['virtue'] < interaction_reward_level:\n\t\teffective_interaction_reward_level = interaction_reward_level - slave['virtue']\n\t\tslave_rate['spoil'] += interaction_reward_potence * effective_interaction_reward_level"
+            }
+          ]
+        }
+      ],
+      "uncertainty": "attention union이 동시에 존재하면 attention_repair가 passion_fame=-1을 0으로 고치는 배타 정리 코드가 있으므로 저장 상태의 공존/정규화 조건도 중요하다.",
+      "interaction_evidence": [
+        {
+          "location": "jo9_traits",
+          "start": 741,
+          "end": 748,
+          "reference": "jo9_traits:741-748",
+          "note": "관심종자 union과 은둔형 외톨이 충돌 보정",
+          "code": "if $args[0] = 'attention_repair':\n result = 0\n if func('jo9_traits', 'attention_has', $args[1]) = 1 and dyneval('result = ' + $args[1] + \"['passion_fame']\") = -1:\n  dynamic $replace({\n   j9attention['passion_fame'] = 0\n   j9attention['passion_fame_revealed'] = 0\n  }, 'j9attention', $args[1])\n  result = 1"
+        }
+      ]
+    }
+  ],
+  "commonCaveat": {
+    "description": "주인 애정 moodlet은 좋은 mood 목록이지만 애정 발생 후 동침 요구/질투가 생길 수 있다.",
+    "evidence": [
+      {
+        "location": "next_day",
+        "start": 4457,
+        "end": 4475,
+        "reference": "next_day:4457-4475",
+        "note": "공통 동침 요구 및 질투",
+        "code": "if slave[\"pos_slave_love\"] > 0 or slave[\"pos_slave_love2\"] > 0 or slave[\"pos_slave_love3\"] > 0 or slave[\"pos_slave_love4\"] > 0 or slave[\"pos_slave_love5\"] > 0 or slave[\"pos_slave_love6\"] > 0:\n\tif slave['sleep_condition'] ! 1:\n\t\tslave['pos_sleep'] = 0\n\t\tslave[\"neg_not_sleep_together\"] = 1\n\tend\n\tif assistant_state = CONST_INT[\"slave_exist\"] and assistant_rules['sleep_condition'] = 1:\n\t\tslave[\"neg_another_sleep_together\"] = 1\n\t\tslave[\"jealousy\"] += 1\n\tend\nend\n\nif assistant[\"pos_slave_love\"] > 0 or assistant[\"pos_slave_love2\"] > 0 or assistant[\"pos_slave_love3\"] > 0 or assistant[\"pos_slave_love4\"] > 0 or assistant[\"pos_slave_love5\"] > 0 or assistant[\"pos_slave_love6\"] > 0:\n\tif assistant_rules['sleep_condition'] ! 1:\n\t\tassistant['pos_sleep'] = 0\n\t\tassistant[\"neg_not_sleep_together\"] = 1\n\tend\n\tif slave_state = CONST_INT[\"slave_exist\"] and slave['sleep_condition'] = 1:\n\t\tassistant[\"neg_another_sleep_together\"] = 1\n\t\tassistant[\"jealousy\"] += 1"
+      },
+      {
+        "location": "next_day",
+        "start": 4537,
+        "end": 4547,
+        "reference": "next_day:4537-4547",
+        "note": "보상 차이에 따른 질투",
+        "code": "if slave[\"pos_slave_love\"] > 0 or slave[\"pos_slave_love2\"] > 0 or slave[\"pos_slave_love3\"] > 0 or slave[\"pos_slave_love4\"] > 0 or slave[\"pos_slave_love5\"] > 0 or slave[\"pos_slave_love6\"] > 0:\n! JO9 MOD START PEER_VALID_LOVE_JEALOUSY_SLAVE | 2026-10-22_peer_relation_zero_id_and_variants\n\tif assistant['id'] > 0 and slave['love'] = assistant['id']: \n! JO9 MOD END PEER_VALID_LOVE_JEALOUSY_SLAVE\n\t\tjel_cap = 0 - slave[\"rewarded_today\"]\n\telse\n\t\tjel_cap = (assistant[\"rewarded_today\"] / 3) - slave[\"rewarded_today\"] + slave[\"punished_today\"]\n\tend\n\tif jel_cap > 5: jel_cap = 5\n\tif jel_cap < -10: jel_cap = -10\n\tslave[\"jealousy\"] += jel_cap"
+      }
+    ]
+  }
+}

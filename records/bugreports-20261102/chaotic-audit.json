@@ -1,0 +1,105 @@
+{
+  "scope": "Read-only audit. QSP parsing and small JS branch model only; no engine execution, WORK edits, save access, image edits, or translation work.",
+  "qsp": "C:/MOVE/Jack O Nine Tails v2.4.1_Kor_Full/game/jack.qsp",
+  "qspSHA256": "2f74d3194ee16c5400e09e06669fee39e32c851e5f03b22c188534ae3f9be9cb",
+  "locations": 278,
+  "decodedSource": "tmp/bugreports-20261102/current-decoded.qsps",
+  "classification": "Current deliberate fallback candidate policy, not accidental whole-character reset. One use removes exactly one selected candidate. Simultaneous disappearance of all three after one use is not explained by this path.",
+  "flow": {
+    "menuLocation": "menu_form:1761-1763 (slave), 1487-1489 (assistant)",
+    "description": "Negative traits first; otherwise one situational general trait; clear positives and achievements/titles/states retained.",
+    "helper": "jo9_chaotic",
+    "negativeTier": "body 37-187",
+    "fallback": "body 188-261",
+    "randomPick": "body 264-266",
+    "mutation": "body 267-310",
+    "inventory": "chaotic_essence -= 1 only after candidate selected"
+  },
+  "traits": [
+    {
+      "reported": "색정광",
+      "key": "nymphomania",
+      "display": "value > 0 in #static_base body 2058-2059",
+      "candidate": "value 1 or 2 in jo9_chaotic body 199-203",
+      "decodedLine": 333736
+    },
+    {
+      "reported": "이상성욕",
+      "actualDisplay": "이상성욕 선호",
+      "key": "perversion",
+      "display": "value 2 in #static_base body 2084-2085",
+      "candidate": "value -1 or 2 in jo9_chaotic body 205-210",
+      "decodedLine": 333742
+    },
+    {
+      "reported": "용감한",
+      "actualDisplay": "용감함",
+      "key": "courage",
+      "display": "value 1 in #static_base body 2103-2104",
+      "candidate": "value -1, 1, or 2 in jo9_chaotic body 219-225",
+      "decodedLine": 333756,
+      "note": "Separate from 광전사/성기사/역전의 용사 combat traits."
+    }
+  ],
+  "writtenPolicy": {
+    "path": "C:/MOVE/Jack O Nine Tails v2.4.1_Kor_Full/JO9_2.4.1_업데이트안내.html",
+    "line": 51,
+    "text": "카오틱 에센스는 제거 가능한 부정 특성을 먼저, 그다음 애매한 성향을 무작위로 정리하도록 범위를 보완했습니다. 확실한 긍정 특성과 보호 대상은 유지합니다."
+  },
+  "model": {
+    "sourceParsedFallbackBlocks": 10,
+    "actorTraitValues": {
+      "nymphomania": 1,
+      "perversion": 2,
+      "courage": 1
+    },
+    "noNegativeCandidates": [
+      "nymphomania",
+      "perversion",
+      "courage"
+    ],
+    "withNegativeCandidates": [
+      "negative-placeholder"
+    ],
+    "noCandidateCase": [],
+    "selections": [
+      {
+        "selected": "nymphomania",
+        "changedTraitKeys": [
+          "nymphomania"
+        ],
+        "resetXP": "nymphomania_xp",
+        "resetRevealed": "nymphomania_revealed"
+      },
+      {
+        "selected": "perversion",
+        "changedTraitKeys": [
+          "perversion"
+        ],
+        "resetXP": "perversion_xp",
+        "resetRevealed": "perversion_revealed"
+      },
+      {
+        "selected": "courage",
+        "changedTraitKeys": [
+          "courage"
+        ],
+        "resetXP": null,
+        "resetRevealed": "courage_revealed"
+      }
+    ],
+    "passed": true
+  },
+  "safeDirection": "If the desired policy is to preserve these three, change only the explicit fallback eligibility conditions after user policy confirmation, and align item/help text. Do not restore traits globally or edit saves. Current evidence does not justify changing random selection or the whole trait system.",
+  "userPolicyCorrection": {
+    "supersedesEarlierNormalPolicyClassification": true,
+    "confirmedProtected": [
+      "이상성욕 선호",
+      "용감함",
+      "색정광"
+    ],
+    "rule": "Clearly negative first; then only approved mixed traits. Ambiguity requires user approval.",
+    "approvalReview": "records/chaotic-policy-review-20261102/APPROVAL_KO.md",
+    "gameChangesApplied": false
+  }
+}

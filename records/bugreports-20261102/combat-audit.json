@@ -1,0 +1,121 @@
+{
+  "reportDate": "2026-11-02",
+  "scope": "Read-only static investigation of the reported combat status scrollbar",
+  "gameRoot": "C:\\MOVE\\Jack O Nine Tails v2.4.1_Kor_Full\\game",
+  "sourceRecord": "tmp/bugreports-20261102/source.json",
+  "decodedSource": "tmp/bugreports-20261102/current-decoded.qsps",
+  "sourceQspSha256": "2f74d3194ee16c5400e09e06669fee39e32c851e5f03b22c188534ae3f9be9cb",
+  "sourceCssSha256": "1676136c66213272031f11bb7891223e15862b3c3944079fd2925d8e5f277e77",
+  "hashProvenance": "Copied from the existing source record; this audit did not run a new broad hash scan.",
+  "userClarification": {
+    "exactReportedArea": "Unknown; testing is needed to identify the reported scrollbar.",
+    "battleDialogueScrollbar": "The user confirmed that scrolling in the combat dialogue/log window is normal."
+  },
+  "regions": {
+    "combatStatusList": {
+      "selector": ".jo9-battle-v01 #combat_ui_conditions",
+      "classification": "Conditional status overflow reproduced in a browser fixture; reporter exact area and native client reproduction remain unconfirmed",
+      "staticCause": "The active battle UI constrains each status list to 122px and explicitly enables overflow:auto. Content exceeding that height can produce a scrollbar.",
+      "cssEvidence": [
+        {
+          "path": "game/css/base.css",
+          "line": 10153,
+          "code": ".jo9-battle-v01 #combat_ui_conditions{left:12px;top:300px;width:218px;height:122px;box-sizing:border-box;font-size:20px;line-height:25px;text-align:center;overflow:auto;}"
+        },
+        {
+          "path": "game/css/base.css",
+          "line": 10136,
+          "note": "BATTLE_UI_TEST_V01 block; the following comment identifies the presentation proposal as 20261027."
+        },
+        {
+          "path": "game/css/base.css",
+          "line": 3537,
+          "note": "The earlier unscoped #combat_ui_conditions rule has height:600px; the scoped battle rule overrides it with 122px."
+        },
+        {
+          "path": "game/css/base.css",
+          "line": 10143,
+          "note": "The containing ally/enemy panels have height:440px and overflow:hidden; status content begins at top:300px."
+        },
+        {
+          "path": "game/css/base.css",
+          "line": 10219,
+          "note": "The later battle font rule retains font-size:20px and line-height:25px without removing the 122px height or overflow:auto."
+        }
+      ],
+      "qspEvidence": [
+        {
+          "location": "боевой_интерфейс",
+          "locationLine": 103,
+          "decodedLine": 136624,
+          "note": "Combat output opens a wrapper with class jo9-battle-v01."
+        },
+        {
+          "location": "боевой_интерфейс",
+          "locationLine": 233,
+          "decodedLine": 136754,
+          "note": "Ally status HTML outputs the 상태 heading, br, $эффекты_игрока, and an extra final br."
+        },
+        {
+          "location": "боевой_интерфейс",
+          "locationLine": 248,
+          "decodedLine": 136769,
+          "note": "Enemy status HTML outputs the 상태 heading, br, $эффекты_противника, and an extra final br."
+        },
+        {
+          "location": "#dynamic",
+          "locationLine": 1993,
+          "decodedLine": 93122,
+          "note": "The ally 고통 effect appends br twice, adding a blank row."
+        },
+        {
+          "location": "#dynamic",
+          "locationLine": 2017,
+          "decodedLine": 93146,
+          "note": "The ally 명중 effect appends br twice, adding a blank row."
+        }
+      ],
+      "capacityObservation": "Five 25px line boxes require 125px, exceeding the 122px viewport. The exact active-effect count that triggers scrolling depends on the generated breaks and rendered line boxes; this audit does not claim a rendered threshold.",
+      "minimalChangeDirection": "First inspect redundant blank rows and the final br, then adjust the status layout within the existing frame if needed. Setting overflow:hidden alone would risk hiding status information.",
+      "unresolved": "The user's exact scrollbar location and failing active-effect combination have not been identified."
+    },
+    "battleDialogueLog": {
+      "selector": ".jo9-battle-v01 #fight_txt",
+      "classification": "Normal behavior confirmed by the user",
+      "cssEvidence": [
+        {
+          "path": "game/css/base.css",
+          "line": 10266,
+          "code": "overflow-x:hidden;"
+        },
+        {
+          "path": "game/css/base.css",
+          "line": 10267,
+          "code": "overflow-y:auto;"
+        }
+      ],
+      "note": "Keep this log viewport separate from the reported status-list investigation."
+    }
+  },
+  "verification": {
+    "staticSourceInspection": "Completed",
+    "browserFixture": {
+      "status": "passed",
+      "cases": 9,
+      "result": "combat-browser-results.json",
+      "nativeGameEngine": false,
+      "overflowCases": [
+        "three",
+        "four",
+        "allyPainTwo",
+        "painAccuracy"
+      ]
+    },
+    "nativeEngine": "Not run",
+    "gameplayReproduction": "Not run",
+    "productionGameFilesChanged": false,
+    "jsonImageOrSaveFilesChanged": false,
+    "newTranslationPerformed": false,
+    "onlyWrittenArtifact": "records/bugreports-20261102/combat-audit.json"
+  }
+}

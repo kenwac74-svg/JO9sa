@@ -1,0 +1,15 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
+const task=path.resolve('tmp/release-patch1-20261103'),root='C:/MOVE/Jack O Nine Tails v2.4.1_Kor_Full';
+const base=JSON.parse(fs.readFileSync(path.join(task,'baseline/BUILD_MANIFEST.json'),'utf8').replace(/^\uFEFF/,'')),byPath=new Map(base.files.map(x=>[x.path.replaceAll('\\','/').toLowerCase(),x]));
+const aliases=JSON.parse(fs.readFileSync(path.join(task,'baseline/2026-10-28_fullimage.json'),'utf8').replace(/^\uFEFF/,''));
+const mandatory=new Set(['game/jack.qsp',...aliases.files.map(x=>'game/'+x.compatibility),...JSON.parse(fs.readFileSync('records/equipment-icon-fill-20261102/manifest.json','utf8')).files.map(x=>'game/'+x.game_path)]);
+const hash=b=>crypto.createHash('sha256').update(b).digest('hex'),cutoff=Date.parse(base.preparedUtc),selected=[],missing=[],stats={inspectedMetadata:0,selectedReads:0,unchangedSelected:0};
+function walk(dir){for(const e of fs.readdirSync(dir,{withFileTypes:true})){const p=path.join(dir,e.name);if(e.isDirectory())walk(p);else if(e.isFile())inspect(p);}}
+function inspect(p){const rel=path.relative(root,p).replaceAll('\\','/'),s=fs.statSync(p),prev=byPath.get(rel.toLowerCase());stats.inspectedMetadata++;const json=rel.startsWith('game/json/')&&rel.endsWith('.json'),small=/^game\/(css|content\/js)\//.test(rel);const why=[];
+ if(mandatory.has(rel))why.push('required-explicit-payload');if(json)why.push('complete-json-folder');if(!prev)why.push('new-path');else if(s.size!==prev.bytes)why.push('size-changed');if(s.mtimeMs>cutoff)why.push('modified-after-base');if(small)why.push('small-runtime-compare');if(!why.length)return;
+ stats.selectedReads++;const b=fs.readFileSync(p),sha256=hash(b),changed=!prev||sha256!==prev.sha256;if(!changed&&!mandatory.has(rel)&&!json){stats.unchangedSelected++;return;}selected.push({path:rel,bytes:b.length,sha256,baselineSha256:prev?.sha256??null,changed,reason:why,modifiedAt:s.mtime.toISOString()});}
+for(const dir of ['game/json','game/css','game/content/pic','game/content/js','game/content/snd','game/fonts']){const p=path.join(root,dir);if(fs.existsSync(p))walk(p);}inspect(path.join(root,'game/jack.qsp'));
+for(const rel of mandatory)if(!fs.existsSync(path.join(root,rel)))missing.push(rel);
+const result={sourceRoot:root,baselineCommit:'49458e65c6f3ee9d3d072e976fc4fe5a43b1013a',baselineQsp:base.qspSha256,cutoff:base.preparedUtc,comparison:'Local metadata inventory; hash selected/new/size-changed/recent/mandatory/small runtime files and JSON only. No whole-image hash sweep.',stats,mandatoryCount:mandatory.size,missingMandatory:missing,selected:selected.sort((a,b)=>a.path.localeCompare(b.path))};fs.writeFileSync(path.join(task,'inventory.json'),JSON.stringify(result,null,2));
+const extra=selected.filter(x=>!x.path.startsWith('game/json/'));console.log(JSON.stringify({stats,selected:selected.length,bytes:selected.reduce((s,x)=>s+x.bytes,0),missingMandatory:missing,nonJson:extra.map(x=>({path:x.path,bytes:x.bytes,changed:x.changed,reason:x.reason}))},null,2));

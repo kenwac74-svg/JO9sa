@@ -1,0 +1,234 @@
+{
+  "audit": "fog disposal and basement meiki routing",
+  "date": "2026-11-02",
+  "mode": "read-only source audit plus memory-only control-flow model; no game engine or save execution",
+  "source": {
+    "game": "C:\\MOVE\\Jack O Nine Tails v2.4.1_Kor_Full\\game",
+    "qsp": "C:\\MOVE\\Jack O Nine Tails v2.4.1_Kor_Full\\game\\jack.qsp",
+    "sha256": "2f74d3194ee16c5400e09e06669fee39e32c851e5f03b22c188534ae3f9be9cb",
+    "locations": 278,
+    "verifiedSha256": "2f74d3194ee16c5400e09e06669fee39e32c851e5f03b22c188534ae3f9be9cb",
+    "hashMatchesSource": true
+  },
+  "conclusion": {
+    "codeGapConfirmed": true,
+    "scope": "The reported target is prisoner. Both prisoner and the precursor post-battle stock are omitted from jo9_meiki_willing and jo9_meiki_state.",
+    "reportedPlaythroughConfirmed": false,
+    "certainty": "The missing role dispatch and zero-roll path are confirmed statically. Matching the exact reported actor and prior state still needs UI route or state evidence.",
+    "notEvidenceOf": "Native save corruption, QSP runtime reproduction, or a regression introduced by a particular prior patch.",
+    "reportedTarget": "prisoner"
+  },
+  "stateKeys": {
+    "actual": [
+      "virginity",
+      "jo9_meiki_initialized",
+      "jo9_meiki_prev",
+      "jo9_meiki_checked",
+      "jo9_meiki_known"
+    ],
+    "jo9_meiki_rolledPresent": false,
+    "explanation": "Current code uses jo9_meiki_checked as the once-only outcome guard; it does not use jo9_meiki_rolled."
+  },
+  "routes": [
+    {
+      "id": "fog-to-disposal",
+      "steps": [
+        {
+          "at": "конец_боя:120-125",
+          "action": "Victory continue action goes to выход_из_боя."
+        },
+        {
+          "at": "выход_из_боя:610-634",
+          "action": "get_girl generates stock, applies trophy state, then routes interaction_city=61120."
+        },
+        {
+          "at": "выход_из_боя:640-641",
+          "action": "Runs $newloc then goes to return location."
+        },
+        {
+          "at": "interaction_city:11274-11313",
+          "action": "61120 sets hunting_prize=1, interaction_type=hunting_trophy, displays hunting_prize_options."
+        },
+        {
+          "at": "#options:338-357",
+          "action": "Menu acts on captured stock. It offers acquisition and storage/disposal actions; it does not select arbitrary existing slave/assistant/room/prisoner actors."
+        }
+      ]
+    },
+    {
+      "id": "disposal-stock-transition",
+      "steps": [
+        {
+          "at": "interaction_city:11315-11351",
+          "action": "61121 validates stock/hunting_prize, keeps role stock, calls $vaginally_penetrated with dynslave replaced by stock at line11334."
+        },
+        {
+          "at": "#dynamic:5004-5033",
+          "action": "Shared helper calls state(role,0) before v<2->2 and willing(role,0) plus checks(transition) after the change, then state(role,1 or0)."
+        },
+        {
+          "at": "jo9_meiki_willing:3-91",
+          "action": "Default result=0 and explicit branches only slave,assistant,room1..4. stock is absent."
+        },
+        {
+          "at": "jo9_meiki_state:22-285",
+          "action": "Explicit update branches only slave,assistant,room1..4. stock is absent, so no initialization, first-transition draw, known flag, or rank grant occurs."
+        }
+      ]
+    },
+    {
+      "id": "storage-after-disposal",
+      "steps": [
+        {
+          "at": "interaction_city:11385-11390",
+          "action": "61133 temporarily swaps existing main slave into empty prisoner, acquires stock to slave, then slave_to_cage swaps captured slave into prisoner; original main slave returns."
+        },
+        {
+          "at": "stock_to_slave_nogt:92-94",
+          "action": "Acquisition uses full slave/stock instance swap."
+        },
+        {
+          "at": "slave_to_cage:6-27",
+          "action": "Full slave/prisoner swap; hunting_prize is cleared and return location entered."
+        },
+        {
+          "at": "#static_base:413-415,452-480",
+          "action": "Instance arrays and associated variables are swapped with copyarr. Meiki keys in the actor array travel with the actor; this path does not discard those keys."
+        }
+      ],
+      "consequence": "If a stock actor already transitioned while unsupported, storing it in prisoner keeps its uninitialized/unknown state. Later moving it to a supported role at virginity>=2 initializes prev to the current value and checked=1, so it will not receive the missed generic first-transition draw."
+    },
+    {
+      "id": "existing-basement-prisoner",
+      "steps": [
+        {
+          "at": "prison_cell:6-10",
+          "action": "Basement cell uses role prisoner and runs newloc_update_slave for prisoner."
+        },
+        {
+          "at": "interaction:8234-8276",
+          "action": "Dungeon activity1486 uses prisoner and calls the same transition helper with prisoner at line8267."
+        },
+        {
+          "at": "jo9_meiki_willing:3-91;jo9_meiki_state:22-285",
+          "action": "prisoner is absent from both dispatchers, just like stock."
+        }
+      ],
+      "consequence": "First transition performed while in prisoner cannot run the generic discovery draw. This is a separate route from the stock disposal screen."
+    }
+  ],
+  "supportedRoleBehavior": {
+    "at": "jo9_meiki_state:22-65",
+    "rules": [
+      "First entry at virginity>0 sets initialized=1,prev=current,checked=1 and grants no generic retrospective draw.",
+      "A fresh virginity0->>=2 transition with prev=0 and checked=0 consumes checked=1 once. Only permit1 draws rand(1,100)<=5.",
+      "Existing known=1 and virginity>=2 normalizes to4 and applies one-time rank minima when initialized<2.",
+      "Repeated actions after a failed draw do not re-roll. A 95 percent failure alone is expected for a correctly supported eligible first transition."
+    ],
+    "specialCase": {
+      "at": "jo9_meiki_state:7-20",
+      "rule": "Fixed latent type2624 reveals on a supported role once experienced; the whitelist also excludes stock and prisoner."
+    }
+  },
+  "minimumModel": {
+    "description": "Hand-transcribed role-dispatch and first-transition bookkeeping, all-zero fresh state, valid age/state assumed, forced candidate draw1. It is not an execution of QSP or a save.",
+    "cases": [
+      {
+        "role": "slave",
+        "drawIfReached": 1,
+        "rollCount": 1,
+        "actor": {
+          "v": 4,
+          "initialized": 2,
+          "prev": 4,
+          "checked": 1,
+          "known": 1
+        }
+      },
+      {
+        "role": "stock",
+        "drawIfReached": 1,
+        "rollCount": 0,
+        "actor": {
+          "v": 2,
+          "initialized": 0,
+          "prev": 0,
+          "checked": 0,
+          "known": 0
+        }
+      },
+      {
+        "role": "prisoner",
+        "drawIfReached": 1,
+        "rollCount": 0,
+        "actor": {
+          "v": 2,
+          "initialized": 0,
+          "prev": 0,
+          "checked": 0,
+          "known": 0
+        }
+      },
+      {
+        "role": "stock then acquire as slave",
+        "rollCount": 0,
+        "actor": {
+          "v": 2,
+          "initialized": 1,
+          "prev": 2,
+          "checked": 1,
+          "known": 0
+        }
+      }
+    ],
+    "assertions": {
+      "supportedRoleSuccess": true,
+      "stockSkipped": true,
+      "prisonerSkipped": true,
+      "lateSupportedInitializationBlocksMissedDraw": true
+    }
+  },
+  "distinguishFromExpectedFailure": {
+    "bugEvidence": [
+      "The user-confirmed target is a captured actor stored as prisoner; the dungeon activity1486 routes directly through the unsupported prisoner helper.",
+      "Before the relevant activity the target was virginity0 (or a known=1 target fails normalization/growth while remaining in an unsupported role).",
+      "For generic discovery the helper performs the first transition but the dispatch never reaches a random draw."
+    ],
+    "expectedNoNewDiscovery": [
+      "Target was already experienced before the current patch/first bookkeeping initialization.",
+      "jo9_meiki_checked already equals1 from a prior eligible draw or a prior noneligible first transition.",
+      "A supported role reached its only5 percent draw and the draw failed.",
+      "No qualifying first transition happened during this activity."
+    ],
+    "unknowns": [
+      "The exact activity used on the confirmed prisoner actor; the source has dungeon activity1486 invoking the common transition helper.",
+      "The target actor identity, role,virginity,known,checked,initialized,prev before the activity.",
+      "Whether this was a generic actor or fixed latent type2624."
+    ]
+  },
+  "minimalFixDirection": {
+    "implementationPerformed": false,
+    "items": [
+      "Extend the shared willing/state dispatcher to the intended stock and prisoner roles, or use a role-safe generic shared routine with equivalent bookkeeping.",
+      "Keep initialization before the first transition and the post-transition permit flag on the same actor array. Adding only a popup or only one dispatcher is insufficient.",
+      "Preserve one-shot checked behavior and existing known=1 traits and one-time skill grants.",
+      "Do not blindly re-roll all experienced legacy actors; the old skipped outcome cannot be distinguished from an expected prior failure by current keys alone.",
+      "Verify stock-disposal transition, direct prisoner transition, stock-to-prisoner and later retrieval, supported-role5 percent success/failure, existing known and fixed latent type against a minimal state model before any authorized patch."
+    ]
+  },
+  "integrity": {
+    "workQspUntouched": true,
+    "gameEngineExecuted": false,
+    "savesReadOrModified": false,
+    "imagesModified": false,
+    "translationsModified": false,
+    "sourceHashAtReport": "2f74d3194ee16c5400e09e06669fee39e32c851e5f03b22c188534ae3f9be9cb"
+  },
+  "memoryUse": {
+    "file": "MEMORY.md",
+    "lines": "3-4",
+    "purpose": "Only scope guard: verify current installation and do not call source/model checks live play proof.",
+    "rolloutId": null
+  },
+  "userClarification": "The user confirmed the actor is a captured slave stored in the basement: prisoner. Private-room room1..4 actors are outside the reported target."
+}

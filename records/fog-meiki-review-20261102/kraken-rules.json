@@ -1,0 +1,942 @@
+{
+  "auditDate": "2026-11-02",
+  "mode": "read-only source analysis; no engine execution",
+  "source": "tmp/fog-meiki-review-20261102/current-decoded.qsps",
+  "sourceSha256": "c77cadd9bd1335eea6e39a06f4049499bd2b177a6c2d04ccf9d22c1496a3cc75",
+  "gamePathProvidedByParent": "C:/MOVE/Jack O Nine Tails v2.4.1_Kor_Full/game",
+  "scope": "Only neutral game-state, training, eligibility, yield and success-condition analysis. No dialogue reproduced. Only this analysis record written.",
+  "lineConvention": "location body line 1 starts on the physical line after # location; decodedFileLine is 1-based in current-decoded.qsps",
+  "terminology": {
+    "specialTrait": "명기",
+    "traitCondition": "virginity = 4",
+    "training": "sub_tentacles",
+    "monsterStage": "tentacle_size",
+    "storedYield": "spawn_semen",
+    "cooldownProgress": "spawn_milked"
+  },
+  "trainingGrades": [
+    {
+      "value": 0,
+      "label": "F"
+    },
+    {
+      "value": 1,
+      "label": "D"
+    },
+    {
+      "value": 2,
+      "label": "C"
+    },
+    {
+      "value": 3,
+      "label": "B"
+    },
+    {
+      "value": 4,
+      "label": "A"
+    },
+    {
+      "value": 5,
+      "label": "S"
+    }
+  ],
+  "monsterTable": [
+    {
+      "stage": 0,
+      "name": "그늘진 그리퍼",
+      "grade": "D",
+      "ordinaryTrainingMinimum": 1,
+      "ordinaryTrainingGrade": "D",
+      "baseYieldAtZeroCooldown": 12,
+      "traitBonusPercent": 20
+    },
+    {
+      "stage": 1,
+      "name": "어둠의 유생",
+      "grade": "C",
+      "ordinaryTrainingMinimum": 2,
+      "ordinaryTrainingGrade": "C",
+      "baseYieldAtZeroCooldown": 18,
+      "traitBonusPercent": 30
+    },
+    {
+      "stage": 2,
+      "name": "촉수 짐승",
+      "grade": "B",
+      "ordinaryTrainingMinimum": 3,
+      "ordinaryTrainingGrade": "B",
+      "baseYieldAtZeroCooldown": 24,
+      "traitBonusPercent": 40
+    },
+    {
+      "stage": 3,
+      "name": "크라켄",
+      "grade": "A",
+      "ordinaryTrainingMinimum": 4,
+      "ordinaryTrainingGrade": "A",
+      "baseYieldAtZeroCooldown": 64,
+      "traitBonusPercent": 50
+    },
+    {
+      "stage": 4,
+      "name": "레비아탄",
+      "grade": "S",
+      "ordinaryTrainingMinimum": 5,
+      "ordinaryTrainingGrade": "S",
+      "baseYieldAtZeroCooldown": 126,
+      "traitBonusPercent": 60
+    }
+  ],
+  "distinctions": [
+    {
+      "aspect": "selection",
+      "traitBypass": false,
+      "summary": "Manual harvest menu has no training gate for anyone. It requires a present, ready monster. Trait does not unlock selection."
+    },
+    {
+      "aspect": "productive harvest",
+      "traitBypass": true,
+      "summary": "After the action is accepted, successful production requires training > stage OR trait. Thus a trait holder at F can produce from stage 3 Kraken and stage 4 Leviathan."
+    },
+    {
+      "aspect": "success probability",
+      "traitBypass": "not a percentage roll",
+      "summary": "Production uses a deterministic OR condition. General acceptance/refusal is evaluated separately and is not bypassed by this OR."
+    },
+    {
+      "aspect": "training value / advancement",
+      "traitBypass": false,
+      "summary": "Trait does not set training level to the monster stage and does not skip lesson advancement requirements. Dedicated trait training XP bonus excludes sub_tentacles."
+    },
+    {
+      "aspect": "cost / damage",
+      "traitBypass": false,
+      "summary": "Damage is 4 - training for manual harvest/lesson and automatic harvest, so F retains damage 4; normal condition and energy costs still apply."
+    },
+    {
+      "aspect": "readiness/cooldown",
+      "traitBypass": false,
+      "summary": "Ready requires pet_tentacle > 0, tentacle_state != 2, spawn_milked <= stage. Spending advances cooldown by max(training, positive-yield ? 1 : 0), so trait F production still advances cooldown at least 1."
+    },
+    {
+      "aspect": "automatic assignment",
+      "traitBypass": false,
+      "summary": "Rule enabled, conscious existence, energy >= 0, monster readiness/hunger and selected role are separate requirements. Assistant additionally needs training > 0 even with trait. Main trainee and room roles do not have that extra minimum."
+    }
+  ],
+  "manualVsAuto": {
+    "manualHarvest": {
+      "selection": "present and ready monster; no education gate",
+      "acceptance": "shared interaction res check must be nonnegative before special production block",
+      "production": "training > stage OR virginity = 4",
+      "bonus": "(12 + stage) / 10 for trait; otherwise 1",
+      "sourceRoles": [
+        "slave",
+        "assistant"
+      ]
+    },
+    "manualLesson": {
+      "selection": "pen >= 1; monster exists; not completed; execution also requires readiness",
+      "production": "training > stage OR virginity = 4",
+      "learning": "rise_difficulty = 12 + training * 12, +999 when training > stage; shared learning calculations apply; trait XP helper excludes this subject"
+    },
+    "automatic": {
+      "eligibility": "chosen role, rule=1, state=slave_exist, energy>=0, monster exists, ready and hungry",
+      "assistantExtraMinimum": "training > 0; trait F is ineligible",
+      "ordinaryTraineeAndRoomMinimum": "no extra education minimum; may perform action without production",
+      "traineeRefusal": "explicit shared acceptance/repulse check; on refusal reselect worker",
+      "assistantAndRooms": "no matching refusal check in these automatic branches",
+      "production": "training > stage OR virginity = 4",
+      "bonus": "20 + stage*10 percent for trait; otherwise 0",
+      "rolePriority": "main trainee first, then assistant. Any enabled upper role suppresses room fallback in selector; otherwise highest training room role, random tie resolution."
+    }
+  },
+  "planningTradeoffs": [
+    {
+      "choice": "Keep present trait exception",
+      "benefit": "Clear rare-trait identity; immediate high-stage productive use with no education.",
+      "cost": "Stage-based education matters less for productive access; raw per-action yield bonus is also largest on high stages. Low-grade damage and acceptance remain."
+    },
+    {
+      "choice": "Discuss whether education controls efficiency after access",
+      "benefit": "Can preserve intended immediate access while giving education a distinct economic role.",
+      "cost": "Any formula or threshold would be a new balance decision requiring user direction; none proposed as approved or implemented."
+    },
+    {
+      "choice": "Discuss automatic F assistant exception separately",
+      "benefit": "Clarifies whether manual/auto consistency or assistant minimum training is desired.",
+      "cost": "Current automatic assistant F restriction is independent of the productive trait exception; changing it would alter role automation policy."
+    }
+  ],
+  "evidence": [
+    {
+      "location": "#variative",
+      "lines": [
+        {
+          "line": 229,
+          "decodedFileLine": 118278,
+          "code": "$skill_grade[0] = ' F'"
+        },
+        {
+          "line": 230,
+          "decodedFileLine": 118279,
+          "code": "$skill_grade[1] = ' D'"
+        },
+        {
+          "line": 231,
+          "decodedFileLine": 118280,
+          "code": "$skill_grade[2] = ' C'"
+        },
+        {
+          "line": 232,
+          "decodedFileLine": 118281,
+          "code": "$skill_grade[3] = ' B'"
+        },
+        {
+          "line": 233,
+          "decodedFileLine": 118282,
+          "code": "$skill_grade[4] = ' A'"
+        },
+        {
+          "line": 234,
+          "decodedFileLine": 118283,
+          "code": "$skill_grade[5] = ' S'"
+        }
+      ]
+    },
+    {
+      "location": "#static_base",
+      "lines": [
+        {
+          "line": 183,
+          "decodedFileLine": 122785,
+          "code": "semen_gain[0] = 12  &! daily"
+        },
+        {
+          "line": 184,
+          "decodedFileLine": 122786,
+          "code": "semen_gain[1] = 18  &! daily (+6)"
+        },
+        {
+          "line": 185,
+          "decodedFileLine": 122787,
+          "code": "semen_gain[2] = 24  &! daily (+6)"
+        },
+        {
+          "line": 186,
+          "decodedFileLine": 122788,
+          "code": "semen_gain[3] = 64  &! every other day (32/day, +8)"
+        },
+        {
+          "line": 187,
+          "decodedFileLine": 122789,
+          "code": "semen_gain[4] = 126 &! every third day (42/day, +10)"
+        },
+        {
+          "line": 207,
+          "decodedFileLine": 122809,
+          "code": "$tentacle_name[0] = dyneval($vb_cycle_skill, 1, '그늘진 그리퍼')    & $tentacle_chart += $tentacle_name[0]+'<br>'"
+        },
+        {
+          "line": 208,
+          "decodedFileLine": 122810,
+          "code": "$tentacle_name[1] = dyneval($vb_cycle_skill, 2, '어둠의 유생')   & $tentacle_chart += $tentacle_name[1]+'<br>'"
+        },
+        {
+          "line": 209,
+          "decodedFileLine": 122811,
+          "code": "$tentacle_name[2] = dyneval($vb_cycle_skill, 3, '촉수 짐승')  & $tentacle_chart += $tentacle_name[2]+'<br>'"
+        },
+        {
+          "line": 210,
+          "decodedFileLine": 122812,
+          "code": "$tentacle_name[3] = dyneval($vb_cycle_skill, 4, '크라켄')          & $tentacle_chart += $tentacle_name[3]+'<br>'"
+        },
+        {
+          "line": 211,
+          "decodedFileLine": 122813,
+          "code": "$tentacle_name[4] = dyneval($vb_cycle_skill, 5, '레비아탄')       & $tentacle_chart += $tentacle_name[4]+'</center>'"
+        }
+      ]
+    },
+    {
+      "location": "menu_form",
+      "lines": [
+        {
+          "line": 374,
+          "decodedFileLine": 3700,
+          "code": "if pet_tentacle = 0:"
+        },
+        {
+          "line": 376,
+          "decodedFileLine": 3702,
+          "code": "elseif func('jo9_household_worker', 'tentacle_ready') = 0:"
+        },
+        {
+          "line": 379,
+          "decodedFileLine": 3705,
+          "code": "func('$menu', 'goto', $menu_item_Milk_A, menu_Milk_A, 'interaction', 'interaction', '안개 괴물 착정', '<<$assistant_name>>에게 착정 지시')"
+        },
+        {
+          "line": 447,
+          "decodedFileLine": 3773,
+          "code": "if pet_tentacle = 0:"
+        },
+        {
+          "line": 449,
+          "decodedFileLine": 3775,
+          "code": "elseif func('jo9_household_worker', 'tentacle_ready') = 0:"
+        },
+        {
+          "line": 452,
+          "decodedFileLine": 3778,
+          "code": "func('$menu', 'goto', $menu_item_Milk_S, menu_Milk_S, 'interaction', 'interaction', '안개 괴물 착정', '<<$slave_name>>에게 착정 지시')"
+        }
+      ]
+    },
+    {
+      "location": "teach_screen",
+      "lines": [
+        {
+          "line": 498,
+          "decodedFileLine": 28211,
+          "code": "if slave[\"sub_tentacles\"] > 5:"
+        },
+        {
+          "line": 500,
+          "decodedFileLine": 28213,
+          "code": "elseif pen < 1:"
+        },
+        {
+          "line": 502,
+          "decodedFileLine": 28215,
+          "code": "elseif pet_tentacle ! 1:"
+        },
+        {
+          "line": 505,
+          "decodedFileLine": 28218,
+          "code": "$middle_text_8 += '<a href = \"EXEC: interaction = 1354 & gt ''interaction''\"><<$slave_tentacle[slave[''sub_tentacles'']]>></a><<iif(debug_interactions = 3, \"(\" + debug_repulse[1354] + \",\" + debug_sex_acceptance[1354] + \")\", \"\")>><br>'"
+        }
+      ]
+    },
+    {
+      "location": "interaction",
+      "lines": [
+        {
+          "line": 5168,
+          "decodedFileLine": 38621,
+          "code": "rise_difficulty = 12 + dynslave['sub_tentacles'] * 12"
+        },
+        {
+          "line": 5169,
+          "decodedFileLine": 38622,
+          "code": "if dynslave['sub_tentacles'] > tentacle_size: rise_difficulty += 999 &! very slow to level up if practicing on a fiend size below the current skill level"
+        },
+        {
+          "line": 5171,
+          "decodedFileLine": 38624,
+          "code": "if dynslave['sub_tentacles'] > 5: $interaction_type = 'completed'"
+        },
+        {
+          "line": 5193,
+          "decodedFileLine": 38646,
+          "code": "tentacle_hp += 1"
+        },
+        {
+          "line": 5195,
+          "decodedFileLine": 38648,
+          "code": "if dynslave['sub_tentacles'] > tentacle_size or dynslave['virginity'] = 4:"
+        },
+        {
+          "line": 5197,
+          "decodedFileLine": 38650,
+          "code": "tentacle_hp += 2"
+        },
+        {
+          "line": 5199,
+          "decodedFileLine": 38652,
+          "code": "spawn_semen += semen_gain[max(0, tentacle_size - spawn_milked)] * iif(dynslave['virginity'] = 4, 12 + tentacle_size, 10) / 10"
+        },
+        {
+          "line": 5207,
+          "decodedFileLine": 38660,
+          "code": "gs 'jo9_household_worker', 'tentacle_spent', dynslave['sub_tentacles'], spawn_semen - jo9_tentacle_before"
+        },
+        {
+          "line": 5210,
+          "decodedFileLine": 38663,
+          "code": "damage = 4 - dynslave['sub_tentacles']"
+        },
+        {
+          "line": 5223,
+          "decodedFileLine": 38676,
+          "code": "if func('jo9_household_worker', 'tentacle_ready') = 0: gt 'menu_form'"
+        },
+        {
+          "line": 5225,
+          "decodedFileLine": 38678,
+          "code": "dynamic $replace($interaction_lesson_tentacles, 'dyn'+'slave', 'slave')"
+        },
+        {
+          "line": 5230,
+          "decodedFileLine": 38683,
+          "code": "if func('jo9_household_worker', 'tentacle_ready') = 0: gt 'menu_form'"
+        },
+        {
+          "line": 5232,
+          "decodedFileLine": 38685,
+          "code": "dynamic $replace($interaction_lesson_tentacles, 'dyn'+'slave', 'assistant')"
+        },
+        {
+          "line": 9390,
+          "decodedFileLine": 42843,
+          "code": "if func('jo9_household_worker', 'tentacle_ready') = 0: gt 'menu_form'"
+        },
+        {
+          "line": 9404,
+          "decodedFileLine": 42857,
+          "code": "tentacle_hp += 1"
+        },
+        {
+          "line": 9406,
+          "decodedFileLine": 42859,
+          "code": "if assistant['sub_tentacles'] > tentacle_size or assistant['virginity'] = 4:"
+        },
+        {
+          "line": 9408,
+          "decodedFileLine": 42861,
+          "code": "tentacle_hp += 2"
+        },
+        {
+          "line": 9410,
+          "decodedFileLine": 42863,
+          "code": "spawn_semen += semen_gain[max(0, tentacle_size - spawn_milked)] * iif(assistant['virginity'] = 4, 12 + tentacle_size, 10) / 10"
+        },
+        {
+          "line": 9426,
+          "decodedFileLine": 42879,
+          "code": "gs 'jo9_household_worker', 'tentacle_spent', assistant['sub_tentacles'], spawn_semen - jo9_tentacle_before"
+        },
+        {
+          "line": 9429,
+          "decodedFileLine": 42882,
+          "code": "damage = 4 - assistant['sub_tentacles']"
+        },
+        {
+          "line": 9439,
+          "decodedFileLine": 42892,
+          "code": "if func('jo9_household_worker', 'tentacle_ready') = 0: gt 'menu_form'"
+        },
+        {
+          "line": 9442,
+          "decodedFileLine": 42895,
+          "code": "interaction_slave['repulse'] = iif(slave['virginity'] < 1, 25, 24) &! same as fiend milking lesson"
+        },
+        {
+          "line": 9443,
+          "decodedFileLine": 42896,
+          "code": "interaction_slave['motivation_repulse'] = 5 - slave['sub_tentacles']"
+        },
+        {
+          "line": 9455,
+          "decodedFileLine": 42908,
+          "code": "tentacle_hp += 1"
+        },
+        {
+          "line": 9457,
+          "decodedFileLine": 42910,
+          "code": "if slave['sub_tentacles'] > tentacle_size or slave['virginity'] = 4:"
+        },
+        {
+          "line": 9459,
+          "decodedFileLine": 42912,
+          "code": "tentacle_hp += 2"
+        },
+        {
+          "line": 9461,
+          "decodedFileLine": 42914,
+          "code": "spawn_semen += semen_gain[max(0, tentacle_size - spawn_milked)] * iif(slave['virginity'] = 4, 12 + tentacle_size, 10) / 10"
+        },
+        {
+          "line": 9477,
+          "decodedFileLine": 42930,
+          "code": "gs 'jo9_household_worker', 'tentacle_spent', slave['sub_tentacles'], spawn_semen - jo9_tentacle_before"
+        },
+        {
+          "line": 9480,
+          "decodedFileLine": 42933,
+          "code": "damage = 4 - slave['sub_tentacles']"
+        }
+      ]
+    },
+    {
+      "location": "interaction_result",
+      "lines": [
+        {
+          "line": 646,
+          "decodedFileLine": 47176,
+          "code": "if interaction_dynslave['res'] < 0:"
+        },
+        {
+          "line": 651,
+          "decodedFileLine": 47181,
+          "code": "else"
+        },
+        {
+          "line": 664,
+          "decodedFileLine": 47194,
+          "code": "dynamic $dynslave_energy_drop"
+        },
+        {
+          "line": 671,
+          "decodedFileLine": 47201,
+          "code": "dynamic $special_part &! note: may modify diligence"
+        },
+        {
+          "line": 682,
+          "decodedFileLine": 47212,
+          "code": "if damage > 0: dynamic $replace($dyn_slave_damaged, 'dyn'+'slave', 'dynslave') &! added physical damage check - ImperatorAugustus"
+        },
+        {
+          "line": 854,
+          "decodedFileLine": 47384,
+          "code": "if interaction_dynslave['res'] < 0:"
+        },
+        {
+          "line": 873,
+          "decodedFileLine": 47403,
+          "code": "else"
+        },
+        {
+          "line": 883,
+          "decodedFileLine": 47413,
+          "code": "dynamic $special_part"
+        },
+        {
+          "line": 884,
+          "decodedFileLine": 47414,
+          "code": "rise_difficulty += max(1, dyneval($replace('result = <<$subskill>>', 'slave', 'dynslave')))*rise_mod"
+        },
+        {
+          "line": 888,
+          "decodedFileLine": 47418,
+          "code": "success = learn_bonus['sex'] &! item bonuses currently go up to 4 and there are no items that give penalties"
+        },
+        {
+          "line": 889,
+          "decodedFileLine": 47419,
+          "code": "success += dyneval('result = <<$coach_skill>>') &! for balance purposes, master skill is treated as an alternative to item bonuses (giving master skill a +1 advantage at S+)"
+        },
+        {
+          "line": 890,
+          "decodedFileLine": 47420,
+          "code": "success += (interaction_dynslave['diligence']*(dynslave['intellect'] + dynslave['temper']))/5 &! diligence determines how much intellect and temperament contribute"
+        },
+        {
+          "line": 891,
+          "decodedFileLine": 47421,
+          "code": "success += (dynslave['stamina'] - 2) &! endurance B+ and up helps, below hinders"
+        },
+        {
+          "line": 892,
+          "decodedFileLine": 47422,
+          "code": "success += (master_mood + dynslave['mood'])/2 &! good mood helps, bad mood hinders"
+        },
+        {
+          "line": 893,
+          "decodedFileLine": 47423,
+          "code": "success -= dynslave['pride'] &! being prideful hinders"
+        },
+        {
+          "line": 894,
+          "decodedFileLine": 47424,
+          "code": "success -= dynslave['angst'] &! being depressed hinders"
+        },
+        {
+          "line": 924,
+          "decodedFileLine": 47454,
+          "code": "if interaction_dynslave['diligence'] <= 0:"
+        },
+        {
+          "line": 925,
+          "decodedFileLine": 47455,
+          "code": "success = 0"
+        },
+        {
+          "line": 958,
+          "decodedFileLine": 47488,
+          "code": "dynamic $replace($dyn_advance_sex_skills, 'dyn'+'slave', 'dynslave')"
+        },
+        {
+          "line": 959,
+          "decodedFileLine": 47489,
+          "code": "if success >= rise_difficulty:"
+        }
+      ]
+    },
+    {
+      "location": "#dynamic",
+      "lines": [
+        {
+          "line": 536,
+          "decodedFileLine": 91665,
+          "code": "interaction_dynslave['res'] = dynslave['obedience'] + interaction_dynslave['sex_acceptance'] - interaction_dynslave['repulse']"
+        },
+        {
+          "line": 545,
+          "decodedFileLine": 91674,
+          "code": "if $interaction_partner = 'dynslave' and interaction_dynslave['res'] >= 0: dynslave['daring'] = max(dynslave['daring'], interaction_dynslave['repulse']) &! this is used to limit merit, increases here and decreases in next_day"
+        },
+        {
+          "line": 892,
+          "decodedFileLine": 92021,
+          "code": "if dyneval($replace('result = <<$subskill>>', 'slave', 'dynslave')) < 5:"
+        },
+        {
+          "line": 894,
+          "decodedFileLine": 92023,
+          "code": "if success >= rise_difficulty or dyneval($replace('result = <<$subskill>>', 'slave', 'dynslave')) = 0:"
+        },
+        {
+          "line": 911,
+          "decodedFileLine": 92040,
+          "code": "if func('jo9_meiki_training_bonus', 'dynslave', $subskill) = 1: jo9_learning_gain += 1"
+        }
+      ]
+    },
+    {
+      "location": "jo9_meiki_training_bonus",
+      "lines": [
+        {
+          "line": 4,
+          "decodedFileLine": 330545,
+          "code": "if $interaction_type = 'self_sex_lesson' or $interaction_type = 'self_sex_lesson_assistant':"
+        },
+        {
+          "line": 5,
+          "decodedFileLine": 330546,
+          "code": "if $args[1] = 'slave[\"sub_threesome\"]' or $args[1] = 'slave[\"sub_dp\"]' or $args[1] = 'slave[\"sub_tp\"]' or $args[1] = 'slave[\"sub_gangbang\"]' or $args[1] = 'slave[\"sub_bukkake\"]':"
+        }
+      ]
+    },
+    {
+      "location": "jo9_household_worker",
+      "lines": [
+        {
+          "line": 6,
+          "decodedFileLine": 332519,
+          "code": "if $args[0] = 'tentacle_ready':"
+        },
+        {
+          "line": 7,
+          "decodedFileLine": 332520,
+          "code": "result = iif(pet_tentacle > 0 and tentacle_state ! 2 and spawn_milked <= tentacle_size, 1, 0)"
+        },
+        {
+          "line": 10,
+          "decodedFileLine": 332523,
+          "code": "if $args[0] = 'tentacle_spent':"
+        },
+        {
+          "line": 11,
+          "decodedFileLine": 332524,
+          "code": "spawn_milked += max(args[1], iif(args[2] > 0, 1, 0))"
+        },
+        {
+          "line": 12,
+          "decodedFileLine": 332525,
+          "code": "if spawn_milked > tentacle_size: tentacle_state = 2"
+        },
+        {
+          "line": 42,
+          "decodedFileLine": 332555,
+          "code": "elseif $args[0]='tentacle':"
+        },
+        {
+          "line": 43,
+          "decodedFileLine": 332556,
+          "code": "if func('jo9_household_worker', 'tentacle_ready') = 0 or (tentacle_state!1 and spawn_milked!0): exit"
+        },
+        {
+          "line": 44,
+          "decodedFileLine": 332557,
+          "code": "$jo9_rule='tentacle_rule' & $jo9_skill='sub_tentacles'"
+        },
+        {
+          "line": 53,
+          "decodedFileLine": 332566,
+          "code": "$jo9_roles[0]='slave'"
+        },
+        {
+          "line": 54,
+          "decodedFileLine": 332567,
+          "code": "$jo9_roles[1]='assistant'"
+        },
+        {
+          "line": 55,
+          "decodedFileLine": 332568,
+          "code": "$jo9_roles[2]='room1'"
+        },
+        {
+          "line": 56,
+          "decodedFileLine": 332569,
+          "code": "$jo9_roles[3]='room2'"
+        },
+        {
+          "line": 57,
+          "decodedFileLine": 332570,
+          "code": "$jo9_roles[4]='room3'"
+        },
+        {
+          "line": 58,
+          "decodedFileLine": 332571,
+          "code": "$jo9_roles[5]='room4'"
+        },
+        {
+          "line": 66,
+          "decodedFileLine": 332579,
+          "code": "if jo9_i<2 and jo9_state>CONST_INT['no_slave'] and jo9_enabled=1: jo9_upper_checked=1"
+        },
+        {
+          "line": 67,
+          "decodedFileLine": 332580,
+          "code": "if jo9_i>=2 and jo9_upper_checked=1: exit"
+        },
+        {
+          "line": 68,
+          "decodedFileLine": 332581,
+          "code": "jo9_eligible=iif(jo9_state=CONST_INT['slave_exist'] and jo9_enabled=1 and $jo9_role!$args[1],1,0)"
+        },
+        {
+          "line": 69,
+          "decodedFileLine": 332582,
+          "code": "if $args[0] ! 'wake' and jo9_energy<iif($args[0]='wash',-1,0): jo9_eligible=0"
+        },
+        {
+          "line": 74,
+          "decodedFileLine": 332587,
+          "code": "if $args[0]='tentacle' and $jo9_role='assistant' and jo9_value<=0: jo9_eligible=0"
+        },
+        {
+          "line": 76,
+          "decodedFileLine": 332589,
+          "code": "if jo9_i<2:"
+        },
+        {
+          "line": 77,
+          "decodedFileLine": 332590,
+          "code": "$jo9_winner=$jo9_role"
+        },
+        {
+          "line": 78,
+          "decodedFileLine": 332591,
+          "code": "exit"
+        },
+        {
+          "line": 80,
+          "decodedFileLine": 332593,
+          "code": "if jo9_value>jo9_best:"
+        },
+        {
+          "line": 81,
+          "decodedFileLine": 332594,
+          "code": "jo9_best=jo9_value & jo9_ties=1 & $jo9_winner=$jo9_role"
+        },
+        {
+          "line": 82,
+          "decodedFileLine": 332595,
+          "code": "elseif jo9_value=jo9_best:"
+        },
+        {
+          "line": 83,
+          "decodedFileLine": 332596,
+          "code": "jo9_ties+=1"
+        },
+        {
+          "line": 84,
+          "decodedFileLine": 332597,
+          "code": "if rand(1,jo9_ties)=1: $jo9_winner=$jo9_role"
+        }
+      ]
+    },
+    {
+      "location": "next_day",
+      "lines": [
+        {
+          "line": 774,
+          "decodedFileLine": 20192,
+          "code": "if $jo9_tentacle_worker = 'slave' and pet_tentacle > 0 and slave_state = CONST_INT['slave_exist'] and slave['tentacle_rule'] = 1 and slave['energy'] >= 0:"
+        },
+        {
+          "line": 779,
+          "decodedFileLine": 20197,
+          "code": "dynamic $replace($dyn_sex_acceptance, 'dyn'+'slave', 'slave')"
+        },
+        {
+          "line": 780,
+          "decodedFileLine": 20198,
+          "code": "$interaction_partner = 'slave' & dynamic $replace($dyn_repulse_check, 'dyn'+'slave', 'slave')"
+        },
+        {
+          "line": 781,
+          "decodedFileLine": 20199,
+          "code": "if interaction_slave['res'] < 0:"
+        },
+        {
+          "line": 782,
+          "decodedFileLine": 20200,
+          "code": "slave_auto_tentacle = -1"
+        },
+        {
+          "line": 783,
+          "decodedFileLine": 20201,
+          "code": "elseif tentacle_state = 1 or spawn_milked = 0:"
+        },
+        {
+          "line": 797,
+          "decodedFileLine": 20215,
+          "code": "if slave['sub_tentacles'] > tentacle_size or slave['virginity'] = 4:"
+        },
+        {
+          "line": 801,
+          "decodedFileLine": 20219,
+          "code": "jo9_tentacle_report['slave_bonus'] = iif(slave['virginity'] = 4, 20 + tentacle_size * 10, 0)"
+        },
+        {
+          "line": 802,
+          "decodedFileLine": 20220,
+          "code": "jo9_tentacle_report['slave_gain'] = semen_gain[max(0, tentacle_size - spawn_milked)] * (100 + jo9_tentacle_report['slave_bonus']) / 100"
+        },
+        {
+          "line": 807,
+          "decodedFileLine": 20225,
+          "code": "slave['energy'] -= 1 &! not using energy_drop here so end of day calorie display is reliable and subsequent rule energy checks can pass"
+        },
+        {
+          "line": 812,
+          "decodedFileLine": 20230,
+          "code": "damage = 4 - slave['sub_tentacles']"
+        },
+        {
+          "line": 814,
+          "decodedFileLine": 20232,
+          "code": "if damage > 0: bruising = 1 & dynamic $replace($dyn_slave_damaged, 'dyn'+'slave', 'slave') & bruising = 0"
+        },
+        {
+          "line": 822,
+          "decodedFileLine": 20240,
+          "code": "if $jo9_tentacle_worker = 'slave' and slave_auto_tentacle < 0: $jo9_tentacle_worker=func('jo9_household_worker', 'tentacle', 'slave')"
+        },
+        {
+          "line": 825,
+          "decodedFileLine": 20243,
+          "code": "if $jo9_tentacle_worker = 'assistant' and slave_auto_tentacle <= 0 and pet_tentacle > 0 and assistant_state = CONST_INT['slave_exist'] and assistant['tentacle_rule'] = 1 and assistant['energy'] >= 0 and assistant['sub_tentacles'] > 0:"
+        },
+        {
+          "line": 826,
+          "decodedFileLine": 20244,
+          "code": "if tentacle_state = 1 or spawn_milked = 0:"
+        },
+        {
+          "line": 841,
+          "decodedFileLine": 20259,
+          "code": "if assistant['sub_tentacles'] > tentacle_size or assistant['virginity'] = 4:"
+        },
+        {
+          "line": 845,
+          "decodedFileLine": 20263,
+          "code": "jo9_tentacle_report['assistant_bonus'] = iif(assistant['virginity'] = 4, 20 + tentacle_size * 10, 0)"
+        },
+        {
+          "line": 846,
+          "decodedFileLine": 20264,
+          "code": "jo9_tentacle_report['assistant_gain'] = semen_gain[max(0, tentacle_size - spawn_milked)] * (100 + jo9_tentacle_report['assistant_bonus']) / 100"
+        },
+        {
+          "line": 851,
+          "decodedFileLine": 20269,
+          "code": "assistant['energy'] -= 1 &! not using energy_drop here so end of day calorie display is reliable and subsequent rule energy checks can pass"
+        },
+        {
+          "line": 856,
+          "decodedFileLine": 20274,
+          "code": "damage = 4 - assistant['sub_tentacles']"
+        },
+        {
+          "line": 858,
+          "decodedFileLine": 20276,
+          "code": "if damage > 0: bruising = 1 & dynamic $replace($dyn_slave_damaged, 'dyn'+'slave', 'assistant') & bruising = 0"
+        },
+        {
+          "line": 867,
+          "decodedFileLine": 20285,
+          "code": "if $jo9_tentacle_worker = 'room1' and slave_auto_tentacle <= 0 and pet_tentacle > 0 and room1_state = CONST_INT['slave_exist'] and room1['tentacle_rule'] = 1 and room1['energy'] >= 0:"
+        },
+        {
+          "line": 883,
+          "decodedFileLine": 20301,
+          "code": "if room1['sub_tentacles'] > tentacle_size or room1['virginity'] = 4:"
+        },
+        {
+          "line": 907,
+          "decodedFileLine": 20325,
+          "code": "if $jo9_tentacle_worker = 'room2' and slave_auto_tentacle <= 0 and pet_tentacle > 0 and room2_state = CONST_INT['slave_exist'] and room2['tentacle_rule'] = 1 and room2['energy'] >= 0:"
+        },
+        {
+          "line": 923,
+          "decodedFileLine": 20341,
+          "code": "if room2['sub_tentacles'] > tentacle_size or room2['virginity'] = 4:"
+        },
+        {
+          "line": 947,
+          "decodedFileLine": 20365,
+          "code": "if $jo9_tentacle_worker = 'room3' and slave_auto_tentacle <= 0 and pet_tentacle > 0 and room3_state = CONST_INT['slave_exist'] and room3['tentacle_rule'] = 1 and room3['energy'] >= 0:"
+        },
+        {
+          "line": 963,
+          "decodedFileLine": 20381,
+          "code": "if room3['sub_tentacles'] > tentacle_size or room3['virginity'] = 4:"
+        },
+        {
+          "line": 987,
+          "decodedFileLine": 20405,
+          "code": "if $jo9_tentacle_worker = 'room4' and slave_auto_tentacle <= 0 and pet_tentacle > 0 and room4_state = CONST_INT['slave_exist'] and room4['tentacle_rule'] = 1 and room4['energy'] >= 0:"
+        },
+        {
+          "line": 1003,
+          "decodedFileLine": 20421,
+          "code": "if room4['sub_tentacles'] > tentacle_size or room4['virginity'] = 4:"
+        }
+      ]
+    },
+    {
+      "location": "end_day_screen",
+      "lines": [
+        {
+          "line": 290,
+          "decodedFileLine": 24842,
+          "code": "if slave['sub_tentacles'] > tentacle_size or slave['virginity'] = 4:"
+        },
+        {
+          "line": 305,
+          "decodedFileLine": 24857,
+          "code": "decade_semen += jo9_tentacle_report['slave_gain']"
+        },
+        {
+          "line": 306,
+          "decodedFileLine": 24858,
+          "code": "gs 'jo9_household_worker', 'tentacle_spent', slave['sub_tentacles'], jo9_tentacle_report['slave_gain']"
+        },
+        {
+          "line": 307,
+          "decodedFileLine": 24859,
+          "code": "if spawn_milked > tentacle_size: tentacle_state = 2 &! satisfied"
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "Static source analysis only. No save data inspected, game executed, image changed, translation changed or balance changed.",
+    "Grade names and monster stage mapping are read from current decoded source. Actual player state is not inferred."
+  ]
+}

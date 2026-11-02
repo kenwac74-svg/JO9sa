@@ -1,0 +1,258 @@
+{
+  "schema": "jo9-readonly-bug-audit/v1",
+  "recordedAt": "2026-11-02T12:15:49.487Z",
+  "topic": "assistant surgery appearance reverts on outfit change",
+  "source": {
+    "game": "C:\\MOVE\\Jack O Nine Tails v2.4.1_Kor_Full\\game",
+    "qsp": "C:\\MOVE\\Jack O Nine Tails v2.4.1_Kor_Full\\game\\jack.qsp",
+    "qsp_sha256": "2f74d3194ee16c5400e09e06669fee39e32c851e5f03b22c188534ae3f9be9cb",
+    "locations": 278,
+    "css_sha256": "1676136c66213272031f11bb7891223e15862b3c3944079fd2925d8e5f277e77",
+    "verified_current_qsp_sha256": "2f74d3194ee16c5400e09e06669fee39e32c851e5f03b22c188534ae3f9be9cb",
+    "decoded": "tmp/bugreports-20261102/current-decoded.qsps"
+  },
+  "scope": {
+    "kind": "static source investigation plus a small assignment model",
+    "gameEngineRun": false,
+    "saveFilesRead": false,
+    "productionFilesModified": false,
+    "translationsModified": false,
+    "imagesModified": false
+  },
+  "finding": {
+    "confidence": "high static confidence; native gameplay remains untested",
+    "rootCause": "$plastics_confirm_appearance replaces dynslave with the patient role but contains hard-coded slave_type = txt. Assistant appearance/avatar changes, assistant_type stays old, and slave_type is incorrectly changed.",
+    "matchesReport": "Slave surgery updates its own type correctly; assistant outfit buttons and imagepack rendering continue to use the old assistant_type.",
+    "references": [
+      {
+        "loc": "#dynamic",
+        "lines": [
+          5071,
+          5082
+        ],
+        "decodedLines": [
+          96200,
+          96211
+        ],
+        "detail": "fullimage and seed avatars are target-dependent but slave_type at line 5077 is hard-coded"
+      },
+      {
+        "loc": "#options",
+        "lines": [
+          1491,
+          1496
+        ],
+        "decodedLines": [
+          110740,
+          110745
+        ],
+        "detail": "confirmation applies dynslave -> $plastics_target replacement"
+      },
+      {
+        "loc": "assistant_stat",
+        "lines": [
+          191,
+          213
+        ],
+        "decodedLines": [
+          29850,
+          29872
+        ],
+        "detail": "outfit buttons rewrite $assistant[fullimage] from role arrays indexed by assistant_type"
+      },
+      {
+        "loc": "display_fullimage",
+        "lines": [
+          44,
+          129
+        ],
+        "decodedLines": [
+          10648,
+          10733
+        ],
+        "detail": "assistant uses assistant_type; indpack outfit path wins over fallback fullimage"
+      },
+      {
+        "loc": "jo9_seed_role_images",
+        "lines": [
+          38,
+          79
+        ],
+        "decodedLines": [
+          332650,
+          332691
+        ],
+        "detail": "resolver only uses supplied actor ID and known aliases; it does not repair assistant_type or actor caches"
+      }
+    ]
+  },
+  "reproductionConditions": {
+    "static": "Choose a new appearance txt != assistant_type while $plastics_target is assistant; then choose an available assistant outfit or render an indpack outfit keyed by assistant_type.",
+    "newGameRequired": false,
+    "legacySaveOnly": false,
+    "actualUserSaveReproduced": false
+  },
+  "oldSaveNotes": [
+    "No user save was read. The current macro already contains the bug; an old save is not required to create it.",
+    "$plastics_confirm_appearance is a dynamic string stored in state; a future code fix should ensure the corrected macro is refreshed for loaded saves, e.g. a narrow marker check or existing #dynamic refresh path.",
+    "A save already affected may retain inconsistent assistant_type/fullimage/avatar and incorrectly changed slave_type. If the outfit has overwritten fullimage, the intended appearance cannot be safely restored from current assistant_type alone. A selected before/after save or exact patient and chosen appearance ID would be needed before targeted repair."
+  ],
+  "seedBodyIndpack": {
+    "seed": "Selected avatar, gray avatar, clear avatar use $seed_ava[txt]; original assistant_type remains unrelated due to the hard-coded write.",
+    "body": "The surgery block does not write body-image keys boobs_img or pussy_img. Their independent values are not needed to explain the outfit reset. No body-image repair is proposed.",
+    "indpack": "display_fullimage picks indpack_*[assistant_type] for the outfit, so an old type selects the old pack. Changing image files or pack paths is not the minimal fix."
+  },
+  "minimumProposedChange": {
+    "location": "#dynamic / $plastics_confirm_appearance",
+    "old": "slave_type = txt",
+    "new": "dynslave_type = txt",
+    "applied": false,
+    "additionalCompatibilityWork": "Ensure loaded saves refresh this dynamic definition. Evaluate already-affected saves separately; do not bulk-rewrite saves."
+  },
+  "modelVerification": {
+    "kind": "JavaScript assignment and image-selection model only; not native QSP execution",
+    "assertionsPassed": 9,
+    "cases": [
+      {
+        "target": "assistant",
+        "candidate": "current",
+        "imagepack": false,
+        "initial": {
+          "assistant_type": 201,
+          "slave_type": 203,
+          "assistant_fullimage": "old-default",
+          "slave_fullimage": "other-default"
+        },
+        "immediatelyAfterSurgery": {
+          "assistant_type": 201,
+          "slave_type": 202,
+          "assistant_fullimage": "selected-default",
+          "slave_fullimage": "other-default"
+        },
+        "afterClothing": {
+          "assistant_type": 201,
+          "slave_type": 202,
+          "assistant_fullimage": "old-maid",
+          "slave_fullimage": "other-default"
+        },
+        "rendered": "old-maid",
+        "assignedType": "slave_type"
+      },
+      {
+        "target": "slave",
+        "candidate": "current",
+        "imagepack": false,
+        "initial": {
+          "assistant_type": 201,
+          "slave_type": 203,
+          "assistant_fullimage": "old-default",
+          "slave_fullimage": "other-default"
+        },
+        "immediatelyAfterSurgery": {
+          "assistant_type": 201,
+          "slave_type": 202,
+          "assistant_fullimage": "old-default",
+          "slave_fullimage": "selected-default"
+        },
+        "afterClothing": {
+          "assistant_type": 201,
+          "slave_type": 202,
+          "assistant_fullimage": "old-default",
+          "slave_fullimage": "selected-default"
+        },
+        "rendered": "selected-default",
+        "assignedType": "slave_type"
+      },
+      {
+        "target": "assistant",
+        "candidate": "proposed-single-line",
+        "imagepack": false,
+        "initial": {
+          "assistant_type": 201,
+          "slave_type": 203,
+          "assistant_fullimage": "old-default",
+          "slave_fullimage": "other-default"
+        },
+        "immediatelyAfterSurgery": {
+          "assistant_type": 202,
+          "slave_type": 203,
+          "assistant_fullimage": "selected-default",
+          "slave_fullimage": "other-default"
+        },
+        "afterClothing": {
+          "assistant_type": 202,
+          "slave_type": 203,
+          "assistant_fullimage": "selected-maid",
+          "slave_fullimage": "other-default"
+        },
+        "rendered": "selected-maid",
+        "assignedType": "assistant_type"
+      },
+      {
+        "target": "assistant",
+        "candidate": "current",
+        "imagepack": true,
+        "initial": {
+          "assistant_type": 201,
+          "slave_type": 203,
+          "assistant_fullimage": "old-default",
+          "slave_fullimage": "other-default"
+        },
+        "immediatelyAfterSurgery": {
+          "assistant_type": 201,
+          "slave_type": 202,
+          "assistant_fullimage": "selected-default",
+          "slave_fullimage": "other-default"
+        },
+        "afterClothing": {
+          "assistant_type": 201,
+          "slave_type": 202,
+          "assistant_fullimage": "old-maid",
+          "slave_fullimage": "other-default"
+        },
+        "rendered": "old-pack-maid",
+        "assignedType": "slave_type"
+      },
+      {
+        "target": "assistant",
+        "candidate": "proposed-single-line",
+        "imagepack": true,
+        "initial": {
+          "assistant_type": 201,
+          "slave_type": 203,
+          "assistant_fullimage": "old-default",
+          "slave_fullimage": "other-default"
+        },
+        "immediatelyAfterSurgery": {
+          "assistant_type": 202,
+          "slave_type": 203,
+          "assistant_fullimage": "selected-default",
+          "slave_fullimage": "other-default"
+        },
+        "afterClothing": {
+          "assistant_type": 202,
+          "slave_type": 203,
+          "assistant_fullimage": "selected-maid",
+          "slave_fullimage": "other-default"
+        },
+        "rendered": "selected-pack-maid",
+        "assignedType": "assistant_type"
+      }
+    ],
+    "note": "Assistant cases follow the assistant-stat outfit write; the slave control retains its selected default image and has the correct ID for any indexed imagepack lookup."
+  },
+  "neededInformation": [
+    "For validating the specific existing save or planning recovery: exact assistant, chosen surgery appearance, whether the switch was assistant appearance buttons or equipment clothing, and one before/after selected save if authorized. No save is needed to establish the static type-write defect."
+  ],
+  "memoryUsed": [
+    {
+      "file": "MEMORY.md",
+      "lines": [
+        1,
+        4
+      ],
+      "note": "Use active WORK path and distinguish static checks from live game proof",
+      "rolloutId": "01a112f8-7439-7fb2-b358-e97a20ba2540"
+    }
+  ]
+}

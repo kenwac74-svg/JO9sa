@@ -1,0 +1,321 @@
+{
+  "purpose": "카오틱 에센스 제거 후보의 실제 게임 효과 조사. 분류 제안만 제공하며 사용자 결정을 대신하지 않음.",
+  "readOnlyScope": "실제 jack.qsp를 core.cjs parse/shift로 읽음. 게임·세이브·번역·엔진·브라우저 조작 없음. 이 새 조사 기록만 작성.",
+  "source": "C:/MOVE/Jack O Nine Tails v2.4.1_Kor_Full/game/jack.qsp",
+  "sourceSha256": "2f74d3194ee16c5400e09e06669fee39e32c851e5f03b22c188534ae3f9be9cb",
+  "parser": "tools/text-workshop/core.cjs",
+  "referenceConvention": "location:line, 해당 로케이션 body 기준 1-based line",
+  "protectedConfirmedByUser": [
+    "perversion=2",
+    "courage=1",
+    "nymphomania>0"
+  ],
+  "classificationStatus": "사용자 승인 대기; 제거 정책 변경 없음",
+  "method": "현재 QSP 전체에서 metabolism/courage/selfesteem 사용처를 확인하고 관련 계산의 연결 효과를 조사함. 동적 실행 검증은 하지 않음.",
+  "rows": [
+    {
+      "key": "metabolism",
+      "value": 1,
+      "label": "미약한 대사량",
+      "classificationProposal": "혼합",
+      "benefits": [
+        "같은 잉여열량에서 지방이 가장 쉽게 늘어, 마른 체형의 회복이나 의도적으로 살찌우는 목적에 유리하다.",
+        "조수의 기본 자동식단이 대사량에 비례하므로 기본 급식비가 낮다."
+      ],
+      "drawbacks": [
+        "같은 식사에서 살이 쉽게 쪄 유지·감량 관리가 더 까다롭다.",
+        "열량으로 얻는 자연 지구력 성장량이 낮고, 감량이 시작되는 열량적자 조건이 더 엄격하다."
+      ],
+      "evidence": [
+        {
+          "location": "next_day",
+          "lineStart": 1595,
+          "lineEnd": 1621,
+          "excerpt": "\t\t! once we know the final end-of-day calorie count: apply effects accordingly\n\t\tif dynslave['calories'] < 0:\n\t\t\tif dynslave['calories'] < -5 + dynslave['metabolism']:\n\t\t\t\t! weight loss if calories are at or below -5 + metabolism level [metabolism ranges from [1,5] with 1 being weakest (lose fat slowest)]\n\t\t\t\tdynslave_rate['fat'] -= rand(3, 2 + (1+dynslave['metabolism'])/2) &! weak metabolism (1) loses 3 physique points per night, powerful metabolism (5) loses 3-5 physique points per night\n\t\t\t\t! rational motivation to obey increases when a slave notices that she is losing weight (this supports the help text for the \"restricted\" diet portion) - ImperatorAugustus\n\t\t\t\tdynslave_rate['rational'] += 1\n\t\t\tend\n\t\t\tif dynslave['calories'] >= -5:\n\t\t\t\t! below -5 calories = starvation\n\t\t\t\t! minimal endurance loss without starvation occurs when calories are between -1 and -5, representing loss of muscle mass due to caloric deficit, offsetting exercise during the day (if any)\n\t\t\t\tif dynslave['stamina'] > 1 or dynslave['fat'] = 0: dynslave_rate['stamina'] -= 1 &! will not lower endurance below Feeble unless slave is Bony (no reserves to offset caloric deficit) - ImperatorAugustus\n\t\t\tend\n\t\t\t! a slave with no fat reserves will pass out immediately if not given enough food (-22 + fat*2 [here zero] represents full caloric deficit); removed extra stamina impact in favor of starvation effects - ImperatorAugustus\n! JO9 MOD START MAID_LEFT_ACTUAL_RATION_COLLAPSE | 2026-10-19_maid_trainee_priority\n\t\t\tif cheat_no_starve = 0 and dynslave['fat'] = 0 and dynslave_rate['fat'] < 0 and (iif('dynslave' = 'room1', room1_ration + 1, iif('dynslave' = 'room2', room2_ration + 1, iif('dynslave' = 'room3', room3_ration + 1, iif('dynslave' = 'room4', room4_ration + 1, dynslave['diet_portion'])))) = 0 or dynslave['calories'] <= -22): dynslave_state = CONST_INT['slave_faint']\n! JO9 MOD END MAID_LEFT_ACTUAL_RATION_COLLAPSE\n\t\t\t! a slave with no fat reserves who is not being fully deprived of food can remain at that physique indefinitely, but will have a neg_hungry moodlet applied by $next_day_starvation_effects\n\t\telseif dynslave['calories'] > 0:\n\t\t\t! metabolized calories raise endurance until B+ (benefit with higher metabolism = easier to maintain weight)\n! JO9 MOD START CONST_FOOD_GROWTH | 2026-10-24_constitution_unification\n\t\t\tif dynslave['stamina'] < 3: dynslave_rate['stamina'] += func('jo9_traits_combat', 'natural_stamina_xp', 'dynslave', min(dynslave['calories'], dynslave['metabolism']))\n! JO9 MOD END CONST_FOOD_GROWTH\n\t\t\t! excess calories not consumed by metabolism go to fat (increase physique)\n\t\t\tdynslave_rate['fat'] += max(0, dynslave['calories'] - dynslave['metabolism']) &! metabolism ranges from [1,5] with 1 being weakest (gain fat easiest)\n\t\t\t! with max physique, excess calories can drain stamina potentially all the way to death - ImperatorAugustus\n\t\t\tif dynslave['fat'] = 5: dynslave_rate['stamina'] -= max(0, dynslave['calories'] - dynslave['metabolism'])"
+        },
+        {
+          "location": "next_day",
+          "lineStart": 1643,
+          "lineEnd": 1654,
+          "excerpt": "if assistant_state > CONST_INT['no_slave']:\n\t! assistant has already been processed by $next_day_resolve_previous_day_calorie_effects but we still need to apply $next_day_starvation_effects for the day now ending\n\tdynamic $replace($next_day_starvation_effects, 'dyn'+'slave', 'assistant'), 1\n\n\t! set excess calories (and costs) for next day\n\tassistant['calories'] = assistant['metabolism'] &! even if assistant is never given any direct instructions (only following her assigned rules), she will not gain weight\n\tif assistant['neg_hungry'] > 0 or (assistant['fat'] < 2 and assistant_rate['fat'] < 0): assistant['calories'] += assistant['stamina']*3 &! hungry or model-losing-weight eats more (neg_hungry implies F- physique or days_without_food > 0 or losing weight)\n\tif assistant['fiend_tattoo'] = 1 and spawn_semen > assistant['calories']:\n\t\tspawn_semen -= assistant['calories'] &! if fiend tattoo and enough supply, use it instead of fresh food - ImperatorAugustus\n\t\tassistant['perversion_xp'] += 1\n\telse\n\t\ttotal_food_cost += assistant['calories']/2 &! .5$/cal, equivalent to fresh food, cost varies depending on metabolism (2-4 sparks) - ImperatorAugustus"
+        },
+        {
+          "location": "next_day",
+          "lineStart": 3953,
+          "lineEnd": 3958,
+          "excerpt": "\telse\n\t\tpig['calories'] = 21 - iif(pig_state = CONST_INT['slave_faint'], 0, pig['ego']) &! non-fainted pig nature attribute resists (slows) weight gain, reducing profitability - ImperatorAugustus\n\t\t! Powerful Metabolism and Willful slaves resist the most (subtracting 10 calories from weight gain); pregnancy, lactation or egglaying also oppose, equivalent to one level of metabolism or nature\n\t\tif pig['neg_hungry'] > 0: pig['calories'] += pig['stamina']*3 &! hungry pigs eat more (neg_hungry implies F- physique or days_without_food > 0 or losing weight)\n\t\tbarn_pig_food += 1 &! .05 - .07$/cal, rounded up to 1 spark daily, accumulating sum for decade billing (before leftovers are added to calories) - ImperatorAugustus\n\t\tif farmhand_state = CONST_INT['slave_exist'] and slave['diet_leftovers'] = 0 and cooked_food >= 0: pig['calories'] += 2 &! if slave does not eat them, farmhand feeds pig kitchen scraps, 0$ and maybe table scraps"
+        }
+      ]
+    },
+    {
+      "key": "metabolism",
+      "value": 2,
+      "label": "낮은 대사량",
+      "classificationProposal": "혼합",
+      "benefits": [
+        "평균보다 쉽게 살이 늘어 체형회복·의도적 증량에 유리하다.",
+        "조수의 기본 자동식단 급식비가 평균보다 낮다."
+      ],
+      "drawbacks": [
+        "평균보다 비만 방지·감량이 어렵고, 열량에 의한 자연 지구력 성장 상한이 낮다."
+      ],
+      "evidence": [
+        {
+          "location": "next_day",
+          "lineStart": 1595,
+          "lineEnd": 1621,
+          "excerpt": "\t\t! once we know the final end-of-day calorie count: apply effects accordingly\n\t\tif dynslave['calories'] < 0:\n\t\t\tif dynslave['calories'] < -5 + dynslave['metabolism']:\n\t\t\t\t! weight loss if calories are at or below -5 + metabolism level [metabolism ranges from [1,5] with 1 being weakest (lose fat slowest)]\n\t\t\t\tdynslave_rate['fat'] -= rand(3, 2 + (1+dynslave['metabolism'])/2) &! weak metabolism (1) loses 3 physique points per night, powerful metabolism (5) loses 3-5 physique points per night\n\t\t\t\t! rational motivation to obey increases when a slave notices that she is losing weight (this supports the help text for the \"restricted\" diet portion) - ImperatorAugustus\n\t\t\t\tdynslave_rate['rational'] += 1\n\t\t\tend\n\t\t\tif dynslave['calories'] >= -5:\n\t\t\t\t! below -5 calories = starvation\n\t\t\t\t! minimal endurance loss without starvation occurs when calories are between -1 and -5, representing loss of muscle mass due to caloric deficit, offsetting exercise during the day (if any)\n\t\t\t\tif dynslave['stamina'] > 1 or dynslave['fat'] = 0: dynslave_rate['stamina'] -= 1 &! will not lower endurance below Feeble unless slave is Bony (no reserves to offset caloric deficit) - ImperatorAugustus\n\t\t\tend\n\t\t\t! a slave with no fat reserves will pass out immediately if not given enough food (-22 + fat*2 [here zero] represents full caloric deficit); removed extra stamina impact in favor of starvation effects - ImperatorAugustus\n! JO9 MOD START MAID_LEFT_ACTUAL_RATION_COLLAPSE | 2026-10-19_maid_trainee_priority\n\t\t\tif cheat_no_starve = 0 and dynslave['fat'] = 0 and dynslave_rate['fat'] < 0 and (iif('dynslave' = 'room1', room1_ration + 1, iif('dynslave' = 'room2', room2_ration + 1, iif('dynslave' = 'room3', room3_ration + 1, iif('dynslave' = 'room4', room4_ration + 1, dynslave['diet_portion'])))) = 0 or dynslave['calories'] <= -22): dynslave_state = CONST_INT['slave_faint']\n! JO9 MOD END MAID_LEFT_ACTUAL_RATION_COLLAPSE\n\t\t\t! a slave with no fat reserves who is not being fully deprived of food can remain at that physique indefinitely, but will have a neg_hungry moodlet applied by $next_day_starvation_effects\n\t\telseif dynslave['calories'] > 0:\n\t\t\t! metabolized calories raise endurance until B+ (benefit with higher metabolism = easier to maintain weight)\n! JO9 MOD START CONST_FOOD_GROWTH | 2026-10-24_constitution_unification\n\t\t\tif dynslave['stamina'] < 3: dynslave_rate['stamina'] += func('jo9_traits_combat', 'natural_stamina_xp', 'dynslave', min(dynslave['calories'], dynslave['metabolism']))\n! JO9 MOD END CONST_FOOD_GROWTH\n\t\t\t! excess calories not consumed by metabolism go to fat (increase physique)\n\t\t\tdynslave_rate['fat'] += max(0, dynslave['calories'] - dynslave['metabolism']) &! metabolism ranges from [1,5] with 1 being weakest (gain fat easiest)\n\t\t\t! with max physique, excess calories can drain stamina potentially all the way to death - ImperatorAugustus\n\t\t\tif dynslave['fat'] = 5: dynslave_rate['stamina'] -= max(0, dynslave['calories'] - dynslave['metabolism'])"
+        },
+        {
+          "location": "next_day",
+          "lineStart": 1643,
+          "lineEnd": 1654,
+          "excerpt": "if assistant_state > CONST_INT['no_slave']:\n\t! assistant has already been processed by $next_day_resolve_previous_day_calorie_effects but we still need to apply $next_day_starvation_effects for the day now ending\n\tdynamic $replace($next_day_starvation_effects, 'dyn'+'slave', 'assistant'), 1\n\n\t! set excess calories (and costs) for next day\n\tassistant['calories'] = assistant['metabolism'] &! even if assistant is never given any direct instructions (only following her assigned rules), she will not gain weight\n\tif assistant['neg_hungry'] > 0 or (assistant['fat'] < 2 and assistant_rate['fat'] < 0): assistant['calories'] += assistant['stamina']*3 &! hungry or model-losing-weight eats more (neg_hungry implies F- physique or days_without_food > 0 or losing weight)\n\tif assistant['fiend_tattoo'] = 1 and spawn_semen > assistant['calories']:\n\t\tspawn_semen -= assistant['calories'] &! if fiend tattoo and enough supply, use it instead of fresh food - ImperatorAugustus\n\t\tassistant['perversion_xp'] += 1\n\telse\n\t\ttotal_food_cost += assistant['calories']/2 &! .5$/cal, equivalent to fresh food, cost varies depending on metabolism (2-4 sparks) - ImperatorAugustus"
+        },
+        {
+          "location": "next_day",
+          "lineStart": 3953,
+          "lineEnd": 3958,
+          "excerpt": "\telse\n\t\tpig['calories'] = 21 - iif(pig_state = CONST_INT['slave_faint'], 0, pig['ego']) &! non-fainted pig nature attribute resists (slows) weight gain, reducing profitability - ImperatorAugustus\n\t\t! Powerful Metabolism and Willful slaves resist the most (subtracting 10 calories from weight gain); pregnancy, lactation or egglaying also oppose, equivalent to one level of metabolism or nature\n\t\tif pig['neg_hungry'] > 0: pig['calories'] += pig['stamina']*3 &! hungry pigs eat more (neg_hungry implies F- physique or days_without_food > 0 or losing weight)\n\t\tbarn_pig_food += 1 &! .05 - .07$/cal, rounded up to 1 spark daily, accumulating sum for decade billing (before leftovers are added to calories) - ImperatorAugustus\n\t\tif farmhand_state = CONST_INT['slave_exist'] and slave['diet_leftovers'] = 0 and cooked_food >= 0: pig['calories'] += 2 &! if slave does not eat them, farmhand feeds pig kitchen scraps, 0$ and maybe table scraps"
+        }
+      ]
+    },
+    {
+      "key": "metabolism",
+      "value": 4,
+      "label": "높은 대사량",
+      "classificationProposal": "혼합",
+      "benefits": [
+        "평균보다 잉여열량을 많이 소모해 살이 덜 찌며, 감량 조건을 충족하기 쉽다.",
+        "지구력이 B+ 미만이면 열량으로 얻을 수 있는 자연 지구력 성장량이 높다."
+      ],
+      "drawbacks": [
+        "의도적으로 살찌우거나 마른 체형을 회복시키려면 더 많은 잉여열량이 필요하다.",
+        "조수 자동식단의 기본 급식비가 평균보다 높다."
+      ],
+      "evidence": [
+        {
+          "location": "next_day",
+          "lineStart": 1595,
+          "lineEnd": 1621,
+          "excerpt": "\t\t! once we know the final end-of-day calorie count: apply effects accordingly\n\t\tif dynslave['calories'] < 0:\n\t\t\tif dynslave['calories'] < -5 + dynslave['metabolism']:\n\t\t\t\t! weight loss if calories are at or below -5 + metabolism level [metabolism ranges from [1,5] with 1 being weakest (lose fat slowest)]\n\t\t\t\tdynslave_rate['fat'] -= rand(3, 2 + (1+dynslave['metabolism'])/2) &! weak metabolism (1) loses 3 physique points per night, powerful metabolism (5) loses 3-5 physique points per night\n\t\t\t\t! rational motivation to obey increases when a slave notices that she is losing weight (this supports the help text for the \"restricted\" diet portion) - ImperatorAugustus\n\t\t\t\tdynslave_rate['rational'] += 1\n\t\t\tend\n\t\t\tif dynslave['calories'] >= -5:\n\t\t\t\t! below -5 calories = starvation\n\t\t\t\t! minimal endurance loss without starvation occurs when calories are between -1 and -5, representing loss of muscle mass due to caloric deficit, offsetting exercise during the day (if any)\n\t\t\t\tif dynslave['stamina'] > 1 or dynslave['fat'] = 0: dynslave_rate['stamina'] -= 1 &! will not lower endurance below Feeble unless slave is Bony (no reserves to offset caloric deficit) - ImperatorAugustus\n\t\t\tend\n\t\t\t! a slave with no fat reserves will pass out immediately if not given enough food (-22 + fat*2 [here zero] represents full caloric deficit); removed extra stamina impact in favor of starvation effects - ImperatorAugustus\n! JO9 MOD START MAID_LEFT_ACTUAL_RATION_COLLAPSE | 2026-10-19_maid_trainee_priority\n\t\t\tif cheat_no_starve = 0 and dynslave['fat'] = 0 and dynslave_rate['fat'] < 0 and (iif('dynslave' = 'room1', room1_ration + 1, iif('dynslave' = 'room2', room2_ration + 1, iif('dynslave' = 'room3', room3_ration + 1, iif('dynslave' = 'room4', room4_ration + 1, dynslave['diet_portion'])))) = 0 or dynslave['calories'] <= -22): dynslave_state = CONST_INT['slave_faint']\n! JO9 MOD END MAID_LEFT_ACTUAL_RATION_COLLAPSE\n\t\t\t! a slave with no fat reserves who is not being fully deprived of food can remain at that physique indefinitely, but will have a neg_hungry moodlet applied by $next_day_starvation_effects\n\t\telseif dynslave['calories'] > 0:\n\t\t\t! metabolized calories raise endurance until B+ (benefit with higher metabolism = easier to maintain weight)\n! JO9 MOD START CONST_FOOD_GROWTH | 2026-10-24_constitution_unification\n\t\t\tif dynslave['stamina'] < 3: dynslave_rate['stamina'] += func('jo9_traits_combat', 'natural_stamina_xp', 'dynslave', min(dynslave['calories'], dynslave['metabolism']))\n! JO9 MOD END CONST_FOOD_GROWTH\n\t\t\t! excess calories not consumed by metabolism go to fat (increase physique)\n\t\t\tdynslave_rate['fat'] += max(0, dynslave['calories'] - dynslave['metabolism']) &! metabolism ranges from [1,5] with 1 being weakest (gain fat easiest)\n\t\t\t! with max physique, excess calories can drain stamina potentially all the way to death - ImperatorAugustus\n\t\t\tif dynslave['fat'] = 5: dynslave_rate['stamina'] -= max(0, dynslave['calories'] - dynslave['metabolism'])"
+        },
+        {
+          "location": "next_day",
+          "lineStart": 1643,
+          "lineEnd": 1654,
+          "excerpt": "if assistant_state > CONST_INT['no_slave']:\n\t! assistant has already been processed by $next_day_resolve_previous_day_calorie_effects but we still need to apply $next_day_starvation_effects for the day now ending\n\tdynamic $replace($next_day_starvation_effects, 'dyn'+'slave', 'assistant'), 1\n\n\t! set excess calories (and costs) for next day\n\tassistant['calories'] = assistant['metabolism'] &! even if assistant is never given any direct instructions (only following her assigned rules), she will not gain weight\n\tif assistant['neg_hungry'] > 0 or (assistant['fat'] < 2 and assistant_rate['fat'] < 0): assistant['calories'] += assistant['stamina']*3 &! hungry or model-losing-weight eats more (neg_hungry implies F- physique or days_without_food > 0 or losing weight)\n\tif assistant['fiend_tattoo'] = 1 and spawn_semen > assistant['calories']:\n\t\tspawn_semen -= assistant['calories'] &! if fiend tattoo and enough supply, use it instead of fresh food - ImperatorAugustus\n\t\tassistant['perversion_xp'] += 1\n\telse\n\t\ttotal_food_cost += assistant['calories']/2 &! .5$/cal, equivalent to fresh food, cost varies depending on metabolism (2-4 sparks) - ImperatorAugustus"
+        },
+        {
+          "location": "next_day",
+          "lineStart": 3953,
+          "lineEnd": 3958,
+          "excerpt": "\telse\n\t\tpig['calories'] = 21 - iif(pig_state = CONST_INT['slave_faint'], 0, pig['ego']) &! non-fainted pig nature attribute resists (slows) weight gain, reducing profitability - ImperatorAugustus\n\t\t! Powerful Metabolism and Willful slaves resist the most (subtracting 10 calories from weight gain); pregnancy, lactation or egglaying also oppose, equivalent to one level of metabolism or nature\n\t\tif pig['neg_hungry'] > 0: pig['calories'] += pig['stamina']*3 &! hungry pigs eat more (neg_hungry implies F- physique or days_without_food > 0 or losing weight)\n\t\tbarn_pig_food += 1 &! .05 - .07$/cal, rounded up to 1 spark daily, accumulating sum for decade billing (before leftovers are added to calories) - ImperatorAugustus\n\t\tif farmhand_state = CONST_INT['slave_exist'] and slave['diet_leftovers'] = 0 and cooked_food >= 0: pig['calories'] += 2 &! if slave does not eat them, farmhand feeds pig kitchen scraps, 0$ and maybe table scraps"
+        }
+      ]
+    },
+    {
+      "key": "metabolism",
+      "value": 5,
+      "label": "고도 대사량",
+      "classificationProposal": "혼합",
+      "benefits": [
+        "살이 덜 찌고 감량하기 가장 쉬운 대사량이다.",
+        "지구력이 B+ 미만일 때 충분한 잉여열량으로 얻는 자연 지구력 성장이 가장 크다."
+      ],
+      "drawbacks": [
+        "의도적 증량·마른 체형 회복이 가장 어렵고, 조수의 자동식단 기본 급식비도 높다."
+      ],
+      "evidence": [
+        {
+          "location": "next_day",
+          "lineStart": 1595,
+          "lineEnd": 1621,
+          "excerpt": "\t\t! once we know the final end-of-day calorie count: apply effects accordingly\n\t\tif dynslave['calories'] < 0:\n\t\t\tif dynslave['calories'] < -5 + dynslave['metabolism']:\n\t\t\t\t! weight loss if calories are at or below -5 + metabolism level [metabolism ranges from [1,5] with 1 being weakest (lose fat slowest)]\n\t\t\t\tdynslave_rate['fat'] -= rand(3, 2 + (1+dynslave['metabolism'])/2) &! weak metabolism (1) loses 3 physique points per night, powerful metabolism (5) loses 3-5 physique points per night\n\t\t\t\t! rational motivation to obey increases when a slave notices that she is losing weight (this supports the help text for the \"restricted\" diet portion) - ImperatorAugustus\n\t\t\t\tdynslave_rate['rational'] += 1\n\t\t\tend\n\t\t\tif dynslave['calories'] >= -5:\n\t\t\t\t! below -5 calories = starvation\n\t\t\t\t! minimal endurance loss without starvation occurs when calories are between -1 and -5, representing loss of muscle mass due to caloric deficit, offsetting exercise during the day (if any)\n\t\t\t\tif dynslave['stamina'] > 1 or dynslave['fat'] = 0: dynslave_rate['stamina'] -= 1 &! will not lower endurance below Feeble unless slave is Bony (no reserves to offset caloric deficit) - ImperatorAugustus\n\t\t\tend\n\t\t\t! a slave with no fat reserves will pass out immediately if not given enough food (-22 + fat*2 [here zero] represents full caloric deficit); removed extra stamina impact in favor of starvation effects - ImperatorAugustus\n! JO9 MOD START MAID_LEFT_ACTUAL_RATION_COLLAPSE | 2026-10-19_maid_trainee_priority\n\t\t\tif cheat_no_starve = 0 and dynslave['fat'] = 0 and dynslave_rate['fat'] < 0 and (iif('dynslave' = 'room1', room1_ration + 1, iif('dynslave' = 'room2', room2_ration + 1, iif('dynslave' = 'room3', room3_ration + 1, iif('dynslave' = 'room4', room4_ration + 1, dynslave['diet_portion'])))) = 0 or dynslave['calories'] <= -22): dynslave_state = CONST_INT['slave_faint']\n! JO9 MOD END MAID_LEFT_ACTUAL_RATION_COLLAPSE\n\t\t\t! a slave with no fat reserves who is not being fully deprived of food can remain at that physique indefinitely, but will have a neg_hungry moodlet applied by $next_day_starvation_effects\n\t\telseif dynslave['calories'] > 0:\n\t\t\t! metabolized calories raise endurance until B+ (benefit with higher metabolism = easier to maintain weight)\n! JO9 MOD START CONST_FOOD_GROWTH | 2026-10-24_constitution_unification\n\t\t\tif dynslave['stamina'] < 3: dynslave_rate['stamina'] += func('jo9_traits_combat', 'natural_stamina_xp', 'dynslave', min(dynslave['calories'], dynslave['metabolism']))\n! JO9 MOD END CONST_FOOD_GROWTH\n\t\t\t! excess calories not consumed by metabolism go to fat (increase physique)\n\t\t\tdynslave_rate['fat'] += max(0, dynslave['calories'] - dynslave['metabolism']) &! metabolism ranges from [1,5] with 1 being weakest (gain fat easiest)\n\t\t\t! with max physique, excess calories can drain stamina potentially all the way to death - ImperatorAugustus\n\t\t\tif dynslave['fat'] = 5: dynslave_rate['stamina'] -= max(0, dynslave['calories'] - dynslave['metabolism'])"
+        },
+        {
+          "location": "next_day",
+          "lineStart": 1643,
+          "lineEnd": 1654,
+          "excerpt": "if assistant_state > CONST_INT['no_slave']:\n\t! assistant has already been processed by $next_day_resolve_previous_day_calorie_effects but we still need to apply $next_day_starvation_effects for the day now ending\n\tdynamic $replace($next_day_starvation_effects, 'dyn'+'slave', 'assistant'), 1\n\n\t! set excess calories (and costs) for next day\n\tassistant['calories'] = assistant['metabolism'] &! even if assistant is never given any direct instructions (only following her assigned rules), she will not gain weight\n\tif assistant['neg_hungry'] > 0 or (assistant['fat'] < 2 and assistant_rate['fat'] < 0): assistant['calories'] += assistant['stamina']*3 &! hungry or model-losing-weight eats more (neg_hungry implies F- physique or days_without_food > 0 or losing weight)\n\tif assistant['fiend_tattoo'] = 1 and spawn_semen > assistant['calories']:\n\t\tspawn_semen -= assistant['calories'] &! if fiend tattoo and enough supply, use it instead of fresh food - ImperatorAugustus\n\t\tassistant['perversion_xp'] += 1\n\telse\n\t\ttotal_food_cost += assistant['calories']/2 &! .5$/cal, equivalent to fresh food, cost varies depending on metabolism (2-4 sparks) - ImperatorAugustus"
+        },
+        {
+          "location": "next_day",
+          "lineStart": 3953,
+          "lineEnd": 3958,
+          "excerpt": "\telse\n\t\tpig['calories'] = 21 - iif(pig_state = CONST_INT['slave_faint'], 0, pig['ego']) &! non-fainted pig nature attribute resists (slows) weight gain, reducing profitability - ImperatorAugustus\n\t\t! Powerful Metabolism and Willful slaves resist the most (subtracting 10 calories from weight gain); pregnancy, lactation or egglaying also oppose, equivalent to one level of metabolism or nature\n\t\tif pig['neg_hungry'] > 0: pig['calories'] += pig['stamina']*3 &! hungry pigs eat more (neg_hungry implies F- physique or days_without_food > 0 or losing weight)\n\t\tbarn_pig_food += 1 &! .05 - .07$/cal, rounded up to 1 spark daily, accumulating sum for decade billing (before leftovers are added to calories) - ImperatorAugustus\n\t\tif farmhand_state = CONST_INT['slave_exist'] and slave['diet_leftovers'] = 0 and cooked_food >= 0: pig['calories'] += 2 &! if slave does not eat them, farmhand feeds pig kitchen scraps, 0$ and maybe table scraps"
+        }
+      ]
+    },
+    {
+      "key": "courage",
+      "value": -1,
+      "label": "겁쟁이",
+      "classificationProposal": "혼합",
+      "benefits": [
+        "공포 수치만큼 추가 복종 보너스를 받아 공포를 통한 훈련이 쉽다.",
+        "처벌 계산에서 겁쟁이 분기는 항상 공포 증가형 성공으로 처리되어 처벌을 통한 공포·복종 유도가 쉽다."
+      ],
+      "drawbacks": [
+        "전투 기본 사기가 절반으로 적용된다.",
+        "전차 경주 기동성이 1 감소한다.",
+        "공포 상태 판정의 저항값이 낮아져 쉽게 겁먹는다."
+      ],
+      "evidence": [
+        {
+          "location": "#static_base",
+          "lineStart": 1070,
+          "lineEnd": 1079,
+          "excerpt": "\t\t!Psychological status of slave\n\t\t! reluctant, arrogant, hateful, resistant, lachrymose, soft, servile, frightened, obedient, broken, depresive, horny, hysteric, optimistic, docile\n\t\tslave_psy_hardness = max(dynslave['ego'], dynslave['temper'], dynslave['spoil'], dynslave['pride'])\n\t\tslave_psy_hardness += dynslave['courage']\n\t\tcourage = slave_psy_hardness\n\t\tif dynslave['mood'] > 0: courage += dynslave['mood']\n\t\tif dynslave['courage'] = 2:\n\t\t\tcourage = 100\n\t\t\tdynslave['fear'] = 0 &! moronic slaves are impossible to frighten\n\t\tend"
+        },
+        {
+          "location": "#static_base",
+          "lineStart": 1323,
+          "lineEnd": 1328,
+          "excerpt": "\t\t!Calculate slave obedience - crushboss\n\t\tdynamic $replace($set_obedience_difficulty, 'dyn'+'slave', 'dynslave')\n\t\tslave_obedience_bonus += dynslave['meekness'] + seed_obedience_bonus[dynslave_type] &! get obedience bonus from current json for backward compatibility\n\t\tif dynslave['courage'] = 2: slave_obedience_penalty += 6\n\t\tif dynslave['courage'] = 1: slave_obedience_penalty += 4\n\t\tif dynslave['courage'] = -1: slave_obedience_bonus += dynslave['fear']"
+        },
+        {
+          "location": "#dynamic",
+          "lineStart": 720,
+          "lineEnd": 728,
+          "excerpt": "\t!determine outcome: 0 = only negative impacts (sensitivity/fear/taming drain), 1 = positive impacts if matched to guilt - +awareness/+taming [if painful or deprivation], 2 = same as 1 plus fear increase [proportional to sensitivity]\n\tif dynslave['courage'] = -1:\n\t\ttorture_succeeded = 2 &! slave is a coward (easily frightened) so torture always raises fear\n\t\tif dynslave['courage_revealed'] = 0: dynslave['courage_revealed'] = 1\n\telseif interaction_dynslave['phobia'] = 2 or dynslave['courage'] = 2:\n\t\ttorture_succeeded = 0 &! slave has a trait aligned with the activity or has the moronic trait (impossible to frighten)\n\t\tif dynslave['courage_revealed'] = 0: dynslave['courage_revealed'] = 1\n\telseif interaction_dynslave['phobia'] = -1:\n\t\ttorture_succeeded = 2 &! always increase fear when exploiting slave phobia (unless moronic)"
+        },
+        {
+          "location": "jo9_traits_combat",
+          "lineStart": 132,
+          "lineEnd": 140,
+          "excerpt": " if jo9_trait_combat_courage = 1:\n  jo9_trait_combat_mor_num *= 3 & jo9_trait_combat_mor_den *= 2\n elseif jo9_trait_combat_courage = -1:\n  jo9_trait_combat_mor_den *= 2\n end\n ! Combine independent fractions before integer division: healthy + veteran = 9/5 once.\n макс_здоровье_игрока = max(1, args[2] * jo9_trait_combat_hp_num / jo9_trait_combat_hp_den)\n макс_выносливость_игрока = args[3] * jo9_trait_combat_sta_num / jo9_trait_combat_sta_den\n норм_дух_игрока = args[4] * jo9_trait_combat_mor_num / jo9_trait_combat_mor_den"
+        },
+        {
+          "location": "$ride_start",
+          "lineStart": 19,
+          "lineEnd": 23,
+          "excerpt": "chariot['maneuverability'] = slave['instinct'] + slave['dressage'] + 2*slave['dressage_affinity']\nif slave['meekness'] < 0: chariot['maneuverability'] -= 1\nif slave['meekness'] > 0: chariot['maneuverability'] += 1\nif slave['courage'] < 0: chariot['maneuverability'] -= 1\nif slave['courage'] > 0: chariot['maneuverability'] += 1"
+        }
+      ]
+    },
+    {
+      "key": "courage",
+      "value": 2,
+      "label": "무모함",
+      "classificationProposal": "혼합",
+      "benefits": [
+        "정신상태 갱신 시 공포가 0이 되어 겁먹지 않으며, 공개된 특성은 공포 부정무드도 지운다.",
+        "어둠·피·불·물·해충·속박 공포증과의 충돌을 차단하고 기존 충돌도 정리한다.",
+        "전차 경주 기동성이 1 증가한다."
+      ],
+      "drawbacks": [
+        "복종 계산에 페널티 6이 붙고 공포를 이용한 훈련이 불가능해진다.",
+        "위협·제압의 위협 효과가 0이며, 처벌 계산도 실패형으로 처리된다."
+      ],
+      "evidence": [
+        {
+          "location": "#static_base",
+          "lineStart": 1073,
+          "lineEnd": 1079,
+          "excerpt": "\t\tslave_psy_hardness += dynslave['courage']\n\t\tcourage = slave_psy_hardness\n\t\tif dynslave['mood'] > 0: courage += dynslave['mood']\n\t\tif dynslave['courage'] = 2:\n\t\t\tcourage = 100\n\t\t\tdynslave['fear'] = 0 &! moronic slaves are impossible to frighten\n\t\tend"
+        },
+        {
+          "location": "#static_base",
+          "lineStart": 1323,
+          "lineEnd": 1328,
+          "excerpt": "\t\t!Calculate slave obedience - crushboss\n\t\tdynamic $replace($set_obedience_difficulty, 'dyn'+'slave', 'dynslave')\n\t\tslave_obedience_bonus += dynslave['meekness'] + seed_obedience_bonus[dynslave_type] &! get obedience bonus from current json for backward compatibility\n\t\tif dynslave['courage'] = 2: slave_obedience_penalty += 6\n\t\tif dynslave['courage'] = 1: slave_obedience_penalty += 4\n\t\tif dynslave['courage'] = -1: slave_obedience_bonus += dynslave['fear']"
+        },
+        {
+          "location": "#static_base",
+          "lineStart": 2099,
+          "lineEnd": 2102,
+          "excerpt": "        if dynslave['courage'] = 2 and (dynslave['courage_revealed'] = 2 or spell_revelio = 1):\n            $dynslave_features_list += '<a href=\"EXEC: msg $Отмороженая\"><<dyneval($vb_cycle_skill, 1, \"무모함\")>></a><br>'\n            if dynslave['courage_revealed'] = 2: dynslave['neg_fear'] = 0\n        end"
+        },
+        {
+          "location": "jo9_traits",
+          "lineStart": 811,
+          "lineEnd": 815,
+          "excerpt": " result = dyneval($replace({\n  result = 1\n  if ($args[0] = 'darkness_attitude' or $args[0] = 'blood_attitude' or $args[0] = 'fire_attitude' or $args[0] = 'water_attitude' or $args[0] = 'vermin_attitude' or $args[0] = 'deprivation_attitude') and args[1] = -1:\n   if jo9xeactor['courage'] = 2: result = 0\n  end"
+        },
+        {
+          "location": "jo9_traits",
+          "lineStart": 842,
+          "lineEnd": 848,
+          "excerpt": "  if jo9xeactor['courage'] = 2:\n   if jo9xeactor['darkness_attitude'] = -1: jo9xeactor['darkness_attitude'] = 0 & result += 1\n   if jo9xeactor['blood_attitude'] = -1: jo9xeactor['blood_attitude'] = 0 & result += 1\n   if jo9xeactor['fire_attitude'] = -1: jo9xeactor['fire_attitude'] = 0 & result += 1\n   if jo9xeactor['water_attitude'] = -1: jo9xeactor['water_attitude'] = 0 & result += 1\n   if jo9xeactor['vermin_attitude'] = -1: jo9xeactor['vermin_attitude'] = 0 & result += 1\n   if jo9xeactor['deprivation_attitude'] = -1: jo9xeactor['deprivation_attitude'] = 0 & result += 1"
+        },
+        {
+          "location": "$ride_start",
+          "lineStart": 19,
+          "lineEnd": 23,
+          "excerpt": "chariot['maneuverability'] = slave['instinct'] + slave['dressage'] + 2*slave['dressage_affinity']\nif slave['meekness'] < 0: chariot['maneuverability'] -= 1\nif slave['meekness'] > 0: chariot['maneuverability'] += 1\nif slave['courage'] < 0: chariot['maneuverability'] -= 1\nif slave['courage'] > 0: chariot['maneuverability'] += 1"
+        },
+        {
+          "location": "interaction",
+          "lineStart": 1000,
+          "lineEnd": 1004,
+          "excerpt": "\t$special_part = {\n\t\tgs 'jo9_traits', 'attention_observe', 'slave'\n\t\tthreat_effect = min(slave['rational'], slave['intellect']) - func('jo9_traits', 'attention_value', 'slave', 'abuse_attitude')*5 + max(-1, master_supermacy) - rebell[$slave_psy_status] - slave_already_done_recent[$str(interaction)]\n\t\tif slave_already_done_today[$str(interaction)] > 0 or slave['courage'] = 2: threat_effect = 0\n\t\tif threat_effect > 0 and slave['rational'] < 1: threat_effect = 1"
+        },
+        {
+          "location": "interaction",
+          "lineStart": 1028,
+          "lineEnd": 1031,
+          "excerpt": "\t$special_part = {\n\t\tthreat_effect = slave['fear'] + min(slave['rational'], slave['intellect']) + max(-1, master_supermacy) - slave['spoil'] - rebell[$slave_psy_status] - slave_already_done_total[$str(interaction)]\n\t\tif slave_already_done_today[$str(interaction)] > 0 or slave['courage'] = 2 or slave['max_guilt'] < 2: threat_effect = 0\n\t\tif threat_effect > 0 and slave['obedience'] < 0: threat_effect = 1"
+        },
+        {
+          "location": "#dynamic",
+          "lineStart": 724,
+          "lineEnd": 725,
+          "excerpt": "\telseif interaction_dynslave['phobia'] = 2 or dynslave['courage'] = 2:\n\t\ttorture_succeeded = 0 &! slave has a trait aligned with the activity or has the moronic trait (impossible to frighten)"
+        }
+      ]
+    },
+    {
+      "key": "selfesteem",
+      "value": 1,
+      "label": "과대망상",
+      "classificationProposal": "혼합",
+      "benefits": [
+        "공적이 조금이라도 있으면 주 노예의 공적을 최댓값 5로 올려, 큰 보상을 주어도 과잉보상으로 버릇없음이 늘어나는 조건에 걸리지 않기 쉽다. 단, 데이트 등 별도 증가는 남는다.",
+        "특성이 드러나면 위신이 1 오른다."
+      ],
+      "drawbacks": [
+        "공적을 보상하지 않고 하루를 끝내면 부정적 기분·불안·합리적 복종 감소가 공적값에 비례하므로, 사소한 공적을 무시해도 최댓값 기준 불이익이 될 수 있다. 완전한 헌신 또는 정신적 피학성애 예외는 적용된다.",
+        "효과 없는 칭찬은 공적값만큼 합리적 복종을 깎아 이 손실도 커질 수 있다."
+      ],
+      "evidence": [
+        {
+          "location": "$newloc",
+          "lineStart": 163,
+          "lineEnd": 168,
+          "excerpt": "!Evaluate slave achievements (skip if fainted - ImperatorAugustus)\nif slave_state = CONST_INT['slave_exist']:\n\tif slave['selfesteem'] > 0 and slave['virtue'] > 0:\n\t\tslave['virtue'] = 5\n\t\tif slave['selfesteem_revealed'] = 0: slave['selfesteem_revealed'] = 1\n\tend"
+        },
+        {
+          "location": "#static_base",
+          "lineStart": 1586,
+          "lineEnd": 1586,
+          "excerpt": "\t\tif dynslave['selfesteem'] > 0 and dynslave['selfesteem_revealed'] > 0: dynslave['prestige'] += 1        &! megalomania"
+        },
+        {
+          "location": "interaction_result",
+          "lineStart": 1126,
+          "lineEnd": 1131,
+          "excerpt": "\tif slave['virtue'] < interaction_reward_level:\n\t\teffective_interaction_reward_level = interaction_reward_level - slave['virtue']\n\t\tslave_rate['spoil'] += interaction_reward_potence * effective_interaction_reward_level\n\telse\n\t\tslave_rate['rational'] += min(interaction_reward_level, slave['intellect'])\n\t\tslave_rate['spoil'] += (1 + interaction_reward_level)/2 &! spending time together always spoils somewhat -ImperatorAugustus"
+        },
+        {
+          "location": "interaction_result",
+          "lineStart": 1325,
+          "lineEnd": 1332,
+          "excerpt": "\tif slave_already_done_today[$str(interaction)] > 0:\n\t\t$text[2] = $compliment_repeat &! overwrites what was set earlier\n\t\tif slave['virtue'] < interaction_reward_level: slave_rate['spoil'] += 1 &! excessive rewards increase spoil\n\t\tslave_rate['rational'] -= 1 &! empty promises reduce rational obedience\n\telse\n\t\tslave_rate['mood'] += interaction_reward_potence\n\t\tif slave['virtue'] < interaction_reward_level: slave_rate['spoil'] += interaction_reward_potence\n\t\tif slave['virtue'] >= interaction_reward_level: slave_rate['rational'] += min(interaction_reward_level, slave['intellect'])"
+        },
+        {
+          "location": "interaction_result",
+          "lineStart": 1342,
+          "lineEnd": 1348,
+          "excerpt": "\tif master_supermacy > 0 and interaction_reward_potence > 0 and (slave['neg_no_praise'] > 0 or ($slave_psy_status ! 'arrogant' and $slave_psy_status ! 'hateful')):\n\t\tslave['neg_no_praise'] = 0\n\t\tslave['pos_praise'] += interaction_reward_level\n\telseif interaction_reward_potence <= 0:\n\t\tslave_rate['rational'] -= slave['virtue'] &! empty words reduce rational obedience proportional to the amount of merit - ImperatorAugustus\n\tend\n\tslave['virtue'] = 0"
+        },
+        {
+          "location": "next_day",
+          "lineStart": 1447,
+          "lineEnd": 1460,
+          "excerpt": "$next_day_forgotten_rewards = {\n\tif dynslave_state > CONST_INT['no_slave']:\n\t\t! state check includes fainted - ImperatorAugustus\n\n\t\t!Forgotten rewards, merits, and virtue - improved - crushboss\n\t\tif dynslave['virtue'] > 0:\n\t\t\tif dynslave['moral'] ! 5 and dynslave['abuse_attitude'] ! 2:\n\t\t\t\t! fully devoted slaves or psi-masochists do not feel bad about not getting rewards - ImperatorAugustus\n\t\t\t\tdynslave_rate['mood'] -= (dynslave['virtue']*2)\n\t\t\t\tif dynslave['moral'] < 3: dynslave_rate['angst'] += dynslave['virtue']\n\t\t\t\tdynslave['neg_no_praise'] = max(dynslave['neg_no_praise'], dynslave['virtue'])\n\t\t\t\tdynslave_rate['rational'] -= dynslave['virtue'] &! drain awareness instead of increasing it - ImperatorAugustus (not being rewarded undermines rational understanding/acceptance of slavery)\n\t\t\tend\n\t\t\tdynslave['virtue'] = 0"
+        }
+      ]
+    }
+  ]
+}

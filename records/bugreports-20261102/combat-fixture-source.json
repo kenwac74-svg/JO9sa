@@ -1,0 +1,88 @@
+{
+  "qsp_sha256": "2f74d3194ee16c5400e09e06669fee39e32c851e5f03b22c188534ae3f9be9cb",
+  "css_sha256": "1676136c66213272031f11bb7891223e15862b3c3944079fd2925d8e5f277e77",
+  "source_rules": "\r\n\r\n#combat_ui_conditions {\r\n  position:absolute;\r\n  top:300px;\r\n  width: 210px;\r\n  height:600px;\r\n  text-align:center;\r\n}\n\r\n.jo9-battle-v01 #combat_ui_conditions{left:12px;top:300px;width:218px;height:122px;box-sizing:border-box;font-size:20px;line-height:25px;text-align:center;overflow:auto;}\n\r\n.jo9-battle-v01 #combat_ui_conditions{font-size:20px;line-height:25px;}",
+  "fragments": {
+    "weak": "<a href=\"#\"><font color='red'>약화</font>[1]</a><br>",
+    "rigid": "<a href=\"#\"><font color='green'>경직</font>[1]</a><br>",
+    "pain": "<a href=\"#\"><font color='purple'>고통</font>[1]</a><br><br>",
+    "stagger": "<a href=\"#\"><font color='red'>탈력</font>[1]</a><br>",
+    "shock": "<a href=\"#\"><font color='green'>충격</font>[1]</a><br>",
+    "accuracy": "<a href=\"#\"><font color='purple'>명중</font>[1]</a><br><br>",
+    "enemyPain": "<a href=\"#\"><font color='purple'>고통</font>[1]</a><br>"
+  },
+  "cases": [
+    {
+      "id": "none",
+      "name": "상태 없음",
+      "effects": []
+    },
+    {
+      "id": "one",
+      "name": "일반 상태 1개",
+      "effects": [
+        "weak"
+      ]
+    },
+    {
+      "id": "two",
+      "name": "일반 상태 2개",
+      "effects": [
+        "weak",
+        "rigid"
+      ]
+    },
+    {
+      "id": "three",
+      "name": "일반 상태 3개",
+      "effects": [
+        "weak",
+        "rigid",
+        "stagger"
+      ]
+    },
+    {
+      "id": "four",
+      "name": "일반 상태 4개",
+      "effects": [
+        "weak",
+        "rigid",
+        "stagger",
+        "shock"
+      ]
+    },
+    {
+      "id": "painOnly",
+      "name": "아군 고통 1개",
+      "effects": [
+        "pain"
+      ]
+    },
+    {
+      "id": "allyPainTwo",
+      "name": "아군 고통 포함 2개",
+      "effects": [
+        "weak",
+        "pain"
+      ]
+    },
+    {
+      "id": "enemyPainTwo",
+      "name": "적 고통 포함 2개",
+      "effects": [
+        "weak",
+        "enemyPain"
+      ]
+    },
+    {
+      "id": "painAccuracy",
+      "name": "아군 고통·명중 2개",
+      "effects": [
+        "accuracy",
+        "pain"
+      ]
+    }
+  ],
+  "native_gameplay": false,
+  "fixture": "Actual status HTML fragments, interpolation values replaced with 1; actual status CSS cascade. No live game mutation."
+}
