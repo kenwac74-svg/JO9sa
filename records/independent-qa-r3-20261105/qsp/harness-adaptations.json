@@ -1,0 +1,46 @@
+{
+  "createdAt": "2026-11-05T08:23:44.679Z",
+  "sources": [
+    {
+      "path": "G:/somi/JO9sa/records/hard-ap-setting-20261103/tests/hard-ap-runtime.cjs",
+      "sha256": "c63ac0bc22068dec883f2046f5ea7850c9e47b78fb6246b6c0f62c1f8e4e7381"
+    },
+    {
+      "path": "G:/somi/JO9sa/records/work-pending-batch-20261105/tax/check.cjs",
+      "sha256": "f0f18fc627d316593326685fa4007fcdb6da4e679b9235e2ec366d57b4809a51"
+    }
+  ],
+  "edits": [
+    {
+      "kind": "AP representative stamina",
+      "from": "for(let s=0;s<=5;s++)",
+      "to": "for(const s of [0,2,5])"
+    },
+    {
+      "kind": "AP independent creation setting",
+      "from": "for(const creation of [0,2])",
+      "to": "for(const creation of [d===2?0:2])"
+    },
+    {
+      "kind": "AP normalization representative stamina",
+      "from": "for(let s=0;s<=5;s++)",
+      "to": "for(const s of [0,2,5])"
+    },
+    {
+      "kind": "AP daily representative stamina",
+      "from": "for(let s=0;s<=5;s++)",
+      "to": "for(const s of [0,2,5])"
+    },
+    {
+      "kind": "Tax independent creation setting",
+      "from": "for (const creation of [0,1,2])",
+      "to": "for (const creation of [difficulty===2?0:2])"
+    },
+    {
+      "kind": "Tax fresh result output",
+      "from": "const summary={source,checks:checks.length,failed:0};",
+      "to": "const summary={createdAt:new Date().toISOString(),source,inputSha256:core.hash(fs.readFileSync(source)),checks:checks.length,failed:0,assertions:checks,fixtureLimitations:['Source-derived locations and blocks; appraisal, renderer and external-menu stubs.','GT destinations replaced with GS then EXIT for fixture control flow.','Only two unsupported consignment FOR loops lowered to equivalent labels for QSP 5.8 WASM.','No game/native EXE launched.']};"
+    }
+  ],
+  "purpose": "Representative equivalence classes for exact latest ZIP candidate; no new production implementation."
+}

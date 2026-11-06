@@ -1,0 +1,1816 @@
+﻿02_노예시장_구매경매
+기준: 2026-11-05 최신 WORK / QSP SHA-256 6ebda9981bf6bc56de46929474de64157969fd324bba8e8be181e002dad1cc7e
+
+편집 방법: [SELL-001] 등의 ID를 유지하고 [문장 시작]과 [문장 끝] 사이의 글만 고쳐 주세요.
+<<변수>>는 인물 이름·금액 등 자동 삽입 부분입니다. 가능하면 그대로 유지해 주세요.
+화면용 HTML 서식은 읽기 편하게 걷어냈습니다. 원래 태그·위치·문장은 원문_연결명세.json에 보존했습니다.
+등장 조건은 코드에서 읽은 정적 분기이며 특정 세이브의 현재 상태를 평가한 결과는 아닙니다.
+대사 추출만 했으며 게임/QSP/세이브/패치를 수정하지 않았습니다.
+
+============================================================
+첫 상품·다음 상품·낙찰·구매 후·마감
+auction_phase=0 상품 소개, 2/3/4 낙찰 호명, 5/7 마감, 6 구매 후. 일부 개인 성향 분기는 별도 수정란으로 표시합니다.
+============================================================
+
+[BUY-001]
+위치: slave_auction_buy · 42행
+문장 대상: $text
+관련 분기: auction_phase = 0 / stock_sold = 1
+[문장 시작]
+[잡파]
+ 첫번째 상품입니다! <<$stock_world_auk>>에서 건너온 <<$stock_epithet>> <<$stock_occupation_auk>>! <<$stock_family_auk>> <<$stock_name>>! 입찰 시작가는 $<<slave_base_price>> 입니다! 자, 어떤 분이 먼저 응찰하시겠습니까?!
+[문장 끝]
+
+[BUY-002]
+위치: slave_auction_buy · 47행
+문장 대상: $text
+관련 분기: auction_phase = 0 / stock_sold > 1
+[문장 시작]
+[잡파]
+ 다음 상품! <<$stock_world_auk>>에서 건너온 <<$stock_epithet>> <<$stock_occupation_auk>>! <<$stock_family_auk>> <<$stock_name>>! 입찰 시작가는 $<<slave_base_price>> 입니다! 자, 어떤 분이 먼저 응찰하시겠습니까?!
+[문장 끝]
+
+[BUY-003]
+위치: slave_auction_buy · 52행
+문장 대상: $text
+관련 분기: auction_phase = 0 / stock_sold >= stock_limit
+[문장 시작]
+[잡파]
+ 오늘의 마지막 상품입니다! <<$stock_world_auk>>에서 건너온 <<$stock_epithet>> <<$stock_occupation_auk>>! <<$stock_family_auk>> <<$stock_name>>! 입찰 시작가는 $<<slave_base_price>> 입니다! 자, 어떤 분이 먼저 응찰하시겠습니까?!
+[문장 끝]
+
+[BUY-004]
+위치: slave_auction_buy · 60행
+문장 대상: $text
+관련 분기: auction_phase = 2
+[문장 시작]
+[잡파]
+ 입찰됩니다! $<<cur_stock_price>>, 하나... <<$auk_add[b]>>
+[문장 끝]
+
+[BUY-005]
+위치: slave_auction_buy · 67행
+문장 대상: $text
+관련 분기: auction_phase = 3
+[문장 시작]
+[잡파]
+ $<<cur_stock_price>>, 둘... <<$auk_add[b]>>
+[문장 끝]
+
+[BUY-006]
+위치: slave_auction_buy · 74행
+문장 대상: $text
+관련 분기: auction_phase = 4
+[문장 시작]
+[잡파]
+ $<<cur_stock_price>>, 셋! 낙찰.
+[문장 끝]
+
+[BUY-007]
+위치: slave_auction_buy · 80행
+문장 대상: $text
+관련 분기: auction_phase = 5
+[문장 시작]
+[잡파]
+ 이것으로 오늘의 경매는 끝났습니다! 모든 상품이 낙찰되었습니다. 내일 또 뵙기를 바라겠습니다. 안개가 우리에게 더 많은 경이로운 미녀들을 선사할 것입니다!
+[문장 끝]
+
+[BUY-008]
+위치: slave_auction_buy · 86행
+문장 대상: $text
+관련 분기: auction_phase = 6
+[문장 시작]
+당신은 새로 손에 넣은 노예를 데리고 시장을 떠난다.
+[문장 끝]
+
+[BUY-009]
+위치: slave_auction_buy · 99행
+문장 대상: 화면 출력·메뉴
+관련 분기: auction_phase = 6 / likes_lolis = 1 and perv_revealed < 1 and stock['age'] = CONST_INT['loli_age']
+[문장 시작]
+새로 산 노예를 데리고 떠나려는 순간, 잡파가 굳이 너를 찾아온다. 어딘가 아는 사람 같은, 약간 소름 끼치는 태도와 음모를 속삭이듯 한 말투로 그가 말한다:
+[문장 끝]
+
+[BUY-010]
+위치: slave_auction_buy · 124행
+문장 대상: $text
+관련 분기: auction_phase = 6 / is_perv ! 0 and perv_msg1 ! 1 and stock['boobs'] >= 4
+[문장 시작]
+당신은 새로 손에 넣은 노예를 데리고 시장을 떠난다.
+[문장 끝]
+
+[BUY-011]
+위치: slave_auction_buy · 128행
+문장 대상: 화면 출력·메뉴
+관련 분기: auction_phase = 6 / is_perv ! 0 and perv_msg1 ! 1 and stock['boobs'] >= 4
+[문장 시작]
+새 노예의 <<$slave_boobs_txt[stock["boobs"]]>>에 기가 눌린다. 어쩌면 그녀는 네게 너무 벅찬 여자일지도 모른다. 네가 제대로 해내지 못하면 어쩌지?
+[문장 끝]
+
+[BUY-012]
+위치: slave_auction_buy · 131행
+문장 대상: $text
+관련 분기: auction_phase = 6 / is_perv ! 0 and perv_msg2 ! 1 and stock['age'] = CONST_INT['milf_age']
+[문장 시작]
+당신은 새로 손에 넣은 노예를 데리고 시장을 떠난다.
+[문장 끝]
+
+[BUY-013]
+위치: slave_auction_buy · 135행
+문장 대상: 화면 출력·메뉴
+관련 분기: auction_phase = 6 / is_perv ! 0 and perv_msg2 ! 1 and stock['age'] = CONST_INT['milf_age']
+[문장 시작]
+새 노예의 성숙함에 기가 눌린다. 어쩌면 그녀는 네가 쉽게 지배하기엔 너무 경험이 많을지도 모른다. 어쩌면 좀 더 어린 쪽이 나았을지도…
+[문장 끝]
+
+[BUY-014]
+위치: slave_auction_buy · 138행
+문장 대상: $text
+관련 분기: auction_phase = 6 / 그 외 (else)
+[문장 시작]
+당신은 새로 손에 넣은 노예를 데리고 시장을 떠난다.
+[문장 끝]
+
+[BUY-015]
+위치: slave_auction_buy · 145행
+문장 대상: $text
+관련 분기: auction_phase = 7
+[문장 시작]
+[잡파]
+ 오늘 경매는 마감되었으니, 내일 다시 찾아와!
+[문장 끝]
+
+============================================================
+시장 개회·주인공 입찰 시 무작위 대사
+$auction_start는 첫 입장, $auction_buy_player_bets[1..5]는 주인공 입찰 시 5개 중 무작위 하나를 사용합니다.
+============================================================
+
+[BUY-016]
+위치: #static_txt · 1283행
+문장 대상: $auction_start
+[문장 시작]
+[잡파]
+ 좋은 날입니다, 친애하는 여러분! 자, 자, 정숙해 주세요. 상표가 아직 새겨지지 않은 노예를 곧 경매하겠습니다. 안개가 우리에게 흥미로운 것들을 많이 가져왔습니다. 시대와 공간을 초월해 각지에서 온 아름답고, 건강하고, 생기있는 소녀들이 준비되어있습니다! 보시면 바로 아실 겁니다, 부디 스파크를 너무 아끼지는 마시기 바랍니다!
+[문장 끝]
+
+[BUY-017]
+위치: #static_txt · 1284행
+문장 대상: $auction_buy_player_bets[1]
+[문장 시작]
+[잡파]
+ 아하! 여기 조합을 대표해서 입찰하시는 분이 계시는 군요. 자, 저런 분이 찍은 노예니까 반드시 뭔가 특별할 겁니다. 더 부르실 분 안 계십니까? 불러보세요!
+[문장 끝]
+
+[BUY-018]
+위치: #static_txt · 1285행
+문장 대상: $auction_buy_player_bets[2]
+[문장 시작]
+[잡파]
+ 존경받는 조합원이 입찰했습니다. 더 부르실 분?
+[문장 끝]
+
+[BUY-019]
+위치: #static_txt · 1286행
+문장 대상: $auction_buy_player_bets[3]
+[문장 시작]
+[잡파]
+ 낙찰될 것 같군요! 당연히 여러분들은 이런 맛있는 먹거리를 놓칠 분들이 아닐겁니다. 그렇지만 조금 더 가격이 나갈 수도 있을 것 같군요. 다음 응찰자 분?
+[문장 끝]
+
+[BUY-020]
+위치: #static_txt · 1287행
+문장 대상: $auction_buy_player_bets[4]
+[문장 시작]
+[잡파]
+ 정말! 노예 조합은 쉬지도 않는군요. 그렇지 않습니까! 자! 이 전문가보다 더 높은 금액을 제시할 분은 어디 계십니까? 저 사람 눈썰미가 보통이 아니랍니다. 저 소녀는 분명히 가치가 클 겁니다! 여러분의 입찰을 기다리고 있습니다.
+[문장 끝]
+
+[BUY-021]
+위치: #static_txt · 1288행
+문장 대상: $auction_buy_player_bets[5]
+[문장 시작]
+[잡파]
+ 아하! 새로운 가격이군요. 올리겠습니다. 이제 과연 누가 더 높은 가격을 부를까요?
+[문장 끝]
+
+============================================================
+입찰 독려 무작위 덧말
+$auk_add[1..9]. 첫 호명에서는 1..9, 둘째 호명에서는 1..6 범위에서 선택합니다.
+============================================================
+
+[BUY-022]
+위치: #static_txt · 1292행
+문장 대상: $auk_add[1]
+[문장 시작]
+어떤 분이 더 높은 금액을 부르시겠습니까?
+[문장 끝]
+
+[BUY-023]
+위치: #static_txt · 1293행
+문장 대상: $auk_add[2]
+[문장 시작]
+얼마나 훌륭한 상품인지를 보십시오!
+[문장 끝]
+
+[BUY-024]
+위치: #static_txt · 1294행
+문장 대상: $auk_add[3]
+[문장 시작]
+지금 $5를 더 올리라고 들은 것 같은데, 아닌가요?
+[문장 끝]
+
+[BUY-025]
+위치: #static_txt · 1295행
+문장 대상: $auk_add[4]
+[문장 시작]
+조금만 더 용기 내 보세요, 여러분!
+[문장 끝]
+
+[BUY-026]
+위치: #static_txt · 1296행
+문장 대상: $auk_add[5]
+[문장 시작]
+이런 멋진 노예를 구할 수 있는 기회를 놓치지 마세요!
+[문장 끝]
+
+[BUY-027]
+위치: #static_txt · 1297행
+문장 대상: $auk_add[6]
+[문장 시작]
+입찰하세요! 지금 새로운 입찰을 기다리고 있습니다.
+[문장 끝]
+
+[BUY-028]
+위치: #static_txt · 1298행
+문장 대상: $auk_add[7]
+[문장 시작]
+정말 싼 가격이군요! 좋은 상품을 저렴한 가격에 살 수 있는 절호의 기회입니다!
+[문장 끝]
+
+[BUY-029]
+위치: #static_txt · 1299행
+문장 대상: $auk_add[8]
+[문장 시작]
+과연 누가 스파크를 살짝 더 쓸까요? 정말 조금이면 됩니다!
+[문장 끝]
+
+[BUY-030]
+위치: #static_txt · 1300행
+문장 대상: $auk_add[9]
+[문장 시작]
+자 여러분, 이제 마음의 결정을 하십시오! 시간이 얼마 남지 않았습니다!
+[문장 끝]
+
+============================================================
+경쟁 입찰자 대사
+$rival_stake[1..35] 중 무작위 하나에 아래 입찰 증액 문구를 붙입니다.
+============================================================
+
+[BUY-031]
+위치: #static_txt · 1304행
+문장 대상: $rival_stake[1]
+[문장 시작]
+[뚱뚱한 흑인]
+ 거기, 너! 한 번 돌아봐, 다리 벌리고, 숙여. 음... 엉덩이 죽이네. 나 얘 살래!
+[문장 끝]
+
+[BUY-032]
+위치: #static_txt · 1305행
+문장 대상: $rival_stake[2]
+[문장 시작]
+[방탕한 중년남자]
+ 내 쪼그라든 열정을 다시 불태우기에 딱이군, 헤헤...
+[문장 끝]
+
+[BUY-033]
+위치: #static_txt · 1306행
+문장 대상: $rival_stake[3]
+[문장 시작]
+[담배를 뻐금대는 중년부인]
+ 이 소녀, 나와 부엌에서 야한 짓하기에 적당한 것 같네요.
+[문장 끝]
+
+[BUY-034]
+위치: #static_txt · 1307행
+문장 대상: $rival_stake[4]
+[문장 시작]
+[못생긴 난쟁이]
+ 입찰가 올리겠소! 그 귀여운 얼굴이 내 다리 사이에 잘 어울릴 것 같네, 하하!
+[문장 끝]
+
+[BUY-035]
+위치: #static_txt · 1308행
+문장 대상: $rival_stake[5]
+[문장 시작]
+[귀족 대리인]
+ 내 고객 이름으로 더 올리겠소! 저런 물건이 있으면 낙찰받아오라고 했소.
+[문장 끝]
+
+[BUY-036]
+위치: #static_txt · 1309행
+문장 대상: $rival_stake[6]
+[문장 시작]
+[조합의 경쟁자]
+ 입찰가 올리겠소! 조교하기 좋은 재료군.
+[문장 끝]
+
+[BUY-037]
+위치: #static_txt · 1310행
+문장 대상: $rival_stake[7]
+[문장 시작]
+[침흘리는 짐승족]
+ (침 튀기며) 이봐! 내가 그 년을 사겠어. 임신시켜서 건강한 강아지들을 낳게 할거야.
+[문장 끝]
+
+[BUY-038]
+위치: #static_txt · 1311행
+문장 대상: $rival_stake[8]
+[문장 시작]
+[코트 입은 이방인]
+ (입찰가를 올리려는 듯이 손을 올린다)
+[문장 끝]
+
+[BUY-039]
+위치: #static_txt · 1312행
+문장 대상: $rival_stake[9]
+[문장 시작]
+[창백한 뱀파이어]
+ 아하아아아... 따뜻한 심장박동이 느껴지는군.
+[문장 끝]
+
+[BUY-040]
+위치: #static_txt · 1313행
+문장 대상: $rival_stake[10]
+[문장 시작]
+[털북숭이 도살업자]
+ 좋은 햄거리군, 확실해! 어이 경매사, 내 입찰가 올려줘.
+[문장 끝]
+
+[BUY-041]
+위치: #static_txt · 1314행
+문장 대상: $rival_stake[11]
+[문장 시작]
+[마스크 쓴 여자]
+ (입찰가를 올리려는 듯이 손을 올린다)
+[문장 끝]
+
+[BUY-042]
+위치: #static_txt · 1315행
+문장 대상: $rival_stake[12]
+[문장 시작]
+[흉터 있는 기사]
+ 내 침대를 덥힐 때 필요한 게 바로 저거야!
+[문장 끝]
+
+[BUY-043]
+위치: #static_txt · 1316행
+문장 대상: $rival_stake[13]
+[문장 시작]
+[대머리 생체해부학자]
+ 오랜 시간 해부해도 견뎌 낼만한 물건이군, 바로 내가 필요했던 거야.
+[문장 끝]
+
+[BUY-044]
+위치: #static_txt · 1317행
+문장 대상: $rival_stake[14]
+[문장 시작]
+[배고픈 여자 뱀파이어]
+ (송곳니를 핥으며) 더 이상 못 참겠어. 이렇게 달콤하다니, 냄새가 여기까지 나...
+[문장 끝]
+
+[BUY-045]
+위치: #static_txt · 1318행
+문장 대상: $rival_stake[15]
+[문장 시작]
+[송곳니가 튀어나온 짐승족]
+ 내꺼야! 내꺼! 어디 한 번 가격 올려봐, 이 약골들아. 내가 갈가리 찢어 줄 테니!!!
+[문장 끝]
+
+[BUY-046]
+위치: #static_txt · 1319행
+문장 대상: $rival_stake[16]
+[문장 시작]
+[뚱뚱한 흑인]
+ 이봐, 잡파! 저런 애가 나한텐 쓸모 있어!
+[문장 끝]
+
+[BUY-047]
+위치: #static_txt · 1320행
+문장 대상: $rival_stake[17]
+[문장 시작]
+[방탕한 중년남자]
+ 늙은 아저씨의 차가운 침대를 데워 줄 어린 피라니. 헤헤..헤...
+[문장 끝]
+
+[BUY-048]
+위치: #static_txt · 1321행
+문장 대상: $rival_stake[18]
+[문장 시작]
+[담배를 뻐금대는 중년부인]
+ 아이참, 농담이었어요! 저 아이는 부엌에서 날 돕게 할 거예요. 설거지 시킨다구요.
+[문장 끝]
+
+[BUY-049]
+위치: #static_txt · 1322행
+문장 대상: $rival_stake[19]
+[문장 시작]
+[못생긴 난쟁이]
+ 저 년에게 진짜 남자의 맛을 보여줘야지. 이봐, 날 봐. 내가 네 새 주인이다. 알겠나?!
+[문장 끝]
+
+[BUY-050]
+위치: #static_txt · 1323행
+문장 대상: $rival_stake[20]
+[문장 시작]
+[귀족 대리인]
+ 후원자 이름으로 입찰가 올리겠소! 그가 찾던 바로 그 상품이군.
+[문장 끝]
+
+[BUY-051]
+위치: #static_txt · 1324행
+문장 대상: $rival_stake[21]
+[문장 시작]
+[조합의 경쟁자]
+ 이 정도 물건이면 좋은 상품이 되겠군. 내가 데려가서 조교하지.
+[문장 끝]
+
+[BUY-052]
+위치: #static_txt · 1325행
+문장 대상: $rival_stake[22]
+[문장 시작]
+[침흘리는 짐승족]
+ (침 튀기며) 여기봐, 잡파! 내가 올렸어, 올렸다구!
+[문장 끝]
+
+[BUY-053]
+위치: #static_txt · 1326행
+문장 대상: $rival_stake[23]
+[문장 시작]
+[코트 입은 이방인]
+ (입찰가를 더 올린다는 듯이 손을 높게 든다)
+[문장 끝]
+
+[BUY-054]
+위치: #static_txt · 1327행
+문장 대상: $rival_stake[24]
+[문장 시작]
+[창백한 뱀파이어]
+ 저 소녀의 삶의 기운을 느낄 수 있어. 잡파, 이 병에 저 애 피 좀 담아줘! 그거 말곤 쓸모없잖아.
+[문장 끝]
+
+[BUY-055]
+위치: #static_txt · 1328행
+문장 대상: $rival_stake[25]
+[문장 시작]
+[털북숭이 도살업자]
+ 조금만 더 찌우면 육즙이 좔좔 흐르겠군. 내가 사겠어! 누구든지 저걸 좋아하게 된 사람은 나중에 내 가게로 와, 한 점 나눠줄게!
+[문장 끝]
+
+[BUY-056]
+위치: #static_txt · 1329행
+문장 대상: $rival_stake[26]
+[문장 시작]
+[마스크 쓴 여자]
+ (입찰가를 더 올린다는 듯이 손을 강하게 들고 있다)
+[문장 끝]
+
+[BUY-057]
+위치: #static_txt · 1330행
+문장 대상: $rival_stake[27]
+[문장 시작]
+[흉터 있는 기사]
+ 집에 메이드가 필요해, 그리고 침대를 데워줄 탕파도, 이 소녀가 아주 딱이군. 이봐, 잡파!
+[문장 끝]
+
+[BUY-058]
+위치: #static_txt · 1331행
+문장 대상: $rival_stake[28]
+[문장 시작]
+[대머리 생체해부학자]
+ 음, 실험을 몇 개해도 어리니까 살아남을지도 모르겠군. 입찰가를 올려야겠어.
+[문장 끝]
+
+[BUY-059]
+위치: #static_txt · 1332행
+문장 대상: $rival_stake[29]
+[문장 시작]
+[배고픈 여자 뱀파이어]
+ (송곳니를 게걸스럽게 핥으며) - 이봐, 나 빨리 걔를 마셔야 한다고!
+[문장 끝]
+
+[BUY-060]
+위치: #static_txt · 1333행
+문장 대상: $rival_stake[30]
+[문장 시작]
+[송곳니가 튀어나온 짐승족]
+ 내꺼라구! 내꺼! 내꺼어어어어어!!! 빨리, 빨리, 빨리 줘!!!
+[문장 끝]
+
+[BUY-061]
+위치: #static_txt · 1334행
+문장 대상: $rival_stake[31]
+[문장 시작]
+[조합의 경쟁자]
+ (손을 들며) 조교하기 좋을 거야.
+[문장 끝]
+
+[BUY-062]
+위치: #static_txt · 1335행
+문장 대상: $rival_stake[32]
+[문장 시작]
+[여드름 난 십대]
+ 한 달 동안 용돈 모아 왔어요! 제발 아무나 한 명만 사게 해주세요!
+[문장 끝]
+
+[BUY-063]
+위치: #static_txt · 1336행
+문장 대상: $rival_stake[33]
+[문장 시작]
+[조합의 경쟁자]
+ 잡파! 자네 입찰가를 너무 많이 올렸어! 훈련도 안 받은 노예에게 그만한 가치는 없다구! 이게 내 마지막 입찰일세!
+[문장 끝]
+
+[BUY-064]
+위치: #static_txt · 1337행
+문장 대상: $rival_stake[34]
+[문장 시작]
+[땅딸막한 사형집행인]
+ 내려치는 강도를 시험해 볼 애를 하나 구하고 있어. 이거 좋은데? 귀여운 머리가 단두대에 잘 어울릴 것 같군!
+[문장 끝]
+
+[BUY-065]
+위치: #static_txt · 1338행
+문장 대상: $rival_stake[35]
+[문장 시작]
+[귀족 대리인]
+ 내 고객이 원하는 노예가 딱 그 소녀요. 이봐요 잡파, 내가 사겠소!
+[문장 끝]
+
+============================================================
+경쟁자 입찰 증액 문구
+$stake_size[1..10]. 경쟁자가 올리는 단계 수에 맞춰 선택합니다.
+============================================================
+
+[BUY-066]
+위치: #static_txt · 1341행
+문장 대상: $stake_size[1]
+[문장 시작]
+$5 더!
+[문장 끝]
+
+[BUY-067]
+위치: #static_txt · 1342행
+문장 대상: $stake_size[2]
+[문장 시작]
+$10 더!
+[문장 끝]
+
+[BUY-068]
+위치: #static_txt · 1343행
+문장 대상: $stake_size[3]
+[문장 시작]
+$15 더!
+[문장 끝]
+
+[BUY-069]
+위치: #static_txt · 1344행
+문장 대상: $stake_size[4]
+[문장 시작]
+내가 20 더 내겠소!
+[문장 끝]
+
+[BUY-070]
+위치: #static_txt · 1345행
+문장 대상: $stake_size[5]
+[문장 시작]
+내가 25 더 내겠소.
+[문장 끝]
+
+[BUY-071]
+위치: #static_txt · 1346행
+문장 대상: $stake_size[6]
+[문장 시작]
+거기에 30 더 얹겠소!
+[문장 끝]
+
+[BUY-072]
+위치: #static_txt · 1347행
+문장 대상: $stake_size[7]
+[문장 시작]
+$35 더.
+[문장 끝]
+
+[BUY-073]
+위치: #static_txt · 1348행
+문장 대상: $stake_size[8]
+[문장 시작]
+$40 더!
+[문장 끝]
+
+[BUY-074]
+위치: #static_txt · 1349행
+문장 대상: $stake_size[9]
+[문장 시작]
+거기에 $45 더!
+[문장 끝]
+
+[BUY-075]
+위치: #static_txt · 1350행
+문장 대상: $stake_size[10]
+[문장 시작]
+$50 더!
+[문장 끝]
+
+============================================================
+즉시 구매 실패·입찰 버튼 안내
+현재 가격의 2.5배를 낼 스파크가 부족할 때의 팝업.
+============================================================
+
+[BUY-076]
+위치: slave_auction_buyout · 10행
+문장 대상: 화면 출력·메뉴
+[문장 시작]
+이 노예를 사기에는 스파크가 부족합니다!
+[문장 끝]
+
+============================================================
+입찰·즉시 구매·다음 상품 UI 문구
+화면의 입찰가 표기와 버튼 툴팁. 가격 변수와 버튼 동작은 원본 명세에 보존합니다.
+============================================================
+
+[BUY-077]
+위치: slave_auction_buy · 172행
+문장 대상: 화면 출력·메뉴
+관련 분기: haggling_stage = 1 / auction_phase < 4 and sparks >= rise_stock_price
+[문장 시작]
+입찰가
+    $<<rise_stock_price>>
+[문장 끝]
+
+============================================================
+상품 소개 조각 — 출신·가족·직업·수식어
+경매사 소개문에 끼워 넣는 짧은 조각입니다. 동일 문구도 출신·직업 조건이 다르면 별도 항목으로 남깁니다. 아래 항목이 뒤에서 덮어쓸 수 있습니다.
+============================================================
+
+[BUY-078]
+위치: generate_stock · 13행
+문장 대상: $stock_epithet
+[문장 시작]
+값이 싼
+[문장 끝]
+
+[BUY-079]
+위치: generate_stock · 14행
+문장 대상: $stock_occupation_auk
+[문장 시작]
+소녀
+[문장 끝]
+
+[BUY-080]
+위치: generate_stock · 15행
+문장 대상: $stock_world_auk
+[문장 시작]
+수수께끼 같은 세계
+[문장 끝]
+
+[BUY-081]
+위치: generate_stock · 16행
+문장 대상: $stock_family_auk
+[문장 시작]
+고아
+[문장 끝]
+
+[BUY-082]
+위치: generate_stock · 187행
+문장 대상: $stock_world_auk
+관련 분기: $stock_world = 'prehistoric'
+[문장 시작]
+선사 시대의 세계
+[문장 끝]
+
+[BUY-083]
+위치: generate_stock · 197행
+문장 대상: $stock_world_auk
+관련 분기: $stock_world = 'barbarian'
+[문장 시작]
+야만의 세계
+[문장 끝]
+
+[BUY-084]
+위치: generate_stock · 206행
+문장 대상: $stock_world_auk
+관련 분기: $stock_world = 'sns'
+[문장 시작]
+힘과 마법의 세계
+[문장 끝]
+
+[BUY-085]
+위치: generate_stock · 214행
+문장 대상: $stock_world_auk
+관련 분기: $stock_world = 'medieval'
+[문장 시작]
+전통적인 농경 세계
+[문장 끝]
+
+[BUY-086]
+위치: generate_stock · 229행
+문장 대상: $stock_world_auk
+관련 분기: $stock_world = 'highfantasy'
+[문장 시작]
+마법의 세계
+[문장 끝]
+
+[BUY-087]
+위치: generate_stock · 242행
+문장 대상: $stock_world_auk
+관련 분기: $stock_world = 'darkfantasy'
+[문장 시작]
+흑마법의 세계
+[문장 끝]
+
+[BUY-088]
+위치: generate_stock · 255행
+문장 대상: $stock_world_auk
+관련 분기: $stock_world = 'steampunk'
+[문장 시작]
+스팀펑크 세계
+[문장 끝]
+
+[BUY-089]
+위치: generate_stock · 267행
+문장 대상: $stock_world_auk
+관련 분기: $stock_world = 'industrial'
+[문장 시작]
+산업이 발달한 세계
+[문장 끝]
+
+[BUY-090]
+위치: generate_stock · 279행
+문장 대상: $stock_world_auk
+관련 분기: $stock_world = 'modern'
+[문장 시작]
+경제적으로 발전한 세계
+[문장 끝]
+
+[BUY-091]
+위치: generate_stock · 294행
+문장 대상: $stock_world_auk
+관련 분기: $stock_world = 'cyberpunk'
+[문장 시작]
+사이버펑크 세계
+[문장 끝]
+
+[BUY-092]
+위치: generate_stock · 303행
+문장 대상: $stock_world_auk
+관련 분기: $stock_world = 'utopia'
+[문장 시작]
+목가적인 유토피아
+[문장 끝]
+
+[BUY-093]
+위치: generate_stock · 313행
+문장 대상: $stock_world_auk
+관련 분기: $stock_world = 'darkfuture'
+[문장 시작]
+전체주의 국가
+[문장 끝]
+
+[BUY-094]
+위치: generate_stock · 333행
+문장 대상: $stock_world_auk
+관련 분기: $stock_world = 'space'
+[문장 시작]
+고도로 발달한 우주 문명
+[문장 끝]
+
+[BUY-095]
+위치: generate_stock · 356행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'tribe'
+[문장 시작]
+야만 부족에서 자란
+[문장 끝]
+
+[BUY-096]
+위치: generate_stock · 361행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'amazon'
+[문장 시작]
+용감한 아마존들에게 길러진
+[문장 끝]
+
+[BUY-097]
+위치: generate_stock · 369행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'nomad'
+[문장 시작]
+유목민에게 길러진
+[문장 끝]
+
+[BUY-098]
+위치: generate_stock · 373행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'pesant'
+[문장 시작]
+농부의 딸
+[문장 끝]
+
+[BUY-099]
+위치: generate_stock · 386행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'hunter'
+[문장 시작]
+사냥꾼의 딸
+[문장 끝]
+
+[BUY-100]
+위치: generate_stock · 391행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'fisher'
+[문장 시작]
+어부의 딸
+[문장 끝]
+
+[BUY-101]
+위치: generate_stock · 398행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'viking'
+[문장 시작]
+바다 약탈자의 딸
+[문장 끝]
+
+[BUY-102]
+위치: generate_stock · 406행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'barbarian_king'
+[문장 시작]
+야만족 공주
+[문장 끝]
+
+[BUY-103]
+위치: generate_stock · 407행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_family = 'barbarian_king'
+[문장 시작]
+귀부인
+[문장 끝]
+
+[BUY-104]
+위치: generate_stock · 414행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'orphan'
+[문장 시작]
+고아
+[문장 끝]
+
+[BUY-105]
+위치: generate_stock · 423행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'bondman'
+[문장 시작]
+농노 농가의 딸
+[문장 끝]
+
+[BUY-106]
+위치: generate_stock · 428행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'gypsy'
+[문장 시작]
+집시 야영지에서 자란
+[문장 끝]
+
+[BUY-107]
+위치: generate_stock · 435행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'church'
+[문장 시작]
+교회 고아원의 학생
+[문장 끝]
+
+[BUY-108]
+위치: generate_stock · 438행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'craftsman'
+[문장 시작]
+장인의 딸
+[문장 끝]
+
+[BUY-109]
+위치: generate_stock · 442행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'merchant'
+[문장 시작]
+상인의 딸
+[문장 끝]
+
+[BUY-110]
+위치: generate_stock · 448행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'valetry'
+[문장 시작]
+하녀의 딸
+[문장 끝]
+
+[BUY-111]
+위치: generate_stock · 455행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'knight'
+[문장 시작]
+영지를 가진 봉건 영주의 딸
+[문장 끝]
+
+[BUY-112]
+위치: generate_stock · 463행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'mprincess'
+[문장 시작]
+공주
+[문장 끝]
+
+[BUY-113]
+위치: generate_stock · 470행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'farmers'
+[문장 시작]
+농부의 딸
+[문장 끝]
+
+[BUY-114]
+위치: generate_stock · 479행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'workhouse'
+[문장 시작]
+떠돌이 고아 노동자
+[문장 끝]
+
+[BUY-115]
+위치: generate_stock · 484행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'proletarian'
+[문장 시작]
+공장 노동자의 딸
+[문장 끝]
+
+[BUY-116]
+위치: generate_stock · 488행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'clerk'
+[문장 시작]
+사무원의 딸
+[문장 끝]
+
+[BUY-117]
+위치: generate_stock · 492행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'naturalist'
+[문장 시작]
+과학자 겸 박물학자의 딸
+[문장 끝]
+
+[BUY-118]
+위치: generate_stock · 496행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'ingeneer'
+[문장 시작]
+기술자의 딸
+[문장 끝]
+
+[BUY-119]
+위치: generate_stock · 501행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'doctor'
+[문장 시작]
+유명한 의사의 딸
+[문장 끝]
+
+[BUY-120]
+위치: generate_stock · 507행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'servant'
+[문장 시작]
+부잣집 하인의 딸
+[문장 끝]
+
+[BUY-121]
+위치: generate_stock · 514행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'magnat'
+[문장 시작]
+거물의 집안에서 자란
+[문장 끝]
+
+[BUY-122]
+위치: generate_stock · 521행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'bankeer'
+[문장 시작]
+부유한 은행가의 딸
+[문장 끝]
+
+[BUY-123]
+위치: generate_stock · 528행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'mayor'
+[문장 시작]
+영향력 있는 정치인의 딸
+[문장 끝]
+
+[BUY-124]
+위치: generate_stock · 535행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'mafiosi'
+[문장 시작]
+마피아 집안에서 자란
+[문장 끝]
+
+[BUY-125]
+위치: generate_stock · 542행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'orpnange'
+[문장 시작]
+고아원 원생
+[문장 끝]
+
+[BUY-126]
+위치: generate_stock · 545행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'worker'
+[문장 시작]
+평범한 노동자 가정에서 자란
+[문장 끝]
+
+[BUY-127]
+위치: generate_stock · 550행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'policeman'
+[문장 시작]
+경찰관의 딸
+[문장 끝]
+
+[BUY-128]
+위치: generate_stock · 553행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'manager'
+[문장 시작]
+사무원의 딸
+[문장 끝]
+
+[BUY-129]
+위치: generate_stock · 557행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'biologist'
+[문장 시작]
+지식인 가정에서 자란
+[문장 끝]
+
+[BUY-130]
+위치: generate_stock · 561행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'programmer'
+[문장 시작]
+중산층 가정에서 자란
+[문장 끝]
+
+[BUY-131]
+위치: generate_stock · 568행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'surgeon'
+[문장 시작]
+성공한 성형외과 의사의 딸
+[문장 끝]
+
+[BUY-132]
+위치: generate_stock · 573행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'businessman'
+[문장 시작]
+성공한 사업가의 딸
+[문장 끝]
+
+[BUY-133]
+위치: generate_stock · 578행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'finance'
+[문장 시작]
+성공한 금융가의 딸
+[문장 끝]
+
+[BUY-134]
+위치: generate_stock · 583행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'general'
+[문장 시작]
+장군의 딸
+[문장 끝]
+
+[BUY-135]
+위치: generate_stock · 588행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'poet'
+[문장 시작]
+시인 집안에서 자란
+[문장 끝]
+
+[BUY-136]
+위치: generate_stock · 592행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'operator'
+[문장 시작]
+생산 기지 운영자의 딸
+[문장 끝]
+
+[BUY-137]
+위치: generate_stock · 597행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'artist'
+[문장 시작]
+예술가 집안에서 자란
+[문장 끝]
+
+[BUY-138]
+위치: generate_stock · 601행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'architect'
+[문장 시작]
+건축가 집안에서 자란
+[문장 끝]
+
+[BUY-139]
+위치: generate_stock · 605행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'jailer'
+[문장 시작]
+간수의 딸
+[문장 끝]
+
+[BUY-140]
+위치: generate_stock · 609행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'bioreactor'
+[문장 시작]
+바이오리액터 운영자의 딸
+[문장 끝]
+
+[BUY-141]
+위치: generate_stock · 613행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'minitruth'
+[문장 시작]
+진리부 관료의 딸
+[문장 끝]
+
+[BUY-142]
+위치: generate_stock · 617행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'anter'
+[문장 시작]
+산업 개미굴 속에서 자란
+[문장 끝]
+
+[BUY-143]
+위치: generate_stock · 622행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'freetrader'
+[문장 시작]
+무역용 트럭에서 자란
+[문장 끝]
+
+[BUY-144]
+위치: generate_stock · 626행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'asteroid'
+[문장 시작]
+소행성 시추 기지에서 자란
+[문장 끝]
+
+[BUY-145]
+위치: generate_stock · 630행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'astrofarm'
+[문장 시작]
+우주 정거장에서 자란
+[문장 끝]
+
+[BUY-146]
+위치: generate_stock · 634행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'astrogator'
+[문장 시작]
+발전한 행성에서 자란
+[문장 끝]
+
+[BUY-147]
+위치: generate_stock · 640행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'admiral'
+[문장 시작]
+제독의 딸
+[문장 끝]
+
+[BUY-148]
+위치: generate_stock · 644행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'nanofarmacist'
+[문장 시작]
+궤도 정거장에서 자란
+[문장 끝]
+
+[BUY-149]
+위치: generate_stock · 649행
+문장 대상: $stock_family_auk
+관련 분기: $stock_family = 'gendesigner'
+[문장 시작]
+유명한 유전자 설계자의 딸
+[문장 끝]
+
+[BUY-150]
+위치: generate_stock · 661행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'tribal_girl'
+[문장 시작]
+소녀
+[문장 끝]
+
+[BUY-151]
+위치: generate_stock · 666행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'shaman'
+[문장 시작]
+샤먼
+[문장 끝]
+
+[BUY-152]
+위치: generate_stock · 672행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'huntress'
+[문장 시작]
+여사냥꾼
+[문장 끝]
+
+[BUY-153]
+위치: generate_stock · 678행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'heroine'
+[문장 시작]
+영웅 여전사
+[문장 끝]
+
+[BUY-154]
+위치: generate_stock · 688행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'bride'
+[문장 시작]
+처녀
+[문장 끝]
+
+[BUY-155]
+위치: generate_stock · 694행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'viking_wife'
+[문장 시작]
+젊은 바이킹의 아내
+[문장 끝]
+
+[BUY-156]
+위치: generate_stock · 707행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'herbalist'
+[문장 시작]
+약초사
+[문장 끝]
+
+[BUY-157]
+위치: generate_stock · 711행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'witch'
+[문장 시작]
+마녀
+[문장 끝]
+
+[BUY-158]
+위치: generate_stock · 717행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'thief'
+[문장 시작]
+도둑
+[문장 끝]
+
+[BUY-159]
+위치: generate_stock · 727행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'beggar'
+[문장 시작]
+거지
+[문장 끝]
+
+[BUY-160]
+위치: generate_stock · 735행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'gypsy'
+[문장 시작]
+점쟁이
+[문장 끝]
+
+[BUY-161]
+위치: generate_stock · 752행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'whore'
+[문장 시작]
+길거리 창녀
+[문장 끝]
+
+[BUY-162]
+위치: generate_stock · 768행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'markitane'
+[문장 시작]
+길 위의 창녀
+[문장 끝]
+
+[BUY-163]
+위치: generate_stock · 783행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'brothel'
+[문장 시작]
+사창가 창녀
+[문장 끝]
+
+[BUY-164]
+위치: generate_stock · 793행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'nun'
+[문장 시작]
+수녀
+[문장 끝]
+
+[BUY-165]
+위치: generate_stock · 799행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'valertry'
+[문장 시작]
+하녀
+[문장 끝]
+
+[BUY-166]
+위치: generate_stock · 811행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'sorceress'
+[문장 시작]
+여마법사의 제자
+[문장 끝]
+
+[BUY-167]
+위치: generate_stock · 819행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'thug'
+[문장 시작]
+노상강도
+[문장 끝]
+
+[BUY-168]
+위치: generate_stock · 830행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'poor_bride'
+[문장 시작]
+평민
+[문장 끝]
+
+[BUY-169]
+위치: generate_stock · 840행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'poor_wife'
+[문장 시작]
+평민의 아내
+[문장 끝]
+
+[BUY-170]
+위치: generate_stock · 848행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'brigand'
+[문장 시작]
+산적
+[문장 끝]
+
+[BUY-171]
+위치: generate_stock · 859행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'noble_bride'
+[문장 시작]
+귀족 아가씨
+[문장 끝]
+
+[BUY-172]
+위치: generate_stock · 869행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'noble_wife'
+[문장 시작]
+영주의 아내
+[문장 끝]
+
+[BUY-173]
+위치: generate_stock · 893행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'mprincess'
+[문장 시작]
+여왕의 딸
+[문장 끝]
+
+[BUY-174]
+위치: generate_stock · 898행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'farmer'
+[문장 시작]
+목화 수확꾼
+[문장 끝]
+
+[BUY-175]
+위치: generate_stock · 903행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'milker'
+[문장 시작]
+젖 짜는 처녀
+[문장 끝]
+
+[BUY-176]
+위치: generate_stock · 908행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'swiner'
+[문장 시작]
+돼지치기
+[문장 끝]
+
+[BUY-177]
+위치: generate_stock · 912행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'weaver'
+[문장 시작]
+직조공
+[문장 끝]
+
+[BUY-178]
+위치: generate_stock · 916행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'freaser'
+[문장 시작]
+밀링머신 조작원
+[문장 끝]
+
+[BUY-179]
+위치: generate_stock · 922행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'maid'
+[문장 시작]
+하녀
+[문장 끝]
+
+[BUY-180]
+위치: generate_stock · 932행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'sufragist'
+[문장 시작]
+서프러제트
+[문장 끝]
+
+[BUY-181]
+위치: generate_stock · 939행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'nurse'
+[문장 시작]
+간호사
+[문장 끝]
+
+[BUY-182]
+위치: generate_stock · 947행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'teacher'
+[문장 시작]
+초등학교 교사
+[문장 끝]
+
+[BUY-183]
+위치: generate_stock · 953행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'oficiant'
+[문장 시작]
+웨이트리스
+[문장 끝]
+
+[BUY-184]
+위치: generate_stock · 965행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'avanturiste'
+[문장 시작]
+세속 여성 모험가
+[문장 끝]
+
+[BUY-185]
+위치: generate_stock · 976행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'rich_bride'
+[문장 시작]
+부유한 신부
+[문장 끝]
+
+[BUY-186]
+위치: generate_stock · 986행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'rich_wife'
+[문장 시작]
+부자의 아내
+[문장 끝]
+
+[BUY-187]
+위치: generate_stock · 996행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'punk'
+[문장 시작]
+펑크
+[문장 끝]
+
+[BUY-188]
+위치: generate_stock · 1002행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'student'
+[문장 시작]
+학생
+[문장 끝]
+
+[BUY-189]
+위치: generate_stock · 1010행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'secretary'
+[문장 시작]
+비서
+[문장 끝]
+
+[BUY-190]
+위치: generate_stock · 1018행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'voleyball'
+[문장 시작]
+배구 선수
+[문장 끝]
+
+[BUY-191]
+위치: generate_stock · 1025행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'karateka'
+[문장 시작]
+킥복서
+[문장 끝]
+
+[BUY-192]
+위치: generate_stock · 1034행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'hymnast'
+[문장 시작]
+체조 선수
+[문장 끝]
+
+[BUY-193]
+위치: generate_stock · 1043행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'policewoman'
+[문장 시작]
+경찰관
+[문장 끝]
+
+[BUY-194]
+위치: generate_stock · 1052행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'model'
+[문장 시작]
+사진 모델
+[문장 끝]
+
+[BUY-195]
+위치: generate_stock · 1059행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'hacker'
+[문장 시작]
+해커
+[문장 끝]
+
+[BUY-196]
+위치: generate_stock · 1064행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'writer'
+[문장 시작]
+여성 소설 작가
+[문장 끝]
+
+[BUY-197]
+위치: generate_stock · 1075행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'major'
+[문장 시작]
+제트셋의 일원
+[문장 끝]
+
+[BUY-198]
+위치: generate_stock · 1081행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'artist'
+[문장 시작]
+예술가
+[문장 끝]
+
+[BUY-199]
+위치: generate_stock · 1087행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'mind_contol'
+[문장 시작]
+정신 지배 경찰관
+[문장 끝]
+
+[BUY-200]
+위치: generate_stock · 1094행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'time_plice'
+[문장 시작]
+시간 경찰관
+[문장 끝]
+
+[BUY-201]
+위치: generate_stock · 1099행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'jailer'
+[문장 시작]
+여교도관
+[문장 끝]
+
+[BUY-202]
+위치: generate_stock · 1110행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'anter'
+[문장 시작]
+평범한 노동자
+[문장 끝]
+
+[BUY-203]
+위치: generate_stock · 1117행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'academy'
+[문장 시작]
+스타플릿 아카데미 졸업생
+[문장 끝]
+
+[BUY-204]
+위치: generate_stock · 1124행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'mech'
+[문장 시작]
+거대 인간형 전투 로봇 조종사
+[문장 끝]
+
+[BUY-205]
+위치: generate_stock · 1133행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'contraband'
+[문장 시작]
+밀수업자
+[문장 끝]
+
+[BUY-206]
+위치: generate_stock · 1139행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'astrofarmer'
+[문장 시작]
+궤도 농장 운영자
+[문장 끝]
+
+[BUY-207]
+위치: generate_stock · 1144행
+문장 대상: $stock_occupation_auk
+관련 분기: $stock_occupation = 'installer'
+[문장 시작]
+궤도 정비공
+[문장 끝]
+
+[BUY-208]
+위치: generate_stock · 1683행
+문장 대상: $stock_epithet
+관련 분기: stock['exotic'] >= 2
+[문장 시작]
+아주 특이한
+[문장 끝]
+
+[BUY-209]
+위치: generate_stock · 1684행
+문장 대상: $stock_epithet
+관련 분기: stock['temper'] = 4
+[문장 시작]
+흥분해 있는
+[문장 끝]
+
+[BUY-210]
+위치: generate_stock · 1685행
+문장 대상: $stock_epithet
+관련 분기: stock['stamina'] = 4
+[문장 시작]
+강하고 건강한
+[문장 끝]
+
+[BUY-211]
+위치: generate_stock · 1686행
+문장 대상: $stock_epithet
+관련 분기: stock['fat'] = 1
+[문장 시작]
+얇은 천 처럼 늘씬한
+[문장 끝]
+
+[BUY-212]
+위치: generate_stock · 1687행
+문장 대상: $stock_epithet
+관련 분기: stock['beauty'] = 3
+[문장 시작]
+매력적인
+[문장 끝]
+
+[BUY-213]
+위치: generate_stock · 1688행
+문장 대상: $stock_epithet
+관련 분기: stock['beauty'] = 4
+[문장 시작]
+사랑스러운
+[문장 끝]
+
+[BUY-214]
+위치: generate_stock · 1689행
+문장 대상: $stock_epithet
+관련 분기: stock['stamina'] = 5
+[문장 시작]
+흔치않은 강한 몸의
+[문장 끝]
+
+[BUY-215]
+위치: generate_stock · 1690행
+문장 대상: $stock_epithet
+관련 분기: stock['sensitivity'] = 4
+[문장 시작]
+상냥하고 애정깊은
+[문장 끝]
+
+[BUY-216]
+위치: generate_stock · 1691행
+문장 대상: $stock_epithet
+관련 분기: stock['sensitivity'] = 5
+[문장 시작]
+꽃처럼 다정한
+[문장 끝]
+
+[BUY-217]
+위치: generate_stock · 1693행
+문장 대상: $stock_epithet
+관련 분기: stock['beauty'] >= 5
+[문장 시작]
+보석처럼 완벽한
+[문장 끝]
+
+[BUY-218]
+위치: generate_stock · 1695행
+문장 대상: $stock_epithet
+관련 분기: stock['temper'] = 5
+[문장 시작]
+뜨겁고 화끈한
+[문장 끝]
+
+============================================================
+별도 수정란 — 원문 미재수록 항목
+미성년자를 성적으로 묘사한 원문은 옮기지 않았습니다. ID·위치·비성적 요약만 남겼습니다.
+
+[BUY-R01]
+위치: slave_auction_buy · 93~95행
+내용 요약: 미성년 상품의 성적 평가와 관련 설정을 제안하는 대사
+[문장 시작]
+(새 문장을 적어 주세요)
+[문장 끝]
+
+[BUY-R02]
+위치: slave_auction_buy · 102행
+내용 요약: 미성년자를 구매한 뒤 주인공의 성적 반응을 서술하는 문장
+[문장 시작]
+(새 문장을 적어 주세요)
+[문장 끝]
+
+[BUY-R03]
+위치: slave_auction_buy · 110행
+내용 요약: 미성년자와 관련한 성적 상상을 서술하는 문장
+[문장 시작]
+(새 문장을 적어 주세요)
+[문장 끝]
+
+[BUY-R04]
+위치: slave_auction_buy · 118행
+내용 요약: 어린 주인공의 성적 시선을 서술하는 문장
+[문장 시작]
+(새 문장을 적어 주세요)
+[문장 끝]
+
+[BUY-R05]
+위치: slave_auction_buy · 121행
+내용 요약: 어린 주인공의 성적 관심을 해설하는 팝업 문장
+[문장 시작]
+(새 문장을 적어 주세요)
+[문장 끝]

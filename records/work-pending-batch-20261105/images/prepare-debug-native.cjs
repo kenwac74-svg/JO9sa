@@ -1,0 +1,13 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),core=require('G:/somi/JO9sa/tools/text-workshop/core.cjs');
+const out=path.join(__dirname,'native'),base=path.join(out,'files/case01/content/pic/legacy/base.png');
+const values=[base.replaceAll('\\','/'),base,'files/case01/content/pic/legacy/base.png','files\\case01\\content\\pic\\legacy\\base.png','file:///'+base.replaceAll('\\','/')];
+const code=[];
+for(const [i,v]of values.entries())code.push(`$path='${v}'`,`probe_${i}=0`,`dynamic 'probe_${i} = %<<$path>>%'`);
+code.push("$helper_path='files/case01/content/pic/legacy/base.png'","$probe=func('local_exists', $helper_path)","msg 'absolute_fwd <<probe_0>> absolute_back <<probe_1>> relative_fwd <<probe_2>> relative_back <<probe_3>> uri <<probe_4>> local <<$probe>>'","msg 'JO9_QA_GIRLDEBUG_exists_COMPLETE'");
+const shift=x=>core.shift(x.replace(/\r?\n/g,'\r\n'),-5);
+const helper="local local_probe\r\nlocal $local_path\r\n$local_path=$args[0]\r\nlocal_probe=0\r\ndynamic 'local_probe = %<<$local_path>>%'\r\n$result=$str(local_probe)";
+const data=Buffer.from(['QSPGAME','','',shift('2'),shift('Start'),'',shift(code.join('\r\n')),shift('0'),shift('local_exists'),'',shift(helper),shift('0'),''].join('\r\n'),'utf16le');
+const file=path.join(out,'exists-debug.qsp');fs.writeFileSync(file,data);
+fs.writeFileSync(path.join(out,'debug-plan.json'),JSON.stringify([{name:'exists-debug',file,marker:'JO9_QA_GIRLDEBUG_exists_COMPLETE',checkpoint:'native exists path formats/local dynamic'}],null,2));
+console.log(file);

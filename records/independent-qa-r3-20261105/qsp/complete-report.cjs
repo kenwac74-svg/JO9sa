@@ -1,0 +1,12 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+const file=path.join(__dirname,'results.json'),r=JSON.parse(fs.readFileSync(file,'utf8'));
+const previous=path.resolve(__dirname,'../../release-patch-20261105/qa-game/release-report.json'),p=JSON.parse(fs.readFileSync(previous,'utf8'));
+const oldHash=p.checks.find(x=>x.name==='inputs-readable').detail.candidate;assert.equal(oldHash,r.candidate.qspSha256);
+r.checks=r.checks.map(c=>c.id==='QSP-NATIVE-NINE'?{id:c.id,status:'PREVIOUS_EVIDENCE',path:previous,previousCandidateSha256:oldHash,previousVerdict:p.verdict,previousPassed:p.checks.find(x=>x.name==='installed-client-smoke').detail.passed,note:'Same final f9 r2 hash, earlier report inspected now; native not re-executed this turn.'}:c.id==='QSP-EXACT-PATCH-REPLAY'?{id:c.id,status:'PREVIOUS_EVIDENCE',path:previous,baselineGit:'49458e6:assets/runtime/2.4.1/jack.qsp',baselineSha256:'6cc7066736cae7fc428d58f89fbf659f06ee6feae8c710d810ee67c99467d505',previousDetail:p.checks.find(x=>x.name==='patch-replay-and-idempotence').detail,note:'Existing exact f9 report available and inspected. Not redundantly re-executed by this role.'}:c);
+const temp='G:/Codex/tmp/jo9-independent-qa-r2-20261105/qsp',remaining=fs.readdirSync(temp);
+assert.deepEqual(remaining,[],'Task temp should be empty');
+const cleanup={checkedAt:new Date().toISOString(),status:'PASS',temporaryRoot:temp,removed:[{path:path.join(temp,'jack.qsp'),sha256:r.candidate.qspSha256,reason:'Exact ZIP-extracted regenerable temporary copy; absolute path and hash checked before single-file removal.'}],remainingEntries:remaining,savesRemoved:0,sourceZipPreserved:fs.existsSync(r.candidate.zip),productionFilesModified:0};
+r.cleanup=cleanup;r.completedAt=cleanup.checkedAt;
+fs.writeFileSync(file,JSON.stringify(r,null,2)+'\n');fs.writeFileSync(path.join(__dirname,'cleanup.json'),JSON.stringify(cleanup,null,2)+'\n');
+console.log(JSON.stringify({status:r.status,previousNativeCandidate:oldHash,previousNative:p.verdict,temporaryFiles:remaining.length,savesRemoved:0}));

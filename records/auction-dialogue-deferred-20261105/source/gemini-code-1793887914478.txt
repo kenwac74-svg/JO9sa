@@ -1,0 +1,111 @@
+[SELL-006]
+위치: interaction_city · 12901행
+문장 대상: $text[1]
+관련 분기: interaction_city = 930
+[문장 시작]
+<<$slave_name>>(은)는 마침내 길드 경매 무대에 올랐다. 본 경매에 앞서, 거물 고객들이 직접 상품의 상태를 눈으로 감정할 수 있도록 사전 칵테일파티가 열렸다. 그녀는 오늘 출품된 다른 노예들과 함께 손님들 사이로 음료와 다과를 나르며 은밀하고도 치열한 탐색전의 시선을 한몸에 받았다.
+[문장 끝]
+
+============================================================
+응찰·낙찰·가면 쓴 수집가
+============================================================
+
+[SELL-007]
+위치: $guild_auction · 69행
+문장 대상: $auction_flow[1]
+[문장 시작]
+[길드 중개인]
+ 단상 위 상품을 일별하며 입찰 패를 든다. "시작가로 $<<bank_size>> 제시합니다." 아무도 호가를 올리지 않는다면, <<$slave_name>>(은)는 이 헐값에 중개인에게 넘어가게 된다.
+[문장 끝]
+
+[SELL-008]
+위치: $guild_auction · 70행
+문장 대상: $auc_winner
+[문장 시작]
+길드 중개인
+[문장 끝]
+
+[SELL-009]
+위치: $guild_auction · 89행
+문장 대상: $auction_flow[u]
+관련 분기: bet_size > 0
+[문장 시작]
+[<<$npc_name[$auction_participant[i]]>>] $<<bet_size>> 추가 입찰! (현재 최고가: $<<bank_size>>)
+<<$iif($npc_name[$auction_participant[i]]='불혼', '"하하, $' + $str(bet_size) + ' 더 얹지! 푼돈 만지작거릴 거면 다들 그만 빠지고 이 몸에게 양보하시지!"', $iif($npc_name[$auction_participant[i]]='엘리자베스', '"호호, $' + $str(bet_size) + ' 더 부르죠. 내 마구간에서 아주 완벽한 장난감으로 길들여 주겠어요."', $iif($npc_name[$auction_participant[i]]='안젤리카' or instr($npc_name[$auction_participant[i]],'여주인')>0 or instr($npc_name[$auction_participant[i]],'마담')>0 or instr($npc_name[$auction_participant[i]],'부인')>0, '"어머, 꽤 탐나는 물건이네. $' + $str(bet_size) + ' 더 올리겠어요. 이 아이의 새 주인은 바로 저랍니다."', '"잠깐, 그대로 넘길 순 없지! $' + $str(bet_size) + ' 더 올려서 $' + $str(bank_size) + ' 부르겠소!"')))>>
+[문장 끝]
+
+[SELL-010]
+위치: $guild_auction · 101행
+문장 대상: $auction_hammer[1]
+[문장 시작]
+[경매사]
+ "$<<bank_size>> 나왔습니다! 자, $<<bank_size>>, 하나!" 장내의 열기가 달아오르며 입찰자들의 눈빛이 긴박하게 교차한다.
+[문장 끝]
+
+[SELL-011]
+위치: $guild_auction · 102행
+문장 대상: $auction_hammer[2]
+[문장 시작]
+[경매사]
+ "$<<bank_size>>, 둘! 자, 더 부르실 분 안 계십니까? 이대로 망치를 두드리면 기회는 영영 끝입니다!"
+[문장 끝]
+
+[SELL-012]
+위치: $guild_auction · 103행
+문장 대상: $auction_hammer[3]
+[문장 시작]
+[경매사]
+ "$<<bank_size>>, 셋! 낙찰!!!" 경매사의 망치가 경쾌하게 단상을 내리친다. (최종 낙찰가: $<<bank_size>> / 낙찰자: <<$auc_winner>>)
+[문장 끝]
+
+[SELL-013]
+위치: $guild_auction · 121행
+문장 대상: $auction_flow[u - 1]
+[문장 시작]
+[경매사]
+ "$<<bank_size>>, 셋! 낙찰되었습니다!" 치열했던 경쟁 끝에 최종 승자가 결정된다. (최종 낙찰가: $<<bank_size>> / 낙찰자: <<$auc_winner>>)
+[문장 끝]
+
+[SELL-014]
+위치: $guild_auction · 132행
+문장 대상: $auc_winner
+관련 분기: func('jo9_traits_value', 'premium', 'slave') = 1
+[문장 시작]
+가면 쓴 수집가
+[문장 끝]
+
+[SELL-015]
+위치: $guild_auction · 135행
+문장 대상: $auction_flow[u - 1]
+관련 분기: func('jo9_traits_value', 'premium', 'slave') = 1
+[문장 시작]
+[가면 쓴 수집가]
+ 장내 뒤편의 어둠 속에서 정체불명의 귀빈이 나지막이 외친다. "잠깐. 이토록 희귀한 명기를 그런 푼돈에 넘길 수는 없지. 그 진가를 인정해 단숨에 $<<bank_size>>를 부르겠소!"
+[문장 끝]
+
+[SELL-016]
+위치: $guild_auction · 139행
+문장 대상: $auction_flow[u]
+관련 분기: func('jo9_traits_value', 'premium', 'slave') = 1
+[문장 시작]
+[경매사]
+ "세상에, $<<bank_size>> 나왔습니다! 장내가 술렁이는군요! 감히 더 부르실 분 없습니까? 하나, 둘, 셋! 낙찰! <<$auc_winner>> 님께 $<<bank_size>>에 낙찰되었습니다!"
+[문장 끝]
+
+[SELL-017]
+위치: $guild_auction · 144행
+문장 대상: $auction_flow[u - 1]
+관련 분기: slave['jo9_peerless'] = 1
+[문장 시작]
+[가면 쓴 수집가]
+ 가면 너머로 서늘한 안광을 번뜩이며 손가락을 들어 올린다. "눈이 부실 정도의 절세미인이군. 내 컬렉션에 걸맞은 값으로 $<<bank_size>>를 내겠소!"
+[문장 끝]
+
+[SELL-018]
+위치: $guild_auction · 145행
+문장 대상: $auction_flow[u]
+관련 분기: slave['jo9_peerless'] = 1
+[문장 시작]
+[경매사]
+ "압도적인 금액, $<<bank_size>>! 경쟁자들이 모두 입을 다물었군요! 하나, 둘, 셋! <<$auc_winner>> 님께 최종 낙찰되었습니다!"
+[문장 끝]

@@ -1,0 +1,65 @@
+[
+    {
+        "id":  "IQ01",
+        "name":  "Mini happy path: Korean spaces and shell punctuation",
+        "result":  "PASS",
+        "evidence":  "Exact helper logic; only manifest SHA constant substituted for four-file mini fixture; protected files preserved.",
+        "elapsedMs":  990
+    },
+    {
+        "id":  "IQ02",
+        "name":  "Repeat same mini install",
+        "result":  "PASS",
+        "evidence":  "Second install exit 0; all target file hashes unchanged.",
+        "elapsedMs":  805
+    },
+    {
+        "id":  "IQ06",
+        "name":  "Permission failure after QSP copy restores runtime and old JSON",
+        "result":  "PASS",
+        "evidence":  "Deny CreateFiles on image directory; QSP restored to OLD QSP, JSON unchanged, stage/rollback removed.",
+        "elapsedMs":  841
+    },
+    {
+        "id":  "IQ07",
+        "name":  "Old JSON rename failure restores copied runtime",
+        "result":  "PASS",
+        "evidence":  "Deny Delete on old json and DeleteSubdirectoriesAndFiles on parent game; old QSP/JSON restored and new runtime image removed.",
+        "elapsedMs":  878
+    },
+    {
+        "id":  "IQ08",
+        "name":  "CMD in-place install with spaces \u0026 parentheses and exclamation, delayed expansion OFF",
+        "result":  "PASS",
+        "evidence":  "Exact shipped CMD; in-place mini helper installs via parent/script-root autodetection, stdin closed without key automation.",
+        "elapsedMs":  881
+    },
+    {
+        "id":  "IQ18",
+        "name":  "Candidate CMD with delayed expansion ON and special characters",
+        "result":  "PASS",
+        "evidence":  "Candidate CMD only changes setlocal to setlocal EnableExtensions DisableDelayedExpansion; /V:ON and special script-root pass.",
+        "elapsedMs":  887
+    },
+    {
+        "id":  "IQ19",
+        "name":  "Candidate CMD with delayed expansion OFF and special characters",
+        "result":  "PASS",
+        "evidence":  "Same one-line candidate passes /V:OFF and special script-root.",
+        "elapsedMs":  891
+    },
+    {
+        "id":  "IQ20",
+        "name":  "Second independent JSON move ACL fixture restores old tree",
+        "result":  "PASS",
+        "evidence":  "Second distinct fixture; rename denied atomically, old JSON and runtime byte map unchanged, no temporary folders remain.",
+        "elapsedMs":  836
+    },
+    {
+        "id":  "IQ21",
+        "name":  "Candidate helper and actual full payload",
+        "result":  "PASS",
+        "evidence":  "Actual frozen 1966-file payload with four-line helper candidate; all installed hashes verified, JSON replaced, save_config/sav/INI/XML preserved.",
+        "elapsedMs":  42737
+    }
+]

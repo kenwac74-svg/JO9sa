@@ -1,0 +1,100 @@
+[
+    {
+        "id":  "IQ01",
+        "name":  "Mini happy path: Korean spaces and shell punctuation",
+        "result":  "PASS",
+        "evidence":  "Exact helper logic; only manifest SHA constant substituted for four-file mini fixture; protected files preserved.",
+        "elapsedMs":  933
+    },
+    {
+        "id":  "IQ02",
+        "name":  "Repeat same mini install",
+        "result":  "PASS",
+        "evidence":  "Second install exit 0; all target file hashes unchanged.",
+        "elapsedMs":  854
+    },
+    {
+        "id":  "IQ03",
+        "name":  "Corrupt source rejected before target mutation",
+        "result":  "PASS",
+        "evidence":  "Exit 1 names corrupt relative path; entire target byte map unchanged.",
+        "elapsedMs":  663
+    },
+    {
+        "id":  "IQ04",
+        "name":  "Missing payload rejected before target mutation",
+        "result":  "PASS",
+        "evidence":  "Exit 1 names missing relative path; entire target byte map unchanged.",
+        "elapsedMs":  665
+    },
+    {
+        "id":  "IQ05",
+        "name":  "Locked destination rejected at preflight",
+        "result":  "PASS",
+        "evidence":  "Exit 1; exclusive lock does not mutate target.",
+        "elapsedMs":  730
+    },
+    {
+        "id":  "IQ06",
+        "name":  "Permission failure after QSP copy restores runtime and old JSON",
+        "result":  "PASS",
+        "evidence":  "Deny CreateFiles on image directory; QSP restored to OLD QSP, JSON unchanged, stage/rollback removed.",
+        "elapsedMs":  1191
+    },
+    {
+        "id":  "IQ07",
+        "name":  "Old JSON rename failure restores copied runtime",
+        "result":  "FAIL",
+        "error":  "JSON rename denial did not fail",
+        "elapsedMs":  782
+    },
+    {
+        "id":  "IQ08",
+        "name":  "CMD in-place install with spaces \u0026 parentheses and exclamation, delayed expansion OFF",
+        "result":  "PASS",
+        "evidence":  "Exact shipped CMD; in-place mini helper installs via parent/script-root autodetection, stdin closed without key automation.",
+        "elapsedMs":  860
+    },
+    {
+        "id":  "IQ09",
+        "name":  "CMD in-place install with exclamation, delayed expansion ON",
+        "result":  "FAIL",
+        "error":  "CMD /V:ON failed exit=1; unchanged=True",
+        "elapsedMs":  157
+    },
+    {
+        "id":  "IQ10",
+        "name":  "Missing helper/manifest CMD extraction guidance",
+        "result":  "FAIL",
+        "error":  "Extraction guidance absent",
+        "elapsedMs":  85
+    },
+    {
+        "id":  "IQ11",
+        "name":  "No NonInteractive target rejection",
+        "result":  "PASS",
+        "evidence":  "Exit 1; no folder picker invoked under NonInteractive.",
+        "elapsedMs":  433
+    },
+    {
+        "id":  "IQ12",
+        "name":  "Unmodified shipped helper and actual full payload",
+        "result":  "PASS",
+        "evidence":  "1966 manifest payload files installed and hash verified; 1158 JSON + preserved save_config; obsolete JSON removed; saves/INI/XML preserved.",
+        "elapsedMs":  39785
+    },
+    {
+        "id":  "IQ13",
+        "name":  "ExecutionPolicy scope remains unchanged",
+        "result":  "PASS",
+        "evidence":  "Fresh child Get-ExecutionPolicy -List before/after identical; helper has no Set-ExecutionPolicy.",
+        "elapsedMs":  392
+    },
+    {
+        "id":  "IQ14",
+        "name":  "Original ZIP hash remains unchanged",
+        "result":  "PASS",
+        "evidence":  "ff2f3f05097e70e289535d9715cf5b10e812b14f5d16e70dd48f0312db6485db",
+        "elapsedMs":  489
+    }
+]

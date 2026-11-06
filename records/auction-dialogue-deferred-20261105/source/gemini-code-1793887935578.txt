@@ -1,0 +1,41 @@
+! [기존 89행 코드]
+! $auction_flow[u] = '  <<$npc_name[$auction_participant[i]]>>가 <<bet_size>>를 더 부르며 가격을 <<bank_size>>까지 올린다.'
+
+! [개선된 89행 코드 블록 - NPC 배경 및 성별 분기 + 랜덤 대사]
+$cur_bidder_id = $auction_participant[i]
+$cur_bidder_name = $npc_name[$cur_bidder_id]
+bid_rnd = rand(1, 3)
+
+! 1. 공통 입찰 선언 헤더 (조사 오류 완벽 해결)
+$bid_header = '<b>[<<$cur_bidder_name>>]</b> $<<bet_size>> 추가 입찰! (현재 최고가: <b>$<<bank_size>></b>)<br>&nbsp;'
+
+! 2. 주요 캐릭터별 맞춤 경쟁 대사
+if $cur_bidder_name = '불혼' or $cur_bidder_id = 'bullhorn' or $cur_bidder_id = 'geralt':
+    if bid_rnd = 1: $bid_line = '굵은 시가 연기를 내뿜으며 거만하게 손가락을 까딱인다. "하하, $<<bet_size>> 더! 푼돈 만지작거릴 거면 다들 그만 빠지고 이 몸에게 양보하시지!"'
+    if bid_rnd = 2: $bid_line = '주변 입찰자들을 험악하게 노려보며 호통친다. "건방진 것들, 감히 내 사냥감에 침을 흘려? $<<bank_size>>이다! 덤빌 테면 덤벼봐라!"'
+    if bid_rnd = 3: $bid_line = '"크하하! $<<bank_size>> 스파크! 힘도 좋고 내 투기장과 농장에서 굴리기에 딱 좋은 몸뚱어리군!"'
+
+elseif $cur_bidder_name = '엘리자베스' or $cur_bidder_id = 'elizabeth' or $cur_bidder_id = 'applejack':
+    if bid_rnd = 1: $bid_line = '차가운 미소를 띠며 가볍게 경매 패를 든다. "호호, $<<bet_size>> 더 얹죠. 저 뻣뻣한 목덜미를 내 마구간에서 꺾어줄 생각을 하니 돈이 아깝지 않네요."'
+    if bid_rnd = 2: $bid_line = '"$<<bank_size>>! 옛날 생각나게 하는 물건이군요. 아주 완벽한 경주마 장난감으로 조련해 주겠어."'
+    if bid_rnd = 3: $bid_line = '부채 너머로 서늘한 눈빛을 번뜩인다. "$<<bet_size>> 추가하죠. 더 부르실 분 없나요? 이 아이의 새 주인은 바로 저랍니다."'
+
+elseif $cur_bidder_name = '여주인 안젤리카' or $cur_bidder_id = 'mistress_angelika' or instr($cur_bidder_name, '여주인') > 0 or instr($cur_bidder_name, '마담') > 0:
+    if bid_rnd = 1: $bid_line = '나른하고 우아한 손짓으로 가격을 높인다. "어머, 꽤 탐나는 장난감이네. $<<bet_size>> 더 부르겠어요. 내 저택 장식으로 딱이겠어."'
+    if bid_rnd = 2: $bid_line = '"$<<bank_size>>! 남자분들의 시시한 자존심 싸움은 이제 그만 보았으면 좋겠군요. 이 아이는 제가 데려가겠어요."'
+    if bid_rnd = 3: $bid_line = '입가에 여유로운 미소를 걸친다. "제법 훈련이 잘 된 상품이군요. $<<bet_size>> 더 얹죠. 포기들 하시죠?"'
+
+elseif $cur_bidder_id = 'ippolita' or $cur_bidder_id = 'morrigan' or $cur_bidder_id = 'avgi' or $cur_bidder_id = 'marivana' or $cur_bidder_id = 'minosia':
+    ! 기타 여성 네임드 NPC (이폴리타, 모리간, 아브기 등)
+    if bid_rnd = 1: $bid_line = '날카로운 눈초리로 상품을 훑어보며 패를 든다. "제법 쓸만해 보이는군. $<<bet_size>> 더 올려서 $<<bank_size>> 부르겠어!"'
+    if bid_rnd = 2: $bid_line = '"흥, 그 정도 가격에 넘겨줄 것 같아? $<<bet_size>> 추가! 내 손으로 직접 다시 길들여 주지."'
+    if bid_rnd = 3: $bid_line = '경쟁자들을 싸늘하게 일별하며 외친다. "$<<bank_size>>! 잔챙이들은 이제 슬슬 발을 빼시지!"'
+
+else
+    ! 기타 남성 마스터/상인/귀족 NPC (폰 발츠, 요드손, 랍반, 지브스 등)
+    if bid_rnd = 1: $bid_line = '초조하게 입술을 적시며 패를 높이 치켜든다. "아직 포기 못 해! $<<bet_size>> 더 올려서 $<<bank_size>> 부르겠소!"'
+    if bid_rnd = 2: $bid_line = '냉정한 눈빛으로 주판을 튕기듯 계산하며 외친다. "$<<bet_size>> 추가합니다. 이 정도 상품이면 $<<bank_size>>까지는 충분히 투자할 가치가 있군."'
+    if bid_rnd = 3: $bid_line = '주먹으로 팔걸이를 쾅 치며 호기롭게 외친다. "좋아, $<<bet_size>> 더 얹어서 $<<bank_size>>! 어디 재력들 있으면 더 따라와 보시지!"'
+end
+
+$auction_flow[u] = $bid_header + $bid_line

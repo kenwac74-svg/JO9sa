@@ -1,0 +1,10 @@
+--- shipped/INSTALL_HELPER.ps1
++++ CANDIDATE_INSTALL_HELPER.ps1
+-Move-Item -LiteralPath $targetJson -Destination $jsonRollback
++[IO.Directory]::Move($targetJson, $jsonRollback)
+-Move-Item -LiteralPath $jsonStage -Destination $targetJson
++[IO.Directory]::Move($jsonStage, $targetJson)
+-Move-Item -LiteralPath $targetJson -Destination $failedJson
++[IO.Directory]::Move($targetJson, $failedJson)
+-Move-Item -LiteralPath $jsonRollback -Destination $targetJson
++[IO.Directory]::Move($jsonRollback, $targetJson)

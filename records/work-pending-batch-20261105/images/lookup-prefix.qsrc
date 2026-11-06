@@ -1,0 +1,93 @@
+! JO9 MOD START GIRL_IMAGE_DUAL_REGISTRATION_20261105
+! Read-only display lookup. Registration checks do not depend on file presence.
+! select: ID, cached/direct candidate, legacy key, pack key, mood suffix, priority.
+! resolve retains existing callers; alias below retains the prior correction rules.
+if $args[0]='registered':
+ local jo9_lookup_id
+ local $jo9_lookup_old_key, $jo9_lookup_pack_key, $jo9_lookup_old, $jo9_lookup_pack
+ jo9_lookup_id=args[1]
+ $jo9_lookup_old_key=$args[2]
+ $jo9_lookup_pack_key=$args[3]
+ $jo9_lookup_old=dyneval('$result=$<<$jo9_lookup_old_key>>[jo9_lookup_id]')
+ $jo9_lookup_pack=dyneval('$result=$<<$jo9_lookup_pack_key>>[jo9_lookup_id]')
+ result=0
+ if $jo9_lookup_old ! '' or $jo9_lookup_pack ! '': result=1
+ exit
+end
+if $args[0]='resolve' or $args[0]='select':
+ local jo9_lookup_id, jo9_lookup_k, jo9_lookup_exists, jo9_lookup_custom
+ local $jo9_lookup_raw, $jo9_lookup_old_key, $jo9_lookup_pack_key
+ local $jo9_lookup_mood, $jo9_lookup_priority
+ local $jo9_lookup_old, $jo9_lookup_pack, $jo9_lookup_state, $jo9_lookup_alias, $jo9_lookup_old_alias
+ local $jo9_lookup_candidates, $jo9_lookup_path, $jo9_lookup_key, $jo9_lookup_role_pack
+ jo9_lookup_id=args[1]
+ $jo9_lookup_raw=$args[2]
+ $jo9_lookup_old_key=$args[3]
+ $jo9_lookup_pack_key=$args[4]
+ $jo9_lookup_mood=$args[5]
+ $jo9_lookup_priority=$args[6]
+ if $jo9_lookup_old_key='': $jo9_lookup_old_key='fullimage'
+ ! Recover a registered role from a saved fullimage cache, scoped to this ID.
+ if $args[0]='resolve' and $jo9_lookup_old_key='fullimage' and $jo9_lookup_raw ! '' and $jo9_lookup_raw ! $fullimage[jo9_lookup_id]:
+  if $jo9_lookup_raw=$fullmade[jo9_lookup_id] or $jo9_lookup_raw=$indpack_maid[jo9_lookup_id]:
+   $jo9_lookup_old_key='fullmade'
+  elseif $jo9_lookup_raw=$fullsecretary[jo9_lookup_id] or $jo9_lookup_raw=$indpack_secr[jo9_lookup_id]:
+   $jo9_lookup_old_key='fullsecretary'
+  elseif $jo9_lookup_raw=$fullmistress[jo9_lookup_id] or $jo9_lookup_raw=$indpack_dom[jo9_lookup_id]:
+   $jo9_lookup_old_key='fullmistress'
+  end
+ end
+ if $jo9_lookup_pack_key='':
+  if $jo9_lookup_old_key='fullimage': $jo9_lookup_pack_key='indpack_title'
+  if $jo9_lookup_old_key='fullmade': $jo9_lookup_pack_key='indpack_maid'
+  if $jo9_lookup_old_key='fullsecretary': $jo9_lookup_pack_key='indpack_secr'
+  if $jo9_lookup_old_key='fullmistress': $jo9_lookup_pack_key='indpack_dom'
+ end
+ $jo9_lookup_old=dyneval('$result=$<<$jo9_lookup_old_key>>[jo9_lookup_id]')
+ if $jo9_lookup_pack_key ! '': $jo9_lookup_pack=dyneval('$result=$<<$jo9_lookup_pack_key>>[jo9_lookup_id]')
+ if $jo9_lookup_pack_key ! '' and $jo9_lookup_mood ! '':
+  $jo9_lookup_key=$jo9_lookup_pack_key+$jo9_lookup_mood
+  $jo9_lookup_state=dyneval('$result=$<<$jo9_lookup_key>>[jo9_lookup_id]')
+ end
+ $jo9_lookup_alias=func('jo9_seed_role_images','alias',jo9_lookup_id,$jo9_lookup_raw,$args[3])
+ ! Direct legacy-definition screens keep their original candidate first.
+ if $args[0]='select' and $jo9_lookup_priority='legacy' and $jo9_lookup_raw ! 'girls/full/isabella_black_long_milf': $jo9_lookup_alias=$jo9_lookup_raw
+ $jo9_lookup_old_alias=func('jo9_seed_role_images','alias',jo9_lookup_id,$jo9_lookup_old,$jo9_lookup_old_key)
+ ! A legacy role may have been redirected to the base title by the old alias rule.
+ ! Check the same registered outfit before that base fallback.
+ if $jo9_lookup_old_key ! 'fullimage' and $jo9_lookup_alias=$indpack_title[jo9_lookup_id] and $jo9_lookup_raw=$jo9_lookup_old: $jo9_lookup_alias=$jo9_lookup_pack
+ jo9_lookup_custom=0
+ if $jo9_lookup_raw ! '' and $jo9_lookup_alias=$jo9_lookup_raw and $jo9_lookup_raw ! $fullimage[jo9_lookup_id] and $jo9_lookup_raw ! $indpack_title[jo9_lookup_id] and $jo9_lookup_raw ! $jo9_lookup_old and $jo9_lookup_raw ! $jo9_lookup_pack: jo9_lookup_custom=1
+ if $jo9_lookup_priority='pack':
+  $jo9_lookup_candidates[0]=$jo9_lookup_state
+  $jo9_lookup_candidates[1]=$jo9_lookup_pack
+  $jo9_lookup_candidates[2]=$jo9_lookup_old_alias
+  $jo9_lookup_candidates[3]=$jo9_lookup_alias
+  if jo9_lookup_custom=1:
+   $jo9_lookup_candidates[2]=$jo9_lookup_alias
+   $jo9_lookup_candidates[3]=$jo9_lookup_old_alias
+  end
+ else
+  $jo9_lookup_candidates[0]=$jo9_lookup_alias
+  $jo9_lookup_candidates[1]=$jo9_lookup_old_alias
+  $jo9_lookup_candidates[2]=$jo9_lookup_pack
+  $jo9_lookup_candidates[3]=''
+ end
+ ! Keep the uncorrected, currently registered outfit as the alternate registration.
+ ! Obsolete unregistered role aliases are deliberately excluded.
+ $jo9_lookup_candidates[4]=$jo9_lookup_old
+ $jo9_lookup_candidates[5]=func('jo9_seed_role_images','alias',jo9_lookup_id,$fullimage[jo9_lookup_id],'fullimage')
+ $jo9_lookup_candidates[6]=$indpack_title[jo9_lookup_id]
+ $jo9_lookup_candidates[7]=$fullimage[jo9_lookup_id]
+ $result=''
+ for jo9_lookup_k=0 to 7:
+  if $jo9_lookup_candidates[jo9_lookup_k] ! '':
+   $jo9_lookup_path='content/pic/'+$jo9_lookup_candidates[jo9_lookup_k]+'.png'
+   jo9_lookup_exists=0
+   dynamic 'jo9_lookup_exists = %<<$jo9_lookup_path>>%'
+   if jo9_lookup_exists ! 0: $result=$jo9_lookup_candidates[jo9_lookup_k] & exit
+  end
+ end
+ exit
+end
+! JO9 MOD END GIRL_IMAGE_DUAL_REGISTRATION_20261105

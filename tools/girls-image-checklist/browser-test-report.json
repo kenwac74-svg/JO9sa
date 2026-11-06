@@ -1,0 +1,31 @@
+{
+  "status": "PASS",
+  "createdAt": "2026-11-04T18:38:37.439Z",
+  "characters": 1153,
+  "uiSha256": "02ef7c806a7fe2d7bd8f180470b13c43a989e5c13ef0c3947b8491658c303501",
+  "manifestSha256": "e9376981b6587b6538ba4ae3f533ebdf611c728606627dd7bda10dff9d9c49b6",
+  "generatedStandaloneSha256": "317cdd6af5457391bddcc23497a5a8edfbf02ed92b77cd417d9e2aad788e6a68",
+  "checks": [
+    "Actual generated standalone survives the server bridge and three-script closing-body injection, shows the full checklist, and exposes no JavaScript as body text",
+    "Actual generated standalone opens offline with saved status visible, PNG/tag writes disabled, and only synthetic image requests",
+    "Full manifest initializes and girlssets opens the checklist",
+    "Tags remain disabled until shared state is ready; girls panel lives inside main and sidebar navigation reopens it after pick closes it",
+    "Filters and ID searches resolve 1100 broken,1015 hidden,2583 Galateya,2571 Isabella, and random/special groups",
+    "Each character has exactly one eight-tag group, files have none, multiple tags coexist, and ID-only POSTs preserve all existing file statuses",
+    "Status survives a fresh page load through the shared state API",
+    "Characters1260 and1401 keep independent ID statuses even though their maid picture is shared",
+    "Eight status filters plus All filter characters, include completed IDs, toggle off, preserve search, and cooperate with ID/name ordering",
+    "Unavailable shared status disables every tag and sends no POST; successful reconnection enables tags again",
+    "Canceled file selection sends no file or apply request",
+    "Selected PNG is sized to795x596, requires preview approval, and preview cancellation writes nothing",
+    "Missing registered maid creates only its exact path and exact approved preview through one apply job",
+    "Mock rescan retains newly filled image state",
+    "Preview toggle removes thumbnails; screenshot contains no real character imagery",
+    "Downloaded standalone HTML reopens offline, exact numeric search returns one card, and all write controls are disabled"
+  ],
+  "syntheticApplyCalls": 1,
+  "syntheticStatusCalls": 7,
+  "existingFileStatusUnchanged": true,
+  "gameWrites": 0,
+  "limits": "Isolated mock HTTP API with synthetic solid-color PNGs. No WORK reads of image contents or image/JSON/QSP writes. Tests real browser UI, not PIC server integration."
+}

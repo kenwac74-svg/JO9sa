@@ -1,0 +1,18 @@
+{
+  "id": "2026-11-05_donatien_objective_back",
+  "status": "APPROVED",
+  "description": "후작 의뢰 목표 상세창에 복귀 링크를 표시한다. 저장된 설명문을 수정하지 않아 기존 의뢰 세이브에도 적용된다.",
+  "before_sha256": "f9abbda0c5881886424709f68986398ff9527328213dfea4fc770eb4a02f2536",
+  "after_sha256": "6ebda9981bf6bc56de46929474de64157969fd324bba8e8be181e002dad1cc7e",
+  "edits": [
+    {
+      "location": "$quest_list",
+      "field": "body",
+      "old": "if quest_description_mode = 1: $quest_list = '   <<$quest_description[choosen_quest]>>'",
+      "new": "! JO9 MOD START DONATIEN_OBJECTIVE_BACK_20261105\r\nif quest_description_mode = 1: $quest_list = '   <<$quest_description[choosen_quest]>>'\r\n! The stored request description has no Back link, including in existing saves.\r\nif quest_description_mode = 1 and choosen_quest = 5:\r\n    $quest_list += '<br><br><a href = \"EXEC: quest_description_mode = 0 & gt $curloc\">뒤로</a>'\r\nend\r\n! JO9 MOD END DONATIEN_OBJECTIVE_BACK_20261105",
+      "count": 1,
+      "patchId": "DONATIEN_OBJECTIVE_BACK_20261105"
+    }
+  ],
+  "user_approval": "2026-11-05: 수정하고 패치에 반영해. QSP만 손보면 될꺼야. 전체 검사는 반복하지 않고 직접 플레이 확인."
+}

@@ -1,0 +1,113 @@
+{
+  "id": "2026-11-04_hard_trait_price_bonus",
+  "description": "Halve explicit positive trait price premiums in Hard using the in-game difficulty setting.",
+  "before_sha256": "a34b95fc23d39440204ce2aff3cf56cc1b5b19b450cb84865b4389bc6b2f1565",
+  "after_sha256": "c149e6b5728b3ec5ae4f5e508fa60b446bdca84644f3df9b84d70636672b19df",
+  "edits": [
+    {
+      "location": "jo9_traits_value",
+      "field": "body",
+      "old": " if dyneval('result = ' + $jo9_trait_value_actor + \"['jo9_versatile']\") = 1: result += result / 4",
+      "new": " ! JO9 MOD START HARD_TRAIT_PRICE_20261104\r\n if dyneval('result = ' + $jo9_trait_value_actor + \"['jo9_versatile']\") = 1: result += result / iif(difficulty_setting = 2, 8, 4)\r\n ! JO9 MOD END HARD_TRAIT_PRICE_20261104",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits_value",
+      "field": "body",
+      "old": "\r\n  if dynslave['virginity'] = 4 and dynslave['jo9_peerless'] = 1: result += result / 2\r\n",
+      "new": "\r\n  ! JO9 MOD START HARD_TRAIT_PRICE_20261104\r\n  if dynslave['virginity'] = 4 and dynslave['jo9_peerless'] = 1: result += result / iif(difficulty_setting = 2, 4, 2)\r\n  ! JO9 MOD END HARD_TRAIT_PRICE_20261104\r\n",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits_value",
+      "field": "body",
+      "old": "   if dynslave['virginity'] = 4 and dynslave['jo9_peerless'] = 1: result += result / 2",
+      "new": "   ! JO9 MOD START HARD_TRAIT_PRICE_20261104\r\n   if dynslave['virginity'] = 4 and dynslave['jo9_peerless'] = 1: result += result / 2\r\n   if difficulty_setting = 2: result = jo9_trait_value_amount + (result - jo9_trait_value_amount) / 2\r\n   ! JO9 MOD END HARD_TRAIT_PRICE_20261104",
+      "count": 1
+    },
+    {
+      "location": "jo9_meiki_sale",
+      "field": "body",
+      "old": "if $args[0] = 'roll':",
+      "new": "! JO9 MOD START HARD_TRAIT_PRICE_20261104\r\nif $args[0] = 'roll' or $args[0] = 'best_price':\r\n! JO9 MOD END HARD_TRAIT_PRICE_20261104",
+      "count": 1
+    },
+    {
+      "location": "jo9_meiki_sale",
+      "field": "body",
+      "old": " result = jo9_trait_value_haggle_best_roll",
+      "new": " ! JO9 MOD START HARD_TRAIT_PRICE_20261104\r\n result = iif($args[0] = 'best_price', jo9_trait_value_haggle_best, jo9_trait_value_haggle_best_roll)\r\n ! JO9 MOD END HARD_TRAIT_PRICE_20261104",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\tif jo9_meiki_max_sale = 1: jo9_sale_roll = func('jo9_meiki_sale', 'roll')",
+      "new": "\t! JO9 MOD START HARD_TRAIT_PRICE_20261104\r\n\tif jo9_meiki_max_sale = 1 and difficulty_setting ! 2: jo9_sale_roll = func('jo9_meiki_sale', 'roll')\r\n\t! JO9 MOD END HARD_TRAIT_PRICE_20261104",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\tsell_price = func('jo9_traits_value', 'base_price', 'slave', sell_price)",
+      "new": "\t! JO9 MOD START HARD_TRAIT_PRICE_20261104\r\n\tif difficulty_setting = 2 and jo9_meiki_max_sale = 1: sell_price += max(0, func('jo9_meiki_sale', 'best_price') - sell_price) / 2\r\n\tsell_price = func('jo9_traits_value', 'base_price', 'slave', sell_price)\r\n\t! JO9 MOD END HARD_TRAIT_PRICE_20261104",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$text[1] += '당신은 그 희소성과 고객이 원하는 능력을 짚어 설명하며, 현재 능력과 거래 조건에서 제시받을 수 있는 가장 높은 금액을 끌어냈다.<br>'",
+      "new": "\t\t! JO9 MOD START HARD_TRAIT_PRICE_20261104\r\n\t\t$text[1] += iif(difficulty_setting = 2, '당신은 고객이 눈여겨본 희소성과 능력을 짚어 가며 값을 흥정했다.<br>', '당신은 그 희소성과 고객이 원하는 능력을 짚어 설명하며, 현재 능력과 거래 조건에서 제시받을 수 있는 가장 높은 금액을 끌어냈다.<br>')\r\n\t\t! JO9 MOD END HARD_TRAIT_PRICE_20261104",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$text[1] += '현재 능력과 거래 조건에서 가장 높은 금액을 끌어냈다.<br>'",
+      "new": "\t\t! JO9 MOD START HARD_TRAIT_PRICE_20261104\r\n\t\t$text[1] += iif(difficulty_setting = 2, '당신은 그 미모를 내세워 고객과 값을 흥정했다.<br>', '현재 능력과 거래 조건에서 가장 높은 금액을 끌어냈다.<br>')\r\n\t\t! JO9 MOD END HARD_TRAIT_PRICE_20261104",
+      "count": 1
+    },
+    {
+      "location": "#static_base",
+      "field": "body",
+      "old": "\t\tif dynslave['virginity'] < 2: slave_base_price += 20",
+      "new": "\t\t! JO9 MOD START HARD_TRAIT_PRICE_20261104\r\n\t\tif dynslave['virginity'] < 2: slave_base_price += iif(difficulty_setting = 2, 10, 20)\r\n\t\t! JO9 MOD END HARD_TRAIT_PRICE_20261104",
+      "count": 1
+    },
+    {
+      "location": "#static_base",
+      "field": "body",
+      "old": "\t\tif dynslave['grace'] = 1: slave_base_price += 10",
+      "new": "\t\t! JO9 MOD START HARD_TRAIT_PRICE_20261104\r\n\t\tif dynslave['grace'] = 1: slave_base_price += iif(difficulty_setting = 2, 5, 10)\r\n\t\t! JO9 MOD END HARD_TRAIT_PRICE_20261104",
+      "count": 1
+    },
+    {
+      "location": "#static_base",
+      "field": "body",
+      "old": "\t\tif dynslave['dexterity'] > 0: slave_base_price += 10",
+      "new": "\t\t! JO9 MOD START HARD_TRAIT_PRICE_20261104\r\n\t\tif dynslave['dexterity'] > 0: slave_base_price += iif(difficulty_setting = 2, 5, 10)\r\n\t\t! JO9 MOD END HARD_TRAIT_PRICE_20261104",
+      "count": 1
+    },
+    {
+      "location": "slave_sell_chek",
+      "field": "body",
+      "old": "if slave['virginity'] < 2: virgin_price += (50*relative_rating)",
+      "new": "! JO9 MOD START HARD_TRAIT_PRICE_20261104\r\nif slave['virginity'] < 2: virgin_price += (iif(difficulty_setting = 2, 25, 50)*relative_rating)\r\n! JO9 MOD END HARD_TRAIT_PRICE_20261104",
+      "count": 1
+    },
+    {
+      "location": "$cow_price",
+      "field": "body",
+      "old": "if cow['virginity'] = 3: cow_base_price += 80",
+      "new": "! JO9 MOD START HARD_TRAIT_PRICE_20261104\r\nif cow['virginity'] = 3: cow_base_price += iif(difficulty_setting = 2, 40, 80)\r\n! JO9 MOD END HARD_TRAIT_PRICE_20261104",
+      "count": 1
+    },
+    {
+      "location": "$cow_price",
+      "field": "body",
+      "old": "if cow['cowSK_affinity'] > 0: cow_base_price += 250",
+      "new": "! JO9 MOD START HARD_TRAIT_PRICE_20261104\r\nif cow['cowSK_affinity'] > 0: cow_base_price += iif(difficulty_setting = 2, 125, 250)\r\n! JO9 MOD END HARD_TRAIT_PRICE_20261104",
+      "count": 1
+    }
+  ]
+}

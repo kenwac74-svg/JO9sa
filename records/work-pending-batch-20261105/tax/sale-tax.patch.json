@@ -1,0 +1,238 @@
+{
+  "id": "NORMAL_SALE_CAP_REMOVAL_HARD_TAX_20261105",
+  "before_sha256": "c149e6b5728b3ec5ae4f5e508fa60b446bdca84644f3df9b84d70636672b19df",
+  "after_sha256": "be5b81299a757cfc3dbd23ae1988aca68e10bc702576ba331bb68e5e2a240097",
+  "edits": [
+    {
+      "location": "jo9_traits_value",
+      "field": "body",
+      "old": "! JO9 MOD START DEALER_QUOTE | 2026-10-24_dealer_economy",
+      "new": "! JO9 MOD START SALE_TAX_20261105\r\n! Input is the finalized gross; no persistent tax state or quote cache is created.\r\nif $args[0] = 'sale_tax' or $args[0] = 'sale_net' or $args[0] = 'sale_receipt' or $args[0] = 'sale_pay':\r\n local jo9_sale_gross = args[1]\r\n local jo9_sale_rate = 0\r\n if difficulty_setting = 2 and jo9_sale_gross >= 6000: jo9_sale_rate = iif(jo9_sale_gross >= 10000, 10, 5)\r\n local jo9_sale_tax = jo9_sale_gross * jo9_sale_rate / 100\r\n result = jo9_sale_gross - jo9_sale_tax\r\n if $args[0] = 'sale_tax': result = jo9_sale_tax\r\n if $args[0] = 'sale_receipt' or $args[0] = 'sale_pay':\r\n  $result = '<br><br>'\r\n  if jo9_sale_tax > 0: $result += '악질적인 세금징수원이 거래 장부를 들이밀며 대금에서 세금을 떼어 갔다.<br>'\r\n  $result += '거래 총액: $<<jo9_sale_gross>><br>판매세 (<<jo9_sale_rate>>%): $<<jo9_sale_tax>><br>실수령: $<<jo9_sale_gross - jo9_sale_tax>>'\r\n end\r\n if $args[0] = 'sale_pay': sparks += jo9_sale_gross - jo9_sale_tax\r\n exit\r\nend\r\n! JO9 MOD END SALE_TAX_20261105\r\n\r\n! JO9 MOD START DEALER_QUOTE | 2026-10-24_dealer_economy",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits_value",
+      "field": "body",
+      "old": " result = min(6000, result)",
+      "new": "! JO9 MOD START SALE_TAX_20261105\r\n! Dealer quotes retain the full appraisal amount.\r\n! JO9 MOD END SALE_TAX_20261105",
+      "count": 1
+    },
+    {
+      "location": "slave_auction_sell",
+      "field": "body",
+      "old": "sell_price = min(6000, sell_price)",
+      "new": "! JO9 MOD START SALE_TAX_20261105\r\n! Retain the full gross dealer quote, including any chosen premium.\r\n! JO9 MOD END SALE_TAX_20261105",
+      "count": 1
+    },
+    {
+      "location": "slave_auction_sell_end",
+      "field": "body",
+      "old": "sell_price = min(6000, sell_price)",
+      "new": "! JO9 MOD START SALE_TAX_20261105\r\n! Settlement uses the validated full gross quote.\r\n! JO9 MOD END SALE_TAX_20261105",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\tsell_price = min(sell_price, 8000)",
+      "new": "! JO9 MOD START SALE_TAX_20261105\r\n! Retain the full private quote; existing buyer budgets still apply.\r\n! JO9 MOD END SALE_TAX_20261105",
+      "count": 3
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\tif difficulty_setting = 2 and sparks_get > 6000:\r\n\t\t$text[arrsize('$text')-1] += '<br><br>악질적인 세금징수원이 낙찰가에서 이런저런 핑계로 스파크를 뜯어 가고, 내 손에는 $6,000만 쥐어졌다.'\r\n\t\tsparks_get = 6000\r\n\tend\r\n\tsparks += sparks_get",
+      "new": "! JO9 MOD START SALE_TAX_20261105\r\n\t$text[arrsize('$text')-1] += $func('jo9_traits_value', 'sale_pay', sparks_get)\r\n! JO9 MOD END SALE_TAX_20261105",
+      "count": 2
+    },
+    {
+      "location": "$guild_auction",
+      "field": "body",
+      "old": "! The gross quote is retained; difficulty_setting = 2 is capped only at payment.",
+      "new": "! The gross quote is retained; the finalized payment uses the shared Hard sales tax.",
+      "count": 1
+    },
+    {
+      "location": "interaction_screen_city",
+      "field": "body",
+      "old": "if (interaction_city = 911 or interaction_city = 912 or interaction_city = 913) and ($interaction_type = 'slave_sold' or $interaction_type = 'slave_sold_house') and slave_state = CONST_INT['slave_exist'] and sell_price > 8000:\r\n $jo9_gold_result_text += '<br><br>개인 거래의 최종 지급액은 최대 $8,000이다.'\r\nend",
+      "new": "! JO9 MOD START SALE_TAX_20261105\r\nif (interaction_city = 911 or interaction_city = 912 or interaction_city = 913) and ($interaction_type = 'slave_sold' or $interaction_type = 'slave_sold_house') and slave_state = CONST_INT['slave_exist']:\r\n $jo9_gold_result_text += $func('jo9_traits_value', 'sale_receipt', sell_price)\r\nend\r\n! JO9 MOD END SALE_TAX_20261105",
+      "count": 1
+    },
+    {
+      "location": "interaction_result_city",
+      "field": "body",
+      "old": "\tsell_price = min(sell_price, 8000)",
+      "new": "! JO9 MOD START SALE_TAX_20261105\r\n! Use the finalized private gross without the old fixed cap.\r\n! JO9 MOD END SALE_TAX_20261105",
+      "count": 2
+    },
+    {
+      "location": "interaction_result_city",
+      "field": "body",
+      "old": "\tsparks += sell_price",
+      "new": "! JO9 MOD START SALE_TAX_20261105\r\n\t$text[1] += $func('jo9_traits_value', 'sale_pay', sell_price)\r\n! JO9 MOD END SALE_TAX_20261105",
+      "count": 2
+    },
+    {
+      "location": "interaction_result_city",
+      "field": "body",
+      "old": "sparks += func('jo9_traits_value', 'base_price', 'slave', common_price[demand_rating[$npc_id]])",
+      "new": "! JO9 MOD START SALE_TAX_20261105\r\n$text[1] += $func('jo9_traits_value', 'sale_pay', func('jo9_traits_value', 'base_price', 'slave', common_price[demand_rating[$npc_id]]))\r\n! JO9 MOD END SALE_TAX_20261105",
+      "count": 3
+    },
+    {
+      "location": "slave_sell_done",
+      "field": "body",
+      "old": "sparks += sell_price",
+      "new": "! JO9 MOD START SALE_TAX_20261105\r\n$text[1] += $func('jo9_traits_value', 'sale_pay', sell_price)\r\n! JO9 MOD END SALE_TAX_20261105",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits_value",
+      "field": "body",
+      "old": " sparks += jo9_dealer_payment",
+      "new": "! JO9 MOD START SALE_TAX_20261105\r\nkillobj\r\nkillvar '$text'\r\nkillvar '$yes'\r\nkillvar '$no'\r\nkillvar '$special_action'\r\nkillvar '$special_image'\r\nkillvar '$special_image_full'\r\nkillvar '$play_sound'\r\n$bg_path = ''\r\n$picture_type = ''\r\n$interaction_type = ''\r\n $text[1] = '[마스터 봉]<br>거래가 성사되었네.' + $func('jo9_traits_value', 'sale_pay', jo9_dealer_payment)\r\n! JO9 MOD END SALE_TAX_20261105",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits_value",
+      "field": "body",
+      "old": " master_moodlet['pos_deal'] = 3\r\n gt 'guild'",
+      "new": "! JO9 MOD START SALE_TAX_20261105\r\n master_moodlet['pos_deal'] = 3\r\n $place = 'guild_hall'\r\n $return_lock = 'guild'\r\n $npc_id = 'master_vong'\r\n npc = 1\r\n txt = 1\r\n gt 'interaction_screen_city'\r\n! JO9 MOD END SALE_TAX_20261105",
+      "count": 1
+    },
+    {
+      "location": "slave_auction_sell_end",
+      "field": "body",
+      "old": "sparks += sell_price",
+      "new": "! JO9 MOD START SALE_TAX_20261105\r\nkillobj\r\nkillvar '$text'\r\nkillvar '$yes'\r\nkillvar '$no'\r\nkillvar '$special_action'\r\nkillvar '$special_image'\r\nkillvar '$special_image_full'\r\nkillvar '$play_sound'\r\n$bg_path = ''\r\n$picture_type = ''\r\n$interaction_type = ''\r\n$text[1] = '[잡파]<br>거래가 성사되었소.' + $func('jo9_traits_value', 'sale_pay', sell_price)\r\n! JO9 MOD END SALE_TAX_20261105",
+      "count": 1
+    },
+    {
+      "location": "slave_auction_sell_end",
+      "field": "body",
+      "old": "! JO9 MOD END DEALER_FARID_PAID\r\ngt 'city_menu_form'",
+      "new": "! JO9 MOD END DEALER_FARID_PAID\r\n! JO9 MOD START SALE_TAX_20261105\r\n$place = 'slave_stage'\r\n$return_lock = 'city_menu_form'\r\n$npc_id = 'фарид_аукционщик'\r\nnpc = 1\r\ntxt = 1\r\ngt 'interaction_screen_city'\r\n! JO9 MOD END SALE_TAX_20261105",
+      "count": 1
+    },
+    {
+      "location": "jo9_rumor_scan",
+      "field": "body",
+      "old": "jo9_rs_rank = min(8000, common_price[demand_rating[$jo9_rumor_buyer[jo9_rs_b]]] + jo9_rs_virgin_bonus)",
+      "new": "jo9_rs_rank = common_price[demand_rating[$jo9_rumor_buyer[jo9_rs_b]]] + jo9_rs_virgin_bonus",
+      "count": 1
+    },
+    {
+      "location": "jo9_rumor_scan",
+      "field": "body",
+      "old": "   jo9_rs_best = -1",
+      "new": "! JO9 MOD START SALE_TAX_20261105\r\n   jo9_rs_guild_quote = func('jo9_traits_value', 'sale_net', jo9_rs_guild_quote)\r\n   jo9_rs_best = -1\r\n! JO9 MOD END SALE_TAX_20261105",
+      "count": 1
+    },
+    {
+      "location": "jo9_rumor_scan",
+      "field": "body",
+      "old": "       if jo9_rs_rank > jo9_rs_best:",
+      "new": "! JO9 MOD START SALE_TAX_20261105\r\n       jo9_rs_rank = func('jo9_traits_value', 'sale_net', jo9_rs_rank)\r\n       if jo9_rs_rank > jo9_rs_best:\r\n! JO9 MOD END SALE_TAX_20261105",
+      "count": 1
+    },
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "if $npc_id = 'master_vong' and (instr($yes, 'TBV_SUBPURCHASER_BASE') > 0 or (instr($yes, 'dealer_wong_finish') > 0 and jo9_dealer_wong_quote > 6000)):",
+      "new": "if $npc_id = 'master_vong' and (slave_state = CONST_INT['slave_exist'] or slave_state = CONST_INT['slave_faint']) and (instr($yes, 'TBV_SUBPURCHASER_BASE') > 0 or instr($yes, 'dealer_wong_finish') > 0):",
+      "count": 1
+    },
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "! JO9 MOD END DEALER_OLD_CONFIRM_REFRESH",
+      "new": "! JO9 MOD END DEALER_OLD_CONFIRM_REFRESH\r\n! JO9 MOD START SALE_TAX_20261105\r\n! Rebuild pending private quotations only; paid result pages have no owned slave.\r\nif slave_state = CONST_INT['slave_exist'] and (interaction_city = 911 or interaction_city = 912 or interaction_city = 913) and ($interaction_type = 'slave_sold' or $interaction_type = 'slave_sold_house'):\r\n if $curloc = 'interaction_city' or $curloc = 'interaction_screen_city' or $curloc = 'choice_screen':\r\n  buyer_from_house = iif($interaction_type = 'slave_sold_house', 1, 0)\r\n  gs 'refresh_database'\r\n  killobj\r\n  txt = 1\r\n  gt 'interaction_city'\r\n end\r\nend\r\nif $interaction_type = 'sell_milk_cow' and cow_state = CONST_INT['slave_exist'] and instr($yes, 'sparks += cowprice') > 0:\r\n killobj\r\n gt 'interaction_result_city'\r\nend\r\n! JO9 MOD END SALE_TAX_20261105",
+      "count": 1
+    },
+    {
+      "location": "interaction_result_city",
+      "field": "body",
+      "old": "if $interaction_type = 'sell_slave_simple':",
+      "new": "if $interaction_type = 'sell_slave_simple':\r\n! JO9 MOD START SALE_TAX_20261105\r\n\tif slave_state ! CONST_INT['slave_exist']: gt 'interaction_screen_city'\r\n! JO9 MOD END SALE_TAX_20261105",
+      "count": 1
+    },
+    {
+      "location": "interaction_result_city",
+      "field": "body",
+      "old": "if $interaction_type = 'sell_slave_complex':",
+      "new": "if $interaction_type = 'sell_slave_complex':\r\n! JO9 MOD START SALE_TAX_20261105\r\n\tif slave_state ! CONST_INT['slave_exist']: gt 'interaction_screen_city'\r\n! JO9 MOD END SALE_TAX_20261105",
+      "count": 2
+    },
+    {
+      "location": "interaction_result_city",
+      "field": "body",
+      "old": "if $interaction_type = 'slave_sold':",
+      "new": "if $interaction_type = 'slave_sold':\r\n! JO9 MOD START SALE_TAX_20261105\r\n\tif slave_state ! CONST_INT['slave_exist']: gt 'interaction_screen_city'\r\n! JO9 MOD END SALE_TAX_20261105",
+      "count": 1
+    },
+    {
+      "location": "interaction_result_city",
+      "field": "body",
+      "old": "if $interaction_type = 'slave_sold_house':",
+      "new": "if $interaction_type = 'slave_sold_house':\r\n! JO9 MOD START SALE_TAX_20261105\r\n\tif slave_state ! CONST_INT['slave_exist']: gt 'interaction_screen_city'\r\n! JO9 MOD END SALE_TAX_20261105",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "if interaction_city = 931 and hero_choice < 100:",
+      "new": "if interaction_city = 931 and hero_choice < 100:\r\n! JO9 MOD START SALE_TAX_20261105\r\n\tif slave_state ! CONST_INT['slave_exist'] and slave_state ! CONST_INT['slave_faint']: gt 'interaction_screen_city'\r\n! JO9 MOD END SALE_TAX_20261105",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "if interaction_city = 931 and hero_choice > 100:",
+      "new": "if interaction_city = 931 and hero_choice > 100:\r\n! JO9 MOD START SALE_TAX_20261105\r\n\tif slave_state ! CONST_INT['slave_exist'] and slave_state ! CONST_INT['slave_faint']: gt 'interaction_screen_city'\r\n! JO9 MOD END SALE_TAX_20261105",
+      "count": 1
+    },
+    {
+      "location": "jo9_farid_consignment",
+      "field": "body",
+      "old": " jo9_fc_amount = slaveprice / 2\r\n if jo9_fc_amount < 1: exit",
+      "new": "! JO9 MOD START SALE_TAX_20261105\r\n jo9_fc_amount = slaveprice / 2\r\n if jo9_fc_amount < 1: exit\r\n local $jo9_fc_receipt = $func('jo9_traits_value', 'sale_receipt', jo9_fc_amount)\r\n jo9_fc_amount = func('jo9_traits_value', 'sale_net', jo9_fc_amount)\r\n! JO9 MOD END SALE_TAX_20261105",
+      "count": 1
+    },
+    {
+      "location": "jo9_farid_consignment",
+      "field": "body",
+      "old": " jo9_fc_ok = func('jo9_farid_consignment', 'clear', 'stock')\r\n result = 1",
+      "new": " jo9_fc_ok = func('jo9_farid_consignment', 'clear', 'stock')\r\n $result = $jo9_fc_receipt",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\tlocal jo9_farid_deposited = func('jo9_farid_consignment', 'deposit')\r\n\tif jo9_farid_deposited ! 1:",
+      "new": "! JO9 MOD START SALE_TAX_20261105\r\n\tlocal $jo9_farid_sale_receipt = $func('jo9_farid_consignment', 'deposit')\r\n\tif $jo9_farid_sale_receipt = '' or $jo9_farid_sale_receipt = '0':\r\n! JO9 MOD END SALE_TAX_20261105",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[2] = '집으로 오는 길, 당신은 그 노예를 떠올리고 마음속으로 계산했다. 노예시장에 팔아버리는 것보다 내가 키우는 것이 더 이윤이 남지 않을까? 그렇다면 지금 데리고 있는 노예를 어떻게 처리할지 결정해야 한다...'",
+      "new": "! JO9 MOD START SALE_TAX_20261105\r\n\t$text[1] += $jo9_farid_sale_receipt + '<br>이 건의 판매세를 반영한 대금을 내일 받을 수 있다.'\r\n! JO9 MOD END SALE_TAX_20261105\r\n\t$text[2] = '집으로 오는 길, 당신은 그 노예를 떠올리고 마음속으로 계산했다. 노예시장에 팔아버리는 것보다 내가 키우는 것이 더 이윤이 남지 않을까? 그렇다면 지금 데리고 있는 노예를 어떻게 처리할지 결정해야 한다...'",
+      "count": 1
+    },
+    {
+      "location": "interaction_result_city",
+      "field": "body",
+      "old": "\t\t\tsparks += cowprice",
+      "new": "! JO9 MOD START SALE_TAX_20261105\r\n\t\t\tif cow_state ! CONST_INT['slave_exist']: gt 'shop_general'\r\nkillobj\r\nkillvar '$text'\r\nkillvar '$yes'\r\nkillvar '$no'\r\nkillvar '$special_action'\r\nkillvar '$special_image'\r\nkillvar '$special_image_full'\r\nkillvar '$play_sound'\r\n$bg_path = ''\r\n$picture_type = ''\r\n$interaction_type = ''\r\n\t\t\t$text[1] = '매각이 성사되었다.' + $func('jo9_traits_value', 'sale_pay', cowprice)\r\n! JO9 MOD END SALE_TAX_20261105",
+      "count": 1
+    },
+    {
+      "location": "interaction_result_city",
+      "field": "body",
+      "old": "\t\t\tmaster_moodlet['pos_deal'] = 5\r\n\t\t\tgt 'shop_general'",
+      "new": "! JO9 MOD START SALE_TAX_20261105\r\n\t\t\tmaster_moodlet['pos_deal'] = 5\r\n\t\t\tkillvar '$interaction_type'\r\n\t\t\t$return_lock = 'shop_general'\r\n\t\t\ttxt = 1\r\n\t\t\tgt 'interaction_screen_city'\r\n! JO9 MOD END SALE_TAX_20261105",
+      "count": 1
+    }
+  ]
+}

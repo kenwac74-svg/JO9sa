@@ -1,0 +1,42 @@
+﻿r4 objectives return fix — November 5, 2026
+Added a return link from Marquis Donatien's request details to the objectives list. It also covers reopening the details while outside and existing saves that already store the request text.
+Compared with r3, game/jack.qsp is the only changed game file; images and JSON are unchanged. The r4 addition receives limited scope, QSP structure, hash, and ZIP checks. The full QA suite and game EXE are not rerun; user play-testing is pending. Earlier engine-check statements below describe validation through r3.
+
+Title: [Jack o' Nine Tails — Korean Edition] 2.4.1 Additional Patch — November 5, 2026
+
+This is an overwrite patch for an existing 2.4.1 installation. The ZIP includes INSTALL.cmd for automatic installation and does not contain the complete standalone game. These English notes describe the Korean-edition patch; this is not a new English translation.
+
+[Main updates]
+
+This patch focuses on action points and the sale economy on Hard, together with character images. The difficulty changes use the in-game setting, separately from the difficulty chosen during character creation.
+
+- On Hard, base maximum AP for slaves, assistants and private-room occupants is now 0, 1, 2, 3, 4 and 5 at endurance levels 0–5. Easy and Normal retain 0, 2, 3, 4, 5 and 5. The protagonist's AP is unchanged.
+- On Hard, the added portion of designated sale premiums is halved: Versatile's +25% becomes +12.5%, for example. The entire sale payment is not halved.
+- Removed the forced 6,000/8,000 payment caps on ordinary sales and added a Hard-only sales tax: no tax up to 5,999, 5% from 6,000 to 9,999, and 10% from 10,000. The rate applies to the whole gross amount, with fractional tax rounded down, so crossing a threshold can reduce the net payment. The result screen shows gross amount, tax and net payment together.
+- Matched the framing and size of multiple full-body and maid-outfit images, and updated selected portraits and equipment images. Felicity (2572) now has a new default full-body image, with her maid, domina and secretary outfits adjusted to match.
+- Connected image lookup across older and newer outfit registrations, with valid same-outfit images or the default full-body image used when a picture is missing.
+- Separated Isabella (2571) from ordinary character 2323, and corrected Luminous's clothed recruitment-event image and name display. The long brown-haired 2071, short light-blue-haired 2324 and short blonde 2340 now have separate image connections. Ordinary character definitions added since the release are 2339 and 2340; image replacements and renamed files are not being counted as new characters.
+- Improved selected Korean background text and original-language passages displayed from older saves. Storage now uses four columns, and the alchemy room's ingredients and potions use two.
+
+[Fixes and other notes]
+
+Repaired selected image connections, a trait-key typo, a size-condition check and an alignment accumulation connection. Revised Chaotic Essence's candidate/protected lists, and matched S+ promotion and colosseum armor notices to the actual checks.
+
+This post covers changes since 2.4.1. See the included RELEASE_NOTES_EN.html for details and image previews. Korean-edition revision and this patch are by SAnk. Credits for the original game, previous developers, translators and resource contributors remain in the game.
+
+[Installation — existing 2.4.1 required]
+
+This ZIP includes the complete game/json folder. Read INSTALL_EN.txt and choose one of these methods. If you added personal JSON files, keep a copy outside the game folder before installing.
+
+Automatic: close the game, extract the ZIP, run INSTALL.cmd, then start the game with your existing executable. If the game folder cannot be detected automatically, select the destination folder once.
+
+Manual: close the game, delete only the existing game/json folder, merge the patch's game folder into the existing game folder beside your executable, then start the game with your existing executable.
+
+Do not delete the entire game folder. The save folder is not a deletion target, and no separate save conversion is performed. Testing does not cover every existing save or all long-term play routes. For problem reports, include the menu, preceding action and relevant save information.
+
+[Verification scope]
+
+The final QSP passed nine required checks in the native engine. Visual checks in the actual game executable, including screens loaded from existing saves, have not been performed.
+
+[r3 installation fixes]
+Fixed CMD execution with special path names and JSON recovery after permission errors, following independent QA. Game data and installation steps are unchanged.

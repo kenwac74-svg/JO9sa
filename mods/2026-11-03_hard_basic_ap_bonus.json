@@ -1,0 +1,127 @@
+{
+  "id": "2026-11-03_hard_basic_ap_bonus",
+  "description": "Use in-game difficulty_setting only: remove mod +1 base AP for hard(2) in17 existing expressions/15 locations. Preserve easy/normal, master AP, wounds, nurse/medical gates, half-action bonuses, accumulated recovery, all creation game_difficulty logic, economy and save schema.",
+  "before_sha256": "a58cddda7faf051574173484402fa4804f952612c42c9d3981d1fb4d56c7a3e0",
+  "after_sha256": "a34b95fc23d39440204ce2aff3cf56cc1b5b19b450cb84865b4389bc6b2f1565",
+  "edits": [
+    {
+      "location": "generate_stock",
+      "field": "body",
+      "old": "stock['energy'] = iif(stock['stamina'] > 0, min(5, stock['stamina'] + 1), 0)",
+      "new": "! JO9 MOD START HARD_BASIC_AP_20261103\r\nstock['energy'] = iif(stock['stamina'] > 0, min(5, stock['stamina'] + iif(difficulty_setting = 2, 0, 1)), 0)\r\n! JO9 MOD END HARD_BASIC_AP_20261103",
+      "count": 1
+    },
+    {
+      "location": "generate_clone",
+      "field": "body",
+      "old": "stock['energy'] = iif(stock['stamina'] > 0, min(5, stock['stamina'] + 1), 0)",
+      "new": "! JO9 MOD START HARD_BASIC_AP_20261103\r\nstock['energy'] = iif(stock['stamina'] > 0, min(5, stock['stamina'] + iif(difficulty_setting = 2, 0, 1)), 0)\r\n! JO9 MOD END HARD_BASIC_AP_20261103",
+      "count": 1
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "\t\ta = iif(dynslave['stamina'] > 0, min(5, dynslave['stamina'] + 1), 0) - dynslave['wounds']",
+      "new": "\t\t! JO9 MOD START HARD_BASIC_AP_20261103\r\n\t\ta = iif(dynslave['stamina'] > 0, min(5, dynslave['stamina'] + iif(difficulty_setting = 2, 0, 1)), 0) - dynslave['wounds']\r\n\t\t! JO9 MOD END HARD_BASIC_AP_20261103",
+      "count": 1
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "\tslave['energy'] = iif(slave['stamina'] > 0, min(5, slave['stamina'] + 1), 0)",
+      "new": "\t! JO9 MOD START HARD_BASIC_AP_20261103\r\n\tslave['energy'] = iif(slave['stamina'] > 0, min(5, slave['stamina'] + iif(difficulty_setting = 2, 0, 1)), 0)\r\n\t! JO9 MOD END HARD_BASIC_AP_20261103",
+      "count": 1
+    },
+    {
+      "location": "main_screen",
+      "field": "body",
+      "old": "jo9_ap_cap = iif(assistant['stamina'] > 0, min(5, assistant['stamina'] + 1), 0)",
+      "new": "! JO9 MOD START HARD_BASIC_AP_20261103\r\njo9_ap_cap = iif(assistant['stamina'] > 0, min(5, assistant['stamina'] + iif(difficulty_setting = 2, 0, 1)), 0)\r\n! JO9 MOD END HARD_BASIC_AP_20261103",
+      "count": 1
+    },
+    {
+      "location": "main_screen",
+      "field": "body",
+      "old": "jo9_ap_cap = iif(slave['stamina'] > 0, min(5, slave['stamina'] + 1), 0)",
+      "new": "! JO9 MOD START HARD_BASIC_AP_20261103\r\njo9_ap_cap = iif(slave['stamina'] > 0, min(5, slave['stamina'] + iif(difficulty_setting = 2, 0, 1)), 0)\r\n! JO9 MOD END HARD_BASIC_AP_20261103",
+      "count": 1
+    },
+    {
+      "location": "city_screen",
+      "field": "body",
+      "old": "jo9_ap_cap = iif(assistant['stamina'] > 0, min(5, assistant['stamina'] + 1), 0)",
+      "new": "! JO9 MOD START HARD_BASIC_AP_20261103\r\njo9_ap_cap = iif(assistant['stamina'] > 0, min(5, assistant['stamina'] + iif(difficulty_setting = 2, 0, 1)), 0)\r\n! JO9 MOD END HARD_BASIC_AP_20261103",
+      "count": 1
+    },
+    {
+      "location": "city_screen",
+      "field": "body",
+      "old": "jo9_ap_cap = iif(slave['stamina'] > 0, min(5, slave['stamina'] + 1), 0)",
+      "new": "! JO9 MOD START HARD_BASIC_AP_20261103\r\njo9_ap_cap = iif(slave['stamina'] > 0, min(5, slave['stamina'] + iif(difficulty_setting = 2, 0, 1)), 0)\r\n! JO9 MOD END HARD_BASIC_AP_20261103",
+      "count": 1
+    },
+    {
+      "location": "slave_private_room1",
+      "field": "body",
+      "old": "jo9_ap_cap = iif(room1['stamina'] > 0, min(5, room1['stamina'] + 1), 0)",
+      "new": "! JO9 MOD START HARD_BASIC_AP_20261103\r\njo9_ap_cap = iif(room1['stamina'] > 0, min(5, room1['stamina'] + iif(difficulty_setting = 2, 0, 1)), 0)\r\n! JO9 MOD END HARD_BASIC_AP_20261103",
+      "count": 1
+    },
+    {
+      "location": "slave_private_room2",
+      "field": "body",
+      "old": "jo9_ap_cap = iif(room2['stamina'] > 0, min(5, room2['stamina'] + 1), 0)",
+      "new": "! JO9 MOD START HARD_BASIC_AP_20261103\r\njo9_ap_cap = iif(room2['stamina'] > 0, min(5, room2['stamina'] + iif(difficulty_setting = 2, 0, 1)), 0)\r\n! JO9 MOD END HARD_BASIC_AP_20261103",
+      "count": 1
+    },
+    {
+      "location": "slave_private_room3",
+      "field": "body",
+      "old": "jo9_ap_cap = iif(room3['stamina'] > 0, min(5, room3['stamina'] + 1), 0)",
+      "new": "! JO9 MOD START HARD_BASIC_AP_20261103\r\njo9_ap_cap = iif(room3['stamina'] > 0, min(5, room3['stamina'] + iif(difficulty_setting = 2, 0, 1)), 0)\r\n! JO9 MOD END HARD_BASIC_AP_20261103",
+      "count": 1
+    },
+    {
+      "location": "slave_private_room4",
+      "field": "body",
+      "old": "jo9_ap_cap = iif(room4['stamina'] > 0, min(5, room4['stamina'] + 1), 0)",
+      "new": "! JO9 MOD START HARD_BASIC_AP_20261103\r\njo9_ap_cap = iif(room4['stamina'] > 0, min(5, room4['stamina'] + iif(difficulty_setting = 2, 0, 1)), 0)\r\n! JO9 MOD END HARD_BASIC_AP_20261103",
+      "count": 1
+    },
+    {
+      "location": "stock_to_slave_nogt",
+      "field": "body",
+      "old": "local jo9_acquire_ap_cap = iif(stock['stamina'] > 0, min(5, stock['stamina'] + 1), 0)",
+      "new": "! JO9 MOD START HARD_BASIC_AP_20261103\r\nlocal jo9_acquire_ap_cap = iif(stock['stamina'] > 0, min(5, stock['stamina'] + iif(difficulty_setting = 2, 0, 1)), 0)\r\n! JO9 MOD END HARD_BASIC_AP_20261103",
+      "count": 1
+    },
+    {
+      "location": "#static_base",
+      "field": "body",
+      "old": "\t\tlocal jo9_base_ap_cap = iif(dynslave['stamina'] > 0, min(5, dynslave['stamina'] + 1), 0)",
+      "new": "\t\t! JO9 MOD START HARD_BASIC_AP_20261103\r\n\t\tlocal jo9_base_ap_cap = iif(dynslave['stamina'] > 0, min(5, dynslave['stamina'] + iif(difficulty_setting = 2, 0, 1)), 0)\r\n\t\t! JO9 MOD END HARD_BASIC_AP_20261103",
+      "count": 1
+    },
+    {
+      "location": "get_demo_slave",
+      "field": "body",
+      "old": "slave['energy'] = iif(slave['stamina'] > 0, min(5, slave['stamina'] + 1), 0)",
+      "new": "! JO9 MOD START HARD_BASIC_AP_20261103\r\nslave['energy'] = iif(slave['stamina'] > 0, min(5, slave['stamina'] + iif(difficulty_setting = 2, 0, 1)), 0)\r\n! JO9 MOD END HARD_BASIC_AP_20261103",
+      "count": 1
+    },
+    {
+      "location": "get_special_slave",
+      "field": "body",
+      "old": "slave['energy'] = iif(slave['stamina'] > 0, min(5, slave['stamina'] + 1), 0)",
+      "new": "! JO9 MOD START HARD_BASIC_AP_20261103\r\nslave['energy'] = iif(slave['stamina'] > 0, min(5, slave['stamina'] + iif(difficulty_setting = 2, 0, 1)), 0)\r\n! JO9 MOD END HARD_BASIC_AP_20261103",
+      "count": 1
+    },
+    {
+      "location": "snk_room_menu_screen",
+      "field": "body",
+      "old": "jo9_ap_cap = iif(slave['stamina'] > 0, min(5, slave['stamina'] + 1), 0)",
+      "new": "! JO9 MOD START HARD_BASIC_AP_20261103\r\njo9_ap_cap = iif(slave['stamina'] > 0, min(5, slave['stamina'] + iif(difficulty_setting = 2, 0, 1)), 0)\r\n! JO9 MOD END HARD_BASIC_AP_20261103",
+      "count": 1
+    }
+  ]
+}

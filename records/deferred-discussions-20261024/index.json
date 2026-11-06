@@ -200,20 +200,30 @@
     {
       "id": "D13",
       "title": "통합 난이도 조정·쉬움 복종 추가 지원",
-      "status": "USER_DEFERRED_DRAFT_NOT_APPROVED",
-      "decision": "향후 모드 시험은 보통 난도를 기준으로 하고 난이도 전반의 수치 조정은 함께 재논의",
+      "status": "PARTIALLY_APPLIED_AP_TRAIT_PRICE_SALE_TAX",
+      "decision": "게임 설정 하드의 기본 행동력+1 제거, 가격 특성 보너스 절반, 일반 판매 상한 제거 및 구간 판매세는 승인·WORK 적용. 성장·복종 추가 보정과 원본 전투/전차 수치는 미정.",
       "trigger": "다음 통합 난이도·경제·복종·전투/전차 밸런스 검토를 시작할 때",
-      "facts": "2026-10-26 사용자 결정: 향후 모드 시험의 기준은 보통. 하드 혜택 -50%·쉬움 혜택 +30%는 미승인 검토 초안이다. 혜택의 정의와 적용 범위는 미정이며 쉬움 복종 추가 지원도 함께 보류한다. 현재 난이도 수치는 바꾸지 않는다.",
+      "facts": "2026-11-03 사용자 승인: difficulty_setting=2에서만 기본+1 제거를17개 수식/15개 로케이션에 적용. 생성 game_difficulty·주인공·반 칸/회복 보너스·부상/간호 규칙은 유지. 과거 전체 하드혜택-50%·쉬움+30%는 여전히 미승인 초안이며 일반 판매의 하드50%/70%도 논의안이다.",
       "evidence": [
         "records/meiki-discovery-popup-20261026/DECISIONS_KO.md",
-        "docs/THIRD_PATCH_PENDING_20261026_KO.md"
+        "docs/THIRD_PATCH_PENDING_20261026_KO.md",
+        "mods/2026-11-03_hard_basic_ap_bonus.json",
+        "records/hard-ap-setting-20261103/IMPLEMENTATION_KO.md"
       ],
       "constraints": [
         "수치 초안을 런타임 적용 승인으로 취급하지 않음",
         "원본 전투/전차 보정 D01/D02의 최종 수치와 수정 승인은 여전히 미정",
         "쉬움 복종 +8/+10 등 과거 제안을 승인된 값으로 바꾸지 않음",
-        "월별 추가 세금의 금액·적용 범위는 미정으로 유지"
-      ]
+        "월별 추가 세금의 금액·적용 범위는 미정으로 유지",
+        "성장·복종 추가 보정 및 전투/전차 수치의 미승인 초안을 확대 적용하지 않음."
+      ],
+      "latestAction": {
+        "date": "2026-11-05",
+        "scope": "approved WORK batch: hard AP preserved; trait price bonus half preserved; normal sale cap removal + Hard tax applied",
+        "workSha256": "5cbc0fbf858b8102bdc6afe8cdfeb2b07eacfe9329c3c5b1a7623c14ced4cf2e",
+        "evidence": "records/work-pending-batch-20261105/REPORT_KO.md",
+        "fullSynced": false
+      }
     },
     {
       "id": "D14",
@@ -268,6 +278,52 @@
         "별도 재현된 버그와 개별 승인 작업 전체를 보류하는 뜻은 아님",
         "날짜 알림 생성 없음"
       ]
+    },
+    {
+      "id": "D17",
+      "decisionKey": "AUCTION_DIALOGUE_NEXT_UPDATE_20261105",
+      "title": "경매 대사 전체 개편 — 다음 업데이트로 보류",
+      "status": "USER_DEFERRED_NEXT_UPDATE",
+      "decision": "현재 2차 패치(r4)에 넣지 않고 다음 업데이트에서 재개 여부·전체 범위를 확인한다.",
+      "trigger": "다음 게임 업데이트 작업을 시작하거나 사용자가 경매 대사 작업 재개를 요청할 때 먼저 상기한다.",
+      "facts": "경매 대사 추출과 Gemini 제안 검토만 완료. 길드 판매24항목 중13항목 제안/실제문장변경12, 구매218항목 대부분 미수정과 별도수정란5개 제안, 직접매입·위탁정산23항목 미수정. 두 번째 코드는 SELL-009의 대안이며 별도 추가 범위가 아니다. 게임·QSP·r4 ZIP에는 경매 제안을 반영하지 않았다.",
+      "constraints": [
+        "사용자 최신 지시: 지금은 2차 패치 배포에 집중한다.",
+        "현재 r4에 경매 대사/분기/가격/참가자 변경을 포함하지 않는다.",
+        "제안을 전체 수정 완료본이나 구현 승인으로 취급하지 않는다.",
+        "재개 시 실제 경매 참가자 ID·캐릭터 설정·출력 덮어쓰기·줄바꿈·기존 조건과 효과를 먼저 맞춘다.",
+        "문장 편집과 새 무작위 분기·기능 변경을 구분한다. 가격·보상 산식의 새 변경은 합의되지 않았다."
+      ],
+      "evidence": [
+        "records/auction-dialogue-deferred-20261105/DECISION_KO.md",
+        "records/auction-dialogue-deferred-20261105/REVIEW_KO.md",
+        "G:/somi/JO9_경매대사편집_20261105/JO9_경매대사편집_20261105.zip"
+      ],
+      "recordedAt": "2026-11-05T14:32:12.099Z",
+      "currentReleaseExcluded": true
+    },
+    {
+      "id": "D18",
+      "decisionKey": "AUDIO_IMPROVEMENT_NEXT_PATCH_20261106",
+      "title": "차기 패치 사운드 포맷 조정·지역 테마·효과음 추가",
+      "status": "PLANNED_NEXT_PATCH_DETAILS_TO_DISCUSS",
+      "decision": "차기 패치 포맷 조정·지역별 악기 방향 확정. 전투 효과음은 Pixabay 기존 음원으로 승리·패배·처형·석방·치명타 5종을 사용하며 각 사건 확정 시 한 번 재생하는 방향으로 선정했다.",
+      "trigger": "차기 게임 패치 범위 확정 또는 사용자 사운드 작업 재개 지시",
+      "facts": "현행 실존 BGM 연결28곡/미연결 후보2곡. 11핵심공간 중 기본허브 독립선택은 아그라바1; 다른허브는공통곡. 제안은 기존시설/안개/아그라바7곡 활용+신규4곡. 전투타격·방어·승패음 연결공백.",
+      "constraints": [
+        "현재 r4 ZIP에 추가하지 않음",
+        "이번은 기록·조사·제안이며 음원변환/교체/QSP수정/Full동기화/커밋푸시 없음",
+        "곡수·비트레이트·재활용 적합성은 미확정 제안",
+        "경매 대사 D17 및 다른 보류 작업의 자동 재개 아님",
+        "효과음은 Pixabay 기존 음원만 선정하고 신규 생성·직접 합성하지 않음"
+      ],
+      "evidence": [
+        "docs/NEXT_PATCH_AUDIO_20261106_KO.md",
+        "records/audio-planning-20261106/status.json",
+        "records/audio-planning-20261106/pixabay-candidates.json"
+      ],
+      "recordedAt": "2026-11-06T00:57:05.5992193+09:00",
+      "currentReleaseExcluded": true
     }
   ],
   "notDeferred": [
@@ -302,5 +358,6 @@
       "note": "2026-10-26 사용자 승인. 기존 MSG 첫 발견 1회. 재확인 대기 저장·X 전용 키 제어는 추가하지 않음. records/meiki-discovery-popup-20261026/FINAL_RESULT.json."
     }
   ],
-  "updatedAt": "2026-10-29T05:41:08.759915+00:00"
+  "updatedAt": "2026-11-03T11:10:04Z",
+  "lastUpdatedAt": "2026-11-06T12:32:44.6497696+09:00"
 }

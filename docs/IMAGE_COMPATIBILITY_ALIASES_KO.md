@@ -47,3 +47,7 @@ characters/mistress_morrigan.png 및 mistress_ava.png는 유지하고 같은 파
 ## 2026-10-31 이사벨라 영입 거래 화면 호환 사본
 
 `girls/full/isabella_black_long.png`는 `2571/2571_full_title.png`와 같은 현재 외형을 담는다. 거래 메뉴의 직접 호출과 기존 세이브에 저장된 HTML 주소를 보존하기 위한 별도 PNG다. 원본 제목 그림을 교체할 때 이 사본도 검토하며, 같은 해시만으로 삭제하지 않는다. 구2323이 사용하는 `_milf` 파일과 별도 역할 그림은 변경하지 않았다. 원장: `assets/resource-role-copies/2026-10-31_isabella_recruitment.json`; 검증: `records/isabella-recruitment-overlay-20261031/verification.json`.
+
+## 2026-11-05 2071 외형 분리
+
+갈색2071·기존 하늘색2324·새 금발2340의 독립 표시를 유지합니다. 옛2071 금발4경로, 하늘색 전신1경로, blue_short라는 이름의 실제 갈색 하녀1경로를 KEEP으로 보존했습니다. 원장 [2026-11-05_2071_split.json](../assets/compatibility-aliases/2026-11-05_2071_split.json)은 같은 바이트 사본과 다른 구도의 같은 인물, 잘못 명명된 복장 관계를 구분합니다. 해시만으로 삭제하거나 자동 교체하지 않습니다. [최종 보고](../records/girls-2071-split-20261105/REPORT_KO.md).

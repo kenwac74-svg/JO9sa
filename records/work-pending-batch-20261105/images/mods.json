@@ -1,0 +1,107 @@
+[
+  {
+    "location": "jo9_seed_role_images",
+    "field": "body",
+    "old": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n! Global cleanup and non-mutating read resolver; keep actor cache markers across ONGLOAD -> JSON.\r\nlocal $jo9_seed_role_stem, $jo9_seed_role_keys, $jo9_seed_role_dirs, $jo9_seed_role_old, $jo9_seed_role_wanted, $jo9_seed_role_new\r\nlocal jo9_seed_role_id, jo9_seed_role_k, jo9_seed_role_known\r\n$jo9_seed_role_stem[0]='medico'\r\n$jo9_seed_role_stem[1]='por'\r\n$jo9_seed_role_stem[2]='kirakira'\r\n$jo9_seed_role_stem[3]='tsuina'\r\n$jo9_seed_role_stem[4]='yammy'\r\n$jo9_seed_role_stem[5]='antenna'\r\n$jo9_seed_role_stem[6]='alyce'\r\n$jo9_seed_role_stem[7]='mist'\r\n$jo9_seed_role_stem[8]='joker'\r\n$jo9_seed_role_stem[9]='Inui'\r\n$jo9_seed_role_stem[10]='zion'\r\n$jo9_seed_role_stem[11]='rin'\r\n$jo9_seed_role_stem[12]='kikuchiyo'\r\n$jo9_seed_role_stem[13]='Ririe'\r\n$jo9_seed_role_stem[14]='Kyoka'\r\n$jo9_seed_role_stem[15]='Noelle'\r\n$jo9_seed_role_stem[16]='Miruki'\r\n$jo9_seed_role_stem[17]='Tamaki'\r\n$jo9_seed_role_stem[18]='Chiharu'\r\n$jo9_seed_role_stem[19]='Fumi'\r\n$jo9_seed_role_stem[20]='Sana'\r\n$jo9_seed_role_stem[21]='Nanami'\r\n$jo9_seed_role_stem[22]='Shuko'\r\n$jo9_seed_role_stem[23]='celestine'\r\n$jo9_seed_role_stem[24]='olga'\r\n$jo9_seed_role_keys[0]='fullmade'\r\n$jo9_seed_role_keys[1]='fullsecretary'\r\n$jo9_seed_role_keys[2]='fullmistress'\r\n$jo9_seed_role_keys[3]='fullpregnant'\r\n$jo9_seed_role_dirs[0]='maid'\r\n$jo9_seed_role_dirs[1]='secretary'\r\n$jo9_seed_role_dirs[2]='mistress'\r\n$jo9_seed_role_dirs[3]='pregnant'\r\nif $args[0]='resolve':\r\n $result=$args[2]\r\n jo9_seed_role_id=args[1]\r\n $jo9_seed_role_wanted=$args[3]\r\n! JO9 MOD START INDIE_EVENT_FULLIMAGE_20261023 | 2026-10-23_indie_event_fullimage\r\n ! Resolve only a known default/role alias for this ID; do not rewrite actor caches.\r\n if $jo9_seed_role_wanted='fullimage' and $args[2] ! '':\r\n  $jo9_seed_role_new=''\r\n  if $args[2]=$fullimage[jo9_seed_role_id]:\r\n   $jo9_seed_role_new=$indpack_title[jo9_seed_role_id]\r\n  elseif $args[2]=$fullmade[jo9_seed_role_id]:\r\n   $jo9_seed_role_new=$indpack_maid[jo9_seed_role_id]\r\n   if $jo9_seed_role_new='': $jo9_seed_role_new=$indpack_title[jo9_seed_role_id]\r\n  elseif $args[2]=$fullsecretary[jo9_seed_role_id]:\r\n   $jo9_seed_role_new=$indpack_secr[jo9_seed_role_id]\r\n   if $jo9_seed_role_new='': $jo9_seed_role_new=$indpack_title[jo9_seed_role_id]\r\n  elseif $args[2]=$fullmistress[jo9_seed_role_id]:\r\n   $jo9_seed_role_new=$indpack_dom[jo9_seed_role_id]\r\n   if $jo9_seed_role_new='': $jo9_seed_role_new=$indpack_title[jo9_seed_role_id]\r\n  end\r\n  if $jo9_seed_role_new ! '': $result=$jo9_seed_role_new & exit\r\n end\r\n! JO9 MOD END INDIE_EVENT_FULLIMAGE_20261023\r\n if jo9_seed_role_id>=2577 and jo9_seed_role_id<=2601:\r\n  for jo9_seed_role_k=0 to 3:\r\n   jo9_seed_role_known=1\r\n   if jo9_seed_role_k=3 and (jo9_seed_role_id=2585 or jo9_seed_role_id=2597 or jo9_seed_role_id=2600 or jo9_seed_role_id=2601): jo9_seed_role_known=0\r\n   if jo9_seed_role_known=1:\r\n    $jo9_seed_role_old='girls/full/'+$jo9_seed_role_dirs[jo9_seed_role_k]+'/'+$jo9_seed_role_stem[jo9_seed_role_id-2577]\r\n    if $args[2]=$jo9_seed_role_old:\r\n     $result=$fullimage[jo9_seed_role_id]\r\n     if $jo9_seed_role_wanted='fullmade' or $jo9_seed_role_wanted='fullsecretary' or $jo9_seed_role_wanted='fullmistress' or $jo9_seed_role_wanted='fullpregnant':\r\n      $jo9_seed_role_new=dyneval('$result = $<<$jo9_seed_role_wanted>>[jo9_seed_role_id]')\r\n      if $jo9_seed_role_new ! '': $result=$jo9_seed_role_new\r\n     end\r\n     exit\r\n    end\r\n   end\r\n  end\r\n end\r\n exit\r\nend\r\n! Original25 role values are absent/empty. Four absent legacy pregnancy keys are never inferred.\r\nfor jo9_seed_role_id=2577 to 2601:\r\n for jo9_seed_role_k=0 to 3:\r\n  jo9_seed_role_known=1\r\n  if jo9_seed_role_k=3 and (jo9_seed_role_id=2585 or jo9_seed_role_id=2597 or jo9_seed_role_id=2600 or jo9_seed_role_id=2601): jo9_seed_role_known=0\r\n  if jo9_seed_role_known=1:\r\n   $jo9_seed_role_old='girls/full/'+$jo9_seed_role_dirs[jo9_seed_role_k]+'/'+$jo9_seed_role_stem[jo9_seed_role_id-2577]\r\n   dynamic \"if $<<$jo9_seed_role_keys[jo9_seed_role_k]>>[jo9_seed_role_id]=$jo9_seed_role_old: $<<$jo9_seed_role_keys[jo9_seed_role_k]>>[jo9_seed_role_id]=''\"\r\n  end\r\n end\r\nend\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+    "new": "! JO9 MOD START GIRL_IMAGE_DUAL_REGISTRATION_20261105\r\n! Read-only display lookup. Registration checks do not depend on file presence.\r\n! select: ID, cached/direct candidate, legacy key, pack key, mood suffix, priority.\r\n! resolve retains existing callers; alias below retains the prior correction rules.\r\nif $args[0]='registered':\r\n local jo9_lookup_id\r\n local $jo9_lookup_old_key, $jo9_lookup_pack_key, $jo9_lookup_old, $jo9_lookup_pack\r\n jo9_lookup_id=args[1]\r\n $jo9_lookup_old_key=$args[2]\r\n $jo9_lookup_pack_key=$args[3]\r\n $jo9_lookup_old=dyneval('$result=$<<$jo9_lookup_old_key>>[jo9_lookup_id]')\r\n $jo9_lookup_pack=dyneval('$result=$<<$jo9_lookup_pack_key>>[jo9_lookup_id]')\r\n result=0\r\n if $jo9_lookup_old ! '' or $jo9_lookup_pack ! '': result=1\r\n exit\r\nend\r\nif $args[0]='resolve' or $args[0]='select':\r\n local jo9_lookup_id, jo9_lookup_k, jo9_lookup_exists, jo9_lookup_custom\r\n local $jo9_lookup_raw, $jo9_lookup_old_key, $jo9_lookup_pack_key\r\n local $jo9_lookup_mood, $jo9_lookup_priority\r\n local $jo9_lookup_old, $jo9_lookup_pack, $jo9_lookup_state, $jo9_lookup_alias, $jo9_lookup_old_alias\r\n local $jo9_lookup_candidates, $jo9_lookup_path, $jo9_lookup_key, $jo9_lookup_role_pack\r\n jo9_lookup_id=args[1]\r\n $jo9_lookup_raw=$args[2]\r\n $jo9_lookup_old_key=$args[3]\r\n $jo9_lookup_pack_key=$args[4]\r\n $jo9_lookup_mood=$args[5]\r\n $jo9_lookup_priority=$args[6]\r\n if $jo9_lookup_old_key='': $jo9_lookup_old_key='fullimage'\r\n ! Recover a registered role from a saved fullimage cache, scoped to this ID.\r\n if $args[0]='resolve' and $jo9_lookup_old_key='fullimage' and $jo9_lookup_raw ! '' and $jo9_lookup_raw ! $fullimage[jo9_lookup_id]:\r\n  if $jo9_lookup_raw=$fullmade[jo9_lookup_id] or $jo9_lookup_raw=$indpack_maid[jo9_lookup_id]:\r\n   $jo9_lookup_old_key='fullmade'\r\n  elseif $jo9_lookup_raw=$fullsecretary[jo9_lookup_id] or $jo9_lookup_raw=$indpack_secr[jo9_lookup_id]:\r\n   $jo9_lookup_old_key='fullsecretary'\r\n  elseif $jo9_lookup_raw=$fullmistress[jo9_lookup_id] or $jo9_lookup_raw=$indpack_dom[jo9_lookup_id]:\r\n   $jo9_lookup_old_key='fullmistress'\r\n  end\r\n end\r\n if $jo9_lookup_pack_key='':\r\n  if $jo9_lookup_old_key='fullimage': $jo9_lookup_pack_key='indpack_title'\r\n  if $jo9_lookup_old_key='fullmade': $jo9_lookup_pack_key='indpack_maid'\r\n  if $jo9_lookup_old_key='fullsecretary': $jo9_lookup_pack_key='indpack_secr'\r\n  if $jo9_lookup_old_key='fullmistress': $jo9_lookup_pack_key='indpack_dom'\r\n end\r\n $jo9_lookup_old=dyneval('$result=$<<$jo9_lookup_old_key>>[jo9_lookup_id]')\r\n if $jo9_lookup_pack_key ! '': $jo9_lookup_pack=dyneval('$result=$<<$jo9_lookup_pack_key>>[jo9_lookup_id]')\r\n if $jo9_lookup_pack_key ! '' and $jo9_lookup_mood ! '':\r\n  $jo9_lookup_key=$jo9_lookup_pack_key+$jo9_lookup_mood\r\n  $jo9_lookup_state=dyneval('$result=$<<$jo9_lookup_key>>[jo9_lookup_id]')\r\n end\r\n $jo9_lookup_alias=func('jo9_seed_role_images','alias',jo9_lookup_id,$jo9_lookup_raw,$args[3])\r\n ! Direct legacy-definition screens keep their original candidate first.\r\n if $args[0]='select' and $jo9_lookup_priority='legacy' and $jo9_lookup_raw ! 'girls/full/isabella_black_long_milf': $jo9_lookup_alias=$jo9_lookup_raw\r\n $jo9_lookup_old_alias=func('jo9_seed_role_images','alias',jo9_lookup_id,$jo9_lookup_old,$jo9_lookup_old_key)\r\n ! A legacy role may have been redirected to the base title by the old alias rule.\r\n ! Check the same registered outfit before that base fallback.\r\n if $jo9_lookup_old_key ! 'fullimage' and $jo9_lookup_alias=$indpack_title[jo9_lookup_id] and $jo9_lookup_raw=$jo9_lookup_old: $jo9_lookup_alias=$jo9_lookup_pack\r\n jo9_lookup_custom=0\r\n if $jo9_lookup_raw ! '' and $jo9_lookup_alias=$jo9_lookup_raw and $jo9_lookup_raw ! $fullimage[jo9_lookup_id] and $jo9_lookup_raw ! $indpack_title[jo9_lookup_id] and $jo9_lookup_raw ! $jo9_lookup_old and $jo9_lookup_raw ! $jo9_lookup_pack: jo9_lookup_custom=1\r\n if $jo9_lookup_priority='pack':\r\n  $jo9_lookup_candidates[0]=$jo9_lookup_state\r\n  $jo9_lookup_candidates[1]=$jo9_lookup_pack\r\n  $jo9_lookup_candidates[2]=$jo9_lookup_old_alias\r\n  $jo9_lookup_candidates[3]=$jo9_lookup_alias\r\n  if jo9_lookup_custom=1:\r\n   $jo9_lookup_candidates[2]=$jo9_lookup_alias\r\n   $jo9_lookup_candidates[3]=$jo9_lookup_old_alias\r\n  end\r\n else\r\n  $jo9_lookup_candidates[0]=$jo9_lookup_alias\r\n  $jo9_lookup_candidates[1]=$jo9_lookup_old_alias\r\n  $jo9_lookup_candidates[2]=$jo9_lookup_pack\r\n  $jo9_lookup_candidates[3]=''\r\n end\r\n ! Keep the uncorrected, currently registered outfit as the alternate registration.\r\n ! Obsolete unregistered role aliases are deliberately excluded.\r\n $jo9_lookup_candidates[4]=$jo9_lookup_old\r\n $jo9_lookup_candidates[5]=func('jo9_seed_role_images','alias',jo9_lookup_id,$fullimage[jo9_lookup_id],'fullimage')\r\n $jo9_lookup_candidates[6]=$indpack_title[jo9_lookup_id]\r\n $jo9_lookup_candidates[7]=$fullimage[jo9_lookup_id]\r\n $result=''\r\n for jo9_lookup_k=0 to 7:\r\n  if $jo9_lookup_candidates[jo9_lookup_k] ! '':\r\n   $jo9_lookup_path='content/pic/'+$jo9_lookup_candidates[jo9_lookup_k]+'.png'\r\n   jo9_lookup_exists=0\r\n   dynamic 'jo9_lookup_exists = %<<$jo9_lookup_path>>%'\r\n   if jo9_lookup_exists ! 0: $result=$jo9_lookup_candidates[jo9_lookup_k] & exit\r\n  end\r\n end\r\n exit\r\nend\r\n! JO9 MOD END GIRL_IMAGE_DUAL_REGISTRATION_20261105\r\n! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n! Global cleanup and non-mutating read resolver; keep actor cache markers across ONGLOAD -> JSON.\r\nlocal $jo9_seed_role_stem, $jo9_seed_role_keys, $jo9_seed_role_dirs, $jo9_seed_role_old, $jo9_seed_role_wanted, $jo9_seed_role_new\r\nlocal jo9_seed_role_id, jo9_seed_role_k, jo9_seed_role_known\r\n$jo9_seed_role_stem[0]='medico'\r\n$jo9_seed_role_stem[1]='por'\r\n$jo9_seed_role_stem[2]='kirakira'\r\n$jo9_seed_role_stem[3]='tsuina'\r\n$jo9_seed_role_stem[4]='yammy'\r\n$jo9_seed_role_stem[5]='antenna'\r\n$jo9_seed_role_stem[6]='alyce'\r\n$jo9_seed_role_stem[7]='mist'\r\n$jo9_seed_role_stem[8]='joker'\r\n$jo9_seed_role_stem[9]='Inui'\r\n$jo9_seed_role_stem[10]='zion'\r\n$jo9_seed_role_stem[11]='rin'\r\n$jo9_seed_role_stem[12]='kikuchiyo'\r\n$jo9_seed_role_stem[13]='Ririe'\r\n$jo9_seed_role_stem[14]='Kyoka'\r\n$jo9_seed_role_stem[15]='Noelle'\r\n$jo9_seed_role_stem[16]='Miruki'\r\n$jo9_seed_role_stem[17]='Tamaki'\r\n$jo9_seed_role_stem[18]='Chiharu'\r\n$jo9_seed_role_stem[19]='Fumi'\r\n$jo9_seed_role_stem[20]='Sana'\r\n$jo9_seed_role_stem[21]='Nanami'\r\n$jo9_seed_role_stem[22]='Shuko'\r\n$jo9_seed_role_stem[23]='celestine'\r\n$jo9_seed_role_stem[24]='olga'\r\n$jo9_seed_role_keys[0]='fullmade'\r\n$jo9_seed_role_keys[1]='fullsecretary'\r\n$jo9_seed_role_keys[2]='fullmistress'\r\n$jo9_seed_role_keys[3]='fullpregnant'\r\n$jo9_seed_role_dirs[0]='maid'\r\n$jo9_seed_role_dirs[1]='secretary'\r\n$jo9_seed_role_dirs[2]='mistress'\r\n$jo9_seed_role_dirs[3]='pregnant'\r\nif $args[0]='alias':\r\n $result=$args[2]\r\n jo9_seed_role_id=args[1]\r\n $jo9_seed_role_wanted=$args[3]\r\n! JO9 MOD START ISABELLA_SHARED_CACHE_BY_ID_20261105\r\n ! Only the known shared default is redirected; custom actor appearances remain direct candidates.\r\n if $args[2]='girls/full/isabella_black_long_milf':\r\n  if jo9_seed_role_id=2323: $result='girls/full/2323/2323_full_title' & exit\r\n  if jo9_seed_role_id=2571: $result='girls/full/isabella_black_long' & exit\r\n end\r\n! JO9 MOD END ISABELLA_SHARED_CACHE_BY_ID_20261105\r\n! JO9 MOD START INDIE_EVENT_FULLIMAGE_20261023 | 2026-10-23_indie_event_fullimage\r\n ! Resolve only a known default/role alias for this ID; do not rewrite actor caches.\r\n if $jo9_seed_role_wanted='fullimage' and $args[2] ! '':\r\n  $jo9_seed_role_new=''\r\n  if $args[2]=$fullimage[jo9_seed_role_id]:\r\n   $jo9_seed_role_new=$indpack_title[jo9_seed_role_id]\r\n  elseif $args[2]=$fullmade[jo9_seed_role_id]:\r\n   $jo9_seed_role_new=$indpack_maid[jo9_seed_role_id]\r\n   if $jo9_seed_role_new='': $jo9_seed_role_new=$indpack_title[jo9_seed_role_id]\r\n  elseif $args[2]=$fullsecretary[jo9_seed_role_id]:\r\n   $jo9_seed_role_new=$indpack_secr[jo9_seed_role_id]\r\n   if $jo9_seed_role_new='': $jo9_seed_role_new=$indpack_title[jo9_seed_role_id]\r\n  elseif $args[2]=$fullmistress[jo9_seed_role_id]:\r\n   $jo9_seed_role_new=$indpack_dom[jo9_seed_role_id]\r\n   if $jo9_seed_role_new='': $jo9_seed_role_new=$indpack_title[jo9_seed_role_id]\r\n  end\r\n  if $jo9_seed_role_new ! '': $result=$jo9_seed_role_new & exit\r\n end\r\n! JO9 MOD END INDIE_EVENT_FULLIMAGE_20261023\r\n if jo9_seed_role_id>=2577 and jo9_seed_role_id<=2601:\r\n  for jo9_seed_role_k=0 to 3:\r\n   jo9_seed_role_known=1\r\n   if jo9_seed_role_k=3 and (jo9_seed_role_id=2585 or jo9_seed_role_id=2597 or jo9_seed_role_id=2600 or jo9_seed_role_id=2601): jo9_seed_role_known=0\r\n   if jo9_seed_role_known=1:\r\n    $jo9_seed_role_old='girls/full/'+$jo9_seed_role_dirs[jo9_seed_role_k]+'/'+$jo9_seed_role_stem[jo9_seed_role_id-2577]\r\n    if $args[2]=$jo9_seed_role_old:\r\n     $result=$fullimage[jo9_seed_role_id]\r\n     if $jo9_seed_role_wanted='fullmade' or $jo9_seed_role_wanted='fullsecretary' or $jo9_seed_role_wanted='fullmistress' or $jo9_seed_role_wanted='fullpregnant':\r\n      $jo9_seed_role_new=dyneval('$result = $<<$jo9_seed_role_wanted>>[jo9_seed_role_id]')\r\n      if $jo9_seed_role_new ! '': $result=$jo9_seed_role_new\r\n     end\r\n     exit\r\n    end\r\n   end\r\n  end\r\n end\r\n exit\r\nend\r\n! Original25 role values are absent/empty. Four absent legacy pregnancy keys are never inferred.\r\nfor jo9_seed_role_id=2577 to 2601:\r\n for jo9_seed_role_k=0 to 3:\r\n  jo9_seed_role_known=1\r\n  if jo9_seed_role_k=3 and (jo9_seed_role_id=2585 or jo9_seed_role_id=2597 or jo9_seed_role_id=2600 or jo9_seed_role_id=2601): jo9_seed_role_known=0\r\n  if jo9_seed_role_known=1:\r\n   $jo9_seed_role_old='girls/full/'+$jo9_seed_role_dirs[jo9_seed_role_k]+'/'+$jo9_seed_role_stem[jo9_seed_role_id-2577]\r\n   dynamic \"if $<<$jo9_seed_role_keys[jo9_seed_role_k]>>[jo9_seed_role_id]=$jo9_seed_role_old: $<<$jo9_seed_role_keys[jo9_seed_role_k]>>[jo9_seed_role_id]=''\"\r\n  end\r\n end\r\nend\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022",
+    "count": 1
+  },
+  {
+    "location": "display_fullimage",
+    "field": "body",
+    "old": "! JO9 MOD START EGEYA_STALE_ROLE_IMAGES_20261022\r\n! JO9 MOD START ASSISTANT_DEFAULT_IMAGE_LOOKUP_20261028\r\n$def_image_path = func('jo9_seed_role_images', 'resolve', actor_type, $def_image_path, $iif($actor_name = 'assistant' and $assistant_img_key ! '', $assistant_img_key, 'fullimage'))\r\n! JO9 MOD END ASSISTANT_DEFAULT_IMAGE_LOOKUP_20261028\r\n! JO9 MOD END EGEYA_STALE_ROLE_IMAGES_20261022\r\n$patch_image_path = dyneval('$result = $<<$patch_img_arr_name>>[actor_type]')\r\n\r\nif $patch_image_path = '':\r\n    $res_image_path = $def_image_path\r\nelse\r\n    $patch_mood_suffix = ''\r\n    if actor_arousal > 3:\r\n        $patch_mood_suffix = '_horny'\r\n    elseif actor_moral < 3:\r\n        $patch_mood_suffix = '_rebel'\r\n    end\r\n\r\n    $patch_mood_tagname = $patch_img_arr_name+$patch_mood_suffix\r\n    \r\n    if $patch_mood_suffix <> '':\r\n        $patch_mood_image_path = dyneval('$result = $<<$patch_mood_tagname>>[actor_type]')\r\n    end\r\n\r\n    if $patch_mood_image_path <> '':\r\n        $res_image_path = $patch_mood_image_path\r\n    else\r\n        $res_image_path = $patch_image_path\r\n    end\r\n\r\nend\r\n\r\n",
+    "new": "! JO9 MOD START GIRL_IMAGE_DUAL_REGISTRATION_20261105\r\nlocal $jo9_full_old_key\r\n$jo9_full_old_key='fullimage'\r\nif $actor_name='assistant' and $assistant_img_key ! '': $jo9_full_old_key=$assistant_img_key\r\nif $jo9_full_old_key='fullimage' and $patch_img_arr_name='indpack_maid': $jo9_full_old_key='fullmade'\r\nif $jo9_full_old_key='fullimage' and $patch_img_arr_name='indpack_secr': $jo9_full_old_key='fullsecretary'\r\nif $jo9_full_old_key='fullimage' and $patch_img_arr_name='indpack_dom': $jo9_full_old_key='fullmistress'\r\n$patch_mood_suffix=''\r\nif actor_arousal>3:\r\n $patch_mood_suffix='_horny'\r\nelseif actor_moral<3:\r\n $patch_mood_suffix='_rebel'\r\nend\r\n$res_image_path=func('jo9_seed_role_images','select',actor_type,$def_image_path,$jo9_full_old_key,$patch_img_arr_name,$patch_mood_suffix,'pack')\r\n! JO9 MOD END GIRL_IMAGE_DUAL_REGISTRATION_20261105\r\n\r\n",
+    "count": 1
+  },
+  {
+    "location": "assistant_stat",
+    "field": "body",
+    "old": "$fullmade[assistant_type] ! ''",
+    "new": "func('jo9_seed_role_images','registered',assistant_type,'fullmade','indpack_maid') ! 0",
+    "count": 2
+  },
+  {
+    "location": "assistant_stat",
+    "field": "body",
+    "old": "$assistant[''fullimage''] = $fullmade[assistant_type]",
+    "new": "$assistant[''fullimage''] = func(''jo9_seed_role_images'',''select'',assistant_type,$fullmade[assistant_type],''fullmade'',''indpack_maid'','''',''pack'')",
+    "count": 1
+  },
+  {
+    "location": "assistant_stat",
+    "field": "body",
+    "old": "$fullsecretary[assistant_type] ! ''",
+    "new": "func('jo9_seed_role_images','registered',assistant_type,'fullsecretary','indpack_secr') ! 0",
+    "count": 2
+  },
+  {
+    "location": "assistant_stat",
+    "field": "body",
+    "old": "$assistant[''fullimage''] = $fullsecretary[assistant_type]",
+    "new": "$assistant[''fullimage''] = func(''jo9_seed_role_images'',''select'',assistant_type,$fullsecretary[assistant_type],''fullsecretary'',''indpack_secr'','''',''pack'')",
+    "count": 1
+  },
+  {
+    "location": "assistant_stat",
+    "field": "body",
+    "old": "$fullmistress[assistant_type] ! ''",
+    "new": "func('jo9_seed_role_images','registered',assistant_type,'fullmistress','indpack_dom') ! 0",
+    "count": 2
+  },
+  {
+    "location": "assistant_stat",
+    "field": "body",
+    "old": "$assistant[''fullimage''] = $fullmistress[assistant_type]",
+    "new": "$assistant[''fullimage''] = func(''jo9_seed_role_images'',''select'',assistant_type,$fullmistress[assistant_type],''fullmistress'',''indpack_dom'','''',''pack'')",
+    "count": 1
+  },
+  {
+    "location": "assistant_stat",
+    "field": "body",
+    "old": "$assistant[''fullimage''] = $fullimage[assistant_type]",
+    "new": "$assistant[''fullimage''] = func(''jo9_seed_role_images'',''select'',assistant_type,$fullimage[assistant_type],''fullimage'',''indpack_title'','''',''pack'')",
+    "count": 1
+  },
+  {
+    "location": "menu_form",
+    "field": "body",
+    "old": "! JO9 MOD START ROOM_IMAGE_LINK_1 | 2026-10-19_room_appearance_routing\r\n\tif nsfw = 0 and $assistant['fullimage'] ! '': $text_display += func('display_fullimage', 'assistant', 'center_image_home')",
+    "new": "! JO9 MOD START ROOM_IMAGE_LINK_1 | 2026-10-19_room_appearance_routing\r\n\tif nsfw = 0: $text_display += func('display_fullimage', 'assistant', 'center_image_home')",
+    "count": 1
+  },
+  {
+    "location": "$addon_custom_data",
+    "field": "body",
+    "old": "$iif($indpack_title[args[1]] ! \"\", $indpack_title[args[1]], $fullimage[args[1]])",
+    "new": "func(\"jo9_seed_role_images\",\"select\",args[1],$fullimage[args[1]],\"fullimage\",\"indpack_title\",\"\",\"pack\")",
+    "count": 1
+  },
+  {
+    "location": "black_market_interface",
+    "field": "body",
+    "old": "$iif($indpack_title[s_type] ! \"\", $indpack_title[s_type], $fullimage[s_type])",
+    "new": "func(\"jo9_seed_role_images\",\"select\",s_type,$fullimage[s_type],\"fullimage\",\"indpack_title\",\"\",\"pack\")",
+    "count": 1
+  },
+  {
+    "location": "stasis_cell",
+    "field": "body",
+    "old": "$iif($indpack_title[dynslave_type] ! \"\", $indpack_title[dynslave_type], func(\"jo9_seed_role_images\", \"resolve\", dynslave_type, $dynslave[\"fullimage\"], \"fullimage\"))",
+    "new": "func(\"jo9_seed_role_images\",\"select\",dynslave_type,$dynslave[\"fullimage\"],\"fullimage\",\"indpack_title\",\"\",\"pack\")",
+    "count": 1
+  },
+  {
+    "location": "plastics",
+    "field": "body",
+    "old": "if $special_image[txt] ! '':\r\n\t$naked_image_path = dyneval('$result = $indpack_naked[<<txt>>]')\r\n\r\n\tif $naked_image_path <> '':\r\n\t\t$special_image_out = $naked_image_path\r\n\telse\r\n\t\t$special_image_out = $special_image[txt]\r\n\tend\r\n",
+    "new": "! JO9 MOD START GIRL_IMAGE_DUAL_REGISTRATION_20261105\r\n$special_image_out=func('jo9_seed_role_images','select',txt,$special_image[txt],'fullimage','indpack_naked','','pack')\r\nif $special_image_out ! '':\r\n! JO9 MOD END GIRL_IMAGE_DUAL_REGISTRATION_20261105\r\n",
+    "count": 1
+  },
+  {
+    "location": "interaction",
+    "field": "body",
+    "old": "$special_image[1] = $fullimage[slave_type]",
+    "new": "$special_image[1] = func('jo9_seed_role_images','select',slave_type,$fullimage[slave_type],'fullimage','indpack_title','','legacy')",
+    "count": 1
+  }
+]
