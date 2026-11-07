@@ -958,3 +958,7 @@ AUDIO_IMPROVEMENT_NEXT_PATCH_20261106 (D18): 사용자 요청으로 포맷 조�
 ## 2026-11-06 효과음 소스 변경 — Pixabay
 
 PIXABAY_EXISTING_SFX_ONLY_20261106: 사용자 지시로 효과음 생성·합성 대신 Pixabay 기존 음원 사용. 8용도/대안포함11개 [청취 후보](../records/audio-planning-20261106/pixabay-candidates.json)를 기록했다. 실제청취/다운로드/게임반영없음. 음악의 지역별 기획은 유지. [기획 문서](NEXT_PATCH_AUDIO_20261106_KO.md).
+
+## 2026-11-08 JO9 오프라인 모딩 작업실
+
+[관리 HTML·사용법·검증 범위](../records/modding-workbench-20261108/README_KO.md). 본체·사양·이미지 제작, QSP/Git/mods/해시/DryRun 근거, 역할·결정·검증 게이트·개별 승인, 변경 전후 이력과 작업 인계를 단일 HTML로 보관했다. 초기 작업50건·mods244개·추적 이미지경로3022개와 캐릭터 JSON3개를 포함하며 현재 PC 실측 상태는 별도 등록한다. 자동저장·JSON/HTML 백업·이미지/JSON 연결 검사·파일 비교를 지원한다. 핵심 로직15건과 브라우저 편집/복원/필터/내보내기 확인, Windows 폴더 선택·수집기 실행은 미검증. 사용자 명시 지시로 커밋·푸시하며 게임 런타임·WORK·Kor_Full·배포 ZIP은 이 작업 범위 밖이다.
