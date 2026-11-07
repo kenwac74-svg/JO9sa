@@ -1,0 +1,29 @@
+{
+  "id": "2026-10-12_zzz_salon_menu_background",
+  "description": "Clear stale service pictures in four Amaranth branches and make scene menu containers transparent without changing button geometry.",
+  "before_sha256": "6997bd3ce1bcf073da2d0a77cc7a516352adb3ca0d0edbb80c0591163a33f285",
+  "after_sha256": "f40df3fd5e2481ce8590fcdf30f07e7fc607cd693cf8dd312d067223ebbc9462",
+  "edits": [
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "IF interaction_city = 102024:\r\n\t npc = 0\r\n\t $npc_id = ''\r\n\t $place = 'erosalon'\r\n\t $return_lock  = 'shop_general'\r\n\t $interaction_type = 'service'\r\n\t service_price = 20",
+      "new": "IF interaction_city = 102024:\r\n\t npc = 0\r\n\t $npc_id = ''\r\n\t $place = 'erosalon'\r\n\t $return_lock  = 'shop_general'\r\n\t $interaction_type = 'service'\r\n\t $service_picture = ''\r\n\t service_price = 20",
+      "count": 2
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "IF interaction_city = 102025:\r\n\t npc = 0\r\n\t $npc_id = ''\r\n\t $place = 'erosalon'\r\n\t $return_lock  = 'shop_general'\r\n\t $interaction_type = 'service'\r\n\t service_price = 50",
+      "new": "IF interaction_city = 102025:\r\n\t npc = 0\r\n\t $npc_id = ''\r\n\t $place = 'erosalon'\r\n\t $return_lock  = 'shop_general'\r\n\t $interaction_type = 'service'\r\n\t $service_picture = ''\r\n\t service_price = 50",
+      "count": 2
+    },
+    {
+      "location": "$menu",
+      "field": "body",
+      "old": "<style id=\"jo9_menu_layout_style\">",
+      "new": "<style id=\"jo9_menu_layout_style\">#jo9_scene_menu>.menu,#main_screen.jo9_menu_city>.menu{background:transparent!important;}",
+      "count": 1
+    }
+  ]
+}

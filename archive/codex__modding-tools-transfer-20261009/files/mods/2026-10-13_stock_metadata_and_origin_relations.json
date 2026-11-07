@@ -1,0 +1,38 @@
+{
+  "id": "2026-10-13_stock_metadata_and_origin_relations",
+  "description": "신규 STOCK 메타데이터의 기존 SLAVE 덮어쓰기와 ID 0 친족 오판 수정; 데모 초기화·관계 계산 유지, 전용 친족 설명 보존",
+  "target": "game\\jack.qsp",
+  "before_sha256": "9d03be0e645e3944316988f9d0310c40ca91637d4ba614f0f1496decf64c881c",
+  "after_sha256": "ce1f9292e708f54cf0736ca2455e4d51969159cec9b0f77f7cb56931dda92f1b",
+  "backup_checkpoint_commit": "fa365364e3ee2be072a5dd22006728c3552bd51d",
+  "edits": [
+    {
+      "location": "get_stock_seed",
+      "field": "body",
+      "old": "slave[\"world_index\"] = stock_world_index[slave_type]\r\nslave[\"nation_index\"] = stock_nation_index[slave_type]\r\nslave[\"family_index\"] = stock_family_index[slave_type]\r\nslave[\"work_index\"] = stock_work_index[slave_type]\r\nslave[\"id\"] = stock_id[slave_type]\r\nslave[\"relative_id\"] = stock_id_relative[slave_type]\r\n$slave[\"relative_relations\"] = $stock_relative_relations[slave_type]\r\nslave['tolerant_world'] = RAND (0,20) - (slave[\"world_index\"] * 4) + 4\r\nslave['tolerant_nation'] = RAND (0,20) - (slave[\"world_index\"] * 4) + 4\r\nslave['tolerant_family'] = RAND (0,20) - (slave[\"world_index\"] * 4) + 4\r\nslave['tolerant_work'] = RAND (0,20) - (slave[\"world_index\"] * 4) + 4\r\nif slave['tolerant_world'] <0: slave['tolerant_world'] = 0\r\nif slave['tolerant_nation'] <0: slave['tolerant_nation'] = 0\r\nif slave['tolerant_family'] <0: slave['tolerant_family'] = 0\r\nif slave['tolerant_work'] <0: slave['tolerant_work'] = 0",
+      "new": "if $args[0] ! 'demo':\r\n\tstock[\"world_index\"] = stock_world_index[stock_type]\r\n\tstock[\"nation_index\"] = stock_nation_index[stock_type]\r\n\tstock[\"family_index\"] = stock_family_index[stock_type]\r\n\tstock[\"work_index\"] = stock_work_index[stock_type]\r\n\tstock[\"id\"] = stock_id[stock_type]\r\n\tstock[\"relative_id\"] = stock_id_relative[stock_type]\r\n\t$stock[\"relative_relations\"] = $stock_relative_relations[stock_type]\r\n\tstock['tolerant_world'] = RAND (0,20) - (stock[\"world_index\"] * 4) + 4\r\n\tstock['tolerant_nation'] = RAND (0,20) - (stock[\"world_index\"] * 4) + 4\r\n\tstock['tolerant_family'] = RAND (0,20) - (stock[\"world_index\"] * 4) + 4\r\n\tstock['tolerant_work'] = RAND (0,20) - (stock[\"world_index\"] * 4) + 4\r\n\tif stock['tolerant_world'] <0: stock['tolerant_world'] = 0\r\n\tif stock['tolerant_nation'] <0: stock['tolerant_nation'] = 0\r\n\tif stock['tolerant_family'] <0: stock['tolerant_family'] = 0\r\n\tif stock['tolerant_work'] <0: stock['tolerant_work'] = 0\r\nend",
+      "count": 1
+    },
+    {
+      "location": "get_demo_slave",
+      "field": "body",
+      "old": "gs 'get_stock_seed'\r\n$slave_psy_basic",
+      "new": "gs 'get_stock_seed', 'demo'\r\nslave[\"world_index\"] = stock_world_index[slave_type]\r\nslave[\"nation_index\"] = stock_nation_index[slave_type]\r\nslave[\"family_index\"] = stock_family_index[slave_type]\r\nslave[\"work_index\"] = stock_work_index[slave_type]\r\nslave[\"id\"] = stock_id[slave_type]\r\nslave[\"relative_id\"] = stock_id_relative[slave_type]\r\n$slave[\"relative_relations\"] = $stock_relative_relations[slave_type]\r\nslave['tolerant_world'] = RAND (0,20) - (slave[\"world_index\"] * 4) + 4\r\nslave['tolerant_nation'] = RAND (0,20) - (slave[\"world_index\"] * 4) + 4\r\nslave['tolerant_family'] = RAND (0,20) - (slave[\"world_index\"] * 4) + 4\r\nslave['tolerant_work'] = RAND (0,20) - (slave[\"world_index\"] * 4) + 4\r\nif slave['tolerant_world'] <0: slave['tolerant_world'] = 0\r\nif slave['tolerant_nation'] <0: slave['tolerant_nation'] = 0\r\nif slave['tolerant_family'] <0: slave['tolerant_family'] = 0\r\nif slave['tolerant_work'] <0: slave['tolerant_work'] = 0\r\n$slave_psy_basic",
+      "count": 1
+    },
+    {
+      "location": "origins_relations",
+      "field": "body",
+      "old": "if slave1[\"relative_id\"] = slave2[\"id\"]:\r\n\tif int_index = 1: $text[1] += \"<<$slave1['name']>>는 어깨를 으쓱하고 아무 생각 없이 대답한다:\"\r\n\tif int_index = 2: $text[1] += \"<<$slave1['name']>>는 마치 전에도 한 말인 것처럼 대답한다:\"\r\n\tif int_index = 3: $text[1] += \"<<$slave1['name']>>는 조금 어리둥절한 표정으로 당신을 보지만, 그래도 대답한다:\"\r\n\t$text[2] = '<br>' + $slave1[\"relative_relations\"]\r\n!\tjump 'bio_override'\r\nend\r",
+      "new": "snk_origin_relation = slave1['relative_id'] > 0 and slave2['id'] > 0 and slave1['relative_id'] = slave2['id'] and $slave1['relative_relations'] ! ''\r\n$snk_origin_relation_intro = $text[1]\r\nif snk_origin_relation:\r\n\tif int_index = 1: $snk_origin_relation_intro += \"<<$slave1['name']>>는 어깨를 으쓱하고 아무 생각 없이 대답한다:\"\r\n\tif int_index = 2: $snk_origin_relation_intro += \"<<$slave1['name']>>는 마치 전에도 한 말인 것처럼 대답한다:\"\r\n\tif int_index = 3: $snk_origin_relation_intro += \"<<$slave1['name']>>는 조금 어리둥절한 표정으로 당신을 보지만, 그래도 대답한다:\"\r\nend",
+      "count": 1
+    },
+    {
+      "location": "origins_relations",
+      "field": "body",
+      "old": "sa_relations4 = sa_relations\r\n\r\n!:bio_override",
+      "new": "sa_relations4 = sa_relations\r\n\r\n! Preserve relation calculations; select dedicated prose only for an available normal conversation.\r\nif snk_origin_relation and slave1['isolate'] < 1 and (sa_rel ! 2 or slave['obedience'] >= 0):\r\n\t$text[1] = $snk_origin_relation_intro\r\n\t$text[2] = '<br>' + $slave1['relative_relations']\r\nend\r\nkillvar 'snk_origin_relation'\r\nkillvar '$snk_origin_relation_intro'\r\n\r\n!:bio_override",
+      "count": 1
+    }
+  ]
+}
