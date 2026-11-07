@@ -1,0 +1,271 @@
+{
+  "id": "AUCTION_DIALOGUE_20261106",
+  "before_sha256": "6ebda9981bf6bc56de46929474de64157969fd324bba8e8be181e002dad1cc7e",
+  "after_sha256": "9a7a1368520083e16e3dd0a7b9edfec67f84a2a7e63cb07e2fa96ca7426c3143",
+  "edits": [
+    {
+      "id": "SELL-005",
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '<<$slave_name>>의 몸을 경매에 붙이겠습니까? 결정은 되돌릴 수 없습니다.'",
+      "new": "\t$text[1] = '<<$slave_name>>의 소유권을 길드 경매에 넘기겠습니까? 한 번 출품하면 결정을 되돌릴 수 없습니다.'",
+      "count": 1
+    },
+    {
+      "id": "SELL-006",
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$text[1] = '<<$slave_name>>(은)는 경매에 올랐다. 먼저, 고객들이 미리 그녀들을 살펴보고 의견을 정할 수 있게 하기 위해 그녀는 오늘 판매 예정이던 다른 노예들과 함께 음료와 스낵을 나르며 칵테일파티에 참가했다.'",
+      "new": "\t$text[1] = '<<$slave_name>>(은)는 마침내 길드 경매 무대에 올랐다. 본 경매에 앞서 거물 고객들이 직접 상품의 상태를 눈으로 감정할 수 있도록 사전 칵테일파티가 열렸다. 그녀는 오늘 출품된 다른 노예들과 함께 손님들 사이로 음료와 다과를 나르며 은밀하고도 치열한 탐색전의 시선을 한몸에 받았다.'",
+      "count": 1
+    },
+    {
+      "id": "SELL-007",
+      "location": "$guild_auction",
+      "field": "body",
+      "old": "$auction_flow[1] = '  중개인이 시작가로 $<<bank_size>>를 제시한다. 아무도 더 높은 값을 부르지 않으면 <<$slave_name>>는 그 가격에 그에게 넘어간다.'",
+      "new": "local $jo9_auction_opening = '  [길드 중개인]<br>&nbsp;단상 위 상품을 일별하며 입찰 패를 든다. \"시작가로 $<<bank_size>> 제시합니다.\" 아무도 호가를 올리지 않는다면, <<$slave_name>>(은)는 이 헐값에 중개인에게 넘어가게 된다.'",
+      "count": 1
+    },
+    {
+      "id": "SELL-008",
+      "location": "$guild_auction",
+      "field": "body",
+      "old": "$auc_winner = 'Middleman'",
+      "new": "$auc_winner = '길드 중개인'",
+      "count": 1
+    },
+    {
+      "id": "SELL-009",
+      "location": "$guild_auction",
+      "field": "body",
+      "old": "\t\t\t$auction_flow[u] = '  <<$npc_name[$auction_participant[i]]>>가 <<bet_size>>를 더 부르며 가격을 <<bank_size>>까지 올린다.'",
+      "new": "\t\t\t$auction_flow[u] = '<b>[<<$npc_name[$auction_participant[i]]>>]</b> $<<bet_size>> 추가 입찰! (현재 최고가: <b>$<<bank_size>></b>)<br>&nbsp;<<$iif($auction_participant[i]=''bullhorn'', ''\"하하, $'' + $str(bet_size) + '' 더 얹지! 푼돈 만지작거릴 거면 다들 그만 빠지고 이 몸에게 양보하시지!\"'', $iif($npc_name[$auction_participant[i]]=''엘리자베스'', ''\"호호, $'' + $str(bet_size) + '' 더 부르죠. 내 마구간에서 아주 완벽한 경주마 장난감으로 길들여 주겠어요.\"'', $iif($auction_participant[i]=''countess_bathory'' or $auction_participant[i]=''donna_venturi'' or $auction_participant[i]=''lady_edna'' or $auction_participant[i]=''lady_suinton'' or $auction_participant[i]=''madame_jofre'' or $auction_participant[i]=''Kleo'' or instr($npc_name[$auction_participant[i]],''여주인'')>0 or instr($npc_name[$auction_participant[i]],''마담'')>0 or instr($npc_name[$auction_participant[i]],''부인'')>0, ''\"어머, 꽤 탐나는 물건이네. $'' + $str(bet_size) + '' 더 올리겠어요. 이 아이의 새 주인은 바로 저랍니다.\"'', ''\"잠깐, 그대로 넘길 순 없지! $'' + $str(bet_size) + '' 더 올려서 $'' + $str(bank_size) + '' 부르겠소!\"'')))>>'",
+      "count": 1
+    },
+    {
+      "id": "SELL-010",
+      "location": "$guild_auction",
+      "field": "body",
+      "old": "\t$auction_hammer[1] = '[경매사]<br>&nbsp;$<<bank_size>>, 하나!'",
+      "new": "\t$auction_hammer[1] = '[경매사]<br>&nbsp;\"$<<bank_size>> 나왔습니다! 자, $<<bank_size>>, 하나!\" 장내의 열기가 달아오르며 입찰자들의 눈빛이 긴박하게 교차한다.'",
+      "count": 1
+    },
+    {
+      "id": "SELL-011",
+      "location": "$guild_auction",
+      "field": "body",
+      "old": "\t$auction_hammer[2] = '[경매사]<br>&nbsp;$<<bank_size>>, 둘! 어쩌면 이게 마지막 가격일지도 모르겠군요?'",
+      "new": "\t$auction_hammer[2] = '[경매사]<br>&nbsp;\"$<<bank_size>>, 둘! 더 부르실 분 안 계십니까? 이대로 망치를 두드리면 기회는 영영 끝입니다!\"'",
+      "count": 1
+    },
+    {
+      "id": "SELL-012",
+      "location": "$guild_auction",
+      "field": "body",
+      "old": "\t$auction_hammer[3] = '[경매사]<br>&nbsp;$<<bank_size>>, 셋! 낙찰!!! 최종 가격: <<bank_size>>. 구매자: <<$auc_winner>>.'",
+      "new": "\t$auction_hammer[3] = '[경매사]<br>&nbsp;\"$<<bank_size>>, 셋! 낙찰!!!\" 경매사의 망치가 경쾌하게 단상을 내리친다. (최종 낙찰가: $<<bank_size>> / 낙찰자: <<$auc_winner>>)'",
+      "count": 1
+    },
+    {
+      "id": "SELL-013",
+      "location": "$guild_auction",
+      "field": "body",
+      "old": "$auction_flow[u - 1] = '[경매사]<br>&nbsp;$<<bank_size>>, 셋! 낙찰! 최종 가격: <<bank_size>>. 구매자: <<$auc_winner>>.'",
+      "new": "$auction_flow[u - 1] = '[경매사]<br>&nbsp;\"$<<bank_size>>, 셋! 낙찰되었습니다!\" 치열했던 경쟁 끝에 최종 승자가 결정된다. (최종 낙찰가: $<<bank_size>> / 낙찰자: <<$auc_winner>>)'",
+      "count": 1
+    },
+    {
+      "id": "SELL-015",
+      "location": "$guild_auction",
+      "field": "body",
+      "old": " $auction_flow[u - 1] = '[가면 쓴 수집가]<br>&nbsp;잠깐. 희귀한 명기를 이대로 보낼 수는 없지. 그 희소성을 인정해 $<<bank_size>>를 내겠소!'",
+      "new": " $auction_flow[u - 1] = '[가면 쓴 수집가]<br>&nbsp;장내 뒤편의 어둠 속에서 정체불명의 귀빈이 나지막이 외친다. \"잠깐. 이토록 희귀한 명기를 그런 푼돈에 넘길 수는 없지. 그 진가를 인정해 단숨에 $<<bank_size>>를 부르겠소!\"'",
+      "count": 1
+    },
+    {
+      "id": "SELL-016",
+      "location": "$guild_auction",
+      "field": "body",
+      "old": " $auction_flow[u] = '[경매사]<br>&nbsp;$<<bank_size>> 나왔습니다! 더 부르실 분 없습니까? 하나, 둘, 셋! 낙찰! <<$auc_winner>>께 $<<bank_size>>에 낙찰되었습니다!'",
+      "new": " $auction_flow[u] = '[경매사]<br>&nbsp;\"세상에, $<<bank_size>> 나왔습니다! 장내가 술렁이는군요! 감히 더 부르실 분 없습니까? 하나, 둘, 셋! 낙찰! <<$auc_winner>> 님께 $<<bank_size>>에 낙찰되었습니다!\"'",
+      "count": 1
+    },
+    {
+      "id": "SELL-017",
+      "location": "$guild_auction",
+      "field": "body",
+      "old": " $auction_flow[u - 1] = '[가면 쓴 수집가]<br>&nbsp;절세의 미모에 $<<bank_size>>를 내겠소!'",
+      "new": " $auction_flow[u - 1] = '[가면 쓴 수집가]<br>&nbsp;가면 너머로 서늘한 안광을 번뜩이며 손가락을 들어 올린다. \"눈이 부실 정도의 절세미인이군. 내 컬렉션에 걸맞은 값으로 $<<bank_size>>를 내겠소!\"'",
+      "count": 1
+    },
+    {
+      "id": "SELL-018",
+      "location": "$guild_auction",
+      "field": "body",
+      "old": " $auction_flow[u] = '[경매사]<br>&nbsp;$<<bank_size>>! 하나, 둘, 셋! <<$auc_winner>>께 낙찰되었습니다!'",
+      "new": " $auction_flow[u] = '[경매사]<br>&nbsp;\"압도적인 금액, $<<bank_size>>! 경쟁자들이 모두 입을 다물었군요! 하나, 둘, 셋! <<$auc_winner>> 님께 최종 낙찰되었습니다!\"'",
+      "count": 1
+    },
+    {
+      "id": "SELL-019",
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$text[] = '[여주인 안젤리카]<br>&nbsp;가우데테(기뻐하라), <<$master_name>>! 당신에게 제안이 하나 있어요. 방금 우리는 낙인 없는 노예 하나를 확보했는데, 그 아이는 지하 감옥에 쇠사슬로 묶인 채 있다가 걸상으로 자기 조련사의 머리를 내리쳤어요. 그는 상속인도 없이 죽었고, 그래서 그녀의 소유권은 길드로 귀속되었죠. 상태는 끔찍하지만 가능성은 있어요. 경매에 올리는 대신 당신에게 훈련시켜 보라고 당신 이름을 올려 두었어요. 어때요?'",
+      "new": "\t\t$text[] = '[여주인 안젤리카]<br>&nbsp;가우데테(기뻐하라), <<$master_name>>! 당신에게 흥미로운 제안이 하나 있어요. 방금 낙인 없는 노예 하나를 확보했는데, 지하 감옥에 사슬로 묶여 있다가 걸상으로 자기 조련사의 머리를 내리쳐 죽였지 뭐예요. 상속인이 없어 소유권이 길드로 귀속됐는데, 상태는 엉망이지만 원석으로서의 가능성은 충분해요. 경매에 올리는 대신 당신이 직접 조련해 보도록 이름을 올려 두었어요. 어때요?'",
+      "count": 1
+    },
+    {
+      "id": "SELL-020",
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$text[] = '[여주인 안젤리카]<br>&nbsp;당신 솜씨를 우리에게 보여 주겠어요?'",
+      "new": "\t\t$text[] = '[여주인 안젤리카]<br>&nbsp;당신의 조련 솜씨를 우리에게 증명해 보이겠어요?'",
+      "count": 1
+    },
+    {
+      "id": "SELL-021",
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$text[1] = '[여주인 안젤리카]<br>&nbsp;아주 좋아요, <<$master_name>>! 그런 태도라면 멀리까지 가겠네요. 최소한 <<$slave_type_name[$contract[\"specialisation\"]]>>, <<$rating[contract[\"level\"]]>> 이상으로 만들어 오세요.'",
+      "new": "\t\t$text[1] = '[여주인 안젤리카]<br>&nbsp;아주 훌륭해요, <<$master_name>>! 그런 패기라면 크게 성공하겠네요. 최소한 <<$slave_type_name[$contract[\"specialisation\"]]>>, <<$rating[contract[\"level\"]]>> 등급 이상으로 완성해 오세요.'",
+      "count": 1
+    },
+    {
+      "id": "SELL-022",
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\t$text[1] = '[여주인 안젤리카]<br>&nbsp;실망스럽네요, <<$master_name>>! 당신이 잃을 것은 우리의 존중뿐이었는데 말이에요.'",
+      "new": "\t\t$text[1] = '[여주인 안젤리카]<br>&nbsp;실망스럽네요, <<$master_name>>. 실패해도 잃을 건 길드의 신뢰뿐이었을 텐데 말이에요.'",
+      "count": 1
+    },
+    {
+      "id": "BUY-001",
+      "location": "slave_auction_buy",
+      "field": "body",
+      "old": "\t\t$text = '<font color=\"#660000\"> [잡파]<br>&nbsp;첫번째 상품입니다! <<$stock_world_auk>>에서 건너온 <<$stock_epithet>> <<$stock_occupation_auk>>! <<$stock_family_auk>> <b><<$stock_name>></b>! 입찰 시작가는 <b>$<<slave_base_price>></b> 입니다! 자, 어떤 분이 먼저 응찰하시겠습니까?!</font>'",
+      "new": "\t\t$text = '<font color=\"#660000\"> [잡파]<br>&nbsp;오늘의 첫 번째 상품입니다! <<$stock_world_auk>>에서 건너온 <<$stock_epithet>> <<$stock_occupation_auk>>, <<$stock_family_auk>> <b><<$stock_name>></b>! 시작가는 <b>$<<slave_base_price>></b>입니다! 자, 누가 먼저 입찰 패를 드시겠습니까?!</font>'",
+      "count": 1
+    },
+    {
+      "id": "BUY-002",
+      "location": "slave_auction_buy",
+      "field": "body",
+      "old": "\t\t$text = '<font color=\"#660000\"> [잡파]<br>&nbsp;다음 상품! <<$stock_world_auk>>에서 건너온 <<$stock_epithet>> <<$stock_occupation_auk>>! <<$stock_family_auk>> <b><<$stock_name>></b>! 입찰 시작가는 <b>$<<slave_base_price>></b> 입니다! 자, 어떤 분이 먼저 응찰하시겠습니까?!</font>'",
+      "new": "\t\t$text = '<font color=\"#660000\"> [잡파]<br>&nbsp;자, 다음 상품 올라옵니다! <<$stock_world_auk>>에서 건너온 <<$stock_epithet>> <<$stock_occupation_auk>>, <<$stock_family_auk>> <b><<$stock_name>></b>! 시작가는 <b>$<<slave_base_price>></b>입니다! 망설이면 놓칩니다, 어서 응찰하십시오!</font>'",
+      "count": 1
+    },
+    {
+      "id": "BUY-003",
+      "location": "slave_auction_buy",
+      "field": "body",
+      "old": "\t\t$text = '<font color=\"#660000\"> [잡파]<br>&nbsp;오늘의 마지막 상품입니다! <<$stock_world_auk>>에서 건너온 <<$stock_epithet>> <<$stock_occupation_auk>>! <<$stock_family_auk>> <b><<$stock_name>></b>! 입찰 시작가는 <b>$<<slave_base_price>></b> 입니다! 자, 어떤 분이 먼저 응찰하시겠습니까?!</font>'",
+      "new": "\t\t$text = '<font color=\"#660000\"> [잡파]<br>&nbsp;오늘 경매의 대미를 장식할 마지막 상품입니다! <<$stock_world_auk>>에서 건너온 <<$stock_epithet>> <<$stock_occupation_auk>>, <<$stock_family_auk>> <b><<$stock_name>></b>! 시작가는 <b>$<<slave_base_price>></b>입니다! 오늘 마지막 기회를 놓치지 마십시오!</font>'",
+      "count": 1
+    },
+    {
+      "id": "BUY-004",
+      "location": "slave_auction_buy",
+      "field": "body",
+      "old": "  $text = '<font color=\"#660000\"> [잡파]<br>&nbsp;입찰됩니다! $<<cur_stock_price>>, 하나... <<$auk_add[b]>></font>'",
+      "new": "  $text = '<font color=\"#660000\"> [잡파]<br>&nbsp;입찰 나왔습니다! 현재가 $<<cur_stock_price>>, 하나... <<$auk_add[b]>></font>'",
+      "count": 1
+    },
+    {
+      "id": "BUY-006",
+      "location": "slave_auction_buy",
+      "field": "body",
+      "old": "  $text = '<font color=\"#660000\"> [잡파]<br>&nbsp;$<<cur_stock_price>>, 셋! 낙찰.</font>'",
+      "new": "  $text = '<font color=\"#660000\"> [잡파]<br>&nbsp;$<<cur_stock_price>>, 셋! 낙찰되었습니다!</font>'",
+      "count": 1
+    },
+    {
+      "id": "BUY-016",
+      "location": "#static_txt",
+      "field": "body",
+      "old": "$auction_start = '<font color=\"#660000\"> [잡파]<br>&nbsp;좋은 날입니다, 친애하는 여러분! 자, 자, 정숙해 주세요. 상표가 아직 새겨지지 않은 노예를 곧 경매하겠습니다. 안개가 우리에게 흥미로운 것들을 많이 가져왔습니다. 시대와 공간을 초월해 각지에서 온 아름답고, 건강하고, 생기있는 소녀들이 준비되어있습니다! 보시면 바로 아실 겁니다, 부디 스파크를 너무 아끼지는 마시기 바랍니다!</font>'",
+      "new": "$auction_start = '<font color=\"#660000\"> [잡파]<br>&nbsp;좋은 날입니다, 친애하는 고객 여러분! 자, 장내를 정숙히 해 주십시오. 지금부터 아직 낙인이 찍히지 않은 싱싱한 원석들의 경매를 시작하겠습니다! 오늘도 안개가 시공을 넘어 각지에서 아름답고 생기 넘치는 상품들을 잔뜩 실어 왔습니다. 직접 눈으로 확인하시고, 지갑 속 스파크를 아낌없이 풀어 주시기 바랍니다!</font>'",
+      "count": 1
+    },
+    {
+      "id": "BUY-017",
+      "location": "#static_txt",
+      "field": "body",
+      "old": "$auction_buy_player_bets[1] = '<font color=\"#660000\"> [잡파]<br>&nbsp;아하! 여기 조합을 대표해서 입찰하시는 분이 계시는 군요. 자, 저런 분이 찍은 노예니까 반드시 뭔가 특별할 겁니다. 더 부르실 분 안 계십니까? 불러보세요!</font>' ",
+      "new": "$auction_buy_player_bets[1] = '<font color=\"#660000\"> [잡파]<br>&nbsp;오호! 노예상 길드의 공인 조련사께서 직접 입찰하셨군요! 전문가의 눈썰미가 점찍은 상품이니 품질은 보증된 셈입니다! 자, 더 부르실 분 안 계십니까?!</font>' ",
+      "count": 1
+    },
+    {
+      "id": "BUY-018",
+      "location": "#static_txt",
+      "field": "body",
+      "old": "$auction_buy_player_bets[2] = '<font color=\"#660000\"> [잡파]<br>&nbsp;존경받는 조합원이 입찰했습니다. 더 부르실 분? </font>'",
+      "new": "$auction_buy_player_bets[2] = '<font color=\"#660000\"> [잡파]<br>&nbsp;명망 높은 길드 조합원께서 호가를 올리셨습니다! 자, 이에 맞서 더 부르실 분 계십니까?</font>'",
+      "count": 1
+    },
+    {
+      "id": "BUY-019",
+      "location": "#static_txt",
+      "field": "body",
+      "old": "$auction_buy_player_bets[3] = '<font color=\"#660000\"> [잡파]<br>&nbsp;낙찰될 것 같군요! 당연히 여러분들은 이런 맛있는 먹거리를 놓칠 분들이 아닐겁니다. 그렇지만 조금 더 가격이 나갈 수도 있을 것 같군요. 다음 응찰자 분? </font>'",
+      "new": "$auction_buy_player_bets[3] = '<font color=\"#660000\"> [잡파]<br>&nbsp;이대로 낙찰될 분위기군요! 안목 있는 분들이라면 이런 상급 매물을 그냥 보내진 않으실 텐데요! 다음 응찰자 안 계십니까?</font>'",
+      "count": 1
+    },
+    {
+      "id": "BUY-020",
+      "location": "#static_txt",
+      "field": "body",
+      "old": "$auction_buy_player_bets[4] = '<font color=\"#660000\"> [잡파]<br>&nbsp;정말! 노예 조합은 쉬지도 않는군요. 그렇지 않습니까! 자! 이 전문가보다 더 높은 금액을 제시할 분은 어디 계십니까? 저 사람 눈썰미가 보통이 아니랍니다. 저 소녀는 분명히 가치가 클 겁니다! 여러분의 입찰을 기다리고 있습니다.</font>'",
+      "new": "$auction_buy_player_bets[4] = '<font color=\"#660000\"> [잡파]<br>&nbsp;역시 길드의 조련사들은 좋은 물건을 알아보는 법이죠! 저 노련한 전문가의 안목을 믿고 더 높은 금액으로 가로채실 배포 큰 분은 어디 계십니까?!</font>'",
+      "count": 1
+    },
+    {
+      "id": "BUY-021",
+      "location": "#static_txt",
+      "field": "body",
+      "old": "$auction_buy_player_bets[5] = '<font color=\"#660000\"> [잡파]<br>&nbsp;아하! 새로운 가격이군요. 올리겠습니다. 이제 과연 누가 더 높은 가격을 부를까요?</font>'",
+      "new": "$auction_buy_player_bets[5] = '<font color=\"#660000\"> [잡파]<br>&nbsp;아하, 새로운 호가가 나왔습니다! 판돈이 올라갑니다! 과연 누가 이 경쟁에서 승리할 것인가?!</font>'",
+      "count": 1
+    },
+    {
+      "id": "DEAL-001",
+      "location": "slave_auction_sell",
+      "field": "body",
+      "old": "$text[1] = '[잡파]<br>&nbsp;<font color=\"#660000\">오! 내 좋은 친구 <<$master_name>> 아니십니까!!! 언제 봐도 반갑군요, 내 친구! 자, 이번엔 누굴 데리고 오셨습니까? 제자라도 되는 겁니까? 와, 정말 사랑스럽군요!<br></font>'",
+      "new": "$text[1] = '[잡파]<br>&nbsp;<font color=\"#660000\">오! 내 좋은 친구 <<$master_name>> 아니십니까! 언제 봐도 반갑군요! 자, 이번엔 어떤 상품을 데리고 오셨습니까? 직접 길들인 제자인가요? 허허, 아주 탐스럽군요!<br></font>'",
+      "count": 1
+    },
+    {
+      "id": "DEAL-002",
+      "location": "slave_auction_sell",
+      "field": "body",
+      "old": "$text[2] = '[<<$master_name>>]<br>&nbsp;<font color=\"#191970\">안녕, 잡파. 친구 좋다는 게 뭐야, 이 아이 진짜 값이 어느 정도인지 좀 봐주겠나? 차액을 나눠 갖는 조건으로 네게 판매를 맡기고 싶어.<br></font>'",
+      "new": "$text[2] = '[<<$master_name>>]<br>&nbsp;<font color=\"#191970\">반갑네, 잡파. 친구 사이에 터놓고 말하지. 이 아이의 제값을 제대로 쳐줄 수 있겠나? 판매 차액을 나누는 조건으로 자네에게 위탁하고 싶네.<br></font>'",
+      "count": 1
+    },
+    {
+      "id": "DEAL-006",
+      "location": "slave_auction_sell",
+      "field": "body",
+      "old": "\t$text[4] = '[잡파]<br>&nbsp;<font color=\"#660000\">그래… 그래… 좋아, 알겠소. 빈털터리로 돌려보내진 않기 위해 $<<sell_price>>를 주겠소. 더 많은 스파크? 안 되오, 친구, 그건 못 하오.<br></font>'",
+      "new": "\t$text[4] = '[잡파]<br>&nbsp;<font color=\"#660000\">음… 좋아, 알겠소. 친구가 빈손으로 돌아가게 할 순 없으니 당장 현금으로 $<<sell_price>>를 쳐주겠소. 거기서 더 달라고? 아이고, 친구. 그 이상은 나도 남는 게 없소!<br></font>'",
+      "count": 1
+    },
+    {
+      "id": "DEAL-022",
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t $text[1] = '<font color=\"#660000\">[잡파]<br>&nbsp;어이, <<$master_name>>! 네가 맡긴 노예를 팔았네. 자, 여기 자네 몫인 $<<jo9_farid_payment>>일세. 약속한 중개료는 이미 제했어.</font>'",
+      "new": "\t $text[1] = '<font color=\"#660000\">[잡파]<br>&nbsp;어이, <<$master_name>>! 자네가 맡긴 노예가 마침내 팔렸네! 약속한 중개 수수료를 제하고 남은 자네 몫, $<<jo9_farid_payment>>를 여기 챙겨 두었소.</font>'",
+      "count": 1
+    },
+    {
+      "id": "SELL-007-visible",
+      "location": "$guild_auction",
+      "field": "body",
+      "count": 1,
+      "old": "sparks_get = bank_size\r\ninteraction_city = 931",
+      "new": "$auction_flow[1] = $jo9_auction_opening + '<br><br>' + $auction_flow[1]\r\nsparks_get = bank_size\r\ninteraction_city = 931"
+    }
+  ]
+}

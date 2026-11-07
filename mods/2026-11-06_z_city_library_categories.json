@@ -1,0 +1,35 @@
+{
+  "id": "CITY_LIBRARY_CATEGORIES_20261106",
+  "before_sha256": "a48330b7dd4f9d9d287d7547f90b538047af8434a18455964a49369993a1ce0b",
+  "after_sha256": "e9c9559b54dbf93e50e7745b639b734865d23a1c991fb2805db107ffd787ff4c",
+  "edits": [
+    {
+      "location": "#options",
+      "old": "if $args[0] = 'constitution_menu_reload': jump 'jo9_const_clinic_menu'",
+      "new": "if $args[0] = 'constitution_menu_reload': jump 'jo9_const_clinic_menu'\r\nif $args[0] = 'library_menu_reload': jump 'jo9_library_menu_options'",
+      "field": "body",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "old": "$library_city_options[1] = {\r\n$sp_text[1] = '기존 문명들이 모두 먼지가 되어 무너지고 또 다른 문명들이 그 자리를 차지하더라도, 시공간 밖에 존재하는 이 악덕의 도시는 번성할 것이다. 고대 전설에 따르면 영원의 로마는 세 개의 위대한 가문에 의해 세워졌다고 한다. 하지만 일이 그렇게 단순하지만은 않았다...'\r\n$text_display = '<br>'\r\nif nsfw = 1: not_safe = 1\r\nFUNC('$menu', 'spacer', 0)\r\nFUNC('$menu', '===BEGIN===', 'column_0')\r\nFUNC('$menu', 'interaction_city', $menu_item_library_korvus, menu_library_korvus, '코르부스 가문')\r\nFUNC('$menu', 'interaction_city', $menu_item_library_taurus, menu_library_taurus, '타우루스 가문')\r\nFUNC('$menu', 'interaction_city', $menu_item_library_serpis, menu_library_serpis, '세르피스 가문')\r\nFUNC('$menu', 'interaction_city', $menu_item_library_kamira, menu_library_kamira, '카미라 가문')\r\nFUNC('$menu', 'interaction_city', $menu_item_library_zagovor, menu_library_zagovor, '대음모')\r\nFUNC('$menu', 'interaction_city', $menu_item_library_ugroza, menu_library_ugroza, '안개의 위협')\r\nFUNC('$menu', 'interaction_city', $menu_item_tolerant_girl, menu_slave_psychology, '노예 심리학')\r\nFUNC('$menu', 'interaction_city', $menu_item_Central, menu_Central, '떠난다')\r\nFUNC('$menu', '===END===')\r\n}",
+      "new": "! JO9 MOD START CITY_LIBRARY_CATEGORIES_20261106\r\n:jo9_library_menu_options\r\nkillvar '$library_city_options'\r\n$library_city_options[1] = {\r\n$sp_text[1] = '기존 문명들이 모두 먼지가 되어 무너지고 또 다른 문명들이 그 자리를 차지하더라도, 시공간 밖에 존재하는 이 악덕의 도시는 번성할 것이다. 고대 전설에 따르면 영원의 로마는 세 개의 위대한 가문에 의해 세워졌다고 한다. 하지만 일이 그렇게 단순하지만은 않았다...'\r\n$text_display = '<br>'\r\nif nsfw = 1: not_safe = 1\r\nFUNC('$menu', 'spacer', 0)\r\nFUNC('$menu', '===BEGIN===', 'column_0')\r\n! JO9_LIBRARY_MENU_V1\r\nFUNC('$menu', 'exec_options', $menu_item_Library_city, 'sp_txt = 2 & gt $curloc', '역사와 지리')\r\nFUNC('$menu', 'exec_options', $menu_item_tolerant_girl, 'sp_txt = 3 & gt $curloc', '철학과 심리학')\r\nFUNC('$menu', 'exec_options', $menu_item_spellbook, 'sp_txt = 4 & gt $curloc', '과학과 마법')\r\nFUNC('$menu', 'exec_options', $menu_item_art_school, 'sp_txt = 5 & gt $curloc', '문학과 예술')\r\nFUNC('$menu', 'exec_options', $menu_item_library_torg, 'sp_txt = 6 & gt $curloc', '사회와 생활')\r\n! 비밀금서 항목은 해금 이벤트에 연결할 때 추가한다.\r\nFUNC('$menu', 'interaction_city', $menu_item_Central, menu_Central, '떠난다')\r\nFUNC('$menu', '===END===')\r\n}\r\n\r\n$library_city_options[2] = {\r\n$sp_text[2] = '<b>역사와 지리</b><br>열람할 문헌을 고르세요.'\r\n$text_display = '<br>'\r\nif nsfw = 1: not_safe = 1\r\nFUNC('$menu', 'spacer', 0)\r\nFUNC('$menu', '===BEGIN===', 'column_0')\r\nFUNC('$menu', 'interaction_city', $menu_item_library_korvus, menu_library_korvus, '코르부스 가문')\r\nFUNC('$menu', 'interaction_city', $menu_item_library_taurus, menu_library_taurus, '타우르스 가문')\r\nFUNC('$menu', 'interaction_city', $menu_item_library_serpis, menu_library_serpis, '세르피스 가문')\r\nFUNC('$menu', 'interaction_city', $menu_item_library_kamira, menu_library_kamira, '카미라 가문')\r\nFUNC('$menu', 'interaction_city', $menu_item_library_zagovor, menu_library_zagovor, '대음모')\r\nFUNC('$menu', 'interaction_city', $menu_item_library_ugroza, menu_library_ugroza, '안개의 위협')\r\nFUNC('$menu', 'exec_options', $menu_item_Changeselection, 'sp_txt = 1 & gt $curloc', '뒤로')\r\nFUNC('$menu', '===END===')\r\n}\r\n\r\n$library_city_options[3] = {\r\n$sp_text[3] = '<b>철학과 심리학</b><br>열람할 문헌을 고르세요.'\r\n$text_display = '<br>'\r\nif nsfw = 1: not_safe = 1\r\nFUNC('$menu', 'spacer', 0)\r\nFUNC('$menu', '===BEGIN===', 'column_0')\r\nFUNC('$menu', 'interaction_city', $menu_item_tolerant_girl, menu_slave_psychology, '노예심리학')\r\nFUNC('$menu', 'exec_options', $menu_item_Changeselection, 'sp_txt = 1 & gt $curloc', '뒤로')\r\nFUNC('$menu', '===END===')\r\n}\r\n\r\n$library_city_options[4] = {\r\n$sp_text[4] = '<b>과학과 마법</b><br>아직 등록된 문헌이 없습니다.'\r\n$text_display = '<br>'\r\nif nsfw = 1: not_safe = 1\r\nFUNC('$menu', 'spacer', 0)\r\nFUNC('$menu', '===BEGIN===', 'column_0')\r\nFUNC('$menu', 'exec_options', $menu_item_Changeselection, 'sp_txt = 1 & gt $curloc', '뒤로')\r\nFUNC('$menu', '===END===')\r\n}\r\n\r\n$library_city_options[5] = {\r\n$sp_text[5] = '<b>문학과 예술</b><br>아직 등록된 문헌이 없습니다.'\r\n$text_display = '<br>'\r\nif nsfw = 1: not_safe = 1\r\nFUNC('$menu', 'spacer', 0)\r\nFUNC('$menu', '===BEGIN===', 'column_0')\r\nFUNC('$menu', 'exec_options', $menu_item_Changeselection, 'sp_txt = 1 & gt $curloc', '뒤로')\r\nFUNC('$menu', '===END===')\r\n}\r\n\r\n$library_city_options[6] = {\r\n$sp_text[6] = '<b>사회와 생활</b><br>아직 등록된 문헌이 없습니다.'\r\n$text_display = '<br>'\r\nif nsfw = 1: not_safe = 1\r\nFUNC('$menu', 'spacer', 0)\r\nFUNC('$menu', '===BEGIN===', 'column_0')\r\nFUNC('$menu', 'exec_options', $menu_item_Changeselection, 'sp_txt = 1 & gt $curloc', '뒤로')\r\nFUNC('$menu', '===END===')\r\n}\r\nif $args[0] = 'library_menu_reload': exit\r\n! JO9 MOD END CITY_LIBRARY_CATEGORIES_20261106",
+      "field": "body",
+      "count": 1
+    },
+    {
+      "location": "shop_general",
+      "old": "npc = 0\r\n$text_display = ''\r\ndynamic $display_options[sp_txt]",
+      "new": "! JO9 MOD START CITY_LIBRARY_CATEGORIES_RENDER_20261106\r\nif $place = 'library_city':\r\n if instr($library_city_options[1], 'JO9_LIBRARY_MENU_V1') = 0: gs '#options', 'library_menu_reload'\r\n if interaction_city >= 15011 and interaction_city <= 15016: sp_txt = 2\r\n if interaction_city = menu_slave_psychology: sp_txt = 3\r\n interaction_city = menu_Library_city\r\n if sp_txt < 1 or $library_city_options[sp_txt] = '': sp_txt = 1\r\n copyarr '$display_options', '$library_city_options'\r\nend\r\n! JO9 MOD END CITY_LIBRARY_CATEGORIES_RENDER_20261106\r\nnpc = 0\r\n$text_display = ''\r\ndynamic $display_options[sp_txt]",
+      "field": "body",
+      "count": 1
+    },
+    {
+      "location": "$ongload",
+      "old": "if $curloc = 'main_screen': gt 'menu_form'",
+      "new": "if $curloc = 'shop_general' and $place = 'library_city': gt 'shop_general'\r\nif $curloc = 'main_screen': gt 'menu_form'",
+      "field": "body",
+      "count": 1
+    }
+  ]
+}

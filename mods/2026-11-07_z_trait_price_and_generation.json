@@ -1,0 +1,28 @@
+{
+  "id": "TRAIT_PRICE_AND_GENERATION_20261107",
+  "before_sha256": "5090d0e5b650c7d59a8a90b2bc5a53ebefda5e8af36e620e8db638945e4f66e8",
+  "after_sha256": "3c3e944c004531b891d33c2554692ef3c7d8e48da6a353ed182133e7a550ecce",
+  "edits": [
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "count": 1,
+      "old": " if jo9_trait_registry_roll > 2 and jo9_trait_registry_roll <= 12 and stock['ego'] < 4 and stock['pride'] < 4:",
+      "new": " if jo9_trait_registry_roll > 2 and jo9_trait_registry_roll <= 7 and stock['ego'] < 4 and stock['pride'] < 4:"
+    },
+    {
+      "location": "jo9_traits_value",
+      "field": "body",
+      "count": 1,
+      "old": " if dyneval('result = ' + $jo9_trait_value_actor + \"['jo9_versatile']\") > 0: result += result / iif(difficulty_setting = 2, 8, 4)",
+      "new": " local jo9_versatile_tier = dyneval('result = ' + $jo9_trait_value_actor + \"['jo9_versatile']\")\r\n if jo9_versatile_tier = 1 or jo9_versatile_tier = 2:\r\n  local jo9_versatile_percent = iif(jo9_versatile_tier = 2, 25, 15)\r\n  result += result * jo9_versatile_percent / iif(difficulty_setting = 2, 200, 100)\r\n end"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "count": 1,
+      "old": " if $args[1] = 'versatile' and args[2] = 2: $args[1] = 'versatile_master'\r\n if $args[1] = 'versatile': $result = '[다재다능]<br>지정된 기술 24개를 모두 A 이상으로 익히면 얻는 영구 칭호다. 모두 S 이상이 되면 팔방미인으로 승급한다. 상품 가치가 높아지며, 이 계열 칭호를 처음 얻을 때 명성이 한 등급 오른다.'\r\n if $args[1] = 'versatile_master': $result = '[팔방미인]<br>지정된 기술 24개를 모두 S 이상으로 익히면 얻는 영구 칭호다. 다재다능을 대신하며 두 칭호는 함께 보유할 수 없다. 다재다능의 상품 가치 보너스는 유지된다.'",
+      "new": " if $args[1] = 'versatile' and args[2] = 2: $args[1] = 'versatile_master'\r\n if $args[1] = 'versatile': $result = '[다재다능]<br>지정된 기술 24개를 모두 A 이상으로 익히면 얻는 영구 칭호다. 모두 S 이상이 되면 팔방미인으로 승급한다. 해당 거래의 가격에 15% 보정을 받고(하드에서는 7.5%), 이 계열 칭호를 처음 얻을 때 명성이 한 등급 오른다.'\r\n if $args[1] = 'versatile_master': $result = '[팔방미인]<br>지정된 기술 24개를 모두 S 이상으로 익히면 얻는 영구 칭호다. 다재다능을 대신하며 두 칭호는 함께 보유할 수 없다. 해당 거래의 가격에 25% 보정을 받는다(하드에서는 12.5%).'"
+    }
+  ]
+}

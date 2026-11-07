@@ -1,0 +1,14 @@
+{
+  "id": "SHIRU_EXISTING_SAVE_ADDICTION_20261107",
+  "before_sha256": "59f5d13fb6846b340db804ffb58de39f5df573c3bd936b7153247610241ff94e",
+  "after_sha256": "46e972bf98bc74cd79176312683e398bf7ae639bc7edeecadfcb6efd9a8f54b9",
+  "edits": [
+    {
+      "location": "$ongload",
+      "field": "body",
+      "count": 1,
+      "old": "gs 'jo9_seed_role_images'",
+      "new": "gs 'jo9_seed_role_images'\r\n! JO9 MOD START SHIRU_EXISTING_SAVE_ADDICTION_20261107\r\nlocal $jo9_shiru_load_roles, $jo9_shiru_load_role, jo9_shiru_load_i\r\ncopyarr '$jo9_shiru_load_roles', '$all_slave_characters'\r\n$jo9_shiru_load_roles[arrsize('$jo9_shiru_load_roles')] = 'snk_parked_slave'\r\nfor jo9_shiru_load_i = 0 to arrsize('$jo9_shiru_load_roles') - 1:\r\n $jo9_shiru_load_role = $jo9_shiru_load_roles[jo9_shiru_load_i]\r\n dynamic $replace({\r\n  if jo9shiruactor_state > 0 and jo9shiruactor_type = 1448 and jo9shiruactor['jo9_shiru_addiction_migrated'] = 0:\r\n   if jo9shiruactor['jo9_nymph_no_upgrade'] = 0:\r\n    jo9shiruactor['nymphomania'] = 2\r\n    jo9shiruactor['nymphomania_revealed'] = 2\r\n   end\r\n   jo9shiruactor['jo9_shiru_addiction_migrated'] = 1\r\n  end\r\n }, 'jo9shiruactor', $jo9_shiru_load_role)\r\nend\r\n! JO9 MOD END SHIRU_EXISTING_SAVE_ADDICTION_20261107"
+    }
+  ]
+}

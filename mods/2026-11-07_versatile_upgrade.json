@@ -1,0 +1,77 @@
+{
+  "id": "VERSATILE_UPGRADE_20261107",
+  "before_sha256": "89296597f76707b96063720e47d4a2638726191a41080c2eff28e649188ceab3",
+  "after_sha256": "5090d0e5b650c7d59a8a90b2bc5a53ebefda5e8af36e620e8db638945e4f66e8",
+  "edits": [
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "count": 1,
+      "old": "if $args[0] = 'activity_value' or $args[0] = 'activity_sign' or $args[0] = 'activity_compatible' or $args[0] = 'activity_known':\r\n local $j9av_role = $args[1]\r\n result = 0\r\n ! Existing saved display routines still call activity_compatible.\r\n if $args[0] = 'activity_compatible': result = 1 & exit\r\n if $args[0] = 'activity_known':\r\n  if dyneval('result = ' + $j9av_role + \"['jo9_work_ethic_known']\") = 1 or dyneval('result = ' + $j9av_role + \"['passion_comfort_revealed']\") = 2: result = 1\r\n  exit\r\n end\r\n local j9av_work = dyneval('result = ' + $j9av_role + \"['jo9_work_ethic']\")\r\n local j9av_comfort = dyneval('result = ' + $j9av_role + \"['passion_comfort']\")\r\n local j9av_sign = 0\r\n if j9av_work > 0 or j9av_comfort < 0:\r\n  j9av_sign = 1\r\n elseif j9av_work < 0 or j9av_comfort > 0:\r\n  j9av_sign = -1\r\n end\r\n if $args[0] = 'activity_sign' or $args[2] = 'jo9_work_ethic': result = j9av_sign\r\n if $args[0] = 'activity_value' and $args[2] = 'passion_comfort': result = -j9av_sign\r\n exit\r\nend\r\nif $args[0] = 'activity_repair':\r\n local $j9av_role = $args[1]\r\n local j9av_sign = func('jo9_traits', 'activity_sign', $j9av_role)\r\n result = 0\r\n dynamic $replace({\r\n  if j9avactor['jo9_work_ethic'] ! args[0] or j9avactor['passion_comfort'] ! -args[0]:\r\n   j9avactor['jo9_work_ethic'] = args[0]\r\n   j9avactor['passion_comfort'] = -args[0]\r\n   result = 1\r\n  end\r\n }, 'j9avactor', $j9av_role), j9av_sign\r\n exit\r\nend\r\nif $args[0] = 'activity_load':\r\n local j9av_i, $j9av_role, $j9av_roles\r\n copyarr '$j9av_roles', '$all_slave_characters'\r\n $j9av_roles[] = 'stock'\r\n $j9av_roles[] = 'selected'\r\n $j9av_roles[] = 'saved_stock'\r\n $j9av_roles[] = 'snk_parked_slave'\r\n for j9av_i = 0 to arrsize('$j9av_roles') - 1:\r\n  $j9av_role = $j9av_roles[j9av_i]\r\n  if dyneval('result = ' + $j9av_role + '_state') > CONST_INT['no_slave']:\r\n   gs 'jo9_traits', 'activity_repair', $j9av_role\r\n  end\r\n end\r\n exit\r\nend\r\n",
+      "new": "if $args[0] = 'activity_value' or $args[0] = 'activity_sign' or $args[0] = 'activity_compatible' or $args[0] = 'activity_known':\r\n local $j9av_role = $args[1]\r\n result = 0\r\n ! Existing saved display routines still call activity_compatible.\r\n if $args[0] = 'activity_compatible': result = 1 & exit\r\n if $args[0] = 'activity_known':\r\n  if dyneval('result = ' + $j9av_role + \"['jo9_work_ethic_known']\") = 1 or dyneval('result = ' + $j9av_role + \"['passion_comfort_revealed']\") = 2: result = 1\r\n  exit\r\n end\r\n local j9av_work = dyneval('result = ' + $j9av_role + \"['jo9_work_ethic']\")\r\n local j9av_comfort = dyneval('result = ' + $j9av_role + \"['passion_comfort']\")\r\n local j9av_sign = 0\r\n if j9av_work > 0 or j9av_comfort < 0:\r\n  j9av_sign = 1\r\n elseif j9av_work < 0 or j9av_comfort > 0:\r\n  j9av_sign = -1\r\n end\r\n if $args[0] = 'activity_sign' or $args[2] = 'jo9_work_ethic': result = j9av_sign\r\n if $args[0] = 'activity_value' and $args[2] = 'passion_comfort': result = -j9av_sign\r\n exit\r\nend\r\nif $args[0] = 'activity_repair':\r\n local $j9av_role = $args[1]\r\n local j9av_sign = func('jo9_traits', 'activity_sign', $j9av_role)\r\n result = 0\r\n dynamic $replace({\r\n  if j9avactor['jo9_work_ethic'] ! args[0] or j9avactor['passion_comfort'] ! -args[0]:\r\n   j9avactor['jo9_work_ethic'] = args[0]\r\n   j9avactor['passion_comfort'] = -args[0]\r\n   result = 1\r\n  end\r\n }, 'j9avactor', $j9av_role), j9av_sign\r\n exit\r\nend\r\nif $args[0] = 'activity_load':\r\n local j9av_i, $j9av_role, $j9av_roles\r\n copyarr '$j9av_roles', '$all_slave_characters'\r\n $j9av_roles[] = 'stock'\r\n $j9av_roles[] = 'selected'\r\n $j9av_roles[] = 'saved_stock'\r\n $j9av_roles[] = 'snk_parked_slave'\r\n for j9av_i = 0 to arrsize('$j9av_roles') - 1:\r\n  $j9av_role = $j9av_roles[j9av_i]\r\n  if dyneval('result = ' + $j9av_role + '_state') > CONST_INT['no_slave']:\r\n   gs 'jo9_traits', 'activity_repair', $j9av_role\r\n   gs 'jo9_traits_value', 'versatile_refresh', $j9av_role\r\n  end\r\n end\r\n exit\r\nend\r\n"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "count": 1,
+      "old": " if $args[1] = 'versatile': $result = '[다재다능]<br>지식과 기술, 성애기술을 두루 높은 수준까지 익히면 영구적으로 얻는 칭호다. 상품 가치가 높아지고, 처음 칭호를 얻을 때 명성도 오른다. 이미 최고의 명성을 얻었다면 더 높아지지는 않는다.'",
+      "new": " if $args[1] = 'versatile' and args[2] = 2: $args[1] = 'versatile_master'\r\n if $args[1] = 'versatile': $result = '[다재다능]<br>지정된 기술 24개를 모두 A 이상으로 익히면 얻는 영구 칭호다. 모두 S 이상이 되면 팔방미인으로 승급한다. 상품 가치가 높아지며, 이 계열 칭호를 처음 얻을 때 명성이 한 등급 오른다.'\r\n if $args[1] = 'versatile_master': $result = '[팔방미인]<br>지정된 기술 24개를 모두 S 이상으로 익히면 얻는 영구 칭호다. 다재다능을 대신하며 두 칭호는 함께 보유할 수 없다. 다재다능의 상품 가치 보너스는 유지된다.'"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "count": 1,
+      "old": "  if dynslave['jo9_versatile'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''versatile''\">다재다능</a><br>'",
+      "new": "  if dynslave['jo9_versatile'] = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''versatile''\">다재다능</a><br>'\r\n  if dynslave['jo9_versatile'] = 2: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''versatile'', 2\">팔방미인</a><br>'"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "count": 1,
+      "old": "  $setting_display_r += '<div id=\"under_cheats\"><a href=\"EXEC: gs ''jo9_traits'', ''edit'', ''dynslave'', ''jo9_versatile'', 1 & gt ''menu_form''\">다재다능: '\r\n  if dynslave['jo9_versatile'] = 1: $setting_display_r += '있음'\r\n  if dynslave['jo9_versatile'] ! 1: $setting_display_r += '없음'\r\n  $setting_display_r += '</a></div>'",
+      "new": "  if dynslave['jo9_versatile'] = 2:\r\n   $setting_display_r += '<div id=\"under_cheats\"><a href=\"EXEC: gs ''jo9_traits'', ''edit'', ''dynslave'', ''jo9_versatile'', 2 & gt ''menu_form''\">팔방미인: 있음</a></div>'\r\n  else\r\n   $setting_display_r += '<div id=\"under_cheats\"><a href=\"EXEC: gs ''jo9_traits'', ''edit'', ''dynslave'', ''jo9_versatile'', 1 & gt ''menu_form''\">다재다능: '\r\n   if dynslave['jo9_versatile'] = 1: $setting_display_r += '있음'\r\n   if dynslave['jo9_versatile'] ! 1: $setting_display_r += '없음'\r\n   $setting_display_r += '</a></div>'\r\n  end"
+    },
+    {
+      "location": "jo9_traits_value",
+      "field": "body",
+      "count": 1,
+      "old": "if $jo9_trait_value_mode = 'refresh':\r\n dynamic $replace({\r\n! JO9 MOD START ERZA_BRANCH_IMAGES_TRAITS_20261101\r\n  if dynslave_type = 2624: dynslave['jo9_peerless'] = 1\r\n! JO9 MOD END ERZA_BRANCH_IMAGES_TRAITS_20261101\r\n  jo9_trait_value_rate = max(cont_atr_min, min(cont_atr_max, dynslave_rate['beauty'])) + dynslave_rate['temp_beauty']\r\n  jo9_trait_value_grade = 0\r\n  if jo9_trait_value_rate >= cont_atr_threshold[1]: jo9_trait_value_grade = 1\r\n  if jo9_trait_value_rate >= cont_atr_threshold[2]: jo9_trait_value_grade = 2\r\n  if jo9_trait_value_rate >= cont_atr_threshold[3]: jo9_trait_value_grade = 3\r\n  if jo9_trait_value_rate >= cont_atr_threshold[4]: jo9_trait_value_grade = 4\r\n  if jo9_trait_value_rate >= cont_atr_threshold[5]: jo9_trait_value_grade = 5\r\n  dynslave['beauty'] = jo9_trait_value_grade\r\n  if dynslave['jo9_peerless'] = 1: dynslave['beauty'] = min(6, dynslave['beauty'] + 1)\r\n  ! Every individual grade printed in the knowledge and ST columns must reach A (4).",
+      "new": "if $jo9_trait_value_mode = 'refresh' or $jo9_trait_value_mode = 'versatile_refresh':\r\n dynamic $replace({\r\n  if $jo9_trait_value_mode = 'refresh':\r\n! JO9 MOD START ERZA_BRANCH_IMAGES_TRAITS_20261101\r\n   if dynslave_type = 2624: dynslave['jo9_peerless'] = 1\r\n! JO9 MOD END ERZA_BRANCH_IMAGES_TRAITS_20261101\r\n   jo9_trait_value_rate = max(cont_atr_min, min(cont_atr_max, dynslave_rate['beauty'])) + dynslave_rate['temp_beauty']\r\n   jo9_trait_value_grade = 0\r\n   if jo9_trait_value_rate >= cont_atr_threshold[1]: jo9_trait_value_grade = 1\r\n   if jo9_trait_value_rate >= cont_atr_threshold[2]: jo9_trait_value_grade = 2\r\n   if jo9_trait_value_rate >= cont_atr_threshold[3]: jo9_trait_value_grade = 3\r\n   if jo9_trait_value_rate >= cont_atr_threshold[4]: jo9_trait_value_grade = 4\r\n   if jo9_trait_value_rate >= cont_atr_threshold[5]: jo9_trait_value_grade = 5\r\n   dynslave['beauty'] = jo9_trait_value_grade\r\n   if dynslave['jo9_peerless'] = 1: dynslave['beauty'] = min(6, dynslave['beauty'] + 1)\r\n  end\r\n  ! A is grade 4 and S is grade 5. Keep only the highest earned title."
+    },
+    {
+      "location": "jo9_traits_value",
+      "field": "body",
+      "count": 1,
+      "old": "  if dynslave['jo9_versatile'] = 0 and dynslave['jo9_versatile_manual_off'] = 0 and min(min(dynslave['service'], dynslave['cook'], dynslave['secretary'], dynslave['expression'], dynslave['nurse'], dynslave['alchemy'], dynslave['enchanter'], dynslave['stamina']), min(dynslave['gladiatrix'], dynslave['calisthenics'], dynslave['music'], dynslave['art'], dynslave['pet'], dynslave['dressage'], dynslave['cowSK'], dynslave['petting']), min(dynslave['oral'], dynslave['penetration'], dynslave['orgy'], dynslave['roleplay'], dynslave['fetishism'], dynslave['xenophily'], dynslave['nipplefuck'], dynslave['lesbiansex'])) >= 4: $jo9_trait_value_mode = 'grant_versatile'",
+      "new": "  if dynslave['jo9_versatile'] < 2 and dynslave['jo9_versatile_manual_off'] = 0:\r\n   local jo9_skill_min = min(min(dynslave['service'], dynslave['cook'], dynslave['secretary'], dynslave['expression'], dynslave['nurse'], dynslave['alchemy'], dynslave['enchanter'], dynslave['stamina']), min(dynslave['gladiatrix'], dynslave['calisthenics'], dynslave['music'], dynslave['art'], dynslave['pet'], dynslave['dressage'], dynslave['cowSK'], dynslave['petting']), min(dynslave['oral'], dynslave['penetration'], dynslave['orgy'], dynslave['roleplay'], dynslave['fetishism'], dynslave['xenophily'], dynslave['nipplefuck'], dynslave['lesbiansex']))\r\n   if jo9_skill_min >= 4:\r\n    jo9_trait_value_amount = iif(jo9_skill_min >= 5, 2, 1)\r\n    if jo9_trait_value_amount > dynslave['jo9_versatile']: $jo9_trait_value_mode = 'grant_versatile'\r\n   end\r\n  end"
+    },
+    {
+      "location": "jo9_traits_value",
+      "field": "body",
+      "count": 1,
+      "old": " if dyneval('result = ' + $jo9_trait_value_actor + \"['jo9_versatile']\") = 1: result += result / iif(difficulty_setting = 2, 8, 4)",
+      "new": " if dyneval('result = ' + $jo9_trait_value_actor + \"['jo9_versatile']\") > 0: result += result / iif(difficulty_setting = 2, 8, 4)"
+    },
+    {
+      "location": "jo9_traits_value",
+      "field": "body",
+      "count": 1,
+      "old": "  dynslave['jo9_versatile'] = 1",
+      "new": "  dynslave['jo9_versatile'] = iif(jo9_trait_value_amount = 2, 2, 1)"
+    },
+    {
+      "location": "jo9_traits_value",
+      "field": "body",
+      "count": 1,
+      "old": "  dynslave['fame'] = jo9_trait_value_grade\r\n end",
+      "new": "  dynslave['fame'] = jo9_trait_value_grade\r\n elseif dynslave['jo9_versatile'] = 1 and jo9_trait_value_amount = 2:\r\n  dynslave['jo9_versatile'] = 2\r\n end"
+    },
+    {
+      "location": "jo9_traits_view",
+      "field": "body",
+      "count": 1,
+      "old": "   $j9_key = $strfind($j9_action, \"(?i)^\\s*gs\\s*'jo9_traits'\\s*,\\s*'describe'\\s*,\\s*'([a-z_]+)'\\s*$\", 1)\r\n   if $j9_key ! '': $j9_desc = $func('jo9_traits', 'text', $j9_key)",
+      "new": "   local $j9_trait_pattern = \"(?i)^\\s*gs\\s*'jo9_traits'\\s*,\\s*'describe'\\s*,\\s*'([a-z_]+)'(?:\\s*,\\s*([12]))?\\s*$\"\r\n   $j9_key = $strfind($j9_action, $j9_trait_pattern, 1)\r\n   if $j9_key ! '': $j9_desc = $func('jo9_traits', 'text', $j9_key, val($strfind($j9_action, $j9_trait_pattern, 2)))"
+    }
+  ]
+}

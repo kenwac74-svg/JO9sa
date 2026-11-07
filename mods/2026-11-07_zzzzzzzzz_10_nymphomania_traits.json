@@ -1,0 +1,1062 @@
+{
+  "id": "NYMPHOMANIA_TRAITS_20261107",
+  "before_sha256": "38e4027fb3dc792a3c15b91a3c8adc83241dcc0e181f582b87db80733d7bac6b",
+  "after_sha256": "877e5ac6a3ebea4c406d411268e598e90a30da243e92f582d12bc6a7d49c1b43",
+  "edits": [
+    {
+      "location": "jo9_chaotic",
+      "field": "body",
+      "count": 1,
+      "old": "! JO9 MOD START CHAOTIC_APPROVED_POLICY_20261103\r\n! Eligibility only: protect approved traits; negatives first, approved mixed traits only if no negatives.\r\n! JO9 MOD START CHAOTIC_PRIORITY_20261028 | 2026-10-28_chaotic_priority\r\n! JO9 MOD START PROFILE_POLISH_20261025_R3\r\n! JO9 MOD START TRAIT_MERGE_EXCLUSIONS_20261025\r\n! JO9 MOD START CHAOTIC_ESSENCE_HELPER | 2026-10-24_chaotic_essence\r\n! count: candidate count in the current priority tier. apply: negatives first, then situational general traits; consume one only on success.\r\n! use: invoke apply and show the result. Actor roles are limited to the active slave or assistant.\r\nresult = 0\r\nlocal $jo9_chaotic_mode = $args[0]\r\nlocal $jo9_chaotic_role = $args[1]\r\nif $jo9_chaotic_mode = 'apply': $jo9_chaotic_removed = ''\r\nif $jo9_chaotic_mode ! 'count' and $jo9_chaotic_mode ! 'apply' and $jo9_chaotic_mode ! 'use': exit\r\nif $jo9_chaotic_role ! 'slave' and $jo9_chaotic_role ! 'assistant': exit\r\nlocal jo9_chaotic_state = dyneval('result = ' + $jo9_chaotic_role + '_state')\r\nif jo9_chaotic_state <= CONST_INT['no_slave']:\r\n if $jo9_chaotic_mode = 'use': msg '사용할 대상이 없습니다.'\r\n exit\r\nend\r\nif $jo9_chaotic_mode = 'use':\r\n if chaotic_essence < 1:\r\n  msg '카오틱 에센스가 없습니다.'\r\n  exit\r\n end\r\n local jo9_chaotic_used = func('jo9_chaotic', 'apply', $jo9_chaotic_role)\r\n if jo9_chaotic_used = 1:\r\n  msg '카오틱 에센스를 사용해 <<$jo9_chaotic_removed>> 특성을 제거했습니다. 남은 수량: <<chaotic_essence>>개.'\r\n else\r\n  msg '제거할 부정·상황형 특성이 없습니다. 카오틱 에센스는 소모되지 않았습니다.'\r\n end\r\n result = jo9_chaotic_used\r\n exit\r\nend\r\nif $jo9_chaotic_mode = 'apply' and chaotic_essence < 1: exit\r\nlocal jo9_chaotic_count = 0\r\nlocal $jo9_chaotic_keys = ''\r\nlocal $jo9_chaotic_labels = ''\r\nlocal $jo9_chaotic_xps = ''\r\ndynamic $replace({\r\n if jo9ceactor['sport_affinity'] = -1:\r\n  $jo9_chaotic_keys[jo9_chaotic_count] = 'sport_affinity'\r\n  $jo9_chaotic_labels[jo9_chaotic_count] = '게으름'\r\n  $jo9_chaotic_xps[jo9_chaotic_count] = ''\r\n  jo9_chaotic_count += 1\r\n end\r\n if jo9ceactor['masochism'] = -1:\r\n  $jo9_chaotic_keys[jo9_chaotic_count] = 'masochism'\r\n  $jo9_chaotic_labels[jo9_chaotic_count] = '통증 공포증'\r\n  $jo9_chaotic_xps[jo9_chaotic_count] = 'masochism_xp'\r\n  jo9_chaotic_count += 1\r\n end\r\n if jo9ceactor['exhibitionism'] = -1:\r\n  $jo9_chaotic_keys[jo9_chaotic_count] = 'exhibitionism'\r\n  $jo9_chaotic_labels[jo9_chaotic_count] = '노출 기피'\r\n  $jo9_chaotic_xps[jo9_chaotic_count] = 'exhibitionism_xp'\r\n  jo9_chaotic_count += 1\r\n end\r\n if jo9ceactor['meekness'] = -1:\r\n  $jo9_chaotic_keys[jo9_chaotic_count] = 'meekness'\r\n  $jo9_chaotic_labels[jo9_chaotic_count] = '자유로운 영혼'\r\n  $jo9_chaotic_xps[jo9_chaotic_count] = ''\r\n  jo9_chaotic_count += 1\r\n end\r\n if jo9ceactor['selfesteem'] = -1:\r\n  $jo9_chaotic_keys[jo9_chaotic_count] = 'selfesteem'\r\n  $jo9_chaotic_labels[jo9_chaotic_count] = '자책망상'\r\n  $jo9_chaotic_xps[jo9_chaotic_count] = ''\r\n  jo9_chaotic_count += 1\r\n end\r\n if jo9ceactor['darkness_attitude'] = -1:\r\n  $jo9_chaotic_keys[jo9_chaotic_count] = 'darkness_attitude'\r\n  $jo9_chaotic_labels[jo9_chaotic_count] = '암흑 공포증'\r\n  $jo9_chaotic_xps[jo9_chaotic_count] = 'darkness_xp'\r\n  jo9_chaotic_count += 1\r\n end\r\n if jo9ceactor['blood_attitude'] = -1:\r\n  $jo9_chaotic_keys[jo9_chaotic_count] = 'blood_attitude'\r\n  $jo9_chaotic_labels[jo9_chaotic_count] = '혈액 공포증'\r\n  $jo9_chaotic_xps[jo9_chaotic_count] = 'blood_xp'\r\n  jo9_chaotic_count += 1\r\n end\r\n if jo9ceactor['fire_attitude'] = -1:\r\n  $jo9_chaotic_keys[jo9_chaotic_count] = 'fire_attitude'\r\n  $jo9_chaotic_labels[jo9_chaotic_count] = '발화 공포증'\r\n  $jo9_chaotic_xps[jo9_chaotic_count] = 'fire_xp'\r\n  jo9_chaotic_count += 1\r\n end\r\n if jo9ceactor['water_attitude'] = -1:\r\n  $jo9_chaotic_keys[jo9_chaotic_count] = 'water_attitude'\r\n  $jo9_chaotic_labels[jo9_chaotic_count] = '물 공포증'\r\n  $jo9_chaotic_xps[jo9_chaotic_count] = 'water_xp'\r\n  jo9_chaotic_count += 1\r\n end\r\n if jo9ceactor['vermin_attitude'] = -1:\r\n  $jo9_chaotic_keys[jo9_chaotic_count] = 'vermin_attitude'\r\n  $jo9_chaotic_labels[jo9_chaotic_count] = '벌레 공포증'\r\n  $jo9_chaotic_xps[jo9_chaotic_count] = 'vermin_xp'\r\n  jo9_chaotic_count += 1\r\n end\r\n if jo9ceactor['defiant'] = 1:\r\n  $jo9_chaotic_keys[jo9_chaotic_count] = 'defiant'\r\n  $jo9_chaotic_labels[jo9_chaotic_count] = '거센 반항심'\r\n  $jo9_chaotic_xps[jo9_chaotic_count] = ''\r\n  jo9_chaotic_count += 1\r\n end\r\n if jo9ceactor['jo9_focus'] = -1:\r\n  $jo9_chaotic_keys[jo9_chaotic_count] = 'jo9_focus'\r\n  $jo9_chaotic_labels[jo9_chaotic_count] = '산만함'\r\n  $jo9_chaotic_xps[jo9_chaotic_count] = ''\r\n  jo9_chaotic_count += 1\r\n end\r\n if jo9ceactor['jo9_grudge'] = 1:\r\n  $jo9_chaotic_keys[jo9_chaotic_count] = 'jo9_grudge'\r\n  $jo9_chaotic_labels[jo9_chaotic_count] = '옹졸함'\r\n  $jo9_chaotic_xps[jo9_chaotic_count] = ''\r\n  jo9_chaotic_count += 1\r\n end\r\n if jo9ceactor['homosexualism'] = -1:\r\n  $jo9_chaotic_keys[jo9_chaotic_count] = 'homosexualism'\r\n  if jo9ceactor['homosexualism'] = -1: $jo9_chaotic_labels[jo9_chaotic_count] = '동성애 혐오자'\r\n  $jo9_chaotic_xps[jo9_chaotic_count] = 'lesbian_xp'\r\n  jo9_chaotic_count += 1\r\n end\r\n}, 'jo9ceactor', $jo9_chaotic_role)\r\nif jo9_chaotic_count = 0:\r\n dynamic $replace({\r\n  if func('jo9_traits', 'attention_has', 'jo9ceactor') = 1 and (jo9ceactor['jo9_attention'] = 0 or jo9ceactor['jo9_attention'] = 1):\r\n   $jo9_chaotic_keys[jo9_chaotic_count] = 'jo9_attention'\r\n   $jo9_chaotic_labels[jo9_chaotic_count] = '관심종자'\r\n   $jo9_chaotic_xps[jo9_chaotic_count] = ''\r\n   jo9_chaotic_count += 1\r\n  end\r\n  if func('jo9_traits', 'activity_sign', 'jo9ceactor') = -1:\r\n   $jo9_chaotic_keys[jo9_chaotic_count] = 'jo9_activity'\r\n   $jo9_chaotic_labels[jo9_chaotic_count] = '무기력함'\r\n   $jo9_chaotic_xps[jo9_chaotic_count] = ''\r\n   jo9_chaotic_count += 1\r\n  end\r\n  if jo9ceactor['deprivation_attitude'] = -1:\r\n   $jo9_chaotic_keys[jo9_chaotic_count] = 'deprivation_attitude'\r\n   $jo9_chaotic_labels[jo9_chaotic_count] = '폐소 공포증'\r\n   $jo9_chaotic_xps[jo9_chaotic_count] = 'deprivation_xp'\r\n   jo9_chaotic_count += 1\r\n  end\r\n  if jo9ceactor['nymphomania'] = -1:\r\n   $jo9_chaotic_keys[jo9_chaotic_count] = 'nymphomania'\r\n   $jo9_chaotic_labels[jo9_chaotic_count] = '불감증'\r\n   $jo9_chaotic_xps[jo9_chaotic_count] = 'nymphomania_xp'\r\n   jo9_chaotic_count += 1\r\n  end\r\n  if jo9ceactor['perversion'] = -1:\r\n   $jo9_chaotic_keys[jo9_chaotic_count] = 'perversion'\r\n   if jo9ceactor['perversion'] = -1: $jo9_chaotic_labels[jo9_chaotic_count] = '순수한 영혼'\r\n   $jo9_chaotic_xps[jo9_chaotic_count] = 'perversion_xp'\r\n   jo9_chaotic_count += 1\r\n  end\r\n  if jo9ceactor['homosexualism'] = 2:\r\n   $jo9_chaotic_keys[jo9_chaotic_count] = 'homosexualism'\r\n   if jo9ceactor['homosexualism'] = 2: $jo9_chaotic_labels[jo9_chaotic_count] = '레즈비언'\r\n   $jo9_chaotic_xps[jo9_chaotic_count] = 'lesbian_xp'\r\n   jo9_chaotic_count += 1\r\n  end\r\n  if jo9ceactor['courage'] = -1 or jo9ceactor['courage'] = 2:\r\n   $jo9_chaotic_keys[jo9_chaotic_count] = 'courage'\r\n   if jo9ceactor['courage'] = -1: $jo9_chaotic_labels[jo9_chaotic_count] = '겁쟁이'\r\n   if jo9ceactor['courage'] = 2: $jo9_chaotic_labels[jo9_chaotic_count] = '무모함'\r\n   $jo9_chaotic_xps[jo9_chaotic_count] = ''\r\n   jo9_chaotic_count += 1\r\n  end\r\n  if jo9ceactor['selfesteem'] = 1:\r\n   $jo9_chaotic_keys[jo9_chaotic_count] = 'selfesteem'\r\n   $jo9_chaotic_labels[jo9_chaotic_count] = '과대망상'\r\n   $jo9_chaotic_xps[jo9_chaotic_count] = ''\r\n   jo9_chaotic_count += 1\r\n  end\r\n  if jo9ceactor['compassion'] = 1:\r\n   $jo9_chaotic_keys[jo9_chaotic_count] = 'compassion'\r\n   if jo9ceactor['compassion'] = 1: $jo9_chaotic_labels[jo9_chaotic_count] = '평화주의자'\r\n   $jo9_chaotic_xps[jo9_chaotic_count] = 'compassion_xp'\r\n   jo9_chaotic_count += 1\r\n  end\r\n  if jo9ceactor['passion_luxury'] = -1 or jo9ceactor['passion_luxury'] = 1:\r\n   $jo9_chaotic_keys[jo9_chaotic_count] = 'passion_luxury'\r\n   if jo9ceactor['passion_luxury'] = -1: $jo9_chaotic_labels[jo9_chaotic_count] = '검소함'\r\n   if jo9ceactor['passion_luxury'] = 1: $jo9_chaotic_labels[jo9_chaotic_count] = '사치광'\r\n   $jo9_chaotic_xps[jo9_chaotic_count] = ''\r\n   jo9_chaotic_count += 1\r\n  end\r\n  if jo9ceactor['passion_sweets'] = -1 or jo9ceactor['passion_sweets'] = 1:\r\n   $jo9_chaotic_keys[jo9_chaotic_count] = 'passion_sweets'\r\n   if jo9ceactor['passion_sweets'] = -1: $jo9_chaotic_labels[jo9_chaotic_count] = '까다로운 입맛'\r\n   if jo9ceactor['passion_sweets'] = 1: $jo9_chaotic_labels[jo9_chaotic_count] = '당분 중독'\r\n   $jo9_chaotic_xps[jo9_chaotic_count] = ''\r\n   jo9_chaotic_count += 1\r\n  end\r\n  if jo9ceactor['passion_fame'] = -1:\r\n   $jo9_chaotic_keys[jo9_chaotic_count] = 'passion_fame'\r\n   $jo9_chaotic_labels[jo9_chaotic_count] = '은둔형 외톨이'\r\n   $jo9_chaotic_xps[jo9_chaotic_count] = ''\r\n   jo9_chaotic_count += 1\r\n  end\r\n }, 'jo9ceactor', $jo9_chaotic_role)\r\nend\r\nif $jo9_chaotic_mode = 'count': result = jo9_chaotic_count & exit\r\nif jo9_chaotic_count < 1: exit\r\nlocal jo9_chaotic_pick = rand(0, jo9_chaotic_count - 1)\r\nlocal $jo9_chaotic_selected = $jo9_chaotic_keys[jo9_chaotic_pick]\r\nlocal $jo9_chaotic_selected_xp = $jo9_chaotic_xps[jo9_chaotic_pick]\r\ndynamic $replace({\r\n if $args[0] = 'jo9_attention':\r\n  gs 'jo9_traits', 'attention_remove', 'jo9ceactor'\r\n else\r\n  if $args[0] = 'jo9_activity':\r\n  gs 'jo9_traits', 'activity_remove', 'jo9ceactor'\r\n else\r\n  jo9ceactor[$args[0]] = iif($args[0] = 'metabolism', 3, 0)\r\n end\r\n end\r\n if $args[1] ! '': jo9ceactor[$args[1]] = 0\r\n if instr('|grace|dexterity|sport_affinity|masochism|exhibitionism|meekness|selfesteem|abuse_attitude|darkness_attitude|blood_attitude|fire_attitude|water_attitude|vermin_attitude|deprivation_attitude|nymphomania|metabolism|perversion|homosexualism|courage|compassion|passion_luxury|passion_sweets|passion_fame|', '|' + $args[0] + '|') > 0: jo9ceactor[$args[0] + '_revealed'] = 0\r\n if $args[0] = 'jo9_work_ethic' or $args[0] = 'jo9_focus' or $args[0] = 'jo9_grudge': jo9ceactor[$args[0] + '_known'] = 0\r\n if $args[0] = 'jo9_focus':\r\n  jo9ceactor['jo9_focus_active'] = 0\r\n  jo9ceactor['jo9_focus_xp_credit'] = 0\r\n  $jo9ceactor['jo9_focus_subject'] = ''\r\n end\r\n if $args[0] = 'jo9_grudge':\r\n  jo9ceactor['jo9_memory_neg_pain'] = 0\r\n  jo9ceactor['jo9_memory_neg_abuse'] = 0\r\n  jo9ceactor['jo9_memory_neg_disgust'] = 0\r\n  jo9ceactor['jo9_memory_neg_no_praise'] = 0\r\n  jo9ceactor['jo9_memory_neg_shame'] = 0\r\n  jo9ceactor['jo9_memory_neg_prisoner'] = 0\r\n  jo9ceactor['jo9_memory_neg_job'] = 0\r\n  jo9ceactor['jo9_memory_neg_forced'] = 0\r\n  jo9ceactor['jo9_memory_neg_raped'] = 0\r\n  jo9ceactor['jo9_memory_neg_defloration'] = 0\r\n  jo9ceactor['jo9_memory_neg_artifact'] = 0\r\n  jo9ceactor['jo9_memory_neg_cheap_gift'] = 0\r\n  jo9ceactor['jo9_memory_neg_cheap_reward'] = 0\r\n  jo9ceactor['jo9_memory_neg_pony_died'] = 0\r\n  jo9ceactor['jo9_memory_neg_sa_catfight'] = 0\r\n  jo9ceactor['jo9_memory_neg_sa_love_lost2'] = 0\r\n  jo9ceactor['jo9_memory_neg_sa_demote'] = 0\r\n  jo9ceactor['jo9_memory_neg_sa_friend_prisoned'] = 0\r\n  jo9ceactor['jo9_memory_neg_sa_friend_punished'] = 0\r\n  jo9ceactor['jo9_memory_neg_sa_love_lost1'] = 0\r\n  jo9ceactor['jo9_memory_neg_another_sleep_together'] = 0\r\n end\r\n}, 'jo9ceactor', $jo9_chaotic_role), $jo9_chaotic_selected, $jo9_chaotic_selected_xp\r\n$jo9_chaotic_removed = $jo9_chaotic_labels[jo9_chaotic_pick]\r\nchaotic_essence -= 1\r\nif $get_lab_space ! '': dynamic $get_lab_space\r\nresult = 1\r\n! JO9 MOD END CHAOTIC_ESSENCE_HELPER\r\n\r\n! JO9 MOD END TRAIT_MERGE_EXCLUSIONS_20261025\r\n! JO9 MOD END PROFILE_POLISH_20261025_R3\r\n! JO9 MOD END CHAOTIC_PRIORITY_20261028\r\n! JO9 MOD END CHAOTIC_APPROVED_POLICY_20261103\r\n",
+      "new": "! JO9 MOD START CHAOTIC_APPROVED_POLICY_20261103\r\n! Eligibility only: protect approved traits; negatives first, approved mixed traits only if no negatives.\r\n! JO9 MOD START CHAOTIC_PRIORITY_20261028 | 2026-10-28_chaotic_priority\r\n! JO9 MOD START PROFILE_POLISH_20261025_R3\r\n! JO9 MOD START TRAIT_MERGE_EXCLUSIONS_20261025\r\n! JO9 MOD START CHAOTIC_ESSENCE_HELPER | 2026-10-24_chaotic_essence\r\n! count: candidate count in the current priority tier. apply: negatives first, then situational general traits; consume one only on success.\r\n! use: invoke apply and show the result. Actor roles are limited to the active slave or assistant.\r\nresult = 0\r\nlocal $jo9_chaotic_mode = $args[0]\r\nlocal $jo9_chaotic_role = $args[1]\r\nif $jo9_chaotic_mode = 'apply': $jo9_chaotic_removed = ''\r\nif $jo9_chaotic_mode ! 'count' and $jo9_chaotic_mode ! 'apply' and $jo9_chaotic_mode ! 'use': exit\r\nif $jo9_chaotic_role ! 'slave' and $jo9_chaotic_role ! 'assistant': exit\r\nlocal jo9_chaotic_state = dyneval('result = ' + $jo9_chaotic_role + '_state')\r\nif jo9_chaotic_state <= CONST_INT['no_slave']:\r\n if $jo9_chaotic_mode = 'use': msg '사용할 대상이 없습니다.'\r\n exit\r\nend\r\nif $jo9_chaotic_mode = 'use':\r\n if chaotic_essence < 1:\r\n  msg '카오틱 에센스가 없습니다.'\r\n  exit\r\n end\r\n local jo9_chaotic_used = func('jo9_chaotic', 'apply', $jo9_chaotic_role)\r\n if jo9_chaotic_used = 1:\r\n  if $jo9_chaotic_removed = '정액 중독':\r\n   msg '카오틱 에센스로 정액 중독을 색정광으로 완화했습니다. 남은 수량: <<chaotic_essence>>개.'\r\n  elseif $jo9_chaotic_removed = '석녀':\r\n   msg '카오틱 에센스로 석녀를 불감증으로 완화했습니다. 남은 수량: <<chaotic_essence>>개.'\r\n  else\r\n   msg '카오틱 에센스를 사용해 <<$jo9_chaotic_removed>> 특성을 제거했습니다. 남은 수량: <<chaotic_essence>>개.'\r\n  end\r\n else\r\n  msg '제거할 부정·상황형 특성이 없습니다. 카오틱 에센스는 소모되지 않았습니다.'\r\n end\r\n result = jo9_chaotic_used\r\n exit\r\nend\r\nif $jo9_chaotic_mode = 'apply' and chaotic_essence < 1: exit\r\nlocal jo9_chaotic_count = 0\r\nlocal $jo9_chaotic_keys = ''\r\nlocal $jo9_chaotic_labels = ''\r\nlocal $jo9_chaotic_xps = ''\r\ndynamic $replace({\r\n if jo9ceactor['sport_affinity'] = -1:\r\n  $jo9_chaotic_keys[jo9_chaotic_count] = 'sport_affinity'\r\n  $jo9_chaotic_labels[jo9_chaotic_count] = '게으름'\r\n  $jo9_chaotic_xps[jo9_chaotic_count] = ''\r\n  jo9_chaotic_count += 1\r\n end\r\n if jo9ceactor['masochism'] = -1:\r\n  $jo9_chaotic_keys[jo9_chaotic_count] = 'masochism'\r\n  $jo9_chaotic_labels[jo9_chaotic_count] = '통증 공포증'\r\n  $jo9_chaotic_xps[jo9_chaotic_count] = 'masochism_xp'\r\n  jo9_chaotic_count += 1\r\n end\r\n if jo9ceactor['exhibitionism'] = -1:\r\n  $jo9_chaotic_keys[jo9_chaotic_count] = 'exhibitionism'\r\n  $jo9_chaotic_labels[jo9_chaotic_count] = '노출 기피'\r\n  $jo9_chaotic_xps[jo9_chaotic_count] = 'exhibitionism_xp'\r\n  jo9_chaotic_count += 1\r\n end\r\n if jo9ceactor['meekness'] = -1:\r\n  $jo9_chaotic_keys[jo9_chaotic_count] = 'meekness'\r\n  $jo9_chaotic_labels[jo9_chaotic_count] = '자유로운 영혼'\r\n  $jo9_chaotic_xps[jo9_chaotic_count] = ''\r\n  jo9_chaotic_count += 1\r\n end\r\n if jo9ceactor['selfesteem'] = -1:\r\n  $jo9_chaotic_keys[jo9_chaotic_count] = 'selfesteem'\r\n  $jo9_chaotic_labels[jo9_chaotic_count] = '자책망상'\r\n  $jo9_chaotic_xps[jo9_chaotic_count] = ''\r\n  jo9_chaotic_count += 1\r\n end\r\n if jo9ceactor['darkness_attitude'] = -1:\r\n  $jo9_chaotic_keys[jo9_chaotic_count] = 'darkness_attitude'\r\n  $jo9_chaotic_labels[jo9_chaotic_count] = '암흑 공포증'\r\n  $jo9_chaotic_xps[jo9_chaotic_count] = 'darkness_xp'\r\n  jo9_chaotic_count += 1\r\n end\r\n if jo9ceactor['blood_attitude'] = -1:\r\n  $jo9_chaotic_keys[jo9_chaotic_count] = 'blood_attitude'\r\n  $jo9_chaotic_labels[jo9_chaotic_count] = '혈액 공포증'\r\n  $jo9_chaotic_xps[jo9_chaotic_count] = 'blood_xp'\r\n  jo9_chaotic_count += 1\r\n end\r\n if jo9ceactor['fire_attitude'] = -1:\r\n  $jo9_chaotic_keys[jo9_chaotic_count] = 'fire_attitude'\r\n  $jo9_chaotic_labels[jo9_chaotic_count] = '발화 공포증'\r\n  $jo9_chaotic_xps[jo9_chaotic_count] = 'fire_xp'\r\n  jo9_chaotic_count += 1\r\n end\r\n if jo9ceactor['water_attitude'] = -1:\r\n  $jo9_chaotic_keys[jo9_chaotic_count] = 'water_attitude'\r\n  $jo9_chaotic_labels[jo9_chaotic_count] = '물 공포증'\r\n  $jo9_chaotic_xps[jo9_chaotic_count] = 'water_xp'\r\n  jo9_chaotic_count += 1\r\n end\r\n if jo9ceactor['vermin_attitude'] = -1:\r\n  $jo9_chaotic_keys[jo9_chaotic_count] = 'vermin_attitude'\r\n  $jo9_chaotic_labels[jo9_chaotic_count] = '벌레 공포증'\r\n  $jo9_chaotic_xps[jo9_chaotic_count] = 'vermin_xp'\r\n  jo9_chaotic_count += 1\r\n end\r\n if jo9ceactor['defiant'] = 1:\r\n  $jo9_chaotic_keys[jo9_chaotic_count] = 'defiant'\r\n  $jo9_chaotic_labels[jo9_chaotic_count] = '거센 반항심'\r\n  $jo9_chaotic_xps[jo9_chaotic_count] = ''\r\n  jo9_chaotic_count += 1\r\n end\r\n if jo9ceactor['jo9_focus'] = -1:\r\n  $jo9_chaotic_keys[jo9_chaotic_count] = 'jo9_focus'\r\n  $jo9_chaotic_labels[jo9_chaotic_count] = '산만함'\r\n  $jo9_chaotic_xps[jo9_chaotic_count] = ''\r\n  jo9_chaotic_count += 1\r\n end\r\n if jo9ceactor['jo9_grudge'] = 1:\r\n  $jo9_chaotic_keys[jo9_chaotic_count] = 'jo9_grudge'\r\n  $jo9_chaotic_labels[jo9_chaotic_count] = '옹졸함'\r\n  $jo9_chaotic_xps[jo9_chaotic_count] = ''\r\n  jo9_chaotic_count += 1\r\n end\r\n if jo9ceactor['homosexualism'] = -1:\r\n  $jo9_chaotic_keys[jo9_chaotic_count] = 'homosexualism'\r\n  if jo9ceactor['homosexualism'] = -1: $jo9_chaotic_labels[jo9_chaotic_count] = '동성애 혐오자'\r\n  $jo9_chaotic_xps[jo9_chaotic_count] = 'lesbian_xp'\r\n  jo9_chaotic_count += 1\r\n end\r\n}, 'jo9ceactor', $jo9_chaotic_role)\r\nif jo9_chaotic_count = 0:\r\n dynamic $replace({\r\n  if func('jo9_traits', 'attention_has', 'jo9ceactor') = 1 and (jo9ceactor['jo9_attention'] = 0 or jo9ceactor['jo9_attention'] = 1):\r\n   $jo9_chaotic_keys[jo9_chaotic_count] = 'jo9_attention'\r\n   $jo9_chaotic_labels[jo9_chaotic_count] = '관심종자'\r\n   $jo9_chaotic_xps[jo9_chaotic_count] = ''\r\n   jo9_chaotic_count += 1\r\n  end\r\n  if func('jo9_traits', 'activity_sign', 'jo9ceactor') = -1:\r\n   $jo9_chaotic_keys[jo9_chaotic_count] = 'jo9_activity'\r\n   $jo9_chaotic_labels[jo9_chaotic_count] = '무기력함'\r\n   $jo9_chaotic_xps[jo9_chaotic_count] = ''\r\n   jo9_chaotic_count += 1\r\n  end\r\n  if jo9ceactor['deprivation_attitude'] = -1:\r\n   $jo9_chaotic_keys[jo9_chaotic_count] = 'deprivation_attitude'\r\n   $jo9_chaotic_labels[jo9_chaotic_count] = '폐소 공포증'\r\n   $jo9_chaotic_xps[jo9_chaotic_count] = 'deprivation_xp'\r\n   jo9_chaotic_count += 1\r\n  end\r\n  if jo9ceactor['nymphomania'] < 0:\r\n   $jo9_chaotic_keys[jo9_chaotic_count] = iif(jo9ceactor['nymphomania'] < -1, 'jo9_stone_treatment', 'nymphomania')\r\n   $jo9_chaotic_labels[jo9_chaotic_count] = iif(jo9ceactor['nymphomania'] < -1, '석녀', '불감증')\r\n   $jo9_chaotic_xps[jo9_chaotic_count] = 'nymphomania_xp'\r\n   jo9_chaotic_count += 1\r\n  end\r\n  if jo9ceactor['perversion'] = -1:\r\n   $jo9_chaotic_keys[jo9_chaotic_count] = 'perversion'\r\n   if jo9ceactor['perversion'] = -1: $jo9_chaotic_labels[jo9_chaotic_count] = '순수한 영혼'\r\n   $jo9_chaotic_xps[jo9_chaotic_count] = 'perversion_xp'\r\n   jo9_chaotic_count += 1\r\n  end\r\n  if jo9ceactor['homosexualism'] = 2:\r\n   $jo9_chaotic_keys[jo9_chaotic_count] = 'homosexualism'\r\n   if jo9ceactor['homosexualism'] = 2: $jo9_chaotic_labels[jo9_chaotic_count] = '레즈비언'\r\n   $jo9_chaotic_xps[jo9_chaotic_count] = 'lesbian_xp'\r\n   jo9_chaotic_count += 1\r\n  end\r\n  if jo9ceactor['courage'] = -1 or jo9ceactor['courage'] = 2:\r\n   $jo9_chaotic_keys[jo9_chaotic_count] = 'courage'\r\n   if jo9ceactor['courage'] = -1: $jo9_chaotic_labels[jo9_chaotic_count] = '겁쟁이'\r\n   if jo9ceactor['courage'] = 2: $jo9_chaotic_labels[jo9_chaotic_count] = '무모함'\r\n   $jo9_chaotic_xps[jo9_chaotic_count] = ''\r\n   jo9_chaotic_count += 1\r\n  end\r\n  if jo9ceactor['selfesteem'] = 1:\r\n   $jo9_chaotic_keys[jo9_chaotic_count] = 'selfesteem'\r\n   $jo9_chaotic_labels[jo9_chaotic_count] = '과대망상'\r\n   $jo9_chaotic_xps[jo9_chaotic_count] = ''\r\n   jo9_chaotic_count += 1\r\n  end\r\n  if jo9ceactor['compassion'] = 1:\r\n   $jo9_chaotic_keys[jo9_chaotic_count] = 'compassion'\r\n   if jo9ceactor['compassion'] = 1: $jo9_chaotic_labels[jo9_chaotic_count] = '평화주의자'\r\n   $jo9_chaotic_xps[jo9_chaotic_count] = 'compassion_xp'\r\n   jo9_chaotic_count += 1\r\n  end\r\n  if jo9ceactor['passion_luxury'] = -1 or jo9ceactor['passion_luxury'] = 1:\r\n   $jo9_chaotic_keys[jo9_chaotic_count] = 'passion_luxury'\r\n   if jo9ceactor['passion_luxury'] = -1: $jo9_chaotic_labels[jo9_chaotic_count] = '검소함'\r\n   if jo9ceactor['passion_luxury'] = 1: $jo9_chaotic_labels[jo9_chaotic_count] = '사치광'\r\n   $jo9_chaotic_xps[jo9_chaotic_count] = ''\r\n   jo9_chaotic_count += 1\r\n  end\r\n  if jo9ceactor['passion_sweets'] = -1 or jo9ceactor['passion_sweets'] = 1:\r\n   $jo9_chaotic_keys[jo9_chaotic_count] = 'passion_sweets'\r\n   if jo9ceactor['passion_sweets'] = -1: $jo9_chaotic_labels[jo9_chaotic_count] = '까다로운 입맛'\r\n   if jo9ceactor['passion_sweets'] = 1: $jo9_chaotic_labels[jo9_chaotic_count] = '당분 중독'\r\n   $jo9_chaotic_xps[jo9_chaotic_count] = ''\r\n   jo9_chaotic_count += 1\r\n  end\r\n  if jo9ceactor['passion_fame'] = -1:\r\n   $jo9_chaotic_keys[jo9_chaotic_count] = 'passion_fame'\r\n   $jo9_chaotic_labels[jo9_chaotic_count] = '은둔형 외톨이'\r\n   $jo9_chaotic_xps[jo9_chaotic_count] = ''\r\n   jo9_chaotic_count += 1\r\n  end\r\n }, 'jo9ceactor', $jo9_chaotic_role)\r\nend\r\nif jo9_chaotic_count = 0:\r\n dynamic $replace({\r\n  if jo9ceactor['nymphomania'] > 1:\r\n   $jo9_chaotic_keys[0] = 'jo9_addiction_treatment'\r\n   $jo9_chaotic_labels[0] = '정액 중독'\r\n   $jo9_chaotic_xps[0] = ''\r\n   jo9_chaotic_count = 1\r\n  end\r\n }, 'jo9ceactor', $jo9_chaotic_role)\r\nend\r\nif $jo9_chaotic_mode = 'count': result = jo9_chaotic_count & exit\r\nif jo9_chaotic_count < 1: exit\r\nlocal jo9_chaotic_pick = rand(0, jo9_chaotic_count - 1)\r\nlocal $jo9_chaotic_selected = $jo9_chaotic_keys[jo9_chaotic_pick]\r\nlocal $jo9_chaotic_selected_xp = $jo9_chaotic_xps[jo9_chaotic_pick]\r\ndynamic $replace({\r\n if $args[0] = 'jo9_addiction_treatment':\r\n  jo9ceactor['nymphomania'] = 1\r\n  jo9ceactor['nymphomania_revealed'] = 2\r\n  jo9ceactor['jo9_nymph_no_upgrade'] = 1\r\n  jo9ceactor['jo9_addiction_high_days'] = 0\r\n  jo9ceactor['jo9_addiction_pending_loss'] = 0\r\n  jo9ceactor['jo9_nymph_relief_day'] = 0\r\n  jo9ceactor['jo9_nymph_relief_pending'] = 0\r\n elseif $args[0] = 'jo9_stone_treatment':\r\n  jo9ceactor['nymphomania'] = -1\r\n  jo9ceactor['nymphomania_revealed'] = 2\r\n  jo9ceactor['nymphomania_xp'] = 0\r\n  jo9ceactor['jo9_frigid_days'] = 0\r\n else\r\n if $args[0] = 'jo9_attention':\r\n  gs 'jo9_traits', 'attention_remove', 'jo9ceactor'\r\n else\r\n  if $args[0] = 'jo9_activity':\r\n  gs 'jo9_traits', 'activity_remove', 'jo9ceactor'\r\n else\r\n  jo9ceactor[$args[0]] = iif($args[0] = 'metabolism', 3, 0)\r\n end\r\n end\r\n if $args[1] ! '': jo9ceactor[$args[1]] = 0\r\n if instr('|grace|dexterity|sport_affinity|masochism|exhibitionism|meekness|selfesteem|abuse_attitude|darkness_attitude|blood_attitude|fire_attitude|water_attitude|vermin_attitude|deprivation_attitude|nymphomania|metabolism|perversion|homosexualism|courage|compassion|passion_luxury|passion_sweets|passion_fame|', '|' + $args[0] + '|') > 0: jo9ceactor[$args[0] + '_revealed'] = 0\r\n if $args[0] = 'jo9_work_ethic' or $args[0] = 'jo9_focus' or $args[0] = 'jo9_grudge': jo9ceactor[$args[0] + '_known'] = 0\r\n if $args[0] = 'jo9_focus':\r\n  jo9ceactor['jo9_focus_active'] = 0\r\n  jo9ceactor['jo9_focus_xp_credit'] = 0\r\n  $jo9ceactor['jo9_focus_subject'] = ''\r\n end\r\n if $args[0] = 'jo9_grudge':\r\n  jo9ceactor['jo9_memory_neg_pain'] = 0\r\n  jo9ceactor['jo9_memory_neg_abuse'] = 0\r\n  jo9ceactor['jo9_memory_neg_disgust'] = 0\r\n  jo9ceactor['jo9_memory_neg_no_praise'] = 0\r\n  jo9ceactor['jo9_memory_neg_shame'] = 0\r\n  jo9ceactor['jo9_memory_neg_prisoner'] = 0\r\n  jo9ceactor['jo9_memory_neg_job'] = 0\r\n  jo9ceactor['jo9_memory_neg_forced'] = 0\r\n  jo9ceactor['jo9_memory_neg_raped'] = 0\r\n  jo9ceactor['jo9_memory_neg_defloration'] = 0\r\n  jo9ceactor['jo9_memory_neg_artifact'] = 0\r\n  jo9ceactor['jo9_memory_neg_cheap_gift'] = 0\r\n  jo9ceactor['jo9_memory_neg_cheap_reward'] = 0\r\n  jo9ceactor['jo9_memory_neg_pony_died'] = 0\r\n  jo9ceactor['jo9_memory_neg_sa_catfight'] = 0\r\n  jo9ceactor['jo9_memory_neg_sa_love_lost2'] = 0\r\n  jo9ceactor['jo9_memory_neg_sa_demote'] = 0\r\n  jo9ceactor['jo9_memory_neg_sa_friend_prisoned'] = 0\r\n  jo9ceactor['jo9_memory_neg_sa_friend_punished'] = 0\r\n  jo9ceactor['jo9_memory_neg_sa_love_lost1'] = 0\r\n  jo9ceactor['jo9_memory_neg_another_sleep_together'] = 0\r\n end\r\n end\r\n}, 'jo9ceactor', $jo9_chaotic_role), $jo9_chaotic_selected, $jo9_chaotic_selected_xp\r\n$jo9_chaotic_removed = $jo9_chaotic_labels[jo9_chaotic_pick]\r\nchaotic_essence -= 1\r\nif $get_lab_space ! '': dynamic $get_lab_space\r\nresult = 1\r\n! JO9 MOD END CHAOTIC_ESSENCE_HELPER\r\n\r\n! JO9 MOD END TRAIT_MERGE_EXCLUSIONS_20261025\r\n! JO9 MOD END PROFILE_POLISH_20261025_R3\r\n! JO9 MOD END CHAOTIC_PRIORITY_20261028\r\n! JO9 MOD END CHAOTIC_APPROVED_POLICY_20261103\r\n"
+    },
+    {
+      "location": "#dynamic",
+      "field": "body",
+      "count": 1,
+      "old": "\t\t\t\t\tdynslave_rate['arousal'] += (interaction_dynslave['final_stimulation'] * (2 + dynslave['sensitivity']))/2",
+      "new": "\t\t\t\t\tdynslave_rate['arousal'] += func('jo9_nymph_arousal', 'gain', 'dynslave', (interaction_dynslave['final_stimulation'] * (2 + dynslave['sensitivity']))/2)"
+    },
+    {
+      "location": "#dynamic",
+      "field": "body",
+      "count": 1,
+      "old": "\t\t\tdynslave_rate['arousal'] += (interaction_dynslave['final_stimulation'] * (2 + dynslave['sensitivity']))/2",
+      "new": "\t\t\tdynslave_rate['arousal'] += func('jo9_nymph_arousal', 'gain', 'dynslave', (interaction_dynslave['final_stimulation'] * (2 + dynslave['sensitivity']))/2)"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "count": 1,
+      "old": "\t\tif dynslave['nymphomania'] >= 0: dynslave_rate['arousal'] += dynslave['stamina'] + daily_bonus['arousal'] + dynslave['sensitivity'] + dynslave['mood'] + dynslave['moral']",
+      "new": "\t\tif dynslave['nymphomania'] >= 0: dynslave_rate['arousal'] += func('jo9_nymph_arousal', 'gain', 'dynslave', dynslave['stamina'] + daily_bonus['arousal'] + dynslave['sensitivity'] + dynslave['mood'] + dynslave['moral'])"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "count": 1,
+      "old": "\t\t\t\t\tif slave['no_orgasm_rule'] = 1 and slave[\"arousal\"] <= slave[\"obedience\"]:\t\r\n\t\t\t\t\t\tslave_rate[\"arousal\"] += (slave[\"sub_masturbation\"] * slave[\"arousal\"])",
+      "new": "\t\t\t\t\tif slave['no_orgasm_rule'] = 1 and slave[\"arousal\"] <= slave[\"obedience\"]:\t\r\n\t\t\t\t\t\tslave_rate[\"arousal\"] += func('jo9_nymph_arousal', 'gain', 'slave', (slave[\"sub_masturbation\"] * slave[\"arousal\"]))"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "count": 1,
+      "old": "\t\t\t\tif slave['no_orgasm_rule'] = 1 and slave[\"arousal\"] <= slave[\"obedience\"]: \r\n\t\t\t\t\tslave_rate[\"arousal\"] += (slave[\"sub_masturbation\"] * slave[\"arousal\"])",
+      "new": "\t\t\t\tif slave['no_orgasm_rule'] = 1 and slave[\"arousal\"] <= slave[\"obedience\"]: \r\n\t\t\t\t\tslave_rate[\"arousal\"] += func('jo9_nymph_arousal', 'gain', 'slave', (slave[\"sub_masturbation\"] * slave[\"arousal\"]))"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "count": 1,
+      "old": "\t\tif dynslave['nymphomania'] > 0: dynslave_rate['arousal'] += (dynslave['temper'] + dynslave['sensitivity'] + dynslave['mood'])/2",
+      "new": "\t\tif dynslave['nymphomania'] > 0: dynslave_rate['arousal'] += func('jo9_nymph_arousal', 'gain', 'dynslave', (dynslave['temper'] + dynslave['sensitivity'] + dynslave['mood'])/2)"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "count": 1,
+      "old": "\t\t\tdynslave_rate['arousal'] += dynslave['parasite'] * 10 &! this effect was not applied for prisoners before - ImperatorAugustus",
+      "new": "\t\t\tdynslave_rate['arousal'] += func('jo9_nymph_arousal', 'gain', 'dynslave', dynslave['parasite'] * 10) &! this effect was not applied for prisoners before - ImperatorAugustus"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "count": 1,
+      "old": "\t\tif slave['nymphomania'] >= 0: slave_rate['arousal'] += 3 &! arousal increases only if not frigid",
+      "new": "\t\tif slave['nymphomania'] >= 0: slave_rate['arousal'] += func('jo9_nymph_arousal', 'gain', 'slave', 3) &! arousal increases only if not frigid"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "count": 1,
+      "old": "\t\tassistant_rate['arousal'] += assistant['sensitivity'] + assistant['temper'] - assistant['fear']",
+      "new": "\t\tassistant_rate['arousal'] += func('jo9_nymph_arousal', 'gain', 'assistant', assistant['sensitivity'] + assistant['temper'] - assistant['fear'])"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "count": 1,
+      "old": "\troom1_rate['arousal'] = rand(1,50)",
+      "new": "\troom1_rate['arousal'] = func('jo9_nymph_arousal', 'set', 'room1', rand(1,50))"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "count": 1,
+      "old": "\troom2_rate['arousal'] = rand(1,50)",
+      "new": "\troom2_rate['arousal'] = func('jo9_nymph_arousal', 'set', 'room2', rand(1,50))"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "count": 1,
+      "old": "\troom3_rate['arousal'] = rand(1,50)",
+      "new": "\troom3_rate['arousal'] = func('jo9_nymph_arousal', 'set', 'room3', rand(1,50))"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "count": 1,
+      "old": "\troom4_rate['arousal'] = rand(1,50)",
+      "new": "\troom4_rate['arousal'] = func('jo9_nymph_arousal', 'set', 'room4', rand(1,50))"
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "count": 1,
+      "old": "\t\tslave_rate['arousal'] += slave['sub_masturbation'] + (slave['arousal']*3)",
+      "new": "\t\tslave_rate['arousal'] += func('jo9_nymph_arousal', 'gain', 'slave', slave['sub_masturbation'] + (slave['arousal']*3))"
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "count": 1,
+      "old": "\t\t\tslave_rate['arousal'] += (slave['sub_masturbation'] * slave['arousal'])",
+      "new": "\t\t\tslave_rate['arousal'] += func('jo9_nymph_arousal', 'gain', 'slave', (slave['sub_masturbation'] * slave['arousal']))"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "\t\tif assistant['arousal'] < 5: assistant_rate['arousal'] += iif(assistant['nymphomania'] < 0, 10, 50)",
+      "new": "\t\tif assistant['arousal'] < 5: assistant_rate['arousal'] += func('jo9_nymph_arousal', 'gain', 'assistant', iif(assistant['nymphomania'] < 0, 10, 50))"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "\t\tif slave['arousal'] < 5: slave_rate['arousal'] += iif(slave['nymphomania'] < 0, 10, 50)",
+      "new": "\t\tif slave['arousal'] < 5: slave_rate['arousal'] += func('jo9_nymph_arousal', 'gain', 'slave', iif(slave['nymphomania'] < 0, 10, 50))"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "  assistant_rate[\"arousal\"] += master_str + master_domination + assistant[\"obedience\"]",
+      "new": "  assistant_rate[\"arousal\"] += func('jo9_nymph_arousal', 'gain', 'assistant', master_str + master_domination + assistant[\"obedience\"])"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "        slave_rate[\"arousal\"] += ((byte_fear*3) + (slave[\"sensitivity\"]*3))",
+      "new": "        slave_rate[\"arousal\"] += func('jo9_nymph_arousal', 'gain', 'slave', ((byte_fear*3) + (slave[\"sensitivity\"]*3)))"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "\t\tassistant_rate['arousal'] += iif(assistant['nymphomania'] < 0, 5, 25)",
+      "new": "\t\tassistant_rate['arousal'] += func('jo9_nymph_arousal', 'gain', 'assistant', iif(assistant['nymphomania'] < 0, 5, 25))"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "\t\tslave_rate['arousal'] += iif(slave['nymphomania'] < 0, 5, 25)",
+      "new": "\t\tslave_rate['arousal'] += func('jo9_nymph_arousal', 'gain', 'slave', iif(slave['nymphomania'] < 0, 5, 25))"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "\t\t\tslave_rate['arousal'] += skill_adv_mul * master_mage * 5",
+      "new": "\t\t\tslave_rate['arousal'] += func('jo9_nymph_arousal', 'gain', 'slave', skill_adv_mul * master_mage * 5)"
+    },
+    {
+      "location": "interaction_result",
+      "field": "body",
+      "count": 1,
+      "old": "\tslave_rate['arousal'] += 200",
+      "new": "\tslave_rate['arousal'] += func('jo9_nymph_arousal', 'gain', 'slave', 200)"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "\t\tassistant['arousal'] = 5\r\n\t\tassistant_rate['arousal'] = 200",
+      "new": "\t\tif assistant['nymphomania'] >= -1:\r\n\t\t\tassistant['arousal'] = 5\r\n\t\t\tassistant_rate['arousal'] = 200\r\n\t\telse\r\n\t\t\tassistant['arousal'] = 0 & assistant_rate['arousal'] = 0\r\n\t\tend"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "\t\tslave['arousal'] = 5\r\n\t\tslave_rate['arousal'] = 200",
+      "new": "\t\tif slave['nymphomania'] >= -1:\r\n\t\t\tslave['arousal'] = 5\r\n\t\t\tslave_rate['arousal'] = 200\r\n\t\telse\r\n\t\t\tslave['arousal'] = 0 & slave_rate['arousal'] = 0\r\n\t\tend"
+    },
+    {
+      "location": "interaction_result",
+      "field": "body",
+      "count": 1,
+      "old": "\tslave_rate['arousal'] += func('jo9_nymph_arousal', 'gain', 'slave', 200)\r\n\tslave['arousal'] = 5",
+      "new": "\tif slave['nymphomania'] >= -1:\r\n\t\tslave_rate['arousal'] += func('jo9_nymph_arousal', 'gain', 'slave', 200)\r\n\t\tslave['arousal'] = 5\r\n\telse\r\n\t\tslave['arousal'] = 0 & slave_rate['arousal'] = 0\r\n\tend"
+    },
+    {
+      "location": "hard_return",
+      "field": "body",
+      "count": 1,
+      "old": "\tslave['arousal'] = 3",
+      "new": "\tslave['arousal'] = iif(slave['nymphomania'] < -1, 0, 3)"
+    },
+    {
+      "location": "#dynamic",
+      "field": "body",
+      "count": 1,
+      "old": "dynslave['nymphomania_xp'] += (1 + orgastic)/2",
+      "new": "gs 'jo9_nymph_arousal', 'xp', 'dynslave', (1 + orgastic)/2"
+    },
+    {
+      "location": "#dynamic",
+      "field": "body",
+      "count": 1,
+      "old": "\t\t\torgasm_description = 1\r\n\r\n\t\t\tdynslave['pos_orgasm'] += 1 &! moodlet exponentially decays in next_day -ImperatorAugustus\r\n\t\t\tdynslave_rate['arousal'] -= interaction_dynslave['final_stimulation'] * (dynslave['arousal'] + orgastic * dynslave['temper'])",
+      "new": "\t\t\torgasm_description = 1\r\n\r\n\t\t\tdynslave['pos_orgasm'] += 1 &! moodlet exponentially decays in next_day -ImperatorAugustus\r\n\t\t\tdynslave_rate['arousal'] -= interaction_dynslave['final_stimulation'] * (dynslave['arousal'] + orgastic * dynslave['temper'])\r\n\t\t\tgs 'jo9_nymph_arousal', 'mark_relief', 'dynslave'"
+    },
+    {
+      "location": "#dynamic",
+      "field": "body",
+      "count": 1,
+      "old": "\t\t\t\torgasm_description = 3\r\n\r\n\t\t\t\tdynslave['pos_orgasm'] += 1 &! moodlet exponentially decays in next_day -ImperatorAugustus\r\n\t\t\t\tdynslave_rate['arousal'] -= interaction_dynslave['final_stimulation'] * (dynslave['arousal'] + orgastic * dynslave['temper'])",
+      "new": "\t\t\t\torgasm_description = 3\r\n\r\n\t\t\t\tdynslave['pos_orgasm'] += 1 &! moodlet exponentially decays in next_day -ImperatorAugustus\r\n\t\t\t\tdynslave_rate['arousal'] -= interaction_dynslave['final_stimulation'] * (dynslave['arousal'] + orgastic * dynslave['temper'])\r\n\t\t\t\tgs 'jo9_nymph_arousal', 'mark_relief', 'dynslave'"
+    },
+    {
+      "location": "sex_end",
+      "field": "body",
+      "count": 1,
+      "old": "\t\tslave['nymphomania_xp'] += min(3, (1 + sex['climax_count'])/2)\r\n\t\tslave_rate['arousal'] -= sex['climax_count'] * slave['arousal'] * sex['climax_top']",
+      "new": "\t\tgs 'jo9_nymph_arousal', 'xp', 'slave', min(3, (1 + sex['climax_count'])/2)\r\n\t\tslave_rate['arousal'] -= sex['climax_count'] * slave['arousal'] * sex['climax_top']\r\n\t\tif sex['climax_top'] > 0: gs 'jo9_nymph_arousal', 'mark_relief', 'slave'"
+    },
+    {
+      "location": "sex_end",
+      "field": "body",
+      "count": 1,
+      "old": "\t\tassistant['nymphomania_xp'] += min(3, (1 + sex['climax_count'])/2)\r\n\t\tassistant_rate['arousal'] -= sex['climax_count'] * assistant['arousal'] * sex['climax_top']",
+      "new": "\t\tgs 'jo9_nymph_arousal', 'xp', 'assistant', min(3, (1 + sex['climax_count'])/2)\r\n\t\tassistant_rate['arousal'] -= sex['climax_count'] * assistant['arousal'] * sex['climax_top']\r\n\t\tif sex['climax_top'] > 0: gs 'jo9_nymph_arousal', 'mark_relief', 'assistant'"
+    },
+    {
+      "location": "#static_base",
+      "field": "body",
+      "count": 1,
+      "old": "\t\ti = 0\r\n\t\tn = arrsize('$cont_atr')\r\n\t\t:slave_cont_loop",
+      "new": "\t\tlocal jo9_nymph_previous_arousal = dynslave['arousal']\r\n\t\ti = 0\r\n\t\tn = arrsize('$cont_atr')\r\n\t\t:slave_cont_loop"
+    },
+    {
+      "location": "#static_base",
+      "field": "body",
+      "count": 1,
+      "old": "\t\tif i < n: jump 'slave_independent_loop'",
+      "new": "\t\tif i < n: jump 'slave_independent_loop'\r\n\t\tgs 'jo9_nymph_arousal', 'recalc', 'dynslave', jo9_nymph_previous_arousal"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "count": 1,
+      "old": "day += 1\r\ndecadecount += 1",
+      "new": "day += 1\r\ngs 'jo9_nymphomania_daily', 'tick'\r\ndecadecount += 1"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "count": 1,
+      "old": "\t\tdynslave['energy'] += a &! can be negative if wounded",
+      "new": "\t\ta = func('jo9_nymphomania_daily', 'recovery', 'dynslave', a)\r\n\t\tdynslave['energy'] += a &! can be negative if wounded"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "count": 1,
+      "old": "if slave_state = CONST_INT['slave_exist'] and previous_energy >= 0 and slave['arousal'] > slave['pride'] and slave['arousal'] > 2 and slave['nymphomania'] >= 0:",
+      "new": "if slave_state = CONST_INT['slave_exist'] and previous_energy >= 0 and slave['arousal'] > slave['pride'] and slave['arousal'] > 2 and slave['nymphomania'] >= 0 and slave['nymphomania'] <= 1:"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "count": 1,
+      "old": "if room1['arousal'] = 5:",
+      "new": "if room1['arousal'] = 5 and room1['nymphomania'] <= 1:"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "count": 1,
+      "old": "if room2['arousal'] = 5:",
+      "new": "if room2['arousal'] = 5 and room2['nymphomania'] <= 1:"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "count": 1,
+      "old": "if room3['arousal'] = 5:",
+      "new": "if room3['arousal'] = 5 and room3['nymphomania'] <= 1:"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "count": 1,
+      "old": "if room4['arousal'] = 5:",
+      "new": "if room4['arousal'] = 5 and room4['nymphomania'] <= 1:"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "count": 1,
+      "old": "if assistant_rape = 1:\r\n\tif assistant[\"arousal\"] > 3 and slave_assistant_sex = 0 and assistant_state = CONST_INT['slave_exist'] and slave_state = CONST_INT['slave_exist'] and RAND(1,3) > 1:",
+      "new": "if assistant_rape = 1 and assistant['nymphomania'] <= 1 and slave['nymphomania'] <= 1:\r\n\tif assistant[\"arousal\"] > 3 and slave_assistant_sex = 0 and assistant_state = CONST_INT['slave_exist'] and slave_state = CONST_INT['slave_exist'] and RAND(1,3) > 1:"
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "count": 1,
+      "old": "png = 0\r\nnpc = 0\r\n\r\nif end_day_phase = 0:",
+      "new": "png = 0\r\nnpc = 0\r\n\r\nif slave['nymphomania'] > 1: slave_will_masturbate = 0 & slave_masturbating_anyway = 0\r\nif assistant['nymphomania'] > 1 or slave['nymphomania'] > 1: slave_assistant_rape = 0 & slave_orgasm_anyway = 0\r\nif room1['nymphomania'] > 1: room1_will_masturbate = 0\r\nif room2['nymphomania'] > 1: room2_will_masturbate = 0\r\nif room3['nymphomania'] > 1: room3_will_masturbate = 0\r\nif room4['nymphomania'] > 1: room4_will_masturbate = 0\r\n\r\nif end_day_phase = 0:"
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "count": 1,
+      "old": "if slave_suicide = 1 and assistant['supervise_rule'] = 1:",
+      "new": "if func('jo9_nymphomania_daily', 'loss'): jump 'loop'\r\n\r\nif slave_suicide = 1 and assistant['supervise_rule'] = 1:"
+    },
+    {
+      "location": "#dynamic",
+      "field": "body",
+      "count": 1,
+      "old": "$dyn_sex_acceptance = {\r\n\t! sub-calculation for $dyn_repulse_check, called from interaction, interaction_city, interaction_result\r\n\t! no effect unless stimulating flag is enabled (expected to be enabled for any interactions that set erotic_stimulation in $special_part)\r\n\t! sets interaction_*['sex_acceptance'], to be interpreted as a bonus/penalty to obedience, uncapped, values < 0 indicate reluctance\r\n\t! expects to be called with dynamic $replace($dyn_sex_acceptance, 'dyn'+'slave', 'a slave instance variable')\r\n\tinteraction_dynslave['sex_acceptance'] = 0\r\n\tif dynslave_state = CONST_INT['slave_exist']:\r\n\r\n\t\tif $dynslave_psy_status = 'broken':\r\n\t\t\t! mind-broken slaves are indifferent\r\n\t\telseif dynslave['moral'] < 5 and instr($interaction_type, 'rape') ! 0:\r\n\t\t\t! rape is opposed by nature ([-20, -4]) unless fully devoted - ImperatorAugustus\r\n\t\t\tinteraction_dynslave['sex_acceptance'] -= (dynslave['ego'] + dynslave['temper'] + dynslave['pride'] + dynslave['intellect'])\r\n\t\telseif stimulating > 0 or orgastic > 0:\r\n\t\t\tinteraction_dynslave['sex_acceptance'] = (master_style - 5) + dynslave['mood'] + dynslave['moral'] + dynslave['arousal']*2 - dynslave['pride']*2\r\n\t\t\t! initial value ranges from +20 (alluring master, ecstatic, max devotion, max arousal, no pride) to -20 (repulsive master, depressed, no devotion, no arousal, max pride)\r\n\t\t\tif $dynslave_psy_status = 'frightened' or $dynslave_psy_status = 'docile':\r\n\t\t\t\tinteraction_dynslave['sex_acceptance'] += dynslave['fear'] &! a frightened or docile slave is most motivated by fear - ImperatorAugustus\r\n\t\t\telseif $dynslave_psy_status = 'horny':\r\n\t\t\t\tinteraction_dynslave['sex_acceptance'] += dynslave['arousal'] &! a horny slave is most motivated by arousal - ImperatorAugustus\r\n\t\t\telseif $dynslave_psy_status = 'servile':\r\n\t\t\t\tinteraction_dynslave['sex_acceptance'] += dynslave['ego'] &! a devoted slave subordinates their nature - ImperatorAugustus\r\n\t\t\telseif $dynslave_psy_status = 'obedient':\r\n\t\t\t\tinteraction_dynslave['sex_acceptance'] += dynslave['intellect'] &! an obedient slave is most motivated by rationality - ImperatorAugustus\r\n\t\t\telseif $dynslave_psy_status = 'hysteric':\r\n\t\t\t\tinteraction_dynslave['sex_acceptance'] -= dynslave['moral'] &! being hysteric (spoiled) counters devotion - ImperatorAugustus\r\n\t\t\telseif $dynslave_psy_status = 'hateful':\r\n\t\t\t\tinteraction_dynslave['sex_acceptance'] -= dynslave['temper'] &! a hateful slave is most motivated by temperament - ImperatorAugustus\r\n\t\t\telseif $dynslave_psy_status = 'resistant':\r\n\t\t\t\tinteraction_dynslave['sex_acceptance'] -= dynslave['ego'] &! a resistant slave is most motivated by nature - ImperatorAugustus\r\n\t\t\telseif $dynslave_psy_status = 'arrogant':\r\n\t\t\t\tinteraction_dynslave['sex_acceptance'] -= dynslave['pride'] &! an arrogant slave is most motivated by pride - ImperatorAugustus\r\n\t\t\telseif $dynslave_psy_status = 'reluctant' or $dynslave_psy_status = 'depresive' or $dynslave_psy_status = 'lachrymose':\r\n\t\t\t\tinteraction_dynslave['sex_acceptance'] += dynslave['sensitivity'] &! sensitivity determines the impact of angst, which reduces resistance - ImperatorAugustus\r\n\t\t\tend\r\n\t\t\tif dynslave['nymphomania'] > 0: interaction_dynslave['sex_acceptance'] += dynslave['arousal'] &! nymphomania increases arousal weight - ImperatorAugustus\r\n\t\t\tif dynslave['nymphomania'] < 0: interaction_dynslave['sex_acceptance'] -= dynslave['sensitivity'] &! frigidity increases resistance proportional to sensitivity - ImperatorAugustus\r\n\t\t\t! above factors range from [-10, +10] (without nymphomania/frigidity, [-5, +5]), below factors range from [-20, +40]\r\n\t\t\tinteraction_dynslave['sex_acceptance'] += dynslave['sex_sum']/2 &! acceptance rises with experience (average of all sex skills adds [0, 16])\r\n\t\t\tif shameful > 0:\r\n\t\t\t\tinteraction_dynslave['sex_acceptance'] += 5*dynslave['exhibitionism']\r\n\t\t\tend\r\n\t\t\tif painful > 0:\r\n\t\t\t\tinteraction_dynslave['sex_acceptance'] += 5*dynslave['masochism']\r\n\t\t\tend\r\n\t\t\tif disgusting > 0:\r\n\t\t\t\tinteraction_dynslave['sex_acceptance'] += 5*dynslave['perversion']\r\n\t\t\tend\r\n\t\t\tif hero_choice < 100:\r\n\t\t\t\tif lesbian > 0:\r\n\t\t\t\t\tinteraction_dynslave['sex_acceptance'] += 5*dynslave['homosexualism']\r\n\t\t\t\telseif dynslave['homosexualism'] = 2:\r\n\t\t\t\t\tinteraction_dynslave['sex_acceptance'] -= 8 &! lesbians dislike non-lesbian activities\r\n\t\t\t\tend\r\n\t\t\telseif hero_choice > 100:\r\n\t\t\t\tif dynslave['homosexualism'] = 0:\r\n\t\t\t\t\tinteraction_dynslave['sex_acceptance'] -= 2 &!heterosexual slaves dislike mistress\r\n\t\t\t\telseif dynslave['homosexualism'] = -1:\r\n\t\t\t\t\tinteraction_dynslave['sex_acceptance'] -= 8 &!homophobic slaves dislike mistress\r\n\t\t\t\telseif dynslave['homosexualism'] = 2:\r\n\t\t\t\t\tinteraction_dynslave['sex_acceptance'] += 8 &!lesbians love mistress\r\n\t\t\t\telse\r\n\t\t\t\t\tinteraction_dynslave['sex_acceptance'] += 5 &!bisexual slaves like mistress\r\n\t\t\t\tend\r\n\t\t\tend\r\n\t\t\t! sum of all factors ranges from [-50,+70]\r\n! JO9 MOD START ARGON_RESTORED_ACCEPTANCE | 2026-10-19_argon_trait_text_integration\r\n\t\t\tinteraction_dynslave['sex_acceptance'] /= 2 &! final value is in range [-30, +48] but usually single digits\r\n\t\t\tinteraction_dynslave['sex_acceptance'] += func('jo9_traits', 'restored_acceptance', 'dynslave', $subskill)\r\n! JO9 MOD END ARGON_RESTORED_ACCEPTANCE\r\n\r\n\t\tend &! end of stimulating check\r\n\r\n\tend &! end of conscious state check\r\n}",
+      "new": "$dyn_sex_acceptance = {\r\n\t! sub-calculation for $dyn_repulse_check, called from interaction, interaction_city, interaction_result\r\n\t! no effect unless stimulating flag is enabled (expected to be enabled for any interactions that set erotic_stimulation in $special_part)\r\n\t! sets interaction_*['sex_acceptance'], to be interpreted as a bonus/penalty to obedience, uncapped, values < 0 indicate reluctance\r\n\t! expects to be called with dynamic $replace($dyn_sex_acceptance, 'dyn'+'slave', 'a slave instance variable')\r\n\tinteraction_dynslave['sex_acceptance'] = 0\r\n\tif dynslave_state = CONST_INT['slave_exist']:\r\n\t\tlocal jo9_command_moral = dynslave['moral']\r\n\t\tlocal $jo9_command_psy = $dynslave_psy_status\r\n\t\tif dynslave['nymphomania'] > 1:\r\n\t\t\tjo9_command_moral = func('jo9_nymph_reaction', 'moral', 'dynslave')\r\n\t\t\t$jo9_command_psy = $func('jo9_nymph_reaction', 'status', 'dynslave')\r\n\t\tend\r\n\r\n\t\tif $jo9_command_psy = 'broken':\r\n\t\t\t! mind-broken slaves are indifferent\r\n\t\telseif jo9_command_moral < 5 and instr($interaction_type, 'rape') ! 0:\r\n\t\t\t! rape is opposed by nature ([-20, -4]) unless fully devoted - ImperatorAugustus\r\n\t\t\tinteraction_dynslave['sex_acceptance'] -= (dynslave['ego'] + dynslave['temper'] + dynslave['pride'] + dynslave['intellect'])\r\n\t\telseif stimulating > 0 or orgastic > 0:\r\n\t\t\tinteraction_dynslave['sex_acceptance'] = (master_style - 5) + dynslave['mood'] + jo9_command_moral + dynslave['arousal']*2 - dynslave['pride']*2\r\n\t\t\t! initial value ranges from +20 (alluring master, ecstatic, max devotion, max arousal, no pride) to -20 (repulsive master, depressed, no devotion, no arousal, max pride)\r\n\t\t\tif $jo9_command_psy = 'frightened' or $jo9_command_psy = 'docile':\r\n\t\t\t\tinteraction_dynslave['sex_acceptance'] += dynslave['fear'] &! a frightened or docile slave is most motivated by fear - ImperatorAugustus\r\n\t\t\telseif $jo9_command_psy = 'horny':\r\n\t\t\t\tinteraction_dynslave['sex_acceptance'] += dynslave['arousal'] &! a horny slave is most motivated by arousal - ImperatorAugustus\r\n\t\t\telseif $jo9_command_psy = 'servile':\r\n\t\t\t\tinteraction_dynslave['sex_acceptance'] += dynslave['ego'] &! a devoted slave subordinates their nature - ImperatorAugustus\r\n\t\t\telseif $jo9_command_psy = 'obedient':\r\n\t\t\t\tinteraction_dynslave['sex_acceptance'] += dynslave['intellect'] &! an obedient slave is most motivated by rationality - ImperatorAugustus\r\n\t\t\telseif $jo9_command_psy = 'hysteric':\r\n\t\t\t\tinteraction_dynslave['sex_acceptance'] -= jo9_command_moral &! being hysteric (spoiled) counters devotion - ImperatorAugustus\r\n\t\t\telseif $jo9_command_psy = 'hateful':\r\n\t\t\t\tinteraction_dynslave['sex_acceptance'] -= dynslave['temper'] &! a hateful slave is most motivated by temperament - ImperatorAugustus\r\n\t\t\telseif $jo9_command_psy = 'resistant':\r\n\t\t\t\tinteraction_dynslave['sex_acceptance'] -= dynslave['ego'] &! a resistant slave is most motivated by nature - ImperatorAugustus\r\n\t\t\telseif $jo9_command_psy = 'arrogant':\r\n\t\t\t\tinteraction_dynslave['sex_acceptance'] -= dynslave['pride'] &! an arrogant slave is most motivated by pride - ImperatorAugustus\r\n\t\t\telseif $jo9_command_psy = 'reluctant' or $jo9_command_psy = 'depresive' or $jo9_command_psy = 'lachrymose':\r\n\t\t\t\tinteraction_dynslave['sex_acceptance'] += dynslave['sensitivity'] &! sensitivity determines the impact of angst, which reduces resistance - ImperatorAugustus\r\n\t\t\tend\r\n\t\t\tif dynslave['nymphomania'] > 0: interaction_dynslave['sex_acceptance'] += dynslave['arousal'] &! nymphomania increases arousal weight - ImperatorAugustus\r\n\t\t\tif dynslave['nymphomania'] < 0: interaction_dynslave['sex_acceptance'] -= dynslave['sensitivity'] &! frigidity increases resistance proportional to sensitivity - ImperatorAugustus\r\n\t\t\t! above factors range from [-10, +10] (without nymphomania/frigidity, [-5, +5]), below factors range from [-20, +40]\r\n\t\t\tinteraction_dynslave['sex_acceptance'] += dynslave['sex_sum']/2 &! acceptance rises with experience (average of all sex skills adds [0, 16])\r\n\t\t\tif shameful > 0:\r\n\t\t\t\tinteraction_dynslave['sex_acceptance'] += 5*dynslave['exhibitionism']\r\n\t\t\tend\r\n\t\t\tif painful > 0:\r\n\t\t\t\tinteraction_dynslave['sex_acceptance'] += 5*dynslave['masochism']\r\n\t\t\tend\r\n\t\t\tif disgusting > 0:\r\n\t\t\t\tinteraction_dynslave['sex_acceptance'] += 5*dynslave['perversion']\r\n\t\t\tend\r\n\t\t\tif hero_choice < 100:\r\n\t\t\t\tif lesbian > 0:\r\n\t\t\t\t\tinteraction_dynslave['sex_acceptance'] += 5*dynslave['homosexualism']\r\n\t\t\t\telseif dynslave['homosexualism'] = 2:\r\n\t\t\t\t\tinteraction_dynslave['sex_acceptance'] -= 8 &! lesbians dislike non-lesbian activities\r\n\t\t\t\tend\r\n\t\t\telseif hero_choice > 100:\r\n\t\t\t\tif dynslave['homosexualism'] = 0:\r\n\t\t\t\t\tinteraction_dynslave['sex_acceptance'] -= 2 &!heterosexual slaves dislike mistress\r\n\t\t\t\telseif dynslave['homosexualism'] = -1:\r\n\t\t\t\t\tinteraction_dynslave['sex_acceptance'] -= 8 &!homophobic slaves dislike mistress\r\n\t\t\t\telseif dynslave['homosexualism'] = 2:\r\n\t\t\t\t\tinteraction_dynslave['sex_acceptance'] += 8 &!lesbians love mistress\r\n\t\t\t\telse\r\n\t\t\t\t\tinteraction_dynslave['sex_acceptance'] += 5 &!bisexual slaves like mistress\r\n\t\t\t\tend\r\n\t\t\tend\r\n\t\t\t! sum of all factors ranges from [-50,+70]\r\n! JO9 MOD START ARGON_RESTORED_ACCEPTANCE | 2026-10-19_argon_trait_text_integration\r\n\t\t\tinteraction_dynslave['sex_acceptance'] /= 2 &! final value is in range [-30, +48] but usually single digits\r\n\t\t\tinteraction_dynslave['sex_acceptance'] += func('jo9_traits', 'restored_acceptance', 'dynslave', $subskill)\r\n! JO9 MOD END ARGON_RESTORED_ACCEPTANCE\r\n\r\n\t\tend &! end of stimulating check\r\n\r\n\tend &! end of conscious state check\r\n}"
+    },
+    {
+      "location": "#dynamic",
+      "field": "body",
+      "count": 1,
+      "old": "interaction_dynslave['res'] = dynslave['obedience'] + interaction_dynslave['sex_acceptance'] - interaction_dynslave['repulse']",
+      "new": "local jo9_command_obedience = dynslave['obedience']\r\n\t\t\tif dynslave['nymphomania'] > 1: jo9_command_obedience = func('jo9_nymph_reaction', 'obedience', 'dynslave')\r\n\t\t\tinteraction_dynslave['res'] = jo9_command_obedience + interaction_dynslave['sex_acceptance'] - interaction_dynslave['repulse']"
+    },
+    {
+      "location": "#dynamic",
+      "field": "body",
+      "count": 1,
+      "old": "$dyn_diligence = {\r\n\t! called from interaction_result after $dyn_repulse_check\r\n\t! sets interaction_*['diligence'] in range [0,5], zero reflects inadequate/lackluster effort, positive reflects praise-worthy effort\r\n\t! interaction_*['motivation_repulse'] can be set by caller in [0,5] range as a malus to overcome (motivation_repulse affects only diligence, not obedience)\r\n\t! this function adjusts diligence to account for $target_affinity, if set by caller (affinities have strong influence)\r\n\t! this function also imposes a range of [0, diligence] on the sex_quality global (which represents the slave applying skills to improve sex for partner)\r\n\t! expects to be called with dynamic $replace($dyn_diligence, 'dyn'+'slave', 'a slave instance variable')\r\n\tif dynslave_state = CONST_INT['slave_exist']:\r\n\r\n\t\tinteraction_dynslave['diligence'] = dynslave['mood'] + dynslave['moral'] + dynslave['fear']*2 - dynslave['angst']/2 - dynslave['spoil'] &! initial value is in range [-12, +20]\r\n\r\n\t\t! AURA-BASED MOTIVATION\r\n\t\tinteraction_dynslave['motivation_repulse'] = max(0, min(5, interaction_dynslave['motivation_repulse'])) &! enforce [0,5] range (default 0)\r\n\t\tinteraction_dynslave['diligence'] -= (1 + interaction_dynslave['motivation_repulse'])/2 &! reduce initial diligence by [0,3] - ImperatorAugustus\r\n\t\tif dynslave['custom']     > interaction_dynslave['motivation_repulse']: interaction_dynslave['diligence'] += 1\r\n\t\tif dynslave['instinct']   > interaction_dynslave['motivation_repulse']: interaction_dynslave['diligence'] += 1\r\n\t\tif dynslave['rational']   > interaction_dynslave['motivation_repulse']: interaction_dynslave['diligence'] += 1\r\n\r\n\t\t! ITEM BONUSES\r\n\t\tif $target_skill ! '':\r\n\t\t\tdynamic $replace($recalc_equipment_bonuses, 'dyn'+'slave', 'dynslave') &! refresh learn_bonus for slave (used in $misc_bonus)\r\n\t\t\tinteraction_dynslave['diligence'] += dyneval('result = learn_bonus[$target_skill]') &! item bonuses increase diligence\r\n\t\tend\r\n\r\n\t\t! PHOBIAS\r\n\t\tphobia = 0\r\n\t\tif shameful > 0:     phobia += dynslave['exhibitionism'] - shameful\r\n\t\tif painful > 0:      phobia += dynslave['masochism'] - painful\r\n\t\tif abuse > 0:        phobia += func('jo9_traits', 'attention_value', 'dynslave', 'abuse_attitude') - abuse\r\n\t\tif disgusting > 0:   phobia += dynslave['perversion'] - disgusting\r\n\t\tif darkness > 0:     phobia += dynslave['darkness_attitude'] - darkness\r\n\t\tif bloody > 0:       phobia += dynslave['blood_attitude'] - bloody\r\n\t\tif fire_based > 0:   phobia += dynslave['fire_attitude'] - fire_based\r\n\t\tif water_based > 0:  phobia += dynslave['water_attitude'] - water_based\r\n\t\tif vermin_based > 0: phobia += dynslave['vermin_attitude'] - vermin_based\r\n\t\tif deprivation > 0:  phobia += dynslave['deprivation_attitude'] - deprivation\r\n\t\tif lesbian > 0:      phobia += dynslave['homosexualism'] - lesbian\r\n\t\tif heterosexual = 0: phobia += dynslave['homosexualism'] - heterosexual\r\n\t\tif stimulating = 0:  phobia += dynslave['nymphomania'] &! no offset because nymphomania only goes up to +1, all above go to +2\r\n\t\tinteraction_dynslave['diligence'] += phobia*2 &! will be positive or negative depending on relevant attitudes (doubled for greater trait impact - ImperatorAugustus)\r\n\r\n\t\t! SAME-DAY PUNISHMENTS BOOST DILIGENCE POTENTIAL\r\n\t\tinteraction_dynslave['diligence'] += dynslave['daily_punishment_count']\r\n\r\n\t\t! NEGATIVE FACTORS\r\n\t\tif dynslave['energy'] < 0: interaction_dynslave['diligence'] += dynslave['energy']*4 &! exhaustion directly reduces diligence\r\n\t\tif stimulating > 0 or orgastic > 0: interaction_dynslave['diligence'] -= dynslave['pride'] - max(0, dynslave['arousal'] - 3) &! pride opposes sex, 4/5 arousal does the opposite [1,2]\r\n\t\tif rebell[$dynslave_psy_status] < 0: interaction_dynslave['diligence'] += rebell[$dynslave_psy_status] &! currently a [-100,-2] range\r\n\t\tif rebell[$dynslave_psy_status] > 0: interaction_dynslave['diligence'] -= rebell[$dynslave_psy_status] &! currently a [0,4] range\r\n\t\tif interaction_dynslave['res'] < 0: interaction_dynslave['diligence'] += interaction_dynslave['res']/2 &! when refusal is not possible (tutor, academy)\r\n\r\n\t\t! BONUSES FOR TEACHING ABILITY\r\n\t\tif $interaction_type = 'master_teaches_slave':\r\n\t\t\tinteraction_dynslave['diligence'] += max(0, master_tutor - 2) &! +1 with B+ teaching skill, +2 with A+ teaching skill, +3 with S+ teaching skill\r\n\t\telseif $interaction_type = 'assistant_teaches_slave' and assistant['intellect'] > 3:\r\n\t\t\tinteraction_dynslave['diligence'] += (assistant['intellect'] - 3) &! assistants with A+ or S+ intellect boost diligence by +1 or +2\r\n\t\telseif $interaction_type = 'school_class':\r\n\t\t\tinteraction_dynslave['diligence'] += 2 &! classes boost diligence by +2\r\n\t\telseif $interaction_type = 'coach_teaches_slave':\r\n\t\t\tinteraction_dynslave['diligence'] += 3 &! tutors boost diligence by +3\r\n\t\telseif $interaction_type = 'master_teaches_assistant':\r\n\t\t\tinteraction_dynslave['diligence'] += max(0, master_tutor - 2) &! +1 with B+ teaching skill, +2 with A+ teaching skill, +3 with S+ teaching skill\r\n\t\tend\r\n\t\t! NORMAL DIFFICULTY OVERRIDE\r\n\t\tif interaction_dynslave['diligence'] < 2 and difficulty_setting ! 2:\r\n\t\t\t! except on hardcore obedience difficulty, negative mood has a reduced impact on diligence\r\n\t\t\tif dynslave['mood'] < 0: interaction_dynslave['diligence'] -= (1+dynslave['mood'])/2 &! subtracting a negative, effectively reversing a portion of the penalty (depressed becomes a -2 instead of -5)\r\n\t\t\t! except on hardcore obedience difficulty, a slave with non-negative obedience and/or mood will give at least a minimal effort irrespective of above factors\r\n\t\t\tif max(dynslave['obedience'], dynslave['mood']) >= 0: interaction_dynslave['diligence'] = max(1, interaction_dynslave['diligence'])\r\n\t\tend\r\n\r\n\t\t! LINKED PRIMARY TRAIT BONUS/PENALTY\r\n\t\tif $target_affinity ! '':\r\n\t\t\tif dynslave[$target_affinity] > 0: interaction_dynslave['diligence'] += 10 &! positive affinity negates two out of three: depressed mood, max-angst, max-spoil\r\n\t\t\tif dynslave[$target_affinity] < 0: interaction_dynslave['diligence'] -= 10 &! negative affinity does the opposite\r\n\t\tend\r\n\r\n\t\t! SEX DILIGENCE IS CAPPED WHEN PSY STATUS IS FRIGHTENED, DOCILE, LACHRYMOSE, DEPRESSIVE OR BROKEN\r\n\t\tif (stimulating > 0 or orgastic > 0) and rebell[$dynslave_psy_status] < 0 and interaction_dynslave['diligence'] > 2: interaction_dynslave['diligence'] = 2\r\n\r\n\t\t! PSEUDO-RANDOM POSITIVE DILIGENCE WITH MOOD AS LOWER BOUND, OR CAP POSITIVE DILIGENCE AT 1 IF MOOD IS NEGATIVE (HARDCORE ONLY)\r\n\t\tif interaction_dynslave['diligence'] > 1:\r\n\t\t\tif dynslave['mood'] < 0 and difficulty_setting = 2:\r\n\t\t\t\tinteraction_dynslave['diligence'] = 1\r\n\t\t\telseif dynslave['mood'] < interaction_dynslave['diligence']:\r\n\t\t\t\tinteraction_dynslave['diligence'] = max(dynslave['mood'], 1 + (48271 * (day + dynslave_type + interaction + dynslave_already_done_total[$str(interaction)]) mod 65537)/(65537/interaction_dynslave['diligence']))\r\n\t\t\tend\r\n\t\tend\r\n\r\n\t\t! SPECIAL CASES\r\n\t\tif dynslave['domini_dictum'] = 1 or $dynslave_psy_status = 'broken':\r\n\t\t\tinteraction_dynslave['diligence'] = 1 &! mind-controlled or mind-broken diligence is locked at 1\r\n\t\t!elseif 'dynslave' = 'assistant':\r\n\t\t!\tinteraction_dynslave['diligence'] = iif(stimulating > 0, min(5, dynslave['moral'] + dynslave['arousal']/5), dynslave['moral']) &! TODO: assistant ignores other factors for now - ImperatorAugustus\r\n\t\tend\r\n\r\n\t\t! CLAMP RESULT\r\n\t\tinteraction_dynslave['diligence'] = max(0, min(5, interaction_dynslave['diligence'])) &! enforce [0,5] range\r\n\r\n\tend &! end of conscious state check\r\n}",
+      "new": "$dyn_diligence = {\r\n\t! called from interaction_result after $dyn_repulse_check\r\n\t! sets interaction_*['diligence'] in range [0,5], zero reflects inadequate/lackluster effort, positive reflects praise-worthy effort\r\n\t! interaction_*['motivation_repulse'] can be set by caller in [0,5] range as a malus to overcome (motivation_repulse affects only diligence, not obedience)\r\n\t! this function adjusts diligence to account for $target_affinity, if set by caller (affinities have strong influence)\r\n\t! this function also imposes a range of [0, diligence] on the sex_quality global (which represents the slave applying skills to improve sex for partner)\r\n\t! expects to be called with dynamic $replace($dyn_diligence, 'dyn'+'slave', 'a slave instance variable')\r\n\tif dynslave_state = CONST_INT['slave_exist']:\r\n\t\tlocal jo9_command_moral = dynslave['moral']\r\n\t\tlocal jo9_command_obedience = dynslave['obedience']\r\n\t\tlocal $jo9_command_psy = $dynslave_psy_status\r\n\t\tif dynslave['nymphomania'] > 1:\r\n\t\t\tjo9_command_moral = func('jo9_nymph_reaction', 'moral', 'dynslave')\r\n\t\t\tjo9_command_obedience = func('jo9_nymph_reaction', 'obedience', 'dynslave')\r\n\t\t\t$jo9_command_psy = $func('jo9_nymph_reaction', 'status', 'dynslave')\r\n\t\tend\r\n\r\n\t\tinteraction_dynslave['diligence'] = dynslave['mood'] + jo9_command_moral + dynslave['fear']*2 - dynslave['angst']/2 - dynslave['spoil'] &! initial value is in range [-12, +20]\r\n\r\n\t\t! AURA-BASED MOTIVATION\r\n\t\tinteraction_dynslave['motivation_repulse'] = max(0, min(5, interaction_dynslave['motivation_repulse'])) &! enforce [0,5] range (default 0)\r\n\t\tinteraction_dynslave['diligence'] -= (1 + interaction_dynslave['motivation_repulse'])/2 &! reduce initial diligence by [0,3] - ImperatorAugustus\r\n\t\tif dynslave['custom']     > interaction_dynslave['motivation_repulse']: interaction_dynslave['diligence'] += 1\r\n\t\tif dynslave['instinct']   > interaction_dynslave['motivation_repulse']: interaction_dynslave['diligence'] += 1\r\n\t\tif dynslave['rational']   > interaction_dynslave['motivation_repulse']: interaction_dynslave['diligence'] += 1\r\n\r\n\t\t! ITEM BONUSES\r\n\t\tif $target_skill ! '':\r\n\t\t\tdynamic $replace($recalc_equipment_bonuses, 'dyn'+'slave', 'dynslave') &! refresh learn_bonus for slave (used in $misc_bonus)\r\n\t\t\tinteraction_dynslave['diligence'] += dyneval('result = learn_bonus[$target_skill]') &! item bonuses increase diligence\r\n\t\tend\r\n\r\n\t\t! PHOBIAS\r\n\t\tphobia = 0\r\n\t\tif shameful > 0:     phobia += dynslave['exhibitionism'] - shameful\r\n\t\tif painful > 0:      phobia += dynslave['masochism'] - painful\r\n\t\tif abuse > 0:        phobia += func('jo9_traits', 'attention_value', 'dynslave', 'abuse_attitude') - abuse\r\n\t\tif disgusting > 0:   phobia += dynslave['perversion'] - disgusting\r\n\t\tif darkness > 0:     phobia += dynslave['darkness_attitude'] - darkness\r\n\t\tif bloody > 0:       phobia += dynslave['blood_attitude'] - bloody\r\n\t\tif fire_based > 0:   phobia += dynslave['fire_attitude'] - fire_based\r\n\t\tif water_based > 0:  phobia += dynslave['water_attitude'] - water_based\r\n\t\tif vermin_based > 0: phobia += dynslave['vermin_attitude'] - vermin_based\r\n\t\tif deprivation > 0:  phobia += dynslave['deprivation_attitude'] - deprivation\r\n\t\tif lesbian > 0:      phobia += dynslave['homosexualism'] - lesbian\r\n\t\tif heterosexual = 0: phobia += dynslave['homosexualism'] - heterosexual\r\n\t\tif stimulating = 0:  phobia += dynslave['nymphomania'] &! no offset because nymphomania only goes up to +1, all above go to +2\r\n\t\tinteraction_dynslave['diligence'] += phobia*2 &! will be positive or negative depending on relevant attitudes (doubled for greater trait impact - ImperatorAugustus)\r\n\r\n\t\t! SAME-DAY PUNISHMENTS BOOST DILIGENCE POTENTIAL\r\n\t\tinteraction_dynslave['diligence'] += dynslave['daily_punishment_count']\r\n\r\n\t\t! NEGATIVE FACTORS\r\n\t\tif dynslave['energy'] < 0: interaction_dynslave['diligence'] += dynslave['energy']*4 &! exhaustion directly reduces diligence\r\n\t\tif stimulating > 0 or orgastic > 0: interaction_dynslave['diligence'] -= dynslave['pride'] - max(0, dynslave['arousal'] - 3) &! pride opposes sex, 4/5 arousal does the opposite [1,2]\r\n\t\tif rebell[$jo9_command_psy] < 0: interaction_dynslave['diligence'] += rebell[$jo9_command_psy] &! currently a [-100,-2] range\r\n\t\tif rebell[$jo9_command_psy] > 0: interaction_dynslave['diligence'] -= rebell[$jo9_command_psy] &! currently a [0,4] range\r\n\t\tif interaction_dynslave['res'] < 0: interaction_dynslave['diligence'] += interaction_dynslave['res']/2 &! when refusal is not possible (tutor, academy)\r\n\r\n\t\t! BONUSES FOR TEACHING ABILITY\r\n\t\tif $interaction_type = 'master_teaches_slave':\r\n\t\t\tinteraction_dynslave['diligence'] += max(0, master_tutor - 2) &! +1 with B+ teaching skill, +2 with A+ teaching skill, +3 with S+ teaching skill\r\n\t\telseif $interaction_type = 'assistant_teaches_slave' and assistant['intellect'] > 3:\r\n\t\t\tinteraction_dynslave['diligence'] += (assistant['intellect'] - 3) &! assistants with A+ or S+ intellect boost diligence by +1 or +2\r\n\t\telseif $interaction_type = 'school_class':\r\n\t\t\tinteraction_dynslave['diligence'] += 2 &! classes boost diligence by +2\r\n\t\telseif $interaction_type = 'coach_teaches_slave':\r\n\t\t\tinteraction_dynslave['diligence'] += 3 &! tutors boost diligence by +3\r\n\t\telseif $interaction_type = 'master_teaches_assistant':\r\n\t\t\tinteraction_dynslave['diligence'] += max(0, master_tutor - 2) &! +1 with B+ teaching skill, +2 with A+ teaching skill, +3 with S+ teaching skill\r\n\t\tend\r\n\t\t! NORMAL DIFFICULTY OVERRIDE\r\n\t\tif interaction_dynslave['diligence'] < 2 and difficulty_setting ! 2:\r\n\t\t\t! except on hardcore obedience difficulty, negative mood has a reduced impact on diligence\r\n\t\t\tif dynslave['mood'] < 0: interaction_dynslave['diligence'] -= (1+dynslave['mood'])/2 &! subtracting a negative, effectively reversing a portion of the penalty (depressed becomes a -2 instead of -5)\r\n\t\t\t! except on hardcore obedience difficulty, a slave with non-negative obedience and/or mood will give at least a minimal effort irrespective of above factors\r\n\t\t\tif max(jo9_command_obedience, dynslave['mood']) >= 0: interaction_dynslave['diligence'] = max(1, interaction_dynslave['diligence'])\r\n\t\tend\r\n\r\n\t\t! LINKED PRIMARY TRAIT BONUS/PENALTY\r\n\t\tif $target_affinity ! '':\r\n\t\t\tif dynslave[$target_affinity] > 0: interaction_dynslave['diligence'] += 10 &! positive affinity negates two out of three: depressed mood, max-angst, max-spoil\r\n\t\t\tif dynslave[$target_affinity] < 0: interaction_dynslave['diligence'] -= 10 &! negative affinity does the opposite\r\n\t\tend\r\n\r\n\t\t! SEX DILIGENCE IS CAPPED WHEN PSY STATUS IS FRIGHTENED, DOCILE, LACHRYMOSE, DEPRESSIVE OR BROKEN\r\n\t\tif (stimulating > 0 or orgastic > 0) and rebell[$jo9_command_psy] < 0 and interaction_dynslave['diligence'] > 2: interaction_dynslave['diligence'] = 2\r\n\r\n\t\t! PSEUDO-RANDOM POSITIVE DILIGENCE WITH MOOD AS LOWER BOUND, OR CAP POSITIVE DILIGENCE AT 1 IF MOOD IS NEGATIVE (HARDCORE ONLY)\r\n\t\tif interaction_dynslave['diligence'] > 1:\r\n\t\t\tif dynslave['mood'] < 0 and difficulty_setting = 2:\r\n\t\t\t\tinteraction_dynslave['diligence'] = 1\r\n\t\t\telseif dynslave['mood'] < interaction_dynslave['diligence']:\r\n\t\t\t\tinteraction_dynslave['diligence'] = max(dynslave['mood'], 1 + (48271 * (day + dynslave_type + interaction + dynslave_already_done_total[$str(interaction)]) mod 65537)/(65537/interaction_dynslave['diligence']))\r\n\t\t\tend\r\n\t\tend\r\n\r\n\t\t! SPECIAL CASES\r\n\t\tif dynslave['domini_dictum'] = 1 or $jo9_command_psy = 'broken':\r\n\t\t\tinteraction_dynslave['diligence'] = 1 &! mind-controlled or mind-broken diligence is locked at 1\r\n\t\t!elseif 'dynslave' = 'assistant':\r\n\t\t!\tinteraction_dynslave['diligence'] = iif(stimulating > 0, min(5, dynslave['moral'] + dynslave['arousal']/5), dynslave['moral']) &! TODO: assistant ignores other factors for now - ImperatorAugustus\r\n\t\tend\r\n\r\n\t\t! CLAMP RESULT\r\n\t\tinteraction_dynslave['diligence'] = max(0, min(5, interaction_dynslave['diligence'])) &! enforce [0,5] range\r\n\r\n\tend &! end of conscious state check\r\n}"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "\t$interaction_relaxed_vaginal = {\r\n\t\t$interaction_type = 'make_dynslave_do'\r\n\t\tinteraction_dynslave['repulse'] = iif(dynslave['virginity'] < 1, 8, 4) &! same as vaginal sex lesson\r\n\t\tinteraction_dynslave['motivation_repulse'] = 7 - master_style &! diligence will improve with 3+ aura stats, low master allure impedes diligence in this task - ImperatorAugustus\r\n\t\tstimulating = 1 &! sex acceptance will be added to repulse - ImperatorAugustus\r\n\t\tif master_penetration > 2: orgastic = 1\r\n\t\tif dynslave['moral'] < 1: shameful = 1 &! interacts with slave exhibitionism trait when non-devoted slave is exposed to master - ImperatorAugustus\r\n\t\t$refuse_txt = '  <<$dynslave_name>>는 당신과 성관계를 갖기를 거부한다. 뭐, 강간당하는 편을 더 원한다면야, 그렇게 만드는 건 어렵지 않지…'\r\n\t\t$subskill = 'slave[\"sub_vaginal\"]'\r\n\t\t$subskill_xp = 'slave[\"sub_vaginal_xp\"]'\r\n\t\tsex_ability = (1 + dynslave['roleplay'] + dynslave['oral'] + dynslave['sub_vaginal']*2)/4\r\n\t\tsex_quality = min(5, max(1, sex_ability))\r\n\t\t$special_part = {\r\n\t\t\t$bg_path = func('display_pic', 'dynslave', 'sex', 'girls/sex_scenes/')\r\n\t\t\tif dynslave['virginity'] < 2: $bg_path = func('display_pic', 'dynslave', 'defloration', 'girls/sex_scenes/')\r\n\t\t\t$play_sound[1] = $fuck_sound[dynslave['age']]\r\n\t\t\tif rebell[$dynslave_psy_status] < 0:\r\n\t\t\t\tif interaction_dynslave['diligence'] > 0: interaction_dynslave['diligence'] = 1\r\n\t\t\t\t$text[1] = $slave_seduction[0] &! uses delayed sub-expressions\r\n\t\t\t\t$text[2] = $slave_foreplay[0] &! uses delayed sub-expressions\r\n\t\t\t\t$text[3] = $slave_fuck[0] &! uses delayed sub-expressions\r\n\t\t\telse\r\n\t\t\t\t$text[1] = $slave_seduction[min(interaction_dynslave['diligence'], 1 + dynslave['roleplay'])] &! uses delayed sub-expressions\r\n\t\t\t\t$text[2] = $slave_foreplay[min(interaction_dynslave['diligence'], 1 + dynslave['oral'])] &! uses delayed sub-expressions\r\n\t\t\t\t$text[3] = $slave_fuck[min(interaction_dynslave['diligence'], 1 + dynslave['sub_vaginal'])] &! uses delayed sub-expressions\r\n\t\t\tend\r\n\t\t\tinteraction_dynslave['erotic_stimulation'] = master_penetration + 1\r\n\t\t\tejaculation_intensity = sex_quality\r\n! JO9 MOD START J9M1677 | 2026-10-15_z_meiki_voluntary_outcome | changed block; context may be included\r\n\t\t\t! MEIKI_CHECKS_V1: direct result controls master_mood_rate increment.\r\n\t\t\tif func('jo9_meiki_checks', 'direct', interaction_dynslave['diligence'], func('jo9_meiki_willing', 'dynslave', 1)) = 1: master_mood_rate += 1\r\n! JO9 MOD END J9M1677\r\n\t\t\tdynamic $replace($vaginally_penetrated, 'dyn'+'slave', 'dynslave') &! includes $master_ejaculate\r\n\t\t\tdynslave['pos_gentle'] = max(dynslave['pos_gentle'], 2)\r\n\t\t\tdynamic $master_energy_drop &! slave energy drop is handled in interaction_result\r\n\t\t\tdynslave['calories'] -= 1 & dynslave_rate['stamina'] += min(interaction_dynslave['diligence'], 1) & master_str_rate += iif(master_str < 4, 1, 0)\r\n\t\t\thouse_mess_rate += 10\r\n\t\t\tmaster_hygiene_rate += 15\r\n\t\t\tdynslave_rate['hygiene'] += 15\r\n\t\t}\r\n\t\t$place = 'bedroom'\r\n\t}",
+      "new": "\t$interaction_relaxed_vaginal = {\r\n\t\t$interaction_type = 'make_dynslave_do'\r\n\t\tinteraction_dynslave['repulse'] = iif(dynslave['virginity'] < 1, 8, 4) &! same as vaginal sex lesson\r\n\t\tinteraction_dynslave['motivation_repulse'] = 7 - master_style &! diligence will improve with 3+ aura stats, low master allure impedes diligence in this task - ImperatorAugustus\r\n\t\tstimulating = 1 &! sex acceptance will be added to repulse - ImperatorAugustus\r\n\t\tif master_penetration > 2: orgastic = 1\r\n\t\tif func('jo9_nymph_reaction', 'moral', 'dynslave') < 1: shameful = 1 &! interacts with slave exhibitionism trait when non-devoted slave is exposed to master - ImperatorAugustus\r\n\t\t$refuse_txt = '  <<$dynslave_name>>는 당신과 성관계를 갖기를 거부한다. 뭐, 강간당하는 편을 더 원한다면야, 그렇게 만드는 건 어렵지 않지…'\r\n\t\t$subskill = 'slave[\"sub_vaginal\"]'\r\n\t\t$subskill_xp = 'slave[\"sub_vaginal_xp\"]'\r\n\t\tsex_ability = (1 + dynslave['roleplay'] + dynslave['oral'] + dynslave['sub_vaginal']*2)/4\r\n\t\tsex_quality = min(5, max(1, sex_ability))\r\n\t\t$special_part = {\r\n\t\t\t$bg_path = func('display_pic', 'dynslave', 'sex', 'girls/sex_scenes/')\r\n\t\t\tif dynslave['virginity'] < 2: $bg_path = func('display_pic', 'dynslave', 'defloration', 'girls/sex_scenes/')\r\n\t\t\t$play_sound[1] = $fuck_sound[dynslave['age']]\r\n\t\t\tif rebell[$func('jo9_nymph_reaction', 'status', 'dynslave')] < 0:\r\n\t\t\t\tif interaction_dynslave['diligence'] > 0: interaction_dynslave['diligence'] = 1\r\n\t\t\t\t$text[1] = $slave_seduction[0] &! uses delayed sub-expressions\r\n\t\t\t\t$text[2] = $slave_foreplay[0] &! uses delayed sub-expressions\r\n\t\t\t\t$text[3] = $slave_fuck[0] &! uses delayed sub-expressions\r\n\t\t\telse\r\n\t\t\t\t$text[1] = $slave_seduction[min(interaction_dynslave['diligence'], 1 + dynslave['roleplay'])] &! uses delayed sub-expressions\r\n\t\t\t\t$text[2] = $slave_foreplay[min(interaction_dynslave['diligence'], 1 + dynslave['oral'])] &! uses delayed sub-expressions\r\n\t\t\t\t$text[3] = $slave_fuck[min(interaction_dynslave['diligence'], 1 + dynslave['sub_vaginal'])] &! uses delayed sub-expressions\r\n\t\t\tend\r\n\t\t\tinteraction_dynslave['erotic_stimulation'] = master_penetration + 1\r\n\t\t\tejaculation_intensity = sex_quality\r\n! JO9 MOD START J9M1677 | 2026-10-15_z_meiki_voluntary_outcome | changed block; context may be included\r\n\t\t\t! MEIKI_CHECKS_V1: direct result controls master_mood_rate increment.\r\n\t\t\tif func('jo9_meiki_checks', 'direct', interaction_dynslave['diligence'], func('jo9_meiki_willing', 'dynslave', 1)) = 1: master_mood_rate += 1\r\n! JO9 MOD END J9M1677\r\n\t\t\tdynamic $replace($vaginally_penetrated, 'dyn'+'slave', 'dynslave') &! includes $master_ejaculate\r\n\t\t\tif dynslave['nymphomania'] >= -1: dynslave['pos_gentle'] = max(dynslave['pos_gentle'], 2)\r\n\t\t\tdynamic $master_energy_drop &! slave energy drop is handled in interaction_result\r\n\t\t\tdynslave['calories'] -= 1 & dynslave_rate['stamina'] += min(interaction_dynslave['diligence'], 1) & master_str_rate += iif(master_str < 4, 1, 0)\r\n\t\t\thouse_mess_rate += 10\r\n\t\t\tmaster_hygiene_rate += 15\r\n\t\t\tdynslave_rate['hygiene'] += 15\r\n\t\t}\r\n\t\t$place = 'bedroom'\r\n\t}"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "\t$interaction_relaxed_anal = {\r\n\t\t$interaction_type = 'make_dynslave_do'\r\n\t\tinteraction_dynslave['repulse'] = 11 &! same as anal sex lesson\r\n\t\tinteraction_dynslave['motivation_repulse'] = 8 - master_style &! diligence will improve with 4+ aura stats, low master allure impedes diligence in this task - ImperatorAugustus\r\n\t\tstimulating = 1 &! sex acceptance will be added to repulse - ImperatorAugustus\r\n\t\tif dynslave['sub_anal'] <= 2: painful = 1\r\n\t\tif dynslave['sub_anal'] > 2 and master_penetration > 2: orgastic = 1\r\n\t\tif dynslave['moral'] < 1: shameful = 1 &! interacts with slave exhibitionism trait when non-devoted slave is exposed to master - ImperatorAugustus\r\n\t\t$refuse_txt = '  <<$dynslave_name>>는 당신과 성관계를 갖기를 거부한다. 뭐, 강간당하는 편을 더 원한다면야, 그렇게 만드는 건 어렵지 않지…'\r\n\t\t$subskill = 'slave[\"sub_anal\"]'\r\n\t\t$subskill_xp = 'slave[\"sub_anal_xp\"]'\r\n\t\tsex_ability = (1 + dynslave['roleplay'] + dynslave['sub_anal']*2)/3\r\n\t\tsex_quality = min(5, max(1, sex_ability))\r\n\t\t$special_part = {\r\n\t\t\t$bg_path = func('display_pic', 'dynslave', 'analsex', 'girls/sex_scenes/')\r\n\t\t\t$play_sound[1] = $assfuck_sound[dynslave['age']]\r\n\t\t\tif rebell[$dynslave_psy_status] < 0:\r\n\t\t\t\tif interaction_dynslave['diligence'] > 0: interaction_dynslave['diligence'] = 1\r\n\t\t\t\t$text[1] = $slave_seduction_anal[0] &! uses delayed sub-expressions\r\n\t\t\t\t$text[2] = $slave_foreplay_anal[0] &! uses delayed sub-expressions\r\n\t\t\t\t$text[3] = $slave_fuck_anal[0] &! uses delayed sub-expressions\r\n\t\t\telse\r\n\t\t\t\t$text[1] = $slave_seduction_anal[min(interaction_dynslave['diligence'], 1 + dynslave['roleplay'])] &! uses delayed sub-expressions\r\n\t\t\t\t$text[2] = $slave_foreplay_anal[min(interaction_dynslave['diligence'], 1 + dynslave['sub_anal'])] &! uses delayed sub-expressions\r\n\t\t\t\t!text2 was based on oral, but the text does not have that much to do with oral and you get weird continuity issues - on knees then on back\r\n\t\t\t\t$text[3] = $slave_fuck_anal[min(interaction_dynslave['diligence'], 1 + dynslave['sub_anal'])] &! uses delayed sub-expressions\r\n\t\t\tend\r\n\t\t\tinteraction_dynslave['erotic_stimulation'] = master_penetration\r\n\t\t\tejaculation_intensity = sex_quality\r\n\t\t\tif ejaculation_intensity > 0:\r\n\t\t\t\tmaster_penetration_rate += (skill_adv_mul * 2)\r\n\t\t\t\tdynamic $master_ejaculate\r\n\t\t\tend\r\n\t\t\tif dynslave['ill'] > 0 and master_ill = 0 and rand(1,6) > master_str and obereg_on = 0: master_ill = 1\r\n\t\t\tif dynslave['ill'] = 0 and master_ill > 0 and rand(1,6) > dynslave['stamina']: dynslave['ill'] = 1\r\n\t\t\tdynslave['pos_gentle'] = max(dynslave['pos_gentle'], 2)\r\n\t\t\tdynslave_rate['pride'] -= 1\r\n\t\t\tdynamic $master_energy_drop &! slave energy drop is handled in interaction_result\r\n\t\t\tdynslave['calories'] -= 1 & dynslave_rate['stamina'] += min(interaction_dynslave['diligence'], 1) & master_str_rate += iif(master_str < 4, 1, 0)\r\n\t\t\thouse_mess_rate += 10\r\n\t\t\tmaster_hygiene_rate += 20\r\n\t\t\tdynslave_rate['hygiene'] += 20\r\n\t\t}\r\n\t\t$place = 'bedroom'\r\n\t}",
+      "new": "\t$interaction_relaxed_anal = {\r\n\t\t$interaction_type = 'make_dynslave_do'\r\n\t\tinteraction_dynslave['repulse'] = 11 &! same as anal sex lesson\r\n\t\tinteraction_dynslave['motivation_repulse'] = 8 - master_style &! diligence will improve with 4+ aura stats, low master allure impedes diligence in this task - ImperatorAugustus\r\n\t\tstimulating = 1 &! sex acceptance will be added to repulse - ImperatorAugustus\r\n\t\tif dynslave['sub_anal'] <= 2: painful = 1\r\n\t\tif dynslave['sub_anal'] > 2 and master_penetration > 2: orgastic = 1\r\n\t\tif func('jo9_nymph_reaction', 'moral', 'dynslave') < 1: shameful = 1 &! interacts with slave exhibitionism trait when non-devoted slave is exposed to master - ImperatorAugustus\r\n\t\t$refuse_txt = '  <<$dynslave_name>>는 당신과 성관계를 갖기를 거부한다. 뭐, 강간당하는 편을 더 원한다면야, 그렇게 만드는 건 어렵지 않지…'\r\n\t\t$subskill = 'slave[\"sub_anal\"]'\r\n\t\t$subskill_xp = 'slave[\"sub_anal_xp\"]'\r\n\t\tsex_ability = (1 + dynslave['roleplay'] + dynslave['sub_anal']*2)/3\r\n\t\tsex_quality = min(5, max(1, sex_ability))\r\n\t\t$special_part = {\r\n\t\t\t$bg_path = func('display_pic', 'dynslave', 'analsex', 'girls/sex_scenes/')\r\n\t\t\t$play_sound[1] = $assfuck_sound[dynslave['age']]\r\n\t\t\tif rebell[$func('jo9_nymph_reaction', 'status', 'dynslave')] < 0:\r\n\t\t\t\tif interaction_dynslave['diligence'] > 0: interaction_dynslave['diligence'] = 1\r\n\t\t\t\t$text[1] = $slave_seduction_anal[0] &! uses delayed sub-expressions\r\n\t\t\t\t$text[2] = $slave_foreplay_anal[0] &! uses delayed sub-expressions\r\n\t\t\t\t$text[3] = $slave_fuck_anal[0] &! uses delayed sub-expressions\r\n\t\t\telse\r\n\t\t\t\t$text[1] = $slave_seduction_anal[min(interaction_dynslave['diligence'], 1 + dynslave['roleplay'])] &! uses delayed sub-expressions\r\n\t\t\t\t$text[2] = $slave_foreplay_anal[min(interaction_dynslave['diligence'], 1 + dynslave['sub_anal'])] &! uses delayed sub-expressions\r\n\t\t\t\t!text2 was based on oral, but the text does not have that much to do with oral and you get weird continuity issues - on knees then on back\r\n\t\t\t\t$text[3] = $slave_fuck_anal[min(interaction_dynslave['diligence'], 1 + dynslave['sub_anal'])] &! uses delayed sub-expressions\r\n\t\t\tend\r\n\t\t\tinteraction_dynslave['erotic_stimulation'] = master_penetration\r\n\t\t\tejaculation_intensity = sex_quality\r\n\t\t\tif ejaculation_intensity > 0:\r\n\t\t\t\tmaster_penetration_rate += (skill_adv_mul * 2)\r\n\t\t\t\tdynamic $master_ejaculate\r\n\t\t\tend\r\n\t\t\tif dynslave['ill'] > 0 and master_ill = 0 and rand(1,6) > master_str and obereg_on = 0: master_ill = 1\r\n\t\t\tif dynslave['ill'] = 0 and master_ill > 0 and rand(1,6) > dynslave['stamina']: dynslave['ill'] = 1\r\n\t\t\tif dynslave['nymphomania'] >= -1: dynslave['pos_gentle'] = max(dynslave['pos_gentle'], 2)\r\n\t\t\tdynslave_rate['pride'] -= 1\r\n\t\t\tdynamic $master_energy_drop &! slave energy drop is handled in interaction_result\r\n\t\t\tdynslave['calories'] -= 1 & dynslave_rate['stamina'] += min(interaction_dynslave['diligence'], 1) & master_str_rate += iif(master_str < 4, 1, 0)\r\n\t\t\thouse_mess_rate += 10\r\n\t\t\tmaster_hygiene_rate += 20\r\n\t\t\tdynslave_rate['hygiene'] += 20\r\n\t\t}\r\n\t\t$place = 'bedroom'\r\n\t}"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "\t$interaction_relaxed_oral = {\r\n\t\t$interaction_type = 'make_dynslave_do'\r\n\t\tstimulating = 1 &! sex acceptance will be added to repulse - ImperatorAugustus\r\n\t\tinteraction_dynslave['repulse'] = 6 &! same as blowjob lesson\r\n\t\tinteraction_dynslave['motivation_repulse'] = 6 - master_style &! diligence will improve with 2+ aura stats, low master allure impedes diligence in this task - ImperatorAugustus\r\n\t\teasy_for_master = 1 &! lower energy consumption for master makes this more competitive with vaginal and anal - ImperatorAugustus\r\n\t\tif dynslave['oral'] > 3: orgastic = 1\r\n\t\t$refuse_txt = '  <<$dynslave_name>>는 당신과 성관계를 갖기를 거부한다. 뭐, 강간당하는 편을 더 원한다면야, 그렇게 만드는 건 어렵지 않지…'\r\n\t\t$subskill = 'slave[\"sub_bj\"]'\r\n\t\t$subskill_xp = 'slave[\"sub_bj_xp\"]'\r\n\t\tsex_ability = (1 + dynslave['roleplay'] + dynslave['oral']*2)/3\r\n\t\tsex_quality = min(5, max(1, sex_ability))\r\n\t\t$special_part = {\r\n\t\t\t$bg_path = func('display_pic', 'dynslave', 'bj', 'girls/sex_scenes/')\r\n\t\t\t$play_sound[1] = $bj_sound[dynslave['age']]\r\n\t\t\tif rebell[$dynslave_psy_status] < 0:\r\n\t\t\t\tif interaction_dynslave['diligence'] > 0: interaction_dynslave['diligence'] = 1\r\n\t\t\t\t$text[1] = $slave_seduction_oral[0] &! uses delayed sub-expressions\r\n\t\t\t\t$text[2] = $slave_foreplay_oral[0] &! uses delayed sub-expressions\r\n\t\t\t\t$text[3] = $slave_fuck_oral[0] &! uses delayed sub-expressions\r\n\t\t\t\tif dynslave['oral'] > 0: interaction_dynslave['erotic_stimulation'] = master_excitement\r\n\t\t\telse\r\n\t\t\t\t$text[1] = $slave_seduction_oral[min(interaction_dynslave['diligence'], 1 + dynslave['roleplay'])] &! uses delayed sub-expressions\r\n\t\t\t\t$text[2] = $slave_foreplay_oral[min(interaction_dynslave['diligence'], 1 + dynslave['oral'])] &! uses delayed sub-expressions\r\n\t\t\t\t$text[3] = $slave_fuck_oral[min(interaction_dynslave['diligence'], 1 + dynslave['oral'])] &! uses delayed sub-expressions\r\n\t\t\t\tif dynslave['oral'] > 0: interaction_dynslave['erotic_stimulation'] = max(master_style - 1, master_excitement)\r\n\t\t\tend\r\n\t\t\tinteraction_dynslave['erotic_stimulation'] = master_oral\r\n\t\t\tejaculation_intensity = sex_quality\r\n\t\t\tif ejaculation_intensity > 0:\r\n\t\t\t\tmaster_oral_rate += (skill_adv_mul * 2)\r\n\t\t\t\tdynamic $master_ejaculate\r\n\t\t\tend\r\n\t\t\tif rand(1,12) = 1 and dynslave['ill'] = 0 and master_ill > 0 and rand(1,6) > dynslave['stamina']: dynslave['ill'] = 1 &! disease transmission only from master to slave\r\n\t\t\tdynslave['pos_gentle'] = max(dynslave['pos_gentle'], 2)\r\n\t\t\tdynamic $master_energy_drop &! slave energy drop is handled in interaction_result\r\n\t\t\thouse_mess_rate += 3\r\n\t\t\tmaster_hygiene_rate += 5\r\n\t\t\tdynslave_rate['hygiene'] += 10\r\n\t\t}\r\n\t\t$place = 'bedroom'\r\n\t}",
+      "new": "\t$interaction_relaxed_oral = {\r\n\t\t$interaction_type = 'make_dynslave_do'\r\n\t\tstimulating = 1 &! sex acceptance will be added to repulse - ImperatorAugustus\r\n\t\tinteraction_dynslave['repulse'] = 6 &! same as blowjob lesson\r\n\t\tinteraction_dynslave['motivation_repulse'] = 6 - master_style &! diligence will improve with 2+ aura stats, low master allure impedes diligence in this task - ImperatorAugustus\r\n\t\teasy_for_master = 1 &! lower energy consumption for master makes this more competitive with vaginal and anal - ImperatorAugustus\r\n\t\tif dynslave['oral'] > 3: orgastic = 1\r\n\t\t$refuse_txt = '  <<$dynslave_name>>는 당신과 성관계를 갖기를 거부한다. 뭐, 강간당하는 편을 더 원한다면야, 그렇게 만드는 건 어렵지 않지…'\r\n\t\t$subskill = 'slave[\"sub_bj\"]'\r\n\t\t$subskill_xp = 'slave[\"sub_bj_xp\"]'\r\n\t\tsex_ability = (1 + dynslave['roleplay'] + dynslave['oral']*2)/3\r\n\t\tsex_quality = min(5, max(1, sex_ability))\r\n\t\t$special_part = {\r\n\t\t\t$bg_path = func('display_pic', 'dynslave', 'bj', 'girls/sex_scenes/')\r\n\t\t\t$play_sound[1] = $bj_sound[dynslave['age']]\r\n\t\t\tif rebell[$func('jo9_nymph_reaction', 'status', 'dynslave')] < 0:\r\n\t\t\t\tif interaction_dynslave['diligence'] > 0: interaction_dynslave['diligence'] = 1\r\n\t\t\t\t$text[1] = $slave_seduction_oral[0] &! uses delayed sub-expressions\r\n\t\t\t\t$text[2] = $slave_foreplay_oral[0] &! uses delayed sub-expressions\r\n\t\t\t\t$text[3] = $slave_fuck_oral[0] &! uses delayed sub-expressions\r\n\t\t\t\tif dynslave['oral'] > 0: interaction_dynslave['erotic_stimulation'] = master_excitement\r\n\t\t\telse\r\n\t\t\t\t$text[1] = $slave_seduction_oral[min(interaction_dynslave['diligence'], 1 + dynslave['roleplay'])] &! uses delayed sub-expressions\r\n\t\t\t\t$text[2] = $slave_foreplay_oral[min(interaction_dynslave['diligence'], 1 + dynslave['oral'])] &! uses delayed sub-expressions\r\n\t\t\t\t$text[3] = $slave_fuck_oral[min(interaction_dynslave['diligence'], 1 + dynslave['oral'])] &! uses delayed sub-expressions\r\n\t\t\t\tif dynslave['oral'] > 0: interaction_dynslave['erotic_stimulation'] = max(master_style - 1, master_excitement)\r\n\t\t\tend\r\n\t\t\tinteraction_dynslave['erotic_stimulation'] = master_oral\r\n\t\t\tejaculation_intensity = sex_quality\r\n\t\t\tif ejaculation_intensity > 0:\r\n\t\t\t\tmaster_oral_rate += (skill_adv_mul * 2)\r\n\t\t\t\tdynamic $master_ejaculate\r\n\t\t\tend\r\n\t\t\tif rand(1,12) = 1 and dynslave['ill'] = 0 and master_ill > 0 and rand(1,6) > dynslave['stamina']: dynslave['ill'] = 1 &! disease transmission only from master to slave\r\n\t\t\tif dynslave['nymphomania'] >= -1: dynslave['pos_gentle'] = max(dynslave['pos_gentle'], 2)\r\n\t\t\tdynamic $master_energy_drop &! slave energy drop is handled in interaction_result\r\n\t\t\thouse_mess_rate += 3\r\n\t\t\tmaster_hygiene_rate += 5\r\n\t\t\tdynslave_rate['hygiene'] += 10\r\n\t\t}\r\n\t\t$place = 'bedroom'\r\n\t}"
+    },
+    {
+      "location": "sex_initiate",
+      "field": "body",
+      "count": 1,
+      "old": "sex['girl_moral'] = slave['moral']",
+      "new": "sex['girl_moral'] = func('jo9_nymph_reaction', 'moral', 'slave')"
+    },
+    {
+      "location": "sex_initiate",
+      "field": "body",
+      "count": 1,
+      "old": "sex['girl_obedience'] = slave['obedience']",
+      "new": "sex['girl_obedience'] = func('jo9_nymph_reaction', 'obedience', 'slave')"
+    },
+    {
+      "location": "sex_interaction_result",
+      "field": "body",
+      "count": 1,
+      "old": "slave['pos_gentle'] = max(slave['pos_gentle'], 2)",
+      "new": "if slave['nymphomania'] >= -1: slave['pos_gentle'] = max(slave['pos_gentle'], 2)"
+    },
+    {
+      "location": "sex_interaction_result_woman",
+      "field": "body",
+      "count": 1,
+      "old": "slave['pos_gentle'] = 1",
+      "new": "if slave['nymphomania'] >= -1: slave['pos_gentle'] = 1"
+    },
+    {
+      "location": "sex_end",
+      "field": "body",
+      "count": 1,
+      "old": "slave['pride'] - slave['moral']*2 - slave['arousal']",
+      "new": "slave['pride'] - func('jo9_nymph_reaction', 'moral', 'slave')*2 - slave['arousal']"
+    },
+    {
+      "location": "sex_initiate",
+      "field": "body",
+      "count": 1,
+      "old": "sex['girl_moral'] = assistant['moral']",
+      "new": "sex['girl_moral'] = func('jo9_nymph_reaction', 'moral', 'assistant')"
+    },
+    {
+      "location": "sex_initiate",
+      "field": "body",
+      "count": 1,
+      "old": "sex['girl_obedience'] = assistant['obedience']",
+      "new": "sex['girl_obedience'] = func('jo9_nymph_reaction', 'obedience', 'assistant')"
+    },
+    {
+      "location": "sex_interaction_result",
+      "field": "body",
+      "count": 1,
+      "old": "assistant['pos_gentle'] = max(assistant['pos_gentle'], 2)",
+      "new": "if assistant['nymphomania'] >= -1: assistant['pos_gentle'] = max(assistant['pos_gentle'], 2)"
+    },
+    {
+      "location": "sex_interaction_result_woman",
+      "field": "body",
+      "count": 1,
+      "old": "assistant['pos_gentle'] = 1",
+      "new": "if assistant['nymphomania'] >= -1: assistant['pos_gentle'] = 1"
+    },
+    {
+      "location": "sex_end",
+      "field": "body",
+      "count": 1,
+      "old": "assistant['pride'] - assistant['moral']*2 - assistant['arousal']",
+      "new": "assistant['pride'] - func('jo9_nymph_reaction', 'moral', 'assistant')*2 - assistant['arousal']"
+    },
+    {
+      "location": "interaction_result",
+      "field": "body",
+      "count": 1,
+      "old": "if $interaction_type = 'praise_erotic':\r\n\t$text[1] = $praise_erotic[interaction_reward_text]\r\n\tif interaction_reward_level = 5 and slave['ero_rwd_cnt'] ! 1:\r\n\t\t$text[2] = $praise_erotic5_reaction[$slave_psy_status]\r\n\telse\r\n\t\t$text[2] = $praise_erotic_reaction[$slave_psy_status]\r\n\tend\r\n\tif interaction_reward_level ! 5 or slave['ero_rwd_cnt'] = 1 or ($slave_psy_status ! 'frightened' and $slave_psy_status ! 'lachrymose' and $slave_psy_status ! 'broken'):\r\n\t\tdynamic $replace($dyn_erotic_stimulation, 'dyn'+'slave', 'slave') &! these interactions are required to set erotic stimulation outside $special_part - ImperatorAugustus\r\n\t\tif interaction_slave['final_stimulation'] <= 0:\r\n\t\t\t$text[2] = '  <<$slave_name>>는 당신의 행동에 반응하지 않는다. 그녀의 흥분이 오르지 않는 것이 보이고, 따라서 이 보상은 아무 효과도 내지 못할 것이다. 당신의 노예를 흥분시킬 무언가를 생각해 내야 한다…'\r\n\t\t\tif master_style < 3: $text[2] += '<br><br>  어쩌면 당신의 매력을 좀 더 갈고닦아야 할지도 모르겠다?'\r\n\t\t\tif slave['pride'] > 0: $text[2] += ' 그녀의 개방성을 다듬는 것도 좋은 생각일 것이다.'\r\n\t\t\thouse_mess_rate += 10\r\n\t\t\tmaster_hygiene_rate += 10\r\n\t\t\tslave_rate['hygiene'] += 10\r\n\t\t\tkillvar '$special_image'\r\n\t\telse\r\n\t\t\tinteraction_reward_potence += interaction_reward_level\r\n\t\t\tdynamic $special_part &! apply effects (including hygiene) only when final stimulation is non-zero, may modify interaction_reward_potence\r\n\t\t\tslave['pos_gentle'] = max(slave['pos_gentle'], interaction_reward_potence)\r\n\t\t\tslave_rate['mood'] += interaction_reward_potence*2\r\n\t\t\tslave_rate['angst'] -= slave['sensitivity']\r\n\t\t\tslave_rate['moral'] += max(0, min(2, (1 + interaction_reward_level)/2) - slave_already_done_today[$str(interaction)])\r\n\t\t\tif slave['virtue'] < interaction_reward_level: slave_rate['spoil'] += interaction_reward_potence\r\n\t\t\tif slave['virtue'] >= interaction_reward_level: slave_rate['rational'] += min(interaction_reward_potence, slave['intellect'])\r\n\t\t\tmaster_mood_rate += slave['beauty']*3\r\n\t\t\tif is_perv ! 0 and slave['age'] = CONST_INT['loli_age']:\r\n\t\t\t\tmaster_excitement_rate += interaction_reward_level*3\r\n\t\t\t\tmaster_perv_rate += interaction_reward_level*2\r\n\t\t\t\tif master_libido > 0 and (interaction_reward_level < 5 or slave['ero_rwd_cnt'] = 1):\r\n\t\t\t\t\tif no_loli = 1:\r\n\t\t\t\t\t\t$text[] = $praise_erotic_no_loli0[interaction_reward_text]\r\n\t\t\t\t\telse\r\n\t\t\t\t\t\t$text[] = $praise_erotic_no_loli2[interaction_reward_text]\r\n\t\t\t\t\tend\r\n\t\t\t\tend\r\n\t\t\tend\r\n\t\tend\r\n\tend\r\n\tif $slave_psy_status = 'broken':\r\n\t\tslave['neg_cheap_reward'] = 0\r\n\telseif interaction_reward_level < min(5, min(3, slave['total_rewards']/5) + min(3, max(slave['spoil'], slave['pride'] - 2)) - max(0, slave['moral'] - 2)):\r\n\t\tif slave['promise_reward'] > 0: slave['neg_cheap_reward'] = 100\r\n\telse\r\n\t\tslave['neg_cheap_reward'] = 0\r\n\tend\r\n\tslave['promise_reward'] = 0 &! promise fulfilled, even if the slave disliked it\r\n\tslave['total_rewards'] += 1\r\n\tslave['virtue'] = 0\r\nend",
+      "new": "if $interaction_type = 'praise_erotic':\r\n\t$text[1] = $praise_erotic[interaction_reward_text]\r\n\tif interaction_reward_level = 5 and slave['ero_rwd_cnt'] ! 1:\r\n\t\t$text[2] = $praise_erotic5_reaction[$slave_psy_status]\r\n\telse\r\n\t\t$text[2] = $praise_erotic_reaction[$slave_psy_status]\r\n\tend\r\n\tif interaction_reward_level ! 5 or slave['ero_rwd_cnt'] = 1 or ($slave_psy_status ! 'frightened' and $slave_psy_status ! 'lachrymose' and $slave_psy_status ! 'broken'):\r\n\t\tdynamic $replace($dyn_erotic_stimulation, 'dyn'+'slave', 'slave') &! these interactions are required to set erotic stimulation outside $special_part - ImperatorAugustus\r\n\t\tif interaction_slave['final_stimulation'] <= 0:\r\n\t\t\t$text[2] = '  <<$slave_name>>는 당신의 행동에 반응하지 않는다. 그녀의 흥분이 오르지 않는 것이 보이고, 따라서 이 보상은 아무 효과도 내지 못할 것이다. 당신의 노예를 흥분시킬 무언가를 생각해 내야 한다…'\r\n\t\t\tif master_style < 3: $text[2] += '<br><br>  어쩌면 당신의 매력을 좀 더 갈고닦아야 할지도 모르겠다?'\r\n\t\t\tif slave['pride'] > 0: $text[2] += ' 그녀의 개방성을 다듬는 것도 좋은 생각일 것이다.'\r\n\t\t\thouse_mess_rate += 10\r\n\t\t\tmaster_hygiene_rate += 10\r\n\t\t\tslave_rate['hygiene'] += 10\r\n\t\t\tkillvar '$special_image'\r\n\t\telse\r\n\t\t\tinteraction_reward_potence += interaction_reward_level\r\n\t\t\tdynamic $special_part &! apply effects (including hygiene) only when final stimulation is non-zero, may modify interaction_reward_potence\r\n\t\t\tif slave['nymphomania'] >= -1: slave['pos_gentle'] = max(slave['pos_gentle'], interaction_reward_potence)\r\n\t\t\tslave_rate['mood'] += interaction_reward_potence*2\r\n\t\t\tslave_rate['angst'] -= slave['sensitivity']\r\n\t\t\tif slave['nymphomania'] >= -1: slave_rate['moral'] += max(0, min(2, (1 + interaction_reward_level)/2) - slave_already_done_today[$str(interaction)])\r\n\t\t\tif slave['virtue'] < interaction_reward_level: slave_rate['spoil'] += interaction_reward_potence\r\n\t\t\tif slave['virtue'] >= interaction_reward_level: slave_rate['rational'] += min(interaction_reward_potence, slave['intellect'])\r\n\t\t\tmaster_mood_rate += slave['beauty']*3\r\n\t\t\tif is_perv ! 0 and slave['age'] = CONST_INT['loli_age']:\r\n\t\t\t\tmaster_excitement_rate += interaction_reward_level*3\r\n\t\t\t\tmaster_perv_rate += interaction_reward_level*2\r\n\t\t\t\tif master_libido > 0 and (interaction_reward_level < 5 or slave['ero_rwd_cnt'] = 1):\r\n\t\t\t\t\tif no_loli = 1:\r\n\t\t\t\t\t\t$text[] = $praise_erotic_no_loli0[interaction_reward_text]\r\n\t\t\t\t\telse\r\n\t\t\t\t\t\t$text[] = $praise_erotic_no_loli2[interaction_reward_text]\r\n\t\t\t\t\tend\r\n\t\t\t\tend\r\n\t\t\tend\r\n\t\tend\r\n\tend\r\n\tif $slave_psy_status = 'broken':\r\n\t\tslave['neg_cheap_reward'] = 0\r\n\telseif interaction_reward_level < min(5, min(3, slave['total_rewards']/5) + min(3, max(slave['spoil'], slave['pride'] - 2)) - max(0, slave['moral'] - 2)):\r\n\t\tif slave['promise_reward'] > 0: slave['neg_cheap_reward'] = 100\r\n\telse\r\n\t\tslave['neg_cheap_reward'] = 0\r\n\tend\r\n\tslave['promise_reward'] = 0 &! promise fulfilled, even if the slave disliked it\r\n\tslave['total_rewards'] += 1\r\n\tslave['virtue'] = 0\r\nend"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "IF interaction = 5608:\r\n $interaction_type = 'assistant_prise_erotic'\r\n\r\n erotic_stimulation = master_petting + assistant[\"arousal\"]\r\n $text[1] = $prise_erotic_assistant[2]\r\n orgastic = 0\r\n add_assistant_hygiene = 5\r\n add_master_hygiene = 5\r\n add_house_mess = 10\r\n $play_sound[2] = '<<$petting_sound[assistant[\"age\"]]>>'\r\n IF master_petting > 2 and assistant[\"massaged\"] = 0:\r\n  assistant[\"massaged\"] = 1\r\n  if assistant[\"energy\"] ! 5: assistant[\"energy\"] += 1\r\n END\r\n $place = 'bedroom'\r\n gs 'jo9_traits', 'activity_reveal', 'assistant'\r\n IF assistant[\"spoil\"] < 3 and assistant[\"obedience\"] > 1:\r\n  assistant_rate[\"sensitivity\"] += 2\r\n  assistant_rate[\"instinct\"] += 1\r\n  assistant_rate[\"moral\"] += 2\r\n  assistant_rate[\"ego\"] += 1\r\n  assistant_rate[\"arousal\"] += func('jo9_nymph_arousal', 'gain', 'assistant', master_str + master_domination + assistant[\"obedience\"])\r\n END\r\n master_petting_rate += 2\r\n assistant_rate[\"spoil\"] += (master_str + master_domination + master_cha)/2\r\n if assistant[\"bruises\"] > 0 or assistant_rate[\"bruises\"] > 0: assistant_rate[\"bruises\"] -= assistant[\"stamina\"]\r\n if assistant[\"wounds\"] > 0 or assistant_rate[\"wounds\"] > 0: assistant_rate[\"wounds\"] -= assistant[\"stamina\"]\r\n if assistant[\"angst\"] > 0 or assistant_rate[\"angst\"] > 0: assistant_rate[\"angst\"] -= (assistant[\"sensitivity\"]*2)\r\n if assistant[\"fear\"] > 0 or assistant_rate[\"fear\"] > 0: assistant_rate[\"fear\"] -= (assistant[\"temper\"]*2)\r\n if master_petting > 3 and assistant[\"angst\"] < 2: assistant['neg_pain'] = 0\r\n if assistant['rehabilitation'] > 0: assistant['rehabilitation'] -= 1\r\nEND",
+      "new": "IF interaction = 5608:\r\n $interaction_type = 'assistant_prise_erotic'\r\n\r\n erotic_stimulation = master_petting + assistant[\"arousal\"]\r\n $text[1] = $prise_erotic_assistant[2]\r\n orgastic = 0\r\n add_assistant_hygiene = 5\r\n add_master_hygiene = 5\r\n add_house_mess = 10\r\n $play_sound[2] = '<<$petting_sound[assistant[\"age\"]]>>'\r\n IF master_petting > 2 and assistant[\"massaged\"] = 0:\r\n  assistant[\"massaged\"] = 1\r\n  if assistant[\"energy\"] ! 5: assistant[\"energy\"] += 1\r\n END\r\n $place = 'bedroom'\r\n gs 'jo9_traits', 'activity_reveal', 'assistant'\r\n IF assistant[\"spoil\"] < 3 and assistant[\"obedience\"] > 1:\r\n  assistant_rate[\"sensitivity\"] += 2\r\n  assistant_rate[\"instinct\"] += 1\r\n  if assistant['nymphomania'] >= -1: assistant_rate[\"moral\"] += 2\r\n  assistant_rate[\"ego\"] += 1\r\n  assistant_rate[\"arousal\"] += func('jo9_nymph_arousal', 'gain', 'assistant', master_str + master_domination + assistant[\"obedience\"])\r\n END\r\n master_petting_rate += 2\r\n assistant_rate[\"spoil\"] += (master_str + master_domination + master_cha)/2\r\n if assistant[\"bruises\"] > 0 or assistant_rate[\"bruises\"] > 0: assistant_rate[\"bruises\"] -= assistant[\"stamina\"]\r\n if assistant[\"wounds\"] > 0 or assistant_rate[\"wounds\"] > 0: assistant_rate[\"wounds\"] -= assistant[\"stamina\"]\r\n if assistant[\"angst\"] > 0 or assistant_rate[\"angst\"] > 0: assistant_rate[\"angst\"] -= (assistant[\"sensitivity\"]*2)\r\n if assistant[\"fear\"] > 0 or assistant_rate[\"fear\"] > 0: assistant_rate[\"fear\"] -= (assistant[\"temper\"]*2)\r\n if master_petting > 3 and assistant[\"angst\"] < 2: assistant['neg_pain'] = 0\r\n if assistant['rehabilitation'] > 0: assistant['rehabilitation'] -= 1\r\nEND"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "IF interaction = 5609:\r\n $interaction_type = 'assistant_prise_erotic'\r\n erotic_stimulation = (master_oral + assistant[\"arousal\"])*4\r\n $text[1] = $prise_erotic_assistant[5]\r\n orgastic = 1\r\n assistant_rate[\"moral\"] += 1\r\n add_assistant_hygiene = 2\r\n add_master_hygiene = 10\r\n add_house_mess = 10\r\n $place = 'bedroom'\r\n $play_sound[2] = '<<$orgasm_sound[assistant[\"age\"]]>>'\r\n if assistant[\"nymphomania\"] ! 0 and assistant[\"nymphomania_revealed\"] = 0: assistant[\"nymphomania_revealed\"] = 1\r\n master_oral_rate += 2\r\n assistant_rate[\"angst\"] -= assistant[\"sensitivity\"]*2\r\nEND",
+      "new": "IF interaction = 5609:\r\n $interaction_type = 'assistant_prise_erotic'\r\n erotic_stimulation = (master_oral + assistant[\"arousal\"])*4\r\n $text[1] = $prise_erotic_assistant[5]\r\n orgastic = 1\r\n if assistant['nymphomania'] >= -1: assistant_rate[\"moral\"] += 1\r\n add_assistant_hygiene = 2\r\n add_master_hygiene = 10\r\n add_house_mess = 10\r\n $place = 'bedroom'\r\n $play_sound[2] = '<<$orgasm_sound[assistant[\"age\"]]>>'\r\n if assistant[\"nymphomania\"] ! 0 and assistant[\"nymphomania_revealed\"] = 0: assistant[\"nymphomania_revealed\"] = 1\r\n master_oral_rate += 2\r\n assistant_rate[\"angst\"] -= assistant[\"sensitivity\"]*2\r\nEND"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "if interaction = menu_threesome_noassistant:\r\n\t$interaction_type = 'make_slave_do'\r\n\tinteraction_slave['repulse'] = iif(slave['virginity'] < 1, 9, 8) &! same as threesome lesson\r\n\tinteraction_slave['motivation_repulse'] = 5 - (slave['oral'] + slave['sub_vaginal'])/2\r\n\tstimulating = 1 &! sex acceptance will be added to repulse - ImperatorAugustus\r\n\tlesbian = 1\r\n\torgastic = 1\r\n\t$subskill = 'slave[\"sub_threesome\"]'\r\n\t$subskill_xp = 'slave[\"sub_threesome_xp\"]'\r\n\t$target_affinity = 'homosexualism'\r\n\t$refuse_txt = '  <<$slave_name>>는 여자와 섹스하는 것을 거부한다. 복종을 가르쳐야 할 듯하다.'\r\n\tsex_ability = (slave['roleplay'] + slave['oral'] + slave['penetration'] + 9)/6 &! equivalent to a B+ skilled assistant\r\n\tsex_quality = min(5, max(1, sex_ability * 2))\r\n\t$special_part = {\r\n\t\tif master_excitement < 0:\r\n\t\t\t$bg_path = 'scene/flaccid'\r\n\t\t\tg = rand(1, picMax[\"flaccid\"])\r\n\t\t\tif g > 1: $bg_path += '_' + $str(g)\r\n\t\t\t$text[1] = '  아쉽게도 당신은 제대로 서지 못하고, 그래서 의도했던 쓰리섬 대신 레즈비언 쇼가 되고 만다.'\r\n\t\t\t$special_action[1] = { $return_lock = 'interaction' & interaction = menu_lesbianshow }\r\n\t\t\t$interaction_type = 'special' &! skip interaction_result - ImperatorAugustus\r\n\t\telse\r\n\t\t\tsparks -= 1 &! cost of hiring a whore\r\n\t\t\t$bg_path = func('display_pic', 'slave, <<$slave_les_txt5>>', 'threesome', 'girls/sex_scenes/') &! slave, general because no assistant\r\n\t\t\tif slave['virginity'] < 2: $bg_path = func('display_pic', 'slave', 'defloration', 'girls/sex_scenes/')\r\n\t\t\t$play_sound[1] = $slopy[0]\r\n\t\t\t$text[1] = $threesome_noassistant_description[slave['sub_threesome']] &! TODO - adapt $trio_sex_description[rand(1,5)] for non-assistant\r\n\t\t\tslave['calories'] -= 1 & slave_rate['stamina'] += min(interaction_slave['diligence'], 1) & master_str_rate += iif(master_str < 4, 1, 0)\r\n\t\t\tinteraction_slave['erotic_stimulation'] = master_fetish\r\n\t\t\tejaculation_intensity = max(2, sex_quality)\r\n\t\t\tif is_perv ! 0:\r\n\t\t\t\tif slave['age'] = CONST_INT['loli_age']:\r\n\t\t\t\t\tmaster_perv_rate += slave['beauty']\r\n\t\t\t\telseif slave['boobs'] > 2:\r\n\t\t\t\t\t$text[1] += ' 물론 당신은 <<$slave_name>>가 젖소 같은 젖통만 없었으면 좋겠다고 생각한다.'\r\n\t\t\t\t\tmaster_excitement_rate -= sex_quality * slave['boobs']\r\n\t\t\t\tend\r\n\t\t\tend\r\n! JO9 MOD START J9M1675 | 2026-10-15_z_meiki_voluntary_outcome | changed block; context may be included\r\n\t\t\t! MEIKI_CHECKS_V1: direct and companion results control this branch.\r\n\t\t\tif func('jo9_meiki_checks', 'direct', interaction_slave['diligence'], func('jo9_meiki_willing', 'slave', 1)) = 1:\r\n\t\t\t\tif func('jo9_meiki_checks', 'companion', $slave_les_txt5) = 1: master_mood_rate += 1\r\n\t\t\tend\r\n! JO9 MOD END J9M1675\r\n\t\t\tdynamic $replace($vaginally_penetrated, 'dyn'+'slave', 'slave') &! includes $master_ejaculate\r\n\t\t\thouse_mess_rate += 15\r\n\t\t\tmaster_hygiene_rate += 15\r\n\t\t\tslave_rate['hygiene'] += 15\r\n\t\tend\r\n\t}\r\n\t$place = 'bedroom'\r\nend",
+      "new": "if code_defined['jo9_interaction_paid_threesome'] = 0:\r\n code_defined['jo9_interaction_paid_threesome'] = 1\r\n $jo9_interaction_paid_threesome = {\r\n\t$interaction_type = 'make_dynslave_do'\r\n\tinteraction_dynslave['repulse'] = iif(dynslave['virginity'] < 1, 9, 8) &! same as threesome lesson\r\n\tinteraction_dynslave['motivation_repulse'] = 5 - (dynslave['oral'] + dynslave['sub_vaginal'])/2\r\n\tstimulating = 1 &! sex acceptance will be added to repulse - ImperatorAugustus\r\n\tlesbian = 1\r\n\torgastic = 1\r\n\t$subskill = 'slave[\"sub_threesome\"]'\r\n\t$subskill_xp = 'slave[\"sub_threesome_xp\"]'\r\n\t$target_affinity = 'homosexualism'\r\n\t$refuse_txt = '  <<$dynslave_name>>는 여자와 섹스하는 것을 거부한다. 복종을 가르쳐야 할 듯하다.'\r\n\tsex_ability = (dynslave['roleplay'] + dynslave['oral'] + dynslave['penetration'] + 9)/6 &! equivalent to a B+ skilled assistant\r\n\tsex_quality = min(5, max(1, sex_ability * 2))\r\n\t$special_part = {\r\n\t\tif master_excitement < 0:\r\n\t\t\t$bg_path = 'scene/flaccid'\r\n\t\t\tg = rand(1, picMax[\"flaccid\"])\r\n\t\t\tif g > 1: $bg_path += '_' + $str(g)\r\n\t\t\t$text[1] = '  아쉽게도 당신은 제대로 서지 못하고, 그래서 의도했던 쓰리섬 대신 레즈비언 쇼가 되고 만다.'\r\n\t\t\t$special_action[1] = { $return_lock = 'interaction' & interaction = menu_lesbianshow }\r\n\t\t\t$interaction_type = 'special' &! skip interaction_result - ImperatorAugustus\r\n\t\telse\r\n\t\t\tsparks -= 1 &! cost of hiring a whore\r\n\t\t\t$bg_path = func('display_pic', 'dynslave, <<$slave_les_txt5>>', 'threesome', 'girls/sex_scenes/') &! dynslave, general because no assistant\r\n\t\t\tif dynslave['virginity'] < 2: $bg_path = func('display_pic', 'dynslave', 'defloration', 'girls/sex_scenes/')\r\n\t\t\t$play_sound[1] = $slopy[0]\r\n\t\t\t$text[1] = $threesome_noassistant_description[dynslave['sub_threesome']] &! TODO - adapt $trio_sex_description[rand(1,5)] for non-assistant\r\n\t\t\tdynslave['calories'] -= 1 & dynslave_rate['stamina'] += min(interaction_dynslave['diligence'], 1) & master_str_rate += iif(master_str < 4, 1, 0)\r\n\t\t\tinteraction_dynslave['erotic_stimulation'] = master_fetish\r\n\t\t\tejaculation_intensity = max(2, sex_quality)\r\n\t\t\tif is_perv ! 0:\r\n\t\t\t\tif dynslave['age'] = CONST_INT['loli_age']:\r\n\t\t\t\t\tmaster_perv_rate += dynslave['beauty']\r\n\t\t\t\telseif dynslave['boobs'] > 2:\r\n\t\t\t\t\t$text[1] += ' 물론 당신은 <<$dynslave_name>>가 젖소 같은 젖통만 없었으면 좋겠다고 생각한다.'\r\n\t\t\t\t\tmaster_excitement_rate -= sex_quality * dynslave['boobs']\r\n\t\t\t\tend\r\n\t\t\tend\r\n! JO9 MOD START J9M1675 | 2026-10-15_z_meiki_voluntary_outcome | changed block; context may be included\r\n\t\t\t! MEIKI_CHECKS_V1: direct and companion results control this branch.\r\n\t\t\tif func('jo9_meiki_checks', 'direct', interaction_dynslave['diligence'], func('jo9_meiki_willing', 'dynslave', 1)) = 1:\r\n\t\t\t\tif func('jo9_meiki_checks', 'companion', $slave_les_txt5) = 1: master_mood_rate += 1\r\n\t\t\tend\r\n! JO9 MOD END J9M1675\r\n\t\t\tdynamic $replace($vaginally_penetrated, 'dyn'+'slave', 'dynslave') &! includes $master_ejaculate\r\n\t\t\thouse_mess_rate += 15\r\n\t\t\tmaster_hygiene_rate += 15\r\n\t\t\tdynslave_rate['hygiene'] += 15\r\n\t\tend\r\n\t}\r\n\t$place = 'bedroom'\r\n }\r\nend\r\nif interaction = menu_threesome_noassistant: dynamic $replace($jo9_interaction_paid_threesome, 'dyn'+'slave', 'slave')\r\nif interaction = 65483:\r\n if assistant_state ! CONST_INT['slave_exist'] or assistant['energy'] <= -2 or sparks < 1 or master_excitement < 0: gt 'menu_form'\r\n dynamic $replace($jo9_interaction_paid_threesome, 'dyn'+'slave', 'assistant')\r\nend"
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "count": 1,
+      "old": "\n\t\telseif assistant_state = CONST_INT['slave_exist'] and assistant['energy'] > -2:\r\n\t\t\tfunc('$menu', 'goto', $menu_item_Threesome, menu_Threesome_noassistant, 'interaction', 'interaction', '편안한 3P ($1)', '다른 여자를 불러서 <<$slave_name>>와 3p')",
+      "new": "\n\t\telseif assistant_state = CONST_INT['slave_exist'] and assistant['energy'] > -2 and sparks >= 1 and master_excitement >= 0:\r\n\t\t\tfunc('$menu', 'goto', $menu_item_Threesome, 65483, 'interaction', 'interaction', '편안한 3P ($1)', '다른 여자를 불러서 <<$assistant_name>>와 3p')"
+    },
+    {
+      "location": "jo9_traits_personality",
+      "field": "body",
+      "count": 1,
+      "old": "elseif $jo9_trait_personality_mode = 'performance':",
+      "new": "  if result > 0 and jo9actor['nymphomania'] > 1 and jo9actor['jo9_nymph_relief_day'] = day + 1: result += 1\r\nelseif $jo9_trait_personality_mode = 'performance':"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "count": 1,
+      "old": "\thealing = max(master_medic, assistant['nurse']) &! ImperatorAugustus: changed to use best skill of master or assistant instead of sum",
+      "new": "\thealing = max(master_medic, func('jo9_nymph_productivity', 'assistant', assistant['nurse'], 5)) &! ImperatorAugustus: changed to use best skill of master or assistant instead of sum"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "count": 1,
+      "old": "\t\t\tslave_healing_bonus = max(master_medic, assistant['nurse']) &! ImperatorAugustus: changed to use best skill of master or assistant instead of sum",
+      "new": "\t\t\tslave_healing_bonus = max(master_medic, func('jo9_nymph_productivity', 'assistant', assistant['nurse'], 5)) &! ImperatorAugustus: changed to use best skill of master or assistant instead of sum"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "count": 1,
+      "old": "\t\t\t\tslave_healing_bonus = farmhand['nurse'] &! for livestock, only farmhand skill is considered",
+      "new": "\t\t\t\tslave_healing_bonus = func('jo9_nymph_productivity', 'farmhand', farmhand['nurse'], 5) &! for livestock, only farmhand skill is considered"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "count": 1,
+      "old": "\tif room4['service'] < 3 and house_mess = 0: house_mess_rate = 10 ",
+      "new": "\tif func('jo9_nymph_productivity', 'room4', room4['service'], 5) < 3 and house_mess = 0: house_mess_rate = 10 "
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "count": 1,
+      "old": "\thouse_mess_rate -= max(8, room4['service']*16) ",
+      "new": "\thouse_mess_rate -= max(8, func('jo9_nymph_productivity', 'room4', room4['service'], 5)*16) "
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "count": 1,
+      "old": "\tif room3['service'] < 3 and house_mess = 0: house_mess_rate = 10 ",
+      "new": "\tif func('jo9_nymph_productivity', 'room3', room3['service'], 5) < 3 and house_mess = 0: house_mess_rate = 10 "
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "count": 1,
+      "old": "\thouse_mess_rate -= max(8, room3['service']*16) ",
+      "new": "\thouse_mess_rate -= max(8, func('jo9_nymph_productivity', 'room3', room3['service'], 5)*16) "
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "count": 1,
+      "old": "\tif room2['service'] < 3 and house_mess = 0: house_mess_rate = 10 ",
+      "new": "\tif func('jo9_nymph_productivity', 'room2', room2['service'], 5) < 3 and house_mess = 0: house_mess_rate = 10 "
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "count": 1,
+      "old": "\thouse_mess_rate -= max(8, room2['service']*16) ",
+      "new": "\thouse_mess_rate -= max(8, func('jo9_nymph_productivity', 'room2', room2['service'], 5)*16) "
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "count": 1,
+      "old": "\tif room1['service'] < 3 and house_mess = 0: house_mess_rate = 10 ",
+      "new": "\tif func('jo9_nymph_productivity', 'room1', room1['service'], 5) < 3 and house_mess = 0: house_mess_rate = 10 "
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "count": 1,
+      "old": "\thouse_mess_rate -= max(8, room1['service']*16) ",
+      "new": "\thouse_mess_rate -= max(8, func('jo9_nymph_productivity', 'room1', room1['service'], 5)*16) "
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "count": 1,
+      "old": "\tif assistant['service'] < 3 and house_mess = 0: house_mess_rate = 10 &! B+ skill or better is needed to reach perfect cleanliness",
+      "new": "\tif func('jo9_nymph_productivity', 'assistant', assistant['service'], 5) < 3 and house_mess = 0: house_mess_rate = 10 &! B+ skill or better is needed to reach perfect cleanliness"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "count": 1,
+      "old": "\thouse_mess_rate -= max(8, assistant['service']*16) &! added missing formula to clean based on ability instead of full cleaning - ImperatorAugustus",
+      "new": "\thouse_mess_rate -= max(8, func('jo9_nymph_productivity', 'assistant', assistant['service'], 5)*16) &! added missing formula to clean based on ability instead of full cleaning - ImperatorAugustus"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "count": 1,
+      "old": "\tslave_skill = min(slave['mood'] + 2, slave['service'])",
+      "new": "\tslave_skill = func('jo9_nymph_productivity', 'slave', min(slave['mood'] + 2, slave['service']), 5)"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "count": 1,
+      "old": "\tslave_skill = min(room4['cook'], max(1, room4['mood']))",
+      "new": "\tslave_skill = func('jo9_nymph_productivity', 'room4', min(room4['cook'], max(1, room4['mood'])), 5)"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "count": 1,
+      "old": "\tslave_skill = min(room3['cook'], max(1, room3['mood']))",
+      "new": "\tslave_skill = func('jo9_nymph_productivity', 'room3', min(room3['cook'], max(1, room3['mood'])), 5)"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "count": 1,
+      "old": "\tslave_skill = min(room2['cook'], max(1, room2['mood']))",
+      "new": "\tslave_skill = func('jo9_nymph_productivity', 'room2', min(room2['cook'], max(1, room2['mood'])), 5)"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "count": 1,
+      "old": "\tslave_skill = min(room1['cook'], max(1, room1['mood']))",
+      "new": "\tslave_skill = func('jo9_nymph_productivity', 'room1', min(room1['cook'], max(1, room1['mood'])), 5)"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "count": 1,
+      "old": "\tslave_skill = min(assistant['cook'], max(1, assistant['mood']))",
+      "new": "\tslave_skill = func('jo9_nymph_productivity', 'assistant', min(assistant['cook'], max(1, assistant['mood'])), 5)"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "count": 1,
+      "old": "\tslave_skill = min(slave['cook'], max(1, slave['mood']))",
+      "new": "\tslave_skill = func('jo9_nymph_productivity', 'slave', min(slave['cook'], max(1, slave['mood'])), 5)"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "milk_bottle_plus = func('jo9_traits_personality', 'performance', 'room4', '', milk_bottle_plus)",
+      "new": "milk_bottle_plus = func('jo9_nymph_productivity', 'room4', func('jo9_traits_personality', 'performance', 'room4', '', milk_bottle_plus), 99)"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "milk_bottle_plus = func('jo9_traits_personality', 'performance', 'room3', '', milk_bottle_plus)",
+      "new": "milk_bottle_plus = func('jo9_nymph_productivity', 'room3', func('jo9_traits_personality', 'performance', 'room3', '', milk_bottle_plus), 99)"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "milk_bottle_plus = func('jo9_traits_personality', 'performance', 'room2', '', milk_bottle_plus)",
+      "new": "milk_bottle_plus = func('jo9_nymph_productivity', 'room2', func('jo9_traits_personality', 'performance', 'room2', '', milk_bottle_plus), 99)"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "milk_bottle_plus = func('jo9_traits_personality', 'performance', 'room1', '', milk_bottle_plus)",
+      "new": "milk_bottle_plus = func('jo9_nymph_productivity', 'room1', func('jo9_traits_personality', 'performance', 'room1', '', milk_bottle_plus), 99)"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "    slave_skill = slave[\"calisthenics\"]",
+      "new": "    slave_skill = func('jo9_nymph_productivity', 'slave', slave[\"calisthenics\"], 5)"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "    slave_skill = slave[\"gladiatrix\"]",
+      "new": "    slave_skill = func('jo9_nymph_productivity', 'slave', slave[\"gladiatrix\"], 5)"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "    slave_skill = slave[\"stamina\"]",
+      "new": "    slave_skill = func('jo9_nymph_productivity', 'slave', slave[\"stamina\"], 5)"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "    dynamic 'assistant_rate[\"cook\"] += func(''jo9_learning_xp'', (skill_rise), assistant[''jo9_learning_trait''], ''cook'')'",
+      "new": "    dynamic 'assistant_rate[\"cook\"] += func(''jo9_traits_personality'', ''xp'', ''assistant'', ''cook'', func(''jo9_learning_xp'', (skill_rise), assistant[''jo9_learning_trait''], ''cook''))'"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "    dynamic 'slave_rate[\"cook\"] += func(''jo9_learning_xp'', (skill_rise), slave[''jo9_learning_trait''], ''cook'')'",
+      "new": "    dynamic 'slave_rate[\"cook\"] += func(''jo9_traits_personality'', ''xp'', ''slave'', ''cook'', func(''jo9_learning_xp'', (skill_rise), slave[''jo9_learning_trait''], ''cook''))'"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "  slave_skill = slave[\"service\"]",
+      "new": "  slave_skill = func('jo9_nymph_productivity', 'slave', slave[\"service\"], 5)"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "\t$special_part = {\r\n\t\tslave_skill = slave['music']\r\n\t\t$bg_path = func('display_pic', 'slave', 'strings', 'girls/normal_scenes/')",
+      "new": "\t$special_part = {\r\n\t\tslave_skill = func('jo9_nymph_productivity', 'slave', slave['music'], 5)\r\n\t\t$bg_path = func('display_pic', 'slave', 'strings', 'girls/normal_scenes/')"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "\t$special_part = {\r\n\t\tslave_skill = slave['music']\r\n\t\t$bg_path = func('display_pic', 'slave', 'piano', 'girls/normal_scenes/')",
+      "new": "\t$special_part = {\r\n\t\tslave_skill = func('jo9_nymph_productivity', 'slave', slave['music'], 5)\r\n\t\t$bg_path = func('display_pic', 'slave', 'piano', 'girls/normal_scenes/')"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "\t$special_part = {\r\n\t\tslave_skill = slave['music']\r\n\t\t$bg_path = func('display_pic', 'slave', 'woodwind', 'girls/normal_scenes/')",
+      "new": "\t$special_part = {\r\n\t\tslave_skill = func('jo9_nymph_productivity', 'slave', slave['music'], 5)\r\n\t\t$bg_path = func('display_pic', 'slave', 'woodwind', 'girls/normal_scenes/')"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "\t$special_part = {\r\n\t\tslave_skill = slave['music']\r\n\t\t$bg_path = func('display_pic', 'slave', 'singing', 'girls/normal_scenes/', slave['special_singing_lesson'])",
+      "new": "\t$special_part = {\r\n\t\tslave_skill = func('jo9_nymph_productivity', 'slave', slave['music'], 5)\r\n\t\t$bg_path = func('display_pic', 'slave', 'singing', 'girls/normal_scenes/', slave['special_singing_lesson'])"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "\t\tslave_skill = slave['music']",
+      "new": "\t\tslave_skill = func('jo9_nymph_productivity', 'slave', slave['music'], 5)"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "\t$misc_bonus = 'learn_bonus[\"pet\"]'\r\n\t$special_part = {\r\n\t\tslave_skill = slave['pet']\r\n\t\t$bg_path = func('display_pic', 'slave', 'petplay', 'girls/normal_scenes/')\r\n\t\t$text[1] = $dogplay_lesson_description[slave_skill] &! uses delayed sub-expressions",
+      "new": "\t$misc_bonus = 'learn_bonus[\"pet\"]'\r\n\t$special_part = {\r\n\t\tslave_skill = func('jo9_nymph_productivity', 'slave', slave['pet'], 5)\r\n\t\t$bg_path = func('display_pic', 'slave', 'petplay', 'girls/normal_scenes/')\r\n\t\t$text[1] = $dogplay_lesson_description[slave_skill] &! uses delayed sub-expressions"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "\t\tslave_skill = slave['pet']",
+      "new": "\t\tslave_skill = func('jo9_nymph_productivity', 'slave', slave['pet'], 5)"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "\t\t\tslave_skill = slave['cowSK']",
+      "new": "\t\t\tslave_skill = func('jo9_nymph_productivity', 'slave', slave['cowSK'], 5)"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "\t\tslave_skill = slave['art']",
+      "new": "\t\tslave_skill = func('jo9_nymph_productivity', 'slave', slave['art'], 5)"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "\t\tsparks -= coach_price[slave['cook']]\r\n\t\tslave_skill = min(interaction_slave['diligence'], max(1, slave['cook']))\r\n\t\tgs '$food_choice', slave_skill &! consume ingredients, update last_cooked_food, cooked_food and $cooked_meal - lack of ingredients or skill limits meal quality - will only replace a lower quality meal",
+      "new": "\t\tsparks -= coach_price[slave['cook']]\r\n\t\tslave_skill = func('jo9_nymph_productivity', 'slave', min(interaction_slave['diligence'], max(1, slave['cook'])), 5)\r\n\t\tgs '$food_choice', slave_skill &! consume ingredients, update last_cooked_food, cooked_food and $cooked_meal - lack of ingredients or skill limits meal quality - will only replace a lower quality meal"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "\t$special_part = {\r\n\t\tslave_skill = min(interaction_slave['diligence'], max(1, slave['cook']))\r\n\t\tgs '$food_choice', slave_skill &! consume ingredients, update last_cooked_food, cooked_food and $cooked_meal - lack of ingredients or skill limits meal quality - will only replace a lower quality meal",
+      "new": "\t$special_part = {\r\n\t\tslave_skill = func('jo9_nymph_productivity', 'slave', min(interaction_slave['diligence'], max(1, slave['cook'])), 5)\r\n\t\tgs '$food_choice', slave_skill &! consume ingredients, update last_cooked_food, cooked_food and $cooked_meal - lack of ingredients or skill limits meal quality - will only replace a lower quality meal"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "\t\tslave_skill = min(interaction_slave['diligence'], max(1, slave['cook']))",
+      "new": "\t\tslave_skill = func('jo9_nymph_productivity', 'slave', min(interaction_slave['diligence'], max(1, slave['cook'])), 5)"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "\t\t\tslave_skill = min(interaction_dynslave['diligence'], 1 + (1 + dynslave['roleplay'] + dynslave['expression'])/2)",
+      "new": "\t\t\tslave_skill = func('jo9_nymph_productivity', 'dynslave', min(interaction_dynslave['diligence'], 1 + (1 + dynslave['roleplay'] + dynslave['expression'])/2), 5)"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "\t\t\tslave_skill = min(interaction_dynslave['diligence'], 1 + (1 + dynslave['roleplay'] + dynslave['calisthenics'])/2)",
+      "new": "\t\t\tslave_skill = func('jo9_nymph_productivity', 'dynslave', min(interaction_dynslave['diligence'], 1 + (1 + dynslave['roleplay'] + dynslave['calisthenics'])/2), 5)"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "\t\t\tslave_skill = min(interaction_dynslave['diligence'], 1 + (1 + dynslave['stamina'] + dynslave['calisthenics'])/2)",
+      "new": "\t\t\tslave_skill = func('jo9_nymph_productivity', 'dynslave', min(interaction_dynslave['diligence'], 1 + (1 + dynslave['stamina'] + dynslave['calisthenics'])/2), 5)"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "\t\t\tslave_skill = min(interaction_dynslave['diligence'], dynslave['music'])",
+      "new": "\t\t\tslave_skill = func('jo9_nymph_productivity', 'dynslave', min(interaction_dynslave['diligence'], dynslave['music']), 5)"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "\t\t\tmassage_quality = min(interaction_dynslave['diligence'], 1 + dynslave['petting'])",
+      "new": "\t\t\tmassage_quality = func('jo9_nymph_productivity', 'dynslave', min(interaction_dynslave['diligence'], 1 + dynslave['petting']), 5)"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "\t\t\toral_wash = min(interaction_dynslave['diligence'], 1 + dynslave['oral'])",
+      "new": "\t\t\toral_wash = func('jo9_nymph_productivity', 'dynslave', min(interaction_dynslave['diligence'], 1 + dynslave['oral']), 5)"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "\t\t\tmain_wash = min(interaction_dynslave['diligence'], 1 + dynslave['petting'])",
+      "new": "\t\t\tmain_wash = func('jo9_nymph_productivity', 'dynslave', min(interaction_dynslave['diligence'], 1 + dynslave['petting']), 5)"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "\t\t\tslave_skill = min(interaction_dynslave['diligence'], max(1, dynslave['cook']))",
+      "new": "\t\t\tslave_skill = func('jo9_nymph_productivity', 'dynslave', min(interaction_dynslave['diligence'], max(1, dynslave['cook'])), 5)"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "\t\t\tslave_skill = min(interaction_dynslave['diligence'], max(1, dynslave['service']))",
+      "new": "\t\t\tslave_skill = func('jo9_nymph_productivity', 'dynslave', min(interaction_dynslave['diligence'], max(1, dynslave['service'])), 5)"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "\t\toral_wash = min (interaction_assistant['diligence'], assistant['oral'])",
+      "new": "\t\toral_wash = func('jo9_nymph_productivity', 'assistant', min (interaction_assistant['diligence'], assistant['oral']), 5)"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "count": 1,
+      "old": "\tbrewing_skill = min(dynslave['alchemy'], dynslave['enchanter'])",
+      "new": "\tbrewing_skill = func('jo9_nymph_productivity', 'dynslave', min(dynslave['alchemy'], dynslave['enchanter']), 5)"
+    },
+    {
+      "location": "shop_general",
+      "field": "body",
+      "count": 1,
+      "old": "  brewing_skill = min(slave['alchemy'], slave['enchanter'])",
+      "new": "  brewing_skill = func('jo9_nymph_productivity', 'slave', min(slave['alchemy'], slave['enchanter']), 5)"
+    },
+    {
+      "location": "shop_general",
+      "field": "body",
+      "count": 1,
+      "old": "  brewing_skill = min(assistant['alchemy'], assistant['enchanter'])",
+      "new": "  brewing_skill = func('jo9_nymph_productivity', 'assistant', min(assistant['alchemy'], assistant['enchanter']), 5)"
+    },
+    {
+      "location": "billing",
+      "field": "body",
+      "count": 1,
+      "old": "\t\taccount_skill = max(account_skill, dynslave['secretary'] + dynslave['intellect'])",
+      "new": "\t\taccount_skill = max(account_skill, func('jo9_nymph_productivity', 'dynslave', dynslave['secretary'] + dynslave['intellect'], 10))"
+    },
+    {
+      "location": "billing",
+      "field": "body",
+      "count": 1,
+      "old": "\t\tdynslave_rate['secretary'] += func('jo9_learning_xp', (15), dynslave['jo9_learning_trait'], 'secretary')",
+      "new": "\t\tdynslave_rate['secretary'] += func('jo9_traits_personality', 'xp', 'dynslave', 'secretary', func('jo9_learning_xp', (15), dynslave['jo9_learning_trait'], 'secretary'))"
+    },
+    {
+      "location": "billing",
+      "field": "body",
+      "count": 1,
+      "old": "\t\tdynslave_rate['intellect'] += func('jo9_learning_xp', (5), dynslave['jo9_learning_trait'], 'intellect')",
+      "new": "\t\tdynslave_rate['intellect'] += func('jo9_traits_personality', 'xp', 'dynslave', 'intellect', func('jo9_learning_xp', (5), dynslave['jo9_learning_trait'], 'intellect'))"
+    },
+    {
+      "location": "interaction_result",
+      "field": "body",
+      "count": 1,
+      "old": "milk_bottle_plus = func('jo9_traits_personality', 'performance', iif($interaction_type = 'milking_farmhand', 'farmhand', 'dynslave'), '', milk_bottle_plus)",
+      "new": "milk_bottle_plus = func('jo9_nymph_productivity', iif($interaction_type = 'milking_farmhand', 'farmhand', 'dynslave'), func('jo9_traits_personality', 'performance', iif($interaction_type = 'milking_farmhand', 'farmhand', 'dynslave'), '', milk_bottle_plus), 99)"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "count": 1,
+      "old": "\t a = rand (60,100)\r\n\t sparks.res = a\r\n\t sparks += sparks.res - 20\r\n\t b = sparks.res - 20\r\n\t slave['virtue'] = 3",
+      "new": "\t a = rand (60,100)\r\n\t sparks.res = a\r\n\t sparks.res = func('jo9_nymph_productivity', 'slave', sparks.res, sparks.res + 1)\r\n\t sparks.res = func('jo9_nymph_productivity', 'assistant', sparks.res, sparks.res + 1)\r\n\t sparks += sparks.res - 20\r\n\t b = sparks.res - 20\r\n\t slave['virtue'] = 3"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "count": 1,
+      "old": "\t sparks.res = a\r\n\t sparks += sparks.res - 20\r\n\t b = sparks.res - 20",
+      "new": "\t sparks.res = a\r\n\t sparks.res = func('jo9_nymph_productivity', 'slave', sparks.res, sparks.res + 1)\r\n\t sparks.res = func('jo9_nymph_productivity', 'assistant', sparks.res, sparks.res + 1)\r\n\t sparks += sparks.res - 20\r\n\t b = sparks.res - 20"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "count": 1,
+      "old": "\t if $assistant[\"cloth\"] ! 'slut_dress' and $slave[\"cloth\"] ! 'slut_dress': sparks.res = a\r\n\t if $assistant[\"cloth\"] = 'slut_dress' and $slave[\"cloth\"] = 'slut_dress': sparks.res = a + a/2\r\n\t if $assistant[\"cloth\"] ! 'slut_dress' and $slave[\"cloth\"] = 'slut_dress': sparks.res = a + a/5\r\n\t if $assistant[\"cloth\"] = 'slut_dress' and $slave[\"cloth\"] ! 'slut_dress': sparks.res = a + a/4\r\n\t sparks += sparks.res - 20\r\n\t b = sparks.res - 20\r\n\t slave['virtue'] = 3\r\n\t slave['sin'] = 0\r\n\t\t$text[1] = \"자기 여자들로 돈을 좀 더 벌어 보자는 생각이 분명 마음에 들었다. 이번에는 한술 더 떠서 노예와 조수 둘 다 거리로 내보냈다. 매춘굴의 큰 방 하나 값을 치른 뒤, 당신은 맡겨 둔 둘에게 죽어라 벌어 오라고 명령하고 자기 볼일을 보러 갔다.\"",
+      "new": "\t if $assistant[\"cloth\"] ! 'slut_dress' and $slave[\"cloth\"] ! 'slut_dress': sparks.res = a\r\n\t if $assistant[\"cloth\"] = 'slut_dress' and $slave[\"cloth\"] = 'slut_dress': sparks.res = a + a/2\r\n\t if $assistant[\"cloth\"] ! 'slut_dress' and $slave[\"cloth\"] = 'slut_dress': sparks.res = a + a/5\r\n\t if $assistant[\"cloth\"] = 'slut_dress' and $slave[\"cloth\"] ! 'slut_dress': sparks.res = a + a/4\r\n\t sparks.res = func('jo9_nymph_productivity', 'slave', sparks.res, sparks.res + 1)\r\n\t sparks.res = func('jo9_nymph_productivity', 'assistant', sparks.res, sparks.res + 1)\r\n\t sparks += sparks.res - 20\r\n\t b = sparks.res - 20\r\n\t slave['virtue'] = 3\r\n\t slave['sin'] = 0\r\n\t\t$text[1] = \"자기 여자들로 돈을 좀 더 벌어 보자는 생각이 분명 마음에 들었다. 이번에는 한술 더 떠서 노예와 조수 둘 다 거리로 내보냈다. 매춘굴의 큰 방 하나 값을 치른 뒤, 당신은 맡겨 둔 둘에게 죽어라 벌어 오라고 명령하고 자기 볼일을 보러 갔다.\""
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "count": 1,
+      "old": "\t\t if $assistant[\"cloth\"] ! 'slut_dress': sparks.res = b",
+      "new": "\t\t if $assistant[\"cloth\"] ! 'slut_dress': sparks.res = b\r\n\t\t sparks.res = func('jo9_nymph_productivity', 'assistant', sparks.res, sparks.res + 1)"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "count": 1,
+      "old": "\t\tif $slave[\"cloth\"] ! 'slut_dress': sparks.res = b",
+      "new": "\t\tif $slave[\"cloth\"] ! 'slut_dress': sparks.res = b\r\n\t\tsparks.res = func('jo9_nymph_productivity', 'slave', sparks.res, sparks.res + 1)"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "count": 1,
+      "old": "\t if $assistant[\"cloth\"] = 'slut_dress' and $slave[\"cloth\"] ! 'slut_dress': sparks.res = a + a/4\r\n\t sparks += sparks.res - 20\r\n\t b = sparks.res - 20",
+      "new": "\t if $assistant[\"cloth\"] = 'slut_dress' and $slave[\"cloth\"] ! 'slut_dress': sparks.res = a + a/4\r\n\t sparks.res = func('jo9_nymph_productivity', 'slave', sparks.res, sparks.res + 1)\r\n\t sparks.res = func('jo9_nymph_productivity', 'assistant', sparks.res, sparks.res + 1)\r\n\t sparks += sparks.res - 20\r\n\t b = sparks.res - 20"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "count": 1,
+      "old": "\t if $assistant[\"cloth\"] = 'slut_dress': sparks.res = b + b/4\r\n\t if $assistant[\"cloth\"] ! 'slut_dress': sparks.res = b\r\n\t sparks += sparks.res",
+      "new": "\t if $assistant[\"cloth\"] = 'slut_dress': sparks.res = b + b/4\r\n\t if $assistant[\"cloth\"] ! 'slut_dress': sparks.res = b\r\n\t sparks.res = func('jo9_nymph_productivity', 'assistant', sparks.res, sparks.res + 1)\r\n\t sparks += sparks.res"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "count": 1,
+      "old": "\t if $slave[\"cloth\"] ! 'slut_dress': sparks.res = b",
+      "new": "\t if $slave[\"cloth\"] ! 'slut_dress': sparks.res = b\r\n\t sparks.res = func('jo9_nymph_productivity', 'slave', sparks.res, sparks.res + 1)"
+    },
+    {
+      "location": "#static_txt",
+      "field": "body",
+      "count": 1,
+      "old": "$Нимфоманка = '[색정광]<br>당신은 당신의 노예가, 좋게 말해도, 섹스를 몹시 밝힌다는 걸 알아차렸다. 많은 성적 행위는 그녀에게 더 쉬워지겠지만, 채워지지 않는 욕망은 그녀를 미치게 만들 것이다.'",
+      "new": "$Нимфоманка = '[색정광]<br>당신은 당신의 노예가, 좋게 말해도, 섹스를 몹시 밝힌다는 걸 알아차렸다. 많은 성적 행위는 그녀에게 더 쉬워지겠지만, 채워지지 않는 욕망은 그녀를 미치게 만들 것이다.'\r\n$jo9_nymph_addiction_text = '[정액 중독]<br>색정광의 상위 특성이다. 흥분도가 더 빨리 오르며 해소하면 그날의 기분과 활동에 보너스를 받는다. 최고 흥분도가 오래 이어지면 기분과 행동력 회복이 나빠진다.'\r\n$jo9_nymph_stone_text = '[석녀]<br>흥분도는 0에 고정된다. 훈련과 경험은 쌓이지만 성적 상호작용을 통해 주인과의 친밀감이 오르지 않는다.'"
+    },
+    {
+      "location": "#txt_woman",
+      "field": "body",
+      "count": 1,
+      "old": "$Нимфоманка = '[색정광]<br>당신은 당신의 노예가, 좋게 말해도, 섹스를 몹시 밝힌다는 걸 알아차렸다. 많은 성적 행위는 그녀에게 더 쉬워지겠지만, 채워지지 않는 욕망은 그녀를 미치게 만들 것이다.'",
+      "new": "$Нимфоманка = '[색정광]<br>당신은 당신의 노예가, 좋게 말해도, 섹스를 몹시 밝힌다는 걸 알아차렸다. 많은 성적 행위는 그녀에게 더 쉬워지겠지만, 채워지지 않는 욕망은 그녀를 미치게 만들 것이다.'\r\n$jo9_nymph_addiction_text = '[정액 중독]<br>색정광의 상위 특성이다. 흥분도가 더 빨리 오르며 해소하면 그날의 기분과 활동에 보너스를 받는다. 최고 흥분도가 오래 이어지면 기분과 행동력 회복이 나빠진다.'\r\n$jo9_nymph_stone_text = '[석녀]<br>흥분도는 0에 고정된다. 훈련과 경험은 쌓이지만 성적 상호작용을 통해 주인과의 친밀감이 오르지 않는다.'"
+    },
+    {
+      "location": "#static_base",
+      "field": "body",
+      "count": 1,
+      "old": "\t\tif dynslave['nymphomania_xp'] > 200 and dynslave['nymphomania'] < 1: dynslave['nymphomania'] = 1 &! Nymphomaniac (can replace opposite Frigid)",
+      "new": "\t\tif dynslave['nymphomania_xp'] > 200 and dynslave['nymphomania'] >= -1 and dynslave['nymphomania'] < 1: dynslave['nymphomania'] = 1 &! Nymphomaniac (can replace opposite Frigid)"
+    },
+    {
+      "location": "#static_base",
+      "field": "body",
+      "count": 1,
+      "old": "\t\t\tif dynslave['nymphomania'] > 0: msg '<<$Нимфоманка>>'\r\n\t\t\tif dynslave['nymphomania'] < 0: msg '<<$Фригидная>>'",
+      "new": "\t\t\tif dynslave['nymphomania'] > 1: msg $jo9_nymph_addiction_text\r\n\t\t\tif dynslave['nymphomania'] = 1: msg $Нимфоманка\r\n\t\t\tif dynslave['nymphomania'] = -1: msg $Фригидная\r\n\t\t\tif dynslave['nymphomania'] < -1: msg $jo9_nymph_stone_text"
+    },
+    {
+      "location": "#static_base",
+      "field": "body",
+      "count": 1,
+      "old": "        if dynslave['nymphomania'] > 0 and (dynslave['nymphomania_revealed'] = 2 or spell_revelio = 1):\r\n            $dynslave_features_list += '<a href=\"EXEC: msg $Нимфоманка\"><<dyneval($vb_cycle_skill, 5, \"색정광\")>></a><br>'\r\n        end\r\n        if dynslave['nymphomania'] < 0 and (dynslave['nymphomania_revealed'] = 2 or spell_revelio = 1):\r\n            $dynslave_features_list += '<a href=\"EXEC: msg $Фригидная\"><<dyneval($vb_cycle_skill, 0, \"불감증\")>></a><br>'\r\n        end",
+      "new": "        if dynslave['nymphomania'] > 1 and (dynslave['nymphomania_revealed'] = 2 or spell_revelio = 1):\r\n         $dynslave_features_list += '<a href=\"EXEC: msg $jo9_nymph_addiction_text\"><<dyneval($vb_cycle_skill, 5, \"정액 중독\")>></a><br>'\r\n        end\r\n        if dynslave['nymphomania'] = 1 and (dynslave['nymphomania_revealed'] = 2 or spell_revelio = 1):\r\n            $dynslave_features_list += '<a href=\"EXEC: msg $Нимфоманка\"><<dyneval($vb_cycle_skill, 5, \"색정광\")>></a><br>'\r\n        end\r\n        if dynslave['nymphomania'] = -1 and (dynslave['nymphomania_revealed'] = 2 or spell_revelio = 1):\r\n            $dynslave_features_list += '<a href=\"EXEC: msg $Фригидная\"><<dyneval($vb_cycle_skill, 0, \"불감증\")>></a><br>'\r\n        end\r\n        if dynslave['nymphomania'] < -1 and (dynslave['nymphomania_revealed'] = 2 or spell_revelio = 1):\r\n         $dynslave_features_list += '<a href=\"EXEC: msg $jo9_nymph_stone_text\"><<dyneval($vb_cycle_skill, 0, \"석녀\")>></a><br>'\r\n        end"
+    },
+    {
+      "location": "#static_base",
+      "field": "body",
+      "count": 1,
+      "old": "\t\telseif dynslave['nymphomania'] > 1 and dynslave['arousal'] > 0:\r\n\t\t\tdynslave['neg_horny'] = 100\r\n",
+      "new": ""
+    },
+    {
+      "location": "#static_base",
+      "field": "body",
+      "count": 1,
+      "old": "\t\t! keep mood within [-5, +5] range",
+      "new": "\t\tif dynslave['nymphomania'] > 1:\r\n\t\t if dynslave['jo9_nymph_relief_day'] = day + 1:\r\n\t\t  dynslave['mood'] += 2\r\n\t\t  $dynslave_mood_list[] = '욕구를 해소해 기분이 좋아졌다.'\r\n\t\t end\r\n\t\t if dynslave['arousal'] >= 5 and arrpos('$barn_slave_characters', 'dynslave') = -1 and arrpos('$iced_slave_characters', 'dynslave') = -1:\r\n\t\t  local jo9_nymph_mood_penalty = iif(dynslave['jo9_addiction_high_days'] >= 12, 3, iif(dynslave['jo9_addiction_high_days'] >= 6, 2, iif(dynslave['jo9_addiction_high_days'] >= 3, 1, 0)))\r\n\t\t  if jo9_nymph_mood_penalty > 0:\r\n\t\t   dynslave['mood'] -= jo9_nymph_mood_penalty\r\n\t\t   $dynslave_mood_list[] = '욕구가 오래 해소되지 않아 기분이 나빠졌다.'\r\n\t\t  end\r\n\t\t end\r\n\t\tend\r\n\t\t! keep mood within [-5, +5] range"
+    },
+    {
+      "location": "interaction_result",
+      "field": "body",
+      "count": 1,
+      "old": "\t\t\t\tif dynslave['nymphomania'] < 0: rise_mod += -2",
+      "new": "\t\t\t\tif dynslave['nymphomania'] = -1: rise_mod += -2"
+    },
+    {
+      "location": "interaction_result",
+      "field": "body",
+      "count": 1,
+      "old": "\t\t\t\tif dynslave['nymphomania'] = 2: rise_mod += 2",
+      "new": "\t\t\t\tif dynslave['nymphomania'] > 1: rise_mod += 2"
+    },
+    {
+      "location": "slave_stat",
+      "field": "body",
+      "count": 1,
+      "old": "\tif slave[\"masturbation_rule\"] = 1:",
+      "new": "\tif slave['nymphomania'] > 1:\r\n\t *p '<div id=\"chekbox_12r\"><img src=\"content/pic/ui/buttons/legacy/sel_button.png\" title=\"정액 중독 특성에 따른 자위 금지\"></div>'\r\n\telseif slave[\"masturbation_rule\"] = 1:"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "count": 1,
+      "old": "slave[\"nymphomania\"] = 1 and slave[\"beauty\"] > 3",
+      "new": "slave[\"nymphomania\"] >= 1 and slave[\"beauty\"] > 3"
+    },
+    {
+      "location": "master_love",
+      "field": "body",
+      "count": 1,
+      "old": "slave1[\"nymphomania\"] = 1",
+      "new": "slave1[\"nymphomania\"] >= 1"
+    },
+    {
+      "location": "master_love",
+      "field": "body",
+      "count": 1,
+      "old": "slave1[\"nymphomania\"] = -1",
+      "new": "slave1[\"nymphomania\"] <= -1"
+    }
+  ],
+  "add_locations": [
+    {
+      "name": "jo9_nymph_arousal",
+      "desc": "",
+      "body": "! JO9 MOD START NYMPHOMANIA_AROUSAL\r\nresult = dyneval($replace({\r\n if $args[0] = 'gain' or $args[0] = 'set':\r\n  local jo9_nymph_start = iif($args[0] = 'set', jo9nymphactor_rate['arousal'], 0)\r\n  local jo9_nymph_gain = args[1] - jo9_nymph_start\r\n  result = args[1]\r\n  if jo9nymphactor['nymphomania'] < -1:\r\n   result = 0\r\n  elseif jo9nymphactor['nymphomania'] > 1 and jo9_nymph_gain > 0:\r\n   local jo9_nymph_doubled = jo9_nymph_gain * 3 + jo9nymphactor['jo9_nymph_gain_half']\r\n   result = jo9_nymph_start + jo9_nymph_doubled / 2\r\n   jo9nymphactor['jo9_nymph_gain_half'] = jo9_nymph_doubled mod 2\r\n  end\r\n elseif $args[0] = 'xp':\r\n  if args[1] > 0:\r\n   jo9nymphactor['nymphomania_xp'] += args[1]\r\n   if jo9nymphactor['nymphomania'] = 1 and jo9nymphactor['nymphomania_xp'] > 600 and jo9nymphactor['jo9_nymph_no_upgrade'] = 0:\r\n    if rand(1, 10) = 1:\r\n     jo9nymphactor['nymphomania'] = 2\r\n     jo9nymphactor['nymphomania_revealed'] = 1\r\n    end\r\n   end\r\n  end\r\n elseif $args[0] = 'mark_relief':\r\n  if $curloc ! 'next_day' and $curloc ! 'end_day_screen' and jo9nymphactor['nymphomania'] > 1 and jo9nymphactor['arousal'] > 0:\r\n   jo9nymphactor['jo9_nymph_relief_pending'] = 1\r\n  end\r\n elseif $args[0] = 'recalc':\r\n  if jo9nymphactor['nymphomania'] < -1:\r\n   jo9nymphactor['arousal'] = 0\r\n   jo9nymphactor_rate['arousal'] = 0\r\n   jo9nymphactor_rate['temp_arousal'] = 0\r\n  end\r\n  if jo9nymphactor['arousal'] < 5: jo9nymphactor['jo9_addiction_high_days'] = 0\r\n  if jo9nymphactor['jo9_nymph_relief_pending'] = 1:\r\n   jo9nymphactor['jo9_nymph_relief_pending'] = 0\r\n   if jo9nymphactor['nymphomania'] > 1 and args[1] > 0 and jo9nymphactor['arousal'] = 0:\r\n    local jo9_nymph_ap_cap = iif(jo9nymphactor['stamina'] > 0, min(5, jo9nymphactor['stamina'] + iif(difficulty_setting = 2, 0, 1)), 0)\r\n    jo9nymphactor['energy'] = max(jo9nymphactor['energy'], min(jo9_nymph_ap_cap, jo9nymphactor['energy'] + 2))\r\n    jo9nymphactor['jo9_nymph_relief_day'] = day + 1\r\n   end\r\n  end\r\n end\r\n}, 'jo9nymphactor', $args[1]), $args[0], args[2])\r\n! JO9 MOD END NYMPHOMANIA_AROUSAL",
+      "actions": []
+    },
+    {
+      "name": "jo9_nymphomania_daily",
+      "desc": "",
+      "body": "if $args[0] = 'tick' or $args[0] = 'loss':\r\n local $jo9_daily_mode = $args[0]\r\n local $jo9_daily_role\r\n local jo9_daily_i\r\n for jo9_daily_i = 0 to arrsize('$unfrozen_slave_characters') - 1:\r\n  $jo9_daily_role = $unfrozen_slave_characters[jo9_daily_i]\r\n  if arrpos('$barn_slave_characters', $jo9_daily_role) < 0:\r\n   if $jo9_daily_mode = 'tick':\r\n    gs 'jo9_nymphomania_daily', 'tick_actor', $jo9_daily_role\r\n   elseif $jo9_daily_role ! 'prisoner' and func('jo9_nymphomania_daily', 'lose_actor', $jo9_daily_role):\r\n    result = 1\r\n    exit\r\n   end\r\n  end\r\n end\r\nelseif $args[0] = 'tick_actor':\r\n dynamic $replace({\r\n  if jo9actor_state <= CONST_INT['no_slave'] or jo9actor['jo9_nymph_day_seen'] = day + 1: exit\r\n  jo9actor['jo9_nymph_day_seen'] = day + 1\r\n  jo9actor['jo9_addiction_pending_loss'] = 0\r\n  if jo9actor['nymphomania'] > 1 and max(cont_atr_min, min(cont_atr_max, jo9actor_rate['arousal'])) + jo9actor_rate['temp_arousal'] >= cont_atr_threshold[5]:\r\n   jo9actor['jo9_addiction_high_days'] += 1\r\n   if jo9actor['jo9_addiction_high_days'] >= 60 and 'jo9actor' ! 'prisoner': jo9actor['jo9_addiction_pending_loss'] = iif(jo9actor['gladiatrix'] >= 4, 1, 2)\r\n  else\r\n   jo9actor['jo9_addiction_high_days'] = 0\r\n  end\r\n  if jo9actor['nymphomania'] = -1 and max(jo9actor['penetration'], jo9actor['orgy'], jo9actor['xenophily']) <= 3:\r\n   jo9actor['jo9_frigid_days'] += 1\r\n   if jo9actor['jo9_frigid_days'] >= 30:\r\n    jo9actor['jo9_frigid_days'] = 0\r\n    if rand(1, 100) <= 30:\r\n     jo9actor['nymphomania'] = -2\r\n     jo9actor['nymphomania_revealed'] = 1\r\n     jo9actor['arousal'] = 0\r\n     jo9actor_rate['arousal'] = 0\r\n     jo9actor_rate['temp_arousal'] = 0\r\n    end\r\n   end\r\n  else\r\n   jo9actor['jo9_frigid_days'] = 0\r\n  end\r\n }, 'jo9actor', $args[1])\r\nelseif $args[0] = 'recovery':\r\n result = args[2]\r\n if result > 0 and arrpos('$unfrozen_slave_characters', $args[1]) >= 0 and arrpos('$barn_slave_characters', $args[1]) < 0:\r\n  local jo9_recovery_days = dyneval($replace({if jo9actor['nymphomania'] > 1: result = jo9actor['jo9_addiction_high_days']}, 'jo9actor', $args[1]))\r\n  if jo9_recovery_days >= 12:\r\n   result = result * 40 / 100\r\n  elseif jo9_recovery_days >= 6:\r\n   result = result * 60 / 100\r\n  elseif jo9_recovery_days >= 3:\r\n   result = result * 80 / 100\r\n  end\r\n end\r\nelseif $args[0] = 'lose_actor':\r\n result = dyneval($replace({\r\n  local jo9_loss = jo9actor['jo9_addiction_pending_loss']\r\n  if jo9_loss < 1 or jo9actor_state <= CONST_INT['no_slave'] or jo9actor['nymphomania'] <= 1: exit\r\n  jo9actor['jo9_addiction_pending_loss'] = 0\r\n  if 'jo9actor' = 'slave': slave_escape = 0 & slave_suicide = 0\r\n  if 'jo9actor' = 'slave' or 'jo9actor' = 'assistant': jo9actor_died = 0\r\n  $place = 'study'\r\n  local jo9_loss_image\r\n  if jo9_loss = 1:\r\n   $text = '오랫동안 욕구를 억누르던 ' + $jo9actor_name + '(이)가 밤사이 도망쳤다. 아침이 되어서야 빈자리를 발견했다.'\r\n   $bg_path = 'scene/escape'\r\n   jo9_loss_image = rand(1, max(1, picMax['escape']))\r\n   master_moodlet['neg_escape'] = 10\r\n  else\r\n   $text = '오랫동안 욕구를 억누르던 ' + $jo9actor_name + '(이)가 밤사이 스스로 목숨을 끊었다.'\r\n   $bg_path = 'girls/normal_scenes/suicide'\r\n   jo9_loss_image = rand(1, max(1, picMax['suicide']))\r\n   master_moodlet['neg_slave_died'] = 10\r\n   dynamic $master_energy_drop\r\n  end\r\n  if jo9_loss_image > 1: $bg_path += '_' + $str(jo9_loss_image)\r\n  gs '$mod_master_drop', 1\r\n  dynamic $clear_slave_instance, 'jo9actor'\r\n  result = 1\r\n }, 'jo9actor', $args[1]))\r\nend",
+      "actions": []
+    },
+    {
+      "name": "jo9_nymph_reaction",
+      "desc": "",
+      "body": "local $jo9_react_key = $args[0]\r\nlocal $jo9_react_actor = $args[1]\r\nif arrpos('$all_slave_characters', $jo9_react_actor) < 0: exit\r\nlocal jo9_react_eligible = 0\r\nif $jo9_react_actor = 'slave':\r\n jo9_react_eligible = (interaction = 5414 or interaction = 54141 or interaction = 54142 or interaction = 5415 or interaction > 0 and (interaction = menu_threesome or interaction = menu_threesome_noassistant))\r\nelseif $jo9_react_actor = 'assistant':\r\n jo9_react_eligible = (interaction = 441 or interaction = 4411 or interaction = 4412 or interaction = 44 or interaction = 65483 or interaction > 0 and interaction = menu_threesome)\r\nelseif $jo9_react_actor = 'room1':\r\n jo9_react_eligible = (interaction = 1027)\r\nelseif $jo9_react_actor = 'room2':\r\n jo9_react_eligible = (interaction = 1028)\r\nelseif $jo9_react_actor = 'room3':\r\n jo9_react_eligible = (interaction = 1029)\r\nelseif $jo9_react_actor = 'room4':\r\n jo9_react_eligible = (interaction = 1030)\r\nend\r\nlocal $jo9_react_code = $replace({\r\n local jo9_react_moral = jo9subject['moral']\r\n local jo9_react_obedience = jo9subject['obedience']\r\n local $jo9_react_status = $jo9subject_psy_status\r\n if args[1] = 1 and jo9subject['nymphomania'] > 1 and $jo9_react_status ! 'broken' and jo9_react_moral < 5:\r\n  jo9_react_obedience += 4 * (5 - jo9_react_moral)\r\n  if difficulty_setting = 2: jo9_react_obedience += (jo9subject['obedience_difficulty'] - 6)/2\r\n  jo9_react_moral = 5\r\n  if $args[0] = 'status':\r\n   ! Derive the command reaction with moral 5 while keeping current fear, mood and personality.\r\n   local jo9_react_motivation = max(5, jo9subject['fear'], jo9subject['custom'], jo9subject['rational'], jo9subject['instinct'], jo9subject['spoil'], jo9subject['angst'], jo9subject['arousal'])\r\n   local jo9_react_hardness = max(jo9subject['ego'], jo9subject['temper'], jo9subject['spoil'], jo9subject['pride']) + jo9subject['courage']\r\n   local jo9_react_fear_threshold = jo9_react_hardness + max(0, jo9subject['mood'])\r\n   if jo9subject['courage'] = 2: jo9_react_fear_threshold = 100\r\n   $jo9_react_status = $jo9subject_psy_basic\r\n   if $jo9_react_status = 'lachrymose': $jo9_react_status = 'soft'\r\n   if jo9subject['mood'] < 0:\r\n    if $jo9subject_psy_basic = 'optimistic': $jo9_react_status = 'soft'\r\n    if jo9subject['temper'] >= jo9_react_motivation: $jo9_react_status = 'hysteric'\r\n    if jo9subject['ego'] >= jo9_react_motivation: $jo9_react_status = 'docile'\r\n    if jo9subject['pride'] >= jo9_react_motivation: $jo9_react_status = 'soft'\r\n   elseif rebell[$jo9subject_psy_basic] ! 0:\r\n    $jo9_react_status = 'reluctant'\r\n   end\r\n   if jo9subject['fear'] = jo9_react_motivation and jo9subject['fear'] >= jo9_react_fear_threshold:\r\n    $jo9_react_status = 'frightened'\r\n   elseif jo9subject['mood'] < 2 and (jo9subject['angst'] > jo9subject['temper']/3 or jo9subject['mood'] = -5):\r\n    $jo9_react_status = 'depresive'\r\n    if jo9subject['sensitivity'] >= 4 and jo9subject['mood'] < -1: $jo9_react_status = 'lachrymose'\r\n   elseif jo9_react_obedience >= jo9_react_hardness/2:\r\n    if jo9subject['spoil'] > max(jo9subject['fear'], 3):\r\n     $jo9_react_status = 'hysteric'\r\n    elseif jo9subject['mood'] >= 0:\r\n     $jo9_react_status = 'servile'\r\n     if jo9subject['spoil'] >= 3: $jo9_react_status = 'docile'\r\n     if jo9subject['arousal'] = jo9_react_motivation: $jo9_react_status = 'horny'\r\n    end\r\n   end\r\n  end\r\n end\r\n if $args[0] = 'moral':\r\n  result = jo9_react_moral\r\n elseif $args[0] = 'obedience':\r\n  result = jo9_react_obedience\r\n elseif $args[0] = 'status':\r\n  $result = $jo9_react_status\r\n end\r\n}, 'jo9subject', $jo9_react_actor)\r\nif $jo9_react_key = 'status':\r\n $result = $dyneval($jo9_react_code, $jo9_react_key, jo9_react_eligible)\r\nelse\r\n result = dyneval($jo9_react_code, $jo9_react_key, jo9_react_eligible)\r\nend",
+      "actions": []
+    },
+    {
+      "name": "jo9_nymph_productivity",
+      "desc": "",
+      "body": "local $jo9_work_actor = $args[0]\r\nlocal jo9_work_grade = args[1]\r\nlocal jo9_work_limit = args[2]\r\nif jo9_work_grade >= jo9_work_limit: result = jo9_work_grade & exit\r\nresult = dyneval($replace({\r\n result = args[0]\r\n if jo9workactor['nymphomania'] > 1 and jo9workactor['jo9_nymph_relief_day'] = day + 1: result += 1\r\n}, 'jo9workactor', $jo9_work_actor), jo9_work_grade)",
+      "actions": []
+    }
+  ]
+}

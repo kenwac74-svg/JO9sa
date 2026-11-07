@@ -1,0 +1,63 @@
+{
+  "id": "PENELOPE_JOURNAL_PAGING_20261107",
+  "before_sha256": "9c19daa28f7a186166792599be304ba3271f29f42487a4d77ad9249e2232eed3",
+  "after_sha256": "38e4027fb3dc792a3c15b91a3c8adc83241dcc0e181f582b87db80733d7bac6b",
+  "edits": [
+    {
+      "location": "#npc_base",
+      "field": "body",
+      "count": 1,
+      "old": "$penelope_pref[5] = '  [Penelope]\r\n  - Oh… almost forgot… the assistant should also be <font color=\"#4B0082\"><b>able to handle difficult customers</b></font> diplomatically. That’s the final point.'",
+      "new": "$penelope_pref[5] = '[페넬로페]<br>&nbsp;아, 깜빡할 뻔했네요. 가게 조수는 <font color=\"#4B0082\"><b>까다로운 손님도 요령 있게 응대할 줄</b></font> 알아야 해요. 이게 마지막 조건이에요.'"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "count": 1,
+      "old": " txt_count = 5\r\n copyarr '$text', '$penelope_pref'",
+      "new": " jo9_goal_offer_seen[39911] = 1\r\n txt_count = 5\r\n copyarr '$text', '$penelope_pref'"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "count": 1,
+      "old": " IF no_slave_count['penelope'] < 1:\r\n    gt \"slave_sell\"",
+      "new": " IF no_slave_count['penelope'] < 1:\r\n    jo9_goal_offer_seen[39911] = 1\r\n    gt \"slave_sell\""
+    },
+    {
+      "location": "slave_sell_chek",
+      "field": "body",
+      "count": 1,
+      "old": " if jo9_goal_listing = 1 and active[$quest[5]] = 1 and $quest_description[5] ! '' and func('slave_sell_chek', 'special_goal_legacy') = 0:",
+      "new": " if jo9_goal_offer_seen[39911] = 1 and no_slave_count['penelope'] < 1:\r\n  if jo9_goal_listing = 1: $result += '<a href=\"EXEC: quest_description_mode = 2 & jo9_goal_selected_scene = 39911 & gt $curloc\">페넬로페 (벼룩시장)</a><br>'\r\n  if jo9_goal_lookup_scene = 39911: result = 1 & exit\r\n end\r\n if jo9_goal_listing = 1 and active[$quest[5]] = 1 and $quest_description[5] ! '' and func('slave_sell_chek', 'special_goal_legacy') = 0:"
+    },
+    {
+      "location": "slave_sell_chek",
+      "field": "body",
+      "count": 1,
+      "old": "  if $jo9_goal_offer_source = '': exit",
+      "new": "  if jo9_goal_read_scene = 39911: $jo9_goal_offer_source = '$penelope_pref' & $jo9_goal_offer_title = '페넬로페 (벼룩시장)'\r\n  if $jo9_goal_offer_source = '': exit"
+    },
+    {
+      "location": "slave_sell_chek",
+      "field": "body",
+      "count": 1,
+      "old": " local $jo9_goal_buyer, $jo9_goal_extra, $jo9_goal_skills",
+      "new": " if jo9_goal_scene = 39911: $result = $jo9_goal_title + '<b>동행 노예</b> · 낙인 1~3 · 대출 없음 · 종합 <<$rating[demand_rating[\"penelope\"]]>> 이상 · 외모 <<$beauty[2]>> 이상 · 앙상한 체형 제외<br><b>능력</b> · 지성·수사학 B 이상 · 간호의학·구강 기술 C 이상 · 매력 18 이상<br><b>상태</b> · 체력 C 이상 · 행동력 0 이상 · 부상·재활·정신 붕괴·확인된 임신 없음 · 청결도 3 이하' & exit\r\n local $jo9_goal_buyer, $jo9_goal_extra, $jo9_goal_skills"
+    },
+    {
+      "location": "$quest_list",
+      "field": "body",
+      "count": 1,
+      "old": "if quest_description_mode = 3:\r\n if $jo9_special_rows ! '':\r\n  $quest_list = '<b>특별 의뢰</b> &nbsp; <a href=\"EXEC: quest_description_mode = 0 & gt $curloc\">뒤로</a><br><br>' + $jo9_special_rows\r\n  exit\r\n end\r\n quest_description_mode = 0\r\nend",
+      "new": "! JO9 MOD START SPECIAL_JOURNAL_PAGING_20261107\r\nif quest_description_mode = 3:\r\n if $jo9_special_rows ! '':\r\n  local $jo9_page_separator = '</a><br>'\r\n  local jo9_page_size = 14\r\n  local jo9_page_total_rows = (len($jo9_special_rows) - len($replace($jo9_special_rows, $jo9_page_separator, ''))) / len($jo9_page_separator)\r\n  local jo9_page_count = max(1, (jo9_page_total_rows + jo9_page_size - 1) / jo9_page_size)\r\n  jo9_goal_page = max(1, min(jo9_goal_page, jo9_page_count))\r\n  local jo9_page_first = (jo9_goal_page - 1) * jo9_page_size + 1\r\n  local jo9_page_last = min(jo9_page_total_rows, jo9_page_first + jo9_page_size - 1)\r\n  local jo9_page_row, jo9_page_row_end\r\n  $quest_list = '<b>고객들의 특별한 요구</b> &nbsp; <a href=\"EXEC: quest_description_mode = 0 & gt $curloc\">뒤로</a><br><br>'\r\n  ! The registry returns one complete link followed by a line break per entry.\r\n  for jo9_page_row = 1 to jo9_page_last:\r\n   jo9_page_row_end = instr($jo9_special_rows, $jo9_page_separator) + len($jo9_page_separator) - 1\r\n   if jo9_page_row >= jo9_page_first: $quest_list += $mid($jo9_special_rows, 1, jo9_page_row_end)\r\n   $jo9_special_rows = $mid($jo9_special_rows, jo9_page_row_end + 1)\r\n  end\r\n  $quest_list += '<div style=\"margin-top:12px\">'\r\n  if jo9_goal_page > 1: $quest_list += '<a href=\"EXEC: jo9_goal_page -= 1 & gt $curloc\">이전 페이지</a> &nbsp;'\r\n  $quest_list += '<<jo9_goal_page>> / <<jo9_page_count>> 페이지'\r\n  if jo9_goal_page < jo9_page_count: $quest_list += '&nbsp; <a href=\"EXEC: jo9_goal_page += 1 & gt $curloc\">다음 페이지</a>'\r\n  $quest_list += '</div>'\r\n  exit\r\n end\r\n jo9_goal_page = 1\r\n quest_description_mode = 0\r\nend\r\n! JO9 MOD END SPECIAL_JOURNAL_PAGING_20261107"
+    },
+    {
+      "location": "$quest_list",
+      "field": "body",
+      "count": 1,
+      "old": "quest_description_mode = 3 & gt $curloc\">Sp. 정말 특별한 고객들이 내게 접촉해 왔다",
+      "new": "quest_description_mode = 3 & jo9_goal_page = 1 & gt $curloc\">Sp. 정말 특별한 고객들이 내게 접촉해 왔다"
+    }
+  ]
+}

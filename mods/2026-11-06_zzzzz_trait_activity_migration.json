@@ -1,0 +1,182 @@
+{
+  "id": "TRAIT_ACTIVITY_MIGRATION_20261106",
+  "before_sha256": "72a2b519d5fd0989acb9cdeae0c829d0671428e106974558415cb9de5772dbf0",
+  "after_sha256": "89296597f76707b96063720e47d4a2638726191a41080c2eff28e649188ceab3",
+  "edits": [
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "count": 1,
+      "old": "if $args[0] = 'activity_value' or $args[0] = 'activity_sign' or $args[0] = 'activity_compatible' or $args[0] = 'activity_known':\r\n local $j9av_role = $args[1]\r\n local j9av_a = dyneval('result = ' + $j9av_role + \"['jo9_work_ethic']\")\r\n local j9av_c = dyneval('result = ' + $j9av_role + \"['passion_comfort']\")\r\n local j9av_ok = 0\r\n local j9av_sign = 0\r\n if j9av_a >= -1 and j9av_a <= 1 and j9av_c >= -1 and j9av_c <= 1:\r\n  j9av_ok = 1\r\n end\r\n if j9av_ok = 1:\r\n  if j9av_a = 1 or j9av_c = -1:\r\n   j9av_sign = 1\r\n  elseif j9av_a = -1 or j9av_c = 1:\r\n   j9av_sign = -1\r\n  end\r\n end\r\n result = 0\r\n if $args[0] = 'activity_compatible': result = j9av_ok\r\n if $args[0] = 'activity_sign': result = j9av_sign\r\n if $args[0] = 'activity_known':\r\n  if dyneval('result = ' + $j9av_role + \"['jo9_work_ethic_known']\") = 1 or dyneval('result = ' + $j9av_role + \"['passion_comfort_revealed']\") = 2: result = 1\r\n end\r\n if $args[0] = 'activity_value':\r\n  if $args[2] = 'jo9_work_ethic': result = j9av_a\r\n  if $args[2] = 'passion_comfort': result = j9av_c\r\n  if j9av_ok = 1:\r\n   if $args[2] = 'jo9_work_ethic': result = j9av_sign\r\n   if $args[2] = 'passion_comfort': result = -j9av_sign\r\n  end\r\n end\r\n exit\r\nend\r\nif $args[0] = 'activity_repair':\r\n local $j9av_role = $args[1]\r\n local j9av_a = dyneval('result = ' + $j9av_role + \"['jo9_work_ethic']\")\r\n local j9av_c = dyneval('result = ' + $j9av_role + \"['passion_comfort']\")\r\n result = 0\r\n if (j9av_a = 1 and j9av_c = 1) or (j9av_a = -1 and j9av_c = -1):\r\n  dynamic $replace({\r\n   j9avactor['jo9_work_ethic'] = 1\r\n   j9avactor['passion_comfort'] = -1\r\n  }, 'j9avactor', $j9av_role)\r\n  result = 1\r\n end\r\n exit\r\nend\r\n",
+      "new": "if $args[0] = 'activity_value' or $args[0] = 'activity_sign' or $args[0] = 'activity_compatible' or $args[0] = 'activity_known':\r\n local $j9av_role = $args[1]\r\n result = 0\r\n ! Existing saved display routines still call activity_compatible.\r\n if $args[0] = 'activity_compatible': result = 1 & exit\r\n if $args[0] = 'activity_known':\r\n  if dyneval('result = ' + $j9av_role + \"['jo9_work_ethic_known']\") = 1 or dyneval('result = ' + $j9av_role + \"['passion_comfort_revealed']\") = 2: result = 1\r\n  exit\r\n end\r\n local j9av_work = dyneval('result = ' + $j9av_role + \"['jo9_work_ethic']\")\r\n local j9av_comfort = dyneval('result = ' + $j9av_role + \"['passion_comfort']\")\r\n local j9av_sign = 0\r\n if j9av_work > 0 or j9av_comfort < 0:\r\n  j9av_sign = 1\r\n elseif j9av_work < 0 or j9av_comfort > 0:\r\n  j9av_sign = -1\r\n end\r\n if $args[0] = 'activity_sign' or $args[2] = 'jo9_work_ethic': result = j9av_sign\r\n if $args[0] = 'activity_value' and $args[2] = 'passion_comfort': result = -j9av_sign\r\n exit\r\nend\r\nif $args[0] = 'activity_repair':\r\n local $j9av_role = $args[1]\r\n local j9av_sign = func('jo9_traits', 'activity_sign', $j9av_role)\r\n result = 0\r\n dynamic $replace({\r\n  if j9avactor['jo9_work_ethic'] ! args[0] or j9avactor['passion_comfort'] ! -args[0]:\r\n   j9avactor['jo9_work_ethic'] = args[0]\r\n   j9avactor['passion_comfort'] = -args[0]\r\n   result = 1\r\n  end\r\n }, 'j9avactor', $j9av_role), j9av_sign\r\n exit\r\nend\r\nif $args[0] = 'activity_load':\r\n local j9av_i, $j9av_role, $j9av_roles\r\n copyarr '$j9av_roles', '$all_slave_characters'\r\n $j9av_roles[] = 'stock'\r\n $j9av_roles[] = 'selected'\r\n $j9av_roles[] = 'saved_stock'\r\n $j9av_roles[] = 'snk_parked_slave'\r\n for j9av_i = 0 to arrsize('$j9av_roles') - 1:\r\n  $j9av_role = $j9av_roles[j9av_i]\r\n  if dyneval('result = ' + $j9av_role + '_state') > CONST_INT['no_slave']:\r\n   gs 'jo9_traits', 'activity_repair', $j9av_role\r\n  end\r\n end\r\n exit\r\nend\r\n"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "count": 1,
+      "old": "  if func('jo9_traits', 'activity_compatible', $j9av_role) = 0 or func('jo9_traits', 'activity_known', $j9av_role) = 0:",
+      "new": "  if func('jo9_traits', 'activity_known', $j9av_role) = 0:"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "count": 1,
+      "old": "if $args[0] = 'activity_discover':\r\n local $j9av_role = $args[1]\r\n if func('jo9_traits', 'activity_compatible', $j9av_role) = 1:\r\n  local j9av_sign = func('jo9_traits', 'activity_sign', $j9av_role)\r\n  dynamic $replace({\r\n   if j9avactor['passion_comfort_revealed'] = 1 and args[0] ! 0:\r\n    if j9avactor['jo9_work_ethic_known'] ! 1:\r\n     if args[0] = 1: msg $func('jo9_traits', 'text', 'activity_active')\r\n     if args[0] = -1: msg $func('jo9_traits', 'text', 'activity_passive')\r\n    end\r\n    j9avactor['jo9_work_ethic_known'] = 1\r\n    j9avactor['passion_comfort_revealed'] = 2\r\n   elseif args[0] = 0:\r\n    j9avactor['passion_comfort_revealed'] = 0\r\n   end\r\n  }, 'j9avactor', $j9av_role), j9av_sign\r\n else\r\n  dynamic $replace({\r\n   if j9avactor['passion_comfort_revealed'] = 1 and j9avactor['passion_comfort'] ! 0:\r\n    if j9avactor['passion_comfort'] = 1: msg '<<$Ленивая>>'\r\n    if j9avactor['passion_comfort'] = -1: msg '<<$Гиперактивная>>'\r\n    j9avactor['passion_comfort_revealed'] = 2\r\n   elseif j9avactor['passion_comfort'] = 0:\r\n    j9avactor['passion_comfort_revealed'] = 0\r\n   end\r\n  }, 'j9avactor', $j9av_role)\r\n end\r\n exit\r\nend\r\n",
+      "new": "if $args[0] = 'activity_discover':\r\n local $j9av_role = $args[1]\r\n local j9av_sign = func('jo9_traits', 'activity_sign', $j9av_role)\r\n dynamic $replace({\r\n  if j9avactor['passion_comfort_revealed'] = 1 and args[0] ! 0:\r\n   if j9avactor['jo9_work_ethic_known'] ! 1:\r\n    if args[0] = 1: msg $func('jo9_traits', 'text', 'activity_active')\r\n    if args[0] = -1: msg $func('jo9_traits', 'text', 'activity_passive')\r\n   end\r\n   j9avactor['jo9_work_ethic_known'] = 1\r\n   j9avactor['passion_comfort_revealed'] = 2\r\n  elseif args[0] = 0:\r\n   j9avactor['passion_comfort_revealed'] = 0\r\n  end\r\n }, 'j9avactor', $j9av_role), j9av_sign\r\n exit\r\nend\r\n"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "count": 1,
+      "old": "if $args[0] = 'activity_generate':\r\n local $j9av_role = $args[1]\r\n local j9av_a = dyneval('result = ' + $j9av_role + \"['jo9_work_ethic']\")\r\n local j9av_c = dyneval('result = ' + $j9av_role + \"['passion_comfort']\")\r\n local j9av_sign = 0\r\n if j9av_a = 1 or j9av_c = -1:\r\n  j9av_sign = 1\r\n elseif j9av_a = -1 or j9av_c > 0:\r\n  j9av_sign = -1\r\n end\r\n if j9av_sign ! 0:\r\n  if func('jo9_traits', 'allow', $j9av_role, 'jo9_work_ethic', j9av_sign) = 0: j9av_sign = 0\r\n end\r\n dynamic $replace({\r\n  j9avactor['jo9_work_ethic'] = args[0]\r\n  j9avactor['passion_comfort'] = -args[0]\r\n }, 'j9avactor', $j9av_role), j9av_sign\r\n result = 1\r\n exit\r\nend\r\n",
+      "new": "if $args[0] = 'activity_generate':\r\n local $j9av_role = $args[1]\r\n local j9av_sign = func('jo9_traits', 'activity_sign', $j9av_role)\r\n if j9av_sign ! 0:\r\n  if func('jo9_traits', 'allow', $j9av_role, 'jo9_work_ethic', j9av_sign) = 0: j9av_sign = 0\r\n end\r\n dynamic $replace({\r\n  j9avactor['jo9_work_ethic'] = args[0]\r\n  j9avactor['passion_comfort'] = -args[0]\r\n }, 'j9avactor', $j9av_role), j9av_sign\r\n result = 1\r\n exit\r\nend\r\n"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "count": 1,
+      "old": " if j9av_sign ! 1 and j9av_sign ! -1: exit\r\n if func('jo9_traits', 'activity_compatible', $j9av_role) = 0: exit\r\n if func('jo9_traits', 'allow', $j9av_role, 'jo9_work_ethic', j9av_sign) = 0: exit",
+      "new": " if j9av_sign ! 1 and j9av_sign ! -1: exit\r\n if func('jo9_traits', 'allow', $j9av_role, 'jo9_work_ethic', j9av_sign) = 0: exit"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "count": 1,
+      "old": "if $args[0] = 'activity_remove':\r\n local $j9av_role = $args[1]\r\n local $j9av_target = $args[2]\r\n result = 0\r\n if $j9av_target = '':\r\n  if func('jo9_traits', 'activity_compatible', $j9av_role) = 0: exit\r\n end\r\n if $j9av_target ! '' and $j9av_target ! 'jo9_work_ethic' and $j9av_target ! 'passion_comfort': exit\r\n dynamic $replace({\r\n  if $args[0] = '' or $args[0] = 'jo9_work_ethic':\r\n   j9avactor['jo9_work_ethic'] = 0\r\n   j9avactor['jo9_work_ethic_known'] = 0\r\n  end\r\n  if $args[0] = '' or $args[0] = 'passion_comfort':\r\n   j9avactor['passion_comfort'] = 0\r\n   j9avactor['passion_comfort_revealed'] = 0\r\n  end\r\n }, 'j9avactor', $j9av_role), $j9av_target\r\n result = 1\r\n exit\r\nend\r\n",
+      "new": "if $args[0] = 'activity_remove':\r\n local $j9av_role = $args[1]\r\n local $j9av_target = $args[2]\r\n result = 0\r\n if $j9av_target ! '' and $j9av_target ! 'jo9_work_ethic' and $j9av_target ! 'passion_comfort': exit\r\n dynamic $replace({\r\n  j9avactor['jo9_work_ethic'] = 0\r\n  j9avactor['passion_comfort'] = 0\r\n  j9avactor['jo9_work_ethic_known'] = 0\r\n  j9avactor['passion_comfort_revealed'] = 0\r\n }, 'j9avactor', $j9av_role)\r\n result = 1\r\n exit\r\nend\r\n"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "count": 1,
+      "old": " if $j9av_key = 'passion_comfort': j9av_sign = -j9av_wanted\r\n if func('jo9_traits', 'activity_compatible', $j9av_role) = 0:\r\n  if dyneval('result = ' + $j9av_role + \"['\" + $j9av_key + \"']\") = j9av_wanted:\r\n   gs 'jo9_traits', 'activity_remove', $j9av_role, $j9av_key\r\n  else\r\n   msg '이전 활동 성향의 조합을 보존합니다. 바꾸려면 해당 기존 성향을 먼저 해제하세요.'\r\n  end\r\n  exit\r\n end\r\n if func('jo9_traits', 'activity_sign', $j9av_role) = j9av_sign:",
+      "new": " if $j9av_key = 'passion_comfort': j9av_sign = -j9av_wanted\r\n if func('jo9_traits', 'activity_sign', $j9av_role) = j9av_sign:"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "count": 1,
+      "old": " if $args[1] = 'workaholic': $result = '[일벌레]<br>일이 이어져도 쉽게 싫증내지 않는다. 업무나 교육을 거듭할수록 오히려 기분이 좋아진다.'\r\n if $args[1] = 'content': $result = '[안분지족]<br>바쁘게 지내기보다는 현재에 만족하며 여유를 즐긴다. 업무나 교육이 이어지면 기분이 가라앉는다.'\r\n  if $args[1] = 'activity_active': $result = '[활동적]<br>업무나 교육이 이어지면 오히려 활기를 얻는다. 쉬게 하거나 마사지를 해 주어도 보상으로 받아들이는 정도는 작다. 성향이 드러난 뒤에는 휴식만으로 푹 쉰 기분 효과를 얻지 않는다.'\r\n  if $args[1] = 'activity_passive': $result = '[휴식 선호]<br>업무나 교육이 이어지면 지치고 기분이 가라앉는다. 반면 휴식이나 마사지에는 특히 만족하며, 그런 보상을 기꺼이 받아들인다.'\r\n",
+      "new": " if $args[1] = 'workaholic': $args[1] = 'activity_active'\r\n if $args[1] = 'content': $args[1] = 'activity_passive'\r\n if $args[1] = 'activity_active': $result = '[워커홀릭]<br>업무와 교육을 합쳐 하루 두 번째 활동부터 기분이 2씩 오른다.<br>직접 주는 휴식·마사지의 보상 효과는 절반이다. 성향이 드러나면 ‘푹 쉼’ 효과가 사라진다.'\r\n if $args[1] = 'activity_passive': $result = '[무기력함]<br>업무와 교육을 합쳐 하루 두 번째 활동부터 기분이 2씩 내려간다.<br>직접 주는 휴식·마사지의 보상 효과는 두 배다.'\r\n"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "count": 1,
+      "old": "   if func('jo9_traits', 'activity_compatible', 'dynslave') = 1:\r\n    if func('jo9_traits', 'activity_known', 'dynslave') = 1 or spell_revelio = 1:\r\n     if func('jo9_traits', 'activity_sign', 'dynslave') = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''activity_active''\">활동적</a><br>'\r\n     if func('jo9_traits', 'activity_sign', 'dynslave') = -1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''activity_passive''\">휴식 선호</a><br>'\r\n    end\r\n   else\r\n! JO9 MOD START REVELIO_NEW_LEGACY_WORK_ACTIVE_20261028\r\n  if dynslave['jo9_work_ethic'] = 1 and (dynslave['jo9_work_ethic_known'] = 1 or spell_revelio = 1): $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''workaholic''\">일벌레</a><br>'\r\n! JO9 MOD END REVELIO_NEW_LEGACY_WORK_ACTIVE_20261028\r\n! JO9 MOD START REVELIO_NEW_LEGACY_WORK_PASSIVE_20261028\r\n  if dynslave['jo9_work_ethic'] = -1 and (dynslave['jo9_work_ethic_known'] = 1 or spell_revelio = 1): $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''content''\">안분지족</a><br>'\r\n! JO9 MOD END REVELIO_NEW_LEGACY_WORK_PASSIVE_20261028\r\n   end\r\n",
+      "new": "   if func('jo9_traits', 'activity_known', 'dynslave') = 1 or spell_revelio = 1:\r\n    if func('jo9_traits', 'activity_sign', 'dynslave') = 1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''activity_active''\">워커홀릭</a><br>'\r\n    if func('jo9_traits', 'activity_sign', 'dynslave') = -1: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''activity_passive''\">무기력함</a><br>'\r\n   end\r\n"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "count": 1,
+      "old": "   if func('jo9_traits', 'activity_compatible', 'dynslave') = 1:\r\n    $setting_display += '<div id=\"under_cheats\"><a href=\"EXEC: gs ''jo9_traits'', ''edit'', ''dynslave'', ''jo9_work_ethic'', 1 & gt ''menu_form''\">활동적: '\r\n    if func('jo9_traits', 'activity_sign', 'dynslave') = 1: $setting_display += '있음'\r\n    if func('jo9_traits', 'activity_sign', 'dynslave') ! 1: $setting_display += '없음'\r\n    $setting_display += '</a></div>'\r\n    $setting_display += '<div id=\"under_cheats\"><a href=\"EXEC: gs ''jo9_traits'', ''edit'', ''dynslave'', ''jo9_work_ethic'', -1 & gt ''menu_form''\">휴식 선호: '\r\n    if func('jo9_traits', 'activity_sign', 'dynslave') = -1: $setting_display += '있음'\r\n    if func('jo9_traits', 'activity_sign', 'dynslave') ! -1: $setting_display += '없음'\r\n    $setting_display += '</a></div>'\r\n   else\r\n    if dynslave['jo9_work_ethic'] ! 0:\r\n     $setting_display += '<div id=\"under_cheats\"><a href=\"EXEC: gs ''jo9_traits'', ''activity_remove'', ''dynslave'', ''jo9_work_ethic'' & gt ''menu_form''\">'\r\n     if dynslave['jo9_work_ethic'] = 1: $setting_display += '일벌레'\r\n     if dynslave['jo9_work_ethic'] = -1: $setting_display += '안분지족'\r\n     if dynslave['jo9_work_ethic'] ! 1 and dynslave['jo9_work_ethic'] ! -1: $setting_display += '이전 업무 성향'\r\n     $setting_display += ': 해제</a></div>'\r\n    end\r\n    if dynslave['passion_comfort'] ! 0:\r\n     $setting_display += '<div id=\"under_cheats\"><a href=\"EXEC: gs ''jo9_traits'', ''activity_remove'', ''dynslave'', ''passion_comfort'' & gt ''menu_form''\">'\r\n     if dynslave['passion_comfort'] = 1: $setting_display += '무기력증'\r\n     if dynslave['passion_comfort'] = -1: $setting_display += '과다행동장애'\r\n     if dynslave['passion_comfort'] ! 1 and dynslave['passion_comfort'] ! -1: $setting_display += '이전 휴식 성향'\r\n     $setting_display += ': 해제</a></div>'\r\n    end\r\n   end\r\n",
+      "new": "  $setting_display += '<div id=\"under_cheats\"><a href=\"EXEC: gs ''jo9_traits'', ''edit'', ''dynslave'', ''jo9_work_ethic'', 1 & gt ''menu_form''\">워커홀릭: '\r\n  if func('jo9_traits', 'activity_sign', 'dynslave') = 1: $setting_display += '있음'\r\n  if func('jo9_traits', 'activity_sign', 'dynslave') ! 1: $setting_display += '없음'\r\n  $setting_display += '</a></div>'\r\n  $setting_display += '<div id=\"under_cheats\"><a href=\"EXEC: gs ''jo9_traits'', ''edit'', ''dynslave'', ''jo9_work_ethic'', -1 & gt ''menu_form''\">무기력함: '\r\n  if func('jo9_traits', 'activity_sign', 'dynslave') = -1: $setting_display += '있음'\r\n  if func('jo9_traits', 'activity_sign', 'dynslave') ! -1: $setting_display += '없음'\r\n  $setting_display += '</a></div>'\r\n"
+    },
+    {
+      "location": "#static_base",
+      "field": "body",
+      "count": 1,
+      "old": "        if func('jo9_traits', 'activity_compatible', 'dynslave') = 1:\r\n            if func('jo9_traits', 'activity_sign', 'dynslave') = 1 and func('jo9_traits', 'activity_known', 'dynslave') = 1: dynslave['pos_well_rested'] = 0\r\n        else\r\n        if dynslave['passion_comfort'] = 1 and (dynslave['passion_comfort_revealed'] = 2 or spell_revelio = 1):\r\n            $dynslave_features_list += '<a href=\"EXEC: msg $Ленивая\"><<dyneval($vb_cycle_skill, 3, \"무기력증\")>></a><br>'\r\n        end\r\n        if dynslave['passion_comfort'] = -1 and (dynslave['passion_comfort_revealed'] = 2 or spell_revelio = 1):\r\n            $dynslave_features_list += '<a href=\"EXEC: msg $Гиперактивная\"><<dyneval($vb_cycle_skill, 2, \"과다행동장애\")>></a><br>'\r\n            if dynslave['passion_comfort_revealed'] = 2: dynslave['pos_well_rested'] = 0\r\n        end\r\n        end\r\n",
+      "new": "        if func('jo9_traits', 'activity_sign', 'dynslave') = 1 and func('jo9_traits', 'activity_known', 'dynslave') = 1: dynslave['pos_well_rested'] = 0\r\n"
+    },
+    {
+      "location": "#static_base",
+      "field": "body",
+      "count": 1,
+      "old": "\"구두쇠\"",
+      "new": "\"검소함\""
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "count": 1,
+      "old": ">구두쇠<div",
+      "new": ">검소함<div"
+    },
+    {
+      "location": "#static_txt",
+      "field": "body",
+      "count": 1,
+      "old": "$Аскетичная = '[구두쇠]<br>당신 노예는 사치에 완전히 무관심한 것 같다. 반짝이는 장식품이나 화려한 드레스로는 매수할 수 없다. 좋지 않은 일이다. 영향을 줄 수단이 줄어들기 때문이다.'",
+      "new": "$Аскетичная = '[검소함]<br>사치품에 별 관심이 없다. 화려한 옷이나 비싼 장신구를 선물해도 보상 효과를 얻기 어렵다.'"
+    },
+    {
+      "location": "#static_txt",
+      "field": "body",
+      "count": 1,
+      "old": "$Ленивая = '[무기력증]<br>당신 노예를 지켜보면, 그녀가 빈둥거릴 기회를 높이 평가한다는 걸 알 수 있다. 노예에게는 썩 좋은 특성이 아니지만, 몇몇 종류의 보상은 분명 더 효과적일 것이다.'",
+      "new": "$Ленивая = '[무기력함]<br>업무와 교육을 합쳐 하루 두 번째 활동부터 기분이 2씩 내려간다.<br>직접 주는 휴식·마사지의 보상 효과는 두 배다.'"
+    },
+    {
+      "location": "#static_txt",
+      "field": "body",
+      "count": 1,
+      "old": "$Гиперактивная = '[과다행동장애]<br>당신 노예는 도무지 가만히 앉아 있지를 못한다. 언제나 활력이 넘치고, 늘 무슨 일엔가 바쁘다. 자유 시간을 준다고 해서 특별한 감사는 받지 못할 것이다.'",
+      "new": "$Гиперактивная = '[워커홀릭]<br>업무와 교육을 합쳐 하루 두 번째 활동부터 기분이 2씩 오른다.<br>직접 주는 휴식·마사지의 보상 효과는 절반이다. 성향이 드러나면 ‘푹 쉼’ 효과가 사라진다.'"
+    },
+    {
+      "location": "#txt_woman",
+      "field": "body",
+      "count": 1,
+      "old": "$Аскетичная = '[구두쇠]<br>당신 노예는 사치에 완전히 무관심한 것 같다. 반짝이는 장식품이나 화려한 드레스로는 매수할 수 없다. 좋지 않은 일이다. 영향을 줄 수단이 줄어들기 때문이다.'",
+      "new": "$Аскетичная = '[검소함]<br>사치품에 별 관심이 없다. 화려한 옷이나 비싼 장신구를 선물해도 보상 효과를 얻기 어렵다.'"
+    },
+    {
+      "location": "#txt_woman",
+      "field": "body",
+      "count": 1,
+      "old": "$Ленивая = '[무기력증]<br>당신 노예를 지켜보면, 그녀가 빈둥거릴 기회를 높이 평가한다는 걸 알 수 있다. 노예에게는 썩 좋은 특성이 아니지만, 몇몇 종류의 보상은 분명 더 효과적일 것이다.'",
+      "new": "$Ленивая = '[무기력함]<br>업무와 교육을 합쳐 하루 두 번째 활동부터 기분이 2씩 내려간다.<br>직접 주는 휴식·마사지의 보상 효과는 두 배다.'"
+    },
+    {
+      "location": "#txt_woman",
+      "field": "body",
+      "count": 1,
+      "old": "$Гиперактивная = '[과다행동장애]<br>당신 노예는 도무지 가만히 앉아 있지를 못한다. 언제나 활력이 넘치고, 늘 무슨 일엔가 바쁘다. 자유 시간을 준다고 해서 특별한 감사는 받지 못할 것이다.'",
+      "new": "$Гиперактивная = '[워커홀릭]<br>업무와 교육을 합쳐 하루 두 번째 활동부터 기분이 2씩 오른다.<br>직접 주는 휴식·마사지의 보상 효과는 절반이다. 성향이 드러나면 ‘푹 쉼’ 효과가 사라진다.'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "field": "body",
+      "count": 1,
+      "old": " end\r\n if func('jo9_traits', 'activity_compatible', 'jo9ceactor') = 0 and jo9ceactor['jo9_work_ethic'] = -1:\r\n  $jo9_chaotic_keys[jo9_chaotic_count] = 'jo9_work_ethic'\r\n  $jo9_chaotic_labels[jo9_chaotic_count] = '안분지족'\r\n  $jo9_chaotic_xps[jo9_chaotic_count] = ''\r\n  jo9_chaotic_count += 1\r\n end\r\n if jo9ceactor['jo9_focus'] = -1:",
+      "new": " end\r\n if jo9ceactor['jo9_focus'] = -1:"
+    },
+    {
+      "location": "jo9_chaotic",
+      "field": "body",
+      "count": 1,
+      "old": "  if func('jo9_traits', 'activity_compatible', 'jo9ceactor') = 1 and func('jo9_traits', 'activity_sign', 'jo9ceactor') = -1:",
+      "new": "  if func('jo9_traits', 'activity_sign', 'jo9ceactor') = -1:"
+    },
+    {
+      "location": "jo9_chaotic",
+      "field": "body",
+      "count": 1,
+      "old": "'휴식 선호'",
+      "new": "'무기력함'"
+    },
+    {
+      "location": "jo9_chaotic",
+      "field": "body",
+      "count": 1,
+      "old": "'구두쇠'",
+      "new": "'검소함'"
+    },
+    {
+      "location": "generate_stock",
+      "field": "body",
+      "count": 1,
+      "old": "gs '$stock_traits'",
+      "new": "gs 'jo9_traits', 'activity_repair', 'stock'\r\ngs '$stock_traits'"
+    },
+    {
+      "location": "$ongload",
+      "field": "body",
+      "count": 1,
+      "old": "saved_game_loaded = 1 &! do-once flag for $newloc",
+      "new": "! JO9 MOD START ACTIVITY_MIGRATION_20261106\r\ngs 'jo9_traits', 'activity_load'\r\n$Ленивая = $func('jo9_traits', 'text', 'activity_passive')\r\n$Гиперактивная = $func('jo9_traits', 'text', 'activity_active')\r\n$update_slave_features_list = replace($update_slave_features_list, '\"구두쇠\"', '\"검소함\"')\r\n$Аскетичная = '[검소함]<br>사치품에 별 관심이 없다. 화려한 옷이나 비싼 장신구를 선물해도 보상 효과를 얻기 어렵다.'\r\n! JO9 MOD END ACTIVITY_MIGRATION_20261106\r\nsaved_game_loaded = 1 &! do-once flag for $newloc"
+    }
+  ]
+}

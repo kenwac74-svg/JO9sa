@@ -1,0 +1,21 @@
+{
+  "id": "GUILD_BID_VARIATION_20261106",
+  "before_sha256": "9a7a1368520083e16e3dd0a7b9edfec67f84a2a7e63cb07e2fa96ca7426c3143",
+  "after_sha256": "4b341a61a3ddec9ce5f2f1605bf1efe148e1b0fea8a5a7bc2aa98ecf16bd3227",
+  "edits": [
+    {
+      "location": "$guild_auction",
+      "field": "body",
+      "old": "x = 1\r\n:torg_loop",
+      "new": "local jo9_auction_bid_count\r\nlocal jo9_auction_bid_variant\r\nlocal $jo9_auction_bidder\r\nlocal $jo9_auction_bid_line\r\nx = 1\r\n:torg_loop",
+      "count": 1
+    },
+    {
+      "location": "$guild_auction",
+      "field": "body",
+      "old": "\t\t\t$auction_flow[u] = '<b>[<<$npc_name[$auction_participant[i]]>>]</b> $<<bet_size>> 추가 입찰! (현재 최고가: <b>$<<bank_size>></b>)<br>&nbsp;<<$iif($auction_participant[i]=''bullhorn'', ''\"하하, $'' + $str(bet_size) + '' 더 얹지! 푼돈 만지작거릴 거면 다들 그만 빠지고 이 몸에게 양보하시지!\"'', $iif($npc_name[$auction_participant[i]]=''엘리자베스'', ''\"호호, $'' + $str(bet_size) + '' 더 부르죠. 내 마구간에서 아주 완벽한 경주마 장난감으로 길들여 주겠어요.\"'', $iif($auction_participant[i]=''countess_bathory'' or $auction_participant[i]=''donna_venturi'' or $auction_participant[i]=''lady_edna'' or $auction_participant[i]=''lady_suinton'' or $auction_participant[i]=''madame_jofre'' or $auction_participant[i]=''Kleo'' or instr($npc_name[$auction_participant[i]],''여주인'')>0 or instr($npc_name[$auction_participant[i]],''마담'')>0 or instr($npc_name[$auction_participant[i]],''부인'')>0, ''\"어머, 꽤 탐나는 물건이네. $'' + $str(bet_size) + '' 더 올리겠어요. 이 아이의 새 주인은 바로 저랍니다.\"'', ''\"잠깐, 그대로 넘길 순 없지! $'' + $str(bet_size) + '' 더 올려서 $'' + $str(bank_size) + '' 부르겠소!\"'')))>>'",
+      "new": "\t\t\t$jo9_auction_bidder = $auction_participant[i]\r\n\t\t\tjo9_auction_bid_variant = 1 + ((day + jo9_auction_bid_count[$jo9_auction_bidder]) mod 3)\r\n\t\t\tjo9_auction_bid_count[$jo9_auction_bidder] += 1\r\n\t\t\tif $jo9_auction_bidder = 'bullhorn':\r\n\t\t\t if jo9_auction_bid_variant = 1: $jo9_auction_bid_line = '굵은 시가 연기를 내뿜으며 거만하게 손가락을 까딱인다. \"하하, $<<bet_size>> 더! 푼돈 만지작거릴 거면 다들 그만 빠지고 이 몸에게 양보하시지!\"'\r\n\t\t\t if jo9_auction_bid_variant = 2: $jo9_auction_bid_line = '주변 입찰자들을 험악하게 노려보며 호통친다. \"건방진 것들, 감히 내 사냥감에 침을 흘려? $<<bank_size>>이다! 덤빌 테면 덤벼봐라!\"'\r\n\t\t\t if jo9_auction_bid_variant = 3: $jo9_auction_bid_line = '\"크하하! $<<bank_size>> 스파크! 힘도 좋고 내 투기장과 농장에서 굴리기에 딱 좋은 몸뚱어리군!\"'\r\n\t\t\telseif $jo9_auction_bidder = 'countess_bathory' or $jo9_auction_bidder = 'donna_venturi' or $jo9_auction_bidder = 'lady_edna' or $jo9_auction_bidder = 'lady_suinton' or $jo9_auction_bidder = 'madame_jofre' or $jo9_auction_bidder = 'Kleo' or instr($npc_name[$jo9_auction_bidder], '여주인') > 0 or instr($npc_name[$jo9_auction_bidder], '마담') > 0 or instr($npc_name[$jo9_auction_bidder], '부인') > 0:\r\n\t\t\t if jo9_auction_bid_variant = 1: $jo9_auction_bid_line = '나른하고 우아한 손짓으로 가격을 높인다. \"어머, 꽤 탐나는 장난감이네. $<<bet_size>> 더 부르겠어요. 내 저택 장식으로 딱이겠어.\"'\r\n\t\t\t if jo9_auction_bid_variant = 2: $jo9_auction_bid_line = '\"$<<bank_size>>! 남자분들의 시시한 자존심 싸움은 이제 그만 보았으면 좋겠군요. 이 사람은 제가 데려가겠어요.\"'\r\n\t\t\t if jo9_auction_bid_variant = 3: $jo9_auction_bid_line = '입가에 여유로운 미소를 걸친다. \"제법 훈련이 잘 된 상품이군요. $<<bet_size>> 더 얹죠. 포기들 하시죠?\"'\r\n\t\t\telse\r\n\t\t\t if jo9_auction_bid_variant = 1: $jo9_auction_bid_line = '초조하게 입술을 적시며 패를 높이 치켜든다. \"아직 포기 못 해! $<<bet_size>> 더 올려서 $<<bank_size>> 부르겠소!\"'\r\n\t\t\t if jo9_auction_bid_variant = 2: $jo9_auction_bid_line = '냉정한 눈빛으로 주판을 튕기듯 계산하며 외친다. \"$<<bet_size>> 추가합니다. 이 정도 상품이면 $<<bank_size>>까지는 충분히 투자할 가치가 있군.\"'\r\n\t\t\t if jo9_auction_bid_variant = 3: $jo9_auction_bid_line = '주먹으로 팔걸이를 쾅 치며 호기롭게 외친다. \"좋아, $<<bet_size>> 더 얹어서 $<<bank_size>>! 어디 재력들 있으면 더 따라와 보시지!\"'\r\n\t\t\tend\r\n\t\t\t$auction_flow[u] = '<b>[<<$npc_name[$jo9_auction_bidder]>>]</b> $<<bet_size>> 추가 입찰! (현재 최고가: <b>$<<bank_size>></b>)<br>&nbsp;' + $jo9_auction_bid_line",
+      "count": 1
+    }
+  ]
+}

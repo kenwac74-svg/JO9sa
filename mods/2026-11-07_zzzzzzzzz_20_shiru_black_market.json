@@ -1,0 +1,56 @@
+{
+  "id": "SHIRU_BLACK_MARKET_20261107",
+  "before_sha256": "877e5ac6a3ebea4c406d411268e598e90a30da243e92f582d12bc6a7d49c1b43",
+  "after_sha256": "25a4eedd7f4e89fb742fa4258a7dd6c7c6fa7458739dbfff5347a223aae3b0f8",
+  "edits": [
+    {
+      "location": "#options",
+      "field": "body",
+      "count": 1,
+      "old": "$black_bazar_options[2] = {\r\n$sp_text[2] = '   우리는 상품의 품질을 엄격하게 관리하며 최상급 여자들만 취급한다. 하지만 떠돌이, 중고품, 팔리지 않는 상품, 그리고 이런저런 이유로 우리 주력 취급 대상에는 맞지 않지만 어쩌다 우리 손에 들어온 다른 노예들도 역시 상품이긴 하다.'\r\n$text_display = '<br><br>'\r\nFUNC('$menu', 'spacer', 1)\r\nFUNC('$menu', '===BEGIN===', 'column_0')\r\nIF unique_slave[\"tsuki\"] = 0 and slave_state = CONST_INT['no_slave'] and sparks >= 1250:\r\n FUNC('$menu', 'interaction_city', $menu_item_buytsuki, menu_Buytsuki, '츠키 ($1250)')\r\n ELSE\r\n FUNC('$menu', 'location_gray', $menu_item_buytsuki_gray, empty, '츠키 ($1250)')\r\nEND\r\nIF unique_slave[\"Luminous\"] = 0 and slave_state = CONST_INT['no_slave'] and sparks >= 2000:\r\n FUNC('$menu', 'interaction_city', $menu_item_buyLuminous, menu_BuyLuminous, '루미너스 ($2000)')\r\n ELSE\r\n FUNC('$menu', 'location_gray', $menu_item_buyLuminous_gray, empty, '루미너스 ($2000)')\r\nEND\r\nFUNC('$menu', 'exec_options', $menu_item_nobuy, 'sp_txt = 1 & gt $curloc', '떠난다')\r\nFUNC('$menu', '===END===')\r\n}",
+      "new": "$black_bazar_options[2] = {\r\n$sp_text[2] = '   우리는 상품의 품질을 엄격하게 관리하며 최상급 여자들만 취급한다. 하지만 떠돌이, 중고품, 팔리지 않는 상품, 그리고 이런저런 이유로 우리 주력 취급 대상에는 맞지 않지만 어쩌다 우리 손에 들어온 다른 노예들도 역시 상품이긴 하다.'\r\n$text_display = '<br><br>'\r\nFUNC('$menu', 'spacer', 1)\r\nFUNC('$menu', '===BEGIN===', 'column_0')\r\nIF unique_slave[\"tsuki\"] = 0 and slave_state = CONST_INT['no_slave'] and sparks >= 1250:\r\n FUNC('$menu', 'interaction_city', $menu_item_buytsuki, menu_Buytsuki, '츠키 ($1250)')\r\n ELSE\r\n FUNC('$menu', 'location_gray', $menu_item_buytsuki_gray, empty, '츠키 ($1250)')\r\nEND\r\nIF unique_slave[\"Luminous\"] = 0 and slave_state = CONST_INT['no_slave'] and sparks >= 2000:\r\n FUNC('$menu', 'interaction_city', $menu_item_buyLuminous, menu_BuyLuminous, '루미너스 ($2000)')\r\n ELSE\r\n FUNC('$menu', 'location_gray', $menu_item_buyLuminous_gray, empty, '루미너스 ($2000)')\r\nEND\r\nIF func('black_market_get_comm_slave', 'shiru_can_buy') = 1:\r\n FUNC('$menu', 'interaction_city', $menu_item_Orderparcel2, 666802, '시루 ($10,000)')\r\nELSE\r\n FUNC('$menu', 'location_gray', $menu_item_Orderparcel2_gray, empty, '시루 ($10,000)')\r\nEND\r\nFUNC('$menu', 'exec_options', $menu_item_nobuy, 'sp_txt = 1 & gt $curloc', '떠난다')\r\nFUNC('$menu', '===END===')\r\n}"
+    },
+    {
+      "location": "generate_stock",
+      "field": "body",
+      "count": 1,
+      "old": "\t\tif meta_type = 2 and stock_type = 1450: jump 'loop_type'",
+      "new": "! JO9 MOD START SHIRU_EXCLUSIVE_STOCK_20261107\r\n\t\tif stock_type = 1448 or (meta_type = 2 and stock_type = 1450): jump 'loop_type'\r\n! JO9 MOD END SHIRU_EXCLUSIVE_STOCK_20261107"
+    },
+    {
+      "location": "generate_stock",
+      "field": "body",
+      "count": 1,
+      "old": "!Align characteristics (calculate attribute values from rates, enforce upper/lower bounds)\r\ndynamic $replace($dyn_calc_slave_attrs, 'dyn'+'slave', 'stock')",
+      "new": "! JO9 MOD START SHIRU_VAMPIRE_STOCK_20261107\r\nif special_stock = 1448 and stock_type = 1448 and creating_clone = 0:\r\n stock['jo9_vampire'] = 1\r\n stock['jo9_combat_trait'] = 3\r\nend\r\n! JO9 MOD END SHIRU_VAMPIRE_STOCK_20261107\r\n!Align characteristics (calculate attribute values from rates, enforce upper/lower bounds)\r\ndynamic $replace($dyn_calc_slave_attrs, 'dyn'+'slave', 'stock')"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "count": 1,
+      "old": "  if dynslave['jo9_combat_trait'] = 3: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''veteran''\">역전의 용사</a><br>'",
+      "new": "  if dynslave['jo9_combat_trait'] = 3: $result += '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''veteran''\">역전의 용사</a><br>'\r\n  if dynslave['jo9_vampire'] = 1: $result += '뱀파이어<br>'"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "count": 1,
+      "old": "if master_vampire >= 1 and assistant_type ! 2605:",
+      "new": "if master_vampire >= 1 and assistant_type ! 2605 and assistant['jo9_vampire'] = 0:"
+    },
+    {
+      "location": "black_market_get_comm_slave",
+      "field": "body",
+      "count": 1,
+      "old": "!activates the slave for training mode\r\nslave_state = CONST_INT['slave_exist']",
+      "new": "! JO9 MOD START SHIRU_ELIGIBILITY_20261107\r\nif $args[0] = 'shiru_can_buy':\r\n result = 0\r\n if $place ! 'black_bazar' or npc_progress['Rafael'] ! 2: exit\r\n if unique_slave['Shiru'] ! 0 or sparks < 10000 or slave_state ! CONST_INT['no_slave']: exit\r\n if $seed_name[1448] = '' or $fullimage[1448] = '': exit\r\n local jo9_shiru_slot, jo9_shiru_owned, $jo9_shiru_role\r\n for jo9_shiru_slot = 0 to arrsize('$all_slave_characters') - 1:\r\n  $jo9_shiru_role = $all_slave_characters[jo9_shiru_slot]\r\n  jo9_shiru_owned += dyneval('result = iif('+$jo9_shiru_role+'_state > 0 and '+$jo9_shiru_role+'_type = 1448, 1, 0)')\r\n end\r\n result = iif(jo9_shiru_owned = 0, 1, 0)\r\n exit\r\nend\r\n! JO9 MOD END SHIRU_ELIGIBILITY_20261107\r\n!activates the slave for training mode\r\nslave_state = CONST_INT['slave_exist']"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "count": 1,
+      "old": "!Port\r\n\r\nIF interaction_city = 10400:",
+      "new": "! JO9 MOD START SHIRU_BLACK_MARKET_20261107\r\nIF interaction_city = 666802 OR interaction_city = 6668021:\r\n if $place ! 'black_bazar' or npc_progress['Rafael'] ! 2: gt 'city_menu_form'\r\n $return_lock = 'shop_general'\r\n copyarr '$display_options', '$black_bazar_options'\r\n sp_txt = 2\r\n if func('black_market_get_comm_slave', 'shiru_can_buy') ! 1: gt 'shop_general'\r\n if interaction_city = 666802:\r\n  $special_image[1] = func('jo9_seed_role_images', 'select', 1448, $fullimage[1448], 'fullimage', 'indpack_title', '', 'pack') + '.png'\r\n  txt_count = 1\r\n  txt = 1\r\n  npc = 0\r\n  $npc_id = ''\r\n  $text[1] = '[나타샤]<br>&nbsp;이쪽은 시루예요. 데려가시려면 10,000스파크입니다. 구매하시겠어요?'\r\n  $yes = {interaction_city = 6668021 & gt 'interaction_city'}\r\n  $no = {sp_txt = 2 & gt 'shop_general'}\r\n  gt 'choice_screen'\r\n end\r\n special_stock = 1448\r\n gs 'generate_stock'\r\n if stock_state ! CONST_INT['slave_exist'] or stock_type ! 1448: gt 'shop_general'\r\n if func('stock_to_slave_nogt') ! 1: gt 'shop_general'\r\n sparks -= 10000\r\n unique_slave['Shiru'] = 1\r\n gs '$slave_price'\r\n npc = 1\r\n $npc_id = 'natasha'\r\n txt_count = 1\r\n $text[1] = '[나타샤]<br>&nbsp;거래가 끝났습니다. 시루를 데려가세요.'\r\nEND\r\n! JO9 MOD END SHIRU_BLACK_MARKET_20261107\r\n!Port\r\n\r\nIF interaction_city = 10400:"
+    }
+  ]
+}

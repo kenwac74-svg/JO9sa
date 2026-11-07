@@ -958,3 +958,7 @@ AUDIO_IMPROVEMENT_NEXT_PATCH_20261106 (D18): 사용자 요청으로 포맷 조�
 ## 2026-11-06 효과음 소스 변경 — Pixabay
 
 PIXABAY_EXISTING_SFX_ONLY_20261106: 사용자 지시로 효과음 생성·합성 대신 Pixabay 기존 음원 사용. 8용도/대안포함11개 [청취 후보](../records/audio-planning-20261106/pixabay-candidates.json)를 기록했다. 실제청취/다운로드/게임반영없음. 음악의 지역별 기획은 유지. [기획 문서](NEXT_PATCH_AUDIO_20261106_KO.md).
+
+## 2026-11-07 2.4.1 3차 r2 배포 인계
+
+[다른 PC에서 이어받기](modding/HOME_HANDOFF_UPDATE3_20261107.md). 브랜치 `codex/release-2.4.1-update3-20261107`, 최종 ZIP과 원장은 `releases/2.4.1-update3-20261107/` 안내를 따른다. 배포 ZIP은 사용자가 수동 전달했다.

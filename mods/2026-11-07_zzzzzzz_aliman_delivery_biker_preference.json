@@ -1,0 +1,63 @@
+{
+  "id": "ALIMAN_DELIVERY_BIKER_PREFERENCE_20261107",
+  "before_sha256": "302cbf323e2aec33fc445fa6ff8af86c34bdb421982205491a96d11a80d40dfa",
+  "after_sha256": "9c19daa28f7a186166792599be304ba3271f29f42487a4d77ad9249e2232eed3",
+  "edits": [
+    {
+      "location": "slave_sell_chek",
+      "field": "body",
+      "count": 1,
+      "old": "if $args[0] = 'easy_goal_hint':",
+      "new": "! JO9 MOD START HOTORN_ALIMAN_DELIVERY_20261107\r\nif $args[0] = 'hotorn_aliman_ready':\r\n result = 0\r\n if npc_progress['Hotorn_aliman'] ! 1 or slave_state ! CONST_INT['slave_exist'] or slave_type ! 2620: exit\r\n if slave['virginity'] ! 0 and slave['virginity'] ! 1: exit\r\n if slave['brand'] = 0 and slave['gladiatrix'] >= 5 and slave['beauty'] >= 5 and slave['intellect'] >= 4 and slave['stamina'] >= 5: result = 1\r\n exit\r\nend\r\n! JO9 MOD END HOTORN_ALIMAN_DELIVERY_20261107\r\nif $args[0] = 'easy_goal_hint':"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "count": 1,
+      "old": "  if slave_state = CONST_INT['slave_exist'] and slave_type = 10911 and (virginity = 0 or virginity = 1) and slave['brand'] = 0 and slave[\"gladiatrix\"] > 4 and slave[\"beauty\"] > 4 and slave[\"intellect\"] > 3 and slave[\"stamina\"] > 4: interaction_city = 9235  ",
+      "new": "  if func('slave_sell_chek', 'hotorn_aliman_ready') = 1: interaction_city = 9235"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "count": 1,
+      "old": "IF interaction_city = 9233:\r\n if slave_state = CONST_INT['slave_exist']:\r\n  npc_progress['Hotorn_aliman'] = 2\r\n  interaction_city = 9234\r\n  else\r\n  $special_image[1] = 'scene\\others\\hotorn_voice.png'\r\n  $special_image[2] = 'scene\\others\\hotorn_voice.png'\r\n  txt_count = arrsize('$Hotorn_aliman_quest') - 1\r\n  copyarr '$text', '$Hotorn_aliman_quest'\r\n  $return_lock  = 'city_menu_form'\r\n end  \r\nEND",
+      "new": "IF interaction_city = 9233:\r\n $special_image[1] = 'scene\\others\\Hotorn_voice.png'\r\n $return_lock = 'city_menu_form'\r\n if slave_state = CONST_INT['slave_exist']:\r\n  txt_count = 1\r\n  if slave_type = 2620:\r\n   $text[1] = '[호손의 목소리]<br>라나의 교육이 아직 끝나지 않았군. 준비가 되면 다시 데려와라.'\r\n  else\r\n   $text[1] = '[호손의 목소리]<br>우리가 맡긴 사람은 라나다. 라나를 데려와라.'\r\n  end\r\n else\r\n  $special_image[2] = 'scene\\others\\Hotorn_voice.png'\r\n  txt_count = arrsize('$Hotorn_aliman_quest') - 1\r\n  copyarr '$text', '$Hotorn_aliman_quest'\r\n end\r\nEND"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "count": 1,
+      "old": "!специальная рабыня в отчуждении",
+      "new": "! JO9 MOD START HOTORN_ALIMAN_DELIVERY_20261107\r\nIF interaction_city = 9235:\r\n if func('slave_sell_chek', 'hotorn_aliman_ready') = 0: gt 'city_menu_form'\r\n npc = 1\r\n $npc_id = 'Hotorn_aliman'\r\n $place = 'slum_house'\r\n $return_lock = 'city_menu_form'\r\n sp_txt = 1\r\n txt_count = arrsize('$Hotorn_aliman_win') - 1\r\n copyarr '$text', '$Hotorn_aliman_win'\r\n $special_image[1] = 'scene\\others\\Hotorn_voice.png'\r\n $special_image[2] = 'characters\\Hotorn_aliman.png'\r\n $special_image[3] = 'characters\\Hotorn_aliman.png'\r\n npc_progress['Hotorn_aliman'] = 2\r\n gs 'killslave'\r\nEND\r\n! JO9 MOD END HOTORN_ALIMAN_DELIVERY_20261107\r\n!специальная рабыня в отчуждении"
+    },
+    {
+      "location": "slave_sell_chek",
+      "field": "body",
+      "count": 1,
+      "old": " if jo9_goal_scene = 9232: $result = $jo9_goal_title + '납품 경로 오류로 현재 완료할 수 없는 의뢰입니다.' & exit",
+      "new": " if jo9_goal_scene = 9232: $result = $jo9_goal_title + '<b>라나(2620)</b> · 동행 · 낙인 없음 · 순결 유지(상태 0~1)<br>전투술·외모·체력 S · 지성 A 이상' & exit"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "count": 1,
+      "old": "IF interaction_city = 9222:\r\n $place = 'slum_house'\r\n $return_lock  = 'menu_form'\r\n jo9_trait_value_gift_peerless = slave['jo9_peerless']\r\n gs 'killslave'",
+      "new": "IF interaction_city = 9222:\r\n if jo9_biker3_reward_resolved = 1: gt 'city_menu_form'\r\n $place = 'slum_house'\r\n $return_lock  = 'menu_form'\r\n jo9_trait_value_gift_peerless = slave['jo9_peerless']\r\n ! Third exchange only. Capture the submitted actor before loading the reward actor.\r\n local jo9_biker3_preferred = 0\r\n if slave_state = CONST_INT['slave_exist'] and slave['fat'] >= 4: jo9_biker3_preferred = 1\r\n gs 'killslave'"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "count": 1,
+      "old": " brand_rate += func('jo9_traits_value', 'reward', '', 10, jo9_trait_value_gift_peerless)\r\n guild_reputation_rate += func('jo9_traits_value', 'reward', '', 10, jo9_trait_value_gift_peerless)\r\n copyarr '$text', '$biker_branded'",
+      "new": " local jo9_biker3_reputation = func('jo9_traits_value', 'reward', '', 10, jo9_trait_value_gift_peerless)\r\n ! Round 10% of the existing final reputation award to the nearest whole point.\r\n if jo9_biker3_preferred = 1: jo9_biker3_reputation += (jo9_biker3_reputation + 5) / 10\r\n brand_rate += jo9_biker3_reputation\r\n guild_reputation_rate += jo9_biker3_reputation\r\n jo9_biker3_reward_resolved = 1\r\n copyarr '$text', '$biker_branded'"
+    },
+    {
+      "location": "slave_sell_chek",
+      "field": "body",
+      "count": 1,
+      "old": " if jo9_goal_scene = 9219: $result = $jo9_goal_title + '<b>노예</b> · 동행 중인 인물, 낙인 값 0~3, 젊거나 성숙한 연령 분류. 경주 1회 이상 우승. 외모·경마녀·무용술·체력·구강 기술·삽입 A 이상, 페티시 B 이상.' & exit",
+      "new": " if jo9_goal_scene = 9219: $result = $jo9_goal_title + '<b>노예</b> · 동행 중인 인물, 낙인 값 0~3, 젊거나 성숙한 연령 분류. 경주 1회 이상 우승. 외모·경마녀·무용술·체력·구강 기술·삽입 A 이상, 페티시 B 이상.<br>선호 보너스 · 통통한 체형 이상이면 평판 보상 10% 추가.' & exit"
+    }
+  ]
+}

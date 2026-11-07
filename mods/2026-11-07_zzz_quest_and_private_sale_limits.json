@@ -1,0 +1,63 @@
+{
+  "id": "QUEST_AND_PRIVATE_SALE_LIMITS_20261107",
+  "before_sha256": "451e1f6bc215f3a1f9a64341ae6ea408a83ede624ab7d13fa4b1f8eed5153f39",
+  "after_sha256": "6245907e647f388a2a599e0856242037bf1657cf02d8e1a8aeb87e57d0bdbcc8",
+  "edits": [
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "count": 1,
+      "old": "\tjo9_meiki_max_sale = func('jo9_meiki_sale', 'eligible')\r\n\tlocal jo9_sale_roll = (48271 * (day + slave_type)) mod 65537\r\n\t! JO9 MOD START HARD_TRAIT_PRICE_20261104\r\n\tif jo9_meiki_max_sale = 1 and difficulty_setting ! 2: jo9_sale_roll = func('jo9_meiki_sale', 'roll')\r\n\t! JO9 MOD END HARD_TRAIT_PRICE_20261104",
+      "new": "\tjo9_meiki_max_sale = func('jo9_meiki_sale', 'eligible')\r\n\tlocal jo9_sale_roll\r\n\tlocal jo9_use_private_price_effects = 1\r\n\t! JO9 MOD START HARD_TRAIT_PRICE_20261104\r\n\t! The difficulty-specific roll is selected at jo9_private_sale_price.\r\n\t! JO9 MOD END HARD_TRAIT_PRICE_20261104"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "count": 1,
+      "old": "\t!--------------Shared Part---------------",
+      "new": "\t:jo9_private_sale_price\r\n\tjo9_sale_roll = (48271 * (day + slave_type)) mod 65537\r\n\tif jo9_meiki_max_sale = 1 and difficulty_setting ! 2: jo9_sale_roll = func('jo9_meiki_sale', 'roll')\r\n\t!--------------Shared Part---------------"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "count": 1,
+      "old": "\t! JO9 MOD START HARD_TRAIT_PRICE_20261104\r\n\tif difficulty_setting = 2 and jo9_meiki_max_sale = 1: sell_price += max(0, func('jo9_meiki_sale', 'best_price') - sell_price) / 2\r\n\tsell_price = func('jo9_traits_value', 'base_price', 'slave', sell_price)\r\n\t! JO9 MOD END HARD_TRAIT_PRICE_20261104\r\n\tif jo9_meiki_max_sale = 1: sell_price = func('jo9_traits_value', 'haggle', 'slave', sell_price)",
+      "new": "\tif jo9_use_private_price_effects = 1:\r\n\t\t! JO9 MOD START HARD_TRAIT_PRICE_20261104\r\n\t\tif difficulty_setting = 2 and jo9_meiki_max_sale = 1: sell_price += max(0, func('jo9_meiki_sale', 'best_price') - sell_price) / 2\r\n\t\tsell_price = func('jo9_traits_value', 'base_price', 'slave', sell_price)\r\n\t\t! JO9 MOD END HARD_TRAIT_PRICE_20261104\r\n\t\tif jo9_meiki_max_sale = 1: sell_price = func('jo9_traits_value', 'haggle', 'slave', sell_price)\r\n\t\tif npc_money[$npc_id] > 0 and sell_price > npc_money[$npc_id]:\r\n\t\t\t! Recalculate the normal quote and dialogue without any trait pricing effects.\r\n\t\t\tjo9_use_private_price_effects = 0\r\n\t\t\tjo9_meiki_max_sale = 0\r\n\t\t\tjump 'jo9_private_sale_price'\r\n\t\tend\r\n\tend"
+    },
+    {
+      "location": "interaction_result_city",
+      "field": "body",
+      "count": 1,
+      "old": "! JO9 MOD START TBV_FIXED_PRICE_78 | 2026-10-17_trait_value\r\n\t\t! JO9 MOD START SALE_TAX_20261105\r\n$text[1] += $func('jo9_traits_value', 'sale_pay', func('jo9_traits_value', 'base_price', 'slave', common_price[demand_rating[$npc_id]]))\r\n! JO9 MOD END SALE_TAX_20261105",
+      "new": "! JO9 MOD START TBV_FIXED_PRICE_78 | 2026-10-17_trait_value\r\n\t\t! JO9 MOD START SALE_TAX_20261105\r\n$text[1] += $func('jo9_traits_value', 'sale_pay', func('jo9_traits_value', 'base_price', 'slave', common_price[demand_rating[$npc_id]], npc_money[$npc_id]))\r\n! JO9 MOD END SALE_TAX_20261105"
+    },
+    {
+      "location": "interaction_result_city",
+      "field": "body",
+      "count": 1,
+      "old": "! JO9 MOD START TBV_FIXED_PRICE_177 | 2026-10-17_trait_value\r\n\t\t\t\t! JO9 MOD START SALE_TAX_20261105\r\n$text[1] += $func('jo9_traits_value', 'sale_pay', func('jo9_traits_value', 'base_price', 'slave', common_price[demand_rating[$npc_id]]))\r\n! JO9 MOD END SALE_TAX_20261105",
+      "new": "! JO9 MOD START TBV_FIXED_PRICE_177 | 2026-10-17_trait_value\r\n\t\t\t\t! JO9 MOD START SALE_TAX_20261105\r\n$text[1] += $func('jo9_traits_value', 'sale_pay', common_price[demand_rating[$npc_id]])\r\n! JO9 MOD END SALE_TAX_20261105"
+    },
+    {
+      "location": "interaction_result_city",
+      "field": "body",
+      "count": 1,
+      "old": "\t\t\tif noprice = 0:\r\n\t\t\t\t! JO9 MOD START SALE_TAX_20261105\r\n$text[1] += $func('jo9_traits_value', 'sale_pay', func('jo9_traits_value', 'base_price', 'slave', common_price[demand_rating[$npc_id]]))\r\n! JO9 MOD END SALE_TAX_20261105",
+      "new": "\t\t\tif noprice = 0:\r\n\t\t\t\t! JO9 MOD START SALE_TAX_20261105\r\n$text[1] += $func('jo9_traits_value', 'sale_pay', common_price[demand_rating[$npc_id]])\r\n! JO9 MOD END SALE_TAX_20261105"
+    },
+    {
+      "location": "jo9_traits_value",
+      "field": "body",
+      "count": 1,
+      "old": " local jo9_versatile_tier = dyneval('result = ' + $jo9_trait_value_actor + \"['jo9_versatile']\")\r\n if jo9_versatile_tier = 1 or jo9_versatile_tier = 2:\r\n  local jo9_versatile_percent = iif(jo9_versatile_tier = 2, 25, 15)\r\n  result += result * jo9_versatile_percent / iif(difficulty_setting = 2, 200, 100)\r\n end",
+      "new": " local jo9_versatile_tier = dyneval('result = ' + $jo9_trait_value_actor + \"['jo9_versatile']\")\r\n if jo9_versatile_tier = 1 or jo9_versatile_tier = 2:\r\n  local jo9_versatile_percent = iif(jo9_versatile_tier = 2, 25, 15)\r\n  result += result * jo9_versatile_percent / iif(difficulty_setting = 2, 200, 100)\r\n end\r\n ! Private callers may supply a positive budget. A bonus that exceeds it is discarded.\r\n if args[3] > 0 and result > args[3]: result = jo9_trait_value_amount"
+    },
+    {
+      "location": "jo9_rumor_scan",
+      "field": "body",
+      "count": 1,
+      "old": "        jo9_rs_rank = func('jo9_traits_value', 'base_price', 'jo9_rumor_probe', common_price[demand_rating[$jo9_rumor_buyer[jo9_rs_b]]])",
+      "new": "        jo9_rs_rank = func('jo9_traits_value', 'base_price', 'jo9_rumor_probe', common_price[demand_rating[$jo9_rumor_buyer[jo9_rs_b]]], npc_money[$jo9_rumor_buyer[jo9_rs_b]])"
+    }
+  ]
+}
