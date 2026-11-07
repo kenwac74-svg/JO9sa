@@ -954,7 +954,7 @@ AUCTION_DIALOGUE_NEXT_UPDATE_20261105 (D17): [결정 기록](../records/auction-
 CUMULATIVE_PATCH_POLICY_20261106: 같은 본편에 최신 정식 누적 패치 하나만 적용한다. 현재 2.4.1 본편+r4 기준, 최초 추가 패치 942런타임 경로 누락0·후속 QSP 교체 확인. [기록](../records/cumulative-patch-policy-20261106/REPORT_KO.md). 보류 경매 대사·Full 동기화·커밋푸시는 포함하지 않는다.
 ## 2026-11-06 차기 패치 사운드 개선
 
-AUDIO_IMPROVEMENT_NEXT_PATCH_20261106 (D18): 사용자 요청으로 포맷 조정·사운드 추가를 다음 패치 항목에 등록했다. [현황·브레인스토밍](NEXT_PATCH_AUDIO_20261106_KO.md). 실존 연결 BGM28곡+미연결후보2곡, 지역 공통곡 의존과 전투 사건음 공백 확인. 우선11공간에 기존7곡 활용+신작4곡은 추천안이며 청취·곡별 범위 미확정. 현재r4/WORK런타임/Full/SAV/커밋푸시 변경없음.
+AUDIO_IMPROVEMENT_NEXT_PATCH_20261106 (D18): 사용자 요청으로 포맷 조정·사운드 추가를 다음 패치 항목에 등록했다. [현황·브레인스토밍](NEXT_PATCH_AUDIO_20261106_KO.md). 실존 연결 BGM28곡+미연결후보2곡, 지역 공통곡 의존과 전투 사건음 공백 확인. 기존곡을 보존·재배치하고 채울 수 없는 자리만 새로 제작한다. 곡별 청취와 신규곡 수는 미확정이다. 현재r4/WORK런타임/Full/SAV/커밋푸시 변경없음.
 ## 2026-11-06 효과음 소스 변경 — Pixabay
 
 PIXABAY_EXISTING_SFX_ONLY_20261106: 사용자 지시로 효과음 생성·합성 대신 Pixabay 기존 음원 사용. 8용도/대안포함11개 [청취 후보](../records/audio-planning-20261106/pixabay-candidates.json)를 기록했다. 실제청취/다운로드/게임반영없음. 음악의 지역별 기획은 유지. [기획 문서](NEXT_PATCH_AUDIO_20261106_KO.md).
