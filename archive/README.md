@@ -5,15 +5,15 @@
 
 | 폴더 | 원격 브랜치 끝 커밋 |
 |---|---|
-| `JO9imgtool` | 커밋: |
-| `brothel` | 커밋: |
-| `claude__elegant-carson-nbb823` | 커밋: |
-| `claude__lucid-ramanujan-2821xz` | 커밋: |
-| `claude__sweet-meitner-72rd73` | 커밋: |
-| `codex__jo9-team-roles-20261011` | 커밋: |
-| `codex__modding-tools-transfer-20261009` | 커밋: |
-| `design__slave-voice` | 커밋: |
-| `newimgadd` | 커밋: |
+| `JO9imgtool` | `d0ca7dc` |
+| `brothel` | `4660868` |
+| `claude__elegant-carson-nbb823` | `4bed325` |
+| `claude__lucid-ramanujan-2821xz` | `6db703a` |
+| `claude__sweet-meitner-72rd73` | `cd6b7a8` |
+| `codex__jo9-team-roles-20261011` | `028db86` |
+| `codex__modding-tools-transfer-20261009` | `151a728` |
+| `design__slave-voice` | `dbdca06` |
+| `newimgadd` | `7612c71` |
 
 폴더를 따로 만들지 않은 브랜치는 다음과 같다(히스토리는 보존됨).
 - `JO9UIpatch`, `codex/snkmod-0.1-handoff`: 모두 `claude/sweet-meitner-72rd73`에 포함된다.
