@@ -1,0 +1,18 @@
+{
+  "id": "2026-11-08_dumak_reward_decay",
+  "status": "APPROVED",
+  "description": "두막의 오두막 노예 판매 지급액을 거래 회차마다 10%씩 감액한다(정수 내림, 하한 20스파크, 영구 누적). 누적 횟수는 기존 판매 통계 master['slaveSoldDumak']를 써서 기존 세이브의 판매 기록도 반영된다. 반복 거래로 스파크를 무한히 얻는 차익을 막는다.",
+  "before_sha256": "46e972bf98bc74cd79176312683e398bf7ae639bc7edeecadfcb6efd9a8f54b9",
+  "after_sha256": "0bfd80d1df772e784790ac1c6880dacfd7951eb2d2dbec0a80eed00675f0c755",
+  "edits": [
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": " dReward = 100 + 200/sanityMod + slave['beauty']*10\r\n sparks += dReward",
+      "new": " dReward = 100 + 200/sanityMod + slave['beauty']*10\r\n! JO9 MOD START DUMAK_REWARD_DECAY_20261108\r\n! Each earlier sale to Dumak cuts the payout by 10% (integer floor), never below 20 sparks.\r\n! 30 cuts already push every possible payout under the floor, so the loop is capped there.\r\n local jo9_dumak_cut\r\n local jo9_dumak_sales\r\n jo9_dumak_sales = min(master['slaveSoldDumak'], 30)\r\n for jo9_dumak_cut = 1 to jo9_dumak_sales:\r\n  dReward = dReward * 9 / 10\r\n end\r\n if dReward < 20: dReward = 20\r\n! JO9 MOD END DUMAK_REWARD_DECAY_20261108\r\n sparks += dReward",
+      "count": 1,
+      "patchId": "DUMAK_REWARD_DECAY_20261108"
+    }
+  ],
+  "user_approval": "2026-11-08: 회차마다 10% 감액, 하한 20스파크, 영구 누적 권장안에 '그렇게 해'."
+}

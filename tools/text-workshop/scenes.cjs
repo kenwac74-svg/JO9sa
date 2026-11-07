@@ -191,6 +191,9 @@ function buildNavigator(doc,allEntries) {
     found.sort((a,b)=>Number(!!scene.predicate&&a.states[scene.predicate.key]===undefined)-Number(!!scene.predicate&&b.states[scene.predicate.key]===undefined));
     return {total:found.length,items:found.slice(0,80).map(b=>({label:b.label,mode:b.mode,line:b.line,conditions:b.conditions,source:b.source,uncertain:!!scene.predicate && b.states[scene.predicate.key]===undefined}))};
   }
-  return {context,open,incoming};
+  // JO9 MOD SCRIPT_EXPORT_20261108: 흐름 전체 각본 출력
+  const scriptExport=require('./script-export.cjs').build(doc,allEntries,{data,chooseScene,masked,inScene,visible,branches:(a,s,l,e)=>branchList(a,s,l,e).map(b=>({...b,destinations:b.destinations||resolve(b)}))});
+  function script(input){if(input.hash!==doc.hash)throw Error('QSP가 바뀌었습니다. 다시 검색해 주세요.');return scriptExport.script({location:input.location,sceneId:input.sceneId},input.options||{});}
+  return {context,open,incoming,script};
 }
 module.exports={analyse,masked,predicate,assignments,calls,links,buildNavigator,sceneImages,bgTable};

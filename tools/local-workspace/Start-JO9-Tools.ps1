@@ -35,7 +35,7 @@ function Test-EditorProcess($Process,[string]$Server,[string]$Game,[string]$Orig
 function Get-EditorCodeChanges([string]$From,[string]$To) {
  # User settings, keys, history, runtime and existing assets are not deployment files.
  return @(Get-ChildItem -LiteralPath $From -File | Where-Object {
-  ($_.Extension -in @('.cjs','.js','.py','.ps1') -or $_.Name -in @('index.html','journal-keywords.json','Open-JO9-Text.cmd')) -and
+  ($_.Extension -in @('.cjs','.js','.py','.ps1') -or $_.Name -in @('index.html','patch-schedule.html','journal-keywords.json','Open-JO9-Text.cmd')) -and
   $_.Name -notmatch '(?i)(\.test\.|^test\.|\.test$)'
  } | Where-Object {
   $dest=Join-Path $To $_.Name
@@ -70,7 +70,8 @@ function Get-EditorState([string]$Ready,[string]$Server,[string]$Game,[string]$O
  }
  $uri=[uri]$state.url
  if ($uri.Scheme -ne 'http' -or $uri.Host -ne '127.0.0.1' -or $uri.AbsolutePath -ne '/') {throw 'Invalid local editor URL.'}
- $listeners=@(Get-NetTCPConnection -LocalPort $uri.Port -State Listen -ErrorAction SilentlyContinue)
+ # JO9 MOD LISTENER_STATE_20261108: on this PC a listening socket can be reported as FinWait1 with remote 0.0.0.0:0.
+ $listeners=@(Get-NetTCPConnection -LocalPort $uri.Port -ErrorAction SilentlyContinue | Where-Object {$_.State -eq 'Listen' -or ($_.RemoteAddress -eq '0.0.0.0' -and $_.RemotePort -eq 0)})
  if (!$listeners -or @($listeners | Where-Object {$_.OwningProcess -ne [int]$state.pid}).Count) {throw 'The editor port does not belong to the recorded process.'}
  try {$response=Invoke-WebRequest -UseBasicParsing -Uri $state.url -TimeoutSec 3;if ($response.StatusCode -ne 200) {throw 'Not ready'}} catch {throw 'The existing editor server is not responding. It was not duplicated or stopped.'}
  return $state
@@ -200,5 +201,5 @@ try {
  if (!$locked) {throw 'Another workspace launch is still running.'}
  $toolUrl=Start-ConfiguredEditor
  Write-Output $toolUrl
- if (!$NoBrowser) {Start-Process $toolUrl;Start-Process ($toolUrl+'catalog')}
+ if (!$NoBrowser) {Start-Process $toolUrl;Start-Process ($toolUrl+'catalog');Start-Process ($toolUrl+'patch-schedule')}
 } finally {if ($locked) {$mutex.ReleaseMutex()};$mutex.Dispose()}

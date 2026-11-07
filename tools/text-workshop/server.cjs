@@ -6,6 +6,7 @@ const batchReplace=require('./batch-replace.cjs');
 // JO9 MOD END: text-batch-replace-20261018-module
 const addition=require('./addition.cjs');
 const scenes=require('./scenes.cjs');
+const scriptImport=require('./script-import.cjs'); // JO9 MOD SCRIPT_IMPORT_20261108
 const catalogModule=require('./catalog.cjs');
 const {spawn}=require('node:child_process');
 const arg=n=>{const i=process.argv.indexOf(n);return i<0 ? undefined : process.argv[i+1];};
@@ -14,6 +15,9 @@ const target=path.join(game,'jack.qsp');
 const catalogRoot=path.resolve(arg('--catalog-dir')||path.join(game,'..','..','IMGMG'));
 const originalRoot=path.resolve(arg('--original-dir')||path.join(game,'..','..','JO9O','game'));
 const catalog=catalogModule.create(catalogRoot);
+// JO9 MOD START PATCH_SCHEDULE_20261107
+const patchSchedule=require('./patch-schedule.cjs').create(catalogRoot);
+// JO9 MOD END PATCH_SCHEDULE_20261107
 const runtime=path.resolve(arg('--runtime') || path.join(__dirname,'runtime'));
 fs.mkdirSync(runtime,{recursive:true});
 const backups=path.join(runtime,'backups');fs.mkdirSync(backups,{recursive:true});
@@ -126,12 +130,18 @@ const server=http.createServer(async(req,res)=>{
     const host=`127.0.0.1:${server.address().port}`;
     if(req.headers.host!==host){json(res,403,{error:'허용되지 않은 접속 주소입니다.'});return;}
     const url=new URL(req.url,'http://'+host);
+    // JO9 MOD START PATCH_SCHEDULE_PAGE_20261107
+    if(req.method==='GET'&&url.pathname==='/patch-schedule'){
+      res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','Content-Security-Policy':"default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'"});
+      res.end(patchSchedule.page(token));return;
+    }
+    // JO9 MOD END PATCH_SCHEDULE_PAGE_20261107
     if(req.method==='GET' && url.pathname==='/'){
       res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','Content-Security-Policy':"default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'"});
       res.end(fs.readFileSync(path.join(__dirname,'index.html'),'utf8').replace('__SESSION_TOKEN__',token));return;
     }
     // JO9 MOD START: text-batch-replace-20261018-static
-    if(req.method==='GET'&&['/dialogue-ai.js','/editing-tools.js','/variable-inspector.js','/batch-replace.js','/catalog-cut-conditions.js'].includes(url.pathname)){res.writeHead(200,{'Content-Type':'text/javascript; charset=utf-8','Cache-Control':'no-store'});res.end(fs.readFileSync(path.join(__dirname,url.pathname.slice(1)),'utf8'));return;}
+    if(req.method==='GET'&&['/script-export.js','/dialogue-ai.js','/editing-tools.js','/variable-inspector.js','/batch-replace.js','/catalog-cut-conditions.js'].includes(url.pathname)){res.writeHead(200,{'Content-Type':'text/javascript; charset=utf-8','Cache-Control':'no-store'});res.end(fs.readFileSync(path.join(__dirname,url.pathname.slice(1)),'utf8'));return;}
     // JO9 MOD END: text-batch-replace-20261018-static
     const catalogRoute=url.pathname.startsWith('/api/catalog/');
     if(catalogRoute&&req.headers.origin==='null'){
@@ -211,6 +221,16 @@ const server=http.createServer(async(req,res)=>{
 
     if(req.headers['x-jo9-token']!==token) {json(res,403,{error:'편집기를 다시 열어 주세요.'});return;}
     if(req.headers.origin && req.headers.origin!=='http://'+host && !(catalogRoute&&req.headers.origin==='null')){json(res,403,{error:'다른 사이트에서는 사용할 수 없습니다.'});return;}
+    // JO9 MOD START PATCH_SCHEDULE_API_20261107
+    if(url.pathname==='/api/patch-schedule'){
+      try {
+        if(req.method==='GET')json(res,200,patchSchedule.view());
+        else if(req.method==='POST')json(res,200,patchSchedule.update(await body(req,250000)));
+        else json(res,405,{error:'지원하지 않는 일정 요청입니다.'});
+      } catch(error) {json(res,error.status||400,{error:error.message});}
+      return;
+    }
+    // JO9 MOD END PATCH_SCHEDULE_API_20261107
     // JO9 MOD START IMAGE_CUT_CONDITION_EDITOR_API_20261101
     if(url.pathname.startsWith('/api/catalog/cut-conditions/')){
       const action=url.pathname.slice('/api/catalog/cut-conditions/'.length);
@@ -333,6 +353,27 @@ const server=http.createServer(async(req,res)=>{
     if(req.method==='POST' && url.pathname==='/api/scene'){
       const input=await body(req);const {doc}=current();if(input.hash!==doc.hash)throw Error('QSP가 바뀌었습니다. 다시 검색해 주세요.');json(res,200,withImages(navigator.open(input.destination,input.mode)));return;
     }
+    // JO9 MOD SCRIPT_EXPORT_20261108
+    if(req.method==='POST' && url.pathname==='/api/script'){
+      const input=await body(req);current();
+      const exportId=crypto.randomBytes(8).toString('hex'),r=navigator.script({...input,options:{...(input.options||{}),exportId}});
+      const dir=path.join(runtime,'script-exports');fs.mkdirSync(dir,{recursive:true});
+      fs.writeFileSync(path.join(dir,exportId+'.json'),JSON.stringify({id:exportId,hash:r.hash,created:new Date().toISOString(),start:{location:input.location,sceneId:input.sceneId},options:input.options||{},map:r.map}));
+      json(res,200,{text:r.text,stats:r.stats,hash:r.hash,exportId,pages:Object.keys(r.map).length});return;
+    }
+    // JO9 MOD SCRIPT_IMPORT_20261108: 각색본 미리보기
+    if(req.method==='POST' && url.pathname==='/api/script/preview'){
+      const input=await body(req,20000000);const {doc}=current();
+      if(typeof input.text!=='string'||!input.text.trim())throw Error('각색본을 붙여 넣어 주세요.');
+      const exportId=(input.text.match(/#\s*각본 ID:\s*([a-f0-9]{16})/i)||[])[1]||input.exportId;
+      if(!/^[a-f0-9]{16}$/.test(exportId||''))throw Error('각본 ID를 찾지 못했습니다. 각본 맨 위의 “# 각본 ID:” 줄을 지우지 말거나, 이 화면에서 방금 만든 각본에 붙여 넣어 주세요.');
+      const file=path.join(runtime,'script-exports',exportId+'.json');
+      if(!fs.existsSync(file))throw Error('각본 기록('+exportId+')을 찾지 못했습니다. 이 편집실에서 각본을 다시 만들어 주세요.');
+      const record=JSON.parse(fs.readFileSync(file,'utf8'));
+      const p=scriptImport.prepare(doc,record,input.text,{allowMissing:input.allowMissing===true,exclude:Array.isArray(input.exclude)?input.exclude:[]});
+      preview=p.raw?{kind:'script',id:crypto.randomBytes(24).toString('hex'),raw:p.raw,before:p.before,after:p.after,edits:p.edits,count:p.chosen.length,exportId}:null;
+      json(res,200,{id:preview?.id||null,exportId,count:p.chosen.length,unchanged:p.unchanged,missing:p.missing.length,changes:p.changes.map(c=>({id:c.id,location:c.location,line:c.line,oldPlain:c.oldPlain,newPlain:c.newPlain,warnings:c.warnings,excluded:c.excluded}))});return;
+    }
     if(req.method==='POST' && url.pathname==='/api/incoming'){
       const input=await body(req);current();json(res,200,navigator.incoming(input));return;
     }
@@ -358,6 +399,16 @@ const server=http.createServer(async(req,res)=>{
         current();json(res,200,{...m,selection:null});return;
       }
       // JO9 MOD END: text-batch-replace-20261018-apply
+      // JO9 MOD START SCRIPT_IMPORT_20261108-apply
+      if(p.kind==='script'){
+        const locations=[...new Set(p.edits.map(e=>e.location))];
+        if(locations.some(name=>doc.locations.filter(l=>l.name===name).length!==1))throw Error('동일한 이름의 위치가 중복되어 반영할 수 없습니다.');
+        const stamp=new Date().toISOString();
+        const mod={description:`대사 편집실: 흐름 각본 각색 반영 ${p.count}개 (각본 ${p.exportId})`,id:stamp.slice(0,10)+'_text_script_'+stamp.slice(11,19).replace(/:/g,''),target:'game\\jack.qsp',before_sha256:p.before.toUpperCase(),after_sha256:p.after.toUpperCase(),edits:p.edits};
+        const m=transact(raw,p.raw,{kind:'batch',location:locations.length===1?locations[0]:'여러 위치',field:'script',count:p.count,occurrences:p.count,mod});
+        preview=null;current();json(res,200,{...m,selection:null});return;
+      }
+      // JO9 MOD END SCRIPT_IMPORT_20261108-apply
       if(doc.locations.filter(l=>l.name===p.entry.location).length!==1)throw Error('동일한 이름의 위치가 중복되어 반영할 수 없습니다.');
       // mods용 기록은 location 전체가 아니라 바뀐 문구와 최소 맥락만 담는다(apply_mods.ps1 형식).
       const stamp=new Date().toISOString();

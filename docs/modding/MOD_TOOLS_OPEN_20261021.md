@@ -7,7 +7,7 @@
 | 대사 편집기 | 통합 실행기, http://127.0.0.1:3813/ |
 | 이미지 리스트/체크리스트 | 같은 서버, http://127.0.0.1:3813/catalog |
 | 이미지 워크숍/이미지 편집기 | 통합 실행기가 실제 포트를 확인한다. 이번 실행 http://127.0.0.1:5463/ |
-| 인물 편집기 | tools/state-editor/Start-StateEditor.ps1 -Targets tools/state-editor/runtime/targets.json -Port 5284, http://127.0.0.1:5284/ |
+| 사운드 청취 목록 | tools/sound-audition/청취_목록.html (로컬 파일). node tools/sound-audition/build.cjs로 다시 만든다 |
 | 이미지 폴더 비교·선택 | 통합 실행기에 추가했다. 현재 http://127.0.0.1:11332/ |
 
 통합 실행: tools/local-workspace/Open-Modding-Tools.ps1. 서버만 시작할 때는 -NoBrowser를 사용한다. 일반 실행의 브라우저 URL 목록에도 이미지 비교 URL을 추가했다. 기존 외부 작업 사이트 목록은 유지했다. 인물 편집기는 기존 별도 실행 명령을 함께 사용한다.
@@ -21,3 +21,17 @@ MOD_TOOLS_IMAGE_REVIEW_20261021 구간은 image-folder-review/Start-Image-Folder
 ## 2026-10-24 WORKSHOP_MSAA_CAPTURE_20261024
 
 현재 노예 정보/규칙창 감지 실패를 수정했다. MSAA 메뉴/원문 읽기로 캡처하며, 소스와 WORK 도구 v1.1.3에 반영. 문법·컴파일·실제현재창3회·전체흐름2회·브라우저이미지목록확인PASS. 게임 QSP/세이브/이미지/Full/커밋푸시변경없음. [수정·검증 설명](../../records/workshop-capture-fix-20261024/MANUAL_KO.md).
+
+## 2026-11-07 — 다음 패치 작업 일정
+
+PATCH_SCHEDULE_20261107. 모드툴을 열 때 편집기와 같은 서버의 /patch-schedule도 함께 연다. Open-Modding-Tools.ps1의 출력에는 PatchSchedule URL이 포함되며, NoBrowser일 때는 호출한 에이전트가 이 URL을 오른쪽 브라우저에 함께 제시한다. Start-JO9-Tools.ps1의 일반 실행도 일정판을 연다.
+
+상태는 완료·보류·재파악·폐기·진행중이며, 초기 자료는 후보36·수동3·완료9·폐기2의50개다. 실제 상태 기록은 현재 설정의 CatalogDir/patch-schedule.json이다. PC를 옮길 때 이 기록을 보존하거나 일정 JSON 저장/가져오기를 사용한다. HTML 단독 파일은 브라우저 저장과 JSON/HTML 내보내기를 지원한다. [사용·유지보수](../../records/patch-schedule-20261107/MANUAL_KO.md).
+
+## 2026-11-08 — 인물 상태 편집기 제외
+
+사용자 확정: “모드툴 열어”에서 인물 상태 편집기(tools/state-editor, 5284)는 열지 않는다. 필요할 때만 별도로 실행한다. 아이템 리스트는 포함 요청이 있었으나 이 PC에서 파일을 찾지 못해 보류했다.
+
+## 2026-11-08 — 사운드 청취 목록 포함
+
+SOUND_AUDITION_20261108. 사용자 지시로 모드툴에 사운드 청취 목록을 포함한다. 이전 PC의 output/jo9-sound-preview-20261106(MP3 34개)은 이 PC에 없어서, records/audio-planning-20261106의 후보 기록과 docs/NEXT_PATCH_AUDIO_20261106_KO.md의 지역 BGM 비교표로 tools/sound-audition/build.cjs가 청취_목록.html을 만든다. 효과음·몬스터 등장음은 Pixabay 원본 페이지로 연결하고(다운로드 안 함), 지역 BGM은 local.config.json의 GameRoot 아래 content/snd 원본 WAV를 페이지에서 재생한다. 게임 파일은 읽기만 한다. Open-Modding-Tools.ps1은 출력에 SoundAudition 주소를 추가하고 일반 실행 때 함께 연다. 기록 문서가 바뀌면 build.cjs를 다시 실행한다.
