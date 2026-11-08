@@ -59,9 +59,9 @@ function build(doc,entries,helpers){
     const contexts=direct?[{id:loc.name+':'+scope.id,location:loc.name,sceneId:scope.id,title:scope.condition,line:scope.line,d,scene:scope}]:usages(bind.array),use=contexts.find(u=>u.id===usageId)||contexts[0];
     const stageAt=stages.findIndex(s=>s.number===bind.stage),images=[];
     if(use){
-      for(const e of use.d.entries){const b=binding(use.d.body,e);if(!b||b.array!=='$special_image'||b.stage!==bind.stage||e.start<use.scene.start||e.start>=use.scene.end)continue;
+      for(const e of use.d.entries){const b=binding(use.d.body,e);if(!b||!['$special_image','$special_image_full'].includes(b.array)||b.stage!==bind.stage||e.start<use.scene.start||e.start>=use.scene.end)continue;
         const line=use.d.body.slice(use.d.body.lastIndexOf('\n',e.start)+1,use.d.body.indexOf('\n',e.end)<0?use.d.body.length:use.d.body.indexOf('\n',e.end));
-        images.push({path:e.text,note:conditions(use.d.a,e.start).filter(c=>c!==use.scene.condition&&!use.scene.parents.includes(c)).join(' · '),random:/\brand\s*\(|picmax\s*\[/i.test(line)});
+        images[b.array==='$special_image_full'?'unshift':'push']({path:e.text,note:conditions(use.d.a,e.start).filter(c=>c!==use.scene.condition&&!use.scene.parents.includes(c)).join(' · '),random:/\brand\s*\(|picmax\s*\[/i.test(line)});
       }
       // Retain backdrop metadata, but never another stage's $special_image.
       const backdrop={...use.d.a,body:use.d.body.replace(/^.*\$special_image.*$/gm,row=>' '.repeat(row.length))};

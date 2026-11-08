@@ -11,6 +11,9 @@ from pathlib import Path, PurePosixPath
 import re
 
 DEFAULT_GAME = Path("G:/somi/Jack O Nine Tails v2.4_work/game")
+# generate_stock overrides (NEW_CHARACTER_POOL_20261029, SHIRU_EXCLUSIVE_STOCK_20261107).
+GAME_POOL_LAST = {"young": 1462, "milf": 2340}
+GAME_POOL_EXCLUDED = {1448, 1450}
 ROLE_FIELDS = {
     "maid": ("fullmade", "indpack_maid"),
     "secretary": ("fullsecretary", "indpack_secr"),
@@ -27,6 +30,14 @@ NUMERIC_DIRS = {"full", "face", "sex_scenes"}
 # JO9 MOD START GIRLS_2071_SPLIT_2340_20261105
 # Old-save addresses remain physical files, outside active character image sets.
 COMPATIBILITY_ASSETS = {
+    # SHIRU_IMAGE_PATHS_20261108: old-save addresses are intentional aliases.
+    "girls/full/1448_white_long_young.png": (1448, "girls/full/1448_shiru.png"),
+    "girls/full/cloth/1448_white_long_young.png": (1448, "girls/full/cloth/1448_shiru.png"),
+    "girls/full/mistress/1448_white_long_young.png": (1448, "girls/full/mistress/1448_shiru.png"),
+    "girls/full/secretary/1448_white_long_young.png": (1448, "girls/full/secretary/1448_shiru.png"),
+    "girls/face/1448_white_long_young_sepia.png": (1448, "girls/face/1448_shiru_sepia.png"),
+    "girls/face/1448_white_long_young_gray.png": (1448, "girls/face/1448_shiru_gray.png"),
+    "girls/face/1448_white_long_young.png": (1448, "girls/face/1448_shiru.png"),
     "girls/full/2071_blond_short_milf.png": (2340, "girls/full/2340_blond_short_milf.png"),
     "girls/face/2071_blond_short_milf.png": (2340, "girls/face/2340_blond_short_milf.png"),
     "girls/face/2071_blond_short_milf_gray.png": (2340, "girls/face/2340_blond_short_milf_gray.png"),
@@ -35,6 +46,7 @@ COMPATIBILITY_ASSETS = {
     "girls/full/cloth/2071_blue_short_milf.png": (2071, "girls/full/cloth/2071_brown_long_milf.png"),
 }
 SPLIT_NOTES = {
+    1448: "1448_shiru 계열로 연결했습니다. 옛 일반 파일명 7개는 기존 세이브용 호환 사본입니다.",
     2071: "갈색 장발 유지 · 금발은 2340, 하늘색은 기존 2324로 구분합니다. blue_short 이름의 옛 하녀 파일은 실제로 갈색 인물이며 호환용으로만 보존합니다.",
     2324: "하늘색 단발 · 이전 추가팩에서 2071→2324로 이미 분리 등록된 인물입니다. 전신·초상 3종을 유지하며 전용 복장이 없으면 기본 전신을 표시합니다.",
     2340: "금발 단발 · 원본 2071의 JSON과 전신·초상 3종을 새 번호로 독립 등록했습니다. 전용 복장이 없으면 기본 전신을 표시합니다.",
@@ -50,12 +62,12 @@ def sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
-def image_reference(value):
+def image_reference(value, known_field=False):
     """Return a PNG request relative to content/pic, preserving spelling."""
     if not isinstance(value, str):
         return None
     value = re.sub(r"/+", "/", value.strip().replace("\\", "/"))
-    if not value.lower().startswith(IMAGE_PREFIXES):
+    if not known_field and not value.lower().startswith(IMAGE_PREFIXES):
         return None
     if value.lower().startswith("content/pic/"):
         value = value[len("content/pic/"):]
@@ -122,15 +134,15 @@ def effective_roles(refs, known_files):
         results[role] = {
             "legacyField": legacy,
             "packField": pack,
-            "menuAvailable": bool(refs.get(legacy)),
+            "menuAvailable": bool(refs.get(legacy) or refs.get(pack)),
             "normal": normal,
             **variants,
             "safeBase": safe_base,
             "needsArtwork": not distinct_art,
             "hasExplicitArtwork": any(path and path.lower() in known_files for path in explicit),
             "displayIssue": not normal["exists"],
-            "menuIssue": not refs.get(legacy) and bool(refs.get(pack))
-                         and refs[pack].lower() in known_files,
+            # Current WORK enables the role when either registration is present.
+            "menuIssue": False,
         }
     return base, results
 
@@ -210,7 +222,7 @@ def build(game: Path):
             continue
         refs = {}
         for field, value in data.items():
-            requested = image_reference(value)
+            requested = image_reference(value, field in BASE_FIELDS + PORTRAIT_FIELDS or field in ("fullmade", "fullsecretary", "fullmistress", "fullpregnant") or field.startswith("indpack_"))
             if requested is None:
                 continue
             actual = files.get(requested.lower())
@@ -219,10 +231,15 @@ def build(game: Path):
                 if actual:
                     files[actual.lower()] = actual
             refs[field] = actual or requested
+        # Mirror generate_stock: the game widens some pools past slave_index.json and
+        # never generates exclusive IDs (1448 Shiru since 2026-11-07, unregistered 1450).
         groups = [
             age for age in ("loli", "young", "milf")
-            if index.get(age + "_first", -1) <= character_id <= index.get(age + "_last", -1)
+            if index.get(age + "_first", -1) <= character_id
+            <= max(index.get(age + "_last", -1), GAME_POOL_LAST.get(age, -1))
         ]
+        if character_id in GAME_POOL_EXCLUDED:
+            groups = []
         scene_folders = {
             "/".join(PurePosixPath(path).parts[:3]).lower()
             for path in refs.values()

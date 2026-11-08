@@ -5,7 +5,7 @@
   if (!nav || typeof api !== 'function') return;
   const box=document.getElementById('scriptExportBox');
   const $ = id => document.getElementById(id);
-  let made = null, revision = 0, lastExportId = null, review = null, excluded = new Set(), busy = false;
+  let made = null, revision = 0, lastExportId = null;
 
   // ---------- 출력 ----------
   const start = () => {
@@ -27,7 +27,7 @@
     try {
       const r = await api('/api/script', { hash: context.hash || context.selection?.hash, location: s.location, sceneId: s.sceneId, options: { maxDepth: Number($('scriptDepth').value), maxScenes: Number($('scriptMax').value), edition: $('scriptEdition').value, variants: $('scriptVariants').checked, followCalls: $('scriptCalls').checked, showCode: $('scriptCode').checked } });
       if (mine !== revision) return;
-      made = { ...r, start: s }; lastExportId = r.exportId; $('scriptText').value = r.text;
+      made = { ...r, start: s }; lastExportId = r.exportId; $('scriptText').value = r.text;window.JO9ScriptImporter?.source(r);
       for (const id of ['scriptCopy', 'scriptSave', 'scriptCopyRequest']) $(id).disabled = false;
       const st = r.stats;
       $('scriptStatus').textContent = `장면 ${st.scenes}개 · 페이지 ${st.pages}개 · 대체문 ${st.variants}개${st.dynamic ? ' · 실행 중 결정 ' + st.dynamic + '곳' : ''}${st.skipped ? ' · 한도 때문에 멈춘 연결 ' + st.skipped + '개' : ''} · ${r.text.length.toLocaleString()}자 · 각본 ID ${r.exportId}`;
@@ -68,56 +68,6 @@
     $('scriptStatus').textContent = '다운로드 폴더에 txt로 저장했습니다.';
   };
   for (const id of ['scriptStart', 'scriptDepth', 'scriptMax', 'scriptEdition', 'scriptVariants', 'scriptCalls', 'scriptCode']) $(id).addEventListener('change', () => reset());
-
-  // ---------- 각색본 반영 ----------
-  const node = (tag, text, cls) => { const el = document.createElement(tag); if (text !== undefined) el.textContent = text; if (cls) el.className = cls; return el; };
-  function clearReview(note) {
-    review = null; $('scriptChanges').replaceChildren(); $('scriptApproved').checked = false; $('scriptApproved').disabled = true; $('scriptApply').disabled = true;
-    if (note !== undefined) $('scriptImportStatus').textContent = note;
-  }
-  function renderReview(r) {
-    const list = $('scriptChanges'); list.replaceChildren();
-    const warned = r.changes.filter(c => c.warnings.length && !c.excluded).length;
-    $('scriptImportStatus').textContent = r.changes.length
-      ? `바뀐 페이지 ${r.changes.length}개 (반영 ${r.count}개) · 그대로 ${r.unchanged}개${r.missing ? ' · 빠진 번호 ' + r.missing + '개(원문 유지)' : ''}${warned ? ' · 경고 ' + warned + '개' : ''}`
-      : `바뀐 페이지가 없습니다 · 그대로 ${r.unchanged}개`;
-    for (const c of r.changes) {
-      const card = node('div', undefined, 'chg' + (c.excluded ? ' off' : ''));
-      const head = node('label'); const check = node('input'); check.type = 'checkbox'; check.checked = !c.excluded;
-      check.onchange = () => { if (check.checked) excluded.delete(c.id); else excluded.add(c.id); preview().catch(e => clearReview('실패: ' + e.message)); };
-      head.append(check, ' ', node('strong', c.id), node('span', ` · ${c.location} ${c.line}행`, 'muted'));
-      card.append(head);
-      for (const w of c.warnings) card.append(node('div', '⚠ ' + w, 'warn'));
-      const cols = node('div', undefined, 'cols'); cols.append(node('div', c.oldPlain, 'old'), node('div', c.newPlain)); card.append(cols);
-      list.append(card);
-    }
-    $('scriptApproved').disabled = !r.id; $('scriptApply').disabled = true;
-  }
-  async function preview() {
-    if (busy) return; busy = true; $('scriptPreview').disabled = true;
-    try {
-      const text = $('scriptAdapted').value;
-      $('scriptImportStatus').textContent = '확인하는 중…';
-      const r = await api('/api/script/preview', { text, exportId: lastExportId, allowMissing: $('scriptAllowMissing').checked, exclude: [...excluded] });
-      review = r; renderReview(r);
-    } finally { busy = false; $('scriptPreview').disabled = false; }
-  }
-  $('scriptPreview').onclick = () => { excluded = new Set(); clearReview(); preview().catch(e => clearReview('실패: ' + e.message)); };
-  $('scriptAdapted').addEventListener('input', () => { if (review) clearReview('각색본이 바뀌었습니다. 다시 미리보기를 누르세요.'); });
-  $('scriptAllowMissing').addEventListener('change', () => { if (review) clearReview('설정이 바뀌었습니다. 다시 미리보기를 누르세요.'); });
-  $('scriptApproved').onchange = () => { $('scriptApply').disabled = !($('scriptApproved').checked && review?.id); };
-  $('scriptApply').onclick = async () => {
-    if (!review?.id || !$('scriptApproved').checked) return;
-    $('scriptApply').disabled = true;
-    try {
-      const n = review.count;
-      await api('/api/apply', { id: review.id, approved: true });
-      window.dispatchEvent(new Event('jo9:text-changed'));
-      $('scriptAdapted').value = ''; clearReview('');
-      if (window.JO9BatchEditor?.afterApply) await window.JO9BatchEditor.afterApply();
-      if (typeof say === 'function') say(`각색본 ${n}개 페이지를 반영했습니다. 백업과 수정 기록이 남았고, ‘변경 기록’에서 되돌릴 수 있습니다. 게임에서 해당 장면을 다시 열어 확인하세요.`);
-    } catch (e) { $('scriptImportStatus').textContent = '반영 실패: ' + e.message; $('scriptApply').disabled = false; }
-  };
 
   // 장면이 바뀌면 출력 결과만 비우고 각색본·각본 ID는 유지한다.
   window.addEventListener('jo9:selection',()=>reset());

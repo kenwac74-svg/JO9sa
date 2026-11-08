@@ -15,7 +15,7 @@ const STRUCTURE = [/^={2,}\s*\[S\d+\]/, /^\[대사 묶음[\s\]]/, /^▶ /, /^\s+
 function parse(text) {
   const rows = String(text).replace(/\r\n?/g, '\n').split('\n');
   const exportId = (String(text).match(/#\s*각본 ID:\s*([a-f0-9]{8,64})/i) || [])[1] || null;
-  const blocks = new Map(), duplicate = [];
+  const blocks = new Map(), duplicate = []; let normalizedMarkers=0;
   let current = null, buffer = [], afterPageMark = false;
   const flush = () => {
     if (!current) return;
@@ -24,7 +24,8 @@ function parse(text) {
     current = null; buffer = [];
   };
   for (const row of rows) {
-    const line = row.replace(/\s+$/, '');
+    let line = row.replace(/\s+$/, '');
+    if(/^\\(?:={2,}|-{2,})\s*\[S\d+/.test(line)){line=line.slice(1).replace(/\\$/, '');normalizedMarkers++;}
     let m;
     if ((m = line.match(MARK_PAGE))) { flush(); current = m[1]; afterPageMark = true; continue; }
     if ((m = line.match(MARK_VARIANT))) { flush(); current = m[1]; afterPageMark = false; continue; }
@@ -37,7 +38,7 @@ function parse(text) {
     buffer.push(line);
   }
   flush();
-  return { exportId, blocks, duplicate };
+  return { exportId, blocks, duplicate, normalizedMarkers };
 }
 
 const norm = s => String(s).replace(/\(빈 페이지\)/g, '').replace(/[ \t ]+/g, ' ').replace(/ *\n */g, '\n').replace(/\n{2,}/g, '\n').trim();
@@ -91,10 +92,23 @@ function toGame(newPlain, oldRaw) {
   return out + (tail && !out.endsWith(tail.trim()) ? tail : '');
 }
 
+// Explicit revalidation against current WORK: exact text, unique within location/field.
+function revalidateRecord(doc,record){
+ if(!record?.map)throw Error('원본 각본 기록이 없습니다.');
+ if(record.hash===doc.hash)return record;
+ const entries=core.entries(doc),map={};
+ for(const [id,ref]of Object.entries(record.map)){
+  const matches=entries.filter(e=>e.location===ref.location&&e.field===ref.field&&e.text===ref.text);
+  if(matches.length!==1)throw Error(id+': '+(matches.length?'같은 원문이 중복되어 유일한 위치를 정할 수 없습니다.':'현재 WORK 원문이 바뀌어 충돌합니다. 원문을 다시 확인하세요.'));
+  map[id]={...matches[0],hash:doc.hash};
+ }
+ return {...record,originalHash:record.hash,hash:doc.hash,map};
+}
 // record: {hash, map}, text: 각색본, opts: {allowMissing, exclude: [id]}
 function prepare(doc, record, text, opts = {}) {
   if (!record || record.hash !== doc.hash) throw Error('각본을 만든 뒤 QSP가 바뀌었습니다. 각본을 다시 만들어 각색해 주세요.');
   const { blocks, duplicate } = parse(text);
+  if(!blocks.size)throw Error('페이지 번호를 인식하지 못했습니다. [S1-P1] 구분선을 포함한 각본을 넣으세요.');
   if (duplicate.length) throw Error('같은 번호가 두 번 나옵니다: ' + duplicate.slice(0, 5).join(', '));
   const known = Object.keys(record.map), exclude = new Set(opts.exclude || []);
   const unknown = [...blocks.keys()].filter(id => !record.map[id]);
@@ -115,7 +129,8 @@ function prepare(doc, record, text, opts = {}) {
     if (norm(plain(next)) !== norm(newPlain.replace(/\(빈 페이지\)/g, ''))) { errors.push(id + ': 게임 형식으로 되돌린 결과가 각색본과 다릅니다. 태그·괄호 표시를 확인하세요.'); continue; }
     const warnings = [];
     const lostVars = missingFrom(varsOf(entry.text), varsOf(next));
-    if (lostVars.length) warnings.push('변수 빠짐: ' + lostVars.join(' '));
+    const addedVars=missingFrom(varsOf(next),varsOf(entry.text));
+    if(lostVars.length||addedVars.length){errors.push(id+': 치환변수 보존 검사 실패'+(lostVars.length?' · 빠짐 '+lostVars.join(' '):'')+(addedVars.length?' · 추가 '+addedVars.join(' '):''));continue;}
     const lostTags = missingFrom(tagsOf(entry.text), tagsOf(next));
     if (lostTags.length) warnings.push('서식 태그 빠짐: ' + lostTags.slice(0, 4).join(' '));
     const speakerOld = (entry.text.match(/^\s*\[([^\[\]\n]{1,80})\]<br>/) || [])[1], speakerNew = (next.match(/^\s*\[([^\[\]\n]{1,80})\]<br>/) || [])[1];
@@ -157,4 +172,4 @@ function prepare(doc, record, text, opts = {}) {
   return { raw, before: doc.hash, after: core.hash(raw), edits, changes, chosen, unchanged, missing };
 }
 
-module.exports = { parse, toGame, prepare, norm };
+module.exports = { parse, toGame, prepare, norm, revalidateRecord };

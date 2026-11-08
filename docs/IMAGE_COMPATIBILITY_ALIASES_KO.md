@@ -51,3 +51,7 @@ characters/mistress_morrigan.png 및 mistress_ava.png는 유지하고 같은 파
 ## 2026-11-05 2071 외형 분리
 
 갈색2071·기존 하늘색2324·새 금발2340의 독립 표시를 유지합니다. 옛2071 금발4경로, 하늘색 전신1경로, blue_short라는 이름의 실제 갈색 하녀1경로를 KEEP으로 보존했습니다. 원장 [2026-11-05_2071_split.json](../assets/compatibility-aliases/2026-11-05_2071_split.json)은 같은 바이트 사본과 다른 구도의 같은 인물, 잘못 명명된 복장 관계를 구분합니다. 해시만으로 삭제하거나 자동 교체하지 않습니다. [최종 보고](../records/girls-2071-split-20261105/REPORT_KO.md).
+
+## 2026-11-08 시루1448 파일명 정리7쌍
+
+새 기준은1448_shiru 계열이다. 옛1448_white_long_young 전신/하녀/비서/도미나/초상3종7개는 저장된 인물의 옛 경로를 위해 동일 바이트의 호환 파일로 유지한다. 삭제/중복 정리 대상이 아니다. 기준 원장: assets/compatibility-aliases/2026-11-08_shiru-paths.json. 새로운 그림을 교체할 때 두 경로를 어떻게 유지할지 명시적으로 검토한다.

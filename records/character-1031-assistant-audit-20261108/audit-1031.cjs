@@ -1,0 +1,16 @@
+const fs=require('node:fs'),path=require('node:path'),core=require('G:/somi/JO9sa/tools/text-workshop/core.cjs');
+const work='G:/somi/Jack O Nine Tails v2.4_work/game',tmp='G:/Codex/tmp/scene-1031-audit-20261108',doc=core.parse(fs.readFileSync(work+'/jack.qsp'));
+fs.mkdirSync(tmp,{recursive:true});
+const pic=tmp+'/content/pic/girls/sex_scenes/1031';fs.mkdirSync(pic,{recursive:true});
+const emojiRoot='G:/somi/JO9sa/tools/text-workshop/assets/dialogue-emoji',emojiName=fs.readdirSync(emojiRoot,{recursive:true}).find(n=>/\.png$/i.test(n)),png=fs.readFileSync(path.join(emojiRoot,emojiName));
+const names=fs.readdirSync(work+'/content/pic/girls/sex_scenes/1031');for(const n of names)fs.writeFileSync(pic+'/'+n,png);
+for(const n of ['clean_black_short_young.png','clean_black_short_young_2.png','clean_general_young.png'])fs.writeFileSync(tmp+'/content/pic/girls/sex_scenes/'+n,png);
+fs.mkdirSync(tmp+'/json',{recursive:true});fs.mkdirSync(tmp+'/css',{recursive:true});fs.writeFileSync(tmp+'/json/probe.json',JSON.stringify({qa_json_loaded:1}));
+const loc=(name,body)=>[core.shift(name,-5),'',core.shift(body,-5),core.shift('0',-5)];
+const display=doc.locations.find(l=>l.name==='display_pic');
+const start=["killall","$age[0]='young'","slave_type=1031","slave_state=1","$slave['hairColor']='black'","$slave['hairLen']='short'","slave['age']=0","$slave_scene_tag=''","qa_clean=picMax['1031_clean']","qa_bath=picMax['1031_bath']","qa_normal=picMax['clean_black_short_young']","$chosen=func('display_pic','slave','clean','girls/sex_scenes/')","savegame 'result.sav'","msg 'JO9_QA_1031_sceneaudit_COMPLETE'"].join('\r\n');
+const lines=['QSPGAME','','',core.shift('2',-5),...loc('Start',start),...loc('display_pic',core.shift(doc.lines[display.body],5)),''];
+fs.writeFileSync(tmp+'/probe.qsp',core.serialize({lines}));
+fs.writeFileSync(tmp+'/plan.json',JSON.stringify([{name:'scene-audit',file:tmp+'/probe.qsp',marker:'JO9_QA_1031_sceneaudit_COMPLETE',checkpoint:'Read-only resource-name indexing and production display_pic selection, no actual scene images copied or rendered'}],null,2));
+fs.writeFileSync(tmp+'/source.json',JSON.stringify({hash:doc.hash,files:names.length,source:work+'/content/pic/girls/sex_scenes/1031',placeholdersOnly:true},null,2));
+console.log('Prepared metadata-only native probe: '+tmp);

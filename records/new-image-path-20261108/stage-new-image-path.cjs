@@ -1,0 +1,24 @@
+const fs=require('node:fs'),a=require('node:assert/strict'),vm=require('node:vm'),crypto=require('node:crypto'),zlib=require('node:zlib');
+const tmp='G:/Codex/tmp/new-image-path-20261108',record='G:/somi/JO9sa/records/new-image-path-20261108',game='G:/somi/Jack O Nine Tails v2.4_work/game',repo='G:/somi/JO9sa';
+const paths=[game+'/modtools/catalog/catalog_editor.js',repo+'/tools/local-workspace/catalog-seed/catalog_editor.js',repo+'/tools/cut-addition/catalog_editor.js'];
+const sha=b=>crypto.createHash('sha256').update(b).digest('hex');fs.mkdirSync(tmp,{recursive:true});fs.mkdirSync(record+'/before',{recursive:true});
+const before=Object.fromEntries([...paths,game+'/jack.qsp',game+'/json/slaves/1031.json',game+'/modtools/catalog/catalog_status.js'].map(p=>[p,sha(fs.readFileSync(p))]));
+for(const p of paths)fs.writeFileSync(record+'/before/'+before[p]+'.gz',zlib.gzipSync(fs.readFileSync(p)));
+let code=fs.readFileSync(paths[0],'utf8').replaceAll('\r\n','\n');
+for(const p of paths.slice(1))a.equal(fs.readFileSync(p,'utf8').replaceAll('\r\n','\n'),code,'source differs from WORK');
+function replace(old,next){a.equal(code.split(old).length,2,'unique hook '+old.slice(0,70));code=code.replace(old,next);}
+replace("if(!s.cutPlan&&!s.editCut&&s.mappedPath&&!valid.has(s.mappedPath))", "if(!s.cutPlan&&!s.editCut&&!s.newPathMode&&s.mappedPath&&!valid.has(s.mappedPath))");
+replace("try{await C.read(S.root,r.target)}catch(e)","try{await C.read(S.root,r.target);if(r.newFile)throw Error('이미 같은 이름의 파일이 있습니다. 새 경로를 다시 선택하세요: '+r.target)}catch(e)");
+replace("const warning=absent.length?", "const fresh=rows.filter(r=>r.newFile);\n  const warning=fresh.length===rows.length?'선택한 새 경로에 '+fresh.length+'개 PNG를 저장할까요?\\n'+fresh.map(r=>r.target).join('\\n')+'\\n\\n새 폴더는 함께 생성됩니다.':absent.length?");
+replace("const record=await locked(()=>C.apply(S.root,jobs,msg));", "const record=await locked(()=>C.apply(S.root,jobs,msg));\n  completeNewPathRows(rows);");
+replace("s.mappedPath=e.target.value||'';", "if(e.target.value==='__new_path__'){await openNewImagePath(s);return;}\n   s.newPathMode=false;s.exactNewPath=false;\n   s.mappedPath=e.target.value||'';");
+replace("if(action==='input-face'){", "if(action==='new-path-folder'){await openNewImagePath(s);return;}\n  if(action==='input-face'){");
+replace("${s.mappedPath?'교체 대상과 관련 베리에이션':'교체 대상 선택 필요'}", "${s.newPathMode?'새 경로 저장 대상':s.mappedPath?'교체 대상과 관련 베리에이션':'교체 대상 선택 필요'}");
+replace("위에서 체크한 게임 파일 중 하나를 직접 지정하세요.","기존 게임 파일 또는 「새 경로 추가」를 선택하세요.");
+replace("$('apply').textContent=targets.some(r=>r.meta?.missing)?", "$('apply').textContent=targets.some(r=>r.newFile)?(targets.every(r=>r.newFile)?'새 파일로 저장':'선택 파일 저장 (새 파일 포함)'):targets.some(r=>r.meta?.missing)?");
+replace("msg(`${ok}개 변환 완료. 비교·조절에서 결과를 확인하세요. 없는 원본은 경고를 확인한 뒤 게임의 원래 경로에 강제 저장할 수 있습니다.`)","msg(`${ok}개 변환 완료. 비교·조절에서 결과를 확인하세요. `+(S.rows.some(r=>r.newFile)?'새 경로 대상은 「새 파일로 저장」으로 저장합니다.':'없는 원본은 경고를 확인한 뒤 게임의 원래 경로에 강제 저장할 수 있습니다.'))");
+replace("실제 교체 대상 ${targets.length}개", "저장 대상 ${targets.length}개");
+replace("// Installed inside the existing workshop scope; shares its drop area, rows and editor.",fs.readFileSync('workshop-new-path.js','utf8')+'\n\n// Installed inside the existing workshop scope; shares its drop area, rows and editor.');
+new vm.Script(code);fs.writeFileSync(tmp+'/catalog_editor.js',code);fs.copyFileSync('workshop-new-path.js',tmp+'/workshop-new-path.js');fs.copyFileSync('workshop-new-path.test.cjs',tmp+'/workshop-new-path.test.cjs');
+fs.writeFileSync(record+'/plan.json',JSON.stringify({paths,before,candidate:tmp+'/catalog_editor.js',after:sha(Buffer.from(code))},null,2));
+console.log(JSON.stringify({candidate:tmp+'/catalog_editor.js',before,after:sha(Buffer.from(code))}));

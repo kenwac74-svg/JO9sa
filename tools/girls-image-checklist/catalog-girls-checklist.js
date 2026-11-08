@@ -161,6 +161,49 @@
     ['gorgeous','고급 드레스'],['bride','신부'],['tail','꼬리 장비'],['cow','착유 장비'],
     ['pet','펫슈트'],['restrain','감각차단복']
   ];
+  // JO9 MOD START CHECKLIST_MANUAL_IMAGE_LINKS_20261108
+  const editableImageFields=new Set(['fullimage','fullmade','fullsecretary','fullmistress','fullpregnant','seed_ava','seed_ava_gray','seed_ava_clear',...outfits.flatMap(([key])=>['indpack_'+key,'indpack_'+key+'_horny','indpack_'+key+'_rebel']), 'indpack_title', 'indpack_naked']);
+  function mergeCharacterLinks(result){
+    if(result.files){files.clear();for(const p of result.files)files.set(normal(p),p);data.files=Array.from(files.values());}
+    for(const current of result.characters||[]){const c=data.characters.find(c=>c.id===current.id);if(c){const aliases=new Set((c.compatibilityAssets||[]).map(p=>normal(p.path))),assets=[...new Set([...(c.assets||[]),...(c.namedSceneAssets||[]),...(current.assets||[])].filter(p=>exists(p)&&!aliases.has(normal(p))))];Object.assign(c,current,{assets});}}
+    namedLabel.replaceChildren(namedOnly,document.createTextNode(' 이름 있는 유니크만 ('+data.characters.filter(c=>c.hasFixedName).length+')'));
+    actionsById=collectActions();version=Date.now();render();
+  }
+  let currentLinksLoading=false;
+  async function readCurrentLinks(rescan=false){
+    if(!live||currentLinksLoading)return;currentLinksLoading=true;
+    try{const result=await statusApi('character-images/read',{ids:data.characters.map(c=>c.id),rescan});mergeCharacterLinks(result);message.textContent='현재 WORK JSON의 이미지 연결과 파일 상태를 읽었습니다.'+(result.errors?.length?' · 확인 필요 '+result.errors.length+'명':'');}
+    catch(e){message.textContent='WORK JSON 연결 확인 실패: '+e.message;}finally{currentLinksLoading=false;}
+  }
+  function imageLinkButton(c,field,title){
+    if(!c||!editableImageFields.has(field))return node('span');
+    const b=node('button','파일 선택·연결');b.type='button';b.disabled=!live;b.dataset.imageLinkField=field;b.dataset.imageLinkCharacter=c.id;b.onclick=()=>chooseLinkedImage(c,field,title);return b;
+  }
+  async function chooseLinkedImage(c,field,title){
+    if(busy)return;let dialog;
+    try{
+      const current=await statusApi('character-images/read',{ids:[c.id]}),latest=current.characters[0];mergeCharacterLinks(current);if(!latest)throw Error('캐릭터 JSON을 찾지 못했습니다.');const expectedHash=latest.jsonSha256;
+      dialog=node('dialog');dialog.className='gc-link-dialog';dialog.setAttribute('aria-label',c.id+' '+title+' 이미지 파일 연결');root.append(dialog);
+      dialog.style.cssText='color:inherit;background:#202832;border:1px solid #9d784a;border-radius:8px;width:min(860px,94vw);max-height:90vh';
+      const header=node('div',undefined,'gc-row'),close=node('button','취소');header.append(node('h3',c.id+' · '+c.name+' · '+title),close);dialog.append(header,node('p','연결할 PNG를 폴더에서 선택하세요. 이 항목의 등록 경로를 바꾸며 그림 파일은 그대로 둡니다.','gc-note'));
+      const fallback={indpack_maid:'fullmade',indpack_secr:'fullsecretary',indpack_dom:'fullmistress'},old=latest.refs[field]||latest.refs[fallback[field]]||'';
+      dialog.append(node('p','현재 연결: '+(old||'미등록'),'gc-path'));
+      const pathLabel=node('p','', 'gc-path'),nav=node('div',undefined,'gc-row'),up=node('button','상위 폴더'),home=node('button','PIC 폴더 처음');nav.append(up,home);dialog.append(pathLabel,nav);
+      const list=node('div');list.style.cssText='display:flex;flex-direction:column;gap:4px;max-height:35vh;overflow:auto;margin:10px 0';dialog.append(list);
+      const paging=node('div',undefined,'gc-row'),prev=node('button','이전 목록'),counter=node('span'),next=node('button','다음 목록');paging.append(prev,counter,next);dialog.append(paging);
+      const selected=node('p','파일을 선택하세요.','gc-path'),preview=node('img');preview.alt='직접 연결할 PNG';preview.hidden=true;preview.style.cssText='max-width:100%;max-height:180px;object-fit:contain';const error=node('p','', 'gc-error'),apply=node('button','이 파일 연결');apply.disabled=true;dialog.append(selected,preview,error,apply);
+      let folder='',entries=[],offset=0,choice='',revision=0,saving=false;
+      function closeDialog(){if(saving)return;revision++;dialog.close();dialog.remove();}
+      close.onclick=closeDialog;dialog.addEventListener('cancel',e=>{if(saving)e.preventDefault();});dialog.addEventListener('close',()=>{revision++;dialog.remove();});
+      function show(){list.replaceChildren();const visible=entries.filter(e=>! /^(?:_|backup)/i.test(e.name)&&(e.kind==='directory'||/\.png$/i.test(e.name))),page=visible.slice(offset,offset+100);for(const entry of page){const b=node('button',(entry.kind==='directory'?'📁 ':'🖼 ')+entry.name);b.style.textAlign='left';b.onclick=()=>{if(saving)return;const p=[folder,entry.name].filter(Boolean).join('/');if(entry.kind==='directory')browse(p);else{choice=p;selected.textContent='선택: '+p;apply.disabled=false;preview.hidden=!images.checked;if(images.checked)preview.src=assetUrl(p);error.textContent='';}};list.append(b);}if(!page.length)list.append(node('p','하위 폴더 또는 PNG가 없습니다.'));counter.textContent=(visible.length?Math.floor(offset/100)+1:0)+' / '+Math.ceil(visible.length/100);prev.disabled=!offset;next.disabled=offset+100>=visible.length;pathLabel.textContent='content/pic'+(folder?'/'+folder:'');up.disabled=!folder;}
+      async function browse(p){const request=++revision;list.textContent='폴더 읽는 중…';try{const result=await api('entries',{path:p});if(request!==revision)return;if(result.missing&&p){await browse('');return;}folder=p;entries=(result.entries||[]).sort((a,b)=>(a.kind===b.kind?0:a.kind==='directory'?-1:1)||a.name.localeCompare(b.name));offset=0;show();}catch(e){if(request===revision)error.textContent=e.message;}}
+      up.onclick=()=>{if(!saving)browse(folder.split('/').slice(0,-1).join('/'));};home.onclick=()=>{if(!saving)browse('');};prev.onclick=()=>{if(!saving){offset=Math.max(0,offset-100);show();}};next.onclick=()=>{if(!saving){offset+=100;show();}};
+      apply.onclick=async()=>{if(saving||!choice)return;saving=true;busy=true;apply.disabled=true;close.disabled=true;try{const saved=await statusApi('character-images/apply',{id:c.id,field,path:choice,expectedHash});files.set(normal(saved.path),saved.path);mergeCharacterLinks({characters:[saved.character]});message.textContent=c.id+' · '+title+' 연결 저장: '+saved.path+' · JSON 원본 백업과 연결 이력을 기록했습니다.';dialog.close();dialog.remove();}catch(e){error.textContent=e.message;apply.disabled=false;}finally{saving=false;busy=false;close.disabled=false;}};
+      dialog.showModal();await browse(old?old.split('/').slice(0,-1).join('/'):'');
+    }catch(e){message.textContent='파일 연결: '+e.message;if(dialog)dialog.remove();}
+  }
+  // JO9 MOD END CHECKLIST_MANUAL_IMAGE_LINKS_20261108
+
   const actionNames = {bath:'목욕',cook:'요리',clean:'청소',rest:'휴식',wash:'씻기',
     gym:'체조',fight:'격투',music:'음악',art:'그림',dance:'춤',nurse:'간호',
     alchemy:'연금술',petplay:'펫플레이',milking:'착유',bondage:'구속'};
@@ -175,17 +218,20 @@
     return map;
   }
   let actionsById=collectActions();
-  function full(c) { return c.refs.indpack_title || c.refs.fullimage || ''; }
+  // JO9 MOD START CHECKLIST_DRESSED_LOOK_20261109
+  // The base slot is the naked body; the dressed look (indpack_title) has its own slot.
+  function full(c) { return c.refs.indpack_naked || c.refs.fullimage || ''; }
+  // JO9 MOD END CHECKLIST_DRESSED_LOOK_20261109
   function role(c, spec) {
     const legacy = c.refs[spec[2]] || '', pack = c.refs[spec[3]] || '', path = pack || legacy;
     const moodMissing = ['_horny','_rebel'].some(s => c.refs[spec[3]+s] && !exists(c.refs[spec[3]+s]));
     let state = 'ok', text = '전용 그림 있음';
     if (!path) { state = 'empty'; text = '전용 복장 미등록 · 기본 전신 대체 예정'; }
     else if (!exists(path)) { state = 'broken'; text = '그림 경로 오류 · 기본 전신 대체 예정'; }
-    else if (!legacy && pack) { state = 'hidden'; text = '그림 있음 · 복장 선택 연결 필요'; }
     else if (normal(path) === normal(full(c)) || normal(path) === normal(c.refs.fullimage)) {
       state = 'same'; text = '기본 전신과 같은 그림 · 전용 복장 보완 가능';
     }
+    if (state === 'ok' && !legacy && pack) text = '전용 그림 있음 · 추가팩 등록';
     if (moodMissing) text += ' · 등록된 상태 변형 누락';
     return {path, legacy, pack, state, text, moodMissing};
   }
@@ -283,25 +329,71 @@
     };
     input.click();
   }
-  function pathRow(path, title) {
+  function pathRow(path, title, c, field) {
     const row=node('div',undefined,'gc-row');
     row.append(node('span',exists(path)?'있음':'없음',exists(path)?'gc-ok':'gc-error'),node('span',title+' · '+path,'gc-path'));
-    const b=node('button',exists(path)?'PNG 교체':'PNG 추가');b.disabled=!live;b.onclick=()=>put(path,title);row.append(b);
+    const b=node('button',exists(path)?'PNG 교체':'PNG 추가');b.disabled=!live;b.onclick=()=>put(path,title);row.append(b);if(c&&field)row.append(imageLinkButton(c,field,title));
     return row;
   }
-  function slot(c,title,path,text,state) {
+  // JO9 MOD START CHECKLIST_NAMING_RULE_20261109
+  // docs/modding/IMAGE_NAMING_RULES_KO.md: new or replaced art goes under the character number.
+  function rulePath(id,field){
+    const role={fullimage:'naked',indpack_naked:'naked',indpack_title:'title',fullmade:'maid',indpack_maid:'maid',fullsecretary:'secr',indpack_secr:'secr',fullmistress:'dom',indpack_dom:'dom'};
+    if(field==='seed_ava_clear')return 'girls/face/'+id+'.png';
+    if(field==='seed_ava_gray')return 'girls/face/'+id+'_gray.png';
+    if(field==='seed_ava')return 'girls/face/'+id+'_sepia.png';
+    if(role[field])return 'girls/full/'+id+'/'+id+'_'+role[field]+'.png';
+    const m=/^indpack_([a-z]+)(_horny|_rebel)?$/.exec(field||'');
+    return m?'girls/full/'+id+'/'+id+'_'+m[1]+(m[2]||'')+'.png':'';
+  }
+  function ruleNote(c,path,field){
+    const rule=rulePath(c.id,field);
+    return rule&&path&&normal(path)!==normal(rule)?node('p','규칙 경로: '+rule+' · 새로 추가하거나 바꿀 때 이 이름을 씁니다','gc-note'):null;
+  }
+  // JO9 MOD END CHECKLIST_NAMING_RULE_20261109
+  function slot(c,title,path,text,state,field) {
     const box=node('div',undefined,'gc-slot');box.append(node('h4',title));
     box.append(node('strong',text,state==='ok'?'gc-ok':state==='broken'?'gc-error':'gc-warn'));
     if(path){
-      box.append(node('p',path,'gc-path'));
+      box.append(node('p',path,'gc-path'));{const rn=ruleNote(c,path,field);if(rn)box.append(rn);}
       if(images.checked&&exists(path)){const img=node('img');img.loading='lazy';img.alt=title;img.src=assetUrl(path);box.append(img);}
       const shared=info(path);if(shared)box.append(node('p',shared,'gc-note'));
       const b=node('button',exists(path)?'PNG 교체':'PNG 추가');b.disabled=!live;b.onclick=()=>put(path,title);box.append(b);
     }else{
-      box.append(node('p','경로 등록도 필요한 칸입니다. 캐릭터 이미지추가도구에서 해당 복장을 선택·저장하면 파일과 연결을 함께 만들 수 있습니다.','gc-note'));
+      box.append(node('p','파일 선택·연결에서 이미 만들어 둔 PNG를 직접 지정할 수 있습니다.','gc-note'));
     }
+    if(field)box.append(imageLinkButton(c,field,title));
     return box;
   }
+  // JO9 MOD START CHECKLIST_DRESSED_LOOK_20261109
+  function dressed(c){
+    const box=node('div',undefined,'gc-slot');box.append(node('h4','옷 입은 모습'));
+    const t=c.refs.indpack_title||'',base=full(c),own=!!t&&normal(t)!==normal(base);
+    let shared='';for(const spec of roles){const r=role(c,spec);if(own&&r.path&&normal(r.path)===normal(t))shared=spec[1];}
+    let text='미지정 · 옷을 입혀도 알몸 전신 표시',state='empty';
+    if(own&&!exists(t)){text='그림 경로 오류';state='broken';}
+    else if(own&&shared){text='공용 · '+shared+' 복장';state='ok';}
+    else if(own){text='전용 그림 있음';state='ok';}
+    box.append(node('strong',text,state==='ok'?'gc-ok':state==='broken'?'gc-error':'gc-warn'));
+    if(own){box.append(node('p',t,'gc-path'));if(!shared){const rn=ruleNote(c,t,'indpack_title');if(rn)box.append(rn);}if(images.checked&&exists(t)){const img=node('img');img.loading='lazy';img.alt='옷 입은 모습';img.src=assetUrl(t);box.append(img);}}
+    box.append(node('p','전용 PNG를 연결하거나 기존 복장 그림을 공용으로 지정합니다. 지정하면 알몸 전신은 기본 전신으로 고정됩니다.','gc-note'));
+    box.append(imageLinkButton(c,'indpack_title','옷 입은 모습'));
+    const row=node('div',undefined,'gc-row');
+    for(const spec of roles){const r=role(c,spec),b=node('button',spec[1]+' 공용');b.type='button';
+      b.disabled=!live||!r.path||!exists(r.path)||normal(r.path)===normal(base)||shared===spec[1];
+      b.title=r.path&&exists(r.path)?'옷 입은 모습을 '+spec[1]+' 복장 그림('+r.path+')과 공용으로 지정합니다.':spec[1]+' 복장 그림이 없습니다.';
+      b.onclick=()=>shareDressed(c,spec[1],r.path);row.append(b);}
+    box.append(row);return box;
+  }
+  async function shareDressed(c,label,p){
+    if(busy||!live)return;busy=true;
+    try{const current=await statusApi('character-images/read',{ids:[c.id]}),latest=current.characters[0];if(!latest)throw Error('캐릭터 JSON을 찾지 못했습니다.');
+      const saved=await statusApi('character-images/apply',{id:c.id,field:'indpack_title',path:p,expectedHash:latest.jsonSha256});
+      mergeCharacterLinks({characters:[saved.character]});
+      message.textContent=c.id+' · 옷 입은 모습을 '+label+' 복장과 공용으로 지정: '+saved.path+' · JSON 원본 백업과 연결 이력을 기록했습니다.';}
+    catch(e){message.textContent='공용 지정: '+e.message;}finally{busy=false;}
+  }
+  // JO9 MOD END CHECKLIST_DRESSED_LOOK_20261109
   function render() {
     if(window.JO9_CATALOG_TABS&&window.JO9_CATALOG_TABS.current()!=='girls'){dirty=true;return;}dirty=false;
     const rows=chooseRows(),pages=Math.max(1,Math.ceil(rows.length/pageSize));
@@ -319,22 +411,22 @@
       if(c.catalogNote)card.append(node('p',c.catalogNote,'gc-note'));
       const grid=node('div',undefined,'gc-grid');card.append(grid);
       const base=full(c);
-      grid.append(slot(c,'기본 전신',base,exists(base)?'기본 전신 있음':'기본 전신 연결 확인 필요',exists(base)?'ok':'broken'));
+      grid.append(slot(c,'기본 전신',base,exists(base)?'기본 전신 있음':'기본 전신 연결 확인 필요',exists(base)?'ok':'broken','fullimage'),dressed(c));
       for(const [field,title] of [['seed_ava_clear','컬러 초상'],['seed_ava_gray','흑백 초상'],['seed_ava','세피아 초상']]){
-        const path=c.refs[field]||'';grid.append(slot(c,title,path,exists(path)?'초상 있음':'초상 추가 / 연결 필요',exists(path)?'ok':'broken'));
+        const path=c.refs[field]||'';grid.append(slot(c,title,path,exists(path)?'초상 있음':'초상 추가 / 연결 필요',exists(path)?'ok':'broken',field));
       }
-      for(const spec of roles){const r=role(c,spec);grid.append(slot(c,spec[1],r.path,r.text,r.state));}
+      for(const spec of roles){const r=role(c,spec);grid.append(slot(c,spec[1],r.path,r.text,r.state,spec[3]));}
       const clothes=node('details');clothes.append(node('summary','전체 복장 · 일반 / 흥분 / 반항 컷 보유 상태'));
       const clothList=node('div',undefined,'gc-list');
       for(const [key,title] of outfits){
         const field='indpack_'+key, ordinary=c.refs[field];
         const group=node('div');group.append(node('h4',title));
-        if(ordinary)group.append(pathRow(ordinary,'일반'));
-        else group.append(node('p','일반 전용 컷 미등록 · 기본 전신 또는 기존 역할 그림을 사용','gc-note'));
+        if(ordinary)group.append(pathRow(ordinary,'일반',c,field));
+        else group.append(node('p','일반 전용 컷 미등록 · 기본 전신 또는 기존 역할 그림을 사용','gc-note'),imageLinkButton(c,field,title+' · 일반'));
         for(const [suffix,label] of [['_horny','흥분'],['_rebel','반항']]){
           const variant=c.refs[field+suffix];
-          if(variant)group.append(pathRow(variant,label));
-          else group.append(node('p',label+' 전용 컷 미등록 · 일반 복장 그림 사용','gc-note'));
+          if(variant)group.append(pathRow(variant,label,c,field+suffix));
+          else group.append(node('p',label+' 전용 컷 미등록 · 일반 복장 그림 사용','gc-note'),imageLinkButton(c,field+suffix,title+' · '+label));
         }
         clothList.append(group);
       }
@@ -342,7 +434,7 @@
       const refs=node('details');refs.append(node('summary','등록된 전신·복장·상태 변형 경로 전체'));
       const refList=node('div',undefined,'gc-list');
       for(const [field,path] of Object.entries(c.refs).filter(([key])=>key.startsWith('indpack_')||['fullimage','fullmade','fullsecretary','fullmistress','fullpregnant'].includes(key)))
-        refList.append(pathRow(path,fieldLabels[field]||field));
+        refList.append(pathRow(path,fieldLabels[field]||field,c,field));
       refs.append(refList);card.append(refs);
       const scenes=node('details');const actionFiles=Array.from(actionsById.entries()).filter(([key])=>key.startsWith(c.id+':')).flatMap(([,paths])=>paths);
       scenes.append(node('summary','캐릭터 번호별 행동 컷 · '+actionFiles.length+'개'));
@@ -360,10 +452,13 @@
       }
       actionSlots.append(actionGrid);scenes.append(actionSlots);
       const sceneList=node('div',undefined,'gc-list');for(const p of actionFiles)sceneList.append(pathRow(p,p.split('/').pop()));scenes.append(sceneList);card.append(scenes);
-      const old=node('details');old.append(node('summary','이전 개별 장면 등록 · 현재 행동 화면과 연결 확인 필요'));
-      const legacy=node('div',undefined,'gc-list');
-      for(const key of c.legacyFields||[]){const p=c.refs[key];if(p)legacy.append(pathRow(p,key));}
-      old.append(node('p','이 목록의 파일을 채워도 목욕·요리 등 일반 행동이 자동으로 이 경로를 읽지는 않습니다. 현재 행동 컷 경로와 연결을 맞춰야 합니다.','gc-note'),legacy);card.append(old);
+      const legacyFields=(c.legacyFields||[]).filter(key=>c.refs[key]);
+      if(legacyFields.length){
+        const old=node('details');old.append(node('summary','이전 개별 장면 등록 · 참고 경로'));
+        const legacy=node('div',undefined,'gc-list');
+        for(const key of legacyFields)legacy.append(pathRow(c.refs[key],key));
+        old.append(node('p','옛 개별 등록은 번호별 행동 컷과 별도 자료입니다. 이 목록만으로 현재 장면의 미연결 여부를 판정하지 않습니다.','gc-note'),legacy);card.append(old);
+      }
       if((c.namedSceneAssets||[]).length){
         const named=node('details');named.append(node('summary','캐릭터 이름 폴더에 있는 장면 · '+c.namedSceneAssets.length+'개'));
         const namedList=node('div',undefined,'gc-list');for(const p of c.namedSceneAssets)namedList.append(pathRow(p,p.split('/').pop()));
@@ -385,11 +480,7 @@
   async function rescan(){
     if(busy)return;busy=true;refresh.disabled=true;message.textContent='WORK 이미지 파일을 다시 확인하고 있습니다.';
     try{
-      const result=await api('index?rescan=1');
-      files.clear();for(const f of result.index)files.set(normal(f.path),f.path);
-      actionsById=collectActions();
-      version=Date.now();message.textContent='이미지 파일 상태를 갱신했습니다. JSON 경로를 새로 등록한 경우에는 목록 재생성이 필요합니다.';
-      render();
+      await readCurrentLinks(true);
     }catch(e){message.textContent=e.message;}finally{busy=false;refresh.disabled=false;}
   }
   function download(){
@@ -409,6 +500,6 @@
   namedOnly.onchange=()=>{if(namedOnly.checked)filter.value='all';page=0;render();};
   document.addEventListener('jo9:catalog-tab',e=>{if(e.detail==='girls'&&dirty)render();});
   render();
-  if(live){refreshTags();const activeRefresh=()=>{if(!window.JO9_CATALOG_TABS||window.JO9_CATALOG_TABS.current()==='girls')refreshTags();};window.addEventListener('focus',activeRefresh);setInterval(activeRefresh,5000);}
+  if(live){readCurrentLinks(true);refreshTags();const activeRefresh=()=>{if(!window.JO9_CATALOG_TABS||window.JO9_CATALOG_TABS.current()==='girls')refreshTags();};window.addEventListener('focus',activeRefresh);setInterval(activeRefresh,5000);}
 })(window.JO9_GIRLS_CHECKLIST);
 /* JO9 MOD END GIRLS_CHARACTER_CHECKLIST_20261104 */

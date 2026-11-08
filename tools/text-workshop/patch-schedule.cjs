@@ -15,6 +15,7 @@ function validate(item){
  if('notes'in item&&(typeof item.notes!=='string'||item.notes.length>2000))fail('메모는 2,000자 이내로 입력하세요.');
  if(item.startDate&&item.dueDate&&item.startDate>item.dueDate)fail('목표일은 시작일 이후로 정하세요.');
 }
+function validateIdeaNotes(value){if(typeof value!=='string'||value.length>20000)fail('기획 아이디어 노트는 20,000자 이내로 입력하세요.');}
 function create(root){
  const file=path.join(path.resolve(root),'patch-schedule.json');
  function read(){
@@ -22,12 +23,14 @@ function create(root){
   const raw=fs.readFileSync(file);let state;try{state=JSON.parse(raw.toString('utf8').replace(/^\uFEFF/,''));}catch{fail('일정 기록을 읽지 못했습니다. 원본 JSON을 확인하세요.');}
   if(state.schema!==1||!state.overrides||typeof state.overrides!=='object'||Array.isArray(state.overrides))fail('지원하지 않는 일정 기록입니다.');
   for(const [id,v]of Object.entries(state.overrides))if(ids.has(id)){if(!v||typeof v!=='object'||Array.isArray(v)||'id'in v)fail('저장된 작업 정보를 확인하세요.');validate({id,...v});}
+  if(Object.hasOwn(state,'ideaNotes'))validateIdeaNotes(state.ideaNotes);
   return {state,revision:crypto.createHash('sha256').update(raw).digest('hex')};
  }
- function view(){const {state,revision}=read();return {...seed,tasks:seed.tasks.map(t=>({...t,...state.overrides[t.id]})),revision,updatedAt:state.updatedAt};}
+ function view(){const {state,revision}=read();return {...seed,ideaNotes:state.ideaNotes||'',tasks:seed.tasks.map(t=>({...t,...state.overrides[t.id]})),revision,updatedAt:state.updatedAt};}
  function update(input){
   const loaded=read();if(!input||input.revision!==loaded.revision)fail('다른 창에서 일정이 변경됐습니다. 최신 상태를 불러온 뒤 다시 변경하세요.',409);
-  if(!Array.isArray(input.changes)||!input.changes.length||input.changes.length>seed.tasks.length)fail('저장할 작업을 확인하세요.');
+  const hasIdeaNotes=Object.hasOwn(input,'ideaNotes');if(hasIdeaNotes)validateIdeaNotes(input.ideaNotes);
+  if(!Array.isArray(input.changes)||(!input.changes.length&&!hasIdeaNotes)||input.changes.length>seed.tasks.length)fail('저장할 작업을 확인하세요.');
   const next=structuredClone(loaded.state),seen=new Set();
   for(const item of input.changes){
    validate(item);if(seen.has(item.id))fail('같은 작업이 두 번 들어 있습니다.');seen.add(item.id);
@@ -36,6 +39,7 @@ function create(root){
    const merged={...before,...change};validate({id:item.id,...Object.fromEntries(Object.entries(merged).filter(([k])=>fields.has(k)&&k!=='id'))});
    next.overrides[item.id]={...next.overrides[item.id],...change};
   }
+  if(hasIdeaNotes)next.ideaNotes=input.ideaNotes;
   next.updatedAt=new Date().toISOString();fs.mkdirSync(path.dirname(file),{recursive:true});const temp=file+'.'+crypto.randomBytes(6).toString('hex')+'.tmp';
   try{fs.writeFileSync(temp,JSON.stringify(next,null,2)+'\n',{flag:'wx'});fs.renameSync(temp,file);}finally{if(fs.existsSync(temp))fs.unlinkSync(temp);}
   return view();

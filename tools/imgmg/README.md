@@ -31,3 +31,7 @@ IMGMG는 용량 때문에 git 밖에서 사용자가 관리한다. 이 폴더는
 ## SNKmod 정규 경로 이전 (2026-10-11)
 
 SNKmod는 폐기했다. 신규 자원은 bg/characters/scene/master/ui/buttons 등 실제 용도별 정규 폴더를 사용한다. sync_snkmod.ps1은 퇴역 안내만 하고 -Apply는 거부한다. make_catalog.ps1은 순정의 옛 SNKmod도 목록에서 제외하되 원본 파일은 보존한다. 기존 ID와 확인 상태의 대응은 catalog_path_aliases.json, 상세 기록은 docs/SNKMOD_RELOCATION_20261011.md에 있다.
+
+## 새 경로에 이미지 저장 (2026-11-08)
+
+이미지 교체 창의 대상 선택 → 「＋ 새 경로 추가 · 폴더 선택」 → PIC 폴더 탐색 → 규격 맞추기 → 「새 파일로 저장」. 파일명은 투입한 이름, 출력은 PNG다. 하위 폴더 추가는 실제 저장 때 생성하며 같은 경로의 기존 파일은 새 경로 모드에서 덮어쓰지 않는다. 원본 모듈은 workshop-new-path.js, 사용/구조/복구는 records/new-image-path-20261108/REPORT_KO.md. catalog_editor.js 재생성 시 이 모듈뿐 아니라 apply/map/render/poll 훅을 함께 재병합할 것.
