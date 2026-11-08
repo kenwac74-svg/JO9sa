@@ -7,6 +7,7 @@ const batchReplace=require('./batch-replace.cjs');
 const addition=require('./addition.cjs');
 const scenes=require('./scenes.cjs');
 const scriptImport=require('./script-import.cjs'); // JO9 MOD SCRIPT_IMPORT_20261108
+const catalogTabs=require('./catalog-tabs.cjs'); // JO9 MOD NATIVE_CATALOG_TABS_20261108
 const catalogModule=require('./catalog.cjs');
 const {spawn}=require('node:child_process');
 const arg=n=>{const i=process.argv.indexOf(n);return i<0 ? undefined : process.argv[i+1];};
@@ -140,8 +141,9 @@ const server=http.createServer(async(req,res)=>{
       res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','Content-Security-Policy':"default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'"});
       res.end(fs.readFileSync(path.join(__dirname,'index.html'),'utf8').replace('__SESSION_TOKEN__',token));return;
     }
+    if(req.method==='GET'&&url.pathname==='/workshop.css'){res.writeHead(200,{'Content-Type':'text/css; charset=utf-8','Cache-Control':'no-store'});res.end(fs.readFileSync(path.join(__dirname,'workshop.css'),'utf8'));return;}
     // JO9 MOD START: text-batch-replace-20261018-static
-    if(req.method==='GET'&&['/script-export.js','/dialogue-ai.js','/editing-tools.js','/variable-inspector.js','/batch-replace.js','/catalog-cut-conditions.js'].includes(url.pathname)){res.writeHead(200,{'Content-Type':'text/javascript; charset=utf-8','Cache-Control':'no-store'});res.end(fs.readFileSync(path.join(__dirname,url.pathname.slice(1)),'utf8'));return;}
+    if(req.method==='GET'&&['/workshop-ui.js','/script-export.js','/dialogue-ai.js','/editing-tools.js','/variable-inspector.js','/batch-replace.js','/catalog-cut-conditions.js','/script-range.js'].includes(url.pathname)){res.writeHead(200,{'Content-Type':'text/javascript; charset=utf-8','Cache-Control':'no-store'});res.end(fs.readFileSync(path.join(__dirname,url.pathname.slice(1)),'utf8'));return;}
     // JO9 MOD END: text-batch-replace-20261018-static
     const catalogRoute=url.pathname.startsWith('/api/catalog/');
     if(catalogRoute&&req.headers.origin==='null'){
@@ -157,10 +159,17 @@ const server=http.createServer(async(req,res)=>{
       html=html.replace(/<head(?:\s[^>]*)?>/i,head=>head+'<script>window.JO9_CATALOG_BRIDGE='+cfg+';</script>');
       // file:// cannot be displayed inside HTTP pages. Serve only allowlisted catalog images.
       html=html.replace("function url(p){", "function url(p){if(p.indexOf(MR+'\\\\')===0||p.indexOf(OR+'\\\\')===0){var orig=p.indexOf(OR+'\\\\')===0;return '/api/catalog-asset?t='+"+JSON.stringify(token)+"+'&original='+(orig?'1':'0')+'&p='+encodeURIComponent(p.substring((orig?OR:MR).length+1));}");
-      html=html.replace(/<\/body>/i,'<script src="catalog_grok.js"></script><script src="catalog_cuts.js"></script><script src="catalog-cut-conditions.js"></script></body>');
+      const nativeCatalog=catalogTabs.native(html);html=catalogTabs.shell(html);
+      html=html.replace(/<\/body>/i,nativeCatalog?'<script src="catalog_grok.js"></script></body>':'<script src="catalog_grok.js"></script><script src="catalog_cuts.js"></script><script src="catalog-cut-conditions.js"></script></body>');
       res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store'});res.end(html);return;
     }
-    const catalogFiles=['catalog_cuts.js','catalog_status.js','catalog_work_codes.js','catalog_workshop.js','catalog_editor.js','catalog_pic.js','catalog_local_pic.js','catalog_grok.js'];
+    if(req.method==='GET'&&url.pathname.startsWith('/catalog-tab/')){
+      const key=url.pathname.slice('/catalog-tab/'.length),html=fs.readFileSync(path.join(catalogRoot,'catalog_merge_vs_original.html'),'utf8'),payload=catalogTabs.payload(html,key,true);
+      if(payload===null){res.writeHead(404);res.end();return;}
+      const code=key==='conditions'?[...payload.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(m=>m[1]).join('\n'):payload;
+      res.writeHead(200,{'Content-Type':key==='conditions'?'text/javascript; charset=utf-8':'text/html; charset=utf-8','Cache-Control':'no-store'});res.end(code);return;
+    }
+    const catalogFiles=['catalog-tabs.js','catalog_cuts.js','catalog_status.js','catalog_work_codes.js','catalog_workshop.js','catalog_editor.js','catalog_pic.js','catalog_local_pic.js','catalog_grok.js'];
     if(req.method==='GET'&&catalogFiles.includes(url.pathname.slice(1))){
       const file=url.pathname.slice(1);let text;
       if(file==='catalog_status.js')text='window.CATALOG_STATUS='+JSON.stringify(catalog.state())+';';
@@ -354,6 +363,20 @@ const server=http.createServer(async(req,res)=>{
       const input=await body(req);const {doc}=current();if(input.hash!==doc.hash)throw Error('QSP가 바뀌었습니다. 다시 검색해 주세요.');json(res,200,withImages(navigator.open(input.destination,input.mode)));return;
     }
     // JO9 MOD SCRIPT_EXPORT_20261108
+    // JO9 MOD START SCRIPT_RANGE_20261108
+    if(req.method==='POST'&&url.pathname==='/api/script/boundary'){
+      const input=await body(req);current();json(res,200,navigator.scriptBoundary(input));return;
+    }
+    if(req.method==='POST'&&url.pathname==='/api/script/range'){
+      const input=await body(req);current();const exportId=crypto.randomBytes(8).toString('hex');
+      const r=navigator.scriptRange({...input,exportId});
+      if(r.status==='ready'){
+        const dir=path.join(runtime,'script-exports');fs.mkdirSync(dir,{recursive:true});
+        fs.writeFileSync(path.join(dir,exportId+'.json'),JSON.stringify({id:exportId,hash:r.hash,created:new Date().toISOString(),start:input.start,end:input.end,range:true,map:r.map}));
+      }
+      json(res,200,{...r,...(r.status==='ready'?{exportId}:{})});return;
+    }
+    // JO9 MOD END SCRIPT_RANGE_20261108
     if(req.method==='POST' && url.pathname==='/api/script'){
       const input=await body(req);current();
       const exportId=crypto.randomBytes(8).toString('hex'),r=navigator.script({...input,options:{...(input.options||{}),exportId}});

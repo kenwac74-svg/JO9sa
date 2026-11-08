@@ -3,49 +3,7 @@
   'use strict';
   const nav = document.getElementById('navigation');
   if (!nav || typeof api !== 'function') return;
-  const css = document.createElement('style');
-  css.textContent = `
-#scriptExportBox textarea{width:100%;font:13px/1.6 Consolas,'Malgun Gothic',monospace;white-space:pre-wrap;overflow:auto;background:#0b1220;color:#e5e7eb;border:1px solid #374151;border-radius:6px;padding:10px;margin-top:8px}
-#scriptExportBox .opts{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-#scriptImport{margin-top:18px;border-top:1px solid #374151;padding-top:12px}
-#scriptChanges .chg{border:1px solid #374151;border-radius:6px;padding:8px 10px;margin:8px 0;background:#0f172a}
-#scriptChanges .chg.off{opacity:.45}
-#scriptChanges .cols{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
-#scriptChanges .cols div{white-space:pre-wrap;font-size:13px;line-height:1.55}
-#scriptChanges .old{color:#9ca3af}
-#scriptChanges .warn{color:#fbbf24;font-size:13px}
-@media (max-width:760px){#scriptChanges .cols{grid-template-columns:1fr}}`;
-  document.head.append(css);
-  const box = document.createElement('details');
-  box.id = 'scriptExportBox';
-  box.innerHTML = `
-<summary>흐름 전체 각본 · 출력과 각색본 일괄 반영</summary>
-<p class="muted">선택한 장면에서 시작해 선택지·이동으로 이어지는 장면을 따라가며 대사 전체를 페이지 구분선과 함께 한 문서로 만듭니다. AI가 각색한 결과를 아래 ‘각색본 반영’에 붙여 넣으면 페이지 번호로 원래 대사를 찾아 한 번에 반영합니다.</p>
-<div class="opts">
- <label>시작 <select id="scriptStart"><option value="scene">선택한 장면</option><option value="root">이 위치 전체</option></select></label>
- <label>따라갈 단계 <input id="scriptDepth" type="number" min="0" max="50" value="6" style="width:4.5em"></label>
- <label>최대 장면 수 <input id="scriptMax" type="number" min="1" max="200" value="30" style="width:4.5em"></label>
- <label>주인공 판본 <select id="scriptEdition"><option value="man">남성</option><option value="woman">여성</option></select></label>
- <label><input id="scriptVariants" type="checkbox" checked> 조건부 대체문 포함</label>
- <label><input id="scriptCalls" type="checkbox"> 호출(gs)도 따라가기</label>
- <label><input id="scriptCode" type="checkbox"> 코드 위치 표시</label>
-</div>
-<div class="row" style="margin-top:8px"><button id="scriptMake">각본 만들기</button><button id="scriptCopy" disabled>복사</button><button id="scriptSave" disabled>txt 저장</button><button id="scriptCopyRequest" disabled>각색 요청문과 함께 복사</button><span id="scriptStatus" class="muted"></span></div>
-<textarea id="scriptText" readonly spellcheck="false" style="min-height:380px" placeholder="장면을 고른 뒤 ‘각본 만들기’를 누르세요."></textarea>
-<div id="scriptImport">
- <h3 style="margin:0 0 4px">각색본 반영</h3>
- <p class="muted">AI가 돌려준 각본 전체를 붙여 넣으세요. 맨 위 “# 각본 ID:” 줄과 페이지 번호([S1-P3])가 있어야 합니다. 바뀐 페이지만 골라 원문과 나란히 보여 주고, 승인하면 백업 후 한 번에 저장합니다(수정 기록에서 되돌리기 가능).</p>
- <textarea id="scriptAdapted" spellcheck="false" style="min-height:220px" placeholder="각색된 각본을 여기에 붙여 넣으세요."></textarea>
- <div class="row" style="margin-top:8px;flex-wrap:wrap;gap:10px;align-items:center">
-  <label><input id="scriptAllowMissing" type="checkbox"> 빠진 번호는 원문 유지</label>
-  <button id="scriptPreview">반영 미리보기</button>
-  <span id="scriptImportStatus" class="muted"></span>
- </div>
- <div id="scriptChanges"></div>
- <div class="row" style="margin-top:8px;gap:10px;align-items:center"><label><input id="scriptApproved" type="checkbox" disabled> 위 변경을 확인했습니다</label><button id="scriptApply" disabled>일괄 반영</button></div>
-</div>`;
-  const anchor = document.getElementById('sceneTextsBox');
-  if (anchor) anchor.after(box); else nav.append(box);
+  const box=document.getElementById('scriptExportBox');
   const $ = id => document.getElementById(id);
   let made = null, revision = 0, lastExportId = null, review = null, excluded = new Set(), busy = false;
 
@@ -161,9 +119,8 @@
     } catch (e) { $('scriptImportStatus').textContent = '반영 실패: ' + e.message; $('scriptApply').disabled = false; }
   };
 
-  const previous = window.JO9_VARIABLE_SELECT;
-  // 장면이 바뀌면 출력 결과만 비운다. 붙여 넣은 각색본과 마지막 각본 ID는 유지한다.
-  window.JO9_VARIABLE_SELECT = function (c) { if (typeof previous === 'function') previous(c); reset(); };
+  // 장면이 바뀌면 출력 결과만 비우고 각색본·각본 ID는 유지한다.
+  window.addEventListener('jo9:selection',()=>reset());
   reset();
 })();
 /* JO9 MOD END SCRIPT_EXPORT_UI */

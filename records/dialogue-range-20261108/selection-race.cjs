@@ -1,0 +1,5 @@
+const fs=require('fs'),z=require('zlib'),crypto=require('crypto');const record='G:/somi/JO9sa/records/dialogue-range-20261108';
+const old="$('rangeStage').onchange=()=>{const e=stageEntries[Number($('rangeStage').value)]?.entry;if(e&&typeof selectEntry==='function')selectEntry(e,undefined,false).catch(err=>{$('rangeStatus').textContent=err.message;});};";
+const replacement="$('rangeStage').onchange=async()=>{const e=stageEntries[Number($('rangeStage').value)]?.entry;if(!e||typeof selectEntry!=='function'||busy)return;busy=true;buttons();try{await selectEntry(e,undefined,false);}catch(err){$('rangeStatus').textContent=err.message;}finally{busy=false;buttons();}};";
+for(const root of ['G:/somi/JO9sa/tools/text-workshop','G:/somi/Jack O Nine Tails v2.4_work/game/modtools/text-workshop']){const p=root+'/script-range.js',raw=fs.readFileSync(p);fs.writeFileSync(record+'/before/'+crypto.createHash('sha256').update(raw).digest('hex')+'.gz',z.gzipSync(raw));const s=raw.toString('utf8');if(!s.includes(old))throw Error('stale');fs.writeFileSync(p,s.replace(old,replacement));}
+console.log('Stage selection blocks markers until the current dialogue has loaded');

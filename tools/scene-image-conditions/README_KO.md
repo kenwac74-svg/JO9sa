@@ -9,3 +9,10 @@
 의존: tools/text-workshop/core.cjs의 QSP/문자열 코덱, scenes.cjs의 주석·분기 분석. 브라우저는 기존 rowHtml과 JO9_CATALOG_BRIDGE, 선택적으로 /api/state를 사용한다. 표시 모듈을 빼면 조건 표시만 사라지며 게임 동작은 바뀌지 않는다. 새 서버 API나 서버 재시작은 없다. QSP 해시가 달라지면 화면에 오래된 분석임을 알린다.
 
 한계: 상위 진행은 이벤트 번호를 지정하는 소스 근거이고, 이후 덮어쓰기·동적 호출·저장 상태를 완전히 실행해 검증한 재현 경로가 아니다. 현재 연결을 못 찾았다고 미사용/삭제 가능으로 단정하지 않는다. 단독 번호명에 근거해 형제 파일을 자동 연결하지 않는다. 카탈로그 밖 게임 참조 경로는 metadata.json의 unresolved에 별도로 남긴다.
+
+## 2026-11-08 처리 주석
+
+카드의 권장 처리·이유·다음 할 일·삭제 판정은 review-notes.json에서 읽는다. 위쪽 처리 주석 목록을 펼쳐 권고 종류별로 찾고 파일명을 누르면 기존 ?image= 경로로 해당 카드에 이동한다.
+review-notes.cjs는 경로 중복·허용 조치·필수 문구를 검사하고 현재 분석 메타데이터에 주석을 붙인다. generate.cjs가 매번 읽기 때문에 재분석해도 주석을 잃지 않는다. QSP 또는 해당 이미지 해시가 조사 때와 달라지면 이전 권고를 접고 조치 재확인을 먼저 표시한다.
+각 항목의 path/action/label/reason/nextStep/deleteDecision/evidence/imageSha256와 문서의 qspSha256가 입력이다. 출력은 기존 카드와 처리 목록의 안내 HTML이다. 체크 상태, 게임 QSP, 이미지 파일은 변경하지 않는다. 모듈과 호출을 제거하면 처리 주석만 사라진다.
+action-notes.test.cjs와 review-notes.test.cjs는 안내 표시·이스케이프·완료 항목·목록 바로가기·재생성 보존·오래된 권고 표시·중복 자료 거부를 검사한다. 기존 analyse/catalog 검사와 합계 20개다.

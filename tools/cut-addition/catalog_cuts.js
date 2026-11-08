@@ -24,7 +24,7 @@
 
 /* One explicit reconciliation button; checking a flag only saves checklist state. */
 (function(){
- 'use strict';const config=window.JO9_CATALOG_BRIDGE,main=document.getElementById('main');if(!config||!main)return;
+ 'use strict';const config=window.JO9_CATALOG_BRIDGE,main=document.getElementById('jo9-catalog-panel-gallery')||document.getElementById('main');if(!config||!main)return;
  const bar=document.createElement('div');bar.style.cssText='display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:12px 0';
  const button=document.createElement('button');button.id='jo9OriginalSync';button.type='button';button.textContent='현재 상태로 동기화';button.title='현재 보관 체크에 맞춰 원본 B컷 연결을 정리합니다. 실제 컷 파일은 유지합니다.';
  const status=document.createElement('span');status.id='jo9OriginalSyncStatus';status.setAttribute('role','status');status.setAttribute('aria-live','polite');bar.append(button,status);main.prepend(bar);

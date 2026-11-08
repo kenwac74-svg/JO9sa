@@ -1,0 +1,32 @@
+sound_on=1 & sound_volume=0
+! MAP_CHECKS
+количество_врагов=1 & $враг[1]='исчадие'
+gs 'jo9_combat_sfx','start',0
+if $jo9_sfx_intro!'content/snd/jo9_monster_405454.wav': msg 'JO9_QA_SFX_fail_start' & exit
+gs 'jo9_combat_sfx','flush'
+if $jo9_sfx_intro!'': msg 'JO9_QA_SFX_fail_flush' & exit
+gs 'jo9_combat_sfx','flush'
+gs 'jo9_combat_sfx','start',1
+if $jo9_sfx_intro!'': msg 'JO9_QA_SFX_fail_resume' & exit
+gs 'jo9_combat_sfx','reset'
+gs 'jo9_combat_sfx','result','победа'
+gs 'jo9_combat_sfx','result','победа'
+gs 'jo9_combat_sfx','reset'
+gs 'jo9_combat_sfx','result','убит'
+gs 'jo9_combat_sfx','critical'
+gs 'jo9_combat_sfx','flush'
+$итог_боя='победа' & количество_врагов=1 & $враг[1]='исчадие' & текущий=1
+$place='edge_patrol' & jo9_fate['mode']=1 & jo9_fate['phase']=1 & jo9_fate['count']=1 & jo9_fate_enemy[1]=1
+gs 'jo9_battle_fate','choose',1
+if jo9_fate['phase']!2: msg 'JO9_QA_SFX_fail_execution' & exit
+gs 'jo9_battle_fate','choose',1
+$place='colosseum_arena' & $fight_return='Start' & jo9_fate['mode']=2 & jo9_fate['phase']=1 & jo9_fate['count']=1 & jo9_fate_enemy[1]=1
+gs 'jo9_battle_fate','choose',2
+if jo9_fate['choice']!2: msg 'JO9_QA_SFX_fail_release' & exit
+$place='colosseum' & colosseum_fight=1 & jo9_fate['phase']=1 & jo9_fate['count']=1
+gs 'jo9_battle_fate','choose',1
+if jo9_fate['phase']!1: msg 'JO9_QA_SFX_fail_practice_guard' & exit
+sound_on=0
+gs 'jo9_combat_sfx','fate',1
+gs 'jo9_combat_sfx','fate',2
+msg 'JO9_QA_SFX_runtime_COMPLETE'

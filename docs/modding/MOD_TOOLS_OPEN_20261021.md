@@ -35,3 +35,12 @@ PATCH_SCHEDULE_20261107. 모드툴을 열 때 편집기와 같은 서버의 /pat
 ## 2026-11-08 — 사운드 청취 목록 포함
 
 SOUND_AUDITION_20261108. 사용자 지시로 모드툴에 사운드 청취 목록을 포함한다. 이전 PC의 output/jo9-sound-preview-20261106(MP3 34개)은 이 PC에 없어서, records/audio-planning-20261106의 후보 기록과 docs/NEXT_PATCH_AUDIO_20261106_KO.md의 지역 BGM 비교표로 tools/sound-audition/build.cjs가 청취_목록.html을 만든다. 효과음·몬스터 등장음은 Pixabay 원본 페이지로 연결하고(다운로드 안 함), 지역 BGM은 local.config.json의 GameRoot 아래 content/snd 원본 WAV를 페이지에서 재생한다. 게임 파일은 읽기만 한다. Open-Modding-Tools.ps1은 출력에 SoundAudition 주소를 추가하고 일반 실행 때 함께 연다. 기록 문서가 바뀌면 build.cjs를 다시 실행한다.
+
+## 2026-11-08 — 사운드 폴더·파일 선택과 검토 상태
+
+청취_목록.html의 폴더 선택·음원 파일 추가·후보별 파일 지정으로 사용자가 직접 음원을 고른다. 재제작·채택·보류와 배정은 브라우저/설정 JSON에 저장하며, 음원 바이트는 저장하지 않는다. 다시 열면 같은 폴더/파일을 재선택해 재생 연결을 복원한다. 기존 파일을 열어 둔 경우 새로고침한다. [구현과 확인](../../records/sound-file-picker-20261108/REPORT_KO.md).
+
+
+## 2026-11-08 — 현재 WORK 특성·아이템 열람표
+
+GAME_REFERENCE_TOOL_20261108. 모드툴 열기에는 특성128개·아이템271개 열람표를 포함한다. Open-Modding-Tools.ps1은 WORK/modtools/game-reference의 읽기 전용 서버를 시작·재사용하고 GameReference URL을 출력하며 일반 실행에서는 탭을 함께 연다. HTML 단독 열람도 가능하다. 데이터와 출처는 tools/game-reference/snapshot.json, 갱신·다운로드 기록은 records/game-reference-refresh-20261108/REPORT_KO.md. 사운드 정리는 사용자 지시로 취소했으며 파일 이동은 하지 않았다.

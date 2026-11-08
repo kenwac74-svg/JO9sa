@@ -58,7 +58,8 @@
   setSt=function(i,s){if(remote&&(saving||pending.length)){el('save').textContent='상태 저장 중입니다. 저장 후 다시 선택하세요.';return;}originalSet(i,s);if(remote)saveNow();};
   bulkSet=function(){if(remote&&(saving||pending.length))return;originalBulk();};
   function refresh(){if(!remote||saving||pending.length||refreshing)return;refreshing=true;request('api/catalog/state?since='+encodeURIComponent(window.CATALOG_STATUS.savedAt||0)).then(function(v){if(!v.unchanged)accept(v);}).catch(function(){el('save').textContent='편집실 연결이 끊겼습니다 · 재연결 전에는 체크할 수 없습니다';}).finally(function(){refreshing=false;});}
-  function locate(p){if(window.JO9_UNCHECKED_REVIEW&&window.JO9_UNCHECKED_REVIEW.active())return;if(typeof p!=='string')p=new URLSearchParams(location.search).get('image');if(!p)return;var target=D.find(function(d){return d[0]===p.replace(/\//g,'\\');});if(!target){el('save').textContent='체크리스트에 없는 이미지입니다: '+p;return;}targetedPath=target[0];var parent=target[7]||target[0];curDir='';el('small').checked=true;['fs','st','src'].forEach(function(k){el(k).value='';});el('q').value=parent;filter();el('save').textContent='워크샵 선택 이미지: '+target[0];var card=document.querySelector('[data-workshop-target]');if(card)card.scrollIntoView({block:'center'});}
+  function locate(p){if(window.JO9_UNCHECKED_REVIEW&&window.JO9_UNCHECKED_REVIEW.active())return;if(typeof p!=='string')p=new URLSearchParams(location.search).get('image');if(!p)return;var target=D.find(function(d){return d[0]===p.replace(/\//g,'\\');});if(!target){el('save').textContent='체크리스트에 없는 이미지입니다: '+p;return;}targetedPath=target[0];var parent=target[7]||target[0];curDir='';el('small').checked=true;['fs','st','src'].forEach(function(k){el(k).value='';});el('q').value=parent;if(window.JO9_CATALOG_SEARCH)window.JO9_CATALOG_SEARCH.run();else filter();el('save').textContent='워크샵 선택 이미지: '+target[0];var card=document.querySelector('[data-workshop-target]');if(card)card.scrollIntoView({block:'center'});}
+  window.JO9_CATALOG_LOCATE=locate;
   applyCodesOffline();
   if(!config||!window.fetch){if(window.URLSearchParams)locate();return;}
   request('api/catalog/state').then(function(v){
@@ -91,14 +92,18 @@
   var query=document.getElementById('q'),main=document.getElementById('main');if(!query||!main)return;
   var style=document.createElement('style');style.textContent='#jo9SearchBar{position:sticky;top:0;z-index:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px;margin-bottom:12px;background:#20354d;color:#f1f6fc;border:1px solid #8fa9c6;border-radius:6px}#jo9SearchBar #q{flex:1;min-width:180px;width:auto;padding:9px;background:#fff;color:#172235;border:1px solid #9ab0c9;border-radius:4px;font-size:15px}#jo9SearchBar button{padding:7px 10px;background:#e7eef8;color:#172235;border:1px solid #9ab0c9;border-radius:4px;cursor:pointer}#jo9SearchBar label{color:#f1f6fc}';document.head.appendChild(style);
   var bar=document.createElement('div');bar.id='jo9SearchBar';bar.innerHTML='<strong>이미지 검색</strong><button id="jo9SearchGo" type="button">검색</button><button id="jo9SearchClear" type="button">검색 지우기</button><label><input id="jo9SearchAll" type="checkbox" checked> 전체 폴더 · 미적용 포함</label><span id="jo9SearchCount" aria-live="polite"></span>';
-  query.placeholder='파일명 또는 작업번호 · 예: womens_attraction, bg-0028';query.setAttribute('aria-label','이미지 파일명 또는 작업번호 검색');bar.insertBefore(query,bar.children[1]);main.insertBefore(bar,main.firstChild);
+  query.placeholder='파일명 또는 작업번호 · 예: womens_attraction, bg-0028';query.setAttribute('aria-label','이미지 파일명 또는 작업번호 검색');bar.insertBefore(query,bar.children[1]);var gallery=document.getElementById('jo9-catalog-panel-gallery')||main;gallery.insertBefore(bar,gallery.firstChild);
   var scope=document.getElementById('jo9SearchAll'),counter=document.getElementById('jo9SearchCount'),beforeInDir=inDir,beforeMatch=match;
-  function globalSearch(){return scope.checked&&!!query.value.trim();}
+  // JO9 MOD START CATALOG_MANUAL_SEARCH_20261108
+  var appliedQuery=query.value.trim(),appliedScope=scope.checked,lastQuery=null;
+  function globalSearch(){return appliedScope&&!!appliedQuery;}
   inDir=function(d){return globalSearch()?true:beforeInDir(d);};
-  match=function(d,fs,nd){if(!globalSearch())return beforeMatch(d,fs,nd);var savedDir=curDir;curDir=catalogDir(d[0]);try{return beforeMatch(d,fs,nd);}finally{curDir=savedDir;}};
-  var timer,lastQuery=null;function run(force){clearTimeout(timer);var currentQuery=query.value.trim();query.value=currentQuery;if(globalSearch()&&(currentQuery!==lastQuery||force===true)){['fs','st','src'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('small').checked=true;}lastQuery=currentQuery;filter();counter.textContent=currentQuery?'검색 결과 '+view.length+'개':'';}
-  query.addEventListener('input',function(){clearTimeout(timer);timer=setTimeout(function(){run(false);},180);});query.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();run(true);}if(e.key==='Escape'){query.value='';run();}});
-  document.getElementById('jo9SearchGo').onclick=function(){run(true);};document.getElementById('jo9SearchClear').onclick=function(){query.value='';run();query.focus();};scope.onchange=function(){run(true);};
+  match=function(d,fs,nd){var draft=query.value,savedDir=curDir;query.value=appliedQuery;if(globalSearch())curDir=catalogDir(d[0]);try{return beforeMatch(d,fs,nd);}finally{query.value=draft;curDir=savedDir;}};
+  function run(force){var currentQuery=query.value.trim();query.value=currentQuery;appliedQuery=currentQuery;appliedScope=scope.checked;if(globalSearch()&&(currentQuery!==lastQuery||force===true)){['fs','st','src'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('small').checked=true;}lastQuery=currentQuery;filter();counter.textContent=currentQuery?'검색 결과 '+view.length+'개':'';}
+  query.onkeyup=null;
+  document.getElementById('jo9SearchGo').onclick=function(){run(true);};document.getElementById('jo9SearchClear').onclick=function(){query.value='';run();query.focus();};scope.onchange=null;
+  window.JO9_CATALOG_SEARCH={run:run};
+  // JO9 MOD END CATALOG_MANUAL_SEARCH_20261108
 })();
 
 /* JO9_UNCHECKED_REVIEW_BEGIN: dedicated, non-mutating review of every unmarked file. */
@@ -154,7 +159,7 @@
     ['small','sub'].forEach(function(id){previous.checks[id]=el(id).checked;});
     ['fs','small','sub'].forEach(function(id){previous.disabled[id]=el(id).disabled;el(id).disabled=true;});
     active=true;curDir='';el('fs').value='none';el('st').value='';el('src').value='';el('q').value='';el('small').checked=true;el('sub').checked=true;
-    drawTree();filter();
+    drawTree();window.JO9_CATALOG_SEARCH.run();
   }
   function leave(){
     if(!active)return;active=false;clearTimeout(timer);
@@ -162,24 +167,12 @@
     Object.keys(previous.values).forEach(function(id){el(id).value=previous.values[id];});
     Object.keys(previous.checks).forEach(function(id){el(id).checked=previous.checks[id];});
     Object.keys(previous.disabled).forEach(function(id){el(id).disabled=previous.disabled[id];});
-    var oldPage=previous.page;drawTree();filter();page=oldPage;render();refreshBadge();
+    var oldPage=previous.page;drawTree();window.JO9_CATALOG_SEARCH.run();page=oldPage;render();refreshBadge();
   }
   // Classic handlers captured the old filter function during page startup.
   // Capture only review controls; normal-mode event handling stays untouched.
   document.addEventListener('change',function(e){
     if(active&&['fs','st','src','per','small','sub'].indexOf(e.target.id)>=0){e.stopImmediatePropagation();filter();}
-  },true);
-  document.addEventListener('keyup',function(e){
-    if(active&&e.target.id==='q'){e.stopImmediatePropagation();clearTimeout(timer);timer=setTimeout(filter,250);}
-  },true);
-  document.addEventListener('input',function(e){
-    if(active&&e.target.id==='q'){e.stopImmediatePropagation();clearTimeout(timer);timer=setTimeout(filter,180);}
-  },true);
-  document.addEventListener('keydown',function(e){
-    if(active&&e.target.id==='q'&&(e.key==='Enter'||e.key==='Escape')){e.stopImmediatePropagation();e.preventDefault();if(e.key==='Escape')el('q').value='';filter();}
-  },true);
-  document.addEventListener('click',function(e){
-    if(active&&(e.target.id==='jo9SearchGo'||e.target.id==='jo9SearchClear')){e.stopImmediatePropagation();if(e.target.id==='jo9SearchClear')el('q').value='';filter();}
   },true);
   el('review-unchecked').onclick=enter;el('review-normal').onclick=leave;
   window.JO9_UNCHECKED_REVIEW.enter=enter;window.JO9_UNCHECKED_REVIEW.leave=leave;

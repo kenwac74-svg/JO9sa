@@ -223,6 +223,7 @@ function build(doc, allEntries, h) {
     out.push('# 끝 · 장면 ' + stats.scenes + '개 · 페이지 ' + stats.pages + '개 · 조건부 대체문 ' + stats.variants + '개' + (stats.skipped ? ' · 한도 때문에 따라가지 않은 연결 ' + stats.skipped + '개' : ''));
     return { text: out.join('\n'), stats, hash: doc.hash, map };
   }
-  return { script };
+  const selectedRange=require('./script-range.cjs').build(doc,{sceneOf,collect,arrays,pickEdition,stagesOf,branches:h.branches,entries:allEntries,visible:h.visible});
+  return { script,range:selectedRange.range,boundary:selectedRange.boundary };
 }
 module.exports = { build, plain };

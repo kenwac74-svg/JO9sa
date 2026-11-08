@@ -1,0 +1,58 @@
+! JO9 MOD START SFX_ADOPTED_RUNTIME_20261108
+if $args[0]='intro':
+ $result=''
+! INTRO_MAPPING
+ exit
+end
+if $args[0]='reset':
+ killvar 'jo9_sfx_pending'
+ killvar '$jo9_sfx_intro'
+ exit
+end
+if $args[0]='start':
+ gs 'jo9_combat_sfx','reset'
+ if args[1]=1: exit
+ local jo9_sfx_i
+ for jo9_sfx_i=1 to количество_врагов:
+  if $jo9_sfx_intro='': $jo9_sfx_intro=$func('jo9_combat_sfx','intro',$враг[jo9_sfx_i])
+  if $враг[jo9_sfx_i]='garsid': $jo9_sfx_intro='content/snd/gsid.wav'
+ end
+ exit
+end
+if $args[0]='hit':
+ if $args[1]='дробящий': jo9_sfx_pending['blunt']=1
+ exit
+end
+if $args[0]='critical': jo9_sfx_pending['critical']=1 & exit
+if $args[0]='flush':
+ local $jo9_sfx_file=$jo9_sfx_intro
+ local jo9_sfx_b
+ local jo9_sfx_c
+ jo9_sfx_b=jo9_sfx_pending['blunt']
+ jo9_sfx_c=jo9_sfx_pending['critical']
+ $jo9_sfx_intro=''
+ jo9_sfx_pending['blunt']=0
+ jo9_sfx_pending['critical']=0
+ if sound_on!1: exit
+ if $jo9_sfx_file!'': play $jo9_sfx_file,sound_volume
+ if jo9_sfx_c=1:
+  play 'content/snd/jo9_critical.wav',sound_volume
+ elseif jo9_sfx_b=1:
+  play 'content/snd/blunt.wav',sound_volume
+ end
+ exit
+end
+if $args[0]='result':
+ if jo9_sfx_pending['result_played']=1: exit
+ jo9_sfx_pending['result_played']=1
+ if sound_on!1: exit
+ if $args[1]='победа': play 'content/snd/jo9_victory.wav',sound_volume
+ if $args[1]='вырубился' or $args[1]='убит': play 'content/snd/jo9_defeat.wav',sound_volume
+ exit
+end
+if $args[0]='fate':
+ if sound_on!1: exit
+ if args[1]=1: play 'content/snd/jo9_execution.wav',sound_volume
+ if args[1]=2: play 'content/snd/jo9_release.wav',sound_volume
+end
+! JO9 MOD END SFX_ADOPTED_RUNTIME_20261108

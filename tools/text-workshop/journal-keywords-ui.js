@@ -1,9 +1,7 @@
 (function(){
  'use strict';
  const model=window.JO9_JOURNAL;
- const box=document.createElement('section');box.id='journalKeywords';
- box.innerHTML='<details><summary>저널 호출 키워드 <span id="journalCount"></span></summary><p class="muted">Kindroid Narrator에 등록한 NPC·장소 저널을 이름으로 호출합니다. 선택한 키워드는 각색 전송과 요청 복사에 포함됩니다.</p><div id="journalSelected" class="row"></div><div class="row"><input id="journalSearch" type="search" placeholder="NPC·장소 이름 검색 또는 키워드 입력" aria-label="저널 키워드 검색"><button id="journalAdd" type="button">직접 추가</button><button id="journalSuggest" type="button">장면에서 다시 추천</button></div><div id="journalOptions" class="row"></div><p id="journalHint" class="muted"></p></details>';
- document.getElementById('editor').prepend(box);
+ const box=document.getElementById('journalKeywords');
  const get=id=>document.getElementById(id);let chosen=[],suggested=[],sceneKey='';
  let saved={};try{saved=JSON.parse(sessionStorage.getItem('jo9JournalKeywords')||'{}');}catch{}
  function remember(){if(sceneKey){saved[sceneKey]=chosen;try{sessionStorage.setItem('jo9JournalKeywords',JSON.stringify(saved));}catch{}}}

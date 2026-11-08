@@ -1,0 +1,81 @@
+{
+  "id": "2026-11-08_garsid_blunt_playback",
+  "status": "APPROVED",
+  "description": "사용자 게임 적용 지시. 가르시드 전투 진입과 실제 둔기 피해 발생을 소리 ON/효과음 음량에 맞춰 연결. 사용자 청감 검사는 생략.",
+  "before_sha256": "787545550714aa5858f54d0502fb0c1c1edc239cabb55b42a83709b4b49b65d1",
+  "after_sha256": "fffd82c3b9a9c8ce4f1205b29f5b9620b102588b0c6f8411941bed1dc1fab980",
+  "edits": [
+    {
+      "location": "начать_бой",
+      "field": "body",
+      "old": "end\r\njo9_fog['resuming'] = 0",
+      "new": "end\r\n! JO9 MOD START SFX_START_20261108\r\ngs 'jo9_combat_sfx','start',jo9_fog['resuming']\r\n! JO9 MOD END SFX_START_20261108\r\njo9_fog['resuming'] = 0",
+      "count": 1,
+      "patchId": "SFX_START_20261108"
+    },
+    {
+      "location": "конец_раунда",
+      "field": "body",
+      "old": " $jo9_bui_hit_id[текущий] = $враг[текущий]",
+      "new": " $jo9_bui_hit_id[текущий] = $враг[текущий]\r\n! JO9 MOD START SFX_HIT_20261108\r\n gs 'jo9_combat_sfx','hit',$тип_нанесенного_вреда\r\n! JO9 MOD END SFX_HIT_20261108",
+      "count": 1,
+      "patchId": "SFX_HIT_20261108"
+    },
+    {
+      "location": "атака_игрока",
+      "field": "body",
+      "old": " $jo9_bui_hit_id[вторцель] = $враг[вторцель]",
+      "new": " $jo9_bui_hit_id[вторцель] = $враг[вторцель]\r\n! JO9 MOD START SFX_SECONDARY_20261108\r\n gs 'jo9_combat_sfx','hit',$тип_нанесенного_вреда\r\n! JO9 MOD END SFX_SECONDARY_20261108",
+      "count": 1,
+      "patchId": "SFX_SECONDARY_20261108"
+    },
+    {
+      "location": "конец_раунда",
+      "field": "body",
+      "old": "\t\tif $тип_нанесенного_вреда[i] = 'дробящий':",
+      "new": "\t\tif $тип_нанесенного_вреда[i] = 'дробящий':\r\n! JO9 MOD START SFX_ENEMY_HIT_20261108\r\n   if cheat_fight_dif * нанесенный_вред[i] > 0: gs 'jo9_combat_sfx','hit','дробящий'\r\n! JO9 MOD END SFX_ENEMY_HIT_20261108",
+      "count": 1,
+      "patchId": "SFX_ENEMY_HIT_20261108"
+    },
+    {
+      "location": "боевой_интерфейс",
+      "field": "body",
+      "old": "dynamic $play_music &! $toplay varies depending on the opponent so it is set elsewhere - ImperatorAugustus",
+      "new": "dynamic $play_music &! $toplay varies depending on the opponent so it is set elsewhere - ImperatorAugustus\r\n! JO9 MOD START SFX_FLUSH_20261108\r\ngs 'jo9_combat_sfx','flush'\r\n! JO9 MOD END SFX_FLUSH_20261108",
+      "count": 1,
+      "patchId": "SFX_FLUSH_20261108"
+    },
+    {
+      "location": "конец_боя",
+      "field": "body",
+      "old": "gs 'jo9_battle_fate', 'result'",
+      "new": "gs 'jo9_battle_fate', 'result'\r\n! JO9 MOD START SFX_FINAL_HIT_20261108\r\ngs 'jo9_combat_sfx','flush'\r\n! JO9 MOD END SFX_FINAL_HIT_20261108",
+      "count": 1,
+      "patchId": "SFX_FINAL_HIT_20261108"
+    },
+    {
+      "location": "$combat_variable_reset",
+      "field": "body",
+      "old": "gs 'jo9_traits_combat', 'reset'",
+      "new": "gs 'jo9_traits_combat', 'reset'\r\n! JO9 MOD START SFX_RESET_20261108\r\ngs 'jo9_combat_sfx','reset'\r\n! JO9 MOD END SFX_RESET_20261108",
+      "count": 1,
+      "patchId": "SFX_RESET_20261108"
+    },
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "gs 'jo9_gameover_audio','load',$curloc",
+      "new": "gs 'jo9_gameover_audio','load',$curloc\r\n! JO9 MOD START SFX_LOAD_20261108\r\ngs 'jo9_combat_sfx','reset'\r\n! JO9 MOD END SFX_LOAD_20261108",
+      "count": 1,
+      "patchId": "SFX_LOAD_20261108"
+    }
+  ],
+  "add_locations": [
+    {
+      "name": "jo9_combat_sfx",
+      "desc": "",
+      "body": "! JO9 MOD START SFX_GARSID_BLUNT_20261108\r\nif $args[0]='reset': killvar 'jo9_sfx_pending' & exit\r\nif $args[0]='start':\r\n killvar 'jo9_sfx_pending'\r\n if args[1]=1: exit\r\n local jo9_sfx_i\r\n for jo9_sfx_i=1 to количество_врагов:\r\n  if $враг[jo9_sfx_i]='garsid': jo9_sfx_pending['garsid']=1\r\n end\r\n exit\r\nend\r\nif $args[0]='hit':\r\n if $args[1]='дробящий': jo9_sfx_pending['blunt']=1\r\n exit\r\nend\r\nif $args[0]='flush':\r\n local jo9_sfx_g, jo9_sfx_b\r\n jo9_sfx_g=jo9_sfx_pending['garsid']\r\n jo9_sfx_b=jo9_sfx_pending['blunt']\r\n killvar 'jo9_sfx_pending'\r\n if sound_on!1: exit\r\n if jo9_sfx_g=1: play 'content/snd/gsid.wav',sound_volume\r\n if jo9_sfx_b=1: play 'content/snd/blunt.wav',sound_volume\r\nend\r\n! JO9 MOD END SFX_GARSID_BLUNT_20261108",
+      "actions": []
+    }
+  ]
+}

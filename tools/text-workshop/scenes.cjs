@@ -194,6 +194,8 @@ function buildNavigator(doc,allEntries) {
   // JO9 MOD SCRIPT_EXPORT_20261108: 흐름 전체 각본 출력
   const scriptExport=require('./script-export.cjs').build(doc,allEntries,{data,chooseScene,masked,inScene,visible,branches:(a,s,l,e)=>branchList(a,s,l,e).map(b=>({...b,destinations:b.destinations||resolve(b)}))});
   function script(input){if(input.hash!==doc.hash)throw Error('QSP가 바뀌었습니다. 다시 검색해 주세요.');return scriptExport.script({location:input.location,sceneId:input.sceneId},input.options||{});}
-  return {context,open,incoming,script};
+  function scriptRange(input){if(input.hash!==doc.hash)throw Error('QSP가 바뀌었습니다. 시작과 마무리를 다시 선택하세요.');return scriptExport.range(input);}
+  function scriptBoundary(input){if(input.hash!==doc.hash)throw Error('QSP가 바뀌었습니다. 다시 검색해 주세요.');return scriptExport.boundary(input);}
+  return {context,open,incoming,script,scriptRange,scriptBoundary};
 }
 module.exports={analyse,masked,predicate,assignments,calls,links,buildNavigator,sceneImages,bgTable};

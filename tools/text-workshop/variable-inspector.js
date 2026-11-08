@@ -91,5 +91,6 @@
     try { await navigator.clipboard.writeText(lines.filter(Boolean).join('\n')); status.textContent = '변수 확인 내용을 복사했습니다. 원하는 변경을 함께 적어 전달하세요.'; }
     catch { status.textContent = '클립보드 접근이 막혔습니다. 코드에서 필요한 부분을 직접 복사해 주세요.'; }
   };
+  window.addEventListener('jo9:selection',e=>window.JO9_VARIABLE_SELECT(e.detail));
   window.JO9_VARIABLE_SELECT(context);
 })();

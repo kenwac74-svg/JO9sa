@@ -1,5 +1,15 @@
 # JO9 로컬 모딩 — Claude 작업 규칙
 
+<!-- JO9 MOD START CODEX_TO_CLAUDE_HANDOFF_20261108 -->
+## 2026-11-08 최신 인수인계
+
+**추가 사용자 지시: 사운드 바이너리 Git 업로드 금지.** MP3/WAV 등 음원은 로컬 WORK·assets에 보존하고 경로·채택 정보·재생 코드만 추적한다.
+
+사용자 지시로 Codex 사용량 충전 동안 Claude가 이어받는다. 먼저 [최신 인수인계](docs/session-handoffs/2026-11-08/CLAUDE_HANDOFF_KO.md)와 AGENTS.md를 읽는다. 현재 실행 기준은 WORK와 assets/runtime/2.4.1/jack.qsp이며, 아래의 옛 source/ 기준보다 최신 WORK 정책이 우선한다. Full은 별도 지시 없이 동기화하지 않는다.
+<!-- JO9 MOD END CODEX_TO_CLAUDE_HANDOFF_20261108 -->
+
+
+
 이 repo를 연 Claude는 먼저 `docs/PROJECT.md`(채팅별 역할, PM 관리)를 읽고 자기 역할만 한다. 그다음 아래 문서를 읽고 그대로 따른다. 이미 정해진 결정은 다시 묻지 않는다.
 
 1. `docs/modding/JO9_Claude_Local_Modding_Handoff.md` — 작업 방식과 원칙 전문

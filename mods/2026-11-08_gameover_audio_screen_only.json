@@ -1,0 +1,49 @@
+{
+  "id": "2026-11-08_gameover_audio_screen_only",
+  "status": "APPROVED",
+  "description": "게임오버 화면에만 gameoverbgm.mp3와 gameover.wav를 재생한다. 화면 이탈과 로드에서 정지하고 일반 전투 패배에는 연결하지 않는다.",
+  "before_sha256": "26955511e2efa18815f883387eebe473bfc757d961aaa5c3eab8cc499a679348",
+  "after_sha256": "787545550714aa5858f54d0502fb0c1c1edc239cabb55b42a83709b4b49b65d1",
+  "edits": [
+    {
+      "location": "exit",
+      "field": "body",
+      "old": "gs '_layout'",
+      "new": "gs '_layout'\r\n! JO9 MOD START GAMEOVER_AUDIO_ENTER_20261108\r\ngs 'jo9_gameover_audio','enter'\r\n! JO9 MOD END GAMEOVER_AUDIO_ENTER_20261108",
+      "count": 1,
+      "patchId": "GAMEOVER_AUDIO_ENTER_20261108"
+    },
+    {
+      "location": "_layout",
+      "field": "body",
+      "old": "! JO9 MOD START UI_RESOURCE_PATHS_20261027\r\nui_style = 2\r\n! JO9_SINGLE_GRIMDARK_UI_20261014",
+      "new": "! JO9 MOD START GAMEOVER_AUDIO_LAYOUT_LEAVE_20261108\r\ngs 'jo9_gameover_audio','leave',$curloc\r\n! JO9 MOD END GAMEOVER_AUDIO_LAYOUT_LEAVE_20261108\r\n! JO9 MOD START UI_RESOURCE_PATHS_20261027\r\nui_style = 2\r\n! JO9_SINGLE_GRIMDARK_UI_20261014",
+      "count": 1,
+      "patchId": "GAMEOVER_AUDIO_LAYOUT_LEAVE_20261108"
+    },
+    {
+      "location": "main_menu",
+      "field": "body",
+      "old": "if snk_room_target > 0 and $curloc = 'main_menu': gs 'snk_room_bridge', 'guard', 'main_menu'\r\n! JO9 MOD START J9M2693 | 2026-10-14_hide_outer_frame_on_startup | changed block; context may be included\r\n*p '<style id=\"jo9_startup_no_outer_frame\">body:before,body:after{display:none!important;}</style>'",
+      "new": "! JO9 MOD START GAMEOVER_AUDIO_MENU_LEAVE_20261108\r\ngs 'jo9_gameover_audio','leave','main_menu'\r\n! JO9 MOD END GAMEOVER_AUDIO_MENU_LEAVE_20261108\r\nif snk_room_target > 0 and $curloc = 'main_menu': gs 'snk_room_bridge', 'guard', 'main_menu'\r\n! JO9 MOD START J9M2693 | 2026-10-14_hide_outer_frame_on_startup | changed block; context may be included\r\n*p '<style id=\"jo9_startup_no_outer_frame\">body:before,body:after{display:none!important;}</style>'",
+      "count": 1,
+      "patchId": "GAMEOVER_AUDIO_MENU_LEAVE_20261108"
+    },
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "! JO9 MOD START AUDIO_FORMAT_LOAD_20261108\r\ngs 'jo9_audio_formats'\r\n! JO9 MOD END AUDIO_FORMAT_LOAD_20261108\r\n! JO9 MOD START MARIANNA_POTIONS_CACHE_20261103\r\n! Rename saved display text only. Never replay a purchase or change item variables.\r\nlocal $jo9_marianna_html = replace(replace(replace(replace(replace(replace($maintxt, '대사+', '아나볼릭'), '대사-', '코르티코'), '지방+', '메게이스'), '지방-', '위고비'), '마리안나', '마리아나'), '아나볼릭가', '아나볼릭이')",
+      "new": "! JO9 MOD START AUDIO_FORMAT_LOAD_20261108\r\ngs 'jo9_audio_formats'\r\ngs 'jo9_gameover_audio','load',$curloc\r\n! JO9 MOD END AUDIO_FORMAT_LOAD_20261108\r\n! JO9 MOD START MARIANNA_POTIONS_CACHE_20261103\r\n! Rename saved display text only. Never replay a purchase or change item variables.\r\nlocal $jo9_marianna_html = replace(replace(replace(replace(replace(replace($maintxt, '대사+', '아나볼릭'), '대사-', '코르티코'), '지방+', '메게이스'), '지방-', '위고비'), '마리안나', '마리아나'), '아나볼릭가', '아나볼릭이')",
+      "count": 1,
+      "patchId": "GAMEOVER_AUDIO_LOAD_20261108"
+    }
+  ],
+  "add_locations": [
+    {
+      "name": "jo9_gameover_audio",
+      "desc": "",
+      "body": "! JO9 MOD START GAMEOVER_AUDIO_SCREEN_ONLY_20261108\r\nif $args[0]='enter':\r\n if jo9_gameover_audio_active=1: exit\r\n jo9_gameover_audio_active=1\r\n $music_now='content/snd/gameoverbgm.mp3'\r\n if sound_on=1:\r\n  play 'content/snd/gameoverbgm.mp3',music_volume,'only, loop'\r\n  play 'content/snd/gameover.wav',sound_volume\r\n end\r\n exit\r\nend\r\nif $args[0]='leave':\r\n if $args[1]='exit' or jo9_gameover_audio_active!1: exit\r\n jo9_gameover_audio_active=0\r\n close 'content/snd/gameoverbgm.mp3'\r\n close 'content/snd/gameover.wav'\r\n if $music_now='content/snd/gameoverbgm.mp3': $music_now=''\r\n exit\r\nend\r\nif $args[0]='load':\r\n jo9_gameover_audio_active=0\r\n if $args[1]='exit': gs 'jo9_gameover_audio','enter' & exit\r\n if $music_now='content/snd/gameoverbgm.mp3': $music_now=''\r\n if sound_on=1 and $music_now!'':\r\n  play $music_now,music_volume,'only, loop'\r\n else\r\n  close 'content/snd/gameoverbgm.mp3'\r\n  close 'content/snd/gameover.wav'\r\n end\r\nend\r\n! JO9 MOD END GAMEOVER_AUDIO_SCREEN_ONLY_20261108",
+      "actions": []
+    }
+  ]
+}

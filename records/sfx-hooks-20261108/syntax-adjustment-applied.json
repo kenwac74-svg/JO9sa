@@ -1,0 +1,14 @@
+{
+  "id": "2026-11-08_sfx_local_syntax",
+  "before_sha256": "8a05a483ce3e421fbc485a3846bbc3e4c47f889648e1ad1b7fa7145233ce3b16",
+  "after_sha256": "fffd82c3b9a9c8ce4f1205b29f5b9620b102588b0c6f8411941bed1dc1fab980",
+  "edits": [
+    {
+      "location": "jo9_combat_sfx",
+      "field": "body",
+      "old": "! JO9 MOD START SFX_GARSID_BLUNT_20261108\r\nif $args[0]='reset': killvar 'jo9_sfx_pending' & exit\r\nif $args[0]='start':\r\n killvar 'jo9_sfx_pending'\r\n if args[1]=1: exit\r\n local jo9_sfx_i\r\n for jo9_sfx_i=1 to количество_врагов:\r\n  if $враг[jo9_sfx_i]='garsid': jo9_sfx_pending['garsid']=1\r\n end\r\n exit\r\nend\r\nif $args[0]='hit':\r\n if $args[1]='дробящий': jo9_sfx_pending['blunt']=1\r\n exit\r\nend\r\nif $args[0]='flush':\r\n local jo9_sfx_g=jo9_sfx_pending['garsid'], jo9_sfx_b=jo9_sfx_pending['blunt']\r\n killvar 'jo9_sfx_pending'\r\n if sound_on!1: exit\r\n if jo9_sfx_g=1: play 'content/snd/gsid.wav',sound_volume\r\n if jo9_sfx_b=1: play 'content/snd/blunt.wav',sound_volume\r\nend\r\n! JO9 MOD END SFX_GARSID_BLUNT_20261108",
+      "new": "! JO9 MOD START SFX_GARSID_BLUNT_20261108\r\nif $args[0]='reset': killvar 'jo9_sfx_pending' & exit\r\nif $args[0]='start':\r\n killvar 'jo9_sfx_pending'\r\n if args[1]=1: exit\r\n local jo9_sfx_i\r\n for jo9_sfx_i=1 to количество_врагов:\r\n  if $враг[jo9_sfx_i]='garsid': jo9_sfx_pending['garsid']=1\r\n end\r\n exit\r\nend\r\nif $args[0]='hit':\r\n if $args[1]='дробящий': jo9_sfx_pending['blunt']=1\r\n exit\r\nend\r\nif $args[0]='flush':\r\n local jo9_sfx_g, jo9_sfx_b\r\n jo9_sfx_g=jo9_sfx_pending['garsid']\r\n jo9_sfx_b=jo9_sfx_pending['blunt']\r\n killvar 'jo9_sfx_pending'\r\n if sound_on!1: exit\r\n if jo9_sfx_g=1: play 'content/snd/gsid.wav',sound_volume\r\n if jo9_sfx_b=1: play 'content/snd/blunt.wav',sound_volume\r\nend\r\n! JO9 MOD END SFX_GARSID_BLUNT_20261108",
+      "count": 1
+    }
+  ]
+}

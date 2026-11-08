@@ -49,27 +49,17 @@
     .gc-preview button{padding:9px;margin:8px}
   `;
   document.head.append(style);
-  const root = node('details');
+  const root = node('section');
   root.id = 'jo9-girls-checklist';
-  root.append(node('summary', '전체 캐릭터 이미지 보완 목록'));
-  const host = document.getElementById('main') || document.body;
-  host.insertBefore(root, host.firstChild);
-  if(document.getElementById('main')){
-    const side=document.getElementById('side');
-    if(side){const nav=node('button','캐릭터 이미지 세트');nav.id='jo9GirlsNav';nav.type='button';
-      nav.onclick=()=>{root.open=true;root.scrollIntoView({block:'start'});};side.insertBefore(nav,side.firstChild);}
-    const originalPick=window.pick;
-    if(typeof originalPick==='function')window.pick=function(){root.open=false;const result=originalPick.apply(this,arguments);
-      (document.getElementById('jo9SearchBar')||root).scrollIntoView({block:'start'});return result;};
-    window.addEventListener('load',()=>{const banner=document.querySelector('.jo9-scene-condition-banner');
-      if(banner&&banner.parentElement===document.body)host.insertBefore(banner,root);});
-  }
-  root.addEventListener('toggle',()=>{if(!live)return;const url=new URL(location.href);
-    if(root.open)url.searchParams.set('girlssets','1');else url.searchParams.delete('girlssets');history.replaceState(null,'',url);});
+  root.append(node('h2', '전체 캐릭터 이미지 보완 목록'));
+  const host = document.getElementById('jo9-catalog-panel-girls') || document.body;
+  host.append(root);
   const intro = node('p', 'WORK 적용 완료 · 새·옛 복장 등록을 함께 확인하며, 전용 그림이 없으면 기본 전신을 표시합니다.', 'gc-warn');
   root.append(intro, node('p', '태그는 캐릭터 번호별로 저장합니다. 위 상태 버튼을 누르면 해당 태그의 캐릭터만 모아 볼 수 있습니다.', 'gc-note'));
   const toolbar = node('div', undefined, 'gc-toolbar');
   const search = node('input');
+  let appliedSearch='';
+  const searchGo=node('button','검색');searchGo.type='button';searchGo.id='jo9GirlsSearchGo';
   search.type = 'search'; search.placeholder = '번호 · 이름 · JSON · 파일명 검색';
   const filter = node('select');
   for (const [v, label] of [['issues','보완할 캐릭터'],['all','전체 캐릭터'],['broken','선택 시 그림 누락'],['hidden','그림 있음 · 선택 연결 필요'],['empty','전용 복장 미등록'],['random','무작위 등장 범위'],['special','고유·별도 등록']]) {
@@ -89,12 +79,13 @@
   const refresh = node('button', 'WORK 이미지 상태 새로고침');
   refresh.disabled = !live;
   const save = node('button', '현재 목록 HTML 저장');
-  toolbar.append(search, filter, sort, namedLabel, label, refresh, save);
+  filter.value='all';
+  toolbar.append(search, searchGo, filter, sort, namedLabel, label, refresh, save);
   root.append(toolbar);
   const tagFilters=node('div',undefined,'gc-toolbar');tagFilters.setAttribute('aria-label','캐릭터 상태 필터');root.append(tagFilters);
   const status = node('p', '', 'gc-note'), message = node('p', '', 'gc-note'), pager = node('div', undefined, 'gc-toolbar'), list = node('div');
   root.append(status, message, pager, list);
-  let page = 0, version = Date.now(), busy = false;
+  let page = 0, version = Date.now(), busy = false, dirty=false;
   let selectedTag='';
   let statusState=data.checklistStatus||{items:{},savedAt:0},statusReady=!live,statusSaving=false,statusLoading=false;
   const flagSpecs=Array.isArray(window.STS)?window.STS:[
@@ -205,7 +196,7 @@
       hidden:rr.some(r=>r.state==='hidden'),empty:rr.some(r=>r.state==='empty'||r.state==='same')};
   }
   function chooseRows() {
-    const term = search.value.trim().toLowerCase();
+    const term = appliedSearch;
     const rows=data.characters.filter(c=>{
       if(namedOnly.checked&&!c.hasFixedName)return false;
       if(selectedTag&&!(statusState.characterItems?.[String(c.id)]||[]).includes(selectedTag))return false;
@@ -312,6 +303,7 @@
     return box;
   }
   function render() {
+    if(window.JO9_CATALOG_TABS&&window.JO9_CATALOG_TABS.current()!=='girls'){dirty=true;return;}dirty=false;
     const rows=chooseRows(),pages=Math.max(1,Math.ceil(rows.length/pageSize));
     page=Math.min(page,pages-1);
     const all=data.characters.map(evaluation);
@@ -412,10 +404,11 @@
   for(const g of data.unknownGroups||[]){extras.append(node('h4','번호 '+g.id));for(const p of g.paths)extras.append(node('p',p,'gc-path'));}
   extra.append(extras);root.append(extra,node('p','조사 기준 '+data.createdAt+' · QSP '+data.qspSha.slice(0,12)+' · 일반 EXE 플레이 화면 확인 전','gc-note'));
   refresh.onclick=rescan;save.onclick=download;
-  search.oninput=filter.onchange=sort.onchange=()=>{page=0;render();};images.onchange=render;
+  searchGo.onclick=()=>{appliedSearch=search.value.trim().toLowerCase();page=0;render();};
+  filter.onchange=sort.onchange=()=>{page=0;render();};images.onchange=render;
   namedOnly.onchange=()=>{if(namedOnly.checked)filter.value='all';page=0;render();};
-  root.open=new URLSearchParams(location.search).get('girlssets')==='1'||!window.JO9_CATALOG_BRIDGE;
+  document.addEventListener('jo9:catalog-tab',e=>{if(e.detail==='girls'&&dirty)render();});
   render();
-  if(live){refreshTags();window.addEventListener('focus',refreshTags);setInterval(refreshTags,5000);}
+  if(live){refreshTags();const activeRefresh=()=>{if(!window.JO9_CATALOG_TABS||window.JO9_CATALOG_TABS.current()==='girls')refreshTags();};window.addEventListener('focus',activeRefresh);setInterval(activeRefresh,5000);}
 })(window.JO9_GIRLS_CHECKLIST);
 /* JO9 MOD END GIRLS_CHARACTER_CHECKLIST_20261104 */

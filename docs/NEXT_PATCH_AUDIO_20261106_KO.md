@@ -1,5 +1,7 @@
 # 차기 패치 — 사운드 포맷 조정·추가 기획
 
+> 2026-11-08 최신 실행 현황: 기존 음원 형식 통일과 게임오버 전용 음향은 WORK에 반영했다. [적용·검증 기록](../records/audio-format-normalize-20261108/REPORT_KO.md), [거주지 순차 재생 가능성](../records/residence-bgm-feasibility-20261108/REPORT_KO.md), [미채택 후보 재탐색](../records/sound-candidate-refresh-20261108/REPORT_KO.md). 아래 수량·미실행 표기는 2026-11-06 기획 당시 기록이다. 지역 재배치와 순차 재생 본체 연결은 아직 미반영이다.
+
 작업번호: AUDIO_IMPROVEMENT_NEXT_PATCH_20261106
 
 사용자 요청: 다음 패치에 사운드 포맷 조정 및 사운드 추가를 포함하고, 비어 있는 상황과 큰 지역별 테마 음악 구성에 대해 자유롭게 제안한다.

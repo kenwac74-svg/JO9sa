@@ -1,0 +1,57 @@
+{
+  "id": "2026-11-08_adopted_combat_monster_sfx",
+  "status": "APPROVED",
+  "description": "채택 전투5종·몬스터18종의 실제 재생 연결. 전투 판정과 처형/석방 선택 조건 유지.",
+  "before_sha256": "fffd82c3b9a9c8ce4f1205b29f5b9620b102588b0c6f8411941bed1dc1fab980",
+  "after_sha256": "60f8bc4064b33bf6fbd8d0722a18fb06bdf8918b8e1ec0097717abb71badfefe",
+  "edits": [
+    {
+      "location": "jo9_combat_sfx",
+      "field": "body",
+      "old": "! JO9 MOD START SFX_GARSID_BLUNT_20261108\r\nif $args[0]='reset': killvar 'jo9_sfx_pending' & exit\r\nif $args[0]='start':\r\n killvar 'jo9_sfx_pending'\r\n if args[1]=1: exit\r\n local jo9_sfx_i\r\n for jo9_sfx_i=1 to количество_врагов:\r\n  if $враг[jo9_sfx_i]='garsid': jo9_sfx_pending['garsid']=1\r\n end\r\n exit\r\nend\r\nif $args[0]='hit':\r\n if $args[1]='дробящий': jo9_sfx_pending['blunt']=1\r\n exit\r\nend\r\nif $args[0]='flush':\r\n local jo9_sfx_g, jo9_sfx_b\r\n jo9_sfx_g=jo9_sfx_pending['garsid']\r\n jo9_sfx_b=jo9_sfx_pending['blunt']\r\n killvar 'jo9_sfx_pending'\r\n if sound_on!1: exit\r\n if jo9_sfx_g=1: play 'content/snd/gsid.wav',sound_volume\r\n if jo9_sfx_b=1: play 'content/snd/blunt.wav',sound_volume\r\nend\r\n! JO9 MOD END SFX_GARSID_BLUNT_20261108",
+      "new": "! JO9 MOD START SFX_ADOPTED_RUNTIME_20261108\r\nif $args[0]='intro':\r\n $result=''\r\n if $args[1]='исчадие_молодь': $result='content/snd/jo9_monster_461220.wav' & exit\r\n if $args[1]='исчадие': $result='content/snd/jo9_monster_405454.wav' & exit\r\n if $args[1]='чудовщиное_исчадие': $result='content/snd/jo9_monster_364481.wav' & exit\r\n if $args[1]='козлорогий': $result='content/snd/jo9_monster_390298.wav' & exit\r\n if $args[1]='свинорылый': $result='content/snd/jo9_monster_229155.wav' & exit\r\n if $args[1]='жабован': $result='content/snd/jo9_monster_85649.wav' & exit\r\n if $args[1]='крысолюд': $result='content/snd/jo9_monster_570216.wav' & exit\r\n if $args[1]='garsid': $result='content/snd/gsid.wav' & exit\r\n if $args[1]='вампир': $result='content/snd/jo9_monster_552126.wav' & exit\r\n if $args[1]='вервольф': $result='content/snd/jo9_monster_478142.wav' & exit\r\n if $args[1]='лич': $result='content/snd/jo9_monster_490452.wav' & exit\r\n if $args[1]='ogre': $result='content/snd/jo9_monster_199377.wav' & exit\r\n if $args[1]='goblin': $result='content/snd/jo9_monster_87564.wav' & exit\r\n if $args[1]='warg': $result='content/snd/jo9_monster_478947.wav' & exit\r\n if $args[1]='orc': $result='content/snd/jo9_monster_195713.wav' & exit\r\n if $args[1]='исчадие_арены': $result='content/snd/jo9_monster_405454.wav' & exit\r\n if $args[1]='strazhnik': $result='content/snd/jo9_monster_477827.wav' & exit\r\n if $args[1]='grinch': $result='content/snd/jo9_monster_87566.wav' & exit\r\n exit\r\nend\r\nif $args[0]='reset':\r\n killvar 'jo9_sfx_pending'\r\n killvar '$jo9_sfx_intro'\r\n exit\r\nend\r\nif $args[0]='start':\r\n gs 'jo9_combat_sfx','reset'\r\n if args[1]=1: exit\r\n local jo9_sfx_i\r\n for jo9_sfx_i=1 to количество_врагов:\r\n  if $jo9_sfx_intro='': $jo9_sfx_intro=$func('jo9_combat_sfx','intro',$враг[jo9_sfx_i])\r\n  if $враг[jo9_sfx_i]='garsid': $jo9_sfx_intro='content/snd/gsid.wav'\r\n end\r\n exit\r\nend\r\nif $args[0]='hit':\r\n if $args[1]='дробящий': jo9_sfx_pending['blunt']=1\r\n exit\r\nend\r\nif $args[0]='critical': jo9_sfx_pending['critical']=1 & exit\r\nif $args[0]='flush':\r\n local $jo9_sfx_file=$jo9_sfx_intro\r\n local jo9_sfx_b\r\n local jo9_sfx_c\r\n jo9_sfx_b=jo9_sfx_pending['blunt']\r\n jo9_sfx_c=jo9_sfx_pending['critical']\r\n $jo9_sfx_intro=''\r\n jo9_sfx_pending['blunt']=0\r\n jo9_sfx_pending['critical']=0\r\n if sound_on!1: exit\r\n if $jo9_sfx_file!'': play $jo9_sfx_file,sound_volume\r\n if jo9_sfx_c=1:\r\n  play 'content/snd/jo9_critical.wav',sound_volume\r\n elseif jo9_sfx_b=1:\r\n  play 'content/snd/blunt.wav',sound_volume\r\n end\r\n exit\r\nend\r\nif $args[0]='result':\r\n if jo9_sfx_pending['result_played']=1: exit\r\n jo9_sfx_pending['result_played']=1\r\n if sound_on!1: exit\r\n if $args[1]='победа': play 'content/snd/jo9_victory.wav',sound_volume\r\n if $args[1]='вырубился' or $args[1]='убит': play 'content/snd/jo9_defeat.wav',sound_volume\r\n exit\r\nend\r\nif $args[0]='fate':\r\n if sound_on!1: exit\r\n if args[1]=1: play 'content/snd/jo9_execution.wav',sound_volume\r\n if args[1]=2: play 'content/snd/jo9_release.wav',sound_volume\r\nend\r\n! JO9 MOD END SFX_ADOPTED_RUNTIME_20261108",
+      "count": 1,
+      "patchId": "SFX_ADOPTED_RUNTIME_20261108"
+    },
+    {
+      "location": "jo9_battle_fate",
+      "field": "body",
+      "old": " jo9_fate['count'] = 0\r\n result = 1\r\n exit\r\nend\r\n\r\nif $args[0] = 'choices':",
+      "new": " jo9_fate['count'] = 0\r\n! JO9 MOD START SFX_FATE_ACCEPTED_20261108\r\n gs 'jo9_combat_sfx','fate',jo9_bf_choice\r\n! JO9 MOD END SFX_FATE_ACCEPTED_20261108\r\n result = 1\r\n exit\r\nend\r\n\r\nif $args[0] = 'choices':",
+      "count": 1,
+      "patchId": "SFX_FATE_ACCEPTED_20261108"
+    },
+    {
+      "location": "$gladiator_fight_start",
+      "field": "body",
+      "old": "gs 'jo9_battle_fate', 'init', 'arena'",
+      "new": "! JO9 MOD START SFX_ARENA_START_20261108\r\ngs 'jo9_combat_sfx','start',0\r\n! JO9 MOD END SFX_ARENA_START_20261108\r\ngs 'jo9_battle_fate', 'init', 'arena'",
+      "count": 1,
+      "patchId": "SFX_ARENA_START_20261108"
+    },
+    {
+      "location": "$catfight_fight_start",
+      "field": "body",
+      "old": "gs 'jo9_battle_fate', 'init', 'catfight'",
+      "new": "! JO9 MOD START SFX_ARENA_START_20261108\r\ngs 'jo9_combat_sfx','start',0\r\n! JO9 MOD END SFX_ARENA_START_20261108\r\ngs 'jo9_battle_fate', 'init', 'catfight'",
+      "count": 1,
+      "patchId": "SFX_ARENA_START_20261108"
+    },
+    {
+      "location": "конец_боя",
+      "field": "body",
+      "old": "arena_mode = 0",
+      "new": "! JO9 MOD START SFX_COMBAT_RESULT_20261108\r\ngs 'jo9_combat_sfx','result',$итог_боя\r\n! JO9 MOD END SFX_COMBAT_RESULT_20261108\r\narena_mode = 0",
+      "count": 1,
+      "patchId": "SFX_COMBAT_RESULT_20261108"
+    },
+    {
+      "location": "атака_игрока",
+      "field": "body",
+      "old": "\t\t$действия_игрока += \"[치명타]<br>\"",
+      "new": "\t\t$действия_игрока += \"[치명타]<br>\"\r\n! JO9 MOD START SFX_CRITICAL_CONFIRMED_20261108\r\n  gs 'jo9_combat_sfx','critical'\r\n! JO9 MOD END SFX_CRITICAL_CONFIRMED_20261108",
+      "count": 1,
+      "patchId": "SFX_CRITICAL_CONFIRMED_20261108"
+    }
+  ]
+}
