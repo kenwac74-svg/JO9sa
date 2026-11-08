@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="ko">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JO9 2.4.1 · 특성·아이템 열람표</title>
+<style>
+  :root { color-scheme: dark; --page:#151519; --panel:#201f24; --border:#39343b; --text:#f1e9dc; --muted:#c0b6ab; --gold:#efc485; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--page); color:var(--text); font:15px/1.55 "Malgun Gothic", system-ui, sans-serif; }
+  main { max-width:1120px; margin:auto; padding:clamp(12px, 3vw, 34px); }
+  header { padding:0 0 15px; }
+  .eyebrow { color:var(--gold); font-size:.78rem; letter-spacing:.11em; font-weight:700; }
+  h1 { font-size:clamp(24px, 4vw, 38px); line-height:1.22; margin:.3rem 0 0; }
+  h2 { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); }
+  button, input, select { font:inherit; }
+  [role=tablist] { display:flex; gap:6px; border-bottom:1px solid var(--border); }
+  [role=tab] { border:1px solid transparent; border-radius:7px 7px 0 0; padding:.6rem .75rem; color:var(--muted); background:none; cursor:pointer; white-space:nowrap; }
+  [role=tab][aria-selected=true] { color:var(--gold); border-color:var(--border); border-bottom-color:var(--panel); background:var(--panel); font-weight:700; }
+  [role=tab] span { font-size:.78rem; padding-left:.35em; }
+  [role=tabpanel] { background:var(--panel); border:1px solid var(--border); border-top:0; padding:clamp(9px, 2.4vw, 19px); border-radius:0 0 8px 8px; }
+  .controls { display:grid; grid-template-columns:minmax(0, 2fr) minmax(9ch, 1fr); gap:8px; }
+  label { color:var(--muted); font-size:.84rem; min-width:0; }
+  input, select { display:block; width:100%; padding:.53rem .5rem; margin-top:.25rem; min-width:0; color:var(--text); background:var(--page); border:1px solid #59505a; border-radius:5px; }
+  :focus-visible { outline:2px solid var(--gold); outline-offset:2px; }
+  .count { color:var(--gold); font-size:.86rem; margin:.65rem 0 .4rem; }
+  .coverage, footer, .ref { color:var(--muted); font-size:.78rem; }
+  .coverage { margin:.45rem 0 .8rem; }
+  table { border-collapse:collapse; width:100%; table-layout:fixed; }
+  col.name { width:20%; } col.category { width:12%; } col.price { width:14%; } col.acquisition { width:23%; }
+  th, td { text-align:left; vertical-align:top; overflow-wrap:anywhere; padding:.55rem .38rem; border-bottom:1px solid var(--border); }
+  th { color:var(--gold); background:#2c2627; font-size:.81rem; }
+  td { font-size:.9rem; }
+  td:nth-child(2) { color:var(--muted); }
+  td:nth-child(n+3) { white-space:pre-line; }
+  tbody tr:nth-child(even) { background:#26242a; }
+  td strong { display:block; }
+  .ref { display:block; line-height:1.35; margin-top:.22rem; }
+  footer { margin-top:.75rem; }
+  @media (max-width:640px) {
+    table, tbody { display:block; }
+    colgroup, thead { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); }
+    tbody tr { display:grid; grid-template-columns:1fr 1fr; border-bottom:1px solid var(--border); padding:.55rem; gap:.28rem .55rem; }
+    tbody td { display:block; border:0; padding:0; font-size:.84rem; }
+    tbody td:nth-child(n+3) { grid-column:1 / -1; }
+    tbody td[data-label]::before { content:attr(data-label) " · "; color:var(--gold); }
+    .ref { font-size:.72rem; }
+  }
+  @media print { :root { color-scheme:light; --page:#fff; --panel:#fff; --border:#ccc; --text:#222; --muted:#444; --gold:#57380f; } .controls { display:none; } th, tbody tr:nth-child(even) { background:#f3f3f3; } tr { break-inside:avoid; } }
+</style>
+<main>
+  <header><div class="eyebrow">JACK O NINE TAILS · 2.4.1 KOR</div><h1>특성·아이템 열람표</h1></header>
+  <div role="tablist" aria-label="열람표 종류">
+    <button type="button" id="traits-tab" role="tab" aria-selected="true" aria-controls="traits-panel">전체 특성 <span></span></button>
+    <button type="button" id="items-tab" role="tab" aria-selected="false" aria-controls="items-panel" tabindex="-1">전체 아이템 <span></span></button>
+  </div>
+  <section id="traits-panel" role="tabpanel" aria-labelledby="traits-tab"><h2>전체 특성</h2></section>
+  <section id="items-panel" role="tabpanel" aria-labelledby="items-tab" hidden><h2>전체 아이템</h2></section>
+  <footer id="snapshot"></footer>
+  <noscript>검색과 탭 전환을 사용하려면 자바스크립트를 켜 주세요.</noscript>
+</main>
+<template id="reference-panel">
+  <div class="controls">
+    <label>검색<input type="search" placeholder="이름, 설명, 획득처, ID" autocomplete="off"></label>
+    <label><span class="group-label">분류</span><select></select></label>
+  </div>
+  <p class="count" role="status"></p>
+  <p class="coverage"></p>
+  <table><colgroup><col class="name"><col class="category"><col class="price"><col class="acquisition"><col></colgroup><thead><tr><th scope="col">이름 · ID</th><th scope="col">분류</th><th scope="col">가격</th><th scope="col" class="acquisition-heading">획득처</th><th scope="col">설명</th></tr></thead><tbody></tbody></table>
+</template>
+<script id="reference-data" type="application/json">__JO9_REFERENCE_DATA__</script>
+<script>
+  'use strict';
+  const data = JSON.parse(document.getElementById('reference-data').textContent);
+  const kinds = ['traits', 'items'];
+  const tabs = kinds.map(kind => document.getElementById(kind + '-tab'));
+  const panels = kinds.map(kind => document.getElementById(kind + '-panel'));
+  const template = document.getElementById('reference-panel');
+  const order = new Intl.Collator('ko', { numeric: true });
+  const normalize = value => String(value ?? '').normalize('NFKC').toLowerCase();
+  const unknownSource = '획득처 미확인';
+
+  function itemGroups(row) {
+    const routes = (row.acquisition || unknownSource).split(/\r?\n/).filter(Boolean);
+    return [...new Set(routes.map(route => route
+      .replace(/(?: \(조수용 메뉴\))? 구매(?: · .*)?$/, '')
+      .replace(/ · [\d,]+스파크.*$/, '')
+      .replace(/^(바티칸 외곽 · 중앙 포럼) · .+$/, '$1')
+      .replace(/^(?:일반 )?새 게임 시작 시 .+$/, '새 게임 시작 지급')
+      .replace(/^튜토리얼 시작 시 \d+개$/, '튜토리얼 시작 지급')
+      .replace(/^(?:입수 경로|일반 진행 획득처) 미확인$/, unknownSource)))];
+  }
+
+  function compareGroups(left, right) {
+    return Number(left === unknownSource) - Number(right === unknownSource) || order.compare(left, right);
+  }
+
+  function setup(panel, tab, set, isTrait) {
+    panel.append(template.content.cloneNode(true));
+    const input = panel.querySelector('input');
+    const select = panel.querySelector('select');
+    const body = panel.querySelector('tbody');
+    const count = panel.querySelector('.count');
+    const indexed = set.rows.map(row => {
+      const groups = isTrait ? [row.category] : itemGroups(row);
+      const terms = normalize([row.name, row.category, row.id, row.description, row.source, row.policy, row.price, row.acquisition, ...groups, ...(row.aliases || [])].join(' '));
+      return { row, groups, terms };
+    }).sort((a, b) => compareGroups(a.groups[0], b.groups[0]) || order.compare(a.row.name, b.row.name) || order.compare(a.row.id, b.row.id));
+    tab.querySelector('span').textContent = indexed.length.toLocaleString('ko');
+    panel.querySelector('.coverage').textContent = set.coverage || '';
+    const acquisitionLabel = isTrait ? '발현·획득 조건' : '획득처';
+    panel.querySelector('.acquisition-heading').textContent = acquisitionLabel;
+    panel.querySelector('.group-label').textContent = isTrait ? '분류' : '획득처';
+    select.add(new Option(isTrait ? '모든 분류' : '모든 획득처', ''));
+    const totals = new Map();
+    for (const { groups } of indexed) {
+      for (const group of groups) totals.set(group, (totals.get(group) || 0) + 1);
+    }
+    for (const group of [...totals.keys()].sort(compareGroups)) select.add(new Option(`${group} (${totals.get(group)})`, group));
+
+    function render() {
+      const words = normalize(input.value).trim().split(/\s+/).filter(Boolean);
+      const selected = indexed.filter(({ groups, terms }) => (!select.value || groups.includes(select.value)) && words.every(word => terms.includes(word)));
+      const frag = document.createDocumentFragment();
+      for (const { row } of selected) {
+        const tr = frag.appendChild(document.createElement('tr'));
+        const title = tr.insertCell();
+        const label = title.appendChild(document.createElement('strong'));
+        label.textContent = row.name;
+        if (row.id) {
+          const ref = title.appendChild(document.createElement('span'));
+          ref.className = 'ref';
+          ref.textContent = row.id;
+          if (row.source) ref.title = row.source;
+        }
+        tr.insertCell().textContent = row.category;
+        const price = tr.insertCell();
+        price.dataset.label = '가격';
+        price.textContent = typeof row.price === 'number' ? `기본가 ${row.price.toLocaleString('ko')}스파크` : row.price || (isTrait ? '—' : '가격 미확인');
+        const acquisition = tr.insertCell();
+        acquisition.dataset.label = acquisitionLabel;
+        acquisition.textContent = row.acquisition || (isTrait ? '발현 조건 미확인' : '획득처 미확인');
+        if (row.acquisitionSource) acquisition.title = row.acquisitionSource;
+        const description = tr.insertCell();
+        description.dataset.label = '설명';
+        description.textContent = row.description?.replace(/(?:^|\n)기본 가격 [\d,]+스파크$/, '').trim() || '별도 설명 없음';
+        if (row.policy) {
+          const policy = description.appendChild(document.createElement('span'));
+          policy.className = 'ref';
+          policy.textContent = '카오틱 에센스 · ' + row.policy;
+        }
+      }
+      if (!selected.length) {
+        const empty = frag.appendChild(document.createElement('tr')).insertCell();
+        empty.colSpan = 5;
+        empty.textContent = '조건에 맞는 항목이 없습니다.';
+      }
+      body.replaceChildren(frag);
+      count.textContent = `${selected.length.toLocaleString('ko')}개 표시 / 전체 ${indexed.length.toLocaleString('ko')}개`;
+    }
+    input.addEventListener('input', render);
+    select.addEventListener('change', render);
+    render();
+  }
+
+  function selectTab(index, focus = false) {
+    tabs.forEach((tab, i) => {
+      tab.setAttribute('aria-selected', String(index === i));
+      tab.tabIndex = index === i ? 0 : -1;
+      panels[i].hidden = index !== i;
+    });
+    if (focus) tabs[index].focus();
+  }
+
+  tabs.forEach((tab, i) => {
+    setup(panels[i], tab, data[kinds[i]], kinds[i] === 'traits');
+    tab.addEventListener('click', () => selectTab(i));
+    tab.addEventListener('keydown', event => {
+      if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+      event.preventDefault();
+      const last = tabs.length - 1;
+      const next = event.key === 'Home' ? 0 : event.key === 'End' ? last : (i + (event.key === 'ArrowRight' ? 1 : last)) % tabs.length;
+      selectTab(next, true);
+    });
+  });
+  const build = data.traits.hash.slice(0, 12);
+  document.getElementById('snapshot').textContent = `현재 게임 데이터 · jack.qsp ${build}`;
+</script>
+</html>
