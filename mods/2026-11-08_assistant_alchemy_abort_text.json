@@ -1,0 +1,25 @@
+{
+  "id": "2026-11-08_assistant_alchemy_abort_text",
+  "status": "APPROVED",
+  "description": "조수 연금술 명령을 해제할 때의 대사가 남성판에서 \"노예를 도와 포션을 만들라\"로 번역되어 없는 동작을 안내했다. 해제하면 노예가 단독으로 조제하고 조수 능력치는 쓰이지 않으므로, 남녀판 모두 \"조제를 그만두고 노예가 맡는다, 노예가 없으면 다시 조수\"로 바로잡는다.",
+  "before_sha256": "ae90d10b9ce0edcbb20653adf742fd9c31930797ecb1edee30ebdaabb85e54c0",
+  "after_sha256": "de25615f770503ad4a6749493ed1b2d55884704f151cb93a5e11c9d3daef8ef7",
+  "edits": [
+    {
+      "location": "#txt_man",
+      "field": "body",
+      "old": "$assistant_alchemist_rule_abort = '<br> 당신은 조수에게 노예를 도와 포션을 만들라고 말했다. 그러나 노예가 할 수 없을 땐, 조수의 책임이 될 것이다.'",
+      "new": "$assistant_alchemist_rule_abort = '<br> 당신은 조수에게 이제 물약 조제는 그만두라고 말했다. 앞으로는 노예가 맡는다. 다만 노예가 없을 때는 다시 조수가 맡게 된다.'",
+      "count": 1,
+      "patchId": "ASSISTANT_ALCHEMY_ABORT_TEXT_20261108"
+    },
+    {
+      "location": "#txt_woman",
+      "field": "body",
+      "old": "$assistant_alchemist_rule_abort = '  당신은 조수에게 이제 당신의 노예와 함께 물약을 섞겠다고 말한다. 다만 노예가 그걸 할 수 없는 때에는 여전히 조수가 책임을 져야 한다.'",
+      "new": "$assistant_alchemist_rule_abort = '  당신은 조수에게 이제 물약 조제는 그만두라고 말한다. 앞으로는 노예가 맡는다. 다만 노예가 없을 때는 다시 조수가 맡게 된다.'",
+      "count": 1,
+      "patchId": "ASSISTANT_ALCHEMY_ABORT_TEXT_20261108"
+    }
+  ]
+}

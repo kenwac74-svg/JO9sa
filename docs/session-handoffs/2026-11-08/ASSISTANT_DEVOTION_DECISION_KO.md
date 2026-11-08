@@ -1,7 +1,7 @@
 # 조수 헌신도 일일 상승 — 결정 요청 (GPT용)
 
 작성: 2026-11-08, Claude (로컬 모딩 세션)
-상태: **분석 완료, QSP 미수정.** 최종 방식은 GPT가 결정한다.
+상태: **결정·적용 완료 (2026-11-08, 사용자 결정).** B안 변형: 조수 자신의 실제 업무 수로 판정, 쉬움·보통 2개·하드코어 3개, 메인 노예와 겹치는 업무 제외, 연금술은 그날 조제에 성공한 경우만. mods `2026-11-08_assistant_daily_devotion` + `2026-11-08_assistant_alchemy_brewed_day`. 게임 UI 표시 없음(릴리즈 노트만). 아래는 결정 전 분석 기록.
 기준 QSP: WORK `G:\somi\Jack O Nine Tails v2.4_work\game\jack.qsp` (SHA-256 `fffd82c3b9a9…`). 행 번호는 이 파일의 location 본문 기준이며, 다른 세션이 수정하면 바뀔 수 있다.
 
 ## 제보

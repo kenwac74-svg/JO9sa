@@ -1,0 +1,33 @@
+{
+  "id": "2026-11-08_assistant_alchemy_brewed_day",
+  "status": "APPROVED",
+  "description": "조수 헌신 판정(ASSISTANT_DAILY_DEVOTION_20261108)에서 연금술은 조제 담당 지정 스위치일 뿐 매일 하는 업무가 아니므로, 그날 조수가 실험실에서 물약 조제에 성공했을 때만 업무 1개로 센다. 재료 부족으로 실패하면 세지 않으며, 표시는 판정 직후 0으로 돌린다.",
+  "before_sha256": "de25615f770503ad4a6749493ed1b2d55884704f151cb93a5e11c9d3daef8ef7",
+  "after_sha256": "3ed148b3defa43003fe2ec033d15db14dcf817290271bc14079ee763ef0d750a",
+  "edits": [
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "\tif lab > 0 and assistant['alchemist_rule'] = 1: jo9_assistant_rules_count += 1",
+      "new": "\tif lab > 0 and jo9_assistant_brewed_today > 0: jo9_assistant_rules_count += 1",
+      "count": 1,
+      "patchId": "ASSISTANT_ALCHEMY_BREWED_DAY_20261108"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "! JO9 MOD END ASSISTANT_DAILY_DEVOTION_20261108\r\n$next_day_slave_moral = {",
+      "new": "jo9_assistant_brewed_today = 0\r\n! JO9 MOD END ASSISTANT_DAILY_DEVOTION_20261108\r\n$next_day_slave_moral = {",
+      "count": 1,
+      "patchId": "ASSISTANT_ALCHEMY_BREWED_DAY_20261108"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "\t\tdynamic $replace($interaction_brew_potion, 'dynslave', 'assistant')\r\n\telse\r\n\t\tdynamic $replace($interaction_brew_potion, 'dynslave', 'slave')",
+      "new": "\t\tdynamic $replace($interaction_brew_potion, 'dynslave', 'assistant')\r\n! JO9 MOD START ASSISTANT_ALCHEMY_BREWED_DAY_20261108\r\n! Reached only when the brew succeeded. Missing ingredients jump away inside the brew block.\r\n\t\tjo9_assistant_brewed_today = 1\r\n! JO9 MOD END ASSISTANT_ALCHEMY_BREWED_DAY_20261108\r\n\telse\r\n\t\tdynamic $replace($interaction_brew_potion, 'dynslave', 'slave')",
+      "count": 1,
+      "patchId": "ASSISTANT_ALCHEMY_BREWED_DAY_20261108"
+    }
+  ]
+}

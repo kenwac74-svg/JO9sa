@@ -1,0 +1,25 @@
+{
+  "id": "2026-11-08_assistant_daily_devotion",
+  "status": "APPROVED",
+  "description": "조수의 매일 헌신 보너스가 메인 노예의 밤 규칙 수(overnight_rules_count)를 빌려 써서, 노예 없이 조수만 있으면 헌신이 오르지 않던 문제(바닐라부터)를 고친다. 조수는 자신이 실제로 맡은 업무 수(회계, 연금술[연구실], 요리[부엌], 청소, 주인 목욕[욕실], 촉수[촉수], 감독[노예], 노예 목욕[욕실+노예], 오르가슴 금지 — 같은 업무를 메인 노예가 맡고 있으면 제외)로 판정하고 기준은 노예와 같은 보통 2개/어려움 3개다. 상승량과 나머지 조건, 다른 역할은 바꾸지 않는다. 게임 UI 표시는 하지 않는다.",
+  "before_sha256": "60f8bc4064b33bf6fbd8d0722a18fb06bdf8918b8e1ec0097717abb71badfefe",
+  "after_sha256": "ae90d10b9ce0edcbb20653adf742fd9c31930797ecb1edee30ebdaabb85e54c0",
+  "edits": [
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "$next_day_slave_moral = {",
+      "new": "! JO9 MOD START ASSISTANT_DAILY_DEVOTION_20261108\r\n! The assistant is judged by her own active duties, not by the main slave rule count.\r\n! A duty counts only when its facility exists and the main slave does not hold the same duty.\r\njo9_assistant_rules_count = 0\r\nif assistant_state = CONST_INT['slave_exist']:\r\n\tif assistant['account_rule'] = 1: jo9_assistant_rules_count += 1\r\n\tif lab > 0 and assistant['alchemist_rule'] = 1: jo9_assistant_rules_count += 1\r\n\tif kitchen > 0 and assistant['cooks_rule'] = 1 and (slave_state ! CONST_INT['slave_exist'] or slave['cooks_rule'] ! 1): jo9_assistant_rules_count += 1\r\n\tif assistant['cleans_rule'] = 1 and (slave_state ! CONST_INT['slave_exist'] or slave['cleans_rule'] ! 1): jo9_assistant_rules_count += 1\r\n\tif bath > 0 and assistant['washes_master_rule'] = 1 and (slave_state ! CONST_INT['slave_exist'] or slave['washes_master_rule'] ! 1): jo9_assistant_rules_count += 1\r\n\tif pet_tentacle > 0 and assistant['tentacle_rule'] = 1 and (slave_state ! CONST_INT['slave_exist'] or slave['tentacle_rule'] ! 1): jo9_assistant_rules_count += 1\r\n\tif slave_state = CONST_INT['slave_exist'] and assistant['supervise_rule'] = 1: jo9_assistant_rules_count += 1\r\n\tif bath > 0 and slave_state = CONST_INT['slave_exist'] and assistant['washes_slave_rule'] = 1: jo9_assistant_rules_count += 1\r\n\tif assistant['no_orgasm_rule'] = 1: jo9_assistant_rules_count += 1\r\nend\r\n! JO9 MOD END ASSISTANT_DAILY_DEVOTION_20261108\r\n$next_day_slave_moral = {",
+      "count": 1,
+      "patchId": "ASSISTANT_DAILY_DEVOTION_20261108"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "\t\tif moral_app = dynslave['moral'] and overnight_rules_count >= iif(difficulty_setting = 2, 3, 2):",
+      "new": "! JO9 MOD START ASSISTANT_DAILY_DEVOTION_20261108\r\n\t\tif moral_app = dynslave['moral'] and iif('dynslave' = 'assistant', jo9_assistant_rules_count, overnight_rules_count) >= iif(difficulty_setting = 2, 3, 2):\r\n! JO9 MOD END ASSISTANT_DAILY_DEVOTION_20261108",
+      "count": 1,
+      "patchId": "ASSISTANT_DAILY_DEVOTION_20261108"
+    }
+  ]
+}
