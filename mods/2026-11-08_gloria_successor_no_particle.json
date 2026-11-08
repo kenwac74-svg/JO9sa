@@ -1,0 +1,49 @@
+{
+  "id": "2026-11-08_gloria_successor_no_particle",
+  "status": "APPROVED",
+  "description": "사용자 지시: 후임 이름 뒤에 조사가 붙지 않게 한다. 새 대사 3곳을 조사 없는 문장으로 고치고, 기존 부동산 대사의 이름 치환은 글로리아+조사(는·가·를·의·에게)를 그녀+조사로, 화자 표시와 조사 없는 이름만 후임 이름으로 바꾼다.",
+  "before_sha256": "1b31271ee704dfd94cd35cd350fcafa306c907e8d5574d5948ffcd318e763ae0",
+  "after_sha256": "dd50291deda019a53b84574bf3f356b6bd82a4b99896787ee59781e88afaa4d7",
+  "edits": [
+    {
+      "location": "interaction_screen_city",
+      "field": "body",
+      "old": "$jo9_gold_result_text = $replace($jo9_gold_result_text, '글로리아', $jo9_gloria_successor_name)",
+      "new": "$jo9_gold_result_text = $replace($replace($replace($replace($replace($replace($replace($jo9_gold_result_text, '글로리아에게', '그녀에게'), '글로리아는', '그녀는'), '글로리아가', '그녀가'), '글로리아를', '그녀를'), '글로리아의', '그녀의'), '[글로리아]', '[' + $jo9_gloria_successor_name + ']'), '글로리아', $jo9_gloria_successor_name)",
+      "count": 1,
+      "patchId": "GLORIA_SUCCESSOR_NO_PARTICLE_20261108"
+    },
+    {
+      "location": "choice_screen",
+      "field": "body",
+      "old": "$text[txt] = $replace($text[txt], '글로리아', $jo9_gloria_successor_name)",
+      "new": "$text[txt] = $replace($replace($replace($replace($replace($replace($replace($text[txt], '글로리아에게', '그녀에게'), '글로리아는', '그녀는'), '글로리아가', '그녀가'), '글로리아를', '그녀를'), '글로리아의', '그녀의'), '[글로리아]', '[' + $jo9_gloria_successor_name + ']'), '글로리아', $jo9_gloria_successor_name)",
+      "count": 1,
+      "patchId": "GLORIA_SUCCESSOR_NO_PARTICLE_20261108"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "제 자리는 <<$master_name>>님이 데려오신 <<$jo9_gloria_successor_name>>(이)가 맡게 될 거예요.",
+      "new": "제 자리는 <<$master_name>>님이 데려오신 <<$jo9_gloria_successor_name>>, 그 아이가 맡게 될 거예요.",
+      "count": 1,
+      "patchId": "GLORIA_SUCCESSOR_NO_PARTICLE_20261108"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "다음에 들렀을 때, 그녀의 자리에는 <<$jo9_gloria_successor_name>>(이)가 앉아 있었다.",
+      "new": "다음에 들렀을 때, 그녀의 자리에는 당신이 넘긴 노예가 앉아 있었다. 책상 위 명패의 이름은 <<$jo9_gloria_successor_name>>.",
+      "count": 1,
+      "patchId": "GLORIA_SUCCESSOR_NO_PARTICLE_20261108"
+    },
+    {
+      "location": "interaction_result_city",
+      "field": "body",
+      "old": "<<$jo9_gloria_successor_name>>(은)는 빠르고 꼼꼼하게 집을 정리하고 꽤 괜찮은 식사를 차렸다.",
+      "new": "당신 손에서 자란 그 아이는 빠르고 꼼꼼하게 집을 정리하고 꽤 괜찮은 식사를 차렸다.",
+      "count": 1,
+      "patchId": "GLORIA_SUCCESSOR_NO_PARTICLE_20261108"
+    }
+  ]
+}

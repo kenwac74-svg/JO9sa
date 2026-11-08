@@ -1,0 +1,41 @@
+{
+  "id": "2026-11-08_broker_brothel_offer",
+  "status": "APPROVED",
+  "description": "수상한 중개인 퀘스트를 창관 모드 트리거로 바꾼다. 대사를 홍등가 창관 인수 제안(5만 스파크)으로 교체하고(사용자 승인), 퀘스트를 마치면 홍등가 메뉴에 창관을 인수한다 ($50000) 선택지를 비활성 상태로 보인다(아이콘 brothel_buy). 개인실은 메이드 승진 단계라 창관 역할을 하지 않으므로 next_day의 개인실 매춘 수입 블록(하루 30 스파크 등)을 지우고, 예전 세이브의 postitute_rule을 불러올 때 0으로 돌린다. 켜고 끄는 interaction 1015~1022는 창관 모드용으로 남긴다.",
+  "before_sha256": "2e27a6896db61e3ff55a16c502fb455229f7866cb9de6e18dc199d6936827a0b",
+  "after_sha256": "5f3d547a81ad059c668182b44eb9b6112a6e22925551685309d642ff64e6f2eb",
+  "edits": [
+    {
+      "location": "#txt_man",
+      "field": "body",
+      "old": "$broker_quest[1] = '[중개인]<br>&nbsp;반갑습니다 <<$master_name>> 전 조합 소속의 중개인입니다 조합소속 노예의 임대나 전매등을 중계하죠. 요즘 스파크가 많이 필요하신듯 한데 저랑 거래를 하지 않으시렵니까?</div>'\r\n$broker_quest[2] = '[중개인]<br>&nbsp;본론으로 바로 들어가죠 당신 상표의 노예들이 콜로세움에서 활약하는 모습은 잘 봤습니다 아주 독보적이더군요 사교계에서 당신의 노예는 아주 유명합니다.</div>'\r\n$broker_quest[3] = '[중개인]<br>&nbsp;로마에서는 그런 유명한 노예들을 한번 안아보고 싶어하는 분들이 많습니다 그중에는 지속적으로 스폰서를 해줄 분들도 많이 있습니다만 보통 그런 유명한 노예는 주인이 있거나 매우 비싸 함부로 맛볼수가 없지요.</div>'\r\n$broker_quest[4] = '[중개인]<br>&nbsp;노예만 제공해주신다면 이런분들이랑 다리를 놓아드리죠 그분들은 하룻밤의 꿈에 순순히 스파크를 내어놓을겁니다 쏠쏠한 수입에 덤으로 고위층과의 인맥도 얻으실수 있겠죠.</div>'\r\n$broker_quest[5] = '[중개인]<br>&nbsp;다만 고객분들이 이 도시의 고위층들이다보니 웬만한 노예론 어림도 없습니다 적어도 인지도가 <font color=\"#009FEF\">스타</font>등급은 되야합니다. 성적인 만족도를 위해선 외모도 <font color=\"#009FEF\">아름다움</font> 이상은 되야하죠.</div>'\r\n$broker_quest[6] = '[중개인]<br>&nbsp;가무나 예술에 능하거나 밤일이 끝내준다면 수익은 더 올라갈겁니다 수익은 전적으로 고객의 만족도에 비례하니 노예의 능력도 중요하죠.</div>'\r\n$broker_quest[7] = '[중개인]<br>&nbsp;다소 하드한 플레이를 원하는 고객도 많긴 하지만 비가역적인 손상은 없을겁니다 당신의 상품을 망가뜨렸다가는 변상이 만만치 않거든요 당신정도의 지위라면 함부로 무시할수도 없으니 말이죠.</div>'\r\n$broker_quest[8] = '[중개인]<br>&nbsp;당신이 원할떄만 노예를 보내주셔도 괜찮습니다 언제든 연락만 주십시오 바로 주선해드리죠.</div>'\r\n$broker_quest[9] = '<br> 이제 2층의 노예에게 성접대을 지시할수 있습니다-</div>'",
+      "new": "! JO9 MOD START BROKER_BROTHEL_OFFER_20261108\r\n! The broker now offers a Red Light brothel for a future brothel mod. Old lines are cleared first.\r\nkillvar '$broker_quest'\r\n$broker_quest[1] = '[중개인]<br>&nbsp;반갑습니다, <<$master_name>>. 조합 소속 중개인입니다. 조합 노예의 임대나 전매 같은 거래를 주선하고 있지요. 요즘 스파크가 꽤 필요하신 듯한데, 저와 이야기 좀 나눠 보시겠습니까?</div>'\r\n$broker_quest[2] = '[중개인]<br>&nbsp;본론부터 말씀드리죠. 콜로세움에서 활약하는 당신 상표의 노예들은 잘 봤습니다. 사교계에서도 당신 이름이 자주 오르내리더군요.</div>'\r\n$broker_quest[3] = '[중개인]<br>&nbsp;홍등가에 창관이 하나 매물로 나왔습니다. 전 주인이 빚에 몰려 손을 떼게 됐지요.</div>'\r\n$broker_quest[4] = '[중개인]<br>&nbsp;건물과 영업 허가, 단골 명부까지 통째로 넘어갑니다. 손님층도 나쁘지 않습니다. 고위층 단골도 몇 있지요.</div>'\r\n$broker_quest[5] = '[중개인]<br>&nbsp;값은 5만 스파크입니다. 싸다고는 못 하겠지만, 당신처럼 이름난 조련사가 직접 길러 낸 아이들을 세운다면 본전은 금방 뽑으실 겁니다.</div>'\r\n$broker_quest[6] = '[중개인]<br>&nbsp;물론 창관은 손이 많이 가는 장사입니다. 아이들 관리부터 손님 상대, 경비까지 신경 쓸 게 한둘이 아니지요.</div>'\r\n$broker_quest[7] = '[중개인]<br>&nbsp;어떻습니까, 홍등가에 있는 창관 하나를 인수해서 장사해 볼 생각 있으십니까?</div>'\r\n$broker_quest[8] = '[중개인]<br>&nbsp;지금 당장 답하실 필요는 없습니다. 서류가 정리되는 대로 홍등가에서 거래를 진행하실 수 있게 해 두지요.</div>'\r\n$broker_quest[9] = '<br> -이제 홍등가에서 창관 인수를 알아볼 수 있습니다.-</div>'\r\n! JO9 MOD END BROKER_BROTHEL_OFFER_20261108",
+      "count": 1,
+      "patchId": "BROKER_BROTHEL_OFFER_20261108"
+    },
+    {
+      "location": "city_menu_form",
+      "field": "body",
+      "old": "  FUNC('$menu', 'interaction_city', $menu_item_dosug, 22700, '사창가 골목')\r\n! JO9 MOD END J9M0001\r\n",
+      "new": "  FUNC('$menu', 'interaction_city', $menu_item_dosug, 22700, '사창가 골목')\r\n! JO9 MOD END J9M0001\r\n! JO9 MOD START BROKER_BROTHEL_OFFER_20261108\r\n! Brothel takeover is announced by the broker but stays disabled until the brothel mod exists.\r\n  IF broker_quest = 1:\r\n    FUNC('$menu', 'location_gray_tooltip', $menu_item_brothel_buy_gray, empty, '창관을 인수한다 ($50000)', '창관 인수는 아직 준비 중이다.')\r\n  END\r\n! JO9 MOD END BROKER_BROTHEL_OFFER_20261108\r\n",
+      "count": 1,
+      "patchId": "BROKER_BROTHEL_OFFER_20261108"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "!매춘 파트\r\nif room1['postitute_rule'] = 1:\r\n    메이드1손님 = 1\r\n    sparks += 30  \r\n\troom1_rate['arousal'] = func('jo9_nymph_arousal', 'set', 'room1', rand(1,50))\r\n\troom1['half_action'] += 4 \r\n\troom1['cum_load'] += rand(10,15)\r\n    room1_rate['hygiene'] += rand(10,25)\r\n    room1_rate['stamina'] += 2\t\r\n\tif room1['ovulation'] > 0 and room1['pregnant'] > 0: room1['ovulation'] -= 1 \r\n\t\tif room1['ovulation'] = 0 and room1['fertility'] = 0 and room1['pregnant'] = 0 and rand(1,10) = 1:\r\n\t\t\troom1['pregnant'] += 1\r\n\t\tend\t\r\n\tend\r\nend\r\nif room2['postitute_rule'] = 1:\r\n    메이드2손님 = 1\r\n    sparks += 30  \r\n\troom2_rate['arousal'] = func('jo9_nymph_arousal', 'set', 'room2', rand(1,50))\r\n\troom2['half_action'] += 4 \r\n\troom2['cum_load'] += rand(10,15)\r\n    room2_rate['hygiene'] += rand(10,25)\t\r\n    room2_rate['stamina'] += 2    \r\n\tif room2['ovulation'] > 0 and room2['pregnant'] > 0: room2['ovulation'] -= 1 \r\n\t\tif room2['ovulation'] = 0 and room2['fertility'] = 0 and room1['pregnant'] = 0 and rand(1,10) = 1:\r\n\t\t\troom2['pregnant'] += 1 \r\n\t\tend\t\r\n\tend\r\n    \r\nend\r\nif room3['postitute_rule'] = 1:\r\n    메이드3손님 = 1\r\n    sparks += 30  \r\n\troom3_rate['arousal'] = func('jo9_nymph_arousal', 'set', 'room3', rand(1,50))\r\n\troom3['half_action'] += 4 \r\n\troom3['cum_load'] += rand(10,15)\r\n    room3_rate['hygiene'] += rand(10,25)\r\n    room3_rate['stamina'] += 2     \r\n\tif room3['ovulation'] > 0 and room3['pregnant'] > 0: room3['ovulation'] -= 1 \r\n\t\tif room3['ovulation'] = 0 and room3['fertility'] = 0 and room1['pregnant'] = 0 and rand(1,10) = 1:\r\n\t\t\troom3['pregnant'] += 1\r\n\t\tend\t\r\n\tend\r\n     \r\nend\r\nif room4['postitute_rule'] = 1:\r\n    메이드4손님 = 1\r\n    sparks += 30 \r\n\troom4_rate['arousal'] = func('jo9_nymph_arousal', 'set', 'room4', rand(1,50))\r\n\troom4['half_action'] += 4 \r\n\troom4['cum_load'] += rand(10,15) \r\n    room4_rate['hygiene'] += rand(10,25) \r\n    room4_rate['stamina'] += 2     \r\n\tif room4['ovulation'] > 0 and room4['pregnant'] > 0: room4['ovulation'] -= 1 \r\n\t\tif room4['ovulation'] = 0 and room4['fertility'] = 0 and room1['pregnant'] = 0 and rand(1,10) = 1:\r\n\t\t\troom4['pregnant'] += 1 \r\n\t\tend\t\r\n\tend\r\n     \r\nend",
+      "new": "! JO9 MOD START BROKER_BROTHEL_OFFER_20261108\r\n! Private rooms are a maid promotion, not a brothel. The daily room prostitution block was removed.\r\n! JO9 MOD END BROKER_BROTHEL_OFFER_20261108",
+      "count": 1,
+      "patchId": "BROKER_BROTHEL_OFFER_20261108"
+    },
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "! JO9 MOD END ACTIVITY_MIGRATION_20261106\r\nsaved_game_loaded = 1",
+      "new": "! JO9 MOD END ACTIVITY_MIGRATION_20261106\r\n! JO9 MOD START BROKER_BROTHEL_OFFER_20261108\r\n! Older saves may still carry the retired room prostitution flag.\r\nroom1['postitute_rule'] = 0\r\nroom2['postitute_rule'] = 0\r\nroom3['postitute_rule'] = 0\r\nroom4['postitute_rule'] = 0\r\n! JO9 MOD END BROKER_BROTHEL_OFFER_20261108\r\nsaved_game_loaded = 1",
+      "count": 1,
+      "patchId": "BROKER_BROTHEL_OFFER_20261108"
+    }
+  ]
+}

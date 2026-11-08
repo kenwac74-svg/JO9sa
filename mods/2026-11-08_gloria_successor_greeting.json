@@ -1,0 +1,17 @@
+{
+  "id": "2026-11-08_gloria_successor_greeting",
+  "status": "APPROVED",
+  "description": "사용자 승인 대사: 글로리아 퀘스트가 끝난 뒤 교체된 부동산 NPC(후임)가 채용조건 대화 첫 페이지에서 전 주인을 알아보고 인사한다. 넘길 때 저장한 후임의 헌신 등급으로 1 이하 건조, 2~3 살가움, 4~5 그리움과 애정 인사를 고른다.",
+  "before_sha256": "f5f53e0e5b0224bb9b5532cef535b0761d6944e87320eace114deca46a2e180d",
+  "after_sha256": "175aa4600cf40092e09678a1056918c9d6e55ea3939c0e6393e504e59ef2076a",
+  "edits": [
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t\tkillvar '$text', 6\r\n\tend\r\n! JO9 MOD END GLORIA_HINT_ONCE_20261108\r\n",
+      "new": "\t\tkillvar '$text', 6\r\n\tend\r\n! JO9 MOD END GLORIA_HINT_ONCE_20261108\r\n! JO9 MOD START GLORIA_SUCCESSOR_GREETING_20261108\r\n! The successor greets the former master on the first page, by her devotion when she was sold.\r\n\tif jo9_gloria_event > 0 and $jo9_gloria_successor_name ! '':\r\n\t\tlocal jo9_gg_i\r\n\t\tfor jo9_gg_i = arrsize('$text') to 2 step -1:\r\n\t\t\t$text[jo9_gg_i] = $text[jo9_gg_i - 1]\r\n\t\tend\r\n\t\tif jo9_gloria_successor_slave['moral'] >= 4:\r\n\t\t\t$text[1] = '[<<$jo9_gloria_successor_name>>]<br>&nbsp;…<<$master_name>>님. 정말 오셨네요. 문이 열릴 때마다 혹시나 했어요. 여기서도 사람들한테 잘 대해 주라고 하신 말씀, 하나도 잊지 않았어요. …저, 가끔은 주인님 댁이 많이 그리워요.</div>'\r\n\t\telseif jo9_gloria_successor_slave['moral'] >= 2:\r\n\t\t\t$text[1] = '[<<$jo9_gloria_successor_name>>]<br>&nbsp;어머, <<$master_name>>님! 오랜만이에요. 여기서 뵈니까 반갑네요. 저요? 덕분에 이렇게 잘 지내고 있어요. 주인님께 배운 걸로 여기서도 제법 인정받고 있답니다.</div>'\r\n\t\telse\r\n\t\t\t$text[1] = '[<<$jo9_gloria_successor_name>>]<br>&nbsp;어서 오세요, <<$master_name>>님. 잘 지내셨나요? 오늘은 어떤 용건으로 오셨는지요.</div>'\r\n\t\tend\r\n\tend\r\n! JO9 MOD END GLORIA_SUCCESSOR_GREETING_20261108\r\n",
+      "count": 1,
+      "patchId": "GLORIA_SUCCESSOR_GREETING_20261108"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "id": "2026-11-08_gloria_quest_test_cheat",
+  "status": "APPROVED",
+  "description": "임시 테스트용(배포 전 제거). 부동산 메뉴에 [테스트] 글로리아 퀘스트 준비 버튼을 넣는다. 누르면 조수(없으면 노예)를 후임으로 저장하고 납품일을 60일 전으로 둔다. 노예를 후임으로 쓰면 노예 칸을 비운다.",
+  "before_sha256": "9e2e3120ffc75455b10a6737009cef8022b61a64dd9f764ac8d9c00114e0098a",
+  "after_sha256": "5c3cab4522a12be7ec851fe277ea9f039b59996fd3cb7c6e9ccc6a6883927770",
+  "edits": [
+    {
+      "location": "#npc_base",
+      "field": "body",
+      "old": "\t\t\tgs '$slave_price'\r\n\t\tend\r\n\tend\r\n}\r\n! JO9 MOD END GLORIA_QUEST_STAGE2_20261108\r\n",
+      "new": "\t\t\tgs '$slave_price'\r\n\t\tend\r\n\tend\r\n}\r\n! JO9 MOD END GLORIA_QUEST_STAGE2_20261108\r\n! JO9 MOD START GLORIA_QUEST_TEST_CHEAT_20261108\r\n! TEMPORARY TEST CHEAT. Remove before release.\r\n! Uses the assistant as successor when present, otherwise the slave, whose slot is then emptied.\r\n$jo9_gloria_test = {\r\n\tif assistant_state = CONST_INT['slave_exist']:\r\n\t\t$jo9_gloria_successor_name = $assistant_name\r\n\t\t$jo9_gloria_successor_image = '..\\' + $iif($fullsecretary[assistant_type] ! '', $fullsecretary[assistant_type], $fullimage[assistant_type])\r\n\telseif slave_state = CONST_INT['slave_exist']:\r\n\t\t$jo9_gloria_successor_name = $slave_name\r\n\t\t$jo9_gloria_successor_image = '..\\' + $iif($fullsecretary[slave_type] ! '', $fullsecretary[slave_type], $fullimage[slave_type])\r\n\t\tdynamic $clear_slave_instance, 'slave'\r\n\tend\r\n\tif $jo9_gloria_successor_name ! '':\r\n\t\tjo9_gloria_successor = 1\r\n\t\tjo9_gloria_successor_day = day - 60\r\n\t\tjo9_gloria_event = 0\r\n\tend\r\n}\r\n! JO9 MOD END GLORIA_QUEST_TEST_CHEAT_20261108\r\n",
+      "count": 1,
+      "patchId": "GLORIA_QUEST_TEST_CHEAT_20261108"
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\t\t\tfunc('$menu', 'interaction_city', $menu_item_requirementsestate, 951541, '글로리아에게 말을 건다')\r\n\t\tend\r\n",
+      "new": "\t\t\tfunc('$menu', 'interaction_city', $menu_item_requirementsestate, 951541, '글로리아에게 말을 건다')\r\n\t\tend\r\n! JO9 MOD START GLORIA_QUEST_TEST_CHEAT_20261108\r\n! TEMPORARY TEST CHEAT. Remove before release.\r\n\t\tif jo9_gloria_event = 0 and (jo9_gloria_successor = 0 or slave_state ! CONST_INT['no_slave']):\r\n\t\t\tfunc('$menu', 'exec_options', $menu_item_requirementsestate, 'dynamic $jo9_gloria_test & sp_txt = 1 & gt $curloc', '[테스트] 글로리아 퀘스트 준비')\r\n\t\tend\r\n! JO9 MOD END GLORIA_QUEST_TEST_CHEAT_20261108\r\n",
+      "count": 1,
+      "patchId": "GLORIA_QUEST_TEST_CHEAT_20261108"
+    }
+  ]
+}

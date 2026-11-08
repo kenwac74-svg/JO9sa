@@ -1,0 +1,49 @@
+{
+  "id": "2026-11-08_gloria_join_intimacy",
+  "status": "APPROVED",
+  "description": "사용자 지시: 영입 가격에 따라 글로리아의 첫 상태를 맞춘다. 원인은 새 노예에게 붙는 낯선 세계 무드릿(neg_slave, 글로리아는 13일)으로 기분이 음수가 되어 적극적 성격(temper 4) 때문에 관심병으로 판정된 것. neg_slave를 지우고, 1만은 이사벨라 수준(습관3·이성5·본능3, 다정함·칭찬·보상 무드릿 7일), 5천은 습관2·이성3·본능2와 무드릿 2개, 2,500은 동기 없이 두려움만 최고값이 되어 온순함(순응)으로 판정되게 하고 절망은 우울증 판정을 피하려 2에서 1로 낮춘다.",
+  "before_sha256": "f7fbeae2e0750dceb052eb35ae6578e77e47a9c9111f519626c049abb8e26fb1",
+  "after_sha256": "76642a0aec729faf60bed6dba4e0ee83ae05d1417e3d2009e9321a9a49f05d93",
+  "edits": [
+    {
+      "location": "#npc_base",
+      "field": "body",
+      "old": "\t\t\tslave['mood'] = 4\r\n",
+      "new": "! JO9 MOD START GLORIA_JOIN_INTIMACY_20261108\r\n! Gloria has lived in Rome for years, so the new-slave homesick moodlet does not apply.\r\n! Drives and good moodlets set her starting state by price: 10000 close like Isabella, 5000 warm, 2500 plain docile.\r\n\t\t\tslave['neg_slave'] = 0\r\n\t\t\tslave['custom'] = jo9_gloria_custom\r\n\t\t\tslave_rate['custom'] = 0\r\n\t\t\tslave['rational'] = jo9_gloria_rational\r\n\t\t\tslave_rate['rational'] = 0\r\n\t\t\tslave['instinct'] = jo9_gloria_instinct\r\n\t\t\tslave_rate['instinct'] = 0\r\n\t\t\tif jo9_gloria_price >= 10000:\r\n\t\t\t\tslave['pos_gentle'] = 7\r\n\t\t\t\tslave['pos_praise'] = 7\r\n\t\t\t\tslave['pos_reward'] = 7\r\n\t\t\telseif jo9_gloria_price >= 5000:\r\n\t\t\t\tslave['pos_gentle'] = 7\r\n\t\t\t\tslave['pos_praise'] = 7\r\n\t\t\tend\r\n! JO9 MOD END GLORIA_JOIN_INTIMACY_20261108\r\n",
+      "count": 1,
+      "patchId": "GLORIA_JOIN_INTIMACY_20261108"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\tjo9_gloria_price = 10000\r\n\tjo9_gloria_moral = 3\r\n",
+      "new": "\tjo9_gloria_price = 10000\r\n\tjo9_gloria_moral = 3\r\n! JO9 MOD START GLORIA_JOIN_INTIMACY_20261108\r\n\tjo9_gloria_custom = 3\r\n\tjo9_gloria_rational = 5\r\n\tjo9_gloria_instinct = 3\r\n! JO9 MOD END GLORIA_JOIN_INTIMACY_20261108\r\n",
+      "count": 1,
+      "patchId": "GLORIA_JOIN_INTIMACY_20261108"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\tjo9_gloria_price = 5000\r\n\tjo9_gloria_moral = 2\r\n",
+      "new": "\tjo9_gloria_price = 5000\r\n\tjo9_gloria_moral = 2\r\n! JO9 MOD START GLORIA_JOIN_INTIMACY_20261108\r\n\tjo9_gloria_custom = 2\r\n\tjo9_gloria_rational = 3\r\n\tjo9_gloria_instinct = 2\r\n! JO9 MOD END GLORIA_JOIN_INTIMACY_20261108\r\n",
+      "count": 1,
+      "patchId": "GLORIA_JOIN_INTIMACY_20261108"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\tjo9_gloria_price = 2500\r\n\tjo9_gloria_moral = 1\r\n",
+      "new": "\tjo9_gloria_price = 2500\r\n\tjo9_gloria_moral = 1\r\n! JO9 MOD START GLORIA_JOIN_INTIMACY_20261108\r\n\tjo9_gloria_custom = 0\r\n\tjo9_gloria_rational = 0\r\n\tjo9_gloria_instinct = 0\r\n! JO9 MOD END GLORIA_JOIN_INTIMACY_20261108\r\n",
+      "count": 1,
+      "patchId": "GLORIA_JOIN_INTIMACY_20261108"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\tjo9_gloria_fear = 2\r\n\tjo9_gloria_angst = 2\r\n",
+      "new": "\tjo9_gloria_fear = 2\r\n! JO9 MOD START GLORIA_JOIN_INTIMACY_20261108\r\n! Angst 2 would read as depressed; a forced sale should leave her plainly docile.\r\n\tjo9_gloria_angst = 1\r\n! JO9 MOD END GLORIA_JOIN_INTIMACY_20261108\r\n",
+      "count": 1,
+      "patchId": "GLORIA_JOIN_INTIMACY_20261108"
+    }
+  ]
+}

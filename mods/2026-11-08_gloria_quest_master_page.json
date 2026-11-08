@@ -1,0 +1,17 @@
+{
+  "id": "2026-11-08_gloria_quest_master_page",
+  "status": "APPROVED",
+  "description": "사용자 지시: 글로리아 3페이지에서 선택지를 빼고, 4페이지에 주인공 대사(내가 데려온 후임에게 자리를 내주게 됐다니 안된 일이군)를 넣어 그 아래에 선택지 4개를 보인다.",
+  "before_sha256": "b42eebcf264868b685aed77cee98ef9f0db9113cc4f51dfcd3c4ee2a0066e847",
+  "after_sha256": "07791d3182be0e3434bc3292c4ff8228ed64af33483e3fa491d39d8df87badfd",
+  "edits": [
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "잘 돌아갈 거예요.<br><br>' + $jo9_gloria_choices + '</div>'\r\nend\r\nif interaction_city = 951542:",
+      "new": "잘 돌아갈 거예요.</div>'\r\n! JO9 MOD START GLORIA_QUEST_MASTER_PAGE_20261108\r\n! Page 4 is the protagonist reply with the four choices under it.\r\n\t$text[4] = '[<<$master_name>>]<br>&nbsp;흠… 내가 데려온 <<$jo9_gloria_successor_name>>, 그 아이에게 자리를 내주게 됐다니. 거참, 안된 일이군….<br><br>' + $jo9_gloria_choices + '</div>'\r\n! JO9 MOD END GLORIA_QUEST_MASTER_PAGE_20261108\r\nend\r\nif interaction_city = 951542:",
+      "count": 1,
+      "patchId": "GLORIA_QUEST_MASTER_PAGE_20261108"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "id": "2026-11-08_gloria_2500_docile",
+  "status": "APPROVED",
+  "description": "사용자 지시: 2,500 스파크 결말은 인식 4에서도 온순함을 유지한다. 두려움과 인식이 같으면 복종중 판정이 덮어쓰므로 두려움을 5로 올리고, 두려움이 용기(기질 4+기분) 이상이면 두려움 상태가 되므로 중립 무드릿 3개(괜찮아요, 푹 쉬었어요, 푹 잤어요, 7일)로 기분을 +3에 둔다.",
+  "before_sha256": "0191fabef81ca80908a79f1615e042be0abc0bbb818c360082d811981ee3bef2",
+  "after_sha256": "d10b269e391e570058744cd4f9cee128ceca30ab5f5dde62a678f76de470fcba",
+  "edits": [
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\tjo9_gloria_fear = 2\r\n! JO9 MOD START GLORIA_JOIN_INTIMACY_20261108\r\n",
+      "new": "\tjo9_gloria_fear = 5\r\n! JO9 MOD START GLORIA_JOIN_INTIMACY_20261108\r\n",
+      "count": 1,
+      "patchId": "GLORIA_2500_DOCILE_20261108"
+    },
+    {
+      "location": "#npc_base",
+      "field": "body",
+      "old": "\t\t\telseif jo9_gloria_price >= 5000:\r\n\t\t\t\tslave['pos_gentle'] = 7\r\n\t\t\t\tslave['pos_praise'] = 7\r\n\t\t\tend\r\n",
+      "new": "\t\t\telseif jo9_gloria_price >= 5000:\r\n\t\t\t\tslave['pos_gentle'] = 7\r\n\t\t\t\tslave['pos_praise'] = 7\r\n! JO9 MOD START GLORIA_2500_DOCILE_20261108\r\n! Neutral moodlets keep mood at plus 3 so fear 5 stays under courage; she reads docile, not frightened.\r\n\t\t\telse\r\n\t\t\t\tslave['pos_'] = 7\r\n\t\t\t\tslave['pos_well_rested'] = 7\r\n\t\t\t\tslave['pos_sleep'] = 7\r\n! JO9 MOD END GLORIA_2500_DOCILE_20261108\r\n\t\t\tend\r\n",
+      "count": 1,
+      "patchId": "GLORIA_2500_DOCILE_20261108"
+    }
+  ]
+}

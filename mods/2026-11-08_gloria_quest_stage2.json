@@ -1,0 +1,81 @@
+{
+  "id": "2026-11-08_gloria_quest_stage2",
+  "status": "APPROVED",
+  "description": "글로리아 퀘스트 2단계(사용자 승인 대사·규칙). 첫 A 이상 비서 납품 60일 뒤 노예 칸이 비어 있으면 부동산 메뉴에 글로리아에게 말을 건다가 생기고, 우울한 대화 3페이지 뒤 선택지 4개(1만·5천·2,500 스파크, 돌아간다)를 띄운다. 성공하면 고유 타입 2341 글로리아를 노예로 들이며 헌신·두려움·절망을 규칙대로 정하고 노예근성과 기분 행복함을 켠다. 모든 결말에서 부동산 NPC 이름·그림을 후임으로 바꾸고, 대사 속 글로리아 이름을 후임으로 치환하며, 계약 뒤 서비스는 비성적 후임 장면으로 고정한다.",
+  "before_sha256": "838afbf0522e27dd069088fa41158ab7c3071e479122a758559c943b1522e251",
+  "after_sha256": "9e2e3120ffc75455b10a6737009cef8022b61a64dd9f764ac8d9c00114e0098a",
+  "edits": [
+    {
+      "location": "#npc_base",
+      "field": "body",
+      "old": "npc_attitude['realtor'] = 32\r\n",
+      "new": "npc_attitude['realtor'] = 32\r\n! JO9 MOD START GLORIA_QUEST_STAGE2_20261108\r\n! Gloria keeps her own NPC id for the quest scenes; the realtor id is taken over by the successor.\r\n$npc_image['jo9_gloria'] = 'realtor'\r\n$npc_name['jo9_gloria'] = '글로리아'\r\n$npc_status['jo9_gloria'] = $npc_status['realtor']\r\n$npc_alignment['jo9_gloria'] = 'neutral'\r\n$npc_info['jo9_gloria'] = $npc_info['realtor']\r\nnpc_attitude['jo9_gloria'] = 32\r\n$jo9_gloria_apply_successor = {\r\n\tif jo9_gloria_event > 0 and $jo9_gloria_successor_name ! '':\r\n\t\t$npc_name['realtor'] = $jo9_gloria_successor_name\r\n\t\tif $jo9_gloria_successor_image ! '': $npc_image['realtor'] = $jo9_gloria_successor_image\r\n\tend\r\n}\r\ndynamic $jo9_gloria_apply_successor\r\n$jo9_gloria_join = {\r\n\tjo9_gloria_join_ok = 0\r\n\tspecial_stock = 2341\r\n\tgs 'generate_stock'\r\n\tif stock_state = CONST_INT['slave_exist'] and stock_type = 2341:\r\n\t\tif func('stock_to_slave_nogt') = 1:\r\n\t\t\tjo9_gloria_join_ok = 1\r\n\t\t\tsparks -= jo9_gloria_price\r\n\t\t\tunique_slave['Gloria'] = 1\r\n\t\t\tslave['moral'] = jo9_gloria_moral\r\n\t\t\tslave_rate['moral'] = 0\r\n\t\t\tslave['fear'] = jo9_gloria_fear\r\n\t\t\tslave_rate['fear'] = 0\r\n\t\t\tslave['angst'] = jo9_gloria_angst\r\n\t\t\tslave_rate['angst'] = 0\r\n\t\t\tslave['mood'] = 4\r\n\t\t\tslave['jo9_slave_nature'] = 1\r\n\t\t\tslave['jo9_slave_nature_initialized'] = 1\r\n\t\t\tgs '$slave_price'\r\n\t\tend\r\n\tend\r\n}\r\n! JO9 MOD END GLORIA_QUEST_STAGE2_20261108\r\n",
+      "count": 1,
+      "patchId": "GLORIA_QUEST_STAGE2_20261108"
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "func('$menu', 'interaction_city', $menu_item_requirementsestate, menu_requirementsestate, '채용조건을 물어본다.')\r\n",
+      "new": "func('$menu', 'interaction_city', $menu_item_requirementsestate, menu_requirementsestate, '채용조건을 물어본다.')\r\n! JO9 MOD START GLORIA_QUEST_STAGE2_20261108\r\n! Sixty days after the first A or better secretary was delivered, with the slave slot empty.\r\n\t\tif jo9_gloria_successor = 1 and jo9_gloria_event = 0 and day - jo9_gloria_successor_day >= 60 and slave_state = CONST_INT['no_slave']:\r\n\t\t\tfunc('$menu', 'interaction_city', $menu_item_requirementsestate, 951541, '글로리아에게 말을 건다')\r\n\t\tend\r\n! JO9 MOD END GLORIA_QUEST_STAGE2_20261108\r\n",
+      "count": 1,
+      "patchId": "GLORIA_QUEST_STAGE2_20261108"
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "$realtor_options[2] = {",
+      "new": "! JO9 MOD START GLORIA_QUEST_STAGE2_20261108\r\n$realtor_options[5] = {\r\n\tnpc = 1\r\n\t$npc_id = 'jo9_gloria'\r\n\t$text_display = '<br><br><br>'\r\n\tfunc('$menu', '===BEGIN===', 'column_0')\r\n\tif sparks >= 10000:\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_requirementsestate, 951542, '부동산 주인에게 1만 스파크를 일시불로 내고 글로리아를 사겠다고 한다 ($10000)')\r\n\telse\r\n\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_employeeestate_gray, empty, '부동산 주인에게 1만 스파크를 일시불로 내고 글로리아를 사겠다고 한다 ($10000)', '스파크가 부족하다')\r\n\tend\r\n\tif sparks >= 5000:\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_requirementsestate, 951543, '부동산 주인에게 5천 스파크에 글로리아를 넘길 생각이 없냐고 묻는다 ($5000)')\r\n\telse\r\n\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_employeeestate_gray, empty, '부동산 주인에게 5천 스파크에 글로리아를 넘길 생각이 없냐고 묻는다 ($5000)', '스파크가 부족하다')\r\n\tend\r\n\tif sparks >= 2500:\r\n\t\tfunc('$menu', 'interaction_city', $menu_item_requirementsestate, 951544, '부동산 주인에게 2,500 스파크에 글로리아를 넘기라고 강요한다 ($2500)')\r\n\telse\r\n\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_employeeestate_gray, empty, '부동산 주인에게 2,500 스파크에 글로리아를 넘기라고 강요한다 ($2500)', '스파크가 부족하다')\r\n\tend\r\n\tfunc('$menu', 'interaction_city', $menu_item_requirementsestate, 951545, '글로리아에게 관심 없다. 돌아간다')\r\n\tfunc('$menu', '===END===')\r\n}\r\n\r\n! JO9 MOD END GLORIA_QUEST_STAGE2_20261108\r\n$realtor_options[2] = {",
+      "count": 1,
+      "patchId": "GLORIA_QUEST_STAGE2_20261108"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "if interaction_city = 1311:",
+      "new": "! JO9 MOD START GLORIA_QUEST_STAGE2_20261108\r\n! Gloria quest talk. The choices open as realtor menu page 5 after the last page.\r\nif interaction_city = 951541:\r\n\tnpc = 1\r\n\t$npc_id = 'jo9_gloria'\r\n\t$place = 'realtor_office'\r\n\t$return_lock = 'shop_general'\r\n\tkillvar '$text'\r\n\tsp_txt = 5\r\n\t$text[1] = '[글로리아]<br>&nbsp;…오셨네요, <<$master_name>>님. 죄송해요, 오늘은 제가 좀… 아니에요. 어차피 곧 아시게 될 테니 말씀드릴게요.</div>'\r\n\t$text[2] = '[글로리아]<br>&nbsp;주인님께서 급하게 돈이 필요하시대요. 그래서 제가 다음 길드 경매에 나가게 됐어요. 서류도 벌써 제 손으로 다 꾸몄고요. 웃기죠, 제 매각 서류를 제가 쓰다니.</div>'\r\n\t$text[3] = '[글로리아]<br>&nbsp;제 자리는 <<$master_name>>님이 데려오신 <<$jo9_gloria_successor_name>>(이)가 맡게 될 거예요. 일도 금방 배우고 손님들 평도 좋아요. …그러니까 걱정 마세요. 사무소는 저 없이도 잘 돌아갈 거예요.</div>'\r\nend\r\nif interaction_city = 951542:\r\n\tnpc = 1\r\n\t$npc_id = 'jo9_gloria'\r\n\t$place = 'realtor_office'\r\n\t$return_lock = 'shop_general'\r\n\tkillvar '$text'\r\n\tsp_txt = 1\r\n\tif sparks < 10000 or slave_state ! CONST_INT['no_slave'] or jo9_gloria_event ! 0: sp_txt = 1 & gt 'shop_general'\r\n\tjo9_gloria_price = 10000\r\n\tjo9_gloria_moral = 2\r\n\tif jo9_cruel_mercy >= 7: jo9_gloria_moral += 1\r\n\tjo9_gloria_fear = iif(jo9_cruel_mercy <= -7, 2, 0)\r\n\tjo9_gloria_angst = 0\r\n\tif 1 = 1:\r\n\t\tdynamic $jo9_gloria_join\r\n\t\tif jo9_gloria_join_ok = 0: sp_txt = 1 & gt 'shop_general'\r\n\t\tjo9_gloria_event = 1\r\n\t\tdynamic $jo9_gloria_apply_successor\r\n\t\t$text[1] = '<br> 당신은 사무소 주인을 불러 그 자리에서 1만 스파크를 세어 건넸다. 경매에 내놓아도 그만한 값은 받기 어렵다는 걸 아는 주인은 두말없이 서류에 서명했다.'\r\n\t\t$text[2] = '[글로리아]<br>&nbsp;…정말요? 저를… 사신 거예요? 감사합니다, <<$master_name>>님. 이 은혜는 평생 잊지 않을게요.</div>'\r\n\tend\r\nend\r\nif interaction_city = 951543:\r\n\tnpc = 1\r\n\t$npc_id = 'jo9_gloria'\r\n\t$place = 'realtor_office'\r\n\t$return_lock = 'shop_general'\r\n\tkillvar '$text'\r\n\tsp_txt = 1\r\n\tif sparks < 5000 or slave_state ! CONST_INT['no_slave'] or jo9_gloria_event ! 0: sp_txt = 1 & gt 'shop_general'\r\n\tjo9_gloria_price = 5000\r\n\tjo9_gloria_moral = 1\r\n\tif jo9_cruel_mercy >= 7: jo9_gloria_moral += 1\r\n\tjo9_gloria_fear = iif(jo9_cruel_mercy <= -7, 2, 0)\r\n\tjo9_gloria_angst = 0\r\n\tif brand_reputation = 5 or guild_reputation = 5:\r\n\t\tdynamic $jo9_gloria_join\r\n\t\tif jo9_gloria_join_ok = 0: sp_txt = 1 & gt 'shop_general'\r\n\t\tjo9_gloria_event = 1\r\n\t\tdynamic $jo9_gloria_apply_successor\r\n\t\t$text[1] = '<br> 당신이 5천 스파크를 제시하자 주인은 얼굴을 찌푸렸다. 하지만 상대가 로마에서 손꼽히는 조련사라는 걸 떠올리고는, 괜히 척질 필요는 없다고 판단한 듯 고개를 끄덕였다.'\r\n\t\t$text[2] = '[글로리아]<br>&nbsp;…감사합니다. 경매장보다는… 훨씬 나아요.</div>'\r\n\telse\r\n\t\tjo9_gloria_event = 2\r\n\t\tdynamic $jo9_gloria_apply_successor\r\n\t\t$text[1] = '<br> 주인은 코웃음을 쳤다. \"경매에 내놓으면 그 두 배는 받습니다. 흥정은 다른 데 가서 하시죠.\" 글로리아는 말없이 고개를 숙였다. 며칠 뒤, 그녀는 경매장으로 넘겨졌다.'\r\n\tend\r\nend\r\nif interaction_city = 951544:\r\n\tnpc = 1\r\n\t$npc_id = 'jo9_gloria'\r\n\t$place = 'realtor_office'\r\n\t$return_lock = 'shop_general'\r\n\tkillvar '$text'\r\n\tsp_txt = 1\r\n\tif sparks < 2500 or slave_state ! CONST_INT['no_slave'] or jo9_gloria_event ! 0: sp_txt = 1 & gt 'shop_general'\r\n\tjo9_gloria_price = 2500\r\n\tjo9_gloria_moral = 0\r\n\tjo9_gloria_fear = 2\r\n\tjo9_gloria_angst = 2\r\n\tif (brand_reputation = 5 or guild_reputation = 5) and jo9_cruel_mercy <= -30:\r\n\t\tdynamic $jo9_gloria_join\r\n\t\tif jo9_gloria_join_ok = 0: sp_txt = 1 & gt 'shop_general'\r\n\t\tjo9_gloria_event = 1\r\n\t\tdynamic $jo9_gloria_apply_successor\r\n\t\t$text[1] = '<br> 당신은 2,500 스파크를 책상 위에 던지고 주인 앞으로 바짝 다가섰다. 당신에 관한 소문을 아는 주인은 하얗게 질린 얼굴로 서류에 서명했다.'\r\n\t\t$text[2] = '[글로리아]<br>&nbsp;(떨리는 목소리로) …네, 주인님.</div>'\r\n\telse\r\n\t\tjo9_gloria_event = 2\r\n\t\tdynamic $jo9_gloria_apply_successor\r\n\t\t$text[1] = '<br> 주인은 당신의 협박에도 꿈쩍하지 않았다. \"여긴 조합이 보증하는 사무소입니다. 경비를 부르기 전에 나가 주시죠.\" 결국 글로리아는 예정대로 경매에 넘겨졌다.'\r\n\tend\r\nend\r\nif interaction_city = 951545:\r\n\tnpc = 1\r\n\t$npc_id = 'jo9_gloria'\r\n\t$place = 'realtor_office'\r\n\t$return_lock = 'shop_general'\r\n\tkillvar '$text'\r\n\tsp_txt = 1\r\n\tif jo9_gloria_event ! 0: gt 'shop_general'\r\n\tjo9_gloria_event = 2\r\n\tdynamic $jo9_gloria_apply_successor\r\n\t$text[1] = '<br> 당신은 글로리아에게 짧게 인사하고 사무소를 나섰다. 다음에 들렀을 때, 그녀의 자리에는 <<$jo9_gloria_successor_name>>(이)가 앉아 있었다.'\r\nend\r\n\r\n! JO9 MOD END GLORIA_QUEST_STAGE2_20261108\r\nif interaction_city = 1311:",
+      "count": 1,
+      "patchId": "GLORIA_QUEST_STAGE2_20261108"
+    },
+    {
+      "location": "interaction_result_city",
+      "field": "body",
+      "old": "\t\t\t$jo9_gloria_successor_name = $slave_name\r\n",
+      "new": "\t\t\t$jo9_gloria_successor_name = $slave_name\r\n\t\t\t$jo9_gloria_successor_image = '..\\' + $iif($fullsecretary[slave_type] ! '', $fullsecretary[slave_type], $fullimage[slave_type])\r\n",
+      "count": 1,
+      "patchId": "GLORIA_QUEST_STAGE2_20261108"
+    },
+    {
+      "location": "interaction_result_city",
+      "field": "body",
+      "old": "\telseif master_excitement >= 0:\r\n\t\tif is_master_virgin = 1:",
+      "new": "! JO9 MOD START GLORIA_QUEST_STAGE2_20261108\r\n! Without Gloria the realtor service is always the non-sexual version.\r\n! JO9 MOD END GLORIA_QUEST_STAGE2_20261108\r\n\telseif master_excitement >= 0 and jo9_gloria_event = 0:\r\n\t\tif is_master_virgin = 1:",
+      "count": 1,
+      "patchId": "GLORIA_QUEST_STAGE2_20261108"
+    },
+    {
+      "location": "interaction_result_city",
+      "field": "body",
+      "old": "\t\tcopyarr '$text', '$realtor_no_sex'\r\n\tend\r\nend",
+      "new": "\t\tcopyarr '$text', '$realtor_no_sex'\r\n\tend\r\n! JO9 MOD START GLORIA_QUEST_STAGE2_20261108\r\n\tif jo9_gloria_event > 0:\r\n\t\tkillvar '$text'\r\n\t\t$text[1] = '[<<$jo9_gloria_successor_name>>]<br>&nbsp;여기와 여기에 서명해 주세요. …네, 좋습니다! 새 집 계약을 축하드려요, <<$master_name>>님. 사무소 서비스로 앞으로 한 시간 동안 이사 정리와 식사 준비를 도와드릴게요.</div>'\r\n\t\t$text[2] = '[<<$master_name>>]<br>&nbsp;좋아. 짐 정리하고, 따뜻한 걸로 한 끼 차려 줘.</div>'\r\n\t\t$text[3] = '<br> <<$jo9_gloria_successor_name>>(은)는 빠르고 꼼꼼하게 집을 정리하고 꽤 괜찮은 식사를 차렸다. 당신 손에서 배운 솜씨가 여기서도 빛을 발했다.'\r\n\t\t$text[4] = '<br> 그녀는 새 집 열쇠를 건넨 뒤 정중히 인사하고 사무소로 돌아갔다. 당신은 짐꾼들이 짐을 가져올 때까지 새 집을 둘러보았다.'\r\n\tend\r\n! JO9 MOD END GLORIA_QUEST_STAGE2_20261108\r\nend",
+      "count": 1,
+      "patchId": "GLORIA_QUEST_STAGE2_20261108"
+    },
+    {
+      "location": "interaction_screen_city",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$jo9_gold_result_text>></div>'",
+      "new": "! JO9 MOD START GLORIA_QUEST_STAGE2_20261108\r\nif $npc_id = 'realtor' and jo9_gloria_event > 0 and $jo9_gloria_successor_name ! '': $jo9_gold_result_text = $replace($jo9_gold_result_text, '글로리아', $jo9_gloria_successor_name)\r\n! JO9 MOD END GLORIA_QUEST_STAGE2_20261108\r\n*p '<div id = \"text\"><<$jo9_gold_result_text>></div>'",
+      "count": 1,
+      "patchId": "GLORIA_QUEST_STAGE2_20261108"
+    },
+    {
+      "location": "choice_screen",
+      "field": "body",
+      "old": "*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "new": "! JO9 MOD START GLORIA_QUEST_STAGE2_20261108\r\nif $npc_id = 'realtor' and jo9_gloria_event > 0 and $jo9_gloria_successor_name ! '': $text[txt] = $replace($text[txt], '글로리아', $jo9_gloria_successor_name)\r\n! JO9 MOD END GLORIA_QUEST_STAGE2_20261108\r\n*p '<div id = \"text\"><<$text[txt]>></div>'",
+      "count": 1,
+      "patchId": "GLORIA_QUEST_STAGE2_20261108"
+    }
+  ]
+}

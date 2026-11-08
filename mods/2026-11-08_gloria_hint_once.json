@@ -1,0 +1,17 @@
+{
+  "id": "2026-11-08_gloria_hint_once",
+  "status": "APPROVED",
+  "description": "사용자 지시: 글로리아 퀘스트는 반복 퀘스트가 아니므로, 퀘스트가 끝난 뒤(jo9_gloria_event > 0)에는 채용조건 대화에서 A 등급 귓속말 페이지(4페이지)를 뺀다.",
+  "before_sha256": "156730f006f7797c7b9604b394ad07c35093c2de20372263088a4a062e9ae9c7",
+  "after_sha256": "f5f53e0e5b0224bb9b5532cef535b0761d6944e87320eace114deca46a2e180d",
+  "edits": [
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "if interaction_city = 139:\r\n\tnpc = 1\r\n\t$npc_id = 'realtor'\r\n\t$place = 'realtor_office'\r\n\t$return_lock = 'shop_general'\r\n\tcopyarr '$text', '$realtor_pref'\r\n",
+      "new": "if interaction_city = 139:\r\n\tnpc = 1\r\n\t$npc_id = 'realtor'\r\n\t$place = 'realtor_office'\r\n\t$return_lock = 'shop_general'\r\n\tcopyarr '$text', '$realtor_pref'\r\n! JO9 MOD START GLORIA_HINT_ONCE_20261108\r\n! The Gloria hint is page 4. The quest is not repeatable, so the page is dropped once it ended.\r\n\tif jo9_gloria_event > 0:\r\n\t\t$text[4] = $text[5]\r\n\t\t$text[5] = $text[6]\r\n\t\tkillvar '$text', 6\r\n\tend\r\n! JO9 MOD END GLORIA_HINT_ONCE_20261108\r\n",
+      "count": 1,
+      "patchId": "GLORIA_HINT_ONCE_20261108"
+    }
+  ]
+}

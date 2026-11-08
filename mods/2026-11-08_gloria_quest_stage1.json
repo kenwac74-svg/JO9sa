@@ -1,0 +1,33 @@
+{
+  "id": "2026-11-08_gloria_quest_stage1",
+  "status": "APPROVED",
+  "description": "글로리아 퀘스트 1단계(사용자 승인 대사). 채용조건 대화 3페이지 뒤에 A 등급 이상은 데려오지 말라는 귓속말 페이지를 넣고 기존 4·5페이지를 5·6으로 민다. 부동산에 종합 등급 A(7) 이상 비서를 처음 납품하면 후임 정보(이름, 납품일, 노예 배열 사본)를 판매로 지워지기 전에 저장한다. 대화 메뉴·선택지·NPC 교체는 다음 단계.",
+  "before_sha256": "c33bbf9eb0827209861a443078e0fedd275a2026f1d7051201470019166772d7",
+  "after_sha256": "838afbf0522e27dd069088fa41158ab7c3071e479122a758559c943b1522e251",
+  "edits": [
+    {
+      "location": "#npc_base",
+      "field": "body",
+      "old": "! JO9 MOD END ARGON1114_TEXT_046_01\r\n! JO9 MOD START ARGON1114_TEXT_047_01 | 2026-10-21_argon_11_14_editorial\r\n$realtor_pref[4] = '[글로리아]<br>&nbsp;사업이",
+      "new": "! JO9 MOD END ARGON1114_TEXT_046_01\r\n! JO9 MOD START GLORIA_QUEST_STAGE1_20261108\r\n! Gloria quest hint. Delivering an A or better secretary starts her quest.\r\n$realtor_pref[4] = '[글로리아]<br>&nbsp;(목소리를 낮추며) 아, <<$rating[demand_rating[''realtor'']]>> 등급 이상이면 되긴 하는데요… <<$master_name>>님, A 등급이 넘는 아이는 데려오지 마세요. <<$master_name>>님도 $<<common_price[demand_rating[''realtor'']]>>이라는 헐값에 그런 고급 노예를 넘기실 생각은 없으시죠? 저는 부하 직원이 필요하지, 경쟁자가 오는 건 반갑지 않거든요.</div>'\r\n! JO9 MOD END GLORIA_QUEST_STAGE1_20261108\r\n! JO9 MOD START ARGON1114_TEXT_047_01 | 2026-10-21_argon_11_14_editorial\r\n$realtor_pref[5] = '[글로리아]<br>&nbsp;사업이",
+      "count": 1,
+      "patchId": "GLORIA_QUEST_STAGE1_20261108"
+    },
+    {
+      "location": "#npc_base",
+      "field": "body",
+      "old": "$realtor_pref[5] = '[글로리아]<br>&nbsp;복잡한",
+      "new": "$realtor_pref[6] = '[글로리아]<br>&nbsp;복잡한",
+      "count": 1,
+      "patchId": "GLORIA_QUEST_STAGE1_20261108"
+    },
+    {
+      "location": "interaction_result_city",
+      "field": "body",
+      "old": "\t\tif slave['parasite'] > 0: sold_parasite_slave += 1 &! trigger follow-up event\r\n\t\tdynamic $clear_slave_instance, 'slave'\r\n",
+      "new": "\t\tif slave['parasite'] > 0: sold_parasite_slave += 1 &! trigger follow-up event\r\n! JO9 MOD START GLORIA_QUEST_STAGE1_20261108\r\n! The first A or better secretary sold to the realtor becomes the successor of Gloria. Saved before the slave is cleared.\r\n\t\tif $npc_id = 'realtor' and rating >= 7 and jo9_gloria_successor = 0:\r\n\t\t\tjo9_gloria_successor = 1\r\n\t\t\tjo9_gloria_successor_day = day\r\n\t\t\t$jo9_gloria_successor_name = $slave_name\r\n\t\t\tkillvar 'jo9_gloria_successor_slave'\r\n\t\t\tcopyarr 'jo9_gloria_successor_slave', 'slave'\r\n\t\tend\r\n! JO9 MOD END GLORIA_QUEST_STAGE1_20261108\r\n\t\tdynamic $clear_slave_instance, 'slave'\r\n",
+      "count": 1,
+      "patchId": "GLORIA_QUEST_STAGE1_20261108"
+    }
+  ]
+}

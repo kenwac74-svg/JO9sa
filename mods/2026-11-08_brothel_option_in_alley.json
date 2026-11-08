@@ -1,0 +1,57 @@
+{
+  "id": "2026-11-08_brothel_option_in_alley",
+  "status": "APPROVED",
+  "description": "사용자 지시: 창관을 인수한다 선택지를 홍등가 구역 메뉴에서 사창가 골목 안(남녀 주인공 메뉴 모두, 큰길로 나간다 위)으로 옮기고, 중개인 대사의 위치 표현을 사창가 골목으로 맞춘다. 예전 세이브용 아이콘 보충도 함께 옮긴다.",
+  "before_sha256": "e9aa0bdd06de01842037142e0ee20f538bbbf89e36041fdb915d7cfe2e01c2eb",
+  "after_sha256": "33a637f415decbb319bcf0d3d7112ff1f73b903a7abd12dfbc74b407a260fcf8",
+  "edits": [
+    {
+      "location": "city_menu_form",
+      "field": "body",
+      "old": "! JO9 MOD START BROKER_BROTHEL_OFFER_20261108\r\n! Brothel takeover is announced by the broker but stays disabled until the brothel mod exists.\r\n  IF broker_quest = 1:\r\n! JO9 MOD START BROTHEL_ICON_SAVE_FALLBACK_20261108\r\n! Menu icons are copied into the save at new game, so older saves lack this new icon.\r\n    if $menu_item_brothel_buy_gray = '': $menu_item_brothel_buy_gray = '<li id=\"grey\" style=\"background: url(''content/pic/ui/legacy_overhaul/brothel_buy_gray.png'') no-repeat left top;\">'\r\n! JO9 MOD END BROTHEL_ICON_SAVE_FALLBACK_20261108\r\n    FUNC('$menu', 'location_gray_tooltip', $menu_item_brothel_buy_gray, empty, '창관을 인수한다 ($50000)', '창관 인수는 아직 준비 중이다.')\r\n  END\r\n! JO9 MOD END BROKER_BROTHEL_OFFER_20261108\r\n",
+      "new": "! JO9 BROTHEL_OPTION_IN_ALLEY_20261108: the brothel takeover option moved into the alley menu.\r\n",
+      "count": 1,
+      "patchId": "BROTHEL_OPTION_IN_ALLEY_20261108"
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": " FUNC('$menu', 'location_gray', $menu_item_Vip_club_gray, empty, 'VIP 클럽')\r\nEND\r\nFUNC('$menu', 'city_form', $menu_item_Redlight, menu_leaveredlight_district, '큰길로 나간다')",
+      "new": " FUNC('$menu', 'location_gray', $menu_item_Vip_club_gray, empty, 'VIP 클럽')\r\nEND\r\n IF broker_quest = 1:\r\n! JO9 MOD START BROTHEL_OPTION_IN_ALLEY_20261108\r\n! Brothel takeover lives inside the alley. It stays disabled until the brothel mod exists.\r\n! Menu icons are copied into the save at new game, so older saves lack this new icon.\r\n  if $menu_item_brothel_buy_gray = '': $menu_item_brothel_buy_gray = '<li id=\"grey\" style=\"background: url(''content/pic/ui/legacy_overhaul/brothel_buy_gray.png'') no-repeat left top;\">'\r\n  FUNC('$menu', 'location_gray_tooltip', $menu_item_brothel_buy_gray, empty, '창관을 인수한다 ($50000)', '창관 인수는 아직 준비 중이다.')\r\n! JO9 MOD END BROTHEL_OPTION_IN_ALLEY_20261108\r\n END\r\nFUNC('$menu', 'city_form', $menu_item_Redlight, menu_leaveredlight_district, '큰길로 나간다')",
+      "count": 2,
+      "patchId": "BROTHEL_OPTION_IN_ALLEY_20261108"
+    },
+    {
+      "location": "#txt_man",
+      "field": "body",
+      "old": "홍등가에 창관이 하나 매물로 나왔습니다. 전 주인이",
+      "new": "홍등가 사창가 골목에 창관이 하나 매물로 나왔습니다. 전 주인이",
+      "count": 1,
+      "patchId": "BROTHEL_OPTION_IN_ALLEY_20261108"
+    },
+    {
+      "location": "#txt_man",
+      "field": "body",
+      "old": "어떻습니까, 홍등가에 있는 창관 하나를 인수해서 장사해 볼 생각 있으십니까?",
+      "new": "어떻습니까, 사창가 골목에 있는 그 창관을 인수해서 장사해 볼 생각 있으십니까?",
+      "count": 1,
+      "patchId": "BROTHEL_OPTION_IN_ALLEY_20261108"
+    },
+    {
+      "location": "#txt_man",
+      "field": "body",
+      "old": "서류가 정리되는 대로 홍등가에서 거래를 진행하실 수 있게 해 두지요.",
+      "new": "서류가 정리되는 대로 사창가 골목에서 거래를 진행하실 수 있게 해 두지요.",
+      "count": 1,
+      "patchId": "BROTHEL_OPTION_IN_ALLEY_20261108"
+    },
+    {
+      "location": "#txt_man",
+      "field": "body",
+      "old": "-이제 홍등가에서 창관 인수를 알아볼 수 있습니다.-",
+      "new": "-이제 홍등가 사창가 골목에서 창관 인수를 알아볼 수 있습니다.-",
+      "count": 1,
+      "patchId": "BROTHEL_OPTION_IN_ALLEY_20261108"
+    }
+  ]
+}

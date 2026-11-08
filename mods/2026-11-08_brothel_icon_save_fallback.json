@@ -1,0 +1,17 @@
+{
+  "id": "2026-11-08_brothel_icon_save_fallback",
+  "status": "APPROVED",
+  "description": "창관을 인수한다 선택지가 예전 세이브에서 보이지 않던 문제. 메뉴 아이콘 변수는 새 게임 시작 때 menu_icon.json에서 읽혀 세이브에 저장되므로, 예전 세이브에는 새 아이콘 변수가 비어 있어 메뉴 항목의 li가 빠졌다. 값이 비어 있으면 그 자리에서 같은 아이콘 HTML로 채운다.",
+  "before_sha256": "5f3d547a81ad059c668182b44eb9b6112a6e22925551685309d642ff64e6f2eb",
+  "after_sha256": "1772cd1b6948bcaabcb4b0a12c547dd568a276f55a1029a36f23d5f39459eccc",
+  "edits": [
+    {
+      "location": "city_menu_form",
+      "field": "body",
+      "old": "  IF broker_quest = 1:\r\n    FUNC('$menu', 'location_gray_tooltip', $menu_item_brothel_buy_gray,",
+      "new": "  IF broker_quest = 1:\r\n! JO9 MOD START BROTHEL_ICON_SAVE_FALLBACK_20261108\r\n! Menu icons are copied into the save at new game, so older saves lack this new icon.\r\n    if $menu_item_brothel_buy_gray = '': $menu_item_brothel_buy_gray = '<li id=\"grey\" style=\"background: url(''content/pic/ui/legacy_overhaul/brothel_buy_gray.png'') no-repeat left top;\">'\r\n! JO9 MOD END BROTHEL_ICON_SAVE_FALLBACK_20261108\r\n    FUNC('$menu', 'location_gray_tooltip', $menu_item_brothel_buy_gray,",
+      "count": 1,
+      "patchId": "BROTHEL_ICON_SAVE_FALLBACK_20261108"
+    }
+  ]
+}

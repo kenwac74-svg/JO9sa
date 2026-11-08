@@ -1,0 +1,25 @@
+{
+  "id": "2026-11-08_gloria_quest_test_cheat_copy",
+  "status": "APPROVED",
+  "description": "임시 테스트용(배포 전 제거). 테스트 버튼이 후임의 노예 정보도 복사해 인사말 헌신 단계를 시험할 수 있게 한다.",
+  "before_sha256": "175aa4600cf40092e09678a1056918c9d6e55ea3939c0e6393e504e59ef2076a",
+  "after_sha256": "f7fbeae2e0750dceb052eb35ae6578e77e47a9c9111f519626c049abb8e26fb1",
+  "edits": [
+    {
+      "location": "#npc_base",
+      "field": "body",
+      "old": "\t\t$jo9_gloria_successor_name = $assistant_name\r\n",
+      "new": "\t\t$jo9_gloria_successor_name = $assistant_name\r\n\t\tkillvar 'jo9_gloria_successor_slave'\r\n\t\tcopyarr 'jo9_gloria_successor_slave', 'assistant'\r\n",
+      "count": 1,
+      "patchId": "GLORIA_QUEST_TEST_CHEAT_20261108"
+    },
+    {
+      "location": "#npc_base",
+      "field": "body",
+      "old": "\t\t$jo9_gloria_successor_name = $slave_name\r\n\t\t$jo9_gloria_successor_image",
+      "new": "\t\t$jo9_gloria_successor_name = $slave_name\r\n\t\tkillvar 'jo9_gloria_successor_slave'\r\n\t\tcopyarr 'jo9_gloria_successor_slave', 'slave'\r\n\t\t$jo9_gloria_successor_image",
+      "count": 1,
+      "patchId": "GLORIA_QUEST_TEST_CHEAT_20261108"
+    }
+  ]
+}

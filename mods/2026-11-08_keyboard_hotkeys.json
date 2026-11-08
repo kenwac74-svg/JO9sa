@@ -1,0 +1,41 @@
+{
+  "id": "2026-11-08_keyboard_hotkeys",
+  "status": "APPROVED",
+  "description": "키보드 단축키 추가. 주인공·노예·조수 상태창에서 좌우 화살표로 상단 탭(보관함·목표·장비·일지 / 규칙·신체·장비·오라)을 옮기고, 지역 이동 패널이 보일 때 W N B V O E R C G 키로 해당 지역 이동 버튼을 누른다. 처리는 content/js/jo9_hotkeys.js가 하고 QSP는 그 스크립트를 싣기만 한다. 엔진이 이미 쓰는 키(S·A·D 등)는 엔진이 먼저 받는다.",
+  "before_sha256": "3ed148b3defa43003fe2ec033d15db14dcf817290271bc14079ee763ef0d750a",
+  "after_sha256": "48a5af1124758d3195b6fd1566803454327c3dbbcfb968fe8a24af23fda91bce",
+  "edits": [
+    {
+      "location": "sjm_UI_UIadds",
+      "field": "body",
+      "old": "\t*p '<<$tmp>>'\r\nend\r\n\r\n! Action of quarters buttons",
+      "new": "\t*p '<<$tmp>>'\r\n! JO9 MOD START KEYBOARD_HOTKEYS_20261108\r\n\t*p '<script src=\"content/js/jo9_hotkeys.js?v=20261108\"></script>'\r\n! JO9 MOD END KEYBOARD_HOTKEYS_20261108\r\nend\r\n\r\n! Action of quarters buttons",
+      "count": 1,
+      "patchId": "KEYBOARD_HOTKEYS_20261108"
+    },
+    {
+      "location": "master_stat",
+      "field": "body",
+      "old": "*p '<div id = \"bookmark_four\">일지</div>'\r\n",
+      "new": "*p '<div id = \"bookmark_four\">일지</div>'\r\n! JO9 MOD START KEYBOARD_HOTKEYS_20261108\r\n*p '<script src=\"content/js/jo9_hotkeys.js?v=20261108\"></script>'\r\n! JO9 MOD END KEYBOARD_HOTKEYS_20261108\r\n",
+      "count": 1,
+      "patchId": "KEYBOARD_HOTKEYS_20261108"
+    },
+    {
+      "location": "slave_stat",
+      "field": "body",
+      "old": "*p '<div id = \"bookmark_four\">오라</div>'\r\n",
+      "new": "*p '<div id = \"bookmark_four\">오라</div>'\r\n! JO9 MOD START KEYBOARD_HOTKEYS_20261108\r\n*p '<script src=\"content/js/jo9_hotkeys.js?v=20261108\"></script>'\r\n! JO9 MOD END KEYBOARD_HOTKEYS_20261108\r\n",
+      "count": 1,
+      "patchId": "KEYBOARD_HOTKEYS_20261108"
+    },
+    {
+      "location": "assistant_stat",
+      "field": "body",
+      "old": "*p '<div id = \"bookmark_four\">오라</div>'\r\n",
+      "new": "*p '<div id = \"bookmark_four\">오라</div>'\r\n! JO9 MOD START KEYBOARD_HOTKEYS_20261108\r\n*p '<script src=\"content/js/jo9_hotkeys.js?v=20261108\"></script>'\r\n! JO9 MOD END KEYBOARD_HOTKEYS_20261108\r\n",
+      "count": 1,
+      "patchId": "KEYBOARD_HOTKEYS_20261108"
+    }
+  ]
+}

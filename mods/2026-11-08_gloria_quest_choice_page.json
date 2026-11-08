@@ -1,0 +1,17 @@
+{
+  "id": "2026-11-08_gloria_quest_choice_page",
+  "status": "APPROVED",
+  "description": "글로리아 대화 뒤 선택지가 나오지 않던 문제. interaction_city 다음에 실행되는 interaction_result_city가 sp_txt를 1로 되돌려, 대화 블록에서 정한 선택지 페이지 5가 지워졌다. 3페이지가 표시될 때 special_action으로 sp_txt = 5를 정한다.",
+  "before_sha256": "5c3cab4522a12be7ec851fe277ea9f039b59996fd3cb7c6e9ccc6a6883927770",
+  "after_sha256": "1b31271ee704dfd94cd35cd350fcafa306c907e8d5574d5948ffcd318e763ae0",
+  "edits": [
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "if interaction_city = 951541:\r\n\tnpc = 1\r\n\t$npc_id = 'jo9_gloria'\r\n\t$place = 'realtor_office'\r\n\t$return_lock = 'shop_general'\r\n\tkillvar '$text'\r\n\tsp_txt = 5\r\n",
+      "new": "if interaction_city = 951541:\r\n\tnpc = 1\r\n\t$npc_id = 'jo9_gloria'\r\n\t$place = 'realtor_office'\r\n\t$return_lock = 'shop_general'\r\n\tkillvar '$text'\r\n! JO9 MOD START GLORIA_QUEST_CHOICE_PAGE_20261108\r\n! interaction_result_city resets sp_txt, so the choice page is chosen while page 3 is shown.\r\n\t$special_action[3] = {sp_txt = 5}\r\n! JO9 MOD END GLORIA_QUEST_CHOICE_PAGE_20261108\r\n",
+      "count": 1,
+      "patchId": "GLORIA_QUEST_CHOICE_PAGE_20261108"
+    }
+  ]
+}

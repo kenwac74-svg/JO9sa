@@ -1,0 +1,33 @@
+{
+  "id": "2026-11-08_oral_gag_exclusion",
+  "status": "APPROVED",
+  "description": "펠라 중독(oral_affinity)과 반사적 구역질(jo9_gag_reflex)은 상반된 특성인데 생성 시 각각 10%로 따로 뽑고 배타 목록에도 없어 함께 붙을 수 있었다. 생성은 한 번 굴려 각 10%를 유지하면서 겹치지 않게 하고, allow와 repair_exclusions에 쌍을 추가한다. 이미 둘 다 가진 인물은 사용자 결정에 따라 펠라 중독을 남기고 반사적 구역질을 지운다.",
+  "before_sha256": "f3a17d3c73e95c18c352d1ec6fc27d44fac8c18cfe407e108b1a433713f93475",
+  "after_sha256": "e4867094b29e04cac4b87c92d0b3d399aa95cbf9b0587eb82ad53f8cb329b029",
+  "edits": [
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": " stock['oral_affinity'] = 0\r\n if rand(1,100) <= 10: stock['oral_affinity'] = 1\r\n stock['jo9_gag_reflex'] = 0\r\n if rand(1,100) <= 10: stock['jo9_gag_reflex'] = 1\r\n",
+      "new": "! JO9 MOD START ORAL_GAG_EXCLUSION_20261108\r\n! Fellatio addiction and gag reflex are opposites. One roll keeps each at 10 percent without overlap.\r\n stock['oral_affinity'] = 0\r\n stock['jo9_gag_reflex'] = 0\r\n jo9_trait_registry_roll = rand(1,100)\r\n if jo9_trait_registry_roll <= 10: stock['oral_affinity'] = 1\r\n if jo9_trait_registry_roll > 10 and jo9_trait_registry_roll <= 20: stock['jo9_gag_reflex'] = 1\r\n! JO9 MOD END ORAL_GAG_EXCLUSION_20261108\r\n",
+      "count": 1,
+      "patchId": "ORAL_GAG_EXCLUSION_20261108"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": "  if $args[0] = 'sport_affinity' and args[1] = 1:\r\n   if jo9xeactor['cowSK_affinity'] > 0: result = 0\r\n  end\r\n",
+      "new": "  if $args[0] = 'sport_affinity' and args[1] = 1:\r\n   if jo9xeactor['cowSK_affinity'] > 0: result = 0\r\n  end\r\n! JO9 MOD START ORAL_GAG_EXCLUSION_20261108\r\n  if $args[0] = 'jo9_gag_reflex' and args[1] = 1:\r\n   if jo9xeactor['oral_affinity'] > 0: result = 0\r\n  end\r\n  if $args[0] = 'oral_affinity' and args[1] > 0:\r\n   if jo9xeactor['jo9_gag_reflex'] = 1: result = 0\r\n  end\r\n! JO9 MOD END ORAL_GAG_EXCLUSION_20261108\r\n",
+      "count": 1,
+      "patchId": "ORAL_GAG_EXCLUSION_20261108"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": "  if jo9xeactor['expression_affinity'] > 0 and jo9xeactor['jo9_voice_trait'] = 1: jo9xeactor['jo9_voice_trait'] = 0 & result += 1\r\n",
+      "new": "  if jo9xeactor['expression_affinity'] > 0 and jo9xeactor['jo9_voice_trait'] = 1: jo9xeactor['jo9_voice_trait'] = 0 & result += 1\r\n! JO9 MOD START ORAL_GAG_EXCLUSION_20261108\r\n  if jo9xeactor['oral_affinity'] > 0 and jo9xeactor['jo9_gag_reflex'] = 1: jo9xeactor['jo9_gag_reflex'] = 0 & result += 1\r\n! JO9 MOD END ORAL_GAG_EXCLUSION_20261108\r\n",
+      "count": 1,
+      "patchId": "ORAL_GAG_EXCLUSION_20261108"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "id": "2026-11-08_brothel_owned_work_lock",
+  "status": "APPROVED",
+  "description": "사용자 지시: 창관 인수가 완료되면 사창가 골목의 일 시키기(남성 주인공 메뉴)를 비활성화한다. 완료 표시는 새 변수 brothel_owned이며 이후 창관 모드가 1로 설정한다. 인수 후에는 창관을 인수한다 선택지도 숨긴다.",
+  "before_sha256": "33a637f415decbb319bcf0d3d7112ff1f73b903a7abd12dfbc74b407a260fcf8",
+  "after_sha256": "7b354e3f05cd0e87abf398fcc4df9a69d2902ba07f0ae58695d18bfd4b2fd0a2",
+  "edits": [
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "IF sparks >= 20 and faction_fame['RedLight'] > 1:\r\n FUNC('$menu', 'exec_options', $menu_item_sa_whore, 'sp_txt = 5 & gt $curloc', '일 시키기...')\r\n else\r\n if sparks < 10: FUNC('$menu', 'exec', $menu_item_sa_whore_gray, empty, '일하러 보낸다...', '스파크가 부족하다')\r\n if faction_fame['RedLight'] < 2: FUNC('$menu', 'exec', $menu_item_sa_whore_gray, empty, '일하러 보낸다...', '구역 내 평판이 너무 낮다')\r\nEND\r\n",
+      "new": "! JO9 MOD START BROTHEL_OWNED_WORK_LOCK_20261108\r\n! brothel_owned is set by the future brothel mod when the takeover completes.\r\nIF brothel_owned = 1:\r\n FUNC('$menu', 'location_gray_tooltip', $menu_item_sa_whore_gray, empty, '일 시키기...', '창관을 인수했으니 노예 일은 이제 창관에서 맡긴다.')\r\nELSE\r\n! JO9 MOD END BROTHEL_OWNED_WORK_LOCK_20261108\r\nIF sparks >= 20 and faction_fame['RedLight'] > 1:\r\n FUNC('$menu', 'exec_options', $menu_item_sa_whore, 'sp_txt = 5 & gt $curloc', '일 시키기...')\r\n else\r\n if sparks < 10: FUNC('$menu', 'exec', $menu_item_sa_whore_gray, empty, '일하러 보낸다...', '스파크가 부족하다')\r\n if faction_fame['RedLight'] < 2: FUNC('$menu', 'exec', $menu_item_sa_whore_gray, empty, '일하러 보낸다...', '구역 내 평판이 너무 낮다')\r\nEND\r\n! JO9 MOD START BROTHEL_OWNED_WORK_LOCK_20261108\r\nEND\r\n! JO9 MOD END BROTHEL_OWNED_WORK_LOCK_20261108\r\n",
+      "count": 1,
+      "patchId": "BROTHEL_OWNED_WORK_LOCK_20261108"
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": " IF broker_quest = 1:\r\n! JO9 MOD START BROTHEL_OPTION_IN_ALLEY_20261108",
+      "new": " IF broker_quest = 1 and brothel_owned = 0:\r\n! JO9 MOD START BROTHEL_OPTION_IN_ALLEY_20261108",
+      "count": 2,
+      "patchId": "BROTHEL_OWNED_WORK_LOCK_20261108"
+    }
+  ]
+}

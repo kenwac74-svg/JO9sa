@@ -1,0 +1,33 @@
+{
+  "id": "2026-11-08_gloria_quest_inline_choices",
+  "status": "APPROVED",
+  "description": "사용자 지시: 글로리아 선택지를 메뉴 UI가 아니라 하단 대사창에 넣는다. 3페이지 문장 아래에 선택지 링크 4개를 붙이고(스파크 부족은 회색 글자), 에르자 선택지처럼 그 페이지의 앞뒤 버튼을 숨긴다. 메뉴 페이지 5로 넘기던 처리는 뺀다.",
+  "before_sha256": "dd50291deda019a53b84574bf3f356b6bd82a4b99896787ee59781e88afaa4d7",
+  "after_sha256": "f61b928b6f126cd6ef20e8e70ded694ba4f9e4c0a71faf5ff01e2d8d02553ae3",
+  "edits": [
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "! JO9 MOD START GLORIA_QUEST_CHOICE_PAGE_20261108\r\n! interaction_result_city resets sp_txt, so the choice page is chosen while page 3 is shown.\r\n\t$special_action[3] = {sp_txt = 5}\r\n! JO9 MOD END GLORIA_QUEST_CHOICE_PAGE_20261108\r\n",
+      "new": "! JO9 MOD START GLORIA_QUEST_INLINE_CHOICES_20261108\r\n! The four choices sit in the dialogue box under page 3, like the Erza death choices.\r\n\t$jo9_gloria_choices = ''\r\n\tif sparks >= 10000:\r\n\t\t$jo9_gloria_choices += '<a id=\"jo9-gloria-choice-951542\" href=\"EXEC: interaction_city = 951542 & gt ''interaction_city''\">부동산 주인에게 1만 스파크를 일시불로 내고 글로리아를 사겠다고 한다 ($10000)</a><br>'\r\n\telse\r\n\t\t$jo9_gloria_choices += '<font color=\"#808080\">부동산 주인에게 1만 스파크를 일시불로 내고 글로리아를 사겠다고 한다 ($10000) - 스파크가 부족하다</font><br>'\r\n\tend\r\n\tif sparks >= 5000:\r\n\t\t$jo9_gloria_choices += '<a id=\"jo9-gloria-choice-951543\" href=\"EXEC: interaction_city = 951543 & gt ''interaction_city''\">부동산 주인에게 5천 스파크에 글로리아를 넘길 생각이 없냐고 묻는다 ($5000)</a><br>'\r\n\telse\r\n\t\t$jo9_gloria_choices += '<font color=\"#808080\">부동산 주인에게 5천 스파크에 글로리아를 넘길 생각이 없냐고 묻는다 ($5000) - 스파크가 부족하다</font><br>'\r\n\tend\r\n\tif sparks >= 2500:\r\n\t\t$jo9_gloria_choices += '<a id=\"jo9-gloria-choice-951544\" href=\"EXEC: interaction_city = 951544 & gt ''interaction_city''\">부동산 주인에게 2,500 스파크에 글로리아를 넘기라고 강요한다 ($2500)</a><br>'\r\n\telse\r\n\t\t$jo9_gloria_choices += '<font color=\"#808080\">부동산 주인에게 2,500 스파크에 글로리아를 넘기라고 강요한다 ($2500) - 스파크가 부족하다</font><br>'\r\n\tend\r\n\t$jo9_gloria_choices += '<a id=\"jo9-gloria-choice-951545\" href=\"EXEC: interaction_city = 951545 & gt ''interaction_city''\">글로리아에게 관심 없다. 돌아간다</a>'\r\n! JO9 MOD END GLORIA_QUEST_INLINE_CHOICES_20261108\r\n",
+      "count": 1,
+      "patchId": "GLORIA_QUEST_INLINE_CHOICES_20261108"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "잘 돌아갈 거예요.</div>'\r\nend\r\nif interaction_city = 951542:",
+      "new": "잘 돌아갈 거예요.<br><br>' + $jo9_gloria_choices + '</div>'\r\nend\r\nif interaction_city = 951542:",
+      "count": 1,
+      "patchId": "GLORIA_QUEST_INLINE_CHOICES_20261108"
+    },
+    {
+      "location": "interaction_screen_city",
+      "field": "body",
+      "old": "if interaction_city = 6667792 and instr($text[txt], 'id=\"jo9-erza-positive-choice\"') > 0 and instr($text[txt], 'id=\"jo9-erza-negative-choice\"') > 0:",
+      "new": "if (interaction_city = 6667792 and instr($text[txt], 'id=\"jo9-erza-positive-choice\"') > 0 and instr($text[txt], 'id=\"jo9-erza-negative-choice\"') > 0) or (interaction_city = 951541 and instr($text[txt], 'id=\"jo9-gloria-choice-951545\"') > 0):",
+      "count": 1,
+      "patchId": "GLORIA_QUEST_INLINE_CHOICES_20261108"
+    }
+  ]
+}
