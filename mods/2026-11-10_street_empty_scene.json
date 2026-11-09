@@ -1,0 +1,17 @@
+{
+  "id": "2026-11-10_street_empty_scene",
+  "status": "APPROVED",
+  "description": "길거리 업무에서 수입이 없던 날(빈손)에는 정산 컷신 street_empty를 보여 준다. 그림이 없으면 기존 화면이 그대로 남는다.",
+  "before_sha256": "d2329e54af996c3bbf708fa4da5df4ae1ed21591ec2dd4a04015bbd888d56dca",
+  "after_sha256": "c7f11d8059a164de2520cc25fbd8b44be6bfd6e555fdddba39a1f906d3d5b1b0",
+  "edits": [
+    {
+      "location": "jo9_room_duty",
+      "field": "body",
+      "old": "  if jo9_rd_kind=3: $jo9_rd_t='street_unpleasant'\r\n end\r\n",
+      "new": "  if jo9_rd_kind=3: $jo9_rd_t='street_unpleasant'\r\n  if jo9_rd_tier=0: $jo9_rd_t='street_empty'\r\n end\r\n",
+      "count": 1,
+      "patchId": "STREET_EMPTY_SCENE_20261110"
+    }
+  ]
+}

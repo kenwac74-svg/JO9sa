@@ -1,0 +1,37 @@
+{
+  "id": "2026-11-09_decade_ledger",
+  "status": "APPROVED",
+  "description": "10일 정산 회계장부: 지출내역, 수입내역(축사, 개인실 업무), 수입 대 지출 결산을 쪽별 화면으로 보여 주고 다음 표시로 넘긴다. 현물(재료·보관 아이템)은 금액에 합산하지 않고 수량만 적는다.",
+  "before_sha256": "46780b7279934a282aab08999a03c61cce87d8ee5e8e746ab81bda5ce44d4d25",
+  "after_sha256": "23ae68d3a5253aae9ab6a78b2e8f89791f1c42831c458a7312ab33cedea336a5",
+  "add_locations": [
+    {
+      "name": "jo9_ledger",
+      "desc": "",
+      "body": "if $args[0]='decade':\r\n ! Decade ledger pages: expenses, income, in-kind income and the settlement, paged with the forward mark.\r\n local jo9_led_in, jo9_led_net, jo9_led_room, jo9_led_k\r\n local $jo9_led_b, $jo9_led_t\r\n local jo9_led_ok\r\n ! ledger cutscene by house: content/pic/scene/home/jo9_ledger_ plus the lower case estate name plus .png, then jo9_ledger.png, then the study as the last fallback\r\n $jo9_led_bgpath=''\r\n jo9_led_ok=0\r\n $jo9_led_t='jo9_led_ok = %content/pic/scene/home/jo9_ledger_'+$lcase($estate)+'.png%'\r\n dynamic $jo9_led_t\r\n if jo9_led_ok=1: $jo9_led_bgpath='content/pic/scene/home/jo9_ledger_'+$lcase($estate)+'.png'\r\n if $jo9_led_bgpath='':\r\n  jo9_led_ok=0\r\n  dynamic 'jo9_led_ok = %content/pic/scene/home/jo9_ledger.png%'\r\n  if jo9_led_ok=1: $jo9_led_bgpath='content/pic/scene/home/jo9_ledger.png'\r\n end\r\n jo9_led_room=jo9_led_street+jo9_led_fog+jo9_led_item\r\n jo9_led_in=barn_total_profit+jo9_led_room\r\n killvar '$text'\r\n killvar '$jo9_led_ttl'\r\n jo9_led_pn=1\r\n $text[1]=$bill_message\r\n $jo9_led_ttl[1]='지출내역'\r\n jo9_led_pn+=1\r\n $jo9_led_pg='<center>지난 주기 수입내역</center><br>'\r\n if barn_total_profit ! 0:\r\n  $jo9_led_b=$barn_accounts\r\n  jo9_led_k=instr($jo9_led_b,' 이윤 총계')\r\n  if jo9_led_k>0: $jo9_led_b=$mid($jo9_led_b,1,jo9_led_k-1)\r\n  $jo9_led_b=$replace($jo9_led_b,'<center>축사 장부</center><br>','')\r\n  $jo9_led_pg+='[축사]<br>'+$jo9_led_b\r\n  if barn_total_profit>0:\r\n   $jo9_led_pg+='<b>축사 총계: + $'+str(barn_total_profit)+'</b><br><br>'\r\n  else\r\n   $jo9_led_pg+='<b>축사 총계: - $'+str(-barn_total_profit)+'</b><br><br>'\r\n  end\r\n end\r\n $jo9_led_pg+='[개인실 업무]<br>'\r\n if jo9_led_street>0: $jo9_led_pg+='길거리: + $'+str(jo9_led_street)+'<br>'\r\n if jo9_led_fog>0: $jo9_led_pg+='안개 경계 탐색: + $'+str(jo9_led_fog)+'<br>'\r\n if jo9_led_item>0: $jo9_led_pg+='아이템 매각: + $'+str(jo9_led_item)+'<br>'\r\n if jo9_led_room<=0: $jo9_led_pg+='수입이 없었다.<br>'\r\n $jo9_led_pg+='<b>개인실 총계: + $'+str(jo9_led_room)+'</b><br>'\r\n $text[jo9_led_pn]=$jo9_led_pg\r\n $jo9_led_ttl[jo9_led_pn]='수입내역'\r\n if $produce_msg ! '' or jo9_led_mat>0 or jo9_led_keep>0:\r\n  jo9_led_pn+=1\r\n  $jo9_led_pg='<center>지난 주기 수입내역 - 현물</center><br>'\r\n  if $produce_msg ! '': $jo9_led_pg+=$produce_msg+'<br><br>'\r\n  if jo9_led_mat>0 or jo9_led_keep>0: $jo9_led_pg+='[개인실 업무]<br>재료 '+str(jo9_led_mat)+'개 수령<br>아이템 '+str(jo9_led_keep)+'개 보관<br><br>'\r\n  $jo9_led_pg+='현물은 결산 금액에 포함하지 않습니다.'\r\n  $text[jo9_led_pn]=$jo9_led_pg\r\n  $jo9_led_ttl[jo9_led_pn]='수입내역: 현물'\r\n end\r\n jo9_led_pn+=1\r\n jo9_led_net=jo9_led_in-final_payment\r\n $jo9_led_pg='<center>지난 주기 결산</center><br>'\r\n if barn_total_profit>0:\r\n  $jo9_led_pg+='축사 총계: + $'+str(barn_total_profit)+'<br>'\r\n elseif barn_total_profit<0:\r\n  $jo9_led_pg+='축사 총계: - $'+str(-barn_total_profit)+'<br>'\r\n end\r\n $jo9_led_pg+='개인실 총계: + $'+str(jo9_led_room)+'<br>'\r\n $jo9_led_pg+='수입 합계: '\r\n if jo9_led_in>=0:\r\n  $jo9_led_pg+='+ $'+str(jo9_led_in)+'<br>'\r\n else\r\n  $jo9_led_pg+='- $'+str(-jo9_led_in)+'<br>'\r\n end\r\n $jo9_led_pg+='지출 총계: - $'+str(final_payment)+'<br>'\r\n $jo9_led_pg+='--------------------------<br>'\r\n if jo9_led_net>=0:\r\n  $jo9_led_pg+='<b>결산: + $'+str(jo9_led_net)+'</b>'\r\n else\r\n  $jo9_led_pg+='<b>결산: - $'+str(-jo9_led_net)+'</b>'\r\n end\r\n $text[jo9_led_pn]=$jo9_led_pg\r\n $jo9_led_ttl[jo9_led_pn]='결산'\r\n jo9_led_street=0\r\n jo9_led_fog=0\r\n jo9_led_item=0\r\n jo9_led_mat=0\r\n jo9_led_keep=0\r\n exit\r\nend\r\n",
+      "actions": []
+    },
+    {
+      "name": "jo9_ledger_view",
+      "desc": "",
+      "body": "! Decade ledger viewer: one page per screen, the engine forward and back marks turn the pages.\r\n*clr & cla & killobj\r\n$return_lock='jo9_ledger_end'\r\ngs '_layout'\r\n$place='study'\r\nif $jo9_led_bgpath ! '':\r\n *p func('interior_change', 'jo9_html', '<div id = \"bg\"><img style=\"width:795px;height:595px;\" src=\"<<$jo9_led_bgpath>>\"></div>')\r\nelse\r\n *p func('interior_change', 'jo9_html', '<div id = \"bg\"><img src=\"content/pic/bg/<<$bg[$place]>>.png\"></div>')\r\nend\r\n*p '<div id=\"side_panel_main\"><center><div style=\"font-size:32px;\">정산 장부</div><<$jo9_led_ttl[txt]>><br>쪽 <<txt>> / <<jo9_led_pn>></center></div>'\r\n*p '<div id=\"side_panel_text\" style=\"color:#20160e;font-size:20px;line-height:1.3;overflow:auto;\"><<$text[txt]>></div>'\r\nif txt<jo9_led_pn:\r\n *p '<div id=\"text\" style=\"color:#20160e;font-size:18px;line-height:1.2;overflow:auto;\">아래의 다음 표시를 누르면 장부를 넘깁니다.</div>'\r\nelse\r\n *p '<div id=\"text\" style=\"color:#20160e;font-size:18px;line-height:1.2;overflow:auto;\">마지막 쪽입니다. 다음 표시를 누르면 정산을 마칩니다.</div>'\r\nend\r\nif txt>1: addobj '<img src = \"content/pic/ui/buttons/legacy/back_button.png\">'\r\naddobj '<img src = \"content/pic/ui/buttons/legacy/forward_button.png\">'\r\n",
+      "actions": []
+    },
+    {
+      "name": "jo9_ledger_end",
+      "desc": "",
+      "body": "! Decade settlement after the ledger pages: the rest of the original decade block.\r\n$return_lock=''\r\ndecadecount = 0\r\ndecade += 1\r\ndecadesave = 1\r\n\r\nsparks += barn_total_profit\r\nif final_payment > sparks and exam_in_progress ! 1:\r\n gs 'jo9_liquidation', 'begin'\r\n gt 'jo9_liquidation', 'view'\r\nelse\r\n sparks -= final_payment\r\nend\r\n\r\n!Refresh all databases - crushboss\r\ngs 'interior_storage'\r\ngs 'refresh_database'\r\ngs 'interior_restore'\r\ngt 'menu_form'\r\n",
+      "actions": []
+    }
+  ],
+  "edits": [
+    {
+      "location": "main_screen",
+      "field": "body",
+      "old": "\tgs 'billing'\r\n\tmsg '<<$bill_message>>'\r\n\tbarn_report_available = 0\r\n\tif barn_total_profit ! 0:\r\n\t\tmsg '<<$barn_accounts>>'\r\n\t\tbarn_report_available = 1\r\n\tend\r\n\tif assistant_quiet_rule = 1 and $produce_msg ! '': msg $produce_msg\r\n\r\n\tdecadecount = 0\r\n\tdecade += 1\r\n\tdecadesave = 1\r\n\r\n\tsparks += barn_total_profit\r\n\tif final_payment > sparks and exam_in_progress ! 1:\r\n! JO9 MOD START INSOLVENCY_BILL_BEGIN_20261023 | 2026-10-23_insolvency_asset_liquidation\r\n\t\tgs 'jo9_liquidation', 'begin'\r\n\t\tgt 'jo9_liquidation', 'view'\r\n! JO9 MOD END INSOLVENCY_BILL_BEGIN_20261023\r\n\telse\r\n\t\tsparks -= final_payment\r\n\tend\r\n\r\n\t!Refresh all databases - crushboss\r\n\tgs 'interior_storage'\r\n\tgs 'refresh_database'\r\n\tgs 'interior_restore'\r\n\tgt 'menu_form' &! refresh menus and mood to reflect potential changes from billing\r\n",
+      "new": "\t! JO9 MOD START DECADE_LEDGER_20261109\r\n\tgs 'billing'\r\n\tbarn_report_available = 0\r\n\tif barn_total_profit ! 0: barn_report_available = 1\r\n\tgs 'jo9_ledger', 'decade'\r\n\ttxt = 1\r\n\t$return_lock = 'jo9_ledger_end'\r\n\tgt 'jo9_ledger_view'\r\n\t! JO9 MOD END DECADE_LEDGER_20261109\r\n",
+      "count": 1,
+      "patchId": "DECADE_LEDGER_20261109"
+    }
+  ]
+}

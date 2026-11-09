@@ -1,5 +1,6 @@
 /* JO9 MOD START KEYBOARD_HOTKEYS_20261108: page-level keyboard shortcuts for QtWebKit.
    - Left/Right arrows switch the top tabs (mark_one..mark_four) of the master, slave and assistant screens.
+   - On every other screen Left/Right press the page marks (forward and back objects) when they are on screen.
    - W N B V O E R C G press the matching travel button of the quick-move panel (qm_block).
    - H presses the go-home button in the city, barn and prison cell screens.
    Keys the engine already binds (S, A, D, Esc ...) are consumed by the engine first and never reach here. */
@@ -58,6 +59,18 @@
         return false;
     }
 
+    // Page marks are engine objects drawn as links with an image: the forward mark and the back mark.
+    var FORWARD = /(forward|fwrd)[^/]*[.]png$/i, BACK = /back[^/]*[.]png$/i;
+    function pageMove(step) {
+        var links = document.querySelectorAll('a[href^="obj:"]'), i, img, src;
+        for (i = 0; i < links.length; i += 1) {
+            img = links[i].getElementsByTagName('img')[0];
+            src = img ? (img.getAttribute('src') || '').split(String.fromCharCode(92)).join('/') : '';
+            if ((step > 0 && FORWARD.test(src)) || (step < 0 && BACK.test(src))) { return press(links[i]); }
+        }
+        return false;
+    }
+
     function travel(code) {
         var block = document.getElementById('qm_block');
         if (!block || !TRAVEL.hasOwnProperty(code)) { return false; }
@@ -85,8 +98,8 @@
         if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (t && t.isContentEditable)) { return; }
         if (messageOpen()) { return; }
         var code = e.keyCode || e.which, done = false;
-        if (code === 37) { done = switchTab(-1); }
-        else if (code === 39) { done = switchTab(1); }
+        if (code === 37) { done = switchTab(-1) || pageMove(-1); }
+        else if (code === 39) { done = switchTab(1) || pageMove(1); }
         else if (code === 72) { done = goHome(); }
         else { done = travel(code); }
         if (done && e.preventDefault) { e.preventDefault(); }

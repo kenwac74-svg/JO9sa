@@ -1,0 +1,33 @@
+{
+  "id": "2026-11-09_quiet_info_always",
+  "status": "APPROVED",
+  "description": "조수·노예 조용히 명령이 켜져 있어도 경고·사건 알림(사망, 도주·자살, 굶주림 경고, 규칙 위반, 월경, 산란, 촉수 성장·사망, 소 탈출, 기생충 경고)은 하루 종료 화면에서 항상 보여 준다. 요리·청소·목욕 같은 일상 장면은 그대로 조용히 규칙을 따른다.",
+  "before_sha256": "23ae68d3a5253aae9ab6a78b2e8f89791f1c42831c458a7312ab33cedea336a5",
+  "after_sha256": "bddd0565fdf1e542d1a425a42cc6792e4ecfa5f38c55de6fefd095c00791daa9",
+  "edits": [
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "if slave['menstruation'] = 1:\r\n\t$text = $menstrual_anounce\r\n\t$place = 'bedroom'\r\n\t$bg_path = 'scene\\menstruation'\r\n\tg = rand(1, picMax['menstruation'])\r\n\tif g > 1: $bg_path += '_' + $str(g)\r\n\tslave['menstruation'] = 2\r\n\tif assistant_quiet_rule = 0: jump 'loop'\r\n",
+      "new": "if slave['menstruation'] = 1:\r\n\t$text = $menstrual_anounce\r\n\t$place = 'bedroom'\r\n\t$bg_path = 'scene\\menstruation'\r\n\tg = rand(1, picMax['menstruation'])\r\n\tif g > 1: $bg_path += '_' + $str(g)\r\n\tslave['menstruation'] = 2\r\n\tjump 'loop' &! informational notice: the quiet rule does not suppress it\r\n",
+      "count": 1,
+      "patchId": "QUIET_INFO_ALWAYS_1"
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "if assistant['menstruation'] = 1:\r\n\t$text = $menstrual_anounce_assistant\r\n\t$place = 'bedroom'\r\n\t$bg_path = 'scene\\menstruation'\r\n\tg = rand(1, picMax['menstruation'])\r\n\tif g > 1: $bg_path += '_' + $str(g)\r\n\tassistant['menstruation'] = 2\r\n\tif assistant_quiet_rule = 0: jump 'loop'\r\n",
+      "new": "if assistant['menstruation'] = 1:\r\n\t$text = $menstrual_anounce_assistant\r\n\t$place = 'bedroom'\r\n\t$bg_path = 'scene\\menstruation'\r\n\tg = rand(1, picMax['menstruation'])\r\n\tif g > 1: $bg_path += '_' + $str(g)\r\n\tassistant['menstruation'] = 2\r\n\tjump 'loop' &! informational notice: the quiet rule does not suppress it\r\n",
+      "count": 1,
+      "patchId": "QUIET_INFO_ALWAYS_2"
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "if total_eggs_laid_today > 0:\r\n\t$text = ''\r\n\t$end_day_screen_collect_eggs = {\r\n\t\tif dynslave['egg_time'] > 0 and dynslave_state = CONST_INT['slave_exist']:\r\n\t\t\t$text += ' <<$dynslave_name>>가 당신을 위해 신선한 알을 하나 낳았다.<br>'\r\n\t\t\tdecade_eggs += 1\r\n\t\t\tdynslave['egg_time'] = 0\r\n\t\tend\r\n\t}\r\n\tdynamic $do_for_each_slave_in_list, '$end_day_screen_collect_eggs', '$unfrozen_slave_characters'\r\n\t$place = 'bedroom'\r\n\tif kitchen > 0: $place = 'kitchen'\r\n\t$bg_path = 'scene\\egg_birth'\r\n\tg = rand(1, picMax['egg_birth'])\r\n\tif g > 1: $bg_path += '_' + $str(g)\r\n\tif fridge_space > 0: fridge['eggs'] += min(fridge_space, total_eggs_laid_today) &! if you have an egglayer in your barn, excess eggs (more than 5) will be sold tomorrow night\r\n\ttotal_eggs_laid_today = 0 &! excess eggs that cannot fit in the fridge are discarded\r\n\tif assistant_quiet_rule = 0: jump 'loop'\r\n",
+      "new": "if total_eggs_laid_today > 0:\r\n\t$text = ''\r\n\t$end_day_screen_collect_eggs = {\r\n\t\tif dynslave['egg_time'] > 0 and dynslave_state = CONST_INT['slave_exist']:\r\n\t\t\t$text += ' <<$dynslave_name>>가 당신을 위해 신선한 알을 하나 낳았다.<br>'\r\n\t\t\tdecade_eggs += 1\r\n\t\t\tdynslave['egg_time'] = 0\r\n\t\tend\r\n\t}\r\n\tdynamic $do_for_each_slave_in_list, '$end_day_screen_collect_eggs', '$unfrozen_slave_characters'\r\n\t$place = 'bedroom'\r\n\tif kitchen > 0: $place = 'kitchen'\r\n\t$bg_path = 'scene\\egg_birth'\r\n\tg = rand(1, picMax['egg_birth'])\r\n\tif g > 1: $bg_path += '_' + $str(g)\r\n\tif fridge_space > 0: fridge['eggs'] += min(fridge_space, total_eggs_laid_today) &! if you have an egglayer in your barn, excess eggs (more than 5) will be sold tomorrow night\r\n\ttotal_eggs_laid_today = 0 &! excess eggs that cannot fit in the fridge are discarded\r\n\tjump 'loop' &! informational notice: the quiet rule does not suppress it\r\n",
+      "count": 1,
+      "patchId": "QUIET_INFO_ALWAYS_3"
+    }
+  ]
+}
