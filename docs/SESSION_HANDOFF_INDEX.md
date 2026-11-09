@@ -1,5 +1,9 @@
 # JO9 통합 대화 인계
 
+## 2026-11-09 Codex: 캐릭터 이미지 폴더 규칙 경고 (Claude 확인)
+
+[확정 규칙](modding/IMAGE_NAMING_RULES_KO.md) · [구조·사용·검사·복구](../records/character-path-rules-20261109/REPORT_KO.md). 사용자 지시로 전용 폴더 유무에 따른 경고를 WORK/소스에 적용하고 로컬 커밋한다. 전용 캐릭터는 종류별 번호 폴더, 그 외 타이틀은 characters/·알몸은 girls/full/·복장은 역할 하위폴더. 파일명 자유, 공용 타이틀도 경고, 저장 차단/파일 이동 없음. 관련24검사·격리 브라우저6확인 통과, 실제 탭 응답 확인. QSP/JSON/이미지/태그 보존. 이미 별도 수정 중이던 소스 QSP와 런타임 원장2개는 이번 커밋에서 제외한다. 푸시 지시 없음.
+
 ## 2026-11-09 Codex: 최신 WORK 이미지 연결·동기화·펠라게야 공유
 
 [커밋 전 검사](../records/commit-push-20261109/verification.json). WORK QSP `8ac4e5178aefc1eedc4ade7f08c7ff94eeafb87a68789e20387c26e6c5d24aed`와 추적 스냅샷 일치. 사용자가 편집실에서 저장한 글로리아 4·5·6단계 연결과 gloria02~04.png를 변경 기록·리소스로 보존했다.

@@ -3589,15 +3589,16 @@ window.JO9_GIRLS_CHECKLIST={"schema":1,"gameRoot":"G:\\somi\\Jack O Nine Tails v
       const header=node('div',undefined,'gc-row'),close=node('button','취소');header.append(node('h3',c.id+' · '+c.name+' · '+title),close);dialog.append(header,node('p','연결할 PNG를 폴더에서 선택하세요. 이 항목의 등록 경로를 바꾸며 그림 파일은 그대로 둡니다.','gc-note'));
       if(latest.imageSyncTargets?.length)dialog.append(node('p','이미지 연동: '+[c.id,...latest.imageSyncTargets].join(' · ')+' 번호에 함께 저장합니다. 각 번호의 설명문과 능력치는 유지합니다.','gc-note'));
       const fallback={indpack_maid:'fullmade',indpack_secr:'fullsecretary',indpack_dom:'fullmistress'},old=latest.refs[field]||latest.refs[fallback[field]]||'';
-      dialog.append(node('p','현재 연결: '+(old||'미등록'),'gc-path'));
+      dialog.append(node('p','현재 연결: '+(old||'미등록'),'gc-path'));const currentWarning=ruleNote(latest,old,field);if(currentWarning)dialog.append(currentWarning);
       const pathLabel=node('p','', 'gc-path'),nav=node('div',undefined,'gc-row'),up=node('button','상위 폴더'),home=node('button','PIC 폴더 처음');nav.append(up,home);dialog.append(pathLabel,nav);
       const list=node('div');list.style.cssText='display:flex;flex-direction:column;gap:4px;max-height:35vh;overflow:auto;margin:10px 0';dialog.append(list);
       const paging=node('div',undefined,'gc-row'),prev=node('button','이전 목록'),counter=node('span'),next=node('button','다음 목록');paging.append(prev,counter,next);dialog.append(paging);
+      const selectionWarning=node('p','','gc-warn');selectionWarning.setAttribute('role','status');dialog.append(selectionWarning);
       const selected=node('p','파일을 선택하세요.','gc-path'),preview=node('img');preview.alt='직접 연결할 PNG';preview.hidden=true;preview.style.cssText='max-width:100%;max-height:180px;object-fit:contain';const error=node('p','', 'gc-error'),apply=node('button','이 파일 연결');apply.disabled=true;dialog.append(selected,preview,error,apply);
       let folder='',entries=[],offset=0,choice='',revision=0,saving=false;
       function closeDialog(){if(saving)return;revision++;dialog.close();dialog.remove();}
       close.onclick=closeDialog;dialog.addEventListener('cancel',e=>{if(saving)e.preventDefault();});dialog.addEventListener('close',()=>{revision++;dialog.remove();});
-      function show(){list.replaceChildren();const visible=entries.filter(e=>! /^(?:_|backup)/i.test(e.name)&&(e.kind==='directory'||/\.png$/i.test(e.name))),page=visible.slice(offset,offset+100);for(const entry of page){const b=node('button',(entry.kind==='directory'?'📁 ':'🖼 ')+entry.name);b.style.textAlign='left';b.onclick=()=>{if(saving)return;const p=[folder,entry.name].filter(Boolean).join('/');if(entry.kind==='directory')browse(p);else{choice=p;selected.textContent='선택: '+p;apply.disabled=false;preview.hidden=!images.checked;if(images.checked)preview.src=assetUrl(p);error.textContent='';}};list.append(b);}if(!page.length)list.append(node('p','하위 폴더 또는 PNG가 없습니다.'));counter.textContent=(visible.length?Math.floor(offset/100)+1:0)+' / '+Math.ceil(visible.length/100);prev.disabled=!offset;next.disabled=offset+100>=visible.length;pathLabel.textContent='content/pic'+(folder?'/'+folder:'');up.disabled=!folder;}
+      function show(){list.replaceChildren();const visible=entries.filter(e=>! /^(?:_|backup)/i.test(e.name)&&(e.kind==='directory'||/\.png$/i.test(e.name))),page=visible.slice(offset,offset+100);for(const entry of page){const b=node('button',(entry.kind==='directory'?'📁 ':'🖼 ')+entry.name);b.style.textAlign='left';b.onclick=()=>{if(saving)return;const p=[folder,entry.name].filter(Boolean).join('/');if(entry.kind==='directory')browse(p);else{choice=p;selected.textContent='선택: '+p;const warning=pathRule(latest,p,field);selectionWarning.textContent=warning?'경로 규칙 경고 · 권장 폴더: '+warning.expected+' · 이 파일을 그대로 연결할 수 있습니다.':'';apply.disabled=false;preview.hidden=!images.checked;if(images.checked)preview.src=assetUrl(p);error.textContent='';}};list.append(b);}if(!page.length)list.append(node('p','하위 폴더 또는 PNG가 없습니다.'));counter.textContent=(visible.length?Math.floor(offset/100)+1:0)+' / '+Math.ceil(visible.length/100);prev.disabled=!offset;next.disabled=offset+100>=visible.length;pathLabel.textContent='content/pic'+(folder?'/'+folder:'');up.disabled=!folder;}
       async function browse(p){const request=++revision;list.textContent='폴더 읽는 중…';try{const result=await api('entries',{path:p});if(request!==revision)return;if(result.missing&&p){await browse('');return;}folder=p;entries=(result.entries||[]).sort((a,b)=>(a.kind===b.kind?0:a.kind==='directory'?-1:1)||a.name.localeCompare(b.name));offset=0;show();}catch(e){if(request===revision)error.textContent=e.message;}}
       up.onclick=()=>{if(!saving)browse(folder.split('/').slice(0,-1).join('/'));};home.onclick=()=>{if(!saving)browse('');};prev.onclick=()=>{if(!saving){offset=Math.max(0,offset-100);show();}};next.onclick=()=>{if(!saving){offset+=100;show();}};
       apply.onclick=async()=>{if(saving||!choice)return;saving=true;busy=true;apply.disabled=true;close.disabled=true;try{const saved=await statusApi('character-images/apply',{id:c.id,field,path:choice,expectedHash});files.set(normal(saved.path),saved.path);mergeCharacterLinks({characters:saved.characters||[saved.character]});message.textContent=(saved.affectedIds||[c.id]).join(' · ')+' · '+title+' 연결 저장: '+saved.path+' · JSON 원본 백업과 연결 이력을 기록했습니다.';dialog.close();dialog.remove();}catch(e){error.textContent=e.message;apply.disabled=false;}finally{saving=false;busy=false;close.disabled=false;}};
@@ -3734,25 +3735,63 @@ window.JO9_GIRLS_CHECKLIST={"schema":1,"gameRoot":"G:\\somi\\Jack O Nine Tails v
   function pathRow(path, title, c, field) {
     const row=node('div',undefined,'gc-row');
     row.append(node('span',exists(path)?'있음':'없음',exists(path)?'gc-ok':'gc-error'),node('span',title+' · '+path,'gc-path'));
-    const b=node('button',exists(path)?'PNG 교체':'PNG 추가');b.disabled=!live;b.onclick=()=>put(path,title);row.append(b);if(c&&field)row.append(imageLinkButton(c,field,title));
+    const b=node('button',exists(path)?'PNG 교체':'PNG 추가');b.disabled=!live;b.onclick=()=>put(path,title);row.append(b);if(c&&field)row.append(imageLinkButton(c,field,title));if(c){const warning=ruleNote(c,path,field);if(warning)row.append(warning);}
     return row;
   }
-  // JO9 MOD START CHECKLIST_NAMING_RULE_20261109
-  // docs/modding/IMAGE_NAMING_RULES_KO.md: new or replaced art goes under the character number.
-  function rulePath(id,field){
-    const role={fullimage:'naked',indpack_naked:'naked',indpack_title:'title',fullmade:'maid',indpack_maid:'maid',fullsecretary:'secr',indpack_secr:'secr',fullmistress:'dom',indpack_dom:'dom'};
-    if(field==='seed_ava_clear')return 'girls/face/'+id+'.png';
-    if(field==='seed_ava_gray')return 'girls/face/'+id+'_gray.png';
-    if(field==='seed_ava')return 'girls/face/'+id+'_sepia.png';
-    if(role[field])return 'girls/full/'+id+'/'+id+'_'+role[field]+'.png';
-    const m=/^indpack_([a-z]+)(_horny|_rebel)?$/.exec(field||'');
-    return m?'girls/full/'+id+'/'+id+'_'+m[1]+(m[2]||'')+'.png':'';
+  // JO9 MOD START CHECKLIST_PATH_RULES_20261109
+  // User rule: numbered folders remain separate for full, face and action images.
+  let pathDirectoryVersion=null,pathDirectoryIds=new Set();
+  function hasDedicatedFolder(c){
+    if(Array.isArray(c.dedicatedImageFolders))return c.dedicatedImageFolders.length>0;
+    if(pathDirectoryVersion!==version){
+      pathDirectoryIds=new Set();
+      for(const p of files.keys()){const m=/^girls\/(?:full|face|sex_scenes)\/(\d+)\//.exec(normal(p));if(m)pathDirectoryIds.add(Number(m[1]));}
+      for(const d of data.directories||[]){const m=/^girls\/(?:full|face|sex_scenes)\/(\d+)(?:\/|$)/.exec(normal(typeof d==='string'?d:d.path));if(m)pathDirectoryIds.add(Number(m[1]));}
+      pathDirectoryVersion=version;
+    }
+    return pathDirectoryIds.has(c.id);
+  }
+  function pathRule(c,path,field){
+    if(!c||!path)return null;
+    const p=normal(path),dedicated=hasDedicatedFolder(c),key=String(field||'').replace(/_(?:horny|rebel)$/,'');
+    let kind='',roots=[],direct=false;
+    if(/^seed_ava(?:_clear|_gray)?$/.test(key))kind='face';
+    else if(key==='action')kind='action';
+    else if(key==='indpack_title')kind='title';
+    else if(key==='fullimage'||key==='indpack_naked')kind='naked';
+    else if(['fullmade','indpack_maid'].includes(key))kind='maid';
+    else if(['fullsecretary','indpack_secr'].includes(key))kind='secretary';
+    else if(['fullmistress','indpack_dom'].includes(key))kind='mistress';
+    else if(/^indpack_|^fullpregnant$/.test(key))kind='full';
+    else if(dedicated){if(/^girls\/face\//.test(p))kind='face';else if(/^(?:girls\/sex_scenes|scene)\//.test(p))kind='action';else if(/^(?:girls\/full|characters)\//.test(p))kind='full';}
+    if(dedicated&&kind)roots=['girls/'+(kind==='face'?'face':kind==='action'?'sex_scenes':'full')+'/'+c.id+'/'];
+    else if(kind==='title')roots=['characters/'];
+    else if(kind==='naked'){roots=['girls/full/'];direct=true;}
+    else if(kind==='maid')roots=['girls/full/cloth/','girls/full/maid/'];
+    else if(kind==='secretary')roots=['girls/full/secretary/'];
+    else if(kind==='mistress')roots=['girls/full/mistress/'];
+    if(!roots.length||roots.some(root=>direct?p.slice(0,p.lastIndexOf('/')+1)===root:p.startsWith(root)))return null;
+    return{field:field||'',path,expected:roots.join(' 또는 '),kind,dedicated};
   }
   function ruleNote(c,path,field){
-    const rule=rulePath(c.id,field);
-    return rule&&path&&normal(path)!==normal(rule)?node('p','규칙 경로: '+rule+' · 새로 추가하거나 바꿀 때 이 이름을 씁니다','gc-note'):null;
+    const warning=pathRule(c,path,field);
+    return warning?node('p','경로 규칙 경고 · 권장 폴더: '+warning.expected+' · 현재: '+path,'gc-warn'):null;
   }
-  // JO9 MOD END CHECKLIST_NAMING_RULE_20261109
+  function pathWarnings(c){
+    const warnings=[],seen=new Set(),refs=c.refs||{},aliases=new Set((c.compatibilityAssets||[]).map(x=>normal(x.path)));
+    const add=(p,field)=>{const w=pathRule(c,p,field);if(w&&!seen.has(normal(p)+'|'+w.expected)){seen.add(normal(p)+'|'+w.expected);warnings.push(w);}};
+    for(const [field,p]of Object.entries(refs))add(p,field);
+    if(hasDedicatedFolder(c))for(const p of [...(c.assets||[]),...(c.namedSceneAssets||[])])if(!aliases.has(normal(p)))add(p);
+    return warnings;
+  }
+  function pathWarningBox(c){
+    const warnings=pathWarnings(c);if(!warnings.length)return null;
+    const box=node('details');box.className='gc-path-warnings';box.append(node('summary','경로 규칙 경고 · '+warnings.length+'건','gc-warn'));
+    box.append(node('p','현재 연결은 유지합니다. 파일을 옮긴 뒤에는 파일 선택·연결로 새 위치를 지정하세요.','gc-note'));
+    for(const w of warnings)box.append(node('p',(w.field?w.field+' · ':'')+w.path+' → 권장 폴더: '+w.expected,'gc-warn'));
+    return box;
+  }
+  // JO9 MOD END CHECKLIST_PATH_RULES_20261109
   function slot(c,title,path,text,state,field) {
     const box=node('div',undefined,'gc-slot');box.append(node('h4',title));
     box.append(node('strong',text,state==='ok'?'gc-ok':state==='broken'?'gc-error':'gc-warn'));
@@ -3777,7 +3816,7 @@ window.JO9_GIRLS_CHECKLIST={"schema":1,"gameRoot":"G:\\somi\\Jack O Nine Tails v
     else if(own&&shared){text='공용 · '+shared+' 복장';state='ok';}
     else if(own){text='전용 그림 있음';state='ok';}
     box.append(node('strong',text,state==='ok'?'gc-ok':state==='broken'?'gc-error':'gc-warn'));
-    if(own){box.append(node('p',t,'gc-path'));if(!shared){const rn=ruleNote(c,t,'indpack_title');if(rn)box.append(rn);}if(images.checked&&exists(t)){const img=node('img');img.loading='lazy';img.alt='옷 입은 모습';img.src=assetUrl(t);box.append(img);}}
+    if(own){box.append(node('p',t,'gc-path'));{const rn=ruleNote(c,t,'indpack_title');if(rn)box.append(rn);}if(images.checked&&exists(t)){const img=node('img');img.loading='lazy';img.alt='옷 입은 모습';img.src=assetUrl(t);box.append(img);}}
     box.append(node('p','전용 PNG를 연결하거나 기존 복장 그림을 공용으로 지정합니다. 지정하면 알몸 전신은 기본 전신으로 고정됩니다.','gc-note'));
     box.append(imageLinkButton(c,'indpack_title','옷 입은 모습'));
     const row=node('div',undefined,'gc-row');
@@ -3812,6 +3851,7 @@ window.JO9_GIRLS_CHECKLIST={"schema":1,"gameRoot":"G:\\somi\\Jack O Nine Tails v
       card.append(node('h3',c.id+' · '+displayName),node('p',c.json+' · '+(c.random?'무작위 등장 범위에 포함':'고유 이벤트 / 별도 등록'),'gc-note'),tags(c.id));
       if(c.catalogNote)card.append(node('p',c.catalogNote,'gc-note'));
       if(c.imageGroupOwner)card.append(node('p',c.id===c.imageGroupOwner?'이미지 공유 기준 2577 · 이미지 연결을 저장하면 2585 · 2607에도 함께 적용됩니다.':'이미지 공유: 2577에서 이미지 연결을 변경하면 함께 적용됩니다.','gc-note'));
+      const warnings=pathWarningBox(c);if(warnings)card.append(warnings);
       const grid=node('div',undefined,'gc-grid');card.append(grid);
       const base=full(c);
       grid.append(slot(c,'기본 전신',base,exists(base)?'기본 전신 있음':'기본 전신 연결 확인 필요',exists(base)?'ok':'broken','fullimage'),dressed(c));
@@ -3854,12 +3894,12 @@ window.JO9_GIRLS_CHECKLIST={"schema":1,"gameRoot":"G:\\somi\\Jack O Nine Tails v
         }
       }
       actionSlots.append(actionGrid);scenes.append(actionSlots);
-      const sceneList=node('div',undefined,'gc-list');for(const p of actionFiles)sceneList.append(pathRow(p,p.split('/').pop()));scenes.append(sceneList);card.append(scenes);
+      const sceneList=node('div',undefined,'gc-list');for(const p of actionFiles)sceneList.append(pathRow(p,p.split('/').pop(),c,'action'));scenes.append(sceneList);card.append(scenes);
       const legacyFields=(c.legacyFields||[]).filter(key=>c.refs[key]);
       if(legacyFields.length){
         const old=node('details');old.append(node('summary','이전 개별 장면 등록 · 참고 경로'));
         const legacy=node('div',undefined,'gc-list');
-        for(const key of legacyFields)legacy.append(pathRow(c.refs[key],key));
+        for(const key of legacyFields)legacy.append(pathRow(c.refs[key],key,c,key));
         old.append(node('p','옛 개별 등록은 번호별 행동 컷과 별도 자료입니다. 이 목록만으로 현재 장면의 미연결 여부를 판정하지 않습니다.','gc-note'),legacy);card.append(old);
       }
       if((c.namedSceneAssets||[]).length){

@@ -12,3 +12,5 @@ test('base selection keeps a dressed title separate; duplicate JSON keys are ref
 // JO9 MOD START CHECKLIST_DRESSED_LOOK_20261109
 test('dressed look sets only the title and pins the naked base',t=>{const f=fixture(t),api=links.create(f.game,f.catalog),c=api.read([1448]).characters[0];const prior=JSON.parse(fs.readFileSync(f.json));api.apply({id:1448,field:'indpack_title',path:'any folder/선택.png',expectedHash:c.jsonSha256});const obj=JSON.parse(fs.readFileSync(f.json));a.equal(obj.indpack_title,'any folder/선택');a.equal(obj.fullimage,prior.fullimage);if(prior.indpack_naked===undefined)a.equal(obj.indpack_naked,prior.fullimage);else a.equal(obj.indpack_naked,prior.indpack_naked);});
 // JO9 MOD END CHECKLIST_DRESSED_LOOK_20261109
+
+test('read reports actual numbered folders including empty ones without changing JSON',t=>{const f=fixture(t),api=links.create(f.game,f.catalog);a.deepEqual(api.read([1448]).characters[0].dedicatedImageFolders,[]);fs.mkdirSync(f.game+'/content/pic/girls/full/1448',{recursive:true});a.deepEqual(api.read([1448]).characters[0].dedicatedImageFolders,['girls/full/1448']);a.equal(fs.readFileSync(f.json,'utf8'),f.text);});

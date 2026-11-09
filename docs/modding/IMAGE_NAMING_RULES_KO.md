@@ -1,53 +1,35 @@
-# 캐릭터 이미지 파일명·경로 규칙
+# 캐릭터 이미지 폴더 규칙
 
-작성: 2026-11-09. 대상: `content/pic/girls/` 아래 노예 캐릭터 그림과 `json/slaves/<번호>_<이름>.json`의 이미지 키.
+사용자 확정: 2026-11-09. 이 규칙은 이전의 모든 캐릭터를 새 번호 폴더에 두도록 한 안내를 대체한다. 타이틀 폴더는 기존 characters/를 쓴다. 파일 이름은 이 경고의 검사 대상이 아니다.
 
-## 왜 정리하는가
+## 전용 번호 폴더가 있는 캐릭터
 
-지금은 같은 종류의 그림이 인물마다 다른 폴더와 이름을 쓴다.
+전신·초상·장면의 종류별 번호 폴더를 유지한다. 전용 번호 폴더는 girls/full/<번호>, girls/face/<번호>, girls/sex_scenes/<번호> 중 하나라도 실제로 있는 캐릭터를 뜻한다.
 
-| 같은 의미 | 인물별 실제 경로 |
+| 이미지 종류 | content/pic/ 기준 폴더 |
 |---|---|
-| 하녀 복장 | `girls/full/maid/isabella.png` / `girls/full/cloth/1448_shiru.png` |
-| 기본 전신 | `girls/full/isabella_black_long_milf.png` / `girls/full/2341_brown_short_milf.png` |
-| 옷별 개별 팩 | `girls/full/2571/2571_full_apron.png` (일부 인물만) |
+| 옷 입은 타이틀·알몸·하녀·비서·도미나·기타 전신 및 상태 변형 | girls/full/<번호>/ |
+| 컬러·흑백·세피아 초상 | girls/face/<번호>/ |
+| 캐릭터별 장면·행동 이미지 | girls/sex_scenes/<번호>/ |
 
-경로만 보고 무슨 그림인지, 어느 인물 것인지 알기 어렵다. 새로 넣는 그림부터 아래 규칙을 쓴다.
+각 번호 폴더 아래의 하위 폴더도 허용한다. 예를 들어1031 전신은 girls/full/1031/ 아래이며 초상은 girls/face/1031/ 아래다. 다른 번호 폴더나 공용 경로를 참조하면 경고한다.
 
-## 규칙
+## 전용 번호 폴더가 없는 캐릭터
 
-모든 전신 그림은 **캐릭터 번호 폴더** 안에, 파일명은 `<번호>_<종류>[_<상태>].png`로 둔다.
+| 이미지 종류 | content/pic/ 기준 폴더 |
+|---|---|
+| 옷 입은 기본 타이틀 포즈 | characters/ |
+| 기본 알몸 전신 | girls/full/ 바로 아래 |
+| 하녀 | girls/full/cloth/ 또는 기존 girls/full/maid/ |
+| 비서 | girls/full/secretary/ |
+| 도미나 | girls/full/mistress/ |
 
-| 종류 | 경로 | JSON 키 |
-|---|---|---|
-| 기본 전신(알몸) | `girls/full/<번호>/<번호>_naked.png` | `fullimage`, `indpack_naked` |
-| 옷 입은 모습(대표) | `girls/full/<번호>/<번호>_title.png` | `indpack_title` |
-| 하녀 | `girls/full/<번호>/<번호>_maid.png` | `fullmade`, `indpack_maid` |
-| 비서·교복 | `girls/full/<번호>/<번호>_secr.png` | `fullsecretary`, `indpack_secr` |
-| 도미나 | `girls/full/<번호>/<번호>_dom.png` | `fullmistress`, `indpack_dom` |
-| 옷 아이템별 | `girls/full/<번호>/<번호>_<옷>.png` | `indpack_<옷>` |
-| 흥분·반항 변형 | 위 이름 뒤에 `_horny` / `_rebel` | `indpack_<옷>_horny` / `_rebel` |
-| 컬러 초상 | `girls/face/<번호>.png` | `seed_ava_clear` |
-| 흑백 초상 | `girls/face/<번호>_gray.png` | `seed_ava_gray` |
-| 세피아 초상 | `girls/face/<번호>_sepia.png` | `seed_ava` |
+하녀는 현재 두 하위 폴더가 실제 쓰이고 있어 둘 다 해당 역할 폴더로 인정한다. 초상·기타 복장·공용 장면에 대해 이 표 밖의 새 폴더 규칙을 추가하지 않는다. 이미지 공유 기능은 유지하지만, 역할 이미지를 타이틀과 공용 지정하면 타이틀 경로 경고를 표시한다.
 
-JSON에는 기존처럼 `.png`를 뺀 경로를 적는다. 초상 키만 앞에 `content/pic/`를 붙인다.
+## 도구의 표시와 저장
 
-`<옷>`은 게임이 옷 아이템에서 고르는 이름이다(`display_fullimage`): `apron` 주름 앞치마, `maid` 하녀복, `nurse` 간호복, `school` 세일러복, `sorc` 마법 망토, `leotard` 치어리딩 복장, `chainmail` 사슬 비키니, `kimono` 유카타, `sundress` 반투명 원피스, `lace` 명주 속옷, `cocktail` 명주 의상, `latex` 캣슈트, `exotic` 벨리댄스, `corset` 가죽 코르셋, `gorgeous` 화려한 드레스, `bride` 웨딩드레스, `tail` 삽입 말꼬리, `cow` 젖소 장비, `pet` 펫슈트, `restrain` 구속복.
+노예 이미지 리스트의 캐릭터 카드에 경로 규칙 경고 건수와 상세(현재 경로 → 권장 폴더)를 표시한다. 기본 전신·타이틀·초상·복장과 전체 등록·장면 목록에도 해당 경고가 나온다. 파일 선택·연결 창은 현재 연결과 새 선택의 경고를 보여 주며, 경고가 있어도 저장할 수 있다.
 
-## 옷 입은 모습(대표 그림)
+이 규칙은 경고 기능이다. 기존 PNG·JSON·QSP·세이브를 자동 이동하거나 수정하지 않는다. 경로를 정리할 때는 직접 파일을 원하는 폴더에 둔 뒤 파일 선택·연결로 지정한다. 원본 B컷·호환 PNG·공용 이미지와 기존 저장 경로는 별도 보존 대상이다. 옛 저장 호환 파일 목록의 사본은 자동 정리 대상이 아니며, 현재 JSON이 예전 경로를 쓰는 경우는 연결 경고로 남는다.
 
-게임은 옷 아이템에 맞는 그림이 없으면 대표 그림(`indpack_title`)을, 그것도 없으면 기본 전신(알몸)을 보여 준다. 그래서 대표 그림이 없는 인물은 무엇을 입혀도 알몸으로 보인다.
-
-- 전용 그림이 있으면 `<번호>_title.png`로 두고 연결한다.
-- 전용 그림이 없으면 하녀·비서·도미나 중 하나를 **공용**으로 지정한다. 이때 대표 그림 키가 그 복장 파일을 가리킨다. 예: 시루 = 도미나 공용(`girls/full/mistress/1448_shiru`).
-- 대표 그림을 지정하면 알몸 키(`indpack_naked`)도 기본 전신으로 고정한다. 그렇지 않으면 옷을 벗겨도 대표 그림이 나온다.
-
-캐릭터 이미지 체크리스트의 **옷 입은 모습** 칸에서 파일 선택·연결 또는 "하녀/비서/도미나 공용" 버튼으로 지정한다.
-
-## 적용 방식
-
-- 이미 있는 파일과 JSON 경로는 옮기지 않는다. 세이브에 저장된 경로와 기존 연결이 깨지지 않게 하기 위해서다.
-- **새로 추가하거나 교체하는 그림부터** 이 규칙으로 저장하고 JSON을 연결한다.
-- 체크리스트는 각 칸의 현재 경로가 규칙과 다르면 아래에 "규칙 경로"를 함께 보여 준다. 표시일 뿐이며 파일을 옮기지 않는다.
-- 기존 파일 일괄 정리는 세이브 호환 확인 뒤 별도 작업으로 한다.
+온라인에서는 현재 WORK의 실제 전용 폴더를 읽어 판정한다(비어 있는 폴더 포함). 오프라인 HTML은 저장된 디렉터리·파일 목록을 쓴다. 파일명·확장자 없는 JSON 경로와 초상 content/pic/ 접두어 등 기존 저장 형식은 변경하지 않는다. JSON 키는 타이틀 indpack_title, 알몸 fullimage/indpack_naked, 하녀 fullmade/indpack_maid, 비서 fullsecretary/indpack_secr, 도미나 fullmistress/indpack_dom, 초상 seed_ava_clear/seed_ava_gray/seed_ava를 유지한다.
