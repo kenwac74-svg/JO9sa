@@ -1,5 +1,14 @@
 # JO9 통합 대화 인계
 
+## 2026-11-09 Codex: 최신 WORK 이미지 연결·동기화·펠라게야 공유
+
+[커밋 전 검사](../records/commit-push-20261109/verification.json). WORK QSP `8ac4e5178aefc1eedc4ade7f08c7ff94eeafb87a68789e20387c26e6c5d24aed`와 추적 스냅샷 일치. 사용자가 편집실에서 저장한 글로리아 4·5·6단계 연결과 gloria02~04.png를 변경 기록·리소스로 보존했다.
+
+- [이미지 참조 직접 변경](../records/image-reference-20261109/REPORT_KO.md): 새 경로 선택과 조건 편집.
+- [체크 기록 복구·버전 확인 동기화](../records/catalog-sync-20261109/REPORT_KO.md): 원본 B컷48개, 기존 선택 보존. 정적 분석 경고는 유지.
+- [펠라게야 이미지 공유·글로리아 목록](../records/pelageya-group-gloria-list-20261109/REPORT_KO.md):2577 이미지 연결 저장 시2585·2607도 적용, 설명·능력치 보존.2341 포함1155명.
+- 관련 테스트92개 통과. 음원·개인 설정·이전 복구 사본은 제외, Kor_Full·배포 ZIP은 변경하지 않았다. 기존 글로리아 테스트 버튼은 위 Claude 인계의 배포 전 확인 사항으로 남아 있다.
+
 ## 2026-11-09 Claude: 미커밋 작업 일괄 커밋 (Codex 확인 요망)
 
 Codex가 2026-11-08에 마친 도구 작업이 커밋되지 않아 사용자 지시로 Claude가 커밋했다. 푸시는 하지 않았다.

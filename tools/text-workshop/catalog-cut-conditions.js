@@ -151,7 +151,7 @@
     } finally { ctx.saving = false; if (current === ctx) updateDisabled(ctx); }
   }
   function buildRow(ctx, item, rule, options) {
-    const card = el('fieldset', PREFIX + '-card'), legend = el('legend', '', (item.cutIndex === 2 ? 'B컷' : item.cutIndex === 3 ? 'C컷' : '추가 컷 ' + item.cutIndex) + ' · ' + item.file);
+    const card = el('fieldset', PREFIX + '-card'), legend = el('legend', '', item.label || ((item.cutIndex === 2 ? 'B컷' : item.cutIndex === 3 ? 'C컷' : '추가 컷 ' + item.cutIndex) + ' · ' + item.file));
     card.dataset.cutPath = item.path; card.appendChild(legend);
     const row = {path:item.path,file:item.file};
     row.enabled = checkbox(card, '이 컷의 등장 조건 사용', !!rule);
@@ -220,6 +220,13 @@
     if(typeof root.render==='function')root.render();return true;
   }
   doc.addEventListener('click',e=>{const button=e.target.closest?.('[data-jo9-image-condition]');if(!button)return;e.preventDefault();e.stopPropagation();open(button.dataset.jo9ImageCondition);});
-  root.JO9_IMAGE_CONDITIONS={installed:true,open,close:()=>close(current),save:()=>current&&save(current),state:()=>current?{open:true,loading:current.loading,saving:current.saving,base:current.base,rows:current.rows.length,status:current.status.textContent}: {open:false},...helpers};
+  // JO9 MOD START IMAGE_REFERENCE_FIELDS_20261109
+  function fields(body,rule,options){
+    installStyle();const ctx={body,rows:[],save:el('button'),close:el('button'),loading:false,saving:false};
+    buildRow(ctx,{path:'',file:'선택 이미지',label:'이 이미지에 추가할 조건'},rule,options);updateDisabled(ctx);
+    return {busy(value){ctx.saving=value;updateDisabled(ctx);},read(){const value=collectRules('',readRows(ctx))[0];if(!value)return null;const {morality,money,rank,reputation}=value;return {morality,money,rank,reputation};}};
+  }
+  // JO9 MOD END IMAGE_REFERENCE_FIELDS_20261109
+  root.JO9_IMAGE_CONDITIONS={installed:true,fields,open,close:()=>close(current),save:()=>current&&save(current),state:()=>current?{open:true,loading:current.loading,saving:current.saving,base:current.base,rows:current.rows.length,status:current.status.textContent}: {open:false},...helpers};
   if(!hook()){let tries=0;const timer=root.setInterval(()=>{if(hook()||++tries>=300)root.clearInterval(timer);},100);}
 })(typeof window==='object'?window:null);

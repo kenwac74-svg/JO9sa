@@ -26,16 +26,18 @@
 (function(){
  'use strict';const config=window.JO9_CATALOG_BRIDGE,main=document.getElementById('jo9-catalog-panel-gallery')||document.getElementById('main');if(!config||!main)return;
  const bar=document.createElement('div');bar.style.cssText='display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:12px 0';
- const button=document.createElement('button');button.id='jo9OriginalSync';button.type='button';button.textContent='현재 상태로 동기화';button.title='현재 보관 체크에 맞춰 원본 B컷 연결을 정리합니다. 실제 컷 파일은 유지합니다.';
+ const button=document.createElement('button');button.id='jo9OriginalSync';button.type='button';button.textContent='현재 상태로 동기화';button.title='최신 WORK QSP와 체크 기록의 버전을 확인하고, 현재 보관·이미지 연결 변경을 QSP에 병합합니다. 실제 컷 파일은 유지합니다.';
  const status=document.createElement('span');status.id='jo9OriginalSyncStatus';status.setAttribute('role','status');status.setAttribute('aria-live','polite');bar.append(button,status);main.prepend(bar);
  button.addEventListener('click',async()=>{button.disabled=true;status.textContent='현재 보관 상태로 동기화 중…';try{
   if(window.JO9_CATALOG_SAVE)await window.JO9_CATALOG_SAVE();
-  const response=await fetch(config.url+'api/catalog/original-sync',{method:'POST',headers:{'X-JO9-Token':config.token,'Content-Type':'application/json'},body:'{}'}),v=await response.json();if(!response.ok)throw Error(v.error);
+  const planResponse=await fetch(config.url+'api/catalog/original-sync-plan',{headers:{'X-JO9-Token':config.token}}),plan=await planResponse.json();if(!planResponse.ok)throw Error(plan.error);
+  const versionLabel='WORK '+plan.qspHash.slice(0,12)+' 기준';status.textContent='버전 확인 · '+versionLabel+(plan.analysisHash&&plan.analysisHash!==plan.qspHash?' · 이전 조건 분석 '+plan.analysisHash.slice(0,12)+'은 안내로 유지':'')+' · 연결 추가 예정 '+plan.add+'건 / 해제 예정 '+plan.release+'건 · 현재 WORK 기준으로 병합 중…';
+  const response=await fetch(config.url+'api/catalog/original-sync',{method:'POST',headers:{'X-JO9-Token':config.token,'Content-Type':'application/json'},body:JSON.stringify({qspHash:plan.qspHash,statusHash:plan.statusHash})}),v=await response.json();if(!response.ok)throw Error(v.error);
   for(const name of ['originalCuts','originalReservations']){const current=config[name]||(config[name]={});Object.keys(current).forEach(k=>delete current[k]);Object.assign(current,v[name]||{});}
   if(Array.isArray(v.rows)&&Array.isArray(window.D))window.D.splice(0,window.D.length,...v.rows);
   if(window.JO9_CATALOG_ACCEPT)window.JO9_CATALOG_ACCEPT(v);else if(typeof window.render==='function')window.render();
   window.JO9Workshop?.refreshCuts();
-  status.textContent='동기화 완료 · 연결 추가 '+v.sync.linked+'건 · 해제 '+v.sync.released+'건'+(v.sync.pending?' · 확인 필요 '+v.sync.pending+'건':'')+(v.sync.warning?' · 목록 갱신 확인: '+v.sync.warning:'');
+  status.textContent='동기화 완료 · '+versionLabel+' · 연결 확인 '+(v.sync.verified??v.sync.linked)+'건 · 신규 '+v.sync.linked+'건 · 해제 '+v.sync.released+'건'+(v.sync.preserved?' · 기존 B컷 유지 '+v.sync.preserved+'건':'')+(v.sync.pending?' · 확인 필요 '+v.sync.pending+'건':'')+(v.sync.warning?' · 목록 갱신 확인: '+v.sync.warning:'');
   status.title=(v.sync.details||[]).map(e=>e.base+': '+e.reason).join('\n')+(v.sync.warning?'\n'+v.sync.warning:'');
  }catch(e){status.textContent='동기화 실패: '+e.message;}finally{button.disabled=false;}});
 })();

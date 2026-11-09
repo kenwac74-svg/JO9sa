@@ -1,6 +1,6 @@
 'use strict';
 // Static bindings, never QSP execution or save-variable evaluation.
-const core=require('./core.cjs');
+const core=require('./core.cjs'),imageReference=require('./image-reference.cjs');
 const norm=s=>s.toLowerCase();
 function binding(body,e){
   const prefix=body.slice(Math.max(body.lastIndexOf('\n',e.start-1)+1,0),e.start-1);
@@ -61,7 +61,8 @@ function build(doc,entries,helpers){
     if(use){
       for(const e of use.d.entries){const b=binding(use.d.body,e);if(!b||!['$special_image','$special_image_full'].includes(b.array)||b.stage!==bind.stage||e.start<use.scene.start||e.start>=use.scene.end)continue;
         const line=use.d.body.slice(use.d.body.lastIndexOf('\n',e.start)+1,use.d.body.indexOf('\n',e.end)<0?use.d.body.length:use.d.body.indexOf('\n',e.end));
-        images[b.array==='$special_image_full'?'unshift':'push']({path:e.text,note:conditions(use.d.a,e.start).filter(c=>c!==use.scene.condition&&!use.scene.parents.includes(c)).join(' · '),random:/\brand\s*\(|picmax\s*\[/i.test(line)});
+        const reference=imageReference.describe(use.d.body,e);if(reference?.role==='fallback')continue;
+        images[b.array==='$special_image_full'?'unshift':'push']({source:ref(e),reference:reference?{fallback:reference.meta.fallback,conditions:reference.meta.conditions}:null,path:e.text,note:conditions(use.d.a,e.start).filter(c=>c!==use.scene.condition&&!use.scene.parents.includes(c)&&(!reference?.meta.conditions||c!==imageReference.conditionExpression(reference.meta.conditions))).join(' · '),random:/\brand\s*\(|picmax\s*\[/i.test(line)});
       }
       // Retain backdrop metadata, but never another stage's $special_image.
       const backdrop={...use.d.a,body:use.d.body.replace(/^.*\$special_image.*$/gm,row=>' '.repeat(row.length))};

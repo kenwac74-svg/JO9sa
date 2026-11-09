@@ -186,6 +186,7 @@
       dialog=node('dialog');dialog.className='gc-link-dialog';dialog.setAttribute('aria-label',c.id+' '+title+' 이미지 파일 연결');root.append(dialog);
       dialog.style.cssText='color:inherit;background:#202832;border:1px solid #9d784a;border-radius:8px;width:min(860px,94vw);max-height:90vh';
       const header=node('div',undefined,'gc-row'),close=node('button','취소');header.append(node('h3',c.id+' · '+c.name+' · '+title),close);dialog.append(header,node('p','연결할 PNG를 폴더에서 선택하세요. 이 항목의 등록 경로를 바꾸며 그림 파일은 그대로 둡니다.','gc-note'));
+      if(latest.imageSyncTargets?.length)dialog.append(node('p','이미지 연동: '+[c.id,...latest.imageSyncTargets].join(' · ')+' 번호에 함께 저장합니다. 각 번호의 설명문과 능력치는 유지합니다.','gc-note'));
       const fallback={indpack_maid:'fullmade',indpack_secr:'fullsecretary',indpack_dom:'fullmistress'},old=latest.refs[field]||latest.refs[fallback[field]]||'';
       dialog.append(node('p','현재 연결: '+(old||'미등록'),'gc-path'));
       const pathLabel=node('p','', 'gc-path'),nav=node('div',undefined,'gc-row'),up=node('button','상위 폴더'),home=node('button','PIC 폴더 처음');nav.append(up,home);dialog.append(pathLabel,nav);
@@ -198,7 +199,7 @@
       function show(){list.replaceChildren();const visible=entries.filter(e=>! /^(?:_|backup)/i.test(e.name)&&(e.kind==='directory'||/\.png$/i.test(e.name))),page=visible.slice(offset,offset+100);for(const entry of page){const b=node('button',(entry.kind==='directory'?'📁 ':'🖼 ')+entry.name);b.style.textAlign='left';b.onclick=()=>{if(saving)return;const p=[folder,entry.name].filter(Boolean).join('/');if(entry.kind==='directory')browse(p);else{choice=p;selected.textContent='선택: '+p;apply.disabled=false;preview.hidden=!images.checked;if(images.checked)preview.src=assetUrl(p);error.textContent='';}};list.append(b);}if(!page.length)list.append(node('p','하위 폴더 또는 PNG가 없습니다.'));counter.textContent=(visible.length?Math.floor(offset/100)+1:0)+' / '+Math.ceil(visible.length/100);prev.disabled=!offset;next.disabled=offset+100>=visible.length;pathLabel.textContent='content/pic'+(folder?'/'+folder:'');up.disabled=!folder;}
       async function browse(p){const request=++revision;list.textContent='폴더 읽는 중…';try{const result=await api('entries',{path:p});if(request!==revision)return;if(result.missing&&p){await browse('');return;}folder=p;entries=(result.entries||[]).sort((a,b)=>(a.kind===b.kind?0:a.kind==='directory'?-1:1)||a.name.localeCompare(b.name));offset=0;show();}catch(e){if(request===revision)error.textContent=e.message;}}
       up.onclick=()=>{if(!saving)browse(folder.split('/').slice(0,-1).join('/'));};home.onclick=()=>{if(!saving)browse('');};prev.onclick=()=>{if(!saving){offset=Math.max(0,offset-100);show();}};next.onclick=()=>{if(!saving){offset+=100;show();}};
-      apply.onclick=async()=>{if(saving||!choice)return;saving=true;busy=true;apply.disabled=true;close.disabled=true;try{const saved=await statusApi('character-images/apply',{id:c.id,field,path:choice,expectedHash});files.set(normal(saved.path),saved.path);mergeCharacterLinks({characters:[saved.character]});message.textContent=c.id+' · '+title+' 연결 저장: '+saved.path+' · JSON 원본 백업과 연결 이력을 기록했습니다.';dialog.close();dialog.remove();}catch(e){error.textContent=e.message;apply.disabled=false;}finally{saving=false;busy=false;close.disabled=false;}};
+      apply.onclick=async()=>{if(saving||!choice)return;saving=true;busy=true;apply.disabled=true;close.disabled=true;try{const saved=await statusApi('character-images/apply',{id:c.id,field,path:choice,expectedHash});files.set(normal(saved.path),saved.path);mergeCharacterLinks({characters:saved.characters||[saved.character]});message.textContent=(saved.affectedIds||[c.id]).join(' · ')+' · '+title+' 연결 저장: '+saved.path+' · JSON 원본 백업과 연결 이력을 기록했습니다.';dialog.close();dialog.remove();}catch(e){error.textContent=e.message;apply.disabled=false;}finally{saving=false;busy=false;close.disabled=false;}};
       dialog.showModal();await browse(old?old.split('/').slice(0,-1).join('/'):'');
     }catch(e){message.textContent='파일 연결: '+e.message;if(dialog)dialog.remove();}
   }
@@ -409,6 +410,7 @@
       const displayName=c.name==='ID '+c.id?'일반 캐릭터':c.name;
       card.append(node('h3',c.id+' · '+displayName),node('p',c.json+' · '+(c.random?'무작위 등장 범위에 포함':'고유 이벤트 / 별도 등록'),'gc-note'),tags(c.id));
       if(c.catalogNote)card.append(node('p',c.catalogNote,'gc-note'));
+      if(c.imageGroupOwner)card.append(node('p',c.id===c.imageGroupOwner?'이미지 공유 기준 2577 · 이미지 연결을 저장하면 2585 · 2607에도 함께 적용됩니다.':'이미지 공유: 2577에서 이미지 연결을 변경하면 함께 적용됩니다.','gc-note'));
       const grid=node('div',undefined,'gc-grid');card.append(grid);
       const base=full(c);
       grid.append(slot(c,'기본 전신',base,exists(base)?'기본 전신 있음':'기본 전신 연결 확인 필요',exists(base)?'ok':'broken','fullimage'),dressed(c));

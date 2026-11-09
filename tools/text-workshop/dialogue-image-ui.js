@@ -1,46 +1,31 @@
-/* JO9 MOD START DIALOGUE_IMAGE_UI_20261108 */
+/* JO9 MOD START IMAGE_REFERENCE_UI_20261109 */
 (function(){
- 'use strict';const el=id=>document.getElementById(id);let active=null,chosen='',prepared=null,folder='',entries=[],offset=0,browseVersion=0,imageRequestVersion=0,loadingWorkshop=null;
- const sayImage=(text,bad=false)=>{el('dialogueImageStatus').textContent=text;el('dialogueImageStatus').className=bad?'error':'muted';};
- function invalidateImage(){imageRequestVersion++;prepared=null;el('dialogueImageApply').disabled=true;el('dialogueImagePreviewBox').hidden=true;}
- function setChosen(path){chosen=String(path||'').replace(/^content[\\/]pic[\\/]/i,'').replaceAll('\\','/');el('dialogueImagePath').textContent=chosen||'연결할 이미지를 선택하세요.';invalidateImage();}
- function selectionChanged(c){active=c;invalidateImage();setChosen('');el('dialogueImagePanel').hidden=!c?.selection;const use=c?.flow?.usage;el('dialogueImageTarget').textContent=c?.selection?(use?use.location+' · '+use.title+' · '+c.flow.selected+'단계':c.selection.location+' · '+c.selection.line+'행')+'\n'+c.selection.text:'';}
- window.addEventListener('jo9:selection',e=>selectionChanged(e.detail));
- window.addEventListener('jo9:single-preview',invalidateImage);window.addEventListener('jo9:text-changed',invalidateImage);
+ 'use strict';const el=id=>document.getElementById(id),dialog=el('dialogueImageEdit');let active=null,chosen='',fallback='',fields=null,folder='',entries=[],offset=0,browseVersion=0,version=0,pickerTarget='path',busy=false;
+ const status=(s,bad=false)=>{el('dialogueImageStatus').textContent=s;el('dialogueImageStatus').className=bad?'error':'muted';};
+ const norm=p=>String(p||'').replace(/^content[\\/]pic[\\/]/i,'').replaceAll('\\','/');
+ const invalidateImage=()=>{version++;el('dialogueImagePreviewBox').hidden=true;};
+ function close(){if(busy)return;invalidateImage();dialog.close();el('dialogueImagePicker').close();active=null;}
+ window.addEventListener('jo9:selection',()=>{if(busy){invalidateImage();active=null;}else close();});window.addEventListener('jo9:single-preview',invalidateImage);window.addEventListener('jo9:text-changed',invalidateImage);
+ function binding(){return active?.image.bindings?.[Number(el('dialogueImageBranch').value)||0];}
+ async function loadBinding(){const stamp=++version,b=binding();if(!b)return;chosen=norm(b.source?.text);fallback=norm(b.reference?.fallback||chosen);el('dialogueImageBefore').textContent=chosen?'현재 경로: '+chosen:'이 대사 단계에 새 이미지를 지정합니다.';el('dialogueImageConditions').hidden=!b.source;el('dialogueImagePath').textContent=chosen;el('dialogueImageFallback').textContent=fallback;el('dialogueImageGuards').textContent='기존 분기: '+(b.note||'별도 조건 없음');el('dialogueImageFields').replaceChildren();fields=null;try{const options=await api('/api/dialogue-image/options');if(stamp!==version)return;fields=window.JO9_IMAGE_CONDITIONS.fields(el('dialogueImageFields'),b.reference?.conditions,options);el('dialogueImageApply').disabled=false;status('이 이미지 지정 한 곳의 경로·추가 조건을 변경합니다. 파일 내용은 덮어쓰지 않습니다.');}catch(e){status(e.message,true);}}
+ async function open(image,which){if(busy)return;active={image,selection:context.selection,sceneId:context.scene.id,usageId:context.flow?.usage?.id};invalidateImage();const select=el('dialogueImageBranch');select.replaceChildren();for(const [i,b]of image.bindings.entries()){const o=document.createElement('option');o.value=String(i);o.textContent=b.source?b.source.location+' '+b.source.line+'행 · '+(b.note||'공통'):'현재 대사 단계 · 새 이미지 지정';select.append(o);}el('dialogueImageScope').textContent=(context.flow?.usage?.location||context.location)+' · '+context.flow.selected+'단계 · 현재 이미지 지정 '+image.bindings.length+'곳';el('dialogueImageConditions').open=which==='conditions';el('dialogueImageApply').disabled=true;dialog.showModal();await loadBinding();if(which==='path'&&active)openPicker('path');}
+ function mount(host,image){if(!image.bindings?.length){empty(host);return;}for(const [text,which]of [['새 경로 지정','path'],['조건 편집','conditions']]){const b=document.createElement('button');b.type='button';b.textContent=text;b.onclick=()=>open(image,which).catch(e=>status(e.message,true));host.append(b);}}
+ function empty(host){const b=document.createElement('button');b.type='button';b.textContent='이 대사에 별도 이미지 지정';b.onclick=()=>open({path:'',bindings:[{}]},'path').catch(e=>status(e.message,true));host.append(b);}
+ el('dialogueImageBranch').onchange=()=>{invalidateImage();el('dialogueImageApply').disabled=true;loadBinding();};
+ el('dialogueImageFields').addEventListener('change',invalidateImage);el('dialogueImageFields').addEventListener('input',invalidateImage);
+ dialog.addEventListener('cancel',e=>{e.preventDefault();close();});el('dialogueImageCancel').onclick=close;
  const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- function renderFiles(){
-  el('dialogueImageFolder').textContent='content/pic'+(folder?'/'+folder:'');el('dialogueImageUp').disabled=!folder;
-  const list=entries.filter(e=>! /^(?:_|backup)/i.test(e.name)&&(e.kind==='directory'||/\.(png|jpe?g|gif|webp|bmp)$/i.test(e.name))),page=list.slice(offset,offset+100);
-  el('dialogueImageFiles').innerHTML=page.map(e=>'<button type="button" data-image-kind="'+e.kind+'" data-image-name="'+esc(e.name)+'">'+(e.kind==='directory'?'📁 ':'🖼 ')+esc(e.name)+'</button>').join('')||'<p class="muted">이미지가 없습니다.</p>';
-  el('dialogueImagePage').textContent=(list.length?Math.floor(offset/100)+1:0)+' / '+Math.ceil(list.length/100);el('dialogueImagePrev').disabled=offset===0;el('dialogueImageNext').disabled=offset+100>=list.length;
- }
- async function browse(path){const version=++browseVersion;el('dialogueImageFiles').textContent='폴더를 읽는 중…';try{const r=await api('/api/catalog/pic/entries',{path});if(version!==browseVersion)return;folder=path;entries=(r.entries||[]).sort((a,b)=>(a.kind===b.kind?0:a.kind==='directory'?-1:1)||a.name.localeCompare(b.name));offset=0;renderFiles();}catch(e){if(version===browseVersion)el('dialogueImageFiles').textContent=e.message;}}
- el('dialogueImageChoose').onclick=()=>{el('dialogueImagePicker').showModal();browse(chosen?chosen.split('/').slice(0,-1).join('/'):'');};
- el('dialogueImagePickerClose').onclick=()=>{browseVersion++;el('dialogueImagePicker').close();};
- el('dialogueImageUp').onclick=()=>browse(folder.split('/').slice(0,-1).join('/'));
- el('dialogueImageFiles').onclick=e=>{const b=e.target.closest('button[data-image-name]');if(!b)return;const path=[folder,b.dataset.imageName].filter(Boolean).join('/');if(b.dataset.imageKind==='directory')browse(path);else{setChosen(path);el('dialogueImagePicker').close();sayImage('이미지를 선택했습니다. 장면 미리보기로 연결 범위를 확인하세요.');}};
+ function renderFiles(){el('dialogueImageFolder').textContent='content/pic'+(folder?'/'+folder:'');el('dialogueImageUp').disabled=!folder;const list=entries.filter(e=>e.kind==='directory'||/\.(png|jpe?g|gif)$/i.test(e.name)),page=list.slice(offset,offset+100);el('dialogueImageFiles').innerHTML=page.map(e=>'<button type="button" data-image-kind="'+e.kind+'" data-image-name="'+esc(e.name)+'">'+(e.kind==='directory'?'📁 ':'🖼 ')+esc(e.name)+'</button>').join('')||'<p>이미지가 없습니다.</p>';el('dialogueImagePage').textContent=(list.length?Math.floor(offset/100)+1:0)+' / '+Math.ceil(list.length/100);el('dialogueImagePrev').disabled=offset===0;el('dialogueImageNext').disabled=offset+100>=list.length;}
+ async function browse(path){const stamp=++browseVersion;el('dialogueImageFiles').textContent='폴더를 읽는 중…';try{const r=await api('/api/catalog/pic/entries',{path});if(stamp!==browseVersion)return;folder=path;entries=(r.entries||[]).sort((a,b)=>(a.kind===b.kind?0:a.kind==='directory'?-1:1)||a.name.localeCompare(b.name));offset=0;renderFiles();}catch(e){if(stamp===browseVersion)el('dialogueImageFiles').textContent=e.message;}}
+ function openPicker(target){pickerTarget=target;el('dialogueImagePicker').showModal();browse((target==='path'?chosen:fallback).split('/').slice(0,-1).join('/'));}
+ el('dialogueImageChoose').onclick=()=>openPicker('path');el('dialogueImageFallbackChoose').onclick=()=>openPicker('fallback');
+ el('dialogueImagePickerClose').onclick=()=>{browseVersion++;el('dialogueImagePicker').close();};el('dialogueImageUp').onclick=()=>browse(folder.split('/').slice(0,-1).join('/'));
+ el('dialogueImageFiles').onclick=e=>{const b=e.target.closest('button[data-image-name]');if(!b)return;const path=[folder,b.dataset.imageName].filter(Boolean).join('/');if(b.dataset.imageKind==='directory')browse(path);else{invalidateImage();if(pickerTarget==='path'){chosen=path;el('dialogueImagePath').textContent=chosen;el('dialogueImagePreviewImg').src='/api/pic?t='+token+'&p='+encodeURIComponent(chosen);el('dialogueImagePreviewBox').hidden=false;}else{fallback=path;el('dialogueImageFallback').textContent=fallback;}el('dialogueImagePicker').close();status('선택했습니다. 「경로·조건 반영」을 누르면 검사 후 저장합니다.');}};
  el('dialogueImagePrev').onclick=()=>{offset=Math.max(0,offset-100);renderFiles();};el('dialogueImageNext').onclick=()=>{offset+=100;renderFiles();};
- function loadScript(src){return new Promise((resolve,reject)=>{const script=document.createElement('script');script.src=src;script.onload=resolve;script.onerror=()=>{script.remove();reject(Error('이미지 등록 도구를 불러오지 못했습니다.'));};document.body.append(script);});}
- async function openRegistration(){
-  if(!active?.selection)throw Error('대사를 먼저 선택하세요.');
-  if(!window.JO9WS){if(!loadingWorkshop)loadingWorkshop=(async()=>{window.JO9_CATALOG_BRIDGE={url:location.origin+'/',token};if(!window.JO9PIC)await loadScript('/catalog_pic.js');await loadScript('/catalog_editor.js');})().catch(e=>{loadingWorkshop=null;throw e;});await loadingWorkshop;}
-  window.JO9WS.open([]);sayImage('이미지 등록 창에서 투입 → 새 경로 추가 → 폴더 선택 → 새 파일 저장을 진행하세요.');
- }
- el('dialogueImageImport').onclick=()=>openRegistration().catch(e=>sayImage(e.message,true));
- window.addEventListener('jo9ws-applied',e=>{const paths=e.detail||[];if(paths.length===1&&active?.selection){setChosen(paths[0]);document.getElementById('wsdialog')?.close();sayImage('새 이미지를 등록했습니다. 장면 미리보기 후 이미지 연결을 반영하세요.');}else if(paths.length)sayImage(paths.length+'개 이미지를 등록했습니다. 기존 이미지 선택에서 연결할 파일을 고르세요.');});
- el('dialogueImagePreview').onclick=async()=>{try{
-  invalidateImage();invalidate();if(!active?.selection)throw Error('대사를 먼저 선택하세요.');if(!chosen)throw Error('연결할 이미지를 선택하세요.');
-  const version=imageRequestVersion,request={selection:active.selection,sceneId:active.scene?.id,usageId:active.flow?.usage?.id,path:chosen};const p=await api('/api/dialogue-image/preview',request);if(version!==imageRequestVersion)return;
-  prepared=p;el('dialogueImagePreviewImg').src=p.imageUrl;el('dialogueImagePreviewText').textContent=p.dialogue;el('dialogueImageScope').textContent=p.location+' · '+p.title+' · '+p.page+'단계\n'+p.path+(p.variants>1?'\n이 단계의 조건별 대사 '+p.variants+'개에 공통으로 표시됩니다.':'')+'\n다른 단계의 이미지 연결은 유지합니다.';
-  el('dialogueImagePreviewBox').hidden=false;el('dialogueImageApply').disabled=false;sayImage('선택 대사와 표시할 이미지를 확인한 뒤 「이미지 연결 반영」을 누르세요.');
- }catch(e){sayImage(e.message,true);}};
- el('dialogueImageApply').onclick=async()=>{const p=prepared;if(!p)return;el('dialogueImageApply').disabled=true;try{
-  const draft={text:el('replacement').value,addition:el('additionText').value,additionMode:el('additionMode').value};
-  const result=await api('/api/apply',{id:p.id,approved:true});window.dispatchEvent(new Event('jo9:text-changed'));invalidate();visits=[];
-  if(result.selection){selectedImagePath='';render(await api('/api/context',{selection:result.selection,sceneId:p.sceneId,usageId:p.usageId,mode:mode()}));}
-  if(result.selection){el('replacement').value=draft.text;el('additionText').value=draft.addition;el('additionMode').value=draft.additionMode;remember();rememberAddition();}
-  await refresh();await state();sayImage('이미지 연결을 반영했습니다. 변경 기록에서 되돌릴 수 있습니다. 기록: '+result.id);
- }catch(e){invalidateImage();sayImage(e.message,true);}};
- if(typeof context!=='undefined'&&context)selectionChanged(context);
+ async function prepare(){if(!active||!fields)throw Error('이미지 정보를 다시 여세요.');invalidateImage();invalidate();const stamp=version,b=binding(),request={selection:active.selection,sceneId:active.sceneId,usageId:active.usageId,source:b.source,path:chosen,conditions:b.source?fields.read():null,fallback};const result=await api('/api/dialogue-image/preview',request);if(stamp!==version||!active)return null;el('dialogueImagePreviewImg').src=result.imageUrl;el('dialogueImagePreviewBox').hidden=false;return result;}
+ el('dialogueImagePreview').onclick=async()=>{try{const p=await prepare();if(p)status('검사 통과 · '+p.location+' '+p.page+'단계 · '+p.previous+' → '+norm(p.path)+(p.conditions?' · 추가 조건 충족 시 표시, 불충족 시 '+p.fallback:''));}catch(e){status(e.message,true);}};
+ function setBusy(value){busy=value;for(const node of dialog.querySelectorAll('button,input,select'))node.disabled=value;fields?.busy(value);}
+ el('dialogueImageApply').onclick=async()=>{if(busy)return;let saved=false;const draft={text:el('replacement').value,addition:el('additionText').value,additionMode:el('additionMode').value};try{setBusy(true);const p=await prepare();if(!p)return;setBusy(true);const result=await api('/api/apply',{id:p.id,approved:true});saved=true;window.dispatchEvent(new Event('jo9:text-changed'));invalidate();visits=[];if(result.selection){selectedImagePath=p.path;render(await api('/api/context',{selection:result.selection,sceneId:p.sceneId,usageId:p.usageId,mode:mode()}));el('replacement').value=draft.text;el('additionText').value=draft.addition;el('additionMode').value=draft.additionMode;remember();rememberAddition();}await refresh();await state();say('이미지 경로·조건을 반영했습니다. 변경 기록에서 되돌릴 수 있습니다. 기록: '+result.id);}catch(e){status((saved?'저장은 완료됐지만 화면 갱신에 실패했습니다. 새로고침하세요. ':'')+e.message,true);}finally{setBusy(false);if(saved||!active)close();}};
+ window.JO9_IMAGE_REFERENCE={mount,open,empty};if(typeof context!=='undefined'&&context)renderPreview();
 })();
-/* JO9 MOD END DIALOGUE_IMAGE_UI_20261108 */
+/* JO9 MOD END IMAGE_REFERENCE_UI_20261109 */

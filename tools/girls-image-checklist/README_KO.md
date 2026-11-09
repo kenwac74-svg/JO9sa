@@ -48,3 +48,7 @@ PNG 교체/추가는 기존 이미지 패치·백업을 저장한다. 파일 선
 - 저장 기능(`tools/text-workshop/character-image-links.cjs`)은 기본 전신과 대표 그림을 분리했다. 대표 그림을 지정할 때 `indpack_naked`가 없으면 기본 전신으로 함께 넣는다. 기본 전신을 연결할 때 대표 그림은 기본 전신의 단순 복사본이었을 때만 같이 바뀐다.
 - 각 칸 경로가 `docs/modding/IMAGE_NAMING_RULES_KO.md` 규칙과 다르면 "규칙 경로"를 함께 표시한다.
 - 무작위 등장 표시는 게임 `generate_stock` 기준(영 1462까지, 1448·1450 제외)으로 고쳤다(`build_inventory.py`의 `GAME_POOL_*`).
+
+## 2026-11-09 펠라게야 이미지 그룹·글로리아
+
+2577에서 PNG 경로를 연결하면2585·2607에도 같은 이미지 항목이 함께 저장된다. 각 번호의 설명문과 능력치는 유지한다. 단방향 그룹이며 카드와 선택 창에 적용 대상을 표시한다.2341 글로리아를 추가해1155명 목록으로 갱신했다. 현재 WORK JSON 조회와 기존 태그·검색·복장 기능을 유지한다. 기록: records/pelageya-group-gloria-list-20261109/REPORT_KO.md.

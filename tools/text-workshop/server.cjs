@@ -5,6 +5,7 @@ const core=require('./core.cjs');
 const batchReplace=require('./batch-replace.cjs');
 // JO9 MOD END: text-batch-replace-20261018-module
 const addition=require('./addition.cjs');
+const imageReference=require('./image-reference.cjs');
 const dialogueImage=require('./dialogue-image.cjs'); // JO9 MOD DIALOGUE_IMAGE_BINDING_20261108
 const scenes=require('./scenes.cjs');
 const rangeOutput=require('./range-output.cjs'); // JO9 MOD RANGE_OUTPUT_20261108
@@ -44,15 +45,18 @@ const imageCuts=require('./image-cuts.cjs').create(game,catalogRoot,catalog,runt
 const imageCutConditions=require('./image-cut-conditions.cjs').create(game,(before,after,details)=>transact(before,after,details));
 // JO9 MOD END IMAGE_CUT_CONDITION_EDITOR_20261101
 const originalCutRegistrar=require('./original-cuts.cjs');
+const catalogSyncVersion=require('./catalog-sync-version.cjs');
+function catalogSyncPlan(){return catalogSyncVersion.plan(current().raw,fs.readFileSync(path.join(catalogRoot,'catalog_status.js')),fs.readFileSync(path.join(catalogRoot,'catalog_merge_vs_original.html'),'utf8'),fs.existsSync(path.join(game,'modtools/image-original-cuts.json'))?JSON.parse(fs.readFileSync(path.join(game,'modtools/image-original-cuts.json'),'utf8')):{},originalCutRegistrar.readRows(catalogRoot));}
 const localPic=require('./pic-local.cjs').create(game,catalogRoot,catalog,imageCuts);
 const characterImageLinks=require('./character-image-links.cjs').create(game,catalogRoot,{files:force=>localPic.scan(force)}); // JO9 MOD CHARACTER_IMAGE_LINKS_20261108
-function syncSavedOriginals(paths,reconcile=false){
+function syncSavedOriginals(paths,reconcile=false,expected){
   const registration=originalCutRegistrar.register(game,catalogRoot,originalRoot,runtime,paths,reconcile);
+  if(expected){try{catalogSyncVersion.assertCurrent(expected,catalogSyncPlan());}catch(error){originalCutRegistrar.rollback(registration);throw error;}}
   const priorManifest=registration.prior?JSON.parse(registration.prior):{};
   if(registration.changed){const before=fs.readFileSync(target),persistent=path.resolve(__dirname,'../../mods/2026-10-08_persistent_image_cycle.json'),priorMod=fs.existsSync(persistent)?fs.readFileSync(persistent):null;try{imageCuts.refresh('original_B_'+Date.now());}catch(error){originalCutRegistrar.rollback(registration);if(!fs.readFileSync(target).equals(before))catalogModule.atomic(target,before);if(priorMod)catalogModule.atomic(persistent,priorMod);throw error;}}
   let warning,added=[];try{added=originalCutRegistrar.exposeCatalog(catalogRoot,catalog,registration.registered,runtime,registration.released||[]);}catch(error){warning=error.message;}
   if(registration.changed||added.length||(registration.released||[]).length){localPic.scan(true);cache=null;preview=null;}
-  return {linked:registration.registered.filter(e=>!priorManifest.originals?.[e.base.toLowerCase()]).length,released:(registration.released||[]).length,details:registration.pending,pending:registration.pending.length,warning,originalCuts:Object.fromEntries(registration.registered.map(e=>[e.base.toLowerCase(),e])),originalReservations:imageCuts.reservations()};
+  return {preserved:registration.preserved?.length||0,verified:registration.registered.length,linked:registration.registered.filter(e=>!priorManifest.originals?.[e.base.toLowerCase()]).length,released:(registration.released||[]).length,details:registration.pending,pending:registration.pending.length,warning,originalCuts:Object.fromEntries(registration.registered.map(e=>[e.base.toLowerCase(),e])),originalReservations:imageCuts.reservations()};
 }
 const cutToken=crypto.randomBytes(24).toString('hex');
 // 장면 이미지 후보를 실제 파일로 확인한다(확장자가 없으면 png·jpg·gif 순으로).
@@ -90,7 +94,8 @@ function withImages(c) {
       const r=resolvePic(im.path);if(r){const stem=path.basename(r.full,path.extname(r.full)),folder=path.dirname(r.full);const re=new RegExp('^'+stem.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'(?:_[2-9][0-9]*|_[1-9][0-9]+)?'+path.extname(r.full).replace('.','\\.')+'$','i');candidates=fs.readdirSync(folder).filter(n=>re.test(n)).map(n=>path.join(path.dirname(r.rel),n));}
     }
     let count=0;
-    for(const p of candidates){if(/(?:^|[\\/])(?:ui(?: overhaul)?|buttons?|portraits?|icons?|avatars?)(?:[\\/]|$)|(?:_ava|_portrait|_icon)\.(?:png|jpe?g|gif|webp)$/i.test(String(p)))continue;const r=resolvePic(p);if(r&&!smallImage(r.full)&&!seen.has(r.rel.toLowerCase())){seen.add(r.rel.toLowerCase());count++;images.push({path:r.rel,note:note+(im.random?' · 랜덤 후보':im.path.includes('<<')?' · 상태에 따른 후보':''),random:!!im.random,url:'/api/pic?t='+token+'&p='+encodeURIComponent(r.rel)+'&v='+fs.statSync(r.full).mtimeMs,work:catalog.meta('content\\pic\\'+r.rel)});}}
+    for(const p of candidates){if(/(?:^|[\\/])(?:ui(?: overhaul)?|buttons?|portraits?|icons?|avatars?)(?:[\\/]|$)|(?:_ava|_portrait|_icon)\.(?:png|jpe?g|gif|webp)$/i.test(String(p)))continue;const r=resolvePic(p);if(r&&!smallImage(r.full)&&!seen.has(r.rel.toLowerCase())){seen.add(r.rel.toLowerCase());count++;images.push({path:r.rel,note:note+(im.random?' · 랜덤 후보':im.path.includes('<<')?' · 상태에 따른 후보':''),bindings:im.source?[{source:im.source,reference:im.reference,note}]:[],random:!!im.random,url:'/api/pic?t='+token+'&p='+encodeURIComponent(r.rel)+'&v='+fs.statSync(r.full).mtimeMs,work:catalog.meta('content\\pic\\'+r.rel)});}}
+    if(!count&&im.source)for(const p of candidates){const r=resolvePic(p),existing=r&&images.find(x=>x.path.toLowerCase()===r.rel.toLowerCase());if(existing)existing.bindings.push({source:im.source,reference:im.reference,note});}
     if(!count&&!candidates.some(p=>seen.has(String(p).toLowerCase())))unresolved.push({path:im.path,note});
   }
   return {...c,images,imageCandidates:(c.images||[]).length,unresolvedImages:unresolved};
@@ -321,9 +326,10 @@ const server=http.createServer(async(req,res)=>{
       await new Promise((resolve,reject)=>{const child=spawn('explorer.exe',['/select,',full],{shell:false,detached:true,stdio:'ignore'});child.once('error',reject);child.once('spawn',()=>{child.unref();resolve();});});
       json(res,200,{ok:true});return;
     }
+    if(req.method==='GET'&&url.pathname==='/api/catalog/original-sync-plan'){json(res,200,catalogSyncPlan());return;}
     if(req.method==='POST'&&url.pathname==='/api/catalog/original-sync'){
       if(busy)throw Error('다른 저장 작업이 끝난 뒤 다시 눌러 주세요.');busy=true;
-      try{const result=syncSavedOriginals(undefined,true);json(res,200,{...catalog.snapshot(),sync:result,rows:originalCutRegistrar.readRows(catalogRoot),originalCuts:imageCuts.originals(),originalReservations:imageCuts.reservations()});}finally{busy=false;}return;
+      try{const input=await body(req,4096);catalogSyncVersion.assertCurrent(input,catalogSyncPlan());const result=syncSavedOriginals(undefined,true,input);json(res,200,{...catalog.snapshot(),sync:result,rows:originalCutRegistrar.readRows(catalogRoot),originalCuts:imageCuts.originals(),originalReservations:imageCuts.reservations()});}finally{busy=false;}return;
     }
     if(req.method==='POST'&&url.pathname==='/api/catalog/status'){
       const input=await body(req,12000000);catalog.update(input.actions);let originalCutSync;
@@ -414,11 +420,12 @@ const server=http.createServer(async(req,res)=>{
       const id=url.searchParams.get('id');if(!/^[\dTZ_-]+[a-f0-9]{6}$/.test(id||''))throw Error('잘못된 기록 번호입니다.');
       const m=history().find(e=>e.id===id);if(!m || !m.mod || m.status!=='applied')throw Error('내보낼 수정 기록이 없습니다.');json(res,200,m.mod);return;
     }
+    if(req.method==='GET'&&url.pathname==='/api/dialogue-image/options'){json(res,200,require('./image-cut-condition-rules.cjs').OPTIONS);return;}
     // JO9 MOD START DIALOGUE_IMAGE_BINDING_20261108-preview
     if(req.method==='POST'&&url.pathname==='/api/dialogue-image/preview'){
-      const input=await body(req),rel=dialogueImage.imagePath(input.path),image=resolvePic(rel);if(!image)throw Error('연결할 이미지 파일이 PIC 폴더에 없습니다. 먼저 이미지를 등록하세요.');
-      const {doc}=current(),p=dialogueImage.prepare(doc,input.selection,image.rel,input);preview={...p,kind:'image',id:crypto.randomBytes(24).toString('hex')};
-      json(res,200,{id:preview.id,location:p.targetLocation,title:p.usage.title,page:p.page,path:p.path,dialogue:p.entry.text,variants:p.variants,sceneId:p.sceneId,usageId:p.usage.id,imageUrl:'/api/pic?t='+token+'&p='+encodeURIComponent(p.path)+'&v='+fs.statSync(image.full).mtimeMs});return;
+      const input=await body(req),rel=dialogueImage.imagePath(input.path),image=resolvePic(rel);if(!image)throw Error('연결할 이미지 파일이 PIC 폴더에 없습니다. PIC 폴더의 기존 파일을 선택하세요.');
+      const {doc}=current(),p=(input.source?imageReference:dialogueImage).prepare(doc,input.selection,image.rel,input);if(p.conditions&&!resolvePic(p.fallback))throw Error('조건 불충족 시 이미지 파일이 없습니다.');preview={...p,kind:'image',id:crypto.randomBytes(24).toString('hex')};
+      json(res,200,{id:preview.id,location:p.targetLocation,title:p.usage.title,page:p.page,path:p.path,previous:p.previous,conditions:p.conditions,fallback:p.fallback,dialogue:p.entry.text,variants:p.variants,sceneId:p.sceneId,usageId:p.usage.id,imageUrl:'/api/pic?t='+token+'&p='+encodeURIComponent(p.path)+'&v='+fs.statSync(image.full).mtimeMs});return;
     }
     // JO9 MOD END DIALOGUE_IMAGE_BINDING_20261108-preview
     if(req.method==='POST' && url.pathname==='/api/preview'){
@@ -433,9 +440,10 @@ const server=http.createServer(async(req,res)=>{
       // JO9 MOD START DIALOGUE_IMAGE_BINDING_20261108-apply
       if(p.kind==='image'){
         const stamp=new Date().toISOString(),mod={description:'대사 편집실: '+p.targetLocation+' '+p.page+'단계 이미지 연결',id:stamp.slice(0,10)+'_dialogue_image_'+stamp.slice(11,19).replace(/:/g,''),target:'game\\jack.qsp',before_sha256:p.before.toUpperCase(),after_sha256:p.after.toUpperCase(),edits:[{location:p.targetLocation,field:'body',old:p.piece.old,new:p.piece.new,count:1}]};
+        if(p.conditions&&!resolvePic(p.fallback))throw Error('조건 불충족 시 이미지 파일이 없어졌습니다.');
         if(!resolvePic(p.path))throw Error('미리보기 이후 이미지 파일이 없어졌습니다. 다시 선택하세요.');
         const result=transact(raw,p.raw,{kind:'image',location:p.targetLocation,field:'body',page:p.page,image:p.path,mod});current();
-        const selected=cacheEntries.find(e=>e.fieldIndex===p.entry.fieldIndex&&e.start===p.entry.start&&e.text===p.entry.text);json(res,200,{...result,selection:selected?{...selected,hash:cache.hash}:null});return;
+        const selected=cacheEntries.find(e=>e.fieldIndex===p.entry.fieldIndex&&e.start===(p.selectionStart??p.entry.start)&&e.text===p.entry.text);json(res,200,{...result,selection:selected?{...selected,hash:cache.hash}:null});return;
       }
       // JO9 MOD END DIALOGUE_IMAGE_BINDING_20261108-apply
       // JO9 MOD START: text-batch-replace-20261018-apply

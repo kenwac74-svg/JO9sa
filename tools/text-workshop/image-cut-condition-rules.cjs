@@ -32,6 +32,35 @@ function stage(value,what){
 function moralityValue(value){
  return Number.isFinite(value)&&(OPTIONS.moralityExtremes.includes(value)||(value>=OPTIONS.moralityMin&&value<=OPTIONS.moralityMax&&Number.isInteger(value*2)));
 }
+// JO9 MOD START IMAGE_REFERENCE_CONDITIONS_20261109
+function normalizeCondition(raw){
+ object(raw,['base','path','morality','money','rank','reputation'],'등장 조건');
+ let morality=null,money=null;
+ if(raw.morality!==null&&raw.morality!==undefined){
+  object(raw.morality,['min','max'],'cruel & mercy 범위');
+  const {min,max}=raw.morality;
+  if(!moralityValue(min)||!moralityValue(max)||min>max)throw Error('cruel & mercy는 -9999, -10~+10 사이의 0.5 단위 값, +9999 중에서 최솟값과 최댓값을 지정하세요.');
+  morality={min:Object.is(min,-0)?0:min,max:Object.is(max,-0)?0:max};
+ }
+ if(raw.money!==null&&raw.money!==undefined){
+  object(raw.money,['op','value'],'보유금 조건');
+  const {op,value}=raw.money;
+  if(!['ge','le'].includes(op)||!Number.isSafeInteger(value)||value<0||value>OPTIONS.moneyMax)throw Error('보유금은 0~2,147,483,647 사이의 정수와 이상·이하 중 하나로 지정하세요.');
+  money={op,value};
+ }
+ const rank=stage(raw.rank,'계급'),reputation=stage(raw.reputation,'평판');
+ if(morality===null&&money===null&&rank===null&&reputation===null)throw Error('조건을 하나 이상 선택하세요.');
+ return {morality,money,rank,reputation};
+}
+function conditionExpression(rule){
+ const conditions=[];
+ if(rule.morality)conditions.push('(2 * jo9_cruel_mercy + jo9_cruel_mercy_half) >= '+rule.morality.min*2,'(2 * jo9_cruel_mercy + jo9_cruel_mercy_half) <= '+rule.morality.max*2);
+ if(rule.money)conditions.push('sparks '+(rule.money.op==='ge'?'>=':'<=')+' '+rule.money.value);
+ if(rule.rank!==null)conditions.push('guild_reputation = '+rule.rank);
+ if(rule.reputation!==null)conditions.push('brand_reputation = '+rule.reputation);
+ return conditions.join(' and ');
+}
+// JO9 MOD END IMAGE_REFERENCE_CONDITIONS_20261109
 function normalizeRules(input){
  if(!Array.isArray(input))throw Error('조건 목록은 배열이어야 합니다.');
  const seen=new Set();
@@ -41,21 +70,7 @@ function normalizeRules(input){
   if(/ \([0-9]+\)\.[^.\/]+$/.test(base)||path.replace(/ \([0-9]+\)(\.[^.\/]+)$/,'$1')!==base)throw Error('기본 이미지와 추가 컷의 이름·폴더·확장자가 일치해야 합니다.');
   if(seen.has(path))throw Error('같은 추가 컷의 조건이 중복되었습니다.');
   seen.add(path);
-  let morality=null,money=null;
-  if(raw.morality!==null&&raw.morality!==undefined){
-   object(raw.morality,['min','max'],'cruel & mercy 범위');
-   const {min,max}=raw.morality;
-   if(!moralityValue(min)||!moralityValue(max)||min>max)throw Error('cruel & mercy는 -9999, -10~+10 사이의 0.5 단위 값, +9999 중에서 최솟값과 최댓값을 지정하세요.');
-   morality={min:Object.is(min,-0)?0:min,max:Object.is(max,-0)?0:max};
-  }
-  if(raw.money!==null&&raw.money!==undefined){
-   object(raw.money,['op','value'],'보유금 조건');
-   const {op,value}=raw.money;
-   if(!['ge','le'].includes(op)||!Number.isSafeInteger(value)||value<0||value>OPTIONS.moneyMax)throw Error('보유금은 0~2,147,483,647 사이의 정수와 이상·이하 중 하나로 지정하세요.');
-   money={op,value};
-  }
-  const rank=stage(raw.rank,'계급'),reputation=stage(raw.reputation,'평판');
-  if(morality===null&&money===null&&rank===null&&reputation===null)throw Error('조건을 하나 이상 선택하세요.');
+  const {morality,money,rank,reputation}=normalizeCondition(raw);
   return {base,path,morality,money,rank,reputation};
  });
  return result.sort((a,b)=>a.base.localeCompare(b.base)||cutNumber(a.path)-cutNumber(b.path)||a.path.localeCompare(b.path));
@@ -179,12 +194,7 @@ function buildBody(body,input){
  }
  const data=[JSON_MARK+JSON.stringify(normalized),"if $args[0] = 'jo9_cut_condition':",' result = -1'];
  for(const rule of normalized){
-  const conditions=[];
-  if(rule.morality){conditions.push('(2 * jo9_cruel_mercy + jo9_cruel_mercy_half) >= '+rule.morality.min*2,'(2 * jo9_cruel_mercy + jo9_cruel_mercy_half) <= '+rule.morality.max*2);}
-  if(rule.money)conditions.push('sparks '+(rule.money.op==='ge'?'>=':'<=')+' '+rule.money.value);
-  if(rule.rank!==null)conditions.push('guild_reputation = '+rule.rank);
-  if(rule.reputation!==null)conditions.push('brand_reputation = '+rule.reputation);
-  data.push(" if $lcase($replace($args[1], '\\', '/')) = "+quote(rule.base)+" and $lcase($replace($args[2], '\\', '/')) = "+quote(rule.path)+':','  result = 0','  if '+conditions.join(' and ')+': result = '+cutNumber(rule.path),'  exit',' end');
+  data.push(" if $lcase($replace($args[1], '\\', '/')) = "+quote(rule.base)+" and $lcase($replace($args[2], '\\', '/')) = "+quote(rule.path)+':','  result = 0','  if '+conditionExpression(rule)+': result = '+cutNumber(rule.path),'  exit',' end');
  }
  data.push(' exit','end');
  data.push("if $args[0] = 'jo9_condition_path':",' local $jo9_ic_path_input, $jo9_ic_path_base, jo9_ic_path_best, jo9_ic_path_match, jo9_ic_path_exists',' $jo9_ic_path_input = $args[1]'," $jo9_ic_path_base = $lcase($replace($jo9_ic_path_input, '\\', '/'))",' $result = $jo9_ic_path_input',' jo9_ic_path_best = 0');
@@ -217,4 +227,4 @@ function buildBody(body,input){
  if(JSON.stringify(checked.rules)!==JSON.stringify(normalized)||removeBlocks(next,checked.ranges)!==removeBlocks(body,old.ranges))throw Error('등장 조건 외의 QSP 본문이 변경되었습니다.');
  return next;
 }
-module.exports={OPTIONS,normalizeRules,readRules,installBaseBody,buildBody};
+module.exports={normalizeCondition,conditionExpression,OPTIONS,normalizeRules,readRules,installBaseBody,buildBody};
