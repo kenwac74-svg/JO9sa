@@ -1,0 +1,25 @@
+{
+  "id": "2026-11-09_gloria_test_cheat_removed",
+  "status": "APPROVED",
+  "description": "사용자 지시: 글로리아 퀘스트 테스트가 끝났으므로 임시 테스트 선택지([테스트] 글로리아 퀘스트 준비)와 그 함수를 삭제한다.",
+  "before_sha256": "9fd020b73ea460feeb554905996d1eb92a73281248018f148ed4052c4214ff80",
+  "after_sha256": "5f253a5bcbc3d4373baddedc1ad70c434c0cb35380f7658216635ddd3e51337e",
+  "edits": [
+    {
+      "location": "#npc_base",
+      "field": "body",
+      "old": "! JO9 MOD START GLORIA_QUEST_TEST_CHEAT_20261108\r\n! TEMPORARY TEST CHEAT. Remove before release.\r\n! Uses the assistant as successor when present, otherwise the slave, whose slot is then emptied.\r\n$jo9_gloria_test = {\r\n\tif assistant_state = CONST_INT['slave_exist']:\r\n\t\t$jo9_gloria_successor_name = $assistant_name\r\n\t\tkillvar 'jo9_gloria_successor_slave'\r\n\t\tcopyarr 'jo9_gloria_successor_slave', 'assistant'\r\n\t\t$jo9_gloria_successor_image = '..\\' + $iif($fullsecretary[assistant_type] ! '', $fullsecretary[assistant_type], $fullimage[assistant_type])\r\n\telseif slave_state = CONST_INT['slave_exist']:\r\n\t\t$jo9_gloria_successor_name = $slave_name\r\n\t\tkillvar 'jo9_gloria_successor_slave'\r\n\t\tcopyarr 'jo9_gloria_successor_slave', 'slave'\r\n\t\t$jo9_gloria_successor_image = '..\\' + $iif($fullsecretary[slave_type] ! '', $fullsecretary[slave_type], $fullimage[slave_type])\r\n\t\tdynamic $clear_slave_instance, 'slave'\r\n\tend\r\n\tif $jo9_gloria_successor_name ! '':\r\n\t\tjo9_gloria_successor = 1\r\n\t\tjo9_gloria_successor_day = day - 60\r\n\t\tjo9_gloria_event = 0\r\n\tend\r\n}\r\n! JO9 MOD END GLORIA_QUEST_TEST_CHEAT_20261108\r\n",
+      "new": "! Gloria quest test button removed 2026-11-09\r\n",
+      "count": 1,
+      "patchId": "GLORIA_TEST_REMOVED_20261109"
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "! JO9 MOD START GLORIA_QUEST_TEST_CHEAT_20261108\r\n! TEMPORARY TEST CHEAT. Remove before release.\r\n\t\tif jo9_gloria_event = 0 and (jo9_gloria_successor = 0 or slave_state ! CONST_INT['no_slave']):\r\n\t\t\tfunc('$menu', 'exec_options', $menu_item_requirementsestate, 'dynamic $jo9_gloria_test & sp_txt = 1 & gt $curloc', '[테스트] 글로리아 퀘스트 준비')\r\n\t\tend\r\n! JO9 MOD END GLORIA_QUEST_TEST_CHEAT_20261108\r\n",
+      "new": "! Gloria quest test button removed 2026-11-09\r\n",
+      "count": 1,
+      "patchId": "GLORIA_TEST_REMOVED_20261109"
+    }
+  ]
+}

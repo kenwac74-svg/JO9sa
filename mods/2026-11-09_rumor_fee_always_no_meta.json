@@ -1,0 +1,41 @@
+{
+  "id": "2026-11-09_rumor_fee_always_no_meta",
+  "status": "APPROVED",
+  "description": "사용자 지시: 소문값은 조언이 없어도 항상 받는다(노예가 없어도 받고, 소문값은 내지 않았다 안내 제거). 소문이 비면 NPC가 요즘은 귀담아들을 만한 소문이 없다고 말한다. 목표 탭 같은 게임 밖 안내는 NPC 대사에서 모두 없앤다(의뢰 손님 페이지는 직접 찾아가 이야기를 들어 보라는 말로 끝낸다). 기본 원칙: 메타 발언 금지.",
+  "before_sha256": "4a49bd891b6ed8e8dfd7922b9dbfa4d927a38bbea2067190b5a9d31bb1b45f65",
+  "after_sha256": "1f7998999918d7d6cd244e50227ced73d120de5c8d74f702dff2f9fa745700e6",
+  "edits": [
+    {
+      "location": "jo9_buyer_rumors",
+      "field": "body",
+      "old": "  gs 'jo9_rumor_scan', $jo9_rm_provider\r\n  if jo9_rumor_actor_count > 0:\r\n   sparks -= jo9_rm_fee\r\n   $jo9_rumor_provider = $jo9_rm_provider\r\n   jo9_rumor_page = 0\r\n   result = 1\r\n  else\r\n   $jo9_rumor_notice = '지금은 조건을 살펴볼 보유 인물이 없다. 소문값은 내지 않았다.'\r\n  end\r\n",
+      "new": "  gs 'jo9_rumor_scan', $jo9_rm_provider\r\n! JO9 MOD START RUMOR_FEE_ALWAYS_NO_META_20261109\r\n! The fee is paid whether or not the rumor holds any advice.\r\n  sparks -= jo9_rm_fee\r\n  $jo9_rumor_provider = $jo9_rm_provider\r\n  jo9_rumor_page = 0\r\n  result = 1\r\n! JO9 MOD END RUMOR_FEE_ALWAYS_NO_META_20261109\r\n",
+      "count": 1,
+      "patchId": "RUMOR_FEE_ALWAYS_NO_META_20261109"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "if interaction_city = 951560:\r\n if jo9_rumor_reading ! 1 or arrsize('$jo9_rumor_pages') < 1:\r\n  jo9_rumor_reading = 0\r\n  gt 'jo9_buyer_rumors', 'back', $jo9_rumor_provider\r\n end\r\n jo9_rumor_reading = 2\r\n",
+      "new": "if interaction_city = 951560:\r\n if jo9_rumor_reading ! 1:\r\n  jo9_rumor_reading = 0\r\n  gt 'jo9_buyer_rumors', 'back', $jo9_rumor_provider\r\n end\r\n jo9_rumor_reading = 2\r\n! JO9 MOD START RUMOR_FEE_ALWAYS_NO_META_20261109\r\n if arrsize('$jo9_rumor_pages') < 1: $jo9_rumor_pages[0] = '요즘은 귀담아들을 만한 소문이 없군.'\r\n! JO9 MOD END RUMOR_FEE_ALWAYS_NO_META_20261109\r\n",
+      "count": 1,
+      "patchId": "RUMOR_FEE_ALWAYS_NO_META_20261109"
+    },
+    {
+      "location": "jo9_rumor_scan",
+      "field": "body",
+      "old": "노예를 찾는다더군. 사정은 목표 탭의 특별 고객 의뢰에 적혀 있네.'",
+      "new": "노예를 찾는다더군. 마음이 있다면 직접 찾아가 이야기를 들어 보게.'",
+      "count": 1,
+      "patchId": "RUMOR_FEE_ALWAYS_NO_META_20261109"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "   $jo9_rp_t = replace($jo9_rp_t, ' 노예를 찾는다더군. 사정은 목표 탭의 특별 고객 의뢰에 적혀 있네.', ' 노예를 찾는대요. 사정은 목표 탭의 특별 고객 의뢰에 적혀 있어요.')",
+      "new": "   $jo9_rp_t = replace($jo9_rp_t, ' 노예를 찾는다더군. 마음이 있다면 직접 찾아가 이야기를 들어 보게.', ' 노예를 찾는대요. 마음이 있으시다면 직접 찾아가 이야기를 들어 보세요.')\r\n   $jo9_rp_t = replace($jo9_rp_t, '요즘은 귀담아들을 만한 소문이 없군.', '요즘은 귀담아들을 만한 소문이 없네요.')",
+      "count": 1,
+      "patchId": "RUMOR_FEE_ALWAYS_NO_META_20261109"
+    }
+  ]
+}

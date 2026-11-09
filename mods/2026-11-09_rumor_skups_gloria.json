@@ -1,0 +1,17 @@
+{
+  "id": "2026-11-09_rumor_skups_gloria",
+  "status": "APPROVED",
+  "description": "사용자 지시: 글로리아 퀘스트 안내. 스컵스의 소문 마지막 페이지에 부동산 중개업소 주인이 글로리아를 팔려 한다는 소문을 붙인다. 퀘스트가 끝나면(jo9_gloria_event > 0) 나오지 않는다.",
+  "before_sha256": "1f7998999918d7d6cd244e50227ced73d120de5c8d74f702dff2f9fa745700e6",
+  "after_sha256": "9fd020b73ea460feeb554905996d1eb92a73281248018f148ed4052c4214ff80",
+  "edits": [
+    {
+      "location": "jo9_rumor_scan",
+      "field": "body",
+      "old": " end\r\nend\r\n:jo9_rs_cleanup",
+      "new": " end\r\n! JO9 MOD START RUMOR_SKUPS_GLORIA_20261109\r\n! Skups closes his rumors with the Gloria hint until her quest is over.\r\n if $jo9_rs_provider = 'skups' and jo9_gloria_event = 0 and snk_room_target <= 0:\r\n  $jo9_rumor_pages[arrsize('$jo9_rumor_pages')] = '아, 그 소문 들었나? 부동산 중개업소 주인이 곧 글로리아를 팔아치우려고 한다는군. 적당한 가격이면 직접 넘길 생각도 있는 것 같으니, 비서 특화 노예를 찾는다면 부동산 중개업소로 가 보게나.'\r\n end\r\n! JO9 MOD END RUMOR_SKUPS_GLORIA_20261109\r\nend\r\n:jo9_rs_cleanup",
+      "count": 1,
+      "patchId": "RUMOR_SKUPS_GLORIA_20261109"
+    }
+  ]
+}

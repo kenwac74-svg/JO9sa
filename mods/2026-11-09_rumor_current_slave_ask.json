@@ -1,0 +1,33 @@
+{
+  "id": "2026-11-09_rumor_current_slave_ask",
+  "status": "APPROVED",
+  "description": "사용자 지시: 소문을 현재 노예 칸의 노예에 대해서만 말하게 하고(보유 인물 전체 순회 제거), 첫 페이지에 주인공이 NPC에게 내 노예 이름과 잘하는 전공(slave_specialisation 3 이상, 최대 3개, 조수 전공 판정과 같은 값)을 말하며 값을 잘 쳐주는 곳을 묻는 대사를 넣는다. 표식 @M@로 시작하는 소문 페이지는 주인공 화자로 출력한다. NPC 답변 문장은 아직 바꾸지 않았다.",
+  "before_sha256": "97173c054d5504d8a7f7a27317f7930a0f16559759596c7591f6a397dc3874b7",
+  "after_sha256": "332d10a2f630b5bf88057776d3dfb8f0570053082ff3da6f9f820eeace4fcf1b",
+  "edits": [
+    {
+      "location": "jo9_rumor_scan",
+      "field": "body",
+      "old": "for jo9_rs_i = 0 to arrsize('$all_slave_characters') - 1:\r\n $jo9_rs_role = $all_slave_characters[jo9_rs_i]\r\n",
+      "new": "! JO9 MOD START RUMOR_CURRENT_SLAVE_ASK_20261109\r\n! Rumors are about the slave in the slave slot only.\r\nfor jo9_rs_i = 0 to 0:\r\n $jo9_rs_role = 'slave'\r\n! JO9 MOD END RUMOR_CURRENT_SLAVE_ASK_20261109\r\n",
+      "count": 1,
+      "patchId": "RUMOR_CURRENT_SLAVE_ASK_20261109"
+    },
+    {
+      "location": "jo9_rumor_scan",
+      "field": "body",
+      "old": "   $jo9_rs_actor = replace(replace(replace($jo9_rumor_probe_name, '&', '&amp;'), '<', '&lt;'), '>', '&gt;')\r\n   if $jo9_rs_actor = '': $jo9_rs_actor = '이 인물'\r\n",
+      "new": "   $jo9_rs_actor = replace(replace(replace($jo9_rumor_probe_name, '&', '&amp;'), '<', '&lt;'), '>', '&gt;')\r\n   if $jo9_rs_actor = '': $jo9_rs_actor = '이 인물'\r\n! JO9 MOD START RUMOR_CURRENT_SLAVE_ASK_20261109\r\n   local $jo9_rs_npc = 'master_skups'\r\n   if $jo9_rs_provider = 'barman': $jo9_rs_npc = 'barman'\r\n   if $jo9_rs_provider = 'anes': $jo9_rs_npc = 'anes'\r\n   local $jo9_rs_strong = ''\r\n   local jo9_rs_cnt = 0\r\n   local jo9_rs_lv, jo9_rs_k, $jo9_rs_keys\r\n   $jo9_rs_keys[0] = 'refferent'\r\n   $jo9_rs_keys[1] = 'servant'\r\n   $jo9_rs_keys[2] = 'witchdoctor'\r\n   $jo9_rs_keys[3] = 'gladiatrix'\r\n   $jo9_rs_keys[4] = 'artist'\r\n   $jo9_rs_keys[5] = 'concubine'\r\n   $jo9_rs_keys[6] = 'pet'\r\n   for jo9_rs_lv = 9 to 3 step -1:\r\n    for jo9_rs_k = 0 to 6:\r\n     if jo9_rs_cnt < 3 and jo9_rumor_spec[$jo9_rs_keys[jo9_rs_k]] = jo9_rs_lv:\r\n      if jo9_rs_cnt > 0: $jo9_rs_strong += ', '\r\n      $jo9_rs_strong += $slave_type_name[$jo9_rs_keys[jo9_rs_k]]\r\n      jo9_rs_cnt += 1\r\n     end\r\n    end\r\n   end\r\n   ! The marker at the start of a page makes the protagonist the speaker.\r\n   if jo9_rs_cnt > 0:\r\n    $jo9_rumor_pages[arrsize('$jo9_rumor_pages')] = '@M@<<$npc_name[$jo9_rs_npc]>>, 혹시 내 노예 <<$jo9_rs_actor>>, 그 아이가 <<$jo9_rs_strong>> 쪽 일을 잘하는데, 어디 값을 잘 쳐주는 곳이 있을까?'\r\n   else\r\n    $jo9_rumor_pages[arrsize('$jo9_rumor_pages')] = '@M@<<$npc_name[$jo9_rs_npc]>>, 내 노예 <<$jo9_rs_actor>>, 그 아이를 넘기려는데 어디 값을 잘 쳐주는 곳이 있을까?'\r\n   end\r\n! JO9 MOD END RUMOR_CURRENT_SLAVE_ASK_20261109\r\n",
+      "count": 1,
+      "patchId": "RUMOR_CURRENT_SLAVE_ASK_20261109"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "  $text[jo9_rp_i + 1] = '[<<$npc_name[$npc_id]>>]<br>&nbsp;' + $jo9_rp_t + '</div>'\r\n",
+      "new": "! JO9 MOD START RUMOR_CURRENT_SLAVE_ASK_20261109\r\n  if instr($jo9_rp_t, '@M@') = 1:\r\n   $text[jo9_rp_i + 1] = '[<<$master_name>>]<br>&nbsp;' + $mid($jo9_rp_t, 4, len($jo9_rp_t)) + '</div>'\r\n  else\r\n   $text[jo9_rp_i + 1] = '[<<$npc_name[$npc_id]>>]<br>&nbsp;' + $jo9_rp_t + '</div>'\r\n  end\r\n! JO9 MOD END RUMOR_CURRENT_SLAVE_ASK_20261109\r\n",
+      "count": 1,
+      "patchId": "RUMOR_CURRENT_SLAVE_ASK_20261109"
+    }
+  ]
+}

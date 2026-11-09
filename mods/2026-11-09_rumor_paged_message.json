@@ -1,0 +1,25 @@
+{
+  "id": "2026-11-09_rumor_paged_message",
+  "status": "APPROVED",
+  "description": "사용자 지시: 소문을 듣는다(스컵스·바텐더 작크·아네스)에서 다음 소문을 메뉴 UI가 아니라 하단 대사창의 페이지 넘김 화살표로 읽는다. 소문 보기를 interaction_city 951560으로 넘겨 소문 페이지 전체를 $text 대사 페이지로 만들고, 마지막 페이지를 넘기면 각 NPC 메뉴로 돌아간다. 아네스 말투 치환은 기존 보기 화면과 같다.",
+  "before_sha256": "9ca249ef17bd0d572c367bb09ad3a352b6554b32b2ec0b22d10d85d2338a78f7",
+  "after_sha256": "97173c054d5504d8a7f7a27317f7930a0f16559759596c7591f6a397dc3874b7",
+  "edits": [
+    {
+      "location": "jo9_buyer_rumors",
+      "field": "body",
+      "old": "if jo9_rumor_page >= arrsize('$jo9_rumor_pages'): jo9_rumor_page = max(0, arrsize('$jo9_rumor_pages') - 1)\r\ngs '_layout'\r\n",
+      "new": "if jo9_rumor_page >= arrsize('$jo9_rumor_pages'): jo9_rumor_page = max(0, arrsize('$jo9_rumor_pages') - 1)\r\n! JO9 MOD START RUMOR_PAGED_MESSAGE_20261109\r\n! Rumors are read in the bottom message box with the normal page arrows (interaction 951560).\r\njo9_rumor_reading = 1\r\ninteraction_city = 951560\r\ngt 'interaction_city'\r\n! JO9 MOD END RUMOR_PAGED_MESSAGE_20261109\r\ngs '_layout'\r\n",
+      "count": 1,
+      "patchId": "RUMOR_PAGED_MESSAGE_20261109"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "if interaction_city = 1311:",
+      "new": "! JO9 MOD START RUMOR_PAGED_MESSAGE_20261109\r\nif interaction_city = 951560:\r\n if jo9_rumor_reading ! 1 or arrsize('$jo9_rumor_pages') < 1:\r\n  jo9_rumor_reading = 0\r\n  gt 'jo9_buyer_rumors', 'back', $jo9_rumor_provider\r\n end\r\n jo9_rumor_reading = 2\r\n npc = 1\r\n $npc_id = 'master_skups'\r\n if $jo9_rumor_provider = 'barman': $npc_id = 'barman'\r\n if $jo9_rumor_provider = 'anes': $npc_id = 'anes'\r\n $return_lock = 'interaction_city'\r\n local jo9_rp_i\r\n local $jo9_rp_t\r\n for jo9_rp_i = 0 to arrsize('$jo9_rumor_pages') - 1:\r\n  $jo9_rp_t = $jo9_rumor_pages[jo9_rp_i]\r\n  if $jo9_rumor_provider = 'anes':\r\n   $jo9_rp_t = replace($jo9_rp_t, '내가 듣기로는 ', '제가 듣기로는 ')\r\n   $jo9_rp_t = replace($jo9_rp_t, '를 특별히 찾는 손님은 없군. 돈이 급하다면 길드의 재매입상에게 가보게.', '를 특별히 찾는 손님은 없네요. 돈이 급하시다면 길드의 재매입상에게 가보세요.')\r\n   $jo9_rp_t = replace($jo9_rp_t, '라면 지금은 길드의 재매입상을 찾아가는 편이 낫겠군. 돈이 급하다면 그쪽과 이야기해 보게.', '라면 지금은 길드의 재매입상을 찾아가는 편이 낫겠어요. 돈이 급하시다면 그쪽과 이야기해 보세요.')\r\n   $jo9_rp_t = replace($jo9_rp_t, '의 상태가 잘 맞는군. 이 근방에서도 눈여겨볼 만한 상대들이지. 직접 찾아가 이야기를 들어 보게.', '의 상태가 잘 맞아요. 이 근방에서도 눈여겨볼 만한 분들이에요. 직접 찾아가 이야기를 들어 보세요.')\r\n   $jo9_rp_t = replace($jo9_rp_t, '에게는 지금 이 지역에서 권할 만한 고정 구매처가 떠오르지 않는군. 몸 상태나 낙인, 교육 정도를 다시 살펴보게.', '에게는 지금 이 지역에서 권할 만한 고정 구매처가 떠오르지 않네요. 몸 상태나 낙인, 교육 정도를 다시 살펴보세요.')\r\n  end\r\n  $text[jo9_rp_i + 1] = '[<<$npc_name[$npc_id]>>]<br>&nbsp;' + $jo9_rp_t + '</div>'\r\n end\r\nend\r\n! JO9 MOD END RUMOR_PAGED_MESSAGE_20261109\r\nif interaction_city = 1311:",
+      "count": 1,
+      "patchId": "RUMOR_PAGED_MESSAGE_20261109"
+    }
+  ]
+}
