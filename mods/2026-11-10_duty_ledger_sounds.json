@@ -1,0 +1,25 @@
+{
+  "id": "2026-11-10_duty_ledger_sounds",
+  "status": "APPROVED",
+  "description": "개인실 업무 보고에서 부상 또는 빈손인 날 bad_secen.mp3, 초대박인 날 great-success.mp3를 재생하고(둘이 겹치면 bad_secen), 10일 정산 장부가 열릴 때 ledger.mp3를 재생한다. 음원은 content/snd에 있으며 Git에는 올리지 않는다.",
+  "before_sha256": "9986d47d801687c49d46f9f3c2ab00a216203ee9c7ca08007d98ec22b2515fb1",
+  "after_sha256": "aea3087eea738ab8059212b60a2a6e5a17eac99e90bf0e0f24f189dd4ed870fa",
+  "edits": [
+    {
+      "location": "jo9_duty_text",
+      "field": "body",
+      "old": " end\r\n exit\r\nend\r\nif $args[0]='select':",
+      "new": " end\r\n ! sound: a wound or an empty-handed day plays the bad scene sound, a jackpot (result 4) the great success sound\r\n jo9_rd_snd=''\r\n if jo9_rd_rep=8 and (jo9_rd_kind=2 or jo9_rd_wd>0): jo9_rd_snd='bad_secen'\r\n if jo9_rd_rep=6 and jo9_rd_tier=0: jo9_rd_snd='bad_secen'\r\n if jo9_rd_rep=4 and jo9_rd_tier=0: jo9_rd_snd='bad_secen'\r\n if jo9_rd_snd='' and (jo9_rd_rep=4 or jo9_rd_rep=6 or jo9_rd_rep=8) and jo9_rd_tier=4: jo9_rd_snd='great-success'\r\n if jo9_rd_snd ! '' and sound_on = 1: play 'content/snd/'+$jo9_rd_snd+'.mp3', sound_volume\r\n exit\r\nend\r\nif $args[0]='select':",
+      "count": 1,
+      "patchId": "DUTY_SOUNDS_20261110_REPORT"
+    },
+    {
+      "location": "main_screen",
+      "field": "body",
+      "old": "\tgs 'jo9_ledger', 'decade'\r\n",
+      "new": "\tif sound_on = 1: play 'content/snd/ledger.mp3', sound_volume\r\n\tgs 'jo9_ledger', 'decade'\r\n",
+      "count": 1,
+      "patchId": "DUTY_SOUNDS_20261110_LEDGER"
+    }
+  ]
+}

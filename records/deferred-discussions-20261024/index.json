@@ -324,6 +324,46 @@
       ],
       "recordedAt": "2026-11-06T00:57:05.5992193+09:00",
       "currentReleaseExcluded": true
+    },
+    {
+      "id": "D19",
+      "decisionKey": "CHARACTER_CLONE_GROUP_EXPANSION_20261110",
+      "title": "캐릭터 복제본을 이미지 체크리스트 그룹에 포함",
+      "status": "USER_DEFERRED",
+      "decision": "복제 기능(캐릭터 추가 도구)으로 만든 복제본은 이미지 파일 경로를 공유하지만 체크리스트의 이미지 그룹(현재 2577→2585·2607 하드코딩)에는 들어가지 않는다. 그룹을 데이터화해 복제본을 포함하는 확장은 기록만 하고 나중에 한다.",
+      "trigger": "사용자가 이미지 체크리스트/복제 확장을 다시 꺼낼 때, 또는 복제본의 이미지를 체크리스트에서 연결 경로로 바꾸는 작업을 시작할 때",
+      "facts": "tools/text-workshop/character-image-links.cjs 의 imageTargets 는 2577 일 때만 [2577,2585,2607]을 돌려준다. 복제본은 같은 PNG 경로를 공유하므로 파일 교체는 함께 반영되나, 경로를 바꿔 연결하는 저장은 복제본에 전파되지 않는다.",
+      "constraints": [
+        "지금은 구현하지 않음",
+        "체크리스트 코드·manifest·사용자 체크 상태를 임의로 바꾸지 않음",
+        "그룹 정의를 데이터화할 때 기존 펠라게야 그룹 동작을 보존"
+      ],
+      "evidence": [
+        "docs/session-handoffs/2026-11-10/CLAUDE_HANDOFF_KO.md",
+        "records/pelageya-group-gloria-list-20261109/REPORT_KO.md",
+        "tools/character-image-adder/add_character.py"
+      ],
+      "recordedAt": "2026-11-09T20:21:18.921Z",
+      "currentReleaseExcluded": true
+    },
+    {
+      "id": "D20",
+      "decisionKey": "MONTHLY_SETTLEMENT_IDEA_20261110",
+      "title": "월정산 기획 아이디어 (구현 안 함)",
+      "status": "USER_DEFERRED_IDEA_ONLY",
+      "decision": "정산이 너무 빈번해진다는 판단으로 월정산(30일)은 구현하지 않고 기획 아이디어로만 남긴다.",
+      "trigger": "사용자가 월정산 또는 회계 확장을 다시 꺼낼 때",
+      "facts": "아이디어: 3번째 10일 정산 뒤 30일 회계. 정기 항목과 비정기 흐름(노예·소 판매, 전투·투기장 상금, 의뢰, 경주, 위탁, 계약 종료, 청산, 상점 구매)을 시작·종료 스파크와 대조하고 기타로 차액을 맞춘다. 재사용할 것: 10일 정산 쪽 넘김 뷰어(jo9_ledger_view).",
+      "constraints": [
+        "사용자가 다시 꺼내기 전에는 제안·구현하지 않음",
+        "10일 정산 장부 동작은 변경하지 않음"
+      ],
+      "evidence": [
+        "docs/session-handoffs/2026-11-10/CLAUDE_HANDOFF_KO.md",
+        "mods/2026-11-09_decade_ledger.json"
+      ],
+      "recordedAt": "2026-11-09T20:21:18.921Z",
+      "currentReleaseExcluded": true
     }
   ],
   "notDeferred": [
@@ -358,6 +398,6 @@
       "note": "2026-10-26 사용자 승인. 기존 MSG 첫 발견 1회. 재확인 대기 저장·X 전용 키 제어는 추가하지 않음. records/meiki-discovery-popup-20261026/FINAL_RESULT.json."
     }
   ],
-  "updatedAt": "2026-11-03T11:10:04Z",
-  "lastUpdatedAt": "2026-11-06T12:32:44.6497696+09:00"
+  "updatedAt": "2026-11-09T20:21:18.921Z",
+  "lastUpdatedAt": "2026-11-09T20:21:18.921Z"
 }

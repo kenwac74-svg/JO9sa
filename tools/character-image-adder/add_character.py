@@ -220,6 +220,73 @@ def registry_next_id(paths, age):
     return nid
 
 
+UNIQUE_ID_FIRST = 2626   # 고유 캐릭터 자동 번호 시작 (랜덤 풀 밖, 기존 고유 캐릭터 2571~2625 이후)
+UNIQUE_ID_LAST = 3000
+
+
+def clean_unique_slug(text):
+    """JSON 파일명에 붙일 영문 이름. 영문·숫자·밑줄·하이픈만 남긴다."""
+    return re.sub(r"[^A-Za-z0-9_-]+", "", (text or "").strip().replace(" ", "_"))
+
+
+STORY_FIELDS = [("world", "seed_world_description", "배경 이야기(세계·과거)"),
+                ("family", "seed_family_description", "가족"),
+                ("occupation", "seed_occupation_description", "직업·경력")]
+STORY_MARK = "<!-- #nwtx -->"
+
+
+def story_to_display(value):
+    """JSON 문장 -> 편집창 문장. 끝의 #nwtx 표시를 떼고 <br> 을 줄바꿈으로 바꾼다."""
+    text = (value or "")
+    text = re.sub(r"<!--\s*#nwtx.*?-->\s*$", "", text, flags=re.S)
+    return re.sub(r"<br\s*/?>", "\n", text).strip()
+
+
+def story_from_display(text):
+    """편집창 문장 -> JSON 문장. 줄바꿈은 <br>, 끝에는 #nwtx 표시를 붙인다."""
+    text = (text or "").strip()
+    if not text:
+        return ""
+    return re.sub(r"\s*\n\s*", "<br>", text) + STORY_MARK
+
+
+def apply_story(data, story):
+    """story = {"world":..., "family":..., "occupation":...}. 빈 칸은 건드리지 않는다."""
+    out = dict(data)
+    for key, field, _label in STORY_FIELDS:
+        value = story_from_display((story or {}).get(key, ""))
+        if value:
+            out[field] = value
+    return out
+
+
+def plan_unique_id(paths, wanted=None):
+    """고유 캐릭터 번호. 지정하면 그 번호(비어 있어야 함), 아니면 2626부터 빈 번호."""
+    if wanted not in (None, ""):
+        nid = int(wanted)
+        if nid <= 0:
+            raise ValueError("번호는 1 이상이어야 합니다.")
+        if _character_json_matches(paths, nid):
+            raise FileExistsError("이미 사용 중인 번호입니다: %d" % nid)
+        return nid
+    nid = UNIQUE_ID_FIRST
+    while _character_json_matches(paths, nid):
+        nid += 1
+        if nid > UNIQUE_ID_LAST:
+            raise ValueError("고유 캐릭터 자동 번호가 가득 찼습니다. 번호를 직접 지정하세요.")
+    return nid
+
+
+def pool_range_warning(paths, nid):
+    """번호가 랜덤 등장 범위 안이면 경고 문구를 돌려준다."""
+    idx = read_index(paths)
+    for info in AGE_INFO.values():
+        first, last = info["band_first"], int(idx.get(info["index_key"], info["band_first"] - 1))
+        if first <= nid <= last:
+            return "번호 %d 는 랜덤 등장 범위(%d~%d) 안이라 랜덤으로도 등장할 수 있습니다." % (nid, first, last)
+    return ""
+
+
 def free_file_prefix(paths, start, cat):
     """
     이미지 파일 접두번호. 보통은 ID 와 같지만, 등록 안 된 '고아 이미지'가 그 번호를
@@ -487,9 +554,15 @@ def _write_files_together(payloads):
 
 def save_existing_character(paths, sid, full_path=None, face_path=None, face_image=None,
                             attributes=None, outfits=None, resize_full=True,
-                            resize_face=True, auto_cutout=False, log=print, dry_run=False):
-    """Save one existing character without allocating IDs or changing pool bounds."""
+                            resize_face=True, auto_cutout=False, log=print, dry_run=False,
+                            identity=None):
+    """Save one existing character without allocating IDs or changing pool bounds.
+
+    identity = {"name": 표시 이름, "slug": 영문 파일 이름} 를 주면 고유 캐릭터처럼 seed_name 을 넣고
+    JSON 을 <번호>_<영문이름>.json 으로 바꾼다. ID 와 랜덤 등장 범위는 바꾸지 않는다.
+    """
     data, json_file = read_slave(paths, sid)
+    new_json = json_file
     updated = dict(data)
     base = slave_base_name(data)
     if not base:
@@ -568,13 +641,30 @@ def save_existing_character(paths, sid, full_path=None, face_path=None, face_ima
         if field not in allowed:
             raise ValueError("이 화면에서 바꿀 수 없는 속성입니다: " + str(field))
         updated[field] = int(value) if field == "seed_boobs" else str(value)
-    if updated != data:
+    if identity is not None:
+        name = (identity.get("name") or "").strip()
+        if name and updated.get("seed_name") != name:
+            updated = dict([("seed_name", name)] + [(k, v) for k, v in updated.items() if k != "seed_name"])
+        raw_slug = (identity.get("slug") or "").strip().replace(" ", "_")
+        slug = clean_unique_slug(raw_slug)
+        if slug != raw_slug:
+            raise ValueError("파일 이름은 영문·숫자·밑줄·하이픈만 쓸 수 있습니다.")
+        updated = apply_story(updated, identity.get("story"))
+        if slug:
+            wanted = os.path.join(paths.slaves_dir, "%d_%s.json" % (int(sid), slug))
+            if os.path.normcase(wanted) != os.path.normcase(json_file):
+                if os.path.exists(wanted):
+                    raise FileExistsError("이미 있는 파일 이름입니다: " + os.path.basename(wanted))
+                new_json = wanted
+    if updated != data or new_json != json_file:
         with open(json_file, "rb") as source:
             original_json = source.read()
-        if not os.path.exists(json_file + ".bak"):
+        if not os.path.exists(json_file + ".bak") and not os.path.exists(new_json + ".bak"):
             payloads[json_file + ".bak"] = original_json
-        payloads[json_file] = json.dumps(updated, indent=4, ensure_ascii=False).encode("utf-8")
-    result = {"id": int(sid), "base": base, "json_file": json_file,
+        payloads[new_json] = json.dumps(updated, indent=4, ensure_ascii=False).encode("utf-8")
+        if new_json != json_file:
+            payloads[json_file] = None
+    result = {"id": int(sid), "base": base, "json_file": new_json,
               "files": list(payloads), "dry_run": dry_run, "data": updated}
     if dry_run:
         log("[미리보기] ID %d · %d개 파일 변경 예정 (저장하지 않음)" % (int(sid), len(payloads)))
@@ -708,8 +798,13 @@ def add_character(paths, full_path, face_path, color, length, age,
                   seed_boobs, boobs_img, pussy_img,
                   resize_full=True, resize_face=True,
                   register_pool=True, outfits=None,
-                  auto_cutout=False, face_image=None, log=print, dry_run=False):
+                  auto_cutout=False, face_image=None, log=print, dry_run=False,
+                  unique=None, title=None):
     """캐릭터 한 명을 추가한다. 성공 시 생성 정보 dict 반환.
+
+    unique 를 주면 고유 캐릭터로 추가한다(랜덤 등장 풀에 등록하지 않음).
+      unique = {"name": 표시 이름(seed_name), "slug": 영문 파일 이름, "id": 번호 또는 빈 값}
+    JSON 은 <번호>_<영문이름>.json 으로 저장하고 seed_name 을 넣는다.
 
     face_image 를 주면(PIL 이미지) face_path 대신 그 이미지를 얼굴로 쓴다.
     (전신에서 얼굴 영역을 잘라온 경우에 사용)
@@ -717,12 +812,26 @@ def add_character(paths, full_path, face_path, color, length, age,
 
     info = AGE_INFO[age]
     new_id, img_prefix, base, cat = plan_add(paths, age, color, length)
+    json_name = "%d.json" % new_id
+    if unique is not None:
+        raw_slug = (unique.get("slug") or "").strip().replace(" ", "_")
+        slug = clean_unique_slug(raw_slug)
+        if slug != raw_slug:
+            raise ValueError("파일 이름은 영문·숫자·밑줄·하이픈만 쓸 수 있습니다.")
+        new_id = plan_unique_id(paths, unique.get("id"))
+        img_prefix = free_file_prefix(paths, new_id, cat)
+        base = "%04d_%s" % (img_prefix, cat)
+        json_name = "%d_%s.json" % (new_id, slug) if slug else "%d.json" % new_id
+        register_pool = False
+        warn = pool_range_warning(paths, new_id)
+        if warn:
+            log("   [주의] " + warn)
 
     full_out = os.path.join(paths.full_dir, base + ".png")
     face_clear = os.path.join(paths.face_dir, base + ".png")
     face_gray = os.path.join(paths.face_dir, base + "_gray.png")
     face_sepia = os.path.join(paths.face_dir, base + "_sepia.png")
-    json_out = os.path.join(paths.slaves_dir, "%d.json" % new_id)
+    json_out = os.path.join(paths.slaves_dir, json_name)
 
     # 충돌 방지 (plan_add 가 비어있는 번호를 골라주므로 정상적으로는 걸리지 않음)
     for p in (full_out, face_clear, face_gray, face_sepia, json_out):
@@ -730,15 +839,18 @@ def add_character(paths, full_path, face_path, color, length, age,
             raise FileExistsError("이미 존재하는 파일과 충돌: %s" % p)
 
     if img_prefix == new_id:
-        log("-> 새 ID: %d   (파일 이름: %s)" % (new_id, base))
+        log("-> 새 ID: %d   (파일 이름: %s)%s" % (new_id, base,
+            "  [고유 캐릭터: %s]" % json_name if unique is not None else ""))
     else:
         log("-> 새 ID: %d   (그 번호 이미지가 이미 있어 파일은 %04d 번으로 저장: %s)"
             % (new_id, img_prefix, base))
 
     if dry_run:
         log("   [미리보기] 실제로 파일을 만들지는 않았습니다.")
-        return {"id": new_id, "base": base, "cat": cat}
+        return {"id": new_id, "base": base, "cat": cat,
+                "files": [full_out, face_clear, face_gray, face_sepia, json_out], "dry_run": True}
 
+    written = []
     # 1) 원본 구도에서 배경을 제거하고, 저장 직전에만 전체 크기를 맞춘다.
     full_src = _load_rgba(full_path)
     if auto_cutout:
@@ -746,6 +858,7 @@ def add_character(paths, full_path, face_path, color, length, age,
         full_src = remove_bg(full_src)
     full_img = compose_full(full_src) if resize_full else full_src
     full_img.save(full_out)
+    written.append(full_out)
     log("   [OK] 전신 저장: full/%s.png  (%dx%d)" % (base, *full_img.size))
 
     # 2~4) 얼굴 3종 (face_image 를 주면 그걸, 아니면 face_path 파일을 사용)
@@ -758,6 +871,7 @@ def add_character(paths, full_path, face_path, color, length, age,
     face_img.save(face_clear)
     to_grayscale(face_img).save(face_gray)
     to_sepia(face_img).save(face_sepia)
+    written += [face_clear, face_gray, face_sepia]
     log("   [OK] 얼굴 저장: face/%s.png + _gray + _sepia  (%dx%d)" % (base, *face_img.size))
 
     # 선택: 외형(하녀/도미나/비서) 이미지
@@ -766,7 +880,20 @@ def add_character(paths, full_path, face_path, color, length, age,
         if src:
             outfit_fields[field] = save_outfit_image(paths, field, base, src,
                                                      resize_full, auto_cutout)
+            written.append(_abs_from_gamepath(paths.root, outfit_fields[field]))
             log("   [OK] %s 저장: %s.png" % (OUTFIT_LABELS[field], outfit_fields[field]))
+    title_ref = ""
+    if title is not None:
+        # 전용 번호 폴더가 없는 새 캐릭터의 타이틀(옷 입은 모습)은 characters/ 폴더에 둔다.
+        title_stem = base
+        if unique is not None and clean_unique_slug(unique.get("slug")):
+            title_stem = "%d_%s" % (new_id, clean_unique_slug(unique.get("slug")))
+        title_ref = _free_reference(paths, "%s/%s_title" % (CHARACTERS_DIR_NAME, title_stem), set())
+        title_target = _abs_from_gamepath(paths.root, title_ref)
+        os.makedirs(os.path.dirname(title_target), exist_ok=True)
+        _load_rgba(title).save(title_target)
+        written.append(title_target)
+        log("   [OK] 타이틀 저장: %s.png" % title_ref)
 
     # 5) json/slaves/<ID>.json  (경로 규칙에 주의: fullimage는 content/pic 없음, seed_ava는 있음)
     data = {
@@ -784,9 +911,17 @@ def add_character(paths, full_path, face_path, color, length, age,
         "seed_psy_basic": "",
         "seed_world": "",
     }
+    if title_ref:
+        data["indpack_title"] = title_ref
+        data["indpack_naked"] = data["fullimage"]   # 타이틀이 있으면 알몸 필드도 채운다(체크리스트와 같은 규칙)
+    if unique is not None and (unique.get("name") or "").strip():
+        data = dict([("seed_name", unique["name"].strip())] + list(data.items()))
+    if unique is not None:
+        data = apply_story(data, unique.get("story"))
     with open(json_out, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4, ensure_ascii=False)
-    log("   [OK] 데이터 저장: json/slaves/%d.json" % new_id)
+    written.append(json_out)
+    log("   [OK] 데이터 저장: json/slaves/%s" % json_name)
 
     # 6) slave_index.json 갱신 (백업 후)
     if register_pool:
@@ -799,6 +934,7 @@ def add_character(paths, full_path, face_path, color, length, age,
             idx[info["index_key"]] = new_id
             with open(paths.index_file, "w", encoding="utf-8") as f:
                 json.dump(idx, f, indent=2, ensure_ascii=False)
+            written.append(paths.index_file)
             log("   [OK] 생성범위 갱신: %s  %s -> %d  (랜덤 등장 대상)" % (info["index_key"], old, new_id))
         else:
             log("   -  생성범위는 이미 %d 이상이라 그대로 둠" % new_id)
@@ -806,7 +942,364 @@ def add_character(paths, full_path, face_path, color, length, age,
         log("   -  생성범위 미갱신 (랜덤 풀 등록 안 함)")
 
     log("완료! ID %d (%s) 추가됨.\n" % (new_id, cat))
-    return {"id": new_id, "base": base, "cat": cat}
+    return {"id": new_id, "base": base, "cat": cat, "json": json_name, "files": written, "data": data,
+            "json_file": json_out, "dry_run": False}
+
+
+# ---------------------------------------------------------------------------
+# 슬롯(기본·타이틀·복장) 저장 규칙 · 이미지 공유 · 복제   (2026-11-10)
+# 폴더 규칙은 docs/modding/IMAGE_NAMING_RULES_KO.md (사용자 확정 2026-11-09)를 따른다.
+# ---------------------------------------------------------------------------
+
+import copy
+
+# (슬롯, 라벨, 가능한 JSON 필드(옛 필드 먼저), 역할 이름)
+SLOTS = [
+    ("base", "기본(알몸)", ("fullimage", "indpack_naked"), "naked"),
+    ("title", "타이틀(옷 입은 모습)", ("indpack_title",), "title"),
+    ("maid", "하녀", ("fullmade", "indpack_maid"), "maid"),
+    ("secr", "비서", ("fullsecretary", "indpack_secr"), "secr"),
+    ("dom", "도미나", ("fullmistress", "indpack_dom"), "dom"),
+]
+SLOT_LABELS = {key: label for key, label, _f, _r in SLOTS}
+SLOT_FIELDS = {key: fields for key, _l, fields, _r in SLOTS}
+SLOT_ROLE = {key: role for key, _l, _f, role in SLOTS}
+IMAGE_FIELDS = ("fullimage", "fullmade", "fullmistress", "fullsecretary", "seed_ava", "seed_ava_gray",
+                "seed_ava_clear", "indpack_maid", "indpack_secr", "indpack_dom", "indpack_naked", "indpack_title")
+OUTFIT_SUBFOLDER = {"maid": "cloth", "secr": "secretary", "dom": "mistress"}
+CHARACTERS_DIR_NAME = "characters"
+
+
+def is_dedicated(paths, sid):
+    """전용 번호 폴더(girls/full|face|sex_scenes/<번호>) 가 하나라도 실제로 있으면 True."""
+    sid = int(sid)
+    return any(os.path.isdir(os.path.join(paths.girls_dir, *part, str(sid)))
+               for part in (("full",), ("face",), ("sex_scenes",)))
+
+
+def _norm_ref(reference):
+    text = (reference or "").replace("\\", "/")
+    if text.startswith("content/pic/"):
+        text = text[len("content/pic/"):]
+    return os.path.splitext(text)[0].lower() if os.path.splitext(text)[1].lower() in (".png", ".gif", ".jpg") else text.lower()
+
+
+def build_ref_index(paths):
+    """모든 캐릭터 JSON 의 이미지 참조 -> 그 참조를 쓰는 ID 집합."""
+    index = {}
+    for name in os.listdir(paths.slaves_dir):
+        match = re.match(r"^(\d+)(?:_[^/\\]+)?\.json$", name, re.IGNORECASE)
+        if not match or int(match.group(1)) == 0:
+            continue
+        try:
+            with open(os.path.join(paths.slaves_dir, name), "r", encoding="utf-8-sig") as stream:
+                data = json.load(stream)
+        except (OSError, ValueError):
+            continue
+        for field in IMAGE_FIELDS:
+            value = data.get(field)
+            if isinstance(value, str) and value:
+                index.setdefault(_norm_ref(value), set()).add(int(match.group(1)))
+    return index
+
+
+def slot_reference(data, slot, dedicated):
+    """현재 JSON 에서 이 슬롯이 쓰는 (필드, 참조). 없으면 (None, None). 전용 폴더 캐릭터는 indpack 필드를 우선."""
+    fields = SLOT_FIELDS[slot]
+    # 체크리스트와 같은 기준: 기본 전신은 알몸 필드(indpack_naked)를 우선한다. 전용 폴더 캐릭터는 indpack 필드 우선.
+    ordered = tuple(reversed(fields)) if (dedicated or slot == "base") else fields
+    for field in ordered:
+        if data.get(field):
+            return field, data[field]
+    return None, None
+
+
+def slot_default_target(paths, sid, data, slot, base):
+    """아직 연결 안 된 슬롯의 새 저장 위치 (필드, 참조). 확정된 폴더 규칙을 따른다."""
+    role = SLOT_ROLE[slot]
+    fields = SLOT_FIELDS[slot]
+    if is_dedicated(paths, sid):
+        field = fields[-1]
+        return field, "girls/full/%d/%d_full_%s" % (int(sid), int(sid), role)
+    if slot == "base":
+        return "fullimage", "girls/full/%s" % base
+    if slot == "title":
+        return "indpack_title", "%s/%s_title" % (CHARACTERS_DIR_NAME, base)
+    return fields[0], "girls/full/%s/%s" % (OUTFIT_SUBFOLDER[slot], base)
+
+
+def rule_warning(paths, sid, slot, reference, dedicated=None):
+    """참조 경로가 폴더 규칙과 다르면 안내 문구, 맞으면 빈 문자열. 저장은 막지 않는다."""
+    if not reference:
+        return ""
+    ref = reference.replace("\\", "/")
+    if ref.startswith("content/pic/"):
+        ref = ref[len("content/pic/"):]
+    dedicated = is_dedicated(paths, sid) if dedicated is None else dedicated
+    if dedicated:
+        ok = ref.startswith("girls/full/%d/" % int(sid))
+        wanted = "girls/full/%d/" % int(sid)
+    elif slot == "base":
+        ok = ref.startswith("girls/full/") and ref.count("/") == 2
+        wanted = "girls/full/"
+    elif slot == "title":
+        ok = ref.startswith(CHARACTERS_DIR_NAME + "/")
+        wanted = CHARACTERS_DIR_NAME + "/"
+    else:
+        subs = {"cloth", "maid"} if slot == "maid" else {OUTFIT_SUBFOLDER[slot]}
+        ok = any(ref.startswith("girls/full/%s/" % s) for s in subs)
+        wanted = "girls/full/%s/" % OUTFIT_SUBFOLDER[slot]
+    return "" if ok else "%s → 권장 %s" % (reference, wanted)
+
+
+def _free_reference(paths, reference, taken):
+    """저장 대상 참조가 이미 있거나 이번 저장에서 쓰이면 _2, _3 을 붙여 비어 있는 이름을 찾는다."""
+    candidate, number = reference, 2
+    while os.path.exists(_abs_from_gamepath(paths.root, candidate)) or _abs_from_gamepath(paths.root, candidate) in taken:
+        candidate = "%s_%d" % (reference, number)
+        number += 1
+    return candidate
+
+
+def link_semantics(data, updated, slot, field, reference):
+    """체크리스트(character-image-links.cjs)와 같은 연결 규칙.
+    - 기본 전신을 바꾸면 fullimage 와 (있으면) indpack_naked 를 같은 경로로 맞추고, 타이틀이 옛 fullimage 와 같았다면 따라간다.
+    - 타이틀을 지정할 때 indpack_naked 가 없으면 현재 기본 전신으로 채운다(옷을 벗었을 때 옷 입은 그림이 나오지 않게).
+    """
+    if slot == "base":
+        updated["fullimage"] = reference
+        if "indpack_naked" in data or field == "indpack_naked":
+            updated["indpack_naked"] = reference
+        old_full = data.get("fullimage")
+        if isinstance(data.get("indpack_title"), str) and data.get("indpack_title") and data.get("indpack_title") == old_full:
+            updated["indpack_title"] = reference
+    elif slot == "title":
+        if not updated.get("indpack_naked") and updated.get("fullimage"):
+            updated["indpack_naked"] = updated["fullimage"]
+
+
+def stat_keys(data):
+    """능력치 편집 대상: 정수 값을 가진 seed_* 항목 중 외모·나이 같은 분류값은 제외."""
+    skip = {"seed_age", "seed_boobs", "seed_hair", "seed_world", "seed_psy_basic"}
+    return sorted(k for k, v in data.items()
+                  if k.startswith("seed_") and isinstance(v, int) and not isinstance(v, bool) and k not in skip)
+
+
+def save_character_slots(paths, sid, slot_images=None, face_image=None, attributes=None,
+                         identity=None, log=print, dry_run=False, fix_json=None):
+    """기존 캐릭터의 슬롯 이미지(이미 795x596 으로 맞춘 PIL 이미지)와 얼굴을 저장한다.
+
+    slot_images = {슬롯: PIL 이미지 | None(연결 해제)}.  슬롯 키는 SLOTS 참조.
+    이미 연결된 슬롯은 같은 경로에서 교체하고, 연결 안 된 슬롯은 폴더 규칙에 맞는 새 경로를 만든다.
+    같은 경로를 다른 역할이 함께 쓰고 있으면(공유 사본) 덮어쓰지 않고 새 경로를 만든다.
+    반환: {"id", "files"(전체 경로 목록), "data"(저장될 JSON), "before", "targets", "warnings", "shared_with"}
+    """
+    data, json_file = read_slave(paths, sid)
+    before = copy.deepcopy(data)
+    updated = dict(data)
+    base = slave_base_name(data) or ("%04d_%s" % (int(sid), "char"))
+    dedicated = is_dedicated(paths, sid)
+    payloads, taken, targets, warnings = {}, set(), {}, []
+    ref_index = build_ref_index(paths)
+    shared_with = set()
+    removed = set()
+
+    def put(target, image):
+        key = os.path.normcase(os.path.abspath(target))
+        if key in taken:
+            raise ValueError("서로 다른 이미지 항목이 같은 저장 경로를 참조합니다: " + target)
+        taken.add(key)
+        payloads[target] = _png_bytes(image)
+
+    other_refs = lambda skip_fields: {_abs_from_gamepath(paths.root, data[f]) for f in IMAGE_FIELDS
+                                      if f not in skip_fields and data.get(f)}
+    for slot, image in (slot_images or {}).items():
+        if slot not in SLOT_FIELDS:
+            raise ValueError("알 수 없는 슬롯입니다: " + str(slot))
+        field, reference = slot_reference(data, slot, dedicated)
+        if image is None:
+            if reference:
+                removed.add(_abs_from_gamepath(paths.root, reference))
+                for f in SLOT_FIELDS[slot]:
+                    updated[f] = ""
+                targets[slot] = None
+            continue
+        if reference:
+            current = _abs_from_gamepath(paths.root, reference)
+            if current in other_refs(set(SLOT_FIELDS[slot])):
+                field, reference = slot_default_target(paths, sid, data, slot, base)
+                reference = _free_reference(paths, reference, taken)
+                warnings.append("%s: 다른 역할과 같은 파일을 쓰고 있어 새 경로 %s 에 저장합니다." % (SLOT_LABELS[slot], reference))
+            else:
+                users = ref_index.get(_norm_ref(reference), set()) - {int(sid)}
+                if users:
+                    shared_with |= users
+        else:
+            field, reference = slot_default_target(paths, sid, data, slot, base)
+            reference = _free_reference(paths, reference, taken)
+        updated[field] = reference
+        link_semantics(data, updated, slot, field, reference)
+        targets[slot] = reference
+        put(_abs_from_gamepath(paths.root, reference), image.convert("RGBA"))
+        note = rule_warning(paths, sid, slot, reference, dedicated)
+        if note:
+            warnings.append("%s 경로 규칙: %s" % (SLOT_LABELS[slot], note))
+
+    if face_image is not None:
+        face = face_image.convert("RGBA")
+        if face.size != FACE_SIZE:
+            face = face.resize(FACE_SIZE, Image.LANCZOS)
+        for field, suffix, variant in (("seed_ava_clear", "", face), ("seed_ava_gray", "_gray", to_grayscale(face)),
+                                       ("seed_ava", "_sepia", to_sepia(face))):
+            if data.get(field):
+                reference = data[field]
+            elif dedicated:
+                reference = "content/pic/girls/face/%d/%d_face%s" % (int(sid), int(sid), suffix)
+            else:
+                reference = "content/pic/girls/face/" + base + suffix
+            updated[field] = reference
+            put(_abs_from_gamepath(paths.root, reference), variant)
+            users = ref_index.get(_norm_ref(reference), set()) - {int(sid)}
+            if users:
+                shared_with |= users
+
+    for key, value in (attributes or {}).items():
+        if key not in {"seed_boobs", "seed_boobs_img", "seed_pussy_img"}:
+            raise ValueError("이 화면에서 바꿀 수 없는 속성입니다: " + str(key))
+        updated[key] = int(value) if key == "seed_boobs" else str(value)
+
+    new_json = json_file
+    if identity is not None:
+        name = (identity.get("name") or "").strip()
+        if name and updated.get("seed_name") != name:
+            updated = dict([("seed_name", name)] + [(k, v) for k, v in updated.items() if k != "seed_name"])
+        raw_slug = (identity.get("slug") or "").strip().replace(" ", "_")
+        slug = clean_unique_slug(raw_slug)
+        if slug != raw_slug:
+            raise ValueError("파일 이름은 영문·숫자·밑줄·하이픈만 쓸 수 있습니다.")
+        updated = apply_story(updated, identity.get("story"))
+        if slug:
+            wanted = os.path.join(paths.slaves_dir, "%d_%s.json" % (int(sid), slug))
+            if os.path.normcase(wanted) != os.path.normcase(json_file):
+                if os.path.exists(wanted):
+                    raise FileExistsError("이미 있는 파일 이름입니다: " + os.path.basename(wanted))
+                new_json = wanted
+
+    remaining = {_abs_from_gamepath(paths.root, updated[f]) for f in IMAGE_FIELDS if updated.get(f)}
+    for target in removed:
+        if target not in remaining and target not in payloads:
+            payloads[target] = None
+    if updated != data or new_json != json_file:
+        with open(json_file, "rb") as source:
+            original_json = source.read()
+        if not os.path.exists(json_file + ".bak") and not os.path.exists(new_json + ".bak"):
+            payloads[json_file + ".bak"] = original_json
+        payloads[new_json] = json.dumps(updated, indent=4, ensure_ascii=False).encode("utf-8")
+        if new_json != json_file:
+            payloads[json_file] = None
+    result = {"id": int(sid), "base": base, "json_file": new_json, "files": list(payloads), "dry_run": dry_run,
+              "data": updated, "before": before, "targets": targets, "warnings": warnings,
+              "shared_with": sorted(shared_with), "dedicated": dedicated}
+    if dry_run:
+        log("[미리보기] ID %d · %d개 파일 변경 예정 (저장하지 않음)" % (int(sid), len(payloads)))
+    elif payloads:
+        _write_files_together(payloads)
+        log("[OK] ID %d 저장 완료 · %d개 파일" % (int(sid), len(payloads)))
+    else:
+        log("변경할 내용이 없습니다.")
+    for note in warnings:
+        log("   [주의] " + note)
+    if shared_with and not dry_run:
+        log("   [공유] 같은 이미지를 쓰는 다른 캐릭터: " + ", ".join(str(x) for x in sorted(shared_with)))
+    return result
+
+
+def clone_character(paths, src_sid, name=None, slug="", new_id=None, story=None, seed_overrides=None,
+                    slot_images=None, face_image=None, log=print, dry_run=False):
+    """기존 캐릭터를 새 번호로 복제한다. 이미지·외모·설정은 원본과 같은 경로를 그대로 공유하고,
+    표시 이름·배경 이야기·능력치(seed_*)만 따로 고친다. 랜덤 등장 풀에는 넣지 않는다.
+
+    slot_images/face_image 를 주면 그 슬롯만 복제본 전용 새 파일(폴더 규칙 경로)로 저장해 공유를 끊는다.
+    원본 JSON·이미지는 바꾸지 않는다.
+    """
+    data, _src_file = read_slave(paths, src_sid)
+    raw_slug = (slug or "").strip().replace(" ", "_")
+    clean = clean_unique_slug(raw_slug)
+    if clean != raw_slug:
+        raise ValueError("파일 이름은 영문·숫자·밑줄·하이픈만 쓸 수 있습니다.")
+    nid = plan_unique_id(paths, new_id)
+    new = copy.deepcopy(data)
+    if (name or "").strip():
+        new = dict([("seed_name", name.strip())] + [(k, v) for k, v in new.items() if k != "seed_name"])
+    new = apply_story(new, story)
+    allowed = set(stat_keys(data))
+    for key, value in (seed_overrides or {}).items():
+        if key not in allowed:
+            raise ValueError("복제본에서 바꿀 수 없는 능력치 항목입니다: " + str(key))
+        new[key] = int(value)
+    payloads, taken, warnings = {}, set(), []
+    own_base = "%04d_%s" % (nid, clean or "clone")
+
+    def put(target, image):
+        key = os.path.normcase(os.path.abspath(target))
+        if key in taken:
+            raise ValueError("서로 다른 이미지 항목이 같은 저장 경로를 참조합니다: " + target)
+        taken.add(key)
+        payloads[target] = _png_bytes(image)
+
+    separated = []
+    for slot, image in (slot_images or {}).items():
+        if image is None:
+            continue
+        # 복제본은 전용 번호 폴더가 없으므로 '전용 번호 폴더 없음' 규칙 경로를 쓴다.
+        field = next((f for f in SLOT_FIELDS[slot] if new.get(f)), None)
+        default_field, reference = None, None
+        if slot == "base":
+            default_field, reference = "fullimage", "girls/full/%s" % own_base
+        elif slot == "title":
+            default_field, reference = "indpack_title", "%s/%s_title" % (CHARACTERS_DIR_NAME, own_base)
+        else:
+            default_field, reference = SLOT_FIELDS[slot][0], "girls/full/%s/%s" % (OUTFIT_SUBFOLDER[slot], own_base)
+        reference = _free_reference(paths, reference, taken)
+        field = field or default_field
+        before_link = dict(new)
+        new[field] = reference
+        link_semantics(before_link, new, slot, field, reference)
+        put(_abs_from_gamepath(paths.root, reference), image.convert("RGBA"))
+        separated.append("%s → %s" % (SLOT_LABELS[slot], reference))
+    if face_image is not None:
+        face = face_image.convert("RGBA")
+        if face.size != FACE_SIZE:
+            face = face.resize(FACE_SIZE, Image.LANCZOS)
+        for field, suffix, variant in (("seed_ava_clear", "", face), ("seed_ava_gray", "_gray", to_grayscale(face)),
+                                       ("seed_ava", "_sepia", to_sepia(face))):
+            reference = _free_reference(paths, "content/pic/girls/face/%s%s" % (own_base, suffix), taken)
+            new[field] = reference
+            put(_abs_from_gamepath(paths.root, reference), variant)
+        separated.append("얼굴 3종 → content/pic/girls/face/%s*" % own_base)
+
+    json_name = "%d_%s.json" % (nid, clean) if clean else "%d.json" % nid
+    json_out = os.path.join(paths.slaves_dir, json_name)
+    if os.path.exists(json_out):
+        raise FileExistsError("이미 존재하는 파일: " + json_name)
+    payloads[json_out] = json.dumps(new, indent=4, ensure_ascii=False).encode("utf-8")
+    warn = pool_range_warning(paths, nid)
+    if warn:
+        warnings.append(warn)
+    if separated:
+        warnings.append("따로 저장한 이미지: " + " / ".join(separated))
+    shared_fields = sorted(f for f in IMAGE_FIELDS if new.get(f) and new.get(f) == data.get(f))
+    result = {"id": nid, "source_id": int(src_sid), "json": json_name, "json_file": json_out, "files": list(payloads),
+              "data": new, "before": data, "dry_run": dry_run, "warnings": warnings, "shared_fields": shared_fields,
+              "shared_with": [int(src_sid)] if shared_fields else []}
+    if dry_run:
+        log("[미리보기] 복제 ID %d (%s) · 파일 %d개 예정" % (nid, json_name, len(payloads)))
+    else:
+        _write_files_together(payloads)
+        log("[OK] ID %d 를 ID %d 로 복제했습니다 (%s). 공유하는 이미지 항목 %d개." % (int(src_sid), nid, json_name, len(shared_fields)))
+    for note in warnings:
+        log("   [주의] " + note)
+    return result
 
 
 # ---------------------------------------------------------------------------

@@ -1,0 +1,121 @@
+{
+  "id": "2026-11-10_fog_injury_after_haul",
+  "status": "APPROVED",
+  "description": "안개 경계 탐색에서 부상과 수확이 같은 날 나올 때, 수확 보고가 먼저 나오고 부상 문장이 이어서 덧붙는다. 컷은 부상한 날 부상 컷을 쓴다. 판정·확률·금액은 그대로다.",
+  "before_sha256": "c7f11d8059a164de2520cc25fbd8b44be6bfd6e555fdddba39a1f906d3d5b1b0",
+  "after_sha256": "b254f73672d25e4fd36761156a264549dcde64ff49594fffefe4b54e3ee7c71c",
+  "edits": [
+    {
+      "location": "jo9_room_duty",
+      "field": "body",
+      "old": "if jo9_rd_wd>0: jo9_rd_kind=3\r\n",
+      "new": "! the wound is reported after the haul (duty_wound), the harvest kind stays 0, 1 or 2\r\n",
+      "count": 1,
+      "patchId": "FOG_INJURY_AFTER_HAUL_20261110_KIND"
+    },
+    {
+      "location": "jo9_room_duty",
+      "field": "body",
+      "old": "if jo9_rd_kind=3: $jo9_rd_t='fog_injured'\r\n",
+      "new": "if dyneval('result=room'+str(jo9_rd_n)+'[\"duty_wound\"]')>0: $jo9_rd_t='fog_injured'\r\n",
+      "count": 1,
+      "patchId": "FOG_INJURY_AFTER_HAUL_20261110_SCENE"
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "\tif jo9_rd_rep = 8 and room1['duty_kind'] = 3 and room1['duty_wound'] = 1: $text = '  [<<$room1_name>>]은(는) 안개 속에서 괴물과 마주쳐 가벼운 상처를 입고 돌아왔다. (<<$jo9_rd_goods1>>)'\r\n",
+      "new": "\tif jo9_rd_rep = 8 and room1['duty_wound'] = 1: $text += ' 게다가 안개 속에서 괴물과 마주쳐 가벼운 상처를 입었다.'\r\n",
+      "count": 1,
+      "patchId": "FOG_INJURY_AFTER_HAUL_20261110_R1W1"
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "\tif jo9_rd_rep = 8 and room1['duty_kind'] = 3 and room1['duty_wound'] = 2: $text = '  [<<$room1_name>>]은(는) 안개 속에서 괴물과 맞서다 깊은 상처를 입고 돌아왔다. 절뚝이며 겨우 수습한 소지품을 내려놓는다. (<<$jo9_rd_goods1>>)'\r\n",
+      "new": "\tif jo9_rd_rep = 8 and room1['duty_wound'] = 2: $text += ' 게다가 안개 속에서 괴물과 맞서다 깊은 상처를 입어, 절뚝이며 돌아왔다.'\r\n",
+      "count": 1,
+      "patchId": "FOG_INJURY_AFTER_HAUL_20261110_R1W2"
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "\tif jo9_rd_rep = 8 and room1['duty_kind'] = 3 and room1['duty_wound'] = 3: $text = '  [<<$room1_name>>]은(는) 안개 속에서 큰 부상을 당해 피투성이로 돌아왔다. 가까스로 살아 돌아온 것이다. (<<$jo9_rd_goods1>>)'\r\n",
+      "new": "\tif jo9_rd_rep = 8 and room1['duty_wound'] = 3: $text += ' 게다가 안개 속에서 큰 부상을 당해 피투성이가 되었다. 가까스로 살아 돌아온 것이다.'\r\n",
+      "count": 1,
+      "patchId": "FOG_INJURY_AFTER_HAUL_20261110_R1W3"
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "\tif jo9_rd_rep = 8 and room2['duty_kind'] = 3 and room2['duty_wound'] = 1: $text = '  [<<$room2_name>>]은(는) 안개 속에서 괴물과 마주쳐 가벼운 상처를 입고 돌아왔다. (<<$jo9_rd_goods2>>)'\r\n",
+      "new": "\tif jo9_rd_rep = 8 and room2['duty_wound'] = 1: $text += ' 게다가 안개 속에서 괴물과 마주쳐 가벼운 상처를 입었다.'\r\n",
+      "count": 1,
+      "patchId": "FOG_INJURY_AFTER_HAUL_20261110_R2W1"
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "\tif jo9_rd_rep = 8 and room2['duty_kind'] = 3 and room2['duty_wound'] = 2: $text = '  [<<$room2_name>>]은(는) 안개 속에서 괴물과 맞서다 깊은 상처를 입고 돌아왔다. 절뚝이며 겨우 수습한 소지품을 내려놓는다. (<<$jo9_rd_goods2>>)'\r\n",
+      "new": "\tif jo9_rd_rep = 8 and room2['duty_wound'] = 2: $text += ' 게다가 안개 속에서 괴물과 맞서다 깊은 상처를 입어, 절뚝이며 돌아왔다.'\r\n",
+      "count": 1,
+      "patchId": "FOG_INJURY_AFTER_HAUL_20261110_R2W2"
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "\tif jo9_rd_rep = 8 and room2['duty_kind'] = 3 and room2['duty_wound'] = 3: $text = '  [<<$room2_name>>]은(는) 안개 속에서 큰 부상을 당해 피투성이로 돌아왔다. 가까스로 살아 돌아온 것이다. (<<$jo9_rd_goods2>>)'\r\n",
+      "new": "\tif jo9_rd_rep = 8 and room2['duty_wound'] = 3: $text += ' 게다가 안개 속에서 큰 부상을 당해 피투성이가 되었다. 가까스로 살아 돌아온 것이다.'\r\n",
+      "count": 1,
+      "patchId": "FOG_INJURY_AFTER_HAUL_20261110_R2W3"
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "\tif jo9_rd_rep = 8 and room3['duty_kind'] = 3 and room3['duty_wound'] = 1: $text = '  [<<$room3_name>>]은(는) 안개 속에서 괴물과 마주쳐 가벼운 상처를 입고 돌아왔다. (<<$jo9_rd_goods3>>)'\r\n",
+      "new": "\tif jo9_rd_rep = 8 and room3['duty_wound'] = 1: $text += ' 게다가 안개 속에서 괴물과 마주쳐 가벼운 상처를 입었다.'\r\n",
+      "count": 1,
+      "patchId": "FOG_INJURY_AFTER_HAUL_20261110_R3W1"
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "\tif jo9_rd_rep = 8 and room3['duty_kind'] = 3 and room3['duty_wound'] = 2: $text = '  [<<$room3_name>>]은(는) 안개 속에서 괴물과 맞서다 깊은 상처를 입고 돌아왔다. 절뚝이며 겨우 수습한 소지품을 내려놓는다. (<<$jo9_rd_goods3>>)'\r\n",
+      "new": "\tif jo9_rd_rep = 8 and room3['duty_wound'] = 2: $text += ' 게다가 안개 속에서 괴물과 맞서다 깊은 상처를 입어, 절뚝이며 돌아왔다.'\r\n",
+      "count": 1,
+      "patchId": "FOG_INJURY_AFTER_HAUL_20261110_R3W2"
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "\tif jo9_rd_rep = 8 and room3['duty_kind'] = 3 and room3['duty_wound'] = 3: $text = '  [<<$room3_name>>]은(는) 안개 속에서 큰 부상을 당해 피투성이로 돌아왔다. 가까스로 살아 돌아온 것이다. (<<$jo9_rd_goods3>>)'\r\n",
+      "new": "\tif jo9_rd_rep = 8 and room3['duty_wound'] = 3: $text += ' 게다가 안개 속에서 큰 부상을 당해 피투성이가 되었다. 가까스로 살아 돌아온 것이다.'\r\n",
+      "count": 1,
+      "patchId": "FOG_INJURY_AFTER_HAUL_20261110_R3W3"
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "\tif jo9_rd_rep = 8 and room4['duty_kind'] = 3 and room4['duty_wound'] = 1: $text = '  [<<$room4_name>>]은(는) 안개 속에서 괴물과 마주쳐 가벼운 상처를 입고 돌아왔다. (<<$jo9_rd_goods4>>)'\r\n",
+      "new": "\tif jo9_rd_rep = 8 and room4['duty_wound'] = 1: $text += ' 게다가 안개 속에서 괴물과 마주쳐 가벼운 상처를 입었다.'\r\n",
+      "count": 1,
+      "patchId": "FOG_INJURY_AFTER_HAUL_20261110_R4W1"
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "\tif jo9_rd_rep = 8 and room4['duty_kind'] = 3 and room4['duty_wound'] = 2: $text = '  [<<$room4_name>>]은(는) 안개 속에서 괴물과 맞서다 깊은 상처를 입고 돌아왔다. 절뚝이며 겨우 수습한 소지품을 내려놓는다. (<<$jo9_rd_goods4>>)'\r\n",
+      "new": "\tif jo9_rd_rep = 8 and room4['duty_wound'] = 2: $text += ' 게다가 안개 속에서 괴물과 맞서다 깊은 상처를 입어, 절뚝이며 돌아왔다.'\r\n",
+      "count": 1,
+      "patchId": "FOG_INJURY_AFTER_HAUL_20261110_R4W2"
+    },
+    {
+      "location": "end_day_screen",
+      "field": "body",
+      "old": "\tif jo9_rd_rep = 8 and room4['duty_kind'] = 3 and room4['duty_wound'] = 3: $text = '  [<<$room4_name>>]은(는) 안개 속에서 큰 부상을 당해 피투성이로 돌아왔다. 가까스로 살아 돌아온 것이다. (<<$jo9_rd_goods4>>)'\r\n",
+      "new": "\tif jo9_rd_rep = 8 and room4['duty_wound'] = 3: $text += ' 게다가 안개 속에서 큰 부상을 당해 피투성이가 되었다. 가까스로 살아 돌아온 것이다.'\r\n",
+      "count": 1,
+      "patchId": "FOG_INJURY_AFTER_HAUL_20261110_R4W3"
+    }
+  ]
+}
