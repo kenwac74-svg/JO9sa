@@ -1,0 +1,161 @@
+{
+  "id": "2026-11-10_private_room_diet",
+  "status": "APPROVED",
+  "description": "개인실 식단 재설계(사용자 지시 2026-11-10). 업무별 하루 칼로리 소모(집안일 2, 길거리·알바 3, 안개 경계 4, 실제로 일한 날만, 과체중은 -6 아래로 내려가지 않음). 일반식은 집 식사 요리 등급을 따른다(등급 D 이하·요리 없음이면 불평, 등급이 B+·자존심보다 높으면 맛있게 먹음). 고열량식은 소모가 큰 메이드용, 특별식은 5일 유지 후 영양사처럼 몸매를 관리하고 5일·10일 맛 효과는 그대로.",
+  "before_sha256": "5484fa09f4f3506363a7853510352a3d9da1ba215360a48433ecc1e3af8ab8a9",
+  "after_sha256": "a61b8328a0c7a36b83e9aedcf676f51722d2234b4ed988a1d9e1071646c5767c",
+  "edits": [
+    {
+      "location": "jo9_room_duty",
+      "field": "body",
+      "old": "local $jo9_rd_t, $jo9_rd_h, $jo9_rd_g, $jo9_rd_goods\r\n",
+      "new": "local $jo9_rd_t, $jo9_rd_h, $jo9_rd_g, $jo9_rd_goods\r\nlocal jo9_rd_cal, jo9_rd_fat, jo9_rd_met, jo9_rd_cost, jo9_rd_new, jo9_rd_rt, jo9_rd_off\r\n",
+      "count": 1,
+      "patchId": "ROOM_DIET_20261110_LOCAL"
+    },
+    {
+      "location": "jo9_room_duty",
+      "field": "body",
+      "old": "if $args[0]='post':\r\n",
+      "new": "if $args[0]='burn':\r\n ! Daily calorie cost of a maid duty (chores 2, street and day labor 3, fog patrol 4; only on days she really works).\r\n ! A special diet kept for 5 days also steers the physique like a nutritionist does for the main slave.\r\n ! Runs right before the previous day calories are resolved in next_day.\r\n for jo9_rd_n=1 to 4 step 1:\r\n  if dyneval('result=room'+str(jo9_rd_n)+'_state')=CONST_INT['slave_exist']:\r\n   jo9_rd_cal=dyneval('result=room'+str(jo9_rd_n)+'[\"calories\"]')\r\n   jo9_rd_fat=dyneval('result=room'+str(jo9_rd_n)+'[\"fat\"]')\r\n   jo9_rd_met=dyneval('result=room'+str(jo9_rd_n)+'[\"metabolism\"]')\r\n   jo9_rd_d=dyneval('result=room'+str(jo9_rd_n)+'[\"duty\"]')\r\n   jo9_rd_cost=0\r\n   if dyneval('result=room'+str(jo9_rd_n)+'[\"duty_ok\"]')=1:\r\n    if jo9_rd_d=1: jo9_rd_cost=2\r\n    if jo9_rd_d=2: jo9_rd_cost=4\r\n    if jo9_rd_d=3 or jo9_rd_d=4: jo9_rd_cost=3\r\n   end\r\n   jo9_rd_new=jo9_rd_cal-jo9_rd_cost\r\n   ! an overweight maid is already on a slimming diet, so work never pushes her deeper into starvation\r\n   if jo9_rd_fat>1 and jo9_rd_new<-6: jo9_rd_new=min(jo9_rd_cal,-6)\r\n   jo9_rd_rt=dyneval('result=room'+str(jo9_rd_n)+'_ration')\r\n   if jo9_rd_rt=2 and dyneval('result=room'+str(jo9_rd_n)+'[\"special_diet_days\"]')>=5:\r\n    jo9_rd_off=0\r\n    if dyneval('result=room'+str(jo9_rd_n)+'[\"pregnant\"]')>9: jo9_rd_off+=1\r\n    if dyneval('result=room'+str(jo9_rd_n)+'[\"fertility\"]')=1: jo9_rd_off+=1\r\n    if dyneval('result=room'+str(jo9_rd_n)+'[\"lactation\"]')>0: jo9_rd_off+=1\r\n    if dyneval('result=room'+str(jo9_rd_n)+'[\"parasite\"]')>0: jo9_rd_off+=dyneval('result=room'+str(jo9_rd_n)+'[\"parasite\"]')\r\n    if jo9_rd_fat>3:\r\n     jo9_rd_new=-6+jo9_rd_met+jo9_rd_off\r\n    elseif jo9_rd_fat=0:\r\n     jo9_rd_new=max(jo9_rd_new,4+jo9_rd_met+jo9_rd_off)\r\n    else\r\n     jo9_rd_new=jo9_rd_off\r\n    end\r\n   end\r\n   if jo9_rd_new ! jo9_rd_cal: dynamic \"room<<jo9_rd_n>>['calories']=<<jo9_rd_new>>\"\r\n  end\r\n end\r\n exit\r\nend\r\nif $args[0]='post':\r\n",
+      "count": 1,
+      "patchId": "ROOM_DIET_20261110_BURN"
+    },
+    {
+      "location": "jo9_room_duty",
+      "field": "body",
+      "old": " if args[1]=1: $result='집안일 (내근)'",
+      "new": " if args[1]=1: $result='집안일 (내근) 하루 칼로리 2을(를) 소모합니다.'",
+      "count": 1,
+      "patchId": "ROOM_DIET_20261110_HELP1"
+    },
+    {
+      "location": "jo9_room_duty",
+      "field": "body",
+      "old": " if args[1]=2: $result='안개 경계 탐색 (외근)'",
+      "new": " if args[1]=2: $result='안개 경계 탐색 (외근) 하루 칼로리 4을(를) 소모합니다.'",
+      "count": 1,
+      "patchId": "ROOM_DIET_20261110_HELP2"
+    },
+    {
+      "location": "jo9_room_duty",
+      "field": "body",
+      "old": " if args[1]=3: $result='길거리에서 매춘 (외근)'",
+      "new": " if args[1]=3: $result='길거리에서 매춘 (외근) 하루 칼로리 3을(를) 소모합니다.'",
+      "count": 1,
+      "patchId": "ROOM_DIET_20261110_HELP3"
+    },
+    {
+      "location": "jo9_room_duty",
+      "field": "body",
+      "old": " if args[1]=4: $result='일용직 아르바이트 (외근)'",
+      "new": " if args[1]=4: $result='일용직 아르바이트 (외근) 하루 칼로리 3을(를) 소모합니다.'",
+      "count": 1,
+      "patchId": "ROOM_DIET_20261110_HELP4"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "dynamic $do_for_each_slave_in_list, '$next_day_resolve_previous_day_calorie_effects', '$unfrozen_slave_characters'",
+      "new": "gs 'jo9_room_duty', 'burn'\r\ndynamic $do_for_each_slave_in_list, '$next_day_resolve_previous_day_calorie_effects', '$unfrozen_slave_characters'",
+      "count": 1,
+      "patchId": "ROOM_DIET_20261110_CALL"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "   if room1['time_in_barn'] < 10: room1['neg_slave_food'] = 1\r\n",
+      "new": "   ! plain food is the meal the household eats: a poor meal (grade D or worse, or no cooking) is resented, a good one is a treat\r\n   if cooked_food <= 1: room1['neg_slave_food'] = 1\r\n   if cooked_food > max(room1['pride'], 2): room1['pos_cookie'] = max(room1['pos_cookie'], 1)\r\n",
+      "count": 1,
+      "patchId": "ROOM_DIET_20261110_FOOD1"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "   if room2['time_in_barn'] < 10: room2['neg_slave_food'] = 1\r\n",
+      "new": "   ! plain food is the meal the household eats: a poor meal (grade D or worse, or no cooking) is resented, a good one is a treat\r\n   if cooked_food <= 1: room2['neg_slave_food'] = 1\r\n   if cooked_food > max(room2['pride'], 2): room2['pos_cookie'] = max(room2['pos_cookie'], 1)\r\n",
+      "count": 1,
+      "patchId": "ROOM_DIET_20261110_FOOD2"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "   if room3['time_in_barn'] < 10: room3['neg_slave_food'] = 1\r\n",
+      "new": "   ! plain food is the meal the household eats: a poor meal (grade D or worse, or no cooking) is resented, a good one is a treat\r\n   if cooked_food <= 1: room3['neg_slave_food'] = 1\r\n   if cooked_food > max(room3['pride'], 2): room3['pos_cookie'] = max(room3['pos_cookie'], 1)\r\n",
+      "count": 1,
+      "patchId": "ROOM_DIET_20261110_FOOD3"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "   if room4['time_in_barn'] < 10: room4['neg_slave_food'] = 1\r\n",
+      "new": "   ! plain food is the meal the household eats: a poor meal (grade D or worse, or no cooking) is resented, a good one is a treat\r\n   if cooked_food <= 1: room4['neg_slave_food'] = 1\r\n   if cooked_food > max(room4['pride'], 2): room4['pos_cookie'] = max(room4['pos_cookie'], 1)\r\n",
+      "count": 1,
+      "patchId": "ROOM_DIET_20261110_FOOD4"
+    },
+    {
+      "location": "#txt_man",
+      "field": "body",
+      "old": "$room1_ration[1] = '일반식 (하루 $2): 곡물과 채소를 중심으로 소박한 끼니를 차린다. 살이 붙으면 양을 줄이고 마르면 늘려 몸매를 관리한다. 막 방에 들어온 노예라면 초라한 밥상에 불평할 수도 있지만, 차츰 이 집의 대우에 익숙해질 것이다.'",
+      "new": "$room1_ration[1] = '일반식 (하루 $2): 집에서 모두가 먹는 식사를 함께 먹는다. 오늘 차려진 요리의 솜씨가 낮거나 요리가 없으면 형편없다고 불평하고, 솜씨가 좋으면 주인님 식탁에 오른 음식에 흡족해한다. 살이 붙으면 양을 줄이고 마르면 늘려 몸매를 관리한다.'",
+      "count": 1,
+      "patchId": "ROOM_DIET_20261110_TEXT_txt_man1"
+    },
+    {
+      "location": "#txt_man",
+      "field": "body",
+      "old": "$room1_ration[2] = '일반식 (하루 $2): 곡물과 채소를 중심으로 소박한 끼니를 차린다. 살이 붙으면 양을 줄이고 마르면 늘려 몸매를 관리한다. 막 방에 들어온 노예라면 초라한 밥상에 불평할 수도 있지만, 차츰 이 집의 대우에 익숙해질 것이다.'",
+      "new": "$room1_ration[2] = '일반식 (하루 $2): 집에서 모두가 먹는 식사를 함께 먹는다. 오늘 차려진 요리의 솜씨가 낮거나 요리가 없으면 형편없다고 불평하고, 솜씨가 좋으면 주인님 식탁에 오른 음식에 흡족해한다. 살이 붙으면 양을 줄이고 마르면 늘려 몸매를 관리한다.'",
+      "count": 1,
+      "patchId": "ROOM_DIET_20261110_TEXT_txt_man2"
+    },
+    {
+      "location": "#txt_man",
+      "field": "body",
+      "old": "$room1_ration[3] = '고열량식 (하루 $4): 고기와 우유를 넉넉히 곁들여 든든하게 먹인다. 마른 몸에 살을 붙이거나 수유로 소모하는 기력을 보충하기에 알맞다. 몸매를 다듬기보다는 풍족하게 살찌우는 식사다.'",
+      "new": "$room1_ration[3] = '고열량식 (하루 $4): 고기와 우유를 넉넉히 곁들여 든든하게 먹인다. 안개 경계 순찰이나 하루 종일 하는 외근처럼 칼로리 소모가 큰 메이드에게 알맞고, 집에만 있는 메이드에게 먹이면 살이 찐다. 수유로 소모하는 기력도 보충한다.'",
+      "count": 1,
+      "patchId": "ROOM_DIET_20261110_TEXT_txt_man3"
+    },
+    {
+      "location": "#txt_man",
+      "field": "body",
+      "old": "$room1_ration[4] = '특별식단 (하루 $8): 몸매에 맞춰 조절한 양에 좋은 재료와 간식을 더한다. 닷새를 이어 대접하면 특별대우를 실감하며 기분이 풀리고 응석도 늘기 시작한다. 열흘쯤 지나면 달콤한 후식까지 당연한 몫으로 여기며 더욱 흡족해할 것이다. 다른 식단으로 바꾸면 연속해서 대접받은 날은 새로 센다.'",
+      "new": "$room1_ration[4] = '특별식단 (하루 $8): 영양사가 짜 준 것처럼 몸매에 맞춘 양에 좋은 재료와 간식을 더한다. 닷새를 이어 대접하면 맛있는 식사를 실감하며 응석이 늘기 시작하고, 이때부터 활동량을 반영해 몸매를 알맞게 유지해 준다(과체중은 감량, 마른 몸은 회복). 열흘쯤 지나면 달콤한 후식까지 당연한 몫으로 여기며 더욱 흡족해할 것이다. 다른 식단으로 바꾸면 연속해서 대접받은 날은 새로 센다.'",
+      "count": 1,
+      "patchId": "ROOM_DIET_20261110_TEXT_txt_man4"
+    },
+    {
+      "location": "snk_room_diet_migrate",
+      "field": "body",
+      "old": "$room1_ration[1] = '일반식 (하루 $2): 곡물과 채소를 중심으로 소박한 끼니를 차린다. 살이 붙으면 양을 줄이고 마르면 늘려 몸매를 관리한다. 막 방에 들어온 노예라면 초라한 밥상에 불평할 수도 있지만, 차츰 이 집의 대우에 익숙해질 것이다.'",
+      "new": "$room1_ration[1] = '일반식 (하루 $2): 집에서 모두가 먹는 식사를 함께 먹는다. 오늘 차려진 요리의 솜씨가 낮거나 요리가 없으면 형편없다고 불평하고, 솜씨가 좋으면 주인님 식탁에 오른 음식에 흡족해한다. 살이 붙으면 양을 줄이고 마르면 늘려 몸매를 관리한다.'",
+      "count": 1,
+      "patchId": "ROOM_DIET_20261110_TEXT_snk_room_diet_migrate1"
+    },
+    {
+      "location": "snk_room_diet_migrate",
+      "field": "body",
+      "old": "$room1_ration[2] = '일반식 (하루 $2): 곡물과 채소를 중심으로 소박한 끼니를 차린다. 살이 붙으면 양을 줄이고 마르면 늘려 몸매를 관리한다. 막 방에 들어온 노예라면 초라한 밥상에 불평할 수도 있지만, 차츰 이 집의 대우에 익숙해질 것이다.'",
+      "new": "$room1_ration[2] = '일반식 (하루 $2): 집에서 모두가 먹는 식사를 함께 먹는다. 오늘 차려진 요리의 솜씨가 낮거나 요리가 없으면 형편없다고 불평하고, 솜씨가 좋으면 주인님 식탁에 오른 음식에 흡족해한다. 살이 붙으면 양을 줄이고 마르면 늘려 몸매를 관리한다.'",
+      "count": 1,
+      "patchId": "ROOM_DIET_20261110_TEXT_snk_room_diet_migrate2"
+    },
+    {
+      "location": "snk_room_diet_migrate",
+      "field": "body",
+      "old": "$room1_ration[3] = '고열량식 (하루 $4): 고기와 우유를 넉넉히 곁들여 든든하게 먹인다. 마른 몸에 살을 붙이거나 수유로 소모하는 기력을 보충하기에 알맞다. 몸매를 다듬기보다는 풍족하게 살찌우는 식사다.'",
+      "new": "$room1_ration[3] = '고열량식 (하루 $4): 고기와 우유를 넉넉히 곁들여 든든하게 먹인다. 안개 경계 순찰이나 하루 종일 하는 외근처럼 칼로리 소모가 큰 메이드에게 알맞고, 집에만 있는 메이드에게 먹이면 살이 찐다. 수유로 소모하는 기력도 보충한다.'",
+      "count": 1,
+      "patchId": "ROOM_DIET_20261110_TEXT_snk_room_diet_migrate3"
+    },
+    {
+      "location": "snk_room_diet_migrate",
+      "field": "body",
+      "old": "$room1_ration[4] = '특별식단 (하루 $8): 몸매에 맞춰 조절한 양에 좋은 재료와 간식을 더한다. 닷새를 이어 대접하면 특별대우를 실감하며 기분이 풀리고 응석도 늘기 시작한다. 열흘쯤 지나면 달콤한 후식까지 당연한 몫으로 여기며 더욱 흡족해할 것이다. 다른 식단으로 바꾸면 연속해서 대접받은 날은 새로 센다.'",
+      "new": "$room1_ration[4] = '특별식단 (하루 $8): 영양사가 짜 준 것처럼 몸매에 맞춘 양에 좋은 재료와 간식을 더한다. 닷새를 이어 대접하면 맛있는 식사를 실감하며 응석이 늘기 시작하고, 이때부터 활동량을 반영해 몸매를 알맞게 유지해 준다(과체중은 감량, 마른 몸은 회복). 열흘쯤 지나면 달콤한 후식까지 당연한 몫으로 여기며 더욱 흡족해할 것이다. 다른 식단으로 바꾸면 연속해서 대접받은 날은 새로 센다.'",
+      "count": 1,
+      "patchId": "ROOM_DIET_20261110_TEXT_snk_room_diet_migrate4"
+    }
+  ]
+}

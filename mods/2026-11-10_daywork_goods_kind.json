@@ -1,0 +1,65 @@
+{
+  "id": "2026-11-10_daywork_goods_kind",
+  "status": "APPROVED",
+  "description": "F-6: 알바(일용직) 보고 끝에 받아 온 물건 종류(식재료/연금 재료/물약)에 따른 한 문장을 덧붙인다. 종류는 메이드 데이터 duty_goodskind(0 없음, 1 식재료, 2 연금 재료, 3 물약)에 저장하며 예전 세이브는 0이라 문장이 없다.",
+  "before_sha256": "a61b8328a0c7a36b83e9aedcf676f51722d2234b4ed988a1d9e1071646c5767c",
+  "after_sha256": "8332e1857fa594283eddda448177e3e63dbf554a2f3b241350aa7a9c3291c94f",
+  "edits": [
+    {
+      "location": "jo9_room_duty",
+      "field": "body",
+      "old": "local jo9_rd_cal, jo9_rd_fat, jo9_rd_met, jo9_rd_cost, jo9_rd_new, jo9_rd_rt, jo9_rd_off\r\n",
+      "new": "local jo9_rd_cal, jo9_rd_fat, jo9_rd_met, jo9_rd_cost, jo9_rd_new, jo9_rd_rt, jo9_rd_off\r\nlocal jo9_rd_gk\r\n",
+      "count": 1,
+      "patchId": "DAYWORK_KIND_20261110_LOCAL"
+    },
+    {
+      "location": "jo9_room_duty",
+      "field": "body",
+      "old": " $jo9_rd_goods=''\r\n jo9_rd_x=0\r\n",
+      "new": " $jo9_rd_goods=''\r\n jo9_rd_gk=0\r\n jo9_rd_x=0\r\n",
+      "count": 1,
+      "patchId": "DAYWORK_KIND_20261110_INIT"
+    },
+    {
+      "location": "jo9_room_duty",
+      "field": "body",
+      "old": "    $jo9_rd_goods+=$jo9_rdfn[jo9_rd_i]+' '+str(jo9_rd_put)+', '\r\n",
+      "new": "    $jo9_rd_goods+=$jo9_rdfn[jo9_rd_i]+' '+str(jo9_rd_put)+', '\r\n    jo9_rd_gk=1\r\n",
+      "count": 1,
+      "patchId": "DAYWORK_KIND_20261110_FOOD"
+    },
+    {
+      "location": "jo9_room_duty",
+      "field": "body",
+      "old": "    $jo9_rd_goods+=$jo9_rdln[jo9_rd_i]+' '+str(jo9_rd_put)+', '\r\n",
+      "new": "    $jo9_rd_goods+=$jo9_rdln[jo9_rd_i]+' '+str(jo9_rd_put)+', '\r\n    jo9_rd_gk=2\r\n",
+      "count": 1,
+      "patchId": "DAYWORK_KIND_20261110_MAT"
+    },
+    {
+      "location": "jo9_room_duty",
+      "field": "body",
+      "old": "   $jo9_rd_goods+=$jo9_rdpn[jo9_rd_pot]+' 1, '\r\n",
+      "new": "   $jo9_rd_goods+=$jo9_rdpn[jo9_rd_pot]+' 1, '\r\n   jo9_rd_gk=3\r\n",
+      "count": 1,
+      "patchId": "DAYWORK_KIND_20261110_POTION"
+    },
+    {
+      "location": "jo9_room_duty",
+      "field": "body",
+      "old": "dynamic \"$jo9_rd_goods<<jo9_rd_n>> = '<<$jo9_rd_goods>>'\"\r\n",
+      "new": "dynamic \"$jo9_rd_goods<<jo9_rd_n>> = '<<$jo9_rd_goods>>'\"\r\n dynamic \"room<<jo9_rd_n>>['duty_goodskind']=<<jo9_rd_gk>>\"\r\n",
+      "count": 1,
+      "patchId": "DAYWORK_KIND_20261110_SAVE"
+    },
+    {
+      "location": "jo9_duty_text",
+      "field": "body",
+      "old": " ! sound: a wound or an empty-handed day plays the bad scene sound",
+      "new": " if jo9_rd_rep=4 and jo9_rd_tier>0:\r\n  jo9_rd_gk=dyneval('result=room'+str(jo9_rd_n)+'[\"duty_goodskind\"]')\r\n  jo9_rd_pk=rand(1,2)\r\n  if jo9_rd_gk=1 and jo9_rd_pk=1: $text += ' 바구니에서 곡식과 향신료 냄새가 구수하게 올라온다.'\r\n  if jo9_rd_gk=1 and jo9_rd_pk=2: $text += ' 저장고를 채울 먹거리가 한층 늘었다.'\r\n  if jo9_rd_gk=2 and jo9_rd_pk=1: $text += ' 약초 상인이 챙겨 준 재료에서 알싸한 향이 번진다.'\r\n  if jo9_rd_gk=2 and jo9_rd_pk=2: $text += ' 연금실에서 쓸 재료가 쏠쏠하게 모였다.'\r\n  if jo9_rd_gk=3 and jo9_rd_pk=1: $text += ' 귀한 약병이 깨질세라 두 손으로 감싸 쥐고 왔다.'\r\n  if jo9_rd_gk=3 and jo9_rd_pk=2: $text += ' 소중한 약병을 품에 안은 채 내려놓을 때까지 손을 놓지 않았다.'\r\n end\r\n ! sound: a wound or an empty-handed day plays the bad scene sound",
+      "count": 1,
+      "patchId": "DAYWORK_KIND_20261110_TEXT"
+    }
+  ]
+}

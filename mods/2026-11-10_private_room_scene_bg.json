@@ -1,0 +1,33 @@
+{
+  "id": "2026-11-10_private_room_scene_bg",
+  "status": "APPROVED",
+  "description": "개인실 인테리어 단계 그림을 개인실 메뉴 화면과 개인실에서 시작하는 상호작용 장면(place slave_private_roomN)의 배경에도 쓴다. 파일이 없으면 기존 sboudoir 그림으로 돌아간다. 방 배정 화면(interaction 7771x)의 sboudoir는 그대로 둔다.",
+  "before_sha256": "4a47fc6d115c97e91738f08d12231a626fddb0f68e355b263804e6d61668a98e",
+  "after_sha256": "5484fa09f4f3506363a7853510352a3d9da1ba215360a48433ecc1e3af8ab8a9",
+  "edits": [
+    {
+      "location": "jo9_interior",
+      "field": "body",
+      "old": "  $jo9_int_f='content/pic/bg/interiors/'+$jo9_int_f+'_slave_room.png'\r\n",
+      "new": "  $jo9_int_n=$jo9_int_f\r\n  $jo9_int_f='content/pic/bg/interiors/'+$jo9_int_f+'_slave_room.png'\r\n",
+      "count": 1,
+      "patchId": "ROOM_SCENE_BG_20261110_NAME"
+    },
+    {
+      "location": "jo9_interior",
+      "field": "body",
+      "old": "  if jo9_int_x=1: $result=$jo9_int_f\r\n",
+      "new": "  if jo9_int_x=1: $result=$jo9_int_f\r\n  ! scenes that start in a private room (place slave_private_roomN) read this entry as their background\r\n  $jo9_int_k='slave_private_room'+str(args[1])\r\n  $bg[$jo9_int_k]='sboudoir'\r\n  if jo9_int_x=1: $bg[$jo9_int_k]='interiors/'+$jo9_int_n+'_slave_room'\r\n",
+      "count": 1,
+      "patchId": "ROOM_SCENE_BG_20261110_SYNC"
+    },
+    {
+      "location": "snk_room_menu_screen",
+      "field": "body",
+      "old": "*p func('interior_change', 'jo9_html', '<div id=\"snk_room_bg\"><img src=\"content/pic/bg/sboudoir.png\"></div>')\r\n",
+      "new": "$jo9_int_bg = 'content/pic/bg/sboudoir.png'\r\nif snk_room_target > 0: $jo9_int_bg = func('jo9_interior', 'bg', snk_room_target)\r\n*p func('interior_change', 'jo9_html', '<div id=\"snk_room_bg\"><img src=\"<<$jo9_int_bg>>\"></div>')\r\n",
+      "count": 1,
+      "patchId": "ROOM_SCENE_BG_20261110_MENU"
+    }
+  ]
+}
