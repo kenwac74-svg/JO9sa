@@ -21,6 +21,29 @@ function build(doc,h){
   }
   return {d,scene,units:out};
  }
+ function outgoing(current,info,edition){
+  const sk=sceneKey(current),options=[];
+  const scenes=info.d.analysis.scenes.filter(s=>s.id!=='root'&&s.type!=='condition');
+  if(current.sceneId==='root'&&scenes.length){
+   return scenes.map(s=>({id:sk+':scene:'+s.id,label:s.condition,preview:'이 이벤트로 이어가기',destination:{location:info.d.loc.name,sceneId:s.id,edition}}));
+  }
+  const seen=new Set();
+  for(const b of h.branches(info.d.analysis,info.scene,info.d.loc.name,info.d.entries)){
+   if(b.mode==='condition'||b.mode==='jump'||/^#/.test(b.target||''))continue;
+   for(const dest of b.destinations||[]){
+    if(sceneKey(dest)===sk)continue;
+    const dk=sceneKey(dest);
+    if(/^(gs|gosub)$/.test(b.mode)){
+     let sub;try{sub=units({...dest,edition});}catch{continue;}
+     if(!sub.units.some(u=>u.variants?.length))continue;
+    }
+    const label=plain(b.label||'다음 장면').replace(/\n/g,' ');
+    const unique=label+'|'+dk;if(seen.has(unique))continue;seen.add(unique);
+    options.push({id:String(options.length),label,preview:(b.conditions||[]).join(' → ')||dest.title||'다음 장면',destination:{...dest,edition}});
+   }
+  }
+  return options;
+ }
  function point(input){
   if(!input?.selection||typeof input.location!=='string'||typeof input.sceneId!=='string')throw Error('시작과 마무리 대사를 지정하세요.');
   const e=h.entries.find(e=>key(e)===key(input.selection));
@@ -37,7 +60,16 @@ function build(doc,h){
   const indexes=list.flatMap((u,i)=>u.variants?.length?[i]:[]);
   const at=input.role==='end'?indexes.at(-1):indexes[0],unit=list[at];
   const v=unit.variants.find(v=>v.entry.location===selected.selection.location)||unit.variants[0];
-  return {selected,proposed:{...selected,selection:ref(v.entry),at},needsConfirmation:selected.at!==at,position:indexes.indexOf(selected.at)+1,total:indexes.length};
+  const result={selected,proposed:{...selected,selection:ref(v.entry),at},needsConfirmation:selected.at!==at,position:indexes.indexOf(selected.at)+1,total:indexes.length};
+  if(input.fromPoint){
+   const from=point(input.fromPoint);
+   if(sceneKey(from)!==sceneKey(selected)&&from.edition===selected.edition){
+    const matches=outgoing(from,units(from),from.edition).filter(o=>sceneKey(o.destination)===sceneKey(selected));
+    // Different labels may reach the same scene; only a unique direct route is safe to pin.
+    if(matches.length===1)result.routeChoice={id:sceneKey(from)+':route',optionId:matches[0].id};
+   }
+  }
+  return result;
  }
  function range(input){
   const start=point(input.start),end=point(input.end),choices=input.choices||{};
@@ -71,27 +103,7 @@ function build(doc,h){
    }
    first=false;
    // Root dispatchers require a concrete event, never export all their events.
-   let options=[];
-   const scenes=info.d.analysis.scenes.filter(s=>s.id!=='root'&&s.type!=='condition');
-   if(current.sceneId==='root'&&scenes.length){
-    options=scenes.map(s=>({id:sk+':scene:'+s.id,label:s.condition,preview:'이 이벤트로 이어가기',destination:{location:info.d.loc.name,sceneId:s.id,edition:start.edition}}));
-   }else{
-    const seen=new Set();
-    for(const b of h.branches(info.d.analysis,info.scene,info.d.loc.name,info.d.entries)){
-     if(b.mode==='condition'||b.mode==='jump'||/^#/.test(b.target||''))continue;
-     for(const dest of b.destinations||[]){
-      if(sceneKey(dest)===sk)continue;
-      const dk=sceneKey(dest);
-      if(/^(gs|gosub)$/.test(b.mode)){
-       let sub;try{sub=units({...dest,edition:start.edition});}catch{continue;}
-       if(!sub.units.some(u=>u.variants?.length))continue;
-      }
-      const label=plain(b.label||'다음 장면').replace(/\n/g,' ');
-      const unique=label+'|'+dk;if(seen.has(unique))continue;seen.add(unique);
-      options.push({id:String(options.length),label,preview:(b.conditions||[]).join(' → ')||dest.title||'다음 장면',destination:{...dest,edition:start.edition}});
-     }
-    }
-   }
+   const options=outgoing(current,info,start.edition);
    if(!options.length){
     if(lastFork)return {...prompt(lastFork.id,'이 경로는 지정한 마무리에 닿지 않습니다. 다른 분기를 골라 주세요.',lastFork.options)};
     throw Error('지정한 마무리까지 이어지는 연결을 찾지 못했습니다. 연결된 이벤트의 대사를 선택해 주세요.');

@@ -19,7 +19,7 @@ const read = kind => {
   assert.ok(set.rows.length > 0 && set.rows.every(row => row.name && row.category && row.source), `${kind} contains an incomplete row`);
   return set;
 };
-const data = { traits: read('traits'), items: read('items') };
+const data = { traits: read('traits'), items: read('items'), spells: read('spells') };
 const itemRows = new Map(data.items.rows.map(row => [row.id, row]));
 function offer(id, price, acquisition, acquisitionSource) {
   const row = itemRows.get(id);
@@ -90,13 +90,17 @@ for (const [line, text] of foodSource.split(/\r?\n/).entries()) {
 }
 data.items.coverage += ` 조리 음식 ${recipes}개는 등급과 재료를 함께 표시합니다. 기본가는 아이템 정의값이며, 확인된 판매가는 판매 단위와 함께 표시합니다.`;
 require('./refresh-current.cjs').apply(data, doc);
-for (const kind of ['traits', 'items']) fs.writeFileSync(path.join(__dirname, kind + '.json'), JSON.stringify(data[kind], null, 2) + '\n');
+for (const kind of ['traits', 'items', 'spells']) fs.writeFileSync(path.join(__dirname, kind + '.json'), JSON.stringify(data[kind], null, 2) + '\n');
 const encoded = JSON.stringify(data).replaceAll('<', '\\u003c');
 const template = fs.readFileSync(source, 'utf8');
-const html = template.replace('__JO9_REFERENCE_DATA__', () => encoded);
-new vm.Script(html.match(/<script>\s*([\s\S]+?)<\/script>/)[1]);
+let html = template.replace('__JO9_REFERENCE_DATA__', () => encoded);
+for (const [token, name] of [['__JO9_IDEAS_MODEL__','ideas-core.cjs'],['__JO9_IDEAS_CLIENT__','ideas-client.cjs'],['__JO9_IDEAS_UI__','ideas-ui.js']]) {
+  assert.equal(html.split(token).length - 1, 1, `Missing template slot ${token}`);
+  html = html.replace(token, () => fs.readFileSync(path.join(__dirname, name), 'utf8').replace(/<\/script/gi, '<\\/script'));
+}
+for (const script of html.matchAll(/<script>\s*([\s\S]+?)<\/script>/g)) new vm.Script(script[1]);
 assert.deepEqual(JSON.parse(html.match(/id="reference-data" type="application\/json">([^\n]+)<\/script>/)[1]), data);
 const pending = `${output}.${process.pid}.tmp`;
 fs.writeFileSync(pending, html, { flag: 'wx' });
 fs.renameSync(pending, output);
-console.log(JSON.stringify({ output, hash, traits: data.traits.rows.length, items: data.items.rows.length }));
+console.log(JSON.stringify({ output, hash, traits: data.traits.rows.length, items: data.items.rows.length, spells: data.spells.rows.length }));

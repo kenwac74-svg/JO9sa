@@ -1,0 +1,73 @@
+{
+  "id": "2026-11-10_stability_03_room_refunds",
+  "status": "APPROVED",
+  "description": "개인실 증축 철거·이주 처분가의 8개 경로에 기존 증축비와 같은 하드 1.5배를 적용한다. 20% 환급은 일반 1000/400/1000/2000, 하드 1500/600/1500/3000이다. 인테리어 환급은 이미 적용된 배수를 유지한다.",
+  "before_sha256": "65eb451b4d31f8e9b82990826e0d8294d30a3d22968e09e22e173e2243a81f45",
+  "after_sha256": "8aadee2edbc0b2b7b3455f3c062a42efc8ba6d72317f4429eef23873dc084a26",
+  "edits": [
+    {
+      "location": "jo9_liquidation_assets",
+      "field": "body",
+      "old": " if kulaconstruct >= 1: jo9_lq_value['relocation_rooms'] += 1000",
+      "new": " if kulaconstruct >= 1: jo9_lq_value['relocation_rooms'] += 1000 * iif(difficulty_setting = 2, 150, 100) / 100",
+      "count": 1,
+      "patchId": "STABILITY_ROOM_REFUND_MOVE1_20261110"
+    },
+    {
+      "location": "jo9_liquidation_assets",
+      "field": "body",
+      "old": "  jo9_lq_value['room1'] = 1000",
+      "new": "  jo9_lq_value['room1'] = 1000 * iif(difficulty_setting = 2, 150, 100) / 100",
+      "count": 1,
+      "patchId": "STABILITY_ROOM_REFUND_ROOM1_20261110"
+    },
+    {
+      "location": "jo9_liquidation_assets",
+      "field": "body",
+      "old": " if kulaconstruct >= 2: jo9_lq_value['relocation_rooms'] += 400",
+      "new": " if kulaconstruct >= 2: jo9_lq_value['relocation_rooms'] += 400 * iif(difficulty_setting = 2, 150, 100) / 100",
+      "count": 1,
+      "patchId": "STABILITY_ROOM_REFUND_MOVE2_20261110"
+    },
+    {
+      "location": "jo9_liquidation_assets",
+      "field": "body",
+      "old": "  jo9_lq_value['room2'] = 400",
+      "new": "  jo9_lq_value['room2'] = 400 * iif(difficulty_setting = 2, 150, 100) / 100",
+      "count": 1,
+      "patchId": "STABILITY_ROOM_REFUND_ROOM2_20261110"
+    },
+    {
+      "location": "jo9_liquidation_assets",
+      "field": "body",
+      "old": " if kulaconstruct >= 3: jo9_lq_value['relocation_rooms'] += 1000",
+      "new": " if kulaconstruct >= 3: jo9_lq_value['relocation_rooms'] += 1000 * iif(difficulty_setting = 2, 150, 100) / 100",
+      "count": 1,
+      "patchId": "STABILITY_ROOM_REFUND_MOVE3_20261110"
+    },
+    {
+      "location": "jo9_liquidation_assets",
+      "field": "body",
+      "old": "  jo9_lq_value['room3'] = 1000",
+      "new": "  jo9_lq_value['room3'] = 1000 * iif(difficulty_setting = 2, 150, 100) / 100",
+      "count": 1,
+      "patchId": "STABILITY_ROOM_REFUND_ROOM3_20261110"
+    },
+    {
+      "location": "jo9_liquidation_assets",
+      "field": "body",
+      "old": " if kulaconstruct >= 4: jo9_lq_value['relocation_rooms'] += 2000",
+      "new": " if kulaconstruct >= 4: jo9_lq_value['relocation_rooms'] += 2000 * iif(difficulty_setting = 2, 150, 100) / 100",
+      "count": 1,
+      "patchId": "STABILITY_ROOM_REFUND_MOVE4_20261110"
+    },
+    {
+      "location": "jo9_liquidation_assets",
+      "field": "body",
+      "old": "  jo9_lq_value['room4'] = 2000",
+      "new": "  jo9_lq_value['room4'] = 2000 * iif(difficulty_setting = 2, 150, 100) / 100",
+      "count": 1,
+      "patchId": "STABILITY_ROOM_REFUND_ROOM4_20261110"
+    }
+  ]
+}

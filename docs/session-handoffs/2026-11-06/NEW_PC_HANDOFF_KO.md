@@ -1,4 +1,6 @@
-# 새 PC 인계 · 2.4.1 2차 패치 이후
+#> 이 문서의 본편/r4 해시와 검사 기록은2026-11-06 당시 기준이다. 이후 WORK 최신 QSP는 런타임 원장을 따른다.2026-11-10 개인실 그림36장은 아래 추가 복원 입력을 함께 준비한다.
+
+ 새 PC 인계 · 2.4.1 2차 패치 이후
 
 ## 게임 기준
 
@@ -30,3 +32,9 @@
 - [경매 대사 D17](../../../records/auction-dialogue-deferred-20261105/DECISION_KO.md). 길드 판매 경매와 시장 구매 경매를 나눠 재개한다. 추출 문장과 사용자 제공 Gemini 제안은 같은 폴더의 `source/`에서 확인할 수 있다. Gemini 제안은 부분 검토 상태다.
 - [기존 보류 결정](../../../records/deferred-discussions-20261024/index.json). 경매 대사, 미번역 과거 설명 등은 각 결정의 재개 조건을 따른다. 하드 행동력·가격 특성 보정, 거래세와 경로 대체 조회는 이미 r4 기준에 들어간 변경이다. [일괄 적용 기록](../../../records/work-pending-batch-20261105/REPORT_KO.md)
 - [누적 패치 원칙](../../PACKAGING_POLICY_20261019.md). 다음 정식 패치를 만들 때도 같은 본편 기준으로 이전 필수 변경을 포함한다. WORK와 추적 소스를 기준으로 이어가며 Kor_Full 설치 확인은 사용자가 관리한다.
+
+## 2026-11-10 개인실 추가 리소스 필수 입력
+
+[추가36장 원장](../../../assets/additional-resources/2026-11-10_private-room.json)은 업무·장부 컷28장과 인테리어8장을 나열한다. 본편+r4 또는 Git 소스만으로는 이 그림을 복원할 수 없다. 원장의 runtimePath·bytes·sha256과 일치하는 WORK의 원본 PNG를 별도로 가져오거나, 각 objectPath가 가리키는 개인 이미지 패치 보관 객체를 새 PC로 전송한다. 현재 원본 객체는 G:/somi/IMGMG/image_work/personal-patch/objects/<SHA256>에 있다. 해시·크기가 맞는 객체 바이트를 새 WORK의 해당 runtimePath에 두고 다시 대조한다. 기존 파일이 다른 경우 자동으로 덮어쓰지 않는다.
+
+런타임 원장 externalResourceSources의 local-private-room-20261110과 files36개가 이 입력을 연결한다. 차기 정식 누적 패치에는 이36개 경로의 실제 PNG 바이트도 포함해야 한다. 이번 안정성 수정에서는 이미지 이동·재인코딩·ZIP 제작·Full 복사·음원 업로드를 하지 않았다.

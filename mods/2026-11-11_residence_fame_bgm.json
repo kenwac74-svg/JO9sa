@@ -1,0 +1,121 @@
+{
+  "id": "2026-11-11_residence_fame_bgm",
+  "status": "APPROVED",
+  "description": "Residence-first native BGM playlist with supported regional fame >70 percent; preserve event priority and settings; no audio uploads.",
+  "before_sha256": "2bafb73a7af5423d01493a3e0859064b5846a0f56368c07e9d332ad431830c73",
+  "after_sha256": "0b08b2c36923fbc9495bf9de467b09feef26c5b0afd2ce0b7bdb286a6182ad3e",
+  "edits": [
+    {
+      "location": "#dynamic",
+      "field": "body",
+      "old": "$play_music = {\r\n\tif sound_on = 1 and $toplay ! '':\r\n\t\tif $music_now ! $music[$toplay]:\r\n\t\t\t! it is unsafe to change tracks within a half-second of each other, and we have not found a viable workaround\r\n\t\t\t! closing a different audio file (or all files) somehow glitches the next play sometimes, so using close during track transitions is unsafe\r\n\t\t\t! quickly toggling sound on/off or quickly entering/leaving home also causes glitches (silence or city/night music continues instead of home music)\r\n\t\t\t! filing this under ??? for now; these glitches are avoidable by not spamming spacebar at night nor click-spamming the door button nor mute button\r\n\t\t\t$music_now = $music[$toplay] &! switch to the new track\r\n\t\tend\r\n\t\tif $music_now ! '': play $music_now, music_volume, 'only, loop' &! start new track / ensure it is playing (transitions sometimes glitch)\r\n\tend\r\n}",
+      "new": "! JO9 MOD START RESIDENCE_BGM_PLAY_20261111\r\n$play_music = {\r\n if $toplay='jo9_playlist':\r\n  gs 'jo9_residence_bgm','play'\r\n elseif $toplay='jo9_direct_event':\r\n  gs 'jo9_residence_bgm','eventplay'\r\n else\r\n  gs 'jo9_residence_bgm','pause'\r\n\t\tif sound_on = 1 and $toplay ! '':\r\n\t\t\tif $music_now ! $music[$toplay]:\r\n\t\t\t\t! it is unsafe to change tracks within a half-second of each other, and we have not found a viable workaround\r\n\t\t\t\t! closing a different audio file (or all files) somehow glitches the next play sometimes, so using close during track transitions is unsafe\r\n\t\t\t\t! quickly toggling sound on/off or quickly entering/leaving home also causes glitches (silence or city/night music continues instead of home music)\r\n\t\t\t\t! filing this under ??? for now; these glitches are avoidable by not spamming spacebar at night nor click-spamming the door button nor mute button\r\n\t\t\t\t$music_now = $music[$toplay] &! switch to the new track\r\n\t\t\tend\r\n\t\t\tif $music_now ! '': play $music_now, music_volume, 'only, loop' &! start new track / ensure it is playing (transitions sometimes glitch)\r\n\t\tend\r\n end\r\n}\r\n! JO9 MOD END RESIDENCE_BGM_PLAY_20261111",
+      "count": 1,
+      "patchId": "RESIDENCE_BGM_PLAY_20261111"
+    },
+    {
+      "location": "#dynamic",
+      "field": "body",
+      "old": "! JO9 MOD START CITY_SETTINGS_BGM_KEEP_20261111\r\n$city_sounds = {\r\n\tif sound_on = 1:\r\n\t\tif city_form ! 1000 or $toplay = '' or $toplay = 'city':\r\n\t\t\tif noble_status = 1 or brand_reputation >= 5:\r\n\t\t\t\t$toplay = 'honor'\r\n\t\t\telseif $estate = 'slum_house':\r\n\t\t\t\t$toplay = 'poor'\r\n\t\t\telse\r\n\t\t\t\t$toplay = 'citizen'\r\n\t\t\tend\r\n\t\tend\r\n\tend\r\n\tdynamic $play_music\r\n}\r\n! JO9 MOD END CITY_SETTINGS_BGM_KEEP_20261111",
+      "new": "! JO9 MOD START RESIDENCE_BGM_CITY_20261111\r\n$city_sounds = {\r\n if sound_on=1:\r\n  if city_form!1000 or $toplay='' or $toplay='city' or $toplay='jo9_playlist':\r\n   gs 'jo9_residence_bgm','city'\r\n  end\r\n end\r\n dynamic $play_music\r\n}\r\n! JO9 MOD END RESIDENCE_BGM_CITY_20261111",
+      "count": 1,
+      "patchId": "RESIDENCE_BGM_CITY_20261111"
+    },
+    {
+      "location": "main_menu",
+      "field": "body",
+      "old": "gs 'jo9_gameover_audio','leave','main_menu'",
+      "new": "gs 'jo9_gameover_audio','leave','main_menu'\r\n! JO9 MOD START RESIDENCE_BGM_MENU_20261111\r\ngs 'jo9_residence_bgm','reset'\r\n! JO9 MOD END RESIDENCE_BGM_MENU_20261111",
+      "count": 1,
+      "patchId": "RESIDENCE_BGM_MENU_20261111"
+    },
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "gs 'jo9_gameover_audio','load',$curloc",
+      "new": "gs 'jo9_gameover_audio','load',$curloc\r\n! JO9 MOD START RESIDENCE_BGM_LOAD_20261111\r\ngs 'jo9_residence_bgm','load'\r\n! JO9 MOD END RESIDENCE_BGM_LOAD_20261111",
+      "count": 1,
+      "patchId": "RESIDENCE_BGM_LOAD_20261111"
+    },
+    {
+      "location": "jo9_gameover_audio",
+      "field": "body",
+      "old": "if $args[0]='enter':",
+      "new": "if $args[0]='enter':\r\n ! JO9 MOD START RESIDENCE_BGM_GAMEOVER_20261111\r\n gs 'jo9_residence_bgm','pause'\r\n ! JO9 MOD END RESIDENCE_BGM_GAMEOVER_20261111",
+      "count": 1,
+      "patchId": "RESIDENCE_BGM_GAMEOVER_20261111"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "play 'content/snd/Agraba.mp3', music_volume, 'only, loop'",
+      "new": "gs 'jo9_residence_bgm','event','content/snd/Agraba.mp3',0 & play 'content/snd/Agraba.mp3', music_volume, 'only, loop'",
+      "count": 1,
+      "patchId": "RESIDENCE_BGM_DIRECT_EVENT_20261111"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "play 'content/snd/Agraba_quests.mp3', music_volume, 'only, loop'",
+      "new": "gs 'jo9_residence_bgm','event','content/snd/Agraba_quests.mp3',0 & play 'content/snd/Agraba_quests.mp3', music_volume, 'only, loop'",
+      "count": 4,
+      "patchId": "RESIDENCE_BGM_DIRECT_EVENT_20261111"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "play 'content/snd/Jafars_theme.mp3', music_volume, 'only, loop'",
+      "new": "gs 'jo9_residence_bgm','event','content/snd/Jafars_theme.mp3',0 & play 'content/snd/Jafars_theme.mp3', music_volume, 'only, loop'",
+      "count": 1,
+      "patchId": "RESIDENCE_BGM_DIRECT_EVENT_20261111"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "play 'content/snd/Stealing_the_lamp.mp3', music_volume, 'only, loop'",
+      "new": "gs 'jo9_residence_bgm','event','content/snd/Stealing_the_lamp.mp3',0 & play 'content/snd/Stealing_the_lamp.mp3', music_volume, 'only, loop'",
+      "count": 3,
+      "patchId": "RESIDENCE_BGM_DIRECT_EVENT_20261111"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "play 'content/snd/Rasuls_theme.mp3', music_volume, 'only, loop'",
+      "new": "gs 'jo9_residence_bgm','event','content/snd/Rasuls_theme.mp3',0 & play 'content/snd/Rasuls_theme.mp3', music_volume, 'only, loop'",
+      "count": 2,
+      "patchId": "RESIDENCE_BGM_DIRECT_EVENT_20261111"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "play 'content/snd/Rajas_theme.mp3', music_volume, 'only, loop'",
+      "new": "gs 'jo9_residence_bgm','event','content/snd/Rajas_theme.mp3',0 & play 'content/snd/Rajas_theme.mp3', music_volume, 'only, loop'",
+      "count": 1,
+      "patchId": "RESIDENCE_BGM_DIRECT_EVENT_20261111"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "play 'content/snd/Abus_theme.mp3', music_volume, 'only, loop'",
+      "new": "gs 'jo9_residence_bgm','event','content/snd/Abus_theme.mp3',0 & play 'content/snd/Abus_theme.mp3', music_volume, 'only, loop'",
+      "count": 1,
+      "patchId": "RESIDENCE_BGM_DIRECT_EVENT_20261111"
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "play 'content\\snd\\fight_master.mp3', sound_volume,'only, loop'",
+      "new": "gs 'jo9_residence_bgm','event','content\\snd\\fight_master.mp3',1 & play 'content\\snd\\fight_master.mp3', sound_volume,'only, loop'",
+      "count": 1,
+      "patchId": "RESIDENCE_BGM_DIRECT_EVENT_20261111"
+    }
+  ],
+  "add_locations": [
+    {
+      "name": "jo9_residence_bgm",
+      "desc": "",
+      "body": "! JO9 MOD START RESIDENCE_BGM_CONTROLLER_20261111\r\nif $args[0]='defs':\r\n jo9_bgm_length['content/snd/city_honor.mp3']=240961\r\n jo9_bgm_length['content/snd/city_poor.mp3']=102061\r\n jo9_bgm_length['content/snd/city_citizen.mp3']=132240\r\n jo9_bgm_length['content/snd/vatican.mp3']=455025\r\n jo9_bgm_length['content/snd/citadel.mp3']=135053\r\n jo9_bgm_length['content/snd/spires.mp3']=254270\r\n jo9_bgm_length['content/snd/palace.mp3']=388919\r\n jo9_bgm_length['content/snd/outside.mp3']=154018\r\n jo9_bgm_length['content/snd/necropolis.mp3']=233509\r\n jo9_bgm_length['content/snd/redlight.mp3']=139442\r\n exit\r\nend\r\nif $args[0]='token':\r\n if $jo9_bgm_nonce='': $jo9_bgm_nonce=str(rand(100000000,999999999))+'-'+str(rand(100000000,999999999))\r\n jo9_bgm_serial+=1\r\n $jo9_bgm_token=$jo9_bgm_nonce+'-'+str(jo9_bgm_serial)\r\n exit\r\nend\r\nif $args[0]='render':\r\n local jo9_bg_ms,jo9_bg_run\r\n jo9_bg_ms=0 & jo9_bg_run=0\r\n if jo9_bgm_active=1 and arrsize('$jo9_bgm_paths')>1:\r\n  jo9_bg_ms=jo9_bgm_ms[jo9_bgm_index]\r\n  jo9_bg_run=1\r\n end\r\n *p '<script>window.jo9BgmSeed={token:\"<<$jo9_bgm_token>>\",durationMs:<<jo9_bg_ms>>,active:<<jo9_bg_run>>};</script><script src=\"content/js/jo9_bgm_clock.js?v=20261111\"></script>'\r\n exit\r\nend\r\nif $args[0]='pause':\r\n if jo9_bgm_active=1:\r\n  if $music_now=$jo9_bgm_paths[jo9_bgm_index] and $music_now!'': close $music_now\r\n  jo9_bgm_active=0\r\n  jo9_bgm_needs_start=1\r\n  gs 'jo9_residence_bgm','token'\r\n  gs 'jo9_residence_bgm','render'\r\n end\r\n exit\r\nend\r\nif $args[0]='event':\r\n gs 'jo9_residence_bgm','pause'\r\n $toplay='jo9_direct_event'\r\n $music['jo9_direct_event']=$args[1]\r\n $music_now=$args[1]\r\n jo9_bgm_event_sound=args[2]\r\n exit\r\nend\r\nif $args[0]='eventplay':\r\n if sound_on!1 or $toplay!'jo9_direct_event' or $music_now='': exit\r\n local jo9_bg_volume=music_volume\r\n if jo9_bgm_event_sound=1: jo9_bg_volume=sound_volume\r\n play $music_now,jo9_bg_volume,'only, loop'\r\n exit\r\nend\r\nif $args[0]='reset':\r\n gs 'jo9_residence_bgm','pause'\r\n killvar '$jo9_bgm_paths'\r\n killvar 'jo9_bgm_ms'\r\n $jo9_bgm_signature=''\r\n $jo9_bgm_nonce=''\r\n jo9_bgm_serial=0\r\n jo9_bgm_index=0\r\n jo9_bgm_active=0\r\n jo9_bgm_needs_start=1\r\n gs 'jo9_residence_bgm','token'\r\n gs 'jo9_residence_bgm','render'\r\n exit\r\nend\r\nif $args[0]='add':\r\n local jo9_bg_i,jo9_bg_n,jo9_bg_duplicate\r\n jo9_bg_n=arrsize('$jo9_bgm_next')\r\n jo9_bg_duplicate=0\r\n if jo9_bgm_length[$args[1]]<=0: exit\r\n for jo9_bg_i=0 to jo9_bg_n-1:\r\n  if lcase($jo9_bgm_next[jo9_bg_i])=lcase($args[1]): jo9_bg_duplicate=1\r\n end\r\n if jo9_bg_duplicate=1: exit\r\n $jo9_bgm_next[jo9_bg_n]=$args[1]\r\n jo9_bgm_next_ms[jo9_bg_n]=jo9_bgm_length[$args[1]]\r\n $jo9_bgm_next_signature+=$args[1]+'|'\r\n exit\r\nend\r\nif $args[0]='city':\r\n gs 'jo9_residence_bgm','defs'\r\n killvar '$jo9_bgm_next'\r\n killvar 'jo9_bgm_next_ms'\r\n $jo9_bgm_next_signature=''\r\n local $jo9_bg_base='content/snd/city_citizen.mp3'\r\n if noble_status=1 or brand_reputation>=5:\r\n  $jo9_bg_base='content/snd/city_honor.mp3'\r\n elseif $estate='slum_house':\r\n  $jo9_bg_base='content/snd/city_poor.mp3'\r\n elseif $estate='white_house':\r\n  $jo9_bg_base='content/snd/vatican.mp3'\r\n elseif $estate='kamira_house':\r\n  $jo9_bg_base='content/snd/citadel.mp3'\r\n elseif $estate='serpis_house':\r\n  $jo9_bg_base='content/snd/spires.mp3'\r\n elseif $estate='taurus_house':\r\n  $jo9_bg_base='content/snd/palace.mp3'\r\n elseif $estate='korvus_house':\r\n  $jo9_bg_base='content/snd/necropolis.mp3'\r\n elseif $estate='otchuzhdenie_house':\r\n  $jo9_bg_base='content/snd/outside.mp3'\r\n elseif $estate='Redlight_house':\r\n  $jo9_bg_base='content/snd/redlight.mp3'\r\n elseif $estate='centralkvartal_house':\r\n  $jo9_bg_base='content/snd/city_honor.mp3'\r\n end\r\n gs 'jo9_residence_bgm','add',$jo9_bg_base\r\n if faction_fame['taurus']>=4: gs 'jo9_residence_bgm','add','content/snd/palace.mp3'\r\n if faction_fame['serpis']>=4: gs 'jo9_residence_bgm','add','content/snd/spires.mp3'\r\n if faction_fame['kamira']>=4: gs 'jo9_residence_bgm','add','content/snd/citadel.mp3'\r\n if faction_fame['korvus']>=4: gs 'jo9_residence_bgm','add','content/snd/necropolis.mp3'\r\n if faction_fame['otchuzhdenie']>=4: gs 'jo9_residence_bgm','add','content/snd/outside.mp3'\r\n if faction_fame['RedLight']>=4: gs 'jo9_residence_bgm','add','content/snd/redlight.mp3'\r\n if faction_fame['centralkvartal']>=4: gs 'jo9_residence_bgm','add','content/snd/city_honor.mp3'\r\n if $jo9_bgm_signature!$jo9_bgm_next_signature:\r\n  killvar '$jo9_bgm_paths'\r\n  killvar 'jo9_bgm_ms'\r\n  copyarr '$jo9_bgm_paths','$jo9_bgm_next'\r\n  copyarr 'jo9_bgm_ms','jo9_bgm_next_ms'\r\n  $jo9_bgm_signature=$jo9_bgm_next_signature\r\n  jo9_bgm_index=0\r\n  jo9_bgm_needs_start=1\r\n end\r\n if jo9_bgm_active!1: jo9_bgm_needs_start=1\r\n $toplay='jo9_playlist'\r\n exit\r\nend\r\nif $args[0]='play':\r\n if sound_on!1 or music_volume<=0:\r\n  gs 'jo9_residence_bgm','pause'\r\n  exit\r\n end\r\n if arrsize('$jo9_bgm_paths')=0: gs 'jo9_residence_bgm','city'\r\n if arrsize('$jo9_bgm_paths')=0: exit\r\n if jo9_bgm_active!1: jo9_bgm_needs_start=1\r\n if jo9_bgm_needs_start=1 or $music_now!$jo9_bgm_paths[jo9_bgm_index]:\r\n  if $music_now!'': close $music_now\r\n  $music_now=$jo9_bgm_paths[jo9_bgm_index]\r\n  play $music_now,music_volume,'only, loop'\r\n  jo9_bgm_last_volume=music_volume\r\n  jo9_bgm_needs_start=0\r\n  jo9_bgm_active=1\r\n  gs 'jo9_residence_bgm','token'\r\n elseif jo9_bgm_last_volume!music_volume:\r\n  play $music_now,music_volume,'only, loop'\r\n  jo9_bgm_last_volume=music_volume\r\n end\r\n gs 'jo9_residence_bgm','render'\r\n exit\r\nend\r\nif $args[0]='advance':\r\n if jo9_bgm_active!1 or $args[1]!$jo9_bgm_token or $toplay!'jo9_playlist': exit\r\n if jo9_gameover_audio_active=1 or $curloc='exit' or arrsize('$jo9_bgm_paths')<2: exit\r\n if sound_on!1 or music_volume<=0:\r\n  gs 'jo9_residence_bgm','pause'\r\n  exit\r\n end\r\n jo9_bgm_index=(jo9_bgm_index+1) mod arrsize('$jo9_bgm_paths')\r\n jo9_bgm_needs_start=1\r\n gs 'jo9_residence_bgm','play'\r\n exit\r\nend\r\nif $args[0]='load':\r\n local jo9_bg_restore=iif($toplay='jo9_playlist',1,0)\r\n gs 'jo9_residence_bgm','reset'\r\n gs '#dynamic'\r\n if jo9_bg_restore=1 and $curloc!'exit' and jo9_gameover_audio_active!1:\r\n  if is_home=1:\r\n   dynamic $home_sounds\r\n  else\r\n   dynamic $city_sounds\r\n  end\r\n elseif $toplay='jo9_direct_event' and $curloc!'exit' and jo9_gameover_audio_active!1:\r\n  gs 'jo9_residence_bgm','eventplay'\r\n end\r\nend\r\n! JO9 MOD END RESIDENCE_BGM_CONTROLLER_20261111\r\n",
+      "actions": []
+    }
+  ]
+}

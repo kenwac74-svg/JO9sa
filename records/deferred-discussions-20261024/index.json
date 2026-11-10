@@ -242,22 +242,27 @@
         "공통 안내 원칙의 기록은 기존 조건·수치 변경 승인이 아님",
         "기존 유료 구매자 소문 기능은 유지"
       ],
-      "nextPatchAction": "2026-10-26 사용자 지정: 체질개선 확인창의 정확한 효과 보정률·회복/성장 계산·숨은 조건 설명을 암시 문구로 교정한다. 다음 패치 적용 승인, 현재 미적용. 실제 수치·비용·횟수·저장키는 유지한다."
+      "nextPatchAction": "2026-10-26 사용자 지정: 체질개선 확인창의 정확한 효과 보정률·회복/성장 계산·숨은 조건 설명을 암시 문구로 교정한다. 다음 패치 적용 승인, 2026-11-11 WORK 반영 완료. 실제 수치·비용·횟수·저장키는 유지한다.",
+      "nextPatchActionStatus": "APPLIED",
+      "nextPatchActionReport": "records/constitution-hint-20261111/REPORT_KO.md"
     },
     {
       "id": "D15",
       "title": "UI 클릭 뒤 검은 잔상 원인 조사",
-      "status": "POST_THIRD_PATCH_PRIORITY",
-      "decision": "이번3차패치제외,패치이후우선조사",
-      "trigger": "3차패치마무리이후",
-      "facts": "게임밖을누르면사라지는잔상제보. 엔진포커스/다시그리기와QSP/CSS원인미확정.",
+      "status": "USER_DEFERRED_REPRODUCTION",
+      "decision": "2026-11-11 사용자 확정: 검은 테두리/잔상이 다시 발생할 때 조사를 재개한다. 현재 조사 중단.",
+      "trigger": "사용자가 현재 WORK에서 같은 선/사각 테두리 잔상의 재발을 알릴 때",
+      "facts": "사용자가 참고 사진2개와 함께 현재 WORK에서도 발생한다고 확인했다. 게임 창을 다시 열어 둔 뒤 이번 직접 화면 확인에서는 선이 보이지 않았고 사용자도 현재 미발생을 확인했다. 원인·재현 조건·수정 완료는 미확정이다.",
       "evidence": [
         "docs/THIRD_PATCH_PENDING_20261026_KO.md",
-        "records/third-followups-20261026/REPORT_KO.md"
+        "records/third-followups-20261026/REPORT_KO.md",
+        "records/ui-focus-repaint-20261111/REPORT_KO.md"
       ],
       "constraints": [
-        "현재패치에추정수리추가하지않음"
-      ]
+        "현재패치에추정수리추가하지않음",
+        "재발 제보 전 추가 재현 조사·추정 수리·엔진 교체를 진행하지 않음"
+      ],
+      "lastReviewed": "2026-11-11"
     },
     {
       "id": "D16",
@@ -364,6 +369,51 @@
       ],
       "recordedAt": "2026-11-09T20:21:18.921Z",
       "currentReleaseExcluded": true
+    },
+    {
+      "id": "D21",
+      "decisionKey": "SAVE_MIGRATION_2_4_2_FULL_PRERELEASE_20261110",
+      "title": "2.4.2 풀버전 배포 직전 세이브 마이그레이션 도구",
+      "status": "USER_DEFERRED",
+      "decision": "모든 수정사항이 완료된 뒤 2.4.2 풀버전 배포 직전에 배포용 세이브 마이그레이션 도구를 작업한다. 지금은 구현하지 않는다. 노예 캐릭터의 기본 이름 변경을 기존 세이브에 반영하는 작업도 범위에 포함한다.",
+      "trigger": "모든 수정사항 완료를 확인하고 2.4.2 풀버전 배포 직전 준비를 시작할 때",
+      "targetRelease": "2.4.2 Full",
+      "facts": "배포 시 구버전 세이브의 이미지 경로와 화면 캐시 등 호환을 처리하는 도구다. 이미지 정리·경로 통합을 위해 필요하며 지원 범위와 최종 매핑은 모든 변경이 끝난 기준에서 확정한다.",
+      "constraints": [
+        "현재 도구 구현·세이브 변환을 시작하지 않음",
+        "2.4.2 풀버전 배포 직전이면서 모든 수정사항이 끝난 뒤에 진행",
+        "기존 게임의 호환 처리와 필수 이미지 경로는 현행대로 보존",
+        "이미지 정리 때 옛 세이브 필수 경로는 마이그레이션 검증 전 자동 삭제하지 않음"
+      ],
+      "evidence": [
+        "docs/SESSION_HANDOFF_INDEX.md",
+        "records/deferred-discussions-20261024/REMINDERS_KO.txt"
+      ],
+      "recordedAt": "2026-11-10T11:53:57.883Z",
+      "includedScope": [
+        "구버전 세이브의 이미지 경로·화면 캐시 호환",
+        "노예 캐릭터 기본 이름 변경의 기존 세이브 반영"
+      ],
+      "nameMigrationRules": [
+        "같은 캐릭터 번호(ID)이면서 저장된 이름이 해당 캐릭터의 옛 기본 이름인 경우에만 새 기본 이름으로 변경한다.",
+        "플레이어가 직접 지은 이름은 보존한다."
+      ],
+      "scopeUpdatedAt": "2026-11-10T17:25:45.317Z",
+      "imageCleanupCandidates": [
+        {
+          "characterId": 1448,
+          "oldRuntimePath": "content/pic/girls/full/mistress/1448_white_long_young.png",
+          "canonicalRuntimePath": "content/pic/girls/full/mistress/1448_shiru.png",
+          "status": "KEEP_UNTIL_VERIFIED_SAVE_MIGRATION",
+          "targetRelease": "2.4.2 Full",
+          "decisionDate": "2026-11-11",
+          "sha256": "2ce40cc4a268eef76d0d60cb1b7774c002c86e0d1be4e8850d871c95d1d2f624",
+          "bytes": 456692,
+          "migrationAction": "기존 세이브의 옛 도미나 이미지 참조와 화면 캐시를 현재 경로로 이관한다.",
+          "cleanupAfter": "마이그레이션 검증 후 옛 PNG와 호환/배포 원장의 옛 경로를 함께 정리한다.",
+          "evidence": "records/shiru-domina-alias-20261111/REPORT_KO.md"
+        }
+      ]
     }
   ],
   "notDeferred": [
@@ -398,6 +448,6 @@
       "note": "2026-10-26 사용자 승인. 기존 MSG 첫 발견 1회. 재확인 대기 저장·X 전용 키 제어는 추가하지 않음. records/meiki-discovery-popup-20261026/FINAL_RESULT.json."
     }
   ],
-  "updatedAt": "2026-11-09T20:21:18.921Z",
-  "lastUpdatedAt": "2026-11-09T20:21:18.921Z"
+  "updatedAt": "2026-11-10T17:25:45.317Z",
+  "lastUpdatedAt": "2026-11-10T17:25:45.317Z"
 }

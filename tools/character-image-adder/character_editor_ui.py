@@ -71,6 +71,7 @@ class CharacterEditor:
         if self.paths:
             self.tool_log.game_root = self.paths.root
         self.build()
+        self.identity_original = self.identity_values()
         if self.paths:
             self.refresh_library()
         self.update_mode()
@@ -476,6 +477,8 @@ class CharacterEditor:
     def dirty(self):
         if any(s["changed"] for s in self.slots.values()) or self.face_changed or self.clone_dirty:
             return True
+        if self.identity_values() != self.identity_original:
+            return True
         return bool(self.loaded_data and self.mode.get() == "edit" and self.changed_attributes())
 
     def discard_allowed(self):
@@ -592,6 +595,7 @@ class CharacterEditor:
         for var in (self.unique_name_var, self.unique_slug_var, self.unique_id_var):
             var.set("")
         self.set_story_values({})
+        self.identity_original = self.identity_values()
         self.edit_id = self.loaded_data = None
         self.id_var.set("")
         self.reset_images()
@@ -652,6 +656,7 @@ class CharacterEditor:
         self.unique_id_var.set(str(sid))
         self.unique_var.set(False)
         self.set_story_values({key: self.api.story_to_display(data.get(field, "")) for key, field, _label in self.api.STORY_FIELDS})
+        self.identity_original = self.identity_values()
         self.ref_index = None
         self.update_mode()
         self.refresh_slot_widgets()
@@ -668,9 +673,10 @@ class CharacterEditor:
         if self.mode.get() != "edit" or self.loaded_data is None:
             self.error("먼저 왼쪽 목록이나 ID 입력으로 복제할 캐릭터를 불러오세요.")
             return
-        if any(s["changed"] for s in self.slots.values()) or self.face_changed:
-            if not messagebox.askyesno("복제", "지금까지 바꾼 이미지 변경은 복제본으로 가져가지 않고 버립니다. 계속할까요?", parent=self.window):
+        if self.dirty():
+            if not messagebox.askyesno("복제", "저장하지 않은 변경이 있습니다.\n\n이미지·이름·파일 이름·번호·외모 변경은 버리고 원본을 복제합니다.\n입력한 이야기는 복제본으로 가져옵니다.\n\n계속할까요?", parent=self.window):
                 return
+        original_story = dict(self.identity_original["story"])
         source_id = self.edit_id
         data = self.loaded_data
         for slot in self.slots.values():
@@ -684,6 +690,8 @@ class CharacterEditor:
         self.unique_name_var.set(str(data.get("seed_name", "")))
         self.unique_slug_var.set((slug or "clone") + "_2")
         self.unique_id_var.set("")
+        self.identity_original = self.identity_values()
+        self.identity_original["story"] = original_story
         self.build_stats(data)
         self.clone_dirty = False
         self.update_mode()
@@ -745,6 +753,11 @@ class CharacterEditor:
 
     def story_values(self):
         return {key: box.get("1.0", "end").strip() for key, box in self.story_boxes.items()}
+
+    def identity_values(self):
+        """저장 형식과 별도로 현재 입력을 비교해 지운 문장도 미저장 변경으로 확인한다."""
+        return {"name": self.unique_name_var.get(), "slug": self.unique_slug_var.get(),
+                "id": self.unique_id_var.get(), "story": self.story_values()}
 
     def changed_story(self):
         """원본과 표시 문장이 달라진 항목만 돌려준다(안 고친 문단은 JSON 원문을 그대로 보존)."""
@@ -1657,13 +1670,19 @@ class CharacterEditor:
             self.log_event("save_error", error=str(exc), stage="preview", **summary)
             return self.error("저장하지 못했습니다: " + str(exc))
         shared = preview.get("shared_with") if mode == "edit" else None
-        if shared:
-            text = "같은 이미지를 쓰는 다른 캐릭터에도 반영됩니다:\nID %s\n\n그대로 저장할까요?" % ", ".join(str(x) for x in shared[:20])
-            if not messagebox.askyesno("공유 이미지 교체", text, parent=self.window):
+        preserved = preview.get("preserved_shared_with") if mode == "edit" else None
+        if shared or preserved:
+            notes = []
+            if shared:
+                notes.append("같은 이미지를 쓰는 다른 캐릭터에도 반영됩니다:\nID %s" % ", ".join(str(x) for x in shared[:20]))
+            if preserved:
+                notes.append("다른 캐릭터(ID %s)도 쓰는 PNG는 보존하고, 이 캐릭터의 이미지 연결만 해제합니다." % ", ".join(str(x) for x in preserved[:20]))
+            text = "\n\n".join(notes) + "\n\n그대로 저장할까요?"
+            if not messagebox.askyesno("공유 이미지 변경", text, parent=self.window):
                 return None
         self.log_event("save_start", id=source_id,
                        files=[os.path.relpath(p, self.paths.root).replace("\\", "/") for p in preview.get("files", [])],
-                       shared_with=shared or None, warnings=preview.get("warnings") or None, **summary)
+                       shared_with=shared or None, preserved_shared_with=preserved or None, warnings=preview.get("warnings") or None, **summary)
         try:
             result = self.perform_save()
         except Exception as exc:
@@ -1675,7 +1694,8 @@ class CharacterEditor:
         changes = diff_fields(result.get("before"), data) if result.get("before") is not None else None
         self.log_event("save", id=sid, name=name, result_mode=mode, source_id=source_id if mode == "clone" else None,
                        files=describe_files(result.get("files", []), self.paths.root), json_changes=changes or None,
-                       shared_with=result.get("shared_with") or None, warnings=result.get("warnings") or None, **summary)
+                       shared_with=result.get("shared_with") or None, preserved_shared_with=result.get("preserved_shared_with") or None,
+                       warnings=result.get("warnings") or None, **summary)
         targets = result.get("targets") or {}
         for key, info in summary["slots"].items():
             if info.get("transform"):
@@ -1733,10 +1753,10 @@ class CharacterEditor:
             return
         sid, name = self.edit_id, (self.loaded_data or {}).get("seed_name")
         try:
-            users = sorted(self.api.build_ref_index(self.paths).get(self.api._norm_ref(self.slots["base"]["ref"] or ""), set()) - {sid})
+            users = self.api.shared_image_users(self.paths, sid)
         except Exception:
             users = []
-        if users and not messagebox.askyesno("공유 이미지 삭제", "이 캐릭터의 이미지를 다른 캐릭터(ID %s)도 쓰고 있습니다.\n이미지까지 지우면 그쪽 이미지가 사라집니다. 계속할까요?" % ", ".join(str(u) for u in users[:12]), parent=self.window):
+        if users and not messagebox.askyesno("공유 이미지 보존", "이 캐릭터의 이미지를 다른 캐릭터(ID %s)도 쓰고 있습니다.\n공유 PNG는 보존하고 이 캐릭터의 데이터와 단독 이미지만 삭제합니다. 계속할까요?" % ", ".join(str(u) for u in users[:12]), parent=self.window):
             return
         self.log_event("delete_start", id=sid, name=name, mode=mode, shared_with=users or None)
         try:

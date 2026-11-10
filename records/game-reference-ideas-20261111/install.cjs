@@ -1,0 +1,28 @@
+'use strict';
+const fs=require('node:fs'),p=require('node:path'),zlib=require('node:zlib'),crypto=require('node:crypto'),assert=require('node:assert/strict');
+const repo='G:/somi/JO9sa',work='G:/somi/Jack O Nine Tails v2.4_work/game',candidate='G:/Codex/tmp/jo9-game-reference-ideas-20261111/tool/game-reference',stage=__dirname;
+const source=p.join(repo,'tools/game-reference'),target=p.join(work,'modtools/game-reference'),record=p.join(repo,'records/game-reference-ideas-20261111');
+const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+const qspHash=sha(fs.readFileSync(p.join(work,'jack.qsp')));
+assert.equal(qspHash,'0b08b2c36923fbc9495bf9de467b09feef26c5b0afd2ce0b7bdb286a6182ad3e','WORK changed; rebuild reference first');
+const pre=JSON.parse(fs.readFileSync(p.join(stage,'source-preconditions.json'),'utf8').replace(/^\uFEFF/,''));
+const launcher=p.join(repo,'tools/local-workspace/Open-Modding-Tools.ps1'),ignore=p.join(repo,'.gitignore');
+assert.equal(sha(fs.readFileSync(launcher)).toUpperCase(),pre.launcher);assert.equal(sha(fs.readFileSync(ignore)).toUpperCase(),pre.gitignore);
+const changed=['assemble.cjs','extract-spells.cjs','ideas-core.cjs','ideas-store.cjs','ideas-client.cjs','ideas-ui.js','ideas.test.cjs','server.test.cjs','client.test.cjs','spells.test.cjs','reference-template.html','jo9-reference.html','README.md','Start-Game-Reference.ps1','traits.json','items.json','items.input.json','spells.json'];
+const runtime=['jo9-reference.html','README.md','serve.cjs','ideas-core.cjs','ideas-store.cjs','Start-Game-Reference.ps1','snapshot.json'];
+changed.push('serve.cjs');
+for(const kind of ['traits','items','spells'])assert.equal(JSON.parse(fs.readFileSync(p.join(candidate,kind+'.json'))).hash,qspHash);
+const snapshot={recordedDate:'2026-11-11',dataCreated:new Date().toISOString(),source:'WORK',sourceQspSha256:qspHash,traits:128,items:271,spells:11,itemInputRows:196,recipesAddedByAssembly:75,sourceCommit:'607c7ec6fc02b8eaadbfb4aa7770db834f5b7701',personalIdeas:'Excluded: runtime/ideas.json is user data; never copied by generator or launcher.',files:fs.readdirSync(candidate).filter(n=>/\.(?:cjs|js|json|html|md|ps1)$/.test(n)&&n!=='snapshot.json').sort().map(n=>{const b=fs.readFileSync(p.join(candidate,n));return{file:n,sha256:sha(b),bytes:b.length};})};
+fs.writeFileSync(p.join(candidate,'snapshot.json'),JSON.stringify(snapshot,null,2)+'\n');changed.push('snapshot.json');
+const writes=[...changed.map(n=>({from:p.join(candidate,n),to:p.join(source,n)})),...runtime.map(n=>({from:p.join(candidate,n),to:p.join(target,n)})),{from:p.join(stage,'Open-Modding-Tools.ps1'),to:launcher},{from:p.join(stage,'.gitignore'),to:ignore}];
+const backup='G:/somi/JO9_work_backups/game-reference-ideas-20261111-'+crypto.randomUUID().slice(0,8);fs.mkdirSync(backup,{recursive:true});
+const privateFile=p.join(target,'runtime/ideas.json'),privateBefore=fs.existsSync(privateFile)?sha(fs.readFileSync(privateFile)):null;
+const old=writes.map(({to})=>({file:to,bytes:fs.existsSync(to)?fs.readFileSync(to).toString('base64'):null}));
+fs.writeFileSync(p.join(backup,'before-files.json.gz'),zlib.gzipSync(Buffer.from(JSON.stringify({files:old})),{level:9}),{flag:'wx'});
+assert.deepEqual(JSON.parse(zlib.gunzipSync(fs.readFileSync(p.join(backup,'before-files.json.gz')))),{files:old},'Backup roundtrip failed');
+for(const {from,to} of writes){fs.mkdirSync(p.dirname(to),{recursive:true});fs.copyFileSync(from,to);assert.equal(sha(fs.readFileSync(from)),sha(fs.readFileSync(to)));}
+assert.equal(fs.existsSync(privateFile)?sha(fs.readFileSync(privateFile)):null,privateBefore,'Personal ideas changed during install');assert.equal(sha(fs.readFileSync(p.join(work,'jack.qsp'))),qspHash);
+const result={date:'2026-11-11',qspHash,backup,privateFileBefore:privateBefore,privateFileAfter:privateBefore,files:writes.map(({to})=>({file:to,sha256:sha(fs.readFileSync(to)),bytes:fs.statSync(to).size})),fullTouched:false,audioTouched:false,commitPush:false};
+fs.mkdirSync(record,{recursive:true});fs.writeFileSync(p.join(record,'installation.json'),JSON.stringify(result,null,2)+'\n');
+fs.copyFileSync(p.join(stage,'PLAN_KO.md'),p.join(record,'PLAN_KO.md'));fs.copyFileSync(__filename,p.join(record,'install.cjs'));
+console.log(JSON.stringify({files:writes.length,backup,privateRecordsPreserved:true,qspUnchanged:true}));

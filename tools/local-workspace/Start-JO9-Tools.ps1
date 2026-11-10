@@ -35,7 +35,7 @@ function Test-EditorProcess($Process,[string]$Server,[string]$Game,[string]$Orig
 function Get-EditorCodeChanges([string]$From,[string]$To) {
  # User settings, keys, history, runtime and existing assets are not deployment files.
  return @(Get-ChildItem -LiteralPath $From -File | Where-Object {
-  ($_.Extension -in @('.cjs','.js','.py','.ps1') -or $_.Name -in @('index.html','patch-schedule.html','journal-keywords.json','Open-JO9-Text.cmd')) -and
+  ($_.Extension -in @('.cjs','.js','.css','.py','.ps1') -or $_.Name -in @('index.html','patch-schedule.html','journal-keywords.json','Open-JO9-Text.cmd')) -and
   $_.Name -notmatch '(?i)(\.test\.|^test\.|\.test$)'
  } | Where-Object {
   $dest=Join-Path $To $_.Name

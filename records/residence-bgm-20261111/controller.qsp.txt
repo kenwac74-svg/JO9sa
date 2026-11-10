@@ -1,0 +1,172 @@
+! JO9 MOD START RESIDENCE_BGM_CONTROLLER_20261111
+if $args[0]='defs':
+ __DURATION_DEFINITIONS__
+ exit
+end
+if $args[0]='token':
+ if $jo9_bgm_nonce='': $jo9_bgm_nonce=str(rand(100000000,999999999))+'-'+str(rand(100000000,999999999))
+ jo9_bgm_serial+=1
+ $jo9_bgm_token=$jo9_bgm_nonce+'-'+str(jo9_bgm_serial)
+ exit
+end
+if $args[0]='render':
+ local jo9_bg_ms,jo9_bg_run
+ jo9_bg_ms=0 & jo9_bg_run=0
+ if jo9_bgm_active=1 and arrsize('$jo9_bgm_paths')>1:
+  jo9_bg_ms=jo9_bgm_ms[jo9_bgm_index]
+  jo9_bg_run=1
+ end
+ *p '<script>window.jo9BgmSeed={token:"<<$jo9_bgm_token>>",durationMs:<<jo9_bg_ms>>,active:<<jo9_bg_run>>};</script><script src="content/js/jo9_bgm_clock.js?v=20261111"></script>'
+ exit
+end
+if $args[0]='pause':
+ if jo9_bgm_active=1:
+  if $music_now=$jo9_bgm_paths[jo9_bgm_index] and $music_now!'': close $music_now
+  jo9_bgm_active=0
+  jo9_bgm_needs_start=1
+  gs 'jo9_residence_bgm','token'
+  gs 'jo9_residence_bgm','render'
+ end
+ exit
+end
+if $args[0]='event':
+ gs 'jo9_residence_bgm','pause'
+ $toplay='jo9_direct_event'
+ $music['jo9_direct_event']=$args[1]
+ $music_now=$args[1]
+ jo9_bgm_event_sound=args[2]
+ exit
+end
+if $args[0]='eventplay':
+ if sound_on!1 or $toplay!'jo9_direct_event' or $music_now='': exit
+ local jo9_bg_volume=music_volume
+ if jo9_bgm_event_sound=1: jo9_bg_volume=sound_volume
+ play $music_now,jo9_bg_volume,'only, loop'
+ exit
+end
+if $args[0]='reset':
+ gs 'jo9_residence_bgm','pause'
+ killvar '$jo9_bgm_paths'
+ killvar 'jo9_bgm_ms'
+ $jo9_bgm_signature=''
+ $jo9_bgm_nonce=''
+ jo9_bgm_serial=0
+ jo9_bgm_index=0
+ jo9_bgm_active=0
+ jo9_bgm_needs_start=1
+ gs 'jo9_residence_bgm','token'
+ gs 'jo9_residence_bgm','render'
+ exit
+end
+if $args[0]='add':
+ local jo9_bg_i,jo9_bg_n,jo9_bg_duplicate
+ jo9_bg_n=arrsize('$jo9_bgm_next')
+ jo9_bg_duplicate=0
+ if jo9_bgm_length[$args[1]]<=0: exit
+ for jo9_bg_i=0 to jo9_bg_n-1:
+  if lcase($jo9_bgm_next[jo9_bg_i])=lcase($args[1]): jo9_bg_duplicate=1
+ end
+ if jo9_bg_duplicate=1: exit
+ $jo9_bgm_next[jo9_bg_n]=$args[1]
+ jo9_bgm_next_ms[jo9_bg_n]=jo9_bgm_length[$args[1]]
+ $jo9_bgm_next_signature+=$args[1]+'|'
+ exit
+end
+if $args[0]='city':
+ gs 'jo9_residence_bgm','defs'
+ killvar '$jo9_bgm_next'
+ killvar 'jo9_bgm_next_ms'
+ $jo9_bgm_next_signature=''
+ local $jo9_bg_base='content/snd/city_citizen.mp3'
+ if noble_status=1 or brand_reputation>=5:
+  $jo9_bg_base='content/snd/city_honor.mp3'
+ elseif $estate='slum_house':
+  $jo9_bg_base='content/snd/city_poor.mp3'
+ elseif $estate='white_house':
+  $jo9_bg_base='content/snd/vatican.mp3'
+ elseif $estate='kamira_house':
+  $jo9_bg_base='content/snd/citadel.mp3'
+ elseif $estate='serpis_house':
+  $jo9_bg_base='content/snd/spires.mp3'
+ elseif $estate='taurus_house':
+  $jo9_bg_base='content/snd/palace.mp3'
+ elseif $estate='korvus_house':
+  $jo9_bg_base='content/snd/necropolis.mp3'
+ elseif $estate='otchuzhdenie_house':
+  $jo9_bg_base='content/snd/outside.mp3'
+ elseif $estate='Redlight_house':
+  $jo9_bg_base='content/snd/redlight.mp3'
+ elseif $estate='centralkvartal_house':
+  $jo9_bg_base='content/snd/city_honor.mp3'
+ end
+ gs 'jo9_residence_bgm','add',$jo9_bg_base
+ if faction_fame['taurus']>=4: gs 'jo9_residence_bgm','add','content/snd/palace.mp3'
+ if faction_fame['serpis']>=4: gs 'jo9_residence_bgm','add','content/snd/spires.mp3'
+ if faction_fame['kamira']>=4: gs 'jo9_residence_bgm','add','content/snd/citadel.mp3'
+ if faction_fame['korvus']>=4: gs 'jo9_residence_bgm','add','content/snd/necropolis.mp3'
+ if faction_fame['otchuzhdenie']>=4: gs 'jo9_residence_bgm','add','content/snd/outside.mp3'
+ if faction_fame['RedLight']>=4: gs 'jo9_residence_bgm','add','content/snd/redlight.mp3'
+ if faction_fame['centralkvartal']>=4: gs 'jo9_residence_bgm','add','content/snd/city_honor.mp3'
+ if $jo9_bgm_signature!$jo9_bgm_next_signature:
+  killvar '$jo9_bgm_paths'
+  killvar 'jo9_bgm_ms'
+  copyarr '$jo9_bgm_paths','$jo9_bgm_next'
+  copyarr 'jo9_bgm_ms','jo9_bgm_next_ms'
+  $jo9_bgm_signature=$jo9_bgm_next_signature
+  jo9_bgm_index=0
+  jo9_bgm_needs_start=1
+ end
+ if jo9_bgm_active!1: jo9_bgm_needs_start=1
+ $toplay='jo9_playlist'
+ exit
+end
+if $args[0]='play':
+ if sound_on!1 or music_volume<=0:
+  gs 'jo9_residence_bgm','pause'
+  exit
+ end
+ if arrsize('$jo9_bgm_paths')=0: gs 'jo9_residence_bgm','city'
+ if arrsize('$jo9_bgm_paths')=0: exit
+ if jo9_bgm_active!1: jo9_bgm_needs_start=1
+ if jo9_bgm_needs_start=1 or $music_now!$jo9_bgm_paths[jo9_bgm_index]:
+  if $music_now!'': close $music_now
+  $music_now=$jo9_bgm_paths[jo9_bgm_index]
+  play $music_now,music_volume,'only, loop'
+  jo9_bgm_last_volume=music_volume
+  jo9_bgm_needs_start=0
+  jo9_bgm_active=1
+  gs 'jo9_residence_bgm','token'
+ elseif jo9_bgm_last_volume!music_volume:
+  play $music_now,music_volume,'only, loop'
+  jo9_bgm_last_volume=music_volume
+ end
+ gs 'jo9_residence_bgm','render'
+ exit
+end
+if $args[0]='advance':
+ if jo9_bgm_active!1 or $args[1]!$jo9_bgm_token or $toplay!'jo9_playlist': exit
+ if jo9_gameover_audio_active=1 or $curloc='exit' or arrsize('$jo9_bgm_paths')<2: exit
+ if sound_on!1 or music_volume<=0:
+  gs 'jo9_residence_bgm','pause'
+  exit
+ end
+ jo9_bgm_index=(jo9_bgm_index+1) mod arrsize('$jo9_bgm_paths')
+ jo9_bgm_needs_start=1
+ gs 'jo9_residence_bgm','play'
+ exit
+end
+if $args[0]='load':
+ local jo9_bg_restore=iif($toplay='jo9_playlist',1,0)
+ gs 'jo9_residence_bgm','reset'
+ gs '#dynamic'
+ if jo9_bg_restore=1 and $curloc!'exit' and jo9_gameover_audio_active!1:
+  if is_home=1:
+   dynamic $home_sounds
+  else
+   dynamic $city_sounds
+  end
+ elseif $toplay='jo9_direct_event' and $curloc!'exit' and jo9_gameover_audio_active!1:
+  gs 'jo9_residence_bgm','eventplay'
+ end
+end
+! JO9 MOD END RESIDENCE_BGM_CONTROLLER_20261111

@@ -1,0 +1,83 @@
+✔ 중간 시작 버튼은 첫 클릭에 고정되고 다른 대사 탐색으로 풀리지 않는다 (14.2371ms)
+✔ 분기 두 개 고정 후 마무리 지정과 미리보기·저장까지 선택한 루트를 유지한다 (8.8528ms)
+✔ 단순 탐색·편집 탭 왕복·같은 QSP의 세션 복원은 시작과 고정 분기를 유지한다 (5.4108ms)
+✔ QSP 해시 변경은 선택을 삭제하지 않고 오래된 경로로 보존하며 출력을 잠근다 (3.0735ms)
+✖ 연결 장면에서 고른 이동 경로도 각본에 고정해 미리보기에서 다시 묻지 않는다 (6.4098ms)
+✔ 이미 고정한 같은 분기를 다시 열면 뒤 분기와 마무리를 유지한다 (5.2718ms)
+✖ 앞 분기를 다른 변형으로 바꾸면 시작은 유지하고 뒤 고정·후속 장면 선택·마무리만 해제한다 (6.3216ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 5
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 156.0849
+
+✖ failing tests:
+
+test at G:\somi\JO9sa\tools\text-workshop\script-route-ui.test.cjs:110:1
+✖ 연결 장면에서 고른 이동 경로도 각본에 고정해 미리보기에서 다시 묻지 않는다 (6.4098ms)
+  AssertionError [ERR_ASSERTION]: The input was expected to not match the regular expression /포함하면 안 되는 후속 장면|고르지 않은 기본문/. Input:
+  
+  '# JO9 선택 구간 각본\n' +
+    '# QSP: 291942c98f3409ad39c28f45a4c8fbb00523b8fe78da62a9d3d0433ee23509d4\n' +
+    '# 시작: [안내] 고정할 중간 시작\n' +
+    '# 마무리: [후속] 고른 장면의 마무리\n' +
+    '\n' +
+    '==== [S1] interaction_city = 1 ====\n' +
+    '\n' +
+    '---- [S1-P1] ----\n' +
+    '[안내] 고정할 중간 시작\n' +
+    '\n' +
+    '---- [S1-P2] ----\n' +
+    '[안내] 선택한 분기 A\n' +
+    '\n' +
+    '---- [S1-P3] ----\n' +
+    '[안내] 선택한 분기 B\n' +
+    '\n' +
+    '---- [S1-P4] ----\n' +
+    '[안내] 고정할 마무리\n' +
+    "[실행 중 결정] 실행 중 조립되는 페이지: $text[3] = '[안내] 고정할 중간 시작'\n" +
+    "[실행 중 결정] 실행 중 조립되는 페이지: $text[4] = '[안내] 선택한 분기 A'\n" +
+    "[실행 중 결정] 실행 중 조립되는 페이지: $text[5] = '[안내] 고르지 않은 기본문 B'\n" +
+    "[실행 중 결정] 실행 중 조립되는 페이지: $text[5] = '[안내] 선택한 분기 B'\n" +
+    "[실행 중 결정] 실행 중 조립되는 페이지: $text[6] = '[안내] 고정할 마무리'\n" +
+    '▶ 선택: 선택한 후속 장면\n' +
+    '\n' +
+    '==== [S2] interaction_city = 2 ====\n' +
+    "[실행 중 결정] 실행 중 조립되는 페이지: $text[1] = '[후속] 고른 장면의 첫 대사'\n" +
+    '\n' +
+    '---- [S2-P5] ----\n' +
+    '[후속] 고른 장면의 첫 대사\n' +
+    '\n' +
+    '---- [S2-P6] ----\n' +
+    '[후속] 고른 장면의 마무리\n'
+  
+      at TestContext.<anonymous> (G:\somi\JO9sa\tools\text-workshop\script-route-ui.test.cjs:120:4)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: "# JO9 선택 구간 각본\n# QSP: 291942c98f3409ad39c28f45a4c8fbb00523b8fe78da62a9d3d0433ee23509d4\n# 시작: [안내] 고정할 중간 시작\n# 마무리: [후속] 고른 장면의 마무리\n\n==== [S1] interaction_city = 1 ====\n\n---- [S1-P1] ----\n[안내] 고정할 중간 시작\n\n---- [S1-P2] ----\n[안내] 선택한 분기 A\n\n---- [S1-P3] ----\n[안내] 선택한 분기 B\n\n---- [S1-P4] ----\n[안내] 고정할 마무리\n[실행 중 결정] 실행 중 조립되는 페이지: $text[3] = '[안내] 고정할 중간 시작'\n[실행 중 결정] 실행 중 조립되는 페이지: $text[4] = '[안내] 선택한 분기 A'\n[실행 중 결정] 실행 중 조립되는 페이지: $text[5] = '[안내] 고르지 않은 기본문 B'\n[실행 중 결정] 실행 중 조립되는 페이지: $text[5] = '[안내] 선택한 분기 B'\n[실행 중 결정] 실행 중 조립되는 페이지: $text[6] = '[안내] 고정할 마무리'\n▶ 선택: 선택한 후속 장면\n\n==== [S2] interaction_city = 2 ====\n[실행 중 결정] 실행 중 조립되는 페이지: $text[1] = '[후속] 고른 장면의 첫 대사'\n\n---- [S2-P5] ----\n[후속] 고른 장면의 첫 대사\n\n---- [S2-P6] ----\n[후속] 고른 장면의 마무리\n",
+    expected: /포함하면 안 되는 후속 장면|고르지 않은 기본문/,
+    operator: 'doesNotMatch',
+    diff: 'simple'
+  }
+
+test at G:\somi\JO9sa\tools\text-workshop\script-route-ui.test.cjs:131:1
+✖ 앞 분기를 다른 변형으로 바꾸면 시작은 유지하고 뒤 고정·후속 장면 선택·마무리만 해제한다 (6.3216ms)
+  AssertionError [ERR_ASSERTION]: 원래 뒤쪽 후속 장면 이동 선택도 해제해야 함
+  
+  '0' !== undefined
+  
+      at TestContext.<anonymous> (G:\somi\JO9sa\tools\text-workshop\script-route-ui.test.cjs:140:175)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '0',
+    expected: undefined,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

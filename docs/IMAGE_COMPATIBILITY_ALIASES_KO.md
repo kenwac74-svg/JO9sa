@@ -55,3 +55,8 @@ characters/mistress_morrigan.png 및 mistress_ava.png는 유지하고 같은 파
 ## 2026-11-08 시루1448 파일명 정리7쌍
 
 새 기준은1448_shiru 계열이다. 옛1448_white_long_young 전신/하녀/비서/도미나/초상3종7개는 저장된 인물의 옛 경로를 위해 동일 바이트의 호환 파일로 유지한다. 삭제/중복 정리 대상이 아니다. 기준 원장: assets/compatibility-aliases/2026-11-08_shiru-paths.json. 새로운 그림을 교체할 때 두 경로를 어떻게 유지할지 명시적으로 검토한다.
+
+
+## 2026-11-11 시루 도미나 호환 사본 임시 복구
+
+사용자 승인으로 누락된 girls/full/mistress/1448_white_long_young.png를 현재 1448_shiru.png와 같은 바이트로 복구했다. 현재 그림과 소스·원장을 맞췄으며 다른6쌍은 그대로다. 이 옛 경로1개는 D21의 2.4.2 Full 배포 직전 세이브 마이그레이션에서 정리할 대상이다. 이관·화면 캐시 호환 검증이 끝날 때까지 KEEP하며, 검증 후 PNG와 호환/배포 원장을 함께 정리한다. [반영·검증·복구](../records/shiru-domina-alias-20261111/REPORT_KO.md).

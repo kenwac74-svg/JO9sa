@@ -1,26 +1,28 @@
-# JO9 특성·아이템 열람표
+# JO9 특성·아이템·마법 DB와 개인 아이디어
 
-2026-11-08 현재 WORK QSP 기준 갱신본이다. 특성 128개와 아이템 271개(기본 196개·조리 음식 75개)를 검색·분류·탭으로 열람한다. 게임 실행이나 설치 없이 같은 폴더의 jo9-reference.html을 브라우저로 열면 된다.
+현재 WORK에서 특성·아이템·마법을 검색·분류해서 읽고, ‘내 아이디어’ 탭에서 향후 추가할 특성·아이템·마법의 이름·내용·효과·조건·가격/소모·메모를 저장한다.
 
-정액 중독·석녀의 발현과 카오틱 에센스 치료, 기존 시루 보정, 특별요리 재료의 가격·10회분 판매 단위·사용 우선순위를 현재 코드에 대조했다. 특등급 처녀고기는 내부 지급 함수만 있고 획득 이벤트 호출이 없어 입수 불가로 표시한다. 미확인 입수처를 임의로 채우지 않았다.
+## 사용
 
-snapshot.json의 QSP SHA256은 갱신 시점의 출처다. 실행 중 게임을 자동 감지하지 않는다. 재생성 후 QSP가 바뀌면 다시 갱신해야 한다. 원작 표시명·수동 요약은 보존했으며, 이전 제작본을 보존한 원격 커밋은 41c1a6409e89b1cccac50f1c033d16a5043030d2다.
+- 모드툴의 GameReference를 열면 된다. 마법은 소모량·직접 메뉴 조건·코드 출처와 실제 시전 코드를 함께 표시한다.
+- ‘내 아이디어’에서 새로 작성하고 **아이디어 저장**을 누른다. 목록에서 선택해 수정하며, 삭제는 두 번 확인한다. 작성 중인 내용을 남긴 채 DB 탭을 오갈 수 있다.
+- 서버 모드의 개인 기록은 화면에 표시한 `WORK/game/modtools/game-reference/runtime/ideas.json`에 저장된다. 포트가 바뀌어도 같은 파일을 읽는다. 도구 코드/DB 갱신은 이 파일을 복사하거나 초기화하지 않는다.
+- 단독 `jo9-reference.html`을 파일로 열면 브라우저에 저장한다. 브라우저/파일 저장소를 바꿀 때는 JSON 백업을 이용한다.
+- **JSON 백업**으로 모든 저장 아이디어를 내보낸다. **JSON 가져오기·추가**는 새 ID만 추가한다. 기존 ID의 현재 내용은 유지하므로 옛 백업을 가져와도 최신 수정문을 덮지 않는다.
+- 다른 창이 먼저 저장하면 최신 목록을 다시 읽고 작성 중인 양식은 유지한다. 내용을 확인한 뒤 다시 저장한다. 실패/손상 파일을 빈 자료로 덮지 않는다.
 
-## 모드툴
+개인 기록은 생성 HTML과 Git에 포함하지 않는다. 이 도구에서 아이디어를 저장해도 게임 QSP/능력치/세이브에 자동 적용되지는 않는다.
 
-Open-Modding-Tools.ps1에 포함했다. WORK의 modtools/game-reference에서 읽기 전용 로컬 서버를 시작·재사용하며 GameReference 주소를 출력한다. 일반 실행에서는 해당 탭을 함께 연다. 이 도구만 실행할 때는 Start-Game-Reference.ps1을 사용한다. HTML 단독 열람에는 Node.js가 필요 없다.
+## 현재 WORK로 다시 생성
 
-## 현재 WORK에서 재생성
+Node.js 22 이상. 먼저 작업 사본에서 다음을 실행한다. `game`은 현재 WORK의 game 폴더다.
 
-Node.js 22 이상을 사용한다. 생성 명령은 이 폴더의 데이터와 HTML을 갱신하므로, 이전 제작본을 보존한 작업 사본에서 실행한다. game/jack.qsp와 game/json/menu_item.json을 읽으며 게임 파일은 쓰지 않는다.
+    node extract-traits.cjs "<game/jack.qsp>"
+    node extract-items.cjs "<game/jack.qsp>"
+    node enrich-item-acquisition.cjs "<game>"
+    node extract-spells.cjs "<game/jack.qsp>" "<game/json/menu_item.json>"
+    node assemble.cjs "<game/jack.qsp>"
 
-    node extract-traits.cjs "<WORK/game/jack.qsp>"
-    node extract-items.cjs "<WORK/game/jack.qsp>"
-    node enrich-item-acquisition.cjs "<WORK/game>"
-    node assemble.cjs "<WORK/game/jack.qsp>"
+생성기는 `../text-workshop/core.cjs`에 의존한다. 원작 표시명·수동 보완은 해당 생성기에서 유지한다. traits/items/spells JSON과 HTML은 같은 QSP 해시를 가져야 한다. 마법은 직접 메뉴 조건과 시전 정의를 대조한 자료이며, 상위 메뉴 조건·모든 자동 시전 경로·모든 결과를 실제 플레이로 검증한 공략은 아니다.
 
-생성기는 ../text-workshop/core.cjs에 의존한다. extract-items와 enrich는 items.input.json을 만들고, assemble은 여기에 음식과 현재 보완을 합쳐 최종 items.json·traits.json·jo9-reference.html을 만든다. refresh-current.cjs의 보완은 소스 조건과 수치를 검사한 뒤 반영한다. 실패 시 현재 WORK와 대조해야 하며 과거 수치를 임의로 이어 쓰면 안 된다.
-
-## 범위
-
-열람표이며 게임 밸런스·가격·특성·세이브를 수정하지 않는다. 일반 능력치·일시적 버프·초상 전용 아이콘은 특성 집계 밖이다. 마법 전용 목록은 이 자료에 포함되지 않았다. 생성 시점의 정적 코드 자료이며 모든 플레이 경로를 실행해 검증한 공략은 아니다.
+`serve.cjs`는 127.0.0.1에서만 실행된다. `ideas-core.cjs`와 `ideas-store.cjs`가 필요하다. API는 개인 기록 파일만 수정하며 revision 충돌과 외부 Origin 쓰기를 거부한다. `Start-Game-Reference.ps1`은 자기 서버의 PID/경로/버전을 확인해 재사용하거나 코드 변경 시 재시작한다. 개인 파일은 그대로 둔다.

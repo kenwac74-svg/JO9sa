@@ -1,0 +1,55 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),zlib=require('node:zlib'),cp=require('node:child_process'),a=require('node:assert/strict');
+const repo='G:/somi/JO9sa',game='G:/somi/Jack O Nine Tails v2.4_work/game',tmp='G:/Codex/tmp/jo9-city-settings-bgm-20261111',rec=repo+'/records/city-settings-bgm-20261111';
+const core=require(repo+'/tools/text-workshop/core.cjs'),qa=require(repo+'/tools/qa/release-check.cjs');
+const id='2026-11-11_city_settings_bgm_keep',patchId='CITY_SETTINGS_BGM_KEEP_20261111';
+const read=p=>JSON.parse(fs.readFileSync(p,'utf8').replace(/^\uFEFF/,'')),write=(p,x)=>fs.writeFileSync(p,JSON.stringify(x,null,2)+'\n');
+const hash=p=>core.hash(fs.readFileSync(p));
+const protectedFiles=[...fs.readdirSync(game+'/content/snd').filter(n=>fs.statSync(game+'/content/snd/'+n).isFile()).map(n=>game+'/content/snd/'+n),game+'/modtools/catalog/catalog_status.js',game+'/modtools/catalog/catalog_work_ids.json',game+'/modtools/catalog/patch-schedule.json'];
+const body=d=>core.shift(d.lines[d.locations.find(l=>l.name==='#dynamic').body],5);
+const modPath=repo+'/mods/'+id+'.json';
+const mode=process.argv[2];
+if(mode==='prepare'){
+ const raw=fs.readFileSync(game+'/jack.qsp'),d=core.parse(raw);a(core.serialize(d).equals(raw));
+ a.equal(d.hash,'d566d3e9edcc5fcb47c02a350ea1640340ee316777fbbcd87718aa786357d161','WORK changed since investigation; recheck required');
+ a.equal(hash(repo+'/assets/runtime/2.4.1/jack.qsp'),d.hash);
+ const beforeNative=read(rec+'/native-before.json');a(beforeNative.some(r=>!r.pass));
+ a(fs.readFileSync(tmp+'/before/city-settings-stderr.log','utf8').includes('FAIL music selection'));
+ const originalBody=body(d),old=originalBody.match(/^\$city_sounds = \{[\s\S]*?^\}/m)?.[0];a(old);
+ a.equal(old.split("\t\tif city_form ! 1000:").length-1,1);
+ a.equal(old.split("\t\telse\r\n\t\t\t$toplay = 'city'\r\n").length-1,1);
+ const code=old.replace('\t\tif city_form ! 1000:',"\t\tif city_form ! 1000 or $toplay = '' or $toplay = 'city':").replace("\t\telse\r\n\t\t\t$toplay = 'city'\r\n",'');
+ const next='! JO9 MOD START '+patchId+'\r\n'+code+'\r\n! JO9 MOD END '+patchId;
+ const l=d.locations.find(l=>l.name==='#dynamic');d.lines[l.body]=core.shift(originalBody.replace(old,next),-5);
+ const candidate=core.serialize(d);const structure=qa.inspectWorld(candidate);
+ const backup='G:/somi/JO9_work_backups/city-settings-bgm-20261111-'+core.hash(raw).slice(0,12);fs.mkdirSync(backup,{recursive:true});
+ const gzip=zlib.gzipSync(raw);fs.writeFileSync(backup+'/before.qsp.gz',gzip);a(zlib.gunzipSync(gzip).equals(raw));
+ fs.copyFileSync(repo+'/assets/runtime-source-2.4.1.json',backup+'/runtime-source-before.json');
+ fs.mkdirSync(tmp+'/mods',{recursive:true});
+ const mod={id,status:'APPROVED',description:'Keep the prior city BGM in settings; recover blank or retired city selection with existing noble/reputation/home rules. No audio changes.',before_sha256:core.hash(raw),after_sha256:core.hash(candidate),edits:[{location:'#dynamic',field:'body',old,new:next,count:1,patchId}]};
+ a(!fs.existsSync(modPath));write(modPath,mod);write(tmp+'/mods/'+id+'.json',mod);
+ fs.writeFileSync(tmp+'/candidate.qsp',candidate);fs.writeFileSync(tmp+'/replay.qsp',raw);
+ const state={id,beforeSha256:core.hash(raw),afterSha256:core.hash(candidate),backup,protected:Object.fromEntries(protectedFiles.map(p=>[p,hash(p)])),structure};write(rec+'/prepared.json',state);
+ console.log(JSON.stringify({prepared:true,before:state.beforeSha256,after:state.afterSha256,structure,protectedFiles:protectedFiles.length}));
+}else if(mode==='install'){
+ const state=read(rec+'/prepared.json'),native=read(rec+'/native-after.json');a.equal(native.length,1);a(native.every(r=>r.pass));
+ a.equal(hash(game+'/jack.qsp'),state.beforeSha256,'WORK changed during checks; rebase required');
+ a.equal(hash(repo+'/assets/runtime/2.4.1/jack.qsp'),state.beforeSha256);
+ a.equal(hash(tmp+'/replay.qsp'),state.afterSha256);a.equal(hash(tmp+'/candidate.qsp'),state.afterSha256);
+ for(const [p,h]of Object.entries(state.protected))a.equal(hash(p),h);
+ const log=cp.execFileSync('powershell.exe',['-NoProfile','-ExecutionPolicy','Bypass','-File',repo+'/tools/apply_mods.ps1','-Qsp',game+'/jack.qsp','-ModsDir',tmp+'/mods'],{encoding:'utf8',windowsHide:true,maxBuffer:2*1024*1024});fs.writeFileSync(rec+'/apply.log',log);
+ a.equal(hash(game+'/jack.qsp'),state.afterSha256);fs.copyFileSync(game+'/jack.qsp',repo+'/assets/runtime/2.4.1/jack.qsp');
+ const mp=repo+'/assets/runtime-source-2.4.1.json',m=read(mp),original=structuredClone(m);a.equal(m.sourceQspSha256,state.beforeSha256);
+ m.sourceQspSha256=state.afterSha256;m.snapshotDate='2026-11-11';const q=m.files.find(f=>f.repositoryPath==='assets/runtime/2.4.1/jack.qsp');if(q){q.sha256=state.afterSha256;q.bytes=fs.statSync(game+'/jack.qsp').size;}
+ m.latestCitySettingsBgm={date:'2026-11-11',mod:id,beforeSha256:state.beforeSha256,qspSha256:state.afterSha256,report:'records/city-settings-bgm-20261111/REPORT_KO.md',audioFilesChanged:false};
+ const comparison=structuredClone(m);comparison.sourceQspSha256=original.sourceQspSha256;comparison.snapshotDate=original.snapshotDate;delete comparison.latestCitySettingsBgm;if(q){const i=comparison.files.findIndex(f=>f.repositoryPath==='assets/runtime/2.4.1/jack.qsp');comparison.files[i]=original.files[i];}a.deepEqual(comparison,original);
+ write(mp,m);write(rec+'/installed.json',{...state,installed:true,nativeCases:120,protectedFiles:Object.keys(state.protected).length});
+ console.log(JSON.stringify({installed:true,qspSha256:state.afterSha256}));
+}else if(mode==='verify'){
+ const state=read(rec+'/installed.json'),baseline=zlib.gunzipSync(fs.readFileSync(state.backup+'/before.qsp.gz')),before=core.parse(baseline),raw=fs.readFileSync(game+'/jack.qsp'),after=core.parse(raw),mod=read(modPath);
+ a.equal(after.hash,state.afterSha256);a.equal(hash(repo+'/assets/runtime/2.4.1/jack.qsp'),state.afterSha256);a.equal(read(repo+'/assets/runtime-source-2.4.1.json').sourceQspSha256,state.afterSha256);
+ a.equal(before.lines.length,after.lines.length);const changed=[];for(let i=0;i<before.lines.length;i++)if(before.lines[i]!==after.lines[i]){const l=before.locations.find(l=>l.body===i);a(l);changed.push(l.name);}a.deepEqual(changed,['#dynamic']);
+ a.equal(body(before).replace(mod.edits[0].old,mod.edits[0].new),body(after));
+ for(const [p,h]of Object.entries(state.protected))a.equal(hash(p),h,'Protected input changed: '+p);
+ const structure=qa.inspectWorld(raw),markers=require(repo+'/tools/qa/check-qsp-marker-boundaries.cjs').inspectMarkerBoundaries(raw);a.deepEqual(markers.issues,[]);const result={...structure,markerIssues:0,beforeSha256:state.beforeSha256,afterSha256:state.afterSha256,changedLocations:changed,nativeCases:120,workAndSourceMatch:true,protectedFiles:Object.keys(state.protected).length,audioFilesChanged:false};write(rec+'/verification.json',result);console.log(JSON.stringify(result));
+}else throw Error('prepare / install / verify required');

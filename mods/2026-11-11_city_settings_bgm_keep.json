@@ -1,0 +1,17 @@
+{
+  "id": "2026-11-11_city_settings_bgm_keep",
+  "status": "APPROVED",
+  "description": "Keep the prior city BGM in settings; recover blank or retired city selection with existing noble/reputation/home rules. No audio changes.",
+  "before_sha256": "d566d3e9edcc5fcb47c02a350ea1640340ee316777fbbcd87718aa786357d161",
+  "after_sha256": "2bafb73a7af5423d01493a3e0859064b5846a0f56368c07e9d332ad431830c73",
+  "edits": [
+    {
+      "location": "#dynamic",
+      "field": "body",
+      "old": "$city_sounds = {\r\n\tif sound_on = 1:\r\n\t\tif city_form ! 1000:\r\n\t\t\tif noble_status = 1 or brand_reputation >= 5:\r\n\t\t\t\t$toplay = 'honor'\r\n\t\t\telseif $estate = 'slum_house':\r\n\t\t\t\t$toplay = 'poor'\r\n\t\t\telse\r\n\t\t\t\t$toplay = 'citizen'\r\n\t\t\tend\r\n\t\telse\r\n\t\t\t$toplay = 'city'\r\n\t\tend\r\n\tend\r\n\tdynamic $play_music\r\n}",
+      "new": "! JO9 MOD START CITY_SETTINGS_BGM_KEEP_20261111\r\n$city_sounds = {\r\n\tif sound_on = 1:\r\n\t\tif city_form ! 1000 or $toplay = '' or $toplay = 'city':\r\n\t\t\tif noble_status = 1 or brand_reputation >= 5:\r\n\t\t\t\t$toplay = 'honor'\r\n\t\t\telseif $estate = 'slum_house':\r\n\t\t\t\t$toplay = 'poor'\r\n\t\t\telse\r\n\t\t\t\t$toplay = 'citizen'\r\n\t\t\tend\r\n\t\tend\r\n\tend\r\n\tdynamic $play_music\r\n}\r\n! JO9 MOD END CITY_SETTINGS_BGM_KEEP_20261111",
+      "count": 1,
+      "patchId": "CITY_SETTINGS_BGM_KEEP_20261111"
+    }
+  ]
+}

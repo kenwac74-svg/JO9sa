@@ -8,7 +8,7 @@
  function dockHeight(value,closed,viewport){const expanded=Math.max(180,Math.min(Number.isFinite(value)?value:330,Math.max(180,viewport-100)));return {expanded,height:closed?48:expanded};}
  function rangeRoles(entryKey,context,points){
   if(!context||!points)return [];const usage=context.flow?.usage,location=usage?.location||context.location,sceneId=usage?.sceneId||context.scene?.id;
-  return ['start','end'].filter(role=>{const p=points[role],e=p?.selection;return e&&p.location===location&&String(p.sceneId)===String(sceneId)&&entryKey===e.hash+':'+e.fieldIndex+':'+e.start;});
+  const matches=p=>{const e=p?.selection;return e&&p.location===location&&String(p.sceneId)===String(sceneId)&&entryKey===e.hash+':'+e.fieldIndex+':'+e.start;};const roles=['start','end'].filter(role=>matches(points[role]));if(points.pins?.some(matches))roles.push('pin');return roles;
  }
  function create(document,events){
   const get=id=>document.getElementById(id),keys=['script','edit'];let selected='script';

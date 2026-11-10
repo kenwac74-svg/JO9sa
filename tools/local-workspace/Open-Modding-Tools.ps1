@@ -121,7 +121,7 @@ function Open-ConfiguredTools {
  $referenceSource=Join-Path (Split-Path -Parent $PSScriptRoot) 'game-reference'
  $referenceTarget=Join-Path $root 'game-reference'
  New-Item -ItemType Directory -Path $referenceTarget -Force | Out-Null
- foreach ($referenceName in @('jo9-reference.html','serve.cjs','Start-Game-Reference.ps1','README.md')) {
+ foreach ($referenceName in @('jo9-reference.html','serve.cjs','ideas-core.cjs','ideas-store.cjs','Start-Game-Reference.ps1','README.md','snapshot.json')) {
   $referenceFrom=Join-Path $referenceSource $referenceName;$referenceTo=Join-Path $referenceTarget $referenceName
   if (!(Test-Path -LiteralPath $referenceTo) -or (Get-FileHash -LiteralPath $referenceFrom).Hash -ne (Get-FileHash -LiteralPath $referenceTo).Hash) {Copy-Item -LiteralPath $referenceFrom -Destination $referenceTo -Force}
  }

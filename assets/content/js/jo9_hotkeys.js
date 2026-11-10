@@ -106,3 +106,14 @@
     }, false);
 }());
 /* JO9 MOD END KEYBOARD_HOTKEYS_20261108 */
+
+/* JO9 MOD START RESIDENCE_BGM_CLOCK_LOADER_20261111 */
+(function () {
+    if (window.JO9BgmClock) { window.JO9BgmClock.refresh(); return; }
+    if (document.jo9BgmClockLoading) { return; }
+    document.jo9BgmClockLoading = true;
+    var script = document.createElement('script');
+    script.src = 'content/js/jo9_bgm_clock.js?v=20261111';
+    (document.head || document.documentElement).appendChild(script);
+}());
+/* JO9 MOD END RESIDENCE_BGM_CLOCK_LOADER_20261111 */

@@ -1,0 +1,25 @@
+{
+  "id": "2026-11-10_duty_ledger_sfx_wav",
+  "status": "APPROVED",
+  "description": "Three local SFX to PCM WAV; timing, volume, priority and latest dialogue preserved; no audio uploads.",
+  "before_sha256": "51085e56449b7e78ba894ba1e4bf85aec11b7c644b408dcc9914024f80b3240a",
+  "after_sha256": "d566d3e9edcc5fcb47c02a350ea1640340ee316777fbbcd87718aa786357d161",
+  "edits": [
+    {
+      "location": "jo9_duty_text",
+      "field": "body",
+      "old": " if $jo9_rd_snd ! '' and sound_on = 1: play 'content/snd/'+$jo9_rd_snd+'.mp3', sound_volume",
+      "new": " ! JO9 MOD START DUTY_REPORT_SFX_WAV_20261110\r\n if $jo9_rd_snd ! '' and sound_on = 1: play 'content/snd/'+$jo9_rd_snd+'.wav', sound_volume\r\n ! JO9 MOD END DUTY_REPORT_SFX_WAV_20261110",
+      "count": 1,
+      "patchId": "DUTY_REPORT_SFX_WAV_20261110"
+    },
+    {
+      "location": "main_screen",
+      "field": "body",
+      "old": "\tif sound_on = 1: play 'content/snd/ledger.mp3', sound_volume",
+      "new": "\t! JO9 MOD START LEDGER_SFX_WAV_20261110\r\n\tif sound_on = 1: play 'content/snd/ledger.wav', sound_volume\r\n\t! JO9 MOD END LEDGER_SFX_WAV_20261110",
+      "count": 1,
+      "patchId": "LEDGER_SFX_WAV_20261110"
+    }
+  ]
+}

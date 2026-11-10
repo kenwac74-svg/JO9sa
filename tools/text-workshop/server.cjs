@@ -10,6 +10,7 @@ const dialogueImage=require('./dialogue-image.cjs'); // JO9 MOD DIALOGUE_IMAGE_B
 const scenes=require('./scenes.cjs');
 const rangeOutput=require('./range-output.cjs'); // JO9 MOD RANGE_OUTPUT_20261108
 const scriptImport=require('./script-import.cjs'); // JO9 MOD SCRIPT_IMPORT_20261108
+const scriptGameLayout=require('./script-game-layout.cjs'); // JO9 MOD SCRIPT_GAME_LAYOUT_20261110
 const catalogTabs=require('./catalog-tabs.cjs'); // JO9 MOD NATIVE_CATALOG_TABS_20261108
 const catalogModule=require('./catalog.cjs');
 const {spawn}=require('node:child_process');
@@ -190,6 +191,11 @@ const server=http.createServer(async(req,res)=>{
       const full=catalogAsset(url.searchParams.get('p')||'',url.searchParams.get('original')==='1');if(!full){json(res,404,{error:'이미지를 찾지 못했습니다.'});return;}
       const types={'.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.gif':'image/gif','.webp':'image/webp','.bmp':'image/bmp'};
       res.writeHead(200,{'Content-Type':types[path.extname(full).toLowerCase()],'Cache-Control':'no-store'});fs.createReadStream(full).pipe(res);return;
+    }
+    if(req.method==='GET'&&url.pathname==='/api/script-layout-font'){
+      if(url.searchParams.get('t')!==token){json(res,403,{error:'편집기를 다시 열어 주세요.'});return;}
+      const file=scriptGameLayout.fontFile(game,url.searchParams.get('profile'));
+      res.writeHead(200,{'Content-Type':path.extname(file)==='.otf'?'font/otf':'font/ttf','Cache-Control':'private, max-age=3600'});fs.createReadStream(file).pipe(res);return;
     }
     if(req.method==='GET' && url.pathname==='/api/pic'){
       if(url.searchParams.get('t')!==token){json(res,403,{error:'편집기를 다시 열어 주세요.'});return;}
@@ -411,7 +417,8 @@ const server=http.createServer(async(req,res)=>{
       if(input.revalidate===true)record=scriptImport.revalidateRecord(doc,record);
       const p=scriptImport.prepare(doc,record,input.text,{allowMissing:input.allowMissing===true,exclude:Array.isArray(input.exclude)?input.exclude:[]});
       preview=p.raw?{kind:'script',id:crypto.randomBytes(24).toString('hex'),raw:p.raw,before:p.before,after:p.after,edits:p.edits,count:p.chosen.length,exportId}:null;
-      json(res,200,{checks:{normalizedMarkers:scriptImport.parse(input.text).normalizedMarkers,revalidated:originalHash!==doc.hash,hash:doc.hash,structure:true,variables:true,roundTrip:true},id:preview?.id||null,exportId,count:p.chosen.length,unchanged:p.unchanged,missing:p.missing.length,changes:p.changes.map(c=>({id:c.id,location:c.location,line:c.line,oldPlain:c.oldPlain,newPlain:c.newPlain,warnings:c.warnings,excluded:c.excluded}))});return;
+      let gameLayout,layoutError;try{gameLayout=scriptGameLayout.load(game,doc,token);}catch(e){layoutError=e.message;}
+      json(res,200,{gameLayout,layoutError,checks:{normalizedMarkers:scriptImport.parse(input.text).normalizedMarkers,revalidated:originalHash!==doc.hash,hash:doc.hash,structure:true,variables:true,roundTrip:true},id:preview?.id||null,exportId,count:p.chosen.length,unchanged:p.unchanged,missing:p.missing.length,changes:p.changes.map(c=>({id:c.id,location:c.location,line:c.line,oldPlain:c.oldPlain,newPlain:c.newPlain,previewText:c.new.replace(/<<([\s\S]*?)>>/g,'〈$1〉'),warnings:c.warnings,excluded:c.excluded}))});return;
     }
     if(req.method==='POST' && url.pathname==='/api/incoming'){
       const input=await body(req);current();json(res,200,navigator.incoming(input));return;

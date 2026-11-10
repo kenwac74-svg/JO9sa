@@ -16,7 +16,7 @@ test('표식은 같은 대사라도 지정한 이벤트/판본에서만 보인�
 test('대사별 지정 버튼은 그 대사 선택이 끝난 뒤 마무리를 지정한다',async()=>{
  const vm=require('vm'),calls=[];let release;const gate=new Promise(r=>release=r);
  const node=()=>({dataset:{},children:[],append(...xs){this.children.push(...xs);}}),container=node(),entry={id:'clicked-page'};
- const doc={createElement:node,querySelectorAll:()=>[]};const scope={document:doc,key:e=>e.id,$:()=>({childElementCount:0}),say:e=>{throw Error(e);},selectEntry:async(e,s)=>{calls.push(['select',e.id,s]);await gate;calls.push(['ready',e.id]);},window:{JO9WorkshopUI:{current:()=> 'script'},JO9ScriptRange:{mark:async role=>calls.push(['mark',role])}}};vm.createContext(scope);
+ const doc={createElement:node,querySelectorAll:()=>[]};const scope={document:doc,key:e=>e.id,$:()=>({childElementCount:0,querySelector:()=>null}),say:e=>{throw Error(e);},selectEntry:async(e,s)=>{calls.push(['select',e.id,s]);await gate;calls.push(['ready',e.id]);},window:{JO9WorkshopUI:{current:()=> 'script'},JO9ScriptRange:{mark:async role=>calls.push(['mark',role])}}};vm.createContext(scope);
  const start=html.indexOf('let rangeSelecting=false;'),end=html.indexOf("window.addEventListener('jo9:range-changed'",start);a(start>=0&&end>start);vm.runInContext(html.slice(start,end),scope);
  scope.appendRangeActions(container,entry,'scene-2');const job=container.children[0].children[1].onclick();a.deepEqual(calls,[['select','clicked-page','scene-2']]);release();await job;a.deepEqual(calls,[['select','clicked-page','scene-2'],['ready','clicked-page'],['mark','end']]);
 });

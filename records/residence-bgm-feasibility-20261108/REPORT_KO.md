@@ -35,3 +35,7 @@
 빈민가·백색 도시에는 같은 형태의 독립적인 0~5 지역 명성 값이 확인되지 않았다. `faction_fame['neutral']`은 일반 지역 명성과 같은 등급표로 취급할 수 없다. 두 곳의 거주지곡 지정은 가능하지만, 명성으로 추가할 조건에는 임의로 전역 평판이나 주택 구매 허가를 끼워 넣지 않는다. 아그라바 등 확장 지역도 곡 파일 존재만으로 다른 지역 명성 값을 연결하지 않는다.
 
 현재 조사 자료: `qsp-evidence.json`, `faction-fame-index.json`, `regional-cap-evidence.json`, `user-audio-metadata.json`. 재현 스크립트는 `native-probe.cjs`, 최종 성공 로그는 `playlist-stderr.log`이다.
+
+## 2026-11-11 후속 반영
+
+사용자 승인으로 본체에 거주지·지역명성 재생목록을 연결했다. 기존 이 문서의 가능성 검증 기록은 당시 사실로 유지한다. 최신 규칙·구현·검증·복구는 [완료 기록](../residence-bgm-20261111/REPORT_KO.md)을 따른다.

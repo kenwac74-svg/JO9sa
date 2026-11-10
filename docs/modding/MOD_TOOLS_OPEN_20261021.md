@@ -44,3 +44,8 @@ SOUND_AUDITION_20261108. 사용자 지시로 모드툴에 사운드 청취 목�
 ## 2026-11-08 — 현재 WORK 특성·아이템 열람표
 
 GAME_REFERENCE_TOOL_20261108. 모드툴 열기에는 특성128개·아이템271개 열람표를 포함한다. Open-Modding-Tools.ps1은 WORK/modtools/game-reference의 읽기 전용 서버를 시작·재사용하고 GameReference URL을 출력하며 일반 실행에서는 탭을 함께 연다. HTML 단독 열람도 가능하다. 데이터와 출처는 tools/game-reference/snapshot.json, 갱신·다운로드 기록은 records/game-reference-refresh-20261108/REPORT_KO.md. 사운드 정리는 사용자 지시로 취소했으며 파일 이동은 하지 않았다.
+
+
+## 2026-11-11 — 마법과 개인 아이디어 기록
+
+GAME_REFERENCE_IDEAS_20261111. 기존 DB에 마법11종과 내 아이디어 탭을 추가했다. 새 아이디어→종류/이름/내용/효과/조건/비용/메모→아이디어 저장으로 보관한다. 편집·삭제·검색·JSON 백업/새 ID 가져오기를 지원한다. 개인 파일은 WORK/game/modtools/game-reference/runtime/ideas.json이며 실행기/DB 재생성에서 복사·초기화하지 않는다. 단독 HTML에서는 브라우저 저장을 사용한다. 통합 실행기는 저장 모듈2개와 snapshot을 포함한7개 실행 파일만 맞추고 API/빌드가 오래된 자기 서버를 갱신한다. [검증과 한계](../../records/game-reference-ideas-20261111/REPORT_KO.md).

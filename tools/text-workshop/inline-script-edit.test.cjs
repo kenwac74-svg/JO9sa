@@ -28,11 +28,28 @@ test('오른쪽 카드 입력은 다른 카드를 지우지 않고 전체각본�
  editors[1].value='나: 두 번째 직접 수정';editors[1].oninput();a($('scriptAdapted').value.includes('나: 두 번째 직접 수정'));await $('scriptApply').onclick();a.equal(calls.length,1);await $('scriptPreview').onclick();a(calls.at(-1).data.text.includes('가: 직접 수정'));a(calls.at(-1).data.text.includes('나: 두 번째 직접 수정'));
 });
 test('카드에서 잘못된 구분선을 입력하면 재검토와 반영을 막고 수정하면 다시 허용한다',async()=>{
- const {$}=setup();await $('scriptPreview').onclick();const editor=$('scriptChanges').querySelectorAll('textarea')[0];a(editor);editor.value='---- [S9-P9] ----';editor.oninput();a.equal($('scriptPreview').disabled,true);a.equal($('scriptApply').disabled,true);editor.value='가: 바로잡음';editor.oninput();a.equal($('scriptPreview').disabled,false);a($('scriptAdapted').value.includes('가: 바로잡음'));
+ const {$}=setup();await $('scriptPreview').onclick();const editor=$('scriptChanges').querySelectorAll('textarea')[0];a(editor);editor.value='---- [S9-P9] ----';editor.oninput();a.equal($('scriptPreview').disabled,true);a.equal($('scriptRecheck').disabled,true);a.equal($('scriptApply').disabled,true);editor.value='가: 바로잡음';editor.oninput();a.equal($('scriptPreview').disabled,false);a.equal($('scriptRecheck').disabled,false);a($('scriptAdapted').value.includes('가: 바로잡음'));
 });
 test('잘못된 카드 입력을 전체 각본에서 고쳐도 검토 버튼을 다시 쓸 수 있다',async()=>{
  const {$}=setup();await $('scriptPreview').onclick();const editor=$('scriptChanges').querySelectorAll('textarea')[0];a(editor);editor.value='---- [S9-P9] ----';editor.oninput();a.equal($('scriptPreview').disabled,true);$('scriptAdapted').listeners.input();a.equal($('scriptPreview').disabled,false);
 });
 test('직접 편집 뒤 다시 검토해도 사용자가 제외한 페이지 선택은 유지한다',async()=>{
  const {$,calls}=setup();await $('scriptPreview').onclick();const check=$('scriptChanges').querySelectorAll('input')[0];check.checked=false;await check.onchange();const editor=$('scriptChanges').querySelectorAll('textarea')[1];a(editor);editor.value='나: 계속 편집';editor.oninput();await $('scriptPreview').onclick();a(calls.at(-1).data.exclude.includes('S1-P1'));
+});
+test('직접 수정 뒤 반영 옆 재검토 버튼이 다음 동작을 안내하고 새 검토만 승인할 수 있다',async()=>{
+ const {$,calls}=setup();a.equal($('scriptRecheck').hidden,false);await $('scriptPreview').onclick();
+ const editor=$('scriptChanges').querySelectorAll('textarea')[0];
+ editor.value='가: 직접 고친 최종 문장';editor.oninput();
+ a.equal($('scriptApproved').disabled,true);a.equal($('scriptApply').disabled,true);
+ a.equal($('scriptRecheck').hidden,false);a.equal($('scriptRecheck').disabled,false);
+ a.match($('scriptApprovalHint').textContent,/재검토/);
+ await $('scriptRecheck').onclick();
+ a.equal(calls.length,2);a(calls[1].data.text.includes('직접 고친 최종 문장'));
+ a.equal($('scriptApproved').disabled,false);a.equal($('scriptApproved').checked,false);a.equal($('scriptApply').disabled,true);
+ $('scriptApproved').checked=true;$('scriptApproved').onchange();a.equal($('scriptApply').disabled,false);
+ editor.value='가: 승인 이후 다시 바꿈';editor.oninput();a.equal($('scriptApproved').checked,false);a.equal($('scriptApply').disabled,true);
+});
+test('게임 UI와 사용자 크기 전환은 원고와 제외한 페이지를 보존한다',async()=>{
+ const {$,calls}=setup();await $('scriptPreview').onclick();const draft=$('scriptAdapted').value,check=$('scriptChanges').querySelectorAll('input')[0];check.checked=false;await check.onchange();
+ $('scriptLayoutMode').value='custom';$('scriptLayoutMode').listeners.input();a.equal($('scriptCustomLayout').hidden,false);a.equal($('scriptAdapted').value,draft);await $('scriptPreview').onclick();a(calls.at(-1).data.exclude.includes('S1-P1'));
 });

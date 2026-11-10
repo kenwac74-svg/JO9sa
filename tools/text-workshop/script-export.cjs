@@ -87,6 +87,20 @@ function build(doc, allEntries, h) {
   function collect(d, scene) {
     const body = d.analysis.body, safe = d.analysis.safe, items = [], copied = new Set();
     const slice = (scene.id === 'root') ? [0, body.length] : [scene.start, scene.end];
+    // Stop at '=' in the masked source: consuming RHS whitespace there also consumes
+    // quoted literals and can cross into the next statement. A purely quoted RHS
+    // has no remaining executable text in safe and is already handled as a page.
+    const dynamicBounds = [], assignments = /\$text\[[^\]\r\n]*\][ \t]*=/gi;
+    assignments.lastIndex = slice[0]; let assignment;
+    while ((assignment = assignments.exec(safe)) && assignment.index < slice[1]) {
+      const rhs = assignment.index + assignment[0].length;
+      const newline = body.indexOf('\n', rhs), amp = safe.indexOf('&', rhs);
+      const end = Math.min(slice[1], newline < 0 ? body.length : newline, amp < 0 ? body.length : amp);
+      if (!body.slice(rhs, end).trim() || !safe.slice(rhs, end).trim()) continue;
+      dynamicBounds.push({ start: assignment.index, end });
+      if (/^\s*\$replace\(\s*\$text/i.test(body.slice(rhs, end))) continue;
+      items.push({ kind: 'dynamic', offset: assignment.index, note: '실행 중 조립되는 페이지입니다. 실제 표시 문구는 게임 상태에 따라 달라집니다.', conditions: localConditions(d.analysis, scene, assignment.index) });
+    }
     // copyarr '$text', '$배열'
     const re = /\bcopyarr\s+/gi; re.lastIndex = slice[0]; let m;
     while ((m = re.exec(safe)) && m.index < slice[1]) {
@@ -94,7 +108,7 @@ function build(doc, allEntries, h) {
       const args = core.literals(tail);
       if ((args[0]?.text || '').toLowerCase() !== '$text' || !args[1]) continue;
       const array = args[1].text.toLowerCase();
-      if (!/^\$[\w]+$/.test(array)) { items.push({ kind: 'dynamic', offset: m.index, note: 'copyarr 대상이 실행 중 결정됩니다: ' + args[1].text, conditions: localConditions(d.analysis, scene, m.index) }); continue; }
+      if (!/^\$[\w]+$/.test(array)) { items.push({ kind: 'dynamic', offset: m.index, note: '실행 중 결정되는 대사 묶음입니다. 실제 표시 문구는 게임 상태에 따라 달라집니다.', conditions: localConditions(d.analysis, scene, m.index) }); continue; }
       copied.add(array);
       items.push({ kind: 'array', offset: m.index, array, conditions: localConditions(d.analysis, scene, m.index) });
     }
@@ -102,18 +116,14 @@ function build(doc, allEntries, h) {
     const direct = [];
     for (const e of d.entries) {
       if (e.field !== 'body' || !h.visible(e) || e.start < slice[0] || e.start >= slice[1]) continue;
+      // Function arguments / concatenation fragments are not standalone dialogue.
+      if (dynamicBounds.some(span => e.start >= span.start && e.start < span.end)) continue;
       const b = flowModule.binding(body, e);
       if (b && b.array === '$text') { direct.push({ entry: e, stage: b.stage, location: d.loc.name, conditions: localConditions(d.analysis, scene, e.start), offset: e.start }); continue; }
       if (b && copied.has(b.array)) continue;
       items.push({ kind: 'line', offset: e.start, entry: e, conditions: localConditions(d.analysis, scene, e.start) });
     }
     if (direct.length) items.push({ kind: 'direct', offset: direct[0].offset, rows: direct });
-    // 실행 중 조립되는 페이지
-    const dyn = /\$text\[\s*[^\]]*\]\s*=\s*(?!['"])\S/g; dyn.lastIndex = slice[0];
-    while ((m = dyn.exec(safe)) && m.index < slice[1]) {
-      if (/\$text\[\s*[^\]]*\]\s*=\s*\$replace\(\s*\$text/i.test(body.slice(m.index, m.index + 80))) continue;
-      items.push({ kind: 'dynamic', offset: m.index, note: '실행 중 조립되는 페이지: ' + body.slice(m.index, body.indexOf('\n', m.index) < 0 ? body.length : body.indexOf('\n', m.index)).trim().slice(0, 140), conditions: localConditions(d.analysis, scene, m.index) });
-    }
     items.sort((a, b) => a.offset - b.offset);
     // 페이지를 다 넘긴 뒤 돌아갈 곳
     const returns = [];

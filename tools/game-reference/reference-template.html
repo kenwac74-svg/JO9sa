@@ -2,7 +2,7 @@
 <html lang="ko">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>JO9 2.4.1 · 특성·아이템 열람표</title>
+<title>JO9 · 특성·아이템·마법 DB와 내 아이디어</title>
 <style>
   :root { color-scheme: dark; --page:#151519; --panel:#201f24; --border:#39343b; --text:#f1e9dc; --muted:#c0b6ab; --gold:#efc485; }
   * { box-sizing:border-box; }
@@ -12,15 +12,34 @@
   .eyebrow { color:var(--gold); font-size:.78rem; letter-spacing:.11em; font-weight:700; }
   h1 { font-size:clamp(24px, 4vw, 38px); line-height:1.22; margin:.3rem 0 0; }
   h2 { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); }
-  button, input, select { font:inherit; }
-  [role=tablist] { display:flex; gap:6px; border-bottom:1px solid var(--border); }
+  button, input, select, textarea { font:inherit; }
+  [role=tablist] { display:flex; gap:6px; border-bottom:1px solid var(--border); overflow-x:auto; }
   [role=tab] { border:1px solid transparent; border-radius:7px 7px 0 0; padding:.6rem .75rem; color:var(--muted); background:none; cursor:pointer; white-space:nowrap; }
   [role=tab][aria-selected=true] { color:var(--gold); border-color:var(--border); border-bottom-color:var(--panel); background:var(--panel); font-weight:700; }
   [role=tab] span { font-size:.78rem; padding-left:.35em; }
   [role=tabpanel] { background:var(--panel); border:1px solid var(--border); border-top:0; padding:clamp(9px, 2.4vw, 19px); border-radius:0 0 8px 8px; }
   .controls { display:grid; grid-template-columns:minmax(0, 2fr) minmax(9ch, 1fr); gap:8px; }
   label { color:var(--muted); font-size:.84rem; min-width:0; }
-  input, select { display:block; width:100%; padding:.53rem .5rem; margin-top:.25rem; min-width:0; color:var(--text); background:var(--page); border:1px solid #59505a; border-radius:5px; }
+  input:not([hidden]), select, textarea { display:block; width:100%; padding:.53rem .5rem; margin-top:.25rem; min-width:0; color:var(--text); background:var(--page); border:1px solid #59505a; border-radius:5px; }
+  textarea { resize:vertical; }
+  .idea-toolbar { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
+  .action { padding:.5rem .7rem; color:var(--text); background:#35303a; border:1px solid #75624c; border-radius:5px; cursor:pointer; }
+  .action.primary { background:#735635; border-color:var(--gold); }
+  button:disabled { opacity:.55; cursor:default; }
+  .ideas-grid { display:grid; grid-template-columns:minmax(190px,1fr) minmax(0,2fr); gap:18px; align-items:start; }
+  .idea-fields { border:1px solid var(--border); border-radius:7px; padding:14px; margin:0; display:grid; gap:10px; min-width:0; }
+  .idea-fields legend { color:var(--gold); padding:0 6px; }
+  .idea-entry { width:100%; display:block; text-align:left; padding:10px; margin:7px 0; color:var(--text); background:var(--page); border:1px solid var(--border); border-radius:5px; cursor:pointer; overflow-wrap:anywhere; }
+  .idea-entry[aria-current=true] { border-color:var(--gold); }
+  .idea-entry strong, .idea-entry span { display:block; }
+  .idea-entry span { color:var(--muted); font-size:.8rem; }
+  .idea-actions { display:flex; flex-wrap:wrap; gap:8px; }
+  .message { white-space:pre-wrap; overflow-wrap:anywhere; color:var(--gold); }
+  .message.error { color:#ffb4a8; }
+  details { margin-top:8px; }
+  summary { color:var(--gold); cursor:pointer; }
+  pre { white-space:pre-wrap; overflow-wrap:anywhere; max-height:22rem; overflow:auto; font:12px/1.5 Consolas,monospace; }
+  @media (max-width:760px) { .ideas-grid { grid-template-columns:1fr; } }
   :focus-visible { outline:2px solid var(--gold); outline-offset:2px; }
   .count { color:var(--gold); font-size:.86rem; margin:.65rem 0 .4rem; }
   .coverage, footer, .ref { color:var(--muted); font-size:.78rem; }
@@ -48,13 +67,53 @@
   @media print { :root { color-scheme:light; --page:#fff; --panel:#fff; --border:#ccc; --text:#222; --muted:#444; --gold:#57380f; } .controls { display:none; } th, tbody tr:nth-child(even) { background:#f3f3f3; } tr { break-inside:avoid; } }
 </style>
 <main>
-  <header><div class="eyebrow">JACK O NINE TAILS · 2.4.1 KOR</div><h1>특성·아이템 열람표</h1></header>
+  <header><div class="eyebrow">JACK O NINE TAILS · WORK</div><h1>특성·아이템·마법 DB</h1></header>
   <div role="tablist" aria-label="열람표 종류">
     <button type="button" id="traits-tab" role="tab" aria-selected="true" aria-controls="traits-panel">전체 특성 <span></span></button>
     <button type="button" id="items-tab" role="tab" aria-selected="false" aria-controls="items-panel" tabindex="-1">전체 아이템 <span></span></button>
+    <button type="button" id="spells-tab" role="tab" aria-selected="false" aria-controls="spells-panel" tabindex="-1">마법 <span></span></button>
+    <button type="button" id="ideas-tab" role="tab" aria-selected="false" aria-controls="ideas-panel" tabindex="-1">내 아이디어 <span>…</span></button>
   </div>
   <section id="traits-panel" role="tabpanel" aria-labelledby="traits-tab"><h2>전체 특성</h2></section>
   <section id="items-panel" role="tabpanel" aria-labelledby="items-tab" hidden><h2>전체 아이템</h2></section>
+  <section id="spells-panel" role="tabpanel" aria-labelledby="spells-tab" hidden><h2>마법</h2></section>
+  <section id="ideas-panel" role="tabpanel" aria-labelledby="ideas-tab" hidden>
+    <h2>내 아이디어</h2>
+    <div class="idea-toolbar">
+      <button class="action primary" id="idea-new" type="button">새 아이디어</button>
+      <button class="action" id="idea-export" type="button">JSON 백업</button>
+      <button class="action" id="idea-import" type="button">JSON 가져오기·추가</button>
+      <button class="action" id="idea-reload" type="button">목록 다시 불러오기</button>
+      <input id="idea-file" type="file" accept=".json,application/json" hidden>
+    </div>
+    <p class="coverage" id="idea-storage">개인 기록 저장 위치를 확인하는 중입니다.</p>
+    <p class="message" id="idea-message" role="status" aria-live="polite"></p>
+    <div class="ideas-grid">
+      <div>
+        <label>아이디어 검색<input id="idea-search" type="search" placeholder="이름·내용·메모" autocomplete="off"></label>
+        <label>아이디어 종류<select id="idea-filter"><option value="">전체</option><option value="traits">특성</option><option value="items">아이템</option><option value="spells">마법</option></select></label>
+        <p class="count" id="idea-count"></p>
+        <div id="idea-list"></div>
+      </div>
+      <form id="idea-form">
+        <fieldset class="idea-fields" id="idea-fields">
+          <legend id="idea-editor-title">새 아이디어</legend>
+          <label>종류<select id="idea-kind"><option value="traits">특성</option><option value="items">아이템</option><option value="spells">마법</option></select></label>
+          <label>이름<input id="idea-title" required autocomplete="off"></label>
+          <label>아이디어 내용<textarea id="idea-description" rows="5"></textarea></label>
+          <label>원하는 효과<textarea id="idea-effect" rows="3"></textarea></label>
+          <label>획득·사용 조건<textarea id="idea-condition" rows="3"></textarea></label>
+          <label>가격·소모량 구상<input id="idea-cost" autocomplete="off"></label>
+          <label>추가 메모<textarea id="idea-notes" rows="3"></textarea></label>
+          <div class="idea-actions">
+            <button class="action primary" id="idea-save" type="submit">아이디어 저장</button>
+            <button class="action" id="idea-cancel" type="button">수정 취소</button>
+            <button class="action" id="idea-delete" type="button" disabled>삭제</button>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+  </section>
   <footer id="snapshot"></footer>
   <noscript>검색과 탭 전환을 사용하려면 자바스크립트를 켜 주세요.</noscript>
 </main>
@@ -68,10 +127,12 @@
   <table><colgroup><col class="name"><col class="category"><col class="price"><col class="acquisition"><col></colgroup><thead><tr><th scope="col">이름 · ID</th><th scope="col">분류</th><th scope="col">가격</th><th scope="col" class="acquisition-heading">획득처</th><th scope="col">설명</th></tr></thead><tbody></tbody></table>
 </template>
 <script id="reference-data" type="application/json">__JO9_REFERENCE_DATA__</script>
+<script>__JO9_IDEAS_MODEL__</script>
+<script>__JO9_IDEAS_CLIENT__</script>
 <script>
   'use strict';
   const data = JSON.parse(document.getElementById('reference-data').textContent);
-  const kinds = ['traits', 'items'];
+  const kinds = ['traits', 'items', 'spells', 'ideas'];
   const tabs = kinds.map(kind => document.getElementById(kind + '-tab'));
   const panels = kinds.map(kind => document.getElementById(kind + '-panel'));
   const template = document.getElementById('reference-panel');
@@ -94,23 +155,25 @@
     return Number(left === unknownSource) - Number(right === unknownSource) || order.compare(left, right);
   }
 
-  function setup(panel, tab, set, isTrait) {
+  function setup(panel, tab, set, kind) {
+    const isTrait = kind === 'traits', isSpell = kind === 'spells';
     panel.append(template.content.cloneNode(true));
     const input = panel.querySelector('input');
     const select = panel.querySelector('select');
     const body = panel.querySelector('tbody');
     const count = panel.querySelector('.count');
     const indexed = set.rows.map(row => {
-      const groups = isTrait ? [row.category] : itemGroups(row);
-      const terms = normalize([row.name, row.category, row.id, row.description, row.source, row.policy, row.price, row.acquisition, ...groups, ...(row.aliases || [])].join(' '));
+      const groups = isTrait || isSpell ? [row.category] : itemGroups(row);
+      const terms = normalize([row.name, row.category, row.id, row.description, row.source, row.policy, row.price, row.acquisition, row.requirements, row.usage, ...groups, ...(row.aliases || [])].join(' '));
       return { row, groups, terms };
     }).sort((a, b) => compareGroups(a.groups[0], b.groups[0]) || order.compare(a.row.name, b.row.name) || order.compare(a.row.id, b.row.id));
     tab.querySelector('span').textContent = indexed.length.toLocaleString('ko');
     panel.querySelector('.coverage').textContent = set.coverage || '';
-    const acquisitionLabel = isTrait ? '발현·획득 조건' : '획득처';
+    const acquisitionLabel = isTrait ? '발현·획득 조건' : isSpell ? '직접 메뉴 조건' : '획득처';
     panel.querySelector('.acquisition-heading').textContent = acquisitionLabel;
-    panel.querySelector('.group-label').textContent = isTrait ? '분류' : '획득처';
-    select.add(new Option(isTrait ? '모든 분류' : '모든 획득처', ''));
+    if (isSpell) panel.querySelector('thead th:nth-child(3)').textContent = '소모';
+    panel.querySelector('.group-label').textContent = isTrait || isSpell ? '분류' : '획득처';
+    select.add(new Option(isTrait || isSpell ? '모든 분류' : '모든 획득처', ''));
     const totals = new Map();
     for (const { groups } of indexed) {
       for (const group of groups) totals.set(group, (totals.get(group) || 0) + 1);
@@ -134,7 +197,7 @@
         }
         tr.insertCell().textContent = row.category;
         const price = tr.insertCell();
-        price.dataset.label = '가격';
+        price.dataset.label = isSpell ? '소모' : '가격';
         price.textContent = typeof row.price === 'number' ? `기본가 ${row.price.toLocaleString('ko')}스파크` : row.price || (isTrait ? '—' : '가격 미확인');
         const acquisition = tr.insertCell();
         acquisition.dataset.label = acquisitionLabel;
@@ -147,6 +210,14 @@
           const policy = description.appendChild(document.createElement('span'));
           policy.className = 'ref';
           policy.textContent = '카오틱 에센스 · ' + row.policy;
+        }
+        if (isSpell) {
+          const ref = description.appendChild(document.createElement('span'));
+          ref.className = 'ref';
+          ref.textContent = (row.linked ? '직접 메뉴 연결 확인' : '호출 미확인') + ' · ' + row.usage + ' · ' + row.source;
+          const details = description.appendChild(document.createElement('details'));
+          details.appendChild(document.createElement('summary')).textContent = '조건·효과 코드 보기';
+          details.appendChild(document.createElement('pre')).textContent = row.code || '';
         }
       }
       if (!selected.length) {
@@ -172,7 +243,7 @@
   }
 
   tabs.forEach((tab, i) => {
-    setup(panels[i], tab, data[kinds[i]], kinds[i] === 'traits');
+    if (kinds[i] !== 'ideas') setup(panels[i], tab, data[kinds[i]], kinds[i]);
     tab.addEventListener('click', () => selectTab(i));
     tab.addEventListener('keydown', event => {
       if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
@@ -185,4 +256,5 @@
   const build = data.traits.hash.slice(0, 12);
   document.getElementById('snapshot').textContent = `현재 WORK 데이터 · jack.qsp ${build}`;
 </script>
+<script>__JO9_IDEAS_UI__</script>
 </html>

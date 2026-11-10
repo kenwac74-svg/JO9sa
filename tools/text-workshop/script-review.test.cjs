@@ -35,3 +35,9 @@ test('기존 반영 UI는 각본 패널에 한 번만 있으며 원본/수정TXT
 test('검토 중 입력 변경은 늦은 응답을 무효화한다',()=>{
  const gate=require(root+'/script-review.js').createGate();const request=gate.begin();a(gate.current(request));gate.invalidate();a.equal(gate.current(request),false);a(gate.current(gate.begin()));
 });
+test('실제 UI 넘침은 게임 대사 폭과 캔버스 안에 보이는 높이로 판단한다',()=>{
+ const ui=require(root+'/script-review.js'),p={rect:{width:740,height:185},visibleHeight:179};
+ a.deepEqual(ui.gameOverflow(p,{scrollWidth:740,scrollHeight:178}),{horizontal:false,vertical:false});
+ a.deepEqual(ui.gameOverflow(p,{scrollWidth:740,scrollHeight:180}),{horizontal:false,vertical:true});
+ a.equal(ui.gameOverflow(p,{scrollWidth:742,scrollHeight:20}).horizontal,true);
+});

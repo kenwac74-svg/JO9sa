@@ -1,0 +1,17 @@
+{
+  "id": "2026-11-10_stability_01_duty_sound",
+  "status": "APPROVED",
+  "description": "개인실 업무 결과음 경로를 지역 문자열 변수로 통일한다. 기존 결과별 음원 경로·음소거 조건·재생 호출은 유지한다.",
+  "before_sha256": "8332e1857fa594283eddda448177e3e63dbf554a2f3b241350aa7a9c3291c94f",
+  "after_sha256": "b52c0194e83949d56849ac77f709eb141398734cf3883602dc7e61b4d832a524",
+  "edits": [
+    {
+      "location": "jo9_duty_text",
+      "field": "body",
+      "old": " jo9_rd_snd=''\r\n if jo9_rd_rep=8 and (jo9_rd_kind=2 or jo9_rd_wd>0): jo9_rd_snd='bad_secen'\r\n if jo9_rd_rep=6 and jo9_rd_tier=0: jo9_rd_snd='bad_secen'\r\n if jo9_rd_rep=4 and jo9_rd_tier=0: jo9_rd_snd='bad_secen'\r\n if jo9_rd_snd='' and (jo9_rd_rep=4 or jo9_rd_rep=6 or jo9_rd_rep=8) and jo9_rd_tier=4: jo9_rd_snd='great-success'\r\n if jo9_rd_snd ! '' and sound_on = 1: play 'content/snd/'+$jo9_rd_snd+'.mp3', sound_volume",
+      "new": " ! JO9 MOD START STABILITY_DUTY_SOUND_20261110\r\n local $jo9_rd_snd=''\r\n if jo9_rd_rep=8 and (jo9_rd_kind=2 or jo9_rd_wd>0): $jo9_rd_snd='bad_secen'\r\n if jo9_rd_rep=6 and jo9_rd_tier=0: $jo9_rd_snd='bad_secen'\r\n if jo9_rd_rep=4 and jo9_rd_tier=0: $jo9_rd_snd='bad_secen'\r\n if $jo9_rd_snd='' and (jo9_rd_rep=4 or jo9_rd_rep=6 or jo9_rd_rep=8) and jo9_rd_tier=4: $jo9_rd_snd='great-success'\r\n if $jo9_rd_snd ! '' and sound_on = 1: play 'content/snd/'+$jo9_rd_snd+'.mp3', sound_volume\r\n ! JO9 MOD END STABILITY_DUTY_SOUND_20261110",
+      "count": 1,
+      "patchId": "STABILITY_DUTY_SOUND_20261110"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "id": "2026-11-10_stability_02_external_duty_chores",
+  "status": "APPROVED",
+  "description": "외근 2~4 지정 시 기존 요리·청소 지시와 집안일 소유 플래그를 해제한다. 구 저장의 외근 메이드는 요리·청소 담당자 선택에서 제외한다. 내근과 기존 다른 업무 우선순위는 유지한다.",
+  "before_sha256": "b52c0194e83949d56849ac77f709eb141398734cf3883602dc7e61b4d832a524",
+  "after_sha256": "65eb451b4d31f8e9b82990826e0d8294d30a3d22968e09e22e173e2243a81f45",
+  "edits": [
+    {
+      "location": "jo9_room_duty",
+      "field": "body",
+      "old": " jo9_rd_v=dyneval('result=room'+str(jo9_rd_n)+'[\"duty\"]')\r\n if jo9_rd_v=jo9_rd_d: exit",
+      "new": " jo9_rd_v=dyneval('result=room'+str(jo9_rd_n)+'[\"duty\"]')\r\n ! JO9 MOD START STABILITY_EXTERNAL_CHORES_SET_20261110\r\n if jo9_rd_d>=2 and jo9_rd_d<=4:\r\n  dynamic \"room<<jo9_rd_n>>['cooks_rule']=0\"\r\n  dynamic \"room<<jo9_rd_n>>['cleans_rule']=0\"\r\n  dynamic \"room<<jo9_rd_n>>['duty_rules']=0\"\r\n end\r\n ! JO9 MOD END STABILITY_EXTERNAL_CHORES_SET_20261110\r\n if jo9_rd_v=jo9_rd_d: exit",
+      "count": 1,
+      "patchId": "STABILITY_EXTERNAL_CHORES_SET_20261110"
+    },
+    {
+      "location": "jo9_household_worker",
+      "field": "body",
+      "old": " jo9_eligible=iif(jo9_state=CONST_INT['slave_exist'] and jo9_enabled=1 and $jo9_role!$args[1],1,0)",
+      "new": " jo9_eligible=iif(jo9_state=CONST_INT['slave_exist'] and jo9_enabled=1 and $jo9_role!$args[1],1,0)\r\n ! JO9 MOD START STABILITY_EXTERNAL_CHORES_SELECT_20261110\r\n if jo9_i>=2 and ($args[0]='cook' or $args[0]='clean') and dyneval('result='+$jo9_role+'[\"duty\"]')>=2 and dyneval('result='+$jo9_role+'[\"duty\"]')<=4: jo9_eligible=0\r\n ! JO9 MOD END STABILITY_EXTERNAL_CHORES_SELECT_20261110",
+      "count": 1,
+      "patchId": "STABILITY_EXTERNAL_CHORES_SELECT_20261110"
+    }
+  ]
+}

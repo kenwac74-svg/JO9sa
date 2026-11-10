@@ -13,19 +13,19 @@ function setup(responder,saved){
  const els=new Map(),listeners={};const node=()=>({textContent:'',value:'',disabled:false,hidden:false,open:false,children:[],append(...xs){this.children.push(...xs);},replaceChildren(...xs){this.children=xs;},add(x){this.children.push(x);},scrollIntoView(){}});
  const $=id=>{if(!els.has(id))els.set(id,node());return els.get(id);};
  const point={selection:{hash:'h',text:'안녕하세요',line:1},location:'city',sceneId:'scene'};let data=saved||JSON.stringify({start:point,end:point});
- const scope={document:{getElementById:$,createElement:node},window:{addEventListener:(n,fn)=>listeners[n]=fn,dispatchEvent(){}},sessionStorage:{getItem:()=>data,setItem:(k,v)=>data=v},api:responder,Event:class{},Option:class{},context:undefined,console,Blob,URL,setTimeout};
- vm.runInNewContext(fs.readFileSync(root+'/script-range.js','utf8'),scope);return {$,listeners,scope,stored:()=>JSON.parse(data)};
+ const scope={document:{getElementById:$,createElement:node},window:{addEventListener:(n,fn)=>listeners[n]=fn,dispatchEvent(){}},sessionStorage:{getItem:()=>data,setItem:(k,v)=>data=v},api:async(u,p)=>u==='/api/script/boundary'?{selected:p.point,proposed:p.point,needsConfirmation:false}:responder(u,p),Event:class{},Option:class{},context:{hash:'h',selection:point.selection,location:'city',scene:{id:'scene'},texts:[point.selection]},console,Blob,URL,setTimeout};
+ vm.runInNewContext(fs.readFileSync(root+'/script-range.js','utf8'),scope);return {$,listeners,scope,stored:()=>JSON.parse(data),ready:async()=>{for(let i=0;i<100&&scope.window.JO9ScriptRange.state().busy;i++)await Promise.resolve();a.equal(scope.window.JO9ScriptRange.state().busy,false);}};
 }
 const ready={status:'ready',text:'# 각본\n안녕하세요',hash:'h',stats:{scenes:1,pages:1,choices:0},savedPath:'G:/game/modtools/text-workshop/runtime/script-exports/123.txt'};
 test('미리보기만 요청하면 다운로드나 저장 없이 본문을 열고 표시한다',async()=>{
- let request;const h=setup(async(u,p)=>{request={u,p};return {...ready,savedPath:undefined};});a.equal(typeof h.$('rangePreview').onclick,'function');await h.$('rangePreview').onclick();a.equal(request.p.save,false);a.equal(h.$('rangeText').value,ready.text);a.equal(h.$('rangePreviewBox').open,true);a.match(h.$('rangeStatus').textContent,/미리보기/);
+ let request;const h=setup(async(u,p)=>{request={u,p};return {...ready,savedPath:undefined};});a.equal(typeof h.$('rangePreview').onclick,'function');await h.ready();await h.$('rangePreview').onclick();a.equal(request.p.save,false);a.equal(h.$('rangeText').value,ready.text);a.equal(h.$('rangePreviewBox').open,true);a.match(h.$('rangeStatus').textContent,/미리보기/);
 });
 test('저장은 경로와 같은 본문을 보여주고 재접속에도 미리보기를 복원한다',async()=>{
- let request;const h=setup(async(u,p)=>{request=p;return ready;});await h.$('rangeSave').onclick();a.equal(request.save,true);a.equal(h.$('rangeText').value,ready.text);a.match(h.$('rangeSavedPath').textContent,/123.txt/);a.equal(h.$('rangePreviewBox').open,true);const again=setup(async()=>ready,JSON.stringify(h.stored()));a.equal(again.$('rangeText').value,ready.text);a.match(again.$('rangeSavedPath').textContent,/123.txt/);a.match(again.$('rangeStatus').textContent,/저장한 각본/);
+ let request;const h=setup(async(u,p)=>{request=p;return ready;});await h.ready();await h.$('rangeSave').onclick();a.equal(request.save,true);a.equal(h.$('rangeText').value,ready.text);a.match(h.$('rangeSavedPath').textContent,/123.txt/);a.equal(h.$('rangePreviewBox').open,true);const again=setup(async()=>ready,JSON.stringify(h.stored()));a.equal(again.$('rangeText').value,ready.text);a.match(again.$('rangeSavedPath').textContent,/123.txt/);a.match(again.$('rangeStatus').textContent,/저장한 각본/);
 });
-test('QSP 변경 오류는 저장 성공으로 표시하지 않고 재지정을 안내한다',async()=>{
- const h=setup(async()=>{throw Error('QSP가 바뀌었습니다. 시작과 마무리를 다시 선택하세요.');});await h.$('rangeSave').onclick();a.match(h.$('rangeStatus').textContent,/다시/);a.equal(h.$('rangeSave').disabled,true);a.equal(h.$('rangeText').value,'');
+test('QSP 변경 오류는 저장 성공으로 표시하지 않고 기존 고정을 보존한 채 출력을 잠근다',async()=>{
+ const h=setup(async()=>{throw Error('QSP가 바뀌었습니다. 시작과 마무리를 다시 선택하세요.');});await h.ready();await h.$('rangeSave').onclick();a.match(h.$('rangeStatus').textContent,/고정.*보존/);a.equal(h.$('rangeSave').disabled,true);a(h.scope.window.JO9ScriptRange.state().start);a.equal(h.scope.window.JO9ScriptRange.state().stale,true);a.equal(h.$('rangeText').value,'');
 });
 test('분기 선택 뒤에도 미리보기 작업이 저장으로 바뀌지 않는다',async()=>{
- let count=0,requests=[];const h=setup(async(u,p)=>{requests.push(p);return count++?ready:{status:'choice',choice:{id:'route',title:'경로 선택',options:[{id:'a',label:'안내'}]}};});a.equal(typeof h.$('rangePreview').onclick,'function');await h.$('rangePreview').onclick();await h.$('rangePrompt').children[1].onclick();a.deepEqual(requests.map(p=>p.save),[false,false]);a.equal(h.$('rangeText').value,ready.text);
+ let count=0,requests=[];const h=setup(async(u,p)=>{requests.push(p);return count++?ready:{status:'choice',choice:{id:'route',title:'경로 선택',options:[{id:'a',label:'안내'}]}};});a.equal(typeof h.$('rangePreview').onclick,'function');await h.ready();await h.$('rangePreview').onclick();await h.$('rangePrompt').children[1].onclick();a.deepEqual(requests.map(p=>p.save),[false,false]);a.equal(h.$('rangeText').value,ready.text);
 });
