@@ -14,7 +14,9 @@ const avg=(a)=>a.length?(a.reduce((x,y)=>x+y,0)/a.length):0;
 export async function createSimView(api){
  const load=async f=>{const r=await fetch('./data/'+f);if(!r.ok)throw new Error(f+'를 읽지 못했습니다.');return r.json();};
  const [sample,formula,bg,drafts]=await Promise.all(['generated-stock.json','past-history-formula.json','backgrounds.json','background-drafts.json'].map(load));
- const rows=sample.rows.map(r=>Object.fromEntries(sample.keys.map((k,i)=>[k,r[i]])));
+ const all=sample.rows.map(r=>Object.fromEntries(sample.keys.map((k,i)=>[k,r[i]])));
+ // 랜덤 범위 안의 고유 캐릭터(예: 2339)는 세계·출신·직업이 없고 고정 배경을 쓰므로 공식 대상에서 뺀다
+ const rows=all.filter(r=>r.world&&r.family&&r.occupation),uniques=all.length-rows.length;
  const labels={};for(const r of [...bg.records,...drafts.records])(labels[r.kind]??={})[r.id]??=r.label;
  const name=(kind,id)=>labels[kind]?.[id]??id;
  const opts=key=>[...new Set(rows.map(r=>r[key]))].sort((a,b)=>name(key,a).localeCompare(name(key,b),'ko'));
@@ -53,7 +55,7 @@ export async function createSimView(api){
   const preg=valid.filter(r=>r.pregnancies!==null);
   const groups=new Map();for(const p of picked){const k=groupKey(p);if(!groups.has(k))groups.set(k,[]);groups.get(k).push(p);}
   const sel=(key,label,list,all)=>`<label class="field"><span>${label}</span><select data-sim="${key}"><option value="">${all}</option>${list.map(v=>`<option value="${e(v)}" ${String(st[key])===String(v)?'selected':''}>${e(key==='age'?AGE[v]:name(key,v))}</option>`).join('')}</select></label>`;
-  root.innerHTML=`<div class="notice neutral"><span>⚄</span><div><strong>실제 게임 엔진 표본 ${rows.length.toLocaleString('ko-KR')}명</strong>에서 뽑습니다. 최신 jack.qsp의 generate_stock을 QSP WASM 엔진으로 실행해 만든 랜덤 노예(연령 코드 1 제외)입니다. 공식은 계수 ${e(formula.version)}을 씁니다.</div></div>
+  root.innerHTML=`<div class="notice neutral"><span>⚄</span><div><strong>실제 게임 엔진 표본 ${rows.length.toLocaleString('ko-KR')}명</strong>에서 뽑습니다. 최신 jack.qsp의 generate_stock과 영입 처리(stock_to_slave_nogt)까지 QSP WASM 엔진으로 실행한, 모든 특성 추첨이 끝난 랜덤 노예(연령 코드 1 제외)입니다.${uniques?` 랜덤 범위에서 뽑힌 고유 캐릭터 ${uniques}명은 고정 배경이라 뺐습니다.`:''} 공식은 계수 ${e(formula.version)}을 씁니다.</div></div>
   <article class="card"><div class="card-body sim-controls">
    <label class="field"><span>뽑을 수</span><select data-sim="count">${[100,1000,5000,10000].map(n=>`<option ${st.count===n?'selected':''}>${n}</option>`).join('')}</select></label>
    ${sel('world','세계',opts('world'),'모든 세계')}${sel('family','출신',opts('family'),'모든 출신')}${sel('occupation','직업',opts('occupation'),'모든 직업')}${sel('age','연령',['0','2'],'모든 연령')}

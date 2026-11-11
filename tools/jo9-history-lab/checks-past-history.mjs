@@ -109,3 +109,14 @@ console.log(`게임 생성 흉내: 수녀 처녀 유지율 젊음 ${(young*100).
  assert.equal(attributeFactor({exotic:0,base_exotic:3},F).factor,attributeFactor({exotic:3},F).factor);
  console.log(`기본 속성: 외모 0~5 평균 ${byBeauty.map(x=>x.toFixed(0)).join(' < ')}`);
 }
+// 시뮬레이터 표본은 영입 처리(stock_to_slave_nogt)까지 끝난 값이어야 한다: 처녀(virginity 0)는 질·애널 기술·임신이 0
+{
+ const d=await read('generated-stock.json'),k=d.keys,rows=d.rows.map(r=>Object.fromEntries(k.map((x,i)=>[x,r[i]])));
+ assert(d.note.includes('stock_to_slave_nogt'),'표본이 영입 처리 전 값이다');
+ const bad=rows.filter(r=>r.virginity<=0&&(r.sub_vaginal>0||r.sub_anal>0||r.pregnant>0||r.anal_stretch>0));
+ assert.equal(bad.length,0,`영입 처리 전 값으로 보이는 처녀 ${bad.length}명`);
+ // 세계·출신·직업이 빈 행은 랜덤 범위 안의 고유 캐릭터뿐이다(2026-11-11 표본: 2339 야기스나)
+ const empty=rows.filter(r=>!(r.world&&r.family&&r.occupation));
+ assert(empty.every(r=>r.type===2339),'고유 캐릭터가 아닌 빈 배경 행: '+[...new Set(empty.map(r=>r.type))]);
+ console.log(`시뮬레이터 표본 ${rows.length}명: 영입 처리 후 값, 처녀 ${rows.filter(r=>r.virginity<2).length}명의 질·애널·임신 0`);
+}
