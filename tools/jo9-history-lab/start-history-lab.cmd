@@ -18,6 +18,6 @@ if errorlevel 1 (
   timeout /t 2 /nobreak >nul
 )
 
-start "" "http://127.0.0.1:%PORT%/#slave-sim"
-echo 편집기를 열었습니다: http://127.0.0.1:%PORT%/#slave-sim
+start "" "http://127.0.0.1:%PORT%/"
+echo 편집기를 열었습니다: http://127.0.0.1:%PORT%/
 echo 끝내려면 작업 표시줄의 "JO9 history-lab server" 창을 닫으세요.
