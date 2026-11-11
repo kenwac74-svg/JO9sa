@@ -29,3 +29,14 @@
   - 계산값·이름 불일치: sanity(ego+temper+pride 계산), activity_sign(게임 저장 키는 jo9_work_ethic, 이것도 seed_로 읽지 않음)
 - 결정: 바인딩 자체는 바꾸지 않는다(편집기 통계 계산에 쓰이고, 열람표 갱신으로 덮일 수 있다). 대신 특성 카드에 "게임 미적용" 경고를 띄운다. 게임이 이 키들을 읽게 하는 것은 게임 본체 작업이라 이번 범위 밖이다.
 - `snapshot-manifest.json`은 인계 당시 묶음의 해시 기록이다. 이후 편집기 수정으로 해시가 달라지는 것은 정상이며 manifest는 갱신하지 않는다.
+
+## A3·A4 (2026-11-11)
+- 외양간지기 임명(menu_form 4930): `moral >= 3 and nurse > 2 and secretary > 2`. 스킬 값 0~5 = F~S이므로 간호·비서 B 이상. 체력 0=죽어감, 1=쇠약함(#variative 313).
+- 직업 명세는 사람이 고치는 원본(`docs/occupation-specs-source.mjs`)과 생성물(`dist/data/occupation-specs.json`)로 나눴다. 수치가 없는 항목은 probability null + 상태 "미정"으로 두고 임의로 채우지 않는다(핸드오프 7장).
+- 스킬 이름 매핑: 무용 = calisthenics(이국적인 댄서가 calisthenics_affinity), 체력 = stamina, 집안일 = service. "회계"는 게임에 대응 스킬이 없어 메모로 남겼다.
+- 해석이 갈리는 항목은 메모로 두고 사용자 확인 대상으로 남겼다: 범죄자 공통 대상 직업 목록, 하녀에 성의 하녀 포함 여부, 경찰관류 "화술 제외", 사관생도 "비서 제외", 선반공 수치, 소녀·여학생 순수한 영혼 공통 여부.
+- 비처녀 100%는 "처녀" 특성 등장 금지(forbid)로 표현했다.
+
+## 사용자 제공 최신 자료 (2026-11-11)
+- jack.7z → jack.qsp sha256 4354cf39…, 50,204,050바이트. 2.4.1 저장소본(8332e185…)보다 새 버전. 대조에 쓴 값은 두 버전이 같았다. 원본은 저장소에 넣지 않는다(게임 파일 관리는 PM).
+- json.zip: 게임 json 폴더. 저장소 assets/json과 비교해 zip에만 15개(백업 .bak 포함, 3040_chunhyang, 2339_yagisuna), 저장소에만 26개, 내용 다름 18개.

@@ -1,0 +1,1193 @@
+{
+ "version": "20261111-specs-v1",
+ "source": "docs/JO9_Stats_Background_Generation_Handoff_20261112.md",
+ "note": "핸드오프 9장·7장 결정의 데이터화. 미정은 수치가 정해지지 않은 규칙이며 임의로 채우지 않는다. 게임 본체 미반영.",
+ "specs": [
+  {
+   "label": "평민",
+   "occupations": [
+    {
+     "id": "poor_bride",
+     "label": "평민"
+    }
+   ],
+   "source": "docs/JO9_Stats_Background_Generation_Handoff_20261112.md:185",
+   "rules": [
+    {
+     "type": "note",
+     "status": "메모",
+     "text": "직업 추가 특성 없음"
+    }
+   ]
+  },
+  {
+   "label": "사냥꾼",
+   "occupations": [
+    {
+     "id": "huntress",
+     "label": "사냥꾼"
+    }
+   ],
+   "source": "docs/JO9_Stats_Background_Generation_Handoff_20261112.md:186",
+   "rules": [
+    {
+     "type": "chance",
+     "status": "확정",
+     "trait": {
+      "name": "촌뜨기",
+      "id": "grace < 0",
+      "key": "grace"
+     },
+     "probability": 10
+    },
+    {
+     "type": "chance",
+     "status": "확정",
+     "trait": {
+      "name": "높은 대사량",
+      "id": "metabolism = 4",
+      "key": "metabolism"
+     },
+     "probability": 10
+    },
+    {
+     "type": "note",
+     "status": "메모",
+     "text": "문명생활 밖 직업의 촌뜨기 공통 규칙은 대상 목록이 정해지지 않았다"
+    }
+   ]
+  },
+  {
+   "label": "바이킹의 아내",
+   "occupations": [
+    {
+     "id": "viking_wife",
+     "label": "바이킹의 아내"
+    }
+   ],
+   "source": "docs/JO9_Stats_Background_Generation_Handoff_20261112.md:187",
+   "rules": [
+    {
+     "type": "forbid",
+     "status": "확정",
+     "text": "비처녀 100%",
+     "trait": {
+      "name": "처녀",
+      "id": "virginity < 2",
+      "key": "virginity"
+     }
+    },
+    {
+     "type": "chance",
+     "status": "확정",
+     "trait": {
+      "name": "물 기호증",
+      "id": "water_attitude = 2",
+      "key": "water_attitude"
+     },
+     "probability": 40
+    },
+    {
+     "type": "chance",
+     "status": "확정",
+     "trait": {
+      "name": "촌뜨기",
+      "id": "grace < 0",
+      "key": "grace"
+     },
+     "probability": 10
+    }
+   ]
+  },
+  {
+   "label": "수녀",
+   "occupations": [
+    {
+     "id": "nun",
+     "label": "수녀"
+    }
+   ],
+   "source": "docs/JO9_Stats_Background_Generation_Handoff_20261112.md:188",
+   "rules": [
+    {
+     "type": "chance",
+     "status": "미정",
+     "trait": {
+      "name": "은둔형 외톨이",
+      "id": "passion_fame = -1",
+      "key": "passion_fame"
+     },
+     "probability": null
+    },
+    {
+     "type": "chance",
+     "status": "미정",
+     "trait": {
+      "name": "동성애 혐오자",
+      "id": "homosexualism = -1",
+      "key": "homosexualism"
+     },
+     "probability": null
+    },
+    {
+     "type": "chance",
+     "status": "미정",
+     "trait": {
+      "name": "순수한 영혼",
+      "id": "perversion = -1",
+      "key": "perversion"
+     },
+     "probability": null
+    },
+    {
+     "type": "chance",
+     "status": "미정",
+     "trait": {
+      "name": "노출 기피",
+      "id": "exhibitionism = -1",
+      "key": "exhibitionism"
+     },
+     "probability": null
+    },
+    {
+     "type": "chance",
+     "status": "확정",
+     "trait": {
+      "name": "처녀",
+      "id": "virginity < 2",
+      "key": "virginity"
+     },
+     "probability": 90
+    },
+    {
+     "type": "exclude",
+     "status": "확정",
+     "trait": {
+      "name": "너그러움",
+      "id": "jo9_grudge = -1",
+      "key": "jo9_grudge"
+     }
+    }
+   ]
+  },
+  {
+   "label": "살인마",
+   "occupations": [
+    {
+     "id": "serial_killer",
+     "label": "살인마"
+    }
+   ],
+   "source": "docs/JO9_Stats_Background_Generation_Handoff_20261112.md:189",
+   "rules": [
+    {
+     "type": "chance",
+     "status": "미정",
+     "trait": {
+      "name": "혈액 기호증",
+      "id": "blood_attitude = 2",
+      "key": "blood_attitude"
+     },
+     "probability": null
+    },
+    {
+     "type": "raise",
+     "status": "미정",
+     "trait": {
+      "name": "가학성애자",
+      "id": "compassion < 0",
+      "key": "compassion"
+     }
+    },
+    {
+     "type": "chance",
+     "status": "미정",
+     "trait": {
+      "name": "무모함",
+      "id": "courage = 2",
+      "key": "courage"
+     },
+     "probability": null
+    },
+    {
+     "type": "chance",
+     "status": "확정",
+     "trait": {
+      "name": "자유로운 영혼",
+      "id": "meekness < 0",
+      "key": "meekness"
+     },
+     "probability": 30
+    },
+    {
+     "type": "note",
+     "status": "메모",
+     "text": "직업 전투 스킬 부여 없음"
+    }
+   ]
+  },
+  {
+   "label": "범죄자 공통",
+   "occupations": [
+    {
+     "id": "thief",
+     "label": "도둑"
+    },
+    {
+     "id": "thug",
+     "label": "노상강도"
+    },
+    {
+     "id": "brigand",
+     "label": "산적"
+    },
+    {
+     "id": "contraband",
+     "label": "밀수업자"
+    },
+    {
+     "id": "gang_member",
+     "label": "폭력조직 조직원"
+    },
+    {
+     "id": "mafia_boss",
+     "label": "폭력조직 간부"
+    }
+   ],
+   "source": "docs/JO9_Stats_Background_Generation_Handoff_20261112.md:190",
+   "rules": [
+    {
+     "type": "chance",
+     "status": "미정",
+     "text": "범죄 경력 정도별. 갱단·마피아 등 수치 미확인",
+     "trait": {
+      "name": "자유로운 영혼",
+      "id": "meekness < 0",
+      "key": "meekness"
+     },
+     "probability": null
+    },
+    {
+     "type": "note",
+     "status": "메모",
+     "text": "대상 직업 목록은 범죄 경력 직업을 추린 것이다. 사용자 확인 필요"
+    }
+   ]
+  },
+  {
+   "label": "도둑",
+   "occupations": [
+    {
+     "id": "thief",
+     "label": "도둑"
+    }
+   ],
+   "source": "docs/JO9_Stats_Background_Generation_Handoff_20261112.md:191",
+   "rules": [
+    {
+     "type": "skillMin",
+     "status": "확정",
+     "text": "초기 체력 죽어감(0)·쇠약함(1) 제외",
+     "skill": {
+      "name": "체력",
+      "key": "stamina"
+     },
+     "minGrade": "C",
+     "minValue": 2
+    }
+   ]
+  },
+  {
+   "label": "목축업자",
+   "occupations": [
+    {
+     "id": "milker",
+     "label": "착유사"
+    },
+    {
+     "id": "swiner",
+     "label": "돼지치기"
+    }
+   ],
+   "source": "docs/JO9_Stats_Background_Generation_Handoff_20261112.md:192",
+   "rules": [
+    {
+     "type": "skillMin",
+     "status": "확정",
+     "skill": {
+      "name": "간호",
+      "key": "nurse"
+     },
+     "minGrade": "B",
+     "minValue": 3
+    },
+    {
+     "type": "skillMin",
+     "status": "확정",
+     "skill": {
+      "name": "비서",
+      "key": "secretary"
+     },
+     "minGrade": "B",
+     "minValue": 3
+    },
+    {
+     "type": "note",
+     "status": "메모",
+     "text": "게임 외양간지기 임명 조건(menu_form 4930): moral >= 3, nurse > 2, secretary > 2. 간호·비서 B는 게임과 일치. moral 3 이상 조건이 추가로 있다"
+    },
+    {
+     "type": "note",
+     "status": "메모",
+     "text": "다른 추가 보너스 없음"
+    }
+   ]
+  },
+  {
+   "label": "하녀",
+   "occupations": [
+    {
+     "id": "maid",
+     "label": "저택 하녀"
+    },
+    {
+     "id": "valertry",
+     "label": "성의 하녀"
+    }
+   ],
+   "source": "docs/JO9_Stats_Background_Generation_Handoff_20261112.md:193",
+   "rules": [
+    {
+     "type": "note",
+     "status": "메모",
+     "text": "타고난 하녀 발견 누적 경험치 기준을 절반으로. 성의 하녀(valertry) 포함 여부 확인 필요"
+    }
+   ]
+  },
+  {
+   "label": "여마법사의 제자",
+   "occupations": [
+    {
+     "id": "sorceress",
+     "label": "여마법사의 제자"
+    }
+   ],
+   "source": "docs/JO9_Stats_Background_Generation_Handoff_20261112.md:194",
+   "rules": [
+    {
+     "type": "chance",
+     "status": "미정",
+     "trait": {
+      "name": "강한 복종심",
+      "id": "meekness > 0",
+      "key": "meekness"
+     },
+     "probability": null
+    },
+    {
+     "type": "note",
+     "status": "메모",
+     "text": "집안일 보너스(수치 미정). 노예근성으로 대체하지 않음"
+    }
+   ]
+  },
+  {
+   "label": "공주계열",
+   "occupations": [
+    {
+     "id": "mprincess",
+     "label": "공주"
+    },
+    {
+     "id": "barbarian_princess",
+     "label": "부족 공주"
+    }
+   ],
+   "source": "docs/JO9_Stats_Background_Generation_Handoff_20261112.md:195",
+   "rules": [
+    {
+     "type": "chance",
+     "status": "미정",
+     "trait": {
+      "name": "거센 반항심",
+      "id": "defiant = 1",
+      "key": "defiant"
+     },
+     "probability": null
+    },
+    {
+     "type": "chance",
+     "status": "미정",
+     "trait": {
+      "name": "벌레 공포증",
+      "id": "vermin_attitude = -1",
+      "key": "vermin_attitude"
+     },
+     "probability": null
+    },
+    {
+     "type": "chance",
+     "status": "미정",
+     "trait": {
+      "name": "품위있는 여자",
+      "id": "grace > 0",
+      "key": "grace"
+     },
+     "probability": null
+    },
+    {
+     "type": "skillExclude",
+     "status": "확정",
+     "skill": {
+      "name": "화술",
+      "key": "expression"
+     },
+     "grades": [
+      "F"
+     ]
+    },
+    {
+     "type": "skillExclude",
+     "status": "확정",
+     "skill": {
+      "name": "음악",
+      "key": "music"
+     },
+     "grades": [
+      "F"
+     ]
+    },
+    {
+     "type": "skillExclude",
+     "status": "확정",
+     "skill": {
+      "name": "미술",
+      "key": "art"
+     },
+     "grades": [
+      "F"
+     ]
+    },
+    {
+     "type": "skillExclude",
+     "status": "확정",
+     "skill": {
+      "name": "무용",
+      "key": "calisthenics"
+     },
+     "grades": [
+      "F"
+     ]
+    },
+    {
+     "type": "note",
+     "status": "메모",
+     "text": "회계 F 제외: 게임에 회계 스킬이 없다. 어느 스킬인지 확인 필요"
+    }
+   ]
+  },
+  {
+   "label": "직조공",
+   "occupations": [
+    {
+     "id": "weaver",
+     "label": "직조공"
+    }
+   ],
+   "source": "docs/JO9_Stats_Background_Generation_Handoff_20261112.md:196",
+   "rules": [
+    {
+     "type": "chance",
+     "status": "확정",
+     "trait": {
+      "name": "끈기",
+      "id": "jo9_focus = 1",
+      "key": "jo9_focus"
+     },
+     "probability": 20
+    },
+    {
+     "type": "chance",
+     "status": "미정",
+     "trait": {
+      "name": "불감증",
+      "id": "nymphomania = -1",
+      "key": "nymphomania"
+     },
+     "probability": null
+    }
+   ]
+  },
+  {
+   "label": "선반공",
+   "occupations": [
+    {
+     "id": "freaser",
+     "label": "선반공"
+    }
+   ],
+   "source": "docs/JO9_Stats_Background_Generation_Handoff_20261112.md:196",
+   "rules": [
+    {
+     "type": "chance",
+     "status": "미정",
+     "trait": {
+      "name": "끈기",
+      "id": "jo9_focus = 1",
+      "key": "jo9_focus"
+     },
+     "probability": null
+    },
+    {
+     "type": "chance",
+     "status": "미정",
+     "trait": {
+      "name": "불감증",
+      "id": "nymphomania = -1",
+      "key": "nymphomania"
+     },
+     "probability": null
+    },
+    {
+     "type": "note",
+     "status": "메모",
+     "text": "직조공과 동일 방향. 같은 수치를 쓸지 확인 필요"
+    }
+   ]
+  },
+  {
+   "label": "페미니스트",
+   "occupations": [
+    {
+     "id": "sufragist",
+     "label": "페미니스트"
+    }
+   ],
+   "source": "docs/JO9_Stats_Background_Generation_Handoff_20261112.md:197",
+   "rules": [
+    {
+     "type": "group",
+     "status": "확정",
+     "options": [
+      {
+       "trait": {
+        "name": "레즈비언",
+        "id": "homosexualism = 2",
+        "key": "homosexualism"
+       },
+       "probability": 30
+      },
+      {
+       "trait": {
+        "name": "양성애자",
+        "id": "homosexualism = 1",
+        "key": "homosexualism"
+       },
+       "probability": 30
+      }
+     ],
+     "none": 40
+    },
+    {
+     "type": "chance",
+     "status": "확정",
+     "trait": {
+      "name": "과대망상",
+      "id": "selfesteem > 0",
+      "key": "selfesteem"
+     },
+     "probability": 30
+    },
+    {
+     "type": "chance",
+     "status": "확정",
+     "trait": {
+      "name": "거센 반항심",
+      "id": "defiant = 1",
+      "key": "defiant"
+     },
+     "probability": 20
+    }
+   ]
+  },
+  {
+   "label": "운동선수 공통",
+   "occupations": [
+    {
+     "id": "voleyball",
+     "label": "배구선수"
+    },
+    {
+     "id": "karateka",
+     "label": "격투기선수"
+    },
+    {
+     "id": "hymnast",
+     "label": "체조선수"
+    }
+   ],
+   "source": "docs/JO9_Stats_Background_Generation_Handoff_20261112.md:198",
+   "rules": [
+    {
+     "type": "skillMin",
+     "status": "확정",
+     "skill": {
+      "name": "체력",
+      "key": "stamina"
+     },
+     "minGrade": "B",
+     "minValue": 3
+    },
+    {
+     "type": "chance",
+     "status": "미정",
+     "text": "개별 확률은 최종 직업 표와 확인",
+     "trait": {
+      "name": "운동광",
+      "id": "sport_affinity = 1",
+      "key": "sport_affinity"
+     },
+     "probability": null
+    }
+   ]
+  },
+  {
+   "label": "경찰관류",
+   "occupations": [
+    {
+     "id": "policewoman",
+     "label": "경찰관"
+    },
+    {
+     "id": "mind_contol",
+     "label": "미래경찰"
+    },
+    {
+     "id": "time_plice",
+     "label": "시공경찰관"
+    },
+    {
+     "id": "jailer",
+     "label": "교도관"
+    }
+   ],
+   "source": "docs/JO9_Stats_Background_Generation_Handoff_20261112.md:199",
+   "rules": [
+    {
+     "type": "exclude",
+     "status": "확정",
+     "trait": {
+      "name": "끈기",
+      "id": "jo9_focus = 1",
+      "key": "jo9_focus"
+     }
+    },
+    {
+     "type": "note",
+     "status": "메모",
+     "text": "화술 제외: 화술 스킬 등급인지 달변가 특성인지 확인 필요"
+    }
+   ]
+  },
+  {
+   "label": "시공경찰관",
+   "occupations": [
+    {
+     "id": "time_plice",
+     "label": "시공경찰관"
+    }
+   ],
+   "source": "docs/JO9_Stats_Background_Generation_Handoff_20261112.md:199",
+   "rules": [
+    {
+     "type": "chance",
+     "status": "미정",
+     "trait": {
+      "name": "건강체질",
+      "id": "jo9_constitution = 1",
+      "key": "jo9_constitution"
+     },
+     "probability": null
+    }
+   ]
+  },
+  {
+   "label": "미래경찰",
+   "occupations": [
+    {
+     "id": "mind_contol",
+     "label": "미래경찰"
+    }
+   ],
+   "source": "docs/JO9_Stats_Background_Generation_Handoff_20261112.md:199",
+   "rules": [
+    {
+     "type": "exclude",
+     "status": "확정",
+     "trait": {
+      "name": "용감함",
+      "id": "courage = 1",
+      "key": "courage"
+     }
+    },
+    {
+     "type": "chance",
+     "status": "미정",
+     "trait": {
+      "name": "옹졸함",
+      "id": "jo9_grudge = 1",
+      "key": "jo9_grudge"
+     },
+     "probability": null
+    }
+   ]
+  },
+  {
+   "label": "교도관",
+   "occupations": [
+    {
+     "id": "jailer",
+     "label": "교도관"
+    }
+   ],
+   "source": "docs/JO9_Stats_Background_Generation_Handoff_20261112.md:199",
+   "rules": [
+    {
+     "type": "chance",
+     "status": "미정",
+     "trait": {
+      "name": "가학성애자",
+      "id": "compassion < 0",
+      "key": "compassion"
+     },
+     "probability": null
+    }
+   ]
+  },
+  {
+   "label": "대학생",
+   "occupations": [
+    {
+     "id": "student",
+     "label": "대학생"
+    }
+   ],
+   "source": "docs/JO9_Stats_Background_Generation_Handoff_20261112.md:200",
+   "rules": [
+    {
+     "type": "chance",
+     "status": "확정",
+     "trait": {
+      "name": "천재",
+      "id": "jo9_learning_trait = 1",
+      "key": "jo9_learning_trait"
+     },
+     "probability": 5
+    }
+   ]
+  },
+  {
+   "label": "작가",
+   "occupations": [
+    {
+     "id": "writer",
+     "label": "작가"
+    }
+   ],
+   "source": "docs/JO9_Stats_Background_Generation_Handoff_20261112.md:200",
+   "rules": [
+    {
+     "type": "chance",
+     "status": "확정",
+     "trait": {
+      "name": "천재",
+      "id": "jo9_learning_trait = 1",
+      "key": "jo9_learning_trait"
+     },
+     "probability": 5
+    },
+    {
+     "type": "exclude",
+     "status": "확정",
+     "trait": {
+      "name": "끈기",
+      "id": "jo9_focus = 1",
+      "key": "jo9_focus"
+     }
+    },
+    {
+     "type": "chance",
+     "status": "미정",
+     "trait": {
+      "name": "달변가",
+      "id": "expression_affinity > 0",
+      "key": "expression_affinity"
+     },
+     "probability": null
+    },
+    {
+     "type": "chance",
+     "status": "미정",
+     "trait": {
+      "name": "야심가",
+      "id": "jo9_ambition = 1",
+      "key": "jo9_ambition"
+     },
+     "probability": null
+    }
+   ]
+  },
+  {
+   "label": "화가",
+   "occupations": [
+    {
+     "id": "artist",
+     "label": "화가"
+    }
+   ],
+   "source": "docs/JO9_Stats_Background_Generation_Handoff_20261112.md:200",
+   "rules": [
+    {
+     "type": "chance",
+     "status": "미정",
+     "trait": {
+      "name": "야심가",
+      "id": "jo9_ambition = 1",
+      "key": "jo9_ambition"
+     },
+     "probability": null
+    }
+   ]
+  },
+  {
+   "label": "모델",
+   "occupations": [
+    {
+     "id": "model",
+     "label": "모델"
+    }
+   ],
+   "source": "docs/JO9_Stats_Background_Generation_Handoff_20261112.md:201",
+   "rules": [
+    {
+     "type": "exclude",
+     "status": "확정",
+     "trait": {
+      "name": "운동광",
+      "id": "sport_affinity = 1",
+      "key": "sport_affinity"
+     }
+    },
+    {
+     "type": "exclude",
+     "status": "확정",
+     "trait": {
+      "name": "품위있는 여자",
+      "id": "grace > 0",
+      "key": "grace"
+     }
+    },
+    {
+     "type": "forbid",
+     "status": "확정",
+     "trait": {
+      "name": "낮은 대사량",
+      "id": "metabolism = 2",
+      "key": "metabolism"
+     }
+    },
+    {
+     "type": "forbid",
+     "status": "확정",
+     "trait": {
+      "name": "미약한 대사량",
+      "id": "metabolism = 1",
+      "key": "metabolism"
+     }
+    },
+    {
+     "type": "chance",
+     "status": "확정",
+     "trait": {
+      "name": "절세미인",
+      "id": "jo9_peerless = 1",
+      "key": "jo9_peerless"
+     },
+     "probability": 5
+    }
+   ]
+  },
+  {
+   "label": "클러버",
+   "occupations": [
+    {
+     "id": "major",
+     "label": "클러버"
+    }
+   ],
+   "source": "docs/JO9_Stats_Background_Generation_Handoff_20261112.md:202",
+   "rules": [
+    {
+     "type": "chance",
+     "status": "미정",
+     "trait": {
+      "name": "미련한 소",
+      "id": "cowSK_affinity > 0",
+      "key": "cowSK_affinity"
+     },
+     "probability": null
+    },
+    {
+     "type": "chance",
+     "status": "미정",
+     "trait": {
+      "name": "이국적인 댄서",
+      "id": "calisthenics_affinity > 0",
+      "key": "calisthenics_affinity"
+     },
+     "probability": null
+    },
+    {
+     "type": "chance",
+     "status": "미정",
+     "trait": {
+      "name": "무기력함",
+      "id": "activity_sign = -1",
+      "key": "activity_sign"
+     },
+     "probability": null
+    },
+    {
+     "type": "skillExclude",
+     "status": "확정",
+     "skill": {
+      "name": "무용",
+      "key": "calisthenics"
+     },
+     "grades": [
+      "F",
+      "D"
+     ]
+    },
+    {
+     "type": "exclude",
+     "status": "확정",
+     "trait": {
+      "name": "무모함",
+      "id": "courage = 2",
+      "key": "courage"
+     }
+    }
+   ]
+  },
+  {
+   "label": "무용가",
+   "occupations": [
+    {
+     "id": "dancer",
+     "label": "무용가"
+    }
+   ],
+   "source": "docs/JO9_Stats_Background_Generation_Handoff_20261112.md:203",
+   "rules": [
+    {
+     "type": "grant",
+     "status": "확정",
+     "trait": {
+      "name": "이국적인 댄서",
+      "id": "calisthenics_affinity > 0",
+      "key": "calisthenics_affinity"
+     }
+    },
+    {
+     "type": "exclude",
+     "status": "확정",
+     "trait": {
+      "name": "끈기",
+      "id": "jo9_focus = 1",
+      "key": "jo9_focus"
+     }
+    }
+   ]
+  },
+  {
+   "label": "우주군 사관생도",
+   "occupations": [
+    {
+     "id": "academy",
+     "label": "우주군 사관생도"
+    }
+   ],
+   "source": "docs/JO9_Stats_Background_Generation_Handoff_20261112.md:204",
+   "rules": [
+    {
+     "type": "chance",
+     "status": "확정",
+     "trait": {
+      "name": "야심가",
+      "id": "jo9_ambition = 1",
+      "key": "jo9_ambition"
+     },
+     "probability": 5
+    },
+    {
+     "type": "exclude",
+     "status": "확정",
+     "trait": {
+      "name": "용감함",
+      "id": "courage = 1",
+      "key": "courage"
+     }
+    },
+    {
+     "type": "chance",
+     "status": "미정",
+     "trait": {
+      "name": "거센 반항심",
+      "id": "defiant = 1",
+      "key": "defiant"
+     },
+     "probability": null
+    },
+    {
+     "type": "note",
+     "status": "메모",
+     "text": "비서 제외: 비서 스킬 등급인지 다른 뜻인지 확인 필요"
+    }
+   ]
+  },
+  {
+   "label": "전투로봇 파일럿",
+   "occupations": [
+    {
+     "id": "mech",
+     "label": "전투로봇 파일럿"
+    }
+   ],
+   "source": "docs/JO9_Stats_Background_Generation_Handoff_20261112.md:205",
+   "rules": [
+    {
+     "type": "grant",
+     "status": "확정",
+     "trait": {
+      "name": "거센 반항심",
+      "id": "defiant = 1",
+      "key": "defiant"
+     }
+    },
+    {
+     "type": "grant",
+     "status": "확정",
+     "trait": {
+      "name": "운동광",
+      "id": "sport_affinity = 1",
+      "key": "sport_affinity"
+     }
+    },
+    {
+     "type": "exclude",
+     "status": "확정",
+     "trait": {
+      "name": "용감함",
+      "id": "courage = 1",
+      "key": "courage"
+     }
+    }
+   ]
+  },
+  {
+   "label": "궤도 정비공",
+   "occupations": [
+    {
+     "id": "installer",
+     "label": "궤도 정비공"
+    }
+   ],
+   "source": "docs/JO9_Stats_Background_Generation_Handoff_20261112.md:206",
+   "rules": [
+    {
+     "type": "chance",
+     "status": "미정",
+     "trait": {
+      "name": "운동광",
+      "id": "sport_affinity = 1",
+      "key": "sport_affinity"
+     },
+     "probability": null
+    }
+   ]
+  },
+  {
+   "label": "영웅 여전사",
+   "occupations": [
+    {
+     "id": "heroine",
+     "label": "영웅 여전사"
+    }
+   ],
+   "source": "docs/JO9_Stats_Background_Generation_Handoff_20261112.md:148",
+   "rules": [
+    {
+     "type": "tiered",
+     "status": "미정",
+     "text": "20% 진입 → 둘 중 하나 확정 → 진입자 중 20%에 셋 중 하나(전체 4%). 그룹 안 세부 가중치는 미정",
+     "entry": 20,
+     "first": [
+      {
+       "name": "타고난 투사",
+       "id": "gladiatrix_affinity > 0",
+       "key": "gladiatrix_affinity"
+      },
+      {
+       "name": "용감함",
+       "id": "courage = 1",
+       "key": "courage"
+      }
+     ],
+     "second": {
+      "probability": 20,
+      "traits": [
+       {
+        "name": "역전의 용사",
+        "id": "jo9_combat_trait = 3",
+        "key": "jo9_combat_trait"
+       },
+       {
+        "name": "성기사",
+        "id": "jo9_combat_trait = 2",
+        "key": "jo9_combat_trait"
+       },
+       {
+        "name": "광전사",
+        "id": "jo9_combat_trait = 1",
+        "key": "jo9_combat_trait"
+       }
+      ]
+     },
+     "overall": 4
+    }
+   ]
+  },
+  {
+   "label": "소녀·여학생",
+   "occupations": [
+    {
+     "id": "tribal_girl",
+     "label": "소녀"
+    },
+    {
+     "id": "schoolgirl",
+     "label": "여학생"
+    }
+   ],
+   "source": "docs/JO9_Stats_Background_Generation_Handoff_20261112.md:94",
+   "rules": [
+    {
+     "type": "note",
+     "status": "메모",
+     "text": "두 직업의 기본 직업 보너스는 같다. 소녀에 순수한 영혼 추가 지시가 있었으며 두 직업 공통 적용 여부는 확인 필요"
+    }
+   ]
+  }
+ ]
+}
