@@ -20,3 +20,12 @@
 
 ## 백업 브랜치 누락
 - 11-07 백업(`claude/cool-hopper-a9o2df`) 때 `.gitignore`(`dist/`, handoff 기록 경로 등)에 걸린 텍스트 9개가 `git add`에서 빠졌다. 내용은 git 기록(`claude/sweet-meitner-72rd73`)에 있다.
+
+## A2 특성 바인딩 (2026-11-11)
+- 게임은 캐릭터 JSON의 필드를 엔진이 `seed_<키>[유형]` 배열로 올리고, `get_stock_seed`가 그중 일부만 인물 값으로 옮긴다. 2.4.1에서 읽는 키는 164개이며 `dist/data/game-seed-keys.json`에 저장했다(`docs/export-game-seed-keys.py`로 다시 뽑는다).
+- 편집기 특성 128개는 선택하면 `seed_<binding.key>`를 JSON에 쓴다. 이 중 40개(키 19종)는 게임이 읽지 않는다.
+  - 생성 뒤 상태값: brand, pregnant, wounds, rehabilitation, arena_level, has_ride_win, deprivation_attitude
+  - jo9 확장 특성: jo9_focus·jo9_grudge·jo9_ambition·jo9_slave_nature·jo9_attention·jo9_constitution·jo9_peerless·jo9_combat_trait·jo9_versatile·jo9_learning_trait
+  - 계산값·이름 불일치: sanity(ego+temper+pride 계산), activity_sign(게임 저장 키는 jo9_work_ethic, 이것도 seed_로 읽지 않음)
+- 결정: 바인딩 자체는 바꾸지 않는다(편집기 통계 계산에 쓰이고, 열람표 갱신으로 덮일 수 있다). 대신 특성 카드에 "게임 미적용" 경고를 띄운다. 게임이 이 키들을 읽게 하는 것은 게임 본체 작업이라 이번 범위 밖이다.
+- `snapshot-manifest.json`은 인계 당시 묶음의 해시 기록이다. 이후 편집기 수정으로 해시가 달라지는 것은 정상이며 manifest는 갱신하지 않는다.

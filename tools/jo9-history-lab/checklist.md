@@ -5,12 +5,12 @@
 게임 소스 기준: `assets/runtime/2.4.1/jack.qsp` (main `607c7ec6`).
 
 ## 0. 준비
-- [x] 인계 zip의 추가 자료 4개와 manifest 커밋 (`f25b522f`)
+- [x] 인계 zip의 추가 자료 4개와 manifest: 원격에 같은 내용 `07549eba`가 먼저 올라와 그것을 기준으로 함
 - [x] 계획·체크리스트·결정 기록 작성
 
 ## A. 편집기 완성 (게임 본체는 건드리지 않음)
 - [x] A1 seed_age 실제 매핑 대조: 0=young, 1=loli, 2=milf. 편집기의 `adultOnly && age===1` 제외와 일치
-- [ ] A2 특성 바인딩 대조: `dist/data/traits-live.json`의 특성 ID·조건값을 게임 특성 정의와 비교
+- [x] A2 특성 바인딩 대조: 128개 중 88개는 게임이 읽는 seed_ 키, 40개(키 19종)는 미적용. 카드에 경고 표시, `checks-trait-bindings.mjs`
 - [ ] A3 직업 임명 조건 확인: 외양간지기(간호·비서 기준) 등 핸드오프 9장에서 게임 확인이 필요한 것
 - [ ] A4 직업별 스킬·특성 명세 데이터화: 핸드오프 9장을 `dist/data/occupation-specs.json`으로. 확정 값과 미정 값을 구분
 - [ ] A5 생성 검증 검사: 금지 조합 0건, 배척 그룹, 스킬 필요조건, 빈 후보 처리 (`checks-occupation-specs.mjs`)
