@@ -18,8 +18,14 @@ for(const id of ['noble_wife','poor_wife','rich_wife','viking_wife'])assert.equa
 const skilled={sub_hug:4,sub_kiss:4,sub_bj:4,sub_vaginal:4,sub_anal:2,sub_hj:3,sub_fj:2,sub_paizuri:2,sub_tongue:3,sub_dt:2,sub_asslik:1,sub_fisting:0,anal_stretch:0};
 const stock=(o)=>({world:'medieval',family:'pesant',occupation:'poor_wife',age:0,virginity:2,fertility:0,pregnant:0,clone:0,...skilled,...o});
 // 처녀 고정 배경은 기술이 높아도 성경험 0
-for(const occupation of F.occupation.virginForced.ids)for(const age of [0,2])assert.equal(pastHistory(stock({occupation,age}),F,'s').intimacy,0,occupation);
-assert(pastHistory(stock({occupation:'nun',virginity:2}),F,'s').trace.some(t=>t.startsWith('주의')));
+for(const occupation of F.occupation.virginForced.ids)for(const age of [0,2])assert.equal(pastHistory(stock({occupation,age,virginity:0}),F,'s').intimacy,0,occupation);
+// 비처녀면 처녀 고정 배경이어도, 기술이 낮아 0이 나와도 최소 경험 1~3
+for(let i=0;i<200;i++){
+ const nun=pastHistory(stock({occupation:'nun',virginity:2}),F,'n'+i).intimacy;assert(nun>=1&&nun<=3,'nun '+nun);
+ const low=pastHistory({world:'modern',family:'worker',occupation:'teacher',age:0,virginity:2,fertility:0,pregnant:0,clone:0},F,'l'+i).intimacy;assert(low>=1&&low<=3,'low '+low);
+}
+assert.equal(pastHistory({world:'modern',family:'worker',occupation:'teacher',age:0,virginity:0,fertility:0,pregnant:0,clone:0},F,'z').intimacy,0);
+assert.equal(pastHistory(stock({clone:1,virginity:2}),F,'s').intimacy,0);
 // 연령 코드 1은 계산하지 않는다
 assert.equal(pastHistory(stock({age:1}),F,'s').excluded,true);
 assert.equal(pastHistory(stock({age:1}),F,'s').intimacy,null);

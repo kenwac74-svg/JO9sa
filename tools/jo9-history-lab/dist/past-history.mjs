@@ -40,7 +40,7 @@ export function pastHistory(stock,formula,seed='0'){
  if(stock.clone){trace.push('클론·기술 주입: 성경험 0');}
  else if(occ.factor===0){
   trace.push(`처녀 고정 배경(${stock.occupation}): 성경험 0`);
-  if(stock.virginity>1)trace.push('주의: 처녀 고정 배경인데 생성 후 비처녀(virginity 2)다. generate_stock의 연령별 비처녀 추첨(1226행)이 직업 설정 뒤에 다시 적용된 경우다');
+  if(stock.virginity>1)trace.push('처녀 고정 배경이지만 생성 값이 비처녀다(generate_stock 1226행 등). 생성 값을 따른다');
  }
  else{
   const age=formula.ageFactor[String(stock.age)]??100,vary=rand(100-formula.variationPct,100+formula.variationPct);
@@ -48,6 +48,12 @@ export function pastHistory(stock,formula,seed='0'){
   let v=base*occ.factor;v=idiv(v*fam.factor,100);v=idiv(v*wld.factor,100);v=idiv(v*age,100);v=idiv(v*vary,100);v=idiv(v,100);
   result.intimacy=Math.max(0,v);
   trace.push(`× 직업 ${occ.name} ${occ.factor} × 출신 ${fam.name} ${fam.factor} × 세계 ${wld.factor} × 연령 ${age} × 변동 ${vary} (각 /100) = ${result.intimacy}`);
+ }
+ // 비처녀인데 계산 결과가 0이면 생성 값을 따라 최소 경험을 준다(사용자 결정 2026-11-11).
+ if(!stock.clone&&stock.virginity>1&&result.intimacy<1){
+  const [min,max]=formula.nonVirginMinimum;
+  result.intimacy=rand(min,max);
+  trace.push(`비처녀 최소 경험: rand(${min},${max}) = ${result.intimacy}`);
  }
  if(occ.name==='married'){
   if(stock.fertility<0){result.pregnancies=0;result.births=0;trace.push('불임·미성숙: 임신·출산 0');}
