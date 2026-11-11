@@ -164,7 +164,14 @@ export async function createWorkbench(api){
   <div class="selected-traits-bar"><strong>선택 ${selectedTraits().length}개</strong>${selectedTraits().map(t=>`<button class="race-chip" data-trait-remove="${e(t.id)}">${e(t.name)} ×</button>`).join('')}</div>
   <div class="trait-card-grid">${rows.slice(traitPage*12,traitPage*12+12).map(t=>`<article class="card trait-card ${traitMatches(t,c().traitValues??{})?'chosen':''}"><div class="trait-card-head"><h3>${e(t.name)}</h3><label class="tag"><input type="checkbox" data-trait-id="${e(t.id)}" ${traitMatches(t,c().traitValues??{})?'checked':''} ${t.binding?'':'disabled'} aria-label="${e(t.name)} 선택"> 선택</label></div><span class="badge muted">${e(t.category)}</span><code class="trait-code">${e(t.id)}</code><p>${e(t.description)}</p><div class="trait-effect">${effectLabel(t)}</div>${gameSeedNote(t)}</article>`).join('')||'<div class="empty-state">검색 결과가 없습니다.</div>'}</div><div class="pager">${button('← 이전','traits-prev')}<span>${traitPage+1} / ${max} · ${rows.length}개</span>${button('다음 →','traits-next')}</div>`;
  }
- function gameSeedNote(t){const key=t.binding?.key;return key&&gameSeedKeys.size&&!gameSeedKeys.has(key)?`<div class="warning">게임 미적용: 2.4.1 get_stock_seed가 seed_${e(key)}를 읽지 않아 캐릭터 JSON에 써도 게임 인물에는 반영되지 않습니다.</div>`:'';}
+ const SEED_NOTE={
+  jo9:'신규 특성입니다. 게임은 랜덤 생성 때 추첨하고 캐릭터 JSON의 seed_ 값은 읽지 않습니다. 고유 캐릭터에 주려면 전용 프로필 코드(예: 3040 춘향 jo9_chunhyang_profile)가 필요합니다.',
+  state:'게임 진행 중에 생기는 상태값입니다. 캐릭터 JSON 초기값으로는 지정되지 않습니다.',
+  sanity:'자아·기질·자존심 합으로 계산되는 상태입니다. JSON에서는 ego·temper·pride 값으로 조정합니다.',
+  activity_sign:'워커홀릭·무기력함은 게임에서 jo9_work_ethic으로 저장되며 랜덤 생성 때 추첨합니다. 캐릭터 JSON의 seed_ 값은 읽지 않습니다.'};
+ function gameSeedNote(t){const key=t.binding?.key;if(!key||!gameSeedKeys.size||gameSeedKeys.has(key))return '';
+  const text=key.startsWith('jo9_')?SEED_NOTE.jo9:SEED_NOTE[key]??SEED_NOTE.state;
+  return `<div class="warning">JSON으로 지정 불가: ${e(text)}</div>`;}
  function effectLabel(t){const key=t.binding?.key;
   return key==='homosexualism'?'자동 반영: 인간 동성 비중':key==='oral_affinity'?'자동 반영: 구강 상세 S 상당 보정':key==='anal_affinity'?'자동 반영: 애널 상세 S 상당 보정':key==='nymphomania'?'자동 반영: 초기 경력 성향 계수':'JSON 조건값에 반영 · 초기 통계 전용 계수는 미지정';
  }

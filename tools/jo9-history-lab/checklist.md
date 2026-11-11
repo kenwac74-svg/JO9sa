@@ -10,7 +10,7 @@
 
 ## A. 편집기 완성 (게임 본체는 건드리지 않음)
 - [x] A1 seed_age 실제 매핑 대조: 0=young, 1=loli, 2=milf. 편집기의 `adultOnly && age===1` 제외와 일치
-- [x] A2 특성 바인딩 대조: 128개 중 88개는 게임이 읽는 seed_ 키, 40개(키 19종)는 미적용. 카드에 경고 표시, `checks-trait-bindings.mjs`
+- [x] A2 특성 바인딩 대조: 128개 중 88개는 게임이 읽는 seed_ 키, 40개(키 19종)는 JSON으로 지정 불가(신규 특성은 랜덤 생성 추첨·전용 프로필, 나머지는 진행 중 상태값). 카드에 안내 표시, `checks-trait-bindings.mjs`
 - [x] A3 직업 임명 조건: 외양간지기 = moral >= 3, 간호 > 2(B), 비서 > 2(B). 핸드오프 권장 B/B는 맞고 moral 조건이 추가로 있다
 - [x] A4 직업 명세 데이터화: 30개 명세, 규칙 80개(확정 39·미정 28·메모 13). 원본 `docs/occupation-specs-source.mjs`, 생성 `docs/build-occupation-specs.mjs`
 - [x] A5 명세 검사 `checks-occupation-specs.mjs`: 원본 일치, 없는 특성·직업·스킬·등급, 배척 그룹 합, 부여·제외 겹침, 같은 게임 키 충돌
