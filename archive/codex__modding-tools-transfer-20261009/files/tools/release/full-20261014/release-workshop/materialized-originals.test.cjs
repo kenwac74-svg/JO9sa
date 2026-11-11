@@ -1,0 +1,37 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto'),vm=require('node:vm');
+const root=fs.mkdtempSync(path.join(__dirname,'physical-original-test-'));
+const game=path.join(root,'Game With Spaces'),catalog=path.join(root,'Catalog'),runtime=path.join(root,'Runtime');
+const physical=path.join(game,'content','jo9o_original_cuts'),base='scene/VIP/VIP3.png';
+const png=Buffer.from('89504e470d0a1a0a0000000d494844520000031b00000254','hex');
+const a=Buffer.concat([png,Buffer.from('replacement')]),b=Buffer.concat([png,Buffer.from('original')]);
+const hash=v=>crypto.createHash('sha256').update(v).digest('hex');
+try {
+ for(const dir of [path.dirname(path.join(game,'content','pic',base)),path.dirname(path.join(physical,base)),catalog,runtime])fs.mkdirSync(dir,{recursive:true});
+ fs.writeFileSync(path.join(game,'content','pic',base),a);fs.writeFileSync(path.join(physical,base),b);
+ fs.writeFileSync(path.join(catalog,'catalog_merge_vs_original.html'),'var D = '+JSON.stringify([['content\\pic\\'+base.replaceAll('/','\\'),'a','etc',a.length,0,795,596,'']])+';\nvar MR = [];');
+ fs.writeFileSync(path.join(catalog,'catalog_status.js'),'window.CATALOG_STATUS='+JSON.stringify({savedAt:0,items:{['content\\pic\\'+base.replaceAll('/','\\')]:['spare']}})+';');
+ const registrar=require('./original-cuts.cjs');
+ const registered=registrar.register(game,catalog,game,runtime,[base],false,physical);
+ assert.equal(registered.createdLink,false);assert.equal(fs.lstatSync(physical).isSymbolicLink(),false);
+ assert.equal(registered.registered.length,1);assert.equal(registered.registered[0].target,'content/jo9o_original_cuts/'+base);
+ assert.equal(registered.registered[0].sourceSha,hash(b));
+ assert.deepEqual(fs.readFileSync(path.join(game,'content','pic',base)),a);assert.deepEqual(fs.readFileSync(path.join(physical,base)),b);
+ const again=registrar.register(game,catalog,game,runtime,[base],false,physical);assert.equal(again.changed,false);assert.equal(again.createdLink,false);
+ const release=registrar.register(game,catalog,game,runtime,null,true,physical);assert.equal(release.registered.length,1);assert.equal(release.createdLink,false);
+ assert.deepEqual(fs.readFileSync(path.join(physical,base)),b);
+ const source=fs.readFileSync(path.join(__dirname,'server.cjs'),'utf8');
+ const compareSource=source.slice(source.indexOf('function catalogAsset('),source.indexOf('\nfunction history()'));
+ const context={fs,path,game,originalPic:physical,portableOriginalPic:physical,imageCuts:{resolveAlias:()=>null,originals:()=>({[base.toLowerCase()]:registered.registered[0]})}};
+ vm.runInNewContext(compareSource,context);
+ assert.equal(context.catalogAsset('content/pic/'+base,true),path.join(physical,base));
+ assert.equal(context.catalogAsset('content/pic/'+base.replace('.png',' (2).png'),true),path.join(physical,base));
+ assert.equal(context.catalogAsset('content/pic/'+base,false),path.join(game,'content','pic',base));
+ assert.equal(context.catalogAsset('content/pic/scene/Missing.png',true),null);
+ assert.equal(context.catalogAsset('content/pic/'+base.toLowerCase(),true),null);
+ assert.equal(context.catalogAsset('content/pic/../outside.png',true),null);
+ const reserveEntry={...registered.registered[0],base:'reserve/'+base,alias:'reserve/'+base.replace('.png',' (2).png')};
+ context.imageCuts.originals=()=>({['reserve/'+base.toLowerCase()]:reserveEntry});
+ assert.equal(context.catalogAsset('content/pic/reserve/'+base,true),path.join(physical,base));
+ console.log('PASS: materialized B cuts, no junctions, unchanged A/B bytes, idempotent sync, manifest-mapped original comparison, missing original rejected, exact filename case and traversal checks');
+} finally {fs.rmSync(root,{recursive:true,force:true});}
