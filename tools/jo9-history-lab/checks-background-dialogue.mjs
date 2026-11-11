@@ -1,0 +1,32 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {defaultConfig,validateState} from './dist/engine.mjs';
+import {buildBackgroundCases,findBackgrounds} from './dist/backgrounds.mjs';
+import {textKey} from './dist/background-settings.mjs';
+const revision=JSON.parse(fs.readFileSync('docs/background-revision-20261112.json'));
+const documents=['backgrounds.json','background-drafts.json'].map(f=>JSON.parse(fs.readFileSync('dist/data/'+f)));
+const records=documents.flatMap(d=>d.records);
+assert.equal(records.length,163);
+const names={world:new Map(),family:new Map(),occupation:new Map()};
+for(const record of records){
+ const [label,value]=revision[record.kind][record.id]??[];
+ assert(label&&value,'every record needs an authored revision: '+record.kind+':'+record.id);
+ const prose=record.kind==='world'?value[record.variant-1]:value;
+ assert(prose,'every world variant needs a separate revision: '+textKey(record));
+ assert.equal(record.label,label,'updated introduction label: '+record.kind+':'+record.id);
+ assert.equal(record.text,'{이름}\n'+prose,'updated reflective dialogue: '+record.kind+':'+textKey(record));
+ assert(!/만세|영광을|여성들이여|하하|!!!|어디서 자랐든/.test(record.text),'reflective speech, not slogans: '+textKey(record));
+ assert(record.text.length<=4000);
+ names[record.kind].set(record.id,label);
+}
+for(const[kind,group]of Object.entries(names))assert.equal(new Set(group.values()).size,group.size,'distinct introduction names: '+kind);
+const catalogue={...documents[0],records};
+const config=defaultConfig();
+const cases=buildBackgroundCases(catalogue,config);
+assert(cases.length>0);
+assert(findBackgrounds(cases,{query:'선반공'}).every(r=>r.occupation.id==='freaser'));
+assert(findBackgrounds(cases,{query:'미래경찰'}).length>0);
+assert(!revision.family.orphan[1].includes('아버지'));
+assert(revision.family.astrogator[0].includes('항해사'));
+assert(revision.family.nanofarmacist[0].includes('약리학자'));
+console.log('PASS · 163 authored texts, all variant coverage, unique names, reflective tone, preserved placeholders and catalogue search');

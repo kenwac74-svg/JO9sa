@@ -1,0 +1,127 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {validateBackgroundSettings,getAgeRule,allowedBackgroundAges,backgroundAgeAllows,worldOccupations,familyOccupations} from './dist/background-settings.mjs';
+import {buildBackgroundCases,findBackgrounds,autoBackground,useBackground} from './dist/backgrounds.mjs';
+import {freshState,validateState,defaultConfig,defaultCharacter,clone} from './dist/engine.mjs';
+import {parseCharacterJSON,exportCharacterJSON,setCharacterSeedAge} from './dist/character-io.mjs';
+import {applyBackgroundDefaults,backgroundConnectionDefault,CONNECTION_DEFAULTS_VERSION} from './dist/background-defaults.mjs';
+const base=JSON.parse(fs.readFileSync('dist/data/backgrounds.json'));
+const drafts=JSON.parse(fs.readFileSync('dist/data/background-drafts.json'));
+const catalogue={...base,records:[...base.records,...drafts.records]},config=defaultConfig();
+assert.equal(drafts.records.length,11);
+assert.equal(buildBackgroundCases(catalogue,config).length,4980,'world-level defaults; drafts never auto-connect');
+validateBackgroundSettings(config);
+config.backgroundSettings.links.worldFamilies.earth_rome=['ancient_noble'];
+config.backgroundSettings.links.occupations['earth_rome:ancient_noble']=['gang_member','mafia_boss'];
+let cases=buildBackgroundCases(catalogue,config);
+assert.equal(cases.length,4982);
+const roman=cases.filter(c=>c.world.id==='earth_rome'),gang=roman.find(c=>c.occupation.id==='gang_member'),mafia=roman.find(c=>c.occupation.id==='mafia_boss');
+config.backgroundSettings.ageRules.occupation.gang_member={required:[0,1],rejected:[2]};
+config.backgroundSettings.ageRules.occupation.mafia_boss={required:[2],rejected:[]};
+validateBackgroundSettings(config);
+assert.deepEqual(allowedBackgroundAges(config,gang),[0,1]);
+assert.deepEqual(allowedBackgroundAges(config,mafia),[2]);
+assert.equal(backgroundAgeAllows(config,gang,null),false);
+assert.equal(backgroundAgeAllows(config,gang,0),true);
+assert.equal(backgroundAgeAllows(config,gang,2),false);
+config.backgroundSettings.ageRules.world.earth_rome={required:[1,2],rejected:[]};
+assert.deepEqual(allowedBackgroundAges(config,gang),[1],'different rows intersect');
+config.backgroundSettings.ageRules.family.ancient_noble={required:[],rejected:[1]};
+assert.deepEqual(allowedBackgroundAges(config,gang),[]);
+assert.equal(autoBackground({...defaultCharacter(),seedAge:1},[gang],config).selected,null,'no fallback bypasses age');
+delete config.backgroundSettings.ageRules.family.ancient_noble;
+const rule=getAgeRule(config,'occupation','gang_member');rule.required.push(2);assert.deepEqual(getAgeRule(config,'occupation','gang_member').required,[0,1]);
+for(const bad of [
+ {ageRules:{world:{earth_rome:{required:[1],rejected:[1]}}}},
+ {ageRules:{occupation:{gang_member:{required:[3]}}}},
+ {ageRules:{occupation:{gang_member:{required:[0,0]}}}},
+ {texts:{world:{'earth_rome:1':''}}},
+ JSON.parse('{"links":{"worldFamilies":{"__proto__":[]}}}'),
+ {links:{worldFamilies:{earth_rome:['ancient_noble','ancient_noble']}}},
+])assert.throws(()=>validateBackgroundSettings({backgroundSettings:bad}));
+config.backgroundSettings.texts.world['earth_rome:1']='{이름}\n수정한 로마 세계 원고';
+config.backgroundSettings.texts.family.ancient_noble='{이름}\n수정한 귀족 출신 원고';
+cases=buildBackgroundCases(catalogue,config);
+assert.equal(findBackgrounds(cases,{query:'수정한 로마'}).length,2);
+const actor={...defaultCharacter(),seedAge:2};useBackground(actor,cases.find(c=>c.occupation.id==='mafia_boss'));
+assert(actor.note.includes('수정한 로마 세계 원고'));assert(actor.note.includes('수정한 귀족 출신 원고'));
+config.backgroundSettings.links.occupations['industrial:clerk']=['gang_member'];
+assert(!buildBackgroundCases(catalogue,config).some(c=>c.world.id==='steampunk'&&c.family.id==='clerk'&&c.occupation.id==='gang_member'),'world-scoped links never leak into shared family worlds');
+config.backgroundSettings.links.worldFamilies.earth_rome=[];
+assert.equal(buildBackgroundCases(catalogue,config).filter(c=>c.world.id==='earth_rome').length,0,'explicit empty means disconnected');
+const data=freshState();data.config=clone(config);const roundtrip=validateState(JSON.parse(JSON.stringify(data)));
+assert.deepEqual(roundtrip.config.backgroundSettings,config.backgroundSettings);
+for(const age of [0,1,2]){
+ const parsed=parseCharacterJSON({seed_name:'검증용',seed_age:age},'age.json',config);
+ assert.equal(parsed.character.seedAge,age);
+ const result=exportCharacterJSON({config,character:parsed.character,characterFile:parsed.document});
+ assert.equal(result.seed_age,age);
+}
+assert.equal(parseCharacterJSON({seed_name:'검증용',seed_age:''},'age.json',config).character.seedAge,null);
+const wrapper={schema:'jo9-history-result/v1',config:clone(config),character:{...defaultCharacter(),seedAge:0}};
+for(const age of [2,null,0]){
+ const loaded=parseCharacterJSON(wrapper,'result.json',config);
+ setCharacterSeedAge(loaded.character,loaded.document,age);
+ const reapplied=parseCharacterJSON(loaded.document.working,'result.json',config);
+ assert.equal(reapplied.character.seedAge,age,'whole raw JSON apply preserves profile wrapper age edits and clearing');
+}
+const native=parseCharacterJSON({seed_name:'검증용',seed_age:0},'native.json',config);
+setCharacterSeedAge(native.character,native.document,2);assert.equal(native.document.working.seed_age,2);
+setCharacterSeedAge(native.character,native.document,null);assert(!Object.hasOwn(native.document.working,'seed_age'));
+const unmapped=parseCharacterJSON({seed_name:'검증용'},'native.json',config);
+setCharacterSeedAge(unmapped.character,unmapped.document,0);assert.equal(unmapped.document.working.seed_age,0);
+setCharacterSeedAge(unmapped.character,unmapped.document,null);assert(!Object.hasOwn(unmapped.document.working,'seed_age'));
+const adult=drafts.records.find(r=>r.id==='courtesan');
+assert(!allowedBackgroundAges(config,{world:gang.world,family:gang.family,occupation:adult}).includes(1));
+assert(drafts.records.every(r=>!r.text.includes('성인이 된 뒤')),'prose is independent of age wording');
+const activated=defaultConfig();assert.equal(applyBackgroundDefaults(activated,catalogue),true);
+assert.equal(activated.backgroundSettings.defaultConnectionsVersion,CONNECTION_DEFAULTS_VERSION);
+const activatedCases=buildBackgroundCases(catalogue,activated);
+for(const record of drafts.records)assert(activatedCases.some(item=>item[record.kind].id===record.id),'every added setting appears in main combinations: '+record.id);
+assert.equal(new Set(activatedCases.map(item=>item.world.id)).size,14);
+assert.deepEqual([...new Set(activatedCases.filter(item=>item.occupation.id==='former_slave').map(item=>item.world.id))].sort(),['barbarian','sns','earth_rome','medieval','highfantasy','darkfantasy','steampunk'].sort());
+activated.backgroundSettings.links.worldOccupations.earth_rome=[];
+assert.equal(applyBackgroundDefaults(activated,catalogue),false,'later edits are never automatically refilled');
+assert.deepEqual(activated.backgroundSettings.links.worldOccupations.earth_rome,[]);
+assert(backgroundConnectionDefault(activated,catalogue,'worldOccupations','earth_rome').includes('former_slave'),'reset restores the connected new defaults');
+assert.deepEqual(activated.backgroundSettings.links.worldOccupations.earth_rome,[],'computing a reset never mutates other settings');
+const personalized=defaultConfig();
+personalized.backgroundSettings.links.occupationFamilies['medieval:brigand']={required:['orphan','bondman'],rejected:['knight']};
+personalized.backgroundSettings.links.occupationFamilies['medieval:beggar']={required:[],rejected:[]};
+personalized.backgroundSettings.ageRules.occupation.gang_member={required:[2],rejected:[0]};
+personalized.backgroundSettings.links.occupations['medieval:admiral']=['thief'];
+applyBackgroundDefaults(personalized,catalogue);
+assert.deepEqual(personalized.backgroundSettings.links.occupationFamilies['medieval:gang_member'],{required:['orphan','bondman'],rejected:['knight']},'copy the user-set brigand template into similar jobs');
+assert.deepEqual(personalized.backgroundSettings.links.occupationFamilies['medieval:beggar'],{required:[],rejected:[]},'keep individually edited jobs, including empty allowed sets');
+assert.deepEqual(personalized.backgroundSettings.ageRules.occupation.gang_member,{required:[2],rejected:[0]},'keep customized age rules');
+assert.deepEqual(personalized.backgroundSettings.links.occupations['medieval:admiral'],['thief'],'archive stays intact');
+assert.deepEqual(validateState({schema:data.schema,config:personalized,character:defaultCharacter(),snapshots:[]}).config.backgroundSettings,personalized.backgroundSettings,'activated defaults survive backup validation');
+const oldEmpty=defaultConfig();oldEmpty.backgroundSettings.links.worldFamilies.earth_rome=[];oldEmpty.backgroundSettings.links.worldOccupations.earth_rome=[];
+applyBackgroundDefaults(oldEmpty,catalogue);assert(!buildBackgroundCases(catalogue,oldEmpty).some(item=>item.world.id==='earth_rome'),'explicit disconnected world remains disconnected until user applies the reviewed graph');
+const independent=defaultConfig();validateBackgroundSettings(independent);
+independent.backgroundSettings.links.worldOccupations.earth_rome=['gang_member','mafia_boss'];
+assert.deepEqual(worldOccupations(catalogue,independent,'earth_rome'),['gang_member','mafia_boss'],'jobs can be stored with no family');
+assert.equal(buildBackgroundCases(catalogue,independent).filter(c=>c.world.id==='earth_rome').length,0,'full biographies still require a linked family');
+independent.backgroundSettings.links.worldFamilies.earth_rome=['ancient_noble','ancient_citizen'];
+let independentCases=buildBackgroundCases(catalogue,independent).filter(c=>c.world.id==='earth_rome');
+assert.equal(independentCases.length,4,'both families share both world jobs');
+independent.backgroundSettings.links.worldFamilies.earth_rome=['roman_freedslave'];
+assert.deepEqual(worldOccupations(catalogue,independent,'earth_rome'),['gang_member','mafia_boss'],'family changes never change world jobs');
+independent.backgroundSettings.links.occupationFamilies['earth_rome:mafia_boss']={required:['ancient_noble'],rejected:[]};
+assert.deepEqual(familyOccupations(catalogue,independent,'earth_rome','roman_freedslave'),['gang_member']);
+independent.backgroundSettings.links.occupationFamilies['earth_rome:gang_member']={required:null,rejected:['roman_freedslave']};
+assert.equal(buildBackgroundCases(catalogue,independent).filter(c=>c.world.id==='earth_rome').length,0,'optional rejected family is enforced');
+independent.backgroundSettings.links.occupationFamilies['earth_rome:mafia_boss']={required:[],rejected:[]};
+assert.equal(familyOccupations(catalogue,independent,'earth_rome','ancient_noble').includes('mafia_boss'),false,'empty required differs from null');
+assert.throws(()=>validateBackgroundSettings({backgroundSettings:{links:{occupationFamilies:{'earth_rome:mafia_boss':{required:['ancient_noble'],rejected:['ancient_noble']}}}}}));
+const legacy=defaultConfig();delete legacy.backgroundSettings.links.worldOccupations;delete legacy.backgroundSettings.links.occupationFamilies;
+legacy.backgroundSettings.links.occupations['earth_rome:admiral']=['gang_member'];
+assert.deepEqual(worldOccupations(catalogue,legacy,'earth_rome'),['gang_member'],'legacy settings of unlinked families survive');
+const legacyRound=validateState({schema:data.schema,config:legacy,character:defaultCharacter(),snapshots:[]});
+assert.deepEqual(legacyRound.config.backgroundSettings.links.occupations['earth_rome:admiral'],['gang_member']);
+assert.deepEqual(worldOccupations(catalogue,legacyRound.config,'earth_rome'),['gang_member']);
+legacyRound.config.backgroundSettings.links.worldOccupations.earth_rome=[];
+assert.deepEqual(worldOccupations(catalogue,legacyRound.config,'earth_rome'),[],'explicit no jobs wins over legacy union');
+const v2=validateState(JSON.parse(JSON.stringify({...legacyRound,config:independent})));
+assert.deepEqual(v2.config.backgroundSettings,independent.backgroundSettings,'world jobs and optional constraints round trip');
+console.log('PASS · independent world jobs, optional family restrictions, legacy migration, explicit empty preservation, manual scoped links, unconnected drafts, age OR/intersection/rejection, invalid configuration, edited text, deterministic no-bypass selection, backup and native seed_age round trips');

@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import {settingsFilename,saveSettingsFile} from './dist/settings-save.mjs';
+assert.equal(settingsFilename(new Date(2026,10,11,8,9,3)),'잭오나_전체설정백업_2026-11-11_08-09-03.json');
+assert.deepEqual(await saveSettingsFile('{}','test.json',null),{status:'unsupported'});
+assert.equal((await saveSettingsFile('{}','test.json',async()=>{throw Object.assign(new Error(),{name:'AbortError'});})).status,'cancelled');
+let written,closed=false,options;
+assert.equal((await saveSettingsFile('{"keep":0}','test.json',async o=>{options=o;return{name:'chosen.json',createWritable:async()=>({write:async x=>{written=x;},close:async()=>{closed=true;}})}})).name,'chosen.json');
+assert.equal(written,'{"keep":0}');assert(closed);assert.equal(options.startIn,'downloads');
+let aborted=false;
+const failure=await saveSettingsFile('{}','test.json',async()=>({createWritable:async()=>({write:async()=>{throw new Error('Disk full');},abort:async()=>{aborted=true;}})}));
+assert.equal(failure.status,'error');assert(aborted);
+assert.equal((await saveSettingsFile('{}','test.json',async()=>({createWritable:async()=>({write:async()=>{},close:async()=>{throw new Error('Close failed');}})}))).status,'error');
+console.log('PASS · picker selection, exact JSON, filename, cancellation, unsupported, write/close failure and completion');
