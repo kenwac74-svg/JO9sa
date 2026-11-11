@@ -10,3 +10,11 @@
 - 본문에 남은 /workspace/sites/jo9-history-lab 경로는 원 작업 환경이다. 이 저장소에서는 tools/jo9-history-lab 아래 대응 파일을 사용한다.
 - Sites 호스팅 식별 파일(.openai)은 이식하지 않았다. 게임 본체·배포 폴더·main에는 반영하지 않았다.
 - 검증: node checks-background-connections.mjs, node checks-background-dialogue.mjs, node checks.mjs 등 checks-*.mjs. 원 작업에서 통과한 검사이며 실제 게임 플레이 확인과 구분한다.
+
+
+## 동봉 자료 및 기준 정정
+
+- presets/에 핸드오프 3장의 자료 6개를 모두 동봉했다(출신 계층 엑셀·활동/집중 특성 개편 문서 포함).
+- 0eb1394b는 문서 작성 전 기능 기준, 53769aa는 인계 문서 추가 후 실제 소스 기준이다.
+- 원 GitHub 인계 커밋은 085b0d8. 이번에는 기준 설명·참조 파일·manifest만 보강했으며 실행 코드와 게임 기능은 변경하지 않았다.
+- snapshot-manifest.json은 이 묶음의 모든 파일(자기 자신 제외)의 SHA-256을 기록한다.
