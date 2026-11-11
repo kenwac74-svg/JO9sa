@@ -97,6 +97,7 @@ export function pastHistory(stock,formula,seed='0'){
  }else if(result.intimacy===0){result.acts={vaginal:0,oral:0,anal:0};result.partners={opposite:0,sameSex:0,nonhuman:0};}
  if(occ.name==='married'){
   if(stock.fertility<0){result.pregnancies=0;result.births=0;trace.push('불임·미성숙: 임신·출산 0');}
+  else if(stock.virginity<2){result.pregnancies=0;result.births=0;trace.push('유부녀지만 처녀(원숙한 신부가 이름만 아내로 바뀐 경우 등): 임신·출산 0');}
   else{
    const [ymin,ymax]=formula.marriage.years[String(stock.age)]??formula.marriage.years['0'];
    const years=rand(ymin,ymax);

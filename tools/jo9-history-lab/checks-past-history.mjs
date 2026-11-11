@@ -43,6 +43,7 @@ for(let i=0;i<2000;i++)for(const [age,key]of [[0,'young'],[2,'milf']]){
 const avg=k=>[sum[k][0]/sum[k][2],sum[k][1]/sum[k][2]].map(x=>x.toFixed(2));
 // 기대값: 젊음 2.5년×45% ≈ 1.1회, 원숙 8.5년×45% ≈ 3.8회
 assert(Math.abs(sum.young[0]/2000-1.125)<0.15&&Math.abs(sum.milf[0]/2000-3.825)<0.25,`평균 ${avg('young')} ${avg('milf')}`);
+const virginWife=pastHistory(stock({age:2,virginity:0}),F,'s');assert.equal(virginWife.pregnancies,0);assert.equal(virginWife.births,0);
 const sterile=pastHistory(stock({fertility:-1}),F,'s');assert.equal(sterile.pregnancies,0);assert.equal(sterile.births,0);
 const other=pastHistory(stock({occupation:'whore'}),F,'s');assert.equal(other.pregnancies,null);assert.equal(other.births,null);
 const pregnantNow=pastHistory(stock({occupation:'whore',pregnant:1}),F,'s');assert.equal(pregnantNow.pregnancies,1);assert.equal(pregnantNow.births,0);

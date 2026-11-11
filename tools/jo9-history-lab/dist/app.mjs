@@ -1,5 +1,6 @@
 import {SCHEMA,GRADES,DOMAINS,STAT_KEYS,OWNER_COUNT_KEYS,COMBAT_KEYS,COMBAT_TYPES,SKILLS,defaultConfig,defaultCharacter,freshState,clone,estimate,validateState} from './engine.mjs';
 import {createWorkbench} from './workbench.mjs';
+import {createSimView} from './sim-view.mjs';
 import {moveUnclassifiedCombat} from './character-io.mjs';
 import {settingsFilename,openSettingsSave} from './settings-save.mjs';
 const KEY='jo9-history-lab-v1';
@@ -208,3 +209,4 @@ tab=location.hash.slice(1)||'simulator';renderAll();if(!storageAvailable)$('#sav
 window.addEventListener('hashchange',()=>{const next=location.hash.slice(1);if(next!==tab){if(next==='simulator')renderSimulator();switchTab(next);}});
 
 try{workbench=await createWorkbench({getState:()=>state,save,renderAll,renderSimulator,renderResult,tabNames,switchTab,toast,confirmAction,download,snapshot});tab=requestedTab;renderAll();}catch(error){toast('캐릭터 편집 데이터를 읽지 못했습니다: '+error.message);}
+try{await createSimView({tabNames});if(requestedTab==='slave-sim')switchTab('slave-sim');}catch(error){toast('노예 뽑기 시뮬레이터 데이터를 읽지 못했습니다: '+error.message);}
