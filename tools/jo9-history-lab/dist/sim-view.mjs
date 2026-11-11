@@ -2,7 +2,8 @@
 import {pastHistory,tierOf} from './past-history.mjs';
 
 const e=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const AGE={0:'젊음',2:'원숙'};
+// 연령은 게임 코드 그대로 표시한다(0 young, 1 loli, 2 milf). 1은 통계 대상이 아니라 표본에 없다.
+const AGE={0:'0',1:'1',2:'2'};
 const LIBIDO={2:'정액 중독',1:'색정광',0:'',[-1]:'불감증',[-2]:'석녀'};
 
 // 고정 시드 수열(mulberry32). 같은 시드면 같은 노예를 뽑는다.
@@ -19,7 +20,20 @@ export async function createSimView(api){
  const rows=all.filter(r=>r.world&&r.family&&r.occupation),uniques=all.length-rows.length;
  const labels={};for(const r of [...bg.records,...drafts.records])(labels[r.kind]??={})[r.id]??=r.label;
  const name=(kind,id)=>labels[kind]?.[id]??id;
- const opts=key=>[...new Set(rows.map(r=>r[key]))].sort((a,b)=>name(key,a).localeCompare(name(key,b),'ko'));
+ // 게임 생성 규칙의 연결: 세계 → $<세계>_family, 출신 → $<출신>_occupation. 원숙한 신부는 생성 중 아내로 이름이 바뀐다.
+ const RENAME={poor_bride:'poor_wife',noble_bride:'noble_wife',rich_bride:'rich_wife'};
+ const worlds=[...new Set(bg.worldPool)];
+ const familiesOf=w=>bg.pools[w+'_family']??[];
+ const occupationsOf=f=>{const o=bg.pools[f+'_occupation']??[];return [...new Set([...o,...o.filter(x=>RENAME[x]).map(x=>RENAME[x])])];};
+ const byName=key=>(a,b)=>name(key,a).localeCompare(name(key,b),'ko');
+ // 다른 두 칸의 선택과 연결되는 값만 남긴다
+ function opts(key){
+  const W=st.world?[st.world]:worlds;
+  if(key==='world')return worlds.filter(w=>(!st.family||familiesOf(w).includes(st.family))&&(!st.occupation||familiesOf(w).some(f=>(!st.family||f===st.family)&&occupationsOf(f).includes(st.occupation)))).sort(byName('world'));
+  if(key==='family')return [...new Set(W.flatMap(familiesOf))].filter(f=>!st.occupation||occupationsOf(f).includes(st.occupation)).sort(byName('family'));
+  const F=st.family?[st.family]:[...new Set(W.flatMap(familiesOf))];
+  return [...new Set(F.flatMap(occupationsOf))].sort(byName('occupation'));
+ }
  const st={count:1000,seed:1,world:'',family:'',occupation:'',age:'',group:'tier',detail:null};
  const id='slave-sim';
  api.tabNames[id]=['노예 뽑기 시뮬레이터','노예 뽑기 시뮬레이터','실제 게임 엔진으로 뽑은 랜덤 노예 표본에서 N명을 뽑아 과거 경험 공식의 결과를 확인하세요.'];
@@ -39,7 +53,7 @@ export async function createSimView(api){
   if(st.group==='occupation')return name('occupation',p.stock.occupation);
   if(st.group==='family')return name('family',p.stock.family);
   if(st.group==='world')return name('world',p.stock.world);
-  return AGE[p.stock.age]??String(p.stock.age);
+  return '연령 '+(AGE[p.stock.age]??String(p.stock.age));
  }
  const TIER={virginForced:'처녀 고정',sexWork:'성인 접객업',married:'유부녀',formerSlave:'노예 출신',nightlife:'유흥·사교',default:'그 밖'};
  function histogram(values){
@@ -54,11 +68,11 @@ export async function createSimView(api){
   const acts=valid.reduce((a,r)=>{if(r.acts){a.v+=r.acts.vaginal;a.o+=r.acts.oral;a.a+=r.acts.anal;}return a;},{v:0,o:0,a:0}),actSum=acts.v+acts.o+acts.a;
   const preg=valid.filter(r=>r.pregnancies!==null);
   const groups=new Map();for(const p of picked){const k=groupKey(p);if(!groups.has(k))groups.set(k,[]);groups.get(k).push(p);}
-  const sel=(key,label,list,all)=>`<label class="field"><span>${label}</span><select data-sim="${key}"><option value="">${all}</option>${list.map(v=>`<option value="${e(v)}" ${String(st[key])===String(v)?'selected':''}>${e(key==='age'?AGE[v]:name(key,v))}</option>`).join('')}</select></label>`;
+  const sel=(key,label,list,all)=>`<label class="field"><span>${label}</span><select data-sim="${key}"><option value="">${all}</option>${list.map(v=>`<option value="${e(v)}" ${String(st[key])===String(v)?'selected':''} ${key==='age'&&v==='1'?'disabled':''}>${e(key==='age'?(v==='1'?'1 (통계 제외)':v):name(key,v))}</option>`).join('')}</select></label>`;
   root.innerHTML=`<div class="notice neutral"><span>⚄</span><div><strong>실제 게임 엔진 표본 ${rows.length.toLocaleString('ko-KR')}명</strong>에서 뽑습니다. 최신 jack.qsp의 generate_stock과 영입 처리(stock_to_slave_nogt)까지 QSP WASM 엔진으로 실행한, 모든 특성 추첨이 끝난 랜덤 노예(연령 코드 1 제외)입니다.${uniques?` 랜덤 범위에서 뽑힌 고유 캐릭터 ${uniques}명은 고정 배경이라 뺐습니다.`:''} 공식은 계수 ${e(formula.version)}을 씁니다.</div></div>
   <article class="card"><div class="card-body sim-controls">
    <label class="field"><span>뽑을 수</span><select data-sim="count">${[100,1000,5000,10000].map(n=>`<option ${st.count===n?'selected':''}>${n}</option>`).join('')}</select></label>
-   ${sel('world','세계',opts('world'),'모든 세계')}${sel('family','출신',opts('family'),'모든 출신')}${sel('occupation','직업',opts('occupation'),'모든 직업')}${sel('age','연령',['0','2'],'모든 연령')}
+   ${sel('world','세계',opts('world'),'모든 세계')}${sel('family','출신',opts('family'),'모든 출신')}${sel('occupation','직업',opts('occupation'),'모든 직업')}${sel('age','연령 코드',['0','1','2'],'모든 연령')}
    <div class="sim-actions"><button class="button primary" data-sim-action="reroll">⚄ 다시 뽑기</button><span class="muted-text">시드 ${st.seed} · 조건에 맞는 표본 ${pool.length.toLocaleString('ko-KR')}명</span></div>
   </div></article>
   ${pool.length?`<div class="result-summary sim-summary">
@@ -68,16 +82,19 @@ export async function createSimView(api){
    <div class="summary-tile"><span class="summary-label">임신 · 출산 기록</span><span class="summary-value sim-small">${pct(preg.length,valid.length)}</span><div class="summary-foot">기록 있는 노예 평균 임신 ${avg(preg.map(r=>r.pregnancies)).toFixed(2)} · 출산 ${avg(preg.map(r=>r.births)).toFixed(2)}</div></div>
   </div>
   <article class="card"><div class="card-head"><h2>성경험 분포 <small>${picked.length.toLocaleString('ko-KR')}명</small></h2></div><div class="card-body">${histogram(xs)}</div></article>
-  <article class="card"><div class="card-head"><h2>묶음별 결과</h2><select data-sim="group" aria-label="묶음 기준">${[['tier','직업 묶음'],['occupation','직업'],['family','출신'],['world','세계'],['age','연령']].map(([v,l])=>`<option value="${v}" ${st.group===v?'selected':''}>${l}</option>`).join('')}</select></div>
+  <article class="card"><div class="card-head"><h2>묶음별 결과</h2><select data-sim="group" aria-label="묶음 기준">${[['tier','직업 묶음'],['occupation','직업'],['family','출신'],['world','세계'],['age','연령 코드']].map(([v,l])=>`<option value="${v}" ${st.group===v?'selected':''}>${l}</option>`).join('')}</select></div>
    <div class="table-wrap"><table><thead><tr><th>${st.group==='tier'?'직업 묶음':'구분'}</th><th class="numeric">인원</th><th class="numeric">처녀</th><th class="numeric">성경험 중앙값</th><th class="numeric">평균</th><th class="numeric">질·구강·애널</th><th class="numeric">임신/출산 평균</th></tr></thead><tbody>
    ${[...groups].sort((a,b)=>b[1].length-a[1].length).map(([k,list])=>{const r=list.map(p=>p.result),x=r.map(v=>v.intimacy??0),a=r.reduce((s,v)=>{if(v.acts){s[0]+=v.acts.vaginal;s[1]+=v.acts.oral;s[2]+=v.acts.anal;}return s;},[0,0,0]),t=a[0]+a[1]+a[2],pr=r.filter(v=>v.pregnancies!==null);
     return `<tr><td>${e(st.group==='tier'?TIER[k]??k:k)}</td><td class="numeric">${list.length}</td><td class="numeric">${pct(list.filter(p=>p.stock.virginity<2).length,list.length)}</td><td class="numeric">${median(x)}</td><td class="numeric">${avg(x).toFixed(1)}</td><td class="numeric">${pct(a[0],t)} · ${pct(a[1],t)} · ${pct(a[2],t)}</td><td class="numeric">${pr.length?avg(pr.map(v=>v.pregnancies)).toFixed(2)+' / '+avg(pr.map(v=>v.births)).toFixed(2):'—'}</td></tr>`;}).join('')}
    </tbody></table></div></article>
-  <article class="card"><div class="card-head"><h2>뽑힌 노예 <small>앞 30명 · 행을 누르면 산출 과정</small></h2></div><div class="table-wrap"><table class="sim-list"><thead><tr><th>#</th><th>세계 · 출신 · 직업</th><th>연령</th><th>처녀</th><th>외모</th><th>성욕</th><th class="numeric">성경험</th><th class="numeric">질/구강/애널</th><th class="numeric">임신/출산</th></tr></thead><tbody>
+  <article class="card"><div class="card-head"><h2>뽑힌 노예 <small>앞 30명 · 행을 누르면 산출 과정</small></h2></div><div class="table-wrap"><table class="sim-list"><thead><tr><th>#</th><th>세계 · 출신 · 직업</th><th>연령 코드</th><th>처녀</th><th>외모</th><th>성욕</th><th class="numeric">성경험</th><th class="numeric">질/구강/애널</th><th class="numeric">임신/출산</th></tr></thead><tbody>
    ${picked.slice(0,30).map((p,i)=>{const s=p.stock,r=p.result;return `<tr data-sim-row="${i}" class="${st.detail===i?'chosen':''}"><td>${i+1}</td><td>${e(name('world',s.world))} · ${e(name('family',s.family))} · ${e(name('occupation',s.occupation))}</td><td>${AGE[s.age]??s.age}</td><td>${s.virginity<2?'처녀':''}</td><td>${s.base_beauty??s.beauty}</td><td>${e(LIBIDO[s.nymphomania]??'')}</td><td class="numeric">${r.intimacy??'제외'}</td><td class="numeric">${r.acts?`${r.acts.vaginal}/${r.acts.oral}/${r.acts.anal}`:'—'}</td><td class="numeric">${r.pregnancies===null?'미상':`${r.pregnancies}/${r.births}`}</td></tr>${st.detail===i?`<tr class="sim-trace"><td></td><td colspan="8"><ol>${r.trace.map(t=>`<li>${e(t)}</li>`).join('')}</ol></td></tr>`:''}`;}).join('')}
    </tbody></table></div></article>`:'<div class="empty-state"><h3>조건에 맞는 표본이 없습니다</h3><p>세계·출신·직업 조합을 넓혀 보세요. 게임에서 연결되지 않는 조합일 수 있습니다.</p></div>'}`;
  }
- root.addEventListener('change',ev=>{const k=ev.target.dataset.sim;if(!k)return;st[k]=k==='count'?Number(ev.target.value):ev.target.value;st.detail=null;render();});
+ root.addEventListener('change',ev=>{const k=ev.target.dataset.sim;if(!k)return;st[k]=k==='count'?Number(ev.target.value):ev.target.value;st.detail=null;
+  // 바꾼 칸 때문에 연결이 끊긴 다른 칸의 선택은 비운다
+  for(const key of ['world','family','occupation'])if(key!==k&&st[key]&&!opts(key).includes(st[key]))st[key]='';
+  render();});
  root.addEventListener('click',ev=>{
   if(ev.target.closest('[data-sim-action="reroll"]')){st.seed++;st.detail=null;render();return;}
   const row=ev.target.closest('[data-sim-row]');if(row){const i=Number(row.dataset.simRow);st.detail=st.detail===i?null:i;render();}
