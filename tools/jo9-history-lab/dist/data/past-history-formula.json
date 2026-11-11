@@ -167,5 +167,196 @@
   },
   "birthPerPregnancyPct": 85,
   "sterileNote": "fertility -1(불임)·-2(미성숙)은 임신·출산 0."
+ },
+ "traits": {
+  "status": "초안(2026-11-11). 승인 전.",
+  "libido": {
+   "note": "성경험 총량 계수(/100). nymphomania 값으로 하나만 적용.",
+   "rules": [
+    {
+     "name": "정액 중독",
+     "key": "nymphomania",
+     "op": ">",
+     "value": 1,
+     "factor": 150
+    },
+    {
+     "name": "색정광",
+     "key": "nymphomania",
+     "op": "=",
+     "value": 1,
+     "factor": 125
+    },
+    {
+     "name": "불감증",
+     "key": "nymphomania",
+     "op": "=",
+     "value": -1,
+     "factor": 75
+    },
+    {
+     "name": "석녀",
+     "key": "nymphomania",
+     "op": "<",
+     "value": -1,
+     "factor": 60
+    }
+   ]
+  },
+  "acts": {
+   "note": "질·구강·애널 배분 가중치. 기본 가중치 = 기술 등급²(질 sub_vaginal, 구강 sub_bj·sub_dt·sub_tongue 최댓값, 애널 sub_anal·anal_stretch 최댓값). 아래 계수(/100)를 곱한다. 처녀(virginity < 2)는 질 0.",
+   "rules": [
+    {
+     "name": "애널섹스 중독",
+     "key": "anal_affinity",
+     "op": ">",
+     "value": 0,
+     "anal": 200
+    },
+    {
+     "name": "애널섹스 혐오",
+     "key": "anal_affinity",
+     "op": "<",
+     "value": 0,
+     "anal": 20
+    },
+    {
+     "name": "펠라 중독",
+     "key": "oral_affinity",
+     "op": ">",
+     "value": 0,
+     "oral": 200
+    },
+    {
+     "name": "반사적 구역질",
+     "key": "jo9_gag_reflex",
+     "op": "=",
+     "value": 1,
+     "oral": 50
+    },
+    {
+     "name": "정액 중독",
+     "key": "nymphomania",
+     "op": ">",
+     "value": 1,
+     "oral": 150
+    },
+    {
+     "name": "이상성욕 선호",
+     "key": "perversion",
+     "op": "=",
+     "value": 2,
+     "oral": 120,
+     "anal": 150
+    },
+    {
+     "name": "순수한 영혼",
+     "key": "perversion",
+     "op": "=",
+     "value": -1,
+     "oral": 50,
+     "anal": 20
+    }
+   ]
+  },
+  "partners": {
+   "note": "상대 배분: 주인 외 인간 이성 / 동성 / 인간 외. 동성 비율(%)은 homosexualism으로 정한다. 인간 외는 근거가 없으면 0.",
+   "samePct": {
+    "default": 5,
+    "2": 80,
+    "1": 40,
+    "-1": 0
+   },
+   "nonhumanPct": 0
+  }
+ },
+ "attributes": {
+  "status": "추정치 초안(2026-11-11). 승인 전.",
+  "note": "기본 속성 계수 = 100 + Σ 단계당 % × (값 − 기준값), 체형은 단계별 표. 결과는 min~max로 자른다. 근거는 게임 #variative의 단계 이름.",
+  "min": 50,
+  "max": 170,
+  "linear": {
+   "beauty": {
+    "name": "외모",
+    "base": 2,
+    "per": 10,
+    "why": "0 추함~5 눈부심·6 절세의 미모. 상대가 먼저 찾아오는 빈도에 가장 직접적"
+   },
+   "exotic": {
+    "name": "독특함",
+    "base": 0,
+    "per": 4,
+    "why": "0 평범함~7 완벽함. 눈길을 끄는 정도. 외모보다 약하게"
+   },
+   "style": {
+    "name": "세련됨",
+    "base": 2,
+    "per": 3,
+    "why": "0 촌스러움~8 품격있음. 사교 기회와 매력 연출"
+   },
+   "temper": {
+    "name": "성격",
+    "base": 2,
+    "per": 6,
+    "why": "0 무관심함~5 열정적임. 스스로 관계를 찾는 적극성"
+   },
+   "pride": {
+    "name": "태도",
+    "base": 2,
+    "per": -4,
+    "why": "0 개방적~5 오만함. 개방적일수록 많고 오만할수록 적다(태도는 낮을수록 좋다)"
+   },
+   "sensitivity": {
+    "name": "감수성",
+    "base": 2,
+    "per": 2,
+    "why": "0 무정함~5 여림. 감정적 교류. 약하게"
+   },
+   "ego": {
+    "name": "자아",
+    "base": 2,
+    "per": -2,
+    "why": "0 우유부단~5 완고함. 자아가 약하면 원치 않는 관계에 끌려가기 쉽다. 약하게"
+   },
+   "stamina": {
+    "name": "체력",
+    "base": 2,
+    "per": 2,
+    "why": "0 죽어감~5 근육질. 체력이 낮으면 활동이 적다. 약하게"
+   }
+  },
+  "table": {
+   "fat": {
+    "name": "체형",
+    "values": {
+     "0": -5,
+     "1": 8,
+     "2": 5,
+     "3": 8,
+     "4": 0,
+     "5": -10
+    },
+    "why": "0 앙상한·1 모델 체형·2 날씬한·3 육감적인·4 통통한·5 비만. 모델·육감적이 가장 높고 비만이 가장 낮다"
+   }
+  },
+  "excluded": {
+   "intellect": "지성(0 정신지체~5 지적임)은 성경험 빈도와 직접 관계가 약하다",
+   "fame": "인지도(무명 노예~로마의 전설)는 노예가 된 뒤의 명성이다. 영입 전 과거에는 쓰지 않는다",
+   "mood": "기분은 그날의 일시값이다"
+  },
+  "source": {
+   "beauty": {
+    "use": "base_beauty",
+    "plus": {
+     "jo9_peerless": 1
+    },
+    "cap": 6,
+    "why": "현재 외모 = 타고난 미모(base_beauty) + 성형 + 절세미인 − (흉터·멍·체형)(slave_stat 613행). 안개경계 획득 노예는 상처·흉터로 현재 외모가 낮게 나오므로 타고난 미모로 판정한다(사용자 결정 2026-11-11). 성형은 영입 전 과거와 무관해 뺀다"
+   },
+   "exotic": {
+    "use": "base_exotic",
+    "why": "독특함도 기본값(base_exotic)으로 판정한다"
+   }
+  }
  }
 }
