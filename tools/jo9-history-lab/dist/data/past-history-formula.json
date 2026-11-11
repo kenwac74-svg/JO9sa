@@ -1,0 +1,39 @@
+{
+ "version": "20261111-past-history-v1",
+ "status": "초안. 모든 수치는 조정값이며 사용자 승인 전이다. 게임 본체 미반영.",
+ "scale": 100,
+ "gradeBase": [0, 3, 15, 50, 140, 320],
+ "skillWeights": {"petting": 1, "oral": 2, "penetration": 2},
+ "variationPct": 15,
+ "ageFactor": {"0": 100, "2": 150},
+ "excludedAges": [1],
+ "occupation": {
+  "virginForced": {
+   "factor": 0,
+   "note": "게임 generate_stock이 virginity = 0과 sub_vaginal·sub_anal·sub_bj = 0으로 고정하는 직업. 성경험 전체 0(사용자 결정 2026-11-11).",
+   "ids": ["bride", "nun", "sorceress", "poor_bride", "noble_bride", "rich_bride", "barbarian_princess", "mprincess"]
+  },
+  "sexWork": {"factor": 200, "note": "성인 접객업. 게임이 virginity = 2와 성 기술 보너스를 준다.", "ids": ["whore", "markitane", "brothel", "courtesan"]},
+  "married": {"factor": 130, "note": "설정상 유부녀. 게임이 virginity = 2를 준다. 임신·출산 공식 적용.", "ids": ["viking_wife", "poor_wife", "noble_wife", "rich_wife"]},
+  "formerSlave": {"factor": 150, "note": "이전에도 노예였던 경력.", "ids": ["former_slave"]},
+  "nightlife": {"factor": 120, "note": "유흥·사교 중심 직업. 게임이 유혹·키스 기술 보너스를 준다.", "ids": ["major", "model", "avanturiste"]},
+  "default": {"factor": 100}
+ },
+ "family": {
+  "sheltered": {"factor": 80, "note": "보호가 강한 상류·왕가 출신.", "ids": ["mprincess", "barbarian_king", "knight", "magnat", "bankeer", "mayor", "finance", "admiral", "general", "ancient_noble"]},
+  "street": {"factor": 120, "note": "거리·빈곤·범죄 환경 출신.", "ids": ["orphan", "workhouse", "orpnange", "gypsy", "bondman", "mafiosi", "roman_freedslave"]},
+  "default": {"factor": 100}
+ },
+ "world": {"default": {"factor": 100, "note": "세계는 초기 능력치 추첨 담당(핸드오프 8장). 경험량에는 중립."}},
+ "marriage": {
+  "note": "유부녀 직업만 적용. 결혼 기간(년)을 추첨하고 해마다 임신 여부, 임신마다 출산 여부를 추첨한다.",
+  "years": {"0": [1, 4], "2": [5, 12]},
+  "pregnancyPerYearPct": {
+   "traditional": {"pct": 45, "ids": ["prehistoric", "barbarian", "sns", "medieval", "darkfantasy", "highfantasy", "earth_rome"]},
+   "industrial": {"pct": 30, "ids": ["steampunk", "industrial"]},
+   "modern": {"pct": 20, "ids": ["modern", "cyberpunk", "utopia", "darkfuture", "space"]}
+  },
+  "birthPerPregnancyPct": 85,
+  "sterileNote": "fertility -1(불임)·-2(미성숙)은 임신·출산 0."
+ }
+}
