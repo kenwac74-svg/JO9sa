@@ -68,6 +68,19 @@ export async function createOneView(api){
  const getPath=(o,p)=>p.reduce((x,k)=>x?.[k],o);
  const setPath=(o,p,v)=>{const last=p.at(-1),parent=p.slice(0,-1).reduce((x,k)=>x[k],o);parent[last]=v;};
 
+ // 같은 설정·계수일 때만 100번 결과를 보여 준다(설정을 바꾸면 사라진다)
+ const batchKey=()=>JSON.stringify([s(),F()]);
+ function batchHtml(x,f){
+  const runs=Array.from({length:100},(_,i)=>pastHistory(x,f,`one-batch|${st.batch.base}|${i}`));
+  const xs=runs.map(r=>r.intimacy??0).sort((a,b)=>a-b),q=p=>xs[Math.min(xs.length-1,Math.floor(xs.length*p))];
+  const avg=k=>(runs.reduce((a,r)=>a+(r.acts?.[k]??0),0)/runs.length).toFixed(1);
+  const preg=runs.filter(r=>r.pregnancies!==null),count=k=>{const c={};for(const r of preg)c[r[k]]=(c[r[k]]||0)+1;return Object.entries(c).sort((a,b)=>a[0]-b[0]).map(([v,n])=>`${v}회 ${n}%`).join(' · ');};
+  return `<div class="one-batch"><div class="section-label">같은 설정으로 100번 돌린 결과</div><table><tbody>
+   <tr><td>성경험 총횟수</td><td>최소 ${xs[0]} · 하위 10% ${q(.1)} · 중앙값 ${q(.5)} · 상위 10% ${q(.9)} · 최대 ${xs.at(-1)}</td></tr>
+   <tr><td>질 · 구강 · 애널 평균</td><td>${avg('vaginal')} · ${avg('oral')} · ${avg('anal')}</td></tr>
+   <tr><td>임신</td><td>${preg.length?count('pregnancies'):'미상(추정하지 않음)'}</td></tr>
+   <tr><td>출산</td><td>${preg.length?count('births'):'미상(추정하지 않음)'}</td></tr></tbody></table></div>`;
+ }
  function render(){
   const f=F(),x=s(),sel={world:x.world,family:x.family,occupation:x.occupation};
   const ready=x.world&&x.family&&x.occupation&&x.age!==1;
@@ -88,11 +101,13 @@ export async function createOneView(api){
   </div></article></div>
   <div class="column"><article class="card"><div class="card-head"><h2><span class="index">03</span>영입 전 과거 경험</h2>${field('시드','<input data-one="seed" value="'+e(st.seed)+'" maxlength="40">','one-seed')}</div><div class="card-body">
    ${!ready?'<div class="empty-state"><h3>세계·출신·직업을 고르세요</h3><p>연결된 조합만 고를 수 있습니다. "한 명 뽑기"로 바로 채울 수도 있습니다.</p></div>':`
+   <div class="one-actions one-run"><button class="button primary" data-one-action="run">▶ 돌려보기</button><button class="button secondary" data-one-action="run100">100번 돌려보기</button><span class="muted-text">${st.runs?`${st.runs}번째 결과`:'값을 바꾸면 바로 다시 계산합니다'}. 돌려보기는 시드를 바꿔 변동(±${f.variationPct}%)·결혼 연수·임신 추첨·최소 경험을 새로 뽑습니다.</span></div>
    <div class="result-summary">
     <div class="summary-tile featured"><span class="summary-label">성경험 총횟수</span><span class="summary-value">${r.intimacy}<small>회</small></span></div>
     <div class="summary-tile"><span class="summary-label">질 · 구강 · 애널</span><span class="summary-value sim-small">${r.acts?`${r.acts.vaginal} · ${r.acts.oral} · ${r.acts.anal}`:'—'}</span><div class="summary-foot">이성 ${r.partners?.opposite??0} · 동성 ${r.partners?.sameSex??0} · 인간 외 ${r.partners?.nonhuman??0}</div></div>
     <div class="summary-tile"><span class="summary-label">임신 · 출산</span><span class="summary-value sim-small">${r.pregnancies===null?'미상':`${r.pregnancies} · ${r.births}`}</span><div class="summary-foot">${r.pregnancies===null?'유부녀·영입 시 임신 중이 아니면 추정하지 않음':'회'}</div></div>
    </div>
+   ${st.batch&&st.batch.key===batchKey()?batchHtml(x,f):''}
    <div class="section-label">산출 과정</div><ol class="one-trace">${r.trace.map(t=>`<li>${e(t)}</li>`).join('')}</ol>`}
   </div></article>
   <article class="card"><div class="card-head"><h2><span class="index">04</span>공식 계수</h2><div class="header-actions">${formulaEdited(D.formula)?'<span class="badge">기본값에서 바뀜</span>':'<span class="badge green">승인된 기본값</span>'}<button class="button secondary small" data-one-action="reset-formula">기본값으로</button><button class="button secondary small" data-one-action="export-formula">계수 JSON</button></div></div>
@@ -124,6 +139,8 @@ export async function createOneView(api){
    st.draws=(st.draws??0)+1;const pick=pool[Math.floor(rng(Date.now()^st.draws)()*pool.length)];
    st.stock={...pick};st.drawn=String(pick.type);st.seed=String(st.draws);
   }
+  if(a==='run'){st.seed=String(Date.now()%100000);st.runs=(st.runs??0)+1;}
+  if(a==='run100'){st.batch={key:batchKey(),base:Date.now()};}
   if(a==='clear'){Object.assign(s(),{world:'',family:'',occupation:''});st.drawn=null;}
   if(a==='reset-formula'){resetFormula(D.formula);return;}
   if(a==='export-formula'){const blob=new Blob([JSON.stringify(F(),null,1)],{type:'application/json'});const u=URL.createObjectURL(blob),l=document.createElement('a');l.href=u;l.download='past-history-formula.json';l.click();setTimeout(()=>URL.revokeObjectURL(u),1000);return;}
