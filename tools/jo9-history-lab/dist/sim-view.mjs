@@ -1,5 +1,6 @@
 // 노예 뽑기 시뮬레이터 화면: 실제 게임 엔진으로 뽑은 랜덤 노예 표본에서 N명을 뽑아 과거 경험 공식 결과를 집계한다
 import {pastHistory,tierOf} from './past-history.mjs';
+import {loadSimData,getFormula,onFormulaChange,formulaEdited} from './sim-data.mjs';
 
 const e=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 // 연령은 게임 코드 그대로 표시한다(0 young, 1 loli, 2 milf). 1은 통계 대상이 아니라 표본에 없다.
@@ -13,31 +14,13 @@ const pct=(a,b)=>b?Math.round(a/b*100)+'%':'—';
 const avg=(a)=>a.length?(a.reduce((x,y)=>x+y,0)/a.length):0;
 
 export async function createSimView(api){
- const load=async f=>{const r=await fetch('./data/'+f);if(!r.ok)throw new Error(f+'를 읽지 못했습니다.');return r.json();};
- const [sample,formula,bg,drafts]=await Promise.all(['generated-stock.json','past-history-formula.json','backgrounds.json','background-drafts.json'].map(load));
- const all=sample.rows.map(r=>Object.fromEntries(sample.keys.map((k,i)=>[k,r[i]])));
- // 랜덤 범위 안의 고유 캐릭터(예: 2339)는 세계·출신·직업이 없고 고정 배경을 쓰므로 공식 대상에서 뺀다
- const rows=all.filter(r=>r.world&&r.family&&r.occupation),uniques=all.length-rows.length;
- const labels={};for(const r of [...bg.records,...drafts.records])(labels[r.kind]??={})[r.id]??=r.label;
- const name=(kind,id)=>labels[kind]?.[id]??id;
- // 게임 생성 규칙의 연결: 세계 → $<세계>_family, 출신 → $<출신>_occupation. 원숙한 신부는 생성 중 아내로 이름이 바뀐다.
- const RENAME={poor_bride:'poor_wife',noble_bride:'noble_wife',rich_bride:'rich_wife'};
- const worlds=[...new Set(bg.worldPool)];
- const familiesOf=w=>bg.pools[w+'_family']??[];
- const occupationsOf=f=>{const o=bg.pools[f+'_occupation']??[];return [...new Set([...o,...o.filter(x=>RENAME[x]).map(x=>RENAME[x])])];};
- const byName=key=>(a,b)=>name(key,a).localeCompare(name(key,b),'ko');
- // 다른 두 칸의 선택과 연결되는 값만 남긴다
- function opts(key){
-  const W=st.world?[st.world]:worlds;
-  if(key==='world')return worlds.filter(w=>(!st.family||familiesOf(w).includes(st.family))&&(!st.occupation||familiesOf(w).some(f=>(!st.family||f===st.family)&&occupationsOf(f).includes(st.occupation)))).sort(byName('world'));
-  if(key==='family')return [...new Set(W.flatMap(familiesOf))].filter(f=>!st.occupation||occupationsOf(f).includes(st.occupation)).sort(byName('family'));
-  const F=st.family?[st.family]:[...new Set(W.flatMap(familiesOf))];
-  return [...new Set(F.flatMap(occupationsOf))].sort(byName('occupation'));
- }
+ const D=await loadSimData(),rows=D.rows,uniques=D.uniques,name=D.name,sample=D.sample;
+ const opts=key=>D.options(key,st);
+ const formulaNow=()=>getFormula(D.formula);
  const st={count:1000,seed:1,world:'',family:'',occupation:'',age:'',group:'tier',detail:null};
  const id='slave-sim';
- api.tabNames[id]=['노예 뽑기 시뮬레이터','노예 뽑기 시뮬레이터','실제 게임 엔진으로 뽑은 랜덤 노예 표본에서 N명을 뽑아 과거 경험 공식의 결과를 확인하세요.'];
- document.querySelector('.sidebar nav').insertAdjacentHTML('beforeend',`<button data-tab="${id}" class="nav-button"><span>⚄</span>노예 뽑기 시뮬레이터</button>`);
+ api.tabNames[id]=['뽑기 분포','뽑기 분포','실제 게임 엔진으로 뽑은 랜덤 노예 표본에서 N명을 뽑아 과거 경험 공식의 결과를 확인하세요.'];
+ document.querySelector('.sidebar nav').insertAdjacentHTML('beforeend',`<button data-tab="${id}" class="nav-button"><span>⚄</span>뽑기 분포</button>`);
  document.querySelector('main footer').insertAdjacentHTML('beforebegin',`<section id="${id}" class="tab-panel" hidden></section>`);
  const root=document.getElementById(id);
 
@@ -45,11 +28,11 @@ export async function createSimView(api){
   const pool=rows.filter(r=>(!st.world||r.world===st.world)&&(!st.family||r.family===st.family)&&(!st.occupation||r.occupation===st.occupation)&&(st.age===''||String(r.age)===st.age));
   const rand=rng(st.seed*2654435761);
   const picked=[];
-  if(pool.length)for(let i=0;i<st.count;i++){const s=pool[Math.floor(rand()*pool.length)];picked.push({stock:s,result:pastHistory(s,formula,`sim${st.seed}|${i}|${s.type}`)});}
+  if(pool.length)for(let i=0;i<st.count;i++){const s=pool[Math.floor(rand()*pool.length)];picked.push({stock:s,result:pastHistory(s,formulaNow(),`sim${st.seed}|${i}|${s.type}`)});}
   return {pool,picked};
  }
  function groupKey(p){
-  if(st.group==='tier')return tierOf(formula,'occupation',p.stock.occupation).name;
+  if(st.group==='tier')return tierOf(formulaNow(),'occupation',p.stock.occupation).name;
   if(st.group==='occupation')return name('occupation',p.stock.occupation);
   if(st.group==='family')return name('family',p.stock.family);
   if(st.group==='world')return name('world',p.stock.world);
@@ -69,7 +52,7 @@ export async function createSimView(api){
   const preg=valid.filter(r=>r.pregnancies!==null);
   const groups=new Map();for(const p of picked){const k=groupKey(p);if(!groups.has(k))groups.set(k,[]);groups.get(k).push(p);}
   const sel=(key,label,list,all)=>`<label class="field"><span>${label}</span><select data-sim="${key}"><option value="">${all}</option>${list.map(v=>`<option value="${e(v)}" ${String(st[key])===String(v)?'selected':''} ${key==='age'&&v==='1'?'disabled':''}>${e(key==='age'?(v==='1'?'1 (통계 제외)':v):name(key,v))}</option>`).join('')}</select></label>`;
-  root.innerHTML=`<div class="notice neutral"><span>⚄</span><div><strong>실제 게임 엔진 표본 ${rows.length.toLocaleString('ko-KR')}명</strong>에서 뽑습니다. 최신 jack.qsp의 generate_stock과 영입 처리(stock_to_slave_nogt)까지 QSP WASM 엔진으로 실행한, 모든 특성 추첨이 끝난 랜덤 노예(연령 코드 1 제외)입니다.${uniques?` 랜덤 범위에서 뽑힌 고유 캐릭터 ${uniques}명은 고정 배경이라 뺐습니다.`:''} 공식은 계수 ${e(formula.version)}을 씁니다.</div></div>
+  root.innerHTML=`<div class="notice neutral"><span>⚄</span><div><strong>실제 게임 엔진 표본 ${rows.length.toLocaleString('ko-KR')}명</strong>에서 뽑습니다. 최신 jack.qsp의 generate_stock과 영입 처리(stock_to_slave_nogt)까지 QSP WASM 엔진으로 실행한, 모든 특성 추첨이 끝난 랜덤 노예(연령 코드 1 제외)입니다.${uniques?` 랜덤 범위에서 뽑힌 고유 캐릭터 ${uniques}명은 고정 배경이라 뺐습니다.`:''} 공식은 계수 ${e(D.formula.version)}${formulaEdited(D.formula)?' (초기값 시뮬레이터에서 바꾼 계수)':' (승인된 기본값)'}을 씁니다.</div></div>
   <article class="card"><div class="card-body sim-controls">
    <label class="field"><span>뽑을 수</span><select data-sim="count">${[100,1000,5000,10000].map(n=>`<option ${st.count===n?'selected':''}>${n}</option>`).join('')}</select></label>
    ${sel('world','세계',opts('world'),'모든 세계')}${sel('family','출신',opts('family'),'모든 출신')}${sel('occupation','직업',opts('occupation'),'모든 직업')}${sel('age','연령 코드',['0','1','2'],'모든 연령')}
@@ -93,12 +76,13 @@ export async function createSimView(api){
  }
  root.addEventListener('change',ev=>{const k=ev.target.dataset.sim;if(!k)return;st[k]=k==='count'?Number(ev.target.value):ev.target.value;st.detail=null;
   // 바꾼 칸 때문에 연결이 끊긴 다른 칸의 선택은 비운다
-  for(const key of ['world','family','occupation'])if(key!==k&&st[key]&&!opts(key).includes(st[key]))st[key]='';
+  D.prune(st,k);
   render();});
  root.addEventListener('click',ev=>{
   if(ev.target.closest('[data-sim-action="reroll"]')){st.seed++;st.detail=null;render();return;}
   const row=ev.target.closest('[data-sim-row]');if(row){const i=Number(row.dataset.simRow);st.detail=st.detail===i?null:i;render();}
  });
+ onFormulaChange(render);
  render();
  return {render};
 }

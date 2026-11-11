@@ -1,9 +1,11 @@
 import {SCHEMA,GRADES,DOMAINS,STAT_KEYS,OWNER_COUNT_KEYS,COMBAT_KEYS,COMBAT_TYPES,SKILLS,defaultConfig,defaultCharacter,freshState,clone,estimate,validateState} from './engine.mjs';
 import {createWorkbench} from './workbench.mjs';
 import {createSimView} from './sim-view.mjs';
+import {createOneView} from './one-view.mjs';
 import {moveUnclassifiedCombat} from './character-io.mjs';
 import {settingsFilename,openSettingsSave} from './settings-save.mjs';
 const KEY='jo9-history-lab-v1';
+const initialHash=location.hash.slice(1);
 const requestedTab=location.hash.slice(1)||'simulator';
 let workbench=null;
 let state=freshState(),tab='simulator',traceOpen=false,selected=new Set(),storageAvailable=true;
@@ -209,4 +211,12 @@ tab=location.hash.slice(1)||'simulator';renderAll();if(!storageAvailable)$('#sav
 window.addEventListener('hashchange',()=>{const next=location.hash.slice(1);if(next!==tab){if(next==='simulator')renderSimulator();switchTab(next);}});
 
 try{workbench=await createWorkbench({getState:()=>state,save,renderAll,renderSimulator,renderResult,tabNames,switchTab,toast,confirmAction,download,snapshot});tab=requestedTab;renderAll();}catch(error){toast('캐릭터 편집 데이터를 읽지 못했습니다: '+error.message);}
-try{await createSimView({tabNames});if(requestedTab==='slave-sim')switchTab('slave-sim');}catch(error){toast('노예 뽑기 시뮬레이터 데이터를 읽지 못했습니다: '+error.message);}
+try{
+ // 새 초기값 시뮬레이터(세계·출신·직업 기반 공식)를 맨 앞에 두고, 예전 시뮬레이터·계수 탭은 '이전 산식'으로 남긴다
+ tabNames.simulator[0]=tabNames.simulator[1]='이전 산식 (v0.11)';tabNames.coefficients[0]='이전 산식 계수';
+ const oldSim=document.querySelector('[data-tab="simulator"]'),oldCoef=document.querySelector('[data-tab="coefficients"]');
+ if(oldSim){oldSim.lastChild.textContent=' 이전 산식 (v0.11)';oldSim.querySelector('span').textContent='◇';}if(oldCoef)oldCoef.lastChild.textContent=' 이전 산식 계수';
+ await createOneView({tabNames,toast});await createSimView({tabNames});
+ // 해시 없이 열면 새 초기값 시뮬레이터부터 보여 준다(앱이 시작 중 해시를 #simulator로 바꾸므로 처음 해시를 쓴다)
+ if(!initialHash)switchTab('draw-one');else if(initialHash==='draw-one'||initialHash==='slave-sim')switchTab(initialHash);
+}catch(error){toast('초기값 시뮬레이터 데이터를 읽지 못했습니다: '+error.message);}
