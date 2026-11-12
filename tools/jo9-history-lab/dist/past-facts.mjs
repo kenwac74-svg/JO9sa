@@ -38,6 +38,9 @@ export function pastFacts(stock,result,formula,facts,seed='0',acq={},interviews=
  if(sc){f.xeno=sc.kind;if(X.blocked?.[sc.kind])blocked.xeno=X.blocked[sc.kind];trace.push(`이종 경험: 안개 경계 순찰 장면 ${acq.scene}(${sc.label})에서 구해 영입 → ${X.labels[sc.kind]}${blocked.xeno?` [${blocked.xeno}, 표시 불가]`:''}`);}
  else if(occ===X.prevMasterTier&&rand(1,100)<=X.prevMasterPct){f.xeno='prev_master';trace.push(`이종 경험: 노예 출신 ${X.prevMasterPct}% → 이전 주인의 촉수 착정`);}
  else f.xeno='none';
+ // 이종 경험 초기값(사용자 결정 2026-11-12): 등장 사건만 센다. 성경험 총횟수·상대 수에 포함(total_*)
+ f.xeno_count=sc?(sc.partners??1):f.xeno==='prev_master'?(X.prevMasterCount??1):0;f.xeno_partners=f.xeno_count;
+ if(f.xeno_count)trace.push(`이종 경험 초기값: ${f.xeno_count}회 · ${f.xeno_partners}상대(성경험 총횟수·상대 수에 포함)`);
 
  // 자기가 살던 세상의 동물 경험(B2): 와그(이터널 로마의 괴물)와 따로 둔다. 비율은 사용자가 정한다(기본 0)
  const HA=X.homeAnimal,hp=HA?.pctByWorld?.[stock.world]??0;
@@ -49,7 +52,8 @@ export function pastFacts(stock,result,formula,facts,seed='0',acq={},interviews=
  if(n<=0){
   Object.assign(f,{first_band:'none',partners:0,max_night:0,group:'none',max_day_people:0,orgasm:'never',squirt:0,finish:'none',swallow:0,signature:'',never:'',want:''});
   trace.push('성경험 0: 첫 경험·기록 관련 사실 없음');
-  return {fields:f,blocked,trace,occ,fam};
+  f.total_intimacy=n+f.xeno_count;f.total_partners=(f.partners??0)+f.xeno_partners;
+ return {fields:f,blocked,trace,occ,fam};
  }
 
  // 첫 경험 시기: 나이 숫자는 저장하지 않는다. teen은 내부 코드 B1(화면 표시 불가)
@@ -105,6 +109,7 @@ export function pastFacts(stock,result,formula,facts,seed='0',acq={},interviews=
  const hidden=['anal_affinity','oral_affinity','masochism','exhibitionism','perversion','homosexualism'].find(k=>Number(stock[k]??0)>0&&!Number(stock[k+'_revealed']??0));
  f.want=hidden??(acts.anal===0&&f.never!=='anal'?'anal':f.group==='none'?'group':'');
  trace.push(`오르가즘 ${facts.orgasm.labels[f.orgasm]}${f.squirt?'·분출':''} · 피니시 ${facts.finish.labels[f.finish]}${f.swallow?'·삼킴':''} · 18번 ${SKILL_NAME[f.signature]??'없음'} · 싫은 것 ${f.never} · 해 보고 싶은 것 ${f.want||'없음'}`);
+ f.total_intimacy=n+f.xeno_count;f.total_partners=(f.partners??0)+f.xeno_partners;
  return {fields:f,blocked,trace,occ,fam};
 }
 
