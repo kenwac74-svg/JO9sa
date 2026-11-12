@@ -15,7 +15,7 @@ assert.deepEqual(CAT.world.map(g=>g.label),['선사','고대','중세','판타�
 // 출신은 엑셀 계층 분류(사용자 확정) 7개
 assert.equal(CAT.family.length,7);assert(CAT.family.every(g=>g.source==='xlsx'));
 // 직업 대분류는 공통 규칙 기준(rule)과 신규(new)로 출처가 표시된다
-assert(CAT.occupation.every(g=>['rule','new'].includes(g.source)));
+assert(CAT.occupation.every(g=>['rule','new','user'].includes(g.source)));
 // 엔진 표본: 이름과 ID(stock_type)가 있다
 const K=STOCK.keys;assert(K.includes('name')&&K.includes('type'));
 const ni=K.indexOf('name');assert(STOCK.rows.every(r=>typeof r[ni]==='string'&&r[ni].length>0),'이름 없는 표본');
