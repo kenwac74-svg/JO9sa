@@ -1,0 +1,23 @@
+{
+  "id": "2026-11-12_cruel_mercy_patrol_prison",
+  "description": "악명(jo9_cruel_mercy): 안개 경계 순찰에서 타우루스 가문 성기사단을 처형하면 -0.5, 순찰에서 구한 여자를 감방에 가두면 -0.5(사용자 결정 2026-11-12)",
+  "target": "game\\jack.qsp",
+  "before_sha256": "4354cf397342cc516f8a32c76ffb44894b9a608d3c4f19ad42993287354976ef",
+  "edits": [
+    {
+      "location": "jo9_battle_fate",
+      "field": "body",
+      "old": "! JO9 MOD END CRUEL_MERCY_RULES_20261101\r\n! JO9 MOD END CRUEL_MERCY_20261029",
+      "new": "! JO9 MOD END CRUEL_MERCY_RULES_20261101\r\n! JO9 MOD END CRUEL_MERCY_20261029\r\n! JO9 MOD START CRUEL_MERCY_PATROL_PRISON_20261112 | 순찰 전투: 타우루스 가문 성기사단(도주 노예를 회수하던 정당한 순찰)을 처형하면 악명 -0.5\r\n! 다른 순찰 적(장기 사냥꾼, 식인종 무리, 짐승족 무리, 괴물, 퀘스트 몬스터)은 0\r\nif jo9_fate['mode'] = 1 and jo9_bf_choice = 1 and $враг[1] = 'паладин': gs 'jo9_cruel_mercy_apply', -1\r\n! JO9 MOD END CRUEL_MERCY_PATROL_PRISON_20261112",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "if interaction_city = 61133:\r\n\tdynamic $swap_slave_instances, 'slave', 'prisoner'",
+      "new": "if interaction_city = 61133:\r\n! JO9 MOD START CRUEL_MERCY_PATROL_PRISON_20261112_PRISON | 구한 여자를 죄 없이 감방에 가두면 악명 -0.5(전리품이 남아 있을 때 한 번)\r\n\tif stock_state = CONST_INT['slave_exist'] and hunting_prize >= 1: gs 'jo9_cruel_mercy_apply', -1\r\n! JO9 MOD END CRUEL_MERCY_PATROL_PRISON_20261112_PRISON\r\n\tdynamic $swap_slave_instances, 'slave', 'prisoner'",
+      "count": 1
+    }
+  ],
+  "after_sha256": "e41fe739f7729c20683e40145406c20461e1f3c9d83cdaf3ae05e74ad257f311"
+}
