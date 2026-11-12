@@ -34,10 +34,14 @@ export function pastFacts(stock,result,formula,facts,seed='0',acq={}){
  // 이종 경험: 처녀 여부와 관계없이 영입 경로·이전 주인으로 정한다(이터널 로마 안의 일)
  const X=facts.xeno;
  const sc=acq.route==='patrol'?X.patrolScenes[acq.scene]:null;
- if(sc){f.xeno=sc.kind;if(X.blocked[sc.kind])blocked.xeno=X.blocked[sc.kind];trace.push(`이종 경험: 안개 경계 순찰 장면 ${acq.scene}(${sc.label})에서 구해 영입 → ${X.labels[sc.kind]}${blocked.xeno?` [${blocked.xeno}, 표시 불가]`:''}`);}
+ if(sc){f.xeno=sc.kind;if(X.blocked?.[sc.kind])blocked.xeno=X.blocked[sc.kind];trace.push(`이종 경험: 안개 경계 순찰 장면 ${acq.scene}(${sc.label})에서 구해 영입 → ${X.labels[sc.kind]}${blocked.xeno?` [${blocked.xeno}, 표시 불가]`:''}`);}
  else if(occ===X.prevMasterTier&&rand(1,100)<=X.prevMasterPct){f.xeno='prev_master';trace.push(`이종 경험: 노예 출신 ${X.prevMasterPct}% → 이전 주인의 촉수 착정`);}
  else f.xeno='none';
 
+ // 자기가 살던 세상의 동물 경험(B2): 와그(이터널 로마의 괴물)와 따로 둔다. 비율은 사용자가 정한다(기본 0)
+ const HA=X.homeAnimal,hp=HA?.pctByWorld?.[stock.world]??0;
+ f.home_animal=(n>0&&hp>0&&rand(1,100)<=hp)?1:0;
+ if(f.home_animal){blocked.home_animal=HA.code;trace.push(`살던 세상의 동물 경험: ${hp}% → 있음 [${HA.code}, 표시 불가]`);}
  // 페티시: 앞 주제와 연결되지 않는 성향만
  f.fetish=facts.fetish.candidates.filter(c=>Number(stock[c.key]??0)===c.value).map(c=>c.key);
 

@@ -28,8 +28,12 @@ for(let i=0;i<300;i++){const s=stock({occupation:['whore','teacher','former_slav
 const kind=sc=>run(stock({}),'x',{route:'patrol',scene:sc});
 for(const sc of ['61101','61102','61103'])assert.equal(kind(sc).fields.xeno,'patrol_tentacle');
 for(const sc of ['61106','61107','61111','61112','61114'])assert.equal(kind(sc).fields.xeno,'patrol_monster');
-assert.equal(kind('61113').fields.xeno,'patrol_animal');assert.equal(kind('61113').blocked.xeno,'B2');
-for(const sc of Object.keys(X.xeno.patrolExcluded))assert(!['patrol_tentacle','patrol_monster','patrol_animal'].includes(kind(sc).fields.xeno),sc);
+// 와그는 이터널 로마의 괴물: 표시 가능(B2 아님). 살던 세상의 동물 경험은 따로 home_animal(B2)
+assert.equal(kind('61113').fields.xeno,'patrol_warg');assert.equal(kind('61113').blocked.xeno,undefined);
+assert.equal(run(stock({})).fields.home_animal,0);
+{const X2=structuredClone(X);X2.xeno.homeAnimal.pctByWorld.modern=100;const s=stock({}),r=pastFacts(s,pastHistory(s,F,'h'),F,X2,'h',{});assert.equal(r.fields.home_animal,1);assert.equal(r.blocked.home_animal,'B2');
+ const v0=stock({occupation:'nun',virginity:0}),r0=pastFacts(v0,pastHistory(v0,F,'h'),F,X2,'h',{});assert.equal(r0.fields.home_animal,0,'처녀는 동물 경험 없음');}
+for(const sc of Object.keys(X.xeno.patrolExcluded))assert(!['patrol_tentacle','patrol_monster','patrol_warg'].includes(kind(sc).fields.xeno),sc);
 // 이전 주인 촉수는 노예 출신만
 let pm=0;for(let i=0;i<400;i++){assert.notEqual(run(stock({occupation:'whore'}),'m'+i).fields.xeno,'prev_master');if(run(stock({occupation:'former_slave'}),'m'+i).fields.xeno==='prev_master')pm++;}
 assert(pm>40&&pm<160,'prev_master 비율 '+pm);
@@ -42,6 +46,6 @@ assert.deepEqual(run(stock({perversion:2,oral_affinity:1,masochism:2})).fields.f
 // 촉수 대사 초안: 두 경우 모두 있고, 말투 1·2가 다 있고, 키가 겹치지 않는다
 const ids=new Set();for(const r of T.rows){assert(!ids.has(r.id));ids.add(r.id);assert(['patrol_tentacle','patrol_monster','prev_master'].includes(r.case));assert(r.text['1']&&r.text['2']);}
 for(const c of ['patrol_tentacle','patrol_monster','prev_master'])for(const rel of ['warm','low','hostile'])assert(T.rows.some(r=>r.case===c&&r.rels===rel),c+' '+rel);
-// 짐승(B2)은 대사 초안이 없다
-assert(!T.rows.some(r=>r.case==='patrol_animal'));
+// 와그는 사용자 작성 칸(Claude 초안 없음)
+assert(!T.rows.some(r=>r.case==='patrol_warg'||r.case==='patrol_animal'));
 console.log('past facts checks ok');

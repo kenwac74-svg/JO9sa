@@ -95,7 +95,7 @@ export async function createOneView(api){
   const fx=pastFacts(x,r,f,FACTS,'one|'+st.seed,st.acq??{});if(!fx)return '';
   const v=fx.fields,L=(grp,k)=>FACTS[grp]?.labels?.[k]??k;
   const rows=[
-   ['이종 경험',L('xeno',v.xeno)+(fx.blocked.xeno?` <span class="badge muted">표시 불가 ${fx.blocked.xeno}</span>`:'')],['페티시(앞 주제와 연결 안 되는 성향)',v.fetish.length?v.fetish.map(k=>FACTS.fetish.candidates.find(c=>c.key===k)?.name??k).join(', '):'없음'],
+   ['이종 경험',L('xeno',v.xeno)+(fx.blocked.xeno?` <span class="badge muted">표시 불가 ${fx.blocked.xeno}</span>`:'')],['살던 세상의 동물 경험',v.home_animal?'있음 <span class="badge muted">표시 불가 B2</span>':'없음'],['페티시(앞 주제와 연결 안 되는 성향)',v.fetish.length?v.fetish.map(k=>FACTS.fetish.candidates.find(c=>c.key===k)?.name??k).join(', '):'없음'],
    ['첫 경험 시기',v.first_band==='teen'?'청소년기 <span class="badge muted">표시 불가 B1</span>':v.first_band==='adult'?'성인 이후':'없음'],
    ...(v.first_band==='none'?[]:[['첫 상대 · 방식 · 장소',`${L('firstWho',v.first_who)} · ${L('firstHow',v.first_how)} · ${L('firstWhere',v.first_where)}`],
    ['상대 수 · 하룻밤 최다',`${v.partners}명 · ${v.max_night}회`],['다인 경험 · 하루 최다 상대',`${L('group',v.group)} · ${v.max_day_people}명`],
@@ -107,7 +107,7 @@ export async function createOneView(api){
    const ty=TYPE_GROUP[voiceType(x)],rel=REL_GROUP[relationMode(x)],style=speechStyle(x.occupation);
    const cand=XENO.rows.filter(row=>row.case===v.xeno&&row.rels===rel&&(row.types===ty||row.types==='*'));
    const row=cand.length?cand[Math.floor(rng(hashSeed(st.seed+'x'))()*cand.length)]:null;
-   xeno=`<div class="section-label">이종 경험 대사 초안 <span class="badge muted">${e(TYPE_NAME[voiceType(x)])} · ${e(MODE_NAME[relationMode(x)])} · ${e(STYLE_NAME[style])}</span></div><p class="one-pillow-line">${row?e(row.text[style].replaceAll('{괴물}',FACTS.xeno.patrolScenes[st.acq?.scene]?.label??'괴물')):'이 유형·관계에 맞는 초안 행이 없습니다.'}</p>`;
+   xeno=`<div class="section-label">이종 경험 대사 초안 <span class="badge muted">${e(TYPE_NAME[voiceType(x)])} · ${e(MODE_NAME[relationMode(x)])} · ${e(STYLE_NAME[style])}</span></div><p class="one-pillow-line">${row?e(row.text[style].replaceAll('{괴물}',FACTS.xeno.patrolScenes[st.acq?.scene]?.label??'괴물')):v.xeno==='patrol_warg'?'와그 대사는 사용자 작성 칸입니다(Claude 초안 없음).':'이 유형·관계에 맞는 초안 행이 없습니다.'}</p>`;
   }
   return `<div class="one-facts"><div class="section-label">영입 때 저장할 섹스토크 사실 <span class="badge muted">같은 노예는 언제 물어도 같은 사실</span></div>
    <table><tbody>${rows.map(([a,b])=>`<tr><td>${e(a)}</td><td>${b}</td></tr>`).join('')}</tbody></table>
