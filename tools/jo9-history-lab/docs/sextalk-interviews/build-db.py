@@ -1,4 +1,4 @@
-# 파싱한 인터뷰(posts.json)를 섹스토크 주제별 리소스 DB로 정리하고 제외 대상(미성년 암시·근친·수간·온라인 전용)을 걸러 내는 스크립트
+# 파싱한 인터뷰(posts.json)의 모든 문항·대답에 고유 키를 주고 주제·표시 가능 여부([표시불가] 사유)로 분류하는 창작물 DB 빌드 스크립트
 # 사용: python3 -I build-db.py <posts.json> <출력 폴더>
 import sys, json, re, collections, pathlib
 
@@ -8,7 +8,7 @@ TOPICS = {
     2: 'first_time',              # 첫 경험 묘사
     3: 'age_gap',                 # 나이 차: 게임 미반영, 모든 나이 수치가 19 이상인 대답만
     4: 'max_night',               # 한 상대 최다 횟수
-    5: None,                      # 교복·학생 때: 학생 시절 경험과 분리할 수 없어 통째로 제외
+    5: 'uniform',                 # 교복: 학생 시절이 섞이면 [표시불가]
     6: 'finish_pref',             # 피니시 선호
     7: 'want',                    # 해 보고 싶은 것
     8: 'never',                   # 절대 싫은 것
@@ -33,19 +33,24 @@ TOPICS = {
     27: 'exhibition',             # 촬영·노출 → 게임에서는 구경꾼 앞
     28: 'turn_on',                # 흥분 포인트
     29: 'sns_meet',               # 온라인 만남: 게임 미반영(현대 SNS 전용)
-    30: None,                     # 근친·수간이 든 보기 목록: 대답이 번호만 쓰거나("1,5") 섞여 있어 항목을 가를 수 없으므로 통째로 제외
+    30: 'taboo_list',             # 근친·조건·즉석·클럽·다인종·수간 보기 목록: 항목을 가를 수 없어 문항 전체 [표시불가]
     31: 'sns_creeps',             # 온라인 찌질남: 게임 미반영(현대 SNS 전용)
     32: 'last_word',              # 마지막 한마디
 }
 # 대답 단위 제외: 미성년 암시, 근친, 수간
 MINOR = re.compile(r'중학|중딩|고등|고딩|초등|초딩|학생\s*때|학생때|교복|여고|남고|고[123]|중[123]|(?<!\d)1[0-7]\s*(살|세)|미성년|사춘기|수능|입시|학원|열(한|두|세|네|다섯|여섯|일곱)\s*살|학교\s*(때|다닐)|담임|선생님이랑|수학여행')
-TABOO = re.compile(r'근친|친오빠|친동생|친척|사촌|친아빠|아빠랑|아버지랑|삼촌|수간|강아지|애완견|개랑|개한테|말이랑')
+INCEST = re.compile(r'근친|친오빠|친동생|친척|사촌|친아빠|아빠랑|아버지랑|삼촌')
+BESTIAL = re.compile(r'수간|강아지|애완견|개랑|개한테|말이랑|햄스터')
 # 학교·어린 시절은 대학 언급이 없으면 보수적으로 뺀다
 YOUNG = re.compile(r'어릴|어렸|어린 ?나이|나이가 어려')
 SCHOOL = re.compile(r'학교|학생|교실|과방|운동부')
 UNIV = re.compile(r'대학|대학교|과 ?선배|과 ?동기|조교|강의실|과방|단과대|에브리타임|MT')
 # 게임에 넣지 않고 정리만 하는 주제
-NOT_IN_GAME = {'first_age', 'age_gap', 'sns_meet', 'sns_creeps'}
+NOT_IN_GAME = {'first_age', 'age_gap', 'sns_meet', 'sns_creeps', 'taboo_list'}
+PLACEHOLDER = '[이 대사는 표시 불가합니다.]'
+# 사유 코드: 원문을 DB에 싣지 않는 사유(본문 자리에 PLACEHOLDER) / 원문은 싣되 표시하지 않는 사유
+TEXT_WITHHELD = {'minor', 'bestiality'}
+REASON_KO = {'minor': '청소년기·미성년', 'bestiality': '수간', 'incest': '근친', 'taboo_list': '금기 보기 목록 문항', 'modern_sns': '현대 SNS 소재', 'empty': '빈 대답'}
 AGE_TOPICS = {'first_age', 'age_gap'}
 NUM2 = re.compile(r'(?<!\d)(\d{1,2})(?!\d)')
 HANDLE = re.compile(r'@[A-Za-z0-9_]+')
@@ -62,42 +67,62 @@ def tone(a):
     else: t.append('casual')
     return t
 
+def reasons_of(topic, a):
+    r = []
+    if not a: r.append('empty')
+    if MINOR.search(a) or YOUNG.search(a) or (SCHOOL.search(a) and not UNIV.search(a)) \
+            or (topic in AGE_TOPICS and any(int(n) < 19 for n in NUM2.findall(a))):
+        r.append('minor')
+    if BESTIAL.search(a): r.append('bestiality')
+    if INCEST.search(a): r.append('incest')
+    if topic == 'taboo_list': r.append('taboo_list')
+    if topic in ('sns_meet', 'sns_creeps'): r.append('modern_sns')
+    return r
+
+
 def main(src, out):
     posts = json.load(open(src, encoding='utf-8'))
     out = pathlib.Path(out); out.mkdir(parents=True, exist_ok=True)
-    rows, drop = [], collections.Counter()
+    rows = []
     for p in posts:
         pid = f'p{p["idx"]:04d}'
+        seen = collections.Counter()
         for x in p['qa']:
+            seen[x['n']] += 1  # 한 글에 같은 문항 번호가 또 나오면(인터뷰 두 편 등) 키에 차례를 붙인다
+            key = f'{pid}.q{x["n"]:02d}' + (f'.{seen[x["n"]]}' if seen[x['n']] > 1 else '')
             topic = TOPICS.get(x['n'], 'extra')
             a = HANDLE.sub('@…', x['a']).strip()
-            if topic is None: drop['topic_excluded'] += 1; continue
-            if not a: drop['empty'] += 1; continue
-            if MINOR.search(a): drop['minor'] += 1; continue
-            if TABOO.search(a): drop['taboo'] += 1; continue
-            if topic in AGE_TOPICS and any(int(n) < 19 for n in NUM2.findall(a)): drop['age_under_19_or_ambiguous'] += 1; continue
-            if YOUNG.search(a) or (SCHOOL.search(a) and not UNIV.search(a)): drop['young_or_school'] += 1; continue
-            rows.append({'id': f'{pid}.q{x["n"]:02d}', 'post': pid, 'q': x['n'], 'topic': topic,
-                         'answer': a, 'game': topic not in NOT_IN_GAME, 'len': len(a), 'nums': [f'{n}{u}' for n, u in NUM.findall(a)], 'tone': tone(a)})
-    by_topic = collections.Counter(r['topic'] for r in rows)
-    meta = {'schema': 'jo9-sextalk-interview-db/v1', 'posts': len(posts), 'rows': len(rows), 'dropped': dict(drop),
-            'topics': {k: v for k, v in TOPICS.items()}, 'note': '창작 경험담 형식 인터뷰(저작권자=사용자). 게임 대사로는 세계관에 맞게 다시 쓴다.'}
+            rs = reasons_of(topic, a)
+            withheld = any(r in TEXT_WITHHELD for r in rs)
+            row = {'id': key, 'post': pid, 'q': x['n'], 'topic': topic,
+                   'display': not rs, 'tags': (['표시불가'] if rs else []) + rs,
+                   'game': not rs and topic not in NOT_IN_GAME,
+                   'answer': PLACEHOLDER if withheld else a, 'text_withheld': withheld}
+            if a and not withheld:
+                row.update({'len': len(a), 'nums': [f'{n}{u}' for n, u in NUM.findall(a)], 'tone': tone(a)})
+            rows.append(row)
+    by_reason = collections.Counter(r for x in rows for r in x['tags'] if r != '표시불가')
+    meta = {'schema': 'jo9-sextalk-interview-db/v2', 'posts': len(posts), 'rows': len(rows),
+            'display': sum(x['display'] for x in rows), 'game': sum(x['game'] for x in rows),
+            'blocked_by_reason': dict(by_reason), 'placeholder': PLACEHOLDER, 'reasons': REASON_KO,
+            'topics': {k: v for k, v in TOPICS.items()},
+            'note': '사용자 창작물(경험담 형식 인터뷰) DB. 모든 대답에 고유 키를 준다. [표시불가] 중 청소년기·수간 사유는 원문을 싣지 않고 자리표시 문구만 둔다(원문은 원본 블로그에 있음).'}
     json.dump({'meta': meta, 'rows': rows}, open(out / 'interview-db.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=0)
-    md = ['<!-- 섹스토크 인터뷰 리소스 DB 요약 (build-db.py 자동 생성) -->', '# 섹스토크 인터뷰 리소스 DB 요약', '',
-          f'- 글 {len(posts)}편, 사용 가능 대답 {len(rows)}개. 제외: {dict(drop)}', '- 게임 미반영(정리만, `game: false`): 1 첫 경험 나이·3 나이 차(나이 수치가 모두 19 이상인 대답만), 29·31 현대 SNS 주제', '- 제외: 질문 단위(5 교복, 30 근친·수간 보기), 대답 단위(미성년 암시·근친·수간 단어, 어린 시절 언급, 대학 언급 없는 학교)', '',
-          '| 질문 | 주제 키 | 대답 수 | 평균 길이 | 반말(존댓말 표지 없음) 비율 | 얼버무림 비율 |', '|---|---|---|---|---|---|']
+    md = ['<!-- 섹스토크 인터뷰 창작물 DB 요약 (build-db.py 자동 생성) -->', '# 섹스토크 인터뷰 창작물 DB 요약', '',
+          f'- 글 {len(posts)}편, 문항·대답 {len(rows)}개 전부에 고유 키(`p글번호.q문항번호`, 같은 글에 같은 번호가 또 있으면 `.2`)를 준다.',
+          f'- 표시 가능 {meta["display"]}개, 그중 게임용 {meta["game"]}개. [표시불가] {len(rows) - meta["display"]}개.',
+          f'- [표시불가] 사유별(중복 가능): ' + ', '.join(f'{REASON_KO[k]} {v}' for k, v in by_reason.most_common()),
+          f'- 청소년기·수간 사유는 원문 대신 `{PLACEHOLDER}`만 싣는다. 근친·금기 목록·SNS·빈 대답은 원문을 싣되 표시하지 않는다.', '',
+          '| 질문 | 주제 키 | 전체 | 표시 가능 | 게임용 | [표시불가] 청소년기 | 평균 길이 | 얼버무림 비율 |', '|---|---|---|---|---|---|---|---|']
     for n, k in TOPICS.items():
-        if k is None: md.append(f'| Q{n} | (제외) | 0 | | | |'); continue
-        if k in NOT_IN_GAME: k_label = f'`{k}` (게임 미반영)'
-        else: k_label = f'`{k}`'
-        rs = [r for r in rows if r['topic'] == k]
-        if not rs: continue
-        avg = sum(r['len'] for r in rs) // len(rs)
-        cas = sum('casual' in r['tone'] for r in rs) * 100 // len(rs)
-        hed = sum('hedge' in r['tone'] for r in rs) * 100 // len(rs)
-        md.append(f'| Q{n} | {k_label} | {len(rs)} | {avg} | {cas}% | {hed}% |')
+        rs = [r for r in rows if r['q'] == n]
+        ok = [r for r in rs if r['display']]
+        avg = sum(r['len'] for r in ok) // len(ok) if ok else 0
+        hed = sum('hedge' in r['tone'] for r in ok) * 100 // len(ok) if ok else 0
+        md.append(f'| Q{n} | `{k}` | {len(rs)} | {len(ok)} | {sum(r["game"] for r in rs)} | {sum("minor" in r["tags"] for r in rs)} | {avg} | {hed}% |')
     (out / 'INTERVIEW_DB_KO.md').write_text('\n'.join(md) + '\n', encoding='utf-8')
-    print(meta['rows'], dict(drop), dict(by_topic.most_common(5)))
+    print(len(rows), meta['display'], meta['game'], dict(by_reason))
+
 
 if __name__ == '__main__':
     main(sys.argv[1], sys.argv[2])
