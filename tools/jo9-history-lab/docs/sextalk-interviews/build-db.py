@@ -50,6 +50,8 @@ NOT_IN_GAME = {'first_age', 'age_gap', 'sns_meet', 'sns_creeps', 'taboo_list'}
 PLACEHOLDER = '[이 대사는 표시 불가합니다.]'
 # 사유 코드: 원문을 DB에 싣지 않는 사유(본문 자리에 PLACEHOLDER) / 원문은 싣되 표시하지 않는 사유
 TEXT_WITHHELD = {'minor', 'bestiality'}
+# 내부 분류코드(게임 화면에는 보이지 않음). 키 → 코드는 blocked-index.json으로 찾는다
+BLOCK_CODE = {'minor': 'B1', 'bestiality': 'B2', 'incest': 'B3', 'taboo_list': 'B4', 'modern_sns': 'B5', 'empty': 'B9'}
 REASON_KO = {'minor': '청소년기·미성년', 'bestiality': '수간', 'incest': '근친', 'taboo_list': '금기 보기 목록 문항', 'modern_sns': '현대 SNS 소재', 'empty': '빈 대답'}
 AGE_TOPICS = {'first_age', 'age_gap'}
 NUM2 = re.compile(r'(?<!\d)(\d{1,2})(?!\d)')
@@ -95,7 +97,7 @@ def main(src, out):
             rs = reasons_of(topic, a)
             withheld = any(r in TEXT_WITHHELD for r in rs)
             row = {'id': key, 'post': pid, 'q': x['n'], 'topic': topic,
-                   'display': not rs, 'tags': (['표시불가'] if rs else []) + rs,
+                   'display': not rs, 'tags': (['표시불가'] if rs else []) + rs, 'block': [BLOCK_CODE[r] for r in rs],
                    'game': not rs and topic not in NOT_IN_GAME,
                    'answer': PLACEHOLDER if withheld else a, 'text_withheld': withheld}
             if a and not withheld:
@@ -107,11 +109,16 @@ def main(src, out):
             'blocked_by_reason': dict(by_reason), 'placeholder': PLACEHOLDER, 'reasons': REASON_KO,
             'topics': {k: v for k, v in TOPICS.items()},
             'note': '사용자 창작물(경험담 형식 인터뷰) DB. 모든 대답에 고유 키를 준다. [표시불가] 중 청소년기·수간 사유는 원문을 싣지 않고 자리표시 문구만 둔다(원문은 원본 블로그에 있음).'}
+    meta['block_codes'] = {c: REASON_KO[r] for r, c in BLOCK_CODE.items()}
     json.dump({'meta': meta, 'rows': rows}, open(out / 'interview-db.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=0)
+    index = {'schema': 'jo9-blocked-index/v1', 'codes': meta['block_codes'],
+             'keys': {x['id']: x['block'] for x in rows if x['block']}}
+    json.dump(index, open(out / 'blocked-index.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=0)
     md = ['<!-- 섹스토크 인터뷰 창작물 DB 요약 (build-db.py 자동 생성) -->', '# 섹스토크 인터뷰 창작물 DB 요약', '',
           f'- 글 {len(posts)}편, 문항·대답 {len(rows)}개 전부에 고유 키(`p글번호.q문항번호`, 같은 글에 같은 번호가 또 있으면 `.2`)를 준다.',
           f'- 표시 가능 {meta["display"]}개, 그중 게임용 {meta["game"]}개. [표시불가] {len(rows) - meta["display"]}개.',
           f'- [표시불가] 사유별(중복 가능): ' + ', '.join(f'{REASON_KO[k]} {v}' for k, v in by_reason.most_common()),
+          '- 내부 분류코드(게임 화면에는 보이지 않음): ' + ', '.join(f'{c} {REASON_KO[r]}' for r, c in BLOCK_CODE.items()) + '. 키 → 코드 색인: `blocked-index.json`',
           f'- 청소년기·수간 사유는 원문 대신 `{PLACEHOLDER}`만 싣는다. 근친·금기 목록·SNS·빈 대답은 원문을 싣되 표시하지 않는다.', '',
           '| 질문 | 주제 키 | 전체 | 표시 가능 | 게임용 | [표시불가] 청소년기 | 평균 길이 | 얼버무림 비율 |', '|---|---|---|---|---|---|---|---|']
     for n, k in TOPICS.items():
