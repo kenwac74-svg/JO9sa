@@ -1,6 +1,7 @@
 // 초기값 시뮬레이터: 노예 한 명의 세계·출신·직업과 생성 값, 공식 계수를 직접 바꾸며 영입 전 과거 경험 결과를 확인한다
 import {pastHistory,tierOf} from './past-history.mjs';
-import {pillowTalk,TYPE_NAME,STYLE_NAME} from './pillow-talk.mjs';
+import {pillowTalk,TYPE_NAME,STYLE_NAME,MODE_NAME} from './pillow-talk.mjs';
+const hashSeed=s=>{let h=2166136261;for(const ch of String(s)){h^=ch.charCodeAt(0);h=Math.imul(h,16777619);}return h>>>0;};
 import {loadSimData,esc as e,rng,getFormula,saveFormula,resetFormula,onFormulaChange,formulaEdited} from './sim-data.mjs';
 
 // 게임 #variative의 단계 이름
@@ -25,6 +26,8 @@ const TRAITS=[
  ['jo9_gag_reflex','구역 반사',[[0,'없음'],[1,'반사적 구역질']]],
  ['jo9_peerless','절세미인',[[0,'없음'],[1,'절세미인']]]
 ];
+const PSY=[['docile','온순함'],['soft','부드러움'],['optimistic','낙관'],['obedient','순종'],['servile','비굴'],['horny','발정'],['reluctant','마지못함'],['arrogant','오만'],['hateful','증오'],['resistant','저항'],['hysteric','히스테리'],['lachrymose','울보'],['frightened','겁먹음'],['depresive','우울'],['broken','무너짐']];
+const TALK=[['psy_status','관계 상태(psy_status)',PSY],['moral','헌신(moral)',[0,1,2,3,4,5].map(v=>[v,String(v)])],['fear','두려움(fear)',[0,1,2,3,4,5].map(v=>[v,String(v)])],['jo9_voice_type','말하기 유형',[['','자동(성격으로 계산)'],['ice','얼음'],['proud','도도'],['flame','불꽃'],['calm','관조'],['plain','평범'],['frank','솔직'],['doll','인형'],['meek','순종'],['fragile','여린']]]];
 const STATE=[['virginity','처녀 여부',[[0,'처녀'],[2,'비처녀']]],['fertility','임신 가능',[[0,'가능'],[-1,'불임']]],['pregnant','영입 시 임신 중',[[0,'아니오'],[1,'예']]],['clone','클론·기술 주입',[[0,'아니오'],[1,'예']]]];
 const SKILLS=[['애무',[['sub_hug','포옹'],['sub_hj','손'],['sub_fj','발'],['sub_paizuri','가슴']]],['구강',[['sub_kiss','키스'],['sub_tongue','혀'],['sub_bj','펠라'],['sub_dt','딥스로트'],['sub_asslik','항문 핥기']]],['삽입',[['sub_vaginal','질'],['sub_anal','애널'],['sub_fisting','피스팅'],['anal_stretch','항문 확장']]]];
 const TIER={virginForced:'처녀 고정',sexWork:'성인 접객업',married:'유부녀',formerSlave:'노예 출신',nightlife:'유흥·사교',default:'그 밖',sheltered:'보호가 강한 상류·왕가',street:'거리·빈곤·범죄'};
@@ -98,6 +101,7 @@ export async function createOneView(api){
    <div class="section-label">상태</div><div class="form-grid">${STATE.map(([k,l,o])=>field(l,select(k,o,x[k]??0))).join('')}</div>
    <div class="section-label">성 기술 (0~5, 묶음별 최고 등급을 씁니다)</div><div class="one-skills">${SKILLS.map(([g,list])=>`<div><b>${g}</b>${list.map(([k,l])=>field(l,select(k,[0,1,2,3,4,5].map(v=>[v,String(v)]),Math.min(5,x[k]??0)))).join('')}</div>`).join('')}</div>
    <div class="section-label">성향 특성</div><div class="form-grid">${TRAITS.map(([k,l,o])=>field(l,select(k,o,x[k]??0))).join('')}</div>
+   <div class="section-label">대화 상태 (필로우토크용: 관계 모드·감정 깊이·말하기 유형. 유니크는 유형을 지정할 수 있습니다)</div><div class="form-grid">${TALK.map(([k,l,o])=>field(l,select(k,o,x[k]??(k==='psy_status'?'docile':k==='jo9_voice_type'?'':0)))).join('')}</div>
    <div class="section-label">기본 속성</div><div class="form-grid">${ATTR.map(([k,l])=>field(l,select(k,LV[k].map((n,i)=>[i,`${i} · ${n}`]),x[k]??(k==='base_beauty'?x.beauty:k==='base_exotic'?x.exotic:0)??0))).join('')}</div>
   </div></article></div>
   <div class="column"><article class="card"><div class="card-head"><h2><span class="index">03</span>영입 전 과거 경험</h2>${field('시드','<input data-one="seed" value="'+e(st.seed)+'" maxlength="40">','one-seed')}</div><div class="card-body">
@@ -108,7 +112,7 @@ export async function createOneView(api){
     <div class="summary-tile"><span class="summary-label">질 · 구강 · 애널</span><span class="summary-value sim-small">${r.acts?`${r.acts.vaginal} · ${r.acts.oral} · ${r.acts.anal}`:'—'}</span><div class="summary-foot">이성 ${r.partners?.opposite??0} · 동성 ${r.partners?.sameSex??0} · 인간 외 ${r.partners?.nonhuman??0}</div></div>
     <div class="summary-tile"><span class="summary-label">임신 · 출산</span><span class="summary-value sim-small">${r.pregnancies===null?'미상':`${r.pregnancies} · ${r.births}`}</span><div class="summary-foot">${r.pregnancies===null?'유부녀·영입 시 임신 중이 아니면 추정하지 않음':'회'}</div></div>
    </div>
-   ${(()=>{const pt=pillowTalk(x,r,tierOf(f,'occupation',x.occupation).name,st.seed);return pt?`<div class="one-pillow"><div class="section-label">필로우토크 미리보기 <span class="badge muted">노예와 대화한다 · 샘플</span></div><div class="one-pillow-meta">유형 <b>${TYPE_NAME[pt.type]}</b> · 말투 <b>${STYLE_NAME[pt.style]}</b> · 실제 ${r.intimacy}회 → 말하는 횟수 ${pt.told}회</div>${pt.lines.map(l=>`<p>“${e(l)}”</p>`).join('')}</div>`:'';})()}
+   ${(()=>{const pt=root._pt=pillowTalk(x,r,tierOf(f,'occupation',x.occupation).name,rng(hashSeed(st.seed)),st.ptHistory??[]);return pt?`<div class="one-pillow"><div class="section-label">필로우토크 미리보기 <span class="badge muted">노예와 대화한다 · 샘플</span></div><div class="one-pillow-meta">유형 <b>${TYPE_NAME[pt.type]}</b>${x.jo9_voice_type?' (지정)':''} · 관계 <b>${MODE_NAME[pt.mode]}</b> · 말투 <b>${STYLE_NAME[pt.style]}</b>${pt.refused?' · <b>거절</b>':''} · 실제 ${r.intimacy}회 → 말하는 횟수 ${pt.told}회</div>${pt.lines.map(l=>`<p>“${e(l)}”</p>`).join('')}</div>`:'';})()}
    ${st.batch&&st.batch.key===batchKey()?batchHtml(x,f):''}
    <div class="section-label">산출 과정</div><ol class="one-trace">${r.trace.map(t=>`<li>${e(t)}</li>`).join('')}</ol>`}
   </div></article>
@@ -124,6 +128,7 @@ export async function createOneView(api){
    const k=t.dataset.one;
    if(k==='seed')st.seed=t.value.slice(0,40);
    else if(['world','family','occupation'].includes(k)){s()[k]=t.value;const sel={world:s().world,family:s().family,occupation:s().occupation};D.prune(sel,k);Object.assign(s(),sel);st.drawn=null;}
+   else if(k==='psy_status'||k==='jo9_voice_type')s()[k]=t.value;
    else s()[k]=Number(t.value);
    save();render();return;
   }
@@ -141,7 +146,7 @@ export async function createOneView(api){
    st.draws=(st.draws??0)+1;const pick=pool[Math.floor(rng(Date.now()^st.draws)()*pool.length)];
    st.stock={...pick};st.drawn=String(pick.type);st.seed=String(st.draws);
   }
-  if(a==='run'){st.seed=String(Date.now()%100000);st.runs=(st.runs??0)+1;}
+  if(a==='run'){st.ptHistory=[...(st.ptHistory??[]),...(root._pt?.used??[])].slice(-6);st.seed=String(Date.now()%100000);st.runs=(st.runs??0)+1;}
   if(a==='run100'){st.batch={key:batchKey(),base:Date.now()};}
   if(a==='clear'){Object.assign(s(),{world:'',family:'',occupation:''});st.drawn=null;}
   if(a==='reset-formula'){resetFormula(D.formula);return;}
