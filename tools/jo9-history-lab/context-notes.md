@@ -199,3 +199,4 @@
 - 구현: dist/past-facts.mjs(makeRand를 past-history에서 export), dist/data/past-facts.json, xeno-talk-drafts.json(12행), checks-past-facts.mjs, 초기값 시뮬레이터 사실 칸·영입 경로 입력.
 - 현대 평균 근거: CDC NSFG(미국 여성 도시 17.4세) vs 한국 성인 여성 24.1세(PMC7994665). 기본값 17.4, 사용자 확인 필요. 17.4면 현대 표본 78%가 B1.
 - 발견: 기존 공식의 partners는 '상대 수'가 아니라 횟수의 상대 유형 배분이었다 → 서로 다른 상대 수는 사실 생성기에서 총횟수 ÷ 한 명당 횟수로 따로 계산.
+- 사용자: 잭오나는 러시아 게임이니 러시아 평균 사용, 한국 자료는 편향. 조사: Healthy Russia 2020 여성 중앙값 18세, 보건부 추정 17~18세, Rosstat·UNFPA 2013 18세까지 42%·24세까지 92%. modern meanAge 17.4 → 18.0. 현대 표본 청소년기 비율 70%.
