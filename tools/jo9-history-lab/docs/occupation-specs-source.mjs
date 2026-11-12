@@ -8,8 +8,9 @@ export const SKILLS={화술:'expression',음악:'music',미술:'art',무용:'cal
 export const SPECS=[
  {label:'평민',occupations:['poor_bride'],line:185,rules:[{type:'note',text:'직업 추가 특성 없음'}]},
  {label:'사냥꾼',occupations:['huntress'],line:186,rules:[
-  {type:'chance',trait:'촌뜨기',probability:10},{type:'chance',trait:'높은 대사량',probability:10},
-  {type:'note',text:'문명생활 밖 직업의 촌뜨기 공통 규칙은 대상 목록이 정해지지 않았다'}]},
+  {type:'chance',trait:'촌뜨기',probability:10},{type:'chance',trait:'높은 대사량',probability:10}]},
+ {label:'문명생활 밖 공통',occupations:['tribal_girl','shaman','herbalist'],line:186,rules:[
+  {type:'chance',trait:'촌뜨기',probability:10,text:'사용자 결정 2026-11-12: 사냥꾼·바이킹의 아내와 같은 +10. 부족 공주는 공주계열 품위있는 여자와 충돌해 제외'}]},
  {label:'바이킹의 아내',occupations:['viking_wife'],line:187,rules:[
   {type:'forbid',trait:'처녀',text:'비처녀 100%'},{type:'chance',trait:'물 기호증',probability:40},{type:'chance',trait:'촌뜨기',probability:10}]},
  {label:'수녀',occupations:['nun'],line:188,rules:[
@@ -27,7 +28,7 @@ export const SPECS=[
   {type:'note',text:'게임 외양간지기 임명 조건(menu_form 4930): moral >= 3, nurse > 2, secretary > 2. 간호·비서 B는 게임과 일치. moral 3 이상 조건이 추가로 있다'},
   {type:'note',text:'다른 추가 보너스 없음'}]},
  {label:'하녀',occupations:['maid','valertry'],line:193,rules:[
-  {type:'note',text:'타고난 하녀 발견 누적 경험치 기준을 절반으로. 성의 하녀(valertry) 포함 여부 확인 필요'}]},
+  {type:'note',text:'타고난 하녀 발견 누적 경험치 기준을 절반으로. 저택 하녀·성의 하녀 모두 적용(사용자 결정 2026-11-12)'}]},
  {label:'여마법사의 제자',occupations:['sorceress'],line:194,rules:[
   {type:'chance',trait:'강한 복종심',probability:20},{type:'skillMin',skill:'집안일',grade:'C',text:'집안일 보너스. 노예근성으로 대체하지 않음'}]},
  {label:'공주계열',occupations:['mprincess','barbarian_princess'],line:195,rules:[
@@ -68,5 +69,5 @@ export const SPECS=[
    weights:{first:[50,50],second:[1,1,1]},
    text:'20% 진입 → 둘 중 하나 확정(반반) → 진입자 중 20%에 셋 중 하나(같은 비중, 전체 4%). 최종 비율(사용자 결정 2026-11-12)'}]},
  {label:'소녀·여학생',occupations:['tribal_girl','schoolgirl'],line:94,rules:[
-  {type:'note',text:'두 직업의 기본 직업 보너스는 같다. 소녀에 순수한 영혼 추가 지시가 있었으며 두 직업 공통 적용 여부는 확인 필요'}]},
+  {type:'chance',trait:'순수한 영혼',probability:20,text:'두 직업 공통(사용자 결정 2026-11-12)'}]},
 ];
