@@ -141,6 +141,12 @@ def main(src, out):
                       'occurrence': x['src']['occurrence'], 'part': i, 'chars': pt['chars'], 'sha': pt['sha'], 'topic': x['topic']}
                      for x in rows if x['text_withheld'] for i, pt in enumerate(x['parts'], 1)]}
     json.dump(loc, open(out / 'withheld-locator.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=0)
+    # 첫 경험(Q1 나이·Q2 묘사)이 청소년기(B1)인 인터뷰 번호 목록: 청소년기로 뽑힌 노예가 연결될 인터뷰(키만, 본문 없음)
+    teen = sorted({x['post'] for x in rows if x['q'] in (1, 2) and 'B1' in x['block']})
+    adult = sorted({x['post'] for x in rows if x['q'] == 2 and x['display']} - set(teen))
+    json.dump({'schema': 'jo9-first-time-interviews/v1',
+               'note': '첫 경험 문항(Q1 나이, Q2 묘사) 기준 인터뷰 번호. teen = Q1 또는 Q2가 청소년기(B1)인 인터뷰, adult = Q2가 표시 가능하고 B1이 아닌 인터뷰. 키는 인터뷰 번호(p글번호)이고 해당 문항 키는 번호.q01·번호.q02.',
+               'teen': teen, 'adult': adult}, open(out / 'first-time-interviews.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=0)
     md = ['<!-- 섹스토크 인터뷰 창작물 DB 요약 (build-db.py 자동 생성) -->', '# 섹스토크 인터뷰 창작물 DB 요약', '',
           f'- 글 {len(posts)}편, 문항·대답 {len(rows)}개 전부에 고유 키(`p글번호.q문항번호`, 같은 글에 같은 번호가 또 있으면 `.2`)를 준다.',
           f'- 표시 가능 {meta["display"]}개, 그중 게임용 {meta["game"]}개. [표시불가] {len(rows) - meta["display"]}개.',

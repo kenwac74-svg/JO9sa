@@ -22,10 +22,11 @@ function normal(rand,mean,sd){
 
 /**
  * stock: 생성 값, result: pastHistory 결과, formula: 과거 경험 공식, facts: past-facts.json,
+ * interviews: first-time-interviews.json(청소년기 첫 경험 인터뷰 번호 목록). 없으면 연결하지 않는다
  * acq: 영입 정보 {route:'patrol'|'other', scene:'611xx'(안개 경계 순찰 장면 번호)}
  * 반환: {fields, blocked:{필드:코드}, trace} 또는 대상 아님이면 null
  */
-export function pastFacts(stock,result,formula,facts,seed='0',acq={}){
+export function pastFacts(stock,result,formula,facts,seed='0',acq={},interviews=null){
  if(!result||result.excluded)return null;
  const rand=makeRand(`${seed}|facts|${stock.world}|${stock.family}|${stock.occupation}`);
  const occ=tierOf(formula,'occupation',stock.occupation).name,fam=tierOf(formula,'family',stock.family).name;
@@ -54,8 +55,13 @@ export function pastFacts(stock,result,formula,facts,seed='0',acq={}){
  // 첫 경험 시기: 나이 숫자는 저장하지 않는다. teen은 내부 코드 B1(화면 표시 불가)
  const B=facts.firstBand,mean=B.meanAge[stock.world]??B.meanAge.modern,age=normal(rand,mean,B.sd);
  f.first_band=age<B.adultAge?'teen':'adult';
- if(f.first_band==='teen')blocked.first_band='B1';
- trace.push(`첫 경험 시기: 세계 평균 ${mean}세, 표준편차 ${B.sd} → ${f.first_band==='teen'?'청소년기(B1, 표시 불가)':'성인 이후'}`);
+ if(f.first_band==='teen'){
+  // 청소년기: 나이를 저장하지 않고, 창작물 DB에서 첫 경험이 청소년기인 인터뷰 번호를 연결한다
+  blocked.first_band='B1';
+  const pool=interviews?.teen??[];
+  if(pool.length)f.first_age_ref=pool[rand(0,pool.length-1)];
+ }else f.first_age=Math.min(B.maxAge??45,Math.max(B.adultAge,Math.floor(age)));
+ trace.push(`첫 경험 시기: 세계 평균 ${mean}세, 표준편차 ${B.sd} → ${f.first_band==='teen'?`청소년기(B1, 표시 불가)${f.first_age_ref?` · 연결 인터뷰 ${f.first_age_ref}`:''}`:`성인 이후 ${f.first_age}세`}`);
  f.first_who=pick(rand,byTier(facts.firstWho.byTier,occ,fam));
  f.first_how=pick(rand,byTier(facts.firstHow.byTier,occ,fam));
  f.first_where=pick(rand,byTier(facts.firstWhere.byTier,occ,fam));
@@ -107,3 +113,23 @@ export function packFacts(fields){
  return Object.entries(fields).filter(([,v])=>v!==''&&!(Array.isArray(v)&&!v.length)).map(([k,v])=>`${k}=${Array.isArray(v)?v.join(','):v}`).join(';');
 }
 export {SKILL_NAME};
+
+// 고유어 나이 말(19~45): 스물두, 서른, 마흔한 …
+export function ageWords(n){
+ const tens={1:'열',2:'스물',3:'서른',4:'마흔'},ones=['','한','두','세','네','다섯','여섯','일곱','여덟','아홉'];
+ const t=Math.floor(n/10),o=n%10;
+ if(o===0)return t===2?'스무':tens[t];
+ return tens[t]+ones[o];
+}
+const batchim=w=>{const c=w.charCodeAt(w.length-1);return c>=0xAC00&&c<=0xD7A3&&(c-0xAC00)%28!==0;};
+/** 성인 이후 첫 경험 대사: drafts = first-time-drafts.json, group = hot/cold/soft, style = 1/2. 청소년기·처녀는 null */
+export function firstTimeLine(facts,drafts,fields,group,style,rand=Math.random){
+ if(fields.first_band!=='adult')return null;
+ const cand=drafts.rows.filter(r=>r.how===fields.first_how&&r.types===group);
+ if(!cand.length)return null;
+ const who=facts.firstWho.speech[fields.first_who]??facts.firstWho.labels[fields.first_who],where=facts.firstWhere.speech[fields.first_where]??'';
+ const b=batchim(who);
+ return cand[Math.floor(rand()*cand.length)].text[style]
+  .replaceAll('{나이}',ageWords(fields.first_age)).replaceAll('{상대}',who).replaceAll('{장소}',where)
+  .replaceAll('{이가}',b?'이':'가').replaceAll('{이랑}',b?'이랑':'랑').replaceAll('{이와}',b?'과':'와');
+}

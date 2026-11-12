@@ -1,7 +1,7 @@
 // 초기값 시뮬레이터: 노예 한 명의 세계·출신·직업과 생성 값, 공식 계수를 직접 바꾸며 영입 전 과거 경험 결과를 확인한다
 import {pastHistory,tierOf} from './past-history.mjs';
 import {pillowTalk,voiceType,relationMode,speechStyle,TYPE_NAME,STYLE_NAME,MODE_NAME} from './pillow-talk.mjs';
-import {pastFacts,packFacts,SKILL_NAME} from './past-facts.mjs';
+import {pastFacts,packFacts,firstTimeLine,SKILL_NAME} from './past-facts.mjs';
 const hashSeed=s=>{let h=2166136261;for(const ch of String(s)){h^=ch.charCodeAt(0);h=Math.imul(h,16777619);}return h>>>0;};
 import {loadSimData,esc as e,rng,getFormula,saveFormula,resetFormula,onFormulaChange,formulaEdited} from './sim-data.mjs';
 
@@ -37,7 +37,7 @@ const KEY='jo9-draw-one-v1';
 export async function createOneView(api){
  const D=await loadSimData();
  const getJson=async f=>{const r=await fetch('./data/'+f);if(!r.ok)throw new Error(f+'를 읽지 못했습니다.');return r.json();};
- const FACTS=await getJson('past-facts.json'),XENO=await getJson('xeno-talk-drafts.json');
+ const FACTS=await getJson('past-facts.json'),XENO=await getJson('xeno-talk-drafts.json'),FIRST=await getJson('first-time-drafts.json'),INTERVIEWS=await getJson('first-time-interviews.json');
  const F=()=>getFormula(D.formula);
  let st=null;try{st=JSON.parse(localStorage.getItem(KEY)||'null');}catch{}
  if(!st?.stock)st={stock:{...D.rows[0]},seed:'1',draws:0};
@@ -92,16 +92,21 @@ export async function createOneView(api){
  const TYPE_GROUP={flame:'hot',proud:'hot',frank:'hot',ice:'cold',calm:'cold',plain:'cold',meek:'soft',fragile:'soft',doll:'soft'};
  const REL_GROUP={hopeful:'warm',duty:'warm',loyal:'warm',neutral:'warm',fearful:'low',bleak:'low',broken:'low',hostile:'hostile'};
  function factsHtml(x,r,f){
-  const fx=pastFacts(x,r,f,FACTS,'one|'+st.seed,st.acq??{});if(!fx)return '';
+  const fx=pastFacts(x,r,f,FACTS,'one|'+st.seed,st.acq??{},INTERVIEWS);if(!fx)return '';
   const v=fx.fields,L=(grp,k)=>FACTS[grp]?.labels?.[k]??k;
   const rows=[
    ['이종 경험',L('xeno',v.xeno)+(fx.blocked.xeno?` <span class="badge muted">표시 불가 ${fx.blocked.xeno}</span>`:'')],['살던 세상의 동물 경험',v.home_animal?'있음 <span class="badge muted">표시 불가 B2</span>':'없음'],['페티시(앞 주제와 연결 안 되는 성향)',v.fetish.length?v.fetish.map(k=>FACTS.fetish.candidates.find(c=>c.key===k)?.name??k).join(', '):'없음'],
-   ['첫 경험 시기',v.first_band==='teen'?'청소년기 <span class="badge muted">표시 불가 B1</span>':v.first_band==='adult'?'성인 이후':'없음'],
+   ['첫 경험 시기',v.first_band==='teen'?`청소년기 <span class="badge muted">표시 불가 B1</span>${v.first_age_ref?` 연결 인터뷰 <code>${e(v.first_age_ref)}</code>`:''}`:v.first_band==='adult'?`성인 이후 · ${v.first_age}세`:'없음'],
    ...(v.first_band==='none'?[]:[['첫 상대 · 방식 · 장소',`${L('firstWho',v.first_who)} · ${L('firstHow',v.first_how)} · ${L('firstWhere',v.first_where)}`],
    ['상대 수 · 하룻밤 최다',`${v.partners}명 · ${v.max_night}회`],['다인 경험 · 하루 최다 상대',`${L('group',v.group)} · ${v.max_day_people}명`],
    ['오르가즘 · 분출',`${L('orgasm',v.orgasm)} · ${v.squirt?'있음':'없음'}`],['피니시 · 삼킴',`${L('finish',v.finish)} · ${v.swallow?'삼킴':'뱉음'}`],
    ['18번 기술',SKILL_NAME[v.signature]??'없음'],['절대 싫은 것 · 해 보고 싶은 것',`${v.never?L('actLabels',v.never):'없음'} · ${v.want?L('actLabels',v.want):'없음'}`]])];
   const packed=packFacts(v);
+  const ty0=TYPE_GROUP[voiceType(x)],st0=speechStyle(x.occupation);
+  let first='';
+  if(v.first_band==='teen')first='<p class="one-pillow-line">[이 대사는 표시 불가합니다.]</p>';
+  else if(v.first_band==='adult')first=FIRST.userAuthoredWorlds.includes(x.world)?'<p class="one-pillow-line muted-text">이 세계(선사·고대·중세·마법 시대)는 사용자 작성 칸입니다.</p>':`<p class="one-pillow-line">${e(firstTimeLine(FACTS,FIRST,v,ty0,st0,rng(hashSeed(st.seed+'f')))??'이 방식·유형에 맞는 초안 행이 없습니다.')}</p>`;
+  if(first)first=`<div class="section-label">첫 경험 대사 초안 <span class="badge muted">${e(TYPE_NAME[voiceType(x)])} · ${e(STYLE_NAME[st0])}</span></div>${first}`;
   let xeno='';
   if(v.xeno!=='none'&&!fx.blocked.xeno){
    const ty=TYPE_GROUP[voiceType(x)],rel=REL_GROUP[relationMode(x)],style=speechStyle(x.occupation);
@@ -111,7 +116,7 @@ export async function createOneView(api){
   }
   return `<div class="one-facts"><div class="section-label">영입 때 저장할 섹스토크 사실 <span class="badge muted">같은 노예는 언제 물어도 같은 사실</span></div>
    <table><tbody>${rows.map(([a,b])=>`<tr><td>${e(a)}</td><td>${b}</td></tr>`).join('')}</tbody></table>
-   <div class="muted-text">저장 문자열 ${new TextEncoder().encode(packed).length}바이트: <code>${e(packed)}</code></div>${xeno}
+   <div class="muted-text">저장 문자열 ${new TextEncoder().encode(packed).length}바이트: <code>${e(packed)}</code></div>${first}${xeno}
    <details><summary>사실 산출 과정</summary><ol class="one-trace">${fx.trace.map(t=>`<li>${e(t)}</li>`).join('')}</ol></details></div>`;
  }
  function render(){

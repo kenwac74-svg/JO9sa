@@ -2,12 +2,12 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {pastHistory} from './dist/past-history.mjs';
-import {pastFacts,packFacts} from './dist/past-facts.mjs';
+import {pastFacts,packFacts,ageWords,firstTimeLine} from './dist/past-facts.mjs';
 const read=async f=>JSON.parse(await readFile(new URL('./dist/data/'+f,import.meta.url),'utf8'));
-const F=await read('past-history-formula.json'),X=await read('past-facts.json'),T=await read('xeno-talk-drafts.json');
+const F=await read('past-history-formula.json'),X=await read('past-facts.json'),T=await read('xeno-talk-drafts.json'),FT=await read('first-time-drafts.json'),IV=await read('first-time-interviews.json');
 const skilled={sub_hug:4,sub_kiss:4,sub_bj:4,sub_vaginal:4,sub_anal:2,sub_hj:3,sub_tongue:3,sub_dt:5};
 const stock=o=>({world:'modern',family:'worker',occupation:'whore',age:0,virginity:2,fertility:0,pregnant:0,clone:0,...skilled,...o});
-const run=(s,seed='a',acq={})=>pastFacts(s,pastHistory(s,F,seed),F,X,seed,acq);
+const run=(s,seed='a',acq={})=>pastFacts(s,pastHistory(s,F,seed),F,X,seed,acq,IV);
 // 같은 입력은 같은 사실(사실 일관성)
 for(let i=0;i<50;i++)assert.deepEqual(run(stock({}),'k'+i),run(stock({}),'k'+i));
 // 연령 코드 1은 대상이 아니다
@@ -16,8 +16,10 @@ assert.equal(run(stock({age:1})),null);
 const v=run(stock({occupation:'nun',virginity:0}));assert.equal(v.fields.first_band,'none');assert.equal(v.fields.partners,0);
 // 청소년기는 내부 코드 B1, 성인 이후는 코드 없음. 나이 숫자는 저장하지 않는다
 let teen=0,adult=0;
-for(let i=0;i<400;i++){const r=run(stock({}),'b'+i);if(r.fields.first_band==='teen'){teen++;assert.equal(r.blocked.first_band,'B1');}else{adult++;assert.equal(r.blocked.first_band,undefined);}
- assert(!/age|\d+세/.test(packFacts(r.fields)),'나이 저장 금지');}
+for(let i=0;i<400;i++){const r=run(stock({}),'b'+i),v=r.fields;
+ if(v.first_band==='teen'){teen++;assert.equal(r.blocked.first_band,'B1');assert.equal(v.first_age,undefined,'청소년기 나이 저장 금지');assert(IV.teen.includes(v.first_age_ref),'청소년기는 창작물 인터뷰 번호 연결');assert.equal(firstTimeLine(X,FT,v,'hot',2),null);}
+ else{adult++;assert.equal(r.blocked.first_band,undefined);assert(Number.isInteger(v.first_age)&&v.first_age>=X.firstBand.adultAge&&v.first_age<=X.firstBand.maxAge);assert.equal(v.first_age_ref,undefined);
+  const line=firstTimeLine(X,FT,v,['hot','cold','soft'][i%3],1+i%2,()=>0.5);assert(line&&line.includes(ageWords(v.first_age)+' 살')&&!/[{}]/.test(line),line);}}
 assert(teen>0&&adult>0);
 // 세계 순서: 선사가 가장 이르고 중세·근대가 가장 늦다(평균 나이)
 const M=X.firstBand.meanAge;assert(M.prehistoric<M.modern&&M.space<M.modern&&M.medieval===Math.max(...Object.values(M))&&M.industrial===M.medieval);
@@ -43,6 +45,10 @@ assert.equal(run(stock({occupation:'nun',virginity:0}),'x',{route:'patrol',scene
 const banned=['oral_affinity','anal_affinity','masochism','exhibitionism','nymphomania','homosexualism','abuse_attitude','compassion','water_attitude','fire_attitude','vermin_attitude','darkness_attitude','deprivation_attitude','blood_attitude'];
 for(const c of X.fetish.candidates)assert(!banned.includes(c.key),c.key);
 assert.deepEqual(run(stock({perversion:2,oral_affinity:1,masochism:2})).fields.fetish,['perversion']);
+// 고유어 나이
+assert.deepEqual([19,20,22,30,41].map(ageWords),['열아홉','스무','스물두','서른','마흔한']);
+// 첫 경험 초안: 방식 4 × 유형 묶음 3, 말투 1·2
+for(const h of ['wanted','drifted','paid','forced'])for(const g of ['hot','cold','soft'])assert(FT.rows.some(r=>r.how===h&&r.types===g&&r.text['1']&&r.text['2']),h+g);
 // 촉수 대사 초안: 두 경우 모두 있고, 말투 1·2가 다 있고, 키가 겹치지 않는다
 const ids=new Set();for(const r of T.rows){assert(!ids.has(r.id));ids.add(r.id);assert(['patrol_tentacle','patrol_monster','prev_master'].includes(r.case));assert(r.text['1']&&r.text['2']);}
 for(const c of ['patrol_tentacle','patrol_monster','prev_master'])for(const rel of ['warm','low','hostile'])assert(T.rows.some(r=>r.case===c&&r.rels===rel),c+' '+rel);
