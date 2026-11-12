@@ -134,12 +134,20 @@ def main(src, out):
     index = {'schema': 'jo9-blocked-index/v1', 'codes': meta['block_codes'],
              'keys': {x['id']: x['block'] for x in rows if x['block']}}
     json.dump(index, open(out / 'blocked-index.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=0)
+    # 원문을 싣지 않은 부분(B1·B2)의 원본 위치 색인: 키 → 글 주소·문항·차례·부분 번호·글자 수·지문
+    loc = {'schema': 'jo9-withheld-locator/v1',
+           'note': '원문을 DB에 싣지 않은 부분의 원본 위치. 원본 글의 해당 문항 대답을 줄·문장·보기 번호로 나눈 sNN번째 부분이고, sha는 그 부분 원문의 SHA-256 앞 12자다. 각색은 사용자가 adapt-user.json에 직접 쓴다.',
+           'parts': [{'key': pt['key'], 'block': pt['block'], 'url': x['src']['url'], 'q': x['src']['q'],
+                      'occurrence': x['src']['occurrence'], 'part': i, 'chars': pt['chars'], 'sha': pt['sha'], 'topic': x['topic']}
+                     for x in rows if x['text_withheld'] for i, pt in enumerate(x['parts'], 1)]}
+    json.dump(loc, open(out / 'withheld-locator.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=0)
     md = ['<!-- 섹스토크 인터뷰 창작물 DB 요약 (build-db.py 자동 생성) -->', '# 섹스토크 인터뷰 창작물 DB 요약', '',
           f'- 글 {len(posts)}편, 문항·대답 {len(rows)}개 전부에 고유 키(`p글번호.q문항번호`, 같은 글에 같은 번호가 또 있으면 `.2`)를 준다.',
           f'- 표시 가능 {meta["display"]}개, 그중 게임용 {meta["game"]}개. [표시불가] {len(rows) - meta["display"]}개.',
           f'- [표시불가] 사유별(중복 가능): ' + ', '.join(f'{REASON_KO[k]} {v}' for k, v in by_reason.most_common()),
           '- 내부 분류코드(게임 화면에는 보이지 않음): ' + ', '.join(f'{c} {REASON_KO[r]}' for r, c in BLOCK_CODE.items()) + '. 키 → 코드 색인: `blocked-index.json`',
           '- 대답은 줄·문장·보기 번호 단위 부분으로 나눠 부분 키(`키.sNN`)를 준다. 부분마다 원문 지문(`sha`, SHA-256 앞 12자)과 글자 수가 있어, 원문을 싣지 않은 부분도 원본(글 주소·문항·차례·부분 번호)에서 찾아 맞춰 볼 수 있다.',
+          '- 원문을 싣지 않은 부분의 원본 위치 색인: `withheld-locator.json`(키 → 글 주소·문항·차례·부분 번호·글자 수·지문).',
           f'- 청소년기·수간 사유는 원문 대신 `{PLACEHOLDER}`만 싣는다. 근친·금기 목록·SNS·빈 대답은 원문을 싣되 표시하지 않는다.', '',
           '| 질문 | 주제 키 | 전체 | 표시 가능 | 게임용 | [표시불가] 청소년기 | 평균 길이 | 얼버무림 비율 |', '|---|---|---|---|---|---|---|---|']
     for n, k in TOPICS.items():
