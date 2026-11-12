@@ -11,6 +11,13 @@ DIST = Path(__file__).resolve().parent / 'dist'
 URL = f'http://127.0.0.1:{PORT}/'
 
 
+class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
+    # 편집기를 고친 뒤에도 브라우저가 예전 파일을 쓰지 않게 한다
+    def end_headers(self):
+        self.send_header('Cache-Control', 'no-store, max-age=0')
+        super().end_headers()
+
+
 def already_running() -> bool:
     with socket.socket() as s:
         s.settimeout(0.5)
@@ -22,7 +29,7 @@ def main() -> None:
         webbrowser.open(URL)
         print('이미 실행 중인 편집기를 열었습니다:', URL)
         return
-    handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=str(DIST))
+    handler = functools.partial(NoCacheHandler, directory=str(DIST))
     server = http.server.ThreadingHTTPServer(('127.0.0.1', PORT), handler)
     threading.Timer(0.5, lambda: webbrowser.open(URL)).start()
     print('편집기를 열었습니다:', URL)
