@@ -104,6 +104,7 @@ def main(out: str, build: str) -> None:
             if f.is_file():
                 z.write(f, 'lab/dist/' + f.relative_to(DIST).as_posix())
         z.write(HERE / 'studio_server.py', 'lab/studio_server.py')
+        z.write(HERE / 'studio_save.py', 'lab/studio_save.py')
         for name in BACKEND:
             z.write(IMAGE_TOOL / name, 'character-image-adder/' + name)
     payload = base64.b64encode(buf.getvalue()).decode('ascii')

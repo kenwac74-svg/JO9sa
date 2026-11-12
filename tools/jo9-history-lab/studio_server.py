@@ -447,6 +447,85 @@ def delete(sid, body):
     return {'id': int(sid), 'mode': mode, 'log': logs}
 
 
+# ------------------------------------------------------------------ 세이브 정비(버전 불일치: 이미지 경로)
+import studio_save  # noqa: E402
+_save_cache = {}
+
+
+def _save_path(path):
+    path = os.path.abspath(os.path.expanduser(str(path or '').strip()))
+    if not path.lower().endswith('.sav') or not os.path.isfile(path):
+        raise FileNotFoundError('세이브 파일(.sav)을 찾지 못했습니다: ' + path)
+    return path
+
+
+def _load_save(path):
+    stamp = (path, os.path.getmtime(path), os.path.getsize(path))
+    if _save_cache.get('stamp') != stamp:
+        _save_cache.clear()
+        _save_cache.update(stamp=stamp, save=studio_save.parse(Path(path).read_bytes()))
+    return _save_cache['save']
+
+
+def list_saves():
+    """게임 폴더 아래(3단계까지)의 .sav 목록."""
+    p = paths()
+    out = []
+    for d, dirs, files in os.walk(p.root):
+        if d[len(p.root):].count(os.sep) >= 3:
+            dirs[:] = []
+        dirs[:] = [x for x in dirs if x not in ('content', 'json', 'node_modules')]
+        for f in files:
+            if f.lower().endswith('.sav'):
+                fn = os.path.join(d, f)
+                out.append({'path': fn, 'name': os.path.relpath(fn, p.root), 'size': os.path.getsize(fn), 'mtime': int(os.path.getmtime(fn))})
+    return {'items': sorted(out, key=lambda x: -x['mtime'])}
+
+
+def _slave_json(p):
+    def get(sid):
+        try:
+            return api.read_slave(p, int(sid))[0]
+        except Exception:  # noqa: BLE001 - 없는 번호·깨진 JSON은 제안 없이 넘어간다
+            return None
+    return get
+
+
+def save_scan(body):
+    p = paths()
+    path = _save_path(body.get('path'))
+    save = _load_save(path)
+    r = studio_save.scan(save, p.root, _slave_json(p))
+    for c in r['characters']:
+        c['urls'] = {k: image_url(p, ref) for k, ref in c['images'].items()}
+    return {'path': path, 'vars': len(save['vars']), 'characters': r['characters'], 'fixes': r['fixes'],
+            'uiTotal': len(r['ui']), 'ui': r['ui'][:800]}
+
+
+def save_fix(body):
+    """고친 새 세이브를 원본 옆에 만든다(원본은 그대로). 다시 읽어 왕복·형식 검사."""
+    import datetime
+    path = _save_path(body.get('path'))
+    save = studio_save.parse(Path(path).read_bytes())  # 캐시가 아닌 원본에서 새로 읽어 고친다
+    fixes = [f for f in (body.get('fixes') or []) if f.get('new')]
+    if not fixes:
+        raise ValueError('고칠 항목을 고르세요.')
+    for f in fixes:
+        if not isinstance(f.get('new'), str) or len(f['new']) > 400 or '\r' in f['new'] or '\n' in f['new']:
+            raise ValueError('새 경로 형식이 아닙니다.')
+    n = studio_save.apply(save, fixes)
+    data = studio_save.serialize(save)
+    studio_save.parse(data)
+    stem, _ext = os.path.splitext(path)
+    out = '%s_fixed_%s.sav' % (stem, datetime.datetime.now().strftime('%Y%m%d_%H%M%S'))
+    if os.path.exists(out):
+        raise FileExistsError('같은 이름의 파일이 있습니다: ' + out)
+    Path(out).write_bytes(data)
+    p = paths()
+    work_log(p).event('studio_save_fix', source=os.path.basename(path), output=os.path.basename(out), fixes=n)
+    return {'output': out, 'fixed': n}
+
+
 # ------------------------------------------------------------------ QSP 이벤트 대사(읽기 + mods 초안)
 _qsp_cache = {}
 
@@ -571,6 +650,7 @@ ROUTES_GET = [
     (re.compile(r'^/api/char/(\d+)$'), lambda m, q: read_character(m.group(1))),
     (re.compile(r'^/api/talkbook/(\d+)$'), lambda m, q: read_talkbook(m.group(1))),
     (re.compile(r'^/api/qsp/search$'), lambda m, q: qsp_search(q)),
+    (re.compile(r'^/api/saves$'), lambda m, q: list_saves()),
     (re.compile(r'^/api/char/(\d+)/delete-plan$'), lambda m, q: delete_plan(m.group(1))),
 ]
 ROUTES_POST = [
@@ -579,6 +659,8 @@ ROUTES_POST = [
     (re.compile(r'^/api/char/(\d+)/images$'), lambda m, body: save_images(m.group(1), body)),
     (re.compile(r'^/api/talkbook/(\d+)$'), lambda m, body: save_talkbook(m.group(1), body)),
     (re.compile(r'^/api/qsp/mod$'), lambda m, body: qsp_mod(body)),
+    (re.compile(r'^/api/save/scan$'), lambda m, body: save_scan(body)),
+    (re.compile(r'^/api/save/fix$'), lambda m, body: save_fix(body)),
     (re.compile(r'^/api/char/new$'), lambda m, body: new_character(body)),
     (re.compile(r'^/api/char/(\d+)/clone$'), lambda m, body: clone(m.group(1), body)),
     (re.compile(r'^/api/char/(\d+)/delete$'), lambda m, body: delete(m.group(1), body)),
