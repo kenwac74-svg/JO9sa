@@ -43,7 +43,7 @@ export function tierOf(formula,kind,id){
 
 // 같은 입력이면 같은 결과. 게임에서는 rand(min,max)로 바꾼다.
 // 시드 문자열은 해시로 한 번만 정수로 바꾸고, 수열은 mulberry32로 뽑는다(연속 문자열 해시는 서로 상관이 생긴다).
-function makeRand(seed){
+export function makeRand(seed){
  let s=Math.floor(seededUnit(seed)*4294967295)>>>0;
  const next=()=>{s=(s+0x6D2B79F5)>>>0;let t=s;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return ((t^(t>>>14))>>>0)/4294967296;};
  return (min,max)=>min+Math.floor(next()*(max-min+1));

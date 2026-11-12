@@ -1,0 +1,280 @@
+{
+ "version": "0.1",
+ "status": "초안 2026-11-12. 사용자 결정 반영: 첫 경험 시기는 세계별(현대 = 실제 평균, 선사·미래로 갈수록 빠름, 중세·근대가 가장 늦음), 이종 경험은 이터널 로마 안의 두 경우만, 페티시는 앞 주제와 연결되지 않는 성향만.",
+ "note": "영입 때 한 번 정해 저장하는 섹스토크 사실. 값은 코드이고 문장은 대사집이 만든다. 같은 노예는 언제 물어도 같은 사실로 답한다.",
+ "firstBand": {
+  "note": "첫 경험 나이를 정규분포(평균 meanAge, 표준편차 sd)로 뽑아 adultAge 미만이면 teen(내부 코드 B1, 화면 표시 불가), 이상이면 adult. 나이 숫자는 저장·출력하지 않는다. 현대 평균은 미국 CDC NSFG 2011~2015 여성 18~44세 평균(도시 17.4세)을 기본값으로 둔다. 한국 성인 여성 전국 조사(2014~2015) 평균 24.1세를 쓰려면 modern만 바꾸면 된다.",
+  "adultAge": 19,
+  "sd": 2.0,
+  "meanAge": {
+   "prehistoric": 15.0,
+   "barbarian": 16.0,
+   "sns": 18.0,
+   "medieval": 19.5,
+   "darkfantasy": 18.5,
+   "highfantasy": 18.0,
+   "steampunk": 19.0,
+   "industrial": 19.5,
+   "modern": 17.4,
+   "cyberpunk": 16.8,
+   "utopia": 16.5,
+   "darkfuture": 16.8,
+   "space": 16.5
+  }
+ },
+ "firstWho": {
+  "note": "첫 상대 코드와 가중치. 직업 묶음 → 출신 묶음 → default 순으로 첫 번째로 맞는 표를 쓴다.",
+  "labels": {
+   "husband": "남편",
+   "fiance": "약혼자",
+   "lover": "연인",
+   "neighbor": "이웃 남자",
+   "client": "손님",
+   "pimp": "포주",
+   "master": "전 주인",
+   "thug": "동네 건달",
+   "stranger": "처음 본 남자",
+   "patron": "후원자",
+   "fellow": "같은 처지의 노예"
+  },
+  "byTier": {
+   "married": {
+    "husband": 70,
+    "lover": 20,
+    "neighbor": 10
+   },
+   "sexWork": {
+    "client": 45,
+    "pimp": 25,
+    "lover": 15,
+    "stranger": 15
+   },
+   "formerSlave": {
+    "master": 60,
+    "fellow": 20,
+    "stranger": 20
+   },
+   "nightlife": {
+    "patron": 35,
+    "lover": 40,
+    "stranger": 25
+   },
+   "sheltered": {
+    "fiance": 55,
+    "lover": 30,
+    "patron": 15
+   },
+   "street": {
+    "thug": 40,
+    "neighbor": 25,
+    "stranger": 20,
+    "lover": 15
+   },
+   "default": {
+    "lover": 50,
+    "neighbor": 25,
+    "stranger": 15,
+    "fiance": 10
+   }
+  }
+ },
+ "firstHow": {
+  "labels": {
+   "wanted": "원해서",
+   "drifted": "얼떨결에",
+   "paid": "돈을 받고",
+   "forced": "강제로"
+  },
+  "byTier": {
+   "married": {
+    "wanted": 40,
+    "drifted": 45,
+    "forced": 15
+   },
+   "sexWork": {
+    "paid": 50,
+    "forced": 25,
+    "drifted": 25
+   },
+   "formerSlave": {
+    "forced": 75,
+    "drifted": 25
+   },
+   "street": {
+    "wanted": 25,
+    "drifted": 35,
+    "forced": 40
+   },
+   "default": {
+    "wanted": 50,
+    "drifted": 40,
+    "forced": 10
+   }
+  }
+ },
+ "firstWhere": {
+  "note": "장소는 코드만 정한다. 세계별 문장은 대사집·사용자 각색이 정한다.",
+  "labels": {
+   "home": "자기 집",
+   "his_home": "상대 집",
+   "outdoor": "바깥",
+   "work": "일터",
+   "inn": "숙소",
+   "wedding_bed": "신혼 침상",
+   "master_room": "주인 방"
+  },
+  "byTier": {
+   "married": {
+    "wedding_bed": 80,
+    "home": 20
+   },
+   "sexWork": {
+    "work": 60,
+    "inn": 30,
+    "outdoor": 10
+   },
+   "formerSlave": {
+    "master_room": 70,
+    "outdoor": 15,
+    "work": 15
+   },
+   "default": {
+    "home": 30,
+    "his_home": 30,
+    "outdoor": 25,
+    "inn": 15
+   }
+  }
+ },
+ "partnerCount": {
+  "note": "서로 다른 상대 수 = 성경험 총횟수 ÷ (상대 한 명당 평균 횟수). 접객업은 한 명당 횟수가 적다. 최소 1.",
+  "timesPerPartner": {
+   "sexWork": 2,
+   "formerSlave": 6,
+   "nightlife": 6,
+   "married": 30,
+   "default": 10
+  },
+  "variationPct": 30
+ },
+ "maxNight": {
+  "note": "한 상대와 하룻밤 최다 횟수 = 1 + 성욕 보정 + rand. 총횟수보다 클 수 없다.",
+  "base": [
+   1,
+   3
+  ],
+  "libidoBonus": {
+   "2": 3,
+   "1": 2,
+   "-1": -1,
+   "-2": -1
+  }
+ },
+ "group": {
+  "labels": {
+   "none": "없음",
+   "ffm": "여자 둘 남자 하나",
+   "mmf": "남자 둘 여자 하나",
+   "many": "여럿"
+  },
+  "pctByTier": {
+   "sexWork": 60,
+   "formerSlave": 45,
+   "nightlife": 25,
+   "default": 8
+  },
+  "maxDayPeopleByTier": {
+   "sexWork": [
+    3,
+    12
+   ],
+   "formerSlave": [
+    2,
+    6
+   ],
+   "default": [
+    2,
+    3
+   ]
+  }
+ },
+ "orgasm": {
+  "labels": {
+   "never": "느껴 본 적 없음",
+   "sometimes": "가끔",
+   "often": "자주",
+   "always": "매번"
+  }
+ },
+ "finish": {
+  "labels": {
+   "inside": "안에",
+   "mouth": "입에",
+   "face": "얼굴에",
+   "chest": "가슴에",
+   "anal": "뒤에"
+  }
+ },
+ "xeno": {
+  "note": "이종 경험은 이터널 로마 안의 두 경우만(사용자 결정 2026-11-12). 이전 세계의 과거 경험에는 없다. 동물은 넣지 않는다.",
+  "labels": {
+   "none": "없음",
+   "fog_rescue": "안개경계에서 안개 괴물에게 당하던 중 주인공이 구출",
+   "prev_master": "이전 주인이 촉수로 착정시킴"
+  },
+  "fogEnemies": [
+   "исчадие_молодь",
+   "исчадие",
+   "чудовщиное_исчадие"
+  ],
+  "fogEnemyLabels": {
+   "исчадие_молодь": "어린 안개 괴물",
+   "исчадие": "안개 괴물",
+   "чудовщиное_исчадие": "괴물 같은 안개 괴물"
+  },
+  "prevMasterPct": 25,
+  "prevMasterTier": "formerSlave"
+ },
+ "fetish": {
+  "note": "변태 성욕·페티시 주제는 앞 주제에서 이미 다루지 않는 성향만 다룬다(사용자 결정 2026-11-12). 펠라·애널 중독은 딥스로트·애널, 피학·가학은 SM, 노출은 노출, 색정광·정액 중독은 피니시·오르가즘·상대 수·다인, 레즈비언·양성애자는 다인 경험, 기호증·심리피학은 성벽이 아니라 제외.",
+  "candidates": [
+   {
+    "key": "perversion",
+    "value": 2,
+    "name": "이상성욕 선호"
+   },
+   {
+    "key": "pet_affinity",
+    "value": 1,
+    "name": "순종적인 동물(역할 놀이)",
+    "confirm": true
+   },
+   {
+    "key": "dressage_affinity",
+    "value": 1,
+    "name": "순종적인 말(역할 놀이)",
+    "confirm": true
+   },
+   {
+    "key": "cowSK_affinity",
+    "value": 1,
+    "name": "미련한 소(역할 놀이)",
+    "confirm": true
+   }
+  ]
+ },
+ "actLabels": {
+  "labels": {
+   "anal": "애널",
+   "oral": "구강",
+   "vaginal": "질",
+   "perversion": "변태 행위",
+   "group": "여럿이서",
+   "anal_affinity": "애널(숨은 성향)",
+   "oral_affinity": "펠라(숨은 성향)",
+   "masochism": "맞으면서(숨은 성향)",
+   "exhibitionism": "남들 앞에서(숨은 성향)",
+   "homosexualism": "여자와(숨은 성향)"
+  }
+ }
+}

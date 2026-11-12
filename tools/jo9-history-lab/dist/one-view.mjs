@@ -1,6 +1,7 @@
 // 초기값 시뮬레이터: 노예 한 명의 세계·출신·직업과 생성 값, 공식 계수를 직접 바꾸며 영입 전 과거 경험 결과를 확인한다
 import {pastHistory,tierOf} from './past-history.mjs';
-import {pillowTalk,TYPE_NAME,STYLE_NAME,MODE_NAME} from './pillow-talk.mjs';
+import {pillowTalk,voiceType,relationMode,speechStyle,TYPE_NAME,STYLE_NAME,MODE_NAME} from './pillow-talk.mjs';
+import {pastFacts,packFacts,SKILL_NAME} from './past-facts.mjs';
 const hashSeed=s=>{let h=2166136261;for(const ch of String(s)){h^=ch.charCodeAt(0);h=Math.imul(h,16777619);}return h>>>0;};
 import {loadSimData,esc as e,rng,getFormula,saveFormula,resetFormula,onFormulaChange,formulaEdited} from './sim-data.mjs';
 
@@ -35,6 +36,8 @@ const KEY='jo9-draw-one-v1';
 
 export async function createOneView(api){
  const D=await loadSimData();
+ const getJson=async f=>{const r=await fetch('./data/'+f);if(!r.ok)throw new Error(f+'를 읽지 못했습니다.');return r.json();};
+ const FACTS=await getJson('past-facts.json'),XENO=await getJson('xeno-talk-drafts.json');
  const F=()=>getFormula(D.formula);
  let st=null;try{st=JSON.parse(localStorage.getItem(KEY)||'null');}catch{}
  if(!st?.stock)st={stock:{...D.rows[0]},seed:'1',draws:0};
@@ -85,6 +88,32 @@ export async function createOneView(api){
    <tr><td>임신</td><td>${preg.length?count('pregnancies'):'미상(추정하지 않음)'}</td></tr>
    <tr><td>출산</td><td>${preg.length?count('births'):'미상(추정하지 않음)'}</td></tr></tbody></table></div>`;
  }
+ // 영입 때 저장할 섹스토크 사실(사용자 결정 2026-11-12: 저장 범위는 이 편집기에서 정한다)
+ const TYPE_GROUP={flame:'hot',proud:'hot',frank:'hot',ice:'cold',calm:'cold',plain:'cold',meek:'soft',fragile:'soft',doll:'soft'};
+ const REL_GROUP={hopeful:'warm',duty:'warm',loyal:'warm',neutral:'warm',fearful:'low',bleak:'low',broken:'low',hostile:'hostile'};
+ function factsHtml(x,r,f){
+  const fx=pastFacts(x,r,f,FACTS,'one|'+st.seed,st.acq??{});if(!fx)return '';
+  const v=fx.fields,L=(grp,k)=>FACTS[grp]?.labels?.[k]??k;
+  const rows=[
+   ['이종 경험',L('xeno',v.xeno)],['페티시(앞 주제와 연결 안 되는 성향)',v.fetish.length?v.fetish.map(k=>FACTS.fetish.candidates.find(c=>c.key===k)?.name??k).join(', '):'없음'],
+   ['첫 경험 시기',v.first_band==='teen'?'청소년기 <span class="badge muted">표시 불가 B1</span>':v.first_band==='adult'?'성인 이후':'없음'],
+   ...(v.first_band==='none'?[]:[['첫 상대 · 방식 · 장소',`${L('firstWho',v.first_who)} · ${L('firstHow',v.first_how)} · ${L('firstWhere',v.first_where)}`],
+   ['상대 수 · 하룻밤 최다',`${v.partners}명 · ${v.max_night}회`],['다인 경험 · 하루 최다 상대',`${L('group',v.group)} · ${v.max_day_people}명`],
+   ['오르가즘 · 분출',`${L('orgasm',v.orgasm)} · ${v.squirt?'있음':'없음'}`],['피니시 · 삼킴',`${L('finish',v.finish)} · ${v.swallow?'삼킴':'뱉음'}`],
+   ['18번 기술',SKILL_NAME[v.signature]??'없음'],['절대 싫은 것 · 해 보고 싶은 것',`${v.never?L('actLabels',v.never):'없음'} · ${v.want?L('actLabels',v.want):'없음'}`]])];
+  const packed=packFacts(v);
+  let xeno='';
+  if(v.xeno!=='none'){
+   const ty=TYPE_GROUP[voiceType(x)],rel=REL_GROUP[relationMode(x)],style=speechStyle(x.occupation);
+   const cand=XENO.rows.filter(row=>row.case===v.xeno&&row.rels===rel&&(row.types===ty||row.types==='*'));
+   const row=cand.length?cand[Math.floor(rng(hashSeed(st.seed+'x'))()*cand.length)]:null;
+   xeno=`<div class="section-label">이종 경험 대사 초안 <span class="badge muted">${e(TYPE_NAME[voiceType(x)])} · ${e(MODE_NAME[relationMode(x)])} · ${e(STYLE_NAME[style])}</span></div><p class="one-pillow-line">${row?e(row.text[style]):'이 유형·관계에 맞는 초안 행이 없습니다.'}</p>`;
+  }
+  return `<div class="one-facts"><div class="section-label">영입 때 저장할 섹스토크 사실 <span class="badge muted">같은 노예는 언제 물어도 같은 사실</span></div>
+   <table><tbody>${rows.map(([a,b])=>`<tr><td>${e(a)}</td><td>${b}</td></tr>`).join('')}</tbody></table>
+   <div class="muted-text">저장 문자열 ${new TextEncoder().encode(packed).length}바이트: <code>${e(packed)}</code></div>${xeno}
+   <details><summary>사실 산출 과정</summary><ol class="one-trace">${fx.trace.map(t=>`<li>${e(t)}</li>`).join('')}</ol></details></div>`;
+ }
  function render(){
   const f=F(),x=s(),sel={world:x.world,family:x.family,occupation:x.occupation};
   const ready=x.world&&x.family&&x.occupation&&x.age!==1;
@@ -96,6 +125,7 @@ export async function createOneView(api){
   <article class="card"><div class="card-head"><h2><span class="index">01</span>배경</h2><span class="badge muted">게임 생성 규칙의 연결 조합만</span></div><div class="card-body"><div class="form-grid">
    ${field('세계',select('world',opt('world'),x.world))}${field('출신',select('family',opt('family'),x.family))}
    ${field('직업',select('occupation',opt('occupation'),x.occupation))}${field('연령 코드',select('age',[[0,'0'],[1,'1 (통계 제외)',true],[2,'2']],x.age))}
+   ${field('영입 경로',select('acq_route',[['other','일반'],['fog_battle','안개경계 전투']],st.acq?.route??'other'))}${(st.acq?.route==='fog_battle')?field('전투 상대',select('acq_enemy',[['','선택하세요'],...FACTS.xeno.fogEnemies.map(k=>[k,FACTS.xeno.fogEnemyLabels[k]]),['goblin','고블린(안개 괴물 아님)'],['orc','오크(안개 괴물 아님)']],st.acq?.enemy??'')):''}
   </div><div class="one-actions"><button class="button primary" data-one-action="draw">⚄ 한 명 뽑기</button><button class="button secondary" data-one-action="clear">배경 비우기</button><span class="muted-text">현재 조건에 맞는 실제 엔진 표본 ${pool.length.toLocaleString('ko-KR')}명 중에서 뽑아 아래 생성 값을 모두 채웁니다.${st.drawn?` 마지막 뽑기: 표본 유형 ${e(st.drawn)}`:''}</span></div></div></article>
   <article class="card"><div class="card-head"><h2><span class="index">02</span>생성 값</h2><small class="muted-text">영입 처리까지 끝난 값 기준</small></div><div class="card-body">
    <div class="section-label">상태</div><div class="form-grid">${STATE.map(([k,l,o])=>field(l,select(k,o,x[k]??0))).join('')}</div>
@@ -113,6 +143,7 @@ export async function createOneView(api){
     <div class="summary-tile"><span class="summary-label">임신 · 출산</span><span class="summary-value sim-small">${r.pregnancies===null?'미상':`${r.pregnancies} · ${r.births}`}</span><div class="summary-foot">${r.pregnancies===null?'유부녀·영입 시 임신 중이 아니면 추정하지 않음':'회'}</div></div>
    </div>
    ${(()=>{const pt=root._pt=pillowTalk(x,r,tierOf(f,'occupation',x.occupation).name,rng(hashSeed(st.seed)),st.ptHistory??[]);return pt?`<div class="one-pillow"><div class="section-label">필로우토크 미리보기 <span class="badge muted">노예와 대화한다 · 샘플</span></div><div class="one-pillow-meta">유형 <b>${TYPE_NAME[pt.type]}</b>${x.jo9_voice_type?' (지정)':''} · 관계 <b>${MODE_NAME[pt.mode]}</b> · 말투 <b>${STYLE_NAME[pt.style]}</b>${pt.refused?' · <b>거절</b>':''} · 실제 ${r.intimacy}회 → 말하는 횟수 ${pt.told}회</div>${pt.lines.map(l=>`<p>“${e(l)}”</p>`).join('')}</div>`:'';})()}
+   ${factsHtml(x,r,f)}
    ${st.batch&&st.batch.key===batchKey()?batchHtml(x,f):''}
    <div class="section-label">산출 과정</div><ol class="one-trace">${r.trace.map(t=>`<li>${e(t)}</li>`).join('')}</ol>`}
   </div></article>
@@ -127,6 +158,8 @@ export async function createOneView(api){
   if(t.dataset.one){
    const k=t.dataset.one;
    if(k==='seed')st.seed=t.value.slice(0,40);
+   else if(k==='acq_route')st.acq={route:t.value,enemy:st.acq?.enemy??''};
+   else if(k==='acq_enemy')st.acq={route:'fog_battle',enemy:t.value};
    else if(['world','family','occupation'].includes(k)){s()[k]=t.value;const sel={world:s().world,family:s().family,occupation:s().occupation};D.prune(sel,k);Object.assign(s(),sel);st.drawn=null;}
    else if(k==='psy_status'||k==='jo9_voice_type')s()[k]=t.value;
    else s()[k]=Number(t.value);
