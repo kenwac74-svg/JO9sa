@@ -2,6 +2,7 @@
 // 규칙 종류: chance(확률 추첨) · grant(확정 부여) · exclude(추첨 대상에서 제외) · forbid(등장 금지) · raise(확률 상승, 수치 미정)
 //          group(배척 그룹 추첨) · skillMin(스킬 최저 등급) · skillExclude(해당 스킬 등급 제외) · note(데이터화 불가 메모)
 // probability: 숫자(%)는 확정, null은 미정. 미정 수치를 임의로 채우지 않는다(핸드오프 7장 확률 해석).
+// mode(chance만): 'add'(기본) = 게임 기본 추첨 확률에 %p를 더함, 'final' = 그 직업 최종 비율. 그룹·단계형 추첨은 최종 비율(사용자 결정 2026-11-12, 원 인계 7장 확률 해석을 대체)
 export const SOURCE='docs/JO9_Stats_Background_Generation_Handoff_20261112.md';
 export const SKILLS={화술:'expression',음악:'music',미술:'art',무용:'calisthenics',비서:'secretary',간호:'nurse',체력:'stamina',집안일:'service',전투:'gladiatrix'};
 export const SPECS=[
@@ -14,7 +15,7 @@ export const SPECS=[
  {label:'수녀',occupations:['nun'],line:188,rules:[
   {type:'chance',trait:'은둔형 외톨이',probability:20},{type:'chance',trait:'동성애 혐오자',probability:20},
   {type:'chance',trait:'순수한 영혼',probability:50},{type:'chance',trait:'노출 기피',probability:70},
-  {type:'chance',trait:'처녀',probability:90},{type:'exclude',trait:'너그러움'}]},
+  {type:'chance',trait:'처녀',probability:90,mode:'final'},{type:'exclude',trait:'너그러움'}]},
  {label:'살인마',occupations:['serial_killer'],line:189,rules:[
   {type:'chance',trait:'혈액 기호증',probability:50},{type:'grant',trait:'가학성애자'},{type:'chance',trait:'무모함',probability:50},
   {type:'chance',trait:'자유로운 영혼',probability:30},{type:'note',text:'직업 전투 스킬 부여 없음'}]},

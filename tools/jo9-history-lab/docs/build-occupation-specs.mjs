@@ -20,6 +20,7 @@ export function buildSpecs(specs=SPECS){
     if(r.type==='chance'){
      if(r.probability!==null&&!(r.probability>0&&r.probability<=100))errors.push(`${spec.label}: ${r.trait} 확률 범위`);
      rule.probability=r.probability;if(r.probability===null)rule.status='미정';
+     rule.mode=r.mode??'add';if(!['add','final'].includes(rule.mode))errors.push(`${spec.label}: ${r.trait} 확률 방식`);
     }
     if(r.type==='raise')rule.status='미정';
     return rule;
