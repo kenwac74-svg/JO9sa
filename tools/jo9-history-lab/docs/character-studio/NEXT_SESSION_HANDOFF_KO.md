@@ -35,6 +35,9 @@
 7. **세계관 자료집 + 자동 프롬프트 조립(판단이 많아 오퍼스 권장):** 목차를 먼저 사용자에게 확인. 작업마다 캐릭터 설정·칸 규칙·참고 원문·채택 예시를 붙이고, 채택/거부 이력으로 예시를 쌓는다. 대량 작업 전 이해도 시험.
 8. 기타: 시뮬레이터 '영입 경로'에 '이벤트' 추가(세부는 필로우토크 때), 모드 제작자 편집기 데이터 설명 수정 8개(`records/handoff-b-activity-20261112/editor-data-edits.json`, 모드 제작자 로컬) 받아 대조, 세이브의 지운 캐릭터 옛 seed 찾기(선택).
 
+## 4.5 주의: dist 새 파일은 `git add -f`
+repo `.gitignore` 첫 줄 `dist/` 때문에 `tools/jo9-history-lab/dist/` 아래에 **새로 만든 파일은 그냥 `git add`로 올라가지 않는다**(기존 파일은 강제로 추적 중이라 수정은 올라감). 새 화면·데이터 파일은 반드시 `git add -f <파일>`로 올리고, 커밋 뒤 `git ls-files`로 확인한다. 2026-11-12에 `studio-view.mjs`·`studio-look.mjs`·`studio-save.mjs`가 이 이유로 빠졌다가 추가됐다.
+
 ## 5. 참고 사실
 - 세이브: QSP 5.7, `studio_save.py` 코덱(바이트 왕복). 캐릭터 칸 = `FULLIMAGE` 키 변수, 번호 `<칸>_TYPE`, 이름 `<칸>_NAME`. json 자동 로드 `seed_*`는 세이브에 들어가고 불러온 뒤 json 재등록으로 덮인다(엔진 소스 기록, 실행 파일 미확인). 세이브 크기의 큰 몫은 최대 캐릭터 번호 8,902 때문에 생긴 빈 칸과 `EDGE_OF_MISTS`(102,016칸)·`CAST_SPELL`(70,000칸).
 - 검사: `cd tools/jo9-history-lab && for f in checks-*.mjs; do node $f; done` (15종). 화면 시험은 Playwright로 서버(`JO9_GAME_ROOT=<시험 폴더> python3 -c "import studio_server as s; s.make_server(포트).serve_forever()"`)를 띄워 확인.
