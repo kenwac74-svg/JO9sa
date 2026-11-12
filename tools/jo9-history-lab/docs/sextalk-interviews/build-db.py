@@ -128,7 +128,7 @@ def main(src, out):
             'blocked_by_reason': dict(by_reason), 'placeholder': PLACEHOLDER, 'reasons': REASON_KO,
             'topics': {k: v for k, v in TOPICS.items()},
             'note': '사용자 창작물(경험담 형식 인터뷰) DB. 모든 대답에 고유 키를 준다. [표시불가] 중 청소년기·수간 사유는 원문을 싣지 않고 자리표시 문구만 둔다(원문은 원본 블로그에 있음).'}
-    meta['adapt'] = {'worlds': adapt.WORLDS, 'grades': adapt.GRADE, 'format': 'adapt는 worlds 순서의 13자, 각 자리 0~3 = A0~A3'}
+    meta['adapt'] = {'worlds': adapt.WORLDS, 'grades': adapt.GRADE, 'format': 'adapt는 worlds 순서의 13자. U = 사용자 각색 대상(자동 출력 안 함), 0~3 = A0~A3', 'userAuthoredWorlds': sorted(adapt.USER_WORLDS)}
     meta['block_codes'] = {c: REASON_KO[r] for r, c in BLOCK_CODE.items()}
     json.dump({'meta': meta, 'rows': rows}, open(out / 'interview-db.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=0)
     index = {'schema': 'jo9-blocked-index/v1', 'codes': meta['block_codes'],
@@ -150,12 +150,12 @@ def main(src, out):
         md.append(f'| Q{n} | `{k}` | {len(rs)} | {len(ok)} | {sum(r["game"] for r in rs)} | {sum("minor" in r["tags"] for r in rs)} | {avg} | {hed}% |')
     ok = [r for r in rows if r['display']]
     md += ['', '## 세계별 각색 등급 (표시 가능 대답 기준)', '',
-           '- A0 그대로 / A1 사전 치환(`adapt-dict.json`) / A2 문장 각색 필요 / A3 그 세계에 없는 소재(그 세계 노예에게 쓰지 않음)',
+           '- U 사용자 각색 대상(선사·고대·중세·마법 시대 6종: 성윤리·생활환경이 달라 자동 출력 안 함, `adapt-user.json`에 사용자가 직접 씀) / A0 그대로 / A1 사전 치환(`adapt-dict.json`) / A2 문장 각색 필요 / A3 그 세계에 없는 소재',
            f'- 현대 소재가 든 대답 {sum(1 for r in ok if r["modern"])}개. 소재별: ' + ', '.join(f'{adapt.DICT["categories"][k]["label"]} {v}' for k, v in collections.Counter(c for r in ok for c in r['modern']).most_common()), '',
-           '| 세계 | A0 | A1 | A2 | A3 |', '|---|---|---|---|---|']
+           '| 세계 | U | A0 | A1 | A2 | A3 |', '|---|---|---|---|---|---|']
     for i, w in enumerate(adapt.WORLDS):
         cnt = collections.Counter(r['adapt'][i] for r in ok)
-        md.append(f'| {adapt.DICT["worldLabels"][w]} | {cnt["0"]} | {cnt["1"]} | {cnt["2"]} | {cnt["3"]} |')
+        md.append(f'| {adapt.DICT["worldLabels"][w]} | {cnt["U"]} | {cnt["0"]} | {cnt["1"]} | {cnt["2"]} | {cnt["3"]} |')
     (out / 'INTERVIEW_DB_KO.md').write_text('\n'.join(md) + '\n', encoding='utf-8')
     print(len(rows), meta['display'], meta['game'], dict(by_reason))
 
