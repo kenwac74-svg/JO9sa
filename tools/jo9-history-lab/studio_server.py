@@ -449,6 +449,7 @@ def delete(sid, body):
 
 # ------------------------------------------------------------------ 세이브 정비(버전 불일치: 이미지 경로)
 import studio_save  # noqa: E402
+import studio_interview  # noqa: E402
 _save_cache = {}
 
 
@@ -651,6 +652,9 @@ ROUTES_GET = [
     (re.compile(r'^/api/talkbook/(\d+)$'), lambda m, q: read_talkbook(m.group(1))),
     (re.compile(r'^/api/qsp/search$'), lambda m, q: qsp_search(q)),
     (re.compile(r'^/api/saves$'), lambda m, q: list_saves()),
+    (re.compile(r'^/api/interview/meta$'), lambda m, q: studio_interview.meta()),
+    (re.compile(r'^/api/interview/search$'), lambda m, q: studio_interview.search(q)),
+    (re.compile(r'^/api/interview/row/([\w.]+)$'), lambda m, q: studio_interview.row(m.group(1))),
     (re.compile(r'^/api/char/(\d+)/delete-plan$'), lambda m, q: delete_plan(m.group(1))),
 ]
 ROUTES_POST = [
@@ -659,6 +663,7 @@ ROUTES_POST = [
     (re.compile(r'^/api/char/(\d+)/images$'), lambda m, body: save_images(m.group(1), body)),
     (re.compile(r'^/api/talkbook/(\d+)$'), lambda m, body: save_talkbook(m.group(1), body)),
     (re.compile(r'^/api/qsp/mod$'), lambda m, body: qsp_mod(body)),
+    (re.compile(r'^/api/interview/adapt$'), lambda m, body: studio_interview.save_adapt(body)),
     (re.compile(r'^/api/save/scan$'), lambda m, body: save_scan(body)),
     (re.compile(r'^/api/save/fix$'), lambda m, body: save_fix(body)),
     (re.compile(r'^/api/char/new$'), lambda m, body: new_character(body)),

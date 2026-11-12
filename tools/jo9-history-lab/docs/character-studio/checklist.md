@@ -23,7 +23,7 @@
 
 ## 인계 남은 작업(NEXT_SESSION_HANDOFF_KO.md 4장)
 - [x] 1 블로그 글 단위 원문 DB(`sextalk-interviews/posts-db.json`, 159편·5,112쌍, 2026-11-12)
-- [ ] 2 편집기 DB 탭
+- [x] 2 편집기 DB 탭(`dist/studio-db.mjs`, `studio_interview.py`, 2026-11-12)
 - [ ] 3 엑셀 내보내기·가져오기
 - [ ] 4 AI 작업용 분할·설명서·검사
 - [ ] 5 글로서리·번역 파일
