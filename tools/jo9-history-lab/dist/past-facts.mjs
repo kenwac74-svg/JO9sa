@@ -73,9 +73,13 @@ export function pastFacts(stock,result,formula,facts,seed='0',acq={},interviews=
  trace.push(`첫 상대 ${facts.firstWho.labels[f.first_who]} · ${facts.firstHow.labels[f.first_how]} · ${facts.firstWhere.labels[f.first_where]}`);
 
  // 상대 수: 총횟수 ÷ 한 명당 횟수, ±변동, 최소 1, 총횟수 이하
- const P=facts.partnerCount,per=P.timesPerPartner[occ]??P.timesPerPartner.default,vary=rand(100-P.variationPct,100+P.variationPct);
+ const P=facts.partnerCount,SS=P.sexSlave;
+ // 전직 노예: 성 기술 평균이 기준 이상이면 성노예(상대가 자주 바뀜), 아니면 집에 소속된 노예
+ const sexSlave=occ==='formerSlave'&&SS&&SS.skills.reduce((a,k)=>a+(Number(stock[k])||0),0)/SS.skills.length>=SS.minAvg;
+ if(occ==='formerSlave')f.slave_kind=sexSlave?'sex':'house';
+ const per=sexSlave?SS.timesPerPartner:(P.timesPerPartner[occ]??P.timesPerPartner.default),vary=rand(100-P.variationPct,100+P.variationPct);
  f.partners=Math.max(1,Math.min(n,Math.round(n/per*vary/100)));
- trace.push(`상대 수: ${n} ÷ ${per} × ${vary}% = ${f.partners}명`);
+ trace.push(`상대 수: ${n} ÷ ${per}${occ==='formerSlave'?(sexSlave?'(성노예)':'(집 노예)'):''} × ${vary}% = ${f.partners}명`);
 
  const lib=Number(stock.nymphomania??0);
  const [b0,b1]=facts.maxNight.base;
