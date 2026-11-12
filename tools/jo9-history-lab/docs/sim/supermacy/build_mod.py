@@ -18,10 +18,12 @@ old_block = ca[start:end]
 inner = old_block[len('dynamic $replace("'):-len(end_marker)]
 # 함수 본문: 기존 계산을 그대로 옮기되 결과 변수만 바꾸고, 구타 경험이 없으면 잔인함 평판을 대신 쓴다
 inner_fn = inner.replace('master_supermacy', 'jo9_sm_value')
-inner_fn = inner_fn.replace("dynslave['beaten_ever']", "iif(dynslave['beaten_ever'] > 0, dynslave['beaten_ever'], iif(jo9_cruel_mercy <= -5, 1, 0))", 1)
+# 사용자 결정 2026-11-12: 악명 단계(무자비 -10 +1, 잔인 -20 +2, 흉폭 -30 +3, 악행 -40 +4)와 구타 경험 중 큰 값
+TIER = "iif(jo9_cruel_mercy <= -40, 4, iif(jo9_cruel_mercy <= -30, 3, iif(jo9_cruel_mercy <= -20, 2, iif(jo9_cruel_mercy <= -10, 1, 0))))"
+inner_fn = inner_fn.replace("dynslave['beaten_ever']", f"max(dynslave['beaten_ever'], {TIER})", 1)
 fn_body = '\r\n'.join([
     f'! JO9 MOD START {ID} | 장악력을 대상 인물별로 계산한다. args[0] = slave, assistant, room1~room4, cow, farmhand 등 인물 배열 이름',
-    '! 구타 경험이 없으면 잔인함 평판(jo9_cruel_mercy <= -5, 결투 처형 소문과 같은 기준)이 같은 역할(+1)을 한다',
+    '! 구타 경험과 악명 단계(jo9_cruel_mercy: -10 무자비 +1, -20 잔인 +2, -30 흉폭 +3, -40 악행 +4) 중 큰 값을 더한다',
     'jo9_sm_value = 0',
     'dynamic $replace("' + inner_fn + "\", 'dyn'+'slave', $args[0])",
     'result = jo9_sm_value',
@@ -55,7 +57,7 @@ for path in qsps:
 counts = results[qsps[0]]
 for p in qsps[1:]:
     assert results[p] == counts, ('count differs', p, results[p], counts)
-mod = {'id': '2026-11-12_supermacy_per_target', 'description': '장악력(master_supermacy)을 대상 인물별로 계산(개인실·소·조수·노예 공통 처리의 대상 섞임 버그 수정)하고, 구타 경험이 없으면 잔인함 평판(jo9_cruel_mercy <= -5)을 같은 역할로 반영',
+mod = {'id': '2026-11-12_supermacy_per_target', 'description': '장악력(master_supermacy)을 대상 인물별로 계산(개인실·소·조수·노예 공통 처리의 대상 섞임 버그 수정)하고, 구타 경험과 악명 단계(크루얼 -10/-20/-30/-40 → +1~+4) 중 큰 값을 반영',
        'target': 'game\\jack.qsp', 'before_sha256': '', 'add_locations': [{'name': 'jo9_supermacy', 'desc': '', 'body': fn_body, 'actions': []}],
        'edits': [{'location': loc, 'field': 'body', 'old': o, 'new': n, 'count': c} for (loc, o, n), c in zip(edits + pairs, counts)], 'after_sha256': ''}
 json.dump(mod, open(out, 'w', encoding='utf-8'), ensure_ascii=False, indent=2)

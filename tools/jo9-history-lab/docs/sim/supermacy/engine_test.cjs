@@ -22,9 +22,9 @@ const SLAVE={temper:2,ego:3,pride:1,stamina:2,intellect:4,beaten_ever:0,age:0};
  console.log('style',style,'메인 노예 패치 전',before,'패치 후',after);if(before!==after)throw Error('메인 노예 결과가 다름');
  const f=t=>{A.run(`jo9_t = func('jo9_supermacy', '${t}')`);return A.num('jo9_t');};
  const M=A.num('master_cha')+A.num('master_domination')+style+A.num('master_str')+A.num('magna_magnifika')+A.num('item_supermacy_bonus');const expect=M-(2+3+1+2+(4-3));console.log('slave 함수',f('slave'),'기대',expect);if(f('slave')!==expect)throw Error('slave');
- A.run('jo9_cruel_mercy = -5');console.log('잔인함 -5, 구타 없음',f('slave'));if(f('slave')!==expect+1)throw Error('cruel');
- A.run("jo9_cruel_mercy = -4");if(f('slave')!==expect)throw Error('cruel -4');
- A.run("jo9_cruel_mercy = -30\r\nslave['beaten_ever'] = 1");console.log('구타 1 + 잔인함 -30',f('slave'));if(f('slave')!==expect+1)throw Error('no double');
+ for(const [cm,beat,add] of [[-9,0,0],[-10,0,1],[-20,0,2],[-30,0,3],[-45,0,4],[-5,1,1],[-30,1,3],[10,1,1]]){
+  A.run(`jo9_cruel_mercy = ${cm}\r\nslave['beaten_ever'] = ${beat}`);const v=f('slave');console.log(`크루얼 ${cm}, 구타 ${beat} → ${v-expect>=0?'+':''}${v-expect}`);if(v!==expect+add)throw Error('tier '+cm+' '+beat);}
+ A.run("jo9_cruel_mercy = 0\r\nslave['beaten_ever'] = 0");
  A.run(setup('room1',{temper:5,ego:5,pride:5,stamina:5,intellect:5,beaten_ever:0,age:0}));A.run('jo9_cruel_mercy = 0');
  const r1=f('room1'),er=M-(5+5+5+5+2);console.log('room1',r1,'기대',er,'메인 노예',f('slave'));if(r1!==er)throw Error('room1');
  A.run(setup('cow',{temper:0,ego:1,pride:0,stamina:1,intellect:0,beaten_ever:1,age:2}));console.log('cow',f('cow'));
