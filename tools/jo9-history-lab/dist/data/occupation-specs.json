@@ -111,43 +111,43 @@
    "rules": [
     {
      "type": "chance",
-     "status": "미정",
+     "status": "확정",
      "trait": {
       "name": "은둔형 외톨이",
       "id": "passion_fame = -1",
       "key": "passion_fame"
      },
-     "probability": null
+     "probability": 20
     },
     {
      "type": "chance",
-     "status": "미정",
+     "status": "확정",
      "trait": {
       "name": "동성애 혐오자",
       "id": "homosexualism = -1",
       "key": "homosexualism"
      },
-     "probability": null
+     "probability": 20
     },
     {
      "type": "chance",
-     "status": "미정",
+     "status": "확정",
      "trait": {
       "name": "순수한 영혼",
       "id": "perversion = -1",
       "key": "perversion"
      },
-     "probability": null
+     "probability": 50
     },
     {
      "type": "chance",
-     "status": "미정",
+     "status": "확정",
      "trait": {
       "name": "노출 기피",
       "id": "exhibitionism = -1",
       "key": "exhibitionism"
      },
-     "probability": null
+     "probability": 70
     },
     {
      "type": "chance",
@@ -182,17 +182,17 @@
    "rules": [
     {
      "type": "chance",
-     "status": "미정",
+     "status": "확정",
      "trait": {
       "name": "혈액 기호증",
       "id": "blood_attitude = 2",
       "key": "blood_attitude"
      },
-     "probability": null
+     "probability": 50
     },
     {
-     "type": "raise",
-     "status": "미정",
+     "type": "grant",
+     "status": "확정",
      "trait": {
       "name": "가학성애자",
       "id": "compassion < 0",
@@ -201,13 +201,13 @@
     },
     {
      "type": "chance",
-     "status": "미정",
+     "status": "확정",
      "trait": {
       "name": "무모함",
       "id": "courage = 2",
       "key": "courage"
      },
-     "probability": null
+     "probability": 50
     },
     {
      "type": "chance",
@@ -252,25 +252,24 @@
     {
      "id": "mafia_boss",
      "label": "폭력조직 간부"
+    },
+    {
+     "id": "hacker",
+     "label": "해커"
     }
    ],
    "source": "docs/JO9_Stats_Background_Generation_Handoff_20261112.md:190",
    "rules": [
     {
      "type": "chance",
-     "status": "미정",
-     "text": "범죄 경력 정도별. 갱단·마피아 등 수치 미확인",
+     "status": "확정",
+     "text": "사용자 결정 2026-11-12: 경범·폭력·조직 두목 모두 20%. 살인마는 별도 30%",
      "trait": {
       "name": "자유로운 영혼",
       "id": "meekness < 0",
       "key": "meekness"
      },
-     "probability": null
-    },
-    {
-     "type": "note",
-     "status": "메모",
-     "text": "대상 직업 목록은 범죄 경력 직업을 추린 것이다. 사용자 확인 필요"
+     "probability": 20
     }
    ]
   },
@@ -376,18 +375,24 @@
    "rules": [
     {
      "type": "chance",
-     "status": "미정",
+     "status": "확정",
      "trait": {
       "name": "강한 복종심",
       "id": "meekness > 0",
       "key": "meekness"
      },
-     "probability": null
+     "probability": 20
     },
     {
-     "type": "note",
-     "status": "메모",
-     "text": "집안일 보너스(수치 미정). 노예근성으로 대체하지 않음"
+     "type": "skillMin",
+     "status": "확정",
+     "text": "집안일 보너스. 노예근성으로 대체하지 않음",
+     "skill": {
+      "name": "집안일",
+      "key": "service"
+     },
+     "minGrade": "C",
+     "minValue": 2
     }
    ]
   },
@@ -407,33 +412,33 @@
    "rules": [
     {
      "type": "chance",
-     "status": "미정",
+     "status": "확정",
      "trait": {
       "name": "거센 반항심",
       "id": "defiant = 1",
       "key": "defiant"
      },
-     "probability": null
+     "probability": 20
     },
     {
      "type": "chance",
-     "status": "미정",
+     "status": "확정",
      "trait": {
       "name": "벌레 공포증",
       "id": "vermin_attitude = -1",
       "key": "vermin_attitude"
      },
-     "probability": null
+     "probability": 30
     },
     {
      "type": "chance",
-     "status": "미정",
+     "status": "확정",
      "trait": {
       "name": "품위있는 여자",
       "id": "grace > 0",
       "key": "grace"
      },
-     "probability": null
+     "probability": 70
     },
     {
      "type": "skillExclude",
@@ -480,9 +485,16 @@
      ]
     },
     {
-     "type": "note",
-     "status": "메모",
-     "text": "회계 F 제외: 게임에 회계 스킬이 없다. 어느 스킬인지 확인 필요"
+     "type": "skillExclude",
+     "status": "확정",
+     "text": "원 인계의 회계 F 제외를 비서로 대체(사용자 결정 2026-11-12)",
+     "skill": {
+      "name": "비서",
+      "key": "secretary"
+     },
+     "grades": [
+      "F"
+     ]
     }
    ]
   },
@@ -508,13 +520,13 @@
     },
     {
      "type": "chance",
-     "status": "미정",
+     "status": "확정",
      "trait": {
       "name": "불감증",
       "id": "nymphomania = -1",
       "key": "nymphomania"
      },
-     "probability": null
+     "probability": 10
     }
    ]
   },
@@ -530,28 +542,24 @@
    "rules": [
     {
      "type": "chance",
-     "status": "미정",
+     "status": "확정",
      "trait": {
       "name": "끈기",
       "id": "jo9_focus = 1",
       "key": "jo9_focus"
      },
-     "probability": null
+     "probability": 20
     },
     {
      "type": "chance",
-     "status": "미정",
+     "status": "확정",
+     "text": "직조공과 같은 수치(사용자 결정 2026-11-12)",
      "trait": {
       "name": "불감증",
       "id": "nymphomania = -1",
       "key": "nymphomania"
      },
-     "probability": null
-    },
-    {
-     "type": "note",
-     "status": "메모",
-     "text": "직조공과 동일 방향. 같은 수치를 쓸지 확인 필요"
+     "probability": 10
     }
    ]
   },
@@ -640,14 +648,13 @@
     },
     {
      "type": "chance",
-     "status": "미정",
-     "text": "개별 확률은 최종 직업 표와 확인",
+     "status": "확정",
      "trait": {
       "name": "운동광",
       "id": "sport_affinity = 1",
       "key": "sport_affinity"
      },
-     "probability": null
+     "probability": 70
     }
    ]
   },
@@ -683,9 +690,16 @@
      }
     },
     {
-     "type": "note",
-     "status": "메모",
-     "text": "화술 제외: 화술 스킬 등급인지 달변가 특성인지 확인 필요"
+     "type": "skillExclude",
+     "status": "확정",
+     "text": "원 인계 화술 제외 = 화술 F 제외(사용자 결정 2026-11-12)",
+     "skill": {
+      "name": "화술",
+      "key": "expression"
+     },
+     "grades": [
+      "F"
+     ]
     }
    ]
   },
@@ -701,13 +715,13 @@
    "rules": [
     {
      "type": "chance",
-     "status": "미정",
+     "status": "확정",
      "trait": {
       "name": "건강체질",
       "id": "jo9_constitution = 1",
       "key": "jo9_constitution"
      },
-     "probability": null
+     "probability": 20
     }
    ]
   },
@@ -732,13 +746,13 @@
     },
     {
      "type": "chance",
-     "status": "미정",
+     "status": "확정",
      "trait": {
       "name": "옹졸함",
       "id": "jo9_grudge = 1",
       "key": "jo9_grudge"
      },
-     "probability": null
+     "probability": 20
     }
    ]
   },
@@ -754,13 +768,13 @@
    "rules": [
     {
      "type": "chance",
-     "status": "미정",
+     "status": "확정",
      "trait": {
       "name": "가학성애자",
       "id": "compassion < 0",
       "key": "compassion"
      },
-     "probability": null
+     "probability": 10
     }
    ]
   },
@@ -817,23 +831,23 @@
     },
     {
      "type": "chance",
-     "status": "미정",
+     "status": "확정",
      "trait": {
       "name": "달변가",
       "id": "expression_affinity > 0",
       "key": "expression_affinity"
      },
-     "probability": null
+     "probability": 30
     },
     {
      "type": "chance",
-     "status": "미정",
+     "status": "확정",
      "trait": {
       "name": "야심가",
       "id": "jo9_ambition = 1",
       "key": "jo9_ambition"
      },
-     "probability": null
+     "probability": 5
     }
    ]
   },
@@ -849,13 +863,13 @@
    "rules": [
     {
      "type": "chance",
-     "status": "미정",
+     "status": "확정",
      "trait": {
       "name": "야심가",
       "id": "jo9_ambition = 1",
       "key": "jo9_ambition"
      },
-     "probability": null
+     "probability": 5
     }
    ]
   },
@@ -1107,13 +1121,13 @@
    "rules": [
     {
      "type": "chance",
-     "status": "미정",
+     "status": "확정",
      "trait": {
       "name": "운동광",
       "id": "sport_affinity = 1",
       "key": "sport_affinity"
      },
-     "probability": null
+     "probability": 20
     }
    ]
   },
