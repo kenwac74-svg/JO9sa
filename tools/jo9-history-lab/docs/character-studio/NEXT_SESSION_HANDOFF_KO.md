@@ -30,7 +30,7 @@
 2. **편집기 'DB' 탭: 완료(2026-11-12).** `dist/studio-db.mjs`·`studio_interview.py`. 자세한 것은 `context-notes.md` 마지막 항목.
 3. **엑셀 내보내기·가져오기: 완료(2026-11-12).** `studio_excel.py`, DB 탭의 두 버튼. 규칙은 `context-notes.md` 마지막 항목.
 4. **AI 작업용 정리: 완료(2026-11-12).** `sextalk-interviews/ai-tools.py`(export·check·query), `ai/`, `AI_WORK_SCHEMA_KO.md`. 원본 DB를 바꾸면 export를 다시 실행하고 check로 확인한다.
-5. **글로서리·번역 파일 구조:** 글로서리 1개 + 언어별 번역 파일(같은 키), 칸 상태(미번역/기계/확인/원문 변경), 모델 기록. 로컬라이징 json은 문자열 키로(숫자 번호 금지: 세이브 빈 칸 폭증), 쓰는 언어만 json 폴더에.
+5. **글로서리·번역 파일 구조: 완료(2026-11-12).** `sextalk-interviews/i18n-tools.py`, `i18n/glossary.json`, `I18N_KO.md`. 언어 파일은 쓸 때 `init`.
 6. **AI API 연결부:** OpenRouter·Venice(OpenAI 방식), Gemini(자체·OpenAI 호환), Kindroid(캐릭터 대화형). 키는 git 제외 설정 파일·환경 변수. 정확한 주소·인증·모델명은 공식 문서로 확인.
 7. **세계관 자료집 + 자동 프롬프트 조립(판단이 많아 오퍼스 권장):** 목차를 먼저 사용자에게 확인. 작업마다 캐릭터 설정·칸 규칙·참고 원문·채택 예시를 붙이고, 채택/거부 이력으로 예시를 쌓는다. 대량 작업 전 이해도 시험.
 8. 기타: 시뮬레이터 '영입 경로'에 '이벤트' 추가(세부는 필로우토크 때), 모드 제작자 편집기 데이터 설명 수정 8개(`records/handoff-b-activity-20261112/editor-data-edits.json`, 모드 제작자 로컬) 받아 대조, 세이브의 지운 캐릭터 옛 seed 찾기(선택).
