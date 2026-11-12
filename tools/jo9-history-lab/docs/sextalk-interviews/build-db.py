@@ -1,6 +1,9 @@
 # 파싱한 인터뷰(posts.json)의 모든 문항·대답에 고유 키를 주고 주제·표시 가능 여부([표시불가] 사유)로 분류하는 창작물 DB 빌드 스크립트
 # 사용: python3 -I build-db.py <posts.json> <출력 폴더>
 import sys, json, re, collections, pathlib
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+import adapt  # noqa: E402  세계별 각색 등급
+import hashlib
 
 # 고정 질문지 번호 → 주제 키(섹스토크 기획 v0 4장과 연결). None = 통째로 제외
 TOPICS = {
@@ -69,6 +72,14 @@ def tone(a):
     else: t.append('casual')
     return t
 
+PART_SPLIT = re.compile(r'\n+|(?<=[.!?~…])\s+|(?=(?<!\d)\d\)\s*)')
+
+
+def split_parts(a):
+    """대답을 줄·문장·보기 번호(1) 2) …) 단위로 나눈다. 키 .sNN의 기준."""
+    return [s.strip() for s in PART_SPLIT.split(a) if s and s.strip()]
+
+
 def reasons_of(topic, a):
     r = []
     if not a: r.append('empty')
@@ -101,7 +112,15 @@ def main(src, out):
                    'game': not rs and topic not in NOT_IN_GAME,
                    'answer': PLACEHOLDER if withheld else a, 'text_withheld': withheld}
             if a and not withheld:
-                row.update({'len': len(a), 'nums': [f'{n}{u}' for n, u in NUM.findall(a)], 'tone': tone(a)})
+                cats, g = adapt.grades(a)
+                row.update({'len': len(a), 'modern': cats, 'adapt': g, 'nums': [f'{n}{u}' for n, u in NUM.findall(a)], 'tone': tone(a)})
+            row['src'] = {'url': p['url'], 'q': x['n'], 'occurrence': seen[x['n']]}
+            row['parts'] = []
+            for k, s in enumerate(split_parts(a), 1):
+                part = {'key': f'{key}.s{k:02d}', 'block': row['block'], 'sha': hashlib.sha256(s.encode('utf-8')).hexdigest()[:12], 'chars': len(s)}
+                if not withheld:
+                    part['text'] = s
+                row['parts'].append(part)
             rows.append(row)
     by_reason = collections.Counter(r for x in rows for r in x['tags'] if r != '표시불가')
     meta = {'schema': 'jo9-sextalk-interview-db/v2', 'posts': len(posts), 'rows': len(rows),
@@ -109,6 +128,7 @@ def main(src, out):
             'blocked_by_reason': dict(by_reason), 'placeholder': PLACEHOLDER, 'reasons': REASON_KO,
             'topics': {k: v for k, v in TOPICS.items()},
             'note': '사용자 창작물(경험담 형식 인터뷰) DB. 모든 대답에 고유 키를 준다. [표시불가] 중 청소년기·수간 사유는 원문을 싣지 않고 자리표시 문구만 둔다(원문은 원본 블로그에 있음).'}
+    meta['adapt'] = {'worlds': adapt.WORLDS, 'grades': adapt.GRADE, 'format': 'adapt는 worlds 순서의 13자, 각 자리 0~3 = A0~A3'}
     meta['block_codes'] = {c: REASON_KO[r] for r, c in BLOCK_CODE.items()}
     json.dump({'meta': meta, 'rows': rows}, open(out / 'interview-db.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=0)
     index = {'schema': 'jo9-blocked-index/v1', 'codes': meta['block_codes'],
@@ -119,6 +139,7 @@ def main(src, out):
           f'- 표시 가능 {meta["display"]}개, 그중 게임용 {meta["game"]}개. [표시불가] {len(rows) - meta["display"]}개.',
           f'- [표시불가] 사유별(중복 가능): ' + ', '.join(f'{REASON_KO[k]} {v}' for k, v in by_reason.most_common()),
           '- 내부 분류코드(게임 화면에는 보이지 않음): ' + ', '.join(f'{c} {REASON_KO[r]}' for r, c in BLOCK_CODE.items()) + '. 키 → 코드 색인: `blocked-index.json`',
+          '- 대답은 줄·문장·보기 번호 단위 부분으로 나눠 부분 키(`키.sNN`)를 준다. 부분마다 원문 지문(`sha`, SHA-256 앞 12자)과 글자 수가 있어, 원문을 싣지 않은 부분도 원본(글 주소·문항·차례·부분 번호)에서 찾아 맞춰 볼 수 있다.',
           f'- 청소년기·수간 사유는 원문 대신 `{PLACEHOLDER}`만 싣는다. 근친·금기 목록·SNS·빈 대답은 원문을 싣되 표시하지 않는다.', '',
           '| 질문 | 주제 키 | 전체 | 표시 가능 | 게임용 | [표시불가] 청소년기 | 평균 길이 | 얼버무림 비율 |', '|---|---|---|---|---|---|---|---|']
     for n, k in TOPICS.items():
@@ -127,6 +148,14 @@ def main(src, out):
         avg = sum(r['len'] for r in ok) // len(ok) if ok else 0
         hed = sum('hedge' in r['tone'] for r in ok) * 100 // len(ok) if ok else 0
         md.append(f'| Q{n} | `{k}` | {len(rs)} | {len(ok)} | {sum(r["game"] for r in rs)} | {sum("minor" in r["tags"] for r in rs)} | {avg} | {hed}% |')
+    ok = [r for r in rows if r['display']]
+    md += ['', '## 세계별 각색 등급 (표시 가능 대답 기준)', '',
+           '- A0 그대로 / A1 사전 치환(`adapt-dict.json`) / A2 문장 각색 필요 / A3 그 세계에 없는 소재(그 세계 노예에게 쓰지 않음)',
+           f'- 현대 소재가 든 대답 {sum(1 for r in ok if r["modern"])}개. 소재별: ' + ', '.join(f'{adapt.DICT["categories"][k]["label"]} {v}' for k, v in collections.Counter(c for r in ok for c in r['modern']).most_common()), '',
+           '| 세계 | A0 | A1 | A2 | A3 |', '|---|---|---|---|---|']
+    for i, w in enumerate(adapt.WORLDS):
+        cnt = collections.Counter(r['adapt'][i] for r in ok)
+        md.append(f'| {adapt.DICT["worldLabels"][w]} | {cnt["0"]} | {cnt["1"]} | {cnt["2"]} | {cnt["3"]} |')
     (out / 'INTERVIEW_DB_KO.md').write_text('\n'.join(md) + '\n', encoding='utf-8')
     print(len(rows), meta['display'], meta['game'], dict(by_reason))
 
