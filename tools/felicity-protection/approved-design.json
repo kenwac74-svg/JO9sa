@@ -1,0 +1,77 @@
+{
+  "id": "FELICITY_PROTECTION_20261112",
+  "status": "approved_design_not_installed",
+  "approvedDate": "2026-11-12",
+  "originalPresetId": 2572,
+  "characterPolicy": "Separate protection-route character data; preserve original preset and existing quest.",
+  "durationDaysFromRecruitment": 270,
+  "stages": {
+    "recruitment": "Preserve original character stats.",
+    "awarenessAfterDays": 3,
+    "awakeningAfterDays": 10,
+    "requireNoProtectionFailure": true,
+    "oneTimeEvents": true
+  },
+  "awakening": {
+    "attributes": {
+      "pride": 3,
+      "moral": 3,
+      "rational": 4,
+      "spoil": 0,
+      "fear": 3,
+      "angst": 4,
+      "instinct": 0,
+      "custom": 0
+    },
+    "rateValues": {
+      "moral": 60,
+      "rational": 0,
+      "spoil": 0,
+      "fear": 0,
+      "angst": 0,
+      "instinct": 0,
+      "custom": 0
+    },
+    "traits": {
+      "remove": "Free Spirit",
+      "grant": "Strong Obedience",
+      "nativeKey": "meekness",
+      "nativeValue": 1,
+      "useNativeExclusionChecks": true
+    },
+    "preserve": ["temper", "ego", "intellect", "age", "fertility", "identity", "appearance", "equipment", "learnedSkills"],
+    "easyAngstCap": 3,
+    "cutscene": "content/pic/scene/Slave/felicity_protection_awake.png"
+  },
+  "rules": {
+    "nativeTrainingAndRewards": true,
+    "nativeFearAndDespairRecovery": true,
+    "noAdditionalPerCommandGrowthRewards": true,
+    "noAdditionalDailyGrowthCaps": true,
+    "spoilIncreasesBlockedAfterAwakening": true,
+    "verbalReprimandAndThreatAllowed": true,
+    "physicalHarmFails": true,
+    "sexualActivityFails": true,
+    "nonsexualEducationOnly": true
+  },
+  "happyEnding": {
+    "moralEquals": 5,
+    "angstEquals": 0,
+    "fearAtMost": 2,
+    "instinctAtLeast": 2,
+    "customAtLeast": 3,
+    "familyEnding": "Felicity asks the guardian to become her father and stays in a nonsexual family relationship.",
+    "spectreRelationship": "worst"
+  },
+  "normalEnding": {
+    "condition": "Protection did not fail, but happy-ending thresholds are not all satisfied at day270.",
+    "outcome": "Return Felicity to her father and receive a reward.",
+    "spectreRelationship": "worst"
+  },
+  "pending": [
+    "Assign and verify an unused protected character preset ID.",
+    "Recalculate neglect event gains with native recovery; previous slow-recovery model is obsolete.",
+    "Determine normal-ending reward.",
+    "Integrate QSP events, failure guards, branch timing and UI; then test in game."
+  ]
+}
