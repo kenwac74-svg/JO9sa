@@ -139,8 +139,8 @@ export async function createCharacterView(api){
   if(fx?.fields.home_animal)out.xeno={blocked:'B2 수간(살던 세상의 동물 경험)',text:'[이 대사는 표시 불가합니다.]'};
   return {out,ty,style};
  }
- // 거짓말(사용자 결정 2026-11-12): 헌신 − 두려움 ≥ 3이면 거짓말. 새로 만들지 않고 기존 답 중 오답(다른 표본 노예의 사실로 만든 답, 같은 주제의 다른 원본)을 가져온다. 이전 진실과의 모순은 따지지 않는다
- const lying=()=>(Number(st.talk.moral)||0)-(Number(st.talk.fear)||0)>=3;
+ // 거짓말(사용자 결정 2026-11-12 개정): 장악력 < 0이면 거짓말(게임의 '장악력 < 0 → 사육 감소'와 같은 선). 새로 만들지 않고 기존 답 중 오답(다른 표본 노예의 사실로 만든 답, 같은 주제의 다른 원본)을 가져온다. 이전 진실과의 모순은 따지지 않는다
+ const lying=()=>(Number(st.talk.supermacy)||0)<0;
  function lieCx(cx){
   const R=rng(hashSeed(`${charKey()}|lie`)),row=D.rows[Math.floor(R()*D.rows.length)];
   const s={...row,...st.talk,jo9_voice_type:cx.s.jo9_voice_type,occupation:cx.s.occupation,temper:cx.s.temper,sensitivity:cx.s.sensitivity,ego:cx.s.ego,pride:cx.s.pride};
@@ -164,12 +164,12 @@ export async function createCharacterView(api){
    const [lv,id,label]=slot,g=(lie??truth).out[id]??{text:''},tg=truth.out[id]??{text:''},edited=edits[id]!==undefined,text=edited?edits[id]:g.text;
    const ref=refFor(id,lie?null:cx.fx,lie?'|lie':''),truthRef=lie?refFor(id,cx.fx):null;
    say=text?e(text):'<span class="gm-muted">(대사 없음: 아래에서 원본을 보고 각색해 넣으세요)</span>';
-   editor=`<div class="cv-slot"><div class="cv-slot-head"><b>${e(label)}</b> <small>헌신 ${lv}</small>${g.blocked?` <span class="badge muted" title="표시 불가 사유: ${e(g.blocked)}">표시 불가</span>`:''}${lie?` <span class="badge" title="헌신 ${st.talk.moral} − 두려움 ${st.talk.fear??0} ≥ 3: 거짓말(다른 노예의 답). 진실: ${e(tg.text||'(대사 없음)')}${truthRef?' / 진실 원본 '+e(truthRef):''}">거짓말</span>`:''}${edited?' <span class="badge">수정됨</span>':''}${g.note?` <small class="fine-print">${e(g.note)}</small>`:''}</div>
+   editor=`<div class="cv-slot"><div class="cv-slot-head"><b>${e(label)}</b> <small>헌신 ${lv}</small>${g.blocked?` <span class="badge muted" title="표시 불가 사유: ${e(g.blocked)}">표시 불가</span>`:''}${lie?` <span class="badge" title="장악력 ${st.talk.supermacy??0} < 0: 거짓말(다른 노예의 답). 진실: ${e(tg.text||'(대사 없음)')}${truthRef?' / 진실 원본 '+e(truthRef):''}">거짓말</span>`:''}${edited?' <span class="badge">수정됨</span>':''}${g.note?` <small class="fine-print">${e(g.note)}</small>`:''}</div>
     <textarea class="cv-slot-text" data-cv-pt="${id}" rows="3" placeholder="대사 없음: 원본을 보고 각색해 넣으세요" ${g.blocked?'readonly title="표시 불가 사유: '+e(g.blocked)+'"':''}>${e(text)}</textarea>
     <div class="cv-slot-foot">${edited?`<button class="text-button" data-cv-act="pt-reset" data-slot="${id}">생성 대사로 되돌리기</button>`:''}${ref?refHtml(ref):'<small class="fine-print">원본 DB 대응 문항 없음</small>'}</div></div>`;
   }
   const qs=open.slice(page*PAGE,page*PAGE+PAGE);
-  return `<div class="gm"><div class="gm-left"><div class="gm-stage"><div class="gm-name">${who}</div><div class="cv-meta">${e(TYPE_NAME[truth.ty])} · ${e(MODE_NAME[relationMode(s)])} · ${e(STYLE_NAME[truth.style])} · 헌신 ${moral} · 두려움 ${st.talk.fear??0}${lying()&&!gate?' · <b class="gm-lie">거짓말 중</b>':''}</div></div>
+  return `<div class="gm"><div class="gm-left"><div class="gm-stage"><div class="gm-name">${who}</div><div class="cv-meta">${e(TYPE_NAME[truth.ty])} · ${e(MODE_NAME[relationMode(s)])} · ${e(STYLE_NAME[truth.style])} · 헌신 ${moral} · 두려움 ${st.talk.fear??0} · 장악력 ${st.talk.supermacy??0}${lying()&&!gate?' · <b class="gm-lie">거짓말 중</b>':''}</div></div>
     <div class="gm-say"><div class="gm-who">[${who}]</div><div>${say}</div></div></div>
    <div class="gm-side"><div class="gm-title">내 방</div><div class="gm-subtitle">섹스토크 중</div>
     <div class="gm-qs">${qs.map(([lv,id,,,q])=>`<button class="gm-q ${st.ask===id?'on':''}" data-cv-ask="${id}">${e(q)}</button>`).join('')}
@@ -254,6 +254,7 @@ export async function createCharacterView(api){
    return `<div class="cv-form">
     <label>관계 상태<select data-cv-psy>${Object.entries(PSY).map(([k,n])=>`<option value="${k}" ${t.psy_status===k?'selected':''}>${n}</option>`).join('')}</select></label>
     ${Object.entries(TALK).map(([k,n])=>`<label>${n} 등급${num('talk.'+k,t[k],'min="0" max="5" step="1"')}</label>`).join('')}
+    <label title="0 미만이면 섹스토크에서 거짓말">이 노예에 대한 장악력${num('talk.supermacy',t.supermacy??0,'min="-30" max="30" step="1"')}</label>
     <label>말하기 유형(유니크 지정)<select data-cv-voice><option value="">성격으로 계산</option>${Object.entries(TYPE_NAME).map(([k,n])=>`<option value="${k}" ${c.jo9_voice_type===k?'selected':''}>${n}</option>`).join('')}</select></label>
     <label>고정 난수 시드<input data-cv-seed value="${e(st.seed)}" maxlength="40"></label>
     <label>영입 경로<select data-cv-route><option value="other">일반</option><option value="patrol" ${st.acq.route==='patrol'?'selected':''}>안개 경계 순찰 구출</option></select></label>
@@ -362,7 +363,7 @@ export async function createCharacterView(api){
   if(t.dataset.cvLock){st.locks[t.dataset.cvLock]=t.checked;save();return;}
   // 칸을 벗어날 때(blur) 바로 다시 그리면 클릭한 버튼이 사라지므로 다음 틱에 그린다
   if(t.dataset.cvPt){((st.ptEdits??={})[charKey()]??={})[t.dataset.cvPt]=t.value;save();setTimeout(renderMain,0);return;}
-  if(t.dataset.cvNum){const [grp,k]=t.dataset.cvNum.split('.');const v=t.value===''?undefined:Math.max(0,Math.trunc(Number(t.value)));if(t.value!==''&&!Number.isFinite(Number(t.value)))return;st[grp][k]=v;}
+  if(t.dataset.cvNum){const [grp,k]=t.dataset.cvNum.split('.');const v=t.value===''?undefined:k==='supermacy'?Math.trunc(Number(t.value)):Math.max(0,Math.trunc(Number(t.value)));if(t.value!==''&&!Number.isFinite(Number(t.value)))return;st[grp][k]=v;}
   else if(t.dataset.cvPsy!==undefined)st.talk.psy_status=t.value;
   else if(t.dataset.cvVoice!==undefined){if(t.value)ch().jo9_voice_type=t.value;else delete ch().jo9_voice_type;}
   else if(t.dataset.cvSeed!==undefined)st.seed=t.value.slice(0,40)||'1';
