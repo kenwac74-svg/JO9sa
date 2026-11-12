@@ -131,6 +131,57 @@ def read_character(sid):
                         'boobs': api.BOOBS_SIZES, 'boobsImg': api.BOOBS_IMGS, 'pussyImg': api.PUSSY_IMGS}}
 
 
+SEED_KEYS = set(json.loads((DIST / 'data' / 'game-seed-keys.json').read_text(encoding='utf-8'))['keys'])
+STORY_KEYS = {key: field for key, field, _label in api.STORY_FIELDS}
+
+
+def editable_key(key):
+    """이 화면에서 고칠 수 있는 JSON 키: 게임이 읽는 seed_ 키(이미지·얼굴 경로 제외)."""
+    return key.startswith('seed_') and key[5:] in SEED_KEYS and key not in api.IMAGE_FIELDS
+
+
+def save_fields(sid, body):
+    """캐릭터 JSON의 seed_ 값·배경 이야기를 고친다. 바뀐 키만 쓰고, 처음 저장할 때 .bak 을 남긴다.
+    body = {set:{키:값}, unset:[키], story:{world|family|occupation: 표시 문장}, dryRun:bool}"""
+    p = paths()
+    data, json_file = api.read_slave(p, int(sid))
+    updated = dict(data)
+    for key, value in (body.get('set') or {}).items():
+        if not editable_key(key):
+            raise ValueError('고칠 수 없는 키입니다: ' + str(key))
+        if isinstance(value, bool) or not isinstance(value, (int, str)):
+            raise ValueError('값은 정수나 문자열이어야 합니다: ' + key)
+        if isinstance(value, str) and len(value) > 20000:
+            raise ValueError('문장이 너무 깁니다: ' + key)
+        if key in data and isinstance(data[key], int) and not isinstance(value, int):
+            raise ValueError('정수 항목입니다: ' + key)
+        updated[key] = value
+    for key in body.get('unset') or []:
+        if not editable_key(key) or key == 'seed_name':
+            raise ValueError('지울 수 없는 키입니다: ' + str(key))
+        updated.pop(key, None)
+    for key, text in (body.get('story') or {}).items():
+        if key not in STORY_KEYS:
+            raise ValueError('알 수 없는 배경 칸입니다: ' + str(key))
+        field = STORY_KEYS[key]
+        if api.story_to_display(data.get(field, '')) == (text or '').strip():
+            continue  # 안 고친 문단은 원문(표시·주석 포함) 그대로 둔다
+        value = api.story_from_display(text)
+        if value:
+            updated[field] = value
+        else:
+            updated.pop(field, None)
+    changes = [{'key': k, 'before': data.get(k), 'after': updated.get(k)}
+               for k in dict.fromkeys(list(data) + list(updated)) if data.get(k) != updated.get(k) or (k in data) != (k in updated)]
+    if changes and not body.get('dryRun'):
+        payloads = {json_file: json.dumps(updated, indent=4, ensure_ascii=False).encode('utf-8')}
+        if not os.path.exists(json_file + '.bak'):
+            payloads[json_file + '.bak'] = Path(json_file).read_bytes()
+        api._write_files_together(payloads)
+    return {'changes': changes, 'dryRun': bool(body.get('dryRun')), 'saved': bool(changes) and not body.get('dryRun'),
+            'character': read_character(sid) if changes and not body.get('dryRun') else None}
+
+
 def game_file(rel):
     """/game/<경로>: 게임 폴더 안의 이미지 파일만 돌려준다."""
     p = paths()
@@ -153,6 +204,7 @@ ROUTES_GET = [
 ]
 ROUTES_POST = [
     (re.compile(r'^/api/game$'), lambda m, body: set_game_root(body.get('root'))),
+    (re.compile(r'^/api/char/(\d+)/fields$'), lambda m, body: save_fields(m.group(1), body)),
 ]
 
 

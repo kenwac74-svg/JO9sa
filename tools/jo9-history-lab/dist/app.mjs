@@ -4,6 +4,7 @@ import {createSimView} from './sim-view.mjs';
 import {createCharacterView} from './character-view.mjs';
 import {createCoefView} from './coef-view.mjs';
 import {createTraitEditor} from './trait-editor.mjs';
+import {createStudioView} from './studio-view.mjs';
 import {moveUnclassifiedCombat} from './character-io.mjs';
 import {settingsFilename,openSettingsSave} from './settings-save.mjs';
 const KEY='jo9-history-lab-v1';
@@ -223,10 +224,12 @@ try{
  await createCharacterView({tabNames,toast,confirmAction,getState:()=>state,save});
  await createCoefView({tabNames,toast,confirmAction});
  await createTraitEditor({tabNames,toast});
+ // 통합 캐릭터 편집(게임 폴더의 캐릭터 외형·서사·설정·능력치): 로컬 서버가 있을 때만 게임 파일을 다룬다
+ await createStudioView({tabNames,toast,confirmAction});
  // 폐지한 탭(사용자 지시 2026-11-12): 초기값 시뮬레이터·이전 산식·이전 산식 계수·비교 보관함·산출 규칙·캐릭터 JSON·특성 선택. 필요한 기능은 위 탭으로 옮겼다
  for(const old of ['simulator','coefficients','archive','guide','character-json','traits']){delete tabNames[old];document.querySelector(`.sidebar nav [data-tab="${old}"]`)?.remove();}
  // 사이드바 순서: 캐릭터 시뮬레이터 → 산식 계수 → 특성 편집 → 배경 설정 목록 → 뽑기 분포
- const nav=document.querySelector('.sidebar nav');for(const k of ['character','coef','trait-edit','backgrounds','slave-sim']){const b=nav.querySelector(`[data-tab="${k}"]`);if(b)nav.appendChild(b);}
+ const nav=document.querySelector('.sidebar nav');for(const k of ['studio','character','coef','trait-edit','backgrounds','slave-sim']){const b=nav.querySelector(`[data-tab="${k}"]`);if(b)nav.appendChild(b);}
  // 해시 없이 열면 새 초기값 시뮬레이터부터 보여 준다(앱이 시작 중 해시를 #simulator로 바꾸므로 처음 해시를 쓴다)
  switchTab(tabNames[initialHash]?initialHash:'character');
 }catch(error){toast('초기값 시뮬레이터 데이터를 읽지 못했습니다: '+error.message);}
