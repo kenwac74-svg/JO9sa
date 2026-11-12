@@ -151,7 +151,8 @@ export async function createCharacterView(api){
  function pillowHtml(cx){
   if(!cx)return '<p class="muted-text">캐릭터를 뽑거나 불러오면 필로우토크가 나옵니다.</p>';
   const {r,s}=cx,c=ch();
-  if(r.excluded)return '<p class="muted-text">연령 코드 1은 대상이 아닙니다.</p>';
+  // [클로드 정책 거부] 제외 연령(공식 데이터 excludedAges)은 자동 대사·과거 경험을 만들지 않는다. 대사집에서 직접 쓰는 것은 막지 않는다
+  if(r.excluded)return `<p class="muted-text">연령 코드 ${e(r.age??c.age)}은(는) 제외 연령(공식 데이터 excludedAges)이라 이 편집기가 자동으로 만들지 않습니다. 직접 쓰려면 캐릭터 편집 › 대사집을 쓰세요.</p>`;
   const gate=talkGate(),moral=Math.max(0,Math.min(5,Number(st.talk.moral)||0)),who=e(c.name||'이 노예');
   const open=gate?[]:SLOTS.filter(x=>x[0]<=moral),pages=Math.max(1,Math.ceil(open.length/PAGE)),page=Math.min(st.qpage??0,pages-1);
   const truth=generatedLines(cx),lie=lying()&&!gate?generatedLines(lieCx(cx)):null,edits=st.ptEdits?.[charKey()]??{};
@@ -213,7 +214,7 @@ export async function createCharacterView(api){
   <article class="card"><div class="card-head"><h2><span class="index">02</span>배경</h2><span class="badge muted">고정한 항목은 랜덤 생성 때 유지</span></div><div class="card-body cv-bg">${KINDS.map(([k,l])=>{const b=backgroundText(k);return `<section class="cv-bg-row"><div class="cv-bg-head"><div><div class="section-label">${l}${b?' · '+e(b.label):''}</div><small class="source-line">${e(b?.source??'')}</small></div><label class="cv-lock"><input type="checkbox" data-cv-lock="${k}" ${st.locks[k]?'checked':''} ${c.unique?'disabled':''}> 고정</label></div>
     ${b?`<textarea data-cv-text="${k}" maxlength="4000">${e(b.text)}</textarea><div class="cv-bg-actions">${b.edited?'<span class="badge">수정됨</span>':''}<button class="button secondary" data-cv-act="text-save" data-kind="${k}">저장하기</button><button class="button secondary" data-cv-act="text-restore" data-kind="${k}" ${b.edited?'':'disabled'}>복원</button><span class="fine-print">저장하면 같은 항목의 모든 조합에 적용 · {이름}은 이름 자리표시자</span></div>`:'<p class="fine-print">아래 패널에서 고르세요.</p>'}</section>`;}).join('')}</div></article>
   <article class="card"><div class="card-head"><h2><span class="index">03</span>영입 전 과거 경험</h2>${Object.values(st.overrides).some(v=>v!==undefined&&v!=='')?'<span class="badge blue">직접 지정 포함</span>':''}</div><div class="card-body">
-   ${!r?'<p class="muted-text">캐릭터를 뽑거나 불러오세요.</p>':r.excluded?'<p class="muted-text">연령 코드 1은 통계 대상이 아닙니다.</p>':`<div class="result-summary">
+   ${!r?'<p class="muted-text">캐릭터를 뽑거나 불러오세요.</p>':r.excluded?'<p class="muted-text">제외 연령(공식 데이터 excludedAges)이라 과거 경험을 자동 계산하지 않습니다.</p>':`<div class="result-summary">
     <div class="summary-tile featured"><span class="summary-label">성경험 총횟수</span><span class="summary-value">${r.intimacy}<small>회</small></span></div>
     <div class="summary-tile"><span class="summary-label">질 · 구강 · 애널</span><span class="summary-value sim-small">${r.acts?`${r.acts.vaginal} · ${r.acts.oral} · ${r.acts.anal}`:'—'}</span></div>
     <div class="summary-tile"><span class="summary-label">상대 수</span><span class="summary-value sim-small">${fx?.partners??0}명</span></div>
@@ -244,7 +245,7 @@ export async function createCharacterView(api){
   const c=ch(),cx=compute();
   if(st.panel==='background')return `${c.unique?'<p class="fine-print">유니크는 고정 설정을 씁니다. 과거 경험 계산용으로 세계·출신·직업을 고를 수 있습니다.</p>':''}
    ${pickerHtml('world','세계')}${pickerHtml('family','출신')}${pickerHtml('occupation','직업')}
-   <div class="cv-pick"><div class="cv-pick-label">연령 코드</div><div class="cv-chips">${[0,2].map(a=>`<button class="cv-chip ${c.age===a?'on':''}" data-cv-age="${a}">${a}</button>`).join('')}<span class="fine-print">1은 통계 대상이 아닙니다.</span></div></div>`;
+   <div class="cv-pick"><div class="cv-pick-label">연령 코드</div><div class="cv-chips">${[0,1,2].map(a=>`<button class="cv-chip ${c.age===a?'on':''}" data-cv-age="${a}">${a}${getFormula(D.formula).excludedAges.includes(a)?' (자동 계산 제외)':''}</button>`).join('')}<span class="fine-print">연령 코드 0 젊음 · 1 소녀 · 2 원숙. 자동 계산 제외 연령은 공식 데이터 excludedAges로 정합니다.</span></div></div>`;
   if(st.panel==='input')return `<p class="fine-print">게임 용어를 그대로 입력하세요. 쉼표로 여러 개를 한 번에 넣을 수 있습니다. 예: <code>겁쟁이, 펠라 4, 애널 B, 외모 3, 처녀, 헌신 4, 관계 순종</code></p>
    <div class="cv-input-row"><input id="cvTerm" list="cvDict" placeholder="특성·스킬·속성·상태 입력 후 Enter" autocomplete="off"><button class="button primary" data-cv-act="term">입력</button></div>
    <datalist id="cvDict">${DICT.map(x=>`<option value="${e(x.replace(/ (0~5 또는 F~S|숫자)$/,' '))}">${e(x)}</option>`).join('')}</datalist>

@@ -279,6 +279,15 @@ def talkbook_path(p, sid):
     return os.path.join(p.root, TALKBOOK_DIR, '%d.json' % int(sid))
 
 
+def excluded_ages():
+    """[클로드 정책 거부] 자동 생성(대사·과거 경험)을 하지 않는 연령은 공식 데이터 excludedAges 하나로 정한다(지금 [1]).
+    코드에 연령 숫자를 따로 박지 않는다. 기록: docs/claude-refusals/REFUSAL_LOG_KO.md"""
+    try:
+        return set(json.loads((DIST / 'data' / 'past-history-formula.json').read_text(encoding='utf-8'))['excludedAges'])
+    except (OSError, ValueError, KeyError):
+        return set()
+
+
 def read_talkbook(sid):
     """캐릭터별 대사집(과거 경험 사실·필로우토크 대사·배경 분류). 게임 캐릭터 JSON과 따로 둔다."""
     p = paths()
@@ -288,7 +297,7 @@ def read_talkbook(sid):
     if os.path.isfile(fn):
         book = json.loads(Path(fn).read_text(encoding='utf-8-sig'))
     return {'id': int(sid), 'path': os.path.relpath(fn, p.root).replace(os.sep, '/'), 'exists': book is not None,
-            'book': book, 'noAutoGenerate': data.get('seed_age') == 1}
+            'book': book, 'noAutoGenerate': data.get('seed_age') in excluded_ages()}
 
 
 def check_plain(value, depth=0):

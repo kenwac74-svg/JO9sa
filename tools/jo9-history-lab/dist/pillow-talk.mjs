@@ -147,7 +147,8 @@ const childWords=n=>['','하나','둘','셋','넷','다섯','여섯','일곱','�
 
 /** stock: 영입 처리 후 값(+ psy_status·moral·fear), result: 과거 경험 공식 결과, tier: 직업 묶음, rand: 0~1 난수, history: 최근에 쓴 조각 id */
 export function pillowTalk(stock,result,tier,rand=Math.random,history=[]){
- if(result.excluded||stock.age===1)return null;
+ // [클로드 정책 거부] 제외 연령은 과거 경험 공식 결과의 excluded 하나로 정한다(공식 데이터 excludedAges, 지금 [1]). 여기서 연령 숫자를 따로 박지 않는다(기록: docs/claude-refusals/REFUSAL_LOG_KO.md)
+ if(result.excluded)return null;
  const ctx={stock,type:voiceType(stock),style:speechStyle(stock.occupation),mode:relationMode(stock),rand,history,used:[]};
  const n=result.intimacy??0,told=toldCount(ctx.type,n),lines=[];
  const say=(role,extra=s=>s)=>{const r=pickRow(role,ctx);if(r)lines.push(extra(r.text[ctx.style].replace('{N}',countWords(told)).replace('{X}',String(told))));return !!r;};
