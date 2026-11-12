@@ -270,7 +270,7 @@ def read_talkbook(sid):
     if os.path.isfile(fn):
         book = json.loads(Path(fn).read_text(encoding='utf-8-sig'))
     return {'id': int(sid), 'path': os.path.relpath(fn, p.root).replace(os.sep, '/'), 'exists': book is not None,
-            'book': book, 'adultOnlyBlocked': data.get('seed_age') == 1}
+            'book': book, 'noAutoGenerate': data.get('seed_age') == 1}
 
 
 def check_plain(value, depth=0):
@@ -297,14 +297,21 @@ def save_talkbook(sid, body):
     book = body.get('book')
     if not isinstance(book, dict):
         raise ValueError('대사집은 객체여야 합니다.')
-    allowed = {'background', 'seed', 'acq', 'overrides', 'lines', 'facts', 'history', 'notes'}
+    allowed = {'background', 'seed', 'acq', 'overrides', 'lines', 'facts', 'history', 'notes', 'refs'}
     extra = set(book) - allowed
     if extra:
         raise ValueError('대사집에 없는 항목입니다: ' + ', '.join(sorted(extra)))
     check_plain(book)
-    # 연령 코드 1(소녀)은 성인 대상 대사·과거 경험을 두지 않는다(편집기 공통 원칙). 배경 분류·메모만 저장한다
-    if data.get('seed_age') == 1:
-        book = {k: v for k, v in book.items() if k in ('background', 'notes')}
+    # 원본 DB 연결 코드는 키·표시불가 코드만 남긴다(문장 금지)
+    refs = {}
+    for slot, ref in (book.get('refs') or {}).items():
+        if not isinstance(ref, dict) or not re.match(r'^p\d{4}\.q\d{2}(\.[a-z0-9]+)*$', str(ref.get('key', ''))):
+            raise ValueError('원본 DB 연결 코드 형식이 아닙니다: ' + str(slot))
+        codes = [c for c in ref.get('blocked') or [] if re.match(r'^B\d$', str(c))]
+        refs[slot] = {'key': ref['key'], 'blocked': codes}
+    if 'refs' in book:
+        book['refs'] = refs
+    # 연령 코드 1이어도 사용자가 직접 쓴 내용은 그대로 저장한다. 자동 생성(시뮬레이터 대사·과거 경험)은 화면에서 만들지 않는다(사용자 지시 2026-11-12)
     out = {'format': 'jo9-talkbook', 'version': 1, 'id': int(sid), 'name': data.get('seed_name', ''),
            'jsonFile': os.path.basename(_json_file), **book}
     text = json.dumps(out, ensure_ascii=False, indent=1)
@@ -316,6 +323,110 @@ def save_talkbook(sid, body):
         payloads[fn + '.bak'] = Path(fn).read_bytes()
     api._write_files_together(payloads)
     return read_talkbook(sid)
+
+
+# ------------------------------------------------------------------ QSP 이벤트 대사(읽기 + mods 초안)
+REPO = HERE.parent.parent
+_qsp_cache = {}
+
+
+def _sh(s, d):
+    return ''.join(chr((ord(c) + d) & 0xFFFF) for c in s)
+
+
+def load_qsp():
+    """게임 jack.qsp를 읽어 {이름: 본문}과 원본 줄을 돌려준다(apply_mods.ps1·apply_py와 같은 형식). 파일이 바뀌면 다시 읽는다."""
+    status = game_status()
+    if not status['qsp']:
+        raise LookupError('게임 폴더에 jack.qsp가 없습니다.')
+    fn = status['qsp']
+    stamp = (fn, os.path.getmtime(fn), os.path.getsize(fn))
+    if _qsp_cache.get('stamp') != stamp:
+        raw = Path(fn).read_bytes()
+        lines = raw.decode('utf-16-le').split('\r\n')
+        if '\r\n'.join(lines).encode('utf-16-le') != raw:
+            raise ValueError('qsp 왕복 검사 실패: 읽고 다시 쓴 결과가 원본과 다릅니다.')
+        n, at, idx = int(_sh(lines[3], 5)), 4, {}
+        for _ in range(n):
+            idx[_sh(lines[at], 5)] = at
+            at += 4 + int(_sh(lines[at + 3], 5)) * 3
+        bodies = {name: _sh(lines[i + 2], 5) for name, i in idx.items()}
+        import hashlib
+        _qsp_cache.update(stamp=stamp, raw=raw, lines=lines, idx=idx, bodies=bodies, sha=hashlib.sha256(raw).hexdigest())
+    return _qsp_cache
+
+
+def qsp_search(query):
+    """qsp 본문에서 글자를 찾는다. 결과: 위치·줄 번호(0부터)·줄 문장. 300개까지."""
+    from urllib.parse import parse_qs
+    words = [w for w in (parse_qs(query).get('q', [''])[0]).split('|') if w.strip()]
+    if not words:
+        raise ValueError('찾을 글자를 넣으세요.')
+    q = load_qsp()
+    hits, total = [], 0
+    for name, body in q['bodies'].items():
+        for i, line in enumerate(body.split('\r\n')):
+            if any(w in line for w in words):
+                total += 1
+                if len(hits) < 300:
+                    hits.append({'location': name, 'line': i, 'text': line})
+    return {'sha256': q['sha'], 'total': total, 'hits': hits, 'words': words}
+
+
+def qsp_mod(body):
+    """줄 단위 수정 → mods 선언형 JSON 초안. 메모리에서 적용해 개수·줄끝을 검사하고 적용 뒤 SHA-256을 계산한다."""
+    import hashlib
+    q = load_qsp()
+    mod_id = str(body.get('id') or '').strip()
+    if not re.match(r'^\d{4}-\d{2}-\d{2}_[a-z0-9_]{3,80}$', mod_id):
+        raise ValueError('mod ID는 날짜_영문소문자 형식이어야 합니다(예: 2026-11-12_felicity_lines).')
+    bodies = dict(q['bodies'])
+    edits, warnings = [], []
+    for e in body.get('edits') or []:
+        name, line, new = e.get('location'), int(e.get('line')), str(e.get('new', ''))
+        if name not in bodies:
+            raise ValueError('없는 위치입니다: ' + str(name))
+        if '\r' in new or '\n' in new:
+            raise ValueError('한 줄 수정만 받습니다(줄바꿈 금지). 게임 줄바꿈은 <br>로 쓰세요.')
+        src = q['bodies'][name].split('\r\n')
+        if not 0 <= line < len(src):
+            raise ValueError('줄 번호가 범위를 벗어났습니다.')
+        old = src[line]
+        if old == new:
+            continue
+        if old.count("'") % 2 != new.count("'") % 2:
+            warnings.append('%s %d줄: 작은따옴표 개수의 짝이 바뀌었습니다. 문장 안 작은따옴표는 두 번(\'\')으로 쓰세요.' % (name, line + 1))
+        # 같은 줄이 위치 안에 여러 번 있으면 앞뒤 줄을 붙여 하나로 정해지게 한다
+        lo, hi = line, line + 1
+        while '\r\n'.join(src[lo:hi]) and q['bodies'][name].count('\r\n'.join(src[lo:hi])) > 1 and (lo > 0 or hi < len(src)):
+            lo, hi = max(0, lo - 1), min(len(src), hi + 1)
+        old_block = '\r\n'.join(src[lo:hi])
+        new_block = '\r\n'.join(src[lo:line] + [new] + src[line + 1:hi])
+        count = bodies[name].count(old_block)
+        if count != 1:
+            raise ValueError('%s %d줄: 고칠 문장을 하나로 특정하지 못했습니다(%d곳).' % (name, line + 1, count))
+        bodies[name] = bodies[name].replace(old_block, new_block)
+        edits.append({'location': name, 'field': 'body', 'old': old_block, 'new': new_block, 'count': 1})
+    if not edits:
+        raise ValueError('바뀐 줄이 없습니다.')
+    lines = list(q['lines'])
+    for name, at in q['idx'].items():
+        if bodies[name] != q['bodies'][name]:
+            lines[at + 2] = _sh(bodies[name], -5)
+    data = '\r\n'.join(lines).encode('utf-16-le')
+    mod = {'id': mod_id, 'description': str(body.get('description') or '통합 편집기에서 고친 QSP 대사')[:500],
+           'target': 'game\\jack.qsp', 'before_sha256': q['sha'], 'edits': edits,
+           'after_sha256': hashlib.sha256(data).hexdigest()}
+    saved = None
+    if body.get('saveToRepo'):
+        target = REPO / 'mods' / (mod_id + '.json')
+        if not (REPO / 'mods').is_dir():
+            raise LookupError('repo의 mods 폴더를 찾지 못했습니다: ' + str(REPO / 'mods'))
+        if target.exists():
+            raise FileExistsError('같은 이름의 mod가 이미 있습니다: ' + target.name)
+        target.write_bytes(json.dumps(mod, ensure_ascii=False, indent=1).encode('utf-8'))
+        saved = 'mods/' + target.name
+    return {'mod': mod, 'warnings': warnings, 'saved': saved}
 
 
 def game_file(rel):
@@ -338,12 +449,14 @@ ROUTES_GET = [
     (re.compile(r'^/api/chars$'), lambda m, q: {'items': list_characters()}),
     (re.compile(r'^/api/char/(\d+)$'), lambda m, q: read_character(m.group(1))),
     (re.compile(r'^/api/talkbook/(\d+)$'), lambda m, q: read_talkbook(m.group(1))),
+    (re.compile(r'^/api/qsp/search$'), lambda m, q: qsp_search(q)),
 ]
 ROUTES_POST = [
     (re.compile(r'^/api/game$'), lambda m, body: set_game_root(body.get('root'))),
     (re.compile(r'^/api/char/(\d+)/fields$'), lambda m, body: save_fields(m.group(1), body)),
     (re.compile(r'^/api/char/(\d+)/images$'), lambda m, body: save_images(m.group(1), body)),
     (re.compile(r'^/api/talkbook/(\d+)$'), lambda m, body: save_talkbook(m.group(1), body)),
+    (re.compile(r'^/api/qsp/mod$'), lambda m, body: qsp_mod(body)),
 ]
 
 

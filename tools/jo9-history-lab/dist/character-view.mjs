@@ -23,7 +23,7 @@ const TALK={moral:'헌신',angst:'절망',spoil:'응석',rational:'인식',fear:
 const PSY={docile:'온순함',soft:'부드러움',optimistic:'낙관',obedient:'순종',servile:'비굴',horny:'발정',reluctant:'마지못함',arrogant:'오만',hateful:'증오',resistant:'저항',hysteric:'히스테리',lachrymose:'눈물',frightened:'겁먹음',depresive:'우울',broken:'무너짐'};
 const STATE_WORDS={'처녀':['virginity',0],'비처녀':['virginity',2],'불임':['fertility',-1],'임신 가능':['fertility',0],'임신 중':['pregnant',1],'클론':['clone',1],'연령 0':['age',0],'연령 2':['age',2]};
 // 섹스토크 주제(기획 6.1 헌신 등급표): [헌신, 칸 id, 이름, 원본 DB 주제 키들, 주인공 질문 선택지]
-const SLOTS=[
+export const SLOTS=[
  [1,'first_time','첫 경험',['first_time'],'처음은 언제였는지 묻는다'],[1,'max_night','하룻밤 최다',['max_night'],'하룻밤에 가장 많이 한 게 몇 번인지 묻는다'],
  [2,'partners','상대 수',['partners'],'지금까지 몇 명과 했는지 묻는다'],[2,'odd_place','특이한 장소',['odd_place'],'가장 이상한 곳이 어디였는지 묻는다'],[2,'orgasm','오르가즘·분출',['orgasm','squirt'],'가 본 적이 있는지 묻는다'],
  [3,'finish','피니시·삼킴',['finish_pref','swallow'],'어디에 싸 주는 게 좋은지 묻는다'],[3,'signature','18번 기술',['signature'],'가장 자신 있는 기술을 묻는다'],[3,'dirty_talk','색드립',['dirty_talk'],'할 때 무슨 말을 하는지 묻는다'],[3,'anal','애널',['anal'],'뒤로도 해 봤는지 묻는다'],[3,'deepthroat','딥스로트',['deepthroat'],'목 깊이 넣어 봤는지 묻는다'],[3,'memorable_line','남자가 한 말',['memorable_line'],'남자가 했던 말 중 기억나는 걸 묻는다'],
@@ -393,7 +393,9 @@ export async function createCharacterView(api){
   const c=ch(),cx=compute();
   return {id:String(c.type??''),name:c.name,background:{world:c.world||'',family:c.family||'',occupation:c.occupation||''},seed:st.seed,acq:{...st.acq},overrides:{...st.overrides},
    lines:{...(st.ptEdits?.[charKey()]??{})},facts:cx?.fx?{fields:cx.fx.fields,blocked:cx.fx.blocked}:null,excluded:!!cx?.r?.excluded,
-   history:cx?.r&&!cx.r.excluded?{intimacy:cx.r.intimacy,acts:cx.r.acts,pregnancies:cx.r.pregnancies,births:cx.r.births}:null};
+   history:cx?.r&&!cx.r.excluded?{intimacy:cx.r.intimacy,acts:cx.r.acts,pregnancies:cx.r.pregnancies,births:cx.r.births}:null,
+   // 원본 DB 연결 코드: 칸마다 창작물 DB 키와 표시불가 코드만(문장 없음). 연령 코드 1도 키·분류 코드는 남긴다(사용자 지시 2026-11-12)
+   refs:Object.fromEntries(SLOTS.map(([,id])=>{const k=refFor(id,cx?.fx);const r=k?REFS.rows[k]:null;return [id,k?{key:k,blocked:r?.b??[]}:null];}).filter(([,v])=>v))};
  }
  return {render,loadGameCharacter,exportTalk};
 }
