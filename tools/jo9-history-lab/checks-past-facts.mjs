@@ -38,7 +38,8 @@ assert.equal(run(stock({})).fields.home_animal,0);
 for(const sc of Object.keys(X.xeno.patrolExcluded))assert(!['patrol_tentacle','patrol_monster','patrol_warg'].includes(kind(sc).fields.xeno),sc);
 // 이전 주인 촉수는 노예 출신만
 let pm=0;for(let i=0;i<400;i++){assert.notEqual(run(stock({occupation:'whore'}),'m'+i).fields.xeno,'prev_master');if(run(stock({occupation:'former_slave'}),'m'+i).fields.xeno==='prev_master')pm++;}
-assert(pm>40&&pm<160,'prev_master 비율 '+pm);
+assert.equal(pm,0,'무작위 생성 노예 출신은 촉수 착정 없음(이터널 로마 유니크 전용) '+pm);
+assert.equal(run(stock({occupation:'former_slave'}),'u',{prevMaster:true}).fields.xeno,'prev_master','유니크 수동 지정');
 // 처녀여도 순찰 구출 경험은 있을 수 있다(이터널 로마 안의 일)
 assert.equal(run(stock({occupation:'nun',virginity:0}),'x',{route:'patrol',scene:'61102'}).fields.xeno,'patrol_tentacle');
 // 페티시는 앞 주제와 연결되지 않는 성향만: 펠라·애널 중독, 피학, 노출, 색정광·정액 중독, 동성 성향, 기호증, 심리피학은 들어가지 않는다

@@ -36,7 +36,8 @@ export function pastFacts(stock,result,formula,facts,seed='0',acq={},interviews=
  const X=facts.xeno;
  const sc=acq.route==='patrol'?X.patrolScenes[acq.scene]:null;
  if(sc){f.xeno=sc.kind;if(X.blocked?.[sc.kind])blocked.xeno=X.blocked[sc.kind];trace.push(`이종 경험: 안개 경계 순찰 장면 ${acq.scene}(${sc.label})에서 구해 영입 → ${X.labels[sc.kind]}${blocked.xeno?` [${blocked.xeno}, 표시 불가]`:''}`);}
- else if(occ===X.prevMasterTier&&rand(1,100)<=X.prevMasterPct){f.xeno='prev_master';trace.push(`이종 경험: 노예 출신 ${X.prevMasterPct}% → 이전 주인의 촉수 착정`);}
+ // 이전 주인 촉수 착정: 이터널 로마 출신 특수 유니크에게만 수동 지정(acq.prevMaster). 무작위 생성은 prevMasterPct(0)
+ else if(acq.prevMaster||(occ===X.prevMasterTier&&X.prevMasterPct>0&&rand(1,100)<=X.prevMasterPct)){f.xeno='prev_master';trace.push(acq.prevMaster?'이종 경험: 유니크 수동 지정 → 이전 주인의 촉수 착정':`이종 경험: 노예 출신 ${X.prevMasterPct}% → 이전 주인의 촉수 착정`);}
  else f.xeno='none';
  // 이종 경험 초기값(사용자 결정 2026-11-12): 등장 사건만 센다. 성경험 총횟수·상대 수에 포함(total_*)
  f.xeno_count=sc?(sc.partners??1):f.xeno==='prev_master'?(X.prevMasterCount??1):0;f.xeno_partners=f.xeno_count;
