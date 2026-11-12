@@ -22,7 +22,7 @@ function normal(rand,mean,sd){
 
 /**
  * stock: 생성 값, result: pastHistory 결과, formula: 과거 경험 공식, facts: past-facts.json,
- * acq: 영입 정보 {route:'fog_battle'|'other', enemy:'적 id'}
+ * acq: 영입 정보 {route:'patrol'|'other', scene:'611xx'(안개 경계 순찰 장면 번호)}
  * 반환: {fields, blocked:{필드:코드}, trace} 또는 대상 아님이면 null
  */
 export function pastFacts(stock,result,formula,facts,seed='0',acq={}){
@@ -33,7 +33,8 @@ export function pastFacts(stock,result,formula,facts,seed='0',acq={}){
 
  // 이종 경험: 처녀 여부와 관계없이 영입 경로·이전 주인으로 정한다(이터널 로마 안의 일)
  const X=facts.xeno;
- if(acq.route==='fog_battle'&&X.fogEnemies.includes(acq.enemy)){f.xeno='fog_rescue';trace.push(`이종 경험: 안개경계 전투(${X.fogEnemyLabels[acq.enemy]})에서 영입 → 구출 경험`);}
+ const sc=acq.route==='patrol'?X.patrolScenes[acq.scene]:null;
+ if(sc){f.xeno=sc.kind;if(X.blocked[sc.kind])blocked.xeno=X.blocked[sc.kind];trace.push(`이종 경험: 안개 경계 순찰 장면 ${acq.scene}(${sc.label})에서 구해 영입 → ${X.labels[sc.kind]}${blocked.xeno?` [${blocked.xeno}, 표시 불가]`:''}`);}
  else if(occ===X.prevMasterTier&&rand(1,100)<=X.prevMasterPct){f.xeno='prev_master';trace.push(`이종 경험: 노예 출신 ${X.prevMasterPct}% → 이전 주인의 촉수 착정`);}
  else f.xeno='none';
 

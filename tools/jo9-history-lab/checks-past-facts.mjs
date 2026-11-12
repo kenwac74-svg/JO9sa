@@ -24,18 +24,24 @@ const M=X.firstBand.meanAge;assert(M.prehistoric<M.modern&&M.space<M.modern&&M.m
 // 상대 수는 1 이상, 총횟수 이하. 하루 최다 상대 ≤ 상대 수. 하룻밤 최다 ≤ 총횟수
 for(let i=0;i<300;i++){const s=stock({occupation:['whore','teacher','former_slave','poor_wife'][i%4]}),h=pastHistory(s,F,'p'+i),r=pastFacts(s,h,F,X,'p'+i);
  if(h.intimacy>0){assert(r.fields.partners>=1&&r.fields.partners<=h.intimacy);assert(r.fields.max_day_people<=r.fields.partners);assert(r.fields.max_night<=h.intimacy);}}
-// 이종 경험: 안개 괴물 3종 전투 영입이면 구출, 다른 적이면 아님. 이전 주인 촉수는 노예 출신만
-for(const enemy of X.xeno.fogEnemies)assert.equal(run(stock({}),'x',{route:'fog_battle',enemy}).fields.xeno,'fog_rescue');
-assert.notEqual(run(stock({}),'x',{route:'fog_battle',enemy:'goblin'}).fields.xeno,'fog_rescue');
+// 이종 경험: 안개 경계 순찰에서 괴물에게서 구해 온 노예. 촉수·괴물·짐승(B2)으로 나뉘고, 사람·성적 장면 없는 장면은 아님
+const kind=sc=>run(stock({}),'x',{route:'patrol',scene:sc});
+for(const sc of ['61101','61102','61103'])assert.equal(kind(sc).fields.xeno,'patrol_tentacle');
+for(const sc of ['61106','61107','61111','61112','61114'])assert.equal(kind(sc).fields.xeno,'patrol_monster');
+assert.equal(kind('61113').fields.xeno,'patrol_animal');assert.equal(kind('61113').blocked.xeno,'B2');
+for(const sc of Object.keys(X.xeno.patrolExcluded))assert(!['patrol_tentacle','patrol_monster','patrol_animal'].includes(kind(sc).fields.xeno),sc);
+// 이전 주인 촉수는 노예 출신만
 let pm=0;for(let i=0;i<400;i++){assert.notEqual(run(stock({occupation:'whore'}),'m'+i).fields.xeno,'prev_master');if(run(stock({occupation:'former_slave'}),'m'+i).fields.xeno==='prev_master')pm++;}
 assert(pm>40&&pm<160,'prev_master 비율 '+pm);
-// 처녀여도 안개경계 구출 경험은 있을 수 있다(이터널 로마 안의 일)
-assert.equal(run(stock({occupation:'nun',virginity:0}),'x',{route:'fog_battle',enemy:'исчадие'}).fields.xeno,'fog_rescue');
+// 처녀여도 순찰 구출 경험은 있을 수 있다(이터널 로마 안의 일)
+assert.equal(run(stock({occupation:'nun',virginity:0}),'x',{route:'patrol',scene:'61102'}).fields.xeno,'patrol_tentacle');
 // 페티시는 앞 주제와 연결되지 않는 성향만: 펠라·애널 중독, 피학, 노출, 색정광·정액 중독, 동성 성향, 기호증, 심리피학은 들어가지 않는다
 const banned=['oral_affinity','anal_affinity','masochism','exhibitionism','nymphomania','homosexualism','abuse_attitude','compassion','water_attitude','fire_attitude','vermin_attitude','darkness_attitude','deprivation_attitude','blood_attitude'];
 for(const c of X.fetish.candidates)assert(!banned.includes(c.key),c.key);
 assert.deepEqual(run(stock({perversion:2,oral_affinity:1,masochism:2})).fields.fetish,['perversion']);
 // 촉수 대사 초안: 두 경우 모두 있고, 말투 1·2가 다 있고, 키가 겹치지 않는다
-const ids=new Set();for(const r of T.rows){assert(!ids.has(r.id));ids.add(r.id);assert(['fog_rescue','prev_master'].includes(r.case));assert(r.text['1']&&r.text['2']);}
-for(const c of ['fog_rescue','prev_master'])for(const rel of ['warm','low','hostile'])assert(T.rows.some(r=>r.case===c&&r.rels===rel),c+' '+rel);
+const ids=new Set();for(const r of T.rows){assert(!ids.has(r.id));ids.add(r.id);assert(['patrol_tentacle','patrol_monster','prev_master'].includes(r.case));assert(r.text['1']&&r.text['2']);}
+for(const c of ['patrol_tentacle','patrol_monster','prev_master'])for(const rel of ['warm','low','hostile'])assert(T.rows.some(r=>r.case===c&&r.rels===rel),c+' '+rel);
+// 짐승(B2)은 대사 초안이 없다
+assert(!T.rows.some(r=>r.case==='patrol_animal'));
 console.log('past facts checks ok');

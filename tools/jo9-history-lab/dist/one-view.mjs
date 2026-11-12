@@ -95,7 +95,7 @@ export async function createOneView(api){
   const fx=pastFacts(x,r,f,FACTS,'one|'+st.seed,st.acq??{});if(!fx)return '';
   const v=fx.fields,L=(grp,k)=>FACTS[grp]?.labels?.[k]??k;
   const rows=[
-   ['이종 경험',L('xeno',v.xeno)],['페티시(앞 주제와 연결 안 되는 성향)',v.fetish.length?v.fetish.map(k=>FACTS.fetish.candidates.find(c=>c.key===k)?.name??k).join(', '):'없음'],
+   ['이종 경험',L('xeno',v.xeno)+(fx.blocked.xeno?` <span class="badge muted">표시 불가 ${fx.blocked.xeno}</span>`:'')],['페티시(앞 주제와 연결 안 되는 성향)',v.fetish.length?v.fetish.map(k=>FACTS.fetish.candidates.find(c=>c.key===k)?.name??k).join(', '):'없음'],
    ['첫 경험 시기',v.first_band==='teen'?'청소년기 <span class="badge muted">표시 불가 B1</span>':v.first_band==='adult'?'성인 이후':'없음'],
    ...(v.first_band==='none'?[]:[['첫 상대 · 방식 · 장소',`${L('firstWho',v.first_who)} · ${L('firstHow',v.first_how)} · ${L('firstWhere',v.first_where)}`],
    ['상대 수 · 하룻밤 최다',`${v.partners}명 · ${v.max_night}회`],['다인 경험 · 하루 최다 상대',`${L('group',v.group)} · ${v.max_day_people}명`],
@@ -103,11 +103,11 @@ export async function createOneView(api){
    ['18번 기술',SKILL_NAME[v.signature]??'없음'],['절대 싫은 것 · 해 보고 싶은 것',`${v.never?L('actLabels',v.never):'없음'} · ${v.want?L('actLabels',v.want):'없음'}`]])];
   const packed=packFacts(v);
   let xeno='';
-  if(v.xeno!=='none'){
+  if(v.xeno!=='none'&&!fx.blocked.xeno){
    const ty=TYPE_GROUP[voiceType(x)],rel=REL_GROUP[relationMode(x)],style=speechStyle(x.occupation);
    const cand=XENO.rows.filter(row=>row.case===v.xeno&&row.rels===rel&&(row.types===ty||row.types==='*'));
    const row=cand.length?cand[Math.floor(rng(hashSeed(st.seed+'x'))()*cand.length)]:null;
-   xeno=`<div class="section-label">이종 경험 대사 초안 <span class="badge muted">${e(TYPE_NAME[voiceType(x)])} · ${e(MODE_NAME[relationMode(x)])} · ${e(STYLE_NAME[style])}</span></div><p class="one-pillow-line">${row?e(row.text[style]):'이 유형·관계에 맞는 초안 행이 없습니다.'}</p>`;
+   xeno=`<div class="section-label">이종 경험 대사 초안 <span class="badge muted">${e(TYPE_NAME[voiceType(x)])} · ${e(MODE_NAME[relationMode(x)])} · ${e(STYLE_NAME[style])}</span></div><p class="one-pillow-line">${row?e(row.text[style].replaceAll('{괴물}',FACTS.xeno.patrolScenes[st.acq?.scene]?.label??'괴물')):'이 유형·관계에 맞는 초안 행이 없습니다.'}</p>`;
   }
   return `<div class="one-facts"><div class="section-label">영입 때 저장할 섹스토크 사실 <span class="badge muted">같은 노예는 언제 물어도 같은 사실</span></div>
    <table><tbody>${rows.map(([a,b])=>`<tr><td>${e(a)}</td><td>${b}</td></tr>`).join('')}</tbody></table>
@@ -125,7 +125,7 @@ export async function createOneView(api){
   <article class="card"><div class="card-head"><h2><span class="index">01</span>배경</h2><span class="badge muted">게임 생성 규칙의 연결 조합만</span></div><div class="card-body"><div class="form-grid">
    ${field('세계',select('world',opt('world'),x.world))}${field('출신',select('family',opt('family'),x.family))}
    ${field('직업',select('occupation',opt('occupation'),x.occupation))}${field('연령 코드',select('age',[[0,'0'],[1,'1 (통계 제외)',true],[2,'2']],x.age))}
-   ${field('영입 경로',select('acq_route',[['other','일반'],['fog_battle','안개 경계 순찰 구출']],st.acq?.route??'other'))}${(st.acq?.route==='fog_battle')?field('순찰 장면의 적',select('acq_enemy',[['','선택하세요'],...FACTS.xeno.fogEnemies.map(k=>[k,FACTS.xeno.fogEnemyLabels[k]]),['goblin','고블린(안개 괴물 아님)'],['orc','오크(안개 괴물 아님)']],st.acq?.enemy??'')):''}
+   ${field('영입 경로',select('acq_route',[['other','일반'],['patrol','안개 경계 순찰 구출']],st.acq?.route??'other'))}${(st.acq?.route==='patrol')?field('순찰 장면',select('acq_scene',[['','선택하세요'],...Object.entries(FACTS.xeno.patrolScenes).map(([k,v])=>[k,`${k} ${v.label}`]),...Object.entries(FACTS.xeno.patrolExcluded).map(([k,v])=>[k,`${k} ${v} (이종 경험 아님)`])],st.acq?.scene??'')):''}
   </div><div class="one-actions"><button class="button primary" data-one-action="draw">⚄ 한 명 뽑기</button><button class="button secondary" data-one-action="clear">배경 비우기</button><span class="muted-text">현재 조건에 맞는 실제 엔진 표본 ${pool.length.toLocaleString('ko-KR')}명 중에서 뽑아 아래 생성 값을 모두 채웁니다.${st.drawn?` 마지막 뽑기: 표본 유형 ${e(st.drawn)}`:''}</span></div></div></article>
   <article class="card"><div class="card-head"><h2><span class="index">02</span>생성 값</h2><small class="muted-text">영입 처리까지 끝난 값 기준</small></div><div class="card-body">
    <div class="section-label">상태</div><div class="form-grid">${STATE.map(([k,l,o])=>field(l,select(k,o,x[k]??0))).join('')}</div>
@@ -158,8 +158,8 @@ export async function createOneView(api){
   if(t.dataset.one){
    const k=t.dataset.one;
    if(k==='seed')st.seed=t.value.slice(0,40);
-   else if(k==='acq_route')st.acq={route:t.value,enemy:st.acq?.enemy??''};
-   else if(k==='acq_enemy')st.acq={route:'fog_battle',enemy:t.value};
+   else if(k==='acq_route')st.acq={route:t.value,scene:st.acq?.scene??''};
+   else if(k==='acq_scene')st.acq={route:'patrol',scene:t.value};
    else if(['world','family','occupation'].includes(k)){s()[k]=t.value;const sel={world:s().world,family:s().family,occupation:s().occupation};D.prune(sel,k);Object.assign(s(),sel);st.drawn=null;}
    else if(k==='psy_status'||k==='jo9_voice_type')s()[k]=t.value;
    else s()[k]=Number(t.value);
