@@ -1,21 +1,11 @@
-# 통계 편집기(초기값 시뮬레이터)를 이 PC 안에서만 보이는 로컬 서버로 띄우고 브라우저로 여는 실행기
-import functools
-import http.server
+# 통합 캐릭터 편집기(외형·서사·대사·설정·통계)를 이 PC 안에서만 보이는 로컬 서버로 띄우고 브라우저로 여는 실행기
 import socket
 import threading
 import webbrowser
-from pathlib import Path
+from studio_server import make_server
 
 PORT = 7689
-DIST = Path(__file__).resolve().parent / 'dist'
 URL = f'http://127.0.0.1:{PORT}/'
-
-
-class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
-    # 편집기를 고친 뒤에도 브라우저가 예전 파일을 쓰지 않게 한다
-    def end_headers(self):
-        self.send_header('Cache-Control', 'no-store, max-age=0')
-        super().end_headers()
 
 
 def already_running() -> bool:
@@ -29,8 +19,7 @@ def main() -> None:
         webbrowser.open(URL)
         print('이미 실행 중인 편집기를 열었습니다:', URL)
         return
-    handler = functools.partial(NoCacheHandler, directory=str(DIST))
-    server = http.server.ThreadingHTTPServer(('127.0.0.1', PORT), handler)
+    server = make_server(PORT)
     threading.Timer(0.5, lambda: webbrowser.open(URL)).start()
     print('편집기를 열었습니다:', URL)
     print('끝내려면 이 창을 닫거나 Ctrl+C를 누르세요.')
