@@ -67,16 +67,19 @@ export function pastFacts(stock,result,formula,facts,seed='0',acq={},interviews=
   if(pool.length)f.first_age_ref=pool[rand(0,pool.length-1)];
  }else f.first_age=Math.min(B.maxAge??45,Math.max(B.adultAge,Math.floor(age)));
  trace.push(`첫 경험 시기: 세계 평균 ${mean}세, 표준편차 ${B.sd} → ${f.first_band==='teen'?`청소년기(B1, 표시 불가)${f.first_age_ref?` · 연결 인터뷰 ${f.first_age_ref}`:''}`:`성인 이후 ${f.first_age}세`}`);
- f.first_who=pick(rand,byTier(facts.firstWho.byTier,occ,fam));
- f.first_how=pick(rand,byTier(facts.firstHow.byTier,occ,fam));
- f.first_where=pick(rand,byTier(facts.firstWhere.byTier,occ,fam));
+ // 전직 노예: 성 기술 평균이 기준 이상이면 성노예(상대가 자주 바뀜), 아니면 집에 소속된 노예(사용자 결정 2026-11-12)
+ const SS=facts.partnerCount.sexSlave;
+ const sexSlave=occ==='formerSlave'&&SS&&SS.skills.reduce((a,k)=>a+(Number(stock[k])||0),0)/SS.skills.length>=SS.minAvg;
+ if(occ==='formerSlave')f.slave_kind=sexSlave?'sex':'house';
+ // 집 노예는 houseSlave 표가 있으면 그것을, 없으면 전직 노예 표를 쓴다
+ const tierFor=tbl=>occ==='formerSlave'&&!sexSlave&&tbl.houseSlave?tbl.houseSlave:byTier(tbl,occ,fam);
+ f.first_who=pick(rand,tierFor(facts.firstWho.byTier));
+ f.first_how=pick(rand,tierFor(facts.firstHow.byTier));
+ f.first_where=pick(rand,tierFor(facts.firstWhere.byTier));
  trace.push(`첫 상대 ${facts.firstWho.labels[f.first_who]} · ${facts.firstHow.labels[f.first_how]} · ${facts.firstWhere.labels[f.first_where]}`);
 
  // 상대 수: 총횟수 ÷ 한 명당 횟수, ±변동, 최소 1, 총횟수 이하
- const P=facts.partnerCount,SS=P.sexSlave;
- // 전직 노예: 성 기술 평균이 기준 이상이면 성노예(상대가 자주 바뀜), 아니면 집에 소속된 노예
- const sexSlave=occ==='formerSlave'&&SS&&SS.skills.reduce((a,k)=>a+(Number(stock[k])||0),0)/SS.skills.length>=SS.minAvg;
- if(occ==='formerSlave')f.slave_kind=sexSlave?'sex':'house';
+ const P=facts.partnerCount;
  const per=sexSlave?SS.timesPerPartner:(P.timesPerPartner[occ]??P.timesPerPartner.default),vary=rand(100-P.variationPct,100+P.variationPct);
  f.partners=Math.max(1,Math.min(n,Math.round(n/per*vary/100)));
  trace.push(`상대 수: ${n} ÷ ${per}${occ==='formerSlave'?(sexSlave?'(성노예)':'(집 노예)'):''} × ${vary}% = ${f.partners}명`);
