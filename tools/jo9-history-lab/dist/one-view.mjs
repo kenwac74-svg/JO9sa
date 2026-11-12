@@ -108,7 +108,7 @@ export async function createOneView(api){
     <div class="summary-tile"><span class="summary-label">질 · 구강 · 애널</span><span class="summary-value sim-small">${r.acts?`${r.acts.vaginal} · ${r.acts.oral} · ${r.acts.anal}`:'—'}</span><div class="summary-foot">이성 ${r.partners?.opposite??0} · 동성 ${r.partners?.sameSex??0} · 인간 외 ${r.partners?.nonhuman??0}</div></div>
     <div class="summary-tile"><span class="summary-label">임신 · 출산</span><span class="summary-value sim-small">${r.pregnancies===null?'미상':`${r.pregnancies} · ${r.births}`}</span><div class="summary-foot">${r.pregnancies===null?'유부녀·영입 시 임신 중이 아니면 추정하지 않음':'회'}</div></div>
    </div>
-   ${(()=>{const pt=pillowTalk(x,r,tierOf(f,'occupation',x.occupation).name);return pt?`<div class="one-pillow"><div class="section-label">필로우토크 미리보기 <span class="badge muted">노예와 대화한다 · 샘플</span></div><div class="one-pillow-meta">유형 <b>${TYPE_NAME[pt.type]}</b> · 말투 <b>${STYLE_NAME[pt.style]}</b> · 실제 ${r.intimacy}회 → 말하는 횟수 ${pt.told}회</div>${pt.lines.map(l=>`<p>“${e(l)}”</p>`).join('')}</div>`:'';})()}
+   ${(()=>{const pt=pillowTalk(x,r,tierOf(f,'occupation',x.occupation).name,st.seed);return pt?`<div class="one-pillow"><div class="section-label">필로우토크 미리보기 <span class="badge muted">노예와 대화한다 · 샘플</span></div><div class="one-pillow-meta">유형 <b>${TYPE_NAME[pt.type]}</b> · 말투 <b>${STYLE_NAME[pt.style]}</b> · 실제 ${r.intimacy}회 → 말하는 횟수 ${pt.told}회</div>${pt.lines.map(l=>`<p>“${e(l)}”</p>`).join('')}</div>`:'';})()}
    ${st.batch&&st.batch.key===batchKey()?batchHtml(x,f):''}
    <div class="section-label">산출 과정</div><ol class="one-trace">${r.trace.map(t=>`<li>${e(t)}</li>`).join('')}</ol>`}
   </div></article>
