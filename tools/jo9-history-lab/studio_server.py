@@ -113,6 +113,11 @@ def list_characters():
     return out
 
 
+def choices():
+    return {'hair': api.HAIR_COLORS, 'length': api.HAIR_LENGTHS, 'age': list(api.AGE_INFO),
+            'boobs': api.BOOBS_SIZES, 'boobsImg': api.BOOBS_IMGS, 'pussyImg': api.PUSSY_IMGS}
+
+
 def read_character(sid):
     p = paths()
     data, json_file = api.read_slave(p, int(sid))
@@ -129,8 +134,7 @@ def read_character(sid):
     return {'id': int(sid), 'jsonFile': os.path.basename(json_file), 'data': data, 'dedicated': dedicated,
             'slots': slots, 'faces': faces, 'sharedWith': api.shared_image_users(p, int(sid), data),
             'statKeys': api.stat_keys(data), 'storyFields': [list(x) for x in api.STORY_FIELDS],
-            'choices': {'hair': api.HAIR_COLORS, 'length': api.HAIR_LENGTHS, 'age': list(api.AGE_INFO),
-                        'boobs': api.BOOBS_SIZES, 'boobsImg': api.BOOBS_IMGS, 'pussyImg': api.PUSSY_IMGS}}
+            'choices': choices()}
 
 
 SEED_KEYS = set(json.loads((DIST / 'data' / 'game-seed-keys.json').read_text(encoding='utf-8'))['keys'])
@@ -180,6 +184,7 @@ def save_fields(sid, body):
         if not os.path.exists(json_file + '.bak'):
             payloads[json_file + '.bak'] = Path(json_file).read_bytes()
         api._write_files_together(payloads)
+        work_log(p).event('studio_fields', id=int(sid), name=updated.get('seed_name'), changed=[c['key'] for c in changes])
     return {'changes': changes, 'dryRun': bool(body.get('dryRun')), 'saved': bool(changes) and not body.get('dryRun'),
             'character': read_character(sid) if changes and not body.get('dryRun') else None}
 
@@ -248,6 +253,8 @@ def save_images(sid, body):
                                       log=logs.append, dry_run=bool(body.get('dryRun')))
     root = os.path.realpath(p.root)
     rel = lambda f: os.path.relpath(f, root).replace(os.sep, '/')
+    if not body.get('dryRun'):
+        work_log(p).event('studio_images', id=sid, name=data.get('seed_name'), files=[rel(f) for f in result['files']])
     return {'dryRun': bool(body.get('dryRun')), 'files': [rel(f) for f in result['files']], 'targets': result['targets'],
             'warnings': result['warnings'], 'sharedWith': result['shared_with'], 'log': logs,
             'character': None if body.get('dryRun') else read_character(sid)}
@@ -323,6 +330,101 @@ def save_talkbook(sid, body):
         payloads[fn + '.bak'] = Path(fn).read_bytes()
     api._write_files_together(payloads)
     return read_talkbook(sid)
+
+
+# ------------------------------------------------------------------ 새 캐릭터·복제·삭제 + 작업 기록
+_logs = {}
+
+
+def work_log(p):
+    """작업 기록: 게임 폴더의 picture_modding(기존 이미지 도구 자리)이 있으면 그 기록에 이어 쓰고, 없으면 jo9_editor 폴더에 쓴다."""
+    folder = os.path.join(p.root, 'picture_modding')
+    if not os.path.isdir(folder):
+        folder = os.path.join(p.root, 'jo9_editor')
+    if folder not in _logs:
+        from tool_log import ToolLog
+        _logs[folder] = ToolLog(folder)
+        _logs[folder].game_root = p.root
+    return _logs[folder]
+
+
+def face_from(spec, base_image):
+    if not spec:
+        return None
+    if spec.get('mode') == 'file':
+        return decode_image(spec.get('src'))
+    x, y, w = (int(round(float(v))) for v in spec['box'])
+    h = max(1, int(round(w * 150.0 / 151.0)))
+    if w < 16 or x < 0 or y < 0 or x + w > align.W or y + h > align.H:
+        raise ValueError('얼굴 상자가 그림 밖으로 나갔습니다.')
+    return base_image.crop((x, y, x + w, y + h))
+
+
+def new_character(body):
+    """새 캐릭터(기존 add_character): 기본 전신·얼굴 필수, 외형 슬롯·타이틀 선택. unique를 주면 고유 캐릭터(랜덤 풀 미등록)."""
+    p = paths()
+    images = {}
+    for slot, spec in (body.get('slots') or {}).items():
+        if slot not in api.SLOT_FIELDS:
+            raise ValueError('알 수 없는 슬롯입니다: ' + str(slot))
+        if spec:
+            images[slot] = compose_slot(decode_image(spec.get('src')), spec.get('t'))
+    if images.get('base') is None:
+        raise ValueError('기본(알몸) 전신 이미지를 고르세요.')
+    face = face_from(body.get('face'), images['base'])
+    if face is None:
+        raise ValueError('얼굴 상자를 맞추거나 얼굴 파일을 고르세요.')
+    if body.get('age') not in api.AGE_INFO or body.get('color') not in api.HAIR_COLORS or body.get('length') not in api.HAIR_LENGTHS:
+        raise ValueError('나이 분류·머리색·머리 길이를 고르세요.')
+    outfits = {api.SLOT_FIELDS[k][0]: images[k] for k in ('maid', 'secr', 'dom') if images.get(k) is not None}
+    unique = body.get('unique')
+    logs = []
+    r = api.add_character(p, images['base'], None, body['color'], body['length'], body['age'],
+                          str(body.get('boobs', '3')), body.get('boobsImg') or 'boobs_C', body.get('pussyImg') or 'pussy_l1',
+                          resize_full=True, resize_face=True, register_pool=bool(body.get('register', True)) and not unique,
+                          auto_cutout=False, face_image=face, outfits=outfits, title=images.get('title'),
+                          log=logs.append, dry_run=bool(body.get('dryRun')), unique=unique)
+    root = os.path.realpath(p.root)
+    out = {'id': r['id'], 'dryRun': bool(body.get('dryRun')), 'files': [os.path.relpath(f, root).replace(os.sep, '/') for f in r['files']], 'log': logs}
+    if not body.get('dryRun'):
+        work_log(p).event('studio_new', id=r['id'], name=(unique or {}).get('name'), files=len(r['files']))
+    return out
+
+
+def clone(sid, body):
+    p = paths()
+    logs = []
+    r = api.clone_character(p, int(sid), name=body.get('name'), slug=body.get('slug') or '', new_id=body.get('newId') or None,
+                            story=body.get('story'), seed_overrides=body.get('seedOverrides'), log=logs.append,
+                            dry_run=bool(body.get('dryRun')))
+    if not body.get('dryRun'):
+        work_log(p).event('studio_clone', id=r['id'], source=int(sid), name=body.get('name'))
+    return {'id': r['id'], 'json': r['json'], 'dryRun': bool(body.get('dryRun')), 'warnings': r['warnings'],
+            'sharedFields': r['shared_fields'], 'log': logs}
+
+
+def delete_plan(sid):
+    """삭제 전 확인: 랜덤 풀 안의 중간 번호인지(번호 유지 / 마지막 번호 이동 선택), 공유 이미지."""
+    p = paths()
+    sid = int(sid)
+    band, key, first = api.band_and_key(sid)
+    last = int(api.read_index(p).get(key, first - 1)) if band else None
+    return {'id': sid, 'pool': bool(band and first <= sid <= last), 'middle': bool(band and first <= sid < last),
+            'last': last, 'sharedWith': api.shared_image_users(p, sid)}
+
+
+def delete(sid, body):
+    p = paths()
+    mode = body.get('mode', 'safe')
+    if mode not in ('safe', 'swap'):
+        raise ValueError('삭제 방식은 safe 또는 swap 입니다.')
+    if body.get('confirm') != int(sid):
+        raise ValueError('삭제 확인 번호가 맞지 않습니다.')
+    data, _fn = api.read_slave(p, int(sid))
+    logs = []
+    api.delete_character(p, int(sid), mode=mode, log=logs.append)
+    work_log(p).event('studio_delete', id=int(sid), name=data.get('seed_name'), mode=mode)
+    return {'id': int(sid), 'mode': mode, 'log': logs}
 
 
 # ------------------------------------------------------------------ QSP 이벤트 대사(읽기 + mods 초안)
@@ -446,10 +548,11 @@ def game_file(rel):
 # ------------------------------------------------------------------ HTTP
 ROUTES_GET = [
     (re.compile(r'^/api/game$'), lambda m, q: game_status()),
-    (re.compile(r'^/api/chars$'), lambda m, q: {'items': list_characters()}),
+    (re.compile(r'^/api/chars$'), lambda m, q: {'items': list_characters(), 'choices': choices()}),
     (re.compile(r'^/api/char/(\d+)$'), lambda m, q: read_character(m.group(1))),
     (re.compile(r'^/api/talkbook/(\d+)$'), lambda m, q: read_talkbook(m.group(1))),
     (re.compile(r'^/api/qsp/search$'), lambda m, q: qsp_search(q)),
+    (re.compile(r'^/api/char/(\d+)/delete-plan$'), lambda m, q: delete_plan(m.group(1))),
 ]
 ROUTES_POST = [
     (re.compile(r'^/api/game$'), lambda m, body: set_game_root(body.get('root'))),
@@ -457,6 +560,9 @@ ROUTES_POST = [
     (re.compile(r'^/api/char/(\d+)/images$'), lambda m, body: save_images(m.group(1), body)),
     (re.compile(r'^/api/talkbook/(\d+)$'), lambda m, body: save_talkbook(m.group(1), body)),
     (re.compile(r'^/api/qsp/mod$'), lambda m, body: qsp_mod(body)),
+    (re.compile(r'^/api/char/new$'), lambda m, body: new_character(body)),
+    (re.compile(r'^/api/char/(\d+)/clone$'), lambda m, body: clone(m.group(1), body)),
+    (re.compile(r'^/api/char/(\d+)/delete$'), lambda m, body: delete(m.group(1), body)),
 ]
 
 
