@@ -253,6 +253,71 @@ def save_images(sid, body):
             'character': None if body.get('dryRun') else read_character(sid)}
 
 
+TALKBOOK_DIR = 'jo9_talkbook'  # 게임 폴더 안, json 폴더 밖(게임이 자동으로 읽지 않는 곳)
+SAFE_KEY = re.compile(r'^[A-Za-z0-9_.:|-]{1,80}$')
+
+
+def talkbook_path(p, sid):
+    return os.path.join(p.root, TALKBOOK_DIR, '%d.json' % int(sid))
+
+
+def read_talkbook(sid):
+    """캐릭터별 대사집(과거 경험 사실·필로우토크 대사·배경 분류). 게임 캐릭터 JSON과 따로 둔다."""
+    p = paths()
+    data, json_file = api.read_slave(p, int(sid))
+    fn = talkbook_path(p, sid)
+    book = None
+    if os.path.isfile(fn):
+        book = json.loads(Path(fn).read_text(encoding='utf-8-sig'))
+    return {'id': int(sid), 'path': os.path.relpath(fn, p.root).replace(os.sep, '/'), 'exists': book is not None,
+            'book': book, 'adultOnlyBlocked': data.get('seed_age') == 1}
+
+
+def check_plain(value, depth=0):
+    if depth > 6:
+        raise ValueError('대사집 구조가 너무 깊습니다.')
+    if isinstance(value, dict):
+        for k, v in value.items():
+            if not isinstance(k, str) or not SAFE_KEY.match(k):
+                raise ValueError('대사집 키 형식이 아닙니다: ' + str(k)[:40])
+            check_plain(v, depth + 1)
+    elif isinstance(value, list):
+        for v in value:
+            check_plain(v, depth + 1)
+    elif isinstance(value, str):
+        if len(value) > 8000:
+            raise ValueError('대사 하나가 너무 깁니다(8000자 이하).')
+    elif not (value is None or isinstance(value, (bool, int, float))):
+        raise ValueError('대사집에 쓸 수 없는 값입니다.')
+
+
+def save_talkbook(sid, body):
+    p = paths()
+    data, _json_file = api.read_slave(p, int(sid))
+    book = body.get('book')
+    if not isinstance(book, dict):
+        raise ValueError('대사집은 객체여야 합니다.')
+    allowed = {'background', 'seed', 'acq', 'overrides', 'lines', 'facts', 'history', 'notes'}
+    extra = set(book) - allowed
+    if extra:
+        raise ValueError('대사집에 없는 항목입니다: ' + ', '.join(sorted(extra)))
+    check_plain(book)
+    # 연령 코드 1(소녀)은 성인 대상 대사·과거 경험을 두지 않는다(편집기 공통 원칙). 배경 분류·메모만 저장한다
+    if data.get('seed_age') == 1:
+        book = {k: v for k, v in book.items() if k in ('background', 'notes')}
+    out = {'format': 'jo9-talkbook', 'version': 1, 'id': int(sid), 'name': data.get('seed_name', ''),
+           'jsonFile': os.path.basename(_json_file), **book}
+    text = json.dumps(out, ensure_ascii=False, indent=1)
+    if len(text) > 2_000_000:
+        raise ValueError('대사집이 너무 큽니다(2MB 이하).')
+    fn = talkbook_path(p, sid)
+    payloads = {fn: text.encode('utf-8')}
+    if os.path.isfile(fn) and not os.path.exists(fn + '.bak'):
+        payloads[fn + '.bak'] = Path(fn).read_bytes()
+    api._write_files_together(payloads)
+    return read_talkbook(sid)
+
+
 def game_file(rel):
     """/game/<경로>: 게임 폴더 안의 이미지 파일만 돌려준다."""
     p = paths()
@@ -272,11 +337,13 @@ ROUTES_GET = [
     (re.compile(r'^/api/game$'), lambda m, q: game_status()),
     (re.compile(r'^/api/chars$'), lambda m, q: {'items': list_characters()}),
     (re.compile(r'^/api/char/(\d+)$'), lambda m, q: read_character(m.group(1))),
+    (re.compile(r'^/api/talkbook/(\d+)$'), lambda m, q: read_talkbook(m.group(1))),
 ]
 ROUTES_POST = [
     (re.compile(r'^/api/game$'), lambda m, body: set_game_root(body.get('root'))),
     (re.compile(r'^/api/char/(\d+)/fields$'), lambda m, body: save_fields(m.group(1), body)),
     (re.compile(r'^/api/char/(\d+)/images$'), lambda m, body: save_images(m.group(1), body)),
+    (re.compile(r'^/api/talkbook/(\d+)$'), lambda m, body: save_talkbook(m.group(1), body)),
 ]
 
 

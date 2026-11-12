@@ -221,11 +221,11 @@ try{
  if(oldSim){oldSim.lastChild.textContent=' 이전 산식 (v0.11)';oldSim.querySelector('span').textContent='◇';}if(oldCoef)oldCoef.lastChild.textContent=' 이전 산식 계수';
  await createSimView({tabNames});
  // 캐릭터 시뮬레이터(이전 산식 페이지를 바탕으로 한 새 화면)를 맨 앞에 두고, 산식 계수·특성 편집을 그 뒤에 둔다
- await createCharacterView({tabNames,toast,confirmAction,getState:()=>state,save});
+ const charView=await createCharacterView({tabNames,toast,confirmAction,getState:()=>state,save});
  await createCoefView({tabNames,toast,confirmAction});
  await createTraitEditor({tabNames,toast});
  // 통합 캐릭터 편집(게임 폴더의 캐릭터 외형·서사·설정·능력치): 로컬 서버가 있을 때만 게임 파일을 다룬다
- await createStudioView({tabNames,toast,confirmAction});
+ await createStudioView({tabNames,toast,confirmAction,charView,switchTab});
  // 폐지한 탭(사용자 지시 2026-11-12): 초기값 시뮬레이터·이전 산식·이전 산식 계수·비교 보관함·산출 규칙·캐릭터 JSON·특성 선택. 필요한 기능은 위 탭으로 옮겼다
  for(const old of ['simulator','coefficients','archive','guide','character-json','traits']){delete tabNames[old];document.querySelector(`.sidebar nav [data-tab="${old}"]`)?.remove();}
  // 사이드바 순서: 캐릭터 시뮬레이터 → 산식 계수 → 특성 편집 → 배경 설정 목록 → 뽑기 분포

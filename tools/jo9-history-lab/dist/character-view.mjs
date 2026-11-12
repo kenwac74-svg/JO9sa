@@ -379,5 +379,21 @@ export async function createCharacterView(api){
  });
  onFormulaChange(render);
  render();
- return {render};
+ // 통합 편집(캐릭터 편집 탭)과 잇는 다리: 게임 캐릭터 JSON + 대사집을 시뮬레이터로 열고, 시뮬레이터 결과를 대사집으로 돌려준다
+ function loadGameCharacter(d,fileName,book={}){
+  const bg=book.background??{};
+  st.ch=fromJson({...d,jo9_type:String(book.id??''),jo9_world:bg.world??'',jo9_family:bg.family??'',jo9_occupation:bg.occupation??''},fileName);
+  st.ch.source='unique';st.overrides={...(book.overrides??{})};st.pt=1;
+  if(book.seed)st.seed=String(book.seed);
+  st.acq={...(book.acq??{})};
+  if(book.lines&&Object.keys(book.lines).length)((st.ptEdits??={})[charKey()]={...book.lines});
+  save();render();
+ }
+ function exportTalk(){
+  const c=ch(),cx=compute();
+  return {id:String(c.type??''),name:c.name,background:{world:c.world||'',family:c.family||'',occupation:c.occupation||''},seed:st.seed,acq:{...st.acq},overrides:{...st.overrides},
+   lines:{...(st.ptEdits?.[charKey()]??{})},facts:cx?.fx?{fields:cx.fx.fields,blocked:cx.fx.blocked}:null,excluded:!!cx?.r?.excluded,
+   history:cx?.r&&!cx.r.excluded?{intimacy:cx.r.intimacy,acts:cx.r.acts,pregnancies:cx.r.pregnancies,births:cx.r.births}:null};
+ }
+ return {render,loadGameCharacter,exportTalk};
 }
