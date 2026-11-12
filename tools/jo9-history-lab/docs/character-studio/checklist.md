@@ -25,7 +25,7 @@
 - [x] 1 블로그 글 단위 원문 DB(`sextalk-interviews/posts-db.json`, 159편·5,112쌍, 2026-11-12)
 - [x] 2 편집기 DB 탭(`dist/studio-db.mjs`, `studio_interview.py`, 2026-11-12)
 - [x] 3 엑셀 내보내기·가져오기(`studio_excel.py`, DB 탭 버튼, 2026-11-12)
-- [ ] 4 AI 작업용 분할·설명서·검사
+- [x] 4 AI 작업용 분할·설명서·검사(`sextalk-interviews/ai-tools.py`, `ai/`, `AI_WORK_SCHEMA_KO.md`, 2026-11-12)
 - [ ] 5 글로서리·번역 파일
 - [ ] 6 API 연결부
 - [ ] 7 세계관 자료집·자동 프롬프트 조립

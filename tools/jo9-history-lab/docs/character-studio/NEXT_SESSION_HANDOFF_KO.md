@@ -29,7 +29,7 @@
 1. **블로그 글 단위 원문 DB: 완료(2026-11-12).** `sextalk-interviews/posts-db.json`(159편·5,112쌍, interview-db와 같은 키)과 `build-posts-db.py`. 재수집·재생성 절차는 `context-notes.md` 마지막 항목.
 2. **편집기 'DB' 탭: 완료(2026-11-12).** `dist/studio-db.mjs`·`studio_interview.py`. 자세한 것은 `context-notes.md` 마지막 항목.
 3. **엑셀 내보내기·가져오기: 완료(2026-11-12).** `studio_excel.py`, DB 탭의 두 버튼. 규칙은 `context-notes.md` 마지막 항목.
-4. **AI 작업용 정리:** 주제별 JSONL 분할(원본과 항상 같게 생성), 스키마 설명서, 검사 스크립트, 조회 명령.
+4. **AI 작업용 정리: 완료(2026-11-12).** `sextalk-interviews/ai-tools.py`(export·check·query), `ai/`, `AI_WORK_SCHEMA_KO.md`. 원본 DB를 바꾸면 export를 다시 실행하고 check로 확인한다.
 5. **글로서리·번역 파일 구조:** 글로서리 1개 + 언어별 번역 파일(같은 키), 칸 상태(미번역/기계/확인/원문 변경), 모델 기록. 로컬라이징 json은 문자열 키로(숫자 번호 금지: 세이브 빈 칸 폭증), 쓰는 언어만 json 폴더에.
 6. **AI API 연결부:** OpenRouter·Venice(OpenAI 방식), Gemini(자체·OpenAI 호환), Kindroid(캐릭터 대화형). 키는 git 제외 설정 파일·환경 변수. 정확한 주소·인증·모델명은 공식 문서로 확인.
 7. **세계관 자료집 + 자동 프롬프트 조립(판단이 많아 오퍼스 권장):** 목차를 먼저 사용자에게 확인. 작업마다 캐릭터 설정·칸 규칙·참고 원문·채택 예시를 붙이고, 채택/거부 이력으로 예시를 쌓는다. 대량 작업 전 이해도 시험.
