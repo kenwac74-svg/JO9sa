@@ -4,11 +4,11 @@ import sys, json, re, collections, pathlib
 
 # 고정 질문지 번호 → 주제 키(섹스토크 기획 v0 4장과 연결). None = 통째로 제외
 TOPICS = {
-    1: None,                      # 첫 경험 나이: 미성년 나이가 많아 제외
+    1: 'first_age',               # 첫 경험 나이: 게임 미반영, 모든 나이 수치가 19 이상인 대답만
     2: 'first_time',              # 첫 경험 묘사
-    3: None,                      # 나이 차: 나이 수치 중심이라 제외
+    3: 'age_gap',                 # 나이 차: 게임 미반영, 모든 나이 수치가 19 이상인 대답만
     4: 'max_night',               # 한 상대 최다 횟수
-    5: None,                      # 교복·학생 때: 제외
+    5: None,                      # 교복·학생 때: 학생 시절 경험과 분리할 수 없어 통째로 제외
     6: 'finish_pref',             # 피니시 선호
     7: 'want',                    # 해 보고 싶은 것
     8: 'never',                   # 절대 싫은 것
@@ -32,9 +32,9 @@ TOPICS = {
     26: 'sm',                     # SM
     27: 'exhibition',             # 촬영·노출 → 게임에서는 구경꾼 앞
     28: 'turn_on',                # 흥분 포인트
-    29: None,                     # 온라인 만남: 현대 SNS 전용
-    30: None,                     # 근친·수간 등 보기 목록: 제외
-    31: None,                     # 온라인 찌질남: 현대 SNS 전용
+    29: 'sns_meet',               # 온라인 만남: 게임 미반영(현대 SNS 전용)
+    30: None,                     # 근친·수간이 든 보기 목록: 대답이 번호만 쓰거나("1,5") 섞여 있어 항목을 가를 수 없으므로 통째로 제외
+    31: 'sns_creeps',             # 온라인 찌질남: 게임 미반영(현대 SNS 전용)
     32: 'last_word',              # 마지막 한마디
 }
 # 대답 단위 제외: 미성년 암시, 근친, 수간
@@ -44,6 +44,10 @@ TABOO = re.compile(r'근친|친오빠|친동생|친척|사촌|친아빠|아빠�
 YOUNG = re.compile(r'어릴|어렸|어린 ?나이|나이가 어려')
 SCHOOL = re.compile(r'학교|학생|교실|과방|운동부')
 UNIV = re.compile(r'대학|대학교|과 ?선배|과 ?동기|조교|강의실|과방|단과대|에브리타임|MT')
+# 게임에 넣지 않고 정리만 하는 주제
+NOT_IN_GAME = {'first_age', 'age_gap', 'sns_meet', 'sns_creeps'}
+AGE_TOPICS = {'first_age', 'age_gap'}
+NUM2 = re.compile(r'(?<!\d)(\d{1,2})(?!\d)')
 HANDLE = re.compile(r'@[A-Za-z0-9_]+')
 NUM = re.compile(r'(\d+)\s*(번|명|회|발|시간)')
 
@@ -71,24 +75,27 @@ def main(src, out):
             if not a: drop['empty'] += 1; continue
             if MINOR.search(a): drop['minor'] += 1; continue
             if TABOO.search(a): drop['taboo'] += 1; continue
+            if topic in AGE_TOPICS and any(int(n) < 19 for n in NUM2.findall(a)): drop['age_under_19_or_ambiguous'] += 1; continue
             if YOUNG.search(a) or (SCHOOL.search(a) and not UNIV.search(a)): drop['young_or_school'] += 1; continue
             rows.append({'id': f'{pid}.q{x["n"]:02d}', 'post': pid, 'q': x['n'], 'topic': topic,
-                         'answer': a, 'len': len(a), 'nums': [f'{n}{u}' for n, u in NUM.findall(a)], 'tone': tone(a)})
+                         'answer': a, 'game': topic not in NOT_IN_GAME, 'len': len(a), 'nums': [f'{n}{u}' for n, u in NUM.findall(a)], 'tone': tone(a)})
     by_topic = collections.Counter(r['topic'] for r in rows)
     meta = {'schema': 'jo9-sextalk-interview-db/v1', 'posts': len(posts), 'rows': len(rows), 'dropped': dict(drop),
             'topics': {k: v for k, v in TOPICS.items()}, 'note': '창작 경험담 형식 인터뷰(저작권자=사용자). 게임 대사로는 세계관에 맞게 다시 쓴다.'}
     json.dump({'meta': meta, 'rows': rows}, open(out / 'interview-db.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=0)
     md = ['<!-- 섹스토크 인터뷰 리소스 DB 요약 (build-db.py 자동 생성) -->', '# 섹스토크 인터뷰 리소스 DB 요약', '',
-          f'- 글 {len(posts)}편, 사용 가능 대답 {len(rows)}개. 제외: {dict(drop)}', '- 제외 기준: 질문 단위(1 첫 경험 나이, 3 나이 차, 5 교복, 29·31 온라인 전용, 30 근친·수간 보기), 대답 단위(미성년 암시·근친·수간 단어, 어린 시절 언급, 대학 언급 없는 학교)', '',
+          f'- 글 {len(posts)}편, 사용 가능 대답 {len(rows)}개. 제외: {dict(drop)}', '- 게임 미반영(정리만, `game: false`): 1 첫 경험 나이·3 나이 차(나이 수치가 모두 19 이상인 대답만), 29·31 현대 SNS 주제', '- 제외: 질문 단위(5 교복, 30 근친·수간 보기), 대답 단위(미성년 암시·근친·수간 단어, 어린 시절 언급, 대학 언급 없는 학교)', '',
           '| 질문 | 주제 키 | 대답 수 | 평균 길이 | 반말(존댓말 표지 없음) 비율 | 얼버무림 비율 |', '|---|---|---|---|---|---|']
     for n, k in TOPICS.items():
         if k is None: md.append(f'| Q{n} | (제외) | 0 | | | |'); continue
+        if k in NOT_IN_GAME: k_label = f'`{k}` (게임 미반영)'
+        else: k_label = f'`{k}`'
         rs = [r for r in rows if r['topic'] == k]
         if not rs: continue
         avg = sum(r['len'] for r in rs) // len(rs)
         cas = sum('casual' in r['tone'] for r in rs) * 100 // len(rs)
         hed = sum('hedge' in r['tone'] for r in rs) * 100 // len(rs)
-        md.append(f'| Q{n} | `{k}` | {len(rs)} | {avg} | {cas}% | {hed}% |')
+        md.append(f'| Q{n} | {k_label} | {len(rs)} | {avg} | {cas}% | {hed}% |')
     (out / 'INTERVIEW_DB_KO.md').write_text('\n'.join(md) + '\n', encoding='utf-8')
     print(meta['rows'], dict(drop), dict(by_topic.most_common(5)))
 
