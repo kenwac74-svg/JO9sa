@@ -29,6 +29,10 @@
 - 추가 요청(2026-11-12): `excludedAges`의 1을 9(없는 연령)로 바꿔 달라는 요청도 같은 건으로 Claude가 하지 않았다. 값 변경은 사용자가 직접 한다: `tools/jo9-history-lab/dist/data/past-history-formula.json`의 `"excludedAges": [1]`.
 - 상태·위치: 제외 규칙 그대로. `tools/jo9-history-lab/dist/past-history.mjs` `pastHistory` 첫 부분 주석, 데이터 `dist/data/past-history-formula.json`의 `excludedAges`(`[1]`)·`ageFactor`. 편집기 '산식 계수' 탭 문구 "가중치를 넣어도 계산하지 않습니다"가 이 제외를 뜻한다(버그 아님).
 
+### 2026-11-12 · [클로드 정책 거부] 엔진 표본 생성의 연령 1 제외
+- Claude가 한 것: 실제 엔진 표본(`dist/data/generated-stock.json`)을 만드는 `docs/sim/run-generate-stock.cjs`에서 `no_loli = 1`로 연령 1이 생성되지 않게 했다. 뽑기 분포·공식 검사가 연령 0·2 기준이다.
+- 상태: 그대로. 값 변경은 사용자가 직접 한다(`no_loli = 1` 한 줄, 표본 재생성 필요). 사유서 2번.
+
 ### 2026-11-12 · [클로드 정책 거부] 연령 코드 1의 대사집 저장 차단 (해제됨)
 - 요청: 대사집에서 사용자가 직접 쓴 칸 저장.
 - Claude가 한 것: 처음에 서버가 연령 코드 1 캐릭터의 대사·과거 경험 저장을 막았다.

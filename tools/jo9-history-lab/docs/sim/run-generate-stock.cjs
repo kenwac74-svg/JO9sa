@@ -31,6 +31,7 @@ const STOCK_KEYS=['age','virginity','fertility','pregnant','parasite','clone','b
   const lines=[];for(const [k,v]of Object.entries(d))if(k.startsWith('seed_')){if(typeof v==='number')lines.push(`${k}[${m[1]}] = ${v}`);else if(typeof v==='string')lines.push(`$${k}[${m[1]}] = ${q(v)}`);}
   if(lines.length)run(lines.join('\r\n'),f);
  }
+ // [클로드 정책 거부] 표본에서 연령 코드 1 생성을 끈다(게임 옵션 no_loli). 값 변경은 사용자가 직접 한다(기록: docs/claude-refusals/REFUSAL_LOG_KO.md, 사유서 2번)
  run('no_loli = 1\r\nspecial_stock = 0');
  const N=Number(countArg),rows=[],failures=[];
  for(let i=0;i<N;i++){
