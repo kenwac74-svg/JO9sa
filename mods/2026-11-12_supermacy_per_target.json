@@ -1,0 +1,101 @@
+{
+  "id": "2026-11-12_supermacy_per_target",
+  "description": "장악력(master_supermacy)을 대상 인물별로 계산(개인실·소·조수·노예 공통 처리의 대상 섞임 버그 수정)하고, 구타 경험이 없으면 잔인함 평판(jo9_cruel_mercy <= -5)을 같은 역할로 반영",
+  "target": "game\\jack.qsp",
+  "before_sha256": "4354cf397342cc516f8a32c76ffb44894b9a608d3c4f19ad42993287354976ef",
+  "add_locations": [
+    {
+      "name": "jo9_supermacy",
+      "desc": "",
+      "body": "! JO9 MOD START SUPERMACY_PER_TARGET_20261112 | 장악력을 대상 인물별로 계산한다. args[0] = slave, assistant, room1~room4, cow, farmhand 등 인물 배열 이름\r\n! 구타 경험이 없으면 잔인함 평판(jo9_cruel_mercy <= -5, 결투 처형 소문과 같은 기준)이 같은 역할(+1)을 한다\r\njo9_sm_value = 0\r\ndynamic $replace(\"\r\n\tjo9_sm_value = (master_cha + master_domination + master_style + master_str + iif(dynslave['beaten_ever'] > 0, dynslave['beaten_ever'], iif(jo9_cruel_mercy <= -5, 1, 0)) + magna_magnifika + item_supermacy_bonus) - (dynslave['temper'] + dynslave['ego'] + dynslave['pride'] + dynslave['stamina'] + (dynslave['intellect'] - 3))\r\n\tif $master_cloth = 'regal_suit': jo9_sm_value += 1\r\n\tif $master_cloth = 'comfy_robes': jo9_sm_value -= 1\r\n\tif $master_back_wpn = 'посох_огня': jo9_sm_value += 2\r\n\r\n\t! lolis are easier to dominate.  Uncle Tom is particularly good at it, and it’s easier for Johny to pick on someone smaller than him\r\n\tif dynslave['age'] = CONST_INT['loli_age']:\r\n\t\tjo9_sm_value += 2\r\n\t\tif hero_select = 5:  jo9_sm_value += 3  &! Teacher\r\n\t\tif hero_select = 9:  jo9_sm_value += 8  &! Old Man\r\n\t\tif hero_select = 10: jo9_sm_value += 1  &! Kid\r\n\tend\r\n\tif dynslave['age'] = CONST_INT['milf_age']:\r\n\t\tif hero_select = 8:  jo9_sm_value += 2  &! Butler\r\n\t\tif hero_select = 9:  jo9_sm_value -= 1  &! Old Man\r\n\tend\r\n\tif dynslave['age'] = CONST_INT['young_age']:\r\n\t\tif hero_select = 5:  jo9_sm_value += 2  &! Teacher\r\n\tend\r\n\", 'dyn'+'slave', $args[0])\r\nresult = jo9_sm_value\r\n! JO9 MOD END SUPERMACY_PER_TARGET_20261112",
+      "actions": []
+    }
+  ],
+  "edits": [
+    {
+      "location": "$calculate_attributes",
+      "field": "body",
+      "old": "dynamic $replace(\"\r\n\tmaster_supermacy = (master_cha + master_domination + master_style + master_str + dynslave['beaten_ever'] + magna_magnifika + item_supermacy_bonus) - (dynslave['temper'] + dynslave['ego'] + dynslave['pride'] + dynslave['stamina'] + (dynslave['intellect'] - 3))\r\n\tif $master_cloth = 'regal_suit': master_supermacy += 1\r\n\tif $master_cloth = 'comfy_robes': master_supermacy -= 1\r\n\tif $master_back_wpn = 'посох_огня': master_supermacy += 2\r\n\r\n\t! lolis are easier to dominate.  Uncle Tom is particularly good at it, and it’s easier for Johny to pick on someone smaller than him\r\n\tif dynslave['age'] = CONST_INT['loli_age']:\r\n\t\tmaster_supermacy += 2\r\n\t\tif hero_select = 5:  master_supermacy += 3  &! Teacher\r\n\t\tif hero_select = 9:  master_supermacy += 8  &! Old Man\r\n\t\tif hero_select = 10: master_supermacy += 1  &! Kid\r\n\tend\r\n\tif dynslave['age'] = CONST_INT['milf_age']:\r\n\t\tif hero_select = 8:  master_supermacy += 2  &! Butler\r\n\t\tif hero_select = 9:  master_supermacy -= 1  &! Old Man\r\n\tend\r\n\tif dynslave['age'] = CONST_INT['young_age']:\r\n\t\tif hero_select = 5:  master_supermacy += 2  &! Teacher\r\n\tend\r\n\", 'dyn'+'slave', iif(slave_state > CONST_INT['no_slave'], 'slave', 'assistant'))",
+      "new": "! JO9 MOD START SUPERMACY_PER_TARGET_20261112_CALC | 대상별 함수로 계산(메인 노예, 없으면 조수)\r\nmaster_supermacy = func('jo9_supermacy', iif(slave_state > CONST_INT['no_slave'], 'slave', 'assistant'))\r\n! JO9 MOD END SUPERMACY_PER_TARGET_20261112_CALC",
+      "count": 1
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "if master_supermacy < 0: dynslave_rate['instinct'] -= max(0, dynslave['ego'] - (2 + dynslave['fear']))",
+      "new": "if func('jo9_supermacy', 'dynslave') < 0: dynslave_rate['instinct'] -= max(0, dynslave['ego'] - (2 + dynslave['fear']))",
+      "count": 1
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "assistant['obedience'] > 7 and master_supermacy > 0",
+      "new": "assistant['obedience'] > 7 and func('jo9_supermacy', 'assistant') > 0",
+      "count": 1
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "if master_supermacy > 0: room1_rate['instinct'] += 1",
+      "new": "if func('jo9_supermacy', 'room1') > 0: room1_rate['instinct'] += 1",
+      "count": 1
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "if master_supermacy > 0: room2_rate['instinct'] += 1",
+      "new": "if func('jo9_supermacy', 'room2') > 0: room2_rate['instinct'] += 1",
+      "count": 1
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "if master_supermacy > 0: room3_rate['instinct'] += 1",
+      "new": "if func('jo9_supermacy', 'room3') > 0: room3_rate['instinct'] += 1",
+      "count": 1
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "if master_supermacy > 0: room4_rate['instinct'] += 1",
+      "new": "if func('jo9_supermacy', 'room4') > 0: room4_rate['instinct'] += 1",
+      "count": 1
+    },
+    {
+      "location": "interaction_result",
+      "field": "body",
+      "old": "(dynslave['ego'] - 3) - max(0, min(5, master_supermacy - master_style)) - dynslave['moral']*2",
+      "new": "(dynslave['ego'] - 3) - max(0, min(5, func('jo9_supermacy', 'dynslave') - master_style)) - dynslave['moral']*2",
+      "count": 1
+    },
+    {
+      "location": "interaction_result",
+      "field": "body",
+      "old": "dynslave['gladiatrix'] > max(0, master_supermacy - master_style)",
+      "new": "dynslave['gladiatrix'] > max(0, func('jo9_supermacy', 'dynslave') - master_style)",
+      "count": 1
+    },
+    {
+      "location": "interaction_result",
+      "field": "body",
+      "old": "(cow['ego'] - 3) - max(0, min(5, master_supermacy - master_style)) - cow['moral']*2",
+      "new": "(cow['ego'] - 3) - max(0, min(5, func('jo9_supermacy', 'cow') - master_style)) - cow['moral']*2",
+      "count": 2
+    },
+    {
+      "location": "interaction_result",
+      "field": "body",
+      "old": "cow['gladiatrix'] > max(0, master_supermacy - master_style)",
+      "new": "cow['gladiatrix'] > max(0, func('jo9_supermacy', 'cow') - master_style)",
+      "count": 1
+    },
+    {
+      "location": "#dynamic",
+      "field": "body",
+      "old": "daily_bonus[$atr] = max(0, min(6 - dynslave['ego'], max(2, master_supermacy/2), daily_bonus[$atr]))",
+      "new": "daily_bonus[$atr] = max(0, min(6 - dynslave['ego'], max(2, func('jo9_supermacy', 'dynslave')/2), daily_bonus[$atr]))",
+      "count": 1
+    }
+  ],
+  "after_sha256": "7e9af448e038d0663c6c0c934d7cf65f3d5a8c9c454bda5227788e7222871ce9"
+}
