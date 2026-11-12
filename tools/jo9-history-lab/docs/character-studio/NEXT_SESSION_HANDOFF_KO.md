@@ -38,6 +38,14 @@
 ## 4.5 주의: dist 새 파일은 `git add -f`
 repo `.gitignore` 첫 줄 `dist/` 때문에 `tools/jo9-history-lab/dist/` 아래에 **새로 만든 파일은 그냥 `git add`로 올라가지 않는다**(기존 파일은 강제로 추적 중이라 수정은 올라감). 새 화면·데이터 파일은 반드시 `git add -f <파일>`로 올리고, 커밋 뒤 `git ls-files`로 확인한다. 2026-11-12에 `studio-view.mjs`·`studio-look.mjs`·`studio-save.mjs`가 이 이유로 빠졌다가 추가됐다.
 
+## 4.6 7번을 맡는 오퍼스 세션 시작 안내
+- 시작 문구 예: "편집기 브랜치(`editor/character-studio-20261112`)의 `NEXT_SESSION_HANDOFF_KO.md`를 읽고 남은 작업 7번을 목차 확인부터 진행해."
+- 먼저 할 일: 1~6번 결과물(`posts-db.json`, `ai/`, `i18n/`, `ai_api.py`)을 읽고, **세계관 자료집 목차 초안만** 만들어 사용자에게 확인받는다. 확인 전에 본문·대량 호출을 시작하지 않는다.
+- 쓸 수 있는 재료: 세계 13종 라벨·바꿀 말 사전(`sextalk-interviews/adapt-dict.json`), 세계별 각색 등급, 글로서리(`i18n/glossary.json`), 부분 키 단위 원문(`ai/`), 채택/거부 이력은 새로 만들어야 한다.
+- 지킬 것: 2장 원칙 전부. 특히 B1·B2는 프롬프트·작업 목록·예시에 넣지 않는다(`ai_api.py part`가 번역 목록 밖 키를 거부하는 방식을 따른다).
+- 미해결: Kindroid 공식 문서 미확인(6번), 실제 키로 `ai_api.py chat` 시험 안 함, 실제 Microsoft Excel로 열어 보지 못함(3번).
+- PR 17(모드 제작자 인계) 상태 점검은 이전 세션이 예약해 두었다. 이어서 지켜보려면 새 세션에서 다시 구독을 요청한다.
+
 ## 5. 참고 사실
 - 세이브: QSP 5.7, `studio_save.py` 코덱(바이트 왕복). 캐릭터 칸 = `FULLIMAGE` 키 변수, 번호 `<칸>_TYPE`, 이름 `<칸>_NAME`. json 자동 로드 `seed_*`는 세이브에 들어가고 불러온 뒤 json 재등록으로 덮인다(엔진 소스 기록, 실행 파일 미확인). 세이브 크기의 큰 몫은 최대 캐릭터 번호 8,902 때문에 생긴 빈 칸과 `EDGE_OF_MISTS`(102,016칸)·`CAST_SPELL`(70,000칸).
 - 검사: `cd tools/jo9-history-lab && for f in checks-*.mjs; do node $f; done` (15종). 화면 시험은 Playwright로 서버(`JO9_GAME_ROOT=<시험 폴더> python3 -c "import studio_server as s; s.make_server(포트).serve_forever()"`)를 띄워 확인.
