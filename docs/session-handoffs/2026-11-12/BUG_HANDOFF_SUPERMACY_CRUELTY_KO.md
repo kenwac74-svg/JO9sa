@@ -8,7 +8,7 @@
 | 브랜치 | `handoff/stats-background-generation-20261112` (main에 아직 안 올림) |
 | mod 1 | `mods/2026-11-12_supermacy_per_target.json` |
 | mod 2 | `mods/2026-11-12_cruel_mercy_patrol_prison.json` |
-| 적용 | `powershell -ExecutionPolicy Bypass -File tools\apply_mods.ps1 -DryRun` → 이상 없으면 `-DryRun` 빼고 실행. 파일 이름 순서로 1 → 2 |
+| 적용 | `powershell -ExecutionPolicy Bypass -File tools\apply_mods.ps1 -DryRun` → 이상 없으면 `-DryRun` 빼고 실행. 두 mod는 독립이라 순서 무관(두 순서 모두 같은 결과 `98284e89…` 확인) |
 | 기준 qsp | 사용자 제공 최신본 SHA-256 `4354cf39…` (mod 1 적용 후 `0c864ba6…`, mod 2만 적용 후 `e41fe739…`). 저장소 `assets/runtime/2.4.1/jack.qsp`(`8332e185…`)에도 같은 위치·개수로 적용됨을 확인 |
 | 검증 도구 | `tools/jo9-history-lab/docs/sim/supermacy/`, `tools/jo9-history-lab/docs/sim/cruel-mercy/` (빌드·파이썬 적용·QSP WASM 엔진 검사) |
 | 상세 기록 | `docs/modding/context-notes.md` 2026-11-12 항목, `records/cruel-mercy-20261112/REPORT_KO.md` |
