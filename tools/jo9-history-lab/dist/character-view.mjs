@@ -22,13 +22,13 @@ const LV={
 const TALK={moral:'헌신',angst:'절망',spoil:'응석',rational:'인식',fear:'두려움'};
 const PSY={docile:'온순함',soft:'부드러움',optimistic:'낙관',obedient:'순종',servile:'비굴',horny:'발정',reluctant:'마지못함',arrogant:'오만',hateful:'증오',resistant:'저항',hysteric:'히스테리',lachrymose:'눈물',frightened:'겁먹음',depresive:'우울',broken:'무너짐'};
 const STATE_WORDS={'처녀':['virginity',0],'비처녀':['virginity',2],'불임':['fertility',-1],'임신 가능':['fertility',0],'임신 중':['pregnant',1],'클론':['clone',1],'연령 0':['age',0],'연령 2':['age',2]};
-// 섹스토크 주제(기획 6.1 헌신 등급표): [헌신, 칸 id, 이름, 원본 DB 주제 키들]
+// 섹스토크 주제(기획 6.1 헌신 등급표): [헌신, 칸 id, 이름, 원본 DB 주제 키들, 주인공 질문 선택지]
 const SLOTS=[
- [1,'first_time','첫 경험',['first_time']],[1,'max_night','하룻밤 최다',['max_night']],
- [2,'partners','상대 수',['partners']],[2,'odd_place','특이한 장소',['odd_place']],[2,'orgasm','오르가즘·분출',['orgasm','squirt']],
- [3,'finish','피니시·삼킴',['finish_pref','swallow']],[3,'signature','18번 기술',['signature']],[3,'dirty_talk','색드립',['dirty_talk']],[3,'anal','애널',['anal']],[3,'deepthroat','딥스로트',['deepthroat']],[3,'memorable_line','남자가 한 말',['memorable_line']],
- [4,'kink','자기 취향·흥분 포인트',['kink','turn_on']],[4,'worst_man','최악의 남자',['worst_man']],[4,'best_man','최고의 남자',['best_man']],[4,'want','해 보고 싶은 것',['want']],[4,'never','절대 싫은 것',['never']],
- [5,'group','다인 경험',['group','max_day_people']],[5,'side_partner','애인·남편 외 상대',['side_partner']],[5,'sm','SM',['sm']],[5,'exhibition','노출',['exhibition']],[5,'xeno','이종 경험',[]],[5,'fetish','변태 성욕·페티시',['kink']]];
+ [1,'first_time','첫 경험',['first_time'],'처음은 언제였는지 묻는다'],[1,'max_night','하룻밤 최다',['max_night'],'하룻밤에 가장 많이 한 게 몇 번인지 묻는다'],
+ [2,'partners','상대 수',['partners'],'지금까지 몇 명과 했는지 묻는다'],[2,'odd_place','특이한 장소',['odd_place'],'가장 이상한 곳이 어디였는지 묻는다'],[2,'orgasm','오르가즘·분출',['orgasm','squirt'],'가 본 적이 있는지 묻는다'],
+ [3,'finish','피니시·삼킴',['finish_pref','swallow'],'어디에 싸 주는 게 좋은지 묻는다'],[3,'signature','18번 기술',['signature'],'가장 자신 있는 기술을 묻는다'],[3,'dirty_talk','색드립',['dirty_talk'],'할 때 무슨 말을 하는지 묻는다'],[3,'anal','애널',['anal'],'뒤로도 해 봤는지 묻는다'],[3,'deepthroat','딥스로트',['deepthroat'],'목 깊이 넣어 봤는지 묻는다'],[3,'memorable_line','남자가 한 말',['memorable_line'],'남자가 했던 말 중 기억나는 걸 묻는다'],
+ [4,'kink','자기 취향·흥분 포인트',['kink','turn_on'],'자기만의 취향을 묻는다'],[4,'worst_man','최악의 남자',['worst_man'],'최악이었던 남자를 묻는다'],[4,'best_man','최고의 남자',['best_man'],'최고였던 남자를 묻는다'],[4,'want','해 보고 싶은 것',['want'],'해 보고 싶은 걸 묻는다'],[4,'never','절대 싫은 것',['never'],'절대 싫은 걸 묻는다'],
+ [5,'group','다인 경험',['group','max_day_people'],'여럿이서 해 봤는지 묻는다'],[5,'side_partner','애인·남편 외 상대',['side_partner'],'남편(애인) 말고 다른 남자가 있었는지 묻는다'],[5,'sm','SM',['sm'],'맞으면서 하는 건 어떤지 묻는다'],[5,'exhibition','노출',['exhibition'],'남들 앞에서 해 봤는지 묻는다'],[5,'xeno','이종 경험',[],'사람이 아닌 것과 해 본 적 있는지 묻는다'],[5,'fetish','변태 성욕·페티시',['kink'],'남들이 모르는 성벽이 있는지 묻는다']];
 const TYPE_GROUP={flame:'hot',proud:'hot',frank:'hot',ice:'cold',calm:'cold',plain:'cold',meek:'soft',fragile:'soft',doll:'soft'};
 const REL_GROUP={hopeful:'warm',duty:'warm',loyal:'warm',neutral:'warm',fearful:'low',bleak:'low',broken:'low',hostile:'hostile'};
 const KINDS=[['world','세계'],['family','출신'],['occupation','직업경력']];
@@ -111,11 +111,11 @@ export async function createCharacterView(api){
   return null;
  }
  // 주제마다 이 노예가 참조할 원본 DB 대답(같은 노예·같은 시드면 언제나 같은 대답)
- function refFor(slot,fx){
+ function refFor(slot,fx,salt=''){
   if(slot==='first_time'&&fx?.fields.first_age_ref)return `${fx.fields.first_age_ref}.q02`;
   const keys=SLOTS.find(x=>x[1]===slot)[3];if(!keys.length)return null;
   const pool=keys.flatMap(k=>REFS.topics[k]??[]);if(!pool.length)return null;
-  return pool[Math.floor(rng(hashSeed(`${st.seed}|${ch().type}|${ch().name}|ref|${slot}`))()*pool.length)];
+  return pool[Math.floor(rng(hashSeed(`${st.seed}|${ch().type}|${ch().name}|ref|${slot}${salt}`))()*pool.length)];
  }
  const charKey=()=>`${ch().type}|${ch().name}|${st.seed}`;
  function refHtml(key){
@@ -139,20 +139,44 @@ export async function createCharacterView(api){
   if(fx?.fields.home_animal)out.xeno={blocked:'B2 수간(살던 세상의 동물 경험)',text:'[이 대사는 표시 불가합니다.]'};
   return {out,ty,style};
  }
+ // 거짓말(사용자 결정 2026-11-12): 헌신 − 두려움 ≥ 3이면 거짓말. 새로 만들지 않고 기존 답 중 오답(다른 표본 노예의 사실로 만든 답, 같은 주제의 다른 원본)을 가져온다. 이전 진실과의 모순은 따지지 않는다
+ const lying=()=>(Number(st.talk.moral)||0)-(Number(st.talk.fear)||0)>=3;
+ function lieCx(cx){
+  const R=rng(hashSeed(`${charKey()}|lie`)),row=D.rows[Math.floor(R()*D.rows.length)];
+  const s={...row,...st.talk,jo9_voice_type:cx.s.jo9_voice_type,occupation:cx.s.occupation,temper:cx.s.temper,sensitivity:cx.s.sensitivity,ego:cx.s.ego,pride:cx.s.pride};
+  const r=pastHistory(s,cx.f,'lie|'+st.seed),fx=r.excluded?null:pastFacts(s,r,cx.f,FACTS,'lie|'+st.seed,{},IV);
+  return {r,fx,f:cx.f,s};
+ }
+ const PAGE=8;
  function pillowHtml(cx){
   if(!cx)return '<p class="muted-text">캐릭터를 뽑거나 불러오면 필로우토크가 나옵니다.</p>';
   const {r,s}=cx,c=ch();
   if(r.excluded)return '<p class="muted-text">연령 코드 1은 대상이 아닙니다.</p>';
   const gate=talkGate(),moral=Math.max(0,Math.min(5,Number(st.talk.moral)||0)),who=e(c.name||'이 노예');
-  if(gate)return `<p class="cv-line"><b>[${who}]</b> ${e(gate)}</p><p class="fine-print" title="절망 ≥ 3 → 응석 ≥ 3 → 인식 ≤ 2 순서로 먼저 걸린 반응 하나">대화 거부 조건에 걸렸습니다.</p>`;
-  const {out,ty,style}=generatedLines(cx),edits=st.ptEdits?.[charKey()]??{};
-  const open=SLOTS.filter(x=>x[0]<=moral),closed=SLOTS.length-open.length;
-  return `<div class="cv-meta">${e(TYPE_NAME[ty])} · ${e(MODE_NAME[relationMode(s)])} · ${e(STYLE_NAME[style])} · 헌신 ${moral} · 열린 주제 ${open.length}/${SLOTS.length}</div>
-   ${open.map(([lv,slot,label])=>{const g=out[slot]??{text:''},edited=edits[slot]!==undefined,text=edited?edits[slot]:g.text,ref=refFor(slot,cx.fx);
-    return `<div class="cv-slot"><div class="cv-slot-head"><b>${e(label)}</b> <small>헌신 ${lv}</small>${g.blocked?` <span class="badge muted" title="표시 불가 사유: ${e(g.blocked)}">표시 불가</span>`:''}${edited?' <span class="badge">수정됨</span>':''}${g.note?` <small class="fine-print">${e(g.note)}</small>`:''}</div>
-     <textarea class="cv-slot-text" data-cv-pt="${slot}" rows="2" placeholder="대사 없음: 원본을 보고 각색해 넣으세요" ${g.blocked?'readonly title="표시 불가 사유: '+e(g.blocked)+'"':''}>${e(text)}</textarea>
-     <div class="cv-slot-foot">${edited?`<button class="text-button" data-cv-act="pt-reset" data-slot="${slot}">생성 대사로 되돌리기</button>`:''}${ref?refHtml(ref):'<small class="fine-print">원본 DB 대응 문항 없음</small>'}</div></div>`;}).join('')}
-   ${closed?`<p class="fine-print">헌신이 오르면 ${closed}개 주제가 더 열립니다.</p>`:''}`;
+  const open=gate?[]:SLOTS.filter(x=>x[0]<=moral),pages=Math.max(1,Math.ceil(open.length/PAGE)),page=Math.min(st.qpage??0,pages-1);
+  const truth=generatedLines(cx),lie=lying()&&!gate?generatedLines(lieCx(cx)):null,edits=st.ptEdits?.[charKey()]??{};
+  const slot=open.find(x=>x[1]===st.ask);
+  let say='',editor='';
+  if(gate)say=e(gate);
+  else if(st.ask==='__end')say='<span class="gm-muted">(대화를 끝냈습니다)</span>';
+  else if(!slot)say='<span class="gm-muted">(오른쪽에서 질문을 고르세요)</span>';
+  else{
+   const [lv,id,label]=slot,g=(lie??truth).out[id]??{text:''},tg=truth.out[id]??{text:''},edited=edits[id]!==undefined,text=edited?edits[id]:g.text;
+   const ref=refFor(id,lie?null:cx.fx,lie?'|lie':''),truthRef=lie?refFor(id,cx.fx):null;
+   say=text?e(text):'<span class="gm-muted">(대사 없음: 아래에서 원본을 보고 각색해 넣으세요)</span>';
+   editor=`<div class="cv-slot"><div class="cv-slot-head"><b>${e(label)}</b> <small>헌신 ${lv}</small>${g.blocked?` <span class="badge muted" title="표시 불가 사유: ${e(g.blocked)}">표시 불가</span>`:''}${lie?` <span class="badge" title="헌신 ${st.talk.moral} − 두려움 ${st.talk.fear??0} ≥ 3: 거짓말(다른 노예의 답). 진실: ${e(tg.text||'(대사 없음)')}${truthRef?' / 진실 원본 '+e(truthRef):''}">거짓말</span>`:''}${edited?' <span class="badge">수정됨</span>':''}${g.note?` <small class="fine-print">${e(g.note)}</small>`:''}</div>
+    <textarea class="cv-slot-text" data-cv-pt="${id}" rows="3" placeholder="대사 없음: 원본을 보고 각색해 넣으세요" ${g.blocked?'readonly title="표시 불가 사유: '+e(g.blocked)+'"':''}>${e(text)}</textarea>
+    <div class="cv-slot-foot">${edited?`<button class="text-button" data-cv-act="pt-reset" data-slot="${id}">생성 대사로 되돌리기</button>`:''}${ref?refHtml(ref):'<small class="fine-print">원본 DB 대응 문항 없음</small>'}</div></div>`;
+  }
+  const qs=open.slice(page*PAGE,page*PAGE+PAGE);
+  return `<div class="gm"><div class="gm-left"><div class="gm-stage"><div class="gm-name">${who}</div><div class="cv-meta">${e(TYPE_NAME[truth.ty])} · ${e(MODE_NAME[relationMode(s)])} · ${e(STYLE_NAME[truth.style])} · 헌신 ${moral} · 두려움 ${st.talk.fear??0}${lying()&&!gate?' · <b class="gm-lie">거짓말 중</b>':''}</div></div>
+    <div class="gm-say"><div class="gm-who">[${who}]</div><div>${say}</div></div></div>
+   <div class="gm-side"><div class="gm-title">내 방</div><div class="gm-subtitle">섹스토크 중</div>
+    <div class="gm-qs">${qs.map(([lv,id,,,q])=>`<button class="gm-q ${st.ask===id?'on':''}" data-cv-ask="${id}">${e(q)}</button>`).join('')}
+     ${!gate&&open.length<SLOTS.length?`<div class="gm-muted">헌신이 오르면 질문 ${SLOTS.length-open.length}개가 더 열립니다.</div>`:''}</div>
+    ${pages>1?`<div class="gm-pager"><button class="gm-link" data-cv-qpage="${page-1}" ${page===0?'disabled':''}>◀ 이전 질문</button> - <button class="gm-link" data-cv-qpage="${page+1}" ${page>=pages-1?'disabled':''}>다음 질문 ▶</button></div>`:''}
+    <button class="gm-q gm-end" data-cv-ask="__end">대화를 끝낸다</button></div></div>
+   ${editor}`;
  }
 
  // 영입 때 저장할 섹스토크 사실(초기값 시뮬레이터에서 옮김). 산출 과정은 마우스를 올리면 보인다
@@ -198,7 +222,7 @@ export async function createCharacterView(api){
    <div class="section-label">소속 이후 누적 기록</div><div class="cv-skills">${[['income','수익'],['pregnancies','임신'],['births','출산'],['abortions','낙태'],['children','자녀']].map(([k,l])=>`<span>${l} <b>${e(st.owner[k]??0)}</b></span>`).join('')}</div>
   </div></article>
   ${factsCard(cx)}
-  <article class="card cv-wide"><div class="card-head"><h2><span class="index">05</span>필로우토크</h2><button class="button secondary" data-cv-act="pt-again">다른 대사 뽑기</button></div><div class="card-body">${pillowHtml(cx)}</div></article>
+  <article class="card cv-wide"><div class="card-head"><h2><span class="index">05</span>필로우토크 (게임 화면)</h2><button class="button secondary" data-cv-act="pt-again">다른 대사 뽑기</button></div><div class="card-body">${pillowHtml(cx)}</div></article>
   </div>`;
  }
 
@@ -314,6 +338,8 @@ export async function createCharacterView(api){
   if(b.dataset.cvTraitOff){const t=traitRows.find(r=>r.id===b.dataset.cvTraitOff);if(t){ch()[t.binding.key]=0;}save();render();return;}
   if(b.dataset.cvBig){const [k,g]=b.dataset.cvBig.split(':');st.big[k]=st.big[k]===g?null:g;save();renderDock();return;}
   if(b.dataset.cvSet){const [k,v]=b.dataset.cvSet.split(':');const c=ch();c[k]=c[k]===v?'':v;const sel={world:c.world,family:c.family,occupation:c.occupation};D.prune(sel,k);Object.assign(c,sel);if(k==='world'){const vs=RECORDS.filter(r=>r.kind==='world'&&r.id===c.world);c.worldVariant=vs[0]?.variant??null;}if(c.source==='new'&&!c.name)c.name='';save();render();return;}
+  if(b.dataset.cvAsk){st.ask=b.dataset.cvAsk;save();renderMain();return;}
+  if(b.dataset.cvQpage!==undefined){st.qpage=Math.max(0,Number(b.dataset.cvQpage));save();renderMain();return;}
   if(b.dataset.cvAge!==undefined){ch().age=Number(b.dataset.cvAge);save();render();return;}
   const a=b.dataset.cvAct;if(!a)return;
   if(a==='new'){api.confirmAction('새로 만들기','현재 캐릭터의 값을 모두 지우고 처음 상태로 돌아갑니다. 배경 대사 수정본과 공식 계수는 유지합니다.',()=>{st={...st,ch:blank(),locks:{},acq:{},overrides:{},owner:{},unknown:[],big:{},talk:{psy_status:'docile',moral:3,angst:0,spoil:0,rational:3,fear:0},seed:'1',pt:1};save();render();});return;}
