@@ -127,3 +127,9 @@
 - 사용자 목적: Wayward에서 힌트를 얻어 LLM 없이 LLM처럼 말하게 하는 것. 원본은 구글 드라이브 backupdata/game/Wayward-v2026-09-30_ko-v1.4. 드라이브 도구로는 3MB 이상 파일을 못 읽어 사용자가 index.html(19MB, 스크립트 11MB 한 덩어리)을 업로드했다.
 - 확인한 장치: 점수 매긴 대답 후보(공개·반응·기분/신뢰 변화), 겉말/속말 분리(innerThought), 숨긴 이야기(keptOn), 기억(notedMoments)과 날짜 차이 시간 표현, 아침 상태(dailyState·topOfMind), 반복 방지(recentThoughtIds·항목/전체 대기), 숨은 성향 발견(noticedLatentTraits), 정체성 갈등(identityStrain).
 - 규칙 문서 10장에 보완안 8개를 제안으로 적었다. 채택은 사용자 결정.
+
+## Wayward식 대화 구조 설계 v1 (2026-11-12)
+- 사용자: 게임 성격 차이는 감안. 필로우토크와 기존 대화 모두 Wayward처럼 말하는 구조를 설계하고, 세이브 용량을 줄이려 별도 JSON 대사집도 고민하라.
+- 확인: FastQSP는 json 폴더를 엔진이 변수로 올린다(QSP 코드에 읽기 코드 없음). 지금 대사 9,120행(`#txt_man` 14.7MB)도 변수라 세이브에 통째로 들어간다(QSP 표준 동작, 세이브 직접 확인은 못 함).
+- 결정(제안): 대사집은 JSON을 원본으로 편집하되, 게임에는 QSP location 코드(문자열 리터럴)로 빌드해 local로만 꺼낸다(방안 A). 세이브에는 인물당 약 250바이트 상태만 남긴다. json 자동 로드(방안 B)는 변수가 되어 절감이 안 될 가능성이 커서 엔진 확인 전에는 쓰지 않는다.
+- 문서: docs/JO9_Wayward_Dialogue_Architecture_v1_20261112.md.
