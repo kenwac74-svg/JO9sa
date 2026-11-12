@@ -77,6 +77,11 @@ export function pastHistory(stock,formula,seed='0'){
  const rand=makeRand(`${seed}|${stock.world}|${stock.family}|${stock.occupation}`);
  const trace=[];
  const result={intimacy:0,pregnancies:null,births:null,excluded:false,trace};
+ // [계산 규칙 기록 2026-11-12] 연령 처리
+ //  - 제외 연령: formula.excludedAges(공식 데이터 past-history-formula.json, 지금 [1]). 여기 해당하면 아래 계산을 하지 않고 excluded=true로 돌려준다.
+ //  - 연령 가중치: formula.ageFactor[seed_age](/100, 기본값 0:100, 2:150, 없으면 100). 아래 총횟수 곱셈에서 '× 연령'으로 쓰인다.
+ //    편집기 '산식 계수' 탭에서 넣은 값은 브라우저 저장 공식(localStorage jo9-past-history-formula-v1)에 들어가고, 기본 데이터 파일은 바뀌지 않는다.
+ //  - 이 제외는 Claude가 만든 자동 계산 범위의 경계다. 이 부분의 수정은 사용자가 직접 한다(사용자 결정 2026-11-12, Claude 관여 안 함).
  if(formula.excludedAges.includes(stock.age)){result.excluded=true;result.intimacy=null;trace.push('연령 코드 1은 통계 대상이 아니다');return result;}
  const occ=tierOf(formula,'occupation',stock.occupation),fam=tierOf(formula,'family',stock.family),wld=tierOf(formula,'world',stock.world);
  // 처녀 고정(계수 0)은 규칙이라 대분류 값으로 바꾸지 않는다
