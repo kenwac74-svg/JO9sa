@@ -1,0 +1,23 @@
+{
+ "schema": "jo9-ai-providers/v1",
+ "note": "AI API 연결 설정(키 없음). 키는 환경 변수(keyEnv) 또는 git 제외 파일 ai.local.json 의 {\"keys\": {\"제공처\": \"키\"}} 에 둔다. 주소·인증은 각 제공처 공식 문서로 확인(2026-11-12). 모델 이름은 쓰는 사람이 정한다(바뀌므로 코드에 박지 않는다).",
+ "providers": {
+  "openrouter": {
+   "kind": "openai", "baseUrl": "https://openrouter.ai/api/v1", "keyEnv": "OPENROUTER_API_KEY",
+   "docs": "https://openrouter.ai/docs/api-reference/chat-completion", "headers": {}, "verified": true
+  },
+  "venice": {
+   "kind": "openai", "baseUrl": "https://api.venice.ai/api/v1", "keyEnv": "VENICE_API_KEY",
+   "docs": "https://docs.venice.ai/api-reference/endpoint/chat/completions", "headers": {}, "verified": true
+  },
+  "gemini": {
+   "kind": "openai", "baseUrl": "https://generativelanguage.googleapis.com/v1beta/openai", "keyEnv": "GEMINI_API_KEY",
+   "docs": "https://aistudio.google.com/docs/openai", "headers": {}, "verified": true
+  },
+  "kindroid": {
+   "kind": "kindroid", "baseUrl": "", "keyEnv": "KINDROID_API_KEY",
+   "docs": "", "headers": {}, "verified": false,
+   "note": "공식 문서에 접근하지 못해 주소·인증·요청 칸을 확인하지 못했다. 추측해 채우지 않는다. 사용자가 문서를 확인해 baseUrl·path·인증 방식을 채우기 전에는 호출하지 않는다."
+  }
+ }
+}

@@ -27,7 +27,7 @@
 - [x] 3 엑셀 내보내기·가져오기(`studio_excel.py`, DB 탭 버튼, 2026-11-12)
 - [x] 4 AI 작업용 분할·설명서·검사(`sextalk-interviews/ai-tools.py`, `ai/`, `AI_WORK_SCHEMA_KO.md`, 2026-11-12)
 - [x] 5 글로서리·번역 파일(`sextalk-interviews/i18n-tools.py`, `i18n/glossary.json`, `I18N_KO.md`, 2026-11-12)
-- [ ] 6 API 연결부
+- [x] 6 API 연결부(OpenRouter·Venice·Gemini 완료, Kindroid는 공식 문서 미확인으로 보류: `ai_api.py`, `AI_API_KO.md`, 2026-11-12)
 - [ ] 7 세계관 자료집·자동 프롬프트 조립
 
 ## 나중에 할 것(기록)
