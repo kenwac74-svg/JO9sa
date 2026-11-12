@@ -1,0 +1,350 @@
+{
+ "version": "0.1",
+ "note": "캐릭터 시뮬레이터의 세계·출신·직업 대분류(2026-11-12). 출신은 출신 성격 프리셋 엑셀(presets/JO9_Origin_Personality_Presets_20261111.xlsx) '출신보정' 시트의 '사용자 최종 결정' 계층 분류(사용자 확정)를 그대로 쓴다. 직업은 공통 특성 부여 규칙(source=rule)을 기준으로 하고 나머지는 Claude 신규 분류(source=new).",
+ "world": [
+  {
+   "id": "prehistoric_age",
+   "label": "선사",
+   "members": [
+    "prehistoric"
+   ]
+  },
+  {
+   "id": "ancient_age",
+   "label": "고대",
+   "members": [
+    "barbarian",
+    "earth_rome"
+   ]
+  },
+  {
+   "id": "medieval_age",
+   "label": "중세",
+   "members": [
+    "medieval"
+   ]
+  },
+  {
+   "id": "fantasy_age",
+   "label": "판타지",
+   "members": [
+    "sns",
+    "darkfantasy",
+    "highfantasy"
+   ]
+  },
+  {
+   "id": "early_modern_age",
+   "label": "근대",
+   "members": [
+    "steampunk",
+    "industrial"
+   ]
+  },
+  {
+   "id": "modern_age",
+   "label": "현대",
+   "members": [
+    "modern"
+   ]
+  },
+  {
+   "id": "future_age",
+   "label": "미래",
+   "members": [
+    "cyberpunk",
+    "utopia",
+    "darkfuture",
+    "space"
+   ]
+  }
+ ],
+ "family": [
+  {
+   "id": "class1",
+   "label": "세습 귀족·공주",
+   "source": "xlsx",
+   "members": [
+    "barbarian_king",
+    "knight",
+    "mprincess",
+    "ancient_noble"
+   ]
+  },
+  {
+   "id": "class2",
+   "label": "비세습 상류층",
+   "source": "xlsx",
+   "members": [
+    "doctor",
+    "magnat",
+    "bankeer",
+    "mayor",
+    "mafiosi",
+    "surgeon",
+    "businessman",
+    "finance",
+    "general",
+    "architect",
+    "minitruth",
+    "astrofarm",
+    "admiral",
+    "nanofarmacist",
+    "gendesigner"
+   ]
+  },
+  {
+   "id": "class3",
+   "label": "중산층",
+   "source": "xlsx",
+   "members": [
+    "amazon",
+    "craftsman",
+    "merchant",
+    "farmers",
+    "clerk",
+    "naturalist",
+    "ingeneer",
+    "policeman",
+    "manager",
+    "biologist",
+    "programmer",
+    "freetrader",
+    "astrogator",
+    "ancient_citizen"
+   ]
+  },
+  {
+   "id": "class4",
+   "label": "예술가류",
+   "source": "xlsx",
+   "members": [
+    "poet",
+    "artist"
+   ]
+  },
+  {
+   "id": "class5",
+   "label": "노동자·중하류층",
+   "source": "xlsx",
+   "members": [
+    "nomad",
+    "pesant",
+    "hunter",
+    "fisher",
+    "viking",
+    "servant",
+    "worker",
+    "operator",
+    "jailer",
+    "bioreactor",
+    "asteroid",
+    "roman_freedslave"
+   ]
+  },
+  {
+   "id": "class6",
+   "label": "하류층",
+   "source": "xlsx",
+   "members": [
+    "tribe",
+    "bondman",
+    "valetry",
+    "proletarian",
+    "anter"
+   ]
+  },
+  {
+   "id": "class7",
+   "label": "극빈층",
+   "source": "xlsx",
+   "members": [
+    "orphan",
+    "gypsy",
+    "church",
+    "workhouse",
+    "orpnange"
+   ]
+  }
+ ],
+ "occupation": [
+  {
+   "id": "job1",
+   "label": "창녀",
+   "source": "rule",
+   "basis": "성인 접객업(과거 경험 공식 sexWork, 핸드오프 '창녀/범죄자/목축업자' 직업 분류)",
+   "members": [
+    "whore",
+    "markitane",
+    "brothel",
+    "courtesan"
+   ]
+  },
+  {
+   "id": "job2",
+   "label": "범죄자",
+   "source": "rule",
+   "basis": "핸드오프 9장 '범죄자 공통'. 구성원은 Claude 초안(공통 규칙에 명단 없음)",
+   "members": [
+    "thief",
+    "thug",
+    "brigand",
+    "contraband",
+    "serial_killer",
+    "gang_member",
+    "mafia_boss",
+    "hacker"
+   ]
+  },
+  {
+   "id": "job3",
+   "label": "공주계열",
+   "source": "rule",
+   "basis": "핸드오프 9장 '공주계열'",
+   "members": [
+    "mprincess",
+    "barbarian_princess",
+    "noble_bride"
+   ]
+  },
+  {
+   "id": "job4",
+   "label": "혼인·신부",
+   "source": "rule",
+   "basis": "과거 경험 공식 married·처녀 고정 신부",
+   "members": [
+    "bride",
+    "poor_bride",
+    "rich_bride",
+    "viking_wife",
+    "poor_wife",
+    "noble_wife",
+    "rich_wife"
+   ]
+  },
+  {
+   "id": "job5",
+   "label": "운동선수",
+   "source": "rule",
+   "basis": "핸드오프 9장 '운동선수 공통'",
+   "members": [
+    "voleyball",
+    "karateka",
+    "hymnast"
+   ]
+  },
+  {
+   "id": "job6",
+   "label": "경찰관류",
+   "source": "rule",
+   "basis": "핸드오프 9장 '경찰관류'(시공경찰관·미래경찰·교도관)",
+   "members": [
+    "policewoman",
+    "mind_contol",
+    "time_plice",
+    "jailer"
+   ]
+  },
+  {
+   "id": "job7",
+   "label": "목축업자",
+   "source": "rule",
+   "basis": "핸드오프 9장 '목축업자'(착유사·돼지치기)",
+   "members": [
+    "milker",
+    "swiner"
+   ]
+  },
+  {
+   "id": "job8",
+   "label": "노동자",
+   "source": "new",
+   "basis": "Claude 신규 분류",
+   "members": [
+    "farmer",
+    "weaver",
+    "freaser",
+    "anter",
+    "astrofarmer",
+    "installer"
+   ]
+  },
+  {
+   "id": "job9",
+   "label": "하녀·서비스",
+   "source": "new",
+   "basis": "Claude 신규 분류",
+   "members": [
+    "valertry",
+    "maid",
+    "oficiant",
+    "secretary",
+    "nurse"
+   ]
+  },
+  {
+   "id": "job10",
+   "label": "학업·지식",
+   "source": "new",
+   "basis": "Claude 신규 분류",
+   "members": [
+    "teacher",
+    "student",
+    "writer",
+    "schoolgirl"
+   ]
+  },
+  {
+   "id": "job11",
+   "label": "주술·마법·종교",
+   "source": "new",
+   "basis": "Claude 신규 분류",
+   "members": [
+    "shaman",
+    "witch",
+    "herbalist",
+    "sorceress",
+    "nun"
+   ]
+  },
+  {
+   "id": "job12",
+   "label": "전사·모험가",
+   "source": "new",
+   "basis": "Claude 신규 분류",
+   "members": [
+    "heroine",
+    "huntress",
+    "avanturiste",
+    "academy",
+    "mech"
+   ]
+  },
+  {
+   "id": "job13",
+   "label": "예술·연예",
+   "source": "new",
+   "basis": "Claude 신규 분류",
+   "members": [
+    "model",
+    "major",
+    "artist",
+    "dancer"
+   ]
+  },
+  {
+   "id": "job14",
+   "label": "그 밖",
+   "source": "new",
+   "basis": "공통 규칙이 없는 직업(누락 보고 대상)",
+   "members": [
+    "tribal_girl",
+    "beggar",
+    "gypsy",
+    "punk",
+    "sufragist",
+    "former_slave"
+   ]
+  }
+ ]
+}

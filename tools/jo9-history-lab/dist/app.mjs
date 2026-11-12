@@ -2,6 +2,7 @@ import {SCHEMA,GRADES,DOMAINS,STAT_KEYS,OWNER_COUNT_KEYS,COMBAT_KEYS,COMBAT_TYPE
 import {createWorkbench} from './workbench.mjs';
 import {createSimView} from './sim-view.mjs';
 import {createOneView} from './one-view.mjs';
+import {createCharacterView} from './character-view.mjs';
 import {moveUnclassifiedCombat} from './character-io.mjs';
 import {settingsFilename,openSettingsSave} from './settings-save.mjs';
 const KEY='jo9-history-lab-v1';
@@ -217,6 +218,8 @@ try{
  const oldSim=document.querySelector('[data-tab="simulator"]'),oldCoef=document.querySelector('[data-tab="coefficients"]');
  if(oldSim){oldSim.lastChild.textContent=' 이전 산식 (v0.11)';oldSim.querySelector('span').textContent='◇';}if(oldCoef)oldCoef.lastChild.textContent=' 이전 산식 계수';
  await createOneView({tabNames,toast});await createSimView({tabNames});
+ // 캐릭터 시뮬레이터(이전 산식 페이지를 바탕으로 한 새 화면)를 맨 앞에 둔다
+ await createCharacterView({tabNames,toast,confirmAction,getState:()=>state,save});
  // 해시 없이 열면 새 초기값 시뮬레이터부터 보여 준다(앱이 시작 중 해시를 #simulator로 바꾸므로 처음 해시를 쓴다)
- if(!initialHash)switchTab('draw-one');else if(initialHash==='draw-one'||initialHash==='slave-sim')switchTab(initialHash);
+ if(!initialHash)switchTab('character');else if(['character','draw-one','slave-sim'].includes(initialHash))switchTab(initialHash);
 }catch(error){toast('초기값 시뮬레이터 데이터를 읽지 못했습니다: '+error.message);}

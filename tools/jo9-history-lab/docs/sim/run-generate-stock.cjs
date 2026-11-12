@@ -7,7 +7,11 @@ const {initQspEngine}=require(path.resolve(pkg,'dist/node/wasm-engine.cjs'));
 // 공식과 화면에 필요한 인물 값
 const STOCK_KEYS=['age','virginity','fertility','pregnant','parasite','clone','beauty','base_beauty','jo9_peerless','exotic','base_exotic','style','temper','pride','sensitivity','ego','stamina','fat','intellect','fame',
  'nymphomania','homosexualism','perversion','anal_affinity','oral_affinity','jo9_gag_reflex','masochism','jo9_slave_nature',
- 'sub_hug','sub_hj','sub_fj','sub_paizuri','sub_kiss','sub_tongue','sub_bj','sub_dt','sub_asslik','sub_vaginal','sub_anal','sub_fisting','anal_stretch'];
+ 'sub_hug','sub_hj','sub_fj','sub_paizuri','sub_kiss','sub_tongue','sub_bj','sub_dt','sub_asslik','sub_vaginal','sub_anal','sub_fisting','anal_stretch',
+ // 특성 열람표(traits.json)의 나머지 바인딩 키: 랜덤 생성 캐릭터의 특성 목록을 그대로 보여 주기 위해 읽는다
+ 'water_attitude','fire_attitude','vermin_attitude','darkness_attitude','deprivation_attitude','blood_attitude','exhibitionism','wounds','starvation','bruises','scars','brand','sanity','rehabilitation','compassion','meekness','defiant','passion_luxury','selfesteem','jo9_attention','passion_sweets','jo9_focus','jo9_grudge','activity_sign','abuse_attitude','jo9_ambition','passion_fame','jo9_constitution','metabolism','dexterity','jo9_voice_trait','grace','sport_affinity','expression_affinity','cowSK_affinity','calisthenics_affinity','secretary_affinity','pet_affinity','dressage_affinity','cook_affinity','music_affinity','nurse_affinity','enchanter_affinity','art_affinity','gladiatrix_affinity','service_affinity','courage','jo9_combat_trait','has_ride_win','jo9_versatile','arena_level','jo9_learning_trait',
+ // 숨은 성향의 발견 여부
+ 'nymphomania_revealed','homosexualism_revealed','perversion_revealed','masochism_revealed','exhibitionism_revealed','anal_affinity_revealed','oral_affinity_revealed'];
 (async()=>{
  const api=await initQspEngine(path.resolve(pkg,'dist/qsp-engine.wasm')),errors=[];
  api.on('error',e=>errors.push(e));
@@ -35,7 +39,7 @@ const STOCK_KEYS=['age','virginity','fertility','pregnant','parasite','clone','b
   try{
    run("killvar 'stock'\r\nkillvar 'stock_rate'\r\nkillvar 'slave'\r\nkillvar 'slave_rate'\r\nspecial_stock = 0\r\ngs 'generate_stock'",'generate_stock');
    // 세계·출신·직업 문자열은 영입 뒤 지워지므로 생성 직후 읽는다
-   bg={type:api.readVariable('stock_type',0),world:api.readVariable('$stock_world',0),family:api.readVariable('$stock_family',0),occupation:api.readVariable('$stock_occupation',0)};
+   bg={type:api.readVariable('stock_type',0),name:api.readVariable('$stock_name',0),world:api.readVariable('$stock_world',0),family:api.readVariable('$stock_family',0),occupation:api.readVariable('$stock_occupation',0)};
    run("stock_state = CONST_INT['slave_exist']\r\nslave_state = CONST_INT['no_slave']\r\ngs 'stock_to_slave_nogt'",'stock_to_slave_nogt');
   }catch(e){failures.push(String(e).slice(0,300));if(failures.length>20)break;continue;}
   // result는 gs가 끝나면 지워지는 특수 변수라서, 영입 성공은 slave_state로 확인한다
@@ -45,8 +49,8 @@ const STOCK_KEYS=['age','virginity','fertility','pregnant','parasite','clone','b
   rows.push(r);
  }
  const out={source:'QSP WASM 실제 generate_stock 실행',qspSha256:crypto.createHash('sha256').update(fs.readFileSync(qspPath)).digest('hex'),
-  note:'generate_stock 뒤 영입 처리 stock_to_slave_nogt까지 실행한 최종 slave 값. no_loli = 1(연령 코드 1 제외), special_stock = 0(랜덤 노예). for 반복문은 label/jump로 바꾼 사본으로 실행했다.',count:rows.length,failures:failures.length,keys:['type','world','family','occupation',...STOCK_KEYS],
-  rows:rows.map(r=>['type','world','family','occupation',...STOCK_KEYS].map(k=>r[k]))};
+  note:'generate_stock 뒤 영입 처리 stock_to_slave_nogt까지 실행한 최종 slave 값. no_loli = 1(연령 코드 1 제외), special_stock = 0(랜덤 노예). for 반복문은 label/jump로 바꾼 사본으로 실행했다.',count:rows.length,failures:failures.length,keys:['type','name','world','family','occupation',...STOCK_KEYS],
+  rows:rows.map(r=>['type','name','world','family','occupation',...STOCK_KEYS].map(k=>r[k]))};
  fs.writeFileSync(outPath,JSON.stringify(out));
  console.log('생성',rows.length,'실패',failures.length,failures.slice(0,3));
 })().catch(e=>{console.error('FAIL',String(e).slice(0,600));process.exit(1);});
