@@ -48,6 +48,7 @@ export function countWords(n){
  if(n<150)return '백 번';if(n<1000)return '수백 번';return '천 번';
 }
 
+// 조각 행은 규칙 시험용 프리셋 초안이다(규칙: docs/JO9_Pillow_Talk_Rules_v1_20261112.md). 최종 원고·튜닝은 사용자가 편집기에서 한다.
 // 조각 행: [역할, 유형('*' 공통), 관계(공백 구분, '*' 모두), 감정(-/vulnerable/hostile/positive), 깊이, 말투2 문장, 말투1 문장]
 // {N} 어림 낱말, {X} 정확한 숫자, {C} 아이 수, {이나} 조사
 const ALL='*',WARM='hopeful duty loyal neutral',LOW='fearful bleak broken',COLD='hostile';
