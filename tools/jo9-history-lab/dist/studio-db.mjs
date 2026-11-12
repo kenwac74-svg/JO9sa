@@ -14,7 +14,7 @@ export function createDbView(api) {
  document.querySelector('.sidebar nav').insertAdjacentHTML('beforeend', `<button data-tab="${id}" class="nav-button"><span>▤</span>DB</button>`);
  document.querySelector('main footer').insertAdjacentHTML('beforebegin', `<section id="${id}" class="tab-panel dbv" hidden></section>`);
  const root = document.getElementById(id);
- const st = {meta: null, f: {q: '', topic: '', world: '', grade: '', block: '', shown: '1', mine: ''}, res: null, offset: 0, sel: null, detail: null, err: ''};
+ const st = {xl: null, meta: null, f: {q: '', topic: '', world: '', grade: '', block: '', shown: '1', mine: ''}, res: null, offset: 0, sel: null, detail: null, err: ''};
  const LIMIT = 30;
 
  async function search() {
@@ -38,7 +38,8 @@ export function createDbView(api) {
  function frame() {
   const m = st.meta, f = st.f;
   const opt = (v, cur, label) => `<option value="${e(v)}" ${v === cur ? 'selected' : ''}>${e(label)}</option>`;
-  root.innerHTML = `<article class="card"><div class="card-head"><h2>찾기</h2><span class="badge muted">대답 ${m.rows.toLocaleString('ko-KR')}개 · 글 ${m.posts}편${m.hasPosts ? '' : ' · 글 DB 없음'}</span></div><div class="card-body">
+  root.innerHTML = `<article class="card"><div class="card-head"><h2>찾기</h2><span class="st-row"><button class="button secondary small" data-db-xl="export">엑셀로 내보내기</button><label class="button secondary small import-label">엑셀 가져오기<input type="file" data-db-xl="file" accept=".xlsx" hidden></label></span><span class="badge muted">대답 ${m.rows.toLocaleString('ko-KR')}개 · 글 ${m.posts}편${m.hasPosts ? '' : ' · 글 DB 없음'}</span></div><div class="card-body">
+   <div id="dbXl"></div>
    <div class="st-row"><input data-db="q" value="${e(f.q)}" placeholder="글자 또는 키(예: p0012.q07) 검색">
    <select data-db="topic">${opt('', f.topic, '주제 전체')}${Object.entries(m.topics).map(([n, t]) => opt(t, f.topic, `${n}. ${t}`)).join('')}</select>
    <select data-db="block">${opt('', f.block, '분류 전체')}${opt('none', f.block, '막힘 없음')}${Object.entries(m.blockCodes).map(([c, l]) => opt(c, f.block, `${c} ${l}`)).join('')}</select></div>
@@ -48,7 +49,19 @@ export function createDbView(api) {
    <label class="tag"><input type="checkbox" data-db="mine" ${f.mine === '1' ? 'checked' : ''}> 내가 쓴 각색만</label></div></div></article>
    <div class="sim-grid"><article class="card"><div class="card-head"><h2>목록</h2><span class="badge" id="dbCount"></span></div><div class="card-body" id="dbList"></div></article>
    <article class="card"><div class="card-head"><h2>원문과 각색</h2></div><div class="card-body" id="dbDetail"></div></article></div>`;
-  renderList(); renderDetail();
+  renderList(); renderDetail(); renderXl();
+ }
+ function renderXl() {
+  const box = root.querySelector('#dbXl'); if (!box) return;
+  const x = st.xl; if (!x) { box.innerHTML = ''; return; }
+  const c = x.res.count;
+  box.innerHTML = `<div class="notice neutral"><div><strong>${x.res.applied ? '반영했습니다' : '가져오기 미리보기'}</strong> · 추가 ${c.add} · 수정 ${c.edit} · 지움 ${c.delete} · 반영 못 한 줄 ${x.res.problemTotal}
+   ${x.res.problems.slice(0, 20).map(p => `<br><small>${p.row}줄 <code>${e(p.key)}</code> ${e(p.why)}</small>`).join('')}
+   ${x.res.applied ? '' : `<div class="st-row"><button class="button primary small" data-db-xl="apply" ${c.add + c.edit + c.delete ? '' : 'disabled'}>문제 없는 변경만 반영</button><button class="button secondary small" data-db-xl="cancel">취소</button></div>`}</div></div>`;
+ }
+ async function xlImport(b64, apply) {
+  try { st.xl = {b64, res: await call('/api/excel/import', {data: b64, apply})}; if (apply) { st.detail = null; search(); } } catch (error) { st.xl = null; api.toast(error.message); }
+  renderXl();
  }
  function renderList() {
   const box = root.querySelector('#dbList'); if (!box) return;
@@ -85,7 +98,12 @@ export function createDbView(api) {
   st.f.q = t.value; st.offset = 0; clearTimeout(timer); timer = setTimeout(search, 250);
  });
  root.addEventListener('change', ev => {
-  const t = ev.target, k = t.dataset.db; if (!k || k === 'q') return;
+  const t = ev.target;
+  if (t.dataset.dbXl === 'file') {
+   const f = t.files[0]; if (!f) return;
+   const rd = new FileReader(); rd.onload = () => xlImport(String(rd.result).split(',')[1], false); rd.readAsDataURL(f); t.value = ''; return;
+  }
+  const k = t.dataset.db; if (!k || k === 'q') return;
   st.f[k] = t.type === 'checkbox' ? (t.checked ? '1' : '') : t.value;
   if (k === 'world' && !t.value) st.f.grade = '';
   st.offset = 0; frame(); search();
@@ -93,6 +111,13 @@ export function createDbView(api) {
  root.addEventListener('click', ev => {
   const row = ev.target.closest('[data-db-open]'); if (row) return open(row.dataset.dbOpen);
   const b = ev.target.closest('button'); if (!b) return;
+  if (b.dataset.dbXl === 'export') return call('/api/excel/export', {}).then(d => {
+   const bin = atob(d.data), buf = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
+   const url = URL.createObjectURL(new Blob([buf], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
+   const a = document.createElement('a'); a.href = url; a.download = d.name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 5000); api.toast(`엑셀로 내보냈습니다 · ${d.rows}줄`);
+  }).catch(error => api.toast(error.message));
+  if (b.dataset.dbXl === 'apply') return xlImport(st.xl.b64, true);
+  if (b.dataset.dbXl === 'cancel') { st.xl = null; return renderXl(); }
   if (b.dataset.dbPage) { st.offset = Number(b.dataset.dbPage) * LIMIT; return search(); }
   const w = b.dataset.dbSave ?? b.dataset.dbClear; if (!w) return;
   const ta = root.querySelector(`[data-db-text="${CSS.escape(w)}"]`);

@@ -450,6 +450,7 @@ def delete(sid, body):
 # ------------------------------------------------------------------ 세이브 정비(버전 불일치: 이미지 경로)
 import studio_save  # noqa: E402
 import studio_interview  # noqa: E402
+import studio_excel  # noqa: E402
 _save_cache = {}
 
 
@@ -663,6 +664,8 @@ ROUTES_POST = [
     (re.compile(r'^/api/char/(\d+)/images$'), lambda m, body: save_images(m.group(1), body)),
     (re.compile(r'^/api/talkbook/(\d+)$'), lambda m, body: save_talkbook(m.group(1), body)),
     (re.compile(r'^/api/qsp/mod$'), lambda m, body: qsp_mod(body)),
+    (re.compile(r'^/api/excel/export$'), lambda m, body: studio_excel.export_payload()),
+    (re.compile(r'^/api/excel/import$'), lambda m, body: studio_excel.check_import(body.get('data', ''), bool(body.get('apply')))),
     (re.compile(r'^/api/interview/adapt$'), lambda m, body: studio_interview.save_adapt(body)),
     (re.compile(r'^/api/save/scan$'), lambda m, body: save_scan(body)),
     (re.compile(r'^/api/save/fix$'), lambda m, body: save_fix(body)),
