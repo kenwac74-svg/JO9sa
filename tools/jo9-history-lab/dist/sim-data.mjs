@@ -38,7 +38,7 @@ const listeners=new Set();
 let edited=null;
 export function getFormula(base){
  if(edited)return edited;
- try{const raw=localStorage.getItem(FORMULA_KEY);if(raw){const f=JSON.parse(raw);if(f?.version===base.version){edited=f;return edited;}}}catch{}
+ try{const raw=localStorage.getItem(FORMULA_KEY);if(raw){const f=JSON.parse(raw);if(f?.version===base.version){for(const k of Object.keys(base))if(f[k]===undefined)f[k]=structuredClone(base[k]);edited=f;return edited;}}}catch{}
  edited=structuredClone(base);return edited;
 }
 export function saveFormula(f){edited=f;try{localStorage.setItem(FORMULA_KEY,JSON.stringify(f));}catch{}for(const fn of listeners)fn();}

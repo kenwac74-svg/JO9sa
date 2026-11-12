@@ -1,8 +1,9 @@
 import {SCHEMA,GRADES,DOMAINS,STAT_KEYS,OWNER_COUNT_KEYS,COMBAT_KEYS,COMBAT_TYPES,SKILLS,defaultConfig,defaultCharacter,freshState,clone,estimate,validateState} from './engine.mjs';
 import {createWorkbench} from './workbench.mjs';
 import {createSimView} from './sim-view.mjs';
-import {createOneView} from './one-view.mjs';
 import {createCharacterView} from './character-view.mjs';
+import {createCoefView} from './coef-view.mjs';
+import {createTraitEditor} from './trait-editor.mjs';
 import {moveUnclassifiedCombat} from './character-io.mjs';
 import {settingsFilename,openSettingsSave} from './settings-save.mjs';
 const KEY='jo9-history-lab-v1';
@@ -18,7 +19,7 @@ const ownerCombatTotal=(result,key)=>result.owner?.combatTotals?.[key]??{value:0
 const labels={intimacy:'성적 경험',wins:'승리',losses:'패배',escapes:'도주',pregnancies:'임신',abortions:'낙태',births:'출산',children:'자녀'};
 const comparisonMetrics=[...OWNER_COUNT_KEYS.map(key=>({label:`소속 이후 ${labels[key]}`,read:result=>result.owner?.[key]??{value:0,source:'record'}})),...Object.entries(labels).filter(([key])=>STAT_KEYS.includes(key)&&!COMBAT_KEYS.includes(key)).map(([key,label])=>({label,read:result=>result.rows[key]})),...COMBAT_TYPES.flatMap(type=>COMBAT_KEYS.map(key=>({label:`소속 이후 ${type.name} ${labels[key]}`,read:result=>result.owner?.combatGroups?.[type.id]?.[key]??{value:0,source:'record'}}))),{label:'소속 이후 누적 수익',read:result=>({value:result.owner?.income??0,source:result.owner?.source??'record'})}];
 try{const raw=localStorage.getItem(KEY);if(raw)state=validateState(JSON.parse(raw));}catch(e){storageAvailable=false;setTimeout(()=>toast('저장 데이터를 읽지 못했습니다. JSON 백업을 불러오거나 현재 설정을 내보내세요.'),250);}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(state));storageAvailable=true;$('#saveStatus').textContent='이 브라우저에 저장됨';}catch(e){storageAvailable=false;$('#saveStatus').textContent='자동 저장 불가 · JSON 백업 필요';}$('#archiveCount').textContent=state.snapshots.length;}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));storageAvailable=true;$('#saveStatus').textContent='이 브라우저에 저장됨';}catch(e){storageAvailable=false;$('#saveStatus').textContent='자동 저장 불가 · JSON 백업 필요';}{const ac=$('#archiveCount');if(ac)ac.textContent=state.snapshots.length;}}
 let toastTimer;function toast(message){$('#toast').textContent=message;$('#toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#toast').classList.remove('show'),4200);}
 function confirmAction(title,message,action){$('#confirmTitle').textContent=title;$('#confirmText').textContent=message;$('#confirmOk').onclick=()=>{$('#confirmDialog').close();action();};$('#confirmDialog').showModal();}
 $('#confirmCancel').onclick=()=>$('#confirmDialog').close();
@@ -137,9 +138,9 @@ $('#guide').innerHTML=`<div class="guide-layout"><article class="card"><div clas
 <div class="column"><article class="card"><div class="card-head"><h2>예외 처리</h2></div><div class="card-body prose"><ul><li><strong>기술 주입·클론:</strong> 성적 경험 자동 경력 0. 임신·가족 경력은 명시된 기록이나 배경 범위가 있으면 적용.</li><li><strong>전체 미경험:</strong> 성적 경험의 자동값 0.</li><li><strong>질 미경험:</strong> 질 분배만 제외. 다른 경험까지 0으로 간주하지 않음.</li><li><strong>과거 임신·출산:</strong> 특별한 이력이 있을 때만 범위나 확정값으로 지정. 그 외에는 미상.</li><li><strong>소속 이후 기록:</strong> 전적·임신·출산·낙태·자녀와 수익은 각각 0에서 시작. 과거 이력과 분리해 누적.</li><li><strong>배경 메모:</strong> 자동 해석하지 않음. 태그·계수·지정값으로 적용.</li><li><strong>기존 보유자:</strong> 과거 주인과의 기록 이관은 별도 설계. 이 화면의 신규 영입 규칙을 일괄 적용하지 않음.</li></ul></div></article>
 <article class="card"><div class="card-head"><h2>저장과 내보내기</h2></div><div class="card-body prose"><p>편집값은 <strong>이 브라우저</strong>에 자동 저장됩니다. 기기를 바꾸거나 브라우저 데이터를 지우기 전 ‘전체 설정 내보내기’로 JSON 백업을 남기세요.</p><p>전체 설정 JSON은 계수·현재 캐릭터·비교 보관함을 포함합니다. 캐릭터 결과 JSON과 CSV는 검토·핸드오프용입니다.</p><button class="button secondary" data-action="downloadGuide">↓ 설계 명세 Markdown</button></div></article>
 <article class="card"><div class="card-body source-note"><strong>근거와 가설</strong><br>스킬 F–S, 직업·출신 구조, 클론 기술 주입은 조사한 소스에 근거합니다. 기준 횟수와 모든 추정 계수는 새로 제안한 조정 초안입니다.<br><br>기준 소스 607c7ec6 · 게임 반영 대기<br>길거리 업무의 확정된 성공등급·수익 보정은 이 초기값 추정식과 별도로 유지합니다.</div></article></div></div>`;}
-function renderAll(){renderSimulator();renderCoefficients();renderArchive();renderGuide();switchTab(tab);$('#archiveCount').textContent=state.snapshots.length;workbench?.render();}
+function renderAll(){renderSimulator();renderCoefficients();renderArchive();renderGuide();switchTab(tab);{const ac=$('#archiveCount');if(ac)ac.textContent=state.snapshots.length;}workbench?.render();}
 const tabNames={simulator:['초기값 시뮬레이터','경력 초기값 설계실','스킬과 배경을 조율하고, 캐릭터의 영입 전 경력을 설계하세요.'],coefficients:['산출 계수','초기값 산출 계수','기준 횟수와 배경 계수를 수정하고, 원하는 분포를 찾으세요.'],archive:['비교 보관함','확정 결과 비교','캐릭터별 결과와 계수를 보관하고, 서로 다른 설계를 비교하세요.'],guide:['산출 규칙','산출 규칙과 적용 범위','확정 기록과 추정 이력의 경계를 확인하세요.']};
-function switchTab(next){if(!tabNames[next])next='simulator';if(next!==tab)window.scrollTo(0,0);tab=next;for(const el of document.querySelectorAll('.tab-panel'))el.hidden=el.id!==tab;for(const el of document.querySelectorAll('[data-tab]')){el.classList.toggle('active',el.dataset.tab===tab);el.setAttribute('aria-current',el.dataset.tab===tab?'page':'false');}$('#breadcrumb').textContent=tabNames[tab][0];$('#pageTitle').innerHTML=`${tabNames[tab][1]}<span class="draft-badge">조정 초안</span>`;$('#pageSubtitle').textContent=tabNames[tab][2];history.replaceState(null,'',`#${tab}`);}
+function switchTab(next){if(!tabNames[next])next=tabNames.character?'character':'simulator';if(next!==tab)window.scrollTo(0,0);tab=next;for(const el of document.querySelectorAll('.tab-panel'))el.hidden=el.id!==tab;for(const el of document.querySelectorAll('[data-tab]')){el.classList.toggle('active',el.dataset.tab===tab);el.setAttribute('aria-current',el.dataset.tab===tab?'page':'false');}$('#breadcrumb').textContent=tabNames[tab][0];$('#pageTitle').innerHTML=`${tabNames[tab][1]}<span class="draft-badge">조정 초안</span>`;$('#pageSubtitle').textContent=tabNames[tab][2];history.replaceState(null,'',`#${tab}`);}
 function setPath(path,value){const pieces=path.split('.');let obj=state;for(let i=0;i<pieces.length-1;i++)obj=obj[pieces[i]];obj[pieces.at(-1)]=value;}
 function refreshAfterEdit(element){
 workbench?.onProfileChange(element.dataset.path);
@@ -217,9 +218,15 @@ try{
  tabNames.simulator[0]=tabNames.simulator[1]='이전 산식 (v0.11)';tabNames.coefficients[0]='이전 산식 계수';
  const oldSim=document.querySelector('[data-tab="simulator"]'),oldCoef=document.querySelector('[data-tab="coefficients"]');
  if(oldSim){oldSim.lastChild.textContent=' 이전 산식 (v0.11)';oldSim.querySelector('span').textContent='◇';}if(oldCoef)oldCoef.lastChild.textContent=' 이전 산식 계수';
- await createOneView({tabNames,toast});await createSimView({tabNames});
- // 캐릭터 시뮬레이터(이전 산식 페이지를 바탕으로 한 새 화면)를 맨 앞에 둔다
+ await createSimView({tabNames});
+ // 캐릭터 시뮬레이터(이전 산식 페이지를 바탕으로 한 새 화면)를 맨 앞에 두고, 산식 계수·특성 편집을 그 뒤에 둔다
  await createCharacterView({tabNames,toast,confirmAction,getState:()=>state,save});
+ await createCoefView({tabNames,toast,confirmAction});
+ await createTraitEditor({tabNames,toast});
+ // 폐지한 탭(사용자 지시 2026-11-12): 초기값 시뮬레이터·이전 산식·이전 산식 계수·비교 보관함·산출 규칙·캐릭터 JSON·특성 선택. 필요한 기능은 위 탭으로 옮겼다
+ for(const old of ['simulator','coefficients','archive','guide','character-json','traits']){delete tabNames[old];document.querySelector(`.sidebar nav [data-tab="${old}"]`)?.remove();}
+ // 사이드바 순서: 캐릭터 시뮬레이터 → 산식 계수 → 특성 편집 → 배경 설정 목록 → 뽑기 분포
+ const nav=document.querySelector('.sidebar nav');for(const k of ['character','coef','trait-edit','backgrounds','slave-sim']){const b=nav.querySelector(`[data-tab="${k}"]`);if(b)nav.appendChild(b);}
  // 해시 없이 열면 새 초기값 시뮬레이터부터 보여 준다(앱이 시작 중 해시를 #simulator로 바꾸므로 처음 해시를 쓴다)
- if(!initialHash)switchTab('character');else if(['character','draw-one','slave-sim'].includes(initialHash))switchTab(initialHash);
+ switchTab(tabNames[initialHash]?initialHash:'character');
 }catch(error){toast('초기값 시뮬레이터 데이터를 읽지 못했습니다: '+error.message);}

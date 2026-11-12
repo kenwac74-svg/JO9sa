@@ -6,7 +6,7 @@ const clampGrade=v=>Math.max(0,Math.min(5,Math.trunc(Number(v)||0)));
 // QSP의 정수 나눗셈과 같게 0 쪽으로 버린다.
 const idiv=(a,b)=>Math.trunc(a/b);
 
-export function ruleMatches(stock,r){const v=Number(stock[r.key]??0);return r.op==='>'?v>r.value:r.op==='<'?v<r.value:v===r.value;}
+export function ruleMatches(stock,r){const v=Number(stock[r.key]??0);return r.op==='>'?v>r.value:r.op==='<'?v<r.value:r.op==='>='?v>=r.value:r.op==='range'?v>=r.min&&v<=r.max:v===r.value;}
 // 성욕 계열 특성은 하나만 적용한다(nymphomania 값 하나에 대응).
 export function libidoFactor(stock,formula){const r=formula.traits?.libido.rules.find(x=>ruleMatches(stock,x));return {name:r?.name??'없음',factor:r?.factor??100};}
 
@@ -36,6 +36,21 @@ export function actWeights(stock,formula){
  return {weights:w,applied};
 }
 
+// 대분류 범위 → 소분류 값(사용자 결정 2026-11-12). 소분류 값이 없으면 기존 묶음 계수를 대분류 범위 안으로 맞춘다.
+// formula.categories[kind] = {groups:{대분류id:{min,max,members:[]}}, items:{소분류id:값}}. 없으면 기존 묶음 계수 그대로.
+export function categoryFactor(formula,kind,id,fallback){
+ const C=formula.categories?.[kind];if(!C)return {factor:fallback,group:null};
+ const [gid,g]=Object.entries(C.groups??{}).find(([,x])=>x.members?.includes(id))??[null,null];
+ const clamp=v=>g?Math.max(g.min,Math.min(g.max,v)):v;
+ const own=C.items?.[id];
+ return {factor:clamp(own!==undefined?own:fallback),group:gid};
+}
+// 특성 키워드 가중치(총횟수, /100): [{name, key, op, value, factor}] 맞는 것을 모두 곱한다(성욕 규칙과 별개)
+export function traitWeightFactor(stock,formula){
+ let f=100;const applied=[];
+ for(const w of formula.traitWeights??[])if(ruleMatches(stock,w)){f=idiv(f*w.factor,100);applied.push(`${w.name} ${w.factor}`);}
+ return {factor:f,applied};
+}
 export function tierOf(formula,kind,id){
  for(const [name,tier]of Object.entries(formula[kind]))if(name!=='default'&&tier.ids?.includes(id))return {name,factor:tier.factor};
  return {name:'default',factor:formula[kind].default.factor};
@@ -64,6 +79,10 @@ export function pastHistory(stock,formula,seed='0'){
  const result={intimacy:0,pregnancies:null,births:null,excluded:false,trace};
  if(formula.excludedAges.includes(stock.age)){result.excluded=true;result.intimacy=null;trace.push('연령 코드 1은 통계 대상이 아니다');return result;}
  const occ=tierOf(formula,'occupation',stock.occupation),fam=tierOf(formula,'family',stock.family),wld=tierOf(formula,'world',stock.world);
+ // 처녀 고정(계수 0)은 규칙이라 대분류 값으로 바꾸지 않는다
+ if(occ.factor!==0)occ.factor=categoryFactor(formula,'occupation',stock.occupation,occ.factor).factor;
+ fam.factor=categoryFactor(formula,'family',stock.family,fam.factor).factor;
+ wld.factor=categoryFactor(formula,'world',stock.world,wld.factor).factor;
  const grades=skillGrades(stock),w=formula.skillWeights,wsum=w.petting+w.oral+w.penetration;
  const base=idiv(formula.gradeBase[grades.petting]*w.petting+formula.gradeBase[grades.oral]*w.oral+formula.gradeBase[grades.penetration]*w.penetration,wsum);
  trace.push(`기술 등급 애무 ${grades.petting}·구강 ${grades.oral}·삽입 ${grades.penetration} → 기준량 ${base}`);
@@ -73,11 +92,11 @@ export function pastHistory(stock,formula,seed='0'){
   if(stock.virginity>1)trace.push('처녀 고정 배경이지만 생성 값이 비처녀다(generate_stock 1226행 등). 생성 값을 따른다');
  }
  else{
-  const lib=libidoFactor(stock,formula),attr=attributeFactor(stock,formula),age=formula.ageFactor[String(stock.age)]??100,vary=rand(100-formula.variationPct,100+formula.variationPct);
+  const lib=libidoFactor(stock,formula),attr=attributeFactor(stock,formula),tw=traitWeightFactor(stock,formula),age=formula.ageFactor[String(stock.age)]??100,vary=rand(100-formula.variationPct,100+formula.variationPct);
   // 곱셈 순서를 고정하고 단계마다 100으로 나눠 QSP 정수 범위를 넘지 않게 한다.
-  let v=base*occ.factor;v=idiv(v*fam.factor,100);v=idiv(v*wld.factor,100);v=idiv(v*age,100);v=idiv(v*lib.factor,100);v=idiv(v*attr.factor,100);v=idiv(v*vary,100);v=idiv(v,100);
+  let v=base*occ.factor;v=idiv(v*fam.factor,100);v=idiv(v*wld.factor,100);v=idiv(v*age,100);v=idiv(v*lib.factor,100);v=idiv(v*attr.factor,100);v=idiv(v*tw.factor,100);v=idiv(v*vary,100);v=idiv(v,100);
   result.intimacy=Math.max(0,v);
-  trace.push(`× 직업 ${occ.name} ${occ.factor} × 출신 ${fam.name} ${fam.factor} × 세계 ${wld.factor} × 연령 ${age} × 성욕 ${lib.name} ${lib.factor} × 속성 ${attr.factor}${attr.parts.length?'('+attr.parts.join(' ')+')':''} × 변동 ${vary} (각 /100) = ${result.intimacy}`);
+  trace.push(`× 직업 ${occ.name} ${occ.factor} × 출신 ${fam.name} ${fam.factor} × 세계 ${wld.factor} × 연령 ${age} × 성욕 ${lib.name} ${lib.factor} × 속성 ${attr.factor}${attr.parts.length?'('+attr.parts.join(' ')+')':''}${tw.applied.length?` × 특성 ${tw.factor}(${tw.applied.join(', ')})`:''} × 변동 ${vary} (각 /100) = ${result.intimacy}`);
  }
  // 비처녀인데 계산 결과가 0이면 생성 값을 따라 최소 경험을 준다(사용자 결정 2026-11-11).
  if(!stock.clone&&stock.virginity>1&&result.intimacy<1){

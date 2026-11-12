@@ -22,7 +22,13 @@ const LV={
 const TALK={moral:'헌신',angst:'절망',spoil:'응석',rational:'인식',fear:'두려움'};
 const PSY={docile:'온순함',soft:'부드러움',optimistic:'낙관',obedient:'순종',servile:'비굴',horny:'발정',reluctant:'마지못함',arrogant:'오만',hateful:'증오',resistant:'저항',hysteric:'히스테리',lachrymose:'눈물',frightened:'겁먹음',depresive:'우울',broken:'무너짐'};
 const STATE_WORDS={'처녀':['virginity',0],'비처녀':['virginity',2],'불임':['fertility',-1],'임신 가능':['fertility',0],'임신 중':['pregnant',1],'클론':['clone',1],'연령 0':['age',0],'연령 2':['age',2]};
-const TOPICS=[[1,'첫 경험, 하룻밤 최다'],[2,'상대 수, 특이한 장소, 오르가즘'],[3,'피니시, 18번 기술, 색드립, 애널, 딥스로트, 남자가 한 말'],[4,'자기 취향, 흥분 포인트, 최악/최고의 남자, 해 보고 싶은 것, 절대 싫은 것'],[5,'다인 경험, 애인·남편 외 상대, SM, 노출, 이종 경험, 변태 성욕·페티시']];
+// 섹스토크 주제(기획 6.1 헌신 등급표): [헌신, 칸 id, 이름, 원본 DB 주제 키들]
+const SLOTS=[
+ [1,'first_time','첫 경험',['first_time']],[1,'max_night','하룻밤 최다',['max_night']],
+ [2,'partners','상대 수',['partners']],[2,'odd_place','특이한 장소',['odd_place']],[2,'orgasm','오르가즘·분출',['orgasm','squirt']],
+ [3,'finish','피니시·삼킴',['finish_pref','swallow']],[3,'signature','18번 기술',['signature']],[3,'dirty_talk','색드립',['dirty_talk']],[3,'anal','애널',['anal']],[3,'deepthroat','딥스로트',['deepthroat']],[3,'memorable_line','남자가 한 말',['memorable_line']],
+ [4,'kink','자기 취향·흥분 포인트',['kink','turn_on']],[4,'worst_man','최악의 남자',['worst_man']],[4,'best_man','최고의 남자',['best_man']],[4,'want','해 보고 싶은 것',['want']],[4,'never','절대 싫은 것',['never']],
+ [5,'group','다인 경험',['group','max_day_people']],[5,'side_partner','애인·남편 외 상대',['side_partner']],[5,'sm','SM',['sm']],[5,'exhibition','노출',['exhibition']],[5,'xeno','이종 경험',[]],[5,'fetish','변태 성욕·페티시',['kink']]];
 const TYPE_GROUP={flame:'hot',proud:'hot',frank:'hot',ice:'cold',calm:'cold',plain:'cold',meek:'soft',fragile:'soft',doll:'soft'};
 const REL_GROUP={hopeful:'warm',duty:'warm',loyal:'warm',neutral:'warm',fearful:'low',bleak:'low',broken:'low',hostile:'hostile'};
 const KINDS=[['world','세계'],['family','출신'],['occupation','직업경력']];
@@ -31,7 +37,7 @@ const hashSeed=s=>{let h=2166136261;for(const ch of String(s)){h^=ch.charCodeAt(
 export async function createCharacterView(api){
  const D=await loadSimData();
  const get=async f=>{const r=await fetch('./data/'+f);if(!r.ok)throw new Error(f+'를 읽지 못했습니다.');return r.json();};
- const [CAT,FACTS,XENO,FIRST,IV,TRAITS,BG,BGD]=await Promise.all(['background-categories.json','past-facts.json','xeno-talk-drafts.json','first-time-drafts.json','first-time-interviews.json','traits.json','backgrounds.json','background-drafts.json'].map(get));
+ const [CAT,FACTS,XENO,FIRST,IV,TRAITS,BG,BGD,REFS]=await Promise.all(['background-categories.json','past-facts.json','xeno-talk-drafts.json','first-time-drafts.json','first-time-interviews.json','traits.json','backgrounds.json','background-drafts.json','interview-refs.json'].map(get));
  const RECORDS=[...BG.records,...BGD.records];
  const traitRows=TRAITS.rows.filter(r=>r.binding&&!r.binding.key.includes('['));
  const traitOn=(ch,r)=>{
@@ -104,29 +110,59 @@ export async function createCharacterView(api){
   if(t.rational<=2)return '그런 은밀한 제 비밀에 대해서 대답할 의무는 없습니다.';
   return null;
  }
+ // 주제마다 이 노예가 참조할 원본 DB 대답(같은 노예·같은 시드면 언제나 같은 대답)
+ function refFor(slot,fx){
+  if(slot==='first_time'&&fx?.fields.first_age_ref)return `${fx.fields.first_age_ref}.q02`;
+  const keys=SLOTS.find(x=>x[1]===slot)[3];if(!keys.length)return null;
+  const pool=keys.flatMap(k=>REFS.topics[k]??[]);if(!pool.length)return null;
+  return pool[Math.floor(rng(hashSeed(`${st.seed}|${ch().type}|${ch().name}|ref|${slot}`))()*pool.length)];
+ }
+ const charKey=()=>`${ch().type}|${ch().name}|${st.seed}`;
+ function refHtml(key){
+  const r=REFS.rows[key];if(!r)return '';
+  const url=REFS.urls[r.u],blocked=r.b.length?r.b.map(c=>`${c} ${REFS.blockNames[c]??''}`).join(', '):'';
+  return `<details class="cv-ref"><summary>원본 DB <code>${e(key)}</code>${blocked?` <span class="badge muted" title="표시 불가 사유: ${e(blocked)}">표시 불가</span>`:''}</summary>
+   <div class="cv-ref-body">${r.t===null?`<p class="fine-print">이 대답은 원문을 싣지 않았습니다(${e(blocked)}). 원본 글의 Q${r.q}${r.o>1?` (${r.o}번째)`:''} 대답에서 확인하세요. 부분 키: ${r.p.map(e).join(', ')}</p>`:`<p class="cv-ref-text">${e(r.t)}</p>${blocked?`<p class="fine-print">게임 표시 불가: ${e(blocked)}</p>`:''}`}
+   <a href="${e(url)}" target="_blank" rel="noopener">원본 글 열기 (Q${r.q})</a></div></details>`;
+ }
+ function generatedLines(cx){
+  const {r,fx,s}=cx,c=ch(),out={};
+  const rand=rng(hashSeed(st.seed+'|pt'+st.pt));
+  const ty=voiceType(s),style=speechStyle(s.occupation),grp=TYPE_GROUP[ty],rel=REL_GROUP[relationMode(s)];
+  if(fx?.fields.first_band==='teen')out.first_time={blocked:'B1 청소년기',text:'[이 대사는 표시 불가합니다.]'};
+  else if(fx?.fields.first_band==='adult')out.first_time={text:FIRST.userAuthoredWorlds.includes(c.world)?'':firstTimeLine(FACTS,FIRST,fx.fields,grp,style,rand)??'',note:FIRST.userAuthoredWorlds.includes(c.world)?'이 세계는 사용자 작성 칸':''};
+  const pt=pillowTalk(s,r,tierOf(cx.f,'occupation',s.occupation).name,rand,[]);if(pt)out.partners={text:pt.lines.join(' ')};
+  if(fx&&fx.fields.xeno!=='none'){
+   if(fx.blocked.xeno)out.xeno={blocked:fx.blocked.xeno,text:'[이 대사는 표시 불가합니다.]'};
+   else{const cand=XENO.rows.filter(x=>x.case===fx.fields.xeno&&x.rels===rel&&(x.types===grp||x.types==='*'));out.xeno={text:cand.length?cand[Math.floor(rand()*cand.length)].text[style].replaceAll('{괴물}',FACTS.xeno.patrolScenes[st.acq?.scene]?.label??'괴물'):'',note:fx.fields.xeno==='patrol_warg'?'와그 대사는 사용자 작성 칸':''};}
+  }else out.xeno={text:'',note:'이 노예는 이종 경험이 없습니다'};
+  if(fx?.fields.home_animal)out.xeno={blocked:'B2 수간(살던 세상의 동물 경험)',text:'[이 대사는 표시 불가합니다.]'};
+  return {out,ty,style};
+ }
  function pillowHtml(cx){
   if(!cx)return '<p class="muted-text">캐릭터를 뽑거나 불러오면 필로우토크가 나옵니다.</p>';
-  const {r,fx,s}=cx,c=ch();
+  const {r,s}=cx,c=ch();
   if(r.excluded)return '<p class="muted-text">연령 코드 1은 대상이 아닙니다.</p>';
-  const gate=talkGate(),moral=Math.max(0,Math.min(5,Number(st.talk.moral)||0));
-  const who=e(c.name||'이 노예');
-  if(gate)return `<p class="cv-line"><b>[${who}]</b> ${e(gate)}</p><p class="fine-print">대화 거부 조건(절망 ≥ 3 → 응석 ≥ 3 → 인식 ≤ 2 순서)에 걸렸습니다.</p>`;
-  if(moral<1)return `<p class="fine-print">헌신 등급 0: 대답하는 주제가 없습니다.</p>`;
-  const rand=rng(hashSeed(st.seed+'|pt'+st.pt)),lines=[];
-  const ty=voiceType(s),style=speechStyle(s.occupation),grp=TYPE_GROUP[ty],rel=REL_GROUP[relationMode(s)];
-  if(fx?.fields.first_band==='teen')lines.push('[이 대사는 표시 불가합니다.]');
-  else if(fx?.fields.first_band==='adult'){
-   const ua=FIRST.userAuthoredWorlds.includes(c.world);
-   lines.push(ua?'(이 세계의 첫 경험 대사는 사용자 작성 칸입니다)':firstTimeLine(FACTS,FIRST,fx.fields,grp,style,rand)??'');
-  }
-  if(moral>=2){const pt=pillowTalk(s,r,tierOf(cx.f,'occupation',s.occupation).name,rand,[]);if(pt)lines.push(...pt.lines);}
-  if(moral>=5&&fx&&fx.fields.xeno!=='none'){
-   const cand=XENO.rows.filter(x=>x.case===fx.fields.xeno&&x.rels===rel&&(x.types===grp||x.types==='*'));
-   if(cand.length)lines.push(cand[Math.floor(rand()*cand.length)].text[style].replaceAll('{괴물}',FACTS.xeno.patrolScenes[st.acq?.scene]?.label??'괴물'));
-  }
-  return `<div class="cv-meta">${e(TYPE_NAME[ty])} · ${e(MODE_NAME[relationMode(s)])} · ${e(STYLE_NAME[style])} · 헌신 ${moral}</div>
-   ${lines.filter(Boolean).map(l=>`<p class="cv-line"><b>[${who}]</b> ${e(l)}</p>`).join('')||'<p class="muted-text">이 조건에 맞는 대사 행이 없습니다.</p>'}
-   <div class="cv-topics">${TOPICS.map(([lv,t])=>`<span class="${lv<=moral?'on':''}">헌신 ${lv}: ${e(t)}</span>`).join('')}</div>`;
+  const gate=talkGate(),moral=Math.max(0,Math.min(5,Number(st.talk.moral)||0)),who=e(c.name||'이 노예');
+  if(gate)return `<p class="cv-line"><b>[${who}]</b> ${e(gate)}</p><p class="fine-print" title="절망 ≥ 3 → 응석 ≥ 3 → 인식 ≤ 2 순서로 먼저 걸린 반응 하나">대화 거부 조건에 걸렸습니다.</p>`;
+  const {out,ty,style}=generatedLines(cx),edits=st.ptEdits?.[charKey()]??{};
+  const open=SLOTS.filter(x=>x[0]<=moral),closed=SLOTS.length-open.length;
+  return `<div class="cv-meta">${e(TYPE_NAME[ty])} · ${e(MODE_NAME[relationMode(s)])} · ${e(STYLE_NAME[style])} · 헌신 ${moral} · 열린 주제 ${open.length}/${SLOTS.length}</div>
+   ${open.map(([lv,slot,label])=>{const g=out[slot]??{text:''},edited=edits[slot]!==undefined,text=edited?edits[slot]:g.text,ref=refFor(slot,cx.fx);
+    return `<div class="cv-slot"><div class="cv-slot-head"><b>${e(label)}</b> <small>헌신 ${lv}</small>${g.blocked?` <span class="badge muted" title="표시 불가 사유: ${e(g.blocked)}">표시 불가</span>`:''}${edited?' <span class="badge">수정됨</span>':''}${g.note?` <small class="fine-print">${e(g.note)}</small>`:''}</div>
+     <textarea class="cv-slot-text" data-cv-pt="${slot}" rows="2" placeholder="대사 없음: 원본을 보고 각색해 넣으세요" ${g.blocked?'readonly title="표시 불가 사유: '+e(g.blocked)+'"':''}>${e(text)}</textarea>
+     <div class="cv-slot-foot">${edited?`<button class="text-button" data-cv-act="pt-reset" data-slot="${slot}">생성 대사로 되돌리기</button>`:''}${ref?refHtml(ref):'<small class="fine-print">원본 DB 대응 문항 없음</small>'}</div></div>`;}).join('')}
+   ${closed?`<p class="fine-print">헌신이 오르면 ${closed}개 주제가 더 열립니다.</p>`:''}`;
+ }
+
+ // 영입 때 저장할 섹스토크 사실(초기값 시뮬레이터에서 옮김). 산출 과정은 마우스를 올리면 보인다
+ function factsCard(cx){
+  if(!cx?.fx)return '';
+  const v=cx.fx.fields,L=(g,k)=>FACTS[g]?.labels?.[k]??k,trace=[...cx.r.trace,...cx.fx.trace].join('\n');
+  const rows=[['이종 경험',L('xeno',v.xeno),cx.fx.blocked.xeno],['살던 세상의 동물 경험',v.home_animal?'있음':'없음',v.home_animal?'B2 수간':''],['페티시',v.fetish.length?v.fetish.map(k=>FACTS.fetish.candidates.find(c=>c.key===k)?.name??k).join(', '):'없음'],
+   ['첫 경험',v.first_band==='teen'?'청소년기':v.first_band==='adult'?`성인 이후 · ${v.first_age}세`:'없음',v.first_band==='teen'?'B1 청소년기':''],
+   ...(v.first_band==='none'?[]:[['첫 상대 · 방식 · 장소',`${L('firstWho',v.first_who)} · ${L('firstHow',v.first_how)} · ${L('firstWhere',v.first_where)}`],['상대 수 · 하룻밤 최다',`${v.partners}명 · ${v.max_night}회`],['다인 경험 · 하루 최다',`${L('group',v.group)} · ${v.max_day_people}명`],['오르가즘 · 분출',`${L('orgasm',v.orgasm)} · ${v.squirt?'있음':'없음'}`],['피니시 · 삼킴',`${L('finish',v.finish)} · ${v.swallow?'삼킴':'뱉음'}`],['18번 기술',SKILL_NAME[v.signature]??'없음'],['절대 싫은 것 · 해 보고 싶은 것',`${v.never?L('actLabels',v.never):'없음'} · ${v.want?L('actLabels',v.want):'없음'}`]])];
+  return `<article class="card"><div class="card-head"><h2><span class="index">04</span>저장할 섹스토크 사실</h2><span class="badge muted cv-tip" title="${e(trace)}">산출 과정 ⓘ</span></div><div class="card-body"><table class="cv-info"><tbody>${rows.map(([a,b,blk])=>`<tr><td>${e(a)}</td><td>${e(b)}${blk?` <span class="badge muted" title="표시 불가 사유: ${e(blk)}">표시 불가</span>`:''}</td></tr>`).join('')}</tbody></table><div class="fine-print cv-tip" title="${e(packFacts(v))}">저장 문자열 ${new TextEncoder().encode(packFacts(v)).length}바이트 ⓘ</div></div></article>`;
  }
 
  // ── 위: 게임에 보이는 정보 ──
@@ -161,12 +197,13 @@ export async function createCharacterView(api){
    </div>`}
    <div class="section-label">소속 이후 누적 기록</div><div class="cv-skills">${[['income','수익'],['pregnancies','임신'],['births','출산'],['abortions','낙태'],['children','자녀']].map(([k,l])=>`<span>${l} <b>${e(st.owner[k]??0)}</b></span>`).join('')}</div>
   </div></article>
-  <article class="card"><div class="card-head"><h2><span class="index">04</span>필로우토크</h2><button class="button secondary" data-cv-act="pt-again">다른 대사 뽑기</button></div><div class="card-body">${pillowHtml(cx)}</div></article>
+  ${factsCard(cx)}
+  <article class="card cv-wide"><div class="card-head"><h2><span class="index">05</span>필로우토크</h2><button class="button secondary" data-cv-act="pt-again">다른 대사 뽑기</button></div><div class="card-body">${pillowHtml(cx)}</div></article>
   </div>`;
  }
 
  // ── 아래 고정 패널: 생성·입력·내부 설정 ──
- const PANELS=[['background','배경 선택'],['input','특성·스킬 입력'],['internal','대화 상태·내부 설정'],['facts','섹스토크 사실'],['json','JSON 편집']];
+ const PANELS=[['background','배경 선택'],['input','특성·스킬 입력'],['internal','대화 상태·내부 설정'],['json','JSON 편집']];
  function pickerHtml(kind,label){
   const c=ch(),sel={world:c.world,family:c.family,occupation:c.occupation};
   // 위에서 아래로 고른다: 세계는 언제나 전부, 출신은 고른 세계에 연결된 것, 직업은 고른 세계·출신에 연결된 것
@@ -200,13 +237,7 @@ export async function createCharacterView(api){
    </div>
    <div class="section-label">과거 경력 값 직접 지정 (빈칸 = 공식)</div><div class="cv-form">${[['intimacy','성경험 총횟수'],['pregnancies','임신'],['births','출산']].map(([k,l])=>`<label>${l}${num('overrides.'+k,st.overrides[k],'min="0" step="1" placeholder="공식"')}</label>`).join('')}</div>
    <div class="section-label">소속 이후 누적 기록</div><div class="cv-form">${[['income','수익'],['pregnancies','임신'],['births','출산'],['abortions','낙태'],['children','자녀']].map(([k,l])=>`<label>${l}${num('owner.'+k,st.owner[k],'min="0" step="1"')}</label>`).join('')}</div>
-   <p class="fine-print">공식 계수는 "초기값 시뮬레이터" 탭의 공식 계수 칸에서 바꿉니다(이 브라우저에 저장, 여기에도 적용). 전투 관련 항목은 이 패널에서 뺐습니다.</p>`;
-  }
-  if(st.panel==='facts'){
-   if(!cx?.fx)return '<p class="muted-text">캐릭터를 뽑거나 불러오세요.</p>';
-   const v=cx.fx.fields;
-   return `<div class="muted-text">저장 문자열 ${new TextEncoder().encode(packFacts(v)).length}바이트</div><code class="cv-code">${e(packFacts(v))}</code>${v.first_age_ref?`<p class="fine-print">청소년기(B1) 연결 인터뷰: <code>${e(v.first_age_ref)}</code></p>`:''}
-    <ol class="one-trace">${[...cx.r.trace,...cx.fx.trace].map(t=>`<li>${e(t)}</li>`).join('')}</ol>`;
+   <p class="fine-print">공식 계수는 "산식 계수" 탭에서 바꿉니다(이 브라우저에 저장, 여기에도 바로 적용). 전투 관련 항목은 이 패널에서 뺐습니다.</p>`;
   }
   return `<p class="fine-print">현재 캐릭터를 캐릭터 JSON(seed_ 키) 형식으로 보여 줍니다. 고친 뒤 [적용]을 누르면 캐릭터에 반영됩니다.</p>
    <textarea id="cvJson" class="cv-json">${e(JSON.stringify(toJson(),null,1))}</textarea>
@@ -291,6 +322,7 @@ export async function createCharacterView(api){
   if(a==='panel'){st.panel=b.dataset.panel;st.folded=false;}
   if(a==='fold')st.folded=!st.folded;
   if(a==='pt-again')st.pt=(st.pt??1)+1;
+  if(a==='pt-reset'){const m=st.ptEdits?.[charKey()];if(m)delete m[b.dataset.slot];}
   if(a==='term'){applyTerms(root.querySelector('#cvTerm').value);}
   if(a==='text-save'){const k=b.dataset.kind,v=root.querySelector(`[data-cv-text="${k}"]`).value;if(!v.trim()){api.toast('대사는 비워둘 수 없습니다.');return;}saveBackgroundText(k,v);api.toast('대사를 저장했습니다.');}
   if(a==='text-restore'){const k=b.dataset.kind,bt=backgroundText(k);if(bt)saveBackgroundText(k,bt.original);api.toast('원문으로 복원했습니다.');}
@@ -302,6 +334,8 @@ export async function createCharacterView(api){
  root.addEventListener('change',ev=>{
   const t=ev.target;
   if(t.dataset.cvLock){st.locks[t.dataset.cvLock]=t.checked;save();return;}
+  // 칸을 벗어날 때(blur) 바로 다시 그리면 클릭한 버튼이 사라지므로 다음 틱에 그린다
+  if(t.dataset.cvPt){((st.ptEdits??={})[charKey()]??={})[t.dataset.cvPt]=t.value;save();setTimeout(renderMain,0);return;}
   if(t.dataset.cvNum){const [grp,k]=t.dataset.cvNum.split('.');const v=t.value===''?undefined:Math.max(0,Math.trunc(Number(t.value)));if(t.value!==''&&!Number.isFinite(Number(t.value)))return;st[grp][k]=v;}
   else if(t.dataset.cvPsy!==undefined)st.talk.psy_status=t.value;
   else if(t.dataset.cvVoice!==undefined){if(t.value)ch().jo9_voice_type=t.value;else delete ch().jo9_voice_type;}
@@ -309,7 +343,7 @@ export async function createCharacterView(api){
   else if(t.dataset.cvRoute!==undefined)st.acq={route:t.value,scene:st.acq.scene??''};
   else if(t.dataset.cvScene!==undefined)st.acq={route:'patrol',scene:t.value};
   else return;
-  save();render();
+  save();setTimeout(render,0);
  });
  root.querySelector('#cvUniqueFile').addEventListener('change',async ev=>{
   const f=ev.target.files[0];ev.target.value='';if(!f)return;
