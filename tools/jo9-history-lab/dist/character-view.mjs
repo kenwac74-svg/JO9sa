@@ -192,7 +192,8 @@ export async function createCharacterView(api){
  // ── 위: 게임에 보이는 정보 ──
  function renderMain(){
   const c=ch(),cx=compute();
-  const bgLine=kind=>{if(c.unique)return '유니크 고정 설정';if(!c[kind])return '—';const cat=catOf(kind,c[kind]);return `${cat?e(cat.label)+' › ':''}${e(nameOf(kind,c[kind]))}`;};
+  // 유니크도 세계·출신·직업을 정하면 그 값을 보여 준다(사용자 지시 2026-11-12). 정하지 않았으면 '유니크 고정 설정(분류 없음)'
+  const bgLine=kind=>{if(c.unique&&!c[kind])return '유니크 고정 설정(분류 없음)';if(!c[kind])return '—';const cat=catOf(kind,c[kind]);return `${cat?e(cat.label)+' › ':''}${e(nameOf(kind,c[kind]))}`;};
   const traits=traitRows.filter(r=>r.category!=='상태'&&traitOn(c,r)),states=traitRows.filter(r=>r.category==='상태'&&traitOn(c,r));
   const skills=Object.entries(SKILL_NAME).filter(([k])=>Number(c[k]??0)>0);
   const attrs=Object.entries(LV).filter(([k])=>c[k]!==undefined);
