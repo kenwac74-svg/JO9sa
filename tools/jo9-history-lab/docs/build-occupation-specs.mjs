@@ -32,7 +32,7 @@ export function buildSpecs(specs=SPECS){
     return {...base,options,none:r.none};
    }
    if(r.type==='tiered'){
-    return {...base,status:'미정',entry:r.entry,first:r.first.map(trait),second:{probability:r.second.probability,traits:r.second.traits.map(trait)},overall:r.entry*r.second.probability/100};
+    return {...base,status:r.weights?'확정':'미정',...(r.weights?{weights:r.weights}:{}),entry:r.entry,first:r.first.map(trait),second:{probability:r.second.probability,traits:r.second.traits.map(trait)},overall:r.entry*r.second.probability/100};
    }
    if(r.type==='skillMin'||r.type==='skillExclude'){
     const skill=SKILLS[r.skill];if(!skill)errors.push('없는 스킬: '+r.skill);

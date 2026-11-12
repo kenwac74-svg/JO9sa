@@ -976,35 +976,35 @@
    "rules": [
     {
      "type": "chance",
-     "status": "미정",
+     "status": "확정",
      "trait": {
       "name": "미련한 소",
       "id": "cowSK_affinity > 0",
       "key": "cowSK_affinity"
      },
-     "probability": null,
+     "probability": 10,
      "mode": "add"
     },
     {
      "type": "chance",
-     "status": "미정",
+     "status": "확정",
      "trait": {
       "name": "이국적인 댄서",
       "id": "calisthenics_affinity > 0",
       "key": "calisthenics_affinity"
      },
-     "probability": null,
+     "probability": 30,
      "mode": "add"
     },
     {
      "type": "chance",
-     "status": "미정",
+     "status": "확정",
      "trait": {
       "name": "무기력함",
       "id": "activity_sign = -1",
       "key": "activity_sign"
      },
-     "probability": null,
+     "probability": 20,
      "mode": "add"
     },
     {
@@ -1092,19 +1092,26 @@
     },
     {
      "type": "chance",
-     "status": "미정",
+     "status": "확정",
      "trait": {
       "name": "거센 반항심",
       "id": "defiant = 1",
       "key": "defiant"
      },
-     "probability": null,
+     "probability": 10,
      "mode": "add"
     },
     {
-     "type": "note",
-     "status": "메모",
-     "text": "비서 제외: 비서 스킬 등급인지 다른 뜻인지 확인 필요"
+     "type": "skillExclude",
+     "status": "확정",
+     "text": "원 인계 비서 제외 = 비서 F 제외(사용자 결정 2026-11-12)",
+     "skill": {
+      "name": "비서",
+      "key": "secretary"
+     },
+     "grades": [
+      "F"
+     ]
     }
    ]
   },
@@ -1182,8 +1189,19 @@
    "rules": [
     {
      "type": "tiered",
-     "status": "미정",
-     "text": "20% 진입 → 둘 중 하나 확정 → 진입자 중 20%에 셋 중 하나(전체 4%). 그룹 안 세부 가중치는 미정",
+     "status": "확정",
+     "text": "20% 진입 → 둘 중 하나 확정(반반) → 진입자 중 20%에 셋 중 하나(같은 비중, 전체 4%). 최종 비율(사용자 결정 2026-11-12)",
+     "weights": {
+      "first": [
+       50,
+       50
+      ],
+      "second": [
+       1,
+       1,
+       1
+      ]
+     },
      "entry": 20,
      "first": [
       {

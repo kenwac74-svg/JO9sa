@@ -55,17 +55,18 @@ export const SPECS=[
   {type:'exclude',trait:'운동광'},{type:'exclude',trait:'품위있는 여자'},{type:'forbid',trait:'낮은 대사량'},{type:'forbid',trait:'미약한 대사량'},
   {type:'chance',trait:'절세미인',probability:5}]},
  {label:'클러버',occupations:['major'],line:202,rules:[
-  {type:'chance',trait:'미련한 소',probability:null},{type:'chance',trait:'이국적인 댄서',probability:null},{type:'chance',trait:'무기력함',probability:null},
+  {type:'chance',trait:'미련한 소',probability:10},{type:'chance',trait:'이국적인 댄서',probability:30},{type:'chance',trait:'무기력함',probability:20},
   {type:'skillExclude',skill:'무용',grades:['F','D']},{type:'exclude',trait:'무모함'}]},
  {label:'무용가',occupations:['dancer'],line:203,rules:[{type:'grant',trait:'이국적인 댄서'},{type:'exclude',trait:'끈기'}]},
  {label:'우주군 사관생도',occupations:['academy'],line:204,rules:[
-  {type:'chance',trait:'야심가',probability:5},{type:'exclude',trait:'용감함'},{type:'chance',trait:'거센 반항심',probability:null},
-  {type:'note',text:'비서 제외: 비서 스킬 등급인지 다른 뜻인지 확인 필요'}]},
+  {type:'chance',trait:'야심가',probability:5},{type:'exclude',trait:'용감함'},{type:'chance',trait:'거센 반항심',probability:10},
+  {type:'skillExclude',skill:'비서',grades:['F'],text:'원 인계 비서 제외 = 비서 F 제외(사용자 결정 2026-11-12)'}]},
  {label:'전투로봇 파일럿',occupations:['mech'],line:205,rules:[{type:'grant',trait:'거센 반항심'},{type:'grant',trait:'운동광'},{type:'exclude',trait:'용감함'}]},
  {label:'궤도 정비공',occupations:['installer'],line:206,rules:[{type:'chance',trait:'운동광',probability:20}]},
  {label:'영웅 여전사',occupations:['heroine'],line:148,rules:[
   {type:'tiered',entry:20,first:['타고난 투사','용감함'],second:{probability:20,traits:['역전의 용사','성기사','광전사']},
-   text:'20% 진입 → 둘 중 하나 확정 → 진입자 중 20%에 셋 중 하나(전체 4%). 그룹 안 세부 가중치는 미정'}]},
+   weights:{first:[50,50],second:[1,1,1]},
+   text:'20% 진입 → 둘 중 하나 확정(반반) → 진입자 중 20%에 셋 중 하나(같은 비중, 전체 4%). 최종 비율(사용자 결정 2026-11-12)'}]},
  {label:'소녀·여학생',occupations:['tribal_girl','schoolgirl'],line:94,rules:[
   {type:'note',text:'두 직업의 기본 직업 보너스는 같다. 소녀에 순수한 영혼 추가 지시가 있었으며 두 직업 공통 적용 여부는 확인 필요'}]},
 ];
