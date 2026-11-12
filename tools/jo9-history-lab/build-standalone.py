@@ -1,5 +1,5 @@
-# dist 폴더 전체를 한 파일에 담은 단독 실행기(.py)를 만드는 빌드 스크립트
-# 사용: python3 build-standalone.py <출력 파일>
+# 통합 캐릭터 편집기(dist + 로컬 서버 + 이미지 도구 백엔드)를 한 파일에 담은 단독 실행기(.py)를 만드는 빌드 스크립트
+# 사용: python3 build-standalone.py <출력 파일> [빌드 표시]
 import base64
 import io
 import sys
@@ -8,24 +8,18 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 DIST = HERE / 'dist'
+IMAGE_TOOL = HERE.parent / 'character-image-adder'
+BACKEND = ['add_character.py', 'align_core.py', 'tool_log.py']
 
-TEMPLATE = '''# JO9 통계 편집기 단독 실행기: 편집기 파일을 이 파일 안에 담아 두고, 임시 폴더에 풀어 이 PC 안에서만 보이는 로컬 서버로 연다
-# 실행: 파이썬 3.8 이상에서 이 파일을 더블클릭하거나 `python JO9_history_lab.py`
-# 예전 실행기가 켜져 있어도 이 파일의 편집기를 빈 포트에 따로 띄우고, 브라우저 캐시를 쓰지 않게 한다.
-import base64, functools, http.server, io, socket, tempfile, threading, webbrowser, zipfile
+TEMPLATE = '''# JO9 통합 캐릭터 편집기 단독 실행기: 편집기·로컬 서버·이미지 도구 백엔드를 이 파일 안에 담아 두고, 임시 폴더에 풀어 이 PC 안에서만 보이는 서버로 연다
+# 실행: 파이썬 3.8 이상에서 이 파일을 더블클릭하거나 `python JO9_character_studio.py [--game 게임폴더]`
+# 게임 파일 기능(외형·JSON·대사집·QSP)에는 Pillow가 필요하다(python -m pip install pillow). 없어도 시뮬레이터는 쓸 수 있다.
+# 게임 폴더 설정은 이 파일 옆 studio.local.json 에 남는다.
+import argparse, base64, io, os, socket, sys, tempfile, threading, webbrowser, zipfile
 from pathlib import Path
 
 BUILD = {build!r}
 PAYLOAD = {payload!r}
-
-
-class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
-    def end_headers(self):
-        self.send_header('Cache-Control', 'no-store, max-age=0')
-        super().end_headers()
-
-    def log_message(self, *args):
-        pass
 
 
 def running_build(port):
@@ -56,9 +50,24 @@ def free_port(start=7690, end=7790):
 
 
 def main():
-    root = Path(tempfile.mkdtemp(prefix='jo9-history-lab-'))
+    parser = argparse.ArgumentParser(description='JO9 통합 캐릭터 편집기')
+    parser.add_argument('--game', help='게임 폴더(content/pic/girls/full 과 json/slaves 가 있는 game 폴더)')
+    parser.add_argument('--repo', help='JO9sa repo 폴더(QSP 대사 mod를 repo mods/에 저장할 때)')
+    args = parser.parse_args()
+    root = Path(tempfile.mkdtemp(prefix='jo9-studio-'))
     zipfile.ZipFile(io.BytesIO(base64.b64decode(PAYLOAD))).extractall(root)
-    (root / 'build.txt').write_text(BUILD, encoding='utf-8')
+    (root / 'lab' / 'dist' / 'build.txt').write_text(BUILD, encoding='utf-8')
+    here = Path(__file__).resolve().parent
+    os.environ['JO9_STUDIO_SETTINGS'] = str(here / 'studio.local.json')
+    os.environ['JO9_IMAGE_TOOL'] = str(root / 'character-image-adder')
+    if args.game:
+        os.environ['JO9_GAME_ROOT'] = args.game
+    if args.repo:
+        os.environ['JO9_REPO_ROOT'] = args.repo
+    elif (here / 'local.config.json').exists() or (here.parent / 'mods').is_dir():
+        os.environ['JO9_REPO_ROOT'] = str(here if (here / 'mods').is_dir() else here.parent)
+    sys.path.insert(0, str(root / 'lab'))
+    import studio_server
     # 기본 포트 7689를 쓴다(브라우저 저장값이 포트별로 따로라서). 이미 같은 빌드가 떠 있으면 그 창을 연다.
     port = 7689
     if in_use(port):
@@ -70,10 +79,11 @@ def main():
         print('주의: 예전 실행기 창이 아직 켜져 있습니다. 새 편집기를 다른 포트에 띄웁니다.')
         print('예전 창을 닫고 이 파일을 다시 실행하면 기본 포트에서 열리고, 그동안 이 브라우저에 저장한 값도 그대로 보입니다.')
     url = f'http://127.0.0.1:{{port}}/?v={{BUILD.split()[0] if BUILD else port}}'
-    handler = functools.partial(NoCacheHandler, directory=str(root))
-    server = http.server.ThreadingHTTPServer(('127.0.0.1', port), handler)
+    server = studio_server.make_server(port)
     threading.Timer(0.5, lambda: webbrowser.open(url)).start()
-    print('JO9 통계 편집기', BUILD)
+    print('JO9 통합 캐릭터 편집기', BUILD)
+    if studio_server.BACKEND_ERROR:
+        print('주의:', studio_server.BACKEND_ERROR)
     print('편집기를 열었습니다:', url)
     print('끝내려면 이 창을 닫거나 Ctrl+C를 누르세요.')
     try:
@@ -92,7 +102,10 @@ def main(out: str, build: str) -> None:
     with zipfile.ZipFile(buf, 'w', zipfile.ZIP_DEFLATED, compresslevel=9) as z:
         for f in sorted(DIST.rglob('*')):
             if f.is_file():
-                z.write(f, f.relative_to(DIST).as_posix())
+                z.write(f, 'lab/dist/' + f.relative_to(DIST).as_posix())
+        z.write(HERE / 'studio_server.py', 'lab/studio_server.py')
+        for name in BACKEND:
+            z.write(IMAGE_TOOL / name, 'character-image-adder/' + name)
     payload = base64.b64encode(buf.getvalue()).decode('ascii')
     Path(out).write_text(TEMPLATE.format(build=build, payload=payload), encoding='utf-8')
     print(out, len(payload) // 1024, 'KB')

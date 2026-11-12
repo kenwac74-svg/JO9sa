@@ -12,9 +12,11 @@ from urllib.parse import unquote, urlparse
 
 HERE = Path(__file__).resolve().parent
 DIST = HERE / 'dist'
-SETTINGS = HERE / 'studio.local.json'          # 이 PC의 게임 폴더(깃 제외)
-REPO_CONFIG = HERE.parent.parent / 'local.config.json'  # repo 공통 설정(GameQsp)
-IMAGE_TOOL = HERE.parent / 'character-image-adder'
+# 단독 실행기는 임시 폴더에서 돌므로, 설정 파일·repo 위치를 환경 변수로 받는다
+SETTINGS = Path(os.environ.get('JO9_STUDIO_SETTINGS') or HERE / 'studio.local.json')  # 이 PC의 게임 폴더(깃 제외)
+REPO = Path(os.environ.get('JO9_REPO_ROOT') or HERE.parent.parent)
+REPO_CONFIG = REPO / 'local.config.json'  # repo 공통 설정(GameQsp)
+IMAGE_TOOL = Path(os.environ.get('JO9_IMAGE_TOOL') or HERE.parent / 'character-image-adder')
 IMAGE_EXT = {'.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.gif': 'image/gif', '.webp': 'image/webp'}
 MAX_BODY = 64 * 1024 * 1024
 _lock = threading.Lock()
@@ -30,7 +32,14 @@ def load_backend(tool_dir=IMAGE_TOOL):
     return add_character, align_core
 
 
-api, align = load_backend()
+try:
+    api, align = load_backend()
+    BACKEND_ERROR = ''
+except ImportError as error:  # Pillow가 없으면 게임 파일 기능만 끄고 시뮬레이터는 쓸 수 있게 한다
+    api = align = None
+    BACKEND_ERROR = ('게임 파일 기능에는 Pillow가 필요합니다. 명령 창에서 python -m pip install pillow 를 실행하세요.'
+                     if getattr(error, 'name', '') == 'PIL' else
+                     '이미지 도구 파일(add_character.py)을 찾지 못했습니다: ' + str(IMAGE_TOOL))
 
 
 # ------------------------------------------------------------------ 게임 폴더
@@ -58,6 +67,8 @@ def game_root():
 
 
 def game_status():
+    if api is None:
+        return {'root': '', 'source': '', 'ok': False, 'qsp': '', 'hint': BACKEND_ERROR}
     root, source = game_root()
     ok = bool(root) and api._looks_like_game_root(root)
     qsp = os.path.join(root, 'jack.qsp') if root else ''
@@ -138,7 +149,7 @@ def read_character(sid):
 
 
 SEED_KEYS = set(json.loads((DIST / 'data' / 'game-seed-keys.json').read_text(encoding='utf-8'))['keys'])
-STORY_KEYS = {key: field for key, field, _label in api.STORY_FIELDS}
+STORY_KEYS = {key: field for key, field, _label in api.STORY_FIELDS} if api else {}
 
 
 def editable_key(key):
@@ -428,7 +439,6 @@ def delete(sid, body):
 
 
 # ------------------------------------------------------------------ QSP 이벤트 대사(읽기 + mods 초안)
-REPO = HERE.parent.parent
 _qsp_cache = {}
 
 
