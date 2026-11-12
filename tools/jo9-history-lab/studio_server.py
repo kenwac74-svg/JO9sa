@@ -1,4 +1,6 @@
 # 통합 캐릭터 편집기의 로컬 서버: 편집기 화면(dist)을 내보내고, 이미지 도구(add_character.py) 기능으로 게임 폴더의 캐릭터 JSON·이미지를 읽고 쓴다
+import base64
+import io
 import json
 import os
 import re
@@ -182,6 +184,75 @@ def save_fields(sid, body):
             'character': read_character(sid) if changes and not body.get('dryRun') else None}
 
 
+def decode_image(src):
+    """data:image/...;base64,... → RGBA 이미지. 이미지가 아니면 거부."""
+    from PIL import Image
+    m = re.match(r'^data:image/(png|jpeg|jpg|webp|gif);base64,(.+)$', str(src or ''), re.S)
+    if not m:
+        raise ValueError('이미지 데이터가 아닙니다.')
+    raw = base64.b64decode(m.group(2), validate=False)
+    with Image.open(io.BytesIO(raw)) as image:
+        image.load()
+        if image.width * image.height > 60_000_000:
+            raise ValueError('이미지가 너무 큽니다.')
+        return image.convert('RGBA')
+
+
+def existing_slot_image(p, data, sid, slot):
+    field, reference = api.slot_reference(data, slot, api.is_dedicated(p, int(sid)))
+    if not reference:
+        raise ValueError('이 슬롯에는 기존 이미지가 없습니다: ' + slot)
+    return api._load_rgba(api._abs_from_gamepath(p.root, reference))
+
+
+def compose_slot(image, t):
+    """Tk 도구와 같은 규칙: 변환값이 있으면 그대로 올리고, 없으면 795x596이면 그대로, 아니면 비율 유지로 맞춘다."""
+    if t:
+        return align.apply_transform(image, align.check_transform(t))
+    return image if image.size == (align.W, align.H) else api.compose_full(image)
+
+
+def save_images(sid, body):
+    """외형 슬롯·얼굴 저장. body = {slots:{슬롯: {src: dataURL|'existing', t:{s,x,y}|null} | null(연결 해제)},
+    face: {mode:'box', box:[x,y,w]} | {mode:'file', src:dataURL}, dryRun}"""
+    p = paths()
+    sid = int(sid)
+    data, _json_file = api.read_slave(p, sid)
+    slot_images, composed = {}, {}
+    for slot, spec in (body.get('slots') or {}).items():
+        if slot not in api.SLOT_FIELDS:
+            raise ValueError('알 수 없는 슬롯입니다: ' + str(slot))
+        if spec is None:
+            slot_images[slot] = None
+            continue
+        src = spec.get('src')
+        image = existing_slot_image(p, data, sid, slot) if src == 'existing' else decode_image(src)
+        composed[slot] = slot_images[slot] = compose_slot(image, spec.get('t'))
+    face_image = None
+    face = body.get('face')
+    if face and face.get('mode') == 'box':
+        base = composed.get('base')
+        if base is None:
+            base = compose_slot(existing_slot_image(p, data, sid, 'base'), None)
+        x, y, w = (int(round(float(v))) for v in face['box'])
+        h = max(1, int(round(w * 150.0 / 151.0)))
+        if w < 16 or x < 0 or y < 0 or x + w > align.W or y + h > align.H:
+            raise ValueError('얼굴 상자가 그림 밖으로 나갔습니다.')
+        face_image = base.crop((x, y, x + w, y + h))
+    elif face and face.get('mode') == 'file':
+        face_image = decode_image(face.get('src'))
+    if not slot_images and face_image is None:
+        raise ValueError('바꿀 이미지가 없습니다.')
+    logs = []
+    result = api.save_character_slots(p, sid, slot_images=slot_images, face_image=face_image,
+                                      log=logs.append, dry_run=bool(body.get('dryRun')))
+    root = os.path.realpath(p.root)
+    rel = lambda f: os.path.relpath(f, root).replace(os.sep, '/')
+    return {'dryRun': bool(body.get('dryRun')), 'files': [rel(f) for f in result['files']], 'targets': result['targets'],
+            'warnings': result['warnings'], 'sharedWith': result['shared_with'], 'log': logs,
+            'character': None if body.get('dryRun') else read_character(sid)}
+
+
 def game_file(rel):
     """/game/<경로>: 게임 폴더 안의 이미지 파일만 돌려준다."""
     p = paths()
@@ -205,6 +276,7 @@ ROUTES_GET = [
 ROUTES_POST = [
     (re.compile(r'^/api/game$'), lambda m, body: set_game_root(body.get('root'))),
     (re.compile(r'^/api/char/(\d+)/fields$'), lambda m, body: save_fields(m.group(1), body)),
+    (re.compile(r'^/api/char/(\d+)/images$'), lambda m, body: save_images(m.group(1), body)),
 ]
 
 
