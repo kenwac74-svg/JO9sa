@@ -166,7 +166,7 @@ export async function createCharacterView(api){
    const ref=refFor(id,lie?null:cx.fx,lie?'|lie':''),truthRef=lie?refFor(id,cx.fx):null;
    say=text?e(text):'<span class="gm-muted">(대사 없음: 아래에서 원본을 보고 각색해 넣으세요)</span>';
    editor=`<div class="cv-slot"><div class="cv-slot-head"><b>${e(label)}</b> <small>헌신 ${lv}</small>${g.blocked?` <span class="badge muted" title="표시 불가 사유: ${e(g.blocked)}">표시 불가</span>`:''}${lie?` <span class="badge" title="장악력 ${st.talk.supermacy??0} < 0: 거짓말(다른 노예의 답). 진실: ${e(tg.text||'(대사 없음)')}${truthRef?' / 진실 원본 '+e(truthRef):''}">거짓말</span>`:''}${edited?' <span class="badge">수정됨</span>':''}${g.note?` <small class="fine-print">${e(g.note)}</small>`:''}</div>
-    <textarea class="cv-slot-text" data-cv-pt="${id}" rows="3" placeholder="대사 없음: 원본을 보고 각색해 넣으세요" ${g.blocked?'readonly title="표시 불가 사유: '+e(g.blocked)+'"':''}>${e(text)}</textarea>
+    <textarea class="cv-slot-text" data-cv-pt="${id}" rows="3" placeholder="대사 없음: 원본을 보고 각색해 넣으세요" ${g.blocked?'title="표시 불가 사유: '+e(g.blocked)+' · Claude가 대사를 만들지 않은 칸이며 직접 쓰는 것은 막지 않음"':''}>${e(text)}</textarea>
     <div class="cv-slot-foot">${edited?`<button class="text-button" data-cv-act="pt-reset" data-slot="${id}">생성 대사로 되돌리기</button>`:''}${ref?refHtml(ref):'<small class="fine-print">원본 DB 대응 문항 없음</small>'}</div></div>`;
   }
   const qs=open.slice(page*PAGE,page*PAGE+PAGE);
