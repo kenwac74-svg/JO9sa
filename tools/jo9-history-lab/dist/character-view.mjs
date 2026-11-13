@@ -23,7 +23,7 @@ const TALK={moral:'헌신',angst:'절망',spoil:'응석',rational:'인식',fear:
 const PSY={docile:'온순함',soft:'부드러움',optimistic:'낙관',obedient:'순종',servile:'비굴',horny:'발정',reluctant:'마지못함',arrogant:'오만',hateful:'증오',resistant:'저항',hysteric:'히스테리',lachrymose:'눈물',frightened:'겁먹음',depresive:'우울',broken:'무너짐'};
 const STATE_WORDS={'처녀':['virginity',0],'비처녀':['virginity',2],'불임':['fertility',-1],'임신 가능':['fertility',0],'임신 중':['pregnant',1],'클론':['clone',1],'연령 0':['age',0],'연령 2':['age',2]};
 // 섹스토크 주제(기획 6.1 헌신 등급표): [헌신, 칸 id, 이름, 원본 DB 주제 키들, 주인공 질문 선택지]
-const SLOTS=[
+export const SLOTS=[
  [1,'first_time','첫 경험',['first_time'],'처음은 언제였는지 묻는다'],[1,'max_night','하룻밤 최다',['max_night'],'하룻밤에 가장 많이 한 게 몇 번인지 묻는다'],
  [2,'partners','상대 수',['partners'],'지금까지 몇 명과 했는지 묻는다'],[2,'odd_place','특이한 장소',['odd_place'],'가장 이상한 곳이 어디였는지 묻는다'],[2,'orgasm','오르가즘·분출',['orgasm','squirt'],'가 본 적이 있는지 묻는다'],
  [3,'finish','피니시·삼킴',['finish_pref','swallow'],'어디에 싸 주는 게 좋은지 묻는다'],[3,'signature','18번 기술',['signature'],'가장 자신 있는 기술을 묻는다'],[3,'dirty_talk','색드립',['dirty_talk'],'할 때 무슨 말을 하는지 묻는다'],[3,'anal','애널',['anal'],'뒤로도 해 봤는지 묻는다'],[3,'deepthroat','딥스로트',['deepthroat'],'목 깊이 넣어 봤는지 묻는다'],[3,'memorable_line','남자가 한 말',['memorable_line'],'남자가 했던 말 중 기억나는 걸 묻는다'],
@@ -37,7 +37,7 @@ const hashSeed=s=>{let h=2166136261;for(const ch of String(s)){h^=ch.charCodeAt(
 export async function createCharacterView(api){
  const D=await loadSimData();
  const get=async f=>{const r=await fetch('./data/'+f);if(!r.ok)throw new Error(f+'를 읽지 못했습니다.');return r.json();};
- const [CAT,FACTS,XENO,FIRST,IV,TRAITS,BG,BGD,REFS]=await Promise.all(['background-categories.json','past-facts.json','xeno-talk-drafts.json','first-time-drafts.json','first-time-interviews.json','traits.json','backgrounds.json','background-drafts.json','interview-refs.json'].map(get));
+ const [CAT,FACTS,XENO,FIRST,IV,TRAITS,BG,BGD,REFS,ACQ]=await Promise.all(['background-categories.json','past-facts.json','xeno-talk-drafts.json','first-time-drafts.json','first-time-interviews.json','traits.json','backgrounds.json','background-drafts.json','interview-refs.json','acquisition-routes.json'].map(get));
  const RECORDS=[...BG.records,...BGD.records];
  const traitRows=TRAITS.rows.filter(r=>r.binding&&!r.binding.key.includes('['));
  const traitOn=(ch,r)=>{
@@ -122,19 +122,19 @@ export async function createCharacterView(api){
   const r=REFS.rows[key];if(!r)return '';
   const url=REFS.urls[r.u],blocked=r.b.length?r.b.map(c=>`${c} ${REFS.blockNames[c]??''}`).join(', '):'';
   return `<details class="cv-ref"><summary>원본 DB <code>${e(key)}</code>${blocked?` <span class="badge muted" title="표시 불가 사유: ${e(blocked)}">표시 불가</span>`:''}</summary>
-   <div class="cv-ref-body">${r.t===null?`<p class="fine-print">이 대답은 원문을 싣지 않았습니다(${e(blocked)}). 원본 글의 Q${r.q}${r.o>1?` (${r.o}번째)`:''} 대답에서 확인하세요. 부분 키: ${r.p.map(e).join(', ')}</p>`:`<p class="cv-ref-text">${e(r.t)}</p>${blocked?`<p class="fine-print">게임 표시 불가: ${e(blocked)}</p>`:''}`}
+   <div class="cv-ref-body">${r.t===null?`<p class="fine-print"><span class="badge muted">클로드 정책준수</span> 이 대답은 원문을 싣지 않았습니다(${e(blocked)}). 원본 글의 Q${r.q}${r.o>1?` (${r.o}번째)`:''} 대답에서 확인하세요. 부분 키: ${r.p.map(e).join(', ')}</p>`:`<p class="cv-ref-text">${e(r.t)}</p>${blocked?`<p class="fine-print">게임 표시 불가: ${e(blocked)}</p>`:''}`}
    <a href="${e(url)}" target="_blank" rel="noopener">원본 글 열기 (Q${r.q})</a></div></details>`;
  }
  function generatedLines(cx){
   const {r,fx,s}=cx,c=ch(),out={};
   const rand=rng(hashSeed(st.seed+'|pt'+st.pt));
-  const ty=voiceType(s),style=speechStyle(s.occupation),grp=TYPE_GROUP[ty],rel=REL_GROUP[relationMode(s)];
+  const ty=voiceType(s),style=speechStyle(s.occupation,ch().type),grp=TYPE_GROUP[ty],rel=REL_GROUP[relationMode(s)];
   if(fx?.fields.first_band==='teen')out.first_time={blocked:'B1 청소년기',text:'[이 대사는 표시 불가합니다.]'};
   else if(fx?.fields.first_band==='adult')out.first_time={text:FIRST.userAuthoredWorlds.includes(c.world)?'':firstTimeLine(FACTS,FIRST,fx.fields,grp,style,rand)??'',note:FIRST.userAuthoredWorlds.includes(c.world)?'이 세계는 사용자 작성 칸':''};
   const pt=pillowTalk(s,r,tierOf(cx.f,'occupation',s.occupation).name,rand,[]);if(pt)out.partners={text:pt.lines.join(' ')};
   if(fx&&fx.fields.xeno!=='none'){
    if(fx.blocked.xeno)out.xeno={blocked:fx.blocked.xeno,text:'[이 대사는 표시 불가합니다.]'};
-   else{const cand=XENO.rows.filter(x=>x.case===fx.fields.xeno&&x.rels===rel&&(x.types===grp||x.types==='*'));out.xeno={text:cand.length?cand[Math.floor(rand()*cand.length)].text[style].replaceAll('{괴물}',FACTS.xeno.patrolScenes[st.acq?.scene]?.label??'괴물'):'',note:fx.fields.xeno==='patrol_warg'?'와그 대사는 사용자 작성 칸':''};}
+   else{const cand=XENO.rows.filter(x=>x.case===fx.fields.xeno&&x.rels===rel&&(x.types===grp||x.types==='*'));out.xeno={text:cand.length?(t=>t[style]??t['2'])(cand[Math.floor(rand()*cand.length)].text).replaceAll('{괴물}',FACTS.xeno.patrolScenes[st.acq?.scene]?.label??'괴물'):'',note:fx.fields.xeno==='patrol_warg'?'와그 대사는 사용자 작성 칸':''};}
   }else out.xeno={text:'',note:'이 노예는 이종 경험이 없습니다'};
   if(fx?.fields.home_animal)out.xeno={blocked:'B2 수간(살던 세상의 동물 경험)',text:'[이 대사는 표시 불가합니다.]'};
   return {out,ty,style};
@@ -148,10 +148,22 @@ export async function createCharacterView(api){
   return {r,fx,f:cx.f,s};
  }
  const PAGE=8;
+ // 대답 길이 규칙(사용자 승인 2026-11-13, 세계관 자료집 7장 7.7): 한 페이지 230자(게임 $voice_flow_pack 경계, 문장 가운데서 자르지 않음), 한 대답 최대 2페이지
+ const PAGE_CHARS=230,MAX_PAGES=2;
+ function talkPages(text){
+  const sents=String(text).match(/[^.!?…~]+[.!?…~]*\s*/g)??[String(text)],pages=[];let cur='';
+  for(const s of sents){if(cur&&(cur+s).trim().length>PAGE_CHARS){pages.push(cur.trim());cur='';}cur+=s;}
+  if(cur.trim())pages.push(cur.trim());return pages;
+ }
+ function pagesHtml(text){
+  const p=talkPages(text);if(p.length<=1)return e(text);
+  return p.map((x,i)=>`<span class="badge muted">${i+1}/${p.length}쪽</span> ${e(x)}`).join('<br>')+(p.length>MAX_PAGES?` <span class="badge" title="한 대답은 최대 ${MAX_PAGES}페이지(${PAGE_CHARS*MAX_PAGES}자)">${MAX_PAGES}페이지 초과</span>`:'');
+ }
  function pillowHtml(cx){
   if(!cx)return '<p class="muted-text">캐릭터를 뽑거나 불러오면 필로우토크가 나옵니다.</p>';
   const {r,s}=cx,c=ch();
-  if(r.excluded)return '<p class="muted-text">연령 코드 1은 대상이 아닙니다.</p>';
+  // [클로드 정책 거부] 제외 연령(공식 데이터 excludedAges)은 자동 대사·과거 경험을 만들지 않는다. 대사집에서 직접 쓰는 것은 막지 않는다
+  if(r.excluded)return `<p class="muted-text">연령 코드 ${e(r.age??c.age)}은(는) 제외 연령(공식 데이터 excludedAges)이라 이 편집기가 자동으로 만들지 않습니다. 직접 쓰려면 캐릭터 편집 › 대사집을 쓰세요.</p>`;
   const gate=talkGate(),moral=Math.max(0,Math.min(5,Number(st.talk.moral)||0)),who=e(c.name||'이 노예');
   const open=gate?[]:SLOTS.filter(x=>x[0]<=moral),pages=Math.max(1,Math.ceil(open.length/PAGE)),page=Math.min(st.qpage??0,pages-1);
   const truth=generatedLines(cx),lie=lying()&&!gate?generatedLines(lieCx(cx)):null,edits=st.ptEdits?.[charKey()]??{};
@@ -163,9 +175,9 @@ export async function createCharacterView(api){
   else{
    const [lv,id,label]=slot,g=(lie??truth).out[id]??{text:''},tg=truth.out[id]??{text:''},edited=edits[id]!==undefined,text=edited?edits[id]:g.text;
    const ref=refFor(id,lie?null:cx.fx,lie?'|lie':''),truthRef=lie?refFor(id,cx.fx):null;
-   say=text?e(text):'<span class="gm-muted">(대사 없음: 아래에서 원본을 보고 각색해 넣으세요)</span>';
+   say=text?pagesHtml(text):'<span class="gm-muted">(대사 없음: 아래에서 원본을 보고 각색해 넣으세요)</span>';
    editor=`<div class="cv-slot"><div class="cv-slot-head"><b>${e(label)}</b> <small>헌신 ${lv}</small>${g.blocked?` <span class="badge muted" title="표시 불가 사유: ${e(g.blocked)}">표시 불가</span>`:''}${lie?` <span class="badge" title="장악력 ${st.talk.supermacy??0} < 0: 거짓말(다른 노예의 답). 진실: ${e(tg.text||'(대사 없음)')}${truthRef?' / 진실 원본 '+e(truthRef):''}">거짓말</span>`:''}${edited?' <span class="badge">수정됨</span>':''}${g.note?` <small class="fine-print">${e(g.note)}</small>`:''}</div>
-    <textarea class="cv-slot-text" data-cv-pt="${id}" rows="3" placeholder="대사 없음: 원본을 보고 각색해 넣으세요" ${g.blocked?'readonly title="표시 불가 사유: '+e(g.blocked)+'"':''}>${e(text)}</textarea>
+    <textarea class="cv-slot-text" data-cv-pt="${id}" rows="3" placeholder="대사 없음: 원본을 보고 각색해 넣으세요" ${g.blocked?'title="표시 불가 사유: '+e(g.blocked)+' · Claude가 대사를 만들지 않은 칸이며 직접 쓰는 것은 막지 않음"':''}>${e(text)}</textarea>
     <div class="cv-slot-foot">${edited?`<button class="text-button" data-cv-act="pt-reset" data-slot="${id}">생성 대사로 되돌리기</button>`:''}${ref?refHtml(ref):'<small class="fine-print">원본 DB 대응 문항 없음</small>'}</div></div>`;
   }
   const qs=open.slice(page*PAGE,page*PAGE+PAGE);
@@ -192,7 +204,8 @@ export async function createCharacterView(api){
  // ── 위: 게임에 보이는 정보 ──
  function renderMain(){
   const c=ch(),cx=compute();
-  const bgLine=kind=>{if(c.unique)return '유니크 고정 설정';if(!c[kind])return '—';const cat=catOf(kind,c[kind]);return `${cat?e(cat.label)+' › ':''}${e(nameOf(kind,c[kind]))}`;};
+  // 유니크도 세계·출신·직업을 정하면 그 값을 보여 준다(사용자 지시 2026-11-12). 정하지 않았으면 '유니크 고정 설정(분류 없음)'
+  const bgLine=kind=>{if(c.unique&&!c[kind])return '유니크 고정 설정(분류 없음)';if(!c[kind])return '—';const cat=catOf(kind,c[kind]);return `${cat?e(cat.label)+' › ':''}${e(nameOf(kind,c[kind]))}`;};
   const traits=traitRows.filter(r=>r.category!=='상태'&&traitOn(c,r)),states=traitRows.filter(r=>r.category==='상태'&&traitOn(c,r));
   const skills=Object.entries(SKILL_NAME).filter(([k])=>Number(c[k]??0)>0);
   const attrs=Object.entries(LV).filter(([k])=>c[k]!==undefined);
@@ -212,7 +225,7 @@ export async function createCharacterView(api){
   <article class="card"><div class="card-head"><h2><span class="index">02</span>배경</h2><span class="badge muted">고정한 항목은 랜덤 생성 때 유지</span></div><div class="card-body cv-bg">${KINDS.map(([k,l])=>{const b=backgroundText(k);return `<section class="cv-bg-row"><div class="cv-bg-head"><div><div class="section-label">${l}${b?' · '+e(b.label):''}</div><small class="source-line">${e(b?.source??'')}</small></div><label class="cv-lock"><input type="checkbox" data-cv-lock="${k}" ${st.locks[k]?'checked':''} ${c.unique?'disabled':''}> 고정</label></div>
     ${b?`<textarea data-cv-text="${k}" maxlength="4000">${e(b.text)}</textarea><div class="cv-bg-actions">${b.edited?'<span class="badge">수정됨</span>':''}<button class="button secondary" data-cv-act="text-save" data-kind="${k}">저장하기</button><button class="button secondary" data-cv-act="text-restore" data-kind="${k}" ${b.edited?'':'disabled'}>복원</button><span class="fine-print">저장하면 같은 항목의 모든 조합에 적용 · {이름}은 이름 자리표시자</span></div>`:'<p class="fine-print">아래 패널에서 고르세요.</p>'}</section>`;}).join('')}</div></article>
   <article class="card"><div class="card-head"><h2><span class="index">03</span>영입 전 과거 경험</h2>${Object.values(st.overrides).some(v=>v!==undefined&&v!=='')?'<span class="badge blue">직접 지정 포함</span>':''}</div><div class="card-body">
-   ${!r?'<p class="muted-text">캐릭터를 뽑거나 불러오세요.</p>':r.excluded?'<p class="muted-text">연령 코드 1은 통계 대상이 아닙니다.</p>':`<div class="result-summary">
+   ${!r?'<p class="muted-text">캐릭터를 뽑거나 불러오세요.</p>':r.excluded?'<p class="muted-text">제외 연령(공식 데이터 excludedAges)이라 과거 경험을 자동 계산하지 않습니다.</p>':`<div class="result-summary">
     <div class="summary-tile featured"><span class="summary-label">성경험 총횟수</span><span class="summary-value">${r.intimacy}<small>회</small></span></div>
     <div class="summary-tile"><span class="summary-label">질 · 구강 · 애널</span><span class="summary-value sim-small">${r.acts?`${r.acts.vaginal} · ${r.acts.oral} · ${r.acts.anal}`:'—'}</span></div>
     <div class="summary-tile"><span class="summary-label">상대 수</span><span class="summary-value sim-small">${fx?.partners??0}명</span></div>
@@ -232,7 +245,7 @@ export async function createCharacterView(api){
   const c=ch(),sel={world:c.world,family:c.family,occupation:c.occupation};
   // 위에서 아래로 고른다: 세계는 언제나 전부, 출신은 고른 세계에 연결된 것, 직업은 고른 세계·출신에 연결된 것
   const upper=kind==='world'?{}:kind==='family'?{world:sel.world}:{world:sel.world,family:sel.family};
-  const allowed=new Set(D.options(kind,upper));
+  const allowed=new Set(D.optionsV2(kind,upper)); // 확정 연결표 v2(신규 ID 포함)
   const groups=CAT[kind];const open=st.big[kind]??catOf(kind,c[kind])?.id??null;
   const g=groups.find(x=>x.id===open);
   return `<div class="cv-pick"><div class="cv-pick-label">${label}${c[kind]?` <b>${e(nameOf(kind,c[kind]))}</b>`:''}</div>
@@ -243,7 +256,7 @@ export async function createCharacterView(api){
   const c=ch(),cx=compute();
   if(st.panel==='background')return `${c.unique?'<p class="fine-print">유니크는 고정 설정을 씁니다. 과거 경험 계산용으로 세계·출신·직업을 고를 수 있습니다.</p>':''}
    ${pickerHtml('world','세계')}${pickerHtml('family','출신')}${pickerHtml('occupation','직업')}
-   <div class="cv-pick"><div class="cv-pick-label">연령 코드</div><div class="cv-chips">${[0,2].map(a=>`<button class="cv-chip ${c.age===a?'on':''}" data-cv-age="${a}">${a}</button>`).join('')}<span class="fine-print">1은 통계 대상이 아닙니다.</span></div></div>`;
+   <div class="cv-pick"><div class="cv-pick-label">연령 코드</div><div class="cv-chips">${[0,1,2].map(a=>`<button class="cv-chip ${c.age===a?'on':''}" data-cv-age="${a}">${a}${getFormula(D.formula).excludedAges.includes(a)?' (자동 계산 제외)':''}</button>`).join('')}<span class="fine-print">연령 코드 0 젊음 · 1 소녀 · 2 원숙. 자동 계산 제외 연령은 공식 데이터 excludedAges로 정합니다.</span></div></div>`;
   if(st.panel==='input')return `<p class="fine-print">게임 용어를 그대로 입력하세요. 쉼표로 여러 개를 한 번에 넣을 수 있습니다. 예: <code>겁쟁이, 펠라 4, 애널 B, 외모 3, 처녀, 헌신 4, 관계 순종</code></p>
    <div class="cv-input-row"><input id="cvTerm" list="cvDict" placeholder="특성·스킬·속성·상태 입력 후 Enter" autocomplete="off"><button class="button primary" data-cv-act="term">입력</button></div>
    <datalist id="cvDict">${DICT.map(x=>`<option value="${e(x.replace(/ (0~5 또는 F~S|숫자)$/,' '))}">${e(x)}</option>`).join('')}</datalist>
@@ -257,7 +270,8 @@ export async function createCharacterView(api){
     <label title="0 미만이면 섹스토크에서 거짓말">이 노예에 대한 장악력${num('talk.supermacy',t.supermacy??0,'min="-30" max="30" step="1"')}</label>
     <label>말하기 유형(유니크 지정)<select data-cv-voice><option value="">성격으로 계산</option>${Object.entries(TYPE_NAME).map(([k,n])=>`<option value="${k}" ${c.jo9_voice_type===k?'selected':''}>${n}</option>`).join('')}</select></label>
     <label>고정 난수 시드<input data-cv-seed value="${e(st.seed)}" maxlength="40"></label>
-    <label>영입 경로<select data-cv-route><option value="other">일반</option><option value="patrol" ${st.acq.route==='patrol'?'selected':''}>안개 경계 순찰 구출</option></select></label>
+    <label title="게임 안에서 노예를 얻는 경로(acquisition-routes.json). ★ = 다른 세상에서 바로 넘어온 상태">영입 경로<select data-cv-route>${ACQ.groups.map(g=>`<optgroup label="${e(g.label)}">${g.routes.map(r=>`<option value="${r.key}" title="${e(r.source)}" ${(st.acq.route??'other')===r.key?'selected':''}>${e(r.label)}${r.fresh?' ★':''}</option>`).join('')}</optgroup>`).join('')}</select></label>
+    ${st.acq.route==='event'?`<label>이벤트<select data-cv-event><option value="">선택</option>${ACQ.events.map(v=>`<option value="${v.key}" title="${e(v.source)}" ${st.acq.event===v.key?'selected':''}>${e(v.label)}</option>`).join('')}</select></label>`:''}
     ${st.acq.route==='patrol'?`<label>순찰 장면<select data-cv-scene><option value="">선택</option>${Object.entries(FACTS.xeno.patrolScenes).map(([k,v])=>`<option value="${k}" ${st.acq.scene===k?'selected':''}>${k} ${e(v.label)}</option>`).join('')}</select></label>`:''}
    </div>
    <div class="section-label">과거 경력 값 직접 지정 (빈칸 = 공식)</div><div class="cv-form">${[['intimacy','성경험 총횟수'],['pregnancies','임신'],['births','출산']].map(([k,l])=>`<label>${l}${num('overrides.'+k,st.overrides[k],'min="0" step="1" placeholder="공식"')}</label>`).join('')}</div>
@@ -338,7 +352,7 @@ export async function createCharacterView(api){
   const b=ev.target.closest('button');if(!b)return;
   if(b.dataset.cvTraitOff){const t=traitRows.find(r=>r.id===b.dataset.cvTraitOff);if(t){ch()[t.binding.key]=0;}save();render();return;}
   if(b.dataset.cvBig){const [k,g]=b.dataset.cvBig.split(':');st.big[k]=st.big[k]===g?null:g;save();renderDock();return;}
-  if(b.dataset.cvSet){const [k,v]=b.dataset.cvSet.split(':');const c=ch();c[k]=c[k]===v?'':v;const sel={world:c.world,family:c.family,occupation:c.occupation};D.prune(sel,k);Object.assign(c,sel);if(k==='world'){const vs=RECORDS.filter(r=>r.kind==='world'&&r.id===c.world);c.worldVariant=vs[0]?.variant??null;}if(c.source==='new'&&!c.name)c.name='';save();render();return;}
+  if(b.dataset.cvSet){const [k,v]=b.dataset.cvSet.split(':');const c=ch();c[k]=c[k]===v?'':v;const sel={world:c.world,family:c.family,occupation:c.occupation};D.pruneV2(sel,k);Object.assign(c,sel);if(k==='world'){const vs=RECORDS.filter(r=>r.kind==='world'&&r.id===c.world);c.worldVariant=vs[0]?.variant??null;}if(c.source==='new'&&!c.name)c.name='';save();render();return;}
   if(b.dataset.cvAsk){st.ask=b.dataset.cvAsk;save();renderMain();return;}
   if(b.dataset.cvQpage!==undefined){st.qpage=Math.max(0,Number(b.dataset.cvQpage));save();renderMain();return;}
   if(b.dataset.cvAge!==undefined){ch().age=Number(b.dataset.cvAge);save();render();return;}
@@ -367,7 +381,8 @@ export async function createCharacterView(api){
   else if(t.dataset.cvPsy!==undefined)st.talk.psy_status=t.value;
   else if(t.dataset.cvVoice!==undefined){if(t.value)ch().jo9_voice_type=t.value;else delete ch().jo9_voice_type;}
   else if(t.dataset.cvSeed!==undefined)st.seed=t.value.slice(0,40)||'1';
-  else if(t.dataset.cvRoute!==undefined)st.acq={route:t.value,scene:st.acq.scene??''};
+  else if(t.dataset.cvRoute!==undefined)st.acq={route:t.value,scene:st.acq.scene??'',event:st.acq.event??''};
+  else if(t.dataset.cvEvent!==undefined)st.acq={...st.acq,route:'event',event:t.value};
   else if(t.dataset.cvScene!==undefined)st.acq={route:'patrol',scene:t.value};
   else return;
   save();setTimeout(render,0);
@@ -379,5 +394,23 @@ export async function createCharacterView(api){
  });
  onFormulaChange(render);
  render();
- return {render};
+ // 통합 편집(캐릭터 편집 탭)과 잇는 다리: 게임 캐릭터 JSON + 대사집을 시뮬레이터로 열고, 시뮬레이터 결과를 대사집으로 돌려준다
+ function loadGameCharacter(d,fileName,book={}){
+  const bg=book.background??{};
+  st.ch=fromJson({...d,jo9_type:String(book.id??''),jo9_world:bg.world??'',jo9_family:bg.family??'',jo9_occupation:bg.occupation??''},fileName);
+  st.ch.source='unique';st.overrides={...(book.overrides??{})};st.pt=1;
+  if(book.seed)st.seed=String(book.seed);
+  st.acq={...(book.acq??{})};
+  if(book.lines&&Object.keys(book.lines).length)((st.ptEdits??={})[charKey()]={...book.lines});
+  save();render();
+ }
+ function exportTalk(){
+  const c=ch(),cx=compute();
+  return {id:String(c.type??''),name:c.name,background:{world:c.world||'',family:c.family||'',occupation:c.occupation||''},seed:st.seed,acq:{...st.acq},overrides:{...st.overrides},
+   lines:{...(st.ptEdits?.[charKey()]??{})},facts:cx?.fx?{fields:cx.fx.fields,blocked:cx.fx.blocked}:null,excluded:!!cx?.r?.excluded,
+   history:cx?.r&&!cx.r.excluded?{intimacy:cx.r.intimacy,acts:cx.r.acts,pregnancies:cx.r.pregnancies,births:cx.r.births}:null,
+   // 원본 DB 연결 코드: 칸마다 창작물 DB 키와 표시불가 코드만(문장 없음). 연령 코드 1도 키·분류 코드는 남긴다(사용자 지시 2026-11-12)
+   refs:Object.fromEntries(SLOTS.map(([,id])=>{const k=refFor(id,cx?.fx);const r=k?REFS.rows[k]:null;return [id,k?{key:k,blocked:r?.b??[]}:null];}).filter(([,v])=>v))};
+ }
+ return {render,loadGameCharacter,exportTalk};
 }

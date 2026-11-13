@@ -33,6 +33,7 @@ export function occupationFamilyAllows(config,world,occupation,family){
 export function familyOccupations(catalogue,config,world,family){return worldOccupations(catalogue,config,world).filter(job=>occupationFamilyAllows(config,world,job,family));}
 export function allowedBackgroundAges(config,item){return AGE_CODES.filter(age=>kinds.every(kind=>{
  const record=item[kind],rule=getAgeRule(config,kind,record?.id??record);
+ // 게임 연결 규칙: 성인 전용 표시(adultOnly) 배경은 연령 코드 1과 연결하지 않는다(배경 데이터의 규칙이며 Claude 자동 계산 제외와는 별개)
  return (!rule.required.length||rule.required.includes(age))&&!rule.rejected.includes(age)&&!(record?.adultOnly&&age===1);
 }));}
 export function backgroundAgeAllows(config,item,age){

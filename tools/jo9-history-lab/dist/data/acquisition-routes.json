@@ -1,0 +1,47 @@
+{
+  "note": "게임 안에서 노예를 얻는 모든 경로(사용자 최신 qsp 4354cf39… 코드 추적, 2026-11-13). fresh = 다른 세상에서 바로 넘어온 상태(로마 관습을 모름, 사용자 결정 2026-11-12: 안개 경계·경매장·밀수업자·암시장). 'patrol'은 과거 경험 계산(past-facts.mjs)이 장면 번호를 읽는 값이라 키를 바꾸지 않는다. 'other'는 예전 저장값 호환용 '미지정'.",
+  "groups": [
+    {"label": "미지정", "routes": [
+      {"key": "other", "label": "미지정(일반)", "fresh": null, "source": "예전 저장값"}
+    ]},
+    {"label": "시장·길드", "routes": [
+      {"key": "market_auction", "label": "노예 시장 경매(파리드)", "fresh": true, "source": "slave_auction_buy · interaction_city 117(노예 무대). 매일 안개 경계에서 잡혀 온 비낙인 노예"},
+      {"key": "guild_auction", "label": "길드 낙인 노예 경매(안젤리카)", "fresh": false, "source": "interaction_city 931(길드 경매, 열흘 주기). 훈련을 마친 낙인 노예, 안젤리카의 특별 제안 포함"},
+      {"key": "guild_contract", "label": "길드 훈련 계약(D+~S+)", "fresh": false, "source": "interaction_city 1412~1421(길드 게시판). 맡아서 훈련해 납품하는 노예"},
+      {"key": "guild_expert", "label": "길드 감정사 찾기(전문가 의뢰)", "fresh": null, "source": "$expert_search → guild → expert_to_slave"},
+      {"key": "initial", "label": "시작 노예", "fresh": null, "source": "menu_form get_initial_slave"}
+    ]},
+    {"label": "암시장·밀수", "routes": [
+      {"key": "black_market", "label": "빈민가 암시장(나타샤)", "fresh": true, "source": "black_market_get_comm_slave · interaction_city 6660~6671, 6668001, 6668011, 666802(시루). 라파엘 일을 마친 뒤 열림"},
+      {"key": "smugglers", "label": "밀수업자 소굴(발랄라이카)", "fresh": true, "source": "interaction_city 6229~6235, 6540·6541. 길드에 걸리면 벌금(마스터 스컵스)"},
+      {"key": "kula_shop", "label": "쿨라의 비밀상점(팔라티노 언덕)", "fresh": null, "source": "interaction_city 6236~ (뒷골목·공원·부둣가에서 주워 온 여자)"}
+    ]},
+    {"label": "전투·포획", "routes": [
+      {"key": "patrol", "label": "안개 경계 순찰 구출", "fresh": true, "source": "interaction_city 611xx 장면 → 전투 승리(выход_из_боя get_girl) → 61120", "scenes": true},
+      {"key": "catfight", "label": "캣파이트 클럽 주인 에게야와 결투", "fresh": false, "source": "interaction_city 102016~102017. 에게야가 자기 자유를 $50,000에 걸고 결투, 이기면 노예로 데려옴"},
+      {"key": "safari", "label": "노예 사파리(배제 구역)", "fresh": null, "source": "interaction_city 8998. 사냥감이던 소녀를 데려옴"}
+    ]},
+    {"label": "이벤트·퀘스트", "routes": [
+      {"key": "event", "label": "이벤트·퀘스트", "fresh": null, "source": "아래 events 목록", "events": true}
+    ]}
+  ],
+  "events": [
+    {"key": "julia", "label": "줄리아(교황 의뢰)", "source": "interaction_city 162~163"},
+    {"key": "emperor", "label": "황제 가이우스(VIP 클럽)", "source": "interaction_city 1543"},
+    {"key": "varvar_king", "label": "바르바르 왕(포럼)", "source": "interaction_city 1554~1558"},
+    {"key": "angelika", "label": "여주인 안젤리카(집무실)", "source": "interaction_city 10101"},
+    {"key": "marquis", "label": "마르키 드 S(홍등가)", "source": "interaction_city 7961"},
+    {"key": "jane", "label": "제인(홍등가)", "source": "interaction_city 10395"},
+    {"key": "slum_npcs", "label": "빈민가 인물(바이커·츄안수·베이뉴트)", "source": "interaction_city 9203, 9222, 9224"},
+    {"key": "hotorn", "label": "호손 알리만", "source": "interaction_city 9232, 7951, 996, 998, 6667791, 809234"},
+    {"key": "vampire_hunter", "label": "뱀파이어 헌터(뱀파이렐라)", "source": "interaction_city 10014"},
+    {"key": "zooferma", "label": "동물 농장(바이너 교수)", "source": "interaction_city 6790~6795"},
+    {"key": "garsid", "label": "가르시드·수인(안개 경계)", "source": "interaction_city 61133, 61136"},
+    {"key": "kotshey", "label": "불사의 코셰이(러시아 구역)", "source": "interaction_city 120381"},
+    {"key": "agraba", "label": "아그라바(엘사·자스민)", "source": "interaction_city 3085, 3086"},
+    {"key": "winter_tales", "label": "겨울 동화", "source": "interaction_city 10131, 10243, 10338"},
+    {"key": "chun_club", "label": "춘 클럽", "source": "jo9_chun_club"},
+    {"key": "gloria", "label": "글로리아 합류", "source": "#npc_base $jo9_gloria_join"},
+    {"key": "other_event", "label": "그 밖의 이벤트", "source": ""}
+  ]
+}

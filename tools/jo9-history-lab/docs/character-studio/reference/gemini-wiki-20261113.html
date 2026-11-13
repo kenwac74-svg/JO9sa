@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="ko" class="h-full dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jack-O'-Nine-Tails 종합 백과사전 (Official Wiki)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: { 50: '#f5f3ff', 100: '#ede9fe', 500: '#8b5cf6', 600: '#7c3aed', 700: '#6d28d9' },
+            wiki: {
+              bgLight: '#ffffff', sidebarLight: '#f8fafc', borderLight: '#e2e8f0', cardLight: '#f1f5f9',
+              bgDark: '#090d16', sidebarDark: '#060910', borderDark: '#1e293b', cardDark: '#0f172a'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Consolas', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.3); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.5); }
+    .theme-transition { transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease; }
+  </style>
+</head>
+<body class="h-full font-sans antialiased bg-white dark:bg-wiki-bgDark text-slate-800 dark:text-slate-200 theme-transition flex flex-col">
+
+  <!-- Header -->
+  <header class="h-14 border-b border-wiki-borderLight dark:border-wiki-borderDark bg-white dark:bg-wiki-sidebarDark px-4 flex items-center justify-between sticky top-0 z-30 select-none">
+    <div class="flex items-center space-x-3">
+      <button onclick="toggleMobileSidebar()" class="md:hidden p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+        <i data-lucide="menu" class="w-5 h-5"></i>
+      </button>
+
+      <div class="flex items-center space-x-2.5 cursor-pointer" onclick="loadArticle('wiki-home')">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 via-purple-600 to-rose-600 flex items-center justify-center text-white shadow-md font-bold text-sm">
+          J9
+        </div>
+        <div>
+          <span class="font-extrabold text-sm tracking-tight text-slate-900 dark:text-white flex items-center gap-1.5">
+            Jack-O'-Nine-Tails
+            <span class="text-[10px] px-1.5 py-0.5 rounded font-mono font-bold bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">WIKI</span>
+          </span>
+          <span class="text-[10px] text-slate-500 dark:text-slate-400 block -mt-0.5">영원의 로마 통합 백과사전 & DB</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex items-center space-x-2">
+      <span class="hidden lg:inline-flex items-center gap-1 text-xs font-mono text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 px-2.5 py-1 rounded-full">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+        QSP Canon Verified
+      </span>
+      <button onclick="copyCurrentArticleContent()" title="현재 문서 마크다운 복사" class="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+        <i data-lucide="copy" class="w-4 h-4"></i>
+      </button>
+      <button onclick="toggleDarkMode()" title="다크/라이트 모드" class="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+        <i id="theme-icon" data-lucide="sun" class="w-4 h-4"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main View -->
+  <div class="flex-1 flex overflow-hidden relative">
+    <div id="mobile-backdrop" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 hidden md:hidden"></div>
+
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar" class="fixed md:static inset-y-0 left-0 z-40 w-72 md:w-64 lg:w-72 border-r border-wiki-borderLight dark:border-wiki-borderDark bg-wiki-sidebarLight dark:bg-wiki-sidebarDark flex flex-col transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-in-out">
+      <div class="p-3 border-b border-wiki-borderLight dark:border-wiki-borderDark">
+        <div class="relative">
+          <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-slate-400"></i>
+          <input 
+            type="text" 
+            id="wikiSearchInput" 
+            oninput="handleSearch(this.value)"
+            placeholder="항목 검색 (특성, 스틸로즈, 카가미상...)" 
+            class="w-full bg-white dark:bg-slate-900 text-xs text-slate-800 dark:text-slate-200 rounded-lg pl-9 pr-8 py-2 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+          >
+          <button onclick="clearSearch()" id="searchClearBtn" class="hidden absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+            <i data-lucide="x" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+      </div>
+
+      <nav id="nav-list" class="flex-1 overflow-y-auto p-3 space-y-3.5 text-xs">
+        <div>
+          <button onclick="loadArticle('wiki-home')" data-target="wiki-home" class="nav-item w-full flex items-center gap-2 px-2.5 py-2 rounded-lg text-left font-medium transition text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/50">
+            <i data-lucide="home" class="w-4 h-4 shrink-0"></i>
+            <span class="font-bold">위키 대문 (Home)</span>
+          </button>
+        </div>
+
+        <div>
+          <div class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider px-2 mb-1 flex items-center justify-between">
+            <span>1. 세계관 & 5대 권력</span>
+            <span class="font-mono text-[9px]">LORE</span>
+          </div>
+          <ul class="space-y-0.5">
+            <li>
+              <button onclick="loadArticle('art-world-rules')" data-target="art-world-rules" class="nav-item w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-left text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+                <i data-lucide="globe" class="w-3.5 h-3.5 shrink-0"></i>
+                <span class="truncate">영원의 로마 & 시공 법칙</span>
+              </button>
+            </li>
+            <li>
+              <button onclick="loadArticle('art-factions-5')" data-target="art-factions-5" class="nav-item w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-left text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+                <i data-lucide="shield" class="w-3.5 h-3.5 shrink-0"></i>
+                <span class="truncate">사도궁 & 4대 가문 체제</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider px-2 mb-1 flex items-center justify-between">
+            <span>2. 지리 & 9대 권역</span>
+            <span class="font-mono text-[9px]">GEO</span>
+          </div>
+          <ul class="space-y-0.5">
+            <li>
+              <button onclick="loadArticle('art-geo-regions')" data-target="art-geo-regions" class="nav-item w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-left text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+                <i data-lucide="map" class="w-3.5 h-3.5 shrink-0"></i>
+                <span class="truncate">9대 구역 총람 (27p 가이드)</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider px-2 mb-1 flex items-center justify-between">
+            <span>3. 주요 인물 & 상인 명감</span>
+            <span class="font-mono text-[9px]">NPC</span>
+          </div>
+          <ul class="space-y-0.5">
+            <li>
+              <button onclick="loadArticle('art-npc-directory')" data-target="art-npc-directory" class="nav-item w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-left text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+                <i data-lucide="users" class="w-3.5 h-3.5 shrink-0"></i>
+                <span class="truncate">거점 NPC QSP 프로필 카드</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider px-2 mb-1 flex items-center justify-between">
+            <span>4. 조교 & 생체 메커니즘</span>
+            <span class="font-mono text-[9px]">SYS</span>
+          </div>
+          <ul class="space-y-0.5">
+            <li>
+              <button onclick="loadArticle('art-mechanics-mental')" data-target="art-mechanics-mental" class="nav-item w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-left text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+                <i data-lucide="brain" class="w-3.5 h-3.5 shrink-0"></i>
+                <span class="truncate">심리·정신 붕괴 & 조교 체계</span>
+              </button>
+            </li>
+            <li>
+              <button onclick="loadArticle('art-mechanics-growth')" data-target="art-mechanics-growth" class="nav-item w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-left text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+                <i data-lucide="activity" class="w-3.5 h-3.5 shrink-0"></i>
+                <span class="truncate">150일 압축성장 & 40세 붕괴</span>
+              </button>
+            </li>
+            <li>
+              <button onclick="loadArticle('art-mechanics-housing-barn')" data-target="art-mechanics-housing-barn" class="nav-item w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-left text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+                <i data-lucide="warehouse" class="w-3.5 h-3.5 shrink-0"></i>
+                <span class="truncate">주거지 확장 & 헛간 가축화</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider px-2 mb-1 flex items-center justify-between">
+            <span>5. 퀘스트 & 데이터베이스</span>
+            <span class="font-mono text-[9px]">DATA</span>
+          </div>
+          <ul class="space-y-0.5">
+            <li>
+              <button onclick="loadArticle('art-events-quests')" data-target="art-events-quests" class="nav-item w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-left text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5 shrink-0"></i>
+                <span class="truncate">주요 이벤트 & 패트리시안 의뢰</span>
+              </button>
+            </li>
+            <li>
+              <button onclick="loadArticle('art-db-traits')" data-target="art-db-traits" class="nav-item w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-left text-purple-600 dark:text-purple-400 font-bold hover:bg-slate-100 dark:hover:bg-slate-800">
+                <i data-lucide="dna" class="w-3.5 h-3.5 shrink-0"></i>
+                <span class="truncate">노예 특성(Traits) 전체 카탈로그</span>
+              </button>
+            </li>
+            <li>
+              <button onclick="loadArticle('art-db-equipment')" data-target="art-db-equipment" class="nav-item w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-left text-purple-600 dark:text-purple-400 font-bold hover:bg-slate-100 dark:hover:bg-slate-800">
+                <i data-lucide="shield-alert" class="w-3.5 h-3.5 shrink-0"></i>
+                <span class="truncate">스틸로즈 장비 & 정육/식자재 DB</span>
+              </button>
+            </li>
+            <li>
+              <button onclick="loadArticle('art-db-alchemy')" data-target="art-db-alchemy" class="nav-item w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-left text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+                <i data-lucide="flask-conical" class="w-3.5 h-3.5 shrink-0"></i>
+                <span class="truncate">연금술 약품 DB (한국어 공인)</span>
+              </button>
+            </li>
+            <li>
+              <button onclick="loadArticle('art-db-magic')" data-target="art-db-magic" class="nav-item w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-left text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+                <i data-lucide="wand-2" class="w-3.5 h-3.5 shrink-0"></i>
+                <span class="truncate">주인 마법 목록 DB</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider px-2 mb-1 flex items-center justify-between">
+            <span>6. 도시 도서관 뷰어</span>
+            <span class="font-mono text-[9px]">LIB</span>
+          </div>
+          <ul class="space-y-0.5">
+            <li>
+              <button onclick="loadArticle('art-lib-viewer')" data-target="art-lib-viewer" class="nav-item w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-left text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+                <i data-lucide="book-marked" class="w-3.5 h-3.5 shrink-0"></i>
+                <span class="truncate">공개 도서 8권 & 1급 금서 6종</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <div class="p-3 border-t border-wiki-borderLight dark:border-wiki-borderDark text-[11px] text-slate-400 flex items-center justify-between">
+        <span>Jack-O'-Nine-Tails DB</span>
+        <span class="font-mono text-[10px] text-purple-400">v4.0 Full</span>
+      </div>
+    </aside>
+
+    <!-- Main Content Reader -->
+    <main class="flex-1 overflow-y-auto px-4 md:px-8 lg:px-12 py-8 scroll-smooth" id="main-content-area">
+      <div class="max-w-4xl mx-auto flex flex-col lg:flex-row gap-8">
+        <div class="flex-1 min-w-0">
+
+          <div class="flex items-center space-x-2 text-xs text-slate-400 mb-4 select-none" id="breadcrumb">
+            <span>위키</span>
+            <span>/</span>
+            <span class="text-purple-600 dark:text-purple-400 font-medium" id="bc-current">위키 대문</span>
+          </div>
+
+          <!-- ARTICLE: WIKI HOME -->
+          <article id="wiki-home" class="wiki-article">
+            <div class="border-b border-wiki-borderLight dark:border-wiki-borderDark pb-5 mb-6">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300">WIKI-PORTAL</span>
+                <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-semibold">[TRAITS & ITEMS DB SYNCED]</span>
+              </div>
+              <h1 class="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                Jack-O'-Nine-Tails 종합 백과사전
+              </h1>
+              <p class="mt-2 text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                QSP 원문 스크립트 기반 인물 프로필 카드, 한국어 공인 번역 용어, 9대 권역 핵심 거점 시설, 헛간 가축화와 조수 자동화, 그리고 <strong>노예 특성(Traits) 카탈로그와 스틸로즈 장비 DB</strong>를 총망라한 데이터베이스입니다.
+              </p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mb-8">
+              <div onclick="loadArticle('art-db-traits')" class="p-3.5 rounded-xl border border-purple-300 dark:border-purple-800 bg-purple-50/50 dark:bg-purple-950/20 hover:border-purple-500 cursor-pointer transition">
+                <div class="flex items-center gap-2 font-bold text-sm text-purple-900 dark:text-purple-200 mb-1">
+                  <i data-lucide="dna" class="w-4 h-4 text-purple-600"></i>
+                  노예 특성 전체 카탈로그
+                </div>
+                <p class="text-xs text-slate-500 dark:text-slate-400">신체, 정신, 성벽, 외과·마법 개조 특성 일체 및 가격/육성 공식.</p>
+              </div>
+
+              <div onclick="loadArticle('art-db-equipment')" class="p-3.5 rounded-xl border border-purple-300 dark:border-purple-800 bg-purple-50/50 dark:bg-purple-950/20 hover:border-purple-500 cursor-pointer transition">
+                <div class="flex items-center gap-2 font-bold text-sm text-purple-900 dark:text-purple-200 mb-1">
+                  <i data-lucide="shield-alert" class="w-4 h-4 text-purple-600"></i>
+                  스틸로즈 장비 & 정육 DB
+                </div>
+                <p class="text-xs text-slate-500 dark:text-slate-400">BDSM 구속구, 가축화 동물 마구, 식자재 및 도축 정육 품목.</p>
+              </div>
+
+              <div onclick="loadArticle('art-npc-directory')" class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 hover:border-purple-500 cursor-pointer transition">
+                <div class="flex items-center gap-2 font-bold text-sm text-slate-900 dark:text-white mb-1">
+                  <i data-lucide="users" class="w-4 h-4 text-indigo-500"></i>
+                  인물 & 상인 QSP 명감
+                </div>
+                <p class="text-xs text-slate-500 dark:text-slate-400">카가미상, 파리드, 보 아저씨 등 인게임 프로필 카드 원문과 시스템 기능.</p>
+              </div>
+
+              <div onclick="loadArticle('art-geo-regions')" class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 hover:border-purple-500 cursor-pointer transition">
+                <div class="flex items-center gap-2 font-bold text-sm text-slate-900 dark:text-white mb-1">
+                  <i data-lucide="map" class="w-4 h-4 text-emerald-500"></i>
+                  9대 구역 안내서 (27p)
+                </div>
+                <p class="text-xs text-slate-500 dark:text-slate-400">백색도시, 네크로폴리스, 조프리 살롱, 뱀자리 병원 등 27페이지 총람.</p>
+              </div>
+
+              <div onclick="loadArticle('art-events-quests')" class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 hover:border-purple-500 cursor-pointer transition">
+                <div class="flex items-center gap-2 font-bold text-sm text-slate-900 dark:text-white mb-1">
+                  <i data-lucide="sparkles" class="w-4 h-4 text-cyan-500"></i>
+                  이벤트 & 퀘스트 체계
+                </div>
+                <p class="text-xs text-slate-500 dark:text-slate-400">150일 임신 강탈, 이사벨라, 줄리아, 4대 가문 패트리시안 작위 의뢰.</p>
+              </div>
+
+              <div onclick="loadArticle('art-lib-viewer')" class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 hover:border-purple-500 cursor-pointer transition">
+                <div class="flex items-center gap-2 font-bold text-sm text-slate-900 dark:text-white mb-1">
+                  <i data-lucide="book-marked" class="w-4 h-4 text-rose-500"></i>
+                  도서관 뷰어 (공개+금서)
+                </div>
+                <p class="text-xs text-slate-500 dark:text-slate-400">공개 도서 8권 및 바티칸 1급 금서 6종 대사창 전문 인터랙티브 열람.</p>
+              </div>
+            </div>
+          </article>
+
+          <!-- ARTICLE: 5-2. TRAITS CATALOG (NEW) -->
+          <article id="art-db-traits" class="wiki-article hidden">
+            <div class="border-b border-wiki-borderLight dark:border-wiki-borderDark pb-5 mb-6">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 font-bold">DATA-TRAITS</span>
+                <span class="text-xs text-slate-400 font-mono">인게임 특성 카탈로그</span>
+              </div>
+              <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                노예 특성(Traits) 전체 카탈로그
+              </h1>
+              <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
+                노예의 가치 산정, 조교 난이도, 의뢰 납품 판정에 직접 영향을 미치는 인게임 특성 체계 총람.
+              </p>
+            </div>
+
+            <!-- Physical Traits -->
+            <h2 id="traits-physical" class="text-lg font-bold text-slate-900 dark:text-white mb-3">1. 신체 및 생리 특성 (Physical Traits)</h2>
+            <div class="overflow-x-auto rounded-lg border border-wiki-borderLight dark:border-wiki-borderDark mb-6 text-xs sm:text-sm">
+              <table class="w-full text-left">
+                <thead class="bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400 font-semibold border-b border-wiki-borderLight dark:border-wiki-borderDark">
+                  <tr>
+                    <th class="py-2.5 px-3">특성 분류</th>
+                    <th class="py-2.5 px-3">단계 및 인게임 명칭</th>
+                    <th class="py-2.5 px-3">시스템 효과 및 가격/육성 영향</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-wiki-borderLight dark:divide-wiki-borderDark text-slate-700 dark:text-slate-300">
+                  <tr>
+                    <td class="py-2.5 px-3 font-bold text-indigo-600 dark:text-indigo-400">체형 (Physique)</td>
+                    <td class="py-2.5 px-3">앙상함(Skinny) - 마름(Slender) - 보통(Normal) - 풍만(Voluptuous) - 비만(Chubby) - 과체중(Fat)</td>
+                    <td class="py-2.5 px-3">칼로리 대사량에 따라 변동. 타우르스 군단은 풍만 이상을 거부하며, 헛간 돼지/젖소는 비만 체형에서 가치 극대화.</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 px-3 font-bold text-indigo-600 dark:text-indigo-400">가슴 (Bust)</td>
+                    <td class="py-2.5 px-3">절벽(Flat) - 작음(Small) - 보통(Medium) - 큼(Large) - 거유(Voluptuous) - 폭유(Stupendous)</td>
+                    <td class="py-2.5 px-3">출산이나 젖분비 수술 후 1단계 이상 영구 확대. 코르티잔 접객 및 낙농 협동조합 젖소 납품 가격에 직결.</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 px-3 font-bold text-indigo-600 dark:text-indigo-400">운동 신경</td>
+                    <td class="py-2.5 px-3">우아함(Graceful) / 민첩함(Dexterous) / 덤벙댐(Klutzy) / 둔함(Clumsy)</td>
+                    <td class="py-2.5 px-3">우아함/민첩함은 경매 기본가 +10$, 덤벙댐/둔함은 기본가 -10$ 페널티 적용. 전투 회피율 및 댄서 학습 보정.</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 px-3 font-bold text-indigo-600 dark:text-indigo-400">순결 (Virginity)</td>
+                    <td class="py-2.5 px-3">처녀(Virgin) / 비처녀</td>
+                    <td class="py-2.5 px-3">처녀 보유 시 경매 기본가 +20$ 할증. 바티칸 및 고위 귀족의 최고가 납품 필수 조건. 질 성교나 출산 시 소멸.</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 px-3 font-bold text-indigo-600 dark:text-indigo-400">신진대사</td>
+                    <td class="py-2.5 px-3">허약(Weak) - 쇠약(Weakened) - 보통(Normal) - 양호(Good) - 강력(Powerful)</td>
+                    <td class="py-2.5 px-3">일일 칼로리 소모 및 체중 증가율 결정. 강력 대사는 살이 덜 찌며, 중앙구역 대사 포션(Metabolism+/-)으로만 변경 가능.</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 px-3 font-bold text-indigo-600 dark:text-indigo-400">이색성 (Exoticism)</td>
+                    <td class="py-2.5 px-3">평범함 - 특이함(Quirky) - 이색적(Exotic)</td>
+                    <td class="py-2.5 px-3">문신, 피어싱, 마물 각인에 비례하여 상승. 일반 귀족은 기피하나 특수 취향 바이어(코르부스 등) 납품 시 가격 상승.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Mental Traits -->
+            <h2 id="traits-mental" class="text-lg font-bold text-slate-900 dark:text-white mb-3">2. 정신 및 기질 특성 (Mental Traits)</h2>
+            <div class="overflow-x-auto rounded-lg border border-wiki-borderLight dark:border-wiki-borderDark mb-6 text-xs sm:text-sm">
+              <table class="w-full text-left">
+                <thead class="bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400 font-semibold border-b border-wiki-borderLight dark:border-wiki-borderDark">
+                  <tr>
+                    <th class="py-2.5 px-3">특성 명칭</th>
+                    <th class="py-2.5 px-3">성격 분류</th>
+                    <th class="py-2.5 px-3">조교 및 심리 역학</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-wiki-borderLight dark:divide-wiki-borderDark text-slate-700 dark:text-slate-300">
+                  <tr>
+                    <td class="py-2.5 px-3 font-bold text-amber-600 dark:text-amber-400">완고함 (Willful)</td>
+                    <td class="py-2.5 px-3 font-mono">본성 (Nature)</td>
+                    <td class="py-2.5 px-3">주인의 명령에 쉽게 굴복하지 않음. 헛간 돼지 육성 시 고칼로리 쿠키 섭취를 500cal 저항함.</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 px-3 font-bold text-amber-600 dark:text-amber-400">유약함 (Spineless)</td>
+                    <td class="py-2.5 px-3 font-mono">본성 (Nature)</td>
+                    <td class="py-2.5 px-3">공포와 체벌에 취약하며 굴복이 빠름. 낙농 젖소로 전향하기에 가장 이상적인 기질.</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 px-3 font-bold text-amber-600 dark:text-amber-400">수치심 없음 (Unashamed)</td>
+                    <td class="py-2.5 px-3 font-mono">자존심 (Pride)</td>
+                    <td class="py-2.5 px-3">노출이나 가학적 성애, 변기 플레이 등에 수치심을 느끼지 않아 멘탈 붕괴가 억제됨.</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 px-3 font-bold text-amber-600 dark:text-amber-400">오만함 (Arrogant)</td>
+                    <td class="py-2.5 px-3 font-mono">자존심 (Pride)</td>
+                    <td class="py-2.5 px-3">복종 훈련 성공률을 깎아먹는 저항 기제. 체벌과 공개 수치를 통해 서서히 허물어야 함.</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 px-3 font-bold text-amber-600 dark:text-amber-400">게으름 (Indolent)</td>
+                    <td class="py-2.5 px-3 font-mono">행동 성향</td>
+                    <td class="py-2.5 px-3">훈련 습득 속도가 느리지만, 헛간에 배치할 경우 활동량이 적어 체중 증가가 빨라짐.</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 px-3 font-bold text-amber-600 dark:text-amber-400">민감함 (Sensitive)</td>
+                    <td class="py-2.5 px-3 font-mono">감수성</td>
+                    <td class="py-2.5 px-3">식단이나 의복의 질에 따른 기분 변동 폭이 큼. 좋은 식사를 주면 호감도가 급상승하나 학대 시 절망 폭증.</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 px-3 font-bold text-rose-600 dark:text-rose-400">정신 붕괴 (Mind Broken)</td>
+                    <td class="py-2.5 px-3 font-mono text-rose-500 font-bold">상태이상</td>
+                    <td class="py-2.5 px-3">지속적인 학대로 자아가 파괴된 상태. 지능 -40, 노예 시장 판매가 -50% 반토막, 도축 외 활용처 상실.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Orientation & Fetish -->
+            <h2 id="traits-orientation" class="text-lg font-bold text-slate-900 dark:text-white mb-3">3. 성적 지향 및 성벽 특성 (Orientation & Fetish)</h2>
+            <div class="overflow-x-auto rounded-lg border border-wiki-borderLight dark:border-wiki-borderDark mb-6 text-xs sm:text-sm">
+              <table class="w-full text-left">
+                <thead class="bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400 font-semibold border-b border-wiki-borderLight dark:border-wiki-borderDark">
+                  <tr>
+                    <th class="py-2.5 px-3">특성 명칭</th>
+                    <th class="py-2.5 px-3">세부 분류</th>
+                    <th class="py-2.5 px-3">게임 내 상호작용 및 시너지</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-wiki-borderLight dark:divide-wiki-borderDark text-slate-700 dark:text-slate-300">
+                  <tr>
+                    <td class="py-2.5 px-3 font-bold text-pink-600 dark:text-pink-400">레즈비언 (Lesbian)</td>
+                    <td class="py-2.5 px-3 font-mono">성적 지향</td>
+                    <td class="py-2.5 px-3">여성과의 성행위에서만 만족도를 얻음. 길드 위탁 학대 노예가 100% 확정 보유하여 헛간 여성 가축 간 교배에 유용.</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 px-3 font-bold text-pink-600 dark:text-pink-400">이성애 (Straight)</td>
+                    <td class="py-2.5 px-3 font-mono">성적 지향</td>
+                    <td class="py-2.5 px-3">남성 주인과의 행위에는 순응하나 여성 노예/조수와의 성적 상호작용 시 거부 반응.</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 px-3 font-bold text-pink-600 dark:text-pink-400">양성애 (Bisexual)</td>
+                    <td class="py-2.5 px-3 font-mono">성적 지향</td>
+                    <td class="py-2.5 px-3">남녀 가리지 않고 성애 훈련이 가능하여 코르티잔 육성 시 범용성이 가장 높음.</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 px-3 font-bold text-purple-600 dark:text-purple-400">이종애호 (Xenophily)</td>
+                    <td class="py-2.5 px-3 font-mono">성벽</td>
+                    <td class="py-2.5 px-3">마물, 촉수, 수인에 대한 거부감이 없음. 안개 마물 피엔드 착유 및 카미라 가문 포니걸 납품 시 필수.</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 px-3 font-bold text-emerald-600 dark:text-emerald-400">가축화 적성 (Animal)</td>
+                    <td class="py-2.5 px-3 font-mono">조교 성향</td>
+                    <td class="py-2.5 px-3">펫(Pet), 말(Pony), 젖소(Cow) 장비를 장착하고 훈련 시 거부감이 낮고 스킬이 S+까지 도달 가능.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Augmentations -->
+            <h2 id="traits-augmentations" class="text-lg font-bold text-slate-900 dark:text-white mb-3">4. 외과 및 마법 개조 특성 (Augmentations)</h2>
+            <div class="overflow-x-auto rounded-lg border border-wiki-borderLight dark:border-wiki-borderDark mb-6 text-xs sm:text-sm">
+              <table class="w-full text-left">
+                <thead class="bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400 font-semibold border-b border-wiki-borderLight dark:border-wiki-borderDark">
+                  <tr>
+                    <th class="py-2.5 px-3">개조 명칭</th>
+                    <th class="py-2.5 px-3">시술처 및 비용</th>
+                    <th class="py-2.5 px-3">영구 부여 효과</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-wiki-borderLight dark:divide-wiki-borderDark text-slate-700 dark:text-slate-300">
+                  <tr>
+                    <td class="py-2.5 px-3 font-bold text-emerald-600 dark:text-emerald-400">영구 젖분비 (Permanent Lactation)</td>
+                    <td class="py-2.5 px-3">뱀자리 의료 센터 (50$)</td>
+                    <td class="py-2.5 px-3">수유 및 임신 여부와 무관하게 유선이 영구 활성화되어 매일 우유 착유 가능 (젖소화 필수).</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 px-3 font-bold text-emerald-600 dark:text-emerald-400">난생 (Oviparity)</td>
+                    <td class="py-2.5 px-3">뱀자리 의료 센터 (50$)</td>
+                    <td class="py-2.5 px-3">체내에서 주기적으로 알(Egg)을 형성하여 산란 (산란계 노예 특성화).</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 px-3 font-bold text-emerald-600 dark:text-emerald-400">불임화 (Sterilization)</td>
+                    <td class="py-2.5 px-3">뱀자리 의료 센터 (5$)</td>
+                    <td class="py-2.5 px-3">임신을 원천 차단하여 감가상각 및 바티칸의 150일 출산 강탈을 영구 방지.</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 px-3 font-bold text-emerald-600 dark:text-emerald-400">가임 복원 (Restore Fertility)</td>
+                    <td class="py-2.5 px-3">뱀자리 의료 센터 (50$)</td>
+                    <td class="py-2.5 px-3">불임 처리된 신체를 다시 정상 가임기로 복원 (회복 7일 소요).</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 px-3 font-bold text-emerald-600 dark:text-emerald-400">외모 성형 (Neoplasty)</td>
+                    <td class="py-2.5 px-3">뱀자리 의료 센터 (250$)</td>
+                    <td class="py-2.5 px-3">외모(Beauty) 등급을 즉시 1단계 승급시키고 외형 커스텀 가능 (회복 20일 소요).</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 px-3 font-bold text-emerald-600 dark:text-emerald-400">처녀막 복원 (Virginity Restoration)</td>
+                    <td class="py-2.5 px-3">뱀자리 의료 센터 (25$)</td>
+                    <td class="py-2.5 px-3">처녀(Virgin) 특성을 재부여하여 고위층 납품 조건 충족.</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 px-3 font-bold text-purple-600 dark:text-purple-400">설소대 절개 (Split Tongue)</td>
+                    <td class="py-2.5 px-3">네크로폴리스 스틸로즈</td>
+                    <td class="py-2.5 px-3">혀를 둘로 가르는 시술. 이색성은 크게 오르나 구강 성교 스킬이 일시 하락해 재훈련 필요.</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 px-3 font-bold text-rose-600 dark:text-rose-400">낙인 문신 (Brand Tattoo)</td>
+                    <td class="py-2.5 px-3">추방자 구역 보 아저씨 (10$)</td>
+                    <td class="py-2.5 px-3">주인의 상표를 각인하여 소유권을 법적으로 공인하고 도주 시 포획 확률 증가.</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 px-3 font-bold text-rose-600 dark:text-rose-400">피엔드 문신 (Fiend Tattoo)</td>
+                    <td class="py-2.5 px-3">추방자 구역 보 아저씨 (30$)</td>
+                    <td class="py-2.5 px-3">마물 친화 각인. 헛간 노예에게 피엔드 유충/사료를 급여할 수 있는 선행 조건.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+
+          <!-- ARTICLE: 5-3. EQUIPMENT & ITEMS DB (NEW) -->
+          <article id="art-db-equipment" class="wiki-article hidden">
+            <div class="border-b border-wiki-borderLight dark:border-wiki-borderDark pb-5 mb-6">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 font-bold">DATA-EQUIP</span>
+                <span class="text-xs text-slate-400 font-mono">장비 & 식자재 DB</span>
+              </div>
+              <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                스틸로즈 장비 & 정육/식자재 데이터베이스
+              </h1>
+              <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
+                스틸로즈 독점 구속구 및 가축화 도구, 가스트로노미콘 식자재 및 도축 정육 품목 총람.
+              </p>
+            </div>
+
+            <!-- Steel Rose Gear -->
+            <h2 id="gear-steelrose" class="text-lg font-bold text-slate-900 dark:text-white mb-3">1. 스틸로즈 독점 조교구 및 가축화 마구 (Paraphernalia)</h2>
+            <div class="overflow-x-auto rounded-lg border border-wiki-borderLight dark:border-wiki-borderDark mb-6 text-xs sm:text-sm">
+              <table class="w-full text-left">
+                <thead class="bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400 font-semibold border-b border-wiki-borderLight dark:border-wiki-borderDark">
+                  <tr>
+                    <th class="py-2.5 px-3">카테고리</th>
+                    <th class="py-2.5 px-3">품목 리스트 및 가격 (스파크)</th>
+                    <th class="py-2.5 px-3">인게임 기능 및 스탯 보정</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-wiki-borderLight dark:divide-wiki-borderDark text-slate-700 dark:text-slate-300">
+                  <tr>
+                    <td class="py-2.5 px-3 font-bold text-rose-600 dark:text-rose-400">BDSM 복종 구속구</td>
+                    <td class="py-2.5 px-3">가죽 목걸이(3$), 강철 목걸이(10$), 가시 칼라(10$), 가죽 수갑(5$), 젖꼭지 사슬(10$), 가시 면류관(5$)</td>
+                    <td class="py-2.5 px-3">노예의 자존심을 깎고 복종도와 마조히즘 성향을 강제 증폭. 착용 거부 확률이 존재함.</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 px-3 font-bold text-amber-600 dark:text-amber-400">동물/가축화 장비</td>
+                    <td class="py-2.5 px-3">개목줄과 리드줄(5$), 애널 테일(10$), 깃털 굴레(10$), 말발굽 부츠(25$), 포니 하네스(10$), 전신 펫슈트(25$)</td>
+                    <td class="py-2.5 px-3">노예에게 짐승의 역할을 부여하여 펫/포니 스킬 습득 속도 배가. 카미라 가문 납품용 필수 장비.</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 px-3 font-bold text-purple-600 dark:text-purple-400">페티시 규칙 강제구</td>
+                    <td class="py-2.5 px-3">질 구슬(5$), 애널 페어(20$), 구형 재갈(20$), 정조대(30$), 감각 박탈 슈트(50$), 소변기 랙(100$), 변기 의자(250$)</td>
+                    <td class="py-2.5 px-3">오르가즘 금지, 대소변 통제, 자위 금지 룰을 물리적으로 강제하여 극도의 욕구불만과 굴종 유도.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Food & Meat -->
+            <h2 id="food-meat-db" class="text-lg font-bold text-slate-900 dark:text-white mb-3">2. 식자재 및 도축 생산물 데이터베이스 (Food & Meat)</h2>
+            <div class="overflow-x-auto rounded-lg border border-wiki-borderLight dark:border-wiki-borderDark mb-6 text-xs sm:text-sm">
+              <table class="w-full text-left">
+                <thead class="bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400 font-semibold border-b border-wiki-borderLight dark:border-wiki-borderDark">
+                  <tr>
+                    <th class="py-2.5 px-3">품목 분류</th>
+                    <th class="py-2.5 px-3">품목 명칭 및 단가</th>
+                    <th class="py-2.5 px-3">수급처 및 소비 효과</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-wiki-borderLight dark:divide-wiki-borderDark text-slate-700 dark:text-slate-300">
+                  <tr>
+                    <td class="py-2.5 px-3 font-bold text-indigo-600 dark:text-indigo-400">기본 식단</td>
+                    <td class="py-2.5 px-3">단백질 죽(Slop, 저가) / 신선 식품(Fresh Food, 3$/일)</td>
+                    <td class="py-2.5 px-3">단백질 죽은 유지비를 아끼나 기분을 깎고, 신선 식품은 피로 회복과 기분을 크게 호전시킴.</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 px-3 font-bold text-indigo-600 dark:text-indigo-400">특식</td>
+                    <td class="py-2.5 px-3">마스터의 잔반(Leftovers) / 베스투리아의 암브로시아(25$)</td>
+                    <td class="py-2.5 px-3">잔반은 호감도와 헌신을 올리나 응석(Spoil)을 축적. 암브로시아는 600cal 급여 및 기분 대폭 상승.</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 px-3 font-bold text-rose-600 dark:text-rose-400">도축 생산 정육</td>
+                    <td class="py-2.5 px-3">다진 고기(Mince) / 안심(Tenderloin) / 처녀육(Virgin Meat)</td>
+                    <td class="py-2.5 px-3">가스트로노미콘이나 헛간에서 노예 도축 시 생산. 1회 도축 시 80~130$ 상당의 정육을 얻어 시장에 판매.</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 px-3 font-bold text-emerald-600 dark:text-emerald-400">낙농 생산물</td>
+                    <td class="py-2.5 px-3">우유 (Milk)</td>
+                    <td class="py-2.5 px-3">젖소(Cow) 노예로부터 매일 착유하여 냉장 캔에 보관 후 낙농 협동조합에 정기 납품.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+
+        </div>
+
+        <!-- Table of Contents -->
+        <aside class="hidden xl:block w-48 shrink-0 py-2 sticky top-20 self-start text-xs">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2 flex items-center gap-1.5">
+            <i data-lucide="align-left" class="w-3.5 h-3.5"></i>
+            페이지 목차
+          </div>
+          <ul id="toc-list" class="space-y-1.5 border-l border-wiki-borderLight dark:border-wiki-borderDark pl-2.5 text-slate-500 dark:text-slate-400"></ul>
+        </aside>
+
+      </div>
+    </main>
+  </div>
+
+  <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-10 opacity-0 transition-all duration-200 pointer-events-none bg-slate-900 text-white dark:bg-purple-600 text-xs px-4 py-2.5 rounded-lg shadow-lg flex items-center gap-2">
+    <i data-lucide="check" class="w-4 h-4 text-emerald-400"></i>
+    <span id="toast-msg">클립보드에 복사되었습니다.</span>
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    function initTheme() {
+      if (localStorage.getItem('theme') === 'light') {
+        document.documentElement.classList.remove('dark');
+        document.getElementById('theme-icon').setAttribute('data-lucide', 'moon');
+      } else {
+        document.documentElement.classList.add('dark');
+        document.getElementById('theme-icon').setAttribute('data-lucide', 'sun');
+      }
+      lucide.createIcons();
+    }
+    initTheme();
+
+    function toggleDarkMode() {
+      const isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      const icon = document.getElementById('theme-icon');
+      icon.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+      lucide.createIcons();
+    }
+
+    function toggleMobileSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const backdrop = document.getElementById('mobile-backdrop');
+      const isOpen = !sidebar.classList.contains('-translate-x-full');
+      if (isOpen) {
+        sidebar.classList.add('-translate-x-full');
+        backdrop.classList.add('hidden');
+      } else {
+        sidebar.classList.remove('-translate-x-full');
+        backdrop.classList.remove('hidden');
+      }
+    }
+
+    function loadArticle(articleId) {
+      document.querySelectorAll('.wiki-article').forEach(page => page.classList.add('hidden'));
+      const target = document.getElementById(articleId);
+      if (target) target.classList.remove('hidden');
+
+      document.querySelectorAll('.nav-item').forEach(item => {
+        if (item.getAttribute('data-target') === articleId) {
+          item.className = "nav-item w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-left text-xs font-bold transition text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/60";
+        } else {
+          item.className = "nav-item w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-left text-xs text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition";
+        }
+      });
+
+      const titleElem = target.querySelector('h1');
+      if (titleElem) {
+        document.getElementById('bc-current').textContent = titleElem.textContent.trim();
+      }
+
+      document.getElementById('main-content-area').scrollTop = 0;
+      buildTOC(target);
+
+      const sidebar = document.getElementById('sidebar');
+      if (!sidebar.classList.contains('-translate-x-full') && window.innerWidth < 768) {
+        toggleMobileSidebar();
+      }
+      lucide.createIcons();
+    }
+
+    function buildTOC(articleElem) {
+      const tocList = document.getElementById('toc-list');
+      tocList.innerHTML = '';
+      const headings = articleElem.querySelectorAll('h2');
+      
+      if (headings.length === 0) {
+        const li = document.createElement('li');
+        li.textContent = '세부 항목 없음';
+        li.className = 'text-[11px] text-slate-400';
+        tocList.appendChild(li);
+        return;
+      }
+
+      headings.forEach(h => {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = '#' + (h.id || '');
+        a.textContent = h.textContent.replace(/^[\d\.\s]+/, '').trim();
+        a.className = 'block hover:text-purple-600 dark:hover:text-purple-400 transition truncate';
+        a.onclick = (e) => {
+          e.preventDefault();
+          h.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        };
+        li.appendChild(a);
+        tocList.appendChild(li);
+      });
+    }
+
+    function handleSearch(query) {
+      const q = query.trim().toLowerCase();
+      const clearBtn = document.getElementById('searchClearBtn');
+      if (q.length > 0) clearBtn.classList.remove('hidden');
+      else clearBtn.classList.add('hidden');
+
+      const navButtons = document.querySelectorAll('#nav-list button.nav-item');
+      navButtons.forEach(btn => {
+        const text = btn.textContent.toLowerCase();
+        const targetId = btn.getAttribute('data-target');
+        const docElem = document.getElementById(targetId);
+        const docFullText = docElem ? docElem.textContent.toLowerCase() : '';
+
+        if (text.includes(q) || docFullText.includes(q)) {
+          btn.parentElement.style.display = 'block';
+        } else {
+          btn.parentElement.style.display = 'none';
+        }
+      });
+    }
+
+    function clearSearch() {
+      const input = document.getElementById('wikiSearchInput');
+      input.value = '';
+      handleSearch('');
+      input.focus();
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = message;
+      toast.classList.remove('translate-y-10', 'opacity-0');
+      setTimeout(() => {
+        toast.classList.add('translate-y-10', 'opacity-0');
+      }, 2000);
+    }
+
+    function copyCurrentArticleContent() {
+      const activeArticle = document.querySelector('.wiki-article:not(.hidden)');
+      if (!activeArticle) return;
+      const text = activeArticle.innerText;
+      const tempTextArea = document.createElement('textarea');
+      tempTextArea.value = text;
+      document.body.appendChild(tempTextArea);
+      tempTextArea.select();
+      try {
+        document.execCommand('copy');
+        showToast('문서 내용이 클립보드에 복사되었습니다.');
+      } catch (err) {
+        showToast('복사에 실패했습니다.');
+      }
+      document.body.removeChild(tempTextArea);
+    }
+
+    function switchLibCategory(type) {
+      const pubBox = document.getElementById('lib-public-container');
+      const secBox = document.getElementById('lib-secret-container');
+      const pubTab = document.getElementById('lib-tab-public');
+      const secTab = document.getElementById('lib-tab-secret');
+
+      if (type === 'public') {
+        pubBox.classList.remove('hidden');
+        secBox.classList.add('hidden');
+        pubTab.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold transition bg-indigo-600 text-white shadow";
+        secTab.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold transition bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-red-500";
+      } else {
+        pubBox.classList.add('hidden');
+        secBox.classList.remove('hidden');
+        pubTab.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold transition bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400";
+        secTab.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold transition bg-red-600 text-white shadow";
+      }
+    }
+
+    window.onload = function() {
+      const initialArticle = document.getElementById('wiki-home');
+      buildTOC(initialArticle);
+    };
+  </script>
+</body>
+</html>
