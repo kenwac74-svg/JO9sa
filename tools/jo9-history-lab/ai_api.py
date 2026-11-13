@@ -4,7 +4,8 @@ import argparse, json, os, pathlib, sys, time, urllib.error, urllib.request
 
 HERE = pathlib.Path(__file__).resolve().parent
 CONFIG = HERE / 'ai-providers.json'
-LOCAL = pathlib.Path(os.environ.get('JO9_AI_LOCAL') or HERE / 'ai.local.json')  # git 제외 키 파일
+# git 제외 키 파일. 단독 실행기는 설정 파일(studio.local.json) 옆에 둔다
+LOCAL = pathlib.Path(os.environ.get('JO9_AI_LOCAL') or (pathlib.Path(os.environ['JO9_STUDIO_SETTINGS']).with_name('ai.local.json') if os.environ.get('JO9_STUDIO_SETTINGS') else HERE / 'ai.local.json'))
 INTERVIEWS = HERE / 'docs' / 'sextalk-interviews'
 TIMEOUT = 120
 
@@ -33,7 +34,7 @@ def chat(name, model, messages, base_url=None, retries=2, **opts):
     if cfg is None:
         raise AiError('없는 제공처: ' + name)
     if cfg['kind'] != 'openai':
-        raise AiError(f'{name}: 공식 문서로 확인되지 않아 호출하지 않습니다(ai-providers.json 의 note 참고).')
+        raise AiError(f'{name}: 번역 호출용이 아닙니다. 편집기의 \'AI 연결\' 탭 입력창에서 직접 설정해 쓰세요.')
     if not model:
         raise AiError('모델 이름이 필요합니다.')
     url = (base_url or cfg['baseUrl']).rstrip('/') + '/chat/completions'
@@ -61,6 +62,89 @@ def chat(name, model, messages, base_url=None, retries=2, **opts):
     except (KeyError, IndexError, TypeError):
         raise AiError(f'{name}: 예상과 다른 응답 형식')
     return {'text': text, 'model': d.get('model', model), 'usage': d.get('usage'), 'id': d.get('id')}
+
+
+# ---------------------------------------------------------------- Kindroid: 사용자가 입력창에 직접 적은 설정으로만 호출(주소·헤더·본문 모양을 추측하지 않는다)
+MASK = '••••••••'
+
+
+def _local():
+    return json.loads(LOCAL.read_text(encoding='utf-8')) if LOCAL.is_file() else {}
+
+
+def kindroid_get():
+    """저장된 Kindroid 설정. 헤더 값(키)은 가리고 저장 여부만 알린다."""
+    c = _local().get('kindroid', {})
+    return {'url': c.get('url', ''), 'headers': [{'name': n, 'value': MASK if v else '', 'saved': bool(v)} for n, v in c.get('headers', {}).items()],
+            'body': c.get('body', ''), 'path': c.get('path', '')}
+
+
+def kindroid_save(cfg):
+    old = _local()
+    prev = old.get('kindroid', {}).get('headers', {})
+    headers = {}
+    for h in cfg.get('headers', []):
+        n = str(h.get('name', '')).strip()
+        if not n:
+            continue
+        if not all(c.isalnum() or c in '-_' for c in n):
+            raise AiError('헤더 이름은 영문·숫자·-·_ 만 쓸 수 있습니다: ' + n)
+        v = h.get('value', '')
+        headers[n] = prev.get(n, '') if v == MASK else str(v)  # 가려진 값 그대로면 기존 값 유지
+    url = str(cfg.get('url', '')).strip()
+    if url and not (url.startswith('https://') or url.startswith('http://127.0.0.1')):
+        raise AiError('주소는 https:// 로 시작해야 합니다.')
+    body = str(cfg.get('body', '')).strip()
+    if body:
+        try:
+            json.loads(body)
+        except ValueError:
+            raise AiError('요청 본문이 JSON 형식이 아닙니다.')
+    old['kindroid'] = {'url': url, 'headers': headers, 'body': body, 'path': str(cfg.get('path', '')).strip()}
+    tmp = LOCAL.with_suffix('.json.tmp')
+    tmp.write_text(json.dumps(old, ensure_ascii=False, indent=1) + '\n', encoding='utf-8')
+    os.replace(tmp, LOCAL)
+    return kindroid_get()
+
+
+def _fill(node, message):
+    if isinstance(node, str):
+        return node.replace('{message}', message)
+    if isinstance(node, list):
+        return [_fill(x, message) for x in node]
+    if isinstance(node, dict):
+        return {k: _fill(v, message) for k, v in node.items()}
+    return node
+
+
+def _dig(node, path):
+    for part in path.split('.'):
+        node = node[int(part)] if isinstance(node, list) else node[part]
+    return node
+
+
+def kindroid_send(message):
+    """입력창 설정대로 POST 한다. 본문 안의 {message}를 보낼 말로 바꾸고, 응답 경로가 있으면 그 칸만 꺼낸다."""
+    c = _local().get('kindroid', {})
+    if not c.get('url'):
+        raise AiError('Kindroid 주소가 입력되지 않았습니다.')
+    body = json.dumps(_fill(json.loads(c['body'] or '{"message": "{message}"}'), message), ensure_ascii=False).encode('utf-8')
+    headers = {'Content-Type': 'application/json', **c.get('headers', {})}
+    req = urllib.request.Request(c['url'], data=body, headers=headers, method='POST')
+    try:
+        with urllib.request.urlopen(req, timeout=TIMEOUT) as r:
+            raw = r.read().decode('utf-8', 'replace')
+    except urllib.error.HTTPError as e:
+        raise AiError(f'Kindroid HTTP {e.code}: {e.read().decode("utf-8", "replace")[:300]}')
+    except (urllib.error.URLError, TimeoutError) as e:
+        raise AiError(f'Kindroid 연결 실패: {e}')
+    text = raw
+    if c.get('path'):
+        try:
+            text = str(_dig(json.loads(raw), c['path']))
+        except (ValueError, KeyError, IndexError, TypeError):
+            raise AiError('응답에서 입력한 경로를 찾지 못했습니다. 전체 응답: ' + raw[:300])
+    return {'text': text, 'raw': raw[:2000]}
 
 
 def part_source(key):

@@ -451,6 +451,7 @@ def delete(sid, body):
 import studio_save  # noqa: E402
 import studio_interview  # noqa: E402
 import studio_excel  # noqa: E402
+import ai_api  # noqa: E402
 _save_cache = {}
 
 
@@ -653,6 +654,7 @@ ROUTES_GET = [
     (re.compile(r'^/api/talkbook/(\d+)$'), lambda m, q: read_talkbook(m.group(1))),
     (re.compile(r'^/api/qsp/search$'), lambda m, q: qsp_search(q)),
     (re.compile(r'^/api/saves$'), lambda m, q: list_saves()),
+    (re.compile(r'^/api/ai/kindroid$'), lambda m, q: ai_api.kindroid_get()),
     (re.compile(r'^/api/interview/meta$'), lambda m, q: studio_interview.meta()),
     (re.compile(r'^/api/interview/search$'), lambda m, q: studio_interview.search(q)),
     (re.compile(r'^/api/interview/row/([\w.]+)$'), lambda m, q: studio_interview.row(m.group(1))),
@@ -664,6 +666,8 @@ ROUTES_POST = [
     (re.compile(r'^/api/char/(\d+)/images$'), lambda m, body: save_images(m.group(1), body)),
     (re.compile(r'^/api/talkbook/(\d+)$'), lambda m, body: save_talkbook(m.group(1), body)),
     (re.compile(r'^/api/qsp/mod$'), lambda m, body: qsp_mod(body)),
+    (re.compile(r'^/api/ai/kindroid$'), lambda m, body: ai_api.kindroid_save(body)),
+    (re.compile(r'^/api/ai/kindroid/send$'), lambda m, body: ai_api.kindroid_send(str(body.get('message', '')))),
     (re.compile(r'^/api/excel/export$'), lambda m, body: studio_excel.export_payload()),
     (re.compile(r'^/api/excel/import$'), lambda m, body: studio_excel.check_import(body.get('data', ''), bool(body.get('apply')))),
     (re.compile(r'^/api/interview/adapt$'), lambda m, body: studio_interview.save_adapt(body)),
@@ -696,7 +700,7 @@ class StudioHandler(http.server.SimpleHTTPRequestHandler):
         self.wfile.write(body)
 
     def fail(self, error):
-        status = {LookupError: 409, FileNotFoundError: 404, PermissionError: 403, ValueError: 400, FileExistsError: 409}
+        status = {ai_api.AiError: 400, LookupError: 409, FileNotFoundError: 404, PermissionError: 403, ValueError: 400, FileExistsError: 409}
         code = next((v for k, v in status.items() if isinstance(error, k)), 500)
         self.send_json(code, {'error': str(error) or error.__class__.__name__})
 

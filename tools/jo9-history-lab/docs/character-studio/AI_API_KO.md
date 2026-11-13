@@ -9,12 +9,12 @@
 | OpenRouter | OpenAI 방식 | `https://openrouter.ai/api/v1/chat/completions` | `Authorization: Bearer <키>` | 확인 |
 | Venice | OpenAI 방식 | `https://api.venice.ai/api/v1/chat/completions` | `Authorization: Bearer <키>` | 확인 |
 | Gemini | OpenAI 호환 | `https://generativelanguage.googleapis.com/v1beta/openai/chat/completions` | `Authorization: Bearer <키>` | 확인 |
-| Kindroid | 캐릭터 대화형 | — | — | **미확인** |
+| Kindroid | 캐릭터 대화형 | 사용자 입력 | 사용자 입력 | 문서 미확인, 입력창 방식 |
 
 - 응답 글은 `choices[0].message.content`, 사용량은 `usage`. 모델 이름은 바뀌므로 코드에 박지 않고 호출할 때 준다.
 - OpenRouter 앱 표시 헤더(`HTTP-Referer`, `X-OpenRouter-Title`)는 선택이며 쓰지 않았다. 필요하면 `ai-providers.json` 의 `headers` 에 넣는다.
 - Gemini 자체(generateContent) 방식은 이번에 문서를 확인하지 못해 넣지 않았다. 필요하면 공식 문서로 확인한 뒤 `kind` 를 추가한다.
-- **Kindroid는 공식 문서에 접근하지 못해**(주소 안내가 이동·404) 주소·인증·요청 칸을 추측해 채우지 않았다. 호출하면 거부 메시지가 나온다. 사용자가 문서를 확인해 `ai-providers.json` 의 `baseUrl`·인증 방식을 알려 주면 구현한다. 캐릭터 대화형이라 번역 호출과는 구조가 다르다(남은 작업 7번과 함께 정하기).
+- **Kindroid는 공식 문서에 접근하지 못해**(주소 안내가 이동·404) 주소·인증·요청 칸을 추측해 채우지 않았다. 대신 **편집기 'AI 연결' 탭의 입력창**(사용자 지시 2026-11-13)에 사용자가 문서의 값을 직접 적는다: 요청 주소(https), 헤더 이름·값(인증 등), 요청 본문 JSON(보낼 말 자리에 `{message}`), 응답에서 꺼낼 칸(`a.b.0.c`, 선택). '저장'은 `ai.local.json`(git 제외)에 쓰고 헤더 값(키)은 화면에 가려 보인다. '한 번 보내 보기'로 응답을 확인한다. 번역 호출(`part`)에는 쓰지 않는다.
 
 ## 키
 환경 변수(`OPENROUTER_API_KEY`, `VENICE_API_KEY`, `GEMINI_API_KEY`, `KINDROID_API_KEY`) 또는 git 제외 파일 `ai.local.json`(`{"keys": {"openrouter": "…"}}`, `.gitignore` 등록됨). 키 값은 출력·기록하지 않는다.
@@ -33,3 +33,6 @@ python3 -I ai_api.py part ... --dry-run                          # 보낼 내용
 
 ## 시험(2026-11-12)
 실제 키 없이 로컬 가짜 서버(127.0.0.1)로 확인: 키 없음 거부, `Authorization` 헤더와 경로, 429 후 재시도, Kindroid 거부, `part`의 번역 기록(모델 `제공처/모델`)·표시불가 키 거부. 실제 제공처 호출은 키가 없어 해 보지 못했다.
+
+## 시험(2026-11-13, Kindroid 입력창)
+가짜 서버(127.0.0.1)로 확인: 입력·저장·새로고침 후 값 가림(재저장해도 기존 값 유지)·`{message}` 치환·응답 경로 추출·헤더 전달·https 아닌 주소 거부. 실제 Kindroid 호출은 하지 못했다.

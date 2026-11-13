@@ -107,6 +107,7 @@ def main(out: str, build: str) -> None:
         z.write(HERE / 'studio_save.py', 'lab/studio_save.py')
         z.write(HERE / 'studio_interview.py', 'lab/studio_interview.py')
         z.write(HERE / 'studio_excel.py', 'lab/studio_excel.py')
+        z.write(HERE / 'ai_api.py', 'lab/ai_api.py')
         for name in BACKEND:
             z.write(IMAGE_TOOL / name, 'character-image-adder/' + name)
     payload = base64.b64encode(buf.getvalue()).decode('ascii')

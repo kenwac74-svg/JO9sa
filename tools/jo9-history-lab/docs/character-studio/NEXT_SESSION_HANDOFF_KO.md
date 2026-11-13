@@ -31,7 +31,7 @@
 3. **엑셀 내보내기·가져오기: 완료(2026-11-12).** `studio_excel.py`, DB 탭의 두 버튼. 규칙은 `context-notes.md` 마지막 항목.
 4. **AI 작업용 정리: 완료(2026-11-12).** `sextalk-interviews/ai-tools.py`(export·check·query), `ai/`, `AI_WORK_SCHEMA_KO.md`. 원본 DB를 바꾸면 export를 다시 실행하고 check로 확인한다.
 5. **글로서리·번역 파일 구조: 완료(2026-11-12).** `sextalk-interviews/i18n-tools.py`, `i18n/glossary.json`, `I18N_KO.md`. 언어 파일은 쓸 때 `init`.
-6. **AI API 연결부: 부분 완료(2026-11-12).** OpenRouter·Venice·Gemini(OpenAI 방식) 구현·시험(가짜 서버). **Kindroid는 공식 문서를 확인하지 못해 보류**(사용자 확인 필요). 실제 키로 호출은 아직 못 해 봄. `ai_api.py`, `ai-providers.json`, `docs/character-studio/AI_API_KO.md`.
+6. **AI API 연결부: 부분 완료(2026-11-12).** OpenRouter·Venice·Gemini(OpenAI 방식) 구현·시험(가짜 서버). **Kindroid는 공식 문서 미확인이라 '입력창 방식'으로 완료**(2026-11-13): 편집기 'AI 연결' 탭에서 사용자가 주소·헤더·본문을 직접 입력. 실제 키로 호출은 아직 못 해 봄. `ai_api.py`, `ai-providers.json`, `docs/character-studio/AI_API_KO.md`.
 7. **세계관 자료집 + 자동 프롬프트 조립(판단이 많아 오퍼스 권장):** 목차를 먼저 사용자에게 확인. 작업마다 캐릭터 설정·칸 규칙·참고 원문·채택 예시를 붙이고, 채택/거부 이력으로 예시를 쌓는다. 대량 작업 전 이해도 시험.
 8. 기타: 시뮬레이터 '영입 경로'에 '이벤트' 추가(세부는 필로우토크 때), 모드 제작자 편집기 데이터 설명 수정 8개(`records/handoff-b-activity-20261112/editor-data-edits.json`, 모드 제작자 로컬) 받아 대조, 세이브의 지운 캐릭터 옛 seed 찾기(선택).
 
@@ -43,7 +43,7 @@ repo `.gitignore` 첫 줄 `dist/` 때문에 `tools/jo9-history-lab/dist/` 아래
 - 먼저 할 일: 1~6번 결과물(`posts-db.json`, `ai/`, `i18n/`, `ai_api.py`)을 읽고, **세계관 자료집 목차 초안만** 만들어 사용자에게 확인받는다. 확인 전에 본문·대량 호출을 시작하지 않는다.
 - 쓸 수 있는 재료: 세계 13종 라벨·바꿀 말 사전(`sextalk-interviews/adapt-dict.json`), 세계별 각색 등급, 글로서리(`i18n/glossary.json`), 부분 키 단위 원문(`ai/`), 채택/거부 이력은 새로 만들어야 한다.
 - 지킬 것: 2장 원칙 전부. 특히 B1·B2는 프롬프트·작업 목록·예시에 넣지 않는다(`ai_api.py part`가 번역 목록 밖 키를 거부하는 방식을 따른다).
-- 미해결: Kindroid 공식 문서 미확인(6번), 실제 키로 `ai_api.py chat` 시험 안 함, 실제 Microsoft Excel로 열어 보지 못함(3번).
+- 미해결: 실제 Kindroid·OpenRouter·Venice·Gemini 호출 미시험(6번), 실제 키로 `ai_api.py chat` 시험 안 함, 실제 Microsoft Excel로 열어 보지 못함(3번).
 - PR 17(모드 제작자 인계) 상태 점검은 이전 세션이 예약해 두었다. 이어서 지켜보려면 새 세션에서 다시 구독을 요청한다.
 
 ## 5. 참고 사실
