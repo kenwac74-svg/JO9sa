@@ -1,6 +1,8 @@
 <!-- 통합 캐릭터 편집기 다음 세션(소넷 등) 인계: 현재 상태, 원칙, 남은 작업 순서 -->
 # 통합 캐릭터 편집기 · 다음 세션 인계 (2026-11-12)
 
+> **2026-11-13: 최신 전체 인계는 `EDITOR_HANDOFF_KO.md`다. 그 문서를 먼저 읽는다.** 아래는 2026-11-12 기록이다.
+
 먼저 이 문서, `PLAN_KO.md`, `checklist.md`, `context-notes.md`(같은 폴더), `GUIDE_KO.md`, repo `CLAUDE.md`·`AGENTS.md`, `docs/claude-refusals/REFUSAL_LOG_KO.md`를 읽는다. 이미 정한 것은 다시 묻지 않는다.
 
 ## 1. 위치
