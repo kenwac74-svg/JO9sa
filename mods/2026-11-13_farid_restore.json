@@ -1,0 +1,87 @@
+{
+  "id": "2026-11-13_farid_restore",
+  "description": "경매인 이름을 정식 설정인 파리드로 복구: 이전 한글판에서 들어온 잡파를 대사·경매·위탁 판매·노출 전시에서 파리드로 바꾸고, 인물 설명을 러시아어 원문(#npc_base_woman) 번역으로 되돌리며, 쓰이지 않는 zappa 인물 정의 두 벌을 지운다",
+  "target": "game\\jack.qsp",
+  "before_sha256": "4354cf397342cc516f8a32c76ffb44894b9a608d3c4f19ad42993287354976ef",
+  "after_sha256": "17ffe5a9cbd09446293e94e5f196b2c18b3a58b5d93fe46fd47f6a5bd9c47e10",
+  "edits": [
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "잡파",
+      "new": "파리드",
+      "count": 10
+    },
+    {
+      "location": "slave_auction_buy",
+      "field": "body",
+      "old": "잡파",
+      "new": "파리드",
+      "count": 10
+    },
+    {
+      "location": "slave_auction_sell",
+      "field": "body",
+      "old": "잡파",
+      "new": "파리드",
+      "count": 11
+    },
+    {
+      "location": "slave_auction_sell_end",
+      "field": "body",
+      "old": "잡파",
+      "new": "파리드",
+      "count": 1
+    },
+    {
+      "location": "#static_txt",
+      "field": "body",
+      "old": "잡파",
+      "new": "파리드",
+      "count": 12
+    },
+    {
+      "location": "#txt_woman",
+      "field": "body",
+      "old": "잡파",
+      "new": "파리드",
+      "count": 1
+    },
+    {
+      "location": "#txt_man",
+      "field": "body",
+      "old": "잡파",
+      "new": "파리드",
+      "count": 2
+    },
+    {
+      "location": "#npc_base",
+      "field": "body",
+      "old": "$npc_info['фарид_аукционщик'] = '<br> 파리드를 밀어내고 경매인이 된 잡파.<br><br>파리드를 축출하고 이권을 모조리 가져왔다.<br><br> 경박해보이는듯한 행동과는 다르게 완벽한 관리력을 보여주는중이다.'",
+      "new": "$npc_info['фарид_аукционщик'] = '<br> 시장 경매에서 낙인 없는 노예를 거래하는 자리를 단단히 독점해 온 늙고 노련한 노예상이다.<br><br> 가끔 훈련된 노예를 위탁받아 팔기도 하지만, 이 늙은 사기꾼이 떼어 가는 터무니없는 수수료 때문에 그런 일은 드물다.<br><br> 대신 살아 있는 상품의 값을 매기는 데에는 파리드가 최고의 전문가로 통한다.'",
+      "count": 2
+    },
+    {
+      "location": "#npc_base",
+      "field": "body",
+      "old": "$npc_name['фарид_аукционщик'] = '경매인 잡파'",
+      "new": "$npc_name['фарид_аукционщик'] = '경매인 파리드'",
+      "count": 1
+    },
+    {
+      "location": "#npc_base",
+      "field": "body",
+      "old": "$npc_image['zappa'] = 'zappa'\r\n$npc_name['zappa'] = '잡파'\r\n! JO9 MOD START J9M2150 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included\r\n$npc_status['zappa'] = '중립 -<br>경매인 / 노예상 조합 중역'\r\n! JO9 MOD END J9M2150\r\n$npc_info['zappa'] = '<br> 파리드를 밀어내고 경매인이 된 잡파.<br><br>파리드를 축출하고 이권을 모조리 가져왔다.<br><br> 경박해보이는듯한 행동과는 다르게 완벽한 관리력을 보여주는중이다.'\r\nnpc_attitude['zappa'] = 30\r\n",
+      "new": "",
+      "count": 1
+    },
+    {
+      "location": "#npc_base",
+      "field": "body",
+      "old": "$npc_image['zappa'] = 'zappa'\r\n$npc_name['zappa'] = '잡파'\r\n$npc_status['zappa'] = '노예상 조합 중역<br>중립'\r\n$npc_info['zappa'] = '<br> 파리드를 밀어내고 경매인이 된 잡파.<br><br>파리드를 축출하고 이권을 모조리 가져왔다.<br><br> 경박해보이는듯한 행동과는 다르게 완벽한 관리력을 보여주는중이다.'\r\nnpc_attitude['zappa'] = 30\r\n",
+      "new": "",
+      "count": 1
+    }
+  ],
+  "note": "해시는 사용자 최신 qsp(4354cf39…)에 farid_restore → lore_name_fixes 순서로 적용한 값. 두 mod는 서로 독립이라 반대 순서도 같은 결과(843bd722…). 저장소 qsp(8332e185…)와 장악력 mod 적용본에도 그대로 적용됨을 확인(2026-11-13)."
+}
