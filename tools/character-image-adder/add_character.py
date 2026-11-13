@@ -719,7 +719,6 @@ def delete_character(paths, sid, mode="safe", log=print):
     """
     sid = int(sid)
     data, fn = read_slave(paths, sid)
-    base = slave_base_name(data)
     root = paths.root
 
     band, key, first = band_and_key(sid)
@@ -727,17 +726,16 @@ def delete_character(paths, sid, mode="safe", log=print):
     last = int(idx.get(key, first - 1)) if idx is not None else None
     if band is not None and not first <= sid <= last:
         band = None  # Fixed presets outside the registered random pool have no pool slot.
-    targets = [_abs_from_gamepath(root, data["fullimage"])]
-    for field, suffix in [("seed_ava_clear", ""), ("seed_ava_gray", "_gray"), ("seed_ava", "_sepia")]:
-        reference = data.get(field) or "content/pic/girls/face/" + base + suffix
-        targets.append(_abs_from_gamepath(root, reference))
-    for field, _lbl, _sub in OUTFITS:
-        if data.get(field):
-            targets.append(_abs_from_gamepath(root, data[field]))
-
-    # 이 캐릭터의 이미지들 삭제 (항상)
-    for target in dict.fromkeys(targets):
-        _rm(target, log)
+    references = character_image_references(data)
+    ref_index = build_ref_index(paths, physical=True)
+    # 다른 ID의 어느 역할에서든 쓰는 이미지는 보존하고 이 캐릭터의 데이터만 제거한다.
+    for reference in references:
+        users = ref_index.get(_image_path_key(paths, reference), set()) - {sid}
+        target = _abs_from_gamepath(root, reference)
+        if users:
+            log("   [공유 보존] %s · ID %s" % (os.path.basename(target), ", ".join(str(n) for n in sorted(users))))
+        else:
+            _rm(target, log)
 
     # 프리셋(풀 밖) 또는 밴드 판별 불가 -> json 만 지우면 끝
     if band is None:
@@ -984,23 +982,49 @@ def _norm_ref(reference):
     return os.path.splitext(text)[0].lower() if os.path.splitext(text)[1].lower() in (".png", ".gif", ".jpg") else text.lower()
 
 
-def build_ref_index(paths):
-    """모든 캐릭터 JSON 의 이미지 참조 -> 그 참조를 쓰는 ID 집합."""
+def character_image_references(data):
+    """모든 외형·초상 참조와 기존 기본 초상 경로를 중복 없이 돌려준다."""
+    references = [data[field] for field in IMAGE_FIELDS if isinstance(data.get(field), str) and data[field]]
+    base = slave_base_name(data)
+    if base:
+        for field, suffix in (("seed_ava_clear", ""), ("seed_ava_gray", "_gray"), ("seed_ava", "_sepia")):
+            if not data.get(field):
+                references.append("content/pic/girls/face/" + base + suffix)
+    return list(dict.fromkeys(references))
+
+
+def _image_path_key(paths, reference):
+    """같은 실제 파일을 가리키는 표기 차이는 삭제 판단에서 하나로 취급한다."""
+    return os.path.normcase(_abs_from_gamepath(paths.root, reference))
+
+
+def build_ref_index(paths, physical=False):
+    """모든 캐릭터 JSON 의 이미지 참조(또는 실제 경로) -> 그 참조를 쓰는 ID 집합."""
     index = {}
     for name in os.listdir(paths.slaves_dir):
         match = re.match(r"^(\d+)(?:_[^/\\]+)?\.json$", name, re.IGNORECASE)
-        if not match or int(match.group(1)) == 0:
+        if not match:
             continue
         try:
             with open(os.path.join(paths.slaves_dir, name), "r", encoding="utf-8-sig") as stream:
                 data = json.load(stream)
         except (OSError, ValueError):
             continue
-        for field in IMAGE_FIELDS:
-            value = data.get(field)
-            if isinstance(value, str) and value:
-                index.setdefault(_norm_ref(value), set()).add(int(match.group(1)))
+        for reference in character_image_references(data):
+            key = _image_path_key(paths, reference) if physical else _norm_ref(reference)
+            index.setdefault(key, set()).add(int(match.group(1)))
     return index
+
+
+def shared_image_users(paths, sid, data=None):
+    """이 ID의 모든 외형·초상 중 하나라도 함께 쓰는 다른 ID 목록."""
+    if data is None:
+        data, _filename = read_slave(paths, sid)
+    index = build_ref_index(paths, physical=True)
+    users = set()
+    for reference in character_image_references(data):
+        users.update(index.get(_image_path_key(paths, reference), set()))
+    return sorted(users - {int(sid)})
 
 
 def slot_reference(data, slot, dedicated):
@@ -1092,7 +1116,7 @@ def save_character_slots(paths, sid, slot_images=None, face_image=None, attribut
     slot_images = {슬롯: PIL 이미지 | None(연결 해제)}.  슬롯 키는 SLOTS 참조.
     이미 연결된 슬롯은 같은 경로에서 교체하고, 연결 안 된 슬롯은 폴더 규칙에 맞는 새 경로를 만든다.
     같은 경로를 다른 역할이 함께 쓰고 있으면(공유 사본) 덮어쓰지 않고 새 경로를 만든다.
-    반환: {"id", "files"(전체 경로 목록), "data"(저장될 JSON), "before", "targets", "warnings", "shared_with"}
+    반환: {"id", "files"(전체 경로 목록), "data"(저장될 JSON), "before", "targets", "warnings", "shared_with", "preserved_shared_with"}
     """
     data, json_file = read_slave(paths, sid)
     before = copy.deepcopy(data)
@@ -1100,9 +1124,10 @@ def save_character_slots(paths, sid, slot_images=None, face_image=None, attribut
     base = slave_base_name(data) or ("%04d_%s" % (int(sid), "char"))
     dedicated = is_dedicated(paths, sid)
     payloads, taken, targets, warnings = {}, set(), {}, []
-    ref_index = build_ref_index(paths)
+    ref_index = build_ref_index(paths, physical=True)
     shared_with = set()
-    removed = set()
+    preserved_shared_with = set()
+    removed = {}
 
     def put(target, image):
         key = os.path.normcase(os.path.abspath(target))
@@ -1119,7 +1144,7 @@ def save_character_slots(paths, sid, slot_images=None, face_image=None, attribut
         field, reference = slot_reference(data, slot, dedicated)
         if image is None:
             if reference:
-                removed.add(_abs_from_gamepath(paths.root, reference))
+                removed[_abs_from_gamepath(paths.root, reference)] = reference
                 for f in SLOT_FIELDS[slot]:
                     updated[f] = ""
                 targets[slot] = None
@@ -1131,7 +1156,7 @@ def save_character_slots(paths, sid, slot_images=None, face_image=None, attribut
                 reference = _free_reference(paths, reference, taken)
                 warnings.append("%s: 다른 역할과 같은 파일을 쓰고 있어 새 경로 %s 에 저장합니다." % (SLOT_LABELS[slot], reference))
             else:
-                users = ref_index.get(_norm_ref(reference), set()) - {int(sid)}
+                users = ref_index.get(_image_path_key(paths, reference), set()) - {int(sid)}
                 if users:
                     shared_with |= users
         else:
@@ -1159,7 +1184,7 @@ def save_character_slots(paths, sid, slot_images=None, face_image=None, attribut
                 reference = "content/pic/girls/face/" + base + suffix
             updated[field] = reference
             put(_abs_from_gamepath(paths.root, reference), variant)
-            users = ref_index.get(_norm_ref(reference), set()) - {int(sid)}
+            users = ref_index.get(_image_path_key(paths, reference), set()) - {int(sid)}
             if users:
                 shared_with |= users
 
@@ -1185,9 +1210,11 @@ def save_character_slots(paths, sid, slot_images=None, face_image=None, attribut
                     raise FileExistsError("이미 있는 파일 이름입니다: " + os.path.basename(wanted))
                 new_json = wanted
 
-    remaining = {_abs_from_gamepath(paths.root, updated[f]) for f in IMAGE_FIELDS if updated.get(f)}
-    for target in removed:
-        if target not in remaining and target not in payloads:
+    remaining = {_image_path_key(paths, updated[f]) for f in IMAGE_FIELDS if updated.get(f)}
+    for target, reference in removed.items():
+        users = ref_index.get(_image_path_key(paths, reference), set()) - {int(sid)}
+        preserved_shared_with.update(users)
+        if _image_path_key(paths, reference) not in remaining and target not in payloads and not users:
             payloads[target] = None
     if updated != data or new_json != json_file:
         with open(json_file, "rb") as source:
@@ -1199,7 +1226,7 @@ def save_character_slots(paths, sid, slot_images=None, face_image=None, attribut
             payloads[json_file] = None
     result = {"id": int(sid), "base": base, "json_file": new_json, "files": list(payloads), "dry_run": dry_run,
               "data": updated, "before": before, "targets": targets, "warnings": warnings,
-              "shared_with": sorted(shared_with), "dedicated": dedicated}
+              "shared_with": sorted(shared_with), "preserved_shared_with": sorted(preserved_shared_with), "dedicated": dedicated}
     if dry_run:
         log("[미리보기] ID %d · %d개 파일 변경 예정 (저장하지 않음)" % (int(sid), len(payloads)))
     elif payloads:
@@ -1211,6 +1238,8 @@ def save_character_slots(paths, sid, slot_images=None, face_image=None, attribut
         log("   [주의] " + note)
     if shared_with and not dry_run:
         log("   [공유] 같은 이미지를 쓰는 다른 캐릭터: " + ", ".join(str(x) for x in sorted(shared_with)))
+    if preserved_shared_with and not dry_run:
+        log("   [공유 보존] PNG는 유지하고 이 캐릭터의 연결만 해제했습니다. 다른 ID: " + ", ".join(str(x) for x in sorted(preserved_shared_with)))
     return result
 
 

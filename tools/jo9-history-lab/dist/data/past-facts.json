@@ -1,0 +1,389 @@
+{
+ "version": "0.1",
+ "status": "초안 2026-11-12. 사용자 결정 반영: 첫 경험 시기는 세계별(현대 = 실제 평균, 선사·미래로 갈수록 빠름, 중세·근대가 가장 늦음), 이종 경험은 이터널 로마 안의 두 경우만, 페티시는 앞 주제와 연결되지 않는 성향만.",
+ "note": "영입 때 한 번 정해 저장하는 섹스토크 사실. 값은 코드이고 문장은 대사집이 만든다. 같은 노예는 언제 물어도 같은 사실로 답한다.",
+ "firstBand": {
+  "note": "첫 경험 나이를 정규분포(평균 meanAge, 표준편차 sd)로 뽑아 adultAge 미만이면 teen(내부 코드 B1, 화면 표시 불가), 이상이면 adult. 나이 숫자는 저장·출력하지 않는다. 현대 기준은 러시아(잭오나 원작 국가) 자료(사용자 결정 2026-11-12): Healthy Russia 2020 조사 여성 첫 경험 중앙값 18세, 러시아 보건부 추정 여성 17~18세 → 18.0. 참고로 Rosstat·UNFPA 2013(여성 15~44세 약 1만 명)은 18세까지 42%, 24세까지 92%.",
+  "adultAge": 19,
+  "sd": 2.0,
+  "meanAge": {
+   "prehistoric": 14.0,
+   "barbarian": 15.0,
+   "sns": 18.0,
+   "medieval": 19.5,
+   "darkfantasy": 18.5,
+   "highfantasy": 18.0,
+   "steampunk": 19.0,
+   "industrial": 19.5,
+   "modern": 18.0,
+   "cyberpunk": 16.8,
+   "utopia": 16.5,
+   "darkfuture": 16.8,
+   "space": 16.5,
+   "earth_rome": 16.0
+  },
+  "maxAge": 45,
+  "tablesNote": "성인 이후는 뽑은 나이(정수, adultAge~maxAge)를 first_age로 저장한다. 청소년기는 나이를 뽑아 저장하지 않고, 사용자 창작물 DB에서 첫 경험이 청소년기(B1)인 인터뷰 번호를 하나 골라 first_age_ref로 남긴다(사용자 지시 2026-11-12: 뽑혔어야 하는 DB 테이블 = 창작물의 해당 인터뷰 번호). 목록: first-time-interviews.json.",
+  "meanAgeNote": "사용자 결정 2026-11-12: 선사 14.0, 야만 15.0, 지구의 고대 로마 16.0, 현대 18.0(러시아). 나머지 세계는 Claude 초안을 승인."
+ },
+ "firstWho": {
+  "note": "첫 상대 코드와 가중치. 직업 묶음 → 출신 묶음 → default 순으로 첫 번째로 맞는 표를 쓴다.",
+  "labels": {
+   "husband": "남편",
+   "fiance": "약혼자",
+   "lover": "연인",
+   "neighbor": "이웃 남자",
+   "client": "손님",
+   "pimp": "포주",
+   "master": "전 주인",
+   "thug": "동네 건달",
+   "stranger": "처음 본 남자",
+   "patron": "후원자",
+   "fellow": "같은 처지의 노예"
+  },
+  "byTier": {
+   "married": {
+    "husband": 70,
+    "lover": 20,
+    "neighbor": 10
+   },
+   "sexWork": {
+    "client": 45,
+    "pimp": 25,
+    "lover": 15,
+    "stranger": 15
+   },
+   "formerSlave": {
+    "master": 60,
+    "fellow": 20,
+    "stranger": 20
+   },
+   "nightlife": {
+    "patron": 35,
+    "lover": 40,
+    "stranger": 25
+   },
+   "sheltered": {
+    "fiance": 55,
+    "lover": 30,
+    "patron": 15
+   },
+   "street": {
+    "thug": 40,
+    "neighbor": 25,
+    "stranger": 20,
+    "lover": 15
+   },
+   "default": {
+    "lover": 50,
+    "neighbor": 25,
+    "stranger": 15,
+    "fiance": 10
+   },
+   "houseSlave": {
+    "master": 40,
+    "fellow": 40,
+    "stranger": 20
+   }
+  },
+  "speech": {
+   "husband": "남편",
+   "fiance": "약혼자",
+   "lover": "사귀던 남자",
+   "neighbor": "친한 동네 오빠",
+   "client": "처음 받은 손님",
+   "pimp": "포주",
+   "master": "전 주인",
+   "thug": "동네 건달",
+   "stranger": "처음 보는 남자",
+   "patron": "뒤를 봐주던 나리",
+   "fellow": "같이 끌려온 남자 노예"
+  },
+  "houseSlaveNote": "사용자 결정 2026-11-12: 집에 소속된 노예(전직 노예 중 성 기술 평균 3 미만)는 첫 상대·방식을 따로 쓴다. 장소는 전직 노예 표. 나머지 표는 초안 승인."
+ },
+ "firstHow": {
+  "labels": {
+   "wanted": "원해서",
+   "drifted": "얼떨결에",
+   "paid": "돈을 받고",
+   "forced": "강제로"
+  },
+  "byTier": {
+   "married": {
+    "wanted": 40,
+    "drifted": 45,
+    "forced": 15
+   },
+   "sexWork": {
+    "paid": 50,
+    "forced": 25,
+    "drifted": 25
+   },
+   "formerSlave": {
+    "forced": 75,
+    "drifted": 25
+   },
+   "street": {
+    "wanted": 25,
+    "drifted": 35,
+    "forced": 40
+   },
+   "default": {
+    "wanted": 50,
+    "drifted": 40,
+    "forced": 10
+   },
+   "houseSlave": {
+    "forced": 50,
+    "drifted": 30,
+    "wanted": 20
+   }
+  }
+ },
+ "firstWhere": {
+  "note": "장소는 코드만 정한다. 세계별 문장은 대사집·사용자 각색이 정한다.",
+  "labels": {
+   "home": "자기 집",
+   "his_home": "상대 집",
+   "outdoor": "바깥",
+   "work": "일터",
+   "inn": "숙소",
+   "wedding_bed": "신혼 침상",
+   "master_room": "주인 방"
+  },
+  "byTier": {
+   "married": {
+    "wedding_bed": 80,
+    "home": 20
+   },
+   "sexWork": {
+    "work": 60,
+    "inn": 30,
+    "outdoor": 10
+   },
+   "formerSlave": {
+    "master_room": 70,
+    "outdoor": 15,
+    "work": 15
+   },
+   "default": {
+    "home": 30,
+    "his_home": 30,
+    "outdoor": 25,
+    "inn": 15
+   }
+  },
+  "speech": {
+   "home": "제 방에서",
+   "his_home": "그 사람 집에서",
+   "outdoor": "바깥에서",
+   "work": "일하던 곳에서",
+   "inn": "싸구려 여관방에서",
+   "wedding_bed": "첫날밤 신방에서",
+   "master_room": "주인 방에서"
+  }
+ },
+ "partnerCount": {
+  "note": "한 명당 평균 횟수 = 같은 상대와 평균 몇 번 했는지. 상대 수 = 성경험 총횟수 ÷ 한 명당 횟수(±변동, 최소 1). 사용자 결정 2026-11-12: 접객업 2, 밤 문화 5, 그 밖 10, 기혼 100(일처일부제), 전직 노예는 성 기술(질·구강·애널) 평균 3 이상이면 성노예 2, 아니면 집에 소속된 노예 10.",
+  "timesPerPartner": {
+   "sexWork": 2,
+   "formerSlave": 10,
+   "nightlife": 5,
+   "married": 100,
+   "default": 10
+  },
+  "variationPct": 30,
+  "sexSlave": {
+   "skills": [
+    "sub_vaginal",
+    "sub_bj",
+    "sub_anal"
+   ],
+   "minAvg": 3,
+   "timesPerPartner": 2
+  }
+ },
+ "maxNight": {
+  "note": "한 상대와 하룻밤 최다 횟수 = 1 + 성욕 보정 + rand. 총횟수보다 클 수 없다.",
+  "base": [
+   1,
+   3
+  ],
+  "libidoBonus": {
+   "2": 3,
+   "1": 2,
+   "-1": -1,
+   "-2": -1
+  }
+ },
+ "group": {
+  "labels": {
+   "none": "없음",
+   "ffm": "여자 둘 남자 하나",
+   "mmf": "남자 둘 여자 하나",
+   "many": "여럿"
+  },
+  "pctByTier": {
+   "sexWork": 60,
+   "formerSlave": 45,
+   "nightlife": 25,
+   "default": 8
+  },
+  "maxDayPeopleByTier": {
+   "sexWork": [
+    3,
+    12
+   ],
+   "formerSlave": [
+    2,
+    6
+   ],
+   "default": [
+    2,
+    3
+   ]
+  }
+ },
+ "orgasm": {
+  "labels": {
+   "never": "느껴 본 적 없음",
+   "sometimes": "가끔",
+   "often": "자주",
+   "always": "매번"
+  }
+ },
+ "finish": {
+  "labels": {
+   "inside": "안에",
+   "mouth": "입에",
+   "face": "얼굴에",
+   "chest": "가슴에",
+   "anal": "뒤에"
+  }
+ },
+ "xeno": {
+  "note": "이종 경험은 이터널 로마 안의 일만(사용자 결정 2026-11-12). 이전 세계의 과거 경험에는 없다. 안개 경계 순찰에서 괴물에게 당하던 중 구해 온 노예와, 이전 주인에게 촉수 착정당한 노예 출신.",
+  "labels": {
+   "none": "없음",
+   "patrol_tentacle": "안개 경계 순찰: 안개 괴물(촉수)에게 당하던 중 구출",
+   "patrol_monster": "안개 경계 순찰: 괴물(수인·웨어울프·오우거·고블린·오크)에게 당하던 중 구출",
+   "prev_master": "이전 주인이 촉수로 착정시킴",
+   "patrol_warg": "안개 경계 순찰: 와그(안개 경계의 괴물 늑대)에게 당하던 중 구출"
+  },
+  "prevMasterPct": 0,
+  "prevMasterTier": "formerSlave",
+  "patrolScenes": {
+   "61101": {
+    "enemy": "исчадие_молодь",
+    "label": "어린 안개 괴물",
+    "kind": "patrol_tentacle",
+    "partners": 1
+   },
+   "61102": {
+    "enemy": "исчадие",
+    "label": "큰 촉수 괴물",
+    "kind": "patrol_tentacle",
+    "partners": 1
+   },
+   "61103": {
+    "enemy": "чудовщиное_исчадие",
+    "label": "거대한 촉수 괴물",
+    "kind": "patrol_tentacle",
+    "partners": 1
+   },
+   "61106": {
+    "enemy": "зверолюд(무작위)",
+    "label": "카미라 가문 짐승족 무리",
+    "kind": "patrol_monster",
+    "partners": 3
+   },
+   "61107": {
+    "enemy": "вервольф",
+    "label": "웨어울프",
+    "kind": "patrol_monster",
+    "partners": 1
+   },
+   "61111": {
+    "enemy": "ogre",
+    "label": "오우거",
+    "kind": "patrol_monster",
+    "partners": 1
+   },
+   "61112": {
+    "enemy": "goblin",
+    "label": "고블린 셋",
+    "kind": "patrol_monster",
+    "partners": 3
+   },
+   "61113": {
+    "enemy": "warg",
+    "label": "큰 늑대(와그)",
+    "kind": "patrol_warg",
+    "partners": 1
+   },
+   "61114": {
+    "enemy": "orc",
+    "label": "오크 전사",
+    "kind": "patrol_monster",
+    "partners": 1,
+    "note": "끌려가던 중 구출. 이종 경험에 포함(사용자 결정 2026-11-12)"
+   }
+  },
+  "gameSource": "interaction_city 611xx(안개 경계 순찰 장면). 장면 설명 $sp_text[n]에서 괴물이 여자를 범하는 중이고, $враг[1]에 적 id를 넣고 전투(shop_general)로 간다. 괴물을 퇴치하면 구한 여자를 노예로 삼을 수 있다. 게임 적용 때는 영입 시점에 장면 번호를 사실로 남긴다.",
+  "blocked": {},
+  "patrolExcluded": {
+   "61104": "검은 의사·용병(사람)",
+   "61105": "성기사·보병(사람)",
+   "61108": "뱀파이어: 피를 마시려 함, 성적 장면 없음, 피해자가 어린 소녀",
+   "61109": "리치: 의식용 마비, 성적 장면 없음, 피해자가 어린 소녀",
+   "61110": "빈민가 사람들(사람)",
+   "61115": "가르시드 무리: 구할 여자 없음"
+  },
+  "homeAnimal": {
+   "note": "자기가 살던 세상에서의 동물 경험(수간). 내부 코드 B2: 키·사실은 남기고 화면에는 자리표시 문구만, 대사 원고 없음. 세계별 비율은 사용자가 정한다(기본 0).",
+   "code": "B2",
+   "pctByWorld": {
+    "prehistoric": 0,
+    "barbarian": 0,
+    "sns": 0,
+    "medieval": 0,
+    "darkfantasy": 0,
+    "highfantasy": 0,
+    "steampunk": 0,
+    "industrial": 0,
+    "modern": 0,
+    "cyberpunk": 0,
+    "utopia": 0,
+    "darkfuture": 0,
+    "space": 0
+   }
+  },
+  "countNote": "사용자 결정 2026-11-12: 이종 경험은 주인을 만난 뒤 쌓이는 누적 수치이며 성경험 횟수·상대 수에 포함한다. 영입 시 초기값은 등장 사건뿐: 안개 경계 구출 = 장면의 상대 수만큼(횟수 = 상대 수), 이전 주인 촉수 착정 = 1/1. 그 밖의 과거 경험에서는 늘지 않는다.",
+  "prevMasterCount": 1,
+  "prevMasterNote": "사용자 결정 2026-11-12: 촉수 착정은 이터널 로마 안의 일이다. 다른 세계 출신 노예(직업 노예 포함)는 자기 세계에서 노예였으므로 촉수 착정이 없다. 특수 설정의 유니크 노예에게만 수동 지정한다(무작위 생성 0%)."
+ },
+ "fetish": {
+  "note": "변태 성욕·페티시 주제는 앞 주제에서 이미 다루지 않는 성향만 다룬다(사용자 결정 2026-11-12). 펠라·애널 중독은 딥스로트·애널, 피학·가학은 SM, 노출은 노출, 색정광·정액 중독은 피니시·오르가즘·상대 수·다인, 레즈비언·양성애자는 다인 경험, 기호증·심리피학은 성벽이 아니라 제외. 역할 놀이 재능(순종적인 동물·말, 미련한 소)은 재능일 뿐 페티시가 아니라 제외(사용자 결정 2026-11-12).",
+  "candidates": [
+   {
+    "key": "perversion",
+    "value": 2,
+    "name": "이상성욕 선호"
+   }
+  ]
+ },
+ "actLabels": {
+  "labels": {
+   "anal": "애널",
+   "oral": "구강",
+   "vaginal": "질",
+   "perversion": "변태 행위",
+   "group": "여럿이서",
+   "anal_affinity": "애널(숨은 성향)",
+   "oral_affinity": "펠라(숨은 성향)",
+   "masochism": "맞으면서(숨은 성향)",
+   "exhibitionism": "남들 앞에서(숨은 성향)",
+   "homosexualism": "여자와(숨은 성향)"
+  }
+ }
+}
