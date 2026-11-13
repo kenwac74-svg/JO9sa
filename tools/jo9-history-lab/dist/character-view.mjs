@@ -148,6 +148,17 @@ export async function createCharacterView(api){
   return {r,fx,f:cx.f,s};
  }
  const PAGE=8;
+ // 대답 길이 규칙(사용자 승인 2026-11-13, 세계관 자료집 7장 7.7): 한 페이지 230자(게임 $voice_flow_pack 경계, 문장 가운데서 자르지 않음), 한 대답 최대 2페이지
+ const PAGE_CHARS=230,MAX_PAGES=2;
+ function talkPages(text){
+  const sents=String(text).match(/[^.!?…~]+[.!?…~]*\s*/g)??[String(text)],pages=[];let cur='';
+  for(const s of sents){if(cur&&(cur+s).trim().length>PAGE_CHARS){pages.push(cur.trim());cur='';}cur+=s;}
+  if(cur.trim())pages.push(cur.trim());return pages;
+ }
+ function pagesHtml(text){
+  const p=talkPages(text);if(p.length<=1)return e(text);
+  return p.map((x,i)=>`<span class="badge muted">${i+1}/${p.length}쪽</span> ${e(x)}`).join('<br>')+(p.length>MAX_PAGES?` <span class="badge" title="한 대답은 최대 ${MAX_PAGES}페이지(${PAGE_CHARS*MAX_PAGES}자)">${MAX_PAGES}페이지 초과</span>`:'');
+ }
  function pillowHtml(cx){
   if(!cx)return '<p class="muted-text">캐릭터를 뽑거나 불러오면 필로우토크가 나옵니다.</p>';
   const {r,s}=cx,c=ch();
@@ -164,7 +175,7 @@ export async function createCharacterView(api){
   else{
    const [lv,id,label]=slot,g=(lie??truth).out[id]??{text:''},tg=truth.out[id]??{text:''},edited=edits[id]!==undefined,text=edited?edits[id]:g.text;
    const ref=refFor(id,lie?null:cx.fx,lie?'|lie':''),truthRef=lie?refFor(id,cx.fx):null;
-   say=text?e(text):'<span class="gm-muted">(대사 없음: 아래에서 원본을 보고 각색해 넣으세요)</span>';
+   say=text?pagesHtml(text):'<span class="gm-muted">(대사 없음: 아래에서 원본을 보고 각색해 넣으세요)</span>';
    editor=`<div class="cv-slot"><div class="cv-slot-head"><b>${e(label)}</b> <small>헌신 ${lv}</small>${g.blocked?` <span class="badge muted" title="표시 불가 사유: ${e(g.blocked)}">표시 불가</span>`:''}${lie?` <span class="badge" title="장악력 ${st.talk.supermacy??0} < 0: 거짓말(다른 노예의 답). 진실: ${e(tg.text||'(대사 없음)')}${truthRef?' / 진실 원본 '+e(truthRef):''}">거짓말</span>`:''}${edited?' <span class="badge">수정됨</span>':''}${g.note?` <small class="fine-print">${e(g.note)}</small>`:''}</div>
     <textarea class="cv-slot-text" data-cv-pt="${id}" rows="3" placeholder="대사 없음: 원본을 보고 각색해 넣으세요" ${g.blocked?'title="표시 불가 사유: '+e(g.blocked)+' · Claude가 대사를 만들지 않은 칸이며 직접 쓰는 것은 막지 않음"':''}>${e(text)}</textarea>
     <div class="cv-slot-foot">${edited?`<button class="text-button" data-cv-act="pt-reset" data-slot="${id}">생성 대사로 되돌리기</button>`:''}${ref?refHtml(ref):'<small class="fine-print">원본 DB 대응 문항 없음</small>'}</div></div>`;

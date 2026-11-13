@@ -11,9 +11,18 @@ from xml.sax.saxutils import escape
 import studio_interview as si
 
 NS = {'m': 'http://schemas.openxmlformats.org/spreadsheetml/2006/main'}
-FIXED = ['키', '주제', '분류', '원본 글 링크', '글자 수', '답 길이', '대답 원문(수정 금지)']
+FIXED = ['키', '주제', '분류', '원본 글 링크', '글자 수', '답 길이', '쪽 수', '대답 원문(수정 금지)']
 # 답 길이: 성격 유형에 대답을 배치할 때 쓰는 기계적 구분(글자 수 기준, 세계관 자료집 7장). 단답 ≤ 20 · 보통 21~89 · 풍부 ≥ 90
 SHORT_MAX, RICH_MIN = 20, 90
+# 쪽 수: 한 페이지 230자, 한 대답 최대 2페이지(사용자 승인 2026-11-13). 2페이지를 넘으면 '초과'(각색 때 줄임)
+PAGE_CHARS, MAX_PAGES = 230, 2
+
+
+def page_class(n):
+    if n == 0:
+        return ''
+    pages = -(-n // PAGE_CHARS)
+    return '초과' if pages > MAX_PAGES else str(pages)
 
 
 def length_class(n):
@@ -74,14 +83,14 @@ def export_xlsx():
         codes = ', '.join(f'{c} {names.get(c, "")}'.strip() for c in r['block'])
         url = r['src']['url']
         n = len(r['answer']) if not r['text_withheld'] else 0
-        rows.append([r['id'], r['topic'], codes, f"Q{r['src']['q']} 원본 글", str(n) if n else '', length_class(n), answer] + [u.get(w, '') for w in worlds])
+        rows.append([r['id'], r['topic'], codes, f"Q{r['src']['q']} 원본 글", str(n) if n else '', length_class(n), page_class(n), answer] + [u.get(w, '') for w in worlds])
         links[f'D{len(rows)}'] = url
     files = {
         '[Content_Types].xml': '<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/></Types>',
         '_rels/.rels': '<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>',
         'xl/workbook.xml': '<?xml version="1.0" encoding="UTF-8"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="각색" sheetId="1" r:id="rId1"/></sheets><definedNames><definedName name="_xlnm._FilterDatabase" localSheetId="0" hidden="1">\'각색\'!' + _filter_ref(rows, True) + '</definedName></definedNames></workbook>',
         'xl/_rels/workbook.xml.rels': '<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/></Relationships>',
-        'xl/worksheets/sheet1.xml': _sheet_xml(rows, [14, 14, 18, 14, 8, 8, 60] + [34] * len(worlds), links),
+        'xl/worksheets/sheet1.xml': _sheet_xml(rows, [14, 14, 18, 14, 8, 8, 8, 60] + [34] * len(worlds), links),
         'xl/worksheets/_rels/sheet1.xml.rels': '<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
         + ''.join(f'<Relationship Id="rL{i}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink" Target="{escape(u, {chr(34): "&quot;"})}" TargetMode="External"/>' for i, u in enumerate(links.values(), 1)) + '</Relationships>',
     }
