@@ -142,7 +142,7 @@ export function firstTimeLine(facts,drafts,fields,group,style,rand=Math.random){
  if(!cand.length)return null;
  const who=facts.firstWho.speech[fields.first_who]??facts.firstWho.labels[fields.first_who],where=facts.firstWhere.speech[fields.first_where]??'';
  const b=batchim(who);
- return cand[Math.floor(rand()*cand.length)].text[style]
+ return (t=>t[style]??t['2'])(cand[Math.floor(rand()*cand.length)].text)
   .replaceAll('{나이}',ageWords(fields.first_age)).replaceAll('{상대}',who).replaceAll('{장소}',where)
   .replaceAll('{이가}',b?'이':'가').replaceAll('{이랑}',b?'이랑':'랑').replaceAll('{이와}',b?'과':'와');
 }

@@ -17,8 +17,12 @@ export function voiceType(s){
 // 5장 말투: 1 격식 존댓말, 2 일반 존댓말. 일반 노예에는 반말(3)을 쓰지 않는다(사용자 최신 기준).
 // 게임의 말투3 직업도 필로우토크에서는 2로 둔다. 1/2 구분 정리는 게임 쪽 과제로 남아 있다.
 const FORMAL=['maid','valertry','secretary','nun','policewoman','mind_contol','time_plice','jailer','academy','mech'];
-export const STYLE_NAME={1:'격식 존댓말',2:'일반 존댓말'};
-export function speechStyle(occupation){return FORMAL.includes(occupation)?1:2;}
+// 말투 3 반말(대화 규칙 개편, 사용자 확인 2026-11-13): 지정 유니크 8명과 공주 계열 직업(mprincess·barbarian_princess). 반말 원고가 없는 조각은 일반 존댓말(2) 문장을 쓴다.
+export const CASUAL_UNIQUE=[3002,2610,2620,3010,3021,3023,2621,3012];
+export const CASUAL_OCC=['mprincess','barbarian_princess'];
+export const STYLE_NAME={1:'격식 존댓말',2:'일반 존댓말',3:'반말'};
+export function speechStyle(occupation,id){if(CASUAL_UNIQUE.includes(Number(id))||CASUAL_OCC.includes(occupation))return 3;return FORMAL.includes(occupation)?1:2;}
+export const styleText=(text,style)=>text[style]??text[2];
 
 // 6장 관계 모드
 export const MODE_NAME={hostile:'적대',fearful:'두려움',bleak:'우울',broken:'무너짐',hopeful:'기대',duty:'의무',loyal:'헌신',neutral:'중립'};
@@ -149,9 +153,9 @@ const childWords=n=>['','하나','둘','셋','넷','다섯','여섯','일곱','�
 export function pillowTalk(stock,result,tier,rand=Math.random,history=[]){
  // [클로드 정책 거부] 제외 연령은 과거 경험 공식 결과의 excluded 하나로 정한다(공식 데이터 excludedAges, 지금 [1]). 여기서 연령 숫자를 따로 박지 않는다(기록: docs/claude-refusals/REFUSAL_LOG_KO.md)
  if(result.excluded)return null;
- const ctx={stock,type:voiceType(stock),style:speechStyle(stock.occupation),mode:relationMode(stock),rand,history,used:[]};
+ const ctx={stock,type:voiceType(stock),style:speechStyle(stock.occupation,stock.id??stock.type),mode:relationMode(stock),rand,history,used:[]};
  const n=result.intimacy??0,told=toldCount(ctx.type,n),lines=[];
- const say=(role,extra=s=>s)=>{const r=pickRow(role,ctx);if(r)lines.push(extra(r.text[ctx.style].replace('{N}',countWords(told)).replace('{X}',String(told))));return !!r;};
+ const say=(role,extra=s=>s)=>{const r=pickRow(role,ctx);if(r)lines.push(extra(styleText(r.text,ctx.style).replace('{N}',countWords(told)).replace('{X}',String(told))));return !!r;};
  // 적대이고 적대 깊이 0이면 말하지 않는다(거절)
  if(ctx.mode==='hostile'&&depthOf(stock,'hostile')===0){say('refuse');return {...ctx,told,lines,refused:true};}
  if(n===0)say('none');

@@ -128,13 +128,13 @@ export async function createCharacterView(api){
  function generatedLines(cx){
   const {r,fx,s}=cx,c=ch(),out={};
   const rand=rng(hashSeed(st.seed+'|pt'+st.pt));
-  const ty=voiceType(s),style=speechStyle(s.occupation),grp=TYPE_GROUP[ty],rel=REL_GROUP[relationMode(s)];
+  const ty=voiceType(s),style=speechStyle(s.occupation,ch().type),grp=TYPE_GROUP[ty],rel=REL_GROUP[relationMode(s)];
   if(fx?.fields.first_band==='teen')out.first_time={blocked:'B1 청소년기',text:'[이 대사는 표시 불가합니다.]'};
   else if(fx?.fields.first_band==='adult')out.first_time={text:FIRST.userAuthoredWorlds.includes(c.world)?'':firstTimeLine(FACTS,FIRST,fx.fields,grp,style,rand)??'',note:FIRST.userAuthoredWorlds.includes(c.world)?'이 세계는 사용자 작성 칸':''};
   const pt=pillowTalk(s,r,tierOf(cx.f,'occupation',s.occupation).name,rand,[]);if(pt)out.partners={text:pt.lines.join(' ')};
   if(fx&&fx.fields.xeno!=='none'){
    if(fx.blocked.xeno)out.xeno={blocked:fx.blocked.xeno,text:'[이 대사는 표시 불가합니다.]'};
-   else{const cand=XENO.rows.filter(x=>x.case===fx.fields.xeno&&x.rels===rel&&(x.types===grp||x.types==='*'));out.xeno={text:cand.length?cand[Math.floor(rand()*cand.length)].text[style].replaceAll('{괴물}',FACTS.xeno.patrolScenes[st.acq?.scene]?.label??'괴물'):'',note:fx.fields.xeno==='patrol_warg'?'와그 대사는 사용자 작성 칸':''};}
+   else{const cand=XENO.rows.filter(x=>x.case===fx.fields.xeno&&x.rels===rel&&(x.types===grp||x.types==='*'));out.xeno={text:cand.length?(t=>t[style]??t['2'])(cand[Math.floor(rand()*cand.length)].text).replaceAll('{괴물}',FACTS.xeno.patrolScenes[st.acq?.scene]?.label??'괴물'):'',note:fx.fields.xeno==='patrol_warg'?'와그 대사는 사용자 작성 칸':''};}
   }else out.xeno={text:'',note:'이 노예는 이종 경험이 없습니다'};
   if(fx?.fields.home_animal)out.xeno={blocked:'B2 수간(살던 세상의 동물 경험)',text:'[이 대사는 표시 불가합니다.]'};
   return {out,ty,style};
