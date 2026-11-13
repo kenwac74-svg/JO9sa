@@ -37,7 +37,7 @@ const hashSeed=s=>{let h=2166136261;for(const ch of String(s)){h^=ch.charCodeAt(
 export async function createCharacterView(api){
  const D=await loadSimData();
  const get=async f=>{const r=await fetch('./data/'+f);if(!r.ok)throw new Error(f+'를 읽지 못했습니다.');return r.json();};
- const [CAT,FACTS,XENO,FIRST,IV,TRAITS,BG,BGD,REFS]=await Promise.all(['background-categories.json','past-facts.json','xeno-talk-drafts.json','first-time-drafts.json','first-time-interviews.json','traits.json','backgrounds.json','background-drafts.json','interview-refs.json'].map(get));
+ const [CAT,FACTS,XENO,FIRST,IV,TRAITS,BG,BGD,REFS,ACQ]=await Promise.all(['background-categories.json','past-facts.json','xeno-talk-drafts.json','first-time-drafts.json','first-time-interviews.json','traits.json','backgrounds.json','background-drafts.json','interview-refs.json','acquisition-routes.json'].map(get));
  const RECORDS=[...BG.records,...BGD.records];
  const traitRows=TRAITS.rows.filter(r=>r.binding&&!r.binding.key.includes('['));
  const traitOn=(ch,r)=>{
@@ -259,7 +259,8 @@ export async function createCharacterView(api){
     <label title="0 미만이면 섹스토크에서 거짓말">이 노예에 대한 장악력${num('talk.supermacy',t.supermacy??0,'min="-30" max="30" step="1"')}</label>
     <label>말하기 유형(유니크 지정)<select data-cv-voice><option value="">성격으로 계산</option>${Object.entries(TYPE_NAME).map(([k,n])=>`<option value="${k}" ${c.jo9_voice_type===k?'selected':''}>${n}</option>`).join('')}</select></label>
     <label>고정 난수 시드<input data-cv-seed value="${e(st.seed)}" maxlength="40"></label>
-    <label>영입 경로<select data-cv-route><option value="other">일반</option><option value="patrol" ${st.acq.route==='patrol'?'selected':''}>안개 경계 순찰 구출</option></select></label>
+    <label title="게임 안에서 노예를 얻는 경로(acquisition-routes.json). ★ = 다른 세상에서 바로 넘어온 상태">영입 경로<select data-cv-route>${ACQ.groups.map(g=>`<optgroup label="${e(g.label)}">${g.routes.map(r=>`<option value="${r.key}" title="${e(r.source)}" ${(st.acq.route??'other')===r.key?'selected':''}>${e(r.label)}${r.fresh?' ★':''}</option>`).join('')}</optgroup>`).join('')}</select></label>
+    ${st.acq.route==='event'?`<label>이벤트<select data-cv-event><option value="">선택</option>${ACQ.events.map(v=>`<option value="${v.key}" title="${e(v.source)}" ${st.acq.event===v.key?'selected':''}>${e(v.label)}</option>`).join('')}</select></label>`:''}
     ${st.acq.route==='patrol'?`<label>순찰 장면<select data-cv-scene><option value="">선택</option>${Object.entries(FACTS.xeno.patrolScenes).map(([k,v])=>`<option value="${k}" ${st.acq.scene===k?'selected':''}>${k} ${e(v.label)}</option>`).join('')}</select></label>`:''}
    </div>
    <div class="section-label">과거 경력 값 직접 지정 (빈칸 = 공식)</div><div class="cv-form">${[['intimacy','성경험 총횟수'],['pregnancies','임신'],['births','출산']].map(([k,l])=>`<label>${l}${num('overrides.'+k,st.overrides[k],'min="0" step="1" placeholder="공식"')}</label>`).join('')}</div>
@@ -369,7 +370,8 @@ export async function createCharacterView(api){
   else if(t.dataset.cvPsy!==undefined)st.talk.psy_status=t.value;
   else if(t.dataset.cvVoice!==undefined){if(t.value)ch().jo9_voice_type=t.value;else delete ch().jo9_voice_type;}
   else if(t.dataset.cvSeed!==undefined)st.seed=t.value.slice(0,40)||'1';
-  else if(t.dataset.cvRoute!==undefined)st.acq={route:t.value,scene:st.acq.scene??''};
+  else if(t.dataset.cvRoute!==undefined)st.acq={route:t.value,scene:st.acq.scene??'',event:st.acq.event??''};
+  else if(t.dataset.cvEvent!==undefined)st.acq={...st.acq,route:'event',event:t.value};
   else if(t.dataset.cvScene!==undefined)st.acq={route:'patrol',scene:t.value};
   else return;
   save();setTimeout(render,0);
