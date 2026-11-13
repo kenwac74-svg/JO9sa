@@ -3,7 +3,7 @@
 #       python3 -I fetch_originals.py --all      모든 대답을 원본에서 다시 가져온다
 # 결과(local/, git 제외): interview-db.json · posts-db.json · interview-refs.json. 편집기는 local/ 파일이 있으면 그것을 읽는다.
 # 내용은 판단하지 않는다. 키·주제(질문 번호에 붙은 first_age 등)·분류 코드는 저장소 색인 값을 그대로 쓴다.
-import sys, re, json, html, time, pathlib, subprocess, hashlib, collections
+import sys, re, json, html, time, pathlib, subprocess, hashlib, collections, urllib.request
 
 HERE = pathlib.Path(__file__).resolve().parent
 LOCAL = HERE / 'local'
@@ -12,12 +12,28 @@ HANDLE = re.compile(r'@[A-Za-z0-9_]+')  # build-db.py와 같은 처리(계정 �
 PART_SPLIT = re.compile(r'\n+|(?<=[.!?~…])\s+|(?=(?<!\d)\d\)\s*)')  # build-db.py split_parts와 같은 규칙
 
 
+def download(url):
+    """파이썬 내장 urllib로 받는다. 안 되면 curl로 다시 시도한다(윈도우 curl은 인증서 폐기 검사 실패를 피하려고 --ssl-no-revoke)."""
+    try:
+        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+        with urllib.request.urlopen(req, timeout=30) as r:
+            return r.read()
+    except Exception as error:  # noqa: BLE001 - curl로 한 번 더 시도한다
+        cmd = ['curl', '-sS', '-L', url]
+        if sys.platform == 'win32':
+            cmd.insert(1, '--ssl-no-revoke')
+        got = subprocess.run(cmd, capture_output=True)
+        if got.returncode != 0:
+            raise SystemExit(f'내려받기 실패: {url}\n  urllib: {error}\n  curl: {got.stderr.decode("utf-8", "replace").strip()}')
+        return got.stdout
+
+
 def fetch(url):
     """글 HTML을 local/pages 에 받아 두고 읽는다(이미 있으면 다시 받지 않는다)."""
     PAGES.mkdir(parents=True, exist_ok=True)
     f = PAGES / (hashlib.sha256(url.encode()).hexdigest()[:16] + '.html')
-    if not f.is_file():
-        subprocess.run(['curl', '-sS', '-L', url, '-o', str(f)], check=True)
+    if not f.is_file() or f.stat().st_size == 0:
+        f.write_bytes(download(url))
         time.sleep(0.7)
     return f.read_text(encoding='utf-8', errors='replace')
 
