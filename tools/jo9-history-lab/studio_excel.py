@@ -130,7 +130,7 @@ def read_xlsx(data):
 
 
 def check_import(b64, apply=False):
-    """고쳐 온 엑셀을 검사한다. 형식 오류·표시불가 칸·원문 열 변경은 반영하지 않고 목록으로 돌려준다. apply가 참이면 문제 없는 변경만 저장."""
+    """고쳐 온 엑셀을 검사한다. 형식 오류·원문 열 변경은 반영하지 않고 목록으로 돌려준다(표시불가 행의 세계 열은 반영, 사용자 편집권). apply가 참이면 문제 없는 변경만 저장."""
     rows = read_xlsx(base64.b64decode(b64))
     head, worlds = _headers()
     top = [c.strip() for c in rows[0]] if rows else []

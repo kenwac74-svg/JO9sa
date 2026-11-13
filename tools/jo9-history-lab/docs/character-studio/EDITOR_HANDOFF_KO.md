@@ -5,7 +5,7 @@
 
 ## 0. 읽는 순서
 1. 이 문서
-2. `docs/claude-refusals/CLAUDE_POLICY_GUIDE_KO.md`(정책 적용 지침, 사용자 확정) → `REFUSAL_LOG_KO.md`(기록) → `REASONS_KO.md`(기술 사유)
+2. `docs/claude-refusals/CLAUDE_POLICY_GUIDE_KO.md`(정책 적용 지침, 사용자 확정) → `REFUSAL_LOG_KO.md`(기록) → `REASONS_KO.md`(기술 사유) → `POLICY_POINTS_MANUAL_KO.md`(제외 지점의 파일·줄 지도)
 3. `docs/CREATIVE_INTENT_RULES_20261015.md`(사용자 기본 지침)
 4. `OPEN_QUESTIONS_KO.md`, `checklist.md`, `context-notes.md`(이 폴더)
 5. 저장소 `CLAUDE.md`, `AGENTS.md`, `docs/PROJECT.md`
