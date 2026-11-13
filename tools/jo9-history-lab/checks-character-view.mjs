@@ -36,7 +36,9 @@ for(const kind of ['world','family','occupation'])for(const g of CAT[kind])asser
 {const f=structuredClone(FORMULA);f.traitWeights=[{name:'겁쟁이',key:'courage',op:'=',value:-1,factor:200}];
  const s={...sample.find(r=>r.virginity>1&&r.occupation==='whore'),courage:-1},s0={...s,courage:0};
  const a=pastHistory(s,f,'t').intimacy,b=pastHistory(s0,f,'t').intimacy;assert(a>b,`특성 가중치 미적용 ${a} ${b}`);}
-// 원본 DB 참조표: 게임용 주제 키가 있고, 표시 불가 원문은 비어 있다
+// 원본 DB 참조표: 게임용 주제 키가 있고, 청소년기·수간 대답은 DB의 가린 값(* 부분, [클로드 정책준수])과 같다
 assert(REFS.topics.partners.length>100&&REFS.topics.first_time.length>50);
-assert(Object.values(REFS.rows).every(r=>r.b.includes('B1')||r.b.includes('B2')?r.t===null:true),'표시 불가 원문이 들어 있음');
+{const {readFileSync}=await import('node:fs');const DB=JSON.parse(readFileSync(new URL('./docs/sextalk-interviews/interview-db.json',import.meta.url),'utf8')).rows;
+ const byId=Object.fromEntries(DB.map(r=>[r.id,r]));
+ assert(Object.entries(REFS.rows).every(([k,r])=>r.t===byId[k].answer&&(!!r.m)===!!byId[k].masked),'참조표 원문이 DB의 가린 값과 다름');}
 console.log('formula category checks ok');

@@ -15,9 +15,9 @@ def sha(t):
 
 
 def source_parts():
-    """번역 대상 = 표시 가능한 대답의 부분(sNN). 표시불가(B1·B2 포함)는 번역 목록에 넣지 않는다."""
+    """번역 대상 = 모든 대답의 부분(sNN). [클로드 정책준수]로 전부 *인 부분과 빈 부분만 뺀다(2026-11-13 지침)."""
     db = json.loads((HERE / 'interview-db.json').read_text(encoding='utf-8'))
-    return {p['key']: p['text'] for r in db['rows'] if r['display'] and not r['text_withheld'] for p in r['parts']}, db
+    return {p['key']: p['text'] for r in db['rows'] for p in r['parts'] if p.get('text', '').strip(' *\n')}, db
 
 
 def write(path, data):

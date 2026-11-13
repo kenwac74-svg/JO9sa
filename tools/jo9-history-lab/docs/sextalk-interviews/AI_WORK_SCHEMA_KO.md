@@ -4,7 +4,7 @@
 원본은 `interview-db.json`(대답 5,112개)이다. `ai/`의 파일은 거기서 **만들어진 사본**이므로 손으로 고치지 않는다. 고치려면 원본이나 `adapt-user.json`을 바꾸고 다시 만든다.
 
 ## 무엇이 들어 있나
-- 표시 가능한 대답 3,862줄만 담는다. 표시불가(청소년기 B1·수간 B2·근친 B3·금기 보기 목록 B4·현대 SNS B5·빈 대답 B9)는 사유와 상관없이 작업 목록에 넣지 않았다. B1·B2 칸은 외부 AI 작업 목록에 올리지 않는다(스위치 없음, `[클로드 정책준수]`).
+- 빈 대답을 뺀 모든 대답 4,788줄을 담는다(2026-11-13 정책 적용 지침). `display`가 false면 게임 표시불가(B3 근친·B4 금기 목록·B5 SNS 등)이고, `masked`가 true면 청소년기·수간 분류 대답이라 문제 부분이 `*`로 가려져 있다(`[클로드 정책준수]`, 원문은 원본 글 링크). `*` 부분을 추측해 채우지 않는다.
 - 파일은 주제별로 나뉜다: `NN_주제.jsonl`(NN은 문항 번호, 예 `02_first_time.jsonl`). `index.json`에 파일별 줄 수와 SHA-256, 세계 순서가 있다.
 - `game`이 false인 줄(첫 경험 나이·나이 차 등)은 게임 미반영 주제라 작업 대상에서 건너뛰어도 된다.
 
@@ -27,7 +27,7 @@ JSON 키는 정렬돼 있고 한 줄에 한 개체다.
 ```bash
 cd tools/jo9-history-lab/docs/sextalk-interviews
 python3 -I ai-tools.py export    # 원본에서 ai/ 를 새로 만든다
-python3 -I ai-tools.py check     # 원본에서 다시 만든 결과와 같은지, 표시불가가 섞이지 않았는지 검사(어긋나면 종료 코드 1)
+python3 -I ai-tools.py check     # 원본에서 다시 만든 결과와 같은지, 원문 미수록·빈 대답이 섞이지 않았는지 검사(어긋나면 종료 코드 1)
 python3 -I ai-tools.py query --key p0000.q02 --json
 python3 -I ai-tools.py query --topic first_time --grep 노콘 --limit 5
 python3 -I ai-tools.py query --world medieval --grade 2     # 세계별 각색 등급으로 찾기
