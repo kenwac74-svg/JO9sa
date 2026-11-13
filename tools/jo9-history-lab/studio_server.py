@@ -725,6 +725,13 @@ class StudioHandler(http.server.SimpleHTTPRequestHandler):
                     return self.fail(error)
         if url.path.startswith('/api/'):
             return self.send_json(404, {'error': '없는 주소입니다.'})
+        if url.path == '/build.txt':
+            body = BUILD_ID.encode('utf-8')
+            self.send_response(200)
+            self.send_header('Content-Type', 'text/plain; charset=utf-8')
+            self.send_header('Content-Length', str(len(body)))
+            self.end_headers()
+            return self.wfile.write(body)
         # 원문을 채운 참조표(fetch_originals.py가 만든 local/)가 있으면 그것을 낸다
         local_refs = HERE / 'docs' / 'sextalk-interviews' / 'local' / 'interview-refs.json'
         if url.path == '/data/interview-refs.json' and local_refs.is_file():
@@ -760,6 +767,23 @@ class StudioHandler(http.server.SimpleHTTPRequestHandler):
                 except Exception as error:  # noqa: BLE001
                     return self.fail(error)
         return self.send_json(404, {'error': '없는 주소입니다.'})
+
+
+def build_id():
+    """이 편집기 파일들(dist·서버 코드)의 지문. 실행기가 같은 포트에 떠 있는 편집기가 이 버전인지 가린다.
+    단독 실행기는 dist/build.txt에 빌드 표시를 써 두므로 그것을 쓴다."""
+    fixed = DIST / 'build.txt'
+    if fixed.is_file():
+        return fixed.read_text(encoding='utf-8').strip()
+    import hashlib
+    h = hashlib.sha256()
+    for f in sorted(list(DIST.rglob('*')) + list(HERE.glob('*.py'))):
+        if f.is_file() and f.name != 'build.txt':
+            h.update(f.relative_to(HERE).as_posix().encode()); h.update(f.read_bytes())
+    return 'lab-' + h.hexdigest()[:12]
+
+
+BUILD_ID = build_id()
 
 
 def make_server(port):
