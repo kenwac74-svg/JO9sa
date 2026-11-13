@@ -706,6 +706,17 @@ class StudioHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_GET(self):
         url = urlparse(self.path)
+        # 화면 파일은 버전별 주소(/v/<빌드>/…)로 낸다. 브라우저가 예전 편집기 파일을 캐시에 들고 있어도 주소가 달라 섞이지 않는다
+        if url.path in ('/', '/index.html'):
+            self.send_response(302)
+            self.send_header('Location', f'/v/{BUILD_ID}/' + (f'?{url.query}' if url.query else ''))
+            self.send_header('Content-Length', '0')
+            self.end_headers()
+            return
+        if url.path.startswith('/v/'):
+            parts = url.path.split('/', 3)
+            self.path = '/' + (parts[3] if len(parts) > 3 else '') + (f'?{url.query}' if url.query else '')
+            url = urlparse(self.path)
         if url.path.startswith('/game/'):
             try:
                 body, mime = game_file(url.path[len('/game/'):])
