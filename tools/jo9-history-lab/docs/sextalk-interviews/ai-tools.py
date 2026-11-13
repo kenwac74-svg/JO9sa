@@ -6,7 +6,7 @@ HERE = pathlib.Path(__file__).resolve().parent
 OUT = HERE / 'ai'
 SCHEMA = 'jo9-sextalk-ai-rows/v1'
 # 행에서 AI 작업에 필요한 칸만 옮긴다. 값은 interview-db.json·posts-db.json 그대로다
-KEEP = ['id', 'post', 'q', 'topic', 'answer', 'len', 'tone', 'modern', 'adapt', 'nums', 'game', 'display', 'block', 'masked']
+KEEP = ['id', 'post', 'q', 'topic', 'answer', 'len', 'tone', 'modern', 'adapt', 'nums', 'game', 'display', 'block']
 
 
 def load():
@@ -22,12 +22,12 @@ def load():
 
 def build():
     """주제별 줄 목록을 만든다. 모든 대답(5,112개)을 넣는다(2026-11-13 지침 CLAUDE_POLICY_GUIDE_KO.md).
-    B1·B2 대답은 DB에서 이미 문제 낱말·문장을 *로 가린 값(masked)이고, 게임 표시불가(display false)는 칸으로 남긴다. 빈 대답(B9)만 뺀다."""
+    저장소 DB에 원문이 없는 대답(text_withheld, 원문은 fetch_originals.py로 사용자 PC에만 가져옴)과 빈 대답만 뺀다. 게임 표시불가(display false)는 칸으로 남긴다."""
     db, questions = load()
     files, excluded = {}, 0
     topics = db['meta']['topics']
     for r in db['rows']:
-        if not r['answer'].strip():
+        if r['text_withheld'] or not r['answer'].strip():
             excluded += 1
             continue
         row = {k: r[k] for k in KEEP if k in r}
@@ -37,7 +37,7 @@ def build():
         files.setdefault(name, []).append(json.dumps(row, ensure_ascii=False, sort_keys=True))
     text = {n: '\n'.join(v) + '\n' for n, v in sorted(files.items())}
     index = {'schema': SCHEMA, 'source': 'interview-db.json', 'sourceRows': len(db['rows']), 'rows': sum(len(v) for v in files.values()), 'excluded': excluded,
-             'note': '빈 대답을 뺀 모든 대답을 담는다. display=false는 게임 표시불가 표시이고, masked=true인 대답의 * 부분은 [클로드 정책준수]로 가린 원문이다(원본은 src 링크). 파일은 ai-tools.py export로만 만든다.',
+             'note': '원문이 있는 모든 대답을 담는다(빈 대답과 저장소에 원문이 없는 대답 제외). display=false는 게임 표시불가 표시다. 파일은 ai-tools.py export로만 만든다.',
              'worlds': load_worlds(), 'files': {n: {'rows': t.count('\n'), 'sha256': hashlib.sha256(t.encode('utf-8')).hexdigest()} for n, t in text.items()}}
     text['index.json'] = json.dumps(index, ensure_ascii=False, indent=1) + '\n'
     return text
@@ -91,7 +91,7 @@ def cmd_check(_):
                 errors.append(f'{n}:{i} 원본과 값이 다름 {row["id"]}')
             if not n.startswith(f'{[k for k, v in db["meta"]["topics"].items() if v == row["topic"]][0].zfill(2)}_'):
                 errors.append(f'{n}:{i} 파일과 주제가 안 맞음 {row["id"]}')
-    expect = {r['id'] for r in db['rows'] if r['answer'].strip()}
+    expect = {r['id'] for r in db['rows'] if r['answer'].strip() and not r['text_withheld']}
     if seen != expect:
         errors.append(f'빈 대답 아닌 대답 {len(expect)}개 중 빠진 것 {len(expect - seen)}개, 넘친 것 {len(seen - expect)}개')
     for e in errors[:50]:

@@ -57,7 +57,7 @@ def _filter_ref(rows, absolute=False):
 
 def export_xlsx():
     """모든 대답(5,112개)과 사용자가 쓴 세계별 각색 문장을 한 시트에 담는다.
-    청소년기·수간 대답은 DB에서 문제 낱말·문장만 *로 가린 값이고, 분류 열에 [클로드 정책준수] 표시, 링크 열에 원본 글을 단다."""
+    원문을 싣지 않은 대답(B1·B2)은 [클로드 정책준수] 안내와 원본 글 링크만 넣는다. 게임 표시불가라도 원문이 있는 대답은 원문을 넣는다."""
     head, worlds = _headers()
     db, user = si._load('interview-db.json'), si._user_text()
     names = db['meta']['block_codes']
@@ -66,8 +66,6 @@ def export_xlsx():
         u = user.get(r['id'], {})
         answer = si.withheld_text(r) if r['text_withheld'] else r['answer']
         codes = ', '.join(f'{c} {names.get(c, "")}'.strip() for c in r['block'])
-        if r.get('masked'):
-            codes += ' · [클로드 정책준수] * 부분 가림(원본 링크)'
         url = r['src']['url']
         rows.append([r['id'], r['topic'], codes, f"Q{r['src']['q']} 원본 글", answer] + [u.get(w, '') for w in worlds])
         links[f'D{len(rows)}'] = url

@@ -122,7 +122,7 @@ export async function createCharacterView(api){
   const r=REFS.rows[key];if(!r)return '';
   const url=REFS.urls[r.u],blocked=r.b.length?r.b.map(c=>`${c} ${REFS.blockNames[c]??''}`).join(', '):'';
   return `<details class="cv-ref"><summary>원본 DB <code>${e(key)}</code>${blocked?` <span class="badge muted" title="표시 불가 사유: ${e(blocked)}">표시 불가</span>`:''}</summary>
-   <div class="cv-ref-body">${r.t===null?`<p class="fine-print"><span class="badge muted">클로드 정책준수</span> 이 대답은 원문을 싣지 않았습니다(${e(blocked)}). 원본 글의 Q${r.q}${r.o>1?` (${r.o}번째)`:''} 대답에서 확인하세요. 부분 키: ${r.p.map(e).join(', ')}</p>`:`<p class="cv-ref-text">${e(r.t)}</p>${r.m?'<p class="fine-print"><span class="badge muted">클로드 정책준수</span> * 부분은 가린 자리입니다. 원문은 원본 글에서 보세요.</p>':''}${blocked?`<p class="fine-print">게임 표시 불가: ${e(blocked)}</p>`:''}`}
+   <div class="cv-ref-body">${r.t===null?`<p class="fine-print"><span class="badge muted">클로드 정책준수</span> 이 대답은 원문을 싣지 않았습니다(${e(blocked)}). 원본 글의 Q${r.q}${r.o>1?` (${r.o}번째)`:''} 대답에서 확인하세요. 부분 키: ${r.p.map(e).join(', ')}</p>`:`<p class="cv-ref-text">${e(r.t)}</p>${blocked?`<p class="fine-print">게임 표시 불가: ${e(blocked)}</p>`:''}`}
    <a href="${e(url)}" target="_blank" rel="noopener">원본 글 열기 (Q${r.q})</a></div></details>`;
  }
  function generatedLines(cx){

@@ -80,7 +80,6 @@ export function createDbView(api) {
   box.innerHTML = `<p><code>${e(d.id)}</code> · ${e(d.topic)} · ${e(d.title)} ${e(d.date)}${d.url ? ` · <a href="${e(d.url)}" target="_blank" rel="noopener noreferrer" style="text-decoration:underline">원본 글</a>` : ''}</p>
    ${d.question ? `<div class="section-label">질문 ${d.q}</div><p class="fine-print">${e(d.question)}</p>` : ''}
    <div class="section-label">대답 원문</div><p style="white-space:pre-wrap">${e(d.answer)}</p>
-   ${d.masked ? `<p class="fine-print"><span class="badge muted">클로드 정책준수</span> <code>*</code> 부분은 문제 낱말·문장을 가린 자리입니다. 원문은 <a href="${e(d.url)}" target="_blank" rel="noopener noreferrer" style="text-decoration:underline">원본 글 Q${d.q}</a>에서 보세요.</p>` : ''}
    ${d.withheld ? `<p class="fine-print"><span class="badge muted">클로드 정책준수</span> 이 대답은 원문을 DB에 싣지 않았습니다. 원본은 <a href="${e(d.url)}" target="_blank" rel="noopener noreferrer" style="text-decoration:underline">원본 글 Q${d.q}</a>에서 보세요. 각색 문장은 직접 쓸 수 있습니다.</p>` : ''}
    ${d.modern.length ? `<p class="fine-print">현대 소재: ${e(d.modern.join(', '))}</p>` : ''}
    <div class="section-label">세계별 각색 문장</div>

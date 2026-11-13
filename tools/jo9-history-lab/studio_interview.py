@@ -10,6 +10,7 @@ REPO = Path(os.environ.get('JO9_REPO_ROOT') or HERE.parent.parent)
 # 단독 실행기에는 DB가 없으므로 repo(--repo)의 것을 쓴다
 DIRS = [HERE / 'docs' / 'sextalk-interviews', REPO / 'tools' / 'jo9-history-lab' / 'docs' / 'sextalk-interviews']
 _cache = {}
+LOCAL_FILES = {'interview-db.json', 'posts-db.json'}
 
 
 def db_dir():
@@ -20,7 +21,9 @@ def db_dir():
 
 
 def _load(name):
-    path = db_dir() / name
+    # 원문을 채운 사용자 PC 사본(fetch_originals.py가 만든 local/)이 있으면 그것을 먼저 읽는다
+    local = db_dir() / 'local' / name
+    path = local if name in LOCAL_FILES and local.is_file() else db_dir() / name
     stamp = path.stat().st_mtime_ns if path.is_file() else None
     hit = _cache.get(name)
     if hit and hit[0] == stamp:
@@ -66,11 +69,11 @@ def _user_text():
 
 def _slim(r, idx):
     post = idx['posts'].get(r['post'], {})
-    # 청소년기·수간 대답은 DB에서 문제 낱말·문장만 *로 가린 값(masked)이다. [클로드 정책준수] 표시와 원본 글 링크를 준다.
-    # 게임 표시불가(display false)라도 원문은 그대로 보인다. text_withheld는 예전 DB 호환용(지금은 항상 거짓).
+    # 원문을 싣지 않은 대답(B1·B2, text_withheld)만 자리표시를 낸다. [클로드 정책준수] 표시와 원본 글 링크를 준다.
+    # 게임 표시불가(display false)라도 원문이 있는 대답(B3 근친·B4 금기 목록·B5 SNS·B9 빈 대답)은 원문을 그대로 보인다.
     shown = not r['text_withheld']
     return {'id': r['id'], 'post': r['post'], 'q': r['q'], 'topic': r['topic'], 'display': r['display'], 'game': r['game'],
-            'block': r['block'], 'withheld': r['text_withheld'], 'masked': bool(r.get('masked')), 'answer': r['answer'] if shown else withheld_text(r),
+            'block': r['block'], 'withheld': r['text_withheld'], 'answer': r['answer'] if shown else withheld_text(r),
             'adapt': r.get('adapt', ''), 'modern': r.get('modern', []), 'tone': r.get('tone', []),
             'title': post.get('title', ''), 'date': post.get('date', ''), 'url': r['src']['url'],
             'hasUser': r['id'] in _user_text()}

@@ -725,6 +725,15 @@ class StudioHandler(http.server.SimpleHTTPRequestHandler):
                     return self.fail(error)
         if url.path.startswith('/api/'):
             return self.send_json(404, {'error': '없는 주소입니다.'})
+        # 원문을 채운 참조표(fetch_originals.py가 만든 local/)가 있으면 그것을 낸다
+        local_refs = HERE / 'docs' / 'sextalk-interviews' / 'local' / 'interview-refs.json'
+        if url.path == '/data/interview-refs.json' and local_refs.is_file():
+            body = local_refs.read_bytes()
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json; charset=utf-8')
+            self.send_header('Content-Length', str(len(body)))
+            self.end_headers()
+            return self.wfile.write(body)
         return super().do_GET()
 
     def do_POST(self):
