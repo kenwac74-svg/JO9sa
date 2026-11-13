@@ -40,8 +40,14 @@ def _sheet_xml(rows, widths):
                 # 문자열로만 저장하므로 = + - @ 로 시작해도 수식으로 실행되지 않는다
                 out.append(f'<c r="{_col(c)}{r}" t="inlineStr"><is><t xml:space="preserve">{escape(str(v))}</t></is></c>')
         out.append('</row>')
-    out.append('</sheetData></worksheet>')
+    # 머리줄에 정렬·필터 단추를 단다(엑셀 '자동 필터')
+    out.append(f'</sheetData><autoFilter ref="{_filter_ref(rows)}"/></worksheet>')
     return ''.join(out)
+
+
+def _filter_ref(rows, absolute=False):
+    last, n = _col(max(len(r) for r in rows) - 1), len(rows)
+    return f'$A$1:${last}${n}' if absolute else f'A1:{last}{n}'
 
 
 def export_xlsx():
@@ -57,7 +63,7 @@ def export_xlsx():
     files = {
         '[Content_Types].xml': '<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/></Types>',
         '_rels/.rels': '<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>',
-        'xl/workbook.xml': '<?xml version="1.0" encoding="UTF-8"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="각색" sheetId="1" r:id="rId1"/></sheets></workbook>',
+        'xl/workbook.xml': '<?xml version="1.0" encoding="UTF-8"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="각색" sheetId="1" r:id="rId1"/></sheets><definedNames><definedName name="_xlnm._FilterDatabase" localSheetId="0" hidden="1">\'각색\'!' + _filter_ref(rows, True) + '</definedName></definedNames></workbook>',
         'xl/_rels/workbook.xml.rels': '<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/></Relationships>',
         'xl/worksheets/sheet1.xml': _sheet_xml(rows, [14, 14, 60] + [34] * len(worlds)),
     }
