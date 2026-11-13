@@ -66,10 +66,11 @@ def _user_text():
 
 def _slim(r, idx):
     post = idx['posts'].get(r['post'], {})
-    # 표시불가(display false) 대답은 원문 대신 자리표시를 낸다. B1·B2는 DB에도 원문이 없다
-    shown = r['display']
-    return {'id': r['id'], 'post': r['post'], 'q': r['q'], 'topic': r['topic'], 'display': shown, 'game': r['game'],
-            'block': r['block'], 'withheld': r['text_withheld'], 'answer': r['answer'] if shown else _placeholder(),
+    # 원문을 싣지 않은 대답(B1·B2, text_withheld)만 자리표시를 낸다. [클로드 정책준수] 표시와 원본 글 링크를 준다.
+    # 게임 표시불가(display false)라도 원문이 있는 대답(B3 근친·B4 금기 목록·B5 SNS·B9 빈 대답)은 원문을 그대로 보인다.
+    shown = not r['text_withheld']
+    return {'id': r['id'], 'post': r['post'], 'q': r['q'], 'topic': r['topic'], 'display': r['display'], 'game': r['game'],
+            'block': r['block'], 'withheld': r['text_withheld'], 'answer': r['answer'] if shown else withheld_text(r),
             'adapt': r.get('adapt', ''), 'modern': r.get('modern', []), 'tone': r.get('tone', []),
             'title': post.get('title', ''), 'date': post.get('date', ''), 'url': r['src']['url'],
             'hasUser': r['id'] in _user_text()}
@@ -77,6 +78,14 @@ def _slim(r, idx):
 
 def _placeholder():
     return _load('interview-db.json')['meta']['placeholder']
+
+
+def withheld_text(r):
+    """원문을 싣지 않은 대답의 안내 문구: [클로드 정책준수] + 분류 + 원본 글 위치. 링크는 src.url."""
+    names = _load('interview-db.json')['meta']['block_codes']
+    codes = ', '.join(f'{c} {names.get(c, "")}'.strip() for c in r['block'])
+    occ = r['src'].get('occurrence', 1)
+    return f"[클로드 정책준수] 원문 미수록({codes}). 원본 글 Q{r['src']['q']}{f' ({occ}번째)' if occ > 1 else ''} 대답에서 확인: {r['src']['url']}"
 
 
 def search(query):
@@ -102,8 +111,8 @@ def search(query):
             continue
         if p.get('mine') == '1' and r['id'] not in user:
             continue
-        # 글자 검색은 표시 가능한 원문만 본다(표시불가·자리표시 대답은 글자로 찾지 않는다)
-        if q and not (r['display'] and not r['text_withheld'] and q in r['answer']) and q not in r['id']:
+        # 글자 검색은 원문이 있는 대답만 본다(원문 미수록 대답은 키로만 찾는다)
+        if q and not (not r['text_withheld'] and q in r['answer']) and q not in r['id']:
             continue
         out.append(r)
     offset = max(0, int(p.get('offset', 0) or 0))
@@ -120,11 +129,11 @@ def row(key):
     post = idx['posts'].get(r['post'], {})
     qa = next((x for x in post.get('qa', []) if x['key'] == key), {})
     item['question'] = qa.get('question', '')
-    item['parts'] = [{'key': pt['key'], 'text': pt.get('text', '')} for pt in r['parts']] if r['display'] and not r['text_withheld'] else []
+    item['parts'] = [{'key': pt['key'], 'text': pt.get('text', '')} for pt in r['parts']] if not r['text_withheld'] else []
     item['user'] = _user_text().get(key, {})
     # 바꿀 말 제안: 사전으로 바꾼 결과(A1)와 문장을 다시 써야 할 소재 설명(A2). 사용자 각색 세계(U)는 제안하지 않는다
     sug = {}
-    if r['display'] and not r['text_withheld'] and r['answer']:
+    if not r['text_withheld'] and r['answer']:
         for w in adapt.WORLDS:
             g, text, notes = adapt.preview(r['answer'], w)
             sug[w] = {'grade': g, 'text': text, 'notes': notes}

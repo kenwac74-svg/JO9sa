@@ -14,7 +14,7 @@ export function createDbView(api) {
  document.querySelector('.sidebar nav').insertAdjacentHTML('beforeend', `<button data-tab="${id}" class="nav-button"><span>▤</span>DB</button>`);
  document.querySelector('main footer').insertAdjacentHTML('beforebegin', `<section id="${id}" class="tab-panel dbv" hidden></section>`);
  const root = document.getElementById(id);
- const st = {xl: null, meta: null, f: {q: '', topic: '', world: '', grade: '', block: '', shown: '1', mine: ''}, res: null, offset: 0, sel: null, detail: null, err: ''};
+ const st = {xl: null, meta: null, f: {q: '', topic: '', world: '', grade: '', block: '', shown: '', mine: ''}, res: null, offset: 0, sel: null, detail: null, err: ''};
  const LIMIT = 30;
 
  async function search() {
@@ -45,7 +45,7 @@ export function createDbView(api) {
    <select data-db="block">${opt('', f.block, '분류 전체')}${opt('none', f.block, '막힘 없음')}${Object.entries(m.blockCodes).map(([c, l]) => opt(c, f.block, `${c} ${l}`)).join('')}</select></div>
    <div class="st-row"><select data-db="world">${opt('', f.world, '세계 선택 안 함')}${m.worlds.map(w => opt(w, f.world, m.worldLabels[w])).join('')}</select>
    <select data-db="grade" ${f.world ? '' : 'disabled'}>${opt('', f.grade, '각색 등급 전체')}${Object.entries(m.grades).map(([g, l]) => opt(g.slice(-1), f.grade, `${g} ${l}`)).join('')}</select>
-   <label class="tag"><input type="checkbox" data-db="shown" ${f.shown === '1' ? 'checked' : ''}> 표시 가능만</label>
+   <label class="tag"><input type="checkbox" data-db="shown" ${f.shown === '1' ? 'checked' : ''}> 게임 표시 가능만</label>
    <label class="tag"><input type="checkbox" data-db="mine" ${f.mine === '1' ? 'checked' : ''}> 내가 쓴 각색만</label></div></div></article>
    <div class="sim-grid"><article class="card"><div class="card-head"><h2>목록</h2><span class="badge" id="dbCount"></span></div><div class="card-body" id="dbList"></div></article>
    <article class="card"><div class="card-head"><h2>원문과 각색</h2></div><div class="card-body" id="dbDetail"></div></article></div>`;
@@ -80,7 +80,7 @@ export function createDbView(api) {
   box.innerHTML = `<p><code>${e(d.id)}</code> · ${e(d.topic)} · ${e(d.title)} ${e(d.date)}${d.url ? ` · <a href="${e(d.url)}" target="_blank" rel="noopener noreferrer" style="text-decoration:underline">원본 글</a>` : ''}</p>
    ${d.question ? `<div class="section-label">질문 ${d.q}</div><p class="fine-print">${e(d.question)}</p>` : ''}
    <div class="section-label">대답 원문</div><p style="white-space:pre-wrap">${e(d.answer)}</p>
-   ${d.withheld ? '<p class="fine-print">이 대답은 원문을 DB에 싣지 않았습니다. 각색 문장은 직접 쓸 수 있습니다.</p>' : ''}
+   ${d.withheld ? `<p class="fine-print"><span class="badge muted">클로드 정책준수</span> 이 대답은 원문을 DB에 싣지 않았습니다. 원본은 <a href="${e(d.url)}" target="_blank" rel="noopener noreferrer" style="text-decoration:underline">원본 글 Q${d.q}</a>에서 보세요. 각색 문장은 직접 쓸 수 있습니다.</p>` : ''}
    ${d.modern.length ? `<p class="fine-print">현대 소재: ${e(d.modern.join(', '))}</p>` : ''}
    <div class="section-label">세계별 각색 문장</div>
    ${m.worlds.map((w, i) => {
