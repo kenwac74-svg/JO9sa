@@ -71,6 +71,18 @@
         return false;
     }
 
+    // PageUp / PageDown: turn the pages of a long text box (the goal window request text).
+    function pageScroll(step) {
+        var list = ['.jo9_goal_scroll', '.jo9_hint_scroll', '.jo9_side_scroll'], box = null, i, cand;
+        for (i = 0; i < list.length && !box; i += 1) {
+            cand = document.querySelector(list[i]);
+            if (cand && cand.scrollHeight > cand.clientHeight + 2) { box = cand; }
+        }
+        if (!box) { return false; }
+        box.scrollTop = Math.max(0, box.scrollTop + step * (box.clientHeight - 40));
+        return true;
+    }
+
     function travel(code) {
         var block = document.getElementById('qm_block');
         if (!block || !TRAVEL.hasOwnProperty(code)) { return false; }
@@ -101,6 +113,7 @@
         if (code === 37) { done = switchTab(-1) || pageMove(-1); }
         else if (code === 39) { done = switchTab(1) || pageMove(1); }
         else if (code === 72) { done = goHome(); }
+        else if (code === 33 || code === 34) { done = pageScroll(code === 34 ? 1 : -1); }
         else { done = travel(code); }
         if (done && e.preventDefault) { e.preventDefault(); }
     }, false);

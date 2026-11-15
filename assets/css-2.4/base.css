@@ -665,12 +665,32 @@ position:absolute;
 left:30px;
 top:615px;
 width:740px;
-height:185px;
+height:165px;
 font-size:18px;
 font-family:경기천년제목 Medium;
 margin-top:6px;
 line-height:130%;
+box-sizing:border-box;
+padding:0 0 8px;
+overflow-x:hidden;
+overflow-y:auto;
 }
+
+/* JO9 MOD START SCENE_BOTTOM_FRAME_HALF_20261112 */
+#jo9_scene_bottom_frame {
+position:fixed;
+left:0;
+top:782px;
+width:1280px;
+height:18px;
+background-image:url('content/pic/ui/grimdark/bg.png');
+background-repeat:no-repeat;
+background-size:1280px 400px;
+background-position:0 -382px;
+pointer-events:none;
+z-index:901;
+}
+/* JO9 MOD END SCENE_BOTTOM_FRAME_HALF_20261112 */
 
 #bg_blue_script {
 position:absolute;
@@ -1031,16 +1051,36 @@ font-family:"Sandoll 미생";
 font-size:27px;
 }
 
+/* JO9 MOD START EQUIPMENT_LIST_SCROLL_20261113 */
 #center_text_column_2 {
+display:block;
 position:absolute;
 left:700px;
 top:60px;
 width:300px;
-height:585px;
+height:560px;
+max-height:560px;
+box-sizing:border-box;
+overflow-y:auto;
+overflow-x:hidden;
+padding:0 10px 12px 0;
 text-align:left;
 font-family:"Sandoll 미생";
 font-size:27px;
 }
+/* Keep hover descriptions outside the clipped equipment list. */
+#center_text_column_2 [tooltip-data]:after,
+#center_text_column_2 .tooltip-left:hover:after {
+position:fixed;
+left:418px;
+right:auto !important;
+top:60px;
+bottom:auto;
+margin:0;
+max-height:560px;
+overflow-y:auto;
+}
+/* JO9 MOD END EQUIPMENT_LIST_SCROLL_20261113 */
 
 #center_text_column_4 {
 position:absolute;
@@ -9931,6 +9971,21 @@ line-height:110%;
 #snk_private_room #snk_room_header_actions [tooltip-data]:after,#snk_private_room #debug_info [tooltip-data]:after,#snk_private_room #slave_short_ava [tooltip-data]:after,#snk_private_room #slinfo_ill:after,#snk_private_room #slinfo_wounds:after{top:calc(100% + 6px)!important;bottom:auto!important}
 #snk_room_menu [tooltip-data]:after{left:0!important;right:auto!important;top:calc(100% + 6px)!important;bottom:auto!important}
 #snk_room_home [tooltip-data]:after{right:0!important;top:auto!important;bottom:calc(100% + 8px)!important}
+/* JO9 MOD START ROOM_DUTY_GEAR_TOOLTIP_BGM_20261114 */
+#jo9_duty_panel{position:absolute;left:0;top:0;width:426px;height:242px;box-sizing:border-box;padding:14px 18px 8px 20px;font-family:"경기천년제목 Medium";color:#211a11}
+#jo9_duty_panel .jo9_duty_title{font-size:22px;line-height:30px;margin-bottom:6px}
+#jo9_duty_panel .jo9_duty_row{display:block;position:relative;height:30px;line-height:30px;padding-left:36px;font-size:16px;color:#211a11;text-decoration:none;white-space:nowrap}
+#jo9_duty_panel .jo9_duty_label{display:block;padding-right:52px;white-space:nowrap}
+#jo9_duty_panel .jo9_duty_row img{position:absolute;left:4px;top:3px;width:24px;height:24px}
+#jo9_duty_panel a.jo9_duty_row:hover{color:#70430c;background:rgba(245,218,158,.25)}
+#jo9_duty_panel .jo9_duty_on{color:#70430c}
+#jo9_duty_panel .jo9_duty_off{opacity:.55}
+#jo9_duty_panel .jo9_duty_tag{position:absolute;right:0;top:0;width:48px;font-size:12px;text-align:right;color:#6b5a3e}
+#jo9_duty_panel .jo9_duty_mode{font-size:15px;color:#6b5a3e;padding-left:8px;height:26px;line-height:26px}
+#jo9_duty_panel a.jo9_duty_mode:hover{color:#70430c}
+#jo9_duty_panel .jo9_duty_empty{font-size:18px;margin:10px 0}
+#snk_private_room #jo9_duty_panel [tooltip-data]:after{position:fixed!important;left:330px!important;right:auto!important;top:120px!important;bottom:auto!important;width:460px!important;min-width:0!important;max-width:460px!important;max-height:620px!important;box-sizing:border-box;padding:12px 16px;overflow-y:auto;white-space:pre-line!important;word-wrap:break-word;text-align:left;font:16px/23px 'Malgun Gothic','맑은 고딕',sans-serif!important}
+/* JO9 MOD END ROOM_DUTY_GEAR_TOOLTIP_BGM_20261114 */
 /* Fixed game-canvas navigation, independent of menu row count and nesting. */
 [id^="Back_"],[id^="Cancel_"],[id^="cancel_"]{position:fixed!important;left:4px!important;right:auto!important;top:330px!important;bottom:auto!important;width:24px!important;height:56px!important;margin:0!important;padding:0!important;z-index:20!important}
 [id^="Cancel_"],[id^="cancel_"]{top:392px!important}
@@ -10619,3 +10674,40 @@ body:after{left:0;top:792px;width:1003px;height:8px;background-size:1280px 400px
   column-fill:auto;
 }
 /* JO9 MOD END TUTORIAL_CURRENT_UI_20261102 */
+
+/* JO9 MOD START GOAL_TEXT_SCROLL_20261115: the goal window text box scrolls when a request text is longer than the box. */
+#bg_blue_script_right.jo9_goal_scroll {
+height:556px !important;
+max-height:556px !important;
+box-sizing:border-box !important;
+overflow-x:hidden !important;
+overflow-y:auto !important;
+word-wrap:break-word;
+padding:0 10px 8px 0;
+}
+/* JO9 MOD END GOAL_TEXT_SCROLL_20261115 */
+
+/* JO9 MOD START SCROLL_CSS_20261115: scroll containers that only had an inline overflow style (ignored by the engine). */
+#info .jo9_hint_scroll {
+height:140px !important;
+max-height:140px !important;
+box-sizing:border-box !important;
+overflow-x:hidden !important;
+overflow-y:auto !important;
+word-wrap:break-word;
+padding-right:10px;
+font-size:16px;
+line-height:1.35;
+}
+#side_panel_text.jo9_side_scroll {
+box-sizing:border-box !important;
+overflow-x:hidden !important;
+overflow-y:auto !important;
+padding-right:8px;
+}
+#jo9_gameover_message.jo9_gameover_scroll {
+max-height:180px !important;
+overflow-x:hidden !important;
+overflow-y:auto !important;
+}
+/* JO9 MOD END SCROLL_CSS_20261115 */

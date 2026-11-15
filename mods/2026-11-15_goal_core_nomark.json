@@ -1,0 +1,17 @@
+{
+  "id": "2026-11-15_goal_core_nomark",
+  "status": "APPROVED",
+  "description": "마커(색·굵은 글씨)가 없는 특별 고객 의뢰 중, 쉬움 난이도에서 조건 상자가 이미 등급 조건을 보여 주는 의뢰는 목표창에 상세 설명을 표시하지 않는다(제목과 조건 상자만). 조건 상자가 없는 의뢰와 보통·하드는 기존대로 요약문을 보여 준다.",
+  "before_sha256": "008e2aade73dd0499b152d155ff9ede1f12e666e9a0ab32e00f6320f1c989ce1",
+  "after_sha256": "9b1c0e4a869545edcd639da67a77af2c38067cb5cf9e17b9cb082480d1b41bc1",
+  "edits": [
+    {
+      "location": "slave_sell_chek",
+      "field": "body",
+      "old": "  if $jo9_goal_core_text ! '': $jo9_goal_full_text = $jo9_goal_core_text\r\n",
+      "new": "  if $jo9_goal_core_text ! '':\r\n   $jo9_goal_full_text = $jo9_goal_core_text\r\n  elseif difficulty_setting = 1:\r\n   ! no marked requirement and the easy condition box already lists the grades: the description is not needed\r\n   if $func('slave_sell_chek', 'easy_goal_hint', 5, jo9_goal_read_scene) ! '': $jo9_goal_full_text = ''\r\n  end\r\n",
+      "count": 1,
+      "patchId": "GOAL_CORE_20261115_NOMARK"
+    }
+  ]
+}

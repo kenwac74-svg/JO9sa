@@ -1,0 +1,41 @@
+{
+  "id": "2026-11-15_goal_core_text",
+  "status": "APPROVED",
+  "description": "목표창의 특별 고객 의뢰문을 요구조건의 핵심(색·굵은 글씨로 표시된 문장)과 그 주변 문장만 보이도록 줄인다. 표시가 없는 의뢰는 전체 문장을 그대로 보여 준다. 대화 장면의 원문은 바뀌지 않는다.",
+  "before_sha256": "0988796df210ac73aef6037c329979a7870d5c515131f6d9cfb9e23848e2a402",
+  "after_sha256": "008e2aade73dd0499b152d155ff9ede1f12e666e9a0ab32e00f6320f1c989ce1",
+  "edits": [
+    {
+      "location": "slave_sell_chek",
+      "field": "body",
+      "old": "if $args[0] = 'special_goal_format':\r\n",
+      "new": "if $args[0] = 'goal_core':\r\n ! Special client request text, reduced to what the player must see: the sentences that contain colored (font) or bold requirement markup.\r\n ! Returns an empty string when the text has no such markup, so the caller keeps the full text.\r\n $result = ''\r\n local $jo9_gc_rest, $jo9_gc_hit, $jo9_gc_label\r\n local jo9_gc_pos\r\n $jo9_gc_rest = $args[1]\r\n :jo9_gc_next\r\n $jo9_gc_hit = $strfind($jo9_gc_rest, '[^.!?]*(?:<font|<b>|<b )[^.!?]*(?:[.!?]+|$)')\r\n if $jo9_gc_hit ! '':\r\n  jo9_gc_pos = instr($jo9_gc_rest, $jo9_gc_hit)\r\n  $jo9_gc_hit = $trim($jo9_gc_hit)\r\n  $jo9_gc_label = $strfind($jo9_gc_hit, '^\\[[^\\[\\]<>]{1,60}\\](?:<br>)?(?:&nbsp;)?\\s*')\r\n  if $jo9_gc_label ! '': $jo9_gc_hit = $mid($jo9_gc_hit, len($jo9_gc_label) + 1)\r\n  if $result ! '': $result += ' '\r\n  $result += $jo9_gc_hit\r\n  $jo9_gc_rest = $mid($jo9_gc_rest, jo9_gc_pos + len($jo9_gc_hit))\r\n  jump 'jo9_gc_next'\r\n end\r\n exit\r\nend\r\nif $args[0] = 'special_goal_format':\r\n",
+      "count": 1,
+      "patchId": "GOAL_CORE_20261115_HELPER"
+    },
+    {
+      "location": "slave_sell_chek",
+      "field": "body",
+      "old": "  for jo9_goal_offer_index = 0 to arrsize('$jo9_goal_offer_pages') - 1:\r\n   $jo9_goal_offer_page = $jo9_goal_offer_pages[jo9_goal_offer_index]\r\n   if instr($jo9_goal_offer_page, '<div') = 0: $jo9_goal_offer_page = $replace($jo9_goal_offer_page, '</div>', '')\r\n   if $jo9_goal_offer_page ! '': $result += '<br>' + $jo9_goal_offer_page\r\n  end\r\n",
+      "new": "  local $jo9_goal_full_text, $jo9_goal_core_text, $jo9_goal_core_page\r\n  for jo9_goal_offer_index = 0 to arrsize('$jo9_goal_offer_pages') - 1:\r\n   $jo9_goal_offer_page = $jo9_goal_offer_pages[jo9_goal_offer_index]\r\n   if instr($jo9_goal_offer_page, '<div') = 0: $jo9_goal_offer_page = $replace($jo9_goal_offer_page, '</div>', '')\r\n   if $jo9_goal_offer_page ! '':\r\n    $jo9_goal_full_text += '<br>' + $jo9_goal_offer_page\r\n    $jo9_goal_core_page = $func('slave_sell_chek', 'goal_core', $jo9_goal_offer_page)\r\n    if $jo9_goal_core_page ! '': $jo9_goal_core_text += '<br>' + $jo9_goal_core_page\r\n   end\r\n  end\r\n  if $jo9_goal_core_text ! '': $jo9_goal_full_text = $jo9_goal_core_text\r\n  $result += $jo9_goal_full_text\r\n",
+      "count": 1,
+      "patchId": "GOAL_CORE_20261115_PAGES"
+    },
+    {
+      "location": "slave_sell_chek",
+      "field": "body",
+      "old": "  if $jo9_goal_offer_source = '': $result = $func('slave_sell_chek', 'special_goal_format', $jo9_goal_saved_text) & exit\r\n",
+      "new": "  if $jo9_goal_offer_source = '':\r\n   $jo9_gc_tmp = $func('slave_sell_chek', 'goal_core', $jo9_goal_saved_text)\r\n   if $jo9_gc_tmp = '': $jo9_gc_tmp = $jo9_goal_saved_text\r\n   $result = $func('slave_sell_chek', 'special_goal_format', $jo9_gc_tmp)\r\n   exit\r\n  end\r\n",
+      "count": 1,
+      "patchId": "GOAL_CORE_20261115_SAVED"
+    },
+    {
+      "location": "$quest_list",
+      "field": "body",
+      "old": "if quest_description_mode = 1 and choosen_quest = 5: $quest_list = $func('slave_sell_chek', 'special_goal_format', $quest_list)\r\n",
+      "new": "if quest_description_mode = 1 and choosen_quest = 5:\r\n $jo9_gc_tmp = $func('slave_sell_chek', 'goal_core', $quest_list)\r\n if $jo9_gc_tmp ! '': $quest_list = $jo9_gc_tmp\r\n $quest_list = $func('slave_sell_chek', 'special_goal_format', $quest_list)\r\nend\r\n",
+      "count": 1,
+      "patchId": "GOAL_CORE_20261115_LEGACY"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "id": "2026-11-15_goal_hint_top",
+  "status": "APPROVED",
+  "description": "쉬움 난이도 의뢰 달성 조건 상자를 목표창 본문 맨 위로 옮긴다. 긴 의뢰 대사(바이커 첫 의뢰 등) 때문에 하단 상자가 보이지 않던 문제 수정. 하단 상자는 일반 안내문으로 되돌린다.",
+  "before_sha256": "f2bb72249a53fd491ae68f27a9caa78f56702a129bcdb5fee002921b223c229a",
+  "after_sha256": "0988796df210ac73aef6037c329979a7870d5c515131f6d9cfb9e23848e2a402",
+  "edits": [
+    {
+      "location": "master_stat",
+      "field": "body",
+      "old": "\t*p '<div id = \"bg_blue_script_right\" style=\"max-height:556px;overflow-y:auto;overflow-x:hidden;word-wrap:break-word;padding-right:8px;padding-bottom:8px;box-sizing:border-box\"><br><<$quest_list>></div>'\r\n",
+      "new": "\t! easy difficulty: the achievement conditions sit at the top of the goal text (the bottom box was easy to miss next to long request dialogue)\r\n\t$jo9_goal_top = ''\r\n\tif difficulty_setting = 1 and quest_description_mode = 1: $jo9_goal_top = $func('slave_sell_chek', 'easy_goal_hint', choosen_quest)\r\n\tif difficulty_setting = 1 and quest_description_mode = 2: $jo9_goal_top = $func('slave_sell_chek', 'easy_goal_hint', 5, jo9_goal_selected_scene)\r\n\tif $jo9_goal_top ! '': $jo9_goal_top = '<div style=\"margin:0 0 12px;padding:8px 10px;border:1px solid #7a6a45;background:#f3ead0;color:#191970;font-size:16px;line-height:1.35\">' + $jo9_goal_top + '</div>'\r\n\t*p '<div id = \"bg_blue_script_right\" style=\"max-height:556px;overflow-y:auto;overflow-x:hidden;word-wrap:break-word;padding-right:8px;padding-bottom:8px;box-sizing:border-box\"><br><<$jo9_goal_top>><<$quest_list>></div>'\r\n",
+      "count": 1,
+      "patchId": "GOAL_HINT_TOP_20261115_TOP"
+    },
+    {
+      "location": "master_stat",
+      "field": "body",
+      "old": "local $jo9_goal_hint = ''\r\nif master_stat_screen = 1 and quest_description_mode = 1 and difficulty_setting = 1: $jo9_goal_hint = $func('slave_sell_chek', 'easy_goal_hint', choosen_quest)\r\nif master_stat_screen = 1 and quest_description_mode = 2 and difficulty_setting = 1: $jo9_goal_hint = $func('slave_sell_chek', 'easy_goal_hint', 5, jo9_goal_selected_scene)\r\nif $jo9_goal_hint ! '':\r\n *p '<div id=\"info\"><div style=\"height:140px;overflow-y:auto;overflow-x:hidden;word-wrap:break-word;padding-right:10px;font-size:16px;line-height:1.35\"><<$jo9_goal_hint>></div></div>'\r\nelse\r\n *p '<div id=\"info\"><<$info_text>></div>'\r\nend\r\n",
+      "new": "*p '<div id=\"info\"><<$info_text>></div>'\r\n",
+      "count": 1,
+      "patchId": "GOAL_HINT_TOP_20261115_BOTTOM"
+    }
+  ]
+}

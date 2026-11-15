@@ -1,0 +1,49 @@
+{
+  "id": "2026-11-15_goal_hint_bottom_scroll_css",
+  "status": "APPROVED",
+  "description": "의뢰 달성 조건을 원래대로 아래 메시지 박스(#info)에 표시하고(상단 상자는 제거), 높이·스크롤 지정을 CSS 클래스로 옮긴다. 같은 문제(인라인 overflow 무시)를 가진 게임오버 메시지·파산 처분 옆 패널·정산 장부 옆 패널에도 CSS 클래스를 붙인다.",
+  "before_sha256": "42871f50d74af8c8d1e0d7912b15d3eaf9b49dd1fd4fd8165377d96756c3f5c5",
+  "after_sha256": "4ea39fcd705f725adafa542931d8bd5524a7b047696b431f0164e5b4e0c5755b",
+  "edits": [
+    {
+      "location": "master_stat",
+      "field": "body",
+      "old": "\t! easy difficulty: the achievement conditions sit at the top of the goal text (the bottom box was easy to miss next to long request dialogue)\r\n\t$jo9_goal_top = ''\r\n\tif difficulty_setting = 1 and quest_description_mode = 1: $jo9_goal_top = $func('slave_sell_chek', 'easy_goal_hint', choosen_quest)\r\n\tif difficulty_setting = 1 and quest_description_mode = 2: $jo9_goal_top = $func('slave_sell_chek', 'easy_goal_hint', 5, jo9_goal_selected_scene)\r\n\tif $jo9_goal_top ! '': $jo9_goal_top = '<div style=\"margin:0 0 12px;padding:8px 10px;border:1px solid #7a6a45;background:#f3ead0;color:#191970;font-size:16px;line-height:1.35\">' + $jo9_goal_top + '</div>'\r\n\t*p '<div id = \"bg_blue_script_right\" class=\"jo9_goal_scroll\"><br><<$jo9_goal_top>><<$quest_list>></div>'\r\n",
+      "new": "\t*p '<div id = \"bg_blue_script_right\" class=\"jo9_goal_scroll\"><br><<$quest_list>></div>'\r\n",
+      "count": 1,
+      "patchId": "GOAL_HINT_BOTTOM_20261115_TOP"
+    },
+    {
+      "location": "master_stat",
+      "field": "body",
+      "old": "*p '<div id=\"info\"><<$info_text>></div>'\r\n",
+      "new": "local $jo9_goal_hint = ''\r\nif master_stat_screen = 1 and quest_description_mode = 1 and difficulty_setting = 1: $jo9_goal_hint = $func('slave_sell_chek', 'easy_goal_hint', choosen_quest)\r\nif master_stat_screen = 1 and quest_description_mode = 2 and difficulty_setting = 1: $jo9_goal_hint = $func('slave_sell_chek', 'easy_goal_hint', 5, jo9_goal_selected_scene)\r\nif $jo9_goal_hint ! '':\r\n *p '<div id=\"info\"><div class=\"jo9_hint_scroll\"><<$jo9_goal_hint>></div></div>'\r\nelse\r\n *p '<div id=\"info\"><<$info_text>></div>'\r\nend\r\n",
+      "count": 1,
+      "patchId": "GOAL_HINT_BOTTOM_20261115_BOTTOM"
+    },
+    {
+      "location": "exit",
+      "field": "body",
+      "old": "<div id=\"jo9_gameover_message\" style=\"position:absolute;",
+      "new": "<div id=\"jo9_gameover_message\" class=\"jo9_gameover_scroll\" style=\"position:absolute;",
+      "count": 1,
+      "patchId": "SCROLL_CSS_20261115_GAMEOVER"
+    },
+    {
+      "location": "jo9_liquidation",
+      "field": "body",
+      "old": "<div id=\"side_panel_text\" style=\"color:#20160e;font-size:20px;line-height:1.3;overflow:auto;\"><b>밀린 비용</b>",
+      "new": "<div id=\"side_panel_text\" class=\"jo9_side_scroll\" style=\"color:#20160e;font-size:20px;line-height:1.3;overflow:auto;\"><b>밀린 비용</b>",
+      "count": 1,
+      "patchId": "SCROLL_CSS_20261115_LIQUIDATION"
+    },
+    {
+      "location": "jo9_ledger_view",
+      "field": "body",
+      "old": "<div id=\"side_panel_text\" style=\"color:#20160e;font-size:20px;line-height:1.3;overflow:auto;\"><<$text[txt]>></div>",
+      "new": "<div id=\"side_panel_text\" class=\"jo9_side_scroll\" style=\"color:#20160e;font-size:20px;line-height:1.3;overflow:auto;\"><<$text[txt]>></div>",
+      "count": 1,
+      "patchId": "SCROLL_CSS_20261115_LEDGER"
+    }
+  ]
+}
