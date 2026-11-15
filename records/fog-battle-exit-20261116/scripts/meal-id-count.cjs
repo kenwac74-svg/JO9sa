@@ -1,0 +1,2 @@
+const fs=require('fs'),codec=require('G:/somi/JO9sa/tools/qa/save-codec.cjs');
+for(const p of process.argv.slice(2)){const s=codec.parse(fs.readFileSync(p));const v=s.vars.find(v=>v.name==='MEAL_ID');const n=v?v.values.filter(x=>x[1]).length:0;const idx=s.vars.find(v=>v.name==='MEAL_INDEX_FINAL');console.log(p.split('/').pop().padEnd(28),'meal_id entries',n, 'size',(fs.statSync(p).size/1e6).toFixed(1)+'MB');}

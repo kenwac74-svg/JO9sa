@@ -1,0 +1,4 @@
+const fs=require('fs'),codec=require('G:/somi/JO9sa/tools/qa/save-codec.cjs');
+const s=codec.parse(fs.readFileSync(process.argv[2]));
+const show=n=>{const v=s.vars.find(v=>v.name===n);if(!v){return n+': (absent)';}const vals=v.values.map((x,i)=>{const k=(v.idx.find(([ii])=>ii===i)||[])[1];return (k!==undefined?k+'=':'')+x[0]+(x[1]?':'+x[1].slice(0,70):'');}).filter(x=>!/^(\d+=)?0$/.test(x)).slice(0,10);return n+': '+JSON.stringify(vals);};
+for(const n of ['SOUND_ON','MUSIC_VOLUME','SOUND_VOLUME','TOPLAY','MUSIC_NOW','JO9_BGM_ACTIVE','JO9_BGM_PATHS','JO9_BGM_INDEX','JO9_BGM_SIGNATURE','ESTATE','NOBLE_STATUS','BRAND_REPUTATION','FACTION_FAME','IS_HOME','CITY_FORM','CITY_DISTRICT','DAY','JO9_GAMEOVER_AUDIO_ACTIVE','AUTOSAVE','GAME_VER','TITLE_FIX','COMBATANT','БОЙ_СО_СТРАЖНИКОМ','FIGHT_RETURN'])console.log(show(n));

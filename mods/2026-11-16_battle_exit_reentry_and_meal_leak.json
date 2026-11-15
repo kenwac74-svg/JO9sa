@@ -1,0 +1,25 @@
+{
+  "id": "2026-11-16_battle_exit_reentry_and_meal_leak",
+  "status": "APPROVED",
+  "description": "(1) 안개 전투 나가기(выход_из_боя)가 이미 시작된 세이브(phase 3, 결과 비어 있음)에서 아무것도 안 하고 끝나던 문제: 전투를 정리하고 원래 화면으로 이동. (2) #food_base가 $meal_id를 비우지 않고 76개씩 덧붙여 세이브가 커지고 로드가 느려지던 문제: 시작 때 목록을 비움.",
+  "before_sha256": "0a3ea7950a9fbdcd2e69725a1c241ef4d59c02d3838c2e368962f9266206419b",
+  "after_sha256": "caa246cf81ce3cec32fe9edc7c2345208165c86b51613d2a5ae4ba1e2bef6022",
+  "edits": [
+    {
+      "location": "выход_из_боя",
+      "field": "body",
+      "old": " if jo9_fate['phase'] = 3: exit\r\n",
+      "new": " if jo9_fate['phase'] = 3:\r\n  ! JO9 MOD START BATTLE_EXIT_REENTRY_20261116\r\n  ! The exit already ran (result cleared) but the battle screen is still shown, e.g. a save made at that moment: leave the battle instead of doing nothing.\r\n  ! Fog battles only (mode 1). Arena, colosseum and catfight results read this state, and a stored return target could replay a finished event, so those are left alone.\r\n  if $итог_боя = '' and jo9_fate['mode'] = 1:\r\n   jo9_fate['mode'] = 0\r\n   jo9_fate['phase'] = 0\r\n   $return_lock = iif(is_home = 1, 'main_screen', 'city_menu_form')\r\n   gs '$combat_variable_reset'\r\n   gs '$newloc'\r\n   gt '<<$return_lock>>'\r\n  end\r\n  ! JO9 MOD END BATTLE_EXIT_REENTRY_20261116\r\n  exit\r\n end\r\n",
+      "count": 1,
+      "patchId": "BATTLE_EXIT_REENTRY_20261116"
+    },
+    {
+      "location": "#food_base",
+      "field": "body",
+      "old": "!FOOD DATABASE\r\n",
+      "new": "!FOOD DATABASE\r\n! JO9 MOD START FOOD_BASE_NO_LEAK_20261116\r\n! The list is rebuilt below on every refresh; without this reset each load appended another copy (an old save held 28804 entries instead of 76).\r\nkillvar '$meal_id'\r\n! JO9 MOD END FOOD_BASE_NO_LEAK_20261116\r\n",
+      "count": 1,
+      "patchId": "FOOD_BASE_NO_LEAK_20261116"
+    }
+  ]
+}

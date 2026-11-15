@@ -1,0 +1,3 @@
+const fs=require('fs'),codec=require('G:/somi/JO9sa/tools/qa/save-codec.cjs');
+function top(p){const s=codec.parse(fs.readFileSync(p));const rows=s.vars.map(v=>{let bytes=0,nz=0;for(const [n,t] of v.values){bytes+=(n||'').length+(t||'').length;if((t&&t.length)||(n&&n!=='0'))nz++;}return {name:v.name,n:v.values.length,nz,bytes};});rows.sort((a,b)=>b.bytes-a.bytes);return {total:rows.reduce((a,r)=>a+r.bytes,0),vars:rows.length,top:rows.slice(0,14)};}
+const p=process.argv[2];const r=top(p);console.log(p.split('/').pop(),'vars',r.vars,'bytes',r.total);r.top.forEach(x=>console.log('  ',x.name.padEnd(34),'n='+x.n,'nonzero='+x.nz,'bytes='+x.bytes));

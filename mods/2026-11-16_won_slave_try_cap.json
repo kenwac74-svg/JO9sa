@@ -1,0 +1,17 @@
+{
+  "id": "2026-11-16_won_slave_try_cap",
+  "status": "APPROVED",
+  "description": "안개 승리 전리품 여자 생성 반복(최소 가격 충족까지 generate_stock 재추첨)에 횟수 상한 100을 둔다. 상한에 이르면 마지막으로 뽑은 후보를 그대로 쓴다. 최소 가격 규칙과 보상 밸런스는 그대로, 오래 멈추는 최악 경우만 막는다.",
+  "before_sha256": "caa246cf81ce3cec32fe9edc7c2345208165c86b51613d2a5ae4ba1e2bef6022",
+  "after_sha256": "bc61afe7b3b68fd4aa6a120f8f91c740adcd3c0a4946ed273027e961d00d0c70",
+  "edits": [
+    {
+      "location": "выход_из_боя",
+      "field": "body",
+      "old": "\t:won_slave_calc\r\n\tgs 'generate_stock'\r\n\tif slave_base_price < won_slave_minimum_value: jump 'won_slave_calc'\r\n",
+      "new": "\t! JO9 MOD START WON_SLAVE_TRY_CAP_20261116\r\n\t! The trophy girl is drawn again until she is worth the enemy minimum. Stop after 100 draws and keep the last one, so a rare minimum (300) cannot freeze the game for a long time.\r\n\tjo9_won_tries = 0\r\n\t! JO9 MOD END WON_SLAVE_TRY_CAP_20261116\r\n\t:won_slave_calc\r\n\tgs 'generate_stock'\r\n\tjo9_won_tries += 1\r\n\tif slave_base_price < won_slave_minimum_value and jo9_won_tries < 100: jump 'won_slave_calc'\r\n",
+      "count": 1,
+      "patchId": "WON_SLAVE_TRY_CAP_20261116"
+    }
+  ]
+}
