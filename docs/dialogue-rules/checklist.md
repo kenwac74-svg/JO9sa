@@ -16,7 +16,8 @@
 - [ ] JSON 자동 로드가 세이브에 들어가는지(사용자 PC 10분 시험)
 - [ ] `SLAVE_DIALOGUE_ASSEMBLY_RULES_CURRENT_20261112_KO.md` 원본 위치
 
-- [ ] 기존 거부 대사(`$refuse_talk`)에 주인을 향한 욕설이 있는지(주인에게 비속어를 쓰지 않는다는 규칙과 맞는지)
+- [x] 기존 거부 대사(`$refuse_talk`)에 주인을 향한 욕설이 있는지 → 있음(hateful). 반말도 4개 상태에 있음. 기획서 10장 결정 9
+- [x] 대상별 장악력 → `master_supermacy`가 이미 대상 기준 계산(`$calculate_attributes`)
 - [x] 헌신 3 선이 2.4.1에도 있는지 → 있음(`main_screen` 조수 교환, `interaction` 외양간 지기)
 
 ## 구현(기획 승인 뒤, 기획서 9장)
