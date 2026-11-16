@@ -1,0 +1,307 @@
+! JO9 MOD START OCCUPATION_INIT_20261112
+! Extra chances use exact eligible-state fractions frozen from current common rolls.
+if $args[0] = 'roll':
+ result = rand(1,args[1])
+ exit
+end
+if special_stock ! 0 or creating_clone ! 0 or stock['jo9_bg_random'] ! 1: exit
+local j9occ_low = iif(stock['ego'] < 4 and stock['pride'] < 4,1,0)
+local j9occ_stamina = stock['stamina']
+local j9occ_upper = 0
+if stock['jo9_work_ethic'] > 0 or stock['passion_comfort'] < 0:
+ j9occ_upper = 1
+elseif stock['jo9_work_ethic'] < 0 or stock['passion_comfort'] > 0:
+ j9occ_upper = -1
+end
+local j9occ_draw
+! Spec 1: 평민
+if $stock_occupation = 'poor_bride':
+end
+! Spec 2: 사냥꾼
+if $stock_occupation = 'huntress':
+ if (stock['grace'] < 0) = 0:
+  if func('jo9_occupation_init','roll',85) <= 9: stock['grace'] = -1
+ end
+ if (stock['metabolism'] = 4) = 0:
+  if func('jo9_occupation_init','roll',8) <= 1: stock['metabolism'] = 4
+ end
+end
+! Spec 3: 문명생활 밖 공통
+if $stock_occupation = 'tribal_girl' or $stock_occupation = 'shaman' or $stock_occupation = 'herbalist':
+ if (stock['grace'] < 0) = 0:
+  if func('jo9_occupation_init','roll',85) <= 9: stock['grace'] = -1
+ end
+end
+! Spec 4: 바이킹의 아내
+if $stock_occupation = 'viking_wife':
+ if stock['virginity'] < 2: stock['virginity'] = 2
+ if (stock['water_attitude'] = 2) = 0:
+  if func('jo9_occupation_init','roll',115) <= 48: stock['water_attitude'] = 2
+ end
+ if (stock['grace'] < 0) = 0:
+  if func('jo9_occupation_init','roll',85) <= 9: stock['grace'] = -1
+ end
+end
+! Spec 5: 수녀
+if $stock_occupation = 'nun':
+ if stock['jo9_attention'] = 0 and (stock['passion_fame'] = -1) = 0:
+  if func('jo9_occupation_init','roll',1265) <= 288: stock['passion_fame'] = -1
+ end
+ if (stock['homosexualism'] = -1) = 0:
+  if func('jo9_occupation_init','roll',135) <= 28: stock['homosexualism'] = -1
+ end
+ if (stock['perversion'] = -1) = 0:
+  if func('jo9_occupation_init','roll',23) <= 12: stock['perversion'] = -1
+ end
+ if (stock['exhibitionism'] = -1) = 0:
+  if func('jo9_occupation_init','roll',39) <= 28: stock['exhibitionism'] = -1
+ end
+ if func('jo9_occupation_init','roll',100) <= 90:
+  stock['virginity'] = 0
+ else
+  stock['virginity'] = 2
+ end
+ if stock['jo9_grudge'] = -1: stock['jo9_grudge'] = 0
+end
+! Spec 6: 살인마
+if $stock_occupation = 'serial_killer':
+ if (stock['blood_attitude'] = 2) = 0:
+  if func('jo9_occupation_init','roll',23) <= 12: stock['blood_attitude'] = 2
+ end
+ stock['compassion'] = -1
+ if (stock['courage'] = 2) = 0:
+  if func('jo9_occupation_init','roll',23) <= 12: stock['courage'] = 2
+ end
+ if j9occ_low = 1 and stock['jo9_slave_nature'] ! 1 and (stock['meekness'] < 0) = 0:
+  if func('jo9_occupation_init','roll',437) <= 144: stock['meekness'] = -1
+ end
+ if j9occ_low = 0 and stock['jo9_slave_nature'] ! 1 and (stock['meekness'] < 0) = 0:
+  if func('jo9_occupation_init','roll',115) <= 36: stock['meekness'] = -1
+ end
+end
+! Spec 7: 범죄자 공통
+if $stock_occupation = 'thief' or $stock_occupation = 'thug' or $stock_occupation = 'brigand' or $stock_occupation = 'contraband' or $stock_occupation = 'gang_member' or $stock_occupation = 'mafia_boss' or $stock_occupation = 'hacker':
+ if j9occ_low = 1 and stock['jo9_slave_nature'] ! 1 and (stock['meekness'] < 0) = 0:
+  if func('jo9_occupation_init','roll',437) <= 96: stock['meekness'] = -1
+ end
+ if j9occ_low = 0 and stock['jo9_slave_nature'] ! 1 and (stock['meekness'] < 0) = 0:
+  if func('jo9_occupation_init','roll',115) <= 24: stock['meekness'] = -1
+ end
+end
+! Spec 8: 도둑
+if $stock_occupation = 'thief':
+ stock['stamina'] = max(stock['stamina'],2)
+end
+! Spec 9: 목축업자
+if $stock_occupation = 'milker' or $stock_occupation = 'swiner':
+ stock['nurse'] = max(stock['nurse'],3)
+ stock['secretary'] = max(stock['secretary'],3)
+end
+! Spec 10: 하녀
+if $stock_occupation = 'maid' or $stock_occupation = 'valertry':
+end
+! Spec 11: 여마법사의 제자
+if $stock_occupation = 'sorceress':
+ if (stock['meekness'] > 0) = 0:
+  if func('jo9_occupation_init','roll',215) <= 48: stock['meekness'] = 1
+ end
+ stock['service'] = max(stock['service'],2)
+end
+! Spec 12: 공주계열
+if $stock_occupation = 'mprincess' or $stock_occupation = 'barbarian_princess':
+ if j9occ_low = 1 and stock['meekness'] <= 0 and stock['jo9_slave_nature'] ! 1 and (stock['defiant'] = 1) = 0:
+  if func('jo9_occupation_init','roll',1333) <= 320: stock['defiant'] = 1 & stock['jo9_slave_nature'] = 0 & stock['meekness'] = min(0,stock['meekness'])
+ end
+ if j9occ_low = 0 and stock['meekness'] <= 0 and stock['jo9_slave_nature'] ! 1 and (stock['defiant'] = 1) = 0:
+  if func('jo9_occupation_init','roll',2107) <= 480: stock['defiant'] = 1 & stock['jo9_slave_nature'] = 0 & stock['meekness'] = min(0,stock['meekness'])
+ end
+ if stock['courage'] ! 2 and (stock['vermin_attitude'] = -1) = 0:
+  if func('jo9_occupation_init','roll',2645) <= 864: stock['vermin_attitude'] = -1
+ end
+ if (stock['grace'] > 0) = 0:
+  if func('jo9_occupation_init','roll',85) <= 63: stock['grace'] = 1
+ end
+ stock['expression'] = max(stock['expression'],1)
+ stock['music'] = max(stock['music'],1)
+ stock['art'] = max(stock['art'],1)
+ stock['calisthenics'] = max(stock['calisthenics'],1)
+ stock['secretary'] = max(stock['secretary'],1)
+end
+! Spec 13: 직조공
+if $stock_occupation = 'weaver':
+ if (stock['jo9_focus'] = 1) = 0:
+  if func('jo9_occupation_init','roll',9) <= 2: stock['jo9_focus'] = 1
+ end
+ if (stock['nymphomania'] = -1) = 0:
+  if func('jo9_occupation_init','roll',29) <= 3: stock['nymphomania'] = -1
+ end
+end
+! Spec 14: 선반공
+if $stock_occupation = 'freaser':
+ if (stock['jo9_focus'] = 1) = 0:
+  if func('jo9_occupation_init','roll',9) <= 2: stock['jo9_focus'] = 1
+ end
+ if (stock['nymphomania'] = -1) = 0:
+  if func('jo9_occupation_init','roll',29) <= 3: stock['nymphomania'] = -1
+ end
+end
+! Spec 15: 페미니스트
+if $stock_occupation = 'sufragist':
+ j9occ_draw = func('jo9_occupation_init','roll',100)
+ stock['homosexualism'] = 0
+ if j9occ_draw <= 30: stock['homosexualism'] = 2
+ if j9occ_draw > 30 and j9occ_draw <= 60: stock['homosexualism'] = 1
+ if (stock['selfesteem'] > 0) = 0:
+  if func('jo9_occupation_init','roll',85) <= 27: stock['selfesteem'] = 1
+ end
+ if j9occ_low = 1 and stock['meekness'] <= 0 and stock['jo9_slave_nature'] ! 1 and (stock['defiant'] = 1) = 0:
+  if func('jo9_occupation_init','roll',1333) <= 320: stock['defiant'] = 1 & stock['jo9_slave_nature'] = 0 & stock['meekness'] = min(0,stock['meekness'])
+ end
+ if j9occ_low = 0 and stock['meekness'] <= 0 and stock['jo9_slave_nature'] ! 1 and (stock['defiant'] = 1) = 0:
+  if func('jo9_occupation_init','roll',2107) <= 480: stock['defiant'] = 1 & stock['jo9_slave_nature'] = 0 & stock['meekness'] = min(0,stock['meekness'])
+ end
+end
+! Spec 16: 운동선수 공통
+if $stock_occupation = 'voleyball' or $stock_occupation = 'karateka' or $stock_occupation = 'hymnast':
+ stock['stamina'] = max(stock['stamina'],3)
+ if (stock['sport_affinity'] = 1) = 0:
+  if func('jo9_occupation_init','roll',85) <= 63: stock['sport_affinity'] = 1 & stock['cowSK_affinity'] = 0
+ end
+end
+! Spec 17: 경찰관류
+if $stock_occupation = 'policewoman' or $stock_occupation = 'mind_contol' or $stock_occupation = 'time_plice' or $stock_occupation = 'jailer':
+ if stock['jo9_focus'] = 1: stock['jo9_focus'] = 0
+ stock['expression'] = max(stock['expression'],1)
+end
+! Spec 18: 시공경찰관
+if $stock_occupation = 'time_plice':
+ if (stock['jo9_constitution'] = 1) = 0:
+  if func('jo9_occupation_init','roll',97) <= 20: stock['jo9_constitution'] = 1
+ end
+end
+! Spec 19: 미래경찰
+if $stock_occupation = 'mind_contol':
+ if stock['courage'] = 1: stock['courage'] = 0
+ if (stock['jo9_grudge'] = 1) = 0:
+  if func('jo9_occupation_init','roll',9) <= 2: stock['jo9_grudge'] = 1
+ end
+end
+! Spec 20: 교도관
+if $stock_occupation = 'jailer':
+ if (stock['compassion'] < 0) = 0:
+  if func('jo9_occupation_init','roll',115) <= 12: stock['compassion'] = -1
+ end
+end
+! Spec 21: 대학생
+if $stock_occupation = 'student':
+ if (stock['jo9_learning_trait'] = 1) = 0:
+  if func('jo9_occupation_init','roll',97) <= 5: stock['jo9_learning_trait'] = 1 & stock['intellect'] = 5 & stock_rate['intellect'] = 0
+ end
+end
+! Spec 22: 작가
+if $stock_occupation = 'writer':
+ if (stock['jo9_learning_trait'] = 1) = 0:
+  if func('jo9_occupation_init','roll',97) <= 5: stock['jo9_learning_trait'] = 1 & stock['intellect'] = 5 & stock_rate['intellect'] = 0
+ end
+ if stock['jo9_focus'] = 1: stock['jo9_focus'] = 0
+ if (stock['expression_affinity'] > 0) = 0:
+  if func('jo9_occupation_init','roll',20) <= 7: stock['expression_affinity'] = 1
+ end
+ if (stock['jo9_ambition'] = 1) = 0:
+  if func('jo9_occupation_init','roll',18) <= 1: stock['jo9_ambition'] = 1
+ end
+end
+! Spec 23: 화가
+if $stock_occupation = 'artist':
+ if (stock['jo9_ambition'] = 1) = 0:
+  if func('jo9_occupation_init','roll',18) <= 1: stock['jo9_ambition'] = 1
+ end
+end
+! Spec 24: 모델
+if $stock_occupation = 'model':
+ if stock['sport_affinity'] = 1: stock['sport_affinity'] = 0
+ if stock['grace'] > 0: stock['grace'] = 0
+ if stock['metabolism'] = 2: stock['metabolism'] = 3
+ if stock['metabolism'] = 1: stock['metabolism'] = 3
+ if stock['beauty'] >= 5 and (stock['jo9_peerless'] = 1) = 0:
+  if func('jo9_occupation_init','roll',99) <= 5: stock['jo9_peerless'] = 1
+ end
+ if stock['beauty'] < 5 and (stock['jo9_peerless'] = 1) = 0:
+  if func('jo9_occupation_init','roll',20) <= 1: stock['jo9_peerless'] = 1
+ end
+end
+! Spec 25: 클러버
+if $stock_occupation = 'major':
+ if stock['sport_affinity'] ! 1 and stock['gladiatrix_affinity'] ! 1 and j9occ_upper ! 1 and (stock['cowSK_affinity'] > 0) = 0:
+  if func('jo9_occupation_init','roll',1173) <= 196: stock['cowSK_affinity'] = 1
+ end
+ if (stock['calisthenics_affinity'] > 0) = 0:
+  if func('jo9_occupation_init','roll',20) <= 7: stock['calisthenics_affinity'] = 1
+ end
+ if j9occ_upper = 0 and (j9occ_upper = -1) = 0:
+  if func('jo9_occupation_init','roll',1193) <= 336: stock['jo9_work_ethic'] = -1 & stock['passion_comfort'] = 1
+ end
+ stock['calisthenics'] = max(stock['calisthenics'],2)
+ if stock['courage'] = 2: stock['courage'] = 0
+end
+! Spec 26: 무용가
+if $stock_occupation = 'dancer':
+ stock['calisthenics_affinity'] = 1
+ if stock['jo9_focus'] = 1: stock['jo9_focus'] = 0
+end
+! Spec 27: 우주군 사관생도
+if $stock_occupation = 'academy':
+ if (stock['jo9_ambition'] = 1) = 0:
+  if func('jo9_occupation_init','roll',18) <= 1: stock['jo9_ambition'] = 1
+ end
+ if stock['courage'] = 1: stock['courage'] = 0
+ if j9occ_low = 1 and stock['meekness'] <= 0 and stock['jo9_slave_nature'] ! 1 and (stock['defiant'] = 1) = 0:
+  if func('jo9_occupation_init','roll',1333) <= 160: stock['defiant'] = 1 & stock['jo9_slave_nature'] = 0 & stock['meekness'] = min(0,stock['meekness'])
+ end
+ if j9occ_low = 0 and stock['meekness'] <= 0 and stock['jo9_slave_nature'] ! 1 and (stock['defiant'] = 1) = 0:
+  if func('jo9_occupation_init','roll',2107) <= 240: stock['defiant'] = 1 & stock['jo9_slave_nature'] = 0 & stock['meekness'] = min(0,stock['meekness'])
+ end
+ stock['secretary'] = max(stock['secretary'],1)
+end
+! Spec 28: 전투로봇 파일럿
+if $stock_occupation = 'mech':
+ stock['defiant'] = 1 & stock['jo9_slave_nature'] = 0 & stock['meekness'] = min(0,stock['meekness'])
+ stock['sport_affinity'] = 1 & stock['cowSK_affinity'] = 0
+ if stock['courage'] = 1: stock['courage'] = 0
+end
+! Spec 29: 궤도 정비공
+if $stock_occupation = 'installer':
+ if (stock['sport_affinity'] = 1) = 0:
+  if func('jo9_occupation_init','roll',85) <= 18: stock['sport_affinity'] = 1 & stock['cowSK_affinity'] = 0
+ end
+end
+! Spec 30: 영웅 여전사
+if $stock_occupation = 'heroine':
+ stock['gladiatrix_affinity'] = 0
+ if stock['courage'] = 1: stock['courage'] = 0
+ stock['jo9_combat_trait'] = 0
+ if func('jo9_occupation_init','roll',100) <= 20:
+  if func('jo9_occupation_init','roll',2) = 1:
+   stock['gladiatrix_affinity'] = 1
+   stock['cowSK_affinity'] = 0 & stock['pet_affinity'] = 0 & stock['dressage_affinity'] = 0
+  else
+   stock['courage'] = 1
+  end
+  if func('jo9_occupation_init','roll',100) <= 20: stock['jo9_combat_trait'] = func('jo9_occupation_init','roll',3)
+ end
+end
+! Spec 31: 소녀·여학생
+if $stock_occupation = 'tribal_girl' or $stock_occupation = 'schoolgirl':
+ if (stock['perversion'] = -1) = 0:
+  if func('jo9_occupation_init','roll',115) <= 24: stock['perversion'] = -1
+ end
+end
+! Preserve the initial resource formula if an approved stamina minimum raised stamina.
+if stock['stamina'] > j9occ_stamina:
+ stock['calories'] = stock['stamina']
+ stock['energy'] = iif(stock['stamina'] > 0,min(5,stock['stamina'] + iif(difficulty_setting = 2,0,1)),0)
+end
+gs 'jo9_traits','activity_repair','stock'
+gs 'jo9_traits','attention_repair','stock'
+gs 'jo9_traits','repair_exclusions','stock'
+! JO9 MOD END OCCUPATION_INIT_20261112

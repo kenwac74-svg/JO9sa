@@ -1,0 +1,845 @@
+--- a/general_dialogue.py
++++ b/general_dialogue.py
+@@ -0,0 +1,77 @@
++"""JO9 MOD GENERAL_DIALOGUE_DB_20261115: read/edit literal QSP dialogue data.
++
++Does not execute game code, classify user text, or infer gameplay outcomes.
++"""
++from pathlib import Path
++import re,hashlib,datetime,html,bisect
++from master_editor import QspDocument,MasterEditor,literal,quote,encoded,digest
++
++QUESTIONS={'1112':'인상 묻기','1115':'불만 묻기','1113':'요구 묻기','1114':'희망사항 묻기','1116':'기분 묻기','1111':'과거 묻기','1117':'조수에 대해 묻기','1118':'노예에 대해 묻기'}
++ORIGINAL={'relation','obed','urge','fear','ratio','instinct','custom','spoil','moral'}
++FIELDS={'text','role','types','relations','emotion','tone','level','question','good_mood','rare_praise','need_fear'}
++INDEX=r'''(?:'(?:''|[^'])*'|"(?:""|[^"])*")'''
++PATTERN=re.compile(r'(?m)^[ \t]*(?P<arr>\$?voice_fragment_(?:'+ '|'.join(FIELDS) +r')|\$slave_(?:'+'|'.join(ORIGINAL)+r')_description)\[(?P<index>'+INDEX+r'|-?\d+)\][ \t]*=[ \t]*(?P<value>[^\r\n]*)')
++_CACHE={}
++
++def plain(text):
++ return html.unescape(re.sub(r'<<.*?>>|<[^>]*>',lambda m:m[0] if m[0].startswith('<<') else '\n' if re.match(r'<br\s*/?>',m[0],re.I) else '',str(text))).strip()
++def compatible(value,wanted):return not wanted or not value or value=='*' or wanted in value.strip('|').split('|')
++
++class GeneralDialogueDB:
++ def __init__(self,root,backend=None):self.root=Path(root).resolve();self.path=self.root/'jack.qsp';self.editor=MasterEditor(self.root,backend)
++ def _load(self):
++  stamp=self.path.stat();finger=(str(self.path),stamp.st_mtime_ns,stamp.st_size)
++  if finger in _CACHE:return _CACHE[finger]
++  doc=QspDocument(self.path.read_bytes());rows=[];spans={};skipped=0
++  for location in ['#txt_man','#txt_woman']:
++   if location not in doc.index:continue
++   text=doc.body(location);pieces={};originals=[];line_starts=[0]+[m.end() for m in re.finditer('\n',text)]
++   for match in PATTERN.finditer(text):
++    raw=match['value'].rstrip();index=match['index'];key=literal(index) if index.startswith(('\'', '"')) else index
++    try:value=literal(raw) if match['arr'].startswith('$') else int(raw)
++    except (ValueError,TypeError):skipped+=1;continue
++    binding=match['arr']+'['+index+']';start=match.start('value');end=start+len(raw)
++    if match['arr'].startswith('$slave_'):
++     category=match['arr'].removeprefix('$slave_').removesuffix('_description');rid=location+'|'+category+':'+key
++     row={'id':rid,'key':binding,'text':value,'kind':'original','question':'1112','role':'fact_'+category+'_'+key,'types':'*','relations':'*','tone':0,'level':0,'source':location,'line':bisect.bisect_right(line_starts,match.start()),'revision':digest(raw.encode('utf-8'))}
++     originals.append(row);spans[rid]=(location,start,end,raw)
++    else:
++     field=match['arr'].lstrip('$').removeprefix('voice_fragment_');record=pieces.setdefault(key,{})
++     record[field]=value
++     if field=='text':record.update(_start=start,_end=end,_raw=raw,_line=bisect.bisect_right(line_starts,match.start()))
++   for key,piece in pieces.items():
++    if 'text' not in piece:continue
++    q=str(piece.get('question') or '')
++    if q not in QUESTIONS:
++     m=re.search(r'(111[1-8])',str(piece.get('role',''))+' '+key);q=m[1] if m else '1112'
++    rid=location+'|'+key
++    row={k:v for k,v in piece.items() if not k.startswith('_')};row.update(id=rid,key=key,kind='fragment',question=q,source=location,line=piece['_line'],revision=digest(piece['_raw'].encode('utf-8')))
++    row.setdefault('types','*');row.setdefault('relations','*');row.setdefault('tone',0);row.setdefault('level',0)
++    rows.append(row);spans[rid]=(location,piece['_start'],piece['_end'],piece['_raw'])
++   rows.extend(originals)
++  result=(doc,rows,spans,skipped);_CACHE.clear();_CACHE[finger]=result;return result
++ def meta(self):
++  _,rows,_,skipped=self._load();counts={q:sum(r['question']==q for r in rows) for q in QUESTIONS}
++  return {'rows':len(rows),'questions':QUESTIONS,'counts':counts,'questionAliases':{'1118':'1117'},'skippedNonLiteral':skipped,'source':str(self.path),'types':['ice','proud','flame','calm','plain','frank','doll','meek','fragile'],'relations':['neutral','hopeful','duty','loyal','hostile','fearful','bleak','broken']}
++ def search(self,params):
++  _,rows,_,_=self._load();q=str(params.get('q','')).strip().casefold();question=str(params.get('question',''));question='1117' if question=='1118' else question;tone=str(params.get('tone',''));kind=params.get('kind','');source=params.get('source','')
++  found=[r for r in rows if (not question or r['question']==question) and (not kind or r['kind']==kind) and (not source or r['source']==source) and compatible(str(r.get('types','*')),str(params.get('type',''))) and compatible(str(r.get('relations','*')),str(params.get('relation',''))) and (not tone or not r.get('tone') or str(r['tone'])==tone) and (not q or q in (r['key']+' '+plain(r['text'])+' '+r.get('role','')).casefold())]
++  try:offset=max(0,int(params.get('offset',0)));limit=max(1,min(100,int(params.get('limit',30))))
++  except (TypeError,ValueError):raise ValueError('목록 범위는 정수여야 합니다.')
++  return {'total':len(found),'rows':[{**r,'plain':plain(r['text'])} for r in found[offset:offset+limit]],'offset':offset,'limit':limit}
++ def row(self,rid):
++  _,rows,_,_=self._load();row=next((r for r in rows if r['id']==rid),None)
++  if not row:raise FileNotFoundError('일반 대사 항목을 찾지 못했습니다.')
++  return {**row,'plain':plain(row['text'])}
++ def save(self,body):
++  value=body.get('text')
++  if not isinstance(value,str) or len(value)>8000:raise ValueError('대사는 8000자 이하 문자열로 입력하세요.')
++  doc,_,spans,_=self._load();row=self.row(body.get('id'))
++  if body.get('revision')!=row['revision']:raise ValueError('원문이 바뀌었습니다. 다시 불러오세요.')
++  location,start,end,old=spans[row['id']];new=quote(value);changes=[] if old==new else [{'id':row['id'],'before':row['text'],'after':value}]
++  if changes and not body.get('dryRun'):
++   before=doc.body(location);after=before[:start]+new+before[end:];raw=doc.replace_body(location,after);folder=self.root/'jo9_editor/general-dialogue-patches';stamp=datetime.datetime.now().strftime('%Y%m%d_%H%M%S_%f')
++   payloads={self.path:raw,folder/(stamp+'.json'):encoded({'id':'general_dialogue_'+stamp,'target':'game/jack.qsp','before_sha256':digest(doc.raw),'after_sha256':digest(raw),'edits':[{'location':location,'field':'body','old':before,'new':after,'count':1}]})}
++   if not (folder/'before_first_save.qsp').exists():payloads[folder/'before_first_save.qsp']=doc.raw
++   self.editor._write(payloads)
++  return {'changes':changes,'saved':bool(changes) and not body.get('dryRun'),'dryRun':bool(body.get('dryRun')),'row':self.row(row['id']) if not body.get('dryRun') else row}
+--- a/server.py
++++ b/server.py
+@@ -1,15 +1,16 @@
+ """Sidebar extension; delegates every existing studio API to the unmodified server."""
+ import argparse,hashlib,http.server,importlib,json,mimetypes,os,sys,threading
+ from pathlib import Path
+-from urllib.parse import unquote,urlparse
++from urllib.parse import unquote,urlparse,parse_qs
+ import registry
+ from master_editor import MasterEditor, MAPPINGS
+ import master_initials as initials
++from general_dialogue import GeneralDialogueDB
+ 
+ HERE=Path(__file__).resolve().parent
+ def build_id():
+  h=hashlib.sha256()
+- for name in ['server.py','registry.py','integration.mjs','integration.css','app_launcher.py','embedded-tools.css','overrides/studio-look.mjs','overrides/studio-look-geometry.mjs','master_editor.py','master_initials.py','overrides/studio-view.mjs','overrides/studio-role.mjs']:
++ for name in ['server.py','registry.py','integration.mjs','integration.css','app_launcher.py','embedded-tools.css','overrides/studio-look.mjs','overrides/studio-look-geometry.mjs','master_editor.py','master_initials.py','general_dialogue.py','overrides/character-view.mjs','overrides/general-dialogue.mjs','overrides/studio-view.mjs','overrides/studio-role.mjs']:
+   h.update((HERE/name).read_bytes())
+  return h.hexdigest()[:16]
+ def create_server(studio_root,repo,urls_file,port=0):
+@@ -25,6 +26,7 @@
+   try:return json.loads(Path(urls_file).read_text('utf-8-sig'))
+   except (OSError,ValueError):return {}
+  def store():return MasterEditor(base.paths().root,backend=base.api)
++ def dialogue_db():return GeneralDialogueDB(base.paths().root,backend=base.api)
+  def decorate_slave(sid):
+   ch=base.read_character(sid);editor=store();profile=editor.slave_profile(sid)
+   ch.update(role='slave',master=editor.master_from_slave(ch['data'],profile),revision=editor.slave_revision(sid),nativeDefaults=editor.native_defaults())
+@@ -66,6 +68,8 @@
+   def do_GET(self):
+    url=urlparse(self.path);route=url.path
+    native=route.split('/',3)[3] if route.startswith('/v/') and len(route.split('/',3))>3 else route.lstrip('/')
++   if native=='character-view.mjs':return self.blob((HERE/'overrides/character-view.mjs').read_bytes(),'text/javascript; charset=utf-8')
++   if route=='/workspace/general-dialogue.mjs':return self.blob((HERE/'overrides/general-dialogue.mjs').read_bytes(),'text/javascript; charset=utf-8')
+    if native=='studio-view.mjs':
+     text=(HERE/'overrides/studio-view.mjs').read_text('utf-8')
+     marker='<button class="button secondary st-tosim"'
+@@ -82,6 +86,9 @@
+     return self.blob((HERE/name).read_bytes(),mime+'; charset=utf-8')
+    try:
+     import re
++    if route=='/api/general-dialogue/meta':return self.send_json(200,dialogue_db().meta())
++    if route=='/api/general-dialogue/search':return self.send_json(200,dialogue_db().search({k:v[-1] for k,v in parse_qs(url.query).items()}))
++    if route=='/api/general-dialogue/row':return self.send_json(200,dialogue_db().row(parse_qs(url.query).get('id',[''])[0]))
+     if route=='/api/master/chars':return self.send_json(200,{'items':store().list(),'choices':base.choices()})
+     match=re.fullmatch(r'/api/master/(\d+)',route)
+     if match:return self.send_json(200,read_master(match[1]))
+@@ -119,7 +126,8 @@
+    clone=re.fullmatch(r'/api/role/(slave|master)/(\d+)/clone',route)
+    slave=re.fullmatch(r'/api/char/(\d+)/fields',route)
+    slave_images=re.fullmatch(r'/api/char/(\d+)/images',route)
+-   if not (master or clone or slave or slave_images):return super().do_POST()
++   general=route=='/api/general-dialogue/save'
++   if not (master or clone or slave or slave_images or general):return super().do_POST()
+    origin=self.headers.get('Origin')
+    if origin and urlparse(origin).hostname not in ('127.0.0.1','localhost'):return self.send_json(403,{'error':'허용되지 않은 출처입니다.'})
+    if self.headers.get('Content-Type','').split(';')[0].strip()!='application/json':return self.send_json(415,{'error':'JSON 요청만 받습니다.'})
+@@ -130,7 +138,8 @@
+     if not isinstance(body,dict):raise ValueError('요청은 객체여야 합니다.')
+     with base._lock:
+      editor=store()
+-     if slave:result=save_slave(slave[1],body)
++     if general:result=dialogue_db().save(body)
++     elif slave:result=save_slave(slave[1],body)
+      elif slave_images:
+       editor._check_revision('slave',slave_images[1],body.get('revision'))
+       result=base.save_images(slave_images[1],body)
+--- a/integration.mjs
++++ b/integration.mjs
+@@ -1,3 +1,4 @@
++import {createGeneralDbView,simulatorMenuHtml} from '/workspace/general-dialogue.mjs';
+ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const MENUS=[
+  {id:'studio',label:'캐릭터 편집',icon:'✎',children:[['studio','노예 편집'],['master-studio','마스터 편집'],['backgrounds','배경 설정 목록']]},
+@@ -5,7 +6,7 @@
+  {id:'dialogue',label:'대사 편집',icon:'☷'},
+  {id:'image-tools',label:'이미지 작업',icon:'▧'},
+  {id:'coef',label:'산식·계수',icon:'≋'},
+- {id:'game-db',label:'게임 DB',icon:'▤',children:[['interview-db','인터뷰 DB'],['trait-edit','특성 편집']]},
++ {id:'game-db',label:'게임 DB',icon:'▤',children:[['general-dialogue-db','일반 대사 DB'],['interview-db','인터뷰 DB'],['trait-edit','특성 편집']]},
+  {id:'patch-schedule',label:'작업 일정',icon:'◷'},
+  {id:'utilities',label:'기타툴',icon:'⚙',children:[['save-fix','세이브 정비'],['ai-link','AI 연결'],['slave-sim','뽑기 분포']]},
+  {id:'artifacts',label:'기타 산출물',icon:'▥'},
+@@ -23,6 +24,7 @@
+  const css=document.createElement('link');css.rel='stylesheet';css.href='/workspace/integration.css';document.head.append(css);
+  const {createStudioView}=await import(new URL('studio-view.mjs',document.baseURI).href);
+  await createStudioView(globalThis.__jo9StudioApi,{role:'master'});
++ createGeneralDbView(api);
+  const nativeIds=new Set(Object.keys(api.tabNames));const originalNames=new Map([...nativeIds].map(k=>[k,api.tabNames[k]]));
+  const panels=new Map();let items=null,selectedArtifact=null,query='',category='';
+  const subtitle={dialogue:'원문을 찾아 각본으로 저장하거나, 대사를 수정하고 반영합니다.','image-tools':'이미지와 복장을 확인하고 교체합니다.','game-db':'게임 정보를 찾고 아이디어를 정리합니다.','patch-schedule':'일정과 진행 상태, 메모를 관리합니다.',utilities:'작업에 필요한 보조 도구를 선택합니다.',artifacts:'카탈로그와 비교표, 작업 결과를 찾아봅니다.'};
+@@ -34,7 +36,7 @@
+   }
+  }
+  const nav=document.querySelector('.sidebar nav');
+- nav.innerHTML=MENUS.map(m=>`<button type="button" class="nav-button" data-tab="${m.id}" data-workspace-main="${m.id}"><span>${m.icon}</span>${m.label}</button>${m.children?`<div class="workspace-subnav" data-workspace-parent="${m.id}" hidden>${m.children.map(([id,label])=>`<button type="button" class="nav-button" data-tab="${id}">${label}</button>`).join('')}</div>`:''}`).join('');
++ nav.innerHTML=MENUS.map(m=>`<button type="button" class="nav-button" data-tab="${m.id}" data-workspace-main="${m.id}"><span>${m.icon}</span>${m.label}</button>${m.id==='character'?simulatorMenuHtml():m.children?`<div class="workspace-subnav" data-workspace-parent="${m.id}" hidden>${m.children.map(([id,label])=>`<button type="button" class="nav-button" data-tab="${id}">${label}</button>`).join('')}</div>`:''}`).join('');
+  document.querySelector('.workspace-label').textContent='통합 모드 작업실';
+  document.querySelector('.sidebar-bottom p').textContent='기존 도구 연결 · WORK\n각 도구의 설정과 저장 기능 유지';
+  document.title='JO9 · 통합 모드 작업실';
+@@ -49,7 +51,7 @@
+  dialoguePanel.querySelector('iframe').title='대사 편집 작업 영역';
+  framePanel('image-tools',[['checklist','이미지 체크리스트'],['workshop','이미지 교체·편집'],['imageReview','폴더 비교·선택'],['promptWorksheet','장면 프롬프트']]);
+  framePanel('game-db',[['gameReference','특성·아이템·마법·MOB DB']]);
+- panels.get('game-db').querySelector('.workspace-toolbar').insertAdjacentHTML('beforeend','<button type="button" class="button secondary small" data-tab="interview-db">인터뷰 DB</button><button type="button" class="button secondary small" data-tab="trait-edit">특성 편집</button>');
++ panels.get('game-db').querySelector('.workspace-toolbar').insertAdjacentHTML('beforeend','<button type="button" class="button secondary small" data-tab="general-dialogue-db">일반 대사 DB</button><button type="button" class="button secondary small" data-tab="interview-db">인터뷰 DB</button><button type="button" class="button secondary small" data-tab="trait-edit">특성 편집</button>');
+  framePanel('patch-schedule',[['schedule','작업 일정']]);
+  const external=[['Mage.space','https://www.mage.space/advanced'],['JoyCaption','https://huggingface.co/spaces/fancyfeast/joy-caption-beta-one'],['번역','https://translate.google.co.kr/?sl=en&tl=ko&op=translate'],['Gamma','https://gamma.app/design/01M48RXZSYBT1HBN8BFGAQ09AS?from=designs']];
+  panels.get('utilities').innerHTML=`<article class="card"><div class="card-head"><h2>기존 보조 도구</h2></div><div class="card-body workspace-toolbar"><button type="button" class="button secondary" data-tab="save-fix">세이브 정비</button><button type="button" class="button secondary" data-tab="ai-link">AI 연결</button><button type="button" class="button secondary" data-tab="slave-sim">뽑기 분포</button>${button('soundList','사운드 목록')}</div></article><article class="card"><div class="card-head"><h2>외부 도구</h2></div><div class="card-body workspace-toolbar">${external.map(([label,url])=>`<a class="button secondary" href="${esc(url)}" target="_blank" rel="noopener">${label} ↗</a>`).join('')}</div></article><div class="workspace-tool-view"><iframe class="workspace-frame" title="선택한 보조 도구" hidden></iframe></div>`;
+@@ -95,6 +97,9 @@
+  function sync(){
+   const id=api.getTab(),parent=parentOf(id);document.body.classList.toggle('workspace-dialogue-active',id==='dialogue');document.body.classList.toggle('workspace-framed-active',['dialogue','image-tools','game-db','patch-schedule'].includes(id));requestAnimationFrame(fitWorkspace);document.querySelectorAll('[data-workspace-parent]').forEach(x=>x.hidden=x.dataset.workspaceParent!==parent);
+   nav.querySelectorAll('[data-workspace-main]').forEach(x=>{x.classList.toggle('active',x.dataset.workspaceMain===parent);x.setAttribute('aria-current',x.dataset.workspaceMain===parent?'page':'false');});
++  const simState=globalThis.__jo9StudioApi?.charView?.getWorkspaceState?.();
++  nav.querySelectorAll('[data-sim-question]').forEach(x=>x.classList.toggle('active',id==='character'&&simState?.section==='questions'&&(x.dataset.simQuestion===simState.question||(x.dataset.simQuestion==='1117'&&simState.question==='1118'))));
++  nav.querySelectorAll('[data-sim-section]').forEach(x=>x.classList.toggle('active',id==='character'&&x.dataset.simSection===simState?.section));
+   document.querySelector('.header-actions').hidden=panels.has(id);document.querySelector('#pageTitle .draft-badge')?.classList.toggle('workspace-hide',panels.has(id));
+   const panel=panels.get(id);
+   if(panel&&!panel.dataset.loaded){const initial={dialogue:'dialogue','image-tools':'checklist','game-db':'gameReference','patch-schedule':'schedule'}[id];if(initial)openTool(panel,initial);}
+@@ -103,6 +108,7 @@
+  }
+  document.addEventListener('click',event=>{
+   const target=event.target.closest('button');if(!target)return;
++  if(target.dataset.simQuestion||target.dataset.simSection){globalThis.__jo9StudioApi?.charView?.openSection?.(target.dataset.simSection||'questions',target.dataset.simQuestion);api.switchTab('character');}
+   if(target.dataset.workspaceImageSearch!==undefined){
+    const keyword=characterImageKeyword(target.dataset.workspaceImageSearch,target.dataset.imagePath,target.dataset.imageId),panel=panels.get('image-tools');
+    api.switchTab('image-tools');openTool(panel,'checklist');
+@@ -118,6 +124,7 @@
+  document.addEventListener('input',event=>{if(event.target.matches('.workspace-search')){query=event.target.value;renderList();}});
+  document.addEventListener('change',event=>{if(event.target.matches('.workspace-category')){category=event.target.value;renderList();}});
+  window.addEventListener('hashchange',sync);
++ window.addEventListener('jo9-simulator-question',sync);
+  // The original startup does not know workspace-only hashes; restore the user's requested page now.
+  const requested=globalThis.__jo9WorkspaceInitialHash;
+  api.switchTab(requested&&api.tabNames[requested]?requested:api.getTab());sync();
+--- a/integration.css
++++ b/integration.css
+@@ -37,3 +37,8 @@
+ .st-grid .st-initial-field button{justify-self:start;min-width:0}
+ [data-initial-group]{margin-top:12px}
+ [data-initial-group]>summary{cursor:pointer;margin-bottom:10px}
++
++/* JO9 MOD QUESTION_WORKSPACE_20261115: common character context and independent questions. */
++.question-tabs{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 14px}.question-workspace{min-width:0}.question-workspace textarea{box-sizing:border-box;width:100%}.question-workspace .gm-text{white-space:pre-wrap;padding:14px;min-height:80px;overflow-wrap:anywhere}.gdb-columns,.gdb-sim-columns{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:18px}.gdb-columns{margin-top:18px}.gdb-columns>* , .gdb-sim-columns>*{min-width:0}.gdb-rows{max-height:650px;overflow:auto}.gdb-row{display:flex;flex-direction:column;text-align:left;width:100%;padding:12px;gap:7px;margin-bottom:8px;border:1px solid var(--border,#34383c);border-radius:7px;background:var(--panel,#1d2023);color:inherit;cursor:pointer;overflow-wrap:anywhere}.gdb-row.on,.gdb-row:hover{border-color:var(--gold,#bba36c)}.gdb-row small{opacity:.65;overflow-wrap:anywhere}.gdb-original{white-space:pre-wrap;overflow-wrap:anywhere}.workspace-sim-nav>.workspace-subnav{margin-left:10px;padding-left:6px}.workspace-sim-nav .nav-button{font-size:11px;padding:6px 8px}.question-workspace [data-q-candidates]{max-height:470px;overflow:auto}.question-workspace .cv-grid{margin-top:14px}@media(max-width:1050px){.gdb-columns,.gdb-sim-columns{grid-template-columns:minmax(0,1fr)}}
++
++.general-db .st-row>input,.general-db .st-row>select{width:auto;min-width:130px;flex:1}.general-db .st-row>button{flex:0 0 auto}
+--- a/Start-Modding-Hub.ps1
++++ b/Start-Modding-Hub.ps1
+@@ -18,7 +18,7 @@
+ if ($ToolUrls.Count) {[IO.File]::WriteAllText($urlsFile,($ToolUrls | ConvertTo-Json -Depth 5),[Text.UTF8Encoding]::new($false))}
+ if (!(Test-Path -LiteralPath $urlsFile)) {throw '기존 모드툴 주소가 없습니다. Open-Modding-Tools.ps1로 실행하세요.'}
+ $stream=New-Object IO.MemoryStream
+-foreach ($name in @('server.py','registry.py','integration.mjs','integration.css','app_launcher.py','embedded-tools.css','overrides/studio-look.mjs','overrides/studio-look-geometry.mjs','master_editor.py','master_initials.py','overrides/studio-view.mjs','overrides/studio-role.mjs')) {$block=[IO.File]::ReadAllBytes((Join-Path $hubDir $name));$stream.Write($block,0,$block.Length)}
++foreach ($name in @('server.py','registry.py','integration.mjs','integration.css','app_launcher.py','embedded-tools.css','overrides/studio-look.mjs','overrides/studio-look-geometry.mjs','master_editor.py','master_initials.py','general_dialogue.py','overrides/character-view.mjs','overrides/general-dialogue.mjs','overrides/studio-view.mjs','overrides/studio-role.mjs')) {$block=[IO.File]::ReadAllBytes((Join-Path $hubDir $name));$stream.Write($block,0,$block.Length)}
+ $build=([BitConverter]::ToString([Security.Cryptography.SHA256]::Create().ComputeHash($stream.ToArray())).Replace('-','').ToLowerInvariant()).Substring(0,16)
+ $stream.Dispose()
+ if ($old) {
+--- a/overrides/character-view.mjs
++++ b/overrides/character-view.mjs
+@@ -0,0 +1,425 @@
++// 캐릭터 시뮬레이터: 위는 게임에 보이는 캐릭터 정보·배경·과거 경험·필로우토크, 아래 고정 패널은 생성·입력·내부 설정을 맡는다
++import {pastHistory,tierOf} from './past-history.mjs';
++import {pastFacts,packFacts,firstTimeLine,SKILL_NAME} from './past-facts.mjs';
++import {pillowTalk,voiceType,relationMode,speechStyle,TYPE_NAME,STYLE_NAME,MODE_NAME} from './pillow-talk.mjs';
++import {loadSimData,esc as e,rng,getFormula,onFormulaChange} from './sim-data.mjs';
++import {editedBackgroundText,validateBackgroundSettings,textKey} from './background-settings.mjs';
++import {mountQuestionWorkspace,mergeTalkLines,splitTalkLines} from '/workspace/general-dialogue.mjs';
++
++const KEY='jo9-character-v1';
++const GRADE='FDCBAS';
++const LV={
++ base_beauty:['외모',['추함','평범함','귀여움','예쁨','아름다움','눈부심','절세의 미모']],
++ base_exotic:['독특함',['평범함','색다름','신비로움','오묘함','이국적임','몽환적임','신화적임','완벽함']],
++ style:['세련됨',['촌스러움','무난함','평범함','세련됨','근사함','우아함','아름다움','눈부심','품격있음']],
++ temper:['성격',['무관심함','차가움','내성적임','수동적임','적극적임','열정적임']],
++ pride:['태도',['개방적','솔직함','의존적','당당함','건방짐','오만함']],
++ sensitivity:['감수성',['무정함','냉담함','둔감함','민감함','다감함','여림']],
++ ego:['자아',['우유부단','겁쟁이','소심함','주관적','단호함','완고함']],
++ stamina:['체력',['죽어감','쇠약함','평범함','건강함','강인함','근육질']],
++ fat:['체형',['앙상한','모델 체형','날씬한','육감적인','통통한','비만']]
++};
++// 섹스토크 대화 조건(기획 6.1): 절망·응석·인식·헌신·두려움과 관계 상태
++const TALK={moral:'헌신',angst:'절망',spoil:'응석',rational:'인식',fear:'두려움'};
++const PSY={docile:'온순함',soft:'부드러움',optimistic:'낙관',obedient:'순종',servile:'비굴',horny:'발정',reluctant:'마지못함',arrogant:'오만',hateful:'증오',resistant:'저항',hysteric:'히스테리',lachrymose:'눈물',frightened:'겁먹음',depresive:'우울',broken:'무너짐'};
++const STATE_WORDS={'처녀':['virginity',0],'비처녀':['virginity',2],'불임':['fertility',-1],'임신 가능':['fertility',0],'임신 중':['pregnant',1],'클론':['clone',1],'연령 0':['age',0],'연령 2':['age',2]};
++// 섹스토크 주제(기획 6.1 헌신 등급표): [헌신, 칸 id, 이름, 원본 DB 주제 키들, 주인공 질문 선택지]
++export const SLOTS=[
++ [1,'first_time','첫 경험',['first_time'],'처음은 언제였는지 묻는다'],[1,'max_night','하룻밤 최다',['max_night'],'하룻밤에 가장 많이 한 게 몇 번인지 묻는다'],
++ [2,'partners','상대 수',['partners'],'지금까지 몇 명과 했는지 묻는다'],[2,'odd_place','특이한 장소',['odd_place'],'가장 이상한 곳이 어디였는지 묻는다'],[2,'orgasm','오르가즘·분출',['orgasm','squirt'],'가 본 적이 있는지 묻는다'],
++ [3,'finish','피니시·삼킴',['finish_pref','swallow'],'어디에 싸 주는 게 좋은지 묻는다'],[3,'signature','18번 기술',['signature'],'가장 자신 있는 기술을 묻는다'],[3,'dirty_talk','색드립',['dirty_talk'],'할 때 무슨 말을 하는지 묻는다'],[3,'anal','애널',['anal'],'뒤로도 해 봤는지 묻는다'],[3,'deepthroat','딥스로트',['deepthroat'],'목 깊이 넣어 봤는지 묻는다'],[3,'memorable_line','남자가 한 말',['memorable_line'],'남자가 했던 말 중 기억나는 걸 묻는다'],
++ [4,'kink','자기 취향·흥분 포인트',['kink','turn_on'],'자기만의 취향을 묻는다'],[4,'worst_man','최악의 남자',['worst_man'],'최악이었던 남자를 묻는다'],[4,'best_man','최고의 남자',['best_man'],'최고였던 남자를 묻는다'],[4,'want','해 보고 싶은 것',['want'],'해 보고 싶은 걸 묻는다'],[4,'never','절대 싫은 것',['never'],'절대 싫은 걸 묻는다'],
++ [5,'group','다인 경험',['group','max_day_people'],'여럿이서 해 봤는지 묻는다'],[5,'side_partner','애인·남편 외 상대',['side_partner'],'남편(애인) 말고 다른 남자가 있었는지 묻는다'],[5,'sm','SM',['sm'],'맞으면서 하는 건 어떤지 묻는다'],[5,'exhibition','노출',['exhibition'],'남들 앞에서 해 봤는지 묻는다'],[5,'xeno','이종 경험',[],'사람이 아닌 것과 해 본 적 있는지 묻는다'],[5,'fetish','변태 성욕·페티시',['kink'],'남들이 모르는 성벽이 있는지 묻는다']];
++const TYPE_GROUP={flame:'hot',proud:'hot',frank:'hot',ice:'cold',calm:'cold',plain:'cold',meek:'soft',fragile:'soft',doll:'soft'};
++const REL_GROUP={hopeful:'warm',duty:'warm',loyal:'warm',neutral:'warm',fearful:'low',bleak:'low',broken:'low',hostile:'hostile'};
++const KINDS=[['world','세계'],['family','출신'],['occupation','직업경력']];
++const hashSeed=s=>{let h=2166136261;for(const ch of String(s)){h^=ch.charCodeAt(0);h=Math.imul(h,16777619);}return h>>>0;};
++
++export async function createCharacterView(api){
++ const D=await loadSimData();
++ const get=async f=>{const r=await fetch('./data/'+f);if(!r.ok)throw new Error(f+'를 읽지 못했습니다.');return r.json();};
++ const [CAT,FACTS,XENO,FIRST,IV,TRAITS,BG,BGD,REFS,ACQ]=await Promise.all(['background-categories.json','past-facts.json','xeno-talk-drafts.json','first-time-drafts.json','first-time-interviews.json','traits.json','backgrounds.json','background-drafts.json','interview-refs.json','acquisition-routes.json'].map(get));
++ const RECORDS=[...BG.records,...BGD.records];
++ const traitRows=TRAITS.rows.filter(r=>r.binding&&!r.binding.key.includes('['));
++ const traitOn=(ch,r)=>{
++  const b=r.binding;if(ch[b.key]===undefined)return false;
++  // 정신 상태(sanity)는 생성 단계에서 0(미설정)이라 0이면 보이지 않는다
++  if(b.key==='sanity'&&!Number(ch.sanity))return false;
++  const v=Number(ch[b.key]);
++  return b.op==='>'?v>b.threshold:b.op==='<'?v<b.threshold:b.op==='>='?v>=b.threshold:b.op==='range'?v>=b.min&&v<=b.max:v===b.threshold;
++ };
++ // 입력 사전: 특성 이름, 스킬·속성·대화 상태 이름, 상태 낱말
++ const SKILL_BY_NAME=Object.fromEntries(Object.entries(SKILL_NAME).map(([k,n])=>[n,k]));
++ const ATTR_BY_NAME=Object.fromEntries(Object.entries(LV).map(([k,[n]])=>[n,k]));
++ const TALK_BY_NAME=Object.fromEntries(Object.entries(TALK).map(([k,n])=>[n,k]));
++ const PSY_BY_NAME=Object.fromEntries(Object.entries(PSY).map(([k,n])=>[n,k]));
++ const DICT=[...traitRows.map(r=>r.name),...Object.keys(STATE_WORDS),...Object.keys(PSY_BY_NAME).map(n=>'관계 '+n),...Object.keys(SKILL_BY_NAME).map(n=>n+' 0~5 또는 F~S'),...Object.keys(ATTR_BY_NAME).map(n=>n+' 숫자'),...Object.keys(TALK_BY_NAME).map(n=>n+' 숫자')];
++
++ const blank=()=>({source:'new',name:'',type:'',world:'',family:'',occupation:'',age:0,virginity:2,fertility:0,pregnant:0,clone:0,worldVariant:null,unique:null});
++ let st=null;try{st=JSON.parse(localStorage.getItem(KEY)||'null');}catch{}
++ if(!st?.ch)st={ch:blank(),locks:{},seed:'1',acq:{},talk:{psy_status:'docile',moral:3,angst:0,spoil:0,rational:3,fear:0},overrides:{},owner:{},panel:'background',big:{},unknown:[],pt:1,draws:0};
++ const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(st));}catch{}};
++ const ch=()=>st.ch;
++ const id='character';
++ api.tabNames[id]=['캐릭터 시뮬레이터','캐릭터 시뮬레이터','캐릭터·배경을 공통으로 두고 질문별 일반 대사와 성경험 대사를 편집하세요.'];
++ document.querySelector('.sidebar nav').insertAdjacentHTML('afterbegin',`<button data-tab="${id}" class="nav-button"><span>◆</span>캐릭터 시뮬레이터</button>`);
++ document.querySelector('main footer').insertAdjacentHTML('beforebegin',`<section id="${id}" class="tab-panel cv" hidden><div class="cv-main"></div><div class="cv-dock"></div><input type="file" accept=".json,application/json" hidden id="cvUniqueFile"></section>`);
++ const root=document.getElementById(id),main=root.querySelector('.cv-main'),dock=root.querySelector('.cv-dock');
++ // 탭이 보일 때만 하단 패널을 띄운다
++ new MutationObserver(()=>document.body.classList.toggle('cv-open',!root.hidden)).observe(root,{attributes:true,attributeFilter:['hidden']});
++
++ const nameOf=(kind,v)=>D.name(kind,v);
++ const catOf=(kind,v)=>CAT[kind].find(c=>c.members.includes(v));
++ const stockForFormula=()=>({...ch(),...st.talk});
++ function recordFor(kind){
++  const c=ch();if(!c[kind])return null;
++  const list=RECORDS.filter(r=>r.kind===kind&&r.id===c[kind]);if(!list.length)return null;
++  if(kind!=='world')return list[0];
++  return list.find(r=>r.variant===c.worldVariant)??list[0];
++ }
++ // 배경 대사: 유니크는 JSON 원문(수정본 우선), 랜덤은 배경 설정 목록의 대사(수정본 우선)
++ function backgroundSource(kind){
++  const c=ch();
++  if(c.unique){const u=c.unique;return {text:u.texts[kind]??'',original:u.original[kind]??'',edited:u.texts[kind]!==u.original[kind],label:'유니크 고정 설정',source:u.fileName};}
++  const r=recordFor(kind);if(!r)return null;
++  const cfg=api.getState().config;
++  return {text:editedBackgroundText(cfg,r),original:r.text,edited:editedBackgroundText(cfg,r)!==r.text,label:`${r.label??nameOf(kind,r.id)} · ${r.id}`,source:r.source,record:r};
++ }
++ const backgroundDraftKey=kind=>`${charKey()}|${kind}|${ch()[kind]??''}|${ch().worldVariant??''}`;
++ function backgroundText(kind){const source=backgroundSource(kind),key=backgroundDraftKey(kind);return source&&Object.hasOwn(st.backgroundDrafts??{},key)?{...source,text:st.backgroundDrafts[key],edited:true,draft:true}:source;}
++ function setBackgroundDraft(kind,value){const drafts=st.backgroundDrafts??={},key=backgroundDraftKey(kind);if(value===backgroundSource(kind)?.text)delete drafts[key];else drafts[key]=value;save();for(const el of root.querySelectorAll(`[data-cv-text="${kind}"],[data-q-background="${kind}"]`))if(el.value!==value)el.value=value;}
++ function saveBackgroundText(kind,value){
++  if(typeof value!=='string'||!value.trim()||value.length>4000)throw Error('배경 대사는 빈칸 없이 4,000자 이내로 입력하세요.');
++  const c=ch();
++  if(c.unique){c.unique.texts[kind]=value;if(st.backgroundDrafts)delete st.backgroundDrafts[backgroundDraftKey(kind)];save();return;}
++  const r=recordFor(kind);if(!r)return;
++  const s=api.getState(),next=structuredClone(s.config);validateBackgroundSettings(next);
++  if(value===r.text)delete next.backgroundSettings.texts[kind][textKey(r)];else next.backgroundSettings.texts[kind][textKey(r)]=value;
++  validateBackgroundSettings(next);s.config=next;api.save();if(st.backgroundDrafts)delete st.backgroundDrafts[backgroundDraftKey(kind)];save();
++ }
++
++ // 현재 캐릭터의 과거 경험·사실·필로우토크
++ function compute(){
++  const c=ch(),f=getFormula(D.formula);
++  if(!c.world&&!c.unique)return null;
++  const s=stockForFormula(),r=pastHistory(s,f,'cv|'+st.seed);
++  const ov=st.overrides;
++  for(const k of ['intimacy','pregnancies','births'])if(ov[k]!==undefined&&ov[k]!=='')r[k]=Number(ov[k]);
++  const fx=r.excluded?null:pastFacts(s,r,f,FACTS,'cv|'+st.seed,st.acq,IV);
++  return {r,fx,f,s};
++ }
++ function talkGate(){
++  const t=st.talk;
++  if(t.angst>=3)return '말씀 드리고 싶어도… 기억이 안 납니다.';
++  if(t.spoil>=3)return '몰라요, 말하기 싫어요. 흥~';
++  if(t.rational<=2)return '그런 은밀한 제 비밀에 대해서 대답할 의무는 없습니다.';
++  return null;
++ }
++ // 주제마다 이 노예가 참조할 원본 DB 대답(같은 노예·같은 시드면 언제나 같은 대답)
++ function refFor(slot,fx,salt=''){
++  if(slot==='first_time'&&fx?.fields.first_age_ref)return `${fx.fields.first_age_ref}.q02`;
++  const keys=SLOTS.find(x=>x[1]===slot)[3];if(!keys.length)return null;
++  const pool=keys.flatMap(k=>REFS.topics[k]??[]);if(!pool.length)return null;
++  return pool[Math.floor(rng(hashSeed(`${st.seed}|${ch().type}|${ch().name}|ref|${slot}${salt}`))()*pool.length)];
++ }
++ const charKey=()=>`${ch().type}|${ch().name}|${st.seed}`;
++ function refHtml(key){
++  const r=REFS.rows[key];if(!r)return '';
++  const url=REFS.urls[r.u],blocked=r.b.length?r.b.map(c=>`${c} ${REFS.blockNames[c]??''}`).join(', '):'';
++  return `<details class="cv-ref"><summary>원본 DB <code>${e(key)}</code>${blocked?` <span class="badge muted" title="표시 불가 사유: ${e(blocked)}">표시 불가</span>`:''}</summary>
++   <div class="cv-ref-body">${r.t===null?`<p class="fine-print"><span class="badge muted">클로드 정책준수</span> 이 대답은 원문을 싣지 않았습니다(${e(blocked)}). 원본 글의 Q${r.q}${r.o>1?` (${r.o}번째)`:''} 대답에서 확인하세요. 부분 키: ${r.p.map(e).join(', ')}</p>`:`<p class="cv-ref-text">${e(r.t)}</p>${blocked?`<p class="fine-print">게임 표시 불가: ${e(blocked)}</p>`:''}`}
++   <a href="${e(url)}" target="_blank" rel="noopener">원본 글 열기 (Q${r.q})</a></div></details>`;
++ }
++ function generatedLines(cx){
++  const {r,fx,s}=cx,c=ch(),out={};
++  const rand=rng(hashSeed(st.seed+'|pt'+st.pt));
++  const ty=voiceType(s),style=speechStyle(s.occupation,ch().type),grp=TYPE_GROUP[ty],rel=REL_GROUP[relationMode(s)];
++  if(fx?.fields.first_band==='teen')out.first_time={blocked:'B1 청소년기',text:'[이 대사는 표시 불가합니다.]'};
++  else if(fx?.fields.first_band==='adult')out.first_time={text:FIRST.userAuthoredWorlds.includes(c.world)?'':firstTimeLine(FACTS,FIRST,fx.fields,grp,style,rand)??'',note:FIRST.userAuthoredWorlds.includes(c.world)?'이 세계는 사용자 작성 칸':''};
++  const pt=pillowTalk(s,r,tierOf(cx.f,'occupation',s.occupation).name,rand,[]);if(pt)out.partners={text:pt.lines.join(' ')};
++  if(fx&&fx.fields.xeno!=='none'){
++   if(fx.blocked.xeno)out.xeno={blocked:fx.blocked.xeno,text:'[이 대사는 표시 불가합니다.]'};
++   else{const cand=XENO.rows.filter(x=>x.case===fx.fields.xeno&&x.rels===rel&&(x.types===grp||x.types==='*'));out.xeno={text:cand.length?(t=>t[style]??t['2'])(cand[Math.floor(rand()*cand.length)].text).replaceAll('{괴물}',FACTS.xeno.patrolScenes[st.acq?.scene]?.label??'괴물'):'',note:fx.fields.xeno==='patrol_warg'?'와그 대사는 사용자 작성 칸':''};}
++  }else out.xeno={text:'',note:'이 노예는 이종 경험이 없습니다'};
++  if(fx?.fields.home_animal)out.xeno={blocked:'B2 수간(살던 세상의 동물 경험)',text:'[이 대사는 표시 불가합니다.]'};
++  return {out,ty,style};
++ }
++ // 거짓말(사용자 결정 2026-11-12 개정): 장악력 < 0이면 거짓말(게임의 '장악력 < 0 → 사육 감소'와 같은 선). 새로 만들지 않고 기존 답 중 오답(다른 표본 노예의 사실로 만든 답, 같은 주제의 다른 원본)을 가져온다. 이전 진실과의 모순은 따지지 않는다
++ const lying=()=>(Number(st.talk.supermacy)||0)<0;
++ function lieCx(cx){
++  const R=rng(hashSeed(`${charKey()}|lie`)),row=D.rows[Math.floor(R()*D.rows.length)];
++  const s={...row,...st.talk,jo9_voice_type:cx.s.jo9_voice_type,occupation:cx.s.occupation,temper:cx.s.temper,sensitivity:cx.s.sensitivity,ego:cx.s.ego,pride:cx.s.pride};
++  const r=pastHistory(s,cx.f,'lie|'+st.seed),fx=r.excluded?null:pastFacts(s,r,cx.f,FACTS,'lie|'+st.seed,{},IV);
++  return {r,fx,f:cx.f,s};
++ }
++ const PAGE=8;
++ // 대답 길이 규칙(사용자 승인 2026-11-13, 세계관 자료집 7장 7.7): 한 페이지 230자(게임 $voice_flow_pack 경계, 문장 가운데서 자르지 않음), 한 대답 최대 2페이지
++ const PAGE_CHARS=230,MAX_PAGES=2;
++ function talkPages(text){
++  const sents=String(text).match(/[^.!?…~]+[.!?…~]*\s*/g)??[String(text)],pages=[];let cur='';
++  for(const s of sents){if(cur&&(cur+s).trim().length>PAGE_CHARS){pages.push(cur.trim());cur='';}cur+=s;}
++  if(cur.trim())pages.push(cur.trim());return pages;
++ }
++ function pagesHtml(text){
++  const p=talkPages(text);if(p.length<=1)return e(text);
++  return p.map((x,i)=>`<span class="badge muted">${i+1}/${p.length}쪽</span> ${e(x)}`).join('<br>')+(p.length>MAX_PAGES?` <span class="badge" title="한 대답은 최대 ${MAX_PAGES}페이지(${PAGE_CHARS*MAX_PAGES}자)">${MAX_PAGES}페이지 초과</span>`:'');
++ }
++ function pillowHtml(cx){
++  if(!cx)return '<p class="muted-text">캐릭터를 뽑거나 불러오면 필로우토크가 나옵니다.</p>';
++  const {r,s}=cx,c=ch();
++  // [클로드 정책 거부] 제외 연령(공식 데이터 excludedAges)은 자동 대사·과거 경험을 만들지 않는다. 대사집에서 직접 쓰는 것은 막지 않는다
++  if(r.excluded)return `<p class="muted-text">연령 코드 ${e(r.age??c.age)}은(는) 제외 연령(공식 데이터 excludedAges)이라 이 편집기가 자동으로 만들지 않습니다. 직접 쓰려면 캐릭터 편집 › 대사집을 쓰세요.</p>`;
++  const gate=talkGate(),moral=Math.max(0,Math.min(5,Number(st.talk.moral)||0)),who=e(c.name||'이 노예');
++  const open=gate?[]:SLOTS.filter(x=>x[0]<=moral),pages=Math.max(1,Math.ceil(open.length/PAGE)),page=Math.min(st.qpage??0,pages-1);
++  const truth=generatedLines(cx),lie=lying()&&!gate?generatedLines(lieCx(cx)):null,edits=st.ptEdits?.[charKey()]??{};
++  const slot=open.find(x=>x[1]===st.ask);
++  let say='',editor='';
++  if(gate)say=e(gate);
++  else if(st.ask==='__end')say='<span class="gm-muted">(대화를 끝냈습니다)</span>';
++  else if(!slot)say='<span class="gm-muted">(오른쪽에서 질문을 고르세요)</span>';
++  else{
++   const [lv,id,label]=slot,g=(lie??truth).out[id]??{text:''},tg=truth.out[id]??{text:''},edited=edits[id]!==undefined,text=edited?edits[id]:g.text;
++   const ref=refFor(id,lie?null:cx.fx,lie?'|lie':''),truthRef=lie?refFor(id,cx.fx):null;
++   say=text?pagesHtml(text):'<span class="gm-muted">(대사 없음: 아래에서 원본을 보고 각색해 넣으세요)</span>';
++   editor=`<div class="cv-slot"><div class="cv-slot-head"><b>${e(label)}</b> <small>헌신 ${lv}</small>${g.blocked?` <span class="badge muted" title="표시 불가 사유: ${e(g.blocked)}">표시 불가</span>`:''}${lie?` <span class="badge" title="장악력 ${st.talk.supermacy??0} < 0: 거짓말(다른 노예의 답). 진실: ${e(tg.text||'(대사 없음)')}${truthRef?' / 진실 원본 '+e(truthRef):''}">거짓말</span>`:''}${edited?' <span class="badge">수정됨</span>':''}${g.note?` <small class="fine-print">${e(g.note)}</small>`:''}</div>
++    <textarea class="cv-slot-text" data-cv-pt="${id}" rows="3" placeholder="대사 없음: 원본을 보고 각색해 넣으세요" ${g.blocked?'title="표시 불가 사유: '+e(g.blocked)+' · Claude가 대사를 만들지 않은 칸이며 직접 쓰는 것은 막지 않음"':''}>${e(text)}</textarea>
++    <div class="cv-slot-foot">${edited?`<button class="text-button" data-cv-act="pt-reset" data-slot="${id}">생성 대사로 되돌리기</button>`:''}${ref?refHtml(ref):'<small class="fine-print">원본 DB 대응 문항 없음</small>'}</div></div>`;
++  }
++  const qs=open.slice(page*PAGE,page*PAGE+PAGE);
++  return `<div class="gm"><div class="gm-left"><div class="gm-stage"><div class="gm-name">${who}</div><div class="cv-meta">${e(TYPE_NAME[truth.ty])} · ${e(MODE_NAME[relationMode(s)])} · ${e(STYLE_NAME[truth.style])} · 헌신 ${moral} · 두려움 ${st.talk.fear??0} · 장악력 ${st.talk.supermacy??0}${lying()&&!gate?' · <b class="gm-lie">거짓말 중</b>':''}</div></div>
++    <div class="gm-say"><div class="gm-who">[${who}]</div><div>${say}</div></div></div>
++   <div class="gm-side"><div class="gm-title">내 방</div><div class="gm-subtitle">섹스토크 중</div>
++    <div class="gm-qs">${qs.map(([lv,id,,,q])=>`<button class="gm-q ${st.ask===id?'on':''}" data-cv-ask="${id}">${e(q)}</button>`).join('')}
++     ${!gate&&open.length<SLOTS.length?`<div class="gm-muted">헌신이 오르면 질문 ${SLOTS.length-open.length}개가 더 열립니다.</div>`:''}</div>
++    ${pages>1?`<div class="gm-pager"><button class="gm-link" data-cv-qpage="${page-1}" ${page===0?'disabled':''}>◀ 이전 질문</button> - <button class="gm-link" data-cv-qpage="${page+1}" ${page>=pages-1?'disabled':''}>다음 질문 ▶</button></div>`:''}
++    <button class="gm-q gm-end" data-cv-ask="__end">대화를 끝낸다</button></div></div>
++   ${editor}`;
++ }
++
++ // 영입 때 저장할 섹스토크 사실(초기값 시뮬레이터에서 옮김). 산출 과정은 마우스를 올리면 보인다
++ function factsCard(cx){
++  if(!cx?.fx)return '';
++  const v=cx.fx.fields,L=(g,k)=>FACTS[g]?.labels?.[k]??k,trace=[...cx.r.trace,...cx.fx.trace].join('\n');
++  const rows=[['이종 경험',L('xeno',v.xeno),cx.fx.blocked.xeno],['살던 세상의 동물 경험',v.home_animal?'있음':'없음',v.home_animal?'B2 수간':''],['페티시',v.fetish.length?v.fetish.map(k=>FACTS.fetish.candidates.find(c=>c.key===k)?.name??k).join(', '):'없음'],
++   ['첫 경험',v.first_band==='teen'?'청소년기':v.first_band==='adult'?`성인 이후 · ${v.first_age}세`:'없음',v.first_band==='teen'?'B1 청소년기':''],
++   ...(v.first_band==='none'?[]:[['첫 상대 · 방식 · 장소',`${L('firstWho',v.first_who)} · ${L('firstHow',v.first_how)} · ${L('firstWhere',v.first_where)}`],['상대 수 · 하룻밤 최다',`${v.partners}명 · ${v.max_night}회`],['다인 경험 · 하루 최다',`${L('group',v.group)} · ${v.max_day_people}명`],['오르가즘 · 분출',`${L('orgasm',v.orgasm)} · ${v.squirt?'있음':'없음'}`],['피니시 · 삼킴',`${L('finish',v.finish)} · ${v.swallow?'삼킴':'뱉음'}`],['18번 기술',SKILL_NAME[v.signature]??'없음'],['절대 싫은 것 · 해 보고 싶은 것',`${v.never?L('actLabels',v.never):'없음'} · ${v.want?L('actLabels',v.want):'없음'}`]])];
++  return `<article class="card"><div class="card-head"><h2><span class="index">04</span>저장할 섹스토크 사실</h2><span class="badge muted cv-tip" title="${e(trace)}">산출 과정 ⓘ</span></div><div class="card-body"><table class="cv-info"><tbody>${rows.map(([a,b,blk])=>`<tr><td>${e(a)}</td><td>${e(b)}${blk?` <span class="badge muted" title="표시 불가 사유: ${e(blk)}">표시 불가</span>`:''}</td></tr>`).join('')}</tbody></table><div class="fine-print cv-tip" title="${e(packFacts(v))}">저장 문자열 ${new TextEncoder().encode(packFacts(v)).length}바이트 ⓘ</div></div></article>`;
++ }
++
++ // ── 위: 게임에 보이는 정보 ──
++ function renderMain(){
++  const c=ch(),cx=compute();
++  // 유니크도 세계·출신·직업을 정하면 그 값을 보여 준다(사용자 지시 2026-11-12). 정하지 않았으면 '유니크 고정 설정(분류 없음)'
++  const bgLine=kind=>{if(c.unique&&!c[kind])return '유니크 고정 설정(분류 없음)';if(!c[kind])return '—';const cat=catOf(kind,c[kind]);return `${cat?e(cat.label)+' › ':''}${e(nameOf(kind,c[kind]))}`;};
++  const traits=traitRows.filter(r=>r.category!=='상태'&&traitOn(c,r)),states=traitRows.filter(r=>r.category==='상태'&&traitOn(c,r));
++  const skills=Object.entries(SKILL_NAME).filter(([k])=>Number(c[k]??0)>0);
++  const attrs=Object.entries(LV).filter(([k])=>c[k]!==undefined);
++  const r=cx?.r,fx=cx?.fx?.fields;
++  main.innerHTML=`<div class="cv-grid">
++  <article class="card"><div class="card-head"><h2><span class="index">01</span>${e(c.name||'이름 없음')}</h2><span class="badge ${c.source==='unique'?'blue':c.source==='random'?'green':'muted'}">${{unique:'유니크',random:'랜덤 생성',new:'새로 만들기'}[c.source]}</span></div><div class="card-body">
++   <table class="cv-info"><tbody>
++    <tr><td>캐릭터 ID</td><td>${e(c.type||'—')}</td></tr>
++    ${KINDS.map(([k,l])=>`<tr><td>${l}</td><td>${bgLine(k)}</td></tr>`).join('')}
++    <tr><td>연령 · 처녀</td><td>${e(c.age)} · ${c.virginity>1?'비처녀':'처녀'}${c.fertility<0?' · 불임':''}${c.pregnant>0?' · 임신 중':''}${c.clone?' · 클론':''}</td></tr>
++    ${attrs.length?`<tr><td>기본 속성</td><td>${attrs.map(([k,[n,lv]])=>`${n} ${e(lv[c[k]]??c[k])}`).join(' · ')}</td></tr>`:''}
++   </tbody></table>
++   <div class="section-label">특성 ${traits.length}개</div><div class="tag-list">${traits.map(t=>`<button class="tag" data-cv-trait-off="${e(t.id)}" title="${e(t.description)}">${e(t.name)} ×</button>`).join('')||'<span class="fine-print">없음</span>'}</div>
++   ${states.length?`<div class="section-label">상태</div><div class="tag-list">${states.map(t=>`<button class="tag" data-cv-trait-off="${e(t.id)}" title="${e(t.description)}">${e(t.name)} ×</button>`).join('')}</div>`:''}
++   <div class="section-label">성 기술</div><div class="cv-skills">${skills.map(([k,n])=>`<span>${e(n)} <b>${GRADE[Math.min(5,c[k])]}</b></span>`).join('')||'<span class="fine-print">모두 F</span>'}</div>
++  </div></article>
++  <article class="card"><div class="card-head"><h2><span class="index">02</span>배경</h2><span class="badge muted">고정한 항목은 랜덤 생성 때 유지</span></div><div class="card-body cv-bg">${KINDS.map(([k,l])=>{const b=backgroundText(k);return `<section class="cv-bg-row"><div class="cv-bg-head"><div><div class="section-label">${l}${b?' · '+e(b.label):''}</div><small class="source-line">${e(b?.source??'')}</small></div><label class="cv-lock"><input type="checkbox" data-cv-lock="${k}" ${st.locks[k]?'checked':''} ${c.unique?'disabled':''}> 고정</label></div>
++    ${b?`<textarea data-cv-text="${k}" maxlength="4000">${e(b.text)}</textarea><div class="cv-bg-actions">${b.edited?'<span class="badge">수정됨</span>':''}<button class="button secondary" data-cv-act="text-save" data-kind="${k}">저장하기</button><button class="button secondary" data-cv-act="text-restore" data-kind="${k}" ${b.edited?'':'disabled'}>복원</button><span class="fine-print">저장하면 같은 항목의 모든 조합에 적용 · {이름}은 이름 자리표시자</span></div>`:'<p class="fine-print">아래 패널에서 고르세요.</p>'}</section>`;}).join('')}</div></article>
++  <article class="card"><div class="card-head"><h2><span class="index">03</span>영입 전 과거 경험</h2>${Object.values(st.overrides).some(v=>v!==undefined&&v!=='')?'<span class="badge blue">직접 지정 포함</span>':''}</div><div class="card-body">
++   ${!r?'<p class="muted-text">캐릭터를 뽑거나 불러오세요.</p>':r.excluded?'<p class="muted-text">제외 연령(공식 데이터 excludedAges)이라 과거 경험을 자동 계산하지 않습니다.</p>':`<div class="result-summary">
++    <div class="summary-tile featured"><span class="summary-label">성경험 총횟수</span><span class="summary-value">${r.intimacy}<small>회</small></span></div>
++    <div class="summary-tile"><span class="summary-label">질 · 구강 · 애널</span><span class="summary-value sim-small">${r.acts?`${r.acts.vaginal} · ${r.acts.oral} · ${r.acts.anal}`:'—'}</span></div>
++    <div class="summary-tile"><span class="summary-label">상대 수</span><span class="summary-value sim-small">${fx?.partners??0}명</span></div>
++    <div class="summary-tile"><span class="summary-label">임신 · 출산</span><span class="summary-value sim-small">${r.pregnancies===null?'미상':`${r.pregnancies} · ${r.births}`}</span></div>
++    <div class="summary-tile"><span class="summary-label">첫 경험</span><span class="summary-value sim-small">${fx?.first_band==='adult'?fx.first_age+'세':fx?.first_band==='teen'?'표시 불가':'없음'}</span></div>
++   </div>`}
++   <div class="section-label">소속 이후 누적 기록</div><div class="cv-skills">${[['income','수익'],['pregnancies','임신'],['births','출산'],['abortions','낙태'],['children','자녀']].map(([k,l])=>`<span>${l} <b>${e(st.owner[k]??0)}</b></span>`).join('')}</div>
++  </div></article>
++  ${factsCard(cx)}
++  <article class="card cv-wide"><div class="card-head"><h2><span class="index">05</span>필로우토크 (게임 화면)</h2><button class="button secondary" data-cv-act="pt-again">다른 대사 뽑기</button></div><div class="card-body">${pillowHtml(cx)}</div></article>
++  </div>`;
++  mountQuestionWorkspace(main,{state:st,charKey,save,render,background:backgroundText,setBackgroundDraft,saveBackground:(k,value)=>{if(!backgroundSource(k))return api.toast('먼저 세계·출신·직업 배경을 지정하세요.');try{saveBackgroundText(k,value);render();}catch(error){api.toast(error.message);}},context:()=>{const c=ch(),s={...c,...st.talk};return {name:c.name,type:voiceType(s),relation:relationMode(s),tone:String(speechStyle(c.occupation,c.type))};}});
++ }
++
++ // ── 아래 고정 패널: 생성·입력·내부 설정 ──
++ const PANELS=[['background','배경 선택'],['input','특성·스킬 입력'],['internal','대화 상태·내부 설정'],['json','JSON 편집']];
++ function pickerHtml(kind,label){
++  const c=ch(),sel={world:c.world,family:c.family,occupation:c.occupation};
++  // 위에서 아래로 고른다: 세계는 언제나 전부, 출신은 고른 세계에 연결된 것, 직업은 고른 세계·출신에 연결된 것
++  const upper=kind==='world'?{}:kind==='family'?{world:sel.world}:{world:sel.world,family:sel.family};
++  const allowed=new Set(D.optionsV2(kind,upper)); // 확정 연결표 v2(신규 ID 포함)
++  const groups=CAT[kind];const open=st.big[kind]??catOf(kind,c[kind])?.id??null;
++  const g=groups.find(x=>x.id===open);
++  return `<div class="cv-pick"><div class="cv-pick-label">${label}${c[kind]?` <b>${e(nameOf(kind,c[kind]))}</b>`:''}</div>
++   <div class="cv-chips">${groups.map(x=>{const n=x.members.filter(m=>allowed.has(m)).length;return `<button class="cv-chip ${x.id===open?'on':''}" data-cv-big="${kind}:${x.id}" ${n?'':'disabled'}>${e(x.label)} <small>${n}</small></button>`;}).join('')}</div>
++   ${g?`<div class="cv-chips sub">${g.members.map(m=>`<button class="cv-chip ${c[kind]===m?'on':''}" data-cv-set="${kind}:${m}" ${allowed.has(m)?'':'disabled'}>${e(nameOf(kind,m))}</button>`).join('')}</div>`:''}</div>`;
++ }
++ function panelBody(){
++  const c=ch(),cx=compute();
++  if(st.panel==='background')return `${c.unique?'<p class="fine-print">유니크는 고정 설정을 씁니다. 과거 경험 계산용으로 세계·출신·직업을 고를 수 있습니다.</p>':''}
++   ${pickerHtml('world','세계')}${pickerHtml('family','출신')}${pickerHtml('occupation','직업')}
++   <div class="cv-pick"><div class="cv-pick-label">연령 코드</div><div class="cv-chips">${[0,1,2].map(a=>`<button class="cv-chip ${c.age===a?'on':''}" data-cv-age="${a}">${a}${getFormula(D.formula).excludedAges.includes(a)?' (자동 계산 제외)':''}</button>`).join('')}<span class="fine-print">연령 코드 0 젊음 · 1 소녀 · 2 원숙. 자동 계산 제외 연령은 공식 데이터 excludedAges로 정합니다.</span></div></div>`;
++  if(st.panel==='input')return `<p class="fine-print">게임 용어를 그대로 입력하세요. 쉼표로 여러 개를 한 번에 넣을 수 있습니다. 예: <code>겁쟁이, 펠라 4, 애널 B, 외모 3, 처녀, 헌신 4, 관계 순종</code></p>
++   <div class="cv-input-row"><input id="cvTerm" list="cvDict" placeholder="특성·스킬·속성·상태 입력 후 Enter" autocomplete="off"><button class="button primary" data-cv-act="term">입력</button></div>
++   <datalist id="cvDict">${DICT.map(x=>`<option value="${e(x.replace(/ (0~5 또는 F~S|숫자)$/,' '))}">${e(x)}</option>`).join('')}</datalist>
++   ${st.unknown.length?`<div class="warning">모르는 용어(넣지 않음): ${st.unknown.map(e).join(', ')}</div>`:''}
++   <p class="fine-print">특성을 지우려면 위 캐릭터 카드의 특성 버튼(×)을 누르세요.</p>`;
++  if(st.panel==='internal'){
++   const t=st.talk,num=(k,v,attrs='')=>`<input type="number" data-cv-num="${k}" value="${e(v??'')}" ${attrs}>`;
++   return `<div class="cv-form">
++    <label>관계 상태<select data-cv-psy>${Object.entries(PSY).map(([k,n])=>`<option value="${k}" ${t.psy_status===k?'selected':''}>${n}</option>`).join('')}</select></label>
++    ${Object.entries(TALK).map(([k,n])=>`<label>${n} 등급${num('talk.'+k,t[k],'min="0" max="5" step="1"')}</label>`).join('')}
++    <label title="0 미만이면 섹스토크에서 거짓말">이 노예에 대한 장악력${num('talk.supermacy',t.supermacy??0,'min="-30" max="30" step="1"')}</label>
++    <label>말하기 유형(유니크 지정)<select data-cv-voice><option value="">성격으로 계산</option>${Object.entries(TYPE_NAME).map(([k,n])=>`<option value="${k}" ${c.jo9_voice_type===k?'selected':''}>${n}</option>`).join('')}</select></label>
++    <label>고정 난수 시드<input data-cv-seed value="${e(st.seed)}" maxlength="40"></label>
++    <label title="게임 안에서 노예를 얻는 경로(acquisition-routes.json). ★ = 다른 세상에서 바로 넘어온 상태">영입 경로<select data-cv-route>${ACQ.groups.map(g=>`<optgroup label="${e(g.label)}">${g.routes.map(r=>`<option value="${r.key}" title="${e(r.source)}" ${(st.acq.route??'other')===r.key?'selected':''}>${e(r.label)}${r.fresh?' ★':''}</option>`).join('')}</optgroup>`).join('')}</select></label>
++    ${st.acq.route==='event'?`<label>이벤트<select data-cv-event><option value="">선택</option>${ACQ.events.map(v=>`<option value="${v.key}" title="${e(v.source)}" ${st.acq.event===v.key?'selected':''}>${e(v.label)}</option>`).join('')}</select></label>`:''}
++    ${st.acq.route==='patrol'?`<label>순찰 장면<select data-cv-scene><option value="">선택</option>${Object.entries(FACTS.xeno.patrolScenes).map(([k,v])=>`<option value="${k}" ${st.acq.scene===k?'selected':''}>${k} ${e(v.label)}</option>`).join('')}</select></label>`:''}
++   </div>
++   <div class="section-label">과거 경력 값 직접 지정 (빈칸 = 공식)</div><div class="cv-form">${[['intimacy','성경험 총횟수'],['pregnancies','임신'],['births','출산']].map(([k,l])=>`<label>${l}${num('overrides.'+k,st.overrides[k],'min="0" step="1" placeholder="공식"')}</label>`).join('')}</div>
++   <div class="section-label">소속 이후 누적 기록</div><div class="cv-form">${[['income','수익'],['pregnancies','임신'],['births','출산'],['abortions','낙태'],['children','자녀']].map(([k,l])=>`<label>${l}${num('owner.'+k,st.owner[k],'min="0" step="1"')}</label>`).join('')}</div>
++   <p class="fine-print">공식 계수는 "산식 계수" 탭에서 바꿉니다(이 브라우저에 저장, 여기에도 바로 적용). 전투 관련 항목은 이 패널에서 뺐습니다.</p>`;
++  }
++  return `<p class="fine-print">현재 캐릭터를 캐릭터 JSON(seed_ 키) 형식으로 보여 줍니다. 고친 뒤 [적용]을 누르면 캐릭터에 반영됩니다.</p>
++   <textarea id="cvJson" class="cv-json">${e(JSON.stringify(toJson(),null,1))}</textarea>
++   <div class="cv-bg-actions"><button class="button primary" data-cv-act="json-apply">적용</button><button class="button secondary" data-cv-act="json-download">↓ JSON 저장</button></div>`;
++ }
++ function renderDock(){
++  dock.innerHTML=`<div class="cv-dock-head"><div class="cv-actions"><button class="button secondary" data-cv-act="new">새로 만들기</button><button class="button primary" data-cv-act="random">⚄ 랜덤 생성하기</button><button class="button secondary" data-cv-act="unique">↑ 유니크 불러오기</button><button class="button secondary" data-cv-act="panel" data-panel="json">{ } JSON 편집</button></div>
++   <div class="cv-tabs">${PANELS.map(([k,l])=>`<button class="cv-tab ${st.panel===k?'on':''}" data-cv-act="panel" data-panel="${k}">${l}</button>`).join('')}<button class="cv-tab" data-cv-act="fold">${st.folded?'▲ 펼치기':'▼ 접기'}</button></div></div>
++   <div class="cv-dock-body" ${st.folded?'hidden':''}>${panelBody()}</div>`;
++  root.classList.toggle('cv-folded',!!st.folded);
++ }
++ function render(){renderMain();renderDock();}
++
++ // 캐릭터 JSON(seed_ 키)으로 내보내기·불러오기
++ const SEED_KEYS=()=>[...new Set(['age','virginity','fertility','pregnant','clone',...Object.keys(LV),...Object.keys(SKILL_NAME),...traitRows.map(r=>r.binding.key)])];
++ function toJson(){
++  const c=ch(),out={seed_name:c.name};
++  if(c.type!=='')out.jo9_type=c.type;
++  for(const k of ['world','family','occupation'])if(c[k])out['jo9_'+k]=c[k];
++  for(const k of SEED_KEYS())if(c[k]!==undefined)out['seed_'+k]=c[k];
++  if(c.jo9_voice_type)out.seed_jo9_voice_type=c.jo9_voice_type;
++  if(c.unique)for(const [k]of KINDS)out[`seed_${k}_description`]=c.unique.texts[k];
++  return out;
++ }
++ function fromJson(d,fileName){
++  const c=blank(),num=fileName?.match(/^(\d+)/)?.[1];
++  c.name=String(d.seed_name??d.name??'');c.type=d.jo9_type??num??'';
++  for(const k of ['world','family','occupation'])if(d['jo9_'+k])c[k]=d['jo9_'+k];
++  for(const k of SEED_KEYS())if(typeof d['seed_'+k]==='number')c[k]=d['seed_'+k];
++  // 유니크 JSON은 기본 외모·독특함을 seed_beauty·seed_exotic으로 둔다
++  if(c.base_beauty===undefined&&typeof d.seed_beauty==='number')c.base_beauty=d.seed_beauty;
++  if(c.base_exotic===undefined&&typeof d.seed_exotic==='number')c.base_exotic=d.seed_exotic;
++  if(typeof d.seed_jo9_voice_type==='string')c.jo9_voice_type=d.seed_jo9_voice_type;
++  const texts={};for(const [k]of KINDS)if(typeof d[`seed_${k}_description`]==='string')texts[k]=d[`seed_${k}_description`];
++  if(Object.keys(texts).length){c.unique={fileName:fileName??'',texts:{...texts},original:{...texts}};c.source='unique';}
++  else c.source=fileName?'unique':'new';
++  return c;
++ }
++
++ function randomCharacter(){
++  const c=ch(),lock=st.locks;
++  const pool=D.rows.filter(r=>KINDS.every(([k])=>!lock[k]||!c[k]||r[k]===c[k]));
++  if(!pool.length){api.toast('고정한 배경 조합에 맞는 표본이 없습니다. 고정을 풀어 보세요.');return;}
++  st.draws=(st.draws??0)+1;const R=rng(Date.now()^st.draws),row=pool[Math.floor(R()*pool.length)];
++  const variants=RECORDS.filter(r=>r.kind==='world'&&r.id===row.world).map(r=>r.variant);
++  st.ch={...blank(),...row,source:'random',name:row.name??'',type:String(row.type??''),worldVariant:variants.length?variants[Math.floor(R()*variants.length)]:null};
++  st.seed=String(st.draws);st.overrides={};st.pt=1;
++  if(!row.name)api.toast('이 표본에는 이름이 없습니다(이름 포함 표본으로 다시 만들어야 합니다).');
++ }
++ function applyTerms(raw){
++  const c=ch(),unknown=[];
++  for(const tok of raw.split(/[,，]/).map(s=>s.trim()).filter(Boolean)){
++   const trait=traitRows.find(r=>r.name===tok);
++   if(trait){
++    // 같은 키의 다른 특성은 함께 바뀐다(한 키에 한 값)
++    c[trait.binding.key]=trait.binding.setValue;continue;
++   }
++   if(STATE_WORDS[tok]){const [k,v]=STATE_WORDS[tok];c[k]=v;continue;}
++   const rel=tok.match(/^관계\s+(.+)$/);if(rel&&PSY_BY_NAME[rel[1]]){st.talk.psy_status=PSY_BY_NAME[rel[1]];continue;}
++   const m=tok.match(/^(.+?)\s*([0-9]+|[FDCBASfdcbas])$/);
++   if(m){
++    const name=m[1].trim(),raw=m[2].toUpperCase(),v=/\d/.test(raw)?Number(raw):GRADE.indexOf(raw);
++    if(SKILL_BY_NAME[name]&&v>=0&&v<=5){c[SKILL_BY_NAME[name]]=v;continue;}
++    if(ATTR_BY_NAME[name]){const k=ATTR_BY_NAME[name];if(v>=0&&v<LV[k][1].length){c[k]=v;continue;}}
++    if(TALK_BY_NAME[name]&&v>=0&&v<=5){st.talk[TALK_BY_NAME[name]]=v;continue;}
++   }
++   unknown.push(tok);
++  }
++  st.unknown=unknown;
++ }
++
++ root.addEventListener('click',ev=>{
++  const b=ev.target.closest('button');if(!b)return;
++  if(b.dataset.cvTraitOff){const t=traitRows.find(r=>r.id===b.dataset.cvTraitOff);if(t){ch()[t.binding.key]=0;}save();render();return;}
++  if(b.dataset.cvBig){const [k,g]=b.dataset.cvBig.split(':');st.big[k]=st.big[k]===g?null:g;save();renderDock();return;}
++  if(b.dataset.cvSet){const [k,v]=b.dataset.cvSet.split(':');const c=ch();c[k]=c[k]===v?'':v;const sel={world:c.world,family:c.family,occupation:c.occupation};D.pruneV2(sel,k);Object.assign(c,sel);if(k==='world'){const vs=RECORDS.filter(r=>r.kind==='world'&&r.id===c.world);c.worldVariant=vs[0]?.variant??null;}if(c.source==='new'&&!c.name)c.name='';save();render();return;}
++  if(b.dataset.cvAsk){st.ask=b.dataset.cvAsk;save();renderMain();return;}
++  if(b.dataset.cvQpage!==undefined){st.qpage=Math.max(0,Number(b.dataset.cvQpage));save();renderMain();return;}
++  if(b.dataset.cvAge!==undefined){ch().age=Number(b.dataset.cvAge);save();render();return;}
++  const a=b.dataset.cvAct;if(!a)return;
++  if(a==='new'){api.confirmAction('새로 만들기','현재 캐릭터의 값을 모두 지우고 처음 상태로 돌아갑니다. 배경 대사 수정본과 공식 계수는 유지합니다.',()=>{st={...st,ch:blank(),locks:{},acq:{},overrides:{},owner:{},unknown:[],big:{},talk:{psy_status:'docile',moral:3,angst:0,spoil:0,rational:3,fear:0},seed:'1',pt:1};save();render();});return;}
++  if(a==='random')randomCharacter();
++  if(a==='unique'){root.querySelector('#cvUniqueFile').click();return;}
++  if(a==='panel'){st.panel=b.dataset.panel;st.folded=false;}
++  if(a==='fold')st.folded=!st.folded;
++  if(a==='pt-again')st.pt=(st.pt??1)+1;
++  if(a==='pt-reset'){const m=st.ptEdits?.[charKey()];if(m)delete m[b.dataset.slot];}
++  if(a==='term'){applyTerms(root.querySelector('#cvTerm').value);}
++  if(a==='text-save'){const k=b.dataset.kind,v=root.querySelector(`[data-cv-text="${k}"]`).value;if(!v.trim()){api.toast('대사는 비워둘 수 없습니다.');return;}saveBackgroundText(k,v);api.toast('대사를 저장했습니다.');}
++  if(a==='text-restore'){const k=b.dataset.kind,bt=backgroundText(k);if(bt)saveBackgroundText(k,bt.original);api.toast('원문으로 복원했습니다.');}
++  if(a==='json-apply'){try{const d=JSON.parse(root.querySelector('#cvJson').value);const prev=ch();const next=fromJson(d,prev.unique?.fileName);if(prev.unique&&next.unique)next.unique.original=prev.unique.original;next.source=prev.source;st.ch=next;api.toast('JSON을 적용했습니다.');}catch(err){api.toast('JSON을 읽지 못했습니다: '+err.message);return;}}
++  if(a==='json-download'){const blob=new Blob([JSON.stringify(toJson(),null,1)],{type:'application/json'}),u=URL.createObjectURL(blob),l=document.createElement('a');l.href=u;l.download=`${ch().type||'character'}_${ch().name||'jo9'}.json`;l.click();setTimeout(()=>URL.revokeObjectURL(u),1000);return;}
++  save();render();
++ });
++ root.addEventListener('input',ev=>{if(ev.target.dataset.cvText)setBackgroundDraft(ev.target.dataset.cvText,ev.target.value);});
++ root.addEventListener('keydown',ev=>{if(ev.key==='Enter'&&ev.target.id==='cvTerm'){applyTerms(ev.target.value);save();render();root.querySelector('#cvTerm')?.focus();}});
++ root.addEventListener('change',ev=>{
++  const t=ev.target;
++  if(t.dataset.cvLock){st.locks[t.dataset.cvLock]=t.checked;save();return;}
++  // 칸을 벗어날 때(blur) 바로 다시 그리면 클릭한 버튼이 사라지므로 다음 틱에 그린다
++  if(t.dataset.cvPt){((st.ptEdits??={})[charKey()]??={})[t.dataset.cvPt]=t.value;save();setTimeout(renderMain,0);return;}
++  if(t.dataset.cvNum){const [grp,k]=t.dataset.cvNum.split('.');const v=t.value===''?undefined:k==='supermacy'?Math.trunc(Number(t.value)):Math.max(0,Math.trunc(Number(t.value)));if(t.value!==''&&!Number.isFinite(Number(t.value)))return;st[grp][k]=v;}
++  else if(t.dataset.cvPsy!==undefined)st.talk.psy_status=t.value;
++  else if(t.dataset.cvVoice!==undefined){if(t.value)ch().jo9_voice_type=t.value;else delete ch().jo9_voice_type;}
++  else if(t.dataset.cvSeed!==undefined)st.seed=t.value.slice(0,40)||'1';
++  else if(t.dataset.cvRoute!==undefined)st.acq={route:t.value,scene:st.acq.scene??'',event:st.acq.event??''};
++  else if(t.dataset.cvEvent!==undefined)st.acq={...st.acq,route:'event',event:t.value};
++  else if(t.dataset.cvScene!==undefined)st.acq={route:'patrol',scene:t.value};
++  else return;
++  save();setTimeout(render,0);
++ });
++ root.querySelector('#cvUniqueFile').addEventListener('change',async ev=>{
++  const f=ev.target.files[0];ev.target.value='';if(!f)return;
++  try{if(f.size>5*1024*1024)throw new Error('5MB 이하 파일만 읽습니다.');const d=JSON.parse((await f.text()).replace(/^﻿/,''));st.ch=fromJson(d,f.name);st.ch.source='unique';st.overrides={};st.pt=1;save();render();api.toast(`${st.ch.name||f.name}을(를) 불러왔습니다.`);}
++  catch(err){api.toast('유니크 JSON을 읽지 못했습니다: '+err.message);}
++ });
++ onFormulaChange(render);
++ render();
++ // 통합 편집(캐릭터 편집 탭)과 잇는 다리: 게임 캐릭터 JSON + 대사집을 시뮬레이터로 열고, 시뮬레이터 결과를 대사집으로 돌려준다
++ function loadGameCharacter(d,fileName,book={}){
++  const bg=book.background??{};
++  st.ch=fromJson({...d,jo9_type:String(book.id??''),jo9_world:bg.world??'',jo9_family:bg.family??'',jo9_occupation:bg.occupation??''},fileName);
++  st.ch.source='unique';st.overrides={...(book.overrides??{})};st.pt=1;
++  if(book.seed)st.seed=String(book.seed);
++  st.acq={...(book.acq??{})};
++  if(book.lines&&Object.keys(book.lines).length){const parts=splitTalkLines(book.lines);((st.ptEdits??={})[charKey()]={...parts.other});((st.generalEdits??={})[charKey()]={...(st.generalEdits?.[charKey()]??{}),...parts.general});}
++  save();render();
++ }
++ function exportTalk(){
++  const c=ch(),cx=compute();
++  return {id:String(c.type??''),name:c.name,background:{world:c.world||'',family:c.family||'',occupation:c.occupation||''},seed:st.seed,acq:{...st.acq},overrides:{...st.overrides},
++   lines:mergeTalkLines(st.ptEdits?.[charKey()]??{},st.generalEdits?.[charKey()]??{}),facts:cx?.fx?{fields:cx.fx.fields,blocked:cx.fx.blocked}:null,excluded:!!cx?.r?.excluded,
++   history:cx?.r&&!cx.r.excluded?{intimacy:cx.r.intimacy,acts:cx.r.acts,pregnancies:cx.r.pregnancies,births:cx.r.births}:null,
++   // 원본 DB 연결 코드: 칸마다 창작물 DB 키와 표시불가 코드만(문장 없음). 연령 코드 1도 키·분류 코드는 남긴다(사용자 지시 2026-11-12)
++   refs:Object.fromEntries(SLOTS.map(([,id])=>{const k=refFor(id,cx?.fx);const r=k?REFS.rows[k]:null;return [id,k?{key:k,blocked:r?.b??[]}:null];}).filter(([,v])=>v))};
++ }
++ function openSection(section='questions',question){st.workspaceSection=section==='records'?'records':'questions';if(question&&['1111','1112','1113','1114','1115','1116','1117','1118','sex'].includes(String(question)))st.questionId=String(question);save();render();window.dispatchEvent(new CustomEvent('jo9-simulator-question'));}
++ function useGeneralRow(row){if(String(row.question)==='1111'){openSection('questions','1111');return;}const key=charKey();((st.generalEdits??={})[key]??={})[row.question]=row.text;((st.generalSources??={})[key]??={})[row.question]=row.id;openSection('questions',String(row.question));}
++ return {render,loadGameCharacter,exportTalk,openSection,useGeneralRow,getWorkspaceState:()=>({section:st.workspaceSection??'questions',question:st.questionId??'1112'})};
++}
+--- a/overrides/general-dialogue.mjs
++++ b/overrides/general-dialogue.mjs
+@@ -0,0 +1,65 @@
++// JO9 MOD GENERAL_DIALOGUE_DB_20261115: source text editing and shared-character questions.
++const e=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
++export const QUESTION_TABS=[['1112','인상 묻기'],['1115','불만 묻기'],['1113','요구 묻기'],['1114','희망사항 묻기'],['1116','기분 묻기'],['1111','과거 묻기'],['1117','조수/노예에 대해'],['sex','성경험 묻기']];
++export const QUESTION_NAMES=Object.fromEntries([...QUESTION_TABS,['1118','노예에 대해 묻기']]);
++export function generalSlot(q){if(!/^111[2-8]$/.test(String(q)))throw Error('일반 질문 번호가 아닙니다.');return 'general.'+q;}
++export function splitTalkLines(lines={}){const general={},other={};for(const [k,v] of Object.entries(lines)){if(/^general\.111[2-8]$/.test(k))general[k.slice(8)]=v;else other[k]=v;}return {general,other};}
++export function mergeTalkLines(lines={},general={}){return {...lines,...Object.fromEntries(Object.entries(general).filter(([q])=>/^111[2-8]$/.test(q)).map(([q,text])=>[generalSlot(q),text]))};}
++async function call(url,body){const r=await fetch(url,body===undefined?{}:{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const data=await r.json();if(!r.ok)throw Error(data.error||'대사 DB를 읽지 못했습니다.');return data;}
++const endpoint='/api/general-dialogue';
++const plain=t=>String(t).replace(/<<.*?>>|<[^>]*>/g,m=>m.startsWith('<<')?m:/^<br\s*\/?>$/i.test(m)?'\n':'');
++export const shown=(t,name)=>plain(String(t).replaceAll('<<$slave_name>>',name||'{이름}').replaceAll('{이름}',name||'{이름}'));
++const options=(items,current,empty='전체')=>`<option value="">${e(empty)}</option>`+items.map(([k,l])=>`<option value="${e(k)}" ${String(k)===String(current)?'selected':''}>${e(l)}</option>`).join('');
++const metaText=r=>`${r.source}:${r.line} · ${r.role??''} · 성격 ${r.types??'*'} · 관계 ${r.relations??'*'} · 말투 ${r.tone||'공통'} · 표현 ${r.level??0}`;
++
++export function simulatorMenuHtml(){return `<div class="workspace-subnav workspace-sim-nav" data-workspace-parent="character" hidden><button class="nav-button" data-tab="character" data-sim-section="questions">질문하기</button><div class="workspace-subnav">${QUESTION_TABS.map(([q,label])=>`<button class="nav-button" data-tab="character" data-sim-question="${q}">${e(label)}</button>`).join('')}</div><button class="nav-button" data-tab="character" data-sim-section="records">경력·기록</button></div>`;}
++
++export function createGeneralDbView(api){
++ const id='general-dialogue-db';api.tabNames[id]=['게임 DB','일반 대사 DB','현재 WORK의 질문별 대사와 조립 메타데이터를 검색하고 원문을 편집합니다.'];
++ const root=document.createElement('section');root.id=id;root.className='tab-panel general-db';root.hidden=true;document.querySelector('main footer').before(root);
++ const st={meta:null,rows:[],total:0,offset:0,f:{q:'',question:'',type:'',relation:'',tone:'',kind:''},detail:null,draft:'',dirty:false,message:'',request:0};
++ function detail(){const d=st.detail;const box=root.querySelector('[data-gdb-detail]');if(!box)return;
++  box.innerHTML=!d?'<p class="fine-print">목록에서 대사를 고르세요.</p>':`<p class="fine-print"><code>${e(d.key)}</code><br>${e(metaText(d))}</p><details><summary>원문</summary><pre class="gdb-original">${e(d.text)}</pre></details><label class="st-story"><span class="section-label">공통 원문 편집</span><textarea data-gdb-text rows="9" maxlength="8000">${e(st.draft)}</textarea></label><p class="fine-print">저장하면 현재 WORK의 이 문장이 바뀝니다. 다른 대사와 조건은 유지하며 최초 백업·변경 기록을 남깁니다.</p><div class="st-row"><button class="button secondary" data-gdb-action="preview">변경 보기</button><button class="button" data-gdb-action="save" ${st.dirty?'':'disabled'}>WORK 원문 저장</button><button class="button secondary" data-gdb-action="use">시뮬레이터에서 사용</button></div><p data-gdb-message class="fine-print">${e(st.message)}</p>`;
++ }
++ function list(){const box=root.querySelector('[data-gdb-list]');if(!box)return;box.innerHTML=`<p class="fine-print">${st.total.toLocaleString('ko-KR')}개 · ${st.offset+1}~${Math.min(st.offset+st.rows.length,st.total)}</p><div class="gdb-rows">${st.rows.map((r,i)=>`<button class="gdb-row ${st.detail?.id===r.id?'on':''}" data-gdb-row="${i}"><strong>${e(QUESTION_NAMES[r.question]||r.question)}</strong><small>${e(r.key)}</small><span>${e(r.plain.slice(0,130))}</span></button>`).join('')||'<p class="fine-print">맞는 항목이 없습니다.</p>'}</div><div class="st-row"><button class="button secondary" data-gdb-page="-1" ${st.offset?'':'disabled'}>이전</button><button class="button secondary" data-gdb-page="1" ${st.offset+30<st.total?'':'disabled'}>다음</button></div>`;}
++ function frame(){root.innerHTML=`<article class="card"><div class="card-head"><h2>대사 검색</h2><span class="badge muted">${st.meta.rows.toLocaleString('ko-KR')}개</span></div><div class="card-body"><p class="fine-print">과거 묻기의 기준은 배경 설정 DB입니다. 아래에는 게임 조립용 원문과 보충 문구도 함께 표시됩니다.</p><div class="st-row"><input data-gdb-filter="q" placeholder="대사·ID·의미 자리 검색" value="${e(st.f.q)}"><select data-gdb-filter="question">${options(Object.entries(st.meta.questions),st.f.question,'질문 전체')}</select><select data-gdb-filter="tone">${options([['1','말투 1 · 격식'],['2','말투 2 · 존대'],['3','말투 3 · 반말']],st.f.tone,'말투 전체')}</select></div><div class="st-row"><select data-gdb-filter="type">${options(st.meta.types.map(k=>[k,k]),st.f.type,'성격 전체')}</select><select data-gdb-filter="relation">${options(st.meta.relations.map(k=>[k,k]),st.f.relation,'관계 전체')}</select><select data-gdb-filter="kind">${options([['fragment','조립 문구'],['original','기존 기본 원문']],st.f.kind,'종류 전체')}</select><button class="button" data-gdb-action="search">검색</button><button class="button secondary" data-tab="backgrounds">배경 설정 DB</button></div></div></article><div class="gdb-columns"><article class="card"><div class="card-head"><h2>대사 목록</h2></div><div class="card-body" data-gdb-list></div></article><article class="card"><div class="card-head"><h2>원문·편집</h2></div><div class="card-body" data-gdb-detail></div></article></div>`;list();detail();}
++ async function search(){const request=++st.request;try{const r=await call(endpoint+'/search?'+new URLSearchParams({...st.f,offset:st.offset,limit:30}));if(request!==st.request)return;st.rows=r.rows;st.total=r.total;list();}catch(err){root.querySelector('[data-gdb-list]').textContent=err.message;}}
++ root.addEventListener('input',ev=>{const t=ev.target;if(t.dataset.gdbFilter!==undefined)st.f[t.dataset.gdbFilter]=t.value;if(t.hasAttribute('data-gdb-text')){st.draft=t.value;st.dirty=st.draft!==st.detail.text;root.querySelector('[data-gdb-action="save"]').disabled=!st.dirty;}});
++ root.addEventListener('change',ev=>{if(ev.target.dataset.gdbFilter!==undefined)st.f[ev.target.dataset.gdbFilter]=ev.target.value;});
++ root.addEventListener('click',async ev=>{const b=ev.target.closest('button');if(!b)return;
++  if(b.dataset.gdbRow!==undefined){if(st.dirty&&!window.confirm('저장하지 않은 공통 문장을 버리고 다른 항목을 열까요?'))return;st.detail=st.rows[Number(b.dataset.gdbRow)];st.draft=st.detail.text;st.dirty=false;st.message='';list();detail();}
++  if(b.dataset.gdbPage){st.offset=Math.max(0,st.offset+Number(b.dataset.gdbPage)*30);search();}
++  const a=b.dataset.gdbAction;if(a==='search'){st.offset=0;return search();}
++  if(a==='use'&&st.detail){const sim=globalThis.__jo9StudioApi?.charView;if(sim?.useGeneralRow){sim.useGeneralRow({...st.detail,text:st.draft});api.switchTab('character');}return;}
++  if((a==='preview'||a==='save')&&st.detail){const origin=st.detail.id,sent=st.draft,revision=st.detail.revision;try{const r=await call(endpoint+'/save',{id:origin,text:sent,revision,dryRun:a==='preview'});if(r.saved)search();if(st.detail?.id!==origin)return;st.message=r.saved?'저장했습니다.':r.changes.length?'이 문장 1개를 변경합니다.':'변경 없음';if(r.saved){st.detail=r.row;if(st.draft===sent)st.draft=r.row.text;st.dirty=st.draft!==r.row.text;}else if(st.draft!==sent)st.message='편집 내용이 바뀌었습니다. 다시 변경 보기를 눌러 주세요.';detail();}catch(err){if(st.detail?.id===origin){st.message=err.message;detail();}}}
++ });
++ let started=false;new MutationObserver(()=>{if(!root.hidden&&!started){started=true;call(endpoint+'/meta').then(m=>{st.meta=m;frame();search();}).catch(err=>{started=false;root.textContent=err.message;});}}).observe(root,{attributes:true,attributeFilter:['hidden']});
++ return {root};
++}
++
++export function mountQuestionWorkspace(main,o){
++ const grid=main.querySelector('.cv-grid');if(!grid)return;const cards=[...grid.children];if(cards.length<4)return;
++ const state=o.state;state.workspaceSection??='questions';state.questionId??='1112';state.generalEdits??={};state.generalSources??={};
++ const records=cards.slice(2,-1),sex=cards.at(-1);for(const card of [...records,sex])card.remove();
++ sex.querySelector('h2').textContent='성경험 묻기 · 섹스토크';
++ const section=document.createElement('section');section.className='cv-wide question-workspace';grid.append(section);
++ const signal=()=>window.dispatchEvent(new CustomEvent('jo9-simulator-question'));
++ const active=q=>state.questionId===q||(q==='1117'&&state.questionId==='1118');
++ section.innerHTML=`<div class="st-tabs" aria-label="시뮬레이터 작업"><button data-q-section="questions" class="${state.workspaceSection==='questions'?'on':''}">질문하기</button><button data-q-section="records" class="${state.workspaceSection==='records'?'on':''}">경력·기록</button></div><div class="question-tabs st-tabs" aria-label="질문하기 하위 메뉴" ${state.workspaceSection==='questions'?'':'hidden'}>${QUESTION_TABS.map(([q,l])=>`<button data-q-id="${q}" class="${active(q)?'on':''}">${e(l)}</button>`).join('')}</div><div data-question-body></div>`;
++ const body=section.querySelector('[data-question-body]');
++ if(state.workspaceSection==='records'){body.className='cv-grid';body.append(...records);}
++ else if(state.questionId==='sex')body.append(sex);
++ else if(state.questionId==='1111'){
++  body.innerHTML=`<article class="card"><div class="card-head"><h2>과거 묻기 · 배경 설정 DB</h2></div><div class="card-body"><p class="fine-print">02 배경과 같은 원문을 사용합니다. 수정·저장하면 공통 배경 표시에도 반영됩니다.</p>${[['world','세계'],['family','출신'],['occupation','직업']].map(([k,label])=>{const b=o.background(k);return `<label class="st-story"><span class="section-label">${label} · ${e(b?.label||'미지정')}</span><textarea data-q-background="${k}" rows="4" maxlength="4000">${e(b?.text||'')}</textarea></label><button class="button secondary" data-q-bg-save="${k}">이 배경 저장</button>`;}).join('')}<p><button class="button secondary" data-tab="backgrounds">배경 설정 DB 열기</button></p></div></article>`;
++  body.addEventListener('input',ev=>{if(ev.target.dataset.qBackground)o.setBackgroundDraft(ev.target.dataset.qBackground,ev.target.value);});
++ }else{
++  const q=state.questionId,c=o.context(),key=o.charKey(),edits=state.generalEdits[key]??={},sources=state.generalSources[key]??={};
++  body.innerHTML=`<article class="card"><div class="card-head"><h2>${e(QUESTION_NAMES[q]||q)}</h2><button class="button secondary" data-tab="general-dialogue-db">일반 대사 DB 열기</button></div><div class="card-body">${q==='1117'||q==='1118'?`<div class="st-tabs"><button data-q-id="1117" class="${q==='1117'?'on':''}">조수에 대해 묻기</button><button data-q-id="1118" class="${q==='1118'?'on':''}">노예에 대해 묻기</button></div>`:''}<p class="fine-print">${e(c.name||'이름 없음')} · 성격 ${e(c.type)} · 관계 ${e(c.relation)} · 말투 ${e(c.tone)}<br>성격·관계·말투로 찾은 편집 후보입니다. 질문의 최종 발동·거절 조건은 게임에서 판정합니다.</p><div class="gdb-sim-columns"><div><div class="st-row"><label>후보 검색<input data-q-search placeholder="문장·ID 검색"></label><button class="button secondary" data-q-search-go>후보 찾기</button></div><div data-q-candidates>원문 후보를 읽는 중…</div></div><div><label class="st-story"><span class="section-label">이 캐릭터의 대사 편집</span><textarea data-q-text rows="10" maxlength="8000" placeholder="직접 쓰거나 왼쪽 후보를 선택하세요">${e(edits[q]??'')}</textarea></label><p class="fine-print" data-q-source>${e(sources[q]||'직접 작성')}</p><button class="button secondary" data-q-clear>이 질문의 개별 대사 지우기</button><p class="fine-print">편집 내용은 브라우저에 보관됩니다. 캐릭터 편집 → 대사집에서 결과를 담아 저장할 수 있습니다.</p><div class="gm"><div class="gm-left"><div class="gm-stage"><div class="gm-name">${e(c.name||'이름 없음')}</div></div><div class="gm-text" data-q-preview>${e(shown(edits[q]??'',c.name))}</div></div></div></div></div></div></article>`;
++  const write=(text,source)=>{edits[q]=text;sources[q]=source||'직접 작성';o.save();if(body.querySelector('[data-q-text]').value!==text)body.querySelector('[data-q-text]').value=text;body.querySelector('[data-q-preview]').textContent=shown(text,c.name);body.querySelector('[data-q-source]').textContent=sources[q];};
++  let request=0,found=[];async function search(){const req=++request;const target=body.querySelector('[data-q-candidates]');try{const res=await call(endpoint+'/search?'+new URLSearchParams({question:q,type:c.type,relation:c.relation,tone:c.tone,kind:'fragment',q:body.querySelector('[data-q-search]').value,limit:30}));if(req!==request||!body.isConnected)return;found=res.rows;target.innerHTML=`<p class="fine-print">${res.total}개 후보 · 최대 30개 표시</p>`+found.map((r,i)=>`<button class="gdb-row" data-q-candidate="${i}" title="${e(metaText(r))}"><small>${e(r.key)}</small><span>${e(shown(r.text,c.name))}</span></button>`).join('');}catch(err){target.textContent=err.message;}}
++  body.addEventListener('input',ev=>{if(ev.target.hasAttribute('data-q-text'))write(ev.target.value,sources[q]);});
++  body.addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;if(b.dataset.qCandidate!==undefined){const r=found[Number(b.dataset.qCandidate)];write(r.text,r.id);}if(b.hasAttribute('data-q-search-go'))search();if(b.hasAttribute('data-q-clear')){edits[q]='';delete sources[q];o.save();body.querySelector('[data-q-text]').value='';body.querySelector('[data-q-preview]').textContent='';body.querySelector('[data-q-source]').textContent='직접 작성';}});
++  search();
++ }
++ section.addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;if(b.dataset.qSection){state.workspaceSection=b.dataset.qSection;o.save();o.render();signal();}if(b.dataset.qId){state.workspaceSection='questions';state.questionId=b.dataset.qId;o.save();o.render();signal();}if(b.dataset.qBgSave){const k=b.dataset.qBgSave;o.saveBackground(k,body.querySelector(`[data-q-background="${k}"]`).value);}});
++}
+--- a/overrides/studio-view.mjs
++++ b/overrides/studio-view.mjs
+@@ -1,5 +1,6 @@
+ // 통합 캐릭터 편집 탭: 게임 폴더의 캐릭터를 골라 외형·배경 이야기·설정·능력치·특성을 한 화면에서 고친다(로컬 서버 /api 필요)
+ import {roleUrl, masterSettings, masterStats, cmValue, patchCm, initialCm, cmInitialChanges, patchNativeStat, nativeRows, cloneBody, cloneForm} from './studio-role.mjs';
++import {QUESTION_NAMES} from '/workspace/general-dialogue.mjs';
+ import {describeCharacterField} from './character-fields.mjs';
+ import {esc as e, loadSimData} from './sim-data.mjs';
+ import {createLookEditor} from './studio-look.mjs';
+@@ -345,9 +346,11 @@
+    ${bgPicker()}
+    <div class="st-row"><button class="button secondary" data-tb-act="to-sim" ${sim ? '' : 'disabled'}>시뮬레이터에서 열기 →</button><button class="button secondary" data-tb-act="from-sim" ${sim ? '' : 'disabled'}>← 시뮬레이터 결과를 대사집에 담기</button>
+     <span class="fine-print">시뮬레이터에서 과거 경험을 뽑고 필로우토크 칸을 직접 각색한 뒤 '담기'를 누르세요.</span></div>
+-   <div class="section-label">필로우토크 대사 · 칸 ${SLOTS.length}개 <small class="fine-print">칸마다 원본 DB를 골라 참조하며 직접 씁니다. 저장: 대사 ${lines.filter(([, v]) => v).length}칸 · DB 연결 ${Object.keys(b.refs ?? {}).length}칸</small></div>
++   <div class="section-label">질문하기 · 일반 대사</div><p class="fine-print">과거 묻기는 위 배경 설정 DB를 따릅니다. 질문별 개별 대사는 시뮬레이터에서 가져오거나 아래에서 직접 편집하세요.</p>
++   ${lines.filter(([k])=>/^general\.111[2-8]$/.test(k)).map(([k,v])=>`<label class="st-story"><span class="section-label">${e(QUESTION_NAMES[k.slice(8)]||k)} <code>${e(k)}</code></span><textarea data-tb-line="${e(k)}" rows="3" maxlength="8000">${e(v)}</textarea></label>`).join('')||'<p class="fine-print">아직 개별 일반 대사가 없습니다.</p>'}
++   <div class="section-label">성경험 묻기 · 섹스토크 대사 · 칸 ${SLOTS.length}개 <small class="fine-print">칸마다 원본 DB를 골라 참조하며 직접 씁니다. 저장: 대사 ${lines.filter(([, v]) => v).length}칸 · DB 연결 ${Object.keys(b.refs ?? {}).length}칸</small></div>
+    ${SLOTS.map(([lv, id, label]) => slotEditor(lv, id, label)).join('')}
+-   ${lines.filter(([k]) => !SLOTS.some(s => s[1] === k)).map(([k, v]) => `<label class="st-story"><span class="section-label"><code>${e(k)}</code> (추가 칸) <button class="text-button" data-tb-del="${e(k)}">지우기</button></span><textarea data-tb-line="${e(k)}" rows="3" maxlength="8000">${e(v)}</textarea></label>`).join('')}
++   ${lines.filter(([k]) => !SLOTS.some(s => s[1] === k)&&!/^general\.111[2-8]$/.test(k)).map(([k, v]) => `<label class="st-story"><span class="section-label"><code>${e(k)}</code> (추가 칸) <button class="text-button" data-tb-del="${e(k)}">지우기</button></span><textarea data-tb-line="${e(k)}" rows="3" maxlength="8000">${e(v)}</textarea></label>`).join('')}
+    <div class="st-row"><input data-tb-newslot placeholder="추가 칸 ID(영문)" maxlength="60"><button class="button secondary" data-tb-act="add-line">칸 추가</button></div>
+    ${facts.length ? `<details><summary class="section-label">과거 경험 사실 ${facts.length}개 (시드 ${e(b.seed ?? '')})</summary><div class="st-grid">${facts.map(([k, v]) => `<span class="st-stat"><code>${e(k)}</code><b>${e(Array.isArray(v) ? v.join(', ') : v)}</b></span>`).join('')}</div></details>` : ''}
+    <div class="section-label">메모(사람·AI용)</div><textarea class="st-notes" data-tb-notes rows="3" maxlength="8000">${e(b.notes ?? '')}</textarea>
+@@ -507,7 +510,7 @@
+   if (tb === 'from-sim') {
+    const x = api.charView.exportTalk();
+    if (x.id !== String(isMaster ? 'master:' + st.ch.id : st.ch.id)) return api.toast(`시뮬레이터에 열린 캐릭터(${x.name || '이름 없음'}, ${x.id || '번호 없음'})가 이 캐릭터가 아닙니다. 먼저 '시뮬레이터에서 열기'를 누르세요.`);
+-   if (st.talk.noAutoGenerate) Object.assign(st.book, {background: {...st.book.background, ...x.background}, refs: x.refs});
++   if (st.talk.noAutoGenerate) Object.assign(st.book, {background: {...st.book.background, ...x.background}, refs: x.refs, lines:{...st.book.lines,...Object.fromEntries(Object.entries(x.lines??{}).filter(([k])=>/^general\.111[2-8]$/.test(k)))}});
+    else Object.assign(st.book, {background: {...st.book.background, ...x.background}, seed: x.seed, acq: x.acq, overrides: x.overrides, lines: {...st.book.lines, ...x.lines}, facts: x.facts, history: x.history, refs: x.refs});
+    st.bookDirty = true; api.toast(`시뮬레이터 결과를 담았습니다 · 대사 ${Object.keys(x.lines).length}칸${x.excluded ? ' (연령 코드 1은 과거 경험 없음)' : ''}`); return render();
+   }
+--- a/tests/test_general_dialogue.py
++++ b/tests/test_general_dialogue.py
+@@ -0,0 +1,44 @@
++import unittest,tempfile,sys
++from pathlib import Path
++sys.path.insert(0,str(Path(__file__).resolve().parents[1]));sys.path.insert(1,'G:/somi/JO9sa/tools/modding-hub')
++from master_editor import make_fixture,QspDocument
++from general_dialogue import GeneralDialogueDB
++
++DATA="""$voice_fragment_text['q1112_a']='Hello ''name'' <<$slave_name>>'
++$voice_fragment_role['q1112_a']='open'
++$voice_fragment_types['q1112_a']='|calm|plain|'
++$voice_fragment_relations['q1112_a']='*'
++voice_fragment_level['q1112_a']=0
++voice_fragment_tone['q1112_a']=2
++$voice_fragment_text['q1114_b']='Wish'
++$voice_fragment_role['q1114_b']='native_1114_skill'
++$voice_fragment_types['q1114_b']='*'
++$voice_fragment_relations['q1114_b']='|loyal|'
++voice_fragment_tone['q1114_b']=1
++voice_fragment_question['q1114_b']=1114
++"""
++class DbTests(unittest.TestCase):
++ def setUp(self):
++  self.tmp=tempfile.TemporaryDirectory();self.root=Path(self.tmp.name);self.raw=make_fixture({'#txt_man':DATA,'#txt_woman':"$slave_relation_description['docile']='Other original'",'elsewhere':'Untouched'})
++  (self.root/'jack.qsp').write_bytes(self.raw);self.db=GeneralDialogueDB(self.root)
++ def tearDown(self):self.tmp.cleanup()
++ def test_reads_metadata_filters_pages_and_safely_decodes_quotes(self):
++  a=self.db.search({'question':'1112','type':'calm','tone':'2'});self.assertEqual(a['total'],2)
++  row=next(r for r in a['rows'] if r['kind']=='fragment');self.assertEqual(row['text'],"Hello 'name' <<$slave_name>>")
++  self.assertIn('<<$slave_name>>',row['plain'])
++  self.assertEqual(self.db.search({'question':'1114','relation':'hostile'})['total'],0)
++  self.assertEqual(self.db.search({'limit':'1'})['rows'].__len__(),1)
++ def test_dryrun_and_exact_row_save_preserve_every_other_location(self):
++  row=next(r for r in self.db.search({'q':'q1112_a'})['rows'] if r['kind']=='fragment')
++  body={'id':row['id'],'revision':row['revision'],'text':"User's text\nSecond",'dryRun':True}
++  self.assertTrue(self.db.save(body)['changes']);self.assertEqual((self.root/'jack.qsp').read_bytes(),self.raw)
++  body['dryRun']=False;self.db.save(body);d=QspDocument((self.root/'jack.qsp').read_bytes())
++  self.assertEqual(d.body('elsewhere'),'Untouched');self.assertEqual(d.body('#txt_man'),DATA.replace("'Hello ''name'' <<$slave_name>>'","'User''s text<br>Second'"))
++  self.assertTrue(list((self.root/'jo9_editor/general-dialogue-patches').glob('*.json')))
++  with self.assertRaisesRegex(ValueError,'다시'):self.db.save(body)
++ def test_bad_id_and_nonstring_never_write(self):
++  for body in [{'id':'unknown','text':'x'},{'id':'#txt_man|q1112_a','text':3}]:
++   with self.assertRaises((ValueError,FileNotFoundError)):self.db.save(body)
++  self.assertEqual((self.root/'jack.qsp').read_bytes(),self.raw)
++
++if __name__=='__main__':unittest.main()
+--- a/tests/question-workspace.test.mjs
++++ b/tests/question-workspace.test.mjs
+@@ -0,0 +1,16 @@
++import test from 'node:test';import assert from 'node:assert/strict';
++import {QUESTION_TABS,generalSlot,splitTalkLines,mergeTalkLines,simulatorMenuHtml,shown} from '../overrides/general-dialogue.mjs';
++test('question menus include eight independent topics with sex experience inside questions',()=>{
++ assert.deepEqual(QUESTION_TABS.map(([k])=>k),['1112','1115','1113','1114','1116','1111','1117','sex']);
++ const nav=simulatorMenuHtml();for(const [id] of QUESTION_TABS)assert(nav.includes(`data-sim-question="${id}"`));assert(nav.includes('질문하기'));assert(nav.includes('data-tab="character"'));
++});
++test('general edits round trip separately from sex slots without changing the character',()=>{
++ const original={partners:'original','custom':'manual','general.1112':'impression','general.1115':'complaint'};const copy=structuredClone(original),parts=splitTalkLines(original);
++ assert.deepEqual(parts.general,{'1112':'impression','1115':'complaint'});assert.deepEqual(parts.other,{partners:'original',custom:'manual'});
++ assert.deepEqual(mergeTalkLines(parts.other,parts.general),original);assert.deepEqual(original,copy);
++ assert.equal(mergeTalkLines(original,{'1112':''})['general.1112'],'');assert.throws(()=>generalSlot('1111'));assert.throws(()=>generalSlot('sex'));
++});
++test('preview replaces the actor name without treating QSP placeholders as HTML',()=>{
++ assert.equal(shown('[<<$slave_name>>]<br><font color="gold">Hello</font>','Actor'),'[Actor]\nHello');
++ assert.equal(shown('<<$target_name>>','Actor'),'<<$target_name>>');
++});
+--- a/tests/background-drafts.test.mjs
++++ b/tests/background-drafts.test.mjs
+@@ -0,0 +1,10 @@
++import test from 'node:test';import assert from 'node:assert/strict';import vm from 'node:vm';import fs from 'node:fs';
++const source=fs.readFileSync(new URL('../overrides/character-view.mjs',import.meta.url),'utf8');
++const functions=source.slice(source.indexOf(' function backgroundSource('),source.indexOf(' // 현재 캐릭터의 과거 경험'));
++function setup(unique=true){const c={type:'1',world:'world',unique:unique?{texts:{world:'original'},original:{world:'original'},fileName:'1.json'}:null};const st={backgroundDrafts:{}};const env={st,ch:()=>c,charKey:()=> 'actor',save:()=>{},root:{querySelectorAll:()=>[]},recordFor:()=>({text:'original',id:'world'}),editedBackgroundText:(_cfg,r)=>r.text,validateBackgroundSettings:()=>{},textKey:()=> 'world',structuredClone,api:{getState:()=>({config:{backgroundSettings:{texts:{world:{}}}}}),save:()=>{}},nameOf:()=> 'world'};vm.createContext(env);vm.runInContext(functions+';this.methods={backgroundText,setBackgroundDraft,saveBackgroundText};',env);return env;}
++test('shared past draft survives validation failure and restoring it does not alter original',()=>{
++ const env=setup();env.methods.setBackgroundDraft('world','x'.repeat(4001));assert.throws(()=>env.methods.saveBackgroundText('world','x'.repeat(4001)),/4,000/);assert.equal(env.methods.backgroundText('world').text.length,4001);assert.equal(env.ch().unique.texts.world,'original');env.methods.setBackgroundDraft('world','original');assert.equal(Object.keys(env.st.backgroundDrafts).length,0);
++});
++test('a shared DB validation error keeps the exact unsaved draft',()=>{
++ const env=setup(false);env.methods.setBackgroundDraft('world','unsaved');env.validateBackgroundSettings=()=>{throw Error('rejected');};assert.throws(()=>env.methods.saveBackgroundText('world','unsaved'),/rejected/);assert.equal(env.methods.backgroundText('world').text,'unsaved');
++});

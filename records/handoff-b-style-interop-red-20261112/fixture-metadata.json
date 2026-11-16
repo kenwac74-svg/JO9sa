@@ -1,0 +1,59 @@
+{
+  "candidate": "G:/Codex/tmp/handoff-b-combined-20261112/candidate.qsp",
+  "sha256": "942bcadfa8f138fcbae9b3b492715f22324f0418b61c272307f6ea37f24de9cf",
+  "cases": [
+    {
+      "name": "grace1-clean-groomed",
+      "grace": 1,
+      "hygiene": 0,
+      "groom": 1,
+      "base": 0
+    },
+    {
+      "name": "grace2-clean-groomed",
+      "grace": 2,
+      "hygiene": 0,
+      "groom": 1,
+      "base": 0
+    },
+    {
+      "name": "grace1-hygiene1-groomed",
+      "grace": 1,
+      "hygiene": 1,
+      "groom": 1,
+      "base": 0
+    },
+    {
+      "name": "grace1-hygiene3-groomed",
+      "grace": 1,
+      "hygiene": 3,
+      "groom": 1,
+      "base": 0
+    },
+    {
+      "name": "negative-temp-control",
+      "grace": 1,
+      "hygiene": 0,
+      "groom": 0,
+      "base": 80
+    },
+    {
+      "name": "late-occupation-grace",
+      "grace": 0,
+      "lateGrace": 1,
+      "hygiene": 0,
+      "groom": 1,
+      "base": 0
+    },
+    {
+      "name": "fixed-control",
+      "grace": 1,
+      "hygiene": 0,
+      "groom": 1,
+      "base": 0,
+      "fixed": 1
+    }
+  ],
+  "pureStyle": "!IMPACTS ON STYLE (temp style rate is refreshed constantly)\r\n\t\tstock_rate['temp_style'] = (stock['grace']*cont_atr_threshold[2]) - cont_atr_threshold[stock['hygiene']]\r\n\t\tif stock['makeup'] > 1: stock_rate['temp_style'] += 10\r\n\t\tif stock['makeup'] > 0: stock_rate['temp_style'] += 10\r\n\t\tif stock['makeup'] = 0: stock_rate['temp_style'] -= 10\r\n\t\tif stock['perfume'] > 0: stock_rate['temp_style'] += 20\r\n\t\tif stock['perfume'] = 0: stock_rate['temp_style'] -= 10\r\n\t\tif stock['manicure'] > 0: stock_rate['temp_style'] += 10\r\n\t\tif stock['manicure'] = 0: stock_rate['temp_style'] -= 10\r\n\t\tif stock['epilation'] > 0: stock_rate['temp_style'] += 10\r\n\t\tif stock['epilation'] = 0: stock_rate['temp_style'] -= 10\r\n\t\tif stock['hairstyle'] < 1 and stock['wig'] > 0: stock['hairstyle'] = 1\r\n\t\tif stock['hairstyle'] > 0: stock_rate['temp_style'] += 10\r\n\t\tif stock['hairstyle'] = 0: stock_rate['temp_style'] -= 10\r\n\r\n\t\tstock['st_count'] = 0\r\n\t\tif stock['st_plus'] >= 1: stock['st_count'] = 1 & stock_rate['temp_style'] += 10\r\n\t\tif stock['st_plus'] >= 3: stock['st_count'] = 2 & stock_rate['temp_style'] += 10\r\n\t\tif stock['st_plus'] >= 6: stock['st_count'] = 3 & stock_rate['temp_style'] += 20\r\n\t\tif stock['st_plus'] >= 9: stock['st_count'] = 4 & stock_rate['temp_style'] += 20\r\n\t\tif stock['st_plus'] >= 13: stock['st_count'] = 5 & stock_rate['temp_style'] += 30\r\n\r\n\t\t",
+  "fixtureOnlyChange": "rand(1,100) ->1 in jo9_origin_growth to force approved style hit; no product writes"
+}

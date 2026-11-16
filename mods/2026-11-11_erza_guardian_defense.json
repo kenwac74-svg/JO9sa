@@ -1,0 +1,25 @@
+{
+  "id": "2026-11-11_erza_guardian_defense",
+  "status": "APPROVED",
+  "description": "Add the six approved Erza fixed damage modifiers and portal guardian morale-damage immunity; no other combat definitions changed.",
+  "before_sha256": "a08546afd58aff978c1b29b54ca00dcaf53654981ac8c05d1e7a357e4deceb53",
+  "after_sha256": "fef0baedfa22746366fc9ce5acf16e4fa04922fd63e9c5c133c559ecb4265357",
+  "edits": [
+    {
+      "location": "#противники",
+      "field": "body",
+      "old": "базовый_вред['erza'] = 10",
+      "new": "базовый_вред['erza'] = 10\r\n! JO9 MOD START ERZA_RESISTANCE_20261111\r\nмодификатор_колющий['erza'] = -10\r\nмодификатор_рубящий['erza'] = -10\r\nмодификатор_дробящий['erza'] = -5\r\nмодификатор_огонь['erza'] = -5\r\nмодификатор_холод['erza'] = -5\r\nмодификатор_психический['erza'] = 10\r\n! JO9 MOD END ERZA_RESISTANCE_20261111",
+      "count": 1,
+      "patchId": "ERZA_RESISTANCE_20261111"
+    },
+    {
+      "location": "#противники",
+      "field": "body",
+      "old": "бесстрашный['strazhnik'] = 0",
+      "new": "! JO9 MOD START PORTAL_GUARDIAN_MORALE_IMMUNITY_20261111\r\nбесстрашный['strazhnik'] = 1\r\n! JO9 MOD END PORTAL_GUARDIAN_MORALE_IMMUNITY_20261111",
+      "count": 1,
+      "patchId": "PORTAL_GUARDIAN_MORALE_IMMUNITY_20261111"
+    }
+  ]
+}

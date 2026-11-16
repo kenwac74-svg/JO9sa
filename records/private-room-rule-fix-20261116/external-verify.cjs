@@ -1,0 +1,15 @@
+'use strict';
+const fs=require('fs'),a=require('node:assert/strict'),c=require('G:/somi/JO9sa/tools/text-workshop/core.cjs');
+const root=__dirname,T='G:/Codex/tmp/private-rule-external-20261116',work='G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp',input=process.env.JO9_EXTERNAL_BASELINE||work;
+const raw=fs.readFileSync(input),p=JSON.parse(fs.readFileSync(root+'/external-edits.json','utf8')),d=c.parse(raw);a.equal(c.hash(raw),p.before_sha256);
+for(const e of p.edits){const l=d.locations.find(l=>l.name===e.location),b=c.shift(d.lines[l.body],5);a.equal(b.split(e.old).length,2);d.lines[l.body]=c.shift(b.replace(e.old,()=>e.new),-5);}
+const staged=c.serialize(d);a.equal(c.hash(staged),p.after_sha256);a(c.serialize(c.parse(staged)).equals(staged));
+const le=require('G:/somi/JO9sa/tools/qa/check-qsp-line-endings.cjs').inspect(staged),mb=require('G:/somi/JO9sa/tools/qa/check-qsp-marker-boundaries.cjs').inspectMarkerBoundaries(staged);a.equal(le.issues.length,0);a.equal(mb.issues.length,0);
+const old=c.parse(raw),changed=[];for(let i=0;i<d.locations.length;i++){const l=d.locations[i],o=old.locations[i];a.equal(l.name,o.name);if(d.lines[l.body]!==old.lines[o.body])changed.push(l.name);a.equal(d.lines[l.desc],old.lines[o.desc]);}
+a.deepEqual(changed.sort(),['jo9_room_duty','slave_stat']);
+const stat=c.shift(d.lines[d.locations.find(l=>l.name==='slave_stat').body],5);for(const e of p.edits.filter(e=>e.location==='slave_stat'&&e.new.includes('aria-disabled'))){const disabled=e.new.split('\r\n').find(l=>l.includes('aria-disabled'));a(!/href|EXEC:/.test(disabled));a(disabled.includes(p.scope.tooltip));}
+const evidence={sourceSha256:p.before_sha256,stagedSha256:p.after_sha256,changedLocations:changed,edits:p.edits.length,lineEndingIssues:le.issues.length,markerBoundaryIssues:mb.issues.length,roundtrip:true,red:[],green:JSON.parse(fs.readFileSync(T+'/client-results.json','utf8').replace(/^\uFEFF/,'')),limits:['Staged patch only; WORK remains unchanged.','Native UI fixture executes the real rule-rendering branches with output capture and a household-notice stub.','No screenshot, actual-save loading, full next_day integration or release validation claimed.','Existing primary-only guilt helper remains unchanged.']};
+for(const kind of ['set','daily','ui'])for(const mode of ['red','green']){const n=mode+'-'+kind,file=T+'/'+n+'-stderr.log',s=fs.readFileSync(file,'utf8');fs.writeFileSync(root+'/external-'+n+'-stderr.log',s);if(mode==='red'){const m=s.match(/showMessage\(\), str:\s*"([^"]+)"/);a(m&&m[1].startsWith('FAIL_'));evidence.red.push({name:n,expectedFailure:m[1]});}}
+a(evidence.green.length===3&&evidence.green.every(x=>x.pass));a.equal(c.hash(fs.readFileSync(input)),p.before_sha256);evidence.productionUnchanged=c.hash(fs.readFileSync(work))===p.before_sha256;
+fs.writeFileSync(root+'/external-verification.json',JSON.stringify(evidence,null,2));
+console.log(JSON.stringify({static:'PASS',native:'PASS',red:evidence.red,green:evidence.green.map(x=>({name:x.name,pass:x.pass})),productionUnchanged:evidence.productionUnchanged}));

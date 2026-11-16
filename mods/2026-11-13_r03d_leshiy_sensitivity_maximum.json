@@ -1,0 +1,33 @@
+{
+  "id": "2026-11-13_r03d_leshiy_sensitivity_maximum",
+  "status": "APPROVED",
+  "description": "R03-4 사용자 승인: 레시 감수성3이하 상한. 최저값 검사와 구분해 기존 임시 조건표에서 판정하고 알려진 옛 저장 선호 표현만 갱신. 체력/인지도/다른 기술/가격/평가/인물/진행 보존.",
+  "before_sha256": "4f2b7a9d4d664800a541e3cd47211c14f9097172279eeb410e473e99e7bc5c78",
+  "after_sha256": "1efab505a81b43dced363335b265f5f9399570ed07ac7b59a1e979cfe4ac059f",
+  "edits": [
+    {
+      "location": "#npc_base",
+      "field": "body",
+      "old": "$npc_preferences['leshiy'] = {\r\nstat_importance['sensitivity'] < 4\r\nstat_importance['intellect'] = 4\r\nstat_importance['ego'] = 4\r\nstat_importance['nurse'] = 4\r\nstat_importance['gladiatrix'] = 4\r\nstat_importance['enchanter'] = 5\r\nstat_importance['xenophily'] = 5\r\n}",
+      "new": "$npc_preferences['leshiy'] = {\r\nstat_importance['max_sensitivity'] = 3\r\nstat_importance['intellect'] = 4\r\nstat_importance['ego'] = 4\r\nstat_importance['nurse'] = 4\r\nstat_importance['gladiatrix'] = 4\r\nstat_importance['enchanter'] = 5\r\nstat_importance['xenophily'] = 5\r\n}",
+      "count": 1,
+      "patchId": "R03D_LESHIY_SENSITIVITY_MAX_20261113"
+    },
+    {
+      "location": "slave_sell_chek",
+      "field": "body",
+      "old": "dynamic $npc_preferences[$npc_id]\r\n",
+      "new": "dynamic $npc_preferences[$npc_id]\r\n! JO9 MOD START R03D_LESHIY_SENSITIVITY_MAX_20261113\r\n! stat_importance is cleared for each customer; an unset maximum adds no restriction.\r\nif stat_importance['max_sensitivity'] > 0 and slave['sensitivity'] > stat_importance['max_sensitivity']: sl_txt = 102 & exit\r\n! JO9 MOD END R03D_LESHIY_SENSITIVITY_MAX_20261113\r\n",
+      "count": 1,
+      "patchId": "R03D_LESHIY_SENSITIVITY_MAX_20261113"
+    },
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "! JO9 MOD START R03B_ARTEMIA_SKILL_CACHE_20261113\r\n",
+      "new": "! JO9 MOD START R03D_LESHIY_SENSITIVITY_CACHE_20261113\r\n! Replace only the known legacy Leshiy expression; preserve custom conditions and notes.\r\n$npc_preferences['leshiy'] = replace($npc_preferences['leshiy'], 'stat_importance[''sensitivity''] < 4', 'stat_importance[''max_sensitivity''] = 3')\r\n! JO9 MOD END R03D_LESHIY_SENSITIVITY_CACHE_20261113\r\n! JO9 MOD START R03B_ARTEMIA_SKILL_CACHE_20261113\r\n",
+      "count": 1,
+      "patchId": "R03D_LESHIY_SENSITIVITY_MAX_20261113"
+    }
+  ]
+}

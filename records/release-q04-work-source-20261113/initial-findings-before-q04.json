@@ -1,0 +1,42 @@
+[
+  {
+    "id": "G01",
+    "title": "조커 재구매 차단 플래그 불일치",
+    "status": "현재 실행코드 불일치 확인;수정 미적용;게임 재현 미실행",
+    "location": "#options:$KulaShop_options[2]:4216 및 interaction_city:6244:12241",
+    "evidence": "동적 실행 메뉴 if jokr = 0; 구매 본문 joker = 1. 둘 다 주석이 아니다.",
+    "source": "G:/somi/JO9sa/records/dohna-stats-20261112/REPORT_KO.md"
+  },
+  {
+    "id": "G02",
+    "title": "반복 구매자 목표·문의 상태 미연결",
+    "status": "현재 본문 문자열/기존감사 대조;미수정",
+    "location": "slave_sell_chek 및 interaction_city2992/9992/9995",
+    "evidence": "slave_sell_chek에서 anes/ermelinda/noemi/Elisabet_1..5 일치0. 별칭/다른상태로 전반 동작을 재현한 검사는 아니다.",
+    "source": "G:/somi/JO9sa/records/handoff-gap-audit-20261112/REPORT_KO.md"
+  },
+  {
+    "id": "G03",
+    "title": "요구·선호 콜백의 비교 연산자 잔여",
+    "status": "현재 본문 확인;수정/실행검증 없음",
+    "location": "#npc_base:3926~3941(kikimora),5459~5472(Artemia);추가3881~3894(leshiy)",
+    "evidence": "kikimora stat_importance8줄 > 및 min_beauty >; Artemia9줄 > 및 min_beauty >. 추가 leshiy sensitivity < 4,min_stamina > 3도 있음. 실행되는 저장 동적콜백의 코드이며 주석이 아니다. 모든 선호를 필수조건으로 승격하는 수정은 미승인.",
+    "source": "G:/somi/JO9sa/records/handoff-gap-audit-20261112/REPORT_KO.md"
+  },
+  {
+    "id": "G04",
+    "title": "일반 노예 반말 제외 방침과 공용 tone3 경로 차이",
+    "status": "사용자 결정 대비 현재 실행콜백 차이;수정 미적용",
+    "location": "#dynamic:$voice_profile:5222~5252,특히5244~5247",
+    "evidence": "11개 직업 목록은 지정8명 여부와 별개로 tone_code3을 선택한다. 다음줄 지정8명 예외를 추가하며 마지막에결과반환. 주석이아닌 {$voice_profile} 실행코드.",
+    "source": "G:/somi/JO9sa/docs/SLAVE_DIALOGUE_ASSEMBLY_RULES_CURRENT_20261112_KO.md"
+  },
+  {
+    "id": "G05",
+    "title": "신규·변경 저장 상태 최종 이관 도구",
+    "status": "D21:2.4.2 Full 배포 직전 개발 보류",
+    "location": "deferred-discussions D21",
+    "evidence": "인물 기본이름(같은ID+옛기본이름일때만),이미지경로/캐시,임시시루별칭;랠리/신의상/춘향/도나revision/PR17B4필드보존도 최종검토 필요. 지금미구현을 버그수정누락으로 표현하지 않는다.",
+    "source": "G:/somi/JO9sa/records/deferred-discussions-20261024/index.json"
+  }
+]

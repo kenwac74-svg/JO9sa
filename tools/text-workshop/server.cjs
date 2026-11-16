@@ -1,6 +1,11 @@
 'use strict';
 const fs=require('node:fs'); const path=require('node:path'); const http=require('node:http'); const crypto=require('node:crypto');
+// JO9 MOD START SIDEBAR_FRAME_PARENT_20261115
+const hubOrigins=(process.env.JO9_MODDING_HUB_ORIGIN||'').split(/\s+/).filter(origin=>/^http:\/\/127\.0\.0\.1:\d{1,5}$/.test(origin)&&Number(new URL(origin).port)>0&&Number(new URL(origin).port)<=65535);
+const hubFrameParent=[...new Set(hubOrigins)].join(' ')||"'none'";
+// JO9 MOD END SIDEBAR_FRAME_PARENT_20261115
 const core=require('./core.cjs');
+const embeddedShell=require('./embedded-shell.cjs');
 // JO9 MOD START: text-batch-replace-20261018-module
 const batchReplace=require('./batch-replace.cjs');
 // JO9 MOD END: text-batch-replace-20261018-module
@@ -19,7 +24,7 @@ const game=path.resolve(arg('--game-dir') || 'G:/somi/JO9/game');
 const target=path.join(game,'jack.qsp');
 const catalogRoot=path.resolve(arg('--catalog-dir')||path.join(game,'..','..','IMGMG'));
 const originalRoot=path.resolve(arg('--original-dir')||path.join(game,'..','..','JO9O','game'));
-const catalog=catalogModule.create(catalogRoot);
+const catalog=catalogModule.create(catalogRoot,{characterIds:()=>characterImageLinks.ids()}); // JO9 MOD JSON_CHARACTER_DISCOVERY_20261111
 // JO9 MOD START PATCH_SCHEDULE_20261107
 const patchSchedule=require('./patch-schedule.cjs').create(catalogRoot);
 // JO9 MOD END PATCH_SCHEDULE_20261107
@@ -50,6 +55,7 @@ const catalogSyncVersion=require('./catalog-sync-version.cjs');
 function catalogSyncPlan(){return catalogSyncVersion.plan(current().raw,fs.readFileSync(path.join(catalogRoot,'catalog_status.js')),fs.readFileSync(path.join(catalogRoot,'catalog_merge_vs_original.html'),'utf8'),fs.existsSync(path.join(game,'modtools/image-original-cuts.json'))?JSON.parse(fs.readFileSync(path.join(game,'modtools/image-original-cuts.json'),'utf8')):{},originalCutRegistrar.readRows(catalogRoot));}
 const localPic=require('./pic-local.cjs').create(game,catalogRoot,catalog,imageCuts);
 const characterImageLinks=require('./character-image-links.cjs').create(game,catalogRoot,{files:force=>localPic.scan(force)}); // JO9 MOD CHARACTER_IMAGE_LINKS_20261108
+const characterPortraitFrames=require('./character-portrait-frame.cjs').create(characterImageLinks,localPic); // JO9 MOD CHARACTER_PORTRAIT_FRAME_20261111
 function syncSavedOriginals(paths,reconcile=false,expected){
   const registration=originalCutRegistrar.register(game,catalogRoot,originalRoot,runtime,paths,reconcile);
   if(expected){try{catalogSyncVersion.assertCurrent(expected,catalogSyncPlan());}catch(error){originalCutRegistrar.rollback(registration);throw error;}}
@@ -142,15 +148,15 @@ const server=http.createServer(async(req,res)=>{
     const url=new URL(req.url,'http://'+host);
     // JO9 MOD START PATCH_SCHEDULE_PAGE_20261107
     if(req.method==='GET'&&url.pathname==='/patch-schedule'){
-      res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','Content-Security-Policy':"default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'"});
-      res.end(patchSchedule.page(token));return;
+      res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','Content-Security-Policy':"default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self'; frame-ancestors "+hubFrameParent+"; base-uri 'none'; form-action 'none'"});
+      res.end(embeddedShell.page(patchSchedule.page(token),'schedule'));return;
     }
     // JO9 MOD END PATCH_SCHEDULE_PAGE_20261107
     if(req.method==='GET' && url.pathname==='/'){
-      res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','Content-Security-Policy':"default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self' blob: data:; worker-src 'self' blob:; frame-ancestors 'none'; base-uri 'none'; form-action 'none'"});
+      res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','Content-Security-Policy':"default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self' blob: data:; worker-src 'self' blob:; frame-ancestors "+hubFrameParent+"; base-uri 'none'; form-action 'none'"});
       res.end(fs.readFileSync(path.join(__dirname,'index.html'),'utf8').replace('__SESSION_TOKEN__',token));return;
     }
-    if(req.method==='GET'&&url.pathname==='/workshop.css'){res.writeHead(200,{'Content-Type':'text/css; charset=utf-8','Cache-Control':'no-store'});res.end(fs.readFileSync(path.join(__dirname,'workshop.css'),'utf8'));return;}
+    if(req.method==='GET'&&['/workshop.css','/workshop-shell.css'].includes(url.pathname)){res.writeHead(200,{'Content-Type':'text/css; charset=utf-8','Cache-Control':'no-store'});res.end(fs.readFileSync(path.join(__dirname,url.pathname.slice(1)),'utf8'));return;}
     // JO9 MOD START: text-batch-replace-20261018-static
     if(req.method==='GET'&&['/script-review.js','/script-import-ui.js','/workshop-ui.js','/script-export.js','/dialogue-ai.js','/editing-tools.js','/variable-inspector.js','/batch-replace.js','/catalog-cut-conditions.js','/script-range.js','/dialogue-image-ui.js'].includes(url.pathname)){res.writeHead(200,{'Content-Type':'text/javascript; charset=utf-8','Cache-Control':'no-store'});res.end(fs.readFileSync(path.join(__dirname,url.pathname.slice(1)),'utf8'));return;}
     // JO9 MOD END: text-batch-replace-20261018-static
@@ -168,22 +174,22 @@ const server=http.createServer(async(req,res)=>{
       html=html.replace(/<head(?:\s[^>]*)?>/i,head=>head+'<script>window.JO9_CATALOG_BRIDGE='+cfg+';</script>');
       // file:// cannot be displayed inside HTTP pages. Serve only allowlisted catalog images.
       html=html.replace("function url(p){", "function url(p){if(p.indexOf(MR+'\\\\')===0||p.indexOf(OR+'\\\\')===0){var orig=p.indexOf(OR+'\\\\')===0;return '/api/catalog-asset?t='+"+JSON.stringify(token)+"+'&original='+(orig?'1':'0')+'&p='+encodeURIComponent(p.substring((orig?OR:MR).length+1));}");
-      const nativeCatalog=catalogTabs.native(html);html=catalogTabs.shell(html);
+      const nativeCatalog=catalogTabs.native(html);html=catalogTabs.shell(html);html=html.replace(/<\/body>/i,'<script src="catalog-search-bridge.js"></script><script src="catalog-resource-source.js"></script></body>');
       html=html.replace(/<\/body>/i,nativeCatalog?'<script src="catalog_grok.js"></script></body>':'<script src="catalog_grok.js"></script><script src="catalog_cuts.js"></script><script src="catalog-cut-conditions.js"></script></body>');
-      res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store'});res.end(html);return;
+      res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store'});res.end(embeddedShell.page(html,'checklist'));return;
     }
     if(req.method==='GET'&&url.pathname.startsWith('/catalog-tab/')){
       const key=url.pathname.slice('/catalog-tab/'.length),html=fs.readFileSync(path.join(catalogRoot,'catalog_merge_vs_original.html'),'utf8'),payload=catalogTabs.payload(html,key,true);
       if(payload===null){res.writeHead(404);res.end();return;}
-      const code=key==='conditions'?[...payload.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(m=>m[1]).join('\n'):payload;
+      const code=key==='conditions'?[...payload.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(m=>m[1]).join('\n'):payload+(key==='gallery'?'<script src="catalog-refresh.js"></script>':'');
       res.writeHead(200,{'Content-Type':key==='conditions'?'text/javascript; charset=utf-8':'text/html; charset=utf-8','Cache-Control':'no-store'});res.end(code);return;
     }
-    const catalogFiles=['catalog-tabs.js','catalog_cuts.js','catalog_status.js','catalog_work_codes.js','catalog_workshop.js','catalog_editor.js','catalog_pic.js','catalog_local_pic.js','catalog_grok.js'];
+    const catalogFiles=['catalog-search-bridge.js','catalog-resource-source.js','catalog-refresh.js','catalog-tabs.js','catalog_cuts.js','catalog_status.js','catalog_work_codes.js','catalog_workshop.js','catalog_editor.js','catalog_pic.js','catalog_local_pic.js','catalog_grok.js'];
     if(req.method==='GET'&&catalogFiles.includes(url.pathname.slice(1))){
       const file=url.pathname.slice(1);let text;
       if(file==='catalog_status.js')text='window.CATALOG_STATUS='+JSON.stringify(catalog.state())+';';
       else if(file==='catalog_work_codes.js')text='window.JO9_WORK_CODES='+JSON.stringify(catalog.snapshot().codes||{})+';window.JO9_WORK_UNITS='+JSON.stringify(catalog.snapshot().unitCodes||{})+';';
-      else {const full=path.join(catalogRoot,file);if(!fs.existsSync(full)){res.writeHead(404);res.end();return;}text=fs.readFileSync(full,'utf8');if(file==='catalog_pic.js')text=fs.readFileSync(path.join(catalogRoot,'catalog_local_pic.js'),'utf8')+'\n'+text;}
+      else {const full=path.join(['catalog-refresh.js','catalog-search-bridge.js','catalog-resource-source.js'].includes(file)?__dirname:catalogRoot,file);if(!fs.existsSync(full)){res.writeHead(404);res.end();return;}text=fs.readFileSync(full,'utf8');if(file==='catalog_pic.js')text=fs.readFileSync(path.join(catalogRoot,'catalog_local_pic.js'),'utf8')+'\n'+text;}
       res.writeHead(200,{'Content-Type':'text/javascript; charset=utf-8','Cache-Control':'no-store'});res.end(text);return;
     }
     if(req.method==='GET'&&url.pathname==='/api/catalog-asset'){
@@ -275,6 +281,13 @@ const server=http.createServer(async(req,res)=>{
     if(req.method==='POST'&&url.pathname==='/api/catalog/character-images/read'){const input=await body(req,100000);json(res,200,characterImageLinks.read(input.ids,{rescan:input.rescan===true}));return;}
     if(req.method==='POST'&&url.pathname==='/api/catalog/character-images/apply'){json(res,200,characterImageLinks.apply(await body(req,20000)));return;}
     // JO9 MOD END CHARACTER_IMAGE_LINKS_20261108-routes
+    // JO9 MOD START CHARACTER_PORTRAIT_FRAME_API_20261111
+    if(url.pathname.startsWith('/api/catalog/portrait-frame/')){
+      const action=url.pathname.slice('/api/catalog/portrait-frame/'.length);
+      if(req.method!=='POST'||!['preview','apply'].includes(action)){json(res,400,{error:'초상 테두리 요청을 확인하세요.'});return;}
+      json(res,200,characterPortraitFrames[action](await body(req,10000)));return;
+    }
+    // JO9 MOD END CHARACTER_PORTRAIT_FRAME_API_20261111
     if(req.method==='GET'&&url.pathname==='/api/catalog/state'){
       if(url.searchParams.get('brief')==='1'){json(res,200,{available:catalog.load(),...catalog.state()});return;}
       if(url.searchParams.has('since')&&Number(url.searchParams.get('since'))===Number(catalog.state().savedAt||0)){json(res,200,{unchanged:true,available:catalog.load()});return;}

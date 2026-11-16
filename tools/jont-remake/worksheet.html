@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JoNT 장면 작업표</title>
+<style>
+:root{--bg:#14161b;--p:#1d2027;--p2:#181b21;--l:#2e333d;--t:#e6e8ec;--m:#9aa1ad;--a:#d9a441;--b:#5aa7d9;--r:#c9a0a0;--g:#6cc08b;--in:#111318;--w:#e06c6c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--t);font:14px/1.5 "Malgun Gothic","Apple SD Gothic Neo",sans-serif}
+header{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--l);padding:10px 16px}
+h1{font-size:16px;margin:0;color:var(--a)}
+.bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.k{color:var(--m);font-size:12px}
+input[type=text],input[type=search],select,textarea{background:var(--in);color:var(--t);border:1px solid var(--l);border-radius:5px;padding:4px 8px;font:inherit;font-size:13px}
+button{background:#2b303a;color:var(--t);border:1px solid var(--l);border-radius:5px;padding:4px 9px;cursor:pointer;font:inherit;font-size:12px;white-space:nowrap}
+button:hover{border-color:var(--a)}
+button:disabled{opacity:.4;cursor:default}
+button.pri{background:var(--a);border-color:var(--a);color:#111;font-weight:bold}
+.tabs{display:inline-flex;border:1px solid var(--l);border-radius:6px;overflow:hidden}
+.tabs button{border:0;border-radius:0;background:transparent;padding:5px 14px;font-size:13px}
+.tabs button.on{background:var(--a);color:#111;font-weight:bold}
+.chip{display:inline-flex;align-items:center;gap:3px;border:1px solid var(--l);border-radius:12px;padding:1px 8px;font-size:12px;cursor:pointer;user-select:none}
+.chip input{margin:0}
+.chip.off{opacity:.45}
+.box{border:1px solid var(--l);border-radius:6px;padding:6px 8px;background:var(--p2);display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.box.on{border-color:var(--a)}
+main{padding:12px 16px;display:grid;gap:10px}
+.c{display:grid;grid-template-columns:220px 1fr;gap:12px;background:var(--p);border:1px solid var(--l);border-radius:8px;padding:10px}
+.c.done{opacity:.45}
+@media(max-width:860px){.c{grid-template-columns:1fr}}
+.c img{width:100%;border-radius:5px}
+.fn{font-family:Consolas,monospace;color:var(--b)}
+.row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+textarea{width:100%;font:12px Consolas,monospace;resize:vertical}
+table{width:100%;border-collapse:collapse;margin-top:6px}
+td{padding:2px 4px;vertical-align:middle;border-top:1px solid var(--l)}
+td.lb{width:64px;color:var(--m);font-size:12px;white-space:nowrap}
+td.lb.off{text-decoration:line-through;opacity:.5}
+td.lb .at{color:var(--a);font-size:11px;margin-left:2px}
+td input{width:100%;background:transparent;color:var(--t);border:1px solid transparent;border-radius:4px;padding:2px 5px;font:12px Consolas,monospace}
+td input:focus{border-color:var(--l);background:var(--in);outline:none}
+td input.ed{color:var(--g)}
+td input.ov{color:var(--a)}
+td.cp{width:40px}
+.pager{display:flex;gap:6px;align-items:center;justify-content:center;padding:6px}
+.toast{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);background:var(--a);color:#111;padding:5px 12px;border-radius:6px;font-weight:bold;opacity:0;transition:opacity .2s;pointer-events:none;z-index:30}
+.toast.s{opacity:1}
+/* 샘플 탭 */
+.cat{background:var(--p);border:1px solid var(--l);border-radius:8px;padding:10px}
+.cat h2{font-size:14px;margin:0;color:var(--a)}
+.drop{border:1px dashed var(--l);border-radius:6px;padding:10px;text-align:center;color:var(--m);font-size:12px;cursor:pointer;margin:8px 0}
+.drop.over{border-color:var(--a);color:var(--a)}
+.items{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:8px}
+.it{display:grid;grid-template-columns:96px 1fr;gap:8px;background:var(--p2);border:1px solid var(--l);border-radius:6px;padding:6px}
+.it.act{border-color:var(--g)}
+.it img{width:96px;height:96px;object-fit:cover;border-radius:4px}
+.it textarea{min-height:44px;font-size:11px;padding:3px 5px}
+.it .nm{width:100%;font-family:Consolas,monospace;font-size:12px;padding:2px 5px}
+.it .err{color:var(--w);font-size:12px}
+/* @ 목록 */
+.ac{position:absolute;z-index:40;background:var(--p);border:1px solid var(--a);border-radius:6px;max-height:280px;overflow:auto;min-width:320px;max-width:560px;box-shadow:0 6px 18px #0008}
+.ac div{display:grid;grid-template-columns:44px 1fr;gap:8px;padding:4px 6px;cursor:pointer;align-items:center}
+.ac div.on,.ac div:hover{background:#2b303a}
+.ac img{width:44px;height:44px;object-fit:cover;border-radius:3px}
+.ac b{font-family:Consolas,monospace;color:var(--a);font-size:12px}
+.ac span{display:block;font-size:11px;color:var(--m);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ac .none{display:block;color:var(--m);font-size:12px;padding:6px 8px;cursor:default}
+.hide{display:none!important}
+</style>
+</head>
+<body>
+<header>
+  <div class="row"><h1 id="title"></h1>
+    <div class="tabs"><button data-tab="scenes">장면</button><button data-tab="samples">샘플</button></div>
+    <span class="k" id="info"></span><span style="flex:1"></span>
+    <span class="scn row"><button class="pri" id="cpAll">보이는 전체 복사</button><button id="csv">현재 설정으로 CSV</button></span></div>
+  <div class="scn">
+    <div class="bar">
+      <select id="mode"><option value="tags">태그식</option><option value="prose">문장식</option></select>
+      <span class="k">앞 글</span><input type="text" id="prefix" style="width:300px" placeholder="품질·화풍 태그 (비워도 됨)">
+      <span class="k">캐릭터</span><input type="text" id="mention" style="width:110px" placeholder="@핸들">
+      <label class="chip"><input type="checkbox" checked disabled> 성인 표시(고정)</label>
+    </div>
+    <div class="bar" id="fieldBar"></div>
+    <div class="bar">
+      <div class="box" id="ovBox">
+        <label class="chip" style="border:0"><input type="checkbox" id="ovOn"> 의상 일괄 바꾸기</label>
+        <input type="text" id="ovText" style="width:280px" placeholder="예: maid outfit, white apron  ·  @ 로 의상 샘플">
+        <label class="chip"><input type="checkbox" id="keepNude" checked> 알몸 장면은 그대로</label>
+        <label class="chip"><input type="checkbox" id="dropState"> 옷 상태도 지우기</label>
+      </div>
+      <input type="search" id="q" placeholder="커맨드 찾기 (bath, kiss…)" style="width:170px">
+      <label class="chip"><input type="checkbox" id="hide"> 완료 숨기기</label>
+      <button id="resetEd">고친 칸 모두 되돌리기</button>
+      <span class="k" id="cnt"></span>
+    </div>
+  </div>
+  <div class="smp bar">
+    <span class="k" id="smpInfo"></span>
+  </div>
+</header>
+
+<section class="scn">
+  <div class="pager" id="pgTop"></div>
+  <main id="m"></main>
+  <div class="pager" id="pgBot"></div>
+</section>
+<section class="smp"><main id="lib"></main></section>
+<div class="ac hide" id="ac"></div>
+<div class="toast" id="t"></div>
+
+<script>
+const D = /*__DATA__*/null;
+const PAGE = 30;
+const KEY = 'jont-ws-' + D.title;
+const $ = id => document.getElementById(id);
+const e = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const split = s => String(s || '').split(',').map(t => t.trim()).filter(Boolean);
+const join = (...a) => { const seen = new Set(); return a.flatMap(split).filter(t => { const k = t.toLowerCase(); if (seen.has(k)) return false; seen.add(k); return true }).join(', ') };
+const CATS = Object.fromEntries(D.sampleCats.map(([id,lb,px]) => [id,{lb,px}]));
+
+let S = { tab:'scenes', mode:'tags', prefixTags:D.tagPrefix, prefixProse:D.prosePrefix, mention:D.mention, use:Object.fromEntries(D.fields.map(f=>[f[0],true])), useCount:true,
+  ovOn:false, ovText:'', keepNude:true, dropState:false, q:'', hide:false, done:{}, ed:{}, page:0 };
+try { const s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s) S = { ...S, ...s, use:{ ...S.use, ...(s.use||{}) } } } catch (_) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)) } catch (_) {} };
+
+// 샘플 라이브러리: 서버로 열었으면 library.json, 파일로 열었으면 내보낼 때의 사본 + 이 브라우저 저장
+let LIB = D.library && Array.isArray(D.library.items) ? D.library : { items: [] };
+if (!D.server) { try { const l = JSON.parse(localStorage.getItem('jont-lib') || 'null'); if (l && Array.isArray(l.items)) LIB = l } catch (_) {} }
+let libTimer = null;
+function saveLib(){
+  clearTimeout(libTimer);
+  libTimer = setTimeout(async ()=>{
+    const items = LIB.items.filter(x=>!x.pending);
+    if (D.server) { try { await fetch('/api/library',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({items})}) } catch(_) { toast('라이브러리 저장 실패') } }
+    else { try { localStorage.setItem('jont-lib', JSON.stringify({items})) } catch(_) {} }
+  }, 300);
+}
+
+function toast(x){ const t=$('t'); t.textContent=x; t.classList.add('s'); setTimeout(()=>t.classList.remove('s'),1300) }
+async function cp(x){ try{ await navigator.clipboard.writeText(x) }catch(_){ const a=document.createElement('textarea'); a.value=x; document.body.appendChild(a); a.select(); document.execCommand('copy'); a.remove() } toast('복사했어요') }
+
+// ── 장면 탭 ────────────────────────────────────────────────
+const isNude = f => /\b(nude|naked|nothing)\b/i.test(`${f.outfit.tags} ${f.outfit.text}`);
+function fieldsOf(r){
+  const f = {};
+  for (const [id] of D.fields) f[id] = { tags:r.f[id]?.tags||'', text:r.f[id]?.text||'', ov:false };
+  if (S.ovOn && S.ovText.trim() && !(S.keepNude && isNude(f))) {
+    f.outfit = { tags:S.ovText.trim(), text:`She wears ${S.ovText.trim()}.`, ov:true };
+    if (S.dropState) f.outfit_state = { tags:'', text:'', ov:true };
+  }
+  for (const [id] of D.fields) {
+    const ed = S.ed[r.out+'|'+id];
+    if (ed) { if (ed.tags !== undefined) f[id].tags = ed.tags; if (ed.text !== undefined) f[id].text = ed.text; f[id].ed = true }
+  }
+  return f;
+}
+function promptOf(r){
+  const f = fieldsOf(r), use = D.fields.map(x=>x[0]).filter(id=>S.use[id]);
+  const mention = S.mention.trim() ? '@'+S.mention.trim().replace(/^@/,'') : '';
+  if (S.mode === 'prose') {
+    const parts = use.map(id=>f[id].text).filter(Boolean).map(s=>/[.!?]$/.test(s)?s:s+'.');
+    return [mention, S.prefixProse, ...parts, D.safeProse].filter(Boolean).join(' ').replace(/\s+/g,' ').trim();
+  }
+  return join(mention, S.prefixTags, S.useCount ? r.count : '', D.safeTags, ...use.map(id=>f[id].tags));
+}
+function visible(){
+  const q = S.q.trim().toLowerCase();
+  return D.rows.map((r,i)=>[r,i]).filter(([r])=>(!q || r.key.includes(q) || r.out.toLowerCase().includes(q)) && !(S.hide && S.done[r.out]));
+}
+function renderControls(){
+  $('title').textContent = D.title;
+  document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on', b.dataset.tab===S.tab));
+  document.querySelectorAll('.scn').forEach(x=>x.classList.toggle('hide', S.tab!=='scenes'));
+  document.querySelectorAll('.smp').forEach(x=>x.classList.toggle('hide', S.tab!=='samples'));
+  $('info').textContent = `저장 위치: …/${D.relOut}/ · ${D.rows.length}장` + (D.missing ? ` · 아직 해석 안 됨 ${D.missing}장` : '') + (D.oldFormat ? ` · 예전 형식 ${D.oldFormat}장(다시 해석 필요)` : '');
+  $('mode').value = S.mode;
+  $('prefix').value = S.mode==='prose' ? S.prefixProse : S.prefixTags;
+  $('mention').value = S.mention;
+  $('ovOn').checked = S.ovOn; $('ovText').value = S.ovText; $('keepNude').checked = S.keepNude; $('dropState').checked = S.dropState;
+  $('ovBox').classList.toggle('on', S.ovOn);
+  $('q').value = S.q; $('hide').checked = S.hide;
+  const bar = $('fieldBar');
+  bar.innerHTML = '<span class="k">넣을 항목</span>' +
+    `<label class="chip ${S.useCount?'':'off'}"><input type="checkbox" data-f="__count" ${S.useCount?'checked':''}> 인원</label>` +
+    D.fields.map(([id,lb])=>`<label class="chip ${S.use[id]?'':'off'}"><input type="checkbox" data-f="${id}" ${S.use[id]?'checked':''}> ${lb}</label>`).join('') +
+    ' <button id="allOn">모두</button><button id="sceneOnly">장면만(의상 빼기)</button><button id="outfitOnly">의상만</button>';
+  bar.querySelectorAll('input[data-f]').forEach(el=>el.onchange=()=>{ if(el.dataset.f==='__count') S.useCount=el.checked; else S.use[el.dataset.f]=el.checked; save(); renderControls(); draw() });
+  $('allOn').onclick=()=>{ D.fields.forEach(([id])=>S.use[id]=true); S.useCount=true; save(); renderControls(); draw() };
+  $('sceneOnly').onclick=()=>{ D.fields.forEach(([id])=>S.use[id]=!['outfit','outfit_state'].includes(id)); save(); renderControls(); draw() };
+  $('outfitOnly').onclick=()=>{ D.fields.forEach(([id])=>S.use[id]=['outfit','outfit_state'].includes(id)); S.useCount=false; save(); renderControls(); draw() };
+}
+function pager(total){
+  const pages = Math.max(1, Math.ceil(total/PAGE));
+  if (S.page >= pages) S.page = pages-1;
+  const html = pages<2 ? '' : `<button data-pg="${S.page-1}" ${S.page?'':'disabled'}>‹ 이전</button><span class="k">${S.page+1} / ${pages}</span><button data-pg="${S.page+1}" ${S.page<pages-1?'':'disabled'}>다음 ›</button>`;
+  $('pgTop').innerHTML = html; $('pgBot').innerHTML = html;
+}
+function draw(){
+  const vis = visible();
+  pager(vis.length);
+  const slice = vis.slice(S.page*PAGE, S.page*PAGE+PAGE);
+  const fk = S.mode==='prose' ? 'text' : 'tags';
+  $('m').innerHTML = slice.map(([r,i])=>{
+    const f = fieldsOf(r);
+    const rows = D.fields.map(([id,lb])=>{
+      const v = f[id][fk], cls = f[id].ed ? 'ed' : f[id].ov ? 'ov' : '';
+      const at = CATS[id] ? '<span class="at" title="@ 로 샘플 넣기">@</span>' : '';
+      return `<tr><td class="lb ${S.use[id]?'':'off'}">${lb}${at}</td><td><input class="${cls}" data-i="${i}" data-id="${id}" value="${e(v)}" placeholder="${CATS[id]?'@ 로 샘플 고르기':'—'}"></td><td class="cp"><button data-a="cf" data-i="${i}" data-id="${id}">복사</button></td></tr>`;
+    }).join('');
+    return `<div class="c ${S.done[r.out]?'done':''}">
+      <a href="${e(r.srcUrl)}" target="_blank"><img loading="lazy" src="${e(r.thumb||r.srcUrl)}" alt=""></a>
+      <div>
+        <div class="row"><span class="fn">${e(r.out)}</span><span class="k">원본 ${e(r.src)} · 인원 ${e(r.count||'-')}</span><span style="flex:1"></span>
+          <button class="pri" data-a="p" data-i="${i}">프롬프트 복사</button><button data-a="n" data-i="${i}">네거티브</button><button data-a="fn" data-i="${i}">파일명</button>
+          <label class="chip"><input type="checkbox" data-a="d" data-i="${i}" ${S.done[r.out]?'checked':''}> 완료</label></div>
+        <textarea rows="3" readonly data-out="${i}">${e(promptOf(r))}</textarea>
+        <table>${rows}</table>
+      </div></div>`;
+  }).join('') || '<p class="k">표시할 장면이 없어요.</p>';
+  $('cnt').textContent = `표시 ${vis.length} · 완료 ${Object.values(S.done).filter(Boolean).length}/${D.rows.length}`;
+}
+function setField(el){
+  const r = D.rows[el.dataset.i], k = r.out+'|'+el.dataset.id, fk = S.mode==='prose'?'text':'tags';
+  S.ed[k] = { ...(S.ed[k]||{}), [fk]: el.value }; el.className = 'ed'; save();
+  document.querySelector(`textarea[data-out="${el.dataset.i}"]`).value = promptOf(r);
+}
+$('m').addEventListener('input', ev=>{ const el = ev.target; if (!el.dataset.id) return; setField(el); acCheck(el, el.dataset.id) });
+$('m').addEventListener('click', ev=>{
+  const b = ev.target.closest('[data-a]'); if (!b) return;
+  const r = D.rows[b.dataset.i];
+  if (b.dataset.a==='p') cp(promptOf(r));
+  if (b.dataset.a==='n') cp(D.negative);
+  if (b.dataset.a==='fn') cp(r.out.replace(/\.png$/,''));
+  if (b.dataset.a==='cf') cp(fieldsOf(r)[b.dataset.id][S.mode==='prose'?'text':'tags']);
+  if (b.dataset.a==='d') { S.done[r.out] = b.checked; save(); draw() }
+});
+document.addEventListener('click', ev=>{ const b = ev.target.closest('[data-pg]'); if (!b) return; S.page = +b.dataset.pg; save(); draw(); window.scrollTo(0,0) });
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{ S.tab=b.dataset.tab; save(); renderControls(); if (S.tab==='samples') drawLib(); else draw() });
+$('mode').onchange = ()=>{ S.mode=$('mode').value; save(); renderControls(); draw() };
+$('prefix').oninput = ()=>{ if (S.mode==='prose') S.prefixProse=$('prefix').value; else S.prefixTags=$('prefix').value; save(); draw() };
+$('mention').oninput = ()=>{ S.mention=$('mention').value; save(); draw() };
+$('ovOn').onchange = ()=>{ S.ovOn=$('ovOn').checked; $('ovBox').classList.toggle('on',S.ovOn); save(); draw() };
+$('ovText').oninput = ()=>{ setOv($('ovText').value); acCheck($('ovText'), 'outfit', true) };
+function setOv(v){ S.ovText=v; if (v.trim() && !S.ovOn) { S.ovOn=true; $('ovOn').checked=true; $('ovBox').classList.add('on') } save(); draw() }
+$('keepNude').onchange = ()=>{ S.keepNude=$('keepNude').checked; save(); draw() };
+$('dropState').onchange = ()=>{ S.dropState=$('dropState').checked; save(); draw() };
+$('q').oninput = ()=>{ S.q=$('q').value; S.page=0; save(); draw() };
+$('hide').onchange = ()=>{ S.hide=$('hide').checked; S.page=0; save(); draw() };
+$('resetEd').onclick = ()=>{ if (!Object.keys(S.ed).length) return toast('고친 칸이 없어요'); if (!confirm('직접 고친 칸을 모두 원래대로 되돌릴까요?')) return; S.ed={}; save(); draw() };
+$('cpAll').onclick = ()=>{ const v = visible(); if (!v.length) return; cp(v.map(([r])=>`### ${r.out}\n${promptOf(r)}`).join('\n\n')) };
+$('csv').onclick = ()=>{
+  const q = s => '"'+String(s??'').replace(/"/g,'""')+'"';
+  const fk = S.mode==='prose'?'text':'tags';
+  const head = ['save_as','source','command','prompt','negative', ...D.fields.map(f=>f[0])];
+  const lines = visible().map(([r])=>{ const f=fieldsOf(r); return [r.out, r.src, r.key, promptOf(r), D.negative, ...D.fields.map(([id])=>f[id][fk])].map(q).join(',') });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['﻿'+[head.join(','),...lines].join('\r\n')],{type:'text/csv'})); a.download = D.title.replace(/\W+/g,'_')+'_prompts.csv'; a.click();
+};
+
+// ── @ 로 샘플 고르기 ───────────────────────────────────────
+let AC = null; // { el, cat, start, list, sel, forceTags }
+function acCheck(el, cat, forceTags){
+  if (!CATS[cat]) return acClose();
+  const pos = el.selectionStart ?? el.value.length, before = el.value.slice(0,pos);
+  const m = before.match(/@([^\s,@]*)$/);
+  if (!m) return acClose();
+  const q = m[1].toLowerCase();
+  const list = LIB.items.filter(x=>x.cat===cat && x.active && !x.pending && !x.error)
+    .filter(x=>!q || x.name.toLowerCase().includes(q) || (x.tags||'').toLowerCase().includes(q) || (x.text||'').toLowerCase().includes(q));
+  AC = { el, cat, start: pos - m[0].length, end: pos, list, sel: 0, forceTags };
+  const box = $('ac'), r = el.getBoundingClientRect();
+  box.style.left = (r.left + window.scrollX) + 'px'; box.style.top = (r.bottom + window.scrollY + 2) + 'px';
+  box.innerHTML = list.length
+    ? list.map((x,i)=>`<div data-k="${i}" class="${i?'':'on'}"><img src="${e(x.thumb)}" alt=""><p style="margin:0;min-width:0"><b>@${e(x.name)}</b><span>${e((S.mode==='prose'&&!forceTags)?x.text:x.tags)}</span></p></div>`).join('')
+    : `<span class="none">체크된 ${CATS[cat].lb} 샘플이 없어요. 「샘플」 탭에서 올리고 체크하세요.</span>`;
+  box.classList.remove('hide');
+}
+function acClose(){ AC = null; $('ac').classList.add('hide') }
+function acPick(i){
+  if (!AC || !AC.list[i]) return;
+  const x = AC.list[i], el = AC.el;
+  const val = (S.mode==='prose' && !AC.forceTags) ? x.text : x.tags;
+  el.value = el.value.slice(0,AC.start) + val + el.value.slice(AC.end);
+  const caret = AC.start + val.length;
+  acClose();
+  el.focus(); el.setSelectionRange(caret, caret);
+  if (el.id === 'ovText') setOv(el.value); else setField(el);
+  toast(`@${x.name} 넣었어요`);
+}
+document.addEventListener('keydown', ev=>{
+  if (!AC || $('ac').classList.contains('hide')) return;
+  const n = AC.list.length;
+  if (ev.key==='ArrowDown' && n) { AC.sel=(AC.sel+1)%n; ev.preventDefault() }
+  else if (ev.key==='ArrowUp' && n) { AC.sel=(AC.sel-1+n)%n; ev.preventDefault() }
+  else if ((ev.key==='Enter' || ev.key==='Tab') && n) { ev.preventDefault(); return acPick(AC.sel) }
+  else if (ev.key==='Escape') return acClose();
+  else return;
+  $('ac').querySelectorAll('[data-k]').forEach((d,i)=>d.classList.toggle('on', i===AC.sel));
+  $('ac').querySelector('.on')?.scrollIntoView({block:'nearest'});
+}, true);
+$('ac').addEventListener('mousedown', ev=>{ const d = ev.target.closest('[data-k]'); if (!d) return; ev.preventDefault(); acPick(+d.dataset.k) });
+document.addEventListener('focusout', ()=>setTimeout(()=>{ if (AC && document.activeElement !== AC.el) acClose() }, 150));
+window.addEventListener('scroll', ()=>{ if (AC) acCheck(AC.el, AC.cat, AC.forceTags) });
+
+// ── 샘플 탭 ───────────────────────────────────────────────
+function nextName(cat){
+  const px = CATS[cat].px, used = new Set(LIB.items.map(x=>x.name));
+  for (let n=1;;n++){ const nm = px + String(n).padStart(2,'0'); if (!used.has(nm)) return nm }
+}
+function shrink(file, max, q){
+  return new Promise((res,rej)=>{
+    const img = new Image(), url = URL.createObjectURL(file);
+    img.onload = ()=>{ const s = Math.min(1, max/Math.max(img.width,img.height)); const c = document.createElement('canvas'); c.width=Math.round(img.width*s); c.height=Math.round(img.height*s); c.getContext('2d').drawImage(img,0,0,c.width,c.height); URL.revokeObjectURL(url); res(c.toDataURL('image/jpeg', q)) };
+    img.onerror = ()=>{ URL.revokeObjectURL(url); rej(new Error('이미지를 읽을 수 없어요')) };
+    img.src = url;
+  });
+}
+async function extract(item){
+  if (!D.server) { item.error = '이미지 해석은 「node remake.mjs serve」로 열었을 때만 돼요.'; item.pending=false; drawLib(); return }
+  item.pending = true; item.error = ''; drawLib();
+  try {
+    const r = await fetch('/api/extract', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({cat:item.cat, image:item.image})});
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error || ('HTTP '+r.status));
+    item.tags = j.tags; item.text = j.text; item.active = true;
+  } catch (err) { item.error = String(err.message || err) }
+  item.pending = false; saveLib(); drawLib();
+}
+async function addFiles(cat, files){
+  for (const file of files) {
+    if (!/^image\//.test(file.type)) continue;
+    try {
+      const item = { id: Date.now()+'-'+Math.random().toString(36).slice(2,7), cat, name: nextName(cat), active:false, tags:'', text:'',
+        thumb: await shrink(file, 160, .7), image: await shrink(file, 1024, .85), created: new Date().toISOString() };
+      LIB.items.push(item);
+      extract(item);
+    } catch (err) { toast(String(err.message||err)) }
+  }
+}
+function drawLib(){
+  const act = LIB.items.filter(x=>x.active).length;
+  $('smpInfo').textContent = `샘플 ${LIB.items.length}개 · 체크 ${act}개 · ` + (D.server ? '저장: library.json (모든 폴더에서 같이 씀)' : '파일로 열었어요: 새 이미지 해석은 「node remake.mjs serve」로 열어야 해요');
+  $('lib').innerHTML = D.sampleCats.map(([cat,lb,px])=>{
+    const its = LIB.items.filter(x=>x.cat===cat);
+    return `<div class="cat"><div class="row"><h2>${lb}</h2><span class="k">이름 ${px}01, ${px}02… · 장면 탭의 ${lb} 칸에서 @ 로 불러와요</span></div>
+      <div class="drop" data-drop="${cat}">여기로 이미지를 끌어 놓거나 눌러서 고르세요 (여러 장 가능)<input type="file" accept="image/*" multiple hidden data-file="${cat}"></div>
+      <div class="items">${its.map(x=>`
+        <div class="it ${x.active?'act':''}">
+          <img src="${e(x.thumb)}" alt="">
+          <div>
+            <div class="row"><input class="nm" data-k="name" data-id="${x.id}" value="${e(x.name)}" style="flex:1"><label class="chip"><input type="checkbox" data-k="active" data-id="${x.id}" ${x.active?'checked':''}> 쓰기</label></div>
+            ${x.pending ? '<div class="k">해석 중…</div>' : x.error ? `<div class="err">${e(x.error)}</div>` : ''}
+            <textarea data-k="tags" data-id="${x.id}" placeholder="태그">${e(x.tags)}</textarea>
+            <textarea data-k="text" data-id="${x.id}" placeholder="문장">${e(x.text)}</textarea>
+            <div class="row"><button data-act="re" data-id="${x.id}" ${x.pending||!x.image?'disabled':''}>다시 해석</button><button data-act="del" data-id="${x.id}">삭제</button></div>
+          </div>
+        </div>`).join('') || '<span class="k">아직 없어요.</span>'}</div></div>`;
+  }).join('');
+}
+$('lib').addEventListener('click', ev=>{
+  const dz = ev.target.closest('[data-drop]'); if (dz && !ev.target.closest('input')) { dz.querySelector('input[type=file]').click(); return }
+  const b = ev.target.closest('[data-act]'); if (!b) return;
+  const x = LIB.items.find(y=>y.id===b.dataset.id); if (!x) return;
+  if (b.dataset.act==='re') extract(x);
+  if (b.dataset.act==='del' && confirm(`@${x.name} 샘플을 지울까요?`)) { LIB.items = LIB.items.filter(y=>y!==x); saveLib(); drawLib() }
+});
+$('lib').addEventListener('change', ev=>{
+  const el = ev.target;
+  if (el.dataset.file) { addFiles(el.dataset.file, [...el.files]); el.value=''; return }
+  if (el.dataset.k==='active') { const x = LIB.items.find(y=>y.id===el.dataset.id); x.active = el.checked; saveLib(); drawLib() }
+});
+$('lib').addEventListener('input', ev=>{
+  const el = ev.target; if (!['name','tags','text'].includes(el.dataset.k)) return;
+  const x = LIB.items.find(y=>y.id===el.dataset.id); if (!x) return;
+  x[el.dataset.k] = el.dataset.k==='name' ? el.value.replace(/[\s@,]/g,'') : el.value; saveLib();
+});
+$('lib').addEventListener('dragover', ev=>{ const dz = ev.target.closest('[data-drop]'); if (!dz) return; ev.preventDefault(); dz.classList.add('over') });
+$('lib').addEventListener('dragleave', ev=>{ const dz = ev.target.closest('[data-drop]'); if (dz) dz.classList.remove('over') });
+$('lib').addEventListener('drop', ev=>{ const dz = ev.target.closest('[data-drop]'); if (!dz) return; ev.preventDefault(); dz.classList.remove('over'); addFiles(dz.dataset.drop, [...ev.dataTransfer.files]) });
+
+renderControls(); draw(); drawLib();
+</script>
+</body>
+</html>

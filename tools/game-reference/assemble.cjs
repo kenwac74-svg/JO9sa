@@ -13,6 +13,7 @@ const game = process.argv[2];
 assert.ok(game, 'Usage: node assemble.cjs <game/jack.qsp>');
 const qsp = fs.readFileSync(game);
 const hash = crypto.createHash('sha256').update(qsp).digest('hex');
+function buildDatabase() {
 const read = kind => {
   const set = JSON.parse(fs.readFileSync(path.join(__dirname, (kind === 'items' ? 'items.input' : kind) + '.json'), 'utf8').replace(/^\ufeff/, ''));
   assert.equal(set.hash.toLowerCase(), hash, `${kind} uses a different QSP`);
@@ -91,10 +92,23 @@ for (const [line, text] of foodSource.split(/\r?\n/).entries()) {
 data.items.coverage += ` 조리 음식 ${recipes}개는 등급과 재료를 함께 표시합니다. 기본가는 아이템 정의값이며, 확인된 판매가는 판매 단위와 함께 표시합니다.`;
 require('./refresh-current.cjs').apply(data, doc);
 for (const kind of ['traits', 'items', 'spells']) fs.writeFileSync(path.join(__dirname, kind + '.json'), JSON.stringify(data[kind], null, 2) + '\n');
+return data;
+}
+// The enemy-only update retains all existing reference rows and personal notes.
+const enemyOnly = process.argv.includes('--enemies-only');
+let data;
+if (enemyOnly) {
+  const previous = fs.readFileSync(output, 'utf8').match(/<script id="reference-data" type="application\/json">([\s\S]*?)<\/script>/);
+  assert.ok(previous, 'Previous reference data is required for an enemy-only update');
+  data = JSON.parse(previous[1]);
+  for (const kind of ['traits', 'items', 'spells']) assert.ok(data[kind]?.hash && data[kind].rows.length, 'Missing previous ' + kind);
+} else data = buildDatabase();
+data.enemies = require('./enemies-data.cjs').buildEnemies(core.parse(qsp));
+data.mobs = require('./mobs-data.cjs').buildMobs(data.enemies);
 const encoded = JSON.stringify(data).replaceAll('<', '\\u003c');
 const template = fs.readFileSync(source, 'utf8');
 let html = template.replace('__JO9_REFERENCE_DATA__', () => encoded);
-for (const [token, name] of [['__JO9_IDEAS_MODEL__','ideas-core.cjs'],['__JO9_IDEAS_CLIENT__','ideas-client.cjs'],['__JO9_IDEAS_UI__','ideas-ui.js']]) {
+for (const [token, name] of [['__JO9_IDEAS_MODEL__','ideas-core.cjs'],['__JO9_IDEAS_CLIENT__','ideas-client.cjs'],['__JO9_IDEAS_UI__','ideas-ui.js'],['__JO9_ENEMIES_UI__','enemies-ui.js'],['__JO9_MOBS_UI__','mobs-ui.js']]) {
   assert.equal(html.split(token).length - 1, 1, `Missing template slot ${token}`);
   html = html.replace(token, () => fs.readFileSync(path.join(__dirname, name), 'utf8').replace(/<\/script/gi, '<\\/script'));
 }
@@ -103,4 +117,4 @@ assert.deepEqual(JSON.parse(html.match(/id="reference-data" type="application\/j
 const pending = `${output}.${process.pid}.tmp`;
 fs.writeFileSync(pending, html, { flag: 'wx' });
 fs.renameSync(pending, output);
-console.log(JSON.stringify({ output, hash, traits: data.traits.rows.length, items: data.items.rows.length, spells: data.spells.rows.length }));
+console.log(JSON.stringify({ output, hash, traits: data.traits.rows.length, items: data.items.rows.length, spells: data.spells.rows.length, enemies: data.enemies.rows.length, enemyOnly }));

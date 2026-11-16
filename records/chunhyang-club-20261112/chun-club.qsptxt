@@ -1,0 +1,208 @@
+! JO9 MOD START CHUNHYANG_CLUB_20261112
+if $args[0] = 'stage':
+ result = 0
+ if egeya_lose ! 0:
+  result = 3
+  if jo9_chunhyang['open'] = 1: result = 1
+  if jo9_chunhyang['sale_seen'] = 0:
+   jo9_chunhyang['sale_seen'] = 1
+   jo9_chunhyang['sale_day'] = day
+  end
+  ! User-confirmed succession delay: thirty in-game days after Egeya leaves.
+  if day >= jo9_chunhyang['sale_day']+30:
+   jo9_chunhyang['open'] = 1
+   result = 1
+  end
+ end
+ if jo9_chunhyang['owned'] = 1 or jo9_chunhyang['recruited'] = 1 or jo9_chunhyang['won'] = 1: result = 2
+ exit
+end
+if $args[0] = 'place':
+ $bg['chunhyang_battle'] = $bg['catfightclub']
+ if $bg['chunhyang_battle'] = '': $bg['chunhyang_battle'] = 'catfightclub'
+ $place_name['chunhyang_battle'] = '캣파이트 클럽'
+ $place_location['chunhyang_battle'] = '동부 구역'
+ $place_info['chunhyang_battle'] = '클럽의 새 주인, 산도 춘향과 직접 겨루는 결투다. 이기면 춘향과 클럽의 소유권을 얻는다.'
+ exit
+end
+if $args[0] = 'city':
+ local jo9_chun_stage = func('jo9_chun_club','stage')
+ if jo9_chun_stage = 0 or jo9_chun_stage = 1:
+  func('$menu','interaction_city',$menu_item_catfightclub,10201,'캣파이트 클럽')
+ else
+  if jo9_chun_stage = 3:
+   func('$menu','location_gray_tooltip',$menu_item_catfightclub_gray,0,'캣파이트 클럽','에게야가 떠난 캣파이트 클럽이 매물로 나왔습니다.')
+  else
+   func('$menu','location_gray_tooltip',$menu_item_catfightclub_gray,0,'캣파이트 클럽','주인공 소유입니다. 재개장하려면 지배인이 필요합니다.')
+   if jo9_chunhyang['won'] = 1: func('$menu','exec_options',$menu_item_catfightclub,"gt 'jo9_chun_club','enter'",'춘향 영입 약속을 마무리한다')
+  end
+ end
+ exit
+end
+if $args[0] = 'eligible':
+ result = 0
+ if func('jo9_chun_club','stage') ! 1: exit
+ if slave_state = CONST_INT['slave_exist'] and slave['energy'] > 3 and slave['arena_level'] < 4 and slave['jo9_chun_entries'] < 6: result = 1
+ exit
+end
+if $args[0] = 'regular_entry':
+ result = 0
+ if func('jo9_chun_club','eligible') ! 1: exit
+ slave['jo9_chun_entries'] += 1
+ jo9_chun_match = 1
+ result = 1
+ exit
+end
+if $args[0] = 'npc':
+ $npc_image['chunhyang'] = '3040_chunhyang_title'
+ $npc_name['chunhyang'] = '춘향'
+ $npc_status['chunhyang'] = '캣파이트 클럽의 새 주인 · 전직 콜로세움 최고 챔피언'
+ $npc_alignment['chunhyang'] = 'eastkvartal'
+ $npc_info['chunhyang'] = '대쥬신제국에서 암행어사 문수의 산도로 악당들을 물리치던 호위무사. 계략에 빠져 로마에 온 뒤 검투 노예로 살았으며, 콜로세움 최고의 챔피언이 되어 자유를 얻었다. 에게야가 떠난 클럽을 사들였다.'
+ $interesting_specialisation['chunhyang'] = 'gladiatrix'
+ $npc_preferences['chunhyang'] = {stat_importance['gladiatrix'] = 5}
+ $buyer_demand['chunhyang'] = {demand['min_stamina'] = 4}
+ demand_rating['chunhyang'] = 10
+ npc_reveal['chunhyang'] = 1
+ npc_bennies['chunhyang'] = 6
+ npc_reward['chunhyang'] = 200
+ npc_advance['chunhyang'] = 150
+ buying_temp['chunhyang'] = 25
+ count_size['chunhyang'] = 1
+ if jo9_chunhyang['npc_initialized'] = 0:
+  npc_attitude['chunhyang'] = 12
+  jo9_chunhyang['npc_initialized'] = 1
+ end
+ exit
+end
+if $args[0] = 'acquire':
+ result = 0
+ if func('jo9_chun_club','stage') ! 2 or jo9_chunhyang['won'] ! 1: exit
+ if slave_state ! CONST_INT['no_slave']: exit
+ ! Preserve a currently viewed stock and every instance variable, not just its number.
+ dynamic $swap_slave_instances, 'stock', 'jo9_chun_stock_hold'
+ special_stock = 3040
+ creating_clone = 0
+ gs 'generate_stock'
+ gs 'stock_to_slave_nogt'
+ if slave_type = 3040 and slave_state = CONST_INT['slave_exist']:
+  slave['brand'] = 0
+  slave['arena_level'] = max(9, slave['arena_level'])
+  slave['jo9_sando'] = 1
+  jo9_chunhyang['recruited'] = 1
+  jo9_chunhyang['won'] = 0
+ end
+ dynamic $swap_slave_instances, 'stock', 'jo9_chun_stock_hold'
+ dynamic $clear_slave_instance, 'jo9_chun_stock_hold'
+ special_stock = 0
+ gs 'jo9_traits_value','refresh','slave'
+ result = jo9_chunhyang['recruited']
+ exit
+end
+if $args[0] = 'menu':
+ $text_display = '<br>'
+ func('$menu','===BEGIN===','column_0')
+ if jo9_chunhyang['won'] = 1:
+   if slave_state = CONST_INT['no_slave']:
+    func('$menu','exec_options',$menu_item_catfightclub,"gt 'jo9_chun_club','claim'",'약속대로 춘향을 영입한다')
+   else
+    func('$menu','location_gray_tooltip',$menu_item_catfightclub_gray,0,'춘향 영입 대기','주 노예 자리를 비운 뒤 돌아오면 영입할 수 있습니다. 승리와 약속은 유지됩니다.')
+   end
+ else
+  if func('jo9_chun_club','stage') = 1:
+   func('$menu','exec_options',$menu_item_catfightclub,"gt 'jo9_chun_club','about'",'춘향과 클럽에 대해 이야기한다')
+   if sparks >= 200000:
+   func('$menu','exec_options',$menu_item_catfightclub,"gt 'jo9_chun_club','duel'",'춘향에게 결투를 신청한다')
+  else
+   func('$menu','location_gray_tooltip',$menu_item_catfightclub_gray,0,'춘향에게 결투를 신청한다','20만 스파크 이상 보유해야 합니다. 시작·승리 시 차감하지 않습니다.')
+  end
+  func('$menu','interaction_city',$menu_item_catfightclub,102019,'시합을 본다')
+  if func('jo9_chun_club','eligible') = 1:
+   func('$menu','exec_options',$menu_item_Put_gladiatrix,"gt 'jo9_chun_club','style'",'노예를 싸움에 내보낸다')
+  else
+   func('$menu','location_gray_tooltip',$menu_item_catfightclub_gray,0,'노예를 싸움에 내보낸다','행동 가능한 주 노예·행동력 3 초과·아레나 등급 4 미만·춘향 단계 참가 6회 미만이 필요합니다.')
+  end
+  func('$menu','exec_options',$menu_item_catfightclub,"gt 'jo9_chun_club','pref'",'공급 조건을 묻는다')
+  if slave_state = CONST_INT['slave_exist'] and slave['brand'] > 0 and slave['brand'] < 4:
+   func('$menu','exec_options',$menu_item_catfightclub,"gt 'jo9_chun_club','supply'",'노예를 제안한다')
+  end
+  end
+ end
+ func('$menu','city_form',$menu_item_eastkvartal,121,'클럽을 떠난다')
+ func('$menu','===END===')
+ $text_display += '<div id="center_Isabella"><img src="content/pic/characters/3040_chunhyang_title.png"></div>'
+ exit
+end
+if $args[0] = 'style':
+ if func('jo9_chun_club','eligible') ! 1: gt 'jo9_chun_club','enter'
+ combatant = 1
+ sp_txt = 3
+ copyarr '$display_options','$catfightclub_options'
+ $display_options[1] = {gt 'jo9_chun_club','enter'}
+ $display_options[2] = {gt 'jo9_chun_club','enter'}
+ gt 'shop_general'
+end
+if $args[0] = 'duel':
+ if func('jo9_chun_club','stage') ! 1 or jo9_chunhyang['won'] = 1: gt 'jo9_chun_club','enter'
+ if sparks < 200000: gt 'jo9_chun_club','enter'
+ gs '$combat_variable_reset'
+ combatant = 0
+ jo9_chun_requested = 1
+ gs 'jo9_chun_club','place'
+ $place = 'chunhyang_battle'
+ $return_lock = 'city_menu_form'
+ $fight_return = 'jo9_chun_club'
+ количество_врагов = 1
+ $враг[1] = 'chunhyang'
+ gt 'начать_бой'
+end
+if $args[0] = 'claim':
+ if func('jo9_chun_club','acquire') = 1:
+  msg '춘향이 약속대로 당신을 따른다. 캣파이트 클럽도 당신 소유가 되었다. 재개장하려면 지배인이 필요하다.'
+  city_form = 121
+  gt 'city_menu_form'
+ end
+ gt 'jo9_chun_club','enter'
+end
+if func('jo9_chun_club','stage') = 0:
+ interaction_city = 10201
+ gt 'interaction_city'
+end
+if func('jo9_chun_club','stage') = 3:
+ city_form = 121
+ gt 'city_menu_form'
+end
+if func('jo9_chun_club','stage') = 2 and jo9_chunhyang['won'] ! 1:
+ city_form = 121
+ gt 'city_menu_form'
+end
+gs 'jo9_chun_club','npc'
+$jo9_chun_text = '[춘향]<br>에게야가 떠난 뒤 이 클럽을 샀습니다. 경기 상대도 새로 모았습니다. 전보다 힘겨운 싸움이 될 겁니다.'
+if jo9_chunhyang['won'] = 1: $jo9_chun_text = '[춘향]<br>약속은 지키겠습니다. 저와 이 클럽은 당신 것입니다. 저를 데려갈 준비가 되면 말씀하십시오.<br>클럽 재개장에는 지배인이 필요하다.'
+if $args[0] = 'about': $jo9_chun_text = '[춘향]<br>대쥬신제국에서는 암행어사 문수님의 산도였습니다. 계략에 빠져 로마에 왔고, 한 여주인의 검투 노예로 살았습니다. 콜로세움 최고의 챔피언이 되어 자유를 얻은 뒤 이곳을 샀습니다.<br>제게 이기시면 당신을 따르겠습니다. 20만 스파크 이상은 갖고 오십시오. 지셨을 때의 대가는 당신이 살아온 방식에 달렸습니다.'
+if $args[0] = 'pref': $jo9_chun_text = '[춘향]<br>경기에서 버틸 수 있는 사람을 찾습니다. <font color="#008080"><b>체력이 A 이상</b></font>이어야 합니다. 나머지는 직접 살펴보겠습니다.'
+if $args[0] = 'supply':
+ if func('jo9_chun_club','stage') ! 1 or slave_state ! CONST_INT['slave_exist'] or slave['brand'] <= 0 or slave['brand'] >= 4: gt 'jo9_chun_club','enter'
+ npc = 1
+ $npc_id = 'chunhyang'
+ $place = 'catfightclub'
+ $return_lock = 'shop_general'
+ if no_slave_count['chunhyang'] < 1: gt 'slave_sell'
+ $jo9_chun_text = '[춘향]<br>지금은 선수가 충분합니다. 자리가 나면 다시 말씀드리겠습니다.'
+end
+if $args[0] = 'loss': $jo9_chun_text = '[춘향]<br>승부는 났습니다. 오늘은 돌아가십시오.<br>결투 패배로 <<jo9_chunhyang["last_cost"]>> 스파크를 정산했다.'
+if $args[0] = 'win': $jo9_chun_text = '[춘향]<br>…제가 졌습니다. 약속대로 당신을 따르겠습니다. 이 클럽도 넘겨드리겠습니다. 준비가 되시면 말씀하십시오.<br>승리로 스파크가 차감되지는 않았다. 클럽 재개장에는 지배인이 필요하다.'
+$place = 'catfightclub'
+$return_lock = 'city_menu_form'
+interaction_city = 904030
+sp_txt = 1
+skip_to = 0
+npc = 0
+killvar '$special_image'
+killvar '$special_image_full'
+killvar '$special_action'
+$bg_path = ''
+$sp_text[1] = $jo9_chun_text
+$display_options[1] = {gs 'jo9_chun_club','menu'}
+gt 'shop_general'
+! JO9 MOD END CHUNHYANG_CLUB_20261112

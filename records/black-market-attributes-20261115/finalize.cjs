@@ -1,0 +1,58 @@
+'use strict';
+const fs=require('fs'),z=require('zlib'),a=require('assert/strict');
+const R='G:/somi/JO9sa',W='G:/somi/Jack O Nine Tails v2.4_work/game',D=R+'/records/black-market-attributes-20261115',T='G:/Codex/tmp/black-market-attributes-20261115',c=require(R+'/tools/text-workshop/core.cjs');
+const plan=JSON.parse(fs.readFileSync(D+'/plan.json','utf8')),raw=fs.readFileSync(W+'/jack.qsp'),baseline=z.gunzipSync(fs.readFileSync(D+'/baseline.qsp.gz')),candidate=fs.readFileSync(T+'/candidate.qsp'),mod=JSON.parse(fs.readFileSync(T+'/mods/2026-11-15_black_market_random_attributes.json','utf8'));
+a(raw.equals(candidate));a.equal(c.hash(raw),plan.after);a.equal(c.hash(baseline),plan.before);a(fs.readFileSync(R+'/assets/runtime/2.4.1/jack.qsp').equals(baseline));
+const native=JSON.parse(fs.readFileSync(D+'/verification-native.json','utf8'));a.equal(native.nativeFailures,0);
+const undo=c.parse(raw);for(let e of [...mod.edits].reverse()){let l=undo.locations.find(l=>l.name===e.location),b=c.shift(undo.lines[l.body],5);a.equal(b.split(e.new).length,2);undo.lines[l.body]=c.shift(b.replace(e.new,()=>e.old),-5);}a(c.serialize(undo).equals(baseline));
+const manifestPath=R+'/assets/runtime-source-2.4.1.json',manifestBytes=fs.readFileSync(manifestPath);a(manifestBytes.equals(z.gunzipSync(fs.readFileSync(D+'/manifest.before.json.gz'))));let manifest=JSON.parse(manifestBytes);a.equal(manifest.sourceQspSha256,plan.before);let entry=manifest.files.find(f=>f.runtimePath==='jack.qsp');a(entry);a.equal(entry.sha256,plan.before);manifest.sourceQspSha256=plan.after;entry.sha256=plan.after;entry.bytes=raw.length;fs.copyFileSync(W+'/jack.qsp',R+'/assets/runtime/2.4.1/jack.qsp');fs.writeFileSync(manifestPath,JSON.stringify(manifest,null,2).replace(/\n/g,'\r\n')+'\r\n');
+const staticRoot=T+'-static',run=fs.readdirSync(staticRoot).find(f=>f.startsWith('run-'));for(let ext of ['json','md'])if(fs.existsSync(staticRoot+'/'+run+'/report.'+ext))fs.copyFileSync(staticRoot+'/'+run+'/report.'+ext,D+'/static-report.'+ext);
+for(let stage of ['red','green']){for(let [src,dst]of [['client-results.json',stage+'-client-results.json'],['test.qsp.client.stderr.log',stage+'-stderr.log']])if(fs.existsSync(T+'/'+stage+'/'+src))fs.copyFileSync(T+'/'+stage+'/'+src,D+'/'+dst);}
+fs.copyFileSync(D+'/PLAN_KO.md',R+'/docs/superpowers/plans/2026-11-15-black-market-attributes.md');
+const locations=c.parse(raw).locations.length,report=`# 암시장 일부 속성·특성 재추첨 — WORK 적용
+
+사용자 확정 확률과 1~5 균등 범위를 반영했다. 대상은 암시장의 반복 구매용 2586~2597, 아프리카·유럽·아시아·슬라브 네 계열이다. 기존 보유 인물을 다시 뽑는 갱신은 없다.
+
+## 동작
+
+- 이름·출신·직업은 앞서 반영한 추첨을 계속 사용하고, 세계와 등록 이미지는 유지한다.
+- 기본 외모·체력 2/3/4/5: 40/30/20/10%.
+- 감수성·성격·지성·자아: 각각 1~5 균등.
+- 태도: 의존적 45%, 솔직함 30%, 개방적 25%.
+- 독특함 1/2/3/4/5: 35/30/20/10/5%. 사용자의 명칭이 대응하는 기존 도움말 기준이다. 현재 실제 속성 표기의 번역 차이는 전역 수정하지 않았다.
+- 체형: 비만을 제외한 0~4 균등. 앙상도 포함한다.
+- 특성: 일반 인물 생성의 기존 공통 특성 풀과 현재 등록부 추첨을 사용한다. 관련 프리셋 특성은 먼저 초기화하고 배척 규칙을 적용한다. 종족·고유 인물 특성과 획득 칭호를 임의로 주지 않는다. 별도 천재/백치 추첨은 지성을 0/5로 강제하므로 추가하지 않았다.
+- 기술·성애기술의 레벨/경험치/세부 숙련도, 세련됨·인지도·기분은 별도 재추첨하지 않는다. 체력은 사용자 지정 재추첨 항목이다. 고정 구매대금과 반복 구매 메뉴는 변경하지 않는다.
+
+확률은 **기존 게임 보정 전 기본값**이다. 예를 들어 통통한 체형의 체력 상한, 앙상/통통 체형의 외모 보정, 정신 상태, 절세미인 및 노예근성의 기존 효과는 유지한다. 영입 후 특성에 따른 정상적인 외모·기분 재계산도 막지 않는다. 재판매 평가액은 새 속성·특성에 따라 달라질 수 있다.
+
+## 구현·의존성·제거
+
+패치: [2026-11-15_black_market_random_attributes.json](../../mods/2026-11-15_black_market_random_attributes.json).
+
+기존 위치 jo9_background_b에 market_grade(항목·1~100 정수 → 등급), market_attributes(현재 상품의 지정 기본값), market_traits(현재 상품의 공통 특성) 모드를 추가했다. generate_stock에서 기본값 변환 전·공통 특성 적용 전·등록부 추첨 시 호출한다. 다른 번호 및 복제 생성에서는 실행하지 않는다. 기존 jo9_traits의 생성·배척·복구 함수와 일반 속성 계산에 의존한다.
+
+새 위치·새 저장 필드는 0개다. 이 패치의 네 edit를 역적용하면 앞선 이름·출신·직업 추첨 상태로 돌아간다. 이미 영입한 인물의 추첨 결과는 역적용해도 바뀌지 않는다. 출신/직업에 따른 초기 기술 보너스는 추가하지 않았다.
+
+## 검증
+
+- 실제 FastQSP 엔진: 일반·하드, 12개 프리셋, 192회 생성, **3,500검사 실패 0**. 확률 1~100 경계 400건, 범위 밖·복제 방어, 영입 이전 포함.
+- 저장값 대조: **6,264개 보존 항목 일치**. 현재 기술 23종과 경험치·세부 숙련도, 이미지·세계, 세련됨·인지도·기분의 미추첨 기준을 수정 전후와 대조했다. 24개 첫 생성 표본의 특성 구성이 모두 달랐다.
+- 수정 전 엔진 검사: 새 규칙 471건 실패로 기존 고정값과 구분됨을 확인했다.
+- 공식 출고 검사: **STATIC_PASS**. 구조/CRLF/왕복/패치 재생/멱등/입력 해시 통과. 별도 실제 엔진 검사는 위 범위다. 전체 배포 PASS·개인 세이브 GUI 플레이 검사를 마쳤다는 뜻은 아니다.
+- 역적용 바이트가 직전 WORK 백업과 완전히 일치한다.
+
+WORK·추적 소스·원장 SHA-256: ${plan.after}. 위치 ${locations}개.
+
+JSON과 이미지 원본, 사용자의 2586_african1.json.bak, Full/배포 ZIP/음원/개인 SAV는 수정하지 않았다. 커밋·푸시하지 않았다.
+
+일반 EXE 확인 경로: 암시장 → 네 계열 중 하나를 연속 구매. 서로 다른 이름·지정 속성/특성이 나타나는지, 같은 프리셋의 이미지·기술이 유지되는지만 확인하면 된다. 기존 보유 인물은 바뀌지 않는다.
+`;
+fs.writeFileSync(D+'/REPORT_KO.md',report);
+let index=fs.readFileSync(R+'/docs/SESSION_HANDOFF_INDEX.md','utf8');const head=`## 2026-11-15 암시장 일부 속성·특성 재추첨 WORK 반영
+
+[확률·구현·검증·사용](../records/black-market-attributes-20261115/REPORT_KO.md). 신규 2586~2597에 지정 속성과 공통 특성만 재추첨. 기술·성애기술·이미지·세계·세련됨·인지도·기분은 미추첨. 실제 생성 192회/3,500검사, 보존 6,264건, 공식 STATIC_PASS·역적용 확인. QSP 60c7addc… . 새 저장 필드 0개. Full/배포 ZIP/개인 SAV/음원/커밋·푸시 없음.
+
+`;a(!index.startsWith(head));fs.writeFileSync(R+'/docs/SESSION_HANDOFF_INDEX.md',head+index);
+const scope=R+'/docs/release-prep/2026-11-15/HOTFIX_SCOPE_KO.md';let sc=fs.readFileSync(scope,'utf8');sc+='\n## 추가 승인 — 암시장 일부 속성·특성 재추첨\n\n[확정 확률과 검증](../../../records/black-market-attributes-20261115/REPORT_KO.md). 앞선 이름·출신·직업 추첨에 이어 WORK에 반영했다. 기술·성애기술·이미지·세계·세련됨·인지도·기분은 별도 추첨하지 않는다. 앞 절의 능력치·특성 유지/협의 중 표시는 이 후속 승인 전 상태이다. 신규 2586~2597에만 지정 기본 속성과 공통 특성을 다시 뽑고, 기존 게임 보정과 고정 구매대금은 유지한다. 실제 엔진 3,500검사·보존 6,264건·STATIC_PASS. 배포물은 아직 만들지 않았다.\n';fs.writeFileSync(scope,sc);
+const verification={sha256:c.hash(raw),bytes:raw.length,locations,inverseByteMatch:true,workSourceByteMatch:fs.readFileSync(R+'/assets/runtime/2.4.1/jack.qsp').equals(raw),manifestMatch:JSON.parse(fs.readFileSync(manifestPath,'utf8')).sourceQspSha256===c.hash(raw),nativeChecks:native.nativeChecks,nativeFailures:native.nativeFailures,staticStatus:'STATIC_PASS',newSaveFields:0,fullChanged:false,packaged:false,committed:false};fs.writeFileSync(D+'/verification.json',JSON.stringify(verification,null,2)+'\n');console.log(JSON.stringify(verification));

@@ -1,0 +1,101 @@
+{
+  "sourceQspSha256": "7db751c87928f4f9d65f208c30834092b6e6886b83c4758dd578ed6707cff239",
+  "status": "과거 초안·사용자확정안으로 대체",
+  "implemented": false,
+  "directionQuestion": "반말→존댓말 공통 전환인지 캐릭터별 방향인지 사용자 답변 대기",
+  "proposedHonorificThreshold": {
+    "rationalMin": 3,
+    "moralMin": 4,
+    "instinctMin": 4,
+    "logic": "rational>=3 AND (moral>=4 OR instinct>=4)"
+  },
+  "returnToPlainRule": "미정",
+  "automaticTargetRule": "미정",
+  "initialJsonOnly": [
+    {
+      "id": 3002,
+      "file": "3002_Luminous.json",
+      "moral": 2,
+      "instinct": 0,
+      "rational": 1
+    },
+    {
+      "id": 2610,
+      "file": "2610_vasilisa.json",
+      "moral": 2,
+      "instinct": 3,
+      "rational": 3
+    },
+    {
+      "id": 2620,
+      "file": "2620_lana.json",
+      "moral": 0,
+      "instinct": 0,
+      "rational": 0
+    },
+    {
+      "id": 3010,
+      "file": "3010_Rias.json",
+      "moral": 0,
+      "instinct": 0,
+      "rational": 1
+    },
+    {
+      "id": 3021,
+      "file": "3021_Diana.json",
+      "moral": 1,
+      "instinct": 0,
+      "rational": 1
+    },
+    {
+      "id": 3023,
+      "file": "3023_Iris.json",
+      "moral": 1,
+      "instinct": 0,
+      "rational": 1
+    },
+    {
+      "id": 2621,
+      "file": "2621_kyaru.json",
+      "moral": 3,
+      "instinct": 3,
+      "rational": 3
+    },
+    {
+      "id": 3012,
+      "file": "3012_Echidna.json",
+      "moral": 1,
+      "instinct": 0,
+      "rational": 1
+    }
+  ],
+  "note": "초기JSON지정값만대조했다. 실제획득경로의추가보정과기존플레이SAV는미검증.",
+  "supersededBy": "G:/somi/JO9sa/records/release-r05a-auto-speech-20261113/REPORT_KO.md",
+  "confirmedRule": {
+    "sourceQspSha256": "7db751c87928f4f9d65f208c30834092b6e6886b83c4758dd578ed6707cff239",
+    "userApproved": true,
+    "honorific": "rational>=3 AND (moral>=3 OR instinct>=3 OR fear>=3)",
+    "returnToPlain": "NOT(honorific) AND spoil>=3",
+    "otherwise": "keep current jo9_plain_tone",
+    "eligible": "8 default IDs OR nonzero jo9_plain_tone OR ordinary random-pool character with princess origin",
+    "ordinaryPools": {
+      "source": "generate_stock + json/slave_index.json",
+      "youngMaxFloor": 1462,
+      "milfMaxFloor": 2340,
+      "excluded": [
+        1448,
+        1450
+      ]
+    },
+    "princessScope": "family=mprincess only",
+    "princessScopeRuling": "User confirmed ordinary characters with princess origin only; princess origin also fixes occupation to princess.",
+    "updateTiming": "New dialogue construction or explicit update helper call",
+    "stateKey": "jo9_plain_tone",
+    "newActorFields": 0,
+    "newGlobalArrays": 0,
+    "occupationLock": {
+      "generation": "Allowed princess background rows narrowed; legacy stock selection normalized before job effects.",
+      "existing": "Load and speech update normalize occupation, description, auction label, work_index only. Prior training, virginity, traits and progression untouched."
+    }
+  }
+}

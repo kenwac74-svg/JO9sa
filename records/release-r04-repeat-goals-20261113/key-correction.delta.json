@@ -1,0 +1,89 @@
+{
+  "id": "2026-11-13_r04_repeat_client_objectives_named_keys",
+  "status": "APPROVED",
+  "before_sha256": "515d7cda23ff5cfc4118d3de277bd2afeacc8052e001f82d30aee7df8c8edaf7",
+  "after_sha256": "089c5be52b032298c8d8cd1fedf447906f0ac0cbc23c24d2a24eda28a668d2d4",
+  "description": "Same approved query flags, namespaced string keys instead of large numeric scene indices. No added array or altered eligibility.",
+  "edits": [
+    {
+      "location": "slave_sell_chek",
+      "field": "body",
+      "old": "! JO9 MOD START R04_REPEAT_CLIENT_LIST_20261113\r\n local jo9_repeat_goal_i, jo9_repeat_goal_scene\r\n local $jo9_repeat_goal_title, $jo9_repeat_goal_state\r\n for jo9_repeat_goal_i = 1 to 9:\r\n  if jo9_repeat_goal_i = 1: jo9_repeat_goal_scene = 2992\r\n  if jo9_repeat_goal_i = 2: jo9_repeat_goal_scene = 9992\r\n  if jo9_repeat_goal_i = 3: jo9_repeat_goal_scene = 9995\r\n  if jo9_repeat_goal_i = 4: jo9_repeat_goal_scene = 10401\r\n  if jo9_repeat_goal_i = 5: jo9_repeat_goal_scene = 99112\r\n  if jo9_repeat_goal_i = 6: jo9_repeat_goal_scene = 99113\r\n  if jo9_repeat_goal_i = 7: jo9_repeat_goal_scene = 99114\r\n  if jo9_repeat_goal_i = 8: jo9_repeat_goal_scene = 99115\r\n  if jo9_repeat_goal_i = 9: jo9_repeat_goal_scene = 99116\r\n  if jo9_goal_offer_seen[jo9_repeat_goal_scene] = 1:\r\n   if jo9_goal_listing = 1:\r\n    $jo9_repeat_goal_title = $func('slave_sell_chek', 'repeat_goal_title', jo9_repeat_goal_scene)\r\n    $jo9_repeat_goal_state = $func('slave_sell_chek', 'repeat_goal_state', jo9_repeat_goal_scene)\r\n    $result += '<a href=\"EXEC: quest_description_mode = 2 & jo9_goal_selected_scene = ' + $str(jo9_repeat_goal_scene) + ' & gt $curloc\">' + $jo9_repeat_goal_title + ' · ' + $jo9_repeat_goal_state + '</a><br>'\r\n   end\r\n   if jo9_goal_lookup_scene = jo9_repeat_goal_scene: result = 1 & exit\r\n  end\r\n end\r\n! JO9 MOD END R04_REPEAT_CLIENT_LIST_20261113\r\n! JO9 MOD START SPECIAL_CLIENT_JOURNAL_20261108\r\n! Quest-journal Sp. objectives and other compound deliveries are listed here with the special clients.",
+      "new": "! JO9 MOD START R04_REPEAT_CLIENT_LIST_20261113\r\n local jo9_repeat_goal_i, jo9_repeat_goal_scene\r\n local $jo9_repeat_goal_title, $jo9_repeat_goal_state\r\n for jo9_repeat_goal_i = 1 to 9:\r\n  if jo9_repeat_goal_i = 1: jo9_repeat_goal_scene = 2992\r\n  if jo9_repeat_goal_i = 2: jo9_repeat_goal_scene = 9992\r\n  if jo9_repeat_goal_i = 3: jo9_repeat_goal_scene = 9995\r\n  if jo9_repeat_goal_i = 4: jo9_repeat_goal_scene = 10401\r\n  if jo9_repeat_goal_i = 5: jo9_repeat_goal_scene = 99112\r\n  if jo9_repeat_goal_i = 6: jo9_repeat_goal_scene = 99113\r\n  if jo9_repeat_goal_i = 7: jo9_repeat_goal_scene = 99114\r\n  if jo9_repeat_goal_i = 8: jo9_repeat_goal_scene = 99115\r\n  if jo9_repeat_goal_i = 9: jo9_repeat_goal_scene = 99116\r\n  if jo9_goal_offer_seen['repeat_' + $func('slave_sell_chek', 'repeat_goal_key', jo9_repeat_goal_scene)] = 1:\r\n   if jo9_goal_listing = 1:\r\n    $jo9_repeat_goal_title = $func('slave_sell_chek', 'repeat_goal_title', jo9_repeat_goal_scene)\r\n    $jo9_repeat_goal_state = $func('slave_sell_chek', 'repeat_goal_state', jo9_repeat_goal_scene)\r\n    $result += '<a href=\"EXEC: quest_description_mode = 2 & jo9_goal_selected_scene = ' + $str(jo9_repeat_goal_scene) + ' & gt $curloc\">' + $jo9_repeat_goal_title + ' · ' + $jo9_repeat_goal_state + '</a><br>'\r\n   end\r\n   if jo9_goal_lookup_scene = jo9_repeat_goal_scene: result = 1 & exit\r\n  end\r\n end\r\n! JO9 MOD END R04_REPEAT_CLIENT_LIST_20261113\r\n! JO9 MOD START SPECIAL_CLIENT_JOURNAL_20261108\r\n! Quest-journal Sp. objectives and other compound deliveries are listed here with the special clients.",
+      "count": 1,
+      "patchId": "R04_REPEAT_CLIENT_NAMED_KEYS_20261113"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "! JO9 MOD START R04_REPEAT_CLIENT_SEEN_2992_20261113\r\n jo9_goal_offer_seen[2992] = 1\r\n! JO9 MOD END R04_REPEAT_CLIENT_SEEN_2992_20261113\r\n copyarr '$text', '$anes_pref'",
+      "new": "! JO9 MOD START R04_REPEAT_CLIENT_SEEN_2992_20261113\r\n jo9_goal_offer_seen['repeat_anes'] = 1\r\n! JO9 MOD END R04_REPEAT_CLIENT_SEEN_2992_20261113\r\n copyarr '$text', '$anes_pref'",
+      "count": 1,
+      "patchId": "R04_REPEAT_CLIENT_NAMED_KEYS_20261113"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "! JO9 MOD START R04_REPEAT_CLIENT_SEEN_9992_20261113\r\n jo9_goal_offer_seen[9992] = 1\r\n! JO9 MOD END R04_REPEAT_CLIENT_SEEN_9992_20261113\r\n copyarr '$text', '$ermelinda_pref'",
+      "new": "! JO9 MOD START R04_REPEAT_CLIENT_SEEN_9992_20261113\r\n jo9_goal_offer_seen['repeat_ermelinda'] = 1\r\n! JO9 MOD END R04_REPEAT_CLIENT_SEEN_9992_20261113\r\n copyarr '$text', '$ermelinda_pref'",
+      "count": 1,
+      "patchId": "R04_REPEAT_CLIENT_NAMED_KEYS_20261113"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "! JO9 MOD START R04_REPEAT_CLIENT_SEEN_9995_20261113\r\n jo9_goal_offer_seen[9995] = 1\r\n! JO9 MOD END R04_REPEAT_CLIENT_SEEN_9995_20261113\r\n copyarr '$text', '$noemi_pref'",
+      "new": "! JO9 MOD START R04_REPEAT_CLIENT_SEEN_9995_20261113\r\n jo9_goal_offer_seen['repeat_noemi'] = 1\r\n! JO9 MOD END R04_REPEAT_CLIENT_SEEN_9995_20261113\r\n copyarr '$text', '$noemi_pref'",
+      "count": 1,
+      "patchId": "R04_REPEAT_CLIENT_NAMED_KEYS_20261113"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "! JO9 MOD START R04_REPEAT_CLIENT_SEEN_10401_20261113\r\n jo9_goal_offer_seen[10401] = 1\r\n! JO9 MOD END R04_REPEAT_CLIENT_SEEN_10401_20261113\r\n copyarr '$text', '$kap_pref'",
+      "new": "! JO9 MOD START R04_REPEAT_CLIENT_SEEN_10401_20261113\r\n jo9_goal_offer_seen['repeat_kap'] = 1\r\n! JO9 MOD END R04_REPEAT_CLIENT_SEEN_10401_20261113\r\n copyarr '$text', '$kap_pref'",
+      "count": 2,
+      "patchId": "R04_REPEAT_CLIENT_NAMED_KEYS_20261113"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "! JO9 MOD START R04_REPEAT_CLIENT_SEEN_99112_20261113\r\n jo9_goal_offer_seen[99112] = 1\r\n! JO9 MOD END R04_REPEAT_CLIENT_SEEN_99112_20261113\r\n copyarr '$text', '$Elisabet_1_pref'",
+      "new": "! JO9 MOD START R04_REPEAT_CLIENT_SEEN_99112_20261113\r\n jo9_goal_offer_seen['repeat_Elisabet_1'] = 1\r\n! JO9 MOD END R04_REPEAT_CLIENT_SEEN_99112_20261113\r\n copyarr '$text', '$Elisabet_1_pref'",
+      "count": 1,
+      "patchId": "R04_REPEAT_CLIENT_NAMED_KEYS_20261113"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "! JO9 MOD START R04_REPEAT_CLIENT_SEEN_99113_20261113\r\n jo9_goal_offer_seen[99113] = 1\r\n! JO9 MOD END R04_REPEAT_CLIENT_SEEN_99113_20261113\r\n copyarr '$text', '$Elisabet_2_pref'",
+      "new": "! JO9 MOD START R04_REPEAT_CLIENT_SEEN_99113_20261113\r\n jo9_goal_offer_seen['repeat_Elisabet_2'] = 1\r\n! JO9 MOD END R04_REPEAT_CLIENT_SEEN_99113_20261113\r\n copyarr '$text', '$Elisabet_2_pref'",
+      "count": 1,
+      "patchId": "R04_REPEAT_CLIENT_NAMED_KEYS_20261113"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "! JO9 MOD START R04_REPEAT_CLIENT_SEEN_99114_20261113\r\n jo9_goal_offer_seen[99114] = 1\r\n! JO9 MOD END R04_REPEAT_CLIENT_SEEN_99114_20261113\r\n copyarr '$text', '$Elisabet_3_pref'",
+      "new": "! JO9 MOD START R04_REPEAT_CLIENT_SEEN_99114_20261113\r\n jo9_goal_offer_seen['repeat_Elisabet_3'] = 1\r\n! JO9 MOD END R04_REPEAT_CLIENT_SEEN_99114_20261113\r\n copyarr '$text', '$Elisabet_3_pref'",
+      "count": 1,
+      "patchId": "R04_REPEAT_CLIENT_NAMED_KEYS_20261113"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "! JO9 MOD START R04_REPEAT_CLIENT_SEEN_99115_20261113\r\n jo9_goal_offer_seen[99115] = 1\r\n! JO9 MOD END R04_REPEAT_CLIENT_SEEN_99115_20261113\r\n copyarr '$text', '$Elisabet_4_pref'",
+      "new": "! JO9 MOD START R04_REPEAT_CLIENT_SEEN_99115_20261113\r\n jo9_goal_offer_seen['repeat_Elisabet_4'] = 1\r\n! JO9 MOD END R04_REPEAT_CLIENT_SEEN_99115_20261113\r\n copyarr '$text', '$Elisabet_4_pref'",
+      "count": 1,
+      "patchId": "R04_REPEAT_CLIENT_NAMED_KEYS_20261113"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "! JO9 MOD START R04_REPEAT_CLIENT_SEEN_99116_20261113\r\n jo9_goal_offer_seen[99116] = 1\r\n! JO9 MOD END R04_REPEAT_CLIENT_SEEN_99116_20261113\r\n copyarr '$text', '$Elisabet_5_pref'",
+      "new": "! JO9 MOD START R04_REPEAT_CLIENT_SEEN_99116_20261113\r\n jo9_goal_offer_seen['repeat_Elisabet_5'] = 1\r\n! JO9 MOD END R04_REPEAT_CLIENT_SEEN_99116_20261113\r\n copyarr '$text', '$Elisabet_5_pref'",
+      "count": 1,
+      "patchId": "R04_REPEAT_CLIENT_NAMED_KEYS_20261113"
+    }
+  ]
+}

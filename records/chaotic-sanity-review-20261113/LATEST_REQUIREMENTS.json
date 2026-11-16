@@ -1,0 +1,23 @@
+{
+  "date": "2026-11-13",
+  "status": "IMPLEMENTED_EXISTING_DOMINI_NEGATIVE_AND_OPIUM",
+  "sourceQspSha256": "e7d1312a563590a8bc2b1189a553ee88f1bf32a24e9458658ed0c9c31e190f5c",
+  "userRequirements": [
+    "Do not invent a new penalty formula.",
+    "Reuse Domini Dictum negative effects.",
+    "Subtract 2 energy immediately on essence use; low energy target should faint immediately.",
+    "Reuse an existing in-game addiction effect.",
+    "Penalty is driven by accumulated use, not a newly designed abstinence/withdrawal loop."
+  ],
+  "verifiedExisting": {
+    "dominiNegative": "neg_spellbound += 1; angst rate += min(temper,sensitivity) - moral - max(0,deprivation_attitude*5). Formula may be zero or negative for some targets.",
+    "defaultFaint": "energy <= -5 or stamina=0, not energy=0. Requested drug-specific immediate faint trigger needs explicit handling.",
+    "meth": "Next-day use threshold addiction>stamina: energy-1, stamina rate -addiction/2; no-use lingering effects and 3-day decay exist.",
+    "opium": "Use threshold addiction>stamina: mood/stamina effects; no-use lingering effects and 4-day decay exist."
+  },
+  "clarification": "User selected Domini negative only, instant-2, opium-style; applied with no new save fields.",
+  "notImplemented": false,
+  "rejectedEarlierProposal": "No new drug mental-burden formula or new dose/withdrawal curve.",
+  "currentQspSha256": "d139d7a69212be749f4ed8ce03041a85e2a2712341a548c6b6e92d1228b8fb1e",
+  "implementation": "records/chaotic-opium-penalty-20261113/REPORT_KO.md"
+}

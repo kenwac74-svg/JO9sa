@@ -1,0 +1,17 @@
+{
+  "id": "2026-11-11_shlyapkin_target_rating",
+  "status": "APPROVED",
+  "description": "Recalculate Caroline delivery rank from slave immediately before Shlyapkin evaluation; ignore rank left by assistant UI. Requirements unchanged.",
+  "before_sha256": "aa01532fa8aafb4eba61588909ff36d3b31df173b0168fa87320bbd1c4a1df75",
+  "after_sha256": "929e738129d064a4feac6868d221459289f1487dc0a9f0c59abfb3b5d6cebfb2",
+  "edits": [
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "  if slave_type = 2613 and rating > 6 and slave_state = CONST_INT['slave_exist'] and slave[\"beauty\"] > 4 and slave[\"stamina\"] > 3 and slave[\"temper\"] > 3 and slave[\"intellect\"] > 3 and slave[\"cook\"] > 4 and slave[\"service\"] > 4 and slave['expression'] > 3 and slave[\"calisthenics\"] > 3 and slave[\"music\"] > 3 and slave['brand'] = 0: interaction_city = 10375  ",
+      "new": "! JO9 MOD START SHLYAPKIN_TARGET_RATING_20261111\r\n  if slave_type = 2613 and slave_state = CONST_INT['slave_exist']: gs '$slave_price', 'slave'\r\n! JO9 MOD END SHLYAPKIN_TARGET_RATING_20261111\r\n  if slave_type = 2613 and rating > 6 and slave_state = CONST_INT['slave_exist'] and slave[\"beauty\"] > 4 and slave[\"stamina\"] > 3 and slave[\"temper\"] > 3 and slave[\"intellect\"] > 3 and slave[\"cook\"] > 4 and slave[\"service\"] > 4 and slave['expression'] > 3 and slave[\"calisthenics\"] > 3 and slave[\"music\"] > 3 and slave['brand'] = 0: interaction_city = 10375  ",
+      "count": 1,
+      "patchId": "SHLYAPKIN_TARGET_RATING_20261111"
+    }
+  ]
+}

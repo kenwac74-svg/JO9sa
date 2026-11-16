@@ -1,0 +1,17 @@
+{
+  "id": "2026-11-13_r03j_kikimora_young_only",
+  "status": "APPROVED",
+  "description": "사용자승인: 키키모라만young형(분류값0)수락. 다른고객의agree_age=0미지정과no_loli대체규칙·기존요구/가격/평가/진행유지. 새저장필드없음.",
+  "before_sha256": "3ada1bd1e28921edc0d3ae930783a405b68cbde4065aaa912362510032a2c4b5",
+  "after_sha256": "7db751c87928f4f9d65f208c30834092b6e6886b83c4758dd578ed6707cff239",
+  "edits": [
+    {
+      "location": "slave_sell_chek",
+      "field": "body",
+      "old": "dynamic $buyer_demand[$npc_id]\r\n",
+      "new": "dynamic $buyer_demand[$npc_id]\r\n! JO9 MOD START R03J_KIKIMORA_YOUNG_ONLY_20261113\r\n! Preserve zero-as-unspecified for every other buyer. Kikimora explicitly requires young.\r\nif lcase($npc_id) = 'kikimora' and slave['age'] ! CONST_INT['young_age']:\r\n sl_txt = 100\r\n $refuse_txt = '나는 <<$age[CONST_INT[\"young_age\"]]>> 노예만 원한다.'\r\n exit\r\nend\r\n! JO9 MOD END R03J_KIKIMORA_YOUNG_ONLY_20261113\r\n",
+      "count": 1,
+      "patchId": "R03J_KIKIMORA_YOUNG_ONLY_20261113"
+    }
+  ]
+}

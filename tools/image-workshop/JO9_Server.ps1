@@ -156,6 +156,14 @@ try {
                     Write-Response -Stream $Stream -Status 404
                 }
             }
+            elseif ($Path -eq '/catalog-resource-source.js') {
+                $asset = Join-Path $Root 'catalog-resource-source.js'
+                if (Test-Path -LiteralPath $asset -PathType Leaf) {
+                    Write-Response -Stream $Stream -Type 'text/javascript; charset=utf-8' -Body ([IO.File]::ReadAllBytes($asset))
+                } else {
+                    Write-Response -Stream $Stream -Status 404
+                }
+            }
             elseif ($Path -eq '/api/context') {
                 $script:LastPoll = [DateTime]::UtcNow
                 if (Test-Path -LiteralPath $Context) {

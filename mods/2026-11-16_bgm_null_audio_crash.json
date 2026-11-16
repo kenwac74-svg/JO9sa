@@ -1,0 +1,16 @@
+{
+  "id": "2026-11-16_bgm_null_audio_crash",
+  "description": "Prevent reproducible Qt multimedia null-pointer crash on victory thumb: omit redundant named CLOSE before exclusive PLAY. Track selection and rewards unchanged.",
+  "before_sha256": "c398999185f052802f15d35b7f74cbb9a4fb1812328fe50ca4c130a0367010a7",
+  "after_sha256": "bd2b711ac672796529747dfdd4fabb741960216f13cc3902a8932768b7825a18",
+  "edits": [
+    {
+      "location": "jo9_residence_bgm",
+      "field": "body",
+      "old": " if jo9_bgm_needs_start=1 or $music_now!$jo9_bgm_paths[jo9_bgm_index]:\r\n  if $music_now!'': close $music_now\r\n  $music_now=$jo9_bgm_paths[jo9_bgm_index]",
+      "new": " if jo9_bgm_needs_start=1 or $music_now!$jo9_bgm_paths[jo9_bgm_index]:\r\n  ! JO9 MOD START BGM_NULL_AUDIO_CRASH_20261116\r\n  ! PLAY only already stops prior tracks. CLOSE of an unloaded missing track creates a null native audio entry and crashes the following exclusive PLAY.\r\n  ! JO9 MOD END BGM_NULL_AUDIO_CRASH_20261116\r\n  $music_now=$jo9_bgm_paths[jo9_bgm_index]",
+      "count": 1,
+      "patchId": "BGM_NULL_AUDIO_CRASH_20261116"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "id": "2026-11-11_witch_coven_entry",
+  "status": "APPROVED",
+  "description": "Require noble status and both Venera/Pelageya normal requests completed for first coven entry; preserve existing visits/quest chains and refresh only this saved menu.",
+  "before_sha256": "f77a6aee3300761992a4fde84d8a8d2fba73b3781d8e2bed09e1546e1cd1d67c",
+  "after_sha256": "ab34a14466348807883fb06ab65e43ad507f892cf148696f38b3aebcac7b216d",
+  "edits": [
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tFUNC('$menu', 'interaction_city', $menu_item_Unfamiliar, 6021, '마녀들의 모임')",
+      "new": "! JO9 MOD START WITCH_COVEN_MENU_20261111\r\nif (noble_status = 1 and npc_progress['Venera'] = 2 and npc_progress['Pelageya'] = 2) or (witch_text = 2 or active[$quest[14]] > 0 or active[$quest[15]] > 0 or revolution = 1):\r\n FUNC('$menu', 'interaction_city', $menu_item_Unfamiliar, 6021, '마녀들의 모임')\r\nelse\r\n FUNC('$menu', 'location_gray_tooltip', $menu_item_Unfamiliar_gray, empty, '마녀들의 모임', '귀족 신분을 얻고 베네라와 펠라게야의 일반 의뢰를 모두 완료해야 합니다.')\r\nend\r\n! JO9 MOD END WITCH_COVEN_MENU_20261111",
+      "count": 1,
+      "patchId": "WITCH_COVEN_MENU_20261111"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "IF interaction_city = 6031:\r\n",
+      "new": "! JO9 MOD START WITCH_COVEN_ENTRY_20261111\r\n! Existing visits and the special quest chain keep access; no new saved flag.\r\nif interaction_city >= 6021 and interaction_city <= 6024:\r\n if witch_text ! 2 and active[$quest[14]] <= 0 and active[$quest[15]] <= 0 and revolution ! 1 and (noble_status ! 1 or npc_progress['Venera'] ! 2 or npc_progress['Pelageya'] ! 2): interaction_city = 6031\r\nend\r\n! JO9 MOD END WITCH_COVEN_ENTRY_20261111\r\nIF interaction_city = 6031:\r\n",
+      "count": 1,
+      "patchId": "WITCH_COVEN_ENTRY_20261111"
+    },
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "! JO9 MOD START COW_COSTUME_LOAD_20261111",
+      "new": "! JO9 MOD START WITCH_COVEN_LOAD_20261111\r\n! Update only this saved menu call; retain unrelated menus and manual text.\r\nlocal $jo9_coven_old = 'FUNC(''$menu'', ''interaction_city'', $menu_item_Unfamiliar, 6021, ''마녀들의 모임'')'\r\nlocal $jo9_coven_new = {\r\n! JO9 MOD START WITCH_COVEN_MENU_20261111\r\nif (noble_status = 1 and npc_progress['Venera'] = 2 and npc_progress['Pelageya'] = 2) or (witch_text = 2 or active[$quest[14]] > 0 or active[$quest[15]] > 0 or revolution = 1):\r\n FUNC('$menu', 'interaction_city', $menu_item_Unfamiliar, 6021, '마녀들의 모임')\r\nelse\r\n FUNC('$menu', 'location_gray_tooltip', $menu_item_Unfamiliar_gray, empty, '마녀들의 모임', '귀족 신분을 얻고 베네라와 펠라게야의 일반 의뢰를 모두 완료해야 합니다.')\r\nend\r\n! JO9 MOD END WITCH_COVEN_MENU_20261111\r\n}\r\nif instr($slums_options[1], 'WITCH_COVEN_MENU_20261111') = 0: $slums_options[1] = replace($slums_options[1], $jo9_coven_old, $jo9_coven_new)\r\nlocal jo9_coven_i\r\nfor jo9_coven_i = 0 to arrsize('$display_options') - 1 step 1:\r\n if instr($display_options[jo9_coven_i], 'WITCH_COVEN_MENU_20261111') = 0: $display_options[jo9_coven_i] = replace($display_options[jo9_coven_i], $jo9_coven_old, $jo9_coven_new)\r\nend\r\n! JO9 MOD END WITCH_COVEN_LOAD_20261111\r\n! JO9 MOD START COW_COSTUME_LOAD_20261111",
+      "count": 1,
+      "patchId": "WITCH_COVEN_LOAD_20261111"
+    }
+  ]
+}

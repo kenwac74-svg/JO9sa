@@ -1,0 +1,94 @@
+{
+  "source": "G:/Codex/tmp/release-r02-joker-20261113/candidate.qsp",
+  "sourceHash": "f03580b7d55d7100fe29e5ce1a2f9c8cb4bc8dd6bc1323478a89579a8073d14e",
+  "groups": [
+    {
+      "name": "transactions",
+      "assertions": 11,
+      "scope": "Actual interaction_city purchase entry, generate_stock and swap; only downstream render handoffs intercepted. Nine purchase/owned/cash/slot/legacy cases."
+    },
+    {
+      "name": "load-cache",
+      "assertions": 6,
+      "scope": "Actual $ongload twice from saved Kula shop view, actual renderer and preserved custom/other cache text. No OPENGAME or personal save."
+    }
+  ],
+  "transactions": [
+    {
+      "name": "fresh",
+      "money": 6000,
+      "flag": 0,
+      "typo": 0,
+      "slot": 0,
+      "buy": 1
+    },
+    {
+      "name": "same-link-again",
+      "money": 3000,
+      "flag": 1,
+      "typo": 0,
+      "slot": 1,
+      "buy": 0
+    },
+    {
+      "name": "owned-empty-slot",
+      "money": 6000,
+      "flag": 1,
+      "typo": 0,
+      "slot": 0,
+      "buy": 0
+    },
+    {
+      "name": "owned-other-slave",
+      "money": 6000,
+      "flag": 1,
+      "typo": 0,
+      "slot": 1,
+      "buy": 0
+    },
+    {
+      "name": "poor",
+      "money": 2999,
+      "flag": 0,
+      "typo": 0,
+      "slot": 0,
+      "buy": 0
+    },
+    {
+      "name": "occupied",
+      "money": 6000,
+      "flag": 0,
+      "typo": 0,
+      "slot": 1,
+      "buy": 0
+    },
+    {
+      "name": "exact-price",
+      "money": 3000,
+      "flag": 0,
+      "typo": 0,
+      "slot": 0,
+      "buy": 1
+    },
+    {
+      "name": "legacy-typo-only",
+      "money": 6000,
+      "flag": 0,
+      "typo": 1,
+      "slot": 0,
+      "buy": 1
+    },
+    {
+      "name": "nonzero-owned",
+      "money": 6000,
+      "flag": 2,
+      "typo": 0,
+      "slot": 0,
+      "buy": 0
+    }
+  ],
+  "limits": [
+    "Actual full transaction is executed; terminal render handoffs intercepted in transaction fixture.",
+    "Actual full load callback/render executed on synthetic state; not user SAV OPENGAME/CRC/GUI proof."
+  ]
+}

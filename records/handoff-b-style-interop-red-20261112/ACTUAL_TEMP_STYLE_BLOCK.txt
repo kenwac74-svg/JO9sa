@@ -1,0 +1,23 @@
+!IMPACTS ON STYLE (temp style rate is refreshed constantly)
+		stock_rate['temp_style'] = (stock['grace']*cont_atr_threshold[2]) - cont_atr_threshold[stock['hygiene']]
+		if stock['makeup'] > 1: stock_rate['temp_style'] += 10
+		if stock['makeup'] > 0: stock_rate['temp_style'] += 10
+		if stock['makeup'] = 0: stock_rate['temp_style'] -= 10
+		if stock['perfume'] > 0: stock_rate['temp_style'] += 20
+		if stock['perfume'] = 0: stock_rate['temp_style'] -= 10
+		if stock['manicure'] > 0: stock_rate['temp_style'] += 10
+		if stock['manicure'] = 0: stock_rate['temp_style'] -= 10
+		if stock['epilation'] > 0: stock_rate['temp_style'] += 10
+		if stock['epilation'] = 0: stock_rate['temp_style'] -= 10
+		if stock['hairstyle'] < 1 and stock['wig'] > 0: stock['hairstyle'] = 1
+		if stock['hairstyle'] > 0: stock_rate['temp_style'] += 10
+		if stock['hairstyle'] = 0: stock_rate['temp_style'] -= 10
+
+		stock['st_count'] = 0
+		if stock['st_plus'] >= 1: stock['st_count'] = 1 & stock_rate['temp_style'] += 10
+		if stock['st_plus'] >= 3: stock['st_count'] = 2 & stock_rate['temp_style'] += 10
+		if stock['st_plus'] >= 6: stock['st_count'] = 3 & stock_rate['temp_style'] += 20
+		if stock['st_plus'] >= 9: stock['st_count'] = 4 & stock_rate['temp_style'] += 20
+		if stock['st_plus'] >= 13: stock['st_count'] = 5 & stock_rate['temp_style'] += 30
+
+		

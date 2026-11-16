@@ -1,0 +1,172 @@
+--- flow.cjs:before
++++ flow.cjs:after
+@@ -9,6 +9,7 @@
+ }
+ function conditions(a,offset){return a.blocks.filter(b=>b.kind==='if'&&offset>=b.start&&offset<b.end).map(b=>b.condition);}
+ function build(doc,entries,helpers){
++  const pages=require('./page-flow.cjs').build(doc,entries,helpers);
+   const byLoc=new Map(),memo=new Map(),usageMemo=new Map();
+   for(const e of entries){if(!byLoc.has(e.location))byLoc.set(e.location,[]);byLoc.get(e.location).push(e);}
+   function data(loc){if(!memo.has(loc.name)){const body=core.shift(doc.lines[loc.body],5);memo.set(loc.name,{body,a:helpers.analyse(loc.name,body),entries:byLoc.get(loc.name)||[]});}return memo.get(loc.name);}
+@@ -48,6 +49,7 @@
+   function extend(base,entry,usageId){
+     if(entry.field!=='body')return base;
+     const loc=doc.locations[entry.locationIndex],d=data(loc),bind=binding(d.body,entry);
++    if(!bind){const page=pages.extend(base,entry);if(page)return page;}
+     if(!bind)return {...base,flow:{kind:'source',stages:base.texts.map((e,i)=>({number:i+1,variants:[{entry:e,conditions:conditions(d.a,e.start)}]})),selected:base.ordinal}};
+     // $text is reused by every event in the same location. Its assignments
+     // belong to the selected event, not to one global dialogue family.
+--- scenes.cjs:before
++++ scenes.cjs:after
+@@ -154,7 +154,7 @@
+     const d=data(loc.name);const matches=d.analysis.scenes.filter(s=>s.type!=='condition'&&s.predicate&&branch.states[s.predicate.key]===s.predicate.value);
+     return (matches.length?matches:[d.analysis.scenes[0]]).map(s=>({location:loc.name,sceneId:s.id,title:s.condition,line:s.line}));
+   }
+-  const flow=flowModule.build(doc,allEntries,{analyse,masked,chooseScene,sceneImages,bg,branches:(a,s,l,e)=>branchList(a,s,l,e).map(b=>({...b,destinations:b.destinations||resolve(b)}))});
++  const flow=flowModule.build(doc,allEntries,{analyse,masked,chooseScene,sceneImages,bg,links,calls,branches:(a,s,l,e)=>branchList(a,s,l,e).map(b=>({...b,destinations:b.destinations||resolve(b)}))});
+   function context(selection,sceneId,mode,usageId){
+     if(selection.hash!==doc.hash)throw Error('QSP가 바뀌었습니다. 다시 검색해 주세요.');
+     const d=data(selection.location),entry=d.entries.find(e=>e.fieldIndex===selection.fieldIndex&&e.start===selection.start&&e.end===selection.end);
+--- page-flow.cjs:before
++++ page-flow.cjs:after
+@@ -0,0 +1,64 @@
++'use strict';
++// Read-only scalar page assembly. Never executes a choice or evaluates save data.
++const core=require('./core.cjs');
++const ident='\\$?[\\wа-яА-Я가-힣]+';
++function scalar(body,e){const prefix=body.slice(body.lastIndexOf('\n',e.start-1)+1,e.start-1),m=prefix.match(/(\$[\w]+)\s*=\s*$/);return m?.[1].toLowerCase();}
++function build(doc,entries,h){
++ const models=new Map(),byLoc=new Map();for(const e of entries){if(!byLoc.has(e.location))byLoc.set(e.location,[]);byLoc.get(e.location).push(e);}
++ const ref=e=>({...e,hash:doc.hash});
++ function model(location){
++  if(models.has(location))return models.get(location);models.set(location,null);
++  const loc=doc.locations.find(l=>l.name===location);if(!loc)return null;
++  const body=core.shift(doc.lines[loc.body],5);
++  if(!/^\s*\$text\s*=\s*[^\r\n]*\+\s*\$\w+/m.test(body)||(body.match(/\$text\s*=(?!=)/g)||[]).length>40)return null;
++  const a=h.analyse(location,body),es=(byLoc.get(location)||[]).filter(e=>e.field==='body');
++  const aliases=new Map();for(const m of h.masked(body).matchAll(new RegExp('^\\s*('+ident+')\\s*=\\s*('+ident+')\\s*\\r?$','gmu'))){const key=m[1].toLowerCase(),value=m[2].toLowerCase();if(aliases.has(key)&&aliases.get(key)!==value)aliases.set(key,null);else if(!aliases.has(key))aliases.set(key,value);}
++  const outputs=[];let offset=0;
++  for(const row of body.split('\n')){
++   const safe=h.masked(row),m=safe.match(/\$text\s*=(?!=)/i);
++   if(m){const owner=a.blocks.filter(b=>b.kind==='if'&&b.start<=offset&&b.end>offset+row.length).sort((x,y)=>y.start-x.start)[0];
++    if(owner){const scope=a.scenes.find(s=>s.start===owner.start&&s.id!=='root'),rhs=m.index+m[0].length,refs=[...safe.slice(rhs).matchAll(/\$\w+/g)];
++     const parts=refs.map(token=>{const key=token[0].toLowerCase(),family=es.filter(e=>scalar(body,e)===key&&e.start>=owner.start&&e.end<offset+m.index);const first=family.find(e=>h.links(e.text).length)||family[0];return {key,position:offset+rhs+token.index,entry:first?ref(first):null,alternatives:family.filter(e=>e!==first).map(ref),choice:!!first&&h.links(first.text).length>0};});
++     const direct=es.filter(e=>e.start>offset+m.index&&e.end<=offset+row.length&&e.dialogue);parts.push(...direct.map(e=>({position:e.start,entry:ref(e),alternatives:[],choice:h.links(e.text).length>0})));parts.sort((a,b)=>a.position-b.position);
++     outputs.push({offset,owner,scope,parts,direct});
++    }
++   }offset+=row.length+1;
++  }
++  const menus=outputs.filter(o=>o.parts.filter(p=>p.choice).length>=2);
++  // Ambiguous or unrelated scalar writes retain the existing source navigator.
++  if(menus.length!==1||outputs.some(o=>!o.scope)||outputs.length>40)return null;
++  const menu=menus[0],outer=a.blocks.find(b=>b.predicate&&/^\$?args\[0\]$/i.test(b.predicate.key)&&b.start<=menu.offset&&b.end>menu.offset);
++  if(!outer)return null;
++  const pages=outputs.filter(o=>o===menu||o.parts.some(p=>p.entry)).map((o,i)=>({number:i+1,sceneId:o.scope.id,title:o===menu?'선택지 페이지':'결과 페이지',parts:o.parts,variants:o.parts.flatMap(p=>[p.entry,...p.alternatives]).filter(Boolean).map(entry=>({entry,conditions:[]})),scope:o.scope,owner:o.owner,menu:o===menu,images:h.sceneImages(a,o.scope,h.bg)}));
++  if(pages.length<2||pages.some(p=>!p.variants.length))return null;
++  const menuPage=pages.find(p=>p.menu);
++  for(const p of pages){const explicit=es.filter(e=>e.start>=p.scope.start&&e.end<p.scope.end&&scalar(body,e)==='$bg_path'&&/^(?:scene|bg)[\\/]/i.test(e.text));
++   if(explicit.length===1){const key=explicit[0].text.replaceAll('\\','/').toLowerCase();p.images.sort((x,y)=>Number((typeof y==='string'?y:y.path).replaceAll('\\','/').toLowerCase()===key)-Number((typeof x==='string'?x:x.path).replaceAll('\\','/').toLowerCase()===key));}
++  }
++  function destination(branch){
++   if(!branch.resolved||branch.target.toLowerCase()!==location.toLowerCase()||!['gt','goto','xgt'].includes(branch.mode))return branch.destinations||[];
++   const states={...branch.states};for(let n=0;n<aliases.size;n++)for(const [key,value]of aliases)if(value&&states[value]!==undefined&&states[key]===undefined)states[key]=states[value];
++   const results=pages.filter(p=>!p.menu),matches=results.filter(p=>p.owner.predicate&&states[p.owner.predicate.key]===p.owner.predicate.value);
++   if(!matches.length){for(const p of results.filter(p=>/^\s*else\b/i.test(body.slice(p.owner.start,body.indexOf('\n',p.owner.start))))){
++    const prior=results.filter(x=>x.owner.start<p.owner.start&&JSON.stringify(x.owner.parents)===JSON.stringify(p.owner.parents)&&x.owner.predicate);
++    if(prior.length&&prior.every(x=>states[x.owner.predicate.key]!==undefined&&states[x.owner.predicate.key]!==x.owner.predicate.value))matches.push(p);
++   }}
++   if(matches.length!==1)return branch.destinations||[];
++   const p=matches[0];return [{location,sceneId:p.sceneId,title:p.title,line:p.scope.line,staticChoice:true}];
++  }
++  for(const p of pages){
++   const allowed=new Set(p.parts.filter(x=>x.choice).map(x=>x.entry.start));
++   p.branches=h.branches(a,p.scope,location,es).filter(b=>b.kind==='choice'&&allowed.has(b.sourceStart)).map(b=>({...b,destinations:destination(b)}));
++  }
++  for(const [i,b]of menuPage.branches.entries()){const p=pages.find(p=>p.sceneId===b.destinations[0]?.sceneId);if(p)p.title=(i+1)+'번 선택 결과';}
++  const result={pages,menu:menuPage};models.set(location,result);return result;
++ }
++ function extend(base,entry){
++  if(entry.field!=='body')return null;const m=model(entry.location);if(!m)return null;
++  const page=m.pages.find(p=>p.variants.some(v=>v.entry.start===entry.start&&v.entry.fieldIndex===entry.fieldIndex));if(!page)return null;
++  const stages=m.pages.map(({scope,owner,branches,...p})=>p),primary=page.parts.map(p=>p.entry).filter(Boolean);
++  return {...base,scene:{id:page.sceneId,title:page.title,conditions:page.scope.parents||[],line:page.scope.line},flow:{kind:'pages',selected:page.number,stages,menu:m.menu.number},images:page.images,screen:primary,texts:page.variants.map(v=>v.entry),branches:page.branches,branchTotal:page.branches.length,previous:page.menu?null:m.menu.variants[0].entry,next:null,ordinal:page.number,total:stages.length};
++ }
++ return {extend};
++}
++module.exports={build};
+--- index.html:before
++++ index.html:after
+@@ -128,8 +128,34 @@
+  const text=document.createElement('div');text.className='snippet';gameLine(text,v.entry.text);card.append(text);
+  const pick=document.createElement('button');pick.className='routePick';pick.textContent='이 대사 선택';pick.onclick=()=>{const route=window.JO9ScriptRange;return (window.JO9WorkshopUI.current()==='script'&&route?.state().start?route.pick(v.entry,sceneId):selectEntry(v.entry,sceneId,false)).catch(e=>say(e.message,true));};card.append(pick);appendRangeActions(card,v.entry,sceneId);container.append(card);
+ }
++// JO9 MOD START SCALAR_PAGE_PREVIEW_20261115
++function renderComposedPages(c){
++ const flow=c.flow,lines=$('gameLines'),page=flow.stages.find(p=>p.number===flow.selected),menu=flow.stages.find(p=>p.number===flow.menu);
++ const jump=p=>selectEntry(p.variants[0].entry,p.sceneId,false).catch(e=>say(e.message,true));
++ $('gameNote').textContent='선택지 1페이지 → 선택별 결과 '+(flow.stages.length-1)+'페이지 · 소스 미리보기';
++ const bar=document.createElement('div');bar.className='flowbar';
++ const back=document.createElement('button');back.textContent='← 선택지 페이지';back.disabled=page.number===menu.number;back.onclick=()=>jump(menu);bar.append(back);
++ const label=document.createElement('label');label.textContent='페이지 바로 보기 ';const picker=document.createElement('select');picker.setAttribute('aria-label','선택지와 결과 페이지');
++ for(const p of flow.stages){const option=document.createElement('option');option.value=p.number;option.textContent=p.title;option.selected=p.number===page.number;picker.append(option);}picker.onchange=()=>jump(flow.stages.find(p=>String(p.number)===picker.value));label.append(picker);bar.append(label);lines.append(bar);
++ const heading=document.createElement('strong');heading.className='flowheading';heading.textContent=page.title;lines.append(heading);
++ for(const part of page.parts){
++  if(!part.entry){const note=document.createElement('p');note.className='muted';note.textContent='〈'+String(part.key||'호출 대사').replace(/^\$/,'')+'〉 · 호출 장면에서 전달하는 대사';lines.append(note);continue;}
++  const card=document.createElement('div');card.className='composed-page-part'+(part.choice?' composed-choice':' line selected');
++  if(part.choice){const b=(c.branches||[]).find(b=>b.sourceStart===part.entry.start),pick=document.createElement('button');pick.className='composed-choice-pick';gameLine(pick,part.entry.text);pick.title='선택하면 연결된 결과 페이지를 미리 봅니다. 게임 상태는 바뀌지 않습니다.';
++   pick.onclick=()=>{const d=b?.destinations?.[0];if(d)return openScene(d).catch(e=>say(e.message,true));say('이 선택지의 결과 경로를 정적으로 확정하지 못했습니다. 아래 연결 조건을 확인하세요.',true);};card.append(pick);
++   const edit=document.createElement('button');edit.className='composed-choice-edit';edit.textContent='문구 편집';edit.onclick=()=>selectEntry(part.entry,page.sceneId,false).catch(e=>say(e.message,true));card.append(edit);
++  }else{gameLine(card,part.entry.text);appendRangeActions(card,part.entry,page.sceneId);}
++  if(part.alternatives?.length){const detail=document.createElement('details');detail.className='composed-conditions';const title=document.createElement('summary');title.textContent='조건별 표시 · '+part.alternatives.length+'개';detail.append(title);
++   for(const e of part.alternatives){const edit=document.createElement('button');edit.className='line';gameLine(edit,e.text);edit.title='같은 페이지의 조건별 문구를 편집합니다.';edit.onclick=()=>selectEntry(e,page.sceneId,false).catch(error=>say(error.message,true));detail.append(edit);}card.append(detail);
++  }lines.append(card);
++ }
++ const note=document.createElement('p');note.className='muted';note.textContent=page.number===menu.number?'세 선택지는 같은 화면에 함께 표시됩니다. 선택지 버튼을 누르면 해당 결과와 샘플 이미지를 표시합니다. 비용 충족 여부는 실제 세이브에서 판정됩니다.':'이 선택지의 결과 페이지입니다. 위의 돌아가기 버튼으로 선택지 화면을 다시 볼 수 있습니다.';lines.append(note);
++ const all=$('sceneTexts');all.replaceChildren();const full=()=>{if(all.childElementCount)return;for(const p of flow.stages){const row=document.createElement('div');row.className='stagerow';const b=document.createElement('button');b.textContent=p.title+(p.number===menu.number?' · 선택지 '+p.parts.filter(x=>x.choice).length+'개':'');b.onclick=()=>jump(p);row.append(b);all.append(row);}};$('sceneTextsBox').ontoggle=()=>{if($('sceneTextsBox').open)full();};if($('sceneTextsBox').open)full();
++}
++// JO9 MOD END SCALAR_PAGE_PREVIEW_20261115
+ function renderFlow(c){
+  const lines=$('gameLines');lines.replaceChildren();const flow=c.flow;
++ if(flow?.kind==='pages'){renderComposedPages(c);return;}
+  if(!flow){$('gameNote').textContent='이 장면의 대사';for(const e of c.screen||[]){const b=document.createElement('button');b.className='line'+(selection&&key(selection)===key(e)?' selected':'');gameLine(b,e.text);b.onclick=()=>selectEntry(e,c.scene.id).catch(err=>say(err.message,true));const row=document.createElement('div');row.append(b);appendRangeActions(row,e,c.scene.id);lines.append(row);}return;}
+  const stages=flow.stages,at=stages.findIndex(s=>s.number===flow.selected),current=stages[at],next=stages[at+1];
+  $('gameNote').textContent=flow.kind==='array'?`현재 ${flow.selected}단계 · 전체 ${stages.length}단계${flow.usage?' · '+flow.usage.location+' / '+flow.usage.title:''}`:'현재 대사와 연결 조건';
+@@ -168,12 +194,14 @@
+  const go=document.createElement('a');go.textContent='이미지 패치 체크리스트에서 보기 ↗';go.href='/catalog?image='+encodeURIComponent('content\\pic\\'+im.path);go.target='_blank';go.rel='noopener';work.append(go);
+ }
+ function updateWorkState(v){for(const im of context?.images||[]){if(im.work)im.work.flags=v.items?.[im.work.path]||[];}const im=context?.images?.find(x=>x.path===selectedImagePath);if(im?.work){for(const check of document.querySelectorAll('#imageStatusChecks input'))check.checked=im.work.flags.includes(check.dataset.flag);}}
++let selectedImageSceneKey='';
+ function renderGame(c){
+  const shots=$('shots');shots.replaceChildren();const imgs=c.images||[];
+- if(imgs.length)showImage(imgs.find(x=>x.path===selectedImagePath)||imgs[0]);else{const n=document.createElement('div');n.className='none';n.textContent=c.flow?.unresolved?'이 대사 배열을 화면에 연결하는 경로를 아직 찾지 못했습니다.':'파일 경로를 확정할 수 있는 이미지가 없습니다.';shots.append(n);window.JO9_IMAGE_REFERENCE?.empty(shots);if(c.unresolvedImages?.length){const info=document.createElement('div');info.className='muted';info.textContent=c.unresolvedImages.length+'개 이미지 지정은 변수 또는 파일 확인이 필요합니다.';shots.append(info);}}
++ const imageSceneKey=c.location+':'+c.scene.id,keepImage=c.flow?.kind!=='pages'||selectedImageSceneKey===imageSceneKey;selectedImageSceneKey=imageSceneKey;
++ if(imgs.length)showImage((keepImage&&imgs.find(x=>x.path===selectedImagePath))||imgs[0]);else{const n=document.createElement('div');n.className='none';n.textContent=c.flow?.unresolved?'이 대사 배열을 화면에 연결하는 경로를 아직 찾지 못했습니다.':'파일 경로를 확정할 수 있는 이미지가 없습니다.';shots.append(n);window.JO9_IMAGE_REFERENCE?.empty(shots);if(c.unresolvedImages?.length){const info=document.createElement('div');info.className='muted';info.textContent=c.unresolvedImages.length+'개 이미지 지정은 변수 또는 파일 확인이 필요합니다.';shots.append(info);}}
+  renderFlow(c);
+  const usage=$('usageSelector');usage.replaceChildren();usage.hidden=!(c.flow?.usages?.length>1);if(!usage.hidden){const label=document.createElement('label');label.textContent='이 대사가 쓰이는 장면';const sel=document.createElement('select');for(const u of c.flow.usages){const o=document.createElement('option');o.value=u.id;o.textContent=u.location+' / '+u.title;o.selected=u.id===c.flow.usage?.id;sel.append(o);}sel.onchange=async()=>{remember();try{render(await api('/api/context',{selection,sceneId:c.scene.id,mode:mode(),usageId:sel.value}));}catch(e){say(e.message,true);}};label.append(sel);usage.append(label);}
+- const ch=$('choices');ch.replaceChildren();for(const b of (c.branches||[]).filter(b=>b.kind==='choice')){for(const d of (b.destinations||[]).slice(0,1)){const x=document.createElement('button');x.textContent='▶ '+b.label;x.onclick=()=>openScene(d).catch(e=>say(e.message,true));ch.append(x);}}
++ const ch=$('choices');ch.replaceChildren();for(const b of (c.flow?.kind==='pages'?[]:c.branches||[]).filter(b=>b.kind==='choice')){for(const d of (b.destinations||[]).slice(0,1)){const x=document.createElement('button');x.textContent='▶ '+b.label;x.onclick=()=>openScene(d).catch(e=>say(e.message,true));ch.append(x);}}
+ }
+ 
+ function zoom(src){$('zoom').querySelector('img').src=src;$('zoom').hidden=false;}$('zoom').onclick=()=>$('zoom').hidden=true;
+@@ -184,7 +212,7 @@
+  const all=mode()==='all';
+  $('sceneTitle').textContent=all?`${c.location} · ${c.scene.title}${c.scene.conditions?.length?' · '+c.scene.conditions.join(' → '):''}`:`${c.location}${selection?' · '+selection.line+'행':''}`;
+  $('sourceBox').hidden=!all;$('branchBox').hidden=false;
+- $('sourceContext').textContent=c.source||'';$('textPosition').textContent=c.empty?'대사 없음':`${c.ordinal} / ${c.total}개`;$('sceneTexts').replaceChildren();
++ $('sourceContext').textContent=c.source||'';$('textPosition').textContent=c.empty?'대사 없음':`${c.ordinal} / ${c.total}${c.flow?.kind==='pages'?'페이지':'개'}`;$('sceneTexts').replaceChildren();
+  if(selection){$('selected').textContent=name(selection);$('original').value=selection.text;$('replacement').value=drafts[key(selection)]??selection.text;for(const e of c.texts)textButton(e,$('sceneTexts'),c.scene.id);}
+  renderPreview();window.dispatchEvent(new CustomEvent('jo9:selection',{detail:c}));
+  $('branches').replaceChildren();
+--- workshop.css:before
++++ workshop.css:after
+@@ -215,3 +215,10 @@
+ 
+ /* JO9 MOD SCRIPT_GAME_LAYOUT_20261110: isolated native-pixel preview markup. */
+ .scriptGameScroll{overflow:auto;max-width:100%;margin-top:10px}.scriptGameStage{position:relative;overflow:hidden;flex:none;background:#000;color:#000;box-sizing:content-box;isolation:isolate}.scriptGameFrame{position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;margin:0;border:0;pointer-events:none}.scriptGamePaper{position:absolute;left:4px;top:3px;width:795px;height:595px;max-width:none;max-height:none;margin:0;border:0;pointer-events:none}.scriptGameImageGuide{position:absolute;left:4px;top:3px;width:795px;height:595px;display:flex;align-items:center;justify-content:center;color:#bfae91;font:16px sans-serif}.scriptGameText{position:absolute;box-sizing:content-box;margin:0;padding:0;border:0;background:none;font-weight:normal;text-align:left;white-space:normal;overflow:visible;outline:1px dashed #a38652;outline-offset:1px}.scriptGameContent{margin:0;padding:0;border:0;overflow-wrap:normal;word-break:normal;white-space:normal;font:inherit;color:inherit}.scriptGameContent p{margin:1em 0}.scriptGameContent div,.scriptGameContent span{font:inherit;color:inherit}
++
++/* JO9 MOD SCALAR_PAGE_PREVIEW_20261115 */
++.composed-page-part{margin:10px 0;padding:12px;border:1px solid #455a68;border-radius:9px;background:#14222c}
++.composed-choice{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:start}
++.composed-choice-pick{width:100%;text-align:left;font-size:16px;font-weight:600;line-height:1.6}
++.composed-choice-edit{font-size:12px;padding:7px 10px}
++.composed-conditions{grid-column:1/-1;font-size:13px}

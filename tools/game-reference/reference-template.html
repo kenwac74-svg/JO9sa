@@ -2,7 +2,7 @@
 <html lang="ko">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>JO9 · 특성·아이템·마법 DB와 내 아이디어</title>
+<title>JO9 · 특성·아이템·마법 DB · MOB 정보·적 전투 특성과 내 아이디어</title>
 <style>
   :root { color-scheme: dark; --page:#151519; --panel:#201f24; --border:#39343b; --text:#f1e9dc; --muted:#c0b6ab; --gold:#efc485; }
   * { box-sizing:border-box; }
@@ -40,6 +40,20 @@
   summary { color:var(--gold); cursor:pointer; }
   pre { white-space:pre-wrap; overflow-wrap:anywhere; max-height:22rem; overflow:auto; font:12px/1.5 Consolas,monospace; }
   @media (max-width:760px) { .ideas-grid { grid-template-columns:1fr; } }
+  .enemy-controls { display:flex; flex-wrap:wrap; align-items:end; gap:8px; }
+  .enemy-controls label:first-child { flex:2 1 220px; }
+  .enemy-controls label { flex:1 1 110px; }
+  .enemy-card { border:1px solid var(--border); border-radius:7px; padding:14px; margin:12px 0; overflow-wrap:anywhere; }
+  .enemy-card h3 { margin:0 0 4px; color:var(--gold); font-size:1.05rem; }
+  .enemy-card p { margin:.35rem 0; }
+  .enemy-stats { font-weight:700; }
+  .enemy-warning { color:#ffbf90; }
+  .enemy-guide { margin:.7rem 0 1rem; }
+  .mob-name { color:var(--gold); background:none; border:0; padding:0; text-align:left; font-weight:700; cursor:pointer; text-decoration:underline; }
+  .mob-planned { border-left:3px solid var(--gold); }
+  .mob-table-wrap { overflow:auto; max-height:32rem; }
+  .mob-table th { position:sticky; top:0; z-index:1; }
+  .mob-detail li { margin:.4rem 0; }
   :focus-visible { outline:2px solid var(--gold); outline-offset:2px; }
   .count { color:var(--gold); font-size:.86rem; margin:.65rem 0 .4rem; }
   .coverage, footer, .ref { color:var(--muted); font-size:.78rem; }
@@ -72,11 +86,46 @@
     <button type="button" id="traits-tab" role="tab" aria-selected="true" aria-controls="traits-panel">전체 특성 <span></span></button>
     <button type="button" id="items-tab" role="tab" aria-selected="false" aria-controls="items-panel" tabindex="-1">전체 아이템 <span></span></button>
     <button type="button" id="spells-tab" role="tab" aria-selected="false" aria-controls="spells-panel" tabindex="-1">마법 <span></span></button>
+    <button type="button" id="mobs-tab" role="tab" aria-selected="false" aria-controls="mobs-panel" tabindex="-1">MOB 정보 <span></span></button>
+    <button type="button" id="enemies-tab" role="tab" aria-selected="false" aria-controls="enemies-panel" tabindex="-1">적 전투 특성 <span></span></button>
     <button type="button" id="ideas-tab" role="tab" aria-selected="false" aria-controls="ideas-panel" tabindex="-1">내 아이디어 <span>…</span></button>
   </div>
   <section id="traits-panel" role="tabpanel" aria-labelledby="traits-tab"><h2>전체 특성</h2></section>
   <section id="items-panel" role="tabpanel" aria-labelledby="items-tab" hidden><h2>전체 아이템</h2></section>
   <section id="spells-panel" role="tabpanel" aria-labelledby="spells-tab" hidden><h2>마법</h2></section>
+  <section id="mobs-panel" role="tabpanel" aria-labelledby="mobs-tab" hidden>
+    <h2>MOB 정보</h2>
+    <form class="enemy-controls">
+      <label>MOB 검색<input type="search" placeholder="이름, ID, 방어, 기술 · 춘향 기획 포함" autocomplete="off"></label>
+      <label>등록 상태<select name="state"><option value="">전체</option><option value="defined">QSP 정의</option><option value="planned">미구현 기획</option></select></label>
+      <label>MOB 분류<select name="category"><option value="">모든 분류</option></select></label>
+      <label>정렬<select name="sort"><option value="name">이름순</option><option value="0">체력 높은 순</option><option value="1">스태미나 높은 순</option><option value="2">사기 높은 순</option><option value="3">기본 피해 높은 순</option></select></label>
+      <button type="submit" class="action primary">검색</button>
+      <button type="reset" class="action">검색 지우기</button>
+    </form>
+    <p class="count" role="status" aria-live="polite"></p>
+    <p class="coverage"></p>
+    <div class="mob-detail"></div>
+    <p>아래 MOB 이름을 누르면 상세 정보를 표시합니다.</p>
+    <div class="mob-table-wrap"><table class="mob-table">
+      <colgroup><col style="width:26%"><col style="width:14%"><col style="width:15%"><col style="width:15%"><col style="width:15%"><col style="width:15%"></colgroup>
+      <thead><tr><th scope="col">MOB · 등록 상태</th><th scope="col">분류</th><th scope="col">체력</th><th scope="col">스태미나</th><th scope="col">사기</th><th scope="col">기본 피해</th></tr></thead><tbody></tbody>
+    </table></div>
+  </section>
+  <section id="enemies-panel" role="tabpanel" aria-labelledby="enemies-tab" hidden>
+    <h2>적 전투 특성</h2>
+    <form class="enemy-controls">
+      <label>적 검색<input type="search" placeholder="적 이름, ID, 특성, 저항, 공격 효과" autocomplete="off"></label>
+      <label>적 분류<select><option value="">모든 분류</option></select></label>
+      <button type="submit" class="action primary">검색</button>
+      <button type="reset" class="action">검색 지우기</button>
+    </form>
+    <p class="count" role="status" aria-live="polite"></p>
+    <p class="coverage"></p>
+    <p class="enemy-warning">일반공격 부가상태와 특수공격은 현재 코드에 연결 누락이 있습니다. 정의된 효과와 실제 작동 상태를 구분해 표시합니다.</p>
+    <div class="enemy-guide"></div>
+    <div class="enemy-list"></div>
+  </section>
   <section id="ideas-panel" role="tabpanel" aria-labelledby="ideas-tab" hidden>
     <h2>내 아이디어</h2>
     <div class="idea-toolbar">
@@ -129,10 +178,16 @@
 <script id="reference-data" type="application/json">__JO9_REFERENCE_DATA__</script>
 <script>__JO9_IDEAS_MODEL__</script>
 <script>__JO9_IDEAS_CLIENT__</script>
+<script>__JO9_ENEMIES_UI__</script>
+<script>__JO9_MOBS_UI__</script>
 <script>
   'use strict';
   const data = JSON.parse(document.getElementById('reference-data').textContent);
-  const kinds = ['traits', 'items', 'spells', 'ideas'];
+  const kinds = ['traits', 'items', 'spells', 'mobs', 'enemies', 'ideas'];
+  let enemiesReady = false;
+  let mobsReady = false;
+  document.querySelector('#mobs-tab span').textContent = data.mobs.rows.length.toLocaleString('ko');
+  document.querySelector('#enemies-tab span').textContent = data.enemies.rows.length.toLocaleString('ko');
   const tabs = kinds.map(kind => document.getElementById(kind + '-tab'));
   const panels = kinds.map(kind => document.getElementById(kind + '-panel'));
   const template = document.getElementById('reference-panel');
@@ -234,6 +289,14 @@
   }
 
   function selectTab(index, focus = false) {
+    if (kinds[index] === 'mobs' && !mobsReady) {
+      setupMobs(panels[index], tabs[index], data.mobs);
+      mobsReady = true;
+    }
+    if (kinds[index] === 'enemies' && !enemiesReady) {
+      setupEnemies(panels[index], tabs[index], data.enemies);
+      enemiesReady = true;
+    }
     tabs.forEach((tab, i) => {
       tab.setAttribute('aria-selected', String(index === i));
       tab.tabIndex = index === i ? 0 : -1;
@@ -243,7 +306,7 @@
   }
 
   tabs.forEach((tab, i) => {
-    if (kinds[i] !== 'ideas') setup(panels[i], tab, data[kinds[i]], kinds[i]);
+    if (!['ideas', 'enemies', 'mobs'].includes(kinds[i])) setup(panels[i], tab, data[kinds[i]], kinds[i]);
     tab.addEventListener('click', () => selectTab(i));
     tab.addEventListener('keydown', event => {
       if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
@@ -254,7 +317,7 @@
     });
   });
   const build = data.traits.hash.slice(0, 12);
-  document.getElementById('snapshot').textContent = `현재 WORK 데이터 · jack.qsp ${build}`;
+  document.getElementById('snapshot').textContent = `특성·아이템·마법 기준 QSP ${build} · 적 전투 기준 QSP ${data.enemies.hash.slice(0, 12)}`;
 </script>
 <script>__JO9_IDEAS_UI__</script>
 </html>

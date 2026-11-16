@@ -1,0 +1,55 @@
+killall
+$onnewloc=''
+$counter=''
+settimer 0
+gs 'refresh_database'
+gs 'init_game'
+$onnewloc=''
+$counter=''
+settimer 0
+sound_on=0
+loli_first=4000
+loli_last=4179
+young_first=4180
+young_last=4439
+milf_first=4440
+milf_last=4727
+no_loli=0
+no_milf=0
+cheat_e=1
+cheat_f=0
+cheat_g=0
+for jo9_sample=1 to 8:
+ special_stock=0
+ gs 'generate_stock'
+ if stock_type<4000 or stock_type>4179: msg 'FAIL_GENERATE_META_1' & exit
+ if $stock['fullimage'] ! $fullimage[stock_type]: msg 'FAIL_GENERATE_BODY' & exit
+ if $stock['ava_clear'] ! $seed_ava_clear[stock_type]: msg 'FAIL_GENERATE_FACE' & exit
+ if stock['age'] ! 1: msg 'FAIL_GENERATE_AGE' & exit
+ if stock_state ! CONST_INT['slave_exist']: msg 'FAIL_GENERATE_STATE' & exit
+end
+cheat_e=0
+cheat_f=1
+cheat_g=0
+for jo9_sample=1 to 8:
+ special_stock=0
+ gs 'generate_stock'
+ if stock_type<4180 or stock_type>4439: msg 'FAIL_GENERATE_META_2' & exit
+ if $stock['fullimage'] ! $fullimage[stock_type]: msg 'FAIL_GENERATE_BODY' & exit
+ if $stock['ava_clear'] ! $seed_ava_clear[stock_type]: msg 'FAIL_GENERATE_FACE' & exit
+ if stock['age'] ! 0: msg 'FAIL_GENERATE_AGE' & exit
+ if stock_state ! CONST_INT['slave_exist']: msg 'FAIL_GENERATE_STATE' & exit
+end
+cheat_e=0
+cheat_f=0
+cheat_g=1
+for jo9_sample=1 to 8:
+ special_stock=0
+ gs 'generate_stock'
+ if stock_type<4440 or stock_type>4727: msg 'FAIL_GENERATE_META_3' & exit
+ if $stock['fullimage'] ! $fullimage[stock_type]: msg 'FAIL_GENERATE_BODY' & exit
+ if $stock['ava_clear'] ! $seed_ava_clear[stock_type]: msg 'FAIL_GENERATE_FACE' & exit
+ if stock['age'] ! 2: msg 'FAIL_GENERATE_AGE' & exit
+ if stock_state ! CONST_INT['slave_exist']: msg 'FAIL_GENERATE_STATE' & exit
+end
+msg 'JO9_QA_MOB728_generation_COMPLETE'

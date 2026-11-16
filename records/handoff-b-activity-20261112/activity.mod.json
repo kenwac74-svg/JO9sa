@@ -1,0 +1,129 @@
+{
+  "id": "2026-11-12_activity_stages",
+  "description": "활동·집중 네 특성 단일 단계형 통합; 긍정 우선·같은 계열 상위 우선. 기존 저장 필드와 추첨 횟수 유지.",
+  "target": "game\\jack.qsp",
+  "before_sha256": "a4d1985cba2f3071405fe8e6ac3edd47a1e29c1693dd84e7485b131974665a72",
+  "add_locations": [
+    {
+      "name": "jo9_activity_stage",
+      "desc": "",
+      "body": "! JO9 MOD START ACTIVITY_STAGES_20261112\r\n! Derived stages: +1 perseverance, +2 workaholic, -1 distracted, -2 inertia.\r\n! Existing physical trait/history fields are reused; no automatic promotion.\r\nlocal $j9as_mode, $j9as_role\r\n$j9as_mode=$args[0]\r\n$j9as_role=$args[1]\r\nlocal j9as_stage, j9as_focus, j9as_work, j9as_comfort\r\nj9as_stage=0\r\nj9as_focus=dyneval('result='+$j9as_role+\"['jo9_focus']\")\r\nj9as_work=dyneval('result='+$j9as_role+\"['jo9_work_ethic']\")\r\nj9as_comfort=dyneval('result='+$j9as_role+\"['passion_comfort']\")\r\nif j9as_work>0 or j9as_comfort<0:\r\n j9as_stage=2\r\nelseif j9as_focus>0:\r\n j9as_stage=1\r\nelseif j9as_work<0 or j9as_comfort>0:\r\n j9as_stage=-2\r\nelseif j9as_focus<0:\r\n j9as_stage=-1\r\nend\r\nresult=j9as_stage\r\nif $j9as_mode='stage': exit\r\nif $j9as_mode='sign': result=iif(j9as_stage*j9as_stage=4,j9as_stage/2,0) & exit\r\nif $j9as_mode='focus': result=iif(j9as_stage>0,1,iif(j9as_stage<0,-1,0)) & exit\r\nif $j9as_mode='grant' or $j9as_mode='edit':\r\n local j9as_wanted=args[2]\r\n if j9as_wanted ! 1 and j9as_wanted ! 2 and j9as_wanted ! -1 and j9as_wanted ! -2: result=0 & exit\r\n if $j9as_mode='edit' and j9as_wanted=j9as_stage:\r\n  j9as_stage=0\r\n else\r\n  if j9as_stage>0 and j9as_wanted<0: result=0 & exit\r\n  if j9as_wanted>0 and j9as_stage<=0: j9as_stage=j9as_wanted\r\n  if j9as_wanted>0 and j9as_stage>0: j9as_stage=max(j9as_stage,j9as_wanted)\r\n  if j9as_wanted<0 and j9as_stage<=0: j9as_stage=min(j9as_stage,j9as_wanted)\r\n end\r\n if j9as_stage=2 and func('jo9_traits','allow',$j9as_role,'jo9_work_ethic',1)=0: result=0 & exit\r\nelseif $j9as_mode='remove':\r\n if $args[2]='jo9_work_ethic' or $args[2]='passion_comfort':\r\n  if j9as_stage*j9as_stage=4: j9as_stage=0\r\n elseif $args[2]='jo9_focus':\r\n  if j9as_stage*j9as_stage=1: j9as_stage=0\r\n else\r\n  j9as_stage=0\r\n end\r\nend\r\ndynamic $replace({\r\n j9asactor['jo9_focus']=iif(args[0]*args[0]=1,args[0],0)\r\n j9asactor['jo9_work_ethic']=iif(args[0]*args[0]=4,args[0]/2,0)\r\n j9asactor['passion_comfort']=-j9asactor['jo9_work_ethic']\r\n if args[0]=0 or (j9asactor['jo9_focus_active']>0 and args[0]<0) or (j9asactor['jo9_focus_active']<0 and args[0]>0):\r\n  j9asactor['jo9_focus_active']=0\r\n  j9asactor['jo9_focus_xp_credit']=0\r\n end\r\n if $args[1]='grant' or $args[1]='edit':\r\n  if args[0]*args[0]=1: j9asactor['jo9_focus_known']=1\r\n  if args[0]*args[0]=4: j9asactor['jo9_work_ethic_known']=1 & j9asactor['passion_comfort_revealed']=2\r\n  j9asactor['jo9_focus_active']=0\r\n  j9asactor['jo9_focus_xp_credit']=0\r\n  $j9asactor['jo9_focus_subject']=''\r\n end\r\n},'j9asactor',$j9as_role),j9as_stage,$j9as_mode\r\nresult=1\r\n! JO9 MOD END ACTIVITY_STAGES_20261112",
+      "actions": []
+    }
+  ],
+  "edits": [
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": "if $args[0] = 'activity_value' or $args[0] = 'activity_sign' or $args[0] = 'activity_compatible' or $args[0] = 'activity_known':\r\n local $j9av_role = $args[1]\r\n result = 0\r\n ! Existing saved display routines still call activity_compatible.\r\n if $args[0] = 'activity_compatible': result = 1 & exit\r\n if $args[0] = 'activity_known':\r\n  if dyneval('result = ' + $j9av_role + \"['jo9_work_ethic_known']\") = 1 or dyneval('result = ' + $j9av_role + \"['passion_comfort_revealed']\") = 2: result = 1\r\n  exit\r\n end\r\n local j9av_work = dyneval('result = ' + $j9av_role + \"['jo9_work_ethic']\")\r\n local j9av_comfort = dyneval('result = ' + $j9av_role + \"['passion_comfort']\")\r\n local j9av_sign = 0\r\n if j9av_work > 0 or j9av_comfort < 0:\r\n  j9av_sign = 1\r\n elseif j9av_work < 0 or j9av_comfort > 0:\r\n  j9av_sign = -1\r\n end\r\n if $args[0] = 'activity_sign' or $args[2] = 'jo9_work_ethic': result = j9av_sign\r\n if $args[0] = 'activity_value' and $args[2] = 'passion_comfort': result = -j9av_sign\r\n exit\r\nend\r\nif $args[0] = 'activity_repair':\r\n local $j9av_role = $args[1]\r\n local j9av_sign = func('jo9_traits', 'activity_sign', $j9av_role)\r\n result = 0\r\n dynamic $replace({\r\n  if j9avactor['jo9_work_ethic'] ! args[0] or j9avactor['passion_comfort'] ! -args[0]:\r\n   j9avactor['jo9_work_ethic'] = args[0]\r\n   j9avactor['passion_comfort'] = -args[0]\r\n   result = 1\r\n  end\r\n }, 'j9avactor', $j9av_role), j9av_sign\r\n exit\r\nend\r\nif $args[0] = 'activity_load':\r\n local j9av_i, $j9av_role, $j9av_roles\r\n copyarr '$j9av_roles', '$all_slave_characters'\r\n $j9av_roles[] = 'stock'\r\n $j9av_roles[] = 'selected'\r\n $j9av_roles[] = 'saved_stock'\r\n $j9av_roles[] = 'snk_parked_slave'\r\n for j9av_i = 0 to arrsize('$j9av_roles') - 1:\r\n  $j9av_role = $j9av_roles[j9av_i]\r\n  if dyneval('result = ' + $j9av_role + '_state') > CONST_INT['no_slave']:\r\n   gs 'jo9_traits', 'activity_repair', $j9av_role\r\n   gs 'jo9_traits_value', 'versatile_refresh', $j9av_role\r\n  end\r\n end\r\n exit\r\nend\r\nif $args[0] = 'activity_reveal':\r\n local $j9av_role = $args[1]\r\n local j9av_value = func('jo9_traits', 'activity_value', $j9av_role, 'passion_comfort')\r\n if j9av_value ! 0:\r\n  if func('jo9_traits', 'activity_known', $j9av_role) = 0:\r\n   dynamic $replace({\r\n    if j9avactor['passion_comfort_revealed'] = 0: j9avactor['passion_comfort_revealed'] = 1\r\n   }, 'j9avactor', $j9av_role)\r\n  end\r\n end\r\n exit\r\nend\r\nif $args[0] = 'activity_discover':\r\n local $j9av_role = $args[1]\r\n local j9av_sign = func('jo9_traits', 'activity_sign', $j9av_role)\r\n dynamic $replace({\r\n  if j9avactor['passion_comfort_revealed'] = 1 and args[0] ! 0:\r\n   if j9avactor['jo9_work_ethic_known'] ! 1:\r\n    if args[0] = 1: msg $func('jo9_traits', 'text', 'activity_active')\r\n    if args[0] = -1: msg $func('jo9_traits', 'text', 'activity_passive')\r\n   end\r\n   j9avactor['jo9_work_ethic_known'] = 1\r\n   j9avactor['passion_comfort_revealed'] = 2\r\n  elseif args[0] = 0:\r\n   j9avactor['passion_comfort_revealed'] = 0\r\n  end\r\n }, 'j9avactor', $j9av_role), j9av_sign\r\n exit\r\nend\r\nif $args[0] = 'activity_generate':\r\n local $j9av_role = $args[1]\r\n local j9av_sign = func('jo9_traits', 'activity_sign', $j9av_role)\r\n if j9av_sign ! 0:\r\n  if func('jo9_traits', 'allow', $j9av_role, 'jo9_work_ethic', j9av_sign) = 0: j9av_sign = 0\r\n end\r\n dynamic $replace({\r\n  j9avactor['jo9_work_ethic'] = args[0]\r\n  j9avactor['passion_comfort'] = -args[0]\r\n }, 'j9avactor', $j9av_role), j9av_sign\r\n result = 1\r\n exit\r\nend\r\nif $args[0] = 'activity_set':\r\n local $j9av_role = $args[1]\r\n local j9av_sign = args[2]\r\n result = 0\r\n if j9av_sign ! 1 and j9av_sign ! -1: exit\r\n if func('jo9_traits', 'allow', $j9av_role, 'jo9_work_ethic', j9av_sign) = 0: exit\r\n dynamic $replace({\r\n  j9avactor['jo9_work_ethic'] = args[0]\r\n  j9avactor['passion_comfort'] = -args[0]\r\n  j9avactor['jo9_work_ethic_known'] = 1\r\n  j9avactor['passion_comfort_revealed'] = 2\r\n }, 'j9avactor', $j9av_role), j9av_sign\r\n result = 1\r\n exit\r\nend\r\nif $args[0] = 'activity_remove':\r\n local $j9av_role = $args[1]\r\n local $j9av_target = $args[2]\r\n result = 0\r\n if $j9av_target ! '' and $j9av_target ! 'jo9_work_ethic' and $j9av_target ! 'passion_comfort': exit\r\n dynamic $replace({\r\n  j9avactor['jo9_work_ethic'] = 0\r\n  j9avactor['passion_comfort'] = 0\r\n  j9avactor['jo9_work_ethic_known'] = 0\r\n  j9avactor['passion_comfort_revealed'] = 0\r\n }, 'j9avactor', $j9av_role)\r\n result = 1\r\n exit\r\nend\r\nif $args[0] = 'activity_edit':\r\n local $j9av_role = $args[1]\r\n local $j9av_key = $args[2]\r\n local j9av_wanted = args[3]\r\n local j9av_sign = j9av_wanted\r\n if $j9av_key = 'passion_comfort': j9av_sign = -j9av_wanted\r\n if func('jo9_traits', 'activity_sign', $j9av_role) = j9av_sign:\r\n  gs 'jo9_traits', 'activity_remove', $j9av_role\r\n else\r\n  if func('jo9_traits', 'activity_set', $j9av_role, j9av_sign) = 0: msg '함께 가질 수 없는 특성이 있어 이 활동 성향을 부여할 수 없습니다.'\r\n end\r\n exit\r\nend\r\n",
+      "new": "! JO9 MOD START ACTIVITY_STAGES_ROUTES_20261112\r\nif $args[0]='activity_stage': result=func('jo9_activity_stage','stage',$args[1]) & exit\r\nif $args[0]='activity_focus': result=func('jo9_activity_stage','focus',$args[1]) & exit\r\nif $args[0]='activity_sign': result=func('jo9_activity_stage','sign',$args[1]) & exit\r\nif $args[0]='activity_compatible': result=1 & exit\r\nif $args[0]='activity_value':\r\n result=func('jo9_activity_stage','sign',$args[1])\r\n if $args[2]='passion_comfort': result=-result\r\n exit\r\nend\r\nif $args[0]='activity_known':\r\n result=0\r\n if dyneval('result='+$args[1]+\"['jo9_work_ethic_known']\")=1 or dyneval('result='+$args[1]+\"['passion_comfort_revealed']\")=2: result=1\r\n exit\r\nend\r\nif $args[0]='activity_repair': result=func('jo9_activity_stage','repair',$args[1]) & exit\r\nif $args[0]='activity_generate':\r\n local j9as_generated=func('jo9_activity_stage','stage',$args[1])\r\n if j9as_generated=2 and func('jo9_traits','allow',$args[1],'jo9_work_ethic',1)=0:\r\n  dynamic $replace({j9asactor['jo9_work_ethic']=0 & j9asactor['passion_comfort']=0},'j9asactor',$args[1])\r\n end\r\n result=func('jo9_activity_stage','repair',$args[1])\r\n exit\r\nend\r\nif $args[0]='activity_set': result=func('jo9_activity_stage','grant',$args[1],args[2]*2) & exit\r\nif $args[0]='activity_remove': result=func('jo9_activity_stage','remove',$args[1],$args[2]) & exit\r\nif $args[0]='activity_edit':\r\n local j9as_edit=args[3]*2\r\n if $args[2]='passion_comfort': j9as_edit=-j9as_edit\r\n result=func('jo9_activity_stage','edit',$args[1],j9as_edit)\r\n exit\r\nend\r\nif $args[0] = 'activity_load':\r\n local j9av_i, $j9av_role, $j9av_roles\r\n copyarr '$j9av_roles', '$all_slave_characters'\r\n $j9av_roles[] = 'stock'\r\n $j9av_roles[] = 'selected'\r\n $j9av_roles[] = 'saved_stock'\r\n $j9av_roles[] = 'snk_parked_slave'\r\n for j9av_i = 0 to arrsize('$j9av_roles') - 1:\r\n  $j9av_role = $j9av_roles[j9av_i]\r\n  if dyneval('result = ' + $j9av_role + '_state') > CONST_INT['no_slave']:\r\n   gs 'jo9_traits', 'activity_repair', $j9av_role\r\n   gs 'jo9_traits_value', 'versatile_refresh', $j9av_role\r\n  end\r\n end\r\n exit\r\nend\r\nif $args[0] = 'activity_reveal':\r\n local $j9av_role = $args[1]\r\n local j9av_value = func('jo9_traits', 'activity_value', $j9av_role, 'passion_comfort')\r\n if j9av_value ! 0:\r\n  if func('jo9_traits', 'activity_known', $j9av_role) = 0:\r\n   dynamic $replace({\r\n    if j9avactor['passion_comfort_revealed'] = 0: j9avactor['passion_comfort_revealed'] = 1\r\n   }, 'j9avactor', $j9av_role)\r\n  end\r\n end\r\n exit\r\nend\r\nif $args[0] = 'activity_discover':\r\n local $j9av_role = $args[1]\r\n local j9av_sign = func('jo9_traits', 'activity_sign', $j9av_role)\r\n dynamic $replace({\r\n  if j9avactor['passion_comfort_revealed'] = 1 and args[0] ! 0:\r\n   if j9avactor['jo9_work_ethic_known'] ! 1:\r\n    if args[0] = 1: msg $func('jo9_traits', 'text', 'activity_active')\r\n    if args[0] = -1: msg $func('jo9_traits', 'text', 'activity_passive')\r\n   end\r\n   j9avactor['jo9_work_ethic_known'] = 1\r\n   j9avactor['passion_comfort_revealed'] = 2\r\n  elseif args[0] = 0:\r\n   j9avactor['passion_comfort_revealed'] = 0\r\n  end\r\n }, 'j9avactor', $j9av_role), j9av_sign\r\n exit\r\nend\r\n! JO9 MOD END ACTIVITY_STAGES_ROUTES_20261112\r\n",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": "if $args[0] = 'edit' and ($args[2] = 'jo9_work_ethic' or $args[2] = 'passion_comfort'):",
+      "new": "! JO9 MOD START ACTIVITY_FOCUS_EDITOR_20261112\r\nif $args[0]='edit' and $args[2]='jo9_focus':\r\n result=func('jo9_activity_stage','edit',$args[1],args[3])\r\n gs 'jo9_traits_value','refresh',$args[1]\r\n exit\r\nend\r\n! JO9 MOD END ACTIVITY_FOCUS_EDITOR_20261112\r\nif $args[0] = 'edit' and ($args[2] = 'jo9_work_ethic' or $args[2] = 'passion_comfort'):",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": "if $args[0] = 'set_guarded':",
+      "new": "! JO9 MOD START ACTIVITY_GUARDED_SET_20261112\r\nif $args[0]='set_guarded' and ($args[2]='jo9_focus' or $args[2]='jo9_work_ethic' or $args[2]='passion_comfort'):\r\n if args[3]=0:\r\n  result=func('jo9_activity_stage','remove',$args[1],$args[2])\r\n else\r\n  local j9as_set=args[3]\r\n  if $args[2]='jo9_work_ethic': j9as_set*=2\r\n  if $args[2]='passion_comfort': j9as_set*=-2\r\n  result=func('jo9_activity_stage','grant',$args[1],j9as_set)\r\n end\r\n exit\r\nend\r\n! JO9 MOD END ACTIVITY_GUARDED_SET_20261112\r\nif $args[0] = 'set_guarded':",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": " local jo9x_previous = dyneval('result = ' + $args[1] + \"['\" + $args[2] + \"']\")",
+      "new": " ! JO9 MOD START ACTIVITY_GRANT_PRIORITY_20261112\r\n if $args[2]='jo9_focus' or $args[2]='jo9_work_ethic' or $args[2]='passion_comfort':\r\n  local j9as_candidate=jo9x_candidate\r\n  if $args[2]='passion_comfort': j9as_candidate=-j9as_candidate\r\n  if j9as_candidate<0 and func('jo9_activity_stage','stage',$args[1])>0: result=0 & exit\r\n end\r\n ! JO9 MOD END ACTIVITY_GRANT_PRIORITY_20261112\r\n local jo9x_previous = dyneval('result = ' + $args[1] + \"['\" + $args[2] + \"']\")",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": "if $args[0] = 'list':",
+      "new": "if $args[0] = 'list':\r\n gs 'jo9_traits','activity_repair',$args[1]",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits_personality",
+      "field": "body",
+      "old": "if $args[0] = 'activity' or $args[0] = 'praise': gs 'jo9_traits_personality', 'gradecheck', $args[1]",
+      "new": "! JO9 MOD START ACTIVITY_INHERITANCE_20261112\r\nif $args[0]='activity': gs 'jo9_traits','activity_repair',$args[1]\r\n! JO9 MOD END ACTIVITY_INHERITANCE_20261112\r\nif $args[0] = 'activity' or $args[0] = 'praise': gs 'jo9_traits_personality', 'gradecheck', $args[1]",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits_personality",
+      "field": "body",
+      "old": "local j9av_work = func('jo9_traits', 'activity_value', 'jo9actor', 'jo9_work_ethic')",
+      "new": "local j9av_work = func('jo9_traits', 'activity_value', 'jo9actor', 'jo9_work_ethic')\r\n local j9as_focus=func('jo9_traits','activity_focus','jo9actor')",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits_personality",
+      "field": "body",
+      "old": "if jo9_trait_personality_amount = 0 and (jo9actor['jo9_focus'] = 1 or jo9actor['jo9_focus'] = -1):",
+      "new": "if jo9_trait_personality_amount = 0 and (j9as_focus = 1 or j9as_focus = -1):",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits_personality",
+      "field": "body",
+      "old": "jo9actor['jo9_focus_active'] = jo9actor['jo9_focus']",
+      "new": "jo9actor['jo9_focus_active'] = j9as_focus",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits_personality",
+      "field": "body",
+      "old": "   jo9actor['jo9_focus_known'] = 1\r\n   if jo9actor['jo9_focus'] = 1: jo9actor_rate['mood'] += 2",
+      "new": "   if j9av_work=0:\r\n    jo9actor['jo9_focus_known'] = 1\r\n   else\r\n    jo9actor['jo9_work_ethic_known']=1\r\n    jo9actor['passion_comfort_revealed']=2\r\n   end\r\n   if j9as_focus = 1: jo9actor_rate['mood'] += 2",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": " if $args[1] = 'activity_active': $result = '[워커홀릭]<br>업무와 교육을 합쳐 하루 두 번째 활동부터 기분이 2씩 오른다.<br>직접 주는 휴식·마사지의 보상 효과는 절반이다. 성향이 드러나면 ‘푹 쉼’ 효과가 사라진다.'",
+      "new": "  if $args[1] = 'activity_active': $result = '[워커홀릭]<br>끈기의 상위 단계. 동일 업무·교육 반복 시 획득 경험치 +10%, 반복 기분 보정 +2. 업무·교육을 합쳐 하루 두 번째 활동부터 기분 보정 +2가 추가된다. 두 조건을 만족하면 각각 한 번 적용한다. 직접 휴식·마사지 보상은 절반이며, 성향 발견 후 푹 쉼 효과는 사라진다. 고정 규칙 업무에는 반복 보정을 적용하지 않는다. 다른 활동·집중 특성과 동시 보유하지 않는다.'",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": " if $args[1] = 'activity_passive': $result = '[무기력함]<br>업무와 교육을 합쳐 하루 두 번째 활동부터 기분이 2씩 내려간다.<br>직접 주는 휴식·마사지의 보상 효과는 두 배다.'",
+      "new": "  if $args[1] = 'activity_passive': $result = '[무기력함]<br>산만함의 상위 단계. 동일 업무·교육 반복 시 획득 경험치와 업무 성과 -10%. 업무·교육을 합쳐 하루 두 번째 활동부터 기분 보정 -2. 직접 휴식·마사지 보상은 두 배다. 고정 규칙 업무에는 반복 보정을 적용하지 않는다. 다른 활동·집중 특성과 동시 보유하지 않는다.'",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": " if $args[1] = 'persevering': $result = '[끈기]<br>같은 업무나 교육을 꾸준히 반복하면 기분이 좋아지고, 배우는 속도도 빨라진다. 고정 규칙에 따른 업무에는 이 효과가 적용되지 않는다.'",
+      "new": "  if $args[1] = 'persevering': $result = '[끈기]<br>긍정 계열 1단계. 동일 업무·교육 반복 시 획득 경험치 +10%, 반복 기분 보정 +2. 내부 기분 보정이며 화면상 기분 등급 +2를 뜻하지 않는다. 고정 규칙 업무에는 반복 보정을 적용하지 않는다. 워커홀릭은 이 효과를 포함한다. 다른 활동·집중 특성과 동시 보유하지 않는다.'",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": " if $args[1] = 'distracted': $result = '[산만함]<br>같은 업무나 교육이 계속되면 집중력이 흐트러진다. 배우는 속도와 업무 성과가 떨어지지만, 고정 규칙에 따른 업무에는 영향을 주지 않는다.'",
+      "new": "  if $args[1] = 'distracted': $result = '[산만함]<br>부정 계열 1단계. 동일 업무·교육 반복 시 획득 경험치와 업무 성과 -10%. 고정 규칙 업무에는 반복 보정을 적용하지 않는다. 무기력함은 이 효과를 포함한다. 다른 활동·집중 특성과 동시 보유하지 않는다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction_result",
+      "field": "body",
+      "old": "\tif $slave_psy_status = 'broken':\r\n\t\tslave_rate['mood'] += free_time\r\n\telseif func('jo9_traits', 'activity_value', 'slave', 'passion_comfort') = 1:",
+      "new": "\tif $slave_psy_status = 'broken':\r\n\t\tslave_rate['mood'] += free_time\r\n\tend\r\n\tif func('jo9_traits', 'activity_value', 'slave', 'passion_comfort') = 1:",
+      "count": 1
+    },
+    {
+      "location": "interaction_result",
+      "field": "body",
+      "old": "elseif func('jo9_traits', 'activity_value', 'slave', 'passion_comfort') = -1 and $slave_psy_status ! 'broken':",
+      "new": "elseif func('jo9_traits', 'activity_value', 'slave', 'passion_comfort') = -1:",
+      "count": 1
+    }
+  ],
+  "after_sha256": "62ceea521254da2bc1ce6599c4a6094e965f7a88835343ff82c8eb9ce732bceb"
+}

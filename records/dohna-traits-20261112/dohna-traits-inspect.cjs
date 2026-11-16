@@ -1,0 +1,3 @@
+const fs=require('fs'),R='G:/somi/JO9sa',G='G:/somi/Jack O Nine Tails v2.4_work/game',c=require(R+'/tools/text-workshop/core.cjs'),d=c.parse(fs.readFileSync(G+'/jack.qsp')),b=n=>c.shift(d.lines[d.locations.find(l=>l.name===n).body],5);
+if(process.argv[2]==='range')console.log(b(process.argv[3]).split('\r\n').slice(+process.argv[4]-1,+process.argv[5]).map((s,i)=>(+process.argv[4]+i)+': '+s).join('\n'));
+if(process.argv[2]==='key'){const re=new RegExp(process.argv[3],'i');for(const l of d.locations){if(['#txt_man','#txt_woman','#sex_texts','#sex_texts_woman','jo9_plain_voice'].includes(l.name))continue;for(const[i,s]of b(l.name).split('\r\n').entries())if(re.test(s))console.log(l.name+':'+(i+1)+' '+s.slice(0,450));}}

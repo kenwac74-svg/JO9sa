@@ -1,0 +1,82 @@
+{
+  "schema": 1,
+  "createdAt": "2026-11-14T10:42:36.439Z",
+  "profile": "static",
+  "checks": [
+    {
+      "name": "inputs-readable",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "candidate": "dc95823ecd264e8ec32b4350d7008ba6a4f9014f71ed311b9a91c283fd9e240a"
+      }
+    },
+    {
+      "name": "world-structure-and-line-endings",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "sha256": "dc95823ecd264e8ec32b4350d7008ba6a4f9014f71ed311b9a91c283fd9e240a",
+        "bytes": 51944786,
+        "locations": 313,
+        "roundtrip": true,
+        "lineEndingIssues": 0
+      }
+    },
+    {
+      "name": "slave-template-registry",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "files": 1885,
+        "numericIds": 1885,
+        "collisions": 0,
+        "invalidJson": 0,
+        "embeddedIdMismatches": 0
+      }
+    },
+    {
+      "name": "distribution-byte-match",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "sha256": "dc95823ecd264e8ec32b4350d7008ba6a4f9014f71ed311b9a91c283fd9e240a"
+      }
+    },
+    {
+      "name": "patch-replay-and-idempotence",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "patches": [
+          "MOB728_POOL_20261114"
+        ],
+        "byteExact": true,
+        "idempotent": true
+      }
+    },
+    {
+      "name": "installed-client-smoke",
+      "required": false,
+      "status": "SKIP",
+      "reason": "Static profile explicitly requested"
+    },
+    {
+      "name": "input-hashes-unchanged",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "files": 3
+      }
+    }
+  ],
+  "limits": [
+    "No GUI clicks or visual layout verification.",
+    "Save data is used only to prime representative state. GUI save-file loading, CRC compatibility and full saved script restoration are NOT tested.",
+    "Start is replaced only in diagnostic copies. Smoke covers lifecycle calls, not the character-selection UI or every gameplay branch.",
+    "No complete QSP syntax checker: dynamic code and all game logic are not statically proved.",
+    "Battle smoke instruments the menu dispatch only; full combat outcomes and balance are not tested."
+  ],
+  "verdict": "STATIC_PASS",
+  "output": "G:\\Codex\\tmp\\mob728-static-20261114\\run-r4xbU9"
+}

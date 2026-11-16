@@ -1,0 +1,73 @@
+! JO9 MOD START COW_COSTUME_HELPER_20261111
+local $cc_op = $args[0]
+if $cc_op = 'data':
+ $item_name['cow_costume'] = '젖소 코스튬'
+ item_price['cow_costume'] = 25
+ $item_description['cow_costume'] = '<br>젖소를 본뜬 귀와 꼬리, 작은 종을 달아 귀엽게 꾸민 코스튬. 기존 젖소녀 장비와 같은 차림을 즐길 수 있는 일반 의상이다.<br><br>독특함 +1, 매일 사육 상승, 젖소녀 교육효율 상승, 세련됨 -1.<br>지성이나 태도를 낮추지 않으며 고급 젖소녀 훈련용 장비를 대신하지 않는다.<br><br>가격 25스파크.'
+ $item_demo['cow_costume'] = 'scene\item\item_cow_gear'
+ $item_property['cow_costume'] = {
+  dynslave['ex_plus'] += 1
+  daily_bonus['instinct'] += 1
+  learn_bonus['cowSK'] += 2
+  dynslave['st_plus'] -= 1
+ }
+ $item_property_off['cow_costume'] = {}
+ exit
+end
+
+if $cc_op = 'equipment':
+ local $cc_nl = '
+'
+ local $cc_old_slave = {
+@@OLD_SLAVE_LINE@@
+}
+ local $cc_new_slave = " if slave_inventory['cow_costume'] > 0 or inventory['cow_costume'] > 0: dynamic $replace($get_non_combat_equipment, 'dyn'+'slave', 'slave'), 'cow_costume', 24"
+ local $cc_old_assistant = {
+@@OLD_ASSISTANT_LINE@@
+}
+ local $cc_new_assistant = " if assistant_inventory['cow_costume'] > 0 or inventory['cow_costume'] > 0: dynamic $replace($get_non_combat_equipment, 'dyn'+'slave', 'assistant'), 'cow_costume', 44"
+ if instr($slave_cloth_list, 'cow_costume') = 0: $slave_cloth_list = replace($slave_cloth_list, $cc_old_slave, $cc_old_slave + $cc_new_slave + $cc_nl)
+ if instr($assistant_cloth_list, 'cow_costume') = 0: $assistant_cloth_list = replace($assistant_cloth_list, $cc_old_assistant, $cc_old_assistant + $cc_new_assistant + $cc_nl)
+ local $cc_clear = "$equip_choice = ''"
+ if instr($slave_cloth_list, 'cow_costume') = 0: $slave_cloth_list = replace($slave_cloth_list, $cc_clear, $cc_clear + $cc_nl + $cc_new_slave)
+ if instr($assistant_cloth_list, 'cow_costume') = 0: $assistant_cloth_list = replace($assistant_cloth_list, $cc_clear, $cc_clear + $cc_nl + $cc_new_assistant)
+ exit
+end
+
+if $cc_op = 'menus':
+ local $cc_nl = '
+'
+ local $cc_back = "FUNC('$menu', 'exec_options', $menu_item_jeweler_options, 'sp_txt = 1 & gt $curloc', '다른 상품')"
+ local $cc_slave_menu = {
+! JO9_COW_COSTUME_MARKET_SLAVE_20261111
+ if $slave['cloth'] = 'cow_costume' or slave_inventory['cow_costume'] > 0 or inventory['cow_costume'] > 0:
+  FUNC('$menu', 'location_gray', $menu_item_Cow_gear_gray, empty, '젖소 코스튬 ($25)')
+ else
+  FUNC('$menu', 'interaction_city', $menu_item_Cow_gear, 39934, '젖소 코스튬 ($25)')
+ end
+ }
+ local $cc_assistant_menu = {
+! JO9_COW_COSTUME_MARKET_ASSISTANT_20261111
+ if $assistant['cloth'] = 'cow_costume' or assistant_inventory['cow_costume'] > 0 or inventory['cow_costume'] > 0:
+  FUNC('$menu', 'location_gray', $menu_item_Cow_gear_gray, empty, '젖소 코스튬 ($25)')
+ else
+  FUNC('$menu', 'interaction_city', $menu_item_Cow_gear, 39834, '젖소 코스튬 ($25)')
+ end
+ }
+ if $menu_item_Cow_gear = '': $menu_item_Cow_gear = '<li style="background: url(''content/pic/ui/legacy_overhaul/cow_gear.png''); background-repeat: no-repeat;">'
+ if $menu_item_Cow_gear_gray = '': $menu_item_Cow_gear_gray = replace($menu_item_Cow_gear, '<li ', '<li id="grey" ')
+ if instr($baraholka_s_options[3], 'cow_costume') = 0: $baraholka_s_options[3] = replace($baraholka_s_options[3], $cc_back, $cc_slave_menu + $cc_nl + $cc_back)
+ if instr($baraholka_a_options[3], 'cow_costume') = 0: $baraholka_a_options[3] = replace($baraholka_a_options[3], $cc_back, $cc_assistant_menu + $cc_nl + $cc_back)
+ if instr($display_options[3], 'cow_costume') = 0:
+  if instr($display_options[3], '39931') > 0: $display_options[3] = replace($display_options[3], $cc_back, $cc_slave_menu + $cc_nl + $cc_back)
+  if instr($display_options[3], '39831') > 0: $display_options[3] = replace($display_options[3], $cc_back, $cc_assistant_menu + $cc_nl + $cc_back)
+ end
+ exit
+end
+
+if $cc_op = 'load':
+ gs 'jo9_cow_costume', 'data'
+ gs 'jo9_cow_costume', 'equipment'
+ gs 'jo9_cow_costume', 'menus'
+end
+! JO9 MOD END COW_COSTUME_HELPER_20261111

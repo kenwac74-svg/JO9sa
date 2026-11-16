@@ -1,0 +1,34 @@
+--- tools/local-workspace/Open-Modding-Tools.ps1 (before)
++++ tools/local-workspace/Open-Modding-Tools.ps1
+@@ -130,13 +130,18 @@
+  $referenceUrl=(& (Join-Path $referenceTarget 'Start-Game-Reference.ps1') -NoBrowser | Select-Object -Last 1)
+  if ([string]$referenceUrl -notmatch '^http://127\.0\.0\.1:\d+/$') {throw 'Reference tool did not return a local URL.'}
+  # JO9 MOD END GAME_REFERENCE_TOOL_20261108
++ # JO9 MOD START JONT_REMAKE_HUB_20261115
++ $promptLauncher=Join-Path (Split-Path -Parent $PSScriptRoot) 'jont-remake/Start-Jont-Remake.ps1'
++ $promptUrl=(& $promptLauncher | Select-Object -Last 1)
++ if ([string]$promptUrl -notmatch '^http://127\.0\.0\.1:\d+/$') {throw 'Scene prompt tool did not return a local URL.'}
++ # JO9 MOD END JONT_REMAKE_HUB_20261115
+  # JO9 MOD START SIDEBAR_HUB_20261115
+  $hubScript=Join-Path (Split-Path -Parent $PSScriptRoot) 'modding-hub/Start-Modding-Hub.ps1'
+- $hubTools=@{dialogue=[string]$editorUrl;checklist=([string]$editorUrl+'catalog');schedule=([string]$editorUrl+'patch-schedule');workshop=[string]$workshopUrl;imageReview=[string]$reviewUrl;soundList=[string]$soundUrl;gameReference=[string]$referenceUrl}
++ $hubTools=@{dialogue=[string]$editorUrl;checklist=([string]$editorUrl+'catalog');schedule=([string]$editorUrl+'patch-schedule');workshop=[string]$workshopUrl;imageReview=[string]$reviewUrl;soundList=[string]$soundUrl;gameReference=[string]$referenceUrl;promptWorksheet=[string]$promptUrl}
+  $hubUrl=(& $hubScript -ToolUrls $hubTools -NoBrowser | Select-Object -Last 1)
+  if ([string]$hubUrl -notmatch '^http://127\.0\.0\.1:\d+/$') {throw 'Unified workspace did not return a local URL.'}
+  # JO9 MOD END SIDEBAR_HUB_20261115
+- Write-Output ('Unified: '+$hubUrl+' | Dialogue: '+$editorUrl+' | Checklist: '+$editorUrl+'catalog | PatchSchedule: '+$editorUrl+'patch-schedule | Workshop: '+$workshopUrl+' | ImageReview: '+$reviewUrl+' | SoundAudition: '+$soundUrl+' | GameReference: '+$referenceUrl)
++ Write-Output ('Unified: '+$hubUrl+' | Dialogue: '+$editorUrl+' | Checklist: '+$editorUrl+'catalog | PatchSchedule: '+$editorUrl+'patch-schedule | Workshop: '+$workshopUrl+' | ImageReview: '+$reviewUrl+' | SoundAudition: '+$soundUrl+' | GameReference: '+$referenceUrl+' | PromptWorksheet: '+$promptUrl)
+  # JO9 MOD END MOD_TOOLS_IMAGE_REVIEW_20261021
+  if (!$NoBrowser) {
+   if ($AppWindow) {
+--- tools/modding-hub/integration.mjs (before)
++++ tools/modding-hub/integration.mjs
+@@ -37,7 +37,7 @@
+  framePanel('dialogue',[['dialogue','대사 편집실']]);
+  const dialoguePanel=panels.get('dialogue');
+  dialoguePanel.querySelector('iframe').title='대사 편집 작업 영역';
+- framePanel('image-tools',[['checklist','이미지 체크리스트'],['workshop','이미지 교체·편집'],['imageReview','폴더 비교·선택']]);
++ framePanel('image-tools',[['checklist','이미지 체크리스트'],['workshop','이미지 교체·편집'],['imageReview','폴더 비교·선택'],['promptWorksheet','장면 프롬프트']]);
+  framePanel('game-db',[['gameReference','특성·아이템·마법·MOB DB']]);
+  panels.get('game-db').querySelector('.workspace-toolbar').insertAdjacentHTML('beforeend','<button type="button" class="button secondary small" data-tab="interview-db">인터뷰 DB</button><button type="button" class="button secondary small" data-tab="trait-edit">특성 편집</button>');
+  framePanel('patch-schedule',[['schedule','작업 일정']]);

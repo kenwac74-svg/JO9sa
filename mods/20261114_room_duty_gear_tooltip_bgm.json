@@ -1,0 +1,88 @@
+{
+  "id": "ROOM_DUTY_GEAR_TOOLTIP_BGM_20261114",
+  "status": "APPROVED",
+  "before_sha256": "dc95823ecd264e8ec32b4350d7008ba6a4f9014f71ed311b9a91c283fd9e240a",
+  "after_sha256": "b1ffec4bb5a288debce7f766e94dd0ad9b197cbc76e77cbeb2c132b3d6cbc4ca",
+  "edits": [
+    {
+      "location": "jo9_room_duty",
+      "field": "body",
+      "old": " for jo9_rd_i=0 to 1 step 1:\r\n  $jo9_rd_h='right_wpn'\r\n  if jo9_rd_i=1: $jo9_rd_h='left_wpn'",
+      "new": " ! JO9 MOD START ROOM_DUTY_GEAR_TOOLTIP_BGM_20261114\r\n for jo9_rd_i=0 to 2 step 1:\r\n  $jo9_rd_h='right_wpn'\r\n  if jo9_rd_i=1: $jo9_rd_h='left_wpn'\r\n  if jo9_rd_i=2: $jo9_rd_h='back_wpn'\r\n ! JO9 MOD END ROOM_DUTY_GEAR_TOOLTIP_BGM_20261114",
+      "count": 1,
+      "patchId": "ROOM_DUTY_GEAR_TOOLTIP_BGM_20261114"
+    },
+    {
+      "location": "jo9_room_duty",
+      "field": "body",
+      "old": " *p '<style id=\"jo9_duty_style\">#jo9_duty_panel{position:absolute;left:0;top:0;width:392px;height:242px;box-sizing:border-box;padding:14px 20px 8px 26px;font-family:\"경기천년제목 Medium\";color:#211a11}#jo9_duty_panel .jo9_duty_title{font-size:22px;line-height:30px;margin-bottom:6px}#jo9_duty_panel .jo9_duty_row{display:block;position:relative;height:30px;line-height:30px;padding-left:36px;font-size:18px;color:#211a11;text-decoration:none;white-space:nowrap}#jo9_duty_panel .jo9_duty_row img{position:absolute;left:4px;top:3px;width:24px;height:24px}#jo9_duty_panel a.jo9_duty_row:hover{color:#70430c;background:rgba(245,218,158,.25)}#jo9_duty_panel .jo9_duty_on{color:#70430c}#jo9_duty_panel .jo9_duty_off{opacity:.55}#jo9_duty_panel .jo9_duty_tag{position:absolute;right:4px;top:0;font-size:13px;color:#6b5a3e;max-width:200px;overflow:hidden;text-overflow:ellipsis}#jo9_duty_panel .jo9_duty_mode{font-size:15px;color:#6b5a3e;padding-left:8px;height:26px;line-height:26px}#jo9_duty_panel a.jo9_duty_mode:hover{color:#70430c}#jo9_duty_panel .jo9_duty_empty{font-size:18px;margin:10px 0}</style>'",
+      "new": " ! Duty layout and tooltip bounds are defined in css/base.css (ROOM_DUTY_GEAR_TOOLTIP_BGM_20261114).",
+      "count": 1,
+      "patchId": "ROOM_DUTY_GEAR_TOOLTIP_BGM_20261114"
+    },
+    {
+      "location": "jo9_room_duty",
+      "field": "body",
+      "old": "   $jo9_rd_h=func('jo9_room_duty','help',jo9_rd_d)",
+      "new": "   $jo9_rd_h=replace(replace(func('jo9_room_duty','help',jo9_rd_d),'. ','.&#10;'),'<br>','&#10;')",
+      "count": 1,
+      "patchId": "ROOM_DUTY_GEAR_TOOLTIP_BGM_20261114"
+    },
+    {
+      "location": "jo9_room_duty",
+      "field": "body",
+      "old": "    $jo9_rd_h += '<br>현재 불가 사유: '",
+      "new": "    $jo9_rd_h += '&#10;현재 불가 사유: '",
+      "count": 1,
+      "patchId": "ROOM_DUTY_GEAR_TOOLTIP_BGM_20261114"
+    },
+    {
+      "location": "jo9_room_duty",
+      "field": "body",
+      "old": "<<$jo9_rd_t>><span class=\"jo9_duty_tag\">진행 중</span></a>",
+      "new": "<span class=\"jo9_duty_label\"><<$jo9_rd_t>></span><span class=\"jo9_duty_tag\">진행 중</span></a>",
+      "count": 1,
+      "patchId": "ROOM_DUTY_GEAR_TOOLTIP_BGM_20261114"
+    },
+    {
+      "location": "jo9_room_duty",
+      "field": "body",
+      "old": "unsel_button.png\"><<$jo9_rd_t>></a>",
+      "new": "unsel_button.png\"><span class=\"jo9_duty_label\"><<$jo9_rd_t>></span></a>",
+      "count": 1,
+      "patchId": "ROOM_DUTY_GEAR_TOOLTIP_BGM_20261114"
+    },
+    {
+      "location": "jo9_room_duty",
+      "field": "body",
+      "old": "<<$jo9_rd_t>><span class=\"jo9_duty_tag\"><<$jo9_rd_g>></span></a>",
+      "new": "<span class=\"jo9_duty_label\"><<$jo9_rd_t>></span><span class=\"jo9_duty_tag\"><<$jo9_rd_g>></span></a>",
+      "count": 1,
+      "patchId": "ROOM_DUTY_GEAR_TOOLTIP_BGM_20261114"
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "if sound_on = 1: gs 'jo9_residence_bgm','event','content\\snd\\fight_master.mp3',1 & play 'content\\snd\\fight_master.mp3', sound_volume,'only, loop'\r",
+      "new": "if sound_on = 1: gs 'jo9_residence_bgm','event','content\\snd\\fight_master.mp3',0 & play 'content\\snd\\fight_master.mp3', music_volume,'only, loop'\r",
+      "count": 1,
+      "patchId": "ROOM_DUTY_GEAR_TOOLTIP_BGM_20261114"
+    },
+    {
+      "location": "jo9_audio_formats",
+      "field": "body",
+      "old": "local jo9_audio_i",
+      "new": "! JO9 MOD START ROOM_DUTY_GEAR_TOOLTIP_BGM_20261114\r\nif $args[0]='fog_cache':\r\n local $jo9_fog_code, $jo9_fog_path\r\n $jo9_fog_code=$args[1]\r\n local jo9_fog_slash\r\n $jo9_fog_code=replace($jo9_fog_code,'fight_master.wav','fight_master.mp3')\r\n for jo9_fog_slash=0 to 1:\r\n  $jo9_fog_path='content/snd/fight_master.mp3'\r\n  if jo9_fog_slash=1: $jo9_fog_path='content\\snd\\fight_master.mp3'\r\n  $jo9_fog_code=replace($jo9_fog_code,\"play '\"+$jo9_fog_path+\"', sound_volume\",\"play '\"+$jo9_fog_path+\"', music_volume\")\r\n  $jo9_fog_code=replace($jo9_fog_code,\"play '\"+$jo9_fog_path+\"',sound_volume\",\"play '\"+$jo9_fog_path+\"',music_volume\")\r\n  $jo9_fog_code=replace($jo9_fog_code,\"event','\"+$jo9_fog_path+\"',1\",\"event','\"+$jo9_fog_path+\"',0\")\r\n end\r\n $result=$jo9_fog_code\r\n exit\r\nend\r\n! JO9 MOD END ROOM_DUTY_GEAR_TOOLTIP_BGM_20261114\r\nlocal jo9_audio_i",
+      "count": 1,
+      "patchId": "ROOM_DUTY_GEAR_TOOLTIP_BGM_20261114"
+    },
+    {
+      "location": "jo9_audio_formats",
+      "field": "body",
+      "old": "$jo9_audio_old=$music_now",
+      "new": "! JO9 MOD START ROOM_DUTY_GEAR_TOOLTIP_BGM_20261114\r\n$fogs_options[2]=func('jo9_audio_formats','fog_cache',$fogs_options[2])\r\nfor jo9_audio_i=0 to arrsize('$display_options')-1:\r\n $display_options[jo9_audio_i]=func('jo9_audio_formats','fog_cache',$display_options[jo9_audio_i])\r\nend\r\nif $toplay='jo9_direct_event' and lcase(replace($func('jo9_audio_formats','path',$music_now),'\\','/'))='content/snd/fight_master.mp3': jo9_bgm_event_sound=0\r\n! JO9 MOD END ROOM_DUTY_GEAR_TOOLTIP_BGM_20261114\r\n$jo9_audio_old=$music_now",
+      "count": 1,
+      "patchId": "ROOM_DUTY_GEAR_TOOLTIP_BGM_20261114"
+    }
+  ]
+}

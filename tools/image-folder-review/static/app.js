@@ -224,3 +224,6 @@ setInterval(async()=>{
     if(project)await openProject(project.id);
   }catch(error){notice(error.message,true);}
 })();
+
+/* JO9 MOD EMBEDDED_TOOL_SHELL_20261115 */
+(()=>{const r=document.documentElement,on=new URLSearchParams(location.search).get('workspace')==='1';r.classList.toggle('jo9-embedded',on);for(const c of [...r.classList])if(c.startsWith('jo9-tool-'))r.classList.remove(c);if(on)r.classList.add('jo9-tool-folder');})();

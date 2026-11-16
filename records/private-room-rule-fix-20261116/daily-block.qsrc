@@ -1,0 +1,146 @@
+! JO9 MOD START PRIVATE_SANITARY_RULES_20261116
+local $jo9_sanitary_roles, $jo9_sanitary_daily
+$jo9_sanitary_roles[0]='room1'
+$jo9_sanitary_roles[1]='room2'
+$jo9_sanitary_roles[2]='room3'
+$jo9_sanitary_roles[3]='room4'
+$jo9_sanitary_daily = {
+ if $args[0] ! $jo9_wake_worker: $dynslave['rules_explanations']=''
+ if dynslave_state = CONST_INT['slave_exist']:
+  if dynslave['duty'] < 2 or dynslave['duty'] > 4:
+   local jo9_sanitary_old_broken, jo9_sanitary_old_forced, jo9_sanitary_broken, jo9_sanitary_forced
+   jo9_sanitary_old_broken=dynslave['num_rules_broken']
+   jo9_sanitary_old_forced=dynslave['num_rules_wanttobreak']
+   dynslave['urinal_rule_broken']=0
+   dynslave['toilet_rule_broken']=0
+	if dynslave['toilet_rule'] = 1:
+		$dynslave['rules_explanations'] += iif($dynslave['rules_explanations'] ! '', '<br>', '') + '<u>대변기</u>: '
+		stimulating = 1 &! sex acceptance will be added to repulse - ImperatorAugustus
+		impotent = 1 &! does not require the master to achieve an erection - ImperatorAugustus
+		disgusting = 1
+		interaction_dynslave['repulse'] = 26 &! same as coprophagia lesson
+		dynamic $replace($dyn_sex_acceptance, 'dyn'+'slave', 'dynslave')
+		$interaction_partner = 'dynslave' & dynamic $replace($dyn_repulse_check, 'dyn'+'slave', 'dynslave')
+		if interaction_dynslave['res'] < 0:
+			if dynslave['force_rules'] = 1 and inventory['toilet_stable'] = 1:
+				dynslave['neg_rules'] = 1
+				dynslave['num_rules_wanttobreak'] += 1
+				$dynslave['rules_explanations'] += ' <<$dynslave_name>>의 입과 몸을 강제로 묶어둘 수 있는 탈착 대변기가 없었다면, 그녀는 도망쳤을 것이다.'
+				dynslave_rate['angst'] -= interaction_dynslave['res'] &! additional angst increase proportional to how much she does not want to do this - ImperatorAugustus
+			else
+				dynslave['toilet_rule_broken'] = 1
+				dynslave['num_rules_broken'] += 1
+				$dynslave['rules_explanations'] += ' <<$dynslave_name>>(은)는 내 대변을 거부한다. 특별한 변기가 이 문제를 해결해 줄 것이다.'
+			end
+		else
+			$dynslave['rules_explanations'] += ' <<$dynslave_name>>(은)는 당신이 필요할 때마다 누워서 입을 벌린다.'
+		end
+		if dynslave['toilet_rule_broken'] = 0:
+			dynslave_rate['mood'] -= 6 + dynslave['ego'] + dynslave['pride'] - dynslave['moral'] - dynslave['sub_kopro']
+			if 6 + dynslave['ego'] + dynslave['pride'] - dynslave['moral'] - dynslave['sub_kopro'] > 0:
+				$dynslave['rules_explanations'] += ' 하지만, 분명 불쾌해하고 있다.'
+			else
+				$dynslave['rules_explanations'] += ' 그리고 용변이 끝나면 당신의 항문을 혀로 예쁘게 핥아 올린다.'
+			end
+		end
+		if $reset_interaction_variables ! '': dynamic $replace($reset_interaction_variables, 'dyn'+'slave', 'dynslave')
+	end
+
+	if dynslave['urinal_rule'] = 1:
+		$dynslave['rules_explanations'] += iif($dynslave['rules_explanations'] ! '', '<br>', '') + '<u>소변기</u>: '
+		stimulating = 1 &! sex acceptance will be added to repulse - ImperatorAugustus
+		impotent = 1 &! does not require the master to achieve an erection - ImperatorAugustus
+		disgusting = 1
+		interaction_dynslave['repulse'] = 18 &! same as golden shower lesson
+		dynamic $replace($dyn_sex_acceptance, 'dyn'+'slave', 'dynslave')
+		$interaction_partner = 'dynslave' & dynamic $replace($dyn_repulse_check, 'dyn'+'slave', 'dynslave')
+		if interaction_dynslave['res'] < 0:
+			if dynslave['force_rules'] = 1 and inventory['pissuar_stable'] = 1:
+				dynslave['neg_rules'] = 1
+				dynslave['num_rules_wanttobreak'] += 1
+				$dynslave['rules_explanations'] += '<<$dynslave_name>>의 소변기에 강제로 옭아둘 수 없었다면, 아마 그녀는 도망쳤을 것이다.'
+				dynslave_rate['angst'] -= interaction_dynslave['res'] &! additional angst increase proportional to how much she does not want to do this - ImperatorAugustus
+			else
+				dynslave['urinal_rule_broken'] = 1
+				dynslave['num_rules_broken'] += 1
+				$dynslave['rules_explanations'] += '<<$dynslave_name>>(은)는 내 소변을 거부한다. 특별한 소변기가 이 문제를 해결해 줄 것이다.'
+			end
+		else
+			$dynslave['rules_explanations'] += '<<$dynslave_name>>(은)는 당신이 필요할 때마다 무릎을 꿇고 입을 벌린다.'
+		end
+		if dynslave['urinal_rule_broken'] = 0:
+			dynslave_rate['mood'] -= 3 + dynslave['ego'] + dynslave['pride'] - dynslave['moral'] - dynslave['sub_piss']
+			if 3 + dynslave['ego'] + dynslave['pride'] - dynslave['moral'] - dynslave['sub_piss'] > 0:
+				$dynslave['rules_explanations'] += ' 하지만, 분명 불쾌해하고 있다.'
+			else
+				$dynslave['rules_explanations'] += ' 그리고 용변이 끝나면 요도에 남은 것까지 정성스럽게 빨아들인다.'
+			end
+		end
+		if $reset_interaction_variables ! '': dynamic $replace($reset_interaction_variables, 'dyn'+'slave', 'dynslave')
+	end
+
+
+   jo9_sanitary_broken=dynslave['num_rules_broken']-jo9_sanitary_old_broken
+   jo9_sanitary_forced=dynslave['num_rules_wanttobreak']-jo9_sanitary_old_forced
+   dynslave['rules_broken']=iif(dynslave['num_rules_broken']>0,1,0)
+   if jo9_sanitary_broken>0:
+    if jo9_sanitary_old_broken=0: dynamic $sin_gained_now, 'dynslave'
+    master_moodlet['neg_rebell']=1
+    master_moodlet['pos_nice_slave']=0
+    if dynslave['sin']>1:
+     dynslave_rate['custom']-=jo9_sanitary_broken
+     if jo9_sanitary_old_broken=0: dynslave_rate['instinct']-=dynslave['ego']
+    end
+		if dynslave['urinal_rule'] = 1 and dynslave['urinal_rule_broken'] = 1:
+			dynslave_rate['pride'] += func('jo9_origin_growth','delta','dynslave','pride',(5))
+			dynslave_rate['ego'] += func('jo9_origin_growth','delta','dynslave','ego',(1))
+		end
+		if dynslave['toilet_rule'] = 1 and dynslave['toilet_rule_broken'] = 1:
+			dynslave_rate['pride'] += func('jo9_origin_growth','delta','dynslave','pride',(5))
+			dynslave_rate['ego'] += func('jo9_origin_growth','delta','dynslave','ego',(1))
+		end
+
+   end
+	if dynslave['urinal_rule'] = 1 and dynslave['urinal_rule_broken'] = 0:
+		master_mood_rate += dynslave['sub_piss'] - 3
+		if dynslave['perversion'] < 1: dynslave['neg_disgust'] = max(dynslave['neg_disgust'], 10)
+		if dynslave['sub_piss'] > 2: master_moodlet['pos_toilet'] += 1
+		dynslave['perversion_xp'] += 1
+		dynslave_rate['mood'] -= max(0, 4 - dynslave['sub_piss'] - dynslave['moral'] - dynslave['perversion']) &! fixed sign of perversion, zero as lower bound so mood effect cannot be positive - ImperatorAugustus
+		if dynslave['sub_piss'] < 4 and dynslave['perversion'] < 1: dynslave['neg_rules'] = 1
+		dynslave_rate['custom'] += 2
+		dynslave_rate['pride'] += func('jo9_origin_growth','delta','dynslave','pride',-(3))
+		dynslave_rate['hygiene'] += 15
+		dynslave_rate['angst'] += (dynslave['ego'] + dynslave['pride'] + dynslave['temper']) - (dynslave['perversion'] + dynslave['sub_piss'] + dynslave['moral'] + dynslave['instinct'])
+		$subskill = 'dynslave["sub_piss"]'
+		$subskill_xp = 'dynslave["sub_piss_xp"]'
+		dynamic $replace($dyn_advance_sex_skills_nolesson, 'dyn'+'slave', 'dynslave')
+	end
+	if dynslave['toilet_rule'] = 1 and dynslave['toilet_rule_broken'] = 0:
+		if dynslave['perversion'] < 2: dynslave['neg_disgust'] = max(dynslave['neg_disgust'], 20) &! moodlet duration is twice as long as urinal rule -ImperatorAugustus
+		master_mood_rate += dynslave['sub_kopro'] - 3
+		dynslave['perversion_xp'] += 1
+		if dynslave['sub_kopro'] > 3: master_moodlet['pos_toilet'] += 1
+		dynslave_rate['mood'] -= max(0, 5 - dynslave['sub_kopro'] - dynslave['moral'] - dynslave['perversion']) &! fixed sign of perversion, zero as lower bound so mood effect cannot be positive - ImperatorAugustus
+		if dynslave['sub_kopro'] < 4 and dynslave['perversion'] < 2: dynslave['neg_rules'] = 1
+		dynslave_rate['custom'] += 3
+		dynslave_rate['pride'] += func('jo9_origin_growth','delta','dynslave','pride',-(4))
+		dynslave_rate['hygiene'] += 40
+		dynslave_rate['angst'] += 2*(dynslave['ego'] + dynslave['pride'] + dynslave['temper']) - (dynslave['perversion'] + dynslave['sub_kopro'] + dynslave['moral'] + dynslave['instinct'])
+		if master_ill > 0 and rand(1,5) = 1: dynslave['ill'] += 1 &! added 20% chance to become ill (consuming faeces bacteria orally represents a vector of infection) - ImperatorAugustus
+		$subskill = 'dynslave["sub_kopro"]'
+		$subskill_xp = 'dynslave["sub_kopro_xp"]'
+		dynamic $replace($dyn_advance_sex_skills_nolesson, 'dyn'+'slave', 'dynslave')
+	end
+
+   if jo9_sanitary_forced>0:
+    dynslave_rate['angst']+=jo9_sanitary_forced*(dynslave['sensitivity']+2)
+    dynslave_rate['moral']-=jo9_sanitary_forced*5
+    dynslave_rate['rational']+=min(dynslave['intellect'],dynslave['num_rules_wanttobreak'])-min(dynslave['intellect'],jo9_sanitary_old_forced)
+    dynslave_rate['custom']+=jo9_sanitary_forced
+   end
+  end
+ end
+}
+dynamic $do_for_each_slave_in_list, '$jo9_sanitary_daily', '$jo9_sanitary_roles'
+! JO9 MOD END PRIVATE_SANITARY_RULES_20261116

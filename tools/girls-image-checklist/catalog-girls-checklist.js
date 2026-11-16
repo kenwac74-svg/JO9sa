@@ -2,6 +2,29 @@
 (function girlsChecklist(data) {
   'use strict';
   if (!data || document.getElementById('jo9-girls-checklist')) return;
+  // JO9 MOD START CHECKLIST_JSON_DISCOVERY_20261111
+  function characterNumber(c){
+    if(c.characterNumber===null)return null;
+    if(Number.isSafeInteger(c.characterNumber)&&c.characterNumber>=0)return c.characterNumber;
+    return Number.isSafeInteger(c.id)&&c.id>=0?c.id:null;
+  }
+  function characterLabel(c){const number=characterNumber(c);return number===null?'번호 없음':String(number);}
+  function normalizeCharacter(c){
+    const value={random:false,...c};
+    value.name=String(value.name||String(value.json||value.id).split('/').pop().replace(/\.json$/i,''));
+    value.refs=value.refs&&typeof value.refs==='object'&&!Array.isArray(value.refs)?value.refs:{};
+    for(const key of ['assets','namedSceneAssets','compatibilityAssets','legacyFields','previousCharacterIds'])if(!Array.isArray(value[key]))value[key]=[];
+    return value;
+  }
+  function compareCharacters(a,b,mode){
+    const byName=()=>String(a.name||'').localeCompare(String(b.name||''),'ko')||String(a.json||a.id).localeCompare(String(b.json||b.id),'ko');
+    if(mode==='name')return byName();
+    const an=characterNumber(a),bn=characterNumber(b);
+    if(an===null||bn===null)return an===null&&bn===null?byName():an===null?1:-1;
+    return (mode==='id-desc'?bn-an:an-bn)||byName();
+  }
+  // JO9 MOD END CHECKLIST_JSON_DISCOVERY_20261111
+  data.characters=(data.characters||[]).map(normalizeCharacter);
   const cfg = window.JO9_CATALOG_BRIDGE;
   const live = !!(cfg && cfg.url && cfg.token);
   const normal = p => String(p || '').replace(/\\/g, '/').replace(/^content\/pic\//i, '').toLowerCase();
@@ -46,6 +69,9 @@
     .gc-preview{max-width:760px;width:90vw;background:#1d2530;color:#eee;border:1px solid #b69a68}
     .gc-preview img{max-width:100%;max-height:56vh;object-fit:contain;background:#111}
     .gc-preview::backdrop{background:#000a}
+    .gc-preview .gc-frame-compare{display:flex;gap:20px;justify-content:space-around;flex-wrap:wrap}
+    .gc-preview .gc-frame-compare figure{margin:8px;text-align:center}
+    .gc-preview .gc-frame-compare img{display:block;width:auto;height:auto;max-width:240px;max-height:240px;margin:8px auto}
     .gc-preview button{padding:9px;margin:8px}
   `;
   document.head.append(style);
@@ -55,7 +81,7 @@
   const host = document.getElementById('jo9-catalog-panel-girls') || document.body;
   host.append(root);
   const intro = node('p', 'WORK 적용 완료 · 새·옛 복장 등록을 함께 확인하며, 전용 그림이 없으면 기본 전신을 표시합니다.', 'gc-warn');
-  root.append(intro, node('p', '태그는 캐릭터 번호별로 저장합니다. 위 상태 버튼을 누르면 해당 태그의 캐릭터만 모아 볼 수 있습니다.', 'gc-note'));
+  root.append(intro, node('p', '태그는 캐릭터별로 저장합니다. 번호 없는 JSON도 파일별로 구분합니다. 위 상태 버튼을 누르면 해당 태그의 캐릭터만 모아 볼 수 있습니다.', 'gc-note'));
   const toolbar = node('div', undefined, 'gc-toolbar');
   const search = node('input');
   let appliedSearch='';
@@ -165,14 +191,29 @@
   const editableImageFields=new Set(['fullimage','fullmade','fullsecretary','fullmistress','fullpregnant','seed_ava','seed_ava_gray','seed_ava_clear',...outfits.flatMap(([key])=>['indpack_'+key,'indpack_'+key+'_horny','indpack_'+key+'_rebel']), 'indpack_title', 'indpack_naked']);
   function mergeCharacterLinks(result){
     if(result.files){files.clear();for(const p of result.files)files.set(normal(p),p);data.files=Array.from(files.values());}
-    for(const current of result.characters||[]){const c=data.characters.find(c=>c.id===current.id);if(c){const aliases=new Set((c.compatibilityAssets||[]).map(p=>normal(p.path))),assets=[...new Set([...(c.assets||[]),...(c.namedSceneAssets||[]),...(current.assets||[])].filter(p=>exists(p)&&!aliases.has(normal(p))))];Object.assign(c,current,{assets});}}
+    const byId=new Map(data.characters.map(c=>[String(c.id),c])),byJson=new Map(),updatedByJson=new Map();let added=0;
+    for(const c of data.characters)if(c.json&&!byJson.has(normal(c.json)))byJson.set(normal(c.json),c);
+    for(const current of result.characters||[]){
+      if(!current||current.id===undefined||current.id===null)continue;
+      let c=(current.json&&byJson.get(normal(current.json)))||byId.get(String(current.id));
+      if(!c){c=normalizeCharacter(current);data.characters.push(c);added++;}
+      const previousCharacterIds=[...new Set([...(c.previousCharacterIds||[]),...(current.previousCharacterIds||[]),...(String(c.id)!==String(current.id)?[c.id]:[])])];
+      if(byId.get(String(c.id))===c)byId.delete(String(c.id));
+      const aliases=new Map([...(c.compatibilityAssets||[]),...(current.compatibilityAssets||[])].map(value=>[normal(value.path),value]));
+      const namedSceneAssets=[...new Set([...(c.namedSceneAssets||[]),...(current.namedSceneAssets||[])])];
+      const assets=[...new Set([...(c.assets||[]),...namedSceneAssets,...(current.assets||[])].filter(p=>exists(p)&&!aliases.has(normal(p))))];
+      const legacyFields=[...new Set([...(c.legacyFields||[]),...(current.legacyFields||[])])];
+      Object.assign(c,normalizeCharacter({...c,...current,assets,namedSceneAssets,legacyFields,previousCharacterIds,compatibilityAssets:Array.from(aliases.values())}));
+      byId.set(String(c.id),c);if(c.json){byJson.set(normal(c.json),c);updatedByJson.set(normal(c.json),c);}
+    }
+    data.characters=data.characters.filter(c=>!c.json||!updatedByJson.has(normal(c.json))||updatedByJson.get(normal(c.json))===c);
     namedLabel.replaceChildren(namedOnly,document.createTextNode(' 이름 있는 유니크만 ('+data.characters.filter(c=>c.hasFixedName).length+')'));
-    actionsById=collectActions();version=Date.now();render();
+    actionsById=collectActions();version=Date.now();render();return added;
   }
   let currentLinksLoading=false;
   async function readCurrentLinks(rescan=false){
     if(!live||currentLinksLoading)return;currentLinksLoading=true;
-    try{const result=await statusApi('character-images/read',{ids:data.characters.map(c=>c.id),rescan});mergeCharacterLinks(result);message.textContent='현재 WORK JSON의 이미지 연결과 파일 상태를 읽었습니다.'+(result.errors?.length?' · 확인 필요 '+result.errors.length+'명':'');}
+    try{const result=await statusApi('character-images/read',{rescan});const added=mergeCharacterLinks(result);message.textContent='현재 WORK JSON의 이미지 연결과 파일 상태를 읽었습니다.'+(added?' · 신규 '+added+'명 추가':'')+(result.errors?.length?' · JSON 확인 필요 '+result.errors.length+'개':'');}
     catch(e){message.textContent='WORK JSON 연결 확인 실패: '+e.message;}finally{currentLinksLoading=false;}
   }
   function imageLinkButton(c,field,title){
@@ -249,8 +290,8 @@
       if(namedOnly.checked&&!c.hasFixedName)return false;
       if(selectedTag&&!(statusState.characterItems?.[String(c.id)]||[]).includes(selectedTag))return false;
       if (term) {
-        const matches=/^\d+$/.test(term)?c.id===Number(term):
-          [c.name,c.json,...Object.values(c.refs),...c.assets].join('\n').toLowerCase().includes(term);
+        const text=[c.name,c.json,...Object.values(c.refs),...c.assets].join('\n').toLowerCase();
+        const matches=/^\d+$/.test(term)?characterNumber(c)===Number(term)||(characterNumber(c)===null&&text.includes(term)):text.includes(term);
         if(!matches)return false;
       }
       const e=evaluation(c);
@@ -260,7 +301,7 @@
       if(filter.value==='issues')return e.broken||e.hidden||e.empty;
       return e[filter.value];
     });
-    rows.sort(sort.value==='id-desc'?(a,b)=>b.id-a.id:sort.value==='name'?(a,b)=>a.name.localeCompare(b.name,'ko')||a.id-b.id:(a,b)=>a.id-b.id);
+    rows.sort((a,b)=>compareCharacters(a,b,sort.value));
     return rows;
   }
   function assetUrl(path) {
@@ -331,6 +372,44 @@
     };
     input.click();
   }
+  // JO9 MOD START CHECKLIST_PORTRAIT_FRAME_20261111
+  function portraitFramePreview(value,title) {
+    return new Promise(resolve=>{
+      const dialog=node('dialog');dialog.className='gc-preview';
+      dialog.append(node('h3','자동 테두리 · '+title),node('p',value.path||''));
+      const compare=node('div',undefined,'gc-frame-compare');
+      for(const [label,data] of [['원본',value.originalData],['테두리 미리보기',value.data]]){
+        const figure=node('figure'),image=node('img');image.src='data:image/png;base64,'+data;image.alt=label;
+        figure.append(node('figcaption',label),image);compare.append(figure);
+      }
+      dialog.append(compare,node('p','기존 크기와 중앙 얼굴은 유지하고 바깥 5px에 게임 테두리를 넣습니다. 원본 백업을 남깁니다.'));
+      if(!value.changed)dialog.append(node('p','기존 테두리가 확인되어 현재 PNG를 유지합니다.','gc-note'));
+      if(value.frameState==='uncertain')dialog.append(node('p','기존 테두리 여부가 불확실합니다. 미리보기를 확인한 뒤 적용하세요.','gc-warn'));
+      if(value.sharedWith?.length)dialog.append(node('p','공유 이미지 · '+value.sharedWith.join(', ')+'에도 함께 반영됩니다.','gc-warn'));
+      const yes=node('button','테두리 적용'),no=node('button','취소');yes.type=no.type='button';yes.disabled=!value.changed;
+      dialog.append(yes,no);document.body.append(dialog);
+      let settled=false;
+      const finish=result=>{if(settled)return;settled=true;dialog.close();dialog.remove();resolve(result);};
+      yes.onclick=()=>{if(!yes.disabled)finish(true);};no.onclick=()=>finish(false);
+      dialog.oncancel=e=>{e.preventDefault();finish(false);};dialog.onclose=()=>finish(false);dialog.showModal();
+    });
+  }
+  async function addPortraitFrame(c,field,title) {
+    if(busy||!live)return;busy=true;message.textContent=title+' 테두리를 준비하고 있습니다.';
+    try{
+      const current=await statusApi('character-images/read',{ids:[c.id]}),latest=current.characters[0];
+      if(!latest)throw Error('캐릭터 JSON을 찾지 못했습니다.');
+      const value=await statusApi('portrait-frame/preview',{id:c.id,field,expectedHash:latest.jsonSha256});
+      if(!await portraitFramePreview(value,title)){
+        message.textContent=value.changed?'자동 테두리 취소 · PNG는 변경하지 않았습니다.':'기존 테두리가 확인되어 현재 PNG를 유지했습니다.';return;
+      }
+      const result=await statusApi('portrait-frame/apply',{id:value.id,field:value.field,expectedHash:value.expectedHash,path:value.path,before:value.before,after:value.after,frameHash:value.frameHash,confirmed:true});
+      version=Date.now();render();
+      message.textContent=result.status==='unchanged'?result.reason:
+        '테두리 저장 완료 · '+result.path+' · 원본 백업과 이미지 패치 기록을 남겼습니다.'+(result.catalogWarning?' '+result.catalogWarning:'')+(result.patchWarning?' '+result.patchWarning:'');
+    }catch(error){message.textContent='자동 테두리: '+error.message;}finally{busy=false;}
+  }
+  // JO9 MOD END CHECKLIST_PORTRAIT_FRAME_20261111
   function pathRow(path, title, c, field) {
     const row=node('div',undefined,'gc-row');
     row.append(node('span',exists(path)?'있음':'없음',exists(path)?'gc-ok':'gc-error'),node('span',title+' · '+path,'gc-path'));
@@ -341,6 +420,8 @@
   // User rule: numbered folders remain separate for full, face and action images.
   let pathDirectoryVersion=null,pathDirectoryIds=new Set();
   function hasDedicatedFolder(c){
+    const number=Number.isSafeInteger(c.characterNumber)?c.characterNumber:Number.isSafeInteger(c.id)?c.id:null;
+    if(number===null)return false;
     if(Array.isArray(c.dedicatedImageFolders))return c.dedicatedImageFolders.length>0;
     if(pathDirectoryVersion!==version){
       pathDirectoryIds=new Set();
@@ -348,7 +429,7 @@
       for(const d of data.directories||[]){const m=/^girls\/(?:full|face|sex_scenes)\/(\d+)(?:\/|$)/.exec(normal(typeof d==='string'?d:d.path));if(m)pathDirectoryIds.add(Number(m[1]));}
       pathDirectoryVersion=version;
     }
-    return pathDirectoryIds.has(c.id);
+    return pathDirectoryIds.has(number);
   }
   function pathRule(c,path,field){
     if(!c||!path)return null;
@@ -363,7 +444,7 @@
     else if(['fullmistress','indpack_dom'].includes(key))kind='mistress';
     else if(/^indpack_|^fullpregnant$/.test(key))kind='full';
     else if(dedicated){if(/^girls\/face\//.test(p))kind='face';else if(/^(?:girls\/sex_scenes|scene)\//.test(p))kind='action';else if(/^(?:girls\/full|characters)\//.test(p))kind='full';}
-    if(dedicated&&kind)roots=['girls/'+(kind==='face'?'face':kind==='action'?'sex_scenes':'full')+'/'+c.id+'/'];
+    if(dedicated&&kind)roots=['girls/'+(kind==='face'?'face':kind==='action'?'sex_scenes':'full')+'/'+(Number.isSafeInteger(c.characterNumber)?c.characterNumber:c.id)+'/'];
     else if(kind==='title')roots=['characters/'];
     else if(kind==='naked'){roots=['girls/full/'];direct=true;}
     else if(kind==='maid')roots=['girls/full/cloth/','girls/full/maid/'];
@@ -403,6 +484,10 @@
       box.append(node('p','파일 선택·연결에서 이미 만들어 둔 PNG를 직접 지정할 수 있습니다.','gc-note'));
     }
     if(field)box.append(imageLinkButton(c,field,title));
+    if(/^seed_ava(?:_clear|_gray)?$/.test(field||'')){
+      const frame=node('button','자동 테두리 만들기');frame.type='button';frame.className='gc-portrait-frame';frame.dataset.field=field;
+      frame.disabled=!live||!path||!exists(path);frame.onclick=()=>addPortraitFrame(c,field,title);box.append(frame);
+    }
     return box;
   }
   // JO9 MOD START CHECKLIST_DRESSED_LOOK_20261109
@@ -434,6 +519,16 @@
     catch(e){message.textContent='공용 지정: '+e.message;}finally{busy=false;}
   }
   // JO9 MOD END CHECKLIST_DRESSED_LOOK_20261109
+  function previousTagNote(c){
+    const notes=[];
+    for(const id of c.previousCharacterIds||[]){
+      if(String(id)===String(c.id))continue;
+      const flags=statusState.characterItems?.[String(id)]||[];
+      const labels=flagSpecs.filter(([flag])=>flags.includes(flag)).map(([,label])=>label);
+      if(labels.length)notes.push((Number.isSafeInteger(id)?'이전 번호 ':'이전 등록 ')+id+' 상태(보관): '+labels.join(' · '));
+    }
+    return notes.length?node('p',notes.join(' / ')+' · 원래 JSON의 이전 상태 기록을 보존했습니다. 현재 파일의 새 상태는 별도로 저장합니다.','gc-note'):null;
+  }
   function render() {
     if(window.JO9_CATALOG_TABS&&window.JO9_CATALOG_TABS.current()!=='girls'){dirty=true;return;}dirty=false;
     const rows=chooseRows(),pages=Math.max(1,Math.ceil(rows.length/pageSize));
@@ -447,7 +542,8 @@
     for(const c of rows.slice(page*pageSize,(page+1)*pageSize)){
       const card=node('section',undefined,'gc-card');card.dataset.characterId=c.id;
       const displayName=c.name==='ID '+c.id?'일반 캐릭터':c.name;
-      card.append(node('h3',c.id+' · '+displayName),node('p',c.json+' · '+(c.random?'무작위 등장 범위에 포함':'고유 이벤트 / 별도 등록'),'gc-note'),tags(c.id));
+      card.append(node('h3',characterLabel(c)+' · '+displayName),node('p',c.json+' · '+(c.random?'무작위 등장 범위에 포함':'고유 이벤트 / 별도 등록'),'gc-note'),tags(c.id));
+      const previousTags=previousTagNote(c);if(previousTags)card.append(previousTags);
       if(c.catalogNote)card.append(node('p',c.catalogNote,'gc-note'));
       if(c.imageGroupOwner)card.append(node('p',c.id===c.imageGroupOwner?'이미지 공유 기준 2577 · 이미지 연결을 저장하면 2585 · 2607에도 함께 적용됩니다.':'이미지 공유: 2577에서 이미지 연결을 변경하면 함께 적용됩니다.','gc-note'));
       const warnings=pathWarningBox(c);if(warnings)card.append(warnings);
@@ -478,21 +574,22 @@
       for(const [field,path] of Object.entries(c.refs).filter(([key])=>key.startsWith('indpack_')||['fullimage','fullmade','fullsecretary','fullmistress','fullpregnant'].includes(key)))
         refList.append(pathRow(path,fieldLabels[field]||field,c,field));
       refs.append(refList);card.append(refs);
-      const scenes=node('details');const actionFiles=Array.from(actionsById.entries()).filter(([key])=>key.startsWith(c.id+':')).flatMap(([,paths])=>paths);
-      scenes.append(node('summary','캐릭터 번호별 행동 컷 · '+actionFiles.length+'개'));
+      const actionNumber=characterNumber(c),scenes=node('details');const actionFiles=actionNumber===null?[]:Array.from(actionsById.entries()).filter(([key])=>key.startsWith(actionNumber+':')).flatMap(([,paths])=>paths);
+      scenes.append(node('summary',(actionNumber===null?'번호 없는 캐릭터 · 등록 장면을 사용':'캐릭터 번호별 행동 컷 · '+actionFiles.length+'개')));
       scenes.append(node('p','개별 행동 컷이 없는 행동은 공용 컷에서 선택될 수 있습니다. 원래 모든 행동에 전용 컷이 있어야 하는 것은 아닙니다.','gc-note'));
       const actionSlots=node('details');actionSlots.append(node('summary','행동별 전용 컷 보완 · 없는 컷도 보기'));
       const actionGrid=node('div',undefined,'gc-list');
-      for(const action of actionFamilies){
-        const candidates=actionsById.get(c.id+':'+action)||[];
+      if(actionNumber!==null)for(const action of actionFamilies){
+        const candidates=actionsById.get(actionNumber+':'+action)||[];
         const title=(actionNames[action]||action)+' · '+action;
         if(candidates.length){
           actionGrid.append(node('p',title+' · 전용 컷 '+candidates.length+'개','gc-ok'));
         }else{
-          actionGrid.append(pathRow('girls/sex_scenes/'+c.id+'/'+c.id+'_'+action+'.png',title+' · 현재는 공용 컷 사용'));
+          actionGrid.append(pathRow('girls/sex_scenes/'+actionNumber+'/'+actionNumber+'_'+action+'.png',title+' · 현재는 공용 컷 사용'));
         }
       }
-      actionSlots.append(actionGrid);scenes.append(actionSlots);
+      if(actionNumber===null)scenes.append(node('p','번호별 경로를 자동으로 만들지 않습니다. JSON에 등록된 장면과 아래 이미지 경로를 확인하세요.','gc-note'));
+      else{actionSlots.append(actionGrid);scenes.append(actionSlots);}
       const sceneList=node('div',undefined,'gc-list');for(const p of actionFiles)sceneList.append(pathRow(p,p.split('/').pop(),c,'action'));scenes.append(sceneList);card.append(scenes);
       const legacyFields=(c.legacyFields||[]).filter(key=>c.refs[key]);
       if(legacyFields.length){
@@ -506,7 +603,7 @@
         const namedList=node('div',undefined,'gc-list');for(const p of c.namedSceneAssets)namedList.append(pathRow(p,p.split('/').pop()));
         named.append(node('p','파일은 존재하지만 일반 행동에서 사용하는 번호별 컷과 경로가 다를 수 있습니다.','gc-note'),namedList);card.append(named);
       }
-      const assets=node('details');assets.append(node('summary',(c.compatibilityAssets?'이 캐릭터의 사용 이미지':'이 번호의 물리 파일 전체')+' · '+c.assets.length+'개'));
+      const assets=node('details');assets.append(node('summary',((c.compatibilityAssets?.length||actionNumber===null)?'이 캐릭터의 사용 이미지':'이 번호의 물리 파일 전체')+' · '+c.assets.length+'개'));
       const assetList=node('div',undefined,'gc-list');for(const p of c.assets)assetList.append(pathRow(p,p.split('/').pop()));assets.append(assetList);card.append(assets);
       if((c.compatibilityAssets||[]).length){
         const aliases=node('details');aliases.append(node('summary','옛 저장 호환 경로 · '+c.compatibilityAssets.length+'개'));

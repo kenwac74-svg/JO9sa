@@ -1,0 +1,823 @@
+--- a/master_editor.py
++++ b/master_editor.py
+@@ -4,6 +4,7 @@
+ """
+ from pathlib import Path
+ import array,base64,copy,datetime,hashlib,io,json,os,re,tempfile
++import master_initials as initials
+ 
+ LOCATION='#masters_base'
+ ARRAYS={'name':'$master_base_name','description':'$hero_description','difficulty':'$hero_difficulty',
+@@ -41,7 +42,10 @@
+   if at!=len(self.lines)-1 or self.lines[-1]!='':raise ValueError('QSP 구조가 잘못되었습니다.')
+  def body(self,name):return shift(self.lines[self.index[name]+2],5)
+  def replace_body(self,name,text):
+-  lines=self.lines.copy();lines[self.index[name]+2]=shift(text,-5)
++  return self.replace_bodies({name:text})
++ def replace_bodies(self,bodies):
++  lines=self.lines.copy()
++  for name,text in bodies.items():lines[self.index[name]+2]=shift(text,-5)
+   raw='\r\n'.join(lines).encode('utf-16-le','surrogatepass');QspDocument(raw);return raw
+ 
+ def make_fixture(bodies):
+@@ -130,9 +134,12 @@
+    m[key]=raw[1:-1].strip('\r\n') if key=='statsCode' and raw.startswith('{') else literal(raw)
+   return m
+  def revision(self,sid,entries=None):
+-  if entries is None:entries=self._native()[2]
++  doc=QspDocument(self.qsp.read_bytes())
++  if entries is None:entries=array_entries(doc.body(LOCATION))
+   raw={k:v[2] for k,v in entries.items() if k[1]==int(sid)}
+-  return digest(encoded({'native':[[k[0],v] for k,v in sorted(raw.items())],'profile':self._profile('master',sid)}))
++  shared={name:re.sub(r'(?m)^! JO9 MOD START '+initials.TAG+r':[^\r\n]+\r?\n.*?^! JO9 MOD END '+initials.TAG+r':[^\r\n]+(?:\r?\n|$)','',doc.body(name),flags=re.S) for name in initials.SOURCES+initials.RUNTIME if name in doc.index}
++  own=initials.owned_blocks(doc,sid,self._master(sid,entries)['statsCode'])
++  return digest(encoded({'native':[[k[0],v] for k,v in sorted(raw.items())],'profile':self._profile('master',sid),'common':shared,'initials':own}))
+  def image_url(self,ref):
+   if not ref:return None
+   rel=str(ref).replace('\\','/');rel=rel if rel.startswith('content/') else 'content/pic/'+rel
+@@ -153,6 +160,13 @@
+   doc=doc or QspDocument(self.qsp.read_bytes())
+   values=stat_values(doc.body('init_game')) if 'init_game' in doc.index else {}
+   return {key:values.get(key,0) for key in ['jo9_cruel_mercy','jo9_cruel_mercy_half']}
++ def initial_catalog(self,master,sid=None,overrides=None,doc=None):
++  doc=doc or QspDocument(self.qsp.read_bytes());entries=array_entries(doc.body(LOCATION))
++  presets={key[1]:self._master(key[1],entries)['statsCode'] for key in entries if key[0]=='$master_base_name'}
++  if sid is None:presets['profile']=master.get('statsCode','')
++  if overrides is None:overrides=initials.read_overrides(doc,sid,master.get('statsCode','')) if sid is not None else {}
++  result=initials.catalog(doc,presets,master.get('statsCode',''),overrides,sid=sid)
++  return {'fields':result['fields'],'auditedAssignments':len(result['inventory'])}
+  def read(self,sid):
+   doc,body,entries=self._native();master=self._master(sid,entries);profile=self._profile('master',sid);data=copy.deepcopy(profile.get('data',{}));values=stat_values(master['statsCode'])
+   data.setdefault('seed_name',master['name']);data.setdefault('seed_age',0)
+@@ -164,7 +178,7 @@
+   for key,arr in ARRAYS.items():
+    if (arr,int(sid)) in entries:snippets.append(arr+'['+str(sid)+'] = '+entries[(arr,int(sid))][2])
+   return {'id':int(sid),'role':'master','gender':'female' if int(sid)>100 else 'male','jsonFile':'#masters_base['+str(sid)+']','data':data,'dedicated':False,'sharedWith':[],
+-   'master':master,'nativeDefaults':self.native_defaults(doc),'revision':self.revision(sid,entries),'slots':slots,'faces':{k:self.image_url(data.get(k)) for k in ['seed_ava_clear','seed_ava_gray','seed_ava']},
++   'master':master,'nativeDefaults':self.native_defaults(doc),'initialCatalog':self.initial_catalog(master,sid,doc=doc),'initialOverrides':initials.read_overrides(doc,sid,master['statsCode']),'revision':self.revision(sid,entries),'slots':slots,'faces':{k:self.image_url(data.get(k)) for k in ['seed_ava_clear','seed_ava_gray','seed_ava']},
+    'storyFields':list(map(list,STORY.items())),'statKeys':list(data),'choices':{},'nativeSource':'\r\n'.join(snippets),'profilePath':self._profile_file('master',sid).relative_to(self.root).as_posix(),
+    'menuLinked':self.menu_linked(sid),'mappings':self.mapping_rows('master',data,master)}
+  def menu_linked(self,sid):
+@@ -204,18 +218,24 @@
+     if raw is None:p.unlink(missing_ok=True)
+     else:p.write_bytes(raw)
+    raise
+- def _qsp_patch(self,d,before,after,payloads):
+-  if before==after:return
+-  raw=d.replace_body(LOCATION,after);stamp=datetime.datetime.now().strftime('%Y%m%d_%H%M%S_%f')
++ def _qsp_patch(self,d,before,after,payloads,extra=None):
++  bodies={**(extra or {}),LOCATION:after};bodies={n:t for n,t in bodies.items() if t!=d.body(n)}
++  if not bodies:return
++  raw=d.replace_bodies(bodies);stamp=datetime.datetime.now().strftime('%Y%m%d_%H%M%S_%f')
+   p=self.root/'jo9_editor/master-patches'/stamp
+   first=self.root/'jo9_editor/master-patches/before_first_save.qsp'
+   if not first.exists():payloads[first]=d.raw
+-  payloads[Path(str(p)+'.json')]=encoded({'id':'master_editor_'+stamp,'target':'game/jack.qsp','before_sha256':digest(d.raw),'after_sha256':digest(raw),'edits':[{'location':LOCATION,'field':'body','old':before,'new':after,'count':1}]})
++  payloads[Path(str(p)+'.json')]=encoded({'id':'master_editor_'+stamp,'target':'game/jack.qsp','before_sha256':digest(d.raw),'after_sha256':digest(raw),'edits':[{'location':name,'field':'body','old':d.body(name),'new':text,'count':1} for name,text in bodies.items()]})
+   payloads[self.qsp]=raw
+  def save(self,sid,body):
+   self._check_revision('master',sid,body.get('revision'));d,text,entries=self._native();original=self._master(sid,entries);master=validate_master({**original,**(body.get('master') or {})});profile=self._profile('master',sid);new=copy.deepcopy(profile)
++  before_initials=initials.read_overrides(d,sid,master['statsCode']);extra={};after_initials=before_initials
++  if body.get('initials'):
++   fields=self.initial_catalog(master,sid,doc=d)['fields'];after_initials=initials.merge_changes(fields,before_initials,body['initials'])
++   master['statsCode'],extra=initials.apply_overrides(d,sid,master['statsCode'],after_initials,fields);validate_master(master)
+   new['data']=self._update_data(profile.get('data',{}),body);new['master']=master
+   changes=[{'key':'master.'+k,'before':original.get(k),'after':master[k]} for k in ARRAYS if original.get(k)!=master.get(k)]
++  changes.extend({'key':'initial.'+k,'before':before_initials.get(k),'after':after_initials.get(k)} for k in set(before_initials)|set(after_initials) if before_initials.get(k)!=after_initials.get(k))
+   for k in set(profile.get('data',{}))|set(new['data']):
+    if profile.get('data',{}).get(k)!=new['data'].get(k):changes.append({'key':k,'before':profile.get('data',{}).get(k),'after':new['data'].get(k)})
+   updated=text
+@@ -224,7 +244,7 @@
+    if old:updated=updated[:old[0]]+value+updated[old[1]:]
+    else:updated+='\r\n'+ARRAYS[key]+'['+str(sid)+'] = '+value+'\r\n'
+   if changes and not body.get('dryRun'):
+-   payloads={self._profile_file('master',sid):encoded(new)};self._qsp_patch(d,text,updated,payloads);self._write(payloads)
++   payloads={self._profile_file('master',sid):encoded(new)};self._qsp_patch(d,text,updated,payloads,extra);self._write(payloads)
+   return {'changes':changes,'dryRun':bool(body.get('dryRun')),'saved':bool(changes) and not body.get('dryRun'),'character':self.read(sid) if not body.get('dryRun') else None}
+  def slave(self,sid):
+   matches=[]
+@@ -287,8 +307,8 @@
+   if not name:raise ValueError('새 이름을 입력하세요.')
+   slug=str(body.get('slug') or 'copy')
+   if not re.fullmatch(r'[A-Za-z0-9_-]{1,60}',slug):raise ValueError('파일 이름은 영문·숫자·밑줄·하이픈으로 입력하세요.')
+-  if role=='master':r=self.read(sid);data=r['data'];master=r['master'];profile=self._profile(role,sid);revision=r['revision']
+-  else:_,data=self.slave(sid);profile=self.slave_profile(sid);master=self.master_from_slave(data,profile);revision=self.slave_revision(sid)
++  if role=='master':r=self.read(sid);data=r['data'];master=r['master'];profile=self._profile(role,sid);revision=r['revision'];owned=r['initialOverrides']
++  else:_,data=self.slave(sid);profile=self.slave_profile(sid);master=self.master_from_slave(data,profile);revision=self.slave_revision(sid);owned=profile.get('initialOverrides',{})
+   gender=body.get('gender','female');nid=self._new_id(target,body.get('newId'),gender);new={'seed_name':name}
+   image_keys={'fullimage','fullmade','fullsecretary','fullmistress','indpack_title','indpack_naked','indpack_maid','indpack_secr','indpack_dom','seed_ava','seed_ava_clear','seed_ava_gray'}
+   bg_keys=set(STORY.values())|{'seed_age','seed_psy_basic','seed_virginity'}
+@@ -298,13 +318,16 @@
+   newmaster=copy.deepcopy(master) if 'background' in include or 'stats' in include else {'name':name,'description':'','difficulty':'','statsCode':'','portrait':'','sepia':''}
+   if 'background' not in include:newmaster.update(description='',difficulty='')
+   if 'stats' not in include:newmaster['statsCode']=''
++  elif role=='master':newmaster['statsCode']=initials.strip_block(newmaster['statsCode'],'preset',sid).rstrip('\r\n')
+   if 'appearance' not in include:newmaster.update(portrait='',sepia='')
+   newmaster['name']=name
++  carried=copy.deepcopy(owned) if 'stats' in include else {}
+   allowed={sk if target=='slave' else mk for mk,sk,_ in MAPPINGS}
+   for key,value in (body.get('overrides') or {}).items():
+    if key not in allowed or type(value) is not int:raise ValueError('대응표의 정수 항목이 아닙니다: '+key)
+    if target=='slave':new[key]=value
+    else:
++    if key in carried:carried[key]=value
+     pattern=re.compile(r'(?m)^(\s*'+re.escape(key)+r'\s*=\s*)-?\d+')
+     if pattern.search(newmaster['statsCode']):newmaster['statsCode']=pattern.sub(lambda m:m[1]+str(value),newmaster['statsCode'])
+     else:newmaster['statsCode']+='\r\n'+key+' = '+str(value)
+@@ -321,12 +344,12 @@
+     if new.get(field):
+      ref=new[field];newmaster[key]=ref if Path(ref).suffix else ref+'.png'
+   validate_master(newmaster)
+-  return {'id':nid,'role':target,'json':path,'data':new,'master':newmaster,'imageCopies':copies,'talkbook':book,'revision':revision,
++  return {'id':nid,'role':target,'json':path,'data':new,'master':newmaster,'initialOverrides':carried,'imageCopies':copies,'talkbook':book,'revision':revision,
+    'background':background,'menuLinked':False,'warnings':['원본 인물은 유지됩니다.','새 마스터의 시작 메뉴 연결은 QSP 이벤트에서 별도로 지정합니다.'] if target=='master' else ['원본 인물은 유지됩니다. 무작위 등장 풀은 바꾸지 않습니다.']}
+  def clone(self,role,sid,body):
+   self._check_revision(role,sid,body.get('revision'));r=self.clone_preview(role,sid,body)
+   if body.get('dryRun'):return {k:v for k,v in r.items() if k!='talkbook'}
+-  profile={'data':r['data'],'master':r['master'],'background':r['background'],'source':{'role':role,'id':int(sid)}}
++  profile={'data':r['data'],'master':r['master'],'initialOverrides':r['initialOverrides'],'background':r['background'],'source':{'role':role,'id':int(sid)}}
+   payloads={self._profile_file(r['role'],r['id']):encoded(profile)}
+   for dest,src in r['imageCopies'].items():payloads[self.root/dest]=(self.root/src).read_bytes()
+   if r['role']=='slave':
+@@ -336,9 +359,14 @@
+    if r['talkbook']:payloads[self.root/'jo9_talkbook'/(str(r['id'])+'.json')]=encoded({**r['talkbook'],'id':r['id'],'name':r['data']['seed_name'],'jsonFile':path.name})
+   else:
+    if r['talkbook']:profile['talkbook']=r['talkbook'];payloads[self._profile_file('master',r['id'])]=encoded(profile)
+-   d,text,_=self._native();block='\r\n! JO9 MOD START MASTER_EDITOR_'+str(r['id'])+'\r\n'
++   d,text,_=self._native();extra={}
++   if r['initialOverrides']:
++    fields=self.initial_catalog(r['master'],overrides=r['initialOverrides'],doc=d)['fields']
++    r['master']['statsCode'],extra=initials.apply_overrides(d,r['id'],r['master']['statsCode'],r['initialOverrides'],fields)
++    profile['master']=r['master'];payloads[self._profile_file('master',r['id'])]=encoded(profile)
++   block='\r\n! JO9 MOD START MASTER_EDITOR_'+str(r['id'])+'\r\n'
+    for key,arr in ARRAYS.items():block+=arr+'['+str(r['id'])+'] = '+('{\r\n'+r['master'][key]+'\r\n}' if key=='statsCode' else quote(r['master'][key]))+'\r\n'
+-   block+='! JO9 MOD END MASTER_EDITOR_'+str(r['id'])+'\r\n';self._qsp_patch(d,text,text+block,payloads)
++   block+='! JO9 MOD END MASTER_EDITOR_'+str(r['id'])+'\r\n';self._qsp_patch(d,text,text+block,payloads,extra)
+   self._write(payloads);return {k:v for k,v in r.items() if k!='talkbook'}
+  def read_slave_talk(self,sid):
+   p=self.root/'jo9_talkbook'/(str(int(sid))+'.json')
+--- a/master_initials.py
++++ b/master_initials.py
+@@ -0,0 +1,297 @@
++"""JO9 MOD MASTER_INITIALS_20261115: source-derived starting-field inventory.
++
++Never executes QSP. Catalogues assignments and preserves their source phase.
++"""
++import re,json,hashlib,functools
++
++IDENT=r'\$?[^\W\d]\w*'
++INDEX=r'''(?:-?\d+|'(?:''|[^'])*'|"(?:""|[^"])*")'''
++BIND=re.compile(r'('+IDENT+r'(?:\[\s*'+INDEX+r'\s*\])?)\s*(\+=|-=|=(?!=))',re.UNICODE)
++SOURCES=['init_game','init_story_mode','init_custom_game','hero_creation','hero_description','start_game','new_estate']
++ALIASES={'$master_name',' $master_name','$master_ava','$master_ava_color','hero_choice','hero_select'}
++TEMP={'i','a','b','c','j','k','txt','sp_txt','change_loc','snk_room_target','$place','$current_sub','$secondary_stt','ui_style','release_notes_message','daycount','id','href','src','is_home'}
++RUNTIME=['$calculate_attributes','$moodlets_account']
++CM={'jo9_cruel_mercy','jo9_cruel_mercy_half'}
++
++def canonical(key):
++ base=key.split('[',1)[0];index=key[len(base):].strip()
++ if index:
++  value=index[1:-1].strip()
++  if value.startswith('"'):value="'"+value[1:-1].replace('""','"').replace("'","''")+"'"
++  index='['+value+']'
++ return base.lower()+index
++
++def mask(code):
++ """A same-length mask hides quotes/comments, including their separators."""
++ out=list(code);q='';comment=False;comment_depth=0;i=0
++ while i<len(code):
++  ch=code[i]
++  if comment:
++   if ch=='{':comment_depth+=1
++   elif ch=='}' and comment_depth:comment_depth-=1
++   if ch in '\r\n' and not comment_depth:comment=False
++   elif ch not in '\r\n':out[i]='\x00'
++  elif q:
++   out[i]=' '
++   if ch==q:
++    if i+1<len(code) and code[i+1]==q:out[i+1]=' ';i+=1
++    else:q=''
++  elif ch=='!':
++   previous=code[:i].rstrip(' \t')[-1:] if i else ''
++   if not previous or previous in '\r\n&:{':comment=True;out[i]='\x00'
++  elif ch in "'\"":q=ch;out[i]=' '
++  i+=1
++ return ''.join(out)
++
++def scalar(expression):
++ e=expression.strip()
++ if re.fullmatch(r'-?\d+',e):return int(e)
++ if len(e)>=2 and e[0] in "'\"" and e[-1]==e[0]:
++  q=e[0];inside=e[1:-1]
++  if q not in inside.replace(q+q,''):return inside.replace(q+q,q)
++ return None
++
++def assignments(code,location=''):
++ hidden=mask(code);records=[];stack=[];line_starts=[0]
++ line=0
++ for original in code.splitlines(keepends=True):
++  start=line_starts[-1];end=start+len(original);visible=hidden[start:end];stripped=visible.strip();prefix_stack=list(stack)
++  lower=stripped.lower()
++  if re.match(r'^end\b',lower) and stack:stack.pop();prefix_stack=list(stack)
++  elif re.match(r'^(else|elseif)\b',lower) and stack:prefix_stack=stack[:-1]+[original.strip()]
++  for match in BIND.finditer(code,start,end):
++   # A variable inside a string/comment is not a game assignment.
++   if hidden[match.start():match.start()+1] in (' ','\x00'):continue
++   before=hidden[start:match.start()];sep=max(before.rfind('&'),before.rfind(':'),before.rfind('{'),before.rfind('}'))
++   lead=before[sep+1:].strip().lower()
++   if re.match(r'^(if|elseif|while|for|local)\b',lead):continue
++   value_start=match.end();at=value_start
++   while at<len(code):
++    ch=hidden[at]
++    if ch in '\r\n&}\x00':break
++    at+=1
++   value_end=at
++   # Remove a trailing inline comment, while preserving quoted ! and &.
++   raw=code[value_start:value_end]
++   value=raw.strip()
++   if not value:continue
++   key=canonical(match[1]);conditions=list(prefix_stack)
++   if ':' in before and re.search(r'\bif\b',before,re.I):conditions.append(code[start:start+before.rfind(':')+1].strip())
++   records.append({'key':key,'binding':match[1],'op':match[2],'expression':value,'value':scalar(value),'kind':'string' if key.startswith('$') else 'number',
++    'location':location,'line':line+1,'conditional':bool(conditions),'conditions':conditions,'start':match.start(),'valueStart':value_start,'valueEnd':value_end})
++  if re.match(r'^if\b',lower) and ':' in visible and not visible.split(':',1)[1].strip():stack.append(original.strip())
++  elif re.match(r'^(else|elseif)\b',lower) and stack:stack[-1]=original.strip()
++  line+=1;line_starts.append(end)
++ return records
++
++def disposition(record,source):
++ key=record['key'];base=key.split('[',1)[0]
++ if key in ALIASES:return 'alias','다른 전용 편집 항목 또는 인물 선택 번호'
++ if key in TEMP or base in TEMP:return 'transient','화면/초기화 절차의 실행 임시값'
++ if base.startswith(('$msg_','msg_','$difficulty_description','$bg','$place_','$estate_','$interior_')) or base in {'$study','$bed','$bath','$dungeon','$kitchen','$lab','$boudoir','$barn'}:return 'reference','화면 배치/배경 참조 · 거주지/인테리어로 계산'
++ if base.startswith(('event_get','event_met','first_visit','train_slave_count')) or base in {'venera','venera2','pelageya','pelageya2','mira','zhanna','snezhana','madelyn','isabella_get'}:return 'world_state','NPC/이벤트 진행 상태 · 인물 능력치가 아님'
++ if base in {'$защита','$суперудар'}:return 'reference','전투 메뉴 동작 코드 · QSP 이벤트에서 편집'
++ if base.startswith(('$preset_name','$secondary_','$trace','$quest')):return 'reference','메뉴·경로·퀘스트 참조 자료'
++ if base.startswith(('$assistant','$slave','assistant','slave','prisoner','contractor_demand','train_slave_training_count','trainer_slave_training_count')):return 'other_actor','다른 인물/업무의 시작 상태'
++ if record['expression'].startswith('{'):return 'code','함수/메뉴 코드 · QSP 이벤트에서 편집'
++ if source in RUNTIME:
++  if not (base.startswith(('master_','female','guild_reputation','jo9_'))):return 'runtime_other','다른 실행 상태'
++  if '_cap' in base:return 'balance','성장 계수/상한 표'
++ return 'field',''
++
++def group(key):
++ base=key.split('[',1)[0]
++ if key in CM:return 'CM'
++ if base.startswith(('female','piercing_')):return '여주인 신체·설정'
++ if base=='$master_spm':return '보유품·마법'
++ if base.startswith('$master_') or base.endswith('_on') or base=='item_supermacy_bonus':return '장비·유물'
++ if base.endswith(('_rate','_target')) or base=='master_check':return '성장·누적값 (고급)'
++ if base.startswith(('master_','is_perv','is_kid','is_master_virgin')):return '능력치·상태·경험치'
++ if base.startswith(('faction_','debt','guild_reputation','brand_','master_wealth')) or base in {'sparks','purse','noble_status'}:return '자금·세력·평판'
++ if base.startswith(('inventory','fridge','lab_store','spell_','spm_','$master_spm')) or base in {'auspex','sententia_veritas','magna_magnifika','cruciato','tremendio','chaotic_essence','spawn_semen'} or any(ord(c)>127 for c in base):return '보유품·마법'
++ if base in {'$estate','$starting_area','$interior','stock_limit','bath','kitchen','dungeon','lab','library','barn','boudoir','pen','stasis_tank','horse','dog','$dog_name','musical_instruments','svine','arachnidspider','polypusvermin','vibrator','cooked_food','guitar','piano','cello','violin'} or base.startswith('heavy_'):return '거주지·시설·소유물'
++ return '게임 시작 설정 (고급)'
++
++LABELS={'master_energy':'행동력','master_excitement':'흥분','master_excitement_rate':'흥분 누적값','master_wounds':'부상','master_wounds_rate':'부상 누적값','master_hygiene':'청결 등급','master_hygiene_rate':'청결 누적값','master_mood':'기분 등급','master_mood_rate':'기분 누적값','master_half_action':'행동력 반점 잔여','master_supermacy':'장악력',
++ 'female_virginity':'여주인 경험 상태','female_anal_description':'여주인 신체 묘사 단계','female_lactation':'수유 상태','female_nipple_piercing':'유두 피어싱','female_vaginal_modification':'신체 개조 상태','female[\'age\']':'여주인 연령 분류','female[\'boobs\']':'여주인 가슴 분류','female[\'fertility\']':'가임성','female[\'fertility_revealed\']':'가임성 발견 여부',
++ '$master_armor':'방어구','$master_cloth':'평상복','$master_right_wpn':'오른손 무기','$master_left_wpn':'왼손 무기','$master_back_wpn':'등 무기','$master_arm_wpn':'팔 장비','$master_leg_wpn':'허벅지 장비','$master_head_gear':'투구','$master_earring':'귀걸이','$master_amulet':'목걸이','$master_ring':'반지','$master_karman':'주머니 장비',
++ '$estate':'시작 거주지','$starting_area':'시작 지역 안내','$interior':'인테리어','stock_limit':'기본 수용 인원','sparks':'시작 스파크','debt':'부채','noble_status':'귀족 지위','guild_reputation':'길드 평판','guild_reputation_rate':'길드 평판 누적값','brand_rate':'상표 평판 누적값','get_initial_slave':'시작 인물 지급 여부','game_difficulty':'게임 난이도','difficulty_setting':'복종 난이도','is_kid':'특수 주인공 분류','is_master_virgin':'주인공 미경험 상태','is_gangbang':'단체 행동 설정'}
++
++LABELS.update({'master_str':'힘','master_cha':'매력','master_style':'스타일','master_libido':'욕구','master_tutor':'교육','master_fighter':'전투 기술','master_butler':'관리','master_artdirector':'예술','master_medic':'의학','master_mage':'마법','master_torture':'고문','master_domination':'지배','master_bondage':'결박','master_flagelation':'채찍','master_petting':'애무','master_oral':'구강','master_penetration':'삽입','master_fetish':'페티시즘','master_vampire':'뱀파이어','master_check':'초기 경험치 환산 완료 여부','master_ill':'질병 상태','master_issues':'개인 문제 상태','master_perv_rate':'특수 욕구 진행 누적값','master_wealth':'재산 평가','master_wealth_target':'목표 재산',
++ 'female[\'clit_piercing\']':'클리토리스 피어싱','female[\'brand\']':'여주인 상표','female[\'breast_enchanced\']':'가슴 강화','piercing_in':'피어싱 장착 상태',
++ '$master_wpn':'주 무기 (호환값)','$master_scnd':'보조 장비 (호환값)','$master_spm':'선택한 전투 기술','spm_learned':'습득한 전투 기술','inventory':'보관함','fridge':'식료품 보관함','lab_store':'연구 재료','faction_fame':'세력 명성','master_moodlet':'주인공 무들렛','faction_purchase':'세력 구매 기록',
++ 'bath':'욕실','kitchen':'주방','dungeon':'감옥','library':'도서관','lab':'연구실','barn':'외양간','boudoir':'개인실','pen':'우리','stasis_tank':'냉동 보관 시설','horse':'말','dog':'개','$dog_name':'개 이름','svine':'돼지','musical_instruments':'악기 보유','guitar':'기타','piano':'피아노','cello':'첼로','violin':'바이올린','vibrator':'진동기','cooked_food':'준비된 식사','arachnidspider':'거미 사육','polypusvermin':'촉수 사육',
++ 'heavy_frame':'전차 프레임','heavy_boards':'전차 판재','heavy_chasis':'전차 차대','heavy_wheels':'전차 바퀴','heavy_rider_armor':'전차 기수 방어구','debt_count':'부채 횟수','debt_history':'부채 이력','purse':'소지금 보조값','hero_points':'커스텀 제작 포인트','game_difficulty':'게임 난이도','difficulty_setting':'복종 난이도','story_mode':'스토리 모드','custom_game':'커스텀 모드','demo_game':'데모 모드','wizard_mode':'특수 주인공 모드'})
++for _base,_label in list(LABELS.items()):
++ if _base.startswith('master_') and not _base.endswith(('_rate','_target')):LABELS.setdefault(_base+'_rate',_label+' 누적값')
++
++def label(key):
++ if key in LABELS:return LABELS[key]
++ root=key.split('[',1)[0]
++ if '[' in key and root in LABELS:return LABELS[root]+' '+key[len(root):]
++ if root.startswith('faction_purchase_'):return '세력 구매 기록 · '+root.removeprefix('faction_purchase_')
++ if root.endswith('_auto_cast'):return '자동 마법 사용 · '+root.removesuffix('_auto_cast')
++ if root.startswith('spell_'):return '습득 마법 · '+root.removeprefix('spell_')
++ if root.startswith('cheat_'):return '치트 설정 · '+root.removeprefix('cheat_')
++ return key
++
++_CACHE={}
++
++def clean_managed(text):
++ return re.sub(r'(?m)^! JO9 MOD START MASTER_INITIALS_20261115:[^\r\n]+\r?\n.*?^! JO9 MOD END MASTER_INITIALS_20261115:[^\r\n]+(?:\r?\n|$)','',text,flags=re.S)
++def base_catalog(doc,preset_codes):
++ fingerprint=hashlib.sha256(doc.raw+json.dumps(preset_codes,sort_keys=False,ensure_ascii=False).encode('utf-8')).hexdigest()
++ if fingerprint in _CACHE:return _CACHE[fingerprint]
++ raw=[]
++ for location in SOURCES+RUNTIME:
++  if location in doc.index:raw.extend(assignments(clean_managed(doc.body(location)),location))
++ union=[]
++ for sid,code in preset_codes.items():union.extend(assignments(code,'preset:'+str(sid)))
++ known={}
++ for record in raw+union:
++  status,reason=disposition(record,record['location']);record={**record,'disposition':status,'reason':reason}
++  known.setdefault(record['key'],[]).append(record)
++ fields=[]
++ for key,records in known.items():
++  included=[r for r in records if r['disposition']=='field']
++  if not included:continue
++  # The normal preset route uses game + story initialization; custom is shown as an alternative source.
++  defaults=[r for location in ['init_game','init_story_mode'] for r in included if r['location']==location and not r['conditional'] and r['op']=='=']
++  default=defaults[-1] if defaults else None
++  kind=included[0]['kind'];value=default['value'] if default else ('' if kind=='string' else 0);expression=default['expression'] if default else ("''" if kind=='string' else '0')
++  # Literal creation overrides may be applied after the ordinary preset block.
++  after=[r for r in included if r['location'] in ['hero_description','start_game','new_estate']]
++  reset_on_selection=any(r['location']=='init_story_mode' and r['op']=='=' and not r['conditional'] for r in included)
++  phase='start' if any(r['location'] in ['start_game','new_estate'] for r in after) else 'description' if after else 'preset' if reset_on_selection else 'start'
++  # Residence must be configured before new_estate consumes it.
++  if key in {'$estate','$starting_area'}:phase='preset'
++  if key=='$interior':phase='residence'
++  derived=[r for r in records if r['location'] in RUNTIME or (r['location']=='hero_description' and r['value'] is None)]
++  derived_only=not default and not after and any(r['location'] in RUNTIME and not r['conditional'] and r['op']=='=' for r in records)
++  initial_value,initial_expression=(None,' / '.join(dict.fromkeys(r['expression'] for r in derived))) if derived_only else (value,expression)
++  if derived_only:value,expression=initial_value,initial_expression
++  unconditional=[r for r in after if not r['conditional'] and r['op']=='=']
++  if any(r['conditional'] for r in after):value=None;expression=' / '.join(dict.fromkeys(r['expression'] for r in after))
++  elif unconditional:value=unconditional[-1]['value'];expression=unconditional[-1]['expression']
++  fields.append({'key':key,'label':label(key),'group':group(key),'kind':kind,'phase':phase,'postAssigned':bool(after),'initialValue':initial_value,'initialExpression':initial_expression,'value':value,'expression':expression,'inherited':True,
++   'sources':[{k:r[k] for k in ['location','line','op','expression','conditional','conditions','disposition','reason']} for r in records],
++   'recalculated':bool(derived),'conditional':any(r['conditional'] for r in after)})
++ result={'fields':fields,'inventory':[{k:r[k] for k in ['key','binding','op','expression','location','line','conditional','conditions','disposition','reason']} for records in known.values() for r in records]}
++ _CACHE.clear();_CACHE[fingerprint]=result;return result
++
++def applies_to_actor(record,sid):
++ unknown=False
++ for condition in record['conditions']:
++  m=re.fullmatch(r'\s*(?:if|elseif)\s+hero_choice\s*=\s*(\d+)\s*(?:(and)\b.*)?\s*:\s*',condition,re.I)
++  if m:
++   if int(m[1])!=int(sid):return False
++   if m[2]:unknown=True
++  else:unknown=True
++ return None if unknown else True
++
++def catalog(doc,preset_codes,code,overrides=None,sid=None):
++ base=base_catalog(doc,preset_codes);present={r['key']:r for r in assignments(clean_managed(code),'preset') if r['op']=='='};overrides=overrides or {};out=[]
++ for row in base['fields']:
++  current=dict(row);specific=present.get(row['key'])
++  if sid is not None:
++   current.update(value=row['initialValue'],expression=row['initialExpression'],conditional=False)
++   current['sources']=[r for r in row['sources'] if not r['location'].startswith('preset:') or r['location']=='preset:'+str(sid)]
++   if specific:current.update(value=specific['value'],expression=specific['expression'],inherited=False)
++   for source in current['sources']:
++    if source['location'] not in ['hero_description','start_game','new_estate']:continue
++    applicable=applies_to_actor(source,sid)
++    if applicable is False:continue
++    if applicable is None:current.update(value=None,expression=current['expression']+' / '+source['expression'],conditional=True)
++    else:current.update(value=scalar(source['expression']),expression=source['expression'])
++  elif specific and (row['phase']=='preset' or not row['postAssigned']):current.update(value=specific['value'],expression=specific['expression'],inherited=False)
++  current.update(baseValue=current['value'],baseExpression=current['expression'])
++  if row['key'] in overrides:
++   value=overrides[row['key']];current.update(value=value,expression=encode_value(value),inherited=False,override=True)
++  out.append(current)
++ return {'fields':out,'inventory':base['inventory']}
++
++# Managed blocks carry no additional game variables. Only the chosen actor is changed.
++TAG='MASTER_INITIALS_20261115'
++PHASES={'description':('hero_description',r"(?m)^[ \t]*\$secondary_stt\s*=\s*''"),
++ 'residence':('start_game',r"(?m)^[ \t]*gs\s+['\"]new_estate['\"]"),
++ 'start':('start_game',r"(?m)^[ \t]*gs\s+['\"]#npc_base['\"]")}
++def encode_value(value):
++ if type(value) is int:return str(value)
++ if isinstance(value,str):return "'"+value.replace("'","''")+"'"
++ raise ValueError('정수 또는 문자열을 입력하세요.')
++def block_pattern(phase,sid):
++ tag=re.escape(TAG+':'+phase+':'+str(int(sid)))
++ return re.compile(r'(?m)^! JO9 MOD START '+tag+r'\r?\n(.*?)^! JO9 MOD END '+tag+r'(?:\r?\n|$)',re.S)
++def strip_block(text,phase,sid):
++ matches=list(block_pattern(phase,sid).finditer(text))
++ if len(matches)>1:raise ValueError('시작값 편집 구간이 중복됩니다.')
++ if not matches:return text
++ m=matches[0];return text[:m.start()]+text[m.end():]
++def read_overrides(doc,sid,code):
++ out={}
++ for phase in ['preset',*PHASES]:
++  text=code if phase=='preset' else doc.body(PHASES[phase][0]) if PHASES[phase][0] in doc.index else ''
++  matches=list(block_pattern(phase,sid).finditer(text))
++  if len(matches)>1:raise ValueError('시작값 편집 구간이 중복됩니다.')
++  if matches:
++   for r in assignments(matches[0][1]):
++    if r['op']=='=' and r['value'] is not None:out[r['key']]=r['value']
++ return out
++def owned_blocks(doc,sid,code):
++ out={}
++ for phase in ['preset',*PHASES]:
++  text=code if phase=='preset' else doc.body(PHASES[phase][0]) if PHASES[phase][0] in doc.index else ''
++  out[phase]=[m[0] for m in block_pattern(phase,sid).finditer(text)]
++ return out
++def merge_changes(fields,current,patch):
++ if not isinstance(patch,dict):raise ValueError('시작값 수정은 객체여야 합니다.')
++ known={r['key']:r for r in fields};out=dict(current)
++ for key,value in patch.items():
++  if key not in known:raise ValueError('목록에 없는 시작값입니다: '+key)
++  if value is None:out.pop(key,None);continue
++  kind=known[key]['kind']
++  if (kind=='number' and (type(value) is not int or abs(value)>9007199254740991)) or (kind=='string' and (not isinstance(value,str) or len(value)>10000 or '\n' in value or '\r' in value)):
++   raise ValueError('시작값의 정수/문자열 형식이 맞지 않습니다: '+key)
++  out[key]=value
++ return out
++def apply_overrides(doc,sid,code,overrides,fields):
++ # Direct source edits remain available. Do not silently discard user formulas
++ # while regenerating a block which was originally produced as literal values.
++ for phase,blocks in owned_blocks(doc,sid,code).items():
++  for block in blocks:
++   lines=block.splitlines()[1:-1]
++   if phase!='preset':
++    if not lines or not re.fullmatch(r'\s*if\s+hero_choice\s*=\s*'+str(int(sid))+r'\s*:\s*',lines[0],re.I) or lines[-1].strip().lower()!='end':
++     raise ValueError('표 지정 구간을 직접 수정했습니다. 이 구간은 원본 코드에서 편집하세요.')
++    lines=lines[1:-1]
++   seen=set()
++   for line in lines:
++    rows=assignments(line)
++    if len(rows)!=1 or rows[0]['conditional'] or rows[0]['op']!='=' or rows[0]['value'] is None or rows[0]['key'] in seen or line[:rows[0]['start']].strip() or line[rows[0]['valueEnd']:].strip():
++     raise ValueError('표 지정 구간을 직접 수정했습니다. 이 구간은 원본 코드에서 편집하세요.')
++    seen.add(rows[0]['key'])
++ known={r['key']:r for r in fields};groups={k:{} for k in ['preset',*PHASES]}
++ for key,value in overrides.items():
++  if key not in known:raise ValueError('목록에 없는 시작값입니다: '+key)
++  groups[known[key]['phase']][key]=value
++ bodies={};code=strip_block(code,'preset',sid)
++ for phase,values in groups.items():
++  location=None if phase=='preset' else PHASES[phase][0]
++  original=code if phase=='preset' else bodies.get(location,doc.body(location) if location in doc.index else '')
++  text=strip_block(original,phase,sid)
++  if values:
++   nl='\r\n' if '\r\n' in text else '\n';tag=TAG+':'+phase+':'+str(int(sid))
++   lines=['! JO9 MOD START '+tag]
++   if phase!='preset':lines.append('if hero_choice = '+str(int(sid))+':')
++   lines.extend((' ' if phase!='preset' else '')+key+' = '+encode_value(value) for key,value in sorted(values.items()))
++   if phase!='preset':lines.append('end')
++   lines.append('! JO9 MOD END '+tag);block=nl.join(lines)+nl
++   if phase=='preset':text+=(nl if text and not text.endswith('\n') else '')+block
++   else:
++    visible=mask(text)
++    anchor=next((m for m in re.finditer(PHASES[phase][1],text) if visible[m.start():m.end()].strip(' \t\r\n\x00') and visible[:m.start()].count('{')==visible[:m.start()].count('}')),None)
++    if not anchor:raise ValueError('시작값을 넣을 위치를 찾지 못했습니다: '+str(location))
++    text=text[:anchor.start()]+block+text[anchor.start():]
++  if phase=='preset':code=text.rstrip('\r\n')
++  elif text!=original:bodies[location]=text
++ return code,bodies
+--- a/integration.css
++++ b/integration.css
+@@ -29,3 +29,11 @@
+ /* JO9 MOD END COMPACT_WORKSPACE_SHELL_20261115 */
+ 
+ .workspace-panel>.workspace-toolbar>button.primary{background:var(--amber);border-color:var(--amber);color:var(--bg)}
++
++/* JO9 MOD MASTER_INITIALS_20261115: fields keep the existing studio palette. */
++.st-grid .st-initial-field{display:grid;grid-template-columns:minmax(0,1fr);align-items:start;gap:6px;padding:12px;border:1px solid var(--border,#34383c);border-radius:7px;min-width:0}
++.st-grid .st-initial-field input{width:100%;min-width:0;box-sizing:border-box}
++.st-grid .st-initial-field small{display:block;min-width:0;white-space:normal;overflow-wrap:anywhere}
++.st-grid .st-initial-field button{justify-self:start;min-width:0}
++[data-initial-group]{margin-top:12px}
++[data-initial-group]>summary{cursor:pointer;margin-bottom:10px}
+--- a/server.py
++++ b/server.py
+@@ -4,11 +4,12 @@
+ from urllib.parse import unquote,urlparse
+ import registry
+ from master_editor import MasterEditor, MAPPINGS
++import master_initials as initials
+ 
+ HERE=Path(__file__).resolve().parent
+ def build_id():
+  h=hashlib.sha256()
+- for name in ['server.py','registry.py','integration.mjs','integration.css','app_launcher.py','embedded-tools.css','overrides/studio-look.mjs','overrides/studio-look-geometry.mjs','master_editor.py','overrides/studio-view.mjs','overrides/studio-role.mjs']:
++ for name in ['server.py','registry.py','integration.mjs','integration.css','app_launcher.py','embedded-tools.css','overrides/studio-look.mjs','overrides/studio-look-geometry.mjs','master_editor.py','master_initials.py','overrides/studio-view.mjs','overrides/studio-role.mjs']:
+   h.update((HERE/name).read_bytes())
+  return h.hexdigest()[:16]
+ def create_server(studio_root,repo,urls_file,port=0):
+@@ -27,6 +28,7 @@
+  def decorate_slave(sid):
+   ch=base.read_character(sid);editor=store();profile=editor.slave_profile(sid)
+   ch.update(role='slave',master=editor.master_from_slave(ch['data'],profile),revision=editor.slave_revision(sid),nativeDefaults=editor.native_defaults())
++  ch['initialOverrides']=profile.get('initialOverrides',{});ch['initialCatalog']=editor.initial_catalog(ch['master'],overrides=ch['initialOverrides'])
+   ch['mappings']=editor.mapping_rows('slave',ch['data'],ch['master']);return ch
+  def read_master(sid):
+   ch=store().read(sid);ch['choices']=base.choices();return ch
+@@ -35,6 +37,10 @@
+   pending=base.save_fields(sid,{**body,'dryRun':True});profile=editor.slave_profile(sid)
+   before=profile.get('master',editor.master_from_slave(base.read_character(sid)['data'],profile))
+   master=body.get('master');changes=list(pending['changes'])
++  if body.get('initials'):
++   previous=profile.get('initialOverrides',{});fields=editor.initial_catalog(master or before,overrides=previous)['fields']
++   updated=initials.merge_changes(fields,previous,body['initials']);profile['initialOverrides']=updated
++   changes += [{'key':'initial.'+k,'before':previous.get(k),'after':updated.get(k)} for k in set(previous)|set(updated) if previous.get(k)!=updated.get(k)]
+   if master is not None:
+    from master_editor import validate_master
+    validate_master(master)
+@@ -50,7 +56,7 @@
+     payloads[filename]=json.dumps(data,ensure_ascii=False,indent=4).encode('utf-8')
+     backup=filename.with_name(filename.name+'.bak')
+     if not backup.exists():payloads[backup]=filename.read_bytes()
+-   if master is not None:payloads[editor._profile_file('slave',sid)]=json.dumps(profile,ensure_ascii=False,indent=2).encode('utf-8')
++   if master is not None or body.get('initials'):payloads[editor._profile_file('slave',sid)]=json.dumps(profile,ensure_ascii=False,indent=2).encode('utf-8')
+    editor._write(payloads)
+    base.work_log(base.paths()).event('studio_role_fields',id=int(sid),changed=[c['key'] for c in changes])
+   return {'changes':changes,'saved':bool(changes) and not body.get('dryRun'),'dryRun':bool(body.get('dryRun')),'character':None if body.get('dryRun') else decorate_slave(sid)}
+--- a/Start-Modding-Hub.ps1
++++ b/Start-Modding-Hub.ps1
+@@ -18,7 +18,7 @@
+ if ($ToolUrls.Count) {[IO.File]::WriteAllText($urlsFile,($ToolUrls | ConvertTo-Json -Depth 5),[Text.UTF8Encoding]::new($false))}
+ if (!(Test-Path -LiteralPath $urlsFile)) {throw '기존 모드툴 주소가 없습니다. Open-Modding-Tools.ps1로 실행하세요.'}
+ $stream=New-Object IO.MemoryStream
+-foreach ($name in @('server.py','registry.py','integration.mjs','integration.css','app_launcher.py','embedded-tools.css','overrides/studio-look.mjs','overrides/studio-look-geometry.mjs','master_editor.py','overrides/studio-view.mjs','overrides/studio-role.mjs')) {$block=[IO.File]::ReadAllBytes((Join-Path $hubDir $name));$stream.Write($block,0,$block.Length)}
++foreach ($name in @('server.py','registry.py','integration.mjs','integration.css','app_launcher.py','embedded-tools.css','overrides/studio-look.mjs','overrides/studio-look-geometry.mjs','master_editor.py','master_initials.py','overrides/studio-view.mjs','overrides/studio-role.mjs')) {$block=[IO.File]::ReadAllBytes((Join-Path $hubDir $name));$stream.Write($block,0,$block.Length)}
+ $build=([BitConverter]::ToString([Security.Cryptography.SHA256]::Create().ComputeHash($stream.ToArray())).Replace('-','').ToLowerInvariant()).Substring(0,16)
+ $stream.Dispose()
+ if ($old) {
+--- a/overrides/studio-view.mjs
++++ b/overrides/studio-view.mjs
+@@ -1,5 +1,5 @@
+ // 통합 캐릭터 편집 탭: 게임 폴더의 캐릭터를 골라 외형·배경 이야기·설정·능력치·특성을 한 화면에서 고친다(로컬 서버 /api 필요)
+-import {roleUrl, masterSettings, masterStats, cmValue, patchCm, patchNativeStat, nativeRows, cloneBody, cloneForm} from './studio-role.mjs';
++import {roleUrl, masterSettings, masterStats, cmValue, patchCm, initialCm, cmInitialChanges, patchNativeStat, nativeRows, cloneBody, cloneForm} from './studio-role.mjs';
+ import {describeCharacterField} from './character-fields.mjs';
+ import {esc as e, loadSimData} from './sim-data.mjs';
+ import {createLookEditor} from './studio-look.mjs';
+@@ -69,11 +69,11 @@
+  }
+ 
+  const st = {bgMode: role, gender: '', roleCopy: null, game: null, items: [], q: '', page: 0, sel: null, ch: null, tab: 'look', edits: blank(), preview: null, busy: false, error: '', talk: null, book: null, bookDirty: false, qq: '', qhits: null, qedits: {}, qmod: null, qid: '', qdesc: ''};
+- function blank() { return {set: {}, unset: new Set(), story: {}, master: null}; }
++ function blank() { return {set: {}, unset: new Set(), story: {}, master: null, initials: {}}; }
+  const data = () => st.ch?.data ?? {};
+  // 편집 중 값: 저장 전 바꾼 값 → 지운 키 → 원래 값
+  const val = key => key in st.edits.set ? st.edits.set[key] : st.edits.unset.has(key) ? undefined : data()[key];
+- const dirtyCount = () => Object.keys(st.edits.set).length + st.edits.unset.size + Object.keys(st.edits.story).length + (st.edits.master ? 1 : 0);
++ const dirtyCount = () => Object.keys(st.edits.set).length + st.edits.unset.size + Object.keys(st.edits.story).length + (st.edits.master ? 1 : 0) + Object.keys(st.edits.initials).length;
+  const storyText = k => k in st.edits.story ? st.edits.story[k] : toDisplay(data()[st.ch.storyFields.find(f => f[0] === k)[1]]);
+  const toDisplay = s => String(s ?? '').replace(/<!--\s*#nwtx.*?-->\s*$/s, '').replace(/<br\s*\/?>/gi, '\n').trim();
+ 
+@@ -137,12 +137,14 @@
+   return d;
+  }
+  async function preview() {
+-  const body = {set: st.edits.set, unset: [...st.edits.unset], story: st.edits.story, master: st.edits.master, revision: st.ch.revision, dryRun: true};
++  const invalid=root.querySelector('[data-st-initial]:invalid,[data-st-master-cm]:invalid');if(invalid){invalid.reportValidity();return;}
++  const body = {set: st.edits.set, unset: [...st.edits.unset], story: st.edits.story, master: st.edits.master, initials: st.edits.initials, revision: st.ch.revision, dryRun: true};
+   try { st.preview = (await call(`/api/char/${st.sel}/fields`, body)).changes; } catch (error) { api.toast(error.message); }
+   render();
+  }
+  async function saveNow() {
+-  const body = {set: st.edits.set, unset: [...st.edits.unset], story: st.edits.story, master: st.edits.master, revision: st.ch.revision};
++  const invalid=root.querySelector('[data-st-initial]:invalid,[data-st-master-cm]:invalid');if(invalid){invalid.reportValidity();return;}
++  const body = {set: st.edits.set, unset: [...st.edits.unset], story: st.edits.story, master: st.edits.master, initials: st.edits.initials, revision: st.ch.revision};
+   try {
+    const r = await call(`/api/char/${st.sel}/fields`, body);
+    if (r.character) st.ch = r.character;
+@@ -237,7 +239,7 @@
+    <p class="fine-print">줄바꿈은 게임에서 줄바꿈(&lt;br&gt;)이 됩니다. 칸을 비우면 게임이 배경을 무작위로 정합니다. ${d.scene_tag ? '장면 태그 ' + e(d.scene_tag) : ''}</p>`;
+  }
+  function stats() {
+-  const native = masterStats(masterData(),role,st.ch.nativeDefaults), seeds = slaveStats();
++  const native = masterStats(masterData(),role,st.ch.nativeDefaults,st.ch.initialCatalog,st.edits.initials), seeds = slaveStats();
+   return isMaster ? native + '<details><summary>노예 전환용 능력치·특성</summary>' + seeds + '</details>' : seeds + '<details><summary>마스터 전환용 능력치</summary>' + native + '</details>';
+  }
+  function slaveStats() {
+@@ -381,6 +383,21 @@
+  // ---------------------------------------------------------------- 입력
+  root.addEventListener('input', ev => {
+   const t = ev.target;
++  if(t.hasAttribute('data-initial-filter')){
++   const q=t.value.trim().toLowerCase();
++   for(const group of root.querySelectorAll('[data-initial-group]')){
++    let count=0;for(const row of group.querySelectorAll('[data-initial-row]')){row.hidden=!row.dataset.initialRow.includes(q);if(!row.hidden)count++;}
++    group.hidden=!count;
++    if(q){if(!Object.hasOwn(group.dataset,'wasOpen'))group.dataset.wasOpen=String(group.open);group.open=true;}
++    else if(Object.hasOwn(group.dataset,'wasOpen')){group.open=group.dataset.wasOpen==='true';delete group.dataset.wasOpen;}
++   }return;
++  }
++  if(t.hasAttribute('data-st-initial')){
++   if(t.type==='number'&&(t.value===''||!Number.isSafeInteger(Number(t.value)))){t.setCustomValidity('정수를 입력하세요. 자동값으로 돌아가려면 표 지정 해제를 누르세요.');return;}
++   t.setCustomValidity('');st.edits.initials[t.dataset.stInitial]=t.type==='number'?Number(t.value):t.value;
++   const row=t.closest('[data-initial-row]');row?.classList.add('changed');if(row){row.querySelector('[data-initial-state]').textContent='변경 예정';const reset=row.querySelector('[data-initial-reset]');reset.disabled=false;reset.hidden=false;}
++   st.preview=null;updateHead();return;
++  }
+   if (t.dataset.stMaster) {
+    setMaster(t.dataset.stMaster,t.value);
+    if(t.dataset.stMaster==='statsCode'){const cm=root.querySelector('[data-st-master-cm]');if(cm)cm.value=cmValue(t.value,st.ch.nativeDefaults);}
+@@ -388,7 +405,11 @@
+    return;
+   }
+   if(t.hasAttribute('data-st-master-cm')){
+-   if(t.value==='')return;
++   if(t.value===''){t.setCustomValidity('CM을 입력하세요. 공통값으로 돌아가려면 CM 표 지정 해제를 누르세요.');return;}
++   if(st.ch.initialCatalog){
++    try{Object.assign(st.edits.initials,cmInitialChanges(Number(t.value)));t.setCustomValidity('');const reset=root.querySelector('[data-initial-reset-cm]');if(reset)reset.disabled=false;st.preview=null;updateHead();}
++    catch(error){t.setCustomValidity(error.message);t.reportValidity();}return;
++   }
+    try{setMaster('statsCode',patchCm(masterData().statsCode,Number(t.value)));const raw=root.querySelector('[data-st-master="statsCode"]');if(raw)raw.value=masterData().statsCode;}
+    catch(error){api.toast(error.message);t.value=cmValue(masterData().statsCode,st.ch.nativeDefaults);}return;
+   }
+@@ -443,6 +464,10 @@
+  root.addEventListener('click', async ev => {
+   const t = ev.target.closest('button');
+   if (!t) return;
++  if(t.hasAttribute('data-initial-reset')){
++   st.edits.initials[t.dataset.initialReset]=null;st.preview=null;return render();
++  }
++  if(t.hasAttribute('data-initial-reset-cm')){Object.assign(st.edits.initials,{jo9_cruel_mercy:null,jo9_cruel_mercy_half:null});st.preview=null;return render();}
+   if(t.dataset.roleGender!==undefined){st.gender=t.dataset.roleGender;st.page=0;return render();}
+   if(t.dataset.roleBackground){st.bgMode=t.dataset.roleBackground;return render();}
+   if(t.dataset.roleCopyAct){
+--- a/overrides/studio-role.mjs
++++ b/overrides/studio-role.mjs
+@@ -34,7 +34,33 @@
+ export function masterSettings(m,role){
+  return `<p class="fine-print">${role==='master'?'마스터 원본 저장 시 게임의 시작 프리셋에 반영됩니다. 이미 시작한 세이브의 주인공은 바꾸지 않습니다.':'이 인물의 마스터 전환용 설정입니다. 현재 노예 JSON과 별도로 보관하며 마스터로 복제할 때 가져갑니다.'}</p><div class="cv-form"><label>마스터 이름<input data-st-master="name" value="${esc(m.name)}" maxlength="100"></label><label>난이도 안내<input data-st-master="difficulty" value="${esc(m.difficulty)}" title="시작 화면의 안내 문구입니다. 실제 전투 난이도 설정과 다릅니다."></label></div><section class="st-story"><div class="section-label">마스터 소개 · 배경 이야기</div><textarea data-st-master="description" rows="6">${esc(m.description)}</textarea></section><details><summary>게임에서 쓰는 초상 경로</summary><div class="cv-form"><label>컬러 초상<input data-st-master="portrait" value="${esc(m.portrait)}"></label><label>세피아 초상<input data-st-master="sepia" value="${esc(m.sepia)}"></label></div><p class="fine-print">이 경로는 QSP의 마스터 소개 초상입니다. 외형 탭의 편집용 이미지와 구분됩니다. 기존 시작 메뉴에 직접 적힌 아이콘 경로는 QSP 이벤트에서 확인하세요.</p></details>`;
+ }
+-export function masterStats(m,role,defaults={}){
++export function initialValue(row,changes={}){
++ if(Object.hasOwn(changes,row.key))return changes[row.key]===null?(row.baseValue??null):changes[row.key];
++ return row.value;
++}
++export function cmInitialChanges(value){
++ if(!Number.isFinite(value)||!Number.isSafeInteger(value*2))throw Error('CM은 0.5 단위 숫자로 입력하세요.');
++ const whole=Math.trunc(value);return {jo9_cruel_mercy:whole,jo9_cruel_mercy_half:Math.round((value-whole)*2)};
++}
++export function initialCm(m,defaults,catalog,changes={}){
++ const values={...defaults,...Object.fromEntries(nativeRows(m.statsCode).map(r=>[r.key,r.value]))};
++ for(const key of CM_KEYS){const row=catalog?.fields.find(r=>r.key===key);if(row)values[key]=initialValue(row,changes)??0;}
++ return (values.jo9_cruel_mercy??0)+(values.jo9_cruel_mercy_half??0)/2;
++}
++function initialControl(row,changes){
++ const value=initialValue(row,changes),pending=Object.hasOwn(changes,row.key),reset=pending&&changes[row.key]===null;
++ const state=pending?(reset?'표 지정 해제 예정':'변경 예정'):row.override?'개별 지정':row.conditional?'조건에 따라 결정':row.inherited?'공통 초기값':'캐릭터 지정값';
++ const source=(row.sources||[]).map(s=>`${s.location}:${s.line} · ${s.expression}${s.conditional?' · 조건: '+(s.conditions||[]).join(' / '):''}`).join('\n');
++ const info=`${row.label} · ${row.key}\n${state}\n저장 단계: ${{preset:'캐릭터 시작 코드',description:'선택 후 계산 다음',residence:'거주지 생성 직전',start:'거주지·특수 초기화 다음'}[row.phase]||row.phase}${row.recalculated?'\n게임이 계속 재계산하는 값입니다. 초기 지정이 영구 고정되지는 않습니다.':''}\n${source}`;
++ return `<label class="st-stat st-initial-field${pending?' changed':''}" data-initial-row="${esc((row.label+' '+row.key+' '+row.group).toLowerCase())}" title="${esc(info)}">${esc(row.label)} <small>${esc(row.key)}</small><input ${row.kind==='number'?'type="number" step="1"':'type="text"'} data-st-initial="${esc(row.key)}" value="${esc(value??'')}" placeholder="${value==null?'자동 / 조건값':''}"><small data-initial-state>${esc(state)}${row.recalculated?' · 재계산':''}</small>${value==null?`<small>${esc(row.expression||'자동 계산')}</small>`:''}<button type="button" class="button secondary" data-initial-reset="${esc(row.key)}" ${!row.override&&!pending?'disabled hidden':''} title="표에서 지정한 변경분만 해제합니다. 기존 캐릭터 원본 코드와 공통값으로 돌아갑니다.">표 지정 해제</button></label>`;
++}
++export function initialFields(catalog,changes={}){
++ const rows=(catalog?.fields||[]).filter(r=>!CM_KEYS.includes(r.key));
++ const groups=new Map();for(const row of rows){if(!groups.has(row.group))groups.set(row.group,[]);groups.get(row.group).push(row);}
++ return `<p class="fine-print">공통 초기값과 캐릭터 지정값 ${rows.length}개 · 항목에 커서를 올리면 변수 의미·출처·저장 단계를 볼 수 있습니다. 표에서 수정한 항목만 저장됩니다. 원본 코드를 직접 수정했다면 저장 후 표에 반영됩니다.</p><label>시작 설정 검색<input data-initial-filter placeholder="이름 또는 변수 검색"></label>${[...groups].map(([name,list])=>`<details data-initial-group ${name==='능력치·상태·경험치'?'open':''}><summary>${esc(name)} · ${list.length}개</summary><div class="st-grid">${list.map(r=>initialControl(r,changes)).join('')}</div></details>`).join('')}`;
++}
++export function masterStats(m,role,defaults={},catalog=null,changes={}){
++ if(catalog?.fields)return `<div class="section-label">${role==='master'?'마스터 시작 능력치·설정':'마스터 전환용 시작 능력치·설정'}</div><p class="fine-print">${role==='master'?'새 게임의 해당 주인공 시작값에 적용합니다. 이미 진행 중인 세이브는 바꾸지 않습니다.':'노예 JSON과 별도로 보관하고 마스터로 복제할 때 적용합니다.'}</p><div class="cv-form"><label title="CM = jo9_cruel_mercy + jo9_cruel_mercy_half / 2 · 음수 Cruel, 양수 Mercy · 0.5 단위 · 선택한 주인공으로 게임을 시작할 때 적용">CM (Cruel &amp; Mercy)<input type="number" step="0.5" data-st-master-cm value="${initialCm(m,defaults,catalog,changes)}"></label><button type="button" class="button secondary" data-initial-reset-cm ${!CM_KEYS.some(k=>Object.hasOwn(changes,k)||catalog.fields.find(r=>r.key===k)?.override)?'disabled':''}>CM 표 지정 해제</button></div>${initialFields(catalog,changes)}<details><summary>시작 효과 원본 코드 직접 편집</summary><textarea class="st-json" data-st-master="statsCode" rows="16" spellcheck="false">${esc(m.statsCode)}</textarea></details>`;
+  return `<div class="section-label">${role==='master'?'마스터 시작 능력치':'마스터 전환용 시작 능력치'}</div><p class="fine-print">입력한 정수를 그대로 저장합니다. 장비·세력·시작 자금 및 조건문은 아래 원본 코드에 보존됩니다.</p><div class="cv-form"><label title="CM = jo9_cruel_mercy + jo9_cruel_mercy_half / 2 · 음수는 Cruel(잔혹), 양수는 Mercy(자비) · 0.5 단위">CM (Cruel &amp; Mercy)<input type="number" step="0.5" data-st-master-cm value="${cmValue(m.statsCode,defaults)}" ${nativeRows(m.statsCode).some(r=>CM_KEYS.includes(r.key)&&r.repeated)?'disabled title="여러 곳에서 지정됩니다. 원본 코드로 편집하세요."':''}></label></div><p class="fine-print">CM은 0.5 단위입니다. 별도로 지정하지 않으면 공통 시작 값을 표시합니다.</p><div class="st-grid">${nativeRows(m.statsCode).filter(r=>!CM_KEYS.includes(r.key)).map(r=>`<label class="st-stat" title="${esc(r.key)} · 마스터 시작 프리셋에서 지정하는 값${r.repeated?' · 여러 곳에 있어 원본 코드에서 편집':''}">${esc(LABELS[r.key]||r.key)} <small>${esc(r.key)}</small><input type="number" step="1" data-st-master-stat="${esc(r.key)}" value="${r.value}" ${r.repeated?'disabled':''}></label>`).join('')}</div><details><summary>시작 효과 원본 코드 직접 편집</summary><textarea class="st-json" data-st-master="statsCode" rows="16" spellcheck="false">${esc(m.statsCode)}</textarea></details>`;
+ }
+ export function cloneBody(d,revision){
+--- a/tests/test_master_initials.py
++++ b/tests/test_master_initials.py
+@@ -0,0 +1,116 @@
++import unittest,tempfile,sys,json
++from pathlib import Path
++sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
++import master_editor as m
++import master_initials as mi
++from test_master_editor import BODY
++
++class InitialTests(unittest.TestCase):
++ def setUp(self):
++  self.tmp=tempfile.TemporaryDirectory();self.root=Path(self.tmp.name)
++  (self.root/'json/slaves').mkdir(parents=True)
++  self.bodies={'#masters_base':BODY,'init_game':"master_medic = 0\n$master_ring = 'none'\nfemale[\"boobs\"] = 0\nfaction_fame['taurus'] = 0\nmaster_check = 0\n",
++   'init_story_mode':"master_str = 0\nmaster_medic = 0\n$master_ring = 'none'\nmaster_energy = 5\nfemale_virginity = 2\n",
++   'hero_description':"dynamic $master_version_stats[hero_choice]\nmaster_energy = master_str + 1\nif master_energy > 5: master_energy = 5\nget_initial_slave = 0\n$secondary_stt = ''\n",
++   'start_game':"if $estate = 'slum_house': $interior = 'slum_house'\ngs 'new_estate'\nis_kid = 0\nif hero_choice = 10:\n is_kid = 1\nend\ngs '#npc_base'\ngs '$newloc'\n",
++   'new_estate':"if $estate = 'slum_house':\n bath = 0\nelse\n bath = 1\nend\n",
++   '$calculate_attributes':"if master_check = 0:\n master_check = 1\nend\nmaster_energy = min(master_energy, 5)\n",
++   'elsewhere':"*p 'UNTOUCHED'"}
++  (self.root/'jack.qsp').write_bytes(m.make_fixture(self.bodies));self.s=m.MasterEditor(self.root)
++ def tearDown(self):self.tmp.cleanup()
++ def test_parser_supports_arrays_strings_unicode_inline_and_ignores_conditions(self):
++  code="female[\"boobs\"] = 3 & $master_ring = 'a!&b''c' & сила = 4\nif master_str = 2: master_energy = 3\n! master_medic = 9\n*p 'master_mage = 5'"
++  rows=mi.assignments(code);values={r['key']:r['value'] for r in rows}
++  self.assertEqual(values,{"female['boobs']":3,'$master_ring':"a!&b'c",'сила':4,'master_energy':3})
++  self.assertTrue(rows[-1]['conditional'])
++ def test_common_values_and_late_calculations_are_visible_with_provenance(self):
++  a=self.s.read(1);rows={r['key']:r for r in a['initialCatalog']['fields']}
++  self.assertEqual(rows['master_medic']['value'],0);self.assertEqual(rows['$master_ring']['value'],'none')
++  self.assertIn("female['boobs']",rows);self.assertIn("faction_fame['taurus']",rows)
++  self.assertEqual(rows['master_energy']['phase'],'description');self.assertIsNone(rows['master_energy']['value'])
++  self.assertIn('master_str + 1',rows['master_energy']['expression']);self.assertTrue(rows['master_energy']['recalculated'])
++  self.assertEqual(rows['bath']['phase'],'start');self.assertTrue(rows['bath']['conditional'])
++  self.assertEqual(rows['master_str']['value'],4)
++ def test_save_uses_correct_phases_is_atomic_and_dryrun_writes_nothing(self):
++  a=self.s.read(1);before=(self.root/'jack.qsp').read_bytes()
++  patch={'master_energy':3,'$master_ring':"a'b","female['boobs']":2,'is_kid':0,'bath':1}
++  body={'revision':a['revision'],'initials':patch,'dryRun':True}
++  self.assertTrue(self.s.save(1,body)['changes']);self.assertEqual((self.root/'jack.qsp').read_bytes(),before)
++  body['dryRun']=False;self.s.save(1,body);doc=m.QspDocument((self.root/'jack.qsp').read_bytes())
++  self.assertEqual(doc.body('init_game'),self.bodies['init_game']);self.assertEqual(doc.body('elsewhere'),self.bodies['elsewhere'])
++  self.assertLess(doc.body('hero_description').index('master_energy = 3'),doc.body('hero_description').index("$secondary_stt = ''"))
++  self.assertGreater(doc.body('hero_description').index('master_energy = 3'),doc.body('hero_description').index('if master_energy > 5'))
++  self.assertLess(doc.body('start_game').index('bath = 1'),doc.body('start_game').index("gs '#npc_base'"))
++  self.assertIn("$master_ring = 'a''b'",self.s.read(1)['master']['statsCode'])
++  self.assertEqual(self.s.read(1)['initialOverrides'],patch)
++  self.assertEqual(len(json.loads(next((self.root/'jo9_editor/master-patches').glob('*.json')).read_text('utf-8'))['edits']),3)
++ def test_reset_removes_only_owned_overrides_and_keeps_other_master_blocks(self):
++  self.s.save(1,{'initials':{'master_energy':3,'master_str':5}})
++  self.s.save(101,{'initials':{'master_energy':4}})
++  self.s.save(1,{'initials':{'master_energy':None,'master_str':None}})
++  self.assertEqual(self.s.read(1)['initialOverrides'],{})
++  self.assertEqual(self.s.read(101)['initialOverrides'],{'master_energy':4})
++  self.assertEqual(self.s.read(1)['master']['statsCode'],self.s._master(1,m.array_entries(BODY))['statsCode'])
++ def test_revision_covers_owned_late_blocks_and_common_source_but_not_other_actor(self):
++  self.s.save(1,{'initials':{'master_energy':3}});a=self.s.read(1)
++  self.s.save(101,{'initials':{'master_energy':4}})
++  self.s.save(1,{'revision':a['revision'],'initials':{'master_energy':2}})
++  d=m.QspDocument((self.root/'jack.qsp').read_bytes());a=self.s.read(1)
++  (self.root/'jack.qsp').write_bytes(d.replace_body('init_game',d.body('init_game')+'master_medic = 2\n'))
++  with self.assertRaisesRegex(ValueError,'다시'):self.s.save(1,{'revision':a['revision'],'initials':{'master_medic':3}})
++ def test_bad_types_and_missing_phase_anchor_do_not_write(self):
++  before=(self.root/'jack.qsp').read_bytes()
++  for patch in [{'master_medic':'not int'},{'$master_ring':2},{'unknown; gs bad':4}]:
++   with self.assertRaises(ValueError):self.s.save(1,{'initials':patch})
++  self.assertEqual((self.root/'jack.qsp').read_bytes(),before)
++  d=m.QspDocument(before);(self.root/'jack.qsp').write_bytes(d.replace_body('hero_description','master_energy = 0'))
++  with self.assertRaisesRegex(ValueError,'위치'):self.s.save(1,{'initials':{'master_energy':4}})
++ def test_roundtrip_roles_preserves_late_overrides_and_rebinds_new_id(self):
++  self.s.save(1,{'initials':{'master_energy':3,'$master_ring':'special','bath':1}})
++  self.s.clone('master',1,{'targetRole':'slave','newId':3100,'name':'Copy','include':['stats']})
++  self.s.clone('slave',3100,{'targetRole':'master','gender':'male','newId':2,'name':'Back','include':['stats']})
++  self.assertEqual(self.s.read(2)['initialOverrides'],self.s.read(1)['initialOverrides'])
++  d=m.QspDocument((self.root/'jack.qsp').read_bytes());self.assertIn('if hero_choice = 2:',d.body('hero_description'))
++  self.assertNotIn(':preset:1',self.s.read(2)['master']['statsCode'])
++ def test_user_formula_in_owned_late_block_is_not_silently_deleted(self):
++  self.s.save(1,{'initials':{'master_energy':3}})
++  d=m.QspDocument((self.root/'jack.qsp').read_bytes())
++  (self.root/'jack.qsp').write_bytes(d.replace_body('hero_description',d.body('hero_description').replace('master_energy = 3','master_energy = master_str + 2')))
++  before=(self.root/'jack.qsp').read_bytes();self.assertTrue(self.s.read(1)['initialCatalog'])
++  with self.assertRaisesRegex(ValueError,'원본 코드'):self.s.save(1,{'initials':{'master_medic':3}})
++  self.assertEqual((self.root/'jack.qsp').read_bytes(),before)
++ def test_phase_anchor_ignores_identical_statement_inside_multiline_string(self):
++  d=m.QspDocument((self.root/'jack.qsp').read_bytes());real=d.body('hero_description')
++  fake="*p 'fake\n$secondary_stt = ''\ntext'\n"
++  (self.root/'jack.qsp').write_bytes(d.replace_body('hero_description',fake+real))
++  self.s.save(1,{'initials':{'master_energy':3}})
++  result=m.QspDocument((self.root/'jack.qsp').read_bytes()).body('hero_description')
++  self.assertTrue(result.startswith(fake+real[:real.index("$secondary_stt")]))
++ def test_inequality_does_not_start_a_comment_and_braced_comment_stays_hidden(self):
++  code="!{flute = 1\nguitar = 1\nviolin = 1}\nif hero_choice = 9 and no_loli ! 1:\n master_libido = 0\nend\nmaster_medic = 1"
++  rows=mi.assignments(code);self.assertEqual([r['key'] for r in rows],['master_libido','master_medic']);self.assertTrue(rows[0]['conditional'])
++ def test_explicit_clone_mapping_wins_over_carried_table_override(self):
++  self.s.save(1,{'initials':{'master_str':7}})
++  body={'targetRole':'master','gender':'male','newId':2,'name':'Adjusted','include':['stats'],'overrides':{'master_str':9}}
++  preview=self.s.clone_preview('master',1,body);self.assertEqual(preview['initialOverrides']['master_str'],9)
++  self.s.clone('master',1,body);self.assertEqual(self.s.read(2)['initialOverrides']['master_str'],9)
++ def test_direct_commands_and_conditions_inside_managed_block_are_not_deleted(self):
++  self.s.save(1,{'initials':{'master_str':7}});raw=(self.root/'jack.qsp').read_bytes()
++  for replacement in ["master_str = 7\ngs 'my_initializer'","if something: master_str = 7","master_str = 7 & gs 'my_initializer'"]:
++   d=m.QspDocument(raw);(self.root/'jack.qsp').write_bytes(d.replace_body('#masters_base',d.body('#masters_base').replace('master_str = 7',replacement)))
++   before=(self.root/'jack.qsp').read_bytes()
++   with self.assertRaisesRegex(ValueError,'원본 코드'):self.s.save(1,{'initials':{'master_medic':3}})
++   self.assertEqual((self.root/'jack.qsp').read_bytes(),before)
++ def test_nonreset_common_fields_apply_only_when_starting_selected_actor(self):
++  d=m.QspDocument((self.root/'jack.qsp').read_bytes());(self.root/'jack.qsp').write_bytes(d.replace_body('init_game',d.body('init_game')+"$dog_name = 'default'\nhorse = 1\nno_futa = 1\njo9_cruel_mercy = 0\n"))
++  patch={'$dog_name':'custom','horse':0,'no_futa':0,'jo9_cruel_mercy':10}
++  self.s.save(1,{'initials':patch});a=self.s.read(1);d=m.QspDocument((self.root/'jack.qsp').read_bytes())
++  for key in patch:self.assertNotIn(key+' =',a['master']['statsCode'])
++  self.assertNotIn('MASTER_INITIALS',d.body('hero_description'))
++  self.assertIn('if hero_choice = 1:',d.body('start_game'));self.assertEqual(self.s.read(101)['initialOverrides'],{})
++ def test_other_hero_specific_overrides_do_not_hide_this_heros_known_values(self):
++  rows={r['key']:r for r in self.s.read(1)['initialCatalog']['fields']}
++  self.assertEqual(rows['is_kid']['value'],0);self.assertFalse(rows['is_kid']['conditional'])
++  self.assertFalse(any(r['location']=='preset:101' for r in rows['master_mage']['sources']))
++
++if __name__=='__main__':unittest.main()
+--- a/tests/master-initials.test.mjs
++++ b/tests/master-initials.test.mjs
+@@ -0,0 +1,22 @@
++import test from 'node:test';import assert from 'node:assert/strict';
++import {masterStats,initialValue,initialCm,cmInitialChanges} from '../overrides/studio-role.mjs';
++const catalog={fields:[{key:'master_medic',label:'의학',group:'능력치·상태·경험치',kind:'number',value:0,inherited:true,phase:'preset',sources:[{location:'init_game',line:3,expression:'0'}]},
++ {key:'$master_ring',label:'반지',group:'장비·유물',kind:'string',value:'none',expression:"'none'",inherited:true,phase:'preset',sources:[]},
++ {key:'master_energy',label:'행동력',group:'능력치·상태·경험치',kind:'number',value:null,expression:'master_str + 1',phase:'description',recalculated:true,sources:[{location:'hero_description',line:13,expression:'master_str + 1'}]}]};
++test('inherited strings and calculated values appear with provenance and no assumed zero',()=>{
++ const html=masterStats({statsCode:''},'master',{},catalog,{});
++ assert.match(html,/data-st-initial="master_medic"/);assert.match(html,/data-st-initial="\$master_ring"/);assert.match(html,/value="none"/);
++ assert.match(html,/init_game:3/);assert.match(html,/master_str \+ 1/);assert.match(html,/조건|자동/);assert.match(html,/data-initial-filter/);
++ assert.match(html,/data-st-initial="master_energy" value=""/);
++});
++test('pending override and reset are distinct and preserve strings',()=>{
++ const row=catalog.fields[1];assert.equal(initialValue(row,{'$master_ring':'new'}),'new');
++ assert.equal(initialValue(row,{}),'none');
++ const html=masterStats({statsCode:''},'slave',{},catalog,{'$master_ring':'new'});
++ assert.match(html,/value="new"/);assert.match(html,/마스터 전환용/);assert.match(html,/data-initial-reset/);
++});
++test('CM is a typed starting override instead of mutating a browsing preset',()=>{
++ const changes=cmInitialChanges(-3.5);assert.deepEqual(changes,{jo9_cruel_mercy:-3,jo9_cruel_mercy_half:-1});
++ const fields=[{key:'jo9_cruel_mercy',value:0},{key:'jo9_cruel_mercy_half',value:0}];
++ assert.equal(initialCm({statsCode:''},{},{fields},changes),-3.5);assert.throws(()=>cmInitialChanges(1.25));
++});
+--- a/tests/test_cm_defaults.py
++++ b/tests/test_cm_defaults.py
+@@ -1,6 +1,6 @@
+ from pathlib import Path
+ import sys,tempfile,unittest
+-H=Path('G:/somi/JO9sa/tools/modding-hub');sys.path.insert(0,str(H));sys.path.insert(0,str(H/'tests'))
++H=Path(__file__).resolve().parents[1];sys.path.insert(0,str(H));sys.path.insert(0,str(H/'tests'))
+ import master_editor as m
+ from test_master_editor import BODY
+ class CmTests(unittest.TestCase):
+--- a/tests/test_master_editor.py
++++ b/tests/test_master_editor.py
+@@ -2,6 +2,7 @@
+ from pathlib import Path
+ 
+ HERE=Path(__file__).parent
++sys.path.insert(0,str(HERE.parent))
+ spec=importlib.util.spec_from_file_location('master_editor',HERE.parent/'master_editor.py')
+ m=importlib.util.module_from_spec(spec);sys.modules[spec.name]=m
+ if spec.loader and (HERE.parent/'master_editor.py').exists():spec.loader.exec_module(m)

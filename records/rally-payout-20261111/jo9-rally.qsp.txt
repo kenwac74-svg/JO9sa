@@ -1,0 +1,87 @@
+! JO9 MOD START RALLY_ENTRY_PAYOUT_20261111
+local $rally_action = $args[0]
+result = 0
+
+if $rally_action = 'quote' or $rally_action = 'quote_round':
+ local rally_round = max(0, slave['jo9_rally_entries']) + 1
+ if jo9_rally_match['phase'] = 1 and jo9_rally_match['serial'] = slave['jo9_rally_serial']: rally_round = jo9_rally_match['round']
+ result = 300 - 25 * min(7, max(0, rally_round - 3))
+ if $rally_action = 'quote_round': result = rally_round
+ exit
+end
+
+if $rally_action = 'prepare':
+ if jo9_rally_match['phase'] = 1:
+  if slave_state = CONST_INT['slave_exist'] and slave['jo9_rally_serial'] = jo9_rally_match['serial']:
+   result = jo9_rally_match['outcome']
+  else
+   msg '진행 중인 랠리의 참가자를 먼저 선택해 주세요.'
+  end
+  exit
+ end
+ if slave_state ! CONST_INT['slave_exist'] or snk_room_target > 0: exit
+ if sparks < 100 or slave['energy'] * 2 - slave['half_action'] < 6: exit
+ jo9_rally_next_serial = max(jo9_rally_next_serial, slave['jo9_rally_serial'])
+ if slave['jo9_rally_serial'] < 1:
+  jo9_rally_next_serial += 1
+  slave['jo9_rally_serial'] = jo9_rally_next_serial
+ end
+ killvar 'jo9_rally_match'
+ jo9_rally_match['serial'] = slave['jo9_rally_serial']
+ result = 1
+ exit
+end
+
+if $rally_action = 'draw':
+ local rally_stage = args[1]
+ if rally_stage < 102113 or rally_stage > 102116: exit
+ ! A save at an old pre-draw page has no new match record yet.
+ if jo9_rally_match['serial'] < 1:
+  local rally_prepare = func('jo9_rally', 'prepare')
+  if rally_prepare ! 1: result = 0 & exit
+ end
+ result = 0
+ if slave_state ! CONST_INT['slave_exist'] or snk_room_target > 0: exit
+ if slave['jo9_rally_serial'] ! jo9_rally_match['serial']: exit
+ if jo9_rally_match['phase'] = 1 or jo9_rally_match['phase'] = 2:
+  result = jo9_rally_match['outcome']
+  exit
+ end
+ if jo9_rally_match['phase'] ! 0: exit
+ if sparks < 100 or slave['energy'] * 2 - slave['half_action'] < 6: exit
+ slave['jo9_rally_entries'] = max(0, slave['jo9_rally_entries']) + 1
+ jo9_rally_match['round'] = slave['jo9_rally_entries']
+ jo9_rally_match['profit'] = 300 - 25 * min(7, max(0, jo9_rally_match['round'] - 3))
+ sparks -= 100
+ local rally_bound = iif(rally_stage = 102114, 4, 3)
+ local rally_roll = rand(1, rally_bound)
+ if rally_stage = 102113: jo9_rally_match['outcome'] = iif(rally_roll = 2, 102117, 102118)
+ if rally_stage = 102114: jo9_rally_match['outcome'] = iif(rally_roll = 2, 102119, 102120)
+ if rally_stage = 102115: jo9_rally_match['outcome'] = iif(rally_roll = 2, 102121, 102122)
+ if rally_stage = 102116: jo9_rally_match['outcome'] = iif(rally_roll = 2, 102123, 102124)
+ jo9_rally_match['phase'] = 1
+ result = jo9_rally_match['outcome']
+ exit
+end
+
+if $rally_action = 'pay':
+ if jo9_rally_match['phase'] ! 1: exit
+ if slave_state ! CONST_INT['slave_exist'] or snk_room_target > 0: exit
+ if slave['jo9_rally_serial'] ! jo9_rally_match['serial']: exit
+ if args[1] ! jo9_rally_match['outcome']: exit
+ ! Mark the result before awarding money. The result-page guard also protects its other effects.
+ jo9_rally_match['phase'] = 2
+ if args[1] = 102118 or args[1] = 102119 or args[1] = 102121 or args[1] = 102123: sparks += 100 + jo9_rally_match['profit']
+ result = 1
+ exit
+end
+
+if $rally_action = 'refuse':
+ if jo9_rally_match['serial'] < 1 or jo9_rally_match['phase'] ! 0: exit
+ if slave_state ! CONST_INT['slave_exist'] or slave['jo9_rally_serial'] ! jo9_rally_match['serial']: exit
+ if sparks < 100: exit
+ jo9_rally_match['phase'] = 3
+ sparks -= 100
+ result = 1
+end
+! JO9 MOD END RALLY_ENTRY_PAYOUT_20261111

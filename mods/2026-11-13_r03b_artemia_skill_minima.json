@@ -1,0 +1,25 @@
+{
+  "id": "2026-11-13_r03b_artemia_skill_minima",
+  "status": "APPROVED",
+  "description": "R03-2 사용자 승인: 아르테미아 기술 8종을 기존 부등호 뜻대로 최저 4/5로 저장. 알려진 옛 저장 선호 콜백만 갱신. 등급8/외모5/특성/가격/다른 NPC/인물/진행 보존.",
+  "before_sha256": "d64c350069b0a2a1d9e659cf9aad11c401af77bca532329ceafe19347c862ec5",
+  "after_sha256": "91e77edf089f2f6ba9caaacc310dbe419280570ffe1e3a3e8b37c186b3bf1c99",
+  "edits": [
+    {
+      "location": "#npc_base",
+      "field": "body",
+      "old": "$npc_preferences['Artemia'] = {\r\nstat_importance['music'] > 3\r\nstat_importance['music'] > 3\r\nstat_importance['oral'] > 4\r\nstat_importance['penetration'] > 4\r\nstat_importance['petting'] > 4\r\nstat_importance['orgy'] > 4\r\nstat_importance['roleplay'] > 4\r\nstat_importance['xenophily'] > 3\r\nstat_importance['fetishism'] > 3\r\n}\r\n",
+      "new": "$npc_preferences['Artemia'] = {\r\nstat_importance['music'] = 4\r\nstat_importance['music'] = 4\r\nstat_importance['oral'] = 5\r\nstat_importance['penetration'] = 5\r\nstat_importance['petting'] = 5\r\nstat_importance['orgy'] = 5\r\nstat_importance['roleplay'] = 5\r\nstat_importance['xenophily'] = 4\r\nstat_importance['fetishism'] = 4\r\n}\r\n",
+      "count": 1,
+      "patchId": "R03B_ARTEMIA_SKILLS_20261113"
+    },
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "! JO9 MOD START R03A_ARTEMIA_BEAUTY_CACHE_20261113\r\n",
+      "new": "! JO9 MOD START R03B_ARTEMIA_SKILL_CACHE_20261113\r\n! Replace only known legacy Artemia expressions; preserve custom rules and actor state.\r\n$npc_preferences['Artemia'] = replace($npc_preferences['Artemia'], 'stat_importance[''music''] > 3', 'stat_importance[''music''] = 4')\r\n$npc_preferences['Artemia'] = replace($npc_preferences['Artemia'], 'stat_importance[''oral''] > 4', 'stat_importance[''oral''] = 5')\r\n$npc_preferences['Artemia'] = replace($npc_preferences['Artemia'], 'stat_importance[''penetration''] > 4', 'stat_importance[''penetration''] = 5')\r\n$npc_preferences['Artemia'] = replace($npc_preferences['Artemia'], 'stat_importance[''petting''] > 4', 'stat_importance[''petting''] = 5')\r\n$npc_preferences['Artemia'] = replace($npc_preferences['Artemia'], 'stat_importance[''orgy''] > 4', 'stat_importance[''orgy''] = 5')\r\n$npc_preferences['Artemia'] = replace($npc_preferences['Artemia'], 'stat_importance[''roleplay''] > 4', 'stat_importance[''roleplay''] = 5')\r\n$npc_preferences['Artemia'] = replace($npc_preferences['Artemia'], 'stat_importance[''xenophily''] > 3', 'stat_importance[''xenophily''] = 4')\r\n$npc_preferences['Artemia'] = replace($npc_preferences['Artemia'], 'stat_importance[''fetishism''] > 3', 'stat_importance[''fetishism''] = 4')\r\n! JO9 MOD END R03B_ARTEMIA_SKILL_CACHE_20261113\r\n! JO9 MOD START R03A_ARTEMIA_BEAUTY_CACHE_20261113\r\n",
+      "count": 1,
+      "patchId": "R03B_ARTEMIA_SKILLS_20261113"
+    }
+  ]
+}

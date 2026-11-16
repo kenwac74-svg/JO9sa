@@ -1,0 +1,225 @@
+{
+  "id": "2026-11-13_r05a_auto_speech_transitions",
+  "status": "APPROVED",
+  "description": "지정8명·반말속성·공주출신 일반노예 자동 말투 전환. 공주출신 일반노예는 직업도 공주로 고정. 기존 육성/진행 유지, 새 저장키 없음.",
+  "before_sha256": "7db751c87928f4f9d65f208c30834092b6e6886b83c4758dd578ed6707cff239",
+  "after_sha256": "bf27cb384e3c48ee166aeeb557d96314df65306d10aae6ea402e7ba72c5bf30e",
+  "edits": [
+    {
+      "location": "jo9_plain_voice",
+      "field": "body",
+      "old": "if $args[0]='enabled':",
+      "new": "! JO9 MOD START R05A_AUTO_SPEECH_20261113\r\n! Ordinary appearance pools match generate_stock; exclusive presets stay outside.\r\nif $args[0]='ordinary':\r\n result=0\r\n if args[1]=1448 or args[1]=1450: exit\r\n if loli_first>0 and args[1]>=loli_first and args[1]<=loli_last: result=1\r\n if young_first>0 and args[1]>=young_first and args[1]<=max(young_last,1462): result=1\r\n if milf_first>0 and args[1]>=milf_first and args[1]<=max(milf_last,2340): result=1\r\n exit\r\nend\r\nif $args[0]='princess':\r\n result=0\r\n local $jo9_auto_role=$args[1]\r\n if $jo9_auto_role='': exit\r\n local jo9_auto_type=dyneval('result='+$jo9_auto_role+'_type')\r\n if func('jo9_plain_voice','ordinary',jo9_auto_type)=0: exit\r\n if dyneval('$result=$'+$jo9_auto_role+'_family') ! 'mprincess': exit\r\n dynamic '$'+$jo9_auto_role+'_occupation='+\"'mprincess'\"\r\n dynamic '$'+$jo9_auto_role+'_occupation_description=$occupation_description['+\"'mprincess']\"\r\n dynamic '$'+$jo9_auto_role+'_occupation_auk='+\"'여왕의 딸'\"\r\n dynamic $jo9_auto_role+\"['work_index']=5\"\r\n result=1\r\n exit\r\nend\r\nif $args[0]='load':\r\n local $jo9_auto_roles, jo9_auto_i\r\n copyarr '$jo9_auto_roles','$all_slave_characters'\r\n $jo9_auto_roles[]='stock'\r\n $jo9_auto_roles[]='snk_parked_slave'\r\n for jo9_auto_i=0 to arrsize('$jo9_auto_roles')-1:\r\n  gs 'jo9_plain_voice','princess',$jo9_auto_roles[jo9_auto_i]\r\n end\r\n exit\r\nend\r\nif $args[0]='update':\r\n local $jo9_auto_role=$args[1]\r\n result=0\r\n if $jo9_auto_role='': exit\r\n local jo9_auto_type=dyneval('result='+$jo9_auto_role+'_type')\r\n local jo9_auto_mode=dyneval('result='+$jo9_auto_role+\"['jo9_plain_tone']\")\r\n local jo9_auto_princess=func('jo9_plain_voice','princess',$jo9_auto_role)\r\n result=jo9_auto_mode\r\n if jo9_auto_mode=0 and jo9_auto_princess=0 and instr('|3002|2610|2620|3010|3021|3023|2621|3012|','|'+str(jo9_auto_type)+'|')=0: exit\r\n local jo9_auto_rational=dyneval('result='+$jo9_auto_role+\"['rational']\")\r\n local jo9_auto_moral=dyneval('result='+$jo9_auto_role+\"['moral']\")\r\n local jo9_auto_instinct=dyneval('result='+$jo9_auto_role+\"['instinct']\")\r\n local jo9_auto_fear=dyneval('result='+$jo9_auto_role+\"['fear']\")\r\n local jo9_auto_spoil=dyneval('result='+$jo9_auto_role+\"['spoil']\")\r\n if jo9_auto_rational>=3 and (jo9_auto_moral>=3 or jo9_auto_instinct>=3 or jo9_auto_fear>=3):\r\n  result=-1\r\n elseif jo9_auto_spoil>=3:\r\n  result=1\r\n end\r\n if result ! jo9_auto_mode: dynamic $jo9_auto_role+\"['jo9_plain_tone']=\"+str(result)\r\n exit\r\nend\r\n! JO9 MOD END R05A_AUTO_SPEECH_20261113\r\nif $args[0]='enabled':",
+      "count": 1,
+      "patchId": "R05A_AUTO_SPEECH_20261113"
+    },
+    {
+      "location": "#dynamic",
+      "field": "body",
+      "old": "slave_type,slave['jo9_plain_tone'])",
+      "new": "slave_type,func('jo9_plain_voice','update','slave'))",
+      "count": 1,
+      "patchId": "R05A_AUTO_SPEECH_20261113"
+    },
+    {
+      "location": "#dynamic",
+      "field": "body",
+      "old": "dyneval('result='+$jo9_vn_memory_actor+'_type'),dynslave['jo9_plain_tone'])",
+      "new": "dyneval('result='+$jo9_vn_memory_actor+'_type'),func('jo9_plain_voice','update',$jo9_vn_memory_actor))",
+      "count": 1,
+      "patchId": "R05A_AUTO_SPEECH_20261113"
+    },
+    {
+      "location": "#dynamic",
+      "field": "body",
+      "old": "func('jo9_plain_voice','enabled',args[0],slave['jo9_plain_tone'])",
+      "new": "func('jo9_plain_voice','enabled',args[0],func('jo9_plain_voice','update','slave'))",
+      "count": 1,
+      "patchId": "R05A_AUTO_SPEECH_20261113"
+    },
+    {
+      "location": "jo9_plain_voice",
+      "field": "body",
+      "old": "if instr($voice_plain_stored,' $result=$args[2]\r\n if func(''jo9_plain_voice'',''enabled'',args[0],slave[''jo9_plain_tone''])=0: exit\r\n')=0:",
+      "new": "if instr($voice_plain_stored,' $result=$args[2]\r\n if func(''jo9_plain_voice'',''enabled'',args[0],slave[''jo9_plain_tone''])=0: exit\r\n')=0 and instr($voice_plain_stored,' $result=$args[2]\r\n if func(''jo9_plain_voice'',''enabled'',args[0],func(''jo9_plain_voice'',''update'',''slave''))=0: exit\r\n')=0:",
+      "count": 1,
+      "patchId": "R05A_AUTO_SPEECH_20261113"
+    },
+    {
+      "location": "jo9_plain_voice",
+      "field": "body",
+      "old": " exit\r\nend\r\n! JO9 MOD END R05_VOICE_POLICY_API_20261113",
+      "new": " $voice_impression=replace($voice_impression,'slave_type,slave[''jo9_plain_tone''])','slave_type,func(''jo9_plain_voice'',''update'',''slave''))')\r\n $voice_native_actor=replace($voice_native_actor,'dyneval(''result=''+$jo9_vn_memory_actor+''_type''),dynslave[''jo9_plain_tone''])','dyneval(''result=''+$jo9_vn_memory_actor+''_type''),func(''jo9_plain_voice'',''update'',$jo9_vn_memory_actor))')\r\n $voice_plain_stored=replace($voice_plain_stored,'func(''jo9_plain_voice'',''enabled'',args[0],slave[''jo9_plain_tone''])','func(''jo9_plain_voice'',''enabled'',args[0],func(''jo9_plain_voice'',''update'',''slave''))')\r\n exit\r\nend\r\n! JO9 MOD END R05_VOICE_POLICY_API_20261113",
+      "count": 1,
+      "patchId": "R05A_AUTO_SPEECH_20261113"
+    },
+    {
+      "location": "chose_answer",
+      "field": "body",
+      "old": ",slave['jo9_plain_tone'])",
+      "new": ",func('jo9_plain_voice','update','slave'))",
+      "count": 7,
+      "patchId": "R05A_AUTO_SPEECH_20261113"
+    },
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "gs 'jo9_plain_voice','cache'",
+      "new": "gs 'jo9_plain_voice','cache'\r\ngs 'jo9_plain_voice','load'",
+      "count": 1,
+      "patchId": "R05A_AUTO_SPEECH_20261113"
+    },
+    {
+      "location": "jo9_background_b",
+      "field": "body",
+      "old": " if $args[1] = 'sns' and $args[2] = 'mprincess' and args[3] = 0: $result = 'tribal_girl|heroine|bride|witch|herbalist|gypsy|valertry|sorceress|poor_bride|poor_wife|noble_bride|noble_wife|mprincess|milker|swiner|teacher|avanturiste|rich_bride|rich_wife|artist|courtesan|serial_killer|former_slave|dancer' & exit",
+      "new": " if $args[1] = 'sns' and $args[2] = 'mprincess' and args[3] = 0: $result = 'mprincess' & exit",
+      "count": 1,
+      "patchId": "R05A_AUTO_SPEECH_20261113"
+    },
+    {
+      "location": "jo9_background_b",
+      "field": "body",
+      "old": " if $args[1] = 'sns' and $args[2] = 'mprincess' and args[3] = 1: $result = 'heroine|bride|witch|herbalist|gypsy|valertry|sorceress|poor_bride|poor_wife|noble_bride|noble_wife|mprincess|milker|swiner|teacher|avanturiste|rich_bride|rich_wife|artist|serial_killer|dancer' & exit",
+      "new": " if $args[1] = 'sns' and $args[2] = 'mprincess' and args[3] = 1: $result = 'mprincess' & exit",
+      "count": 1,
+      "patchId": "R05A_AUTO_SPEECH_20261113"
+    },
+    {
+      "location": "jo9_background_b",
+      "field": "body",
+      "old": " if $args[1] = 'sns' and $args[2] = 'mprincess' and args[3] = 2: $result = 'heroine|bride|witch|herbalist|gypsy|valertry|sorceress|poor_bride|poor_wife|noble_bride|noble_wife|mprincess|milker|swiner|teacher|avanturiste|rich_bride|rich_wife|artist|courtesan|serial_killer|mafia_boss|former_slave|dancer' & exit",
+      "new": " if $args[1] = 'sns' and $args[2] = 'mprincess' and args[3] = 2: $result = 'mprincess' & exit",
+      "count": 1,
+      "patchId": "R05A_AUTO_SPEECH_20261113"
+    },
+    {
+      "location": "jo9_background_b",
+      "field": "body",
+      "old": " if $args[1] = 'medieval' and $args[2] = 'mprincess' and args[3] = 0: $result = 'heroine|bride|herbalist|gypsy|nun|valertry|poor_bride|poor_wife|noble_bride|noble_wife|mprincess|milker|swiner|nurse|teacher|avanturiste|rich_bride|rich_wife|artist|courtesan|serial_killer|former_slave|schoolgirl|dancer' & exit",
+      "new": " if $args[1] = 'medieval' and $args[2] = 'mprincess' and args[3] = 0: $result = 'mprincess' & exit",
+      "count": 1,
+      "patchId": "R05A_AUTO_SPEECH_20261113"
+    },
+    {
+      "location": "jo9_background_b",
+      "field": "body",
+      "old": " if $args[1] = 'medieval' and $args[2] = 'mprincess' and args[3] = 1: $result = 'heroine|bride|herbalist|gypsy|nun|valertry|poor_bride|poor_wife|noble_bride|noble_wife|mprincess|milker|swiner|nurse|teacher|avanturiste|rich_bride|rich_wife|artist|serial_killer|dancer' & exit",
+      "new": " if $args[1] = 'medieval' and $args[2] = 'mprincess' and args[3] = 1: $result = 'mprincess' & exit",
+      "count": 1,
+      "patchId": "R05A_AUTO_SPEECH_20261113"
+    },
+    {
+      "location": "jo9_background_b",
+      "field": "body",
+      "old": " if $args[1] = 'medieval' and $args[2] = 'mprincess' and args[3] = 2: $result = 'heroine|bride|herbalist|gypsy|nun|valertry|poor_bride|poor_wife|noble_bride|noble_wife|mprincess|milker|swiner|nurse|teacher|avanturiste|rich_bride|rich_wife|artist|courtesan|serial_killer|mafia_boss|former_slave|dancer' & exit",
+      "new": " if $args[1] = 'medieval' and $args[2] = 'mprincess' and args[3] = 2: $result = 'mprincess' & exit",
+      "count": 1,
+      "patchId": "R05A_AUTO_SPEECH_20261113"
+    },
+    {
+      "location": "jo9_background_b",
+      "field": "body",
+      "old": " if $args[1] = 'darkfantasy' and $args[2] = 'mprincess' and args[3] = 0: $result = 'heroine|bride|witch|herbalist|gypsy|nun|valertry|sorceress|poor_bride|poor_wife|noble_bride|noble_wife|mprincess|milker|swiner|nurse|teacher|avanturiste|rich_bride|rich_wife|artist|courtesan|serial_killer|former_slave|schoolgirl|dancer' & exit",
+      "new": " if $args[1] = 'darkfantasy' and $args[2] = 'mprincess' and args[3] = 0: $result = 'mprincess' & exit",
+      "count": 1,
+      "patchId": "R05A_AUTO_SPEECH_20261113"
+    },
+    {
+      "location": "jo9_background_b",
+      "field": "body",
+      "old": " if $args[1] = 'darkfantasy' and $args[2] = 'mprincess' and args[3] = 1: $result = 'heroine|bride|witch|herbalist|gypsy|nun|valertry|sorceress|poor_bride|poor_wife|noble_bride|noble_wife|mprincess|milker|swiner|nurse|teacher|avanturiste|rich_bride|rich_wife|artist|serial_killer|dancer' & exit",
+      "new": " if $args[1] = 'darkfantasy' and $args[2] = 'mprincess' and args[3] = 1: $result = 'mprincess' & exit",
+      "count": 1,
+      "patchId": "R05A_AUTO_SPEECH_20261113"
+    },
+    {
+      "location": "jo9_background_b",
+      "field": "body",
+      "old": " if $args[1] = 'darkfantasy' and $args[2] = 'mprincess' and args[3] = 2: $result = 'heroine|bride|witch|herbalist|gypsy|nun|valertry|sorceress|poor_bride|poor_wife|noble_bride|noble_wife|mprincess|milker|swiner|nurse|teacher|avanturiste|rich_bride|rich_wife|artist|courtesan|serial_killer|mafia_boss|former_slave|dancer' & exit",
+      "new": " if $args[1] = 'darkfantasy' and $args[2] = 'mprincess' and args[3] = 2: $result = 'mprincess' & exit",
+      "count": 1,
+      "patchId": "R05A_AUTO_SPEECH_20261113"
+    },
+    {
+      "location": "jo9_background_b",
+      "field": "body",
+      "old": " if $args[1] = 'highfantasy' and $args[2] = 'mprincess' and args[3] = 0: $result = 'heroine|bride|witch|herbalist|gypsy|nun|valertry|sorceress|poor_bride|poor_wife|noble_bride|noble_wife|mprincess|milker|swiner|nurse|teacher|avanturiste|rich_bride|rich_wife|artist|courtesan|serial_killer|former_slave|schoolgirl|dancer' & exit",
+      "new": " if $args[1] = 'highfantasy' and $args[2] = 'mprincess' and args[3] = 0: $result = 'mprincess' & exit",
+      "count": 1,
+      "patchId": "R05A_AUTO_SPEECH_20261113"
+    },
+    {
+      "location": "jo9_background_b",
+      "field": "body",
+      "old": " if $args[1] = 'highfantasy' and $args[2] = 'mprincess' and args[3] = 1: $result = 'heroine|bride|witch|herbalist|gypsy|nun|valertry|sorceress|poor_bride|poor_wife|noble_bride|noble_wife|mprincess|milker|swiner|nurse|teacher|avanturiste|rich_bride|rich_wife|artist|serial_killer|dancer' & exit",
+      "new": " if $args[1] = 'highfantasy' and $args[2] = 'mprincess' and args[3] = 1: $result = 'mprincess' & exit",
+      "count": 1,
+      "patchId": "R05A_AUTO_SPEECH_20261113"
+    },
+    {
+      "location": "jo9_background_b",
+      "field": "body",
+      "old": " if $args[1] = 'highfantasy' and $args[2] = 'mprincess' and args[3] = 2: $result = 'heroine|bride|witch|herbalist|gypsy|nun|valertry|sorceress|poor_bride|poor_wife|noble_bride|noble_wife|mprincess|milker|swiner|nurse|teacher|avanturiste|rich_bride|rich_wife|artist|courtesan|serial_killer|mafia_boss|former_slave|dancer' & exit",
+      "new": " if $args[1] = 'highfantasy' and $args[2] = 'mprincess' and args[3] = 2: $result = 'mprincess' & exit",
+      "count": 1,
+      "patchId": "R05A_AUTO_SPEECH_20261113"
+    },
+    {
+      "location": "jo9_background_b",
+      "field": "body",
+      "old": " if $args[1] = 'steampunk' and $args[2] = 'mprincess' and args[3] = 0: $result = 'herbalist|gypsy|nun|valertry|poor_bride|poor_wife|noble_bride|noble_wife|mprincess|farmer|milker|swiner|weaver|freaser|maid|sufragist|nurse|teacher|oficiant|avanturiste|rich_bride|rich_wife|student|secretary|policewoman|writer|artist|courtesan|serial_killer|former_slave|schoolgirl|dancer' & exit",
+      "new": " if $args[1] = 'steampunk' and $args[2] = 'mprincess' and args[3] = 0: $result = 'mprincess' & exit",
+      "count": 1,
+      "patchId": "R05A_AUTO_SPEECH_20261113"
+    },
+    {
+      "location": "jo9_background_b",
+      "field": "body",
+      "old": " if $args[1] = 'steampunk' and $args[2] = 'mprincess' and args[3] = 1: $result = 'herbalist|gypsy|nun|valertry|poor_bride|poor_wife|noble_bride|noble_wife|mprincess|farmer|milker|swiner|weaver|freaser|maid|sufragist|nurse|teacher|oficiant|avanturiste|rich_bride|rich_wife|student|secretary|policewoman|writer|artist|serial_killer|dancer' & exit",
+      "new": " if $args[1] = 'steampunk' and $args[2] = 'mprincess' and args[3] = 1: $result = 'mprincess' & exit",
+      "count": 1,
+      "patchId": "R05A_AUTO_SPEECH_20261113"
+    },
+    {
+      "location": "jo9_background_b",
+      "field": "body",
+      "old": " if $args[1] = 'steampunk' and $args[2] = 'mprincess' and args[3] = 2: $result = 'herbalist|gypsy|nun|valertry|poor_bride|poor_wife|noble_bride|noble_wife|mprincess|farmer|milker|swiner|weaver|freaser|maid|sufragist|nurse|teacher|oficiant|avanturiste|rich_bride|rich_wife|student|secretary|policewoman|writer|artist|courtesan|serial_killer|mafia_boss|former_slave|dancer' & exit",
+      "new": " if $args[1] = 'steampunk' and $args[2] = 'mprincess' and args[3] = 2: $result = 'mprincess' & exit",
+      "count": 1,
+      "patchId": "R05A_AUTO_SPEECH_20261113"
+    },
+    {
+      "location": "jo9_background_b",
+      "field": "body",
+      "old": " if $args[1] = 'earth_rome' and $args[2] = 'mprincess' and args[3] = 0: $result = 'tribal_girl|heroine|bride|herbalist|poor_bride|poor_wife|noble_bride|mprincess|milker|swiner|teacher|avanturiste|rich_bride|rich_wife|artist|courtesan|serial_killer|former_slave|dancer' & exit",
+      "new": " if $args[1] = 'earth_rome' and $args[2] = 'mprincess' and args[3] = 0: $result = 'mprincess' & exit",
+      "count": 1,
+      "patchId": "R05A_AUTO_SPEECH_20261113"
+    },
+    {
+      "location": "jo9_background_b",
+      "field": "body",
+      "old": " if $args[1] = 'earth_rome' and $args[2] = 'mprincess' and args[3] = 1: $result = 'heroine|bride|herbalist|poor_bride|poor_wife|noble_bride|mprincess|milker|swiner|teacher|avanturiste|rich_bride|rich_wife|artist|serial_killer|dancer' & exit",
+      "new": " if $args[1] = 'earth_rome' and $args[2] = 'mprincess' and args[3] = 1: $result = 'mprincess' & exit",
+      "count": 1,
+      "patchId": "R05A_AUTO_SPEECH_20261113"
+    },
+    {
+      "location": "jo9_background_b",
+      "field": "body",
+      "old": " if $args[1] = 'earth_rome' and $args[2] = 'mprincess' and args[3] = 2: $result = 'heroine|bride|herbalist|poor_bride|poor_wife|noble_bride|mprincess|milker|swiner|teacher|avanturiste|rich_bride|rich_wife|artist|courtesan|serial_killer|mafia_boss|former_slave|dancer' & exit",
+      "new": " if $args[1] = 'earth_rome' and $args[2] = 'mprincess' and args[3] = 2: $result = 'mprincess' & exit",
+      "count": 1,
+      "patchId": "R05A_AUTO_SPEECH_20261113"
+    },
+    {
+      "location": "generate_stock",
+      "field": "body",
+      "old": "!OCCUPATION\r\n",
+      "new": "!OCCUPATION\r\n! JO9 MOD START R05A_PRINCESS_OCCUPATION_20261113\r\ngs 'jo9_plain_voice','princess','stock'\r\n! JO9 MOD END R05A_PRINCESS_OCCUPATION_20261113\r\n",
+      "count": 1,
+      "patchId": "R05A_AUTO_SPEECH_20261113"
+    }
+  ]
+}

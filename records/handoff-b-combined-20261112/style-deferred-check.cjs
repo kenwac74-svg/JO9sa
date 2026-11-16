@@ -1,0 +1,10 @@
+const fs=require('fs'),cp=require('child_process'),a=require('assert/strict');
+const R='G:/somi/JO9sa',D=R+'/records/handoff-b-combined-20261112',T='G:/Codex/tmp/handoff-b-style-deferred-20261113';
+const source=R+'/records/handoff-b-style-interop-red-20261112/style-interop-red.cjs';let s=fs.readFileSync(source,'utf8');
+s=s.replace("const expected='942bcadfa8f138fcbae9b3b492715f22324f0418b61c272307f6ea37f24de9cf'", "const expected='29f4c04892a19afb25c82443a928e5d7895f1a7a24208df670eb3f4032bbbd15'");
+s=s.replace('assert(origin.includes("stock_rate[\'style\']=max(0,cont_atr_threshold[j9og_style]-stock_rate[\'temp_style\'])"));', 'assert(!origin.includes("stock[\'style\']"));');
+s=s.replace('qa_proper_base[qa_case]-${t.fixed?0:1}', 'qa_proper_base[qa_case]').replaceAll('STYLEINTEROP_red_COMPLETE','STYLEINTEROP_deferred_COMPLETE');
+s=s.replace('RED expected: actual pure temp_style and full dyn_calc after current initializer','User-deferred style roll: actual pure temp_style and full dyn_calc must match baseline');
+fs.mkdirSync(T,{recursive:true});fs.writeFileSync(T+'/build.cjs',s);cp.execFileSync(process.execPath,[T+'/build.cjs','G:/Codex/tmp/handoff-b-combined-20261112/candidate.qsp',T],{stdio:'inherit'});
+fs.copyFileSync(T+'/build.cjs',D+'/style-deferred-fixture.cjs');
+console.log('Final deferred-style fixture ready');

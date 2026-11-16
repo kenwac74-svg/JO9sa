@@ -1,0 +1,563 @@
+--- a/tools/modding-hub/integration.mjs
+
++++ b/tools/modding-hub/integration.mjs
+
+@@ -16,5 +16,5 @@
+
+  const nativeIds=new Set(Object.keys(api.tabNames));const originalNames=new Map([...nativeIds].map(k=>[k,api.tabNames[k]]));
+  const panels=new Map();let items=null,selectedArtifact=null,query='',category='';
+- const subtitle={dialogue:'원문을 찾아 각본으로 저장하거나, 대사를 수정하고 반영합니다.','image-tools':'기존 이미지 도구를 선택하세요. 각 도구의 작업 상태와 저장 기능을 유지합니다.','game-db':'기존 게임 DB·인터뷰 DB·특성 편집을 연결합니다. 새 DB 구조는 이후 설계합니다.','patch-schedule':'기존 작업 일정과 체크·보류·메모를 그대로 사용합니다.',utilities:'기존 보조 도구와 외부 작업 사이트를 골라 엽니다.',artifacts:'그간 만든 HTML 카탈로그·비교표·안내·보고서를 골라 봅니다.'};
++ const subtitle={dialogue:'원문을 찾아 각본으로 저장하거나, 대사를 수정하고 반영합니다.','image-tools':'이미지와 복장을 확인하고 교체합니다.','game-db':'게임 정보를 찾고 아이디어를 정리합니다.','patch-schedule':'일정과 진행 상태, 메모를 관리합니다.',utilities:'작업에 필요한 보조 도구를 선택합니다.',artifacts:'카탈로그와 비교표, 작업 결과를 찾아봅니다.'};
+  for(const m of MENUS){
+   if(!nativeIds.has(m.id)){
+@@ -30,13 +30,12 @@
+
+  document.title='JO9 · 통합 모드 작업실';
+  const parentOf=id=>MENUS.find(m=>m.id===id||m.children?.some(([child])=>child===id))?.id;
++ const openCurrent=document.createElement('a');openCurrent.className='workspace-open-current';openCurrent.target='_blank';openCurrent.rel='noopener';openCurrent.textContent='별도 창에서 열기 ↗';openCurrent.hidden=true;document.querySelector('.page-header').append(openCurrent);
+  const button=(key,label)=>`<button type="button" class="button secondary small" data-workspace-tool="${key}">${label}</button>`;
+  function framePanel(id,tools){
+-  const panel=panels.get(id);panel.innerHTML=`<div class="workspace-toolbar">${tools.map(([key,label])=>button(key,label)).join('')}<a class="button secondary small workspace-original" target="_blank" rel="noopener" hidden>원래 창으로 열기 ↗</a></div><iframe class="workspace-frame" title="${esc(api.tabNames[id][0])}" hidden></iframe>`;
++  const panel=panels.get(id);panel.innerHTML=`<div class="workspace-toolbar">${(tools.length>1||id==='game-db'?tools:[]).map(([key,label])=>button(key,label)).join('')}</div>${tools.map(([key,label])=>`<iframe class="workspace-frame" data-workspace-frame="${key}" title="${esc(label)} 작업 영역" hidden></iframe>`).join('')}`;
+  }
+  framePanel('dialogue',[['dialogue','대사 편집실']]);
+  const dialoguePanel=panels.get('dialogue');
+- dialoguePanel.querySelector('[data-workspace-tool]').remove();
+  dialoguePanel.querySelector('iframe').title='대사 편집 작업 영역';
+- dialoguePanel.querySelector('.workspace-original').textContent='별도 창에서 열기 ↗';
+  framePanel('image-tools',[['checklist','이미지 체크리스트'],['workshop','이미지 교체·편집'],['imageReview','폴더 비교·선택']]);
+  framePanel('game-db',[['gameReference','특성·아이템·마법·MOB DB']]);
+@@ -44,18 +43,20 @@
+
+  framePanel('patch-schedule',[['schedule','작업 일정']]);
+  const external=[['Mage.space','https://www.mage.space/advanced'],['JoyCaption','https://huggingface.co/spaces/fancyfeast/joy-caption-beta-one'],['번역','https://translate.google.co.kr/?sl=en&tl=ko&op=translate'],['Gamma','https://gamma.app/design/01M48RXZSYBT1HBN8BFGAQ09AS?from=designs']];
+- panels.get('utilities').innerHTML=`<article class="card"><div class="card-head"><h2>기존 보조 도구</h2></div><div class="card-body workspace-toolbar"><button type="button" class="button secondary" data-tab="save-fix">세이브 정비</button><button type="button" class="button secondary" data-tab="ai-link">AI 연결</button><button type="button" class="button secondary" data-tab="slave-sim">뽑기 분포</button>${button('soundList','사운드 목록')}</div></article><article class="card"><div class="card-head"><h2>외부 도구</h2></div><div class="card-body workspace-toolbar">${external.map(([label,url])=>`<a class="button secondary" href="${esc(url)}" target="_blank" rel="noopener">${label} ↗</a>`).join('')}</div></article><div class="workspace-tool-view"><div class="workspace-toolbar"><a class="button secondary small workspace-original" target="_blank" rel="noopener" hidden>원래 창으로 열기 ↗</a></div><iframe class="workspace-frame" title="선택한 보조 도구" hidden></iframe></div>`;
++ panels.get('utilities').innerHTML=`<article class="card"><div class="card-head"><h2>기존 보조 도구</h2></div><div class="card-body workspace-toolbar"><button type="button" class="button secondary" data-tab="save-fix">세이브 정비</button><button type="button" class="button secondary" data-tab="ai-link">AI 연결</button><button type="button" class="button secondary" data-tab="slave-sim">뽑기 분포</button>${button('soundList','사운드 목록')}</div></article><article class="card"><div class="card-head"><h2>외부 도구</h2></div><div class="card-body workspace-toolbar">${external.map(([label,url])=>`<a class="button secondary" href="${esc(url)}" target="_blank" rel="noopener">${label} ↗</a>`).join('')}</div></article><div class="workspace-tool-view"><iframe class="workspace-frame" title="선택한 보조 도구" hidden></iframe></div>`;
+  panels.get('artifacts').innerHTML='<article class="card"><div class="card-head"><h2>기타 산출물 목록 <span class="workspace-count"></span></h2><button type="button" class="button secondary small" data-workspace-refresh>목록 새로 확인</button></div><div class="card-body"><div class="workspace-toolbar"><input class="workspace-search" type="search" placeholder="이름·파일명·경로 검색" aria-label="산출물 검색"><select class="workspace-category" aria-label="산출물 종류"><option value="">전체 종류</option></select></div><div class="workspace-artifact-list">목록을 불러오는 중입니다.</div></div></article><article class="workspace-artifact-view" hidden><div class="workspace-toolbar"><strong class="workspace-artifact-title"></strong><a class="button secondary small workspace-original" target="_blank" rel="noopener">새 창으로 열기 ↗</a></div><iframe class="workspace-frame" title="선택한 HTML 산출물"></iframe></article>';
+  function toolUrl(key){
+   const raw=config.tools[key];if(!raw)return '';
+-  if(key==='soundList')return '/workspace/fs/'+encodeURI(raw.replaceAll('\\','/'));
+-  if(key==='dialogue'){const url=new URL(raw,location.href);url.searchParams.set('workspace','1');return url.href;}
+-  return raw;
++  const target=key==='soundList'?'/workspace/fs/'+encodeURI(raw.replaceAll('\\','/')):raw;
++  const url=new URL(target,location.href);url.searchParams.set('workspace','1');return url.href;
+  }
+  function openTool(panel,key){
+   const url=toolUrl(key);if(!url){panel.querySelector('.workspace-toolbar')?.insertAdjacentHTML('beforeend','<span class="workspace-error">도구 주소가 없습니다. 모드툴 실행기로 다시 열어 주세요.</span>');return;}
+-  const frame=panel.querySelector('iframe'),link=panel.querySelector('.workspace-original');
+-  if(frame.dataset.source!==url){frame.src=url;frame.dataset.source=url;}frame.hidden=false;link.href=key==='dialogue'?config.tools.dialogue:url;link.hidden=false;panel.dataset.loaded='1';
++  const frame=panel.querySelector('[data-workspace-frame="'+key+'"]')||panel.querySelector('iframe');
++  panel.querySelectorAll('iframe').forEach(other=>{other.hidden=other!==frame;});
++  if(frame.dataset.source!==url){frame.src=url;frame.dataset.source=url;}frame.hidden=false;panel.dataset.externalUrl=key==='soundList'?url.replace(/[?&]workspace=1(?:&|$)/,''):config.tools[key];panel.dataset.loaded='1';
+   panel.querySelectorAll('[data-workspace-tool]').forEach(b=>b.classList.toggle('primary',b.dataset.workspaceTool===key));
+  }
++ const imageWorker=panels.get('image-tools').querySelector('[data-workspace-frame="workshop"]');
++ if(config.tools.workshop){const url=toolUrl('workshop');imageWorker.src=url;imageWorker.dataset.source=url;}
+  function renderList(){
+   if(!items)return;const panel=panels.get('artifacts'),matches=items.filter(r=>(!category||r.category===category)&&(!query||(`${r.title} ${r.path}`).toLowerCase().includes(query.toLowerCase())));
+@@ -71,14 +72,17 @@
+
+  function openArtifact(id){
+   const row=items?.find(r=>r.id===id);if(!row)return;selectedArtifact=id;renderList();const panel=panels.get('artifacts'),viewer=panel.querySelector('.workspace-artifact-view');viewer.hidden=false;viewer.querySelector('.workspace-artifact-title').textContent=row.title;
+-  viewer.querySelector('a').href=row.url;const frame=viewer.querySelector('iframe');if(frame.dataset.source!==row.url){frame.src=row.url;frame.dataset.source=row.url;}viewer.scrollIntoView({block:'start',behavior:'smooth'});
++  viewer.querySelector('a').href=row.url;panel.dataset.externalUrl=row.url;const frame=viewer.querySelector('iframe');if(frame.dataset.source!==row.url){frame.src=row.url;frame.dataset.source=row.url;}viewer.scrollIntoView({block:'start',behavior:'smooth'});
+  }
+- function fitDialogue(){
+-  if(api.getTab()!=='dialogue')return;
+-  const frame=dialoguePanel.querySelector('iframe');
+-  frame.style.height=Math.max(140,window.innerHeight-frame.getBoundingClientRect().top-18)+'px';
++ function fitWorkspace(){
++  const panel=panels.get(api.getTab());if(!panel)return;
++  const frame=panel.querySelector('iframe:not([hidden])');
++  if(frame&&['dialogue','image-tools','game-db','patch-schedule'].includes(api.getTab()))frame.style.height=Math.max(140,window.innerHeight-frame.getBoundingClientRect().top-12)+'px';
+  }
+- window.addEventListener('resize',()=>{if(api.getTab()==='dialogue')requestAnimationFrame(fitDialogue);});
++ window.addEventListener('resize',()=>requestAnimationFrame(fitWorkspace));
++ css.addEventListener('load',()=>requestAnimationFrame(fitWorkspace));
++ const headerSize=new ResizeObserver(()=>requestAnimationFrame(fitWorkspace));headerSize.observe(document.querySelector('.page-header'));headerSize.observe(document.querySelector('.topbar'));
++ for(const panel of panels.values()){const toolbar=panel.querySelector('.workspace-toolbar');if(toolbar)headerSize.observe(toolbar);}
+  function sync(){
+-  const id=api.getTab(),parent=parentOf(id);document.body.classList.toggle('workspace-dialogue-active',id==='dialogue');if(id==='dialogue')requestAnimationFrame(fitDialogue);document.querySelectorAll('[data-workspace-parent]').forEach(x=>x.hidden=x.dataset.workspaceParent!==parent);
++  const id=api.getTab(),parent=parentOf(id);document.body.classList.toggle('workspace-dialogue-active',id==='dialogue');document.body.classList.toggle('workspace-framed-active',['dialogue','image-tools','game-db','patch-schedule'].includes(id));requestAnimationFrame(fitWorkspace);document.querySelectorAll('[data-workspace-parent]').forEach(x=>x.hidden=x.dataset.workspaceParent!==parent);
+   nav.querySelectorAll('[data-workspace-main]').forEach(x=>{x.classList.toggle('active',x.dataset.workspaceMain===parent);x.setAttribute('aria-current',x.dataset.workspaceMain===parent?'page':'false');});
+   document.querySelector('.header-actions').hidden=panels.has(id);document.querySelector('#pageTitle .draft-badge')?.classList.toggle('workspace-hide',panels.has(id));
+@@ -86,4 +90,5 @@
+
+   if(panel&&!panel.dataset.loaded){const initial={dialogue:'dialogue','image-tools':'checklist','game-db':'gameReference','patch-schedule':'schedule'}[id];if(initial)openTool(panel,initial);}
+   if(id==='artifacts'&&!items)loadArtifacts();
++  openCurrent.hidden=!panel?.dataset.externalUrl;openCurrent.href=panel?.dataset.externalUrl||'#';
+  }
+  document.addEventListener('click',event=>{
+--- a/tools/modding-hub/integration.css
+
++++ b/tools/modding-hub/integration.css
+
+@@ -10,2 +10,22 @@
+
+ #dialogue .workspace-frame{display:block;min-height:0;border:0;border-radius:0;background:var(--bg);height:calc(100dvh - 230px)}
+ /* JO9 MOD END DIALOGUE_SHELL_20261115 */
++
++/* JO9 MOD START COMPACT_WORKSPACE_SHELL_20261115 */
++.page-header{position:relative;padding:12px 0 10px!important;gap:12px}
++.page-header>div:first-child{min-width:0;flex:1}
++.page-header .eyebrow,main>footer{display:none!important}
++.page-header h1{margin:0;font-size:25px;line-height:1.25}
++.page-header p{margin:5px 0 0!important;line-height:1.5}
++.workspace-open-current{flex:none;align-self:center;color:var(--muted);text-decoration:none;font-size:10px;white-space:nowrap;padding:3px 0}
++.workspace-open-current:hover{color:var(--amber)}
++.workspace-panel>.workspace-toolbar{padding:0!important;margin:0 0 8px!important;gap:7px}
++.workspace-panel>.workspace-toolbar:empty{display:none}
++.workspace-panel>.workspace-toolbar>button{font-size:12px;padding:8px 13px}
++.workspace-frame{display:block;min-height:0!important;border:0!important;border-radius:0!important;background:var(--bg)!important}
++body.workspace-framed-active{overflow:hidden}
++.workspace-artifact-view>.workspace-toolbar{display:none}
++.workspace-artifact-list{max-height:min(40vh,440px)}
++@media(max-width:650px){.page-header{display:flex!important;flex-wrap:wrap}.workspace-open-current{font-size:9px}.page-header .header-actions{margin-top:0}.workspace-toolbar{gap:6px}}
++/* JO9 MOD END COMPACT_WORKSPACE_SHELL_20261115 */
++
++.workspace-panel>.workspace-toolbar>button.primary{background:var(--amber);border-color:var(--amber);color:var(--bg)}
+--- a/tools/modding-hub/server.py
+
++++ b/tools/modding-hub/server.py
+
+@@ -8,5 +8,5 @@
+
+ def build_id():
+  h=hashlib.sha256()
+- for name in ['server.py','registry.py','integration.mjs','integration.css','app_launcher.py']:
++ for name in ['server.py','registry.py','integration.mjs','integration.css','app_launcher.py','embedded-tools.css']:
+   h.update((HERE/name).read_bytes())
+  return h.hexdigest()[:16]
+@@ -50,4 +50,8 @@
+
+      if target.suffix.lower() in ['.html','.htm']:
+       text=raw.decode('utf-16' if raw.startswith((b'\xff\xfe',b'\xfe\xff')) else 'utf-8-sig',errors='replace')
++      if sound and target==Path(sound).resolve():
++       css=(HERE/'embedded-tools.css').read_text('utf-8')
++       boot="document.documentElement.classList.toggle('jo9-embedded',new URLSearchParams(location.search).get('workspace')==='1');document.documentElement.classList.add('jo9-tool-sound');"
++       text=text.replace('</head>','<style>'+css+'</style><script>'+boot+'</script></head>') if '</head>' in text else '<style>'+css+'</style><script>'+boot+'</script>'+text
+       raw=registry.rewrite_html(text).encode('utf-8');mime='text/html; charset=utf-8'
+      return self.blob(raw,mime)
+--- a/tools/modding-hub/Start-Modding-Hub.ps1
+
++++ b/tools/modding-hub/Start-Modding-Hub.ps1
+
+@@ -19,5 +19,5 @@
+
+ if (!(Test-Path -LiteralPath $urlsFile)) {throw '기존 모드툴 주소가 없습니다. Open-Modding-Tools.ps1로 실행하세요.'}
+ $stream=New-Object IO.MemoryStream
+-foreach ($name in @('server.py','registry.py','integration.mjs','integration.css','app_launcher.py')) {$block=[IO.File]::ReadAllBytes((Join-Path $hubDir $name));$stream.Write($block,0,$block.Length)}
++foreach ($name in @('server.py','registry.py','integration.mjs','integration.css','app_launcher.py','embedded-tools.css')) {$block=[IO.File]::ReadAllBytes((Join-Path $hubDir $name));$stream.Write($block,0,$block.Length)}
+ $build=([BitConverter]::ToString([Security.Cryptography.SHA256]::Create().ComputeHash($stream.ToArray())).Replace('-','').ToLowerInvariant()).Substring(0,16)
+ $stream.Dispose()
+--- a/tools/text-workshop/server.cjs
+
++++ b/tools/text-workshop/server.cjs
+
+@@ -6,4 +6,5 @@
+
+ // JO9 MOD END SIDEBAR_FRAME_PARENT_20261115
+ const core=require('./core.cjs');
++const embeddedShell=require('./embedded-shell.cjs');
+ // JO9 MOD START: text-batch-replace-20261018-module
+ const batchReplace=require('./batch-replace.cjs');
+@@ -149,5 +150,5 @@
+
+     if(req.method==='GET'&&url.pathname==='/patch-schedule'){
+       res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','Content-Security-Policy':"default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self'; frame-ancestors "+hubFrameParent+"; base-uri 'none'; form-action 'none'"});
+-      res.end(patchSchedule.page(token));return;
++      res.end(embeddedShell.page(patchSchedule.page(token),'schedule'));return;
+     }
+     // JO9 MOD END PATCH_SCHEDULE_PAGE_20261107
+@@ -176,5 +177,5 @@
+
+       const nativeCatalog=catalogTabs.native(html);html=catalogTabs.shell(html);
+       html=html.replace(/<\/body>/i,nativeCatalog?'<script src="catalog_grok.js"></script></body>':'<script src="catalog_grok.js"></script><script src="catalog_cuts.js"></script><script src="catalog-cut-conditions.js"></script></body>');
+-      res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store'});res.end(html);return;
++      res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store'});res.end(embeddedShell.page(html,'checklist'));return;
+     }
+     if(req.method==='GET'&&url.pathname.startsWith('/catalog-tab/')){
+--- a/tools/image-folder-review/static/app.js
+
++++ b/tools/image-folder-review/static/app.js
+
+@@ -225,2 +225,5 @@
+
+   }catch(error){notice(error.message,true);}
+ })();
++
++/* JO9 MOD EMBEDDED_TOOL_SHELL_20261115 */
++(()=>{const r=document.documentElement,on=new URLSearchParams(location.search).get('workspace')==='1';r.classList.toggle('jo9-embedded',on);for(const c of [...r.classList])if(c.startsWith('jo9-tool-'))r.classList.remove(c);if(on)r.classList.add('jo9-tool-folder');})();
+--- a/tools/image-folder-review/static/style.css
+
++++ b/tools/image-folder-review/static/style.css
+
+@@ -8,2 +8,60 @@
+
+ .presence-filters{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:end;flex-basis:100%;padding-top:4px}.presence-filters label{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--muted)}.presence-filters select{min-width:145px;font-size:14px}.hash-badge{display:inline-block;margin-left:10px;font-size:12px;color:var(--muted)}.hash-badge.hash-same{color:var(--original)}.hash-badge.hash-different,.file-label.hash-different{color:#ffe066;font-weight:600}.hash-badge.hash-error{color:var(--danger)}
+ @media(max-width:700px){.presence-filters{flex-basis:100%;display:grid;grid-template-columns:1fr 1fr;gap:10px}.presence-filters select{min-width:0}.presence-filters #reset-filters{grid-column:1/-1}.presence-filters label{min-width:0}.list-heading .hint{max-width:none}}
++
++/* JO9 MOD START EMBEDDED_TOOL_SHELL_20261115 */
++html.jo9-embedded{color-scheme:dark;--bg:#131517;--page:#131517;--panel:#1c1f22;--panel2:#22262a;--raised:#22262a;--card:#1c1f22;--line:#30353a;--border:#30353a;--text:#e9e9e5;--fg:#e9e9e5;--muted:#969c9f;--mute:#969c9f;--dim:#969c9f;--amber:#dbb06e;--gold:#dbb06e;--green:#96bea4;--original:#96bea4;--comparison:#9baed0;--defer:#dbb06e;--danger:#df9e91;--hl:#302a21;font-family:Inter,"Pretendard","Noto Sans KR",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
++html.jo9-embedded,html.jo9-embedded body{min-height:0;scrollbar-width:thin;scrollbar-color:#42484d #131517}
++html.jo9-embedded body{margin:0;background:#131517;color:#e9e9e5;font:13px/1.6 Inter,"Pretendard","Noto Sans KR",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
++html.jo9-embedded main{max-width:none;margin:0;padding:0 10px 10px 0}
++html.jo9-embedded button,html.jo9-embedded input,html.jo9-embedded textarea,html.jo9-embedded select{font:inherit;border:1px solid #30353a;border-radius:7px;color:#e9e9e5;box-shadow:none}
++html.jo9-embedded button{background:#22262a;padding:8px 12px;cursor:pointer}
++html.jo9-embedded input,html.jo9-embedded textarea,html.jo9-embedded select{background:#131517;padding:9px 11px}
++html.jo9-embedded input[type=checkbox],html.jo9-embedded input[type=radio]{accent-color:#dbb06e}
++html.jo9-embedded button:hover:not(:disabled){background:#2a3035;border-color:#52595e}
++html.jo9-embedded button.primary,html.jo9-embedded button[aria-selected=true],html.jo9-embedded #jo9CatalogTabs button[aria-selected=true],html.jo9-embedded #jo9CatalogTabs button.active{background:#dbb06e;border-color:#dbb06e;color:#131517;box-shadow:none}
++html.jo9-embedded button:disabled{opacity:.4}
++html.jo9-embedded :is(input,textarea,select,button,a):focus-visible{outline:2px solid #dbb06e;outline-offset:2px}
++html.jo9-embedded input::placeholder,html.jo9-embedded textarea::placeholder{color:#727b80}
++html.jo9-embedded input[type=file]::file-selector-button{font:inherit;border:1px solid #40464b;background:#22262a;color:#e9e9e5;border-radius:5px;padding:6px 10px;margin-right:10px}
++html.jo9-embedded a{color:#dbb06e}
++html.jo9-embedded :is(.panel,.project-panel,.review-panel,.sourcework,.sourcework-input,.sourcework-results,.place,.screen-panel,.screen-group,.screen-card,.dropzone){background:#1c1f22;border-color:#30353a;border-radius:10px;box-shadow:none}
++html.jo9-embedded :is(.screen-group-head,.sourcework-title,.placehead){background:#22262a;color:#e9e9e5;border-color:#30353a}
++html.jo9-embedded :is(.small,.muted,.sub,.intro,.screen-meta){color:#969c9f}
++html.jo9-embedded h2{font-size:15px;line-height:1.4}
++html.jo9-embedded h3{font-size:14px}
++html.jo9-embedded table{font-size:12px}
++html.jo9-embedded th{background:#22262a;color:#e9e9e5;border-color:#30353a}
++html.jo9-embedded td{border-color:#30353a}
++html.jo9-embedded [role=tablist]{margin-top:0;padding-top:0;border-color:#30353a}
++html.jo9-embedded [role=tab]{font-size:12px;border-radius:7px}
++html.jo9-embedded::-webkit-scrollbar,html.jo9-embedded *::-webkit-scrollbar{width:7px;height:7px}
++html.jo9-embedded::-webkit-scrollbar-track,html.jo9-embedded *::-webkit-scrollbar-track{background:#131517}
++html.jo9-embedded::-webkit-scrollbar-thumb,html.jo9-embedded *::-webkit-scrollbar-thumb{background:#42484d;border:2px solid #131517;border-radius:9px}
++html.jo9-embedded.jo9-tool-checklist #main>h1,html.jo9-embedded.jo9-tool-db main>header,html.jo9-embedded.jo9-tool-workshop body>header{display:none}
++html.jo9-embedded.jo9-tool-checklist #main{padding:0 12px 12px}
++html.jo9-embedded.jo9-tool-checklist #side{padding-top:0;border-color:#30353a;background:#1c1f22}
++html.jo9-embedded.jo9-tool-checklist #jo9CatalogTabs{margin-top:0}
++html.jo9-embedded.jo9-tool-folder .app-header>div:first-child{display:none}
++html.jo9-embedded.jo9-tool-folder .app-header{max-width:none;justify-content:flex-end;margin:0;padding:0 10px 6px 0;border:0;min-height:0;gap:0}
++html.jo9-embedded.jo9-tool-folder .save-state{padding:0;font-size:10px;background:none}
++html.jo9-embedded.jo9-tool-folder .project-panel{margin-top:0}
++html.jo9-embedded.jo9-tool-schedule .top>div:first-child{display:none}
++html.jo9-embedded.jo9-tool-schedule .top{display:flex;justify-content:flex-end;align-items:center;margin:0 0 8px;padding:0;border:0;background:none;min-height:0}
++html.jo9-embedded.jo9-tool-schedule .savebox{font-size:10px;margin:0;padding:0;background:none;border:0}
++html.jo9-embedded.jo9-tool-schedule :is(.idea-notes,.stat,.task,.phase){background:#1c1f22;border-color:#30353a}
++html.jo9-embedded.jo9-tool-workshop main{padding-top:0}
++html.jo9-embedded.jo9-tool-workshop :is(.eyebrow,footer){display:none}
++html.jo9-embedded.jo9-tool-workshop .screen-panel{margin-top:0}
++html.jo9-embedded.jo9-tool-workshop #drop{background:#17191b;border-color:#444b50}
++html.jo9-embedded.jo9-tool-sound h1{display:none}
++@media(max-width:800px){html.jo9-embedded.jo9-tool-checklist #side{padding:6px 8px}html.jo9-embedded.jo9-tool-checklist #main{padding-top:8px}}
++/* JO9 MOD END EMBEDDED_TOOL_SHELL_20261115 */
++
++/* Host palette wins over the old tools' inline presentation styles. */
++html.jo9-embedded :is(input,textarea,select){background:#131517!important;color:#e9e9e5!important;border-color:#30353a!important}
++html.jo9-embedded button{background:#22262a!important;color:#e9e9e5!important;border-color:#30353a!important}
++html.jo9-embedded button:hover:not(:disabled){background:#2a3035!important}
++html.jo9-embedded button.primary,html.jo9-embedded button[aria-selected=true],html.jo9-embedded #jo9CatalogTabs button[aria-selected=true],html.jo9-embedded #jo9CatalogTabs button.active{background:#dbb06e!important;color:#131517!important;border-color:#dbb06e!important}
++html.jo9-embedded button.danger{background:#412a27!important;color:#f0b9af!important;border-color:#ad7369!important}
++html.jo9-embedded.jo9-tool-checklist :is(#jo9CatalogTabs,#jo9SearchBar,#catalogPicPanel,#grokDesk,#grokSettings){background:#1c1f22!important;color:#e9e9e5!important;border-color:#30353a!important;box-shadow:none!important}
++html.jo9-embedded.jo9-tool-checklist #grokDesk :is(label,p,summary){color:#969c9f!important}
+--- a/tools/game-reference/jo9-reference.html
+
++++ b/tools/game-reference/jo9-reference.html
+
+@@ -4,5 +4,62 @@
+
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+ <title>JO9 · 특성·아이템·마법 DB · MOB 정보·적 전투 특성과 내 아이디어</title>
+-<style>
++<!-- JO9_EMBEDDED_TOOL_SHELL_20261115 --><style>/* JO9 MOD START EMBEDDED_TOOL_SHELL_20261115 */
++html.jo9-embedded{color-scheme:dark;--bg:#131517;--page:#131517;--panel:#1c1f22;--panel2:#22262a;--raised:#22262a;--card:#1c1f22;--line:#30353a;--border:#30353a;--text:#e9e9e5;--fg:#e9e9e5;--muted:#969c9f;--mute:#969c9f;--dim:#969c9f;--amber:#dbb06e;--gold:#dbb06e;--green:#96bea4;--original:#96bea4;--comparison:#9baed0;--defer:#dbb06e;--danger:#df9e91;--hl:#302a21;font-family:Inter,"Pretendard","Noto Sans KR",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
++html.jo9-embedded,html.jo9-embedded body{min-height:0;scrollbar-width:thin;scrollbar-color:#42484d #131517}
++html.jo9-embedded body{margin:0;background:#131517;color:#e9e9e5;font:13px/1.6 Inter,"Pretendard","Noto Sans KR",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
++html.jo9-embedded main{max-width:none;margin:0;padding:0 10px 10px 0}
++html.jo9-embedded button,html.jo9-embedded input,html.jo9-embedded textarea,html.jo9-embedded select{font:inherit;border:1px solid #30353a;border-radius:7px;color:#e9e9e5;box-shadow:none}
++html.jo9-embedded button{background:#22262a;padding:8px 12px;cursor:pointer}
++html.jo9-embedded input,html.jo9-embedded textarea,html.jo9-embedded select{background:#131517;padding:9px 11px}
++html.jo9-embedded input[type=checkbox],html.jo9-embedded input[type=radio]{accent-color:#dbb06e}
++html.jo9-embedded button:hover:not(:disabled){background:#2a3035;border-color:#52595e}
++html.jo9-embedded button.primary,html.jo9-embedded button[aria-selected=true],html.jo9-embedded #jo9CatalogTabs button[aria-selected=true],html.jo9-embedded #jo9CatalogTabs button.active{background:#dbb06e;border-color:#dbb06e;color:#131517;box-shadow:none}
++html.jo9-embedded button:disabled{opacity:.4}
++html.jo9-embedded :is(input,textarea,select,button,a):focus-visible{outline:2px solid #dbb06e;outline-offset:2px}
++html.jo9-embedded input::placeholder,html.jo9-embedded textarea::placeholder{color:#727b80}
++html.jo9-embedded input[type=file]::file-selector-button{font:inherit;border:1px solid #40464b;background:#22262a;color:#e9e9e5;border-radius:5px;padding:6px 10px;margin-right:10px}
++html.jo9-embedded a{color:#dbb06e}
++html.jo9-embedded :is(.panel,.project-panel,.review-panel,.sourcework,.sourcework-input,.sourcework-results,.place,.screen-panel,.screen-group,.screen-card,.dropzone){background:#1c1f22;border-color:#30353a;border-radius:10px;box-shadow:none}
++html.jo9-embedded :is(.screen-group-head,.sourcework-title,.placehead){background:#22262a;color:#e9e9e5;border-color:#30353a}
++html.jo9-embedded :is(.small,.muted,.sub,.intro,.screen-meta){color:#969c9f}
++html.jo9-embedded h2{font-size:15px;line-height:1.4}
++html.jo9-embedded h3{font-size:14px}
++html.jo9-embedded table{font-size:12px}
++html.jo9-embedded th{background:#22262a;color:#e9e9e5;border-color:#30353a}
++html.jo9-embedded td{border-color:#30353a}
++html.jo9-embedded [role=tablist]{margin-top:0;padding-top:0;border-color:#30353a}
++html.jo9-embedded [role=tab]{font-size:12px;border-radius:7px}
++html.jo9-embedded::-webkit-scrollbar,html.jo9-embedded *::-webkit-scrollbar{width:7px;height:7px}
++html.jo9-embedded::-webkit-scrollbar-track,html.jo9-embedded *::-webkit-scrollbar-track{background:#131517}
++html.jo9-embedded::-webkit-scrollbar-thumb,html.jo9-embedded *::-webkit-scrollbar-thumb{background:#42484d;border:2px solid #131517;border-radius:9px}
++html.jo9-embedded.jo9-tool-checklist #main>h1,html.jo9-embedded.jo9-tool-db main>header,html.jo9-embedded.jo9-tool-workshop body>header{display:none}
++html.jo9-embedded.jo9-tool-checklist #main{padding:0 12px 12px}
++html.jo9-embedded.jo9-tool-checklist #side{padding-top:0;border-color:#30353a;background:#1c1f22}
++html.jo9-embedded.jo9-tool-checklist #jo9CatalogTabs{margin-top:0}
++html.jo9-embedded.jo9-tool-folder .app-header>div:first-child{display:none}
++html.jo9-embedded.jo9-tool-folder .app-header{max-width:none;justify-content:flex-end;margin:0;padding:0 10px 6px 0;border:0;min-height:0;gap:0}
++html.jo9-embedded.jo9-tool-folder .save-state{padding:0;font-size:10px;background:none}
++html.jo9-embedded.jo9-tool-folder .project-panel{margin-top:0}
++html.jo9-embedded.jo9-tool-schedule .top>div:first-child{display:none}
++html.jo9-embedded.jo9-tool-schedule .top{display:flex;justify-content:flex-end;align-items:center;margin:0 0 8px;padding:0;border:0;background:none;min-height:0}
++html.jo9-embedded.jo9-tool-schedule .savebox{font-size:10px;margin:0;padding:0;background:none;border:0}
++html.jo9-embedded.jo9-tool-schedule :is(.idea-notes,.stat,.task,.phase){background:#1c1f22;border-color:#30353a}
++html.jo9-embedded.jo9-tool-workshop main{padding-top:0}
++html.jo9-embedded.jo9-tool-workshop :is(.eyebrow,footer){display:none}
++html.jo9-embedded.jo9-tool-workshop .screen-panel{margin-top:0}
++html.jo9-embedded.jo9-tool-workshop #drop{background:#17191b;border-color:#444b50}
++html.jo9-embedded.jo9-tool-sound h1{display:none}
++@media(max-width:800px){html.jo9-embedded.jo9-tool-checklist #side{padding:6px 8px}html.jo9-embedded.jo9-tool-checklist #main{padding-top:8px}}
++/* JO9 MOD END EMBEDDED_TOOL_SHELL_20261115 */
++
++/* Host palette wins over the old tools' inline presentation styles. */
++html.jo9-embedded :is(input,textarea,select){background:#131517!important;color:#e9e9e5!important;border-color:#30353a!important}
++html.jo9-embedded button{background:#22262a!important;color:#e9e9e5!important;border-color:#30353a!important}
++html.jo9-embedded button:hover:not(:disabled){background:#2a3035!important}
++html.jo9-embedded button.primary,html.jo9-embedded button[aria-selected=true],html.jo9-embedded #jo9CatalogTabs button[aria-selected=true],html.jo9-embedded #jo9CatalogTabs button.active{background:#dbb06e!important;color:#131517!important;border-color:#dbb06e!important}
++html.jo9-embedded button.danger{background:#412a27!important;color:#f0b9af!important;border-color:#ad7369!important}
++html.jo9-embedded.jo9-tool-checklist :is(#jo9CatalogTabs,#jo9SearchBar,#catalogPicPanel,#grokDesk,#grokSettings){background:#1c1f22!important;color:#e9e9e5!important;border-color:#30353a!important;box-shadow:none!important}
++html.jo9-embedded.jo9-tool-checklist #grokDesk :is(label,p,summary){color:#969c9f!important}
++</style><script>(()=>{const r=document.documentElement,on=new URLSearchParams(location.search).get('workspace')==='1';r.classList.toggle('jo9-embedded',on);for(const c of [...r.classList])if(c.startsWith('jo9-tool-'))r.classList.remove(c);if(on)r.classList.add('jo9-tool-db');})();</script><style>
+   :root { color-scheme: dark; --page:#151519; --panel:#201f24; --border:#39343b; --text:#f1e9dc; --muted:#c0b6ab; --gold:#efc485; }
+   * { box-sizing:border-box; }
+--- a/tools/image-workshop/place/JO9_Place_Workshop.html
+
++++ b/tools/image-workshop/place/JO9_Place_Workshop.html
+
+@@ -1,4 +1,61 @@
+
+ <!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>[연동형 경로복구 1.1.3] JO9 현재 화면 이미지 교체기 · v1.0.5 Cleanup + Filter</title>
+-<style>
++<!-- JO9_EMBEDDED_TOOL_SHELL_20261115 --><style>/* JO9 MOD START EMBEDDED_TOOL_SHELL_20261115 */
++html.jo9-embedded{color-scheme:dark;--bg:#131517;--page:#131517;--panel:#1c1f22;--panel2:#22262a;--raised:#22262a;--card:#1c1f22;--line:#30353a;--border:#30353a;--text:#e9e9e5;--fg:#e9e9e5;--muted:#969c9f;--mute:#969c9f;--dim:#969c9f;--amber:#dbb06e;--gold:#dbb06e;--green:#96bea4;--original:#96bea4;--comparison:#9baed0;--defer:#dbb06e;--danger:#df9e91;--hl:#302a21;font-family:Inter,"Pretendard","Noto Sans KR",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
++html.jo9-embedded,html.jo9-embedded body{min-height:0;scrollbar-width:thin;scrollbar-color:#42484d #131517}
++html.jo9-embedded body{margin:0;background:#131517;color:#e9e9e5;font:13px/1.6 Inter,"Pretendard","Noto Sans KR",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
++html.jo9-embedded main{max-width:none;margin:0;padding:0 10px 10px 0}
++html.jo9-embedded button,html.jo9-embedded input,html.jo9-embedded textarea,html.jo9-embedded select{font:inherit;border:1px solid #30353a;border-radius:7px;color:#e9e9e5;box-shadow:none}
++html.jo9-embedded button{background:#22262a;padding:8px 12px;cursor:pointer}
++html.jo9-embedded input,html.jo9-embedded textarea,html.jo9-embedded select{background:#131517;padding:9px 11px}
++html.jo9-embedded input[type=checkbox],html.jo9-embedded input[type=radio]{accent-color:#dbb06e}
++html.jo9-embedded button:hover:not(:disabled){background:#2a3035;border-color:#52595e}
++html.jo9-embedded button.primary,html.jo9-embedded button[aria-selected=true],html.jo9-embedded #jo9CatalogTabs button[aria-selected=true],html.jo9-embedded #jo9CatalogTabs button.active{background:#dbb06e;border-color:#dbb06e;color:#131517;box-shadow:none}
++html.jo9-embedded button:disabled{opacity:.4}
++html.jo9-embedded :is(input,textarea,select,button,a):focus-visible{outline:2px solid #dbb06e;outline-offset:2px}
++html.jo9-embedded input::placeholder,html.jo9-embedded textarea::placeholder{color:#727b80}
++html.jo9-embedded input[type=file]::file-selector-button{font:inherit;border:1px solid #40464b;background:#22262a;color:#e9e9e5;border-radius:5px;padding:6px 10px;margin-right:10px}
++html.jo9-embedded a{color:#dbb06e}
++html.jo9-embedded :is(.panel,.project-panel,.review-panel,.sourcework,.sourcework-input,.sourcework-results,.place,.screen-panel,.screen-group,.screen-card,.dropzone){background:#1c1f22;border-color:#30353a;border-radius:10px;box-shadow:none}
++html.jo9-embedded :is(.screen-group-head,.sourcework-title,.placehead){background:#22262a;color:#e9e9e5;border-color:#30353a}
++html.jo9-embedded :is(.small,.muted,.sub,.intro,.screen-meta){color:#969c9f}
++html.jo9-embedded h2{font-size:15px;line-height:1.4}
++html.jo9-embedded h3{font-size:14px}
++html.jo9-embedded table{font-size:12px}
++html.jo9-embedded th{background:#22262a;color:#e9e9e5;border-color:#30353a}
++html.jo9-embedded td{border-color:#30353a}
++html.jo9-embedded [role=tablist]{margin-top:0;padding-top:0;border-color:#30353a}
++html.jo9-embedded [role=tab]{font-size:12px;border-radius:7px}
++html.jo9-embedded::-webkit-scrollbar,html.jo9-embedded *::-webkit-scrollbar{width:7px;height:7px}
++html.jo9-embedded::-webkit-scrollbar-track,html.jo9-embedded *::-webkit-scrollbar-track{background:#131517}
++html.jo9-embedded::-webkit-scrollbar-thumb,html.jo9-embedded *::-webkit-scrollbar-thumb{background:#42484d;border:2px solid #131517;border-radius:9px}
++html.jo9-embedded.jo9-tool-checklist #main>h1,html.jo9-embedded.jo9-tool-db main>header,html.jo9-embedded.jo9-tool-workshop body>header{display:none}
++html.jo9-embedded.jo9-tool-checklist #main{padding:0 12px 12px}
++html.jo9-embedded.jo9-tool-checklist #side{padding-top:0;border-color:#30353a;background:#1c1f22}
++html.jo9-embedded.jo9-tool-checklist #jo9CatalogTabs{margin-top:0}
++html.jo9-embedded.jo9-tool-folder .app-header>div:first-child{display:none}
++html.jo9-embedded.jo9-tool-folder .app-header{max-width:none;justify-content:flex-end;margin:0;padding:0 10px 6px 0;border:0;min-height:0;gap:0}
++html.jo9-embedded.jo9-tool-folder .save-state{padding:0;font-size:10px;background:none}
++html.jo9-embedded.jo9-tool-folder .project-panel{margin-top:0}
++html.jo9-embedded.jo9-tool-schedule .top>div:first-child{display:none}
++html.jo9-embedded.jo9-tool-schedule .top{display:flex;justify-content:flex-end;align-items:center;margin:0 0 8px;padding:0;border:0;background:none;min-height:0}
++html.jo9-embedded.jo9-tool-schedule .savebox{font-size:10px;margin:0;padding:0;background:none;border:0}
++html.jo9-embedded.jo9-tool-schedule :is(.idea-notes,.stat,.task,.phase){background:#1c1f22;border-color:#30353a}
++html.jo9-embedded.jo9-tool-workshop main{padding-top:0}
++html.jo9-embedded.jo9-tool-workshop :is(.eyebrow,footer){display:none}
++html.jo9-embedded.jo9-tool-workshop .screen-panel{margin-top:0}
++html.jo9-embedded.jo9-tool-workshop #drop{background:#17191b;border-color:#444b50}
++html.jo9-embedded.jo9-tool-sound h1{display:none}
++@media(max-width:800px){html.jo9-embedded.jo9-tool-checklist #side{padding:6px 8px}html.jo9-embedded.jo9-tool-checklist #main{padding-top:8px}}
++/* JO9 MOD END EMBEDDED_TOOL_SHELL_20261115 */
++
++/* Host palette wins over the old tools' inline presentation styles. */
++html.jo9-embedded :is(input,textarea,select){background:#131517!important;color:#e9e9e5!important;border-color:#30353a!important}
++html.jo9-embedded button{background:#22262a!important;color:#e9e9e5!important;border-color:#30353a!important}
++html.jo9-embedded button:hover:not(:disabled){background:#2a3035!important}
++html.jo9-embedded button.primary,html.jo9-embedded button[aria-selected=true],html.jo9-embedded #jo9CatalogTabs button[aria-selected=true],html.jo9-embedded #jo9CatalogTabs button.active{background:#dbb06e!important;color:#131517!important;border-color:#dbb06e!important}
++html.jo9-embedded button.danger{background:#412a27!important;color:#f0b9af!important;border-color:#ad7369!important}
++html.jo9-embedded.jo9-tool-checklist :is(#jo9CatalogTabs,#jo9SearchBar,#catalogPicPanel,#grokDesk,#grokSettings){background:#1c1f22!important;color:#e9e9e5!important;border-color:#30353a!important;box-shadow:none!important}
++html.jo9-embedded.jo9-tool-checklist #grokDesk :is(label,p,summary){color:#969c9f!important}
++</style><script>(()=>{const r=document.documentElement,on=new URLSearchParams(location.search).get('workspace')==='1';r.classList.toggle('jo9-embedded',on);for(const c of [...r.classList])if(c.startsWith('jo9-tool-'))r.classList.remove(c);if(on)r.classList.add('jo9-tool-workshop');})();</script><style>
+ :root{color-scheme:dark;--bg:#171a18;--panel:#232924;--line:#414b42;--fg:#eff1e9;--dim:#b4c1b5;--green:#b6d5a6;--gold:#e5c588}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.6 'Malgun Gothic',sans-serif}button,input,select{font:inherit}button,select{cursor:pointer}button{border:1px solid #566653;border-radius:6px;background:#354332;color:var(--fg);padding:9px 14px}button:hover:enabled{background:#475a41}button:disabled{opacity:.4;cursor:not-allowed}button.primary{background:var(--green);color:#172414;font-weight:700;border-color:var(--green)}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--gold);outline-offset:3px}input,select{background:#171e18;color:var(--fg);border:1px solid #51614d;border-radius:5px;padding:7px}input[type=checkbox]{accent-color:var(--green)}input[type=range]{accent-color:var(--green);max-width:180px;padding:0}header,main,footer{max-width:1240px;margin:auto;padding:24px}header{display:flex;justify-content:space-between;align-items:center;padding-top:30px;padding-bottom:16px}.eyebrow{font-size:11px;letter-spacing:2px;color:var(--green)}h1{font-size:29px;margin:5px 0}p{margin:6px 0;color:var(--dim)}h2{font-size:18px;margin:0 0 10px}.badge{border:1px solid var(--line);border-radius:20px;padding:7px 13px;color:var(--green);font-size:12px}.panel{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:20px;margin-bottom:18px}.connect{display:flex;align-items:center;justify-content:space-between;gap:18px}.connect h2{margin:0;font-size:16px}.path{font:12px Consolas,monospace;color:#d9cfb4;overflow-wrap:anywhere}.small{font-size:12px;color:var(--dim)}.drop{position:relative;text-align:center;border:1px dashed #738569;border-radius:10px;padding:30px;background:#242e23;transition:.15s}.drop.hover{border-color:var(--gold);background:#34402e}.drop h2{font-size:22px;margin:0 0 7px}.drop p{margin:6px}.uploadbuttons{display:flex;gap:9px;justify-content:center;margin-top:15px}.hidden{display:none!important}.options{display:flex;gap:20px;flex-wrap:wrap;margin:15px 0;font-size:13px;color:var(--dim)}.options label{display:flex;align-items:center;gap:7px}.toolbar{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:20px 0 12px}.toolbar div{display:flex;gap:9px;flex-wrap:wrap}.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:8px}table{border-collapse:collapse;width:100%;min-width:880px;text-align:left}th{font-size:12px;color:var(--dim);font-weight:500;background:#202820;padding:12px}td{border-top:1px solid var(--line);padding:13px 10px;vertical-align:top}td:first-child{max-width:195px;overflow-wrap:anywhere}td select{width:100%;max-width:315px;font-size:12px}td .small{display:block;max-width:320px;overflow-wrap:anywhere}td button{font-size:12px;padding:5px 8px;margin:4px 3px 0 0}.good{color:var(--green)}.warn{color:var(--gold)}.bad{color:#ffb7a7}.actions{white-space:nowrap}.empty{text-align:center;padding:35px!important;color:var(--dim)}#message{border-left:3px solid var(--green);padding:10px 14px;background:#222b22;min-height:42px;margin:14px 0;overflow-wrap:anywhere}footer{font-size:12px;color:var(--dim);padding-top:0}dialog{background:#202820;color:var(--fg);border:1px solid #728367;border-radius:12px;width:min(1050px,94vw);max-height:92vh;padding:22px}dialog::backdrop{background:#000b}.dialoghead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:15px}.dialoghead h2{margin:0}.compare{display:grid;grid-template-columns:1fr 1fr;gap:18px}.checker{background-color:#182018;background-image:linear-gradient(45deg,#2b362b 25%,transparent 25%),linear-gradient(-45deg,#2b362b 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#2b362b 75%),linear-gradient(-45deg,transparent 75%,#2b362b 75%);background-size:16px 16px;background-position:0 0,0 8px,8px -8px,-8px 0;border:1px solid var(--line);min-height:200px;display:flex;align-items:center;justify-content:center;overflow:hidden}.checker img,.checker canvas{max-width:100%;max-height:410px;object-fit:contain;display:block}.checker canvas{touch-action:none;cursor:grab}.editcontrols{display:flex;flex-wrap:wrap;gap:15px;margin:16px 0;align-items:center}.editcontrols label{display:flex;gap:6px;align-items:center;font-size:13px}.dialogfooter{display:flex;gap:10px;justify-content:flex-end;margin-top:15px}.targets button{display:block;width:100%;text-align:left;margin:5px 0;overflow-wrap:anywhere}.targets{max-height:50vh;overflow:auto}#targetsearch{width:100%;margin-bottom:15px}.historyrow{border-top:1px solid var(--line);padding:13px 0;display:flex;align-items:center;justify-content:space-between;gap:12px}.historyrow small{display:block;color:var(--dim)}.progress{font-size:12px;color:var(--dim)}@media(max-width:740px){header .badge{display:none}header,main,footer{padding:16px}.connect{align-items:flex-start;flex-direction:column}.compare{grid-template-columns:1fr}.editcontrols{gap:8px}.drop{padding:24px 12px}h1{font-size:25px}}
+ .rowpreview{display:block;width:132px;height:96px;object-fit:contain;background:repeating-conic-gradient(#333b32 0% 25%,#20261f 0% 50%) 50%/16px 16px;border:1px solid #566653;border-radius:4px;margin-bottom:9px}.rowpreview.missing{display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--dim)}td:first-child strong{display:block;overflow-wrap:anywhere}.place{border:1px solid var(--line);border-radius:8px;margin:16px 0;overflow:hidden}.placehead{padding:12px 16px;background:#2b3529;display:flex;align-items:center;gap:14px;flex-wrap:wrap}.placehead button{margin-left:auto}.placebody{display:grid;grid-template-columns:170px minmax(0,1fr)}.sources{padding:12px;border-right:1px solid var(--line)}.sourcebox{margin-bottom:16px}.sourcebox>img{width:140px;height:120px;object-fit:contain;display:block;background:#151b14}.sourcebox strong{font-size:12px;overflow-wrap:anywhere;display:block;margin:6px 0}.sourcebox input{width:100%}.sourcebox button{padding:4px 8px;font-size:12px;margin:4px 0}.rolebuttons{display:flex;gap:5px}.rolebuttons .active{background:var(--green);color:#172414}.sizegroups{min-width:0}.sizegroup{padding:14px;border-bottom:1px solid var(--line)}.sizehead{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:10px}.targetstrip{display:flex;gap:10px;overflow-x:auto;padding-bottom:8px}.targetcard{flex:0 0 175px;background:#293127;border-radius:5px;padding:9px;min-width:0}.targetcard strong{font-size:12px;overflow-wrap:anywhere}.targetpath{overflow-wrap:anywhere;margin:5px 0}.targetcard button{font-size:12px;padding:5px 8px;margin-top:6px}.pairpreview{display:flex;align-items:center;justify-content:space-between;gap:4px;height:85px;margin-bottom:7px}.pairpreview img{width:68px;height:78px;object-fit:contain;background:#171e17}.pending{font-size:12px;color:var(--dim)}.setwarning{padding:12px;border-left:3px solid var(--gold);background:#343125;color:#f0dab2}@media(max-width:700px){.placebody{grid-template-columns:1fr}.sources{display:flex;gap:12px;flex-wrap:wrap;border-right:0;border-bottom:1px solid var(--line)}.sourcebox{width:145px}.sources>small{width:100%}} .crop-layout{display:grid;grid-template-columns:minmax(0,1fr) 185px;gap:18px}.crop-results{background:#171e18;padding:12px}.crop-results canvas{display:block;max-width:100%;image-rendering:auto}.crop-results p{margin:10px 0}#cropdialog{width:min(1080px,96vw)}@media(max-width:650px){.crop-layout{grid-template-columns:1fr}.crop-results{display:flex;flex-wrap:wrap;gap:10px}} .screen-card.focused{box-shadow:0 0 0 1px #d7c383 inset}.screen-card.focused .screen-file{color:#f2d79a}
+--- /dev/null
+
++++ b/tools/modding-hub/embedded-tools.css
+
+@@ -0,0 +1,57 @@
+
++/* JO9 MOD START EMBEDDED_TOOL_SHELL_20261115 */
++html.jo9-embedded{color-scheme:dark;--bg:#131517;--page:#131517;--panel:#1c1f22;--panel2:#22262a;--raised:#22262a;--card:#1c1f22;--line:#30353a;--border:#30353a;--text:#e9e9e5;--fg:#e9e9e5;--muted:#969c9f;--mute:#969c9f;--dim:#969c9f;--amber:#dbb06e;--gold:#dbb06e;--green:#96bea4;--original:#96bea4;--comparison:#9baed0;--defer:#dbb06e;--danger:#df9e91;--hl:#302a21;font-family:Inter,"Pretendard","Noto Sans KR",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
++html.jo9-embedded,html.jo9-embedded body{min-height:0;scrollbar-width:thin;scrollbar-color:#42484d #131517}
++html.jo9-embedded body{margin:0;background:#131517;color:#e9e9e5;font:13px/1.6 Inter,"Pretendard","Noto Sans KR",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
++html.jo9-embedded main{max-width:none;margin:0;padding:0 10px 10px 0}
++html.jo9-embedded button,html.jo9-embedded input,html.jo9-embedded textarea,html.jo9-embedded select{font:inherit;border:1px solid #30353a;border-radius:7px;color:#e9e9e5;box-shadow:none}
++html.jo9-embedded button{background:#22262a;padding:8px 12px;cursor:pointer}
++html.jo9-embedded input,html.jo9-embedded textarea,html.jo9-embedded select{background:#131517;padding:9px 11px}
++html.jo9-embedded input[type=checkbox],html.jo9-embedded input[type=radio]{accent-color:#dbb06e}
++html.jo9-embedded button:hover:not(:disabled){background:#2a3035;border-color:#52595e}
++html.jo9-embedded button.primary,html.jo9-embedded button[aria-selected=true],html.jo9-embedded #jo9CatalogTabs button[aria-selected=true],html.jo9-embedded #jo9CatalogTabs button.active{background:#dbb06e;border-color:#dbb06e;color:#131517;box-shadow:none}
++html.jo9-embedded button:disabled{opacity:.4}
++html.jo9-embedded :is(input,textarea,select,button,a):focus-visible{outline:2px solid #dbb06e;outline-offset:2px}
++html.jo9-embedded input::placeholder,html.jo9-embedded textarea::placeholder{color:#727b80}
++html.jo9-embedded input[type=file]::file-selector-button{font:inherit;border:1px solid #40464b;background:#22262a;color:#e9e9e5;border-radius:5px;padding:6px 10px;margin-right:10px}
++html.jo9-embedded a{color:#dbb06e}
++html.jo9-embedded :is(.panel,.project-panel,.review-panel,.sourcework,.sourcework-input,.sourcework-results,.place,.screen-panel,.screen-group,.screen-card,.dropzone){background:#1c1f22;border-color:#30353a;border-radius:10px;box-shadow:none}
++html.jo9-embedded :is(.screen-group-head,.sourcework-title,.placehead){background:#22262a;color:#e9e9e5;border-color:#30353a}
++html.jo9-embedded :is(.small,.muted,.sub,.intro,.screen-meta){color:#969c9f}
++html.jo9-embedded h2{font-size:15px;line-height:1.4}
++html.jo9-embedded h3{font-size:14px}
++html.jo9-embedded table{font-size:12px}
++html.jo9-embedded th{background:#22262a;color:#e9e9e5;border-color:#30353a}
++html.jo9-embedded td{border-color:#30353a}
++html.jo9-embedded [role=tablist]{margin-top:0;padding-top:0;border-color:#30353a}
++html.jo9-embedded [role=tab]{font-size:12px;border-radius:7px}
++html.jo9-embedded::-webkit-scrollbar,html.jo9-embedded *::-webkit-scrollbar{width:7px;height:7px}
++html.jo9-embedded::-webkit-scrollbar-track,html.jo9-embedded *::-webkit-scrollbar-track{background:#131517}
++html.jo9-embedded::-webkit-scrollbar-thumb,html.jo9-embedded *::-webkit-scrollbar-thumb{background:#42484d;border:2px solid #131517;border-radius:9px}
++html.jo9-embedded.jo9-tool-checklist #main>h1,html.jo9-embedded.jo9-tool-db main>header,html.jo9-embedded.jo9-tool-workshop body>header{display:none}
++html.jo9-embedded.jo9-tool-checklist #main{padding:0 12px 12px}
++html.jo9-embedded.jo9-tool-checklist #side{padding-top:0;border-color:#30353a;background:#1c1f22}
++html.jo9-embedded.jo9-tool-checklist #jo9CatalogTabs{margin-top:0}
++html.jo9-embedded.jo9-tool-folder .app-header>div:first-child{display:none}
++html.jo9-embedded.jo9-tool-folder .app-header{max-width:none;justify-content:flex-end;margin:0;padding:0 10px 6px 0;border:0;min-height:0;gap:0}
++html.jo9-embedded.jo9-tool-folder .save-state{padding:0;font-size:10px;background:none}
++html.jo9-embedded.jo9-tool-folder .project-panel{margin-top:0}
++html.jo9-embedded.jo9-tool-schedule .top>div:first-child{display:none}
++html.jo9-embedded.jo9-tool-schedule .top{display:flex;justify-content:flex-end;align-items:center;margin:0 0 8px;padding:0;border:0;background:none;min-height:0}
++html.jo9-embedded.jo9-tool-schedule .savebox{font-size:10px;margin:0;padding:0;background:none;border:0}
++html.jo9-embedded.jo9-tool-schedule :is(.idea-notes,.stat,.task,.phase){background:#1c1f22;border-color:#30353a}
++html.jo9-embedded.jo9-tool-workshop main{padding-top:0}
++html.jo9-embedded.jo9-tool-workshop :is(.eyebrow,footer){display:none}
++html.jo9-embedded.jo9-tool-workshop .screen-panel{margin-top:0}
++html.jo9-embedded.jo9-tool-workshop #drop{background:#17191b;border-color:#444b50}
++html.jo9-embedded.jo9-tool-sound h1{display:none}
++@media(max-width:800px){html.jo9-embedded.jo9-tool-checklist #side{padding:6px 8px}html.jo9-embedded.jo9-tool-checklist #main{padding-top:8px}}
++/* JO9 MOD END EMBEDDED_TOOL_SHELL_20261115 */
++
++/* Host palette wins over the old tools' inline presentation styles. */
++html.jo9-embedded :is(input,textarea,select){background:#131517!important;color:#e9e9e5!important;border-color:#30353a!important}
++html.jo9-embedded button{background:#22262a!important;color:#e9e9e5!important;border-color:#30353a!important}
++html.jo9-embedded button:hover:not(:disabled){background:#2a3035!important}
++html.jo9-embedded button.primary,html.jo9-embedded button[aria-selected=true],html.jo9-embedded #jo9CatalogTabs button[aria-selected=true],html.jo9-embedded #jo9CatalogTabs button.active{background:#dbb06e!important;color:#131517!important;border-color:#dbb06e!important}
++html.jo9-embedded button.danger{background:#412a27!important;color:#f0b9af!important;border-color:#ad7369!important}
++html.jo9-embedded.jo9-tool-checklist :is(#jo9CatalogTabs,#jo9SearchBar,#catalogPicPanel,#grokDesk,#grokSettings){background:#1c1f22!important;color:#e9e9e5!important;border-color:#30353a!important;box-shadow:none!important}
++html.jo9-embedded.jo9-tool-checklist #grokDesk :is(label,p,summary){color:#969c9f!important}
+--- /dev/null
+
++++ b/tools/modding-hub/update-embedded-skins.py
+
+@@ -0,0 +1,19 @@
+
++"""Copy the shared embedded-only skin into existing local tool entry pages."""
++from pathlib import Path
++import re
++
++repo=Path(__file__).resolve().parents[2]
++skin=(repo/'tools/modding-hub/embedded-tools.css').read_text('utf-8-sig')
++for rel in ['tools/game-reference/jo9-reference.html','tools/image-workshop/place/JO9_Place_Workshop.html']:
++    p=repo/rel
++    text=p.read_text('utf-8-sig')
++    text,n=re.subn(r'(<!-- JO9_EMBEDDED_TOOL_SHELL_20261115 --><style>).*?(</style><script>)',lambda m:m[1]+skin+m[2],text,count=1,flags=re.S)
++    if n!=1:raise RuntimeError('Missing skin insertion point: '+rel)
++    p.write_text(text,'utf-8')
++p=repo/'tools/image-folder-review/static/style.css'
++text=p.read_text('utf-8-sig')
++marker='/* JO9 MOD START EMBEDDED_TOOL_SHELL_20261115 */'
++if text.count(marker)!=1:raise RuntimeError('Missing folder-review skin insertion point')
++p.write_text(text[:text.index(marker)]+skin,'utf-8')
++(repo/'tools/text-workshop/workspace-shell.css').write_text(skin,'utf-8')
++print('Updated embedded-only tool skins from the shared stylesheet.')
+--- /dev/null
+
++++ b/tools/text-workshop/workspace-shell.css
+
+@@ -0,0 +1,57 @@
+
++/* JO9 MOD START EMBEDDED_TOOL_SHELL_20261115 */
++html.jo9-embedded{color-scheme:dark;--bg:#131517;--page:#131517;--panel:#1c1f22;--panel2:#22262a;--raised:#22262a;--card:#1c1f22;--line:#30353a;--border:#30353a;--text:#e9e9e5;--fg:#e9e9e5;--muted:#969c9f;--mute:#969c9f;--dim:#969c9f;--amber:#dbb06e;--gold:#dbb06e;--green:#96bea4;--original:#96bea4;--comparison:#9baed0;--defer:#dbb06e;--danger:#df9e91;--hl:#302a21;font-family:Inter,"Pretendard","Noto Sans KR",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
++html.jo9-embedded,html.jo9-embedded body{min-height:0;scrollbar-width:thin;scrollbar-color:#42484d #131517}
++html.jo9-embedded body{margin:0;background:#131517;color:#e9e9e5;font:13px/1.6 Inter,"Pretendard","Noto Sans KR",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
++html.jo9-embedded main{max-width:none;margin:0;padding:0 10px 10px 0}
++html.jo9-embedded button,html.jo9-embedded input,html.jo9-embedded textarea,html.jo9-embedded select{font:inherit;border:1px solid #30353a;border-radius:7px;color:#e9e9e5;box-shadow:none}
++html.jo9-embedded button{background:#22262a;padding:8px 12px;cursor:pointer}
++html.jo9-embedded input,html.jo9-embedded textarea,html.jo9-embedded select{background:#131517;padding:9px 11px}
++html.jo9-embedded input[type=checkbox],html.jo9-embedded input[type=radio]{accent-color:#dbb06e}
++html.jo9-embedded button:hover:not(:disabled){background:#2a3035;border-color:#52595e}
++html.jo9-embedded button.primary,html.jo9-embedded button[aria-selected=true],html.jo9-embedded #jo9CatalogTabs button[aria-selected=true],html.jo9-embedded #jo9CatalogTabs button.active{background:#dbb06e;border-color:#dbb06e;color:#131517;box-shadow:none}
++html.jo9-embedded button:disabled{opacity:.4}
++html.jo9-embedded :is(input,textarea,select,button,a):focus-visible{outline:2px solid #dbb06e;outline-offset:2px}
++html.jo9-embedded input::placeholder,html.jo9-embedded textarea::placeholder{color:#727b80}
++html.jo9-embedded input[type=file]::file-selector-button{font:inherit;border:1px solid #40464b;background:#22262a;color:#e9e9e5;border-radius:5px;padding:6px 10px;margin-right:10px}
++html.jo9-embedded a{color:#dbb06e}
++html.jo9-embedded :is(.panel,.project-panel,.review-panel,.sourcework,.sourcework-input,.sourcework-results,.place,.screen-panel,.screen-group,.screen-card,.dropzone){background:#1c1f22;border-color:#30353a;border-radius:10px;box-shadow:none}
++html.jo9-embedded :is(.screen-group-head,.sourcework-title,.placehead){background:#22262a;color:#e9e9e5;border-color:#30353a}
++html.jo9-embedded :is(.small,.muted,.sub,.intro,.screen-meta){color:#969c9f}
++html.jo9-embedded h2{font-size:15px;line-height:1.4}
++html.jo9-embedded h3{font-size:14px}
++html.jo9-embedded table{font-size:12px}
++html.jo9-embedded th{background:#22262a;color:#e9e9e5;border-color:#30353a}
++html.jo9-embedded td{border-color:#30353a}
++html.jo9-embedded [role=tablist]{margin-top:0;padding-top:0;border-color:#30353a}
++html.jo9-embedded [role=tab]{font-size:12px;border-radius:7px}
++html.jo9-embedded::-webkit-scrollbar,html.jo9-embedded *::-webkit-scrollbar{width:7px;height:7px}
++html.jo9-embedded::-webkit-scrollbar-track,html.jo9-embedded *::-webkit-scrollbar-track{background:#131517}
++html.jo9-embedded::-webkit-scrollbar-thumb,html.jo9-embedded *::-webkit-scrollbar-thumb{background:#42484d;border:2px solid #131517;border-radius:9px}
++html.jo9-embedded.jo9-tool-checklist #main>h1,html.jo9-embedded.jo9-tool-db main>header,html.jo9-embedded.jo9-tool-workshop body>header{display:none}
++html.jo9-embedded.jo9-tool-checklist #main{padding:0 12px 12px}
++html.jo9-embedded.jo9-tool-checklist #side{padding-top:0;border-color:#30353a;background:#1c1f22}
++html.jo9-embedded.jo9-tool-checklist #jo9CatalogTabs{margin-top:0}
++html.jo9-embedded.jo9-tool-folder .app-header>div:first-child{display:none}
++html.jo9-embedded.jo9-tool-folder .app-header{max-width:none;justify-content:flex-end;margin:0;padding:0 10px 6px 0;border:0;min-height:0;gap:0}
++html.jo9-embedded.jo9-tool-folder .save-state{padding:0;font-size:10px;background:none}
++html.jo9-embedded.jo9-tool-folder .project-panel{margin-top:0}
++html.jo9-embedded.jo9-tool-schedule .top>div:first-child{display:none}
++html.jo9-embedded.jo9-tool-schedule .top{display:flex;justify-content:flex-end;align-items:center;margin:0 0 8px;padding:0;border:0;background:none;min-height:0}
++html.jo9-embedded.jo9-tool-schedule .savebox{font-size:10px;margin:0;padding:0;background:none;border:0}
++html.jo9-embedded.jo9-tool-schedule :is(.idea-notes,.stat,.task,.phase){background:#1c1f22;border-color:#30353a}
++html.jo9-embedded.jo9-tool-workshop main{padding-top:0}
++html.jo9-embedded.jo9-tool-workshop :is(.eyebrow,footer){display:none}
++html.jo9-embedded.jo9-tool-workshop .screen-panel{margin-top:0}
++html.jo9-embedded.jo9-tool-workshop #drop{background:#17191b;border-color:#444b50}
++html.jo9-embedded.jo9-tool-sound h1{display:none}
++@media(max-width:800px){html.jo9-embedded.jo9-tool-checklist #side{padding:6px 8px}html.jo9-embedded.jo9-tool-checklist #main{padding-top:8px}}
++/* JO9 MOD END EMBEDDED_TOOL_SHELL_20261115 */
++
++/* Host palette wins over the old tools' inline presentation styles. */
++html.jo9-embedded :is(input,textarea,select){background:#131517!important;color:#e9e9e5!important;border-color:#30353a!important}
++html.jo9-embedded button{background:#22262a!important;color:#e9e9e5!important;border-color:#30353a!important}
++html.jo9-embedded button:hover:not(:disabled){background:#2a3035!important}
++html.jo9-embedded button.primary,html.jo9-embedded button[aria-selected=true],html.jo9-embedded #jo9CatalogTabs button[aria-selected=true],html.jo9-embedded #jo9CatalogTabs button.active{background:#dbb06e!important;color:#131517!important;border-color:#dbb06e!important}
++html.jo9-embedded button.danger{background:#412a27!important;color:#f0b9af!important;border-color:#ad7369!important}
++html.jo9-embedded.jo9-tool-checklist :is(#jo9CatalogTabs,#jo9SearchBar,#catalogPicPanel,#grokDesk,#grokSettings){background:#1c1f22!important;color:#e9e9e5!important;border-color:#30353a!important;box-shadow:none!important}
++html.jo9-embedded.jo9-tool-checklist #grokDesk :is(label,p,summary){color:#969c9f!important}
+--- /dev/null
+
++++ b/tools/text-workshop/embedded-shell.cjs
+
+@@ -0,0 +1,13 @@
+
++'use strict';
++const fs=require('node:fs'),path=require('node:path');
++function page(html,kind){
++ if(!/^[a-z]+$/.test(kind))throw Error('Invalid embedded tool kind');
++ if(html.includes('JO9_EMBEDDED_TOOL_SHELL_20261115'))return html;
++ const css=fs.readFileSync(path.join(__dirname,'workspace-shell.css'),'utf8');
++ const boot=`(()=>{const r=document.documentElement,on=new URLSearchParams(location.search).get('workspace')==='1';r.classList.toggle('jo9-embedded',on);for(const c of [...r.classList])if(c.startsWith('jo9-tool-'))r.classList.remove(c);if(on)r.classList.add('jo9-tool-${kind}');})();`;
++ const insert='<!-- JO9_EMBEDDED_TOOL_SHELL_20261115 --><style>'+css+'</style><script>'+boot+'</script>';
++ if(/<\/head>/i.test(html))return html.replace(/<\/head>/i,insert+'</head>');
++ const at=html.search(/<style\b|<body\b|<main\b|<header\b/i);
++ return at<0?html+insert:html.slice(0,at)+insert+html.slice(at);
++}
++module.exports={page};

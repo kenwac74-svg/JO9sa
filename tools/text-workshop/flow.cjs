@@ -9,6 +9,7 @@ function binding(body,e){
 }
 function conditions(a,offset){return a.blocks.filter(b=>b.kind==='if'&&offset>=b.start&&offset<b.end).map(b=>b.condition);}
 function build(doc,entries,helpers){
+  const pages=require('./page-flow.cjs').build(doc,entries,helpers);
   const byLoc=new Map(),memo=new Map(),usageMemo=new Map();
   for(const e of entries){if(!byLoc.has(e.location))byLoc.set(e.location,[]);byLoc.get(e.location).push(e);}
   function data(loc){if(!memo.has(loc.name)){const body=core.shift(doc.lines[loc.body],5);memo.set(loc.name,{body,a:helpers.analyse(loc.name,body),entries:byLoc.get(loc.name)||[]});}return memo.get(loc.name);}
@@ -48,6 +49,7 @@ function build(doc,entries,helpers){
   function extend(base,entry,usageId){
     if(entry.field!=='body')return base;
     const loc=doc.locations[entry.locationIndex],d=data(loc),bind=binding(d.body,entry);
+    if(!bind){const page=pages.extend(base,entry);if(page)return page;}
     if(!bind)return {...base,flow:{kind:'source',stages:base.texts.map((e,i)=>({number:i+1,variants:[{entry:e,conditions:conditions(d.a,e.start)}]})),selected:base.ordinal}};
     // $text is reused by every event in the same location. Its assignments
     // belong to the selected event, not to one global dialogue family.

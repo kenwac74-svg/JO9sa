@@ -1,0 +1,33 @@
+{
+  "id": "2026-11-13_r03e_leshiy_stamina_minimum",
+  "status": "APPROVED",
+  "description": "R03-5 사용자 승인: 다른 고객의 기존 동작 유지,레시만 체력4이상 실제 납품 조건 연결. 알려진 옛 요구 비교식만 갱신. 감수성 상한/다른 기술/평가/가격/인물/진행 보존.",
+  "before_sha256": "1efab505a81b43dced363335b265f5f9399570ed07ac7b59a1e979cfe4ac059f",
+  "after_sha256": "7b4c58faba105d70eae09ea12f3aa7307d3a044081210f3cdb007212ad5f5b58",
+  "edits": [
+    {
+      "location": "#npc_base",
+      "field": "body",
+      "old": "$buyer_demand['leshiy'] = {\r\ndemand['min_stamina'] > 3\r\ndemand['unknown'] = 1\r\ndemand['min_sensitivity'] = 1\r\n}",
+      "new": "$buyer_demand['leshiy'] = {\r\ndemand['min_stamina'] = 4\r\ndemand['unknown'] = 1\r\ndemand['min_sensitivity'] = 1\r\n}",
+      "count": 1,
+      "patchId": "R03E_LESHIY_STAMINA_MINIMUM_20261113"
+    },
+    {
+      "location": "slave_sell_chek",
+      "field": "body",
+      "old": "if slave['wounds'] > 0 or slave['energy'] < 0 or slave['stamina'] < 2: sl_txt = 104 & exit\r\n",
+      "new": "if slave['wounds'] > 0 or slave['energy'] < 0 or slave['stamina'] < 2: sl_txt = 104 & exit\r\n! JO9 MOD START R03E_LESHIY_STAMINA_MINIMUM_20261113\r\n! User-approved Leshiy-only requirement; preserve all other customer rules.\r\nif $lcase($npc_id) = 'leshiy' and demand['min_stamina'] > 0 and slave['stamina'] < demand['min_stamina']: sl_txt = 104 & exit\r\n! JO9 MOD END R03E_LESHIY_STAMINA_MINIMUM_20261113\r\n",
+      "count": 1,
+      "patchId": "R03E_LESHIY_STAMINA_MINIMUM_20261113"
+    },
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "! JO9 MOD START R03D_LESHIY_SENSITIVITY_CACHE_20261113\r\n",
+      "new": "! JO9 MOD START R03E_LESHIY_STAMINA_CACHE_20261113\r\n! Replace only the known legacy Leshiy demand; preserve custom values and notes.\r\n$buyer_demand['leshiy'] = replace($buyer_demand['leshiy'], 'demand[''min_stamina''] > 3', 'demand[''min_stamina''] = 4')\r\n! JO9 MOD END R03E_LESHIY_STAMINA_CACHE_20261113\r\n! JO9 MOD START R03D_LESHIY_SENSITIVITY_CACHE_20261113\r\n",
+      "count": 1,
+      "patchId": "R03E_LESHIY_STAMINA_MINIMUM_20261113"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+'use strict';
+const fs=require('fs'),z=require('zlib'),a=require('assert/strict');
+const R='G:/somi/JO9sa',G='G:/somi/Jack O Nine Tails v2.4_work/game',D=R+'/records/release-r03c-artemia-trait-20261113',T='G:/Codex/tmp/release-r03c-artemia-trait-20261113';
+const c=require(R+'/tools/text-workshop/core.cjs'),qa=require(R+'/tools/qa/release-check.cjs'),sv=require(R+'/tools/qa/save-codec.cjs');
+const rd=p=>JSON.parse(fs.readFileSync(p,'utf8').replace(/^\uFEFF/,'')),wr=(p,x)=>fs.writeFileSync(p,JSON.stringify(x,null,2)+'\n'),nl=s=>s.replace(/\r?\n/g,'\r\n'),q=s=>"'"+s.replaceAll("'","''")+"'",body=(d,n)=>c.shift(d.lines[d.locations.find(l=>l.name===n).body],5),put=(d,n,s)=>{d.lines[d.locations.find(l=>l.name===n).body]=c.shift(nl(s),-5);};
+if(require.main===module&&process.argv[2]==='prepare'){
+ const raw=fs.readFileSync(G+'/jack.qsp');a.equal(c.hash(raw),'91e77edf089f2f6ba9caaacc310dbe419280570ffe1e3a3e8b37c186b3bf1c99');a(raw.equals(fs.readFileSync(R+'/assets/runtime/2.4.1/jack.qsp')));a.equal(rd(R+'/assets/runtime-source-2.4.1.json').sourceQspSha256,c.hash(raw));qa.inspectWorld(raw);a(c.serialize(c.parse(raw)).equals(raw));
+ fs.mkdirSync(D,{recursive:true});fs.mkdirSync(T+'/native',{recursive:true});fs.mkdirSync(T+'/mods',{recursive:true});a(!fs.existsSync(D+'/baseline.qsp.gz'));fs.writeFileSync(D+'/baseline.qsp.gz',z.gzipSync(raw));fs.writeFileSync(D+'/manifest.before.json.gz',z.gzipSync(fs.readFileSync(R+'/assets/runtime-source-2.4.1.json')));
+ fs.writeFileSync(D+'/PLAN_KO.md',`# R03-3 아르테미아 특성 요구 연결\n\n2026-11-13 사용자 승인: 기존 요구 최저값1 이상으로 연결해 색정광·정액 중독을 모두 허용한다. 실제 slave_sell_chek는 해당 요구를 읽지 않는다. 설정값이 양수일 때만 보유값과 비교한다. 발견 상태를 추가 조건으로 삼지 않는다.\n\n수정 범위는 기존 납품 함수 한 본문이다. 기존 #npc_base 요구 정의·외모5·기술4/5·평가등급8·가격·캐시·영구 인물 필드·거래/보상/진행은 바꾸지 않는다. 완료 거래를 소급 취소하지 않는다. Full·음원·커밋푸시·마이그레이션 구현은 제외한다.\n\n검증 순서: 성인 합성 인물의 실제 납품 함수에서 -1/0/1/2 및 발견0/2 경계의 RED → 한 곳 수정 → 같은 경계, 외모/기술 거절 유지, 요구 없는 실제 고객(아주라) 거래 및 가격/인물/재산 보존 → 공식 재생/멱등/역검증·구조 → WORK·소스·원장·체크리스트 → 재생성 가능 임시 사본 정리. 실제 개인 SAV·화면·최종 전체 출고 검증은 별도다.\n`);
+ const p=R+'/records/release-prep-20261113/checklist.json',s=rd(p),e=s.items.find(x=>x.id==='R03');e.status='진행 중';e.notes='R03-1·R03-2 완료. R03-3 특성 요구1이상 사용자 승인, 실제 납품 검사 연결 검증 중.';s.history.push({date:'2026-11-13',item:'R03-3',decision:'최저1 이상 연결: 색정광·정액 중독 모두 허용 승인'});wr(p,s);console.log(JSON.stringify({before:c.hash(raw),D,T}));
+}
+module.exports={R,G,D,T,c,qa,sv,rd,wr,nl,q,body,put};

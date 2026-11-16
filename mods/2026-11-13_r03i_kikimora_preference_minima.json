@@ -1,0 +1,25 @@
+{
+  "id": "2026-11-13_r03i_kikimora_preference_minima",
+  "status": "APPROVED",
+  "description": "R03-9 사용자 승인: 키키모라 선호8종을 기존 부등호 뜻대로 최저4/5로 저장하고 알려진 옛 선호만 갱신. 외모4/다른 요구/분류/대사/가격/인물/진행 보존.",
+  "before_sha256": "081e888dc651332c5683a24cd0f6366c2d1f2751b30e9f406f4428427a5230a1",
+  "after_sha256": "24614a24b457fc2bc21f93397ef754d672b48a42a49a410838985c6650ac501f",
+  "edits": [
+    {
+      "location": "#npc_base",
+      "field": "body",
+      "old": "$npc_preferences['kikimora'] = {\r\nstat_importance['sensitivity'] > 3\r\nstat_importance['temper'] > 3\r\nstat_importance['expression'] > 3\r\nstat_importance['music'] > 3\r\nstat_importance['oral'] > 4\r\nstat_importance['petting'] > 4\r\nstat_importance['roleplay'] > 3\r\nstat_importance['fetishism'] > 4\r\n}",
+      "new": "$npc_preferences['kikimora'] = {\r\nstat_importance['sensitivity'] = 4\r\nstat_importance['temper'] = 4\r\nstat_importance['expression'] = 4\r\nstat_importance['music'] = 4\r\nstat_importance['oral'] = 5\r\nstat_importance['petting'] = 5\r\nstat_importance['roleplay'] = 4\r\nstat_importance['fetishism'] = 5\r\n}",
+      "count": 1,
+      "patchId": "R03I_KIKIMORA_PREFERENCES_20261113"
+    },
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "! JO9 MOD START R03H_KIKIMORA_BEAUTY_CACHE_20261113\r\n",
+      "new": "! JO9 MOD START R03I_KIKIMORA_PREFERENCES_CACHE_20261113\r\n! Replace only known old preference expressions; preserve custom rules and notes.\r\n$npc_preferences['kikimora'] = replace($npc_preferences['kikimora'], 'stat_importance[''sensitivity''] > 3', 'stat_importance[''sensitivity''] = 4')\r\n$npc_preferences['kikimora'] = replace($npc_preferences['kikimora'], 'stat_importance[''temper''] > 3', 'stat_importance[''temper''] = 4')\r\n$npc_preferences['kikimora'] = replace($npc_preferences['kikimora'], 'stat_importance[''expression''] > 3', 'stat_importance[''expression''] = 4')\r\n$npc_preferences['kikimora'] = replace($npc_preferences['kikimora'], 'stat_importance[''music''] > 3', 'stat_importance[''music''] = 4')\r\n$npc_preferences['kikimora'] = replace($npc_preferences['kikimora'], 'stat_importance[''oral''] > 4', 'stat_importance[''oral''] = 5')\r\n$npc_preferences['kikimora'] = replace($npc_preferences['kikimora'], 'stat_importance[''petting''] > 4', 'stat_importance[''petting''] = 5')\r\n$npc_preferences['kikimora'] = replace($npc_preferences['kikimora'], 'stat_importance[''roleplay''] > 3', 'stat_importance[''roleplay''] = 4')\r\n$npc_preferences['kikimora'] = replace($npc_preferences['kikimora'], 'stat_importance[''fetishism''] > 4', 'stat_importance[''fetishism''] = 5')\r\n! JO9 MOD END R03I_KIKIMORA_PREFERENCES_CACHE_20261113\r\n! JO9 MOD START R03H_KIKIMORA_BEAUTY_CACHE_20261113\r\n",
+      "count": 1,
+      "patchId": "R03I_KIKIMORA_PREFERENCES_20261113"
+    }
+  ]
+}

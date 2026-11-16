@@ -1,0 +1,17 @@
+{
+  "id": "2026-11-15_mercy_salon_restore",
+  "status": "APPROVED",
+  "approval": "User approved restore of salon/outfit/condition allure with additive current Mercy, rebuild Patch1 only; no full package.",
+  "before_sha256": "60c7addc1238ecfe44249b57125ceb60a1731d0b0f19d83983d8f5e86f2fcb9e",
+  "after_sha256": "f2bb72249a53fd491ae68f27a9caa78f56702a129bcdb5fee002921b223c229a",
+  "edits": [
+    {
+      "location": "jo9_mercy_allure",
+      "field": "body",
+      "old": "! JO9 MOD START MERCY_ALLURE_20261113_HELPER\r\nif $args[0] = 'help':\r\n $result = '[매력 TIPS]<br>&nbsp;매력은 현재의 자비로운 평판에 따라 달라집니다. 자비 수치가 높아지면 등급이 오르고, 낮아지면 등급도 내려갑니다.<br>매력은 노예의 반응과 대인 거래에 영향을 줍니다.'\r\n exit\r\nend\r\nlocal jo9_mercy_points2 = 2*jo9_cruel_mercy + jo9_cruel_mercy_half\r\nresult = 0\r\nif jo9_mercy_points2 >= 10: result = 1\r\nif jo9_mercy_points2 >= 30: result = 2\r\nif jo9_mercy_points2 >= 50: result = 3\r\nif jo9_mercy_points2 >= 80: result = 4\r\nif jo9_mercy_points2 >= 120: result = 5\r\n! JO9 MOD END MERCY_ALLURE_20261113_HELPER\r\n",
+      "new": "! JO9 MOD START MERCY_ALLURE_20261113_HELPER\r\n! JO9 MOD START MERCY_SALON_RESTORE_20261115\r\nif $args[0] = 'help':\r\n $result = '[매력 TIPS]<br>&nbsp;매력은 의상·청결·행동력·단장·머리 손질·힘·기분에 따라 달라집니다. 미용실 관리도 반영됩니다.<br>현재 자비 수치에 따라 추가 보정을 받으며, 자비가 줄면 보정도 줄어듭니다. 최종 매력은 F~S 범위입니다.'\r\n exit\r\nend\r\nlocal jo9_mercy_points2 = 2*jo9_cruel_mercy + jo9_cruel_mercy_half\r\nlocal jo9_mercy_bonus = 0\r\nif jo9_mercy_points2 >= 10: jo9_mercy_bonus = 1\r\nif jo9_mercy_points2 >= 30: jo9_mercy_bonus = 2\r\nif jo9_mercy_points2 >= 50: jo9_mercy_bonus = 3\r\nif jo9_mercy_points2 >= 80: jo9_mercy_bonus = 4\r\nif jo9_mercy_points2 >= 120: jo9_mercy_bonus = 5\r\nlocal jo9_allure_base = 2 + style_modifer[$master_cloth] - max(0, master_hygiene - 2)\r\nif master_hygiene = 0: jo9_allure_base += 1\r\nif master_energy > 0: jo9_allure_base += 1\r\nif master_energy < 0: jo9_allure_base -= 1\r\nif master_visage > 0: jo9_allure_base += 1\r\nif master_visage = 0: jo9_allure_base -= 1\r\nif master_haircut > 0: jo9_allure_base += 1\r\nif master_haircut = 0: jo9_allure_base -= 1\r\nif master_str > 3: jo9_allure_base += 1\r\nif master_str < 3: jo9_allure_base -= 1\r\nif master_mood > 0: jo9_allure_base += 1\r\nif master_mood < 0: jo9_allure_base -= 1\r\nif jo9_allure_base > 5: jo9_allure_base = 5\r\nif jo9_allure_base < 0: jo9_allure_base = 0\r\nresult = max(0, min(5, jo9_allure_base + jo9_mercy_bonus))\r\n! JO9 MOD END MERCY_SALON_RESTORE_20261115\r\n! JO9 MOD END MERCY_ALLURE_20261113_HELPER\r\n",
+      "count": 1,
+      "patchId": "MERCY_SALON_RESTORE_20261115"
+    }
+  ]
+}

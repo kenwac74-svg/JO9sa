@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>JO9 대사 편집실</title><link rel="stylesheet" href="workshop.css"></head><body>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>JO9 대사 편집실</title><link rel="stylesheet" href="workshop.css"><link rel="stylesheet" href="workshop-shell.css"><script>if(new URLSearchParams(location.search).get("workspace")==="1")document.documentElement.classList.add("workspace-embedded");</script></head><body>
 <!-- JO9 MOD START WORKSHOP_NATIVE_LAYOUT_20261108 -->
 <div id="workshopApp"><div id="workshopScroll"><main><h1>JO9 대사 편집실</h1><p>대사를 찾아 각본으로 저장하거나 수정합니다. 각색 요청은 전송 버튼을 누를 때만 실행하며, 승인한 수정문을 현재 QSP에 저장합니다.</p><div id="state" class="muted">게임 파일을 읽고 있습니다.</div><nav id="rangeTaskTabs" role="tablist" aria-label="편집 작업"><button type="button" role="tab" id="workshopScriptTab" aria-controls="workshopScriptPanel" aria-selected="true">각본 파일 만들기</button><button type="button" role="tab" id="workshopEditTab" aria-controls="workshopEditPanel" aria-selected="false">대사 수정·반영</button></nav><section id="searchPanel"><h2>1. 게임에서 본 원문 찾기</h2><div class="row"><label>원문 일부<input id="query" placeholder="게임에서 본 대사를 입력하세요"></label><label>위치 이름 (선택)<input id="location" placeholder="Location 이름"></label><label class="modebox">보기<select id="viewMode"><option value="text">게임에 보이는 대사만 보기</option><option value="all">코드까지 같이 보기</option></select></label><button id="search">찾기</button></div><p class="muted">화면에 치환된 이름은 원문과 다를 수 있습니다. 이름을 제외한 문장 일부로 찾아 주세요. 결과는 최대 200개입니다. 「게임에 보이는 대사만」은 변수 이름·경로·코드 문자열을 숨깁니다.</p><div id="count"></div><div id="results"></div></section>
 
@@ -128,8 +128,37 @@ function routeCard(v,container,sceneId,compact=false){
  const text=document.createElement('div');text.className='snippet';gameLine(text,v.entry.text);card.append(text);
  const pick=document.createElement('button');pick.className='routePick';pick.textContent='이 대사 선택';pick.onclick=()=>{const route=window.JO9ScriptRange;return (window.JO9WorkshopUI.current()==='script'&&route?.state().start?route.pick(v.entry,sceneId):selectEntry(v.entry,sceneId,false)).catch(e=>say(e.message,true));};card.append(pick);appendRangeActions(card,v.entry,sceneId);container.append(card);
 }
+// JO9 MOD START SCALAR_PAGE_PREVIEW_20261115
+function renderComposedPages(c){
+ const flow=c.flow,lines=$('gameLines'),page=flow.stages.find(p=>p.number===flow.selected),menu=flow.stages.find(p=>p.number===flow.menu);
+ const jump=p=>selectEntry(p.variants[0].entry,p.sceneId,false).catch(e=>say(e.message,true));
+ $('gameNote').textContent='선택지 1페이지 → 선택별 결과 '+(flow.stages.length-1)+'페이지 · 소스 미리보기';
+ const bar=document.createElement('div');bar.className='flowbar';
+ const back=document.createElement('button');back.textContent='← 선택지 페이지';back.disabled=page.number===menu.number;back.onclick=()=>jump(menu);bar.append(back);
+ const label=document.createElement('label');label.textContent='페이지 바로 보기 ';const picker=document.createElement('select');picker.setAttribute('aria-label','선택지와 결과 페이지');
+ for(const p of flow.stages){const option=document.createElement('option');option.value=p.number;option.textContent=p.title;option.selected=p.number===page.number;picker.append(option);}picker.onchange=()=>jump(flow.stages.find(p=>String(p.number)===picker.value));label.append(picker);bar.append(label);lines.append(bar);
+ const heading=document.createElement('strong');heading.className='flowheading';heading.textContent=page.title;lines.append(heading);
+ const choiceControls=(host,e)=>{const b=(c.branches||[]).find(b=>b.sourceStart===e.start),pick=document.createElement('button');pick.className='composed-choice-pick';gameLine(pick,e.text);pick.title='선택하면 연결된 결과 페이지를 미리 봅니다. 게임 상태는 바뀌지 않습니다.';
+  pick.onclick=()=>{const d=b?.destinations?.[0];if(d)return openScene(d).catch(error=>say(error.message,true));say('이 선택지의 결과 경로를 정적으로 확정하지 못했습니다. 아래 연결 조건을 확인하세요.',true);};host.append(pick);
+  const edit=document.createElement('button');edit.className='composed-choice-edit';edit.textContent='문구 편집';edit.onclick=()=>selectEntry(e,page.sceneId,false).catch(error=>say(error.message,true));host.append(edit);
+ };
+ for(const part of page.parts){
+  if(!part.entry){const note=document.createElement('p');note.className='muted';note.textContent='〈'+String(part.key||'호출 대사').replace(/^\$/,'')+'〉 · 호출 장면에서 전달하는 대사';lines.append(note);continue;}
+  const card=document.createElement('div');card.className='composed-page-part'+(part.choice?' composed-choice':' line selected');
+  if(part.choice)choiceControls(card,part.entry);else{gameLine(card,part.entry.text);appendRangeActions(card,part.entry,page.sceneId);}
+  if(part.alternatives?.length){const detail=document.createElement('details');detail.className='composed-conditions';const title=document.createElement('summary');title.textContent='조건별 표시 · '+part.alternatives.length+'개';detail.append(title);
+   for(const e of part.alternatives){const row=document.createElement('div');if(e.conditions?.length){const condition=document.createElement('div');condition.className='muted';condition.textContent='표시 조건: '+e.conditions.join(' → ');row.append(condition);}
+    if((c.branches||[]).some(b=>b.kind==='choice'&&b.sourceStart===e.start))choiceControls(row,e);else{const edit=document.createElement('button');edit.className='line';gameLine(edit,e.text);edit.title='같은 페이지의 조건별 문구를 편집합니다.';edit.onclick=()=>selectEntry(e,page.sceneId,false).catch(error=>say(error.message,true));row.append(edit);}detail.append(row);
+   }card.append(detail);
+  }lines.append(card);
+ }
+ const note=document.createElement('p');note.className='muted';note.textContent=page.number===menu.number?'세 선택지는 같은 화면에 함께 표시됩니다. 선택지 버튼을 누르면 해당 결과와 샘플 이미지를 표시합니다. 비용 충족 여부는 실제 세이브에서 판정됩니다.':'이 선택지의 결과 페이지입니다. 위의 돌아가기 버튼으로 선택지 화면을 다시 볼 수 있습니다.';lines.append(note);
+ const all=$('sceneTexts');all.replaceChildren();const full=()=>{if(all.childElementCount)return;for(const p of flow.stages){const row=document.createElement('div');row.className='stagerow';const b=document.createElement('button');b.textContent=p.title+(p.number===menu.number?' · 선택지 '+p.parts.filter(x=>x.choice).length+'개':'');b.onclick=()=>jump(p);row.append(b);all.append(row);}};$('sceneTextsBox').ontoggle=()=>{if($('sceneTextsBox').open)full();};if($('sceneTextsBox').open)full();
+}
+// JO9 MOD END SCALAR_PAGE_PREVIEW_20261115
 function renderFlow(c){
  const lines=$('gameLines');lines.replaceChildren();const flow=c.flow;
+ if(flow?.kind==='pages'){renderComposedPages(c);return;}
  if(!flow){$('gameNote').textContent='이 장면의 대사';for(const e of c.screen||[]){const b=document.createElement('button');b.className='line'+(selection&&key(selection)===key(e)?' selected':'');gameLine(b,e.text);b.onclick=()=>selectEntry(e,c.scene.id).catch(err=>say(err.message,true));const row=document.createElement('div');row.append(b);appendRangeActions(row,e,c.scene.id);lines.append(row);}return;}
  const stages=flow.stages,at=stages.findIndex(s=>s.number===flow.selected),current=stages[at],next=stages[at+1];
  $('gameNote').textContent=flow.kind==='array'?`현재 ${flow.selected}단계 · 전체 ${stages.length}단계${flow.usage?' · '+flow.usage.location+' / '+flow.usage.title:''}`:'현재 대사와 연결 조건';
@@ -168,12 +197,14 @@ function showImage(im){
  const go=document.createElement('a');go.textContent='이미지 패치 체크리스트에서 보기 ↗';go.href='/catalog?image='+encodeURIComponent('content\\pic\\'+im.path);go.target='_blank';go.rel='noopener';work.append(go);
 }
 function updateWorkState(v){for(const im of context?.images||[]){if(im.work)im.work.flags=v.items?.[im.work.path]||[];}const im=context?.images?.find(x=>x.path===selectedImagePath);if(im?.work){for(const check of document.querySelectorAll('#imageStatusChecks input'))check.checked=im.work.flags.includes(check.dataset.flag);}}
+let selectedImageSceneKey='';
 function renderGame(c){
  const shots=$('shots');shots.replaceChildren();const imgs=c.images||[];
- if(imgs.length)showImage(imgs.find(x=>x.path===selectedImagePath)||imgs[0]);else{const n=document.createElement('div');n.className='none';n.textContent=c.flow?.unresolved?'이 대사 배열을 화면에 연결하는 경로를 아직 찾지 못했습니다.':'파일 경로를 확정할 수 있는 이미지가 없습니다.';shots.append(n);window.JO9_IMAGE_REFERENCE?.empty(shots);if(c.unresolvedImages?.length){const info=document.createElement('div');info.className='muted';info.textContent=c.unresolvedImages.length+'개 이미지 지정은 변수 또는 파일 확인이 필요합니다.';shots.append(info);}}
+ const imageSceneKey=c.location+':'+c.scene.id,keepImage=c.flow?.kind!=='pages'||selectedImageSceneKey===imageSceneKey;selectedImageSceneKey=imageSceneKey;
+ if(imgs.length)showImage((keepImage&&imgs.find(x=>x.path===selectedImagePath))||imgs[0]);else{const n=document.createElement('div');n.className='none';n.textContent=c.flow?.unresolved?'이 대사 배열을 화면에 연결하는 경로를 아직 찾지 못했습니다.':'파일 경로를 확정할 수 있는 이미지가 없습니다.';shots.append(n);window.JO9_IMAGE_REFERENCE?.empty(shots);if(c.unresolvedImages?.length){const info=document.createElement('div');info.className='muted';info.textContent=c.unresolvedImages.length+'개 이미지 지정은 변수 또는 파일 확인이 필요합니다.';shots.append(info);}}
  renderFlow(c);
  const usage=$('usageSelector');usage.replaceChildren();usage.hidden=!(c.flow?.usages?.length>1);if(!usage.hidden){const label=document.createElement('label');label.textContent='이 대사가 쓰이는 장면';const sel=document.createElement('select');for(const u of c.flow.usages){const o=document.createElement('option');o.value=u.id;o.textContent=u.location+' / '+u.title;o.selected=u.id===c.flow.usage?.id;sel.append(o);}sel.onchange=async()=>{remember();try{render(await api('/api/context',{selection,sceneId:c.scene.id,mode:mode(),usageId:sel.value}));}catch(e){say(e.message,true);}};label.append(sel);usage.append(label);}
- const ch=$('choices');ch.replaceChildren();for(const b of (c.branches||[]).filter(b=>b.kind==='choice')){for(const d of (b.destinations||[]).slice(0,1)){const x=document.createElement('button');x.textContent='▶ '+b.label;x.onclick=()=>openScene(d).catch(e=>say(e.message,true));ch.append(x);}}
+ const ch=$('choices');ch.replaceChildren();for(const b of (c.flow?.kind==='pages'?[]:c.branches||[]).filter(b=>b.kind==='choice')){for(const d of (b.destinations||[]).slice(0,1)){const x=document.createElement('button');x.textContent='▶ '+b.label;x.onclick=()=>openScene(d).catch(e=>say(e.message,true));ch.append(x);}}
 }
 
 function zoom(src){$('zoom').querySelector('img').src=src;$('zoom').hidden=false;}$('zoom').onclick=()=>$('zoom').hidden=true;
@@ -184,7 +215,7 @@ function render(c){
  const all=mode()==='all';
  $('sceneTitle').textContent=all?`${c.location} · ${c.scene.title}${c.scene.conditions?.length?' · '+c.scene.conditions.join(' → '):''}`:`${c.location}${selection?' · '+selection.line+'행':''}`;
  $('sourceBox').hidden=!all;$('branchBox').hidden=false;
- $('sourceContext').textContent=c.source||'';$('textPosition').textContent=c.empty?'대사 없음':`${c.ordinal} / ${c.total}개`;$('sceneTexts').replaceChildren();
+ $('sourceContext').textContent=c.source||'';$('textPosition').textContent=c.empty?'대사 없음':`${c.ordinal} / ${c.total}${c.flow?.kind==='pages'?'페이지':'개'}`;$('sceneTexts').replaceChildren();
  if(selection){$('selected').textContent=name(selection);$('original').value=selection.text;$('replacement').value=drafts[key(selection)]??selection.text;for(const e of c.texts)textButton(e,$('sceneTexts'),c.scene.id);}
  renderPreview();window.dispatchEvent(new CustomEvent('jo9:selection',{detail:c}));
  $('branches').replaceChildren();

@@ -1,0 +1,18 @@
+const fs=require('fs'),assert=require('assert/strict');
+const vendor='G:/Codex/.codex/.chatgpt-projects/g-p-6aad063c991081918e27b6675f290be7/outputs/fog-relay-startup-fix-20261017/legacy-engine-probe/package';
+const {initQspEngine}=require(vendor+'/dist/node/wasm-engine.cjs');
+const file=process.argv[2];
+(async()=>{const api=await initQspEngine(vendor+'/dist/qsp-engine.wasm'),errors=[];
+api.on('error',e=>{errors.push(e);console.log('error',e)});
+for(const ev of ['msg','input','wait','play_file','close_file','is_play','version','menu'])api.on(ev,(...args)=>{console.log(ev,args.filter(x=>typeof x!=='function'));const cb=args.find(x=>typeof x==='function');if(cb)cb(ev==='input'?'':ev==='is_play'?false:ev==='version'?'5.7.0':-1);});
+let b=fs.readFileSync(file);api.openGame(b.buffer.slice(b.byteOffset,b.byteOffset+b.byteLength),true);
+const run=s=>{api.execCode(s.replace(/\n/g,'\r\n'));assert.deepEqual(errors,[]);};
+const num=s=>{run('qa_read='+s);return api.readVariable('qa_read');};
+run("CONST_INT['slave_exist']=1\nslave_state=1\nslave['energy']=3\nslave['jo9_rally_entries']=9\nsparks=1000\nqa_roll=1\nqa_result=func('jo9_rally','prepare')\nqa_result=func('jo9_rally','draw',102113)\n$ongload=''\n$onnewloc=''");
+assert.equal(num('sparks'),900);assert.equal(num("slave['jo9_rally_entries']"),10);
+const saved=api.saveGame();assert(saved);run("sparks=0\nslave['jo9_rally_entries']=0\njo9_rally_match['profit']=999");api.loadSave(saved);assert.deepEqual(errors,[]);
+assert.equal(num('sparks'),900);assert.equal(num("slave['jo9_rally_entries']"),10);assert.equal(num("jo9_rally_match['profit']"),125);assert.equal(num("jo9_rally_match['phase']"),1);
+run("qa_result=func('jo9_rally','pay',102118)");assert.equal(num('sparks'),1125);
+run("qa_result=func('jo9_rally','pay',102118)");assert.equal(num('sparks'),1125);assert.equal(num('qa_result'),0);
+console.log('PASS engine API save/load of pending match and once-only payout');
+})();

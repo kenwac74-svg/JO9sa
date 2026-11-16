@@ -1,0 +1,49 @@
+{
+  "id": "2026-11-11_hard_enemy_specials",
+  "status": "APPROVED",
+  "description": "In-game hard difficulty_setting=2 adds each valid defined special to the equal-probability ordinary pool, once per enemy per fresh battle. Caster targeting for three existing adaptation effects; hard-only missing archmage AI route. Definitions and non-hard ordinary selection unchanged.",
+  "before_sha256": "fef0baedfa22746366fc9ce5acf16e4fa04922fd63e9c5c133c559ecb4265357",
+  "after_sha256": "21f41a5203fffa565369c81a9fd11f57874f1af99010709ef1af1240e01fdc40",
+  "add_locations": [
+    {
+      "name": "jo9_enemy_specials",
+      "desc": "",
+      "body": "! JO9 MOD START HARD_ENEMY_SPECIALS_20261111\r\nif difficulty_setting ! 2: exit\r\n\r\nif $args[0] = 'select':\r\n local jo9_es_count = 1\r\n local jo9_es_pool\r\n jo9_es_pool[1] = 1\r\n if $класс_моба[$враг[i]] = 'рядовой' or $класс_моба[$враг[i]] = 'элитный':\r\n  jo9_es_count = 2\r\n  jo9_es_pool[2] = 2\r\n end\r\n if $класс_моба[$враг[i]] = 'элитный':\r\n  jo9_es_count = 3\r\n  jo9_es_pool[3] = 3\r\n end\r\n if jo9_enemy_special_used[(i-1)*3+1] = 0 and $суператака_1_тип[$враг[i]] ! '' and $суператака_1_тип_вреда[$враг[i]] ! '' and $суператака_1_текст[$враг[i]] ! '' and $суператака_1_кратко[$враг[i]] ! '' and базовый_вред_суператаки_1[$враг[i]] > 0:\r\n  jo9_es_count += 1\r\n  jo9_es_pool[jo9_es_count] = 4\r\n end\r\n if jo9_enemy_special_used[(i-1)*3+2] = 0 and $суператака_2_тип[$враг[i]] ! '' and $суператака_2_тип_вреда[$враг[i]] ! '' and $суператака_2_текст[$враг[i]] ! '' and $суператака_2_кратко[$враг[i]] ! '' and базовый_вред_суператаки_2[$враг[i]] > 0:\r\n  jo9_es_count += 1\r\n  jo9_es_pool[jo9_es_count] = 5\r\n end\r\n if jo9_enemy_special_used[(i-1)*3+3] = 0 and $суператака_3_тип[$враг[i]] ! '' and $суператака_3_тип_вреда[$враг[i]] ! '' and $суператака_3_текст[$враг[i]] ! '' and $суператака_3_кратко[$враг[i]] ! '' and базовый_вред_суператаки_3[$враг[i]] > 0:\r\n  jo9_es_count += 1\r\n  jo9_es_pool[jo9_es_count] = 6\r\n end\r\n ам = jo9_es_pool[rand(1,jo9_es_count)]\r\n exit\r\nend\r\n\r\nif $args[0] = 'effect':\r\n local $jo9_es_effect = ''\r\n if args[1] = 1: $jo9_es_effect = $спецэффект_суператаки_1[$враг[i]]\r\n if args[1] = 2: $jo9_es_effect = $спецэффект_суператаки_2[$враг[i]]\r\n if args[1] = 3: $jo9_es_effect = $спецэффект_суператаки_3[$враг[i]]\r\n if args[1] = 2 and ($враг[i] = 'исчадие' or $враг[i] = 'чудовщиное_исчадие' or $враг[i] = 'исчадие_арены'): $jo9_es_effect = replace($jo9_es_effect, '[1]', '[i]')\r\n dynamic $jo9_es_effect\r\nend\r\n! JO9 MOD END HARD_ENEMY_SPECIALS_20261111",
+      "actions": []
+    }
+  ],
+  "edits": [
+    {
+      "location": "начать_бой",
+      "field": "body",
+      "old": "if jo9_fog['resuming'] = 0:\r\nповерженные_враги = 0",
+      "new": "if jo9_fog['resuming'] = 0:\r\n! JO9 MOD START HARD_ENEMY_SPECIALS_20261111\r\nkillvar 'jo9_enemy_special_used'\r\n! JO9 MOD END HARD_ENEMY_SPECIALS_20261111\r\nповерженные_враги = 0",
+      "count": 1,
+      "patchId": "HARD_ENEMY_SPECIALS_20261111"
+    },
+    {
+      "location": "искусственный_идиот",
+      "field": "body",
+      "old": "if ам = 1:\r\n\t$атака[i]",
+      "new": "! JO9 MOD START HARD_ENEMY_SPECIALS_20261111\r\nif difficulty_setting = 2: gs 'jo9_enemy_specials', 'select'\r\n! JO9 MOD END HARD_ENEMY_SPECIALS_20261111\r\n\r\nif ам = 1:\r\n\t$атака[i]",
+      "count": 1,
+      "patchId": "HARD_ENEMY_SPECIALS_20261111"
+    },
+    {
+      "location": "искусственный_идиот",
+      "field": "body",
+      "old": "if ам = 4:\r\n\tif суператака_истрачена[1] = 1: jump 'loop'\r\n\t$атака[i] = '<<$суператака_1_тип[$враг[i]]>>'\r\n\t$рассчетный_тип_вреда = '<<$суператака_1_тип_вреда[$враг[i]]>>'\r\n\tвред_на_рассчет = базовый_вред_суператаки_1[$враг[i]]\r\n\tdynamic $спецэффект_суператаки_1[$враг[i]]\r\n\t$эффект_суператаки = $суператака_1_кратко[$враг[i]]\r\n\t$наложение[i] = ''\r\n\tсуператака_истрачена[1] = 1\r\nend\r\n\r\nif ам = 5:\r\n\tif суператака_истрачена[2] = 1: jump 'loop'\r\n\t$атака[i] = '<<$суператака_2_тип[$враг[i]]>>'\r\n\t$рассчетный_тип_вреда = '<<$суператака_2_тип_вреда[$враг[i]]>>'\r\n\tвред_на_рассчет = базовый_вред_суператаки_2[$враг[i]]\r\n\tdynamic $спецэффект_суператаки_2[$враг[i]]\r\n\t$эффект_суператаки = $суператака_2_кратко[$враг[i]]\r\n\t$наложение[i] = ''\r\n\tсуператака_истрачена[2] = 1\r\nend\r\n\r\nif ам = 6:\r\n\tif суператака_истрачена[3] = 1: jump 'loop'\r\n\t$атака[i] = '<<$суператака_3_тип[$враг[i]]>>'\r\n\t$рассчетный_тип_вреда = '<<$суператака_3_тип_вреда[$враг[i]]>>'\r\n\tвред_на_рассчет = базовый_вред_суператаки_3[$враг[i]]\r\n\tdynamic $спецэффект_суператаки_3[$враг[i]]\r\n\t$эффект_суператаки = $суператака_3_кратко[$враг[i]]\r\n\t$наложение[i] = ''\r\n\tсуператака_истрачена[3] = 1\r\nend\r\n\r\n",
+      "new": "! JO9 MOD START HARD_ENEMY_SPECIALS_20261111\r\nif ам = 4:\r\n\tif difficulty_setting ! 2 and суператака_истрачена[1] = 1: jump 'loop'\r\n\t$атака[i] = '<<$суператака_1_тип[$враг[i]]>>'\r\n\t$рассчетный_тип_вреда = '<<$суператака_1_тип_вреда[$враг[i]]>>'\r\n\tвред_на_рассчет = базовый_вред_суператаки_1[$враг[i]]\r\n\tif difficulty_setting = 2:\r\n\t\tgs 'jo9_enemy_specials', 'effect', 1\r\n\telse\r\n\t\tdynamic $спецэффект_суператаки_1[$враг[i]]\r\n\tend\r\n\t$эффект_суператаки = $суператака_1_кратко[$враг[i]]\r\n\t$наложение[i] = ''\r\n\tif difficulty_setting = 2:\r\n\t\tjo9_enemy_special_used[(i-1)*3+1] = 1\r\n\telse\r\n\t\tсуператака_истрачена[1] = 1\r\n\tend\r\nend\r\n\r\nif ам = 5:\r\n\tif difficulty_setting ! 2 and суператака_истрачена[2] = 1: jump 'loop'\r\n\t$атака[i] = '<<$суператака_2_тип[$враг[i]]>>'\r\n\t$рассчетный_тип_вреда = '<<$суператака_2_тип_вреда[$враг[i]]>>'\r\n\tвред_на_рассчет = базовый_вред_суператаки_2[$враг[i]]\r\n\tif difficulty_setting = 2:\r\n\t\tgs 'jo9_enemy_specials', 'effect', 2\r\n\telse\r\n\t\tdynamic $спецэффект_суператаки_2[$враг[i]]\r\n\tend\r\n\t$эффект_суператаки = $суператака_2_кратко[$враг[i]]\r\n\t$наложение[i] = ''\r\n\tif difficulty_setting = 2:\r\n\t\tjo9_enemy_special_used[(i-1)*3+2] = 1\r\n\telse\r\n\t\tсуператака_истрачена[2] = 1\r\n\tend\r\nend\r\n\r\nif ам = 6:\r\n\tif difficulty_setting ! 2 and суператака_истрачена[3] = 1: jump 'loop'\r\n\t$атака[i] = '<<$суператака_3_тип[$враг[i]]>>'\r\n\t$рассчетный_тип_вреда = '<<$суператака_3_тип_вреда[$враг[i]]>>'\r\n\tвред_на_рассчет = базовый_вред_суператаки_3[$враг[i]]\r\n\tif difficulty_setting = 2:\r\n\t\tgs 'jo9_enemy_specials', 'effect', 3\r\n\telse\r\n\t\tdynamic $спецэффект_суператаки_3[$враг[i]]\r\n\tend\r\n\t$эффект_суператаки = $суператака_3_кратко[$враг[i]]\r\n\t$наложение[i] = ''\r\n\tif difficulty_setting = 2:\r\n\t\tjo9_enemy_special_used[(i-1)*3+3] = 1\r\n\telse\r\n\t\tсуператака_истрачена[3] = 1\r\n\tend\r\nend\r\n! JO9 MOD END HARD_ENEMY_SPECIALS_20261111\r\n\r\n",
+      "count": 1,
+      "patchId": "HARD_ENEMY_SPECIALS_20261111"
+    },
+    {
+      "location": "ход_противников",
+      "field": "body",
+      "old": "  \t\tgs '<<$интеллект[$враг[i]]>>'",
+      "new": "! JO9 MOD START HARD_ENEMY_SPECIALS_20261111\r\n\t\tif difficulty_setting = 2 and $интеллект[$враг[i]] = 'ии_безумный_архимаг':\r\n\t\t\tgs 'искусственный_идиот'\r\n\t\telse\r\n\t\t\tgs '<<$интеллект[$враг[i]]>>'\r\n\t\tend\r\n! JO9 MOD END HARD_ENEMY_SPECIALS_20261111",
+      "count": 1,
+      "patchId": "HARD_ENEMY_SPECIALS_20261111"
+    }
+  ]
+}

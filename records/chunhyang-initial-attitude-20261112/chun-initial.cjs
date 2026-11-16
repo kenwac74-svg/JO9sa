@@ -1,0 +1,65 @@
+'use strict';
+const fs=require('fs'),z=require('zlib'),assert=require('assert/strict');
+const repo='G:/somi/JO9sa',game='G:/somi/Jack O Nine Tails v2.4_work/game',tmp='G:/Codex/tmp/chunhyang-initial-attitude-20261112',rec=repo+'/records/chunhyang-initial-attitude-20261112',id='2026-11-12_zz_chunhyang_initial_attitude';
+const c=require(repo+'/tools/text-workshop/core.cjs'),qa=require(repo+'/tools/qa/release-check.cjs'),sc=require(repo+'/tools/qa/save-codec.cjs');
+const read=p=>JSON.parse(fs.readFileSync(p,'utf8').replace(/^\uFEFF/,'')),json=(p,x)=>fs.writeFileSync(p,JSON.stringify(x,null,2)+'\n'),body=(d,n)=>c.shift(d.lines[d.locations.find(l=>l.name===n).body],5),put=(d,n,s)=>d.lines[d.locations.find(l=>l.name===n).body]=c.shift(s.replace(/\r?\n/g,'\r\n'),-5);
+const phase=process.argv[2],variant=process.argv[3]||'candidate';
+if(phase==='prepare'){
+ const raw=fs.readFileSync(game+'/jack.qsp');assert.equal(c.hash(raw),'4354cf397342cc516f8a32c76ffb44894b9a608d3c4f19ad42993287354976ef');assert(raw.equals(fs.readFileSync(repo+'/assets/runtime/2.4.1/jack.qsp')));const d=c.parse(raw);assert(c.serialize(d).equals(raw));
+ fs.mkdirSync(tmp+'/mods',{recursive:true});fs.mkdirSync(rec,{recursive:true});assert(!fs.existsSync(rec+'/baseline.qsp.gz'));const gz=z.gzipSync(raw,{level:9});assert(z.gunzipSync(gz).equals(raw));fs.writeFileSync(rec+'/baseline.qsp.gz',gz);fs.writeFileSync(rec+'/runtime-source.before.json.gz',z.gzipSync(fs.readFileSync(repo+'/assets/runtime-source-2.4.1.json'),{level:9}));
+ const old=body(d,'jo9_chunhyang_profile'),guard="if $args[0] ! 'init' or stock_type ! 3040 or creating_clone ! 0: exit";assert.equal(old.split(guard).length,2);const fixed=old.replace(guard,guard+"\r\n! JO9 MOD START CHUNHYANG_INITIAL_ATTITUDE_20261112\r\nstock['rational'] = 3\r\nstock_rate['rational'] = 0\r\nstock['moral'] = 0\r\nstock_rate['moral'] = 0\r\n! JO9 MOD END CHUNHYANG_INITIAL_ATTITUDE_20261112");put(d,'jo9_chunhyang_profile',fixed);const candidate=c.serialize(d);qa.inspectWorld(candidate);
+ const beforeJson=fs.readFileSync(game+'/json/slaves/3040_chunhyang.json');assert(beforeJson.equals(fs.readFileSync(repo+'/assets/json/slaves/3040_chunhyang.json')));fs.writeFileSync(rec+'/character.before.json',beforeJson);const char=JSON.parse(beforeJson.toString('utf8'));char.seed_rational=3;char.seed_moral=0;const jsonAfter=Buffer.from(JSON.stringify(char,null,2).replace(/\n/g,'\r\n')+'\r\n','utf8');fs.writeFileSync(rec+'/character.after.json',jsonAfter);
+ const mod={id,status:'APPROVED',description:'사용자 지시: 춘향 신규 영입은 로마 경험에 맞춰 인식3·인식단계0, 헌신등급0·헌신단계0으로 시작한다. 기존 생성3040 비복제 가드 안에서만 초기화하며 기존 영입 인물의 진행은 갱신하지 않는다.',before_sha256:c.hash(raw),after_sha256:c.hash(candidate),edits:[{location:'jo9_chunhyang_profile',field:'body',old,new:fixed,count:1,patchId:'CHUNHYANG_INITIAL_ATTITUDE_20261112'}]};json(repo+'/mods/'+id+'.json',mod);json(tmp+'/mods/'+id+'.json',mod);fs.writeFileSync(tmp+'/candidate.qsp',raw);json(rec+'/plan.json',{id,beforeSha256:c.hash(raw),afterSha256:c.hash(candidate),jsonBeforeSha256:c.hash(beforeJson),jsonAfterSha256:c.hash(jsonAfter),jsonKeys:['seed_rational','seed_moral'],values:{rational:3,rationalRate:0,moral:0,moralRate:0},existingRecruitsReset:false});console.log(JSON.stringify({qsp:c.hash(candidate),json:c.hash(jsonAfter)}));
+}else if(phase==='probe'){
+ const source=variant==='installed'?game+'/jack.qsp':tmp+'/candidate.qsp',raw=fs.readFileSync(source),d=c.parse(raw),char=read(variant==='installed'?game+'/json/slaves/3040_chunhyang.json':rec+'/character.after.json');assert(c.serialize(d).equals(raw));const out=tmp+'/'+variant;fs.mkdirSync(out,{recursive:true});let checks=0;const check=(condition,label)=>{checks++;return "if ("+condition+")=0: msg 'FAIL_CHUNMIND_"+label+"' & exit\nqa_checks+=1\n";};
+ let code="killall\nautosave=0\ndecadesave=0\nsound_on=0\n$onnewloc=''\n$ongload=''\n$ongsave=''\n$counter=''\nsettimer 0\nsnk_room_target=0\ngs '#variative'\ngs '#static_base'\ngs '#dynamic'\ngs '#var_base'\n";
+ for(const [k,v]of Object.entries(char))if(k.startsWith('seed_')&&typeof v==='number')code+=k+'[3040]='+v+'\n';code+="$seed_name[3040]='춘향'\n";
+ code+="stock_type=2579\nstock['rational']=5\nstock_rate['rational']=21\nstock['moral']=4\nstock_rate['moral']=22\ncreating_clone=0\ngs 'jo9_chunhyang_profile','init'\n"+check("stock['rational']=5 and stock_rate['rational']=21 and stock['moral']=4 and stock_rate['moral']=22",'other_actor_unchanged');
+ code+="stock_type=3040\ncreating_clone=1\ngs 'jo9_chunhyang_profile','init'\n"+check("stock['rational']=5 and stock_rate['rational']=21 and stock['moral']=4 and stock_rate['moral']=22",'clone_unchanged');
+ code+="creating_clone=0\nstock_type=999\nstock_state=CONST_INT['slave_exist']\nstock['rational']=4\nstock_rate['rational']=18\nstock['moral']=2\nstock_rate['moral']=19\nslave_state=CONST_INT['no_slave']\negeya_lose=1\njo9_chunhyang['owned']=1\njo9_chunhyang['won']=1\nsparks=250000\nqa_acquired=func('jo9_chun_club','acquire')\n";
+ code+=check("qa_acquired=1 and slave_type=3040 and slave_state=CONST_INT['slave_exist']",'real_acquire');
+ code+=check("slave['rational']=3 and slave_rate['rational']=0",'initial_awareness');code+=check("slave['moral']=0 and slave_rate['moral']=0",'initial_devotion');
+ code+=check("stock_type=999 and stock['rational']=4 and stock_rate['rational']=18 and stock['moral']=2 and stock_rate['moral']=19",'held_stock_preserved');
+ code+="slave['rational']=4\nslave_rate['rational']=9\nslave['moral']=2\nslave_rate['moral']=17\ngs 'jo9_traits_value','refresh','slave'\n"+check("slave['rational']=4 and slave_rate['rational']=9 and slave['moral']=2 and slave_rate['moral']=17",'existing_progress_preserved');
+ code+="qa_acquired=func('jo9_chun_club','acquire')\n"+check("qa_acquired=0 and slave['rational']=4 and slave['moral']=2 and slave_rate['moral']=17",'repeat_recruit_preserves_progress');
+ code+=check("sparks=250000 and jo9_chunhyang['recruited']=1",'no_added_charge');code+="savegame 'mind.sav'\nmsg 'JO9_QA_CHUNMIND_mind_COMPLETE'\nexit";
+ put(d,'Start',code);put(d,'$slave_price','exit');const bytes=c.serialize(d);qa.inspectWorld(bytes);fs.writeFileSync(out+'/mind.qsp',bytes);fs.copyFileSync(game+'/config.xml',out+'/config.xml');fs.writeFileSync(out+'/FastQSP.ini','[General]\r\nignoreCRC=true\r\nmutedState=true\r\n');json(out+'/plan.json',[{name:'mind',file:out+'/mind.qsp',marker:'JO9_QA_CHUNMIND_mind_COMPLETE',checkpoint:checks+' assertions; actual generate_stock and stock_to_slave via recruitment; unrelated price appraisal stubbed'}]);json(rec+'/instrumentation-'+variant+'.json',{source,sourceHash:c.hash(raw),checks,numericSeedsFromCurrentCharacterJson:true,stubbed:['$slave_price'],userSavesTouched:false});console.log(JSON.stringify({variant,checks,plan:out+'/plan.json'}));
+}else if(phase==='collect'){
+ const out=tmp+'/'+variant,results=read(out+'/client-results.json');assert(results.length===1&&results[0].pass);const s=sc.parse(fs.readFileSync(out+'/mind.sav')),checks=Number(sc.value(s,'qa_checks')[0]);assert.equal(checks,9);json(rec+'/native-'+variant+'.json',{results,checks,actualRecruitment:true,initialAwareness:3,initialDevotion:0,initialDevotionRate:0,existingProgressPreserved:true,heldStockPreserved:true,userSavesTouched:false});fs.copyFileSync(out+'/mind-stderr.log',rec+'/'+variant+'-native.log');console.log(JSON.stringify({variant,checks,passed:true}));
+}else if(phase==='sync'){
+ const p=read(rec+'/plan.json'),raw=fs.readFileSync(game+'/jack.qsp');assert.equal(c.hash(raw),p.afterSha256);assert.equal(c.hash(fs.readFileSync(repo+'/assets/runtime/2.4.1/jack.qsp')),p.beforeSha256);assert.equal(c.hash(fs.readFileSync(game+'/json/slaves/3040_chunhyang.json')),p.jsonBeforeSha256);fs.copyFileSync(game+'/jack.qsp',repo+'/assets/runtime/2.4.1/jack.qsp');fs.copyFileSync(rec+'/character.after.json',game+'/json/slaves/3040_chunhyang.json');fs.copyFileSync(rec+'/character.after.json',repo+'/assets/json/slaves/3040_chunhyang.json');const f=repo+'/assets/runtime-source-2.4.1.json',m=read(f);assert.equal(m.sourceQspSha256,p.beforeSha256);m.sourceQspSha256=p.afterSha256;for(const x of m.files)if(x.runtimePath==='jack.qsp'){x.sha256=p.afterSha256;x.bytes=raw.length;}else if(x.runtimePath==='json/slaves/3040_chunhyang.json'){x.sha256=p.jsonAfterSha256;x.bytes=fs.statSync(game+'/json/slaves/3040_chunhyang.json').size;}m.latestChunhyangInitialAttitude={date:'2026-11-12',mod:id,report:'records/chunhyang-initial-attitude-20261112/REPORT_KO.md',rational:3,moral:0,moralRate:0,existingRecruitsReset:false};fs.writeFileSync(f,JSON.stringify(m,null,2).replace(/\n/g,'\r\n')+'\r\n');console.log('WORK QSP/JSON and tracked source/metadata aligned');
+}else if(phase==='finalize'){
+ const p=read(rec+'/plan.json'),raw=fs.readFileSync(game+'/jack.qsp'),d=c.parse(raw),before=c.parse(z.gunzipSync(fs.readFileSync(rec+'/baseline.qsp.gz')));assert.equal(c.hash(raw),p.afterSha256);assert(raw.equals(fs.readFileSync(repo+'/assets/runtime/2.4.1/jack.qsp')));assert(c.serialize(d).equals(raw));qa.inspectWorld(raw);const changed=d.locations.filter(l=>body(d,l.name)!==body(before,l.name)).map(l=>l.name);assert.deepEqual(changed,['jo9_chunhyang_profile']);const a=read(rec+'/character.before.json'),b=read(game+'/json/slaves/3040_chunhyang.json');for(const k of Object.keys(a))if(!['seed_rational','seed_moral'].includes(k))assert.deepEqual(a[k],b[k]);assert.equal(b.seed_rational,3);assert.equal(b.seed_moral,0);assert.equal(c.hash(fs.readFileSync(game+'/json/slaves/3040_chunhyang.json')),p.jsonAfterSha256);assert(fs.readFileSync(game+'/json/slaves/3040_chunhyang.json').equals(fs.readFileSync(repo+'/assets/json/slaves/3040_chunhyang.json')));const m=read(repo+'/assets/runtime-source-2.4.1.json');assert.equal(m.sourceQspSha256,p.afterSha256);assert.equal(m.files.find(f=>f.runtimePath==='json/slaves/3040_chunhyang.json').sha256,p.jsonAfterSha256);for(const v of ['candidate','installed'])assert.equal(read(rec+'/native-'+v+'.json').checks,9);
+ json(rec+'/verification.json',{qspSha256:p.afterSha256,jsonSha256:p.jsonAfterSha256,workTrackedMetadataMatch:true,changedLocations:changed,changedJsonKeys:p.jsonKeys,structureRoundtripAndBoundaries:true,nativeAssertionsPerVariant:9,actualRecruitment:true,existingProgressPreserved:true,userSaveTouched:false,guiVerified:false});
+ const report=`# 춘향 최초 영입 인식·헌신 초기값 — 2026-11-12
+
+사용자 지시를 WORK·추적 소스에 반영했다. 새로 생성·영입하는 춘향3040은 인식 등급3, 인식 단계0, 헌신 등급0, 헌신 단계0으로 시작한다. 이미 영입한 인물의 육성값은 덮어쓰지 않는다.
+
+## 구현
+
+debug_info의 표시 매핑을 확인했다. 인식은 rational/rational_rate, 헌신 등급·단계는 moral/moral_rate(실제 배열은 slave/stock과 slave_rate/stock_rate의 같은 키)다. 조정은 jo9_chunhyang_profile(init)의 기존 신규3040·비복제 가드 안에만 추가했다. 기본 생성기의 moral_rate=-10을 춘향 helper에서0으로 덮는다. JSON에도 seed_rational3·seed_moral0을 명시하여 helper 이전 get_stock_seed와 초기 neg_slave 계산에 맞는 인식값을 전달한다.
+
+최초 생성과 실제 영입에만 적용하며, 일반 갱신·이미 영입한 인물·다른 캐릭터·복제의 진행을 초기화하는 코드는 추가하지 않았다. 새 저장 필드나 마이그레이션은 없다. 입력은 현재 인물번호·생성/복제 여부, 출력은 신규 stock의 네 초기값이며 기존 인물 이동 API가 영입된 slave에 전달한다.
+
+mods/${id}.json의 CHUNHYANG_INITIAL_ATTITUDE_20261112를 참조한다. QSP 변경은 jo9_chunhyang_profile 한 본문, JSON 변경은 seed_rational·seed_moral 두 키뿐이다. WORLD/배경/이미지·전투·다른 프로필 값은 보존했다. WORK의 jack.qsp와 json/slaves/3040_chunhyang.json, 추적 QSP/JSON 및 원장을 맞췄다.
+
+## 검증
+
+후보와 설치본 각각 실제 엔진1경로·9단언 통과. 실제 클럽 acquire→generate_stock→stock_to_slave_nogt에서 인식3/단계0·헌신0/단계0, 기존 열람 stock 보존, 타 인물/복제 가드, 영입 후 육성값의 refresh 및 중복 영입 호출 시 보존을 확인했다. 진단은 현재 JSON의 수치 seed를 주입하고 무관한 가격 평가만 격리했으며 실제 JSON 파일 읽기 UI·사용자 SAV 불러오기는 이번 검증 범위가 아니다.
+
+공식 적용기로 재생·재적용, QSP 왕복·CRLF·마커 경계 및 변경 범위, JSON 기존 키 보존·WORK/추적/원장 일치를 확인했다. 실제 사용자 SAV는 수정하지 않았고 GUI는 사용자 확인 전이다.
+
+QSP SHA-256: ${p.afterSha256}. JSON SHA-256: ${p.jsonAfterSha256}.
+
+## 확인·복구
+
+게임을 완전히 재시작하고 영입 전 저장에서 춘향을 새로 영입한 뒤 디버그 정보의 인식 등급3·헌신 등급/단계0을 확인한다. 영입 후 값이 이미 자란 기존 인물은 그대로 유지된다.
+
+baseline.qsp.gz·character.before.json·runtime-source.before.json.gz는 이번 직전 복구 자료다. 제거 시 해당 QSP 본문 추가와 JSON 두 키를 함께 되돌리되 이후 수동 변경을 먼저 비교한다. 선언형 패치·재현 스크립트·엔진 로그·검증 JSON을 남기고 임시 QSP·합성 SAV·중복 .bak은 정리한다. Full·음원·커밋·푸시 변경은 없다.
+`;
+ fs.writeFileSync(rec+'/REPORT_KO.md',report);fs.copyFileSync('C:/Users/User/.codex/.chatgpt-projects/g-p-6aad063c991081918e27b6675f290be7/chun-initial.cjs',rec+'/chun-initial.cjs');const idx=repo+'/docs/SESSION_HANDOFF_INDEX.md',entry=`## 2026-11-12 Codex: 춘향 최초 영입 인식3·헌신0/0
+
+[반영·변수·검증·복구](../records/chunhyang-initial-attitude-20261112/REPORT_KO.md). 사용자 지시로 신규3040 비복제의 인식3/단계0·헌신등급0/단계0, JSON seed_rational3/seed_moral0을 반영했다. 기존 영입 인물과 타 인물/복제의 육성값 보존. 후보/설치 실제 영입 각9단언·공식 재생/재적용·구조/범위·JSON 보존 검사. WORK/추적/메타 QSP ${p.afterSha256.slice(0,8)},JSON ${p.jsonAfterSha256.slice(0,8)} 일치. 실제 GUI/SAV 미확인. Full·음원·커밋푸시 없음.
+
+`;fs.writeFileSync(idx,entry.replace(/\n/g,'\r\n')+fs.readFileSync(idx,'utf8'));fs.appendFileSync(repo+'/records/chunhyang-profile-20261112/REPORT_KO.md','\n\n2026-11-12 후속: 신규 영입의 인식3·헌신0/0은 [초기값 수정 기록](../chunhyang-initial-attitude-20261112/REPORT_KO.md)에서 반영했다. 기존 인물의 육성값은 보존한다.\n');console.log(JSON.stringify({qsp:p.afterSha256,checksPerVariant:9,changedJsonKeys:p.jsonKeys,passed:true}));
+}else throw Error('Unknown phase');

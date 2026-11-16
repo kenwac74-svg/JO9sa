@@ -1,0 +1,111 @@
+{
+  "sourceQspSha256": "5e0c9eec32246148b4903b98359819c9b44e0ea07bdad29f8f54a1bea2516e77",
+  "asOf": "2026-11-13",
+  "userSteering": "미승인 변경은 대기, 답변 대기 없이 독립 작업 진행",
+  "askOneAtATimeAfterUserReturns": true,
+  "questionsSentWhileAsleep": false,
+  "queue": [
+    {
+      "id": "Q01",
+      "item": "R04",
+      "title": "반복 구매자 의뢰의 목표 등록",
+      "facts": "9고객의 문의·납품 입구를 소스로 대응시켰다. 문의3개의 목표 상태는 실제 엔진에서0, 기존 의뢰 대조군은1이다. 전체9개의 납품·대기 흐름 재현은 남았다.",
+      "proposal": "사용자확정기준으로검토한9개복합의뢰문의후등록,기존대기일표시. 단순전공/등급·글로리아납품제외.",
+      "saveCost": "기존문의배열의문자열키9항목. 새배열/캐릭터필드0.",
+      "question": "문의를 들은 뒤 목표에 남기고, 납품 후 대기일과 재납품 가능 상태도 표시하는 안을 채택할지.",
+      "implemented": true,
+      "status": "완료",
+      "approved": true,
+      "registrationRule": [
+        "색상 강조 복합요구는 등록",
+        "등급/전문 종류만 요구하면 제외",
+        "단순 등급/전문이어도 대사/지문에 별도 이벤트 분기 또는 특별 보상을 직접 알리면 포함",
+        "글로리아 부동산 납품은 간접 후속 트리거이므로 제외"
+      ],
+      "result": "WORK반영·실제엔진105검사·공식재생/멱등/역검증완료",
+      "report": "G:/somi/JO9sa/records/release-r04-repeat-goals-20261113/REPORT_KO.md"
+    },
+    {
+      "id": "Q02",
+      "item": "R05",
+      "title": "일반 노예의 반말 프로필 제외",
+      "facts": "일반11직업은 실제 엔진에서 tone3 선택. 지정8명은 직업과 무관하게 tone3 유지. 일반 하녀1/농부2 대조 확인.",
+      "proposal": "일반직업반말제거·8명기본유지·내부말투속성우선ON/OFF·실제화자/교정/캐시연결.",
+      "saveCost": "인물배열문자열키jo9_plain_tone 1개. 새전역배열0·자동조건없음.",
+      "question": "이 범위로 말투 선택과 알려진 구세이브 콜백을 수정할지.",
+      "implemented": true,
+      "status": "완료",
+      "approved": true,
+      "result": "WORK반영·최종엔진188검사·공식재생/멱등/역검증완료",
+      "report": "G:/somi/JO9sa/records/release-r05-voice-policy-20261113/REPORT_KO.md"
+    },
+    {
+      "id": "Q03",
+      "item": "R03-추가",
+      "title": "키키모라의 외형 분류 조건 해석",
+      "facts": "young=0/loli=1/milf=2이며 agree_age=0은 공용 코드에서 미지정값처럼 무시된다. 이 값만으로 실제 연령은 판정하지 않는다.",
+      "proposal": "키키모라전용young형검사·다른고객규약유지",
+      "saveCost": "새저장값없음",
+      "question": "현재 분류 허용을 유지할지, 원래 young분류0 의도를 복구할지.",
+      "implemented": true,
+      "status": "완료",
+      "approved": true,
+      "result": "WORK반영·엔진72검사·36가격평가보존·공식재생/멱등/역검증완료",
+      "report": "G:/somi/JO9sa/records/release-r03j-kikimora-young-20261113/REPORT_KO.md"
+    },
+    {
+      "id": "Q04",
+      "item": "R06~R09",
+      "title": "현재 WORK 수동 리소스를 최종 입력으로 보존",
+      "facts": "소스와 다른 JSON19개, WORK 전용2339 명명본1개. 신규·크기변경 이미지 후보117개와 현행 수동 JSON의 원장 밖 참조60개. 옛9경로는 따로 남음.",
+      "proposal": "WORK 수동 변경 보존 후보를 검토한 뒤 추적 소스/신규 Full 입력원장에 연결. 같은 ID2339의 옛/새JSON 중복 금지. 옛 경로 퇴역은 D21 검증 후.",
+      "saveCost": "새 필드 없음. 옛 이름/경로 지원은 D21 최종 매핑 필요.",
+      "question": "첨부 보존 후보를 기준으로 소스·원장을 통일할지. 옛9경로 정리는 지금 하지 않음.",
+      "implemented": true,
+      "status": "완료",
+      "approved": true,
+      "result": "WORK수동JSON20/이미지162소스통일·전체런타임입력/기록재감사·옛경로유지",
+      "report": "G:/somi/JO9sa/records/release-q04-work-source-20261113/REPORT_KO.md"
+    },
+    {
+      "id": "Q05",
+      "item": "R11",
+      "title": "모드툴 동봉 범위",
+      "facts": "game/modtools에 실행 도구와 개인 편집 이력·서버 상태가 섞임. 로컬 경로 언급20파일은 곧20개 결함이라는 뜻이 아님.",
+      "proposal": "플레이용 Full과 선택 모드툴 묶음을 구분하는 안을 우선 검토. 동봉한다면 설치별 경로 재생성과 실행 의존성을 검사.",
+      "saveCost": "게임 세이브 추가 없음. 도구 개인 설정/아이디어/편집 백업은 배포 입력에서 제외할 후보.",
+      "question": "Full에 열람표만 넣을지, 전체 편집기를 별도 묶음으로 제공할지.",
+      "implemented": true,
+      "status": "완료·배포 제외",
+      "approved": true,
+      "decision": "사용자 확정: 모드툴 전부 배포 대상 제외",
+      "result": "런타임 배포입력에 도구0개, 후보546개 제외/원본보존. 공개노트 도구항목 제거."
+    },
+    {
+      "id": "Q06",
+      "item": "R18~R19",
+      "title": "세이브 이관 지원 범위 확정",
+      "facts": "코드·이미지 경로가 아직 미동결. 외부 이관 도구는 미구현이며 개인 SAV는 읽거나 쓰지 않음.",
+      "proposal": "모든 수정 후 옛 기본이름·경로 매핑과 지원 엔진/CRC/전투 중 저장 범위를 고정하고 구현. 원본 보존·새출력·반복/복구·실제 UI 로드 왕복 필수.",
+      "saveCost": "변환 허용값만 명시. 사용자 작명·육성·관계·소유일·진행·1회 갱신표식 보존.",
+      "question": "코드와 리소스 확정 후 지원할 구버전/저장 지점과 검사용 사본을 확정.",
+      "implemented": false,
+      "status": "완료",
+      "decision": "2.4.1 일반 화면 저장 지원",
+      "result": "지원범위 유지·불러오기 자동 갱신으로 변경·외부도구 불필요",
+      "report": "records/auto242-load-20261114/REPORT_KO.md"
+    }
+  ],
+  "next": null,
+  "originalNext": "Q04",
+  "followupDiscussions": [
+    {
+      "id": "R05_THRESHOLD",
+      "status": "완료",
+      "implemented": true,
+      "report": "G:/somi/JO9sa/records/release-r05a-auto-speech-20261113/REPORT_KO.md",
+      "note": "사용자확정3/3/3·두려움포함·응석3복귀. 공주출신 일반노예 포함 및 직업공주고정. 새키0.",
+      "approved": true
+    }
+  ]
+}

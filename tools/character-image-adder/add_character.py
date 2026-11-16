@@ -1038,6 +1038,57 @@ def slot_reference(data, slot, dedicated):
     return None, None
 
 
+def shared_appearance_data(paths, sid, data=None):
+    """Fill absent appearance slots from JSONs using the same physical base image.
+
+    Explicit fields, including an empty unlink, stay authoritative. Conflicting
+    donor slots and references without an image file are left unresolved. This
+    only returns data; callers decide whether a user-requested save writes it.
+    """
+    if data is None:
+        data, _filename = read_slave(paths, sid)
+    updated = dict(data)
+    base = data.get("fullimage")
+    if not isinstance(base, str) or not base:
+        return updated
+    try:
+        base_key = _image_path_key(paths, base)
+    except ValueError:
+        return updated
+    groups = [("base", ("indpack_naked",)), ("title", SLOT_FIELDS["title"])] + [
+        (slot, SLOT_FIELDS[slot]) for slot in ("maid", "secr", "dom")]
+    missing = [(slot, fields) for slot, fields in groups if not any(field in data for field in fields)]
+    if not missing:
+        return updated
+    candidates = {slot: {} for slot, _fields in missing}
+    for filename in sorted(os.listdir(paths.slaves_dir)):
+        match = re.fullmatch(r"(\d+)(?:_[^/\\]+)?\.json", filename, re.IGNORECASE)
+        if not match or int(match.group(1)) == int(sid):
+            continue
+        try:
+            with open(os.path.join(paths.slaves_dir, filename), "r", encoding="utf-8-sig") as stream:
+                donor = json.load(stream)
+            donor_base = donor.get("fullimage")
+            if not isinstance(donor_base, str) or _image_path_key(paths, donor_base) != base_key:
+                continue
+            dedicated = is_dedicated(paths, int(match.group(1)))
+            for slot, fields in missing:
+                field, reference = (("indpack_naked", donor.get("indpack_naked")) if slot == "base"
+                                    else slot_reference(donor, slot, dedicated))
+                if field not in fields or not isinstance(reference, str) or not reference:
+                    continue
+                target = _image_path_key(paths, reference)
+                if os.path.isfile(_abs_from_gamepath(paths.root, reference)):
+                    candidates[slot].setdefault(target, (field, reference))
+        except (OSError, ValueError, AttributeError):
+            continue
+    for options in candidates.values():
+        if len(options) == 1:
+            field, reference = next(iter(options.values()))
+            updated[field] = reference
+    return updated
+
+
 def slot_default_target(paths, sid, data, slot, base):
     """아직 연결 안 된 슬롯의 새 저장 위치 (필드, 참조). 확정된 폴더 규칙을 따른다."""
     role = SLOT_ROLE[slot]
@@ -1120,6 +1171,7 @@ def save_character_slots(paths, sid, slot_images=None, face_image=None, attribut
     """
     data, json_file = read_slave(paths, sid)
     before = copy.deepcopy(data)
+    data = shared_appearance_data(paths, sid, data)
     updated = dict(data)
     base = slave_base_name(data) or ("%04d_%s" % (int(sid), "char"))
     dedicated = is_dedicated(paths, sid)
@@ -1216,7 +1268,7 @@ def save_character_slots(paths, sid, slot_images=None, face_image=None, attribut
         preserved_shared_with.update(users)
         if _image_path_key(paths, reference) not in remaining and target not in payloads and not users:
             payloads[target] = None
-    if updated != data or new_json != json_file:
+    if updated != before or new_json != json_file:
         with open(json_file, "rb") as source:
             original_json = source.read()
         if not os.path.exists(json_file + ".bak") and not os.path.exists(new_json + ".bak"):
@@ -1252,6 +1304,7 @@ def clone_character(paths, src_sid, name=None, slug="", new_id=None, story=None,
     원본 JSON·이미지는 바꾸지 않는다.
     """
     data, _src_file = read_slave(paths, src_sid)
+    data = shared_appearance_data(paths, src_sid, data)
     raw_slug = (slug or "").strip().replace(" ", "_")
     clean = clean_unique_slug(raw_slug)
     if clean != raw_slug:

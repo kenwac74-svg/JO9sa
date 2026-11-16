@@ -1,0 +1,283 @@
+--- before/tools/modding-hub/server.py
++++ after/tools/modding-hub/server.py
+@@ -28,6 +28,11 @@
+   def do_GET(self):
+    url=urlparse(self.path);route=url.path
+    native=route.split('/',3)[3] if route.startswith('/v/') and len(route.split('/',3))>3 else route.lstrip('/')
++   if native=='studio-view.mjs':
++    text=(base.DIST/'studio-view.mjs').read_text('utf-8')
++    marker='<button class="button secondary st-tosim"'
++    button='<button class="button secondary" data-workspace-image-search="${e(c.jsonFile)}" data-image-path="${e(c.data.fullimage || \'\')}" data-image-id="${e(c.id)}" title="캐릭터 파일명 키워드를 이미지 검색창에 넣습니다. 검색은 직접 누르세요.">이미지 검색어 보내기</button>'
++    return self.blob(text.replace(marker,button+marker,1).encode(),'text/javascript; charset=utf-8')
+    if native in ['studio-look.mjs','studio-look-geometry.mjs']:
+     return self.blob((HERE/'overrides'/native).read_bytes(),'text/javascript; charset=utf-8')
+    if native=='app.mjs':
+--- before/tools/modding-hub/integration.mjs
++++ after/tools/modding-hub/integration.mjs
+@@ -10,6 +10,12 @@
+  {id:'utilities',label:'기타툴',icon:'⚙',children:[['save-fix','세이브 정비'],['ai-link','AI 연결'],['slave-sim','뽑기 분포']]},
+  {id:'artifacts',label:'기타 산출물',icon:'▥'},
+ ];
++export function characterImageKeyword(file,imagePath='',id=''){
++ const stem=String(imagePath).replaceAll('\\','/').split('/').pop()?.replace(/\.[^.]+$/,'')||'';
++ if(/^\d+_/.test(stem))return stem.split('_')[0];
++ if(stem)return stem.replace(/_(?:black|blond|blue|brown|green|pink|purple|red|white)_(?:long|short)(?:_[^_]+)?$/i,'').replace(/_title$/i,'');
++ const name=String(file).replace(/\.json$/i,'');return name.replace(/^\d+_/,'')||String(id)||name;
++}
+ export async function installWorkspace(api){
+  const config=await fetch('/workspace/config').then(r=>{if(!r.ok)throw Error('통합 메뉴 설정을 읽지 못했습니다.');return r.json();});
+  const css=document.createElement('link');css.rel='stylesheet';css.href='/workspace/integration.css';document.head.append(css);
+@@ -93,6 +99,13 @@
+  }
+  document.addEventListener('click',event=>{
+   const target=event.target.closest('button');if(!target)return;
++  if(target.dataset.workspaceImageSearch!==undefined){
++   const keyword=characterImageKeyword(target.dataset.workspaceImageSearch,target.dataset.imagePath,target.dataset.imageId),panel=panels.get('image-tools');
++   api.switchTab('image-tools');openTool(panel,'checklist');
++   const frame=panel.querySelector('[data-workspace-frame="checklist"]'),origin=new URL(config.tools.checklist).origin;
++   const send=()=>frame.contentWindow?.postMessage({type:'jo9:set-image-search',keyword},origin);
++   frame.addEventListener('load',send,{once:true});send();
++  }
+   if(target.dataset.workspaceTool)openTool(target.closest('.workspace-panel'),target.dataset.workspaceTool);
+   if(target.dataset.workspaceArtifact)openArtifact(target.dataset.workspaceArtifact);
+   if(target.hasAttribute('data-workspace-refresh'))loadArtifacts(true);
+--- before/tools/modding-hub/overrides/studio-look.mjs
++++ after/tools/modding-hub/overrides/studio-look.mjs
+@@ -28,7 +28,15 @@
+ export function createLookEditor({toast, call, onSaved, endpoint = c => `/api/char/${c.id}/images`, extra = () => ({})}) {
+  const blankFace = () => ({box: null, changed: false, file: null, slot: null});
+  let ch = null, cur = 'base', slots = {}, face = blankFace(), faceMode = false, preview = null, drag = null, pick = null;
+- let guides = [], guideCounter = 0, wheelTimer = null;
++ let guides = [], guideCounter = 0, wheelTimer = null, portraitFrame = null, framePromise = null;
++ async function ensurePortraitFrame() {
++  if (!framePromise) framePromise = loadImage('/game/content/pic/girls/face/0001_black_long_loli.png').then(im => portraitFrame = im).catch(error => { framePromise = null; throw Error('기본 초상 테두리를 불러오지 못했습니다. ' + error.message); });
++  return framePromise;
++ }
++ function framePortrait(canvas) {
++  if (!portraitFrame) return canvas;
++  const g = canvas.getContext('2d');g.save();g.beginPath();g.rect(0,0,151,150);g.rect(5,5,141,140);g.clip('evenodd');g.drawImage(portraitFrame,0,0,151,150);g.restore();return canvas;
++ }
+  const rules = {top: 24, head: 142}; // 기준: 머리 윗끝 Y, 정수리~턱 높이(Tk 도구 기본값)
+ 
+  function reset(character) {
+@@ -111,7 +119,7 @@
+       <div class="st-row"><div class="lk-nudge" role="group" aria-label="X·Y 좌표 이동">${[['up','↑','위로'],['left','←','왼쪽으로'],['down','↓','아래로'],['right','→','오른쪽으로']].map(([a,mark,label]) => `<button class="button secondary" data-lk-act="${a}" aria-label="${label} 1px 이동" title="${faceMode && cur === face.slot ? '얼굴 상자' : '이미지'} ${label} 1px · Shift 10px">${mark}</button>`).join('')}</div><small class="fine-print">${faceMode && cur === face.slot ? '얼굴 상자' : '이미지'} X·Y 이동<br>Shift: 10px</small></div>
+       <small class="fine-print">원본 ${s.img.naturalWidth}×${s.img.naturalHeight} → 795×596</small>
+       <div class="lk-guides"><div class="section-label">가이드선</div><div class="st-row"><button class="button secondary small" data-lk-act="guide-h">가로선 추가</button><button class="button secondary small" data-lk-act="guide-v">세로선 추가</button>${guides.length ? '<button class="button secondary small" data-lk-act="guide-clear">가이드 지우기</button>' : ''}</div>${guides.map(g => `<div class="st-row"><label>${g.axis === 'x' ? '세로 X' : '가로 Y'} <input class="lk-guide-position" type="number" min="0" max="${g.axis === 'x' ? W : H}" step="1" data-lk-guide="${g.id}" value="${Math.round(g.value)}"></label><button class="button secondary small" data-lk-guide-delete="${g.id}" aria-label="가이드 ${g.id} 삭제">삭제</button></div>`).join('')}<small class="fine-print lk-guide-help">얇은 실선을 끌어 옮길 수 있습니다. 가이드와 하단 표시선은 저장되지 않습니다.</small></div>` : ''}
+-     <div class="section-label">얼굴(151×150) <small class="fine-print">${face.file ? '얼굴 파일' : face.box ? e(ch.slots[face.slot]?.label || '') : ''}</small></div>
++     <div class="section-label">얼굴(151×150 · 테두리 자동) <small class="fine-print">${face.file ? '얼굴 파일' : face.box ? e(ch.slots[face.slot]?.label || '') : ''}</small></div>
+       <div class="lk-faces"><canvas width="151" height="150" data-lk-face></canvas>${Object.entries(ch.faces).map(([k, u]) => `<figure>${u ? `<img src="${e(u)}" alt="">` : '<div class="st-empty">없음</div>'}<figcaption>${FACE_LABEL[k]}</figcaption></figure>`).join('')}</div>
+       <div class="st-row"><button class="button ${faceMode ? '' : 'secondary'}" data-lk-act="face-mode" ${hasImage(cur) ? '' : 'disabled'}>${faceMode ? '얼굴 상자 편집 중' : '얼굴 상자로 만들기'}</button>
+        <label class="button secondary">얼굴 파일 선택<input type="file" accept="image/png,image/jpeg,image/webp" data-lk-facefile hidden></label>
+@@ -158,7 +166,7 @@
+   og.imageSmoothingQuality = 'high'; og.drawImage(b.img, b.t.x, b.t.y, b.img.naturalWidth * b.t.s, b.img.naturalHeight * b.t.s);
+   const portrait = Object.assign(document.createElement('canvas'), {width: 151, height: 150}), pg = portrait.getContext('2d'), [x, y, w] = face.box;
+   pg.imageSmoothingQuality = 'high'; pg.drawImage(off, x, y, w, Math.round(w * FACE_RATIO), 0, 0, 151, 150);
+-  return portrait;
++  return framePortrait(portrait);
+  }
+  function syncInputs(root) {
+   const s = slot(cur); if (!s.t) return;
+@@ -229,7 +237,7 @@
+    const t = ev.target;
+    try {
+     if (t.matches('[data-lk-file]')) { await pickFile(cur, t.files[0]); return rerender(); }
+-    if (t.matches('[data-lk-facefile]')) { const f = t.files[0]; if (!f) return; const src = await readFile(f); face.file = await loadImage(src); face.fileSrc = src; face.changed = true; face.slot = null; faceMode = false; return rerender(); }
++    if (t.matches('[data-lk-facefile]')) { const f = t.files[0]; if (!f) return; await ensurePortraitFrame(); const src = await readFile(f), im = await loadImage(src), canvas = Object.assign(document.createElement('canvas'), {width:151,height:150}); canvas.getContext('2d').drawImage(im,0,0,151,150); face.file = framePortrait(canvas); face.fileSrc = face.file.toDataURL('image/png'); face.changed = true; face.slot = null; faceMode = false; return rerender(); }
+     if (t.dataset.lkGuide) { const line = guides.find(g => g.id === Number(t.dataset.lkGuide)), v = Number(t.value); if (line && Number.isFinite(v) && v >= 0 && v <= (line.axis === 'x' ? W : H)) line.value = v; else toast('가이드 좌표가 캔버스 범위를 벗어났습니다.'); return refresh(root, rerender); }
+     if (t.dataset.lkBox !== undefined && face.box) { const v = Number(t.value); if (!Number.isFinite(v)) return toast('숫자를 입력하세요.'); face.box[Number(t.dataset.lkBox)] = v; clampFace(); changedFace(); return refresh(root, rerender); }
+     if (t.dataset.lkRule) { const v = Math.round(Number(t.value)); if (t.dataset.lkRule === 'top' && v >= 0 && v <= 200) rules.top = v; else if (t.dataset.lkRule === 'head' && v >= 20 && v <= 590) rules.head = v; else toast('윗끝 0~200, 머리 높이 20~590'); draw(root); return; }
+@@ -251,7 +259,7 @@
+     if (act === 'contain' || act === 'bounds') fit(cur, act);
+     if (act === 'pick-cut' || act === 'pick-chin') { const mode = act.slice(5); pick = pick?.mode === mode ? null : {mode, points: []}; faceMode = false; }
+     if (act === 'undo-slot') delete slots[cur];
+-    if (act === 'face-mode') { pick = null; faceMode = !faceMode; if (faceMode && (face.slot !== cur || !face.box)) resetFace(cur); if (faceMode) { face.file = null; face.changed = true; } }
++    if (act === 'face-mode') { if (!faceMode) await ensurePortraitFrame(); pick = null; faceMode = !faceMode; if (faceMode && (face.slot !== cur || !face.box)) resetFace(cur); if (faceMode) { face.file = null; face.changed = true; } }
+     if (act === 'face-undo') { face = blankFace(); faceMode = false; preview = null; }
+     if (act === 'discard') { slots = {}; face = blankFace(); faceMode = false; preview = null; }
+     if (act === 'cancel') preview = null;
+@@ -274,7 +282,7 @@
+   }
+   if (face.changed) {
+    if (face.file) out.face = {mode: 'file', src: face.fileSrc};
+-   else if (face.box && hasImage(face.slot)) out.face = face.slot === 'base' ? {mode: 'box', box: face.box} : {mode: 'file', src: faceBitmap().toDataURL('image/png')};
++   else if (face.box && hasImage(face.slot)) { if (!portraitFrame) throw Error('초상 테두리를 다시 불러와 주세요.'); out.face = {mode:'file',src:faceBitmap().toDataURL('image/png')}; }
+   }
+   return out;
+  }
+--- before/tools/modding-hub/tests/look-face-source.test.mjs
++++ after/tools/modding-hub/tests/look-face-source.test.mjs
+@@ -23,8 +23,7 @@
+   assert(x.ed.html().includes('data-lk-facefile'),name+' should allow a portrait file');
+   await x.click({lkAct:'face-mode'});assert(x.ed.html().includes('얼굴 상자 편집 중'),name);
+   await x.click({lkAct:'preview'});const p=x.request();assert.deepEqual(p.slots,{});
+-  if(name==='base'){assert.equal(p.face.mode,'box');}
+-  else {assert.equal(p.face.mode,'file');const png=JSON.parse(Buffer.from(p.face.src.split(',')[1],'base64'));assert.equal(png.width,151);assert.equal(png.height,150);assert(JSON.stringify(png.trace).includes('/'+name));}
++  assert.equal(p.face.mode,'file');const png=JSON.parse(Buffer.from(p.face.src.split(',')[1],'base64'));assert.equal(png.width,151);assert.equal(png.height,150);assert(JSON.stringify(png.trace).includes('/'+name));assert(JSON.stringify(png.trace).includes('0001_black_long_loli.png'),'default game border must be composed');
+  }
+ });
+ test('switching tabs keeps the selected portrait source',async()=>{
+--- before/tools/text-workshop/server.cjs
++++ after/tools/text-workshop/server.cjs
+@@ -174,7 +174,7 @@
+       html=html.replace(/<head(?:\s[^>]*)?>/i,head=>head+'<script>window.JO9_CATALOG_BRIDGE='+cfg+';</script>');
+       // file:// cannot be displayed inside HTTP pages. Serve only allowlisted catalog images.
+       html=html.replace("function url(p){", "function url(p){if(p.indexOf(MR+'\\\\')===0||p.indexOf(OR+'\\\\')===0){var orig=p.indexOf(OR+'\\\\')===0;return '/api/catalog-asset?t='+"+JSON.stringify(token)+"+'&original='+(orig?'1':'0')+'&p='+encodeURIComponent(p.substring((orig?OR:MR).length+1));}");
+-      const nativeCatalog=catalogTabs.native(html);html=catalogTabs.shell(html);
++      const nativeCatalog=catalogTabs.native(html);html=catalogTabs.shell(html);html=html.replace(/<\/body>/i,'<script src="catalog-search-bridge.js"></script><script src="catalog-resource-source.js"></script></body>');
+       html=html.replace(/<\/body>/i,nativeCatalog?'<script src="catalog_grok.js"></script></body>':'<script src="catalog_grok.js"></script><script src="catalog_cuts.js"></script><script src="catalog-cut-conditions.js"></script></body>');
+       res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store'});res.end(embeddedShell.page(html,'checklist'));return;
+     }
+@@ -184,12 +184,12 @@
+       const code=key==='conditions'?[...payload.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(m=>m[1]).join('\n'):payload+(key==='gallery'?'<script src="catalog-refresh.js"></script>':'');
+       res.writeHead(200,{'Content-Type':key==='conditions'?'text/javascript; charset=utf-8':'text/html; charset=utf-8','Cache-Control':'no-store'});res.end(code);return;
+     }
+-    const catalogFiles=['catalog-refresh.js','catalog-tabs.js','catalog_cuts.js','catalog_status.js','catalog_work_codes.js','catalog_workshop.js','catalog_editor.js','catalog_pic.js','catalog_local_pic.js','catalog_grok.js'];
++    const catalogFiles=['catalog-search-bridge.js','catalog-resource-source.js','catalog-refresh.js','catalog-tabs.js','catalog_cuts.js','catalog_status.js','catalog_work_codes.js','catalog_workshop.js','catalog_editor.js','catalog_pic.js','catalog_local_pic.js','catalog_grok.js'];
+     if(req.method==='GET'&&catalogFiles.includes(url.pathname.slice(1))){
+       const file=url.pathname.slice(1);let text;
+       if(file==='catalog_status.js')text='window.CATALOG_STATUS='+JSON.stringify(catalog.state())+';';
+       else if(file==='catalog_work_codes.js')text='window.JO9_WORK_CODES='+JSON.stringify(catalog.snapshot().codes||{})+';window.JO9_WORK_UNITS='+JSON.stringify(catalog.snapshot().unitCodes||{})+';';
+-      else {const full=path.join(file==='catalog-refresh.js'?__dirname:catalogRoot,file);if(!fs.existsSync(full)){res.writeHead(404);res.end();return;}text=fs.readFileSync(full,'utf8');if(file==='catalog_pic.js')text=fs.readFileSync(path.join(catalogRoot,'catalog_local_pic.js'),'utf8')+'\n'+text;}
++      else {const full=path.join(['catalog-refresh.js','catalog-search-bridge.js','catalog-resource-source.js'].includes(file)?__dirname:catalogRoot,file);if(!fs.existsSync(full)){res.writeHead(404);res.end();return;}text=fs.readFileSync(full,'utf8');if(file==='catalog_pic.js')text=fs.readFileSync(path.join(catalogRoot,'catalog_local_pic.js'),'utf8')+'\n'+text;}
+       res.writeHead(200,{'Content-Type':'text/javascript; charset=utf-8','Cache-Control':'no-store'});res.end(text);return;
+     }
+     if(req.method==='GET'&&url.pathname==='/api/catalog-asset'){
+--- before/tools/text-workshop/catalog-search-bridge.js
++++ after/tools/text-workshop/catalog-search-bridge.js
+@@ -0,0 +1,14 @@
++/* JO9 MOD SEARCH_TRANSFER_20261115: fill only; the user runs the search. */
++(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else api.install(root);})(typeof window==='undefined'?globalThis:window,function(){
++ 'use strict';
++ function accept(event,parent){
++  if(event.source!==parent||event.data?.type!=='jo9:set-image-search')return null;
++  try{const u=new URL(event.origin);if(u.protocol!=='http:'||u.hostname!=='127.0.0.1')return null;}catch{return null;}
++  const s=event.data.keyword;return typeof s==='string'&&s.trim()&&s.length<=200&&!/[\x00-\x1f]/.test(s)?s.trim():null;
++ }
++ async function putKeyword(env,keyword){await env.tabs.activate('gallery');const input=env.input();if(!input)throw Error('이미지 검색창을 찾지 못했습니다.');input.value=keyword;input.focus();const status=env.status?.();if(status)status.textContent='검색어를 넣었습니다. 검색 버튼을 눌러 주세요.';}
++ function install(win){win.addEventListener('message',async event=>{const keyword=accept(event,win.parent);if(keyword===null)return;try{
++  await putKeyword({tabs:win.JO9_CATALOG_TABS,input:()=>win.document.getElementById('q'),status:()=>{let el=win.document.getElementById('jo9ImageSearchTransferStatus');if(!el){el=win.document.createElement('span');el.id='jo9ImageSearchTransferStatus';el.setAttribute('role','status');win.document.getElementById('q').parentElement.append(el);}return el;}},keyword);
++ }catch(error){console.warn('이미지 검색어 전달:',error.message);}});}
++ return{accept,putKeyword,install};
++});
+--- before/tools/text-workshop/catalog-resource-source.js
++++ after/tools/text-workshop/catalog-resource-source.js
+@@ -0,0 +1,33 @@
++/* JO9 MOD GAME_RESOURCE_SOURCE_20261115 — plugin for the existing image workshop. */
++(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else api.install(root);})(typeof window==='undefined'?globalThis:window,function(){
++ 'use strict';
++ function matches(index,query){
++  const q=String(query||'').trim().toLowerCase(),rank=p=>/^girls\/face\//i.test(p)?0:/^(characters|girls\/full)\//i.test(p)?1:2;
++  return index.filter(f=>/\.(png|jpe?g|webp)$/i.test(f.path)&&(!q||f.path.toLowerCase().includes(q))).sort((a,b)=>rank(a.path)-rank(b.path)||a.path.localeCompare(b.path));
++ }
++ function install(win){
++  const doc=win.document;let installed=false;
++  const observer=new MutationObserver(()=>mount());observer.observe(doc.documentElement,{childList:true,subtree:true});mount();
++  function mount(){
++   if(installed)return;const api=win.JO9Workshop,folder=doc.querySelector('#wsdialog #pickfolder')||doc.getElementById('pickfolder');if(!api||!folder)return;
++   installed=true;observer.disconnect();const host=folder.closest('#wsdialog')||doc.body;
++   const button=doc.createElement('button');button.id='pickgamesource';button.setAttribute('data-lock','');button.textContent='게임 이미지 사용';button.title='현재 PIC 폴더의 초상·전신 등을 교체 소스로 선택합니다.';folder.after(button);
++   const dialog=doc.createElement('dialog');dialog.id='gamesourcedialog';dialog.style.cssText='width:min(900px,94vw);max-height:88vh;overflow:auto;padding:18px;background:var(--panel,#232924);color:var(--fg,#eff1e9);border:1px solid var(--line,#414b42);border-radius:10px';
++   dialog.innerHTML='<h2>게임 이미지 소스로 선택</h2><p>같은 이름의 초상·전신 등을 찾아 교체 소스로 사용합니다.</p><div style="display:flex;gap:8px"><input id="gamesourcequery" aria-label="게임 이미지 검색어" placeholder="파일명 또는 폴더 검색" style="flex:1"><button type="button" id="gamesourcesearch">검색</button><button type="button" id="gamesourceclose">닫기</button></div><p id="gamesourcestatus" role="status"></p><div style="display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:14px"><div id="gamesourcelist" style="max-height:48vh;overflow:auto"></div><div><img id="gamesourcepreview" alt="선택한 게임 이미지" style="display:none;width:100%;max-height:280px;object-fit:contain"><p id="gamesourcepath" style="overflow-wrap:anywhere"></p><button type="button" id="gamesourceuse" disabled>이 이미지를 소스로 넣기</button></div></div>';
++   host.append(dialog);const $=id=>dialog.querySelector('#'+id);let chosen=null,url=null,sequence=0;
++   function clear(){sequence++;chosen=null;$('gamesourceuse').disabled=true;$('gamesourcepreview').style.display='none';if(url){URL.revokeObjectURL(url);url=null;}}
++   async function select(path){const seq=++sequence;chosen=null;$('gamesourceuse').disabled=true;$('gamesourcestatus').textContent='이미지를 읽는 중…';try{
++    let dir=api.state.root;const parts=path.split('/');for(const part of parts.slice(0,-1))dir=await dir.getDirectoryHandle(part);
++    const file=await(await dir.getFileHandle(parts.at(-1))).getFile();if(seq!==sequence)return;
++    if(url)URL.revokeObjectURL(url);url=URL.createObjectURL(file);chosen={path,file};$('gamesourcepreview').src=url;$('gamesourcepreview').style.display='block';$('gamesourcepath').textContent=path;$('gamesourceuse').disabled=false;$('gamesourcestatus').textContent='소스로 사용할 이미지를 확인하세요.';
++   }catch(error){if(seq===sequence)$('gamesourcestatus').textContent=error.message;}}
++   function search(){clear();const files=matches(api.state.index,$('gamesourcequery').value);$('gamesourcelist').replaceChildren();$('gamesourcestatus').textContent=files.length+'개 후보'+(files.length>100?' · 앞 100개 표시. 검색어를 좁혀 주세요.':'');for(const file of files.slice(0,100)){const b=doc.createElement('button');b.type='button';b.style.cssText='display:block;width:100%;text-align:left;margin:4px 0;overflow-wrap:anywhere';b.textContent=file.path;b.onclick=()=>select(file.path);$('gamesourcelist').append(b);}}
++   button.onclick=()=>{if(api.state.busy)return;dialog.showModal();if(!api.state.root){$('gamesourcestatus').textContent='PIC 폴더를 먼저 연결하세요.';return;}
++    const resource=api.screen?.resources?.[0],name=resource?.file||resource?.path?.replaceAll('\\','/').split('/').pop()||'';$('gamesourcequery').value=name.replace(/\.[^.]+$/,'').replace(/_(gray|sepia|ava)$/i,'');search();};
++   $('gamesourcesearch').onclick=search;$('gamesourcequery').onkeydown=event=>{if(event.key==='Enter'){event.preventDefault();search();}};
++   $('gamesourceclose').onclick=()=>dialog.close();dialog.addEventListener('close',clear);
++   $('gamesourceuse').onclick=async()=>{if(!chosen||api.state.busy)return;const pick=chosen;dialog.close();try{await api.add([{file:pick.file,relative:'game/'+pick.path}]);}catch(error){console.error('게임 이미지 추가:',error);}};
++  }
++ }
++ return{matches,install};
++});
+--- before/tools/text-workshop/tests/editor-resource-tools.test.cjs
++++ after/tools/text-workshop/tests/editor-resource-tools.test.cjs
+@@ -0,0 +1,27 @@
++const test=require('node:test'),a=require('node:assert/strict');
++const bridge=require('../catalog-search-bridge.js');
++test('keyword transfer fills input after opening gallery without executing search or input events',async()=>{
++ let activated=0,searched=0,dispatched=0;const input={value:'old',focus(){},dispatchEvent(){dispatched++;}},status={textContent:''};
++ await bridge.putKeyword({tabs:{activate:async k=>{a.equal(k,'gallery');activated++;}},input:()=>input,status:()=>status,search:()=>searched++},'african3');
++ a.equal(input.value,'african3');a.equal(activated,1);a.equal(searched,0);a.equal(dispatched,0);
++});
++test('search transfer only accepts the embedding local parent',()=>{
++ const parent={};const data={type:'jo9:set-image-search',keyword:'african3'};
++ a.equal(bridge.accept({data,source:parent,origin:'http://127.0.0.1:7689'},parent),'african3');
++ a.equal(bridge.accept({data,source:{},origin:'http://127.0.0.1:7689'},parent),null);
++ a.equal(bridge.accept({data,source:parent,origin:'https://external.example'},parent),null);
++});
++test('game source suggestions keep same-named files in distinct folders and prefer portraits',()=>{
++ const fn=require('../catalog-resource-source.js').matches;
++ const files=[{path:'ui/buttons/african3.png',name:'african3.png'},{path:'girls/full/african3_black_long.png',name:'african3_black_long.png'},{path:'girls/face/african3.png',name:'african3.png'},{path:'girls/face/other.png',name:'other.png'}];
++ const found=Array.from(fn(files,'AFRICAN3'));a.equal(found.length,3);a.equal(found[0].path,'girls/face/african3.png');a.equal(new Set(found.map(x=>x.path)).size,3);
++});
++
++test('character keyword uses the image family and retains numbered character identity',async()=>{
++ const {pathToFileURL}=require('node:url'),path=require('node:path');
++ const {characterImageKeyword:keyword}=await import(pathToFileURL(path.resolve(__dirname,'../../modding-hub/integration.mjs')));
++ a.equal(keyword('2588_african3.json','girls/full/african3_black_long'),'african3');
++ a.equal(keyword('2341_Gloria.json','girls/full/2341_gloria'),'2341');
++ a.equal(keyword('2588_african3.json'),'african3');
++ a.equal(keyword('2588_african3.json','characters/african3_black_long_title'),'african3');
++});
+--- before/tools/image-workshop/catalog-resource-source.js
++++ after/tools/image-workshop/catalog-resource-source.js
+@@ -0,0 +1,33 @@
++/* JO9 MOD GAME_RESOURCE_SOURCE_20261115 — plugin for the existing image workshop. */
++(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else api.install(root);})(typeof window==='undefined'?globalThis:window,function(){
++ 'use strict';
++ function matches(index,query){
++  const q=String(query||'').trim().toLowerCase(),rank=p=>/^girls\/face\//i.test(p)?0:/^(characters|girls\/full)\//i.test(p)?1:2;
++  return index.filter(f=>/\.(png|jpe?g|webp)$/i.test(f.path)&&(!q||f.path.toLowerCase().includes(q))).sort((a,b)=>rank(a.path)-rank(b.path)||a.path.localeCompare(b.path));
++ }
++ function install(win){
++  const doc=win.document;let installed=false;
++  const observer=new MutationObserver(()=>mount());observer.observe(doc.documentElement,{childList:true,subtree:true});mount();
++  function mount(){
++   if(installed)return;const api=win.JO9Workshop,folder=doc.querySelector('#wsdialog #pickfolder')||doc.getElementById('pickfolder');if(!api||!folder)return;
++   installed=true;observer.disconnect();const host=folder.closest('#wsdialog')||doc.body;
++   const button=doc.createElement('button');button.id='pickgamesource';button.setAttribute('data-lock','');button.textContent='게임 이미지 사용';button.title='현재 PIC 폴더의 초상·전신 등을 교체 소스로 선택합니다.';folder.after(button);
++   const dialog=doc.createElement('dialog');dialog.id='gamesourcedialog';dialog.style.cssText='width:min(900px,94vw);max-height:88vh;overflow:auto;padding:18px;background:var(--panel,#232924);color:var(--fg,#eff1e9);border:1px solid var(--line,#414b42);border-radius:10px';
++   dialog.innerHTML='<h2>게임 이미지 소스로 선택</h2><p>같은 이름의 초상·전신 등을 찾아 교체 소스로 사용합니다.</p><div style="display:flex;gap:8px"><input id="gamesourcequery" aria-label="게임 이미지 검색어" placeholder="파일명 또는 폴더 검색" style="flex:1"><button type="button" id="gamesourcesearch">검색</button><button type="button" id="gamesourceclose">닫기</button></div><p id="gamesourcestatus" role="status"></p><div style="display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:14px"><div id="gamesourcelist" style="max-height:48vh;overflow:auto"></div><div><img id="gamesourcepreview" alt="선택한 게임 이미지" style="display:none;width:100%;max-height:280px;object-fit:contain"><p id="gamesourcepath" style="overflow-wrap:anywhere"></p><button type="button" id="gamesourceuse" disabled>이 이미지를 소스로 넣기</button></div></div>';
++   host.append(dialog);const $=id=>dialog.querySelector('#'+id);let chosen=null,url=null,sequence=0;
++   function clear(){sequence++;chosen=null;$('gamesourceuse').disabled=true;$('gamesourcepreview').style.display='none';if(url){URL.revokeObjectURL(url);url=null;}}
++   async function select(path){const seq=++sequence;chosen=null;$('gamesourceuse').disabled=true;$('gamesourcestatus').textContent='이미지를 읽는 중…';try{
++    let dir=api.state.root;const parts=path.split('/');for(const part of parts.slice(0,-1))dir=await dir.getDirectoryHandle(part);
++    const file=await(await dir.getFileHandle(parts.at(-1))).getFile();if(seq!==sequence)return;
++    if(url)URL.revokeObjectURL(url);url=URL.createObjectURL(file);chosen={path,file};$('gamesourcepreview').src=url;$('gamesourcepreview').style.display='block';$('gamesourcepath').textContent=path;$('gamesourceuse').disabled=false;$('gamesourcestatus').textContent='소스로 사용할 이미지를 확인하세요.';
++   }catch(error){if(seq===sequence)$('gamesourcestatus').textContent=error.message;}}
++   function search(){clear();const files=matches(api.state.index,$('gamesourcequery').value);$('gamesourcelist').replaceChildren();$('gamesourcestatus').textContent=files.length+'개 후보'+(files.length>100?' · 앞 100개 표시. 검색어를 좁혀 주세요.':'');for(const file of files.slice(0,100)){const b=doc.createElement('button');b.type='button';b.style.cssText='display:block;width:100%;text-align:left;margin:4px 0;overflow-wrap:anywhere';b.textContent=file.path;b.onclick=()=>select(file.path);$('gamesourcelist').append(b);}}
++   button.onclick=()=>{if(api.state.busy)return;dialog.showModal();if(!api.state.root){$('gamesourcestatus').textContent='PIC 폴더를 먼저 연결하세요.';return;}
++    const resource=api.screen?.resources?.[0],name=resource?.file||resource?.path?.replaceAll('\\','/').split('/').pop()||'';$('gamesourcequery').value=name.replace(/\.[^.]+$/,'').replace(/_(gray|sepia|ava)$/i,'');search();};
++   $('gamesourcesearch').onclick=search;$('gamesourcequery').onkeydown=event=>{if(event.key==='Enter'){event.preventDefault();search();}};
++   $('gamesourceclose').onclick=()=>dialog.close();dialog.addEventListener('close',clear);
++   $('gamesourceuse').onclick=async()=>{if(!chosen||api.state.busy)return;const pick=chosen;dialog.close();try{await api.add([{file:pick.file,relative:'game/'+pick.path}]);}catch(error){console.error('게임 이미지 추가:',error);}};
++  }
++ }
++ return{matches,install};
++});
+--- before/tools/image-workshop/place/JO9_Place_Workshop.html
++++ after/tools/image-workshop/place/JO9_Place_Workshop.html
+@@ -1297,4 +1297,4 @@
+   });
+ })();
+ 
+-</script><script src="http://127.0.0.1:3813/catalog_cuts.js"></script></html>
++</script><script src="http://127.0.0.1:3813/catalog_cuts.js"></script><script src="../catalog-resource-source.js"></script></html>
+--- before/tools/local-workspace/Open-Modding-Tools.ps1
++++ after/tools/local-workspace/Open-Modding-Tools.ps1
+@@ -58,7 +58,7 @@
+  $source=Join-Path (Split-Path -Parent $PSScriptRoot) 'image-workshop'
+  $changes=@()
+  # Deploy code only. Existing filters/config/runtime and image templates remain intact.
+- foreach ($relative in @('JO9_Server.ps1','JO9_Detect.ps1','JO9_Launch.cmd','pixelpure_optimizer.html','VERSION.txt','place\JO9_Place_Workshop.html')) {
++ foreach ($relative in @('catalog-resource-source.js','JO9_Server.ps1','JO9_Detect.ps1','JO9_Launch.cmd','pixelpure_optimizer.html','VERSION.txt','place\JO9_Place_Workshop.html')) {
+   $from=Join-Path $source $relative;$to=Join-Path $root $relative
+   if ((Test-Path -LiteralPath $from) -and (!(Test-Path -LiteralPath $to) -or (Get-FileHash -LiteralPath $from -Algorithm SHA256).Hash -ne (Get-FileHash -LiteralPath $to -Algorithm SHA256).Hash)) {$changes+=@{from=$from;to=$to}}
+  }

@@ -1,0 +1,146 @@
+{
+  "schemaVersion": 1,
+  "patchId": "PRIVATE_ROOM_EXTERNAL_RULES_20261116",
+  "before_sha256": "a244ee964f0aaa1ffd6f0d0696242fa0b2bf6b46841cb3b8df2ca9e7747a416a",
+  "after_sha256": "fc849d03743d166a011cd864bed94af4be66e04c6cec436d366b0e6abf5521cc",
+  "scope": {
+    "locations": [
+      "jo9_room_duty",
+      "slave_stat"
+    ],
+    "roles": [
+      "room1",
+      "room2",
+      "room3",
+      "room4"
+    ],
+    "externalDuties": [
+      2,
+      3,
+      4
+    ],
+    "blockedRules": [
+      "cooks_rule",
+      "cleans_rule",
+      "washes_master_rule",
+      "pet_rule",
+      "silence_rule",
+      "toilet_rule",
+      "urinal_rule",
+      "no_shit_rule",
+      "tentacle_rule"
+    ],
+    "preservedRules": [
+      "blowjob_rule",
+      "humility_rule",
+      "no_orgasm_rule",
+      "masturbation_rule",
+      "v_balls_rule",
+      "force_rules"
+    ],
+    "tooltip": "외근 지시를 받은 노예는 수행할 수 없습니다.",
+    "notes": [
+      "Staged edits only; no production QSP or tracked source changes.",
+      "No assistant support, guilt helper changes, equipment removal or save schema changes.",
+      "Preserves existing nonexternal household notice and manual prerequisite branches."
+    ]
+  },
+  "edits": [
+    {
+      "location": "jo9_room_duty",
+      "field": "body",
+      "old": " if jo9_rd_d>=2 and jo9_rd_d<=4:\r\n  dynamic \"room<<jo9_rd_n>>['cooks_rule']=0\"\r\n  dynamic \"room<<jo9_rd_n>>['cleans_rule']=0\"\r\n  dynamic \"room<<jo9_rd_n>>['duty_rules']=0\"\r\n end",
+      "new": " ! JO9 MOD START PRIVATE_ROOM_EXTERNAL_RULES_20261116_SET\r\n if jo9_rd_d>=2 and jo9_rd_d<=4:\r\n  dynamic \"room<<jo9_rd_n>>['cooks_rule']=0\"\r\n  dynamic \"room<<jo9_rd_n>>['cleans_rule']=0\"\r\n  dynamic \"room<<jo9_rd_n>>['washes_master_rule']=0\"\r\n  dynamic \"room<<jo9_rd_n>>['pet_rule']=0\"\r\n  dynamic \"room<<jo9_rd_n>>['silence_rule']=0\"\r\n  dynamic \"room<<jo9_rd_n>>['toilet_rule']=0\"\r\n  dynamic \"room<<jo9_rd_n>>['urinal_rule']=0\"\r\n  dynamic \"room<<jo9_rd_n>>['no_shit_rule']=0\"\r\n  dynamic \"room<<jo9_rd_n>>['tentacle_rule']=0\"\r\n  dynamic \"room<<jo9_rd_n>>['duty_rules']=0\"\r\n end\r\n ! JO9 MOD END PRIVATE_ROOM_EXTERNAL_RULES_20261116_SET",
+      "count": 1,
+      "patchId": "PRIVATE_ROOM_EXTERNAL_RULES_20261116"
+    },
+    {
+      "location": "jo9_room_duty",
+      "field": "body",
+      "old": "  jo9_rd_d=dyneval('result=room'+str(jo9_rd_n)+'[\"duty\"]')\r\n  if jo9_rd_d>0:",
+      "new": "  jo9_rd_d=dyneval('result=room'+str(jo9_rd_n)+'[\"duty\"]')\r\n  ! JO9 MOD START PRIVATE_ROOM_EXTERNAL_RULES_20261116_DAILY\r\n  if jo9_rd_d>=2 and jo9_rd_d<=4:\r\n   dynamic \"room<<jo9_rd_n>>['cooks_rule']=0\"\r\n   dynamic \"room<<jo9_rd_n>>['cleans_rule']=0\"\r\n   dynamic \"room<<jo9_rd_n>>['washes_master_rule']=0\"\r\n   dynamic \"room<<jo9_rd_n>>['pet_rule']=0\"\r\n   dynamic \"room<<jo9_rd_n>>['silence_rule']=0\"\r\n   dynamic \"room<<jo9_rd_n>>['toilet_rule']=0\"\r\n   dynamic \"room<<jo9_rd_n>>['urinal_rule']=0\"\r\n   dynamic \"room<<jo9_rd_n>>['no_shit_rule']=0\"\r\n   dynamic \"room<<jo9_rd_n>>['tentacle_rule']=0\"\r\n   dynamic \"room<<jo9_rd_n>>['duty_rules']=0\"\r\n  end\r\n  ! JO9 MOD END PRIVATE_ROOM_EXTERNAL_RULES_20261116_DAILY\r\n  if jo9_rd_d>0:",
+      "count": 1,
+      "patchId": "PRIVATE_ROOM_EXTERNAL_RULES_20261116"
+    },
+    {
+      "location": "slave_stat",
+      "field": "body",
+      "old": "\tovernight_rules_count = 0",
+      "new": "\tovernight_rules_count = 0\r\n\t! JO9 MOD START PRIVATE_ROOM_EXTERNAL_RULES_20261116_UI_STATE\r\n\tlocal jo9_private_external=iif(snk_room_target>0 and slave['duty']>=2 and slave['duty']<=4,1,0)\r\n\t! JO9 MOD END PRIVATE_ROOM_EXTERNAL_RULES_20261116_UI_STATE",
+      "count": 1,
+      "patchId": "PRIVATE_ROOM_EXTERNAL_RULES_20261116"
+    },
+    {
+      "location": "slave_stat",
+      "field": "body",
+      "old": "\t! JO9 MOD START MAID_DUTY_LOCK_1R | 2026-10-19_maid_trainee_priority\r\n\tlocal $jo9_room_duty_notice=func('jo9_household_worker', 'notice', 'cooks_rule')\r\n\tif $jo9_room_duty_notice!'':\r\n\t\tlocal $jo9_room_duty_tooltip=$replace($replace($replace($replace($jo9_room_duty_notice, \"&\", \"&amp;\"), \"<\", \"&lt;\"), \">\", \"&gt;\"), '\"', \"&quot;\")\r\n\t\t*p '<div id=\"chekbox_1r\"><a class=\"tooltip-left\" tooltip-data=\"<<$jo9_room_duty_tooltip>>\" href=\"EXEC: dynamic $msg, func(''jo9_household_worker'', ''notice'', ''cooks_rule'') & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/unactive_button.png\"></a></div>'\r\n\telse\r\n\tif kitchen <= 0:\r\n\t\t*p '<div id=\"chekbox_1r\"><a href = \"EXEC: dynamic $msg, $no_kitchen & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/unactive_button.png\"></a></div>'\r\n\telseif slave[\"cooks_rule\"] = 1:\r\n\t\tovernight_rules_count += 1\r\n\t\t*p '<div id=\"chekbox_1r\"><a href = \"EXEC: slave[''cooks_rule''] = 0 & $info_text = $slave_cooks_rule_abort & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/sel_button.png\"></a></div>'\r\n\telse\r\n\t\t*p '<div id=\"chekbox_1r\"><a href = \"EXEC: slave[''cooks_rule''] = 1 & $info_text = $slave_cooks_rule & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/unsel_button.png\"></a></div>'\r\n\tend\r\n\tend\r\n\t! JO9 MOD END MAID_DUTY_LOCK_1R",
+      "new": "\t! JO9 MOD START PRIVATE_ROOM_EXTERNAL_RULES_20261116_UI_1R\r\n\tif jo9_private_external=1:\r\n\t *p '<div id=\"chekbox_1r\"><a class=\"tooltip-left\" tooltip-data=\"외근 지시를 받은 노예는 수행할 수 없습니다.\" aria-disabled=\"true\"><img src=\"content/pic/ui/buttons/legacy/unactive_button.png\"></a></div>'\r\n\telse\r\n\t! JO9 MOD START MAID_DUTY_LOCK_1R | 2026-10-19_maid_trainee_priority\r\n\tlocal $jo9_room_duty_notice=func('jo9_household_worker', 'notice', 'cooks_rule')\r\n\tif $jo9_room_duty_notice!'':\r\n\t\tlocal $jo9_room_duty_tooltip=$replace($replace($replace($replace($jo9_room_duty_notice, \"&\", \"&amp;\"), \"<\", \"&lt;\"), \">\", \"&gt;\"), '\"', \"&quot;\")\r\n\t\t*p '<div id=\"chekbox_1r\"><a class=\"tooltip-left\" tooltip-data=\"<<$jo9_room_duty_tooltip>>\" href=\"EXEC: dynamic $msg, func(''jo9_household_worker'', ''notice'', ''cooks_rule'') & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/unactive_button.png\"></a></div>'\r\n\telse\r\n\tif kitchen <= 0:\r\n\t\t*p '<div id=\"chekbox_1r\"><a href = \"EXEC: dynamic $msg, $no_kitchen & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/unactive_button.png\"></a></div>'\r\n\telseif slave[\"cooks_rule\"] = 1:\r\n\t\tovernight_rules_count += 1\r\n\t\t*p '<div id=\"chekbox_1r\"><a href = \"EXEC: slave[''cooks_rule''] = 0 & $info_text = $slave_cooks_rule_abort & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/sel_button.png\"></a></div>'\r\n\telse\r\n\t\t*p '<div id=\"chekbox_1r\"><a href = \"EXEC: slave[''cooks_rule''] = 1 & $info_text = $slave_cooks_rule & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/unsel_button.png\"></a></div>'\r\n\tend\r\n\tend\r\n\t! JO9 MOD END MAID_DUTY_LOCK_1R\r\n\tend\r\n\t! JO9 MOD END PRIVATE_ROOM_EXTERNAL_RULES_20261116_UI_1R",
+      "count": 1,
+      "patchId": "PRIVATE_ROOM_EXTERNAL_RULES_20261116"
+    },
+    {
+      "location": "slave_stat",
+      "field": "body",
+      "old": "\t! JO9 MOD START MAID_DUTY_LOCK_2R | 2026-10-19_maid_trainee_priority\r\n\tlocal $jo9_room_duty_notice=func('jo9_household_worker', 'notice', 'cleans_rule')\r\n\tif $jo9_room_duty_notice!'':\r\n\t\tlocal $jo9_room_duty_tooltip=$replace($replace($replace($replace($jo9_room_duty_notice, \"&\", \"&amp;\"), \"<\", \"&lt;\"), \">\", \"&gt;\"), '\"', \"&quot;\")\r\n\t\t*p '<div id=\"chekbox_2r\"><a class=\"tooltip-left\" tooltip-data=\"<<$jo9_room_duty_tooltip>>\" href=\"EXEC: dynamic $msg, func(''jo9_household_worker'', ''notice'', ''cleans_rule'') & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/unactive_button.png\"></a></div>'\r\n\telse\r\n\tif slave[\"cleans_rule\"] = 1:\r\n\t\tovernight_rules_count += 1\r\n\t\t*p '<div id=\"chekbox_2r\"><a href = \"EXEC: slave[''cleans_rule''] = 0 & $info_text = $slave_cleans_rule_abort & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/sel_button.png\"></a></div>'\r\n\telse\r\n\t\t*p '<div id=\"chekbox_2r\"><a href = \"EXEC: slave[''cleans_rule''] = 1 & $info_text = $slave_cleans_rule & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/unsel_button.png\"></a></div>'\r\n\tend\r\n\tend\r\n\t! JO9 MOD END MAID_DUTY_LOCK_2R",
+      "new": "\t! JO9 MOD START PRIVATE_ROOM_EXTERNAL_RULES_20261116_UI_2R\r\n\tif jo9_private_external=1:\r\n\t *p '<div id=\"chekbox_2r\"><a class=\"tooltip-left\" tooltip-data=\"외근 지시를 받은 노예는 수행할 수 없습니다.\" aria-disabled=\"true\"><img src=\"content/pic/ui/buttons/legacy/unactive_button.png\"></a></div>'\r\n\telse\r\n\t! JO9 MOD START MAID_DUTY_LOCK_2R | 2026-10-19_maid_trainee_priority\r\n\tlocal $jo9_room_duty_notice=func('jo9_household_worker', 'notice', 'cleans_rule')\r\n\tif $jo9_room_duty_notice!'':\r\n\t\tlocal $jo9_room_duty_tooltip=$replace($replace($replace($replace($jo9_room_duty_notice, \"&\", \"&amp;\"), \"<\", \"&lt;\"), \">\", \"&gt;\"), '\"', \"&quot;\")\r\n\t\t*p '<div id=\"chekbox_2r\"><a class=\"tooltip-left\" tooltip-data=\"<<$jo9_room_duty_tooltip>>\" href=\"EXEC: dynamic $msg, func(''jo9_household_worker'', ''notice'', ''cleans_rule'') & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/unactive_button.png\"></a></div>'\r\n\telse\r\n\tif slave[\"cleans_rule\"] = 1:\r\n\t\tovernight_rules_count += 1\r\n\t\t*p '<div id=\"chekbox_2r\"><a href = \"EXEC: slave[''cleans_rule''] = 0 & $info_text = $slave_cleans_rule_abort & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/sel_button.png\"></a></div>'\r\n\telse\r\n\t\t*p '<div id=\"chekbox_2r\"><a href = \"EXEC: slave[''cleans_rule''] = 1 & $info_text = $slave_cleans_rule & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/unsel_button.png\"></a></div>'\r\n\tend\r\n\tend\r\n\t! JO9 MOD END MAID_DUTY_LOCK_2R\r\n\tend\r\n\t! JO9 MOD END PRIVATE_ROOM_EXTERNAL_RULES_20261116_UI_2R",
+      "count": 1,
+      "patchId": "PRIVATE_ROOM_EXTERNAL_RULES_20261116"
+    },
+    {
+      "location": "slave_stat",
+      "field": "body",
+      "old": "\t! JO9 MOD START MAID_DUTY_LOCK_3R | 2026-10-19_maid_trainee_priority\r\n\tlocal $jo9_room_duty_notice=func('jo9_household_worker', 'notice', 'washes_master_rule')\r\n\tif $jo9_room_duty_notice!'':\r\n\t\tlocal $jo9_room_duty_tooltip=$replace($replace($replace($replace($jo9_room_duty_notice, \"&\", \"&amp;\"), \"<\", \"&lt;\"), \">\", \"&gt;\"), '\"', \"&quot;\")\r\n\t\t*p '<div id=\"chekbox_3r\"><a class=\"tooltip-left\" tooltip-data=\"<<$jo9_room_duty_tooltip>>\" href=\"EXEC: dynamic $msg, func(''jo9_household_worker'', ''notice'', ''washes_master_rule'') & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/unactive_button.png\"></a></div>'\r\n\telse\r\n\tif bath <= 0:\r\n\t\t*p '<div id=\"chekbox_3r\"><a href = \"EXEC: dynamic $msg, $no_bath & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/unactive_button.png\"></a></div>'\r\n\telseif slave[\"washes_master_rule\"] = 1:\r\n\t\tovernight_rules_count += 1\r\n\t\t*p '<div id=\"chekbox_3r\"><a href = \"EXEC: slave[''washes_master_rule''] = 0 & $info_text = $slave_washes_master_rule_abort & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/sel_button.png\"></a></div>'\r\n\telse\r\n\t\t*p '<div id=\"chekbox_3r\"><a href = \"EXEC: slave[''washes_master_rule''] = 1 & $info_text = $slave_washes_master_rule & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/unsel_button.png\"></a></div>'\r\n\tend\r\n\tend\r\n\t! JO9 MOD END MAID_DUTY_LOCK_3R",
+      "new": "\t! JO9 MOD START PRIVATE_ROOM_EXTERNAL_RULES_20261116_UI_3R\r\n\tif jo9_private_external=1:\r\n\t *p '<div id=\"chekbox_3r\"><a class=\"tooltip-left\" tooltip-data=\"외근 지시를 받은 노예는 수행할 수 없습니다.\" aria-disabled=\"true\"><img src=\"content/pic/ui/buttons/legacy/unactive_button.png\"></a></div>'\r\n\telse\r\n\t! JO9 MOD START MAID_DUTY_LOCK_3R | 2026-10-19_maid_trainee_priority\r\n\tlocal $jo9_room_duty_notice=func('jo9_household_worker', 'notice', 'washes_master_rule')\r\n\tif $jo9_room_duty_notice!'':\r\n\t\tlocal $jo9_room_duty_tooltip=$replace($replace($replace($replace($jo9_room_duty_notice, \"&\", \"&amp;\"), \"<\", \"&lt;\"), \">\", \"&gt;\"), '\"', \"&quot;\")\r\n\t\t*p '<div id=\"chekbox_3r\"><a class=\"tooltip-left\" tooltip-data=\"<<$jo9_room_duty_tooltip>>\" href=\"EXEC: dynamic $msg, func(''jo9_household_worker'', ''notice'', ''washes_master_rule'') & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/unactive_button.png\"></a></div>'\r\n\telse\r\n\tif bath <= 0:\r\n\t\t*p '<div id=\"chekbox_3r\"><a href = \"EXEC: dynamic $msg, $no_bath & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/unactive_button.png\"></a></div>'\r\n\telseif slave[\"washes_master_rule\"] = 1:\r\n\t\tovernight_rules_count += 1\r\n\t\t*p '<div id=\"chekbox_3r\"><a href = \"EXEC: slave[''washes_master_rule''] = 0 & $info_text = $slave_washes_master_rule_abort & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/sel_button.png\"></a></div>'\r\n\telse\r\n\t\t*p '<div id=\"chekbox_3r\"><a href = \"EXEC: slave[''washes_master_rule''] = 1 & $info_text = $slave_washes_master_rule & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/unsel_button.png\"></a></div>'\r\n\tend\r\n\tend\r\n\t! JO9 MOD END MAID_DUTY_LOCK_3R\r\n\tend\r\n\t! JO9 MOD END PRIVATE_ROOM_EXTERNAL_RULES_20261116_UI_3R",
+      "count": 1,
+      "patchId": "PRIVATE_ROOM_EXTERNAL_RULES_20261116"
+    },
+    {
+      "location": "slave_stat",
+      "field": "body",
+      "old": "\tif slave[\"pet_rule\"] = 1:\r\n\t\tovernight_rules_count += 1\r\n\t\t*p '<div id=\"chekbox_6r\"><a href = \"EXEC: slave[''pet_rule''] = 0 & $info_text = $pet_rule_abort & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/sel_button.png\"></a></div>'\r\n\telse\r\n\t\t*p '<div id=\"chekbox_6r\"><a href = \"EXEC: slave[''pet_rule''] = 1 & $info_text = $pet_rule & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/unsel_button.png\"></a></div>'\r\n\tend",
+      "new": "\t! JO9 MOD START PRIVATE_ROOM_EXTERNAL_RULES_20261116_UI_6R\r\n\tif jo9_private_external=1:\r\n\t *p '<div id=\"chekbox_6r\"><a class=\"tooltip-left\" tooltip-data=\"외근 지시를 받은 노예는 수행할 수 없습니다.\" aria-disabled=\"true\"><img src=\"content/pic/ui/buttons/legacy/unactive_button.png\"></a></div>'\r\n\telse\r\n\tif slave[\"pet_rule\"] = 1:\r\n\t\tovernight_rules_count += 1\r\n\t\t*p '<div id=\"chekbox_6r\"><a href = \"EXEC: slave[''pet_rule''] = 0 & $info_text = $pet_rule_abort & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/sel_button.png\"></a></div>'\r\n\telse\r\n\t\t*p '<div id=\"chekbox_6r\"><a href = \"EXEC: slave[''pet_rule''] = 1 & $info_text = $pet_rule & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/unsel_button.png\"></a></div>'\r\n\tend\r\n\tend\r\n\t! JO9 MOD END PRIVATE_ROOM_EXTERNAL_RULES_20261116_UI_6R",
+      "count": 1,
+      "patchId": "PRIVATE_ROOM_EXTERNAL_RULES_20261116"
+    },
+    {
+      "location": "slave_stat",
+      "field": "body",
+      "old": "\tif slave[\"silence_rule\"] = 1:\r\n\t\tovernight_rules_count += 1\r\n\t\t*p '<div id=\"chekbox_7r\"><a href = \"EXEC: slave[''silence_rule''] = 0 & $info_text = $silence_rule_abort & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/sel_button.png\"></a></div>'\r\n\telse\r\n\t\t*p '<div id=\"chekbox_7r\"><a href = \"EXEC: slave[''silence_rule''] = 1 & $info_text = $silence_rule & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/unsel_button.png\"></a></div>'\r\n\tend",
+      "new": "\t! JO9 MOD START PRIVATE_ROOM_EXTERNAL_RULES_20261116_UI_7R\r\n\tif jo9_private_external=1:\r\n\t *p '<div id=\"chekbox_7r\"><a class=\"tooltip-left\" tooltip-data=\"외근 지시를 받은 노예는 수행할 수 없습니다.\" aria-disabled=\"true\"><img src=\"content/pic/ui/buttons/legacy/unactive_button.png\"></a></div>'\r\n\telse\r\n\tif slave[\"silence_rule\"] = 1:\r\n\t\tovernight_rules_count += 1\r\n\t\t*p '<div id=\"chekbox_7r\"><a href = \"EXEC: slave[''silence_rule''] = 0 & $info_text = $silence_rule_abort & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/sel_button.png\"></a></div>'\r\n\telse\r\n\t\t*p '<div id=\"chekbox_7r\"><a href = \"EXEC: slave[''silence_rule''] = 1 & $info_text = $silence_rule & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/unsel_button.png\"></a></div>'\r\n\tend\r\n\tend\r\n\t! JO9 MOD END PRIVATE_ROOM_EXTERNAL_RULES_20261116_UI_7R",
+      "count": 1,
+      "patchId": "PRIVATE_ROOM_EXTERNAL_RULES_20261116"
+    },
+    {
+      "location": "slave_stat",
+      "field": "body",
+      "old": "\tif slave[\"toilet_rule\"] = 1:\r\n\t\tovernight_rules_count += 1\r\n\t\t*p '<div id=\"chekbox_8r\"><a href = \"EXEC: slave[''toilet_rule''] = 0 & $info_text = $toilet_rule_abort & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/sel_button.png\"></a></div>'\r\n\telse\r\n\t\t*p '<div id=\"chekbox_8r\"><a href = \"EXEC: slave[''toilet_rule''] = 1 & $info_text = $toilet_rule & slave[''urinal_rule''] = 0 & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/unsel_button.png\"></a></div>'\r\n\tend",
+      "new": "\t! JO9 MOD START PRIVATE_ROOM_EXTERNAL_RULES_20261116_UI_8R\r\n\tif jo9_private_external=1:\r\n\t *p '<div id=\"chekbox_8r\"><a class=\"tooltip-left\" tooltip-data=\"외근 지시를 받은 노예는 수행할 수 없습니다.\" aria-disabled=\"true\"><img src=\"content/pic/ui/buttons/legacy/unactive_button.png\"></a></div>'\r\n\telse\r\n\tif slave[\"toilet_rule\"] = 1:\r\n\t\tovernight_rules_count += 1\r\n\t\t*p '<div id=\"chekbox_8r\"><a href = \"EXEC: slave[''toilet_rule''] = 0 & $info_text = $toilet_rule_abort & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/sel_button.png\"></a></div>'\r\n\telse\r\n\t\t*p '<div id=\"chekbox_8r\"><a href = \"EXEC: slave[''toilet_rule''] = 1 & $info_text = $toilet_rule & slave[''urinal_rule''] = 0 & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/unsel_button.png\"></a></div>'\r\n\tend\r\n\tend\r\n\t! JO9 MOD END PRIVATE_ROOM_EXTERNAL_RULES_20261116_UI_8R",
+      "count": 1,
+      "patchId": "PRIVATE_ROOM_EXTERNAL_RULES_20261116"
+    },
+    {
+      "location": "slave_stat",
+      "field": "body",
+      "old": "\tif slave[\"urinal_rule\"] = 1:\r\n\t\tovernight_rules_count += 1\r\n\t\t*p '<div id=\"chekbox_9r\"><a href = \"EXEC: slave[''urinal_rule''] = 0 & $info_text = $urinal_rule_abort & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/sel_button.png\"></a></div>'\r\n\telse\r\n\t\t*p '<div id=\"chekbox_9r\"><a href = \"EXEC: slave[''urinal_rule''] = 1 & $info_text = $urinal_rule & slave[''toilet_rule''] = 0 & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/unsel_button.png\"></a></div>'\r\n\tend",
+      "new": "\t! JO9 MOD START PRIVATE_ROOM_EXTERNAL_RULES_20261116_UI_9R\r\n\tif jo9_private_external=1:\r\n\t *p '<div id=\"chekbox_9r\"><a class=\"tooltip-left\" tooltip-data=\"외근 지시를 받은 노예는 수행할 수 없습니다.\" aria-disabled=\"true\"><img src=\"content/pic/ui/buttons/legacy/unactive_button.png\"></a></div>'\r\n\telse\r\n\tif slave[\"urinal_rule\"] = 1:\r\n\t\tovernight_rules_count += 1\r\n\t\t*p '<div id=\"chekbox_9r\"><a href = \"EXEC: slave[''urinal_rule''] = 0 & $info_text = $urinal_rule_abort & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/sel_button.png\"></a></div>'\r\n\telse\r\n\t\t*p '<div id=\"chekbox_9r\"><a href = \"EXEC: slave[''urinal_rule''] = 1 & $info_text = $urinal_rule & slave[''toilet_rule''] = 0 & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/unsel_button.png\"></a></div>'\r\n\tend\r\n\tend\r\n\t! JO9 MOD END PRIVATE_ROOM_EXTERNAL_RULES_20261116_UI_9R",
+      "count": 1,
+      "patchId": "PRIVATE_ROOM_EXTERNAL_RULES_20261116"
+    },
+    {
+      "location": "slave_stat",
+      "field": "body",
+      "old": "\tif slave[\"no_shit_rule\"] = 1:\r\n\t\tovernight_rules_count += 1\r\n\t\t*p '<div id=\"chekbox_10r\"><a href = \"EXEC: slave[''no_shit_rule''] = 0 & $info_text = $shit_prohibited_abort & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/sel_button.png\"></a></div>'\r\n\telse\r\n\t\t*p '<div id=\"chekbox_10r\"><a href = \"EXEC: slave[''no_shit_rule''] = 1 & $info_text = $shit_prohibited & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/unsel_button.png\"></a></div>'\r\n\tend",
+      "new": "\t! JO9 MOD START PRIVATE_ROOM_EXTERNAL_RULES_20261116_UI_10R\r\n\tif jo9_private_external=1:\r\n\t *p '<div id=\"chekbox_10r\"><a class=\"tooltip-left\" tooltip-data=\"외근 지시를 받은 노예는 수행할 수 없습니다.\" aria-disabled=\"true\"><img src=\"content/pic/ui/buttons/legacy/unactive_button.png\"></a></div>'\r\n\telse\r\n\tif slave[\"no_shit_rule\"] = 1:\r\n\t\tovernight_rules_count += 1\r\n\t\t*p '<div id=\"chekbox_10r\"><a href = \"EXEC: slave[''no_shit_rule''] = 0 & $info_text = $shit_prohibited_abort & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/sel_button.png\"></a></div>'\r\n\telse\r\n\t\t*p '<div id=\"chekbox_10r\"><a href = \"EXEC: slave[''no_shit_rule''] = 1 & $info_text = $shit_prohibited & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/unsel_button.png\"></a></div>'\r\n\tend\r\n\tend\r\n\t! JO9 MOD END PRIVATE_ROOM_EXTERNAL_RULES_20261116_UI_10R",
+      "count": 1,
+      "patchId": "PRIVATE_ROOM_EXTERNAL_RULES_20261116"
+    },
+    {
+      "location": "slave_stat",
+      "field": "body",
+      "old": "\t! JO9 MOD START MAID_DUTY_LOCK_11R | 2026-10-19_maid_trainee_priority\r\n\tlocal $jo9_room_duty_notice=func('jo9_household_worker', 'notice', 'tentacle_rule')\r\n\tif $jo9_room_duty_notice!'':\r\n\t\tlocal $jo9_room_duty_tooltip=$replace($replace($replace($replace($jo9_room_duty_notice, \"&\", \"&amp;\"), \"<\", \"&lt;\"), \">\", \"&gt;\"), '\"', \"&quot;\")\r\n\t\t*p '<div id=\"chekbox_11r\"><a class=\"tooltip-left\" tooltip-data=\"<<$jo9_room_duty_tooltip>>\" href=\"EXEC: dynamic $msg, func(''jo9_household_worker'', ''notice'', ''tentacle_rule'') & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/unactive_button.png\"></a></div>'\r\n\telse\r\n\tif pet_tentacle <= 0:\r\n\t\t*p '<div id=\"chekbox_11r\"><a href = \"EXEC: dynamic $msg, $no_tentacle & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/unactive_button.png\"></a></div>'\r\n\telseif slave[\"tentacle_rule\"] = 1:\r\n\t\tovernight_rules_count += 1\r\n\t\t*p '<div id=\"chekbox_11r\"><a href = \"EXEC: slave[''tentacle_rule''] = 0 & $info_text = $slave_tentacle_rule_abort & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/sel_button.png\"></a></div>'\r\n\telse\r\n\t\t*p '<div id=\"chekbox_11r\"><a href = \"EXEC: slave[''tentacle_rule''] = 1 & $info_text = $slave_tentacle_rule & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/unsel_button.png\"></a></div>'\r\n\tend\r\n\tend\r\n\t! JO9 MOD END MAID_DUTY_LOCK_11R",
+      "new": "\t! JO9 MOD START PRIVATE_ROOM_EXTERNAL_RULES_20261116_UI_11R\r\n\tif jo9_private_external=1:\r\n\t *p '<div id=\"chekbox_11r\"><a class=\"tooltip-left\" tooltip-data=\"외근 지시를 받은 노예는 수행할 수 없습니다.\" aria-disabled=\"true\"><img src=\"content/pic/ui/buttons/legacy/unactive_button.png\"></a></div>'\r\n\telse\r\n\t! JO9 MOD START MAID_DUTY_LOCK_11R | 2026-10-19_maid_trainee_priority\r\n\tlocal $jo9_room_duty_notice=func('jo9_household_worker', 'notice', 'tentacle_rule')\r\n\tif $jo9_room_duty_notice!'':\r\n\t\tlocal $jo9_room_duty_tooltip=$replace($replace($replace($replace($jo9_room_duty_notice, \"&\", \"&amp;\"), \"<\", \"&lt;\"), \">\", \"&gt;\"), '\"', \"&quot;\")\r\n\t\t*p '<div id=\"chekbox_11r\"><a class=\"tooltip-left\" tooltip-data=\"<<$jo9_room_duty_tooltip>>\" href=\"EXEC: dynamic $msg, func(''jo9_household_worker'', ''notice'', ''tentacle_rule'') & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/unactive_button.png\"></a></div>'\r\n\telse\r\n\tif pet_tentacle <= 0:\r\n\t\t*p '<div id=\"chekbox_11r\"><a href = \"EXEC: dynamic $msg, $no_tentacle & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/unactive_button.png\"></a></div>'\r\n\telseif slave[\"tentacle_rule\"] = 1:\r\n\t\tovernight_rules_count += 1\r\n\t\t*p '<div id=\"chekbox_11r\"><a href = \"EXEC: slave[''tentacle_rule''] = 0 & $info_text = $slave_tentacle_rule_abort & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/sel_button.png\"></a></div>'\r\n\telse\r\n\t\t*p '<div id=\"chekbox_11r\"><a href = \"EXEC: slave[''tentacle_rule''] = 1 & $info_text = $slave_tentacle_rule & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/unsel_button.png\"></a></div>'\r\n\tend\r\n\tend\r\n\t! JO9 MOD END MAID_DUTY_LOCK_11R\r\n\tend\r\n\t! JO9 MOD END PRIVATE_ROOM_EXTERNAL_RULES_20261116_UI_11R",
+      "count": 1,
+      "patchId": "PRIVATE_ROOM_EXTERNAL_RULES_20261116"
+    }
+  ]
+}

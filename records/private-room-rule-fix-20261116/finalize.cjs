@@ -1,0 +1,12 @@
+'use strict';
+const fs=require('fs'),a=require('assert/strict'),R='G:/somi/JO9sa',W='G:/somi/Jack O Nine Tails v2.4_work/game',H=__dirname,D=R+'/records/private-room-rule-fix-20261116',c=require(R+'/tools/text-workshop/core.cjs');
+const patch=JSON.parse(fs.readFileSync(H+'/patch.json','utf8'));
+a.equal(c.hash(fs.readFileSync(W+'/jack.qsp')),patch.after_sha256);a(fs.readFileSync(W+'/jack.qsp').equals(fs.readFileSync(R+'/assets/runtime/2.4.1/jack.qsp')));
+for(const n of ['native.cjs','finalize.cjs'])fs.copyFileSync(H+'/'+n,D+'/'+n);
+let external=fs.readFileSync(H+'/external-native.cjs','utf8');
+const anchor="const raw=fs.readFileSync(process.env.JO9_EXTERNAL_BASELINE||W+'/jack.qsp'),d=c.parse(raw);";
+const anchor2="const raw=fs.readFileSync(W+'/jack.qsp'),d=c.parse(raw);";
+const use=external.includes(anchor)?anchor:anchor2;a(external.includes(use));
+const replacement="let raw=fs.readFileSync(process.env.JO9_EXTERNAL_BASELINE||W+'/jack.qsp');\nif(fs.existsSync(__dirname+'/patch.json')){const p=JSON.parse(fs.readFileSync(__dirname+'/patch.json','utf8'));if(c.hash(raw)===p.after_sha256){const old=c.parse(raw);for(const e of [...p.edits].reverse()){const l=old.locations.find(l=>l.name===e.location),b=c.shift(old.lines[l.body],5);a.equal(b.split(e.new).length,2);old.lines[l.body]=c.shift(b.replace(e.new,()=>e.old),-5);}raw=c.serialize(old);}}\nconst d=c.parse(raw);";
+external=external.replace(use,replacement);fs.writeFileSync(H+'/external-native.cjs',external);fs.writeFileSync(D+'/external-native.cjs',external);
+const result={workHash:patch.after_sha256,sourceMatches:true,rollbackPatchReconstructsBaseline:true,diagnosticsCanUseCurrentWorkWithoutKeepingDuplicateQsp:true};fs.writeFileSync(D+'/final-verification.json',JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result));

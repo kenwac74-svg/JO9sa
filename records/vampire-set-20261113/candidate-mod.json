@@ -1,0 +1,169 @@
+{
+  "id": "2026-11-13_vampire_set",
+  "status": "APPROVED",
+  "approval": "User specified six existing traits as vampire set, no duplicate rows, first row [뱀파이어], compact colored component links and original descriptions in the same message pane.",
+  "before_sha256": "e58aa4d77b1be754837bc9f619ed8953536218c58c73ca69df6da643f40c7a6a",
+  "after_sha256": "c1a37feb6ef11513b7293efa93ec974d514997354013dc11ee4c4a3d363465b9",
+  "edits": [
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": "! JO9 MOD START PROFILE_POLISH_20261025_R3",
+      "new": "! JO9 MOD START VAMPIRE_SET_20261113\r\n! Existing component fields carry all effects; the species marker adds no separate multiplier.\r\nif $args[0] = 'vampire_apply':\r\n dynamic replace({\r\n  if jo9vactor['jo9_vampire'] = 1:\r\n   jo9vactor['blood_attitude'] = 2\r\n   jo9vactor['blood_attitude_revealed'] = 2\r\n   jo9vactor['darkness_attitude'] = 2\r\n   jo9vactor['darkness_attitude_revealed'] = 2\r\n   jo9vactor['passion_sweets'] = -1\r\n   jo9vactor['passion_sweets_revealed'] = 2\r\n   jo9vactor['pos_dessert'] = 0\r\n   jo9vactor['jo9_constitution'] = 1\r\n   jo9vactor['metabolism'] = 5\r\n   jo9vactor['metabolism_revealed'] = 2\r\n   jo9vactor['enchanter_affinity'] = 1\r\n   jo9vactor['enchanter_affinity_revealed'] = 2\r\n  end\r\n }, 'jo9vactor', $args[1])\r\n exit\r\nend\r\nif $args[0] = 'race_list':\r\n gs 'jo9_traits','vampire_apply',$args[1]\r\n $result = $dyneval(replace({\r\n  $result = ''\r\n  if dynslave['jo9_vampire'] = 1: $result = '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''vampire''\">[뱀파이어]</a><br>'\r\n }, 'dynslave', $args[1]))\r\n exit\r\nend\r\nif $args[0] = 'vampire_text':\r\n $result = '뱀파이어는 다음과 같은 특성을 모두 가집니다. '\r\n $result += '<a href=\"EXEC: gs ''jo9_traits'', ''vampire_component'', ''blood''\"><<dyneval($vb_cycle_skill, 2, \"[혈액기호증]\")>></a>, '\r\n $result += '<a href=\"EXEC: gs ''jo9_traits'', ''vampire_component'', ''darkness''\"><<dyneval($vb_cycle_skill, 2, \"[암흑기호증]\")>></a>, '\r\n $result += '<a href=\"EXEC: gs ''jo9_traits'', ''vampire_component'', ''picky''\"><<dyneval($vb_cycle_skill, 2, \"[까다로운 입맛]\")>></a>, '\r\n $result += '<a href=\"EXEC: gs ''jo9_traits'', ''vampire_component'', ''healthy''\">[건강체질]</a>, '\r\n $result += '<a href=\"EXEC: gs ''jo9_traits'', ''vampire_component'', ''metabolism''\"><<dyneval($vb_cycle_skill, 5, \"[고도 대사량]\")>></a>, '\r\n $result += '<a href=\"EXEC: gs ''jo9_traits'', ''vampire_component'', ''mage''\"><<dyneval($vb_cycle_skill, 5, \"[타고난 마법사]\")>></a>'\r\n exit\r\nend\r\nif $args[0] = 'vampire_component' or $args[0] = 'vampire_component_text':\r\n $result = ''\r\n if $args[1] = 'blood': $result = $Кровожадная\r\n if $args[1] = 'darkness': $result = $Дитя_тьмы\r\n if $args[1] = 'picky': $result = $Не_любит_сладкое\r\n if $args[1] = 'healthy': $result = $func('jo9_traits','text','healthy')\r\n if $args[1] = 'metabolism': $result = $Мощный_метаболизм\r\n if $args[1] = 'mage': $result = $чародейка\r\n if $args[0] = 'vampire_component' and $result ! '': msg $result\r\n exit\r\nend\r\nif $args[0] = 'vampire_cache':\r\n if instr($update_slave_features_list,'VAMPIRE_SET_20261113') = 0: gs '#static_base'\r\n if instr($newloc_update_iced_features_list,'VAMPIRE_SET_20261113') = 0: code_defined['newloc_update_iced_features_list'] = 0\r\n exit\r\nend\r\nif $args[0] = 'vampire_load':\r\n local jo9v_i\r\n for jo9v_i = 0 to arrsize('$all_slave_characters') - 1:\r\n  gs 'jo9_traits','vampire_apply',$all_slave_characters[jo9v_i]\r\n end\r\n gs 'jo9_traits','vampire_apply','stock'\r\n gs 'jo9_traits','vampire_apply','jo9_farid_stored'\r\n exit\r\nend\r\n! JO9 MOD END VAMPIRE_SET_20261113\r\n! JO9 MOD START PROFILE_POLISH_20261025_R3",
+      "count": 1,
+      "patchId": "VAMPIRE_SET_20261113"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": " $result = ''\r\n ! JO9 MOD START ATTENTION_DESCRIPTION",
+      "new": " $result = ''\r\n! JO9 MOD START VAMPIRE_SET_DESCRIPTION_20261113\r\n if $args[1] = 'vampire': $result = $func('jo9_traits','vampire_text')\r\n! JO9 MOD END VAMPIRE_SET_DESCRIPTION_20261113\r\n ! JO9 MOD START ATTENTION_DESCRIPTION",
+      "count": 1,
+      "patchId": "VAMPIRE_SET_DESCRIPTION_20261113"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": "if dynslave['jo9_vampire'] = 1: $result += '뱀파이어<br>'",
+      "new": "! JO9 MOD START VAMPIRE_SET_20261113\r\n! Species rows are prepended by race_list before the ordinary feature rows.\r\n! JO9 MOD END VAMPIRE_SET_20261113",
+      "count": 1,
+      "patchId": "VAMPIRE_SET_ROW_20261113"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": "  if dynslave['jo9_constitution'] = 1: $result +=",
+      "new": "  if dynslave['jo9_vampire'] ! 1 and dynslave['jo9_constitution'] = 1: $result +=",
+      "count": 1,
+      "patchId": "VAMPIRE_SET_HEALTHY_HIDE_20261113"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": "if $args[0] = 'list':",
+      "new": "if $args[0] = 'list':\r\n gs 'jo9_traits','vampire_apply',$args[1]",
+      "count": 1,
+      "patchId": "VAMPIRE_SET_LIST_REPAIR_20261113"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": "if $args[0] = 'repair':",
+      "new": "if $args[0] = 'repair':\r\n! JO9 MOD START VAMPIRE_SET_20261113\r\n gs 'jo9_traits','vampire_apply',$args[1]\r\n! JO9 MOD END VAMPIRE_SET_20261113",
+      "count": 1,
+      "patchId": "VAMPIRE_SET_REPAIR_20261113"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": " gs 'jo9_traits', 'repair_exclusions', $args[1]\r\n result = 1\r\n exit\r\nend",
+      "new": " gs 'jo9_traits', 'repair_exclusions', $args[1]\r\n! JO9 MOD START VAMPIRE_SET_20261113\r\n gs 'jo9_traits','vampire_apply',$args[1]\r\n! JO9 MOD END VAMPIRE_SET_20261113\r\n result = 1\r\n exit\r\nend",
+      "count": 1,
+      "patchId": "VAMPIRE_SET_EDIT_REPAIR_20261113"
+    },
+    {
+      "location": "#static_base",
+      "field": "body",
+      "old": "\t\t$dynslave_features_list = ''",
+      "new": "\t\t$dynslave_features_list = ''\r\n! JO9 MOD START VAMPIRE_SET_20261113\r\n$dynslave_features_list += $func('jo9_traits','race_list','dynslave')\r\n! JO9 MOD END VAMPIRE_SET_20261113",
+      "count": 1,
+      "patchId": "VAMPIRE_SET_FIRST_dynslave"
+    },
+    {
+      "location": "$stock_traits",
+      "field": "body",
+      "old": "$stock_features_list = ''",
+      "new": "$stock_features_list = ''\r\n! JO9 MOD START VAMPIRE_SET_20261113\r\n$stock_features_list += $func('jo9_traits','race_list','stock')\r\n! JO9 MOD END VAMPIRE_SET_20261113",
+      "count": 1,
+      "patchId": "VAMPIRE_SET_FIRST_stock"
+    },
+    {
+      "location": "jo9_farid_consignment",
+      "field": "body",
+      "old": "$jo9_farid_viewprobe_features_list = ''",
+      "new": "$jo9_farid_viewprobe_features_list = ''\r\n! JO9 MOD START VAMPIRE_SET_20261113\r\n$jo9_farid_viewprobe_features_list += $func('jo9_traits','race_list','jo9_farid_viewprobe')\r\n! JO9 MOD END VAMPIRE_SET_20261113",
+      "count": 1,
+      "patchId": "VAMPIRE_SET_FIRST_jo9_farid_viewprobe"
+    },
+    {
+      "location": "$newloc",
+      "field": "body",
+      "old": "\t\t$dynslave_features_list = ''\r\n\t\tif dynslave_state ! CONST_INT['no_slave']:",
+      "new": "\t\t$dynslave_features_list = ''\r\n\t\tif dynslave_state ! CONST_INT['no_slave']:\r\n! JO9 MOD START VAMPIRE_SET_20261113\r\n$dynslave_features_list += $func('jo9_traits','race_list','dynslave')\r\n! JO9 MOD END VAMPIRE_SET_20261113",
+      "count": 1,
+      "patchId": "VAMPIRE_SET_FIRST_dynslave"
+    },
+    {
+      "location": "#static_base",
+      "field": "body",
+      "old": "        if dynslave['enchanter_affinity'] > 0 and (dynslave['enchanter_affinity_revealed'] = 2 or spell_revelio = 1):",
+      "new": "! JO9 MOD START VAMPIRE_SET_20261113\r\n        if dynslave['jo9_vampire'] ! 1 and dynslave['enchanter_affinity'] > 0 and (dynslave['enchanter_affinity_revealed'] = 2 or spell_revelio = 1):\r\n! JO9 MOD END VAMPIRE_SET_20261113",
+      "count": 1,
+      "patchId": "VAMPIRE_SET_HIDE_enchanter_affinity"
+    },
+    {
+      "location": "#static_base",
+      "field": "body",
+      "old": "        if dynslave['metabolism'] = 5 and (dynslave['metabolism_revealed'] = 2 or spell_revelio = 1):",
+      "new": "! JO9 MOD START VAMPIRE_SET_20261113\r\n        if dynslave['jo9_vampire'] ! 1 and dynslave['metabolism'] = 5 and (dynslave['metabolism_revealed'] = 2 or spell_revelio = 1):\r\n! JO9 MOD END VAMPIRE_SET_20261113",
+      "count": 1,
+      "patchId": "VAMPIRE_SET_HIDE_metabolism"
+    },
+    {
+      "location": "#static_base",
+      "field": "body",
+      "old": "        if dynslave['darkness_attitude'] = 2 and (dynslave['darkness_attitude_revealed'] = 2 or spell_revelio = 1):",
+      "new": "! JO9 MOD START VAMPIRE_SET_20261113\r\n        if dynslave['jo9_vampire'] ! 1 and dynslave['darkness_attitude'] = 2 and (dynslave['darkness_attitude_revealed'] = 2 or spell_revelio = 1):\r\n! JO9 MOD END VAMPIRE_SET_20261113",
+      "count": 1,
+      "patchId": "VAMPIRE_SET_HIDE_darkness_attitude"
+    },
+    {
+      "location": "#static_base",
+      "field": "body",
+      "old": "        if dynslave['blood_attitude'] = 2 and (dynslave['blood_attitude_revealed'] = 2 or spell_revelio = 1):",
+      "new": "! JO9 MOD START VAMPIRE_SET_20261113\r\n        if dynslave['jo9_vampire'] ! 1 and dynslave['blood_attitude'] = 2 and (dynslave['blood_attitude_revealed'] = 2 or spell_revelio = 1):\r\n! JO9 MOD END VAMPIRE_SET_20261113",
+      "count": 1,
+      "patchId": "VAMPIRE_SET_HIDE_blood_attitude"
+    },
+    {
+      "location": "#static_base",
+      "field": "body",
+      "old": "        if dynslave['passion_sweets'] = -1 and (dynslave['passion_sweets_revealed'] = 2 or spell_revelio = 1):",
+      "new": "! JO9 MOD START VAMPIRE_SET_20261113\r\n        if dynslave['jo9_vampire'] ! 1 and dynslave['passion_sweets'] = -1 and (dynslave['passion_sweets_revealed'] = 2 or spell_revelio = 1):\r\n! JO9 MOD END VAMPIRE_SET_20261113",
+      "count": 1,
+      "patchId": "VAMPIRE_SET_HIDE_passion_sweets"
+    },
+    {
+      "location": "jo9_chaotic",
+      "field": "body",
+      "old": "local $jo9_chaotic_keys = ''",
+      "new": "! JO9 MOD START VAMPIRE_SET_20261113\r\ngs 'jo9_traits','vampire_apply',$jo9_chaotic_role\r\n! JO9 MOD END VAMPIRE_SET_20261113\r\nlocal $jo9_chaotic_keys = ''",
+      "count": 1,
+      "patchId": "VAMPIRE_SET_CHAOTIC_REPAIR_20261113"
+    },
+    {
+      "location": "jo9_chaotic",
+      "field": "body",
+      "old": "  if jo9ceactor['passion_sweets'] = -1 or jo9ceactor['passion_sweets'] = 1:",
+      "new": "! JO9 MOD START VAMPIRE_SET_20261113\r\n  if jo9ceactor['jo9_vampire'] ! 1 and (jo9ceactor['passion_sweets'] = -1 or jo9ceactor['passion_sweets'] = 1):\r\n! JO9 MOD END VAMPIRE_SET_20261113",
+      "count": 1,
+      "patchId": "VAMPIRE_SET_CHAOTIC_PROTECT_20261113"
+    },
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "! JO9 MOD START MERCY_ALLURE_20261113_LOAD",
+      "new": "! JO9 MOD START VAMPIRE_SET_CACHE_20261113\r\ngs 'jo9_traits','vampire_cache'\r\ngs 'jo9_traits','vampire_load'\r\n! JO9 MOD END VAMPIRE_SET_CACHE_20261113\r\n! JO9 MOD START MERCY_ALLURE_20261113_LOAD",
+      "count": 1,
+      "patchId": "VAMPIRE_SET_CACHE_20261113"
+    },
+    {
+      "location": "$newloc",
+      "field": "body",
+      "old": "! JO9 MOD START DOHNA_OWNED_LOAD_20261112",
+      "new": "! JO9 MOD START VAMPIRE_SET_CACHE_20261113\r\ngs 'jo9_traits','vampire_cache'\r\n! JO9 MOD END VAMPIRE_SET_CACHE_20261113\r\n! JO9 MOD START DOHNA_OWNED_LOAD_20261112",
+      "count": 1,
+      "patchId": "VAMPIRE_SET_CACHE_20261113"
+    }
+  ]
+}

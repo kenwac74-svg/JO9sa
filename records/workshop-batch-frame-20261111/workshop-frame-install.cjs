@@ -1,0 +1,24 @@
+const fs=require('fs'),assert=require('assert/strict'),crypto=require('crypto'),cp=require('child_process'),vm=require('vm');
+const repo='G:/somi/JO9sa',game='G:/somi/Jack O Nine Tails v2.4_work/game',temp='G:/Codex/tmp/jo9-workshop-batch-frame-20261111',backup='G:/somi/JO9_work_backups/workshop-batch-frame-20261111',record=repo+'/records/workshop-batch-frame-20261111';
+const hash=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex'),json=p=>JSON.parse(fs.readFileSync(p,'utf8'));
+const source=repo+'/tools/image-workshop/place/JO9_Place_Workshop.html',work=game+'/modtools/place/JO9_Place_Workshop.html',seed=repo+'/tools/local-workspace/catalog-seed/catalog_editor.js',catalog=game+'/modtools/catalog/catalog_editor.js';
+assert.equal(hash(work),hash(backup+'/JO9_Place_Workshop.before.html'));assert.equal(hash(seed),hash(catalog));fs.copyFileSync(seed,backup+'/catalog_editor.before.js');
+const protectedFiles=[game+'/jack.qsp',game+'/content/pic/ui/legacy_overhaul/unfamiliar.png',game+'/modtools/catalog/catalog_status.js'].filter(p=>fs.existsSync(p)),before=Object.fromEntries(protectedFiles.map(p=>[p,hash(p)]));
+const built=fs.readFileSync(temp+'/catalog_editor.js','utf8');new vm.Script(built);assert(built.includes('WORKSHOP_BATCH_FRAME_20261111')&&built.includes('WORKSHOP_NEW_IMAGE_PATH_20261108'));assert.equal((built.match(/id=\\"batchframe\\"/g)||[]).length,1);
+assert(json(temp+'/browser-results.json').pass);fs.mkdirSync(record,{recursive:true});
+const tests=['workshop-batch-frame.test.cjs','workshop-batch-frame-ui.test.cjs','workshop-frame-pixels.test.cjs'];
+const output=cp.execFileSync(process.execPath,['--test',...tests.map(n=>__dirname+'/'+n),repo+'/tools/imgmg/workshop-new-path.test.cjs',repo+'/tools/workshop-alignment.test.cjs'],{windowsHide:true,maxBuffer:1024*1024});fs.writeFileSync(record+'/tests.log',output);
+fs.copyFileSync(source,work);fs.copyFileSync(temp+'/catalog_editor.js',seed);fs.copyFileSync(temp+'/catalog_editor.js',catalog);
+for(const n of [...tests,'workshop-batch-frame.js','workshop-frame-browser.cjs','workshop-frame-ui-edit.cjs','workshop-frame-core-edit.cjs','workshop-preserve-new-path.cjs','workshop-frame-install.cjs'])fs.copyFileSync(__dirname+'/'+n,record+'/'+n);
+for(const n of ['browser-results.json','batch-frame-ui.png','catalog-batch-frame-ui.png'])fs.copyFileSync(temp+'/'+n,record+'/'+n);
+for(const [p,h]of Object.entries(before))assert.equal(hash(p),h,'Protected file changed: '+p);
+assert.equal(hash(source),hash(work));assert.equal(hash(seed),hash(catalog));
+const note='\n\n## 2026-11-11 교체기 선택 이미지 일괄 테두리\n\n기존 ui/legacy_overhaul 썸네일과151×150 초상 인식 누락을 복구하고, 교체기 상단에 선택 이미지 테두리 만들기 버튼 하나를 추가했다. 새 입력이 없으면 명시적으로 선택한 기존 PNG의 테두리만 만든다. 규격외/미선택 제외, 중앙RGBA·원본bytes·투명모서리·프레임압축마스크·반복 미리보기 확인. 관련17개와 실물브라우저 standalone/생성catalog 검사 통과, 버튼단계 실제파일쓰기0. 기존새경로기능은원천으로이관해재생성보존. WORK설치·실제HTTP제공·사용자기존투입보존은 records/workshop-batch-frame-20261111/REPORT_KO.md 참조. QSP/운영PNG/체크상태/Full/커밋푸시 변경 없음.\n';
+const verification=repo+'/tools/text-workshop/VERIFICATION.md';fs.appendFileSync(verification,note);
+const index=repo+'/docs/SESSION_HANDOFF_INDEX.md';fs.writeFileSync(index,'## 2026-11-11 Codex: 이미지 교체기 선택 일괄 테두리\n\n[사용·검증·복구](../records/workshop-batch-frame-20261111/REPORT_KO.md). 원본테두리 지원규격/현행경로를복구하고 단일 일괄생성버튼을추가했다. 선택교체대상 또는 새입력없는선택원본만 처리하며 저장은기존백업후교체 사용. 중앙픽셀/원본bytes/투명도/압축마스크, 관련17검사·실물브라우저두모드 통과. 기존새경로기능의원천반영포함. 운영PNG·QSP·체크상태·Full·커밋푸시변경없음.\n\n'+fs.readFileSync(index,'utf8'));
+const manifestPath=repo+'/assets/runtime-source-2.4.1.json',manifest=json(manifestPath);fs.copyFileSync(manifestPath,backup+'/runtime-source-before.json');
+manifest.latestWorkshopBatchFrame={date:'2026-11-11',report:'records/workshop-batch-frame-20261111/REPORT_KO.md',qspChanged:false};
+for(const f of manifest.files){if(['tools/image-workshop/place/JO9_Place_Workshop.html','tools/local-workspace/catalog-seed/catalog_editor.js','tools/imgmg/workshop-new-path.js'].includes(f.repositoryPath)){const p=repo+'/'+f.repositoryPath;f.sha256=hash(p);f.bytes=fs.statSync(p).size;}}
+fs.writeFileSync(manifestPath,JSON.stringify(manifest,null,2)+'\n');
+fs.writeFileSync(record+'/verification.json',JSON.stringify({sourceHtmlSha256:hash(source),generatedJsSha256:hash(seed),workHtmlMatchesSource:true,workCatalogMatchesSource:true,protectedFiles:before,tests:17,browser:json(temp+'/browser-results.json'),backup,operatingPngWrites:0,qspWrites:0,fullTouched:false,commit:false,push:false},null,2)+'\n');
+console.log('Installed source/WORK workshop and generated catalog; protected files unchanged.');

@@ -1,0 +1,25 @@
+{
+  "id": "2026-11-13_r03h_kikimora_beauty_minimum",
+  "status": "APPROVED",
+  "description": "R03-8 사용자 승인: 키키모라 최저외모4이상 저장. 알려진 옛 요구의 >3 비교식만 =4로 갱신. 기술/다른 요구/분류/대사/가격/인물/진행 보존.",
+  "before_sha256": "1ec9e14bb0e95716f4041362e25c811351862a5a7c022615663fc9c42f1fa2b4",
+  "after_sha256": "081e888dc651332c5683a24cd0f6366c2d1f2751b30e9f406f4428427a5230a1",
+  "edits": [
+    {
+      "location": "#npc_base",
+      "field": "body",
+      "old": "$buyer_demand['kikimora'] = {\r\ndemand['agree_age'] = 0\r\ndemand['virginity'] = 1\r\ndemand['min_beauty'] > 3\r\n!demand['vaginal_pure'] = 1\r\ndemand['max_fat'] = 1\r\n}",
+      "new": "$buyer_demand['kikimora'] = {\r\ndemand['agree_age'] = 0\r\ndemand['virginity'] = 1\r\ndemand['min_beauty'] = 4\r\n!demand['vaginal_pure'] = 1\r\ndemand['max_fat'] = 1\r\n}",
+      "count": 1,
+      "patchId": "R03H_KIKIMORA_BEAUTY_MINIMUM_20261113"
+    },
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "! JO9 MOD START R03E_LESHIY_STAMINA_CACHE_20261113\r\n",
+      "new": "! JO9 MOD START R03H_KIKIMORA_BEAUTY_CACHE_20261113\r\n! Replace only the known old beauty expression; preserve custom conditions and notes.\r\n$buyer_demand['kikimora'] = replace($buyer_demand['kikimora'], 'demand[''min_beauty''] > 3', 'demand[''min_beauty''] = 4')\r\n! JO9 MOD END R03H_KIKIMORA_BEAUTY_CACHE_20261113\r\n! JO9 MOD START R03E_LESHIY_STAMINA_CACHE_20261113\r\n",
+      "count": 1,
+      "patchId": "R03H_KIKIMORA_BEAUTY_MINIMUM_20261113"
+    }
+  ]
+}

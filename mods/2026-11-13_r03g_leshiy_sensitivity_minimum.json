@@ -1,0 +1,17 @@
+{
+  "id": "2026-11-13_r03g_leshiy_sensitivity_minimum",
+  "status": "APPROVED",
+  "description": "R03-7 사용자 승인: 레시 감수성 최저1을 실제 납품에 연결해 상한3과 함께1~3 허용. 다른 고객/인물값/체력/인지도/기술/평가/가격/진행 보존.",
+  "before_sha256": "2c40888317e25b9453ca0efc60fa79321cbca9b0b18318d2584e6908e42f0605",
+  "after_sha256": "1ec9e14bb0e95716f4041362e25c811351862a5a7c022615663fc9c42f1fa2b4",
+  "edits": [
+    {
+      "location": "slave_sell_chek",
+      "field": "body",
+      "old": "! JO9 MOD END R03D_LESHIY_SENSITIVITY_MAX_20261113\r\n",
+      "new": "! JO9 MOD END R03D_LESHIY_SENSITIVITY_MAX_20261113\r\n! JO9 MOD START R03G_LESHIY_SENSITIVITY_MINIMUM_20261113\r\n! User-approved lower limit for Leshiy only; use the stored demand value.\r\nif $lcase($npc_id) = 'leshiy' and demand['min_sensitivity'] > 0 and slave['sensitivity'] < demand['min_sensitivity']: sl_txt = 102 & exit\r\n! JO9 MOD END R03G_LESHIY_SENSITIVITY_MINIMUM_20261113\r\n",
+      "count": 1,
+      "patchId": "R03G_LESHIY_SENSITIVITY_MINIMUM_20261113"
+    }
+  ]
+}

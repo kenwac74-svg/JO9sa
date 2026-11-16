@@ -1,0 +1,49 @@
+{
+  "id": "2026-11-13_mercy_allure",
+  "status": "APPROVED",
+  "approval": "User explicitly approved final allure ranks from current Mercy thresholds5/15/25/40/60, both rise and fall, install WORK.",
+  "before_sha256": "d139d7a69212be749f4ed8ce03041a85e2a2712341a548c6b6e92d1228b8fb1e",
+  "after_sha256": "5097bca0511f740d7784d27da8a8ad6e8e115142049209bdcc0376d2d3addd8e",
+  "add_locations": [
+    {
+      "name": "jo9_mercy_allure",
+      "desc": "",
+      "body": "! JO9 MOD START MERCY_ALLURE_20261113_HELPER\r\nif $args[0] = 'help':\r\n $result = '[매력 TIPS]<br>&nbsp;매력은 현재의 자비로운 평판에 따라 달라집니다. 자비 수치가 높아지면 등급이 오르고, 낮아지면 등급도 내려갑니다.<br>매력은 노예의 반응과 대인 거래에 영향을 줍니다.'\r\n exit\r\nend\r\nlocal jo9_mercy_points2 = 2*jo9_cruel_mercy + jo9_cruel_mercy_half\r\nresult = 0\r\nif jo9_mercy_points2 >= 10: result = 1\r\nif jo9_mercy_points2 >= 30: result = 2\r\nif jo9_mercy_points2 >= 50: result = 3\r\nif jo9_mercy_points2 >= 80: result = 4\r\nif jo9_mercy_points2 >= 120: result = 5\r\n! JO9 MOD END MERCY_ALLURE_20261113_HELPER\r\n",
+      "actions": []
+    }
+  ],
+  "edits": [
+    {
+      "location": "$calculate_attributes",
+      "field": "body",
+      "old": "!style update after hygiene, energy and mood updates (above) and before updating master_supermacy (below) - ImperatorAugustus\r\nmaster_style = 2 + style_modifer[$master_cloth] - max(0, master_hygiene - 2)\r\nif master_hygiene = 0: master_style += 1\r\nif master_energy > 0: master_style += 1\r\nif master_energy < 0: master_style -= 1\r\nif master_visage > 0: master_style += 1\r\nif master_visage = 0: master_style -= 1\r\nif master_haircut > 0: master_style += 1\r\nif master_haircut = 0: master_style -= 1\r\nif master_str > 3: master_style += 1\r\nif master_str < 3: master_style -= 1\r\nif master_mood > 0: master_style += 1\r\nif master_mood < 0: master_style -= 1\r\nif master_style > 5: master_style = 5\r\nif master_style < 0: master_style = 0\r\n\r\n",
+      "new": "! JO9 MOD START MERCY_ALLURE_20261113_CALC\r\nmaster_style = func('jo9_mercy_allure')\r\n! JO9 MOD END MERCY_ALLURE_20261113_CALC\r\n\r\n",
+      "count": 1,
+      "patchId": "MERCY_ALLURE_20261113"
+    },
+    {
+      "location": "jo9_cruel_mercy_apply",
+      "field": "body",
+      "old": "! JO9 MOD START CRUEL_MERCY_RULES_20261101\r\n! Delta is in half-points. Missing legacy remainder reads as zero.\r\nlocal jo9_cm_total = 2 * jo9_cruel_mercy + jo9_cruel_mercy_half + args[0]\r\nif jo9_cm_total < 0:\r\n jo9_cruel_mercy = -((-jo9_cm_total) / 2)\r\nelse\r\n jo9_cruel_mercy = jo9_cm_total / 2\r\nend\r\njo9_cruel_mercy_half = jo9_cm_total - 2 * jo9_cruel_mercy\r\n! JO9 MOD END CRUEL_MERCY_RULES_20261101",
+      "new": "! JO9 MOD START CRUEL_MERCY_RULES_20261101\r\n! Delta is in half-points. Missing legacy remainder reads as zero.\r\nlocal jo9_cm_total = 2 * jo9_cruel_mercy + jo9_cruel_mercy_half + args[0]\r\nif jo9_cm_total < 0:\r\n jo9_cruel_mercy = -((-jo9_cm_total) / 2)\r\nelse\r\n jo9_cruel_mercy = jo9_cm_total / 2\r\nend\r\njo9_cruel_mercy_half = jo9_cm_total - 2 * jo9_cruel_mercy\r\n! JO9 MOD END CRUEL_MERCY_RULES_20261101\r\n! JO9 MOD START MERCY_ALLURE_20261113_CHANGE\r\nmaster_style = func('jo9_mercy_allure')\r\n! JO9 MOD END MERCY_ALLURE_20261113_CHANGE\r\n",
+      "count": 1,
+      "patchId": "MERCY_ALLURE_20261113"
+    },
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "! JO9 MOD START R05_VOICE_POLICY_LOAD_20261113",
+      "new": "! JO9 MOD START MERCY_ALLURE_20261113_LOAD\r\nmaster_style = func('jo9_mercy_allure')\r\n$allure_help = $func('jo9_mercy_allure','help')\r\n! JO9 MOD END MERCY_ALLURE_20261113_LOAD\r\n! JO9 MOD START R05_VOICE_POLICY_LOAD_20261113",
+      "count": 1,
+      "patchId": "MERCY_ALLURE_20261113"
+    },
+    {
+      "location": "#help_msg",
+      "field": "body",
+      "old": "$allure_help = '[매력 TIPS]<br>&nbsp;매력이 곧 외모이고, 노예는 매력적인 주인을 더 잘 따릅니다. 그중에도 성적인 것이면 더욱.<br>인상깊은 외모는 고객과의 소통에 도움이 되고, 노예와 섹스를 강압적으로 할 필요도 없습니다.<br>긍정적인 기분, 미용, 복장으로 꾸며주고 과로를 피해주세요.'",
+      "new": "$allure_help = $func('jo9_mercy_allure','help')",
+      "count": 1,
+      "patchId": "MERCY_ALLURE_20261113"
+    }
+  ]
+}

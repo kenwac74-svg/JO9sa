@@ -1,5 +1,5 @@
 ﻿# Open the canonical workspace tools and the user's external modding sites.
-param([switch]$NoBrowser, [string]$ConfigFile='')
+param([switch]$NoBrowser, [string]$ConfigFile='', [switch]$AppWindow)
 $ErrorActionPreference='Stop'
 function Normalize-WorkshopPath([string]$Value) {
  if (!$Value) {return ''}
@@ -44,6 +44,8 @@ function Get-WorkshopUrl([string]$Runtime,[string]$Script) {
  return $url
 }
 function Open-ConfiguredTools {
+ # The original browser/app launchers use these loopback-only fallback ports.
+ $env:JO9_MODDING_HUB_ORIGIN=(@(7689..7709)+@(7719..7729) | ForEach-Object {'http://127.0.0.1:'+$_}) -join ' '
  $localConfig=if ($ConfigFile) {[IO.Path]::GetFullPath($ConfigFile)} else {Join-Path $PSScriptRoot 'local.config.json'}
  $editorUrl=(& (Join-Path $PSScriptRoot 'Start-JO9-Tools.ps1') -ConfigFile $localConfig -NoBrowser | Select-Object -Last 1)
  if (!$editorUrl -or [string]$editorUrl -notmatch '^http://127\.0\.0\.1:\d+/$') {throw 'The editor/checklist launcher did not return a local URL.'}
@@ -56,7 +58,7 @@ function Open-ConfiguredTools {
  $source=Join-Path (Split-Path -Parent $PSScriptRoot) 'image-workshop'
  $changes=@()
  # Deploy code only. Existing filters/config/runtime and image templates remain intact.
- foreach ($relative in @('JO9_Server.ps1','JO9_Detect.ps1','JO9_Launch.cmd','pixelpure_optimizer.html','VERSION.txt','place\JO9_Place_Workshop.html')) {
+ foreach ($relative in @('catalog-resource-source.js','JO9_Server.ps1','JO9_Detect.ps1','JO9_Launch.cmd','pixelpure_optimizer.html','VERSION.txt','place\JO9_Place_Workshop.html')) {
   $from=Join-Path $source $relative;$to=Join-Path $root $relative
   if ((Test-Path -LiteralPath $from) -and (!(Test-Path -LiteralPath $to) -or (Get-FileHash -LiteralPath $from -Algorithm SHA256).Hash -ne (Get-FileHash -LiteralPath $to -Algorithm SHA256).Hash)) {$changes+=@{from=$from;to=$to}}
  }
@@ -128,10 +130,24 @@ function Open-ConfiguredTools {
  $referenceUrl=(& (Join-Path $referenceTarget 'Start-Game-Reference.ps1') -NoBrowser | Select-Object -Last 1)
  if ([string]$referenceUrl -notmatch '^http://127\.0\.0\.1:\d+/$') {throw 'Reference tool did not return a local URL.'}
  # JO9 MOD END GAME_REFERENCE_TOOL_20261108
- Write-Output ('Dialogue: '+$editorUrl+' | Checklist: '+$editorUrl+'catalog | PatchSchedule: '+$editorUrl+'patch-schedule | Workshop: '+$workshopUrl+' | ImageReview: '+$reviewUrl+' | SoundAudition: '+$soundUrl+' | GameReference: '+$referenceUrl)
+ # JO9 MOD START JONT_REMAKE_HUB_20261115
+ $promptLauncher=Join-Path (Split-Path -Parent $PSScriptRoot) 'jont-remake/Start-Jont-Remake.ps1'
+ $promptUrl=(& $promptLauncher | Select-Object -Last 1)
+ if ([string]$promptUrl -notmatch '^http://127\.0\.0\.1:\d+/$') {throw 'Scene prompt tool did not return a local URL.'}
+ # JO9 MOD END JONT_REMAKE_HUB_20261115
+ # JO9 MOD START SIDEBAR_HUB_20261115
+ $hubScript=Join-Path (Split-Path -Parent $PSScriptRoot) 'modding-hub/Start-Modding-Hub.ps1'
+ $hubTools=@{dialogue=[string]$editorUrl;checklist=([string]$editorUrl+'catalog');schedule=([string]$editorUrl+'patch-schedule');workshop=[string]$workshopUrl;imageReview=[string]$reviewUrl;soundList=[string]$soundUrl;gameReference=[string]$referenceUrl;promptWorksheet=[string]$promptUrl}
+ $hubUrl=(& $hubScript -ToolUrls $hubTools -NoBrowser | Select-Object -Last 1)
+ if ([string]$hubUrl -notmatch '^http://127\.0\.0\.1:\d+/$') {throw 'Unified workspace did not return a local URL.'}
+ # JO9 MOD END SIDEBAR_HUB_20261115
+ Write-Output ('Unified: '+$hubUrl+' | Dialogue: '+$editorUrl+' | Checklist: '+$editorUrl+'catalog | PatchSchedule: '+$editorUrl+'patch-schedule | Workshop: '+$workshopUrl+' | ImageReview: '+$reviewUrl+' | SoundAudition: '+$soundUrl+' | GameReference: '+$referenceUrl+' | PromptWorksheet: '+$promptUrl)
  # JO9 MOD END MOD_TOOLS_IMAGE_REVIEW_20261021
  if (!$NoBrowser) {
-  foreach ($url in (@($editorUrl,($editorUrl+'catalog'),$workshopUrl,$reviewUrl,$soundUrl,$referenceUrl,'https://huggingface.co/spaces/fancyfeast/joy-caption-beta-one','https://translate.google.co.kr/?sl=en&tl=ko&op=translate','https://www.mage.space/advanced','https://gamma.app/design/01M48RXZSYBT1HBN8BFGAQ09AS?from=designs',($editorUrl+'patch-schedule')) | Where-Object {$_})) {Start-Process $url}
+  if ($AppWindow) {
+   $appUrl=(& (Join-Path (Split-Path -Parent $PSScriptRoot) 'modding-hub/Start-Modding-App.ps1') | Select-Object -Last 1)
+   Write-Output ('AppWindow: '+$appUrl)
+  } else {Start-Process $hubUrl}
  }
 }
 

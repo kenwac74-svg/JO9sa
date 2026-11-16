@@ -1,0 +1,35 @@
+{
+  "patchId": "EQUIPMENT_LIST_SCROLL_20261113",
+  "sourceQspSha256": "bf27cb384e3c48ee166aeeb557d96314df65306d10aae6ea402e7ba72c5bf30e",
+  "before": "78265cf21ccb6a0cfd616a74c96d984133ffbfa629fbbc0b65ddd65d7293795b",
+  "after": "64939a4bc5a392f83f534c097b9a2b677a9b9645ec4250d20febf91d30deac3d",
+  "bytes": 253531,
+  "scope": [
+    "master_stat equipment list",
+    "slave_stat equipment selection/effects",
+    "assistant_stat equipment selection/effects"
+  ],
+  "cause": "FastQSP injects div { display:table }; declared height grows with content. Original list lacks overflow clipping. Lower info overlaps and intercepts clicks.",
+  "change": "Replace original selector block, set display:block and bounded vertical scrolling; fixed tooltip to left outside clipped list. No added global overlay.",
+  "nativeRed": "Original CSS: bottom1356 vs description top646, scrollTop0; failed actual last-link reach/click.",
+  "nativeGreen": {
+    "long45": true,
+    "short3": true,
+    "lastLinkHitTest": true,
+    "syntheticEXECClick": true,
+    "tooltipLayout": "Pseudo element display forced only in fixture; fixed position checked outside menu; real mouse hover unverified."
+  },
+  "productionCSS": [
+    "game/css/base.css",
+    "assets/css-2.4/base.css"
+  ],
+  "QspChanged": false,
+  "saveOrStateFieldsAdded": 0,
+  "limits": [
+    "Synthetic list in actual FastQSP engine, not personal save.",
+    "Real equipment action/effects not executed; game QSP unchanged.",
+    "User visual QA and real mouse wheel/hover still pending."
+  ],
+  "FullChanged": false,
+  "packaged": false
+}

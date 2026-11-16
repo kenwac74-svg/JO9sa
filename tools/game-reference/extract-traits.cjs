@@ -41,6 +41,7 @@ const activityAliases = {
 };
 
 function categoryFor(field) {
+  if (field === 'jo9_sando') return '특수특성';
   if (field === 'jo9_learning_trait') return '학습';
   if (/(^|_)affinity$/.test(field)) return '재능';
   if (['metabolism', 'grace', 'dexterity', 'jo9_constitution', 'jo9_gag_reflex', 'jo9_voice_trait', 'jo9_peerless'].includes(field)) return '신체';
@@ -183,26 +184,27 @@ const slaveNatureChance = Number(slaveNatureUpper) - Number(slaveNatureLower);
 const valueLines = locations.get('jo9_traits_value');
 const versatileSkills = valueLines.findIndex(line => line.includes("dynslave['service']") && line.includes("dynslave['lesbiansex']")) + 1;
 const versatileGrant = valueLines.findIndex(line => /^\s*:jo9_trait_value_grant_versatile\s*$/.test(line)) + 1;
-const peerlessRefresh = valueLines.findIndex(line => /if dynslave_type = 2624: dynslave\['jo9_peerless'\] = 1/.test(line)) + 1;
+const peerlessRefresh = valueLines.findIndex(line => /if dynslave_type = 3040: dynslave\['jo9_peerless'\] = 1/.test(line)) + 1;
 const peerlessSurgery = valueLines.findIndex(line => /if dynslave\['beauty'\] = 5 and dynslave\['jo9_peerless'\] = 0/.test(line)) + 1;
 assert.ok(versatileSkills && versatileGrant && peerlessRefresh && peerlessSurgery);
 const versatileSource = `jo9_traits_value:${versatileSkills}, ${versatileGrant}`;
 const specific = {
+  '산도': ['춘향(3040번)의 전용 특성이다. 새 인물 생성 및 기존 인물의 일반 갱신 때 부여한다. 최대 체력·최대 스태미나·정상 사기를 기존 특성 보정 후 각각 20% 늘린다.', 'jo9_chunhyang_profile · jo9_traits_value · jo9_traits_combat'],
   '노예근성': [`무작위 생성에서 자아가 단호함 미만이고 태도가 건방짐 미만일 때 ${slaveNatureChance}% 추첨으로 부여된다.`, `jo9_traits:${slaveNatureLine}`],
   '천재': ['무작위 생성 시 3%로 초기 부여된다.', 'generate_stock:1713–1723'],
   '백치': ['무작위 생성 시 3%로 초기 부여된다.', 'generate_stock:1713–1723'],
   '건강체질': ['무작위 생성 시 3%로 초기 부여되며 에게야도 보유한다. 의료센터에서 검진 후 인물당 한 번 체질개선 시술로 획득할 수 있다.', `jo9_traits:${constitutionLine} · generate_stock:1769–1773 · jo9_traits_combat:25–90`, '체질개선 시술 1,000스파크'],
   '약골': ['무작위 생성 시 3%로 초기 부여된다. 체질개선 시술은 약골을 건강체질로 바꾼다.', `jo9_traits:${constitutionLine} · jo9_traits_combat:25–90`],
-  '절세미인': ['무작위 생성 시 미모 5 이상이면 1%로 초기 부여된다. 2624번 인물은 확정 보유한다. 미모 5인 인물이 성형 수술을 받을 때 5%로 획득할 수 있다.', `jo9_traits:${peerlessLine} · jo9_traits_value:${peerlessRefresh}, ${peerlessSurgery} · #options:1384, 1449`, '성형 수술 1회 250스파크'],
+  '절세미인': ['무작위 생성 시 미모 5 이상이면 1%로 초기 부여된다. 춘향(3040번)은 확정 보유한다. 미모 5인 인물이 성형 수술을 받을 때 5%로 획득할 수 있다.', `jo9_traits:${peerlessLine} · jo9_traits_value:${peerlessRefresh}, ${peerlessSurgery} · #options:1384, 1449`, '성형 수술 1회 250스파크'],
   '다재다능': ['지정된 24개 기술이 모두 A 이상이면 얻는다. 24개 기술이 모두 S에 도달하면 팔방미인으로 승급한다.', versatileSource],
   '팔방미인': ['지정된 24개 기술이 모두 S에 도달하면 얻는다. 승급 시 칭호가 팔방미인으로 바뀐다.', versatileSource],
-  '광전사': ['신규 영웅 중 아마존·바이킹 계열은 50%로 초기 부여된다. 전투 특성이 없으면 누적 실전 10승과 이후 5승마다 3%로 얻을 수 있다.', 'generate_stock:1756–1766 · jo9_traits_combat:157–196'],
-  '성기사': ['신규 영웅 중 기사 계열은 50%로 초기 부여된다. 전투 특성이 없으면 누적 실전 10승과 이후 5승마다 3%로 얻을 수 있다.', 'generate_stock:1756–1766 · jo9_traits_combat:157–196'],
+  '광전사': ['춘향(3040번)은 고정 배정된다. 신규 영웅 중 아마존·바이킹 계열은 50%로 초기 부여된다. 전투 특성이 없으면 누적 실전 10승과 이후 5승마다 3%로 얻을 수 있다.', 'generate_stock:1756–1766 · jo9_traits_combat:157–196'],
+  '성기사': ['엘자(2624번)는 고정 배정된다. 신규 영웅 중 기사 계열은 50%로 초기 부여된다. 전투 특성이 없으면 누적 실전 10승과 이후 5승마다 3%로 얻을 수 있다.', 'generate_stock:1756–1766 · jo9_traits_combat:157–196'],
   '역전의 용사': ['신규 영웅 중 아마존·바이킹·기사 이외 계열은 25%로 초기 부여되며 에게야도 보유한다. 전투 특성이 없으면 누적 실전 10승과 이후 5승마다 3%로 얻을 수 있다.', 'generate_stock:1756–1773 · jo9_traits_combat:157–196'],
   '용감함': ['인물 생성 시 부여될 수 있다. 에게야 영입 이벤트에서도 부여된다. 숨겨진 값은 공개 조건을 충족하면 표시된다.', 'generate_stock:1350 · interaction_city:17839–17850, 18107–18117'],
   '관심종자': ['인물 생성 시 칭찬 선호 또는 언어적 압박 성향의 해당 값을 통합해 부여할 수 있다. 공개 조건을 충족하면 표시된다.', `generate_stock:1346, 1750 · jo9_traits:${attentionFreshLine} · #static_base:2142–2143`],
   '아레나 챔피언': ['투기장 단계 5~8에서 표시된다.', '#static_base:1976'],
-  '아레나 그랜드 챔피언': ['투기장 단계 9 이상에서 표시된다. 에게야 영입 이벤트는 9단계로 설정한다.', '#static_base:1977 · interaction_city:17847, 18114'],
+  '아레나 그랜드 챔피언': ['투기장 단계 9 이상에서 표시된다. 에게야 영입 이벤트와 춘향(3040번) 초기 설정은 9단계로 설정한다. 춘향의 기존 9단계 이상 경력은 보존한다.', '#static_base:1977 · interaction_city:17847, 18114'],
   '경주 챔피언': ['경주에서 4~6승을 기록하면 표시된다.', '#static_base:1978–1980'],
   '경주 그랜드 챔피언': ['경주에서 7승 이상을 기록하면 표시된다.', '#static_base:1982–1985'],
 };
@@ -259,6 +261,8 @@ for (const row of result) {
     row.price = line < 0 && !grow ? '확인된 가격 없음' : '별도 구매 없음';
   }
 }
+for (const row of result) if (row.name === '양성애자') { row.acquisition += ' 춘향(3040번)은 처음부터 양성애자를 보유하되 숨김 상태로 시작하며 기존 발견 조건 또는 레벨리오로 표시된다.'; row.acquisitionSource += ' · jo9_chunhyang_profile'; }
+for (const row of result) if (['산도','아레나 그랜드 챔피언','양성애자'].includes(row.name)) { row.acquisition += ' 춘향은 에게야 이후 클럽의 결투에서 이긴 뒤 영입한다. 주 노예 칸이 차 있으면 약속을 보존한다.'; row.acquisitionSource += ' · jo9_chun_club:acquire'; }
 assert.ok(result.every(row => row.price && row.acquisition));
 fs.writeFileSync(path.join(__dirname, 'traits.json'), JSON.stringify({ rows: result, coverage, hash: document.hash }, null, 2) + '\n');
 const categories = Object.fromEntries(Object.entries(Object.groupBy(result, row => row.category)).map(([category, entries]) => [category, entries.length]));

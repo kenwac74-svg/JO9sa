@@ -1,0 +1,40 @@
+{
+  "id": "HARD_ATTRIBUTE_VISIBILITY_V2_20261115",
+  "status": "APPROVED",
+  "before_sha256": "dc97571338996682401037d009f9ecc62923bb471292911daa1b69f9375f9d75",
+  "after_sha256": "f6eb54073aab0f5720ba6d1eeca277346ea17dc9f487ef59c954beab9f54fca8",
+  "edits": [
+    {
+      "location": "jo9_attribute_visibility",
+      "field": "body",
+      "old": "! JO9 MOD START HARD_ATTRIBUTE_VISIBILITY_HELPER_20261112\r\nlocal jo9_av_wait=0\r\nif instr('|stamina|temper|intellect|','|'+$args[2]+'|')>0: jo9_av_wait=10\r\nif instr('|sensitivity|pride|ego|','|'+$args[2]+'|')>0: jo9_av_wait=20\r\nif $args[0]='visible':\r\n result=1\r\n if difficulty_setting!2 or spell_revelio=1 or jo9_av_wait=0: exit\r\n local jo9_av_days=0\r\n if $args[1]!'stock' and $args[1]!'seed': jo9_av_days=max(0,dyneval('result='+$args[1]+\"['age_count']\"))\r\n if jo9_av_days>=jo9_av_wait: exit\r\n result=0\r\n exit\r\nend\r\nlocal jo9_av_show=func('jo9_attribute_visibility','visible',$args[1],$args[2])\r\n$result=$args[3]\r\nif jo9_av_show=1: exit\r\nif $args[0]='tooltip':\r\n $result='획득 후 '+str(jo9_av_wait)+'일이 지나면 확인할 수 있습니다. 전체 공개 마법으로도 확인할 수 있습니다.'\r\nelse\r\n $result='<span style=\"color:#777\">미확인</span>'\r\nend\r\n! JO9 MOD END HARD_ATTRIBUTE_VISIBILITY_HELPER_20261112",
+      "new": "! JO9 MOD START HARD_ATTRIBUTE_VISIBILITY_V2_20261115\r\nif $args[0]='newgame':\r\n jo9_observation_revision=1\r\n exit\r\nend\r\nif $args[0]='legacy':\r\n if jo9_observation_revision>=1: exit\r\n local $jo9_av_roles,$jo9_av_role\r\n local jo9_av_i\r\n $jo9_av_roles[]='slave'\r\n $jo9_av_roles[]='assistant'\r\n $jo9_av_roles[]='prisoner'\r\n $jo9_av_roles[]='cow'\r\n $jo9_av_roles[]='room1'\r\n $jo9_av_roles[]='room2'\r\n $jo9_av_roles[]='room3'\r\n $jo9_av_roles[]='room4'\r\n $jo9_av_roles[]='farmhand'\r\n $jo9_av_roles[]='harpy'\r\n $jo9_av_roles[]='pig'\r\n $jo9_av_roles[]='iced_1'\r\n $jo9_av_roles[]='iced_2'\r\n $jo9_av_roles[]='iced_3'\r\n $jo9_av_roles[]='iced_4'\r\n $jo9_av_roles[]='iced_5'\r\n $jo9_av_roles[]='iced_6'\r\n $jo9_av_roles[]='iced_7'\r\n $jo9_av_roles[]='iced_8'\r\n $jo9_av_roles[]='iced_9'\r\n $jo9_av_roles[]='iced_10'\r\n $jo9_av_roles[]='iced_11'\r\n $jo9_av_roles[]='iced_12'\r\n $jo9_av_roles[]='iced_13'\r\n $jo9_av_roles[]='iced_14'\r\n $jo9_av_roles[]='iced_15'\r\n $jo9_av_roles[]='iced_16'\r\n $jo9_av_roles[]='iced_17'\r\n $jo9_av_roles[]='iced_18'\r\n $jo9_av_roles[]='snk_parked_slave'\r\n for jo9_av_i=0 to arrsize('$jo9_av_roles')-1:\r\n  $jo9_av_role=$jo9_av_roles[jo9_av_i]\r\n  if dyneval('result='+$jo9_av_role+'_state')>CONST_INT['no_slave']:\r\n   dynamic $jo9_av_role+\"['jo9_observation_days']=10\"\r\n  end\r\n end\r\n jo9_observation_revision=1\r\n exit\r\nend\r\nif $args[0]='tick':\r\n if instr('|slave|assistant|room1|room2|room3|room4|','|'+$args[1]+'|')=0: exit\r\n if dyneval('result='+$args[1]+'_state')<=CONST_INT['no_slave']: exit\r\n dynamic $args[1]+\"['jo9_observation_days']=min(10,max(0,\"+$args[1]+\"['jo9_observation_days'])+1)\"\r\n exit\r\nend\r\nif $args[0]='visible':\r\n result=1\r\n if difficulty_setting!2 or spell_revelio=1 or master_mage>=4: exit\r\n if instr('|stamina|temper|intellect|sensitivity|pride|ego|','|'+$args[2]+'|')=0: exit\r\n if master_mage>=2 and instr('|stamina|temper|intellect|','|'+$args[2]+'|')>0: exit\r\n local jo9_av_days=0\r\n if $args[1]!'stock' and $args[1]!'seed': jo9_av_days=max(0,dyneval('result='+$args[1]+\"['jo9_observation_days']\"))\r\n if jo9_av_days>=10: exit\r\n result=0\r\n exit\r\nend\r\nlocal jo9_av_show=func('jo9_attribute_visibility','visible',$args[1],$args[2])\r\n$result=$args[3]\r\nif jo9_av_show=1: exit\r\nif $args[0]='tooltip':\r\n local jo9_av_days=0\r\n if $args[1]!'stock' and $args[1]!'seed': jo9_av_days=max(0,dyneval('result='+$args[1]+\"['jo9_observation_days']\"))\r\n $result='노예·조수 슬롯 또는 개인실에서 누적 10일을 지내면 확인할 수 있습니다. 현재 '+str(jo9_av_days)+'/10일. 감옥·크라이오·외양간에서는 누적되지 않습니다. 마법력 A 이상 또는 리벨리스 효과로 즉시 공개됩니다.'\r\nelse\r\n $result='<span style=\"color:#777\">미확인</span>'\r\nend\r\n! JO9 MOD END HARD_ATTRIBUTE_VISIBILITY_V2_20261115",
+      "count": 1,
+      "patchId": "HARD_ATTRIBUTE_VISIBILITY_V2_20261115"
+    },
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "! JO9 MOD START FARID_RESTORE_CACHE_20261114\r\n$auction_start = '<font color=\"#660000\"> [파리드]<br>&nbsp;좋은 날입니다, 친애하는 고객 여러분! 자, 장내를 정숙히 해 주십시오. 지금부터 아직 낙인이 찍히지 않은 싱싱한 원석들의 경매를 시작하겠습니다! 오늘도 안개가 시공을 넘어 각지에서 아름답고 생기 넘치는 상품들을 잔뜩 실어 왔습니다. 직접 눈으로 확인하시고, 지갑 속 스파크를 아낌없이 풀어 주시기 바랍니다!</font>'",
+      "new": "! JO9 MOD START HARD_ATTRIBUTE_VISIBILITY_V2_20261115\r\ngs 'jo9_attribute_visibility','legacy'\r\n! JO9 MOD END HARD_ATTRIBUTE_VISIBILITY_V2_20261115\r\n! JO9 MOD START FARID_RESTORE_CACHE_20261114\r\n$auction_start = '<font color=\"#660000\"> [파리드]<br>&nbsp;좋은 날입니다, 친애하는 고객 여러분! 자, 장내를 정숙히 해 주십시오. 지금부터 아직 낙인이 찍히지 않은 싱싱한 원석들의 경매를 시작하겠습니다! 오늘도 안개가 시공을 넘어 각지에서 아름답고 생기 넘치는 상품들을 잔뜩 실어 왔습니다. 직접 눈으로 확인하시고, 지갑 속 스파크를 아낌없이 풀어 주시기 바랍니다!</font>'",
+      "count": 1,
+      "patchId": "HARD_ATTRIBUTE_VISIBILITY_V2_20261115"
+    },
+    {
+      "location": "init_game",
+      "field": "body",
+      "old": "! JO9 MOD START MEIKI_REPORT_INIT_RESET | 2026-10-23_meiki_size_yield\r\nkillvar 'jo9_tentacle_report'",
+      "new": "! JO9 MOD START HARD_ATTRIBUTE_VISIBILITY_V2_20261115\r\ngs 'jo9_attribute_visibility','newgame'\r\n! JO9 MOD END HARD_ATTRIBUTE_VISIBILITY_V2_20261115\r\n! JO9 MOD START MEIKI_REPORT_INIT_RESET | 2026-10-23_meiki_size_yield\r\nkillvar 'jo9_tentacle_report'",
+      "count": 1,
+      "patchId": "HARD_ATTRIBUTE_VISIBILITY_V2_20261115"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "\t\tdynslave['age_count'] += 1",
+      "new": "\t\tdynslave['age_count'] += 1\r\n\t\t! JO9 MOD START HARD_ATTRIBUTE_VISIBILITY_V2_20261115\r\n\t\tgs 'jo9_attribute_visibility','tick','dynslave'\r\n\t\t! JO9 MOD END HARD_ATTRIBUTE_VISIBILITY_V2_20261115",
+      "count": 1,
+      "patchId": "HARD_ATTRIBUTE_VISIBILITY_V2_20261115"
+    }
+  ]
+}

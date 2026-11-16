@@ -1,0 +1,396 @@
+--- before/tools/modding-hub/master_editor.py
++++ after/tools/modding-hub/master_editor.py
+@@ -305,6 +305,11 @@
+     if pattern.search(newmaster['statsCode']):newmaster['statsCode']=pattern.sub(lambda m:m[1]+str(value),newmaster['statsCode'])
+     else:newmaster['statsCode']+='\r\n'+key+' = '+str(value)
+   talk=profile.get('talkbook') if role=='master' else self.read_slave_talk(sid)
++  background=copy.deepcopy(profile.get('background') or (talk or {}).get('background',{})) if 'background' in include else {}
++  book=copy.deepcopy(talk) if 'talk' in include else None
++  if book is not None:book.pop('background',None)
++  if background:
++   book=book or {'lines':{},'notes':''};book['background']=background
+   path='json/slaves/'+str(nid)+'_'+slug+'.json' if target=='slave' else self._profile_file('master',nid).relative_to(self.root).as_posix()
+   copies=self._image_copies(target,nid,slug,new) if 'appearance' in include else {}
+   if target=='master' and 'appearance' in include:
+@@ -312,8 +317,8 @@
+     if new.get(field):
+      ref=new[field];newmaster[key]=ref if Path(ref).suffix else ref+'.png'
+   validate_master(newmaster)
+-  return {'id':nid,'role':target,'json':path,'data':new,'master':newmaster,'imageCopies':copies,'talkbook':copy.deepcopy(talk) if 'talk' in include else None,'revision':revision,
+-   'background':copy.deepcopy(profile.get('background',{})) if 'background' in include else {},'menuLinked':False,'warnings':['원본 인물은 유지됩니다.','새 마스터의 시작 메뉴 연결은 QSP 이벤트에서 별도로 지정합니다.'] if target=='master' else ['원본 인물은 유지됩니다. 무작위 등장 풀은 바꾸지 않습니다.']}
++  return {'id':nid,'role':target,'json':path,'data':new,'master':newmaster,'imageCopies':copies,'talkbook':book,'revision':revision,
++   'background':background,'menuLinked':False,'warnings':['원본 인물은 유지됩니다.','새 마스터의 시작 메뉴 연결은 QSP 이벤트에서 별도로 지정합니다.'] if target=='master' else ['원본 인물은 유지됩니다. 무작위 등장 풀은 바꾸지 않습니다.']}
+  def clone(self,role,sid,body):
+   self._check_revision(role,sid,body.get('revision'));r=self.clone_preview(role,sid,body)
+   if body.get('dryRun'):return {k:v for k,v in r.items() if k!='talkbook'}
+@@ -337,11 +342,13 @@
+  def talk(self,sid,body=None):
+   self.read(sid);p=self._profile('master',sid)
+   if body is not None:
++   self._check_revision('master',sid,body.get('revision'))
+    book=body.get('book')
+    if not isinstance(book,dict):raise ValueError('대사집은 객체여야 합니다.')
+-   p['talkbook']=book;self._write({self._profile_file('master',sid):encoded(p)})
+-  return {'id':int(sid),'path':self._profile_file('master',sid).relative_to(self.root).as_posix(),'exists':'talkbook' in p,'book':p.get('talkbook'),'noAutoGenerate':False}
++   p['talkbook']=book;p['background']=copy.deepcopy(book.get('background',{}));self._write({self._profile_file('master',sid):encoded(p)})
++  return {'id':int(sid),'path':self._profile_file('master',sid).relative_to(self.root).as_posix(),'exists':'talkbook' in p,'book':p.get('talkbook'),'revision':self.revision(sid),'noAutoGenerate':False}
+  def images(self,sid,body,decode,compose,gray,sepia):
++  self._check_revision('master',sid,body.get('revision'))
+   current=self.read(sid);profile=self._profile('master',sid);data=copy.deepcopy(current['data']);payloads={};targets={}
+   from PIL import Image
+   for slot,spec in (body.get('slots') or {}).items():
+--- before/tools/modding-hub/server.py
++++ after/tools/modding-hub/server.py
+@@ -3,11 +3,12 @@
+ from pathlib import Path
+ from urllib.parse import unquote,urlparse
+ import registry
++from master_editor import MasterEditor, MAPPINGS
+ 
+ HERE=Path(__file__).resolve().parent
+ def build_id():
+  h=hashlib.sha256()
+- for name in ['server.py','registry.py','integration.mjs','integration.css','app_launcher.py','embedded-tools.css','overrides/studio-look.mjs','overrides/studio-look-geometry.mjs']:
++ for name in ['server.py','registry.py','integration.mjs','integration.css','app_launcher.py','embedded-tools.css','overrides/studio-look.mjs','overrides/studio-look-geometry.mjs','master_editor.py','overrides/studio-view.mjs','overrides/studio-role.mjs']:
+   h.update((HERE/name).read_bytes())
+  return h.hexdigest()[:16]
+ def create_server(studio_root,repo,urls_file,port=0):
+@@ -22,6 +23,37 @@
+  def urls():
+   try:return json.loads(Path(urls_file).read_text('utf-8-sig'))
+   except (OSError,ValueError):return {}
++ def store():return MasterEditor(base.paths().root,backend=base.api)
++ def decorate_slave(sid):
++  ch=base.read_character(sid);editor=store();profile=editor.slave_profile(sid)
++  ch.update(role='slave',master=editor.master_from_slave(ch['data'],profile),revision=editor.slave_revision(sid))
++  ch['mappings']=editor.mapping_rows('slave',ch['data'],ch['master']);return ch
++ def read_master(sid):
++  ch=store().read(sid);ch['choices']=base.choices();return ch
++ def save_slave(sid,body):
++  editor=store();editor._check_revision('slave',sid,body.get('revision'))
++  pending=base.save_fields(sid,{**body,'dryRun':True});profile=editor.slave_profile(sid)
++  before=profile.get('master',editor.master_from_slave(base.read_character(sid)['data'],profile))
++  master=body.get('master');changes=list(pending['changes'])
++  if master is not None:
++   from master_editor import validate_master
++   validate_master(master)
++   changes += [{'key':'master.'+k,'before':before.get(k),'after':v} for k,v in master.items() if before.get(k)!=v]
++   profile['master']=master
++  if changes and not body.get('dryRun'):
++   filename,data=editor.slave(sid);data=dict(data)
++   for c in pending['changes']:
++    if c['after'] is None:data.pop(c['key'],None)
++    else:data[c['key']]=c['after']
++   payloads={}
++   if pending['changes']:
++    payloads[filename]=json.dumps(data,ensure_ascii=False,indent=4).encode('utf-8')
++    backup=filename.with_name(filename.name+'.bak')
++    if not backup.exists():payloads[backup]=filename.read_bytes()
++   if master is not None:payloads[editor._profile_file('slave',sid)]=json.dumps(profile,ensure_ascii=False,indent=2).encode('utf-8')
++   editor._write(payloads)
++   base.work_log(base.paths()).event('studio_role_fields',id=int(sid),changed=[c['key'] for c in changes])
++  return {'changes':changes,'saved':bool(changes) and not body.get('dryRun'),'dryRun':bool(body.get('dryRun')),'character':None if body.get('dryRun') else decorate_slave(sid)}
+  class Handler(base.StudioHandler):
+   def blob(self,body,mime,status=200):
+    self.send_response(status);self.send_header('Content-Type',mime);self.send_header('Content-Length',str(len(body)));self.end_headers();self.wfile.write(body)
+@@ -29,11 +61,11 @@
+    url=urlparse(self.path);route=url.path
+    native=route.split('/',3)[3] if route.startswith('/v/') and len(route.split('/',3))>3 else route.lstrip('/')
+    if native=='studio-view.mjs':
+-    text=(base.DIST/'studio-view.mjs').read_text('utf-8')
++    text=(HERE/'overrides/studio-view.mjs').read_text('utf-8')
+     marker='<button class="button secondary st-tosim"'
+-    button='<button class="button secondary" data-workspace-image-search="${e(c.jsonFile)}" data-image-path="${e(c.data.fullimage || \'\')}" data-image-id="${e(c.id)}" title="캐릭터 파일명 키워드를 이미지 검색창에 넣습니다. 검색은 직접 누르세요.">이미지 검색어 보내기</button>'
++    button='<button class="button secondary" data-workspace-image-search="${e(c.jsonFile)}" data-image-path="${e(c.data.fullimage || c.data.seed_ava_clear || \'\')}" data-image-id="${e(c.id)}" title="캐릭터 파일명 키워드를 이미지 검색창에 넣습니다. 검색은 직접 누르세요.">이미지 검색어 보내기</button>'
+     return self.blob(text.replace(marker,button+marker,1).encode(),'text/javascript; charset=utf-8')
+-   if native in ['studio-look.mjs','studio-look-geometry.mjs']:
++   if native in ['studio-look.mjs','studio-look-geometry.mjs','studio-role.mjs']:
+     return self.blob((HERE/'overrides'/native).read_bytes(),'text/javascript; charset=utf-8')
+    if native=='app.mjs':
+     addon="\nawait (await import('/workspace/integration.mjs')).installWorkspace({tabNames,switchTab,getTab:()=>tab});\n"
+@@ -42,6 +74,16 @@
+    if route in ['/workspace/integration.mjs','/workspace/integration.css']:
+     name=route.rsplit('/',1)[1];mime='text/javascript' if name.endswith('.mjs') else 'text/css'
+     return self.blob((HERE/name).read_bytes(),mime+'; charset=utf-8')
++   try:
++    import re
++    if route=='/api/master/chars':return self.send_json(200,{'items':store().list(),'choices':base.choices()})
++    match=re.fullmatch(r'/api/master/(\d+)',route)
++    if match:return self.send_json(200,read_master(match[1]))
++    match=re.fullmatch(r'/api/master/(\d+)/talkbook',route)
++    if match:return self.send_json(200,store().talk(match[1]))
++    match=re.fullmatch(r'/api/char/(\d+)',route)
++    if match:return self.send_json(200,decorate_slave(match[1]))
++   except Exception as error:return self.fail(error)
+    if route=='/workspace/config':return self.send_json(200,{'app':'jo9-modding-hub','build':build_id(),'studioRoot':str(studio_root),'tools':urls(),'game':base.game_status()})
+    if route=='/workspace/artifacts':
+     try:return self.send_json(200,{'items':catalog('refresh=1' in url.query)})
+@@ -64,6 +106,40 @@
+      return self.blob(raw,mime)
+     except Exception as error:return self.fail(error)
+    return super().do_GET()
++  def do_POST(self):
++   import re
++   route=urlparse(self.path).path
++   master=re.fullmatch(r'/api/master/(\d+)/(fields|images|talkbook)',route)
++   clone=re.fullmatch(r'/api/role/(slave|master)/(\d+)/clone',route)
++   slave=re.fullmatch(r'/api/char/(\d+)/fields',route)
++   slave_images=re.fullmatch(r'/api/char/(\d+)/images',route)
++   if not (master or clone or slave or slave_images):return super().do_POST()
++   origin=self.headers.get('Origin')
++   if origin and urlparse(origin).hostname not in ('127.0.0.1','localhost'):return self.send_json(403,{'error':'허용되지 않은 출처입니다.'})
++   if self.headers.get('Content-Type','').split(';')[0].strip()!='application/json':return self.send_json(415,{'error':'JSON 요청만 받습니다.'})
++   try:
++    size=int(self.headers.get('Content-Length') or 0)
++    if size<0 or size>base.MAX_BODY:raise ValueError('요청 크기가 잘못되었습니다.')
++    body=json.loads(self.rfile.read(size).decode('utf-8') or '{}')
++    if not isinstance(body,dict):raise ValueError('요청은 객체여야 합니다.')
++    with base._lock:
++     editor=store()
++     if slave:result=save_slave(slave[1],body)
++     elif slave_images:
++      editor._check_revision('slave',slave_images[1],body.get('revision'))
++      result=base.save_images(slave_images[1],body)
++      if result.get('character'):result['character']=decorate_slave(slave_images[1])
++     elif clone:result=editor.clone(clone[1],clone[2],body)
++     elif master[2]=='fields':
++      result=editor.save(master[1],body)
++      if result.get('character'):result['character']['choices']=base.choices()
++     elif master[2]=='talkbook':
++      base.check_plain(body.get('book'));result=editor.talk(master[1],body)
++     else:
++      result=editor.images(master[1],body,base.decode_image,base.compose_slot,base.api.to_grayscale,base.api.to_sepia)
++      if result.get('character'):result['character']['choices']=base.choices()
++    return self.send_json(200,result)
++   except Exception as error:return self.fail(error)
+  return http.server.ThreadingHTTPServer(('127.0.0.1',port),Handler)
+ def main():
+  p=argparse.ArgumentParser();p.add_argument('--studio',required=True);p.add_argument('--repo',required=True);p.add_argument('--urls',required=True);p.add_argument('--ready',required=True);p.add_argument('--port',type=int,default=7689);args=p.parse_args()
+--- before/tools/modding-hub/integration.mjs
++++ after/tools/modding-hub/integration.mjs
+@@ -1,6 +1,6 @@
+ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const MENUS=[
+- {id:'studio',label:'캐릭터 편집',icon:'✎',children:[['backgrounds','배경 설정 목록']]},
++ {id:'studio',label:'캐릭터 편집',icon:'✎',children:[['studio','노예 편집'],['master-studio','마스터 편집'],['backgrounds','배경 설정 목록']]},
+  {id:'character',label:'캐릭터 시뮬레이터',icon:'◆'},
+  {id:'dialogue',label:'대사 편집',icon:'☷'},
+  {id:'image-tools',label:'이미지 작업',icon:'▧'},
+@@ -11,7 +11,9 @@
+  {id:'artifacts',label:'기타 산출물',icon:'▥'},
+ ];
+ export function characterImageKeyword(file,imagePath='',id=''){
+- const stem=String(imagePath).replaceAll('\\','/').split('/').pop()?.replace(/\.[^.]+$/,'')||'';
++ const path=String(imagePath).replaceAll('\\','/'),folder=path.match(/(?:^|\/)master\/editor\/(\d+)(?:\/|$)/i);
++ if(folder)return 'master/editor/'+folder[1];
++ const stem=path.split('/').pop()?.replace(/\.[^.]+$/,'')||'';
+  if(/^\d+_/.test(stem))return stem.split('_')[0];
+  if(stem)return stem.replace(/_(?:black|blond|blue|brown|green|pink|purple|red|white)_(?:long|short)(?:_[^_]+)?$/i,'').replace(/_title$/i,'');
+  const name=String(file).replace(/\.json$/i,'');return name.replace(/^\d+_/,'')||String(id)||name;
+@@ -19,6 +21,8 @@
+ export async function installWorkspace(api){
+  const config=await fetch('/workspace/config').then(r=>{if(!r.ok)throw Error('통합 메뉴 설정을 읽지 못했습니다.');return r.json();});
+  const css=document.createElement('link');css.rel='stylesheet';css.href='/workspace/integration.css';document.head.append(css);
++ const {createStudioView}=await import(new URL('studio-view.mjs',document.baseURI).href);
++ await createStudioView(globalThis.__jo9StudioApi,{role:'master'});
+  const nativeIds=new Set(Object.keys(api.tabNames));const originalNames=new Map([...nativeIds].map(k=>[k,api.tabNames[k]]));
+  const panels=new Map();let items=null,selectedArtifact=null,query='',category='';
+  const subtitle={dialogue:'원문을 찾아 각본으로 저장하거나, 대사를 수정하고 반영합니다.','image-tools':'이미지와 복장을 확인하고 교체합니다.','game-db':'게임 정보를 찾고 아이디어를 정리합니다.','patch-schedule':'일정과 진행 상태, 메모를 관리합니다.',utilities:'작업에 필요한 보조 도구를 선택합니다.',artifacts:'카탈로그와 비교표, 작업 결과를 찾아봅니다.'};
+--- before/tools/modding-hub/Start-Modding-Hub.ps1
++++ after/tools/modding-hub/Start-Modding-Hub.ps1
+@@ -18,7 +18,7 @@
+ if ($ToolUrls.Count) {[IO.File]::WriteAllText($urlsFile,($ToolUrls | ConvertTo-Json -Depth 5),[Text.UTF8Encoding]::new($false))}
+ if (!(Test-Path -LiteralPath $urlsFile)) {throw '기존 모드툴 주소가 없습니다. Open-Modding-Tools.ps1로 실행하세요.'}
+ $stream=New-Object IO.MemoryStream
+-foreach ($name in @('server.py','registry.py','integration.mjs','integration.css','app_launcher.py','embedded-tools.css','overrides/studio-look.mjs','overrides/studio-look-geometry.mjs')) {$block=[IO.File]::ReadAllBytes((Join-Path $hubDir $name));$stream.Write($block,0,$block.Length)}
++foreach ($name in @('server.py','registry.py','integration.mjs','integration.css','app_launcher.py','embedded-tools.css','overrides/studio-look.mjs','overrides/studio-look-geometry.mjs','master_editor.py','overrides/studio-view.mjs','overrides/studio-role.mjs')) {$block=[IO.File]::ReadAllBytes((Join-Path $hubDir $name));$stream.Write($block,0,$block.Length)}
+ $build=([BitConverter]::ToString([Security.Cryptography.SHA256]::Create().ComputeHash($stream.ToArray())).Replace('-','').ToLowerInvariant()).Substring(0,16)
+ $stream.Dispose()
+ if ($old) {
+--- before/tools/modding-hub/overrides/studio-view.mjs
++++ after/tools/modding-hub/overrides/studio-view.mjs
+@@ -48,7 +48,7 @@
+  const root = document.getElementById(id);
+  const lookEd = createLookEditor({toast: m => api.toast(m), call,
+   endpoint: c => c.id === 'new' ? '/api/char/new' : `/api/char/${c.id}/images`,
+-  extra: () => st.ch?.id === 'new' ? newBody() : {},
++  extra: () => st.ch?.id === 'new' ? newBody() : {revision: st.ch?.revision},
+   onSaved: async r => {
+    if (st.ch?.id === 'new') { await loadList(); st.ch = null; st.sel = null; return open(r.id, true); }
+    st.ch = r.character; render();
+@@ -102,7 +102,7 @@
+  async function open(sid, force = false) {
+   if (!force && (dirtyCount() || lookEd.dirty() || Object.keys(st.qedits).length) && !window.confirm('저장하지 않은 변경을 버리고 다른 캐릭터를 열까요?')) return;
+   if (!force && st.bookDirty && !window.confirm('저장하지 않은 대사집 변경을 버릴까요?')) return;
+-  try { st.ch = await call('/api/char/' + sid); st.choices = st.ch.choices; st.sel = sid; st.danger = null; st.edits = blank(); st.preview = null; lookEd.reset(st.ch); Object.assign(st, {qq: '', qhits: null, qedits: {}, qmod: null, qid: '', qdesc: ''}); await loadTalk(); sendToSim(false); } catch (error) { api.toast(error.message); }
++  try { st.ch = await call('/api/char/' + sid); st.choices = st.ch.choices; st.sel = sid; st.danger = null; st.roleCopy = null; st.edits = blank(); st.preview = null; lookEd.reset(st.ch); Object.assign(st, {qq: '', qhits: null, qedits: {}, qmod: null, qid: '', qdesc: ''}); await loadTalk(); sendToSim(false); } catch (error) { api.toast(error.message); }
+   render();
+  }
+  async function loadTalk() {
+@@ -115,7 +115,7 @@
+   // 배경 분류만 고정할 때는 저장된 대사집에 배경만 바꿔 쓰고, 아직 저장하지 않은 대사 편집은 화면에 그대로 둔다
+   const book = bgOnly ? {...strip(st.talk.book ?? {}), background: st.book.background} : strip(st.book);
+   try {
+-   st.talk = await call('/api/talkbook/' + st.sel, {book});
++   st.talk = await call('/api/talkbook/' + st.sel, {book, revision: st.ch.revision}); if(st.talk.revision)st.ch.revision=st.talk.revision;
+    if (bgOnly) st.book.background = structuredClone(st.talk.book.background ?? {});
+    else { st.book = structuredClone(st.talk.book); st.book.refs ??= {}; st.book.lines ??= {}; st.bookDirty = false; }
+    api.toast((bgOnly ? '배경 분류를 고정했습니다 · ' : '대사집을 저장했습니다 · ') + st.talk.path);
+@@ -148,7 +148,7 @@
+    if (r.character) st.ch = r.character;
+    st.edits = blank(); st.preview = null; sendToSim(false);
+    api.toast(r.saved ? `저장했습니다 · ${r.changes.length}개 항목 (처음 저장이면 .bak 백업을 남겼습니다)` : '바뀐 것이 없습니다.');
+-   const item = st.items.find(x => x.id === st.sel); if (item) item.name = st.ch.data.seed_name ?? item.name;
++   const item = st.items.find(x => x.id === st.sel); if (item) item.name = (isMaster ? st.ch.master.name : st.ch.data.seed_name) ?? item.name;
+   } catch (error) { api.toast(error.message); }
+   render();
+  }
+@@ -447,6 +447,7 @@
+     const rows=st.ch.mappings||[];
+     st.roleCopy={targetRole:isMaster?'slave':'master',name:(isMaster?st.ch.master.name:data().seed_name)+' 복제',slug:'',newId:'',gender:isMaster?st.ch.gender:'female',include:{appearance:true,background:true,stats:true,talk:true},rows,overrides:Object.fromEntries(rows.filter(r=>Number.isInteger(r.value)).map(r=>[r.target,r.value])),result:null};return render();
+    }
++   if(dirtyCount()||lookEd.dirty()||st.bookDirty)return api.toast('변경 내용을 저장한 뒤 복제하세요.');
+    const body={...cloneBody(st.roleCopy,st.ch.revision),dryRun:action==='preview'};
+    try{const r=await baseCall(`/api/role/${role}/${st.ch.id}/clone`,body);if(action==='preview'){st.roleCopy.result=r;return render();}st.roleCopy=null;api.toast(`새 ${r.role==='master'?'마스터':'노예'} ${r.id}로 복제했습니다.`);render();window.dispatchEvent(new CustomEvent('jo9:role-open',{detail:{role:r.role,id:r.id}}));}catch(error){api.toast(error.message);}return;
+   }
+--- before/tools/modding-hub/overrides/studio-role.mjs
++++ after/tools/modding-hub/overrides/studio-role.mjs
+@@ -21,11 +21,11 @@
+  return `<p class="fine-print">${role==='master'?'마스터 원본 저장 시 게임의 시작 프리셋에 반영됩니다. 이미 시작한 세이브의 주인공은 바꾸지 않습니다.':'이 인물의 마스터 전환용 설정입니다. 현재 노예 JSON과 별도로 보관하며 마스터로 복제할 때 가져갑니다.'}</p><div class="cv-form"><label>마스터 이름<input data-st-master="name" value="${esc(m.name)}" maxlength="100"></label><label>난이도 안내<input data-st-master="difficulty" value="${esc(m.difficulty)}" title="시작 화면의 안내 문구입니다. 실제 전투 난이도 설정과 다릅니다."></label></div><section class="st-story"><div class="section-label">마스터 소개 · 배경 이야기</div><textarea data-st-master="description" rows="6">${esc(m.description)}</textarea></section><details><summary>게임에서 쓰는 초상 경로</summary><div class="cv-form"><label>컬러 초상<input data-st-master="portrait" value="${esc(m.portrait)}"></label><label>세피아 초상<input data-st-master="sepia" value="${esc(m.sepia)}"></label></div><p class="fine-print">이 경로는 QSP의 마스터 소개 초상입니다. 외형 탭의 편집용 이미지와 구분됩니다. 기존 시작 메뉴에 직접 적힌 아이콘 경로는 QSP 이벤트에서 확인하세요.</p></details>`;
+ }
+ export function masterStats(m,role){
+- return `<div class="section-label">${role==='master'?'마스터 시작 능력치':'마스터 전환용 시작 능력치'}</div><p class="fine-print">입력한 정수를 그대로 저장합니다. 장비·세력·시작 자금 및 조건문은 아래 원본 코드에 보존됩니다.</p><div class="st-stats">${nativeRows(m.statsCode).map(r=>`<label class="st-stat" title="${esc(r.key)} · 마스터 시작 프리셋에서 지정하는 값${r.repeated?' · 여러 곳에 있어 원본 코드에서 편집':''}">${esc(LABELS[r.key]||r.key)} <small>${esc(r.key)}</small><input type="number" step="1" data-st-master-stat="${esc(r.key)}" value="${r.value}" ${r.repeated?'disabled':''}></label>`).join('')}</div><details><summary>시작 효과 원본 코드 직접 편집</summary><textarea class="st-json" data-st-master="statsCode" rows="16" spellcheck="false">${esc(m.statsCode)}</textarea></details>`;
++ return `<div class="section-label">${role==='master'?'마스터 시작 능력치':'마스터 전환용 시작 능력치'}</div><p class="fine-print">입력한 정수를 그대로 저장합니다. 장비·세력·시작 자금 및 조건문은 아래 원본 코드에 보존됩니다.</p><div class="st-grid">${nativeRows(m.statsCode).map(r=>`<label class="st-stat" title="${esc(r.key)} · 마스터 시작 프리셋에서 지정하는 값${r.repeated?' · 여러 곳에 있어 원본 코드에서 편집':''}">${esc(LABELS[r.key]||r.key)} <small>${esc(r.key)}</small><input type="number" step="1" data-st-master-stat="${esc(r.key)}" value="${r.value}" ${r.repeated?'disabled':''}></label>`).join('')}</div><details><summary>시작 효과 원본 코드 직접 편집</summary><textarea class="st-json" data-st-master="statsCode" rows="16" spellcheck="false">${esc(m.statsCode)}</textarea></details>`;
+ }
+ export function cloneBody(d,revision){
+  const include=Object.entries(d.include).filter(([,v])=>v).map(([k])=>k);
+- return {targetRole:d.targetRole,name:d.name,slug:d.slug,newId:d.newId,gender:d.gender,include,revision,overrides:include.includes('stats')?d.overrides:{}};
++ return {targetRole:d.targetRole,name:d.name,slug:d.slug,newId:d.newId || d.result?.id || '',gender:d.gender,include,revision,overrides:include.includes('stats')?d.overrides:{}};
+ }
+ export function cloneForm(d){
+  const target=d.targetRole==='master'?'마스터':'노예';
+--- before/tools/modding-hub/tests/test_master_editor.py
++++ after/tools/modding-hub/tests/test_master_editor.py
+@@ -0,0 +1,112 @@
++import importlib.util,sys,unittest,tempfile,json,hashlib
++from pathlib import Path
++
++HERE=Path(__file__).parent
++spec=importlib.util.spec_from_file_location('master_editor',HERE.parent/'master_editor.py')
++m=importlib.util.module_from_spec(spec);sys.modules[spec.name]=m
++if spec.loader and (HERE.parent/'master_editor.py').exists():spec.loader.exec_module(m)
++
++BODY="""! original comment
++$master_base_name[1] = 'Man'
++$hero_description[1] = 'First ''quoted'' story<br>' + _
++'second {part}'
++$hero_difficulty[1] = 'Easy'
++$clear_ava_path[1] = 'content/pic/master/a.png'
++$sepia_ava_path[1] = 'content/pic/master/a_sepia.png'
++$master_version_stats[1] = {
++ master_str = 4
++ master_fighter = 5
++ $master_armor = 'with } brace'
++ if something = 1: sparks += 9
++}
++$master_base_name[101] = 'Woman'
++$hero_description[101] = 'Other'
++$master_version_stats[101] = {master_mage = 3}
++! unrelated data must remain
++$npc_name['x'] = 'A'
++""".replace('\n','\r\n')
++
++class MasterTests(unittest.TestCase):
++ def setUp(self):
++  self.tmp=tempfile.TemporaryDirectory();self.root=Path(self.tmp.name)
++  (self.root/'json/slaves').mkdir(parents=True)
++  self.raw=m.make_fixture({'#masters_base':BODY,'elsewhere':"*p 'Original untouched'"})
++  (self.root/'jack.qsp').write_bytes(self.raw)
++  self.s=m.MasterEditor(self.root)
++ def tearDown(self):self.tmp.cleanup()
++ def files(self):return {str(p.relative_to(self.root)):p.read_bytes() for p in self.root.rglob('*') if p.is_file()}
++ def test_reads_multiline_strings_and_braced_code_without_evaluating(self):
++  rows=self.s.list();self.assertEqual([x['gender'] for x in rows],['male','female'])
++  a=self.s.read(1);self.assertEqual(a['master']['description'],"First 'quoted' story<br>second {part}")
++  self.assertIn('sparks += 9',a['master']['statsCode']);self.assertEqual(a['data']['seed_gladiatrix'],5)
++ def test_dry_run_has_no_writes_and_save_only_changes_requested_arrays(self):
++  a=self.s.read(1);body={'revision':a['revision'],'master':{**a['master'],'name':"King's name"},'dryRun':True}
++  before=self.files();r=self.s.save(1,body);self.assertTrue(r['changes']);self.assertEqual(self.files(),before)
++  body['dryRun']=False;self.s.save(1,body)
++  d=m.QspDocument((self.root/'jack.qsp').read_bytes());self.assertEqual(d.body('elsewhere'),"*p 'Original untouched'")
++  self.assertEqual(d.body('#masters_base'),BODY.replace("$master_base_name[1] = 'Man'","$master_base_name[1] = 'King''s name'"))
++  self.assertTrue(list((self.root/'jo9_editor/master-patches').glob('*.json')))
++ def test_stale_source_rejected_but_unrelated_qsp_change_survives(self):
++  a=self.s.read(1);d=m.QspDocument(self.raw);(self.root/'jack.qsp').write_bytes(d.replace_body('elsewhere','Other data'))
++  self.s.save(1,{'revision':a['revision'],'master':{**a['master'],'name':'Changed'}})
++  self.assertEqual(m.QspDocument((self.root/'jack.qsp').read_bytes()).body('elsewhere'),'Other data')
++  with self.assertRaisesRegex(ValueError,'다시'):self.s.save(1,{'revision':a['revision'],'master':a['master']})
++ def test_master_to_slave_keeps_roles_distinct_unknown_fields_and_source(self):
++  a=self.s.read(101);self.s.save(101,{'revision':a['revision'],'set':{'seed_custom_marker':91},'story':{'world':'User text'}})
++  before=(self.root/'jack.qsp').read_bytes();a=self.s.read(101)
++  r=self.s.clone('master',101,{'revision':a['revision'],'targetRole':'slave','newId':3100,'name':'Copy','slug':'copy','include':['appearance','background','stats','talk'],'overrides':{'seed_nurse':4}})
++  j=json.loads((self.root/'json/slaves/3100_copy.json').read_text('utf-8'))
++  self.assertEqual(j['seed_name'],'Copy');self.assertEqual(j['seed_custom_marker'],91);self.assertEqual(j['seed_nurse'],4)
++  self.assertEqual((self.root/'jack.qsp').read_bytes(),before)
++  self.assertEqual(self.s.slave_profile(3100)['master']['description'],'Other')
++  self.assertEqual(r['role'],'slave')
++ def test_slave_to_master_round_trip_and_collision_do_not_overwrite(self):
++  f=self.root/'json/slaves/3100_test.json';j={'seed_name':'Test','seed_stamina':4,'seed_gladiatrix':5,'seed_custom_marker':82,'fullimage':'girls/full/test'};f.write_text(json.dumps(j),'utf-8')
++  p=self.s.clone_preview('slave',3100,{'targetRole':'master','gender':'female','name':'New master','newId':102,'include':['appearance','background','stats','talk']})
++  self.assertEqual(p['id'],102);self.assertIn('master_fighter = 5',p['master']['statsCode'])
++  r=self.s.clone('slave',3100,{'revision':self.s.slave_revision(3100),'targetRole':'master','gender':'female','name':'New master','newId':102,'include':['appearance','background','stats','talk']})
++  self.assertEqual(f.read_text('utf-8'),json.dumps(j));self.assertEqual(self.s.read(102)['data']['seed_custom_marker'],82)
++  before=self.files()
++  with self.assertRaises((ValueError,FileExistsError)):self.s.clone('slave',3100,{'targetRole':'master','newId':101,'name':'Collision','include':[]})
++  self.assertEqual(self.files(),before)
++  self.assertFalse(r['menuLinked'])
++ def test_unselected_sections_are_not_copied_and_unsafe_filename_rejected(self):
++  r=self.s.clone_preview('master',1,{'targetRole':'slave','newId':3100,'name':'Only name','slug':'safe','include':[]})
++  self.assertNotIn('seed_gladiatrix',r['data']);self.assertNotIn('seed_ava_clear',r['data'])
++  with self.assertRaises(ValueError):self.s.clone_preview('master',1,{'targetRole':'slave','newId':3100,'name':'x','slug':'../bad','include':[]})
++ def test_clone_images_are_independent_and_never_overwrite_master_sources(self):
++  p=self.root/'content/pic/master/a.png';p.parent.mkdir(parents=True);p.write_bytes(b'original portrait')
++  self.s.clone('master',1,{'targetRole':'slave','newId':3100,'name':'Copy','slug':'copy','include':['appearance']})
++  f=self.s.slave(3100)[1]['seed_ava_clear'];target=self.root/(f+'.png')
++  self.assertNotEqual(target,p);self.assertEqual(target.read_bytes(),p.read_bytes())
++  target.write_bytes(b'changed copy');self.assertEqual(p.read_bytes(),b'original portrait')
++ def test_code_ending_in_a_comment_is_valid(self):
++  a=self.s.read(1);self.s.save(1,{'revision':a['revision'],'master':{**a['master'],'statsCode':'master_str = 4\n! last comment'}})
++ def test_talk_save_returns_revision_and_background_copies_independently(self):
++  r=self.s.talk(1,{'book':{'background':{'world':'rome'},'lines':{'greeting':'Hello'}}})
++  self.assertEqual(r['revision'],self.s.read(1)['revision'])
++  self.s.clone('master',1,{'targetRole':'slave','newId':3100,'name':'x','include':['background']})
++  book=self.s.read_slave_talk(3100);self.assertEqual(book['background'],{'world':'rome'});self.assertFalse(book['lines'])
++  self.s.clone('master',1,{'targetRole':'slave','newId':3101,'name':'y','include':['talk']})
++  book=self.s.read_slave_talk(3101);self.assertEqual(book['lines'],{'greeting':'Hello'});self.assertNotIn('background',book)
++ def test_master_outfit_and_face_save_only_editor_paths(self):
++  from PIL import Image,ImageOps
++  import io,base64
++  im=Image.new('RGBA',(80,80),(30,160,70,255));out=io.BytesIO();im.save(out,'PNG');src='data:image/png;base64,'+base64.b64encode(out.getvalue()).decode()
++  decode=lambda s:Image.open(io.BytesIO(base64.b64decode(s.split(',')[1]))).convert('RGBA')
++  args=(decode,lambda im,t:im.resize((795,596)),lambda im:ImageOps.grayscale(im).convert('RGBA'),lambda im:im.copy())
++  before=self.files();body={'slots':{'maid':{'src':src,'t':None}},'face':{'mode':'file','src':src},'dryRun':True}
++  self.s.images(101,body,*args);self.assertEqual(self.files(),before)
++  body['dryRun']=False;r=self.s.images(101,body,*args)
++  self.assertTrue(all(p.startswith(('content/pic/master/editor/101/','jo9_editor/role-profiles/master/101.json')) for p in r['files']))
++  with Image.open(self.root/'content/pic/master/editor/101/maid.png') as pic:self.assertEqual(pic.size,(795,596))
++  with Image.open(self.root/'content/pic/master/editor/101/face.png') as pic:self.assertEqual(pic.size,(151,150))
++  self.assertEqual((self.root/'jack.qsp').read_bytes(),self.raw)
++  self.s.images(101,{'slots':{'maid':None}},*args);self.assertTrue((self.root/'content/pic/master/editor/101/maid.png').exists());self.assertIsNone(self.s.read(101)['slots']['maid']['reference'])
++ def test_talk_save_cannot_refresh_a_stale_native_snapshot(self):
++  tab_a=self.s.read(1);tab_b=self.s.read(1)
++  self.s.save(1,{'revision':tab_b['revision'],'master':{**tab_b['master'],'name':'Other tab new name'}})
++  with self.assertRaisesRegex(ValueError,'다시'):self.s.talk(1,{'revision':tab_a['revision'],'book':{'lines':{'greeting':'Hello'}}})
++  self.assertEqual(self.s.read(1)['master']['name'],'Other tab new name')
++
++if __name__=='__main__':unittest.main()
+--- before/tools/modding-hub/tests/master-role.test.mjs
++++ after/tools/modding-hub/tests/master-role.test.mjs
+@@ -0,0 +1,7 @@
++import test from 'node:test';import assert from 'node:assert/strict';
++import {roleUrl,nativeRows,patchNativeStat,cloneBody,masterSettings,cloneForm} from '../overrides/studio-role.mjs';
++test('master and slave URLs and same numeric IDs remain distinct',()=>{assert.equal(roleUrl('master','/api/char/101/images'),'/api/master/101/images');assert.equal(roleUrl('master','/api/talkbook/101'),'/api/master/101/talkbook');assert.equal(roleUrl('slave','/api/char/101'),'/api/char/101');assert.equal(roleUrl('master','/api/game'),'/api/game');});
++test('changing a stat preserves commands comments and quoted text',()=>{const code=" master_str = 4 &! keep\r\n$thing = 'master_str = 4'\r\nif x: sparks += 9";assert.equal(patchNativeStat(code,'master_str',3),code.replace('master_str = 4 &','master_str = 3 &'));assert.equal(nativeRows('master_str = 4\nmaster_str = 3')[0].repeated,true);assert.throws(()=>patchNativeStat('master_str = 4\nmaster_str = 3','master_str',2));});
++test('unchecked stats never carry conversion overrides',()=>{const d={include:{appearance:true,stats:false},targetRole:'master',overrides:{master_str:4}};assert.deepEqual(cloneBody(d,'rev').overrides,{});assert.deepEqual(cloneBody(d,'rev').include,['appearance']);});
++test('automatic target ID remains the ID reviewed in preview',()=>{assert.equal(cloneBody({include:{},newId:'',result:{id:125}},'rev').newId,125);});
++test('user text is escaped in master and clone forms',()=>{const x=masterSettings({name:'<script>x</script>',description:'</textarea>'},'master');assert(!x.includes('<script>'));assert(x.includes('&lt;/textarea&gt;'));assert(cloneForm({targetRole:'slave',name:'<img>',include:{},overrides:{},rows:[]}).includes('&lt;img&gt;'));});

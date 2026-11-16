@@ -1,0 +1,227 @@
+{
+  "date": "2026-11-13",
+  "sourceQspSha256": "e7d1312a563590a8bc2b1189a553ee88f1bf32a24e9458658ed0c9c31e190f5c",
+  "status": "RESEARCH_AND_PROPOSAL_ONLY",
+  "gameChanged": false,
+  "sourceChanged": false,
+  "personalSaveRead": false,
+  "findings": {
+    "price": 900,
+    "removeOnlyOnSuccess": true,
+    "cooldown": false,
+    "APCost": false,
+    "mentalCost": false,
+    "positiveTraitsProtected": true,
+    "addictionTreatmentBlocksReupgrade": true,
+    "sanityFormula": "ego + temper + pride",
+    "normalMinimum": 5,
+    "neurasthenia": [
+      3,
+      4
+    ],
+    "mindbreakMaximum": 2,
+    "mindbreakGate": "no_mindbreak != 1",
+    "directNeurastheniaAPOrSkillPenaltyFound": false
+  },
+  "proposalNotApproved": {
+    "A": "Damage existing ego/temper/pride and use current state calculation; no new save field, changes personality/obedience and may reset relationships through mindbreak.",
+    "B": "Accumulate recoverable drug mental burden, connect effective mental score to state/voice; one new per-character saved integer required; recovery/dose/severity and concrete functional penalty are undecided."
+  },
+  "evidence": [
+    {
+      "location": "jo9_chaotic",
+      "from": 20,
+      "to": 40,
+      "lines": [
+        "if $jo9_chaotic_mode = 'use':",
+        " if chaotic_essence < 1:",
+        "  msg '카오틱 에센스가 없습니다.'",
+        "  exit",
+        " end",
+        " local jo9_chaotic_used = func('jo9_chaotic', 'apply', $jo9_chaotic_role)",
+        " if jo9_chaotic_used = 1:",
+        "  if $jo9_chaotic_removed = '정액 중독':",
+        "   msg '카오틱 에센스로 정액 중독을 색정광으로 완화했습니다. 남은 수량: <<chaotic_essence>>개.'",
+        "  elseif $jo9_chaotic_removed = '석녀':",
+        "   msg '카오틱 에센스로 석녀를 불감증으로 완화했습니다. 남은 수량: <<chaotic_essence>>개.'",
+        "  else",
+        "   msg '카오틱 에센스를 사용해 <<$jo9_chaotic_removed>> 특성을 제거했습니다. 남은 수량: <<chaotic_essence>>개.'",
+        "  end",
+        " else",
+        "  msg '제거할 부정·상황형 특성이 없습니다. 카오틱 에센스는 소모되지 않았습니다.'",
+        " end",
+        " result = jo9_chaotic_used",
+        " exit",
+        "end",
+        "if $jo9_chaotic_mode = 'apply' and chaotic_essence < 1: exit"
+      ]
+    },
+    {
+      "location": "jo9_chaotic",
+      "from": 210,
+      "to": 238,
+      "lines": [
+        "if jo9_chaotic_count = 0:",
+        " dynamic $replace({",
+        "  if jo9ceactor['nymphomania'] > 1:",
+        "   $jo9_chaotic_keys[0] = 'jo9_addiction_treatment'",
+        "   $jo9_chaotic_labels[0] = '정액 중독'",
+        "   $jo9_chaotic_xps[0] = ''",
+        "   jo9_chaotic_count = 1",
+        "  end",
+        " }, 'jo9ceactor', $jo9_chaotic_role)",
+        "end",
+        "if $jo9_chaotic_mode = 'count': result = jo9_chaotic_count & exit",
+        "if jo9_chaotic_count < 1: exit",
+        "local jo9_chaotic_pick = rand(0, jo9_chaotic_count - 1)",
+        "local $jo9_chaotic_selected = $jo9_chaotic_keys[jo9_chaotic_pick]",
+        "local $jo9_chaotic_selected_xp = $jo9_chaotic_xps[jo9_chaotic_pick]",
+        "dynamic $replace({",
+        " if $args[0] = 'jo9_addiction_treatment':",
+        "  jo9ceactor['nymphomania'] = 1",
+        "  jo9ceactor['nymphomania_revealed'] = 2",
+        "  jo9ceactor['jo9_nymph_no_upgrade'] = 1",
+        "  jo9ceactor['jo9_addiction_high_days'] = 0",
+        "  jo9ceactor['jo9_addiction_pending_loss'] = 0",
+        "  jo9ceactor['jo9_nymph_relief_day'] = 0",
+        "  jo9ceactor['jo9_nymph_relief_pending'] = 0",
+        " elseif $args[0] = 'jo9_stone_treatment':",
+        "  jo9ceactor['nymphomania'] = -1",
+        "  jo9ceactor['nymphomania_revealed'] = 2",
+        "  jo9ceactor['nymphomania_xp'] = 0",
+        "  jo9ceactor['jo9_frigid_days'] = 0"
+      ]
+    },
+    {
+      "location": "jo9_chaotic",
+      "from": 280,
+      "to": 285,
+      "lines": [
+        " end",
+        "}, 'jo9ceactor', $jo9_chaotic_role), $jo9_chaotic_selected, $jo9_chaotic_selected_xp",
+        "$jo9_chaotic_removed = $jo9_chaotic_labels[jo9_chaotic_pick]",
+        "chaotic_essence -= 1",
+        "if $get_lab_space ! '': dynamic $get_lab_space",
+        "result = 1"
+      ]
+    },
+    {
+      "location": "#static_base",
+      "from": 1098,
+      "to": 1099,
+      "lines": [
+        "\t\tmax_motivation = max(dynslave['fear'],dynslave['moral'],dynslave['custom'],dynslave['rational'],dynslave['instinct'],dynslave['spoil'],dynslave['angst'],dynslave['arousal'])",
+        "\t\tsanity = dynslave['ego'] + dynslave['temper'] + dynslave['pride']"
+      ]
+    },
+    {
+      "location": "#static_base",
+      "from": 1118,
+      "to": 1127,
+      "lines": [
+        "\t\tif sanity < 3 and no_mindbreak ! 1:",
+        "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t$dynslave_psy_status = 'broken' &! must first raise nature (ego) to restore a broken slave - ImperatorAugustus",
+        "\t\t\tdynslave['pride'] = 0 & dynslave_rate['pride'] = 0",
+        "\t\t\tdynslave['temper'] = 0 &  dynslave_rate['temper'] = 0",
+        "\t\t\tdynslave['fear'] = 0 & dynslave_rate['fear'] = 0",
+        "\t\t\tdynslave['rational'] = 0 & dynslave_rate['rational'] = 0",
+        "\t\t\tdynslave['instinct'] = 0 & dynslave_rate['instinct'] = 0",
+        "\t\t\tdynslave['custom'] = 5 & dynslave_rate['custom'] = 0",
+        "\t\t\tdynslave['spoil'] = 0 & dynslave_rate['spoil'] = 0",
+        "\t\t\tdynslave['moral'] = 0 & dynslave_rate['moral'] = 0"
+      ]
+    },
+    {
+      "location": "#static_base",
+      "from": 1373,
+      "to": 1376,
+      "lines": [
+        "\t\t! Obedience is sum of positive factors (first line) offset by negative factors (second line)",
+        "\t\tdynslave['obedience'] = slave_obedience_bonus + slave_mood_bonus + slave_fear_bonus + (dynslave['moral']*4) + (dynslave['instinct']*2) + dynslave['custom'] + dynslave['rational'] + (1 + dynslave['angst'])/2 - _",
+        "\t\t\t(dynslave['obedience_difficulty']/2) - slave_obedience_penalty - (dynslave['spoil']*2) - dynslave['pride'] - dynslave['temper'] - dynslave['ego'] - dynslave['intellect']",
+        "\t\tif $dynslave_psy_status = 'broken': dynslave['obedience'] = 100"
+      ]
+    },
+    {
+      "location": "#static_base",
+      "from": 1964,
+      "to": 1969,
+      "lines": [
+        "\t\tsanity = dynslave['ego'] + dynslave['temper'] + dynslave['pride']",
+        "\t\tif sanity < 3:",
+        "\t\t\t$dynslave_features_list += '<a style = \"color: #cd0000;\" href=\"EXEC: msg $sanity_broken\">정신분열</a><br>'",
+        "\t\telseif sanity < 5:",
+        "\t\t\t$dynslave_features_list += '<a style = \"color: #EA0090;\" href=\"EXEC: msg $sanity_low\">신경 쇠약</a><br>'",
+        "\t\tend"
+      ]
+    },
+    {
+      "location": "#dynamic",
+      "from": 781,
+      "to": 784,
+      "lines": [
+        "\t\tif dynslave['sin'] < torture_intensity:",
+        "\t\t\t! torture intensity above guilt increases angst and, if angst is already maxed, directly drains stats - ImperatorAugustus",
+        "\t\t\tdynslave_rate['angst'] += torture_intensity + dynslave['sensitivity']*2",
+        "\t\t\tif dynslave['angst'] = 5: dynslave_rate['temper'] -= 5 & dynslave_rate['ego'] += func('jo9_origin_growth','delta','dynslave','ego',-(5)) &! drain stats directly when angst is already maxed - ImperatorAugustus"
+      ]
+    },
+    {
+      "location": "#dynamic",
+      "from": 1697,
+      "to": 1702,
+      "lines": [
+        "\t\tif rape_fear > 0:",
+        "\t\t\tgs '$mood_drop', 'dynslave', dynslave['sensitivity'] &! reduce magnitude of any positive moodlets",
+        "\t\t\tdynslave_rate['sensitivity'] += func('jo9_origin_growth','delta','dynslave','sensitivity',-(dynslave['sensitivity']*7)) &! max 3 repetitions to drop highest empathy (-80 rate threshold, rate can go up to +10)",
+        "\t\t\tdynslave['angst'] = min(5, max(2, dynslave['sensitivity'] - 1, dynslave['angst'])) &! set despair to a minimum of 2 (3 if empathy is A+) if lower",
+        "\t\t\tdynslave_rate['angst'] = max(dynslave_rate['angst'] + dynslave['neg_raped']*3, indep_atr_max_threshold[dynslave['angst']] / 2) &! set despair half-way to next level if lower",
+        "\t\t\tif dynslave['angst'] = 5: dynslave_rate['ego'] += func('jo9_origin_growth','delta','dynslave','ego',-(2 * dynslave['ego'])) & dynslave_rate['temper'] -= 2 * dynslave['temper'] &! drain stats directly when angst is already maxed - ImperatorAugustus"
+      ]
+    },
+    {
+      "location": "#dynamic",
+      "from": 5256,
+      "to": 5262,
+      "lines": [
+        "! 자아, 성격, 태도 -> 0 보통 / 1 신경쇠약 / 2 정신분열. 전용 대사 덮어쓰기는 4단계다.",
+        "$voice_mental = {",
+        " jo9_voice_mental_sum = args[0] + args[1] + args[2]",
+        " result = 0",
+        " if jo9_voice_mental_sum <= 4: result = 1",
+        " if jo9_voice_mental_sum <= 2: result = 2",
+        " killvar 'jo9_voice_mental_sum'"
+      ]
+    },
+    {
+      "location": "pharmacy",
+      "from": 331,
+      "to": 338,
+      "lines": [
+        "! JO9 MOD START CHAOTIC_ESSENCE_SHOP_PURCHASE | 2026-10-24_chaotic_essence",
+        "IF sp_txt = 125:",
+        " IF sparks >= 900:",
+        "  sparks -= 900",
+        "  chaotic_essence += 1",
+        "  $pharmacy[125] = $pharmacy_accept",
+        "  dynamic $get_lab_space",
+        " ELSE"
+      ]
+    },
+    {
+      "location": "jo9_nymph_arousal",
+      "from": 14,
+      "to": 21,
+      "lines": [
+        " elseif $args[0] = 'xp':",
+        "  if args[1] > 0:",
+        "   jo9nymphactor['nymphomania_xp'] += args[1]",
+        "   if jo9nymphactor['nymphomania'] = 1 and jo9nymphactor['nymphomania_xp'] > 600 and jo9nymphactor['jo9_nymph_no_upgrade'] = 0:",
+        "    if rand(1, 10) = 1:",
+        "     jo9nymphactor['nymphomania'] = 2",
+        "     jo9nymphactor['nymphomania_revealed'] = 1",
+        "    end"
+      ]
+    }
+  ]
+}

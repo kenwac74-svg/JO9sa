@@ -26,6 +26,18 @@ APP_ID = 'image-folder-review'
 STATIC = Path(__file__).resolve().parent.parent / 'static'
 
 
+# JO9 MOD START SIDEBAR_FRAME_PARENT_20261115
+def hub_frame_parent():
+    origins = os.environ.get('JO9_MODDING_HUB_ORIGIN', '').split()
+    valid = []
+    for origin in origins:
+        match = re.fullmatch(r'http://127\.0\.0\.1:(\d{1,5})', origin)
+        if match and 0 < int(match[1]) <= 65535 and origin not in valid:
+            valid.append(origin)
+    return ' '.join(valid) or "'none'"
+# JO9 MOD END SIDEBAR_FRAME_PARENT_20261115
+
+
 class ReviewService:
     def __init__(self, data_dir: Path):
         self.store = ProjectStore(data_dir)
@@ -207,7 +219,7 @@ def make_server(host, port, service):
             self.send_header('Content-Length', str(length))
             self.send_header('X-Content-Type-Options', 'nosniff')
             self.send_header('Cache-Control', 'no-store')
-            self.send_header('Content-Security-Policy', "default-src 'self'; img-src 'self' blob:; style-src 'self'; script-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'")
+            self.send_header('Content-Security-Policy', "default-src 'self'; img-src 'self' blob:; style-src 'self'; script-src 'self'; connect-src 'self'; frame-ancestors " + hub_frame_parent() + "; base-uri 'none'; form-action 'self'")
             for key, value in (extra or {}).items():
                 self.send_header(key, value)
             self.end_headers()

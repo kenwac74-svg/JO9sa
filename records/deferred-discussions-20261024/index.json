@@ -55,18 +55,20 @@
     {
       "id": "D04",
       "title": "아이템·안개경계 전리품 개편",
-      "status": "EXPLICIT_RESUME_ONLY",
-      "decision": "사용자가 지시하면 다시 꺼내기",
-      "trigger": "사용자가 아이템/전리품 기획 재개를 명시할 때",
+      "status": "USER_DEFERRED_NEXT_UPDATE",
+      "decision": "2026-11-12 상위 아이템 기획을 여기까지 저장하고 다음 업데이트에서 이어감",
+      "trigger": "다음 업데이트 아이템 기획을 사용자가 재개 요청할 때",
       "facts": "합의한 드롭·포획 기본 방향은 보존하되 적별 가치/확률/연금술 효과 초안을 승인된 수치로 취급하지 않음.",
       "evidence": [
         "records/fog-loot-planning-20261021/paused-handoff.json",
-        "records/fog-loot-planning-20261021/value-allocation-proposal.json"
+        "records/fog-loot-planning-20261021/value-allocation-proposal.json",
+        "records/drop-equipment-planning-20261111/NEXT_UPDATE_HANDOFF_KO.md"
       ],
       "constraints": [
         "임의 재개·구현·패키징 없음",
         "미제시 연금술6안은 미승인"
-      ]
+      ],
+      "latestHandoff": "records/drop-equipment-planning-20261111/NEXT_UPDATE_HANDOFF_KO.md"
     },
     {
       "id": "D05",
@@ -414,6 +416,53 @@
           "evidence": "records/shiru-domina-alias-20261111/REPORT_KO.md"
         }
       ]
+    },
+    {
+      "id": "D22",
+      "title": "비밀서고·금서의 중요 퀘스트 연계",
+      "status": "USER_DEFERRED_MAJOR_QUEST",
+      "decision": "2026-11-12 사용자 확정: 중요 퀘스트와 연결된 콘텐츠이므로 보류. 계속 리마인드한다.",
+      "trigger": "관련 중요 퀘스트·도서관/비밀서고 개발 검토 및 미결/보류 항목 점검 때 계속 상기",
+      "facts": "공개 열람과 별개로 비밀서고 해금 사건·조건·금서 연결은 중요 퀘스트 기획에 맞춰 결정한다.",
+      "constraints": [
+        "자동 해금·금서 연결·임의 퀘스트 창작으로 재개하지 않는다.",
+        "시간 지정 자동 알림이 아니라 관련 작업 시 대화상 리마인드다."
+      ],
+      "evidence": [
+        "records/pending-decisions-20261112/DECISIONS_KO.md"
+      ]
+    },
+    {
+      "id": "D23",
+      "title": "특등급 처녀고기의 도축장 중요 퀘스트 연계",
+      "status": "USER_DEFERRED_MAJOR_QUEST",
+      "decision": "2026-11-12 사용자 확정: 도축장 퀘스트와 연결된 중요 퀘스트 콘텐츠로 보류.",
+      "trigger": "도축장 퀘스트·특수 식재료 획득 이벤트 기획 또는 미결/보류 항목 점검 때 상기",
+      "facts": "기존 재고·특별요리 소비를 보존한다. 정상 획득 이벤트는 도축장 퀘스트 기획에서 연결한다.",
+      "constraints": [
+        "임시 획득처·상점 판매·일반 랜덤 드랍을 임의 추가하지 않는다."
+      ],
+      "evidence": [
+        "records/pending-decisions-20261112/DECISIONS_KO.md"
+      ]
+    },
+    {
+      "id": "D24",
+      "title": "특수목적 반말 세트·캐릭터별 항상 반말",
+      "status": "WORK_IMPLEMENTED_FOLLOWUP_POLICY_GAP",
+      "decision": "2026-11-12 사용자 확정: 캐릭터별로 지정하고 관계/복종 상태가 바뀌어도 반말을 유지하는 별도 세트를 만든다. 후속 답변으로 검토8명 전체 확정·WORK 반영 완료. 후속 사용자 기준: 일반 노예 반말 미적용, 지정 유니크에게만 선택 적용.",
+      "trigger": "캐릭터별 대사/말투 시스템 작업",
+      "facts": "루미너스3002/바실리사2610/라나2620/리아스3010/다이아나3021/이리스3023/캬루2621/에키드나3012 일반 대화 전용 반말 프로필·문장 교정본·기존 캐시/소개문 표시 호환을 연결했다. 성격·헌신·복종·성공/거절 판정 보존. 실제 엔진160단언 및 공식재생/재적용 통과. 실제GUI/개인SAV로드 미검증. 현재 직업별 tone3 일반 적용 분기가 남아 최신 기준과 미일치. 현행 조립 규칙 문서에 기록했으며 이번 문서 작업에서는 게임 수정하지 않음.",
+      "constraints": [
+        "기존 일반 인물의 말투를 전역 반말로 바꾸지 않는다.",
+        "반말 고정을 성격/태도/복종값 고정으로 구현하지 않는다.",
+        "설명문과 공용 대화 예외를 별개로 대조한다."
+      ],
+      "evidence": [
+        "records/pending-decisions-20261112/DECISIONS_KO.md",
+        "records/always-plain-voice-20261112/REPORT_KO.md",
+        "docs/SLAVE_DIALOGUE_ASSEMBLY_RULES_CURRENT_20261112_KO.md"
+      ]
     }
   ],
   "notDeferred": [
@@ -448,6 +497,6 @@
       "note": "2026-10-26 사용자 승인. 기존 MSG 첫 발견 1회. 재확인 대기 저장·X 전용 키 제어는 추가하지 않음. records/meiki-discovery-popup-20261026/FINAL_RESULT.json."
     }
   ],
-  "updatedAt": "2026-11-10T17:25:45.317Z",
+  "updatedAt": "2026-11-12",
   "lastUpdatedAt": "2026-11-10T17:25:45.317Z"
 }

@@ -1,0 +1,17 @@
+{
+  "id": "2026-11-12_unique_character_traits",
+  "status": "APPROVED",
+  "description": "Move guaranteed Peerless from Erza2624 to Chunhyang3040; set Erza Paladin and Chunhyang Berserker once per instance. Egeya and other traits preserved. One numeric instance revision permits later earned/manual changes.",
+  "before_sha256": "bd99a3aece472b2041fab190b7f306a68a5b4ec2fe55f123f0fbeaef388af302",
+  "after_sha256": "2698fcb4246e5eecf943aa625b90cae90916c74f714c72e4050ced721e226ee9",
+  "edits": [
+    {
+      "location": "jo9_traits_value",
+      "field": "body",
+      "old": "! JO9 MOD START ERZA_BRANCH_IMAGES_TRAITS_20261101\r\n   if dynslave_type = 2624: dynslave['jo9_peerless'] = 1\r\n! JO9 MOD END ERZA_BRANCH_IMAGES_TRAITS_20261101",
+      "new": "! JO9 MOD START UNIQUE_CHARACTER_TRAITS_20261112\r\n   ! One-time preset revision clears the former Erza guarantee without blocking later earned traits.\r\n   if dynslave_type = 2624 and dynslave['jo9_erza_chun_preset_rev'] < 1:\r\n    dynslave['jo9_peerless'] = 0\r\n    dynslave['jo9_combat_trait'] = 2\r\n    dynslave['jo9_erza_chun_preset_rev'] = 1\r\n   elseif dynslave_type = 3040 and dynslave['jo9_erza_chun_preset_rev'] < 1:\r\n    dynslave['jo9_combat_trait'] = 1\r\n    dynslave['jo9_erza_chun_preset_rev'] = 1\r\n   end\r\n   if dynslave_type = 3040: dynslave['jo9_peerless'] = 1\r\n! JO9 MOD END UNIQUE_CHARACTER_TRAITS_20261112",
+      "count": 1,
+      "patchId": "UNIQUE_CHARACTER_TRAITS_20261112"
+    }
+  ]
+}

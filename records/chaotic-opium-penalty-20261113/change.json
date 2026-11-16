@@ -1,0 +1,41 @@
+{
+  "id": "2026-11-13_chaotic_opium_penalty",
+  "status": "APPROVED",
+  "approval": "User chose Domini negative effects only, immediate energy-2 with low-energy faint, and existing opium-style addiction; no new penalty formula.",
+  "before_sha256": "e7d1312a563590a8bc2b1189a553ee88f1bf32a24e9458658ed0c9c31e190f5c",
+  "after_sha256": "d139d7a69212be749f4ed8ce03041a85e2a2712341a548c6b6e92d1228b8fb1e",
+  "edits": [
+    {
+      "location": "jo9_chaotic",
+      "field": "body",
+      "old": "chaotic_essence -= 1",
+      "new": "! JO9 MOD START CHAOTIC_OPIUM_PENALTY_20261113\r\ndynamic $replace({\r\n jo9ceactor['neg_spellbound'] += 1\r\n jo9ceactor_rate['angst'] += max(0, min(jo9ceactor['temper'], jo9ceactor['sensitivity']) - jo9ceactor['moral'] - max(0, jo9ceactor['deprivation_attitude']*5))\r\n if jo9ceactor['on_opium'] > 0:\r\n  jo9ceactor['opium_addiction'] += 1\r\n else\r\n  jo9ceactor['on_opium'] = 1\r\n end\r\n jo9ceactor['energy'] -= 2\r\n if jo9ceactor['energy']*2 - jo9ceactor['half_action'] <= 0:\r\n  jo9ceactor_state = CONST_INT['slave_faint']\r\n  jo9ceactor['exhaustion_fainted'] = 1\r\n end\r\n}, 'jo9ceactor', $jo9_chaotic_role)\r\n! JO9 MOD END CHAOTIC_OPIUM_PENALTY_20261113\r\nchaotic_essence -= 1",
+      "count": 1,
+      "patchId": "CHAOTIC_OPIUM_PENALTY_20261113"
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "부정 특성을 우선 무작위로 하나 제거하며, 없으면 상황형 일반 특성에서 하나를 제거합니다. 확실한 긍정 특성과 성취·칭호·상태는 보존합니다.",
+      "new": "부정 특성을 우선 무작위로 하나 제거하며, 없으면 상황형 일반 특성에서 하나를 제거합니다. 확실한 긍정 특성과 성취·칭호·상태는 보존합니다. 복용 즉시 행동력 2 소모(0 이하면 기절). 정신교란·스트레스 부작용과 아편형 약물 중독이 누적됩니다.",
+      "count": 2,
+      "patchId": "CHAOTIC_OPIUM_PENALTY_20261113"
+    },
+    {
+      "location": "pharmacy",
+      "field": "body",
+      "old": "부정 특성을 우선 무작위로 하나 제거하며, 없으면 상황형 일반 특성에서 하나를 제거합니다. 확실한 긍정 특성과 성취·칭호·상태는 보존합니다.",
+      "new": "부정 특성을 우선 무작위로 하나 제거하며, 없으면 상황형 일반 특성에서 하나를 제거합니다. 확실한 긍정 특성과 성취·칭호·상태는 보존합니다. 복용 즉시 행동력 2 소모(0 이하면 기절). 정신교란·스트레스 부작용과 아편형 약물 중독이 누적됩니다.",
+      "count": 2,
+      "patchId": "CHAOTIC_OPIUM_PENALTY_20261113"
+    },
+    {
+      "location": "next_day",
+      "field": "body",
+      "old": "day mod dynslave['stamina']",
+      "new": "day mod max(1, dynslave['stamina'])",
+      "count": 1,
+      "patchId": "CHAOTIC_OPIUM_PENALTY_20261113"
+    }
+  ]
+}

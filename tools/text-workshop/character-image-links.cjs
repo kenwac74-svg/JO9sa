@@ -30,17 +30,46 @@ function linkUpdates(field,stem,cur){
 // JO9 MOD END CHECKLIST_DRESSED_LOOK_20261109
 function create(game,catalogRoot,options={}){
  const pic=path.resolve(game,'content/pic'),jsonDir=path.join(game,'json/slaves'),history=path.join(catalogRoot,'image_work','character-links');let locked=false;
- function jsonFiles(){const map=new Map();for(const name of fs.readdirSync(jsonDir)){const m=name.match(/^(\d+)(?:_|\.json$)/i);if(!m||! /\.json$/i.test(name))continue;const id=Number(m[1]);if(!map.has(id))map.set(id,[]);map.get(id).push(name);}return map;}
- function locate(id,map=jsonFiles()){if(!Number.isSafeInteger(id)||id<0)throw Error('캐릭터 번호를 확인하세요.');const names=map.get(id)||[];if(names.length!==1)throw Error(names.length?'캐릭터 JSON 번호가 중복됩니다: '+id:'캐릭터 JSON이 없습니다: '+id);const full=path.join(jsonDir,names[0]);if(fs.lstatSync(full).isSymbolicLink())throw Error('연결된 JSON은 편집할 수 없습니다.');return full;}
+ // JO9 MOD START JSON_CHARACTER_DISCOVERY_20261111
+ const validIdentity=id=>(Number.isSafeInteger(id)&&id>=0)||(typeof id==='string'&&/^json:[^\\/<>:"|?*\x00-\x1f]+\.json$/i.test(id));
+ const fileNumber=name=>{const m=name.match(/^(\d+)(?:_|\.json$)/i),n=m?Number(m[1]):null;return Number.isSafeInteger(n)&&n>=0?n:null;};
+ function jsonFiles(){
+  const names=fs.readdirSync(jsonDir,{withFileTypes:true}).filter(e=>e.isFile()&&!e.isSymbolicLink()&&/\.json$/i.test(e.name)).map(e=>e.name).sort((a,b)=>a.localeCompare(b)),counts=new Map(),map=new Map();
+  for(const name of names){const number=fileNumber(name);if(number!==null)counts.set(number,(counts.get(number)||0)+1);}
+  map.duplicates=new Set([...counts].filter(([,count])=>count>1).map(([number])=>number));
+  for(const name of names){const number=fileNumber(name),id=number!==null&&counts.get(number)===1?number:'json:'+name;map.set(id,name);}
+  return map;
+ }
+ function locate(id,map=jsonFiles()){
+  if(!validIdentity(id))throw Error('캐릭터 번호 또는 JSON 파일을 확인하세요.');
+  if(map.duplicates.has(id))throw Error('캐릭터 JSON 번호가 중복됩니다: '+id);
+  const name=map.get(id);if(!name)throw Error('캐릭터 JSON이 없습니다: '+id);
+  const full=path.join(jsonDir,name),entry=fs.lstatSync(full);if(entry.isSymbolicLink()||!entry.isFile()||path.dirname(fs.realpathSync(full))!==fs.realpathSync(jsonDir))throw Error('연결된 JSON은 편집할 수 없습니다.');return full;
+ }
+ function parseCharacter(bytes){const data=JSON.parse(bytes.toString('utf8').replace(/^\uFEFF/,''));if(!data||typeof data!=='object'||Array.isArray(data))throw Error('캐릭터 JSON은 객체여야 합니다.');return data;}
+ function ids(){const map=jsonFiles(),result=[];for(const id of map.keys())try{parseCharacter(fs.readFileSync(locate(id,map)));result.push(id);}catch{}return result;}
+ function generationGroups(number){
+  if(number===null||[1448,1450].includes(number))return[];
+  let index={};try{index=JSON.parse(fs.readFileSync(path.join(game,'json/slave_index.json'),'utf8').replace(/^\uFEFF/,''));}catch{}
+  return['loli','young','milf'].filter(age=>Number.isFinite(index[age+'_first'])&&index[age+'_first']<=number&&number<=Math.max(index[age+'_last']??-1,({young:1462,milf:2340})[age]??-1));
+ }
+ // JO9 MOD END JSON_CHARACTER_DISCOVERY_20261111
  function resolve(value){const rel=relative(value),root=fs.realpathSync(pic);let current=pic;const names=[];for(const part of rel.split('/')){const list=fs.readdirSync(current),same=list.filter(n=>n.toLowerCase()===part.toLowerCase());if(same.length!==1)throw Error('PNG 파일을 찾을 수 없습니다: '+rel);current=path.join(current,same[0]);names.push(same[0]);if(fs.lstatSync(current).isSymbolicLink())throw Error('외부 연결 PNG는 선택할 수 없습니다.');}if(!fs.statSync(current).isFile()||!fs.realpathSync(current).startsWith(root+path.sep))throw Error('PIC 밖의 경로입니다.');const bytes=fs.readFileSync(current);if(bytes.length<33||bytes.subarray(0,8).toString('hex')!=='89504e470d0a1a0a'||bytes.toString('ascii',12,16)!=='IHDR'||!bytes.readUInt32BE(16)||!bytes.readUInt32BE(20))throw Error('읽을 수 있는 PNG를 선택하세요.');return{path:names.join('/'),full:current,bytes,width:bytes.readUInt32BE(16),height:bytes.readUInt32BE(20)};}
  function fileList(rescan){if(options.files)return options.files(rescan).map(x=>typeof x==='string'?x:x.path);const result=[];function walk(dir,p=''){for(const e of fs.readdirSync(dir,{withFileTypes:true})){if(e.isSymbolicLink()||/^(?:_|backup)/i.test(e.name))continue;if(e.isDirectory())walk(path.join(dir,e.name),p+e.name+'/');else if(e.isFile()&&/\.png$/i.test(e.name))result.push(p+e.name);}}walk(pic);return result;}
- function snapshot(id,file,known,assetsById){const bytes=fs.readFileSync(file),data=JSON.parse(bytes.toString('utf8').replace(/^\uFEFF/,'')),refs={};for(const [key,value]of Object.entries(data)){const p=reference(value,allowed.has(key));if(p)refs[key]=p;}
+ function snapshot(id,file,known,assetsById){const bytes=fs.readFileSync(file),data=parseCharacter(bytes),characterNumber=fileNumber(path.basename(file)),refs={};for(const [key,value]of Object.entries(data)){const p=reference(value,allowed.has(key));if(p)refs[key]=p;}
   const exists=p=>!!p&&known.has(p.toLowerCase()),baseField=refs.indpack_title?'indpack_title':'fullimage',base=refs[baseField]||'',info=(p,source)=>({path:p,source,exists:exists(p)}),effectiveRoles={};
   for(const [role,old,pack]of [['maid','fullmade','indpack_maid'],['secretary','fullsecretary','indpack_secr'],['domina','fullmistress','indpack_dom']]){const pick=keys=>{const k=keys.find(k=>exists(refs[k]))||keys.find(k=>refs[k]);return k?info(refs[k],k):info('',null);};const explicit=[refs[old],refs[pack]].filter(Boolean),has=explicit.some(p=>exists(p)&&p.toLowerCase()!==base.toLowerCase());effectiveRoles[role]={legacyField:old,packField:pack,menuAvailable:!!(refs[old]||refs[pack]),normal:pick([pack,old,baseField]),horny:pick([pack+'_horny',pack,old,baseField]),rebel:pick([pack+'_rebel',pack,old,baseField]),safeBase:info(base,baseField),needsArtwork:!has,hasExplicitArtwork:has,displayIssue:explicit.some(p=>!exists(p)),menuIssue:false};}
-  const dedicatedImageFolders=['girls/full/','girls/face/','girls/sex_scenes/'].map(root=>root+id).filter(rel=>{try{const full=path.join(pic,rel),entry=fs.lstatSync(full);return entry.isDirectory()&&!entry.isSymbolicLink()&&fs.realpathSync(full).startsWith(fs.realpathSync(pic)+path.sep);}catch{return false;}});
-  const stem=path.basename(file,'.json');return{id,dedicatedImageFolders,imageGroupOwner:[2577,2585,2607].includes(id)?2577:null,imageSyncTargets:id===2577?[2585,2607]:[],name:data.seed_name||(stem.includes('_')?stem.split('_').slice(1).join('_'):'ID '+id),hasFixedName:typeof data.seed_name==='string'&&!!data.seed_name.trim(),json:path.relative(game,file).replaceAll('\\','/'),jsonSha256:sha(bytes),refs,missingRefs:Object.keys(refs).filter(k=>!exists(refs[k])),effectiveBase:info(base,baseField),effectiveRoles,portraitComplete:['seed_ava','seed_ava_gray','seed_ava_clear'].every(k=>exists(refs[k])),assets:[...new Set([...(assetsById.get(id)||[]),...Object.values(refs).filter(exists)])]};
+  const dedicatedImageFolders=['girls/full/','girls/face/','girls/sex_scenes/'].map(root=>root+characterNumber).filter(rel=>{if(characterNumber===null)return false;try{const full=path.join(pic,rel),entry=fs.lstatSync(full);return entry.isDirectory()&&!entry.isSymbolicLink()&&fs.realpathSync(full).startsWith(fs.realpathSync(pic)+path.sep);}catch{return false;}});
+  const stem=path.basename(file).replace(/\.json$/i,''),groups=generationGroups(characterNumber),sceneFolders=new Set(Object.values(refs).filter(p=>/^girls\/scene\/[^/]+\//i.test(p)).map(p=>p.split('/').slice(0,3).join('/').toLowerCase())),namedSceneAssets=sceneFolders.size?[...known.values()].filter(p=>[...sceneFolders].some(folder=>p.toLowerCase().startsWith(folder+'/'))):[];return{id,characterNumber,random:groups.length>0,groups,namedSceneAssets,compatibilityAssets:[],dedicatedImageFolders,imageGroupOwner:[2577,2585,2607].includes(id)?2577:null,imageSyncTargets:id===2577?[2585,2607]:[],name:(typeof data.seed_name==='string'&&data.seed_name.trim())?data.seed_name:(characterNumber===null?stem:stem.includes('_')?stem.split('_').slice(1).join('_'):'ID '+id),hasFixedName:typeof data.seed_name==='string'&&!!data.seed_name.trim(),json:path.relative(game,file).replaceAll('\\','/'),jsonSha256:sha(bytes),refs,missingRefs:Object.keys(refs).filter(k=>!exists(refs[k])),effectiveBase:info(base,baseField),effectiveRoles,portraitComplete:['seed_ava','seed_ava_gray','seed_ava_clear'].every(k=>exists(refs[k])),assets:[...new Set([...(characterNumber===null?[]:assetsById.get(characterNumber)||[]),...namedSceneAssets,...Object.values(refs).filter(exists)])]};
  }
- function read(ids,settings={}){const map=jsonFiles();if(ids===undefined)ids=[...map.keys()];if(!Array.isArray(ids)||ids.length>5000||ids.some(id=>!Number.isSafeInteger(id)||id<0))throw Error('캐릭터 번호 목록을 확인하세요.');const files=fileList(settings.rescan),known=new Map(files.map(p=>[p.toLowerCase(),p])),assetsById=new Map(),characters=[],errors=[];for(const p of files)for(const m of p.matchAll(/(?:^|\/)(\d+)(?=[_/.])/g)){const id=Number(m[1]);if(!assetsById.has(id))assetsById.set(id,new Set());assetsById.get(id).add(p);}for(const id of [...new Set(ids)])try{characters.push(snapshot(id,locate(id,map),known,assetsById));}catch(e){if(ids.length===1)throw e;errors.push({id,error:e.message});}return{characters,files,errors};}
+ function read(ids,settings={}){
+  const map=jsonFiles(),complete=ids===undefined;if(complete)ids=[...map.keys()];
+  if(!Array.isArray(ids)||ids.length>5000||ids.some(id=>!validIdentity(id)))throw Error('캐릭터 번호 또는 JSON 파일 목록을 확인하세요.');
+  const files=fileList(settings.rescan),known=new Map(files.map(p=>[p.toLowerCase(),p])),assetsById=new Map(),characters=[],errors=[];
+  for(const p of files)for(const m of p.matchAll(/(?:^|\/)(\d+)(?=[_/.])/g)){const id=Number(m[1]);if(!assetsById.has(id))assetsById.set(id,new Set());assetsById.get(id).add(p);}
+  for(const id of [...new Set(ids)])try{characters.push(snapshot(id,locate(id,map),known,assetsById));}catch(e){if(!complete&&ids.length===1)throw e;errors.push({id,json:map.has(id)?'json/slaves/'+map.get(id):null,error:e.message});}
+  return{characters,files,errors};
+ }
  function apply(input){
   if(locked)throw Error('다른 이미지 연결을 저장 중입니다.');locked=true;
   try{
@@ -52,7 +81,7 @@ function create(game,catalogRoot,options={}){
     return{characterId,file,before,next,updates,json:path.relative(game,file),beforeHash:sha(before),afterHash:sha(next)};
    });
    const stamp=new Date().toISOString().replace(/[:.]/g,'-')+'_'+crypto.randomBytes(4).toString('hex'),dir=path.join(history,stamp);fs.mkdirSync(dir,{recursive:true});
-   for(const p of plans){p.backup=path.join(dir,p.characterId===id?'before.json':'before-'+p.characterId+'.json');fs.writeFileSync(p.backup,p.before,{flag:'wx'});p.temp=p.file+'.'+stamp+'.tmp';}
+   for(const p of plans){p.backup=path.join(dir,p.characterId===id?'before.json':'before-'+(typeof p.characterId==='number'?p.characterId:sha(Buffer.from(p.characterId)).slice(0,16))+'.json');fs.writeFileSync(p.backup,p.before,{flag:'wx'});p.temp=p.file+'.'+stamp+'.tmp';}
    const first=plans[0],record={id:stamp,characterId:id,json:first.json,field,updates:first.updates,image:image.path,before:first.beforeHash,after:first.afterHash,status:'prepared',affectedIds,related:plans.map(p=>({characterId:p.characterId,json:p.json,updates:p.updates,before:p.beforeHash,after:p.afterHash,backup:p.backup}))},recordFile=path.join(dir,'record.json'),written=[];
    fs.writeFileSync(recordFile,JSON.stringify(record,null,2));
    try{
@@ -67,7 +96,7 @@ function create(game,catalogRoot,options={}){
    const current=read(affectedIds,{rescan:true});return{...record,backup:first.backup,character:current.characters.find(c=>c.id===id),characters:current.characters,path:image.path};
   }finally{locked=false;}
  }
- return{read,apply,resolve};
+ return{read,apply,resolve,ids};
 }
 module.exports={create,patchStrings,allowedFields:[...allowed]};
 // JO9 MOD END CHARACTER_IMAGE_LINKS_20261108

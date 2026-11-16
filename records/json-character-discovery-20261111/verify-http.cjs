@@ -1,0 +1,10 @@
+const fs=require('node:fs'),cp=require('node:child_process'),a=require('node:assert/strict');
+const repo='G:/somi/JO9sa',record=repo+'/records/json-character-discovery-20261111',game='G:/somi/Jack O Nine Tails v2.4_work/game';
+const ready=JSON.parse(fs.readFileSync(game+'/modtools/text-workshop/runtime/server.json','utf8'));
+const get=url=>cp.execFileSync('curl.exe',['--max-time','25','-fsS',url],{windowsHide:true,maxBuffer:64*1024*1024}).toString('utf8');
+const root=get(ready.url),token=root.match(/const token='([a-f0-9]+)'/)?.[1];a(token,'Missing local tool token');
+const raw=cp.execFileSync('curl.exe',['--max-time','45','-fsS','-X','POST','-H','Content-Type: application/json','-H','X-JO9-Token: '+token,'--data','{"rescan":true}',ready.url+'api/catalog/character-images/read'],{windowsHide:true,maxBuffer:64*1024*1024}).toString('utf8');
+const data=JSON.parse(raw),ch=data.characters.find(c=>c.id===3040);a(ch,'New character 3040 not discovered');a.equal(ch.name,'춘향');a.equal(ch.json,'json/slaves/3040_chunhyang.json');a(ch.assets.length>=8);a.equal(ch.portraitComplete,true);a.deepEqual(ch.missingRefs,[]);
+const payload=get(ready.url+'catalog-tab/girls');a(payload.includes('CHECKLIST_JSON_DISCOVERY_20261111'),'New UI marker missing');
+const output={checkedAt:new Date().toISOString(),url:ready.url+'catalog?catalogtab=girls',characters:data.characters.length,withoutNumericIdentity:data.characters.filter(c=>typeof c.id==='string').map(c=>({id:c.id,name:c.name,json:c.json})),newCharacter:{id:ch.id,name:ch.name,json:ch.json,assets:ch.assets.length,portraitComplete:ch.portraitComplete,missingRefs:ch.missingRefs},errors:data.errors,liveUiUpdated:true,productionWrites:0};
+fs.writeFileSync(record+'/http-verification.json',JSON.stringify(output,null,2)+'\n');console.log(JSON.stringify(output));

@@ -1,0 +1,142 @@
+{
+  "sourceQspSha256": "bf27cb384e3c48ee166aeeb557d96314df65306d10aae6ea402e7ba72c5bf30e",
+  "references": [
+    {
+      "location": "$ongload",
+      "lines": [
+        {
+          "line": 2,
+          "anchor": "gs 'jo9_plain_voice','cache'"
+        },
+        {
+          "line": 3,
+          "anchor": "gs 'jo9_plain_voice','load'"
+        }
+      ]
+    },
+    {
+      "location": "chose_answer",
+      "lines": [
+        {
+          "line": 197,
+          "anchor": "$text[] = func('jo9_plain_voice',slave_type,'['+$slave_name+']<br>&nbsp;' + '주인님, 전 항상 뭘 빨고 있는게 너무 좋아요… 그런데 말만 시키시니 보여 드릴 기회가 없네요.',func('jo9_plain_voice','update','slave'))"
+        },
+        {
+          "line": 205,
+          "anchor": "$text[] = func('jo9_plain_voice',slave_type,'['+$slave_name+']<br>&nbsp;' + '전 그..앞으로 말고 뒤로 하는게 더 좋더라고요…언제 제대로 배우나 기다려져요.',func('jo9_plain_voice','update','slave'))"
+        },
+        {
+          "line": 213,
+          "anchor": "$text[] = func('jo9_plain_voice',slave_type,'['+$slave_name+']<br>&nbsp;' + '오늘 수업은 벌써 끝인가요? 저는 아직 더 배울 수 있는데… 내일은 조금 더 오래 가르쳐 주시면 안 돼요?',func('jo9_plain_voice','update','slave'))"
+        },
+        {
+          "line": 222,
+          "anchor": "$text[] = func('jo9_plain_voice',slave_type,'['+$slave_name+']<br>&nbsp;' + '수업이 끝나면 늘 아쉬워요. 제가 잘해서 주인님이 마지막에 제 구멍에 잔뜩 싸주실 때가 너무 행복하거든요.',func('jo9_plain_voice','update','slave'))"
+        },
+        {
+          "line": 231,
+          "anchor": "$text[] = func('jo9_plain_voice',slave_type,'['+$slave_name+']<br>&nbsp;' + '개인적으로는 여자랑 섹스하는게 더 좋지만, 주인님이 시키시는거면 할 수 없죠...',func('jo9_plain_voice','update','slave'))"
+        },
+        {
+          "line": 240,
+          "anchor": "$text[] = func('jo9_plain_voice',slave_type,'['+$slave_name+']<br>&nbsp;' + '저는…남자나 여자나 가리지 않고 다 같이 잘 놀 수 있답니다.',func('jo9_plain_voice','update','slave'))"
+        },
+        {
+          "line": 249,
+          "anchor": "$text[] = func('jo9_plain_voice',slave_type,'['+$slave_name+']<br>&nbsp;' + '저는 다양한 기술로 남자들을 끝까지 짜내는 섹스머신이 되고 싶어요 😄',func('jo9_plain_voice','update','slave'))"
+        }
+      ]
+    },
+    {
+      "location": "generate_stock",
+      "lines": [
+        {
+          "line": 791,
+          "anchor": "! JO9 MOD START R05A_PRINCESS_OCCUPATION_20261113"
+        },
+        {
+          "line": 792,
+          "anchor": "gs 'jo9_plain_voice','princess','stock'"
+        },
+        {
+          "line": 793,
+          "anchor": "! JO9 MOD END R05A_PRINCESS_OCCUPATION_20261113"
+        }
+      ]
+    },
+    {
+      "location": "#dynamic",
+      "lines": [
+        {
+          "line": 6013,
+          "anchor": "$jo9_vf_profile=$dyneval($voice_profile,$slave_occupation,slave['temper'],slave['sensitivity'],slave['ego'],slave['pride'],slave_type,func('jo9_plain_voice','update','slave'))"
+        },
+        {
+          "line": 6245,
+          "anchor": "$jo9_vn_profile=$dyneval($voice_profile,$jo9_vn_occupation,dynslave['temper'],dynslave['sensitivity'],dynslave['ego'],dynslave['pride'],dyneval('result='+$jo9_vn_memory_actor+'_typ"
+        },
+        {
+          "line": 6804,
+          "anchor": "if func('jo9_plain_voice','enabled',args[0],func('jo9_plain_voice','update','slave'))=0: exit"
+        }
+      ]
+    },
+    {
+      "location": "jo9_plain_voice",
+      "lines": [
+        {
+          "line": 4,
+          "anchor": "! JO9 MOD START R05A_AUTO_SPEECH_20261113"
+        },
+        {
+          "line": 14,
+          "anchor": "if $args[0]='princess':"
+        },
+        {
+          "line": 28,
+          "anchor": "if $args[0]='load':"
+        },
+        {
+          "line": 34,
+          "anchor": "gs 'jo9_plain_voice','princess',$jo9_auto_roles[jo9_auto_i]"
+        },
+        {
+          "line": 38,
+          "anchor": "if $args[0]='update':"
+        },
+        {
+          "line": 44,
+          "anchor": "local jo9_auto_princess=func('jo9_plain_voice','princess',$jo9_auto_role)"
+        },
+        {
+          "line": 60,
+          "anchor": "! JO9 MOD END R05A_AUTO_SPEECH_20261113"
+        },
+        {
+          "line": 68,
+          "anchor": "if $args[0]='cache':"
+        },
+        {
+          "line": 88,
+          "anchor": "if func(''jo9_plain_voice'',''enabled'',args[0],func(''jo9_plain_voice'',''update'',''slave''))=0: exit"
+        },
+        {
+          "line": 93,
+          "anchor": "$voice_impression=replace($voice_impression,'slave_type,slave[''jo9_plain_tone''])','slave_type,func(''jo9_plain_voice'',''update'',''slave''))')"
+        },
+        {
+          "line": 94,
+          "anchor": "$voice_native_actor=replace($voice_native_actor,'dyneval(''result=''+$jo9_vn_memory_actor+''_type''),dynslave[''jo9_plain_tone''])','dyneval(''result=''+$jo9_vn_memory_actor+''_typ"
+        },
+        {
+          "line": 95,
+          "anchor": "$voice_plain_stored=replace($voice_plain_stored,'func(''jo9_plain_voice'',''enabled'',args[0],slave[''jo9_plain_tone''])','func(''jo9_plain_voice'',''enabled'',args[0],func(''jo9_p"
+        }
+      ]
+    },
+    {
+      "location": "jo9_background_b",
+      "lines": []
+    }
+  ]
+}

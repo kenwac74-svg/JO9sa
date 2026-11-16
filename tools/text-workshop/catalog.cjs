@@ -12,11 +12,11 @@ function checklistCharacterIds(text){
   if(!match)return ids;
   const data=JSON.parse(match[1]);
   for(const character of Array.isArray(data.characters)?data.characters:[]){
-    if(character&&Number.isSafeInteger(character.id)&&character.id>=0)ids.add(character.id);
+    if(character&&((Number.isSafeInteger(character.id)&&character.id>=0)||(typeof character.id==='string'&&/^json:[^\\/<>:"|?*\x00-\x1f]+\.json$/i.test(character.id))))ids.add(character.id);
   }
   return ids;
 }
-function create(root){
+function create(root,options={}){
   const html=path.join(root,'catalog_merge_vs_original.html'),statusFile=path.join(root,'catalog_status.js'),idFile=path.join(root,'catalog_work_ids.json');
   let stamp='',records=[],idx=new Map(),ids={version:1,items:{},counters:{}},characterIds=new Set();
   function load(){
@@ -37,11 +37,14 @@ function create(root){
   function update(actions){
     if(!load())throw Error('이미지 체크리스트를 찾지 못했습니다.');if(!Array.isArray(actions)||actions.length>50000)throw Error('상태 변경 목록이 올바르지 않습니다.');
     const before=fs.existsSync(statusFile)?fs.readFileSync(statusFile):null,v=state(),next=JSON.parse(JSON.stringify(v));next.autoDone=next.autoDone||{};
+    // JO9 MOD JSON_CHARACTER_DISCOVERY_20261111: accept newly discovered JSON identities without changing old image/status records.
+    const needsDiscovery=actions.some(a=>a&&Object.prototype.hasOwnProperty.call(a,'characterId')&&!characterIds.has(a.characterId));
+    const currentCharacterIds=needsDiscovery&&typeof options.characterIds==='function'?new Set(options.characterIds()):new Set();
     const resolved=[];
     for(const a of actions){
       if(!a||typeof a!=='object'||!FLAGS.includes(a.flag)||typeof a.checked!=='boolean'||typeof a.expected!=='boolean')throw Error('카탈로그 항목과 상태를 확인하세요.');
       if(Object.prototype.hasOwnProperty.call(a,'characterId')){
-        if(!Number.isSafeInteger(a.characterId)||!characterIds.has(a.characterId)||Object.prototype.hasOwnProperty.call(a,'path'))throw Error('체크리스트에 등록된 캐릭터 ID를 확인하세요.');
+        if(!((Number.isSafeInteger(a.characterId)&&a.characterId>=0)||(typeof a.characterId==='string'&&/^json:[^\\/<>:"|?*\x00-\x1f]+\.json$/i.test(a.characterId)))||!(characterIds.has(a.characterId)||currentCharacterIds.has(a.characterId))||Object.prototype.hasOwnProperty.call(a,'path'))throw Error('체크리스트에 등록된 캐릭터 ID를 확인하세요.');
         const id=String(a.characterId),cur=flags(v.characterItems?.[id]).includes(a.flag);
         if(cur!==a.expected&&cur!==a.checked)throw Error('다른 창에서 상태가 바뀌었습니다. 새로고침 후 다시 선택하세요.');
         resolved.push([a,null,id]);

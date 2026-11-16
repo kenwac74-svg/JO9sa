@@ -1,0 +1,17 @@
+'use strict';
+const fs=require('fs'),path=require('path'),assert=require('node:assert/strict'),zlib=require('zlib'),vm=require('vm');
+const repo='G:/somi/JO9sa',game='G:/somi/Jack O Nine Tails v2.4_work/game',rec=repo+'/records/chunhyang-profile-20261112',tmp='G:/Codex/tmp/chunhyang-profile-20261112',c=require(repo+'/tools/text-workshop/core.cjs');
+const read=p=>JSON.parse(fs.readFileSync(p,'utf8').replace(/^\ufeff/,'')),hash=p=>c.hash(fs.readFileSync(p));
+const final=read(rec+'/final-prepared.json');assert.equal(hash(game+'/jack.qsp'),final.after);assert.equal(hash(repo+'/assets/runtime/2.4.1/jack.qsp'),final.after);
+const html=fs.readFileSync(repo+'/tools/game-reference/jo9-reference.html','utf8');let scripts=0;for(const m of html.matchAll(/<script([^>]*)>([\s\S]*?)<\/script>/g))if(!/application\/json/.test(m[1])&&!/\bsrc=/.test(m[1])){new vm.Script(m[2]);scripts++;}
+assert(scripts>0);const data=JSON.parse(html.match(/<script id="reference-data" type="application\/json">([\s\S]*?)<\/script>/)[1]);assert.equal(data.traits.rows.length,129);assert(data.traits.rows.some(x=>x.name==='산도'));assert(data.traits.rows.find(x=>x.name==='아레나 그랜드 챔피언').acquisition.includes('춘향'));assert(data.traits.rows.find(x=>x.name==='양성애자').acquisition.includes('숨김'));const planned=data.mobs.rows.find(x=>x.id==='chunhyang');assert(planned.notes.some(x=>x.includes('영입 인물 프로필 구현 완료')));assert(planned.rules.some(x=>x.includes('AI에는 구현되지')));
+assert.equal(hash(repo+'/tools/game-reference/jo9-reference.html'),hash(game+'/modtools/game-reference/jo9-reference.html'));for(const f of read(repo+'/tools/game-reference/snapshot.json').files)assert.equal(hash(repo+'/tools/game-reference/'+f.file),f.sha256,f.file);
+// Reproducible diagnostics only: reject links, allow only this task's bounded absolute tree.
+const root=path.resolve(tmp);assert.equal(root.toLowerCase(),'g:\\codex\\tmp\\chunhyang-profile-20261112');assert(!fs.lstatSync(root).isSymbolicLink());const files=[],dirs=[];
+function scan(dir){for(const entry of fs.readdirSync(dir,{withFileTypes:true})){const full=path.resolve(dir,entry.name);assert(full.startsWith(root+path.sep));assert(!fs.lstatSync(full).isSymbolicLink(),full);if(entry.isDirectory())scan(full);else {assert(entry.isFile());files.push(full);}}dirs.push(dir);}
+scan(root);const removedBytes=files.reduce((n,p)=>n+fs.statSync(p).size,0);for(const p of files)fs.unlinkSync(p);for(const p of dirs)fs.rmdirSync(p);
+const recoverable=new Set(['before.qsp.gz','before-final.qsp.gz'].map(p=>c.hash(zlib.gunzipSync(fs.readFileSync(rec+'/'+p)))));const backups=[];
+for(const name of fs.readdirSync(game).filter(n=>/^jack\.qsp\.bak_20261112_(013730|015355)$/.test(n))){const p=path.resolve(game,name);assert.equal(path.dirname(p),path.resolve(game));assert(!fs.lstatSync(p).isSymbolicLink());assert(recoverable.has(hash(p)));fs.unlinkSync(p);backups.push(name);}
+fs.writeFileSync(rec+'/cleanup.json',JSON.stringify({pass:true,temporaryAbsoluteRoot:root,linksFollowed:false,temporaryFilesRemoved:files.length,temporaryBytesRemoved:removedBytes,taskWorkBackupsRemoved:backups,preservedRecovery:['before.qsp.gz','before-final.qsp.gz','before/3040_chunhyang.json','before/runtime-source.json'],embeddedScriptsParsed:scripts,userDataTouched:false},null,2)+'\n');
+fs.copyFileSync('check-clean-chunhyang.cjs',rec+'/check-clean.cjs');
+console.log(JSON.stringify({finalHash:final.after,traits:129,scriptsParsed:scripts,temporaryFilesRemoved:files.length,temporaryBytesRemoved:removedBytes,recoveryPreserved:true}));

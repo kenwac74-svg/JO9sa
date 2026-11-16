@@ -1,0 +1,133 @@
+! JO9 MOD START CHUNHYANG_BATTLE_20261112
+if $args[0] = 'chance':
+ result = 0
+ if args[1] >= 2100 and args[1] <= 3000 and args[2] <= 3300-args[1]: result = 1
+ exit
+end
+if $args[0] = 'cost':
+ local jo9_chun_cm = jo9_cruel_mercy*2 + jo9_cruel_mercy_half
+ result = 0
+ if jo9_chun_cm <= -20: result = -1 & exit
+ if jo9_chun_cm <= 0: result = 200000 & exit
+ if jo9_chun_cm <= 20: result = 100000 & exit
+ if jo9_chun_cm <= 40: result = 50000
+ exit
+end
+if $args[0] = 'reset':
+ killvar 'jo9_chun_fight'
+ killvar 'jo9_chun_requested'
+ killvar 'jo9_chun_match'
+ exit
+end
+if $args[0] = 'init':
+ if $враг[1] ! 'chunhyang': exit
+ if jo9_chun_fight['active'] = 1: exit
+ if jo9_chun_requested ! 1 or combatant ! 0 or sparks < 200000 or func('jo9_chun_club','stage') ! 1 or jo9_chunhyang['won'] = 1:
+  gt 'jo9_chun_club','enter'
+ end
+ jo9_chun_fight['active'] = 1
+ jo9_chun_fight['hard'] = iif(difficulty_setting=2,1,0)
+ jo9_chun_fight['balm'] = iif(jo9_chun_fight['hard']=1,6,3)
+ jo9_chun_fight['str'] = base_str
+ jo9_chun_fight['skill'] = сила
+ jo9_chun_fight['hp'] = макс_здоровье_игрока
+ jo9_chun_fight['sta'] = макс_выносливость_игрока
+ jo9_chun_fight['mor'] = норм_дух_игрока
+ ! Exact common denominator: R(percent) = units/30, roll /3000 keeps fractional odds.
+ jo9_chun_fight['units'] = base_str*120 + сила*100 + макс_здоровье_игрока*3 + макс_выносливость_игрока*2 + норм_дух_игрока*3
+ jo9_chun_fight['period'] = rand(5,10)
+ jo9_chun_fight['kill_at'] = jo9_chun_fight['period']
+ jo9_chun_fight['evade_at'] = jo9_chun_fight['period']/2
+ if jo9_chun_fight['units'] < 2100:
+  $действия_врага[1] = '산도의 일섬 — 춘향의 움직임을 따라잡지 못했다. 승부가 순식간에 끝났다.'
+  $итог_боя = 'вырубился'
+  gt 'конец_боя'
+ end
+ exit
+end
+if $args[0] = 'ai':
+ ! Same ordinary attack engine; periodic specials and item usage settle after player damage.
+ gs 'искусственный_идиот'
+ exit
+end
+if jo9_chun_fight['active'] ! 1 or $враг[1] ! 'chunhyang' or combatant ! 0: exit
+if $args[0] = 'before':
+ jo9_chun_fight['turn'] += 1
+ jo9_chun_fight['kill_due'] = 0
+ if jo9_chun_fight['turn'] = jo9_chun_fight['kill_at']: jo9_chun_fight['kill_due'] = 1
+ if jo9_chun_fight['turn'] ! jo9_chun_fight['evade_at']: exit
+ if нанесенный_вред <= 0 and это_суперудар = 0: exit
+ if func('jo9_chun_battle','chance',jo9_chun_fight['units'],rand(1,3000)) = 0: exit
+ нанесенный_вред = 0
+ $наложение = ''
+ это_суперудар = 0
+ $состояние[1] = ''
+ слабость[1] = 0
+ скованность[1] = 0
+ боль[1] = 0
+ шаткость[1] = 0
+ ошеломление[1] = 0
+ рассеянность[1] = 0
+ $действия_игрока += '<br>유수보 — 춘향이 공격을 흘려냈다. 그녀에게 걸려 있던 약화 효과가 사라졌다.'
+ exit
+end
+if $args[0] = 'after_player':
+ if здоровье_врага[1] <= 0 or выносливость_врага[1] <= 0 or дух_врага[1] <= 0 or $состояние[1] = 'повержен': exit
+ if здоровье_игрока <= 0 or выносливость_игрока <= 0 or дух_игрока <= 0: exit
+ if jo9_chun_fight['kill_due'] = 1:
+  jo9_chun_fight['kill_due'] = 0
+  jo9_chun_fight['period'] = rand(5,10)
+  jo9_chun_fight['kill_at'] = jo9_chun_fight['turn'] + jo9_chun_fight['period']
+  jo9_chun_fight['evade_at'] = jo9_chun_fight['turn'] + jo9_chun_fight['period']/2
+  if func('jo9_chun_battle','chance',jo9_chun_fight['units'],rand(1,3000)) = 1:
+   $действия_врага[1] = '산도의 일섬 — 춘향의 결착을 내는 일격에 쓰러졌다.'
+   $итог_боя = 'вырубился'
+   gt 'конец_боя'
+  end
+  $действия_врага[1] = '산도의 일섬 — 결정타를 피했지만 공격이 이어졌다.<br>' + $действия_врага[1]
+  exit
+ end
+ if jo9_chun_fight['balm'] <= 0: exit
+ if здоровье_врага[1] > 60 and выносливость_врага[1] > 90 and дух_врага[1] > 60: exit
+ jo9_chun_fight['balm'] -= 1
+ здоровье_врага[1] = 200
+ выносливость_врага[1] = 300
+ дух_врага[1] += 20
+ боль[1] = 0
+ нанесенный_вред[1] = 0
+ $наложение[1] = ''
+ $действия_врага[1] = '전장 응급처치 — 춘향이 기적의 연고를 사용했다. 체력·스태미나를 회복하고 사기를 추슬렀다. 남은 연고 <<jo9_chun_fight["balm"]>>개.'
+ exit
+end
+if $args[0] = 'finish':
+ jo9_chun_fight['active'] = 0
+ jo9_chun_requested = 0
+ if $итог_боя = 'победа':
+  jo9_chunhyang['won'] = 1
+  jo9_chunhyang['owned'] = 1
+  jo9_chunhyang['last_cost'] = 0
+ else
+  local jo9_chun_cost = func('jo9_chun_battle','cost')
+  if jo9_chun_cost < 0:
+   gs '$combat_variable_reset'
+   dynamic $death, '춘향에게 패배했다. 당신이 쌓아 온 잔혹함의 끝에서, 그녀는 마지막 일격을 거두지 않았다.'
+   exit
+  end
+  jo9_chunhyang['last_cost'] = min(sparks,jo9_chun_cost)
+  sparks = max(0,sparks-jo9_chun_cost)
+ end
+ ! Preserve ordinary battle injury thresholds; CM survival cannot turn into a lethal wound state.
+ local jo9_chun_loss = max(0,макс_здоровье_игрока-здоровье_игрока)
+ if jo9_chun_loss > master_str_rate: master_wounds_rate += 10
+ if jo9_chun_loss > макс_здоровье_игрока/4: master_wounds_rate += 10
+ if jo9_chun_loss > макс_здоровье_игрока/3: master_wounds_rate += 20
+ if jo9_chun_loss > макс_здоровье_игрока/2: master_wounds_rate += 40
+ if jo9_chun_loss > макс_здоровье_игрока-2: master_wounds_rate += 80
+ master_wounds_rate = min(master_wounds_rate,max(0,master_str*14-1))
+ if master_wounds_rate > 0: master_moodlet['neg_wounded'] = 1
+ master_energy = min(master_energy,1)
+ master_half_energy = 0
+ gs '$combat_variable_reset'
+ exit
+end
+! JO9 MOD END CHUNHYANG_BATTLE_20261112

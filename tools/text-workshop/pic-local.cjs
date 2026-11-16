@@ -66,7 +66,7 @@ function create(game,catalogRoot,catalog,originalCuts={}){
    record.status='applied';record.operation=operation;save();index=null;try{personalPatch.record(record,operation);}catch(e){record.patchWarning='패치 자동 기록 실패: '+e.message;save();}try{refreshCatalog(record.files,record);}catch(e){record.catalogWarning='이미지는 저장됐지만 체크리스트 기록을 확인하세요: '+e.message;save();}return record;
   }catch(e){if(record&&dir){record.status='interrupted';record.error=e.message;fs.writeFileSync(path.join(dir,'manifest.json'),JSON.stringify(record,null,2));}throw e;}finally{locked=false;}
  }
- function revisions(paths){if(!Array.isArray(paths)||paths.length>500)fail('표시 이미지 목록을 확인하세요.');const result={};for(const p of paths){try{const full=originalCuts.resolveAlias?.(p)||resolve(p),st=fs.statSync(full);result[p]={version:st.size+':'+st.mtimeMs,work:catalog.meta('content\\pic\\'+p.replaceAll('/','\\'))};}catch{}}return result;}
+ function revisions(paths){if(!Array.isArray(paths)||paths.length>500)fail('표시 이미지 목록을 확인하세요.');const result={};for(const p of paths){try{const full=originalCuts.resolveAlias?.(p)||resolve(p),st=fs.statSync(full);result[p]={version:st.size+':'+st.mtimeMs,bytes:st.size,lastModified:st.mtimeMs,work:catalog.meta('content\\pic\\'+p.replaceAll('/','\\'))};}catch{}}return result;}
  function restore(id){
   if(typeof id!=='string'||!/^[A-Za-z0-9_-]+$/.test(id))fail('잘못된 백업 번호입니다.');
   const manifest=resolve(backupName+'/'+id+'/manifest.json',true),record=JSON.parse(fs.readFileSync(manifest,'utf8'));if(!Array.isArray(record.files)||!record.files.length)fail('백업 기록을 확인하세요.');

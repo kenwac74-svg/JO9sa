@@ -1,0 +1,444 @@
+--- before/tools/modding-hub/master_editor.py
++++ after/tools/modding-hub/master_editor.py
+@@ -149,8 +149,12 @@
+    rows.append({'id':sid,'name':master['name'],'base':'master_'+str(sid),'gender':'female' if sid>100 else 'male','age':'여주인공' if sid>100 else '남주인공','color':'','length':'','outfits':[],
+     'face':self.image_url(d.get('seed_ava_clear') or master['portrait']),'jsonFile':'#masters_base['+str(sid)+']'})
+   return sorted(rows,key=lambda r:r['id'])
++ def native_defaults(self,doc=None):
++  doc=doc or QspDocument(self.qsp.read_bytes())
++  values=stat_values(doc.body('init_game')) if 'init_game' in doc.index else {}
++  return {key:values.get(key,0) for key in ['jo9_cruel_mercy','jo9_cruel_mercy_half']}
+  def read(self,sid):
+-  _,body,entries=self._native();master=self._master(sid,entries);profile=self._profile('master',sid);data=copy.deepcopy(profile.get('data',{}));values=stat_values(master['statsCode'])
++  doc,body,entries=self._native();master=self._master(sid,entries);profile=self._profile('master',sid);data=copy.deepcopy(profile.get('data',{}));values=stat_values(master['statsCode'])
+   data.setdefault('seed_name',master['name']);data.setdefault('seed_age',0)
+   for mk,sk,_ in MAPPINGS:
+    if mk in values:data.setdefault(sk,values[mk])
+@@ -160,7 +164,7 @@
+   for key,arr in ARRAYS.items():
+    if (arr,int(sid)) in entries:snippets.append(arr+'['+str(sid)+'] = '+entries[(arr,int(sid))][2])
+   return {'id':int(sid),'role':'master','gender':'female' if int(sid)>100 else 'male','jsonFile':'#masters_base['+str(sid)+']','data':data,'dedicated':False,'sharedWith':[],
+-   'master':master,'revision':self.revision(sid,entries),'slots':slots,'faces':{k:self.image_url(data.get(k)) for k in ['seed_ava_clear','seed_ava_gray','seed_ava']},
++   'master':master,'nativeDefaults':self.native_defaults(doc),'revision':self.revision(sid,entries),'slots':slots,'faces':{k:self.image_url(data.get(k)) for k in ['seed_ava_clear','seed_ava_gray','seed_ava']},
+    'storyFields':list(map(list,STORY.items())),'statKeys':list(data),'choices':{},'nativeSource':'\r\n'.join(snippets),'profilePath':self._profile_file('master',sid).relative_to(self.root).as_posix(),
+    'menuLinked':self.menu_linked(sid),'mappings':self.mapping_rows('master',data,master)}
+  def menu_linked(self,sid):
+--- before/tools/modding-hub/server.py
++++ after/tools/modding-hub/server.py
+@@ -1,150 +1,150 @@
+-"""Sidebar extension; delegates every existing studio API to the unmodified server."""
+-import argparse,hashlib,http.server,importlib,json,mimetypes,os,sys,threading
+-from pathlib import Path
+-from urllib.parse import unquote,urlparse
+-import registry
+-from master_editor import MasterEditor, MAPPINGS
+-
+-HERE=Path(__file__).resolve().parent
+-def build_id():
+- h=hashlib.sha256()
+- for name in ['server.py','registry.py','integration.mjs','integration.css','app_launcher.py','embedded-tools.css','overrides/studio-look.mjs','overrides/studio-look-geometry.mjs','master_editor.py','overrides/studio-view.mjs','overrides/studio-role.mjs']:
+-  h.update((HERE/name).read_bytes())
+- return h.hexdigest()[:16]
+-def create_server(studio_root,repo,urls_file,port=0):
+- studio_root=Path(studio_root).resolve();repo=Path(repo).resolve()
+- sys.path.insert(0,str(studio_root));base=importlib.import_module('studio_server')
+- cached=[];catalog_lock=threading.Lock()
+- def catalog(refresh=False):
+-  nonlocal cached
+-  with catalog_lock:
+-   if not cached or refresh:cached=registry.catalog_rows(registry.default_roots(repo))
+-   return cached
+- def urls():
+-  try:return json.loads(Path(urls_file).read_text('utf-8-sig'))
+-  except (OSError,ValueError):return {}
+- def store():return MasterEditor(base.paths().root,backend=base.api)
+- def decorate_slave(sid):
+-  ch=base.read_character(sid);editor=store();profile=editor.slave_profile(sid)
+-  ch.update(role='slave',master=editor.master_from_slave(ch['data'],profile),revision=editor.slave_revision(sid))
+-  ch['mappings']=editor.mapping_rows('slave',ch['data'],ch['master']);return ch
+- def read_master(sid):
+-  ch=store().read(sid);ch['choices']=base.choices();return ch
+- def save_slave(sid,body):
+-  editor=store();editor._check_revision('slave',sid,body.get('revision'))
+-  pending=base.save_fields(sid,{**body,'dryRun':True});profile=editor.slave_profile(sid)
+-  before=profile.get('master',editor.master_from_slave(base.read_character(sid)['data'],profile))
+-  master=body.get('master');changes=list(pending['changes'])
+-  if master is not None:
+-   from master_editor import validate_master
+-   validate_master(master)
+-   changes += [{'key':'master.'+k,'before':before.get(k),'after':v} for k,v in master.items() if before.get(k)!=v]
+-   profile['master']=master
+-  if changes and not body.get('dryRun'):
+-   filename,data=editor.slave(sid);data=dict(data)
+-   for c in pending['changes']:
+-    if c['after'] is None:data.pop(c['key'],None)
+-    else:data[c['key']]=c['after']
+-   payloads={}
+-   if pending['changes']:
+-    payloads[filename]=json.dumps(data,ensure_ascii=False,indent=4).encode('utf-8')
+-    backup=filename.with_name(filename.name+'.bak')
+-    if not backup.exists():payloads[backup]=filename.read_bytes()
+-   if master is not None:payloads[editor._profile_file('slave',sid)]=json.dumps(profile,ensure_ascii=False,indent=2).encode('utf-8')
+-   editor._write(payloads)
+-   base.work_log(base.paths()).event('studio_role_fields',id=int(sid),changed=[c['key'] for c in changes])
+-  return {'changes':changes,'saved':bool(changes) and not body.get('dryRun'),'dryRun':bool(body.get('dryRun')),'character':None if body.get('dryRun') else decorate_slave(sid)}
+- class Handler(base.StudioHandler):
+-  def blob(self,body,mime,status=200):
+-   self.send_response(status);self.send_header('Content-Type',mime);self.send_header('Content-Length',str(len(body)));self.end_headers();self.wfile.write(body)
+-  def do_GET(self):
+-   url=urlparse(self.path);route=url.path
+-   native=route.split('/',3)[3] if route.startswith('/v/') and len(route.split('/',3))>3 else route.lstrip('/')
+-   if native=='studio-view.mjs':
+-    text=(HERE/'overrides/studio-view.mjs').read_text('utf-8')
+-    marker='<button class="button secondary st-tosim"'
+-    button='<button class="button secondary" data-workspace-image-search="${e(c.jsonFile)}" data-image-path="${e(c.data.fullimage || c.data.seed_ava_clear || \'\')}" data-image-id="${e(c.id)}" title="캐릭터 파일명 키워드를 이미지 검색창에 넣습니다. 검색은 직접 누르세요.">이미지 검색어 보내기</button>'
+-    return self.blob(text.replace(marker,button+marker,1).encode(),'text/javascript; charset=utf-8')
+-   if native in ['studio-look.mjs','studio-look-geometry.mjs','studio-role.mjs']:
+-    return self.blob((HERE/'overrides'/native).read_bytes(),'text/javascript; charset=utf-8')
+-   if native=='app.mjs':
+-    addon="\nawait (await import('/workspace/integration.mjs')).installWorkspace({tabNames,switchTab,getTab:()=>tab});\n"
+-    prefix="globalThis.__jo9WorkspaceInitialHash=location.hash.slice(1);\n"
+-    return self.blob(prefix.encode()+(base.DIST/'app.mjs').read_bytes()+addon.encode(),'text/javascript; charset=utf-8')
+-   if route in ['/workspace/integration.mjs','/workspace/integration.css']:
+-    name=route.rsplit('/',1)[1];mime='text/javascript' if name.endswith('.mjs') else 'text/css'
+-    return self.blob((HERE/name).read_bytes(),mime+'; charset=utf-8')
+-   try:
+-    import re
+-    if route=='/api/master/chars':return self.send_json(200,{'items':store().list(),'choices':base.choices()})
+-    match=re.fullmatch(r'/api/master/(\d+)',route)
+-    if match:return self.send_json(200,read_master(match[1]))
+-    match=re.fullmatch(r'/api/master/(\d+)/talkbook',route)
+-    if match:return self.send_json(200,store().talk(match[1]))
+-    match=re.fullmatch(r'/api/char/(\d+)',route)
+-    if match:return self.send_json(200,decorate_slave(match[1]))
+-   except Exception as error:return self.fail(error)
+-   if route=='/workspace/config':return self.send_json(200,{'app':'jo9-modding-hub','build':build_id(),'studioRoot':str(studio_root),'tools':urls(),'game':base.game_status()})
+-   if route=='/workspace/artifacts':
+-    try:return self.send_json(200,{'items':catalog('refresh=1' in url.query)})
+-    except Exception as error:return self.fail(error)
+-   if route.startswith('/workspace/fs/'):
+-    try:
+-     value=unquote(route[len('/workspace/fs/'):]);game=base.game_root()[0]
+-     roots=[repo/'assets',repo/'docs',Path(game)/'content/pic',Path(game)/'content/snd'] if game else [repo/'assets',repo/'docs']
+-     sound=urls().get('soundList')
+-     rows=catalog()
+-     if sound and Path(sound).is_file():rows=rows+[{'path':sound,'copies':[sound]}]
+-     target=registry.resolve_file(value,rows,roots);raw=target.read_bytes();mime=mimetypes.guess_type(str(target))[0] or 'application/octet-stream'
+-     if target.suffix.lower() in ['.html','.htm']:
+-      text=raw.decode('utf-16' if raw.startswith((b'\xff\xfe',b'\xfe\xff')) else 'utf-8-sig',errors='replace')
+-      if sound and target==Path(sound).resolve():
+-       css=(HERE/'embedded-tools.css').read_text('utf-8')
+-       boot="document.documentElement.classList.toggle('jo9-embedded',new URLSearchParams(location.search).get('workspace')==='1');document.documentElement.classList.add('jo9-tool-sound');"
+-       text=text.replace('</head>','<style>'+css+'</style><script>'+boot+'</script></head>') if '</head>' in text else '<style>'+css+'</style><script>'+boot+'</script>'+text
+-      raw=registry.rewrite_html(text).encode('utf-8');mime='text/html; charset=utf-8'
+-     return self.blob(raw,mime)
+-    except Exception as error:return self.fail(error)
+-   return super().do_GET()
+-  def do_POST(self):
+-   import re
+-   route=urlparse(self.path).path
+-   master=re.fullmatch(r'/api/master/(\d+)/(fields|images|talkbook)',route)
+-   clone=re.fullmatch(r'/api/role/(slave|master)/(\d+)/clone',route)
+-   slave=re.fullmatch(r'/api/char/(\d+)/fields',route)
+-   slave_images=re.fullmatch(r'/api/char/(\d+)/images',route)
+-   if not (master or clone or slave or slave_images):return super().do_POST()
+-   origin=self.headers.get('Origin')
+-   if origin and urlparse(origin).hostname not in ('127.0.0.1','localhost'):return self.send_json(403,{'error':'허용되지 않은 출처입니다.'})
+-   if self.headers.get('Content-Type','').split(';')[0].strip()!='application/json':return self.send_json(415,{'error':'JSON 요청만 받습니다.'})
+-   try:
+-    size=int(self.headers.get('Content-Length') or 0)
+-    if size<0 or size>base.MAX_BODY:raise ValueError('요청 크기가 잘못되었습니다.')
+-    body=json.loads(self.rfile.read(size).decode('utf-8') or '{}')
+-    if not isinstance(body,dict):raise ValueError('요청은 객체여야 합니다.')
+-    with base._lock:
+-     editor=store()
+-     if slave:result=save_slave(slave[1],body)
+-     elif slave_images:
+-      editor._check_revision('slave',slave_images[1],body.get('revision'))
+-      result=base.save_images(slave_images[1],body)
+-      if result.get('character'):result['character']=decorate_slave(slave_images[1])
+-     elif clone:result=editor.clone(clone[1],clone[2],body)
+-     elif master[2]=='fields':
+-      result=editor.save(master[1],body)
+-      if result.get('character'):result['character']['choices']=base.choices()
+-     elif master[2]=='talkbook':
+-      base.check_plain(body.get('book'));result=editor.talk(master[1],body)
+-     else:
+-      result=editor.images(master[1],body,base.decode_image,base.compose_slot,base.api.to_grayscale,base.api.to_sepia)
+-      if result.get('character'):result['character']['choices']=base.choices()
+-    return self.send_json(200,result)
+-   except Exception as error:return self.fail(error)
+- return http.server.ThreadingHTTPServer(('127.0.0.1',port),Handler)
+-def main():
+- p=argparse.ArgumentParser();p.add_argument('--studio',required=True);p.add_argument('--repo',required=True);p.add_argument('--urls',required=True);p.add_argument('--ready',required=True);p.add_argument('--port',type=int,default=7689);args=p.parse_args()
+- server=create_server(args.studio,args.repo,args.urls,args.port);port=server.server_address[1]
+- ready={'app':'jo9-modding-hub','pid':os.getpid(),'url':f'http://127.0.0.1:{port}/','build':build_id(),'studioRoot':str(Path(args.studio).resolve())}
+- Path(args.ready).write_text(json.dumps(ready,ensure_ascii=False,indent=2),'utf-8');print(json.dumps(ready,ensure_ascii=False),flush=True)
+- server.serve_forever()
+-if __name__=='__main__':main()
++"""Sidebar extension; delegates every existing studio API to the unmodified server."""
++import argparse,hashlib,http.server,importlib,json,mimetypes,os,sys,threading
++from pathlib import Path
++from urllib.parse import unquote,urlparse
++import registry
++from master_editor import MasterEditor, MAPPINGS
++
++HERE=Path(__file__).resolve().parent
++def build_id():
++ h=hashlib.sha256()
++ for name in ['server.py','registry.py','integration.mjs','integration.css','app_launcher.py','embedded-tools.css','overrides/studio-look.mjs','overrides/studio-look-geometry.mjs','master_editor.py','overrides/studio-view.mjs','overrides/studio-role.mjs']:
++  h.update((HERE/name).read_bytes())
++ return h.hexdigest()[:16]
++def create_server(studio_root,repo,urls_file,port=0):
++ studio_root=Path(studio_root).resolve();repo=Path(repo).resolve()
++ sys.path.insert(0,str(studio_root));base=importlib.import_module('studio_server')
++ cached=[];catalog_lock=threading.Lock()
++ def catalog(refresh=False):
++  nonlocal cached
++  with catalog_lock:
++   if not cached or refresh:cached=registry.catalog_rows(registry.default_roots(repo))
++   return cached
++ def urls():
++  try:return json.loads(Path(urls_file).read_text('utf-8-sig'))
++  except (OSError,ValueError):return {}
++ def store():return MasterEditor(base.paths().root,backend=base.api)
++ def decorate_slave(sid):
++  ch=base.read_character(sid);editor=store();profile=editor.slave_profile(sid)
++  ch.update(role='slave',master=editor.master_from_slave(ch['data'],profile),revision=editor.slave_revision(sid),nativeDefaults=editor.native_defaults())
++  ch['mappings']=editor.mapping_rows('slave',ch['data'],ch['master']);return ch
++ def read_master(sid):
++  ch=store().read(sid);ch['choices']=base.choices();return ch
++ def save_slave(sid,body):
++  editor=store();editor._check_revision('slave',sid,body.get('revision'))
++  pending=base.save_fields(sid,{**body,'dryRun':True});profile=editor.slave_profile(sid)
++  before=profile.get('master',editor.master_from_slave(base.read_character(sid)['data'],profile))
++  master=body.get('master');changes=list(pending['changes'])
++  if master is not None:
++   from master_editor import validate_master
++   validate_master(master)
++   changes += [{'key':'master.'+k,'before':before.get(k),'after':v} for k,v in master.items() if before.get(k)!=v]
++   profile['master']=master
++  if changes and not body.get('dryRun'):
++   filename,data=editor.slave(sid);data=dict(data)
++   for c in pending['changes']:
++    if c['after'] is None:data.pop(c['key'],None)
++    else:data[c['key']]=c['after']
++   payloads={}
++   if pending['changes']:
++    payloads[filename]=json.dumps(data,ensure_ascii=False,indent=4).encode('utf-8')
++    backup=filename.with_name(filename.name+'.bak')
++    if not backup.exists():payloads[backup]=filename.read_bytes()
++   if master is not None:payloads[editor._profile_file('slave',sid)]=json.dumps(profile,ensure_ascii=False,indent=2).encode('utf-8')
++   editor._write(payloads)
++   base.work_log(base.paths()).event('studio_role_fields',id=int(sid),changed=[c['key'] for c in changes])
++  return {'changes':changes,'saved':bool(changes) and not body.get('dryRun'),'dryRun':bool(body.get('dryRun')),'character':None if body.get('dryRun') else decorate_slave(sid)}
++ class Handler(base.StudioHandler):
++  def blob(self,body,mime,status=200):
++   self.send_response(status);self.send_header('Content-Type',mime);self.send_header('Content-Length',str(len(body)));self.end_headers();self.wfile.write(body)
++  def do_GET(self):
++   url=urlparse(self.path);route=url.path
++   native=route.split('/',3)[3] if route.startswith('/v/') and len(route.split('/',3))>3 else route.lstrip('/')
++   if native=='studio-view.mjs':
++    text=(HERE/'overrides/studio-view.mjs').read_text('utf-8')
++    marker='<button class="button secondary st-tosim"'
++    button='<button class="button secondary" data-workspace-image-search="${e(c.jsonFile)}" data-image-path="${e(c.data.fullimage || c.data.seed_ava_clear || \'\')}" data-image-id="${e(c.id)}" title="캐릭터 파일명 키워드를 이미지 검색창에 넣습니다. 검색은 직접 누르세요.">이미지 검색어 보내기</button>'
++    return self.blob(text.replace(marker,button+marker,1).encode(),'text/javascript; charset=utf-8')
++   if native in ['studio-look.mjs','studio-look-geometry.mjs','studio-role.mjs']:
++    return self.blob((HERE/'overrides'/native).read_bytes(),'text/javascript; charset=utf-8')
++   if native=='app.mjs':
++    addon="\nawait (await import('/workspace/integration.mjs')).installWorkspace({tabNames,switchTab,getTab:()=>tab});\n"
++    prefix="globalThis.__jo9WorkspaceInitialHash=location.hash.slice(1);\n"
++    return self.blob(prefix.encode()+(base.DIST/'app.mjs').read_bytes()+addon.encode(),'text/javascript; charset=utf-8')
++   if route in ['/workspace/integration.mjs','/workspace/integration.css']:
++    name=route.rsplit('/',1)[1];mime='text/javascript' if name.endswith('.mjs') else 'text/css'
++    return self.blob((HERE/name).read_bytes(),mime+'; charset=utf-8')
++   try:
++    import re
++    if route=='/api/master/chars':return self.send_json(200,{'items':store().list(),'choices':base.choices()})
++    match=re.fullmatch(r'/api/master/(\d+)',route)
++    if match:return self.send_json(200,read_master(match[1]))
++    match=re.fullmatch(r'/api/master/(\d+)/talkbook',route)
++    if match:return self.send_json(200,store().talk(match[1]))
++    match=re.fullmatch(r'/api/char/(\d+)',route)
++    if match:return self.send_json(200,decorate_slave(match[1]))
++   except Exception as error:return self.fail(error)
++   if route=='/workspace/config':return self.send_json(200,{'app':'jo9-modding-hub','build':build_id(),'studioRoot':str(studio_root),'tools':urls(),'game':base.game_status()})
++   if route=='/workspace/artifacts':
++    try:return self.send_json(200,{'items':catalog('refresh=1' in url.query)})
++    except Exception as error:return self.fail(error)
++   if route.startswith('/workspace/fs/'):
++    try:
++     value=unquote(route[len('/workspace/fs/'):]);game=base.game_root()[0]
++     roots=[repo/'assets',repo/'docs',Path(game)/'content/pic',Path(game)/'content/snd'] if game else [repo/'assets',repo/'docs']
++     sound=urls().get('soundList')
++     rows=catalog()
++     if sound and Path(sound).is_file():rows=rows+[{'path':sound,'copies':[sound]}]
++     target=registry.resolve_file(value,rows,roots);raw=target.read_bytes();mime=mimetypes.guess_type(str(target))[0] or 'application/octet-stream'
++     if target.suffix.lower() in ['.html','.htm']:
++      text=raw.decode('utf-16' if raw.startswith((b'\xff\xfe',b'\xfe\xff')) else 'utf-8-sig',errors='replace')
++      if sound and target==Path(sound).resolve():
++       css=(HERE/'embedded-tools.css').read_text('utf-8')
++       boot="document.documentElement.classList.toggle('jo9-embedded',new URLSearchParams(location.search).get('workspace')==='1');document.documentElement.classList.add('jo9-tool-sound');"
++       text=text.replace('</head>','<style>'+css+'</style><script>'+boot+'</script></head>') if '</head>' in text else '<style>'+css+'</style><script>'+boot+'</script>'+text
++      raw=registry.rewrite_html(text).encode('utf-8');mime='text/html; charset=utf-8'
++     return self.blob(raw,mime)
++    except Exception as error:return self.fail(error)
++   return super().do_GET()
++  def do_POST(self):
++   import re
++   route=urlparse(self.path).path
++   master=re.fullmatch(r'/api/master/(\d+)/(fields|images|talkbook)',route)
++   clone=re.fullmatch(r'/api/role/(slave|master)/(\d+)/clone',route)
++   slave=re.fullmatch(r'/api/char/(\d+)/fields',route)
++   slave_images=re.fullmatch(r'/api/char/(\d+)/images',route)
++   if not (master or clone or slave or slave_images):return super().do_POST()
++   origin=self.headers.get('Origin')
++   if origin and urlparse(origin).hostname not in ('127.0.0.1','localhost'):return self.send_json(403,{'error':'허용되지 않은 출처입니다.'})
++   if self.headers.get('Content-Type','').split(';')[0].strip()!='application/json':return self.send_json(415,{'error':'JSON 요청만 받습니다.'})
++   try:
++    size=int(self.headers.get('Content-Length') or 0)
++    if size<0 or size>base.MAX_BODY:raise ValueError('요청 크기가 잘못되었습니다.')
++    body=json.loads(self.rfile.read(size).decode('utf-8') or '{}')
++    if not isinstance(body,dict):raise ValueError('요청은 객체여야 합니다.')
++    with base._lock:
++     editor=store()
++     if slave:result=save_slave(slave[1],body)
++     elif slave_images:
++      editor._check_revision('slave',slave_images[1],body.get('revision'))
++      result=base.save_images(slave_images[1],body)
++      if result.get('character'):result['character']=decorate_slave(slave_images[1])
++     elif clone:result=editor.clone(clone[1],clone[2],body)
++     elif master[2]=='fields':
++      result=editor.save(master[1],body)
++      if result.get('character'):result['character']['choices']=base.choices()
++     elif master[2]=='talkbook':
++      base.check_plain(body.get('book'));result=editor.talk(master[1],body)
++     else:
++      result=editor.images(master[1],body,base.decode_image,base.compose_slot,base.api.to_grayscale,base.api.to_sepia)
++      if result.get('character'):result['character']['choices']=base.choices()
++    return self.send_json(200,result)
++   except Exception as error:return self.fail(error)
++ return http.server.ThreadingHTTPServer(('127.0.0.1',port),Handler)
++def main():
++ p=argparse.ArgumentParser();p.add_argument('--studio',required=True);p.add_argument('--repo',required=True);p.add_argument('--urls',required=True);p.add_argument('--ready',required=True);p.add_argument('--port',type=int,default=7689);args=p.parse_args()
++ server=create_server(args.studio,args.repo,args.urls,args.port);port=server.server_address[1]
++ ready={'app':'jo9-modding-hub','pid':os.getpid(),'url':f'http://127.0.0.1:{port}/','build':build_id(),'studioRoot':str(Path(args.studio).resolve())}
++ Path(args.ready).write_text(json.dumps(ready,ensure_ascii=False,indent=2),'utf-8');print(json.dumps(ready,ensure_ascii=False),flush=True)
++ server.serve_forever()
++if __name__=='__main__':main()
+--- before/tools/modding-hub/overrides/studio-view.mjs
++++ after/tools/modding-hub/overrides/studio-view.mjs
+@@ -1,5 +1,5 @@
+ // 통합 캐릭터 편집 탭: 게임 폴더의 캐릭터를 골라 외형·배경 이야기·설정·능력치·특성을 한 화면에서 고친다(로컬 서버 /api 필요)
+-import {roleUrl, masterSettings, masterStats, patchNativeStat, nativeRows, cloneBody, cloneForm} from './studio-role.mjs';
++import {roleUrl, masterSettings, masterStats, cmValue, patchCm, patchNativeStat, nativeRows, cloneBody, cloneForm} from './studio-role.mjs';
+ import {describeCharacterField} from './character-fields.mjs';
+ import {esc as e, loadSimData} from './sim-data.mjs';
+ import {createLookEditor} from './studio-look.mjs';
+@@ -237,7 +237,7 @@
+    <p class="fine-print">줄바꿈은 게임에서 줄바꿈(&lt;br&gt;)이 됩니다. 칸을 비우면 게임이 배경을 무작위로 정합니다. ${d.scene_tag ? '장면 태그 ' + e(d.scene_tag) : ''}</p>`;
+  }
+  function stats() {
+-  const native = masterStats(masterData(),role), seeds = slaveStats();
++  const native = masterStats(masterData(),role,st.ch.nativeDefaults), seeds = slaveStats();
+   return isMaster ? native + '<details><summary>노예 전환용 능력치·특성</summary>' + seeds + '</details>' : seeds + '<details><summary>마스터 전환용 능력치</summary>' + native + '</details>';
+  }
+  function slaveStats() {
+@@ -383,8 +383,14 @@
+   const t = ev.target;
+   if (t.dataset.stMaster) {
+    setMaster(t.dataset.stMaster,t.value);
++   if(t.dataset.stMaster==='statsCode'){const cm=root.querySelector('[data-st-master-cm]');if(cm)cm.value=cmValue(t.value,st.ch.nativeDefaults);}
+    if(t.dataset.stMaster==='statsCode') for(const row of nativeRows(t.value)){const input=root.querySelector(`[data-st-master-stat="${row.key}"]`);if(input)input.value=row.value;}
+    return;
++  }
++  if(t.hasAttribute('data-st-master-cm')){
++   if(t.value==='')return;
++   try{setMaster('statsCode',patchCm(masterData().statsCode,Number(t.value)));const raw=root.querySelector('[data-st-master="statsCode"]');if(raw)raw.value=masterData().statsCode;}
++   catch(error){api.toast(error.message);t.value=cmValue(masterData().statsCode,st.ch.nativeDefaults);}return;
+   }
+   if (t.dataset.stMasterStat) {
+    if(t.value==='' || !Number.isInteger(Number(t.value)))return;
+--- before/tools/modding-hub/overrides/studio-role.mjs
++++ after/tools/modding-hub/overrides/studio-role.mjs
+@@ -1,33 +1,47 @@
+-// JO9 MOD MASTER_EDITOR_20261115: role controls share the existing studio classes.
+-const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+-export function roleUrl(role,url){
+- if(role!=='master')return url;
+- if(url==='/api/chars')return '/api/master/chars';
+- if(/^\/api\/char\/\d+(?:\/|$)/.test(url))return url.replace('/api/char/','/api/master/');
+- const talk=url.match(/^\/api\/talkbook\/(\d+)$/);return talk?'/api/master/'+talk[1]+'/talkbook':url;
+-}
+-export function nativeRows(code){
+- const rows=[...String(code).matchAll(/^(\s*)([A-Za-z_]\w*)\s*=\s*(-?\d+)\s*(?=&|!|\r?$)/gm)].map(m=>({key:m[2],value:Number(m[3])}));
+- const counts=new Map();for(const r of rows)counts.set(r.key,(counts.get(r.key)||0)+1);
+- return rows.filter((r,i)=>rows.findIndex(x=>x.key===r.key)===i).map(r=>({...r,repeated:counts.get(r.key)>1}));
+-}
+-export function patchNativeStat(code,key,value){
+- if(!/^[A-Za-z_]\w*$/.test(key)||!Number.isInteger(value))throw Error('정수 항목을 입력하세요.');
+- if(nativeRows(code).find(r=>r.key===key)?.repeated)throw Error('여러 곳에 있는 값입니다. 원본 코드에서 편집하세요.');
+- return code.replace(new RegExp('^(\\s*'+key+'\\s*=\\s*)-?\\d+','m'),(_,prefix)=>prefix+value);
+-}
+-const LABELS={master_str:'힘',master_cha:'매력',master_style:'스타일',master_libido:'욕구',master_tutor:'교육',master_fighter:'전투 기술',master_butler:'관리',master_artdirector:'예술',master_medic:'의학',master_mage:'마법',master_torture:'고문',master_domination:'지배',master_bondage:'결박',master_flagelation:'채찍',master_petting:'애무',master_oral:'구강',master_penetration:'삽입',master_fetish:'페티시즘',sparks:'시작 스파크',master_vampire:'뱀파이어'};
+-export function masterSettings(m,role){
+- return `<p class="fine-print">${role==='master'?'마스터 원본 저장 시 게임의 시작 프리셋에 반영됩니다. 이미 시작한 세이브의 주인공은 바꾸지 않습니다.':'이 인물의 마스터 전환용 설정입니다. 현재 노예 JSON과 별도로 보관하며 마스터로 복제할 때 가져갑니다.'}</p><div class="cv-form"><label>마스터 이름<input data-st-master="name" value="${esc(m.name)}" maxlength="100"></label><label>난이도 안내<input data-st-master="difficulty" value="${esc(m.difficulty)}" title="시작 화면의 안내 문구입니다. 실제 전투 난이도 설정과 다릅니다."></label></div><section class="st-story"><div class="section-label">마스터 소개 · 배경 이야기</div><textarea data-st-master="description" rows="6">${esc(m.description)}</textarea></section><details><summary>게임에서 쓰는 초상 경로</summary><div class="cv-form"><label>컬러 초상<input data-st-master="portrait" value="${esc(m.portrait)}"></label><label>세피아 초상<input data-st-master="sepia" value="${esc(m.sepia)}"></label></div><p class="fine-print">이 경로는 QSP의 마스터 소개 초상입니다. 외형 탭의 편집용 이미지와 구분됩니다. 기존 시작 메뉴에 직접 적힌 아이콘 경로는 QSP 이벤트에서 확인하세요.</p></details>`;
+-}
+-export function masterStats(m,role){
+- return `<div class="section-label">${role==='master'?'마스터 시작 능력치':'마스터 전환용 시작 능력치'}</div><p class="fine-print">입력한 정수를 그대로 저장합니다. 장비·세력·시작 자금 및 조건문은 아래 원본 코드에 보존됩니다.</p><div class="st-grid">${nativeRows(m.statsCode).map(r=>`<label class="st-stat" title="${esc(r.key)} · 마스터 시작 프리셋에서 지정하는 값${r.repeated?' · 여러 곳에 있어 원본 코드에서 편집':''}">${esc(LABELS[r.key]||r.key)} <small>${esc(r.key)}</small><input type="number" step="1" data-st-master-stat="${esc(r.key)}" value="${r.value}" ${r.repeated?'disabled':''}></label>`).join('')}</div><details><summary>시작 효과 원본 코드 직접 편집</summary><textarea class="st-json" data-st-master="statsCode" rows="16" spellcheck="false">${esc(m.statsCode)}</textarea></details>`;
+-}
+-export function cloneBody(d,revision){
+- const include=Object.entries(d.include).filter(([,v])=>v).map(([k])=>k);
+- return {targetRole:d.targetRole,name:d.name,slug:d.slug,newId:d.newId || d.result?.id || '',gender:d.gender,include,revision,overrides:include.includes('stats')?d.overrides:{}};
+-}
+-export function cloneForm(d){
+- const target=d.targetRole==='master'?'마스터':'노예';
+- return `<div class="st-preview"><b>${target} 캐릭터로 복제</b><p class="fine-print">원본 인물을 유지하고 새 번호로 만듭니다. 저장하지 않은 변경은 먼저 저장하세요. 선택한 외형 파일은 복제본 전용 경로로 복사하여 원본을 보존합니다.</p><div class="cv-form"><label>새 이름<input data-role-copy="name" value="${esc(d.name)}"></label><label>파일명(영문)<input data-role-copy="slug" value="${esc(d.slug)}" placeholder="비우면 copy"></label><label>새 번호(비우면 자동)<input data-role-copy="newId" value="${esc(d.newId)}"></label>${d.targetRole==='master'?`<label>주인공 성별<select data-role-copy="gender"><option value="male" ${d.gender==='male'?'selected':''}>남주인공</option><option value="female" ${d.gender==='female'?'selected':''}>여주인공</option></select></label>`:''}</div><div class="st-row">${[['appearance','외형'],['background','배경·설정'],['stats','능력치·특성'],['talk','대사집']].map(([key,label])=>`<label class="cv-lock"><input type="checkbox" data-role-include="${key}" ${d.include[key]?'checked':''}>${label}</label>`).join('')}</div><details><summary>능력치 대응표 · 복제할 값 조정</summary><p class="fine-print">완전히 같은 수치 체계가 아니므로 값을 확인하세요. 대응하지 않는 원래 역할의 설정은 보조 자료로 보관합니다.</p><div class="cv-form">${d.rows.map(r=>`<label title="${esc(r.source)} → ${esc(r.target)}">${esc(r.label)}<small>${esc(r.source)} → ${esc(r.target)}</small><input type="number" step="1" data-role-map="${esc(r.target)}" value="${esc(d.overrides[r.target]??r.value)}"></label>`).join('')||'<span class="fine-print">자동 대응되는 값 없음</span>'}</div></details>${d.result?`<p>새 번호 ${d.result.id} · ${esc(d.result.json)}</p>${d.result.warnings.map(w=>`<p class="warning">${esc(w)}</p>`).join('')}`:''}<div class="st-row"><button class="button secondary" data-role-copy-act="preview">복제 미리보기</button><button class="button" data-role-copy-act="save" ${d.result?'':'disabled'}>새 ${target}로 복제</button><button class="button secondary" data-role-copy-act="close">취소</button></div></div>`;
+-}
++// JO9 MOD MASTER_EDITOR_20261115: role controls share the existing studio classes.
++const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
++export function roleUrl(role,url){
++ if(role!=='master')return url;
++ if(url==='/api/chars')return '/api/master/chars';
++ if(/^\/api\/char\/\d+(?:\/|$)/.test(url))return url.replace('/api/char/','/api/master/');
++ const talk=url.match(/^\/api\/talkbook\/(\d+)$/);return talk?'/api/master/'+talk[1]+'/talkbook':url;
++}
++export function nativeRows(code){
++ const rows=[...String(code).matchAll(/^(\s*)([A-Za-z_]\w*)\s*=\s*(-?\d+)\s*(?=&|!|\r?$)/gm)].map(m=>({key:m[2],value:Number(m[3])}));
++ const counts=new Map();for(const r of rows)counts.set(r.key,(counts.get(r.key)||0)+1);
++ return rows.filter((r,i)=>rows.findIndex(x=>x.key===r.key)===i).map(r=>({...r,repeated:counts.get(r.key)>1}));
++}
++export function patchNativeStat(code,key,value){
++ if(!/^[A-Za-z_]\w*$/.test(key)||!Number.isInteger(value))throw Error('정수 항목을 입력하세요.');
++ if(nativeRows(code).find(r=>r.key===key)?.repeated)throw Error('여러 곳에 있는 값입니다. 원본 코드에서 편집하세요.');
++ return code.replace(new RegExp('^(\\s*'+key+'\\s*=\\s*)-?\\d+','m'),(_,prefix)=>prefix+value);
++}
++const CM_KEYS=['jo9_cruel_mercy','jo9_cruel_mercy_half'];
++export function cmValue(code,defaults={}){
++ const values={...defaults,...Object.fromEntries(nativeRows(code).map(r=>[r.key,r.value]))};
++ return (values.jo9_cruel_mercy??0)+(values.jo9_cruel_mercy_half??0)/2;
++}
++export function patchCm(code,value){
++ if(!Number.isFinite(value)||!Number.isSafeInteger(value*2))throw Error('CM은 0.5 단위 숫자로 입력하세요.');
++ const whole=Math.trunc(value),half=Math.round((value-whole)*2),newline=code.includes('\r\n')?'\r\n':'\n';
++ for(const [key,number] of [[CM_KEYS[0],whole],[CM_KEYS[1],half]]){
++  if(nativeRows(code).some(r=>r.key===key))code=patchNativeStat(code,key,number);
++  else code+=(code && !code.endsWith('\n')?newline:'')+key+' = '+number;
++ }
++ return code;
++}
++const LABELS={master_str:'힘',master_cha:'매력',master_style:'스타일',master_libido:'욕구',master_tutor:'교육',master_fighter:'전투 기술',master_butler:'관리',master_artdirector:'예술',master_medic:'의학',master_mage:'마법',master_torture:'고문',master_domination:'지배',master_bondage:'결박',master_flagelation:'채찍',master_petting:'애무',master_oral:'구강',master_penetration:'삽입',master_fetish:'페티시즘',sparks:'시작 스파크',master_vampire:'뱀파이어'};
++export function masterSettings(m,role){
++ return `<p class="fine-print">${role==='master'?'마스터 원본 저장 시 게임의 시작 프리셋에 반영됩니다. 이미 시작한 세이브의 주인공은 바꾸지 않습니다.':'이 인물의 마스터 전환용 설정입니다. 현재 노예 JSON과 별도로 보관하며 마스터로 복제할 때 가져갑니다.'}</p><div class="cv-form"><label>마스터 이름<input data-st-master="name" value="${esc(m.name)}" maxlength="100"></label><label>난이도 안내<input data-st-master="difficulty" value="${esc(m.difficulty)}" title="시작 화면의 안내 문구입니다. 실제 전투 난이도 설정과 다릅니다."></label></div><section class="st-story"><div class="section-label">마스터 소개 · 배경 이야기</div><textarea data-st-master="description" rows="6">${esc(m.description)}</textarea></section><details><summary>게임에서 쓰는 초상 경로</summary><div class="cv-form"><label>컬러 초상<input data-st-master="portrait" value="${esc(m.portrait)}"></label><label>세피아 초상<input data-st-master="sepia" value="${esc(m.sepia)}"></label></div><p class="fine-print">이 경로는 QSP의 마스터 소개 초상입니다. 외형 탭의 편집용 이미지와 구분됩니다. 기존 시작 메뉴에 직접 적힌 아이콘 경로는 QSP 이벤트에서 확인하세요.</p></details>`;
++}
++export function masterStats(m,role,defaults={}){
++ return `<div class="section-label">${role==='master'?'마스터 시작 능력치':'마스터 전환용 시작 능력치'}</div><p class="fine-print">입력한 정수를 그대로 저장합니다. 장비·세력·시작 자금 및 조건문은 아래 원본 코드에 보존됩니다.</p><div class="cv-form"><label title="CM = jo9_cruel_mercy + jo9_cruel_mercy_half / 2 · 음수는 Cruel(잔혹), 양수는 Mercy(자비) · 0.5 단위">CM (Cruel &amp; Mercy)<input type="number" step="0.5" data-st-master-cm value="${cmValue(m.statsCode,defaults)}" ${nativeRows(m.statsCode).some(r=>CM_KEYS.includes(r.key)&&r.repeated)?'disabled title="여러 곳에서 지정됩니다. 원본 코드로 편집하세요."':''}></label></div><p class="fine-print">CM은 0.5 단위입니다. 별도로 지정하지 않으면 공통 시작 값을 표시합니다.</p><div class="st-grid">${nativeRows(m.statsCode).filter(r=>!CM_KEYS.includes(r.key)).map(r=>`<label class="st-stat" title="${esc(r.key)} · 마스터 시작 프리셋에서 지정하는 값${r.repeated?' · 여러 곳에 있어 원본 코드에서 편집':''}">${esc(LABELS[r.key]||r.key)} <small>${esc(r.key)}</small><input type="number" step="1" data-st-master-stat="${esc(r.key)}" value="${r.value}" ${r.repeated?'disabled':''}></label>`).join('')}</div><details><summary>시작 효과 원본 코드 직접 편집</summary><textarea class="st-json" data-st-master="statsCode" rows="16" spellcheck="false">${esc(m.statsCode)}</textarea></details>`;
++}
++export function cloneBody(d,revision){
++ const include=Object.entries(d.include).filter(([,v])=>v).map(([k])=>k);
++ return {targetRole:d.targetRole,name:d.name,slug:d.slug,newId:d.newId || d.result?.id || '',gender:d.gender,include,revision,overrides:include.includes('stats')?d.overrides:{}};
++}
++export function cloneForm(d){
++ const target=d.targetRole==='master'?'마스터':'노예';
++ return `<div class="st-preview"><b>${target} 캐릭터로 복제</b><p class="fine-print">원본 인물을 유지하고 새 번호로 만듭니다. 저장하지 않은 변경은 먼저 저장하세요. 선택한 외형 파일은 복제본 전용 경로로 복사하여 원본을 보존합니다.</p><div class="cv-form"><label>새 이름<input data-role-copy="name" value="${esc(d.name)}"></label><label>파일명(영문)<input data-role-copy="slug" value="${esc(d.slug)}" placeholder="비우면 copy"></label><label>새 번호(비우면 자동)<input data-role-copy="newId" value="${esc(d.newId)}"></label>${d.targetRole==='master'?`<label>주인공 성별<select data-role-copy="gender"><option value="male" ${d.gender==='male'?'selected':''}>남주인공</option><option value="female" ${d.gender==='female'?'selected':''}>여주인공</option></select></label>`:''}</div><div class="st-row">${[['appearance','외형'],['background','배경·설정'],['stats','능력치·특성'],['talk','대사집']].map(([key,label])=>`<label class="cv-lock"><input type="checkbox" data-role-include="${key}" ${d.include[key]?'checked':''}>${label}</label>`).join('')}</div><details><summary>능력치 대응표 · 복제할 값 조정</summary><p class="fine-print">완전히 같은 수치 체계가 아니므로 값을 확인하세요. 대응하지 않는 원래 역할의 설정은 보조 자료로 보관합니다.</p><div class="cv-form">${d.rows.map(r=>`<label title="${esc(r.source)} → ${esc(r.target)}">${esc(r.label)}<small>${esc(r.source)} → ${esc(r.target)}</small><input type="number" step="1" data-role-map="${esc(r.target)}" value="${esc(d.overrides[r.target]??r.value)}"></label>`).join('')||'<span class="fine-print">자동 대응되는 값 없음</span>'}</div></details>${d.result?`<p>새 번호 ${d.result.id} · ${esc(d.result.json)}</p>${d.result.warnings.map(w=>`<p class="warning">${esc(w)}</p>`).join('')}`:''}<div class="st-row"><button class="button secondary" data-role-copy-act="preview">복제 미리보기</button><button class="button" data-role-copy-act="save" ${d.result?'':'disabled'}>새 ${target}로 복제</button><button class="button secondary" data-role-copy-act="close">취소</button></div></div>`;
++}

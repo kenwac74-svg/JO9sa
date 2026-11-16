@@ -1,0 +1,17 @@
+{
+  "id": "2026-11-13_r03f_leshiy_unknown_requirement",
+  "status": "APPROVED",
+  "description": "R03-6 사용자 승인: 레시의 기존 unknown=1 요구를 실제 납품에 연결해 인지도0 무명 노예만 허용. 인지도1이상 거절. 인물값/체력/감수성/다른 고객/평가/가격/진행 보존.",
+  "before_sha256": "7b4c58faba105d70eae09ea12f3aa7307d3a044081210f3cdb007212ad5f5b58",
+  "after_sha256": "2c40888317e25b9453ca0efc60fa79321cbca9b0b18318d2584e6908e42f0605",
+  "edits": [
+    {
+      "location": "slave_sell_chek",
+      "field": "body",
+      "old": "if slave['beauty'] < demand['min_beauty']: sl_txt = 100 & $refuse_txt = '나는 더 아름다운 노예를 원한다.' & exit\r\n",
+      "new": "if slave['beauty'] < demand['min_beauty']: sl_txt = 100 & $refuse_txt = '나는 더 아름다운 노예를 원한다.' & exit\r\n! JO9 MOD START R03F_LESHIY_UNKNOWN_REQUIREMENT_20261113\r\n! Existing unknown demand requires fame zero; other customers keep the normal rules.\r\nif demand['unknown'] = 1 and slave['fame'] ! 0:\r\n sl_txt = 100 & $refuse_txt = '나는 아무에게도 알려지지 않은 무명 노예를 원한다.' & exit\r\nend\r\n! JO9 MOD END R03F_LESHIY_UNKNOWN_REQUIREMENT_20261113\r\n",
+      "count": 1,
+      "patchId": "R03F_LESHIY_UNKNOWN_REQUIREMENT_20261113"
+    }
+  ]
+}

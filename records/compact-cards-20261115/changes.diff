@@ -1,0 +1,140 @@
+--- before/overrides/game-presentation.mjs
++++ after/overrides/game-presentation.mjs
+@@ -13,20 +13,21 @@
+ const grades=['F','D','C','B','A','S'];
+ const present=v=>v!==undefined&&v!==null&&v!=='';
+ export function describeGameValue(key,value){
+- key=alias[key]??key.replace(/^seed_/,'');const label=rules.labels[key]??rules.status?.find(s=>s.key===key)?.label??key;
++ key=alias[key]??key.replace(/^seed_/,'');const label=rules.labels[key]??rules.status?.find(s=>s.key===key)?.label??rules.skills.find(g=>g.key===key)?.label??key;
++ const sexSkill=rules.skills.some(g=>g.key===key||g.children.includes(key)),defaulted=sexSkill&&!present(value);if(defaulted)value=0;
+  if(!present(value))return {key,label,text:'미설정',color:null,tooltip:`${label} · ${key}\n미설정: 게임 초기값 또는 시뮬레이션 값을 지정하지 않았습니다.`};
+- const row=rules.values[key]?.[value];let color=row?rules.palettes[row.cycle]?.[row.index]??null:null;
++ const row=rules.values[key]?.[value]??(sexSkill&&grades[value]?{text:label+' '+grades[value],cycle:'skill',index:Number(value)}:undefined);let color=row?rules.palettes[row.cycle]?.[row.index]??null:null;
+  const status=rules.status?.find(s=>s.key===key.replace(/^rate\./,''));if(status&&!row)color=status.color;
+  if(key==='obedience')color=Number(value)>0?'#008000':Number(value)<0?'#cd0000':'#3c8712';
+  let grade=row?.text.match(/\s([FDCBAS](?:\+\+)?)$/)?.[1]??(row?.cycle==='skill'?grades[row.index]:null);
+  if(key==='psy_status'){const psy=rules.psych?.[value];return {key,label:'정신 상태',text:psy?.text??String(value),color:psy?.color??null,tooltip:`정신 상태 · ${value}`};}
+- return {key,label:status?status.label+(key.startsWith('rate.')?' 단계':''):label,text:row?.text??String(value),color,grade,tooltip:`${status?.label??label} · ${key}\n${grade?'등급: '+grade+' · ':''}수치: ${value}${row?'\n게임 표시: '+row.text:''}`};
++ return {key,label:status?status.label+(key.startsWith('rate.')?' 단계':''):label,text:row?.text??String(value),color,grade,tooltip:`${status?.label??label} · ${key}\n${grade?'등급: '+grade+' · ':''}수치: ${value}${row?'\n게임 표시: '+row.text:''}${defaulted?'\n입력값 없음: 기본값 0(F)':''}`};
+ }
+ export function valueBadge(key,value){const d=describeGameValue(key,value);return `<span class="game-value${d.color?' has-color':''}"${d.color?` style="--game-color:${e(d.color)}"`:''} title="${e(d.tooltip)}" tabindex="0">${e(d.text)}</span>`;}
+ export function attributeCards(c){return `${rules.unavailable?'<p class="warning">게임 폴더를 연결하면 색상·등급 표시를 불러옵니다.</p>':''}<div class="game-attribute-grid">${ATTRIBUTES.map(k=>{const v=c[{beauty:'base_beauty',exotic:'base_exotic'}[k]]??c[k];return `<div class="game-attribute"><span>${e(describeGameValue(k,v).label)}</span>${valueBadge(k,v)}</div>`;}).join('')}</div>`;}
+ export function skillTree(c){return `<div class="game-skill-tree">${rules.skills.map(g=>{
+- const average=!present(c[g.key])&&g.children.every(k=>present(c[k]));
+- const value=average?Math.trunc(g.children.reduce((sum,k)=>sum+Number(c[k]),0)/g.children.length):c[g.key];
++ const average=!present(c[g.key]);
++ const value=average?Math.trunc(g.children.reduce((sum,k)=>sum+Number(present(c[k])?c[k]:0),0)/g.children.length):c[g.key];
+  const badge=average?`<span class="game-skill-average" title="입력한 하위 기술의 정수 평균입니다. 게임의 연관 기술 보정 전 값입니다."><small>입력 평균</small>${valueBadge(g.key,value)}</span>`:valueBadge(g.key,value);
+  return `<details data-skill-group="${e(g.key)}"><summary><span>${e(g.label)}</span>${badge}</summary><div class="game-skill-children">${g.children.map(k=>`<div><span>${e(describeGameValue(k,c[k]).label)}</span>${valueBadge(k,c[k])}</div>`).join('')}</div></details>`;
+  }).join('')}</div>`;}
+--- before/integration.css
++++ after/integration.css
+@@ -1,45 +1,48 @@
+-.sidebar nav{overflow-y:auto;min-height:0;scrollbar-width:thin}.workspace-subnav{margin:0 0 7px 21px;padding-left:9px;border-left:1px solid var(--border,#34383c)}.workspace-subnav .nav-button{font-size:12px;min-height:30px;padding:7px 10px}.workspace-toolbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:14px}.workspace-panel>.workspace-toolbar{padding-top:3px}.workspace-frame{width:100%;height:calc(100vh - 220px);min-height:640px;border:1px solid var(--border,#34383c);border-radius:10px;background:var(--bg,#151719)}.workspace-original{margin-left:auto}.workspace-hide,[hidden]{display:none!important}.workspace-search{min-width:240px;flex:1}.workspace-catalog-table{width:100%;border-collapse:collapse;font-size:13px}.workspace-catalog-table th,.workspace-catalog-table td{padding:11px 12px;text-align:left;border-bottom:1px solid var(--border,#34383c)}.workspace-catalog-table td:nth-child(2),.workspace-catalog-table td:nth-child(3){white-space:nowrap}.workspace-artifact-name{background:none;border:0;padding:0;color:inherit;text-align:left;font:inherit;cursor:pointer}.workspace-artifact-name:hover{text-decoration:underline}.workspace-selected{background:rgba(187,163,108,.1)}.workspace-artifact-list{max-height:440px;overflow:auto}.workspace-artifact-list th{position:sticky;top:0;background:var(--panel,#1d2023)}.workspace-artifact-title{font-size:15px}.workspace-count{font-size:12px;font-weight:normal;opacity:.7}.workspace-error{font-size:12px;color:#e6b8a4}.workspace-tool-view{margin-top:20px}.sidebar-bottom p{white-space:pre-line}.workspace-artifact-view{margin-top:20px}@media(max-width:850px){.workspace-catalog-table td:nth-child(3),.workspace-catalog-table th:nth-child(3){display:none}.workspace-frame{min-height:560px}.workspace-search{min-width:150px}}
+-
+-/* JO9 MOD START DIALOGUE_SHELL_20261115 */
+-body.workspace-dialogue-active{overflow:hidden}
+-body.workspace-dialogue-active main>footer,body.workspace-dialogue-active .page-header .eyebrow{display:none}
+-body.workspace-dialogue-active .page-header{padding:22px 0 18px}
+-#dialogue>.workspace-toolbar{justify-content:flex-end;margin:0 0 10px;padding:0}
+-#dialogue>.workspace-toolbar .workspace-original{background:none;border-color:transparent;font-size:10px;padding:3px 0;color:var(--muted)}
+-#dialogue>.workspace-toolbar .workspace-original:hover{color:var(--amber)}
+-#dialogue .workspace-frame{display:block;min-height:0;border:0;border-radius:0;background:var(--bg);height:calc(100dvh - 230px)}
+-/* JO9 MOD END DIALOGUE_SHELL_20261115 */
+-
+-/* JO9 MOD START COMPACT_WORKSPACE_SHELL_20261115 */
+-.page-header{position:relative;padding:12px 0 10px!important;gap:12px}
+-.page-header>div:first-child{min-width:0;flex:1}
+-.page-header .eyebrow,main>footer{display:none!important}
+-.page-header h1{margin:0;font-size:25px;line-height:1.25}
+-.page-header p{margin:5px 0 0!important;line-height:1.5}
+-.workspace-open-current{flex:none;align-self:center;color:var(--muted);text-decoration:none;font-size:10px;white-space:nowrap;padding:3px 0}
+-.workspace-open-current:hover{color:var(--amber)}
+-.workspace-panel>.workspace-toolbar{padding:0!important;margin:0 0 8px!important;gap:7px}
+-.workspace-panel>.workspace-toolbar:empty{display:none}
+-.workspace-panel>.workspace-toolbar>button{font-size:12px;padding:8px 13px}
+-.workspace-frame{display:block;min-height:0!important;border:0!important;border-radius:0!important;background:var(--bg)!important}
+-body.workspace-framed-active{overflow:hidden}
+-.workspace-artifact-view>.workspace-toolbar{display:none}
+-.workspace-artifact-list{max-height:min(40vh,440px)}
+-@media(max-width:650px){.page-header{display:flex!important;flex-wrap:wrap}.workspace-open-current{font-size:9px}.page-header .header-actions{margin-top:0}.workspace-toolbar{gap:6px}}
+-/* JO9 MOD END COMPACT_WORKSPACE_SHELL_20261115 */
+-
+-.workspace-panel>.workspace-toolbar>button.primary{background:var(--amber);border-color:var(--amber);color:var(--bg)}
+-
+-/* JO9 MOD MASTER_INITIALS_20261115: fields keep the existing studio palette. */
+-.st-grid .st-initial-field{display:grid;grid-template-columns:minmax(0,1fr);align-items:start;gap:6px;padding:12px;border:1px solid var(--border,#34383c);border-radius:7px;min-width:0}
+-.st-grid .st-initial-field input{width:100%;min-width:0;box-sizing:border-box}
+-.st-grid .st-initial-field small{display:block;min-width:0;white-space:normal;overflow-wrap:anywhere}
+-.st-grid .st-initial-field button{justify-self:start;min-width:0}
+-[data-initial-group]{margin-top:12px}
+-[data-initial-group]>summary{cursor:pointer;margin-bottom:10px}
+-
+-/* JO9 MOD QUESTION_WORKSPACE_20261115: common character context and independent questions. */
+-.question-tabs{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 14px}.question-workspace{min-width:0}.question-workspace textarea{box-sizing:border-box;width:100%}.question-workspace .gm-text{white-space:pre-wrap;padding:14px;min-height:80px;overflow-wrap:anywhere}.gdb-columns,.gdb-sim-columns{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:18px}.gdb-columns{margin-top:18px}.gdb-columns>* , .gdb-sim-columns>*{min-width:0}.gdb-rows{max-height:650px;overflow:auto}.gdb-row{display:flex;flex-direction:column;text-align:left;width:100%;padding:12px;gap:7px;margin-bottom:8px;border:1px solid var(--border,#34383c);border-radius:7px;background:var(--panel,#1d2023);color:inherit;cursor:pointer;overflow-wrap:anywhere}.gdb-row.on,.gdb-row:hover{border-color:var(--gold,#bba36c)}.gdb-row small{opacity:.65;overflow-wrap:anywhere}.gdb-original{white-space:pre-wrap;overflow-wrap:anywhere}.workspace-sim-nav>.workspace-subnav{margin-left:10px;padding-left:6px}.workspace-sim-nav .nav-button{font-size:11px;padding:6px 8px}.question-workspace [data-q-candidates]{max-height:470px;overflow:auto}.question-workspace .cv-grid{margin-top:14px}@media(max-width:1050px){.gdb-columns,.gdb-sim-columns{grid-template-columns:minmax(0,1fr)}}
+-
+-.general-db .st-row>input,.general-db .st-row>select{width:auto;min-width:130px;flex:1}.general-db .st-row>button{flex:0 0 auto}
+-.game-attribute-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:8px;margin:8px 0 18px}.game-attribute{display:flex;flex-direction:column;align-items:flex-start;gap:7px;padding:10px;border:1px solid var(--border,#34383c);border-radius:7px;min-width:0}.game-attribute>span:first-child{font-size:11px;color:var(--muted,#92989b)}.game-value{display:inline-block;max-width:100%;padding:3px 7px;border-radius:4px;font-size:12px;line-height:1.5;overflow-wrap:anywhere;background:var(--panel,#22262a);color:var(--muted,#92989b)}.game-value.has-color{background:#f5ecd8;color:var(--game-color);font-weight:700}.game-value:focus-visible{outline:2px solid var(--amber,#c9ab70);outline-offset:2px}.game-skill-tree{display:grid;gap:7px}.game-skill-tree details{border:1px solid var(--border,#34383c);border-radius:7px;overflow:hidden}.game-skill-tree summary{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:9px 11px;cursor:pointer}.game-skill-tree summary>span:first-child:before{content:'▸';margin-right:7px;color:var(--muted)}.game-skill-tree details[open]>summary>span:first-child:before{content:'▾'}.game-skill-children{padding:3px 12px 10px 24px;display:grid;gap:5px}.game-skill-children>div{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px}.game-status-name{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:14px}.game-status-name img{width:64px;height:64px;object-fit:cover;border-radius:5px}.game-status-name small{font-size:11px;color:var(--muted);flex-basis:100%}.game-status-columns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.game-status-columns section{min-width:0}.game-status-columns h3{font-size:12px;margin:0 0 10px}.game-status-pair{display:grid;grid-template-columns:1fr 1fr;gap:3px 8px;background:#f5ecd8;color:var(--game-color);padding:9px;border-radius:5px;margin:6px 0;font-size:11px}.game-status-pair b{grid-column:1/-1;font-size:12px}.game-status-pair span{display:flex;justify-content:space-between;gap:4px}.game-status-pair strong{font-variant-numeric:tabular-nums}.game-status-line{display:flex;justify-content:space-between;gap:8px;background:#f5ecd8;color:var(--game-color,#222);padding:8px;border-radius:5px;font-size:11px;margin:6px 0;align-items:center;flex-wrap:wrap}.game-status-line .game-value{padding:0;background:none}.game-status-reserved{margin-top:15px;border:1px dashed var(--border,#34383c);border-radius:6px;padding:12px;min-height:48px;display:flex;flex-direction:column;gap:5px;color:var(--muted);font-size:11px}.game-status-card{align-self:start}.st .st-grid:has(>.st-game-stat){grid-template-columns:repeat(auto-fill,minmax(165px,1fr));align-items:stretch;gap:10px}.st .st-grid>.st-game-stat{display:grid;grid-template-columns:minmax(0,1fr);align-content:start;align-items:start;gap:8px;min-width:0;padding:12px;border:1px solid var(--border,#34383c);border-radius:7px}.st-game-stat .st-stat-name{display:block;font-size:12px;line-height:1.4;min-height:1.4em;white-space:normal;overflow-wrap:anywhere}.st-game-stat .st-stat-controls{display:flex;align-items:center;gap:6px;min-width:0}.st .st-game-stat input[type=number]{box-sizing:border-box;width:68px;min-width:0;max-width:100%;padding:6px 5px;font-variant-numeric:tabular-nums}.st .st-game-stat input[type=number][data-st-simulation]{width:88px}.st-game-stat .st-stat-description{display:block;min-width:0;font-size:10px}.st-game-stat select{width:100%;min-width:0}.game-simulation-editor{margin:22px 0}.game-character-summary .tag{cursor:help}@media(max-width:1250px){.game-status-columns{grid-template-columns:1fr}.game-status-pair{grid-template-columns:minmax(55px,1fr) 1fr 1fr}.game-status-pair b{grid-column:auto}.game-status-reserved{min-height:30px}}@media(max-width:620px){.game-status-pair{grid-template-columns:1fr 1fr}.game-status-pair b{grid-column:1/-1}.game-attribute-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.st .st-grid:has(>.st-game-stat){grid-template-columns:repeat(2,minmax(0,1fr))}}
++.sidebar nav{overflow-y:auto;min-height:0;scrollbar-width:thin}.workspace-subnav{margin:0 0 7px 21px;padding-left:9px;border-left:1px solid var(--border,#34383c)}.workspace-subnav .nav-button{font-size:12px;min-height:30px;padding:7px 10px}.workspace-toolbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:14px}.workspace-panel>.workspace-toolbar{padding-top:3px}.workspace-frame{width:100%;height:calc(100vh - 220px);min-height:640px;border:1px solid var(--border,#34383c);border-radius:10px;background:var(--bg,#151719)}.workspace-original{margin-left:auto}.workspace-hide,[hidden]{display:none!important}.workspace-search{min-width:240px;flex:1}.workspace-catalog-table{width:100%;border-collapse:collapse;font-size:13px}.workspace-catalog-table th,.workspace-catalog-table td{padding:11px 12px;text-align:left;border-bottom:1px solid var(--border,#34383c)}.workspace-catalog-table td:nth-child(2),.workspace-catalog-table td:nth-child(3){white-space:nowrap}.workspace-artifact-name{background:none;border:0;padding:0;color:inherit;text-align:left;font:inherit;cursor:pointer}.workspace-artifact-name:hover{text-decoration:underline}.workspace-selected{background:rgba(187,163,108,.1)}.workspace-artifact-list{max-height:440px;overflow:auto}.workspace-artifact-list th{position:sticky;top:0;background:var(--panel,#1d2023)}.workspace-artifact-title{font-size:15px}.workspace-count{font-size:12px;font-weight:normal;opacity:.7}.workspace-error{font-size:12px;color:#e6b8a4}.workspace-tool-view{margin-top:20px}.sidebar-bottom p{white-space:pre-line}.workspace-artifact-view{margin-top:20px}@media(max-width:850px){.workspace-catalog-table td:nth-child(3),.workspace-catalog-table th:nth-child(3){display:none}.workspace-frame{min-height:560px}.workspace-search{min-width:150px}}
++
++/* JO9 MOD START DIALOGUE_SHELL_20261115 */
++body.workspace-dialogue-active{overflow:hidden}
++body.workspace-dialogue-active main>footer,body.workspace-dialogue-active .page-header .eyebrow{display:none}
++body.workspace-dialogue-active .page-header{padding:22px 0 18px}
++#dialogue>.workspace-toolbar{justify-content:flex-end;margin:0 0 10px;padding:0}
++#dialogue>.workspace-toolbar .workspace-original{background:none;border-color:transparent;font-size:10px;padding:3px 0;color:var(--muted)}
++#dialogue>.workspace-toolbar .workspace-original:hover{color:var(--amber)}
++#dialogue .workspace-frame{display:block;min-height:0;border:0;border-radius:0;background:var(--bg);height:calc(100dvh - 230px)}
++/* JO9 MOD END DIALOGUE_SHELL_20261115 */
++
++/* JO9 MOD START COMPACT_WORKSPACE_SHELL_20261115 */
++.page-header{position:relative;padding:12px 0 10px!important;gap:12px}
++.page-header>div:first-child{min-width:0;flex:1}
++.page-header .eyebrow,main>footer{display:none!important}
++.page-header h1{margin:0;font-size:25px;line-height:1.25}
++.page-header p{margin:5px 0 0!important;line-height:1.5}
++.workspace-open-current{flex:none;align-self:center;color:var(--muted);text-decoration:none;font-size:10px;white-space:nowrap;padding:3px 0}
++.workspace-open-current:hover{color:var(--amber)}
++.workspace-panel>.workspace-toolbar{padding:0!important;margin:0 0 8px!important;gap:7px}
++.workspace-panel>.workspace-toolbar:empty{display:none}
++.workspace-panel>.workspace-toolbar>button{font-size:12px;padding:8px 13px}
++.workspace-frame{display:block;min-height:0!important;border:0!important;border-radius:0!important;background:var(--bg)!important}
++body.workspace-framed-active{overflow:hidden}
++.workspace-artifact-view>.workspace-toolbar{display:none}
++.workspace-artifact-list{max-height:min(40vh,440px)}
++@media(max-width:650px){.page-header{display:flex!important;flex-wrap:wrap}.workspace-open-current{font-size:9px}.page-header .header-actions{margin-top:0}.workspace-toolbar{gap:6px}}
++/* JO9 MOD END COMPACT_WORKSPACE_SHELL_20261115 */
++
++.workspace-panel>.workspace-toolbar>button.primary{background:var(--amber);border-color:var(--amber);color:var(--bg)}
++
++/* JO9 MOD MASTER_INITIALS_20261115: fields keep the existing studio palette. */
++.st-grid .st-initial-field{display:grid;grid-template-columns:minmax(0,1fr);align-items:start;gap:6px;padding:12px;border:1px solid var(--border,#34383c);border-radius:7px;min-width:0}
++.st-grid .st-initial-field input{width:100%;min-width:0;box-sizing:border-box}
++.st-grid .st-initial-field small{display:block;min-width:0;white-space:normal;overflow-wrap:anywhere}
++.st-grid .st-initial-field button{justify-self:start;min-width:0}
++[data-initial-group]{margin-top:12px}
++[data-initial-group]>summary{cursor:pointer;margin-bottom:10px}
++
++/* JO9 MOD QUESTION_WORKSPACE_20261115: common character context and independent questions. */
++.question-tabs{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 14px}.question-workspace{min-width:0}.question-workspace textarea{box-sizing:border-box;width:100%}.question-workspace .gm-text{white-space:pre-wrap;padding:14px;min-height:80px;overflow-wrap:anywhere}.gdb-columns,.gdb-sim-columns{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:18px}.gdb-columns{margin-top:18px}.gdb-columns>* , .gdb-sim-columns>*{min-width:0}.gdb-rows{max-height:650px;overflow:auto}.gdb-row{display:flex;flex-direction:column;text-align:left;width:100%;padding:12px;gap:7px;margin-bottom:8px;border:1px solid var(--border,#34383c);border-radius:7px;background:var(--panel,#1d2023);color:inherit;cursor:pointer;overflow-wrap:anywhere}.gdb-row.on,.gdb-row:hover{border-color:var(--gold,#bba36c)}.gdb-row small{opacity:.65;overflow-wrap:anywhere}.gdb-original{white-space:pre-wrap;overflow-wrap:anywhere}.workspace-sim-nav>.workspace-subnav{margin-left:10px;padding-left:6px}.workspace-sim-nav .nav-button{font-size:11px;padding:6px 8px}.question-workspace [data-q-candidates]{max-height:470px;overflow:auto}.question-workspace .cv-grid{margin-top:14px}@media(max-width:1050px){.gdb-columns,.gdb-sim-columns{grid-template-columns:minmax(0,1fr)}}
++
++.general-db .st-row>input,.general-db .st-row>select{width:auto;min-width:130px;flex:1}.general-db .st-row>button{flex:0 0 auto}
++.game-attribute-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:8px;margin:8px 0 18px}.game-attribute{display:flex;flex-direction:column;align-items:flex-start;gap:7px;padding:10px;border:1px solid var(--border,#34383c);border-radius:7px;min-width:0}.game-attribute>span:first-child{font-size:11px;color:var(--muted,#92989b)}.game-value{display:inline-block;max-width:100%;padding:3px 7px;border-radius:4px;font-size:12px;line-height:1.5;overflow-wrap:anywhere;background:var(--panel,#22262a);color:var(--muted,#92989b)}.game-value.has-color{background:#f5ecd8;color:var(--game-color);font-weight:700}.game-value:focus-visible{outline:2px solid var(--amber,#c9ab70);outline-offset:2px}.game-skill-tree{display:grid;gap:7px}.game-skill-tree details{border:1px solid var(--border,#34383c);border-radius:7px;overflow:hidden}.game-skill-tree summary{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:9px 11px;cursor:pointer}.game-skill-tree summary>span:first-child:before{content:'▸';margin-right:7px;color:var(--muted)}.game-skill-tree details[open]>summary>span:first-child:before{content:'▾'}.game-skill-children{padding:3px 12px 10px 24px;display:grid;gap:5px}.game-skill-children>div{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px}.game-status-name{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:14px}.game-status-name img{width:64px;height:64px;object-fit:cover;border-radius:5px}.game-status-name small{font-size:11px;color:var(--muted);flex-basis:100%}.game-status-columns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.game-status-columns section{min-width:0}.game-status-columns h3{font-size:12px;margin:0 0 10px}.game-status-pair{display:grid;grid-template-columns:1fr 1fr;gap:3px 8px;background:#f5ecd8;color:var(--game-color);padding:9px;border-radius:5px;margin:6px 0;font-size:11px}.game-status-pair b{grid-column:1/-1;font-size:12px}.game-status-pair span{display:flex;justify-content:space-between;gap:4px}.game-status-pair strong{font-variant-numeric:tabular-nums}.game-status-line{display:flex;justify-content:space-between;gap:8px;background:#f5ecd8;color:var(--game-color,#222);padding:8px;border-radius:5px;font-size:11px;margin:6px 0;align-items:center;flex-wrap:wrap}.game-status-line .game-value{padding:0;background:none}.game-status-reserved{margin-top:15px;border:1px dashed var(--border,#34383c);border-radius:6px;padding:12px;min-height:48px;display:flex;flex-direction:column;gap:5px;color:var(--muted);font-size:11px}.game-status-card{align-self:start}.st .st-grid:has(>.st-game-stat){grid-template-columns:repeat(auto-fill,minmax(165px,1fr));align-items:stretch;gap:10px}.st .st-grid>.st-game-stat{display:grid;grid-template-columns:minmax(0,1fr);align-content:start;align-items:start;gap:8px;min-width:0;padding:12px;border:1px solid var(--border,#34383c);border-radius:7px}.st-game-stat .st-stat-name{display:block;font-size:12px;line-height:1.4;min-height:1.4em;white-space:normal;overflow-wrap:anywhere}.st-game-stat .st-stat-controls{display:flex;align-items:center;gap:6px;min-width:0}.st .st-game-stat input[type=number]{box-sizing:border-box;width:68px;min-width:0;max-width:100%;padding:6px 5px;font-variant-numeric:tabular-nums}.st .st-game-stat input[type=number][data-st-simulation]{width:88px}.st-game-stat .st-stat-description{display:block;min-width:0;font-size:10px}.st-game-stat select{width:100%;min-width:0}.game-simulation-editor{margin:22px 0}.game-character-summary .tag{cursor:help}@media(max-width:1250px){.game-status-columns{grid-template-columns:1fr}.game-status-pair{grid-template-columns:minmax(55px,1fr) 1fr 1fr}.game-status-pair b{grid-column:auto}.game-status-reserved{min-height:30px}}@media(max-width:620px){.game-status-pair{grid-template-columns:1fr 1fr}.game-status-pair b{grid-column:1/-1}.game-attribute-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.st .st-grid:has(>.st-game-stat){grid-template-columns:repeat(2,minmax(0,1fr))}}
++
++/* Compact single-row basic attributes in the simulator. */
++.game-attribute-grid{gap:6px;margin:7px 0 14px}.game-attribute{flex-direction:row;align-items:center;justify-content:space-between;gap:6px;padding:6px 8px;min-height:30px;box-sizing:border-box}.game-attribute>span:first-child{flex-shrink:0;white-space:nowrap;font-size:10.5px}.game-attribute .game-value{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:11px;padding:1px 5px}
+--- before/tests/game-presentation.test.mjs
++++ after/tests/game-presentation.test.mjs
+@@ -26,3 +26,12 @@
+  try{globalThis.fetch=async()=>({ok:false});assert((await loadGamePresentation(true)).unavailable);globalThis.fetch=async()=>({ok:true,json:async()=>rules});assert.equal((await loadGamePresentation()).unavailable,undefined);}
+  finally{globalThis.fetch=original;setGamePresentation(rules);}
+ });
++
++test('unspecified sex skills use F while missing category averages zero defaults',()=>{
++ assert.equal(describeGameValue('sub_hj',undefined).grade,'F');
++ assert.equal(describeGameValue('sub_hj',undefined).color,'#cd0000');
++ assert.equal(describeGameValue('beauty',undefined).text,'미설정');
++ assert(!skillTree({}).includes('미설정'));assert(skillTree({}).includes('애무 F'));
++ const original=rules.skills;rules.skills=[{key:'petting',label:'애무',children:['sub_hj','sub_fj']}];
++ try{assert(skillTree({sub_hj:4}).includes('애무 C'));}finally{rules.skills=original;}
++});

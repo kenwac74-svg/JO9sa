@@ -1,0 +1,19 @@
+!Continuous field dependence (primary value is computed from rate variable, which represents continuous -- i.e., complete -- range of primary value)
+		!Temporary rate will be added/subtracted (e.g., dynslave_rate['temp_beauty'], dynslave_rate['temp_exotic'], dynslave_rate['temp_style'])
+		local jo9_nymph_previous_arousal = dynslave['arousal']
+		i = 0
+		n = arrsize('$cont_atr')
+		:slave_cont_loop
+			if dynslave_rate[$cont_atr[i]] < cont_atr_min: dynslave_rate[$cont_atr[i]] = cont_atr_min &! zero is lower bound for rate
+			if dynslave_rate[$cont_atr[i]] > cont_atr_max: dynslave_rate[$cont_atr[i]] = cont_atr_max &! 200 is upper bound for rate
+			rate = dynslave_rate[$cont_atr[i]] + dynslave_rate['temp_' + $cont_atr[i]]
+			dynslave[$cont_atr[i]] = 0
+			if rate >= cont_atr_threshold[1]: dynslave[$cont_atr[i]] = 1
+			if rate >= cont_atr_threshold[2]: dynslave[$cont_atr[i]] = 2
+			if rate >= cont_atr_threshold[3]: dynslave[$cont_atr[i]] = 3
+			if rate >= cont_atr_threshold[4]: dynslave[$cont_atr[i]] = 4
+			if rate >= cont_atr_threshold[5]: dynslave[$cont_atr[i]] = 5
+			i += 1
+		if i < n: jump 'slave_cont_loop'
+
+		

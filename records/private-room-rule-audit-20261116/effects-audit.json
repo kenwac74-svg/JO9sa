@@ -1,0 +1,317 @@
+{
+  "read_only": true,
+  "qsp": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+  "sha256": "a244ee964f0aaa1ffd6f0d0696242fa0b2bf6b46841cb3b8df2ca9e7747a416a",
+  "location_count": 314,
+  "verification": "Static decoded-QSP audit only; no saves inspected and no engine or UI run.",
+  "conclusion": "Both nightly rules are implemented only for the conscious primary slave. Assistant and private-room actors have no nightly acceptance/effect consumer. Actual user-save checkbox flags and a main-slave refusal outcome remain unverified.",
+  "consumers": [
+    {
+      "location": "$end_day_variable_reset",
+      "body_line": 28,
+      "code": "\tdynslave['urinal_rule_broken'] = 0"
+    },
+    {
+      "location": "$end_day_variable_reset",
+      "body_line": 29,
+      "code": "\tdynslave['toilet_rule_broken'] = 0"
+    },
+    {
+      "location": "next_day",
+      "body_line": 2414,
+      "code": "\tif slave['toilet_rule'] = 1:"
+    },
+    {
+      "location": "next_day",
+      "body_line": 2430,
+      "code": "\t\t\t\tslave['toilet_rule_broken'] = 1"
+    },
+    {
+      "location": "next_day",
+      "body_line": 2437,
+      "code": "\t\tif slave['toilet_rule_broken'] = 0:"
+    },
+    {
+      "location": "next_day",
+      "body_line": 2448,
+      "code": "\tif slave['urinal_rule'] = 1:"
+    },
+    {
+      "location": "next_day",
+      "body_line": 2464,
+      "code": "\t\t\t\tslave['urinal_rule_broken'] = 1"
+    },
+    {
+      "location": "next_day",
+      "body_line": 2471,
+      "code": "\t\tif slave['urinal_rule_broken'] = 0:"
+    },
+    {
+      "location": "next_day",
+      "body_line": 2564,
+      "code": "\t\tif slave['urinal_rule'] = 1 and slave['urinal_rule_broken'] = 1:"
+    },
+    {
+      "location": "next_day",
+      "body_line": 2568,
+      "code": "\t\tif slave['toilet_rule'] = 1 and slave['toilet_rule_broken'] = 1:"
+    },
+    {
+      "location": "next_day",
+      "body_line": 2643,
+      "code": "\tif slave['urinal_rule'] = 1 and slave['urinal_rule_broken'] = 0:"
+    },
+    {
+      "location": "next_day",
+      "body_line": 2658,
+      "code": "\tif slave['toilet_rule'] = 1 and slave['toilet_rule_broken'] = 0:"
+    },
+    {
+      "location": "end_day_screen",
+      "body_line": 1195,
+      "code": "\tif slave['urinal_rule_broken']: $text += '[TEXT]'"
+    },
+    {
+      "location": "end_day_screen",
+      "body_line": 1196,
+      "code": "\tif slave['toilet_rule_broken']: $text += '[TEXT]'"
+    },
+    {
+      "location": "slave_stat",
+      "body_line": 493,
+      "code": "\tif slave[\"toilet_rule\"] = 1:"
+    },
+    {
+      "location": "slave_stat",
+      "body_line": 495,
+      "code": "\t\t*p '<div id=\"chekbox_8r\"><a href = \"EXEC: slave[''toilet_rule''] = 0 & $info_text = $toilet_rule_abort & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/sel_button.png\"></a></div>'"
+    },
+    {
+      "location": "slave_stat",
+      "body_line": 497,
+      "code": "\t\t*p '<div id=\"chekbox_8r\"><a href = \"EXEC: slave[''toilet_rule''] = 1 & $info_text = $toilet_rule & slave[''urinal_rule''] = 0 & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/unsel_button.png\"></a></div>'"
+    },
+    {
+      "location": "slave_stat",
+      "body_line": 500,
+      "code": "\tif slave[\"urinal_rule\"] = 1:"
+    },
+    {
+      "location": "slave_stat",
+      "body_line": 502,
+      "code": "\t\t*p '<div id=\"chekbox_9r\"><a href = \"EXEC: slave[''urinal_rule''] = 0 & $info_text = $urinal_rule_abort & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/sel_button.png\"></a></div>'"
+    },
+    {
+      "location": "slave_stat",
+      "body_line": 504,
+      "code": "\t\t*p '<div id=\"chekbox_9r\"><a href = \"EXEC: slave[''urinal_rule''] = 1 & $info_text = $urinal_rule & slave[''toilet_rule''] = 0 & gt $curloc\"><img src=\"content/pic/ui/buttons/legacy/unsel_button.png\"></a></div>'"
+    },
+    {
+      "location": "#dynamic",
+      "body_line": 3455,
+      "code": "\tpreset_urinal_rule[i] = 0"
+    },
+    {
+      "location": "#dynamic",
+      "body_line": 3456,
+      "code": "\tpreset_toilet_rule[i] = 0"
+    },
+    {
+      "location": "#dynamic",
+      "body_line": 3480,
+      "code": "\tif slave['urinal_rule'] = 1: preset_urinal_rule[i] = 1"
+    },
+    {
+      "location": "#dynamic",
+      "body_line": 3481,
+      "code": "\tif slave['toilet_rule'] = 1: preset_toilet_rule[i] = 1"
+    },
+    {
+      "location": "#dynamic",
+      "body_line": 3507,
+      "code": "\tslave['urinal_rule'] = preset_urinal_rule[i]"
+    },
+    {
+      "location": "#dynamic",
+      "body_line": 3508,
+      "code": "\tslave['toilet_rule'] = preset_toilet_rule[i]"
+    },
+    {
+      "location": "#dynamic",
+      "body_line": 3542,
+      "code": "\tslave['urinal_rule'] = 0"
+    },
+    {
+      "location": "#dynamic",
+      "body_line": 3543,
+      "code": "\tslave['toilet_rule'] = 0"
+    },
+    {
+      "location": "#txt_woman",
+      "body_line": 768,
+      "code": "$urinal_rule = '[TEXT]'"
+    },
+    {
+      "location": "#txt_woman",
+      "body_line": 769,
+      "code": "$urinal_rule_abort = '[TEXT]'"
+    },
+    {
+      "location": "#txt_woman",
+      "body_line": 770,
+      "code": "$toilet_rule = '[TEXT]'"
+    },
+    {
+      "location": "#txt_woman",
+      "body_line": 771,
+      "code": "$toilet_rule_abort = '[TEXT]'"
+    },
+    {
+      "location": "#txt_man",
+      "body_line": 718,
+      "code": "$urinal_rule = '[TEXT]'"
+    },
+    {
+      "location": "#txt_man",
+      "body_line": 720,
+      "code": "$urinal_rule_abort = '[TEXT]'"
+    },
+    {
+      "location": "#txt_man",
+      "body_line": 722,
+      "code": "$toilet_rule = '[TEXT]'"
+    },
+    {
+      "location": "#txt_man",
+      "body_line": 724,
+      "code": "$toilet_rule_abort = '[TEXT]'"
+    }
+  ],
+  "role_guards": [
+    {
+      "location": "next_day",
+      "body_lines": [
+        2214,
+        2577
+      ],
+      "behavior": "Acceptance, explanation and rule refusal processing only slave_state = slave_exist."
+    },
+    {
+      "location": "next_day",
+      "body_lines": [
+        2589,
+        2692
+      ],
+      "behavior": "Followed-rule effects only slave_state = slave_exist."
+    }
+  ],
+  "rule_effects": {
+    "urinal": {
+      "acceptance_lines": [
+        2448,
+        2480
+      ],
+      "repulse": 18,
+      "force_requirements": [
+        "force_rules=1",
+        "inventory[pissuar_stable]=1"
+      ],
+      "followed_lines": [
+        2643,
+        2657
+      ],
+      "effects": [
+        "master_mood_rate += sub_piss - 3",
+        "if perversion<1: neg_disgust=max(current,10)",
+        "if sub_piss>2: master_moodlet[pos_toilet]+=1",
+        "perversion_xp += 1",
+        "mood_rate -= max(0,4-sub_piss-moral-perversion)",
+        "custom_rate += 2",
+        "pride_rate += jo9_origin_growth(delta,-3)",
+        "hygiene_rate += 15",
+        "angst_rate += ego+pride+temper-perversion-sub_piss-moral-instinct",
+        "invoke dyn_advance_sex_skills_nolesson for sub_piss"
+      ]
+    },
+    "toilet": {
+      "acceptance_lines": [
+        2414,
+        2446
+      ],
+      "repulse": 26,
+      "force_requirements": [
+        "force_rules=1",
+        "inventory[toilet_stable]=1"
+      ],
+      "followed_lines": [
+        2658,
+        2673
+      ],
+      "effects": [
+        "if perversion<2: neg_disgust=max(current,20)",
+        "master_mood_rate += sub_kopro - 3",
+        "perversion_xp += 1",
+        "if sub_kopro>3: master_moodlet[pos_toilet]+=1",
+        "mood_rate -= max(0,5-sub_kopro-moral-perversion)",
+        "custom_rate += 3",
+        "pride_rate += jo9_origin_growth(delta,-4)",
+        "hygiene_rate += 40",
+        "angst_rate += 2*(ego+pride+temper)-perversion-sub_kopro-moral-instinct",
+        "if master_ill>0 and rand(1,5)=1: ill+=1",
+        "invoke dyn_advance_sex_skills_nolesson for sub_kopro"
+      ]
+    }
+  },
+  "conditions_not_bugs": [
+    "No nightly effect occurs immediately on checkbox change; processing is in next_day.",
+    "A fainted primary slave is excluded by slave_exist guard.",
+    "Refusal sets the corresponding broken flag; followed-rule effects require broken=0.",
+    "neg_disgust is conditional on perversion threshold, so that mood text is not guaranteed even when rules execute.",
+    "Skill advancement uses the shared progression helper; a daily skill-level increment is not guaranteed."
+  ],
+  "bridge": {
+    "location": "snk_room_bridge",
+    "entry_lines": [
+      55,
+      89
+    ],
+    "swap_lines": [
+      81,
+      82
+    ],
+    "leave_swap_lines": [
+      102,
+      103
+    ],
+    "guard_lines": [
+      118,
+      198
+    ],
+    "next_day_guard_line": 3,
+    "meaning": "Room menu temporarily aliases actor into slave, but next_day guard restores ownership and redirects before daily processing. This is not a nightly callback."
+  },
+  "daily_reset": {
+    "location": "$end_day_variable_reset",
+    "body_lines": [
+      7,
+      41
+    ],
+    "meaning": "Both broken flags and num_rules_broken/num_rules_wanttobreak already reset through $all_slave_characters, which includes assistant and room1-4 (#static_base 321-328,346-355)."
+  },
+  "minimal_repair_proposal": [
+    "After explicit approval, reuse only these two rules acceptance/effect code with actor parameter for the intended roles, preserving existing formulas and refusal requirements.",
+    "Provide per-actor rules_explanations display and clear text once daily.",
+    "Preserve primary-slave-only other rules, overnight_rules_count and end_day_screen flags; do not broadly clone the entire rule section.",
+    "Existing fields suffice; no new persistence schema or save migration appears necessary for this omission.",
+    "Integration ordering must account for next_day 2098-2101 selected wake worker reset, invoked 2580-2583: new counters and text added before it would be erased.",
+    "Explicitly review whether player mood contributions from multiple active role occupants should accumulate; existing implementation handles one primary actor, so this extension must not silently decide concurrency."
+  ],
+  "not_modified": [
+    "game QSP",
+    "source",
+    "mods JSON",
+    "archives",
+    "saves"
+  ],
+  "temporary_copies_created": false
+}

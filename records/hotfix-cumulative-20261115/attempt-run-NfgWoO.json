@@ -1,0 +1,82 @@
+{
+  "schema": 1,
+  "createdAt": "2026-11-14T18:24:00.523Z",
+  "profile": "release",
+  "checks": [
+    {
+      "name": "inputs-readable",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "candidate": "7e8c7a8a6b452c06c988e51a2fe6e33b0667d50f55c8cd190e50ccb21d43a64a"
+      }
+    },
+    {
+      "name": "world-structure-and-line-endings",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "sha256": "7e8c7a8a6b452c06c988e51a2fe6e33b0667d50f55c8cd190e50ccb21d43a64a",
+        "bytes": 51982444,
+        "locations": 313,
+        "roundtrip": true,
+        "lineEndingIssues": 0
+      }
+    },
+    {
+      "name": "slave-template-registry",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "files": 1885,
+        "numericIds": 1885,
+        "collisions": 0,
+        "invalidJson": 0,
+        "embeddedIdMismatches": 0
+      }
+    },
+    {
+      "name": "distribution-byte-match",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "sha256": "7e8c7a8a6b452c06c988e51a2fe6e33b0667d50f55c8cd190e50ccb21d43a64a"
+      }
+    },
+    {
+      "name": "patch-replay-and-idempotence",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "patches": [
+          "DISTRIBUTION_EXCLUDE_22_DIALOGUE_20261115"
+        ],
+        "byteExact": true,
+        "idempotent": true
+      }
+    },
+    {
+      "name": "installed-client-smoke",
+      "required": true,
+      "status": "FAIL",
+      "error": "Representative save must have both slave and assistant present"
+    },
+    {
+      "name": "input-hashes-unchanged",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "files": 4
+      }
+    }
+  ],
+  "limits": [
+    "No GUI clicks or visual layout verification.",
+    "Save data is used only to prime representative state. GUI save-file loading, CRC compatibility and full saved script restoration are NOT tested.",
+    "Start is replaced only in diagnostic copies. Smoke covers lifecycle calls, not the character-selection UI or every gameplay branch.",
+    "No complete QSP syntax checker: dynamic code and all game logic are not statically proved.",
+    "Battle smoke instruments the menu dispatch only; full combat outcomes and balance are not tested."
+  ],
+  "verdict": "FAIL",
+  "output": "G:\\Codex\\tmp\\hotfix-cumulative-20261115-gate\\run-NfgWoO"
+}

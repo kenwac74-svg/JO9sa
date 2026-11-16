@@ -1,0 +1,156 @@
+{
+  "schema": 1,
+  "createdAt": "2026-11-13T15:18:13.681Z",
+  "profile": "release",
+  "checks": [
+    {
+      "name": "inputs-readable",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "candidate": "62a5f282751d102820379e71cd26694dcf5535c4871a8bd5ebe23a224bb21cc2"
+      }
+    },
+    {
+      "name": "world-structure-and-line-endings",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "sha256": "62a5f282751d102820379e71cd26694dcf5535c4871a8bd5ebe23a224bb21cc2",
+        "bytes": 51909854,
+        "locations": 311,
+        "roundtrip": true,
+        "lineEndingIssues": 0
+      }
+    },
+    {
+      "name": "slave-template-registry",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "files": 1157,
+        "numericIds": 1157,
+        "collisions": 0,
+        "invalidJson": 0,
+        "embeddedIdMismatches": 0
+      }
+    },
+    {
+      "name": "distribution-byte-match",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "sha256": "62a5f282751d102820379e71cd26694dcf5535c4871a8bd5ebe23a224bb21cc2"
+      }
+    },
+    {
+      "name": "patch-replay-and-idempotence",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "patches": [
+          "2026-11-14_shiru_purchase_portrait"
+        ],
+        "byteExact": true,
+        "idempotent": true
+      }
+    },
+    {
+      "name": "installed-client-smoke",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "passed": 9,
+        "expected": 9
+      }
+    },
+    {
+      "name": "input-hashes-unchanged",
+      "required": true,
+      "status": "PASS",
+      "detail": {
+        "files": 4
+      }
+    }
+  ],
+  "limits": [
+    "No GUI clicks or visual layout verification.",
+    "Save data is used only to prime representative state. GUI save-file loading, CRC compatibility and full saved script restoration are NOT tested.",
+    "Start is replaced only in diagnostic copies. Smoke covers lifecycle calls, not the character-selection UI or every gameplay branch.",
+    "No complete QSP syntax checker: dynamic code and all game logic are not statically proved.",
+    "Battle smoke instruments the menu dispatch only; full combat outcomes and balance are not tested."
+  ],
+  "client": {
+    "timeoutSeconds": 30,
+    "runnerTimeoutMs": 282000,
+    "engineSha256": "f75032d79ecb58eeb7b969cd3f774d66b091fca38a360acdabd782e03a46c6e6",
+    "stateAssignments": 199509,
+    "probes": [
+      {
+        "name": "home",
+        "checkpoint": "main_screen",
+        "pass": true,
+        "reason": "",
+        "durationMs": 8751
+      },
+      {
+        "name": "newgame",
+        "checkpoint": "main_screen",
+        "pass": true,
+        "reason": "",
+        "durationMs": 8489
+      },
+      {
+        "name": "editor-slave",
+        "checkpoint": "main_screen",
+        "pass": true,
+        "reason": "",
+        "durationMs": 8210
+      },
+      {
+        "name": "editor-assistant",
+        "checkpoint": "main_screen",
+        "pass": true,
+        "reason": "",
+        "durationMs": 8467
+      },
+      {
+        "name": "cache",
+        "checkpoint": "main_screen",
+        "pass": true,
+        "reason": "",
+        "durationMs": 8434
+      },
+      {
+        "name": "daily",
+        "checkpoint": "end_day_screen",
+        "pass": true,
+        "reason": "",
+        "durationMs": 8236
+      },
+      {
+        "name": "city-weapons",
+        "checkpoint": "interaction_screen_city",
+        "pass": true,
+        "reason": "",
+        "durationMs": 7987
+      },
+      {
+        "name": "city-beauty",
+        "checkpoint": "interaction_screen_city",
+        "pass": true,
+        "reason": "",
+        "durationMs": 7692
+      },
+      {
+        "name": "battle-entry",
+        "checkpoint": "боевое_меню",
+        "pass": true,
+        "reason": "",
+        "durationMs": 7733
+      }
+    ]
+  },
+  "verdict": "PASS",
+  "output": "G:\\Codex\\tmp\\full242-release-gate-20261113\\run-TCBn7C"
+}

@@ -1,0 +1,305 @@
+{
+  "id": "2026-11-13_species_sets_damage_stone",
+  "status": "APPROVED",
+  "approval": "User specified ghost/android bundles, vampire and android take2/3 HP/stamina damage, vampire takes2/3 morale, ghost takes1/2 HP/stamina with unchanged morale, android morale immunity, stone blocks oral/anal/nymph addictions. Existing ghost/android preset matches verified in JSON.",
+  "before_sha256": "c1a37feb6ef11513b7293efa93ec974d514997354013dc11ee4c4a3d363465b9",
+  "after_sha256": "3aa9711ef12b8f6875c5efd3eb7db8947839dfbcaf417ed447313041eff4d14f",
+  "edits": [
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": "! JO9 MOD START VAMPIRE_SET_20261113\r\n! Existing component fields carry all effects; the species marker adds no separate multiplier.",
+      "new": "! JO9 MOD START SPECIES_SET_20261113\r\nif $args[0] = 'species_apply':\r\n dynamic replace({\r\n  ! jo9_species: 1 ghost, 2 android. Existing vampire marker remains separate.\r\n  if jo9sactor['jo9_species'] = 0 and jo9sactor_type = 3011: jo9sactor['jo9_species'] = 1\r\n  if jo9sactor['jo9_species'] = 0 and jo9sactor_type = 3018: jo9sactor['jo9_species'] = 2\r\n  if jo9sactor['jo9_vampire'] ! 1:\r\n   if jo9sactor['jo9_species'] = 1:\r\n    jo9sactor['masochism'] = 1\r\n    jo9sactor['masochism_revealed'] = 2\r\n    jo9sactor['darkness_attitude'] = 2\r\n    jo9sactor['darkness_attitude_revealed'] = 2\r\n    jo9sactor['passion_luxury'] = -1\r\n    jo9sactor['passion_luxury_revealed'] = 2\r\n    jo9sactor['passion_fame'] = -1\r\n    jo9sactor['passion_fame_revealed'] = 2\r\n    jo9sactor['pos_praise'] = 0\r\n    ! Keep the existing attention/hikikomori exclusion, with the racial set taking priority.\r\n    jo9sactor['jo9_attention'] = 0\r\n    jo9sactor['jo9_attention_known'] = 0\r\n    if jo9sactor['abuse_attitude'] = -1: jo9sactor['abuse_attitude'] = 0 & jo9sactor['abuse_attitude_revealed'] = 0\r\n    jo9sactor['metabolism'] = 5\r\n    jo9sactor['metabolism_revealed'] = 2\r\n   elseif jo9sactor['jo9_species'] = 2:\r\n    jo9sactor['nymphomania'] = -2\r\n    jo9sactor['nymphomania_revealed'] = 2\r\n    jo9sactor['meekness'] = 1\r\n    jo9sactor['meekness_revealed'] = 2\r\n    jo9sactor['metabolism'] = 5\r\n    jo9sactor['metabolism_revealed'] = 2\r\n    jo9sactor['secretary_affinity'] = 1\r\n    jo9sactor['secretary_affinity_revealed'] = 2\r\n   end\r\n  end\r\n }, 'jo9sactor', $args[1])\r\n gs 'jo9_traits','stone_repair',$args[1]\r\n exit\r\nend\r\nif $args[0] = 'stone_repair':\r\n dynamic replace({\r\n  if jo9stone['nymphomania'] < -1:\r\n   if jo9stone['oral_affinity'] > 0: jo9stone['oral_affinity'] = 0 & jo9stone['oral_affinity_revealed'] = 0\r\n   if jo9stone['anal_affinity'] > 0: jo9stone['anal_affinity'] = 0 & jo9stone['anal_affinity_revealed'] = 0\r\n  end\r\n },'jo9stone',$args[1])\r\n exit\r\nend\r\nif $args[0] = 'species_component' or $args[0] = 'species_component_text':\r\n $result = ''\r\n if $args[1] = 'pain': $result = $Привычна_к_боли\r\n if $args[1] = 'darkness': $result = $Дитя_тьмы\r\n if $args[1] = 'frugal': $result = $Аскетичная\r\n if $args[1] = 'loner': $result = $Хикикомори\r\n if $args[1] = 'metabolism': $result = $Мощный_метаболизм\r\n if $args[1] = 'stone': $result = $jo9_nymph_stone_text\r\n if $args[1] = 'obedient': $result = $Дисциплинированная\r\n if $args[1] = 'advisor': $result = $секретарша\r\n if $args[0] = 'species_component' and $result ! '': msg $result\r\n exit\r\nend\r\nif $args[0] = 'ghost_text':\r\n $result = '유령은 다음과 같은 특성을 모두 가집니다. '\r\n $result += '<a href=\"EXEC: gs ''jo9_traits'', ''species_component'', ''pain''\"><<dyneval($vb_cycle_skill, 2, \"[통증 내성]\")>></a>, '\r\n $result += '<a href=\"EXEC: gs ''jo9_traits'', ''species_component'', ''darkness''\"><<dyneval($vb_cycle_skill, 2, \"[암흑기호증]\")>></a>, '\r\n $result += '<a href=\"EXEC: gs ''jo9_traits'', ''species_component'', ''frugal''\"><<dyneval($vb_cycle_skill, 2, \"[검소함]\")>></a>, '\r\n $result += '<a href=\"EXEC: gs ''jo9_traits'', ''species_component'', ''loner''\"><<dyneval($vb_cycle_skill, 2, \"[은둔형 외톨이]\")>></a>, '\r\n $result += '<a href=\"EXEC: gs ''jo9_traits'', ''species_component'', ''metabolism''\"><<dyneval($vb_cycle_skill, 5, \"[고도 대사량]\")>></a>'\r\n $result += ' 전투에서 받는 체력·스태미나 피해가 각각 절반으로 줄어듭니다.'\r\n exit\r\nend\r\nif $args[0] = 'android_text':\r\n $result = '안드로이드는 다음과 같은 특성을 모두 가집니다. '\r\n $result += '<a href=\"EXEC: gs ''jo9_traits'', ''species_component'', ''stone''\"><<dyneval($vb_cycle_skill, 0, \"[석녀]\")>></a>, '\r\n $result += '<a href=\"EXEC: gs ''jo9_traits'', ''species_component'', ''obedient''\"><<dyneval($vb_cycle_skill, 5, \"[강한 복종심]\")>></a>, '\r\n $result += '<a href=\"EXEC: gs ''jo9_traits'', ''species_component'', ''metabolism''\"><<dyneval($vb_cycle_skill, 5, \"[고도 대사량]\")>></a>, '\r\n $result += '<a href=\"EXEC: gs ''jo9_traits'', ''species_component'', ''advisor''\"><<dyneval($vb_cycle_skill, 5, \"[보좌관]\")>></a>'\r\n $result += ' 전투에서 받는 체력·스태미나 피해가 각각 1/3 줄어들며, 사기 피해를 받지 않습니다.'\r\n exit\r\nend\r\n\r\n! JO9 MOD END SPECIES_SET_20261113\r\n! JO9 MOD START VAMPIRE_SET_20261113\r\n! Component fields keep their existing effects; incoming combat damage also applies the approved racial reduction.",
+      "count": 1,
+      "patchId": "SPECIES_SET_20261113"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": "if $args[0] = 'vampire_apply':",
+      "new": "if $args[0] = 'vampire_apply':\r\n gs 'jo9_traits','species_apply',$args[1]",
+      "count": 1,
+      "patchId": "SPECIES_SET_20261113"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": "  if dynslave['jo9_vampire'] = 1: $result = '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''vampire''\">[뱀파이어]</a><br>'",
+      "new": "  if dynslave['jo9_vampire'] = 1: $result = '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''vampire''\">[뱀파이어]</a><br>'\r\n  if dynslave['jo9_vampire'] ! 1 and dynslave['jo9_species'] = 1: $result = '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''ghost''\">[유령]</a><br>'\r\n  if dynslave['jo9_vampire'] ! 1 and dynslave['jo9_species'] = 2: $result = '<a href=\"EXEC: gs ''jo9_traits'', ''describe'', ''android''\">[안드로이드]</a><br>'",
+      "count": 1,
+      "patchId": "SPECIES_SET_20261113"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": " if $args[1] = 'vampire': $result = $func('jo9_traits','vampire_text')",
+      "new": " if $args[1] = 'vampire': $result = $func('jo9_traits','vampire_text')\r\n if $args[1] = 'ghost': $result = $func('jo9_traits','ghost_text')\r\n if $args[1] = 'android': $result = $func('jo9_traits','android_text')",
+      "count": 1,
+      "patchId": "SPECIES_SET_20261113"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": " $result += '<a href=\"EXEC: gs ''jo9_traits'', ''vampire_component'', ''mage''\"><<dyneval($vb_cycle_skill, 5, \"[타고난 마법사]\")>></a>'",
+      "new": " $result += '<a href=\"EXEC: gs ''jo9_traits'', ''vampire_component'', ''mage''\"><<dyneval($vb_cycle_skill, 5, \"[타고난 마법사]\")>></a>'\r\n $result += ' 전투에서 받는 체력·스태미나·사기 피해가 각각 1/3 줄어듭니다.'",
+      "count": 1,
+      "patchId": "SPECIES_SET_20261113"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": "if $args[0] = 'vampire_cache':",
+      "new": "if $args[0] = 'vampire_cache':\r\n if instr($jo9_nymph_stone_text,'애널·펠라 중독과 색정광·정액 중독은 발생하지 않는다.') = 0: $jo9_nymph_stone_text += ' 애널·펠라 중독과 색정광·정액 중독은 발생하지 않는다.'",
+      "count": 1,
+      "patchId": "STONE_EXCLUSION_CACHE_20261113"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": "instr($update_slave_features_list,'VAMPIRE_SET_20261113')",
+      "new": "instr($update_slave_features_list,'SPECIES_SET_20261113')",
+      "count": 1,
+      "patchId": "SPECIES_SET_20261113"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": "instr($newloc_update_iced_features_list,'VAMPIRE_SET_20261113')",
+      "new": "instr($newloc_update_iced_features_list,'SPECIES_SET_20261113')",
+      "count": 1,
+      "patchId": "SPECIES_SET_20261113"
+    },
+    {
+      "location": "#static_base",
+      "field": "body",
+      "old": "$dynslave_features_list += $func('jo9_traits','race_list','dynslave')",
+      "new": "! SPECIES_SET_20261113\r\n$dynslave_features_list += $func('jo9_traits','race_list','dynslave')",
+      "count": 1,
+      "patchId": "SPECIES_SET_20261113"
+    },
+    {
+      "location": "$stock_traits",
+      "field": "body",
+      "old": "$stock_features_list += $func('jo9_traits','race_list','stock')",
+      "new": "! SPECIES_SET_20261113\r\n$stock_features_list += $func('jo9_traits','race_list','stock')",
+      "count": 1,
+      "patchId": "SPECIES_SET_20261113"
+    },
+    {
+      "location": "jo9_farid_consignment",
+      "field": "body",
+      "old": "$jo9_farid_viewprobe_features_list += $func('jo9_traits','race_list','jo9_farid_viewprobe')",
+      "new": "! SPECIES_SET_20261113\r\n$jo9_farid_viewprobe_features_list += $func('jo9_traits','race_list','jo9_farid_viewprobe')",
+      "count": 1,
+      "patchId": "SPECIES_SET_20261113"
+    },
+    {
+      "location": "$newloc",
+      "field": "body",
+      "old": "$dynslave_features_list += $func('jo9_traits','race_list','dynslave')",
+      "new": "! SPECIES_SET_20261113\r\n$dynslave_features_list += $func('jo9_traits','race_list','dynslave')",
+      "count": 1,
+      "patchId": "SPECIES_SET_20261113"
+    },
+    {
+      "location": "#static_base",
+      "field": "body",
+      "old": "        if dynslave['jo9_vampire'] ! 1 and dynslave['metabolism'] = 5 and (dynslave['metabolism_revealed'] = 2 or spell_revelio = 1):",
+      "new": "! JO9 MOD START SPECIES_SET_20261113\r\n        if dynslave['jo9_species'] = 0 and dynslave['jo9_vampire'] ! 1 and dynslave['metabolism'] = 5 and (dynslave['metabolism_revealed'] = 2 or spell_revelio = 1):\r\n! JO9 MOD END SPECIES_SET_20261113",
+      "count": 1,
+      "patchId": "SPECIES_SET_20261113"
+    },
+    {
+      "location": "#static_base",
+      "field": "body",
+      "old": "        if dynslave['jo9_vampire'] ! 1 and dynslave['darkness_attitude'] = 2 and (dynslave['darkness_attitude_revealed'] = 2 or spell_revelio = 1):",
+      "new": "! JO9 MOD START SPECIES_SET_20261113\r\n        if dynslave['jo9_species'] ! 1 and dynslave['jo9_vampire'] ! 1 and dynslave['darkness_attitude'] = 2 and (dynslave['darkness_attitude_revealed'] = 2 or spell_revelio = 1):\r\n! JO9 MOD END SPECIES_SET_20261113",
+      "count": 1,
+      "patchId": "SPECIES_SET_20261113"
+    },
+    {
+      "location": "#static_base",
+      "field": "body",
+      "old": "        if dynslave['masochism'] = 1 and (dynslave['masochism_revealed'] = 2 or spell_revelio = 1):",
+      "new": "! JO9 MOD START SPECIES_SET_20261113\r\n        if dynslave['jo9_species'] ! 1 and dynslave['masochism'] = 1 and (dynslave['masochism_revealed'] = 2 or spell_revelio = 1):\r\n! JO9 MOD END SPECIES_SET_20261113",
+      "count": 1,
+      "patchId": "SPECIES_SET_20261113"
+    },
+    {
+      "location": "#static_base",
+      "field": "body",
+      "old": "        if dynslave['passion_luxury'] = -1 and (dynslave['passion_luxury_revealed'] = 2 or spell_revelio = 1):",
+      "new": "! JO9 MOD START SPECIES_SET_20261113\r\n        if dynslave['jo9_species'] ! 1 and dynslave['passion_luxury'] = -1 and (dynslave['passion_luxury_revealed'] = 2 or spell_revelio = 1):\r\n! JO9 MOD END SPECIES_SET_20261113",
+      "count": 1,
+      "patchId": "SPECIES_SET_20261113"
+    },
+    {
+      "location": "#static_base",
+      "field": "body",
+      "old": "        if dynslave['passion_fame'] = -1 and (dynslave['passion_fame_revealed'] = 2 or spell_revelio = 1):",
+      "new": "! JO9 MOD START SPECIES_SET_20261113\r\n        if dynslave['jo9_species'] ! 1 and dynslave['passion_fame'] = -1 and (dynslave['passion_fame_revealed'] = 2 or spell_revelio = 1):\r\n! JO9 MOD END SPECIES_SET_20261113",
+      "count": 1,
+      "patchId": "SPECIES_SET_20261113"
+    },
+    {
+      "location": "#static_base",
+      "field": "body",
+      "old": "        if dynslave['nymphomania'] < -1 and (dynslave['nymphomania_revealed'] = 2 or spell_revelio = 1):",
+      "new": "! JO9 MOD START SPECIES_SET_20261113\r\n        if dynslave['jo9_species'] ! 2 and dynslave['nymphomania'] < -1 and (dynslave['nymphomania_revealed'] = 2 or spell_revelio = 1):\r\n! JO9 MOD END SPECIES_SET_20261113",
+      "count": 1,
+      "patchId": "SPECIES_SET_20261113"
+    },
+    {
+      "location": "#static_base",
+      "field": "body",
+      "old": "        if dynslave['meekness'] > 0 and (dynslave['meekness_revealed'] = 2 or spell_revelio = 1):",
+      "new": "! JO9 MOD START SPECIES_SET_20261113\r\n        if dynslave['jo9_species'] ! 2 and dynslave['meekness'] > 0 and (dynslave['meekness_revealed'] = 2 or spell_revelio = 1):\r\n! JO9 MOD END SPECIES_SET_20261113",
+      "count": 1,
+      "patchId": "SPECIES_SET_20261113"
+    },
+    {
+      "location": "#static_base",
+      "field": "body",
+      "old": "        if dynslave['secretary_affinity'] > 0 and (dynslave['secretary_affinity_revealed'] = 2 or spell_revelio = 1):",
+      "new": "! JO9 MOD START SPECIES_SET_20261113\r\n        if dynslave['jo9_species'] ! 2 and dynslave['secretary_affinity'] > 0 and (dynslave['secretary_affinity_revealed'] = 2 or spell_revelio = 1):\r\n! JO9 MOD END SPECIES_SET_20261113",
+      "count": 1,
+      "patchId": "SPECIES_SET_20261113"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": "if $args[0] = 'repair_exclusions':\r\n result = 0",
+      "new": "if $args[0] = 'repair_exclusions':\r\n gs 'jo9_traits','stone_repair',$args[1]\r\n result = 0",
+      "count": 1,
+      "patchId": "STONE_EXCLUSION_20261113"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": " if jo9x_candidate = 0: exit",
+      "new": " if jo9x_candidate = 0: exit\r\n! JO9 MOD START STONE_EXCLUSION_20261113\r\n if jo9x_candidate > 0 and ($args[2] = 'oral_affinity' or $args[2] = 'anal_affinity' or $args[2] = 'nymphomania'):\r\n  if dyneval('result = <<$args[1]>>[\"nymphomania\"]') < -1: result = 0 & exit\r\n end\r\n! JO9 MOD END STONE_EXCLUSION_20261113",
+      "count": 1,
+      "patchId": "STONE_EXCLUSION_20261113"
+    },
+    {
+      "location": "jo9_chaotic",
+      "field": "body",
+      "old": "  if jo9ceactor['nymphomania'] < 0:",
+      "new": "! JO9 MOD START SPECIES_SET_20261113\r\n  if jo9ceactor['jo9_species'] ! 2 and jo9ceactor['nymphomania'] < 0:\r\n! JO9 MOD END SPECIES_SET_20261113",
+      "count": 1,
+      "patchId": "SPECIES_SET_20261113"
+    },
+    {
+      "location": "jo9_chaotic",
+      "field": "body",
+      "old": "  if jo9ceactor['passion_luxury'] = -1 or jo9ceactor['passion_luxury'] = 1:",
+      "new": "! JO9 MOD START SPECIES_SET_20261113\r\n  if jo9ceactor['jo9_species'] ! 1 and (jo9ceactor['passion_luxury'] = -1 or jo9ceactor['passion_luxury'] = 1):\r\n! JO9 MOD END SPECIES_SET_20261113",
+      "count": 1,
+      "patchId": "SPECIES_SET_20261113"
+    },
+    {
+      "location": "jo9_chaotic",
+      "field": "body",
+      "old": "  if jo9ceactor['passion_fame'] = -1:",
+      "new": "! JO9 MOD START SPECIES_SET_20261113\r\n  if jo9ceactor['jo9_species'] ! 1 and jo9ceactor['passion_fame'] = -1:\r\n! JO9 MOD END SPECIES_SET_20261113",
+      "count": 1,
+      "patchId": "SPECIES_SET_20261113"
+    },
+    {
+      "location": "jo9_traits_combat",
+      "field": "body",
+      "old": "! JO9 MOD START PROFILE_POLISH_20261025_R3",
+      "new": "! JO9 MOD START SPECIES_SET_20261113\r\nif $args[0] = 'incoming':\r\n result = args[2]\r\n if result <= 0 or $jo9_trait_combat_actor = '': exit\r\n local jo9s_vampire = dyneval('result = <<$jo9_trait_combat_actor>>[\"jo9_vampire\"]')\r\n local jo9s_species = dyneval('result = <<$jo9_trait_combat_actor>>[\"jo9_species\"]')\r\n if jo9s_vampire = 1:\r\n  result = result * 2 / 3\r\n elseif jo9s_species = 1 and $args[1] ! 'morale':\r\n  result /= 2\r\n elseif jo9s_species = 2:\r\n  if $args[1] = 'morale':\r\n   result = 0\r\n  else\r\n   result = result * 2 / 3\r\n  end\r\n end\r\n exit\r\nend\r\n! JO9 MOD END SPECIES_SET_20261113\r\n! JO9 MOD START PROFILE_POLISH_20261025_R3",
+      "count": 1,
+      "patchId": "SPECIES_SET_20261113"
+    },
+    {
+      "location": "jo9_traits_combat",
+      "field": "body",
+      "old": " $jo9_trait_combat_actor = $args[1]",
+      "new": " $jo9_trait_combat_actor = $args[1]\r\n if $args[1] ! '': gs 'jo9_traits','vampire_apply',$args[1]",
+      "count": 1,
+      "patchId": "SPECIES_SET_20261113"
+    },
+    {
+      "location": "конец_раунда",
+      "field": "body",
+      "old": "здоровье_игрока -= cheat_fight_dif * нанесенный_вред[i]",
+      "new": "здоровье_игрока -= func('jo9_traits_combat','incoming','hp',cheat_fight_dif * нанесенный_вред[i])",
+      "count": 1,
+      "patchId": "SPECIES_DAMAGE_20261113"
+    },
+    {
+      "location": "конец_раунда",
+      "field": "body",
+      "old": "выносливость_игрока -= cheat_fight_dif * нанесенный_вред[i]",
+      "new": "выносливость_игрока -= func('jo9_traits_combat','incoming','stamina',cheat_fight_dif * нанесенный_вред[i])",
+      "count": 2,
+      "patchId": "SPECIES_DAMAGE_20261113"
+    },
+    {
+      "location": "конец_раунда",
+      "field": "body",
+      "old": "дух_игрока -= cheat_fight_dif * нанесенный_вред[i]",
+      "new": "дух_игрока -= func('jo9_traits_combat','incoming','morale',cheat_fight_dif * нанесенный_вред[i])",
+      "count": 3,
+      "patchId": "SPECIES_DAMAGE_20261113"
+    },
+    {
+      "location": "generate_stock",
+      "field": "body",
+      "old": "if stock['nymphomania'] < 0: stock['nymphomania'] = rand(0,1)",
+      "new": "if stock['nymphomania'] = -1: stock['nymphomania'] = rand(0,1)",
+      "count": 1,
+      "patchId": "STONE_EXCLUSION_20261113"
+    },
+    {
+      "location": "jo9_occupation_init",
+      "field": "body",
+      "old": "if (stock['nymphomania'] = -1) = 0:",
+      "new": "if stock['nymphomania'] >= 0:",
+      "count": 2,
+      "patchId": "STONE_EXCLUSION_20261113"
+    },
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "if jo9shiruactor['jo9_nymph_no_upgrade'] = 0:",
+      "new": "if jo9shiruactor['jo9_nymph_no_upgrade'] = 0 and jo9shiruactor['nymphomania'] >= -1:",
+      "count": 1,
+      "patchId": "STONE_EXCLUSION_20261113"
+    },
+    {
+      "location": "jo9_dohna_migrate",
+      "field": "body",
+      "old": "  j9dmactor['nymphomania']=max(j9dmactor['nymphomania'],1)",
+      "new": "  if j9dmactor['nymphomania'] >= -1: j9dmactor['nymphomania']=max(j9dmactor['nymphomania'],1)",
+      "count": 3,
+      "patchId": "STONE_EXCLUSION_20261113"
+    },
+    {
+      "location": "jo9_dohna_migrate",
+      "field": "body",
+      "old": "  j9dmactor['oral_affinity']=1",
+      "new": "  if j9dmactor['nymphomania'] >= -1: j9dmactor['oral_affinity']=1",
+      "count": 1,
+      "patchId": "STONE_EXCLUSION_20261113"
+    },
+    {
+      "location": "jo9_dohna_migrate",
+      "field": "body",
+      "old": "  j9dmactor['anal_affinity']=1",
+      "new": "  if j9dmactor['nymphomania'] >= -1: j9dmactor['anal_affinity']=1",
+      "count": 1,
+      "patchId": "STONE_EXCLUSION_20261113"
+    },
+    {
+      "location": "#static_txt",
+      "field": "body",
+      "old": "$jo9_nymph_stone_text = '[석녀]<br>흥분도는 0에 고정된다. 훈련과 경험은 쌓이지만 성적 상호작용을 통해 주인과의 친밀감이 오르지 않는다.'",
+      "new": "$jo9_nymph_stone_text = '[석녀]<br>흥분도는 0에 고정된다. 훈련과 경험은 쌓이지만 성적 상호작용을 통해 주인과의 친밀감이 오르지 않는다. 애널·펠라 중독과 색정광·정액 중독은 발생하지 않는다.'",
+      "count": 1,
+      "patchId": "STONE_EXCLUSION_20261113"
+    }
+  ]
+}

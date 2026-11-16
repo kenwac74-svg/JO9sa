@@ -1,0 +1,56 @@
+{
+  "id": "2026-11-14_urgent242_duty_tooltip",
+  "status": "APPROVED",
+  "before_sha256": "5e0c9eec32246148b4903b98359819c9b44e0ea07bdad29f8f54a1bea2516e77",
+  "after_sha256": "da589b0a9d66ea737fc731535e8ca293d5a73047c30fbb97f50ae81f8496232e",
+  "edits": [
+    {
+      "location": "jo9_room_duty",
+      "field": "body",
+      "old": " if args[1]=1: $result='집안일 (내근) 하루 칼로리 2을(를) 소모합니다.'",
+      "new": " if args[1]=1: $result='집안일 (내근)'",
+      "count": 1,
+      "patchId": "ROOM_DUTY_TOOLTIP_20261114"
+    },
+    {
+      "location": "jo9_room_duty",
+      "field": "body",
+      "old": " if args[1]=2: $result='안개 경계 탐색 (외근) 하루 칼로리 4을(를) 소모합니다.'",
+      "new": " if args[1]=2: $result='안개 경계 탐색 (외근)'",
+      "count": 1,
+      "patchId": "ROOM_DUTY_TOOLTIP_20261114"
+    },
+    {
+      "location": "jo9_room_duty",
+      "field": "body",
+      "old": " if args[1]=3: $result='길거리에서 매춘 (외근) 하루 칼로리 3을(를) 소모합니다.'",
+      "new": " if args[1]=3: $result='길거리에서 매춘 (외근)'",
+      "count": 1,
+      "patchId": "ROOM_DUTY_TOOLTIP_20261114"
+    },
+    {
+      "location": "jo9_room_duty",
+      "field": "body",
+      "old": " if args[1]=4: $result='일용직 아르바이트 (외근) 하루 칼로리 3을(를) 소모합니다.'",
+      "new": " if args[1]=4: $result='일용직 아르바이트 (외근)'",
+      "count": 1,
+      "patchId": "ROOM_DUTY_TOOLTIP_20261114"
+    },
+    {
+      "location": "jo9_room_duty",
+      "field": "body",
+      "old": "if $args[0]='help':\r\n if args[1]=0: $result='업무를 맡기지 않고 쉬게 합니다. 개인실에서 몸을 추스를 수 있습니다.'\r\n if args[1]=1: $result='집 안의 청소와 요리를 맡습니다. 기분이 조금 내려갑니다. 노예·조수의 청소·요리 지시보다 우선합니다.'\r\n if args[1]=2: $result='하루 종일 안개 경계를 돌며 쓰러진 이들의 소지품을 수습해 스파크를 벌어 옵니다. 갑옷을 입고 무기를 든 메이드만 나갈 수 있고, 갑옷이 좋을수록 부상이 줄고 무기가 좋을수록 큰 수확이 늘어납니다. 외근, 행동력 3, 기분이 내려갑니다.'\r\n if args[1]=3: $result='하루 종일 사창가 골목에서 손님을 받아 화대를 법니다. 외근, 행동력 3, 기분이 내려갑니다. 임신할 수 있고, 큰 대박이 나면 성 관련 용품을 받아 올 수도 있습니다.'\r\n if args[1]=4: $result='하루 종일 장터와 가게를 돌며 일을 거들고 식재료(채소·곡물·향신료·술·유제품)를 받아 오며, 가끔 연금 재료나 물약을 받아 옵니다. 외근, 행동력 3, 기분이 내려갑니다.'\r\n exit\r\nend\r\n",
+      "new": "! JO9 MOD START ROOM_DUTY_TOOLTIP_20261114\r\nif $args[0]='help':\r\n if args[1]=0: $result='업무를 맡기지 않고 쉬게 합니다. 개인실에서 몸을 추스를 수 있습니다.'\r\n if args[1]=1: $result='집 안의 청소와 요리를 맡습니다. 기분이 조금 내려갑니다. 노예·조수의 청소·요리 지시보다 우선합니다. 하루 칼로리 2 소모. 조건: 잡일·요리 모두 A 이상, 집안일 담당은 개인실 전체에서 한 명. 수행: 활동 가능한 상태와 행동력 0 이상.'\r\n if args[1]=2: $result='하루 종일 안개 경계를 돌며 쓰러진 이들의 소지품을 수습해 스파크를 벌어 옵니다. 갑옷을 입고 무기를 든 메이드만 나갈 수 있고, 갑옷이 좋을수록 부상이 줄고 무기가 좋을수록 큰 수확이 늘어납니다. 외근, 행동력 3, 기분이 내려갑니다. 하루 칼로리 4 소모. 조건: 체력·전투력 모두 A 이상, 갑옷과 무기 착용. 수행: 행동력 3 이상, 부상 2 미만.'\r\n if args[1]=3: $result='하루 종일 사창가 골목에서 손님을 받아 화대를 법니다. 외근, 행동력 3, 기분이 내려갑니다. 임신할 수 있고, 큰 대박이 나면 성 관련 용품을 받아 올 수도 있습니다. 하루 칼로리 3 소모. 조건: 애무·구강·삽입 모두 A 이상, 처녀·가짜 처녀 및 어린 연령형 제외, 확인된 임신 상태 제외. 수행: 행동력 3 이상, 부상 2 미만.'\r\n if args[1]=4: $result='하루 종일 장터와 가게를 돌며 일을 거들고 식재료(채소·곡물·향신료·술·유제품)를 받아 오며, 가끔 연금 재료나 물약을 받아 옵니다. 외근, 행동력 3, 기분이 내려갑니다. 하루 칼로리 3 소모. 조건: 요리·사무·연금 중 두 가지 이상 A 이상. 수행: 행동력 3 이상, 부상 2 미만.'\r\n exit\r\nend\r\n! JO9 MOD END ROOM_DUTY_TOOLTIP_20261114\r\n",
+      "count": 1,
+      "patchId": "ROOM_DUTY_TOOLTIP_20261114"
+    },
+    {
+      "location": "jo9_room_duty",
+      "field": "body",
+      "old": "    $jo9_rd_h=func('jo9_room_duty','why',jo9_rd_n,jo9_rd_d)",
+      "new": "    $jo9_rd_h += '<br>현재 불가 사유: '+func('jo9_room_duty','why',jo9_rd_n,jo9_rd_d)",
+      "count": 1,
+      "patchId": "ROOM_DUTY_TOOLTIP_20261114"
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+'use strict';
+const {fs,a,R,W,T,c,body,sections,region,makeFixture}=require('./shared.cjs');
+const qa=require(R+'/tools/qa/release-check.cjs'),raw=fs.readFileSync(W+'/jack.qsp'),before=c.hash(raw),s=sections(raw);
+a.equal(before,'a244ee964f0aaa1ffd6f0d0696242fa0b2bf6b46841cb3b8df2ca9e7747a416a');a(fs.readFileSync(R+'/assets/runtime/2.4.1/jack.qsp').equals(raw));
+const testedDaily=fs.readFileSync(T+'/candidate.qsp');a.equal(c.hash(testedDaily),'e7cb76e04e2ea0ba83a3e305bb70bf19342865d41d03da184cbdef88858554b8');
+const green=JSON.parse(fs.readFileSync(T+'/client-results.json','utf8').replace(/^\uFEFF/,''));a.equal(green.length,1);a(green[0].pass);a(fs.readFileSync(T+'/red-stderr.log','utf8').includes('FAIL_room1_urinal_neg_rules'));
+fs.writeFileSync(__dirname+'/daily-green-results.json',JSON.stringify(green,null,2)+'\n');
+const daily=JSON.parse(fs.readFileSync(__dirname+'/daily-patch.json','utf8')),external=JSON.parse(fs.readFileSync(__dirname+'/external-edits.json','utf8')),proof=JSON.parse(fs.readFileSync(__dirname+'/external-verification.json','utf8'));
+a.equal(external.before_sha256,before);const externalDoc=c.parse(raw);
+for(const e of external.edits){const l=externalDoc.locations.find(l=>l.name===e.location),b=body(externalDoc,e.location);a.equal(b.split(e.old).length,2);externalDoc.lines[l.body]=c.shift(b.replace(e.old,()=>e.new),-5);}
+a.equal(c.hash(c.serialize(externalDoc)),external.after_sha256);
+const edits=[...daily.edits,...external.edits],doc=c.parse(raw);
+for(const e of edits){const l=doc.locations.find(l=>l.name===e.location),b=body(doc,e.location);a.equal(b.split(e.old).length,2);doc.lines[l.body]=c.shift(b.replace(e.old,()=>e.new),-5);}
+const candidate=c.serialize(doc);qa.inspectWorld(candidate);a(c.serialize(c.parse(candidate)).equals(candidate));
+a.equal(body(doc,'next_day'),body(c.parse(testedDaily),'next_day'));for(const n of ['jo9_room_duty','slave_stat'])a.equal(body(doc,n),body(externalDoc,n));
+const old=c.parse(raw),changes=doc.locations.filter(l=>doc.lines[l.body]!==old.lines[l.body]).map(l=>l.name);a.equal(changes.length,3);a.deepEqual(new Set(changes),new Set(['next_day','jo9_room_duty','slave_stat']));
+const inverse=c.parse(candidate);for(const e of [...edits].reverse()){const l=inverse.locations.find(l=>l.name===e.location),b=body(inverse,e.location);a.equal(b.split(e.new).length,2);inverse.lines[l.body]=c.shift(b.replace(e.new,()=>e.old),-5);}a(c.serialize(inverse).equals(raw));
+const patch={id:'2026-11-16_private_room_daily_rules',status:'APPROVED',approval:'User final scope: private rooms only; keep assistant and 2.3 guilt scope unchanged; block specified nine rules on external duties, preserve six and use requested tooltip.',before_sha256:before,after_sha256:c.hash(candidate),edits};
+fs.writeFileSync(__dirname+'/patch.json',JSON.stringify(patch,null,2)+'\n');fs.writeFileSync(T+'/candidate.qsp',candidate);
+const cr='\r\n',q=x=>"'"+x.replaceAll("'","''")+"'",check=(test,label)=>`if ${test}:msg 'FAIL_${label}' & exit${cr}`;
+let code="killall\r\n$counter=''\r\n$onnewloc=''\r\n$ongload=''\r\nsettimer 0\r\nCONST_INT['slave_exist']=1\r\nCONST_INT['no_slave']=0\r\nCONST_INT['loli_age']=1\r\n"+s.foreach+cr;
+code+="$dyn_sex_acceptance={}\r\n$dyn_repulse_check={interaction_dynslave['res']=1}\r\n$reset_interaction_variables={}\r\n$sin_gained_now={}\r\n$dyn_advance_sex_skills_nolesson={}\r\n$jo9_wake_worker=''\r\n";
+const blocked=external.scope.blockedRules,allowed=external.scope.preservedRules;
+code+="room1_state=1\r\nroom1['duty']=2\r\nroom1['energy']=5\r\nroom1['stamina']=4\r\nroom1['gladiatrix']=4\r\n$room1['armor']='кольчуга'\r\n$room1['right_wpn']='гладиус'\r\n$room1['left_wpn']='безоружный'\r\n$room1_name='ROOM_ONE'\r\n";
+for(const key of [...blocked,...allowed])code+=`room1[${q(key)}]=1${cr}`;
+code+="overnight_rules_count=7\r\ngs 'jo9_room_duty','daily'\r\n"+region(body(doc,'next_day'))+cr;
+for(const key of blocked)code+=check(`room1[${q(key)}] ! 0`,'EXTERNAL_CLEAR_'+key);
+for(const key of allowed)code+=check(`room1[${q(key)}] ! 1`,'EXTERNAL_KEEP_'+key);
+code+=check("room1_rate['custom'] ! 0 or room1_rate['hygiene'] ! 0 or room1['neg_disgust'] ! 0",'NO_EXTERNAL_EFFECT');
+code+="gs 'jo9_room_duty','set',1,0\r\nroom1['toilet_rule']=1\r\nroom1['force_rules']=0\r\nroom1['perversion']=0\r\nroom1['sub_kopro']=4\r\ngs 'jo9_room_duty','daily'\r\n"+region(body(doc,'next_day'))+cr;
+code+=check("room1_rate['custom'] ! 3 or room1_rate['hygiene'] ! 40 or room1['neg_disgust'] ! 20",'HOME_EFFECT');
+code+=check("instr($room1['rules_explanations'],'대변기')=0",'HOME_EXPLANATION');
+code+=check('overnight_rules_count ! 7','PRIMARY_RULE_COUNT');
+code+="msg 'JO9_QA_PRIVATERULES_combined_COMPLETE'";
+fs.writeFileSync(T+'/combined.qsp',makeFixture(code,[['jo9_room_duty',body(doc,'jo9_room_duty')],['jo9_origin_growth','result=args[3]']]));
+fs.writeFileSync(T+'/combined-plan.json',JSON.stringify([{name:'combined',file:T+'/combined.qsp',marker:'JO9_QA_PRIVATERULES_combined_COMPLETE',checkpoint:'Real duty daily cleanup before rule effects; external-to-home transition'}],null,2));
+const result={before,after:c.hash(candidate),changes,edits:edits.length,existingTestedBodiesIdentical:true,structureAndInverse:true,privateRoomsOnly:true,assistantAndGuiltHelpersUnchanged:true,newSaveFields:0,newLocations:0};fs.writeFileSync(__dirname+'/prepared.json',JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result));

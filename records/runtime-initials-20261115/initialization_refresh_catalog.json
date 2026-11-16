@@ -1,0 +1,444 @@
+{
+  "source": "G:\\somi\\Jack O Nine Tails v2.4_work\\game\\jack.qsp",
+  "source_sha256": "d9e54998be9b9d2dbb56e69c1d464c582d6e047ea7c44ed9d50c03134b506c33",
+  "scope": "Static dependency/order audit. Suggested minimal initialization is not a replacement for host-specific seed registration or runtime validation.",
+  "master_initialization": {
+    "fresh_base": [
+      {
+        "purpose": "Base definitions in observed refresh_database order; broad text/UI databases can be retained by the worker for dependency safety.",
+        "source": {
+          "location": "refresh_database",
+          "start_line": 18,
+          "end_line": 35,
+          "code": "gs '#static_base' &! no load order dependencies\ngs '#static_txt' &! must load after #static_base\n!if hero_choice < 101: gs '#var_base'\ngs '#dynamic' &! no load order dependencies\ngs '#food_base' &! must load after #static_base\ngs '#variative' &! must load after #static_base\ngs '#help_msg' &! must load after #static_base and #variative\ngs '#item_base' &! no load order dependencies\ngs '#masters_base' &! no load order dependencies\ngs '#moodlet_base' &! load order no dependencies\ngs '#simple_npc' &! before #npc_base until conflicts are resolved (TODO)\ngs '#npc_base' &! no load order dependencies\ngs '#options' &! no load order dependencies\ngs '#place_base' &! no load order dependencies\n\n!locations that are refreshed elsewhere\ngs '#estate_base' &! refreshed by Adverto Servili special event\ngs '#var_base' &! must load after #static_base, refreshed by main_screen, city_screen, choice_screen, next_day, contains conditional text and subexpressions"
+        }
+      },
+      {
+        "purpose": "New-game reset before selecting a master. init_game resets hero_choice=1, master_check=0, mercy=0 and difficulty_setting=0.",
+        "statement": "gs 'init_game'",
+        "source": {
+          "location": "init_game",
+          "start_line": 18,
+          "end_line": 39,
+          "code": "jo9_cruel_mercy = 0\n! JO9 MOD START CRUEL_MERCY_RULES_20261101\njo9_cruel_mercy_half = 0\n! JO9 MOD END CRUEL_MERCY_RULES_20261101\n! JO9 MOD END CRUEL_MERCY_20261029\n!Initialize Game - this is loaded before init_custom_game, hero_creation, and hero_customization (story mode)\n!settings for master stats\n$master_ava = 'content\\pic\\master\\master_noble_sepia.png'\n$master_ava_color = 'content\\pic\\master\\master_noble.png'\n$master_name = '잭'\n\ngs '#var_base'\n!if hero_choice > 100: gs '#var_base_woman'\n\nhero_choice = 1\n\n\nmaster_str = 0\nmaster_cha = 0\nmaster_style = 0\nmaster_libido = 0\nmaster_energy = 0"
+        },
+        "additional_refs": [
+          {
+            "location": "init_game",
+            "start_line": 168,
+            "end_line": 179
+          },
+          {
+            "location": "init_game",
+            "start_line": 225,
+            "end_line": 258
+          }
+        ]
+      },
+      {
+        "purpose": "Story-mode reset must precede applying selected master/difficulties.",
+        "statement": "gs 'init_story_mode'",
+        "sources": [
+          {
+            "location": "init_story_mode",
+            "start_line": 9,
+            "end_line": 16
+          },
+          {
+            "location": "init_story_mode",
+            "start_line": 26,
+            "end_line": 59
+          },
+          {
+            "location": "init_story_mode",
+            "start_line": 97,
+            "end_line": 111,
+            "code": "assistant_rules['sleep_condition'] = 0\nslave[\"rewarded_today\"] = 0\nassistant[\"rewarded_today\"] = 0\n\nstory_mode = 1\ncustom_game = 0\ndemo_game = 0\ndifficulty_setting = 0 &! changed from 0 (normal obedience) to 1 (easy obedience) in 2.3.1 for better transition from tutorial - ImperatorAugustus\ngame_difficulty = 1\n\nIF hero_choice = 114 or hero_choice = 119 or hero_choice = 120 or hero_choice = 12 or hero_choice = 17 or hero_choice = 18:\n\tmaster_vampire = 1\nELSE\n\tmaster_vampire = 0\nEND"
+          }
+        ]
+      }
+    ],
+    "per_request_from_fresh_snapshot": [
+      "hero_choice = <selected_master_id>",
+      "gs '#var_base'",
+      "$master_name = $master_base_name[hero_choice]",
+      "$master_ava = $sepia_ava_path[hero_choice]",
+      "$master_ava_color = $clear_ava_path[hero_choice]",
+      "dynamic $master_version_stats[hero_choice]",
+      "master_energy = min(5, master_str + 1)",
+      "get_initial_slave = 0",
+      "difficulty_setting = <selected_obedience_0_normal_1_easy_2_hard>",
+      "game_difficulty = <selected_game_difficulty>",
+      "day = 1",
+      "<execute start_game lines 60-78 for master 9/10 special state and hero_select>",
+      "gs '$calculate_attributes'"
+    ],
+    "preset_source": {
+      "location": "hero_description",
+      "start_line": 8,
+      "end_line": 15,
+      "code": "gs '#var_base'\n$master_name = $master_base_name[hero_choice]\n$master_ava = $sepia_ava_path[hero_choice]\n$master_ava_color = $clear_ava_path[hero_choice]\ndynamic $master_version_stats[hero_choice]\nmaster_energy = master_str + 1\nif master_energy > 5: master_energy = 5\nget_initial_slave = 0"
+    },
+    "start_game_specials": {
+      "location": "start_game",
+      "start_line": 60,
+      "end_line": 78,
+      "code": "if hero_choice = 9 and no_loli ! 1 and game_difficulty ! 0:\n\tis_perv = 3 &! impotence challenge for Uncle Tom if lolis are enabled and not Easy game difficulty\n\tmaster_libido = 0\n\tmaster_libido_rate = 2\n\tmaster_excitement = -4\n\tmaster_excitement_rate = -140\nend\nis_kid = 0\nis_master_virgin = 0\nif hero_choice = 10:\n\tis_kid = 1\n\tis_master_virgin = 1\n\tmaster_libido = 5\n\tmaster_libido_rate = 180\n\tmaster_excitement = 5\n\tmaster_excitement_rate = 180\nend\nhero_select = hero_choice\nis_gangbang = 1"
+    },
+    "rate_initialization": {
+      "location": "$calculate_attributes",
+      "start_line": 35,
+      "end_line": 146
+    },
+    "master_clothing_boost": {
+      "location": "$calculate_attributes",
+      "start_line": 380,
+      "end_line": 402,
+      "code": "!Counting master cloth characteristic boosts - crushboss\nkillvar 'boost_up'\ndynamic $item_property[$master_cloth]\n\nif boost_up['master_artdirector'] = 1:\n\tmaster_artdirector += 1\nend\n\nif boost_up['master_fighter'] = 1:\n\tmaster_fighter += 1\nend\n\nif boost_up['master_butler'] = 1:\n\tmaster_butler += 1\nend\n\nif boost_up['master_medic'] = 1:\n\tmaster_medic += 1\nend\n\nif boost_up['master_mage'] = 1:\n\tmaster_mage += 1\nend"
+    },
+    "master_final_derived": {
+      "location": "$calculate_attributes",
+      "start_line": 520,
+      "end_line": 534,
+      "code": "!Update situational master moodlets (expects slaves have been updated already - specifically, $newloc_update_slave in #static_base)\ngs 'moodlets' &! depends on house_mess, master_hygiene, master_wealth, brand_reputation, master_excitement, master_energy, master_str, does not depend on master_style\n\n! $moodlets_account refreshes mood (and mood description strings) for master\nif args[0] = 0: gs '$moodlets_account' &! #dynamic passes a 1 here from $master_ejaculate to bypass mood update to avoid side effects to next_day mood checks due to alarm rule\n\n! JO9 MOD START MERCY_ALLURE_20261113_CALC\nmaster_style = func('jo9_mercy_allure')\n! JO9 MOD END MERCY_ALLURE_20261113_CALC\n\n!Calculate Master Supermacy\n\n! JO9 MOD START SUPERMACY_PER_TARGET_20261112_CALC | 대상별 함수로 계산(메인 노예, 없으면 조수)\nmaster_supermacy = func('jo9_supermacy', iif(slave_state > CONST_INT['no_slave'], 'slave', 'assistant'))\n! JO9 MOD END SUPERMACY_PER_TARGET_20261112_CALC"
+    },
+    "warnings": [
+      "Restore a clean snapshot before each request; init_story_mode does not clear every master rate. Reusing prior calculated rates can change the next preset.",
+      "difficulty_setting and game_difficulty are separate controls. Both init_game and init_story_mode overwrite difficulty_setting.",
+      "Actual start_game calls $newloc before gameplay; a pre-acquisition $calculate_attributes pass is needed to obtain calculated master skill/clothing/style fields rather than raw preset values.",
+      "hero_select is set by start_game:77 and used by jo9_supermacy for master-specific age bonuses.",
+      "House/quest progression used as acquisition prerequisites is separate from this master-stat minimum. Do not claim a synthetic acquisition fixture is a real progressed save."
+    ]
+  },
+  "refresh_order": {
+    "observed_newloc_sequence": [
+      {
+        "statement": "gs '$slave_traits'",
+        "source": {
+          "location": "$newloc",
+          "start_line": 434,
+          "end_line": 434,
+          "code": "gs '$slave_traits' &! check for revealed traits and refresh trait features list for slave, assistant, prisoner, cow"
+        }
+      },
+      {
+        "statement": "dynamic $do_for_each_slave_in_list, '$newloc_update_slave', '$main_screen_slave_characters'",
+        "source": {
+          "location": "$newloc",
+          "start_line": 435,
+          "end_line": 435,
+          "code": "dynamic $do_for_each_slave_in_list, '$newloc_update_slave', '$main_screen_slave_characters' &! see #static_base (includes $set_obedience_difficulty and $slave_price)"
+        }
+      },
+      {
+        "statement": "gs '$calculate_attributes'",
+        "source": {
+          "location": "$newloc",
+          "start_line": 472,
+          "end_line": 472,
+          "code": "gs '$calculate_attributes' &! update master stats including energy and mood, should be done after updating slaves due to dependencies - ImperatorAugustus"
+        }
+      }
+    ],
+    "role_order": [
+      "slave",
+      "assistant",
+      "prisoner",
+      "cow",
+      "room1",
+      "room2",
+      "room3",
+      "room4"
+    ],
+    "role_order_source": {
+      "location": "#static_base",
+      "start_line": 339,
+      "end_line": 347,
+      "code": "killvar '$main_screen_slave_characters'\n$main_screen_slave_characters[] = 'slave'\n$main_screen_slave_characters[] = 'assistant'\n$main_screen_slave_characters[] = 'prisoner'\n$main_screen_slave_characters[] = 'cow'\n$main_screen_slave_characters[] = 'room1'\n$main_screen_slave_characters[] = 'room2'\n$main_screen_slave_characters[] = 'room3'\n$main_screen_slave_characters[] = 'room4'"
+    },
+    "iterator": {
+      "location": "#static_base",
+      "start_line": 380,
+      "end_line": 393,
+      "code": "$do_for_each_slave_in_list = {\n\t!uncomment next line for troubleshooting\n\tif debug = 1: msg \"$do_for_each_slave_in_list '<<$args[0]>>', '<<$args[1]>>'\"\n\tdo_for_each_slave_in_list_count = arrsize($args[1])\n\tif do_for_each_slave_in_list_count > 0:\n\t\tdo_for_each_slave_in_list_index = 0\n\t\t:do_for_each_slave_in_list_loop\n\t\t\tdynamic \"\n\t\t\t\tdynamic $replace(<<$args[0]>>, 'dynslave', <<$args[1]>>[do_for_each_slave_in_list_index]), <<$args[1]>>[do_for_each_slave_in_list_index] &! replace dynslave and pass as $args[0]\n\t\t\t\"\n\t\t\tdo_for_each_slave_in_list_index += 1\n\t\tif do_for_each_slave_in_list_index < do_for_each_slave_in_list_count: jump 'do_for_each_slave_in_list_loop'\n\tend\n}"
+    },
+    "target_only_statements_if_only_one_role_exists": {
+      "slave": "dynamic $replace($newloc_update_slave, 'dyn'+'slave', 'slave'), 'slave'",
+      "assistant": "dynamic $replace($newloc_update_slave, 'dyn'+'slave', 'assistant'), 'assistant'"
+    },
+    "per_role_stages": [
+      {
+        "stage": "Equipment bonuses",
+        "source": {
+          "location": "#static_base",
+          "start_line": 965,
+          "end_line": 965,
+          "code": "\t\tdynamic $replace($recalc_equipment_bonuses, 'dyn'+'slave', 'dynslave') &! protect from earlier replace, defined in #item_base"
+        }
+      },
+      {
+        "stage": "Health/resource bounds, temporary beauty/style/exotic modifiers",
+        "source": {
+          "location": "#static_base",
+          "start_line": 968,
+          "end_line": 1040
+        }
+      },
+      {
+        "stage": "Attribute/skill alignment and category derivation",
+        "source": {
+          "location": "#static_base",
+          "start_line": 1045,
+          "end_line": 1045,
+          "code": "\t\tdynamic $replace($dyn_calc_slave_attrs, 'dyn'+'slave', 'dynslave') &! protect from earlier replace"
+        },
+        "definition": {
+          "location": "#static_base",
+          "start_line": 515,
+          "end_line": 687
+        }
+      },
+      {
+        "stage": "Situational moodlets, mood, psychological state",
+        "source": {
+          "location": "#static_base",
+          "start_line": 1048,
+          "end_line": 1147
+        },
+        "mood_call": {
+          "location": "#static_base",
+          "start_line": 1085,
+          "end_line": 1085,
+          "code": "\t\tdynamic $replace($recalc_slave_mood, 'dyn'+'slave', 'dynslave') &! protect from earlier replace"
+        }
+      },
+      {
+        "stage": "Obedience, rating and price",
+        "source": {
+          "location": "#static_base",
+          "start_line": 1158,
+          "end_line": 1158,
+          "code": "\t\tdynamic $replace($update_slave_price, 'dyn'+'slave', 'dynslave') &! protect from earlier replace"
+        },
+        "definition": {
+          "location": "#static_base",
+          "start_line": 1166,
+          "end_line": 1641
+        }
+      }
+    ],
+    "important_order_limits": [
+      "The common $newloc_update_slave is used for assistant too. $recalc_assistant_mood is defined at905 but has no QSP call references.",
+      "The $recalc_slave_mood path calls equipment recalculation again at816; preserve current engine order instead of deleting the apparent duplicate.",
+      "Paired quests create both a slave and assistant. Refresh slave first, then assistant as the actual main-screen list does.",
+      "$recalc_slave_mood:864 reads shared slave_psy_hardness before $newloc_update_slave:1089 assigns it for the current role, so changing iteration order may alter intermediate mood caps.",
+      "An extra gs '$slave_price' after $newloc_update_slave is a second repair/value pass, not a necessary part of the observed newloc update.",
+      "rating, slaveprice, skill_sum and related calculations use shared globals. Capture them per role when needed; after a multi-role loop they refer to the last updated existing role."
+    ]
+  },
+  "price_dependencies": {
+    "public_wrapper": {
+      "location": "$slave_price",
+      "start_line": 8,
+      "end_line": 12,
+      "code": "if $args[0] = '': $args[0] = 'slave' &! update slave if not specified - ImperatorAugustus\n\n! JO9 MOD START TBV_PRICE_REFRESH | 2026-10-17_trait_value\ngs 'jo9_traits_value', 'refresh', $args[0]\ndynamic $replace($update_slave_price, 'dyn'+'slave', $args[0]) &! see #static_base"
+    },
+    "value_refresh_before_price": "The wrapper calls jo9_traits_value,'refresh' first. The newloc path already refreshes during $dyn_calc_slave_attrs before calling $update_slave_price directly.",
+    "static_base_required_definitions": [
+      "$update_slave_price",
+      "$set_obedience_difficulty",
+      "$dyn_calc_slave_attrs",
+      "$recalc_slave_mood",
+      "$newloc_update_slave",
+      "$swap_slave_instances",
+      "$clear_slave_instance"
+    ],
+    "obedience_difficulty": {
+      "location": "#static_base",
+      "start_line": 690,
+      "end_line": 743
+    },
+    "seed_obedience_bonus": {
+      "location": "#static_base",
+      "start_line": 1347,
+      "end_line": 1353,
+      "code": "\t\tdynamic $replace($set_obedience_difficulty, 'dyn'+'slave', 'dynslave')\n\t\tslave_obedience_bonus += dynslave['meekness'] + seed_obedience_bonus[dynslave_type] &! get obedience bonus from current json for backward compatibility\n\t\tif dynslave['courage'] = 2: slave_obedience_penalty += 6\n\t\tif dynslave['courage'] = 1: slave_obedience_penalty += 4\n\t\tif dynslave['courage'] = -1: slave_obedience_bonus += dynslave['fear']\n\t\tif dynslave['age'] = CONST_INT['loli_age']: slave_obedience_bonus += 2\n\t\tif dynslave['age'] = CONST_INT['young_age']: slave_obedience_bonus += 1"
+    },
+    "trait_base_price": {
+      "location": "#static_base",
+      "start_line": 1272,
+      "end_line": 1283,
+      "code": "\t\tdynamic $replace($dyn_meat_evaluation, 'dyn'+'slave', 'dynslave')\n\t\tif slave_base_price < max(20, meat_price): slave_base_price = max(20, meat_price)\n\n! JO9 MOD START TBV_BASE_PRICE | 2026-10-17_trait_value\n\t\t! Rebuilt base valuation receives the permanent versatile bonus once.\n\t\tslave_base_price = func('jo9_traits_value', 'base_price', 'dynslave', slave_base_price)\n\t\t!Calculate slave price\n\t\tslaveprice = (slave_base_price*3)/2 &! global variable, used when selling to Farid\n! JO9 MOD END TBV_BASE_PRICE\n\t\tif slaveprice < 30: slaveprice = 30\n\n\t\thaggling_limit = slave_base_price/3 &! global variable, used for stock - ImperatorAugustus"
+    },
+    "direct_master_dependencies": "No direct master_* references found in $update_slave_price1166-1641 or $set_obedience_difficulty690-743. Master preset is still required for complete master/supermacy output and host context.",
+    "other_definitions": [
+      "#variative continuous/independent/dependent/sex attribute lists and thresholds",
+      "#dynamic $dyn_meat_evaluation",
+      "jo9_traits repair",
+      "jo9_traits_value base_price/refresh",
+      "current seed_obedience_bonus[ID]"
+    ]
+  },
+  "equipment": {
+    "definition": {
+      "location": "#item_base",
+      "start_line": 86,
+      "end_line": 130
+    },
+    "item_slots": [
+      "armor",
+      "headband",
+      "earrings",
+      "tongue",
+      "cloth",
+      "collar",
+      "nipplerings",
+      "gloves",
+      "ring_left",
+      "ring_right",
+      "navel",
+      "clitring",
+      "boots"
+    ],
+    "inventory_gifts": [
+      "plaid",
+      "stuffed_toy",
+      "perfume",
+      "pony"
+    ],
+    "effects": "Resets st_plus/ex_plus, clothing mood fields, collar/wig flags, learn_bonus/daily_bonus/worn_bonus globals; then executes current $item_property definitions for equipped items and gifts.",
+    "source": {
+      "location": "#item_base",
+      "start_line": 92,
+      "end_line": 125,
+      "code": "\t\tdynslave['st_plus'] = 0 &! reset count from zero (items that confer a style bonus)\n\t\tdynslave['ex_plus'] = 0 &! reset count from zero (items that confer an exoticism bonus)\n\t\tdynslave['neg_clothes'] = 0 &! reset in case no longer wearing an item with this effect\n\t\tdynslave['pos_clothes'] = 0 &! reset in case no longer wearing an item with this effect\n\t\tdynslave['slave_collar'] = 0 &! reset in case no longer wearing an item with this effect\n\t\tdynslave['wig'] = 0 &! reset in case no longer wearing an item with this effect\n\t\tkillvar 'learn_bonus'\n\t\tkillvar 'daily_bonus'\n\t\tkillvar 'worn_bonus'\n\t\t! use $replace to generalize the $item_property effects - ImperatorAugustus\n\t\tdynamic $replace($item_property[$dynslave['armor']], 'dyn'+'slave', 'dynslave')\n\t\tdynamic $replace($item_property[$dynslave['headband']], 'dyn'+'slave', 'dynslave')\n\t\tdynamic $replace($item_property[$dynslave['earrings']], 'dyn'+'slave', 'dynslave')\n\t\tdynamic $replace($item_property[$dynslave['tongue']], 'dyn'+'slave', 'dynslave')\n\t\tdynamic $replace($item_property[$dynslave['cloth']], 'dyn'+'slave', 'dynslave')\n\t\tdynamic $replace($item_property[$dynslave['collar']], 'dyn'+'slave', 'dynslave')\n\t\tdynamic $replace($item_property[$dynslave['nipplerings']], 'dyn'+'slave', 'dynslave')\n\t\tdynamic $replace($item_property[$dynslave['gloves']], 'dyn'+'slave', 'dynslave')\n\t\tdynamic $replace($item_property[$dynslave['ring_left']], 'dyn'+'slave', 'dynslave')\n\t\tdynamic $replace($item_property[$dynslave['ring_right']], 'dyn'+'slave', 'dynslave')\n\t\tdynamic $replace($item_property[$dynslave['navel']], 'dyn'+'slave', 'dynslave')\n\t\tdynamic $replace($item_property[$dynslave['clitring']], 'dyn'+'slave', 'dynslave')\n\t\tdynamic $replace($item_property[$dynslave['boots']], 'dyn'+'slave', 'dynslave')\n\t\tif $args[0] ! 'ignore gifts':\n\t\t\tif dynslave_inventory['plaid'] > 0: dynamic $replace($item_property['plaid'], 'dyn'+'slave', 'dynslave')\n\t\t\tif dynslave_inventory['stuffed_toy'] > 0: dynamic $replace($item_property['stuffed_toy'], 'dyn'+'slave', 'dynslave')\n\t\t\tif dynslave_inventory['perfume'] > 0: dynamic $replace($item_property['perfume'], 'dyn'+'slave', 'dynslave')\n\t\t\tif dynslave_inventory['pony'] > 0: dynamic $replace($item_property['pony'], 'dyn'+'slave', 'dynslave')\n\t\tend\n\t\t! neg_clothes is intended as a display-only moodlet, to indicate via \"how do you feel?\" that some item(s) worn by the slave have negative impact - ImperatorAugustus\n\t\tif dynslave['neg_clothes'] > 0: worn_bonus['mood'] += 1 &! reverse the -1 mood for a negative moodlet that is applied by $recalc_slave_mood in #static_base\n\t\t! items setting neg_clothes should apply negative worn_bonus['mood'] or worn_bonus['mood_rate'] adjustments of the appropriate magnitude\n\t\t! in contrast, pos_clothes applies +1 mood (not stacking from multiple items); however, it does not contribute to raising mood above Hopeful (capped in $recalc_slave_mood in #static_base)\n\t\tif dynslave['pos_clothes'] > 0 and (dynslave['neg_clothes'] > 0 or $dynslave['cloth'] = 'голая' or $dynslave['cloth'] = 'пусто'): dynslave['pos_clothes'] = -100 & worn_bonus['mood'] += 1"
+    },
+    "master_equipment": "Master cloth effects are separately applied by $calculate_attributes380-402. Master style is recalculated by jo9_mercy_allure; target mastery is jo9_supermacy."
+  },
+  "json_registration": {
+    "scope_limit": "Native JSON filename-to-array registration is not implemented in this QSP. QSP alone cannot prove the native loader rule; host runtime registration must be verified separately.",
+    "qsp_loader_evidence": {
+      "location": "start_refresh",
+      "start_line": 8,
+      "end_line": 8,
+      "code": "killall &! THIS DELETES EVERY VARIABLE IN THE GAME (the engine has been updated to reload json files afterwards)"
+    },
+    "slave_file_count": 1885,
+    "all_have_numeric_prefix": true,
+    "unique_prefix_id_count": 1885,
+    "fully_numeric_basename_count": 1046,
+    "numeric_prefix_with_suffix_count": 839,
+    "examples": [
+      "1448_Shiru.json",
+      "2339_yagisuna.json",
+      "3040_chunhyang.json",
+      "4000_mob_0011_black_long_loli.json",
+      "4180_mob_1016_black_long_young.json",
+      "4440_mob_2012_black_long_milf.json"
+    ],
+    "known_numeric_id_evidence": [
+      {
+        "location": "interaction_city",
+        "start_line": 21870,
+        "end_line": 21873,
+        "code": " special_stock = 1448\n gs 'generate_stock'\n if stock_state ! CONST_INT['slave_exist'] or stock_type ! 1448: gt 'shop_general'\n if func('stock_to_slave_nogt') ! 1: gt 'shop_general'"
+      },
+      {
+        "location": "jo9_load_compat242",
+        "start_line": 22,
+        "end_line": 22,
+        "code": " if $j9lc_norm='json/slaves/2339.json': $result='json/slaves/2339_yagisuna.json'"
+      }
+    ],
+    "random_pool": {
+      "source": {
+        "location": "jo9_mob_pool",
+        "start_line": 4,
+        "end_line": 32,
+        "code": "local jo9_pool_first, jo9_pool_last, jo9_pool_new, jo9_pool_count, jo9_pool_old, jo9_pool_pick\nresult=0\nif args[0]=1:\n jo9_pool_first=loli_first\n jo9_pool_last=loli_last\n jo9_pool_new=4000\n jo9_pool_count=180\nelseif args[0]=2:\n jo9_pool_first=young_first\n jo9_pool_last=max(young_last,1462)\n jo9_pool_new=4180\n jo9_pool_count=260\nelseif args[0]=3:\n jo9_pool_first=milf_first\n jo9_pool_last=max(milf_last,2340)\n jo9_pool_new=4440\n jo9_pool_count=288\nelse\n exit\nend\njo9_pool_old=jo9_pool_last-jo9_pool_first+1\njo9_pool_pick=args[1]\nif jo9_pool_pick=0: jo9_pool_pick=rand(1,jo9_pool_old+jo9_pool_count)\nif jo9_pool_pick<1 or jo9_pool_pick>jo9_pool_old+jo9_pool_count: exit\nif jo9_pool_pick<=jo9_pool_old:\n result=jo9_pool_first+jo9_pool_pick-1\nelse\n result=jo9_pool_new+jo9_pool_pick-jo9_pool_old-1\nend"
+      },
+      "old_index": {
+        "loli_first": 1,
+        "loli_last": 247,
+        "young_first": 1001,
+        "young_last": 1449,
+        "milf_first": 2001,
+        "milf_last": 2340
+      },
+      "added_ranges": [
+        {
+          "first": 4000,
+          "last": 4179
+        },
+        {
+          "first": 4180,
+          "last": 4439
+        },
+        {
+          "first": 4440,
+          "last": 4727
+        }
+      ],
+      "added_file_count": 728,
+      "selection_semantics": "QSP random generation chooses numeric registration IDs (stock_type). Current added random-template filenames have descriptive suffixes. Numeric registration IDs do not imply purely numeric filenames."
+    }
+  },
+  "legacy_kind_collision": {
+    "references": [
+      {
+        "location": "black_market_get_comm_slave",
+        "line": 24,
+        "code": "$slave_type = 'unic'"
+      },
+      {
+        "location": "get_special_assistant_quest",
+        "line": 28,
+        "code": "$assistant_type = 'unic'"
+      },
+      {
+        "location": "killslave",
+        "line": 11,
+        "code": "killvar '$slave_type'"
+      },
+      {
+        "location": "get_demo_slave",
+        "line": 22,
+        "code": "$slave_type = 'unic'"
+      },
+      {
+        "location": "get_special_slave",
+        "line": 9,
+        "code": "$slave_type = 'unic'"
+      },
+      {
+        "location": "jo9_dohna_story",
+        "line": 423,
+        "code": " if slave_type=8882: $slave_type='unic'"
+      },
+      {
+        "location": "jo9_dohna_story",
+        "line": 427,
+        "code": " if assistant_type=8882: $assistant_type='unic'"
+      },
+      {
+        "location": "jo9_dohna_story",
+        "line": 431,
+        "code": " if stock_type=8882: $stock_type='unic'"
+      }
+    ],
+    "numeric_swap_class_member": {
+      "location": "#static_base",
+      "start_line": 414,
+      "end_line": 430,
+      "code": "killvar '$playable_vars'\n$playable_vars[] = 'instance'            &! e.g., 'master' or 'slave'\n$playable_vars[] = 'instance_state'      &! e.g., 'master_state' or 'slave_state'                                       &! number var, frequently accessed\n$playable_vars[] = '$instance_name'      &! e.g., '$master_name' or '$slave_name'                                       &! string var, frequently accessed\n$playable_vars[] = '$instance_ava'       &! e.g., '$master_ava' or '$slave_ava'                                         &! string var, frequently accessed\n\n$playable_vars[] = 'instance_type'       &! e.g., 'master_type' or 'slave_type'                                         &! number var, not frequently accessed, make this a property\n$playable_vars[] = 'instance_rate'       &! e.g., 'master_rate' or 'slave_rate'                                         &! array var, each string index corresponds to an attribute, with a number as the value\n$playable_vars[] = 'instance_inventory'  &! e.g., 'master_inventory' or 'slave_inventory'                               &! array var, each string index corresponds to an item type, with a count as the value\n\nkillvar '$master_vars'\ncopyarr '$master_vars', '$playable_vars' &! $master_vars inherits from $playable_vars\n\n$masters_vars[] = 'instance_mood'                     &! 'master_mood' array var, each string index corresponds to a moodlet name, with a number as the value (remaining duration)\n\nkillvar '$slave_vars'\ncopyarr '$slave_vars', '$playable_vars' &! $slave_vars inherits from $playable_vars"
+    },
+    "finding": "Only numeric instance_type is enumerated for swapping. Legacy $slave_type/$assistant_type/$stock_type labels have assignments/one killvar but no consuming reads in the QSP.",
+    "probe_file": "legacy_kind_probe_results.json",
+    "compatibility_mapping_candidates": {
+      "$slave_type": "$jo9_legacy_slave_kind",
+      "$assistant_type": "$jo9_legacy_assistant_kind",
+      "$stock_type": "$jo9_legacy_stock_kind"
+    },
+    "scope": "Virtual evaluator compatibility only. Native WORK QSP has not been changed."
+  }
+}

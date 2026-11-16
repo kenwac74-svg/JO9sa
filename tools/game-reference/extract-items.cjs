@@ -80,6 +80,31 @@ for (const [index, line] of read(baseSource).split(/\r?\n/).entries()) {
 }
 assert.equal(baseCount, read(baseSource).split(/\r?\n/).filter(line => /^\s*dynamic \$ib_cycle,/i.test(line)).length);
 
+// The ordinary costume is registered by its helper rather than an ib_cycle row.
+const costumeSource = 'jo9_cow_costume';
+if (doc.locations.some(location => location.name === costumeSource)) {
+  const costumeId = 'cow_costume';
+  const textAssignment = new RegExp(String.raw`^\s*\$item_(name|description)\[${literal}\]\s*=\s*${literal}`);
+  const priceAssignment = new RegExp(String.raw`^\s*item_price\[${literal}\]\s*=\s*(\d+)`);
+  const fields = {};
+  let sourceLine;
+  for (const [index, line] of read(costumeSource).split(/\r?\n/).entries()) {
+    const textMatch = textAssignment.exec(line);
+    if (textMatch && unquote(textMatch[2]) === costumeId) {
+      fields[textMatch[1]] = unquote(textMatch[3]);
+      if (textMatch[1] === 'name') sourceLine = index + 1;
+    }
+    const priceMatch = priceAssignment.exec(line);
+    if (priceMatch && unquote(priceMatch[1]) === costumeId) fields.price = Number(priceMatch[2]);
+  }
+  assert.ok(fields.name && fields.description && Number.isFinite(fields.price), 'Incomplete costume helper literals');
+  const description = clean(fields.description).split('\n')
+    .filter(line => !/^(?:기본\s*)?가격\s*[\d,]+\s*스파크[.]?$/.test(line)).join('\n');
+  record({ name: fields.name, category: '의상', id: costumeId,
+    description: [description, `기본 가격 ${fields.price.toLocaleString('ko-KR')}스파크`].filter(Boolean).join('\n'),
+    source: `${costumeSource} ${sourceLine}행`, price: fields.price });
+}
+
 const combatSource = '#боевые_предметы';
 const combat = read(combatSource).split(/\r?\n/);
 const assignment = new RegExp(String.raw`^\s*\$item_(name|description)\[${literal}\]\s*=\s*${literal}`);

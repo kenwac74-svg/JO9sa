@@ -154,7 +154,7 @@ function buildNavigator(doc,allEntries) {
     const d=data(loc.name);const matches=d.analysis.scenes.filter(s=>s.type!=='condition'&&s.predicate&&branch.states[s.predicate.key]===s.predicate.value);
     return (matches.length?matches:[d.analysis.scenes[0]]).map(s=>({location:loc.name,sceneId:s.id,title:s.condition,line:s.line}));
   }
-  const flow=flowModule.build(doc,allEntries,{analyse,masked,chooseScene,sceneImages,bg,branches:(a,s,l,e)=>branchList(a,s,l,e).map(b=>({...b,destinations:b.destinations||resolve(b)}))});
+  const flow=flowModule.build(doc,allEntries,{analyse,masked,chooseScene,sceneImages,bg,links,calls,branches:(a,s,l,e)=>branchList(a,s,l,e).map(b=>({...b,destinations:b.destinations||resolve(b)}))});
   function context(selection,sceneId,mode,usageId){
     if(selection.hash!==doc.hash)throw Error('QSP가 바뀌었습니다. 다시 검색해 주세요.');
     const d=data(selection.location),entry=d.entries.find(e=>e.fieldIndex===selection.fieldIndex&&e.start===selection.start&&e.end===selection.end);

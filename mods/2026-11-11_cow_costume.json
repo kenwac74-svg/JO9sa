@@ -1,0 +1,73 @@
+{
+  "id": "2026-11-11_cow_costume",
+  "status": "APPROVED",
+  "description": "Add the ordinary cow costume sold at the flea market for 25 sparks, reusing cow images with exoticism +1, daily taming +1, cow learning +2 and style -1. No intellect/pride loss or refusal. Original advanced-training gear requirement retained.",
+  "before_sha256": "396abb21437e04713d1f461b018af80821f4a077b261492b122db334af29217a",
+  "after_sha256": "f77a6aee3300761992a4fde84d8a8d2fba73b3781d8e2bed09e1546e1cd1d67c",
+  "add_locations": [
+    {
+      "name": "jo9_cow_costume",
+      "desc": "",
+      "body": "! JO9 MOD START COW_COSTUME_HELPER_20261111\r\nlocal $cc_op = $args[0]\r\nif $cc_op = 'data':\r\n $item_name['cow_costume'] = '젖소 코스튬'\r\n item_price['cow_costume'] = 25\r\n $item_description['cow_costume'] = '<br>젖소를 본뜬 귀와 꼬리, 작은 종을 달아 귀엽게 꾸민 코스튬. 기존 젖소녀 장비와 같은 차림을 즐길 수 있는 일반 의상이다.<br><br>독특함 +1, 매일 사육 상승, 젖소녀 교육효율 상승, 세련됨 -1.<br>지성이나 태도를 낮추지 않으며 고급 젖소녀 훈련용 장비를 대신하지 않는다.<br><br>가격 25스파크.'\r\n $item_demo['cow_costume'] = 'scene\\item\\item_cow_gear'\r\n $item_property['cow_costume'] = {\r\n  dynslave['ex_plus'] += 1\r\n  daily_bonus['instinct'] += 1\r\n  learn_bonus['cowSK'] += 2\r\n  dynslave['st_plus'] -= 1\r\n }\r\n $item_property_off['cow_costume'] = {}\r\n exit\r\nend\r\n\r\nif $cc_op = 'equipment':\r\n local $cc_nl = '\r\n'\r\n local $cc_old_slave = {\r\n\tif slave_inventory['cow_gear'] > 0 \t\t\tor inventory['cow_gear'] > 0: \t\t\tdynamic $replace($get_non_combat_equipment, 'dyn'+'slave', 'slave'), 'cow_gear', 24 &! $equip_choice += '<a href = \"EXEC: $new_item = ''cow_gear'' & slot = 24 & gt ''item_change''\"><<$item_name[\"cow_gear\"]>></a><br>'\r\n}\r\n local $cc_new_slave = \" if slave_inventory['cow_costume'] > 0 or inventory['cow_costume'] > 0: dynamic $replace($get_non_combat_equipment, 'dyn'+'slave', 'slave'), 'cow_costume', 24\"\r\n local $cc_old_assistant = {\r\n\tif assistant_inventory['cow_gear'] > 0 \t\t\tor inventory['cow_gear'] > 0: \t\t\tdynamic $replace($get_non_combat_equipment, 'dyn'+'slave', 'assistant'), 'cow_gear', 44 &! $equip_choice += '<a href = \"EXEC: $new_item = ''cow_gear'' & slot = 44 & gt ''item_change''\"><<$item_name[\"cow_gear\"]>></a><br>'\r\n}\r\n local $cc_new_assistant = \" if assistant_inventory['cow_costume'] > 0 or inventory['cow_costume'] > 0: dynamic $replace($get_non_combat_equipment, 'dyn'+'slave', 'assistant'), 'cow_costume', 44\"\r\n if instr($slave_cloth_list, 'cow_costume') = 0: $slave_cloth_list = replace($slave_cloth_list, $cc_old_slave, $cc_old_slave + $cc_new_slave + $cc_nl)\r\n if instr($assistant_cloth_list, 'cow_costume') = 0: $assistant_cloth_list = replace($assistant_cloth_list, $cc_old_assistant, $cc_old_assistant + $cc_new_assistant + $cc_nl)\r\n local $cc_clear = \"$equip_choice = ''\"\r\n if instr($slave_cloth_list, 'cow_costume') = 0: $slave_cloth_list = replace($slave_cloth_list, $cc_clear, $cc_clear + $cc_nl + $cc_new_slave)\r\n if instr($assistant_cloth_list, 'cow_costume') = 0: $assistant_cloth_list = replace($assistant_cloth_list, $cc_clear, $cc_clear + $cc_nl + $cc_new_assistant)\r\n exit\r\nend\r\n\r\nif $cc_op = 'menus':\r\n local $cc_nl = '\r\n'\r\n local $cc_back = \"FUNC('$menu', 'exec_options', $menu_item_jeweler_options, 'sp_txt = 1 & gt $curloc', '다른 상품')\"\r\n local $cc_slave_menu = {\r\n! JO9_COW_COSTUME_MARKET_SLAVE_20261111\r\n if $slave['cloth'] = 'cow_costume' or slave_inventory['cow_costume'] > 0 or inventory['cow_costume'] > 0:\r\n  FUNC('$menu', 'location_gray', $menu_item_Cow_gear_gray, empty, '젖소 코스튬 ($25)')\r\n else\r\n  FUNC('$menu', 'interaction_city', $menu_item_Cow_gear, 39934, '젖소 코스튬 ($25)')\r\n end\r\n }\r\n local $cc_assistant_menu = {\r\n! JO9_COW_COSTUME_MARKET_ASSISTANT_20261111\r\n if $assistant['cloth'] = 'cow_costume' or assistant_inventory['cow_costume'] > 0 or inventory['cow_costume'] > 0:\r\n  FUNC('$menu', 'location_gray', $menu_item_Cow_gear_gray, empty, '젖소 코스튬 ($25)')\r\n else\r\n  FUNC('$menu', 'interaction_city', $menu_item_Cow_gear, 39834, '젖소 코스튬 ($25)')\r\n end\r\n }\r\n if $menu_item_Cow_gear = '': $menu_item_Cow_gear = '<li style=\"background: url(''content/pic/ui/legacy_overhaul/cow_gear.png''); background-repeat: no-repeat;\">'\r\n if $menu_item_Cow_gear_gray = '': $menu_item_Cow_gear_gray = replace($menu_item_Cow_gear, '<li ', '<li id=\"grey\" ')\r\n if instr($baraholka_s_options[3], 'cow_costume') = 0: $baraholka_s_options[3] = replace($baraholka_s_options[3], $cc_back, $cc_slave_menu + $cc_nl + $cc_back)\r\n if instr($baraholka_a_options[3], 'cow_costume') = 0: $baraholka_a_options[3] = replace($baraholka_a_options[3], $cc_back, $cc_assistant_menu + $cc_nl + $cc_back)\r\n if instr($display_options[3], 'cow_costume') = 0:\r\n  if instr($display_options[3], '39931') > 0: $display_options[3] = replace($display_options[3], $cc_back, $cc_slave_menu + $cc_nl + $cc_back)\r\n  if instr($display_options[3], '39831') > 0: $display_options[3] = replace($display_options[3], $cc_back, $cc_assistant_menu + $cc_nl + $cc_back)\r\n end\r\n exit\r\nend\r\n\r\nif $cc_op = 'load':\r\n gs 'jo9_cow_costume', 'data'\r\n gs 'jo9_cow_costume', 'equipment'\r\n gs 'jo9_cow_costume', 'menus'\r\nend\r\n! JO9 MOD END COW_COSTUME_HELPER_20261111\r\n",
+      "actions": []
+    }
+  ],
+  "edits": [
+    {
+      "location": "#item_base",
+      "field": "body",
+      "old": "! JO9 MOD END PROFILE_POLISH_20261025_R3",
+      "new": "! JO9 MOD END PROFILE_POLISH_20261025_R3\r\n! JO9 MOD START COW_COSTUME_DATA_20261111\r\ngs 'jo9_cow_costume', 'data'\r\n! JO9 MOD END COW_COSTUME_DATA_20261111",
+      "count": 1,
+      "patchId": "COW_COSTUME_20261111"
+    },
+    {
+      "location": "#dynamic",
+      "field": "body",
+      "old": "! JO9 MOD END UI_RESOURCE_PATHS_20261027\r\n",
+      "new": "! JO9 MOD END UI_RESOURCE_PATHS_20261027\r\n\r\n! JO9 MOD START COW_COSTUME_EQUIPMENT_20261111\r\ngs 'jo9_cow_costume', 'equipment'\r\n! JO9 MOD END COW_COSTUME_EQUIPMENT_20261111",
+      "count": 1,
+      "patchId": "COW_COSTUME_20261111"
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "! JO9 MOD END UI_RESOURCE_PATHS_20261027\r\n",
+      "new": "! JO9 MOD END UI_RESOURCE_PATHS_20261027\r\n\r\n! JO9 MOD START COW_COSTUME_MENUS_20261111\r\ngs 'jo9_cow_costume', 'menus'\r\n! JO9 MOD END COW_COSTUME_MENUS_20261111",
+      "count": 1,
+      "patchId": "COW_COSTUME_20261111"
+    },
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "! JO9 MOD START RALLY_MENU_LOAD_20261111",
+      "new": "! JO9 MOD START COW_COSTUME_LOAD_20261111\r\ngs 'jo9_cow_costume', 'load'\r\n! JO9 MOD END COW_COSTUME_LOAD_20261111\r\n! JO9 MOD START RALLY_MENU_LOAD_20261111",
+      "count": 1,
+      "patchId": "COW_COSTUME_20261111"
+    },
+    {
+      "location": "display_fullimage",
+      "field": "body",
+      "old": "if $outfit_game = 'cow_gear': $outfit_patch = 'cow'",
+      "new": "if $outfit_game = 'cow_gear': $outfit_patch = 'cow'\r\n! JO9 MOD START COW_COSTUME_IMAGE_20261111\r\nif $outfit_game = 'cow_costume': $outfit_patch = 'cow'\r\n! JO9 MOD END COW_COSTUME_IMAGE_20261111",
+      "count": 1,
+      "patchId": "COW_COSTUME_20261111"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "IF interaction_city = 39933:\r\n $place = 'baraholka'\r\n $return_lock  = 'shop_general'\r\n $interaction_type = 'buy_item_slut'\r\n $item_id = 'slutcostume'\r\nEND",
+      "new": "IF interaction_city = 39933:\r\n $place = 'baraholka'\r\n $return_lock  = 'shop_general'\r\n $interaction_type = 'buy_item_slut'\r\n $item_id = 'slutcostume'\r\nEND\r\n! JO9 MOD START COW_COSTUME_SALE_39934_20261111\r\nIF interaction_city = 39934:\r\n $place = 'baraholka'\r\n $return_lock  = 'shop_general'\r\n $interaction_type = 'buy_item'\r\n $item_id = 'cow_costume'\r\n item_qty = 1\r\nEND\r\n! JO9 MOD END COW_COSTUME_SALE_39934_20261111",
+      "count": 1,
+      "patchId": "COW_COSTUME_20261111"
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "IF interaction_city = 39833:\r\n $place = 'baraholka'\r\n $return_lock  = 'shop_general'\r\n $interaction_type = 'buy_item_assistant_slut'\r\n $item_id = 'slutcostume'\r\nEND",
+      "new": "IF interaction_city = 39833:\r\n $place = 'baraholka'\r\n $return_lock  = 'shop_general'\r\n $interaction_type = 'buy_item_assistant_slut'\r\n $item_id = 'slutcostume'\r\nEND\r\n! JO9 MOD START COW_COSTUME_SALE_39834_20261111\r\nIF interaction_city = 39834:\r\n $place = 'baraholka'\r\n $return_lock  = 'shop_general'\r\n $interaction_type = 'buy_item_assistant'\r\n $item_id = 'cow_costume'\r\n item_qty = 1\r\nEND\r\n! JO9 MOD END COW_COSTUME_SALE_39834_20261111",
+      "count": 1,
+      "patchId": "COW_COSTUME_20261111"
+    }
+  ]
+}

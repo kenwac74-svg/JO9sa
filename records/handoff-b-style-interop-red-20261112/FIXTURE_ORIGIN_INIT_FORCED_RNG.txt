@@ -1,0 +1,65 @@
+! JO9 MOD START ORIGIN_GROWTH_20261112
+! Spreadsheet X:AD percentages, fixed/pre-existing actors are untouched.
+if $args[0]='init':
+ result=0
+ if stock['jo9_bg_random']!1: exit
+ stock['jo9_origin_frac_ego']=0
+ stock['jo9_origin_frac_pride']=0
+ stock['jo9_origin_frac_sensitivity']=0
+ local j9og_style_delta=0
+ if $stock_family='tribe' and 1<=10: j9og_style_delta=-1
+ if $stock_family='amazon' and 1<=10: j9og_style_delta=1
+ if $stock_family='barbarian_king' and 1<=10: j9og_style_delta=1
+ if $stock_family='orphan' and 1<=20: j9og_style_delta=-1
+ if $stock_family='bondman' and 1<=10: j9og_style_delta=-1
+ if $stock_family='gypsy' and 1<=20: j9og_style_delta=-1
+ if $stock_family='church' and 1<=20: j9og_style_delta=-1
+ if $stock_family='craftsman' and 1<=10: j9og_style_delta=1
+ if $stock_family='merchant' and 1<=10: j9og_style_delta=1
+ if $stock_family='valetry' and 1<=10: j9og_style_delta=-1
+ if $stock_family='knight' and 1<=20: j9og_style_delta=1
+ if $stock_family='mprincess' and 1<=30: j9og_style_delta=1
+ if $stock_family='farmers' and 1<=10: j9og_style_delta=1
+ if $stock_family='workhouse' and 1<=20: j9og_style_delta=-1
+ if $stock_family='proletarian' and 1<=10: j9og_style_delta=-1
+ if $stock_family='clerk' and 1<=10: j9og_style_delta=1
+ if $stock_family='naturalist' and 1<=10: j9og_style_delta=1
+ if $stock_family='ingeneer' and 1<=10: j9og_style_delta=1
+ if $stock_family='doctor' and 1<=10: j9og_style_delta=1
+ if $stock_family='magnat' and 1<=10: j9og_style_delta=1
+ if $stock_family='bankeer' and 1<=10: j9og_style_delta=1
+ if $stock_family='mayor' and 1<=10: j9og_style_delta=1
+ if $stock_family='mafiosi' and 1<=10: j9og_style_delta=1
+ if $stock_family='orpnange' and 1<=20: j9og_style_delta=-1
+ if $stock_family='policeman' and 1<=10: j9og_style_delta=1
+ if $stock_family='manager' and 1<=10: j9og_style_delta=1
+ if $stock_family='biologist' and 1<=10: j9og_style_delta=1
+ if $stock_family='programmer' and 1<=10: j9og_style_delta=1
+ if $stock_family='surgeon' and 1<=10: j9og_style_delta=1
+ if $stock_family='businessman' and 1<=10: j9og_style_delta=1
+ if $stock_family='finance' and 1<=10: j9og_style_delta=1
+ if $stock_family='general' and 1<=10: j9og_style_delta=1
+ if $stock_family='poet' and 1<=10: j9og_style_delta=1
+ if $stock_family='artist' and 1<=10: j9og_style_delta=1
+ if $stock_family='architect' and 1<=10: j9og_style_delta=1
+ if $stock_family='minitruth' and 1<=10: j9og_style_delta=1
+ if $stock_family='anter' and 1<=10: j9og_style_delta=-1
+ if $stock_family='freetrader' and 1<=10: j9og_style_delta=1
+ if $stock_family='astrofarm' and 1<=10: j9og_style_delta=1
+ if $stock_family='astrogator' and 1<=10: j9og_style_delta=1
+ if $stock_family='admiral' and 1<=10: j9og_style_delta=1
+ if $stock_family='nanofarmacist' and 1<=10: j9og_style_delta=1
+ if $stock_family='gendesigner' and 1<=10: j9og_style_delta=1
+ if $stock_family='ancient_noble' and 1<=20: j9og_style_delta=1
+ if $stock_family='ancient_citizen' and 1<=10: j9og_style_delta=1
+ if j9og_style_delta!0:
+  local j9og_style=max(0,min(5,stock['style']+j9og_style_delta))
+  if j9og_style!stock['style']:
+   stock_rate['style']=max(0,cont_atr_threshold[j9og_style]-stock_rate['temp_style'])
+   stock['style']=j9og_style
+   result=1
+  end
+ end
+ exit
+end
+

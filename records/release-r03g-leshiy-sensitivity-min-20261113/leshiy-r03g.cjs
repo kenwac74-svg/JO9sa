@@ -1,0 +1,12 @@
+'use strict';
+const fs=require('fs'),z=require('zlib'),a=require('assert/strict');
+const R='G:/somi/JO9sa',G='G:/somi/Jack O Nine Tails v2.4_work/game',D=R+'/records/release-r03g-leshiy-sensitivity-min-20261113',T='G:/Codex/tmp/release-r03g-leshiy-sensitivity-min-20261113';
+const c=require(R+'/tools/text-workshop/core.cjs'),qa=require(R+'/tools/qa/release-check.cjs'),sv=require(R+'/tools/qa/save-codec.cjs');
+const rd=p=>JSON.parse(fs.readFileSync(p,'utf8').replace(/^\uFEFF/,'')),wr=(p,x)=>fs.writeFileSync(p,JSON.stringify(x,null,2)+'\n'),nl=s=>s.replace(/\r?\n/g,'\r\n'),q=s=>"'"+s.replaceAll("'","''")+"'",body=(d,n)=>c.shift(d.lines[d.locations.find(l=>l.name===n).body],5),put=(d,n,s)=>{d.lines[d.locations.find(l=>l.name===n).body]=c.shift(nl(s),-5);};
+if(require.main===module&&process.argv[2]==='prepare'){
+ const raw=fs.readFileSync(G+'/jack.qsp');a.equal(c.hash(raw),'2c40888317e25b9453ca0efc60fa79321cbca9b0b18318d2584e6908e42f0605');a(raw.equals(fs.readFileSync(R+'/assets/runtime/2.4.1/jack.qsp')));a.equal(rd(R+'/assets/runtime-source-2.4.1.json').sourceQspSha256,c.hash(raw));qa.inspectWorld(raw);a(c.serialize(c.parse(raw)).equals(raw));
+ fs.mkdirSync(D,{recursive:true});fs.mkdirSync(T+'/native',{recursive:true});fs.mkdirSync(T+'/mods',{recursive:true});a(!fs.existsSync(D+'/baseline.qsp.gz'));fs.writeFileSync(D+'/baseline.qsp.gz',z.gzipSync(raw));fs.writeFileSync(D+'/manifest.before.json.gz',z.gzipSync(fs.readFileSync(R+'/assets/runtime-source-2.4.1.json')));
+ fs.writeFileSync(D+'/PLAN_KO.md',`# R03-7 레시 감수성 최저1 연결\n\n2026-11-13 사용자 승인: 기존 감수성3이하에 원본 최저1을 추가해1~3만 허용한다. 기존 demand['min_sensitivity']=1을 레시 납품에서만 읽는다. 감수성0과4이상은 거절하고 인물값은 수정하지 않는다.\n\n실제 납품 함수 한 본문만 변경한다. 현재 요구값은 이미 저장돼 있으므로 새 캐시/영구 필드/로케이션을 추가하지 않는다. 다른 고객의 동작,체력4이상·인지도0·다른 기술·평가·가격과 인물/재산/진행을 유지한다. 별도 사용자 최저값도 덮어쓰지 않는다.\n\n실제 성인 합성 인물에서0/1/3/4 경계,기존 체력/인지도/간호 거절과 다른 고객,기존 요구의2회로드 및 수동 편집을 RED→수정후 비교한다. 공식 재생/멱등/역검증·구조 후 WORK·소스·원장·문서를 맞추고 이번 임시 사본만 정리한다. 개인 SAV/GUI/전체출고검증·Full·음원·커밋푸시·최종 마이그레이션은 별도다.\n`);
+ const p=R+'/records/release-prep-20261113/checklist.json',s=rd(p),e=s.items.find(x=>x.id==='R03');e.status='진행 중';e.notes='R03-1~6 완료. R03-7 레시 감수성 최저1 연결·1~3 허용 사용자 승인, 실제 납품/기존 저장 요구 검증 중.';s.history.push({date:'2026-11-13',item:'R03-7',decision:'최저1도 연결해 레시 감수성1~3 허용 승인'});wr(p,s);console.log(JSON.stringify({before:c.hash(raw),D,T}));
+}
+module.exports={R,G,D,T,c,qa,sv,rd,wr,nl,q,body,put};

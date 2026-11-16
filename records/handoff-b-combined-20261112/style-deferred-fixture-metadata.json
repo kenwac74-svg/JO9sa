@@ -1,0 +1,61 @@
+{
+  "candidate": "G:/Codex/tmp/handoff-b-combined-20261112/candidate.qsp",
+  "sha256": "29f4c04892a19afb25c82443a928e5d7895f1a7a24208df670eb3f4032bbbd15",
+  "cases": [
+    {
+      "name": "grace1-clean-groomed",
+      "grace": 1,
+      "hygiene": 0,
+      "groom": 1,
+      "base": 0
+    },
+    {
+      "name": "grace2-clean-groomed",
+      "grace": 2,
+      "hygiene": 0,
+      "groom": 1,
+      "base": 0
+    },
+    {
+      "name": "grace1-hygiene1-groomed",
+      "grace": 1,
+      "hygiene": 1,
+      "groom": 1,
+      "base": 0
+    },
+    {
+      "name": "grace1-hygiene3-groomed",
+      "grace": 1,
+      "hygiene": 3,
+      "groom": 1,
+      "base": 0
+    },
+    {
+      "name": "negative-temp-control",
+      "grace": 1,
+      "hygiene": 0,
+      "groom": 0,
+      "base": 80
+    },
+    {
+      "name": "late-occupation-grace",
+      "grace": 0,
+      "lateGrace": 1,
+      "hygiene": 0,
+      "groom": 1,
+      "base": 0
+    },
+    {
+      "name": "fixed-control",
+      "grace": 1,
+      "hygiene": 0,
+      "groom": 1,
+      "base": 0,
+      "fixed": 1
+    }
+  ],
+  "pureStyle": "!IMPACTS ON STYLE (temp style rate is refreshed constantly)\r\n\t\tstock_rate['temp_style'] = (stock['grace']*cont_atr_threshold[2]) - cont_atr_threshold[stock['hygiene']]\r\n\t\tif stock['makeup'] > 1: stock_rate['temp_style'] += 10\r\n\t\tif stock['makeup'] > 0: stock_rate['temp_style'] += 10\r\n\t\tif stock['makeup'] = 0: stock_rate['temp_style'] -= 10\r\n\t\tif stock['perfume'] > 0: stock_rate['temp_style'] += 20\r\n\t\tif stock['perfume'] = 0: stock_rate['temp_style'] -= 10\r\n\t\tif stock['manicure'] > 0: stock_rate['temp_style'] += 10\r\n\t\tif stock['manicure'] = 0: stock_rate['temp_style'] -= 10\r\n\t\tif stock['epilation'] > 0: stock_rate['temp_style'] += 10\r\n\t\tif stock['epilation'] = 0: stock_rate['temp_style'] -= 10\r\n\t\tif stock['hairstyle'] < 1 and stock['wig'] > 0: stock['hairstyle'] = 1\r\n\t\tif stock['hairstyle'] > 0: stock_rate['temp_style'] += 10\r\n\t\tif stock['hairstyle'] = 0: stock_rate['temp_style'] -= 10\r\n\r\n\t\tstock['st_count'] = 0\r\n\t\tif stock['st_plus'] >= 1: stock['st_count'] = 1 & stock_rate['temp_style'] += 10\r\n\t\tif stock['st_plus'] >= 3: stock['st_count'] = 2 & stock_rate['temp_style'] += 10\r\n\t\tif stock['st_plus'] >= 6: stock['st_count'] = 3 & stock_rate['temp_style'] += 20\r\n\t\tif stock['st_plus'] >= 9: stock['st_count'] = 4 & stock_rate['temp_style'] += 20\r\n\t\tif stock['st_plus'] >= 13: stock['st_count'] = 5 & stock_rate['temp_style'] += 30\r\n\r\n\t\t",
+  "originalOriginSource": "! JO9 MOD START ORIGIN_GROWTH_20261112\r\n! Spreadsheet X:AB growth percentages; AC:AD style roll is deferred by explicit user decision.\r\nif $args[0]='init':\r\n result=0\r\n if stock['jo9_bg_random']!1: exit\r\n stock['jo9_origin_frac_ego']=0\r\n stock['jo9_origin_frac_pride']=0\r\n stock['jo9_origin_frac_sensitivity']=0\r\n exit\r\nend\r\nif $args[0]!'delta': exit\r\nresult=args[3]\r\nlocal $j9og_role=$args[1]\r\nlocal $j9og_key=$args[2]\r\nif $j9og_key!'ego' and $j9og_key!'pride' and $j9og_key!'sensitivity': exit\r\nif instr('|dynslave|slave|assistant|prisoner|cow|farmhand|pig|harpy|room1|room2|room3|room4|snk_parked_slave|iced_1|iced_2|iced_3|iced_4|iced_5|iced_6|iced_7|iced_8|iced_9|iced_10|iced_11|iced_12|iced_13|iced_14|iced_15|iced_16|iced_17|iced_18|','|'+$j9og_role+'|')=0: exit\r\nif dyneval('result = '+$j9og_role+'[''jo9_bg_random'']')!1: result=args[3] & exit\r\nlocal $j9og_family=$dyneval('$result = $'+$j9og_role+'_family')\r\nlocal j9og_percent=0\r\nif $j9og_family='tribe':\r\n if $j9og_key='ego' and args[3]<0: j9og_percent=10\r\n if $j9og_key='pride' and args[3]<0: j9og_percent=10\r\nend\r\nif $j9og_family='nomad':\r\n if $j9og_key='ego' and args[3]<0: j9og_percent=5\r\n if $j9og_key='pride' and args[3]<0: j9og_percent=5\r\nend\r\nif $j9og_family='pesant':\r\n if $j9og_key='ego' and args[3]<0: j9og_percent=5\r\n if $j9og_key='pride' and args[3]<0: j9og_percent=5\r\nend\r\nif $j9og_family='hunter':\r\n if $j9og_key='ego' and args[3]<0: j9og_percent=5\r\n if $j9og_key='pride' and args[3]<0: j9og_percent=5\r\nend\r\nif $j9og_family='fisher':\r\n if $j9og_key='ego' and args[3]<0: j9og_percent=5\r\n if $j9og_key='pride' and args[3]<0: j9og_percent=5\r\nend\r\nif $j9og_family='viking':\r\n if $j9og_key='ego' and args[3]<0: j9og_percent=5\r\n if $j9og_key='pride' and args[3]<0: j9og_percent=5\r\nend\r\nif $j9og_family='barbarian_king':\r\n if $j9og_key='pride' and args[3]>0: j9og_percent=15\r\n if $j9og_key='sensitivity' and args[3]>0: j9og_percent=10\r\nend\r\nif $j9og_family='orphan':\r\n if $j9og_key='ego' and args[3]<0: j9og_percent=15\r\n if $j9og_key='pride' and args[3]<0: j9og_percent=15\r\nend\r\nif $j9og_family='bondman':\r\n if $j9og_key='ego' and args[3]<0: j9og_percent=10\r\n if $j9og_key='pride' and args[3]<0: j9og_percent=10\r\nend\r\nif $j9og_family='gypsy':\r\n if $j9og_key='ego' and args[3]<0: j9og_percent=15\r\n if $j9og_key='pride' and args[3]<0: j9og_percent=15\r\nend\r\nif $j9og_family='church':\r\n if $j9og_key='ego' and args[3]<0: j9og_percent=15\r\n if $j9og_key='pride' and args[3]<0: j9og_percent=15\r\nend\r\nif $j9og_family='valetry':\r\n if $j9og_key='ego' and args[3]<0: j9og_percent=10\r\n if $j9og_key='pride' and args[3]<0: j9og_percent=10\r\nend\r\nif $j9og_family='knight':\r\n if $j9og_key='pride' and args[3]>0: j9og_percent=10\r\n if $j9og_key='sensitivity' and args[3]>0: j9og_percent=10\r\nend\r\nif $j9og_family='mprincess':\r\n if $j9og_key='pride' and args[3]>0: j9og_percent=15\r\n if $j9og_key='sensitivity' and args[3]>0: j9og_percent=15\r\nend\r\nif $j9og_family='workhouse':\r\n if $j9og_key='ego' and args[3]<0: j9og_percent=15\r\n if $j9og_key='pride' and args[3]<0: j9og_percent=15\r\nend\r\nif $j9og_family='proletarian':\r\n if $j9og_key='ego' and args[3]<0: j9og_percent=10\r\n if $j9og_key='pride' and args[3]<0: j9og_percent=10\r\nend\r\nif $j9og_family='doctor':\r\n if $j9og_key='ego' and args[3]>0: j9og_percent=5\r\n if $j9og_key='sensitivity' and args[3]>0: j9og_percent=10\r\nend\r\nif $j9og_family='servant':\r\n if $j9og_key='ego' and args[3]<0: j9og_percent=5\r\n if $j9og_key='pride' and args[3]<0: j9og_percent=5\r\nend\r\nif $j9og_family='magnat':\r\n if $j9og_key='ego' and args[3]>0: j9og_percent=5\r\n if $j9og_key='sensitivity' and args[3]>0: j9og_percent=10\r\nend\r\nif $j9og_family='bankeer':\r\n if $j9og_key='ego' and args[3]>0: j9og_percent=5\r\n if $j9og_key='sensitivity' and args[3]>0: j9og_percent=10\r\nend\r\nif $j9og_family='mayor':\r\n if $j9og_key='ego' and args[3]>0: j9og_percent=5\r\n if $j9og_key='sensitivity' and args[3]>0: j9og_percent=10\r\nend\r\nif $j9og_family='mafiosi':\r\n if $j9og_key='ego' and args[3]>0: j9og_percent=5\r\n if $j9og_key='sensitivity' and args[3]>0: j9og_percent=10\r\nend\r\nif $j9og_family='orpnange':\r\n if $j9og_key='ego' and args[3]<0: j9og_percent=15\r\n if $j9og_key='pride' and args[3]<0: j9og_percent=15\r\nend\r\nif $j9og_family='worker':\r\n if $j9og_key='ego' and args[3]<0: j9og_percent=5\r\n if $j9og_key='pride' and args[3]<0: j9og_percent=5\r\nend\r\nif $j9og_family='surgeon':\r\n if $j9og_key='ego' and args[3]>0: j9og_percent=5\r\n if $j9og_key='sensitivity' and args[3]>0: j9og_percent=10\r\nend\r\nif $j9og_family='businessman':\r\n if $j9og_key='ego' and args[3]>0: j9og_percent=5\r\n if $j9og_key='sensitivity' and args[3]>0: j9og_percent=10\r\nend\r\nif $j9og_family='finance':\r\n if $j9og_key='ego' and args[3]>0: j9og_percent=5\r\n if $j9og_key='sensitivity' and args[3]>0: j9og_percent=10\r\nend\r\nif $j9og_family='general':\r\n if $j9og_key='ego' and args[3]>0: j9og_percent=5\r\n if $j9og_key='sensitivity' and args[3]>0: j9og_percent=10\r\nend\r\nif $j9og_family='architect':\r\n if $j9og_key='ego' and args[3]>0: j9og_percent=5\r\n if $j9og_key='sensitivity' and args[3]>0: j9og_percent=10\r\nend\r\nif $j9og_family='operator':\r\n if $j9og_key='ego' and args[3]<0: j9og_percent=5\r\n if $j9og_key='pride' and args[3]<0: j9og_percent=5\r\nend\r\nif $j9og_family='jailer':\r\n if $j9og_key='ego' and args[3]<0: j9og_percent=5\r\n if $j9og_key='pride' and args[3]<0: j9og_percent=5\r\nend\r\nif $j9og_family='bioreactor':\r\n if $j9og_key='ego' and args[3]<0: j9og_percent=5\r\n if $j9og_key='pride' and args[3]<0: j9og_percent=5\r\nend\r\nif $j9og_family='minitruth':\r\n if $j9og_key='ego' and args[3]>0: j9og_percent=5\r\n if $j9og_key='sensitivity' and args[3]>0: j9og_percent=10\r\nend\r\nif $j9og_family='anter':\r\n if $j9og_key='ego' and args[3]<0: j9og_percent=10\r\n if $j9og_key='pride' and args[3]<0: j9og_percent=10\r\nend\r\nif $j9og_family='astrofarm':\r\n if $j9og_key='ego' and args[3]>0: j9og_percent=5\r\n if $j9og_key='sensitivity' and args[3]>0: j9og_percent=10\r\nend\r\nif $j9og_family='asteroid':\r\n if $j9og_key='ego' and args[3]<0: j9og_percent=5\r\n if $j9og_key='pride' and args[3]<0: j9og_percent=5\r\nend\r\nif $j9og_family='admiral':\r\n if $j9og_key='ego' and args[3]>0: j9og_percent=5\r\n if $j9og_key='sensitivity' and args[3]>0: j9og_percent=10\r\nend\r\nif $j9og_family='nanofarmacist':\r\n if $j9og_key='ego' and args[3]>0: j9og_percent=5\r\n if $j9og_key='sensitivity' and args[3]>0: j9og_percent=10\r\nend\r\nif $j9og_family='gendesigner':\r\n if $j9og_key='ego' and args[3]>0: j9og_percent=5\r\n if $j9og_key='sensitivity' and args[3]>0: j9og_percent=10\r\nend\r\nif $j9og_family='ancient_noble':\r\n if $j9og_key='pride' and args[3]>0: j9og_percent=10\r\n if $j9og_key='sensitivity' and args[3]>0: j9og_percent=10\r\nend\r\nif $j9og_family='roman_freedslave':\r\n if $j9og_key='ego' and args[3]<0: j9og_percent=5\r\n if $j9og_key='pride' and args[3]<0: j9og_percent=5\r\nend\r\nif j9og_percent=0: result=args[3] & exit\r\nlocal $j9og_frac='jo9_origin_frac_'+$j9og_key\r\nlocal j9og_total=args[3]*j9og_percent+dyneval('result = '+$j9og_role+\"['\"+$j9og_frac+\"']\")\r\nlocal j9og_bonus=j9og_total/100\r\ndynamic $j9og_role+\"['\"+$j9og_frac+\"'] = \"+str(j9og_total-j9og_bonus*100)\r\nresult=args[3]+j9og_bonus\r\n! JO9 MOD END ORIGIN_GROWTH_20261112\r\n",
+  "continuousStyleGradeSource": "!Continuous field dependence (primary value is computed from rate variable, which represents continuous -- i.e., complete -- range of primary value)\r\n\t\t!Temporary rate will be added/subtracted (e.g., dynslave_rate['temp_beauty'], dynslave_rate['temp_exotic'], dynslave_rate['temp_style'])\r\n\t\tlocal jo9_nymph_previous_arousal = dynslave['arousal']\r\n\t\ti = 0\r\n\t\tn = arrsize('$cont_atr')\r\n\t\t:slave_cont_loop\r\n\t\t\tif dynslave_rate[$cont_atr[i]] < cont_atr_min: dynslave_rate[$cont_atr[i]] = cont_atr_min &! zero is lower bound for rate\r\n\t\t\tif dynslave_rate[$cont_atr[i]] > cont_atr_max: dynslave_rate[$cont_atr[i]] = cont_atr_max &! 200 is upper bound for rate\r\n\t\t\trate = dynslave_rate[$cont_atr[i]] + dynslave_rate['temp_' + $cont_atr[i]]\r\n\t\t\tdynslave[$cont_atr[i]] = 0\r\n\t\t\tif rate >= cont_atr_threshold[1]: dynslave[$cont_atr[i]] = 1\r\n\t\t\tif rate >= cont_atr_threshold[2]: dynslave[$cont_atr[i]] = 2\r\n\t\t\tif rate >= cont_atr_threshold[3]: dynslave[$cont_atr[i]] = 3\r\n\t\t\tif rate >= cont_atr_threshold[4]: dynslave[$cont_atr[i]] = 4\r\n\t\t\tif rate >= cont_atr_threshold[5]: dynslave[$cont_atr[i]] = 5\r\n\t\t\ti += 1\r\n\t\tif i < n: jump 'slave_cont_loop'\r\n\r\n\t\t",
+  "fixtureOnlyChange": "rand(1,100) ->1 in jo9_origin_growth to force approved style hit; no product writes"
+}

@@ -201,22 +201,37 @@ def build(game: Path):
     errors = []
     excluded = []
     external_cache = {}
-    seen_ids = {}
-    for file in sorted(json_root.glob("*.json"), key=lambda value: value.name.lower()):
-        if file.stem == "0_template":
-            excluded.append(file.name)
+    # JO9 MOD START JSON_CHARACTER_DISCOVERY_20261111
+    # Keep unique numeric keys compatible; all other JSONs are keyed by filename.
+    json_files = []
+    for file in sorted(json_root.iterdir(), key=lambda value: value.name.lower()):
+        if file.suffix.lower() != ".json":
             continue
+        if file.is_symlink() or getattr(file, "is_junction", lambda: False)():
+            ignored_links.append(file.relative_to(game).as_posix())
+            continue
+        if file.is_file():
+            json_files.append(file)
+
+    def number_for(file):
+        match = re.match(r"^([0-9]+)(?:_|$)", file.stem)
+        number = int(match.group(1)) if match else None
+        return number if number is not None and number <= 9007199254740991 else None
+
+    numbers = {file.name: number_for(file) for file in json_files}
+    counts = collections.Counter(number for number in numbers.values() if number is not None)
+    seen_ids = set()
+    for file in json_files:
         try:
             data = json.loads(file.read_text(encoding="utf-8-sig"))
             if not isinstance(data, dict):
                 raise ValueError("Character JSON must contain an object.")
-            match = re.match(r"^(\d+)(?:_|$)", file.stem)
-            if not match:
-                raise ValueError("Character filename has no numeric ID.")
-            character_id = int(match.group(1))
-            if character_id in seen_ids:
-                raise ValueError("Duplicate numeric ID also defined in " + seen_ids[character_id])
-            seen_ids[character_id] = file.name
+            character_number = numbers[file.name]
+            character_id = (character_number
+                            if character_number is not None and counts[character_number] == 1
+                            else "json:" + file.name)
+            if character_number is not None:
+                seen_ids.add(character_number)
         except (OSError, ValueError) as error:
             errors.append({"json": file.name, "error": str(error)})
             continue
@@ -235,10 +250,11 @@ def build(game: Path):
         # never generates exclusive IDs (1448 Shiru since 2026-11-07, unregistered 1450).
         groups = [
             age for age in ("loli", "young", "milf")
-            if index.get(age + "_first", -1) <= character_id
+            if character_number is not None
+            and index.get(age + "_first", -1) <= character_number
             <= max(index.get(age + "_last", -1), GAME_POOL_LAST.get(age, -1))
         ]
-        if character_id in GAME_POOL_EXCLUDED:
+        if character_number in GAME_POOL_EXCLUDED:
             groups = []
         scene_folders = {
             "/".join(PurePosixPath(path).parts[:3]).lower()
@@ -252,13 +268,17 @@ def build(game: Path):
         existing_references = {
             files[path.lower()] for path in refs.values() if path.lower() in files
         }
-        character_assets = assets_by_id.get(character_id, set()) | existing_references | scene_assets
-        character_assets.update(path for path in EVENT_IMAGE_ASSETS.get(character_id, ())
+        character_assets = assets_by_id.get(character_number, set()) | existing_references | scene_assets
+        character_assets.update(path for path in EVENT_IMAGE_ASSETS.get(character_number, ())
                                 if path.lower() in files)
         record = {
             "id": character_id,
-            "name": data.get("seed_name") or file.stem.split("_", 1)[-1]
-                    if "_" in file.stem else "ID " + str(character_id),
+            "characterNumber": character_number,
+            "isTemplate": file.stem.lower() == "0_template",
+            "name": (file.stem.split("_", 1)[1]
+                     if character_number is not None and "_" in file.stem
+                     else "ID " + str(character_number) if character_number is not None
+                     else file.stem),
             "json": file.relative_to(game).as_posix(),
             "hasFixedName": isinstance(data.get("seed_name"), str)
                             and bool(data["seed_name"].strip()),
@@ -273,17 +293,18 @@ def build(game: Path):
                 if path.lower().startswith(LEGACY_FOLDERS)
             ),
         }
-        if character_id in SPLIT_NOTES:
-            record["catalogNote"] = SPLIT_NOTES[character_id]
+        if character_number in SPLIT_NOTES:
+            record["catalogNote"] = SPLIT_NOTES[character_number]
             record["compatibilityAssets"] = [
                 {"path": old, "canonicalPath": canonical}
                 for old, (owner_id, canonical) in COMPATIBILITY_ASSETS.items()
-                if owner_id == character_id and old in files
+                if owner_id == character_number and old in files
             ]
         # A seed_name should always take precedence over a generic numbered label.
         if isinstance(data.get("seed_name"), str) and data["seed_name"].strip():
             record["name"] = data["seed_name"]
         records.append(record)
+    # JO9 MOD END JSON_CHARACTER_DISCOVERY_20261111
 
     known_files = set(files)
     for record in records:
@@ -311,7 +332,11 @@ def build(game: Path):
         "createdAt": datetime.now(timezone.utc).isoformat(),
         "qspSha": before_sha,
         "indexSha256": sha256_file(index_path),
-        "characters": sorted(records, key=lambda value: value["id"]),
+        "characters": sorted(records, key=lambda value: (
+            value["characterNumber"] is None,
+            value["characterNumber"] if value["characterNumber"] is not None else 0,
+            value["json"].lower(),
+        )),
         "files": sorted(files.values(), key=str.lower),
         "directories": sorted(directories.values(), key=lambda value: value["path"].lower()),
         "unknownGroups": unknown,

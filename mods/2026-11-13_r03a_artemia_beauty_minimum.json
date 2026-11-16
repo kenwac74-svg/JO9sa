@@ -1,0 +1,25 @@
+{
+  "id": "2026-11-13_r03a_artemia_beauty_minimum",
+  "status": "APPROVED",
+  "description": "R03-1 사용자 확정: 아르테미아 최저 외모5이상. 잘못된 >4 비교식을 =5 대입으로 바꾸고 알려진 옛 저장 요구 콜백만 갱신. 다른 NPC/조건/가격/진행 보존.",
+  "before_sha256": "f03580b7d55d7100fe29e5ce1a2f9c8cb4bc8dd6bc1323478a89579a8073d14e",
+  "after_sha256": "d64c350069b0a2a1d9e659cf9aad11c401af77bca532329ceafe19347c862ec5",
+  "edits": [
+    {
+      "location": "#npc_base",
+      "field": "body",
+      "old": "$buyer_demand['Artemia'] = {\r\ndemand['min_beauty'] > 4\r\ndemand['nymphomania'] = 1\r\n}",
+      "new": "$buyer_demand['Artemia'] = {\r\ndemand['min_beauty'] = 5\r\ndemand['nymphomania'] = 1\r\n}",
+      "count": 1,
+      "patchId": "R03A_ARTEMIA_BEAUTY_20261113"
+    },
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "! JO9 MOD START R02_JOKER_SAVED_MENU_20261113\r\n",
+      "new": "! JO9 MOD START R03A_ARTEMIA_BEAUTY_CACHE_20261113\r\n! Replace only the known obsolete expression; preserve edited conditions and actor state.\r\n$buyer_demand['Artemia'] = replace($buyer_demand['Artemia'], 'demand[''min_beauty''] > 4', 'demand[''min_beauty''] = 5')\r\n! JO9 MOD END R03A_ARTEMIA_BEAUTY_CACHE_20261113\r\n! JO9 MOD START R02_JOKER_SAVED_MENU_20261113\r\n",
+      "count": 1,
+      "patchId": "R03A_ARTEMIA_BEAUTY_20261113"
+    }
+  ]
+}
