@@ -1,0 +1,209 @@
+<!doctype html>
+<!-- JO9 텍스트 풍부화 기획의 현재까지 파악 내용을 공식 표와 개편 대상 목록 표로 한눈에 보여 주는 요약 페이지 -->
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JO9 텍스트 규칙 한눈에</title>
+<style>
+:root{
+  --bg:#f6f4ef;--panel:#fffdf8;--ink:#23201b;--mute:#6b655a;--line:#ddd6c8;--head:#efe9dc;
+  --ok:#1f6f4a;--okbg:#dff1e6;--prop:#8a5a00;--propbg:#fbecc8;--game:#27507a;--gamebg:#dde9f6;
+  --todo:#9b2c2c;--todobg:#f8dcdc;--user:#5b3a8c;--userbg:#e9defa;--accent:#7a4b1f;
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#17150f;--panel:#1f1c15;--ink:#ece6d8;--mute:#a69f90;--line:#3a3529;--head:#2a261c;
+  --ok:#8fd6ad;--okbg:#173626;--prop:#f0c56a;--propbg:#3d2f0c;--game:#9cc3ee;--gamebg:#152a40;
+  --todo:#f0a0a0;--todobg:#431a1a;--user:#c9aef5;--userbg:#2c1f45;--accent:#e0a868;}
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 "Pretendard","Noto Sans KR","Malgun Gothic",system-ui,sans-serif}
+header{padding:28px 16px 12px;max-width:1180px;margin:0 auto}
+h1{font-size:24px;margin:0 0 6px}
+header p{margin:4px 0;color:var(--mute)}
+nav{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+nav div{max-width:1180px;margin:0 auto;padding:8px 16px;display:flex;gap:8px;flex-wrap:wrap}
+nav a{color:var(--accent);text-decoration:none;font-weight:600;padding:4px 10px;border:1px solid var(--line);border-radius:999px;background:var(--panel);font-size:13px}
+main{max-width:1180px;margin:0 auto;padding:8px 16px 60px}
+h2{font-size:20px;margin:34px 0 4px;padding-top:8px;border-top:3px solid var(--accent)}
+h3{font-size:16px;margin:24px 0 8px;color:var(--accent)}
+.note{color:var(--mute);font-size:13.5px;margin:4px 0 10px}
+.legend{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 0}
+.wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+table{border-collapse:collapse;width:100%;min-width:760px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:var(--head);font-size:13px;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.f{font-family:"D2Coding","Consolas",monospace;font-size:13.5px}
+td.n{white-space:nowrap;font-weight:600}
+.chip{display:inline-block;padding:1px 8px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap}
+.ok{color:var(--ok);background:var(--okbg)}.prop{color:var(--prop);background:var(--propbg)}
+.game{color:var(--game);background:var(--gamebg)}.todo{color:var(--todo);background:var(--todobg)}
+.user{color:var(--user);background:var(--userbg)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px;margin:10px 0}
+.card{border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:10px 12px}
+.card b{display:block;font-size:13px;color:var(--mute)}
+.card span{font-size:20px;font-weight:700}
+small{color:var(--mute)}
+</style>
+</head>
+<body>
+<header>
+  <h1>JO9 텍스트 규칙 한눈에</h1>
+  <p>2026-11-16 기준. 게임 적용 전이며 QSP와 mods는 건드리지 않았습니다. 근거 문서는 같은 폴더의 풍부화 규칙, 재검토안, 목소리 인물 설정서, 무게 3 사건 조사입니다.</p>
+  <div class="legend">
+    <span class="chip game">게임 현행</span><small>QSP에서 확인한 지금 동작</small>
+    <span class="chip ok">확정</span><small>사용자 결정이 있음</small>
+    <span class="chip prop">제안</span><small>Claude 제안, 승인 전</small>
+    <span class="chip todo">미조사</span><small>아직 하지 않은 작업</small>
+    <span class="chip user">사용자 작성</span><small>Claude가 문장을 쓰지 않는 칸</small>
+  </div>
+</header>
+<nav><div>
+  <a href="#p1">1부 공식</a><a href="#f-who">인물 판정</a><a href="#f-how">분량·표현</a><a href="#f-rich">풍부화</a><a href="#f-talk">대화 관문</a>
+  <a href="#p2">2부 개편 대상</a><a href="#l-react">기존 반응 글</a><a href="#l-w3">특수 사건</a><a href="#l-w2">반응 갈래</a><a href="#l-todo">안 한 작업</a>
+</div></nav>
+<main>
+
+<h2 id="p1">1부. 게임 전반의 텍스트와 대사에 적용할 수 있는 공식</h2>
+<p class="note">목적은 풍부화입니다. 원래 글은 그대로 두고, 임팩트 있는 순간에 그 인물의 반응을 덧붙입니다.</p>
+
+<div class="grid">
+  <div class="card"><b>목소리 인물</b><span>5명</span><br><small>수천 명의 화자를 다섯 목소리로</small></div>
+  <div class="card"><b>한 자리의 원고 칸</b><span>5 × 3 = 15</span><br><small>목소리 인물 × 태도</small></div>
+  <div class="card"><b>보강 대상</b><span>무게 2 이상</span><br><small>일상 명령은 지금 그대로</small></div>
+  <div class="card"><b>전체 보강 원고</b><span>약 600블록</span><br><small>최소 240블록으로도 동작</small></div>
+</div>
+
+<h3 id="f-who">A. 인물 판정 공식 (대사와 지문 모두에 씀)</h3>
+<div class="wrap"><table>
+<tr><th>#</th><th>이름</th><th>공식</th><th>결과</th><th>상태</th></tr>
+<tr><td>1</td><td class="n">성격 유형</td><td class="f">표현 = 성격 + 감수성<br>주장 = 자아 + 태도<br>0~3 낮음 / 4~6 중간 / 7+ 높음</td><td>9유형(인형·순종·여린 / 관조·평범·솔직 / 얼음·도도·불꽃)</td><td><span class="chip game">게임 현행</span></td></tr>
+<tr><td>2</td><td class="n">목소리 인물</td><td class="f">순종·여린 → 순한 아이<br>평범·솔직 → 담백한 아이<br>도도·불꽃 → 센 아이<br>인형·관조·얼음 → 조용한 아이<br>공주 출신 직업 → 공주(반말)</td><td>5명. <b>영입 때 한 번 정하고 바꾸지 않음</b></td><td><span class="chip prop">제안</span> <small>사용자 "진행"</small></td></tr>
+<tr><td>3</td><td class="n">태도</td><td class="f">정신 상태 15종을 묶음<br>맞섬: 거리감·저항심·혐오감·증오심·관심병<br>움츠림: 두려움·슬퍼함·우울증<br>순함: 상냥함·온순함·긍정적<br>따름: 복종중·노예근성·발정중<br>무너짐: 정신병</td><td>5종. 원고는 움츠림·순함·따름 3칸</td><td><span class="chip prop">제안</span></td></tr>
+<tr><td>4</td><td class="n">열림</td><td class="f">헌신 등급 0~1 → 0 닫힘<br>2~3 → 1 조금<br>4~5 → 2 다</td><td>속마음과 깊은 주제를 얼마나 내는가</td><td><span class="chip prop">제안</span></td></tr>
+<tr><td>5</td><td class="n">관계 단계</td><td class="f">나쁨 = 태도가 맞섬<br>복종 = 태도가 따름 또는 헌신 ≥ 3<br>중간 = 그 밖</td><td>호칭이 바뀜(6번)</td><td><span class="chip prop">제안</span></td></tr>
+<tr><td>6</td><td class="n">호칭</td><td class="f">반말 인물: 너·네놈 → 당신·이름 → 주인·마스터<br>(나쁨인데 인식 ≥ 2면 당신)<br>존댓말 인물: 당신 → 주인님 → 주인님</td><td>말투는 고정, 호칭만 바뀜</td><td><span class="chip ok">확정</span> <small>방향</small> <span class="chip prop">제안</span> <small>문턱</small></td></tr>
+<tr><td>7</td><td class="n">정신병·신경쇠약</td><td class="f">자아 + 성격 + 태도 &lt; 3 → 정신병<br>합 ≤ 4 → 신경쇠약(대사용 판정)</td><td>무너짐은 공통 전용 대사</td><td><span class="chip game">게임 현행</span></td></tr>
+<tr><td>8</td><td class="n">장악력</td><td class="f">(주인 매력 + 지배력 + 스타일 + 힘 + 때려 본 적 + 마법 + 장비)<br>− (노예 성격 + 자아 + 태도 + 체력 + (지능 − 3))</td><td>0 미만이면 사실 질문에 거짓으로 답함</td><td><span class="chip game">게임 현행</span> <span class="chip ok">확정</span></td></tr>
+<tr><td>9</td><td class="n">겉과 속</td><td class="f">따름 + 장악력 ≥ 0 → 진심<br>따름 + 장악력 &lt; 0 → 겉으로만 따름<br>맞섬 + 장악력 ≥ 0 → 눌려 있음<br>맞섬 + 장악력 &lt; 0 → 대놓고 맞섬</td><td>겉말과 속말이 갈리는 조건</td><td><span class="chip prop">제안</span></td></tr>
+<tr><td>10</td><td class="n">스스로 따르는 선</td><td class="f">헌신 ≥ 3</td><td>조수 교환 버튼, 외양간 지기 임명의 조건</td><td><span class="chip game">게임 현행</span></td></tr>
+</table></div>
+
+<h3 id="f-how">B. 분량과 표현 공식</h3>
+<div class="wrap"><table>
+<tr><th>#</th><th>이름</th><th>공식</th><th>비고</th><th>상태</th></tr>
+<tr><td>11</td><td class="n">쪽 크기</td><td class="f">한 쪽 = 230자, 한 대답 최대 2쪽(460자)<br>일반 대사창 7줄 ≈ 370~400자</td><td>문장 가운데서 자르지 않음</td><td><span class="chip ok">확정</span></td></tr>
+<tr><td>12</td><td class="n">길이 상한</td><td class="f">인형·관조·얼음: 단답~1쪽<br>순종·평범·도도: 1쪽<br>여린·솔직·불꽃: 2쪽<br>태도가 움츠림이면 한 단계 낮춤, 느낌표 없음</td><td>기분은 따로 축을 두지 않고 이것으로 반영</td><td><span class="chip ok">확정</span> <span class="chip prop">제안</span> <small>움츠림</small></td></tr>
+<tr><td>13</td><td class="n">수치 꾸밈</td><td class="f">말한 수 = 실제 × 배율<br>불꽃 300% / 도도 150% / 솔직·평범 100%<br>관조·얼음 100%(정확한 숫자) / 순종 70% / 여린 50% / 인형 100%</td><td>배율이 고정이라 언제 물어도 같은 수</td><td><span class="chip ok">확정</span></td></tr>
+<tr><td>14</td><td class="n">어림말</td><td class="f">1~3 한·두·세 번 / 4~9 몇 번 / 10~19 열댓 번 / 20~29 스무 번<br>30~39 서른 번 / 40~69 쉰 번 / 70~149 백 번 / 150~999 수백 번 / 1000+ 천 번</td><td></td><td><span class="chip ok">확정</span></td></tr>
+<tr><td>15</td><td class="n">원고 칸</td><td class="f">목소리 인물 5 × 태도 3 = 15칸<br>칸마다 문장 한 벌, 변형 3개 권장</td><td>격식 존댓말은 새 원고에서 제외</td><td><span class="chip prop">제안</span></td></tr>
+<tr><td>16</td><td class="n">키와 대체</td><td class="f">자리.주제.목소리.태도.결과<br>없으면 자리.주제.*.태도.결과<br>없으면 자리.주제.*.*.결과</td><td>유니크는 목소리 자리에 인물 id</td><td><span class="chip prop">제안</span></td></tr>
+<tr><td>17</td><td class="n">결과</td><td class="f">필요 열림 ≤ 인물 열림 → 대답<br>필요 열림 = 인물 열림 + 1 → 망설임<br>그보다 높음 → 거부</td><td>망설임은 얼버무리는 대답</td><td><span class="chip prop">제안</span></td></tr>
+<tr><td>18</td><td class="n">반복 방지</td><td class="f">대기 일수 안의 줄 제외 → 최근 2회 제외 → 허용<br>최근 줄은 집 전체 기준으로 피함</td><td>조건을 완화해 다양성을 만들지 않음</td><td><span class="chip ok">확정</span> <span class="chip prop">제안</span> <small>집 전체</small></td></tr>
+<tr><td>19</td><td class="n">말투</td><td class="f">일반 노예 = 존댓말(해요체), 공주·반말 유니크 = 반말<br>관계가 변해도 말투는 그대로</td><td>어미 자동 변환 금지, 말투마다 문장을 따로 씀</td><td><span class="chip ok">확정</span></td></tr>
+<tr><td>20</td><td class="n">지문 문체</td><td class="f">3인칭 관찰자, 어미 "~다"<br>주인공 = 당신, 노예 = 이름 또는 그녀</td><td>한 문단에서 인칭을 섞지 않음</td><td><span class="chip ok">확정</span></td></tr>
+</table></div>
+
+<h3 id="f-rich">C. 풍부화 공식</h3>
+<div class="wrap"><table>
+<tr><th>#</th><th>이름</th><th>공식</th><th>비고</th><th>상태</th></tr>
+<tr><td>21</td><td class="n">무게</td><td class="f">3 = 한 번뿐이거나 처지가 바뀌는 일<br>2 = 강도 4~5의 보상·처벌, 등급 변화, 억울한 벌 등<br>1 = 그 밖</td><td>무게 2 이상만 보강</td><td><span class="chip prop">제안</span></td></tr>
+<tr><td>22</td><td class="n">보강 블록</td><td class="f">[원래 글] + ① 몸짓 지문 + ② 대사 + ③ 여운<br>무게 2 = ① + ② (80~150자, 같은 쪽)<br>무게 3 = ① + ② + ③ (150~350자, 새 쪽, 최대 2쪽)</td><td>원래 글은 한 글자도 바꾸지 않음</td><td><span class="chip prop">제안</span></td></tr>
+<tr><td>23</td><td class="n">드물게 내기</td><td class="f">무게 2는 인물당 하루에 갈래당 1회<br>무게 3과 2가 겹치면 3만</td><td>같은 벌을 다시 주면 원래 글만</td><td><span class="chip prop">제안</span></td></tr>
+<tr><td>24</td><td class="n">속마음 조건</td><td class="f">열림 0(헌신 0~1)이면 ③ 속마음을 내지 않음</td><td>헌신을 올린 뒤에야 속이 보임</td><td><span class="chip prop">제안</span></td></tr>
+<tr><td>25</td><td class="n">몸짓 사전</td><td class="f">목소리 인물 5 × 태도 3 = 15칸, 칸마다 구절 3~4개</td><td>지문을 다섯 벌 쓰지 않고 인물을 드러냄</td><td><span class="chip prop">제안</span> <span class="chip todo">사전 미작성</span></td></tr>
+<tr><td>26</td><td class="n">밤 사건 표시</td><td class="f">밤 사이 값이 바뀐 사건은 인물에 표시 하나 저장<br>다음 날 처음 마주할 때 블록을 냄</td><td>임신 확인, 태도 넘어감, 등급 변화</td><td><span class="chip prop">제안</span></td></tr>
+<tr><td>27</td><td class="n">처음 한 번</td><td class="f">되풀이할 수 있는 행동은 첫 번째만 무게 3</td><td>조수 승격 등</td><td><span class="chip prop">제안</span></td></tr>
+<tr><td>28</td><td class="n">원고량</td><td class="f">무게 2 갈래 8 × 15칸 × 변형 3 = 360<br>무게 3 사건 12 × 10칸 × 변형 2 = 240<br>몸짓 사전 60구절</td><td>변형 없이 240블록으로도 동작</td><td><span class="chip prop">제안</span></td></tr>
+<tr><td>29</td><td class="n">불변 원칙</td><td class="f">원래 글 유지 / 보강은 수치를 바꾸지 않음 / 원고는 변수에 두지 않음</td><td>세이브에 대사가 들어가지 않게</td><td><span class="chip ok">확정</span></td></tr>
+</table></div>
+
+<h3 id="f-talk">D. 대화 커맨드 관문 (구조만)</h3>
+<div class="wrap"><table>
+<tr><th>#</th><th>이름</th><th>공식</th><th>비고</th><th>상태</th></tr>
+<tr><td>30</td><td class="n">말문 순서</td><td class="f">벙어리 → 무너짐 → 맞섬(기존 거부 대사) → 자리별 조건 → 대답</td><td>모든 대화 자리 공통</td><td><span class="chip prop">제안</span></td></tr>
+<tr><td>31</td><td class="n">새 대화 커맨드의 조건</td><td class="f">하루 1회, 행동력 0.5<br>절망 ≥ 3 거부 → 응석 ≥ 3 거부 → 헌신 0 거부<br>헌신 1~5가 주제 22개를 차례로 엶</td><td>세 번째 조건은 기존 "인식 ≤ 2"를 바꾸자는 제안. 연령 코드 1에게는 열지 않음</td><td><span class="chip ok">확정</span> <span class="chip prop">제안</span> <small>헌신 0</small></td></tr>
+<tr><td>32</td><td class="n">사실의 일관성</td><td class="f">영입 때 한 번 정해 저장(고정) + 영입 후 누적(증가)</td><td>같은 질문에는 언제나 같은 사실</td><td><span class="chip ok">확정</span></td></tr>
+<tr><td>33</td><td class="n">숨은 성향</td><td class="f">경험치 ≥ 기준의 70%일 때 대화 1회 = 경험치 1(하루 1회)</td><td>대화가 수치에 닿는 유일한 예외</td><td><span class="chip ok">확정</span></td></tr>
+</table></div>
+
+<h2 id="p2">2부. 개편해야 할 대사와 특수 사건 목록</h2>
+<p class="note">"개편"은 고쳐 쓰기가 아니라 뒤에 덧붙이기입니다. 길이는 QSP 2.4.1에서 센 대략값(정신 상태 15가지 평균)입니다.</p>
+
+<h3 id="l-react">A. 기존 반응 글 (이미 정신 상태로 갈려 있음)</h3>
+<div class="wrap"><table>
+<tr><th>기존 글</th><th>변수</th><th>지금 길이</th><th>무게</th><th>반응 갈래</th><th>보완</th><th>문장</th></tr>
+<tr><td class="n">선물 반응</td><td class="f">present_reaction</td><td>56자</td><td>강도 4~5면 2</td><td>따뜻한 보상</td><td>몸짓 + 대사</td><td><span class="chip prop">Claude 초안</span></td></tr>
+<tr><td class="n">칭찬 반응</td><td class="f">compliment_reaction</td><td>65자</td><td>강도 4~5면 2</td><td>따뜻한 보상</td><td>몸짓 + 대사</td><td><span class="chip prop">Claude 초안</span></td></tr>
+<tr><td class="n">언어 처벌 반응</td><td class="f">abuse_torture_reaction</td><td>65자</td><td>강도 4~5면 2</td><td>말로 받는 벌</td><td>몸짓 + 대사</td><td><span class="chip prop">Claude 초안</span></td></tr>
+<tr><td class="n">구속 반응</td><td class="f">bondage_reaction</td><td>69자</td><td>강도 4~5면 2</td><td>몸으로 받는 벌</td><td>몸짓 + 대사</td><td><span class="chip prop">Claude 초안</span></td></tr>
+<tr><td class="n">치욕 반응</td><td class="f">shame_torture_reaction</td><td>73자</td><td>2</td><td>부끄러운 벌</td><td>몸짓 + 대사</td><td><span class="chip prop">Claude 초안</span></td></tr>
+<tr><td class="n">죄수 처벌 관람</td><td class="f">compassion_reaction</td><td>75자</td><td>2</td><td>몸으로 받는 벌(지켜봄)</td><td>몸짓 + 대사</td><td><span class="chip prop">Claude 초안</span></td></tr>
+<tr><td class="n">고문 반응</td><td class="f">torture_reaction</td><td>80자</td><td>2</td><td>몸으로 받는 벌</td><td>몸짓 + 대사</td><td><span class="chip prop">Claude 초안</span></td></tr>
+<tr><td class="n">처형 위협 반응</td><td class="f">execution_reaction</td><td>122자</td><td>3</td><td>(사건)</td><td>몸짓 + 대사 + 여운</td><td><span class="chip prop">Claude 초안</span></td></tr>
+<tr><td class="n">성적 보상 반응</td><td class="f">praise_erotic_reaction<br>praise_erotic5_reaction</td><td>50자 / 91자</td><td>강도 4~5면 2</td><td>몸으로 받는 보상</td><td>구조만</td><td><span class="chip user">사용자 작성</span></td></tr>
+<tr><td class="n">성교육 반응</td><td class="f">intimate_lesson_reaction</td><td>100자</td><td>처음이면 3</td><td>(사건)</td><td>구조만</td><td><span class="chip user">사용자 작성</span></td></tr>
+<tr><td class="n">가벼운 고문 반응</td><td class="f">light_torture_reaction</td><td>99자</td><td>1</td><td>—</td><td>그대로</td><td>—</td></tr>
+<tr><td class="n">혼자 목욕</td><td class="f">bathing_slave_alone</td><td>110자</td><td>1</td><td>—</td><td>그대로</td><td>—</td></tr>
+<tr><td class="n">대화 거부</td><td class="f">refuse_talk</td><td>63자</td><td>1</td><td>—</td><td>그대로(반말·욕설 포함해 원문 유지)</td><td>—</td></tr>
+<tr><td class="n">정보창 상태 묘사</td><td class="f">psy_status</td><td>92자</td><td>—</td><td>—</td><td>그대로</td><td>—</td></tr>
+</table></div>
+
+<h3 id="l-w3">B. 무게 3 특수 사건</h3>
+<div class="wrap"><table>
+<tr><th>사건</th><th>가려낼 지점</th><th>지금 글</th><th>보강 필요</th><th>조사</th><th>문장</th></tr>
+<tr><td class="n">조수 승격(처음 한 번)</td><td class="f">slave_to_assistant location 실행</td><td><b>글 없음</b></td><td>가장 큼</td><td><span class="chip ok">조사함</span></td><td><span class="chip prop">Claude 초안</span></td></tr>
+<tr><td class="n">낙인</td><td class="f">세 실행 지점<br>인두(interaction 1811, brand 1)<br>문신(interaction_city 4217, brand 2)<br>마법 성공(brand 3)</td><td>시술 묘사 한두 문단(약 80~110자씩). 인물의 반응 없음</td><td>큼</td><td><span class="chip ok">조사함</span></td><td><span class="chip prop">Claude 초안</span></td></tr>
+<tr><td class="n">임신 확인</td><td class="f">pregnant_revealed 0 → 1<br>(next_day 2008~2012, 의료 센터 검진)</td><td>밤 사이 값만 바뀜. 그 순간의 글을 찾지 못함</td><td>큼</td><td><span class="chip ok">조사함</span></td><td><span class="chip prop">Claude 초안</span></td></tr>
+<tr><td class="n">우승·챔피언</td><td class="f">arena_level이 5, 9가 됨(выход_из_боя)<br>has_ride_win 4승, 7승($ride_finish)</td><td>아레나 승리 장면 4줄 약 300~340자. 관중과 의식의 묘사</td><td>중간</td><td><span class="chip ok">조사함</span> <small>경주 장면 글은 미측정</small></td><td><span class="chip prop">Claude 초안</span></td></tr>
+<tr><td class="n">되돌릴 수 없는 수술</td><td class="f">interaction_city 3321~3326 계열</td><td>세지 못함</td><td>?</td><td><span class="chip todo">일부만</span> <small>코드와 수술의 대응 미확인</small></td><td><span class="chip prop">Claude 초안</span></td></tr>
+<tr><td class="n">처형 위협</td><td class="f">해당 커맨드</td><td>반응 글 122자</td><td>중간</td><td><span class="chip todo">일부만</span> <small>길이만 셈</small></td><td><span class="chip prop">Claude 초안</span></td></tr>
+<tr><td class="n">챔피언이 되고도 남음</td><td class="f">헌신 ≥ 3인 챔피언</td><td>?</td><td>?</td><td><span class="chip todo">미조사</span></td><td><span class="chip prop">Claude 초안</span></td></tr>
+<tr><td class="n">태도가 넘어감</td><td class="f">정신 상태 묶음이 전날과 다름</td><td>?</td><td>?</td><td><span class="chip todo">미조사</span></td><td><span class="chip prop">Claude 초안</span></td></tr>
+<tr><td class="n">신경쇠약 진입·회복</td><td class="f">정신력 합</td><td>?</td><td>?</td><td><span class="chip todo">미조사</span></td><td><span class="chip prop">Claude 초안</span></td></tr>
+<tr><td class="n">숨은 성향이 드러남</td><td class="f">성향 표시가 켜짐</td><td>?</td><td>?</td><td><span class="chip todo">미조사</span></td><td><span class="chip prop">Claude 초안</span> <small>성적 성향은 사용자 작성</small></td></tr>
+<tr><td class="n">판매·납품 직전</td><td class="f">해당 커맨드</td><td>?</td><td>?</td><td><span class="chip todo">미조사</span></td><td><span class="chip prop">Claude 초안</span></td></tr>
+<tr><td class="n">도주·반란 실패</td><td class="f">해당 사건</td><td>?</td><td>?</td><td><span class="chip todo">미조사</span></td><td><span class="chip prop">Claude 초안</span></td></tr>
+<tr><td class="n">처음 겪는 성적 행위</td><td class="f">누적 횟수 0 → 1</td><td>?</td><td>?</td><td><span class="chip todo">미조사</span></td><td><span class="chip user">사용자 작성</span></td></tr>
+<tr><td class="n">강제 계열 커맨드</td><td class="f">해당 커맨드</td><td>?</td><td>?</td><td><span class="chip todo">미조사</span></td><td><span class="chip user">사용자 작성</span></td></tr>
+</table></div>
+
+<h3 id="l-w2">C. 무게 2 반응 갈래 (명령이 아니라 반응에 원고를 씀)</h3>
+<div class="wrap"><table>
+<tr><th>갈래</th><th>묶이는 명령</th><th>반응의 핵심</th><th>원고</th><th>문장</th></tr>
+<tr><td class="n">따뜻한 보상</td><td>칭찬, 선물, 외출, 음식(강도 4~5)</td><td>받아도 되는지, 받을 만한지</td><td><span class="chip todo">미작성</span></td><td><span class="chip prop">Claude 초안</span></td></tr>
+<tr><td class="n">말로 받는 벌</td><td>압박, 위협, 훈계</td><td>수긍, 반발, 겁</td><td><span class="chip todo">미작성</span></td><td><span class="chip prop">Claude 초안</span></td></tr>
+<tr><td class="n">몸으로 받는 벌</td><td>구타, 채찍, 고문 기구, 구속</td><td>견딤, 원망, 무너짐</td><td><span class="chip todo">미작성</span> <small>예문 3줄만 있음</small></td><td><span class="chip prop">Claude 초안</span></td></tr>
+<tr><td class="n">부끄러운 벌</td><td>치욕 계열</td><td>자존심이 꺾임</td><td><span class="chip todo">미작성</span></td><td><span class="chip prop">Claude 초안</span></td></tr>
+<tr><td class="n">억울한 벌</td><td>죄 없이 받은 벌, 무시당한 공로</td><td>서운함, 불신</td><td><span class="chip todo">미작성</span></td><td><span class="chip prop">Claude 초안</span></td></tr>
+<tr><td class="n">등급이 바뀐 순간</td><td>헌신·두려움·절망·응석·사육 등급 변화</td><td>스스로 달라졌음을 알아챔</td><td><span class="chip todo">미작성</span></td><td><span class="chip prop">Claude 초안</span></td></tr>
+<tr><td class="n">몸으로 받는 보상</td><td>성적 보상(강도 4~5)</td><td>—</td><td>구조만</td><td><span class="chip user">사용자 작성</span></td></tr>
+<tr><td class="n">절정과 그 뒤</td><td>절정 판정</td><td>—</td><td>구조만</td><td><span class="chip user">사용자 작성</span></td></tr>
+</table></div>
+
+<h3>D. 대화 커맨드</h3>
+<div class="wrap"><table>
+<tr><th>대상</th><th>지금</th><th>할 일</th><th>상태</th></tr>
+<tr><td class="n">기존 질문 1111~1118</td><td>조립 대사 9,120행(약 41만 자). 9유형·말투·관계 모드로 동작</td><td>그대로 둠. 새 규칙은 새 원고에만</td><td><span class="chip ok">확정</span></td></tr>
+<tr><td class="n">새 대화 커맨드(주제 22개)</td><td>게임에 없음. 편집기에 설계와 초안 자료</td><td>관문·화면·키 구조. 대답 문장은 사용자</td><td><span class="chip prop">구조 제안</span> <span class="chip user">문장은 사용자 작성</span></td></tr>
+<tr><td class="n">정보창 [말을 건다]</td><td>게임에 없음</td><td>최근 강한 사건 하나에 한두 마디</td><td><span class="chip todo">설계 안 함</span></td></tr>
+</table></div>
+
+<h3 id="l-todo">E. 아직 하지 않은 작업</h3>
+<div class="wrap"><table>
+<tr><th>#</th><th>작업</th><th>왜 필요한가</th><th>양</th></tr>
+<tr><td>1</td><td class="n">무게 3 사건 조사 2차</td><td>B표의 미조사 8건. 가려낼 값이 실제로 있는지와 지금 글의 길이를 봐야 목록이 확정됨</td><td>QSP 읽기</td></tr>
+<tr><td>2</td><td class="n">수술 코드 대응, brand 5의 뜻, 고문 공용 처리의 반응 글</td><td>1차 조사에서 남은 세 가지</td><td>QSP 읽기</td></tr>
+<tr><td>3</td><td class="n">몸짓 사전 15칸</td><td>모든 보강 블록의 첫 줄이 여기서 나옴</td><td>60구절</td></tr>
+<tr><td>4</td><td class="n">시험 원고</td><td>다섯 인물이 실제로 갈리는지, 대사창에 들어가는지 확인. 대상은 조수 승격 + 따뜻한 보상</td><td>약 25블록</td></tr>
+<tr><td>5</td><td class="n">무게 2 판정에 쓸 값 확인</td><td>보상·처벌 강도, 등급 변화, 죄 없는 벌을 코드에서 가려낼 수 있는지</td><td>QSP 읽기</td></tr>
+<tr><td>6</td><td class="n">출신 세계 낱말 사전</td><td>예문의 장소·옛일 낱말이 세계마다 달라야 함</td><td>미정</td></tr>
+<tr><td>7</td><td class="n">문서 합치기</td><td>v0, 재검토안, 풍부화 규칙, 설정서가 따로 있음. 확정본 하나로</td><td>문서 작업</td></tr>
+<tr><td>8</td><td class="n">조수·개인실 메이드 적용 범위</td><td>조수용 반응 글이 따로 있음. 같은 보강을 넣을지 미정</td><td>결정 필요</td></tr>
+<tr><td>9</td><td class="n">보강 호출을 넣는 mods 초안</td><td>실제 게임 적용</td><td>승인 뒤</td></tr>
+</table></div>
+
+</main>
+</body>
+</html>
