@@ -98,7 +98,7 @@
 ### 3.4 ④ 태도 5종
 | 태도 | 정신 상태(화면 표기) | 뜻 | 원고 |
 |---|---|---|---|
-| 맞섬 | 거리감 reluctant, 저항심 resistant, 혐오감 arrogant, 증오심 hateful, 관심병 hysteric | 대답하지 않거나 맞받는다 | 기존 거부 대사. 새 대답 원고 없음 |
+| 맞섬 | 거리감 reluctant, 저항심 resistant, 혐오감 arrogant, 증오심 hateful, 히스테리 hysteric | 대답하지 않거나 맞받는다 | 기존 거부 대사. 새 대답 원고 없음 |
 | 움츠림 | 두려움 frightened, 슬퍼함 lachrymose, 우울증 depresive | 묻는 말에 답하지만 겁먹었거나 가라앉아 있다 | 태도 칸 1 |
 | 순함 | 상냥함 soft, 온순함 docile, 긍정적 optimistic | 거스르지 않지만 아직 마음을 주지 않았다 | 태도 칸 2 |
 | 따름 | 복종중 obedient, 노예근성 servile, 발정중 horny | 스스로 따른다 | 태도 칸 3 |
