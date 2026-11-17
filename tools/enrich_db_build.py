@@ -151,6 +151,8 @@ def check(db):
             errs.append(where + ': 레이아웃에 없는 칸')
         text = f['line'] + f.get('after', '')
         if "'" in text: errs.append(where + ': 작은따옴표(QSP 문자열과 충돌)')
+        if t.get('originalSpeech', 'unknown') != 'all' and '"' in text:
+            errs.append(where + f": 대사 포함(원래 글의 대사 여부 {t.get('originalSpeech', 'unknown')}. 원칙 3에 따라 관찰 지문만)")
         if '『' in text or '』' in text: errs.append(where + ': 속마음 표기(노예의 속마음은 쓰지 않는다)')
         for tok in re.findall(r'\{[^}]*\}', text):
             if tok not in TOKENS: errs.append(where + ': 모르는 빈칸 ' + tok)

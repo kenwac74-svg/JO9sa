@@ -4,80 +4,372 @@
  "title": "JO9 풍부화 대사 DB",
  "description": "큰 사건·강한 명령의 원래 글 뒤에 덧대는 인물 반응 블록의 원본 데이터. 문장은 fragments, 언제 내는지는 triggers, 누가 어떻게 말하는지는 voices·attitudes·layouts·honorifics가 정한다.",
  "type": "object",
- "required": ["schema", "limits", "voices", "attitudes", "layouts", "honorifics", "triggers", "gestures", "fragments"],
+ "required": [
+  "schema",
+  "limits",
+  "voices",
+  "attitudes",
+  "layouts",
+  "honorifics",
+  "triggers",
+  "gestures",
+  "fragments"
+ ],
  "properties": {
-  "schema": {"const": "jo9-enrich-db/v1"},
-  "updated": {"type": "string"},
+  "schema": {
+   "const": "jo9-enrich-db/v1"
+  },
+  "updated": {
+   "type": "string"
+  },
   "limits": {
    "type": "object",
-   "required": ["rowChars", "maxRows", "afterMinDevotion", "perDayPerTriggerWeight2"],
+   "required": [
+    "rowChars",
+    "maxRows",
+    "afterMinDevotion",
+    "perDayPerTriggerWeight2"
+   ],
    "properties": {
-    "rowChars": {"type": "integer", "description": "대사창 한 행의 글자 수(약 53)"},
-    "maxRows": {"type": "integer", "description": "블록 하나의 최대 행 수(3)"},
-    "afterMinDevotion": {"type": "integer", "description": "여운 지문을 붙이는 최소 헌신 등급(2)"},
-    "perDayPerTriggerWeight2": {"type": "integer", "description": "무게 2 트리거를 인물마다 하루에 내는 횟수(1)"}
+    "rowChars": {
+     "type": "integer",
+     "description": "대사창 한 행의 글자 수(약 53)"
+    },
+    "maxRows": {
+     "type": "integer",
+     "description": "블록 하나의 최대 행 수(3)"
+    },
+    "afterMinDevotion": {
+     "type": "integer",
+     "description": "여운 지문을 붙이는 최소 헌신 등급(2)"
+    },
+    "perDayPerTriggerWeight2": {
+     "type": "integer",
+     "description": "무게 2 트리거를 인물마다 하루에 내는 횟수(1)"
+    },
+    "speechOnlyWhenOriginalHasSpeech": {
+     "type": "boolean",
+     "description": "원래 대사가 없던 장면에 대사를 넣지 않는다"
+    }
    }
   },
   "voices": {
-   "type": "array", "description": "목소리 인물 5. 영입 때 한 번 정해 slave['jo9_voice_cast']에 id를 저장한다",
-   "items": {"type": "object", "required": ["id", "key", "label", "speech", "types"],
+   "type": "array",
+   "description": "목소리 인물 5. 영입 때 한 번 정해 slave['jo9_voice_cast']에 id를 저장한다",
+   "items": {
+    "type": "object",
+    "required": [
+     "id",
+     "key",
+     "label",
+     "speech",
+     "types"
+    ],
     "properties": {
-     "id": {"type": "integer", "minimum": 1, "maximum": 5},
-     "key": {"enum": ["meek", "plain", "bold", "quiet", "princess"]},
-     "label": {"type": "string"},
-     "speech": {"enum": ["polite", "banmal"]},
-     "types": {"type": "array", "items": {"enum": ["doll", "meek", "fragile", "calm", "plain", "frank", "ice", "proud", "flame"]}},
-     "override": {"type": "object", "description": "유형과 관계없이 이 목소리로 정하는 조건(직업, 유니크 번호)"}
-    }}
+     "id": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5
+     },
+     "key": {
+      "enum": [
+       "meek",
+       "plain",
+       "bold",
+       "quiet",
+       "princess"
+      ]
+     },
+     "label": {
+      "type": "string"
+     },
+     "speech": {
+      "enum": [
+       "polite",
+       "banmal"
+      ]
+     },
+     "types": {
+      "type": "array",
+      "items": {
+       "enum": [
+        "doll",
+        "meek",
+        "fragile",
+        "calm",
+        "plain",
+        "frank",
+        "ice",
+        "proud",
+        "flame"
+       ]
+      }
+     },
+     "override": {
+      "type": "object",
+      "description": "유형과 관계없이 이 목소리로 정하는 조건(직업, 유니크 번호)"
+     }
+    }
+   }
   },
   "attitudes": {
-   "type": "array", "description": "게임의 정신 상태(psy_status) 15가지를 다섯 묶음으로",
-   "items": {"type": "object", "required": ["key", "label", "psy"],
-    "properties": {"key": {"enum": ["shrink", "soft", "follow", "oppose", "broken"]}, "label": {"type": "string"}, "psy": {"type": "array", "items": {"type": "string"}}}}
+   "type": "array",
+   "description": "게임의 정신 상태(psy_status) 15가지를 다섯 묶음으로",
+   "items": {
+    "type": "object",
+    "required": [
+     "key",
+     "label",
+     "psy"
+    ],
+    "properties": {
+     "key": {
+      "enum": [
+       "shrink",
+       "soft",
+       "follow",
+       "oppose",
+       "broken"
+      ]
+     },
+     "label": {
+      "type": "string"
+     },
+     "psy": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     }
+    }
+   }
   },
   "layouts": {
-   "type": "object", "description": "트리거가 원고 칸을 나누는 방식",
-   "additionalProperties": {"type": "object", "required": ["cells"], "properties": {"cells": {"type": "array", "items": {"type": "string"}}, "note": {"type": "string"}}}
+   "type": "object",
+   "description": "트리거가 원고 칸을 나누는 방식",
+   "additionalProperties": {
+    "type": "object",
+    "required": [
+     "cells"
+    ],
+    "properties": {
+     "cells": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "note": {
+      "type": "string"
+     }
+    }
+   }
   },
   "honorifics": {
-   "type": "object", "description": "말투별·헌신 등급별 호칭과 조사가 붙은 꼴",
-   "additionalProperties": {"type": "array", "items": {"type": "object", "required": ["minDevotion", "forms"],
-    "properties": {"minDevotion": {"type": "integer"}, "forms": {"type": "object", "required": ["bare", "i", "eun", "eul", "ui", "ege"]}}}}
+   "type": "object",
+   "description": "말투별·헌신 등급별 호칭과 조사가 붙은 꼴",
+   "additionalProperties": {
+    "type": "array",
+    "items": {
+     "type": "object",
+     "required": [
+      "minDevotion",
+      "forms"
+     ],
+     "properties": {
+      "minDevotion": {
+       "type": "integer"
+      },
+      "forms": {
+       "type": "object",
+       "required": [
+        "bare",
+        "i",
+        "eun",
+        "eul",
+        "ui",
+        "ege"
+       ]
+      }
+     }
+    }
+   }
   },
   "triggers": {
    "type": "array",
-   "items": {"type": "object", "required": ["id", "label", "status"],
+   "items": {
+    "type": "object",
+    "required": [
+     "id",
+     "label",
+     "status"
+    ],
     "properties": {
-     "id": {"type": "string"}, "label": {"type": "string"},
-     "weight": {"enum": [2, 3]},
-     "layout": {"type": "string"},
-     "writer": {"enum": ["claude", "user"], "description": "user면 Claude는 문장을 쓰지 않고 칸만 만든다"},
-     "status": {"enum": ["draft_mod", "text_draft", "structure_only", "later_review", "excluded", "on_hold"]},
-     "condition": {"type": "string"},
-     "deferred": {"type": "boolean", "description": "밤에 일어난 사건. 다음 날 처음 마주할 때 낸다"},
-     "reason": {"type": "string"},
-     "hooks": {"type": "array", "items": {"type": "object", "required": ["location"],
-      "properties": {"location": {"type": "string"}, "anchor": {"type": ["string", "null"], "description": "이 줄 바로 뒤에 호출을 넣는다. null이면 위치 미확정"}, "count": {"type": "integer"}, "textVar": {"type": "string"}, "note": {"type": "string"}}}}
-    }}
+     "id": {
+      "type": "string"
+     },
+     "label": {
+      "type": "string"
+     },
+     "weight": {
+      "enum": [
+       2,
+       3
+      ]
+     },
+     "layout": {
+      "type": "string"
+     },
+     "writer": {
+      "enum": [
+       "claude",
+       "user"
+      ],
+      "description": "user면 Claude는 문장을 쓰지 않고 칸만 만든다"
+     },
+     "status": {
+      "enum": [
+       "draft_mod",
+       "text_draft",
+       "structure_only",
+       "later_review",
+       "excluded",
+       "on_hold"
+      ]
+     },
+     "condition": {
+      "type": "string"
+     },
+     "deferred": {
+      "type": "boolean",
+      "description": "밤에 일어난 사건. 다음 날 처음 마주할 때 낸다"
+     },
+     "reason": {
+      "type": "string"
+     },
+     "hooks": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "required": [
+        "location"
+       ],
+       "properties": {
+        "location": {
+         "type": "string"
+        },
+        "anchor": {
+         "type": [
+          "string",
+          "null"
+         ],
+         "description": "이 줄 바로 뒤에 호출을 넣는다. null이면 위치 미확정"
+        },
+        "count": {
+         "type": "integer"
+        },
+        "textVar": {
+         "type": "string"
+        },
+        "note": {
+         "type": "string"
+        }
+       }
+      }
+     },
+     "originalSpeech": {
+      "enum": [
+       "all",
+       "some",
+       "mixed",
+       "none",
+       "unknown"
+      ],
+      "description": "원래 글에 대사가 있는가. all이 아니면 관찰 지문만 덧댄다(원칙 3). some = 일부 줄에만, mixed = 넣는 자리마다 다름"
+     },
+     "originalSpeechNote": {
+      "type": "string"
+     }
+    }
+   }
   },
   "gestures": {
-   "type": "array", "description": "몸짓 사전: 목소리 인물 × 태도(움츠림·순함·따름)",
-   "items": {"type": "object", "required": ["voice", "attitude", "phrases"],
-    "properties": {"voice": {"type": "string"}, "attitude": {"enum": ["shrink", "soft", "follow"]}, "phrases": {"type": "array", "items": {"type": "string"}, "minItems": 3}}}
+   "type": "array",
+   "description": "몸짓 사전: 목소리 인물 × 태도(움츠림·순함·따름)",
+   "items": {
+    "type": "object",
+    "required": [
+     "voice",
+     "attitude",
+     "phrases"
+    ],
+    "properties": {
+     "voice": {
+      "type": "string"
+     },
+     "attitude": {
+      "enum": [
+       "shrink",
+       "soft",
+       "follow"
+      ]
+     },
+     "phrases": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      },
+      "minItems": 3
+     }
+    }
+   }
   },
   "fragments": {
-   "type": "array", "description": "블록 한 줄. 키 = trigger.voice.cell.variant",
-   "items": {"type": "object", "required": ["trigger", "voice", "cell", "variant", "line"],
+   "type": "array",
+   "description": "블록 한 줄. 키 = trigger.voice.cell.variant",
+   "items": {
+    "type": "object",
+    "required": [
+     "trigger",
+     "voice",
+     "cell",
+     "variant",
+     "line"
+    ],
     "properties": {
-     "trigger": {"type": "string"},
-     "voice": {"type": "string", "description": "목소리 인물 key. 유니크 전용 줄은 'u<slave_type>'(예정)"},
-     "cell": {"type": "string"},
-     "variant": {"type": "integer", "minimum": 1},
-     "line": {"type": "string", "description": "몸짓 지문 + 대사. 2행 이내"},
-     "after": {"type": "string", "description": "여운 지문(관찰). 헌신 afterMinDevotion 이상일 때만. 1행 이내"},
-     "by": {"enum": ["claude", "user"]},
-     "cooldownDays": {"type": "integer"}
-    }}
+     "trigger": {
+      "type": "string"
+     },
+     "voice": {
+      "type": "string",
+      "description": "목소리 인물 key. 유니크 전용 줄은 'u<slave_type>'(예정)"
+     },
+     "cell": {
+      "type": "string"
+     },
+     "variant": {
+      "type": "integer",
+      "minimum": 1
+     },
+     "line": {
+      "type": "string",
+      "description": "몸짓 지문 + 대사. 2행 이내"
+     },
+     "after": {
+      "type": "string",
+      "description": "여운 지문(관찰). 헌신 afterMinDevotion 이상일 때만. 1행 이내"
+     },
+     "by": {
+      "enum": [
+       "claude",
+       "user"
+      ]
+     },
+     "cooldownDays": {
+      "type": "integer"
+     }
+    }
+   }
   }
  }
 }

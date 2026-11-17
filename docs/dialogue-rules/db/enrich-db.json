@@ -6,7 +6,8 @@
   "rowChars": 53,
   "maxRows": 3,
   "afterMinDevotion": 2,
-  "perDayPerTriggerWeight2": 1
+  "perDayPerTriggerWeight2": 1,
+  "speechOnlyWhenOriginalHasSpeech": true
  },
  "voices": [
   {
@@ -221,7 +222,9 @@
      "textVar": "$text[1]",
      "note": "interaction 182~187"
     }
-   ]
+   ],
+   "originalSpeech": "some",
+   "originalSpeechNote": "execution_reaction 30줄 중 2줄에만 대사"
   },
   {
    "id": "arena_win",
@@ -246,7 +249,9 @@
      "anchor": null,
      "note": "has_ride_win += 1(76행), 4승·7승"
     }
-   ]
+   ],
+   "originalSpeech": "none",
+   "originalSpeechNote": "아레나 승리 장면 글에 대사 없음"
   },
   {
    "id": "champion_stay",
@@ -261,7 +266,9 @@
      "anchor": null,
      "note": "1963행 slave['moral'] > slave['fear'] 분기"
     }
-   ]
+   ],
+   "originalSpeech": "none",
+   "originalSpeechNote": "돌아옴 문단에 대사 없음"
   },
   {
    "id": "branding",
@@ -286,7 +293,9 @@
      "anchor": null,
      "note": "마법 성공(brand = 3, 421행)"
     }
-   ]
+   ],
+   "originalSpeech": "mixed",
+   "originalSpeechNote": "인두 $fire_branding에는 대사 있음, 문신 $tattoo_branding·$branding_final에는 없음, 마법은 미확인"
   },
   {
    "id": "sale",
@@ -301,7 +310,8 @@
      "anchor": null,
      "note": "sell_slave_simple·sell_slave_complex 결과. 한 곳으로 모을 수 있는지 미확인"
     }
-   ]
+   ],
+   "originalSpeech": "unknown"
   },
   {
    "id": "rebellion",
@@ -316,7 +326,8 @@
      "anchor": null,
      "note": "$slave_fights_back 제압 뒤"
     }
-   ]
+   ],
+   "originalSpeech": "unknown"
   },
   {
    "id": "pregnancy_reveal",
@@ -332,7 +343,8 @@
      "anchor": null,
      "note": "pregnant_revealed = 1(2008~2012행). 다음 날 처음 마주할 때 낸다"
     }
-   ]
+   ],
+   "originalSpeech": "unknown"
   },
   {
    "id": "verbal_punish",
@@ -342,7 +354,9 @@
    "writer": "claude",
    "status": "text_draft",
    "condition": "언어 압박 계열 처벌, torture_intensity >= 4",
-   "hooks": []
+   "hooks": [],
+   "originalSpeech": "none",
+   "originalSpeechNote": "abuse_torture_reaction 16줄 모두 대사 없음"
   },
   {
    "id": "physical_punish",
@@ -352,7 +366,9 @@
    "writer": "claude",
    "status": "text_draft",
    "condition": "구타·채찍·고문 기구·구속, torture_intensity >= 4",
-   "hooks": []
+   "hooks": [],
+   "originalSpeech": "some",
+   "originalSpeechNote": "torture_reaction 15줄 대사 없음, bondage_reaction 15줄 중 1줄에 대사"
   },
   {
    "id": "unjust_punish",
@@ -362,7 +378,9 @@
    "writer": "claude",
    "status": "text_draft",
    "condition": "처벌 시점에 slave['sin'] = 0",
-   "hooks": []
+   "hooks": [],
+   "originalSpeech": "unknown",
+   "originalSpeechNote": "어느 처벌 글에 붙을지에 따라 다름"
   },
   {
    "id": "shame_punish",
@@ -372,7 +390,9 @@
    "writer": "user",
    "status": "structure_only",
    "condition": "치욕 계열 처벌",
-   "hooks": []
+   "hooks": [],
+   "originalSpeech": "none",
+   "originalSpeechNote": "shame_torture_reaction 15줄 모두 대사 없음"
   },
   {
    "id": "erotic_reward",
