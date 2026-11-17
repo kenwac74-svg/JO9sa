@@ -8,13 +8,16 @@ ROW = 53  # 대사창 한 행의 한글 글자 수(DIALOGUE_TEXT_CAPACITY_202610
 
 VOICES = [
     {'id': 1, 'key': 'meek', 'label': '순한 사람', 'speech': 'polite', 'types': ['meek', 'fragile']},
-    {'id': 2, 'key': 'plain', 'label': '담백한 사람', 'speech': 'polite', 'types': ['plain', 'frank']},
-    {'id': 3, 'key': 'bold', 'label': '센 사람', 'speech': 'polite', 'types': ['proud', 'flame']},
-    {'id': 4, 'key': 'quiet', 'label': '조용한 사람', 'speech': 'polite', 'types': ['doll', 'calm', 'ice']},
+    {'id': 2, 'key': 'plain', 'label': '담백한 사람', 'speech': 'polite', 'types': ['plain']},
+    {'id': 3, 'key': 'proud', 'label': '도도한 사람', 'speech': 'polite', 'types': ['proud', 'ice']},
+    {'id': 4, 'key': 'quiet', 'label': '조용한 사람', 'speech': 'polite', 'types': ['doll', 'calm']},
     {'id': 5, 'key': 'princess', 'label': '공주', 'speech': 'banmal', 'types': [],
      'override': {'occupation': ['mprincess', 'barbarian_princess'], 'slave_type': [3002, 2610, 2620, 3010, 3021, 3023, 2621, 3012]}},
+    {'id': 6, 'key': 'bright', 'label': '명랑한 사람', 'speech': 'polite', 'types': ['frank']},
+    {'id': 7, 'key': 'fierce', 'label': '거센 사람', 'speech': 'polite', 'types': ['flame']},
 ]
 LABEL2VOICE = {v['label']: v['key'] for v in VOICES}
+LABEL2VOICE['센 사람'] = 'proud'  # 다섯 묶음 시절 원고의 이름(2026-11-17에 도도한·거센으로 나뉨)
 ATTITUDES = [
     {'key': 'shrink', 'label': '움츠림', 'psy': ['frightened', 'lachrymose', 'depresive']},
     {'key': 'soft', 'label': '순함', 'psy': ['soft', 'docile', 'optimistic']},
@@ -163,7 +166,7 @@ def check(db):
         if r > db['limits']['maxRows']: errs.append(where + f': {r}행(3행 초과)')
         if voices[f['voice']]['speech'] == 'banmal' and re.search(r'(요|니다|세요)[.?!"]', f['line']):
             warns.append(where + ': 반말 인물에 존댓말 어미로 보이는 부분')
-        if f['voice'] in ('meek', 'plain', 'bold', 'quiet') and re.search(r'"[^"]*(해|야|어|지)\.\s*"', f['line']):
+        if voices[f['voice']]['speech'] == 'polite' and re.search(r'"[^"]*(해|야|어|지)\.\s*"', f['line']):
             warns.append(where + ': 존댓말 인물에 반말 어미로 보이는 부분')
     for t in db['triggers']:
         if t['status'] not in ('text_draft', 'draft_mod'):
