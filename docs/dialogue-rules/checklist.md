@@ -60,3 +60,10 @@
 - [x] 덧대기 시범 mods 초안: 처형 위협(`mods/drafts/2026-11-16_enrich_execution_draft.json`). 왕복·적용·다시 읽기·블록 균형 검사 통과
 - [ ] 사용자 게임 확인: 처형 위협 덧대기
 - [ ] 확인 뒤 나머지 덧대기 지점(우승, 챔피언 잔류, 낙인, 판매 직전, 반란 제압, 강한 처벌 세 갈래)
+
+## 2026-11-17 DB 스키마와 규칙
+- [x] 시스템 보고서 `DIALOGUE_SYSTEM_REPORT_20261117_KO.md`
+- [x] DB 스키마 `db/enrich-db.schema.json`, DB `db/enrich-db.json`(원고 95블록 옮김), 옮기기·검사 도구 `tools/enrich_db_build.py`(오류 0)
+- [ ] 빌드 도구: DB → jo9_enrich location + mods JSON
+- [ ] 무게 2 넣을 자리 조사(처벌 커맨드 번호 → 갈래)
+- [ ] 인물 교체 때 저장값이 따라가는 등록 위치

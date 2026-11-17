@@ -1,0 +1,1303 @@
+{
+ "schema": "jo9-enrich-db/v1",
+ "updated": "2026-11-17",
+ "limits": {
+  "rowChars": 53,
+  "maxRows": 3,
+  "afterMinDevotion": 2,
+  "perDayPerTriggerWeight2": 1
+ },
+ "voices": [
+  {
+   "id": 1,
+   "key": "meek",
+   "label": "순한 사람",
+   "speech": "polite",
+   "types": [
+    "meek",
+    "fragile"
+   ]
+  },
+  {
+   "id": 2,
+   "key": "plain",
+   "label": "담백한 사람",
+   "speech": "polite",
+   "types": [
+    "plain",
+    "frank"
+   ]
+  },
+  {
+   "id": 3,
+   "key": "bold",
+   "label": "센 사람",
+   "speech": "polite",
+   "types": [
+    "proud",
+    "flame"
+   ]
+  },
+  {
+   "id": 4,
+   "key": "quiet",
+   "label": "조용한 사람",
+   "speech": "polite",
+   "types": [
+    "doll",
+    "calm",
+    "ice"
+   ]
+  },
+  {
+   "id": 5,
+   "key": "princess",
+   "label": "공주",
+   "speech": "banmal",
+   "types": [],
+   "override": {
+    "occupation": [
+     "mprincess",
+     "barbarian_princess"
+    ],
+    "slave_type": [
+     3002,
+     2610,
+     2620,
+     3010,
+     3021,
+     3023,
+     2621,
+     3012
+    ]
+   }
+  }
+ ],
+ "attitudes": [
+  {
+   "key": "shrink",
+   "label": "움츠림",
+   "psy": [
+    "frightened",
+    "lachrymose",
+    "depresive"
+   ]
+  },
+  {
+   "key": "soft",
+   "label": "순함",
+   "psy": [
+    "soft",
+    "docile",
+    "optimistic"
+   ]
+  },
+  {
+   "key": "follow",
+   "label": "따름",
+   "psy": [
+    "obedient",
+    "servile",
+    "horny"
+   ]
+  },
+  {
+   "key": "oppose",
+   "label": "맞섬",
+   "psy": [
+    "reluctant",
+    "resistant",
+    "arrogant",
+    "hateful",
+    "hysteric"
+   ]
+  },
+  {
+   "key": "broken",
+   "label": "무너짐",
+   "psy": [
+    "broken"
+   ]
+  }
+ ],
+ "layouts": {
+  "attitude3": {
+   "cells": [
+    "shrink",
+    "soft",
+    "follow"
+   ],
+   "note": "무게 2. 헌신 3 이상이면 follow(정신 상태가 움츠림 쪽이면 shrink), 헌신 0~2면 soft(움츠림 쪽은 shrink, 맞섬 쪽은 블록 없음)"
+  },
+  "devotion2": {
+   "cells": [
+    "hi",
+    "lo"
+   ],
+   "note": "무게 3. 헌신 3 이상이면 hi, 0~2면 lo"
+  },
+  "single": {
+   "cells": [
+    "*"
+   ],
+   "note": "태도를 나누지 않는 사건"
+  }
+ },
+ "honorifics": {
+  "polite": [
+   {
+    "minDevotion": 0,
+    "forms": {
+     "bare": "당신",
+     "i": "당신이",
+     "eun": "당신은",
+     "eul": "당신을",
+     "ui": "당신의",
+     "ege": "당신에게"
+    }
+   },
+   {
+    "minDevotion": 1,
+    "forms": {
+     "bare": "주인님",
+     "i": "주인님이",
+     "eun": "주인님은",
+     "eul": "주인님을",
+     "ui": "주인님의",
+     "ege": "주인님께"
+    }
+   }
+  ],
+  "banmal": [
+   {
+    "minDevotion": 0,
+    "forms": {
+     "bare": "너",
+     "i": "네가",
+     "eun": "너는",
+     "eul": "너를",
+     "ui": "네",
+     "ege": "너한테"
+    }
+   },
+   {
+    "minDevotion": 1,
+    "forms": {
+     "bare": "당신",
+     "i": "당신이",
+     "eun": "당신은",
+     "eul": "당신을",
+     "ui": "당신",
+     "ege": "당신한테"
+    }
+   },
+   {
+    "minDevotion": 3,
+    "forms": {
+     "bare": "주인",
+     "i": "주인이",
+     "eun": "주인은",
+     "eul": "주인을",
+     "ui": "주인",
+     "ege": "주인한테"
+    }
+   }
+  ]
+ },
+ "triggers": [
+  {
+   "id": "execution",
+   "label": "처형 위협",
+   "weight": 3,
+   "layout": "devotion2",
+   "writer": "claude",
+   "status": "draft_mod",
+   "hooks": [
+    {
+     "location": "interaction",
+     "anchor": "\t$text[1] = $execution_reaction[$slave_psy_status]",
+     "count": 6,
+     "textVar": "$text[1]",
+     "note": "interaction 182~187"
+    }
+   ]
+  },
+  {
+   "id": "arena_win",
+   "label": "우승",
+   "weight": 3,
+   "layout": "devotion2",
+   "writer": "claude",
+   "status": "text_draft",
+   "hooks": [
+    {
+     "location": "выход_из_боя",
+     "anchor": null,
+     "note": "arena_level이 5가 되는 분기(54~61행)"
+    },
+    {
+     "location": "interaction_city",
+     "anchor": null,
+     "note": "arena_level = 9(1919행)"
+    },
+    {
+     "location": "$ride_finish",
+     "anchor": null,
+     "note": "has_ride_win += 1(76행), 4승·7승"
+    }
+   ]
+  },
+  {
+   "id": "champion_stay",
+   "label": "챔피언이 되고도 남음",
+   "weight": 3,
+   "layout": "single",
+   "writer": "claude",
+   "status": "text_draft",
+   "hooks": [
+    {
+     "location": "interaction_city",
+     "anchor": null,
+     "note": "1963행 slave['moral'] > slave['fear'] 분기"
+    }
+   ]
+  },
+  {
+   "id": "branding",
+   "label": "낙인",
+   "weight": 3,
+   "layout": "devotion2",
+   "writer": "claude",
+   "status": "text_draft",
+   "hooks": [
+    {
+     "location": "interaction",
+     "anchor": null,
+     "note": "인두 1811(brand = 1)"
+    },
+    {
+     "location": "interaction_city",
+     "anchor": null,
+     "note": "문신 4217(brand = 2)"
+    },
+    {
+     "location": "interaction",
+     "anchor": null,
+     "note": "마법 성공(brand = 3, 421행)"
+    }
+   ]
+  },
+  {
+   "id": "sale",
+   "label": "판매·납품 직전",
+   "weight": 3,
+   "layout": "devotion2",
+   "writer": "claude",
+   "status": "text_draft",
+   "hooks": [
+    {
+     "location": "interaction_result_city",
+     "anchor": null,
+     "note": "sell_slave_simple·sell_slave_complex 결과. 한 곳으로 모을 수 있는지 미확인"
+    }
+   ]
+  },
+  {
+   "id": "rebellion",
+   "label": "반란 제압",
+   "weight": 3,
+   "layout": "single",
+   "writer": "claude",
+   "status": "text_draft",
+   "hooks": [
+    {
+     "location": "#dynamic",
+     "anchor": null,
+     "note": "$slave_fights_back 제압 뒤"
+    }
+   ]
+  },
+  {
+   "id": "pregnancy_reveal",
+   "label": "임신 확인",
+   "weight": 3,
+   "layout": "devotion2",
+   "writer": "user",
+   "status": "structure_only",
+   "deferred": true,
+   "hooks": [
+    {
+     "location": "next_day",
+     "anchor": null,
+     "note": "pregnant_revealed = 1(2008~2012행). 다음 날 처음 마주할 때 낸다"
+    }
+   ]
+  },
+  {
+   "id": "verbal_punish",
+   "label": "말로 받는 벌",
+   "weight": 2,
+   "layout": "attitude3",
+   "writer": "claude",
+   "status": "text_draft",
+   "condition": "언어 압박 계열 처벌, torture_intensity >= 4",
+   "hooks": []
+  },
+  {
+   "id": "physical_punish",
+   "label": "몸으로 받는 벌",
+   "weight": 2,
+   "layout": "attitude3",
+   "writer": "claude",
+   "status": "text_draft",
+   "condition": "구타·채찍·고문 기구·구속, torture_intensity >= 4",
+   "hooks": []
+  },
+  {
+   "id": "unjust_punish",
+   "label": "억울한 벌",
+   "weight": 2,
+   "layout": "attitude3",
+   "writer": "claude",
+   "status": "text_draft",
+   "condition": "처벌 시점에 slave['sin'] = 0",
+   "hooks": []
+  },
+  {
+   "id": "shame_punish",
+   "label": "부끄러운 벌",
+   "weight": 2,
+   "layout": "attitude3",
+   "writer": "user",
+   "status": "structure_only",
+   "condition": "치욕 계열 처벌",
+   "hooks": []
+  },
+  {
+   "id": "erotic_reward",
+   "label": "몸으로 받는 보상",
+   "weight": 2,
+   "layout": "attitude3",
+   "writer": "user",
+   "status": "structure_only",
+   "condition": "성적 보상 강도 4~5",
+   "hooks": []
+  },
+  {
+   "id": "climax",
+   "label": "절정과 그 뒤",
+   "weight": 2,
+   "layout": "attitude3",
+   "writer": "user",
+   "status": "structure_only",
+   "condition": "절정 판정",
+   "hooks": []
+  },
+  {
+   "id": "warm_reward",
+   "label": "따뜻한 보상",
+   "weight": 2,
+   "layout": "attitude3",
+   "writer": "claude",
+   "status": "later_review",
+   "condition": "interaction_reward_level >= 4",
+   "hooks": []
+  },
+  {
+   "id": "assistant_promotion",
+   "label": "조수 승격",
+   "status": "excluded",
+   "reason": "승격·강등이 수시로 일어남. 조수 대화에서 따로 다룸"
+  },
+  {
+   "id": "surgery",
+   "label": "수술",
+   "status": "excluded",
+   "reason": "사용자 결정"
+  },
+  {
+   "id": "trait_reveal",
+   "label": "숨은 성향이 드러남",
+   "status": "excluded",
+   "reason": "사용자 결정"
+  },
+  {
+   "id": "attitude_shift",
+   "label": "태도가 넘어감",
+   "status": "excluded",
+   "reason": "사건이 아니라 상태 변화"
+  },
+  {
+   "id": "breakdown",
+   "label": "신경쇠약 진입·회복",
+   "status": "excluded",
+   "reason": "사건이 아니라 상태 변화"
+  },
+  {
+   "id": "grade_change",
+   "label": "등급이 바뀐 순간",
+   "status": "excluded",
+   "reason": "사건이 아니라 상태 변화"
+  },
+  {
+   "id": "escape_fail",
+   "label": "도주 실패",
+   "status": "on_hold",
+   "reason": "실패 지점을 QSP에서 찾지 못함"
+  }
+ ],
+ "gestures": [
+  {
+   "voice": "meek",
+   "attitude": "shrink",
+   "phrases": [
+    "어깨를 움츠리고 손끝을 만지작거린다",
+    "고개를 숙인 채 옷자락을 쥔다",
+    "반 걸음 물러나 벽 쪽에 붙어 선다"
+   ]
+  },
+  {
+   "voice": "meek",
+   "attitude": "soft",
+   "phrases": [
+    "두 손을 앞에 모으고 선다",
+    "눈을 내리깔고 가만히 듣는다",
+    "작게 고개를 끄덕인다"
+   ]
+  },
+  {
+   "voice": "meek",
+   "attitude": "follow",
+   "phrases": [
+    "반 걸음 다가와 고개를 숙인다",
+    "부르면 들릴 거리에 와서 선다",
+    "고개를 들고 당신의 얼굴을 살핀다"
+   ]
+  },
+  {
+   "voice": "plain",
+   "attitude": "shrink",
+   "phrases": [
+    "입술을 깨물고 바닥을 본다",
+    "팔로 제 몸을 감싼다",
+    "대답 대신 한숨을 삼킨다"
+   ]
+  },
+  {
+   "voice": "plain",
+   "attitude": "soft",
+   "phrases": [
+    "고개를 끄덕인다",
+    "어깨를 한 번 으쓱한다",
+    "당신을 똑바로 쳐다본다"
+   ]
+  },
+  {
+   "voice": "plain",
+   "attitude": "follow",
+   "phrases": [
+    "눈을 맞추고 웃는다",
+    "묻기도 전에 곁으로 온다",
+    "손등으로 뺨을 닦고 자세를 고친다"
+   ]
+  },
+  {
+   "voice": "bold",
+   "attitude": "shrink",
+   "phrases": [
+    "턱을 들지만 시선이 흔들린다",
+    "주먹을 쥐었다가 편다",
+    "입을 열려다 다물고 고개를 돌린다"
+   ]
+  },
+  {
+   "voice": "bold",
+   "attitude": "soft",
+   "phrases": [
+    "팔짱을 끼고 선다",
+    "한쪽 눈썹을 올린다",
+    "머리카락을 넘기고 당신을 본다"
+   ]
+  },
+  {
+   "voice": "bold",
+   "attitude": "follow",
+   "phrases": [
+    "못 이기는 척 곁에 선다",
+    "팔짱을 풀고 손을 내린다",
+    "턱을 든 채 당신의 다음 말을 기다린다"
+   ]
+  },
+  {
+   "voice": "quiet",
+   "attitude": "shrink",
+   "phrases": [
+    "움직이지 않는다",
+    "눈을 감는다",
+    "숨소리마저 줄인다"
+   ]
+  },
+  {
+   "voice": "quiet",
+   "attitude": "soft",
+   "phrases": [
+    "눈만 들어 본다",
+    "고개를 한 번 끄덕인다",
+    "선 자리에서 기다린다"
+   ]
+  },
+  {
+   "voice": "quiet",
+   "attitude": "follow",
+   "phrases": [
+    "제 옷자락 끝을 쥐고 기다린다",
+    "한 걸음 뒤에 붙어 선다",
+    "당신이 볼 때까지 시선을 거두지 않는다"
+   ]
+  },
+  {
+   "voice": "princess",
+   "attitude": "shrink",
+   "phrases": [
+    "등을 꼿꼿이 세우지만 손이 떨린다",
+    "입술을 다물고 창 쪽을 본다",
+    "치맛자락을 구겨 쥔다"
+   ]
+  },
+  {
+   "voice": "princess",
+   "attitude": "soft",
+   "phrases": [
+    "고개를 돌린 채 듣는다",
+    "손끝으로 팔걸이를 두드린다",
+    "한숨을 쉬고 이쪽을 본다"
+   ]
+  },
+  {
+   "voice": "princess",
+   "attitude": "follow",
+   "phrases": [
+    "당연하다는 듯 옆자리를 차지한다",
+    "턱을 괴고 당신을 올려다본다",
+    "당신 옆에 서서 방 안을 둘러본다"
+   ]
+  }
+ ],
+ "fragments": [
+  {
+   "trigger": "arena_win",
+   "voice": "meek",
+   "cell": "hi",
+   "variant": 1,
+   "line": "{이름}{은/는} 숨을 고르며 당신 앞에 와서 고개를 숙인다. \"이겼어요… {호칭}. 실망시켜 드리지 않아서 다행이에요.\"",
+   "after": "환호가 아직 들리는데도 그녀는 관중석이 아니라 당신의 얼굴만 살핀다."
+  },
+  {
+   "trigger": "arena_win",
+   "voice": "meek",
+   "cell": "lo",
+   "variant": 1,
+   "line": "{이름}{은/는} 흙 묻은 손을 등 뒤로 감추고 선다. \"이겼어요. …이제 혼나지 않아도 되는 거죠.\"",
+   "after": "트로피를 든 손이 조금 떨린다."
+  },
+  {
+   "trigger": "arena_win",
+   "voice": "plain",
+   "cell": "hi",
+   "variant": 1,
+   "line": "{이름}{은/는} 땀에 젖은 머리를 쓸어 올리며 웃는다. \"봤어요, {호칭}? 진짜 이겼어요! 저도 안 믿겨요.\"",
+   "after": "그녀는 숨이 가쁜 채로 당신 쪽으로 한 걸음 더 다가선다."
+  },
+  {
+   "trigger": "arena_win",
+   "voice": "plain",
+   "cell": "lo",
+   "variant": 1,
+   "line": "{이름}{은/는} 어깨를 으쓱하며 트로피를 내민다. \"이겼네요. 솔직히 무서웠는데, 해 보니까 되더라고요.\"",
+   "after": "내민 손을 거두는 것이 조금 늦다."
+  },
+  {
+   "trigger": "arena_win",
+   "voice": "bold",
+   "cell": "hi",
+   "variant": 1,
+   "line": "{이름}{은/는} 턱을 든 채 당신 앞에 선다. \"당연한 결과예요. {호칭}{이/가} 고른 사람이니까요.\"",
+   "after": "말은 그렇게 해도, 당신의 대답을 기다리는 눈이 자리를 뜨지 않는다."
+  },
+  {
+   "trigger": "arena_win",
+   "voice": "bold",
+   "cell": "lo",
+   "variant": 1,
+   "line": "{이름}{은/는} 팔짱을 끼고 관중석을 돌아본다. \"제 이름을 외치네요. 들으셨어요? 제 이름이에요.\"",
+   "after": "그녀는 당신이 아니라 환호 쪽에 오래 눈을 둔다."
+  },
+  {
+   "trigger": "arena_win",
+   "voice": "quiet",
+   "cell": "hi",
+   "variant": 1,
+   "line": "{이름}{은/는} 말없이 트로피를 당신 손에 쥐여 준다. \"…이겼어요.\"",
+   "after": "물러나지 않고, 당신이 그것을 볼 때까지 옆에 서 있는다."
+  },
+  {
+   "trigger": "arena_win",
+   "voice": "quiet",
+   "cell": "lo",
+   "variant": 1,
+   "line": "{이름}{은/는} 피 묻은 손을 옷에 닦는다. \"…끝났어요.\"",
+   "after": "환호 속에서도 그녀의 표정은 읽히지 않는다."
+  },
+  {
+   "trigger": "arena_win",
+   "voice": "princess",
+   "cell": "hi",
+   "variant": 1,
+   "line": "{이름}{은/는} 당연하다는 듯 당신 곁에 선다. \"봤지, {호칭}? 저 함성은 내 거야. 상은 {호칭}{이/가} 받아 둬.\"",
+   "after": "그녀는 트로피를 당신 쪽으로 밀어 놓는다. 턱은 내려오지 않는다."
+  },
+  {
+   "trigger": "arena_win",
+   "voice": "princess",
+   "cell": "lo",
+   "variant": 1,
+   "line": "{이름}{은/는} 고개를 돌린 채 트로피를 내민다. \"내가 이긴 거야. {호칭}{이/가} 이긴 게 아니라. 그건 알아 둬.\"",
+   "after": "트로피를 놓는 손가락이 마지막까지 버틴다."
+  },
+  {
+   "trigger": "champion_stay",
+   "voice": "meek",
+   "cell": "*",
+   "variant": 1,
+   "line": "{이름}{은/는} 문간에서 한참 망설이다 들어온다. \"자유라는 게 뭔지 잘 모르겠어요. 다만… 제가 돌아올 곳은 여기밖에 떠오르지 않았어요, {호칭}.\"",
+   "after": "그녀는 평소 서던 자리에 가서 선다. 달라진 것은 없다는 듯이."
+  },
+  {
+   "trigger": "champion_stay",
+   "voice": "plain",
+   "cell": "*",
+   "variant": 1,
+   "line": "{이름}{은/는} 신발도 벗기 전에 입을 연다. \"가도 된다길래 문밖까지 나가 봤어요. 근데 갈 데가 없더라고요. 아니, 가고 싶은 데가 없었어요.\"",
+   "after": "그렇게 말하고는 머쓱한 듯 뒷머리를 긁는다."
+  },
+  {
+   "trigger": "champion_stay",
+   "voice": "bold",
+   "cell": "*",
+   "variant": 1,
+   "line": "{이름}{은/는} 문을 열고 들어와 팔짱을 낀다. \"착각하지 마세요. 갈 곳이 없어서 온 게 아니에요. 챔피언을 만든 사람 곁이 제 자리라서 온 거예요.\"",
+   "after": "팔짱을 낀 채로, 그녀는 당신이 뭐라고 할지 기다린다."
+  },
+  {
+   "trigger": "champion_stay",
+   "voice": "quiet",
+   "cell": "*",
+   "variant": 1,
+   "line": "{이름}{은/는} 아무 말 없이 들어와 문을 닫는다. \"…다녀왔어요.\"",
+   "after": "그 한마디가 전부다. 그녀는 늘 하던 일을 하러 간다."
+  },
+  {
+   "trigger": "champion_stay",
+   "voice": "princess",
+   "cell": "*",
+   "variant": 1,
+   "line": "{이름}{은/는} 제 방처럼 들어와 의자에 앉는다. \"풀어 줬다고 내가 떠날 줄 알았어? 내가 있을 곳은 내가 정해. 그리고 정했어, {호칭}.\"",
+   "after": "그녀는 다리를 꼬고, 당신이 차를 내오기를 기다리는 사람처럼 앉아 있다."
+  },
+  {
+   "trigger": "verbal_punish",
+   "voice": "meek",
+   "cell": "shrink",
+   "variant": 1,
+   "line": "{이름}{은/는} 어깨를 움츠리고 손끝을 만지작거린다. \"잘못했어요… 다시는 안 그럴게요. 그러니까 그 얘기만은…\""
+  },
+  {
+   "trigger": "verbal_punish",
+   "voice": "meek",
+   "cell": "soft",
+   "variant": 1,
+   "line": "{이름}{은/는} 두 손을 앞에 모으고 선다. \"말씀하신 대로예요. 제가 부족했어요. 고칠게요.\""
+  },
+  {
+   "trigger": "verbal_punish",
+   "voice": "meek",
+   "cell": "follow",
+   "variant": 1,
+   "line": "{이름}{은/는} 고개를 들고 당신의 얼굴을 살핀다. \"{호칭}{이/가} 이렇게까지 말씀하시게 만들어서 죄송해요. 더 잘할게요.\""
+  },
+  {
+   "trigger": "verbal_punish",
+   "voice": "plain",
+   "cell": "shrink",
+   "variant": 1,
+   "line": "{이름}{은/는} 입술을 깨물고 바닥을 본다. \"알아요. 다 알아요… 그러니까 그만 말해 주세요.\""
+  },
+  {
+   "trigger": "verbal_punish",
+   "voice": "plain",
+   "cell": "soft",
+   "variant": 1,
+   "line": "{이름}{은/는} 당신을 똑바로 쳐다본다. \"혼날 만했어요. 그건 인정해요. 근데 그 말은 좀 아팠어요.\""
+  },
+  {
+   "trigger": "verbal_punish",
+   "voice": "plain",
+   "cell": "follow",
+   "variant": 1,
+   "line": "{이름}{은/는} 손등으로 뺨을 닦고 자세를 고친다. \"틀린 말씀 하나도 없어요. 화내 주셔서 차라리 다행이에요, {호칭}.\""
+  },
+  {
+   "trigger": "verbal_punish",
+   "voice": "bold",
+   "cell": "shrink",
+   "variant": 1,
+   "line": "{이름}{은/는} 턱을 들지만 시선이 흔들린다. \"…알아들었어요. 그러니 같은 말을 두 번 하실 필요는 없어요.\""
+  },
+  {
+   "trigger": "verbal_punish",
+   "voice": "bold",
+   "cell": "soft",
+   "variant": 1,
+   "line": "{이름}{은/는} 팔짱을 끼고 선다. \"지적은 받아들일게요. 다만 그런 식으로 말씀하실 것까지는 없잖아요?\""
+  },
+  {
+   "trigger": "verbal_punish",
+   "voice": "bold",
+   "cell": "follow",
+   "variant": 1,
+   "line": "{이름}{은/는} 팔짱을 풀고 손을 내린다. \"제 잘못이에요. {호칭}께 이런 말을 듣는 건 저도 자존심이 상하네요.\""
+  },
+  {
+   "trigger": "verbal_punish",
+   "voice": "quiet",
+   "cell": "shrink",
+   "variant": 1,
+   "line": "{이름}{은/는} 움직이지 않는다. \"…네.\""
+  },
+  {
+   "trigger": "verbal_punish",
+   "voice": "quiet",
+   "cell": "soft",
+   "variant": 1,
+   "line": "{이름}{은/는} 고개를 한 번 끄덕인다. \"알겠어요. 고칠게요.\""
+  },
+  {
+   "trigger": "verbal_punish",
+   "voice": "quiet",
+   "cell": "follow",
+   "variant": 1,
+   "line": "{이름}{은/는} 당신이 볼 때까지 시선을 거두지 않는다. \"…다시는 없을 거예요.\""
+  },
+  {
+   "trigger": "verbal_punish",
+   "voice": "princess",
+   "cell": "shrink",
+   "variant": 1,
+   "line": "{이름}{은/는} 등을 꼿꼿이 세우지만 손이 떨린다. \"…그만해. 알아들었으니까.\""
+  },
+  {
+   "trigger": "verbal_punish",
+   "voice": "princess",
+   "cell": "soft",
+   "variant": 1,
+   "line": "{이름}{은/는} 고개를 돌린 채 듣는다. \"말이 길어. 잘못한 건 알아. 그걸 굳이 다 들어야 해?\""
+  },
+  {
+   "trigger": "verbal_punish",
+   "voice": "princess",
+   "cell": "follow",
+   "variant": 1,
+   "line": "{이름}{은/는} 한숨을 쉬고 이쪽을 본다. \"{호칭}{이/가} 화낼 만했어. 인정해. …두 번은 안 해.\""
+  },
+  {
+   "trigger": "physical_punish",
+   "voice": "meek",
+   "cell": "shrink",
+   "variant": 1,
+   "line": "{이름}{은/는} 어깨를 움츠리고 손끝을 만지작거린다. \"잘못했어요… 정말 잘못했어요. 이제 그만해 주세요.\""
+  },
+  {
+   "trigger": "physical_punish",
+   "voice": "meek",
+   "cell": "soft",
+   "variant": 1,
+   "line": "{이름}{은/는} 고개를 숙인 채 옷자락을 쥔다. \"제가 받을 벌이었어요. …아프지만, 알아들었어요.\""
+  },
+  {
+   "trigger": "physical_punish",
+   "voice": "meek",
+   "cell": "follow",
+   "variant": 1,
+   "line": "{이름}{은/는} 고개를 들고 당신의 얼굴을 살핀다. \"{호칭}{이/가} 화나실 만했어요. 참을게요. 다음엔 이런 일 없게 할게요.\""
+  },
+  {
+   "trigger": "physical_punish",
+   "voice": "plain",
+   "cell": "shrink",
+   "variant": 1,
+   "line": "{이름}{은/는} 팔로 제 몸을 감싼다. \"아파요… 이제 알았으니까, 제발 그만해요.\""
+  },
+  {
+   "trigger": "physical_punish",
+   "voice": "plain",
+   "cell": "soft",
+   "variant": 1,
+   "line": "{이름}{은/는} 당신을 똑바로 쳐다본다. \"벌인 건 알아요. 근데 진짜 아팠어요. 그건 말해도 되죠?\""
+  },
+  {
+   "trigger": "physical_punish",
+   "voice": "plain",
+   "cell": "follow",
+   "variant": 1,
+   "line": "{이름}{은/는} 손등으로 뺨을 닦고 자세를 고친다. \"아프긴 한데요, {호칭}. 제가 자초한 거라 할 말이 없어요.\""
+  },
+  {
+   "trigger": "physical_punish",
+   "voice": "bold",
+   "cell": "shrink",
+   "variant": 1,
+   "line": "{이름}{은/는} 턱을 들지만 시선이 흔들린다. \"…됐어요. 알아들었다고요. 더 하실 필요 없어요.\""
+  },
+  {
+   "trigger": "physical_punish",
+   "voice": "bold",
+   "cell": "soft",
+   "variant": 1,
+   "line": "{이름}{은/는} 머리카락을 넘기고 당신을 본다. \"이걸로 끝난 거죠? 그럼 됐어요. 사과는 한 번만 할게요.\""
+  },
+  {
+   "trigger": "physical_punish",
+   "voice": "bold",
+   "cell": "follow",
+   "variant": 1,
+   "line": "{이름}{은/는} 팔짱을 풀고 손을 내린다. \"벌은 달게 받았어요. {호칭}께 두 번 이런 수고를 끼치진 않을 거예요.\""
+  },
+  {
+   "trigger": "physical_punish",
+   "voice": "quiet",
+   "cell": "shrink",
+   "variant": 1,
+   "line": "{이름}{은/는} 움직이지 않는다. 입술이 달싹이지만 소리는 나오지 않는다."
+  },
+  {
+   "trigger": "physical_punish",
+   "voice": "quiet",
+   "cell": "soft",
+   "variant": 1,
+   "line": "{이름}{은/는} 눈만 들어 본다. \"…끝났나요.\""
+  },
+  {
+   "trigger": "physical_punish",
+   "voice": "quiet",
+   "cell": "follow",
+   "variant": 1,
+   "line": "{이름}{은/는} 한 걸음 뒤에 붙어 선다. \"…괜찮아요.\""
+  },
+  {
+   "trigger": "physical_punish",
+   "voice": "princess",
+   "cell": "shrink",
+   "variant": 1,
+   "line": "{이름}{은/는} 입술을 다물고 창 쪽을 본다. \"…그만. 그만하라고 했어.\""
+  },
+  {
+   "trigger": "physical_punish",
+   "voice": "princess",
+   "cell": "soft",
+   "variant": 1,
+   "line": "{이름}{은/는} 한숨을 쉬고 이쪽을 본다. \"이 정도로 내가 울 줄 알았어? …아프긴 하네.\""
+  },
+  {
+   "trigger": "physical_punish",
+   "voice": "princess",
+   "cell": "follow",
+   "variant": 1,
+   "line": "{이름}{은/는} 턱을 괴고 당신을 올려다본다. \"{호칭}{이/가} 주는 벌이니까 받은 거야. 다른 사람이었으면 가만 안 있었어.\""
+  },
+  {
+   "trigger": "unjust_punish",
+   "voice": "meek",
+   "cell": "shrink",
+   "variant": 1,
+   "line": "{이름}{은/는} 반 걸음 물러나 벽 쪽에 붙어 선다. \"제가… 뭘 잘못했는지 모르겠어요. 말씀해 주시면 고칠게요…\""
+  },
+  {
+   "trigger": "unjust_punish",
+   "voice": "meek",
+   "cell": "soft",
+   "variant": 1,
+   "line": "{이름}{은/는} 눈을 내리깔고 가만히 듣는다. \"잘못한 게 있다면 알려 주세요. 모르고 벌을 받는 건… 무서워요.\""
+  },
+  {
+   "trigger": "unjust_punish",
+   "voice": "meek",
+   "cell": "follow",
+   "variant": 1,
+   "line": "{이름}{은/는} 부르면 들릴 거리에 와서 선다. \"{호칭}께서 그러시는 데는 이유가 있겠죠. …있는 거죠?\""
+  },
+  {
+   "trigger": "unjust_punish",
+   "voice": "plain",
+   "cell": "shrink",
+   "variant": 1,
+   "line": "{이름}{은/는} 입술을 깨물고 바닥을 본다. \"왜요…? 저 오늘 아무것도 안 했는데요.\""
+  },
+  {
+   "trigger": "unjust_punish",
+   "voice": "plain",
+   "cell": "soft",
+   "variant": 1,
+   "line": "{이름}{은/는} 어깨를 한 번 으쓱한다. \"이건 좀 억울해요. 제가 뭘 했는지는 알고 벌받고 싶어요.\""
+  },
+  {
+   "trigger": "unjust_punish",
+   "voice": "plain",
+   "cell": "follow",
+   "variant": 1,
+   "line": "{이름}{은/는} 묻기도 전에 곁으로 온다. \"{호칭}, 이번 건 솔직히 모르겠어요. 제가 틀렸으면 틀렸다고 말해 주세요.\""
+  },
+  {
+   "trigger": "unjust_punish",
+   "voice": "bold",
+   "cell": "shrink",
+   "variant": 1,
+   "line": "{이름}{은/는} 주먹을 쥐었다가 편다. \"…이유도 없이요. 기억해 둘게요.\""
+  },
+  {
+   "trigger": "unjust_punish",
+   "voice": "bold",
+   "cell": "soft",
+   "variant": 1,
+   "line": "{이름}{은/는} 한쪽 눈썹을 올린다. \"이유를 듣고 싶네요. 없다면, 그건 벌이 아니라 화풀이예요.\""
+  },
+  {
+   "trigger": "unjust_punish",
+   "voice": "bold",
+   "cell": "follow",
+   "variant": 1,
+   "line": "{이름}{은/는} 턱을 든 채 당신의 다음 말을 기다린다. \"{호칭}답지 않으세요. 제가 뭘 놓쳤는지 말씀해 주시면 고치겠어요.\""
+  },
+  {
+   "trigger": "unjust_punish",
+   "voice": "quiet",
+   "cell": "shrink",
+   "variant": 1,
+   "line": "{이름}{은/는} 눈을 감는다. \"…왜요.\""
+  },
+  {
+   "trigger": "unjust_punish",
+   "voice": "quiet",
+   "cell": "soft",
+   "variant": 1,
+   "line": "{이름}{은/는} 선 자리에서 기다린다. \"…이유를 모르겠어요.\""
+  },
+  {
+   "trigger": "unjust_punish",
+   "voice": "quiet",
+   "cell": "follow",
+   "variant": 1,
+   "line": "{이름}{은/는} 당신이 볼 때까지 시선을 거두지 않는다. \"…제가 뭘 했나요.\""
+  },
+  {
+   "trigger": "unjust_punish",
+   "voice": "princess",
+   "cell": "shrink",
+   "variant": 1,
+   "line": "{이름}{은/는} 치맛자락을 구겨 쥔다. \"…이유도 없이 이러는 거야?\""
+  },
+  {
+   "trigger": "unjust_punish",
+   "voice": "princess",
+   "cell": "soft",
+   "variant": 1,
+   "line": "{이름}{은/는} 손끝으로 팔걸이를 두드린다. \"내가 뭘 했는데. 말해 봐. 못 하겠지?\""
+  },
+  {
+   "trigger": "unjust_punish",
+   "voice": "princess",
+   "cell": "follow",
+   "variant": 1,
+   "line": "{이름}{은/는} 당신 옆에 서서 방 안을 둘러본다. \"{호칭}, 이건 틀렸어. 화가 났으면 났다고 말을 해.\""
+  },
+  {
+   "trigger": "branding",
+   "voice": "meek",
+   "cell": "hi",
+   "variant": 1,
+   "line": "{이름}{은/는} 이를 물고 끝까지 소리를 삼킨다. \"이제… {호칭}의 사람이라는 표시가 생긴 거죠. 괜찮아요. 견딜 수 있어요.\"",
+   "after": "그녀는 새겨진 자리 쪽으로 손을 뻗다가, 닿기 전에 거둔다."
+  },
+  {
+   "trigger": "branding",
+   "voice": "meek",
+   "cell": "lo",
+   "variant": 1,
+   "line": "{이름}{은/는} 고개를 들지 못한다. \"지워지지 않는 거죠, 이건… 평생요.\"",
+   "after": "대답을 기다리는 얼굴이 아니다."
+  },
+  {
+   "trigger": "branding",
+   "voice": "plain",
+   "cell": "hi",
+   "variant": 1,
+   "line": "{이름}{은/는} 숨을 길게 내쉰다. \"끝났어요? …생각보다 훨씬 아프네요. 그래도 이제 누가 봐도 제가 어느 집 사람인지 알겠죠.\"",
+   "after": "그녀는 숨을 고르고, 스스로 옷을 여민다."
+  },
+  {
+   "trigger": "branding",
+   "voice": "plain",
+   "cell": "lo",
+   "variant": 1,
+   "line": "{이름}{은/는} 새겨진 자리를 내려다본다. \"이런 걸 달고 살아야 한다고요? …돌아갈 데가 진짜 없어졌네요.\"",
+   "after": "웃으려던 입꼬리가 끝내 올라가지 않는다."
+  },
+  {
+   "trigger": "branding",
+   "voice": "bold",
+   "cell": "hi",
+   "variant": 1,
+   "line": "{이름}{은/는} 옷깃을 바로잡는다. \"표시 하나로 제가 달라지진 않아요. 다만 이 상표가 부끄럽지 않게는 해 드릴게요.\"",
+   "after": "떨리는 다리로도 그녀는 혼자 일어선다."
+  },
+  {
+   "trigger": "branding",
+   "voice": "bold",
+   "cell": "lo",
+   "variant": 1,
+   "line": "{이름}{은/는} 당신을 노려본다. \"가축한테나 하는 짓을… 잊지 않을 거예요. 이 자국을 볼 때마다요.\"",
+   "after": "젖은 눈으로도 시선은 끝까지 당신을 향해 있다."
+  },
+  {
+   "trigger": "branding",
+   "voice": "quiet",
+   "cell": "hi",
+   "variant": 1,
+   "line": "{이름}{은/는} 한참 뒤에야 고개를 든다. \"…끝났나요.\"",
+   "after": "그녀는 상표가 찍힌 쪽을 한 번 내려다보고, 아무 말 없이 당신 뒤에 선다."
+  },
+  {
+   "trigger": "branding",
+   "voice": "quiet",
+   "cell": "lo",
+   "variant": 1,
+   "line": "{이름}{은/는} 소리를 내지 않는다.",
+   "after": "새겨진 자리를 내려다보는 눈에 아무것도 비치지 않는다."
+  },
+  {
+   "trigger": "branding",
+   "voice": "princess",
+   "cell": "hi",
+   "variant": 1,
+   "line": "{이름}{은/는} 손등으로 눈가를 훔치고 턱을 든다. \"…아파. 아프다고. 그래도 {호칭}의 표시라면, 달고 다녀 줄게.\"",
+   "after": "그녀는 누가 부축하려는 손을 뿌리치고 제 발로 선다."
+  },
+  {
+   "trigger": "branding",
+   "voice": "princess",
+   "cell": "lo",
+   "variant": 1,
+   "line": "{이름}{은/는} 주먹을 쥔다. \"왕가의 몸에 이런 걸… 이 값은 꼭 치르게 될 거야.\"",
+   "after": "말과 달리 어깨는 한참을 떨린다."
+  },
+  {
+   "trigger": "execution",
+   "voice": "meek",
+   "cell": "hi",
+   "variant": 1,
+   "line": "{이름}{은/는} 무릎을 꿇는다. \"제가 쓸모없어졌다면… {호칭} 뜻대로 하세요. 다만 한 번만, 한 번만 더 기회를 주시면 안 될까요.\"",
+   "after": "그녀는 당신의 발끝에서 눈을 떼지 못한다."
+  },
+  {
+   "trigger": "execution",
+   "voice": "meek",
+   "cell": "lo",
+   "variant": 1,
+   "line": "{이름}{은/는} 두 손을 모아 쥔다. \"싫어요, 죽고 싶지 않아요… 뭐든 할게요. 뭐든요.\"",
+   "after": "말이 끝나기도 전에 다리가 풀려 주저앉는다."
+  },
+  {
+   "trigger": "execution",
+   "voice": "plain",
+   "cell": "hi",
+   "variant": 1,
+   "line": "{이름}{은/는} 마른침을 삼킨다. \"진심이세요? …진심이면, 제가 뭘 고치면 되는지 먼저 말해 주세요. 고칠 수 있어요.\"",
+   "after": "목소리는 떨리는데 눈은 피하지 않는다."
+  },
+  {
+   "trigger": "execution",
+   "voice": "plain",
+   "cell": "lo",
+   "variant": 1,
+   "line": "{이름}{은/는} 한 걸음 물러선다. \"거짓말이죠. 겁주려는 거죠? …아니에요? 잠깐만요, 잠깐만.\"",
+   "after": "뒷걸음질 치던 등이 벽에 닿는다."
+  },
+  {
+   "trigger": "execution",
+   "voice": "bold",
+   "cell": "hi",
+   "variant": 1,
+   "line": "{이름}{은/는} 턱을 든다. \"그러실 거면 그러세요. 하지만 저만큼 해낼 사람을 다시 구하긴 쉽지 않을 거예요.\"",
+   "after": "꼭 쥔 주먹이 하얗게 질려 있다."
+  },
+  {
+   "trigger": "execution",
+   "voice": "bold",
+   "cell": "lo",
+   "variant": 1,
+   "line": "{이름}{은/는} 입꼬리를 비튼다. \"…할 수 있으면 해 보세요. 빌지는 않을 거니까.\"",
+   "after": "그렇게 말하고도, 침을 삼키는 소리가 방 안에 들린다."
+  },
+  {
+   "trigger": "execution",
+   "voice": "quiet",
+   "cell": "hi",
+   "variant": 1,
+   "line": "{이름}{은/는} 당신을 본다. \"…알겠어요.\"",
+   "after": "그녀는 도망치지 않는다. 다만 선 자리에서 손끝이 조금 떨린다."
+  },
+  {
+   "trigger": "execution",
+   "voice": "quiet",
+   "cell": "lo",
+   "variant": 1,
+   "line": "{이름}{은/는} 대답하지 않는다.",
+   "after": "숨이 얕아지고, 눈이 문 쪽을 한 번 스친다."
+  },
+  {
+   "trigger": "execution",
+   "voice": "princess",
+   "cell": "hi",
+   "variant": 1,
+   "line": "{이름}{은/는} 자리에서 일어선다. \"{호칭}{이/가} 나를? …농담이라고 해. 지금 당장.\"",
+   "after": "명령하는 말투와 달리, 치맛자락을 쥔 손이 하얗다."
+  },
+  {
+   "trigger": "execution",
+   "voice": "princess",
+   "cell": "lo",
+   "variant": 1,
+   "line": "{이름}{은/는} 등을 세운다. \"해. 왕가의 사람은 목숨을 구걸하지 않아.\"",
+   "after": "그 말을 하는 입술에 핏기가 없다."
+  },
+  {
+   "trigger": "sale",
+   "voice": "meek",
+   "cell": "hi",
+   "variant": 1,
+   "line": "{이름}{은/는} 두 손을 앞에 모으고 선다. \"다른 분께 가는 거군요… {호칭}{이/가} 정하신 거니까요. 그동안 가르쳐 주신 것, 잊지 않을게요.\"",
+   "after": "그녀는 문턱에서 한 번 돌아보고, 깊이 고개를 숙인다."
+  },
+  {
+   "trigger": "sale",
+   "voice": "meek",
+   "cell": "lo",
+   "variant": 1,
+   "line": "{이름}{은/는} 옷자락을 쥔다. \"다음 분은… 어떤 분인가요. 벌을 많이 주시는 분인가요.\"",
+   "after": "대답을 듣기도 전에 어깨가 굳는다."
+  },
+  {
+   "trigger": "sale",
+   "voice": "plain",
+   "cell": "hi",
+   "variant": 1,
+   "line": "{이름}{은/는} 짐을 고쳐 든다. \"진짜 가는 거네요. 솔직히 여기 있고 싶었어요. …그래도 잘해 볼게요. 배운 게 있으니까.\"",
+   "after": "웃으려다 만 얼굴로, 그녀는 문 쪽으로 돌아선다."
+  },
+  {
+   "trigger": "sale",
+   "voice": "plain",
+   "cell": "lo",
+   "variant": 1,
+   "line": "{이름}{은/는} 어깨를 으쓱한다. \"팔리는 거죠, 결국. 뭐, 여기나 거기나요.\"",
+   "after": "그렇게 말하면서도 방 안을 한 번 더 둘러본다."
+  },
+  {
+   "trigger": "sale",
+   "voice": "bold",
+   "cell": "hi",
+   "variant": 1,
+   "line": "{이름}{은/는} 옷매무새를 가다듬는다. \"저를 내놓으시는군요. 좋은 값을 받으세요. 그만한 사람으로 만들어 주셨으니까요.\"",
+   "after": "턱은 들었지만, 문 앞에서 발이 한 박자 늦게 떨어진다."
+  },
+  {
+   "trigger": "sale",
+   "voice": "bold",
+   "cell": "lo",
+   "variant": 1,
+   "line": "{이름}{은/는} 팔짱을 낀다. \"값은 얼마나 받으셨어요? …제 값어치는 알고 가고 싶어서요.\"",
+   "after": "비꼬는 말끝이 조금 갈라진다."
+  },
+  {
+   "trigger": "sale",
+   "voice": "quiet",
+   "cell": "hi",
+   "variant": 1,
+   "line": "{이름}{은/는} 당신 앞에 와서 선다. \"…안녕히 계세요.\"",
+   "after": "문을 나서기 전, 그녀는 처음으로 먼저 고개를 숙인다."
+  },
+  {
+   "trigger": "sale",
+   "voice": "quiet",
+   "cell": "lo",
+   "variant": 1,
+   "line": "{이름}{은/는} 고개를 한 번 끄덕인다. \"…네.\"",
+   "after": "돌아보지 않고 나간다."
+  },
+  {
+   "trigger": "sale",
+   "voice": "princess",
+   "cell": "hi",
+   "variant": 1,
+   "line": "{이름}{은/는} 한참 당신을 본다. \"나를 내보낸다고? …{호칭}{이/가} 정한 거면 가 줄게. 대신 후회는 {호칭} 몫이야.\"",
+   "after": "돌아선 뒤로 그녀는 한 번도 뒤를 보지 않는다. 걸음만 느리다."
+  },
+  {
+   "trigger": "sale",
+   "voice": "princess",
+   "cell": "lo",
+   "variant": 1,
+   "line": "{이름}{은/는} 머리를 쓸어 넘긴다. \"드디어 이 집에서 나가네. 인사는 기대하지 마.\"",
+   "after": "문고리를 잡은 손이 잠깐 멈췄다가 움직인다."
+  },
+  {
+   "trigger": "rebellion",
+   "voice": "meek",
+   "cell": "*",
+   "variant": 1,
+   "line": "{이름}{은/는} 바닥에 엎드린 채 떤다. \"죄송해요, 죄송해요… 저도 제가 왜 그랬는지… 다시는 안 그럴게요.\"",
+   "after": "그녀는 일어날 생각을 하지 못한다."
+  },
+  {
+   "trigger": "rebellion",
+   "voice": "plain",
+   "cell": "*",
+   "variant": 1,
+   "line": "{이름}{은/는} 숨을 몰아쉬며 천장을 본다. \"졌네요. …한 번은 해 봐야 했어요. 안 해 보면 평생 생각날 것 같아서.\"",
+   "after": "힘이 빠진 손이 바닥에 떨어진다."
+  },
+  {
+   "trigger": "rebellion",
+   "voice": "bold",
+   "cell": "*",
+   "variant": 1,
+   "line": "{이름}{은/는} 눌린 채로도 눈을 내리깔지 않는다. \"이번엔 제가 진 거예요. 이번엔요.\"",
+   "after": "이를 문 턱이 한참 풀리지 않는다."
+  },
+  {
+   "trigger": "rebellion",
+   "voice": "quiet",
+   "cell": "*",
+   "variant": 1,
+   "line": "{이름}{은/는} 저항을 멈춘다.",
+   "after": "힘이 빠진 것인지 그만둔 것인지는 알 수 없다."
+  },
+  {
+   "trigger": "rebellion",
+   "voice": "princess",
+   "cell": "*",
+   "variant": 1,
+   "line": "{이름}{은/는} 당신의 손을 밀어내려 한다. \"놔. …놓으라고. 졌으니까 놓으라는 거야.\"",
+   "after": "분한 숨이 한참 동안 가라앉지 않는다."
+  }
+ ]
+}
