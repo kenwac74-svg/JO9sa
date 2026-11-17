@@ -4,6 +4,12 @@
 - 대상: `assets/runtime/2.4.1/jack.qsp`. `interaction`에서 `$interaction_type`이 compliment(칭찬 1561~1565), execution(처형 182~187), 처벌 계열(torture, abuse, present_torture, prisoner_torture, torture_assistant, 낙인) 이거나 `torture_intensity`를 정하는 커맨드 78개와, 그 커맨드가 쓰는 글 변수, 정신 상태별 반응 글(`compliment_reaction`, `*_torture_reaction`, `bondage_reaction`, `compassion_reaction`, `execution_reaction`, 조수용 포함)을 훑었다.
 - 대사의 기준: 따옴표로 직접 인용한 말, 또는 `[이름]` 표를 단 말. "애원했다"처럼 전한 말(간접 전달)은 대사로 치지 않았다.
 
+## 0. 2026-11-17 정정: 게임에 나오는 글은 `#txt_man`이다
+- 사용자: `#txt_woman`은 여주인용 텍스트이고 여주인은 더 이상 게임에서 고를 수 없다. 소스로 쓸 수는 있지만 게임에 나타나지 않는다.
+- QSP 확인: `#txt_woman`은 `hero_choice > 100`(여주인)일 때만 불린다(`interaction_city` 34행, `#txt` 5행).
+- **따라서 게임에 나오는 노예의 직접 대사는 처형 위협의 1줄(`#txt_man` 991행, 거리감)뿐이다.** 아래 표의 `#txt_woman` 두 줄은 소스로만 참고한다.
+- 함께 바로잡은 것: 앞선 조사의 "인두 낙인 글에는 대사가 있다"도 `#txt_woman`과 잘못 센 결과였다. 게임에 나오는 `#txt_man`의 낙인 글 세 가지에는 대사가 없다.
+
 ## 1. 노예의 직접 대사가 있는 줄 (3줄, 모두 처형 위협)
 | 위치 | 정신 상태 | 대사 |
 |---|---|---|
