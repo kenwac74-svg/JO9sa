@@ -1,0 +1,187 @@
+<!doctype html>
+<!-- 어떤 대사·커맨드에 적용하든 기본이 되는 JO9 텍스트 보강 대원칙을 한눈에 보는 페이지 -->
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JO9 텍스트 대원칙</title>
+<style>
+:root{--bg:#f6f4ef;--panel:#fffdf8;--ink:#23201b;--mute:#6b655a;--line:#ddd6c8;--head:#efe9dc;--accent:#7a4b1f;
+--ok:#1f6f4a;--okbg:#dff1e6;--prop:#8a5a00;--propbg:#fbecc8}
+@media (prefers-color-scheme:dark){:root{--bg:#17150f;--panel:#1f1c15;--ink:#ece6d8;--mute:#a69f90;--line:#3a3529;--head:#2a261c;--accent:#e0a868;
+--ok:#8fd6ad;--okbg:#173626;--prop:#f0c56a;--propbg:#3d2f0c}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15.5px/1.65 "Pretendard","Noto Sans KR","Malgun Gothic",system-ui,sans-serif}
+header,main{max-width:980px;margin:0 auto;padding:0 16px}
+header{padding-top:28px}
+h1{font-size:26px;margin:0 0 8px}
+header ul{margin:6px 0 0;padding-left:18px;color:var(--mute);font-size:14px}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0 4px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px}
+.stat b{font-size:20px;margin-right:6px}
+nav{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);margin-top:12px}
+nav div{max-width:980px;margin:0 auto;padding:8px 16px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+nav a,nav button{font:inherit;font-size:13px;font-weight:600;color:var(--accent);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:3px 11px;text-decoration:none;cursor:pointer}
+nav button.on{background:var(--accent);color:var(--panel);border-color:var(--accent)}
+nav .sep{flex:1}
+section{margin:26px 0}
+h2{font-size:19px;margin:0 0 10px;padding-bottom:6px;border-bottom:2px solid var(--accent)}
+.pr{display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:start;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:8px 0}
+.pr[data-kind="prop"]{border-left:4px solid var(--prop)}
+.pr[data-kind="ok"]{border-left:4px solid var(--ok)}
+.num{font-weight:800;font-size:18px;color:var(--accent);text-align:center;padding-top:1px}
+.txt h3{margin:0 0 3px;font-size:16px}
+.txt p{margin:0}
+.basis{color:var(--mute);font-size:13.5px;margin-top:5px !important}
+.st{text-align:right}
+.chip{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap;background:var(--head);color:var(--mute);margin:1px 0}
+.chip.ok{background:var(--okbg);color:var(--ok)}.chip.prop{background:var(--propbg);color:var(--prop)}
+.hide{display:none}
+.note{color:var(--mute);margin:4px 0 8px}
+.wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+table{border-collapse:collapse;width:100%}
+th,td{padding:8px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:var(--head);font-size:13px}
+tr:last-child td{border-bottom:0}
+code{font-family:"D2Coding",Consolas,monospace;font-size:13px;background:var(--head);padding:0 4px;border-radius:4px}
+footer{max-width:980px;margin:30px auto 50px;padding:0 16px;color:var(--mute);font-size:13px}
+@media (max-width:560px){.pr{grid-template-columns:34px 1fr}.st{grid-column:2;text-align:left}}
+</style>
+</head>
+<body>
+<header>
+<h1>JO9 텍스트 보강 대원칙</h1>
+<ul><li>이 문서는 <b>어디에 적용할지와 무관한 원칙만</b> 담는다. 어떤 대사나 커맨드를 고칠지는 아직 정하지 않았다.</li><li>기존 문서(풍부화 규칙, 시스템 보고서, DB의 <code>triggers</code>)에 있는 사건 목록과 넣을 자리는 <b>적용 후보</b>이며 결정된 것이 아니다.</li><li>상태 표시: <b>확정</b>은 사용자 결정이 있는 것, <b>제안</b>은 Claude가 연구에서 끌어낸 것(사용자 확인 전).</li></ul>
+<div class="stats">
+ <div class="stat"><b>27</b>원칙</div>
+ <div class="stat"><b style="color:var(--ok)">18</b>확정</div>
+ <div class="stat"><b style="color:var(--prop)">9</b>제안(확인 필요)</div>
+</div>
+</header>
+<nav><div>
+<a href="#s1">무엇을 쓰는가</a><a href="#s2">어떤 시점과 문체로 쓰는가</a><a href="#s3">누가 어떻게 말하는가</a><a href="#s4">어떻게 저장하고 고르는가</a><a href="#s5">누가 쓰는가</a><a href="#s6">적용할 때마다 정해야 하는 것</a><a href="#s7">이전 문서와의 관계</a>
+<span class="sep"></span>
+<button data-f="all" class="on">전체</button><button data-f="ok">확정만</button><button data-f="prop">제안만</button>
+</div></nav>
+<main>
+<section id="s1"><h2>1. 무엇을 쓰는가</h2><article class="pr" data-kind="ok">
+  <div class="num">1</div>
+  <div class="txt"><h3>풍부화이지 개편이 아니다</h3><p>기존 규칙과 문장을 갈아엎지 않는다. 한두 줄로 끝나는 곳을 채운다</p><p class="basis">근거 · 사용자 2026-11-16</p></div>
+  <div class="st"><span class="chip ok">확정</span></div>
+</article><article class="pr" data-kind="ok">
+  <div class="num">2</div>
+  <div class="txt"><h3>원문을 지우지 않는다</h3><p>원래 글은 그대로 나오고 그 뒤에 덧댄다. 교체는 따로 검토한다</p><p class="basis">근거 · 사용자 "우선 덧대기만"</p></div>
+  <div class="st"><span class="chip ok">확정</span></div>
+</article><article class="pr" data-kind="prop">
+  <div class="num">3</div>
+  <div class="txt"><h3>덧대는 것은 인물의 반응이다</h3><p>사건 설명을 늘리지 않는다. 그 인물이 그 순간 어떻게 굴고 무슨 말을 하는가를 쓴다</p><p class="basis">근거 · 기존 글은 이미 사건을 묘사하고, 인물별 차이가 없다</p></div>
+  <div class="st"><span class="chip prop">제안</span></div>
+</article><article class="pr" data-kind="ok">
+  <div class="num">4</div>
+  <div class="txt"><h3>사건이 일어났을 때만 쓴다</h3><p>마음이나 수치가 바뀐 것 자체는 계기가 아니다</p><p class="basis">근거 · 사용자 "사건 발생만 따진다"</p></div>
+  <div class="st"><span class="chip ok">확정</span></div>
+</article><article class="pr" data-kind="ok">
+  <div class="num">5</div>
+  <div class="txt"><h3>무게에 비례한다</h3><p>큰 일일수록 길게, 일상은 그대로. 같은 계기는 드물게 낸다</p><p class="basis">근거 · 모든 명령에 글을 늘리면 큰 일이 묻힌다. 사용자 "강도 4~5와 큰 변화만", "하루에 갈래당 한 번"</p></div>
+  <div class="st"><span class="chip ok">확정</span></div>
+</article><article class="pr" data-kind="ok">
+  <div class="num">6</div>
+  <div class="txt"><h3>대사창 3행 이내</h3><p>덧대는 양의 상한. 한 행은 약 53자</p><p class="basis">근거 · 사용자 결정</p></div>
+  <div class="st"><span class="chip ok">확정</span></div>
+</article><article class="pr" data-kind="ok">
+  <div class="num">7</div>
+  <div class="txt"><h3>보여 주기만 한다</h3><p>글은 수치를 바꾸지 않는다. 효과는 기존 게임 코드가 처리한다</p><p class="basis">근거 · 기존 대화 설계 결정</p></div>
+  <div class="st"><span class="chip ok">확정</span></div>
+</article></section><section id="s2"><h2>2. 어떤 시점과 문체로 쓰는가</h2><article class="pr" data-kind="ok">
+  <div class="num">8</div>
+  <div class="txt"><h3>관찰자 시점</h3><p>지문은 3인칭 관찰자. 보이는 것만 쓴다</p><p class="basis">근거 · 기존 게임 지문의 문체</p></div>
+  <div class="st"><span class="chip ok">확정</span></div>
+</article><article class="pr" data-kind="ok">
+  <div class="num">9</div>
+  <div class="txt"><h3>노예의 속마음을 쓰지 않는다</h3><p>속은 몸짓과 표정으로 짐작하게 한다. 속마음은 주인공에게만 있다</p><p class="basis">근거 · 사용자 확인, QSP에 노예 속마음 표기 0건</p></div>
+  <div class="st"><span class="chip ok">확정</span></div>
+</article><article class="pr" data-kind="ok">
+  <div class="num">10</div>
+  <div class="txt"><h3>인칭 고정</h3><p>주인공은 "당신", 노예는 이름 또는 "그녀". 한 블록에서 섞지 않는다</p><p class="basis">근거 · 기존 결정</p></div>
+  <div class="st"><span class="chip ok">확정</span></div>
+</article><article class="pr" data-kind="prop">
+  <div class="num">11</div>
+  <div class="txt"><h3>게임 관례를 따른다</h3><p>이름 조사 <code>(은)는</code>, 문단 들여쓰기, 따옴표 대사. 새 표기를 만들지 않는다</p><p class="basis">근거 · 기존 게임 문장</p></div>
+  <div class="st"><span class="chip prop">제안</span></div>
+</article></section><section id="s3"><h2>3. 누가 어떻게 말하는가</h2><article class="pr" data-kind="ok">
+  <div class="num">12</div>
+  <div class="txt"><h3>화자를 소수의 목소리로 묶는다</h3><p>수천 명에게 개성을 따로 주지 않는다. 목소리 인물 다섯(순한·담백한·센·조용한 사람, 공주)</p><p class="basis">근거 · 사용자 방향 "유형별로 묶으면 5개 이하"</p></div>
+  <div class="st"><span class="chip ok">확정(방향)</span> <span class="chip prop">경계값은 제안</span></div>
+</article><article class="pr" data-kind="prop">
+  <div class="num">13</div>
+  <div class="txt"><h3>목소리는 영입 때 정하고 바꾸지 않는다</h3><p>조교로 수치가 바뀌어도 같은 사람으로 들려야 한다. 변화는 관계로 보인다</p><p class="basis">근거 · 목소리가 바뀌면 다른 사람처럼 들린다</p></div>
+  <div class="st"><span class="chip prop">제안</span></div>
+</article><article class="pr" data-kind="ok">
+  <div class="num">14</div>
+  <div class="txt"><h3>말투는 인물에게 고정이다</h3><p>반말은 공주 출신과 일부 유니크뿐. 관계가 변해도 말투는 바뀌지 않는다</p><p class="basis">근거 · 사용자 결정</p></div>
+  <div class="st"><span class="chip ok">확정</span></div>
+</article><article class="pr" data-kind="ok">
+  <div class="num">15</div>
+  <div class="txt"><h3>관계는 호칭으로 보인다</h3><p>말투 대신 호칭이 단계적으로 바뀐다</p><p class="basis">근거 · 사용자 결정</p></div>
+  <div class="st"><span class="chip ok">확정</span></div>
+</article><article class="pr" data-kind="ok">
+  <div class="num">16</div>
+  <div class="txt"><h3>자주 변하지 않는 값을 기준으로 삼는다</h3><p>기준은 헌신 등급. 정신 상태는 하루 안에서도 바뀌므로 그날의 결에만 쓴다</p><p class="basis">근거 · 사용자 "자주 변하면 헌신 하나로 고정", QSP 확인</p></div>
+  <div class="st"><span class="chip ok">확정</span></div>
+</article><article class="pr" data-kind="ok">
+  <div class="num">17</div>
+  <div class="txt"><h3>헌신이 정신 상태보다 먼저다</h3><p>둘이 어긋나면 헌신을 따른다</p><p class="basis">근거 · 사용자 결정</p></div>
+  <div class="st"><span class="chip ok">확정</span></div>
+</article><article class="pr" data-kind="prop">
+  <div class="num">18</div>
+  <div class="txt"><h3>화면에 보이는 값으로만 가른다</h3><p>플레이어가 "왜 이렇게 말하지?"를 화면으로 설명할 수 있어야 한다. 숨은 계산식을 새로 만들지 않는다</p><p class="basis">근거 · 기존 정책의 식이 예측할 수 없었다</p></div>
+  <div class="st"><span class="chip prop">제안</span></div>
+</article><article class="pr" data-kind="prop">
+  <div class="num">19</div>
+  <div class="txt"><h3>미세한 차이는 문장 밖에서 낸다</h3><p>같은 목소리 안의 차이(순종과 여린 등)는 길이와 수치 배율로. 문장을 나누지 않는다</p><p class="basis">근거 · 원고량</p></div>
+  <div class="st"><span class="chip prop">제안</span></div>
+</article></section><section id="s4"><h2>4. 어떻게 저장하고 고르는가</h2><article class="pr" data-kind="ok">
+  <div class="num">20</div>
+  <div class="txt"><h3>규칙과 문장을 나눈다</h3><p>문장은 데이터(DB), 고르는 규칙은 코드. 규칙을 바꿀 때 문장을 다시 쓰지 않는다</p><p class="basis">근거 · 사용자 "DB 스키마와 규칙이 먼저"</p></div>
+  <div class="st"><span class="chip ok">확정(방향)</span></div>
+</article><article class="pr" data-kind="prop">
+  <div class="num">21</div>
+  <div class="txt"><h3>칸 수에 상한을 둔다</h3><p>한 자리의 원고 칸은 목소리 × 관계 단계로 15칸 안팎</p><p class="basis">근거 · 다른 게임 비교(12~15칸), 원고를 채울 수 있는 크기</p></div>
+  <div class="st"><span class="chip prop">제안</span></div>
+</article><article class="pr" data-kind="prop">
+  <div class="num">22</div>
+  <div class="txt"><h3>빈 칸이 있어도 게임은 돈다</h3><p>구체적인 줄이 없으면 공통 줄, 그것도 없으면 원래 글만</p><p class="basis">근거 · 원고가 다 차기 전에도 넣을 수 있어야 한다</p></div>
+  <div class="st"><span class="chip prop">제안</span></div>
+</article><article class="pr" data-kind="prop">
+  <div class="num">23</div>
+  <div class="txt"><h3>어미를 자동으로 바꾸지 않는다</h3><p>말투마다 완결 문장을 따로 쓴다. 빈칸은 이름·호칭·조사뿐이고, 조사가 붙은 꼴을 표로 둔다</p><p class="basis">근거 · Wayward 한국어판과 같은 방식, '너' 같은 꼴 변화</p></div>
+  <div class="st"><span class="chip prop">제안</span></div>
+</article><article class="pr" data-kind="ok">
+  <div class="num">24</div>
+  <div class="txt"><h3>대사를 세이브에 넣지 않는다</h3><p>원고는 변수에 올리지 않는다. 인물에 저장하는 것은 최소(목소리 번호 등)</p><p class="basis">근거 · 기존 대사 변수 문제(세이브 크기, 옛 원고)</p></div>
+  <div class="st"><span class="chip ok">확정</span></div>
+</article><article class="pr" data-kind="ok">
+  <div class="num">25</div>
+  <div class="txt"><h3>같은 줄을 연달아 내지 않는다</h3><p>변형을 두고 최근에 쓴 줄을 피한다. 조건을 완화해 다양성을 만들지 않는다</p><p class="basis">근거 · 기존 결정</p></div>
+  <div class="st"><span class="chip ok">확정</span></div>
+</article></section><section id="s5"><h2>5. 누가 쓰는가</h2><article class="pr" data-kind="ok">
+  <div class="num">26</div>
+  <div class="txt"><h3>구조는 같게, 문장 작성자는 나눈다</h3><p>성적인 장면에 붙는 문장은 사용자가 쓴다. 키·칸·고르는 규칙은 다른 곳과 똑같이 만든다</p></div>
+  <div class="st"><span class="chip ok">확정</span></div>
+</article><article class="pr" data-kind="prop">
+  <div class="num">27</div>
+  <div class="txt"><h3>규칙은 검사로 지킨다</h3><p>속마음 금지, 3행 이내, 작성자 구분 같은 원칙을 데이터 검사 도구가 기계적으로 확인한다</p></div>
+  <div class="st"><span class="chip prop">제안</span></div>
+</article></section>
+<section id="s6" class="plain"><h2>6. 적용할 때마다 정해야 하는 것</h2><p class="note">아래는 원칙이 아니라 <b>적용 대상별 결정</b>이다. 어떤 대사나 커맨드에 적용하기로 하면 이것을 하나씩 정한다.</p><div class="wrap"><table><tr><th>항목</th><th>정하는 것</th></tr><tr><td>대상</td><td>어느 대사·커맨드인가</td></tr><tr><td>무게</td><td>원칙 5에 따라 얼마나 큰 일인가(덧대는 양과 횟수가 따라 정해진다)</td></tr><tr><td>계기</td><td>사건이 일어났다고 판단하는 게임 값이나 실행 지점</td></tr><tr><td>넣을 자리</td><td>원래 글이 나오는 줄</td></tr><tr><td>칸 나누기</td><td>관계 단계를 몇 칸으로 나눌지(태도 3칸, 헌신 2칸, 하나)</td></tr><tr><td>작성자</td><td>Claude 초안인가 사용자 작성인가</td></tr><tr><td>화자</td><td>노예 하나인가, 조수·손님이 함께 나오는가</td></tr></table></div></section><section id="s7" class="plain"><h2>7. 이전 문서와의 관계</h2><p class="note">이 문서가 맨 위다. 풍부화 규칙, 시스템 보고서, 인계 문서의 내용 가운데 이 원칙과 어긋나는 것이 있으면 이 문서를 따른다.</p><p class="note">그 문서들의 사건 목록, 처형 위협 mods 초안, 원고 95블록은 <b>원칙을 시험한 자료</b>다. 적용 대상으로 정해진 것이 아니다.</p></section>
+</main>
+<footer>원본: docs/dialogue-rules/JO9_TEXT_PRINCIPLES_20261117_KO.md · 2026-11-17</footer>
+<script>
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>{
+ document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('on',x===b));
+ const f=b.dataset.f;
+ document.querySelectorAll('.pr').forEach(p=>p.classList.toggle('hide',f!=='all'&&p.dataset.kind!==f));
+}));
+</script>
+</body>
+</html>
