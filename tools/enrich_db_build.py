@@ -154,6 +154,9 @@ def check(db):
         if t.get('originalSpeech', 'unknown') != 'all' and '"' in text:
             errs.append(where + f": 대사 포함(원래 글의 대사 여부 {t.get('originalSpeech', 'unknown')}. 원칙 3에 따라 관찰 지문만)")
         if '『' in text or '』' in text: errs.append(where + ': 속마음 표기(노예의 속마음은 쓰지 않는다)')
+        narr = re.sub(r'"[^"]*"', '', text)
+        if re.search(r'주인님|주인공|\b너\b|네가', narr):
+            warns.append(where + ': 지문에서 주인공을 "당신" 말고 다르게 부름')
         for tok in re.findall(r'\{[^}]*\}', text):
             if tok not in TOKENS: errs.append(where + ': 모르는 빈칸 ' + tok)
         r = rows_of(f['line']) + (rows_of(f['after']) if f.get('after') else 0)
