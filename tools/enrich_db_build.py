@@ -204,6 +204,8 @@ def check(db):
     return errs, warns
 
 if __name__ == '__main__':
+    if '--migrate' in sys.argv and '--force' not in sys.argv:
+        sys.exit('--migrate는 옛 원고 문서로 DB를 다시 만들어 2026-11-18에 다시 쓴 원고를 지운다. 정말 하려면 --force를 함께 준다.')
     db = migrate() if '--migrate' in sys.argv else json.load(open(DB, encoding='utf-8'))
     e, w = check(db)
     n = len(db['fragments'])
