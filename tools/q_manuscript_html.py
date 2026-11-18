@@ -11,7 +11,7 @@ data = json.load(open(SRC, encoding='utf-8'))
 rows = data['rows']
 orig = {(r['question'], r['role'], r['cell'], r['voice']): r for r in csv.DictReader(open(CSV, encoding='utf-8-sig'))}
 
-TOPICS = [('need', '요구'), ('noneed', '바라는 것 없음'), ('refuse', '대답 거부(정신 상태)'),
+TOPICS = [('like', '배우고 싶은 것'), ('nolike', '배우고 싶은 것 없음'), ('need', '요구'), ('noneed', '바라는 것 없음'), ('refuse', '대답 거부(정신 상태)'),
           ('A', '최근 칭찬'), ('B', '최근 처벌'), ('C', '오늘 처벌'), ('D', '오늘 칭찬'),
           ('fact_fear', '두려움'), ('fact_obed', '복종'), ('fact_custom', '습관'), ('fact_instinct', '본능'),
           ('fact_moral', '헌신'), ('fact_ratio', '합리(이득)'), ('fact_relation', '관계 상태'),
@@ -24,10 +24,17 @@ REL = {'arrogant': '오만', 'hateful': '증오', 'hysteric': '히스테리', 'r
 NEED = {'abuse': '매질', 'blood': '피', 'comfort': '안락', 'darkness': '어둠', 'deprivation': '구속', 'fame': '명성', 'fire': '불',
         'luxury': '치장', 'sweets': '단것', 'vermin': '벌레', 'water': '물', 'exhibitionism': '노출', 'homosexualism': '동성',
         'nymphomania': '색정', 'perversion': '도착'}
+LIKE = {'art': '미술', 'calisthenics': '무용·체조', 'cook': '요리', 'dressage': '마차 조련', 'expression': '화술', 'gladiatrix': '검투',
+        'music': '음악', 'nurse': '간호', 'pet': '애완 훈련', 'secretary': '비서', 'service': '집안일', 'sport': '운동',
+        'cowSK': '착유', 'enchanter': '성기술'}
 QNAME = {'1111': '과거 묻기', '1112': '인상 묻기', '1113': '요구 묻기', '1114': '희망 묻기', '1115': '불만 묻기', '1116': '기분 묻기', '1117': '조수 묻기'}
 
 
 def topic(role):
+    if re.match(r'native_\d+_no_like', role):
+        return 'nolike', '배우고 싶은 것 없음'
+    if re.match(r'native_\d+_\w+_like_core', role):
+        return 'like', '배우고 싶은 것'
     if role.startswith('native_1113_refuse'):
         return 'refuse', '대답 거부(정신 상태)'
     if role.startswith('native_1113_no_need'):
@@ -43,6 +50,13 @@ def topic(role):
 def slot(role):
     if role in ('A', 'B', 'C', 'D'):
         return '요약'
+    m = re.match(r'native_\d+_(\w+?)_like_core$', role)
+    if m and not m.group(1).startswith('no'):
+        return LIKE.get(m.group(1), m.group(1))
+    if re.match(r'native_\d+_no_like_gentle', role):
+        return '온순한 경우'
+    if re.match(r'native_\d+_no_like_core', role):
+        return '기본'
     m = re.match(r'native_\d+_(\w+?)_need_(core|detail)$', role)
     if m:
         return NEED.get(m.group(1), m.group(1)) + (' 덧붙임' if m.group(2) == 'detail' else '')
@@ -85,7 +99,7 @@ groups = {}
 for r in rows:
     k, label = topic(r['role'])
     groups.setdefault((k, label), []).append(r)
-order = [t for t in TOPICS if t in groups]
+order = [t for t in TOPICS if t in groups] + [t for t in groups if t not in TOPICS]
 
 nav, parts = [], []
 ujump = []
