@@ -200,6 +200,40 @@
     }
    }
   },
+  "honorificRules": {
+   "type": "array",
+   "description": "호칭을 고르는 순서. 위에서부터 처음 맞는 규칙을 쓴다",
+   "items": {
+    "type": "object",
+    "required": [
+     "order",
+     "when",
+     "speech",
+     "use"
+    ],
+    "properties": {
+     "order": {
+      "type": "integer"
+     },
+     "when": {
+      "type": "string"
+     },
+     "speech": {
+      "enum": [
+       "polite",
+       "banmal",
+       "all"
+      ]
+     },
+     "use": {
+      "type": "string"
+     },
+     "note": {
+      "type": "string"
+     }
+    }
+   }
+  },
   "triggers": {
    "type": "array",
    "items": {

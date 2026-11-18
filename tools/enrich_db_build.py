@@ -36,6 +36,29 @@ HONORIFICS = {
         {'minDevotion': 3, 'forms': {'bare': '주인', 'i': '주인이', 'eun': '주인은', 'eul': '주인을', 'ui': '주인', 'ege': '주인한테'}},
     ],
 }
+HONORIFIC_RULES = [
+    {
+        "order": 1,
+        "when": "맞섬 칸(헌신 0~1이고 정신 상태가 맞섬 쪽)",
+        "speech": "polite",
+        "use": "당신",
+        "note": "사용자 문답 26의 1안. 복종이 높아도 맞섬이면 당신"
+    },
+    {
+        "order": 2,
+        "when": "복종 단계 3 이상(obedience > 20, 화면 '종합정보: 노예'의 복종도)",
+        "speech": "polite",
+        "use": "주인님",
+        "note": "사용자 문답 27. 헌신과 상관없이 주인님. 원문도 복종 단계 3부터 주인님을 쓴다"
+    },
+    {
+        "order": 3,
+        "when": "그 밖",
+        "speech": "all",
+        "use": "honorifics 표(헌신 등급)",
+        "note": "존댓말 0~1 당신, 2 이상 주인님. 반말 0 너, 1~2 당신, 3 이상 주인"
+    }
+]
 LAYOUTS = {
     'attitude3': {'cells': ['shrink', 'soft', 'follow'], 'note': '무게 2. 헌신 3 이상이면 follow(정신 상태가 움츠림 쪽이면 shrink), 헌신 2면 soft(움츠림 쪽은 shrink, 맞섬 상태여도 soft), 헌신 0~1이면 soft(움츠림 쪽은 shrink, 맞섬 쪽은 블록 없음)'},
     'devotion2': {'cells': ['hi', 'lo'], 'note': '무게 3. 헌신 3 이상이면 hi, 0~2면 lo'},
@@ -125,7 +148,7 @@ def migrate():
                 frags.append(f)
     db = {'schema': 'jo9-enrich-db/v1', 'updated': '2026-11-17',
           'limits': {'rowChars': ROW, 'maxRows': 3, 'afterMinDevotion': 2, 'perDayPerTriggerWeight2': 1},
-          'voices': VOICES, 'attitudes': ATTITUDES, 'layouts': LAYOUTS, 'honorifics': HONORIFICS,
+          'voices': VOICES, 'attitudes': ATTITUDES, 'layouts': LAYOUTS, 'honorifics': HONORIFICS, 'honorificRules': HONORIFIC_RULES,
           'triggers': TRIGGERS, 'gestures': gestures, 'fragments': frags}
     json.dump(db, open(DB, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     return db
