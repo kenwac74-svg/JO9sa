@@ -67,3 +67,12 @@
 - [ ] 빌드 도구: DB → jo9_enrich location + mods JSON
 - [ ] 무게 2 넣을 자리 조사(처벌 커맨드 번호 → 갈래)
 - [ ] 인물 교체 때 저장값이 따라가는 등록 위치
+
+## 2026-11-17~18 질문 메뉴 다시 배분
+- [x] 다시 배분 규칙 초안과 샘플(`QUESTION_MENU_REDISTRIBUTION_SAMPLE_20261117_KO.md`)
+- [x] 칸 채우기 표 CSV·HTML과 도구(`question-fill/`, `tools/question_fill_table.py`)
+- [x] 표 도구 수정: 말투가 다르면 겹침으로 세지 않음(분리 398 → 202)
+- [x] 인상 묻기 시험 원고 v0, 46칸(`QUESTION_1112_TEST_MANUSCRIPT_v0_20261118_KO.md`)
+- [ ] 사용자 검토: 시험 원고, 맞섬 칸 호칭, 공주 반말 높이
+- [ ] 결정: 말투 A/B안, 도도한 얼음 줄
+- [ ] 인상 묻기 나머지 152칸

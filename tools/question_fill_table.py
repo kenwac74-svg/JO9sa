@@ -151,7 +151,13 @@ def classify(q, role, cell, v, in_cell, slots, voices_of, tp, types_of):
                 if kind == '전용' and v != '담백한':
                     others = set()
                     for b in hit:
-                        others |= {x for x in voices_of(b) if x not in ('담백한', v)}
+                        # 말투가 다르면 같은 슬롯이라도 다른 문장이 나가므로 같은 말투끼리만 겹친 것으로 본다
+                        for x in voices_of(b):
+                            if x in ('담백한', v):
+                                continue
+                            xt = tp[x][0] if pick_text(slots, b, tp[x][0], False) else tp[x][1]
+                            if xt == tone_used:
+                                others.add(x)
                     if others:
                         rep = next(x for x in REP_ORDER if x == v or x in others)
                         if rep != v:
