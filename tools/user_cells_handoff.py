@@ -118,7 +118,9 @@ def build(q):
             if prow and prow[0].get('text'):
                 pair_txt = f"짝 줄(이미 있음, {len(prow[0]['text'])}자): {prow[0]['text']}"
             elif prow:
-                pair_txt = '짝 줄도 이번에 함께 쓴다. 두 줄 합 150자 이하'
+                pn = next((j for j, x in enumerate(todo, 1) if x['role'] == pr and x['voice'] == r['voice']), None)
+                kind = '덧붙임' if pr.endswith('_detail') else '기본 줄'
+                pair_txt = f'짝 줄은 이 목록의 {pn}번({kind})이다. 두 줄 모두 이번에 쓰며, 두 줄 합 150자 이하'
             else:
                 po = ORIG.get((r['question'], pr, r['cell'], r['voice']), {})
                 mx = max([len(po.get(f'original_t{t}', '')) for t in '123'] or [0])
