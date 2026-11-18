@@ -11,7 +11,8 @@ data = json.load(open(SRC, encoding='utf-8'))
 rows = data['rows']
 orig = {(r['question'], r['role'], r['cell'], r['voice']): r for r in csv.DictReader(open(CSV, encoding='utf-8-sig'))}
 
-TOPICS = [('A', '최근 칭찬'), ('B', '최근 처벌'), ('C', '오늘 처벌'), ('D', '오늘 칭찬'),
+TOPICS = [('need', '요구'), ('noneed', '바라는 것 없음'), ('refuse', '대답 거부(정신 상태)'),
+          ('A', '최근 칭찬'), ('B', '최근 처벌'), ('C', '오늘 처벌'), ('D', '오늘 칭찬'),
           ('fact_fear', '두려움'), ('fact_obed', '복종'), ('fact_custom', '습관'), ('fact_instinct', '본능'),
           ('fact_moral', '헌신'), ('fact_ratio', '합리(이득)'), ('fact_relation', '관계 상태'),
           ('fact_spoil', '대우(응석)'), ('fact_urge', '욕구')]
@@ -20,7 +21,19 @@ REL = {'arrogant': '오만', 'hateful': '증오', 'hysteric': '히스테리', 'r
        'obedient': '순종', 'horny': '발정', 'optimistic': '낙관', 'servile': '예속', 'soft': '상냥'}
 
 
+NEED = {'abuse': '매질', 'blood': '피', 'comfort': '안락', 'darkness': '어둠', 'deprivation': '구속', 'fame': '명성', 'fire': '불',
+        'luxury': '치장', 'sweets': '단것', 'vermin': '벌레', 'water': '물', 'exhibitionism': '노출', 'homosexualism': '동성',
+        'nymphomania': '색정', 'perversion': '도착'}
+QNAME = {'1111': '과거 묻기', '1112': '인상 묻기', '1113': '요구 묻기', '1114': '희망 묻기', '1115': '불만 묻기', '1116': '기분 묻기', '1117': '조수 묻기'}
+
+
 def topic(role):
+    if role.startswith('native_1113_refuse'):
+        return 'refuse', '대답 거부(정신 상태)'
+    if role.startswith('native_1113_no_need'):
+        return 'noneed', '바라는 것 없음'
+    if role.startswith('native_1113_'):
+        return 'need', '요구'
     for k, label in TOPICS:
         if role == k or role.startswith(k + '_'):
             return k, label
@@ -30,6 +43,16 @@ def topic(role):
 def slot(role):
     if role in ('A', 'B', 'C', 'D'):
         return '요약'
+    m = re.match(r'native_\d+_(\w+?)_need_(core|detail)$', role)
+    if m:
+        return NEED.get(m.group(1), m.group(1)) + (' 덧붙임' if m.group(2) == 'detail' else '')
+    m = re.match(r'native_\d+_refuse_(\w+)_core$', role)
+    if m:
+        return REL.get(m.group(1), m.group(1))
+    if role.endswith('no_need_gentle_core'):
+        return '온순한 경우'
+    if role.endswith('no_need_core'):
+        return '기본'
     m = re.match(r'fact_relation_(\w+?)_(core|detail)$', role)
     if m:
         return REL.get(m.group(1), m.group(1)) + (' 덧붙임' if m.group(2) == 'detail' else '')
@@ -40,7 +63,7 @@ def slot(role):
 
 
 def show(s):
-    return re.sub(r'(\{호칭[^}]*\})', r'<span class="tok">\1</span>', e(s))
+    return re.sub(r'(\{호칭[^}]*\}|\{PH_001\})', r'<span class="tok">\1</span>', e(s))
 
 
 def original(r):
@@ -67,7 +90,7 @@ order = [t for t in TOPICS if t in groups]
 nav, parts = [], []
 ujump = []
 uid = 0
-cnt = {'분리': 0, '보완': 0, 'user': 0}
+cnt = {'분리': 0, '보완': 0, '신규': 0, 'user': 0}
 for r in rows:
     if r['writer'] == 'user':
         cnt['user'] += 1
@@ -88,7 +111,7 @@ for k, label in order:
         else:
             new = f'<div class="line">{show(r["text"])}</div>'
         kind = '사용자' if r['writer'] == 'user' else r['kind']
-        cls = {'분리': 'split', '보완': 'fill', '사용자': 'user'}[kind]
+        cls = {'분리': 'split', '보완': 'fill', '신규': 'new', '사용자': 'user'}[kind]
         cell = '' if r['cell'] == '*' else e(r['cell'])
         rid = ''
         if r['writer'] == 'user':
@@ -143,7 +166,7 @@ tr[id]{scroll-margin-top:80px}
 tr:target td{background:color-mix(in srgb,var(--user) 16%,transparent)}
 @media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
 .badge{display:inline-block;font-size:11px;padding:1px 7px;border-radius:3px;border:1px solid currentColor;white-space:nowrap}
-.badge.split{color:var(--split)}.badge.fill{color:var(--fill)}.badge.user{color:var(--user)}.user{color:var(--user)}
+.badge.split{color:var(--split)}.badge.fill{color:var(--fill)}.badge.new{color:var(--tok)}.badge.user{color:var(--user)}.user{color:var(--user)}
 '''
 SCRIPT = r'''<script>
 (function(){
@@ -160,15 +183,17 @@ SCRIPT = r'''<script>
   window.addEventListener('hashchange',apply); apply();
 })();
 </script>'''
-page = f'''<title>인상 묻기 원고표</title>
+QQ = rows[0]['question']
+QN = QNAME.get(QQ, QQ)
+page = f'''<title>{QN} 원고표</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600&family=Noto+Serif+KR:wght@400;600&display=swap">
 <style>{css}</style>
 <main>
-<header style="display:grid;gap:10px"><h1>인상 묻기 원고표</h1>
-<p class="meta">질문 메뉴 "인상 묻기"(1112)에서 새로 쓴 줄을 원문과 나란히 놓았다. 분리는 같은 줄을 나눠 쓰던 목소리의 새 판, 보완은 판이 없던 목소리의 새 줄이다. 보라색 빈칸은 호칭이며 헌신·복종에 따라 당신/주인님(공주는 너/당신/주인)으로 채워진다. 말투는 명랑한·거센 3, 도도한·조용한 1, 순한·담백한 2, 공주 반말.</p>
-<div class="summary"><span>행 <b>{len(rows)}</b></span><span>분리 <b>{cnt.get("분리", 0)}</b></span><span>보완 <b>{cnt.get("보완", 0)}</b></span><span><a href="#u1">사용자 작성 칸 <b>{cnt["user"]}</b></a> (빈 칸 <b>{sum(1 for r in rows if r["writer"] == "user" and not r.get("text"))}</b>)</span></div>
+<header style="display:grid;gap:10px"><h1>{QN} 원고표</h1>
+<p class="meta">질문 메뉴 "{QN}"({QQ})에서 새로 쓴 줄을 원문과 나란히 놓았다. 분리는 같은 줄을 나눠 쓰던 목소리의 새 판, 보완은 판이 없던 목소리의 새 줄이다. 보라색 빈칸은 호칭이며 헌신·복종에 따라 당신/주인님(공주는 너/당신/주인)으로 채워진다. 말투는 명랑한·거센 3, 도도한·조용한 1, 순한·담백한 2, 공주 반말.</p>
+<div class="summary"><span>행 <b>{len(rows)}</b></span><span>분리 <b>{cnt.get("분리", 0)}</b></span><span>보완 <b>{cnt.get("보완", 0)}</b></span><span>신규 <b>{cnt.get("신규", 0)}</b></span><span><a href="#u1">사용자 작성 칸 <b>{cnt["user"]}</b></a> (빈 칸 <b>{sum(1 for r in rows if r["writer"] == "user" and not r.get("text"))}</b>)</span></div>
 <div class="filters" role="group" aria-label="보기 거르기"><span class="ulabel">검토할 줄만 보기</span>
 <a href="#all">전체 <b>{len(rows)}</b></a><a href="#claude">Claude 원고 <b>{sum(1 for r in rows if r["writer"] != "user")}</b></a><a href="#v0">v0 <b>{sum(1 for r in rows if r.get("batch") == "v0")}</b></a><a href="#v1">v1 <b>{sum(1 for r in rows if r.get("batch") == "v1" and r["writer"] != "user")}</b></a><a href="#v1b">추가 <b>{sum(1 for r in rows if r.get("batch") == "v1b")}</b></a><a href="#user">사용자 작성 <b>{cnt["user"]}</b></a></div>
 <nav>{"".join(nav)}</nav>

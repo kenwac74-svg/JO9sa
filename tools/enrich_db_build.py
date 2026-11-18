@@ -28,13 +28,13 @@ ATTITUDES = [
 ]
 HONORIFICS = {
     'polite': [
-        {'minDevotion': 0, 'forms': {'bare': '당신', 'i': '당신이', 'eun': '당신은', 'eul': '당신을', 'ui': '당신의', 'ege': '당신에게'}},
-        {'minDevotion': 2, 'forms': {'bare': '주인님', 'i': '주인님이', 'eun': '주인님은', 'eul': '주인님을', 'ui': '주인님의', 'ege': '주인님께'}},
+        {'minDevotion': 0, 'forms': {'bare': '당신', 'i': '당신이', 'eun': '당신은', 'eul': '당신을', 'ui': '당신의', 'ege': '당신에게', 'voc': ''}},
+        {'minDevotion': 2, 'forms': {'bare': '주인님', 'i': '주인님이', 'eun': '주인님은', 'eul': '주인님을', 'ui': '주인님의', 'ege': '주인님께', 'voc': '주인님'}},
     ],
     'banmal': [
-        {'minDevotion': 0, 'forms': {'bare': '너', 'i': '네가', 'eun': '너는', 'eul': '너를', 'ui': '네', 'ege': '너한테'}},
-        {'minDevotion': 1, 'forms': {'bare': '당신', 'i': '당신이', 'eun': '당신은', 'eul': '당신을', 'ui': '당신', 'ege': '당신한테'}},
-        {'minDevotion': 3, 'forms': {'bare': '주인', 'i': '주인이', 'eun': '주인은', 'eul': '주인을', 'ui': '주인', 'ege': '주인한테'}},
+        {'minDevotion': 0, 'forms': {'bare': '너', 'i': '네가', 'eun': '너는', 'eul': '너를', 'ui': '네', 'ege': '너한테', 'voc': ''}},
+        {'minDevotion': 1, 'forms': {'bare': '당신', 'i': '당신이', 'eun': '당신은', 'eul': '당신을', 'ui': '당신', 'ege': '당신한테', 'voc': ''}},
+        {'minDevotion': 3, 'forms': {'bare': '주인', 'i': '주인이', 'eun': '주인은', 'eul': '주인을', 'ui': '주인', 'ege': '주인한테', 'voc': '주인'}},
     ],
 }
 HONORIFIC_RULES = [
@@ -149,7 +149,7 @@ def migrate():
                 frags.append(f)
     db = {'schema': 'jo9-enrich-db/v1', 'updated': '2026-11-17',
           'limits': {'rowChars': ROW, 'maxRows': 3, 'afterMinDevotion': 2, 'perDayPerTriggerWeight2': 1},
-          'voices': VOICES, 'attitudes': ATTITUDES, 'layouts': LAYOUTS, 'honorifics': HONORIFICS, 'honorificRules': HONORIFIC_RULES,
+          'voices': VOICES, 'attitudes': ATTITUDES, 'layouts': LAYOUTS, 'honorifics': HONORIFICS, 'honorificRules': HONORIFIC_RULES, 'honorificVocativeNote': '부르는 말 {호칭부름}은 forms.voc를 쓴다. 빈 값이면 바로 앞의 ", "와 함께 지운다(헌신이 낮을 때 ", 당신."이 되지 않게). 순서 규칙(honorificRules)은 같다',
           'triggers': TRIGGERS, 'gestures': gestures, 'fragments': frags}
     json.dump(db, open(DB, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     return db
