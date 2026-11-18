@@ -21,7 +21,8 @@ LABEL2VOICE['센 사람'] = 'proud'  # 다섯 묶음 시절 원고의 이름(202
 ATTITUDES = [
     {'key': 'shrink', 'label': '움츠림', 'psy': ['frightened', 'lachrymose', 'depresive']},
     {'key': 'soft', 'label': '순함', 'psy': ['soft', 'docile', 'optimistic']},
-    {'key': 'follow', 'label': '따름', 'psy': ['obedient', 'servile', 'horny']},
+    {'key': 'follow', 'label': '따름(헌신)', 'psy': ['obedient', 'servile', 'horny'], 'note': '헌신 3 이상. 믿음과 애정에 기반한 진짜 따름. 주인을 향한 감정을 말하고 스스로 나선다'},
+    {'key': 'obey', 'label': '따름(복종)', 'psy': [], 'note': '정신 상태가 아니라 복종 단계 3 이상이고 헌신 2 이하일 때. 두려움과 권위에 의한 강제된 따름. 규칙·맡은 일·잘못을 말하고 감정은 말하지 않는다'},
     {'key': 'oppose', 'label': '맞섬', 'psy': ['reluctant', 'resistant', 'arrogant', 'hateful', 'hysteric']},
     {'key': 'broken', 'label': '무너짐', 'psy': ['broken']},
 ]
@@ -60,7 +61,7 @@ HONORIFIC_RULES = [
     }
 ]
 LAYOUTS = {
-    'attitude3': {'cells': ['shrink', 'soft', 'follow'], 'note': '무게 2. 헌신 3 이상이면 follow(정신 상태가 움츠림 쪽이면 shrink), 헌신 2면 soft(움츠림 쪽은 shrink, 맞섬 상태여도 soft), 헌신 0~1이면 soft(움츠림 쪽은 shrink, 맞섬 쪽은 블록 없음)'},
+    'attitude4': {'cells': ['shrink', 'soft', 'obey', 'follow'], 'note': '무게 2. 위에서부터 처음 맞는 칸. ① 헌신 3 이상: 움츠림 상태면 shrink, 그 밖은 follow(따름-헌신). ② 헌신 0~1이고 맞섬 상태: 블록 없음. ③ 복종 단계 3 이상(obedience > 20): 움츠림 상태면 shrink, 그 밖은 obey(따름-복종). ④ 그 밖: 움츠림 상태면 shrink, 그 밖은 soft(헌신 2의 맞섬 상태 포함)'},
     'devotion2': {'cells': ['hi', 'lo'], 'note': '무게 3. 헌신 3 이상이면 hi, 0~2면 lo'},
     'single': {'cells': ['*'], 'note': '태도를 나누지 않는 사건'},
 }
@@ -84,13 +85,13 @@ TRIGGERS = [
      'hooks': [{'location': '#dynamic', 'anchor': None, 'note': '$slave_fights_back 제압 뒤'}]},
     {'id': 'pregnancy_reveal', 'label': '임신 확인', 'weight': 3, 'layout': 'devotion2', 'writer': 'user', 'status': 'structure_only', 'deferred': True,
      'hooks': [{'location': 'next_day', 'anchor': None, 'note': 'pregnant_revealed = 1(2008~2012행). 다음 날 처음 마주할 때 낸다'}]},
-    {'id': 'verbal_punish', 'label': '말로 받는 벌', 'weight': 2, 'layout': 'attitude3', 'writer': 'claude', 'status': 'text_draft', 'condition': '언어 압박 계열 처벌, torture_intensity >= 4', 'hooks': []},
-    {'id': 'physical_punish', 'label': '몸으로 받는 벌', 'weight': 2, 'layout': 'attitude3', 'writer': 'claude', 'status': 'text_draft', 'condition': '구타·채찍·고문 기구·구속, torture_intensity >= 4', 'hooks': []},
-    {'id': 'unjust_punish', 'label': '억울한 벌', 'weight': 2, 'layout': 'attitude3', 'writer': 'claude', 'status': 'text_draft', 'condition': "처벌 시점에 slave['sin'] = 0", 'hooks': []},
-    {'id': 'shame_punish', 'label': '부끄러운 벌', 'weight': 2, 'layout': 'attitude3', 'writer': 'user', 'status': 'structure_only', 'condition': '치욕 계열 처벌', 'hooks': []},
-    {'id': 'erotic_reward', 'label': '몸으로 받는 보상', 'weight': 2, 'layout': 'attitude3', 'writer': 'user', 'status': 'structure_only', 'condition': '성적 보상 강도 4~5', 'hooks': []},
-    {'id': 'climax', 'label': '절정과 그 뒤', 'weight': 2, 'layout': 'attitude3', 'writer': 'user', 'status': 'structure_only', 'condition': '절정 판정', 'hooks': []},
-    {'id': 'warm_reward', 'label': '따뜻한 보상', 'weight': 2, 'layout': 'attitude3', 'writer': 'claude', 'status': 'later_review', 'condition': 'interaction_reward_level >= 4', 'hooks': []},
+    {'id': 'verbal_punish', 'label': '말로 받는 벌', 'weight': 2, 'layout': 'attitude4', 'writer': 'claude', 'status': 'text_draft', 'condition': '언어 압박 계열 처벌, torture_intensity >= 4', 'hooks': []},
+    {'id': 'physical_punish', 'label': '몸으로 받는 벌', 'weight': 2, 'layout': 'attitude4', 'writer': 'claude', 'status': 'text_draft', 'condition': '구타·채찍·고문 기구·구속, torture_intensity >= 4', 'hooks': []},
+    {'id': 'unjust_punish', 'label': '억울한 벌', 'weight': 2, 'layout': 'attitude4', 'writer': 'claude', 'status': 'text_draft', 'condition': "처벌 시점에 slave['sin'] = 0", 'hooks': []},
+    {'id': 'shame_punish', 'label': '부끄러운 벌', 'weight': 2, 'layout': 'attitude4', 'writer': 'user', 'status': 'structure_only', 'condition': '치욕 계열 처벌', 'hooks': []},
+    {'id': 'erotic_reward', 'label': '몸으로 받는 보상', 'weight': 2, 'layout': 'attitude4', 'writer': 'user', 'status': 'structure_only', 'condition': '성적 보상 강도 4~5', 'hooks': []},
+    {'id': 'climax', 'label': '절정과 그 뒤', 'weight': 2, 'layout': 'attitude4', 'writer': 'user', 'status': 'structure_only', 'condition': '절정 판정', 'hooks': []},
+    {'id': 'warm_reward', 'label': '따뜻한 보상', 'weight': 2, 'layout': 'attitude4', 'writer': 'claude', 'status': 'later_review', 'condition': 'interaction_reward_level >= 4', 'hooks': []},
     {'id': 'assistant_promotion', 'label': '조수 승격', 'status': 'excluded', 'reason': '승격·강등이 수시로 일어남. 조수 대화에서 따로 다룸'},
     {'id': 'surgery', 'label': '수술', 'status': 'excluded', 'reason': '사용자 결정'},
     {'id': 'trait_reveal', 'label': '숨은 성향이 드러남', 'status': 'excluded', 'reason': '사용자 결정'},

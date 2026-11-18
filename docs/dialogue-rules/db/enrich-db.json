@@ -119,12 +119,19 @@
   },
   {
    "key": "follow",
-   "label": "따름",
+   "label": "따름(헌신)",
    "psy": [
     "obedient",
     "servile",
     "horny"
-   ]
+   ],
+   "note": "헌신 3 이상. 믿음과 애정에 기반한 진짜 따름. 주인을 향한 감정을 말하고 스스로 나선다"
+  },
+  {
+   "key": "obey",
+   "label": "따름(복종)",
+   "psy": [],
+   "note": "정신 상태가 아니라 복종 단계 3 이상이고 헌신 2 이하일 때. 두려움과 권위에 의한 강제된 따름. 규칙·맡은 일·잘못을 말하고 감정은 말하지 않는다"
   },
   {
    "key": "oppose",
@@ -146,13 +153,14 @@
   }
  ],
  "layouts": {
-  "attitude3": {
+  "attitude4": {
    "cells": [
     "shrink",
     "soft",
+    "obey",
     "follow"
    ],
-   "note": "무게 2. 헌신 3 이상이면 follow(정신 상태가 움츠림 쪽이면 shrink), 헌신 2면 soft(움츠림 쪽은 shrink, 맞섬 상태여도 soft), 헌신 0~1이면 soft(움츠림 쪽은 shrink, 맞섬 쪽은 블록 없음)"
+   "note": "무게 2. 위에서부터 처음 맞는 칸. ① 헌신 3 이상: 움츠림 상태면 shrink, 그 밖은 follow(따름-헌신). ② 헌신 0~1이고 맞섬 상태: 블록 없음. ③ 복종 단계 3 이상(obedience > 20): 움츠림 상태면 shrink, 그 밖은 obey(따름-복종). ④ 그 밖: 움츠림 상태면 shrink, 그 밖은 soft(헌신 2의 맞섬 상태 포함)"
   },
   "devotion2": {
    "cells": [
@@ -396,7 +404,7 @@
    "id": "verbal_punish",
    "label": "말로 받는 벌",
    "weight": 2,
-   "layout": "attitude3",
+   "layout": "attitude4",
    "writer": "claude",
    "status": "text_draft",
    "condition": "언어 압박 계열 처벌, torture_intensity >= 4",
@@ -408,7 +416,7 @@
    "id": "physical_punish",
    "label": "몸으로 받는 벌",
    "weight": 2,
-   "layout": "attitude3",
+   "layout": "attitude4",
    "writer": "claude",
    "status": "text_draft",
    "condition": "구타·채찍·고문 기구·구속, torture_intensity >= 4",
@@ -420,7 +428,7 @@
    "id": "unjust_punish",
    "label": "억울한 벌",
    "weight": 2,
-   "layout": "attitude3",
+   "layout": "attitude4",
    "writer": "claude",
    "status": "text_draft",
    "condition": "처벌 시점에 slave['sin'] = 0",
@@ -432,7 +440,7 @@
    "id": "shame_punish",
    "label": "부끄러운 벌",
    "weight": 2,
-   "layout": "attitude3",
+   "layout": "attitude4",
    "writer": "user",
    "status": "structure_only",
    "condition": "치욕 계열 처벌",
@@ -444,7 +452,7 @@
    "id": "erotic_reward",
    "label": "몸으로 받는 보상",
    "weight": 2,
-   "layout": "attitude3",
+   "layout": "attitude4",
    "writer": "user",
    "status": "structure_only",
    "condition": "성적 보상 강도 4~5",
@@ -454,7 +462,7 @@
    "id": "climax",
    "label": "절정과 그 뒤",
    "weight": 2,
-   "layout": "attitude3",
+   "layout": "attitude4",
    "writer": "user",
    "status": "structure_only",
    "condition": "절정 판정",
@@ -464,7 +472,7 @@
    "id": "warm_reward",
    "label": "따뜻한 보상",
    "weight": 2,
-   "layout": "attitude3",
+   "layout": "attitude4",
    "writer": "claude",
    "status": "later_review",
    "condition": "interaction_reward_level >= 4",
