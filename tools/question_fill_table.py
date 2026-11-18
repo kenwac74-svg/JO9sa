@@ -23,6 +23,8 @@ VTAGS = {'순한': ['meek', 'fragile'], '담백한': ['plain'], '도도한': ['p
 REP_ORDER = ['순한', '조용한', '도도한', '거센', '명랑한']
 CELLS = {'움츠림': {'fearful', 'bleak'}, '순함': {'hopeful', 'neutral'},
          '따름(복종)': {'duty'}, '따름(헌신)': {'loyal'}, '맞섬': {'hostile'}}
+# 줄에 키워드가 없어도 주제 자체가 성적인 것(욕구, 성향)
+SEX_ROLE = re.compile(r'urge|horny|nymphomania|exhibitionism|homosexualism|perversion')
 SEX = re.compile('섹스|성교|자위|젖가슴|가슴을 만|엉덩이|음부|보지[는가를에도]|자지[가를는에]|절정|애무|성기|젖꼭지|발정|교미|정액|삽입|알몸|벗겨|핥|쾌락|음탕|창녀|성노예|살을 섞')
 END_POLITE = re.compile(r'(요|니다|죠|세요|까)[.?!…)~]*\s*$')
 
@@ -177,7 +179,7 @@ def classify(q, role, cell, v, in_cell, slots, voices_of, tp, types_of):
             note = '같은 칸의 다른 말투·목소리 줄을 바탕으로 이 판을 써야 함'
         # 같은 주제·칸의 줄 가운데 하나라도 걸리면 그 칸 전체를 후보로 본다
         texts = ' '.join(x[1] for b in in_cell for x in slots[b].values())
-        if SEX.search(texts):
+        if SEX.search(texts) or SEX_ROLE.search(role):
             row['class'] = '원문만'
             note = '성적인 내용 후보: Claude가 쓰지 않음, 원문만 대비(사용자 작성)'
     row['note'] = note
