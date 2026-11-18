@@ -11,7 +11,7 @@ data = json.load(open(SRC, encoding='utf-8'))
 rows = data['rows']
 orig = {(r['question'], r['role'], r['cell'], r['voice']): r for r in csv.DictReader(open(CSV, encoding='utf-8-sig'))}
 
-TOPICS = [('mood', '기분(그날의 일)'), ('dislike', '불만'), ('nodislike', '불만 없음·숨김'), ('like', '배우고 싶은 것'), ('nolike', '배우고 싶은 것 없음'), ('need', '요구'), ('noneed', '바라는 것 없음'), ('refuse', '대답 거부(정신 상태)'),
+TOPICS = [('asst', '조수에 대한 평'), ('mood', '기분(그날의 일)'), ('dislike', '불만'), ('nodislike', '불만 없음·숨김'), ('like', '배우고 싶은 것'), ('nolike', '배우고 싶은 것 없음'), ('need', '요구'), ('noneed', '바라는 것 없음'), ('refuse', '대답 거부(정신 상태)'),
           ('A', '최근 칭찬'), ('B', '최근 처벌'), ('C', '오늘 처벌'), ('D', '오늘 칭찬'),
           ('fact_fear', '두려움'), ('fact_obed', '복종'), ('fact_custom', '습관'), ('fact_instinct', '본능'),
           ('fact_moral', '헌신'), ('fact_ratio', '합리(이득)'), ('fact_relation', '관계 상태'),
@@ -32,6 +32,8 @@ QNAME = {'1111': '과거 묻기', '1112': '인상 묻기', '1113': '요구 묻�
 
 
 def topic(role):
+    if role.startswith('native_1117_'):
+        return 'asst', '조수에 대한 평'
     if re.match(r'native_\d+_slave_(pos|neg)_', role):
         return 'mood', '기분(그날의 일)'
     if re.match(r'native_\d+_(no_dislike|hide_dislikes)', role):
@@ -57,6 +59,8 @@ def topic(role):
 def slot(role):
     if role in ('A', 'B', 'C', 'D'):
         return '요약'
+    if role.startswith('native_1117_'):
+        return {'feat_pri_high_1_core': '도도한 조수', 'nation_beast_1_1_core': '짐승 종족 조수', 'personal_1to5_1_core': '성격이 맞지 않는 조수'}.get(role[12:], role[12:])
     m = re.match(r'native_\d+_slave_(pos|neg)_(\w+)_core$', role)
     if m:
         return MOOD.get(m.group(2), m.group(2)) + (' (좋음)' if m.group(1) == 'pos' else ' (나쁨)')

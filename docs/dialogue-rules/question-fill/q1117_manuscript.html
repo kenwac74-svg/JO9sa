@@ -1,0 +1,73 @@
+<title>조수 묻기 원고표</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600&family=Noto+Serif+KR:wght@400;600&display=swap">
+<style>
+/* 레이아웃: 위에 요약과 주제 목록, 아래로 주제마다 새 줄과 원문을 나란히 놓은 표 */
+:root{--bg:#f5f6f8;--surface:#ffffff;--fg:#1d2128;--muted:#5f6673;--line:#dde1e8;--accent:#3a5a9c;--tok:#8a4b9e;
+--split:#3a5a9c;--fill:#2f7a5a;--user:#9a5b16;
+--sans:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;--serif:"Noto Serif KR","Batang",serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15171c;--surface:#1d2027;--fg:#e7e9ee;--muted:#a2a8b4;--line:#323743;--accent:#8fa9e0;--tok:#d3a2e6;--split:#8fa9e0;--fill:#7cc4a2;--user:#e0a560;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#15171c;--surface:#1d2027;--fg:#e7e9ee;--muted:#a2a8b4;--line:#323743;--accent:#8fa9e0;--tok:#d3a2e6;--split:#8fa9e0;--fill:#7cc4a2;--user:#e0a560;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font:15px/1.65 var(--sans);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main{max-width:1320px;margin:0 auto;padding-block:28px 64px;display:grid;gap:28px}
+h1{font:600 24px/1.3 var(--serif);margin:0;text-wrap:balance}h2{font:600 19px/1.3 var(--serif);margin:0 0 8px}
+p{margin:0;max-width:72ch}.meta{color:var(--muted);font-size:13px}
+.summary{display:flex;flex-wrap:wrap;gap:8px 18px;color:var(--muted);font-size:14px}.summary b{color:var(--fg);font-variant-numeric:tabular-nums}
+nav{display:flex;flex-wrap:wrap;gap:6px}
+nav a{color:var(--accent);text-decoration:none;border:1px solid var(--line);background:var(--surface);padding:3px 10px;border-radius:999px;font-size:13px}
+nav a:hover,nav a:focus-visible{border-color:var(--accent)}.n{color:var(--muted);font-variant-numeric:tabular-nums}
+section{scroll-margin-top:16px}
+.wrap{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:900px;font-size:14px}
+th,td{border-bottom:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+thead th{font-size:12px;letter-spacing:.04em;color:var(--muted);font-weight:600;background:var(--bg)}
+tbody tr:last-child td{border-bottom:0}
+td.slot,td.cell,td.voice{white-space:nowrap}td.voice{font-weight:600}
+td:nth-child(5){width:38%}td:nth-child(6){width:30%}
+.line{font-family:var(--serif)}.orig{color:var(--muted)}.olab{color:var(--muted);font-size:11px;margin-top:3px}
+.tok{color:var(--tok)}
+.ujump{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px}
+.ujump .ulabel{color:var(--muted);margin-right:4px}.ujump .ulegend{color:var(--muted);font-size:12px;margin-left:4px}
+.ujump a{text-decoration:none;padding:3px 10px;border-radius:999px;border:1px solid var(--user);color:var(--user)}
+.ujump a.empty{border-style:dashed;font-style:italic}
+.ujump a:hover,.ujump a:focus-visible{background:var(--user);color:var(--surface)}
+.summary a{color:inherit}
+.filters{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px}
+.filters a{text-decoration:none;color:var(--fg);border:1px solid var(--line);background:var(--surface);padding:4px 12px;border-radius:6px}
+.filters a b{color:var(--muted);font-weight:600;margin-left:4px;font-variant-numeric:tabular-nums}
+.filters a.on{border-color:var(--accent);background:var(--accent);color:var(--surface)}.filters a.on b{color:var(--surface)}
+.filters a:hover,.filters a:focus-visible{border-color:var(--accent)}
+tr[id]{scroll-margin-top:80px}
+tr:target td{background:color-mix(in srgb,var(--user) 16%,transparent)}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+.badge{display:inline-block;font-size:11px;padding:1px 7px;border-radius:3px;border:1px solid currentColor;white-space:nowrap}
+.badge.split{color:var(--split)}.badge.fill{color:var(--fill)}.badge.new{color:var(--tok)}.badge.user{color:var(--user)}.user{color:var(--user)}
+</style>
+<main>
+<header style="display:grid;gap:10px"><h1>조수 묻기 원고표</h1>
+<p class="meta">질문 메뉴 "조수 묻기"(1117)에서 새로 쓴 줄을 원문과 나란히 놓았다. 분리는 같은 줄을 나눠 쓰던 목소리의 새 판, 보완은 판이 없던 목소리의 새 줄이다. 보라색 빈칸은 호칭이며 헌신·복종에 따라 당신/주인님(공주는 너/당신/주인)으로 채워진다. 말투는 명랑한·거센 3, 도도한·조용한 1, 순한·담백한 2, 공주 반말.</p>
+<div class="summary"><span>행 <b>16</b></span><span>분리 <b>0</b></span><span>보완 <b>16</b></span><span>신규 <b>0</b></span><span><a href="#u1">사용자 작성 칸 <b>0</b></a> (빈 칸 <b>0</b>)</span></div>
+<div class="filters" role="group" aria-label="보기 거르기"><span class="ulabel">검토할 줄만 보기</span>
+<a href="#all">전체 <b>16</b></a><a href="#claude">Claude 원고 <b>16</b></a><a href="#v0">v0 <b>0</b></a><a href="#v1">v1 <b>16</b></a><a href="#v1b">추가 <b>0</b></a><a href="#user">사용자 작성 <b>0</b></a></div>
+<nav><a href="#asst">조수에 대한 평 <span class="n">16</span></a></nav>
+<div class="ujump"><span class="ulabel">사용자 작성 칸 바로가기</span><span class="ulegend">채움 / <i>빈 칸</i></span></div></header>
+
+<section id="asst"><h2>조수에 대한 평</h2><div class="wrap"><table><thead><tr><th>칸</th><th>관계 칸</th><th>목소리</th><th>구분</th><th>새 줄</th><th>원문</th></tr></thead><tbody><tr data-w="claude" data-b="v1"><td class="slot">도도한 조수</td><td class="cell"></td><td class="voice">순한</td><td><span class="badge fill">보완</span><div class="olab">v1</div></td><td><div class="line">(조심스럽게 눈치를 보며) 저 도도한 분은… 자기가 뭐라도 되는 줄 아시나 봐요.</div></td><td><div class="orig">(차분한 어조로 덧붙이며) 자기가 뭐라도 되는 줄 아나요, 저 도도한 건?</div><div class="olab">같은 칸의 다른 판(뜻의 기준)</div></td></tr><tr data-w="claude" data-b="v1"><td class="slot">도도한 조수</td><td class="cell"></td><td class="voice">담백한</td><td><span class="badge fill">보완</span><div class="olab">v1</div></td><td><div class="line">(담담하게) 저 도도한 사람, 자기가 뭐라도 되는 줄 아나 봐요.</div></td><td><div class="orig">(차분한 어조로 덧붙이며) 자기가 뭐라도 되는 줄 아나요, 저 도도한 건?</div><div class="olab">같은 칸의 다른 판(뜻의 기준)</div></td></tr><tr data-w="claude" data-b="v1"><td class="slot">도도한 조수</td><td class="cell"></td><td class="voice">명랑한</td><td><span class="badge fill">보완</span><div class="olab">v1</div></td><td><div class="line">저 새침한 언니요? 자기가 무슨 대단한 사람인 줄 아나 봐요! 콧대가 하늘을 찌른다니까요!</div></td><td><div class="orig">(차분한 어조로 덧붙이며) 자기가 뭐라도 되는 줄 아나요, 저 도도한 건?</div><div class="olab">같은 칸의 다른 판(뜻의 기준)</div></td></tr><tr data-w="claude" data-b="v1"><td class="slot">도도한 조수</td><td class="cell"></td><td class="voice">거센</td><td><span class="badge fill">보완</span><div class="olab">v1</div></td><td><div class="line">저 잘난 척하는 거 좀 봐요. 자기가 뭐라도 되는 줄 아나 보죠?</div></td><td><div class="orig">(차분한 어조로 덧붙이며) 자기가 뭐라도 되는 줄 아나요, 저 도도한 건?</div><div class="olab">같은 칸의 다른 판(뜻의 기준)</div></td></tr><tr data-w="claude" data-b="v1"><td class="slot">짐승 종족 조수</td><td class="cell"></td><td class="voice">순한</td><td><span class="badge fill">보완</span><div class="olab">v1</div></td><td><div class="line">(움찔 물러서며) 저, 저 사람은… 아예 사람이 아닌 것 같아요… 으악!</div></td><td><div class="orig">(차분한 어조로 덧붙이며) 그녀는 아예 인간도 아니에요, 으악!</div><div class="olab">같은 칸의 다른 판(뜻의 기준)</div></td></tr><tr data-w="claude" data-b="v1"><td class="slot">짐승 종족 조수</td><td class="cell"></td><td class="voice">담백한</td><td><span class="badge fill">보완</span><div class="olab">v1</div></td><td><div class="line">(인상을 쓰며) 저건 아예 사람이 아니에요. 으악!</div></td><td><div class="orig">(차분한 어조로 덧붙이며) 그녀는 아예 인간도 아니에요, 으악!</div><div class="olab">같은 칸의 다른 판(뜻의 기준)</div></td></tr><tr data-w="claude" data-b="v1"><td class="slot">짐승 종족 조수</td><td class="cell"></td><td class="voice">도도한</td><td><span class="badge fill">보완</span><div class="olab">v1</div></td><td><div class="line">(미간을 찌푸리며) 저것은 아예 인간이라 부를 수도 없군요. 으악.</div></td><td><div class="orig">(차분한 어조로 덧붙이며) 그녀는 아예 인간도 아니에요, 으악!</div><div class="olab">같은 칸의 다른 판(뜻의 기준)</div></td></tr><tr data-w="claude" data-b="v1"><td class="slot">짐승 종족 조수</td><td class="cell"></td><td class="voice">조용한</td><td><span class="badge fill">보완</span><div class="olab">v1</div></td><td><div class="line">…인간이 아닙니다. 으악.</div></td><td><div class="orig">(차분한 어조로 덧붙이며) 그녀는 아예 인간도 아니에요, 으악!</div><div class="olab">같은 칸의 다른 판(뜻의 기준)</div></td></tr><tr data-w="claude" data-b="v1"><td class="slot">짐승 종족 조수</td><td class="cell"></td><td class="voice">명랑한</td><td><span class="badge fill">보완</span><div class="olab">v1</div></td><td><div class="line">저 사람, 아니 저거 사람 맞아요? 아무리 봐도 아닌데요! 으악!</div></td><td><div class="orig">(차분한 어조로 덧붙이며) 그녀는 아예 인간도 아니에요, 으악!</div><div class="olab">같은 칸의 다른 판(뜻의 기준)</div></td></tr><tr data-w="claude" data-b="v1"><td class="slot">짐승 종족 조수</td><td class="cell"></td><td class="voice">거센</td><td><span class="badge fill">보완</span><div class="olab">v1</div></td><td><div class="line">저게 사람이에요? 말도 안 돼요, 으악!</div></td><td><div class="orig">(차분한 어조로 덧붙이며) 그녀는 아예 인간도 아니에요, 으악!</div><div class="olab">같은 칸의 다른 판(뜻의 기준)</div></td></tr><tr data-w="claude" data-b="v1"><td class="slot">성격이 맞지 않는 조수</td><td class="cell"></td><td class="voice">순한</td><td><span class="badge fill">보완</span><div class="olab">v1</div></td><td><div class="line">(작게 몸을 움츠리며) 저런 사람이 어떻게… 저랑 같은 집에 있게 된 걸까요? 으…</div></td><td><div class="orig">(차분한 어조로 덧붙이며) 대체 저런 것이 어떻게 저와 같은 집에 있게 된 거죠? 으!</div><div class="olab">같은 칸의 다른 판(뜻의 기준)</div></td></tr><tr data-w="claude" data-b="v1"><td class="slot">성격이 맞지 않는 조수</td><td class="cell"></td><td class="voice">담백한</td><td><span class="badge fill">보완</span><div class="olab">v1</div></td><td><div class="line">저런 사람이 어떻게 저랑 한집에 살게 된 거죠? 으.</div></td><td><div class="orig">(차분한 어조로 덧붙이며) 대체 저런 것이 어떻게 저와 같은 집에 있게 된 거죠? 으!</div><div class="olab">같은 칸의 다른 판(뜻의 기준)</div></td></tr><tr data-w="claude" data-b="v1"><td class="slot">성격이 맞지 않는 조수</td><td class="cell"></td><td class="voice">도도한</td><td><span class="badge fill">보완</span><div class="olab">v1</div></td><td><div class="line">어찌 저런 것이 저와 같은 지붕 아래에 있게 되었는지 모르겠군요. 으.</div></td><td><div class="orig">(차분한 어조로 덧붙이며) 대체 저런 것이 어떻게 저와 같은 집에 있게 된 거죠? 으!</div><div class="olab">같은 칸의 다른 판(뜻의 기준)</div></td></tr><tr data-w="claude" data-b="v1"><td class="slot">성격이 맞지 않는 조수</td><td class="cell"></td><td class="voice">조용한</td><td><span class="badge fill">보완</span><div class="olab">v1</div></td><td><div class="line">…어떻게 같은 집에 있게 된 건지 모르겠습니다. 으.</div></td><td><div class="orig">(차분한 어조로 덧붙이며) 대체 저런 것이 어떻게 저와 같은 집에 있게 된 거죠? 으!</div><div class="olab">같은 칸의 다른 판(뜻의 기준)</div></td></tr><tr data-w="claude" data-b="v1"><td class="slot">성격이 맞지 않는 조수</td><td class="cell"></td><td class="voice">명랑한</td><td><span class="badge fill">보완</span><div class="olab">v1</div></td><td><div class="line">저런 애가 어떻게 저랑 같은 집에 있게 된 거예요? 으으, 진짜 이해가 안 돼요!</div></td><td><div class="orig">(차분한 어조로 덧붙이며) 대체 저런 것이 어떻게 저와 같은 집에 있게 된 거죠? 으!</div><div class="olab">같은 칸의 다른 판(뜻의 기준)</div></td></tr><tr data-w="claude" data-b="v1"><td class="slot">성격이 맞지 않는 조수</td><td class="cell"></td><td class="voice">거센</td><td><span class="badge fill">보완</span><div class="olab">v1</div></td><td><div class="line">대체 저런 게 어쩌다 저랑 같은 집에 있게 된 거예요? 으!</div></td><td><div class="orig">(차분한 어조로 덧붙이며) 대체 저런 것이 어떻게 저와 같은 집에 있게 된 거죠? 으!</div><div class="olab">같은 칸의 다른 판(뜻의 기준)</div></td></tr></tbody></table></div></section>
+</main><script>
+(function(){
+  var F={all:function(){return true},claude:function(t){return t.dataset.w==='claude'},v0:function(t){return t.dataset.b==='v0'},
+         v1:function(t){return t.dataset.b==='v1'&&t.dataset.w==='claude'},v1b:function(t){return t.dataset.b==='v1b'},user:function(t){return t.dataset.w==='user'}};
+  function apply(){
+    var h=location.hash.slice(1); var f=F[h];
+    document.querySelectorAll('.filters a').forEach(function(a){a.classList.toggle('on',a.getAttribute('href')==='#'+(f?h:'all'))});
+    if(!f){ if(!h){f=F.all} else return; }
+    document.querySelectorAll('main section:not(.always) tbody tr').forEach(function(tr){tr.hidden=!f(tr)});
+    document.querySelectorAll('main section:not(.always)').forEach(function(sec){sec.hidden=!sec.querySelector('tbody tr:not([hidden])')});
+    if(h&&h!=='all'){var first=document.querySelector('main section:not(.always):not([hidden])'); if(first) first.scrollIntoView();}
+  }
+  window.addEventListener('hashchange',apply); apply();
+  document.querySelectorAll('.filters a').forEach(function(a){a.addEventListener('click',function(ev){
+    ev.preventDefault(); var h=a.getAttribute('href'); try{history.replaceState(null,'',h)}catch(e){location.hash=h} apply();});});
+})();
+</script>

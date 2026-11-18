@@ -26,11 +26,19 @@ CELLS = {'움츠림': {'fearful', 'bleak'}, '순함': {'hopeful', 'neutral'},
 # 줄에 키워드가 없어도 주제 자체가 성적인 것(욕구, 성향)
 SEX_ROLE = re.compile(r'urge|horny|nymphomania|exhibitionism|homosexualism|perversion')
 SEX = re.compile('섹스|성교|자위|젖가슴|가슴을 만|엉덩이|(?<!처)음부|자지[가를는에]|절정|애무|성기|젖꼭지|발정|교미|정액|삽입|알몸|벗겨|핥|쾌락|음탕|창녀|성노예|살을 섞')
-END_POLITE = re.compile(r'(요|니다|죠|세요|까)[.?!…)~]*\s*$')
+END_POLITE = re.compile(r'(요|니다|죠|세요)[.?!…)~]*\s*$')
+END_NIKKA = re.compile(r'(.)니까[.?!…)~]*\s*$')
 
 
 def is_banmal(s):
-    return not END_POLITE.search(s.strip())
+    s = s.strip()
+    if END_POLITE.search(s):
+        return False
+    m = END_NIKKA.search(s)
+    # "-ㅂ니까"(압니까, 합니까)는 존댓말, "-니까"(테니까)는 반말
+    if m and '가' <= m.group(1) <= '힣' and (ord(m.group(1)) - 0xAC00) % 28 == 17:
+        return False
+    return True
 
 
 def tone_plan(plan):
