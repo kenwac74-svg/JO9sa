@@ -17,7 +17,7 @@ TOPICS = [('A', '최근 칭찬'), ('B', '최근 처벌'), ('C', '오늘 처벌')
           ('fact_spoil', '대우(응석)'), ('fact_urge', '욕구')]
 REL = {'arrogant': '오만', 'hateful': '증오', 'hysteric': '히스테리', 'reluctant': '꺼림', 'resistant': '반항',
        'broken': '무너짐', 'depresive': '우울', 'docile': '온순', 'frightened': '겁먹음', 'lachrymose': '눈물',
-       'obedient': '순종', 'optimistic': '낙관', 'servile': '예속', 'soft': '상냥'}
+       'obedient': '순종', 'horny': '발정', 'optimistic': '낙관', 'servile': '예속', 'soft': '상냥'}
 
 
 def topic(role):
@@ -65,6 +65,8 @@ for r in rows:
 order = [t for t in TOPICS if t in groups]
 
 nav, parts = [], []
+ujump = []
+uid = 0
 cnt = {'분리': 0, '보완': 0, 'user': 0}
 for r in rows:
     if r['writer'] == 'user':
@@ -86,8 +88,15 @@ for k, label in order:
         kind = '사용자' if r['writer'] == 'user' else r['kind']
         cls = {'분리': 'split', '보완': 'fill', '사용자': 'user'}[kind]
         cell = '' if r['cell'] == '*' else e(r['cell'])
+        rid = ''
+        if r['writer'] == 'user':
+            uid += 1
+            rid = f' id="u{uid}"'
+            state = 'filled' if r.get('text') else 'empty'
+            lab = f"{label} {slot(r['role'])}" + (f" {r['cell']}" if r['cell'] != '*' else '') + f" · {r['voice']}"
+            ujump.append(f'<a class="{state}" href="#u{uid}">{e(lab)}</a>')
         ocell = f'<div class="orig">{show(o)}</div><div class="olab">{e(olabel)}</div>' if o else ''
-        body.append(f'<tr><td class="slot">{e(slot(r["role"]))}</td><td class="cell">{cell}</td><td class="voice">{e(r["voice"])}</td>'
+        body.append(f'<tr{rid}><td class="slot">{e(slot(r["role"]))}</td><td class="cell">{cell}</td><td class="voice">{e(r["voice"])}</td>'
                     f'<td><span class="badge {cls}">{kind}</span><div class="olab">{e(r.get("batch", ""))}</div></td><td>{new}</td><td>{ocell}</td></tr>')
     body.append('</tbody></table></div>')
     parts.append(f'<section id="{e(k)}"><h2>{e(label)}</h2>' + ''.join(body) + '</section>')
@@ -117,6 +126,15 @@ td.slot,td.cell,td.voice{white-space:nowrap}td.voice{font-weight:600}
 td:nth-child(5){width:38%}td:nth-child(6){width:30%}
 .line{font-family:var(--serif)}.orig{color:var(--muted)}.olab{color:var(--muted);font-size:11px;margin-top:3px}
 .tok{color:var(--tok)}
+.ujump{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px}
+.ujump .ulabel{color:var(--muted);margin-right:4px}.ujump .ulegend{color:var(--muted);font-size:12px;margin-left:4px}
+.ujump a{text-decoration:none;padding:3px 10px;border-radius:999px;border:1px solid var(--user);color:var(--user)}
+.ujump a.empty{border-style:dashed;font-style:italic}
+.ujump a:hover,.ujump a:focus-visible{background:var(--user);color:var(--surface)}
+.summary a{color:inherit}
+tr[id]{scroll-margin-top:80px}
+tr:target td{background:color-mix(in srgb,var(--user) 16%,transparent)}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
 .badge{display:inline-block;font-size:11px;padding:1px 7px;border-radius:3px;border:1px solid currentColor;white-space:nowrap}
 .badge.split{color:var(--split)}.badge.fill{color:var(--fill)}.badge.user{color:var(--user)}.user{color:var(--user)}
 '''
@@ -128,8 +146,9 @@ page = f'''<title>인상 묻기 원고표</title>
 <main>
 <header style="display:grid;gap:10px"><h1>인상 묻기 원고표</h1>
 <p class="meta">질문 메뉴 "인상 묻기"(1112)에서 새로 쓴 줄을 원문과 나란히 놓았다. 분리는 같은 줄을 나눠 쓰던 목소리의 새 판, 보완은 판이 없던 목소리의 새 줄이다. 보라색 빈칸은 호칭이며 헌신·복종에 따라 당신/주인님(공주는 너/당신/주인)으로 채워진다. 말투는 명랑한·거센 3, 도도한·조용한 1, 순한·담백한 2, 공주 반말.</p>
-<div class="summary"><span>행 <b>{len(rows)}</b></span><span>분리 <b>{cnt.get("분리", 0)}</b></span><span>보완 <b>{cnt.get("보완", 0)}</b></span><span>사용자 작성 칸 <b>{cnt["user"]}</b></span></div>
-<nav>{"".join(nav)}</nav></header>
+<div class="summary"><span>행 <b>{len(rows)}</b></span><span>분리 <b>{cnt.get("분리", 0)}</b></span><span>보완 <b>{cnt.get("보완", 0)}</b></span><span><a href="#u1">사용자 작성 칸 <b>{cnt["user"]}</b></a> (빈 칸 <b>{sum(1 for r in rows if r["writer"] == "user" and not r.get("text"))}</b>)</span></div>
+<nav>{"".join(nav)}</nav>
+<div class="ujump"><span class="ulabel">사용자 작성 칸 바로가기</span>{"".join(ujump)}<span class="ulegend">채움 / <i>빈 칸</i></span></div></header>
 {"".join(parts)}
 </main>'''
 Path(OUT).write_text(page, encoding='utf-8')
