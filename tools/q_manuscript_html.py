@@ -11,7 +11,7 @@ data = json.load(open(SRC, encoding='utf-8'))
 rows = data['rows']
 orig = {(r['question'], r['role'], r['cell'], r['voice']): r for r in csv.DictReader(open(CSV, encoding='utf-8-sig'))}
 
-TOPICS = [('dislike', '불만'), ('nodislike', '불만 없음·숨김'), ('like', '배우고 싶은 것'), ('nolike', '배우고 싶은 것 없음'), ('need', '요구'), ('noneed', '바라는 것 없음'), ('refuse', '대답 거부(정신 상태)'),
+TOPICS = [('mood', '기분(그날의 일)'), ('dislike', '불만'), ('nodislike', '불만 없음·숨김'), ('like', '배우고 싶은 것'), ('nolike', '배우고 싶은 것 없음'), ('need', '요구'), ('noneed', '바라는 것 없음'), ('refuse', '대답 거부(정신 상태)'),
           ('A', '최근 칭찬'), ('B', '최근 처벌'), ('C', '오늘 처벌'), ('D', '오늘 칭찬'),
           ('fact_fear', '두려움'), ('fact_obed', '복종'), ('fact_custom', '습관'), ('fact_instinct', '본능'),
           ('fact_moral', '헌신'), ('fact_ratio', '합리(이득)'), ('fact_relation', '관계 상태'),
@@ -27,10 +27,13 @@ NEED = {'abuse': '매질', 'blood': '피', 'comfort': '안락', 'darkness': '어
 LIKE = {'art': '미술', 'calisthenics': '무용·체조', 'cook': '요리', 'dressage': '마차 조련', 'expression': '화술', 'gladiatrix': '검투',
         'music': '음악', 'nurse': '간호', 'pet': '애완 훈련', 'secretary': '비서', 'service': '집안일', 'sport': '운동',
         'cowSK': '착유', 'enchanter': '성기술'}
+MOOD = {'sa_demote': '조수에서 내려옴', 'barn': '외양간', 'moral': '헌신', 'sa_friendship': '조수와의 우정', 'slave_love': '주인을 향한 사랑'}
 QNAME = {'1111': '과거 묻기', '1112': '인상 묻기', '1113': '요구 묻기', '1114': '희망 묻기', '1115': '불만 묻기', '1116': '기분 묻기', '1117': '조수 묻기'}
 
 
 def topic(role):
+    if re.match(r'native_\d+_slave_(pos|neg)_', role):
+        return 'mood', '기분(그날의 일)'
     if re.match(r'native_\d+_(no_dislike|hide_dislikes)', role):
         return 'nodislike', '불만 없음·숨김'
     if re.match(r'native_\d+_\w+_dislike_core', role):
@@ -54,6 +57,9 @@ def topic(role):
 def slot(role):
     if role in ('A', 'B', 'C', 'D'):
         return '요약'
+    m = re.match(r'native_\d+_slave_(pos|neg)_(\w+)_core$', role)
+    if m:
+        return MOOD.get(m.group(2), m.group(2)) + (' (좋음)' if m.group(1) == 'pos' else ' (나쁨)')
     m = re.match(r'native_\d+_(\w+?)_dislike_core$', role)
     if m and m.group(1) != 'no':
         return NEED.get(m.group(1), m.group(1))
