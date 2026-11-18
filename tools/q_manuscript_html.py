@@ -98,7 +98,7 @@ for k, label in order:
             lab = f"{label} {slot(r['role'])}" + (f" {r['cell']}" if r['cell'] != '*' else '') + f" · {r['voice']}"
             ujump.append(f'<a class="{state}" href="#u{uid}">{e(lab)}</a>')
         ocell = f'<div class="orig">{show(o)}</div><div class="olab">{e(olabel)}</div>' if o else ''
-        body.append(f'<tr{rid}><td class="slot">{e(slot(r["role"]))}</td><td class="cell">{cell}</td><td class="voice">{e(r["voice"])}</td>'
+        body.append(f'<tr{rid} data-w="{"user" if r["writer"] == "user" else "claude"}" data-b="{e(r.get("batch", ""))}"><td class="slot">{e(slot(r["role"]))}</td><td class="cell">{cell}</td><td class="voice">{e(r["voice"])}</td>'
                     f'<td><span class="badge {cls}">{kind}</span><div class="olab">{e(r.get("batch", ""))}</div></td><td>{new}</td><td>{ocell}</td></tr>')
     body.append('</tbody></table></div>')
     parts.append(f'<section id="{e(k)}"><h2>{e(label)}</h2>' + ''.join(body) + '</section>')
@@ -134,12 +134,32 @@ td:nth-child(5){width:38%}td:nth-child(6){width:30%}
 .ujump a.empty{border-style:dashed;font-style:italic}
 .ujump a:hover,.ujump a:focus-visible{background:var(--user);color:var(--surface)}
 .summary a{color:inherit}
+.filters{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px}
+.filters a{text-decoration:none;color:var(--fg);border:1px solid var(--line);background:var(--surface);padding:4px 12px;border-radius:6px}
+.filters a b{color:var(--muted);font-weight:600;margin-left:4px;font-variant-numeric:tabular-nums}
+.filters a.on{border-color:var(--accent);background:var(--accent);color:var(--surface)}.filters a.on b{color:var(--surface)}
+.filters a:hover,.filters a:focus-visible{border-color:var(--accent)}
 tr[id]{scroll-margin-top:80px}
 tr:target td{background:color-mix(in srgb,var(--user) 16%,transparent)}
 @media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
 .badge{display:inline-block;font-size:11px;padding:1px 7px;border-radius:3px;border:1px solid currentColor;white-space:nowrap}
 .badge.split{color:var(--split)}.badge.fill{color:var(--fill)}.badge.user{color:var(--user)}.user{color:var(--user)}
 '''
+SCRIPT = r'''<script>
+(function(){
+  var F={all:function(){return true},claude:function(t){return t.dataset.w==='claude'},v0:function(t){return t.dataset.b==='v0'},
+         v1:function(t){return t.dataset.b==='v1'&&t.dataset.w==='claude'},v1b:function(t){return t.dataset.b==='v1b'},user:function(t){return t.dataset.w==='user'}};
+  function apply(){
+    var h=location.hash.slice(1); var f=F[h];
+    document.querySelectorAll('.filters a').forEach(function(a){a.classList.toggle('on',a.getAttribute('href')==='#'+(f?h:'all'))});
+    if(!f){ if(!h){f=F.all} else return; }
+    document.querySelectorAll('tbody tr').forEach(function(tr){tr.hidden=!f(tr)});
+    document.querySelectorAll('main section').forEach(function(sec){sec.hidden=!sec.querySelector('tbody tr:not([hidden])')});
+    if(h&&h!=='all'){var first=document.querySelector('main section:not([hidden])'); if(first) first.scrollIntoView();}
+  }
+  window.addEventListener('hashchange',apply); apply();
+})();
+</script>'''
 page = f'''<title>인상 묻기 원고표</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -149,9 +169,12 @@ page = f'''<title>인상 묻기 원고표</title>
 <header style="display:grid;gap:10px"><h1>인상 묻기 원고표</h1>
 <p class="meta">질문 메뉴 "인상 묻기"(1112)에서 새로 쓴 줄을 원문과 나란히 놓았다. 분리는 같은 줄을 나눠 쓰던 목소리의 새 판, 보완은 판이 없던 목소리의 새 줄이다. 보라색 빈칸은 호칭이며 헌신·복종에 따라 당신/주인님(공주는 너/당신/주인)으로 채워진다. 말투는 명랑한·거센 3, 도도한·조용한 1, 순한·담백한 2, 공주 반말.</p>
 <div class="summary"><span>행 <b>{len(rows)}</b></span><span>분리 <b>{cnt.get("분리", 0)}</b></span><span>보완 <b>{cnt.get("보완", 0)}</b></span><span><a href="#u1">사용자 작성 칸 <b>{cnt["user"]}</b></a> (빈 칸 <b>{sum(1 for r in rows if r["writer"] == "user" and not r.get("text"))}</b>)</span></div>
+<div class="filters" role="group" aria-label="보기 거르기"><span class="ulabel">검토할 줄만 보기</span>
+<a href="#all">전체 <b>{len(rows)}</b></a><a href="#claude">Claude 원고 <b>{sum(1 for r in rows if r["writer"] != "user")}</b></a><a href="#v0">v0 <b>{sum(1 for r in rows if r.get("batch") == "v0")}</b></a><a href="#v1">v1 <b>{sum(1 for r in rows if r.get("batch") == "v1" and r["writer"] != "user")}</b></a><a href="#v1b">추가 <b>{sum(1 for r in rows if r.get("batch") == "v1b")}</b></a><a href="#user">사용자 작성 <b>{cnt["user"]}</b></a></div>
 <nav>{"".join(nav)}</nav>
 <div class="ujump"><span class="ulabel">사용자 작성 칸 바로가기</span>{"".join(ujump)}<span class="ulegend">채움 / <i>빈 칸</i></span></div></header>
 {"".join(parts)}
 </main>'''
+page += SCRIPT
 Path(OUT).write_text(page, encoding='utf-8')
 print(OUT, len(rows), cnt)
