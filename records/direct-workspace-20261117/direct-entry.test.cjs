@@ -1,0 +1,5 @@
+const fs=require('fs'),path=require('path'),a=require('assert/strict'),test=require('node:test');
+const hub=process.env.JO9_DIRECT_CANDIDATE||'G:/somi/JO9sa/tools/modding-hub';
+const old='G:/Codex/tmp/claude-character-studio-e0edb064/tools/jo9-history-lab/dist';
+test('initial HTML is the integrated shell and includes both styles before executing modules',()=>{const f=fs.existsSync(hub+'/workspace.html')?hub+'/workspace.html':old+'/index.html',s=fs.readFileSync(f,'utf8');a.match(s,/<title>JO9 · 통합 모드 작업실<\/title>/);a(s.includes('/workspace/integration.css'));a(s.includes('./workspace-app.mjs'));a(!/id="(?:simulator|coefficients|archive|guide)"/.test(s));a(!/src="\.\/app\.mjs"/.test(s));});
+test('server no longer composes the original app with a late menu overlay',()=>{const s=fs.readFileSync(hub+'/server.py','utf8');a(!s.includes("(base.DIST/'app.mjs').read_bytes()+addon.encode()"));a(s.includes("native in ('workspace-app.mjs','app.mjs')"));a(s.includes("native in ('','index.html')"));});

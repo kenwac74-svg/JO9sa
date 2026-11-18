@@ -1,0 +1,325 @@
+{
+  "input": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+  "hash": "009fc22be4b97a89c0f8d2c83a26917bf206452d2a7a269db52758b3dd11a65c",
+  "cityDone": [
+    {
+      "location": "$newloc",
+      "line": 172,
+      "text": "\t$perm_counter_array_vars[] = 'city_already_done_ever'\r",
+      "context": [
+        "\t$temp_counter_array_vars[] = 'city_already_done_today'\r",
+        "\t$perm_counter_array_vars[] = 'sex_done_thisperson'\r",
+        "\t$perm_counter_array_vars[] = 'city_already_done_ever'\r",
+        "\t$add_counter_vars_for_valid_slaves = {\r",
+        "\t\tif dynslave_state ! CONST_INT['no_slave']:\r"
+      ]
+    },
+    {
+      "location": "interaction_city",
+      "line": 10320,
+      "text": "\t\tif tip_asked = 0: tip_asked = 1 + ((48271 * (day + city_already_done_ever[$str(interaction_city)])) mod 65537)/(65537/6) &! pseudo-rand(1,6)\r",
+      "context": [
+        "\t\tend\r",
+        "\telseif milk_tip = 0:\r",
+        "\t\tif tip_asked = 0: tip_asked = 1 + ((48271 * (day + city_already_done_ever[$str(interaction_city)])) mod 65537)/(65537/6) &! pseudo-rand(1,6)\r",
+        "\t\tif tip_asked = 1:\r",
+        "\t\t\tmilk_tip = 1\r"
+      ]
+    },
+    {
+      "location": "interaction_city",
+      "line": 11238,
+      "text": "\tpatrol_num = 1 + ((48271 * (day + city_already_done_ever[$str(interaction_city)])) mod 65537)/(65537/14) &! pseudo-rand(1,14)\r",
+      "context": [
+        "\tcombatant = 0 &! set master as the combatant\r",
+        "\t!the upper bound of this MUST equal the total number of encounters\r",
+        "\tpatrol_num = 1 + ((48271 * (day + city_already_done_ever[$str(interaction_city)])) mod 65537)/(65537/14) &! pseudo-rand(1,14)\r",
+        "\t!Testing code - comment out the line above and uncomment the lines below to have all fights in order - crushboss\r",
+        "\t! patrol_num += 1\r"
+      ]
+    },
+    {
+      "location": "interaction_city",
+      "line": 11244,
+      "text": "\tcity_already_done_ever[$str(interaction_city)] += 1\r",
+      "context": [
+        "\t!End of Testing Code - crushboss\r",
+        "\tif active[$quest[8]] = 1 and patrol_num = 14 and $master_head_gear = 'raven_crown' and $master_amulet = 'snake_amulet' and $master_ring = 'bull_ring': patrol_num = 15\r",
+        "\tcity_already_done_ever[$str(interaction_city)] += 1\r",
+        "\tinteraction_city = 61100 + patrol_num\r",
+        "\t$враг[2] = ''\r"
+      ]
+    },
+    {
+      "location": "interaction_city",
+      "line": 11460,
+      "text": "\tif (48271 * (day + city_already_done_ever['611'])) mod 65537 > 32768:\r",
+      "context": [
+        "\t$враг[1] = 'goblin'\r",
+        "\t$враг[2] = 'goblin'\r",
+        "\tif (48271 * (day + city_already_done_ever['611'])) mod 65537 > 32768:\r",
+        "\t\t$sp_text[12] = $replace($sp_text[12], '고블린 한 쌍이 양구멍 삽입하는', '고블린 셋이 세구멍 삽입하는')\r",
+        "\t\tколичество_врагов = 3\r"
+      ]
+    },
+    {
+      "location": "interaction_city",
+      "line": 33275,
+      "text": " if city_already_done_ever['66677921'] = 0 and city_already_done_ever['66677922'] = 0:\r",
+      "context": [
+        "! JO9 MOD START ERZA_BRANCH_IMAGES_TRAITS_20261101\r",
+        " ! The two result counters together identify an already completed mutually exclusive choice.\r",
+        " if city_already_done_ever['66677921'] = 0 and city_already_done_ever['66677922'] = 0:\r",
+        "  gs 'jo9_cruel_mercy_apply', 6\r",
+        " end\r"
+      ]
+    },
+    {
+      "location": "interaction_city",
+      "line": 33291,
+      "text": " if city_already_done_ever['66677921'] = 0 and city_already_done_ever['66677922'] = 0:\r",
+      "context": [
+        "! JO9 MOD START ERZA_BRANCH_IMAGES_TRAITS_20261101\r",
+        " ! The two result counters together identify an already completed mutually exclusive choice.\r",
+        " if city_already_done_ever['66677921'] = 0 and city_already_done_ever['66677922'] = 0:\r",
+        "  gs 'jo9_cruel_mercy_apply', -2\r",
+        " end\r"
+      ]
+    },
+    {
+      "location": "interaction_result_city",
+      "line": 1001,
+      "text": "city_already_done_ever[$str(interaction_city)] += 1\r",
+      "context": [
+        "!completion tags\r",
+        "city_already_done_today[$str(interaction_city)] += 1\r",
+        "city_already_done_ever[$str(interaction_city)] += 1\r",
+        "\r",
+        "! JO9 MOD START TBV_SALE_REWARD_CLEANUP | 2026-10-17_trait_value\r"
+      ]
+    }
+  ],
+  "portal6220": [
+    {
+      "location": "interaction_city",
+      "line": 23973,
+      "text": "IF interaction_city = 6220:\r",
+      "context": [
+        "  $return_lock = 'next_day'\r",
+        "END\r",
+        "IF interaction_city = 6220:\r",
+        " npc = 0\r",
+        " $npc_id = ''\r"
+      ]
+    },
+    {
+      "location": "#options",
+      "line": 7265,
+      "text": "  if бой_со_стражником = 1: FUNC('$menu', 'interaction_city', $menu_item_fogs_portal, 6220, '포털로 다가간다')\r",
+      "context": [
+        "  if active[$quest[17]] = 2 and npc_progress['pope'] = 2 and бой_с_паладином = 1 and бой_с_паладиом < 2: FUNC('$menu', 'interaction_city', $menu_item_fogs_portal, 62171, '성기사와 싸운다')\r",
+        "  if active[$quest[17]] = 2 and бой_с_паладином = 2 and бой_со_стражником < 1: FUNC('$menu', 'interaction_city', $menu_item_fogs_portal, 62172, '가디언과 싸운다')\r",
+        "  if бой_со_стражником = 1: FUNC('$menu', 'interaction_city', $menu_item_fogs_portal, 6220, '포털로 다가간다')\r",
+        "  FUNC('$menu', 'city_form', $menu_item_city_gate, 120, '떠난다')\r",
+        "FUNC('$menu', '===END===')\r"
+      ]
+    },
+    {
+      "location": "выход_из_боя",
+      "line": 537,
+      "text": "\tinteraction_city = 6220\r",
+      "context": [
+        "\tmaster_domination_rate += 3\r",
+        "\tбой_со_стражником = 1\r",
+        "\tinteraction_city = 6220\r",
+        "\t$fight_return = 'interaction_city'\r",
+        "END\r"
+      ]
+    },
+    {
+      "location": "выход_из_боя",
+      "line": 589,
+      "text": "\tinteraction_city = 6220\r",
+      "context": [
+        "\tmaster_domination_rate += 3\r",
+        "\tбой_со_стражником = 1\r",
+        "\tinteraction_city = 6220\r",
+        "\t$fight_return = 'interaction_city'\r",
+        "END\r"
+      ]
+    },
+    {
+      "location": "#txt_man",
+      "line": 51901,
+      "text": "$voice_fragment_ids[6220]='q1116_slave_neg_exhausted_core_hesitant_t2'\r",
+      "context": [
+        "voice_fragment_level['q1116_slave_neg_exhausted_core_hesitant_t1']=0\r",
+        "voice_fragment_tone['q1116_slave_neg_exhausted_core_hesitant_t1']=1\r",
+        "$voice_fragment_ids[6220]='q1116_slave_neg_exhausted_core_hesitant_t2'\r",
+        "$voice_fragment_text['q1116_slave_neg_exhausted_core_hesitant_t2']='(머뭇거리며 조용히 입을 연다.) 너무 피곤해요. 쉬어야 해요.'\r",
+        "$voice_fragment_role['q1116_slave_neg_exhausted_core_hesitant_t2']='native_1116_slave_neg_exhausted_core'\r"
+      ]
+    }
+  ],
+  "collision6026": [
+    {
+      "location": "#txt_man",
+      "line": 50543,
+      "text": "$voice_fragment_ids[6026]='q1116_slave_pos_sa_sadist_core_reserved_t3'\r",
+      "context": [
+        "voice_fragment_tone['q1116_slave_pos_sa_sadist_core_reserved_t2']=2\r",
+        "$voice_fragment_ids[6026]='q1116_slave_pos_sa_sadist_core_reserved_t3'\r",
+        "$voice_fragment_text['q1116_slave_pos_sa_sadist_core_reserved_t3']='(짧게 숨을 고르며 말한다.) 저 쓰레기를 벌주게 해 줘서 고마워! 정말 즐거웠어.'\r"
+      ]
+    }
+  ],
+  "grandFinalAssignments": [
+    {
+      "location": "end_day_screen",
+      "line": 1493,
+      "text": "IF grand_final = 1:\r"
+    },
+    {
+      "location": "end_day_screen",
+      "line": 1494,
+      "text": "\tgrand_final = 0\r"
+    },
+    {
+      "location": "interaction_city",
+      "line": 23977,
+      "text": " grand_final = 1\r"
+    }
+  ],
+  "rewardPages": [
+    {
+      "page": 19,
+      "textLine": 24496,
+      "textCodeSha256": "25df10c5a987a32c10ebdcdd966f6c0634e07fbae64169d1335ba37251177da5",
+      "imageLine": 24466,
+      "image": "scene\\Witch\\witch.png",
+      "file": "G:\\somi\\Jack O Nine Tails v2.4_work\\game\\content\\pic\\scene\\Witch\\witch.png",
+      "bytes": 1152705,
+      "pngSignature": true,
+      "width": 795,
+      "height": 596
+    },
+    {
+      "page": 20,
+      "textLine": 24497,
+      "textCodeSha256": "e8b9704d1d480b1ad6c0ec6bb72dfb317d73743a9f2a196c2255ddf2fa09c165",
+      "imageLine": 24467,
+      "image": "scene\\Witch\\witch.png",
+      "file": "G:\\somi\\Jack O Nine Tails v2.4_work\\game\\content\\pic\\scene\\Witch\\witch.png",
+      "bytes": 1152705,
+      "pngSignature": true,
+      "width": 795,
+      "height": 596
+    },
+    {
+      "page": 21,
+      "textLine": 24498,
+      "textCodeSha256": "b09aff473ab779819ad81c4655337ffd56eeeaac9019dd808b935eb419746b8f",
+      "imageLine": 24468,
+      "image": "scene\\Witch\\witch5.png",
+      "file": "G:\\somi\\Jack O Nine Tails v2.4_work\\game\\content\\pic\\scene\\Witch\\witch5.png",
+      "bytes": 614153,
+      "pngSignature": true,
+      "width": 795,
+      "height": 596
+    },
+    {
+      "page": 22,
+      "textLine": 24499,
+      "textCodeSha256": "b33a7ad3f71c1719d1f9d6b4ebb1b2ebcbdf4c23afd6d85e6e30e9a271da0254",
+      "imageLine": 24469,
+      "image": "scene\\Witch\\witch6.png",
+      "file": "G:\\somi\\Jack O Nine Tails v2.4_work\\game\\content\\pic\\scene\\Witch\\witch6.png",
+      "bytes": 773528,
+      "pngSignature": true,
+      "width": 795,
+      "height": 596
+    }
+  ],
+  "rewardStateAssignments": [
+    {
+      "line": 24443,
+      "code": "npc = 0"
+    },
+    {
+      "line": 24444,
+      "code": "$npc_id = ''"
+    },
+    {
+      "line": 24445,
+      "code": "$place = 'guild_hall'"
+    },
+    {
+      "line": 24446,
+      "code": "$return_lock  = 'shop_general'"
+    },
+    {
+      "line": 24447,
+      "code": "txt_count = 22"
+    },
+    {
+      "line": 24501,
+      "code": "witch_talk = 1"
+    },
+    {
+      "line": 24502,
+      "code": "$return_lock = 'city_menu_form'"
+    }
+  ],
+  "evidence": [
+    {
+      "location": "interaction_city",
+      "from": 33830,
+      "to": 33832,
+      "code": "end\r\n! JO9 MOD END CHUNHYANG_CLUB_TEXT_20261112\r\ngt 'interaction_result_city'\r"
+    },
+    {
+      "location": "interaction_result_city",
+      "from": 999,
+      "to": 1006,
+      "code": "!completion tags\r\ncity_already_done_today[$str(interaction_city)] += 1\r\ncity_already_done_ever[$str(interaction_city)] += 1\r\n\r\n! JO9 MOD START TBV_SALE_REWARD_CLEANUP | 2026-10-17_trait_value\r\nkillvar 'jo9_trait_value_sold_peerless'\r\nif txt_is_set_from_save = 0: txt = 1\r\ngt 'interaction_screen_city'\r"
+    },
+    {
+      "location": "interaction_city",
+      "from": 23973,
+      "to": 23994,
+      "code": "IF interaction_city = 6220:\r\n npc = 0\r\n $npc_id = ''\r\n $place = 'fogs_street'\r\n grand_final = 1\r\n txt_count = 5\r\n $special_image[2] = 'scene\\portal.png'\r\n $special_image[3] = 'scene\\portal.png'\r\n $special_image[4] = 'scene\\portal.png'\r\n $special_image[5] = 'scene\\portal.png'\r\n $special_image[6] = 'scene\\final\\2.png'\r\n! JO9 MOD START J9M0452 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included\r\n $text[1] = \"드디어, 영광과 장엄함으로 가득 찬 그 엄숙한 순간이 왔다. 네 앞을 가로막던 모든 장애물을 넘어, 당신은 평생의 꿈은 아닐지라도 적어도 인생 후반부 내내 갈망해 온 것을 손에 넣었다. 이제는 아무도, 아무것도 널 막을 수 없다.\"\r\n $text[2] = \"그동안 네 안에 쌓여 있던 모든 부정의 짐을 털어낸 채, 당신은 결연한 걸음으로 포털을 향해 나아갔다. 수호자들은 갈라서며 신비한 문 너머로 이어지는 길을 드러냈다...\"\r\n! JO9 MOD END J9M0452\r\n $text[3] = \"한 걸음만 더 내딛으면 안으로 들어간다. 타오르듯 뜨겁지만 믿기 힘들 만큼 기분 좋은 한기가 너를 덮쳤고, 곧 그 감각은 비상한 아름다움의 풍경으로 바뀌었다. 눈앞에 펼쳐진 셀 수 없이 많은 다른 세계의 포털들은 너를 잠시 혼란스럽게 만들었다. \"\r\n $text[4] = \"하지만 새로운 지평이 네 앞에 열리고 있다는 사실은, 너를 고무시키지 않을 수 없었다. 이제 남은 건 모든 걸 저울질하고 어느 방향으로 나아갈지 결정하는 것뿐이다.\"\r\n! JO9 MOD START J9M0451 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included\r\n $text[5] = \"그런 생각을 하며, 당신은 한 걸음 뒤로 물러서 자신에게 분명 필요 없는 요소였던, 그리고 이제는 악몽처럼 영원히 네 삶에서 지워져야 할 그 세계를 마지막으로 돌아보았다.\"\r\n! JO9 MOD END J9M0451\r\n$return_lock = 'next_day'\r\nEND\r"
+    },
+    {
+      "location": "epic_win_marsjinn",
+      "from": 28,
+      "to": 29,
+      "code": "$yes = {gt 'end_day_screen'} &! fixed return location - ImperatorAugustus\r\n$no = {gt 'Start'}\r"
+    },
+    {
+      "location": "end_day_screen",
+      "from": 1493,
+      "to": 1496,
+      "code": "IF grand_final = 1:\r\n\tgrand_final = 0\r\n\tgt 'epic_win_marsjinn'\r\nEND\r"
+    },
+    {
+      "location": "interaction_screen_city",
+      "from": 84,
+      "to": 98,
+      "code": "if $special_image_full[txt] ! '':\r\n! JO9 MOD START J9M1343 | 2026-10-08_persistent_image_cycle | changed block; context may be included\r\n\tif nsfw = 0: *p func('interior_change', 'jo9_html', '<div id = \"bg\"><img src=\"<<$special_image_full[txt]>>\"></div>')\r\n! JO9 MOD END J9M1343\r\nelseif $special_image[txt] ! '':\r\n! JO9 MOD START J9M1342 | 2026-10-08_persistent_image_cycle | changed block; context may be included\r\n! JO9 MOD START CHUNHYANG_SCENE_BACKGROUND_20261112\r\n if nsfw = 0 and $special_image[txt] = 'bg\\chunhyang.png':\r\n  *p func('interior_change', 'jo9_html', '<div id = \"bg\"><img src=\"content/pic/bg/chunhyang.png\" width=\"795\" height=\"596\"></div>')\r\n else\r\n\tif nsfw = 0: *p func('interior_change', 'jo9_html', '<div id = \"bg\"><img src=\"content\\pic\\<<$special_image[txt]>>\"></div>')\r\n end\r\n! JO9 MOD END CHUNHYANG_SCENE_BACKGROUND_20261112\r\n! JO9 MOD END J9M1342\r\nend\r"
+    },
+    {
+      "location": "$objsel",
+      "from": 35,
+      "to": 52,
+      "code": "if $selobj = '<img src = \"content/pic/ui/buttons/legacy/forward_button.png\">':\r\n\tunsel\r\n\tkillobj\r\n\tif sound_on = 1: play 'content/snd/page_right.wav', sound_volume\r\n\ttxt_count = arrsize('$text') - 1\r\n\tif txt < txt_count:\r\n\t\ttxt += 1\r\n\telse\r\n\t\tif $msg_txt ! '' and txt_count = txt:\r\n\t\t\tmsg '<<$msg_txt>>'\r\n\t\t\t$msg_txt = ''\r\n\t\tend\r\n\t\tkillvar '$text'\r\n\t\tif $return_lock ! '':\r\n\t\t\tgt $return_lock\r\n\t\telseif exam_in_progress = 1:\r\n\t\t\tgt 'demo_menu_form'\r\n\t\telseif is_home ! 1:\r"
+    }
+  ],
+  "conclusions": {
+    "portalMarkerMeaning": "6220 scene-entry counter; incremented before first scene page, not exclusively after completed ending and return choice.",
+    "normalReturnRoute": "6220 -> interaction_result_city counter -> interaction_screen_city pages -> next_day -> end_day_screen grand_final reset -> epic_win_marsjinn yes -> end_day_screen",
+    "collision": "No interaction_city 6026 use; only unrelated voice_fragment_ids[6026].",
+    "reuse": "Copy four text slots19-22 with exact image mapping witch.png, witch.png, witch5.png, witch6.png. Remap to new contiguous slots and set txt_count to final slot. Do not import witch7.png slot23 because current txt_count22 makes that image unreachable.",
+    "sideEffects": "Existing6025 sets witch_talk1 while constructing scene. Reward slots19-22 contain text only, no item/quest/stat assignments. Basic interaction handler increments new6026 completion counter on entry. Copying reward text/images alone does not complete book delivery.",
+    "combinedPortalGuard": "city_already_done_ever['6220'] > 0 AND grand_final = 0 excludes portal-scene-in-progress. The only grand_final assignments are 1 in6220 and 0 before epic_win_marsjinn. The new encounter being accessible after this checkpoint establishes ordinary return; no separate return-choice flag exists."
+  }
+}

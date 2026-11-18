@@ -1,17 +1,7 @@
 import {ensureWorkspaceTool,managedImageTools} from '/workspace/tool-runtime.mjs';
 import {createGeneralDbView,simulatorMenuHtml} from '/workspace/general-dialogue.mjs';
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const MENUS=[
- {id:'studio',label:'캐릭터 편집',icon:'✎',children:[['studio','노예 편집'],['master-studio','마스터 편집'],['backgrounds','배경 설정 목록']]},
- {id:'character',label:'캐릭터 시뮬레이터',icon:'◆'},
- {id:'dialogue',label:'대사 편집',icon:'☷'},
- {id:'image-tools',label:'이미지 작업',icon:'▧'},
- {id:'coef',label:'산식·계수',icon:'≋'},
- {id:'game-db',label:'게임 DB',icon:'▤',children:[['general-dialogue-db','일반 대사 DB'],['interview-db','인터뷰 DB'],['trait-edit','특성 편집']]},
- {id:'patch-schedule',label:'작업 일정',icon:'◷'},
- {id:'utilities',label:'기타툴',icon:'⚙',children:[['save-fix','세이브 정비'],['ai-link','AI 연결'],['slave-sim','뽑기 분포']]},
- {id:'artifacts',label:'기타 산출물',icon:'▥'},
-];
+
 export function characterImageKeyword(file,imagePath='',id=''){
  const path=String(imagePath).replaceAll('\\','/'),folder=path.match(/(?:^|\/)master\/editor\/(\d+)(?:\/|$)/i);
  if(folder)return 'master/editor/'+folder[1];
@@ -21,10 +11,9 @@ export function characterImageKeyword(file,imagePath='',id=''){
  const name=String(file).replace(/\.json$/i,'');return name.replace(/^\d+_/,'')||String(id)||name;
 }
 export async function installWorkspace(api){
+ const MENUS=api.menus;
  const config=await fetch('/workspace/config').then(r=>{if(!r.ok)throw Error('통합 메뉴 설정을 읽지 못했습니다.');return r.json();});
- const css=document.createElement('link');css.rel='stylesheet';css.href='/workspace/integration.css';document.head.append(css);
- const {createStudioView}=await import(new URL('studio-view.mjs',document.baseURI).href);
- await createStudioView(globalThis.__jo9StudioApi,{role:'master'});
+ const css=document.querySelector('link[href="/workspace/integration.css"]');
  createGeneralDbView(api);
  const nativeIds=new Set(Object.keys(api.tabNames));const originalNames=new Map([...nativeIds].map(k=>[k,api.tabNames[k]]));
  const panels=new Map();let items=null,selectedArtifact=null,query='',category='';
@@ -39,7 +28,7 @@ export async function installWorkspace(api){
  const nav=document.querySelector('.sidebar nav');
  nav.innerHTML=MENUS.map(m=>`<button type="button" class="nav-button" data-tab="${m.id}" data-workspace-main="${m.id}"><span>${m.icon}</span>${m.label}</button>${m.id==='character'?simulatorMenuHtml():m.children?`<div class="workspace-subnav" data-workspace-parent="${m.id}" hidden>${m.children.map(([id,label])=>`<button type="button" class="nav-button" data-tab="${id}">${label}</button>`).join('')}</div>`:''}`).join('');
  document.querySelector('.workspace-label').textContent='통합 모드 작업실';
- document.querySelector('.sidebar-bottom p').textContent='기존 도구 연결 · WORK\n각 도구의 설정과 저장 기능 유지';
+ document.querySelector('.sidebar-bottom p').textContent='WORK · 캐릭터·대사·이미지·게임 DB 통합 편집';
  document.title='JO9 · 통합 모드 작업실';
  const parentOf=id=>MENUS.find(m=>m.id===id||m.children?.some(([child])=>child===id))?.id;
  const openCurrent=document.createElement('a');openCurrent.className='workspace-open-current';openCurrent.target='_blank';openCurrent.rel='noopener';openCurrent.textContent='별도 창에서 열기 ↗';openCurrent.hidden=true;document.querySelector('.page-header').append(openCurrent);
@@ -51,11 +40,11 @@ export async function installWorkspace(api){
  const dialoguePanel=panels.get('dialogue');
  dialoguePanel.querySelector('iframe').title='대사 편집 작업 영역';
  framePanel('image-tools',[['checklist','이미지 체크리스트'],['workshop','이미지 교체·편집'],['imageReview','폴더 비교·선택'],['promptWorksheet','장면 프롬프트']]);
- framePanel('game-db',[['gameReference','특성·아이템·마법·MOB DB']]);
+ framePanel('game-db',[['gameReference','특성·아이템·마법·MOB DB'],['helperDashboard','웹 대시보드'],['statusFormulas','노예 상태 수치 공식표']]);
  panels.get('game-db').querySelector('.workspace-toolbar').insertAdjacentHTML('beforeend','<button type="button" class="button secondary small" data-tab="general-dialogue-db">일반 대사 DB</button><button type="button" class="button secondary small" data-tab="interview-db">인터뷰 DB</button><button type="button" class="button secondary small" data-tab="trait-edit">특성 편집</button>');
  framePanel('patch-schedule',[['schedule','작업 일정']]);
  const external=[['Mage.space','https://www.mage.space/advanced'],['JoyCaption','https://huggingface.co/spaces/fancyfeast/joy-caption-beta-one'],['번역','https://translate.google.co.kr/?sl=en&tl=ko&op=translate'],['Gamma','https://gamma.app/design/01M48RXZSYBT1HBN8BFGAQ09AS?from=designs']];
- panels.get('utilities').innerHTML=`<article class="card"><div class="card-head"><h2>기존 보조 도구</h2></div><div class="card-body workspace-toolbar"><button type="button" class="button secondary" data-tab="save-fix">세이브 정비</button><button type="button" class="button secondary" data-tab="ai-link">AI 연결</button><button type="button" class="button secondary" data-tab="slave-sim">뽑기 분포</button>${button('soundList','사운드 목록')}</div></article><article class="card"><div class="card-head"><h2>외부 도구</h2></div><div class="card-body workspace-toolbar">${external.map(([label,url])=>`<a class="button secondary" href="${esc(url)}" target="_blank" rel="noopener">${label} ↗</a>`).join('')}</div></article><div class="workspace-tool-view"><iframe class="workspace-frame" title="선택한 보조 도구" hidden></iframe></div>`;
+ panels.get('utilities').innerHTML=`<article class="card"><div class="card-head"><h2>보조 도구</h2></div><div class="card-body workspace-toolbar"><button type="button" class="button secondary" data-tab="save-fix">세이브 정비</button><button type="button" class="button secondary" data-tab="ai-link">AI 연결</button><button type="button" class="button secondary" data-tab="slave-sim">뽑기 분포</button>${button('soundList','사운드 목록')}</div></article><article class="card"><div class="card-head"><h2>외부 도구</h2></div><div class="card-body workspace-toolbar">${external.map(([label,url])=>`<a class="button secondary" href="${esc(url)}" target="_blank" rel="noopener">${label} ↗</a>`).join('')}</div></article><div class="workspace-tool-view"><iframe class="workspace-frame" title="선택한 보조 도구" hidden></iframe></div>`;
  panels.get('artifacts').innerHTML='<article class="card"><div class="card-head"><h2>기타 산출물 목록 <span class="workspace-count"></span></h2><button type="button" class="button secondary small" data-workspace-refresh>목록 새로 확인</button></div><div class="card-body"><div class="workspace-toolbar"><input class="workspace-search" type="search" placeholder="이름·파일명·경로 검색" aria-label="산출물 검색"><select class="workspace-category" aria-label="산출물 종류"><option value="">전체 종류</option></select></div><div class="workspace-artifact-list">목록을 불러오는 중입니다.</div></div></article><article class="workspace-artifact-view" hidden><div class="workspace-toolbar"><strong class="workspace-artifact-title"></strong><a class="button secondary small workspace-original" target="_blank" rel="noopener">새 창으로 열기 ↗</a></div><iframe class="workspace-frame" title="선택한 HTML 산출물"></iframe></article>';
  function toolUrl(key){
   const raw=config.tools[key];if(!raw)return '';
@@ -119,9 +108,9 @@ export async function installWorkspace(api){
   if(id==='artifacts'&&!items)loadArtifacts();
   openCurrent.hidden=!panel?.dataset.externalUrl;openCurrent.href=panel?.dataset.externalUrl||'#';
  }
- document.addEventListener('click',event=>{
+ document.addEventListener('click',async event=>{
   const target=event.target.closest('button');if(!target)return;
-  if(target.dataset.simQuestion||target.dataset.simSection){globalThis.__jo9StudioApi?.charView?.openSection?.(target.dataset.simSection||'questions',target.dataset.simQuestion);api.switchTab('character');}
+  if(target.dataset.simQuestion||target.dataset.simSection){if(await api.switchTab('character'))globalThis.__jo9StudioApi?.charView?.openSection?.(target.dataset.simSection||'questions',target.dataset.simQuestion);}
   if(target.dataset.workspaceImageSearch!==undefined){
    const keyword=characterImageKeyword(target.dataset.workspaceImageSearch,target.dataset.imagePath,target.dataset.imageId),panel=panels.get('image-tools');
    api.switchTab('image-tools');openTool(panel,'checklist');
@@ -137,8 +126,8 @@ export async function installWorkspace(api){
  document.addEventListener('input',event=>{if(event.target.matches('.workspace-search')){query=event.target.value;renderList();}});
  document.addEventListener('change',event=>{if(event.target.matches('.workspace-category')){category=event.target.value;renderList();}});
  window.addEventListener('hashchange',sync);
+ window.addEventListener('jo9-workspace-tab',sync);
  window.addEventListener('jo9-simulator-question',sync);
- // The original startup does not know workspace-only hashes; restore the user's requested page now.
- const requested=globalThis.__jo9WorkspaceInitialHash;
- api.switchTab(requested&&api.tabNames[requested]?requested:api.getTab());sync();
+ const requested=api.getInitialTab();
+ await api.switchTab(requested||'character');sync();
 }

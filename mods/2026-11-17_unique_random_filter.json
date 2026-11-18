@@ -1,0 +1,40 @@
+{
+  "id": "2026-11-17_unique_random_filter",
+  "description": "Exclude reviewed unique characters from ordinary random stock and its bounded fallback; preserve explicit acquisition, all reviewed generic templates and the existing retry limits.",
+  "before_sha256": "12704a339285a1c722f8ae636dc275027ed38a02a5af2142746aa0fdfffe7f4f",
+  "after_sha256": "6ba5dd39b3f07b996491bc7d7706011bb92d116d1c8416a1361488d45fbacb8b",
+  "edits": [
+    {
+      "location": "generate_stock",
+      "field": "body",
+      "old": "if stock_type > 0 and stock_type ! 1448 and stock_type ! 1450 and stock_type ! 2339:",
+      "new": "! JO9 MOD START UNIQUE_RANDOM_FILTER_FALLBACK_20261117\r\n\t\t\tif func('jo9_random_stock_allowed',stock_type)=1:\r\n\t\t\t\t! JO9 MOD END UNIQUE_RANDOM_FILTER_FALLBACK_20261117",
+      "count": 1,
+      "patchId": "UNIQUE_RANDOM_FILTER_20261117"
+    },
+    {
+      "location": "generate_stock",
+      "field": "body",
+      "old": "if stock_type = 1448 or (meta_type = 2 and stock_type = 1450): jump 'loop_type'",
+      "new": "! JO9 MOD START UNIQUE_RANDOM_FILTER_PICK_20261117\r\n\t\tif func('jo9_random_stock_allowed',stock_type)=0: jump 'loop_type'\r\n\t\t! JO9 MOD END UNIQUE_RANDOM_FILTER_PICK_20261117",
+      "count": 1,
+      "patchId": "UNIQUE_RANDOM_FILTER_20261117"
+    },
+    {
+      "location": "generate_stock",
+      "field": "body",
+      "old": "if stock_type = 2339: jump 'loop_type'",
+      "new": "! The shared live random-selection gate also covers the existing Yagisuna exclusion.",
+      "count": 1,
+      "patchId": "UNIQUE_RANDOM_FILTER_20261117"
+    }
+  ],
+  "add_locations": [
+    {
+      "name": "jo9_random_stock_allowed",
+      "body": "! JO9 MOD START UNIQUE_RANDOM_FILTER_20261117\r\n! Live code, not a save-cached array. Only unrequested random selection calls this gate.\r\n! Explicit special_stock and quest acquisition paths remain outside this filter.\r\nresult=1\r\nif args[0]<=0: result=0 & exit\r\nif instr('|1448|1450|2339|2341|2571|2572|2573|2574|2575|2576|2577|2578|2579|2580|2581|2582|2583|2584|2585|2605|2606|2607|2608|2609|2610|2611|2612|2613|2614|2615|2616|2617|2618|2619|2620|2621|2622|2623|2624|2625|3001|3002|3003|3004|3005|3006|3007|3008|3009|3010|3011|3012|3013|3014|3015|3016|3017|3018|3019|3020|3021|3022|3023|3024|3025|3026|3040|8877|8878|8879|8880|8881|8882|8883|8884|8885|8886|8887|8888|8889|8890|8891|8892|8893|8894|8895|8896|8897|8898|8899|8900|8901|8902|','|'+str(args[0])+'|')>0: result=0\r\n! JO9 MOD END UNIQUE_RANDOM_FILTER_20261117\r\n",
+      "actions": []
+    }
+  ],
+  "status": "APPROVED"
+}

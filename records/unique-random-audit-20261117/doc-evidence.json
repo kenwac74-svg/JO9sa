@@ -1,0 +1,57 @@
+{
+  "schema": 1,
+  "date": "2026-11-17",
+  "mode": "read-only document evidence; no current QSP generation inspection",
+  "repositoryRoot": "G:/somi/JO9sa",
+  "evidence": [
+    {
+      "subject": "Yagisuna",
+      "id": 2339,
+      "conclusion": "Previously approved random-only exclusion; explicit acquisition and owned characters must remain available.",
+      "sources": ["records/yagisuna-random-exclude-20261113/REPORT_KO.md:5", "records/yagisuna-random-exclude-20261113/REPORT_KO.md:7"],
+      "status": "confirmed historical implementation record",
+      "limits": "Current QSP implementation was not inspected by this agent."
+    },
+    {
+      "subject": "Shiru",
+      "id": 1448,
+      "conclusion": "Named existing character; 2026-11-13 report lists 1448 as an already excluded random ID. Existing character JSON and QSP were preserved in the independent alias repair.",
+      "sources": ["records/yagisuna-random-exclude-20261113/REPORT_KO.md:5", "records/shiru-domina-alias-20261111/REPORT_KO.md:5", "records/shiru-domina-alias-20261111/REPORT_KO.md:6"],
+      "status": "confirmed historical records"
+    },
+    {
+      "subject": "Chunhyang",
+      "id": 3040,
+      "conclusion": "Dedicated club acquisition must remain: victory grants ownership; empty primary slot receives 3040, otherwise a persistent recruitment promise allows later acquisition without overwriting the existing character or viewed stock.",
+      "sources": ["records/chunhyang-club-20261112/REPORT_KO.md:7-14", "records/chunhyang-profile-20261112/REPORT_KO.md:1", "records/chunhyang-random-finish-20261113/REPORT_KO.md"],
+      "status": "confirmed historical implementation records",
+      "limits": "The 2026-11-13 finisher change explicitly preserves club ownership/recruitment; it is not a random-pool registration record."
+    },
+    {
+      "subject": "Egeya and acquisition slot safety",
+      "conclusion": "Earlier Egeya acquisition ensured an empty primary slot. Generic stock-to-slave swap can displace an owned actor into stock, and later generation can destroy that displaced actor. Preserve the already implemented character-specific acquisition routes.",
+      "sources": ["records/catfight-successor-planning-20261111/ACQUISITION_SAFETY_AUDIT_KO.md:5-9"],
+      "status": "confirmed historical safety audit",
+      "limits": "This old planning audit predates the completed Chunhyang safe recruitment flow."
+    },
+    {
+      "subject": "728 split appearances",
+      "ids": {"from": 4000, "to": 4727, "count": 728},
+      "conclusion": "Explicitly registered as additional ordinary/random MOBs, not unique story people. Existing IDs and appearances remained; unique indpack data was intentionally not copied into the added JSONs.",
+      "categoryBlocks": [{"metaKey": "loli", "from": 4000, "to": 4179, "count": 180}, {"metaKey": "young", "from": 4180, "to": 4439, "count": 260}, {"metaKey": "milf", "from": 4440, "to": 4727, "count": 288}],
+      "sources": ["records/mob-register-728-20261114/REPORT_KO.md:5-10", "records/mob-register-728-20261114/MANUAL_KO.md:4-6", "docs/superpowers/plans/2026-11-14-mob728.md:5-11"],
+      "status": "confirmed registration and implementation records",
+      "limits": "Category names are literal engine/file metadata keys. Fixed appearance assets do not alone establish a unique story identity."
+    }
+  ],
+  "classificationWarnings": [
+    {"case": "ethnic4generic", "result": "No authoritative document classification or explicit unique-ID whitelist was found in the bounded document/tool search. Do not infer uniqueness from ethnic=4 alone; use the separate current catalog audit."},
+    {"case": "nonunique fixedart", "result": "Dedicated or fixed image paths alone do not prove unique character status; the 728 ordinary definitions are a documented counterexample to classifying every fixed-art ID as unique."},
+    {"case": "1450", "result": "The Yagisuna report describes 1450 as unregistered. Treat it separately from confirmed unique people."}
+  ],
+  "documentConfirmedCharacterIdsOnly": [1448, 2339, 3040],
+  "authoritativeCompleteUniqueWhitelist": null,
+  "whitelistSearchResult": "No complete authoritative uniqueIds whitelist was located. The three IDs above are document-confirmed examples, not a complete allow/exclude list.",
+  "writes": ["artifacts/unique-random-audit-20261117/doc-evidence.json"],
+  "unchanged": ["WORK", "repository", "QSP", "JSON character definitions", "personal saves"]
+}

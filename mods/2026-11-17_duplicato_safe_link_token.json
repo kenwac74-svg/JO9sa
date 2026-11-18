@@ -1,0 +1,57 @@
+{
+  "id": "2026-11-17_duplicato_safe_link_token",
+  "description": "Encode actor and conflict fingerprints for lossless EXEC link transport; preserve identity checks, talent rules,300spark cost and all AP/usage limits.",
+  "status": "APPROVED",
+  "before_sha256": "4bb19a7268634acf1ebf7f1619f68ab30b2d2f0cdc7193c5a27253e7149b1585",
+  "after_sha256": "03f7e9809dc9e5985f4141940ea1fdab23f781cc84f185363780da54e1cd70d5",
+  "edits": [
+    {
+      "location": "jo9_duplicato",
+      "field": "body",
+      "old": "! JO9 MOD START DUPLICATO_ACTOR_TOKEN_20261117",
+      "new": "! JO9 MOD START DUPLICATO_SAFE_LINK_TOKEN_20261117\r\nif $args[0]='wire_token':\r\n local $j9de_wire=$args[1]\r\n local $j9de_wire_chars=' !\"#$%&''()*+,/:;<=>?@[\\]^`{|}'\r\n local $j9de_wire_codes='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'\r\n local $j9de_wire_char, $j9de_wire_hex\r\n local j9de_wire_i, j9de_wire_code\r\n j9de_wire_i=1\r\n $j9de_wire=$replace($j9de_wire,'~','~~')\r\n :j9de_wire_printable\r\n if j9de_wire_i<=len($j9de_wire_chars):\r\n  $j9de_wire=$replace($j9de_wire,$mid($j9de_wire_chars,j9de_wire_i,1),'~'+$mid($j9de_wire_codes,j9de_wire_i,1))\r\n  j9de_wire_i+=1\r\n  jump 'j9de_wire_printable'\r\n end\r\n j9de_wire_i=1\r\n :j9de_wire_control\r\n if j9de_wire_i<=32:\r\n  j9de_wire_code=iif(j9de_wire_i<32,j9de_wire_i,127)\r\n  $j9de_wire_hex=$mid('0123456789ABCDEF',j9de_wire_code/16+1,1)+$mid('0123456789ABCDEF',(j9de_wire_code mod 16)+1,1)\r\n  $j9de_wire_char=$strfind($j9de_wire,'\\x{'+$j9de_wire_hex+'}')\r\n  if $j9de_wire_char!'': $j9de_wire=$replace($j9de_wire,$j9de_wire_char,'~u'+$j9de_wire_hex)\r\n  j9de_wire_i+=1\r\n  jump 'j9de_wire_control'\r\n end\r\n $result=$j9de_wire\r\n exit\r\nend\r\n! JO9 MOD END DUPLICATO_SAFE_LINK_TOKEN_20261117\r\n! JO9 MOD START DUPLICATO_ACTOR_TOKEN_20261117",
+      "count": 1,
+      "patchId": "DUPLICATO_SAFE_LINK_TOKEN_20261117"
+    },
+    {
+      "location": "jo9_duplicato",
+      "field": "body",
+      "old": " $result = $str(j9de_actor_type) + '|' + $str(j9de_actor_id) + '|' + $str(len($j9de_actor_name)) + ':' + $j9de_actor_name + '|' + $str(len($j9de_actor_ava)) + ':' + $j9de_actor_ava",
+      "new": " $result = $func('jo9_duplicato','wire_token', $str(j9de_actor_type) + '|' + $str(j9de_actor_id) + '|' + $str(len($j9de_actor_name)) + ':' + $j9de_actor_name + '|' + $str(len($j9de_actor_ava)) + ':' + $j9de_actor_ava)",
+      "count": 1,
+      "patchId": "DUPLICATO_SAFE_LINK_TOKEN_20261117"
+    },
+    {
+      "location": "jo9_duplicato",
+      "field": "body",
+      "old": " local $why, $list, $key, $code, _at, _end, _count",
+      "new": " local $why, $list, $key, $code, $j9de_target_token, $j9de_donor_token, _at, _end, _count",
+      "count": 1,
+      "patchId": "DUPLICATO_SAFE_LINK_TOKEN_20261117"
+    },
+    {
+      "location": "jo9_duplicato",
+      "field": "body",
+      "old": "  $list = $func('jo9_duplicato_traits', 'list')",
+      "new": "  $list = $func('jo9_duplicato_traits', 'list')\r\n  $j9de_target_token=$func('jo9_duplicato','actor_token','slave')\r\n  $j9de_donor_token=$func('jo9_duplicato','actor_token','assistant')",
+      "count": 1,
+      "patchId": "DUPLICATO_SAFE_LINK_TOKEN_20261117"
+    },
+    {
+      "location": "jo9_duplicato",
+      "field": "body",
+      "old": "   $code = \"gt 'jo9_duplicato', 'preview', \" + $func('jo9_duplicato', 'quote', $key) + ', ' + $func('jo9_duplicato', 'quote', $func('jo9_duplicato', 'actor_token', 'slave')) + ', ' + $func('jo9_duplicato', 'quote', $func('jo9_duplicato', 'actor_token', 'assistant'))",
+      "new": "   $code = \"gt 'jo9_duplicato', 'preview', \" + $func('jo9_duplicato', 'quote', $key) + ', ' + $func('jo9_duplicato', 'quote', $j9de_target_token) + ', ' + $func('jo9_duplicato', 'quote', $j9de_donor_token)",
+      "count": 1,
+      "patchId": "DUPLICATO_SAFE_LINK_TOKEN_20261117"
+    },
+    {
+      "location": "jo9_duplicato",
+      "field": "body",
+      "old": " $fingerprint = $func('jo9_duplicato_traits', 'removals', $key)",
+      "new": " $fingerprint = $func('jo9_duplicato','wire_token',$func('jo9_duplicato_traits', 'removals', $key))",
+      "count": 1,
+      "patchId": "DUPLICATO_SAFE_LINK_TOKEN_20261117"
+    }
+  ]
+}

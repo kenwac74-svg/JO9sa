@@ -1,7 +1,7 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),os=require('node:os'),{spawn}=require('node:child_process');
 const {chromium}=require(process.env.JO9_PLAYWRIGHT_MODULE||path.join(os.homedir(),'.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright'));
-const repo=process.env.JO9_REPO||path.resolve(__dirname,'../..'),core=require(repo+'/tools/text-workshop/core.cjs');
+const repo=process.env.JO9_REPO||path.resolve(__dirname,'../..'),core=require(repo+'/tools/text-workshop/core.cjs'),expectedCount=require(repo+'/tools/text-workshop/patch-schedule-data.cjs').tasks.length;
 const parent=path.join(fs.existsSync('G:/Codex/tmp')?'G:/Codex/tmp':os.tmpdir(),'jo9-patch-schedule-20261107');
 function fixture(){const rows=['QSPGAME','schedule fixture','',core.shift('1',-5),core.shift('start',-5),'',core.shift("*pl '일정 도구 시험'",-5),core.shift('0',-5),''];return Buffer.from(rows.join('\r\n'),'utf16le');}
 test('일정 페이지의 저장·재조회·필터·완료취소·내보내기·가져오기와 인증',async()=>{
@@ -9,7 +9,7 @@ test('일정 페이지의 저장·재조회·필터·완료취소·내보내기�
  const child=spawn(process.execPath,[repo+'/tools/text-workshop/server.cjs','--game-dir',game,'--catalog-dir',catalog,'--runtime',runtime,'--port','0'],{stdio:['ignore','pipe','pipe']});let errors='',browser;child.stderr.on('data',b=>errors+=b);
  try{const ready=await new Promise((resolve,reject)=>{let out='';const timer=setTimeout(()=>reject(Error(errors||'startup timeout')),15000);child.once('exit',()=>{clearTimeout(timer);reject(Error(errors||'server exited'));});child.stdout.on('data',b=>{out+=b;if(out.includes('\n')){clearTimeout(timer);resolve(JSON.parse(out.trim()));}});});
  browser=await chromium.launch({executablePath:process.env.JO9_BROWSER_EXE||'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',headless:true,args:['--no-first-run','--no-default-browser-check']});const ctx=await browser.newContext({viewport:{width:1440,height:1000},acceptDownloads:true}),page=await ctx.newPage(),pageErrors=[];page.on('pageerror',e=>pageErrors.push(e.message));
- await page.goto(ready.url+'patch-schedule');await page.getByText('공통 기록을 불러왔습니다.',{exact:false}).waitFor();assert.equal(await page.locator('#resultCount').textContent(),'50 / 50개');
+ await page.goto(ready.url+'patch-schedule');await page.getByText('공통 기록을 불러왔습니다.',{exact:false}).waitFor();assert.equal(await page.locator('#resultCount').textContent(),`${expectedCount} / ${expectedCount}개`);
  const http=await fetch(ready.url+'patch-schedule'),html=await http.text(),token=JSON.parse(html.match(/const SESSION=\/\*__JO9_PATCH_SESSION__\*\/(.*?);/)[1]).token;
  assert.equal((await fetch(ready.url+'api/patch-schedule')).status,403);assert.equal((await fetch(ready.url+'api/patch-schedule',{headers:{'X-JO9-Token':token,Origin:'https://other.invalid'}})).status,403);
  const first=await(await fetch(ready.url+'api/patch-schedule',{headers:{'X-JO9-Token':token}})).json();

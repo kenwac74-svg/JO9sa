@@ -30,7 +30,7 @@ export function createGeneralDbView(api){
   if(b.dataset.gdbRow!==undefined){if(st.dirty&&!window.confirm('저장하지 않은 공통 문장을 버리고 다른 항목을 열까요?'))return;st.detail=st.rows[Number(b.dataset.gdbRow)];st.draft=st.detail.text;st.dirty=false;st.message='';list();detail();}
   if(b.dataset.gdbPage){st.offset=Math.max(0,st.offset+Number(b.dataset.gdbPage)*30);search();}
   const a=b.dataset.gdbAction;if(a==='search'){st.offset=0;return search();}
-  if(a==='use'&&st.detail){const sim=globalThis.__jo9StudioApi?.charView;if(sim?.useGeneralRow){sim.useGeneralRow({...st.detail,text:st.draft});api.switchTab('character');}return;}
+  if(a==='use'&&st.detail){const row={...st.detail,text:st.draft};if(!await api.switchTab('character'))return;const sim=globalThis.__jo9StudioApi?.charView;if(sim?.useGeneralRow)sim.useGeneralRow(row);return;}
   if((a==='preview'||a==='save')&&st.detail){const origin=st.detail.id,sent=st.draft,revision=st.detail.revision;try{const r=await call(endpoint+'/save',{id:origin,text:sent,revision,dryRun:a==='preview'});if(r.saved)search();if(st.detail?.id!==origin)return;st.message=r.saved?'저장했습니다.':r.changes.length?'이 문장 1개를 변경합니다.':'변경 없음';if(r.saved){st.detail=r.row;if(st.draft===sent)st.draft=r.row.text;st.dirty=st.draft!==r.row.text;}else if(st.draft!==sent)st.message='편집 내용이 바뀌었습니다. 다시 변경 보기를 눌러 주세요.';detail();}catch(err){if(st.detail?.id===origin){st.message=err.message;detail();}}}
  });
  let started=false;new MutationObserver(()=>{if(!root.hidden&&!started){started=true;call(endpoint+'/meta').then(m=>{st.meta=m;frame();search();}).catch(err=>{started=false;root.textContent=err.message;});}}).observe(root,{attributes:true,attributeFilter:['hidden']});

@@ -1,0 +1,57 @@
+{
+  "id": "2026-11-17_duplicato_spell_manual",
+  "description": "Add Duplicato Essentia to the existing spell manual index and show factual spell requirements, preserving cached-save access and all game progression.",
+  "status": "APPROVED",
+  "before_sha256": "18e4b1138bc249177ae0e7bfe0f3fbdd37947cdf36847770336d7c1a75686900",
+  "after_sha256": "6c55e459be43359b50660344c936a4843c3a470c8fc89ba96d3927d27620cda6",
+  "edits": [
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "if $args[0] = 'library_menu_reload': jump 'jo9_library_menu_options'",
+      "new": "if $args[0] = 'library_menu_reload': jump 'jo9_library_menu_options'\r\n! JO9 MOD START DUPLICATO_MANUAL_DISPATCH_20261117\r\nif $args[0] = 'jo9_duplicato_spellbook': jump 'jo9_duplicato_spellbook'\r\n! JO9 MOD END DUPLICATO_MANUAL_DISPATCH_20261117",
+      "count": 1,
+      "patchId": "DUPLICATO_MANUAL_DISPATCH_20261117"
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "!spellbook\r\n$spell_book[0] = {",
+      "new": "!spellbook\r\n! JO9 MOD START DUPLICATO_MANUAL_INDEX_20261117\r\n:jo9_duplicato_spellbook\r\n! JO9 MOD END DUPLICATO_MANUAL_INDEX_20261117\r\n$spell_book[0] = {",
+      "count": 1,
+      "patchId": "DUPLICATO_MANUAL_INDEX_20261117"
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tfunc('$menu', 'interaction', $menu_item_veritasspellbook, menu_veritasspellbook, '센텐티아 베리타스')",
+      "new": "\tfunc('$menu', 'interaction', $menu_item_veritasspellbook, menu_veritasspellbook, '센텐티아 베리타스')\r\n\t! JO9 MOD START DUPLICATO_MANUAL_MENU_20261117\r\n\tlocal $jo9_duplicato_manual_icon = '<li style=\"background: url(''content/pic/ui/legacy_overhaul/Duplicato_Essentia.png'') no-repeat left top;\">'\r\n\tfunc('$menu', 'interaction', $jo9_duplicato_manual_icon, 62111, '듀플리카토 에센티아')\r\n\t! JO9 MOD END DUPLICATO_MANUAL_MENU_20261117",
+      "count": 1,
+      "patchId": "DUPLICATO_MANUAL_MENU_20261117"
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "}\r\n\r\n!own laboratory",
+      "new": "}\r\n! JO9 MOD START DUPLICATO_MANUAL_RELOAD_EXIT_20261117\r\nif $args[0] = 'jo9_duplicato_spellbook': exit\r\n! JO9 MOD END DUPLICATO_MANUAL_RELOAD_EXIT_20261117\r\n\r\n!own laboratory",
+      "count": 1,
+      "patchId": "DUPLICATO_MANUAL_RELOAD_EXIT_20261117"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "if interaction = menu_spellbook:\r\n\tnpc = 0\r\n\tcopyarr '$display_options', '$spell_book'",
+      "new": "if interaction = menu_spellbook:\r\n\tnpc = 0\r\n\t! JO9 MOD START DUPLICATO_MANUAL_CACHE_REFRESH_20261117\r\n\tgs '#options', 'jo9_duplicato_spellbook'\r\n\t! JO9 MOD END DUPLICATO_MANUAL_CACHE_REFRESH_20261117\r\n\tcopyarr '$display_options', '$spell_book'",
+      "count": 1,
+      "patchId": "DUPLICATO_MANUAL_CACHE_REFRESH_20261117"
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "IF interaction = 82:\r\n $return_lock  = 'shop_general'\r\n copyarr '$text', '$Revelio_help'\r\nEND",
+      "new": "IF interaction = 82:\r\n $return_lock  = 'shop_general'\r\n copyarr '$text', '$Revelio_help'\r\nEND\r\n! JO9 MOD START DUPLICATO_MANUAL_PAGE_20261117\r\nif interaction = 62111:\r\n $return_lock = 'shop_general'\r\n txt_count = 2\r\n $text[1] = '<br> 듀플리카토 에센티아, 비용 : $900<br><br>조수에게서 발견한 긍정 재능 한 가지를 노예에게 복사한다. 조수의 원래 재능은 유지되며, 노예는 복사한 재능을 발견한 상태로 받는다.<br><br>시전 조건 : 마법력 B등급 이상, 활동 가능한 조수와 노예, 두 사람의 상호 친밀도 각각 40 이상. 시전자·조수·노예가 각각 행동력 1을 소모한다.'\r\n $text[2] = '<br> 듀플리카토 에센티아 · 사용 제한과 재능<br><br>하루에 한 번 사용할 수 있으며, 노예 한 사람은 평생 한 번만 받을 수 있다. 노예가 이미 가진 같은 긍정 재능은 복사할 수 없다. 복사할 재능과 상충하는 특성은 적용할 때 제거되며, 확인창에서 미리 볼 수 있다.<br><br>복사 가능한 재능 : 운동광, 달변가, 순종적인 동물, 순종적인 말, 미련한 소, 타고난 간호사, 타고난 하녀, 예민한 미각, 타고난 투사, 타고난 마법사, 타고난 미적감각, 절대음감, 발레리나(이국적인 댄서), 보좌관.'\r\nend\r\n! JO9 MOD END DUPLICATO_MANUAL_PAGE_20261117",
+      "count": 1,
+      "patchId": "DUPLICATO_MANUAL_PAGE_20261117"
+    }
+  ]
+}

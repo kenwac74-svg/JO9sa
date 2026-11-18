@@ -74,7 +74,10 @@ function isDialogue(e) {
   if (/^[a-z0-9 _-]+$/.test(t) && /[-_]/.test(t)) return false; // 'icon tooltip-right' 같은 CSS 클래스 목록
   return (t.match(/\p{L}{2,}/gu)||[]).length>=3; // 영어·러시아어 등 문장(세 단어 이상)
 }
+const entriesCache=new WeakMap(); // JO9 MOD FEMALE_TEXT_WORK_SCOPE_20261118
 function entries(doc) {
+  const cached=entriesCache.get(doc);
+  if(cached&&cached.hash===doc.hash&&cached.lines.length===doc.lines.length&&cached.lines.every((line,i)=>line===doc.lines[i]))return cached.entries;
   const out=[];
   for (const loc of doc.locations) {
     const desc=shift(doc.lines[loc.desc],5);
@@ -82,7 +85,8 @@ function entries(doc) {
     const body=shift(doc.lines[loc.body],5);
     for (const entry of literals(body)) { const e={ ...entry,location:loc.name,locationIndex:loc.index,field:'body',fieldIndex:loc.body }; e.dialogue=isDialogue(e); out.push(e); }
   }
-  return out;
+  const result=require('./work-scope.cjs').annotate(doc,out);
+  entriesCache.set(doc,{hash:doc.hash,lines:doc.lines.slice(),entries:result});return result;
 }
 // 바뀐 문자열과 앞뒤 맥락을 필드 안에서 한 번만 나오는 최소 구간으로 잘라 mods(old/new/count 1)용 조각을 만든다.
 function minimalEdit(oldField,newField,start,oldEnd,newEnd) {
@@ -159,13 +163,14 @@ function restoreDisplayTokens(doc,text,original='') {
     return [...choices][0];
   })).join('');
 }
-function prepare(doc, selection, replacement) {
+function prepare(doc, selection, replacement, options={}) {
   if (typeof replacement !== 'string' || !replacement.trim()) throw Error('수정문을 넣어 주세요.');
   if (replacement.length > 1000000 || /[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(replacement)) throw Error('수정문에 지원하지 않는 제어문자가 있습니다.');
-  replacement = replacement.replace(/\r\n?/g,'\n');
+  if(!options.preserveLineEndings) replacement = replacement.replace(/\r\n?/g,'\n');
   if (selection.hash !== doc.hash) throw Error('검색 이후 QSP가 변경되었습니다. 다시 검색해 주세요.');
   const entry=entries(doc).find(e=>e.fieldIndex===selection.fieldIndex && e.start===selection.start && e.end===selection.end);
   if (!entry || entry.text !== selection.text) throw Error('선택한 원문 위치가 달라졌습니다. 다시 검색해 주세요.');
+  require('./work-scope.cjs').assertEntry(entry,options);
   replacement=restoreDisplayTokens(doc,replacement,entry.text);
   if (entry.text === replacement) throw Error('원문과 수정문이 같습니다.');
   validateMarkup(replacement);

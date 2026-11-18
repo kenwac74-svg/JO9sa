@@ -23,12 +23,18 @@ function build(doc,entries,h){
    const owner=a.blocks.filter(b=>b.kind==='if'&&b.start<=outputStart&&b.end>outputStart).sort((x,y)=>y.start-x.start)[0];
    if(owner){const scope=a.scenes.find(s=>s.start===owner.start&&s.id!=='root'),refs=[...statementSafe.slice(rhs,outputEnd).matchAll(/\$\w+/g)];
     const scopedRef=e=>({...ref(e),conditions:a.blocks.filter(b=>b.kind==='if'&&b.start>owner.start&&e.start>=b.start&&e.start<b.end).map(b=>b.condition)});
-    const parts=refs.map(token=>{const key=token[0].toLowerCase(),family=es.filter(e=>scalar(body,e)===key&&e.start>=owner.start&&e.end<outputStart);const first=family.find(e=>h.links(e.text).length)||family[0];return {key,position:rhs+token.index,entry:first?scopedRef(first):null,alternatives:family.filter(e=>e!==first).map(scopedRef),choice:!!first&&h.links(first.text).length>0};});
-    const direct=es.filter(e=>e.start>=rhs&&e.end<outputEnd&&e.dialogue);parts.push(...direct.map(e=>({position:e.start,entry:ref(e),alternatives:[],choice:h.links(e.text).length>0})));parts.sort((a,b)=>a.position-b.position);
+    const parts=refs.flatMap(token=>{const key=token[0].toLowerCase(),family=es.filter(e=>scalar(body,e)===key&&e.start>=owner.start&&e.end<outputStart);const first=family.find(e=>h.links(e.text).length)||family[0],base={key,position:rhs+token.index,entry:first?scopedRef(first):null,alternatives:family.filter(e=>e!==first).map(scopedRef),choice:!!first&&h.links(first.text).length>0};
+     const appended=es.filter(e=>e.start>=owner.start&&e.end<outputStart&&e.text.includes('data-jo9-choice=')&&body.slice(body.lastIndexOf('\n',e.start-1)+1,e.start-1).match(/(\$[\w]+)\s*\+=\s*$/)?.[1].toLowerCase()===key);
+     return [base,...appended.map((e,i)=>({key:key+':choice:'+e.start,position:base.position+(i+1)/(appended.length+1),entry:scopedRef(e),alternatives:[],choice:true,addedChoice:true}))];});
+    const direct=es.filter(e=>e.start>=rhs&&e.end<outputEnd&&e.dialogue);parts.push(...direct.map(e=>({position:e.start,entry:ref(e),alternatives:[],choice:h.links(e.text).length>0})));
+    // A literal $text result can itself receive choices after its assignment.
+    const nextWrite=statementSafe.slice(outputEnd,owner.end).search(/\$text\s*=(?!=)/i),appendEnd=nextWrite<0?owner.end:outputEnd+nextWrite;
+    if(direct.length)for(const e of es.filter(e=>e.start>outputEnd&&e.end<appendEnd&&e.text.includes('data-jo9-choice=')&&/\$text\s*\+=\s*$/i.test(body.slice(body.lastIndexOf('\n',e.start-1)+1,e.start-1))))parts.push({position:e.start,entry:scopedRef(e),alternatives:[],choice:true,addedChoice:true});
+    parts.sort((a,b)=>a.position-b.position);
     outputs.push({offset:outputStart,owner,scope,parts,direct});
    }
   }
-  const menus=outputs.filter(o=>o.parts.filter(p=>p.choice).length>=2);
+  const menus=outputs.filter(o=>o.parts.filter(p=>p.choice&&!p.addedChoice).length>=2);
   // Ambiguous or unrelated scalar writes retain the existing source navigator.
   if(menus.length!==1||outputs.some(o=>!o.scope)||outputs.length>40)return null;
   const menu=menus[0],outer=a.blocks.find(b=>b.predicate&&/^\$?args\[0\]$/i.test(b.predicate.key)&&b.start<=menu.offset&&b.end>menu.offset);

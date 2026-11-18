@@ -1,0 +1,97 @@
+{
+  "id": "2026-11-17_duplicato_qsp57_token_scan",
+  "description": "Use mode-specific return initialization, two-argument delimiter scans and explicit string functions for QSP5.7 Duplicato selection; lower spark cost from900 to300 as requested. Preserve talent rules, conflicts, AP costs and daily/recipient limits.",
+  "status": "CANDIDATE",
+  "before_sha256": "6c55e459be43359b50660344c936a4843c3a470c8fc89ba96d3927d27620cda6",
+  "after_sha256": "0ab01ad99eb642c9335e7c0e098acddea0b10f649d5f8f6fcbb1ddde6d122040",
+  "edits": [
+    {
+      "location": "jo9_duplicato_traits",
+      "field": "body",
+      "old": "result=0\r\n$result=''",
+      "new": "! JO9 MOD START DUPLICATO_RETURN_CHANNEL_QSP57_20261117\r\nif $j9de_mode='pair' or $j9de_mode='eligible' or $j9de_mode='apply':\r\n result=0\r\nelse\r\n $result=''\r\nend\r\n! JO9 MOD END DUPLICATO_RETURN_CHANNEL_QSP57_20261117",
+      "count": 1,
+      "patchId": "DUPLICATO_TOKEN_SCAN_QSP57_20261117"
+    },
+    {
+      "location": "jo9_duplicato_traits",
+      "field": "body",
+      "old": "if $j9de_mode='list':\r\n if $j9de_reason!'': exit\r\n local $j9de_scan, $j9de_item, $j9de_list\r\n $j9de_scan=mid($j9de_keys,2,len($j9de_keys)-2)\r\n :j9de_list_loop\r\n $j9de_item=strfind($j9de_scan,'^([^|]+)',1)\r\n if $j9de_item!'':\r\n  if func('jo9_duplicato_traits','eligible',$j9de_item)=1:\r\n   if $j9de_list!'': $j9de_list+='|'\r\n   $j9de_list+=$j9de_item\r\n  end\r\n  $j9de_scan=mid($j9de_scan,len($j9de_item)+2)\r\n  jump 'j9de_list_loop'\r\n end\r\n $result=$j9de_list\r\n exit\r\nend\r\n",
+      "new": "if $j9de_mode='list':\r\n if $j9de_reason!'': exit\r\n ! JO9 MOD START DUPLICATO_TOKEN_SCAN_QSP57_20261117\r\n local $j9de_scan, $j9de_item, $j9de_list\r\n local j9de_separator\r\n $j9de_scan=$mid($j9de_keys,2,len($j9de_keys)-2)\r\n :j9de_list_loop\r\n if $j9de_scan!'':\r\n  j9de_separator=instr($j9de_scan,'|')\r\n  if j9de_separator=0:\r\n   $j9de_item=$j9de_scan\r\n   $j9de_scan=''\r\n  else\r\n   $j9de_item=$mid($j9de_scan,1,j9de_separator-1)\r\n   $j9de_scan=$mid($j9de_scan,j9de_separator+1)\r\n  end\r\n  if func('jo9_duplicato_traits','eligible',$j9de_item)=1:\r\n   if $j9de_list!'': $j9de_list+='|'\r\n   $j9de_list+=$j9de_item\r\n  end\r\n  jump 'j9de_list_loop'\r\n end\r\n $result=$j9de_list\r\n ! JO9 MOD END DUPLICATO_TOKEN_SCAN_QSP57_20261117\r\n exit\r\nend\r\n",
+      "count": 1,
+      "patchId": "DUPLICATO_TOKEN_SCAN_QSP57_20261117"
+    },
+    {
+      "location": "jo9_duplicato_traits",
+      "field": "body",
+      "old": "$j9de_old_label+=' (기존 값 '+str(j9de_value)+')'",
+      "new": "$j9de_old_label+=' (기존 값 '+$str(j9de_value)+')'",
+      "count": 1,
+      "patchId": "DUPLICATO_TOKEN_SCAN_QSP57_20261117"
+    },
+    {
+      "location": "jo9_duplicato",
+      "field": "body",
+      "old": "  :duplicato_list_loop\r\n  if _at <= len($list):\r\n   _end = instr($list, '|', _at)\r\n   if _end = 0: _end = len($list) + 1\r\n   $key = mid($list, _at, _end - _at)\r\n   if _count = 7:\r\n    func('$menu', '===END===')\r\n    func('$menu', '===BEGIN===', 'column_1')\r\n   end\r\n   $code = \"gt 'jo9_duplicato', 'preview', \" + $func('jo9_duplicato', 'quote', $key) + ', ' + $func('jo9_duplicato', 'quote', $func('jo9_duplicato', 'actor_token', 'slave')) + ', ' + $func('jo9_duplicato', 'quote', $func('jo9_duplicato', 'actor_token', 'assistant'))\r\n   $code = replace(replace($code, '&', '&amp;'), '\"', '&quot;')\r\n   func('$menu', 'exec', $j9de_icon, $code, $func('jo9_duplicato_traits', 'label', $key), '이 재능을 복사할 때 사라질 기존 특성을 확인합니다. 조수는 재능을 유지합니다.')\r\n   _count += 1\r\n   _at = _end + 1\r\n   jump 'duplicato_list_loop'\r\n  end\r\n",
+      "new": "  ! JO9 MOD START DUPLICATO_TOKEN_SCAN_QSP57_20261117\r\n  :duplicato_list_loop\r\n  if $list ! '':\r\n   _end = instr($list, '|')\r\n   if _end = 0:\r\n    $key = $list\r\n    $list = ''\r\n   else\r\n    $key = $mid($list, 1, _end - 1)\r\n    $list = $mid($list, _end + 1)\r\n   end\r\n   if _count = 7:\r\n    func('$menu', '===END===')\r\n    func('$menu', '===BEGIN===', 'column_1')\r\n   end\r\n   $code = \"gt 'jo9_duplicato', 'preview', \" + $func('jo9_duplicato', 'quote', $key) + ', ' + $func('jo9_duplicato', 'quote', $func('jo9_duplicato', 'actor_token', 'slave')) + ', ' + $func('jo9_duplicato', 'quote', $func('jo9_duplicato', 'actor_token', 'assistant'))\r\n   $code = replace(replace($code, '&', '&amp;'), '\"', '&quot;')\r\n   func('$menu', 'exec', $j9de_icon, $code, $func('jo9_duplicato_traits', 'label', $key), '이 재능을 복사할 때 사라질 기존 특성을 확인합니다. 조수는 재능을 유지합니다.')\r\n   _count += 1\r\n   jump 'duplicato_list_loop'\r\n  end\r\n  ! JO9 MOD END DUPLICATO_TOKEN_SCAN_QSP57_20261117\r\n",
+      "count": 1,
+      "patchId": "DUPLICATO_TOKEN_SCAN_QSP57_20261117"
+    },
+    {
+      "location": "jo9_duplicato",
+      "field": "body",
+      "old": " $result = str(j9de_actor_type) + '|' + str(j9de_actor_id) + '|' + str(len($j9de_actor_name)) + ':' + $j9de_actor_name + '|' + str(len($j9de_actor_ava)) + ':' + $j9de_actor_ava",
+      "new": " $result = $str(j9de_actor_type) + '|' + $str(j9de_actor_id) + '|' + $str(len($j9de_actor_name)) + ':' + $j9de_actor_name + '|' + $str(len($j9de_actor_ava)) + ':' + $j9de_actor_ava",
+      "count": 1,
+      "patchId": "DUPLICATO_TOKEN_SCAN_QSP57_20261117"
+    },
+    {
+      "location": "jo9_duplicato",
+      "field": "body",
+      "old": "   if sparks < 900:",
+      "new": "   if sparks < 300:",
+      "count": 1,
+      "patchId": "DUPLICATO_TOKEN_SCAN_QSP57_20261117"
+    },
+    {
+      "location": "jo9_duplicato",
+      "field": "body",
+      "old": "    $result = '900스파크가 필요합니다.'",
+      "new": "    $result = '300스파크가 필요합니다.'",
+      "count": 1,
+      "patchId": "DUPLICATO_TOKEN_SCAN_QSP57_20261117"
+    },
+    {
+      "location": "jo9_duplicato",
+      "field": "body",
+      "old": "  func('$menu', 'goto', $j9de_icon, 62110, 'menu_form', 'menu_form', '듀플리카토 에센티아($900)', '서로의 친밀도 40 이상. 발견한 조수의 재능 하나를 노예에게 복사합니다. 모두 행동력 1, 하루 1회, 수혜자는 평생 1회. 상충 특성은 사라집니다.')",
+      "new": "  func('$menu', 'goto', $j9de_icon, 62110, 'menu_form', 'menu_form', '듀플리카토 에센티아($300)', '서로의 친밀도 40 이상. 발견한 조수의 재능 하나를 노예에게 복사합니다. 모두 행동력 1, 하루 1회, 수혜자는 평생 1회. 상충 특성은 사라집니다.')",
+      "count": 1,
+      "patchId": "DUPLICATO_TOKEN_SCAN_QSP57_20261117"
+    },
+    {
+      "location": "jo9_duplicato",
+      "field": "body",
+      "old": "  sparks -= 900",
+      "new": "  sparks -= 300",
+      "count": 1,
+      "patchId": "DUPLICATO_TOKEN_SCAN_QSP57_20261117"
+    },
+    {
+      "location": "jo9_duplicato",
+      "field": "body",
+      "old": "  $text[1] = '<b>듀플리카토 에센티아</b><br>조수의 재능 [' + $label + ']을 노예에게 새겼습니다. 조수의 재능은 그대로입니다.<br>900스파크와 세 사람의 행동력 1을 각각 소모했습니다.'",
+      "new": "  $text[1] = '<b>듀플리카토 에센티아</b><br>조수의 재능 [' + $label + ']을 노예에게 새겼습니다. 조수의 재능은 그대로입니다.<br>300스파크와 세 사람의 행동력 1을 각각 소모했습니다.'",
+      "count": 1,
+      "patchId": "DUPLICATO_TOKEN_SCAN_QSP57_20261117"
+    },
+    {
+      "location": "jo9_duplicato",
+      "field": "body",
+      "old": "  $text[1] = '<b>듀플리카토 에센티아</b><br>[' + $label + ']을 조수에게서 노예에게 복사합니다. 조수의 재능은 그대로입니다.<br>900스파크 · 주인공/노예/조수 각각 행동력 1 · 하루 1회 · 수혜자는 평생 1회.'",
+      "new": "  $text[1] = '<b>듀플리카토 에센티아</b><br>[' + $label + ']을 조수에게서 노예에게 복사합니다. 조수의 재능은 그대로입니다.<br>300스파크 · 주인공/노예/조수 각각 행동력 1 · 하루 1회 · 수혜자는 평생 1회.'",
+      "count": 1,
+      "patchId": "DUPLICATO_TOKEN_SCAN_QSP57_20261117"
+    }
+  ]
+}

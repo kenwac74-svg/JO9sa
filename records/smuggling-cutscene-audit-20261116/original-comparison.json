@@ -1,0 +1,950 @@
+{
+  "created": "2026-11-16",
+  "method": "Read-only QSP parse/shift; no game/source changes; archived target QSP held in memory only",
+  "findings": [
+    "6229 detection has no dedicated special image or background assignment. It sets NPC master_skups, text[1], return_lock guild while leaving place smugglers_den.",
+    "WORK branch logic, excluding dialogue formatting and provenance comments, is compared byte-for-byte after line normalization below.",
+    "The common city interaction screen resolves master_skups through the master_scoops NPC image and renders content/pic/characters/master_scoops.png when nsfw is not 1."
+  ],
+  "versions": [
+    {
+      "label": "Archived v2.3 Kor_nosex",
+      "file": "G:/somi/JO9O/Jack O Nine Tails v2.3 Kor_nosex.zip :: game/jack.qsp",
+      "sha256": "070dad711ec21038684c713e7e4999bd913741aa953be4d16ebf123ffccf77dc",
+      "locationCount": 243,
+      "branchStartLine": 10103,
+      "branchEndLine": 10141,
+      "branch": "if interaction_city = 6229:\n\tnpc = 1\n\t$npc_id = 'bararaika'\n\t$place = 'smugglers_den'\n\t$return_lock = 'shop_general'\n\tcreating_clone = 1\n\tgs 'generate_clone'\n\tgs 'stock_to_slave_nogt'\n\tcreating_clone = 0\n\tsparks -= 2000\n\tif snake_amulet_on = 0 and (brand_reputation > 2 or guild_reputation > 2):\n\t\tnpc = 1\n\t\t$npc_id = 'master_skups'\n\t\tbrand_rate -= 10\n\t\tguild_reputation_rate -= 10\n\t\tfine = max(500, sparks/3) &! minimum moneylender loan is 600, so as long as the slaver is not in debt, survival should be possible - ImperatorAugustus\n\t\tsparks -= fine\n\t\t$text[1] = '[마스터 스컵스]<br> 우리 조합이 당신같은 중요 인사를 감시 안하리라 여겼습니까? 어리석군! 저는 정평이 난 조합원이 이런 멍청한 편리나 취하리라곤 상상 못했습니다. 당장 이 <<fine>>$ 벌금을 지불하셔야 할 겁니다. 이 일로 떨어진 신의를 다시 쌓으려면 꽤 시간이 걸릴겁니다! <<$master_name>>!</div>'\n\t\t$return_lock = 'guild'\n\t\tdynamic $clear_slave_instance, 'stock'\n\t\thouse_mess_rate += 5\n\t\tmaster_hygiene_rate += 20\n\t\tmaster_excitement_rate = 0\n\t\tmaster_excitement = 0\n\t\tmaster_moodlet['neg_wealth'] = 3\n\t\tdynamic $master_energy_drop\n\t\tdynamic $master_energy_drop\n\t\tif assistant_state = CONST_INT['slave_exist']:\n\t\t\tassistant_rate['hygiene'] += 20\n\t\t\tdynamic $assistant_energy_drop\n\t\t\tdynamic $assistant_energy_drop\n\t\tend\n\telse\n\t\tbrand_rate -= 5\n\t\tguild_reputation_rate -= 5\n\t\t$text[1] = '[발랄라이카]<br> 운이 좋은 사내네, 막 들여놓은 참이었어. 스파크 먼저 건네고 여잘 데려가.</div>'\n\tend\nend",
+      "logicSha256": "c9dc248e76ed679664ba0992a9cc184e260449b0f714b3f85ba98bdf0baa15d5",
+      "dedicatedSpecialImageInBranch": false,
+      "masterScoopsMapping": {
+        "line": 412,
+        "text": "$npc_image['master_skups'] = 'master_scoops'"
+      },
+      "npcImageRendering": {
+        "line": 74,
+        "lines": [
+          "\t*p '<div id = \"side_panel_text\"><<$place_info[$place]>></div>'",
+          "else",
+          "\t$info_bar = ''",
+          "\tif nsfw = 1:",
+          "\t\t*p '<div id = \"bg\"><img src=\"content\\pic\\bg\\empty.png\"></div>'",
+          "\telseif $npc_image[$npc_id] ! '':",
+          "\t\t*p '<div id = \"bg\"><img src=\"content\\pic\\characters\\<<$npc_image[$npc_id]>>.png\"></div>'",
+          "\tend",
+          "\t*p '<div id = \"side_panel_main\"><center><div style=\"font-size: 40px;\"><<$npc_name[$npc_id]>></div><<$npc_status[$npc_id]>><br>'",
+          "\t*nl '참고 정보:</center></div>'"
+        ]
+      },
+      "cityEnd": [
+        "",
+        "end",
+        "",
+        "gt 'interaction_result_city'",
+        ""
+      ],
+      "resultEnd": [
+        "  gt 'item_buy'",
+        "  else",
+        "  $text[1] = '가격은 <<item_price[$item_id]>> 스파크다 — 가격이 지금 네가 감당할 수 있는 것보다 조금 비싸지만, 그건 쉽게 해결된다. 노예 두어 명만 팔면 된다…'",
+        " END",
+        "END",
+        "",
+        "!completion tags",
+        "city_already_done_today[$str(interaction_city)] += 1",
+        "city_already_done_ever[$str(interaction_city)] += 1",
+        "",
+        "if txt_is_set_from_save = 0: txt = 1",
+        "gt 'interaction_screen_city'",
+        ""
+      ],
+      "clearHelper": {
+        "line": 476,
+        "text": "$clear_slave_instance = {\n\t_counter = arrsize('$slave_vars')\n\t:_clear_slave_instance_loop\n\t\t_counter -= 1\n\t\tkillvar $replace($slave_vars[_counter], 'instance', $args[0])\n\tif _counter > 0: jump '_clear_slave_instance_loop'\n\tkillvar '_counter'\n\n\tdynamic \"\n\t\t$<<$args[0]>>['wpn'] = 'безоружный' &! fists\n\t\t$<<$args[0]>>['right_wpn'] = 'безоружный' &! fists\n\t\t$<<$args[0]>>['left_wpn'] = 'безоружный' &! fists\n\t\t$<<$args[0]>>['armor'] = 'без_брони' &! without armor\n\t\t$<<$args[0]>>['cloth'] = 'голая' &! naked\n\t\"\n\t\n\t! update strings that may contain if statements or subexpressions referring to the cleared slave instance\n\n!\tif hero_choice > 100: gs '#var_base_woman'\n\t\n\tgs '#var_base'\n\tgs '#txt_man'   &! after #var_base\n\tgs '#txt_2_man' &! after #var_base\n!\tif hero_choice > 100: gs '#txt_woman' &! after #var_base\n!\tif hero_choice > 100: gs '#txt_2_woman' &! after #var_base\nend\nend\n}",
+        "sha256": "f5477dd97448875b8c9924d9ad8a92478277ed9f0c7b50d46dd8349220d6a53e",
+        "callees": [
+          {
+            "name": "#var_base",
+            "lineCount": 2705,
+            "exactTextReferences": [],
+            "npcAssignments": [],
+            "killvars": [
+              {
+                "line": 108,
+                "text": "\tkillvar '$cane_sound'"
+              },
+              {
+                "line": 109,
+                "text": "\tkillvar '$spank_sound'"
+              },
+              {
+                "line": 110,
+                "text": "\tkillvar '$slap_sound'"
+              },
+              {
+                "line": 111,
+                "text": "\tkillvar '$whip_sound'"
+              },
+              {
+                "line": 112,
+                "text": "\tkillvar '$slopy'"
+              },
+              {
+                "line": 113,
+                "text": "\tkillvar '$petting_sound'"
+              },
+              {
+                "line": 114,
+                "text": "\tkillvar '$kiss_sound'"
+              },
+              {
+                "line": 115,
+                "text": "\tkillvar '$bj_sound'"
+              },
+              {
+                "line": 116,
+                "text": "\tkillvar '$throatfuck_sound'"
+              },
+              {
+                "line": 117,
+                "text": "\tkillvar '$fuck_sound'"
+              },
+              {
+                "line": 118,
+                "text": "\tkillvar '$assfuck_sound'"
+              },
+              {
+                "line": 119,
+                "text": "\tkillvar '$fisting_sound'"
+              },
+              {
+                "line": 120,
+                "text": "\tkillvar '$soft_pain'"
+              },
+              {
+                "line": 121,
+                "text": "\tkillvar '$pain'"
+              },
+              {
+                "line": 122,
+                "text": "\tkillvar '$severe_pain'"
+              },
+              {
+                "line": 123,
+                "text": "\tkillvar '$urine'"
+              },
+              {
+                "line": 124,
+                "text": "\tkillvar '$kopro_sound'"
+              },
+              {
+                "line": 125,
+                "text": "\tkillvar '$seduce_sound'"
+              },
+              {
+                "line": 126,
+                "text": "\tkillvar '$masturbate_sound'"
+              },
+              {
+                "line": 127,
+                "text": "\tkillvar '$moan'"
+              },
+              {
+                "line": 128,
+                "text": "\tkillvar '$cry'"
+              },
+              {
+                "line": 129,
+                "text": "\tkillvar '$fist_hit_sound'"
+              },
+              {
+                "line": 130,
+                "text": "\tkillvar '$drowning'"
+              },
+              {
+                "line": 131,
+                "text": "\tkillvar '$licking_sound'"
+              },
+              {
+                "line": 132,
+                "text": "\tkillvar '$orgasm_sound'"
+              },
+              {
+                "line": 133,
+                "text": "\tkillvar '$panik_sound'"
+              },
+              {
+                "line": 134,
+                "text": "\tkillvar '$gag_sound'"
+              },
+              {
+                "line": 135,
+                "text": "\tkillvar '$clamps'"
+              },
+              {
+                "line": 2194,
+                "text": "killvar '$tmp'"
+              }
+            ]
+          },
+          {
+            "name": "#txt_man",
+            "lineCount": 1742,
+            "exactTextReferences": [],
+            "npcAssignments": [],
+            "killvars": []
+          },
+          {
+            "name": "#txt_2_man",
+            "lineCount": 361,
+            "exactTextReferences": [],
+            "npcAssignments": [],
+            "killvars": [
+              {
+                "line": 305,
+                "text": "\tkillvar '$spectre_quest'"
+              },
+              {
+                "line": 331,
+                "text": "\tkillvar '$julia_meeting'"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "label": "JO9O installed",
+      "file": "G:/somi/JO9O/game/jack.qsp",
+      "sha256": "26e15aaf30b6226a2883c6b532a6ee4eed34791110618597d234bb7d6fa3e052",
+      "locationCount": 248,
+      "branchStartLine": 10104,
+      "branchEndLine": 10142,
+      "branch": "if interaction_city = 6229:\n\tnpc = 1\n\t$npc_id = 'bararaika'\n\t$place = 'smugglers_den'\n\t$return_lock = 'shop_general'\n\tcreating_clone = 1\n\tgs 'generate_clone'\n\tgs 'stock_to_slave_nogt'\n\tcreating_clone = 0\n\tsparks -= 2000\n\tif snake_amulet_on = 0 and (brand_reputation > 2 or guild_reputation > 2):\n\t\tnpc = 1\n\t\t$npc_id = 'master_skups'\n\t\tbrand_rate -= 10\n\t\tguild_reputation_rate -= 10\n\t\tfine = max(500, sparks/3) &! minimum moneylender loan is 600, so as long as the slaver is not in debt, survival should be possible - ImperatorAugustus\n\t\tsparks -= fine\n\t\t$text[1] = '[마스터 스컵스]<br> 우리 조합이 당신같은 중요 인사를 감시 안하리라 여겼습니까? 어리석군! 저는 정평이 난 조합원이 이런 멍청한 편리나 취하리라곤 상상 못했습니다. 당장 이 <<fine>>$ 벌금을 지불하셔야 할 겁니다. 이 일로 떨어진 신의를 다시 쌓으려면 꽤 시간이 걸릴겁니다! <<$master_name>>!</div>'\n\t\t$return_lock = 'guild'\n\t\tdynamic $clear_slave_instance, 'stock'\n\t\thouse_mess_rate += 5\n\t\tmaster_hygiene_rate += 20\n\t\tmaster_excitement_rate = 0\n\t\tmaster_excitement = 0\n\t\tmaster_moodlet['neg_wealth'] = 3\n\t\tdynamic $master_energy_drop\n\t\tdynamic $master_energy_drop\n\t\tif assistant_state = CONST_INT['slave_exist']:\n\t\t\tassistant_rate['hygiene'] += 20\n\t\t\tdynamic $assistant_energy_drop\n\t\t\tdynamic $assistant_energy_drop\n\t\tend\n\telse\n\t\tbrand_rate -= 5\n\t\tguild_reputation_rate -= 5\n\t\t$text[1] = '[발랄라이카]<br> 운이 좋은 사내네, 막 들여놓은 참이었어. 스파크 먼저 건네고 여잘 데려가.</div>'\n\tend\nend",
+      "logicSha256": "c9dc248e76ed679664ba0992a9cc184e260449b0f714b3f85ba98bdf0baa15d5",
+      "dedicatedSpecialImageInBranch": false,
+      "masterScoopsMapping": {
+        "line": 413,
+        "text": "$npc_image['master_skups'] = 'master_scoops'"
+      },
+      "npcImageRendering": {
+        "line": 75,
+        "lines": [
+          "\t*p '<div id = \"side_panel_text\"><<$place_info[$place]>></div>'",
+          "else",
+          "\t$info_bar = ''",
+          "\tif nsfw = 1:",
+          "\t\t*p '<div id = \"bg\"><img src=\"content\\pic\\bg\\empty.png\"></div>'",
+          "\telseif $npc_image[$npc_id] ! '':",
+          "\t\t*p '<div id = \"bg\"><img src=\"content\\pic\\characters\\<<$npc_image[$npc_id]>>.png\"></div>'",
+          "\tend",
+          "\t*p '<div id = \"side_panel_main\"><center><div style=\"font-size: 40px;\"><<$npc_name[$npc_id]>></div><<$npc_status[$npc_id]>><br>'",
+          "\t*nl '참고 정보:</center></div>'"
+        ]
+      },
+      "cityEnd": [
+        "",
+        "end",
+        "",
+        "gt 'interaction_result_city'",
+        ""
+      ],
+      "resultEnd": [
+        "  gt 'item_buy'",
+        "  else",
+        "  $text[1] = '가격은 <<item_price[$item_id]>> 스파크다 — 가격이 지금 네가 감당할 수 있는 것보다 조금 비싸지만, 그건 쉽게 해결된다. 노예 두어 명만 팔면 된다…'",
+        " END",
+        "END",
+        "",
+        "!completion tags",
+        "city_already_done_today[$str(interaction_city)] += 1",
+        "city_already_done_ever[$str(interaction_city)] += 1",
+        "",
+        "if txt_is_set_from_save = 0: txt = 1",
+        "gt 'interaction_screen_city'",
+        ""
+      ],
+      "clearHelper": {
+        "line": 477,
+        "text": "$clear_slave_instance = {\n\t_counter = arrsize('$slave_vars')\n\t:_clear_slave_instance_loop\n\t\t_counter -= 1\n\t\tkillvar $replace($slave_vars[_counter], 'instance', $args[0])\n\tif _counter > 0: jump '_clear_slave_instance_loop'\n\tkillvar '_counter'\n\n\tdynamic \"\n\t\t$<<$args[0]>>['wpn'] = 'безоружный' &! fists\n\t\t$<<$args[0]>>['right_wpn'] = 'безоружный' &! fists\n\t\t$<<$args[0]>>['left_wpn'] = 'безоружный' &! fists\n\t\t$<<$args[0]>>['armor'] = 'без_брони' &! without armor\n\t\t$<<$args[0]>>['cloth'] = 'голая' &! naked\n\t\"\n\t\n\t! update strings that may contain if statements or subexpressions referring to the cleared slave instance\n\n!\tif hero_choice > 100: gs '#var_base_woman'\n\t\n\tgs '#var_base'\n\tgs '#txt_man'   &! after #var_base\n\tgs '#txt_2_man' &! after #var_base\n!\tif hero_choice > 100: gs '#txt_woman' &! after #var_base\n!\tif hero_choice > 100: gs '#txt_2_woman' &! after #var_base\nend\nend\n}",
+        "sha256": "f5477dd97448875b8c9924d9ad8a92478277ed9f0c7b50d46dd8349220d6a53e",
+        "callees": [
+          {
+            "name": "#var_base",
+            "lineCount": 2706,
+            "exactTextReferences": [],
+            "npcAssignments": [],
+            "killvars": [
+              {
+                "line": 109,
+                "text": "\tkillvar '$cane_sound'"
+              },
+              {
+                "line": 110,
+                "text": "\tkillvar '$spank_sound'"
+              },
+              {
+                "line": 111,
+                "text": "\tkillvar '$slap_sound'"
+              },
+              {
+                "line": 112,
+                "text": "\tkillvar '$whip_sound'"
+              },
+              {
+                "line": 113,
+                "text": "\tkillvar '$slopy'"
+              },
+              {
+                "line": 114,
+                "text": "\tkillvar '$petting_sound'"
+              },
+              {
+                "line": 115,
+                "text": "\tkillvar '$kiss_sound'"
+              },
+              {
+                "line": 116,
+                "text": "\tkillvar '$bj_sound'"
+              },
+              {
+                "line": 117,
+                "text": "\tkillvar '$throatfuck_sound'"
+              },
+              {
+                "line": 118,
+                "text": "\tkillvar '$fuck_sound'"
+              },
+              {
+                "line": 119,
+                "text": "\tkillvar '$assfuck_sound'"
+              },
+              {
+                "line": 120,
+                "text": "\tkillvar '$fisting_sound'"
+              },
+              {
+                "line": 121,
+                "text": "\tkillvar '$soft_pain'"
+              },
+              {
+                "line": 122,
+                "text": "\tkillvar '$pain'"
+              },
+              {
+                "line": 123,
+                "text": "\tkillvar '$severe_pain'"
+              },
+              {
+                "line": 124,
+                "text": "\tkillvar '$urine'"
+              },
+              {
+                "line": 125,
+                "text": "\tkillvar '$kopro_sound'"
+              },
+              {
+                "line": 126,
+                "text": "\tkillvar '$seduce_sound'"
+              },
+              {
+                "line": 127,
+                "text": "\tkillvar '$masturbate_sound'"
+              },
+              {
+                "line": 128,
+                "text": "\tkillvar '$moan'"
+              },
+              {
+                "line": 129,
+                "text": "\tkillvar '$cry'"
+              },
+              {
+                "line": 130,
+                "text": "\tkillvar '$fist_hit_sound'"
+              },
+              {
+                "line": 131,
+                "text": "\tkillvar '$drowning'"
+              },
+              {
+                "line": 132,
+                "text": "\tkillvar '$licking_sound'"
+              },
+              {
+                "line": 133,
+                "text": "\tkillvar '$orgasm_sound'"
+              },
+              {
+                "line": 134,
+                "text": "\tkillvar '$panik_sound'"
+              },
+              {
+                "line": 135,
+                "text": "\tkillvar '$gag_sound'"
+              },
+              {
+                "line": 136,
+                "text": "\tkillvar '$clamps'"
+              },
+              {
+                "line": 2195,
+                "text": "killvar '$tmp'"
+              }
+            ]
+          },
+          {
+            "name": "#txt_man",
+            "lineCount": 1751,
+            "exactTextReferences": [],
+            "npcAssignments": [],
+            "killvars": []
+          },
+          {
+            "name": "#txt_2_man",
+            "lineCount": 362,
+            "exactTextReferences": [],
+            "npcAssignments": [],
+            "killvars": [
+              {
+                "line": 306,
+                "text": "\tkillvar '$spectre_quest'"
+              },
+              {
+                "line": 332,
+                "text": "\tkillvar '$julia_meeting'"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "label": "Source snapshot",
+      "file": "G:/somi/JO9sa/source/jack_2026-10-01.qsp",
+      "sha256": "59e1a1afb4fdd2e9bf9b1ffdcb12c10f2f4cc15d4cd3d890e21f8cb652f5958e",
+      "locationCount": 248,
+      "branchStartLine": 10104,
+      "branchEndLine": 10142,
+      "branch": "if interaction_city = 6229:\n\tnpc = 1\n\t$npc_id = 'bararaika'\n\t$place = 'smugglers_den'\n\t$return_lock = 'shop_general'\n\tcreating_clone = 1\n\tgs 'generate_clone'\n\tgs 'stock_to_slave_nogt'\n\tcreating_clone = 0\n\tsparks -= 2000\n\tif snake_amulet_on = 0 and (brand_reputation > 2 or guild_reputation > 2):\n\t\tnpc = 1\n\t\t$npc_id = 'master_skups'\n\t\tbrand_rate -= 10\n\t\tguild_reputation_rate -= 10\n\t\tfine = max(500, sparks/3) &! minimum moneylender loan is 600, so as long as the slaver is not in debt, survival should be possible - ImperatorAugustus\n\t\tsparks -= fine\n\t\t$text[1] = '[마스터 스컵스]<br> 우리 조합이 당신같은 중요 인사를 감시 안하리라 여겼습니까? 어리석군! 저는 정평이 난 조합원이 이런 멍청한 편리나 취하리라곤 상상 못했습니다. 당장 이 <<fine>>$ 벌금을 지불하셔야 할 겁니다. 이 일로 떨어진 신의를 다시 쌓으려면 꽤 시간이 걸릴겁니다! <<$master_name>>!</div>'\n\t\t$return_lock = 'guild'\n\t\tdynamic $clear_slave_instance, 'stock'\n\t\thouse_mess_rate += 5\n\t\tmaster_hygiene_rate += 20\n\t\tmaster_excitement_rate = 0\n\t\tmaster_excitement = 0\n\t\tmaster_moodlet['neg_wealth'] = 3\n\t\tdynamic $master_energy_drop\n\t\tdynamic $master_energy_drop\n\t\tif assistant_state = CONST_INT['slave_exist']:\n\t\t\tassistant_rate['hygiene'] += 20\n\t\t\tdynamic $assistant_energy_drop\n\t\t\tdynamic $assistant_energy_drop\n\t\tend\n\telse\n\t\tbrand_rate -= 5\n\t\tguild_reputation_rate -= 5\n\t\t$text[1] = '[발랄라이카]<br> 운이 좋은 사내네, 막 들여놓은 참이었어. 스파크 먼저 건네고 여잘 데려가.</div>'\n\tend\nend",
+      "logicSha256": "c9dc248e76ed679664ba0992a9cc184e260449b0f714b3f85ba98bdf0baa15d5",
+      "dedicatedSpecialImageInBranch": false,
+      "masterScoopsMapping": {
+        "line": 413,
+        "text": "$npc_image['master_skups'] = 'master_scoops'"
+      },
+      "npcImageRendering": {
+        "line": 75,
+        "lines": [
+          "\t*p '<div id = \"side_panel_text\"><<$place_info[$place]>></div>'",
+          "else",
+          "\t$info_bar = ''",
+          "\tif nsfw = 1:",
+          "\t\t*p '<div id = \"bg\"><img src=\"content\\pic\\bg\\empty.png\"></div>'",
+          "\telseif $npc_image[$npc_id] ! '':",
+          "\t\t*p '<div id = \"bg\"><img src=\"content\\pic\\characters\\<<$npc_image[$npc_id]>>.png\"></div>'",
+          "\tend",
+          "\t*p '<div id = \"side_panel_main\"><center><div style=\"font-size: 40px;\"><<$npc_name[$npc_id]>></div><<$npc_status[$npc_id]>><br>'",
+          "\t*nl '참고 정보:</center></div>'"
+        ]
+      },
+      "cityEnd": [
+        "",
+        "end",
+        "",
+        "gt 'interaction_result_city'",
+        ""
+      ],
+      "resultEnd": [
+        "  gt 'item_buy'",
+        "  else",
+        "  $text[1] = '가격은 <<item_price[$item_id]>> 스파크다 — 가격이 지금 네가 감당할 수 있는 것보다 조금 비싸지만, 그건 쉽게 해결된다. 노예 두어 명만 팔면 된다…'",
+        " END",
+        "END",
+        "",
+        "!completion tags",
+        "city_already_done_today[$str(interaction_city)] += 1",
+        "city_already_done_ever[$str(interaction_city)] += 1",
+        "",
+        "if txt_is_set_from_save = 0: txt = 1",
+        "gt 'interaction_screen_city'",
+        ""
+      ],
+      "clearHelper": {
+        "line": 477,
+        "text": "$clear_slave_instance = {\n\t_counter = arrsize('$slave_vars')\n\t:_clear_slave_instance_loop\n\t\t_counter -= 1\n\t\tkillvar $replace($slave_vars[_counter], 'instance', $args[0])\n\tif _counter > 0: jump '_clear_slave_instance_loop'\n\tkillvar '_counter'\n\n\tdynamic \"\n\t\t$<<$args[0]>>['wpn'] = 'безоружный' &! fists\n\t\t$<<$args[0]>>['right_wpn'] = 'безоружный' &! fists\n\t\t$<<$args[0]>>['left_wpn'] = 'безоружный' &! fists\n\t\t$<<$args[0]>>['armor'] = 'без_брони' &! without armor\n\t\t$<<$args[0]>>['cloth'] = 'голая' &! naked\n\t\"\n\t\n\t! update strings that may contain if statements or subexpressions referring to the cleared slave instance\n\n!\tif hero_choice > 100: gs '#var_base_woman'\n\t\n\tgs '#var_base'\n\tgs '#txt_man'   &! after #var_base\n\tgs '#txt_2_man' &! after #var_base\n!\tif hero_choice > 100: gs '#txt_woman' &! after #var_base\n!\tif hero_choice > 100: gs '#txt_2_woman' &! after #var_base\nend\nend\n}",
+        "sha256": "f5477dd97448875b8c9924d9ad8a92478277ed9f0c7b50d46dd8349220d6a53e",
+        "callees": [
+          {
+            "name": "#var_base",
+            "lineCount": 2706,
+            "exactTextReferences": [],
+            "npcAssignments": [],
+            "killvars": [
+              {
+                "line": 109,
+                "text": "\tkillvar '$cane_sound'"
+              },
+              {
+                "line": 110,
+                "text": "\tkillvar '$spank_sound'"
+              },
+              {
+                "line": 111,
+                "text": "\tkillvar '$slap_sound'"
+              },
+              {
+                "line": 112,
+                "text": "\tkillvar '$whip_sound'"
+              },
+              {
+                "line": 113,
+                "text": "\tkillvar '$slopy'"
+              },
+              {
+                "line": 114,
+                "text": "\tkillvar '$petting_sound'"
+              },
+              {
+                "line": 115,
+                "text": "\tkillvar '$kiss_sound'"
+              },
+              {
+                "line": 116,
+                "text": "\tkillvar '$bj_sound'"
+              },
+              {
+                "line": 117,
+                "text": "\tkillvar '$throatfuck_sound'"
+              },
+              {
+                "line": 118,
+                "text": "\tkillvar '$fuck_sound'"
+              },
+              {
+                "line": 119,
+                "text": "\tkillvar '$assfuck_sound'"
+              },
+              {
+                "line": 120,
+                "text": "\tkillvar '$fisting_sound'"
+              },
+              {
+                "line": 121,
+                "text": "\tkillvar '$soft_pain'"
+              },
+              {
+                "line": 122,
+                "text": "\tkillvar '$pain'"
+              },
+              {
+                "line": 123,
+                "text": "\tkillvar '$severe_pain'"
+              },
+              {
+                "line": 124,
+                "text": "\tkillvar '$urine'"
+              },
+              {
+                "line": 125,
+                "text": "\tkillvar '$kopro_sound'"
+              },
+              {
+                "line": 126,
+                "text": "\tkillvar '$seduce_sound'"
+              },
+              {
+                "line": 127,
+                "text": "\tkillvar '$masturbate_sound'"
+              },
+              {
+                "line": 128,
+                "text": "\tkillvar '$moan'"
+              },
+              {
+                "line": 129,
+                "text": "\tkillvar '$cry'"
+              },
+              {
+                "line": 130,
+                "text": "\tkillvar '$fist_hit_sound'"
+              },
+              {
+                "line": 131,
+                "text": "\tkillvar '$drowning'"
+              },
+              {
+                "line": 132,
+                "text": "\tkillvar '$licking_sound'"
+              },
+              {
+                "line": 133,
+                "text": "\tkillvar '$orgasm_sound'"
+              },
+              {
+                "line": 134,
+                "text": "\tkillvar '$panik_sound'"
+              },
+              {
+                "line": 135,
+                "text": "\tkillvar '$gag_sound'"
+              },
+              {
+                "line": 136,
+                "text": "\tkillvar '$clamps'"
+              },
+              {
+                "line": 2195,
+                "text": "killvar '$tmp'"
+              }
+            ]
+          },
+          {
+            "name": "#txt_man",
+            "lineCount": 1743,
+            "exactTextReferences": [],
+            "npcAssignments": [],
+            "killvars": []
+          },
+          {
+            "name": "#txt_2_man",
+            "lineCount": 362,
+            "exactTextReferences": [],
+            "npcAssignments": [],
+            "killvars": [
+              {
+                "line": 306,
+                "text": "\tkillvar '$spectre_quest'"
+              },
+              {
+                "line": 332,
+                "text": "\tkillvar '$julia_meeting'"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "label": "WORK",
+      "file": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+      "sha256": "e70db42de6e781d3a1b4373b84570efd6ad7e71b1cedc2826f17dfd57ea16855",
+      "locationCount": 314,
+      "branchStartLine": 11947,
+      "branchEndLine": 11989,
+      "branch": "if interaction_city = 6229:\n\tnpc = 1\n\t$npc_id = 'bararaika'\n\t$place = 'smugglers_den'\n\t$return_lock = 'shop_general'\n\tcreating_clone = 1\n\tgs 'generate_clone'\n\tgs 'stock_to_slave_nogt'\n\tcreating_clone = 0\n\tsparks -= 2000\n\tif snake_amulet_on = 0 and (brand_reputation > 2 or guild_reputation > 2):\n\t\tnpc = 1\n\t\t$npc_id = 'master_skups'\n\t\tbrand_rate -= 10\n\t\tguild_reputation_rate -= 10\n\t\tfine = max(500, sparks/3) &! minimum moneylender loan is 600, so as long as the slaver is not in debt, survival should be possible - ImperatorAugustus\n\t\tsparks -= fine\n! JO9 MOD START J9M0805 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included\n\t\t$text[1] = '[마스터 스컵스]<br>&nbsp;우리 조합이 당신같은 중요 인사를 감시 안하리라 여겼습니까? 어리석군! 저는 정평이 난 조합원이 이런 멍청한 편리나 취하리라곤 상상 못했습니다. 당장 이 $<<fine>> 벌금을 지불하셔야 할 겁니다. 이 일로 떨어진 신의를 다시 쌓으려면 꽤 시간이 걸릴겁니다! <<$master_name>>!</div>'\n! JO9 MOD END J9M0805\n\t\t$return_lock = 'guild'\n\t\tdynamic $clear_slave_instance, 'stock'\n\t\thouse_mess_rate += 5\n\t\tmaster_hygiene_rate += 20\n\t\tmaster_excitement_rate = 0\n\t\tmaster_excitement = 0\n\t\tmaster_moodlet['neg_wealth'] = 3\n\t\tdynamic $master_energy_drop\n\t\tdynamic $master_energy_drop\n\t\tif assistant_state = CONST_INT['slave_exist']:\n\t\t\tassistant_rate['hygiene'] += 20\n\t\t\tdynamic $assistant_energy_drop\n\t\t\tdynamic $assistant_energy_drop\n\t\tend\n\telse\n\t\tbrand_rate -= 5\n\t\tguild_reputation_rate -= 5\n! JO9 MOD START J9M0804 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included\n\t\t$text[1] = '[발랄라이카]<br>&nbsp;운이 좋은 사내네, 막 들여놓은 참이었어. 스파크 먼저 건네고 여잘 데려가.</div>'\n! JO9 MOD END J9M0804\n\tend\nend",
+      "logicSha256": "c9dc248e76ed679664ba0992a9cc184e260449b0f714b3f85ba98bdf0baa15d5",
+      "dedicatedSpecialImageInBranch": false,
+      "masterScoopsMapping": {
+        "line": 416,
+        "text": "$npc_image['master_skups'] = 'master_scoops'"
+      },
+      "npcImageRendering": {
+        "line": 216,
+        "lines": [
+          "\t$info_bar = ''",
+          "\tif nsfw = 1:",
+          "! JO9 MOD START J9M1334 | 2026-10-08_persistent_image_cycle | changed block; context may be included",
+          "\t\t*p func('interior_change', 'jo9_html', '<div id = \"bg\"><img src=\"content/pic/bg/empty.png\"></div>')",
+          "! JO9 MOD END J9M1334",
+          "\telseif $npc_image[$npc_id] ! '':",
+          "! JO9 MOD START J9M1333 | 2026-10-08_persistent_image_cycle | changed block; context may be included",
+          "\t\t*p func('interior_change', 'jo9_html', '<div id = \"bg\"><img src=\"content\\pic\\characters\\<<$npc_image[$npc_id]>>.png\"></div>')",
+          "! JO9 MOD END J9M1333",
+          "\tend"
+        ]
+      },
+      "cityEnd": [
+        "! JO9 MOD END CHUNHYANG_CLUB_TEXT_20261112",
+        "gt 'interaction_result_city'",
+        "",
+        "! JO9 MOD END TRAIT_MERGE_EXCLUSIONS_20261025",
+        "! JO9 MOD END PROFILE_POLISH_20261025_R3"
+      ],
+      "resultEnd": [
+        "END",
+        "",
+        "!completion tags",
+        "city_already_done_today[$str(interaction_city)] += 1",
+        "city_already_done_ever[$str(interaction_city)] += 1",
+        "",
+        "! JO9 MOD START TBV_SALE_REWARD_CLEANUP | 2026-10-17_trait_value",
+        "killvar 'jo9_trait_value_sold_peerless'",
+        "if txt_is_set_from_save = 0: txt = 1",
+        "gt 'interaction_screen_city'",
+        "! JO9 MOD END TBV_SALE_REWARD_CLEANUP",
+        "",
+        "! JO9 MOD END PROFILE_POLISH_20261025_R3"
+      ],
+      "clearHelper": {
+        "line": 465,
+        "text": "$clear_slave_instance = {\n\t_counter = arrsize('$slave_vars')\n\t:_clear_slave_instance_loop\n\t\t_counter -= 1\n\t\tkillvar $replace($slave_vars[_counter], 'instance', $args[0])\n\tif _counter > 0: jump '_clear_slave_instance_loop'\n\tkillvar '_counter'\n\n\tdynamic \"\n\t\t$<<$args[0]>>['wpn'] = 'безоружный' &! fists\n\t\t$<<$args[0]>>['right_wpn'] = 'безоружный' &! fists\n\t\t$<<$args[0]>>['left_wpn'] = 'безоружный' &! fists\n\t\t$<<$args[0]>>['armor'] = 'без_брони' &! without armor\n\t\t$<<$args[0]>>['cloth'] = 'голая' &! naked\n\t\"\n\t\n\t! update strings that may contain if statements or subexpressions referring to the cleared slave instance\n\n!\tif hero_choice > 100: gs '#var_base_woman'\n\t\n\tgs '#var_base'\n\tgs '#txt_man'   &! after #var_base\n\tgs '#txt_2_man' &! after #var_base\n!\tif hero_choice > 100: gs '#txt_woman' &! after #var_base\n!\tif hero_choice > 100: gs '#txt_2_woman' &! after #var_base\nend\nend\n}",
+        "sha256": "f5477dd97448875b8c9924d9ad8a92478277ed9f0c7b50d46dd8349220d6a53e",
+        "callees": [
+          {
+            "name": "#var_base",
+            "lineCount": 3025,
+            "exactTextReferences": [],
+            "npcAssignments": [],
+            "killvars": [
+              {
+                "line": 112,
+                "text": "\tkillvar '$cane_sound'"
+              },
+              {
+                "line": 113,
+                "text": "\tkillvar '$spank_sound'"
+              },
+              {
+                "line": 114,
+                "text": "\tkillvar '$slap_sound'"
+              },
+              {
+                "line": 115,
+                "text": "\tkillvar '$whip_sound'"
+              },
+              {
+                "line": 116,
+                "text": "\tkillvar '$slopy'"
+              },
+              {
+                "line": 117,
+                "text": "\tkillvar '$petting_sound'"
+              },
+              {
+                "line": 118,
+                "text": "\tkillvar '$kiss_sound'"
+              },
+              {
+                "line": 119,
+                "text": "\tkillvar '$bj_sound'"
+              },
+              {
+                "line": 120,
+                "text": "\tkillvar '$throatfuck_sound'"
+              },
+              {
+                "line": 121,
+                "text": "\tkillvar '$fuck_sound'"
+              },
+              {
+                "line": 122,
+                "text": "\tkillvar '$assfuck_sound'"
+              },
+              {
+                "line": 123,
+                "text": "\tkillvar '$fisting_sound'"
+              },
+              {
+                "line": 124,
+                "text": "\tkillvar '$soft_pain'"
+              },
+              {
+                "line": 125,
+                "text": "\tkillvar '$pain'"
+              },
+              {
+                "line": 126,
+                "text": "\tkillvar '$severe_pain'"
+              },
+              {
+                "line": 127,
+                "text": "\tkillvar '$urine'"
+              },
+              {
+                "line": 128,
+                "text": "\tkillvar '$kopro_sound'"
+              },
+              {
+                "line": 129,
+                "text": "\tkillvar '$seduce_sound'"
+              },
+              {
+                "line": 130,
+                "text": "\tkillvar '$masturbate_sound'"
+              },
+              {
+                "line": 131,
+                "text": "\tkillvar '$moan'"
+              },
+              {
+                "line": 132,
+                "text": "\tkillvar '$cry'"
+              },
+              {
+                "line": 133,
+                "text": "\tkillvar '$fist_hit_sound'"
+              },
+              {
+                "line": 134,
+                "text": "\tkillvar '$drowning'"
+              },
+              {
+                "line": 135,
+                "text": "\tkillvar '$licking_sound'"
+              },
+              {
+                "line": 136,
+                "text": "\tkillvar '$orgasm_sound'"
+              },
+              {
+                "line": 137,
+                "text": "\tkillvar '$panik_sound'"
+              },
+              {
+                "line": 138,
+                "text": "\tkillvar '$gag_sound'"
+              },
+              {
+                "line": 139,
+                "text": "\tkillvar '$clamps'"
+              },
+              {
+                "line": 2313,
+                "text": "killvar '$tmp'"
+              }
+            ]
+          },
+          {
+            "name": "#txt_man",
+            "lineCount": 164226,
+            "exactTextReferences": [],
+            "npcAssignments": [],
+            "killvars": [
+              {
+                "line": 2043,
+                "text": "killvar '$voice_1112'"
+              },
+              {
+                "line": 2156,
+                "text": "killvar '$voice_1112_variant'"
+              },
+              {
+                "line": 2377,
+                "text": "killvar '$voice_1112_composed'"
+              },
+              {
+                "line": 2747,
+                "text": "killvar '$voice_1112_formal_from'"
+              },
+              {
+                "line": 2748,
+                "text": "killvar '$voice_1112_formal_to'"
+              },
+              {
+                "line": 2832,
+                "text": "killvar '$voice_fragment_ids'"
+              },
+              {
+                "line": 2833,
+                "text": "killvar '$voice_fragment_text'"
+              },
+              {
+                "line": 2834,
+                "text": "killvar '$voice_fragment_role'"
+              },
+              {
+                "line": 2835,
+                "text": "killvar '$voice_fragment_types'"
+              },
+              {
+                "line": 2836,
+                "text": "killvar '$voice_fragment_relations'"
+              },
+              {
+                "line": 2837,
+                "text": "killvar '$voice_fragment_emotion'"
+              },
+              {
+                "line": 2838,
+                "text": "killvar 'voice_fragment_level'"
+              },
+              {
+                "line": 2839,
+                "text": "killvar 'voice_fragment_tone'"
+              },
+              {
+                "line": 2840,
+                "text": "killvar 'voice_fragment_need_fear'"
+              },
+              {
+                "line": 2841,
+                "text": "killvar 'voice_fragment_good_mood'"
+              },
+              {
+                "line": 2842,
+                "text": "killvar 'voice_fragment_rare_praise'"
+              },
+              {
+                "line": 2843,
+                "text": "killvar 'voice_fragment_narration'"
+              },
+              {
+                "line": 2844,
+                "text": "killvar 'voice_fragment_count'"
+              },
+              {
+                "line": 2845,
+                "text": "killvar '$voice_fragment_item'"
+              },
+              {
+                "line": 2846,
+                "text": "killvar '$voice_fact_emotion'"
+              },
+              {
+                "line": 161637,
+                "text": "killvar 'voice_fragment_question'"
+              },
+              {
+                "line": 161638,
+                "text": "killvar '$voice_flow_override'"
+              },
+              {
+                "line": 161639,
+                "text": "killvar '$voice_flow_original'"
+              }
+            ]
+          },
+          {
+            "name": "#txt_2_man",
+            "lineCount": 382,
+            "exactTextReferences": [],
+            "npcAssignments": [],
+            "killvars": [
+              {
+                "line": 314,
+                "text": "\tkillvar '$spectre_quest'"
+              },
+              {
+                "line": 346,
+                "text": "\tkillvar '$julia_meeting'"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "images": [
+    {
+      "file": "G:/somi/JO9O/game/content/pic/characters/master_scoops.png",
+      "exists": true,
+      "bytes": 238013,
+      "sha256": "dec7eafd9add09c459df705c004f958a375c850cea3fa87ec5cd24901525431a",
+      "png": true,
+      "width": 795,
+      "height": 596
+    },
+    {
+      "file": "G:/somi/Jack O Nine Tails v2.4_work/game/content/pic/characters/master_scoops.png",
+      "exists": true,
+      "bytes": 238013,
+      "sha256": "dec7eafd9add09c459df705c004f958a375c850cea3fa87ec5cd24901525431a",
+      "png": true,
+      "width": 795,
+      "height": 596
+    }
+  ],
+  "equalLogicAcrossComparedVersions": true,
+  "equalClearHelperAcrossComparedVersions": true
+}

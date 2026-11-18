@@ -81,14 +81,15 @@ function renderer(doc,entry,body,analysis,route,scoped){
  }
  throw Error('이 장면의 다음 화면 연결을 아직 분석하지 못했습니다. 위치: '+entry.location+' / '+route.condition);
 }
-function prepare(doc,selection,text,mode='page'){
+function prepare(doc,selection,text,mode='page',options={}){
+ require('./work-scope.cjs').assertSelection(doc,selection,options);
  if(typeof text!=='string'||!text.trim())throw Error('추가할 대사를 입력하세요.');
  if(text.length>20000||/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(text))throw Error('추가 대사가 너무 길거나 지원하지 않는 문자가 있습니다.');
  if(selection?.hash!==doc.hash)throw Error('검색 이후 QSP가 변경되었습니다. 다시 검색하세요.');
  const entry=core.entries(doc).find(e=>e.fieldIndex===selection.fieldIndex&&e.start===selection.start&&e.end===selection.end&&e.text===selection.text);
  if(!entry||!entry.dialogue)throw Error('추가할 기준 대사를 먼저 선택하세요.');
  text=core.restoreDisplayTokens(doc,text.replace(/\r\n?/g,'\n').trim(),entry.text);core.validateMarkup(text);
- if(mode==='paragraph'){const p=core.prepare(doc,selection,entry.text+'<br><br>'+text);return {...p,operation:'paragraph',addition:text};}
+ if(mode==='paragraph'){const p=core.prepare(doc,selection,entry.text+'<br><br>'+text,options);return {...p,operation:'paragraph',addition:text};}
  if(mode!=='page')throw Error('지원하지 않는 추가 방식입니다.');
  if(entry.field!=='body'||!entry.quote)throw Error('이 설명문은 페이지 배열이 아닙니다.');
  const oldField=core.shift(doc.lines[entry.fieldIndex],5),analysis=scenes.analyse(entry.location,oldField);
@@ -123,6 +124,7 @@ function prepare(doc,selection,text,mode='page'){
  const adjustments=Object.entries(summary).filter(([,n])=>n).map(([key,n])=>labels[key]+' '+n+'곳 조정');
  if(screen.name!=='sex_interaction_screen')adjustments.push('추가 페이지는 앞 페이지의 이미지 유지 · 실행 처리와 소리는 복제하지 않음');
  const selectionStart=entry.start+edits.filter(e=>e.end<=entry.start).reduce((n,e)=>n+e.value.length-(e.end-e.start),0);
- return {raw,entry,selectionStart,replacement:entry.text+'\n\n[추가된 다음 페이지]\n'+text,oldField,newField,piece,after:core.hash(raw),operation:'page',addition:text,page:page+1,adjustments};
+ const result={raw,entry,selectionStart,replacement:entry.text+'\n\n[추가된 다음 페이지]\n'+text,oldField,newField,piece,after:core.hash(raw),operation:'page',addition:text,page:page+1,adjustments};
+ require('./work-scope.cjs').assertPrepared(doc,result,options);return result;
 }
 module.exports={prepare,numberEdits,applyEdits,shiftedNumber};

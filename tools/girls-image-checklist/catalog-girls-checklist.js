@@ -61,6 +61,16 @@
     #jo9-girls-checklist .gc-row{display:flex;align-items:center;gap:8px;padding:6px;border-bottom:1px solid #3c4755}
     #jo9-girls-checklist .gc-row .gc-path{flex:1}
     #jo9-girls-checklist .gc-row{flex-wrap:wrap}
+    #jo9-girls-checklist .gc-sharing{margin:12px 0;padding:10px;background:#232b36;border:1px solid #435062;border-radius:4px}
+    #jo9-girls-checklist .gc-sharing h4{margin:0 0 7px}
+    #jo9-girls-checklist .gc-sharing p{margin:6px 0;overflow-wrap:anywhere}
+    #jo9-girls-checklist .gc-sharing-peers{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+    #jo9-girls-checklist .gc-sharing-peers label{display:flex;align-items:flex-start;gap:7px;padding:7px;border:1px solid #435062;border-radius:4px;max-width:100%;cursor:pointer}
+    #jo9-girls-checklist .gc-sharing-peers input{flex:none;margin:3px 0;padding:0}
+    #jo9-girls-checklist .gc-sharing-peers span{min-width:0;overflow-wrap:anywhere}
+    #jo9-girls-checklist .gc-sharing-peers small{display:block}
+    #jo9-girls-checklist .gc-sharing-plan{margin:10px 0;padding:8px;border:1px solid #746446}
+    #jo9-girls-checklist .gc-sharing-plan li{margin:7px 0;overflow-wrap:anywhere}
     #jo9-girls-checklist .gc-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:9px;flex-basis:100%}
     #jo9-girls-checklist .gc-tags button{padding:4px 6px;font-size:12px;line-height:1.4;cursor:pointer}
     #jo9-girls-checklist .gc-tags button[aria-pressed=true]{background:#36513d;color:#fff;box-shadow:inset 0 0 0 1px currentColor}
@@ -216,6 +226,70 @@
     try{const result=await statusApi('character-images/read',{rescan});const added=mergeCharacterLinks(result);message.textContent='현재 WORK JSON의 이미지 연결과 파일 상태를 읽었습니다.'+(added?' · 신규 '+added+'명 추가':'')+(result.errors?.length?' · JSON 확인 필요 '+result.errors.length+'개':'');}
     catch(e){message.textContent='WORK JSON 연결 확인 실패: '+e.message;}finally{currentLinksLoading=false;}
   }
+  // JO9 MOD START CHARACTER_IMAGE_SHARING_20261117
+  const sharingStates=new Map();
+  const sharingDefaults=descriptor=>new Set((descriptor?.candidates||[]).filter(peer=>peer.checked).map(peer=>String(peer.id)));
+  function sharingChanged(state){const saved=sharingDefaults(state.descriptor);return saved.size!==state.selected.size||[...saved].some(peer=>!state.selected.has(peer));}
+  function sharingState(c){
+    let state=sharingStates.get(String(c.id));const descriptor=c.sharing;
+    if(!state){state={descriptor,selected:sharingDefaults(descriptor),plan:null,busy:false,error:''};sharingStates.set(String(c.id),state);}
+    else if(descriptor&&(state.descriptor?.expectedHash!==descriptor.expectedHash||state.descriptor?.policyHash!==descriptor.policyHash)){
+      const pending=sharingChanged(state),available=new Set((descriptor.candidates||[]).map(peer=>String(peer.id)));
+      state.descriptor=descriptor;state.selected=pending?new Set([...state.selected].filter(peer=>available.has(peer))):sharingDefaults(descriptor);state.plan=null;state.error='';
+    }
+    return state;
+  }
+  function sharingBox(c){
+    const state=sharingState(c),descriptor=state.descriptor,peers=(descriptor?.candidates||[]).filter(peer=>String(peer.id)!==String(c.id));
+    const box=node('section',undefined,'gc-sharing');box.setAttribute('aria-label',c.id+' 이미지 공유·분리');
+    box.append(node('h4','이미지 공유·분리'),node('p','기본 이미지: '+(c.refs.fullimage||'연결 없음'),'gc-path'),node('p','다른 번호를 체크하면 현재 인물의 이미지 구성을 함께 사용합니다. 체크 해제는 현재 모습을 유지하며 분리합니다. 체크만으로 저장되지 않습니다.','gc-note'));
+    const choices=node('div',undefined,'gc-sharing-peers');
+    for(const peer of peers){
+      const label=node('label'),input=node('input'),text=node('span',String(peer.id)+' · '+(peer.name||''));input.type='checkbox';input.checked=state.selected.has(String(peer.id));input.disabled=!live||state.busy;input.dataset.sharingPeer=peer.id;
+      text.append(node('small',peer.json||'','gc-path'));label.append(input,text);choices.append(label);
+      input.onchange=()=>{if(state.busy)return;if(input.checked)state.selected.add(String(peer.id));else state.selected.delete(String(peer.id));state.plan=null;state.error='';render();};
+    }
+    box.append(choices);
+    if(!peers.length)box.append(node('p',descriptor?'같은 기본 전신을 쓰거나 현재 공유 중인 다른 캐릭터가 없습니다.':'공유 목록을 읽어 다른 번호를 확인하세요.','gc-note'));
+    if(descriptor?.inheritedFields?.length)box.append(node('p','공유 이미지에서 보완한 연결: '+descriptor.inheritedFields.join(' · '),'gc-note'));
+    const plan=state.plan;
+    if(plan){
+      const preview=node('div',undefined,'gc-sharing-plan'),removed=peers.filter(peer=>peer.checked&&!state.selected.has(String(peer.id))).map(peer=>peer.id);
+      preview.append(node('strong','이미지 공유·분리 미리보기'),node('p','이미지 기준: '+c.id+' · 영향을 받는 번호: '+((plan.affectedIds||[]).join(' · ')||'없음')));
+      if(removed.length)preview.append(node('p','공유 해제: '+removed.join(' · ')+' · 현재 모습을 유지합니다.'));
+      preview.append(node('p','PNG 복사 '+Number(plan.copyCount||0).toLocaleString('ko-KR')+'개 · '+Number(plan.copyBytes||0).toLocaleString('ko-KR')+'바이트. 다른 그룹도 쓰는 PNG만 새 경로로 복사하고 원본은 보존합니다.','gc-note'));
+      const changes=node('ul');for(const change of plan.changes||[])changes.append(node('li',String(change.id)+' · '+change.json+' · 연결 항목: '+((change.fields||[]).join(' · ')||'변경 없음'),'gc-path'));
+      if(!changes.childNodes.length)changes.append(node('li','JSON 연결 변경 없음'));preview.append(changes);box.append(preview);
+    }
+    if(state.error){const error=node('p',state.error,'gc-error');error.setAttribute('role','alert');box.append(error);}
+    const actions=node('div',undefined,'gc-row');
+    for(const [action,title]of [['read','공유 목록 다시 읽기'],['preview','미리보기'],['apply','공유·분리 적용'],['cancel','취소']]){
+      const button=node('button',title);button.type='button';button.dataset.sharingAction=action;
+      button.disabled=!live||state.busy||(action==='preview'&&(!descriptor||!sharingChanged(state)))||(action==='apply'&&!plan)||(action==='cancel'&&!plan&&!sharingChanged(state));
+      button.onclick=()=>changeSharing(c,action);actions.append(button);
+    }
+    box.append(actions);return box;
+  }
+  async function changeSharing(c,action){
+    const state=sharingState(c);if(!live||busy||state.busy)return;
+    if(action==='cancel'){state.selected=sharingDefaults(state.descriptor);state.plan=null;state.error='';return render();}
+    const descriptor=state.descriptor,plan=state.plan;if(action==='apply'&&!plan)return;
+    const peerIds=(descriptor?.candidates||[]).filter(peer=>state.selected.has(String(peer.id))).map(peer=>peer.id);
+    state.busy=true;busy=true;state.error='';let applied=false;root.inert=true;render();
+    try{
+      const result=await statusApi('character-images/sharing',{id:c.id,action,peerIds,expectedHash:plan?.expectedHash||descriptor?.expectedHash,policyHash:plan?.policyHash||descriptor?.policyHash,...(action==='apply'?{planHash:plan.planHash}:{})});
+      if(action==='preview')state.plan=result;
+      else if(action==='read'){state.descriptor=result.sharing||result;c.sharing=state.descriptor;state.selected=sharingDefaults(state.descriptor);state.plan=null;}
+      else{
+        applied=true;state.plan=null;
+        if(result.sharing){state.descriptor=result.sharing;c.sharing=result.sharing;state.selected=sharingDefaults(result.sharing);}
+        const current=await statusApi('character-images/read',{ids:result.affectedIds||[c.id],rescan:true});
+        sharingStates.delete(String(c.id));mergeCharacterLinks(current);message.textContent='이미지 공유·분리를 적용했습니다 · '+(result.affectedIds||[c.id]).join(' · ');
+      }
+    }catch(error){state.plan=null;state.error=(applied?'공유·분리는 적용됐지만 최신 연결을 읽지 못했습니다. WORK 다시 확인을 눌러 확인하세요. · ':'')+error.message;message.textContent='이미지 공유·분리: '+state.error;}
+    finally{state.busy=false;busy=false;root.inert=false;render();}
+  }
+  // JO9 MOD END CHARACTER_IMAGE_SHARING_20261117
   function imageLinkButton(c,field,title){
     if(!c||!editableImageFields.has(field))return node('span');
     const b=node('button','파일 선택·연결');b.type='button';b.disabled=!live;b.dataset.imageLinkField=field;b.dataset.imageLinkCharacter=c.id;b.onclick=()=>chooseLinkedImage(c,field,title);return b;
@@ -545,7 +619,7 @@
       card.append(node('h3',characterLabel(c)+' · '+displayName),node('p',c.json+' · '+(c.random?'무작위 등장 범위에 포함':'고유 이벤트 / 별도 등록'),'gc-note'),tags(c.id));
       const previousTags=previousTagNote(c);if(previousTags)card.append(previousTags);
       if(c.catalogNote)card.append(node('p',c.catalogNote,'gc-note'));
-      if(c.imageGroupOwner)card.append(node('p',c.id===c.imageGroupOwner?'이미지 공유 기준 2577 · 이미지 연결을 저장하면 2585 · 2607에도 함께 적용됩니다.':'이미지 공유: 2577에서 이미지 연결을 변경하면 함께 적용됩니다.','gc-note'));
+      card.append(sharingBox(c));
       const warnings=pathWarningBox(c);if(warnings)card.append(warnings);
       const grid=node('div',undefined,'gc-grid');card.append(grid);
       const base=full(c);

@@ -1,0 +1,151 @@
+! JO9 MOD START DUPLICATO_ESSENTIA_TRAITS_20261116
+! Candidate only. Source is assistant; recipient is slave. No costs, learning flags or progression here.
+! pair -> result 1/0. reason,key -> Korean failure reason; an empty key checks the pair only.
+! list -> $result is eligible keys separated by |, without leading/trailing |.
+! eligible,key -> result 1/0. label,key,role -> $result; optional role is assistant (default) or slave.
+! preview,key -> comma-separated removed trait names. removals,key -> | separated removed field keys.
+! apply,key -> result 1 on success, 0 without changes when ineligible. Preview removals separately.
+! Queries use only local variables. apply writes only recipient talent/discovery and its exact conflicts.
+! Existing references: #static_base talent rows; generate_stock gladiatrix exclusion;
+! jo9_traits allow/repair_exclusions; jo9_activity_stage remove. No broad actor repair is run.
+local $j9de_mode, $j9de_key, $j9de_role
+$j9de_mode=$args[0] & $j9de_key=$args[1] & $j9de_role='assistant'
+local $j9de_keys='|sport_affinity|expression_affinity|pet_affinity|dressage_affinity|cowSK_affinity|nurse_affinity|service_affinity|cook_affinity|gladiatrix_affinity|enchanter_affinity|art_affinity|music_affinity|calisthenics_affinity|secretary_affinity|'
+local $j9de_label, $j9de_reason
+local j9de_i, j9de_n, j9de_value
+local $j9de_remove, $j9de_names, $j9de_removed_keys, $j9de_old_label
+result=0
+$result=''
+if $args[2]='slave': $j9de_role='slave'
+if $j9de_key='sport_affinity': $j9de_label='운동광'
+if $j9de_key='expression_affinity': $j9de_label='달변가'
+if $j9de_key='pet_affinity': $j9de_label='순종적인 동물'
+if $j9de_key='dressage_affinity': $j9de_label='순종적인 말'
+if $j9de_key='cowSK_affinity': $j9de_label='미련한 소'
+if $j9de_key='nurse_affinity': $j9de_label='타고난 간호사'
+if $j9de_key='service_affinity': $j9de_label='타고난 하녀'
+if $j9de_key='cook_affinity': $j9de_label='예민한 미각'
+if $j9de_key='gladiatrix_affinity': $j9de_label='타고난 투사'
+if $j9de_key='enchanter_affinity': $j9de_label='타고난 마법사'
+if $j9de_key='art_affinity': $j9de_label='타고난 미적감각'
+if $j9de_key='music_affinity': $j9de_label='절대음감'
+if $j9de_key='secretary_affinity': $j9de_label='보좌관'
+if $j9de_key='calisthenics_affinity':
+ $j9de_label='발레리나'
+ if dyneval('result='+$j9de_role+"['nymphomania']")>0 and (dyneval('result='+$j9de_role+"['nymphomania_revealed']")>0 or spell_revelio=1): $j9de_label='이국적인 댄서'
+ if dyneval('result='+$j9de_role+"['perversion']")>0 and (dyneval('result='+$j9de_role+"['perversion_revealed']")>0 or spell_revelio=1): $j9de_label='이국적인 댄서'
+end
+if $j9de_mode='label':
+ $result=$j9de_label
+ exit
+end
+if slave_state!CONST_INT['slave_exist'] or assistant_state!CONST_INT['slave_exist']:
+ $j9de_reason='노예와 조수가 모두 활동 가능한 상태여야 합니다.'
+elseif slave['id']<=0 or assistant['id']<=0:
+ $j9de_reason='노예와 조수의 인물 정보를 확인할 수 없습니다.'
+elseif slave['id']=assistant['id']:
+ $j9de_reason='서로 다른 노예와 조수가 필요합니다.'
+elseif slave['jo9_duplicato_received']=1:
+ $j9de_reason='이 노예는 이미 듀플리카토 에센티아로 재능을 복사받았습니다.'
+elseif slave['<<assistant["id"]>>']<40 or assistant['<<slave["id"]>>']<40:
+ $j9de_reason='노예와 조수의 상호 친밀도가 각각 40 이상이어야 합니다.'
+end
+if $j9de_mode='pair' or ($j9de_mode='reason' and $j9de_key=''):
+ if $j9de_mode='pair':
+  result=iif($j9de_reason='',1,0)
+ else
+  $result=$j9de_reason
+ end
+ exit
+end
+if $j9de_mode='list':
+ if $j9de_reason!'': exit
+ local $j9de_scan, $j9de_item, $j9de_list
+ $j9de_scan=mid($j9de_keys,2,len($j9de_keys)-2)
+ :j9de_list_loop
+ $j9de_item=strfind($j9de_scan,'^([^|]+)',1)
+ if $j9de_item!'':
+  if func('jo9_duplicato_traits','eligible',$j9de_item)=1:
+   if $j9de_list!'': $j9de_list+='|'
+   $j9de_list+=$j9de_item
+  end
+  $j9de_scan=mid($j9de_scan,len($j9de_item)+2)
+  jump 'j9de_list_loop'
+ end
+ $result=$j9de_list
+ exit
+end
+if $j9de_reason='' and ($j9de_label='' or instr($j9de_keys,'|'+$j9de_key+'|')=0): $j9de_reason='복사할 수 있는 긍정 재능이 아닙니다.'
+if $j9de_reason='':
+ if assistant[$j9de_key]<=0 or ($j9de_key='sport_affinity' and assistant[$j9de_key]!1):
+  $j9de_reason='조수가 이 긍정 재능을 가지고 있지 않습니다.'
+ elseif assistant[$j9de_key+'_revealed']!2 and spell_revelio!1:
+  $j9de_reason='아직 발견하지 못한 재능입니다.'
+ elseif slave[$j9de_key]>0:
+  $j9de_reason='노예가 이미 같은 긍정 재능을 가지고 있습니다.'
+ end
+end
+if $j9de_mode='reason':
+ $result=$j9de_reason
+ exit
+end
+if $j9de_reason!'': exit
+if $j9de_mode='eligible': result=1 & exit
+if $j9de_mode!'preview' and $j9de_mode!'removals' and $j9de_mode!'apply': exit
+! Same-key negative values are replaced by +1, and are disclosed in the removal preview.
+if slave[$j9de_key]<0: $j9de_remove[j9de_n]=$j9de_key & j9de_n+=1
+if $j9de_key='sport_affinity' and slave['cowSK_affinity']>0: $j9de_remove[j9de_n]='cowSK_affinity' & j9de_n+=1
+if $j9de_key='cowSK_affinity':
+ if slave['sport_affinity']=1: $j9de_remove[j9de_n]='sport_affinity' & j9de_n+=1
+ if func('jo9_activity_stage','stage','slave')=2: $j9de_remove[j9de_n]='jo9_work_ethic' & j9de_n+=1
+end
+if $j9de_key='expression_affinity' and slave['jo9_voice_trait']=1: $j9de_remove[j9de_n]='jo9_voice_trait' & j9de_n+=1
+if $j9de_key='gladiatrix_affinity':
+ if slave['pet_affinity']>0: $j9de_remove[j9de_n]='pet_affinity' & j9de_n+=1
+ if slave['dressage_affinity']>0: $j9de_remove[j9de_n]='dressage_affinity' & j9de_n+=1
+ if slave['cowSK_affinity']>0: $j9de_remove[j9de_n]='cowSK_affinity' & j9de_n+=1
+elseif $j9de_key='pet_affinity' or $j9de_key='dressage_affinity' or $j9de_key='cowSK_affinity':
+ if slave['gladiatrix_affinity']>0: $j9de_remove[j9de_n]='gladiatrix_affinity' & j9de_n+=1
+end
+j9de_i=0
+:j9de_preview_loop
+if j9de_i<j9de_n:
+ j9de_value=slave[$j9de_remove[j9de_i]]
+ $j9de_old_label=$func('jo9_duplicato_traits','label',$j9de_remove[j9de_i],'slave')
+ if $j9de_remove[j9de_i]='jo9_work_ethic': $j9de_old_label='워커홀릭'
+ if $j9de_remove[j9de_i]='jo9_voice_trait': $j9de_old_label='선천적 벙어리'
+ if j9de_value<0:
+  if $j9de_remove[j9de_i]='sport_affinity':
+   $j9de_old_label='게으름'
+  else
+   $j9de_old_label+=' (기존 값 '+str(j9de_value)+')'
+  end
+ end
+ if $j9de_names!'': $j9de_names+=', '
+ if $j9de_removed_keys!'': $j9de_removed_keys+='|'
+ $j9de_names+=$j9de_old_label
+ $j9de_removed_keys+=$j9de_remove[j9de_i]
+ j9de_i+=1
+ jump 'j9de_preview_loop'
+end
+if $j9de_mode='preview': $result=$j9de_names & exit
+if $j9de_mode='removals': $result=$j9de_removed_keys & exit
+! Species/vampire markers are untouched: their only forced talent fields are positive
+! secretary/enchanter affinities, which do not conflict with any of the fourteen talents.
+j9de_i=0
+:j9de_apply_loop
+if j9de_i<j9de_n:
+ if $j9de_remove[j9de_i]='jo9_work_ethic':
+  ! Native stage removal clears the activity stage and its active training credit, not the donor.
+  gs 'jo9_activity_stage','remove','slave','jo9_work_ethic'
+ else
+  slave[$j9de_remove[j9de_i]]=0
+  if $j9de_remove[j9de_i]!'jo9_voice_trait': slave[$j9de_remove[j9de_i]+'_revealed']=0
+ end
+ j9de_i+=1
+ jump 'j9de_apply_loop'
+end
+slave[$j9de_key]=1
+slave[$j9de_key+'_revealed']=2
+result=1
+! JO9 MOD END DUPLICATO_ESSENTIA_TRAITS_20261116

@@ -1,0 +1,983 @@
+--- a/tools/modding-hub/server.py
++++ b/tools/modding-hub/server.py
+@@ -12,11 +12,12 @@
+ from spawn_warning import SpawnPolicy
+ from appearance_sharing import AppearanceSharing
+ from helper_dashboard import HelperDashboard
++import background_metadata as backgrounds
+ 
+ HERE=Path(__file__).resolve().parent
+ def build_id():
+  h=hashlib.sha256()
+- for name in ['server.py','helper_dashboard.py','helper_dashboard_html.py','helper-dashboard.css','data/slave-status-formulas.html','image_tool_runtime.py','Start-Image-Tool.ps1','tool-runtime.mjs','registry.py','integration.mjs','integration.css','app_launcher.py','embedded-tools.css','workspace.html','workspace-app.mjs','workspace-router.mjs','workspace-menu.json','overrides/workbench.mjs','overrides/trait-editor.mjs','overrides/studio-save.mjs','overrides/studio-db.mjs','overrides/studio-ai.mjs','overrides/studio-look.mjs','overrides/studio-look-geometry.mjs','master_editor.py','master_initials.py','general_dialogue.py','overrides/past-history.mjs','overrides/sim-data.mjs','overrides/coef-view.mjs','overrides/sim-view.mjs','overrides/pillow-talk.mjs','overrides/character-view.mjs','overrides/general-dialogue.mjs','overrides/studio-view.mjs','overrides/studio-role.mjs','game_presentation.py','overrides/game-presentation.mjs','overrides/initial-preview.mjs','runtime_initials.py','runtime-initials.cjs','acquisition-routes-runtime.json','overrides/runtime-initials.mjs','appearance_sharing.py','appearance-sharing.cjs','spawn_warning.py','spawn-policy-registry.json','overrides/spawn-notice.mjs','vendor/qsp/wasm-engine.cjs','vendor/qsp/qsp-engine.wasm']:
++ for name in ['server.py','helper_dashboard.py','helper_dashboard_html.py','helper-dashboard.css','data/slave-status-formulas.html','image_tool_runtime.py','Start-Image-Tool.ps1','tool-runtime.mjs','registry.py','integration.mjs','integration.css','app_launcher.py','embedded-tools.css','workspace.html','workspace-app.mjs','workspace-router.mjs','workspace-menu.json','overrides/workbench.mjs','overrides/trait-editor.mjs','overrides/studio-save.mjs','overrides/studio-db.mjs','overrides/studio-ai.mjs','overrides/studio-look.mjs','overrides/studio-look-geometry.mjs','master_editor.py','master_initials.py','general_dialogue.py','overrides/past-history.mjs','overrides/sim-data.mjs','overrides/coef-view.mjs','overrides/sim-view.mjs','overrides/pillow-talk.mjs','overrides/character-view.mjs','overrides/general-dialogue.mjs','overrides/studio-view.mjs','overrides/studio-role.mjs','game_presentation.py','overrides/game-presentation.mjs','overrides/initial-preview.mjs','runtime_initials.py','runtime-initials.cjs','acquisition-routes-runtime.json','overrides/runtime-initials.mjs','appearance_sharing.py','appearance-sharing.cjs','spawn_warning.py','spawn-policy-registry.json','overrides/spawn-notice.mjs','background_metadata.py','data/background-classifications.json','overrides/background-metadata.mjs','vendor/qsp/wasm-engine.cjs','vendor/qsp/qsp-engine.wasm']:
+   h.update((HERE/name).read_bytes())
+  return h.hexdigest()[:16]
+ def render_workspace():
+@@ -35,6 +36,7 @@
+ def create_server(studio_root,repo,urls_file,port=0):
+  studio_root=Path(studio_root).resolve();repo=Path(repo).resolve()
+  sys.path.insert(0,str(studio_root));base=importlib.import_module('studio_server')
++ base.SEED_KEYS.update(backgrounds.SEED_SUFFIXES)
+  cached=[];catalog_lock=threading.Lock()
+  def catalog(refresh=False):
+   nonlocal cached
+@@ -65,6 +67,7 @@
+   ch=store().read(sid);ch['choices']=base.choices();return ch
+  def save_slave(sid,body):
+   editor=store();editor._check_revision('slave',sid,body.get('revision'))
++  body=backgrounds.prepare_fields(editor.slave(sid)[1],body)
+   pending=base.save_fields(sid,{**body,'dryRun':True});profile=editor.slave_profile(sid)
+   before=profile.get('master',editor.master_from_slave(base.read_character(sid)['data'],profile))
+   master=body.get('master');changes=list(pending['changes'])
+@@ -111,6 +114,10 @@
+     formula['excludedAges']=[]
+     formula.setdefault('ageFactor',{}).setdefault('1',100)
+     return self.send_json(200,formula)
++   if native=='data/game-seed-keys.json':
++    seeds=json.loads((base.DIST/'data/game-seed-keys.json').read_text('utf-8'))
++    seeds['keys']=list(dict.fromkeys(seeds['keys']+list(backgrounds.SEED_SUFFIXES)))
++    return self.send_json(200,seeds)
+    if native=='character-view.mjs':return self.blob((HERE/'overrides/character-view.mjs').read_bytes(),'text/javascript; charset=utf-8')
+    if route=='/workspace/general-dialogue.mjs':return self.blob((HERE/'overrides/general-dialogue.mjs').read_bytes(),'text/javascript; charset=utf-8')
+    if native=='studio-view.mjs':
+@@ -118,7 +125,7 @@
+     marker='<button class="button secondary st-tosim"'
+     button='<button class="button secondary" data-workspace-image-search="${e(c.jsonFile)}" data-image-path="${e(c.data.fullimage || c.data.seed_ava_clear || \'\')}" data-image-id="${e(c.id)}" title="캐릭터 파일명 키워드를 이미지 검색창에 넣습니다. 검색은 직접 누르세요.">이미지 검색어 보내기</button>'
+     return self.blob(text.replace(marker,button+marker,1).encode(),'text/javascript; charset=utf-8')
+-   if native in ['workbench.mjs','trait-editor.mjs','studio-save.mjs','studio-db.mjs','studio-ai.mjs','past-history.mjs','sim-data.mjs','coef-view.mjs','sim-view.mjs','pillow-talk.mjs','spawn-notice.mjs','studio-look.mjs','studio-look-geometry.mjs','studio-role.mjs','game-presentation.mjs','initial-preview.mjs','runtime-initials.mjs']:
++   if native in ['workbench.mjs','trait-editor.mjs','studio-save.mjs','studio-db.mjs','studio-ai.mjs','past-history.mjs','sim-data.mjs','coef-view.mjs','sim-view.mjs','pillow-talk.mjs','spawn-notice.mjs','background-metadata.mjs','studio-look.mjs','studio-look-geometry.mjs','studio-role.mjs','game-presentation.mjs','initial-preview.mjs','runtime-initials.mjs']:
+     return self.blob((HERE/'overrides'/native).read_bytes(),'text/javascript; charset=utf-8')
+    if route in ['/workspace/integration.mjs','/workspace/integration.css','/workspace/tool-runtime.mjs']:
+     name=route.rsplit('/',1)[1];mime='text/javascript' if name.endswith('.mjs') else 'text/css'
+@@ -182,12 +189,13 @@
+    master=re.fullmatch(r'/api/master/(\d+)/(fields|images|talkbook)',route)
+    clone=re.fullmatch(r'/api/role/(slave|master)/(\d+)/clone',route)
+    slave=re.fullmatch(r'/api/char/(\d+)/fields',route)
++   slave_talk=re.fullmatch(r'/api/talkbook/(\d+)',route)
+    slave_images=re.fullmatch(r'/api/char/(\d+)/images',route)
+    shared_images=re.fullmatch(r'/api/char/(\d+)/sharing',route)
+    general=route=='/api/general-dialogue/save'
+    runtime=route=='/api/runtime-initials'
+    image_tool=route=='/workspace/tools/ensure'
+-   if not (master or clone or slave or slave_images or shared_images or general or runtime or image_tool):return super().do_POST()
++   if not (master or clone or slave or slave_talk or slave_images or shared_images or general or runtime or image_tool):return super().do_POST()
+    origin=self.headers.get('Origin')
+    if origin and urlparse(origin).hostname not in ('127.0.0.1','localhost'):return self.send_json(403,{'error':'허용되지 않은 출처입니다.'})
+    if self.headers.get('Content-Type','').split(';')[0].strip()!='application/json':return self.send_json(415,{'error':'JSON 요청만 받습니다.'})
+@@ -203,6 +211,9 @@
+      if shared_images:result=sharing.request(base.paths().root,shared_images[1],body)
+      elif general:result=dialogue_db().save(body)
+      elif slave:result=save_slave(slave[1],body)
++     elif slave_talk:
++      result=backgrounds.save_slave_talkbook(editor,slave_talk[1],body,base.check_plain)
++      if result['appliedBackground'] and not body.get('dryRun'):result['character']=decorate_slave(slave_talk[1])
+      elif slave_images:
+       editor._check_revision('slave',slave_images[1],body.get('revision'))
+       result=base.save_images(slave_images[1],body)
+--- a/tools/modding-hub/master_editor.py
++++ b/tools/modding-hub/master_editor.py
+@@ -5,6 +5,7 @@
+ from pathlib import Path
+ import array,base64,copy,datetime,hashlib,io,json,os,re,tempfile
+ import master_initials as initials
++import background_metadata as backgrounds
+ 
+ LOCATION='#masters_base'
+ ARRAYS={'name':'$master_base_name','description':'$hero_description','difficulty':'$hero_difficulty',
+@@ -238,6 +239,7 @@
+   if body.get('initials'):
+    fields=self.initial_catalog(master,sid,doc=d)['fields'];after_initials=initials.merge_changes(fields,before_initials,body['initials'])
+    master['statsCode'],extra=initials.apply_overrides(d,sid,master['statsCode'],after_initials,fields);validate_master(master)
++  body=backgrounds.prepare_fields(profile.get('data',{}),body)
+   new['data']=self._update_data(profile.get('data',{}),body);new['master']=master
+   changes=[{'key':'master.'+k,'before':original.get(k),'after':master[k]} for k in ARRAYS if original.get(k)!=master.get(k)]
+   changes.extend({'key':'initial.'+k,'before':before_initials.get(k),'after':after_initials.get(k)} for k in set(before_initials)|set(after_initials) if before_initials.get(k)!=after_initials.get(k))
+@@ -262,7 +264,7 @@
+   if len(matches)!=1:raise ValueError('노예 JSON을 하나로 특정하지 못했습니다: '+str(sid))
+   return matches[0],json.loads(matches[0].read_text('utf-8-sig'))
+  def slave_profile(self,sid):return self._profile('slave',sid)
+- def slave_revision(self,sid):return digest(encoded({'data':self.slave(sid)[1],'profile':self.slave_profile(sid)}))
++ def slave_revision(self,sid):return digest(encoded({'data':self.slave(sid)[1],'profile':self.slave_profile(sid),'talkbook':self.read_slave_talk(sid)}))
+  def save_slave_profile(self,sid,body):
+   self._check_revision('slave',sid,body.get('revision'));p=self.slave_profile(sid);master=body.get('master')
+   if master is not None:p['master']=validate_master(master)
+@@ -323,7 +325,7 @@
+    profile=self.slave_profile(sid);master=self.master_from_slave(data,profile);revision=self.slave_revision(sid);owned=profile.get('initialOverrides',{})
+   gender=body.get('gender','female');nid=self._new_id(target,body.get('newId'),gender);new={'seed_name':name}
+   image_keys={'fullimage','fullmade','fullsecretary','fullmistress','indpack_title','indpack_naked','indpack_maid','indpack_secr','indpack_dom','seed_ava','seed_ava_clear','seed_ava_gray'}
+-  bg_keys=set(STORY.values())|{'seed_age','seed_psy_basic','seed_virginity'}
++  bg_keys=set(STORY.values())|{'seed_age','seed_psy_basic','seed_virginity'}|backgrounds.SEED_KEYS
+   for k,v in data.items():
+    group='appearance' if k in image_keys or k.startswith(('seed_boobs','seed_pussy')) else 'background' if k in bg_keys else 'stats'
+    if k!='seed_name' and group in include:new[k]=copy.deepcopy(v)
+@@ -344,7 +346,7 @@
+     if pattern.search(newmaster['statsCode']):newmaster['statsCode']=pattern.sub(lambda m:m[1]+str(value),newmaster['statsCode'])
+     else:newmaster['statsCode']+='\r\n'+key+' = '+str(value)
+   talk=profile.get('talkbook') if role=='master' else self.read_slave_talk(sid)
+-  background=copy.deepcopy(profile.get('background') or (talk or {}).get('background',{})) if 'background' in include else {}
++  background=backgrounds.picker_background(data,profile.get('background') or (talk or {}).get('background',{})) if 'background' in include else {}
+   book=copy.deepcopy(talk) if 'talk' in include else None
+   if book is not None:book.pop('background',None)
+   if background:
+@@ -389,8 +391,13 @@
+    self._check_revision('master',sid,body.get('revision'))
+    book=body.get('book')
+    if not isinstance(book,dict):raise ValueError('대사집은 객체여야 합니다.')
++   if body.get('applyBackground') is True:
++    p['data']={**p.get('data',{}),**backgrounds.seed_values(book.get('background',{}))}
++    book={**p.get('talkbook',{}),'background':copy.deepcopy(book.get('background',{}))}
+    p['talkbook']=book;p['background']=copy.deepcopy(book.get('background',{}));self._write({self._profile_file('master',sid):encoded(p)})
+-  return {'id':int(sid),'path':self._profile_file('master',sid).relative_to(self.root).as_posix(),'exists':'talkbook' in p,'book':p.get('talkbook'),'revision':self.revision(sid),'noAutoGenerate':False}
++  result={'id':int(sid),'path':self._profile_file('master',sid).relative_to(self.root).as_posix(),'exists':'talkbook' in p,'book':p.get('talkbook'),'revision':self.revision(sid),'noAutoGenerate':False}
++  if body is not None and body.get('applyBackground') is True:result['character']=self.read(sid)
++  return result
+  def images(self,sid,body,decode,compose,gray,sepia):
+   self._check_revision('master',sid,body.get('revision'))
+   current=self.read(sid);profile=self._profile('master',sid);data=copy.deepcopy(current['data']);payloads={};targets={}
+--- a/tools/modding-hub/Start-Modding-Hub.ps1
++++ b/tools/modding-hub/Start-Modding-Hub.ps1
+@@ -18,7 +18,7 @@
+ if ($ToolUrls.Count) {[IO.File]::WriteAllText($urlsFile,($ToolUrls | ConvertTo-Json -Depth 5),[Text.UTF8Encoding]::new($false))}
+ if (!(Test-Path -LiteralPath $urlsFile)) {throw '기존 모드툴 주소가 없습니다. Open-Modding-Tools.ps1로 실행하세요.'}
+ $stream=New-Object IO.MemoryStream
+-foreach ($name in @('server.py','helper_dashboard.py','helper_dashboard_html.py','helper-dashboard.css','data/slave-status-formulas.html','image_tool_runtime.py','Start-Image-Tool.ps1','tool-runtime.mjs','registry.py','integration.mjs','integration.css','app_launcher.py','embedded-tools.css','workspace.html','workspace-app.mjs','workspace-router.mjs','workspace-menu.json','overrides/workbench.mjs','overrides/trait-editor.mjs','overrides/studio-save.mjs','overrides/studio-db.mjs','overrides/studio-ai.mjs','overrides/studio-look.mjs','overrides/studio-look-geometry.mjs','master_editor.py','master_initials.py','general_dialogue.py','overrides/past-history.mjs','overrides/sim-data.mjs','overrides/coef-view.mjs','overrides/sim-view.mjs','overrides/pillow-talk.mjs','overrides/character-view.mjs','overrides/general-dialogue.mjs','overrides/studio-view.mjs','overrides/studio-role.mjs','game_presentation.py','overrides/game-presentation.mjs','overrides/initial-preview.mjs','runtime_initials.py','runtime-initials.cjs','acquisition-routes-runtime.json','overrides/runtime-initials.mjs','appearance_sharing.py','appearance-sharing.cjs','spawn_warning.py','spawn-policy-registry.json','overrides/spawn-notice.mjs','vendor/qsp/wasm-engine.cjs','vendor/qsp/qsp-engine.wasm')) {$block=[IO.File]::ReadAllBytes((Join-Path $hubDir $name));$stream.Write($block,0,$block.Length)}
++foreach ($name in @('server.py','helper_dashboard.py','helper_dashboard_html.py','helper-dashboard.css','data/slave-status-formulas.html','image_tool_runtime.py','Start-Image-Tool.ps1','tool-runtime.mjs','registry.py','integration.mjs','integration.css','app_launcher.py','embedded-tools.css','workspace.html','workspace-app.mjs','workspace-router.mjs','workspace-menu.json','overrides/workbench.mjs','overrides/trait-editor.mjs','overrides/studio-save.mjs','overrides/studio-db.mjs','overrides/studio-ai.mjs','overrides/studio-look.mjs','overrides/studio-look-geometry.mjs','master_editor.py','master_initials.py','general_dialogue.py','overrides/past-history.mjs','overrides/sim-data.mjs','overrides/coef-view.mjs','overrides/sim-view.mjs','overrides/pillow-talk.mjs','overrides/character-view.mjs','overrides/general-dialogue.mjs','overrides/studio-view.mjs','overrides/studio-role.mjs','game_presentation.py','overrides/game-presentation.mjs','overrides/initial-preview.mjs','runtime_initials.py','runtime-initials.cjs','acquisition-routes-runtime.json','overrides/runtime-initials.mjs','appearance_sharing.py','appearance-sharing.cjs','spawn_warning.py','spawn-policy-registry.json','overrides/spawn-notice.mjs','background_metadata.py','data/background-classifications.json','overrides/background-metadata.mjs','vendor/qsp/wasm-engine.cjs','vendor/qsp/qsp-engine.wasm')) {$block=[IO.File]::ReadAllBytes((Join-Path $hubDir $name));$stream.Write($block,0,$block.Length)}
+ $build=([BitConverter]::ToString([Security.Cryptography.SHA256]::Create().ComputeHash($stream.ToArray())).Replace('-','').ToLowerInvariant()).Substring(0,16)
+ $stream.Dispose()
+ if ($old) {
+--- a/tools/modding-hub/overrides/studio-view.mjs
++++ b/tools/modding-hub/overrides/studio-view.mjs
+@@ -8,6 +8,7 @@
+ import {esc as e, loadSimData} from './sim-data.mjs';
+ import {createLookEditor} from './studio-look.mjs';
+ import {SLOTS} from './character-view.mjs';
++import {pickerBackground, needsBackgroundApply, serialSaves} from './background-metadata.mjs';
+ 
+ const PAGE = 40;
+ const AGE = {0: '젊음(0)', 1: '소녀(1)', 2: '원숙(2)'};
+@@ -73,7 +74,8 @@
+    unique: n.unique ? {name: n.name.trim(), slug: n.slug.trim(), id: n.id.trim(), story: n.story} : null};
+  }
+ 
+- const st = {bgMode: role, gender: '', roleCopy: null, game: null, items: [], q: '', page: 0, sel: null, ch: null, tab: 'look', edits: blank(), preview: null, busy: false, error: '', talk: null, book: null, bookDirty: false, qq: '', qhits: null, qedits: {}, qmod: null, qid: '', qdesc: '', sharing: null};
++ const st = {bgMode: role, gender: '', roleCopy: null, game: null, items: [], q: '', page: 0, sel: null, ch: null, tab: 'look', edits: blank(), preview: null, busy: false, error: '', talk: null, book: null, bookDirty: false, bgVersion: 0, bgUnsaved: false, talkPending: 0, qq: '', qhits: null, qedits: {}, qmod: null, qid: '', qdesc: '', sharing: null};
++ const queueTalk = serialSaves();
+  function blank() { return {set: {}, unset: new Set(), story: {}, master: null, initials: {}, simulation: null}; }
+  const data = () => st.ch?.data ?? {};
+  // 편집 중 값: 저장 전 바꾼 값 → 지운 키 → 원래 값
+@@ -109,32 +111,49 @@
+   try { const r = await call('/api/chars'); st.items = r.items; st.choices = r.choices; } catch (error) { st.items = []; api.toast(error.message); }
+  }
+  async function open(sid, force = false) {
++  await queueTalk(() => {});
+   if (!force && (dirtyCount() || lookEd.dirty() || Object.keys(st.qedits).length || sharingChanged()) && !window.confirm('저장하지 않은 변경을 버리고 다른 캐릭터를 열까요?')) return;
+-  if (!force && st.bookDirty && !window.confirm('저장하지 않은 대사집 변경을 버릴까요?')) return;
++  if (!force && (st.bookDirty || st.bgUnsaved) && !window.confirm('저장하지 않은 대사집·배경 분류 변경을 버릴까요?')) return;
+   try { st.ch = await call('/api/char/' + sid); st.choices = st.ch.choices; st.sel = sid; st.danger = null; st.roleCopy = null; st.edits = blank(); st.preview = null; lookEd.reset(st.ch); Object.assign(st, {qq: '', qhits: null, qedits: {}, qmod: null, qid: '', qdesc: ''}); await loadTalk(); sendToSim(false); } catch (error) { api.toast(error.message); }
+   render();
+  }
+  async function loadTalk() {
++  await queueTalk(() => {});
+   st.talk = await call('/api/talkbook/' + st.sel);
+   st.book = structuredClone(st.talk.book ?? {background: {}, lines: {}, notes: ''});
+-  st.book.background ??= {}; st.book.lines ??= {}; st.book.refs ??= {}; st.bookDirty = false;
++  st.book.background = pickerBackground(data(), st.book.background ?? {}); st.book.lines ??= {}; st.book.refs ??= {}; st.bookDirty = false; st.bgVersion++; st.bgUnsaved = false;
+  }
+  async function saveTalk(bgOnly = false) {
+   const strip = ({format, version, id: _id, name, jsonFile, ...rest}) => rest;
+-  // 배경 분류만 고정할 때는 저장된 대사집에 배경만 바꿔 쓰고, 아직 저장하지 않은 대사 편집은 화면에 그대로 둔다
+-  const book = bgOnly ? {...strip(st.talk.book ?? {}), background: st.book.background} : strip(st.book);
++  const sid = st.sel, version = st.bgVersion, background = structuredClone(st.book.background), fullBook = strip(structuredClone(st.book));
++  st.talkPending++;
+   try {
+-   st.talk = await call('/api/talkbook/' + st.sel, {book, revision: st.ch.revision}); if(st.talk.revision)st.ch.revision=st.talk.revision;
+-   if (bgOnly) st.book.background = structuredClone(st.talk.book.background ?? {});
+-   else { st.book = structuredClone(st.talk.book); st.book.refs ??= {}; st.book.lines ??= {}; st.bookDirty = false; }
+-   api.toast((bgOnly ? '배경 분류를 고정했습니다 · ' : '대사집을 저장했습니다 · ') + st.talk.path);
++   await queueTalk(async () => {
++    if (st.sel !== sid) return;
++    // The server merges background-only writes with persisted dialogue under the same lock.
++    const book = bgOnly ? {...strip(st.talk.book ?? {}), background} : fullBook;
++    const result = await call('/api/talkbook/' + sid, {book, revision: st.ch.revision, ...(bgOnly ? {applyBackground: true} : {})});
++    if (st.sel !== sid) return;
++    st.talk = result;
++    if (result.character) st.ch = result.character;
++    else if (result.revision) st.ch.revision = result.revision;
++    if (bgOnly) {
++     if (version === st.bgVersion) { st.book.background = structuredClone(result.book.background ?? {}); st.bgUnsaved = false; }
++    } else {
++     const currentBackground = st.book.background;
++     st.book = structuredClone(result.book); st.book.refs ??= {}; st.book.lines ??= {}; st.bookDirty = false;
++     if (version !== st.bgVersion) st.book.background = currentBackground;
++    }
++    api.toast((bgOnly ? (isMaster ? '전환용 배경 분류를 저장했습니다 · ' : '게임 배경 분류를 저장했습니다 · ') : '대사집을 저장했습니다 · ') + result.path);
++   });
+   } catch (error) { api.toast(error.message); }
++  finally { st.talkPending--; }
+   render();
+  }
+  // 편집 중인 캐릭터를 시뮬레이터에 연다. 캐릭터를 열 때·저장할 때 자동으로, '시뮬레이터로 보내기' 버튼으로 직접(탭 이동까지)
+  function sendToSim(go) {
+   if (!api.charView || !st.ch || st.ch.id === 'new' || !st.book || (isMaster && !go)) return;
+-  api.charView.loadGameCharacter(pendingData(), st.ch.jsonFile, {...st.book, simulation:simulationData(),portrait:st.ch.faces?.seed_ava_clear??st.ch.faces?.seed_ava,background: resolveBg(st.book.background ?? {}), id: isMaster ? 'master:' + st.ch.id : st.ch.id});
++  api.charView.loadGameCharacter(pendingData(), st.ch.jsonFile, {...st.book, simulation:simulationData(),portrait:st.ch.faces?.seed_ava_clear??st.ch.faces?.seed_ava,background: resolveBg(st.book.background ?? {}),backgroundResolved:true, id: isMaster ? 'master:' + st.ch.id : st.ch.id});
+   if (go) { api.switchTab('character'); api.toast(`${st.ch.data.seed_name || 'ID ' + st.ch.id}을(를) 시뮬레이터로 보냈습니다. 각색한 뒤 캐릭터 편집 › 대사집에서 '담기'를 누르세요.`); }
+  }
+  // 편집 중(저장 전) 값까지 반영한 게임 JSON: 시뮬레이터로 보낼 때 쓴다
+@@ -147,19 +166,24 @@
+  }
+  async function preview() {
+   const invalid=root.querySelector('[data-st-initial]:invalid,[data-st-master-cm]:invalid,[data-st-simulation]:invalid,[data-st-set]:invalid');if(invalid){invalid.reportValidity();return;}
+-  const body = {set: st.edits.set, unset: [...st.edits.unset], story: st.edits.story, master: st.edits.master, initials: st.edits.initials, ...simulationPatch(), revision: st.ch.revision, dryRun: true};
+-  try { st.preview = (await call(`/api/char/${st.sel}/fields`, body)).changes; } catch (error) { api.toast(error.message); }
++  try { await queueTalk(async () => {
++   const body = {set: st.edits.set, unset: [...st.edits.unset], story: st.edits.story, master: st.edits.master, initials: st.edits.initials, ...simulationPatch(), revision: st.ch.revision, dryRun: true};
++   st.preview = (await call(`/api/char/${st.sel}/fields`, body)).changes;
++  }); } catch (error) { api.toast(error.message); }
+   render();
+  }
+  async function saveNow() {
+   const invalid=root.querySelector('[data-st-initial]:invalid,[data-st-master-cm]:invalid,[data-st-simulation]:invalid,[data-st-set]:invalid');if(invalid){invalid.reportValidity();return;}
+-  const body = {set: st.edits.set, unset: [...st.edits.unset], story: st.edits.story, master: st.edits.master, initials: st.edits.initials, ...simulationPatch(), revision: st.ch.revision};
+   try {
++   await queueTalk(async () => {
++   const body = {set: st.edits.set, unset: [...st.edits.unset], story: st.edits.story, master: st.edits.master, initials: st.edits.initials, ...simulationPatch(), revision: st.ch.revision};
+    const r = await call(`/api/char/${st.sel}/fields`, body);
+    if (r.character) st.ch = r.character;
++   if (st.book) st.book.background = pickerBackground(st.ch.data, st.book.background);
+    st.edits = blank(); st.preview = null; sendToSim(false);
+    api.toast(r.saved ? `저장했습니다 · ${r.changes.length}개 항목 (처음 저장이면 .bak 백업을 남겼습니다)` : '바뀐 것이 없습니다.');
+    const item = st.items.find(x => x.id === st.sel); if (item) item.name = (isMaster ? st.ch.master.name : st.ch.data.seed_name) ?? item.name;
++   });
+   } catch (error) { api.toast(error.message); }
+   render();
+  }
+@@ -351,8 +375,7 @@
+   if (!key) delete st.book.refs[id]; else st.book.refs = {...(st.book.refs ?? {}), [id]: {key, blocked: REFS.rows[key]?.b ?? []}};
+   st.bookDirty = true; render();
+  }
+- // 배경 분류(세계·출신·직업): 고르면 바로 대사집에 저장해 고정한다. 유니크도 같다(게임 JSON에는 이 칸이 없다)
+- // 배경 분류(세계·출신·직업)를 대분류 → 소분류 트리로 고른다. 위에서 아래로 연결된 것만, 시대순. 고르면 대사집에 바로 저장해 고정(유니크 포함)
++ // 배경 분류는 대사집과 캐릭터 seed_ 메타데이터에 함께 저장한다. 설명·능력치·특성은 유지한다.
+  const groupOf = (kind, id) => (CAT[kind] ?? []).find(g => g.members.includes(id));
+  const ORDER = ['world', 'family', 'occupation'];
+  const groupList = kind => [...(CAT[kind] ?? [])];
+@@ -387,7 +410,8 @@
+    if (loose.length) groups.push({id: '_etc', label: '그 밖', members: loose});
+    const first = g => { const i = Math.min(...g.members.map(m => allowed.indexOf(m)).filter(x => x >= 0)); return Number.isFinite(i) ? i : 1e4; };
+    groups.sort((a, b) => first(a) - first(b));
+-   const big = bg[kind + 'Group'] ?? groupOf(kind, bg[kind])?.id ?? '';
++   const savedGroup = bg[kind + 'Group'];
++   const big = bg[kind] ? (groups.find(x => x.id === savedGroup)?.members.includes(bg[kind]) ? savedGroup : groupOf(kind, bg[kind])?.id ?? '_etc') : savedGroup ?? '';
+    const g = groups.find(x => x.id === big);
+    const items = g ? allowed.filter(id => g.members.includes(id)) : [];
+    if (bg[kind] && !items.includes(bg[kind])) items.unshift(bg[kind]);
+@@ -395,7 +419,8 @@
+     <select data-tb-big="${kind}"><option value="">(대분류 정하지 않음)</option>${groups.map(x => { const n = x.members.filter(m => allowed.includes(m)).length; return `<option value="${e(x.id)}" ${x.id === big ? 'selected' : ''} ${n ? '' : 'disabled'}>${e(x.label)} (${n})</option>`; }).join('')}</select>
+     <select data-tb-bg="${kind}" ${g ? '' : 'disabled'}><option value="">${g ? '(이 대분류 안에서 무작위)' : '먼저 대분류'}</option>${items.map(id => `<option value="${e(id)}" ${bg[kind] === id ? 'selected' : ''}>${e(SD.name(kind, id))}</option>`).join('')}</select></div>`;
+   };
+-  return `<div class="section-label">배경 분류 <small class="fine-print">1행 대분류 · 2행 소분류. 대분류만 고르면 그 안에서 무작위로 뽑습니다. 세계 → 출신 → 직업 순으로 연결된 것만 시대순으로 보이며, 고르면 대사집에 바로 저장되어 고정됩니다(유니크 포함)</small></div>
++  const needsApply = st.bgUnsaved || needsBackgroundApply(data(), bg);
++  return `<div class="section-label">배경 분류 <small class="fine-print">1행 대분류 · 2행 소분류. 소분류는 ${isMaster ? '노예 전환용 설정' : '게임 캐릭터 분류'}에 바로 저장됩니다. 대분류만 고르면 시뮬레이터에서 무작위로 뽑고 게임 분류는 미지정입니다. 배경 이야기·능력치·특성은 그대로 유지합니다.</small>${needsApply ? '<button class="button secondary" data-tb-act="apply-background">게임 분류로 적용</button>' : ''}</div>
+    <div class="bg-trees">${row('world', '세계')}${row('family', '출신')}${row('occupation', '직업')}</div>`;
+  }
+  // 한 칸을 바꾼 뒤: 그 칸과 위는 두고, 아래 칸 중 새 후보에 없는 대분류·소분류를 비운다
+@@ -408,7 +433,8 @@
+    if (g && !allowed.some(id => groupList(k).find(x => x.id === g)?.members.includes(id))) delete bg[k + 'Group'];
+   }
+   st.book.background = Object.fromEntries(Object.entries(bg).filter(([, v]) => v));
+-  return saveTalk(true);
++  st.bgVersion++; st.bgUnsaved = true;
++  const saved = saveTalk(true); render(); return saved;
+  }
+  function talk() {
+   if (!st.talk) return '<p class="muted-text">대사집을 읽는 중…</p>';
+@@ -584,6 +610,7 @@
+   const tb = t.dataset.tbAct;
+   if (tb === 'add-line') { const k = root.querySelector('[data-tb-newslot]').value.trim(); if (!/^[A-Za-z0-9_.:|-]{1,60}$/.test(k)) return api.toast('칸 ID는 영문·숫자·밑줄로 쓰세요.'); if (!(k in st.book.lines)) st.book.lines[k] = ''; st.bookDirty = true; return render(); }
+   if (tb === 'save') return saveTalk();
++  if (tb === 'apply-background') return saveTalk(true);
+   if (tb === 'reload') return loadTalk().then(render);
+   if (tb === 'to-sim') return sendToSim(true);
+   if (tb === 'from-sim') {
+@@ -640,7 +667,7 @@
+  }
+  root.addEventListener('change',event=>{if(!isMaster&&st.tab==='stats'&&event.target.matches('[data-st-set],[data-st-simulation]')){sendToSim(false);render();}});
+  lookEd.bind(root, () => render());
+- window.addEventListener('beforeunload', ev => { if (dirtyCount() || lookEd.dirty() || st.bookDirty || sharingChanged()) { ev.preventDefault(); ev.returnValue = ''; } });
++ window.addEventListener('beforeunload', ev => { if (dirtyCount() || lookEd.dirty() || st.bookDirty || st.bgUnsaved || st.talkPending || sharingChanged()) { ev.preventDefault(); ev.returnValue = ''; } });
+ 
+  render();
+  loadGame();
+--- a/tools/modding-hub/overrides/character-view.mjs
++++ b/tools/modding-hub/overrides/character-view.mjs
+@@ -5,6 +5,7 @@
+ import {pastFacts,packFacts,firstTimeLine,SKILL_NAME} from './past-facts.mjs';
+ import {pillowTalk,voiceType,relationMode,speechStyle,TYPE_NAME,STYLE_NAME,MODE_NAME} from './pillow-talk.mjs';
+ import {loadSimData,esc as e,rng,getFormula,onFormulaChange} from './sim-data.mjs';
++import {pickerBackground} from './background-metadata.mjs';
+ import {editedBackgroundText,validateBackgroundSettings,textKey} from './background-settings.mjs';
+ import {mountQuestionWorkspace,mergeTalkLines,splitTalkLines} from '/workspace/general-dialogue.mjs';
+ 
+@@ -321,7 +322,8 @@
+  function toJson(){
+   const c=ch(),out={seed_name:c.name};
+   if(c.type!=='')out.jo9_type=c.type;
+-  for(const k of ['world','family','occupation'])if(c[k])out['jo9_'+k]=c[k];
++  for(const k of ['world','family','occupation']){out['seed_'+k]=c[k]||'';if(c[k])out['jo9_'+k]=c[k];}
++  out.seed_background_fixed=1;
+   for(const k of SEED_KEYS())if(c[k]!==undefined)out['seed_'+k]=c[k];
+   if(c.jo9_voice_type)out.seed_jo9_voice_type=c.jo9_voice_type;
+   if(c.unique)for(const [k]of KINDS)out[`seed_${k}_description`]=c.unique.texts[k];
+@@ -330,7 +332,7 @@
+  function fromJson(d,fileName){
+   const c=blank(),num=fileName?.match(/^(\d+)/)?.[1];
+   c.name=String(d.seed_name??d.name??'');c.type=d.jo9_type??num??'';
+-  for(const k of ['world','family','occupation'])if(d['jo9_'+k])c[k]=d['jo9_'+k];
++  for(const k of ['world','family','occupation'])c[k]=d.seed_background_fixed===1?String(d['seed_'+k]??''):String(d['jo9_'+k]??'');
+   for(const [key,v] of Object.entries(d))if(key.startsWith('seed_')&&typeof v==='number')c[key.slice(5)]=v;
+   // 유니크 JSON은 기본 외모·독특함을 seed_beauty·seed_exotic으로 둔다
+   if(c.base_beauty===undefined&&typeof d.seed_beauty==='number')c.base_beauty=d.seed_beauty;
+@@ -427,8 +429,9 @@
+  render();
+  // 통합 편집(캐릭터 편집 탭)과 잇는 다리: 게임 캐릭터 JSON + 대사집을 시뮬레이터로 열고, 시뮬레이터 결과를 대사집으로 돌려준다
+  function loadGameCharacter(d,fileName,book={}){
+-  const bg=book.background??{};st.runtimeActor={id:book.id??(Number(fileName?.match(/^(\d+)/)?.[1])||null),data:d};
++  const bg=book.backgroundResolved?book.background??{}:pickerBackground(d,book.background??{});st.runtimeActor={id:book.id??(Number(fileName?.match(/^(\d+)/)?.[1])||null),data:d};
+   st.ch=fromJson({...d,jo9_type:String(book.id??''),jo9_world:bg.world??'',jo9_family:bg.family??'',jo9_occupation:bg.occupation??''},fileName);
++  for(const kind of ['world','family','occupation'])st.ch[kind]=bg[kind]??'';
+   st.ch.source='unique';st.ch.portrait=book.portrait??null;loadStatus(d,book.simulation??{});st.overrides={...(book.overrides??{})};st.pt=1;
+   if(book.seed)st.seed=String(book.seed);
+   st.acq={...(book.acq??{})};
+--- /dev/null
++++ b/tools/modding-hub/background_metadata.py
+@@ -0,0 +1,108 @@
++"""JO9 MOD CHARACTER_BACKGROUND_20261118: explicit classification metadata only."""
++import copy
++import json
++import re
++from pathlib import Path
++
++KINDS = ('world', 'family', 'occupation')
++SEED_SUFFIXES = (*KINDS, 'background_fixed')
++SEED_KEYS = frozenset('seed_' + kind for kind in SEED_SUFFIXES)
++CATALOG = json.loads((Path(__file__).parent / 'data/background-classifications.json').read_text('utf-8'))
++BOOK_KEYS = {'background', 'seed', 'acq', 'overrides', 'lines', 'facts', 'history', 'notes', 'refs'}
++BOOK_HEADER = {'format', 'version', 'id', 'name', 'jsonFile'}
++
++
++def classification(kind, value):
++    if not isinstance(value, str) or (value and value not in CATALOG[kind]):
++        raise ValueError('알 수 없는 배경 분류입니다: ' + kind + ' / ' + str(value))
++    return value
++
++
++def seed_values(background):
++    if not isinstance(background, dict):
++        raise ValueError('배경 분류는 객체여야 합니다.')
++    return {**{'seed_' + kind: classification(kind, background.get(kind, '')) for kind in KINDS},
++            'seed_background_fixed': 1}
++
++
++def picker_background(data, legacy):
++    background = copy.deepcopy(legacy)
++    if data.get('seed_background_fixed') == 1:
++        for kind in KINDS:
++            background.pop(kind, None)
++            if data.get('seed_' + kind):
++                background[kind] = data['seed_' + kind]
++    return background
++
++
++def prepare_fields(data, body):
++    """Validate manual seed edits; absent/cleared slots remain explicitly unassigned."""
++    sets = dict(body.get('set') or {})
++    unsets = list(body.get('unset') or [])
++    if not (set(sets) | set(unsets)) & SEED_KEYS:
++        return body
++    if 'seed_background_fixed' in unsets:
++        raise ValueError('배경 분류는 세계·출신·직업의 비우기로 해제하세요.')
++    if 'seed_background_fixed' in sets and (type(sets['seed_background_fixed']) is not int or sets['seed_background_fixed'] != 1):
++        raise ValueError('배경 분류 저장 표시는 정수 1이어야 합니다.')
++    background = {}
++    for kind in KINDS:
++        key = 'seed_' + kind
++        background[kind] = '' if key in unsets else sets.get(key, data.get(key, ''))
++    sets.update(seed_values(background))
++    return {**body, 'set': sets, 'unset': [key for key in unsets if key not in SEED_KEYS]}
++
++
++def _book(sid, data, filename, incoming, check_plain):
++    if not isinstance(incoming, dict):
++        raise ValueError('대사집은 객체여야 합니다.')
++    book = copy.deepcopy(incoming)
++    extra = set(book) - BOOK_KEYS
++    if extra:
++        raise ValueError('대사집에 없는 항목입니다: ' + ', '.join(sorted(extra)))
++    check_plain(book)
++    if 'refs' in book:
++        refs = {}
++        for slot, ref in (book.get('refs') or {}).items():
++            if not isinstance(ref, dict) or not re.fullmatch(r'p\d{4}\.q\d{2}(\.[a-z0-9]+)*', str(ref.get('key', ''))):
++                raise ValueError('원본 DB 연결 코드 형식이 아닙니다: ' + str(slot))
++            refs[slot] = {'key': ref['key'], 'blocked': [c for c in ref.get('blocked') or [] if re.fullmatch(r'B\d', str(c))]}
++        book['refs'] = refs
++    out = {'format': 'jo9-talkbook', 'version': 1, 'id': int(sid), 'name': data.get('seed_name', ''),
++           'jsonFile': filename.name, **book}
++    raw = json.dumps(out, ensure_ascii=False, indent=1)
++    if len(raw) > 2_000_000:
++        raise ValueError('대사집이 너무 큽니다(2MB 이하).')
++    return out, raw.encode('utf-8')
++
++
++def save_slave_talkbook(editor, sid, body, check_plain):
++    """Caller holds the studio lock. One transaction writes JSON plus its sidecar."""
++    apply_background = body.get('applyBackground') is True
++    if apply_background and not body.get('revision'):
++        raise ValueError('캐릭터를 다시 불러온 뒤 배경 분류를 저장하세요.')
++    editor._check_revision('slave', sid, body.get('revision'))
++    filename, data = editor.slave(sid)
++    incoming = body.get('book')
++    if not isinstance(incoming, dict):
++        raise ValueError('대사집은 객체여야 합니다.')
++    updated = dict(data)
++    if apply_background:
++        background = incoming.get('background', {})
++        updated.update(seed_values(background))
++        # Background autosaves retain persisted dialogue; unsaved dialogue remains in the UI.
++        previous = editor.read_slave_talk(sid) or {}
++        incoming = {key: value for key, value in previous.items() if key not in BOOK_HEADER}
++        incoming['background'] = copy.deepcopy(background)
++    book, raw = _book(sid, updated, filename, incoming, check_plain)
++    talk_path = editor.root / 'jo9_talkbook' / (str(int(sid)) + '.json')
++    changes = [{'key': key, 'before': data.get(key), 'after': updated[key]}
++               for key in SEED_KEYS if data.get(key) != updated.get(key) or (key in data) != (key in updated)]
++    if not body.get('dryRun'):
++        payloads = {talk_path: raw}
++        if changes:
++            payloads[filename] = json.dumps(updated, ensure_ascii=False, indent=4).encode('utf-8')
++        editor._write(payloads)
++    return {'id': int(sid), 'path': talk_path.relative_to(editor.root).as_posix(), 'exists': True,
++            'book': book, 'revision': editor.slave_revision(sid), 'noAutoGenerate': False,
++            'appliedBackground': apply_background, 'changes': changes, 'dryRun': bool(body.get('dryRun'))}
+--- /dev/null
++++ b/tools/modding-hub/data/background-classifications.json
+@@ -0,0 +1,145 @@
++{
++  "world": [
++    "prehistoric",
++    "barbarian",
++    "sns",
++    "medieval",
++    "darkfantasy",
++    "highfantasy",
++    "steampunk",
++    "industrial",
++    "modern",
++    "cyberpunk",
++    "utopia",
++    "darkfuture",
++    "space",
++    "earth_rome"
++  ],
++  "family": [
++    "tribe",
++    "amazon",
++    "nomad",
++    "pesant",
++    "hunter",
++    "fisher",
++    "viking",
++    "barbarian_king",
++    "orphan",
++    "bondman",
++    "gypsy",
++    "church",
++    "craftsman",
++    "merchant",
++    "valetry",
++    "knight",
++    "mprincess",
++    "farmers",
++    "workhouse",
++    "proletarian",
++    "clerk",
++    "naturalist",
++    "ingeneer",
++    "doctor",
++    "servant",
++    "magnat",
++    "bankeer",
++    "mayor",
++    "mafiosi",
++    "orpnange",
++    "worker",
++    "policeman",
++    "manager",
++    "biologist",
++    "programmer",
++    "surgeon",
++    "businessman",
++    "finance",
++    "general",
++    "poet",
++    "artist",
++    "architect",
++    "operator",
++    "jailer",
++    "bioreactor",
++    "minitruth",
++    "anter",
++    "freetrader",
++    "astrofarm",
++    "asteroid",
++    "astrogator",
++    "admiral",
++    "nanofarmacist",
++    "gendesigner",
++    "ancient_noble",
++    "ancient_citizen",
++    "roman_freedslave"
++  ],
++  "occupation": [
++    "tribal_girl",
++    "shaman",
++    "heroine",
++    "huntress",
++    "bride",
++    "viking_wife",
++    "witch",
++    "herbalist",
++    "barbarian_princess",
++    "thief",
++    "beggar",
++    "gypsy",
++    "whore",
++    "markitane",
++    "brothel",
++    "nun",
++    "valertry",
++    "sorceress",
++    "thug",
++    "poor_bride",
++    "poor_wife",
++    "brigand",
++    "noble_bride",
++    "noble_wife",
++    "mprincess",
++    "farmer",
++    "milker",
++    "swiner",
++    "weaver",
++    "freaser",
++    "maid",
++    "sufragist",
++    "nurse",
++    "teacher",
++    "oficiant",
++    "avanturiste",
++    "rich_bride",
++    "rich_wife",
++    "punk",
++    "student",
++    "secretary",
++    "voleyball",
++    "karateka",
++    "hymnast",
++    "policewoman",
++    "model",
++    "hacker",
++    "writer",
++    "major",
++    "artist",
++    "mind_contol",
++    "time_plice",
++    "jailer",
++    "anter",
++    "academy",
++    "mech",
++    "contraband",
++    "astrofarmer",
++    "installer",
++    "courtesan",
++    "serial_killer",
++    "gang_member",
++    "mafia_boss",
++    "former_slave",
++    "schoolgirl",
++    "dancer"
++  ]
++}
+--- /dev/null
++++ b/tools/modding-hub/overrides/background-metadata.mjs
+@@ -0,0 +1,18 @@
++// JO9 MOD CHARACTER_BACKGROUND_20261118: classification metadata does not change lore or bonuses.
++export const BACKGROUND_KINDS = ['world', 'family', 'occupation'];
++export function pickerBackground(data, legacy = {}) {
++ const background = structuredClone(legacy);
++ if (data.seed_background_fixed !== 1) return background;
++ for (const kind of BACKGROUND_KINDS) {
++  delete background[kind];
++  if (data['seed_' + kind]) background[kind] = data['seed_' + kind];
++ }
++ return background;
++}
++export function needsBackgroundApply(data, background = {}) {
++ return data.seed_background_fixed !== 1 && BACKGROUND_KINDS.some(kind => background[kind]);
++}
++export function serialSaves() {
++ let tail = Promise.resolve();
++ return task => { const next = tail.catch(() => {}).then(task); tail = next; return next; };
++}
+--- /dev/null
++++ b/tools/modding-hub/tests/test_background_metadata.py
+@@ -0,0 +1,136 @@
++import importlib.util
++import json
++import sys
++import tempfile
++import unittest
++from pathlib import Path
++
++HERE = Path(__file__).resolve().parents[1]
++LIVE = Path('G:/somi/JO9sa/tools/modding-hub')
++sys.path[:0] = [str(HERE), str(LIVE)]
++import master_editor
++
++
++class BackgroundTests(unittest.TestCase):
++    def setUp(self):
++        self.assertTrue((HERE / 'background_metadata.py').is_file(), 'canonical background persistence is missing')
++        spec = importlib.util.spec_from_file_location('background_metadata', HERE / 'background_metadata.py')
++        self.bg = importlib.util.module_from_spec(spec)
++        spec.loader.exec_module(self.bg)
++        self.tmp = tempfile.TemporaryDirectory()
++        self.addCleanup(self.tmp.cleanup)
++        self.root = Path(self.tmp.name)
++        (self.root / 'json/slaves').mkdir(parents=True)
++        self.path = self.root / 'json/slaves/3100_unique.json'
++        self.original = {'seed_name': 'Unique', 'seed_stamina': 9, 'seed_tongue_loss': 1,
++                         'seed_world_description': 'Manual world lore', 'seed_family_description': 'Manual family lore',
++                         'seed_occupation_description': 'Manual career lore', 'custom_manual': {'keep': True}}
++        self.path.write_text(json.dumps(self.original), encoding='utf-8')
++        self.editor = master_editor.MasterEditor(self.root)
++
++    def files(self):
++        return {p.relative_to(self.root).as_posix(): p.read_bytes() for p in self.root.rglob('*') if p.is_file()}
++
++    def save(self, background, **extra):
++        return self.bg.save_slave_talkbook(self.editor, 3100,
++            {'revision': self.editor.slave_revision(3100), 'applyBackground': True,
++             'book': {'background': background, 'lines': {'discard': 'unsaved UI line'}}, **extra}, lambda _v: None)
++
++    def test_explicit_save_changes_only_metadata_and_keeps_saved_dialogue(self):
++        talk = self.root / 'jo9_talkbook/3100.json'
++        talk.parent.mkdir()
++        talk.write_text(json.dumps({'background': {'world': 'industrial'}, 'lines': {'hello': 'Saved line'}, 'notes': 'Keep'}), 'utf-8')
++        before = self.path.read_bytes()
++        result = self.save({'world': 'earth_rome', 'family': 'ancient_citizen', 'occupation': 'courtesan'})
++        current = json.loads(self.path.read_text('utf-8'))
++        self.assertEqual(current, {**self.original, 'seed_world': 'earth_rome', 'seed_family': 'ancient_citizen',
++                                  'seed_occupation': 'courtesan', 'seed_background_fixed': 1})
++        self.assertEqual(result['book']['lines'], {'hello': 'Saved line'})
++        self.assertEqual(result['book']['notes'], 'Keep')
++        self.assertEqual(Path(str(self.path) + '.bak').read_bytes(), before)
++
++    def test_group_only_and_clear_are_explicit_empty_strings(self):
++        self.save({'worldGroup': 'modern'})
++        current = json.loads(self.path.read_text('utf-8'))
++        for kind in self.bg.KINDS:
++            self.assertEqual(current['seed_' + kind], '')
++        self.save({})
++        self.assertEqual(json.loads(self.path.read_text('utf-8'))['seed_background_fixed'], 1)
++
++    def test_legacy_dialogue_save_and_reads_do_not_convert_seed_data(self):
++        before = self.path.read_bytes()
++        result = self.bg.save_slave_talkbook(self.editor, 3100,
++            {'revision': self.editor.slave_revision(3100), 'book': {'background': {'world': 'modern'}, 'lines': {'a': 'B'}}}, lambda _v: None)
++        self.assertEqual(self.path.read_bytes(), before)
++        self.assertEqual(result['book']['background']['world'], 'modern')
++        revision = self.editor.slave_revision(3100)
++        self.editor.read_slave_talk(3100)
++        self.assertEqual(self.editor.slave_revision(3100), revision)
++
++    def test_talkbook_participates_in_compare_and_swap(self):
++        revision = self.editor.slave_revision(3100)
++        self.save({'world': 'modern'})
++        self.assertNotEqual(self.editor.slave_revision(3100), revision)
++        before = self.files()
++        with self.assertRaisesRegex(ValueError, '다시'):
++            self.bg.save_slave_talkbook(self.editor, 3100,
++                {'revision': revision, 'applyBackground': True, 'book': {'background': {'world': 'industrial'}}}, lambda _v: None)
++        self.assertEqual(self.files(), before)
++
++    def test_unknown_ids_and_invalid_marker_do_not_write(self):
++        before = self.files()
++        for background in [{'world': 'guessed_world'}, {'family': 1}, {'occupation': 'courtesan ', 'world': 'earth_rome'}]:
++            with self.assertRaises(ValueError):
++                self.save(background)
++        for invalid in [0, 2, True, '1']:
++            with self.assertRaises(ValueError):
++                self.bg.prepare_fields(self.original, {'set': {'seed_background_fixed': invalid}})
++        self.assertEqual(self.files(), before)
++
++    def test_common_fields_accept_only_catalog_ids_and_preserve_other_edits(self):
++        result = self.bg.prepare_fields(self.original, {'set': {'seed_family': 'pesant', 'seed_stamina': 8}, 'story': {'world': 'Draft'}})
++        self.assertEqual(result['set']['seed_family'], 'pesant')
++        self.assertEqual(result['set']['seed_world'], '')
++        self.assertEqual(result['set']['seed_background_fixed'], 1)
++        self.assertEqual(result['set']['seed_stamina'], 8)
++        self.assertEqual(result['story'], {'world': 'Draft'})
++        with self.assertRaises(ValueError):
++            self.bg.prepare_fields(self.original, {'set': {'seed_family': 'peasant'}})
++
++    def test_dry_run_has_no_writes_and_background_save_is_one_transaction(self):
++        before = self.files()
++        result = self.save({'world': 'modern'}, dryRun=True)
++        self.assertTrue(result['changes'])
++        self.assertEqual(self.files(), before)
++        writes = []
++        self.editor._write = lambda payloads: writes.append(payloads)
++        self.save({'world': 'modern'})
++        self.assertEqual(len(writes), 1)
++        self.assertEqual(set(writes[0]), {self.path, self.root / 'jo9_talkbook/3100.json'})
++
++    def test_clone_keeps_metadata_in_background_section(self):
++        self.save({'world': 'modern', 'family': 'worker', 'occupation': 'secretary'})
++        background = self.editor.clone_preview('slave', 3100,
++            {'targetRole': 'slave', 'newId': 3101, 'name': 'Background copy', 'include': ['background']})
++        stats = self.editor.clone_preview('slave', 3100,
++            {'targetRole': 'slave', 'newId': 3101, 'name': 'Stats copy', 'include': ['stats']})
++        self.assertEqual(background['data']['seed_world'], 'modern')
++        self.assertNotIn('seed_stamina', background['data'])
++        self.assertNotIn('seed_world', stats['data'])
++        self.assertNotIn('seed_background_fixed', stats['data'])
++        self.assertEqual(stats['data']['seed_stamina'], 9)
++
++    def test_clone_prefers_canonical_metadata_over_older_profile_background(self):
++        self.save({'world': 'modern', 'family': 'worker', 'occupation': 'secretary'})
++        profile = self.editor._profile_file('slave', 3100)
++        profile.parent.mkdir(parents=True)
++        profile.write_text(json.dumps({'background': {'world': 'industrial', 'worldGroup': 'legacy-group'}}), 'utf-8')
++        result = self.editor.clone_preview('slave', 3100,
++            {'targetRole': 'slave', 'newId': 3101, 'name': 'Background copy', 'include': ['background']})
++        self.assertEqual(result['background']['world'], 'modern')
++        self.assertEqual(result['background']['family'], 'worker')
++        self.assertEqual(result['background']['worldGroup'], 'legacy-group')
++
++
++if __name__ == '__main__':
++    unittest.main()
+--- /dev/null
++++ b/tools/modding-hub/tests/test_background_http.py
+@@ -0,0 +1,105 @@
++"""Exercise real integrated HTTP routes against a tiny disposable game fixture."""
++import io
++import importlib.util
++import json
++import sys
++import tempfile
++import unittest
++from pathlib import Path
++from unittest.mock import patch
++
++HERE = Path(__file__).resolve().parents[1]
++LIVE = Path('G:/somi/JO9sa/tools/modding-hub')
++STUDIO = Path('G:/Codex/tmp/claude-character-studio-e0edb064/tools/jo9-history-lab')
++sys.path[:0] = [str(HERE), str(LIVE), str(STUDIO)]
++import master_editor
++spec = importlib.util.spec_from_file_location('background_hub_candidate', HERE / 'server.py')
++hub = importlib.util.module_from_spec(spec)
++spec.loader.exec_module(hub)
++
++
++class Overlay:
++    def __truediv__(self, name):
++        candidate = HERE / name
++        return candidate if candidate.exists() else LIVE / name
++
++
++class QuietHelper:
++    def __init__(self, *args):
++        pass
++    def close(self):
++        pass
++
++
++class BackgroundHttp(unittest.TestCase):
++    def setUp(self):
++        self.tmp = tempfile.TemporaryDirectory()
++        self.addCleanup(self.tmp.cleanup)
++        self.root = Path(self.tmp.name)
++        (self.root / 'json/slaves').mkdir(parents=True)
++        self.character = self.root / 'json/slaves/3100_unique.json'
++        self.character.write_text(json.dumps({'seed_name': 'Unique', 'seed_stamina': 9, 'seed_world_description': 'Manual lore'}), 'utf-8')
++        (self.root / 'jack.qsp').write_bytes(master_editor.make_fixture({'#masters_base': '', 'init_game': ''}))
++        urls = self.root / 'urls.json'
++        urls.write_text('{}', 'utf-8')
++        self.patches = [patch.object(hub, 'HERE', Overlay()), patch.object(hub, 'HelperDashboard', QuietHelper)]
++        for current in self.patches:
++            current.start()
++            self.addCleanup(current.stop)
++        self.server = hub.create_server(STUDIO, Path('G:/somi/JO9sa'), urls, 0)
++        base = sys.modules['studio_server']
++        self.assertIsNotNone(base.api, base.BACKEND_ERROR)
++        game = base.api.GamePaths(str(self.root))
++        for current in [patch.object(base, 'paths', return_value=game), patch.object(base, 'game_status', return_value={'ok': True, 'root': str(self.root)})]:
++            current.start()
++            self.addCleanup(current.stop)
++        self.addCleanup(self.server.server_close)
++
++    def call(self, path, body=None):
++        payload = b'' if body is None else json.dumps(body).encode('utf-8')
++        method = 'GET' if body is None else 'POST'
++        request = (f'{method} {path} HTTP/1.1\r\nHost: localhost\r\nContent-Type: application/json\r\n'
++                   f'Content-Length: {len(payload)}\r\nConnection: close\r\n\r\n').encode() + payload
++        class StreamSocket:
++            def __init__(self):
++                self.response = bytearray()
++            def makefile(self, *_args):
++                return io.BytesIO(request)
++            def sendall(self, block):
++                self.response.extend(block)
++        connection = StreamSocket()
++        self.server.RequestHandlerClass(connection, ('127.0.0.1', 0), self.server)
++        header, raw = bytes(connection.response).split(b'\r\n\r\n', 1)
++        return int(header.split(b' ', 2)[1]), json.loads(raw)
++
++    def test_picker_save_refreshes_revision_then_common_save_keeps_metadata(self):
++        status, actor = self.call('/api/char/3100')
++        self.assertEqual(status, 200, actor)
++        status, saved = self.call('/api/talkbook/3100', {'revision': actor['revision'], 'applyBackground': True,
++            'book': {'background': {'world': 'earth_rome', 'family': 'ancient_citizen', 'occupation': 'courtesan'}}})
++        self.assertEqual(status, 200, saved)
++        self.assertEqual(saved['character']['data']['seed_world'], 'earth_rome')
++        self.assertNotEqual(saved['revision'], actor['revision'])
++        status, stale = self.call('/api/char/3100/fields', {'revision': actor['revision'], 'set': {'seed_stamina': 3}})
++        self.assertEqual(status, 400, stale)
++        status, fields = self.call('/api/char/3100/fields', {'revision': saved['revision'], 'set': {'seed_stamina': 8}})
++        self.assertEqual(status, 200, fields)
++        self.assertEqual(fields['character']['data']['seed_world'], 'earth_rome')
++        self.assertEqual(fields['character']['data']['seed_world_description'], 'Manual lore')
++        status, changed = self.call('/api/char/3100/fields', {'revision': fields['character']['revision'], 'set': {'seed_world': 'modern'}})
++        self.assertEqual(status, 200, changed)
++        self.assertEqual(changed['character']['data']['seed_world'], 'modern')
++
++    def test_served_seed_whitelist_matches_backend_and_unknown_ids_fail(self):
++        status, keys = self.call('/v/fixture/data/game-seed-keys.json')
++        self.assertEqual(status, 200)
++        self.assertTrue(set(('world', 'family', 'occupation', 'background_fixed')).issubset(keys['keys']))
++        status, actor = self.call('/api/char/3100')
++        before = self.character.read_bytes()
++        status, result = self.call('/api/char/3100/fields', {'revision': actor['revision'], 'set': {'seed_family': 'peasant'}})
++        self.assertEqual(status, 400, result)
++        self.assertEqual(self.character.read_bytes(), before)
++
++
++if __name__ == '__main__':
++    unittest.main()
+--- /dev/null
++++ b/tools/modding-hub/tests/background-metadata.test.mjs
+@@ -0,0 +1,101 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import fs from 'node:fs';
++import vm from 'node:vm';
++
++const moduleUrl = new URL('../overrides/background-metadata.mjs', import.meta.url);
++async function module() {
++ assert(fs.existsSync(moduleUrl), 'canonical background UI helpers are missing');
++ return import(moduleUrl);
++}
++
++test('canonical read prefers explicit empty slots while retaining group metadata', async () => {
++ const {pickerBackground, needsBackgroundApply} = await module();
++ const legacy = {world: 'industrial', worldGroup: 'old-group', family: 'clerk', occupation: 'maid'};
++ const data = {seed_background_fixed: 1, seed_world: 'modern', seed_family: '', seed_occupation: ''};
++ assert.deepEqual(pickerBackground(data, legacy), {world: 'modern', worldGroup: 'old-group'});
++ assert.deepEqual(legacy, {world: 'industrial', worldGroup: 'old-group', family: 'clerk', occupation: 'maid'});
++ assert.equal(needsBackgroundApply(data, legacy), false);
++ assert.equal(needsBackgroundApply({}, legacy), true);
++ assert.equal(needsBackgroundApply({}, {worldGroup: 'g'}), false);
++ assert.deepEqual(pickerBackground({}, legacy), legacy);
++});
++
++test('queued saves run sequentially and a rejected request does not discard the next one', async () => {
++ const {serialSaves} = await module();
++ const enqueue = serialSaves(), calls = [];
++ let release;
++ const blocked = new Promise(resolve => { release = resolve; });
++ const first = enqueue(async () => { calls.push('first-start'); await blocked; calls.push('first-end'); return 1; });
++ const second = enqueue(async () => { calls.push('second'); return 2; });
++ await Promise.resolve(); await Promise.resolve();
++ assert.deepEqual(calls, ['first-start']);
++ release();
++ assert.deepEqual(await Promise.all([first, second]), [1, 2]);
++ assert.deepEqual(calls, ['first-start', 'first-end', 'second']);
++ await assert.rejects(enqueue(async () => { throw Error('stale'); }), /stale/);
++ assert.equal(await enqueue(async () => 3), 3);
++});
++
++test('real picker autosaves keep the latest selection, dirty stats, and unsaved dialogue', async () => {
++ const {serialSaves} = await module();
++ const source = fs.readFileSync(new URL('../overrides/studio-view.mjs', import.meta.url), 'utf8');
++ const saveTalk = source.slice(source.indexOf(' async function saveTalk('), source.indexOf(' // 편집 중인 캐릭터를 시뮬레이터'));
++ const requests = [], releases = [];
++ const st = {sel:3100, ch:{id:3100, revision:'r0', data:{seed_stamina:9}}, edits:{set:{seed_stamina:8}},
++  talk:{book:{background:{world:'industrial'},lines:{hello:'Saved'}}},
++  book:{background:{world:'modern'},lines:{hello:'Unsaved draft'},notes:'Manual draft'},
++  bgVersion:1, bgUnsaved:true, bookDirty:true, talkPending:0};
++ const context = vm.createContext({st, structuredClone, queueTalk:serialSaves(), isMaster:false, render:()=>{}, api:{toast:()=>{}},
++  call:async (_url, body) => { requests.push(structuredClone(body)); await new Promise(resolve => releases.push(resolve));
++   return {book:{...body.book,lines:{hello:'Saved'}},path:'sidecar',revision:'r'+requests.length,
++    character:{id:3100,revision:'r'+requests.length,data:{seed_stamina:9,seed_world:body.book.background.world}}}; }});
++ vm.runInContext(saveTalk+';this.saveTalk=saveTalk',context);
++ const first=context.saveTalk(true);
++ await Promise.resolve(); await Promise.resolve();
++ st.book.background={world:'space'};st.bgVersion=2;
++ const second=context.saveTalk(true);
++ releases.shift()();
++ await first;
++ assert.deepEqual(st.book.background,{world:'space'});
++ assert.deepEqual(st.edits.set,{seed_stamina:8});
++ await Promise.resolve(); await Promise.resolve();
++ assert.equal(requests.length,2);
++ assert.equal(requests[1].revision,'r1');
++ assert.equal(requests[1].book.background.world,'space');
++ releases.shift()();
++ await second;
++ assert.equal(st.book.background.world,'space');
++ assert.equal(st.book.lines.hello,'Unsaved draft');
++ assert.equal(st.book.notes,'Manual draft');
++ assert.equal(st.bookDirty,true);
++ assert.equal(st.bgUnsaved,false);
++});
++
++test('saving canonical seed fields refreshes picker and simulator selection', async () => {
++ const {serialSaves, pickerBackground} = await module();
++ const source = fs.readFileSync(new URL('../overrides/studio-view.mjs', import.meta.url), 'utf8');
++ const saveNow = source.slice(source.indexOf(' async function saveNow('), source.indexOf(' // ---------------------------------------------------------------- 그리기'));
++ const st = {sel:3100,ch:{data:{seed_background_fixed:1,seed_world:'industrial'}},
++  edits:{set:{seed_world:'modern'},unset:new Set(),story:{},master:null,initials:{}},
++  book:{background:{world:'industrial'}},items:[]};
++ let sent;
++ const context=vm.createContext({st,queueTalk:serialSaves(),pickerBackground,root:{querySelector:()=>null},
++  simulationPatch:()=>({}),call:async()=>({character:{data:{seed_background_fixed:1,seed_world:'modern'}},changes:[],saved:true}),
++  blank:()=>({}),sendToSim:()=>{sent=st.book.background.world},api:{toast:()=>{}},isMaster:false,render:()=>{}});
++ vm.runInContext(saveNow+';this.saveNow=saveNow',context);
++ await context.saveNow();
++ assert.equal(st.book.background.world,'modern');
++ assert.equal(sent,'modern');
++});
++
++test('simulator JSON import prefers canonical IDs and keeps unique lore and values', () => {
++ const source=fs.readFileSync(new URL('../overrides/character-view.mjs',import.meta.url),'utf8');
++ const fromJson=source.slice(source.indexOf(' function fromJson('),source.indexOf(' function randomCharacter('));
++ const context=vm.createContext({blank:()=>({world:'',family:'',occupation:''}),KINDS:[['world'],['family'],['occupation']]});
++ vm.runInContext(fromJson+';this.fromJson=fromJson',context);
++ const actor=context.fromJson({seed_name:'Unique',seed_world:'earth_rome',seed_family:'',seed_occupation:'courtesan',
++  seed_background_fixed:1,jo9_world:'industrial',jo9_family:'clerk',seed_stamina:9,seed_world_description:'Manual lore'},'3100_unique.json');
++ assert.equal(actor.world,'earth_rome');assert.equal(actor.family,'');assert.equal(actor.occupation,'courtesan');
++ assert.equal(actor.stamina,9);assert.equal(actor.unique.texts.world,'Manual lore');
++});

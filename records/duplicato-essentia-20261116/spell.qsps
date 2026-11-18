@@ -1,0 +1,162 @@
+! JO9 MOD START DUPLICATO_ESSENTIA_20261116
+! One spell per day; one receipt per character; donor talents are retained.
+if $args[0] = 'learn':
+ npc_progress['Priscilla_duplicato'] = 1
+ $text[1] = '[프리실라]<br>듀플리카토 에센티아. 서로 마음을 나눈 두 사람 사이에서, 한 사람이 지닌 재능을 다른 사람에게 새기는 마법이야.<br><b>듀플리카토 에센티아를 배웠습니다.</b>'
+ exit
+end
+
+if $args[0] = 'quote':
+ $result = "'" + replace($args[1], "'", "''") + "'"
+ exit
+end
+
+if $args[0] = 'reason':
+ $result = ''
+ if npc_progress['Priscilla_duplicato'] ! 1:
+  $result = '프리실라에게 이 마법을 배워야 합니다.'
+ elseif master_mage < 3:
+  $result = '마법력 B 이상이 필요합니다. 장비 보정을 포함합니다.'
+ elseif already_done_today['jo9_duplicato'] = 1:
+  $result = '이 마법은 하루에 한 번만 시전할 수 있습니다.'
+ else
+  $result = $func('jo9_duplicato_traits', 'reason')
+  if $result = '':
+   if sparks < 900:
+    $result = '900스파크가 필요합니다.'
+   elseif cheat_inf_en = 0 and master_energy * 2 - master_half_action < 2:
+    $result = '주인공의 행동력이 1 이상 필요합니다.'
+   elseif cheat_inf_en = 0 and slave['energy'] * 2 - slave['half_action'] < 2:
+    $result = '노예의 행동력이 1 이상 필요합니다.'
+   elseif cheat_inf_en = 0 and assistant['energy'] * 2 - assistant['half_action'] < 2:
+    $result = '조수의 행동력이 1 이상 필요합니다.'
+   end
+  end
+ end
+ exit
+end
+
+if $args[0] = 'menu_item':
+ local $why = $func('jo9_duplicato', 'reason')
+ if $why = '':
+  func('$menu', 'goto', $menu_item_Revelio, 62110, 'menu_form', 'menu_form', '듀플리카토 에센티아($900)', '서로의 친밀도 40 이상. 발견한 조수의 재능 하나를 노예에게 복사합니다. 모두 행동력 1, 하루 1회, 수혜자는 평생 1회. 상충 특성은 사라집니다.')
+ else
+  func('$menu', 'exec', $menu_item_Revelio_gray, empty, '듀플리카토 에센티아', $why)
+ end
+ exit
+end
+
+if $args[0] = 'choose':
+ local $why, $list, $key, $code, _at, _end, _count
+ $why = $func('jo9_duplicato', 'reason')
+ _at = 1
+ if $why ! '':
+  func('$menu', '===BEGIN===', 'column_0')
+  func('$menu', 'exec', $menu_item_Revelio_gray, empty, '듀플리카토 에센티아', $why)
+  func('$menu', '===END===')
+ else
+  $list = $func('jo9_duplicato_traits', 'list')
+  func('$menu', '===BEGIN===', 'column_0')
+  :duplicato_list_loop
+  if _at <= len($list):
+   _end = instr($list, '|', _at)
+   if _end = 0: _end = len($list) + 1
+   $key = mid($list, _at, _end - _at)
+   if _count = 7:
+    func('$menu', '===END===')
+    func('$menu', '===BEGIN===', 'column_1')
+   end
+   $code = "gt 'jo9_duplicato', 'preview', " + $func('jo9_duplicato', 'quote', $key) + ', ' + $func('jo9_duplicato', 'quote', str(slave['id'])) + ', ' + $func('jo9_duplicato', 'quote', str(assistant['id']))
+   $code = replace(replace($code, '&', '&amp;'), '"', '&quot;')
+   func('$menu', 'exec', $menu_item_Revelio, $code, $func('jo9_duplicato_traits', 'label', $key), '이 재능을 복사할 때 사라질 기존 특성을 확인합니다. 조수는 재능을 유지합니다.')
+   _count += 1
+   _at = _end + 1
+   jump 'duplicato_list_loop'
+  end
+  if _count = 0: func('$menu', 'exec', $menu_item_Revelio_gray, empty, '복사할 재능 없음', '조수에게서 발견했고 노예가 아직 갖지 않은 긍정 재능이 필요합니다.')
+  func('$menu', '===END===')
+ end
+ $text_display += '<div id="Back_cast"><a style="padding-top:75px;" class="icon tooltip-right" tooltip-data="마법 목록으로" href="EXEC: menu_form = 6 & gt ''menu_form''"><img src="content/pic/ui/legacy_overhaul/back.png"></a></div>'
+ exit
+end
+
+if $args[0] = 'preview' or $args[0] = 'cast':
+ local $action, $key, $target, $donor, $expected, $why, $removed, $fingerprint, $label
+ $action = $args[0]
+ $key = $args[1]
+ $target = $args[2]
+ $donor = $args[3]
+ $expected = $args[4]
+ $why = $func('jo9_duplicato', 'reason')
+ if $target ! str(slave['id']) or $donor ! str(assistant['id']): $why = '대상 인물이 바뀌었습니다. 재능을 다시 선택하세요.'
+ if $why = '':
+  if func('jo9_duplicato_traits', 'eligible', $key) = 0: $why = $func('jo9_duplicato_traits', 'reason', $key)
+ end
+ if $why ! '':
+  msg $why
+  menu_form = 62110
+  gt 'menu_form'
+ end
+ $fingerprint = $func('jo9_duplicato_traits', 'removals', $key)
+ $removed = $func('jo9_duplicato_traits', 'preview', $key)
+ $label = $func('jo9_duplicato_traits', 'label', $key, 'slave')
+ if $action = 'cast':
+  if $expected ! $fingerprint:
+   msg '상충 특성이 바뀌었습니다. 삭제될 특성을 다시 확인하세요.'
+   menu_form = 62110
+   gt 'menu_form'
+  end
+  if func('jo9_duplicato_traits', 'apply', $key) = 0:
+   msg '재능을 복사할 수 없는 상태로 바뀌었습니다.'
+   menu_form = 62110
+   gt 'menu_form'
+  end
+  slave['jo9_duplicato_received'] = 1
+  already_done_today['jo9_duplicato'] = 1
+  sparks -= 900
+  if cheat_inf_en = 0:
+   master_energy -= 1
+   slave['energy'] -= 1
+   assistant['energy'] -= 1
+  end
+  killvar '$text'
+  $text[1] = '<b>듀플리카토 에센티아</b><br>조수의 재능 [' + $label + ']을 노예에게 새겼습니다. 조수의 재능은 그대로입니다.<br>900스파크와 세 사람의 행동력 1을 각각 소모했습니다.'
+  if $removed ! '': $text[1] += '<br>사라진 특성: ' + $removed
+ else
+  killvar '$text'
+  $text[1] = '<b>듀플리카토 에센티아</b><br>[' + $label + ']을 조수에게서 노예에게 복사합니다. 조수의 재능은 그대로입니다.<br>900스파크 · 주인공/노예/조수 각각 행동력 1 · 하루 1회 · 수혜자는 평생 1회.'
+  if $removed ! '': $text[1] += '<br><b>사라질 특성: ' + $removed + '</b>'
+  $text[1] += '<br>시전하시겠습니까?'
+  $yes = "gt 'jo9_duplicato', 'cast', " + $func('jo9_duplicato', 'quote', $key) + ', ' + $func('jo9_duplicato', 'quote', $target) + ', ' + $func('jo9_duplicato', 'quote', $donor) + ', ' + $func('jo9_duplicato', 'quote', $fingerprint)
+  $no = "menu_form = 62110 & gt 'menu_form'"
+ end
+ ! Remove only obsolete presentation callbacks; no character or quest state reset.
+ killobj
+ killvar '$special_action'
+ killvar '$special_image'
+ killvar '$special_image_full'
+ killvar '$play_sound'
+ txt = 1
+ txt_count = 1
+ $special_image[1] = 'magic.png'
+ $place = 'study'
+ $bg_path = ''
+ $picture_type = ''
+ npc = 0
+ $npc_id = ''
+ $interaction_type = 'basic'
+ show_slave_fullimage = 0
+ show_assistant_fullimage = 0
+ show_prisoner_fullimage = 0
+ show_cow_fullimage = 0
+ show_pig_fullimage = 0
+ show_harpy_fullimage = 0
+ show_farmhand_fullimage = 0
+ $return_lock = 'menu_form'
+ menu_form = 6
+ if $action = 'preview': gt 'choice_screen'
+ killvar '$yes'
+ killvar '$no'
+ gt 'interaction_screen'
+end
+! JO9 MOD END DUPLICATO_ESSENTIA_20261116

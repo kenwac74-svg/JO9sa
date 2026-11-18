@@ -16,8 +16,8 @@ function Get-CimInstance {param($ClassName,$Filter,$ErrorAction)
  if ($ClassName -eq 'Win32_Process' -and $global:jo9LauncherTest.process) {return $global:jo9LauncherTest.process}
 }
 function Get-NetTCPConnection {param($LocalPort,$State,$ErrorAction)
- if ($global:jo9LauncherTest.conflicting) {return [pscustomobject]@{OwningProcess=777}}
- if ($global:jo9LauncherTest.process) {return [pscustomobject]@{OwningProcess=$global:jo9LauncherTest.process.ProcessId}}
+ if ($global:jo9LauncherTest.conflicting) {return [pscustomobject]@{OwningProcess=777;State='Listen'}}
+ if ($global:jo9LauncherTest.process) {return [pscustomobject]@{OwningProcess=$global:jo9LauncherTest.process.ProcessId;State='Listen'}}
 }
 function Invoke-WebRequest {param([switch]$UseBasicParsing,$Uri,$TimeoutSec)
  return [pscustomobject]@{StatusCode=200}

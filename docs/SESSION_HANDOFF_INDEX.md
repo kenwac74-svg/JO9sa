@@ -1654,3 +1654,75 @@ WORK·추적 QSP e58aa4d77b1be754837bc9f619ed8953536218c58c73ca69df6da643f40c7a6
 
 <!-- COMMIT_WORK_SOURCE_20261116 -->
 - 2026-11-16: 사용자 커밋·푸시 지시. 최신 WORK QSP·JSON·이미지 47개를 추적 소스로 반영하고 수동 2-2 결과를 보존. 최신 대사편집 회귀 15건 통과, 기존 게임 검증 재사용. [소스 보존 기록](../records/commit-work-source-20261116/REPORT_KO.md).
+
+<!-- AMARIDA_COMPLETION_FIX_20261116 -->
+- 2026-11-16: 아마리다 완료 상태 재개·저장된 납품 중복 정산 차단 WORK 반영. 설치본 14조건 통과. 프리실라 완료 후 이야기는 사용자 협의 대기. [수정 기록](../records/amarida-completion-fix-20261116/REPORT_KO.md).
+
+
+<!-- PRISCILLA_FOLLOWUP_APPLIED_20261116 -->
+- 2026-11-16: 사용자 승인 프리실라 반란 후 안내·포털 귀환 새 대화15페이지·별도 이미지3개를 WORK/추적 소스에 반영. 책 전달·최종 완료만 후속 개발. 설치본16조건과 테스트 저장의 시작 링크4개 실행 확인. WORK save/프리실라_분기테스트_20261116.sav에서 네 단계 직접 비교 가능. 기존 세이브·Full·ZIP·커밋푸시 없음. [보고서](../records/priscilla-followup-20261116/REPORT_KO.md).
+
+
+<!-- PRISCILLA_REWARD_TEST_ENTRY_20261116 -->
+- 2026-11-16: 프리실라 테스트 저장에 누락된 기존 길드 보상6025 직행을⑤로 추가.1·2·4는안내,③새15페이지,⑤기존22페이지. 실제 페이지 넘김과 후반 그림 경로 출력 확인. 새후반4페이지 원고는 보상이 명확하지 않다는 사용자 제보로 조율대상. 이 보완에서 게임QSP·이미지불변. [현재 기록](../records/priscilla-followup-20261116/REPORT_KO.md).
+
+
+<!-- PRISCILLA_REWARD_PAGINATION_20261116 -->
+- 2026-11-16: 프리실라 귀환 새 분기22페이지·한화자/짧은지문·최대3행으로 분할하고보상후반과이후대화연결. 기존6025원고/그림/메뉴보존,새보상이기존witch_talk수령표시를소모하지않도록분리. WORK·소스44d44e04…일치. 테스트세이브③새분기·⑤기존보상으로갱신. [현재보고서](../records/priscilla-pagination-20261116/REPORT_KO.md).
+
+
+<!-- PRISCILLA_MESSAGE_PAIRS_20261116 -->
+- 2026-11-16: 사용자정정반영.한메시지에프리실라·주인공각1회로묶음.6026은귀환대화6+사용자입력보상4=10페이지.보상4개는기존6025의19~22페이지와대응하고각각scene/Witch/priscilla_return/reward_01~04.png독립복사.기존6025/수령조건보존.테스트③갱신. [현재보고서](../records/priscilla-message-pairs-20261116/REPORT_KO.md).
+
+
+<!-- GENERATOR_AND_RESULT_LOAD_FIX_20261116 -->
+- 2026-11-16: 생성기 내부3재추첨 각각32회 상한+유효fallback,승리 결과 저장의 캐시 재표시와완료안개 탈출을WORK·추적소스에반영. 생사선택/보상재실행없음,새영구필드0. 생성9/UI15조건통과. WORK/source eb8fee1a…일치. 실제제보의최초오류/캐시손상은미확정,Full/ZIP/커밋푸시없음. [통합 보고서](../records/fog-ui-restore-20261116/REPORT_KO.md).
+
+
+<!-- PRISCILLA_CHOICES_AND_EDITOR_20261116 -->
+- 2026-11-16: 사용자 수동 원고 1~8페이지를 보존하고 프리실라 귀환 9페이지에 마법/별도 보상 선택지를 추가. 결과6027(마법 입력1페이지)/6028(사용자 입력4페이지), 그림5개 독립 복사. 새 마법 설계 진행 중이며 지급·시전은 미구현. 편집실에 자유 실행문·조건으로 선택지 추가 설치. 게임6조건/테스트저장5진입/도구38검사/문법8개 및 실제 미리보기 확인. [게임과 설계](../records/priscilla-choices-20261116/REPORT_KO.md), [편집기](../records/choice-editor-20261116/REPORT_KO.md). Full/ZIP/커밋푸시 없음.
+
+
+<!-- TRAIT_CATEGORY_CORRECTION_20261116 -->
+- 2026-11-16: 사용자 정정으로 겁쟁이·무모함·용감함을 전투에서 성격과 기질로 이동. 통합편집/게임DB 자료3행씩과 재생성 매핑만 수정, QSP 불변. [기록](../records/trait-category-20261116/REPORT_KO.md).
+
+
+<!-- DUPLICATO_ESSENTIA_20261116 -->
+- 2026-11-16: 프리실라6027에서 듀플리카토 에센티아 습득/마법 메뉴 연결. 발견한 긍정 재능14종 중1개 복사·상충삭제 미리보기·조수보존. B+/900스파크/세사람각1AP/양방향친밀40/전역하루1회/수혜자평생1회/조수반복제공. 습득·주문30조건·재능161확인과 저장왕복 통과, 실제EXE 화면은 사용자 확인. WORK/source c68a2cd0…일치. 새보상원고/독립이미지와기존보상보존. [보고서](../records/duplicato-essentia-20261116/REPORT_KO.md). Full/ZIP/커밋푸시없음.
+
+
+<!-- PRISCILLA_REWARD_IMAGE_20261116 -->
+- 2026-11-16: 새 보상4페이지의 그림을 직전 프리실라 그림으로 통일. 실제3·4PNG만 교체, 독립 파일명·사용자 대사·QSP 불변. [기록](../records/priscilla-reward-image-20261116/REPORT_KO.md).
+
+
+<!-- PRISCILLA_MAGIC_RESULT_20261117 -->
+- 2026-11-17: 마법 선택6027을 편집 가능한 습득 설명문으로 변경, 프리실라 위 기존magic.png 알파겹침, 다음 화살표는 추가소모없이집기본화면복귀. 관련6조건/최소mod/CRLF검사통과. 사용자원고보존·LF1개정리·6028과마법규칙유지. WORK/source b93fad00…일치. [기록](../records/priscilla-magic-result-20261117/REPORT_KO.md).
+
+
+<!-- PRISCILLA_MAGIC_NARRATION_20261117 -->
+- 2026-11-17: 마법 습득6027의 한 문자열을 사용자 상황묘사 원고로 교체·영문명삭제. 마법진/집복귀/규칙 유지, 저위험 최소검사. [기록](../records/priscilla-magic-narration-20261117/REPORT_KO.md).
+
+
+<!-- UNIQUE_RANDOM_AND_COLLAR_20261117 -->
+- 2026-11-17: 고유·변형92프리셋 일반추첨/대체선택 차단, 일반1792와 명시적영입 보존. 생성선택2300확인 통과. 예의강요의 전기목줄 판정을 실제착용으로 수정하고9조건 통과. 저장변수/JSON/개인세이브 추가변경없음. WORK/source5b344a0e…일치. [추첨기록](../records/unique-random-audit-20261117/REPORT_KO.md), [목걸이](../records/collar-equipped-20261117/REPORT_KO.md).
+
+
+<!-- ASSISTANT_REWARDS_AND_SCHEDULE_20261118 -->
+- 2026-11-18: 조수 보상9종의 결과/행동력 연결을 WORK·추적 소스에 반영. 실제 FastQSP5.7 21시나리오68검사, 공식 재생/멱등·구조 확인. 새 저장필드0. 기존3차ZIP에는 미포함. [수정 기록](../records/assistant-rewards-complete-20261117/REPORT_KO.md). 작업일정은 기존ID/메모/기획을 보존해62개로 최신화하고N03완료등록·우측표시확인. [일정 기록](../records/schedule-refresh-20261117/REPORT_KO.md). Full/기존ZIP/개인SAV/음원/커밋푸시 없음.
+
+<!-- CHARACTER_BACKGROUND_CLASSIFICATION_20261118 -->
+### 2026-11-18 캐릭터 배경 분류 게임 연결
+
+- 세계·출신·직업의 canonical 분류를 설명문과 별도로 JSON에 저장하고 WORK에서 읽는다. 유니크 수치·특성·육성 기록은 유지한다. 기존 대사집 선택에는 명시적 적용 버튼.
+- [사용·구조·검사·복구](../records/character-background-20261118/REPORT_KO.md). WORK·추적 소스 반영, Full·ZIP·세이브·커밋푸시 변경 없음.
+
+<!-- OPTIONAL_CLEAN_SAVE_20261118 -->
+### 2026-11-18 선택형 클린 세이브
+
+- 기본 일반/자동 저장은 대사 캐시 유지. 집·도시 설정의 클린 세이브 만들기에서만 정리 후 새 이름으로 저장. 기존 자동 호환 보정 유지.
+- [사용·지원 범위·검사·복구](../records/optional-clean-save-20261118/REPORT_KO.md). 네이티브35+콜백4조건, WORK·추적 소스 반영. 실제 저장창·GUI 로딩 시간 미검증. Full·ZIP·개인 SAV·커밋푸시 변경 없음.
+
+
+## FEMALE_TEXT_WORK_SCOPE_20261118
+
+여주 전용 자료는 게임에 유지하며 대사 기본 작업에서 제외한다. [작업 제외 설치/검사](../records/female-text-work-scope-20261118/REPORT_KO.md), [분리 조사·JSON 백업](../records/female-protagonist-text-audit-20261118/REPORT_KO.md), [자료 탐색 경로](REFERENCE_SEARCH_PATHS.json). 비활성2.4.2 백업은 K:/doing/242JO9에서 필요 시 탐색하며 자동 이동하지 않는다.

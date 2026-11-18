@@ -1,0 +1,74 @@
+[
+  {
+    "location": "end_day_screen",
+    "line": 1493,
+    "context": [
+      "if active[$quest[3]] = 1 and noble_status = 1:\r",
+      "\tactive[$quest[3]] = 0\r",
+      "\tgt 'epic_win' &! returns to end_day_screen if user chooses to continue playing\r",
+      "end\r",
+      "END\r",
+      "IF grand_final = 1:\r",
+      "\tgrand_final = 0\r",
+      "\tgt 'epic_win_marsjinn'\r",
+      "END\r",
+      "\r",
+      "if end_day_phase = 1:\r",
+      "\tgs '$end_day_variable_reset'\r",
+      "\tgs '$combat_variable_reset'\r",
+      "\tend_day_phase = 2 &! indicates beginning of next day - disables night music and triggers scenes delayed due to exhaustion (3 - 2 = 1)\r",
+      "\tgt $curloc\r",
+      "end\r",
+      "\r",
+      "!Post Patrician Quest - crushboss\r"
+    ]
+  },
+  {
+    "location": "end_day_screen",
+    "line": 1494,
+    "context": [
+      "\tactive[$quest[3]] = 0\r",
+      "\tgt 'epic_win' &! returns to end_day_screen if user chooses to continue playing\r",
+      "end\r",
+      "END\r",
+      "IF grand_final = 1:\r",
+      "\tgrand_final = 0\r",
+      "\tgt 'epic_win_marsjinn'\r",
+      "END\r",
+      "\r",
+      "if end_day_phase = 1:\r",
+      "\tgs '$end_day_variable_reset'\r",
+      "\tgs '$combat_variable_reset'\r",
+      "\tend_day_phase = 2 &! indicates beginning of next day - disables night music and triggers scenes delayed due to exhaustion (3 - 2 = 1)\r",
+      "\tgt $curloc\r",
+      "end\r",
+      "\r",
+      "!Post Patrician Quest - crushboss\r",
+      "if $quest12 = 'fail':\r"
+    ]
+  },
+  {
+    "location": "interaction_city",
+    "line": 23977,
+    "context": [
+      "END\r",
+      "IF interaction_city = 6220:\r",
+      " npc = 0\r",
+      " $npc_id = ''\r",
+      " $place = 'fogs_street'\r",
+      " grand_final = 1\r",
+      " txt_count = 5\r",
+      " $special_image[2] = 'scene\\portal.png'\r",
+      " $special_image[3] = 'scene\\portal.png'\r",
+      " $special_image[4] = 'scene\\portal.png'\r",
+      " $special_image[5] = 'scene\\portal.png'\r",
+      " $special_image[6] = 'scene\\final\\2.png'\r",
+      "! JO9 MOD START J9M0452 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included\r",
+      " $text[1] = \"드디어, 영광과 장엄함으로 가득 찬 그 엄숙한 순간이 왔다. 네 앞을 가로막던 모든 장애물을 넘어, 당신은 평생의 꿈은 아닐지라도 적어도 인생 후반부 내내 갈망해 온 것을 손에 넣었다. 이제는 아무도, 아무것도 널 막을 수 없다.\"\r",
+      " $text[2] = \"그동안 네 안에 쌓여 있던 모든 부정의 짐을 털어낸 채, 당신은 결연한 걸음으로 포털을 향해 나아갔다. 수호자들은 갈라서며 신비한 문 너머로 이어지는 길을 드러냈다...\"\r",
+      "! JO9 MOD END J9M0452\r",
+      " $text[3] = \"한 걸음만 더 내딛으면 안으로 들어간다. 타오르듯 뜨겁지만 믿기 힘들 만큼 기분 좋은 한기가 너를 덮쳤고, 곧 그 감각은 비상한 아름다움의 풍경으로 바뀌었다. 눈앞에 펼쳐진 셀 수 없이 많은 다른 세계의 포털들은 너를 잠시 혼란스럽게 만들었다. \"\r",
+      " $text[4] = \"하지만 새로운 지평이 네 앞에 열리고 있다는 사실은, 너를 고무시키지 않을 수 없었다. 이제 남은 건 모든 걸 저울질하고 어느 방향으로 나아갈지 결정하는 것뿐이다.\"\r"
+    ]
+  }
+]

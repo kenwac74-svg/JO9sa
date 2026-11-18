@@ -1,0 +1,71 @@
+{
+  "id": "2026-11-18_save_voice_lazy_source",
+  "description": "Regenerable voice bank is loaded on picker use; ordinary text refresh keeps only small fact/flow tables. Stop the unused plural masters-vars append.",
+  "before_sha256": "3619a251981de236ea7aa9f803f8f4b0159f6dc16ab6035751a7b49c79a505a6",
+  "after_sha256": "c992008c7b6732a1357a084ad0ce43d1603285b3b646a0c84218baba3249aa52",
+  "edits": [
+    {
+      "location": "#txt_man",
+      "field": "body",
+      "old": ":jo9_voice_fragment_data\r\n",
+      "new": ":jo9_voice_fragment_data\r\n! JO9 MOD START JO9_SAVE_VOICE_LAZY_20261118_ENTRY\r\nif $args[0] ! 'jo9_voice_fragment_data': jump 'jo9_voice_fragment_small_fact'\r\n! JO9 MOD END JO9_SAVE_VOICE_LAZY_20261118_ENTRY\r\n",
+      "count": 1
+    },
+    {
+      "location": "#txt_man",
+      "field": "body",
+      "old": "killvar '$voice_fact_emotion'\r\n",
+      "new": "",
+      "count": 1
+    },
+    {
+      "location": "#txt_man",
+      "field": "body",
+      "old": "$voice_fact_emotion['fear_0']",
+      "new": "! JO9 MOD START JO9_SAVE_VOICE_LAZY_20261118_FACT\r\n:jo9_voice_fragment_small_fact\r\nkillvar '$voice_fact_emotion'\r\n! JO9 MOD END JO9_SAVE_VOICE_LAZY_20261118_FACT\r\n$voice_fact_emotion['fear_0']",
+      "count": 1
+    },
+    {
+      "location": "#txt_man",
+      "field": "body",
+      "old": "killvar 'voice_fragment_question'\r\n",
+      "new": "! JO9 MOD START JO9_SAVE_VOICE_LAZY_20261118_QUESTIONS\r\nif $args[0] ! 'jo9_voice_fragment_data': jump 'jo9_voice_fragment_small_flow'\r\n! JO9 MOD END JO9_SAVE_VOICE_LAZY_20261118_QUESTIONS\r\nkillvar 'voice_fragment_question'\r\n",
+      "count": 1
+    },
+    {
+      "location": "#txt_man",
+      "field": "body",
+      "old": "killvar '$voice_flow_override'\r\nkillvar '$voice_flow_original'\r\n",
+      "new": "",
+      "count": 1
+    },
+    {
+      "location": "#txt_man",
+      "field": "body",
+      "old": "$voice_flow_original['body_obed_2_detail_a_1']",
+      "new": "! JO9 MOD START JO9_SAVE_VOICE_LAZY_20261118_FLOW\r\n:jo9_voice_fragment_small_flow\r\nkillvar '$voice_flow_override'\r\nkillvar '$voice_flow_original'\r\n! JO9 MOD END JO9_SAVE_VOICE_LAZY_20261118_FLOW\r\n$voice_flow_original['body_obed_2_detail_a_1']",
+      "count": 1
+    },
+    {
+      "location": "#txt_man",
+      "field": "body",
+      "old": "\r\nvoice_fragment_revision=8\r\n",
+      "new": "\r\n! JO9 MOD START JO9_SAVE_VOICE_LAZY_20261118_REVISION\r\nif $args[0] = 'jo9_voice_fragment_data': voice_fragment_revision=8\r\n! JO9 MOD END JO9_SAVE_VOICE_LAZY_20261118_REVISION\r\n",
+      "count": 1
+    },
+    {
+      "location": "#dynamic",
+      "field": "body",
+      "old": " $result=''\r\n killvar '$jo9_vfp_candidates'",
+      "new": " $result=''\r\n ! JO9_SAVE_VOICE_LAZY_20261118\r\n if voice_fragment_revision ! 8 or arrsize('$voice_fragment_ids') ! 9120: gs '#txt_man','jo9_voice_fragment_data'\r\n killvar '$jo9_vfp_candidates'",
+      "count": 1
+    },
+    {
+      "location": "#static_base",
+      "field": "body",
+      "old": "$masters_vars[] = 'instance_mood'                     &! 'master_mood' array var, each string index corresponds to a moodlet name, with a number as the value (remaining duration)",
+      "new": "! JO9 MOD START JO9_SAVE_VOICE_LAZY_20261118_ORPHAN\r\nkillvar '$masters_vars' &! Exact unused plural array; the singular $master_vars definition above is preserved.\r\n! JO9 MOD END JO9_SAVE_VOICE_LAZY_20261118_ORPHAN",
+      "count": 1
+    }
+  ]
+}

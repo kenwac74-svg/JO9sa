@@ -1,0 +1,39 @@
+{
+  "phase": "RED",
+  "source": "G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp",
+  "sha256": "e5aa1b41034788bed7b14cbc6412edb8c3f84ddbeaee6d02789e00febf0bfaa7",
+  "engine": "QSP WASM 5.8.0",
+  "checks": [
+    {
+      "name": "pages 1 through 6 do not award the completion flag or change mood rate",
+      "pass": true
+    },
+    {
+      "name": "last page gives ecstasy and flag and survives refresh: mixed moodlets",
+      "pass": false,
+      "error": "Expected values to be strictly equal:\n\n0 !== 1\n"
+    },
+    {
+      "name": "last page gives ecstasy and flag and survives refresh: severely negative rate",
+      "pass": false,
+      "error": "Expected values to be strictly equal:\n\n0 !== 1\n"
+    },
+    {
+      "name": "last page gives ecstasy and flag and survives refresh: already high rate",
+      "pass": false,
+      "error": "Expected values to be strictly equal:\n\n0 !== 1\n"
+    },
+    {
+      "name": "another reward branch does not acquire the completion flag",
+      "pass": true
+    }
+  ],
+  "passed": 2,
+  "total": 5,
+  "errors": [],
+  "limits": [
+    "Uses the exact 6028 branch, the actual page callback dispatch, and existing mood accounting.",
+    "The rest of scene rendering and full home UI are not executed.",
+    "Existing daily reset of master_mood_rate is unchanged; visual play remains unverified."
+  ]
+}

@@ -1,0 +1,107 @@
+{
+  "id": "2026-11-18_optional_clean_save_maintenance",
+  "description": "Keep normal save dialogue caches; offer explicit clean Save As with lazy rebuild and conservative legacy housekeeping",
+  "before_sha256": "7f6f0a32bb0ee9ceb4749bc3172b1acbf16c5e3c5e692bc396a555017473be30",
+  "after_sha256": "acd6bc3c868cb8f39e89a261d3733f351c7f4fe21da87f873ab9ba914686885b",
+  "edits": [
+    {
+      "location": "#txt_man",
+      "field": "body",
+      "old": ":jo9_voice_fragment_data\r\n",
+      "new": ":jo9_voice_fragment_data\r\n! JO9 MOD START JO9_SAVE_VOICE_LAZY_20261118_ENTRY\r\nif $args[0] ! 'jo9_voice_fragment_data': jump 'jo9_voice_fragment_small_fact'\r\n! JO9 MOD END JO9_SAVE_VOICE_LAZY_20261118_ENTRY\r\n",
+      "count": 1
+    },
+    {
+      "location": "#txt_man",
+      "field": "body",
+      "old": "killvar '$voice_fact_emotion'\r\n$voice_fragment_ids[0]='q1111_world_prehistoric_1_core_reserved_t1'\r\n",
+      "new": "$voice_fragment_ids[0]='q1111_world_prehistoric_1_core_reserved_t1'\r\n",
+      "count": 1
+    },
+    {
+      "location": "#txt_man",
+      "field": "body",
+      "old": "$voice_fact_emotion['fear_0']",
+      "new": "! JO9 MOD START JO9_SAVE_VOICE_LAZY_20261118_FACT\r\n:jo9_voice_fragment_small_fact\r\nkillvar '$voice_fact_emotion'\r\n! JO9 MOD END JO9_SAVE_VOICE_LAZY_20261118_FACT\r\n$voice_fact_emotion['fear_0']",
+      "count": 1
+    },
+    {
+      "location": "#txt_man",
+      "field": "body",
+      "old": "killvar 'voice_fragment_question'\r\n",
+      "new": "! JO9 MOD START JO9_SAVE_VOICE_LAZY_20261118_QUESTIONS\r\nif $args[0] ! 'jo9_voice_fragment_data': jump 'jo9_voice_fragment_small_flow'\r\n! JO9 MOD END JO9_SAVE_VOICE_LAZY_20261118_QUESTIONS\r\nkillvar 'voice_fragment_question'\r\n",
+      "count": 1
+    },
+    {
+      "location": "#txt_man",
+      "field": "body",
+      "old": "killvar '$voice_flow_override'\r\nkillvar '$voice_flow_original'\r\nvoice_fragment_question['body_fear_0_core_reserved_1']=1112\r\n",
+      "new": "voice_fragment_question['body_fear_0_core_reserved_1']=1112\r\n",
+      "count": 1
+    },
+    {
+      "location": "#txt_man",
+      "field": "body",
+      "old": "$voice_flow_original['body_obed_2_detail_a_1']",
+      "new": "! JO9 MOD START JO9_SAVE_VOICE_LAZY_20261118_FLOW\r\n:jo9_voice_fragment_small_flow\r\nkillvar '$voice_flow_override'\r\nkillvar '$voice_flow_original'\r\n! JO9 MOD END JO9_SAVE_VOICE_LAZY_20261118_FLOW\r\n$voice_flow_original['body_obed_2_detail_a_1']",
+      "count": 1
+    },
+    {
+      "location": "#txt_man",
+      "field": "body",
+      "old": "\r\nvoice_fragment_revision=8\r\n",
+      "new": "\r\n! JO9 MOD START JO9_SAVE_VOICE_LAZY_20261118_REVISION\r\nif $args[0] = 'jo9_voice_fragment_data': voice_fragment_revision=8\r\n! JO9 MOD END JO9_SAVE_VOICE_LAZY_20261118_REVISION\r\n",
+      "count": 1
+    },
+    {
+      "location": "#dynamic",
+      "field": "body",
+      "old": " $result=''\r\n killvar '$jo9_vfp_candidates'",
+      "new": " $result=''\r\n ! JO9_SAVE_VOICE_LAZY_20261118\r\n if voice_fragment_revision ! 8 or arrsize('$voice_fragment_ids') ! 9120: gs '#txt_man','jo9_voice_fragment_data'\r\n killvar '$jo9_vfp_candidates'",
+      "count": 1
+    },
+    {
+      "location": "#static_base",
+      "field": "body",
+      "old": "$masters_vars[] = 'instance_mood'                     &! 'master_mood' array var, each string index corresponds to a moodlet name, with a number as the value (remaining duration)",
+      "new": "! JO9 MOD START JO9_SAVE_VOICE_LAZY_20261118_ORPHAN\r\nkillvar '$masters_vars' &! Exact unused plural array; the singular $master_vars definition above is preserved.\r\n! JO9 MOD END JO9_SAVE_VOICE_LAZY_20261118_ORPHAN",
+      "count": 1
+    },
+    {
+      "location": "#static_base",
+      "field": "body",
+      "old": "\r\n\tend\r\n}\r\n\r\n! JO9 MOD END TRAIT_MERGE_EXCLUSIONS_20261025\r\n! JO9 MOD END PROFILE_POLISH_20261025_R3\r\n! JO9 MOD END UI_RESOURCE_PATHS_20261027\r\n",
+      "new": "\r\n\tend\r\n}\r\n\r\n! JO9 MOD END TRAIT_MERGE_EXCLUSIONS_20261025\r\n! JO9 MOD END PROFILE_POLISH_20261025_R3\r\n! JO9 MOD END UI_RESOURCE_PATHS_20261027\r\n\r\n! JO9 MOD START SAVE_MAINTENANCE_REGISTER_20261118\r\ngs 'jo9_save_maintenance','install'\r\n! JO9 MOD END SAVE_MAINTENANCE_REGISTER_20261118\r\n",
+      "count": 1
+    },
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "! JO9 MOD END AUTO_LOAD_COMPAT242_ENTRY_20261114",
+      "new": "! JO9 MOD END AUTO_LOAD_COMPAT242_ENTRY_20261114\r\n! JO9 MOD START SAVE_MAINTENANCE_LOAD_20261118\r\ngs 'jo9_save_maintenance','load'\r\n! JO9 MOD END SAVE_MAINTENANCE_LOAD_20261118",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "\t$setting_display_r += '<div id=\"under\">< < 컨텐츠 옵션 > ><br></div>'",
+      "new": "\t! JO9 MOD START CLEAN_SAVE_OPTION_20261118\r\n\t$setting_display += $func('jo9_save_maintenance','clean_link')\r\n\t! JO9 MOD END CLEAN_SAVE_OPTION_20261118\r\n\t$setting_display_r += '<div id=\"under\">< < 컨텐츠 옵션 > ><br></div>'",
+      "count": 1
+    },
+    {
+      "location": "city_menu_form",
+      "field": "body",
+      "old": "\t$setting_display_r += '<div id=\"under\">< < 컨텐츠 옵션 > ><br></div>'",
+      "new": "\t! JO9 MOD START CLEAN_SAVE_OPTION_20261118\r\n\t$setting_display += $func('jo9_save_maintenance','clean_link')\r\n\t! JO9 MOD END CLEAN_SAVE_OPTION_20261118\r\n\t$setting_display_r += '<div id=\"under\">< < 컨텐츠 옵션 > ><br></div>'",
+      "count": 1
+    }
+  ],
+  "add_locations": [
+    {
+      "name": "jo9_save_maintenance",
+      "desc": "",
+      "body": "! JO9 MOD START CLEAN_SAVE_ACTION_20261118\r\nif $args[0]='clean_link':\r\n $result='<br><div id=\"under\"><a class=\"tooltip-right\" tooltip-data=\"업데이트 전후에 새 이름으로 저장하세요. 진행은 보존하고 대사 캐시는 다음 대화에서 다시 만듭니다.\" href=\"EXEC: gs ''jo9_save_maintenance'',''make_clean''\">클린 세이브 만들기</a></div>'\r\n exit\r\nend\r\nif $args[0]='can_clean':\r\n result=0\r\n if ($curloc='main_screen' or $curloc='menu_form') and menu_form=2000: result=1\r\n if ($curloc='city_screen' or $curloc='city_menu_form') and city_form=1000: result=1\r\n if mode=1 or get_weapon>0 or exam_in_progress>0: result=0\r\n exit\r\nend\r\nif $args[0]='make_clean':\r\n if func('jo9_save_maintenance','can_clean')=0:\r\n  msg '전투나 이벤트를 마친 뒤 일반 화면의 설정에서 사용하세요.'\r\n  exit\r\n end\r\n gs 'jo9_save_maintenance','clean'\r\n if arrsize('$voice_fragment_ids')>0 or arrsize('$voice_fragment_text')>0: msg '현재 대사 함수의 원형을 확인할 수 없어 대사 캐시는 유지합니다. 확인된 임시 데이터만 정리한 파일을 저장합니다.'\r\n savegame\r\n exit\r\nend\r\n! JO9 MOD END CLEAN_SAVE_ACTION_20261118\r\n! JO9 MOD START JO9_SAVE_MAINTENANCE_20261118\r\n! Manual clean-save voice-bank lifecycle and exact legacy-cache housekeeping.\r\nlocal $j9sm_mode = lcase($args[0])\r\nlocal j9sm_pos, j9sm_ready, j9sm_size, j9sm_i, j9sm_match\r\nlocal $j9sm_old, $j9sm_new, $j9sm_expected, $j9sm_first\r\nif lcase($ongsave) ! 'jo9_save_maintenance':\r\n if $ongsave ! '':\r\n  $jo9_previous_save_hook = $ongsave\r\n else\r\n  killvar '$jo9_previous_save_hook'\r\n end\r\nend\r\n$ongsave = 'jo9_save_maintenance'\r\nif $j9sm_mode = 'install': exit\r\nif $j9sm_mode ! '' and $j9sm_mode ! 'load' and $j9sm_mode ! 'clean': exit\r\nif $j9sm_mode = '' and $jo9_previous_save_hook ! '' and lcase($jo9_previous_save_hook) ! 'jo9_save_maintenance':\r\n gs $jo9_previous_save_hook\r\n if lcase($ongsave) ! 'jo9_save_maintenance':\r\n  if $ongsave ! '':\r\n   $jo9_previous_save_hook = $ongsave\r\n  else\r\n   killvar '$jo9_previous_save_hook'\r\n  end\r\n end\r\nend\r\n$ongsave = 'jo9_save_maintenance'\r\n$j9sm_old = ' $result=''''\r\n killvar ''$jo9_vfp_candidates'''\r\n$j9sm_new = ' $result=''''\r\n ! JO9_SAVE_VOICE_LAZY_20261118\r\n if voice_fragment_revision ! 8 or arrsize(''$voice_fragment_ids'') ! 9120: gs ''#txt_man'',''jo9_voice_fragment_data''\r\n killvar ''$jo9_vfp_candidates'''\r\nj9sm_pos = instr($voice_pick_fragment, $j9sm_old)\r\nif j9sm_pos >= 1 and j9sm_pos <= 3 and instr($voice_pick_fragment, 'JO9_SAVE_VOICE_LAZY_20261118') = 0:\r\n ! Replace only the recognized opening segment; preserve the rest verbatim.\r\n $voice_pick_fragment = mid($voice_pick_fragment,1,j9sm_pos-1) + replace(mid($voice_pick_fragment,j9sm_pos,len($j9sm_old)),$j9sm_old,$j9sm_new) + mid($voice_pick_fragment,j9sm_pos+len($j9sm_old))\r\nend\r\nj9sm_pos = instr($voice_pick_fragment, $j9sm_new)\r\nj9sm_ready = iif(j9sm_pos >= 1 and j9sm_pos <= 3,1,0)\r\nif $j9sm_mode = 'clean' and j9sm_ready = 1:\r\n killvar '$voice_fragment_emotion'\r\n killvar '$voice_fragment_ids'\r\n killvar '$voice_fragment_item'\r\n killvar '$voice_fragment_relations'\r\n killvar '$voice_fragment_role'\r\n killvar '$voice_fragment_text'\r\n killvar '$voice_fragment_types'\r\n killvar 'voice_fragment_count'\r\n killvar 'voice_fragment_good_mood'\r\n killvar 'voice_fragment_level'\r\n killvar 'voice_fragment_narration'\r\n killvar 'voice_fragment_need_fear'\r\n killvar 'voice_fragment_question'\r\n killvar 'voice_fragment_rare_praise'\r\n killvar 'voice_fragment_tone'\r\n voice_fragment_revision = 0\r\nend\r\nkillvar '$masters_vars'\r\nj9sm_size = arrsize('$meal_id')\r\nif j9sm_size > 76 and j9sm_size mod 76 = 0:\r\n $j9sm_expected[0] = 'консервы'\r\n $j9sm_expected[1] = 'шкварки'\r\n $j9sm_expected[2] = 'рис_отварной'\r\n $j9sm_expected[3] = 'каша_перловая'\r\n $j9sm_expected[4] = 'каша_гречневая'\r\n $j9sm_expected[5] = 'вареная_вермишель'\r\n $j9sm_expected[6] = 'каша_овсяная'\r\n $j9sm_expected[7] = 'каша_манная'\r\n $j9sm_expected[8] = 'тушеная_капуста'\r\n $j9sm_expected[9] = 'овощной_салат'\r\n $j9sm_expected[10] = 'репа_пареная'\r\n $j9sm_expected[11] = 'картоха'\r\n $j9sm_expected[12] = 'яичница_болтунья'\r\n $j9sm_expected[13] = 'острый_рулет'\r\n $j9sm_expected[14] = 'котлеты_с_макарошками'\r\n $j9sm_expected[15] = 'мясная_похлебка'\r\n $j9sm_expected[16] = 'стейк'\r\n $j9sm_expected[17] = 'спагетти'\r\n $j9sm_expected[18] = 'суп_вермешелевый'\r\n $j9sm_expected[19] = 'луковый_суп'\r\n $j9sm_expected[20] = 'тефтельки'\r\n $j9sm_expected[21] = 'глазунья_со_шкварками'\r\n $j9sm_expected[22] = 'макароны_с_сыром'\r\n $j9sm_expected[23] = 'свекольник'\r\n $j9sm_expected[24] = 'пирог_с_яйцом'\r\n $j9sm_expected[25] = 'молочная_каша'\r\n $j9sm_expected[26] = 'пюрешечка'\r\n $j9sm_expected[27] = 'картошка_с_яйцом'\r\n $j9sm_expected[28] = 'болоньезе'\r\n $j9sm_expected[29] = 'острая_отбивная'\r\n $j9sm_expected[30] = 'тушеное_мясо'\r\n $j9sm_expected[31] = 'отбивная_с_рисом'\r\n $j9sm_expected[32] = 'борщ'\r\n $j9sm_expected[33] = 'фаршированные_яйца'\r\n $j9sm_expected[34] = 'колбаски_с_пюре'\r\n $j9sm_expected[35] = 'пирог_с_картошкой'\r\n $j9sm_expected[36] = 'мясо_по_французски'\r\n $j9sm_expected[37] = 'молочный_суп'\r\n $j9sm_expected[38] = 'глазунья_с_ветчиной'\r\n $j9sm_expected[39] = 'овсяный_пуддинг'\r\n $j9sm_expected[40] = 'пирог_с_яйцами'\r\n $j9sm_expected[41] = 'пирог_с_мясом'\r\n $j9sm_expected[42] = 'пирог_с_грибами'\r\n $j9sm_expected[43] = 'сырное_пюре'\r\n $j9sm_expected[44] = 'чебуреки'\r\n $j9sm_expected[45] = 'котлеты_с_картошкой'\r\n $j9sm_expected[46] = 'азу_с_рисом'\r\n $j9sm_expected[47] = 'шашлык'\r\n $j9sm_expected[48] = 'купаты'\r\n $j9sm_expected[49] = 'ветчина_с_сыром'\r\n $j9sm_expected[50] = 'овощи_с_фасолью'\r\n $j9sm_expected[51] = 'суп_бальзамико'\r\n $j9sm_expected[52] = 'окрошка'\r\n $j9sm_expected[53] = 'рулет_с_яйцом'\r\n $j9sm_expected[54] = 'ромовые_блинчики'\r\n $j9sm_expected[55] = 'рагу_с_сыром'\r\n $j9sm_expected[56] = 'стейк_с_макаронами'\r\n $j9sm_expected[57] = 'тушеная_чечевица'\r\n $j9sm_expected[58] = 'вегетарианское_рагу'\r\n $j9sm_expected[59] = 'зразы_с_яйцом'\r\n $j9sm_expected[60] = 'печенье'\r\n $j9sm_expected[61] = 'девчатина_с_макаронами'\r\n $j9sm_expected[62] = 'девчатина_с_бобами'\r\n $j9sm_expected[63] = 'девчатина_с_картошкой'\r\n $j9sm_expected[64] = 'лазанья_бешамель'\r\n $j9sm_expected[65] = 'ребрышки_гриль'\r\n $j9sm_expected[66] = 'шашлык_с_вином'\r\n $j9sm_expected[67] = 'пряная_ветчина'\r\n $j9sm_expected[68] = 'кексы'\r\n $j9sm_expected[69] = 'круассаны'\r\n $j9sm_expected[70] = 'пирог_из_девчатины'\r\n $j9sm_expected[71] = 'рагу_с_рисом'\r\n $j9sm_expected[72] = 'девчатина_с_сыром'\r\n $j9sm_expected[73] = 'мясо_под_сливочным'\r\n $j9sm_expected[74] = 'суп_из_девчатины'\r\n $j9sm_expected[75] = 'образец'\r\n j9sm_i = 0\r\n j9sm_match = 1\r\n :j9sm_meal_check\r\n if j9sm_i < j9sm_size and j9sm_match = 1:\r\n  if $meal_id[j9sm_i] ! $j9sm_expected[j9sm_i mod 76] or meal_id[j9sm_i] ! 0: j9sm_match = 0\r\n  j9sm_i += 1\r\n  jump 'j9sm_meal_check'\r\n end\r\n if j9sm_match = 1:\r\n  copyarr '$j9sm_first', '$meal_id', 0, 76\r\n  killvar '$meal_id'\r\n  copyarr '$meal_id', '$j9sm_first'\r\n end\r\nend\r\njo9_save_clean_revision = 1\r\n! JO9 MOD END JO9_SAVE_MAINTENANCE_20261118\r\n",
+      "actions": []
+    }
+  ]
+}

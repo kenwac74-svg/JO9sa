@@ -1,0 +1,47 @@
+{
+  "status": "PASS",
+  "red": false,
+  "engine": "5.8.0",
+  "checks": [
+    {
+      "name": "normal save retains bank and prior hook runs once only when actual save handler runs",
+      "status": "PASS",
+      "elapsedMs": 4
+    },
+    {
+      "name": "stale cached picker is repaired at accepted opening then lazily rebuilds with original arguments",
+      "status": "PASS",
+      "elapsedMs": 2
+    },
+    {
+      "name": "missing or partial unsafe picker retains complete existing cache and revision",
+      "status": "PASS",
+      "elapsedMs": 1
+    },
+    {
+      "name": "unrecognized opening is preserved and cache retained despite old prefix later in script",
+      "status": "PASS",
+      "elapsedMs": 0
+    },
+    {
+      "name": "exact whitelist cleanup preserves actor history, script callbacks, small tables and battle state",
+      "status": "PASS",
+      "elapsedMs": 2
+    },
+    {
+      "name": "meal exact repeated bank compacts while mismatches, partial repeats and numeric payload survive",
+      "status": "PASS",
+      "elapsedMs": 5
+    },
+    {
+      "name": "normal load/save retain bank; explicit clean is idempotent and never chains helper to itself",
+      "status": "PASS",
+      "elapsedMs": 2
+    }
+  ],
+  "helperBytes": 6799,
+  "limitations": [
+    "WASM invokes registered save-hook location using GS. Native before-save event timing and full game integration are root-owned.",
+    "No native process, original source/save writes, or runtime-speed claims."
+  ]
+}

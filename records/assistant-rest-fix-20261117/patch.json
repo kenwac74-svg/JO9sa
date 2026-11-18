@@ -1,0 +1,16 @@
+{
+  "id": "2026-11-17_assistant_rest_effects",
+  "status": "APPROVED",
+  "description": "Execute the existing assistant rest special effects once; use declared rest time and hygiene delta without double AP charging. Preserve growth formulas and existing infinite AP cheat.",
+  "before_sha256": "03f7e9809dc9e5985f4141940ea1fdab23f781cc84f185363780da54e1cd70d5",
+  "after_sha256": "f0564b27dd84062269dc433091527e7e270a2c4375dbe206a04fcc883f78a7ed",
+  "edits": [
+    {
+      "location": "interaction_result",
+      "field": "body",
+      "old": "!interaction type - verbal punishment",
+      "new": "! JO9 MOD START ASSISTANT_REST_EFFECTS_20261117\r\nif $interaction_type = 'assistant_rest':\r\n interaction_no_auto_energy_drop = 1\r\n if interaction_assistant['res'] >= 0:\r\n  dynamic $special_part\r\n  assistant_rate['hygiene'] += add_assistant_hygiene\r\n  if cheat_inf_en = 0: assistant['energy'] -= free_time\r\n end\r\n free_time = 0\r\nend\r\n! JO9 MOD END ASSISTANT_REST_EFFECTS_20261117\r\n\r\n!interaction type - verbal punishment",
+      "count": 1
+    }
+  ]
+}

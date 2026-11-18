@@ -1,0 +1,65 @@
+{
+  "phase": "RED",
+  "sourceHash": "5cf479ff85b841e9a6f71071415a897aa8e597ed7d0e4684ed21029157a1864d",
+  "cases": [
+    {
+      "name": "active ID-zero Galateya and Misty eligible at intimacy40",
+      "pass": false,
+      "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ '노예와 조수의 인물 정보를 확인할 수 없습니다.'\n- ''\n"
+    },
+    {
+      "name": "optional zero ID with positive-ID donor eligible",
+      "pass": false,
+      "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ '노예와 조수의 인물 정보를 확인할 수 없습니다.'\n- ''\n"
+    },
+    {
+      "name": "positive IDs continue to work",
+      "pass": true
+    },
+    {
+      "name": "positive duplicate identity stays rejected",
+      "pass": true
+    },
+    {
+      "name": "missing actor stays rejected",
+      "pass": true
+    },
+    {
+      "name": "ID-zero pair still requires intimacy40 each way",
+      "pass": false,
+      "error": "The input did not match the regular expression /친밀도/. Input:\n\n'노예와 조수의 인물 정보를 확인할 수 없습니다.'\n"
+    },
+    {
+      "name": "ID-zero transfer charges exactly900 and each1AP; donor kept",
+      "pass": false,
+      "error": "The expression evaluated to a falsy value:\n\n  assert(yes)\n"
+    },
+    {
+      "name": "cancel preview leaves resources and talents intact",
+      "pass": true
+    },
+    {
+      "name": "changing zero-ID target type invalidates pending confirmation",
+      "pass": false,
+      "error": "The expression evaluated to a falsy value:\n\n  assert(yes)\n"
+    },
+    {
+      "name": "changing zero-ID donor name invalidates pending confirmation",
+      "pass": false,
+      "error": "The expression evaluated to a falsy value:\n\n  assert(yes)\n"
+    },
+    {
+      "name": "quoted character names survive generated menu and confirm",
+      "pass": false,
+      "error": "The expression evaluated to a falsy value:\n\n  assert(str('$text_display').includes('Mi'))\n"
+    },
+    {
+      "name": "dedicated icon headers work including disabled and legacy cache path",
+      "pass": false,
+      "error": "The expression evaluated to a falsy value:\n\n  assert(str('$text_display').includes('Duplicato_Essentia.png'))\n"
+    }
+  ],
+  "passed": 4,
+  "total": 12,
+  "errors": []
+}

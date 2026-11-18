@@ -1,0 +1,13 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),assert=require('node:assert/strict');
+const root=__dirname,html=fs.readFileSync(path.join(root,'index.html'),'utf8'),js=fs.readFileSync(path.join(root,'inline-game.js'),'utf8');
+assert.ok(!html.includes('id="choiceFormatBox"'));
+assert.ok(!html.includes('src="choice-format-ui.js"'));
+assert.ok(html.includes('src="inline-game.js"'));
+assert.ok(js.includes('inlineIncludeChoices'));
+assert.ok(js.includes("closest('.cols').prepend(checkbox)"));
+assert.ok(js.includes("mode()==='all'"));
+for(const color of ['#000000','#0000ff','#ff0000','#008000','#00bfff','#800080','#ff00ff','#d4af37','#ffffff'])assert.ok(js.includes(color));
+for(const m of html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi))if(m[1].trim())new vm.Script(m[1]);
+for(const name of ['inline-game.js','inline-page.cjs','server.cjs','choice-editor.js','editing-tools.js'])new vm.Script(fs.readFileSync(path.join(root,name),'utf8'));
+console.log('PASS integrated editor wiring, source-mode preservation, palette and JavaScript syntax');

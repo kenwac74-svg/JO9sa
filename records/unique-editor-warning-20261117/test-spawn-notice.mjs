@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import {newSpawnPolicy, spawnNotice} from '../../tools/modding-hub/overrides/spawn-notice.mjs';
+const esc = s => String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('"','&quot;');
+assert.match(spawnNotice({unique:true, warning:'유니크 일반 등장 제외가 해제되었습니다.'}, esc), /role="alert"/);
+assert.match(spawnNotice({unique:true, warning:'<script>'}, esc), /&lt;script>/);
+assert.doesNotMatch(spawnNotice({unique:true, warning:''}, esc), /role="alert"/);
+assert.equal(spawnNotice({unique:false, warning:''}, esc), '');
+const draft={unique:true, register:true, name:'테스트', slug:'test', id:''};
+assert.equal(newSpawnPolicy(draft), null);
+const disabled={...draft,unique:false};
+assert.ok(newSpawnPolicy(disabled).warning);
+assert.equal(disabled.unique,false);
+assert.equal(disabled.register,true);
+assert.equal(newSpawnPolicy({...disabled,register:false}), null);
+assert.equal(newSpawnPolicy({...disabled,name:'',slug:''}), null);
+console.log('PASS: warning, escaping, safe state, draft toggle and no setting mutation');

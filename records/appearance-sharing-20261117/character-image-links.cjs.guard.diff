@@ -1,0 +1,31 @@
+--- before/character-image-links.cjs
++++ after/character-image-links.cjs
+@@ -30,7 +30,7 @@
+ }
+ // JO9 MOD END CHECKLIST_DRESSED_LOOK_20261109
+ function create(game,catalogRoot,options={}){
+- const pic=path.resolve(game,'content/pic'),jsonDir=path.join(game,'json/slaves'),history=path.join(catalogRoot,'image_work','character-links');let locked=false;
++ const pic=path.resolve(game,'content/pic'),jsonDir=path.join(game,'json/slaves'),history=path.join(catalogRoot,'image_work','character-links'),observedSharing=new Map();let locked=false;
+  // JO9 MOD START JSON_CHARACTER_DISCOVERY_20261111
+  const validIdentity=id=>(Number.isSafeInteger(id)&&id>=0)||(typeof id==='string'&&/^json:[^\\/<>:"|?*\x00-\x1f]+\.json$/i.test(id));
+  const fileNumber=name=>{const m=name.match(/^(\d+)(?:_|\.json$)/i),n=m?Number(m[1]):null;return Number.isSafeInteger(n)&&n>=0?n:null;};
+@@ -68,7 +68,8 @@
+   if(!Array.isArray(ids)||ids.length>5000||ids.some(id=>!validIdentity(id)))throw Error('캐릭터 번호 또는 JSON 파일 목록을 확인하세요.');
+   const files=fileList(settings.rescan),known=new Map(files.map(p=>[p.toLowerCase(),p])),assetsById=new Map(),characters=[],errors=[];
+   for(const p of files)for(const m of p.matchAll(/(?:^|\/)(\d+)(?=[_/.])/g)){const id=Number(m[1]);if(!assetsById.has(id))assetsById.set(id,new Set());assetsById.get(id).add(p);}
+-  for(const id of [...new Set(ids)])try{characters.push(snapshot(id,locate(id,map),known,assetsById,shared));}catch(e){if(!complete&&ids.length===1)throw e;errors.push({id,json:map.has(id)?'json/slaves/'+map.get(id):null,error:e.message});}
++  // A malformed peer cannot erase the group observed by this server before the next write.
++  for(const id of [...new Set(ids)])try{const character=snapshot(id,locate(id,map),known,assetsById,shared),previous=observedSharing.get(id),members=new Set(character.sharing.members);if(previous?.policyHash===character.sharing.policyHash)for(const peer of previous.members)if(!members.has(peer))try{parseCharacter(fs.readFileSync(locate(peer,map)));}catch{members.add(peer);}observedSharing.set(id,{policyHash:character.sharing.policyHash,members:[...members]});characters.push(character);}catch(e){if(!complete&&ids.length===1)throw e;errors.push({id,json:map.has(id)?'json/slaves/'+map.get(id):null,error:e.message});}
+   return{characters,files,errors};
+  }
+  function apply(input){
+@@ -76,7 +77,8 @@
+   try{
+    const {id,field,expectedHash}=input;if(!allowed.has(field))throw Error('편집 가능한 이미지 항목이 아닙니다.');
+    const primaryFile=locate(id),primary=fs.readFileSync(primaryFile);if(sha(primary)!==expectedHash)throw Error('캐릭터 JSON이 변경됐습니다. 다시 선택하세요.');
+-   const shared=appearanceSharing.create(game),appearanceBefore=shared.resolve(id),slotKeys=(field==='fullimage'||field==='indpack_naked')?['fullimage','indpack_naked']:field==='indpack_title'?['indpack_title']:(pairs[field]||[field]);
++   const shared=appearanceSharing.create(game),sharing=shared.describe(id),observed=observedSharing.get(id);if(observed?.policyHash===sharing.policyHash)for(const peer of observed.members)try{parseCharacter(fs.readFileSync(locate(peer)));}catch(error){throw Error('공유 대상 JSON을 읽지 못했습니다: '+peer+' · '+error.message);}
++   const appearanceBefore=shared.resolve(id),slotKeys=(field==='fullimage'||field==='indpack_naked')?['fullimage','indpack_naked']:field==='indpack_title'?['indpack_title']:(pairs[field]||[field]);
+    const norm=value=>typeof value==='string'&&value?value.replaceAll('\\','/').replace(/^content\/pic\//i,'').replace(/\.png$/i,'').toLowerCase():'';
+    const previous=slotKeys.map(key=>norm(appearanceBefore[key])).filter(Boolean);
+    // An explicit different path or empty unlink remains independent until the user opts into sharing in its preview.

@@ -1,0 +1,41 @@
+{
+  "name": "jo9_save_maintenance",
+  "marker": "JO9_SAVE_MAINTENANCE_20261118",
+  "cacheVariables": [
+    "$voice_fragment_emotion",
+    "$voice_fragment_ids",
+    "$voice_fragment_item",
+    "$voice_fragment_relations",
+    "$voice_fragment_role",
+    "$voice_fragment_text",
+    "$voice_fragment_types",
+    "voice_fragment_count",
+    "voice_fragment_good_mood",
+    "voice_fragment_level",
+    "voice_fragment_narration",
+    "voice_fragment_need_fear",
+    "voice_fragment_question",
+    "voice_fragment_rare_praise",
+    "voice_fragment_tone"
+  ],
+  "savedOwnVariables": [
+    "jo9_save_clean_revision",
+    "$jo9_previous_save_hook"
+  ],
+  "hookVariable": "$ongsave",
+  "modes": {
+    "install": "register/chains hook only",
+    "load": "repair compatible cached picker and exact legacy meal/orphan housekeeping; retain voice bank",
+    "": "call prior save hook first, then safe legacy housekeeping; retain voice bank",
+    "clean": "explicit manual clean-save preparation; guarded voice-bank purge plus safe legacy housekeeping; no prior hook or file writing"
+  },
+  "requiredPicker": {
+    "marker": "JO9_SAVE_VOICE_LAZY_20261118"
+  },
+  "sourceHooks": {
+    "newGame": "gs 'jo9_save_maintenance','install'",
+    "load": "gs 'jo9_save_maintenance','load'",
+    "clean": "gs 'jo9_save_maintenance','clean'"
+  },
+  "preservation": "Normal load/save retain the entire voice bank and revision. Only explicit clean mode can remove the exact cache whitelist and invalidate revision. Plural masters-vars, exact repeated meal-ID list and helper-owned hook/version variables can change during safe housekeeping. Other arrays/scripts/pages/callbacks are untouched."
+}

@@ -47,7 +47,7 @@ function categoryFor(field) {
   if (['metabolism', 'grace', 'dexterity', 'jo9_constitution', 'jo9_gag_reflex', 'jo9_voice_trait', 'jo9_peerless'].includes(field)) return '신체';
   if (['oral_affinity', 'anal_affinity', 'nymphomania', 'masochism', 'exhibitionism', 'perversion', 'homosexualism'].includes(field)) return '기호와 성향';
   if (['darkness_attitude', 'blood_attitude', 'fire_attitude', 'water_attitude', 'vermin_attitude', 'deprivation_attitude'].includes(field)) return '기호와 공포';
-  if (['jo9_combat_trait', 'courage'].includes(field)) return '전투';
+  if (['jo9_combat_trait'].includes(field)) return '전투';
   if (['jo9_versatile', 'arena_level', 'has_ride_win'].includes(field)) return '칭호';
   if (['brand', 'sanity'].includes(field)) return '상태';
   return '성격과 기질';

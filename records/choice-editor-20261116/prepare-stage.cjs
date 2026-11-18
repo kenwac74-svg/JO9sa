@@ -1,0 +1,13 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),stage=path.join(__dirname,'stage');
+function edit(file,before,after){const p=path.join(stage,file),s=fs.readFileSync(p,'utf8');if(!s.includes(before))throw Error(file+': anchor missing '+before.slice(0,60));fs.writeFileSync(p,s.replace(before,after));}
+const form='<details id="choiceAdditionBox"><summary>＋ 선택지 추가</summary><p class="muted">선택한 대사 뒤에 선택지 하나를 붙입니다. 반영 후 같은 대사에 반복해서 추가할 수 있습니다. 원문 대사는 유지합니다.</p><label>선택지 문구<input id="choiceLabel" placeholder="예: 다음 장면으로 이동"></label><label>선택하면 실행할 QSP 실행문<input id="choiceActionCode" placeholder="interaction_city = 6027 &amp; gt &#39;interaction_city&#39;"></label><p class="muted">QSP 실행문을 직접 입력하세요. 한 줄에 여러 명령을 쓸 때는 &amp;로 연결합니다. 예: interaction_city = 6027 &amp; gt &#39;interaction_city&#39;</p><label>선택 조건 (선택)<input id="choiceCondition" placeholder="예: sparks >= 1000 and guild_reputation >= 2"></label><p class="muted">빈 조건은 항상 표시합니다. 조건을 입력하면 그 조건이 참일 때만 표시합니다. 기존 장면·분기 조건은 유지합니다. 실행 결과와 세이브 상태에 따른 표시는 게임에서 확인하세요.</p><p class="muted">지원: 독립된 문자열 대입($text[번호] 또는 $변수 = 대사). 출력 명령·연결식은 이유를 안내하고 변경하지 않습니다.</p><button type="button" id="choicePreview">선택지 추가 미리보기</button></details>';
+edit('index.html','<details id="variableBox">',form+'<details id="variableBox">');
+edit('index.html','변수·치환문·HTML 태그 보존 검사를 통과했습니다. 파일 전체를 백업한 뒤 이 위치에만 반영합니다.','변경 내용을 확인하세요. 파일 전체를 백업한 뒤 선택한 위치에 반영합니다.');
+edit('index.html','<script src="dialogue-image-ui.js"></script>','<script src="dialogue-image-ui.js"></script>\r\n<script src="choice-editor.js"></script>');
+edit('server.cjs',"const addition=require('./addition.cjs');","const addition=require('./addition.cjs');\nconst choiceAddition=require('./choice-addition.cjs'); // JO9 MOD CHOICE_ADDITION_20261116");
+edit('server.cjs',"'/dialogue-image-ui.js'].includes(url.pathname)","'/dialogue-image-ui.js','/choice-editor.js'].includes(url.pathname)");
+edit('server.cjs',"const p=input.operation==='add'?addition.prepare(doc,input.selection,input.addition,input.additionMode):core.prepare(doc,input.selection,input.replacement);","const p=input.operation==='choice'?choiceAddition.prepare(doc,input.selection,input.choice):input.operation==='add'?addition.prepare(doc,input.selection,input.addition,input.additionMode):core.prepare(doc,input.selection,input.replacement);");
+edit('server.cjs',"adjustments:p.adjustments||[]});return;","adjustments:p.adjustments||[],choice:p.choice});return;");
+edit('server.cjs',"p.operation==='paragraph'?'문단 추가':'문구 수정'","p.operation==='paragraph'?'문단 추가':p.operation==='choice'?'선택지 추가':'문구 수정'");
+edit('unified-workshop.js','return window.JO9_WORKSHOP_EDITOR?.dirty()||false;','return window.JO9_WORKSHOP_EDITOR?.dirty()||window.JO9ChoiceEditor?.dirty()||false;');

@@ -1,0 +1,21 @@
+'use strict';
+const {test}=require('node:test'),a=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
+const stage=path.join(__dirname,'stage');
+function setup(){
+ const elements=new Map(),listeners=new Map(),saved=new Map(),requests=[];const el=id=>{if(!elements.has(id))elements.set(id,{value:'',hidden:true,checked:false,disabled:false,open:false,textContent:'',addEventListener(type,fn){this[type]=fn;}});return elements.get(id);};
+ const win={addEventListener(name,fn){if(!listeners.has(name))listeners.set(name,[]);listeners.get(name).push(fn);}};
+ const sandbox={window:win,document:{getElementById:el},sessionStorage:{getItem:k=>saved.get(k),setItem:(k,v)=>saved.set(k,v)},selection:{hash:'hash-a',fieldIndex:6,start:30,text:'기준 대사입니다.'},previewId:null,key:e=>e.hash+':'+e.fieldIndex+':'+e.start,invalidate(){sandbox.previewId=null;el('difference').hidden=true;el('approved').checked=false;el('apply').disabled=true;},say:(t,bad)=>{sandbox.message=t;sandbox.bad=bad;},api:async(route,data)=>{requests.push({route,data});return{id:'preview-choice',location:'event',line:2,new:'미리보기 내용',adjustments:[]};}};
+ const file=path.join(stage,'choice-editor.js');a(fs.existsSync(file),'choice editor module must exist');vm.runInNewContext(fs.readFileSync(file,'utf8'),sandbox);return{sandbox,el,saved,requests,fire(name,detail){for(const fn of listeners.get(name)||[])fn({detail});}};
+}
+test('form exposes direct fields in the existing editor and unified dirty guard includes choice drafts',()=>{
+ const html=fs.readFileSync(path.join(stage,'index.html'),'utf8');a(html.includes('id="choiceAdditionBox"'),'choice form must exist');a(html.indexOf('id="additionBox"')<html.indexOf('id="choiceAdditionBox"'));for(const id of ['choiceLabel','choiceActionCode','choiceCondition','choicePreview'])a(html.includes('id="'+id+'"'));a.match(html,/interaction_city = 6027 &amp; gt/);a.match(fs.readFileSync(path.join(stage,'unified-workshop.js'),'utf8'),/JO9ChoiceEditor/);
+});
+test('preview keeps the choice draft, uses shared approval, and input edits revoke approval',async()=>{
+ const u=setup();u.el('choiceLabel').value='선택 문구';u.el('choiceActionCode').value="pick=2 & gt 'event'";u.el('choiceCondition').value='sparks >= 2';u.el('choiceLabel').input();a(u.sandbox.window.JO9ChoiceEditor.dirty());await u.el('choicePreview').onclick();a.equal(u.requests[0].data.operation,'choice');a.deepEqual(JSON.parse(JSON.stringify(u.requests[0].data.choice)),{label:'선택 문구',actionCode:"pick=2 & gt 'event'",condition:'sparks >= 2'});a.equal(u.sandbox.previewId,'preview-choice');a.equal(u.el('difference').hidden,false);a.equal(u.el('apply').disabled,true);u.el('approved').checked=true;u.el('apply').disabled=false;u.el('choiceCondition').value='';u.el('choiceCondition').input();a.equal(u.sandbox.previewId,null);a.equal(u.el('approved').checked,false);a.equal(u.el('apply').disabled,true);
+});
+test('selection roundtrips preserve separate drafts; a choice apply clears only its submitted draft',async()=>{
+ const u=setup();u.el('choiceLabel').value='첫 초안';u.el('choiceActionCode').value="gt 'event'";u.el('choiceLabel').input();const first={...u.sandbox.selection};u.sandbox.selection={...first,start:90};u.fire('jo9:selection');a.equal(u.el('choiceLabel').value,'');u.el('choiceLabel').value='다른 초안';u.el('choiceLabel').input();u.sandbox.selection=first;u.fire('jo9:selection');a.equal(u.el('choiceLabel').value,'첫 초안');await u.el('choicePreview').onclick();u.fire('jo9:text-changed');a.equal(u.el('choiceLabel').value,'');u.sandbox.selection={...first,start:90};u.fire('jo9:selection');a.equal(u.el('choiceLabel').value,'다른 초안');
+});
+test('a competing preview cannot revive a choice response after it has been invalidated',async()=>{
+ const u=setup();let complete;u.sandbox.api=()=>new Promise(resolve=>complete=resolve);u.el('choiceLabel').value='대기 중 선택지';u.el('choiceActionCode').value="gt 'event'";const pending=u.el('choicePreview').onclick();u.fire('jo9:single-preview');u.sandbox.previewId='other-preview';complete({id:'old-choice',location:'event',line:2,new:'이전 미리보기'});await pending;a.equal(u.sandbox.previewId,'other-preview');a.equal(u.el('difference').hidden,true);
+});

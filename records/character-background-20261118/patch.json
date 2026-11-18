@@ -1,0 +1,30 @@
+{
+  "id": "2026-11-18_character_background_classification",
+  "description": "Persist explicit character classification independently of lore and initial stat generation",
+  "before_sha256": "4ff30e397c794a2db5ca02141b6e974ee52d3e21be89a8290e2a4e7e0c6b5cfe",
+  "after_sha256": "3619a251981de236ea7aa9f803f8f4b0159f6dc16ab6035751a7b49c79a505a6",
+  "edits": [
+    {
+      "location": "generate_stock",
+      "field": "body",
+      "old": "! JO9 MOD END BLACK_MARKET_RANDOM_IDENTITY_20261115\r\nspecial_stock = 0",
+      "new": "! JO9 MOD END BLACK_MARKET_RANDOM_IDENTITY_20261115\r\n! JO9 MOD START CHARACTER_BACKGROUND_CLASSIFICATION_20261118_GENERATE\r\ngs 'jo9_character_background','apply','stock'\r\n! JO9 MOD END CHARACTER_BACKGROUND_CLASSIFICATION_20261118_GENERATE\r\nspecial_stock = 0",
+      "count": 1
+    },
+    {
+      "location": "$newloc",
+      "field": "body",
+      "old": "! JO9 MOD START VAMPIRE_SET_CACHE_20261113",
+      "new": "! JO9 MOD START CHARACTER_BACKGROUND_CLASSIFICATION_20261118_REFRESH\r\ngs 'jo9_character_background','all'\r\n! JO9 MOD END CHARACTER_BACKGROUND_CLASSIFICATION_20261118_REFRESH\r\n! JO9 MOD START VAMPIRE_SET_CACHE_20261113",
+      "count": 1
+    }
+  ],
+  "add_locations": [
+    {
+      "name": "jo9_character_background",
+      "desc": "",
+      "body": "! JO9 MOD START CHARACTER_BACKGROUND_CLASSIFICATION_20261118\r\n! Canonical classification only. Lore, numeric hierarchy and growth stay unchanged.\r\nif $args[0]='all':\r\n local jo9_bg_i\r\n local $jo9_bg_roles\r\n copyarr '$jo9_bg_roles','$all_slave_characters'\r\n $jo9_bg_roles[]='stock'\r\n $jo9_bg_roles[]='snk_parked_slave'\r\n jo9_bg_i=0\r\n :jo9_bg_all_loop\r\n if jo9_bg_i<arrsize('$jo9_bg_roles'):\r\n  gs 'jo9_character_background','apply',$jo9_bg_roles[jo9_bg_i]\r\n  jo9_bg_i+=1\r\n  jump 'jo9_bg_all_loop'\r\n end\r\n exit\r\nend\r\nif $args[0] ! 'apply': exit\r\nlocal $jo9_bg_role=$args[1]\r\nif instr(',slave,assistant,prisoner,cow,room1,room2,room3,room4,farmhand,harpy,pig,iced_1,iced_2,iced_3,iced_4,iced_5,iced_6,iced_7,iced_8,iced_9,iced_10,iced_11,iced_12,iced_13,iced_14,iced_15,iced_16,iced_17,iced_18,stock,snk_parked_slave,',','+$jo9_bg_role+',')=0: exit\r\nlocal jo9_bg_id,jo9_bg_state\r\njo9_bg_state=dyneval('result=<<$jo9_bg_role>>_state')\r\nif jo9_bg_state<=0: exit\r\njo9_bg_id=dyneval('result=<<$jo9_bg_role>>_type')\r\nif jo9_bg_id<=0: exit\r\nif seed_background_fixed[jo9_bg_id] ! 1: exit\r\ndynamic '$<<$jo9_bg_role>>_world=$seed_world[jo9_bg_id]'\r\ndynamic '$<<$jo9_bg_role>>_family=$seed_family[jo9_bg_id]'\r\ndynamic '$<<$jo9_bg_role>>_occupation=$seed_occupation[jo9_bg_id]'\r\n! JO9 MOD END CHARACTER_BACKGROUND_CLASSIFICATION_20261118\r\n",
+      "actions": []
+    }
+  ]
+}

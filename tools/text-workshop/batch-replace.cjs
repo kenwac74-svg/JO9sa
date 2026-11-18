@@ -1,23 +1,24 @@
 'use strict';
 // JO9 MOD START: text-batch-replace-20261018
-const core=require('./core.cjs');
+const core=require('./core.cjs'),workScope=require('./work-scope.cjs');
 const key=entry=>`${entry.fieldIndex}:${entry.start}:${entry.end}`;
 function options(input={}){
   const {query,location='',mode='text'}=input;
   if(typeof query!=='string'||!query.length)throw Error('찾을 단어를 입력해 주세요.');
   if(typeof location!=='string'||!['text','all'].includes(mode))throw Error('검색 범위가 올바르지 않습니다.');
-  return {query,location,mode};
+  return {query,location,mode,includeFemale:input.includeFemale===true};
 }
 function count(text,query){let n=0,at=0;while((at=text.indexOf(query,at))!==-1){n++;at+=query.length;}return n;}
 function matches(doc,input,cached){
-  const {query,location,mode}=options(input);
-  return (cached||core.entries(doc)).filter(e=>(mode==='all'||e.dialogue)&&(!location||e.location.includes(location))&&e.text.includes(query)).map(e=>({...e,id:key(e),hash:doc.hash,occurrences:count(e.text,query)}));
+  const {query,location,mode,includeFemale}=options(input);
+  return workScope.filter(cached||core.entries(doc),{includeFemale,automatic:true}).filter(e=>(mode==='all'||e.dialogue)&&(!location||e.location.includes(location))&&e.text.includes(query)).map(e=>({...e,id:key(e),hash:doc.hash,occurrences:count(e.text,query)}));
 }
 function search(doc,input={},cached){
   const scope=options(input),offset=Number(input.offset??0),limit=Number(input.limit??50);
   if(!Number.isSafeInteger(offset)||offset<0||!Number.isSafeInteger(limit)||limit<1)throw Error('검색 페이지가 올바르지 않습니다.');
   const found=matches(doc,scope,cached);
-  return {hash:doc.hash,...scope,total:found.length,occurrences:found.reduce((n,e)=>n+e.occurrences,0),offset,limit,results:found.slice(offset,offset+limit)};
+  const candidates=(cached||core.entries(doc)).filter(e=>(scope.mode==='all'||e.dialogue)&&(!scope.location||e.location.includes(scope.location))&&e.text.includes(scope.query));
+  return {hash:doc.hash,...scope,scope:workScope.summary(candidates,{...scope,automatic:true}),total:found.length,occurrences:found.reduce((n,e)=>n+e.occurrences,0),offset,limit,results:found.slice(offset,offset+limit)};
 }
 function prepare(doc,input,cached){
   if(!input||input.hash!==doc.hash||core.hash(core.serialize(doc))!==doc.hash)throw Error('검색 이후 QSP가 변경되었습니다. 다시 검색해 주세요.');
@@ -57,7 +58,8 @@ function prepare(doc,input,cached){
   }
   const raw=core.serialize(changed),checked=core.parse(raw),fields=new Set(chosen.map(e=>e.fieldIndex));
   if(checked.locations.length!==doc.locations.length||checked.lines.length!==doc.lines.length||checked.lines.some((s,i)=>!fields.has(i)&&s!==doc.lines[i]))throw Error('수정 범위를 벗어난 변경이 감지되었습니다.');
-  return {raw,before:doc.hash,after:core.hash(raw),edits,changes,count:chosen.length,occurrences:chosen.reduce((n,e)=>n+e.occurrences,0)};
+  const result={raw,before:doc.hash,after:core.hash(raw),edits,changes,count:chosen.length,occurrences:chosen.reduce((n,e)=>n+e.occurrences,0),includeFemale:input.includeFemale===true};
+  workScope.assertPrepared(doc,result,input);return result;
 }
 module.exports={key,search,prepare};
 // JO9 MOD END: text-batch-replace-20261018

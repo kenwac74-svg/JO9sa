@@ -1,0 +1,8 @@
+! JO9 MOD START BATTLE_RESULT_LOAD_REDRAW_20261116
+if instr('|jo9_battle_fate|конец_боя|выход_из_боя|', '|' + $curloc + '|') > 0 and jo9_fate['mode'] > 0:
+ if jo9_fate['phase'] = 3 and jo9_fate['mode'] = 1 and $итог_боя = '': gt 'выход_из_боя'
+ if $итог_боя = 'победа' and (jo9_fate['phase'] = 1 or jo9_fate['phase'] = 2) and instr($jo9_fate['page'], 'jo9-battle-result') > 0:
+  gs 'jo9_battle_fate', 'render'
+ end
+end
+! JO9 MOD END BATTLE_RESULT_LOAD_REDRAW_20261116

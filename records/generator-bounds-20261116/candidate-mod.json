@@ -1,0 +1,50 @@
+{
+  "id": "2026-11-16_generate_stock_retry_bounds",
+  "status": "APPROVED",
+  "description": "Bound all three generate_stock retry cycles to 32 random attempts. After the cap use permitted age 2, a deterministic valid same-category pool candidate (recent duplicates only relaxed), or core attributes at least 2. Abort to home/city when the category has no valid registered candidate.",
+  "before_sha256": "dc862baddcdb865680bcffeb141039763bb4e4459d0f6e4ae5a44fdbefd38044",
+  "after_sha256": "1b0980ffd6a07eab98b280f24203aa9f880d28ea81f791b9e0349b0400d95812",
+  "edits": [
+    {
+      "location": "generate_stock",
+      "field": "body",
+      "old": "\t\t!RANDOM AGE\r\n\t\t:loop_meta\r\n\t\t\tmeta_type = rand(1,5)\r\n\t\t\tif meta_type = 4: meta_type = 2\r\n\t\t\tif meta_type = 5: meta_type = 3",
+      "new": "\t\t!RANDOM AGE\r\n\t\t! JO9 MOD START GENERATOR_RETRY_BOUNDS_20261116_META\r\n\t\tlocal jo9_gen_meta_tries = 0\r\n\t\t:loop_meta\r\n\t\tif jo9_gen_meta_tries < 32:\r\n\t\t\tjo9_gen_meta_tries += 1\r\n\t\t\tmeta_type = rand(1,5)\r\n\t\t\tif meta_type = 4: meta_type = 2\r\n\t\t\tif meta_type = 5: meta_type = 3\r\n\t\telse\r\n\t\t\tmeta_type = 2\r\n\t\tend\r\n\t\t! JO9 MOD END GENERATOR_RETRY_BOUNDS_20261116_META",
+      "count": 1,
+      "patchId": "GENERATOR_RETRY_BOUNDS_20261116"
+    },
+    {
+      "location": "generate_stock",
+      "field": "body",
+      "old": "\t:loop_type\r\n",
+      "new": "\t! JO9 MOD START GENERATOR_RETRY_BOUNDS_20261116_TYPE\r\n\tlocal jo9_gen_type_tries = 0\r\n\t:loop_type\r\n\tjo9_gen_type_tries += 1\r\n\tif jo9_gen_type_tries > 32:\r\n\t\t! Same installed pool as jo9_mob_pool; only recent-type exclusion is relaxed.\r\n\t\tlocal jo9_gen_pool_count = 0\r\n\t\tif meta_type = 1: jo9_gen_pool_count = max(0, loli_last-loli_first+1) + 180\r\n\t\tif meta_type = 2: jo9_gen_pool_count = max(0, max(young_last,1462)-young_first+1) + 260\r\n\t\tif meta_type = 3: jo9_gen_pool_count = max(0, max(milf_last,2340)-milf_first+1) + 288\r\n\t\tlocal jo9_gen_scan = 1\r\n\t\tlocal jo9_gen_age = iif(meta_type=1, CONST_INT['loli_age'], iif(meta_type=2, CONST_INT['young_age'], CONST_INT['milf_age']))\r\n\t\t:jo9_gen_type_fallback\r\n\t\tif jo9_gen_scan <= jo9_gen_pool_count:\r\n\t\t\tstock_type = func('jo9_mob_pool', meta_type, jo9_gen_scan)\r\n\t\t\tif stock_type > 0 and stock_type ! 1448 and stock_type ! 1450 and stock_type ! 2339:\r\n\t\t\t\tif $seed_ava[stock_type] ! '' and seed_age[stock_type] = jo9_gen_age:\r\n\t\t\t\t\tif (no_loli ! 1 or meta_type ! 1) and (no_milf ! 1 or meta_type ! 3): jump 'jo9_gen_type_ready'\r\n\t\t\t\tend\r\n\t\t\tend\r\n\t\t\tjo9_gen_scan += 1\r\n\t\t\tjump 'jo9_gen_type_fallback'\r\n\t\tend\r\n\t\t! No valid installed candidate: abort the caller instead of accepting type zero.\r\n\t\tdynamic $clear_slave_instance, 'stock'\r\n\t\tstock_state = CONST_INT['no_slave']\r\n\t\tstock_type = 0\r\n\t\tslave_base_price = 0\r\n\t\tmsg '대상을 불러오지 못했습니다. 이전 화면으로 돌아갑니다.'\r\n\t\tif is_home = 1: gt 'main_screen'\r\n\t\tgt 'city_menu_form'\r\n\tend\r\n\t! JO9 MOD END GENERATOR_RETRY_BOUNDS_20261116_TYPE\r\n",
+      "count": 1,
+      "patchId": "GENERATOR_RETRY_BOUNDS_20261116"
+    },
+    {
+      "location": "generate_stock",
+      "field": "body",
+      "old": "\tprev_num_type[num_count] = stock_type &! record that we have used this type",
+      "new": "\t! JO9 MOD START GENERATOR_RETRY_BOUNDS_20261116_TYPE_READY\r\n\t:jo9_gen_type_ready\r\n\tif jo9_gen_type_tries > 32 and num_count >= 88:\r\n\t\tkillvar 'num_count'\r\n\t\tkillvar 'prev_num_type'\r\n\t\tnum_count = 0\r\n\t\tprev_num_type = 0\r\n\tend\r\n\t! JO9 MOD END GENERATOR_RETRY_BOUNDS_20261116_TYPE_READY\r\n\tprev_num_type[num_count] = stock_type &! record that we have used this type",
+      "count": 1,
+      "patchId": "GENERATOR_RETRY_BOUNDS_20261116"
+    },
+    {
+      "location": "generate_stock",
+      "field": "body",
+      "old": "i = 0\r\n!Slaves can now no longer generate with stats less than one.",
+      "new": "i = 0\r\n! JO9 MOD START GENERATOR_RETRY_BOUNDS_20261116_ATTR_INIT\r\nlocal jo9_gen_attr_tries = 0\r\n! JO9 MOD END GENERATOR_RETRY_BOUNDS_20261116_ATTR_INIT\r\n!Slaves can now no longer generate with stats less than one.",
+      "count": 1,
+      "patchId": "GENERATOR_RETRY_BOUNDS_20261116"
+    },
+    {
+      "location": "generate_stock",
+      "field": "body",
+      "old": "if attribute_sum < 12:\r\n\ti = 0\r\n\tjump 'loop'\r\nend",
+      "new": "! JO9 MOD START GENERATOR_RETRY_BOUNDS_20261116_ATTR\r\njo9_gen_attr_tries += 1\r\nif attribute_sum < 12:\r\n\tif jo9_gen_attr_tries < 32:\r\n\t\ti = 0\r\n\t\tjump 'loop'\r\n\tend\r\n\t! Keep the sum threshold; raise low core attributes without reducing preset values.\r\n\tstock['stamina'] = max(2, stock['stamina'])\r\n\tstock['beauty'] = max(2, stock['beauty'])\r\n\tstock['sensitivity'] = max(2, stock['sensitivity'])\r\n\tstock['intellect'] = max(2, stock['intellect'])\r\n\tstock['temper'] = max(2, stock['temper'])\r\n\tstock['ego'] = max(2, stock['ego'])\r\n\tattribute_sum = stock['stamina'] + stock['beauty'] + stock['sensitivity'] + stock['intellect'] + stock['temper'] + stock['ego']\r\nend\r\n! JO9 MOD END GENERATOR_RETRY_BOUNDS_20261116_ATTR",
+      "count": 1,
+      "patchId": "GENERATOR_RETRY_BOUNDS_20261116"
+    }
+  ],
+  "approval": "2026-11-16 user requested bounded internal candidate redraws and restoring the blank battle UI on saved result load."
+}

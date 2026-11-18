@@ -1,3 +1,4 @@
+import {newSpawnPolicy,spawnNotice} from './spawn-notice.mjs';
 // 통합 캐릭터 편집 탭: 게임 폴더의 캐릭터를 골라 외형·배경 이야기·설정·능력치·특성을 한 화면에서 고친다(로컬 서버 /api 필요)
 import {roleUrl, masterSettings, masterStats, cmValue, patchCm, initialCm, cmInitialChanges, patchNativeStat, nativeRows, cloneBody, cloneForm} from './studio-role.mjs';
 import {QUESTION_NAMES} from '/workspace/general-dialogue.mjs';
@@ -7,6 +8,7 @@ import {describeCharacterField} from './character-fields.mjs';
 import {esc as e, loadSimData} from './sim-data.mjs';
 import {createLookEditor} from './studio-look.mjs';
 import {SLOTS} from './character-view.mjs';
+import {pickerBackground, needsBackgroundApply, serialSaves} from './background-metadata.mjs';
 
 const PAGE = 40;
 const AGE = {0: '젊음(0)', 1: '소녀(1)', 2: '원숙(2)'};
@@ -47,7 +49,7 @@ export async function createStudioView(api, options = {}) {
 
  const id = isMaster ? 'master-studio' : 'studio';
  api.tabNames[id] = [isMaster ? '마스터 편집' : '노예 편집', isMaster ? '마스터 편집' : '통합 캐릭터 편집기', isMaster ? '남주인공과 여주인공의 시작 설정을 편집하거나 다른 역할로 복제합니다.' : '게임 폴더의 캐릭터를 골라 외형·배경 이야기·설정·능력치·특성을 한 화면에서 고치세요.'];
- document.querySelector('.sidebar nav').insertAdjacentHTML('afterbegin', `<button data-tab="${id}" class="nav-button"><span>✎</span>캐릭터 편집</button>`);
+ if(!api.workspace) document.querySelector('.sidebar nav').insertAdjacentHTML('afterbegin', `<button data-tab="${id}" class="nav-button"><span>✎</span>캐릭터 편집</button>`);
  document.querySelector('main footer').insertAdjacentHTML('beforebegin', `<section id="${id}" class="tab-panel st" hidden></section>`);
  const root = document.getElementById(id);
  const lookEd = createLookEditor({toast: m => api.toast(m), call,
@@ -55,7 +57,7 @@ export async function createStudioView(api, options = {}) {
   extra: () => st.ch?.id === 'new' ? newBody() : {revision: st.ch?.revision},
   onSaved: async r => {
    if (st.ch?.id === 'new') { await loadList(); st.ch = null; st.sel = null; return open(r.id, true); }
-   st.ch = r.character; render();
+   st.ch = r.character; st.error = r.sharingWarning || ''; render();
   }});
  // 새 캐릭터: 외형 편집기를 빈 슬롯으로 열고, 정보 폼 값과 함께 /api/char/new 로 보낸다
  const NEW_SLOTS = {base: '기본(알몸)', title: '타이틀(옷 입은 모습)', maid: '하녀', secr: '비서', dom: '도미나'};
@@ -72,7 +74,8 @@ export async function createStudioView(api, options = {}) {
    unique: n.unique ? {name: n.name.trim(), slug: n.slug.trim(), id: n.id.trim(), story: n.story} : null};
  }
 
- const st = {bgMode: role, gender: '', roleCopy: null, game: null, items: [], q: '', page: 0, sel: null, ch: null, tab: 'look', edits: blank(), preview: null, busy: false, error: '', talk: null, book: null, bookDirty: false, qq: '', qhits: null, qedits: {}, qmod: null, qid: '', qdesc: ''};
+ const st = {bgMode: role, gender: '', roleCopy: null, game: null, items: [], q: '', page: 0, sel: null, ch: null, tab: 'look', edits: blank(), preview: null, busy: false, error: '', talk: null, book: null, bookDirty: false, bgVersion: 0, bgUnsaved: false, talkPending: 0, qq: '', qhits: null, qedits: {}, qmod: null, qid: '', qdesc: '', sharing: null};
+ const queueTalk = serialSaves();
  function blank() { return {set: {}, unset: new Set(), story: {}, master: null, initials: {}, simulation: null}; }
  const data = () => st.ch?.data ?? {};
  // 편집 중 값: 저장 전 바꾼 값 → 지운 키 → 원래 값
@@ -108,32 +111,49 @@ export async function createStudioView(api, options = {}) {
   try { const r = await call('/api/chars'); st.items = r.items; st.choices = r.choices; } catch (error) { st.items = []; api.toast(error.message); }
  }
  async function open(sid, force = false) {
-  if (!force && (dirtyCount() || lookEd.dirty() || Object.keys(st.qedits).length) && !window.confirm('저장하지 않은 변경을 버리고 다른 캐릭터를 열까요?')) return;
-  if (!force && st.bookDirty && !window.confirm('저장하지 않은 대사집 변경을 버릴까요?')) return;
+  await queueTalk(() => {});
+  if (!force && (dirtyCount() || lookEd.dirty() || Object.keys(st.qedits).length || sharingChanged()) && !window.confirm('저장하지 않은 변경을 버리고 다른 캐릭터를 열까요?')) return;
+  if (!force && (st.bookDirty || st.bgUnsaved) && !window.confirm('저장하지 않은 대사집·배경 분류 변경을 버릴까요?')) return;
   try { st.ch = await call('/api/char/' + sid); st.choices = st.ch.choices; st.sel = sid; st.danger = null; st.roleCopy = null; st.edits = blank(); st.preview = null; lookEd.reset(st.ch); Object.assign(st, {qq: '', qhits: null, qedits: {}, qmod: null, qid: '', qdesc: ''}); await loadTalk(); sendToSim(false); } catch (error) { api.toast(error.message); }
   render();
  }
  async function loadTalk() {
+  await queueTalk(() => {});
   st.talk = await call('/api/talkbook/' + st.sel);
   st.book = structuredClone(st.talk.book ?? {background: {}, lines: {}, notes: ''});
-  st.book.background ??= {}; st.book.lines ??= {}; st.book.refs ??= {}; st.bookDirty = false;
+  st.book.background = pickerBackground(data(), st.book.background ?? {}); st.book.lines ??= {}; st.book.refs ??= {}; st.bookDirty = false; st.bgVersion++; st.bgUnsaved = false;
  }
  async function saveTalk(bgOnly = false) {
   const strip = ({format, version, id: _id, name, jsonFile, ...rest}) => rest;
-  // 배경 분류만 고정할 때는 저장된 대사집에 배경만 바꿔 쓰고, 아직 저장하지 않은 대사 편집은 화면에 그대로 둔다
-  const book = bgOnly ? {...strip(st.talk.book ?? {}), background: st.book.background} : strip(st.book);
+  const sid = st.sel, version = st.bgVersion, background = structuredClone(st.book.background), fullBook = strip(structuredClone(st.book));
+  st.talkPending++;
   try {
-   st.talk = await call('/api/talkbook/' + st.sel, {book, revision: st.ch.revision}); if(st.talk.revision)st.ch.revision=st.talk.revision;
-   if (bgOnly) st.book.background = structuredClone(st.talk.book.background ?? {});
-   else { st.book = structuredClone(st.talk.book); st.book.refs ??= {}; st.book.lines ??= {}; st.bookDirty = false; }
-   api.toast((bgOnly ? '배경 분류를 고정했습니다 · ' : '대사집을 저장했습니다 · ') + st.talk.path);
+   await queueTalk(async () => {
+    if (st.sel !== sid) return;
+    // The server merges background-only writes with persisted dialogue under the same lock.
+    const book = bgOnly ? {...strip(st.talk.book ?? {}), background} : fullBook;
+    const result = await call('/api/talkbook/' + sid, {book, revision: st.ch.revision, ...(bgOnly ? {applyBackground: true} : {})});
+    if (st.sel !== sid) return;
+    st.talk = result;
+    if (result.character) st.ch = result.character;
+    else if (result.revision) st.ch.revision = result.revision;
+    if (bgOnly) {
+     if (version === st.bgVersion) { st.book.background = structuredClone(result.book.background ?? {}); st.bgUnsaved = false; }
+    } else {
+     const currentBackground = st.book.background;
+     st.book = structuredClone(result.book); st.book.refs ??= {}; st.book.lines ??= {}; st.bookDirty = false;
+     if (version !== st.bgVersion) st.book.background = currentBackground;
+    }
+    api.toast((bgOnly ? (isMaster ? '전환용 배경 분류를 저장했습니다 · ' : '게임 배경 분류를 저장했습니다 · ') : '대사집을 저장했습니다 · ') + result.path);
+   });
   } catch (error) { api.toast(error.message); }
+  finally { st.talkPending--; }
   render();
  }
  // 편집 중인 캐릭터를 시뮬레이터에 연다. 캐릭터를 열 때·저장할 때 자동으로, '시뮬레이터로 보내기' 버튼으로 직접(탭 이동까지)
  function sendToSim(go) {
   if (!api.charView || !st.ch || st.ch.id === 'new' || !st.book || (isMaster && !go)) return;
-  api.charView.loadGameCharacter(pendingData(), st.ch.jsonFile, {...st.book, simulation:simulationData(),portrait:st.ch.faces?.seed_ava_clear??st.ch.faces?.seed_ava,background: resolveBg(st.book.background ?? {}), id: isMaster ? 'master:' + st.ch.id : st.ch.id});
+  api.charView.loadGameCharacter(pendingData(), st.ch.jsonFile, {...st.book, simulation:simulationData(),portrait:st.ch.faces?.seed_ava_clear??st.ch.faces?.seed_ava,background: resolveBg(st.book.background ?? {}),backgroundResolved:true, id: isMaster ? 'master:' + st.ch.id : st.ch.id});
   if (go) { api.switchTab('character'); api.toast(`${st.ch.data.seed_name || 'ID ' + st.ch.id}을(를) 시뮬레이터로 보냈습니다. 각색한 뒤 캐릭터 편집 › 대사집에서 '담기'를 누르세요.`); }
  }
  // 편집 중(저장 전) 값까지 반영한 게임 JSON: 시뮬레이터로 보낼 때 쓴다
@@ -146,19 +166,24 @@ export async function createStudioView(api, options = {}) {
  }
  async function preview() {
   const invalid=root.querySelector('[data-st-initial]:invalid,[data-st-master-cm]:invalid,[data-st-simulation]:invalid,[data-st-set]:invalid');if(invalid){invalid.reportValidity();return;}
-  const body = {set: st.edits.set, unset: [...st.edits.unset], story: st.edits.story, master: st.edits.master, initials: st.edits.initials, ...simulationPatch(), revision: st.ch.revision, dryRun: true};
-  try { st.preview = (await call(`/api/char/${st.sel}/fields`, body)).changes; } catch (error) { api.toast(error.message); }
+  try { await queueTalk(async () => {
+   const body = {set: st.edits.set, unset: [...st.edits.unset], story: st.edits.story, master: st.edits.master, initials: st.edits.initials, ...simulationPatch(), revision: st.ch.revision, dryRun: true};
+   st.preview = (await call(`/api/char/${st.sel}/fields`, body)).changes;
+  }); } catch (error) { api.toast(error.message); }
   render();
  }
  async function saveNow() {
   const invalid=root.querySelector('[data-st-initial]:invalid,[data-st-master-cm]:invalid,[data-st-simulation]:invalid,[data-st-set]:invalid');if(invalid){invalid.reportValidity();return;}
-  const body = {set: st.edits.set, unset: [...st.edits.unset], story: st.edits.story, master: st.edits.master, initials: st.edits.initials, ...simulationPatch(), revision: st.ch.revision};
   try {
+   await queueTalk(async () => {
+   const body = {set: st.edits.set, unset: [...st.edits.unset], story: st.edits.story, master: st.edits.master, initials: st.edits.initials, ...simulationPatch(), revision: st.ch.revision};
    const r = await call(`/api/char/${st.sel}/fields`, body);
    if (r.character) st.ch = r.character;
+   if (st.book) st.book.background = pickerBackground(st.ch.data, st.book.background);
    st.edits = blank(); st.preview = null; sendToSim(false);
    api.toast(r.saved ? `저장했습니다 · ${r.changes.length}개 항목 (처음 저장이면 .bak 백업을 남겼습니다)` : '바뀐 것이 없습니다.');
    const item = st.items.find(x => x.id === st.sel); if (item) item.name = (isMaster ? st.ch.master.name : st.ch.data.seed_name) ?? item.name;
+   });
   } catch (error) { api.toast(error.message); }
   render();
  }
@@ -167,6 +192,7 @@ export async function createStudioView(api, options = {}) {
  const runtimeActor=()=>!isMaster&&st.ch&&st.ch.id!=='new'?{id:Number(st.ch.id),data:pendingData()}:null;
  subscribeRuntime(()=>{if(!root.hidden&&st.tab==='stats')render();});
  function render() {
+  root.inert = !!st.sharing?.busy;
   if (!st.game?.ok) { root.innerHTML = gameForm(); return; }
   root.innerHTML = `<div class="st-wrap"><aside class="st-lib card">${library()}</aside><div class="st-main">${st.ch ? editor() : '<article class="card"><div class="card-body"><p class="muted-text">왼쪽 목록에서 캐릭터를 고르세요.</p></div></article>'}</div></div>`;
   if(st.ch&&!isMaster&&st.tab==='stats')bindRuntimeControls(root,runtimeActor());
@@ -189,7 +215,7 @@ export async function createStudioView(api, options = {}) {
  function newEditor() {
   const n = st.nw, sel = (k, opts) => `<select data-nw="${k}">${opts.map(o => `<option value="${e(o)}" ${String(n[k]) === String(o) ? 'selected' : ''}>${e(o)}</option>`).join('')}</select>`;
   return `<article class="card"><div class="card-head st-head"><h2>새 캐릭터</h2><div class="st-save"><button class="button secondary" data-st-act="cancel-new">취소</button></div></div>
-   <div class="card-body"><div class="cv-form"><label class="cv-lock"><input type="checkbox" data-nw="unique" ${n.unique ? 'checked' : ''}> 고유 캐릭터(랜덤 등장 안 함)</label>
+   <div class="card-body">${spawnNotice(newSpawnPolicy(n),e)}<div class="cv-form"><label class="cv-lock"><input type="checkbox" data-nw="unique" ${n.unique ? 'checked' : ''}> 고유 캐릭터(랜덤 등장 안 함)</label>
      ${n.unique ? `<label>표시 이름<input data-nw="name" value="${e(n.name)}" maxlength="40"></label><label>파일 이름(영문)<input data-nw="slug" value="${e(n.slug)}" maxlength="40"></label><label>번호(비우면 자동)<input data-nw="id" value="${e(n.id)}" maxlength="6"></label>` : `<label class="cv-lock"><input type="checkbox" data-nw="register" ${n.register ? 'checked' : ''}> 랜덤 풀에 등록</label>`}
      <label>머리색${sel('color', st.choices.hair)}</label><label>머리 길이${sel('length', st.choices.length)}</label><label>나이 분류${sel('age', st.choices.age)}</label>
      <label>가슴 크기${sel('boobs', st.choices.boobs)}</label><label>가슴 이미지${sel('boobsImg', st.choices.boobsImg)}</label><label>성기 이미지${sel('pussyImg', st.choices.pussyImg)}</label></div>
@@ -213,6 +239,7 @@ export async function createStudioView(api, options = {}) {
   const c = st.ch, n = dirtyCount();
   return `<article class="card"><div class="card-head st-head"><h2>${e((isMaster ? c.master?.name : c.data.seed_name) || '(이름 없음)')} <small>${isMaster ? (c.gender==='female'?'여주인공':'남주인공') : '노예'} · ID ${c.id} · ${e(c.jsonFile)}${c.dedicated ? ' · 전용 폴더' : ''}</small></h2>
     <div class="st-save"><span class="badge" data-st-badge ${n ? '' : 'hidden'}>저장 안 한 변경 ${n}</span><button class="button secondary" data-st-act="discard" ${n ? '' : 'hidden'}>되돌리기</button><button class="button secondary" data-st-act="preview" ${n ? '' : 'disabled'}>변경 보기</button><button class="button" data-st-act="save" ${n ? '' : 'disabled'}>${isMaster ? '마스터 원본 저장' : '편집값 저장'}</button><button class="button secondary st-tosim" data-st-act="to-sim" title="지금 편집 중인 값(저장 전 포함)과 대사집을 캐릭터 시뮬레이터에 열고 그 탭으로 갑니다">▶ 시뮬레이터로 보내기</button><button class="button secondary" data-role-copy-act="open">${isMaster ? '노예 캐릭터로 복제…' : '마스터로 복제…'}</button>${isMaster ? '' : '<button class="button secondary" data-st-act="clone">복제…</button><button class="button secondary" data-st-act="delete">삭제…</button>'}</div></div>
+   ${isMaster ? '' : spawnNotice(c.spawnPolicy,e)}
    ${isMaster ? `<p class="fine-print">시작 프리셋 · ${c.menuLinked ? '게임 시작 메뉴 연결됨' : '게임 시작 메뉴 미연결 · QSP 이벤트에서 연결'}</p>` : ''}${st.preview ? previewBox() : ''}${st.danger ? dangerBox() : ''}${st.roleCopy ? cloneForm(st.roleCopy) : ''}
    <div class="st-tabs">${TABS.map(([k, l]) => `<button class="${st.tab === k ? 'on' : ''}" data-st-tab="${k}">${k==='json' && isMaster ? '원본 데이터' : l}</button>`).join('')}</div>
    <div class="card-body">${{look, setting, stats, talk, qsp, json}[st.tab]()}</div></article>`;
@@ -223,10 +250,69 @@ export async function createStudioView(api, options = {}) {
    <div class="st-row"><button class="button" data-st-act="save">${isMaster ? '마스터 원본 저장' : '게임 파일에 저장'}</button><button class="button secondary" data-st-act="cancel-preview">취소</button><span class="fine-print">${isMaster ? 'QSP 원본 1회 백업과 변경 mods 기록을 남깁니다.' : '처음 저장할 때 같은 폴더에 .bak 백업을 남깁니다.'}</span></div></div>`;
  }
  const later = msg => () => `<p class="muted-text">${e(msg)}</p>`;
+ // JO9 MOD START CHARACTER_IMAGE_SHARING_20261117
+ const sharingDefaults = descriptor => new Set((descriptor?.candidates || []).filter(peer => peer.checked).map(peer => String(peer.id)));
+ function sharingChanged(state = st.sharing) {
+  if (!state || String(state.id) !== String(st.ch?.id)) return false;
+  const saved = sharingDefaults(state.descriptor);
+  return saved.size !== state.selected.size || [...saved].some(peer => !state.selected.has(peer));
+ }
+ function sharingState() {
+  if (isMaster || !st.ch || st.ch.id === 'new') return null;
+  const descriptor = st.ch.sharing;
+  if (!st.sharing || String(st.sharing.id) !== String(st.ch.id)) st.sharing = {id: st.ch.id, descriptor, selected: sharingDefaults(descriptor), plan: null, busy: false, error: ''};
+  else if (descriptor && (st.sharing.descriptor?.expectedHash !== descriptor.expectedHash || st.sharing.descriptor?.policyHash !== descriptor.policyHash)) {
+   const old = st.sharing, pending = sharingChanged(old), available = new Set((descriptor.candidates || []).map(peer => String(peer.id)));
+   st.sharing = {...old, descriptor, selected: pending ? new Set([...old.selected].filter(peer => available.has(peer))) : sharingDefaults(descriptor), plan: null, error: ''};
+  }
+  return st.sharing;
+ }
+ function sharingBox() {
+  const state = sharingState(); if (!state) return '';
+  const descriptor = state.descriptor, peers = (descriptor?.candidates || []).filter(peer => String(peer.id) !== String(st.ch.id)), plan = state.plan;
+  const removed = peers.filter(peer => peer.checked && !state.selected.has(String(peer.id))).map(peer => peer.id);
+  const bytes = Number(plan?.copyBytes || 0).toLocaleString('ko-KR');
+  return `<section class="st-image-sharing" aria-label="이미지 공유·분리"><div class="section-label">이미지 공유·분리</div>
+   <p class="fine-print">기본 이미지: <code>${e(st.ch.data.fullimage || st.ch.slots.base?.reference || '연결 없음')}</code></p>
+   <p class="fine-print">다른 번호를 체크하면 현재 인물의 이미지 구성을 함께 사용합니다. 체크 해제는 현재 모습을 유지하며 분리합니다. 체크만으로 저장되지 않습니다.</p>
+   ${descriptor ? `<div class="st-sharing-peers">${peers.length ? peers.map(peer => `<label><input type="checkbox" data-st-share-peer="${e(peer.id)}" ${state.selected.has(String(peer.id)) ? 'checked' : ''}><span><b>${e(peer.id)}</b> ${e(peer.name || '')}<small class="source-line">${e(peer.json || '')}</small></span></label>`).join('') : '<p class="fine-print">같은 기본 전신을 쓰거나 현재 공유 중인 다른 캐릭터가 없습니다.</p>'}</div>` : '<p class="fine-print">공유 목록을 읽어 다른 번호를 확인하세요.</p>'}
+   ${descriptor?.inheritedFields?.length ? `<p class="fine-print">공유 이미지에서 보완한 연결: ${descriptor.inheritedFields.map(key => `<code>${e(key)}</code>`).join(' · ')}</p>` : ''}
+   ${plan ? `<div class="st-preview"><b>이미지 공유·분리 미리보기</b><p>이미지 기준: ${e(state.id)} · 영향을 받는 번호: ${e((plan.affectedIds || []).join(' · ') || '없음')}</p>
+    ${removed.length ? `<p>공유 해제: ${e(removed.join(' · '))} · 현재 모습을 유지합니다.</p>` : ''}
+    <p class="fine-print">PNG 복사 ${Number(plan.copyCount || 0).toLocaleString('ko-KR')}개 · ${bytes}바이트. 다른 그룹도 쓰는 PNG만 새 경로로 복사하고 원본은 보존합니다.</p>
+    <ul>${(plan.changes || []).map(change => `<li><b>${e(change.id)}</b> · <code>${e(change.json)}</code><br><span class="fine-print">연결 항목: ${(change.fields || []).map(key => `<code>${e(key)}</code>`).join(' · ') || '변경 없음'}</span></li>`).join('') || '<li>JSON 연결 변경 없음</li>'}</ul></div>` : ''}
+   ${state.error ? `<p class="warning" role="alert">${e(state.error)}</p>` : ''}
+   <div class="st-row"><button class="button secondary" data-st-share-act="read">공유 목록 다시 읽기</button><button class="button secondary" data-st-share-act="preview" ${descriptor && sharingChanged(state) ? '' : 'disabled'}>미리보기</button><button class="button" data-st-share-act="apply" ${plan ? '' : 'disabled'}>공유·분리 적용</button><button class="button secondary" data-st-share-act="cancel" ${plan || sharingChanged(state) ? '' : 'disabled'}>취소</button></div></section>`;
+ }
+ async function changeSharing(action) {
+  const state = sharingState(); if (!state || state.busy) return;
+  if (action === 'cancel') { state.selected = sharingDefaults(state.descriptor); state.plan = null; state.error = ''; return render(); }
+  if (action !== 'read' && (dirtyCount() || lookEd.dirty() || st.bookDirty || Object.keys(st.qedits).length)) {
+   state.error = '저장하지 않은 편집 내용이 있습니다. 각 탭에서 먼저 저장하거나 되돌린 뒤 공유·분리를 미리보기·적용하세요.';
+   api.toast(state.error); return render();
+  }
+  const descriptor = state.descriptor, plan = state.plan;
+  if (action === 'apply' && !plan) return;
+  const peerIds = (descriptor?.candidates || []).filter(peer => state.selected.has(String(peer.id))).map(peer => peer.id);
+  state.busy = true; state.error = ''; let applied = false; render();
+  try {
+   const result = await call(`/api/char/${state.id}/sharing`, {action, peerIds, expectedHash: plan?.expectedHash || descriptor?.expectedHash, policyHash: plan?.policyHash || descriptor?.policyHash, ...(action === 'apply' ? {planHash: plan.planHash} : {})});
+   if (action === 'preview') state.plan = result;
+   else if (action === 'read') { state.descriptor = result.sharing || result; st.ch.sharing = state.descriptor; state.selected = sharingDefaults(state.descriptor); state.plan = null; }
+   else {
+    applied = true; state.plan = null;
+    if (result.sharing) { state.descriptor = result.sharing; st.ch.sharing = result.sharing; state.selected = sharingDefaults(result.sharing); }
+    st.ch = await call('/api/char/' + state.id); lookEd.reset(st.ch); st.sharing = null; await loadList(); sendToSim(false);
+    api.toast(`이미지 공유·분리를 적용했습니다 · ${(result.affectedIds || [state.id]).join(' · ')}`);
+   }
+  } catch (error) { state.plan = null; state.error = (applied ? '공유·분리는 적용됐지만 최신 화면을 읽지 못했습니다. 캐릭터를 다시 열어 확인하세요. · ' : '') + error.message; api.toast(state.error); }
+  finally { state.busy = false; render(); }
+ }
+ // JO9 MOD END CHARACTER_IMAGE_SHARING_20261117
  function look() {
   const c = st.ch, ch = c.choices;
   const sel = (key, options, labels = {}) => `<select data-st-set="${key}" data-type="${typeof data()[key] === 'number' ? 'int' : 'str'}">${options.map(o => `<option value="${e(o)}" ${String(val(key)) === String(o) ? 'selected' : ''}>${e(labels[o] ?? o)}</option>`).join('')}</select>`;
-  return `${isMaster ? '<p class="fine-print">편집용 외형입니다. 게임의 기존 마스터 초상 파일은 덮어쓰지 않습니다. 노예로 복제할 때 사용할 수 있습니다.</p>' : ''}${lookEd.html()}
+  return `${isMaster ? '<p class="fine-print">편집용 외형입니다. 게임의 기존 마스터 초상 파일은 덮어쓰지 않습니다. 노예로 복제할 때 사용할 수 있습니다.</p>' : sharingBox()}${lookEd.html()}
    <div class="section-label">외모 분류값 <small class="fine-print">(위 '저장…' 버튼으로 JSON에 저장)</small></div>
    <div class="cv-form"><label>가슴 크기${sel('seed_boobs', ch.boobs.map(Number))}</label><label>가슴 이미지${sel('seed_boobs_img', ch.boobsImg)}</label><label>성기 이미지${sel('seed_pussy_img', ch.pussyImg)}</label></div>`;
  }
@@ -289,8 +375,7 @@ export async function createStudioView(api, options = {}) {
   if (!key) delete st.book.refs[id]; else st.book.refs = {...(st.book.refs ?? {}), [id]: {key, blocked: REFS.rows[key]?.b ?? []}};
   st.bookDirty = true; render();
  }
- // 배경 분류(세계·출신·직업): 고르면 바로 대사집에 저장해 고정한다. 유니크도 같다(게임 JSON에는 이 칸이 없다)
- // 배경 분류(세계·출신·직업)를 대분류 → 소분류 트리로 고른다. 위에서 아래로 연결된 것만, 시대순. 고르면 대사집에 바로 저장해 고정(유니크 포함)
+ // 배경 분류는 대사집과 캐릭터 seed_ 메타데이터에 함께 저장한다. 설명·능력치·특성은 유지한다.
  const groupOf = (kind, id) => (CAT[kind] ?? []).find(g => g.members.includes(id));
  const ORDER = ['world', 'family', 'occupation'];
  const groupList = kind => [...(CAT[kind] ?? [])];
@@ -325,7 +410,8 @@ export async function createStudioView(api, options = {}) {
    if (loose.length) groups.push({id: '_etc', label: '그 밖', members: loose});
    const first = g => { const i = Math.min(...g.members.map(m => allowed.indexOf(m)).filter(x => x >= 0)); return Number.isFinite(i) ? i : 1e4; };
    groups.sort((a, b) => first(a) - first(b));
-   const big = bg[kind + 'Group'] ?? groupOf(kind, bg[kind])?.id ?? '';
+   const savedGroup = bg[kind + 'Group'];
+   const big = bg[kind] ? (groups.find(x => x.id === savedGroup)?.members.includes(bg[kind]) ? savedGroup : groupOf(kind, bg[kind])?.id ?? '_etc') : savedGroup ?? '';
    const g = groups.find(x => x.id === big);
    const items = g ? allowed.filter(id => g.members.includes(id)) : [];
    if (bg[kind] && !items.includes(bg[kind])) items.unshift(bg[kind]);
@@ -333,7 +419,8 @@ export async function createStudioView(api, options = {}) {
     <select data-tb-big="${kind}"><option value="">(대분류 정하지 않음)</option>${groups.map(x => { const n = x.members.filter(m => allowed.includes(m)).length; return `<option value="${e(x.id)}" ${x.id === big ? 'selected' : ''} ${n ? '' : 'disabled'}>${e(x.label)} (${n})</option>`; }).join('')}</select>
     <select data-tb-bg="${kind}" ${g ? '' : 'disabled'}><option value="">${g ? '(이 대분류 안에서 무작위)' : '먼저 대분류'}</option>${items.map(id => `<option value="${e(id)}" ${bg[kind] === id ? 'selected' : ''}>${e(SD.name(kind, id))}</option>`).join('')}</select></div>`;
   };
-  return `<div class="section-label">배경 분류 <small class="fine-print">1행 대분류 · 2행 소분류. 대분류만 고르면 그 안에서 무작위로 뽑습니다. 세계 → 출신 → 직업 순으로 연결된 것만 시대순으로 보이며, 고르면 대사집에 바로 저장되어 고정됩니다(유니크 포함)</small></div>
+  const needsApply = st.bgUnsaved || needsBackgroundApply(data(), bg);
+  return `<div class="section-label">배경 분류 <small class="fine-print">1행 대분류 · 2행 소분류. 소분류는 ${isMaster ? '노예 전환용 설정' : '게임 캐릭터 분류'}에 바로 저장됩니다. 대분류만 고르면 시뮬레이터에서 무작위로 뽑고 게임 분류는 미지정입니다. 배경 이야기·능력치·특성은 그대로 유지합니다.</small>${needsApply ? '<button class="button secondary" data-tb-act="apply-background">게임 분류로 적용</button>' : ''}</div>
    <div class="bg-trees">${row('world', '세계')}${row('family', '출신')}${row('occupation', '직업')}</div>`;
  }
  // 한 칸을 바꾼 뒤: 그 칸과 위는 두고, 아래 칸 중 새 후보에 없는 대분류·소분류를 비운다
@@ -346,15 +433,15 @@ export async function createStudioView(api, options = {}) {
    if (g && !allowed.some(id => groupList(k).find(x => x.id === g)?.members.includes(id))) delete bg[k + 'Group'];
   }
   st.book.background = Object.fromEntries(Object.entries(bg).filter(([, v]) => v));
-  return saveTalk(true);
+  st.bgVersion++; st.bgUnsaved = true;
+  const saved = saveTalk(true); render(); return saved;
  }
  function talk() {
   if (!st.talk) return '<p class="muted-text">대사집을 읽는 중…</p>';
-  const b = st.book, blocked = st.talk.noAutoGenerate, sim = api.charView;
+  const b = st.book, sim = api.charView;
   const lines = Object.entries(b.lines ?? {});
   const facts = b.facts?.fields ? Object.entries(b.facts.fields).filter(([, v]) => v !== '' && v !== null && !(Array.isArray(v) && !v.length)) : [];
   return `<p class="fine-print">대사집 파일: <code>${e(st.talk.path)}</code> ${st.talk.exists ? '' : '(아직 없음 · 저장하면 만듭니다)'} · 게임 캐릭터 JSON과 따로 둡니다(게임 적용 방식은 모드 제작자가 정함).</p>
-   ${blocked ? '<p class="warning">연령 코드 1: 편집기는 대사·과거 경험을 자동으로 만들지 않습니다(시뮬레이터에서 담으면 배경 분류와 원본 DB 연결 코드만 옵니다). 직접 쓴 칸은 그대로 저장합니다.</p>' : ''}
    ${bgPicker()}
    <div class="st-row"><button class="button secondary" data-tb-act="to-sim" ${sim ? '' : 'disabled'}>시뮬레이터에서 열기 →</button><button class="button secondary" data-tb-act="from-sim" ${sim ? '' : 'disabled'}>← 시뮬레이터 결과를 대사집에 담기</button>
     <span class="fine-print">시뮬레이터에서 과거 경험을 뽑고 필로우토크 칸을 직접 각색한 뒤 '담기'를 누르세요.</span></div>
@@ -463,6 +550,7 @@ export async function createStudioView(api, options = {}) {
  });
  root.addEventListener('change', ev => {
   const t = ev.target;
+  if (t.hasAttribute('data-st-share-peer')) { const state = sharingState(); if (!state || state.busy) return; if (t.checked) state.selected.add(t.dataset.stSharePeer); else state.selected.delete(t.dataset.stSharePeer); state.plan = null; state.error = ''; return render(); }
   if(t.matches('[data-st-simulation]')){if(t.tagName==='SELECT'){setSimulation(t.dataset.stSimulation,t.value||undefined);render();}return;}
   if(t.dataset.roleInclude){st.roleCopy.include[t.dataset.roleInclude]=t.checked;st.roleCopy.result=null;return render();}
   if(t.dataset.roleCopy){st.roleCopy[t.dataset.roleCopy]=t.value;st.roleCopy.result=null;return render();}
@@ -482,6 +570,7 @@ export async function createStudioView(api, options = {}) {
  root.addEventListener('click', async ev => {
   const t = ev.target.closest('button');
   if (!t) return;
+  if (t.dataset.stShareAct) return changeSharing(t.dataset.stShareAct);
   if(t.dataset.simUnset){setSimulation(t.dataset.simUnset,undefined);return render();}
   if(t.hasAttribute('data-initial-reset')){
    st.edits.initials[t.dataset.initialReset]=null;st.preview=null;return render();
@@ -521,14 +610,14 @@ export async function createStudioView(api, options = {}) {
   const tb = t.dataset.tbAct;
   if (tb === 'add-line') { const k = root.querySelector('[data-tb-newslot]').value.trim(); if (!/^[A-Za-z0-9_.:|-]{1,60}$/.test(k)) return api.toast('칸 ID는 영문·숫자·밑줄로 쓰세요.'); if (!(k in st.book.lines)) st.book.lines[k] = ''; st.bookDirty = true; return render(); }
   if (tb === 'save') return saveTalk();
+  if (tb === 'apply-background') return saveTalk(true);
   if (tb === 'reload') return loadTalk().then(render);
   if (tb === 'to-sim') return sendToSim(true);
   if (tb === 'from-sim') {
    const x = api.charView.exportTalk();
    if (x.id !== String(isMaster ? 'master:' + st.ch.id : st.ch.id)) return api.toast(`시뮬레이터에 열린 캐릭터(${x.name || '이름 없음'}, ${x.id || '번호 없음'})가 이 캐릭터가 아닙니다. 먼저 '시뮬레이터에서 열기'를 누르세요.`);
-   if (st.talk.noAutoGenerate) Object.assign(st.book, {background: {...st.book.background, ...x.background}, refs: x.refs, lines:{...st.book.lines,...Object.fromEntries(Object.entries(x.lines??{}).filter(([k])=>/^general\.111[2-8]$/.test(k)))}});
-   else Object.assign(st.book, {background: {...st.book.background, ...x.background}, seed: x.seed, acq: x.acq, overrides: x.overrides, lines: {...st.book.lines, ...x.lines}, facts: x.facts, history: x.history, refs: x.refs});
-   st.bookDirty = true; api.toast(`시뮬레이터 결과를 담았습니다 · 대사 ${Object.keys(x.lines).length}칸${x.excluded ? ' (연령 코드 1은 과거 경험 없음)' : ''}`); return render();
+   Object.assign(st.book, {background: {...st.book.background, ...x.background}, seed: x.seed, acq: x.acq, overrides: x.overrides, lines: {...st.book.lines, ...x.lines}, facts: x.facts, history: x.history, refs: x.refs});
+   st.bookDirty = true; api.toast(`시뮬레이터 결과를 담았습니다 · 대사 ${Object.keys(x.lines).length}칸`); return render();
   }
   const dg = t.dataset.dgAct;
   if (dg === 'close') { st.danger = null; return render(); }
@@ -548,7 +637,7 @@ export async function createStudioView(api, options = {}) {
   }
   const act = t.dataset.stAct;
   if (act === 'set-root') return call('/api/game', {root: root.querySelector('[data-st="root"]').value}).then(g => { st.game = g; return loadList(); }).then(render).catch(error => api.toast(error.message));
-  if (act === 'new') { if ((dirtyCount() || lookEd.dirty()) && !window.confirm('저장하지 않은 변경을 버리고 새 캐릭터를 만들까요?')) return; return startNew(); }
+  if (act === 'new') { if ((dirtyCount() || lookEd.dirty() || sharingChanged()) && !window.confirm('저장하지 않은 변경을 버리고 새 캐릭터를 만들까요?')) return; return startNew(); }
   if (act === 'cancel-new') { st.ch = null; lookEd.reset(null); return render(); }
   if (act === 'clone') { st.danger = {kind: 'clone', name: (st.ch.data.seed_name || '') + ' 복제', slug: '', newId: '', result: null}; return render(); }
   if (act === 'delete') return call(`/api/char/${st.ch.id}/delete-plan`).then(plan => { st.danger = {kind: 'delete', plan, mode: 'safe', confirm: ''}; render(); }).catch(error => api.toast(error.message));
@@ -578,7 +667,7 @@ export async function createStudioView(api, options = {}) {
  }
  root.addEventListener('change',event=>{if(!isMaster&&st.tab==='stats'&&event.target.matches('[data-st-set],[data-st-simulation]')){sendToSim(false);render();}});
  lookEd.bind(root, () => render());
- window.addEventListener('beforeunload', ev => { if (dirtyCount() || lookEd.dirty() || st.bookDirty) { ev.preventDefault(); ev.returnValue = ''; } });
+ window.addEventListener('beforeunload', ev => { if (dirtyCount() || lookEd.dirty() || st.bookDirty || st.bgUnsaved || st.talkPending || sharingChanged()) { ev.preventDefault(); ev.returnValue = ''; } });
 
  render();
  loadGame();

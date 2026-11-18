@@ -123,6 +123,7 @@ function prepare(doc, record, text, opts = {}) {
     const ref = record.map[id], key = ref.fieldIndex + ':' + ref.start + ':' + ref.end, entry = entries.get(key);
     if (!entry || entry.text !== ref.text) { errors.push(id + ': 원문 위치가 바뀌었습니다.'); continue; }
     if (norm(newPlain) === norm(plain(entry.text))) { unchanged++; continue; }
+    if(!exclude.has(id))require('./work-scope.cjs').assertEntry(entry,opts);
     let next;
     try { next = toGame(newPlain, entry.text); core.validateMarkup(next); }
     catch (e) { errors.push(id + ': ' + e.message); continue; }
@@ -169,7 +170,8 @@ function prepare(doc, record, text, opts = {}) {
   // 저장 후 다시 읽었을 때 각 대사가 의도한 값인지 확인
   const texts = new Map([...fields].map(f => [f, new Set(core.literals(core.shift(checked.lines[f], 5)).map(l => l.text))]));
   for (const c of chosen) if (!texts.get(c.entry.fieldIndex).has(c.new)) throw Error(c.id + ': 저장 결과 검사에 실패했습니다.');
-  return { raw, before: doc.hash, after: core.hash(raw), edits, changes, chosen, unchanged, missing };
+  const result={raw,before:doc.hash,after:core.hash(raw),edits,changes,chosen,unchanged,missing,includeFemale:opts.includeFemale===true};
+  require('./work-scope.cjs').assertPrepared(doc,result,opts);return result;
 }
 
 module.exports = { parse, toGame, prepare, norm, revalidateRecord };

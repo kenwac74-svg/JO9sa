@@ -1,0 +1,26 @@
+'use strict';
+const fs=require('fs'),path=require('path'),a=require('node:assert/strict'),c=require('G:/somi/JO9sa/tools/text-workshop/core.cjs');
+const H=__dirname,F=path.join(H,'../duplicato-token-transport-20261117'),R='G:/somi/JO9sa',G='G:/somi/Jack O Nine Tails v2.4_work/game',record=R+'/records/duplicato-link-transport-20261117';
+const read=p=>fs.readFileSync(p),json=p=>JSON.parse(read(p).toString('utf8').replace(/^\uFEFF/,'')),encode=x=>Buffer.from(JSON.stringify(x,null,2)+'\n'),patch=json(F+'/2026-11-17_duplicato_safe_link_token.json'),manifest=json(F+'/manifest.json');
+const raw=read(G+'/jack.qsp'),source=read(R+'/assets/runtime/2.4.1/jack.qsp');a.equal(c.hash(raw),patch.before_sha256,'WORK changed; preserve latest saved file');a(source.equals(raw),'Tracked source changed');
+const beforeLog=read(H+'/gui-probe/visible-before-stderr.log'),afterLog=read(H+'/gui-probe/visible-after-stderr.log'),log=afterLog.toString('latin1');
+a(beforeLog.toString('latin1').includes('2583%7C0%7C8:Galateya'));a(log.includes('JO9_GUI_FINAL pass=1;sparks=997187;AP=4,3,4'));a(log.includes('Link clicked "exec:dynamic $yes"'));
+function apply(raw,mod){const d=c.parse(raw);for(const e of mod.edits){a.equal(e.field,'body');const loc=d.locations.find(l=>l.name===e.location),body=c.shift(d.lines[loc.body],5);a.equal(body.split(e.old).length-1,e.count);d.lines[loc.body]=c.shift(body.replace(e.old,()=>e.new),-5);}return c.serialize(d);}
+// Reuse the verified base and existing patch instead of retaining another 52MB QSP backup.
+const baseFile='G:/Codex/tmp/duplicato-native-cost300-20261117/before.qsp',previousPatch=R+'/mods/2026-11-17_duplicato_native_list_and_cost300.json';a(apply(read(baseFile),json(previousPatch)).equals(raw),'Existing recovery chain must reconstruct this exact input');
+const output=apply(raw,patch);a.equal(c.hash(output),manifest.candidateSha256);a(c.serialize(c.parse(output)).equals(output));
+const inverse={edits:patch.edits.slice().reverse().map(e=>({...e,old:e.new,new:e.old}))};a(apply(output,inverse).equals(raw));
+const oldDoc=c.parse(raw),newDoc=c.parse(output),changed=[];for(const l of newDoc.locations){const old=oldDoc.locations.find(x=>x.name===l.name);a.equal(newDoc.lines[l.desc],oldDoc.lines[old.desc]);if(newDoc.lines[l.body]!==oldDoc.lines[old.body])changed.push(l.name);}a.deepEqual(changed,['jo9_duplicato']);
+patch.status='APPROVED';const verification=json(F+'/token-verification.json');verification.status='PASS';verification.qtGui={actualClicks:true,engine:'5.7.0',talent:'cook_affinity',actors:['Galateya','미스티'],preview:true,cast:true,sparksAfter:997187,energyAfter:[4,3,4],donorPreserved:true,targetReceived:true,dailyUsed:true,sourceSaveUnmodified:true};verification.limits=['Actual Qt links and confirmation were clicked in a separate fixture using the delivered save actor data; full-world gameplay was not run.'];delete verification.pending;
+const writes=[];function add(file,next){writes.push({file,before:fs.existsSync(file)?read(file):null,next});}
+add(G+'/jack.qsp',output);add(R+'/assets/runtime/2.4.1/jack.qsp',output);
+for(const file of [R+'/assets/runtime-source-2.4.1.json',R+'/assets/runtime-manifests/2.4.2-work.json']){const meta=json(file);meta.sourceQspSha256=patch.after_sha256;meta.latestDuplicatoLinkFix={date:'2026-11-17',record:'records/duplicato-link-transport-20261117/REPORT_KO.md',newSavedFields:0,qtClicked:true};for(const row of meta.files||[])if(row.runtimePath==='jack.qsp'||row.path==='game/jack.qsp'){row.sha256=patch.after_sha256;row.bytes=output.length;}add(file,encode(meta));}
+add(R+'/mods/'+patch.id+'.json',encode(patch));add(record+'/verification.json',encode(verification));add(record+'/manifest.json',encode({...manifest,pending:undefined,qtClicked:true}));add(record+'/native-before-qt.log',beforeLog);add(record+'/native-after-qt.log',afterLog);
+for(const name of ['prepare.cjs','test-token.cjs'])add(record+'/'+name,read(F+'/'+name));for(const name of ['gui-probe.cjs','install.cjs'])add(record+'/'+name,read(H+'/'+name));
+const hash=p=>fs.existsSync(p)?c.hash(read(p)):null,done=[],temps=[];
+try{for(const w of writes)a.equal(hash(w.file),w.before?c.hash(w.before):null);
+ for(const w of writes){fs.mkdirSync(path.dirname(w.file),{recursive:true});const tmp=w.file+'.token-'+process.pid+'.tmp';temps.push(tmp);fs.writeFileSync(tmp,w.next,{flag:'wx'});a.equal(hash(w.file),w.before?c.hash(w.before):null);fs.renameSync(tmp,w.file);done.push(w);}
+ a.equal(hash(G+'/jack.qsp'),patch.after_sha256);a(read(G+'/jack.qsp').equals(read(R+'/assets/runtime/2.4.1/jack.qsp')));
+ const proof={before:patch.before_sha256,after:patch.after_sha256,changedLocations:changed,bytes:output.length,recovery:{baseFile,previousPatch,currentPatch:R+'/mods/'+patch.id+'.json',exactReplay:true},inverse:true,roundtrip:true,actualQtClicks:true,sparks:300,newSavedFields:0,fullAndSavesUnchanged:true};fs.writeFileSync(record+'/applied.json',encode(proof));fs.writeFileSync(H+'/applied.json',encode(proof));process.stdout.write(JSON.stringify(proof)+'\n');
+}catch(error){for(const w of done.reverse())if(hash(w.file)===c.hash(w.next)){if(w.before===null)fs.unlinkSync(w.file);else fs.writeFileSync(w.file,w.before);}throw error;}
+finally{for(const tmp of temps)if(fs.existsSync(tmp))fs.unlinkSync(tmp);}

@@ -1,0 +1,160 @@
+{
+  "variant": "red",
+  "sourceHash": "12704a339285a1c722f8ae636dc275027ed38a02a5af2142746aa0fdfffe7f4f",
+  "scope": {
+    "location": "next_day",
+    "startLine": 2299,
+    "endLine": 2323,
+    "realBlock": true,
+    "isolatedDependencies": "Only scalar role/inventory inputs initialized; complete daily lifecycle and personal saves were not executed."
+  },
+  "engineErrors": [],
+  "total": 9,
+  "passed": 7,
+  "cases": [
+    {
+      "name": "stored-only",
+      "pass": false,
+      "stored": 1,
+      "worn": "",
+      "expected": {
+        "forced": 0,
+        "broken": 1
+      },
+      "observed": {
+        "neg": 1,
+        "wanted": 1,
+        "broken": 0,
+        "breakCount": 0
+      }
+    },
+    {
+      "name": "worn-only",
+      "pass": false,
+      "stored": 0,
+      "worn": "shock_collar",
+      "expected": {
+        "forced": 1,
+        "broken": 0
+      },
+      "observed": {
+        "neg": 0,
+        "wanted": 0,
+        "broken": 1,
+        "breakCount": 1
+      }
+    },
+    {
+      "name": "worn-and-spare",
+      "pass": true,
+      "stored": 1,
+      "worn": "shock_collar",
+      "expected": {
+        "forced": 1,
+        "broken": 0
+      },
+      "observed": {
+        "neg": 1,
+        "wanted": 1,
+        "broken": 0,
+        "breakCount": 0
+      }
+    },
+    {
+      "name": "other-collar",
+      "pass": true,
+      "stored": 0,
+      "worn": "golden_collar",
+      "expected": {
+        "forced": 0,
+        "broken": 1
+      },
+      "observed": {
+        "neg": 0,
+        "wanted": 0,
+        "broken": 1,
+        "breakCount": 1
+      }
+    },
+    {
+      "name": "force-disabled",
+      "pass": true,
+      "stored": 1,
+      "worn": "shock_collar",
+      "expected": {
+        "forced": 0,
+        "broken": 1
+      },
+      "observed": {
+        "neg": 0,
+        "wanted": 0,
+        "broken": 1,
+        "breakCount": 1
+      }
+    },
+    {
+      "name": "rule-disabled",
+      "pass": true,
+      "stored": 1,
+      "worn": "shock_collar",
+      "expected": {
+        "forced": 0,
+        "broken": 0
+      },
+      "observed": {
+        "neg": 0,
+        "wanted": 0,
+        "broken": 0,
+        "breakCount": 0
+      }
+    },
+    {
+      "name": "already-compliant",
+      "pass": true,
+      "stored": 1,
+      "worn": "shock_collar",
+      "expected": {
+        "forced": 0,
+        "broken": 0
+      },
+      "observed": {
+        "neg": 0,
+        "wanted": 0,
+        "broken": 0,
+        "breakCount": 0
+      }
+    },
+    {
+      "name": "assistant-worn-only",
+      "pass": true,
+      "stored": 0,
+      "worn": "",
+      "expected": {
+        "forced": 0,
+        "broken": 1
+      },
+      "observed": {
+        "neg": 0,
+        "wanted": 0,
+        "broken": 1,
+        "breakCount": 1
+      }
+    },
+    {
+      "name": "own-inventory-only",
+      "pass": true,
+      "stored": 0,
+      "worn": "",
+      "expected": {
+        "forced": 0,
+        "broken": 1
+      },
+      "observed": {
+        "neg": 0,
+        "wanted": 0,
+        "broken": 1,
+        "breakCount": 1
+      }
+    }
+  ]
+}

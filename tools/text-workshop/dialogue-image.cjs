@@ -21,7 +21,8 @@ function renderer(doc,entry,body,a,route){
  throw Error('이 장면의 페이지 출력 연결은 추가 분석이 필요합니다: '+entry.location+' / '+route.condition);
 }
 function prepare(doc,selection,value,options={}){
- const rel=imagePath(value),entries=core.entries(doc),context=scenes.buildNavigator(doc,entries).context(selection,options.sceneId,'text',options.usageId),flow=context.flow;
+ require('./work-scope.cjs').assertSelection(doc,selection,options);
+ const rel=imagePath(value),entries=core.entries(doc),context=scenes.buildNavigator(doc,entries,options).context(selection,options.sceneId,'text',options.usageId),flow=context.flow;
  if(flow?.kind!=='array'||!flow.usage||!Number.isSafeInteger(flow.selected)||flow.selected<0)throw Error('이 대사의 페이지·사용 장면 연결을 확인할 수 없습니다.');
  if(flow.usages.length>1&&!options.usageId)throw Error('대사가 여러 곳에 쓰입니다. 사용 장면을 먼저 선택하세요.');
  if(options.usageId&&flow.usage.id!==options.usageId)throw Error('선택한 사용 장면이 변경됐습니다. 다시 선택하세요.');
@@ -40,7 +41,8 @@ function prepare(doc,selection,value,options={}){
  const changed={...doc,lines:doc.lines.slice()};changed.lines[loc.body]=core.shift(newField,-5);const raw=core.serialize(changed),parsed=core.parse(raw);assert(core.serialize(parsed).equals(raw));parsed.lines.forEach((s,i)=>{if(i!==loc.body)assert.equal(s,doc.lines[i]);});
  let left=0,oldRight=oldField.length,newRight=newField.length;while(left<oldRight&&left<newRight&&oldField[left]===newField[left])left++;while(oldRight>left&&newRight>left&&oldField[oldRight-1]===newField[newRight-1]){oldRight--;newRight--;}
  const piece=core.minimalEdit(oldField,newField,left,oldRight,newRight),variants=flow.stages.find(s=>s.number===page)?.variants.length||1;
- return{raw,entry:context.selection,before:doc.hash,after:core.hash(raw),targetLocation:loc.name,targetFieldIndex:loc.body,oldField,newField,piece,page,path:rel,usage:flow.usage,renderer:screen.name,variants,sourceSelection:context.selection,sceneId:context.scene.id,operation:'image',syntax:{blockErrors:blockCheck.errors.length,baselineIssues:baselineCheck.errors.length,candidateIssues:check.errors.length}};
+ const result={raw,entry:context.selection,before:doc.hash,after:core.hash(raw),targetLocation:loc.name,targetFieldIndex:loc.body,oldField,newField,piece,page,path:rel,usage:flow.usage,renderer:screen.name,variants,sourceSelection:context.selection,sceneId:context.scene.id,operation:'image',syntax:{blockErrors:blockCheck.errors.length,baselineIssues:baselineCheck.errors.length,candidateIssues:check.errors.length}};
+ require('./work-scope.cjs').assertPrepared(doc,result,options);return result;
 }
 module.exports={prepare,imagePath};
 // JO9 MOD END DIALOGUE_IMAGE_BINDING_20261108

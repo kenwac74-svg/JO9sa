@@ -1,0 +1,36 @@
+{
+  "phase": "GREEN",
+  "source": "artifacts/priscilla-completion-20261117/candidate.qsp",
+  "sha256": "240fde82b114fb0b8d5487d559b64033af83ba5651ca0cea8477cd21263fdfbb",
+  "engine": "QSP WASM 5.8.0",
+  "checks": [
+    {
+      "name": "pages 1 through 6 do not award the completion flag or change mood rate",
+      "pass": true
+    },
+    {
+      "name": "last page gives ecstasy and flag and survives refresh: mixed moodlets",
+      "pass": true
+    },
+    {
+      "name": "last page gives ecstasy and flag and survives refresh: severely negative rate",
+      "pass": true
+    },
+    {
+      "name": "last page gives ecstasy and flag and survives refresh: already high rate",
+      "pass": true
+    },
+    {
+      "name": "another reward branch does not acquire the completion flag",
+      "pass": true
+    }
+  ],
+  "passed": 5,
+  "total": 5,
+  "errors": [],
+  "limits": [
+    "Uses the exact 6028 branch, the actual page callback dispatch, and existing mood accounting.",
+    "The rest of scene rendering and full home UI are not executed.",
+    "Existing daily reset of master_mood_rate is unchanged; visual play remains unverified."
+  ]
+}

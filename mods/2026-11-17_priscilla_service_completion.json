@@ -1,0 +1,17 @@
+{
+  "id": "2026-11-17_priscilla_service_completion",
+  "description": "Apply ecstasy mood through existing mood accounting and priscilla_slv=1 on final page of the newly added Priscilla service reward.",
+  "status": "APPROVED",
+  "before_sha256": "e5aa1b41034788bed7b14cbc6412edb8c3f84ddbeaee6d02789e00febf0bfaa7",
+  "after_sha256": "240fde82b114fb0b8d5487d559b64033af83ba5651ca0cea8477cd21263fdfbb",
+  "edits": [
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": " ! JO9 MOD END DIALOGUE_IMAGE_601e4237a83d9f2b\r\nEND\r\n! JO9 MOD END PRISCILLA_REWARD_CHOICE_20261116",
+      "new": " ! JO9 MOD END DIALOGUE_IMAGE_601e4237a83d9f2b\r\n ! JO9 MOD START PRISCILLA_SERVICE_COMPLETION_20261117\r\n ! The final page raises the existing daily mood rate to the ecstasy threshold without removing moodlets.\r\n $special_action[7] = {\r\n  local jo9_priscilla_mood_target = 50\r\n  local jo9_priscilla_mood_index = 0\r\n  :jo9_priscilla_good_mood\r\n  if jo9_priscilla_mood_index < arrsize('$master_good_mood'):\r\n   if master_moodlet[$master_good_mood[jo9_priscilla_mood_index]] > 0: jo9_priscilla_mood_target -= 10\r\n   jo9_priscilla_mood_index += 1\r\n   jump 'jo9_priscilla_good_mood'\r\n  end\r\n  jo9_priscilla_mood_index = 0\r\n  :jo9_priscilla_bad_mood\r\n  if jo9_priscilla_mood_index < arrsize('$master_bad_mood'):\r\n   if master_moodlet[$master_bad_mood[jo9_priscilla_mood_index]] > 0: jo9_priscilla_mood_target += 15\r\n   jo9_priscilla_mood_index += 1\r\n   jump 'jo9_priscilla_bad_mood'\r\n  end\r\n  master_mood_rate = max(master_mood_rate, jo9_priscilla_mood_target)\r\n  gs '$moodlets_account'\r\n  master_mood_plus = master_mood\r\n  priscilla_slv = 1\r\n }\r\n ! JO9 MOD END PRISCILLA_SERVICE_COMPLETION_20261117\r\nEND\r\n! JO9 MOD END PRISCILLA_REWARD_CHOICE_20261116",
+      "count": 1,
+      "patchId": "PRISCILLA_SERVICE_COMPLETION_20261117"
+    }
+  ]
+}

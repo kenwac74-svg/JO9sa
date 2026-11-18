@@ -1,0 +1,25 @@
+{
+  "id": "2026-11-16_amarida_completed_guard",
+  "status": "APPROVED",
+  "approval": "User: fix Amarida bug; defer Priscilla story branch for discussion.",
+  "before_sha256": "e70db42de6e781d3a1b4373b84570efd6ad7e71b1cedc2826f17dfd57ea16855",
+  "after_sha256": "009fc22be4b97a89c0f8d2c83a26917bf206452d2a7a269db52758b3dd11a65c",
+  "edits": [
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t npc_progress['Amarida'] = 1\r\n\t! active[$quest[5]] = 1 \r\n\t txt_count = 8\r\n\t copyarr '$text', '$Amarida_pref'",
+      "new": "! JO9 MOD START AMARIDA_COMPLETED_OFFER_20261116\r\nif npc_progress['Amarida'] < 2:\r\n\t npc_progress['Amarida'] = 1\r\n\t! active[$quest[5]] = 1 \r\n\t txt_count = 8\r\n\t copyarr '$text', '$Amarida_pref'\r\nelse\r\n txt_count = 1\r\n $text[1] = '[아마리다]<br>이 의뢰는 이미 완료되었습니다.'\r\nend\r\n! JO9 MOD END AMARIDA_COMPLETED_OFFER_20261116",
+      "count": 2,
+      "patchId": "AMARIDA_COMPLETED_OFFER_20261116"
+    },
+    {
+      "location": "interaction_result_city",
+      "field": "body",
+      "old": "if sp_txt_is_set_from_save = 0: sp_txt = 1",
+      "new": "if sp_txt_is_set_from_save = 0: sp_txt = 1\r\n\r\n! JO9 MOD START AMARIDA_CACHED_DELIVERY_GUARD_20261116\r\nif $npc_id = 'Amarida' and npc_progress['Amarida'] >= 2 and $interaction_type = 'sell_slave_complex':\r\n $interaction_type = 'basic'\r\n npc = 1\r\n $place = 'fashion_house'\r\n $return_lock = 'shop_general'\r\n $picture_type = ''\r\n $bg_path = ''\r\n killvar '$text'\r\n killvar '$special_image'\r\n killvar '$special_image_full'\r\n killvar '$special_action'\r\n txt = 1\r\n txt_count = 1\r\n $text[1] = '[아마리다]<br>이 의뢰는 이미 완료되었습니다.'\r\nend\r\n! JO9 MOD END AMARIDA_CACHED_DELIVERY_GUARD_20261116",
+      "count": 1,
+      "patchId": "AMARIDA_CACHED_DELIVERY_GUARD_20261116"
+    }
+  ]
+}

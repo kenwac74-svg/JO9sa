@@ -39,6 +39,7 @@ test('실제 QSP: 장면 하나를 페이지 구분 각본으로 만든다', { s
   assert.ok(man.stats.pages >= 1);
   assert.match(man.text, /페이지를 다 넘기면 → shop_general/);
   assert.throws(() => nav.script({ hash: 'old', location: loc, sceneId: scene.id }), /QSP가 바뀌었습니다/);
-  const woman = nav.script({ hash: doc.hash, location: loc, sceneId: scene.id, options: { edition: 'woman' } });
+  assert.throws(()=>nav.script({hash:doc.hash,location:loc,sceneId:scene.id,options:{edition:'woman'}}),/작업 대상/);
+  const woman = scenes.buildNavigator(doc,core.entries(doc),{includeFemale:true}).script({ hash: doc.hash, location: loc, sceneId: scene.id, options: { edition: 'woman' } });
   assert.notEqual(woman.text.split('\n').slice(3).join('\n'), man.text.split('\n').slice(3).join('\n'));
 });

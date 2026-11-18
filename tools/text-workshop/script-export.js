@@ -71,6 +71,7 @@
 
   // 장면이 바뀌면 출력 결과만 비우고 각색본·각본 ID는 유지한다.
   window.addEventListener('jo9:selection',()=>reset());
+  window.addEventListener('jo9:work-scope',()=>reset('작업 범위가 바뀌었습니다. 현재 범위에서 각본을 다시 만드세요. 수정 각본 원고는 보존했습니다.'));
   reset();
 })();
 /* JO9 MOD END SCRIPT_EXPORT_UI */

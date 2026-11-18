@@ -16,10 +16,10 @@
  function init(){
   const bridge=root.JO9BatchEditor;if(!bridge)return;
   const $=id=>document.getElementById(id),choice=createSelection(),PAGE=50;
-  let scope=null,results=[],total=0,occurrences=0,offset=0,busy=false,searchVersion=0,previewVersion=0,previewId=null,review=null;
+  let scope=null,scopeStats=null,results=[],total=0,occurrences=0,offset=0,busy=false,searchVersion=0,previewVersion=0,previewId=null,review=null;
   const selected=()=>choice.count(total);
   function resetPreview(){previewVersion++;previewId=null;review=null;$('bulkReview').hidden=true;$('bulkApproved').checked=false;$('bulkReviewResults').replaceChildren();buttons();}
-  function resetSearch(){searchVersion++;scope=null;results=[];total=0;occurrences=0;offset=0;choice.setAll(false);resetPreview();render();}
+  function resetSearch(){searchVersion++;scope=null;scopeStats=null;results=[];total=0;occurrences=0;offset=0;choice.setAll(false);resetPreview();render();}
   function buttons(){
    const count=selected();$('bulkSearch').disabled=busy;$('bulkSelectAll').disabled=busy||!scope||!total;$('bulkClear').disabled=busy||!count;
    $('bulkSelectAll').checked=!!total&&count===total;$('bulkSelectAll').indeterminate=count>0&&count<total;
@@ -31,7 +31,8 @@
    for(const box of $('bulkResults').querySelectorAll('input[type=checkbox]'))box.disabled=busy;
   }
   function status(){
-   $('bulkCount').textContent=scope?`${total.toLocaleString()}곳에서 ${occurrences.toLocaleString()}회 발견 · 선택 ${selected().toLocaleString()}곳`:'찾을 단어를 입력하고 치환 대상 찾기를 누르세요.';
+   const scopeNote=scopeStats?(scopeStats.includeFemale?' · 여주인공 전용·확인 필요 원문 포함':` · 여주인공 전용 ${scopeStats.excludedFemale||0}곳 · 확인 필요 ${scopeStats.excludedReview||0}곳 제외`):'';
+   $('bulkCount').textContent=scope?`${total.toLocaleString()}곳에서 ${occurrences.toLocaleString()}회 발견 · 선택 ${selected().toLocaleString()}곳${scopeNote}`:'찾을 단어를 입력하고 치환 대상 찾기를 누르세요.';
    $('bulkPage').textContent=total?`${Math.floor(offset/PAGE)+1} / ${Math.ceil(total/PAGE)}쪽`:'0 / 0쪽';buttons();
   }
   function pair(label,text){const box=document.createElement('div'),title=document.createElement('strong'),value=document.createElement('pre');title.textContent=label;value.textContent=text;box.append(title,value);return box;}
@@ -53,7 +54,7 @@
    const version=searchVersion,params=new URLSearchParams({q:scope.query,location:scope.location,mode:scope.mode,offset:String(at),limit:String(PAGE)}),answer=await bridge.api('/api/batch/search?'+params);
    if(version!==searchVersion)return;
    if(scope.hash&&scope.hash!==answer.hash){resetSearch();throw Error('검색 이후 QSP가 바뀌었습니다. 치환 대상을 다시 찾아 주세요.');}
-   scope.hash=answer.hash;total=answer.total;occurrences=answer.occurrences;offset=answer.offset;results=answer.results;render();
+   scope.hash=answer.hash;scopeStats=answer.scope||null;total=answer.total;occurrences=answer.occurrences;offset=answer.offset;results=answer.results;render();
    if(newSearch)bridge.say(total?'치환할 항목을 체크하거나 검색 결과 전체 선택을 사용하세요.':'일치하는 단어가 없습니다.');
   }
   $('bulkSearch').onclick=()=>run(()=>page(0,true));
@@ -78,7 +79,7 @@
    const m=await bridge.api('/api/apply',{id:previewId,approved:true});resetSearch();await bridge.afterApply(m);
    bridge.say(`${m.count.toLocaleString()}곳에서 단어 ${m.occurrences.toLocaleString()}회를 치환했습니다. 백업·수정 기록: ${m.id}`);
   });
-  root.addEventListener('jo9:single-preview',resetPreview);root.addEventListener('jo9:text-changed',resetSearch);render();
+  root.addEventListener('jo9:single-preview',resetPreview);root.addEventListener('jo9:text-changed',resetSearch);root.addEventListener('jo9:work-scope',resetSearch);render();
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })(globalThis);

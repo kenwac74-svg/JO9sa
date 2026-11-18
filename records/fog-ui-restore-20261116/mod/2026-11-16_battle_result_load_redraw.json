@@ -1,0 +1,16 @@
+{
+  "id": "2026-11-16_battle_result_load_redraw",
+  "status": "APPROVED",
+  "approval": "2026-11-16 user requested bounded internal candidate redraws and restoring the blank battle UI on saved result load.",
+  "before_sha256": "dc862baddcdb865680bcffeb141039763bb4e4459d0f6e4ae5a44fdbefd38044",
+  "after_sha256": "70755be944a0b3b942c899c4409d8ad2c484bdc479a588b82860e2575f612fcb",
+  "edits": [
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "! JO9 MOD END R02_JOKER_LOAD_REDRAW_20261113",
+      "new": "! JO9 MOD END R02_JOKER_LOAD_REDRAW_20261113\r\n! JO9 MOD START BATTLE_RESULT_LOAD_REDRAW_20261116\r\nif instr('|jo9_battle_fate|конец_боя|выход_из_боя|', '|' + $curloc + '|') > 0 and jo9_fate['mode'] > 0:\r\n if jo9_fate['phase'] = 3 and jo9_fate['mode'] = 1 and $итог_боя = '': gt 'выход_из_боя'\r\n if $итог_боя = 'победа' and (jo9_fate['phase'] = 1 or jo9_fate['phase'] = 2) and instr($jo9_fate['page'], 'jo9-battle-result') > 0:\r\n  gs 'jo9_battle_fate', 'render'\r\n end\r\nend\r\n! JO9 MOD END BATTLE_RESULT_LOAD_REDRAW_20261116",
+      "count": 1
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+--- before/appearance-sharing.cjs
++++ after/appearance-sharing.cjs
+@@ -44,11 +44,11 @@
+   imageCache=new Map();
+   const dir=guarded('json/slaves'),names=fs.readdirSync(dir,{withFileTypes:true}).filter(e=>e.isFile()&&!e.isSymbolicLink()&&/\.json$/i.test(e.name)).map(e=>e.name).sort();
+   const number=name=>{const match=name.match(/^(\d+)(?:_|\.json$)/i);const n=match?Number(match[1]):null;return Number.isSafeInteger(n)?n:null;},counts=new Map();for(const name of names){const n=number(name);if(n!==null)counts.set(n,(counts.get(n)||0)+1);}
+-  const records=new Map();for(const name of names){try{const file=guarded('json/slaves/'+name),bytes=fs.readFileSync(file),data=JSON.parse(bytes.toString('utf8').replace(/^\uFEFF/,''));if(!data||typeof data!=='object'||Array.isArray(data))continue;const n=number(name),id=n!==null&&counts.get(n)===1?n:'json:'+name;records.set(key(id),{id,file,json:'json/slaves/'+name,bytes,data,sha:hash(bytes)});}catch(e){if(e.message.startsWith('Linked'))throw e;}}
++  const records=new Map(),errors=new Map();for(const name of names){const n=number(name),id=n!==null&&counts.get(n)===1?n:'json:'+name;try{const file=guarded('json/slaves/'+name),bytes=fs.readFileSync(file),data=JSON.parse(bytes.toString('utf8').replace(/^\uFEFF/,''));if(!data||typeof data!=='object'||Array.isArray(data))throw Error('Character JSON must be an object');records.set(key(id),{id,file,json:'json/slaves/'+name,bytes,data,sha:hash(bytes)});}catch(e){if(e.message.startsWith('Linked'))throw e;errors.set(key(id),{id,json:'json/slaves/'+name,error:e.message});}}
+   const policyFile=guarded(policyRelative,true),policyBytes=fs.existsSync(policyFile)?fs.readFileSync(policyFile):Buffer.alloc(0),policy=policyBytes.length?JSON.parse(policyBytes.toString('utf8').replace(/^\uFEFF/,'')):{version:1,groups:[],families:[]};
+   if(policy.version!==1||!Array.isArray(policy.groups)||!Array.isArray(policy.families))throw Error('Invalid appearance sharing policy');
+   const assigned=new Set();for(const group of policy.groups){if(!Array.isArray(group)||!group.length||group.some(id=>!validId(id)||assigned.has(key(id))))throw Error('Invalid appearance sharing group');for(const id of group)assigned.add(key(id));}for(const family of policy.families)if(!Array.isArray(family)||family.some(id=>!validId(id)))throw Error('Invalid appearance sharing family');
+-  return cached={records,policy,policyFile,policyBytes,policyHash:hash(policyBytes)};
++  return cached={records,errors,policy,policyFile,policyBytes,policyHash:hash(policyBytes)};
+  }
+  function record(state,id){if(!validId(id)||!state.records.has(key(id)))throw Error('Character JSON does not exist: '+id);return state.records.get(key(id));}
+  function defaultGroups(state){
+@@ -62,6 +62,12 @@
+   for(const group of groups)for(const id of group)used.add(key(id));for(const rec of state.records.values())if(!used.has(key(rec.id)))groups.push([rec.id]);state.defaultGroups=groups.filter(group=>group.length).map(sorted);state.memberMap=new Map();for(const group of state.defaultGroups)for(const id of group)state.memberMap.set(key(id),group);return state.defaultGroups;
+  }
+  function members(state,id){record(state,id);defaultGroups(state);return state.memberMap.get(key(id))||[id];}
++ function writableMembers(state,id){
++  const group=members(state,id),explicit=state.policy.groups.find(group=>group.some(peer=>key(peer)===key(id))),assigned=new Set(state.policy.groups.flat().map(key)),legacy=[2577,2585,2607].filter(peer=>!assigned.has(key(peer)));
++  const expected=sorted([...group,...(explicit||((group.some(peer=>legacy.includes(peer)))?legacy:[]))]);
++  for(const peer of expected)if(!state.records.has(key(peer))){const failure=state.errors.get(key(peer));throw Error('Shared character JSON is unavailable: '+peer+(failure?' ('+failure.json+': '+failure.error+')':''));}
++  return group;
++ }
+  function candidateIds(state,id){
+   record(state,id);if(state.candidateMap)return state.candidateMap.get(key(id))||[id];
+   const sameBase=new Map();for(const rec of state.records.values()){let base;try{base=image(rec.data.fullimage);}catch{}if(base){if(!sameBase.has(base.key))sameBase.set(base.key,[]);sameBase.get(base.key).push(rec.id);}}
+@@ -95,8 +101,9 @@
+  function planning(input){
+   const state=load(true),{id,expectedHash,policyHash}=input,rec=record(state,id);
+   if(expectedHash!==rec.sha||policyHash!==state.policyHash)throw Error('Character or sharing policy changed; refresh the preview');
++  writableMembers(state,id);
+   if(!Array.isArray(input.peerIds)||input.peerIds.some(peer=>!validId(peer)||key(peer)===key(id)))throw Error('Invalid sharing peer list');
+-  const candidates=candidateIds(state,id);if(input.peerIds.some(peer=>!candidates.some(candidate=>key(candidate)===key(peer))))throw Error('Sharing peer is not a candidate');
++  const candidates=candidateIds(state,id);if(input.peerIds.some(peer=>!candidates.some(candidate=>key(candidate)===key(peer))))throw Error('Sharing peer is not a candidate');for(const peer of input.peerIds)writableMembers(state,peer);
+   const chosen=sorted([id,...input.peerIds]),chosenKeys=new Set(chosen.map(key)),oldGroups=defaultGroups(state),involved=oldGroups.filter(group=>group.some(peer=>chosenKeys.has(key(peer)))),removed=sorted(involved.flat().filter(peer=>!chosenKeys.has(key(peer)))),affectedIds=sorted([...chosen,...removed]);
+   const source=effective(state,id),updates=new Map(),copies=[],copyBySource=new Map(),outsideRefs=new Set();
+   if(removed.length)for(const other of state.records.values())if(!chosenKeys.has(key(other.id)))for(const [field,value]of Object.entries(effective(state,other.id)))if(imageFields.has(field)&&value){const ref=image(value,true);if(ref)outsideRefs.add(ref.key);}
+@@ -138,8 +145,8 @@
+   cached=undefined;return {history:historyDir?path.relative(game,historyDir).replaceAll('\\','/'):null};
+  }
+  function apply(input){const plan=planning(input);if(input.planHash!==plan.result.planHash)throw Error('Sharing plan changed; preview again');const audit=transaction(plan.state,plan.updates,plan.copies,plan.policy,plan.sources);return {...plan.result,...audit,sharing:describe(input.id),changedIds:[...plan.updates.values()].map(update=>update.rec.id),copiedFiles:plan.result.copies.map(copy=>copy.to)};}
+- function materialize(ids){const state=load(true);if(ids===undefined)ids=[...state.records.values()].map(rec=>rec.id);if(!Array.isArray(ids)||ids.some(id=>!validId(id)))throw Error('Invalid materialization IDs');const selected=sorted(ids),updates=new Map();for(const id of selected){const rec=record(state,id),resolved=effective(state,id),fields={};for(const field of Object.keys(resolved))if(imageFields.has(field)&&!own(rec.data,field))fields[field]=resolved[field];if(Object.keys(fields).length)updates.set(key(id),{rec,fields});}const result=transaction(state,updates,[],null);return {...result,changedIds:[...updates.values()].map(update=>update.rec.id),affectedIds:selected,changes:[...updates.values()].map(update=>({id:update.rec.id,json:update.rec.json,fields:Object.keys(update.fields).sort()}))};}
+- return {resolve:(id,dataOverride)=>effective(load(),id,dataOverride),describe,targets:id=>members(load(),id),preview:input=>planning(input).result,apply,materialize};
++ function materialize(ids){const state=load(true);if(ids===undefined)ids=[...state.records.values()].map(rec=>rec.id);if(!Array.isArray(ids)||ids.some(id=>!validId(id)))throw Error('Invalid materialization IDs');const selected=sorted(ids),updates=new Map();for(const id of selected){writableMembers(state,id);const rec=record(state,id),resolved=effective(state,id),fields={};for(const field of Object.keys(resolved))if(imageFields.has(field)&&!own(rec.data,field))fields[field]=resolved[field];if(Object.keys(fields).length)updates.set(key(id),{rec,fields});}const result=transaction(state,updates,[],null);return {...result,changedIds:[...updates.values()].map(update=>update.rec.id),affectedIds:selected,changes:[...updates.values()].map(update=>({id:update.rec.id,json:update.rec.json,fields:Object.keys(update.fields).sort()}))};}
++ return {resolve:(id,dataOverride)=>effective(load(),id,dataOverride),describe,targets:id=>writableMembers(load(),id),preview:input=>planning(input).result,apply,materialize};
+ }
+ module.exports={create,imageFields,patchStrings};
+ if(require.main===module){try{const input=JSON.parse(fs.readFileSync(0,'utf8')),api=create(input.game,input.options||{});let result;if(input.action==='resolve')result=api.resolve(input.id,input.dataOverride);else if(input.action==='describe')result=api.describe(input.id);else if(input.action==='targets')result=api.targets(input.id);else if(input.action==='preview')result=api.preview(input);else if(input.action==='apply')result=api.apply(input);else if(input.action==='materialize')result=api.materialize(input.ids);else throw Error('Unknown appearance sharing action');process.stdout.write(JSON.stringify(result));}catch(error){process.stderr.write(JSON.stringify({error:error.message}));process.exitCode=1;}}

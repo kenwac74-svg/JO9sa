@@ -72,7 +72,12 @@ function build(doc,entries,helpers){
     }
     const flow={kind:'array',array:bind.array,selected:bind.stage,stages,usage:use?{id:use.id,location:use.location,sceneId:use.sceneId,title:use.title}:null,usages:contexts.map(({id,location,title,line})=>({id,location,title,line})),unresolved:!use};
     const prev=stages[stageAt-1]?.variants[0]?.entry,next=stages[stageAt+1]?.variants[0]?.entry;
-    const branches=use?helpers.branches(use.d.a,use.scene,use.location,use.d.entries):[];
+    // Marked editor choices belong to the array page they append to.
+    const branches=use?helpers.branches(use.d.a,use.scene,use.location,use.d.entries).filter(branch=>{
+      const e=use.d.entries.find(e=>e.start===branch.sourceStart);if(!e||!e.text.includes('data-jo9-choice='))return true;
+      const prefix=use.d.body.slice(use.d.body.lastIndexOf('\n',e.start-1)+1,e.start-1),m=prefix.match(/(\$[\w]+)\[\s*(\d+)\s*\]\s*\+=\s*$/i);
+      return !m||(norm(m[1])===bind.array&&Number(m[2])===bind.stage);
+    }):[];
     return {...base,flow,images,branches,branchTotal:branches.length,screen:stages.flatMap(s=>s.variants.map(v=>v.entry)),texts:stages.flatMap(s=>s.variants.map(v=>v.entry)),previous:prev||null,next:next||null,ordinal:stageAt+1,total:stages.length};
   }
   return {extend};

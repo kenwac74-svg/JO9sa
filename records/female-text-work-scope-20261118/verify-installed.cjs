@@ -1,0 +1,16 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict');
+const record='G:/somi/JO9sa/records/female-text-work-scope-20261118',hash=b=>crypto.createHash('sha256').update(b).digest('hex'),manifest=JSON.parse(fs.readFileSync(path.join(record,'manifest.json'),'utf8'));
+const html=awaitText('http://127.0.0.1:3813/');
+async function awaitText(url){const response=await fetch(url);assert.equal(response.status,200);return response.text();}
+async function run(){const page=await html,token=page.match(/const token='([a-f0-9]+)'/)?.[1];assert.ok(token);assert.match(page,/<input[^>]*id="excludeFemale"[^>]*checked/);const api=async route=>{const res=await fetch('http://127.0.0.1:3813/'+route,{headers:{'X-JO9-Token':token}});assert.equal(res.status,200);return res.json();};
+ const start=performance.now(),fDefault=await api('api/search?location=%23txt_woman&mode=text&includeFemale=0'),firstLookupMs=performance.now()-start;
+ const cached=performance.now(),fIncluded=await api('api/search?location=%23txt_woman&mode=text&includeFemale=1'),cachedLookupMs=performance.now()-cached;
+ const batch=await api('api/batch/search?q='+encodeURIComponent('당신')+'&location=%23txt_woman&mode=text&includeFemale=0'),shared=await api('api/search?q='+encodeURIComponent('둘 다 놓치기')+'&location=interaction_city&includeFemale=0');
+ assert.equal(fDefault.total,0);assert.ok(fIncluded.total>0);assert.equal(batch.total,0);assert.equal(shared.total,1);
+ const code=manifest.files.flatMap(f=>f.targets.map(target=>{const actual=hash(fs.readFileSync(path.join(target,f.name)));assert.equal(actual,f.sha256);return{name:f.name,target,sha256:actual};}));
+ const qspAfter=hash(fs.readFileSync('G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp'));assert.equal(qspAfter,manifest.qspBefore);
+ const paths=JSON.parse(fs.readFileSync('G:/somi/JO9sa/docs/REFERENCE_SEARCH_PATHS.json','utf8')),backup=paths.paths.find(p=>p.path==='K:\\doing\\242JO9');assert.ok(backup);assert.equal(backup.automaticMove,false);
+ const verification={result:'PASS',date:'2026-11-18',productionApi:{checkedByDefault:true,femaleBankDefault:fDefault.total,femaleBankExplicitInclude:fIncluded.total,femaleBankDefaultBatch:batch.total,commonPriscillaText:shared.total,firstLookupMs,cachedLookupMs,serviceCacheMayBeWarm:true,requests:'GET only; no production preview/apply/export',harnessNote:'First attempt omitted required batch query; corrected request. No production edit was attempted.'},installedFiles:manifest.files.length,codeLocationsVerified:code.length,qspBefore:manifest.qspBefore,qspAfter,qspUnchanged:true,backupPath:backup.path,automaticBackupMove:false,browser:'Active user studio tab intentionally not reloaded. New checkbox/rendering verified through served HTML and focused UI tests; user can refresh dialogue editor.',code};
+ fs.writeFileSync(path.join(record,'API_VERIFICATION.json'),JSON.stringify(verification,null,2)+'\n');console.log(JSON.stringify({result:verification.result,femaleDefault:fDefault.total,femaleOptIn:fIncluded.total,defaultBatch:batch.total,commonPreserved:shared.total,firstLookupMs,cachedLookupMs,files:manifest.files.length,qspUnchanged:true,backupPath:backup.path}));
+}run().catch(e=>{console.error(e.message);process.exitCode=1;});

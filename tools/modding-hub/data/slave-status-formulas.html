@@ -1,0 +1,482 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>노예 상태 수치 공식표</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* 순서: 변화 속도 지도(설계 기준) → 수치 사이 관계도 → 수치별 공식 → 계산기 → 미확인 */
+:root{
+  --bg:#f7f6f8; --panel:#ffffff; --fg:#201d26; --muted:#6a6573; --line:#dcd8e2;
+  --mood:#187700; --mood-bg:#e5f3df;
+  --arousal:#ad0e7b; --arousal-bg:#f9e3f1;
+  --status:#3b4aa8; --status-bg:#e6e9fa;
+  --obey:#a23b12; --obey-bg:#fbe7dc;
+  --loyal:#0b6f6f; --loyal-bg:#dcf1ef;
+  --warn:#b05a00; --warn-bg:#fdecd6;
+  --code-bg:#efedf3;
+  --font:'Noto Sans KR',system-ui,'Malgun Gothic',sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#17151b; --panel:#201d27; --fg:#ece9f1; --muted:#a29cae; --line:#37323f;
+  --mood:#7fd36a; --mood-bg:#1f3319;
+  --arousal:#f06cc4; --arousal-bg:#3b1630;
+  --status:#98a6ff; --status-bg:#222850;
+  --obey:#ff9a6b; --obey-bg:#3d2116;
+  --loyal:#5fd3cf; --loyal-bg:#123433;
+  --warn:#ffb15c; --warn-bg:#3b2a12;
+  --code-bg:#2a2632; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#17151b; --panel:#201d27; --fg:#ece9f1; --muted:#a29cae; --line:#37323f;
+  --mood:#7fd36a; --mood-bg:#1f3319;
+  --arousal:#f06cc4; --arousal-bg:#3b1630;
+  --status:#98a6ff; --status-bg:#222850;
+  --obey:#ff9a6b; --obey-bg:#3d2116;
+  --loyal:#5fd3cf; --loyal-bg:#123433;
+  --warn:#ffb15c; --warn-bg:#3b2a12;
+  --code-bg:#2a2632; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--font);font-size:15px;line-height:1.65;
+  padding-block:28px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1000px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+h1{font-size:26px;margin:0 0 4px;line-height:1.3;text-wrap:balance}
+h2{font-size:20px;margin:0 0 10px;line-height:1.35;text-wrap:balance}
+h3{font-size:15px;margin:18px 0 6px}
+p{margin:6px 0}
+ul{margin:6px 0;padding-left:20px}
+.sub{color:var(--muted);margin:0}
+section{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px;min-width:0}
+code,.m{font-family:var(--mono);font-size:13px;background:var(--code-bg);padding:1px 5px;border-radius:4px}
+.formula{font-family:var(--mono);font-size:13px;background:var(--code-bg);padding:10px 12px;border-radius:6px;overflow-x:auto;white-space:pre;line-height:1.7}
+.tag{display:inline-block;font-size:12px;font-weight:700;padding:1px 8px;border-radius:99px;margin-right:6px;vertical-align:2px}
+.t-mood{background:var(--mood-bg);color:var(--mood)}
+.t-ar{background:var(--arousal-bg);color:var(--arousal)}
+.t-st{background:var(--status-bg);color:var(--status)}
+.t-ob{background:var(--obey-bg);color:var(--obey)}
+.t-lo{background:var(--loyal-bg);color:var(--loyal)}
+.t-warn{background:var(--warn-bg);color:var(--warn)}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{border-bottom:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+th{font-size:12px;color:var(--muted);font-weight:700;letter-spacing:.03em;white-space:nowrap}
+td.n{white-space:nowrap;font-variant-numeric:tabular-nums}
+.note{background:var(--warn-bg);color:var(--fg);border-left:4px solid var(--warn);padding:8px 12px;border-radius:4px;margin:12px 0}
+svg{width:100%;height:auto;display:block}
+svg text{font-family:var(--font);fill:var(--fg);font-size:13px}
+svg .sm{font-size:11.5px;fill:var(--muted)}
+svg .hd{font-size:13px;font-weight:700}
+svg .box{fill:var(--panel);stroke:var(--line);stroke-width:1.5}
+svg .bm{fill:var(--mood-bg);stroke:var(--mood);stroke-width:2}
+svg .ba{fill:var(--arousal-bg);stroke:var(--arousal);stroke-width:2}
+svg .bs{fill:var(--status-bg);stroke:var(--status);stroke-width:2}
+svg .bo{fill:var(--obey-bg);stroke:var(--obey);stroke-width:2}
+svg .bl{fill:var(--loyal-bg);stroke:var(--loyal);stroke-width:2}
+svg .col{fill:var(--bg);stroke:var(--line);stroke-width:1}
+svg .ln{stroke:var(--muted);stroke-width:1.4;fill:none}
+svg .lo{stroke:var(--obey);stroke-width:2;fill:none}
+svg .ll{stroke:var(--loyal);stroke-width:2;fill:none}
+svg .lm{stroke:var(--mood);stroke-width:2;fill:none}
+.bar{display:flex;height:34px;border-radius:6px;overflow:hidden;border:1px solid var(--line);font-size:12px}
+.bar div{display:flex;align-items:center;justify-content:center;border-right:1px solid var(--panel);color:var(--fg);text-align:center;line-height:1.2}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);border-radius:8px;padding:6px 10px;background:var(--bg);min-width:0}
+.chip b{display:block;font-size:14px}
+.chip span{font-size:12px;color:var(--muted)}
+.chip i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
+.layers{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+.layer{border-radius:8px;padding:12px 14px;border:1px solid var(--line)}
+.layer b{display:block;font-size:15px;margin-bottom:2px}
+.layer small{color:var(--muted);display:block;margin-bottom:6px}
+.layer ul{padding-left:18px;font-size:14px}
+.sim{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px 18px}
+.sim label{display:flex;flex-direction:column;gap:2px;font-size:13px}
+.sim label span{display:flex;justify-content:space-between;gap:8px}
+.sim output{font-family:var(--mono);font-weight:500}
+.sim input[type=range]{width:100%}
+.simhead{grid-column:1/-1;font-size:12px;font-weight:700;color:var(--muted);border-bottom:1px solid var(--line);padding-top:6px}
+select{font:inherit;padding:4px;background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:6px}
+.result{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin:14px 0}
+.res{border-radius:8px;padding:10px 12px}
+.res small{display:block;font-size:12px;color:var(--muted)}
+.res strong{font-size:20px}
+.log{font-size:13.5px}
+.log div{padding:3px 0;border-bottom:1px dashed var(--line)}
+@media (max-width:720px){.layers{grid-template-columns:1fr}}
+</style>
+
+<div class="wrap">
+<header>
+  <h1>노예 상태 수치 공식표</h1>
+  <p class="sub">노예 정보창의 기분 · 흥분 · 정신 상태 · 복종심 요소 · 충성심 요소 · 장악력 영향을 현재 작업본 <code>jack.qsp</code> 코드에서 직접 읽어 정리했습니다. 대사 · 표정 · 지문을 상태에 따라 나누는 설계의 기준 자료로 쓰도록, 각 수치가 <b>얼마나 빨리 변하는지</b>를 맨 앞에 두었습니다.</p>
+</header>
+
+<!-- ============ 1. 변화 속도 지도 ============ -->
+<section>
+  <h2>1. 변화 속도 지도: 무엇을 어디에 쓸까</h2>
+  <p class="sub">왼쪽일수록 자주 흔들리고, 오른쪽일수록 오래 갑니다. 어투처럼 일관돼야 하는 것은 오른쪽 수치로, 표정처럼 그날그날 달라도 되는 것은 왼쪽 수치로 고르면 됩니다.</p>
+  <svg viewBox="0 0 900 330" role="img" aria-label="수치별 변화 속도 지도">
+    <defs><marker id="ar1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
+    <rect class="col" x="10" y="10" width="212" height="258" rx="8"/>
+    <rect class="col" x="232" y="10" width="212" height="258" rx="8"/>
+    <rect class="col" x="454" y="10" width="212" height="258" rx="8"/>
+    <rect class="col" x="676" y="10" width="214" height="258" rx="8"/>
+    <text class="hd" x="22" y="34">즉시 (행동 · 화면마다)</text>
+    <text class="hd" x="244" y="34">하루 단위</text>
+    <text class="hd" x="466" y="34">몇 주 단위</text>
+    <text class="hd" x="688" y="34">몇 달 · 거의 고정</text>
+    <!-- 즉시 -->
+    <rect class="bm" x="22" y="48" width="188" height="40" rx="6"/><text x="32" y="66">기분 등급</text><text class="sm" x="32" y="81">무드렛 켜짐/꺼짐에 바로 반응</text>
+    <rect class="ba" x="22" y="96" width="188" height="40" rx="6"/><text x="32" y="114">흥분 등급</text><text class="sm" x="32" y="129">성행위 · 명령으로 수시 변동</text>
+    <rect class="bs" x="22" y="144" width="188" height="40" rx="6"/><text x="32" y="162">정신 상태</text><text class="sm" x="32" y="177">기분이 0을 넘나들면 바뀜</text>
+    <rect class="bo" x="22" y="192" width="188" height="40" rx="6"/><text x="32" y="210">현재 복종도 (일부)</text><text class="sm" x="32" y="225">기분 보너스분만 즉시 변동</text>
+    <!-- 하루 -->
+    <rect class="bm" x="244" y="48" width="188" height="40" rx="6"/><text x="254" y="66">기분 단계</text><text class="sm" x="254" y="81">매일 밤 정산, 10 = 기분 1</text>
+    <rect class="ba" x="244" y="96" width="188" height="40" rx="6"/><text x="254" y="114">흥분 단계</text><text class="sm" x="254" y="129">매일 밤 −(6+절망+자존+…)</text>
+    <rect class="bo" x="244" y="144" width="188" height="40" rx="6"/><text x="254" y="162">두려움 · 절망 · 응석 단계</text><text class="sm" x="254" y="177">처벌 · 규칙 · 잠자리로 매일 증감</text>
+    <!-- 몇 주 -->
+    <rect class="bo" x="466" y="48" width="188" height="40" rx="6"/><text x="476" y="66">두려움 · 절망 · 응석 등급</text><text class="sm" x="476" y="81">감금 하루로도 오를 수 있음</text>
+    <rect class="bl" x="466" y="96" width="188" height="40" rx="6"/><text x="476" y="114">사육 · 습관 · 인식 등급</text><text class="sm" x="476" y="129">규칙 하나당 하루 +1~3</text>
+    <rect class="bo" x="466" y="144" width="188" height="40" rx="6"/><text x="476" y="162">현재 복종도 (몸통)</text><text class="sm" x="476" y="177">헌신 ×4 등 등급들의 합</text>
+    <!-- 몇 달 -->
+    <rect class="bl" x="688" y="48" width="190" height="40" rx="6"/><text x="698" y="66">헌신 등급</text><text class="sm" x="698" y="81">0→5 에 단계 310 필요</text>
+    <rect class="box" x="688" y="96" width="190" height="40" rx="6"/><text x="698" y="114">성향 (자아 · 자존 · 성격)</text><text class="sm" x="698" y="129">타고난 값, 천천히 깎임</text>
+    <rect class="bo" x="688" y="144" width="190" height="40" rx="6"/><text x="698" y="162">장악력 영향</text><text class="sm" x="698" y="177">주인 능력 − 노예 성향</text>
+    <rect class="box" x="688" y="192" width="190" height="40" rx="6"/><text x="698" y="210">성교육 계</text><text class="sm" x="698" y="225">성 기술 9종 합, 거의 늘기만</text>
+    <!-- 아래 쓰임 -->
+    <path class="ln" d="M20 286 L880 286" marker-end="url(#ar1)"/>
+    <text class="sm" x="22" y="306">→ 표정 · 한 줄 지문 · 그 순간 반응</text>
+    <text class="sm" x="244" y="306">→ 아침 인사 · 그날 컨디션</text>
+    <text class="sm" x="466" y="306">→ 태도 · 행동 습관 · 반항 여부</text>
+    <text class="sm" x="688" y="306">→ 어투 · 호칭 · 관계 단계</text>
+    <text class="sm" x="22" y="324">색: 초록 기분 · 자주 흥분 · 남색 정신상태 · 주황 복종심 요소 · 청록 충성심 요소</text>
+  </svg>
+
+  <div class="layers">
+    <div class="layer" style="background:var(--loyal-bg)"><b>어투 층 (장기)</b><small>며칠 사이에 바뀌면 어색한 것</small>
+      <ul><li>헌신 등급: 관계의 깊이</li><li>장악력 영향의 부호: 주인을 위로 보는가</li><li>성향(자존 · 자아 · 성격): 말버릇의 바탕</li><li>성교육 계: 성적 화제의 익숙함</li></ul></div>
+    <div class="layer" style="background:var(--obey-bg)"><b>태도 층 (중기)</b><small>몇 주에 걸쳐 쌓였다 무너지는 것</small>
+      <ul><li>두려움 · 절망 · 응석 등급</li><li>사육 · 습관 · 인식 등급</li><li>현재 복종도(등급 부분)</li><li>규칙을 지키는가 / 어기는가</li></ul></div>
+    <div class="layer" style="background:var(--mood-bg)"><b>표정 층 (단기)</b><small>그날, 그 순간 달라도 되는 것</small>
+      <ul><li>기분 등급</li><li>흥분 등급</li><li>정신 상태(15종)</li><li>그날 켜진 무드렛(굶주림 · 피곤 등)</li></ul></div>
+  </div>
+  <div class="note"><b>정신 상태는 단기 값입니다.</b> 이름은 성격처럼 보이지만 매번 기분 · 복종도로 다시 계산되므로, 기분이 0 아래로 내려가면 “노예근성”이 하루 만에 “상냥함”이나 “우울증”으로 바뀝니다. 스크린샷의 갈라테야도 헌신이 최대(5)인데 기분 −5 때문에 “슬퍼함”입니다. 어투를 정신 상태에 묶으면 관계가 깊어도 말투가 매일 흔들립니다.</div>
+  <p class="sub">“몇 주 · 몇 달”은 코드의 상승 임계값으로 어림한 것입니다. 이 수치들은 단계가 10 / 20 / 40 / 80 / 160에 닿을 때마다 등급이 하나 오르고 단계가 0으로 돌아가므로, 0→5에는 단계가 모두 310 필요합니다. 하루 +1~3이면 100일 이상입니다. 실제 플레이 일수는 확인하지 않았습니다.</p>
+</section>
+
+<!-- ============ 2. 관계도 ============ -->
+<section>
+  <h2>2. 수치 사이 관계도</h2>
+  <p class="sub">“현재 복종도”가 중심입니다. 충성심 · 복종심 요소와 성향이 모여 복종도를 만들고, 복종도가 정신 상태 · 기분 상한 · 규칙 준수 · 헌신 성장을 가릅니다. 장악력 영향은 복종도에 직접 들어가지 않고, 사육 증감과 일부 규칙 판정에만 쓰입니다.</p>
+  <svg viewBox="0 0 900 440" role="img" aria-label="복종도를 중심으로 한 수치 관계도">
+    <defs><marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
+    <rect class="bl" x="10" y="20" width="240" height="70" rx="8"/><text class="hd" x="22" y="42">충성심 요소</text><text class="sm" x="22" y="61">헌신 ×4 · 사육 ×2</text><text class="sm" x="22" y="78">습관 ×1 · 인식 ×1</text>
+    <rect class="bo" x="10" y="104" width="240" height="70" rx="8"/><text class="hd" x="22" y="126">복종심 요소</text><text class="sm" x="22" y="145">두려움 ×2 (+본성 보정 0~5)</text><text class="sm" x="22" y="162">절망 +(1+절망)÷2 · 응석 −2×</text>
+    <rect class="box" x="10" y="188" width="240" height="56" rx="8"/><text class="hd" x="22" y="210">성향</text><text class="sm" x="22" y="229">자존 · 성격 · 자아 · 지능 각 −1</text>
+    <rect class="box" x="10" y="258" width="240" height="56" rx="8"/><text class="hd" x="22" y="280">난이도 · 보너스</text><text class="sm" x="22" y="299">−난이도÷2, 유형 · 온순 · 나이 · 용기</text>
+    <rect class="bo" x="10" y="344" width="240" height="76" rx="8"/><text class="hd" x="22" y="366">장악력 영향</text><text class="sm" x="22" y="385">주인 매력 · 지배 · 스타일 · 힘</text><text class="sm" x="22" y="402">− 노예 성격 · 자아 · 자존 · 체력 · 지능</text>
+
+    <rect class="bm" x="330" y="20" width="220" height="56" rx="8"/><text class="hd" x="440" y="42" text-anchor="middle">기분 등급</text><text class="sm" x="440" y="61" text-anchor="middle">기분 &gt; 0 이면 복종도 +1+기분÷2</text>
+    <rect class="bo" x="330" y="150" width="220" height="80" rx="10"/><text class="hd" x="440" y="180" text-anchor="middle">현재 복종도</text><text class="sm" x="440" y="200" text-anchor="middle">위 합계 (정신병이면 100)</text><text class="sm" x="440" y="217" text-anchor="middle">상한 · 하한 없음</text>
+
+    <rect class="bs" x="630" y="20" width="260" height="62" rx="8"/><text class="hd" x="642" y="42">정신 상태</text><text class="sm" x="642" y="61">복종도 ≥ 강인함÷2 → 복종 계열</text><text class="sm" x="642" y="76">미만이면 출발값(거리감 등)</text>
+    <rect class="bm" x="630" y="96" width="260" height="56" rx="8"/><text class="hd" x="642" y="118">기분 상한 ③</text><text class="sm" x="642" y="137">복종도 &lt; 강인함 이면 기분 최대 2</text>
+    <rect class="box" x="630" y="166" width="260" height="62" rx="8"/><text class="hd" x="642" y="188">매일 밤 규칙 준수 판정</text><text class="sm" x="642" y="207">예: 복종도 &lt; 성격 → 재갈 규칙 어김</text><text class="sm" x="642" y="222">배변 금지는 자아+자존−장악력과 비교</text>
+    <rect class="bl" x="630" y="242" width="260" height="56" rx="8"/><text class="hd" x="642" y="264">매일 밤 헌신 성장</text><text class="sm" x="642" y="283">복종도 &gt; 0 · 기분 &gt; 0 일 때만</text>
+    <rect class="bl" x="630" y="352" width="260" height="62" rx="8"/><text class="hd" x="642" y="374">매일 밤 사육 증감</text><text class="sm" x="642" y="393">장악력 &gt; 0: 잠자리에서 +1</text><text class="sm" x="642" y="408">장악력 &lt; 0: −max(0, 자아−2−두려움)</text>
+
+    <path class="ll" d="M250 55 C290 55 290 170 330 172" marker-end="url(#ar2)"/>
+    <path class="lo" d="M250 139 C290 139 300 182 330 184" marker-end="url(#ar2)"/>
+    <path class="ln" d="M250 216 C290 216 300 198 330 196" marker-end="url(#ar2)"/>
+    <path class="ln" d="M250 286 C290 286 300 212 330 210" marker-end="url(#ar2)"/>
+    <path class="lm" stroke-dasharray="5 4" d="M440 76 L440 150" marker-end="url(#ar2)"/>
+    <path class="lo" d="M550 172 C590 172 590 52 630 50" marker-end="url(#ar2)"/>
+    <path class="lo" d="M550 182 C590 182 595 124 630 124" marker-end="url(#ar2)"/>
+    <path class="lo" d="M550 194 C590 194 600 197 630 197" marker-end="url(#ar2)"/>
+    <path class="lo" d="M550 206 C590 206 600 268 630 270" marker-end="url(#ar2)"/>
+    <path class="lo" stroke-dasharray="5 4" d="M250 372 C450 372 520 214 630 214" marker-end="url(#ar2)"/>
+    <path class="lo" d="M250 392 C450 392 560 384 630 384" marker-end="url(#ar2)"/>
+    <text class="sm" x="642" y="316">↺ 오른 헌신은 다시 복종도 ×4 로 들어감</text>
+  </svg>
+  <p class="sub">점선은 되먹임입니다. 기분이 복종도를 올리고, 복종도가 헌신 성장을 허락하고, 헌신이 다시 복종도를 올립니다. 그래서 헌신이 쌓인 노예는 기분이 나빠도 복종도가 크게 무너지지 않습니다.</p>
+</section>
+
+<!-- ============ 3. 복종도 ============ -->
+<section>
+  <h2><span class="tag t-ob">복종심</span>현재 복종도</h2>
+  <p class="sub">위치: <code>$update_slave_price</code> (노예 가격 계산과 함께 화면이 바뀔 때마다 다시 계산)</p>
+  <div class="formula">복종도 = 보너스 + 기분보너스 + 두려움보너스
+       + 헌신×4 + 사육×2 + 습관 + 인식 + (1+절망)÷2
+       − 난이도÷2 − 용기벌점 − 응석×2 − 자존 − 성격 − 자아 − 지능
+정신 상태가 정신병이면 100</div>
+  <div class="scroll"><table>
+    <tr><th>항목</th><th>값</th><th>변화 속도</th></tr>
+    <tr><td>기분보너스</td><td>기분 &gt; 0 이면 1 + 기분÷2 (기분 +5 → +3), 아니면 0</td><td class="n">즉시</td></tr>
+    <tr><td>두려움보너스</td><td>두려움 &gt; 0 이면 두려움×2 + 본성 보정. 본성 = 자존+성격+자아+지능. 10 이하 0, 11→+1 … 15 이상 +5</td><td class="n">몇 주</td></tr>
+    <tr><td>보너스</td><td>온순 특성 값(<code>meekness</code>) + 소녀 유형 보너스(<code>seed_obedience_bonus</code>) + 나이(로리 +2, 어린 +1) + 쉬움 난이도 +4. 용기 −1(겁쟁이 쪽)이면 두려움만큼 더</td><td class="n">고정</td></tr>
+    <tr><td>난이도</td><td>쉬움 2 · 보통 4 · 어려움 <code>14 − min(8, 헌신×4)</code> (헌신 0→14, 1→10, 2 이상→6). 이 값의 절반을 뺌</td><td class="n">고정 / 헌신 따라</td></tr>
+    <tr><td>용기벌점</td><td>용기 1 → 4, 용기 2 → 6</td><td class="n">고정</td></tr>
+  </table></div>
+  <h3>복종도를 읽는 곳</h3>
+  <ul>
+    <li>정신 상태: 복종도 ≥ 강인함÷2 일 때만 복종 계열(노예근성 · 복종중 · 온순함 · 발정중 · 관심병)로 갈 수 있습니다. 강인함 = max(자아, 성격, 응석, 자존) + 용기.</li>
+    <li>기분 상한: 복종도 &lt; 강인함 이면 기분이 2를 넘지 못합니다.</li>
+    <li>헌신 성장: 복종도와 기분이 모두 0보다 커야 합니다.</li>
+    <li>규칙 준수: 매일 밤 규칙마다 복종도를 성향과 비교해 어길지 정합니다. 재갈은 복종도 &lt; 성격, 배변 금지는 복종도 &lt; 자아+자존−장악력이면 어깁니다(다른 규칙은 개별 확인 안 함).</li>
+    <li>노예 등급: 복종도 1 미만 F−, 5 미만 D−, 6 미만 D+ 이하로 묶입니다.</li>
+  </ul>
+  <div class="note"><b>스크린샷 읽기 예시 (갈라테야, 복종도 32)</b><br>기분 −5 → 기분보너스 0. 두려움 0 → 0. 헌신 5 → +20. 사육 · 습관 · 인식 · 절망 · 응석 0. 따라서 남은 +12는 보너스 − 난이도÷2 − 용기벌점 − (자존+성격+자아+지능)에서 나온 값입니다. 성향 값은 스크린샷에 없어 더 나누지 못했습니다.</div>
+</section>
+
+<!-- ============ 4. 장악력 ============ -->
+<section>
+  <h2><span class="tag t-ob">복종심</span>장악력 영향</h2>
+  <p class="sub">위치: <code>jo9_supermacy</code> (대상 인물마다 따로 계산, 2026-11-12 jo9 모드). 노예 정보창은 훈련 노예가 있으면 그 노예 기준 값을 보여 줍니다.</p>
+  <div class="formula">장악력 = 주인(매력 + 지배 + 스타일 + 힘)
+       + max(구타 경험, 악명 단계) + magna_magnifika + 아이템 장악력 보너스
+       − 노예(성격 + 자아 + 자존 + 체력 + (지능 − 3))
+       + 옷 · 무기 · 나이 · 주인공 보정</div>
+  <div class="scroll"><table>
+    <tr><th>보정</th><th>값</th></tr>
+    <tr><td>악명 단계 (<code>jo9_cruel_mercy</code>)</td><td>−10 이하 1 · −20 이하 2 · −30 이하 3 · −40 이하 4. 구타 경험(<code>beaten_ever</code>)과 비교해 큰 쪽</td></tr>
+    <tr><td>주인 옷 · 무기</td><td>귀족 정장 +1, 편한 로브 −1, 화염 지팡이(등) +2</td></tr>
+    <tr><td>노예 나이 · 주인공</td><td>로리 +2(교사 +3 · 노인 +8 · 소년 +1 추가), 밀프는 집사 +2 · 노인 −1, 어린 나이는 교사 +2</td></tr>
+  </table></div>
+  <h3>장악력을 읽는 곳</h3>
+  <ul>
+    <li>사육: 주인 침대 · 규방에서 자면 장악력 &gt; 0 일 때 +1. 바닥에서 자면 +max(1, min(2, 장악력÷5)). 겸손 규칙은 +max(1, min(5−자아, 장악력÷2)). 개인방 메이드는 장악력 &gt; 0 이면 매일 +1.</li>
+    <li>장악력 &lt; 0 이면 매일 밤 사육 단계 −max(0, 자아 − (2 + 두려움)). 주인이 약하면 길들임이 풀립니다.</li>
+    <li>인식: 겸손 규칙이 +max(1, min(지능, 장악력÷2)).</li>
+    <li>아이템으로 하룻밤 오르는 사육 · 습관 · 인식 상한: max(2, 장악력÷2), 그리고 6 − 자아.</li>
+    <li>고문 · 강간 저항(<code>will_to_resist</code>): − max(0, min(5, 장악력 − 주인 스타일)).</li>
+  </ul>
+  <p class="sub">설계 메모: 주인 능력치는 거의 줄지 않고 노예 성향도 천천히 변하므로, 장악력은 장기 수치입니다. 다만 옷(±1)만은 갈아입으면 즉시 바뀝니다.</p>
+</section>
+
+<!-- ============ 5. 충성심 요소 ============ -->
+<section>
+  <h2><span class="tag t-lo">충성심</span>헌신 · 사육 · 습관 · 인식</h2>
+  <p class="sub">넷 다 독립 속성입니다. 단계가 10 / 20 / 40 / 80 / 160에 닿으면 등급이 하나 오르고 단계는 0으로 돌아갑니다. 내려가는 문턱은 −10 / −10 / −10 / −20 / −40 / −80입니다. 오르내림 사이에 여유가 있어 쉽게 흔들리지 않습니다.</p>
+  <div class="scroll"><table>
+    <tr><th>요소</th><th>매일 밤 오르는 길</th><th>내려가는 길</th><th>다른 곳에 미치는 영향</th></tr>
+    <tr><td><b>헌신</b><br><small>moral</small></td>
+      <td>네 조건이 모두 맞으면 +min(기분, (습관+인식+사육)÷3), 최소 1.<br>① 헌신이 넷 중 가장 낮음(같아도 됨)<br>② 그날 규칙 2개 이상(어려움 3개)<br>③ 복종도 &gt; 0, 기분 &gt; 0<br>④ 절망 · 응석 0, 두려움 · 자존 5 미만<br>주인 침대에서 기꺼이 자면 +1</td>
+      <td>절망 &gt; 2, 또는 두려움 5에 기분 &lt; 0 → −(자존+자아+성격)<br>억지 규칙 하나당 −5<br>응석 &gt; 1 → −응석<br>원치 않는 동침 −1</td>
+      <td>복종도 ×4, 기분 단계 매일 +헌신, 두려움 · 절망 감소, 노예근성 · 복종중, 어려움 난이도 완화. 헌신 5 + 주인 지배 · 매력 5 → “사랑” 무드렛</td></tr>
+    <tr><td><b>사육</b><br><small>instinct</small></td>
+      <td>겸손 규칙, 바닥 · 주인 침대 · 규방 수면(장악력 &gt; 0), 감금 수면 +3, 아침 봉사 +1, 아이템, 메이드 방 +1</td>
+      <td>장악력 &lt; 0, 응석 &gt; 1, 규칙을 어기는 데 성공하면 −자아</td>
+      <td>복종도 ×2, 헌신 성장 한도</td></tr>
+    <tr><td><b>습관</b><br><small>custom</small></td>
+      <td>규칙마다 +1~3(재갈 · 펫 +1, 배변 금지 · 소변기 +2, 변기 +3), 침낭 · 규방 수면 +1, 낙인 +1/+2, 억지 규칙 +개수, 메이드 방 +1</td>
+      <td>응석 &gt; 1 → −응석</td>
+      <td>복종도 ×1, 절망 감소 ×1, 헌신 성장 한도</td></tr>
+    <tr><td><b>인식</b><br><small>rational</small></td>
+      <td>겸손 규칙, 억지 규칙 +min(지능, 개수), 죄책감 있을 때 감금 +지능, 굶김 +min(지능, 굶은 날), 두려움 상태에서 벌을 받으면 다음 등급까지</td>
+      <td>응석 &gt; 1 → −응석</td>
+      <td>복종도 ×1, 절망 감소 ×2, 헌신 성장 한도</td></tr>
+  </table></div>
+  <p class="sub">쉬움 난이도는 매일 훈련 노예에게 헌신 +max(1, 주인 능력 합÷5), 습관 · 인식 · 사육 +1, 응석 · 절망 −5를 더 줍니다. 위 표는 매일 밤 처리 위주이며, 대화 · 명령 이벤트 하나하나의 증감은 다 넣지 않았습니다.</p>
+</section>
+
+<!-- ============ 6. 복종심 요소 ============ -->
+<section>
+  <h2><span class="tag t-ob">복종심</span>두려움 · 절망 · 응석</h2>
+  <div class="scroll"><table>
+    <tr><th>요소</th><th>오르는 길</th><th>내려가는 길 (매일 밤)</th><th>다른 곳에 미치는 영향</th></tr>
+    <tr><td><b>두려움</b><br><small>fear</small></td>
+      <td>감금 수면: 태도에 따라 단계 +20 / +5 / +1. 처벌 · 고문 이벤트(개별 값은 미정리)</td>
+      <td>헌신 &gt; 두려움이고 기분 &gt; 0 → 등급 바로 −1.<br>헌신 &gt; 0이고 기분 &gt; 0 → 단계 −헌신×3</td>
+      <td>복종도 ×2 + 본성 보정, 기분 상한 ④(두려움 ≥ 헌신 → 최대 3), 두려움 &gt; 헌신이고 &gt; 자아−감수성이면 “공포” 무드렛, 정신 상태 두려움, 기분 단계 매일 −두려움</td></tr>
+    <tr><td><b>절망</b><br><small>angst</small></td>
+      <td>억지 규칙 개수 × (감수성+2), 헌신 0으로 동침 +감수성, 소변기 · 변기 규칙, 감금. 기분 &lt; 0이면 6 − 감수성 + 기분 &lt; 0 일 때 +감수성(코드 그대로)</td>
+      <td>기분 ≥ 0 → −(헌신×3 + 인식×2 + 습관 + 기분)</td>
+      <td>매일 성격 단계 −절망, 자아 감소, 절망 &gt; 4 − 감수성이면 “절망” 무드렛, 기분 상한 ①②, 우울증, 절망 &gt; 2면 헌신 감소, 기분 단계 매일 −절망×2. 복종도에는 오히려 +(1+절망)÷2</td></tr>
+    <tr><td><b>응석</b><br><small>spoil</small></td>
+      <td>하루 보상 3번 이상 → +보상수×5. 훈련 노예가 두려움 0 · 굶지 않음 · 규칙 3개 미만이면 +(자존+자아+성격). 규방 수면, 헌신 1로 동침 +성격</td>
+      <td>규칙 충분 · 감옥 · 바닥 · 굶김 · 두려움 &gt; 헌신 중 하나면 −(1 + 헌신 + 두려움 + 절망×2 + 굶은 날×3), 기분 &lt; 0이면 −감수성 추가</td>
+      <td>응석 &gt; 1이면 충성심 4종 단계 매일 −응석, 복종도 −응석×2, 헌신 성장 차단, 관심병, “응석” 무드렛, 기분 단계 매일 −응석</td></tr>
+  </table></div>
+  <p class="sub">설계 메모: 세 요소 모두 등급은 몇 주 단위지만, 감금이나 억지 규칙 하나로 하루 만에 한 등급이 오를 수 있습니다. “상처받은 상태” 같은 중기 태도에 맞습니다.</p>
+</section>
+
+<!-- ============ 7. 기분 ============ -->
+<section>
+  <h2><span class="tag t-mood">기분</span>기분 등급 · 기분 단계</h2>
+  <p><b>기분 등급</b> (<code>$recalc_slave_mood</code>, 화면마다)</p>
+  <div class="formula">기분 = (기분단계 + 장비단계보너스) ÷ 10 + 장비 기분 보너스
+     + 켜진 좋은 무드렛 수 − 켜진 나쁜 무드렛 수</div>
+  <p>무드렛은 값이 0보다 크면 켜진 것으로 치고, 크기와 관계없이 하나당 ±1입니다. 그 뒤 아래 상한 중 처음 맞는 하나만 적용하고, −5~+5로 자릅니다.</p>
+  <div class="scroll"><table>
+    <tr><th>순서</th><th>조건</th><th>결과</th></tr>
+    <tr><td class="n">①</td><td>절망 &gt; 성격, 기분 &gt; 0</td><td>기분 = 0</td></tr>
+    <tr><td class="n">②</td><td>절망 &gt; 0, 기분 &gt; 2 − 절망÷2</td><td>기분 = 2 − 절망÷2 (절망 1 → 2, 2~3 → 1, 4~5 → 0)</td></tr>
+    <tr><td class="n">③</td><td>복종도 &lt; 강인함, 기분 &gt; 2</td><td>기분 = 2</td></tr>
+    <tr><td class="n">④</td><td>두려움 ≥ 헌신, 기분 &gt; 3</td><td>기분 = 3</td></tr>
+    <tr><td class="n">⑤</td><td>색정 성향 &gt; 1</td><td>해소 다음 날 +2, 흥분 5가 3 · 6 · 12일 이상 쌓이면 −1 · −2 · −3</td></tr>
+  </table></div>
+  <p class="sub">정신병이면 위 계산을 건너뛰고 기분 0입니다. 스크린샷처럼 기분 단계가 2(= 0.2)인데 기분 등급이 −5인 것은 나쁜 무드렛이 여러 개 켜져 있기 때문입니다. 기분 등급은 무드렛 하나로 바로 출렁입니다.</p>
+  <p><b>기분 단계</b> (<code>$next_day_slave_mood</code>, 매일 밤 깨어 있는 노예에게)</p>
+  <div class="formula">기분단계 += 10 + 어제 기분×2 + 헌신 + (체력 − 3)
+           − 흥분 − 두려움 − 응석 − 절망×2 − 위생 − (집 어지러움 − 1)</div>
+  <p class="sub">그 밖에 좋은 무드렛이 꺼질 때 +5, 굶은 날마다 −10(심하면 −15), 규칙 · 잠자리 · 이벤트마다 개별 증감이 있습니다. 헌신이 매일 기분 단계에 더해지므로, 관계가 깊으면 바닥 컨디션이 조금 높아집니다.</p>
+</section>
+
+<!-- ============ 8. 흥분 ============ -->
+<section>
+  <h2><span class="tag t-ar">흥분</span>흥분 등급 · 성교육 계</h2>
+  <p>흥분은 연속형 수치입니다. <code>점수 = clamp(흥분단계, 0, 200) + 임시값</code>이고, 점수가 넘은 임계값 수가 등급입니다.</p>
+  <div class="bar" role="img" aria-label="흥분 임계값 막대">
+    <div style="flex:14;background:var(--code-bg)">0<br>0~9</div>
+    <div style="flex:14;background:var(--arousal-bg)">1<br>10~</div>
+    <div style="flex:20;background:var(--arousal-bg)">2 · 20~</div>
+    <div style="flex:40;background:var(--arousal-bg)">3 · 40~</div>
+    <div style="flex:80;background:var(--arousal-bg)">4 · 80~</div>
+    <div style="flex:40;background:var(--arousal-bg)">5 · 160~</div>
+  </div>
+  <div class="formula" style="margin-top:12px">매일 밤 흥분단계 += 체력 + 감수성 + 기분 + 헌신 + 아이템   (불감이 아닐 때)
+                 + (성격 + 감수성 + 기분)÷2                (색정 성향이 있을 때)
+                 − (6 + 절망 + 자존 + 두려움 + 응석)</div>
+  <div class="scroll"><table>
+    <tr><th>색정 성향</th><th>보정 (jo9 모드)</th></tr>
+    <tr><td class="n">−2 이하</td><td>흥분 0 고정</td></tr>
+    <tr><td class="n">−1 ~ 1</td><td>그대로. 0이고 흥분이 (절정+자아+자존+성격+감수성)÷3보다 크면 “욕구불만” 무드렛</td></tr>
+    <tr><td class="n">2 이상</td><td>상승분 ×1.5, 장기 흥분 시 기분 감소, 60일이면 손실 판정</td></tr>
+  </table></div>
+  <p><b>성교육 계</b> = 구강 + 삽입 + 애무 + 난교 + 이종 + 페티시 + 역할극 + 레즈 + 유두 9개 성 기술 등급의 합(최대 45). 노예 등급 판정(D+ 2 · C− 4 · C+ 8 · B− 10 · B 15 이상)에 쓰입니다.</p>
+  <p class="sub">설계 메모: 흥분 등급은 표정 · 숨소리 지문용 단기 값이고, 성교육 계는 거의 줄지 않으므로 성적 대사의 “익숙함” 같은 장기 값으로 쓸 수 있습니다.</p>
+</section>
+
+<!-- ============ 9. 정신 상태 ============ -->
+<section>
+  <h2><span class="tag t-st">정신상태</span>정신 상태 판정 순서</h2>
+  <p class="sub">위치: <code>$dyn_calc_slave_attrs</code> 뒤쪽. 아래 순서로 덮어쓰고, 같은 칸 안에서는 나중 줄이 이깁니다. 동기 최댓값 = max(두려움, 헌신, 습관, 인식, 사육, 응석, 절망, 흥분).</p>
+  <div class="scroll"><table>
+    <tr><th>단계</th><th>조건</th><th>결과</th></tr>
+    <tr><td class="n">0 출발</td><td>항상</td><td>기본 성향. 헌신 &gt; 0이고 기본이 슬퍼함이면 상냥함</td></tr>
+    <tr><td class="n">1 기분 &lt; 0</td><td>기본이 긍정적</td><td>상냥함</td></tr>
+    <tr><td class="n"></td><td>헌신 &lt; 2, 성격 · 자아 · 자존 ≥ max(4, 동기 최댓값)</td><td>증오심 / 저항심 / 혐오감</td></tr>
+    <tr><td class="n"></td><td>헌신 ≥ 2, 같은 조건</td><td>관심병 / 온순함 / 상냥함</td></tr>
+    <tr><td class="n">1 기분 ≥ 0</td><td>기본이 반항 계열(반항값 ≠ 0)</td><td>거리감</td></tr>
+    <tr><td class="n">2</td><td>자아 + 성격 + 자존 &lt; 3</td><td><b>정신병</b> (여러 값 초기화, 복종도 100)</td></tr>
+    <tr><td class="n">3</td><td>두려움이 동기 최댓값이고 ≥ 용기값</td><td><b>두려움</b></td></tr>
+    <tr><td class="n">4</td><td>기분 &lt; 2이고 (절망 &gt; 성격÷3 또는 기분 = −5)</td><td><b>우울증</b>, 감수성 ≥ 4이고 기분 &lt; −1이면 <b>슬퍼함</b></td></tr>
+    <tr><td class="n">5</td><td>복종도 ≥ 강인함÷2이고 응석 &gt; max(1, 두려움, (헌신+1)÷2)</td><td><b>관심병</b></td></tr>
+    <tr><td class="n"></td><td>복종도 ≥ 강인함÷2, 기분 ≥ 0이면 차례로 덮어씀</td><td>두려움 최대 → 온순함 / 인식 최대 또는 헌신 &gt; 1 → 복종중 / 헌신 최대 또는 &gt; 3 → 노예근성 / 응석 ≥ (1+헌신)÷2 → 온순함 / 흥분 최대이고 헌신 &gt; 0 → 발정중</td></tr>
+  </table></div>
+  <p class="sub">용기값 = 강인함(+기분, 기분 &gt; 0일 때). 용기 2면 용기값 100, 두려움 0으로 취급합니다.</p>
+  <h3>15종과 반항값</h3>
+  <div class="chips" id="chips"></div>
+</section>
+
+<!-- ============ 10. 계산기 ============ -->
+<section>
+  <h2>계산기: 복종도 · 기분 · 정신 상태</h2>
+  <p class="sub">슬라이더를 움직이면 위 공식대로 계산합니다. 게임은 직전에 계산된 복종도로 기분 상한을 정하므로, 여기서는 상한 없는 기분으로 복종도를 한 번 구하고 → 기분 상한 → 최종 기분으로 복종도를 다시 구했습니다. 실제 게임 값과 대조하지는 않았습니다.</p>
+  <div class="sim" id="sim"></div>
+  <div class="result" id="result"></div>
+  <div class="log" id="log"></div>
+</section>
+
+<section>
+  <div class="note" style="margin:0"><b>확인하지 못한 점</b><br>
+  ① 대화 · 명령 · 처벌 이벤트 하나하나가 두려움 · 절망 · 응석 · 충성심 요소를 얼마씩 바꾸는지는 표에 다 넣지 않았습니다(각 수치마다 30~70곳). 매일 밤 처리와 규칙 · 잠자리만 정리했습니다.<br>
+  ② 무드렛 약 90종이 어떤 사건으로 켜지는지는 정리하지 않았습니다.<br>
+  ③ 기본 성향(psy_basic)과 유형 복종 보너스가 소녀 유형별로 얼마인지는 찾지 못했습니다.<br>
+  ④ “몇 주 · 몇 달”은 임계값으로 어림한 것이고, 실제 플레이 일수로 확인하지 않았습니다.<br>
+  ⑤ 나눗셈은 정수 나눗셈(0쪽으로 버림)으로 가정했습니다.</div>
+</section>
+</div>
+
+<script>
+const ST=[
+ ['servile','노예근성',0,'#009900'],['obedient','복종중',0,'#006600'],['optimistic','긍정적',0,'#009FEF'],
+ ['soft','상냥함',0,'#0000D8'],['docile','온순함',-1,'#A300CC'],['reluctant','거리감',0,'#6B0084'],
+ ['resistant','저항심',3,'#FF4FBB'],['arrogant','혐오감',2,'#EA0090'],['hateful','증오심',4,'#cd0000'],
+ ['frightened','두려움',-2,'#6B0084'],['lachrymose','슬퍼함(울보)',-1,'#FF4FBB'],['depresive','우울증',-1,'#EA0090'],
+ ['broken','정신병',-100,'#cd0000'],['hysteric','관심병',3,'#ad0e7b'],['horny','발정중',0,'#ad0e7b']];
+const KO=Object.fromEntries(ST.map(s=>[s[0],s[1]]));
+const REB=Object.fromEntries(ST.map(s=>[s[0],s[2]]));
+document.getElementById('chips').innerHTML=ST.map(s=>`<div class="chip"><b><i style="background:${s[3]}"></i>${s[1]}</b><span>${s[0]} · 반항값 ${s[2]}</span></div>`).join('');
+
+const G=[
+ ['성향',[['ego','자아',0,5,2],['pride','자존',0,5,2],['temper','성격',0,5,2],['intellect','지능',0,5,3],['sensitivity','감수성',0,5,2],['courage','용기 (−1~2)',-1,2,0]]],
+ ['충성심 요소',[['moral','헌신',0,5,1],['instinct','사육',0,5,0],['custom','습관',0,5,1],['rational','인식',0,5,1]]],
+ ['복종심 요소',[['fear','두려움',0,5,1],['angst','절망',0,5,0],['spoil','응석',0,5,0]]],
+ ['기분 · 흥분',[['rate','기분 단계',-100,100,0],['worn','장비 기분 보너스',-3,3,0],['good','켜진 좋은 무드렛',0,8,1],['bad','켜진 나쁜 무드렛',0,8,0],['arousal','흥분 등급',0,5,0]]],
+ ['보너스',[['bonus','온순 · 유형 · 나이 보너스',-3,8,0]]]];
+const F=G.flatMap(g=>g[1]);
+const sim=document.getElementById('sim');
+sim.innerHTML=G.map(g=>`<div class="simhead">${g[0]}</div>`+g[1].map(f=>`<label for="f_${f[0]}"><span>${f[1]}<output id="o_${f[0]}">${f[4]}</output></span><input id="f_${f[0]}" type="range" min="${f[2]}" max="${f[3]}" value="${f[4]}"></label>`).join('')).join('')+
+`<div class="simhead">선택</div>
+<label for="f_diff"><span>난이도</span><select id="f_diff"><option value="1">쉬움</option><option value="0" selected>보통</option><option value="2">어려움</option></select></label>
+<label for="f_basic"><span>기본 성향</span><select id="f_basic">${ST.map(s=>`<option value="${s[0]}"${s[0]==='reluctant'?' selected':''}>${s[1]}</option>`).join('')}</select></label>
+<label for="f_nomb"><span>마인드브레이크 방지</span><select id="f_nomb"><option value="0">끔(정신병 가능)</option><option value="1">켬</option></select></label>`;
+const t=Math.trunc, mx=Math.max, mn=Math.min;
+function obey(v,mood){
+  let od, bonus=v.bonus, pen=0;
+  if(v.diff===1){od=2;bonus+=4}else if(v.diff===0){od=4}else{od=14-mn(8,4*v.moral)}
+  if(v.courage===2)pen=6; else if(v.courage===1)pen=4; else if(v.courage===-1)bonus+=v.fear;
+  const mb=mood>0?1+t(mood/2):0;
+  let fb=0; if(v.fear>0){const nat=v.pride+v.temper+v.ego+v.intellect; fb=v.fear*2+mx(0,mn(5,nat-10));}
+  const loyal=v.moral*4+v.instinct*2+v.custom+v.rational;
+  const ob=bonus+mb+fb+loyal+t((1+v.angst)/2)-t(od/2)-pen-v.spoil*2-v.pride-v.temper-v.ego-v.intellect;
+  return {ob,txt:`보너스 ${bonus} + 기분 ${mb} + 두려움 ${fb} + 충성 ${loyal} + 절망 ${t((1+v.angst)/2)} − 난이도 ${t(od/2)} − 용기 ${pen} − 응석 ${v.spoil*2} − 성향 ${v.pride+v.temper+v.ego+v.intellect} = ${ob}`};
+}
+function calc(v){
+  const L=[];const hard=mx(v.ego,v.temper,v.spoil,v.pride)+v.courage;
+  let raw=t(v.rate/10)+v.worn+v.good-v.bad;
+  L.push(['기분 원점수',`${t(v.rate/10)} (단계÷10) + ${v.worn} + ${v.good} − ${v.bad} = ${raw}`]);
+  const o1=obey(v,mx(-5,mn(5,raw)));
+  let mood=raw, cap='상한 없음';
+  if(v.angst>v.temper&&mood>0){mood=0;cap='① 절망 > 성격 → 0'}
+  else if(v.angst>0&&mood>(2-t(v.angst/2))){mood=2-t(v.angst/2);cap=`② 절망 상한 → ${mood}`}
+  else if(o1.ob<hard&&mood>2){mood=2;cap=`③ 복종도 ${o1.ob} < 강인함 ${hard} → 2`}
+  else if(v.fear>=v.moral&&mood>3){mood=3;cap='④ 두려움 ≥ 헌신 → 3'}
+  mood=mx(-5,mn(5,mood)); L.push(['기분 상한',cap+` → 기분 ${mood}`]);
+  const o=obey(v,mood); let ob=o.ob; L.push(['복종도',o.txt]);
+  let courage=hard; if(mood>0)courage+=mood; let fear=v.fear;
+  if(v.courage==2){courage=100;fear=0;}
+  const mm=mx(fear,v.moral,v.custom,v.rational,v.instinct,v.spoil,v.angst,v.arousal);
+  const sanity=v.ego+v.temper+v.pride;
+  L.push(['준비값',`강인함 ${hard}, 복종 계열 문턱 ${t(hard/2)}, 용기값 ${courage}, 동기 최댓값 ${mm}`]);
+  let s=v.basic, step='0 출발(기본 성향)';
+  if(v.moral>0&&v.basic==='lachrymose'){s='soft';step='0 헌신 > 0: 슬퍼함→상냥함'}
+  if(mood<0){
+    if(v.basic==='optimistic'){s='soft';step='1 기분<0: 긍정적→상냥함'}
+    const th=mx(4,mm);
+    if(v.moral<2){ if(v.temper>=th){s='hateful';step='1 기분<0, 성격 높음→증오심'} if(v.ego>=th){s='resistant';step='1 기분<0, 자아 높음→저항심'} if(v.pride>=th){s='arrogant';step='1 기분<0, 자존 높음→혐오감'} }
+    else { if(v.temper>=th){s='hysteric';step='1 기분<0, 헌신≥2, 성격 높음→관심병'} if(v.ego>=th){s='docile';step='1 기분<0, 헌신≥2, 자아 높음→온순함'} if(v.pride>=th){s='soft';step='1 기분<0, 헌신≥2, 자존 높음→상냥함'} }
+  } else if(REB[v.basic]!==0){s='reluctant';step='1 기분≥0, 반항 계열 기본값→거리감'}
+  if(sanity<3&&v.nomb!==1){s='broken';step='2 자아+성격+자존 < 3 → 정신병';ob=100}
+  else if(fear===mm&&fear>=courage){s='frightened';step='3 두려움이 최댓값이고 용기값 이상 → 두려움'}
+  else if(mood<2&&(v.angst>t(v.temper/3)||mood===-5)){s='depresive';step='4 기분<2, 절망 > 성격÷3 또는 기분 −5 → 우울증';
+    if(v.sensitivity>=4&&mood<-1){s='lachrymose';step='4 감수성≥4, 기분<−1 → 슬퍼함'}}
+  else if(ob>=t(hard/2)){
+    if(v.spoil>mx(1,fear,t((v.moral+1)/2))){s='hysteric';step='5 응석 과다 → 관심병'}
+    else if(mood>=0){
+      step='5 복종 계열 통과, 덮어쓸 조건 없음 → 출발값 유지';
+      if(fear===mm){s='docile';step='5 두려움이 최댓값 → 온순함'}
+      if(v.rational===mm||v.moral>1){s='obedient';step='5 인식 최댓값 또는 헌신>1 → 복종중'}
+      if(v.moral===mm||v.moral>3){s='servile';step='5 헌신 최댓값 또는 헌신>3 → 노예근성'}
+      if(v.spoil>=t((1+v.moral)/2)){s='docile';step='5 응석 ≥ (1+헌신)÷2 → 온순함'}
+      if(v.arousal===mm&&v.moral>0){s='horny';step='5 흥분이 최댓값, 헌신>0 → 발정중'}
+    }
+  } else { step+=` (복종도 ${ob} < 문턱 ${t(hard/2)}: 복종 계열 못 감)` }
+  L.push(['결정된 줄',step]);
+  return {mood,s,L,ob};
+}
+function run(){
+  const v={};F.forEach(f=>{v[f[0]]=+document.getElementById('f_'+f[0]).value;document.getElementById('o_'+f[0]).textContent=v[f[0]]});
+  v.basic=document.getElementById('f_basic').value;v.nomb=+document.getElementById('f_nomb').value;v.diff=+document.getElementById('f_diff').value;
+  const r=calc(v);
+  document.getElementById('result').innerHTML=
+   `<div class="res" style="background:var(--obey-bg)"><small>현재 복종도</small><strong>${r.ob}</strong></div>`+
+   `<div class="res" style="background:var(--mood-bg)"><small>기분 등급</small><strong>${r.mood>0?'+':''}${r.mood}</strong></div>`+
+   `<div class="res" style="background:var(--arousal-bg)"><small>흥분 등급</small><strong>${v.arousal}</strong></div>`+
+   `<div class="res" style="background:var(--status-bg)"><small>정신 상태</small><strong>${KO[r.s]}</strong><small>반항값 ${REB[r.s]}</small></div>`;
+  document.getElementById('log').innerHTML=r.L.map(x=>`<div><b>${x[0]}</b> · ${x[1]}</div>`).join('');
+}
+sim.addEventListener('input',run);run();
+</script>
+
+</body></html>

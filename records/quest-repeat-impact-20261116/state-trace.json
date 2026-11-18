@@ -1,0 +1,646 @@
+[
+  {
+    "loc": "slave_sell_chek",
+    "line": 396,
+    "context": [
+      "  if jo9_goal_listing = 1: $result += '<a href=\"EXEC: quest_description_mode = 2 & jo9_goal_selected_scene = 79331 & gt $curloc\">안개 속 인형 극장 지옥의 살아 있는 인형 데몬</a><br>'\r",
+      "  if jo9_goal_lookup_scene = 79331: result = 1 & exit\r",
+      " end\r",
+      " if npc_progress['Amarida'] = 1:\r",
+      "  if jo9_goal_listing = 1: $result += '<a href=\"EXEC: quest_description_mode = 2 & jo9_goal_selected_scene = 102032 & gt $curloc\">동부 구역 패션 하우스의 주인 아마리다</a><br>'\r",
+      "  if jo9_goal_lookup_scene = 102032: result = 1 & exit\r",
+      " end\r",
+      " if npc_progress['Sisters_Menish'] = 1:\r"
+    ]
+  },
+  {
+    "loc": "npc_progress",
+    "line": 66,
+    "context": [
+      "$repeat_npc_id[16] = 'alina'\r",
+      "$repeat_npc_id[17] = 'valentina1'\r",
+      "$repeat_npc_id[18] = 'valentina2'\r",
+      "$repeat_npc_id[19] = 'Amarida'\r",
+      "$repeat_npc_id[20] = 'penelope'\r",
+      "$repeat_npc_id[21] = 'anes'\r",
+      "$repeat_npc_id[22] = 'ermelinda'\r",
+      "$repeat_npc_id[23] = 'noemi'\r"
+    ]
+  },
+  {
+    "loc": "interaction_city",
+    "line": 19789,
+    "context": [
+      "\tEND\r",
+      "\tIF interaction_city = 102031:\r",
+      "\t interaction_city = 102032\r",
+      "\t if slave_state = CONST_INT['slave_exist'] and npc_progress['Amarida'] = 1 and slave['brand'] > 0 and slave['brand'] < 4: interaction_city = 102033\r",
+      "\tEND\r",
+      "\tIF interaction_city = 102032:\r",
+      "\t npc = 1\r",
+      "\t $npc_id = 'Amarida'\r"
+    ]
+  },
+  {
+    "loc": "interaction_city",
+    "line": 19793,
+    "context": [
+      "\tEND\r",
+      "\tIF interaction_city = 102032:\r",
+      "\t npc = 1\r",
+      "\t $npc_id = 'Amarida'\r",
+      "\t $place = 'fashion_house'\r",
+      "\t $return_lock  = 'shop_general' \r",
+      "\t npc_progress['Amarida'] = 1\r",
+      "\t! active[$quest[5]] = 1 \r"
+    ]
+  },
+  {
+    "loc": "interaction_city",
+    "line": 19796,
+    "context": [
+      "\t $npc_id = 'Amarida'\r",
+      "\t $place = 'fashion_house'\r",
+      "\t $return_lock  = 'shop_general' \r",
+      "\t npc_progress['Amarida'] = 1\r",
+      "\t! active[$quest[5]] = 1 \r",
+      "\t txt_count = 8\r",
+      "\t copyarr '$text', '$Amarida_pref'\r",
+      "\tEND\r"
+    ]
+  },
+  {
+    "loc": "interaction_city",
+    "line": 19803,
+    "context": [
+      "\tEND\r",
+      "\tIF interaction_city = 102033:\r",
+      "\t npc = 1\r",
+      "\t $npc_id = 'Amarida' \r",
+      "\t $place = 'fashion_house'\r",
+      "\t $return_lock  = 'shop_general' \r",
+      "\t $interaction_type = 'sell_slave_complex'\r",
+      "\tEND\r"
+    ]
+  },
+  {
+    "loc": "interaction_city",
+    "line": 19889,
+    "context": [
+      "\tEND\r",
+      "\tIF interaction_city = 102031:\r",
+      "\t interaction_city = 102032\r",
+      "\t if slave_state = CONST_INT['slave_exist'] and npc_progress['Amarida'] = 1 and slave['brand'] > 0 and slave['brand'] < 4: interaction_city = 102033\r",
+      "\tEND\r",
+      "\tIF interaction_city = 102032:\r",
+      "\t npc = 1\r",
+      "\t $npc_id = 'Amarida'\r"
+    ]
+  },
+  {
+    "loc": "interaction_city",
+    "line": 19893,
+    "context": [
+      "\tEND\r",
+      "\tIF interaction_city = 102032:\r",
+      "\t npc = 1\r",
+      "\t $npc_id = 'Amarida'\r",
+      "\t $place = 'fashion_house'\r",
+      "\t $return_lock  = 'shop_general' \r",
+      "\t npc_progress['Amarida'] = 1\r",
+      "\t! active[$quest[5]] = 1 \r"
+    ]
+  },
+  {
+    "loc": "interaction_city",
+    "line": 19896,
+    "context": [
+      "\t $npc_id = 'Amarida'\r",
+      "\t $place = 'fashion_house'\r",
+      "\t $return_lock  = 'shop_general' \r",
+      "\t npc_progress['Amarida'] = 1\r",
+      "\t! active[$quest[5]] = 1 \r",
+      "\t txt_count = 8\r",
+      "\t copyarr '$text', '$Amarida_pref'\r",
+      "\tEND\r"
+    ]
+  },
+  {
+    "loc": "interaction_city",
+    "line": 19903,
+    "context": [
+      "\tEND\r",
+      "\tIF interaction_city = 102033:\r",
+      "\t npc = 1\r",
+      "\t $npc_id = 'Amarida' \r",
+      "\t $place = 'fashion_house'\r",
+      "\t $return_lock  = 'shop_general' \r",
+      "\t $interaction_type = 'sell_slave_complex'\r",
+      "\tEND\r"
+    ]
+  },
+  {
+    "loc": "interaction_city",
+    "line": 24428,
+    "context": [
+      "! $return_lock = 'next_day'\r",
+      "END\r",
+      "!Разговор вс Присциллой в гильдии\r",
+      "IF interaction_city = 6025:\r",
+      " npc = 0\r",
+      " $npc_id = ''\r",
+      " $place = 'guild_hall'\r",
+      " $return_lock  = 'shop_general'\r"
+    ]
+  },
+  {
+    "loc": "interaction_city",
+    "line": 24487,
+    "context": [
+      " $text[21] = '[프리실라]<br>&nbsp;더어어어어! 더 깊게! 아, 신이시여! 아, 그래!'\r",
+      " $text[22] = '[프리실라]<br>&nbsp;으으으으음!...<br>[당신]<br>&nbsp;읏! 읏! 으으으으읏!... 아, 좋아아아아아아!...'\r",
+      "! JO9 MOD END J9M0433\r",
+      " witch_talk = 1\r",
+      " $return_lock = 'city_menu_form'\r",
+      "END\r",
+      "!Saving christmas quest. - RedGreen3\r",
+      "\r"
+    ]
+  },
+  {
+    "loc": "interaction_result_city",
+    "line": 23,
+    "context": [
+      "\tnpc = 1\r",
+      "\tkillvar '$text'\r",
+      "\tdynamic '$text[1] = $<<$npc_id>>_pref[1]'\r",
+      "\tif npc_progress[$npc_id] = 2:\r",
+      "\t\tif personal_relations[$npc_id] < 0:\r",
+      "! JO9 MOD START J9M1688 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included\r",
+      "\t\t\t$text[1] = '[<<$npc_name[$npc_id]>>]<br>&nbsp;다시는 당신에게서 사지 않겠어. 그리고 전에 당신이 내게 어떻게 했는지 몇몇 친구들에게도 한마디 해뒀지.'\r",
+      "! JO9 MOD END J9M1688\r"
+    ]
+  },
+  {
+    "loc": "interaction_result_city",
+    "line": 85,
+    "context": [
+      "\t! msg 'Buyer Interested:  <<buyer_interested>>'\r",
+      "\t! msg 'No Charm check: <<no_charm_check>>'\r",
+      "\tif buyer_interested = 1:\r",
+      "\t\tnpc_progress[$npc_id] = 2\r",
+      "\t\t$text[1] = $buy_quote[$npc_id]\r",
+      "! JO9 MOD START TBV_FIXED_PRICE_78 | 2026-10-17_trait_value\r",
+      "\t\t! JO9 MOD START SALE_TAX_20261105\r",
+      "$text[1] += $func('jo9_traits_value', 'sale_pay', func('jo9_traits_value', 'base_price', 'slave', common_price[demand_rating[$npc_id]], npc_money[$npc_id]))\r"
+    ]
+  },
+  {
+    "loc": "interaction_result_city",
+    "line": 175,
+    "context": [
+      "! JO9 MOD END SALE_TAX_20261105\r",
+      "\tnpc = 1\r",
+      "! JO9 MOD START TBV_SALE_REWARD_1_4 | 2026-10-17_trait_value\r",
+      "\tnpc_progress[$npc_id] = 2\r",
+      "\tpersonal_relations[$npc_id] += func('jo9_traits_value', 'reward', '', client_satisfaction, jo9_trait_value_sold_peerless)\r",
+      "! JO9 MOD END TBV_SALE_REWARD_1_4\r",
+      "\tif client_satisfaction > 0:\r",
+      "\t\tif fixed_brand_rise = 0:\r"
+    ]
+  },
+  {
+    "loc": "interaction_result_city",
+    "line": 253,
+    "context": [
+      "\t\t\tend\r",
+      "\r",
+      "\t\t\tif faction_fame[$npc_alignment[$npc_id]] < demand_rating[$npc_id]/2: dynamic $rise_faction_fame\r",
+      "\t\t\tnpc_progress[$npc_id] = 2\r",
+      "\t\t\tactive[$quest[5]] = 0\r",
+      "\t\t\tif noble_status = 0 and demand_rating[$npc_id] = 10:\r",
+      "\t\t\t\tnoble_status = 1\r",
+      "\t\t\t\tif $npc_alignment[$npc_id] = 'taurus' or $npc_alignment[$npc_id] = 'serpis' or $npc_alignment[$npc_id] = 'kamira' or $npc_alignment[$npc_id] = 'korvus':\r"
+    ]
+  },
+  {
+    "loc": "interaction_result_city",
+    "line": 302,
+    "context": [
+      "\t\t\tend\r",
+      "\r",
+      "\t\t\tif faction_fame[$npc_alignment[$npc_id]] < demand_rating[$npc_id]/2: dynamic $rise_faction_fame\r",
+      "\t\t\tnpc_progress[$npc_id] = 2\r",
+      "\t\t\tactive[$quest[5]] = 0\r",
+      "\t\t\tif noble_status = 0 and demand_rating[$npc_id] = 10: noble_status = 1\r",
+      "\t\telse\r",
+      "\t\t\tif sl_txt = 105: $text[1] = $refuse_pregnant_quote[$npc_id]\r"
+    ]
+  },
+  {
+    "loc": "interaction_result_city",
+    "line": 329,
+    "context": [
+      "\t\tcopyarr '$text', '$cow_auction'\r",
+      "\t\t$special_action[arrsize('$cow_auction')-1] = { gt 'choice_screen' }\r",
+      "\t\t$yes = {\r",
+      "\t\t\tnpc_progress[$npc_id] = 2\r",
+      "! JO9 MOD START SALE_TAX_20261105\r",
+      "\t\t\tif cow_state ! CONST_INT['slave_exist']: gt 'shop_general'\r",
+      "killobj\r",
+      "killvar '$text'\r"
+    ]
+  },
+  {
+    "loc": "interaction_result_city",
+    "line": 900,
+    "context": [
+      "\tgs '$slave_price'\r",
+      "\tnpc = 1\r",
+      "\tcopyarr '$text', '$<<$npc_id>>_pref'\r",
+      "\tIF npc_progress[$npc_id] = 2:\r",
+      "\t\tcopyarr '$text', '$<<$npc_id>>_otkaz'\r",
+      "\telse\r",
+      "\t\tIF slave_state = CONST_INT['slave_exist'] and slave['brand'] > 0 and slave['brand'] < 4:\r",
+      "\t\t\tkillvar '$text'\r"
+    ]
+  },
+  {
+    "loc": "guild",
+    "line": 40,
+    "context": [
+      "\t\tfunc('$menu', 'location_gray', $menu_item_Auction_slaves_gray, empty, '경매까지 남은 날: <<auction_count>>')\r",
+      "\tend\r",
+      "\t\r",
+      "\tIF revolution = 1 and witch_talk = 0:\r",
+      "\t\tFUNC('$menu', 'interaction_city', $menu_item_contract_list, 6025, '마녀의 보상')\r",
+      "\tEND\r",
+      "\tIF guild_reputation > 3 and active[$event['спасение_рождества']] = 0:\r",
+      "\t\tFUNC('$menu', 'interaction_city', $menu_item_guild, 1010, '개인 의뢰')\r"
+    ]
+  },
+  {
+    "loc": "#npc_base",
+    "line": 6013,
+    "context": [
+      "stat_importance['xenophily'] = 3\r",
+      "}\r",
+      "\r",
+      "$npc_image['Amarida'] = 'Amarida'\r",
+      "$npc_name['Amarida'] = '아마리다'\r",
+      "$npc_status['Amarida'] = '패션 하우스의 주인 동부 구역'\r",
+      "$npc_alignment['Amarida'] = 'eastkvartal'\r",
+      "$npc_info['Amarida'] = ' 영리하고 겉보기엔 자신감 넘치는 젊은 여자다. 흠잡을 데 없는 태도로 그녀는 사업가 같은 인상을 줄 수 있다… 하지만 이 달콤한 생물이 자기 사업을 꾸릴 수 있다는 건 어쩐지 쉽게 믿기 어렵다. 그리고 그녀의 총명한 머리가 그런 일에 정말 소질이 있는지도 확실치 않다. 보통 이런 숙녀들은 훨씬 더 중요한 일에 바쁘기 마련이다. 경영을 위해서는 언제든 믿고 맡길 수 있는, 특별히 훈련된 사람들이 따로 있으니까.'\r"
+    ]
+  },
+  {
+    "loc": "#npc_base",
+    "line": 6016,
+    "context": [
+      "$npc_image['Amarida'] = 'Amarida'\r",
+      "$npc_name['Amarida'] = '아마리다'\r",
+      "$npc_status['Amarida'] = '패션 하우스의 주인 동부 구역'\r",
+      "$npc_alignment['Amarida'] = 'eastkvartal'\r",
+      "$npc_info['Amarida'] = ' 영리하고 겉보기엔 자신감 넘치는 젊은 여자다. 흠잡을 데 없는 태도로 그녀는 사업가 같은 인상을 줄 수 있다… 하지만 이 달콤한 생물이 자기 사업을 꾸릴 수 있다는 건 어쩐지 쉽게 믿기 어렵다. 그리고 그녀의 총명한 머리가 그런 일에 정말 소질이 있는지도 확실치 않다. 보통 이런 숙녀들은 훨씬 더 중요한 일에 바쁘기 마련이다. 경영을 위해서는 언제든 믿고 맡길 수 있는, 특별히 훈련된 사람들이 따로 있으니까.'\r",
+      "demand_rating['Amarida'] = 8\r",
+      "$interesting_specialisation['Amarida'] = 'concubine'\r",
+      "$npc_preferences['Amarida'] = {\r"
+    ]
+  },
+  {
+    "loc": "#npc_base",
+    "line": 6018,
+    "context": [
+      "$npc_status['Amarida'] = '패션 하우스의 주인 동부 구역'\r",
+      "$npc_alignment['Amarida'] = 'eastkvartal'\r",
+      "$npc_info['Amarida'] = ' 영리하고 겉보기엔 자신감 넘치는 젊은 여자다. 흠잡을 데 없는 태도로 그녀는 사업가 같은 인상을 줄 수 있다… 하지만 이 달콤한 생물이 자기 사업을 꾸릴 수 있다는 건 어쩐지 쉽게 믿기 어렵다. 그리고 그녀의 총명한 머리가 그런 일에 정말 소질이 있는지도 확실치 않다. 보통 이런 숙녀들은 훨씬 더 중요한 일에 바쁘기 마련이다. 경영을 위해서는 언제든 믿고 맡길 수 있는, 특별히 훈련된 사람들이 따로 있으니까.'\r",
+      "demand_rating['Amarida'] = 8\r",
+      "$interesting_specialisation['Amarida'] = 'concubine'\r",
+      "$npc_preferences['Amarida'] = {\r",
+      "stat_importance['intellect'] > 3\r",
+      "stat_importance['expression'] > 4\r"
+    ]
+  },
+  {
+    "loc": "#npc_base",
+    "line": 6019,
+    "context": [
+      "$npc_alignment['Amarida'] = 'eastkvartal'\r",
+      "$npc_info['Amarida'] = ' 영리하고 겉보기엔 자신감 넘치는 젊은 여자다. 흠잡을 데 없는 태도로 그녀는 사업가 같은 인상을 줄 수 있다… 하지만 이 달콤한 생물이 자기 사업을 꾸릴 수 있다는 건 어쩐지 쉽게 믿기 어렵다. 그리고 그녀의 총명한 머리가 그런 일에 정말 소질이 있는지도 확실치 않다. 보통 이런 숙녀들은 훨씬 더 중요한 일에 바쁘기 마련이다. 경영을 위해서는 언제든 믿고 맡길 수 있는, 특별히 훈련된 사람들이 따로 있으니까.'\r",
+      "demand_rating['Amarida'] = 8\r",
+      "$interesting_specialisation['Amarida'] = 'concubine'\r",
+      "$npc_preferences['Amarida'] = {\r",
+      "stat_importance['intellect'] > 3\r",
+      "stat_importance['expression'] > 4\r",
+      "stat_importance['calisthenics'] > 4\r"
+    ]
+  },
+  {
+    "loc": "#npc_base",
+    "line": 6030,
+    "context": [
+      "stat_importance['orgy'] > 3\r",
+      "stat_importance['roleplay'] > 3\r",
+      "}\r",
+      "$buyer_demand['Amarida'] = {\r",
+      "demand['min_beauty'] = 4\r",
+      "demand['refuse_age'] = 1\r",
+      "demand['refuse_age'] = 2\r",
+      "demand['max_fat'] ! 99\r"
+    ]
+  },
+  {
+    "loc": "#npc_base",
+    "line": 6046,
+    "context": [
+      "$Amarida_pref[6] = '[아마리다]<br>&nbsp;그래서 난 그의 정신을 흐리게 할 수 있는 <b>젊은</b> 여자가 필요해. 난 특별한 건 필요 없어. 그저 <font color=\"#008080\"><b>놀라운 첩</b></font> 하나를 손에 넣고 싶을 뿐이야, 도저히 <font color=\"#008000\"><b>눈을 뗄 수 없을</b></font> 정도의. 그리고 무엇보다 그녀는 우선 모델이 될 테니, 당연히 자기 몸을 <font color=\"#008000\"><b>완벽하게 통제할 줄 알고</b></font>, <font color=\"#008080\"><b>충분히 교육받았으며</b></font>, 완벽한 <font color=\"#008000\"><b>예절 규범</b></font>을 갖추고 있어야 해.'\r",
+      "$Amarida_pref[7] = '[아마리다]<br>&nbsp;그리고 가장 중요한 건, <b>문신도 피어싱도 안 된다는 거야</b>. 몸에 새긴 어떤 장식도 언제나 어울리는 건 아니니까... 내가 필요한 건 이게 전부인 것 같네... 그리고 제발, 내가 필요로 하는 여자애를 준비하는 걸 미루지 마! 알겠지, 난... \"대디\"가 가끔 날 쓰는 건 익숙해... 하지만 내 사랑을 내 눈앞에서 그가 박는 건 정말 보고 싶지 않거든.'\r",
+      "$Amarida_pref[8] = '[아마리다]<br>&nbsp;난 질투가 엄청 심한 여자야. 내 것을 누구와도 나눌 생각은 없어. 그리고 내가 원하는 여자애를 더 빨리 손에 넣을수록, 더 빨리 \"대디\"와 흥정할 수 있고, 더 빨리 내 마리슈카를 온전히 내 것으로 만들 수 있어. 그러면 우린 서로에게만 속하게 되겠지... 그렇지, 내 사랑?... 흐음! 흐음! <<$master_name>>, 그리고 그다음엔, 허락해 준다면 우린 당신 없이 지내 볼게. 나중에 봐!'\r",
+      "$buy_quote['Amarida'] = '[대디]<br>&nbsp;와! 얘 정말 끝내준다! 아마리다, 이 여자애를 내 걸로 만들어! 당장!!!<br>[아마리다]<br>&nbsp;<<$master_name>>... 당신도 직접 다 들었잖아. 난 \"대디\"를 거절할 수 없어!... 그리고, 응... 정말 고마워! 이제 내 사랑하는 여자를 누구와도 나누지 않아도 되길 바랄게!.'\r",
+      "$refuse_skill_quote['Amarida'] = '[아마리다]<br>&nbsp;해야 할 일을 하도록 훈련도 안 되어 있는데, 내가 왜 그녀를 필요로 하지?'\r",
+      "$refuse_level_quote['Amarida'] = '[아마리다]<br>&nbsp;더 나은 상품은 못 구하겠어? 이건 이 돈을 받을 만한 수준이 아니야.'\r",
+      "$refuse_charm_quote['Amarida'] = '[아마리다]<br>&nbsp;흐음.... 모르겠네. 형식상으론 맞지만, 그다지 보기 좋진 않아. 내 시선을 끌지 못해.'\r",
+      "$refuse_health_quote['Amarida'] = '[아마리다]<br>&nbsp;뭘 나한테 팔아넘기려는 거야? 얘는 건강해 보이지도 않고, 무슨 일이든 할 만한 힘이 있어 보이지도 않잖아.'\r"
+    ]
+  },
+  {
+    "loc": "#npc_base",
+    "line": 6047,
+    "context": [
+      "$Amarida_pref[7] = '[아마리다]<br>&nbsp;그리고 가장 중요한 건, <b>문신도 피어싱도 안 된다는 거야</b>. 몸에 새긴 어떤 장식도 언제나 어울리는 건 아니니까... 내가 필요한 건 이게 전부인 것 같네... 그리고 제발, 내가 필요로 하는 여자애를 준비하는 걸 미루지 마! 알겠지, 난... \"대디\"가 가끔 날 쓰는 건 익숙해... 하지만 내 사랑을 내 눈앞에서 그가 박는 건 정말 보고 싶지 않거든.'\r",
+      "$Amarida_pref[8] = '[아마리다]<br>&nbsp;난 질투가 엄청 심한 여자야. 내 것을 누구와도 나눌 생각은 없어. 그리고 내가 원하는 여자애를 더 빨리 손에 넣을수록, 더 빨리 \"대디\"와 흥정할 수 있고, 더 빨리 내 마리슈카를 온전히 내 것으로 만들 수 있어. 그러면 우린 서로에게만 속하게 되겠지... 그렇지, 내 사랑?... 흐음! 흐음! <<$master_name>>, 그리고 그다음엔, 허락해 준다면 우린 당신 없이 지내 볼게. 나중에 봐!'\r",
+      "$buy_quote['Amarida'] = '[대디]<br>&nbsp;와! 얘 정말 끝내준다! 아마리다, 이 여자애를 내 걸로 만들어! 당장!!!<br>[아마리다]<br>&nbsp;<<$master_name>>... 당신도 직접 다 들었잖아. 난 \"대디\"를 거절할 수 없어!... 그리고, 응... 정말 고마워! 이제 내 사랑하는 여자를 누구와도 나누지 않아도 되길 바랄게!.'\r",
+      "$refuse_skill_quote['Amarida'] = '[아마리다]<br>&nbsp;해야 할 일을 하도록 훈련도 안 되어 있는데, 내가 왜 그녀를 필요로 하지?'\r",
+      "$refuse_level_quote['Amarida'] = '[아마리다]<br>&nbsp;더 나은 상품은 못 구하겠어? 이건 이 돈을 받을 만한 수준이 아니야.'\r",
+      "$refuse_charm_quote['Amarida'] = '[아마리다]<br>&nbsp;흐음.... 모르겠네. 형식상으론 맞지만, 그다지 보기 좋진 않아. 내 시선을 끌지 못해.'\r",
+      "$refuse_health_quote['Amarida'] = '[아마리다]<br>&nbsp;뭘 나한테 팔아넘기려는 거야? 얘는 건강해 보이지도 않고, 무슨 일이든 할 만한 힘이 있어 보이지도 않잖아.'\r",
+      "$refuse_pregnant_quote['Amarida'] = '[아마리다]<br>&nbsp;임신했다고?! 제정신이야, <<$master_name>>?'\r"
+    ]
+  },
+  {
+    "loc": "#npc_base",
+    "line": 6048,
+    "context": [
+      "$Amarida_pref[8] = '[아마리다]<br>&nbsp;난 질투가 엄청 심한 여자야. 내 것을 누구와도 나눌 생각은 없어. 그리고 내가 원하는 여자애를 더 빨리 손에 넣을수록, 더 빨리 \"대디\"와 흥정할 수 있고, 더 빨리 내 마리슈카를 온전히 내 것으로 만들 수 있어. 그러면 우린 서로에게만 속하게 되겠지... 그렇지, 내 사랑?... 흐음! 흐음! <<$master_name>>, 그리고 그다음엔, 허락해 준다면 우린 당신 없이 지내 볼게. 나중에 봐!'\r",
+      "$buy_quote['Amarida'] = '[대디]<br>&nbsp;와! 얘 정말 끝내준다! 아마리다, 이 여자애를 내 걸로 만들어! 당장!!!<br>[아마리다]<br>&nbsp;<<$master_name>>... 당신도 직접 다 들었잖아. 난 \"대디\"를 거절할 수 없어!... 그리고, 응... 정말 고마워! 이제 내 사랑하는 여자를 누구와도 나누지 않아도 되길 바랄게!.'\r",
+      "$refuse_skill_quote['Amarida'] = '[아마리다]<br>&nbsp;해야 할 일을 하도록 훈련도 안 되어 있는데, 내가 왜 그녀를 필요로 하지?'\r",
+      "$refuse_level_quote['Amarida'] = '[아마리다]<br>&nbsp;더 나은 상품은 못 구하겠어? 이건 이 돈을 받을 만한 수준이 아니야.'\r",
+      "$refuse_charm_quote['Amarida'] = '[아마리다]<br>&nbsp;흐음.... 모르겠네. 형식상으론 맞지만, 그다지 보기 좋진 않아. 내 시선을 끌지 못해.'\r",
+      "$refuse_health_quote['Amarida'] = '[아마리다]<br>&nbsp;뭘 나한테 팔아넘기려는 거야? 얘는 건강해 보이지도 않고, 무슨 일이든 할 만한 힘이 있어 보이지도 않잖아.'\r",
+      "$refuse_pregnant_quote['Amarida'] = '[아마리다]<br>&nbsp;임신했다고?! 제정신이야, <<$master_name>>?'\r",
+      "$refuse_again_quote['Amarida'] = '[아마리다]<br>&nbsp;안 된다는 건 안 되는 거야!'\r"
+    ]
+  },
+  {
+    "loc": "#npc_base",
+    "line": 6049,
+    "context": [
+      "$buy_quote['Amarida'] = '[대디]<br>&nbsp;와! 얘 정말 끝내준다! 아마리다, 이 여자애를 내 걸로 만들어! 당장!!!<br>[아마리다]<br>&nbsp;<<$master_name>>... 당신도 직접 다 들었잖아. 난 \"대디\"를 거절할 수 없어!... 그리고, 응... 정말 고마워! 이제 내 사랑하는 여자를 누구와도 나누지 않아도 되길 바랄게!.'\r",
+      "$refuse_skill_quote['Amarida'] = '[아마리다]<br>&nbsp;해야 할 일을 하도록 훈련도 안 되어 있는데, 내가 왜 그녀를 필요로 하지?'\r",
+      "$refuse_level_quote['Amarida'] = '[아마리다]<br>&nbsp;더 나은 상품은 못 구하겠어? 이건 이 돈을 받을 만한 수준이 아니야.'\r",
+      "$refuse_charm_quote['Amarida'] = '[아마리다]<br>&nbsp;흐음.... 모르겠네. 형식상으론 맞지만, 그다지 보기 좋진 않아. 내 시선을 끌지 못해.'\r",
+      "$refuse_health_quote['Amarida'] = '[아마리다]<br>&nbsp;뭘 나한테 팔아넘기려는 거야? 얘는 건강해 보이지도 않고, 무슨 일이든 할 만한 힘이 있어 보이지도 않잖아.'\r",
+      "$refuse_pregnant_quote['Amarida'] = '[아마리다]<br>&nbsp;임신했다고?! 제정신이야, <<$master_name>>?'\r",
+      "$refuse_again_quote['Amarida'] = '[아마리다]<br>&nbsp;안 된다는 건 안 되는 거야!'\r",
+      "$refuse_special_quote['Amarida'] = '[아마리다]<br>&nbsp;내 특별 요구 조건은 어쩌고?! 난 그녀를 받지 않을 거야!'\r"
+    ]
+  },
+  {
+    "loc": "#npc_base",
+    "line": 6050,
+    "context": [
+      "$refuse_skill_quote['Amarida'] = '[아마리다]<br>&nbsp;해야 할 일을 하도록 훈련도 안 되어 있는데, 내가 왜 그녀를 필요로 하지?'\r",
+      "$refuse_level_quote['Amarida'] = '[아마리다]<br>&nbsp;더 나은 상품은 못 구하겠어? 이건 이 돈을 받을 만한 수준이 아니야.'\r",
+      "$refuse_charm_quote['Amarida'] = '[아마리다]<br>&nbsp;흐음.... 모르겠네. 형식상으론 맞지만, 그다지 보기 좋진 않아. 내 시선을 끌지 못해.'\r",
+      "$refuse_health_quote['Amarida'] = '[아마리다]<br>&nbsp;뭘 나한테 팔아넘기려는 거야? 얘는 건강해 보이지도 않고, 무슨 일이든 할 만한 힘이 있어 보이지도 않잖아.'\r",
+      "$refuse_pregnant_quote['Amarida'] = '[아마리다]<br>&nbsp;임신했다고?! 제정신이야, <<$master_name>>?'\r",
+      "$refuse_again_quote['Amarida'] = '[아마리다]<br>&nbsp;안 된다는 건 안 되는 거야!'\r",
+      "$refuse_special_quote['Amarida'] = '[아마리다]<br>&nbsp;내 특별 요구 조건은 어쩌고?! 난 그녀를 받지 않을 거야!'\r",
+      "! JO9 MOD END J9M1934\r"
+    ]
+  },
+  {
+    "loc": "#npc_base",
+    "line": 6051,
+    "context": [
+      "$refuse_level_quote['Amarida'] = '[아마리다]<br>&nbsp;더 나은 상품은 못 구하겠어? 이건 이 돈을 받을 만한 수준이 아니야.'\r",
+      "$refuse_charm_quote['Amarida'] = '[아마리다]<br>&nbsp;흐음.... 모르겠네. 형식상으론 맞지만, 그다지 보기 좋진 않아. 내 시선을 끌지 못해.'\r",
+      "$refuse_health_quote['Amarida'] = '[아마리다]<br>&nbsp;뭘 나한테 팔아넘기려는 거야? 얘는 건강해 보이지도 않고, 무슨 일이든 할 만한 힘이 있어 보이지도 않잖아.'\r",
+      "$refuse_pregnant_quote['Amarida'] = '[아마리다]<br>&nbsp;임신했다고?! 제정신이야, <<$master_name>>?'\r",
+      "$refuse_again_quote['Amarida'] = '[아마리다]<br>&nbsp;안 된다는 건 안 되는 거야!'\r",
+      "$refuse_special_quote['Amarida'] = '[아마리다]<br>&nbsp;내 특별 요구 조건은 어쩌고?! 난 그녀를 받지 않을 거야!'\r",
+      "! JO9 MOD END J9M1934\r",
+      "\r"
+    ]
+  },
+  {
+    "loc": "#npc_base",
+    "line": 6052,
+    "context": [
+      "$refuse_charm_quote['Amarida'] = '[아마리다]<br>&nbsp;흐음.... 모르겠네. 형식상으론 맞지만, 그다지 보기 좋진 않아. 내 시선을 끌지 못해.'\r",
+      "$refuse_health_quote['Amarida'] = '[아마리다]<br>&nbsp;뭘 나한테 팔아넘기려는 거야? 얘는 건강해 보이지도 않고, 무슨 일이든 할 만한 힘이 있어 보이지도 않잖아.'\r",
+      "$refuse_pregnant_quote['Amarida'] = '[아마리다]<br>&nbsp;임신했다고?! 제정신이야, <<$master_name>>?'\r",
+      "$refuse_again_quote['Amarida'] = '[아마리다]<br>&nbsp;안 된다는 건 안 되는 거야!'\r",
+      "$refuse_special_quote['Amarida'] = '[아마리다]<br>&nbsp;내 특별 요구 조건은 어쩌고?! 난 그녀를 받지 않을 거야!'\r",
+      "! JO9 MOD END J9M1934\r",
+      "\r",
+      "$npc_image['valentina1'] = 'valentina1'\r"
+    ]
+  },
+  {
+    "loc": "#npc_base",
+    "line": 6053,
+    "context": [
+      "$refuse_health_quote['Amarida'] = '[아마리다]<br>&nbsp;뭘 나한테 팔아넘기려는 거야? 얘는 건강해 보이지도 않고, 무슨 일이든 할 만한 힘이 있어 보이지도 않잖아.'\r",
+      "$refuse_pregnant_quote['Amarida'] = '[아마리다]<br>&nbsp;임신했다고?! 제정신이야, <<$master_name>>?'\r",
+      "$refuse_again_quote['Amarida'] = '[아마리다]<br>&nbsp;안 된다는 건 안 되는 거야!'\r",
+      "$refuse_special_quote['Amarida'] = '[아마리다]<br>&nbsp;내 특별 요구 조건은 어쩌고?! 난 그녀를 받지 않을 거야!'\r",
+      "! JO9 MOD END J9M1934\r",
+      "\r",
+      "$npc_image['valentina1'] = 'valentina1'\r",
+      "$npc_name['valentina1'] = '발렌티나'\r"
+    ]
+  },
+  {
+    "loc": "#npc_base_woman",
+    "line": 7014,
+    "context": [
+      "$Kaleriya_pref[5] = '  [Калерия]\r",
+      "  - А вот <font color=\"#4B0082\"><b>её дырочки не стоит портить</b></font>! Девственницу, конечно, в таком возрасте мне не найти, но очень важно, чтобы рабыня с первого раза понимала всё. И большой член в узенькой дырке - самый доходчивый способ объяснить всё и настроить девочку на рабочий лад... Вот теперь, точно всё... Это ведь несложная задача для Вас?!  '\r",
+      "!Модный дом\r",
+      "$npc_image['Amarida'] = 'Amarida'\r",
+      "$npc_name['Amarida'] = 'Амарида'\r",
+      "$npc_status['Amarida'] = 'Хозяйка «Модного дома»\r",
+      "(Восточный квартал)'\r",
+      "$npc_alignment['Amarida'] = 'eastkvartal'\r"
+    ]
+  },
+  {
+    "loc": "#npc_base_woman",
+    "line": 7018,
+    "context": [
+      "$npc_name['Amarida'] = 'Амарида'\r",
+      "$npc_status['Amarida'] = 'Хозяйка «Модного дома»\r",
+      "(Восточный квартал)'\r",
+      "$npc_alignment['Amarida'] = 'eastkvartal'\r",
+      "$npc_info['Amarida'] = ' Умная, и внешне уверенная в себе молодая девушка. Своим безупречным поведением может создать впечатление деловой женщины... Но как-то с трудом верится, что это милое создание способно самостоятельно вести дела. И далеко не факт, что её \"светлая\" головка предрасположена к этому. Обычно у таких леди есть дела куда более важные... А для руководства есть специально обученные люди, на которых можно положиться в любой момент... '\r",
+      "demand_rating['Amarida'] = 8\r",
+      "$interesting_specialisation['Amarida'] = 'concubine'\r",
+      "$npc_preferences['Amarida'] = {\r"
+    ]
+  },
+  {
+    "loc": "#npc_base_woman",
+    "line": 7020,
+    "context": [
+      "(Восточный квартал)'\r",
+      "$npc_alignment['Amarida'] = 'eastkvartal'\r",
+      "$npc_info['Amarida'] = ' Умная, и внешне уверенная в себе молодая девушка. Своим безупречным поведением может создать впечатление деловой женщины... Но как-то с трудом верится, что это милое создание способно самостоятельно вести дела. И далеко не факт, что её \"светлая\" головка предрасположена к этому. Обычно у таких леди есть дела куда более важные... А для руководства есть специально обученные люди, на которых можно положиться в любой момент... '\r",
+      "demand_rating['Amarida'] = 8\r",
+      "$interesting_specialisation['Amarida'] = 'concubine'\r",
+      "$npc_preferences['Amarida'] = {\r",
+      "stat_importance['intellect'] > 3\r",
+      "stat_importance['expression'] > 4\r"
+    ]
+  },
+  {
+    "loc": "#npc_base_woman",
+    "line": 7021,
+    "context": [
+      "$npc_alignment['Amarida'] = 'eastkvartal'\r",
+      "$npc_info['Amarida'] = ' Умная, и внешне уверенная в себе молодая девушка. Своим безупречным поведением может создать впечатление деловой женщины... Но как-то с трудом верится, что это милое создание способно самостоятельно вести дела. И далеко не факт, что её \"светлая\" головка предрасположена к этому. Обычно у таких леди есть дела куда более важные... А для руководства есть специально обученные люди, на которых можно положиться в любой момент... '\r",
+      "demand_rating['Amarida'] = 8\r",
+      "$interesting_specialisation['Amarida'] = 'concubine'\r",
+      "$npc_preferences['Amarida'] = {\r",
+      "stat_importance['intellect'] > 3\r",
+      "stat_importance['expression'] > 4\r",
+      "stat_importance['calisthenics'] > 4\r"
+    ]
+  },
+  {
+    "loc": "#npc_base_woman",
+    "line": 7032,
+    "context": [
+      "stat_importance['orgy'] > 3\r",
+      "stat_importance['roleplay'] > 3\r",
+      "}\r",
+      "$buyer_demand['Amarida'] = {\r",
+      "demand['min_beauty'] = 4\r",
+      "demand['refuse_age'] = 1\r",
+      "demand['refuse_age'] = 2\r",
+      "demand['max_fat'] ! 99\r"
+    ]
+  },
+  {
+    "loc": "#npc_base_woman",
+    "line": 7055,
+    "context": [
+      "  - И самое главное, <b>никаких тату и пирсинга</b>. Всякие художества на её теле будут не всегда уместны... Вот, вроде бы и всё, что мне нужно... И, пожалуйста, не затягивайте с подготовкой нужной мне девочки! Ладно я... Я привыкла к тому, что \"папочка\" иногда пользуется мной... А вот смотреть на то, как он трахает мою любимую у меня же на глазах, мне не очень хочется... '\r",
+      "$Amarida_pref[8] = '  [Амарида]\r",
+      "  - Я жутко ревнивая девочка и своим делиться я не намерена ни с кем. И чем раньше у меня появится нужная девочка, тем быстрее я смогу с \"папочкой\" поторговаться и тем быстрее моя Маришка станет только моей. И тогда мы будем принадлежать только друг-другу... Правда, любимая?... Хм! Хм! <<$master_name>>, а дальше, с Вашего позволения, мы обойдёмся без Вас. До встречи!...  '\r",
+      "$buy_quote['Amarida'] = '   [Папочка]\r",
+      "   - Ух ты! Хороша! Амарида, сделай так, чтобы эта девочка была моей! Немедленно!!! \r",
+      "     [Амарида]\r",
+      "   - <<$master_name>>... Вы сами всё слышали. И я не могу отказать \"папочке\"!... И, да... Огромное Вам спасибо! Надеюсь, теперь я не буду делить свою любимую девочку ни с кем!... '\r",
+      "$refuse_skill_quote['Amarida'] = '   [Амарида]\r"
+    ]
+  },
+  {
+    "loc": "#npc_base_woman",
+    "line": 7059,
+    "context": [
+      "   - Ух ты! Хороша! Амарида, сделай так, чтобы эта девочка была моей! Немедленно!!! \r",
+      "     [Амарида]\r",
+      "   - <<$master_name>>... Вы сами всё слышали. И я не могу отказать \"папочке\"!... И, да... Огромное Вам спасибо! Надеюсь, теперь я не буду делить свою любимую девочку ни с кем!... '\r",
+      "$refuse_skill_quote['Amarida'] = '   [Амарида]\r",
+      "   - И зачем она мне если она не обучена делать то что требуется?'\r",
+      "$refuse_level_quote['Amarida'] = '   [Амарида]\r",
+      "   - А товара получше не найдётся? Эта не достаточно хороша за такие деньги.'\r",
+      "$refuse_charm_quote['Amarida'] = '   [Амарида]\r"
+    ]
+  },
+  {
+    "loc": "#npc_base_woman",
+    "line": 7061,
+    "context": [
+      "   - <<$master_name>>... Вы сами всё слышали. И я не могу отказать \"папочке\"!... И, да... Огромное Вам спасибо! Надеюсь, теперь я не буду делить свою любимую девочку ни с кем!... '\r",
+      "$refuse_skill_quote['Amarida'] = '   [Амарида]\r",
+      "   - И зачем она мне если она не обучена делать то что требуется?'\r",
+      "$refuse_level_quote['Amarida'] = '   [Амарида]\r",
+      "   - А товара получше не найдётся? Эта не достаточно хороша за такие деньги.'\r",
+      "$refuse_charm_quote['Amarida'] = '   [Амарида]\r",
+      "   - Нуууу.... не знаю. Формально вроде подходит, но какая-то она непрезентабельная. Не цепляет.'\r",
+      "$refuse_health_quote['Amarida'] = '   [Амарида]\r"
+    ]
+  },
+  {
+    "loc": "#npc_base_woman",
+    "line": 7063,
+    "context": [
+      "   - И зачем она мне если она не обучена делать то что требуется?'\r",
+      "$refuse_level_quote['Amarida'] = '   [Амарида]\r",
+      "   - А товара получше не найдётся? Эта не достаточно хороша за такие деньги.'\r",
+      "$refuse_charm_quote['Amarida'] = '   [Амарида]\r",
+      "   - Нуууу.... не знаю. Формально вроде подходит, но какая-то она непрезентабельная. Не цепляет.'\r",
+      "$refuse_health_quote['Amarida'] = '   [Амарида]\r",
+      "   - Что это Вы пытаетесь мне впарить? Она выглядит нездоровой, да и не похоже, что у неё хватит сил для какой-то работы.'\r",
+      "$refuse_pregnant_quote['Amarida'] = '   [Амарида]\r"
+    ]
+  },
+  {
+    "loc": "#npc_base_woman",
+    "line": 7065,
+    "context": [
+      "   - А товара получше не найдётся? Эта не достаточно хороша за такие деньги.'\r",
+      "$refuse_charm_quote['Amarida'] = '   [Амарида]\r",
+      "   - Нуууу.... не знаю. Формально вроде подходит, но какая-то она непрезентабельная. Не цепляет.'\r",
+      "$refuse_health_quote['Amarida'] = '   [Амарида]\r",
+      "   - Что это Вы пытаетесь мне впарить? Она выглядит нездоровой, да и не похоже, что у неё хватит сил для какой-то работы.'\r",
+      "$refuse_pregnant_quote['Amarida'] = '   [Амарида]\r",
+      "   - Беременная?! Вы в своём уме, <<$master_name>>? '\r",
+      "$refuse_again_quote['Amarida'] = '   [Амарида]\r"
+    ]
+  },
+  {
+    "loc": "#npc_base_woman",
+    "line": 7067,
+    "context": [
+      "   - Нуууу.... не знаю. Формально вроде подходит, но какая-то она непрезентабельная. Не цепляет.'\r",
+      "$refuse_health_quote['Amarida'] = '   [Амарида]\r",
+      "   - Что это Вы пытаетесь мне впарить? Она выглядит нездоровой, да и не похоже, что у неё хватит сил для какой-то работы.'\r",
+      "$refuse_pregnant_quote['Amarida'] = '   [Амарида]\r",
+      "   - Беременная?! Вы в своём уме, <<$master_name>>? '\r",
+      "$refuse_again_quote['Amarida'] = '   [Амарида]\r",
+      "   - Нет значит нет!'\r",
+      "$refuse_special_quote['Amarida'] = '   [Амарида]\r"
+    ]
+  },
+  {
+    "loc": "#npc_base_woman",
+    "line": 7069,
+    "context": [
+      "   - Что это Вы пытаетесь мне впарить? Она выглядит нездоровой, да и не похоже, что у неё хватит сил для какой-то работы.'\r",
+      "$refuse_pregnant_quote['Amarida'] = '   [Амарида]\r",
+      "   - Беременная?! Вы в своём уме, <<$master_name>>? '\r",
+      "$refuse_again_quote['Amarida'] = '   [Амарида]\r",
+      "   - Нет значит нет!'\r",
+      "$refuse_special_quote['Amarida'] = '   [Амарида]\r",
+      "   - А как же мои особые требования?! Не буду её брать!'\r",
+      "\r"
+    ]
+  },
+  {
+    "loc": "#npc_base_woman",
+    "line": 7071,
+    "context": [
+      "   - Беременная?! Вы в своём уме, <<$master_name>>? '\r",
+      "$refuse_again_quote['Amarida'] = '   [Амарида]\r",
+      "   - Нет значит нет!'\r",
+      "$refuse_special_quote['Amarida'] = '   [Амарида]\r",
+      "   - А как же мои особые требования?! Не буду её брать!'\r",
+      "\r",
+      "$npc_image['valentina2'] = 'valentina2'\r",
+      "$npc_name['valentina2'] = 'Валентина'\r"
+    ]
+  }
+]

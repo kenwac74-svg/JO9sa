@@ -1,0 +1,12 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),core=require('G:/somi/JO9sa/tools/text-workshop/core.cjs'),syntax=require('G:/somi/JO9sa/tools/text-workshop/check-image-cycle-syntax.cjs');
+const file='G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp',raw=fs.readFileSync(file),doc=core.parse(raw),loc=doc.locations.find(l=>l.name==='next_day'),body=core.shift(doc.lines[loc.body],5),nl=body.includes('\r\n')?'\r\n':'\n';
+const patchId='HUMILITY_WORN_SHOCK_COLLAR_20261117',old="\t\t\tif slave['force_rules'] = 1 and inventory['shock_collar'] > 0:",changed="\t\t\tif slave['force_rules'] = 1 and $slave['collar'] = 'shock_collar':";
+assert.equal(body.split(old).length-1,1,'exact affected gate');
+const replacement=['\t\t\t! JO9 MOD START '+patchId,changed,'\t\t\t! JO9 MOD END '+patchId].join(nl),next=body.replace(old,replacement),candidate={...doc,lines:doc.lines.slice()};candidate.lines[loc.body]=core.shift(next,-5);const after=core.serialize(candidate),checked=core.parse(after);
+assert(core.serialize(checked).equals(after));assert.equal(checked.locations.length,doc.locations.length);checked.lines.forEach((line,i)=>{if(i!==loc.body)assert.equal(line,doc.lines[i]);});
+const beforeSyntax=syntax.checkSyntax(body,{normalizeEol:true}),afterSyntax=syntax.checkSyntax(next,{normalizeEol:true});assert.equal(afterSyntax.errors.length,beforeSyntax.errors.length,'no new static syntax issues');
+const mod={id:'2026-11-17_humility_worn_shock_collar',description:'겸손 규칙의 강제 도구 판정을 실제 주 노예의 전기 목줄 착용 상태로 맞춘다.',target:'game\\jack.qsp',before_sha256:core.hash(raw).toUpperCase(),after_sha256:core.hash(after).toUpperCase(),edits:[{location:'next_day',field:'body',old,new:replacement,count:1,patchId}]};
+fs.writeFileSync(path.join(__dirname,'candidate-mod.json'),JSON.stringify(mod,null,2)+'\n');
+const verification={status:'CANDIDATE_ONLY',source:file,before:core.hash(raw),after:core.hash(after),locations:doc.locations.length,modifiedFields:['next_day.body'],edits:1,addedPermanentVariables:0,saveMigration:false,cachedItemTemplatesChanged:false,baselineStaticErrors:beforeSyntax.errors.length,candidateStaticErrors:afterSyntax.errors.length,parseRoundtrip:true,unchangedOtherFields:true,minimumCondition:{old:old.trim(),new:changed.trim()},candidateQspWritten:false,productionWrites:false};
+fs.writeFileSync(path.join(__dirname,'candidate-static.json'),JSON.stringify(verification,null,2)+'\n');console.log(JSON.stringify(verification));

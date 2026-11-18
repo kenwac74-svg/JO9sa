@@ -1,0 +1,12 @@
+'use strict';
+const fs=require('fs'),path=require('path'),cp=require('child_process'),assert=require('assert/strict');
+const core=require('G:/somi/JO9sa/tools/text-workshop/core.cjs');
+const H=__dirname,R='G:/somi/JO9sa',GAME='G:/somi/Jack O Nine Tails v2.4_work/game';
+function body(d,n){const l=d.locations.find(x=>x.name===n);assert(l,'Missing '+n);return core.shift(d.lines[l.body],5);}
+function source(){const zip=process.env.JO9_HUM_SOURCE_ZIP||[H+'/source/jack22-source.zip','G:/somi/JO922/jack2.2.zip'].find(p=>fs.existsSync(p));assert(zip,'Original ZIP required');const z=fs.readFileSync(zip);assert.equal(core.hash(z),'242154fd97e49c0aad702740f0a6d2dc4aeaa651aad08fad3587aa7e4d17f2c7');const raw=cp.execFileSync('py',['-3','-c','import sys,zipfile;sys.stdout.buffer.write(zipfile.ZipFile(sys.argv[1]).read("jack.qsp"))',zip],{maxBuffer:16*1024*1024});assert.equal(core.hash(raw),'a936d0022fd9132ccb374405e915f27c49e6d94cd6179a097bd6c89f692d114e');return core.parse(raw.toString('utf16le').endsWith('\r\n')?raw:Buffer.concat([raw,Buffer.from('\r\n','utf16le')]));}
+function block(s){const start=s.indexOf('!HUMILIATION LESSONS'),end=s.indexOf('! Variable Text',start);assert(start>=0&&end>start);return s.slice(start,end);}
+const assignment=/^([ \t]*\$hum_text([1-8])(?:\[hum_cnt\])?\s*=\s*)(.*)$/;
+function assignments(s){return s.split('\r\n').flatMap((line,i)=>{const m=line.match(assignment);return m?[{line:i+1,field:Number(m[2]),rhs:m[3]}]:[]});}
+function encode(bodies){const lines=['QSPGAME','','',core.shift(String(bodies.size),-5)];for(const[n,b]of bodies)lines.push(core.shift(n,-5),'',core.shift(b.replace(/\r?\n/g,'\r\n'),-5),core.shift('0',-5));lines.push('');return Buffer.from(lines.join('\r\n'),'utf16le');}
+function apply(raw,p){const d=core.parse(raw),lines=d.lines.slice();assert.equal(d.hash,p.before_sha256);for(const e of p.edits){const l=d.locations.find(x=>x.name===e.location),b=core.shift(lines[l.body],5);assert.equal(b.split(e.old).length-1,e.count,e.location);lines[l.body]=core.shift(b.replace(e.old,e.new),-5);}for(const l of p.add_locations||[]){assert(!d.locations.some(x=>x.name===l.name));lines.splice(lines.length-1,0,core.shift(l.name,-5),'',core.shift(l.body,-5),core.shift('0',-5));}lines[3]=core.shift(String(d.locations.length+(p.add_locations||[]).length),-5);return Buffer.from(lines.join('\r\n'),'utf16le');}
+module.exports={fs,path,cp,assert,core,H,R,GAME,body,source,block,assignment,assignments,encode,apply};

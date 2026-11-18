@@ -1,0 +1,30 @@
+! JO9 MOD START CHARACTER_BACKGROUND_CLASSIFICATION_20261118
+! Canonical classification only. Lore, numeric hierarchy and growth stay unchanged.
+if $args[0]='all':
+ local jo9_bg_i
+ local $jo9_bg_roles
+ copyarr '$jo9_bg_roles','$all_slave_characters'
+ $jo9_bg_roles[]='stock'
+ $jo9_bg_roles[]='snk_parked_slave'
+ jo9_bg_i=0
+ :jo9_bg_all_loop
+ if jo9_bg_i<arrsize('$jo9_bg_roles'):
+  gs 'jo9_character_background','apply',$jo9_bg_roles[jo9_bg_i]
+  jo9_bg_i+=1
+  jump 'jo9_bg_all_loop'
+ end
+ exit
+end
+if $args[0] ! 'apply': exit
+local $jo9_bg_role=$args[1]
+if instr(',slave,assistant,prisoner,cow,room1,room2,room3,room4,farmhand,harpy,pig,iced_1,iced_2,iced_3,iced_4,iced_5,iced_6,iced_7,iced_8,iced_9,iced_10,iced_11,iced_12,iced_13,iced_14,iced_15,iced_16,iced_17,iced_18,stock,snk_parked_slave,',','+$jo9_bg_role+',')=0: exit
+local jo9_bg_id,jo9_bg_state
+jo9_bg_state=dyneval('result=<<$jo9_bg_role>>_state')
+if jo9_bg_state<=0: exit
+jo9_bg_id=dyneval('result=<<$jo9_bg_role>>_type')
+if jo9_bg_id<=0: exit
+if seed_background_fixed[jo9_bg_id] ! 1: exit
+dynamic '$<<$jo9_bg_role>>_world=$seed_world[jo9_bg_id]'
+dynamic '$<<$jo9_bg_role>>_family=$seed_family[jo9_bg_id]'
+dynamic '$<<$jo9_bg_role>>_occupation=$seed_occupation[jo9_bg_id]'
+! JO9 MOD END CHARACTER_BACKGROUND_CLASSIFICATION_20261118

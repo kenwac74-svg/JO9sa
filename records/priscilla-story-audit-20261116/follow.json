@@ -1,0 +1,1922 @@
+[
+  {
+    "location": "menu_form",
+    "line": 4661,
+    "text": "\tif faction_fame['serpis'] <= 2 or npc_progress['pope'] >= 2:\r"
+  },
+  {
+    "location": "menu_form",
+    "line": 4709,
+    "text": "\tif faction_fame['kamira'] <= 2 or npc_progress['pope'] >= 2:\r"
+  },
+  {
+    "location": "menu_form",
+    "line": 4757,
+    "text": "\tif faction_fame['korvus'] <= 2 or npc_progress['pope'] >= 2:\r"
+  },
+  {
+    "location": "menu_form",
+    "line": 4805,
+    "text": "\tif faction_fame['taurus'] <= 2 or npc_progress['pope'] >= 2:\r"
+  },
+  {
+    "location": "city_menu_form",
+    "line": 68,
+    "text": "\tfunc('$menu', 'interaction_city', $menu_item_Vatican, menu_Vatican, '바티칸')\r"
+  },
+  {
+    "location": "city_menu_form",
+    "line": 739,
+    "text": "\tFUNC('$menu', 'interaction_city', $menu_item_fogs_portal, 6217, '포털 지대')\r"
+  },
+  {
+    "location": "city_menu_form",
+    "line": 807,
+    "text": "  IF lost_quest_slave = 0 and lost_quest_slave_jasmine = 0 and active[$event['Akabur_quest']] > 1 and active[$event['Akabur_quest']] < 18: FUNC('$menu', 'interaction_city', $menu_item_Agraba, 3000, '아그라바 포털')\r"
+  },
+  {
+    "location": "city_menu_form",
+    "line": 1154,
+    "text": "  FUNC('$menu', 'interaction_city', $menu_item_fogs_portal, 6217, '포털 지대')\r"
+  },
+  {
+    "location": "generate_stock_maximum_testing",
+    "line": 265,
+    "text": "trophy_vatican = 1\r"
+  },
+  {
+    "location": "$ongload",
+    "line": 405,
+    "text": "! JO9 MOD START VATICAN_PALADIN_SETTING_PANEL_20261102\r"
+  },
+  {
+    "location": "$ongload",
+    "line": 407,
+    "text": "if $curloc = 'shop_general' and $place = 'fogs_battle1' and interaction_city = 6215 and get_weapon = 0 and (skip_to = 6215 or sp_txt = 6215) and $враг[1] = 'vatican_paladin': gt 'shop_general'\r"
+  },
+  {
+    "location": "$ongload",
+    "line": 408,
+    "text": "! JO9 MOD END VATICAN_PALADIN_SETTING_PANEL_20261102\r"
+  },
+  {
+    "location": "$ongload",
+    "line": 409,
+    "text": "! JO9 MOD START PORTAL_GUARDIAN_SETTING_PANEL_20261102 | 2026-11-02_portal_guardian_setting_panel\r"
+  },
+  {
+    "location": "$ongload",
+    "line": 412,
+    "text": "! JO9 MOD END PORTAL_GUARDIAN_SETTING_PANEL_20261102\r"
+  },
+  {
+    "location": "$city_random_event",
+    "line": 37,
+    "text": "\t\tjulia_start = -1 &! disable repetition of letter event and signal interaction_city (Vatican gate, id 16) and $quest_list (to display a reminder in objectives tab)\r"
+  },
+  {
+    "location": "$city_random_event",
+    "line": 45,
+    "text": "\t\t\t'  교황 이오안 1세의 비서'\r"
+  },
+  {
+    "location": "$gladiator_setup",
+    "line": 55,
+    "text": "\t\t!Added code to have the Vatican Champion appear sooner to help avoid the Vatican Champion damage bug - crushboss (disabled by ImperatorAugustus)\r"
+  },
+  {
+    "location": "$gladiator_setup",
+    "line": 56,
+    "text": "\t\t!if trophy_vatican = 0 and a ! 5:\r"
+  },
+  {
+    "location": "$gladiator_setup",
+    "line": 65,
+    "text": "\t\tif a = 5: $ge = 'champion_vatican'\r"
+  },
+  {
+    "location": "slave_sell_chek",
+    "line": 116,
+    "text": " if npc_progress['pope'] = 1:\r"
+  },
+  {
+    "location": "slave_sell_chek",
+    "line": 117,
+    "text": "  if jo9_goal_listing = 1: $result += '<a href=\"EXEC: quest_description_mode = 2 & jo9_goal_selected_scene = 1621 & gt $curloc\">바티칸의 교황 이오안 1세</a><br>'\r"
+  },
+  {
+    "location": "slave_sell_chek",
+    "line": 462,
+    "text": " if instr($jo9_goal_saved, '성하 교황 이오안 1세  / 바티칸 소속') > 0: result = 1621 & exit\r"
+  },
+  {
+    "location": "slave_sell_chek",
+    "line": 529,
+    "text": "  if jo9_goal_read_scene = 1621: $jo9_goal_offer_source = '$pope_pref' & $jo9_goal_offer_title = '바티칸의 교황 이오안 1세'\r"
+  },
+  {
+    "location": "slave_sell_chek",
+    "line": 644,
+    "text": "  if jo9_goal_read_scene = 79101: $jo9_goal_offer_source = '$jo9_goal_offer_brief' & $jo9_goal_offer_title = '안개 속 살아 있는 인형 극장의 인형술사' & $jo9_goal_offer_brief[0] = '극장의 인형들이 지키는 다른 세계로 통하는 포털의 열쇠 조각 두 개를 가져와라. 인형술사는 그 대가로 다른 세계로 가는 길을 알려 주겠다고 약속했다.'\r"
+  },
+  {
+    "location": "slave_sell_chek",
+    "line": 834,
+    "text": "  $jo9_goal_buyer = 'pope'\r"
+  },
+  {
+    "location": "interior_change",
+    "line": 401,
+    "text": "if $jo9_base = 'content/pic/bg/guard_vatican.png':\r"
+  },
+  {
+    "location": "interior_change",
+    "line": 403,
+    "text": " $jo9_candidates[0] = 'content/pic/bg/guard_vatican.png'\r"
+  },
+  {
+    "location": "interior_change",
+    "line": 405,
+    "text": " $jo9_candidates[1] = 'content/pic/bg/guard_vatican (2).png'\r"
+  },
+  {
+    "location": "interior_change",
+    "line": 1016,
+    "text": "if $jo9_base = 'content/pic/characters/pope.png':\r"
+  },
+  {
+    "location": "interior_change",
+    "line": 1018,
+    "text": " $jo9_candidates[0] = 'content/pic/characters/pope.png'\r"
+  },
+  {
+    "location": "interior_change",
+    "line": 1020,
+    "text": " $jo9_candidates[1] = 'content/pic/characters/pope (2).png'\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 1927,
+    "text": "\tif $ge = 'champion_vatican': trophy_vatican = 1\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 5672,
+    "text": "!VATICAN\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 5674,
+    "text": "\t$place = 'vatican_gate'\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 5676,
+    "text": "\t$toplay = 'vatican' & dynamic $play_music\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 5677,
+    "text": "\tcopyarr '$display_options', '$vatican_options'\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 5678,
+    "text": "\tif brand_reputation >= 5 and vatican_met = 0:\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 5679,
+    "text": "\t\tvatican_met = 1\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 5683,
+    "text": "\telseif brand_reputation >= 5 and vatican_met = 1:\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 5719,
+    "text": "\t'<br> 그래 <<$master_name>>. 교황님, 그 분께 직접 상품을 보이고 싶다고? 자네가 훌륭한 노옐 구비했음에 여부는 없지만, 이해해주게...<br>' + _\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 5720,
+    "text": "\t'<br> 자넨, 명색이 교황님께서 더 급한 용무를 보시리라 생각 않는건가? 글쎄... 교황님을 직접 보좌하는 수녀 정예 노예 부대에는 이미 공식 유통자가 있다네.<br>' + _\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 5721,
+    "text": "\t'<br> 그럼 이렇게 하지. 내가 시범삼아 자네 일을 겪고, 교황님께 청을 얻어보도록 하지. 물론 내가 만족한다면. 날 <font color=\"#009900\"><b>보좌</b></font>할 역이 필요해.<br>' + _\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 5723,
+    "text": "\t'<br> 반드시, 자네가 유념하고 또 받아들여야 할 것. 난 지불은 안 할거야. 교황님께로 닿는 길, 그게 자네 포상이지. 그 분께도 스파크 같은 건 막연히도 기대말게. 자네가 교황님 후광을 얻고 싶은거라면, 참으로 걸작을 헌사해야 할거야.<br><br>' + _\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 5739,
+    "text": "\tif slave_state = CONST_INT['slave_exist'] and npc_progress['pope'] = 1 and slave['brand'] > 0: interaction_city = 1622\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 5744,
+    "text": "\t$npc_id = 'pope'\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 5747,
+    "text": "\tnpc_progress['pope'] = 1\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 5749,
+    "text": "\t$quest_description[5] = '성하 교황 이오안 1세  / 바티칸 소속 : <<$rating[10]>><br>' + _\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 5756,
+    "text": "\tcopyarr '$text', '$pope_pref'\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 5761,
+    "text": "\t$npc_id = 'pope'\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 5769,
+    "text": "\t! end of conversation exits to White Town instead of Vatican gate\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 5787,
+    "text": "\t\t$place = 'vatican_gate'\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 5799,
+    "text": "\t\t$bg['vatican_bedroom'] = $interior_boudoir['gothic']\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 6766,
+    "text": "\tif faction_fame['taurus'] < 3 and npc_progress['pope'] < 2:\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 9632,
+    "text": "\tif faction_fame['serpis'] < 3 and npc_progress['pope'] < 2:\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 9688,
+    "text": "\t'<br><br> 그래서 내가 병사들에게 호언장담해둔 것이 있지... 그 너저분한 군인들에게 교황도 탐낼만한 여성을 안겨 주리라. 스파크는 걱정말게, 난 포상하는 법을 알고 있으니.' + _\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 10400,
+    "text": "\tif faction_fame['kamira'] < 3 and npc_progress['pope'] < 2:\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 11073,
+    "text": "\tif faction_fame['korvus'] < 3 and npc_progress['pope'] < 2:\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 23642,
+    "text": " $text[1] = \"미치광이들만이 이런 어두운 곳에 감히 발을 들이려 할 것이다. 하지만 이터널 시티의 족쇄에서 벗어나겠다는 꿈에 사로잡혀 있고, 다른 더 밝은 세계들로 통하는 포털에 대해 뭔가 들은 적이 있다면, 이 업장을 그냥 지나칠 수는 없을 것이다. 소문에 따르면, 이 극장의 주인인 퍼피티어는 그 갈망하던 포털에 대해 많은 걸 말해 줄 수 있다고 한다. 하지만 그건 직접 물어보는 편이 가장 좋다...\"\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 23675,
+    "text": " $text[1] = '[퍼피티어]<br>&nbsp;웃기네, <<$master_name>>! 내가 포털에 대한 걸 다 털어놓을 거라고 정말 생각했나?!... 그리고 안 믿기겠지만... 솔직히 난 그 포털에 대해 아무것도 모른다. 내 일은 안개 속에서 온 초대받지 않은 손님들을 추적하고, 곧바로 바티칸에 보고하는 것뿐이야. 그러니 그쪽은 이미 네 자유 찾기 여정에 대해 들어 알고 있다...'\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 23676,
+    "text": " $text[2] = ' 그리고 내 충고를 하나 듣지... 그 포털은 극소수의 특별한 자들만 접근할 수 있다. 그리고 당신은 거기에 속하지 않아. 네가 들어가려는 시도는 뻔하게 재앙으로 끝날 거다. 물론... 네가 자기 인생을 스스로 망치려는 인간이라면, 말리진 않지... 운이 좋으면 네가 찾는 걸 발견할 수도 있다. 가능성은 희박하지만, 아예 없는 건 아니야... 그러니 선택은 네 몫이다.'\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 23931,
+    "text": " $text[1] = \"죽음의 전령들처럼 검은 망토를 두르고, 끝없이 이어지는 까마귀와 까마귀 같은 존재들이 때로는 비극적으로까지 들리는 섬뜩한 울음소리를 내지르는 가운데, 꿰뚫을 수 없는 안개에 둘러싸인 이 강대한 물체를 보자 당신은 불안해졌다. 하지만 당신의 꿈은 그 어느 때보다 가까이 와 있다. 다른 세계들로 통하는 포털이 당신 눈앞에 있다. \"\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 23940,
+    "text": " $special_image[2] = 'scene\\pope.png'\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 23941,
+    "text": " $special_image[3] = 'scene\\pope.png'\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 23942,
+    "text": " $special_image[4] = 'scene\\pope.png'\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 23943,
+    "text": " $text[1] = \"당신이 가장 예상하지 못했던 것은, 정예 부대를 거느린 교황의 갑작스러운 등장이다. 그리고 그 못마땅한 표정을 보아하니, 당신에게 좋은 일은 아닐 듯하다.\"\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 23945,
+    "text": " $text[2] = \"[교황]<br>&nbsp;너 같은 비참한 생물이 수세기 동안 세워진 규칙에 맞서기로 했을 줄은 몰랐군. 기억해라, 구울. 오직 훈련된, 엄선된 바티칸 대표자들만이 포털에 접근해 그곳에서 일을 볼 수 있다. 그리고 당신은 분명 그 부류가 아니다.\"\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 23946,
+    "text": " $text[3] = \"[교황]<br>&nbsp;특히 한심한 건, 네가 포털 접근권을 합법적으로 얻으려는 시도조차 하지 않고 우리를 우회하기로 했다는 점이다. 그 대가로, 당신은...\"\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 23947,
+    "text": " $text[4] = \"[교황]<br>&nbsp;목숨으로 갚게 될 것이다. 다만 내가 네 집념만큼은 마음에 들어 했다는 사실 때문에, 마지막 기회를 하나 주기로 했다. 당신은 포털에 접근할 기회를 얻게 된다. 그리고 네가 그럴 자격이 있음을 증명해 낸다면, 난 널 막지 않을 것이고\"\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 23948,
+    "text": " $text[5] = \"[교황]<br>&nbsp;수호자의 손에 죽을 수 있게 허락해 주지. 실망시키지 말고, 바티칸 최고의 전사에게 걸맞은 싸움을 보여 주길 바란다.\"\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 23949,
+    "text": " $text[6] = \"[교황]<br>&nbsp;그녀를 꺾어라. 그러면 수호자에게 네가 포털에 접근할 자격이 있음을 증명할 권리를 주겠다.\"\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 23950,
+    "text": " $text[7] = \"[교황]<br>&nbsp;기억해라. 그를 쓰러뜨려야만 들어갈 수 있다. 그러니 네가 무엇으로 이루어졌는지 보여 봐라! 하지만 네가 수호자와 만나는 데까지 도달할 거라곤 솔직히 믿지 않는다. 내 노예는 이미 널 갈가리 찢어 버릴 순간만 기다리고 있으니. 그녀에게 도전할 준비가 됐다면, 그녀가 직접 널 찾아갈 것이다...\"\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 23960,
+    "text": " $special_image[2] = 'scene\\pope.png'\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 23961,
+    "text": " $special_image[3] = 'scene\\pope.png'\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 23962,
+    "text": " $special_image[4] = 'scene\\pope.png'\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 23963,
+    "text": " $text[1] = \"당신이 가장 예상하지 못했던 것은, 정예 부대를 거느린 교황의 갑작스러운 등장이다.\"\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 23965,
+    "text": " $text[2] = \"[교황]<br>&nbsp;최근 네 행보를 지켜보고 있었다. 그리고 인정하지. 당신은 포털 접근권을 부여받는 극소수에 들 자격이 있다. 하지만 규칙은 규칙이다. 오직 의지가 강하고, 결연하며, 굴하지 않는 바티칸 구성원만이 그런 영예로운 권리를 주장할 수 있다. 그리고 수호자를 전투에서 쓰러뜨린 자만이 포털 접근권을 얻는다.\"\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 23966,
+    "text": " $text[3] = \"[교황]<br>&nbsp;네가 바티칸 최고의 전사와 싸워 걸맞은 전투를 보여 줄 수 있다면, 안개 속에서 가장 위험한 전사와 맞설 기회를 주겠다. 그녀를 꺾는다면, 당신은 우리 교단에 들어설 자격이 있음을 바티칸에 증명하게 된다. 또한 포털 접근 허가도 받게 될 것이다.\"\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 23967,
+    "text": " $text[4] = \"[교황]<br>&nbsp;하지만 포털 그 자체에 들어가는 건 수호자를 쓰러뜨린 뒤에야 가능하다.\"\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 23968,
+    "text": " $text[5] = \"[교황]<br>&nbsp;그러니 네 진짜 힘을 보여 봐라! 이터널 시티의 모든 하우스를 등쳐먹고도 무사히 빠져나온 인간이라면, 훨씬 더 많은 걸 할 수 있을 거라 믿는다. 행운은 빌지 않겠다. 하지만 막지도 않을 것이다. 내 노예는 언제든 싸울 준비가 되어 있다. 전투 준비가 되면 내게 알려라...\"\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 23979,
+    "text": " $special_image[2] = 'scene\\portal.png'\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 23980,
+    "text": " $special_image[3] = 'scene\\portal.png'\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 23981,
+    "text": " $special_image[4] = 'scene\\portal.png'\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 23982,
+    "text": " $special_image[5] = 'scene\\portal.png'\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 23986,
+    "text": " $text[2] = \"그동안 네 안에 쌓여 있던 모든 부정의 짐을 털어낸 채, 당신은 결연한 걸음으로 포털을 향해 나아갔다. 수호자들은 갈라서며 신비한 문 너머로 이어지는 길을 드러냈다...\"\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 23988,
+    "text": " $text[3] = \"한 걸음만 더 내딛으면 안으로 들어간다. 타오르듯 뜨겁지만 믿기 힘들 만큼 기분 좋은 한기가 너를 덮쳤고, 곧 그 감각은 비상한 아름다움의 풍경으로 바뀌었다. 눈앞에 펼쳐진 셀 수 없이 많은 다른 세계의 포털들은 너를 잠시 혼란스럽게 만들었다. \"\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 24012,
+    "text": " $special_image[1] = 'scene\\vatican_paladin.png'\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 24015,
+    "text": " $враг[1] = 'vatican_paladin'\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 24024,
+    "text": " $sp_text[6216] = '포털 입구 위에서 폭발한 빛의 섬광 하나에 이제 안개의 모든 마력이 집중된 듯했다. 그리고 그 빛 속에서, 결국 네 운명을 결정지을 존재가 모습을 드러냈다.<br>[포털 가디언]<br>&nbsp;네가 누구를 건드렸는지 전혀 모르는군, <<$master_name>>! 나는 이 세상의 모든 더러움, 모든 악덕이다. 나와 마주할 준비는 됐나?!'\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 24482,
+    "text": " $text[11] = '[프리실라]<br>&nbsp;그건 안개 속에 있어. 성문에서 그리 멀지 않은 곳이지. 못 믿겠으면, 저기 선반 위 빨간 책을 확인해 봐. 거기에 그 문들에 대해 전부 자세히 적혀 있으니까.'\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 24483,
+    "text": " $text[12] = '[프리실라]<br>&nbsp;하지만 거길 그냥 통과할 수는 없어... 저 문도 여기 다른 모든 것처럼 바티칸이 통제하고 있거든. 그리고 교황의 허가가 있어야만 그 포털에 접근할 수 있다.'\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 24489,
+    "text": " $text[17] = '[프리실라]<br>&nbsp;그래서 네가 포털 접근권을 얻게 되면, 그 책을 그리로 가져가 주길 바랐어. 거기서 올바른 사람들이 널 찾아낼 거야. 그들에게 건네주기만 하면 끝이야. 난 그 외엔 아무것도 원하지 않아...<br>[당신]<br>&nbsp;좋아. 네 말은 생각해 보지. 하지만 시간이 필요해...'\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 24515,
+    "text": " $text[3] = \"[안젤리카]<br>&nbsp;하하! 아주 웃기네, <<$master_name>>!... 이제 웃는 건 내가 될 거야... ... 좋아! 농담은 이쯤 하고!... 교황의 추기경들까지 직접 이 상황을 걱정하고 있다면, 뭔가 정말 크게 잘못된 게 분명해... 그리고 내가 이해 못 하겠는 건 왜 이 문제를 대하우스들에 넘기지 않고 우리한테 떠넘겼냐는 거야?! 하지만 그건 이제 중요하지 않아...\"\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 26073,
+    "text": "$text[7] = '[이상한 노인]<br>&nbsp;저 길 끝에서 번쩍이는 밝은 섬광이 보이느냐, <<$master_name>>?! 저건 내 세계로 통하는 포털이다. 저 포털 건너편에는 아그라바가 있다. 그 사실은 누구든 포털 안으로 직접 들어가 보기만 하면 확인할 수 있지... 못 믿겠다면, 가서 직접 확인해 봐라!...'\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 26074,
+    "text": "$text[8] = '[당신]<br>&nbsp;그게 사실이라고 치자... 그런데 그게 나랑 무슨 상관이지?...<br>[이상한 노인]<br>&nbsp;누구든 가능하지, <<$master_name>>. 하지만 나는 아니다... 나는 저 포털을 통해 네 세계로 왔지만, 다시 돌아갈 수가 없다. 창문도 문도 없는 끝없는 미궁으로 들어가게 되지. 그리고 결국 나는 언제나 다시 여기로 돌아오고 만다.'\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 26081,
+    "text": "$text[15] = '[이상한 노인]<br>&nbsp;러시아 구역, 페어리 포레스트 안에 버려진 집 하나가 있을 거다. 거기에 마녀 하나가 숨어 있다... 이름은 파멜라다. 누가, 왜 이 서툴고 둔한 여편네한테 마법을 가르쳤는지 난 도무지 모르겠다! 하지만, 어쨌든 있는 건 있는 거지!... 우리 두 세계 사이의 포털을 연 것도 바로 그 여자다. 그리고 그 포털을 닫아야 하는 것도 그녀다.’ 하지만 그게 바로, 내가 이미 네게 넌지시 말해 둔 문제다...'\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 26082,
+    "text": "$text[16] = '[이상한 노인]<br>&nbsp;너희 윗대가리들은 누군가 자기들 일에 코를 들이미는 걸 못마땅해한다. 이곳에서 네가 물러설 자리는 어디에도 없다. 이 도시의 인구는 엄격하게 정해진 규칙으로 관리되니까. 그리고 누구나 드나들 수 있는 포털 같은 건 분명 너희 지배층의 방침에 맞지 않는다. 그래서 이제 바티칸은 감히 자기들 뜻을 거스른 자를 사냥하기 시작했다.'\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 26083,
+    "text": "$text[17] = '[이상한 노인]<br>&nbsp;최고의 마녀사냥꾼들이 이미 그 여자를 찾으러 보내졌다. 놈들의 함정도 곳곳에 전부 깔려 있어. 이제 파멜라가 한 번만 잘못 움직여도 바로 들키게 된다. 그리고 흔적을 남긴 마녀들에게 놈들이 무슨 짓을 하는지는, 너도 이미 아주 잘 알고 있겠지. 하지만 우리에겐 저 여우 같은 계집의 가죽을 지켜 내는 문제를 해결하는 게 중요하다. 그렇지 않으면 포털은 열린 채로 남게 된다.'\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 26110,
+    "text": "$text[14] = '[파멜라]<br>&nbsp;우리가 램프를 손에 넣으면, 난 내 문제를 전부 해결하고 포털도 닫을 수 있어. 하지만 솔직히 말하자면, 내 문제를 스스로 해결하지 못하고 너한테 의지해야 한다는 게 너무 불안해! 믿어 줘, 종교재판의 화형대에 오르기 전에 누군가가 내 문제를 전부 해결해 주기만을 앉아서 기다리는 건 정말 끝내주는 즐거움이거든!'\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 27466,
+    "text": "   $text[52] = '[당신]<br>&nbsp;네가 시작한 일이다. 네가 수습해라, 자스민! 그리고 이쯤이면 넌 벌써 아그라바로 통하는 포털 쪽으로 반쯤은 가고 있어야 했다. 내가 알기로는, 아부는 저쪽 어딘가에서 찾아야 하잖아... 너에겐 아주 좋은 기회가 있다. 무엇보다도 먼저 너 자신에게, 네가 그렇게까지 멍청하지도 않고 전혀 쓸모없는 것도 아니라는 걸 증명할 기회 말이다! 그러니 써먹어라, 자스민!...'\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 27470,
+    "text": "   $text[55] = '<i>   아그라바로 통하는 포털에 도착한 자스민은, 그 포털이 점점 마력을 잃어 가고 있다는 걸 알아챘다. 그건 어느 순간이든 세계 사이의 문이 완전히 닫혀 버릴 수 있다는 뜻이었다. 망설일 시간은 없었다. 하지만 자스민에게도 물러설 권리는 없었다. 주인의 명령을 또 하나 실패하는 건 그녀에게 죽음과도 같았다. 그래서 네 노예는 소심하고 망설이는 한 걸음을 내디뎠다.</i>'\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 27515,
+    "text": "   $text[91] = '[아부]<br>&nbsp;그리고 그다음부터 진짜 재미있는 일이 시작됐지... 난 아그라바와 네 세계를 잇는 포털이 닫히기 시작했다는 걸 알게 됐어. 그리고 아주 어려운 선택 앞에 놓였지. 내겐 시간이 거의 없었고, 소원도 딱 세 개뿐이었어. 게다가 그 세 개는 모두의 이해관계를 전부 고려해서 써야 했지. 난 자파르처럼 자기랑 자기 이익밖에 모르는 놈이 아니니까. 난 누구에게도 해를 끼치고 싶지 않았거든...'\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 27544,
+    "text": "   $text[114] = '[아부]<br>&nbsp;훌륭했어, 자스민! 난 네가 아주 마음에 든다! 네게서 원한 건 전부 얻었고, 심지어 조금 더 얻기까지 했지! 그러니 약속대로, 램프는 다시 네 것이다... 이제 준비해라! 더는 널 붙잡아 둘 생각은 없다... 그리고 서두르는 편이 좋을 거다! 네 세계로 가는 포털은 아주 곧 영원히 닫혀 버릴 테니까. 그러면 넌 제시간에 못 돌아갈 수도 있어!...'\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 27554,
+    "text": "   $text[121] = '<i>   이제 그녀에겐 후회할 시간조차 없었다. 아부의 경고를 또렷이 기억하고 있던 그녀는, 밤의 아그라바를 총알처럼 가르며 이터널 시티로 가는 포털을 향해 날아갔다. 그리고 실제로 포털은 이미 거의 흔적만 남은 상태였다. 그래서 자스민은 슬픈 마음으로 마지막으로 한 번만 자기 고향 아그라바의 거리를 훑어본 뒤, 세계 사이를 잇는 그 남은 잔해 속으로 발을 들였다. </i> '\r"
+  },
+  {
+    "location": "interaction_city",
+    "line": 27556,
+    "text": "   $text[122] = '<i> 그녀가 동방 구역에 도착하자마자, 포털은 눈앞에서 허공 속으로 사라져 버렸다.. 자스민은 조금 슬퍼졌다. 하지만 이번만큼은 네가 맡긴 일을 완벽하게 해냈다는 생각이 그녀를 위로해 주었다. 그래서 그녀는 이 좋은 소식을 빨리 너에게 전하고 싶어 서둘렀다....</i>'\r"
+  },
+  {
+    "location": "shop_general",
+    "line": 175,
+    "text": "! JO9 MOD START VATICAN_PALADIN_SETTING_PANEL_20261102\r"
+  },
+  {
+    "location": "shop_general",
+    "line": 176,
+    "text": "elseif $place = 'fogs_battle1' and interaction_city = 6215 and sp_txt = 6215 and get_weapon = 0 and $враг[1] = 'vatican_paladin':\r"
+  },
+  {
+    "location": "shop_general",
+    "line": 178,
+    "text": " *p '<div id=\"side_panel_main\"><center><div style=\"font-size:40px;\">바티칸 팔라딘</div>교황청 직속 관문 수호자<br>바티칸</center></div>'\r"
+  },
+  {
+    "location": "shop_general",
+    "line": 179,
+    "text": " *p func('jo9_reference_panel', '바티칸의 명을 받들어 차원 관문을 지키는 정예 성기사. 관문을 지나는 물자와 사람, 노예의 행렬은 모두 그녀의 허락 아래 움직인다. 허가 없는 접근자와 안개에서 밀려드는 이계의 괴물 앞에, 축복받은 검은 망설임 없이 내려온다.<br><br>성유물로 강화한 갑옷과 끝없는 금욕 훈련은 공포와 고통마저 신앙 아래 짓누른다. 회유와 뇌물로 길을 열려는 자는 차가운 침묵과 검날을 마주할 뿐이다.<br><br>팔라딘이 수호하는 것은 교황청이 정한 신성한 질서다. 관문 너머에서 누가 쇠사슬에 묶여 오든,"
+  },
+  {
+    "location": "shop_general",
+    "line": 180,
+    "text": "! JO9 MOD END VATICAN_PALADIN_SETTING_PANEL_20261102\r"
+  },
+  {
+    "location": "shop_general",
+    "line": 181,
+    "text": "! JO9 MOD START PORTAL_GUARDIAN_SETTING_PANEL_20261102 | 2026-11-02_portal_guardian_setting_panel\r"
+  },
+  {
+    "location": "shop_general",
+    "line": 184,
+    "text": " *p '<div id=\"side_panel_main\"><center><div style=\"font-size:40px;\">포털 가디언</div>차원 관문의 수호자<br>안개경계 · 포털 지대</center></div>'\r"
+  },
+  {
+    "location": "shop_general",
+    "line": 185,
+    "text": " *p func('jo9_reference_panel', '영원의 로마와 이계가 맞닿는 문턱을 지키는 수호자. 교황청의 기사가 명령을 집행한다면, 이 존재는 관문에 새겨진 금제 그 자체다. 허가받지 않은 발길은 도시를 향하든 고향을 향하든 똑같이 가로막힌다.<br><br>관문 아래 흐르는 마력은 그 육신의 고대 술식을 끊임없이 깨운다. 건립기의 유산인지, 누군가를 깎아 만든 병기인지는 전해지지 않는다. 다만 문 너머의 재앙을 막는 힘이 도망자의 희망도 함께 짓누른다는 사실만은 분명하다.<br><br>관문을 여는 인가와 제어의 열쇠는 교황과 도시의 지"
+  },
+  {
+    "location": "shop_general",
+    "line": 186,
+    "text": "! JO9 MOD END PORTAL_GUARDIAN_SETTING_PANEL_20261102\r"
+  },
+  {
+    "location": "trophy_room_screen",
+    "line": 26,
+    "text": "trophy_won_arena = trophy_corvus + trophy_camira + trophy_serpis + trophy_taurus + trophy_vatican + trophy_absolute + trophy_slaves_x + trophy_arenafiend + trophy_racechampion + trophy_racegrandchampion\r"
+  },
+  {
+    "location": "trophy_room",
+    "line": 37,
+    "text": "if trophy_vatican > 0: *p '<div id = \"trophy_room_vatican\"><img src=\"content\\pic\\mob\\gladiator_champion_vatican_ava.png\"><br><center>바티칸 챔피언</center></div>'\r"
+  },
+  {
+    "location": "#dynamic",
+    "line": 3394,
+    "text": "\tif $npc_alignment[$npc_id] = 'taurus' and faction_fame['kamira'] > 2 and npc_progress['pope'] < 2: no_rise = 1\r"
+  },
+  {
+    "location": "#dynamic",
+    "line": 3395,
+    "text": "\tif $npc_alignment[$npc_id] = 'serpis' and faction_fame['korvus'] > 2 and npc_progress['pope'] < 2: no_rise = 1\r"
+  },
+  {
+    "location": "#dynamic",
+    "line": 3396,
+    "text": "\tif $npc_alignment[$npc_id] = 'kamira' and faction_fame['taurus'] > 2 and npc_progress['pope'] < 2: no_rise = 1\r"
+  },
+  {
+    "location": "#dynamic",
+    "line": 3397,
+    "text": "\tif $npc_alignment[$npc_id] = 'korvus' and faction_fame['serpis'] > 2 and npc_progress['pope'] < 2: no_rise = 1\r"
+  },
+  {
+    "location": "#npc_base",
+    "line": 1200,
+    "text": "!NEUTRALS AND VATICAN\r"
+  },
+  {
+    "location": "#npc_base",
+    "line": 1203,
+    "text": "$npc_status['johanna'] = '교황 이오안 1세의 비서<br>바티칸'\r"
+  },
+  {
+    "location": "#npc_base",
+    "line": 1205,
+    "text": "$npc_info['johanna'] = '   상냥해 보이는 성숙한 수녀다. 그녀는 교황 이오안 1세의 개인 비서지만, 명령은 드 뮈즐롱 추기경에게서 받는다. 친절한 태도 아래에, 당신은 어딘가 날카로운 면과 유능함의 기운을 느낀다. 노예이면서도 그녀는 너를 동등한 존재처럼 대한다.'\r"
+  },
+  {
+    "location": "#npc_base",
+    "line": 1213,
+    "text": "$npc_info['cardinal_de_mujlon'] = '   추기경치고는 매우 젊고 교활한 인물이다. 그는 교황의 오른팔 자리를 차지했다. 교황의 일정을 정하고, 누가 교황을 알현할 수 있는지 없는지를 결정하는 것도 그다.'\r"
+  },
+  {
+    "location": "#npc_base",
+    "line": 1226,
+    "text": "$cardinal_de_mujlon_pref[1] = '[드 뮈즐롱 추기경]<br>&nbsp;그래 <<$master_name>>. 교황님, 그 분께 직접 상품을 보이고 싶다고? 자네가 훌륭한 노옐 구비했음에 여부는 없지만, 이해해주게...</div>'\r"
+  },
+  {
+    "location": "#npc_base",
+    "line": 1228,
+    "text": "$cardinal_de_mujlon_pref[2] = '[드 뮈즐롱 추기경]<br>&nbsp;교황 성하께서는 로마 전체의 안위를 돌보시느라 눈코 뜰 새 없이 바쁘신 분일세. 게다가 성하를 지키는 정예 수녀 근위대에는 이미 검증된 공식 납품책이 따로 있다네.</div>'\r"
+  },
+  {
+    "location": "#npc_base",
+    "line": 1231,
+    "text": "$cardinal_de_mujlon_pref[3] = '[드 뮈즐롱 추기경]<br>&nbsp;그러니 이렇게 하지. 우선 내 집무실에서 나를 <font color=\"#009900\"><b>보좌할 비서</b></font>를 한 명 바쳐서 자네의 실력을 증명해 보이게. 내 마음에 들면 교황 성하의 알현 일정을 직접 주선해 주겠네.</div>'\r"
+  },
+  {
+    "location": "#npc_base",
+    "line": 1235,
+    "text": "$cardinal_de_mujlon_pref[5] = '[드 뮈즐롱 추기경]<br>&nbsp;물론 미리 말해 두지만 스파크는 한 닢도 지급하지 않네. 교황 성하께 닿는 알현권 자체가 자네가 받을 값진 보상이니까. 성하의 총애를 얻고 싶다면 한 치의 흠결도 없는 걸작을 바치도록 하게.</div>'\r"
+  },
+  {
+    "location": "#npc_base",
+    "line": 1241,
+    "text": "$buy_quote['cardinal_de_mujlon'] = '[드 뮈즐롱 추기경]<br>&nbsp;오호, 참으로 훌륭한 보좌관이군! 내 집무실과 침실 모두에 더할 나위 없이 어울리겠어. 약속대로 교황 성하를 알현할 자리를 마련해 주지, <<$master_name>>.</div>'\r"
+  },
+  {
+    "location": "#npc_base",
+    "line": 1247,
+    "text": "$refuse_level_quote['cardinal_de_mujlon'] = '[드 뮈즐롱 추기경]<br>&nbsp;나쁘진 않지만 등급이 부족하네, <<$master_name>>. 내 비서이자 교황 성하께 자네를 천거할 증표가 될 만큼 더 다듬어 오게.</div>'\r"
+  },
+  {
+    "location": "#npc_base",
+    "line": 1250,
+    "text": "$refuse_charm_quote['cardinal_de_mujlon'] = '[드 뮈즐롱 추기경]<br>&nbsp;실력은 갖췄으나 외모와 기품이 영 마음에 차지 않는군. 이런 수준으로는 교황 성하께 자네를 추천할 수 없네.</div>'\r"
+  },
+  {
+    "location": "#npc_base",
+    "line": 1263,
+    "text": "$npc_image['pope'] = 'pope'\r"
+  },
+  {
+    "location": "#npc_base",
+    "line": 1264,
+    "text": "$npc_name['pope'] = '이오안 1세'\r"
+  },
+  {
+    "location": "#npc_base",
+    "line": 1265,
+    "text": "$npc_status['pope'] = '교황<br>바티칸'\r"
+  },
+  {
+    "location": "#npc_base",
+    "line": 1266,
+    "text": "$npc_alignment['pope'] = 'нейтралы'\r"
+  },
+  {
+    "location": "#npc_base",
+    "line": 1267,
+    "text": "$npc_info['pope'] = '<br> 의심할 필요 없는 이 도시 최고의 권위자.<br><br> 교황의 측근이 되면, 순백색 대도시에서의 행동에 거의 제한받지 않을 것이다.<br><Br> 동시에 모든 가문이 당신을 인정해 줄 것이다.'\r"
+  },
+  {
+    "location": "#npc_base",
+    "line": 1268,
+    "text": "demand_rating['pope'] = 10\r"
+  },
+  {
+    "location": "#npc_base",
+    "line": 1269,
+    "text": "$npc_preferences['pope'] = {\r"
+  },
+  {
+    "location": "#npc_base",
+    "line": 1273,
+    "text": "$buyer_demand['pope'] = {\r"
+  },
+  {
+    "location": "#npc_base",
+    "line": 1276,
+    "text": "$pope_pref[1] = '  [교황 이오안 1세]<br> 드 뮈즐롱 추기경이 그대가 훌륭한 노예를 키운다는 것과 상표가 얼마나 인기 있는지에 대해서 귀띔해줬다오. 나에겐 개인 경비대로 활동하는 여성들로 이뤄진 아뎁타 소로리타스라고 불리는 특별 수녀회가 있소.</div>'\r"
+  },
+  {
+    "location": "#npc_base",
+    "line": 1277,
+    "text": "$pope_pref[2] = '  [교황 이오안 1세]<br> 입회 역량을 갖추려면 남성 손길을 받지 않고, 탁월한 자질을 갖추어야 하오. 그 주된 요건은, 절대적 충성심과 <font color=\"#009900\"><b>철의 의지</b></font>의 병행.</div>'\r"
+  },
+  {
+    "location": "#npc_base",
+    "line": 1278,
+    "text": "$pope_pref[3] = '  [교황 이오안 1세]<br> 그와 동시에 여잔 출중한 <font color=\"#009900\"><b>백병전</b></font>을 선보여야 되오. 그제서야 입회 가르침을 받게 될 터이니.</div>'\r"
+  },
+  {
+    "location": "#npc_base",
+    "line": 1279,
+    "text": "$pope_pref[4] = '  [교황 이오안 1세]<br> 그대, 이 과업을 수행해주겠소? <font color=\"#009900\"><b>확고한 의지</b></font>의 <font color=\"#009900\"><b>화안</b></font> 여성을 배출해내어, 입회에 걸맞는 각오를 다져주시오. 극도로 까다로운 과업일테지만, 난 그 미만은 수락 않소.</div>'\r"
+  },
+  {
+    "location": "#npc_base",
+    "line": 1280,
+    "text": "$pope_pref[5] = '  [교황 이오안 1세]<br> 그대, 그런 선물을 불러오면 순백색 대도시의 특별 지위를 기인하여, 내 그대 버팀목이 되어주겠소. 그대의 모든 매진의 댓가로.</div>'\r"
+  },
+  {
+    "location": "#npc_base",
+    "line": 1282,
+    "text": "$buy_quote['pope'] = '[교황 이오안 1세]<br> 교단 수뇌자가 당신 일에 감사하고 있소, <<$master_name>>. 나 또한 마음에 드는 여자요. 교의에도 문제없고 날 아주 잘 섬겨줄 것 같소.</div>'\r"
+  },
+  {
+    "location": "#npc_base",
+    "line": 1283,
+    "text": "$refuse_skill_quote['pope'] = '[교황 이오안 1세]<br> 아뎁타 소로리타스가 될 능력에 못 미치고 있소만. 더 교육하는게 좋겠소.</div>'\r"
+  },
+  {
+    "location": "#npc_base",
+    "line": 1284,
+    "text": "$refuse_level_quote['pope'] = '[교황 이오안 1세]<br> 내 전한 요건 뿐 아니라, 마찬가지로 다른 조예도 끌어내야지. 이 처녀가 입회 자격을 얻으려면, 최상급 품질이 필요해.</div>'\r"
+  },
+  {
+    "location": "#npc_base",
+    "line": 1285,
+    "text": "$refuse_charm_quote['pope'] = '[교황 이오안 1세]<br> 이런 여잘 위해 기도않겠소. 아뎁타 소로리타스에서 열성을 불태울 믿음과 충성심이 없잖소. 그 여잔 절대로 아니되오.</div>'\r"
+  },
+  {
+    "location": "#npc_base",
+    "line": 1286,
+    "text": "$refuse_health_quote['pope'] = '[교황 이오안 1세]<br> 기도에는 체력이 안 드는 줄 아는가 보군. 그런 체능의 여잘 데리고 와, 날 우습게 만들지 마시오. 살려는 드릴테니 이만 물러나시오!</div>'\r"
+  },
+  {
+    "location": "#npc_base",
+    "line": 1287,
+    "text": "$refuse_pregnant_quote['pope'] = '[교황 이오안 1세]<br> 임신? 수녀회에 임신이 웬말인가!</div>'\r"
+  },
+  {
+    "location": "#npc_base",
+    "line": 1288,
+    "text": "$refuse_special_quote['pope'] = '[교황 이오안 1세]<br> 분명 처녀가 필요하다 말 했을텐데?</div>'\r"
+  },
+  {
+    "location": "#npc_base",
+    "line": 2186,
+    "text": "$serpis_prince_first_pref[1] = '[의장 알타이르]<br>&nbsp;바티칸의 저 위선적인 놈들이 로마에서 임신한 여자는 모조리 끌고 가 독점하고 있다는 걸 알고 있나? 나는 교황청의 그 역겨운 독점을 더 이상 좌시하지 않을 작정이야.</div>'\r"
+  },
+  {
+    "location": "#npc_base",
+    "line": 2311,
+    "text": "$general_drago_pref[3] = '[드라고 장군]<br>&nbsp;그래서 이번에 전공을 세운 내 정예 부대원들에게 교황 성하라도 탐낼 만한 최고급 여자를 포상으로 던져 주겠다고 호언장담해 두었네. 스파크는 얼마든 쳐 줄 테니 확실한 물건을 가져오게.</div>'\r"
+  },
+  {
+    "location": "#npc_base",
+    "line": 4254,
+    "text": "$Jinn_pref[4] = '[드미트리 왕자]<br>&nbsp;러시아 왕자를 늘 특별하게 만들어 온 것은 무엇일까요? 맞습니다. 바로 안장에 올라탄 위풍당당한 암말입니다. 충실한 전우이자, 그 자체로 특별한 자부심과 지위의 상징이죠... 저에게는 교황께서 선물로 주신 훌륭한 마차가 있습니다. 그 마차에 매여 있는 조랑말들도 아름답습니다. 하지만 그중에는 제가 가장 아끼는 말로 손꼽을 만한 녀석은 하나도 없습니다.'\r"
+  },
+  {
+    "location": "#npc_base",
+    "line": 7920,
+    "text": "$npc_info['Jinnee_oldman'] = '<font size = 3%>과거의 이상한 기억 파편들이 오랫동안 이 기묘한 로브 차림의 노인을 괴롭혀 왔다. 질문의 답을 찾아 그는 고향 아그라바의 거리를 떠돌았다. 그러다 마법의 포털 하나를 발견했고, 그게 어디로 이어지는지 보기로 결심했다. 그리고 그곳은 영원의 도시 로마로 이어졌다. 하지만 포털에서 나온 지금의 그는 자신의 세계로 돌아갈 수 없다. 무엇이 자신을 고향으로 돌아가지 못하게 막는지 알아내기 위해 상당한 시간과 노력을 들인 끝에, 이 기묘한 로브 차림의 남자는 자신의 과거에 관한"
+  },
+  {
+    "location": "#options",
+    "line": 1723,
+    "text": "\t\tif (noble_status = 1 and $estate = 'white_house' and npc_progress['pope'] = 2 and owner = 0) or _\r"
+  },
+  {
+    "location": "#options",
+    "line": 2496,
+    "text": "!Vatican\r"
+  },
+  {
+    "location": "#options",
+    "line": 2497,
+    "text": "$vatican_options[1] = {\r"
+  },
+  {
+    "location": "#options",
+    "line": 2498,
+    "text": "\t$place = 'vatican'\r"
+  },
+  {
+    "location": "#options",
+    "line": 2505,
+    "text": "\t\t\t$sp_text[1] = '  교황에게 가려면 먼저 추기경을 위해 일을 하나 해내야 한다.'\r"
+  },
+  {
+    "location": "#options",
+    "line": 2506,
+    "text": "\t\t\tfunc('$menu', 'interaction_city', $menu_item_CardinalVatican, menu_CardinalVatican, '접견: 추기경')\r"
+  },
+  {
+    "location": "#options",
+    "line": 2510,
+    "text": "\t\tif npc_progress['cardinal_de_mujlon'] = 2 and npc_progress['pope'] < 2:\r"
+  },
+  {
+    "location": "#options",
+    "line": 2511,
+    "text": "\t\t\t$sp_text[1] = '  이제 나는 교황을 알현할 수 있다. 그를 만나 그의 의뢰를 완수하려 해야 한다.'\r"
+  },
+  {
+    "location": "#options",
+    "line": 2512,
+    "text": "\t\t\tfunc('$menu', 'interaction_city', $menu_item_PopeVatican, menu_PopeVatican, '교황 알현')\r"
+  },
+  {
+    "location": "#options",
+    "line": 2516,
+    "text": "\t\tif npc_progress['pope'] = 2 and noble_status = 1:\r"
+  },
+  {
+    "location": "#options",
+    "line": 2517,
+    "text": "\t\t\t$sp_text[1] = '  이제 나는 백색 도시의 귀족이자 교황의 특사이다. 도움이 필요하면 교황이 나를 도와줄 것이다.'\r"
+  },
+  {
+    "location": "#options",
+    "line": 2520,
+    "text": "\t\t$place = 'vatican_gate'\r"
+  },
+  {
+    "location": "#options",
+    "line": 2524,
+    "text": "\tfunc('$menu', 'city_form', $menu_item_LeaveVatican, menu_LeaveVatican, '떠난다')\r"
+  },
+  {
+    "location": "#options",
+    "line": 7044,
+    "text": "FUNC('$menu', 'interaction_city', $menu_item_Vatican, 15028, '바티칸 사도궁')\r"
+  },
+  {
+    "location": "#options",
+    "line": 7087,
+    "text": "$jo9_library_book_page[18] = '<b>18/27 · 동부 구역 · 닫힌 문에 관한 소문</b><br>동부 구역 깊숙한 회랑 어딘가에 영원의 로마와 바깥세계를 잇는 문이 있다는 소문이 돈다. 이름과 행선지는 말하는 사람마다 다르고, 이 소문만으로 갈 수 있는 길이 표시되지는 않는다. 실제 포털 지대를 찾아가려는 여행자는 동부의 뒷골목 대신 도시 관문의 안내를 따르는 편이 낫다.<!-- #nwtx -->'\r"
+  },
+  {
+    "location": "#options",
+    "line": 7103,
+    "text": "$jo9_library_book_page[26] = '<b>26/27 · 도시 관문과 변경 · 감시받는 포털 지대</b><br>관문 너머의 거대한 포털은 안개와 바깥세계를 떠올리게 하지만, 누구나 마음대로 넘나드는 통로는 아니다. 도시 관문 메뉴에는 포털 지대와 변경 지대가 따로 나뉜다. 표류자가 어디서 왔는지 궁금하다면 포털 지대를, 관문 밖의 거주지와 세력을 찾아가려면 변경 지대를 선택하라.<!-- #nwtx -->'\r"
+  },
+  {
+    "location": "#options",
+    "line": 7104,
+    "text": "$jo9_library_book_bg[26] = 'fogs_portal'\r"
+  },
+  {
+    "location": "#options",
+    "line": 7203,
+    "text": "$jo9_library_book_title['15028'] = '바티칸 사도궁<br><span style=\"font-size:22px;white-space:nowrap\">신성한 질서와 교황령의 규율</span>'\r"
+  },
+  {
+    "location": "#options",
+    "line": 7207,
+    "text": "$jo9_library_book_page[46] = '<b>1/3 · 교황청과 신성한 통치</b><br>영원의 로마 최상층에 군림하는 바티칸 사도궁은 도시의 영적 지도부이자 궁극적인 법과 질서의 원천이다. 대성당의 흰 첨탑 아래에서 반포되는 교황령은 4대 가문의 권세를 초월하며, 성스러운 계율과 십일조를 통해 도시 전역의 상업과 시민 생활을 통제한다.<!-- #nwtx -->'\r"
+  },
+  {
+    "location": "#options",
+    "line": 7209,
+    "text": "$jo9_library_book_page[47] = '<b>2/3 · 팔라딘 군단과 치안</b><br>사도궁을 수호하는 성기사 팔라딘들은 흔들림 없는 신앙과 무력을 갖춘 교황청의 정예 군단이다. 이들은 화이트 타운의 질서를 어지럽히는 이단자와 밀수꾼을 단속하며, 안개 경계선에서 밀려드는 혼돈에 맞서 로마의 권위를 지키는 철벽의 방패로 기능한다.<!-- #nwtx -->'\r"
+  },
+  {
+    "location": "#options",
+    "line": 7210,
+    "text": "$jo9_library_book_bg[47] = 'vatican_paladin'\r"
+  },
+  {
+    "location": "#options",
+    "line": 7211,
+    "text": "$jo9_library_book_page[48] = '<b>3/3 · 교회의 의전과 시종 규격</b><br>사도궁과 대성당에 납품되는 성직 시종 및 성가대 노예는 도시에서 가장 엄격한 심사를 거친다. 결점 없는 순결함과 단정한 태도, 성가와 기도문을 흐트러짐 없이 암송하는 정숙함이 요구되며, 교황청의 정식 납품 인가를 받는 것은 상인에게 최고의 영예로 꼽힌다.<!-- #nwtx -->'\r"
+  },
+  {
+    "location": "#options",
+    "line": 7212,
+    "text": "$jo9_library_book_bg[48] = 'guard_vatican'\r"
+  },
+  {
+    "location": "#options",
+    "line": 7255,
+    "text": "$sp_text[1] = \"포털 입구는 유령들이나 호전적인 인간형 까마귀 괴물들이 지키고 있다. 어느 쪽이든, 네 존재를 반길 것 같지는 않다.\"\r"
+  },
+  {
+    "location": "#options",
+    "line": 7259,
+    "text": "  if active[$quest[17]] < 2: FUNC('$menu', 'exec_options', $menu_item_fogs_portal, 'sp_txt = 2 & gt $curloc', '포털로 다가간다')\r"
+  },
+  {
+    "location": "#options",
+    "line": 7260,
+    "text": "  if active[$quest[17]] = 2 and npc_progress['pope'] < 2 and бой_с_паладином < 1: FUNC('$menu', 'interaction_city', $menu_item_fogs_portal, 6218, '포털로 다가간다')\r"
+  },
+  {
+    "location": "#options",
+    "line": 7261,
+    "text": "  if active[$quest[17]] = 2 and npc_progress['pope'] = 2 and бой_с_паладином < 1: FUNC('$menu', 'interaction_city', $menu_item_fogs_portal, 6219, '포털로 다가간다')\r"
+  },
+  {
+    "location": "#options",
+    "line": 7262,
+    "text": "  if active[$quest[17]] = 2 and npc_progress['pope'] < 2 and бой_с_паладином = 1 and бой_с_паладиом < 2: FUNC('$menu', 'interaction_city', $menu_item_fogs_portal, 62171, '성기사와 싸운다')\r"
+  },
+  {
+    "location": "#options",
+    "line": 7263,
+    "text": "  if active[$quest[17]] = 2 and npc_progress['pope'] = 2 and бой_с_паладином = 1 and бой_с_паладиом < 2: FUNC('$menu', 'interaction_city', $menu_item_fogs_portal, 62171, '성기사와 싸운다')\r"
+  },
+  {
+    "location": "#options",
+    "line": 7264,
+    "text": "  if active[$quest[17]] = 2 and бой_с_паладином = 2 and бой_со_стражником < 1: FUNC('$menu', 'interaction_city', $menu_item_fogs_portal, 62172, '가디언과 싸운다')\r"
+  },
+  {
+    "location": "#options",
+    "line": 7265,
+    "text": "  if бой_со_стражником = 1: FUNC('$menu', 'interaction_city', $menu_item_fogs_portal, 6220, '포털로 다가간다')\r"
+  },
+  {
+    "location": "#options",
+    "line": 7275,
+    "text": "$sp_text[2] =\"[포털 수호자들]<br>&nbsp;우리 인내심을 시험하지 마라, <<$master_name>>! 네가 있어야 할 곳이 아니다! 썩 꺼지고 다시는 돌아오지 마라!\"\r"
+  },
+  {
+    "location": "#options",
+    "line": 7284,
+    "text": "!vatican_paladin\r"
+  },
+  {
+    "location": "#options",
+    "line": 7473,
+    "text": "FUNC('$menu', 'city_form', $menu_item_eastkvartal, 121, '포털을 나간다')\r"
+  },
+  {
+    "location": "#place_base",
+    "line": 62,
+    "text": "$bg['vatican'] = 'throne_room'\r"
+  },
+  {
+    "location": "#place_base",
+    "line": 67,
+    "text": "$bg['vatican_gate'] = 'guard_vatican'\r"
+  },
+  {
+    "location": "#place_base",
+    "line": 130,
+    "text": "$bg['fogs_battle1'] = 'vatican_paladin'\r"
+  },
+  {
+    "location": "#place_base",
+    "line": 176,
+    "text": "$bg['fogs_portal'] = 'fogs_portal'\r"
+  },
+  {
+    "location": "#place_base",
+    "line": 177,
+    "text": "$bg['fogs_portal2'] = 'fogs_portal2'\r"
+  },
+  {
+    "location": "#place_base",
+    "line": 203,
+    "text": "$bg['fogs_portal'] = 'fogs_portal'\r"
+  },
+  {
+    "location": "#place_base",
+    "line": 204,
+    "text": "$bg['fogs_portal2'] = 'fogs_portal2'\r"
+  },
+  {
+    "location": "#place_base",
+    "line": 205,
+    "text": "$bg['fogs_battle1'] = 'vatican_paladin'\r"
+  },
+  {
+    "location": "#place_base",
+    "line": 207,
+    "text": "$bg['fogs_street'] = 'fogs_portal'\r"
+  },
+  {
+    "location": "#place_base",
+    "line": 263,
+    "text": "dynamic $pb_cycle, 'vatican_gate', '바티칸 관문', '백색 도시', '   '\r"
+  },
+  {
+    "location": "#place_base",
+    "line": 264,
+    "text": "dynamic $pb_cycle, 'vatican', '바티칸', '백색 도시', '   '\r"
+  },
+  {
+    "location": "#place_base",
+    "line": 297,
+    "text": "dynamic $pb_cycle, 'garden', '겟세마네 동산', '교황청 구역', '   교황청 구역 외곽에는 고대의 겟세마네 동산이 있다. 이곳은 모든 고통받는 자들이, 예수가 마지막 밤 이곳에서 기도했던 바로 그 장소에서 신의 아들과의 합일을 통해 괴로운 영혼에 위안을 얻을 수 있는 곳이다. 정원에서는 빠져나갈 수 없고, 영원히 머물 수도 없다. 하지만 그 안에 있는 동안만큼은 그 어떤 곳도 이보다 조용하고 안전하지 않다.'\r"
+  },
+  {
+    "location": "#quest_base",
+    "line": 29,
+    "text": "$quest[17] = '<a href = \"EXEC: quest_description_mode = 1 & choosen_quest = 17 & gt curloc\">Sp. 살아 있는 인형 극장의 인형술사가 안개 지대 안의 포털에 대해 뭔가 알고 있다. 정확히 뭔지 알아내야 한다...  </a> <br>'\r"
+  },
+  {
+    "location": "#quest_base",
+    "line": 71,
+    "text": "'<<$korvus_fame[faction_fame[\"korvus\"]]>>' + iif(faction_fame['serpis'] > 2 and npc_progress['pope'] < 2, ' 다만 언데드들이 내가 세르피스 가문과 거래한 일을 눈감아 주게 하려면 교황의 후원이 필요할 것이다.', '') + '<br><br>' + _\r"
+  },
+  {
+    "location": "#quest_base",
+    "line": 72,
+    "text": "'<<$taurus_fame[faction_fame[\"taurus\"]]>>' + iif(faction_fame['kamira'] > 2 and npc_progress['pope'] < 2, ' 다만 타우루스 가문이 내가 카미라 가문과 거래한 일을 눈감아 주게 하려면 교황의 후원이 필요할 것이다.', '') + '<br><br>' + _\r"
+  },
+  {
+    "location": "#quest_base",
+    "line": 73,
+    "text": "'<<$serpis_fame[faction_fame[\"serpis\"]]>>' + iif(faction_fame['korvus'] > 2 and npc_progress['pope'] < 2, ' 다만 뱀들이 내가 코르부스 가문과 거래한 일을 눈감아 주게 하려면 교황의 후원이 필요할 것이다.', '') + '<br><br>' + _\r"
+  },
+  {
+    "location": "#quest_base",
+    "line": 74,
+    "text": "'<<$kamira_fame[faction_fame[\"kamira\"]]>>' + iif(faction_fame['taurus'] > 2 and npc_progress['pope'] < 2, ' 다만 비인간들이 내가 타우루스 가문과 거래한 일을 눈감아 주게 하려면 교황의 후원이 필요할 것이다.', '') + '<br><br>' + _\r"
+  },
+  {
+    "location": "#quest_base",
+    "line": 85,
+    "text": "'교황 이오안은 나에게 백색 도시의 귀족 신분을 줄 수 있다. 그의 호의를 얻으려면 내 브랜드가 매우 유명해야 하고, 추기경들 중 한 명의 지지를 받아야 한다.<br><br>' + _\r"
+  },
+  {
+    "location": "#quest_base",
+    "line": 179,
+    "text": "$quest_description[17] = ' 그 인형술사는, 극장에 있는 모든 배우들의 임무를 내가 완수하면 포털에 관해 아는 것을 전부 말해 주겠다고 약속했다. <a href = \"EXEC: quest_description_mode = 0 & gt curloc\">뒤로</a>'\r"
+  },
+  {
+    "location": "#static_txt",
+    "line": 278,
+    "text": "$fogs_fame[5] = dyneval($vb_cycle_skill, 5, '안개 지대와 거래한 보람이 있었던 모양이다. 드디어 포털에 들어갈 수 있게 되었다. 앞으로는 더 흥미로운 일이 기다리길 바란다!' )\r"
+  },
+  {
+    "location": "#static_txt",
+    "line": 4898,
+    "text": "$kuklovod_quest[1] = '[인형사]<br>&nbsp;음, 안녕하신가, <<$master_name>>! 그런데 무슨 일로 날 찾아왔지?!... 네 꼴을 보자마자 내 평온이 깨졌잖아. 난 방금 내 인형들이 슬픈 이야기를 연기하는 걸 즐기고 있었거든. 가끔은 정말 가슴을 울리지... 뭐 됐어... 그래서 무슨 일로 왔지, 친구?... 다른 세계로 통하는 포털이라도 찾는 건가? 웃기지 마! 설마 그렇게'\r"
+  },
+  {
+    "location": "#static_txt",
+    "line": 4901,
+    "text": "$kuklovod_quest[4] = '[인형사]<br>&nbsp;똑같은 욕망을 품은 또 다른 멍청한 괴물과 마주치게 되지. 그렇게 날마다 이어지는 거야... 그리고 여기서 빠져나가는 길은 단 두 개뿐이다. 첫째는 로마야. 거기선 아무도 널 기다리지 않아. 잘해야 소모품 취급이고, 최악에는 남은 평생 주인들을 기쁘게 하며 살아야 하지. 두 번째 길은 바로 그 다른 세계로 통하는 포털이고.'\r"
+  },
+  {
+    "location": "#static_txt",
+    "line": 4905,
+    "text": "$kuklovod_quest[7] = '[인형사]<br>&nbsp;하지만 대가로 날 도와라. 내 인형들이 정성껏 지키고 있는 \"다른 세계로 통하는 포털\"의 열쇠 조각 두 개를 가져와라. 나와 함께 놀아 줘. 내 극장의 새로운 주인공이 되어라. 내 아이들은 네가 필요하다. 그리고 나는 옆에서 이 공연을 지켜보겠지... 내 부탁을 들어주면, 나도 그 대가로 널 도와주겠다!'\r"
+  },
+  {
+    "location": "#static_txt",
+    "line": 4906,
+    "text": "$kuklovod_win[1] ='[인형사]<br>&nbsp;우습구나, <<$master_name>>! 설마 내가 포털에 대한 걸 전부 순순히 털어놓을 거라고 생각한 건 아니겠지?! 그리고 못 믿겠지만... 나도 사실 그 포털에 대해선 아무것도 모른다. 내 일은 안개의 불청객들을 추적해서 즉시 바티칸에 보고하는 것뿐이야.'\r"
+  },
+  {
+    "location": "#static_txt",
+    "line": 4907,
+    "text": "$kuklovod_win[2] = ' 그리고 충고 하나 해 주지... 그 포털은 아주 극소수의 사람들에게만 열려 있다. 그리고 당신은 그 부류가 아니야. 거길 캐 보려는 모든 시도는 분명 네게 좋지 않은 끝으로 돌아올 거다. '\r"
+  },
+  {
+    "location": "#static_txt",
+    "line": 4913,
+    "text": "$angel_quest[2] = '[천사]<br>&nbsp;그리고 나는 다른 세계로 통하는 포털을 여는 봉인을 얻고 싶다는 네 욕망에 굴복할 수밖에 없다. 하지만 네가 내 영역에 온 이상, 나도 대가로 부탁 하나쯤 할 권리는 있지... 여기 역시 네 세계와 마찬가지로, <<$master_name>>, 전쟁이 벌어지고 있다. 그리고 이 전쟁에서 우리는 밀리고 있다. 균형을 유지해야 할 대천사들이'\r"
+  },
+  {
+    "location": "#static_txt",
+    "line": 4955,
+    "text": "$azazel_quest[1] = '[아자젤]<br>&nbsp;포털에 접근할 봉인을 원한다고 들었다... 좋아, 도와주지. 하지만 대가로 네가 내게 호의를 하나 베풀어야 한다. 아주 작은 일이지.'\r"
+  },
+  {
+    "location": "#static_txt",
+    "line": 5172,
+    "text": "$Shlyapkin_quest[5] = '[슐랴프킨]<br>&nbsp;물론 그린치와 그 공범은 모든 걸 교묘하게 짜 놓았지. 하지만 놈들은 안전장치도 없이 움직이고 있어. 뭔가 틀어지면 가장 먼저 가라앉는 배에서 도망칠 놈들도 바로 그들일 거다. 그리고, 보통 인간들에겐 해결 불가능한 문제가 생기면 거기엔 언제나 교황과 그의 정예 근위대가 있다는 사실도 잊지 마라. 그분이 한마디만 하면, 여기의 모든 건 그분 뜻대로 될 거다...'\r"
+  },
+  {
+    "location": "#static_txt",
+    "line": 5280,
+    "text": "- 보세요. 이런 개인실라면 교황에게 바칠 노예를 준비하는 데조차 부끄럽지 않죠. 어떤 훈련생이든 이 공간의 장엄함에 압도되어, 당신이 자신을 위해 기울이는 정성을 실감하게 될 거예요.'\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3083,
+    "text": "!VATICAN CHAMPION ['champion_vatican']\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3084,
+    "text": "$название_моба['champion_vatican'] = \"특급 투사\"\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3085,
+    "text": "$аватара_моба['champion_vatican'] = \"content/pic/mob/gladiator_champion_vatican_ava.png\"\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3086,
+    "text": "$силуэт_моба['champion_vatican'] = \"content/pic/mob/gladiator_champion_vatican.png\"\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3088,
+    "text": "$описание_моба['champion_vatican'] = \"[경기 진행자]<br>&nbsp;도전에 답하는 자는, 사도궁 특급 투사로 불리우는 그녀, 성하의 친위대! 그녀의 검이 빛나는 걸 보십시오! 저 홍염은 창조의 불꽃입니다. 수 백년을 기억할 전투가 될 겁니다!</div>\"\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3090,
+    "text": "$склонение_моб['champion_vatican'] = \"여기사\"\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3091,
+    "text": "$склонение_моба['champion_vatican'] = \"여기사\"\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3092,
+    "text": "$склонение_мобу['champion_vatican'] = \"여기사\"\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3093,
+    "text": "$класс_моба['champion_vatican'] = \"элитный\"\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3094,
+    "text": "базовое_здоровье['champion_vatican'] = 60\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3095,
+    "text": "базовая_выносливость['champion_vatican'] = 120\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3096,
+    "text": "базовый_дух['champion_vatican'] = 120\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3097,
+    "text": "$интеллект['champion_vatican'] = 'искусственный_идиот'\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3099,
+    "text": "базовый_вред['champion_vatican'] = 7\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3100,
+    "text": "$атака_1_тип['champion_vatican'] = 'точная'\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3101,
+    "text": "$атака_1_тип_вреда['champion_vatican'] = 'огонь'\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3102,
+    "text": "$атака_1_штраф['champion_vatican'] = 'боль'\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3103,
+    "text": "$атака_1_бонус['champion_vatican'] = 'разгон'\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3104,
+    "text": "атака_1_длительность['champion_vatican'] = 6\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3105,
+    "text": "$атака_1_текст['champion_vatican'] = \"여기사는 창을 던지듯 불꽃이 타오르는 검으로 당신을 <font color='purple'>찔렀다</font>.\"\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3106,
+    "text": "$атака_2_тип['champion_vatican'] = 'быстрая'\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3107,
+    "text": "$атака_2_тип_вреда['champion_vatican'] = 'огонь'\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3108,
+    "text": "$атака_2_штраф['champion_vatican'] = 'рассеянность'\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3109,
+    "text": "$атака_2_бонус['champion_vatican'] = 'меткость'\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3110,
+    "text": "атака_2_длительность['champion_vatican'] = 6\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3111,
+    "text": "$атака_2_текст['champion_vatican'] = \"여기사는 불타오르는 검으로 허공에 치명적이지만 아름다운 패턴을 <font color='green'>그렸다</font>.\"\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3112,
+    "text": "$атака_3_тип['champion_vatican'] = 'сильная'\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3113,
+    "text": "$атака_3_тип_вреда['champion_vatican'] = 'огонь'\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3114,
+    "text": "$атака_3_штраф['champion_vatican'] = 'слабость'\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3115,
+    "text": "$атака_3_бонус['champion_vatican'] = 'адреналин'\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3116,
+    "text": "атака_3_длительность['champion_vatican'] = 6\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3117,
+    "text": "$атака_3_текст['champion_vatican'] = \"여기사는 마법검으로 남자 10명분의 <font color='red'>힘</font>으로 공격 했다.\"\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3119,
+    "text": "базовый_вред_суператаки_1['champion_vatican'] = 20\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3120,
+    "text": "$суператака_1_тип['champion_vatican'] = 'быстрая'\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3121,
+    "text": "$суператака_1_тип_вреда['champion_vatican'] = 'рубящий'\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3122,
+    "text": "$суператака_1_текст['champion_vatican'] = \"마법검에 타격을 당하자, 요란한 소리의 불꽃이 당신의 전신을 <font color='red'>휘감았다</font>.\"\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3123,
+    "text": "$суператака_1_кратко['champion_vatican'] = \"[충격]\"\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3124,
+    "text": "$спецэффект_суператаки_1['champion_vatican'] = {\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3128,
+    "text": "$смерть['champion_vatican'] = '<br> 여기사의 시체가 구르면서 피가 흐르고 있다'\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3129,
+    "text": "$отключка['champion_vatican'] = '<br> 여기사는 땅에 쓰러지더니, 의식을 잃었다'\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3130,
+    "text": "$бегство['champion_vatican'] = '<br> 여기사는 항복하고 자비를 구하고 있다'\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3132,
+    "text": "хрупкий['champion_vatican'] = 1\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3133,
+    "text": "тонкое_тело['champion_vatican'] = 0\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3134,
+    "text": "бессмертный['champion_vatican'] = 0\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3135,
+    "text": "безустали['champion_vatican'] = 1\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3136,
+    "text": "бесстрашный['champion_vatican'] = 1\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3138,
+    "text": "модификатор_колющий['champion_vatican'] = -2\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3139,
+    "text": "модификатор_рубящий['champion_vatican'] = -6\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3140,
+    "text": "модификатор_дробящий['champion_vatican'] = -6\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3141,
+    "text": "модификатор_огонь['champion_vatican'] = 0\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3142,
+    "text": "модификатор_холод['champion_vatican'] = 0\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3143,
+    "text": "модификатор_молния['champion_vatican'] = 0\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3144,
+    "text": "модификатор_свет['champion_vatican'] = 0\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3145,
+    "text": "модификатор_тьма['champion_vatican'] = 0\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3146,
+    "text": "модификатор_серебро['champion_vatican'] = 0\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3147,
+    "text": "модификатор_холодное_железо['champion_vatican'] = 0\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3148,
+    "text": "модификатор_психический['champion_vatican'] = -5\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3584,
+    "text": "!Vatican Paladin\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3586,
+    "text": "$название_моба['vatican_paladin'] = \"성기사\"\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3587,
+    "text": "$аватара_моба['vatican_paladin'] = \"content/pic/mob/vatican_paladin_ava.png\"\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3588,
+    "text": "$силуэт_моба['vatican_paladin'] = \"content/pic/mob/vatican_paladin.png\"\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3589,
+    "text": "$описание_моба['vatican_paladin'] = \"<br>교황의 아뎁타 소로리타스에서도 가장 뛰어난 성기사입니다. 상대를 향한 연민과 자비 따위는 그녀에게 존재하지 않습니다.\"\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3590,
+    "text": "$склонение_моб['vatican_paladin'] = \"성기사\"\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3591,
+    "text": "$склонение_моба['vatican_paladin'] = \"성기사\"\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3592,
+    "text": "$склонение_мобу['vatican_paladin'] = \"성기사\"\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3593,
+    "text": "$класс_моба['vatican_paladin'] = \"элитный\"\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3594,
+    "text": "базовое_здоровье['vatican_paladin'] = 150\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3595,
+    "text": "базовая_выносливость['vatican_paladin'] = 150\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3596,
+    "text": "базовый_дух['vatican_paladin'] = 150\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3597,
+    "text": "$интеллект['vatican_paladin'] = 'искусственный_идиот'\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3598,
+    "text": "базовый_вред['vatican_paladin'] = 10\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3599,
+    "text": "$атака_1_тип['vatican_paladin'] = 'точная'\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3600,
+    "text": "$атака_1_тип_вреда['vatican_paladin'] = 'рубящий'\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3601,
+    "text": "$атака_1_штраф['vatican_paladin'] = 'боль'\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3602,
+    "text": "$атака_1_бонус['vatican_paladin'] = 'меткость'\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3603,
+    "text": "атака_1_длительность['vatican_paladin'] = 6\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3605,
+    "text": "$атака_1_текст['vatican_paladin'] = \"성기사는 검으로 당신의 다리를 <font color='purple'>날카롭게</font> 베었다.\"\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3607,
+    "text": "$атака_2_тип['vatican_paladin'] = 'быстрая'\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3608,
+    "text": "$атака_2_тип_вреда['vatican_paladin'] = 'рубящий'\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3609,
+    "text": "$атака_2_штраф['vatican_paladin'] = 'скованность'\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3610,
+    "text": "$атака_2_бонус['vatican_paladin'] = 'разгон'\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3611,
+    "text": "атака_2_длительность['vatican_paladin'] = 6\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3613,
+    "text": "$атака_2_текст['vatican_paladin'] = \"성기사는 검을 <font color='green'>거세게</font> 휘두르며 바닥의 먼지를 일으켰다.\"\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3615,
+    "text": "$атака_3_тип['vatican_paladin'] = 'сильная'\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3616,
+    "text": "$атака_3_тип_вреда['vatican_paladin'] = 'рубящий'\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3617,
+    "text": "$атака_3_штраф['vatican_paladin'] = 'шаткость'\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3618,
+    "text": "$атака_3_бонус['vatican_paladin'] = 'бешенство'\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3619,
+    "text": "атака_3_длительность['vatican_paladin'] = 6\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3621,
+    "text": "$атака_3_текст['vatican_paladin'] = \"성기사가 당신을 반으로 가를 듯 검을 <font color='red'>힘껏</font> 내리쳤다.\"\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3623,
+    "text": "базовый_вред_суператаки_1['vatican_paladin'] = 20\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3624,
+    "text": "$суператака_1_тип['vatican_paladin'] = 'сильная'\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3625,
+    "text": "$суператака_1_тип_вреда['vatican_paladin'] = 'рубящий'\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3627,
+    "text": "$суператака_1_текст['vatican_paladin'] = \"성기사의 <font color='red'>파괴적인</font> 검격이 당신의 몸에 깊은 상처를 남겼다.\"\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3631,
+    "text": "$суператака_1_кратко['vatican_paladin'] = \"[검 강타]\"\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3634,
+    "text": "$спецэффект_суператаки_1['vatican_paladin'] = {\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3640,
+    "text": "$смерть['vatican_paladin'] = '<br>온몸이 난도질당한 성기사의 시체가 땅에 쓰러졌다.'\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3641,
+    "text": "$отключка['vatican_paladin'] = '<br>힘이 다한 성기사는 얼굴부터 땅에 쓰러졌다.'\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3642,
+    "text": "$бегство['vatican_paladin'] = '<br>오만했던 성기사는 항복하고 자비를 구하고 있다.'\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3644,
+    "text": "хрупкий['vatican_paladin'] = 0\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3645,
+    "text": "тонкое_тело['vatican_paladin'] = 0\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3646,
+    "text": "бессмертный['vatican_paladin'] = 0\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3647,
+    "text": "безустали['vatican_paladin'] = 1\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3648,
+    "text": "бесстрашный['vatican_paladin'] = 1\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3649,
+    "text": "модификатор_колющий['vatican_paladin'] = -6\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3650,
+    "text": "модификатор_рубящий['vatican_paladin'] = -10\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3651,
+    "text": "модификатор_дробящий['vatican_paladin'] = -10\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3652,
+    "text": "модификатор_огонь['vatican_paladin'] = 5\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3653,
+    "text": "модификатор_холод['vatican_paladin'] = 5\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3654,
+    "text": "модификатор_молния['vatican_paladin'] = 0\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3655,
+    "text": "модификатор_свет['vatican_paladin'] = 0\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3656,
+    "text": "модификатор_тьма['vatican_paladin'] = 0\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3657,
+    "text": "модификатор_серебро['vatican_paladin'] = 0\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3658,
+    "text": "модификатор_холодное_железо['vatican_paladin'] = 0\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3659,
+    "text": "модификатор_психический['vatican_paladin'] = -5\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3710,
+    "text": "! JO9 MOD START PORTAL_GUARDIAN_MORALE_IMMUNITY_20261111\r"
+  },
+  {
+    "location": "#противники",
+    "line": 3712,
+    "text": "! JO9 MOD END PORTAL_GUARDIAN_MORALE_IMMUNITY_20261111\r"
+  },
+  {
+    "location": "конец_раунда",
+    "line": 138,
+    "text": "\t\t!Vatican Champion damage bug fix/hack - crushboss (disabled by ImperatorAugustus)\r"
+  },
+  {
+    "location": "конец_раунда",
+    "line": 139,
+    "text": "\t\t!if challenge_type = 1 and $ge = 'champion_vatican' and нанесенный_вред[i] > 36:\r"
+  },
+  {
+    "location": "выход_из_боя",
+    "line": 519,
+    "text": "IF $враг[1] = 'vatican_paladin' and $итог_боя = 'победа':\r"
+  },
+  {
+    "location": "#npc_base_woman",
+    "line": 849,
+    "text": "$npc_image['pope'] = 'pope'\r"
+  },
+  {
+    "location": "#npc_base_woman",
+    "line": 850,
+    "text": "$npc_name['pope'] = 'Иоанн I'\r"
+  },
+  {
+    "location": "#npc_base_woman",
+    "line": 851,
+    "text": "$npc_status['pope'] = 'Понтифик\r"
+  },
+  {
+    "location": "#npc_base_woman",
+    "line": 853,
+    "text": "$npc_alignment['pope'] = 'нейтралы'\r"
+  },
+  {
+    "location": "#npc_base_woman",
+    "line": 854,
+    "text": "$npc_info['pope'] = 'Без сомнения самый могущественный человек в городе. Покровительство Папы Римского даёт практически неограниченные возможности в Белом Городе, да и на территории любого из Великих Домов дорогого стоит.'\r"
+  },
+  {
+    "location": "#npc_base_woman",
+    "line": 855,
+    "text": "demand_rating['pope'] = 10\r"
+  },
+  {
+    "location": "#npc_base_woman",
+    "line": 856,
+    "text": "$npc_preferences['pope'] = {\r"
+  },
+  {
+    "location": "#npc_base_woman",
+    "line": 860,
+    "text": "$buyer_demand['pope'] = {\r"
+  },
+  {
+    "location": "#npc_base_woman",
+    "line": 863,
+    "text": "$pope_pref[1] = '  [Папа Иоанн I]\r"
+  },
+  {
+    "location": "#npc_base_woman",
+    "line": 865,
+    "text": "$pope_pref[2] = '  [Папа Иоанн I]\r"
+  },
+  {
+    "location": "#npc_base_woman",
+    "line": 867,
+    "text": "$pope_pref[3] = '  [Папа Иоанн I]\r"
+  },
+  {
+    "location": "#npc_base_woman",
+    "line": 869,
+    "text": "$pope_pref[4] = '  [Папа Иоанн I]\r"
+  },
+  {
+    "location": "#npc_base_woman",
+    "line": 871,
+    "text": "$pope_pref[5] = '  [Папа Иоанн I]\r"
+  },
+  {
+    "location": "#npc_base_woman",
+    "line": 873,
+    "text": "$buy_quote['pope'] = '   [Папа Иоанн I]\r"
+  },
+  {
+    "location": "#npc_base_woman",
+    "line": 875,
+    "text": "$refuse_skill_quote['pope'] = '   [Папа Иоанн I]\r"
+  },
+  {
+    "location": "#npc_base_woman",
+    "line": 877,
+    "text": "$refuse_level_quote['pope'] = '   [Папа Иоанн I]\r"
+  },
+  {
+    "location": "#npc_base_woman",
+    "line": 879,
+    "text": "$refuse_charm_quote['pope'] = '   [Папа Иоанн I]\r"
+  },
+  {
+    "location": "#npc_base_woman",
+    "line": 881,
+    "text": "$refuse_health_quote['pope'] = '   [Папа Иоанн I]\r"
+  },
+  {
+    "location": "#npc_base_woman",
+    "line": 883,
+    "text": "$refuse_pregnant_quote['pope'] = '   [Папа Иоанн I]\r"
+  },
+  {
+    "location": "#npc_base_woman",
+    "line": 885,
+    "text": "$refuse_special_quote['pope'] = '   [Папа Иоанн I]\r"
+  },
+  {
+    "location": "female_pregant_end2",
+    "line": 14,
+    "text": "'<div id = \"title_scroll_text\"> 교구에 머무는 내내, 당신은 현지 교구민들의 보살핌 속에 둘러싸여 있었다. 임신 말기와 출산도 비교적 순조롭게 지나갔다. 자기와 아이에게 이보다 더 나은 환경은 찾을 수 없다는 걸 깨달은 당신은, 세속의 삶으로 돌아가지 않고 교구에 남기로 결심했다. 게다가 교황청의 추기경들은 오래전부터 당신에게 노골적인 추파를 보내고 있었다. 싱글맘이 이 이상 뭘 더 바라겠는가? </div>'\r"
+  },
+  {
+    "location": "#txt_woman",
+    "line": 1759,
+    "text": "$pregnant_slave_taken[1] = '  Barely having time to deal with the morning chores, you hear an insistent knocking at the door. In the doorway you see a priestess of the Vatican, accompanied by a platoon of the Swiss Guard.'\r"
+  },
+  {
+    "location": "#txt_woman",
+    "line": 1762,
+    "text": "$pregnant_slave_taken[4] = '  [<<$master_name>>]<br>- I have a pregnant slave. However, I do not quite understand what this has to do with the Vatican?'\r"
+  },
+  {
+    "location": "#txt_woman",
+    "line": 1959,
+    "text": "$realtor_demo_white[1] = '  [GLORIA]<br>- White Town is under the direct jurisdiction of the Vatican and an exemplary peace and order reigns. The crime rate is virtually nil. Housing stock is entirely elite and in excellent condition. You cannot find any better apartments than these.'\r"
+  },
+  {
+    "location": "#txt_woman",
+    "line": 1988,
+    "text": "$realtor_demo_korvus[13] = '  [GLORIA]<br>- Take a look. You could train a slave worthy of the pope’s attention without any problem in here. Any slave should be comfortable with the great decoration and appreciate your concern for her.'\r"
+  },
+  {
+    "location": "#txt_woman",
+    "line": 1993,
+    "text": "$realtor_demo_taurus[1] = '  [GLORIA]<br>- This district is under the jurisdiction of the Taurus Great House. It is inhabited by the “faithful” - people honoring the Savior, and they receive special support from Vatican. There are fewer people here than in the Serpentine quarter so order is maintained at high"
+  },
+  {
+    "location": "#txt_woman",
+    "line": 2075,
+    "text": "- Take a look. In such a boudoir, it’s not shameful to prepare a slave even for the Pope himself. Any trainee should be imbued with the grandeur of the surroundings and appreciate your care for her.'\r"
+  },
+  {
+    "location": "#txt_man",
+    "line": 1701,
+    "text": "$realtor_demo_korvus[13] = '[글로리아]<br> 이곳도 둘러보아 주시길. 아무런 문제없이, 교황의 관심도 살 노예를 만들어낼 수 있습니다. 어떠한 노예도 이 훌륭한 장식에 반하여 편안함을 느끼고, 당신 심려에 감사해 할 겁니다.</div>'\r"
+  },
+  {
+    "location": "#txt_man",
+    "line": 1769,
+    "text": "$realtor_demo_RedLight[13] = '[글로리아]<br> 이것도 보세요. 이런 부두아라면 교황에게 바칠 노예를 준비한다 해도 부끄럽지 않겠죠. 어떤 훈련생이든 이 웅장한 분위기에 압도되어, 당신의 배려를 절실히 느끼게 될 거예요.</div>'\r"
+  },
+  {
+    "location": "jo9_reference_info",
+    "line": 132,
+    "text": "\t$npc_info['black_arhangel'] = '인형사의 극장에서 타락한 ‘검은 대천사’ 역할을 맡은 살아 있는 인형.<br><br>기계 장치 위에서 천사 인형들을 가학적으로 유린하며 마력을 채우는 괴이한 연극을 반복한다. 포털의 단서를 얻으려면 이 미친 무대의 비위를 맞춰야 한다.<!-- #nwtx -->'\r"
+  },
+  {
+    "location": "jo9_reference_info",
+    "line": 141,
+    "text": "\t$npc_info['demon'] = '인형사의 지옥 무대 가장 깊은 곳에서 군림하는 ‘악마’ 배역의 인형.<br><br>발치에 꿇린 천사 인형을 가학적으로 능욕하며 방문객에게 까다로운 공물을 요구한다. 포털로 향하는 봉인을 손에 넣으려면 그의 광기 어린 거래에 응해야 한다.<!-- #nwtx -->'\r"
+  },
+  {
+    "location": "jo9_reference_info",
+    "line": 257,
+    "text": "if $trim($place_info['vatican_gate']) = '' or $place_info['vatican_gate'] = '백색 도시의 바티칸으로 들어가는 관문.<br><br>안쪽의 권위는 성벽 바깥에서도 느껴진다. 방문하려는 사람은 자신의 이름과 용건을 내세우지만, 그 말이 받아들여지는지는 교단과 맺은 관계에 달려 있다.' or $place_info['vatican_gate'] = '백색 도시의 바티칸으로 들어가는 관문.<br><br>안쪽의 권위는 성벽 바깥에서도 느껴진다. 방문하려는 사람은 자신의 이름과 용건을 내세우지만, 그 말이"
+  },
+  {
+    "location": "jo9_reference_info",
+    "line": 258,
+    "text": "\t$place_info['vatican_gate'] = '순백의 성벽으로 둘러싸인 바티칸 교황청의 거대한 관문.<br><br>안개를 통제하는 절대 권력의 본산으로, 무장한 성기사들이 이단자와 불법 노예상을 매섭게 색출한다. 교단의 신임 없이는 한 걸음도 들여놓을 수 없다.<!-- #nwtx -->'\r"
+  },
+  {
+    "location": "jo9_reference_info",
+    "line": 260,
+    "text": "if $trim($place_info['vatican']) = '' or $place_info['vatican'] = '교황과 교단의 권위가 모이는 바티칸.<br><br>종교적인 격식 속에서도 인재를 찾는 일과 유력자의 후원을 얻는 일이 함께 진행된다. 교단에 쓸모를 증명하면 로마에서의 지위에도 영향을 줄 수 있다.' or $place_info['vatican'] = '교황과 교단의 권위가 모이는 바티칸.<br><br>종교적인 격식 속에서도 인재를 찾는 일과 유력자의 후원을 얻는 일이 함께 진행된다. 교단에 쓸모를 증명하면 로마에서의 지위에도 영향을"
+  },
+  {
+    "location": "jo9_reference_info",
+    "line": 261,
+    "text": "\t$place_info['vatican'] = '교황과 추기경들이 신의 이름으로 로마의 생사여탈권을 쥐고 흔드는 바티칸 심장부.<br><br>성스러운 법복 뒤에서는 포털의 독점권과 막대한 스파크, 그리고 교단 고위층의 은밀한 수발을 들 노예 거래가 가장 거룩한 얼굴로 자행된다.<!-- #nwtx -->'\r"
+  },
+  {
+    "location": "jo9_reference_info",
+    "line": 416,
+    "text": "if $trim($npc_info['kuklovod']) = '' or $npc_info['kuklovod'] = '영원한 도시에서 재능을 인정받지 못해 문명에서 멀리 떨어진 안개로 옮겨 간 살아 있는 인형 극장의 주인이다.<br><br>안개에 들어간 사람들은 대개 무사하지 못하지만, 그는 여전히 살아 있다. 그 이유와 바티칸과의 관계는 수수께끼로 남아 있다. 극장과 포털을 둘러싼 소문 때문에 자유를 찾는 이들이 그를 찾아온다.' or $npc_info['kuklovod'] = '영원한 도시에서 재능을 인정받지 못해 문명에서 멀리 떨어진 안개로 옮겨"
+  },
+  {
+    "location": "jo9_reference_info",
+    "line": 417,
+    "text": "\t$npc_info['kuklovod'] = '안개 한복판에서 광기 어린 ‘살아 있는 인형 극장’을 지배하는 괴짜 인형사.<br><br>안개 속 조난자들을 납치해 정신을 부수고 천사와 악마 인형으로 박제해 부린다. 바티칸의 앞잡이 노릇을 하면서도 뒤로는 포털의 비밀을 미끼로 위험한 거래를 즐긴다.<!-- #nwtx -->'\r"
+  },
+  {
+    "location": "jo9_rumor_scan",
+    "line": 150,
+    "text": "    $jo9_rs_qids[1] = 'pope'\r"
+  },
+  {
+    "location": "jo9_rumor_scan",
+    "line": 152,
+    "text": "    $jo9_rs_qtitles[1] = '바티칸의 교황 이오안 1세'\r"
+  },
+  {
+    "location": "jo9_battle_fate",
+    "line": 90,
+    "text": " if $jo9_bv_standing = 'content/pic/mob/vatican_paladin.png': $jo9_bv_image = 'content/pic/mob/defeated/vatican_paladin.png'\r"
+  },
+  {
+    "location": "jo9_battle_fate",
+    "line": 107,
+    "text": " if $jo9_bv_standing = 'content/pic/mob/gladiator_champion_vatican.png': $jo9_bv_image = 'content/pic/mob/defeated/gladiator_champion_vatican.png'\r"
+  },
+  {
+    "location": "jo9_json_ko",
+    "line": 134,
+    "text": "if $args[1]='I have a big family, I have an older sister, a father, many distant relatives, my mother died when I was little. Don’t think that I’m stuck in this world for a long time, magic, portals, all sorts of spells, all this was in my world, as soon as I find my sister, we’ll try to return with her.': $r"
+  },
+  {
+    "location": "jo9_audio_formats",
+    "line": 47,
+    "text": " $jo9_bgm_track['vatican'] = 'content/snd/vatican.mp3'\r"
+  },
+  {
+    "location": "jo9_audio_formats",
+    "line": 99,
+    "text": " if $jo9_audio_norm='content/snd/vatican.wav': $result='content/snd/vatican.mp3'\r"
+  },
+  {
+    "location": "jo9_residence_bgm",
+    "line": 6,
+    "text": " jo9_bgm_length['content/snd/vatican.mp3']=455025\r"
+  },
+  {
+    "location": "jo9_residence_bgm",
+    "line": 99,
+    "text": "  $jo9_bg_base='content/snd/vatican.mp3'\r"
+  },
+  {
+    "location": "jo9_plain_voice",
+    "line": 2437,
+    "text": " if $args[1]='[글로리아]<br> 이곳도 둘러보아 주시길. 아무런 문제없이, 교황의 관심도 살 노예를 만들어낼 수 있습니다. 어떠한 노예도 이 훌륭한 장식에 반하여 편안함을 느끼고, 당신 심려에 감사해 할 겁니다.</div>': $result='[글로리아]<br> 이곳도 둘러보아 주시길. 아무런 문제없이, 교황의 관심도 살 노예를 만들어낼 수 있다. 어떠한 노예도 이 훌륭한 장식에 반하여 편안함을 느끼고, 당신 심려에 감사해 할 겁니다.</div>' & exit\r"
+  },
+  {
+    "location": "jo9_plain_voice",
+    "line": 2495,
+    "text": " if $args[1]='[글로리아]<br> 이것도 보세요. 이런 부두아라면 교황에게 바칠 노예를 준비한다 해도 부끄럽지 않겠죠. 어떤 훈련생이든 이 웅장한 분위기에 압도되어, 당신의 배려를 절실히 느끼게 될 거예요.</div>': $result='[글로리아]<br> 이것도 봐. 이런 부두아라면 교황에게 바칠 노예를 준비한다 해도 부끄럽지 않겠지. 어떤 훈련생이든 이 웅장한 분위기에 압도되어, 당신의 배려를 절실히 느끼게 될 거야.</div>' & exit\r"
+  }
+]

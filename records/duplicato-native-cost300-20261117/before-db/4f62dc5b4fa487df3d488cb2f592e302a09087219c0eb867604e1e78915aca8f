@@ -1,0 +1,52 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+const core=require(process.env.JO9_REFERENCE_CORE||'../text-workshop/core.cjs');
+// JO9 MOD START DUPLICATO_REFERENCE_20261116
+function locationSpells(sources,hash){
+ const spell=sources.get('jo9_duplicato');if(!spell)return[];
+ const traits=sources.get('jo9_duplicato_traits'),form=sources.get('menu_form')||'',city=sources.get('interaction_city')||'';
+ assert(traits,'Duplicato talent helper is missing');
+ const requireMatch=(text,re,message)=>{const match=text.match(re);assert(match,message);return match;};
+ const costs=[...spell.matchAll(/^\s*sparks\s*-=\s*(\d+)\s*$/gm)];assert.equal(costs.length,1,'Duplicato cost is ambiguous');assert.equal(Number(costs[0][1]),900,'Duplicato cost changed');
+ requireMatch(spell,/\bmaster_mage\s*<\s*3\b/,'Duplicato mage requirement changed');
+ for(const actor of ['master_energy',"slave['energy']","assistant['energy']"])assert(spell.includes(actor+' -= 1'),'Duplicato AP cost changed: '+actor);
+ requireMatch(spell,/npc_progress\['Priscilla_duplicato'\]\s*=\s*1/,'Duplicato learning flag changed');
+ requireMatch(spell,/^\s*already_done_today\['jo9_duplicato'\]\s*=\s*1\s*$/m,'Duplicato daily flag changed');
+ requireMatch(spell,/^\s*slave\['jo9_duplicato_received'\]\s*=\s*1\s*$/m,'Duplicato recipient flag changed');
+ requireMatch(traits,/slave\['jo9_duplicato_received'\]\s*=\s*1/,'Duplicato recipient guard changed');
+ const keys=requireMatch(traits,/\$j9de_keys\s*=\s*'\|([^']+)\|'/,'Duplicato talent list is missing')[1].split('|');assert.equal(keys.length,14,'Duplicato talent count changed');assert.equal(new Set(keys).size,14);
+ const menuCall=requireMatch(form,/gs\s+'jo9_duplicato',\s*'menu_item'/,'Duplicato menu link is missing'),learn=requireMatch(city,/gs\s+'jo9_duplicato',\s*'learn'/,'Duplicato learning link is missing');
+ const event=[...city.slice(0,learn.index).matchAll(/^\s*if\s+interaction_city\s*=\s*(\d+)\s*:/gmi)].at(-1);assert(event&&Number(event[1])===6027,'Duplicato learning event changed');
+ const line=(text,offset)=>text.slice(0,offset).split('\n').length;
+ return[{id:'jo9_duplicato',name:'듀플리카토 에센티아',category:'대상 시전',
+  description:'조수가 지녔고 발견한 긍정 재능 14종 중 노예에게 없는 하나를 복사합니다. 상충 특성은 사전에 표시한 뒤 제거하며 조수의 재능은 유지합니다. 전체 하루 1회, 받는 인물은 평생 1회이고 제공자는 반복 제공할 수 있습니다.',
+  price:'900스파크 · 주인공/노예/조수 각각 행동력 1',sparkCost:900,
+  acquisition:'프리실라의 마법 보상을 선택하면 배웁니다(이벤트 6027).',
+  requirements:'습득 필요 · 장비 보정 포함 마법력 B(3) 이상 · 노예와 조수 모두 활동 가능하며 서로 다른 인물 · 양방향 친밀도 각각 40 이상 · 발견한 긍정 재능 · 900스파크 · 세 사람 각각 행동력 1. 황소 반지·쉬운 행동 할인은 없으며 기존 무한 행동력 치트는 유지됩니다.',
+  source:'jo9_duplicato:1 · jo9_duplicato_traits:1 · interaction_city:'+line(city,learn.index),usage:'menu_form:'+line(form,menuCall.index)+' → jo9_duplicato',linked:true,sourceQspSha256:hash,
+  code:'! location: jo9_duplicato\n'+spell+'\n\n! location: jo9_duplicato_traits\n'+traits}];
+}
+// JO9 MOD END DUPLICATO_REFERENCE_20261116
+function extract(raw,menuItems){
+ const doc=core.parse(raw),sources=new Map(doc.locations.map(l=>[l.name,core.shift(doc.lines[l.body],5).replace(/\r\n/g,'\n')]));
+ const menu=new Map(Object.entries(menuItems).map(([k,v])=>[k.toLowerCase(),v])),calls=new Map();
+ const form=sources.get('menu_form').split('\n');
+ const call=/func\('\$menu',\s*'goto',\s*[^,]+,\s*(menu_\w+),\s*'interaction',\s*'interaction',\s*'((?:''|[^'])*)'(?:,\s*'((?:''|[^'])*)')?/i;
+ for(let i=0;i<form.length;i++){
+  const m=call.exec(form[i]);if(!m)continue;const id=menu.get(m[1].toLowerCase());if(!Number.isInteger(id))continue;
+  let before=i-1;while(before>=0&&!form[before].trim())before--;
+  calls.set(id,{name:m[2].replaceAll("''", "'").replace(/\(\$\d+\)\s*$/,'').trim(),description:(m[3]||'').replaceAll("''", "'"),requirements:/^\s*if\b/i.test(form[before]||'')?form[before].trim():'직접 메뉴 조건 미확인',usage:'menu_form:'+(i+1)});
+ }
+ const code=sources.get('interaction'),rows=[];
+ for(const start of code.matchAll(/^if\s+interaction\s*=\s*(\d+)\s*:[ \t]*$/gmi)){
+  const tail=code.slice(start.index),end=/^end[ \t]*$/gmi.exec(tail);if(!end)continue;
+  const block=tail.slice(0,end.index+end[0].length);if(!/^\s*\$interaction_type\s*=\s*'spell_cast'/mi.test(block))continue;
+  const id=Number(start[1]),active=calls.get(id),costs=[...block.matchAll(/^\s*sparks\s*-=\s*(\d+)/gmi)].map(m=>Number(m[1]));assert(costs.length<=1,'Ambiguous spell cost '+id);
+  const line=code.slice(0,start.index).split('\n').length;
+  rows.push({id:'interaction:'+id,interactionId:id,name:active?.name||'주문 #'+id,category:[61,65,81].includes(id)?'주인공 버프·탐지':[69,70000].includes(id)?'회복·강화':'대상 시전',description:active?.description||'효과 코드를 확인하세요.',price:costs.length?costs[0]+'스파크':'소모 구문 미확인',sparkCost:costs[0]??null,acquisition:active?.requirements||'직접 메뉴 연결 미확인',requirements:active?.requirements||'',source:'interaction:'+line,usage:active?.usage||'호출 미확인',linked:!!active,code:block});
+ }
+ assert(rows.length>0,'No spell_cast definitions found');rows.sort((a,b)=>a.interactionId-b.interactionId);rows.push(...locationSpells(sources,doc.hash));
+ return{hash:doc.hash,created:new Date().toISOString(),coverage:'현재 WORK의 spell_cast 정의와 마법 메뉴를 대조한 자료입니다. 직접 메뉴 조건과 시전 코드를 표시합니다. 상위 메뉴의 전체 조건·모든 자동 시전 경로를 실행해 검증한 공략은 아닙니다.',rows};
+}
+if(require.main===module){const[qsp,menu,out]=process.argv.slice(2);assert(qsp&&menu,'Usage: node extract-spells.cjs <jack.qsp> <json/menu_item.json> [spells.json]');const data=extract(fs.readFileSync(qsp),JSON.parse(fs.readFileSync(menu,'utf8')));fs.writeFileSync(out||path.join(__dirname,'spells.json'),JSON.stringify(data,null,2)+'\n');console.log(JSON.stringify({hash:data.hash,spells:data.rows.length,unlinked:data.rows.filter(r=>!r.linked).length}));}
+module.exports={extract,locationSpells};

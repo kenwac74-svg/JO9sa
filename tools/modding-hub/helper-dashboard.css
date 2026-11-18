@@ -1,0 +1,83 @@
+/* Helper web view: existing functions in the integrated workspace palette. */
+:root {
+  color-scheme: dark;
+  --bg: #131517;
+  --panel: #1c1f22;
+  --panel-2: #22262a;
+  --border: #30353a;
+  --text: #e9e9e5;
+  --muted: #969c9f;
+  --accent: #dbb06e;
+  --accent-soft: rgba(219, 176, 110, .12);
+  --green: #96bea4;
+  --yellow: #dbb06e;
+  --red: #df9e91;
+  --purple: #c7addd;
+  --cyan: #9baed0;
+}
+body[data-jo9-workspace="helper"] {
+  background: var(--bg);
+  color: var(--text);
+  font-family: Inter, "Pretendard", "Noto Sans KR", "Malgun Gothic", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 13px;
+  line-height: 1.55;
+  padding: 0;
+  overflow-wrap: anywhere;
+}
+body.overlay-mode { background: var(--bg); }
+.topbar {
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 0 0 8px;
+  gap: 8px 12px;
+  backdrop-filter: none;
+}
+.topbar > div:first-child { min-width: 0; gap: 8px !important; }
+.helper-sync { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 10.5px; white-space: nowrap; }
+.helper-sync .pulse-dot { width: 6px; height: 6px; box-shadow: none; }
+.meta-pills { gap: 5px; }
+.pill { font-size: 10.5px; padding: 2px 6px; }
+.controls { margin-left: auto; gap: 6px; }
+select, button, input { font-family: inherit; }
+select, button { padding: 6px 9px; border-radius: 6px; background: var(--panel-2); }
+button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+button.primary, .seg-btns button.active, .quest-cats button.active, .overlay-subtabs button.active { color: var(--bg); background: var(--accent); border-color: var(--accent); }
+#savSelect { max-width: 235px; }
+#targetBuildSelect { max-width: 300px; }
+.tabs { background: var(--bg); padding: 8px 0; gap: 6px; }
+.tab-btn { padding: 6px 10px; }
+.tab-btn.active, .qview-btn.active { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+.wrap { max-width: none; margin: 0; padding: 10px 0 0; }
+.grid-3 { grid-template-columns: minmax(220px, .85fr) minmax(260px, 1.1fr) minmax(280px, 1.15fr); gap: 12px; }
+.grid-3 > *, .guide-grid > *, .quest-grid > *, .skill-cols > * { min-width: 0; }
+.card { border-radius: 8px; padding: 11px 12px; margin-bottom: 12px; }
+.card-title, .q-title, .todo-title { color: var(--text); }
+.portrait, .char-ava { background: var(--panel-2); }
+.step-hdr { color: var(--accent); }
+.guide-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); }
+.guide-grid li { color: var(--text); }
+.quest-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); }
+.quest-search { min-width: min(100%, 220px); }
+.cond-row { border-bottom-color: var(--border); }
+.grade-badge { background: var(--accent-soft); color: var(--accent); }
+.q-loc, .tag-goal { color: var(--cyan); }
+.q-reward { color: var(--yellow); }
+.q-acq { color: var(--purple); }
+.q-pill.active { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+.stat-row.goal-highlight, .spec-focus-box { background: var(--accent-soft); border-color: var(--accent); }
+#jo9Tooltip { color: var(--text); background: var(--panel-2); border-color: var(--accent); max-width: min(340px, calc(100vw - 16px)); }
+.jo9-modal { border-color: var(--border); box-shadow: 0 16px 45px #0008; }
+.jo9-modal-hdr { background: var(--panel-2); }
+.modal-sec { background: var(--panel-2); }
+.helper-credit { margin: 12px 0 0; padding: 7px 0; border-top: 1px solid var(--border); color: var(--muted); font-size: 10px; text-align: right; }
+@media (max-width: 1180px) { .grid-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 760px) {
+  .grid-3 { grid-template-columns: minmax(0, 1fr); }
+  .controls { margin-left: 0; width: 100%; }
+  #savSelect, #targetBuildSelect { max-width: 100%; min-width: 0; }
+  .controls select { flex: 1 1 185px; }
+  .topbar { position: static; }
+}
+/* Compact-view behavior remains an explicit user toggle. */
+body.overlay-mode { font-size: 12px; }
+body.overlay-mode .grid-3 { grid-template-columns: minmax(0, 1fr); }

@@ -4,13 +4,14 @@
  if(typeof api!=='function'||!document.getElementById('navigation'))return;
  const $=id=>document.getElementById(id),node=(tag,text)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;return e;};
  const preview=text=>String(text||'').replace(/<<([\s\S]*?)>>/g,'〈$1〉').replace(/<br\s*\/?>/gi,' ').replace(/<[^>]+>/g,'').replace(/&nbsp;/g,' ').replace(/\s+/g,' ').trim();
- let startPoint=null,endPoint=null,choices={},pins=[],routes=[],current=null,stageEntries=[],busy=false,pending=false,stale=false,lastResult=null;
- try{const saved=JSON.parse(sessionStorage.getItem('jo9-script-range')||'null');if(saved){startPoint=saved.start||null;endPoint=saved.end||null;choices=saved.choices||{};pins=Array.isArray(saved.pins)?saved.pins:[];routes=Array.isArray(saved.routes)?saved.routes:[];stale=!!saved.stale;lastResult=saved.result||null;}}catch{}
- let needsReindex=!!startPoint;
+ const activeScope=()=>typeof includeFemale==='function'?includeFemale():null;
+ let startPoint=null,endPoint=null,choices={},pins=[],routes=[],current=null,stageEntries=[],busy=false,pending=false,stale=false,scopeStale=false,lastResult=null;
+ try{const saved=JSON.parse(sessionStorage.getItem('jo9-script-range')||'null');if(saved){startPoint=saved.start||null;endPoint=saved.end||null;choices=saved.choices||{};pins=Array.isArray(saved.pins)?saved.pins:[];routes=Array.isArray(saved.routes)?saved.routes:[];stale=!!saved.stale;lastResult=saved.result||null;scopeStale=!!saved.scopeStale||activeScope()!==null&&saved.includeFemale!==activeScope();if(scopeStale){stale=!!startPoint;lastResult=null;}}}catch{}
+ let needsReindex=!!startPoint&&!scopeStale;
  const entryKey=e=>[e.location.toLowerCase(),e.fieldIndex,e.start,e.end].join(':');
  const sceneKey=p=>p.location.toLowerCase()+':'+p.sceneId;
  const choiceKey=p=>sceneKey(p)+':page:'+p.at;
- const persist=()=>{try{sessionStorage.setItem('jo9-script-range',JSON.stringify({start:startPoint,end:endPoint,choices,pins,routes,stale,result:lastResult}));}catch{}};
+ const persist=()=>{try{sessionStorage.setItem('jo9-script-range',JSON.stringify({start:startPoint,end:endPoint,choices,pins,routes,stale,scopeStale,includeFemale:activeScope(),result:lastResult}));}catch{}};
  function clearFollowingRoutes(p){
   const at=routes.findIndex(r=>sceneKey(r.from)===sceneKey(p)),removed=at>=0?routes.splice(at):[],downstream=new Set(removed.map(r=>sceneKey(r.to)));
   delete choices[sceneKey(p)+':route'];for(const r of removed)delete choices[r.id];
@@ -34,13 +35,14 @@
   if(r){$('rangePreviewBox').open=true;window.JO9ScriptImporter?.source(r);}
  }
  function clearOutput(){lastResult=null;output(null);}
- const summary=p=>p?(p.uiStage?p.uiStage.number+' / '+p.uiStage.total+'단계\n':'')+preview(p.selection.text).slice(0,260):'미지정';
+ const summary=p=>p?(scopeStale?'작업 범위 변경으로 숨김 · 원래 지정은 보존됨':(p.uiStage?p.uiStage.number+' / '+p.uiStage.total+'단계\n':'')+preview(p.selection.text).slice(0,260)):'미지정';
  function labels(){
   $('rangeStartLabel').textContent=summary(startPoint);$('rangeEndLabel').textContent=summary(endPoint);
   const list=$('rangePinned');
   if(list){list.replaceChildren();if(!pins.length)list.append(node('p',startPoint?'아래 분기의 「이 대사 선택」을 누르면 이 경로에 고정됩니다. 공통 대사는 자동으로 포함합니다.':'장면에서 시작 대사를 먼저 고정하세요.'));
-   for(const [i,p]of pins.entries()){const row=node('li');row.append(node('strong',(i+1)+'. '+(p.uiStage?p.uiStage.number+'단계 · ':'' )+'고정'),node('span',preview(p.selection.text)));list.append(row);}
-   if(routes.length)list.append(node('li','다음 장면 이동 '+routes.length+'개도 선택한 경로에 고정했습니다.'));
+   if(scopeStale)list.append(node('p','이전 범위의 경로는 보존했으며 출력을 잠갔습니다. 새 각본 시작을 눌러 현재 범위에서 다시 지정하세요.'));
+   else{for(const [i,p]of pins.entries()){const row=node('li');row.append(node('strong',(i+1)+'. '+(p.uiStage?p.uiStage.number+'단계 · ':'' )+'고정'),node('span',preview(p.selection.text)));list.append(row);}
+    if(routes.length)list.append(node('li','다음 장면 이동 '+routes.length+'개도 선택한 경로에 고정했습니다.'));}
   }
   buttons();window.dispatchEvent(new Event('jo9:range-changed'));
  }
@@ -74,7 +76,7 @@
  $('rangeStage').onchange=async()=>{const e=stageEntries[Number($('rangeStage').value)]?.entry;if(!e||typeof selectEntry!=='function'||busy)return;busy=true;buttons();try{await selectEntry(e,undefined,false);}catch(err){$('rangeStatus').textContent=err.message;}finally{busy=false;labels();}};
  function accept(role,p){
   pending=false;p=withStage(p);
-  if(role==='start'){startPoint=p;endPoint=null;choices={};pins=[];routes=[];stale=false;needsReindex=false;}else endPoint=p;
+  if(role==='start'){startPoint=p;endPoint=null;choices={};pins=[];routes=[];stale=false;scopeStale=false;needsReindex=false;}else endPoint=p;
   clearOutput();persist();$('rangePrompt').replaceChildren();labels();
   $('rangeStatus').textContent=role==='start'?'시작 대사를 고정했습니다. 아래에서 원하는 분기를 고르고, 마지막 대사를 마무리로 지정하세요.':('마무리를 고정했습니다. 선택한 분기 '+pins.length+'개를 유지했습니다. 미리보기 또는 각본 파일 저장을 누르세요.');
  }
@@ -154,10 +156,11 @@
  }
  $('rangePreview').onclick=()=>make(false);$('rangeSave').onclick=()=>make(true);
  $('rangeDownload').onclick=()=>{if(!lastResult||busy||pending||stale)return;download(lastResult);$('rangeStatus').textContent='브라우저에 TXT 다운로드를 요청했습니다. 브라우저의 다운로드 폴더 또는 저장 대화상자를 확인하세요.';};
- $('rangeReset').onclick=()=>{pending=false;stale=false;needsReindex=false;startPoint=endPoint=null;choices={};pins=[];routes=[];clearOutput();persist();$('rangePrompt').replaceChildren();$('rangeStatus').textContent='새 각본을 시작합니다. 장면에서 시작 대사를 고정하세요.';labels();};
+ $('rangeReset').onclick=()=>{pending=false;stale=false;scopeStale=false;needsReindex=false;startPoint=endPoint=null;choices={};pins=[];routes=[];clearOutput();persist();$('rangePrompt').replaceChildren();$('rangeStatus').textContent='새 각본을 시작합니다. 장면에서 시작 대사를 고정하세요.';labels();};
  $('rangeBackToFlow').onclick=()=>($('gameLines').querySelector('.line.selected')||$('navigation')).scrollIntoView({block:'center'});
  window.JO9ScriptRange={mark,pick,follow,state:()=>({start:startPoint,end:endPoint,choices:{...choices},pins:[...pins],routes:[...routes],stale,busy:busy||needsReindex})};
  window.addEventListener('jo9:selection',event=>select(event.detail));
- output(lastResult);labels();if(lastResult)$('rangeStatus').textContent=lastResult.savedPath?'저장한 각본을 미리보기에 복원했습니다. 저장 위치를 아래에서 확인하세요.':'직전 각본 미리보기를 복원했습니다. 아직 파일 저장 전입니다.';if(typeof context!=='undefined'&&context)select(context);
+ window.addEventListener('jo9:work-scope',()=>{scopeStale=!!startPoint;stale=!!startPoint;pending=false;needsReindex=false;current=null;stageEntries=[];$('rangeStage').replaceChildren();clearOutput();persist();$('rangePrompt').replaceChildren();labels();$('rangeStatus').textContent=startPoint?'작업 범위가 바뀌었습니다. 고정한 경로는 보존했으며 출력을 잠갔습니다. 새 각본 시작을 눌러 현재 범위에서 다시 지정하세요.':'작업 범위가 바뀌었습니다. 장면에서 시작 대사를 고정하세요.';});
+ output(lastResult);labels();if(scopeStale)$('rangeStatus').textContent='이전 각본의 작업 범위가 현재와 다릅니다. 경로는 보존했으며 출력을 잠갔습니다. 새 각본 시작을 눌러 현재 범위에서 다시 지정하세요.';else if(lastResult)$('rangeStatus').textContent=lastResult.savedPath?'저장한 각본을 미리보기에 복원했습니다. 저장 위치를 아래에서 확인하세요.':'직전 각본 미리보기를 복원했습니다. 아직 파일 저장 전입니다.';if(typeof context!=='undefined'&&context)select(context);
 })();
 /* JO9 MOD END SCRIPT_ROUTE_LOCK_20261110 */

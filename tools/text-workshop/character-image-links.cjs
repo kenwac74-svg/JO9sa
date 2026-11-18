@@ -1,6 +1,7 @@
 'use strict';
 // JO9 MOD START CHARACTER_IMAGE_LINKS_20261108
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
+const appearanceSharing=require('./appearance-sharing.cjs');
 const outfits=['title','naked','apron','maid','secr','dom','nurse','school','sorc','leotard','chainmail','kimono','sundress','lace','cocktail','latex','exotic','corset','gorgeous','bride','tail','cow','pet','restrain'];
 const allowed=new Set(['fullimage','indpack_naked','fullmade','fullsecretary','fullmistress','fullpregnant','seed_ava','seed_ava_gray','seed_ava_clear',...outfits.flatMap(k=>['indpack_'+k,'indpack_'+k+'_horny','indpack_'+k+'_rebel'])]);
 const pairs={fullimage:['fullimage','indpack_title'],indpack_title:['fullimage','indpack_title'],fullmade:['fullmade','indpack_maid'],indpack_maid:['fullmade','indpack_maid'],fullsecretary:['fullsecretary','indpack_secr'],indpack_secr:['fullsecretary','indpack_secr'],fullmistress:['fullmistress','indpack_dom'],indpack_dom:['fullmistress','indpack_dom']};
@@ -29,7 +30,7 @@ function linkUpdates(field,stem,cur){
 }
 // JO9 MOD END CHECKLIST_DRESSED_LOOK_20261109
 function create(game,catalogRoot,options={}){
- const pic=path.resolve(game,'content/pic'),jsonDir=path.join(game,'json/slaves'),history=path.join(catalogRoot,'image_work','character-links');let locked=false;
+ const pic=path.resolve(game,'content/pic'),jsonDir=path.join(game,'json/slaves'),history=path.join(catalogRoot,'image_work','character-links'),observedSharing=new Map();let locked=false;
  // JO9 MOD START JSON_CHARACTER_DISCOVERY_20261111
  const validIdentity=id=>(Number.isSafeInteger(id)&&id>=0)||(typeof id==='string'&&/^json:[^\\/<>:"|?*\x00-\x1f]+\.json$/i.test(id));
  const fileNumber=name=>{const m=name.match(/^(\d+)(?:_|\.json$)/i),n=m?Number(m[1]):null;return Number.isSafeInteger(n)&&n>=0?n:null;};
@@ -56,18 +57,19 @@ function create(game,catalogRoot,options={}){
  // JO9 MOD END JSON_CHARACTER_DISCOVERY_20261111
  function resolve(value){const rel=relative(value),root=fs.realpathSync(pic);let current=pic;const names=[];for(const part of rel.split('/')){const list=fs.readdirSync(current),same=list.filter(n=>n.toLowerCase()===part.toLowerCase());if(same.length!==1)throw Error('PNG 파일을 찾을 수 없습니다: '+rel);current=path.join(current,same[0]);names.push(same[0]);if(fs.lstatSync(current).isSymbolicLink())throw Error('외부 연결 PNG는 선택할 수 없습니다.');}if(!fs.statSync(current).isFile()||!fs.realpathSync(current).startsWith(root+path.sep))throw Error('PIC 밖의 경로입니다.');const bytes=fs.readFileSync(current);if(bytes.length<33||bytes.subarray(0,8).toString('hex')!=='89504e470d0a1a0a'||bytes.toString('ascii',12,16)!=='IHDR'||!bytes.readUInt32BE(16)||!bytes.readUInt32BE(20))throw Error('읽을 수 있는 PNG를 선택하세요.');return{path:names.join('/'),full:current,bytes,width:bytes.readUInt32BE(16),height:bytes.readUInt32BE(20)};}
  function fileList(rescan){if(options.files)return options.files(rescan).map(x=>typeof x==='string'?x:x.path);const result=[];function walk(dir,p=''){for(const e of fs.readdirSync(dir,{withFileTypes:true})){if(e.isSymbolicLink()||/^(?:_|backup)/i.test(e.name))continue;if(e.isDirectory())walk(path.join(dir,e.name),p+e.name+'/');else if(e.isFile()&&/\.png$/i.test(e.name))result.push(p+e.name);}}walk(pic);return result;}
- function snapshot(id,file,known,assetsById){const bytes=fs.readFileSync(file),data=parseCharacter(bytes),characterNumber=fileNumber(path.basename(file)),refs={};for(const [key,value]of Object.entries(data)){const p=reference(value,allowed.has(key));if(p)refs[key]=p;}
+ function snapshot(id,file,known,assetsById,shared){const bytes=fs.readFileSync(file),rawData=parseCharacter(bytes),data=shared.resolve(id,rawData),sharing=shared.describe(id),characterNumber=fileNumber(path.basename(file)),refs={};for(const [key,value]of Object.entries(data)){const p=reference(value,allowed.has(key));if(p)refs[key]=p;}
   const exists=p=>!!p&&known.has(p.toLowerCase()),baseField=refs.indpack_title?'indpack_title':'fullimage',base=refs[baseField]||'',info=(p,source)=>({path:p,source,exists:exists(p)}),effectiveRoles={};
   for(const [role,old,pack]of [['maid','fullmade','indpack_maid'],['secretary','fullsecretary','indpack_secr'],['domina','fullmistress','indpack_dom']]){const pick=keys=>{const k=keys.find(k=>exists(refs[k]))||keys.find(k=>refs[k]);return k?info(refs[k],k):info('',null);};const explicit=[refs[old],refs[pack]].filter(Boolean),has=explicit.some(p=>exists(p)&&p.toLowerCase()!==base.toLowerCase());effectiveRoles[role]={legacyField:old,packField:pack,menuAvailable:!!(refs[old]||refs[pack]),normal:pick([pack,old,baseField]),horny:pick([pack+'_horny',pack,old,baseField]),rebel:pick([pack+'_rebel',pack,old,baseField]),safeBase:info(base,baseField),needsArtwork:!has,hasExplicitArtwork:has,displayIssue:explicit.some(p=>!exists(p)),menuIssue:false};}
   const dedicatedImageFolders=['girls/full/','girls/face/','girls/sex_scenes/'].map(root=>root+characterNumber).filter(rel=>{if(characterNumber===null)return false;try{const full=path.join(pic,rel),entry=fs.lstatSync(full);return entry.isDirectory()&&!entry.isSymbolicLink()&&fs.realpathSync(full).startsWith(fs.realpathSync(pic)+path.sep);}catch{return false;}});
-  const stem=path.basename(file).replace(/\.json$/i,''),groups=generationGroups(characterNumber),sceneFolders=new Set(Object.values(refs).filter(p=>/^girls\/scene\/[^/]+\//i.test(p)).map(p=>p.split('/').slice(0,3).join('/').toLowerCase())),namedSceneAssets=sceneFolders.size?[...known.values()].filter(p=>[...sceneFolders].some(folder=>p.toLowerCase().startsWith(folder+'/'))):[];return{id,characterNumber,random:groups.length>0,groups,namedSceneAssets,compatibilityAssets:[],dedicatedImageFolders,imageGroupOwner:[2577,2585,2607].includes(id)?2577:null,imageSyncTargets:id===2577?[2585,2607]:[],name:(typeof data.seed_name==='string'&&data.seed_name.trim())?data.seed_name:(characterNumber===null?stem:stem.includes('_')?stem.split('_').slice(1).join('_'):'ID '+id),hasFixedName:typeof data.seed_name==='string'&&!!data.seed_name.trim(),json:path.relative(game,file).replaceAll('\\','/'),jsonSha256:sha(bytes),refs,missingRefs:Object.keys(refs).filter(k=>!exists(refs[k])),effectiveBase:info(base,baseField),effectiveRoles,portraitComplete:['seed_ava','seed_ava_gray','seed_ava_clear'].every(k=>exists(refs[k])),assets:[...new Set([...(characterNumber===null?[]:assetsById.get(characterNumber)||[]),...namedSceneAssets,...Object.values(refs).filter(exists)])]};
+  const stem=path.basename(file).replace(/\.json$/i,''),groups=generationGroups(characterNumber),sceneFolders=new Set(Object.values(refs).filter(p=>/^girls\/scene\/[^/]+\//i.test(p)).map(p=>p.split('/').slice(0,3).join('/').toLowerCase())),namedSceneAssets=sceneFolders.size?[...known.values()].filter(p=>[...sceneFolders].some(folder=>p.toLowerCase().startsWith(folder+'/'))):[];return{id,characterNumber,random:groups.length>0,groups,namedSceneAssets,compatibilityAssets:[],dedicatedImageFolders,sharing,imageGroupOwner:sharing.members.length>1?sharing.members[0]:null,imageSyncTargets:sharing.members.filter(peer=>peer!==id),name:(typeof data.seed_name==='string'&&data.seed_name.trim())?data.seed_name:(characterNumber===null?stem:stem.includes('_')?stem.split('_').slice(1).join('_'):'ID '+id),hasFixedName:typeof data.seed_name==='string'&&!!data.seed_name.trim(),json:path.relative(game,file).replaceAll('\\','/'),jsonSha256:sha(bytes),refs,missingRefs:Object.keys(refs).filter(k=>!exists(refs[k])),effectiveBase:info(base,baseField),effectiveRoles,portraitComplete:['seed_ava','seed_ava_gray','seed_ava_clear'].every(k=>exists(refs[k])),assets:[...new Set([...(characterNumber===null?[]:assetsById.get(characterNumber)||[]),...namedSceneAssets,...Object.values(refs).filter(exists)])]};
  }
  function read(ids,settings={}){
-  const map=jsonFiles(),complete=ids===undefined;if(complete)ids=[...map.keys()];
+  const shared=appearanceSharing.create(game),map=jsonFiles(),complete=ids===undefined;if(complete)ids=[...map.keys()];
   if(!Array.isArray(ids)||ids.length>5000||ids.some(id=>!validIdentity(id)))throw Error('캐릭터 번호 또는 JSON 파일 목록을 확인하세요.');
   const files=fileList(settings.rescan),known=new Map(files.map(p=>[p.toLowerCase(),p])),assetsById=new Map(),characters=[],errors=[];
   for(const p of files)for(const m of p.matchAll(/(?:^|\/)(\d+)(?=[_/.])/g)){const id=Number(m[1]);if(!assetsById.has(id))assetsById.set(id,new Set());assetsById.get(id).add(p);}
-  for(const id of [...new Set(ids)])try{characters.push(snapshot(id,locate(id,map),known,assetsById));}catch(e){if(!complete&&ids.length===1)throw e;errors.push({id,json:map.has(id)?'json/slaves/'+map.get(id):null,error:e.message});}
+  // A malformed peer cannot erase the group observed by this server before the next write.
+  for(const id of [...new Set(ids)])try{const character=snapshot(id,locate(id,map),known,assetsById,shared),previous=observedSharing.get(id),members=new Set(character.sharing.members);if(previous?.policyHash===character.sharing.policyHash)for(const peer of previous.members)if(!members.has(peer))try{parseCharacter(fs.readFileSync(locate(peer,map)));}catch{members.add(peer);}observedSharing.set(id,{policyHash:character.sharing.policyHash,members:[...members]});characters.push(character);}catch(e){if(!complete&&ids.length===1)throw e;errors.push({id,json:map.has(id)?'json/slaves/'+map.get(id):null,error:e.message});}
   return{characters,files,errors};
  }
  function apply(input){
@@ -75,7 +77,16 @@ function create(game,catalogRoot,options={}){
   try{
    const {id,field,expectedHash}=input;if(!allowed.has(field))throw Error('편집 가능한 이미지 항목이 아닙니다.');
    const primaryFile=locate(id),primary=fs.readFileSync(primaryFile);if(sha(primary)!==expectedHash)throw Error('캐릭터 JSON이 변경됐습니다. 다시 선택하세요.');
-   const image=resolve(input.path),stem=image.path.replace(/\.png$/i,''),affectedIds=imageTargets(id),plans=affectedIds.map(characterId=>{
+   const shared=appearanceSharing.create(game),sharing=shared.describe(id),observed=observedSharing.get(id);if(observed?.policyHash===sharing.policyHash)for(const peer of observed.members)try{parseCharacter(fs.readFileSync(locate(peer)));}catch(error){throw Error('공유 대상 JSON을 읽지 못했습니다: '+peer+' · '+error.message);}
+   const appearanceBefore=shared.resolve(id),slotKeys=(field==='fullimage'||field==='indpack_naked')?['fullimage','indpack_naked']:field==='indpack_title'?['indpack_title']:(pairs[field]||[field]);
+   const norm=value=>typeof value==='string'&&value?value.replaceAll('\\','/').replace(/^content\/pic\//i,'').replace(/\.png$/i,'').toLowerCase():'';
+   const previous=slotKeys.map(key=>norm(appearanceBefore[key])).filter(Boolean);
+   // An explicit different path or empty unlink remains independent until the user opts into sharing in its preview.
+   const affectedIds=shared.targets(id).filter(peer=>{
+    if(peer===id)return true;const data=parseCharacter(fs.readFileSync(locate(peer))),present=slotKeys.filter(key=>Object.hasOwn(data,key));
+    return !present.length||present.every(key=>norm(data[key])&&previous.includes(norm(data[key])));
+   });
+   const image=resolve(input.path),stem=image.path.replace(/\.png$/i,''),plans=affectedIds.map(characterId=>{ 
     const file=locate(characterId),before=characterId===id?primary:fs.readFileSync(file),source=before.toString('utf8'),cur=JSON.parse(source.replace(/^\uFEFF/,'')),updates=linkUpdates(field,stem,cur),next=Buffer.from(patchStrings(source,updates),'utf8'),oldObject={...cur},newObject=JSON.parse(next.toString().replace(/^\uFEFF/,''));
     for(const key of Object.keys(updates)){delete oldObject[key];delete newObject[key];}if(JSON.stringify(oldObject)!==JSON.stringify(newObject))throw Error('이미지 항목 밖의 변경이 감지됐습니다.');
     return{characterId,file,before,next,updates,json:path.relative(game,file),beforeHash:sha(before),afterHash:sha(next)};
@@ -96,7 +107,14 @@ function create(game,catalogRoot,options={}){
    const current=read(affectedIds,{rescan:true});return{...record,backup:first.backup,character:current.characters.find(c=>c.id===id),characters:current.characters,path:image.path};
   }finally{locked=false;}
  }
- return{read,apply,resolve,ids};
+ function sharing(input){
+  const shared=appearanceSharing.create(game),action=input.action||'read';
+  if(action==='read')return shared.describe(input.id);
+  if(action==='preview')return shared.preview(input);
+  if(action==='apply'){const result=shared.apply(input);return {...result,...read(result.affectedIds,{rescan:true})};}
+  throw Error('공유 설정 동작을 확인하세요.');
+ }
+ return{read,apply,resolve,ids,sharing};
 }
 module.exports={create,patchStrings,allowedFields:[...allowed]};
 // JO9 MOD END CHARACTER_IMAGE_LINKS_20261108

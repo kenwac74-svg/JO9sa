@@ -1,0 +1,192 @@
+[
+  {
+    "location": "next_day",
+    "line": 272,
+    "code": "\tif contract['time'] = 1 + contract_time[contract['level']]: guild_reputation_rate -= 5 + guild_reputation &! reduce guild rep if late on a contract (do once, the day after it was due) - ImperatorAugustus\r",
+    "context": [
+      "\r",
+      "!training contract completion check or elapsed days counter increment\r",
+      "if contract['active'] = 2: contract['active'] = 0\r",
+      "if contract['active'] = 1:\r",
+      "\tcontract['time'] += 1\r",
+      "\tif contract['time'] = 1 + contract_time[contract['level']]: guild_reputation_rate -= 5 + guild_reputation &! reduce guild rep if late on a contract (do once, the day after it was due) - ImperatorAugustus\r",
+      "end\r",
+      "\r",
+      "!Daily Expenses (charged per-decade in billing)\r",
+      "if stasis_tank > 0: decade_cryo_costs += 2\r",
+      "if iced_1_state ! CONST_INT['no_slave']: decade_cryo_costs += 1\r",
+      "if iced_2_state ! CONST_INT['no_slave']: decade_cryo_costs += 1\r"
+    ]
+  },
+  {
+    "location": "end_day_screen",
+    "line": 1348,
+    "code": "\tguild_reputation_rate -= 2\r",
+    "context": [
+      "\tslave_rate['angst'] += 10\r",
+      "\t! added angst increase for failed escape - ImperatorAugustus\r",
+      "\tdynamic $slave_energy_drop\r",
+      "\tdynamic $slave_energy_drop\r",
+      "\tslave_rate['rational'] += 5\r",
+      "\tguild_reputation_rate -= 2\r",
+      "\tmaster_moodlet['neg_rebell'] = 1 &! slave returned, so different moodlet - ImperatorAugustus\r",
+      "\tgs '$mod_master_drop', 1\r",
+      "\tslave_escape = 0\r",
+      "\tjump 'loop' &! assistant_quiet_rule does not suppress this - ImperatorAugustus\r",
+      "end\r",
+      "\r"
+    ]
+  },
+  {
+    "location": "end_day_screen",
+    "line": 1555,
+    "code": "\t\t\tguild_reputation_rate -= min(guild_reputation_rate, 90)\r",
+    "context": [
+      "\t\t\tif gave_guild_parasite_slave > 1:\r",
+      "\t\t\t\t$text[2] += '몸 속에 안개 괴물 애벌래에 병까지 나있더군. 간신히 내가 시간맞춰 조치했지만, 책임을 물어야 할 걸세. 계급 -15,'\r",
+      "\t\t\telse\r",
+      "\t\t\t\t$text[2] += '몸 속에 안개 괴물 유충에 병까지 나있더군. 간신히 내가 시간맞춰 조치했지만, 책임을 물어야 할 걸세. 계급 -15,'\r",
+      "\t\t\tend\r",
+      "\t\t\tguild_reputation_rate -= min(guild_reputation_rate, 90)\r",
+      "\t\telseif gave_guild_parasite_slave > 0:\r",
+      "\t\t\tif gave_guild_parasite_slave > 1:\r",
+      "\t\t\t\t$text[2] += '몸에 안개 괴물 유충 애벌레들이 들어있더군. 간신히 내가 시간맞춰 조치했지만, 책임을 물어야 할 걸세. 계급 -10'\r",
+      "\t\t\telse\r",
+      "\t\t\t\t$text[2] += '몸에 안개 괴물 유충이 들어있더군. 간신히 내가 시간맞춰 조치했지만, 책임을 물어야 할 걸세. 계급 -10'\r",
+      "\t\t\tend\r"
+    ]
+  },
+  {
+    "location": "end_day_screen",
+    "line": 1562,
+    "code": "\t\t\tguild_reputation_rate -= min(guild_reputation_rate, 80)\r",
+    "context": [
+      "\t\t\tif gave_guild_parasite_slave > 1:\r",
+      "\t\t\t\t$text[2] += '몸에 안개 괴물 유충 애벌레들이 들어있더군. 간신히 내가 시간맞춰 조치했지만, 책임을 물어야 할 걸세. 계급 -10'\r",
+      "\t\t\telse\r",
+      "\t\t\t\t$text[2] += '몸에 안개 괴물 유충이 들어있더군. 간신히 내가 시간맞춰 조치했지만, 책임을 물어야 할 걸세. 계급 -10'\r",
+      "\t\t\tend\r",
+      "\t\t\tguild_reputation_rate -= min(guild_reputation_rate, 80)\r",
+      "\t\telseif gave_guild_ill_slave > 0:\r",
+      "\t\t\tif gave_guild_ill_slave > 1:\r",
+      "\t\t\t\t$text[2] += '병에 걸려 있더군. 한명도 아니고 말이야! 팔기 전에 다행히 발견해냈지만, 자넨 우리 관계를 <<IIF(guild_reputation > 0, \"다시 쌓기\", \"얻기\")>> 힘들거야. 계급 -10'\r",
+      "\t\t\telse\r",
+      "\t\t\t\t$text[2] += '병에 걸려 있더군. 팔기 전에 다행히 발견해냈지만, 자넨 우리 관계를 <<IIF(guild_reputation > 0, \"다시 쌓기\", \"얻기\")>> 힘들거야. 계급 -10'\r",
+      "\t\t\tend\r"
+    ]
+  },
+  {
+    "location": "end_day_screen",
+    "line": 1569,
+    "code": "\t\t\tguild_reputation_rate -= min(guild_reputation_rate, 10 * gave_guild_ill_slave)\r",
+    "context": [
+      "\t\t\tif gave_guild_ill_slave > 1:\r",
+      "\t\t\t\t$text[2] += '병에 걸려 있더군. 한명도 아니고 말이야! 팔기 전에 다행히 발견해냈지만, 자넨 우리 관계를 <<IIF(guild_reputation > 0, \"다시 쌓기\", \"얻기\")>> 힘들거야. 계급 -10'\r",
+      "\t\t\telse\r",
+      "\t\t\t\t$text[2] += '병에 걸려 있더군. 팔기 전에 다행히 발견해냈지만, 자넨 우리 관계를 <<IIF(guild_reputation > 0, \"다시 쌓기\", \"얻기\")>> 힘들거야. 계급 -10'\r",
+      "\t\t\tend\r",
+      "\t\t\tguild_reputation_rate -= min(guild_reputation_rate, 10 * gave_guild_ill_slave)\r",
+      "\t\tend\r",
+      "\t\tif gave_guild_parasite_slave > 0 and parasite_slave_warned_before = 1:\r",
+      "\t\t\t$text[2] += '</div>'\r",
+      "! JO9 MOD START J9M1275 | 2026-10-15_trim_leading_body_blank_lines | changed block; context may be included\r",
+      "\t\t\t$text[3] = '당신은 조합 훈련사로써 전문성이 없다 간주되어, 조합에서 방출되었다.<br><br><center>~ Game Over ~ </center>'\r",
+      "! JO9 MOD END J9M1275\r"
+    ]
+  },
+  {
+    "location": "end_day_screen",
+    "line": 1628,
+    "code": "\t\t\tguild_reputation_rate -= min(guild_reputation_rate, 10 * sold_ill_slave)\r",
+    "context": [
+      "\t\t\tif sold_ill_slave > 1:\r",
+      "\t\t\t\t$text[2] += '매독을 갖고 있었어! 그것도 한명이 아니라! 덕택에 고객들이 기술소에 직접 데려가 치료했고. 이 때문에 조합 명성에 악영향을 끼쳤어! 우리 신의를 <<IIF(guild_reputation > 0, \"다시 얻기\", \"쌓기\")>> 힘들거야! 계급 -5'\r",
+      "\t\t\telse\r",
+      "\t\t\t\t$text[2] += '매독을 갖고 있었어! 덕택에 고객이 기술소에 직접 데려가 치료했고. 이 때문에 조합 명성에 악영향을 끼쳤어! 우리 신의를 <<IIF(guild_reputation > 0, \"다시 얻기\", \"쌓기\")>> 힘들거야! 계급 -5'\r",
+      "\t\t\tend\r",
+      "\t\t\tguild_reputation_rate -= min(guild_reputation_rate, 10 * sold_ill_slave)\r",
+      "\t\t\tbrand_rate -= 10\r",
+      "\t\tend\r",
+      "\t\tif sold_parasite_slave > 0 and parasite_slave_warned_before = 1:\r",
+      "\t\t\t$text[2] += '</font>'\r",
+      "! JO9 MOD START J9M1272 | 2026-10-15_trim_leading_body_blank_lines | changed block; context may be included\r",
+      "\t\t\t$text[3] = '당신은 조합 훈련사로써 전문성이 없다 간주되어, 조합에서 방출되었다.<br><br><center>~ Game Over ~</center>'\r"
+    ]
+  },
+  {
+    "location": "interaction_city",
+    "line": 11961,
+    "code": "\t\tguild_reputation_rate -= 10\r",
+    "context": [
+      "\tsparks -= 2000\r",
+      "\tif snake_amulet_on = 0 and (brand_reputation > 2 or guild_reputation > 2):\r",
+      "\t\tnpc = 1\r",
+      "\t\t$npc_id = 'master_skups'\r",
+      "\t\tbrand_rate -= 10\r",
+      "\t\tguild_reputation_rate -= 10\r",
+      "\t\tfine = max(500, sparks/3) &! minimum moneylender loan is 600, so as long as the slaver is not in debt, survival should be possible - ImperatorAugustus\r",
+      "\t\tsparks -= fine\r",
+      "! JO9 MOD START J9M0805 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included\r",
+      "\t\t$text[1] = '[마스터 스컵스]<br>&nbsp;우리 조합이 당신같은 중요 인사를 감시 안하리라 여겼습니까? 어리석군! 저는 정평이 난 조합원이 이런 멍청한 편리나 취하리라곤 상상 못했습니다. 당장 이 $<<fine>> 벌금을 지불하셔야 할 겁니다. 이 일로 떨어진 신의를 다시 쌓으려면 꽤 시간이 걸릴겁니다! <<$master_name>>!</div>'\r",
+      "! JO9 MOD END J9M0805\r",
+      "\t\t$return_lock = 'guild'\r"
+    ]
+  },
+  {
+    "location": "interaction_city",
+    "line": 11983,
+    "code": "\t\tguild_reputation_rate -= 5\r",
+    "context": [
+      "\t\t\tdynamic $assistant_energy_drop\r",
+      "\t\t\tdynamic $assistant_energy_drop\r",
+      "\t\tend\r",
+      "\telse\r",
+      "\t\tbrand_rate -= 5\r",
+      "\t\tguild_reputation_rate -= 5\r",
+      "! JO9 MOD START J9M0804 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included\r",
+      "\t\t$text[1] = '[발랄라이카]<br>&nbsp;운이 좋은 사내네, 막 들여놓은 참이었어. 스파크 먼저 건네고 여잘 데려가.</div>'\r",
+      "! JO9 MOD END J9M0804\r",
+      "\tend\r",
+      "end\r",
+      "\r"
+    ]
+  },
+  {
+    "location": "interaction_city",
+    "line": 13571,
+    "code": "\t\tguild_reputation_rate -= 10\r",
+    "context": [
+      "\t\tguild_reputation_rate += 10\r",
+      "\telse\r",
+      "! JO9 MOD START J9M0742 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included\r",
+      "\t\t$text[1] = '[여주인 안젤리카]<br>&nbsp;실망스럽네요, <<$master_name>>. 실패해도 잃을 건 길드의 신뢰뿐이었을 텐데 말이에요.'\r",
+      "! JO9 MOD END J9M0742\r",
+      "\t\tguild_reputation_rate -= 10\r",
+      "\tend\r",
+      "\r",
+      "end\r",
+      "\r",
+      "if interaction_city = 931 and hero_choice > 100:\r",
+      "! JO9 MOD START SALE_TAX_20261105\r"
+    ]
+  },
+  {
+    "location": "interaction_city",
+    "line": 13680,
+    "code": "\t\tguild_reputation_rate -= 10\r",
+    "context": [
+      "\telse\r",
+      "\t\tguild_abused_slave_gift = 1:\r",
+      "! JO9 MOD START J9M0739 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included\r",
+      "\t\t$text[1] = '[여주인 안젤리카]<br>&nbsp;이건 부탁이 아니었어요.'\r",
+      "! JO9 MOD END J9M0739\r",
+      "\t\tguild_reputation_rate -= 10\r",
+      "\tend\r",
+      "\r",
+      "end\r",
+      "\r",
+      "\r",
+      "\r"
+    ]
+  }
+]

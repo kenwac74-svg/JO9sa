@@ -18,6 +18,7 @@
  for(const id of inputs)$(id).addEventListener('input',()=>{if(id==='scriptAdapted')syncHeader();changed(id.startsWith('scriptLayout'));});
  function source(r){if(r?.exportId&&!$('scriptAdapted').value.trim()){$('scriptImportId').value=r.exportId;persist();clear('원본 각본 ID를 연결했습니다. 수정본을 아래에 넣으세요.');}}
  window.JO9ScriptImporter={source};
+ window.addEventListener('jo9:work-scope',()=>{persist();clear('작업 범위가 바뀌었습니다. 각본 원고와 제외한 번호는 보존했습니다. 현재 범위에서 구문·화면 검토를 다시 누르세요.');});
  async function openFile(id,original){
   const f=$(id).files?.[0];if(!f||busy)return;
   try{if(f.size>20000000)throw Error('TXT는 20MB까지 열 수 있습니다.');const text=(await f.text()).replace(/^\uFEFF/,'');

@@ -142,7 +142,9 @@ function branchList(analysis,scene,location,entries) {
   const unique=new Map();for(const b of branches){const key=JSON.stringify([b.label,b.mode,b.target,b.states,b.line]);if(!unique.has(key))unique.set(key,b);}
   return [...unique.values()];
 }
-function buildNavigator(doc,allEntries) {
+function buildNavigator(doc,allEntries,options={}) {
+  const workScope=require('./work-scope.cjs');
+  allEntries=workScope.filter(allEntries,options);
   const analyses=new Map(),locations=new Map(doc.locations.map(l=>[l.name.toLowerCase(),l]));let bgFn=null;const bg=p=>(bgFn||(bgFn=bgTable(doc)))(p);
   const npcImages=new Map(),npcBodies=new Map();for(const e of allEntries){if(e.field!=='body'||!/^#npc_base$/i.test(e.location))continue;if(!npcBodies.has(e.fieldIndex))npcBodies.set(e.fieldIndex,core.shift(doc.lines[e.fieldIndex],5));const body=npcBodies.get(e.fieldIndex),prefix=body.slice(body.lastIndexOf('\n',e.start-1)+1,e.start-1),m=prefix.match(/\$npc_image\[\s*(['"])([^'"]+)\1\s*\]\s*=\s*$/i);if(m&&e.text.trim())npcImages.set(m[2].toLowerCase(),e.text.trim());}bg.npc=id=>npcImages.get(String(id).toLowerCase());
   const byLocation=new Map();for(const e of allEntries){const key=e.location.toLowerCase();if(!byLocation.has(key))byLocation.set(key,[]);byLocation.get(key).push(e);}
@@ -192,8 +194,10 @@ function buildNavigator(doc,allEntries) {
     return {total:found.length,items:found.slice(0,80).map(b=>({label:b.label,mode:b.mode,line:b.line,conditions:b.conditions,source:b.source,uncertain:!!scene.predicate && b.states[scene.predicate.key]===undefined}))};
   }
   // JO9 MOD SCRIPT_EXPORT_20261108: 흐름 전체 각본 출력
-  const scriptExport=require('./script-export.cjs').build(doc,allEntries,{data,chooseScene,masked,inScene,visible,branches:(a,s,l,e)=>branchList(a,s,l,e).map(b=>({...b,destinations:b.destinations||resolve(b)}))});
-  function script(input){if(input.hash!==doc.hash)throw Error('QSP가 바뀌었습니다. 다시 검색해 주세요.');return scriptExport.script({location:input.location,sceneId:input.sceneId},input.options||{});}
+  const scriptEntries=workScope.filter(allEntries,{...options,automatic:true});
+  const scriptData=name=>{const d=data(name);return {...d,entries:workScope.filter(d.entries,{...options,automatic:true})};};
+  const scriptExport=require('./script-export.cjs').build(doc,scriptEntries,{data:scriptData,chooseScene,masked,inScene,visible,branches:(a,s,l,e)=>branchList(a,s,l,e).map(b=>({...b,destinations:b.destinations||resolve(b)}))});
+  function script(input){if(input.options?.edition==='woman'&&!workScope.include(options))workScope.assertEntry({workScope:{category:'female'}},options);if(input.hash!==doc.hash)throw Error('QSP가 바뀌었습니다. 다시 검색해 주세요.');return scriptExport.script({location:input.location,sceneId:input.sceneId},input.options||{});}
   function scriptRange(input){if(input.hash!==doc.hash)throw Error('QSP가 바뀌었습니다. 시작과 마무리를 다시 선택하세요.');return scriptExport.range(input);}
   function scriptBoundary(input){if(input.hash!==doc.hash)throw Error('QSP가 바뀌었습니다. 다시 검색해 주세요.');return scriptExport.boundary(input);}
   return {context,open,incoming,script,scriptRange,scriptBoundary};

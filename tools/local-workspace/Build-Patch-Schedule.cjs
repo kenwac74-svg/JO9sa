@@ -2,6 +2,15 @@
 const fs=require('node:fs'),path=require('node:path');
 const input=process.argv[2]||path.resolve(__dirname,'../../docs/NEXT_PATCH_CHECKLIST_20261107_KO.md');
 const output=path.resolve(__dirname,'../text-workshop');
+if(!process.argv[2]){
+ const current=require(path.join(output,'patch-schedule-data.cjs'));
+ if(new Set(current.tasks.map(t=>t.id)).size!==current.tasks.length)throw Error('Duplicate schedule IDs');
+ const template=fs.readFileSync(path.join(output,'patch-schedule.template.html'),'utf8');
+ const html=template.replace('__JO9_PATCH_SEED__',JSON.stringify(current).replaceAll('<','\\u003c'));
+ fs.writeFileSync(path.join(output,'patch-schedule.html'),html);
+ fs.writeFileSync(path.resolve(__dirname,'../../docs/NEXT_PATCH_SCHEDULE_20261107.html'),html);
+ console.log('Seed',current.tasks.length);return;
+}
 const clean=s=>s.replace(/\*\*|`/g,'').trim();
 const text=fs.readFileSync(input,'utf8');
 const recheck=new Set('01 02 04 05 09 13 14 30 31 32 33 34 35 36'.split(' ').map(s=>'P'+s));

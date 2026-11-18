@@ -59,6 +59,25 @@ function Assert-EditorVersion($SourceVersion,[string]$InstalledVersion,[bool]$Ch
  if ([long]$SourceVersion.committedAt -lt [long]$previous.committedAt) {throw 'This tool package is older than the installed version. Downgrade was blocked.'}
  if ([long]$SourceVersion.committedAt -eq [long]$previous.committedAt -and [string]$SourceVersion.revision -ne [string]$previous.revision) {throw 'Tool revisions conflict at the same version date. Existing code was not overwritten.'}
 }
+# JO9 MOD START SCHEDULE_FRAME_REUSE_20261117
+function Get-EditorFrameOrigins {
+ return @(($env:JO9_MODDING_HUB_ORIGIN -split '\s+') | Where-Object {
+  $_ -cmatch '^http://127\.0\.0\.1:(\d{1,5})$' -and [int]$Matches[1] -gt 0 -and [int]$Matches[1] -le 65535
+ } | Sort-Object -Unique)
+}
+function Test-EditorFramePolicy($Policies,$Origins) {
+ if (!@($Policies).Count) {return $false}
+ foreach ($header in @($Policies)) {
+  foreach ($policy in ([string]$header -split ',')) {
+   $directive=@(($policy -split ';') | Where-Object {$_ -match '^\s*frame-ancestors(?:\s|$)'} | Select-Object -First 1)
+   if (!$directive.Count) {return $false}
+   $sources=@(($directive[0].Trim() -split '\s+') | Select-Object -Skip 1)
+   foreach ($origin in $Origins) {if ($sources -notcontains $origin) {return $false}}
+  }
+ }
+ return $true
+}
+# JO9 MOD END SCHEDULE_FRAME_REUSE_20261117
 function Get-EditorState([string]$Ready,[string]$Server,[string]$Game,[string]$Original,[string]$Catalog,[string]$Runtime) {
  if (!(Test-Path -LiteralPath $Ready)) {return $null}
  try {$state=Get-Content -LiteralPath $Ready -Raw -Encoding UTF8 | ConvertFrom-Json} catch {throw 'Invalid editor server.json; inspect the runtime before starting another server.'}
@@ -74,6 +93,17 @@ function Get-EditorState([string]$Ready,[string]$Server,[string]$Game,[string]$O
  $listeners=@(Get-NetTCPConnection -LocalPort $uri.Port -ErrorAction SilentlyContinue | Where-Object {$_.State -eq 'Listen' -or ($_.RemoteAddress -eq '0.0.0.0' -and $_.RemotePort -eq 0)})
  if (!$listeners -or @($listeners | Where-Object {$_.OwningProcess -ne [int]$state.pid}).Count) {throw 'The editor port does not belong to the recorded process.'}
  try {$response=Invoke-WebRequest -UseBasicParsing -Uri $state.url -TimeoutSec 3;if ($response.StatusCode -ne 200) {throw 'Not ready'}} catch {throw 'The existing editor server is not responding. It was not duplicated or stopped.'}
+ # JO9 MOD START SCHEDULE_FRAME_REUSE_20261117
+ $frameCompatible=$true;$frameOrigins=@(Get-EditorFrameOrigins)
+ if ($frameOrigins.Count) {
+  try {
+   $schedule=Invoke-WebRequest -UseBasicParsing -Uri ($state.url+'patch-schedule') -TimeoutSec 3
+   if ($schedule.StatusCode -ne 200) {throw 'Not ready'}
+  } catch {throw 'The editor schedule policy could not be read. It was not duplicated or stopped.'}
+  $frameCompatible=Test-EditorFramePolicy $schedule.Headers['Content-Security-Policy'] $frameOrigins
+ }
+ $state | Add-Member NoteProperty frameCompatible $frameCompatible -Force
+ # JO9 MOD END SCHEDULE_FRAME_REUSE_20261117
  return $state
 }
 function Start-ConfiguredEditor {
@@ -141,7 +171,7 @@ function Start-ConfiguredEditor {
  $version=Get-WorkspaceVersion
  $versionFile=Join-Path $installed '.jo9-tool-version.json'
  Assert-EditorVersion $version $versionFile ($changes.Count -gt 0)
- if ($state -and $changes.Count) {
+ if ($state -and ($changes.Count -or !$state.frameCompatible)) {
   # Identity and listener ownership were checked above. Never stop an arbitrary port owner.
   Stop-Process -Id ([int]$state.pid) -Force -ErrorAction Stop
   Wait-Process -Id ([int]$state.pid) -Timeout 10 -ErrorAction SilentlyContinue
@@ -176,7 +206,10 @@ function Start-ConfiguredEditor {
  for ($i=0;$i -lt 100;$i++) {
   if (Test-Path -LiteralPath $ready) {
    $state=Get-EditorState $ready $server $GameDir $OriginalDir $CatalogDir $RuntimeDir
-   if ($state -and [int]$state.pid -eq $started.Id) {return [string]$state.url}
+   if ($state -and [int]$state.pid -eq $started.Id) {
+    if (!$state.frameCompatible) {throw 'The started editor does not allow the configured hub frame origins. Inspect its response headers before retrying.'}
+    return [string]$state.url
+   }
    throw 'Unexpected editor readiness record; no other process was stopped.'
   }
   $started.Refresh()

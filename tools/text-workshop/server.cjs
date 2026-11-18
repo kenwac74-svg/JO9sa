@@ -5,11 +5,15 @@ const hubOrigins=(process.env.JO9_MODDING_HUB_ORIGIN||'').split(/\s+/).filter(or
 const hubFrameParent=[...new Set(hubOrigins)].join(' ')||"'none'";
 // JO9 MOD END SIDEBAR_FRAME_PARENT_20261115
 const core=require('./core.cjs');
+const inlinePage=require('./inline-page.cjs');
+const workScope=require('./work-scope.cjs'); // JO9 MOD FEMALE_TEXT_WORK_SCOPE_20261118
 const embeddedShell=require('./embedded-shell.cjs');
 // JO9 MOD START: text-batch-replace-20261018-module
 const batchReplace=require('./batch-replace.cjs');
 // JO9 MOD END: text-batch-replace-20261018-module
 const addition=require('./addition.cjs');
+const choiceAddition=require('./choice-addition.cjs'); // JO9 MOD CHOICE_ADDITION_20261116
+const choiceFormat=require('./choice-format.cjs'); // JO9 MOD CHOICE_FORMAT_20261118
 const imageReference=require('./image-reference.cjs');
 const dialogueImage=require('./dialogue-image.cjs'); // JO9 MOD DIALOGUE_IMAGE_BINDING_20261108
 const scenes=require('./scenes.cjs');
@@ -36,12 +40,13 @@ const dialogueAI=require('./grok-prompt.cjs').create(runtime,{kind:'dialogue'});
 let catalogSelection={id:0,path:''};
 const token=crypto.randomBytes(24).toString('hex'); let cache,cacheEntries,navigator,preview; let busy=false;
 // 17 MB QSP를 요청마다 읽고 해시하지 않도록, 크기·수정 시각이 같으면 메모리의 결과를 쓴다(반영 직전 검사는 transact가 파일을 다시 읽어 한다).
-let cacheRaw=null,cacheStat='',variableInspector=null;
+let cacheRaw=null,cacheStat='',variableInspector=null,inclusiveNavigator=null;
+function navigatorFor(input={}){if(!workScope.include(input))return navigator;return inclusiveNavigator||(inclusiveNavigator=scenes.buildNavigator(cache,cacheEntries,{includeFemale:true}));}
 function current() {
   const st=fs.statSync(target),stamp=st.size+':'+st.mtimeMs;
   if(cache && cacheStat===stamp) return {raw:cacheRaw,doc:cache};
   const raw=fs.readFileSync(target);const digest=core.hash(raw);
-  if(!cache || cache.hash!==digest){cache=core.parse(raw);cacheEntries=core.entries(cache);variableInspector=null;navigator=scenes.buildNavigator(cache,cacheEntries);}
+  if(!cache || cache.hash!==digest){cache=core.parse(raw);cacheEntries=core.entries(cache);variableInspector=null;inclusiveNavigator=null;navigator=scenes.buildNavigator(cache,cacheEntries);}
   cacheRaw=raw;cacheStat=stamp;return {raw,doc:cache};
 }
 const pic=path.join(game,'content','pic');
@@ -158,7 +163,8 @@ const server=http.createServer(async(req,res)=>{
     }
     if(req.method==='GET'&&['/workshop.css','/workshop-shell.css'].includes(url.pathname)){res.writeHead(200,{'Content-Type':'text/css; charset=utf-8','Cache-Control':'no-store'});res.end(fs.readFileSync(path.join(__dirname,url.pathname.slice(1)),'utf8'));return;}
     // JO9 MOD START: text-batch-replace-20261018-static
-    if(req.method==='GET'&&['/script-review.js','/script-import-ui.js','/workshop-ui.js','/script-export.js','/dialogue-ai.js','/editing-tools.js','/variable-inspector.js','/batch-replace.js','/catalog-cut-conditions.js','/script-range.js','/dialogue-image-ui.js'].includes(url.pathname)){res.writeHead(200,{'Content-Type':'text/javascript; charset=utf-8','Cache-Control':'no-store'});res.end(fs.readFileSync(path.join(__dirname,url.pathname.slice(1)),'utf8'));return;}
+    if(req.method==='GET'&&['/choice-format.css','/inline-game.css'].includes(url.pathname)){res.writeHead(200,{'Content-Type':'text/css; charset=utf-8','Cache-Control':'no-store'});res.end(fs.readFileSync(path.join(__dirname,url.pathname.slice(1)),'utf8'));return;}
+    if(req.method==='GET'&&['/script-review.js','/script-import-ui.js','/workshop-ui.js','/script-export.js','/dialogue-ai.js','/editing-tools.js','/variable-inspector.js','/batch-replace.js','/catalog-cut-conditions.js','/script-range.js','/dialogue-image-ui.js','/choice-editor.js','/choice-format-ui.js','/inline-game.js'].includes(url.pathname)){res.writeHead(200,{'Content-Type':'text/javascript; charset=utf-8','Cache-Control':'no-store'});res.end(fs.readFileSync(path.join(__dirname,url.pathname.slice(1)),'utf8'));return;}
     // JO9 MOD END: text-batch-replace-20261018-static
     const catalogRoute=url.pathname.startsWith('/api/catalog/');
     if(catalogRoute&&req.headers.origin==='null'){
@@ -279,6 +285,7 @@ const server=http.createServer(async(req,res)=>{
     if(req.method==='GET'&&url.pathname==='/api/catalog/selection'){json(res,200,catalogSelection);return;}
     // JO9 MOD START CHARACTER_IMAGE_LINKS_20261108-routes
     if(req.method==='POST'&&url.pathname==='/api/catalog/character-images/read'){const input=await body(req,100000);json(res,200,characterImageLinks.read(input.ids,{rescan:input.rescan===true}));return;}
+    if(req.method==='POST'&&url.pathname==='/api/catalog/character-images/sharing'){json(res,200,characterImageLinks.sharing(await body(req,100000)));return;}
     if(req.method==='POST'&&url.pathname==='/api/catalog/character-images/apply'){json(res,200,characterImageLinks.apply(await body(req,20000)));return;}
     // JO9 MOD END CHARACTER_IMAGE_LINKS_20261108-routes
     // JO9 MOD START CHARACTER_PORTRAIT_FRAME_API_20261111
@@ -300,7 +307,8 @@ const server=http.createServer(async(req,res)=>{
       if(req.method==='POST'&&action==='settings'){json(res,200,dialogueAI.settings(await body(req,4096)));return;}
       if(req.method==='POST'&&action==='chat'){
         const input=await body(req,24000);current();
-        const c=withImages(navigator.context(input.selection,input.sceneId,'text',input.usageId));
+        const c=withImages(navigatorFor(input).context(input.selection,input.sceneId,'text',input.usageId));
+        workScope.assertEntry(c.selection,input);
         if(!c.selection||c.selection.dialogue===false)throw Error('게임 대사를 선택하세요.');
         const image=input.imagePath?c.images.find(im=>im.path===input.imagePath):null;
         if(input.imagePath&&!image)throw Error('이 장면의 이미지 후보를 선택하세요.');
@@ -360,18 +368,18 @@ const server=http.createServer(async(req,res)=>{
     if(req.method==='GET' && url.pathname==='/api/search'){
       const query=(url.searchParams.get('q')||'').trim(),loc=(url.searchParams.get('location')||'').trim(),all=url.searchParams.get('mode')==='all';
       if(query.length<2 && !loc)throw Error('원문 일부를 두 글자 이상 입력하거나 위치 이름을 넣어 주세요.');
-      const {doc}=current();const found=cacheEntries.filter(e=>(all||e.dialogue) && (!query || e.text.includes(query)) && (!loc || e.location.includes(loc)));
-      json(res,200,{hash:doc.hash,total:found.length,results:found.slice(0,200).map(e=>({...e,hash:doc.hash}))});return;
+      const {doc}=current(),scopeOptions={includeFemale:url.searchParams.get('includeFemale')==='1'},candidates=cacheEntries.filter(e=>(all||e.dialogue) && (!query || e.text.includes(query)) && (!loc || e.location.includes(loc))),found=workScope.filter(candidates,scopeOptions);
+      json(res,200,{hash:doc.hash,total:found.length,scope:workScope.summary(candidates,scopeOptions),results:found.slice(0,200).map(e=>({...e,hash:doc.hash}))});return;
     }
     // JO9 MOD START: text-batch-replace-20261018-routes
     if(req.method==='GET' && url.pathname==='/api/batch/search'){
       const {doc}=current(),limit=Number(url.searchParams.get('limit')||50);
       if(!Number.isSafeInteger(limit)||limit<1)throw Error('검색 페이지가 올바르지 않습니다.');
-      json(res,200,batchReplace.search(doc,{query:url.searchParams.get('q')||'',location:url.searchParams.get('location')||'',mode:url.searchParams.get('mode')||'text',offset:Number(url.searchParams.get('offset')||0),limit:Math.min(limit,50)},cacheEntries));return;
+      json(res,200,batchReplace.search(doc,{query:url.searchParams.get('q')||'',location:url.searchParams.get('location')||'',mode:url.searchParams.get('mode')||'text',includeFemale:url.searchParams.get('includeFemale')==='1',offset:Number(url.searchParams.get('offset')||0),limit:Math.min(limit,50)},cacheEntries));return;
     }
     if(req.method==='POST' && url.pathname==='/api/batch/preview'){
       const input=await body(req),{doc}=current(),p=batchReplace.prepare(doc,input,cacheEntries);
-      preview={...p,kind:'batch',id:crypto.randomBytes(24).toString('hex')};
+      preview={...p,includeFemale:workScope.include(input),kind:'batch',id:crypto.randomBytes(24).toString('hex')};
       json(res,200,{id:preview.id,operation:'batch',before:p.before,after:p.after,count:p.count,occurrences:p.occurrences,totalChanges:p.changes.length,offset:0,limit:50,changes:p.changes.slice(0,50)});return;
     }
     if(req.method==='GET' && url.pathname==='/api/batch/preview'){
@@ -384,27 +392,34 @@ const server=http.createServer(async(req,res)=>{
     if(req.method==='GET' && url.pathname==='/api/history'){json(res,200,history().map(({id,date,location,field,status,before,after,kind})=>({id,date,location,field,status,before,after,kind})));return;}
     if(req.method==='POST' && url.pathname==='/api/variables'){
       const input=await body(req);const {doc}=current();
-      const c=navigator.context(input.selection,input.sceneId,input.mode,input.usageId);
+      const c=navigatorFor(input).context(input.selection,input.sceneId,input.mode,input.usageId);
       variableInspector ||= require('./variable-inspector.cjs').create(doc,cacheEntries);
       json(res,200,variableInspector.inspect(c));return;
     }
+    // JO9 MOD START CHOICE_FORMAT_20261118-options
+    if(req.method==='POST'&&url.pathname==='/api/choice-format/options'){
+      const input=await body(req),{doc}=current(),result=choiceFormat.options(doc,input.selection,navigatorFor(input),{sceneId:input.sceneId,usageId:input.usageId,includeFemale:workScope.include(input)});
+      try{result.gameLayout=scriptGameLayout.load(game,doc,token);}catch(error){result.layoutError=error.message;}
+      json(res,200,result);return;
+    }
+    // JO9 MOD END CHOICE_FORMAT_20261118-options
     if(req.method==='POST' && url.pathname==='/api/context'){
-      const input=await body(req);current();json(res,200,withImages(navigator.context(input.selection,input.sceneId,input.mode,input.usageId)));return;
+      const input=await body(req);current();json(res,200,withImages(navigatorFor(input).context(input.selection,input.sceneId,input.mode,input.usageId)));return;
     }
     if(req.method==='POST' && url.pathname==='/api/scene'){
-      const input=await body(req);const {doc}=current();if(input.hash!==doc.hash)throw Error('QSP가 바뀌었습니다. 다시 검색해 주세요.');json(res,200,withImages(navigator.open(input.destination,input.mode)));return;
+      const input=await body(req);const {doc}=current();if(input.hash!==doc.hash)throw Error('QSP가 바뀌었습니다. 다시 검색해 주세요.');json(res,200,withImages(navigatorFor(input).open(input.destination,input.mode)));return;
     }
     // JO9 MOD SCRIPT_EXPORT_20261108
     // JO9 MOD START SCRIPT_RANGE_20261108
     if(req.method==='POST'&&url.pathname==='/api/script/boundary'){
-      const input=await body(req);current();json(res,200,navigator.scriptBoundary(input));return;
+      const input=await body(req);current();json(res,200,navigatorFor(input).scriptBoundary(input));return;
     }
     if(req.method==='POST'&&url.pathname==='/api/script/range'){
       const input=await body(req);current();const exportId=crypto.randomBytes(8).toString('hex');
-      const r=navigator.scriptRange({...input,exportId});
+      const r=navigatorFor(input).scriptRange({...input,exportId});
       if(r.status==='ready'){
         const dir=path.join(runtime,'script-exports');fs.mkdirSync(dir,{recursive:true});
-        fs.writeFileSync(path.join(dir,exportId+'.json'),JSON.stringify({id:exportId,hash:r.hash,created:new Date().toISOString(),start:input.start,end:input.end,range:true,map:r.map}));
+        fs.writeFileSync(path.join(dir,exportId+'.json'),JSON.stringify({id:exportId,hash:r.hash,created:new Date().toISOString(),start:input.start,end:input.end,range:true,includeFemale:workScope.include(input),map:r.map}));
       }
       const saved=r.status==='ready'&&input.save===true?rangeOutput.save(runtime,exportId,r):{};
       json(res,200,{...r,...(r.status==='ready'?{exportId}:{}),...saved});return;
@@ -412,9 +427,9 @@ const server=http.createServer(async(req,res)=>{
     // JO9 MOD END SCRIPT_RANGE_20261108
     if(req.method==='POST' && url.pathname==='/api/script'){
       const input=await body(req);current();
-      const exportId=crypto.randomBytes(8).toString('hex'),r=navigator.script({...input,options:{...(input.options||{}),exportId}});
+      const exportId=crypto.randomBytes(8).toString('hex'),r=navigatorFor(input).script({...input,options:{...(input.options||{}),exportId}});
       const dir=path.join(runtime,'script-exports');fs.mkdirSync(dir,{recursive:true});
-      fs.writeFileSync(path.join(dir,exportId+'.json'),JSON.stringify({id:exportId,hash:r.hash,created:new Date().toISOString(),start:{location:input.location,sceneId:input.sceneId},options:input.options||{},map:r.map}));
+      fs.writeFileSync(path.join(dir,exportId+'.json'),JSON.stringify({id:exportId,hash:r.hash,created:new Date().toISOString(),start:{location:input.location,sceneId:input.sceneId},options:input.options||{},includeFemale:workScope.include(input),map:r.map}));
       json(res,200,{text:r.text,stats:r.stats,hash:r.hash,exportId,pages:Object.keys(r.map).length});return;
     }
     // JO9 MOD SCRIPT_IMPORT_20261108: 각색본 미리보기
@@ -428,13 +443,13 @@ const server=http.createServer(async(req,res)=>{
       let record=JSON.parse(fs.readFileSync(file,'utf8'));
       const originalHash=record.hash;
       if(input.revalidate===true)record=scriptImport.revalidateRecord(doc,record);
-      const p=scriptImport.prepare(doc,record,input.text,{allowMissing:input.allowMissing===true,exclude:Array.isArray(input.exclude)?input.exclude:[]});
-      preview=p.raw?{kind:'script',id:crypto.randomBytes(24).toString('hex'),raw:p.raw,before:p.before,after:p.after,edits:p.edits,count:p.chosen.length,exportId}:null;
+      const p=scriptImport.prepare(doc,record,input.text,{allowMissing:input.allowMissing===true,exclude:Array.isArray(input.exclude)?input.exclude:[],includeFemale:workScope.include(input)});
+      preview=p.raw?{kind:'script',includeFemale:workScope.include(input),id:crypto.randomBytes(24).toString('hex'),raw:p.raw,before:p.before,after:p.after,edits:p.edits,count:p.chosen.length,exportId}:null;
       let gameLayout,layoutError;try{gameLayout=scriptGameLayout.load(game,doc,token);}catch(e){layoutError=e.message;}
       json(res,200,{gameLayout,layoutError,checks:{normalizedMarkers:scriptImport.parse(input.text).normalizedMarkers,revalidated:originalHash!==doc.hash,hash:doc.hash,structure:true,variables:true,roundTrip:true},id:preview?.id||null,exportId,count:p.chosen.length,unchanged:p.unchanged,missing:p.missing.length,changes:p.changes.map(c=>({id:c.id,location:c.location,line:c.line,oldPlain:c.oldPlain,newPlain:c.newPlain,previewText:c.new.replace(/<<([\s\S]*?)>>/g,'〈$1〉'),warnings:c.warnings,excluded:c.excluded}))});return;
     }
     if(req.method==='POST' && url.pathname==='/api/incoming'){
-      const input=await body(req);current();json(res,200,navigator.incoming(input));return;
+      const input=await body(req);current();json(res,200,navigatorFor(input).incoming(input));return;
     }
     if(req.method==='GET' && url.pathname==='/api/export'){
       const id=url.searchParams.get('id');if(!/^[\dTZ_-]+[a-f0-9]{6}$/.test(id||''))throw Error('잘못된 기록 번호입니다.');
@@ -444,19 +459,19 @@ const server=http.createServer(async(req,res)=>{
     // JO9 MOD START DIALOGUE_IMAGE_BINDING_20261108-preview
     if(req.method==='POST'&&url.pathname==='/api/dialogue-image/preview'){
       const input=await body(req),rel=dialogueImage.imagePath(input.path),image=resolvePic(rel);if(!image)throw Error('연결할 이미지 파일이 PIC 폴더에 없습니다. PIC 폴더의 기존 파일을 선택하세요.');
-      const {doc}=current(),p=(input.source?imageReference:dialogueImage).prepare(doc,input.selection,image.rel,input);if(p.conditions&&!resolvePic(p.fallback))throw Error('조건 불충족 시 이미지 파일이 없습니다.');preview={...p,kind:'image',id:crypto.randomBytes(24).toString('hex')};
+      const {doc}=current(),p=(input.source?imageReference:dialogueImage).prepare(doc,input.selection,image.rel,input);if(p.conditions&&!resolvePic(p.fallback))throw Error('조건 불충족 시 이미지 파일이 없습니다.');workScope.assertPrepared(doc,p,input);preview={...p,includeFemale:workScope.include(input),kind:'image',id:crypto.randomBytes(24).toString('hex')};
       json(res,200,{id:preview.id,location:p.targetLocation,title:p.usage.title,page:p.page,path:p.path,previous:p.previous,conditions:p.conditions,fallback:p.fallback,dialogue:p.entry.text,variants:p.variants,sceneId:p.sceneId,usageId:p.usage.id,imageUrl:'/api/pic?t='+token+'&p='+encodeURIComponent(p.path)+'&v='+fs.statSync(image.full).mtimeMs});return;
     }
     // JO9 MOD END DIALOGUE_IMAGE_BINDING_20261108-preview
     if(req.method==='POST' && url.pathname==='/api/preview'){
 
-      const input=await body(req);const {doc}=current();const p=input.operation==='add'?addition.prepare(doc,input.selection,input.addition,input.additionMode):core.prepare(doc,input.selection,input.replacement);
-      preview={...p,before:doc.hash,id:crypto.randomBytes(24).toString('hex')};
-      json(res,200,{id:preview.id,location:p.entry.location,field:p.entry.field,line:p.entry.line,old:p.entry.text,new:p.replacement,after:p.after,operation:p.operation||'edit',page:p.page,adjustments:p.adjustments||[]});return;
+      const input=await body(req);const {doc}=current();const p=input.operation==='inline-page'?inlinePage.prepare(doc,input.selection,input.changes,input):input.operation==='choice-format'?choiceFormat.prepare(doc,input.selection,input.choiceFormat,input):input.operation==='choice'?choiceAddition.prepare(doc,input.selection,input.choice,input):input.operation==='add'?addition.prepare(doc,input.selection,input.addition,input.additionMode,input):core.prepare(doc,input.selection,input.replacement,input);
+      workScope.assertPrepared(doc,p,input);preview={...p,includeFemale:workScope.include(input),before:doc.hash,id:crypto.randomBytes(24).toString('hex')};
+      json(res,200,{id:preview.id,location:p.entry.location,field:p.entry.field,line:p.entry.line,old:p.entry.text,new:p.replacement,after:p.after,operation:p.operation||'edit',page:p.page,adjustments:p.adjustments||[],choice:p.choice,choiceFormat:p.choiceFormat});return;
     }
     if(req.method==='POST' && url.pathname==='/api/apply'){
       const input=await body(req);if(!preview || input.id!==preview.id || input.approved!==true)throw Error('미리보기와 수정문 승인이 필요합니다.');
-      const p=preview,{raw,doc}=current();if(doc.hash!==p.before)throw Error('미리보기 이후 QSP가 변경되었습니다. 다시 검색해 주세요.');
+      const p=preview,{raw,doc}=current();if(workScope.include(input)!==Boolean(p.includeFemale))throw Error('미리보기 이후 작업 범위가 바뀌었습니다. 같은 범위에서 미리보기를 다시 만드세요.');if(doc.hash!==p.before)throw Error('미리보기 이후 QSP가 변경되었습니다. 다시 검색해 주세요.');
       // JO9 MOD START DIALOGUE_IMAGE_BINDING_20261108-apply
       if(p.kind==='image'){
         const stamp=new Date().toISOString(),mod={description:'대사 편집실: '+p.targetLocation+' '+p.page+'단계 이미지 연결',id:stamp.slice(0,10)+'_dialogue_image_'+stamp.slice(11,19).replace(/:/g,''),target:'game\\jack.qsp',before_sha256:p.before.toUpperCase(),after_sha256:p.after.toUpperCase(),edits:[{location:p.targetLocation,field:'body',old:p.piece.old,new:p.piece.new,count:1}]};
@@ -473,7 +488,7 @@ const server=http.createServer(async(req,res)=>{
         const stamp=new Date().toISOString();
         const mod={description:`대사 편집실: 문구 ${p.count}개에서 단어 ${p.occurrences}회 일괄 변경`,id:stamp.slice(0,10)+'_text_batch_'+stamp.slice(11,19).replace(/:/g,''),target:'game\\jack.qsp',before_sha256:p.before.toUpperCase(),after_sha256:p.after.toUpperCase(),edits:p.edits};
         const m=transact(raw,p.raw,{kind:'batch',location:locations.length===1?locations[0]:'여러 위치',field:'batch',count:p.count,occurrences:p.occurrences,mod});
-        current();json(res,200,{...m,selection:null});return;
+        current();json(res,200,{...m,selection:p.operation==='inline-page'?{...p.updatedEntry,hash:cache.hash}:null});return;
       }
       // JO9 MOD END: text-batch-replace-20261018-apply
       // JO9 MOD START SCRIPT_IMPORT_20261108-apply
@@ -489,7 +504,7 @@ const server=http.createServer(async(req,res)=>{
       if(doc.locations.filter(l=>l.name===p.entry.location).length!==1)throw Error('동일한 이름의 위치가 중복되어 반영할 수 없습니다.');
       // mods용 기록은 location 전체가 아니라 바뀐 문구와 최소 맥락만 담는다(apply_mods.ps1 형식).
       const stamp=new Date().toISOString();
-      const mod={description:`대사 편집실: ${p.entry.location} ${p.entry.field==='desc'?'설명':'본문 '+p.entry.line+'행'} ${p.operation==='page'?'다음 페이지 추가':p.operation==='paragraph'?'문단 추가':'문구 수정'}`,id:stamp.slice(0,10)+'_text_'+stamp.slice(11,19).replace(/:/g,''),target:'game\\jack.qsp',before_sha256:p.before.toUpperCase(),after_sha256:p.after.toUpperCase(),edits:[{location:p.entry.location,field:p.entry.field,old:p.piece.old,new:p.piece.new,count:1}]};
+      const mod={description:`대사 편집실: ${p.entry.location} ${p.entry.field==='desc'?'설명':'본문 '+p.entry.line+'행'} ${p.operation==='page'?'다음 페이지 추가':p.operation==='paragraph'?'문단 추가':p.operation==='choice'?'선택지 추가':p.operation==='choice-format'?'선택지 서식':'문구 수정'}`,id:stamp.slice(0,10)+'_text_'+stamp.slice(11,19).replace(/:/g,''),target:'game\\jack.qsp',before_sha256:p.before.toUpperCase(),after_sha256:p.after.toUpperCase(),edits:[{location:p.entry.location,field:p.entry.field,old:p.piece.old,new:p.piece.new,count:1}]};
       const m=transact(raw,p.raw,{kind:'edit',location:p.entry.location,field:p.entry.field,line:p.entry.line,mod});current();
       const updated=cacheEntries.find(e=>e.fieldIndex===p.entry.fieldIndex&&e.start===(p.selectionStart??p.entry.start));
       json(res,200,{...m,selection:updated?{...updated,hash:cache.hash}:null});return;

@@ -1,0 +1,155 @@
+# jo9_save_maintenance
+! JO9 MOD START JO9_SAVE_MAINTENANCE_20261118
+! Manual clean-save voice-bank lifecycle and exact legacy-cache housekeeping.
+local $j9sm_mode = lcase($args[0])
+local j9sm_pos, j9sm_ready, j9sm_size, j9sm_i, j9sm_match
+local $j9sm_old, $j9sm_new, $j9sm_expected, $j9sm_first
+if lcase($ongsave) ! 'jo9_save_maintenance':
+ if $ongsave ! '':
+  $jo9_previous_save_hook = $ongsave
+ else
+  killvar '$jo9_previous_save_hook'
+ end
+end
+$ongsave = 'jo9_save_maintenance'
+if $j9sm_mode = 'install': exit
+if $j9sm_mode ! '' and $j9sm_mode ! 'load' and $j9sm_mode ! 'clean': exit
+if $j9sm_mode = '' and $jo9_previous_save_hook ! '' and lcase($jo9_previous_save_hook) ! 'jo9_save_maintenance':
+ gs $jo9_previous_save_hook
+ if lcase($ongsave) ! 'jo9_save_maintenance':
+  if $ongsave ! '':
+   $jo9_previous_save_hook = $ongsave
+  else
+   killvar '$jo9_previous_save_hook'
+  end
+ end
+end
+$ongsave = 'jo9_save_maintenance'
+$j9sm_old = ' $result=''''
+ killvar ''$jo9_vfp_candidates'''
+$j9sm_new = ' $result=''''
+ ! JO9_SAVE_VOICE_LAZY_20261118
+ if voice_fragment_revision ! 8 or arrsize(''$voice_fragment_ids'') ! 9120: gs ''#txt_man'',''jo9_voice_fragment_data''
+ killvar ''$jo9_vfp_candidates'''
+j9sm_pos = instr($voice_pick_fragment, $j9sm_old)
+if j9sm_pos >= 1 and j9sm_pos <= 3 and instr($voice_pick_fragment, 'JO9_SAVE_VOICE_LAZY_20261118') = 0:
+ ! Replace only the recognized opening segment; preserve the rest verbatim.
+ $voice_pick_fragment = mid($voice_pick_fragment,1,j9sm_pos-1) + replace(mid($voice_pick_fragment,j9sm_pos,len($j9sm_old)),$j9sm_old,$j9sm_new) + mid($voice_pick_fragment,j9sm_pos+len($j9sm_old))
+end
+j9sm_pos = instr($voice_pick_fragment, $j9sm_new)
+j9sm_ready = iif(j9sm_pos >= 1 and j9sm_pos <= 3,1,0)
+if $j9sm_mode = 'clean' and j9sm_ready = 1:
+ killvar '$voice_fragment_emotion'
+ killvar '$voice_fragment_ids'
+ killvar '$voice_fragment_item'
+ killvar '$voice_fragment_relations'
+ killvar '$voice_fragment_role'
+ killvar '$voice_fragment_text'
+ killvar '$voice_fragment_types'
+ killvar 'voice_fragment_count'
+ killvar 'voice_fragment_good_mood'
+ killvar 'voice_fragment_level'
+ killvar 'voice_fragment_narration'
+ killvar 'voice_fragment_need_fear'
+ killvar 'voice_fragment_question'
+ killvar 'voice_fragment_rare_praise'
+ killvar 'voice_fragment_tone'
+ voice_fragment_revision = 0
+end
+killvar '$masters_vars'
+j9sm_size = arrsize('$meal_id')
+if j9sm_size > 76 and j9sm_size mod 76 = 0:
+ $j9sm_expected[0] = 'консервы'
+ $j9sm_expected[1] = 'шкварки'
+ $j9sm_expected[2] = 'рис_отварной'
+ $j9sm_expected[3] = 'каша_перловая'
+ $j9sm_expected[4] = 'каша_гречневая'
+ $j9sm_expected[5] = 'вареная_вермишель'
+ $j9sm_expected[6] = 'каша_овсяная'
+ $j9sm_expected[7] = 'каша_манная'
+ $j9sm_expected[8] = 'тушеная_капуста'
+ $j9sm_expected[9] = 'овощной_салат'
+ $j9sm_expected[10] = 'репа_пареная'
+ $j9sm_expected[11] = 'картоха'
+ $j9sm_expected[12] = 'яичница_болтунья'
+ $j9sm_expected[13] = 'острый_рулет'
+ $j9sm_expected[14] = 'котлеты_с_макарошками'
+ $j9sm_expected[15] = 'мясная_похлебка'
+ $j9sm_expected[16] = 'стейк'
+ $j9sm_expected[17] = 'спагетти'
+ $j9sm_expected[18] = 'суп_вермешелевый'
+ $j9sm_expected[19] = 'луковый_суп'
+ $j9sm_expected[20] = 'тефтельки'
+ $j9sm_expected[21] = 'глазунья_со_шкварками'
+ $j9sm_expected[22] = 'макароны_с_сыром'
+ $j9sm_expected[23] = 'свекольник'
+ $j9sm_expected[24] = 'пирог_с_яйцом'
+ $j9sm_expected[25] = 'молочная_каша'
+ $j9sm_expected[26] = 'пюрешечка'
+ $j9sm_expected[27] = 'картошка_с_яйцом'
+ $j9sm_expected[28] = 'болоньезе'
+ $j9sm_expected[29] = 'острая_отбивная'
+ $j9sm_expected[30] = 'тушеное_мясо'
+ $j9sm_expected[31] = 'отбивная_с_рисом'
+ $j9sm_expected[32] = 'борщ'
+ $j9sm_expected[33] = 'фаршированные_яйца'
+ $j9sm_expected[34] = 'колбаски_с_пюре'
+ $j9sm_expected[35] = 'пирог_с_картошкой'
+ $j9sm_expected[36] = 'мясо_по_французски'
+ $j9sm_expected[37] = 'молочный_суп'
+ $j9sm_expected[38] = 'глазунья_с_ветчиной'
+ $j9sm_expected[39] = 'овсяный_пуддинг'
+ $j9sm_expected[40] = 'пирог_с_яйцами'
+ $j9sm_expected[41] = 'пирог_с_мясом'
+ $j9sm_expected[42] = 'пирог_с_грибами'
+ $j9sm_expected[43] = 'сырное_пюре'
+ $j9sm_expected[44] = 'чебуреки'
+ $j9sm_expected[45] = 'котлеты_с_картошкой'
+ $j9sm_expected[46] = 'азу_с_рисом'
+ $j9sm_expected[47] = 'шашлык'
+ $j9sm_expected[48] = 'купаты'
+ $j9sm_expected[49] = 'ветчина_с_сыром'
+ $j9sm_expected[50] = 'овощи_с_фасолью'
+ $j9sm_expected[51] = 'суп_бальзамико'
+ $j9sm_expected[52] = 'окрошка'
+ $j9sm_expected[53] = 'рулет_с_яйцом'
+ $j9sm_expected[54] = 'ромовые_блинчики'
+ $j9sm_expected[55] = 'рагу_с_сыром'
+ $j9sm_expected[56] = 'стейк_с_макаронами'
+ $j9sm_expected[57] = 'тушеная_чечевица'
+ $j9sm_expected[58] = 'вегетарианское_рагу'
+ $j9sm_expected[59] = 'зразы_с_яйцом'
+ $j9sm_expected[60] = 'печенье'
+ $j9sm_expected[61] = 'девчатина_с_макаронами'
+ $j9sm_expected[62] = 'девчатина_с_бобами'
+ $j9sm_expected[63] = 'девчатина_с_картошкой'
+ $j9sm_expected[64] = 'лазанья_бешамель'
+ $j9sm_expected[65] = 'ребрышки_гриль'
+ $j9sm_expected[66] = 'шашлык_с_вином'
+ $j9sm_expected[67] = 'пряная_ветчина'
+ $j9sm_expected[68] = 'кексы'
+ $j9sm_expected[69] = 'круассаны'
+ $j9sm_expected[70] = 'пирог_из_девчатины'
+ $j9sm_expected[71] = 'рагу_с_рисом'
+ $j9sm_expected[72] = 'девчатина_с_сыром'
+ $j9sm_expected[73] = 'мясо_под_сливочным'
+ $j9sm_expected[74] = 'суп_из_девчатины'
+ $j9sm_expected[75] = 'образец'
+ j9sm_i = 0
+ j9sm_match = 1
+ :j9sm_meal_check
+ if j9sm_i < j9sm_size and j9sm_match = 1:
+  if $meal_id[j9sm_i] ! $j9sm_expected[j9sm_i mod 76] or meal_id[j9sm_i] ! 0: j9sm_match = 0
+  j9sm_i += 1
+  jump 'j9sm_meal_check'
+ end
+ if j9sm_match = 1:
+  copyarr '$j9sm_first', '$meal_id', 0, 76
+  killvar '$meal_id'
+  copyarr '$meal_id', '$j9sm_first'
+ end
+end
+jo9_save_clean_revision = 1
+! JO9 MOD END JO9_SAVE_MAINTENANCE_20261118
+
+--- jo9_save_maintenance ---------------------------------

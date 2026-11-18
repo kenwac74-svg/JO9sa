@@ -1,0 +1,16 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
+const canonical='G:/somi/JO9sa/tools/text-workshop',file=path.join(canonical,'server.cjs'),before=fs.readFileSync(file),source=before.toString('utf8');let content=source;
+const replace=(old,value)=>{if(content.split(old).length!==2)throw Error('Expected one server insertion anchor: '+old.slice(0,90));content=content.replace(old,value);};
+replace("const choiceAddition=require('./choice-addition.cjs'); // JO9 MOD CHOICE_ADDITION_20261116","const choiceAddition=require('./choice-addition.cjs'); // JO9 MOD CHOICE_ADDITION_20261116\r\nconst choiceFormat=require('./choice-format.cjs'); // JO9 MOD CHOICE_FORMAT_20261118");
+replace("'/choice-editor.js'","'/choice-editor.js','/choice-format-ui.js'");
+const staticStart="    if(req.method==='GET'&&['/script-review.js'";
+replace(staticStart,"    if(req.method==='GET'&&url.pathname==='/choice-format.css'){res.writeHead(200,{'Content-Type':'text/css; charset=utf-8','Cache-Control':'no-store'});res.end(fs.readFileSync(path.join(__dirname,'choice-format.css'),'utf8'));return;}\r\n"+staticStart);
+const context="    if(req.method==='POST' && url.pathname==='/api/context'){";
+replace(context,"    // JO9 MOD START CHOICE_FORMAT_20261118-options\r\n    if(req.method==='POST'&&url.pathname==='/api/choice-format/options'){\r\n      const input=await body(req),{doc}=current(),result=choiceFormat.options(doc,input.selection,navigator,{sceneId:input.sceneId,usageId:input.usageId});\r\n      try{result.gameLayout=scriptGameLayout.load(game,doc,token);}catch(error){result.layoutError=error.message;}\r\n      json(res,200,result);return;\r\n    }\r\n    // JO9 MOD END CHOICE_FORMAT_20261118-options\r\n"+context);
+replace("const p=input.operation==='choice'?choiceAddition.prepare(doc,input.selection,input.choice):", "const p=input.operation==='choice-format'?choiceFormat.prepare(doc,input.selection,input.choiceFormat):input.operation==='choice'?choiceAddition.prepare(doc,input.selection,input.choice):");
+replace("adjustments:p.adjustments||[],choice:p.choice}","adjustments:p.adjustments||[],choice:p.choice,choiceFormat:p.choiceFormat}");
+replace("p.operation==='choice'?'선택지 추가':'문구 수정'","p.operation==='choice'?'선택지 추가':p.operation==='choice-format'?'선택지 서식':'문구 수정'");
+fs.writeFileSync(path.join(__dirname,'server.cjs'),content);
+fs.writeFileSync(path.join(__dirname,'source-fingerprints.json'),JSON.stringify(Object.fromEntries(['server.cjs','core.cjs'].map(name=>[name,crypto.createHash('sha256').update(fs.readFileSync(path.join(canonical,name))).digest('hex')])),null,2));
+console.log('Prepared server candidate and source fingerprints.');

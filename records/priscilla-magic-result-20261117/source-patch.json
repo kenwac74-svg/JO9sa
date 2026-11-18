@@ -1,0 +1,30 @@
+{
+  "id": "2026-11-17_priscilla_magic_result",
+  "status": "APPROVED",
+  "description": "Magic choice6027: editable narrative acquisition, transparent magic.png above Priscilla, next arrow returns home. Preserve spell mechanics and manual reward text; normalize existing single LF to CRLF without wording changes.",
+  "before_sha256": "c68a2cd0d5f65f4c06405d7349829859539ecee504ecd545519e3420d36f3d0c",
+  "after_sha256": "b93fad00ed083453d3eb3348a3faacf7f332e3237281f5376f8b1f4c0a37df4c",
+  "edits": [
+    {
+      "location": "jo9_duplicato",
+      "field": "body",
+      "old": "IA_20261116\r\n! One spell per day; one receipt per character; donor talents are retained.\r\nif $args[0] = 'learn':\r\n npc_progress['Priscilla_duplicato'] = 1\r\n $text[1] = '[프리실라]<br>듀플리카토 에센티아. 서로 마음을 나눈 두 사람 사이에서, 한 사람이 지닌 재능을 다른 사람에게 새기는 마법이야.<br><b>듀플리카토 에센티아를 배웠습니다.</b>'\r\n exit\r\nend\r\n\r\nif $args[0] = 'quote':\r\n $result = \"'\" + replace($args[1], \"'\", \"''\") + \"'",
+      "new": "IA_20261116\r\n! One spell per day; one receipt per character; donor talents are retained.\r\n! JO9 MOD START PRISCILLA_MAGIC_HOME_20261117\r\nif $args[0] = '' and interaction_city = 6027:\r\n menu_form = 0\r\n city_form = estate_location[$estate]\r\n gs '$city_random_event', 'home'\r\n if sound_on = 1: play 'content/snd/door.wav', sound_volume\r\n is_home = 1\r\n gt 'menu_form'\r\nend\r\n! JO9 MOD END PRISCILLA_MAGIC_HOME_20261117\r\n\r\nif $args[0] = 'learn':\r\n npc_progress['Priscilla_duplicato'] = 1\r\n exit\r\nend\r\n\r\nif $args[0] = 'quote':\r\n $result = \"'\" + replace($args[1], \"'\", \"''\") + \"'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "금하네. 호호'\r\n $special_image[8] = 'scene\\Witch\\priscilla_return\\reward_02.png'\r\n $text[9] = '보상을 선택하세요.'\r\n $text[9] += '<br><br><a data-jo9-choice=\"jo9-priscilla-magic-6027\" href=\"EXEC: interaction_city = 6027 & gt ''interaction_city''\">프리실라에게 마법을 요구한다</a>'\r\n $text[9] += '<br><br><a data-jo9-choice=\"jo9-priscilla-service-6028\" href=\"EXEC: interaction_city = 6028 & gt ''interaction_city''\">프리실라에게 끝내주는 섹스 봉사를 하라고 말한다</a>'\r\n $special_image[9] = $special_image[8]\r\nEND\r\nIF interaction_city = 6027:\r\n npc = 0\r\n $npc_id = ''\r\n $place = 'slum_house'\r\n $return_lock = 'shop_general'\r\n txt_count = 1\r\n ! JO9 MOD START DUPLICATO_LEARN_20261116\r\n gs 'jo9_duplicato', 'learn'\r\n ! JO9 MOD END DUPLICATO_LEARN_20261116\r\n $special_image[1] = 'scene\\Witch\\priscilla_ret",
+      "new": "금하네. 호호'\r\n $special_image[8] = 'scene\\Witch\\priscilla_return\\reward_02.png'\r\n $text[9] = '[당신]\r\n아, 젠장! 둘 다 놓치기 싫은 보상이지만, 꼭 하나만 고른다면....'\r\n $text[9] += '<br><br><a data-jo9-choice=\"jo9-priscilla-magic-6027\" href=\"EXEC: interaction_city = 6027 & gt ''interaction_city''\">프리실라에게 마법을 요구한다</a>'\r\n $text[9] += '<br><br><a data-jo9-choice=\"jo9-priscilla-service-6028\" href=\"EXEC: interaction_city = 6028 & gt ''interaction_city''\">프리실라에게 끝내주는 섹스 봉사를 하라고 말한다</a>'\r\n $special_image[9] = $special_image[8]\r\nEND\r\nIF interaction_city = 6027:\r\n npc = 0\r\n $npc_id = ''\r\n $place = 'slum_house'\r\n $return_lock = 'jo9_duplicato'\r\n txt_count = 1\r\n ! JO9 MOD START DUPLICATO_LEARN_20261116\r\n gs 'jo9_duplicato', 'learn'\r\n ! JO9 MOD START PRISCILLA_MAGIC_NOTICE_20261117\r\n $text[1] = '<b>듀플리카토 에센티아 (Duplicato Essentia)를 습득했습니다.</b><br>프리실라에게서 서로 친밀한 두 사람 사이에 재능을 복사하는 마법을 배웠습니다.<br>집의 마법 목록에서 사용할 수 있습니다.'\r\n ! JO9 MOD END PRISCILLA_MAGIC_NOTICE_20261117\r\n ! JO9 MOD END DUPLICATO_LEARN_20261116\r\n $special_image[1] = 'scene\\Witch\\priscilla_ret",
+      "count": 1
+    },
+    {
+      "location": "interaction_screen_city",
+      "field": "body",
+      "old": "_attitude[npc_attitude[$npc_id]])\r\n! JO9 MOD END REFERENCE_PANEL_SPACING_20261101\r\nend\r\n\r\njump 'second_point'\r\n:first_point\r\n!수정작업\r\ngs '$stock_traits'\r\n! JO9 MOD START J9M1332 | 20",
+      "new": "_attitude[npc_attitude[$npc_id]])\r\n! JO9 MOD END REFERENCE_PANEL_SPACING_20261101\r\nend\r\n\r\n! JO9 MOD START PRISCILLA_MAGIC_OVERLAY_20261117\r\nif interaction_city = 6027:\r\n $return_lock = 'jo9_duplicato'\r\n if nsfw = 0:\r\n  *p '<div id=\"jo9_priscilla_magic_fx\" style=\"position:absolute;left:4px;top:3px;width:795px;height:596px;z-index:1;pointer-events:none;overflow:hidden;\"><img src=\"content/pic/magic.png\" width=\"795\" height=\"596\" style=\"display:block;width:100%;height:100%;border:0;pointer-events:none;\"></div>'\r\n end\r\nend\r\n! JO9 MOD END PRISCILLA_MAGIC_OVERLAY_20261117\r\n\r\njump 'second_point'\r\n:first_point\r\n!수정작업\r\ngs '$stock_traits'\r\n! JO9 MOD START J9M1332 | 20",
+      "count": 1
+    }
+  ]
+}
