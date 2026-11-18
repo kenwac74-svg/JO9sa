@@ -11,7 +11,7 @@ data = json.load(open(SRC, encoding='utf-8'))
 rows = data['rows']
 orig = {(r['question'], r['role'], r['cell'], r['voice']): r for r in csv.DictReader(open(CSV, encoding='utf-8-sig'))}
 
-TOPICS = [('like', '배우고 싶은 것'), ('nolike', '배우고 싶은 것 없음'), ('need', '요구'), ('noneed', '바라는 것 없음'), ('refuse', '대답 거부(정신 상태)'),
+TOPICS = [('dislike', '불만'), ('nodislike', '불만 없음·숨김'), ('like', '배우고 싶은 것'), ('nolike', '배우고 싶은 것 없음'), ('need', '요구'), ('noneed', '바라는 것 없음'), ('refuse', '대답 거부(정신 상태)'),
           ('A', '최근 칭찬'), ('B', '최근 처벌'), ('C', '오늘 처벌'), ('D', '오늘 칭찬'),
           ('fact_fear', '두려움'), ('fact_obed', '복종'), ('fact_custom', '습관'), ('fact_instinct', '본능'),
           ('fact_moral', '헌신'), ('fact_ratio', '합리(이득)'), ('fact_relation', '관계 상태'),
@@ -31,6 +31,10 @@ QNAME = {'1111': '과거 묻기', '1112': '인상 묻기', '1113': '요구 묻�
 
 
 def topic(role):
+    if re.match(r'native_\d+_(no_dislike|hide_dislikes)', role):
+        return 'nodislike', '불만 없음·숨김'
+    if re.match(r'native_\d+_\w+_dislike_core', role):
+        return 'dislike', '불만'
     if re.match(r'native_\d+_no_like', role):
         return 'nolike', '배우고 싶은 것 없음'
     if re.match(r'native_\d+_\w+_like_core', role):
@@ -50,6 +54,13 @@ def topic(role):
 def slot(role):
     if role in ('A', 'B', 'C', 'D'):
         return '요약'
+    m = re.match(r'native_\d+_(\w+?)_dislike_core$', role)
+    if m and m.group(1) != 'no':
+        return NEED.get(m.group(1), m.group(1))
+    if 'hide_dislikes' in role:
+        return '숨김'
+    if 'no_dislike' in role:
+        return '없음'
     m = re.match(r'native_\d+_(\w+?)_like_core$', role)
     if m and not m.group(1).startswith('no'):
         return LIKE.get(m.group(1), m.group(1))

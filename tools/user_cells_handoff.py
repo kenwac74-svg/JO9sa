@@ -23,6 +23,12 @@ def label(role):
     m = re.match(r'native_\d+_(\w+?)_need_(core|detail)$', role)
     if m:
         return f"{NEED.get(m.group(1), m.group(1))} 요구" + (' · 덧붙임' if m.group(2) == 'detail' else ' · 기본 줄')
+    m = re.match(r'native_\d+_(\w+?)_dislike_core$', role)
+    if m:
+        return f"{NEED.get(m.group(1), m.group(1))} 불만"
+    m = re.match(r'native_\d+_(\w+?)_like_core$', role)
+    if m:
+        return f"{ {'cowSK': '착유', 'enchanter': '성기술'}.get(m.group(1), m.group(1))} 배우기"
     m = re.match(r'native_\d+_refuse_(\w+)_core$', role)
     if m:
         return f"{NEED.get(m.group(1), m.group(1))} 상태에서 대답 거부"
