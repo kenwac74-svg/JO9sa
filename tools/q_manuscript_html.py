@@ -96,6 +96,27 @@ for r in rows:
         cnt['user'] += 1
     else:
         cnt[r['kind']] = cnt.get(r['kind'], 0) + 1
+def guide(r):
+    if r['voice'] == '공주':
+        return '반말. 호칭 "주인" 고정(정한 대로)'
+    return '편한 존댓말("~요"). 호칭은 빈칸 {호칭이} 등, 부르는 말은 {호칭부름}'
+
+
+ulist = []
+for r in rows:
+    if r['writer'] != 'user':
+        continue
+    k, label = topic(r['role'])
+    o, olabel = original(r)
+    filled = f'<div class="line">{show(r["text"])}</div><div class="olab">{len(r["text"])}자</div>' if r.get('text') else '<span class="user">비어 있음</span>'
+    ulist.append(f'<tr><td class="slot">{e(label)} · {e(slot(r["role"]))}</td><td class="voice">{e(r["voice"])}</td>'
+                 f'<td>{e(guide(r))}</td><td><div class="orig">{show(o)}</div></td><td>{filled}</td></tr>')
+userlist = ''
+if ulist:
+    userlist = ('<section id="userlist" class="always"><h2>사용자 작성 칸 목록</h2><p class="meta">성적인 주제라 직접 쓰셔야 하는 칸. 한 줄 82자, 기본 줄+덧붙임 합 150자 안.</p>'
+                '<div class="wrap"><table><thead><tr><th>칸</th><th>목소리</th><th>쓰는 법</th><th>원문</th><th>쓴 줄</th></tr></thead><tbody>'
+                + ''.join(ulist) + '</tbody></table></div></section>')
+
 for k, label in order:
     rs = groups[(k, label)]
     nav.append(f'<a href="#{e(k)}">{e(label)} <span class="n">{len(rs)}</span></a>')
@@ -176,11 +197,13 @@ SCRIPT = r'''<script>
     var h=location.hash.slice(1); var f=F[h];
     document.querySelectorAll('.filters a').forEach(function(a){a.classList.toggle('on',a.getAttribute('href')==='#'+(f?h:'all'))});
     if(!f){ if(!h){f=F.all} else return; }
-    document.querySelectorAll('tbody tr').forEach(function(tr){tr.hidden=!f(tr)});
-    document.querySelectorAll('main section').forEach(function(sec){sec.hidden=!sec.querySelector('tbody tr:not([hidden])')});
-    if(h&&h!=='all'){var first=document.querySelector('main section:not([hidden])'); if(first) first.scrollIntoView();}
+    document.querySelectorAll('main section:not(.always) tbody tr').forEach(function(tr){tr.hidden=!f(tr)});
+    document.querySelectorAll('main section:not(.always)').forEach(function(sec){sec.hidden=!sec.querySelector('tbody tr:not([hidden])')});
+    if(h&&h!=='all'){var first=document.querySelector('main section:not(.always):not([hidden])'); if(first) first.scrollIntoView();}
   }
   window.addEventListener('hashchange',apply); apply();
+  document.querySelectorAll('.filters a').forEach(function(a){a.addEventListener('click',function(ev){
+    ev.preventDefault(); var h=a.getAttribute('href'); try{history.replaceState(null,'',h)}catch(e){location.hash=h} apply();});});
 })();
 </script>'''
 QQ = rows[0]['question']
@@ -198,6 +221,7 @@ page = f'''<title>{QN} 원고표</title>
 <a href="#all">전체 <b>{len(rows)}</b></a><a href="#claude">Claude 원고 <b>{sum(1 for r in rows if r["writer"] != "user")}</b></a><a href="#v0">v0 <b>{sum(1 for r in rows if r.get("batch") == "v0")}</b></a><a href="#v1">v1 <b>{sum(1 for r in rows if r.get("batch") == "v1" and r["writer"] != "user")}</b></a><a href="#v1b">추가 <b>{sum(1 for r in rows if r.get("batch") == "v1b")}</b></a><a href="#user">사용자 작성 <b>{cnt["user"]}</b></a></div>
 <nav>{"".join(nav)}</nav>
 <div class="ujump"><span class="ulabel">사용자 작성 칸 바로가기</span>{"".join(ujump)}<span class="ulegend">채움 / <i>빈 칸</i></span></div></header>
+{userlist}
 {"".join(parts)}
 </main>'''
 page += SCRIPT
