@@ -79,7 +79,9 @@ for k, label in order:
     body = ['<div class="wrap"><table><thead><tr><th>칸</th><th>관계 칸</th><th>목소리</th><th>구분</th><th>새 줄</th><th>원문</th></tr></thead><tbody>']
     for r in rs:
         o, olabel = original(r)
-        if r['writer'] == 'user' and r.get('text'):
+        if r.get('variants'):
+            new = ''.join(f'<div class="line">{show(v)}</div><div class="olab">판 {i} · {len(v)}자</div>' for i, v in enumerate(r['variants'], 1))
+        elif r['writer'] == 'user' and r.get('text'):
             new = f'<div class="line">{show(r["text"])}</div><div class="olab">{len(r["text"])}자</div>'
         elif r['writer'] == 'user':
             new = '<span class="user">사용자 작성 칸(성적인 주제)</span>'
