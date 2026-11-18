@@ -20,6 +20,8 @@ def show(s):
 def tag(note):
     if not note:
         return ''
+    if '사용자 고침' in note:
+        return '<span class="badge user">사용자 고침</span>'
     if '원래 줄을 과거형으로만' in note:
         return '<span class="badge keep">과거형만 고침</span>'
     if '다시 씀' in note:
@@ -129,7 +131,7 @@ tbody tr:last-child th,tbody tr:last-child td{border-bottom:0}
 .line{font-family:var(--serif)}.after{color:var(--muted);font-size:13px;margin-top:4px}
 .tok{color:var(--tok)}
 .badge{display:inline-block;margin-top:6px;font-size:11px;letter-spacing:.03em;padding:1px 7px;border-radius:3px;border:1px solid currentColor}
-.badge.new{color:var(--new)}.badge.redo{color:var(--redo)}.badge.keep{color:var(--keep)}
+.badge.new{color:var(--new)}.badge.redo{color:var(--redo)}.badge.keep{color:var(--keep)}.badge.user{color:var(--tok)}
 .missing{color:var(--missing)}.empty{color:var(--muted);font-size:14px}
 ul{margin:0;padding-left:18px}
 @media (max-width:600px){h1{font-size:21px}}
