@@ -28,7 +28,7 @@ ATTITUDES = [
 HONORIFICS = {
     'polite': [
         {'minDevotion': 0, 'forms': {'bare': '당신', 'i': '당신이', 'eun': '당신은', 'eul': '당신을', 'ui': '당신의', 'ege': '당신에게'}},
-        {'minDevotion': 1, 'forms': {'bare': '주인님', 'i': '주인님이', 'eun': '주인님은', 'eul': '주인님을', 'ui': '주인님의', 'ege': '주인님께'}},
+        {'minDevotion': 2, 'forms': {'bare': '주인님', 'i': '주인님이', 'eun': '주인님은', 'eul': '주인님을', 'ui': '주인님의', 'ege': '주인님께'}},
     ],
     'banmal': [
         {'minDevotion': 0, 'forms': {'bare': '너', 'i': '네가', 'eun': '너는', 'eul': '너를', 'ui': '네', 'ege': '너한테'}},
@@ -37,7 +37,7 @@ HONORIFICS = {
     ],
 }
 LAYOUTS = {
-    'attitude3': {'cells': ['shrink', 'soft', 'follow'], 'note': '무게 2. 헌신 3 이상이면 follow(정신 상태가 움츠림 쪽이면 shrink), 헌신 0~2면 soft(움츠림 쪽은 shrink, 맞섬 쪽은 블록 없음)'},
+    'attitude3': {'cells': ['shrink', 'soft', 'follow'], 'note': '무게 2. 헌신 3 이상이면 follow(정신 상태가 움츠림 쪽이면 shrink), 헌신 2면 soft(움츠림 쪽은 shrink, 맞섬 상태여도 soft), 헌신 0~1이면 soft(움츠림 쪽은 shrink, 맞섬 쪽은 블록 없음)'},
     'devotion2': {'cells': ['hi', 'lo'], 'note': '무게 3. 헌신 3 이상이면 hi, 0~2면 lo'},
     'single': {'cells': ['*'], 'note': '태도를 나누지 않는 사건'},
 }

@@ -59,7 +59,7 @@
 ### 3.3 칸 고르기 (사용자 확정: 헌신이 태도보다 먼저)
 | 레이아웃 | 칸 | 규칙 |
 |---|---|---|
-| attitude3 (무게 2) | shrink / soft / follow | 헌신 3 이상: 정신 상태가 움츠림 쪽이면 shrink, 그 밖은 follow. 헌신 0~2: 움츠림 쪽이면 shrink, 맞섬 쪽이면 블록 없음, 그 밖은 soft |
+| attitude3 (무게 2) | shrink / soft / follow | 헌신 3 이상: 정신 상태가 움츠림 쪽이면 shrink, 그 밖은 follow. 헌신 2: 움츠림 쪽이면 shrink, 그 밖은 soft(맞섬 상태 포함). 헌신 0~1: 움츠림 쪽이면 shrink, 맞섬 쪽이면 블록 없음, 그 밖은 soft (2026-11-18) |
 | devotion2 (무게 3) | hi / lo | 헌신 3 이상 hi, 0~2 lo |
 | single | * | 나누지 않음(챔피언 잔류, 반란 제압) |
 
