@@ -1,5 +1,5 @@
 <!-- 승인된 질문 메뉴 대사를 jack.qsp에 넣는 모드 개발 핸드오프(무엇을, 어디에, 어떻게 확인하는지) -->
-# 모드 개발 핸드오프: 질문 메뉴 대사 반영 (2026-11-19)
+# 모드 개발 핸드오프: 질문 메뉴 대사 반영 (2026-11-19 최종본)
 
 - 받는 쪽: 모드 개발(QSP 반영·빌드 담당). 이 문서를 쓴 쪽은 QSP를 바꾸지 않았다.
 - 기준 파일: `assets/runtime/2.4.1/jack.qsp` SHA-256 `8332e1857fa594283eddda448177e3e63dbf554a2f3b241350aa7a9c3291c94f`. 아래 줄 번호는 이 파일 기준이다(1부터, 위치 본문 안의 줄).
@@ -9,7 +9,7 @@
 ## 0. 넘기는 것
 | 파일 | 내용 |
 |---|---|
-| `handoff/build/question_build_data.json` | 넣을 데이터 전부. 아래 3장 |
+| `handoff/build/question_build_data.json` | 넣을 데이터 전부. 아래 3장. SHA-256 `e24ad9fa55bab17568814f9bfea098b1c05a53e0a3cd3ff837a440e5f3883c1a` |
 | `tools/question_build_data.py` | 위 파일을 만드는 도구. qsp가 바뀌면 다시 돌린다 |
 | `question-fill/q*_manuscript.json` | 원고 원본(질문별). 사람이 읽는 표는 같은 폴더의 `q*_manuscript.html` |
 | `db/enrich-db.json` | 호칭 표(`honorifics`), 호칭 순서(`honorificRules`), 부르는 말(`honorificVocativeNote`) |
@@ -120,5 +120,5 @@ if instr($result,'{호칭')>0: $result=$dyneval($jo9_hon_apply,$result)
 ## 6. 이번에 하지 않는 것
 - 원래 대사의 호칭 빈칸화(확정 사항 2).
 - 깊이(`$voice_depth_level`)의 숨은 식 정리(결정 전).
-- 풍부화 사건(무게 2·3) 덧대기. 원고는 `db/enrich-db.json`에 승인되어 있고 사건마다 넣을 자리 조사가 남았다. 별도 핸드오프로 넘긴다.
+- 풍부화 사건(무게 2·3) 덧대기. 별도 핸드오프 `MOD_DEV_HANDOFF_ENRICH_EVENTS_20261119_KO.md`(최종본)로 넘긴다.
 - 조수 묻기의 `personal_ltol`(어린 나이 코드 인물) 6칸은 정책상 쓰지 않았다. 원문만 남는다.
