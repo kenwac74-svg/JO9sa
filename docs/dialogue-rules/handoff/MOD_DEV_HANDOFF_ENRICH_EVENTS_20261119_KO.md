@@ -68,7 +68,7 @@
 | 임신 확인 `pregnancy_reveal` | devotion2 | `next_day` 2011행 `dynslave['pregnant_revealed'] = 1` 뒤에 주 노예면 `jo9_en_preg_pending`을 세운다. 게임은 이 순간 글을 내지 않으므로, 다음 날 주인이 그 노예를 처음 보는 화면(아침 보고 또는 첫 상호작용 결과)에 블록을 내고 표시를 지운다. 보여 줄 화면은 **(후보)** | 처음 한 번. 3장 나이 거름 |
 | 우승 `arena_win` | devotion2 | `interaction_city` 1294(아레나 승리 결과) 안. 1903~1921행 도전전 분기에서 `c1done`·`c2done`·`c3done`이 이번에 처음 1이 되거나 `challenge_type = 4`(절대 챔피언, 처음)일 때 표시를 세우고, 1922행(상금 줄) **바로 앞**에서 `$text[1]`에 덧붙인다 **(확인함)** | 도전전 4종(챔피언 도전·집단전·안개 괴물·절대 챔피언)의 **첫 승리만**. 일반 승리(등급 1~5)와 경마는 내지 않는다(원고에 트로피·쓰러진 상대가 나옴, 사용자 확정 문답 50). 패배 없이 등급 5가 되는 승리는 1295(챔피언 해방)로 가므로 우승 지문이 나오지 않는다 |
 | 챔피언 잔류 `champion_stay` | single | `interaction_city` 1963행 `if slave['moral'] > slave['fear']:` 안, 1965행 `$text[2] = '공식적으로 당신이…'` 뒤 **(확인함)** | 없음 |
-| 낙인 `branding` | devotion2 | 인두 `interaction` 8594행 `$text[1] = $fire_branding` 뒤, 문신 `interaction_city` 9994행 `copyarr '$text', '$tattoo_branding'` 뒤, 마법 `interaction` 421행 `slave['brand'] = 3` 분기의 결과 글 뒤, 결과 `interaction_result` 1497행 `$branding_final` **(후보)** | 한 번 낙인에 한 번 |
+| 낙인 `branding` | devotion2 | 인두: `interaction_result` 1499행 `dynamic $special_part` 뒤에서 `$text[2]`(`$branding_final`) 끝에 덧붙인다. 노예가 저항해 싸우는 1492행 가지는 화면이 넘어가므로 붙지 않는다. 문신: `interaction_result_city` 812행 `dynamic $do_service` 뒤에서 `interaction_city = 4217`일 때만 마지막 `$text` 끝에 덧붙인다(돈이 모자라면 서비스가 실행되지 않음) **(확인함)** | 인물마다 **첫 낙인 한 번만**(`slave['jo9_en_branded']`로 기록, 다른 방식으로 또 찍어도 내지 않음). **마법 낙인(어드버토 서벌리, `brand = 3`)은 내지 않는다**(통증이 없는 장면이라 원고와 맞지 않음). 암시장 구입 등 `brand = 2`를 대입만 하는 곳(666802, 700007)도 낙인 장면이 아니라 제외. 절정과 겹치면 낙인 우선(4-1). 사용자 확정 문답 51 |
 | 판매·납품 `sale` | devotion2 | `interaction_result_city` 58행(`sell_slave_simple`), 221·271행(`sell_slave_complex`) 분기에서 인물이 떠나기 전의 결과 글 뒤 **(후보)** | 노예가 아직 `slave`에 있을 때 |
 | 반란 제압 `rebellion` | single | `выход_из_боя` 231~238행 `if $враг[1] = 'воспитуемая':` 안(전투 뒤 제압), `#dynamic` 1627행 `$dyn_slave_forced`의 제압 글(`msg`) 뒤 **(후보)** | 노예가 진 경우만 |
 
@@ -81,6 +81,7 @@
 - 몸으로 받는 보상: 덧붙이는 자리(1286행 뒤)는 1275행 자극 계산 **뒤**라 절정 표시 `jo9_en_climax`가 이미 정해져 있다. `jo9_en_climax = 1`이면 보상 블록을 붙이지 않는다.
 - 처벌 4사건: 덧붙이는 자리(`interaction`의 반응 글 대입)는 절정 판정(`interaction_result`)보다 **앞**이다. 그래서 그 자리에서 바로 붙이지 말고 블록과 대상 칸(`$text[2]`)을 대기값(예: `$jo9_en_pending`, `jo9_en_pending_idx`, `$jo9_en_pending_id`)에 담아 둔다. `interaction_result` 1717행 앞에서 `jo9_en_climax = 1`이면 대기값을 버리고 절정 블록을 내고, 아니면 대기 블록을 그 칸에 붙인다. 대기값은 `interaction` 시작(46행 옆)에서 비운다.
 - 하루 한 번 기록(`slave['jo9_en_day_<사건 id>']`)은 **실제로 낸 블록만** 남긴다. 절정에 밀려 나오지 않은 사건은 그날 다시 나올 수 있다.
+- **예외: 낙인은 절정보다 우선한다.** 인두 낙인 화면에서 절정이 나면 낙인 블록을 내고 절정 블록은 생략한다(인물마다 한 번뿐인 무게 3 사건, 문답 51).
 - 억울한 벌과 다른 처벌이 겹치면 억울한 벌 하나(문답 45)를 먼저 고른 뒤, 그 결과와 절정 사이에서 다시 이 규칙을 적용한다.
 
 ## 5. 이번에 넣지 않는 것
