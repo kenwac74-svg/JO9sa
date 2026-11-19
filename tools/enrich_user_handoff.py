@@ -102,7 +102,7 @@ def merge(path):
             probs.append(where + ': {이름}{은/는}으로 시작하지 않음')
         if len(line) > 110 or len(line) + len(after) > 159:
             probs.append(where + f': 길이 초과({len(line)}+{len(after)})')
-        f = {'trigger': r['trigger'], 'voice': r['voice'], 'cell': r['cell'], 'variant': 1, 'line': line,
+        f = {'trigger': r['trigger'], 'voice': r['voice'], 'cell': r['cell'], 'variant': 1, 'line': line, 'by': 'user',
              'note': '사용자 의뢰 답안 반영(다른 AI 작성)'}
         if after:
             f['after'] = after
