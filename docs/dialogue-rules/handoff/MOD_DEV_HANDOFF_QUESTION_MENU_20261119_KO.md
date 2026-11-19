@@ -49,14 +49,14 @@
 ! 인상 묻기 경로(slave). 그 밖 경로는 dynslave·$jo9_vn_occupation으로 같은 일
 if $slave['jo9_vtype']='':
  $slave['jo9_vtype']=$jo9_vf_type
- if instr('|mprincess|barbarian_princess|','|'+$slave_occupation+'|')>0 or instr('|3002|2610|2620|3010|3021|3023|2621|3012|','|'+str(slave['type'])+'|')>0: $slave['jo9_vtype']='princess'
+ if instr('|mprincess|barbarian_princess|','|'+$slave_occupation+'|')>0 or instr('|3002|2610|2620|3010|3021|3023|2621|3012|','|'+str(slave_type)+'|')>0: $slave['jo9_vtype']='princess'
 end
 $jo9_vf_type=$slave['jo9_vtype']
 jo9_vf_tone=2
 if instr('|proud|ice|doll|calm|','|'+$jo9_vf_type+'|')>0: jo9_vf_tone=1
 if instr('|frank|flame|princess|','|'+$jo9_vf_type+'|')>0: jo9_vf_tone=3
 ```
-- `slave['type']`가 공주 판정의 slave_type 필드가 맞는지 확인할 것(랜덤 노예 데이터의 첫 필드가 `type`이었다).
+- 공주 판정의 노예 종류 번호는 전역 변수 `slave_type`이다(그 밖 질문 경로는 `dynslave_type`). 2026-11-16 처형 위협 초안(`mods/drafts/2026-11-16_enrich_execution_draft.json`)도 같은 변수를 썼다. 2026-11-19 처음 판에는 `slave['type']`으로 잘못 적었다가 고쳤다.
 - 인물이 다른 칸으로 교체될 때 `$slave['jo9_vtype']`가 따라가는지 확인하지 못했다. 안 따라가면 다음 질문 때 다시 계산되며, 그사이 수치가 바뀌었으면 목소리가 달라질 수 있다.
 
 ### 4-2. 관계 칸
