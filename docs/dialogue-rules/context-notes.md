@@ -274,3 +274,4 @@
 - 임신(문답 60): 임신은 병원 진찰(확진값 2, 2일째부터), 저절로 드러남(값 1, 120일 또는 90일 이후 확률), Codex 100·149일 알림 세 경로로 알려진다. 저절로 드러남에만 걸면 병원 확진 때 안 뜨고 100일 알림보다 늦어서, 100일 알림 뒤에 붙였다.
 - 목소리 값 이동: `$swap_slave_instances`(copyarr 전체 배열)로 글자 값도 옮겨짐을 QSP 엔진으로 확인(slave↔assistant 맞바꿈, 오류 0).
 - 사용자 지시(문답 61): 원문은 사용자가 직접 편집하고 Claude는 판단하지 않는다. 질문 원고 편집기(`tools/manuscript_editor/manuscript_editor.html`, 내용 없이 파일을 읽고 쓰는 기계적 도구)와 zip 도구(`tools/pack_manuscript_editor.py`)를 만들었다. 조수 묻기 personal_ltol 6칸은 사용자 대기.
+- 사용자 재확인(문답 62): 사용자가 지시하는 모든 게임 변경은 Claude가 QSP를 고치지 않고 기록해 모드 개발 핸드오프로 넘긴다.
