@@ -17,8 +17,10 @@ README = '''질문 원고 편집기
    - "사용자 작성 칸", "이 질문의 모든 칸"으로 바꿔 볼 수 있다.
 5. "저장하기"를 누르면 그 JSON에 바로 쓴다(처음 한 번 쓰기 허락을 묻는다).
    브라우저가 직접 쓰지 못하면 같은 이름으로 내려받으니 그 파일로 덮어쓴다.
-6. 저장소에 반영하려면 고친 JSON을 docs/dialogue-rules/question-fill/에 덮어쓰고 커밋한다.
-   그 뒤 넣을 데이터를 다시 뽑는다: python tools/question_build_data.py <qsp> docs/dialogue-rules/handoff/build
+6. 저장소에 반영하려면 이 폴더를 저장소의 tools/apply_edited_manuscripts.bat 위로 끌어다 놓는다.
+   원고 JSON을 저장소에 덮어쓰고 게임에 넣을 데이터까지 다시 뽑는다. 그다음 커밋한다.
+   데이터만 다시 뽑을 때는 tools/rebuild_question_data.bat을 더블클릭한다.
+   - 가장 최근에 받은 zip으로 작업한다. 오래된 zip의 원고를 끌어다 놓으면 그 사이 바뀐 원고가 되돌아간다.
 
 - 내용은 검사하지 않는다. 행을 지우지 않으며, 원고가 없던 칸에 처음 쓰면 writer: user 행이 하나 더해진다.
 - 저장 형식은 원래 파일과 같다(들여쓰기 1칸, 한글 그대로).

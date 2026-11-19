@@ -275,3 +275,4 @@
 - 목소리 값 이동: `$swap_slave_instances`(copyarr 전체 배열)로 글자 값도 옮겨짐을 QSP 엔진으로 확인(slave↔assistant 맞바꿈, 오류 0).
 - 사용자 지시(문답 61): 원문은 사용자가 직접 편집하고 Claude는 판단하지 않는다. 질문 원고 편집기(`tools/manuscript_editor/manuscript_editor.html`, 내용 없이 파일을 읽고 쓰는 기계적 도구)와 zip 도구(`tools/pack_manuscript_editor.py`)를 만들었다. 조수 묻기 personal_ltol 6칸은 사용자 대기.
 - 사용자 재확인(문답 62): 사용자가 지시하는 모든 게임 변경은 Claude가 QSP를 고치지 않고 기록해 모드 개발 핸드오프로 넘긴다.
+- 사용자 지시: 파이썬 명령어를 출력하지 말고 항상 간단한 도구(더블클릭·끌어다 놓기 실행 파일)로 만든다. `tools/rebuild_question_data.bat`(데이터 다시 뽑기), `tools/apply_edited_manuscripts.bat`(편집기 폴더를 끌어다 놓으면 원고 덮어쓰기 + 데이터 다시 뽑기).
