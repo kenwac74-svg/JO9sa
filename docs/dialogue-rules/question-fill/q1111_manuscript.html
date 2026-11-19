@@ -1,0 +1,73 @@
+<title>과거 묻기 원고표</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600&family=Noto+Serif+KR:wght@400;600&display=swap">
+<style>
+/* 레이아웃: 위에 요약과 주제 목록, 아래로 주제마다 새 줄과 원문을 나란히 놓은 표 */
+:root{--bg:#f5f6f8;--surface:#ffffff;--fg:#1d2128;--muted:#5f6673;--line:#dde1e8;--accent:#3a5a9c;--tok:#8a4b9e;
+--split:#3a5a9c;--fill:#2f7a5a;--user:#9a5b16;
+--sans:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;--serif:"Noto Serif KR","Batang",serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15171c;--surface:#1d2027;--fg:#e7e9ee;--muted:#a2a8b4;--line:#323743;--accent:#8fa9e0;--tok:#d3a2e6;--split:#8fa9e0;--fill:#7cc4a2;--user:#e0a560;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#15171c;--surface:#1d2027;--fg:#e7e9ee;--muted:#a2a8b4;--line:#323743;--accent:#8fa9e0;--tok:#d3a2e6;--split:#8fa9e0;--fill:#7cc4a2;--user:#e0a560;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font:15px/1.65 var(--sans);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main{max-width:1320px;margin:0 auto;padding-block:28px 64px;display:grid;gap:28px}
+h1{font:600 24px/1.3 var(--serif);margin:0;text-wrap:balance}h2{font:600 19px/1.3 var(--serif);margin:0 0 8px}
+p{margin:0;max-width:72ch}.meta{color:var(--muted);font-size:13px}
+.summary{display:flex;flex-wrap:wrap;gap:8px 18px;color:var(--muted);font-size:14px}.summary b{color:var(--fg);font-variant-numeric:tabular-nums}
+nav{display:flex;flex-wrap:wrap;gap:6px}
+nav a{color:var(--accent);text-decoration:none;border:1px solid var(--line);background:var(--surface);padding:3px 10px;border-radius:999px;font-size:13px}
+nav a:hover,nav a:focus-visible{border-color:var(--accent)}.n{color:var(--muted);font-variant-numeric:tabular-nums}
+section{scroll-margin-top:16px}
+.wrap{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:900px;font-size:14px}
+th,td{border-bottom:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+thead th{font-size:12px;letter-spacing:.04em;color:var(--muted);font-weight:600;background:var(--bg)}
+tbody tr:last-child td{border-bottom:0}
+td.slot,td.cell,td.voice{white-space:nowrap}td.voice{font-weight:600}
+td:nth-child(5){width:38%}td:nth-child(6){width:30%}
+.line{font-family:var(--serif)}.orig{color:var(--muted)}.olab{color:var(--muted);font-size:11px;margin-top:3px}
+.tok{color:var(--tok)}
+.ujump{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px}
+.ujump .ulabel{color:var(--muted);margin-right:4px}.ujump .ulegend{color:var(--muted);font-size:12px;margin-left:4px}
+.ujump a{text-decoration:none;padding:3px 10px;border-radius:999px;border:1px solid var(--user);color:var(--user)}
+.ujump a.empty{border-style:dashed;font-style:italic}
+.ujump a:hover,.ujump a:focus-visible{background:var(--user);color:var(--surface)}
+.summary a{color:inherit}
+.filters{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px}
+.filters a{text-decoration:none;color:var(--fg);border:1px solid var(--line);background:var(--surface);padding:4px 12px;border-radius:6px}
+.filters a b{color:var(--muted);font-weight:600;margin-left:4px;font-variant-numeric:tabular-nums}
+.filters a.on{border-color:var(--accent);background:var(--accent);color:var(--surface)}.filters a.on b{color:var(--surface)}
+.filters a:hover,.filters a:focus-visible{border-color:var(--accent)}
+tr[id]{scroll-margin-top:80px}
+tr:target td{background:color-mix(in srgb,var(--user) 16%,transparent)}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+.badge{display:inline-block;font-size:11px;padding:1px 7px;border-radius:3px;border:1px solid currentColor;white-space:nowrap}
+.badge.split{color:var(--split)}.badge.fill{color:var(--fill)}.badge.new{color:var(--tok)}.badge.user{color:var(--user)}.user{color:var(--user)}
+</style>
+<main>
+<header style="display:grid;gap:10px"><h1>과거 묻기 원고표</h1>
+<p class="meta">질문 메뉴 "과거 묻기"(1111)에서 새로 쓴 줄을 원문과 나란히 놓았다. 분리는 같은 줄을 나눠 쓰던 목소리의 새 판, 보완은 판이 없던 목소리의 새 줄이다. 보라색 빈칸은 호칭이며 헌신·복종에 따라 당신/주인님(공주는 너/당신/주인)으로 채워진다. 말투는 명랑한·거센 3, 도도한·조용한 1, 순한·담백한 2, 공주 반말.</p>
+<div class="summary"><span>행 <b>16</b></span><span>분리 <b>16</b></span><span>보완 <b>0</b></span><span>신규 <b>0</b></span><span><a href="#u1">사용자 작성 칸 <b>0</b></a> (빈 칸 <b>0</b>)</span></div>
+<div class="filters" role="group" aria-label="보기 거르기"><span class="ulabel">검토할 줄만 보기</span>
+<a href="#all">전체 <b>16</b></a><a href="#claude">Claude 원고 <b>16</b></a><a href="#v0">v0 <b>0</b></a><a href="#v1">v1 <b>16</b></a><a href="#v1b">추가 <b>0</b></a><a href="#user">사용자 작성 <b>0</b></a></div>
+<nav><a href="#past">과거 이야기 뒤 반응 <span class="n">16</span></a></nav>
+<div class="ujump"><span class="ulabel">사용자 작성 칸 바로가기</span><span class="ulegend">채움 / <i>빈 칸</i></span></div></header>
+
+<section id="past"><h2>과거 이야기 뒤 반응</h2><div class="wrap"><table><thead><tr><th>칸</th><th>관계 칸</th><th>목소리</th><th>구분</th><th>새 줄</th><th>원문</th></tr></thead><tbody><tr data-w="claude" data-b="v1"><td class="slot">가족</td><td class="cell">움츠림</td><td class="voice">명랑한</td><td><span class="badge split">분리</span><div class="olab">v1</div></td><td><div class="line">(눈치를 보며) 어릴 적 기억도 소중하긴 한데요… 지금은 <span class="tok">{호칭}</span> 말씀만 잘 들으면 돼요.</div></td><td><div class="orig">어릴 적 추억도 소중하지만, 지금 제가 의지하고 따라야 할 분은 오직 주인님뿐이에요.</div><div class="olab">나눠 쓰던 원래 줄(말투 2)</div></td></tr><tr data-w="claude" data-b="v1"><td class="slot">가족</td><td class="cell">순함</td><td class="voice">명랑한</td><td><span class="badge split">분리</span><div class="olab">v1</div></td><td><div class="line">어릴 적 추억도 소중하지만요, 지금은 여기서 지내는 하루하루가 더 중요해요!</div></td><td><div class="orig">어릴 적 추억도 소중하지만, 지금 제가 의지하고 따라야 할 분은 오직 주인님뿐이에요.</div><div class="olab">나눠 쓰던 원래 줄(말투 2)</div></td></tr><tr data-w="claude" data-b="v1"><td class="slot">가족</td><td class="cell">따름(복종)</td><td class="voice">명랑한</td><td><span class="badge split">분리</span><div class="olab">v1</div></td><td><div class="line">어릴 적 추억은 추억이고요! 지금 제가 따라야 할 분은 <span class="tok">{호칭}</span>뿐이잖아요.</div></td><td><div class="orig">어릴 적 추억도 소중하지만, 지금 제가 의지하고 따라야 할 분은 오직 주인님뿐이에요.</div><div class="olab">나눠 쓰던 원래 줄(말투 2)</div></td></tr><tr data-w="claude" data-b="v1"><td class="slot">가족</td><td class="cell">따름(헌신)</td><td class="voice">명랑한</td><td><span class="badge split">분리</span><div class="olab">v1</div></td><td><div class="line">어릴 적 추억도 소중해요. 그래도 지금 제 곁엔 <span class="tok">{호칭}</span>뿐인걸요! 그걸로 충분해요!</div></td><td><div class="orig">어릴 적 추억도 소중하지만, 지금 제가 의지하고 따라야 할 분은 오직 주인님뿐이에요.</div><div class="olab">나눠 쓰던 원래 줄(말투 2)</div></td></tr><tr data-w="claude" data-b="v1"><td class="slot">가족</td><td class="cell">맞섬</td><td class="voice">명랑한</td><td><span class="badge split">분리</span><div class="olab">v1</div></td><td><div class="line">제 가족 얘기를 왜 자꾸 물어보세요? 그 기억까지 함부로 건드리진 마세요!</div></td><td><div class="orig">제 가족 이야기를 캐물으시는 이유가 뭔가요. 그 기억마저 함부로 건드리지는 말아 주세요.</div><div class="olab">나눠 쓰던 원래 줄(말투 2)</div></td></tr><tr data-w="claude" data-b="v1"><td class="slot">가족</td><td class="cell">맞섬</td><td class="voice">거센</td><td><span class="badge split">분리</span><div class="olab">v1</div></td><td><div class="line">가족 얘기는 왜 캐물어요? 그 기억까지 멋대로 건드리지 마요.</div></td><td><div class="orig">제 가족 이야기를 캐물으시는 이유가 뭔가요. 그 기억마저 함부로 건드리지는 말아 주세요.</div><div class="olab">나눠 쓰던 원래 줄(말투 2)</div></td></tr><tr data-w="claude" data-b="v1"><td class="slot">직업</td><td class="cell">움츠림</td><td class="voice">명랑한</td><td><span class="badge split">분리</span><div class="olab">v1</div></td><td><div class="line">(어깨를 움츠리며) 예전에 배운 거라도… 쓸모가 있다면 <span class="tok">{호칭을}</span> 위해 쓸게요.</div></td><td><div class="orig">과거에 배워 둔 기술이든 무엇이든, 이제는 모두 주인님을 위해 기꺼이 쓰고 싶어요.</div><div class="olab">나눠 쓰던 원래 줄(말투 2)</div></td></tr><tr data-w="claude" data-b="v1"><td class="slot">직업</td><td class="cell">순함</td><td class="voice">명랑한</td><td><span class="badge split">분리</span><div class="olab">v1</div></td><td><div class="line">예전에 배운 기술, 여기서도 써먹을 수 있으면 좋겠어요! 뭐든 해 볼게요!</div></td><td><div class="orig">과거에 배워 둔 기술이든 무엇이든, 이제는 모두 주인님을 위해 기꺼이 쓰고 싶어요.</div><div class="olab">나눠 쓰던 원래 줄(말투 2)</div></td></tr><tr data-w="claude" data-b="v1"><td class="slot">직업</td><td class="cell">따름(복종)</td><td class="voice">명랑한</td><td><span class="badge split">분리</span><div class="olab">v1</div></td><td><div class="line">예전에 익힌 기술이든 뭐든, 시키시는 대로 다 쓸게요!</div></td><td><div class="orig">과거에 배워 둔 기술이든 무엇이든, 이제는 모두 주인님을 위해 기꺼이 쓰고 싶어요.</div><div class="olab">나눠 쓰던 원래 줄(말투 2)</div></td></tr><tr data-w="claude" data-b="v1"><td class="slot">직업</td><td class="cell">따름(헌신)</td><td class="voice">명랑한</td><td><span class="badge split">분리</span><div class="olab">v1</div></td><td><div class="line">예전에 배운 거 전부 <span class="tok">{호칭을}</span> 위해 쓰고 싶어요! 기대하셔도 좋아요!</div></td><td><div class="orig">과거에 배워 둔 기술이든 무엇이든, 이제는 모두 주인님을 위해 기꺼이 쓰고 싶어요.</div><div class="olab">나눠 쓰던 원래 줄(말투 2)</div></td></tr><tr data-w="claude" data-b="v1"><td class="slot">직업</td><td class="cell">맞섬</td><td class="voice">명랑한</td><td><span class="badge split">분리</span><div class="olab">v1</div></td><td><div class="line">그땐 제 뜻대로 일하며 살던 사람이었어요! 이렇게 목줄 찬 노예가 아니었다고요!</div></td><td><div class="orig">그때는 제 뜻대로 일하며 살아가던 사람이었어요. 지금처럼 사슬에 묶인 노예가 아니었다고요.</div><div class="olab">나눠 쓰던 원래 줄(말투 2)</div></td></tr><tr data-w="claude" data-b="v1"><td class="slot">고향 세계</td><td class="cell">움츠림</td><td class="voice">명랑한</td><td><span class="badge split">분리</span><div class="olab">v1</div></td><td><div class="line">돌아갈 수도 없는 고향 얘기는… 떠올릴수록 마음만 무거워져요. 헤헤…</div></td><td><div class="orig">어차피 돌아갈 길도 없는 옛 세계 이야기예요… 떠올릴수록 가슴만 무겁게 가라앉아요.</div><div class="olab">나눠 쓰던 원래 줄(말투 2)</div></td></tr><tr data-w="claude" data-b="v1"><td class="slot">고향 세계</td><td class="cell">순함</td><td class="voice">명랑한</td><td><span class="badge split">분리</span><div class="olab">v1</div></td><td><div class="line">고향 생각도 가끔 나요! 그래도 지금은 여기서 지내는 게 제 하루하루예요.</div></td><td><div class="orig">고향에 대한 기억도 남아 있지만, 지금 제가 살아 숨 쉬며 곁을 지킬 곳은 주인님 옆뿐이에요.</div><div class="olab">나눠 쓰던 원래 줄(말투 2)</div></td></tr><tr data-w="claude" data-b="v1"><td class="slot">고향 세계</td><td class="cell">따름(복종)</td><td class="voice">명랑한</td><td><span class="badge split">분리</span><div class="olab">v1</div></td><td><div class="line">고향 기억도 있긴 하지만요, 지금 제 자리는 <span class="tok">{호칭}</span> 곁이잖아요.</div></td><td><div class="orig">고향에 대한 기억도 남아 있지만, 지금 제가 살아 숨 쉬며 곁을 지킬 곳은 주인님 옆뿐이에요.</div><div class="olab">나눠 쓰던 원래 줄(말투 2)</div></td></tr><tr data-w="claude" data-b="v1"><td class="slot">고향 세계</td><td class="cell">따름(헌신)</td><td class="voice">명랑한</td><td><span class="badge split">분리</span><div class="olab">v1</div></td><td><div class="line">고향 생각도 나요. 그래도 지금 제가 있고 싶은 곳은 <span class="tok">{호칭}</span> 옆이에요!</div></td><td><div class="orig">고향에 대한 기억도 남아 있지만, 지금 제가 살아 숨 쉬며 곁을 지킬 곳은 주인님 옆뿐이에요.</div><div class="olab">나눠 쓰던 원래 줄(말투 2)</div></td></tr><tr data-w="claude" data-b="v1"><td class="slot">고향 세계</td><td class="cell">맞섬</td><td class="voice">명랑한</td><td><span class="badge split">분리</span><div class="olab">v1</div></td><td><div class="line">그 빌어먹을 안개 너머로 끌려오지만 않았어도, <span class="tok">{호칭}</span> 얼굴 보면서 노예 노릇할 일은 없었을 거예요!</div></td><td><div class="orig">그 고향 세계에서 저주받을 안개 너머로 끌려오지만 않았어도, 지금쯤 당신 얼굴을 보며 노예 노릇할 일은 없었을 거예요.</div><div class="olab">나눠 쓰던 원래 줄(말투 2)</div></td></tr></tbody></table></div></section>
+</main><script>
+(function(){
+  var F={all:function(){return true},claude:function(t){return t.dataset.w==='claude'},v0:function(t){return t.dataset.b==='v0'},
+         v1:function(t){return t.dataset.b==='v1'&&t.dataset.w==='claude'},v1b:function(t){return t.dataset.b==='v1b'},user:function(t){return t.dataset.w==='user'}};
+  function apply(){
+    var h=location.hash.slice(1); var f=F[h];
+    document.querySelectorAll('.filters a').forEach(function(a){a.classList.toggle('on',a.getAttribute('href')==='#'+(f?h:'all'))});
+    if(!f){ if(!h){f=F.all} else return; }
+    document.querySelectorAll('main section:not(.always) tbody tr').forEach(function(tr){tr.hidden=!f(tr)});
+    document.querySelectorAll('main section:not(.always)').forEach(function(sec){sec.hidden=!sec.querySelector('tbody tr:not([hidden])')});
+    if(h&&h!=='all'){var first=document.querySelector('main section:not(.always):not([hidden])'); if(first) first.scrollIntoView();}
+  }
+  window.addEventListener('hashchange',apply); apply();
+  document.querySelectorAll('.filters a').forEach(function(a){a.addEventListener('click',function(ev){
+    ev.preventDefault(); var h=a.getAttribute('href'); try{history.replaceState(null,'',h)}catch(e){location.hash=h} apply();});});
+})();
+</script>
