@@ -64,7 +64,7 @@ for t in db['triggers']:
         continue
     user = t.get('writer') == 'user'
     if user:
-        head += '<p class="note">사용자 입력 사건. 문장은 <code>db/enrich-db.json</code>에 있다. 위의 "DB 파일 불러오기"로 그 파일을 고르면 칸마다 문장이 채워진다.</p>'
+        head += '<p class="note">사용자 입력 사건. 문장은 <code>db/enrich-db.json</code>에 있다. 위의 "DB 불러오기"로 그 파일을 열면 칸마다 편집할 수 있고, "저장하기"로 파일에 쓴다.</p>'
     rows =['<div class="wrap"><table><thead><tr><th class="v">목소리</th>' + ''.join(f'<th>{e(CELL_LABEL[c])}</th>' for c in cells) + '</tr></thead><tbody>']
     for v in voices:
         tds = []
@@ -136,38 +136,83 @@ tbody tr:last-child th,tbody tr:last-child td{border-bottom:0}
 .tok{color:var(--tok)}
 .badge{display:inline-block;margin-top:6px;font-size:11px;letter-spacing:.03em;padding:1px 7px;border-radius:3px;border:1px solid currentColor}
 .badge.new{color:var(--new)}.badge.redo{color:var(--redo)}.badge.keep{color:var(--keep)}.badge.user{color:var(--tok)}
-.load{font-size:14px;display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center}.load label{color:var(--accent);font-weight:600}
+.load{font-size:14px;display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center}.load button{font:inherit;font-size:14px;padding:4px 12px;border:1px solid var(--accent);background:var(--surface);color:var(--accent);border-radius:4px;cursor:pointer}.load button:disabled{opacity:.45;cursor:default}
+textarea.ed{width:100%;box-sizing:border-box;font:14px/1.5 var(--serif);background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:4px 6px;resize:vertical}textarea.ed.after{font-size:13px;margin-top:4px}
 .missing{color:var(--missing)}.empty{color:var(--muted);font-size:14px}
 ul{margin:0;padding-left:18px}
 @media (max-width:600px){h1{font-size:21px}}
 '''
 SCRIPT = r'''<script>
-// 사용자가 고른 enrich-db.json을 브라우저에서 읽어 사용자 입력 칸에 문장을 채운다
-document.getElementById('dbfile').addEventListener('change', async ev => {
-  const file = ev.target.files[0];
-  const state = document.getElementById('dbstate');
-  if (!file) return;
-  let db;
-  try { db = JSON.parse(await file.text()); } catch (err) { state.textContent = 'JSON을 읽지 못했다: ' + err.message; return; }
-  const cells = {};
-  for (const f of (db.fragments || [])) {
-    if (f.by !== 'user') continue;
-    (cells[f.trigger + '|' + f.voice + '|' + f.cell] ||= []).push(f);
-  }
+// 기계적인 입출력: 사용자가 고른 enrich-db.json을 읽어 사용자 입력 칸을 편집 칸으로 채우고, 저장하면 같은 형식(indent 1)으로 다시 쓴다. 내용 검사는 하지 않는다
+let DB = null, HANDLE = null, FILENAME = 'enrich-db.json';
+const state = msg => { document.getElementById('dbstate').textContent = msg; };
+function fill() {
+  const idx = {};
+  DB.fragments.forEach((f, i) => { if (f.by === 'user') (idx[f.trigger + '|' + f.voice + '|' + f.cell] ||= []).push(i); });
   let n = 0;
   document.querySelectorAll('td.userin').forEach(td => {
-    const fs = cells[td.dataset.k];
-    if (!fs) return;
+    const k = td.dataset.k;
+    const list = idx[k] || [null];
     td.replaceChildren();
-    for (const f of fs) {
-      const line = document.createElement('div'); line.className = 'line';
-      line.textContent = f.line.replace('{이름}{은/는}', '{이름}(은)는'); td.append(line);
-      if (f.after) { const a = document.createElement('div'); a.className = 'after'; a.textContent = '여운 · ' + f.after; td.append(a); }
-      n++;
+    for (const i of list) {
+      const f = i === null ? null : DB.fragments[i];
+      for (const [field, label] of [['line', '본문'], ['after', '여운']]) {
+        const t = document.createElement('textarea');
+        t.className = 'ed ' + field; t.rows = field === 'line' ? 3 : 2; t.placeholder = label;
+        t.value = f ? (f[field] || '') : '';
+        t.dataset.k = k; t.dataset.i = i === null ? '' : String(i); t.dataset.f = field;
+        t.addEventListener('input', edit);
+        td.append(t);
+      }
+      if (f) n++;
     }
     const b = document.createElement('span'); b.className = 'badge user'; b.textContent = '사용자 입력'; td.append(b);
   });
-  state.textContent = file.name + '에서 사용자 입력 ' + n + '블록을 채웠다.';
+  document.getElementById('dbsave').disabled = false;
+  state(FILENAME + ' 불러옴. 사용자 입력 ' + n + '블록. 고친 뒤 저장하기를 누른다.');
+}
+function edit(ev) {
+  const t = ev.target;
+  let i = t.dataset.i;
+  if (i === '') {
+    // 빈 칸에 처음 쓰면 행을 하나 더한다
+    const [trigger, voice, cell] = t.dataset.k.split('|');
+    DB.fragments.push({ trigger, voice, cell, variant: 1, line: '', by: 'user' });
+    i = String(DB.fragments.length - 1);
+    t.closest('td').querySelectorAll('textarea').forEach(x => { if (x.dataset.i === '') x.dataset.i = i; });
+  }
+  const f = DB.fragments[Number(i)];
+  if (t.dataset.f === 'after' && t.value === '') delete f.after; else f[t.dataset.f] = t.value;
+  state('저장하지 않은 변경 있음.');
+}
+async function openDb() {
+  if (window.showOpenFilePicker) {
+    try {
+      [HANDLE] = await showOpenFilePicker({ types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }] });
+      const file = await HANDLE.getFile(); FILENAME = file.name;
+      DB = JSON.parse(await file.text()); fill(); return;
+    } catch (err) { if (err.name === 'AbortError') return; HANDLE = null; }
+  }
+  document.getElementById('dbfile').click();
+}
+document.getElementById('dbopen').addEventListener('click', openDb);
+document.getElementById('dbfile').addEventListener('change', async ev => {
+  const file = ev.target.files[0];
+  if (!file) return;
+  FILENAME = file.name;
+  try { DB = JSON.parse(await file.text()); } catch (err) { state('JSON을 읽지 못했다: ' + err.message); return; }
+  fill();
+});
+document.getElementById('dbsave').addEventListener('click', async () => {
+  const text = JSON.stringify(DB, null, 1) + '\n';
+  if (HANDLE) {
+    try { const w = await HANDLE.createWritable(); await w.write(text); await w.close(); state(FILENAME + '에 저장했다.'); return; }
+    catch (err) { state('파일에 바로 쓰지 못해 내려받기로 저장한다: ' + err.message); }
+  }
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
+  a.download = FILENAME; a.click(); URL.revokeObjectURL(a.href);
+  state(FILENAME + '을 내려받았다. 저장소의 docs/dialogue-rules/db/enrich-db.json에 덮어쓴다.');
 });
 </script>'''
 page = f'''<title>풍부화 원고 검토표</title>
@@ -179,7 +224,7 @@ page = f'''<title>풍부화 원고 검토표</title>
 <header style="display:grid;gap:10px"><h1>풍부화 원고 검토표</h1>
 <p class="meta">DB 갱신 {e(db.get("updated", ""))}. 모든 블록은 대사 없는 관찰 지문이고 과거형이다. 여운 줄은 헌신 2 이상일 때만 붙는다. 이름 뒤 조사는 게임에서 (은)는으로 나온다.</p>
 <div class="summary"><span>블록 <b>{total}</b></span><span>새로 씀 <b>{count["new"]}</b></span><span>다시 씀 <b>{count["redo"]}</b></span><span>과거형만 고침 <b>{count["keep"]}</b></span><span>몸짓 <b>{len(db["gestures"])}</b>칸</span></div>
-<div class="load"><label>DB 파일 불러오기 <input type="file" id="dbfile" accept=".json,application/json"></label> <span id="dbstate" class="meta">사용자 입력 칸의 문장은 <code>docs/dialogue-rules/db/enrich-db.json</code>을 고르면 표에 채워진다. 파일은 이 브라우저 안에서만 읽는다.</span></div>
+<div class="load"><button id="dbopen" type="button">DB 불러오기</button><button id="dbsave" type="button" disabled>저장하기</button><input type="file" id="dbfile" accept=".json,application/json" hidden> <span id="dbstate" class="meta"><code>docs/dialogue-rules/db/enrich-db.json</code>을 불러오면 사용자 입력 칸이 편집 칸이 된다. 저장하기를 누르면 그 파일이 바뀐다(브라우저가 직접 쓰기를 못 하면 같은 이름으로 내려받는다).</span></div>
 <nav>{"".join(nav)}</nav></header>
 {"".join(parts)}
 </main>'''
