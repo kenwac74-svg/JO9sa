@@ -6,7 +6,7 @@
   분리    맞는 전용 줄이 있으나 다른 목소리와 같이 쓴다(대표 목소리는 재활용)
   보완    같은 칸에 뜻은 있으나 이 목소리·말투 판이 없다
   신규    이 관계 칸에 해당하는 줄이 하나도 없다
-  원문만  써야 하는 칸인데 원문이 성적인 내용 후보다(Claude가 쓰지 않음, 사용자 작성)
+  원문만  사용자 작성 칸(원문을 대비해 보여 준다)
 """
 import csv, html, json, re, sys, collections
 from pathlib import Path
@@ -189,7 +189,7 @@ def classify(q, role, cell, v, in_cell, slots, voices_of, tp, types_of):
         texts = ' '.join(x[1] for b in in_cell for x in slots[b].values())
         if SEX.search(texts) or SEX_ROLE.search(role):
             row['class'] = '원문만'
-            note = '성적인 내용 후보: Claude가 쓰지 않음, 원문만 대비(사용자 작성)'
+            note = '사용자 작성 칸, 원문 대비'
     row['note'] = note
     return row
 
