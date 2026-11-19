@@ -37,6 +37,7 @@ for f in db['fragments']:
 
 parts = []
 nav = []
+ucount = {'done': 0, 'wait': 0}
 count = {'new': 0, 'redo': 0, 'keep': 0}
 for f in db['fragments']:
     t = tag(f.get('note', ''))
@@ -64,15 +65,17 @@ for t in db['triggers']:
         continue
     user = t.get('writer') == 'user'
     if user:
-        head += '<p class="note">사용자 입력 사건. 문장은 <code>db/enrich-db.json</code>에 있다. 위의 "DB 불러오기"로 그 파일을 열면 칸마다 편집할 수 있고, "저장하기"로 파일에 쓴다.</p>'
+        head += '<p class="note">사용자 입력 사건. 칸 표시: <b>사용자 완료</b>는 사용자가 입력을 마친 칸, <b>사용자 대기</b>는 사용자가 입력해야 DB가 완성되는 칸. 문장은 <code>db/enrich-db.json</code>에 있고 위의 "DB 불러오기"로 열어 편집·저장한다.' + (' 여운은 헌신 2 이상일 때 본문 다음 줄에 붙는다.' if t.get('weight') == 3 else ' 무게 2 사건이라 여운은 쓰지 않는다.') + '</p>'
     rows =['<div class="wrap"><table><thead><tr><th class="v">목소리</th>' + ''.join(f'<th>{e(CELL_LABEL[c])}</th>' for c in cells) + '</tr></thead><tbody>']
     for v in voices:
         tds = []
         for c in cells:
             fs = frag.get((tid, v['key'], c), [])
             if user:
-                state = '입력됨' + (' · 여운 있음' if any(f.get('after') for f in fs) else '') if fs else '빈 칸'
-                tds.append(f'<td class="userin" data-k="{tid}|{v["key"]}|{c}"><span class="badge user">사용자 입력</span> {state}</td>')
+                done = any((f.get('line') or '').strip() for f in fs)
+                ucount['done' if done else 'wait'] += 1
+                label = '사용자 완료' if done else '사용자 대기'
+                tds.append(f'<td class="userin" data-k="{tid}|{v["key"]}|{c}" data-w="{t.get("weight")}"><span class="badge {"udone" if done else "uwait"}">{label}</span></td>')
                 continue
             if not fs:
                 tds.append('<td class="missing">빈 칸</td>')
@@ -135,7 +138,7 @@ tbody tr:last-child th,tbody tr:last-child td{border-bottom:0}
 .line{font-family:var(--serif)}.after{color:var(--muted);font-size:13px;margin-top:4px}
 .tok{color:var(--tok)}
 .badge{display:inline-block;margin-top:6px;font-size:11px;letter-spacing:.03em;padding:1px 7px;border-radius:3px;border:1px solid currentColor}
-.badge.new{color:var(--new)}.badge.redo{color:var(--redo)}.badge.keep{color:var(--keep)}.badge.user{color:var(--tok)}
+.badge.new{color:var(--new)}.badge.redo{color:var(--redo)}.badge.keep{color:var(--keep)}.badge.user{color:var(--tok)}.badge.udone{color:var(--new)}.badge.uwait{color:var(--missing);font-weight:600}
 .load{font-size:14px;display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center}.load button{font:inherit;font-size:14px;padding:4px 12px;border:1px solid var(--accent);background:var(--surface);color:var(--accent);border-radius:4px;cursor:pointer}.load button:disabled{opacity:.45;cursor:default}
 textarea.ed{width:100%;box-sizing:border-box;font:14px/1.5 var(--serif);background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:4px 6px;resize:vertical}textarea.ed.after{font-size:13px;margin-top:4px}
 .missing{color:var(--missing)}.empty{color:var(--muted);font-size:14px}
@@ -156,7 +159,10 @@ function fill() {
     td.replaceChildren();
     for (const i of list) {
       const f = i === null ? null : DB.fragments[i];
-      for (const [field, label] of [['line', '본문'], ['after', '여운']]) {
+      // 여운은 무게 3 사건에만 쓴다. 무게 2라도 이미 여운이 들어 있으면 지우지 않게 보여 준다
+      const fields = [['line', '본문']];
+      if (td.dataset.w === '3' || (f && f.after)) fields.push(['after', '여운']);
+      for (const [field, label] of fields) {
         const t = document.createElement('textarea');
         t.className = 'ed ' + field; t.rows = field === 'line' ? 3 : 2; t.placeholder = label;
         t.value = f ? (f[field] || '') : '';
@@ -166,10 +172,24 @@ function fill() {
       }
       if (f) n++;
     }
-    const b = document.createElement('span'); b.className = 'badge user'; b.textContent = '사용자 입력'; td.append(b);
+    const b = document.createElement('span'); b.className = 'badge'; td.append(b);
+    mark(td);
   });
+  count();
   document.getElementById('dbsave').disabled = false;
   state(FILENAME + ' 불러옴. 사용자 입력 ' + n + '블록. 고친 뒤 저장하기를 누른다.');
+}
+// 칸 상태: 본문이 있으면 사용자 완료, 없으면 사용자 대기(DB 완성에 사용자 입력이 필요함)
+function mark(td) {
+  const done = [...td.querySelectorAll('textarea.line')].some(t => t.value.trim() !== '');
+  const b = td.querySelector('.badge');
+  b.className = 'badge ' + (done ? 'udone' : 'uwait');
+  b.textContent = done ? '사용자 완료' : '사용자 대기';
+}
+function count() {
+  let d = 0, w = 0;
+  document.querySelectorAll('td.userin .badge').forEach(b => { if (b.classList.contains('udone')) d++; else w++; });
+  document.getElementById('udone').textContent = d; document.getElementById('uwait').textContent = w;
 }
 function edit(ev) {
   const t = ev.target;
@@ -183,6 +203,7 @@ function edit(ev) {
   }
   const f = DB.fragments[Number(i)];
   if (t.dataset.f === 'after' && t.value === '') delete f.after; else f[t.dataset.f] = t.value;
+  mark(t.closest('td')); count();
   state('저장하지 않은 변경 있음.');
 }
 async function openDb() {
@@ -223,7 +244,7 @@ page = f'''<title>풍부화 원고 검토표</title>
 <main>
 <header style="display:grid;gap:10px"><h1>풍부화 원고 검토표</h1>
 <p class="meta">DB 갱신 {e(db.get("updated", ""))}. 모든 블록은 대사 없는 관찰 지문이고 과거형이다. 여운 줄은 헌신 2 이상일 때만 붙는다. 이름 뒤 조사는 게임에서 (은)는으로 나온다.</p>
-<div class="summary"><span>블록 <b>{total}</b></span><span>새로 씀 <b>{count["new"]}</b></span><span>다시 씀 <b>{count["redo"]}</b></span><span>과거형만 고침 <b>{count["keep"]}</b></span><span>몸짓 <b>{len(db["gestures"])}</b>칸</span></div>
+<div class="summary"><span>블록 <b>{total}</b></span><span>새로 씀 <b>{count["new"]}</b></span><span>다시 씀 <b>{count["redo"]}</b></span><span>과거형만 고침 <b>{count["keep"]}</b></span><span>몸짓 <b>{len(db["gestures"])}</b>칸</span><span>사용자 완료 <b id="udone">{ucount["done"]}</b></span><span>사용자 대기 <b id="uwait">{ucount["wait"]}</b></span></div>
 <div class="load"><button id="dbopen" type="button">DB 불러오기</button><button id="dbsave" type="button" disabled>저장하기</button><input type="file" id="dbfile" accept=".json,application/json" hidden> <span id="dbstate" class="meta"><code>docs/dialogue-rules/db/enrich-db.json</code>을 불러오면 사용자 입력 칸이 편집 칸이 된다. 저장하기를 누르면 그 파일이 바뀐다(브라우저가 직접 쓰기를 못 하면 같은 이름으로 내려받는다).</span></div>
 <nav>{"".join(nav)}</nav></header>
 {"".join(parts)}
