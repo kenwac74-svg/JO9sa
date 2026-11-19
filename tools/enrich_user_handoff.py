@@ -2,7 +2,7 @@
 """사용법:
   python tools/enrich_user_handoff.py            → handoff/USER_EVENTS_HANDOFF_KO.md, user_events_answer.json
   python tools/enrich_user_handoff.py --merge <답안 JSON>  → 검사 후 db/enrich-db.json에 넣는다
-  python tools/enrich_user_handoff.py --redo     → 겹치는 칸 다시 쓰기 핸드오프 USER_EVENTS_REDO_HANDOFF_KO.md, user_events_redo_answer.json
+  python tools/enrich_user_handoff.py --redo [회차]  → 겹치는 칸 다시 쓰기 핸드오프 USER_EVENTS_REDO_HANDOFF_KO.md, user_events_redo_answer.json
   python tools/enrich_user_handoff.py --merge-redo <답안 JSON>  → 검사 후 해당 칸의 줄을 바꾼다"""
 import difflib, json, re, sys
 from pathlib import Path
@@ -117,9 +117,15 @@ def merge(path):
         print('확인:', p)
 
 
-# 다시 쓸 칸: 다른 사건과 똑같은 줄(앞 사건 것은 남김) + 장면에 맞지 않는 줄
-REDO_EXTRA = {('erotic_reward', 'proud', 'obey'): '벌 장면의 "아픈 자리를 가리지 않고"가 보상 장면에 들어 있음',
-              ('pregnancy_reveal', 'princess', 'hi'): '"당신 앞에 서서"와 "턱을 괴고"가 함께 있어 자세가 맞지 않음'}
+# 다시 쓸 칸: 다른 사건과 닮은 줄(앞 사건 것은 남김) + 회차마다 따로 고른 장면·자세가 맞지 않는 줄
+REDO_ROUNDS = {
+    1: {'suffix': '', 'extra': {('erotic_reward', 'proud', 'obey'): '벌 장면의 "아픈 자리를 가리지 않고"가 보상 장면에 들어 있음',
+                                ('pregnancy_reveal', 'princess', 'hi'): '"당신 앞에 서서"와 "턱을 괴고"가 함께 있어 자세가 맞지 않음'}},
+    2: {'suffix': '2', 'extra': {('climax', 'princess', 'obey'): '"무릎을 꿇고 앉아"로 시작해 "꼿꼿이 섰다"로 끝나 자세가 맞지 않음',
+                                 ('climax', 'meek', 'obey'): '"두 손을 무릎 위에 가지런히 얹었다"와 "다리를 모아 섰으며"가 함께 있어 자세가 맞지 않음'},
+        'intro': '- 2차: 1차 다시 쓰기(56칸) 답안을 반영한 뒤에도 첫 문장이 앞 사건과 같은 7칸과, 한 줄 안에서 자세가 맞지 않는 2칸이 남았다. 이 9칸만 다시 쓴다. 1차 때처럼 첫 문장을 그대로 두고 뒷부분만 바꾸면 다시 걸린다.'},
+}
+REDO_EXTRA = REDO_ROUNDS[1]['extra']
 REDO_SCENE = {
     'shame_punish': '치욕 계열 처벌 뒤. 부끄러움과 굴욕이 몸에 남아 있다(이번에 다시 쓰지 않음, 비교용)',
     'erotic_reward': '성적 보상을 받은 뒤. 벌이 아니라 **받은 쪽**이다. 몸이 풀렸거나 달아올랐고, 그것을 대하는 태도가 칸마다 다르다. 아픔·벌 흔적을 쓰지 않는다',
@@ -127,7 +133,6 @@ REDO_SCENE = {
     'pregnancy_reveal': '임신이 드러난 뒤 주인을 처음 마주함. 배·손·자세의 변화가 중심이다. 다른 사건(벌·보상)의 몸짓을 가져오지 않는다',
 }
 ORDER = ['shame_punish', 'erotic_reward', 'climax', 'pregnancy_reveal']
-REDO_JSON = OUT / 'user_events_redo_answer.json'
 
 
 def first_act(line):
@@ -153,15 +158,19 @@ def redo_rows(db):
     return rows
 
 
-def redo_build():
+def redo_build(rnd=1):
+    global REDO_EXTRA
+    R = REDO_ROUNDS[rnd]
+    REDO_EXTRA = R['extra']
+    md, js = f"USER_EVENTS_REDO{R['suffix']}_HANDOFF_KO.md", f"user_events_redo{R['suffix']}_answer.json"
     db = load()
     voices = {v['key']: v['label'] for v in db['voices']}
     lab = {t['id']: t['label'] for t in db['triggers']}
     rows = redo_rows(db)
     redo_keys = {(f['trigger'], f['voice'], f['cell']) for f, _, _ in rows}
     L = ['<!-- 풍부화 사건 사용자 작성 칸 중 다른 사건과 겹치거나 장면에 맞지 않는 칸을 다시 맡기는 핸드오프 -->',
-         '# 풍부화 사건 다시 쓰기 핸드오프', '',
-         f'- 만든 날: 2026-11-19. 다시 쓸 칸 **{len(rows)}개**. 답안 틀: `user_events_redo_answer.json`(각 행의 `line`을 새로 쓴다. 임신 확인은 `after`도 확인).',
+         '# 풍부화 사건 다시 쓰기 핸드오프' + (f' ({rnd}차)' if rnd > 1 else ''), '',
+         f'- 만든 날: 2026-11-19. 다시 쓸 칸 **{len(rows)}개**. 답안 틀: `{js}`(각 행의 `line`을 새로 쓴다. 임신 확인은 `after`도 확인).'] + ([R['intro']] if R.get('intro') else []) + [
          '- 앞서 받은 답안(`USER_EVENTS_HANDOFF_KO.md`)의 규칙을 그대로 따른다. 대사 없음, 속마음 없음, 3인칭 관찰, 과거형, `{이름}{은/는}`으로 시작, 본문 110자 이하.',
          '- 문제: 몸짓 사전을 그대로 옮겨 써서 사건끼리 **똑같은 줄**, **첫 동작이 같은 줄**, **몇 단어만 다른 줄**이 많다. 부끄러운 벌의 줄은 남기고, 그 뒤 사건(보상·절정·임신)에서 앞 사건 줄과 닮은 칸만 다시 쓴다. 사건마다 장면이 다르므로 장면에 맞게 쓴다.', '',
          '## 1. 다시 쓸 때 지킬 것',
@@ -193,9 +202,9 @@ def redo_build():
     L += ['## 4. 돌려주기 전 확인', '1. 새 줄이 "지금 줄", "닮은 줄", 같은 목소리의 다른 새 줄과 첫 동작부터 다르다.', '2. 따옴표·말 전달·속마음 단정이 없다.',
           '3. 과거형이고 `{이름}{은/는}`으로 시작하며 110자 이하다(임신 확인은 본문+여운 159자 이하).',
           '4. 보상·절정·임신 장면에 벌의 흔적이 없다.', '5. 미성년자·동물 관련 표현이 없다.', '']
-    (OUT / 'USER_EVENTS_REDO_HANDOFF_KO.md').write_text('\n'.join(L), encoding='utf-8')
+    (OUT / md).write_text('\n'.join(L), encoding='utf-8')
     json.dump({'note': '각 행의 line만 새로 쓴다. old는 지금 줄(참고용). 임신 확인의 after는 고쳐도 된다', 'rows': ans},
-              open(REDO_JSON, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+              open(OUT / js, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     print('다시 쓸 칸', len(ans), {lab[t]: sum(1 for a in ans if a['trigger'] == t) for t in ORDER[1:]})
 
 
@@ -254,6 +263,6 @@ if __name__ == '__main__':
     elif len(sys.argv) > 2 and sys.argv[1] == '--merge-redo':
         redo_merge(sys.argv[2])
     elif len(sys.argv) > 1 and sys.argv[1] == '--redo':
-        redo_build()
+        redo_build(int(sys.argv[2]) if len(sys.argv) > 2 else 1)
     else:
         build()
