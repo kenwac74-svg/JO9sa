@@ -58,7 +58,7 @@ if instr('|proud|ice|doll|calm|','|'+$jo9_vf_type+'|')>0: jo9_vf_tone=1
 if instr('|frank|flame|princess|','|'+$jo9_vf_type+'|')>0: jo9_vf_tone=3
 ```
 - 공주 판정의 노예 종류 번호는 전역 변수 `slave_type`이다(그 밖 질문 경로는 `dynslave_type`). 2026-11-16 처형 위협 초안(`mods/drafts/2026-11-16_enrich_execution_draft.json`)도 같은 변수를 썼다. 2026-11-19 처음 판에는 `slave['type']`으로 잘못 적었다가 고쳤다.
-- 인물이 다른 칸으로 교체될 때 `$slave['jo9_vtype']`가 따라가는지 확인하지 못했다. 안 따라가면 다음 질문 때 다시 계산되며, 그사이 수치가 바뀌었으면 목소리가 달라질 수 있다.
+- **인물이 다른 칸으로 옮겨도 `jo9_vtype`는 따라간다(2026-11-19 확인).** 칸 이동은 `#static_base` 441행 `$swap_slave_instances`가 인물 배열 전체를 `copyarr`로 맞바꾼다. 새 qsp를 QSP 엔진으로 열어 `slave`(공주, 헌신 4)와 `assistant`(순한, 헌신 1)를 맞바꾸니 글자 값과 숫자 값이 모두 함께 옮겨졌다(`handoff/build/swap_vtype_test.cjs`, 오류 0). 팔거나 내보내 인물 배열을 지우면 값도 함께 지워지고, 새로 들어온 인물은 첫 질문 때 계산된다.
 
 ### 4-2. 관계 칸
 5987~5996행과 6218~6227행을 아래 순서로 바꾼다(정신 상태 psy, 헌신 moral, 복종 obedience). 처음 맞는 줄을 쓴다.
