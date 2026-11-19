@@ -40,7 +40,7 @@
 | `tone2_fallback_index` | 1,040 묶음 | 솔직·불꽃 말투 3에 존댓말 줄이 하나도 없는 역할의 말투 2 줄. `역할_frank_3` 등 색인에 붙인다 |
 
 - 새 조각 id는 `jo9x_<질문>_<번호>`(공용 줄은 `jo9x_c_…`). 기존 id와 겹치지 않는다.
-- `source.honorific`가 `fixed:주인`인 줄(사용자가 쓴 공주 성적 대사)은 빈칸 없이 "주인"이 글자로 들어 있다. 바꾸지 않는다.
+- `source.honorific`가 `fixed:주인`인 줄(사용자 작성 공주 줄)은 빈칸 없이 "주인"이 글자로 들어 있다. 바꾸지 않는다.
 - 이 데이터는 실행 코드로 넣는 것을 권한다: 새 위치(예: `jo9_vf_extra`)에 대입문을 모으고, 조각 데이터를 읽은 직후(164235행 `voice_fragment_revision=8` 대입 다음)와 이미 데이터가 실린 세이브용으로 `interaction` 세 곳에 `if jo9_vf_extra_rev ! 1: gs 'jo9_vf_extra'`를 둔다. `jo9_vf_extra` 끝에서 `jo9_vf_extra_rev=1`.
 
 ## 4. 코드에서 바꿀 것
@@ -122,7 +122,6 @@ if instr($result,'{호칭')>0: $result=$dyneval($jo9_hon_apply,$result)
 - 원래 대사의 호칭 빈칸화(확정 사항 2).
 - 깊이(`$voice_depth_level`)의 숨은 식 정리(결정 전).
 - 풍부화 사건(무게 2·3) 덧대기. 별도 핸드오프 `MOD_DEV_HANDOFF_ENRICH_EVENTS_20261119_KO.md`(최종본)로 넘긴다.
-- 조수 묻기의 `personal_ltol`(어린 나이 코드 인물) 6칸은 정책상 쓰지 않았다. 원문만 남는다.
 
 ## 7. 새 파일의 R05 말투 정책과 겹치는 부분 (사용자 확인 필요)
 main에는 2026-11-12~13 사용자 승인으로 Codex가 넣은 말투 정책이 있다(`records/always-plain-voice-20261112`, `records/release-r05-voice-policy-20261113`, `docs/modding/CHARACTER_SPEECH_MODE_KO.md`). 이 핸드오프의 설계(문답 43까지)와 겹치는 곳을 적는다. 어느 쪽을 따를지는 사용자가 정한다. 이 문서는 고르지 않는다.
