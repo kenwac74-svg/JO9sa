@@ -1,7 +1,7 @@
 # 승인된 질문 메뉴 원고를 게임에 넣을 수 있는 데이터(새 조각, 태그 변경, 색인 추가)로 계산하는 도구. QSP는 바꾸지 않는다
 """사용법: python tools/question_build_data.py [qsp 경로] [출력 폴더]
 출력: question_build_data.json (모드 개발 핸드오프용), 요약은 표준 출력"""
-import collections, json, re, sys
+import collections, hashlib, json, re, sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
@@ -22,8 +22,15 @@ END_NIKKA = re.compile(r'(.)니까[.?!…)~]*\s*$')
 NUMF = ('level', 'tone', 'question', 'need_fear', 'good_mood', 'rare_praise')
 
 
+# 끝에 붙은 부르는 말("…몰라요, 주인님.")은 떼고 끝맺음을 본다(문답 57)
+TAIL_VOC = re.compile(r'[,\s]*((오직\s*)?나만의\s*)?(주인님|주인|마스터|당신)[.?!…~]*\s*$')
+
+
 def is_banmal(s):
     s = s.strip()
+    t = TAIL_VOC.sub('', s)
+    if t and t != s:
+        s = t
     if END_POLITE.search(s):
         return False
     m = END_NIKKA.search(s)
@@ -124,7 +131,7 @@ def main():
             for i in idx.get(f'{role}_{t}_2', []):
                 if i in F and t not in tag_remove.get(i, set()):
                     fallback[f'{role}_{t}_3'].append(i)
-    data = {'qsp_sha256_basis': '8332e1857fa594283eddda448177e3e63dbf554a2f3b241350aa7a9c3291c94f',
+    data = {'qsp_sha256_basis': hashlib.sha256(Path(QSP).read_bytes()).hexdigest(),
             'new_fragments': new,
             'tag_remove': {k: sorted(v) for k, v in sorted(tag_remove.items())},
             'banmal_to_princess': banmal_ids,
