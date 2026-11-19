@@ -9,7 +9,7 @@
 ## 1. 순서
 | 단계 | 상세 핸드오프 | 넣을 데이터 | 규모 |
 |---|---|---|---|
-| 1 | `MOD_DEV_HANDOFF_QUESTION_MENU_20261119_KO.md` | `build/question_build_data.json` | 새 조각 530, 태그 빼기 901줄, 반말→공주 1,669줄, 공주 색인 556묶음, 말투 2 대체 색인 1,042묶음. 고르는 코드 4곳(목소리 고정·관계 칸·말투 검사·호칭 빈칸) |
+| 1 | `MOD_DEV_HANDOFF_QUESTION_MENU_20261119_KO.md` | `build/question_build_data.json` | 새 조각 530, 태그 빼기 901줄, 반말→공주 1,662줄, 공주 색인 553묶음, 말투 2 대체 색인 1,042묶음, 원래 줄 글자 고침 1줄. 고르는 코드 4곳(목소리 고정·관계 칸·말투 검사·호칭 빈칸) |
 | 2 | `MOD_DEV_HANDOFF_ENRICH_EVENTS_20261119_KO.md` | `build/enrich_build_data.json` | 사건 13개, 블록 252개(무게 3 7사건, 무게 2 6사건) |
 
 2단계는 1단계에서 저장하는 목소리 값 `$slave['jo9_vtype']`을 쓰므로 1단계를 먼저 넣는다.
@@ -17,7 +17,7 @@
 ## 2. 넘기는 파일
 | 파일 | SHA-256 | 다시 만드는 도구 |
 |---|---|---|
-| `handoff/build/question_build_data.json` | `0aa149be6d4c5abf9ffb2a6b2c95e5ad71d3871584a3a30b17ead0408c26f9b7` | `python tools/question_build_data.py` (qsp를 읽음) |
+| `handoff/build/question_build_data.json` | `051909c844e1ed7be4ad263fed651eca6c6fc32bff2bf70683a9173ce8359dc5` | `python tools/question_build_data.py` (qsp를 읽음) |
 | `handoff/build/enrich_build_data.json` | `ec0e673bd6ebe0de4e1a055696b3bc1664cc3f5d576935fd235cfc57852090d9` | `python tools/enrich_build_data.py` (`db/enrich-db.json`을 읽음) |
 | `handoff/build/engine_smoke.cjs` | — | QSP 엔진으로 qsp를 열어 조각을 읽는 확인 스크립트 |
 | `question-fill/q*_manuscript.json`·`.html` | — | 질문 메뉴 원고 원본과 사람이 읽는 표 |

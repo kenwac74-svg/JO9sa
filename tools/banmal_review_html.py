@@ -13,8 +13,10 @@ QSP = sys.argv[1] if len(sys.argv) > 1 else 'assets/runtime/2.4.1/jack.qsp'
 OUT = Path(sys.argv[2] if len(sys.argv) > 2 else 'docs/dialogue-rules/question-fill/banmal_review.html')
 qb.QSP = QSP
 e = html.escape
-MID_POLITE = re.compile(r'(요|니다|세요|죠|십시오)(?=[\s.,!?…~)\'"])')
-SELF_POLITE = re.compile(r'(^|[\s(“"…])(저는|제가|저를|저도|저한테|저에게|제\s|전\s|저\s)')
+# 문장 부호 바로 앞의 존댓말 끝("필요 없게", "요 며칠" 같은 낱말은 잡지 않는다)
+MID_POLITE = re.compile(r'(?<=[가-힣])(요|니다|세요|죠|십시오)(?=[.,!?…~])')
+# "저 년", "전 세계" 같은 지시어·낱말은 잡지 않는다
+SELF_POLITE = re.compile(r'(^|[\s(“"…])(저는|제가|저를|저도|저한테|저에게)')
 
 
 def plain_table(qsp):
@@ -31,9 +33,13 @@ def main():
         table = set()
     rows = []
     for fid, f in sorted(F.items()):
-        if f.get('tone') != 3 or 'text' not in f or not qb.is_banmal(f['text']):
+        if f.get('tone') != 3 or 'text' not in f:
             continue
         t = f['text']
+        if fid in qb.TEXT_FIX and qb.TEXT_FIX[fid][0] in t:
+            t = t.replace(*qb.TEXT_FIX[fid])
+        if not qb.banmal_of(fid, t):
+            continue
         hidden = bool(SEX_ROLE.search(f.get('role', '')) or SEX.search(t))
         flags = []
         if not hidden:

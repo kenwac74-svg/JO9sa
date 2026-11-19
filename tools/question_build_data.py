@@ -22,6 +22,17 @@ END_NIKKA = re.compile(r'(.)니까[.?!…)~]*\s*$')
 NUMF = ('level', 'tone', 'question', 'need_fear', 'good_mood', 'rare_praise')
 
 
+# 끝맺음 규칙이 반말로 잘못 본 존댓말 줄(사용자 확정 문답 58). 공주 반말 목록에 넣지 않는다
+POLITE_FIX = {'body_relation_hysteric_core_hesitant_3', 'body_relation_lachrymose_core_neutral_3', 'frame_fragile_3_1',
+              'q1113_refuse_frightened_core_direct_t3', 'q1113_refuse_reluctant_core_direct_t3', 'typed_A_doll_3_0', 'typed_D_doll_3_2'}
+# 원래 줄의 글자 고침(사용자 확정 문답 58). 모드 개발이 $voice_fragment_text[id]를 바꾼다
+TEXT_FIX = {'q1113_refuse_hysteric_core_direct_t3': ('취급도 안 하고 있잖아요!', '취급도 안 하고 있잖아!')}
+
+
+def banmal_of(fid, text):
+    return fid not in POLITE_FIX and is_banmal(text)
+
+
 # 끝에 붙은 부르는 말("…몰라요, 주인님.")은 떼고 끝맺음을 본다(문답 57)
 TAIL_VOC = re.compile(r'[,\s]*((오직\s*)?나만의\s*)?(주인님|주인|마스터|당신)[.?!…~]*\s*$')
 
@@ -78,6 +89,12 @@ def tags(s):
 
 def main():
     F, idx = load()
+    text_fix = {}
+    for fid, (old, new) in TEXT_FIX.items():
+        if fid in F and old in F[fid].get('text', ''):
+            before = F[fid]['text']
+            F[fid]['text'] = before.replace(old, new)
+            text_fix[fid] = {'old': before, 'new': F[fid]['text']}
     by_role = collections.defaultdict(list)
     for fid, f in F.items():
         if 'role' in f and 'text' in f:
@@ -114,7 +131,7 @@ def main():
                     if same and tags(f.get('types', '*')) & set(VTYPES[v]):
                         tag_remove[c] |= set(VTYPES[v]) & tags(f['types'])
     # 반말 말투 3 줄은 공주만: 유형 태그를 |princess|로
-    banmal_ids = sorted(fid for fid, f in F.items() if f.get('tone') == 3 and 'text' in f and is_banmal(f['text']))
+    banmal_ids = sorted(fid for fid, f in F.items() if f.get('tone') == 3 and 'text' in f and banmal_of(fid, f['text']))
     princess_index = collections.defaultdict(list)
     for fid in banmal_ids:
         princess_index[f"{F[fid]['role']}_princess_3"].append(fid)
@@ -124,7 +141,7 @@ def main():
     newroles = {(x['role'], t) for x in new for t in VTYPES[x['source']['voice']]}
     for role in sorted(roles):
         for t in ('frank', 'flame'):
-            ids3 = [i for i in idx.get(f'{role}_{t}_3', []) if i in F and not is_banmal(F[i].get('text', ''))
+            ids3 = [i for i in idx.get(f'{role}_{t}_3', []) if i in F and not banmal_of(i, F[i].get('text', ''))
                     and t not in tag_remove.get(i, set())]
             if ids3 or (role, t) in newroles:
                 continue
@@ -136,7 +153,8 @@ def main():
             'tag_remove': {k: sorted(v) for k, v in sorted(tag_remove.items())},
             'banmal_to_princess': banmal_ids,
             'princess_index': dict(princess_index),
-            'tone2_fallback_index': dict(fallback)}
+            'tone2_fallback_index': dict(fallback),
+            'text_fix': text_fix}
     OUT.mkdir(parents=True, exist_ok=True)
     json.dump(data, open(OUT / 'question_build_data.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     print('새 조각', len(new), '| 태그를 빼는 원래 줄', len(tag_remove), '| 공주 전용으로 바꿀 반말 줄', len(banmal_ids),
