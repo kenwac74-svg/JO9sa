@@ -1,5 +1,12 @@
 # JO9 로컬 모딩 — Claude 작업 규칙
 
+<!-- JO9 MOD START BRANCH_READ_LOCK_20261119 -->
+## 이 브랜치 읽기 제한 (사용자 지시, 2026-11-19)
+
+**`claude/vibrant-turing-ysgmbv` 브랜치는 사용자 허락 없이 다른 AI(Codex·Claude 다른 세션·모딩 개발 AI 등)가 자동으로 읽거나, 가져오거나, 작업 근거로 쓰지 않는다.** 이 브랜치의 내용이 필요하면 먼저 사용자에게 묻는다. 사용자는 필요한 자료를 zip 등으로 직접 전달한다.
+<!-- JO9 MOD END BRANCH_READ_LOCK_20261119 -->
+
+
 <!-- JO9 MOD START CODEX_TO_CLAUDE_HANDOFF_20261108 -->
 ## 2026-11-08 최신 인수인계
 
