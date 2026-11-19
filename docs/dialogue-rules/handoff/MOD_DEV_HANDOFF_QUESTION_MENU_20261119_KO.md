@@ -2,7 +2,7 @@
 # 모드 개발 핸드오프: 질문 메뉴 대사 반영 (2026-11-19 최종본)
 
 - 받는 쪽: 모드 개발(QSP 반영·빌드 담당). 이 문서를 쓴 쪽은 QSP를 바꾸지 않았다.
-- 기준 파일: `assets/runtime/2.4.1/jack.qsp` SHA-256 `8332e1857fa594283eddda448177e3e63dbf554a2f3b241350aa7a9c3291c94f`. 아래 줄 번호는 이 파일 기준이다(1부터, 위치 본문 안의 줄).
+- 기준 파일: `assets/runtime/2.4.1/jack.qsp` SHA-256 `887f7e570e8df2a463c50c4855d4139a6e7a8602202f7039288d5bf15981d438`(main 커밋 ad10a099). 아래 줄 번호는 이 파일 기준이다(1부터, 위치 본문 안의 줄). 2026-11-19 옛 기준 `8332e185…`에서 옮겼다. 넣을 데이터(`question_build_data.json`)는 새 파일로 다시 계산해도 다섯 항목 모두 같았다.
 - 기록 방식: 저장소 규칙대로 `mods/*.json`(location, old, new, count, 적용 전후 SHA-256)과 `add_locations`. qsp 직접 수정, `.qsrc` 재빌드 없음. 왕복 검증과 백업 먼저.
 - 원고는 모두 사용자가 승인했다(문답 34~42). 문장을 고치지 않는다.
 
@@ -22,12 +22,12 @@
 3. **목소리는 처음 대사를 고를 때 저장하고 이후 바꾸지 않는다.** 진행 중인 세이브도 첫 질문 때 저장된다.
 
 ## 2. 현재 코드 구조 (읽은 결과)
-- 조각 데이터: `#txt_man`의 `:jo9_voice_fragment_data`(2826행부터). 2829행 `if voice_fragment_revision=8 and arrsize('$voice_fragment_ids')=9120: exit`, 164222행 `voice_fragment_revision=8`. 필드: `$voice_fragment_text/role/types/relations/emotion`, `voice_fragment_level/tone/question/need_fear/good_mood/rare_praise`(키는 조각 id). 색인: `voice_fragment_count['역할_유형_말투']`, `$voice_fragment_item['역할_유형_말투_n']`.
-- 데이터 읽는 곳: `interaction` 586·621·649행 `if voice_fragment_revision ! 8: gs '#txt_man','jo9_voice_fragment_data'`.
-- 유형·말투 계산: `#dynamic` 5216행 `$voice_profile`(직업 → 말투, 수치 → 9유형). 호출은 5997행(인상 묻기, `slave`)과 6225행(그 밖 질문, `dynslave`).
-- 관계 칸 계산: `#dynamic` 6000~6009행(인상), 6227~6236행(그 밖).
-- 고르기: `#dynamic` 5326행 `$voice_pick_fragment`. 5341행 말투 검사, 5342행 유형 검사, 5343행 관계 검사. **모든 대사가 5418행 `$result=$voice_fragment_text[$jo9_vfp_choice]`를 지난다.**
-- 이름 자리 `{PH_001}`은 6271행에서 바꾼다(그 밖 질문 경로).
+- 조각 데이터: `#txt_man`의 `:jo9_voice_fragment_data`(2826행부터). 2832행 `if voice_fragment_revision=8 and arrsize('$voice_fragment_ids')=9120: exit`, 164235행 `if $args[0] = 'jo9_voice_fragment_data': voice_fragment_revision=8`. 필드: `$voice_fragment_text/role/types/relations/emotion`, `voice_fragment_level/tone/question/need_fear/good_mood/rare_praise`(키는 조각 id). 색인: `voice_fragment_count['역할_유형_말투']`, `$voice_fragment_item['역할_유형_말투_n']`.
+- 데이터 읽는 곳: `interaction` 609·644·672행 `if voice_fragment_revision ! 8: gs '#txt_man','jo9_voice_fragment_data'`. 새 파일은 고르기 안(`#dynamic` 5310행 `JO9_SAVE_VOICE_LAZY_20261118`)에서도 필요할 때 읽는다.
+- 유형·말투 계산: `#dynamic` 5192행 `$voice_profile`(직업 → 말투, 수치 → 9유형, R05 반말 정책은 아래 7장). 호출은 5984행(인상 묻기, `slave`)과 6216행(그 밖 질문, `dynslave`). 새 파일에서 두 호출 모두 인수가 7개로 늘었다(화자 번호, `jo9_plain_voice` 결과).
+- 관계 칸 계산: `#dynamic` 5987~5996행(인상), 6218~6227행(그 밖).
+- 고르기: `#dynamic` 5308행 `$voice_pick_fragment`. 5325행 말투 검사, 5326행 유형 검사, 5327행 관계 검사. **모든 대사가 5402행 `$result=$voice_fragment_text[$jo9_vfp_choice]`를 지난다.** 새 파일은 그 뒤 5403행(흐름 덮어쓰기)과 5411행 `$result=func('jo9_plain_voice',jo9_vf_actor_type,$result,jo9_vf_actor_plain)`(반말 교정표)을 더 지난다.
+- 이름 자리 `{PH_001}`은 6262행에서 바꾼다(그 밖 질문 경로).
 
 ## 3. `question_build_data.json`
 | 키 | 개수 | 할 일 |
@@ -40,11 +40,11 @@
 
 - 새 조각 id는 `jo9x_<질문>_<번호>`(공용 줄은 `jo9x_c_…`). 기존 id와 겹치지 않는다.
 - `source.honorific`가 `fixed:주인`인 줄(사용자가 쓴 공주 성적 대사)은 빈칸 없이 "주인"이 글자로 들어 있다. 바꾸지 않는다.
-- 이 데이터는 실행 코드로 넣는 것을 권한다: 새 위치(예: `jo9_vf_extra`)에 대입문을 모으고, 조각 데이터를 읽은 직후(164222행 `voice_fragment_revision=8` 다음)와 이미 데이터가 실린 세이브용으로 `interaction` 세 곳에 `if jo9_vf_extra_rev ! 1: gs 'jo9_vf_extra'`를 둔다. `jo9_vf_extra` 끝에서 `jo9_vf_extra_rev=1`.
+- 이 데이터는 실행 코드로 넣는 것을 권한다: 새 위치(예: `jo9_vf_extra`)에 대입문을 모으고, 조각 데이터를 읽은 직후(164235행 `voice_fragment_revision=8` 대입 다음)와 이미 데이터가 실린 세이브용으로 `interaction` 세 곳에 `if jo9_vf_extra_rev ! 1: gs 'jo9_vf_extra'`를 둔다. `jo9_vf_extra` 끝에서 `jo9_vf_extra_rev=1`.
 
 ## 4. 코드에서 바꿀 것
 ### 4-1. 목소리 고정과 공주
-`$voice_profile` 결과를 받은 뒤(5997행 다음, 6225행 다음):
+`$voice_profile` 결과를 받은 뒤(5984행 다음, 6216행 다음):
 ```
 ! 인상 묻기 경로(slave). 그 밖 경로는 dynslave·$jo9_vn_occupation으로 같은 일
 if $slave['jo9_vtype']='':
@@ -60,7 +60,7 @@ if instr('|frank|flame|princess|','|'+$jo9_vf_type+'|')>0: jo9_vf_tone=3
 - 인물이 다른 칸으로 교체될 때 `$slave['jo9_vtype']`가 따라가는지 확인하지 못했다. 안 따라가면 다음 질문 때 다시 계산되며, 그사이 수치가 바뀌었으면 목소리가 달라질 수 있다.
 
 ### 4-2. 관계 칸
-6000~6009행과 6227~6236행을 아래 순서로 바꾼다(정신 상태 psy, 헌신 moral, 복종 obedience). 처음 맞는 줄을 쓴다.
+5987~5996행과 6218~6227행을 아래 순서로 바꾼다(정신 상태 psy, 헌신 moral, 복종 obedience). 처음 맞는 줄을 쓴다.
 | 순서 | 조건 | `$jo9_vf_mode` |
 |---|---|---|
 | 1 | psy = broken | broken |
@@ -75,14 +75,14 @@ if instr('|frank|flame|princess|','|'+$jo9_vf_type+'|')>0: jo9_vf_tone=3
 
 호칭을 위해 같은 자리에서 `jo9_vh_moral`(헌신), `jo9_vh_obed`(obedience > 20이면 1), `jo9_vh_oppose`(모드가 hostile이면 1)을 둔다.
 
-### 4-3. 말투 검사 (5341행)
+### 4-3. 말투 검사 (5325행)
 `tone2_fallback_index`로 말투 3 색인에 붙인 말투 2 줄이 통과하도록 바꾼다:
 ```
 if voice_fragment_tone[$jo9_vfp_id] ! jo9_vf_tone and not (jo9_vf_tone=3 and voice_fragment_tone[$jo9_vfp_id]=2 and $jo9_vf_type ! 'princess'): jo9_vfp_ok=0
 ```
 기존 색인은 말투별로 나뉘어 있어서 말투 2 줄은 붙인 곳에서만 들어온다.
 
-### 4-4. 호칭 빈칸 (5418행 다음)
+### 4-4. 호칭 빈칸 (5411행 반말 교정 다음)
 ```
 if instr($result,'{호칭')>0: $result=$dyneval($jo9_hon_apply,$result)
 ```
@@ -105,7 +105,7 @@ if instr($result,'{호칭')>0: $result=$dyneval($jo9_hon_apply,$result)
 
 - `{호칭부름}`이 지워질 때는 바로 앞의 `", "`도 함께 지운다(", {호칭부름}." → ".").
 - 반말 줄의 "당신" 꼴은 DB 표대로 `당신의`가 아니라 `당신`(조사 없이) 등으로 되어 있으니 `db/enrich-db.json`의 `honorifics.banmal`을 그대로 쓴다.
-- `{PH_001}`(이름 자리)은 기존 6271행이 그 밖 질문 경로에서 바꾼다. 새 조각 중 `{PH_001}`이 있는 줄은 요구 묻기의 무너짐 상태 줄 6개뿐이고 그 경로로 나온다.
+- `{PH_001}`(이름 자리)은 기존 6262행이 그 밖 질문 경로에서 바꾼다. 새 조각 중 `{PH_001}`이 있는 줄은 요구 묻기의 무너짐 상태 줄 6개뿐이고 그 경로로 나온다.
 
 ## 5. 검사 (모드 개발 쪽에서)
 1. 적용 전후 SHA-256, 왕복 동일, old가 정해진 횟수만큼만 나오는지.
@@ -122,3 +122,16 @@ if instr($result,'{호칭')>0: $result=$dyneval($jo9_hon_apply,$result)
 - 깊이(`$voice_depth_level`)의 숨은 식 정리(결정 전).
 - 풍부화 사건(무게 2·3) 덧대기. 별도 핸드오프 `MOD_DEV_HANDOFF_ENRICH_EVENTS_20261119_KO.md`(최종본)로 넘긴다.
 - 조수 묻기의 `personal_ltol`(어린 나이 코드 인물) 6칸은 정책상 쓰지 않았다. 원문만 남는다.
+
+## 7. 새 파일의 R05 말투 정책과 겹치는 부분 (사용자 확인 필요)
+main에는 2026-11-12~13 사용자 승인으로 Codex가 넣은 말투 정책이 있다(`records/always-plain-voice-20261112`, `records/release-r05-voice-policy-20261113`, `docs/modding/CHARACTER_SPEECH_MODE_KO.md`). 이 핸드오프의 설계(문답 43까지)와 겹치는 곳을 적는다. 어느 쪽을 따를지는 사용자가 정한다. 이 문서는 고르지 않는다.
+
+| 항목 | R05(main) | 이 핸드오프 |
+|---|---|---|
+| 반말 대상 | 지정 유니크 8명(3002·2610·2620·3010·3021·3023·2621·3012) 기본 반말. 인물별 `jo9_plain_tone`(1 켜기, -1 끄기, 0 기본)이 우선. 공주 가문 일반 인물은 직업을 `mprincess`로 맞춘다 | 공주 목소리(`princess`)만 반말. 공주 판정은 직업 mprincess·barbarian_princess 또는 같은 8개 번호 |
+| 말투 1·2 | 직업으로 정한다(격식 직업 1, 기본 2). 일반 직업의 반말은 없앴다 | 목소리로 정한다(B안, 문답 43) |
+| 반말 문장 | 원문 반말 원고는 두고, 고르기 뒤 5411행에서 교정표(2,406문장 정확 일치)로 8명용 반말을 맞춘다 | 말투 3 반말 줄 1,768개를 `|princess|` 태그로 바꿔 공주만 고르게 한다 |
+| 호칭 빈칸 자리 | — | 5411행 교정 뒤에 둔다(교정표가 빈칸이 든 새 줄을 모르므로 그대로 통과한다) |
+
+- 같은 8명을 반말로 두는 점은 같다. 다른 점은 ① 말투 1·2를 직업과 목소리 중 무엇으로 정할지 ② `jo9_plain_tone`으로 반말을 켠 공주 아닌 인물을 공주 목소리로 볼지 ③ 반말 줄을 태그로 가를지(이 핸드오프) 교정표로 맞출지(R05)다.
+
