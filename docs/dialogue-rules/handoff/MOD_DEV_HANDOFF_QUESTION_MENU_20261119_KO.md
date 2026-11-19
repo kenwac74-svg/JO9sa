@@ -9,7 +9,7 @@
 ## 0. 넘기는 것
 | 파일 | 내용 |
 |---|---|
-| `handoff/build/question_build_data.json` | 넣을 데이터 전부. 아래 3장. SHA-256 `051909c844e1ed7be4ad263fed651eca6c6fc32bff2bf70683a9173ce8359dc5` |
+| `handoff/build/question_build_data.json` | 넣을 데이터 전부. 아래 3장. SHA-256 `0353fdf728b10e8deca9f79ad48e30b74349675940908db8ed291ab5eed0e20a` |
 | `tools/question_build_data.py` | 위 파일을 만드는 도구. qsp가 바뀌면 다시 돌린다 |
 | `question-fill/q*_manuscript.json` | 원고 원본(질문별). 사람이 읽는 표는 같은 폴더의 `q*_manuscript.html` |
 | `db/enrich-db.json` | 호칭 표(`honorifics`), 호칭 순서(`honorificRules`), 부르는 말(`honorificVocativeNote`) |
@@ -32,12 +32,12 @@
 ## 3. `question_build_data.json`
 | 키 | 개수 | 할 일 |
 |---|---|---|
-| `new_fragments` | 530 | 새 조각. 각 항목의 `id·text·role·types·relations·tone·level·emotion·question·need_fear·good_mood·rare_praise`를 조각 배열에 넣고, `$voice_fragment_ids[]`에 id를 더한다. `index`의 각 키(역할_유형_말투)에 색인을 붙인다: `$voice_fragment_item[키+'_'+str(count)]=id`, `count+=1` |
+| `new_fragments` | 536 | 새 조각. 각 항목의 `id·text·role·types·relations·tone·level·emotion·question·need_fear·good_mood·rare_praise`를 조각 배열에 넣고, `$voice_fragment_ids[]`에 id를 더한다. `index`의 각 키(역할_유형_말투)에 색인을 붙인다: `$voice_fragment_item[키+'_'+str(count)]=id`, `count+=1` |
 | `tag_remove` | 901 | 분리한 원래 줄에서 뺄 유형 태그. `$voice_fragment_types[id]`에서 해당 `|태그|`를 지운다. 남은 태그가 없으면 그 줄은 해당 목소리들에게 안 나온다(의도) |
 | `banmal_to_princess` | 1,662 | 말투 3이면서 반말인 원래 줄. `$voice_fragment_types[id]='|princess|'`로 바꾼다(공주만 반말) |
 | `princess_index` | 553 묶음 | `역할_princess_3` 색인. 공주가 고를 반말 원래 줄 목록. 새 공주 줄은 `new_fragments`의 `index`로 따로 붙는다 |
 | `text_fix` | 1 | 원래 줄의 글자 고침. `$voice_fragment_text[id]`를 `old`에서 `new`로 바꾼다(사용자 확정 문답 58: 반말 대사 중간에 섞인 "있잖아요" → "있잖아") |
-| `tone2_fallback_index` | 1,042 묶음 | 솔직·불꽃 말투 3에 존댓말 줄이 하나도 없는 역할의 말투 2 줄. `역할_frank_3` 등 색인에 붙인다 |
+| `tone2_fallback_index` | 1,040 묶음 | 솔직·불꽃 말투 3에 존댓말 줄이 하나도 없는 역할의 말투 2 줄. `역할_frank_3` 등 색인에 붙인다 |
 
 - 새 조각 id는 `jo9x_<질문>_<번호>`(공용 줄은 `jo9x_c_…`). 기존 id와 겹치지 않는다.
 - `source.honorific`가 `fixed:주인`인 줄(사용자가 쓴 공주 성적 대사)은 빈칸 없이 "주인"이 글자로 들어 있다. 바꾸지 않는다.
