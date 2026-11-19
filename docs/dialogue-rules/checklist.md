@@ -97,7 +97,7 @@
 - [x] 1단계 핸드오프: `handoff/MOD_DEV_HANDOFF_QUESTION_MENU_20261119_KO.md`, 데이터 `handoff/build/question_build_data.json`(새 조각 530, 태그 빼기 901, 반말→공주 1,768, 공주 색인 577, 말투 2 대체 1,042)
 - [ ] 모드 개발: QSP 반영·엔진 검사 → 사용자 게임 확인
 - [x] 2단계 핸드오프: `handoff/MOD_DEV_HANDOFF_ENRICH_EVENTS_20261119_KO.md`, 데이터 `handoff/build/enrich_build_data.json`
-- [ ] 사용자 확인: 억울한 벌과 몸으로 받는 벌이 겹칠 때 억울한 벌 하나만(Claude 제안)
+- [x] 사용자 확인: 억울한 벌과 몸·말 처벌이 겹치면 억울한 벌 하나만(문답 45)
 - [ ] 모드 개발: 후보 자리(우승·낙인·판매·반란) 정확한 줄 정하기, QSP 반영·엔진 검사 → 사용자 게임 확인
 - [x] 사용자 작성: 불만 묻기 8칸
 - [x] 사용자 작성: 희망 묻기 4칸

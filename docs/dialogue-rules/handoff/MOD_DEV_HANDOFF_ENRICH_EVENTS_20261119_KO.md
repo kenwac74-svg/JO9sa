@@ -48,7 +48,7 @@
 | 처형 위협 `execution` | devotion2 | `interaction`의 `\t$text[1] = $execution_reaction[$slave_psy_status]` 뒤(6곳, 8721·8757·8794행 등) **(확인함)** | 없음 |
 | 말로 받는 벌 `verbal_punish` | attitude4 | `interaction`의 `$text[2] = $abuse_torture_reaction[$slave_psy_status]` 뒤(6곳, 7358행~) **(확인함)** | `torture_intensity >= 4` |
 | 몸으로 받는 벌 `physical_punish` | attitude4 | `$text[2] = $torture_reaction[…]`(17곳, 7227행~), `$bondage_reaction[…]`(8곳, 7782행~), `$light_torture_reaction[…]`(13곳, 6926행~) 뒤 **(확인함)** | `torture_intensity >= 4` |
-| 억울한 벌 `unjust_punish` | attitude4 | 위 세 처벌 반응과 같은 자리 | 처벌 **전** `slave['sin'] = 0`. 처벌 코드가 sin을 바꾸기 전에 값을 잡아 둬야 한다. 같은 처벌에서 억울한 벌과 몸으로 받는 벌이 둘 다 맞으면 억울한 벌을 먼저 하나만 낸다(Claude 제안, 사용자 확인 전) |
+| 억울한 벌 `unjust_punish` | attitude4 | 위 세 처벌 반응과 같은 자리 | 처벌 **전** `slave['sin'] = 0`. 처벌 코드가 sin을 바꾸기 전에 값을 잡아 둬야 한다. 같은 처벌에서 억울한 벌과 몸으로 받는 벌(또는 말로 받는 벌)이 둘 다 맞으면 **억울한 벌 하나만** 낸다(사용자 확정 2026-11-19, 문답 45) |
 | 우승 `arena_win` | devotion2 | `выход_из_боя` 54~61행 `arena_level`이 5가 되는 분기, `interaction_city` 1919행 `slave['arena_level'] = 9`, `$ride_finish` 76행 경주 4승·7승 **(후보)** | 칭호가 오르는 순간만 |
 | 챔피언 잔류 `champion_stay` | single | `interaction_city` 1963행 `if slave['moral'] > slave['fear']:` 안, 1965행 `$text[2] = '공식적으로 당신이…'` 뒤 **(확인함)** | 없음 |
 | 낙인 `branding` | devotion2 | 인두 `interaction` 8594행 `$text[1] = $fire_branding` 뒤, 문신 `interaction_city` 9994행 `copyarr '$text', '$tattoo_branding'` 뒤, 마법 `interaction` 421행 `slave['brand'] = 3` 분기의 결과 글 뒤, 결과 `interaction_result` 1497행 `$branding_final` **(후보)** | 한 번 낙인에 한 번 |
