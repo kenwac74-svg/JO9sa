@@ -116,4 +116,4 @@
 - [x] 다시 쓴 답안 56칸 `--merge-redo`로 반영, 풍부화 데이터·검토표 다시 뽑음
 - [x] 사용자 확인: 남은 칸을 다시 맡기기로 함
 - [x] 2차 다시 쓰기 핸드오프(9칸): `handoff/USER_EVENTS_REDO2_HANDOFF_KO.md`, 답안 틀 `user_events_redo2_answer.json`
-- [ ] 2차 답안 받아 `--merge-redo`로 반영, 풍부화 데이터·검토표 다시 뽑기
+- [x] 2차 답안 9칸 반영, 닮은 칸 0, DB 검사 통과, 풍부화 데이터·검토표 다시 뽑음
