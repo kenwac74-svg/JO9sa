@@ -62,14 +62,18 @@ for t in db['triggers']:
     if t.get('status') == 'later_review':
         parts.append(head + '<p class="empty">추후 검토로 미룬 사건이라 아직 쓰지 않았다(칸 구조만 있음).</p></section>')
         continue
-    if t.get('writer') == 'user':
-        parts.append(head + '<p class="empty">성적인 장면이라 문장은 사용자가 쓴다. 칸 구조만 있다(' + ', '.join(CELL_LABEL[c] for c in cells) + ').</p></section>')
-        continue
-    rows = ['<div class="wrap"><table><thead><tr><th class="v">목소리</th>' + ''.join(f'<th>{e(CELL_LABEL[c])}</th>' for c in cells) + '</tr></thead><tbody>']
+    user = t.get('writer') == 'user'
+    if user:
+        head += '<p class="note">사용자 입력 사건. 문장은 <code>db/enrich-db.json</code>에 그대로 있고 이 표에는 칸의 상태만 보인다.</p>'
+    rows =['<div class="wrap"><table><thead><tr><th class="v">목소리</th>' + ''.join(f'<th>{e(CELL_LABEL[c])}</th>' for c in cells) + '</tr></thead><tbody>']
     for v in voices:
         tds = []
         for c in cells:
             fs = frag.get((tid, v['key'], c), [])
+            if user:
+                state = '입력됨' + (' · 여운 있음' if any(f.get('after') for f in fs) else '') if fs else '빈 칸'
+                tds.append(f'<td class="userin"><span class="badge user">사용자 입력</span> {state}</td>')
+                continue
             if not fs:
                 tds.append('<td class="missing">빈 칸</td>')
                 continue
