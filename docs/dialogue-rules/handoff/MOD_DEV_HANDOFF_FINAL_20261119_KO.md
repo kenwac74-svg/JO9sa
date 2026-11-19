@@ -12,6 +12,8 @@
 | 1 | `MOD_DEV_HANDOFF_QUESTION_MENU_20261119_KO.md` | `build/question_build_data.json` | 새 조각 536, 태그 빼기 901줄, 반말→공주 1,662줄, 공주 색인 553묶음, 말투 2 대체 색인 1,040묶음, 원래 줄 글자 고침 1줄. 고르는 코드 4곳(목소리 고정·관계 칸·말투 검사·호칭 빈칸) |
 | 2 | `MOD_DEV_HANDOFF_ENRICH_EVENTS_20261119_KO.md` | `build/enrich_build_data.json` | 사건 13개, 블록 252개(무게 3 7사건, 무게 2 6사건) |
 
+**원고 원본은 사용자가 직접 전달하는 원고 묶음이다(2026-11-19 사용자 확정, 문답 65).** 사용자가 질문 메뉴 원고 묶음(`q1111~q1117_manuscript.json`, `qcommon_manuscript.json`, 8개)을 모드 개발에 직접 넘긴다. 모드 개발은 그 8개를 저장소 `docs/dialogue-rules/question-fill/`에 덮어쓴 뒤 아래대로 데이터를 다시 뽑아 반영한다. 저장소 원고와 다르면 사용자 전달본을 따른다. Claude는 이 원고 묶음을 저장소에 옮기지 않았다.
+
 **넣기 전에 데이터를 다시 뽑는다.** 사용자가 원고(`question-fill/q*_manuscript.json`)나 풍부화 DB(`db/enrich-db.json`)를 직접 고쳐 커밋하면, 저장소의 `build/*.json`은 그 전 상태일 수 있다. 모드 개발이 반영 직전에 `tools/question_build_data.py <게임 qsp> docs/dialogue-rules/handoff/build`와 `tools/enrich_build_data.py`로 다시 뽑아 쓴다. 아래 SHA는 2026-11-19 마지막으로 뽑은 값이다.
 
 2단계는 1단계에서 저장하는 목소리 값 `$slave['jo9_vtype']`을 쓰므로 1단계를 먼저 넣는다.
