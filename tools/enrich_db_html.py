@@ -64,7 +64,7 @@ for t in db['triggers']:
         continue
     user = t.get('writer') == 'user'
     if user:
-        head += '<p class="note">사용자 입력 사건. 문장은 <code>db/enrich-db.json</code>에 그대로 있고 이 표에는 칸의 상태만 보인다.</p>'
+        head += '<p class="note">사용자 입력 사건. 문장은 <code>db/enrich-db.json</code>에 있다. 위의 "DB 파일 불러오기"로 그 파일을 고르면 칸마다 문장이 채워진다.</p>'
     rows =['<div class="wrap"><table><thead><tr><th class="v">목소리</th>' + ''.join(f'<th>{e(CELL_LABEL[c])}</th>' for c in cells) + '</tr></thead><tbody>']
     for v in voices:
         tds = []
@@ -72,7 +72,7 @@ for t in db['triggers']:
             fs = frag.get((tid, v['key'], c), [])
             if user:
                 state = '입력됨' + (' · 여운 있음' if any(f.get('after') for f in fs) else '') if fs else '빈 칸'
-                tds.append(f'<td class="userin"><span class="badge user">사용자 입력</span> {state}</td>')
+                tds.append(f'<td class="userin" data-k="{tid}|{v["key"]}|{c}"><span class="badge user">사용자 입력</span> {state}</td>')
                 continue
             if not fs:
                 tds.append('<td class="missing">빈 칸</td>')
@@ -136,10 +136,40 @@ tbody tr:last-child th,tbody tr:last-child td{border-bottom:0}
 .tok{color:var(--tok)}
 .badge{display:inline-block;margin-top:6px;font-size:11px;letter-spacing:.03em;padding:1px 7px;border-radius:3px;border:1px solid currentColor}
 .badge.new{color:var(--new)}.badge.redo{color:var(--redo)}.badge.keep{color:var(--keep)}.badge.user{color:var(--tok)}
+.load{font-size:14px;display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center}.load label{color:var(--accent);font-weight:600}
 .missing{color:var(--missing)}.empty{color:var(--muted);font-size:14px}
 ul{margin:0;padding-left:18px}
 @media (max-width:600px){h1{font-size:21px}}
 '''
+SCRIPT = r'''<script>
+// 사용자가 고른 enrich-db.json을 브라우저에서 읽어 사용자 입력 칸에 문장을 채운다
+document.getElementById('dbfile').addEventListener('change', async ev => {
+  const file = ev.target.files[0];
+  const state = document.getElementById('dbstate');
+  if (!file) return;
+  let db;
+  try { db = JSON.parse(await file.text()); } catch (err) { state.textContent = 'JSON을 읽지 못했다: ' + err.message; return; }
+  const cells = {};
+  for (const f of (db.fragments || [])) {
+    if (f.by !== 'user') continue;
+    (cells[f.trigger + '|' + f.voice + '|' + f.cell] ||= []).push(f);
+  }
+  let n = 0;
+  document.querySelectorAll('td.userin').forEach(td => {
+    const fs = cells[td.dataset.k];
+    if (!fs) return;
+    td.replaceChildren();
+    for (const f of fs) {
+      const line = document.createElement('div'); line.className = 'line';
+      line.textContent = f.line.replace('{이름}{은/는}', '{이름}(은)는'); td.append(line);
+      if (f.after) { const a = document.createElement('div'); a.className = 'after'; a.textContent = '여운 · ' + f.after; td.append(a); }
+      n++;
+    }
+    const b = document.createElement('span'); b.className = 'badge user'; b.textContent = '사용자 입력'; td.append(b);
+  });
+  state.textContent = file.name + '에서 사용자 입력 ' + n + '블록을 채웠다.';
+});
+</script>'''
 page = f'''<title>풍부화 원고 검토표</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -149,8 +179,10 @@ page = f'''<title>풍부화 원고 검토표</title>
 <header style="display:grid;gap:10px"><h1>풍부화 원고 검토표</h1>
 <p class="meta">DB 갱신 {e(db.get("updated", ""))}. 모든 블록은 대사 없는 관찰 지문이고 과거형이다. 여운 줄은 헌신 2 이상일 때만 붙는다. 이름 뒤 조사는 게임에서 (은)는으로 나온다.</p>
 <div class="summary"><span>블록 <b>{total}</b></span><span>새로 씀 <b>{count["new"]}</b></span><span>다시 씀 <b>{count["redo"]}</b></span><span>과거형만 고침 <b>{count["keep"]}</b></span><span>몸짓 <b>{len(db["gestures"])}</b>칸</span></div>
+<div class="load"><label>DB 파일 불러오기 <input type="file" id="dbfile" accept=".json,application/json"></label> <span id="dbstate" class="meta">사용자 입력 칸의 문장은 <code>docs/dialogue-rules/db/enrich-db.json</code>을 고르면 표에 채워진다. 파일은 이 브라우저 안에서만 읽는다.</span></div>
 <nav>{"".join(nav)}</nav></header>
 {"".join(parts)}
 </main>'''
+page += SCRIPT
 Path(OUT).write_text(page, encoding='utf-8')
 print(OUT, total, count)
