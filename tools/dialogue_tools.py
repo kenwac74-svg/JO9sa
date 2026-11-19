@@ -7,7 +7,35 @@ ROOT = Path(__file__).resolve().parent.parent
 FILL = ROOT / 'docs/dialogue-rules/question-fill'
 DB = ROOT / 'docs/dialogue-rules/db/enrich-db.json'
 BUILD = ROOT / 'docs/dialogue-rules/handoff/build'
-QSP = Path(os.environ.get('JO9_QSP') or ROOT / 'assets/runtime/2.4.1/jack.qsp')
+CONFIG = ROOT / 'local.config.json'
+BASIS = '887f7e570e8df2a463c50c4855d4139a6e7a8602202f7039288d5bf15981d438'  # 핸드오프 기준 qsp(main ad10a099)
+
+
+def find_qsp():
+    """게임 파일 찾기: 환경 변수 → 저장소 기준본 → local.config.json(DialogueQsp, GameQsp) → 사용자에게 한 번 묻고 기억"""
+    cfg = {}
+    if CONFIG.exists():
+        try:
+            cfg = json.loads(CONFIG.read_text(encoding='utf-8-sig'))
+        except Exception:
+            cfg = {}
+    for c in (os.environ.get('JO9_QSP'), ROOT / 'assets/runtime/2.4.1/jack.qsp', cfg.get('DialogueQsp'), cfg.get('GameQsp')):
+        if c and Path(c).is_file():
+            return Path(c)
+    print('게임 파일(jack.qsp)을 찾지 못했습니다.')
+    try:
+        ans = input('jack.qsp 파일을 이 창에 끌어다 놓고 Enter를 누르세요: ').strip().strip('"')
+    except EOFError:
+        ans = ''
+    if ans and Path(ans).is_file():
+        cfg['DialogueQsp'] = ans
+        CONFIG.write_text(json.dumps(cfg, ensure_ascii=False, indent=2), encoding='utf-8')
+        print('다음부터는 이 파일을 씁니다(local.config.json에 기억).')
+        return Path(ans)
+    print('파일이 없어 데이터를 뽑지 못했습니다.')
+    return None
+
+
 NAME = re.compile(r'^q.*_manuscript\.json$', re.I)
 
 
@@ -17,12 +45,16 @@ def run(script, *args):
 
 
 def rebuild_question():
-    if not QSP.exists():
-        print(f'게임 파일을 찾지 못했습니다: {QSP}')
+    qsp = find_qsp()
+    if not qsp:
         return False
-    print('질문 메뉴 데이터를 다시 뽑는 중...')
-    ok = run('question_build_data.py', QSP, BUILD)
+    print(f'질문 메뉴 데이터를 다시 뽑는 중... (게임 파일: {qsp})')
+    ok = run('question_build_data.py', qsp, BUILD)
     print('데이터를 다시 뽑았습니다.' if ok else '데이터 뽑기에 실패했습니다. 위 메시지를 확인하세요.')
+    if ok:
+        basis = json.loads((BUILD / 'question_build_data.json').read_text(encoding='utf-8')).get('qsp_sha256_basis', '')
+        if basis != BASIS:
+            print(f'알림: 핸드오프 기준 게임 파일(main {BASIS[:8]})과 다른 파일로 뽑았습니다({basis[:8]}). 데이터는 이 파일 기준입니다.')
     return ok
 
 
@@ -49,8 +81,9 @@ def apply_manuscripts(paths):
     if not n:
         print('덮어쓴 원고가 없습니다. 원고 폴더나 q11xx_manuscript.json 파일을 끌어다 놓으세요.')
         return False
-    print(f'원고 {n}개를 덮어썼습니다.')
-    return rebuild_question()
+    print(f'원고 {n}개를 덮어썼습니다. 커밋하면 끝입니다.')
+    print('게임에 넣을 데이터는 모드 개발이 핸드오프대로 원고에서 다시 뽑습니다(게임 파일 필요 없음).')
+    return True
 
 
 def rebuild_enrich():

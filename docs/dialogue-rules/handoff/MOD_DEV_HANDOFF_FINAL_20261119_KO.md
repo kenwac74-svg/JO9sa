@@ -12,6 +12,8 @@
 | 1 | `MOD_DEV_HANDOFF_QUESTION_MENU_20261119_KO.md` | `build/question_build_data.json` | 새 조각 536, 태그 빼기 901줄, 반말→공주 1,662줄, 공주 색인 553묶음, 말투 2 대체 색인 1,040묶음, 원래 줄 글자 고침 1줄. 고르는 코드 4곳(목소리 고정·관계 칸·말투 검사·호칭 빈칸) |
 | 2 | `MOD_DEV_HANDOFF_ENRICH_EVENTS_20261119_KO.md` | `build/enrich_build_data.json` | 사건 13개, 블록 252개(무게 3 7사건, 무게 2 6사건) |
 
+**넣기 전에 데이터를 다시 뽑는다.** 사용자가 원고(`question-fill/q*_manuscript.json`)나 풍부화 DB(`db/enrich-db.json`)를 직접 고쳐 커밋하면, 저장소의 `build/*.json`은 그 전 상태일 수 있다. 모드 개발이 반영 직전에 `tools/question_build_data.py <게임 qsp> docs/dialogue-rules/handoff/build`와 `tools/enrich_build_data.py`로 다시 뽑아 쓴다. 아래 SHA는 2026-11-19 마지막으로 뽑은 값이다.
+
 2단계는 1단계에서 저장하는 목소리 값 `$slave['jo9_vtype']`을 쓰므로 1단계를 먼저 넣는다.
 
 - 3단계(게임 규칙 변경): `MOD_DEV_HANDOFF_ROOM_DEMOTE_20261119_KO.md` — 개인실에서 방을 빼 일반 노예로 돌아갈 때도 조수 강등과 같은 강등 기분을 붙인다(문답 62).
