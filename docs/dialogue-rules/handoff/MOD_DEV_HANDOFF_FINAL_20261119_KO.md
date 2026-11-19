@@ -58,3 +58,23 @@
 | 풍부화 4사건 98블록 | 사용자 의뢰로 다른 AI(`USER_EVENTS_HANDOFF_KO.md`), 닮은 줄 2차례 다시 쓰기(`USER_EVENTS_REDO_HANDOFF_KO.md` 56칸, `USER_EVENTS_REDO2_HANDOFF_KO.md` 9칸) | 사용자 반영 지시. 사건끼리 닮은 칸 0 확인 |
 
 원칙과 결정의 근거는 `docs/dialogue-rules/JO9_TEXT_PRINCIPLES_20261117_KO.md`, `DECISIONS_QA_20261116_KO.md`, `context-notes.md`에 있다.
+
+## 7. 마무리 상태 (2026-11-19)
+### Claude가 마친 것
+- 질문 메뉴 7개 + 공용 줄의 비성적 원고, 넣을 데이터(새 조각 536), 새 qsp 기준 줄 번호, R05 말투 정책과의 혼용 결정, 반말 줄 점검(1,662줄).
+- 풍부화 사건 중 비성적 사건의 넣을 자리: 처형 위협, 말·몸·억울한 벌, 우승, 챔피언 잔류, 낙인, 판매·납품, 반란 제압, 임신 확인(100일 알림 뒤).
+- 게임 규칙 변경 핸드오프: 개인실에서 방을 빼면 강등 기분.
+- 칸 이동 때 목소리 값이 따라감(QSP 엔진 확인).
+
+### 사용자 몫 (Claude가 다루지 않는 성적 장면 칸) 과 도구
+| 할 일 | 도구 |
+|---|---|
+| 질문 메뉴 사용자 작성 칸(61칸) 편집. 7z로 보낸 인상 3·희망 2·공용 1칸 수정은 아직 저장소에 들어오지 않음 | `tools/manuscript_editor/manuscript_editor.html`(편집기 zip). 저장한 폴더를 `tools/apply_edited_manuscripts.bat` 위로 끌어다 놓으면 원고 덮어쓰기와 데이터 다시 뽑기까지 한다. 데이터만: `tools/rebuild_question_data.bat` |
+| 풍부화 사용자 입력 사건(부끄러운 벌·몸으로 받는 보상·절정) 편집 | `docs/dialogue-rules/db/enrich-db-review.html`(검토표 zip, 불러오기·저장). 저장한 `enrich-db.json`을 `tools/apply_edited_enrich_db.bat` 위로 끌어다 놓으면 DB 덮어쓰기와 사건 데이터·검토표 다시 뽑기까지 한다. 데이터만: `tools/rebuild_enrich_data.bat` |
+| 위 세 사건의 넣을 자리·3장 거름 조건·4-1 겹침 규칙 | 풍부화 핸드오프에 옛 기준(8332e185) 줄 번호로 남아 있다. 새 qsp 줄 번호와 조건 유지 여부는 사용자·모드 개발이 정한다 |
+
+- 실행 파일(.bat)은 PC에 파이썬이 있어야 한다. 이 컨테이너에서는 실행해 보지 못했다.
+
+### 모드 개발 몫
+- 이 문서 1장 순서대로 QSP 반영·엔진 검사. 3장 확인 사항 1~7.
+
