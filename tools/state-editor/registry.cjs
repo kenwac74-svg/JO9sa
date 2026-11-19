@@ -63,7 +63,7 @@ function generationBinding(source) {
     if (markers.length !== 2 || markers[0][0] !== begin || markers[1][0] !== end) error('유형별 생성 초기값 블록 마커가 중복되거나 손상되었습니다.');
     blockStart = markers[0].index;
     const block = source.body.slice(blockStart, anchor.index);
-    const condition = legacy ? "stock\\['age'\\] = CONST_INT\\['milf_age'\\]" : "\\$age\\[stock\\['age'\\]\\] = '((?:''|[^'\\r\\n])*)'";
+    const condition = legacy ? "stock\\['age'\\] = CONST_INT\\['(?:milf_age|mature_age)'\\]" : "\\$age\\[stock\\['age'\\]\\] = '((?:''|[^'\\r\\n])*)'";
     const match = new RegExp(`^${escapeRE(begin)}\\r?\\n(if special_stock = 0 and ${condition}: stock\\['virginity'\\] = (\\d+))\\r?\\n${escapeRE(end)}\\r?\\n$`).exec(block);
     if (!match) error('유형별 생성 초기값 블록에 예상하지 않은 코드·상태 또는 위치가 있습니다.');
     value = Number(match[legacy ? 2 : 3]);
@@ -74,7 +74,7 @@ function generationBinding(source) {
     const statementStart = blockStart + block.indexOf(match[1]);
     binding = sourceBinding(source, statementStart, statementStart + match[1].length);
   }
-  const directRules = [...source.body.matchAll(/^if special_stock = 0 and (?:stock\['age'\] = CONST_INT\['milf_age'\]|\$age\[stock\['age'\]\] = '(?:''|[^'\r\n])*'): stock\['virginity'\] = [^\r\n]+/gm)];
+  const directRules = [...source.body.matchAll(/^if special_stock = 0 and (?:stock\['age'\] = CONST_INT\['(?:milf_age|mature_age)'\]|\$age\[stock\['age'\]\] = '(?:''|[^'\r\n])*'): stock\['virginity'\] = [^\r\n]+/gm)];
   if (directRules.length !== (value === -1 ? 0 : 1)) error('유형별 생성 초기값에 등록되지 않은 중복 연결이 있습니다.');
   return { source, anchor, blockStart, blockEnd, value, typeCode, binding };
 }

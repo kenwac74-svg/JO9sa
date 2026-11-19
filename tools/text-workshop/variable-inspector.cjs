@@ -1,6 +1,7 @@
 'use strict';
 // Source inspection only: this module never evaluates QSP or reads a save.
 const core=require('./core.cjs'),scenes=require('./scenes.cjs');
+const {describeVariable}=require('./appearance-rules.cjs');
 const WORDS=new Set(('if elseif else end then and or not mod local set let act loop while step to for dynamic dyneval gs gosub gt goto xgt jump exit return copyarr killvar killall delact cla clr cls clear close play view msg wait exec true false').split(' '));
 const IDENT=/\$?[\p{L}_][\p{L}\p{N}_]*/gu;
 const base=name=>name.replace(/\[.*$/s,'').trim().toLowerCase();
@@ -127,7 +128,8 @@ function create(doc,allEntries=core.entries(doc)){
   const dedupe=records=>[...new Map(records.map(r=>[JSON.stringify([r.code,r.location,r.line,r.kind]),r])).values()];
   const vars=[...wanted].map(([key,name])=>{
    const defs=dedupe((idx.get(base(name))||[]).slice().sort((a,b)=>Number(b.definedName.toLowerCase()===key)-Number(a.definedName.toLowerCase()===key)||Number(b.location===scope.location)-Number(a.location===scope.location)));
-   return {name,type:name.startsWith('$')?'string':'number',uses:dedupe(uses.get(key)||[]).slice(0,12).map(publicRecord),definitions:defs.slice(0,12).map(publicRecord),definitionTotal:defs.length};
+   const rule=describeVariable(name);
+   return {name,type:name.startsWith('$')?'string':'number',uses:dedupe(uses.get(key)||[]).slice(0,12).map(publicRecord),definitions:defs.slice(0,12).map(publicRecord),definitionTotal:defs.length,...(rule?{rule}:{})};
   });
   return {substitutions,conditions:dedupe(conditions).slice(0,80),variables:vars,scope:{location:scope.location||selected?.location||'',title:scope.title||context.scene?.title||''},notice:'읽기 전용 원문 코드입니다. 설정 후보는 조건에 따라 실행되며, 세이브의 현재값을 뜻하지 않습니다. 지연 실행 코드는 별도로 표시합니다. 최대 80개 변수와 변수별 12개 설정 후보를 표시합니다.'};
  }

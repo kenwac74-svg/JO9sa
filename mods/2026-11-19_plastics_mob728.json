@@ -1,0 +1,73 @@
+{
+  "id": "2026-11-19_plastics_mob728",
+  "description": "성형 후보에 728종을 연결하고 대상 역할의 외형과 번호를 갱신",
+  "target": "game\\jack.qsp",
+  "before_sha256": "eaecb82dd569429ec8be98b68cda09c3f0272be5824caf89b6a405e71d968107",
+  "after_sha256": "611b0f444d12d6cab1acb528b5250b5438f7867d43074b5ae0dc0fc22fe734f6",
+  "edits": [
+    {
+      "location": "plastics",
+      "field": "body",
+      "old": "copyarr '$special_image', '$fullimage'\r\n\r\nif txt = 0:\r\n\tdynamic $replace($plastics_get_image_range, \"dyn\"+\"slave\", $plastics_target)\r\n\ttxt = txt_count\r\n\tdynamic $plastics_hair_color_range, -1\r\n\tmax_txt = txt - 1\r\n\ttxt = min_txt\r\n\tdynamic $plastics_hair_color_range, 1\r\n\tmin_txt = txt\r\nend\r\n\r\n\r\n",
+      "new": "! JO9 MOD START PLASTICS_MOB728_20261119\r\ngs 'jo9_plastics','cache'\r\nif $plastics_target ! 'slave' and $plastics_target ! 'assistant': gt 'shop_general'\r\nlocal jo9_ps_age, jo9_ps_next\r\njo9_ps_age=dyneval('result='+$plastics_target+\"['age']\")\r\nif func('jo9_plastics','find',jo9_ps_age,$hair_color,txt,0)=0:\r\n txt=func('jo9_plastics','find',jo9_ps_age,$hair_color,0,1)\r\nelseif args[0]=1 or args[0]=-1:\r\n jo9_ps_next=func('jo9_plastics','find',jo9_ps_age,$hair_color,txt,args[0])\r\n if jo9_ps_next>0: txt=jo9_ps_next\r\nend\r\nif txt=0:\r\n msg '선택한 머리색의 외형이 없습니다.'\r\n killobj\r\n interaction_city=33243\r\n gt 'interaction_city'\r\nend\r\n! JO9 MOD END PLASTICS_MOB728_20261119\r\n\r\n",
+      "count": 1
+    },
+    {
+      "location": "plastics",
+      "field": "body",
+      "old": "! JO9 MOD START J9M1385 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included\r\n$text[txt] = '[의사]<br>&nbsp;신중히 선택 하십시오. 외모를 한 번 바꾸면 또 바꾸긴 힘듭니다.<br>그렇게 되면 심각한 후유 장해를 불러올테니까요.'\r\n! JO9 MOD END J9M1385\r\n\r\n! JO9 MOD START J9M1384 | 2026-10-08_persistent_image_cycle, 2026-10-15_z_inline_text_prefix | changed block; context may be included\r\n*p func('interior_change', 'jo9_html', '<div id = \"bg\"><img src=\"content/pic/bg/<<$bg[$place]>>.png\"></div>')\r\n! JO9_INLINE_TEXT_PREFIX_20261015\r\nlocal $jo9_leading_empty = $strfind($text[txt], '^(\\s|&nbsp;|<[bB][rR]\\s*/?>)+')\r\nif $jo9_leading_empty ! '': $text[txt] = $mid($text[txt], len($jo9_leading_empty) + 1, len($text[txt]))\r\n! JO9 MOD END J9M1384\r\n*p '<div id = \"text\"><<$text[txt]>></div>'\r\n\r\n",
+      "new": "! JO9 MOD START J9M1385 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included\r\n$text[1] = '[의사]<br>&nbsp;신중히 선택 하십시오. 외모를 한 번 바꾸면 또 바꾸긴 힘듭니다.<br>그렇게 되면 심각한 후유 장해를 불러올테니까요.'\r\n! JO9 MOD END J9M1385\r\n\r\n! JO9 MOD START J9M1384 | 2026-10-08_persistent_image_cycle, 2026-10-15_z_inline_text_prefix | changed block; context may be included\r\n*p func('interior_change', 'jo9_html', '<div id = \"bg\"><img src=\"content/pic/bg/<<$bg[$place]>>.png\"></div>')\r\n! JO9_INLINE_TEXT_PREFIX_20261015\r\nlocal $jo9_leading_empty = $strfind($text[1], '^(\\s|&nbsp;|<[bB][rR]\\s*/?>)+')\r\nif $jo9_leading_empty ! '': $text[1] = $mid($text[1], len($jo9_leading_empty) + 1, len($text[1]))\r\n! JO9 MOD END J9M1384\r\n*p '<div id = \"text\"><<$text[1]>></div>'\r\n\r\n",
+      "count": 1
+    },
+    {
+      "location": "plastics",
+      "field": "body",
+      "old": "$special_image[txt]",
+      "new": "$fullimage[txt]",
+      "count": 1
+    },
+    {
+      "location": "plastics",
+      "field": "body",
+      "old": "if txt > min_txt:\r\n\taddobj '<img src = \"content/pic/ui/buttons/legacy/back_button.png\">'\r\nelse\r\n\taddobj '<img src = \"content/pic/ui/buttons/legacy/noback_button.png\">'\r\nend\r\nif txt <= max_txt:\r\n\taddobj '<img src = \"content/pic/ui/buttons/legacy/forward_button.png\">'\r\n\t$text[] = '   ' &! make the forward button return to this location\r\nend\r\n\r\n",
+      "new": "! JO9 MOD START PLASTICS_MOB728_20261119\r\nif func('jo9_plastics','find',jo9_ps_age,$hair_color,txt,-1)>0:\r\n addobj '<img src = \"content/pic/ui/buttons/legacy/back_button.png\">'\r\nelse\r\n addobj '<img src = \"content/pic/ui/buttons/legacy/noback_button.png\">'\r\nend\r\nif func('jo9_plastics','find',jo9_ps_age,$hair_color,txt,1)>0:\r\n addobj '<img src = \"content/pic/ui/buttons/legacy/forward_button.png\">'\r\nend\r\n! JO9 MOD END PLASTICS_MOB728_20261119\r\n\r\n",
+      "count": 1
+    },
+    {
+      "location": "$objsel",
+      "field": "body",
+      "old": "if $selobj = '<img src = \"content/pic/ui/buttons/legacy/forward_button.png\">':",
+      "new": "! JO9 MOD START PLASTICS_MOB728_20261119\r\nif $curloc='plastics' and ($selobj='<img src = \"content/pic/ui/buttons/legacy/forward_button.png\">' or $selobj='<img src = \"content/pic/ui/buttons/legacy/back_button.png\">'):\r\n local jo9_ps_turn=iif($selobj='<img src = \"content/pic/ui/buttons/legacy/forward_button.png\">',1,-1)\r\n unsel\r\n killobj\r\n if sound_on=1 and jo9_ps_turn=1: play 'content/snd/page_right.wav', sound_volume\r\n if sound_on=1 and jo9_ps_turn=-1: play 'content/snd/page_left.wav', sound_volume\r\n gt 'plastics',jo9_ps_turn\r\nend\r\n! JO9 MOD END PLASTICS_MOB728_20261119\r\n\r\nif $selobj = '<img src = \"content/pic/ui/buttons/legacy/forward_button.png\">':",
+      "count": 1
+    },
+    {
+      "location": "#dynamic",
+      "field": "body",
+      "old": "$plastics_get_image_range = {\r\n\tif dynslave['age'] = CONST_INT['young_age']:\r\n\t\ttxt_count = young_last\r\n\t\tmin_txt = young_first\r\n\telseif dynslave['age'] = CONST_INT['fresh_age']:\r\n\t\ttxt_count = loli_last\r\n\t\tmin_txt = loli_first\r\n\telseif dynslave['age'] = CONST_INT['mature_age']:\r\n\t\ttxt_count = milf_last\r\n\t\tmin_txt = milf_first\r\n\tend\r\n}\r\n\r\n$plastics_hair_color_range = {\r\n\tif instr($fullimage[txt], $hair_color) = 0: \r\n\t\ttxt += args[0]\r\n\t\tdynamic $plastics_hair_color_range, args[0]\r\n\tend\r\n}\r\n\r\n$plastics_confirm_appearance = {\r\n\t$dynslave[\"fullimage\"] = $fullimage[txt]\r\n\t$dynslave[\"ava\"] = $seed_ava[txt]\r\n\t$dynslave[\"ava_gray\"] = $seed_ava_gray[txt]\r\n\t$dynslave[\"ava_clear\"] = $seed_ava_clear[txt]\r\n\t$dynslave[\"hairColor\"] = ''\r\n\tslave_type = txt \r\n\tsp_txt = 1\r\n\tkillobj\r\n\tdynamic $replace($plastics_confirm_procedure, \"dyn\"+\"slave\", $plastics_target)\r\n\tgt \"shop_general\"\r\n}\r\n\r\n",
+      "new": "! JO9 MOD START PLASTICS_MOB728_20261119\r\ngs 'jo9_plastics','cache'\r\n! JO9 MOD END PLASTICS_MOB728_20261119\r\n\r\n",
+      "count": 1
+    },
+    {
+      "location": "jo9_mob_pool",
+      "field": "body",
+      "old": "jo9_pool_pick=args[1]",
+      "new": "! JO9 MOD START PLASTICS_MOB728_20261119\r\n! A negative-one draw requests the pool size without drawing.\r\nif args[1]=-1: result=jo9_pool_old+jo9_pool_count & exit\r\n! JO9 MOD END PLASTICS_MOB728_20261119\r\njo9_pool_pick=args[1]",
+      "count": 1
+    },
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "! JO9 MOD END BATTLE_RESULT_LOAD_REDRAW_20261116",
+      "new": "! JO9 MOD END BATTLE_RESULT_LOAD_REDRAW_20261116\r\n\r\n! JO9 MOD START PLASTICS_MOB728_LOAD_20261119\r\ngs 'jo9_plastics','cache'\r\nif $curloc='plastics': killobj & gt 'plastics'\r\n! JO9 MOD END PLASTICS_MOB728_LOAD_20261119",
+      "count": 1
+    }
+  ],
+  "add_locations": [
+    {
+      "name": "jo9_plastics",
+      "desc": "",
+      "body": "! JO9 MOD START PLASTICS_MOB728_20261119\r\n! Use the shared numbered mob pool. Navigation uses IDs, not page offsets.\r\nif $args[0]='cache':\r\n $plastics_confirm_appearance = {gs 'jo9_plastics', 'confirm'}\r\n exit\r\nend\r\nif $args[0]='confirm':\r\n if $plastics_target ! 'slave' and $plastics_target ! 'assistant': exit\r\n if txt <= 0: exit\r\n if func('jo9_plastics','find',dyneval('result='+$plastics_target+\"['age']\"),$hair_color,txt,0) ! txt: exit\r\n dynamic $replace({\r\n  $dynslave['fullimage']=$fullimage[txt]\r\n  $dynslave['ava']=$seed_ava[txt]\r\n  $dynslave['ava_gray']=$seed_ava_gray[txt]\r\n  $dynslave['ava_clear']=$seed_ava_clear[txt]\r\n  $dynslave['hairColor']=''\r\n  dynslave_type=txt\r\n }, 'dyn'+'slave', $plastics_target)\r\n sp_txt=1\r\n killobj\r\n dynamic $replace($plastics_confirm_procedure,'dyn'+'slave',$plastics_target)\r\n gt 'shop_general'\r\nend\r\nif $args[0] ! 'find': exit\r\nresult=0\r\nif $args[2]='': exit\r\nlocal meta_type, jo9_ps_first, jo9_ps_last, jo9_ps_step, jo9_ps_i, jo9_ps_id\r\nmeta_type=0\r\njo9_ps_first=1\r\njo9_ps_step=1\r\nif args[1]=CONST_INT['fresh_age']: meta_type=1\r\nif args[1]=CONST_INT['young_age']: meta_type=2\r\nif args[1]=CONST_INT['mature_age']: meta_type=3\r\nif meta_type=0: exit\r\njo9_ps_last=func('jo9_mob_pool',meta_type,-1)\r\nif args[4]<0: jo9_ps_first=jo9_ps_last & jo9_ps_last=1 & jo9_ps_step=-1\r\nfor jo9_ps_i = jo9_ps_first to jo9_ps_last step jo9_ps_step:\r\n jo9_ps_id=func('jo9_mob_pool',meta_type,jo9_ps_i)\r\n if (args[4]>0 and jo9_ps_id>args[3]) or (args[4]<0 and jo9_ps_id<args[3]) or (args[4]=0 and jo9_ps_id=args[3]):\r\n  if $fullimage[jo9_ps_id] ! '' and seed_age[jo9_ps_id]=args[1] and instr(lcase($fullimage[jo9_ps_id]),'_'+lcase($args[2])+'_')>0:\r\n   if func('jo9_random_stock_allowed',jo9_ps_id)=1: result=jo9_ps_id & exit\r\n  end\r\n end\r\nend\r\n! JO9 MOD END PLASTICS_MOB728_20261119",
+      "actions": []
+    }
+  ]
+}

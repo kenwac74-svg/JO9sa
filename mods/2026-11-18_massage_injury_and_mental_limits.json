@@ -1,0 +1,43 @@
+{
+  "id": "2026-11-18_massage_injury_and_mental_limits",
+  "description": "Block received massage at severe/fatal wounds before costs; mental exceptions still perform but cannot restore master energy; keep normal skill/daily/AP rules",
+  "before_sha256": "ff69b95e9da0d163829bf88d48fbd2673732e30287ff757d7c25f0cb01edc68c",
+  "after_sha256": "67aaf2b701a60fc7b5706c9604ed0524a4ed105cdafaa7e6ce323b401d9cfd48",
+  "edits": [
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "\tfunc('$menu', 'goto', $menu_item_Massage, menu_Massage, 'interaction', 'interaction', '나에게 안마를 시킨다', '<<$slave_name>>의 안마를 받아본다')",
+      "new": "\t! JO9 MOD START MASSAGE_INJURY_MENTAL_20261118_SLAVE\r\n\tif slave['wounds'] >= 4:\r\n\t\tfunc('$menu', 'exec', replace($menu_item_Massage, '<li', '<li id=\"grey\"'), empty, '나에게 안마를 시킨다', '중상·치명상 상태에서는 안마를 수행할 수 없습니다.')\r\n\telse\r\n\t\tfunc('$menu', 'goto', $menu_item_Massage, menu_Massage, 'interaction', 'interaction', '나에게 안마를 시킨다', '<<$slave_name>>의 안마를 받아본다')\r\n\tend\r\n\t! JO9 MOD END MASSAGE_INJURY_MENTAL_20261118_SLAVE",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "\tfunc('$menu', 'goto', $menu_item_Massage, menu_Massage_assistant, 'interaction', 'interaction', '안마를 시킨다', '<<$assistant_name>> 직접 날 안마할 것이다.')",
+      "new": "\t! JO9 MOD START MASSAGE_INJURY_MENTAL_20261118_ASSISTANT\r\n\tif assistant['wounds'] >= 4:\r\n\t\tfunc('$menu', 'exec', replace($menu_item_Massage, '<li', '<li id=\"grey\"'), empty, '안마를 시킨다', '중상·치명상 상태에서는 안마를 수행할 수 없습니다.')\r\n\telse\r\n\t\tfunc('$menu', 'goto', $menu_item_Massage, menu_Massage_assistant, 'interaction', 'interaction', '안마를 시킨다', '<<$assistant_name>> 직접 날 안마할 것이다.')\r\n\tend\r\n\t! JO9 MOD END MASSAGE_INJURY_MENTAL_20261118_ASSISTANT",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "if snk_room_target > 0 and $curloc = 'interaction': gs 'snk_room_bridge', 'guard', 'interaction'",
+      "new": "if snk_room_target > 0 and $curloc = 'interaction': gs 'snk_room_bridge', 'guard', 'interaction'\r\n! JO9 MOD START MASSAGE_INJURY_MENTAL_20261118_GUARD\r\nif (interaction = 5412 and slave['wounds'] >= 4) or (interaction = 5501 and assistant['wounds'] >= 4):\r\n msg '중상·치명상 상태에서는 안마를 수행할 수 없습니다.'\r\n gt 'menu_form'\r\nend\r\n! JO9 MOD END MASSAGE_INJURY_MENTAL_20261118_GUARD",
+      "count": 1
+    },
+    {
+      "location": "interaction_result",
+      "field": "body",
+      "old": "if snk_room_target > 0 and $curloc = 'interaction_result': gs 'snk_room_bridge', 'guard', 'interaction_result'",
+      "new": "if snk_room_target > 0 and $curloc = 'interaction_result': gs 'snk_room_bridge', 'guard', 'interaction_result'\r\n! JO9 MOD START MASSAGE_INJURY_MENTAL_20261118_GUARD\r\nif (interaction = 5412 and slave['wounds'] >= 4) or (interaction = 5501 and assistant['wounds'] >= 4):\r\n msg '중상·치명상 상태에서는 안마를 수행할 수 없습니다.'\r\n gt 'menu_form'\r\nend\r\n! JO9 MOD END MASSAGE_INJURY_MENTAL_20261118_GUARD",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "\t\t\t\tmassage_quality = func('jo9_nymph_productivity', 'dynslave', min(interaction_dynslave['diligence'], 1 + dynslave['petting']), 5)",
+      "new": "\t\t\t\t! JO9 MOD START MASSAGE_INJURY_MENTAL_20261118_MENTAL\r\n\t\t\t\tmassage_quality = min(2, func('jo9_nymph_productivity', 'dynslave', min(interaction_dynslave['diligence'], 1 + dynslave['petting']), 5))\r\n\t\t\t\t! JO9 MOD END MASSAGE_INJURY_MENTAL_20261118_MENTAL",
+      "count": 1
+    }
+  ]
+}

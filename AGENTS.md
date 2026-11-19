@@ -71,3 +71,6 @@
 
 
 35. 2026-11-18 사용자 지정 (REFERENCE_SEARCH_PATHS_20261118): 당장 쓰지 않는 2.4.2 백업의 탐색 경로는 K:/doing/242JO9이다. 이전 버전·백업 자료가 필요할 때 docs/REFERENCE_SEARCH_PATHS.json의 목록을 확인한다. 최신 작업 기준은 기존 WORK이며, 이 경로로 파일을 자동 이동하지 않는다.
+
+
+36. 2026-11-18 사용자 확정 (AGE_CLASSIFICATION_FACTS_20261118): age/seed_age는 실제 만 나이가 아닌 발육·외형 분류 코드다. loli_age·_loli 같은 이름만으로 실제 미성년이라고 단정하지 않는다. 관련 판단 전에 기존 정정 기록과 실제 정의·인물 설정을 확인하고 같은 사실을 이름만으로 반복 재판정하지 않는다. 명칭 변경은 숫자·게임 효과·세이브·리소스 호환을 유지한다. 상세: docs/modding/AGE_CLASSIFICATION_POLICY_20261118_KO.md.

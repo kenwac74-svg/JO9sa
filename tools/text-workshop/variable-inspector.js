@@ -5,6 +5,7 @@
   const status = document.getElementById('variableStatus');
   const count = document.getElementById('variableCount');
   let selected = null, data = null, revision = 0, loading = false;
+  const explain = rule => rule ? [rule.description,...rule.values.map(row => `${row.value} = ${row.label}${row.code ? ' (' + row.code + ')' : ''}`)].filter(Boolean) : [];
   const node = (tag, text, cls) => {
     const el = document.createElement(tag);
     if (text !== undefined) el.textContent = text;
@@ -40,7 +41,11 @@
     if (!value.variables.length) result.append(node('p', '이 대사와 장면에서 확인되는 변수 코드가 없습니다.', 'muted'));
     for (const variable of value.variables) {
       const item = node('details', undefined, 'variableItem');
-      item.append(node('summary', `${variable.name} · ${variable.type === 'string' ? '문자열' : '숫자'} 변수`));
+      const title = node('summary', `${variable.name} · ${variable.rule?.label || (variable.type === 'string' ? '문자열 변수' : '숫자 변수')}${variable.rule?.legacy ? ' · 호환 이름' : ''}`);
+      const details = explain(variable.rule);
+      if (details.length) title.title = details.join('\n');
+      item.append(title);
+      if (details.length) item.append(node('pre', details.join('\n')));
       if (variable.uses.length) {
         item.append(node('h3', '이 장면에서 쓰는 코드'));
         for (const use of variable.uses) item.append(source(use));
@@ -86,6 +91,7 @@
     const lines = [status.textContent, data.notice, ...data.substitutions.map(s => s.code), ...data.conditions.map(r => `${r.location}:${r.line}\n${r.code}`)];
     for (const variable of data.variables) {
       lines.push(`\n${variable.name}`);
+      lines.push(...explain(variable.rule));
       for (const row of [...variable.uses, ...variable.definitions]) lines.push(`${row.location}:${row.line}${row.kind === 'deferred' ? ' (지연 실행)' : ''}${row.conditions?.length ? '\n조건: ' + row.conditions.join(' → ') : ''}\n${row.code}`);
     }
     try { await navigator.clipboard.writeText(lines.filter(Boolean).join('\n')); status.textContent = '변수 확인 내용을 복사했습니다. 원하는 변경을 함께 적어 전달하세요.'; }

@@ -2,6 +2,15 @@
 const test=require('node:test'),assert=require('node:assert/strict'),core=require('./core.cjs'),scenes=require('./scenes.cjs'),inspector=require('./variable-inspector.cjs');
 function fixture(defs){const lines=['QSPGAME','header','',core.shift(String(defs.length),-5)];for(const [n,b]of defs)lines.push(core.shift(n,-5),'',core.shift(b,-5),core.shift('0',-5));lines.push('');return core.parse(Buffer.from(lines.join('\r\n'),'utf16le'));}
 function inspect(d,text,usageId){const es=core.entries(d),e=es.find(e=>e.text===text),nav=scenes.buildNavigator(d,es),c=nav.context({...e,hash:d.hash},undefined,'text',usageId);return inspector.create(d,es).inspect(c);}
+test('appearance classifications and the saved mode are explained with their distinct 0–2 meanings',()=>{
+ const d=fixture([['room',`if fresh_mode ! 1 and slave['age'] = CONST_INT['fresh_age']:\r\n *pl '분류 <<seed_age[1]>> <<no_loli>>'\r\nend`]]);
+ const x=inspect(d,'분류 <<seed_age[1]>> <<no_loli>>');
+ const byName=new Map(x.variables.map(row=>[row.name,row]));
+ assert.deepEqual(byName.get('fresh_mode')?.rule?.values.map(r=>r.value),[0,1,2]);
+ assert.equal(byName.get('no_loli')?.rule?.legacy,true);
+ assert.equal(byName.get("CONST_INT['fresh_age']")?.rule?.values[0].value,1);
+ assert.deepEqual(byName.get('seed_age[1]')?.rule?.values.map(r=>r.label),['젊음','어림','성숙']);
+});
 test('치환문, 조건별 설정 원문, 문자열 속 가짜 대입을 구분하고 QSP를 보존한다',()=>{
  const d=fixture([['town',`$name='이름'
 if town = 1:

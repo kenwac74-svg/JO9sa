@@ -3,7 +3,9 @@
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),readline=require('node:readline');
 // Upstream logs unhandled UI notifications to console; stdout is reserved for NDJSON.
 console.log=()=>{};
-const core=require(process.env.JO9_RUNTIME_CORE||path.resolve(__dirname,'../text-workshop/core.cjs'));
+const corePath=process.env.JO9_RUNTIME_CORE||path.resolve(__dirname,'../text-workshop/core.cjs');
+const core=require(corePath);
+const appearance=require(path.join(path.dirname(corePath),'appearance-rules.cjs'));
 const vendor=process.env.JO9_RUNTIME_VENDOR||path.resolve(__dirname,'vendor/qsp');
 const {initQspEngine}=require(path.join(vendor,'wasm-engine.cjs'));
 const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
@@ -57,19 +59,26 @@ async function boot(root){
  }
  run("$onnewloc=''\n$ongload=''\n$counter=''",'snapshot callbacks');const snapshot=api.saveGame();if(!snapshot)throw Error('초기 엔진 상태를 보관하지 못했습니다.');
  const catalog=json(process.env.JO9_RUNTIME_ROUTES||path.join(__dirname,'acquisition-routes-runtime.json'));
+ const symbols=appearance.symbolsFor(bodies),normalizedLocations=new Map();
+ const normalizeRule=code=>normal(appearance.adaptRule(code));
+ function matchesReference(fragment){
+  if(!normalizedLocations.has(fragment.location))normalizedLocations.set(fragment.location,normalizeRule(bodies.get(fragment.location)||''));
+  return normalizedLocations.get(fragment.location).includes(normalizeRule(fragment.code));
+ }
  const routes=catalog.routes.map(r=>{
   const refs=[r.source_fragment,r.replay_fragment,r.setup_fragment,r.helper_fragment].filter(Boolean);
-  const valid=refs.every(f=>normal(bodies.get(f.location)||'').includes(normal(f.code)));
+  const valid=refs.every(matchesReference);
   return {...r,valid};
  });
  const masters=[];for(let id=1;id<1000;id++){const name=api.readVariable('$master_base_name',id);if(name)masters.push({id,name});}
- state={root,api,run,snapshot,keys:[...keys],templates,routes,bodies,masters,hash:hash(raw),loops,files,effects,errors,instances:new Map(),draw:0,named:new Set(catalog.characters.map(c=>c.id))};return state;
+ const appearanceRules={mode:{code:symbols.mode,label:appearance.modeLabel,defaultValue:api.readVariable(symbols.mode),values:appearance.modeValues},classes:appearance.classes};
+ state={root,api,run,snapshot,keys:[...keys],templates,routes,bodies,masters,hash:hash(raw),loops,files,effects,errors,instances:new Map(),draw:0,named:new Set(catalog.characters.map(c=>c.id)),symbols,appearanceRules};return state;
 }
 function meta(s,id){
  const known=s.routes.filter(r=>r.character_id===Number(id));
  const generic=[{id:'template',label:'템플릿 생성 · 게임 영입 경로 아님',role:'stock',valid:true},{id:'regular',label:'일반 영입 · 기본 영입 처리',role:'slave',valid:true}];
  const kinds={generate_stock_direct_swap_assistant:'조수 영입',generate_stock_direct_swap_slave:'직접 영입',quest_assistant:'퀘스트 조수 영입',generate_stock_stock_to_slave:'이벤트·상점 영입',dynamic_gloria_join:'글로리아 영입',black_market_sequence:'암시장 순환 상품'};
- return {masters:s.masters,routes:[...known.map(r=>({id:r.route_id,label:`${kinds[r.kind]||r.kind} · ${r.selector||r.location}`,role:r.output_role,valid:r.valid,requirements:r.preconditions||'',notes:r.notes})),...generic],defaultRoute:known.find(r=>r.valid)?.route_id??(s.named.has(Number(id))?'template':'regular'),qspHash:s.hash,engine:s.api.version(),templates:s.templates.size};
+ return {masters:s.masters,routes:[...known.map(r=>({id:r.route_id,label:`${kinds[r.kind]||r.kind} · ${r.selector||r.location}`,role:r.output_role,valid:r.valid,requirements:r.preconditions||'',notes:r.notes})),...generic],defaultRoute:known.find(r=>r.valid)?.route_id??(s.named.has(Number(id))?'template':'regular'),qspHash:s.hash,engine:s.api.version(),templates:s.templates.size,appearanceRules:s.appearanceRules};
 }
 function calculate(s,req){
  const {api,run}=s;api.loadSave(s.snapshot);
@@ -77,7 +86,7 @@ function calculate(s,req){
  if(!s.masters.some(m=>m.id===master)||![0,1,2].includes(difficulty)||![0,1,2].includes(obedience))throw Error('주인공·게임 난이도·복종 난이도를 선택하세요.');
  if(id&&!s.templates.has(id))throw Error('게임에서 등록된 캐릭터 ID가 아닙니다.');
  let selected=s.routes.find(r=>r.route_id===context.route&&r.character_id===id),role=selected?.output_role||'slave',routeCode;
- if(selected){if(!selected.valid)throw Error('QSP 영입 코드가 바뀌었습니다. 이 경로의 연결 정보를 다시 확인해야 합니다.');routeCode=selected.replay_code||selected.replay_fragment.code;}
+ if(selected){if(!selected.valid)throw Error('QSP 영입 코드가 바뀌었습니다. 이 경로의 연결 정보를 다시 확인해야 합니다.');routeCode=appearance.adaptRule(selected.replay_code||selected.replay_fragment.code,s.symbols);}
  else if(context.route==='template'){role='stock';routeCode=`special_stock=${id}\ngs 'generate_stock'`;}
  else if(context.route==='regular'){routeCode=`special_stock=${id}\ngs 'generate_stock'\ngs 'stock_to_slave_nogt'`;}
  else throw Error('영입 경로를 선택하세요.');

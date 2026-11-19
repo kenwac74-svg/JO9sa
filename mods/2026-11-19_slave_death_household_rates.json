@@ -1,0 +1,23 @@
+{
+  "id": "2026-11-19_slave_death_household_rates",
+  "status": "APPROVED",
+  "description": "자살 이벤트 선택 결과에 조수와 입주 중인 개인실 인물의 단계 변화 적용. 1번 헌신 최고, 2번·2-2 절망 최고, 3번 헌신 0. 최고 단계는 등급 승급 직전 값(등급 5에서는 10).",
+  "before_sha256": "4ade36f4508efc5bcfaf8e6caf347d3a0c47c0d25117d169001585900275c9bf",
+  "after_sha256": "887f7e570e8df2a463c50c4855d4139a6e7a8602202f7039288d5bf15981d438",
+  "edits": [
+    {
+      "location": "jo9_slave_death",
+      "field": "body",
+      "old": " dynamic $clear_slave_instance, 'slave'\r\n if jo9_sd_c ! 1: gs 'jo9_slave_death','restore'\r\n jo9_sd_active=0",
+      "new": " dynamic $clear_slave_instance, 'slave'\r\n if jo9_sd_c ! 1: gs 'jo9_slave_death','restore'\r\n ! JO9 MOD START SLAVE_DEATH_HOUSEHOLD_RATES_20261119\r\n ! Only the assistant and occupied private rooms react. Stay below the next grade threshold.\r\n if jo9_sd_c = 1 or jo9_sd_c = 2 or jo9_sd_c = 3 or jo9_sd_c = 22:\r\n  local $jo9_sd_rate_key = $iif(jo9_sd_c = 2 or jo9_sd_c = 22, 'angst', 'moral')\r\n  local jo9_sd_role_index\r\n  for jo9_sd_role_index = 0 to 4:\r\n   dynamic $replace({\r\n    if jo9sdactor_state > CONST_INT['no_slave']:\r\n     local jo9_sd_grade = max(0, min(5, jo9sdactor[$args[0]]))\r\n     jo9sdactor_rate[$args[0]] = iif(jo9_sd_c = 3, 0, indep_atr_max_threshold[jo9_sd_grade] - iif(jo9_sd_grade < 5, 1, 0))\r\n    end\r\n   }, 'jo9sdactor', $iif(jo9_sd_role_index = 0, 'assistant', 'room' + $str(jo9_sd_role_index))), $jo9_sd_rate_key\r\n  end\r\n end\r\n ! JO9 MOD END SLAVE_DEATH_HOUSEHOLD_RATES_20261119\r\n jo9_sd_active=0",
+      "count": 1,
+      "patchId": "SLAVE_DEATH_HOUSEHOLD_RATES_20261119"
+    }
+  ],
+  "verification": {
+    "engine": "isolated QSP WASM runtime",
+    "assertions": 336,
+    "scenarios": 7,
+    "gameExeScreenVerified": false
+  }
+}

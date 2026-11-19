@@ -1726,3 +1726,27 @@ WORK·추적 QSP e58aa4d77b1be754837bc9f619ed8953536218c58c73ca69df6da643f40c7a6
 ## FEMALE_TEXT_WORK_SCOPE_20261118
 
 여주 전용 자료는 게임에 유지하며 대사 기본 작업에서 제외한다. [작업 제외 설치/검사](../records/female-text-work-scope-20261118/REPORT_KO.md), [분리 조사·JSON 백업](../records/female-protagonist-text-audit-20261118/REPORT_KO.md), [자료 탐색 경로](REFERENCE_SEARCH_PATHS.json). 비활성2.4.2 백업은 K:/doing/242JO9에서 필요 시 탐색하며 자동 이동하지 않는다.
+
+
+## 2026-11-18 일반 안마 품질 계산 변경
+
+MASSAGE_SKILL_QUALITY_20261118: 사용자 승인으로 정상 인물의 안마 품질을 애무 기술만으로 계산한다. 신경쇠약·정신분열(자아+성격+태도<5)만 기존 품질 계산을 유지한다. 일일1회·회복량·제공자 행동력 비용을 유지하고 구형 저장의 안마 템플릿을 새 행동에서 갱신한다. 실제 엔진34상황·168검사, 격리 패치 재생·멱등성·역변환 확인. 새 저장값0. 추가 신체 제한은 제안만 했으며 기존4차ZIP·Full·세이브·커밋푸시 미변경. [기록](../records/massage-skill-quality-20261118/REPORT_KO.md).
+
+
+## 2026-11-18 안마 수행 제한·정신질환 품질 상한
+
+MASSAGE_INJURY_MENTAL_20261118: 중상·치명상은 노예/조수 안마 메뉴·직접진입·대기결과를 비용 전 차단한다. 신경쇠약·정신분열은 수행/비용은 유지하되 품질최대2로 회복은 없다. 정상 애무기술 품질·일일 제한은 유지. 실제엔진46행동+6메뉴·286검사와 공식패치 격리재생/멱등성 PASS. WORK·소스만 반영. 기존4차ZIP·Full·세이브·커밋푸시 미변경. [기록](../records/massage-injury-guard-20261118/REPORT_KO.md).
+
+
+## 2026-11-18 발육·외형 분류 판단 정책
+
+AGE_CLASSIFICATION_FACTS_20261118: 사용자 지시로 실제 만 나이와 분류값을 혼동했던 판단을 정정하고 반복 방지 기준을 AGENTS/CLAUDE에 연결했다. [정책](modding/AGE_CLASSIFICATION_POLICY_20261118_KO.md). 코드명 호환 정리는 별도 조사·검증 후 기록한다.
+
+
+## 2026-11-18 발육·외형 분류 상수명 호환 정리
+
+AGE_CLASS_SYMBOLS_20261118: 사용자 승인 대응 young_age0/fresh_age1/mature_age2. 실행소스347참조·45본문 이름만 정리하고, loli_age/milf_age는 #static_base/$ongload의 구세이브 호환 별칭만 유지한다. 숫자·이미지·대사·효과 불변, 기존 WORK 수동 수정 보존. 실제엔진 초기화/저장코드19검사, 도구30회귀+legacy/new2경우, 개인SAV2개 코덱왕복, 공식패치 재생/멱등 확인. 실제 개인SAV 선택UI는 미검증. WORK·소스·도구파서만 반영, Full/기존4차ZIP/커밋푸시 미변경. [정책](modding/AGE_CLASSIFICATION_POLICY_20261118_KO.md) · [호환/롤백/검증](../records/age-symbols-20261118/REPORT_KO.md).
+
+## 2026-11-19 외형 분류 코드 인계
+
+[외형 분류 코드 인계](session-handoffs/2026-11-19/AGE_CLASSIFICATION_HANDOFF_KO.md) — 이미지 프롬프트용 외형 기준, seed_age 오판 사례, young/fresh/mature 매핑과 구세이브 별칭.

@@ -1,0 +1,22 @@
+{
+  "id": "2026-11-18_massage_skill_quality",
+  "description": "Ordinary received massage quality depends only on petting; existing diligence applies only to UI nervous-breakdown or schizophrenia classification; daily/AP costs unchanged; refresh saved massage template on use",
+  "before_sha256": "ae2c94d7e49ca4c31631e648f940eb75bb8dbed6150ba4bc63d0f3177e458e77",
+  "after_sha256": "ff69b95e9da0d163829bf88d48fbd2673732e30287ff757d7c25f0cb01edc68c",
+  "edits": [
+    {
+      "location": "interaction",
+      "old": "if code_defined['interaction_serve_massage'] = 0:",
+      "new": "! JO9 MOD START MASSAGE_SKILL_QUALITY_20261118_CACHE\r\nif code_defined['interaction_serve_massage'] = 0 or interaction = 5412 or interaction = 5501:\r\n! JO9 MOD END MASSAGE_SKILL_QUALITY_20261118_CACHE",
+      "count": 1,
+      "field": "body"
+    },
+    {
+      "location": "interaction",
+      "old": "\t\t\tmassage_quality = func('jo9_nymph_productivity', 'dynslave', min(interaction_dynslave['diligence'], 1 + dynslave['petting']), 5)",
+      "new": "\t\t\t! JO9 MOD START MASSAGE_SKILL_QUALITY_20261118\r\n\t\t\tif dynslave['ego'] + dynslave['temper'] + dynslave['pride'] < 5:\r\n\t\t\t\tmassage_quality = func('jo9_nymph_productivity', 'dynslave', min(interaction_dynslave['diligence'], 1 + dynslave['petting']), 5)\r\n\t\t\telse\r\n\t\t\t\tmassage_quality = min(5, 1 + max(0, dynslave['petting']))\r\n\t\t\tend\r\n\t\t\t! JO9 MOD END MASSAGE_SKILL_QUALITY_20261118",
+      "count": 1,
+      "field": "body"
+    }
+  ]
+}

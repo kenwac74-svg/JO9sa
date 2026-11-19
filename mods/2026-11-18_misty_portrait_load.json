@@ -1,0 +1,16 @@
+{
+  "description": "미스티 1214의 기존 저장 초상화 3종을 로드 시 기본 전신에 맞게 복구",
+  "id": "2026-11-18_misty_portrait_load",
+  "target": "game\\jack.qsp",
+  "before_sha256": "72e7a917d85db5acb29ae6bbb1d5de05c4acd387f04601a1a2821ffdd67a6ff6",
+  "after_sha256": "eaecb82dd569429ec8be98b68cda09c3f0272be5824caf89b6a405e71d968107",
+  "edits": [
+    {
+      "location": "jo9_load_compat242",
+      "field": "body",
+      "old": "   $j9lc_old=$j9lcactor['fullimage']",
+      "new": "   ! JO9 MOD START MISTY_PORTRAIT_LOAD_20261118\r\n   ! Repair only the saved faces left on the old default by the Misty body update.\r\n   if j9lc_type=1214:\r\n    $j9lc_old=lcase(replace($j9lcactor['fullimage'],'\\','/'))\r\n    if ($j9lc_old='girls/full/1214_blue_long_young' or $j9lc_old='girls/full/1214_blue_long_young.png') or ($j9lc_old='girls/full/cloth/1214_blue_long_young' or $j9lc_old='girls/full/cloth/1214_blue_long_young.png'):\r\n     $j9lc_old=lcase(replace($j9lcactor['ava'],'\\','/'))\r\n     if ($j9lc_old='content/pic/girls/face/1214_pink_long_young_sepia' or $j9lc_old='content/pic/girls/face/1214_pink_long_young_sepia.png'): $j9lcactor['ava']='content/pic/girls/face/1214_blue_long_young_sepia' & j9lc_changes+=1\r\n     $j9lc_old=lcase(replace($j9lcactor['ava_gray'],'\\','/'))\r\n     if ($j9lc_old='content/pic/girls/face/1214_pink_long_young_gray' or $j9lc_old='content/pic/girls/face/1214_pink_long_young_gray.png'): $j9lcactor['ava_gray']='content/pic/girls/face/1214_blue_long_young_gray' & j9lc_changes+=1\r\n     $j9lc_old=lcase(replace($j9lcactor['ava_clear'],'\\','/'))\r\n     if ($j9lc_old='content/pic/girls/face/1214_pink_long_young' or $j9lc_old='content/pic/girls/face/1214_pink_long_young.png'): $j9lcactor['ava_clear']='content/pic/girls/face/1214_blue_long_young' & j9lc_changes+=1\r\n    end\r\n   end\r\n   ! JO9 MOD END MISTY_PORTRAIT_LOAD_20261118\r\n   $j9lc_old=$j9lcactor['fullimage']",
+      "count": 1
+    }
+  ]
+}

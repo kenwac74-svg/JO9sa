@@ -1,0 +1,65 @@
+{
+  "id": "2026-11-19_vampire_fire_phobia",
+  "description": "뱀파이어 세트에 기존 발화 공포증을 연결",
+  "status": "APPROVED",
+  "before_sha256": "57ec98a2f61a8a369d2696bbe2763cf8288983b9b467770127164ae2b79f31f0",
+  "after_sha256": "c588e6fcabf4c829aa4a58f65f6f040b315067d6ebba60a686ad7d47d94b367f",
+  "edits": [
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": "   jo9vactor['darkness_attitude_revealed'] = 2",
+      "new": "   jo9vactor['darkness_attitude_revealed'] = 2\r\n! JO9 MOD START VAMPIRE_FIRE_PHOBIA_20261119\r\n   jo9vactor['fire_attitude'] = -1\r\n   jo9vactor['fire_attitude_revealed'] = 2\r\n! JO9 MOD END VAMPIRE_FIRE_PHOBIA_20261119",
+      "count": 1,
+      "patchId": "VAMPIRE_FIRE_PHOBIA_20261119"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": " $result += '<a href=\"EXEC: gs ''jo9_traits'', ''vampire_component'', ''darkness''\"><<dyneval($vb_cycle_skill, 2, \"[암흑기호증]\")>></a>, '",
+      "new": " $result += '<a href=\"EXEC: gs ''jo9_traits'', ''vampire_component'', ''darkness''\"><<dyneval($vb_cycle_skill, 2, \"[암흑기호증]\")>></a>, '\r\n! JO9 MOD START VAMPIRE_FIRE_PHOBIA_20261119\r\n $result += '<a href=\"EXEC: gs ''jo9_traits'', ''vampire_component'', ''fire''\"><<dyneval($vb_cycle_skill, 3, \"[발화 공포증]\")>></a>, '\r\n! JO9 MOD END VAMPIRE_FIRE_PHOBIA_20261119",
+      "count": 1,
+      "patchId": "VAMPIRE_FIRE_PHOBIA_20261119"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": " if $args[1] = 'darkness': $result = $Дитя_тьмы\r\n if $args[1] = 'picky': $result = $Не_любит_сладкое\r\n if $args[1] = 'healthy': $result = $func('jo9_traits','text','healthy')\r\n if $args[1] = 'metabolism': $result = $Мощный_метаболизм\r\n if $args[1] = 'mage': $result = $чародейка",
+      "new": "! JO9 MOD START VAMPIRE_FIRE_PHOBIA_20261119\r\n if $args[1] = 'fire': $result = $Пирофобия\r\n! JO9 MOD END VAMPIRE_FIRE_PHOBIA_20261119\r\n if $args[1] = 'darkness': $result = $Дитя_тьмы\r\n if $args[1] = 'picky': $result = $Не_любит_сладкое\r\n if $args[1] = 'healthy': $result = $func('jo9_traits','text','healthy')\r\n if $args[1] = 'metabolism': $result = $Мощный_метаболизм\r\n if $args[1] = 'mage': $result = $чародейка",
+      "count": 1,
+      "patchId": "VAMPIRE_FIRE_PHOBIA_20261119"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": " if instr($update_slave_features_list,'SPECIES_SET_20261113') = 0: gs '#static_base'",
+      "new": "! JO9 MOD START VAMPIRE_FIRE_PHOBIA_20261119\r\n if instr($update_slave_features_list,'VAMPIRE_FIRE_PHOBIA_20261119') = 0: gs '#static_base'\r\n! JO9 MOD END VAMPIRE_FIRE_PHOBIA_20261119",
+      "count": 1,
+      "patchId": "VAMPIRE_FIRE_PHOBIA_20261119"
+    },
+    {
+      "location": "jo9_traits",
+      "field": "body",
+      "old": "   if jo9xeactor['fire_attitude'] = -1: jo9xeactor['fire_attitude'] = 0 & result += 1",
+      "new": "! JO9 MOD START VAMPIRE_FIRE_PHOBIA_20261119\r\n   if jo9xeactor['jo9_vampire'] ! 1 and jo9xeactor['fire_attitude'] = -1: jo9xeactor['fire_attitude'] = 0 & result += 1\r\n! JO9 MOD END VAMPIRE_FIRE_PHOBIA_20261119",
+      "count": 1,
+      "patchId": "VAMPIRE_FIRE_PHOBIA_20261119"
+    },
+    {
+      "location": "#static_base",
+      "field": "body",
+      "old": "        if dynslave['fire_attitude'] = -1 and (dynslave['fire_attitude_revealed'] = 2 or spell_revelio = 1):",
+      "new": "! JO9 MOD START VAMPIRE_FIRE_PHOBIA_20261119\r\n        if dynslave['jo9_vampire'] ! 1 and dynslave['fire_attitude'] = -1 and (dynslave['fire_attitude_revealed'] = 2 or spell_revelio = 1):\r\n! JO9 MOD END VAMPIRE_FIRE_PHOBIA_20261119",
+      "count": 1,
+      "patchId": "VAMPIRE_FIRE_PHOBIA_20261119"
+    },
+    {
+      "location": "jo9_chaotic",
+      "field": "body",
+      "old": " if jo9ceactor['fire_attitude'] = -1:",
+      "new": "! JO9 MOD START VAMPIRE_FIRE_PHOBIA_20261119\r\n if jo9ceactor['jo9_vampire'] ! 1 and jo9ceactor['fire_attitude'] = -1:\r\n! JO9 MOD END VAMPIRE_FIRE_PHOBIA_20261119",
+      "count": 1,
+      "patchId": "VAMPIRE_FIRE_PHOBIA_20261119"
+    }
+  ]
+}

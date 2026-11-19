@@ -1,0 +1,212 @@
+{
+  "id": "2026-11-18_fresh_mode_and_settings_ui",
+  "description": "Rename the saved mode to fresh_mode, mirror the previous key, and repair both settings rows without changing the mode rules.",
+  "target": "game\\jack.qsp",
+  "before_sha256": "d4a3518cc9d2b0653d363378a51f260e6490c6b0651edf486bb19bad1684b7e7",
+  "after_sha256": "72e7a917d85db5acb29ae6bbb1d5de05c4acd387f04601a1a2821ffdd67a6ff6",
+  "edits": [
+    {
+      "location": "start_refresh",
+      "field": "body",
+      "old": "no_loli = 0\r\n",
+      "new": "fresh_mode = 0 & no_loli = fresh_mode\r\n",
+      "count": 1
+    },
+    {
+      "location": "init_game",
+      "field": "body",
+      "old": "no_loli = 0\r\n",
+      "new": "fresh_mode = 0 & no_loli = fresh_mode\r\n",
+      "count": 1
+    },
+    {
+      "location": "hero_creation",
+      "field": "body",
+      "old": "no_loli",
+      "new": "fresh_mode",
+      "count": 2
+    },
+    {
+      "location": "start_game",
+      "field": "body",
+      "old": "no_loli",
+      "new": "fresh_mode",
+      "count": 1
+    },
+    {
+      "location": "$addon",
+      "field": "body",
+      "old": "no_loli = 1 &!",
+      "new": "fresh_mode = 1 & no_loli = fresh_mode &!",
+      "count": 1
+    },
+    {
+      "location": "$addon",
+      "field": "body",
+      "old": "no_loli ! 1",
+      "new": "fresh_mode ! 1",
+      "count": 1
+    },
+    {
+      "location": "menu_form",
+      "field": "body",
+      "old": "\tif no_loli = 0 and perv_revealed > 0:\r\n\t\t$setting_display_r += '<div id=\"under_gray\">아동 추가대사 비활성<div id = \"clear\"><a href = \"EXEC: no_loli = 2 & gt ''menu_form''\"><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>'\r\n\telseif no_loli = 2:\r\n\t\t$setting_display_r += '<div id=\"under\">아동 추가대사 활성<div id = \"clear\"><a href = \"EXEC: no_loli = 0 & gt ''menu_form''\"><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>'\r\n\telseif no_loli = 0:\r\n\t\t$setting_display_r += '<div id=\"under\">아동 출현중<div id = \"clear\"><a href = \"EXEC: no_loli = 1 & gt ''menu_form''\"><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>'\r\n\telseif no_loli = 1:\r\n\t\t$setting_display_r += '<div id=\"under_gray\">아동 미출현<div id = \"clear\"><a href = \"EXEC: no_loli = 0 & gt ''menu_form''\"><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>' \r\n\tend",
+      "new": "\t! JO9 MOD START FRESH_MODE_20261118_SETTINGS\r\n\tif fresh_mode = 0 and perv_revealed > 0:\r\n\t\t$setting_display_r += '<div id=\"under_gray\">어림 추가대사 비활성<div id = \"clear\"><a href = \"EXEC: fresh_mode = 2 & no_loli = fresh_mode & gt ''menu_form''\"><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>'\r\n\telseif fresh_mode = 2:\r\n\t\t$setting_display_r += '<div id=\"under\">어림 추가대사 활성<div id = \"clear\"><a href = \"EXEC: fresh_mode = 0 & no_loli = fresh_mode & gt ''menu_form''\"><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>'\r\n\telseif fresh_mode = 0:\r\n\t\t$setting_display_r += '<div id=\"under\">어림 출현중<div id = \"clear\"><a href = \"EXEC: fresh_mode = 1 & no_loli = fresh_mode & gt ''menu_form''\"><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>'\r\n\telseif fresh_mode = 1:\r\n\t\t$setting_display_r += '<div id=\"under_gray\">어림 미출현<div id = \"clear\"><a href = \"EXEC: fresh_mode = 0 & no_loli = fresh_mode & gt ''menu_form''\"><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>' \r\n\tend\r\n\t! JO9 MOD END FRESH_MODE_20261118_SETTINGS",
+      "count": 1
+    },
+    {
+      "location": "city_menu_form",
+      "field": "body",
+      "old": "\tif no_loli = 0 and perv_revealed > 0:\r\n\t\t$setting_display_r += '<div id=\"under_gray\">아동 추가대사 비활성<div id = \"clear\"><a href = \"EXEC: no_loli = 2 & gt ''menu_form''\"><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>'\r\n\telseif no_loli = 2:\r\n\t\t$setting_display_r += '<div id=\"under\">아동 추가대사 활성<div id = \"clear\"><a href = \"EXEC: no_loli = 0 & gt ''menu_form''\"><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>'\r\n\telseif no_loli = 0:\r\n\t\t$setting_display_r += '<div id=\"under\">아동 출현중<div id = \"clear\"><a href = \"EXEC: no_loli = 1 & gt ''menu_form''\"><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>'\r\n\telseif no_loli = 1:\r\n\t\t$setting_display_r += '<div id=\"under_gray\">아동 미출현<div id = \"clear\"><a href = \"EXEC: no_loli = 0 & gt ''menu_form''\"><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>' \r\n\tend",
+      "new": "\t! JO9 MOD START FRESH_MODE_20261118_SETTINGS\r\n\tif fresh_mode = 0 and perv_revealed > 0:\r\n\t\t$setting_display_r += '<div id=\"under_gray\">어림 추가대사 비활성<div id = \"clear\"><a href = \"EXEC: fresh_mode = 2 & no_loli = fresh_mode & gt ''menu_form''\"><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>'\r\n\telseif fresh_mode = 2:\r\n\t\t$setting_display_r += '<div id=\"under\">어림 추가대사 활성<div id = \"clear\"><a href = \"EXEC: fresh_mode = 0 & no_loli = fresh_mode & gt ''menu_form''\"><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>'\r\n\telseif fresh_mode = 0:\r\n\t\t$setting_display_r += '<div id=\"under\">어림 출현중<div id = \"clear\"><a href = \"EXEC: fresh_mode = 1 & no_loli = fresh_mode & gt ''menu_form''\"><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>'\r\n\telseif fresh_mode = 1:\r\n\t\t$setting_display_r += '<div id=\"under_gray\">어림 미출현<div id = \"clear\"><a href = \"EXEC: fresh_mode = 0 & no_loli = fresh_mode & gt ''menu_form''\"><img src = \"content/pic/ui/icons/legacy/clear.png\"></a></div></div>' \r\n\tend\r\n\t! JO9 MOD END FRESH_MODE_20261118_SETTINGS",
+      "count": 1
+    },
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "! JO9 MOD START AGE_CLASS_SYMBOLS_20261118_LOAD",
+      "new": "! JO9 MOD START FRESH_MODE_20261118_LOAD\r\nif arrsize('fresh_mode') = 0: fresh_mode = no_loli\r\nno_loli = fresh_mode\r\n! JO9 MOD END FRESH_MODE_20261118_LOAD\r\n! JO9 MOD START AGE_CLASS_SYMBOLS_20261118_LOAD",
+      "count": 1
+    },
+    {
+      "location": "$calculate_attributes",
+      "field": "body",
+      "old": "no_loli",
+      "new": "fresh_mode",
+      "count": 2
+    },
+    {
+      "location": "$expert_search",
+      "field": "body",
+      "old": "no_loli",
+      "new": "fresh_mode",
+      "count": 2
+    },
+    {
+      "location": "generate_stock",
+      "field": "body",
+      "old": "no_loli",
+      "new": "fresh_mode",
+      "count": 3
+    },
+    {
+      "location": "slave_sell_chek",
+      "field": "body",
+      "old": "no_loli",
+      "new": "fresh_mode",
+      "count": 4
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": "no_loli",
+      "new": "fresh_mode",
+      "count": 3
+    },
+    {
+      "location": "interaction_result",
+      "field": "body",
+      "old": "no_loli ! 2",
+      "new": "fresh_mode ! 2",
+      "count": 1
+    },
+    {
+      "location": "interaction_result",
+      "field": "body",
+      "old": "no_loli = 2",
+      "new": "fresh_mode = 2",
+      "count": 2
+    },
+    {
+      "location": "interaction_result",
+      "field": "body",
+      "old": "no_loli = 1",
+      "new": "fresh_mode = 1",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "no_loli = 2\r\n",
+      "new": "fresh_mode = 2 & no_loli = fresh_mode\r\n",
+      "count": 3
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "no_loli ! 1",
+      "new": "fresh_mode ! 1",
+      "count": 2
+    },
+    {
+      "location": "slave_auction_buy",
+      "field": "body",
+      "old": "no_loli = 2\r\n",
+      "new": "fresh_mode = 2 & no_loli = fresh_mode\r\n",
+      "count": 1
+    },
+    {
+      "location": "slave_auction_buy",
+      "field": "body",
+      "old": "no_loli = 1",
+      "new": "fresh_mode = 1",
+      "count": 1
+    },
+    {
+      "location": "slave_auction_buy",
+      "field": "body",
+      "old": "no_loli ! 2",
+      "new": "fresh_mode ! 2",
+      "count": 1
+    },
+    {
+      "location": "slave_to_train",
+      "field": "body",
+      "old": "no_loli",
+      "new": "fresh_mode",
+      "count": 1
+    },
+    {
+      "location": "#var_base",
+      "field": "body",
+      "old": "no_loli",
+      "new": "fresh_mode",
+      "count": 72
+    },
+    {
+      "location": "#dynamic",
+      "field": "body",
+      "old": "no_loli",
+      "new": "fresh_mode",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "no_loli",
+      "new": "fresh_mode",
+      "count": 4
+    },
+    {
+      "location": "#static_txt",
+      "field": "body",
+      "old": "no_loli",
+      "new": "fresh_mode",
+      "count": 1
+    },
+    {
+      "location": "#txt_man",
+      "field": "body",
+      "old": "no_loli = 2",
+      "new": "fresh_mode = 2",
+      "count": 1
+    },
+    {
+      "location": "jo9_rumor_match",
+      "field": "body",
+      "old": "no_loli",
+      "new": "fresh_mode",
+      "count": 1
+    }
+  ]
+}
