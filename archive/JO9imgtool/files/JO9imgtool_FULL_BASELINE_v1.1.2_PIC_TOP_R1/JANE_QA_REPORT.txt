@@ -1,0 +1,51 @@
+HISTORICAL REPORT — ORIGINAL v1.1.2 PACKAGE ONLY
+This inherited report describes the original package before PIC_TOP_R1.
+Its statement that the HTML is unchanged does NOT describe this repack.
+For this repack, see REPACKAGE_QA_REPORT.txt and REPACKAGE_REVIEW.md.
+No new Jane-agent review was performed for this repack.
+
+============================================================
+
+JO9 v1.1.2 Patch Manager — Jane static/integrity QA
+
+Core preservation
+-----------------
+PASS — patched jack.exe unchanged from v1.1.1.
+PASS — JO9_Detect.ps1 unchanged from v1.1.1.
+PASS — JO9_Server.ps1 unchanged from v1.1.1.
+PASS — JO9_Place_Workshop.html unchanged from v1.1.1.
+PASS — filters/config unchanged from v1.1.1.
+PASS — all inline JS blocks parse.
+
+Patch manager
+-------------
+PASS — menu option 1 = patch install/update.
+PASS — menu option 2 = vanilla restore.
+PASS — vanilla restore is NOT part of normal installation flow.
+
+Non-stock compatibility warning
+-------------------------------
+PASS — stock engine accepted.
+PASS — existing JO9 patch engine treated as update.
+PASS — unknown/non-stock engine is NOT blocked.
+PASS — exact warning is shown and YES can continue installation.
+PASS — changed file list is printed before installation.
+
+Coexistence
+-----------
+PASS — install no longer deletes the entire game/modtools directory.
+PASS — install only overwrites manifest-owned files.
+PASS — restore removes only JO9 Image Workshop-owned files.
+PASS — unrelated files under game/modtools are preserved.
+PASS — empty JO9-created directories may be removed.
+
+Vanilla restore
+---------------
+PASS — explicit VANILLA confirmation still required.
+PASS — unknown engine state warns that another engine mod may be lost.
+PASS — stock engine SHA256 validation retained.
+PASS — content/pic, save, jack.qsp remain untouched.
+
+Runtime note
+------------
+Static/integrity QA only. Windows runtime must still be tested on the game.

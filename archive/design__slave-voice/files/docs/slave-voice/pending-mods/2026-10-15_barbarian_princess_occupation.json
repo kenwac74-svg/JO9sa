@@ -1,0 +1,16 @@
+{
+  "id": "2026-10-15_barbarian_princess_occupation",
+  "description": "게임에서: 야만족 왕가 집안 노예(항상 '야만족 공주' 직업)에게 원본부터 빠져 있던 직업 보정을 보충한다. 구혼자를 모두 거절한 미혼 공주라 처녀 확정·성 경험 0, 화난 아버지를 달래던 말솜씨로 화술 +1, 궁정 소양으로 체조(무용) +1, 전사 같은 야만족 왕녀라 전투술 +1. 시중을 받으며 살았기에 요리와 잡일·청소는 최저(0). 체력·성격 등 야만족 기질은 기존 출신 세계·집안 보정이 맡으므로 더하지 않는다. 소개 문구('귀부인')는 집안 처리에서 이미 붙으므로 건드리지 않는다. 새로 생성되는 노예부터 적용된다. 사용자 결정 2026-10-15.",
+  "target": "game/jack.qsp",
+  "before_sha256": "",
+  "after_sha256": "",
+  "edits": [
+    {
+      "location": "generate_stock",
+      "field": "body",
+      "old": "elseif $stock_occupation = 'mprincess':",
+      "new": "elseif $stock_occupation = 'barbarian_princess':\r\n\t! JO9_BARBARIAN_PRINCESS_OCCUPATION_20261015 (원본부터 없던 직업 보정 보충)\r\n\tstock['virginity'] = 0\r\n\tstock['sub_vaginal'] = 0\r\n\tstock['sub_anal'] = 0\r\n\tstock['sub_bj'] = 0\r\n\tif stock['expression'] < 5: stock['expression'] += 1\r\n\tif stock['calisthenics'] < 5: stock['calisthenics'] += 1\r\n\tif stock['gladiatrix'] < 5: stock['gladiatrix'] += 1\r\n\tstock['cook'] = 0\r\n\tstock['service'] = 0\r\n\tstock[\"work_index\"] = 5\r\nelseif $stock_occupation = 'mprincess':",
+      "count": 1
+    }
+  ]
+}
