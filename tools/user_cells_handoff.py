@@ -11,7 +11,7 @@ OUTDIR = Path('docs/dialogue-rules/handoff')
 OUTDIR.mkdir(parents=True, exist_ok=True)
 CSV = list(csv.DictReader(open(BASE / 'question_fill_table.csv', encoding='utf-8-sig')))
 ORIG = {(r['question'], r['role'], r['cell'], r['voice']): r for r in CSV}
-QNAME = {'1111': '과거 묻기', '1112': '인상 묻기', '1113': '요구 묻기', '1114': '희망 묻기', '1115': '불만 묻기', '1116': '기분 묻기', '1117': '조수 묻기'}
+QNAME = {'공용': '공용 줄', 'common': '공용 줄', '1111': '과거 묻기', '1112': '인상 묻기', '1113': '요구 묻기', '1114': '희망 묻기', '1115': '불만 묻기', '1116': '기분 묻기', '1117': '조수 묻기'}
 NEED = {'exhibitionism': '노출', 'homosexualism': '동성', 'nymphomania': '색정', 'perversion': '도착', 'abuse': '매질',
         'deprivation': '구속', 'urge': '욕구', 'horny': '발정', 'instinct': '본능'}
 # 길이는 가장 긴 호칭으로 센다
