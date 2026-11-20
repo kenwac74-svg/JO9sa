@@ -4,6 +4,7 @@ const KEY='jo9-runtime-context-v1';let settings={master:1,difficulty:1,obedience
 try{settings={...settings,...JSON.parse(localStorage.getItem(KEY)||'{}')};}catch{}
 const records=new Map(),listeners=new Set();let revision=0;
 export const subscribeRuntime=fn=>(listeners.add(fn),()=>listeners.delete(fn));
+export const runtimeMasterId=()=>Number(settings.master);
 const emit=()=>listeners.forEach(fn=>fn());
 const identity=actor=>JSON.stringify([actor?.id??'',actor?.data??{}]);
 async function call(body){const r=await fetch('/api/runtime-initials',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const d=await r.json();if(!r.ok)throw Error(d.error||'초기값 계산 실패');return d;}

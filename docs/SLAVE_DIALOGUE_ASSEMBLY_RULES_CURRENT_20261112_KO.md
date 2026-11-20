@@ -1,5 +1,7 @@
 # JO9 노예·조수 대화 조립 규칙 — 현재 WORK
 
+> 2026-11-20 이후 현행 말투는 새 규칙 문서를 따른다. 아래 내용은 R05a 당시 기록이다. [최신 대사 조립·생성 규칙](DIALOGUE_ASSEMBLY_GENERATION_RULES_20261120_KO.md)
+
 갱신일: 2026-11-13. R05a 자동 전환 정책 반영 후 현재 WORK 기준이다. 일반 조립 구조는 유지하고 아래 말투·캐시 설명을 갱신했다.
 
 - 확인 파일: `G:/somi/Jack O Nine Tails v2.4_work/game/jack.qsp`

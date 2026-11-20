@@ -1,0 +1,41 @@
+{
+  "id": "2026-11-20_dialogue_qa_backstep_cue",
+  "status": "APPROVED",
+  "description": "일반 대사 QA 5번. 겁먹은 인상 대사의 행동지문 한 곳과 일치 참조를 바로잡고 저장된 기존 조각만 갱신한다.",
+  "before_sha256": "5b60992fb89f8d8f48fdb57b75e9227a4a08002482309755555d09e7d40a5ff6",
+  "after_sha256": "418fe9c60d97fcdb422e620d3de747cac2a9090496d80e7eb6fa2e8e20aebddb",
+  "edits": [
+    {
+      "location": "#txt_man",
+      "field": "body",
+      "old": "$voice_fragment_text['body_relation_frightened_core_neutral_3']='(잔뜩 경계하며 뒷걸음질 쳐서) 또 뭘 트집 잡으려고 이런 걸 묻는 거예요?'",
+      "new": "$voice_fragment_text['body_relation_frightened_core_neutral_3']='(잔뜩 경계하며 뒷걸음질 치며) 또 뭘 트집 잡으려고 이런 걸 묻는 거예요?'",
+      "count": 1,
+      "patchId": "DIALOGUE_QA_BACKSTEP_20261120"
+    },
+    {
+      "location": "#dynamic",
+      "field": "body",
+      "old": " if instr($result,'(잔뜩 경계하며 뒷걸음질 쳐서) ')=1: $result=$trim(mid($result,18,len($result)))",
+      "new": " if instr($result,'(잔뜩 경계하며 뒷걸음질 쳐서) ')=1 or instr($result,'(잔뜩 경계하며 뒷걸음질 치며) ')=1: $result=$trim(mid($result,18,len($result)))",
+      "count": 1,
+      "patchId": "DIALOGUE_QA_BACKSTEP_20261120"
+    },
+    {
+      "location": "jo9_plain_voice",
+      "field": "body",
+      "old": " if $args[1]='(잔뜩 경계하며 뒷걸음질 쳐서) 또 뭘 트집 잡으려고 이런 걸 묻는 거예요?': $result='(잔뜩 경계하며 뒷걸음질 쳐서) 또 뭘 트집 잡으려고 이런 걸 묻는 거야?' & exit",
+      "new": " if $args[1]='(잔뜩 경계하며 뒷걸음질 치며) 또 뭘 트집 잡으려고 이런 걸 묻는 거예요?': $result='(잔뜩 경계하며 뒷걸음질 치며) 또 뭘 트집 잡으려고 이런 걸 묻는 거야?' & exit",
+      "count": 1,
+      "patchId": "DIALOGUE_QA_BACKSTEP_20261120"
+    },
+    {
+      "location": "jo9_plain_voice",
+      "field": "body",
+      "old": "if $args[0]='cache':",
+      "new": "if $args[0]='cache':\r\n ! JO9 MOD START DIALOGUE_QA_BACKSTEP_20261120\r\n if $voice_fragment_text['body_relation_frightened_core_neutral_3']='(잔뜩 경계하며 뒷걸음질 쳐서) 또 뭘 트집 잡으려고 이런 걸 묻는 거예요?': $voice_fragment_text['body_relation_frightened_core_neutral_3']='(잔뜩 경계하며 뒷걸음질 치며) 또 뭘 트집 잡으려고 이런 걸 묻는 거예요?'\r\n if instr($voice_flow_uncue,' if instr($result,''(잔뜩 경계하며 뒷걸음질 쳐서) '')=1: $result=$trim(mid($result,18,len($result)))')>0: $voice_flow_uncue=replace($voice_flow_uncue,' if instr($result,''(잔뜩 경계하며 뒷걸음질 쳐서) '')=1: $result=$trim(mid($result,18,len($result)))',' if instr($result,''(잔뜩 경계하며 뒷걸음질 쳐서) '')=1 or instr($result,''(잔뜩 경계하며 뒷걸음질 치며) '')=1: $result=$trim(mid($result,18,len($result)))')\r\n ! JO9 MOD END DIALOGUE_QA_BACKSTEP_20261120",
+      "count": 1,
+      "patchId": "DIALOGUE_QA_BACKSTEP_20261120"
+    }
+  ]
+}

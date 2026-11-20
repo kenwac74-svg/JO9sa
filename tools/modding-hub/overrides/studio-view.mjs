@@ -7,7 +7,7 @@ import {runtimeValues,runtimeControls,bindRuntimeControls,subscribeRuntime} from
 import {describeCharacterField} from './character-fields.mjs';
 import {esc as e, loadSimData} from './sim-data.mjs';
 import {createLookEditor} from './studio-look.mjs';
-import {SLOTS} from './character-view.mjs';
+import {SLOTS,questionnaireTopics} from './character-view.mjs';
 import {pickerBackground, needsBackgroundApply, serialSaves} from './background-metadata.mjs';
 
 const PAGE = 40;
@@ -36,7 +36,7 @@ export async function createStudioView(api, options = {}) {
  const get = async f => (await fetch('./data/' + f)).json();
  const [TRAITS, SEEDS, REFS, CAT] = await Promise.all([get('traits.json'), get('game-seed-keys.json'), get('interview-refs.json'), get('background-categories.json')]);
  // 칸별 원본 DB 후보(창작물 인터뷰 키): 시뮬레이터와 같은 주제 묶음
- const POOL = Object.fromEntries(SLOTS.map(([, id, , topics]) => [id, topics.flatMap(k => REFS.topics[k] ?? [])]));
+ const questionPool = id => questionnaireTopics(REFS.topics,SLOTS.find(slot=>slot[1]===id)?.[3]??[]);
  // 배경 분류 선택지(세계·출신·직업): 같은 ID의 변형은 하나로
  // 세계 → 출신 → 직업 연결(시뮬레이터와 같은 연결표)으로 위에서 아래로 고른다
  const SD = await loadSimData();
@@ -153,7 +153,7 @@ export async function createStudioView(api, options = {}) {
  // 편집 중인 캐릭터를 시뮬레이터에 연다. 캐릭터를 열 때·저장할 때 자동으로, '시뮬레이터로 보내기' 버튼으로 직접(탭 이동까지)
  function sendToSim(go) {
   if (!api.charView || !st.ch || st.ch.id === 'new' || !st.book || (isMaster && !go)) return;
-  api.charView.loadGameCharacter(pendingData(), st.ch.jsonFile, {...st.book, simulation:simulationData(),portrait:st.ch.faces?.seed_ava_clear??st.ch.faces?.seed_ava,background: resolveBg(st.book.background ?? {}),backgroundResolved:true, id: isMaster ? 'master:' + st.ch.id : st.ch.id});
+  api.charView.loadGameCharacter(pendingData(), st.ch.jsonFile, {...st.book, simulation:simulationData(),portrait:st.ch.faces?.seed_ava_clear??st.ch.faces?.seed_ava,background: resolveBg(st.book.background ?? {}),backgroundResolved:true, fixedSexTalk:isMaster?false:st.ch.spawnPolicy?.unique, id: isMaster ? 'master:' + st.ch.id : st.ch.id});
   if (go) { api.switchTab('character'); api.toast(`${st.ch.data.seed_name || 'ID ' + st.ch.id}을(를) 시뮬레이터로 보냈습니다. 각색한 뒤 캐릭터 편집 › 대사집에서 '담기'를 누르세요.`); }
  }
  // 편집 중(저장 전) 값까지 반영한 게임 JSON: 시뮬레이터로 보낼 때 쓴다
@@ -364,12 +364,14 @@ export async function createStudioView(api, options = {}) {
   return `${blocked ? `<p class="warning">표시 불가 분류: ${e(blocked)}</p>` : ''}${r.t === null ? `<p class="fine-print">원문을 싣지 않은 대답입니다. 원본 글의 Q${r.q}${r.o > 1 ? ` (${r.o}번째)` : ''}에서 확인하세요. 부분 키: ${r.p.map(e).join(', ')}</p>` : `<p class="cv-ref-text">${e(r.t)}</p>`}<a href="${e(REFS.urls[r.u])}" target="_blank" rel="noopener">원본 글 열기 (Q${r.q})</a>`;
  }
  function slotEditor(lv, id, label) {
-  const b = st.book, ref = b.refs?.[id], text = b.lines?.[id] ?? '', pool = POOL[id] ?? [];
+  const b = st.book, ref = b.refs?.[id], text = b.lines?.[id] ?? '', pool = questionPool(id);
+  const fixed = !isMaster && st.ch.spawnPolicy?.unique;
+  const canUseRef = fixed && ref && REFS.rows[ref.key]?.t?.trim();
   const open = ref || text;
   return `<details class="tb-slot" ${open ? 'open' : ''}><summary><b>${e(label)}</b> <small>헌신 ${lv} · <code>${id}</code></small>${ref ? ` <span class="badge muted">${e(ref.key)}${ref.blocked.length ? ' · ' + e(ref.blocked.join(',')) : ''}</span>` : ''}${text ? ' <span class="badge">대사 있음</span>' : ''}</summary>
    <div class="tb-slot-body"><div class="tb-ref"><div class="st-row"><button class="text-button" data-tb-step="${id}" data-d="-1" ${pool.length ? '' : 'disabled'}>◀</button><select data-tb-ref="${id}"><option value="">(원본 DB 고르기 · 후보 ${pool.length}개)</option>${pool.map(k => { const r = REFS.rows[k]; return `<option value="${e(k)}" ${ref?.key === k ? 'selected' : ''}>${e(k)}${r?.b.length ? ' · ' + r.b.join(',') : ''}${r?.t === null ? ' · 원문 없음' : ''}</option>`; }).join('')}</select><button class="text-button" data-tb-step="${id}" data-d="1" ${pool.length ? '' : 'disabled'}>▶</button></div>
-    ${ref ? refBody(ref.key) : '<p class="fine-print">고르면 원문이 여기 나옵니다.</p>'}</div>
-   <textarea data-tb-line="${id}" rows="4" maxlength="8000" placeholder="원문을 참조해 이 캐릭터 말투로 직접 쓰세요">${e(text)}</textarea></div></details>`;
+    ${ref ? refBody(ref.key) : '<p class="fine-print">고르면 원문이 여기 나옵니다.</p>'}${canUseRef ? `<button class="button secondary small" data-tb-use-ref="${id}">이 원문을 고정 답변으로 사용</button>` : ''}</div>
+   <textarea data-tb-line="${id}" rows="4" maxlength="8000" placeholder="${fixed?'고정 답변을 직접 입력하세요':'원문을 참조해 이 캐릭터 말투로 직접 쓰세요'}">${e(text)}</textarea></div></details>`;
  }
  function setRef(id, key) {
   if (!key) delete st.book.refs[id]; else st.book.refs = {...(st.book.refs ?? {}), [id]: {key, blocked: REFS.rows[key]?.b ?? []}};
@@ -444,7 +446,7 @@ export async function createStudioView(api, options = {}) {
   return `<p class="fine-print">대사집 파일: <code>${e(st.talk.path)}</code> ${st.talk.exists ? '' : '(아직 없음 · 저장하면 만듭니다)'} · 게임 캐릭터 JSON과 따로 둡니다(게임 적용 방식은 모드 제작자가 정함).</p>
    ${bgPicker()}
    <div class="st-row"><button class="button secondary" data-tb-act="to-sim" ${sim ? '' : 'disabled'}>시뮬레이터에서 열기 →</button><button class="button secondary" data-tb-act="from-sim" ${sim ? '' : 'disabled'}>← 시뮬레이터 결과를 대사집에 담기</button>
-    <span class="fine-print">시뮬레이터에서 과거 경험을 뽑고 필로우토크 칸을 직접 각색한 뒤 '담기'를 누르세요.</span></div>
+    <span class="fine-print">${!isMaster&&st.ch.spawnPolicy?.unique?'질문별 원문을 고르거나 직접 쓴 뒤 대사집을 저장하세요. 유니크는 입력한 고정 답변만 사용합니다.':"시뮬레이터에서 과거 경험을 뽑고 필로우토크 칸을 직접 각색한 뒤 '담기'를 누르세요."}</span></div>
    <div class="section-label">질문하기 · 일반 대사</div><p class="fine-print">과거 묻기는 위 배경 설정 DB를 따릅니다. 질문별 개별 대사는 시뮬레이터에서 가져오거나 아래에서 직접 편집하세요.</p>
    ${lines.filter(([k])=>/^general\.111[2-8]$/.test(k)).map(([k,v])=>`<label class="st-story"><span class="section-label">${e(QUESTION_NAMES[k.slice(8)]||k)} <code>${e(k)}</code></span><textarea data-tb-line="${e(k)}" rows="3" maxlength="8000">${e(v)}</textarea></label>`).join('')||'<p class="fine-print">아직 개별 일반 대사가 없습니다.</p>'}
    <div class="section-label">성경험 묻기 · 섹스토크 대사 · 칸 ${SLOTS.length}개 <small class="fine-print">칸마다 원본 DB를 골라 참조하며 직접 씁니다. 저장: 대사 ${lines.filter(([, v]) => v).length}칸 · DB 연결 ${Object.keys(b.refs ?? {}).length}칸</small></div>
@@ -596,7 +598,11 @@ export async function createStudioView(api, options = {}) {
   if (t.dataset.stUnset) { unsetVal(t.dataset.stUnset); return render(); }
   if (t.dataset.stAdd) { setVal(t.dataset.stAdd, 0); return render(); }
   if (t.dataset.stTraitOff) { unsetVal('seed_' + t.dataset.stTraitOff); return render(); }
-  if (t.dataset.tbStep) { const id = t.dataset.tbStep, pool = POOL[id], i = pool.indexOf(st.book.refs?.[id]?.key); return setRef(id, pool[(i + Number(t.dataset.d) + pool.length) % pool.length]); }
+  if (t.dataset.tbStep) { const id = t.dataset.tbStep, pool = questionPool(id); if(!pool.length)return;const i = pool.indexOf(st.book.refs?.[id]?.key); return setRef(id, pool[(i + Number(t.dataset.d) + pool.length) % pool.length]); }
+  if (t.dataset.tbUseRef) {
+   const id=t.dataset.tbUseRef, text=REFS.rows[st.book.refs?.[id]?.key]?.t;
+   if (typeof text==='string'&&text.trim()) {st.book.lines[id]=text;markBook();return render();}
+  }
   if (t.dataset.tbClear) { const k = t.dataset.tbClear; return setBg(k, {[k]: undefined, [k + 'Group']: undefined}); }
   if (t.dataset.tbDel) { delete st.book.lines[t.dataset.tbDel]; st.bookDirty = true; return render(); }
   const qa = t.dataset.qsAct;
@@ -616,7 +622,8 @@ export async function createStudioView(api, options = {}) {
   if (tb === 'from-sim') {
    const x = api.charView.exportTalk();
    if (x.id !== String(isMaster ? 'master:' + st.ch.id : st.ch.id)) return api.toast(`시뮬레이터에 열린 캐릭터(${x.name || '이름 없음'}, ${x.id || '번호 없음'})가 이 캐릭터가 아닙니다. 먼저 '시뮬레이터에서 열기'를 누르세요.`);
-   Object.assign(st.book, {background: {...st.book.background, ...x.background}, seed: x.seed, acq: x.acq, overrides: x.overrides, lines: {...st.book.lines, ...x.lines}, facts: x.facts, history: x.history, refs: x.refs});
+   Object.assign(st.book, {background: {...st.book.background, ...x.background}, seed: x.seed, acq: x.acq, overrides: x.overrides, lines: {...st.book.lines, ...x.lines}});
+   if (Object.hasOwn(x,'history')) Object.assign(st.book,{facts:x.facts,history:x.history,refs:x.refs});
    st.bookDirty = true; api.toast(`시뮬레이터 결과를 담았습니다 · 대사 ${Object.keys(x.lines).length}칸`); return render();
   }
   const dg = t.dataset.dgAct;
@@ -672,5 +679,6 @@ export async function createStudioView(api, options = {}) {
  render();
  loadGame();
  window.addEventListener('jo9:role-open',async event=>{if(event.detail.role!==role)return;await loadList();api.switchTab(id);await open(event.detail.id);});
+ window.addEventListener('jo9:questionnaire-change',()=>{if(st.tab==='talk'&&st.book)render();});
  return {reload: loadGame};
 }

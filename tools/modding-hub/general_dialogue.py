@@ -11,6 +11,10 @@ ORIGINAL={'relation','obed','urge','fear','ratio','instinct','custom','spoil','m
 FIELDS={'text','role','types','relations','emotion','tone','level','question','good_mood','rare_praise','need_fear'}
 INDEX=r'''(?:'(?:''|[^'])*'|"(?:""|[^"])*")'''
 PATTERN=re.compile(r'(?m)^[ \t]*(?P<arr>\$?voice_fragment_(?:'+ '|'.join(FIELDS) +r')|\$slave_(?:'+'|'.join(ORIGINAL)+r')_description)\[(?P<index>'+INDEX+r'|-?\d+)\][ \t]*=[ \t]*(?P<value>[^\r\n]*)')
+REFORM_LOCATION='jo9_character_dialogue'
+REFORM_ROW=re.compile(r"(?m)^[ \t]*if \$line_key='(?P<profile>[a-z_]+)\|(?P<question>111[124])\|(?P<state>[a-z_]+)': \$result=(?P<value>"+INDEX+r")[ \t]*&[ \t]*exit[ \t]*\r?$")
+REFORM_STRONG_BLOCK=re.compile(r"(?ms)^if \$args\[0\]='strong':\r?\n(?P<body>.*?)^end[ \t]*\r?$")
+REFORM_STRONG_ROW=re.compile(r"(?m)^[ \t]*(?:if \$args\[1\]='(?P<profile>[a-z_]+)': )?\$result=(?P<value>"+INDEX+r")[ \t]*\r?$")
 _CACHE={}
 
 def plain(text):
@@ -53,6 +57,16 @@ class GeneralDialogueDB:
  def meta(self):
   _,rows,_,skipped=self._load();counts={q:sum(r['question']==q for r in rows) for q in QUESTIONS}
   return {'rows':len(rows),'questions':QUESTIONS,'counts':counts,'questionAliases':{'1118':'1117'},'skippedNonLiteral':skipped,'source':str(self.path),'types':['ice','proud','flame','calm','plain','frank','doll','meek','fragile'],'relations':['neutral','hopeful','duty','loyal','hostile','fearful','bleak','broken']}
+ def reform(self):
+  """Read deployed voice reform literals for preview without exposing them to save()."""
+  doc,_,_,_=self._load()
+  rows=[];strong={}
+  if REFORM_LOCATION in doc.index:
+   body=doc.body(REFORM_LOCATION)
+   rows=[{'profile':m['profile'],'question':m['question'],'state':m['state'],'text':literal(m['value'])} for m in REFORM_ROW.finditer(body)]
+   block=REFORM_STRONG_BLOCK.search(body)
+   if block:strong={m['profile'] or 'fallback':literal(m['value']) for m in REFORM_STRONG_ROW.finditer(block['body'])}
+  return {'rows':rows,'source':str(self.path),'available':bool(rows),'strong':strong}
  def search(self,params):
   _,rows,_,_=self._load();q=str(params.get('q','')).strip().casefold();question=str(params.get('question',''));question='1117' if question=='1118' else question;tone=str(params.get('tone',''));kind=params.get('kind','');source=params.get('source','')
   found=[r for r in rows if (not question or r['question']==question) and (not kind or r['kind']==kind) and (not source or r['source']==source) and compatible(str(r.get('types','*')),str(params.get('type',''))) and compatible(str(r.get('relations','*')),str(params.get('relation',''))) and (not tone or not r.get('tone') or str(r['tone'])==tone) and (not q or q in (r['key']+' '+plain(r['text'])+' '+r.get('role','')).casefold())]

@@ -1,6 +1,8 @@
 // 필로우토크 조립기 시제품: 과거 경험 공식 결과를 "노예와 대화한다"의 과거 성경험 이야기로 조립한다
 // 게임 대사 조립 규칙(SLAVE_DIALOGUE_ASSEMBLY_RULES_CURRENT_20261112)을 따른다: 성격 9유형, 말투 번호, 관계 모드, 감정 깊이,
 // 메타데이터가 붙은 조각 행을 거르고 최근 2회를 피해 추첨한다. seed_age는 발육·외형 분류 코드다.
+import {speechRegister,plainSpeech} from './speech-reform.mjs';
+export {CASUAL_UNIQUE,CASUAL_OCC} from './speech-reform.mjs';
 
 // 4장 성격 9유형: E = temper + sensitivity, A = ego + pride (3 이하 낮음, 4~6 중간, 7 이상 높음)
 // 대상: 랜덤 노예와 유니크 노예. 유니크는 고정 배경이라 과거 경험 값은 공식이 아니라 지정값(jo9_initial_history 등)을 쓴다.
@@ -14,15 +16,10 @@ export function voiceType(s){
  return TYPES[band((s.ego??0)+(s.pride??0))][band((s.temper??0)+(s.sensitivity??0))];
 }
 
-// 5장 말투: 1 격식 존댓말, 2 일반 존댓말. 일반 노예에는 반말(3)을 쓰지 않는다(사용자 최신 기준).
-// 게임의 말투3 직업도 필로우토크에서는 2로 둔다. 1/2 구분 정리는 게임 쪽 과제로 남아 있다.
-const FORMAL=['maid','valertry','secretary','nun','policewoman','mind_contol','time_plice','jailer','academy','mech'];
-// 말투 3 반말(대화 규칙 개편, 사용자 확인 2026-11-13): 지정 유니크 8명과 공주 계열 직업(mprincess·barbarian_princess). 반말 원고가 없는 조각은 일반 존댓말(2) 문장을 쓴다.
-export const CASUAL_UNIQUE=[3002,2610,2620,3010,3021,3023,2621,3012];
-export const CASUAL_OCC=['mprincess','barbarian_princess'];
+// 높임말은 일반 대화와 공유하며, 선택된 원고의 의미와 순서는 섹스토크 규칙을 따른다.
 export const STYLE_NAME={1:'격식 존댓말',2:'일반 존댓말',3:'반말'};
-export function speechStyle(occupation,id){if(CASUAL_UNIQUE.includes(Number(id))||CASUAL_OCC.includes(occupation))return 3;return FORMAL.includes(occupation)?1:2;}
-export const styleText=(text,style)=>text[style]??text[2];
+export function speechStyle(occupation,id){return speechRegister({occupation,id});}
+export const styleText=(text,style)=>text[style]??(style===3?plainSpeech(text[2]):text[2]);
 
 // 6장 관계 모드
 export const MODE_NAME={hostile:'적대',fearful:'두려움',bleak:'우울',broken:'무너짐',hopeful:'기대',duty:'의무',loyal:'헌신',neutral:'중립'};
@@ -150,8 +147,8 @@ const hasBatchim=w=>{const c=w.charCodeAt(w.length-1)-0xAC00;return c>=0&&c<1117
 const childWords=n=>['','하나','둘','셋','넷','다섯','여섯','일곱','여덟','아홉'][n]??`${n}명`;
 
 /** stock: 영입 처리 후 값(+ psy_status·moral·fear), result: 과거 경험 공식 결과, tier: 직업 묶음, rand: 0~1 난수, history: 최근에 쓴 조각 id */
-export function pillowTalk(stock,result,tier,rand=Math.random,history=[]){
- const ctx={stock,type:voiceType(stock),style:speechStyle(stock.occupation,stock.id??stock.type),mode:relationMode(stock),rand,history,used:[]};
+export function pillowTalk(stock,result,tier,rand=Math.random,history=[],speaker=stock){
+ const ctx={stock,type:voiceType(stock),style:speechRegister(speaker),mode:relationMode(stock),rand,history,used:[]};
  const n=result.intimacy??0,told=toldCount(ctx.type,n),lines=[];
  const say=(role,extra=s=>s)=>{const r=pickRow(role,ctx);if(r)lines.push(extra(styleText(r.text,ctx.style).replace('{N}',countWords(told)).replace('{X}',String(told))));return !!r;};
  // 적대이고 적대 깊이 0이면 말하지 않는다(거절)

@@ -123,6 +123,7 @@ function calculate(s,req){
  const strings=Object.fromEntries(['name','world','family','occupation','psy_status','psy_basic','cloth','fullimage'].map(k=>[k,api.readVariableByKey('$'+role,k)]));
  strings.name=api.readVariable('$'+role+'_name')||strings.name;strings.psy_status=api.readVariable('$'+role+'_psy_status')||strings.psy_status;strings.psy_basic=api.readVariable('$'+role+'_psy_basic')||strings.psy_basic;
  for(const k of ['world','family','occupation'])strings[k]=api.readVariable('$'+role+'_'+k)||strings[k];
+ for(const k of ['world_description','family_description','occupation_description'])strings[k]=api.readVariable('$'+role+'_'+k)||'';
  return {values,rates,strings,characterId:actualId,role,context,route:context.route,qspHash:s.hash,engine:api.version(),instanceId:crypto.randomUUID(),acquisitionToken:token,source:selected?{location:selected.location,line:selected.assignment_line,kind:selected.kind,requirements:selected.preconditions||''}:{kind:context.route},compatibility:{forLoops:s.loops,fileChecks:s.files,host:'FastQSP 5.7 / QSP WASM '+api.version()},effects:s.effects.slice(effectAt).filter(x=>!['main_changed','stats_changed','actions_changed','objects_changed','panel_visibility','timer','user_input'].includes(x.event))};
 }
 async function handle(req){if(!state||state.root!==req.root)await boot(req.root);if(req.action==='meta')return meta(state,req.characterId);return calculate(state,req);}

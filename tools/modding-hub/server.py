@@ -17,7 +17,7 @@ import background_metadata as backgrounds
 HERE=Path(__file__).resolve().parent
 def build_id():
  h=hashlib.sha256()
- for name in ['server.py','helper_dashboard.py','helper_dashboard_html.py','helper-dashboard.css','data/slave-status-formulas.html','image_tool_runtime.py','Start-Image-Tool.ps1','tool-runtime.mjs','registry.py','integration.mjs','integration.css','app_launcher.py','embedded-tools.css','workspace.html','workspace-app.mjs','workspace-router.mjs','workspace-menu.json','overrides/workbench.mjs','overrides/trait-editor.mjs','overrides/studio-save.mjs','overrides/studio-db.mjs','overrides/studio-ai.mjs','overrides/studio-look.mjs','overrides/studio-look-geometry.mjs','master_editor.py','master_initials.py','general_dialogue.py','overrides/past-history.mjs','overrides/sim-data.mjs','overrides/coef-view.mjs','overrides/sim-view.mjs','overrides/pillow-talk.mjs','overrides/character-view.mjs','overrides/general-dialogue.mjs','overrides/studio-view.mjs','overrides/studio-role.mjs','game_presentation.py','overrides/game-presentation.mjs','overrides/initial-preview.mjs','runtime_initials.py','runtime-initials.cjs','acquisition-routes-runtime.json','overrides/runtime-initials.mjs','appearance_sharing.py','appearance-sharing.cjs','spawn_warning.py','spawn-policy-registry.json','overrides/spawn-notice.mjs','background_metadata.py','data/background-classifications.json','overrides/background-metadata.mjs','vendor/qsp/wasm-engine.cjs','vendor/qsp/qsp-engine.wasm']:
+ for name in ['server.py','helper_dashboard.py','helper_dashboard_html.py','helper-dashboard.css','data/slave-status-formulas.html','image_tool_runtime.py','Start-Image-Tool.ps1','tool-runtime.mjs','registry.py','integration.mjs','integration.css','app_launcher.py','embedded-tools.css','workspace.html','workspace-app.mjs','workspace-router.mjs','workspace-menu.json','overrides/workbench.mjs','overrides/trait-editor.mjs','overrides/studio-save.mjs','overrides/studio-db.mjs','overrides/studio-ai.mjs','overrides/studio-look.mjs','overrides/studio-look-geometry.mjs','master_editor.py','master_initials.py','general_dialogue.py','overrides/past-history.mjs','overrides/sim-data.mjs','overrides/coef-view.mjs','overrides/sim-view.mjs','overrides/pillow-talk.mjs','overrides/speech-reform.mjs','data/sex-talk-questionnaire.json','overrides/character-view.mjs','overrides/general-dialogue.mjs','overrides/studio-view.mjs','overrides/studio-role.mjs','game_presentation.py','overrides/game-presentation.mjs','overrides/initial-preview.mjs','runtime_initials.py','runtime-initials.cjs','acquisition-routes-runtime.json','overrides/runtime-initials.mjs','appearance_sharing.py','appearance-sharing.cjs','spawn_warning.py','spawn-policy-registry.json','overrides/spawn-notice.mjs','background_metadata.py','data/background-classifications.json','overrides/background-metadata.mjs','vendor/qsp/wasm-engine.cjs','vendor/qsp/qsp-engine.wasm']:
   h.update((HERE/name).read_bytes())
  return h.hexdigest()[:16]
 def render_workspace():
@@ -118,8 +118,11 @@ def create_server(studio_root,repo,urls_file,port=0):
     seeds=json.loads((base.DIST/'data/game-seed-keys.json').read_text('utf-8'))
     seeds['keys']=list(dict.fromkeys(seeds['keys']+list(backgrounds.SEED_SUFFIXES)))
     return self.send_json(200,seeds)
+   if native=='data/sex-talk-questionnaire.json':
+    return self.blob((HERE/'data/sex-talk-questionnaire.json').read_bytes(),'application/json; charset=utf-8')
    if native=='character-view.mjs':return self.blob((HERE/'overrides/character-view.mjs').read_bytes(),'text/javascript; charset=utf-8')
    if route=='/workspace/general-dialogue.mjs':return self.blob((HERE/'overrides/general-dialogue.mjs').read_bytes(),'text/javascript; charset=utf-8')
+   if native in ('speech-reform.mjs','workspace/speech-reform.mjs'):return self.blob((HERE/'overrides/speech-reform.mjs').read_bytes(),'text/javascript; charset=utf-8')
    if native=='studio-view.mjs':
     text=(HERE/'overrides/studio-view.mjs').read_text('utf-8')
     marker='<button class="button secondary st-tosim"'
@@ -133,6 +136,7 @@ def create_server(studio_root,repo,urls_file,port=0):
    try:
     import re
     if route=='/api/game-presentation':return self.send_json(200,read_metadata(Path(base.paths().root)/'jack.qsp'))
+    if route=='/api/general-dialogue/reform':return self.send_json(200,dialogue_db().reform())
     if route=='/api/general-dialogue/meta':return self.send_json(200,dialogue_db().meta())
     if route=='/api/general-dialogue/search':return self.send_json(200,dialogue_db().search({k:v[-1] for k,v in parse_qs(url.query).items()}))
     if route=='/api/general-dialogue/row':return self.send_json(200,dialogue_db().row(parse_qs(url.query).get('id',[''])[0]))
