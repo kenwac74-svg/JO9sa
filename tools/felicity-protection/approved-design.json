@@ -3,6 +3,11 @@
   "status": "approved_design_not_installed",
   "approvedDate": "2026-11-12",
   "originalPresetId": 2572,
+  "entryPolicy": {
+    "preserveOriginalQuestStartConditions": true,
+    "newQuestOnly": true,
+    "nobleRequired": true
+  },
   "characterPolicy": "Separate protection-route character data; preserve original preset and existing quest.",
   "durationDaysFromRecruitment": 270,
   "stages": {
@@ -60,18 +65,29 @@
     "fearAtMost": 2,
     "instinctAtLeast": 2,
     "customAtLeast": 3,
-    "familyEnding": "Felicity asks the guardian to become her father and stays in a nonsexual family relationship.",
-    "spectreRelationship": "worst"
+    "familyEnding": "Felicity asks the guardian to become her father and stays in a nonsexual family relationship."
   },
   "normalEnding": {
     "condition": "Protection did not fail, but happy-ending thresholds are not all satisfied at day270.",
-    "outcome": "Return Felicity to her father and receive a reward.",
-    "spectreRelationship": "worst"
+    "outcome": "Return Felicity to her father and receive a reward."
+  },
+  "protectionFailure": {
+    "returnToOriginalQuestImmediately": true,
+    "countProtectionDaysTowardOriginalDeadline": true,
+    "showDedicatedFailureMessageOrAction": false
+  },
+  "spectreRetaliation": {
+    "replaceRelationshipPenaltyWithEncounter": true,
+    "eligibleAfterEndings": ["happy", "normal"],
+    "preserveNobleStatus": true,
+    "preserveGeneralWhiteCityAccess": true,
+    "randomAssassinCombatEncounter": true
   },
   "pending": [
     "Assign and verify an unused protected character preset ID.",
     "Recalculate neglect event gains with native recovery; previous slow-recovery model is obsolete.",
     "Determine normal-ending reward.",
+    "Define assassin encounter timing, locations, probability, frequency, and combat difficulty.",
     "Integrate QSP events, failure guards, branch timing and UI; then test in game."
   ]
 }
