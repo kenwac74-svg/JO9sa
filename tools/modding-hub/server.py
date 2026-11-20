@@ -140,6 +140,11 @@ def create_server(studio_root,repo,urls_file,port=0):
     if route=='/api/general-dialogue/meta':return self.send_json(200,dialogue_db().meta())
     if route=='/api/general-dialogue/search':return self.send_json(200,dialogue_db().search({k:v[-1] for k,v in parse_qs(url.query).items()}))
     if route=='/api/general-dialogue/row':return self.send_json(200,dialogue_db().row(parse_qs(url.query).get('id',[''])[0]))
+    if route=='/api/chars':
+     items=base.list_characters()
+     for item in items:
+      item['unique'], _ = spawn_policy.identity(item['id'], item['name'])
+     return self.send_json(200,{'items':items,'choices':base.choices()})
     if route=='/api/master/chars':return self.send_json(200,{'items':store().list(),'choices':base.choices()})
     match=re.fullmatch(r'/api/master/(\d+)',route)
     if match:return self.send_json(200,read_master(match[1]))

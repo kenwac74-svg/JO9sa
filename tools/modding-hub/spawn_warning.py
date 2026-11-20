@@ -93,14 +93,20 @@ class SpawnPolicy:
         except OSError:
             return None
 
+    def identity(self, sid, name):
+        sid = int(sid)
+        if sid in self.unique_ids:
+            return True, 'reviewed-id'
+        if sid in self.repeatable_ids:
+            return False, 'repeatable-template'
+        if str(name or '').strip():
+            return True, 'named'
+        return False, 'generic'
+
     def read(self, root, sid, data):
         sid = int(sid)
-        known = sid in self.unique_ids
-        repeatable = sid in self.repeatable_ids
-        named = bool(str(data.get('seed_name') or '').strip())
-        unique = known or (named and not repeatable)
-        row = {'unique': unique, 'warning': '', 'status': 'generic',
-               'identitySource': 'reviewed-id' if known else 'repeatable-template' if repeatable else 'named' if named else 'generic',
+        unique, source = self.identity(sid, data.get('seed_name'))
+        row = {'unique': unique, 'warning': '', 'status': 'generic', 'identitySource': source,
                'inRandomPool': None, 'protected': None}
         if not unique:
             return row

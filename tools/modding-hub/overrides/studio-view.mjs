@@ -74,7 +74,7 @@ export async function createStudioView(api, options = {}) {
    unique: n.unique ? {name: n.name.trim(), slug: n.slug.trim(), id: n.id.trim(), story: n.story} : null};
  }
 
- const st = {bgMode: role, gender: '', roleCopy: null, game: null, items: [], q: '', page: 0, sel: null, ch: null, tab: 'look', edits: blank(), preview: null, busy: false, error: '', talk: null, book: null, bookDirty: false, bgVersion: 0, bgUnsaved: false, talkPending: 0, qq: '', qhits: null, qedits: {}, qmod: null, qid: '', qdesc: '', sharing: null};
+ const st = {bgMode: role, gender: '', roleCopy: null, game: null, items: [], q: '', uniqueOnly: false, page: 0, sel: null, ch: null, tab: 'look', edits: blank(), preview: null, busy: false, error: '', talk: null, book: null, bookDirty: false, bgVersion: 0, bgUnsaved: false, talkPending: 0, qq: '', qhits: null, qedits: {}, qmod: null, qid: '', qdesc: '', sharing: null};
  const queueTalk = serialSaves();
  function blank() { return {set: {}, unset: new Set(), story: {}, master: null, initials: {}, simulation: null}; }
  const data = () => st.ch?.data ?? {};
@@ -206,9 +206,14 @@ export async function createStudioView(api, options = {}) {
  }
  function library() {
   const q = st.q.trim().toLowerCase();
-  const list = st.items.filter(x => (!isMaster || !st.gender || x.gender === st.gender) && (!q || String(x.id).includes(q) || (x.name || '').toLowerCase().includes(q) || (x.base || '').toLowerCase().includes(q) || (x.jsonFile || '').toLowerCase().includes(q)));
+  const list = st.items.filter(x => {
+   if (isMaster && st.gender && x.gender !== st.gender) return false;
+   if (!isMaster && st.uniqueOnly && x.unique !== true) return false;
+   return !q || String(x.id).includes(q) || (x.name || '').toLowerCase().includes(q) || (x.base || '').toLowerCase().includes(q) || (x.jsonFile || '').toLowerCase().includes(q);
+  });
+  const uniqueFilter = isMaster ? '' : `<label class="cv-lock"><input type="checkbox" data-st="unique-only" ${st.uniqueOnly ? 'checked' : ''}> 유니크만 보기</label>`;
   const pages = Math.max(1, Math.ceil(list.length / PAGE)), page = Math.min(st.page, pages - 1);
-  return `<div class="st-lib-head">${isMaster ? `<div class="st-row">${[['','전체'],['male','남주인공'],['female','여주인공']].map(([k,l]) => `<button class="button secondary small ${st.gender===k?'primary':''}" data-role-gender="${k}">${l}</button>`).join('')}</div><p class="fine-print">새 마스터는 인물의 복제 메뉴에서 만듭니다.</p>` : ''}<button class="button secondary st-new" data-st-act="new" ${isMaster ? 'hidden' : st.choices ? '' : 'disabled title="먼저 캐릭터 하나를 열어 선택지를 읽으세요"'}>+ 새 캐릭터</button><input data-st="q" value="${e(st.q)}" placeholder="번호·이름·파일 검색"><small class="fine-print">${list.length}명 · ${e(st.game.root)}</small></div>
+  return `<div class="st-lib-head">${isMaster ? `<div class="st-row">${[['','전체'],['male','남주인공'],['female','여주인공']].map(([k,l]) => `<button class="button secondary small ${st.gender===k?'primary':''}" data-role-gender="${k}">${l}</button>`).join('')}</div><p class="fine-print">새 마스터는 인물의 복제 메뉴에서 만듭니다.</p>` : ''}<button class="button secondary st-new" data-st-act="new" ${isMaster ? 'hidden' : st.choices ? '' : 'disabled title="먼저 캐릭터 하나를 열어 선택지를 읽으세요"'}>+ 새 캐릭터</button><input data-st="q" value="${e(st.q)}" placeholder="번호·이름·파일 검색">${uniqueFilter}<small class="fine-print">${list.length}명 · ${e(st.game.root)}</small></div>
    <div class="st-list">${list.slice(page * PAGE, page * PAGE + PAGE).map(x => `<button class="st-item ${x.id === st.sel ? 'on' : ''}" data-st-open="${x.id}">${x.face ? `<img src="${e(x.face)}" alt="" loading="lazy">` : '<span class="st-noface">?</span>'}<span><b>${x.id}</b> ${e(x.name || x.base)}<small>${e([x.age, x.color, x.length].filter(Boolean).join(' · '))}${x.outfits.length ? ' · 외형 ' + e(x.outfits.join('/')) : ''}</small></span></button>`).join('')}</div>
    <div class="st-pager"><button class="text-button" data-st-page="-1" ${page ? '' : 'disabled'}>◀</button><span>${page + 1} / ${pages}</span><button class="text-button" data-st-page="1" ${page < pages - 1 ? '' : 'disabled'}>▶</button></div>`;
  }
@@ -383,6 +388,7 @@ export async function createStudioView(api, options = {}) {
  const groupList = kind => [...(CAT[kind] ?? [])];
  // 위 칸이 소분류(고정)면 그 값, 대분류만이면 그 대분류의 모든 후보를 위 칸 값으로 보고 이 칸의 허용 목록을 낸다(시대순)
  function candidates(kind, bg) {
+  if (!isMaster && st.ch?.spawnPolicy?.unique) return SD.optionsV2(kind, {});
   const ups = ORDER.slice(0, ORDER.indexOf(kind));
   const upVals = k => bg[k] ? [bg[k]] : bg[k + 'Group'] ? candidates(k, bg).filter(id => groupList(k).find(g => g.id === bg[k + 'Group'])?.members.includes(id)) : [''];
   let combos = [{}];
@@ -552,6 +558,14 @@ export async function createStudioView(api, options = {}) {
  });
  root.addEventListener('change', ev => {
   const t = ev.target;
+  if (t.dataset.st === 'unique-only') {
+   st.uniqueOnly = t.checked;
+   st.page = 0;
+   const libraryPanel = root.querySelector('.st-lib');
+   libraryPanel.innerHTML = library();
+   libraryPanel.querySelector('[data-st="unique-only"]').focus();
+   return;
+  }
   if (t.hasAttribute('data-st-share-peer')) { const state = sharingState(); if (!state || state.busy) return; if (t.checked) state.selected.add(t.dataset.stSharePeer); else state.selected.delete(t.dataset.stSharePeer); state.plan = null; state.error = ''; return render(); }
   if(t.matches('[data-st-simulation]')){if(t.tagName==='SELECT'){setSimulation(t.dataset.stSimulation,t.value||undefined);render();}return;}
   if(t.dataset.roleInclude){st.roleCopy.include[t.dataset.roleInclude]=t.checked;st.roleCopy.result=null;return render();}
