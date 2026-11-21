@@ -1,0 +1,115 @@
+{
+  "id": "2026-11-21_library_psychology_and_felicity_voice",
+  "status": "APPROVED",
+  "description": "노예 심리학 메뉴 번호 분리와 펠리시티 질문 대사의 강반말 적용",
+  "target": "game\\jack.qsp",
+  "before_sha256": "a9e88724b63eca6d58dd5665e402c47bc2f00fb563eb84e5835f4138fe3f8573",
+  "after_sha256": "c1d387a25e1d66d24465c6eda49a82f9d29c4986d6c72a01489d1c9e8946a7dd",
+  "edits": [
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "JO9_LIBRARY_MENU_V8",
+      "new": "JO9_LIBRARY_MENU_V9",
+      "count": 1
+    },
+    {
+      "location": "shop_general",
+      "field": "body",
+      "old": "JO9_LIBRARY_MENU_V8",
+      "new": "JO9_LIBRARY_MENU_V9",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "JO9_LIBRARY_MENU_V8",
+      "new": "JO9_LIBRARY_MENU_V9",
+      "count": 2
+    },
+    {
+      "location": "interaction_screen_city",
+      "field": "body",
+      "old": "JO9_LIBRARY_MENU_V8",
+      "new": "JO9_LIBRARY_MENU_V9",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": ":jo9_library_menu_options",
+      "new": ":jo9_library_menu_options\r\n! JO9 MOD START CITY_LIBRARY_PSYCHOLOGY_ID_20261121\r\n! Refresh the numeric menu key also when saved option arrays are restored.\r\nmenu_slave_psychology = 15029\r\n! JO9 MOD END CITY_LIBRARY_PSYCHOLOGY_ID_20261121",
+      "count": 1
+    },
+    {
+      "location": "jo9_plain_voice",
+      "field": "body",
+      "old": "|3002|2610|2620|3010|3021|3023|2621|3012|1448|",
+      "new": "|3002|2610|2620|3010|3021|3023|2621|3012|1448|2572|",
+      "count": 2
+    },
+    {
+      "location": "jo9_character_dialogue",
+      "field": "body",
+      "old": "if actor_type=1448: $result='shiru' & exit",
+      "new": "if actor_type=1448: $result='shiru' & exit\r\n ! JO9 MOD START FELICITY_STRONG_VOICE_20261121_PROFILE\r\n if actor_type=2572: $result='felicity' & exit\r\n ! JO9 MOD END FELICITY_STRONG_VOICE_20261121_PROFILE",
+      "count": 1
+    },
+    {
+      "location": "jo9_character_dialogue",
+      "field": "body",
+      "old": "if $args[1]='shiru': $result='잘 들어. 한 번만 말할 거야.'",
+      "new": "if $args[1]='shiru': $result='잘 들어. 한 번만 말할 거야.'\r\n ! JO9 MOD START FELICITY_STRONG_VOICE_20261121_ETIQUETTE\r\n if $args[1]='felicity': $result='내 말을 끝까지 듣거라.'\r\n ! JO9 MOD END FELICITY_STRONG_VOICE_20261121_ETIQUETTE",
+      "count": 1
+    },
+    {
+      "location": "jo9_character_dialogue",
+      "field": "body",
+      "old": "local $token, token_at",
+      "new": "local $token, token_at\r\n ! JO9 MOD START FELICITY_STRONG_VOICE_20261121_PAGE\r\n local strong_felicity=(dyneval('result='+$args[2]+'_type')=2572 and (args[3] ! 1111 or ($args[2]='slave' and interaction_slave['res']<0)))\r\n local $strong_state=''\r\n if strong_felicity=1: $strong_state=$dyneval('$result=$'+$args[2]+'_psy_status')\r\n local $piece_pattern='<!--[\\s\\S]*?-->|<{2}[\\s\\S]*?>{2}|<([^\"''<>]|\"[^\"]*\"|''[^'']*'')*>'\r\n if strong_felicity=1: $piece_pattern+='|“[^”]*”|‘[^’]*’|\"[^\"]*\"'\r\n ! JO9 MOD END FELICITY_STRONG_VOICE_20261121_PAGE",
+      "count": 1
+    },
+    {
+      "location": "jo9_character_dialogue",
+      "field": "body",
+      "old": "$token=$strfind($remaining,'<!--[\\s\\S]*?-->|<{2}[\\s\\S]*?>{2}|<([^\"''<>]|\"[^\"]*\"|''[^'']*'')*>')",
+      "new": "$token=$strfind($remaining,$piece_pattern)",
+      "count": 1
+    },
+    {
+      "location": "jo9_character_dialogue",
+      "field": "body",
+      "old": "$result+=$func('jo9_character_dialogue','plain_words',$remaining,args[3])",
+      "new": "$result+=$func('jo9_character_dialogue','plain_words',$remaining,args[3],strong_felicity,$strong_state)",
+      "count": 1
+    },
+    {
+      "location": "jo9_character_dialogue",
+      "field": "body",
+      "old": "$result+=$func('jo9_character_dialogue','plain_words',$mid($remaining,1,token_at-1),args[3])",
+      "new": "$result+=$func('jo9_character_dialogue','plain_words',$mid($remaining,1,token_at-1),args[3],strong_felicity,$strong_state)",
+      "count": 1
+    },
+    {
+      "location": "jo9_character_dialogue",
+      "field": "body",
+      "old": "if args[2]=1111: exit",
+      "new": "if args[2]=1111 and args[3]=0: exit",
+      "count": 1
+    },
+    {
+      "location": "jo9_character_dialogue",
+      "field": "body",
+      "old": "$result=$replace($result,'해 주세요','해 줘')\r\n exit\r\nend",
+      "new": "$result=$replace($result,'해 주세요','해 줘')\r\n if args[3]=1: $result=$func('jo9_character_dialogue','felicity_words',$result,$args[4])\r\n exit\r\nend",
+      "count": 1
+    },
+    {
+      "location": "jo9_character_dialogue",
+      "field": "body",
+      "old": "! JO9 MOD END PLAIN_SPEECH_WORDING_20261120",
+      "new": "! JO9 MOD END PLAIN_SPEECH_WORDING_20261120\r\n! JO9 MOD START FELICITY_STRONG_VOICE_20261121_WORDS\r\nif $args[0]='felicity_words':\r\n local $tail, $cue, $cue_replacement, $whole, $prefix, $ending, $forms\r\n $tail=$args[1]\r\n $cue=$strfind($tail,'\\([^()\\r\\n]*(?:눈치(?:를)?\\s*(?:보|살피)|주눅|주춤|쭈뼛|우물쭈물|소극|위축|움츠|웅크|시선(?:을)?\\s*(?:낮추|내리|피하|떨구|비키)|고개를\\s*(?:숙|푹|깊)|풀이 죽|조심스레|조심스럽)[^()\\r\\n]*\\)')\r\n if $cue ! '':\r\n  $cue_replacement='(말을 고르고 단정하게 답한다.)'\r\n  if $args[2]='frightened': $cue_replacement='(숨을 고르고 시선을 든다.)'\r\n  if $args[2]='lachrymose': $cue_replacement='(낮고 가라앉은 목소리로 말을 잇는다.)'\r\n  if $args[2]='resistant': $cue_replacement='(고개를 젓고 말을 짧게 끊는다.)'\r\n  if $args[2]='hateful': $cue_replacement='(차가운 눈빛으로 상대를 바라본다.)'\r\n  $tail=$replace($tail,$cue,$cue_replacement)\r\n end\r\n $forms['하고 싶어']='하고 싶다'\r\n $forms['보고 싶어']='보고 싶다'\r\n $forms['잘 모르겠어']='잘 모르겠다'\r\n $forms['모르겠어']='모르겠다'\r\n $forms['않겠어']='않겠다'\r\n $forms['알겠어']='알겠다'\r\n $forms['있겠어']='있겠다'\r\n $forms['해 주겠어']='해 주겠다'\r\n $forms['해 줄게']='해 주겠다'\r\n $forms['보여 줄게']='보여 주겠다'\r\n $forms['알려 줄게']='알려 주겠다'\r\n $forms['조금 더 볼게']='조금 더 보겠다'\r\n $forms['않았어']='않았다'\r\n $forms['아니었어']='아니었다'\r\n $forms['있었어']='있었다'\r\n $forms['없었어']='없었다'\r\n $forms['했어']='했다'\r\n $forms['왔어']='왔다'\r\n $forms['아니야']='아니다'\r\n $forms['해야 해']='해야 한다'\r\n $forms['하면 돼']='하면 된다'\r\n $forms['좋아']='좋다'\r\n $forms['없는데']='없군'\r\n $forms['있는데']='있군'\r\n $forms['없어']='없다'\r\n $forms['있어']='있다'\r\n $forms['같아']='같다'\r\n $forms['않아']='않는다'\r\n $forms['맞아']='맞다'\r\n $forms['몰라']='모른다'\r\n $forms['할 거야']='하겠다'\r\n $forms['거야']='거다'\r\n $forms['잖아']='잖나'\r\n $forms['바라겠어']='바라겠나'\r\n $forms['싶어']='싶다'\r\n $forms['생각 마']='생각 마라'\r\n $forms['그만해']='그만해라'\r\n $forms['하지 마']='하지 마라'\r\n $forms['듣고 있어']='듣고 있다'\r\n $forms['기다려 줘']='기다려라'\r\n $forms['말해 줘']='말해라'\r\n $forms['해 줘']='해 다오'\r\n $forms['할게']='하겠다'\r\n $forms['해 볼게']='해 보겠다'\r\n $forms['보여 줘']='보여 다오'\r\n $forms['괜찮아']='괜찮다'\r\n $forms['있네']='있군'\r\n $forms['없네']='없군'\r\n $forms['이해했어']='이해했다'\r\n $forms['하고 싶지 않아']='하고 싶지 않다'\r\n $forms['해도 돼']='해도 된다'\r\n $forms['드릴 수는 없어']='줄 수는 없다'\r\n local $pattern='^([\\s\\S]*?)(하고 싶지 않아|드릴 수는 없어|조금 더 볼게|잘 모르겠어|하고 싶어|보고 싶어|해 주겠어|보여 줄게|알려 줄게|듣고 있어|기다려 줘|모르겠어|해 줄게|아니었어|해야 해|하면 돼|할 거야|바라겠어|생각 마|하지 마|말해 줘|해 볼게|보여 줘|이해했어|해도 돼|않겠어|알겠어|있겠어|않았어|있었어|없었어|아니야|없는데|있는데|그만해|해 줘|괜찮아|했어|왔어|좋아|없어|있어|같아|않아|맞아|몰라|거야|잖아|싶어|할게|있네|없네)(?=\\s*(?:[.!?…~,;:！？，]|$))'\r\n $result=''\r\n :jo9_felicity_ending_next\r\n $whole=$strfind($tail,$pattern)\r\n if $whole='': $result+=$tail & exit\r\n $prefix=$strfind($tail,$pattern,1)\r\n $ending=$strfind($tail,$pattern,2)\r\n $result+=$prefix+$forms[$ending]\r\n $tail=$mid($tail,len($whole)+1)\r\n jump 'jo9_felicity_ending_next'\r\nend\r\n! JO9 MOD END FELICITY_STRONG_VOICE_20261121_WORDS",
+      "count": 1
+    }
+  ]
+}
