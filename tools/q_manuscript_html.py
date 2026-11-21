@@ -1,0 +1,269 @@
+# 질문 메뉴 원고 데이터(q*_manuscript.json)를 원문과 나란히 놓은 검토용 HTML 표로 뽑는 도구
+"""사용법: python tools/q_manuscript_html.py [원고 JSON] [칸 채우기 CSV] [출력 HTML]"""
+import csv, html, json, re, sys
+from pathlib import Path
+
+SRC = sys.argv[1] if len(sys.argv) > 1 else 'docs/dialogue-rules/question-fill/q1112_manuscript.json'
+CSV = sys.argv[2] if len(sys.argv) > 2 else 'docs/dialogue-rules/question-fill/question_fill_table.csv'
+OUT = sys.argv[3] if len(sys.argv) > 3 else 'docs/dialogue-rules/question-fill/q1112_manuscript.html'
+e = html.escape
+data = json.load(open(SRC, encoding='utf-8'))
+rows = data['rows']
+orig = {(r['question'], r['role'], r['cell'], r['voice']): r for r in csv.DictReader(open(CSV, encoding='utf-8-sig'))}
+
+TOPICS = [('past', '과거 이야기 뒤 반응'), ('asst', '조수에 대한 평'), ('mood', '기분(그날의 일)'), ('dislike', '불만'), ('nodislike', '불만 없음·숨김'), ('like', '배우고 싶은 것'), ('nolike', '배우고 싶은 것 없음'), ('need', '요구'), ('noneed', '바라는 것 없음'), ('refuse', '대답 거부(정신 상태)'),
+          ('A', '최근 칭찬'), ('B', '최근 처벌'), ('C', '오늘 처벌'), ('D', '오늘 칭찬'),
+          ('fact_fear', '두려움'), ('fact_obed', '복종'), ('fact_custom', '습관'), ('fact_instinct', '본능'),
+          ('fact_moral', '헌신'), ('fact_ratio', '합리(이득)'), ('fact_relation', '관계 상태'),
+          ('fact_spoil', '대우(응석)'), ('fact_urge', '욕구')]
+REL = {'arrogant': '오만', 'hateful': '증오', 'hysteric': '히스테리', 'reluctant': '꺼림', 'resistant': '반항',
+       'broken': '무너짐', 'depresive': '우울', 'docile': '온순', 'frightened': '겁먹음', 'lachrymose': '눈물',
+       'obedient': '순종', 'horny': '발정', 'optimistic': '낙관', 'servile': '예속', 'soft': '상냥'}
+
+
+NEED = {'abuse': '매질', 'blood': '피', 'comfort': '안락', 'darkness': '어둠', 'deprivation': '구속', 'fame': '명성', 'fire': '불',
+        'luxury': '치장', 'sweets': '단것', 'vermin': '벌레', 'water': '물', 'exhibitionism': '노출', 'homosexualism': '동성',
+        'nymphomania': '색정', 'perversion': '도착'}
+LIKE = {'art': '미술', 'calisthenics': '무용·체조', 'cook': '요리', 'dressage': '마차 조련', 'expression': '화술', 'gladiatrix': '검투',
+        'music': '음악', 'nurse': '간호', 'pet': '애완 훈련', 'secretary': '비서', 'service': '집안일', 'sport': '운동',
+        'cowSK': '착유', 'enchanter': '성기술'}
+MOOD = {'sa_demote': '조수에서 내려옴', 'barn': '외양간', 'moral': '헌신', 'sa_friendship': '조수와의 우정', 'slave_love': '주인을 향한 사랑'}
+QNAME = {'공용': '공용 줄', '1111': '과거 묻기', '1112': '인상 묻기', '1113': '요구 묻기', '1114': '희망 묻기', '1115': '불만 묻기', '1116': '기분 묻기', '1117': '조수 묻기'}
+
+
+def topic(role):
+    if role.startswith('native_1117_'):
+        return 'asst', '조수에 대한 평'
+    if re.match(r'native_1111_\w+_react_detail', role):
+        return 'past', '과거 이야기 뒤 반응'
+    if re.match(r'native_\d+_slave_(pos|neg)_', role):
+        return 'mood', '기분(그날의 일)'
+    if re.match(r'native_\d+_(no_dislike|hide_dislikes)', role):
+        return 'nodislike', '불만 없음·숨김'
+    if re.match(r'native_\d+_\w+_dislike_core', role):
+        return 'dislike', '불만'
+    if re.match(r'native_\d+_no_like', role):
+        return 'nolike', '배우고 싶은 것 없음'
+    if re.match(r'native_\d+_\w+_like_core', role):
+        return 'like', '배우고 싶은 것'
+    if role.startswith('native_1113_refuse'):
+        return 'refuse', '대답 거부(정신 상태)'
+    if role.startswith('native_1113_no_need'):
+        return 'noneed', '바라는 것 없음'
+    if role.startswith('native_1113_'):
+        return 'need', '요구'
+    for k, label in TOPICS:
+        if role == k or role.startswith(k + '_'):
+            return k, label
+    return role, role
+
+
+def slot(role):
+    if role in ('A', 'B', 'C', 'D'):
+        return '요약'
+    m = re.match(r'native_1111_(\w+)_react_detail$', role)
+    if m:
+        return {'family': '가족', 'occupation': '직업', 'world': '고향 세계'}.get(m.group(1), m.group(1))
+    if role.startswith('native_1117_'):
+        return {'feat_pri_high_1_core': '도도한 조수', 'nation_beast_1_1_core': '짐승 종족 조수', 'personal_1to5_1_core': '성격이 맞지 않는 조수'}.get(role[12:], role[12:])
+    m = re.match(r'native_\d+_slave_(pos|neg)_(\w+)_core$', role)
+    if m:
+        return MOOD.get(m.group(2), m.group(2)) + (' (좋음)' if m.group(1) == 'pos' else ' (나쁨)')
+    m = re.match(r'native_\d+_(\w+?)_dislike_core$', role)
+    if m and m.group(1) != 'no':
+        return NEED.get(m.group(1), m.group(1))
+    if 'hide_dislikes' in role:
+        return '숨김'
+    if 'no_dislike' in role:
+        return '없음'
+    m = re.match(r'native_\d+_(\w+?)_like_core$', role)
+    if m and not m.group(1).startswith('no'):
+        return LIKE.get(m.group(1), m.group(1))
+    if re.match(r'native_\d+_no_like_gentle', role):
+        return '온순한 경우'
+    if re.match(r'native_\d+_no_like_core', role):
+        return '기본'
+    m = re.match(r'native_\d+_(\w+?)_need_(core|detail)$', role)
+    if m:
+        return NEED.get(m.group(1), m.group(1)) + (' 덧붙임' if m.group(2) == 'detail' else '')
+    m = re.match(r'native_\d+_refuse_(\w+)_core$', role)
+    if m:
+        return REL.get(m.group(1), m.group(1))
+    if role.endswith('no_need_gentle_core'):
+        return '온순한 경우'
+    if role.endswith('no_need_core'):
+        return '기본'
+    m = re.match(r'fact_relation_(\w+?)_(core|detail)$', role)
+    if m:
+        return REL.get(m.group(1), m.group(1)) + (' 덧붙임' if m.group(2) == 'detail' else '')
+    m = re.match(r'fact_\w+?_(\d)_(core|detail)$', role)
+    if m:
+        return f'{m.group(1)}단계' + (' 덧붙임' if m.group(2) == 'detail' else '')
+    return role
+
+
+def show(s):
+    return re.sub(r'(\{호칭[^}]*\}|\{PH_001\})', r'<span class="tok">\1</span>', e(s))
+
+
+def original(r):
+    o = orig.get((r['question'], r['role'], r['cell'], r['voice']))
+    if not o:
+        return '', ''
+    tone = str(r.get('tone', '')) or ('3' if r['voice'] in ('명랑한', '거센') else '2')
+    t = tone[0] if tone[:1] in '123' else '2'
+    if r['kind'] == '보완':
+        txt = o['original_t2'] or o['original_t1'] or o['original_t3']
+        return txt, '같은 칸의 다른 판(뜻의 기준)'
+    if '말투 2 대체' in o.get('note', ''):
+        t = '2'
+    txt = o[f'original_t{t}'] or o['original_t2']
+    return txt, f'나눠 쓰던 원래 줄(말투 {t})'
+
+
+groups = {}
+for r in rows:
+    k, label = topic(r['role'])
+    groups.setdefault((k, label), []).append(r)
+order = [t for t in TOPICS if t in groups] + [t for t in groups if t not in TOPICS]
+
+nav, parts = [], []
+ujump = []
+uid = 0
+cnt = {'분리': 0, '보완': 0, '신규': 0, 'user': 0}
+for r in rows:
+    if r['writer'] == 'user':
+        cnt['user'] += 1
+    else:
+        cnt[r['kind']] = cnt.get(r['kind'], 0) + 1
+def guide(r):
+    if r['voice'] == '공주':
+        return '반말. 호칭 "주인" 고정(정한 대로)'
+    return '편한 존댓말("~요"). 호칭은 빈칸 {호칭이} 등, 부르는 말은 {호칭부름}'
+
+
+ulist = []
+for r in rows:
+    if r['writer'] != 'user':
+        continue
+    k, label = topic(r['role'])
+    o, olabel = original(r)
+    filled = f'<div class="line">{show(r["text"])}</div><div class="olab">{len(r["text"])}자</div>' if r.get('text') else '<span class="user">비어 있음</span>'
+    ulist.append(f'<tr><td class="slot">{e(label)} · {e(slot(r["role"]))}</td><td class="voice">{e(r["voice"])}</td>'
+                 f'<td>{e(guide(r))}</td><td><div class="orig">{show(o)}</div></td><td>{filled}</td></tr>')
+userlist = ''
+if ulist:
+    userlist = ('<section id="userlist" class="always"><h2>사용자 작성 칸 목록</h2><p class="meta">성적인 주제라 직접 쓰셔야 하는 칸. 한 줄 82자, 기본 줄+덧붙임 합 150자 안.</p>'
+                '<div class="wrap"><table><thead><tr><th>칸</th><th>목소리</th><th>쓰는 법</th><th>원문</th><th>쓴 줄</th></tr></thead><tbody>'
+                + ''.join(ulist) + '</tbody></table></div></section>')
+
+for k, label in order:
+    rs = groups[(k, label)]
+    nav.append(f'<a href="#{e(k)}">{e(label)} <span class="n">{len(rs)}</span></a>')
+    body = ['<div class="wrap"><table><thead><tr><th>칸</th><th>관계 칸</th><th>목소리</th><th>구분</th><th>새 줄</th><th>원문</th></tr></thead><tbody>']
+    for r in rs:
+        o, olabel = original(r)
+        if r.get('variants'):
+            new = ''.join(f'<div class="line">{show(v)}</div><div class="olab">판 {i} · {len(v)}자</div>' for i, v in enumerate(r['variants'], 1))
+        elif r['writer'] == 'user' and r.get('text'):
+            new = f'<div class="line">{show(r["text"])}</div><div class="olab">{len(r["text"])}자</div>'
+        elif r['writer'] == 'user':
+            new = '<span class="user">사용자 작성 칸(성적인 주제)</span>'
+        else:
+            new = f'<div class="line">{show(r["text"])}</div>'
+        kind = '사용자' if r['writer'] == 'user' else r['kind']
+        cls = {'분리': 'split', '보완': 'fill', '신규': 'new', '사용자': 'user'}[kind]
+        cell = '' if r['cell'] == '*' else e(r['cell'])
+        rid = ''
+        if r['writer'] == 'user':
+            uid += 1
+            rid = f' id="u{uid}"'
+            state = 'filled' if r.get('text') else 'empty'
+            lab = f"{label} {slot(r['role'])}" + (f" {r['cell']}" if r['cell'] != '*' else '') + f" · {r['voice']}"
+            ujump.append(f'<a class="{state}" href="#u{uid}">{e(lab)}</a>')
+        ocell = f'<div class="orig">{show(o)}</div><div class="olab">{e(olabel)}</div>' if o else ''
+        body.append(f'<tr{rid} data-w="{"user" if r["writer"] == "user" else "claude"}" data-b="{e(r.get("batch", ""))}"><td class="slot">{e(slot(r["role"]))}</td><td class="cell">{cell}</td><td class="voice">{e(r["voice"])}</td>'
+                    f'<td><span class="badge {cls}">{kind}</span><div class="olab">{e(r.get("batch", ""))}</div></td><td>{new}</td><td>{ocell}</td></tr>')
+    body.append('</tbody></table></div>')
+    parts.append(f'<section id="{e(k)}"><h2>{e(label)}</h2>' + ''.join(body) + '</section>')
+
+css = '''
+/* 레이아웃: 위에 요약과 주제 목록, 아래로 주제마다 새 줄과 원문을 나란히 놓은 표 */
+:root{--bg:#f5f6f8;--surface:#ffffff;--fg:#1d2128;--muted:#5f6673;--line:#dde1e8;--accent:#3a5a9c;--tok:#8a4b9e;
+--split:#3a5a9c;--fill:#2f7a5a;--user:#9a5b16;
+--sans:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;--serif:"Noto Serif KR","Batang",serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15171c;--surface:#1d2027;--fg:#e7e9ee;--muted:#a2a8b4;--line:#323743;--accent:#8fa9e0;--tok:#d3a2e6;--split:#8fa9e0;--fill:#7cc4a2;--user:#e0a560;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#15171c;--surface:#1d2027;--fg:#e7e9ee;--muted:#a2a8b4;--line:#323743;--accent:#8fa9e0;--tok:#d3a2e6;--split:#8fa9e0;--fill:#7cc4a2;--user:#e0a560;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font:15px/1.65 var(--sans);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main{max-width:1320px;margin:0 auto;padding-block:28px 64px;display:grid;gap:28px}
+h1{font:600 24px/1.3 var(--serif);margin:0;text-wrap:balance}h2{font:600 19px/1.3 var(--serif);margin:0 0 8px}
+p{margin:0;max-width:72ch}.meta{color:var(--muted);font-size:13px}
+.summary{display:flex;flex-wrap:wrap;gap:8px 18px;color:var(--muted);font-size:14px}.summary b{color:var(--fg);font-variant-numeric:tabular-nums}
+nav{display:flex;flex-wrap:wrap;gap:6px}
+nav a{color:var(--accent);text-decoration:none;border:1px solid var(--line);background:var(--surface);padding:3px 10px;border-radius:999px;font-size:13px}
+nav a:hover,nav a:focus-visible{border-color:var(--accent)}.n{color:var(--muted);font-variant-numeric:tabular-nums}
+section{scroll-margin-top:16px}
+.wrap{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:900px;font-size:14px}
+th,td{border-bottom:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+thead th{font-size:12px;letter-spacing:.04em;color:var(--muted);font-weight:600;background:var(--bg)}
+tbody tr:last-child td{border-bottom:0}
+td.slot,td.cell,td.voice{white-space:nowrap}td.voice{font-weight:600}
+td:nth-child(5){width:38%}td:nth-child(6){width:30%}
+.line{font-family:var(--serif)}.orig{color:var(--muted)}.olab{color:var(--muted);font-size:11px;margin-top:3px}
+.tok{color:var(--tok)}
+.ujump{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px}
+.ujump .ulabel{color:var(--muted);margin-right:4px}.ujump .ulegend{color:var(--muted);font-size:12px;margin-left:4px}
+.ujump a{text-decoration:none;padding:3px 10px;border-radius:999px;border:1px solid var(--user);color:var(--user)}
+.ujump a.empty{border-style:dashed;font-style:italic}
+.ujump a:hover,.ujump a:focus-visible{background:var(--user);color:var(--surface)}
+.summary a{color:inherit}
+.filters{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px}
+.filters a{text-decoration:none;color:var(--fg);border:1px solid var(--line);background:var(--surface);padding:4px 12px;border-radius:6px}
+.filters a b{color:var(--muted);font-weight:600;margin-left:4px;font-variant-numeric:tabular-nums}
+.filters a.on{border-color:var(--accent);background:var(--accent);color:var(--surface)}.filters a.on b{color:var(--surface)}
+.filters a:hover,.filters a:focus-visible{border-color:var(--accent)}
+tr[id]{scroll-margin-top:80px}
+tr:target td{background:color-mix(in srgb,var(--user) 16%,transparent)}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+.badge{display:inline-block;font-size:11px;padding:1px 7px;border-radius:3px;border:1px solid currentColor;white-space:nowrap}
+.badge.split{color:var(--split)}.badge.fill{color:var(--fill)}.badge.new{color:var(--tok)}.badge.user{color:var(--user)}.user{color:var(--user)}
+'''
+SCRIPT = r'''<script>
+(function(){
+  var F={all:function(){return true},claude:function(t){return t.dataset.w==='claude'},v0:function(t){return t.dataset.b==='v0'},
+         v1:function(t){return t.dataset.b==='v1'&&t.dataset.w==='claude'},v1b:function(t){return t.dataset.b==='v1b'},user:function(t){return t.dataset.w==='user'}};
+  function apply(){
+    var h=location.hash.slice(1); var f=F[h];
+    document.querySelectorAll('.filters a').forEach(function(a){a.classList.toggle('on',a.getAttribute('href')==='#'+(f?h:'all'))});
+    if(!f){ if(!h){f=F.all} else return; }
+    document.querySelectorAll('main section:not(.always) tbody tr').forEach(function(tr){tr.hidden=!f(tr)});
+    document.querySelectorAll('main section:not(.always)').forEach(function(sec){sec.hidden=!sec.querySelector('tbody tr:not([hidden])')});
+    if(h&&h!=='all'){var first=document.querySelector('main section:not(.always):not([hidden])'); if(first) first.scrollIntoView();}
+  }
+  window.addEventListener('hashchange',apply); apply();
+  document.querySelectorAll('.filters a').forEach(function(a){a.addEventListener('click',function(ev){
+    ev.preventDefault(); var h=a.getAttribute('href'); try{history.replaceState(null,'',h)}catch(e){location.hash=h} apply();});});
+})();
+</script>'''
+QQ = rows[0]['question']
+QN = QNAME.get(QQ, QQ)
+page = f'''<title>{QN} 원고표</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600&family=Noto+Serif+KR:wght@400;600&display=swap">
+<style>{css}</style>
+<main>
+<header style="display:grid;gap:10px"><h1>{QN} 원고표</h1>
+<p class="meta">질문 메뉴 "{QN}"({QQ})에서 새로 쓴 줄을 원문과 나란히 놓았다. 분리는 같은 줄을 나눠 쓰던 목소리의 새 판, 보완은 판이 없던 목소리의 새 줄이다. 보라색 빈칸은 호칭이며 헌신·복종에 따라 당신/주인님(공주는 너/당신/주인)으로 채워진다. 말투는 명랑한·거센 3, 도도한·조용한 1, 순한·담백한 2, 공주 반말.</p>
+<div class="summary"><span>행 <b>{len(rows)}</b></span><span>분리 <b>{cnt.get("분리", 0)}</b></span><span>보완 <b>{cnt.get("보완", 0)}</b></span><span>신규 <b>{cnt.get("신규", 0)}</b></span><span><a href="#u1">사용자 작성 칸 <b>{cnt["user"]}</b></a> (빈 칸 <b>{sum(1 for r in rows if r["writer"] == "user" and not r.get("text"))}</b>)</span></div>
+<div class="filters" role="group" aria-label="보기 거르기"><span class="ulabel">검토할 줄만 보기</span>
+<a href="#all">전체 <b>{len(rows)}</b></a><a href="#claude">Claude 원고 <b>{sum(1 for r in rows if r["writer"] != "user")}</b></a><a href="#v0">v0 <b>{sum(1 for r in rows if r.get("batch") == "v0")}</b></a><a href="#v1">v1 <b>{sum(1 for r in rows if r.get("batch") == "v1" and r["writer"] != "user")}</b></a><a href="#v1b">추가 <b>{sum(1 for r in rows if r.get("batch") == "v1b")}</b></a><a href="#user">사용자 작성 <b>{cnt["user"]}</b></a></div>
+<nav>{"".join(nav)}</nav>
+<div class="ujump"><span class="ulabel">사용자 작성 칸 바로가기</span>{"".join(ujump)}<span class="ulegend">채움 / <i>빈 칸</i></span></div></header>
+{userlist}
+{"".join(parts)}
+</main>'''
+page += SCRIPT
+Path(OUT).write_text(page, encoding='utf-8')
+print(OUT, len(rows), cnt)

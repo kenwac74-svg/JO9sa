@@ -1,0 +1,2163 @@
+{
+ "voiceTypes": {
+  "meek": [
+   "meek",
+   "fragile"
+  ],
+  "plain": [
+   "plain"
+  ],
+  "proud": [
+   "proud",
+   "ice"
+  ],
+  "quiet": [
+   "doll",
+   "calm"
+  ],
+  "princess": [
+   "princess"
+  ],
+  "bright": [
+   "frank"
+  ],
+  "fierce": [
+   "flame"
+  ]
+ },
+ "limits": {
+  "rowChars": 53,
+  "maxRows": 3,
+  "afterMinDevotion": 2,
+  "perDayPerTriggerWeight2": 1,
+  "speechOnlyWhenOriginalHasSpeech": true
+ },
+ "events": [
+  {
+   "id": "execution",
+   "label": "처형 위협",
+   "weight": 3,
+   "layout": "devotion2",
+   "cells": [
+    "hi",
+    "lo"
+   ],
+   "cellRule": "무게 3. 헌신 3 이상이면 hi, 0~2면 lo",
+   "condition": "",
+   "hooksFromDb": [
+    {
+     "location": "interaction",
+     "anchor": "\t$text[1] = $execution_reaction[$slave_psy_status]",
+     "count": 6,
+     "textVar": "$text[1]",
+     "note": "interaction 182~187"
+    }
+   ],
+   "originalSpeech": "some",
+   "text": {
+    "hi": {
+     "meek": [
+      {
+       "line": "<<$slave_name>>(은)는 무릎을 꿇었다. 그녀는 두 손을 바닥에 짚고 당신을 올려다보았다.",
+       "after": "그녀는 당신의 발끝에서 눈을 떼지 못했다.",
+       "variant": 1
+      }
+     ],
+     "plain": [
+      {
+       "line": "<<$slave_name>>(은)는 마른침을 삼켰다. 그녀는 당신의 표정을 살피며 한 걸음 다가섰다.",
+       "after": "입술은 떨렸지만 눈은 피하지 않았다.",
+       "variant": 1
+      }
+     ],
+     "proud": [
+      {
+       "line": "<<$slave_name>>(은)는 턱을 들었다. 그녀는 물러서지 않고 당신을 마주 보았다.",
+       "after": "꼭 쥔 주먹이 하얗게 질려 있었다.",
+       "variant": 1
+      }
+     ],
+     "quiet": [
+      {
+       "line": "<<$slave_name>>(은)는 당신을 보았다. 그녀는 고개를 한 번 끄덕였다.",
+       "after": "그녀는 도망치지 않았다. 다만 선 자리에서 손끝이 조금 떨렸다.",
+       "variant": 1
+      }
+     ],
+     "princess": [
+      {
+       "line": "<<$slave_name>>(은)는 자리에서 일어섰다. 그녀는 당신의 얼굴을 빤히 바라보며 대답을 기다렸다.",
+       "after": "치맛자락을 쥔 손이 하얗게 질려 있었다.",
+       "variant": 1
+      }
+     ],
+     "bright": [
+      {
+       "line": "<<$slave_name>>(은)는 웃으려던 얼굴이 그대로 굳었다. 그녀는 농담인지 확인하려는 듯 몇 번이고 당신을 올려다보았다.",
+       "after": "맞잡은 두 손이 하얗게 질려 있었다.",
+       "variant": 1
+      }
+     ],
+     "fierce": [
+      {
+       "line": "<<$slave_name>>(은)는 주먹을 쥔 채 당신 앞을 떠나지 않았다. 떨리는 턱을 감추려는 듯 이를 꽉 물고 있었다.",
+       "after": "그녀는 끝내 당신에게서 눈을 떼지 않았다.",
+       "variant": 1
+      }
+     ]
+    },
+    "lo": {
+     "meek": [
+      {
+       "line": "<<$slave_name>>(은)는 두 손을 모아 쥐고 고개를 저었다. 그녀의 눈에서 눈물이 쏟아졌다.",
+       "after": "다리가 풀린 그녀는 그 자리에 주저앉았다.",
+       "variant": 1
+      }
+     ],
+     "plain": [
+      {
+       "line": "<<$slave_name>>(은)는 한 걸음 물러섰다. 그녀는 웃어 보이려다 말고 고개를 저었다.",
+       "after": "뒷걸음질 치던 등이 벽에 닿았다.",
+       "variant": 1
+      }
+     ],
+     "proud": [
+      {
+       "line": "<<$slave_name>>(은)는 입꼬리를 비틀었다. 그녀는 무릎을 꿇는 대신 당신을 똑바로 바라보았다.",
+       "after": "그래도 침을 삼키는 소리가 방 안에 들렸다.",
+       "variant": 1
+      }
+     ],
+     "quiet": [
+      {
+       "line": "<<$slave_name>>(은)는 대답하지 않았다.",
+       "after": "숨이 얕아지고, 눈이 문 쪽을 한 번 스쳤다.",
+       "variant": 1
+      }
+     ],
+     "princess": [
+      {
+       "line": "<<$slave_name>>(은)는 등을 세웠다. 그녀는 무릎을 꿇지 않고 당신 앞에 꼿꼿이 섰다.",
+       "after": "입술에 핏기가 없었다.",
+       "variant": 1
+      }
+     ],
+     "bright": [
+      {
+       "line": "<<$slave_name>>(은)는 반쯤 웃는 얼굴로 뒷걸음질 쳤다. 웃음은 금세 사라지고 입술만 떨렸다.",
+       "after": "등이 벽에 닿자 그녀는 그 자리에 주저앉았다.",
+       "variant": 1
+      }
+     ],
+     "fierce": [
+      {
+       "line": "<<$slave_name>>(은)는 당신을 정면으로 노려보았다. 한 걸음도 물러서지 않았지만, 쥔 주먹은 멈추지 않고 떨렸다.",
+       "after": "숨을 들이쉬는 소리가 방 안에 크게 울렸다.",
+       "variant": 1
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "arena_win",
+   "label": "우승",
+   "weight": 3,
+   "layout": "devotion2",
+   "cells": [
+    "hi",
+    "lo"
+   ],
+   "cellRule": "무게 3. 헌신 3 이상이면 hi, 0~2면 lo",
+   "condition": "",
+   "hooksFromDb": [
+    {
+     "location": "выход_из_боя",
+     "anchor": null,
+     "note": "arena_level이 5가 되는 분기(54~61행)"
+    },
+    {
+     "location": "interaction_city",
+     "anchor": null,
+     "note": "arena_level = 9(1919행)"
+    },
+    {
+     "location": "$ride_finish",
+     "anchor": null,
+     "note": "has_ride_win += 1(76행), 4승·7승"
+    }
+   ],
+   "originalSpeech": "none",
+   "text": {
+    "hi": {
+     "meek": [
+      {
+       "line": "<<$slave_name>>(은)는 숨을 고르며 당신 앞에 와서 고개를 숙였다. 환호가 쏟아지는데도 그녀는 두 손을 모은 채 당신의 말을 기다렸다.",
+       "after": "그녀는 관중석이 아니라 당신의 얼굴만 살폈다.",
+       "variant": 1
+      }
+     ],
+     "plain": [
+      {
+       "line": "<<$slave_name>>(은)는 땀에 젖은 머리를 쓸어 올리며 웃었다. 그녀는 트로피를 번쩍 들어 당신에게 흔들어 보였다.",
+       "after": "그녀는 숨이 가쁜 채로 당신 쪽으로 한 걸음 더 다가섰다.",
+       "variant": 1
+      }
+     ],
+     "proud": [
+      {
+       "line": "<<$slave_name>>(은)는 턱을 든 채 당신 앞에 섰다. 그녀는 트로피를 당연하다는 듯 한 손으로 들고 있었다.",
+       "after": "그래도 당신의 대답을 기다리는 눈은 자리를 뜨지 않았다.",
+       "variant": 1
+      }
+     ],
+     "quiet": [
+      {
+       "line": "<<$slave_name>>(은)는 말없이 트로피를 당신 손에 쥐여 주었다.",
+       "after": "그녀는 물러나지 않고, 당신이 그것을 볼 때까지 옆에 서 있었다.",
+       "variant": 1
+      }
+     ],
+     "princess": [
+      {
+       "line": "<<$slave_name>>(은)는 당연하다는 듯 당신 곁에 와서 섰다. 그녀는 함성이 쏟아지는 관중석을 턱으로 가리켜 보였다.",
+       "after": "그녀는 트로피를 당신 쪽으로 밀어 놓았다. 턱은 내려오지 않았다.",
+       "variant": 1
+      }
+     ],
+     "bright": [
+      {
+       "line": "<<$slave_name>>(은)는 땀에 젖은 채로 당신에게 달려와 두 팔을 번쩍 들어 보였다. 숨이 가쁜데도 웃음이 그치지 않았다.",
+       "after": "그녀는 당신이 고개를 끄덕일 때까지 그 자리에서 기다렸다.",
+       "variant": 1
+      }
+     ],
+     "fierce": [
+      {
+       "line": "<<$slave_name>>(은)는 피 묻은 주먹을 닦지도 않고 당신 앞으로 걸어왔다. 그녀는 거친 숨을 몰아쉬며 당신을 똑바로 올려다보았다.",
+       "after": "굳어 있던 입꼬리가 아주 조금 올라갔다.",
+       "variant": 1
+      }
+     ]
+    },
+    "lo": {
+     "meek": [
+      {
+       "line": "<<$slave_name>>(은)는 흙 묻은 손을 등 뒤로 감추고 섰다. 그녀는 이겼는데도 당신의 표정부터 살폈다.",
+       "after": "트로피를 든 손이 조금 떨렸다.",
+       "variant": 1
+      }
+     ],
+     "plain": [
+      {
+       "line": "<<$slave_name>>(은)는 어깨를 으쓱하며 트로피를 내밀었다. 웃는 얼굴이었지만 다리는 아직 조금 떨리고 있었다.",
+       "after": "내민 손을 거두는 것이 조금 늦었다.",
+       "variant": 1
+      }
+     ],
+     "proud": [
+      {
+       "line": "<<$slave_name>>(은)는 팔짱을 끼고 관중석을 돌아보았다. 그녀의 이름을 외치는 함성이 쏟아지자 입꼬리가 천천히 올라갔다.",
+       "after": "그녀는 당신이 아니라 환호 쪽에 오래 눈을 두었다.",
+       "variant": 1
+      }
+     ],
+     "quiet": [
+      {
+       "line": "<<$slave_name>>(은)는 피 묻은 손을 옷에 닦았다. 그녀는 쓰러진 상대를 한 번 보고는 고개를 돌렸다.",
+       "after": "환호 속에서도 그녀의 표정은 읽히지 않았다.",
+       "variant": 1
+      }
+     ],
+     "princess": [
+      {
+       "line": "<<$slave_name>>(은)는 고개를 돌린 채 트로피를 내밀었다. 그녀는 당신이 아니라 관중석을 보고 있었다.",
+       "after": "트로피를 놓는 손가락이 마지막까지 버텼다.",
+       "variant": 1
+      }
+     ],
+     "bright": [
+      {
+       "line": "<<$slave_name>>(은)는 관중석을 향해 몇 번이고 손을 흔들었다. 환호가 잦아들고서야 그녀는 당신 쪽을 돌아보았다.",
+       "after": "들뜬 얼굴에 피로가 한꺼번에 몰려왔다.",
+       "variant": 1
+      }
+     ],
+     "fierce": [
+      {
+       "line": "<<$slave_name>>(은)는 쓰러진 상대를 한동안 내려다보았다. 환호가 쏟아져도 그녀의 주먹은 좀처럼 풀리지 않았다.",
+       "after": "그녀는 당신 쪽을 한 번 흘끗 보았을 뿐이었다.",
+       "variant": 1
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "champion_stay",
+   "label": "챔피언이 되고도 남음",
+   "weight": 3,
+   "layout": "single",
+   "cells": [
+    "*"
+   ],
+   "cellRule": "태도를 나누지 않는 사건",
+   "condition": "",
+   "hooksFromDb": [
+    {
+     "location": "interaction_city",
+     "anchor": null,
+     "note": "1963행 slave['moral'] > slave['fear'] 분기"
+    }
+   ],
+   "originalSpeech": "none",
+   "text": {
+    "*": {
+     "meek": [
+      {
+       "line": "<<$slave_name>>(은)는 문간에서 한참 망설이다 들어왔다. 그녀는 짐을 내려놓고 당신을 한 번 올려다보았다.",
+       "after": "그녀는 평소 서던 자리에 가서 섰다. 달라진 것은 없다는 듯이.",
+       "variant": 1
+      }
+     ],
+     "plain": [
+      {
+       "line": "<<$slave_name>>(은)는 신발도 벗기 전에 당신을 찾았다. 그녀는 문밖을 한 번 돌아보고는 머쓱하게 웃었다.",
+       "after": "그러고는 뒷머리를 긁으며 안으로 들어왔다.",
+       "variant": 1
+      }
+     ],
+     "proud": [
+      {
+       "line": "<<$slave_name>>(은)는 문을 열고 들어와 팔짱을 꼈다. 그녀는 당신 앞에 서서 턱을 들었다.",
+       "after": "팔짱을 낀 채로, 그녀는 당신이 무엇이라 할지 기다렸다.",
+       "variant": 1
+      }
+     ],
+     "quiet": [
+      {
+       "line": "<<$slave_name>>(은)는 아무 말 없이 들어와 문을 닫았다. 그녀는 당신에게 고개를 한 번 숙였다.",
+       "after": "그것이 전부였다. 그녀는 늘 하던 일을 하러 갔다.",
+       "variant": 1
+      }
+     ],
+     "princess": [
+      {
+       "line": "<<$slave_name>>(은)는 제 방처럼 들어와 의자에 앉았다. 그녀는 당신을 올려다보며 다리를 꼬았다.",
+       "after": "그녀는 당신이 차를 내오기를 기다리는 사람처럼 앉아 있었다.",
+       "variant": 1
+      }
+     ],
+     "bright": [
+      {
+       "line": "<<$slave_name>>(은)는 문을 열고 들어오며 멋쩍게 웃었다. 그녀는 짐을 내려놓더니 아무 일 없었다는 듯 늘 앉던 자리로 가서 앉았다.",
+       "after": "그러고는 당신의 반응을 살피며 발끝을 까딱거렸다.",
+       "variant": 1
+      }
+     ],
+     "fierce": [
+      {
+       "line": "<<$slave_name>>(은)는 거칠게 밀고 들어와 짐을 툭 던져놓는다. 그녀는 허리에 손을 얹은 채 당신을 째려본다.",
+       "after": "",
+       "variant": 1
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "branding",
+   "label": "낙인",
+   "weight": 3,
+   "layout": "devotion2",
+   "cells": [
+    "hi",
+    "lo"
+   ],
+   "cellRule": "무게 3. 헌신 3 이상이면 hi, 0~2면 lo",
+   "condition": "",
+   "hooksFromDb": [
+    {
+     "location": "interaction",
+     "anchor": null,
+     "note": "인두 1811(brand = 1)"
+    },
+    {
+     "location": "interaction_city",
+     "anchor": null,
+     "note": "문신 4217(brand = 2)"
+    },
+    {
+     "location": "interaction",
+     "anchor": null,
+     "note": "마법 성공(brand = 3, 421행)"
+    }
+   ],
+   "originalSpeech": "none",
+   "text": {
+    "hi": {
+     "meek": [
+      {
+       "line": "<<$slave_name>>(은)는 이를 물고 끝까지 소리를 삼켰다. 낙인이 끝나자 그녀는 떨리는 숨을 고르며 당신을 올려다보았다.",
+       "after": "그녀는 새겨진 자리 쪽으로 손을 뻗다가, 닿기 전에 거두었다.",
+       "variant": 1
+      }
+     ],
+     "plain": [
+      {
+       "line": "<<$slave_name>>(은)는 숨을 길게 내쉬었다. 그녀는 새겨진 자리를 내려다보다가 당신을 보고 희미하게 웃었다.",
+       "after": "그녀는 숨을 고르고, 스스로 옷을 여몄다.",
+       "variant": 1
+      }
+     ],
+     "proud": [
+      {
+       "line": "<<$slave_name>>(은)는 옷깃을 바로잡았다. 그녀는 새겨진 자리를 가리지 않고 당신 앞에 섰다.",
+       "after": "떨리는 다리로도 그녀는 혼자 일어섰다.",
+       "variant": 1
+      }
+     ],
+     "quiet": [
+      {
+       "line": "<<$slave_name>>(은)는 한참 뒤에야 고개를 들었다.",
+       "after": "그녀는 낙인이 찍힌 쪽을 한 번 내려다보고, 아무 말 없이 당신 뒤에 섰다.",
+       "variant": 1
+      }
+     ],
+     "princess": [
+      {
+       "line": "<<$slave_name>>(은)는 손등으로 눈가를 훔치고 턱을 들었다. 그녀는 새겨진 자리를 가리지 않은 채 당신을 바라보았다.",
+       "after": "그녀는 부축하려는 손을 뿌리치고 제 발로 섰다.",
+       "variant": 1
+      }
+     ],
+     "bright": [
+      {
+       "line": "<<$slave_name>>(은)는 눈물이 맺힌 채로 새겨진 자리를 내려다보았다. 그러다 당신과 눈이 마주치자 애써 웃어 보였다.",
+       "after": "웃음 끝이 조금 떨렸다.",
+       "variant": 1
+      }
+     ],
+     "fierce": [
+      {
+       "line": "<<$slave_name>>(은)는 비명을 삼키느라 입술을 깨물어 피가 맺혔다. 낙인이 끝나자 그녀는 떨리는 다리로 혼자 일어섰다.",
+       "after": "그리고 당신 앞에서 옷깃을 여몄다.",
+       "variant": 1
+      }
+     ]
+    },
+    "lo": {
+     "meek": [
+      {
+       "line": "<<$slave_name>>(은)는 고개를 들지 못했다. 그녀는 새겨진 자리를 내려다보며 어깨를 떨었다.",
+       "after": "그녀는 한동안 그 자리에서 움직이지 않았다.",
+       "variant": 1
+      }
+     ],
+     "plain": [
+      {
+       "line": "<<$slave_name>>(은)는 새겨진 자리를 내려다보았다. 그녀는 웃으려다 말고 입술을 깨물었다.",
+       "after": "웃으려던 입꼬리가 끝내 올라가지 않았다.",
+       "variant": 1
+      }
+     ],
+     "proud": [
+      {
+       "line": "<<$slave_name>>(은)는 당신을 노려보았다. 그녀는 새겨진 자리를 손으로 움켜쥐고 이를 악물었다.",
+       "after": "젖은 눈으로도 시선은 끝까지 당신을 향해 있었다.",
+       "variant": 1
+      }
+     ],
+     "quiet": [
+      {
+       "line": "<<$slave_name>>(은)는 소리를 내지 않았다.",
+       "after": "새겨진 자리를 내려다보는 눈에 아무것도 비치지 않았다.",
+       "variant": 1
+      }
+     ],
+     "princess": [
+      {
+       "line": "<<$slave_name>>(은)는 주먹을 쥐었다. 그녀는 새겨진 자리와 당신을 번갈아 노려보았다.",
+       "after": "그러나 어깨는 한참을 떨렸다.",
+       "variant": 1
+      }
+     ],
+     "bright": [
+      {
+       "line": "<<$slave_name>>(은)는 새겨진 자리를 손으로 가리고 울음을 삼켰다. 늘 밝던 얼굴에 핏기가 없었다.",
+       "after": "그녀는 한동안 그 손을 떼지 못했다.",
+       "variant": 1
+      }
+     ],
+     "fierce": [
+      {
+       "line": "<<$slave_name>>(은)는 새겨진 자리와 당신을 번갈아 노려보았다. 젖은 눈으로도 그녀는 시선을 피하지 않았다.",
+       "after": "이를 악문 턱이 한참 풀리지 않았다.",
+       "variant": 1
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "sale",
+   "label": "판매·납품 직전",
+   "weight": 3,
+   "layout": "devotion2",
+   "cells": [
+    "hi",
+    "lo"
+   ],
+   "cellRule": "무게 3. 헌신 3 이상이면 hi, 0~2면 lo",
+   "condition": "",
+   "hooksFromDb": [
+    {
+     "location": "interaction_result_city",
+     "anchor": null,
+     "note": "sell_slave_simple·sell_slave_complex 결과. 한 곳으로 모을 수 있는지 미확인"
+    }
+   ],
+   "originalSpeech": "none",
+   "text": {
+    "hi": {
+     "meek": [
+      {
+       "line": "<<$slave_name>>(은)는 두 손을 앞에 모으고 섰다. 그녀는 당신을 한참 올려다보다가 고개를 숙였다.",
+       "after": "그녀는 문턱에서 한 번 돌아보고, 깊이 고개를 숙였다.",
+       "variant": 1
+      }
+     ],
+     "plain": [
+      {
+       "line": "<<$slave_name>>(은)는 짐을 고쳐 들었다. 그녀는 방 안을 둘러보다가 당신에게 웃어 보였다.",
+       "after": "웃으려다 만 얼굴로, 그녀는 문 쪽으로 돌아섰다.",
+       "variant": 1
+      }
+     ],
+     "proud": [
+      {
+       "line": "<<$slave_name>>(은)는 옷매무새를 가다듬었다. 그녀는 당신 앞에서 고개를 한 번 숙이고 턱을 들었다.",
+       "after": "턱은 들었지만, 문 앞에서 발이 한 박자 늦게 떨어졌다.",
+       "variant": 1
+      }
+     ],
+     "quiet": [
+      {
+       "line": "<<$slave_name>>(은)는 당신 앞에 와서 섰다.",
+       "after": "문을 나서기 전, 그녀는 처음으로 먼저 고개를 숙였다.",
+       "variant": 1
+      }
+     ],
+     "princess": [
+      {
+       "line": "<<$slave_name>>(은)는 한참 당신을 보았다. 그녀는 아무것도 묻지 않고 짐을 들었다.",
+       "after": "돌아선 뒤로 그녀는 한 번도 뒤를 보지 않았다. 걸음만 느렸다.",
+       "variant": 1
+      }
+     ],
+     "bright": [
+      {
+       "line": "<<$slave_name>>(은)는 짐을 들고도 문 앞에서 몇 번이나 뒤를 돌아보았다. 그때마다 웃어 보였지만 눈가가 붉었다.",
+       "after": "마지막으로 그녀는 당신에게 크게 손을 흔들었다.",
+       "variant": 1
+      }
+     ],
+     "fierce": [
+      {
+       "line": "<<$slave_name>>(은)는 짐을 움켜쥔 채 한동안 당신 앞에 서 있었다. 그녀는 고개를 한 번 숙이고 돌아섰다.",
+       "after": "문을 닫는 손이 평소보다 조용했다.",
+       "variant": 1
+      }
+     ]
+    },
+    "lo": {
+     "meek": [
+      {
+       "line": "<<$slave_name>>(은)는 옷자락을 쥐었다. 그녀는 문 쪽과 당신을 번갈아 보았다.",
+       "after": "문이 열리자 어깨가 굳었다.",
+       "variant": 1
+      }
+     ],
+     "plain": [
+      {
+       "line": "<<$slave_name>>(은)는 어깨를 으쓱했다. 그녀는 짐을 대충 어깨에 걸쳤다.",
+       "after": "그러면서도 방 안을 한 번 더 둘러보았다.",
+       "variant": 1
+      }
+     ],
+     "proud": [
+      {
+       "line": "<<$slave_name>>(은)는 팔짱을 꼈다. 그녀는 구매자와 당신을 번갈아 보며 입꼬리를 비틀었다.",
+       "after": "입꼬리가 조금 떨렸다.",
+       "variant": 1
+      }
+     ],
+     "quiet": [
+      {
+       "line": "<<$slave_name>>(은)는 고개를 한 번 끄덕였다.",
+       "after": "그녀는 돌아보지 않고 나갔다.",
+       "variant": 1
+      }
+     ],
+     "princess": [
+      {
+       "line": "<<$slave_name>>(은)는 머리를 쓸어 넘겼다. 그녀는 당신에게 인사도 없이 문 쪽으로 걸어갔다.",
+       "after": "문고리를 잡은 손이 잠깐 멈췄다가 움직였다.",
+       "variant": 1
+      }
+     ],
+     "bright": [
+      {
+       "line": "<<$slave_name>>(은)는 별일 아니라는 듯 짐을 어깨에 둘러멨다. 그러나 방 안을 둘러보는 눈길은 오래 머물렀다.",
+       "after": "문턱을 넘는 발걸음이 한 박자 늦었다.",
+       "variant": 1
+      }
+     ],
+     "fierce": [
+      {
+       "line": "<<$slave_name>>(은)는 짐을 거칠게 집어 들고 당신을 노려보았다. 문을 나서면서도 그녀는 끝내 고개를 숙이지 않았다.",
+       "after": "닫힌 문 너머로 거친 발소리가 멀어졌다.",
+       "variant": 1
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "rebellion",
+   "label": "반란 제압",
+   "weight": 3,
+   "layout": "single",
+   "cells": [
+    "*"
+   ],
+   "cellRule": "태도를 나누지 않는 사건",
+   "condition": "",
+   "hooksFromDb": [
+    {
+     "location": "#dynamic",
+     "anchor": null,
+     "note": "$slave_fights_back 제압 뒤"
+    }
+   ],
+   "originalSpeech": "none",
+   "text": {
+    "*": {
+     "meek": [
+      {
+       "line": "<<$slave_name>>(은)는 바닥에 엎드린 채 떨었다. 그녀는 몸을 웅크리고 두 손으로 머리를 감쌌다.",
+       "after": "그녀는 일어날 생각을 하지 못했다.",
+       "variant": 1
+      }
+     ],
+     "plain": [
+      {
+       "line": "<<$slave_name>>(은)는 숨을 몰아쉬며 천장을 보았다. 그녀의 얼굴에는 이상하게 후련한 기색이 남아 있었다.",
+       "after": "힘이 빠진 손이 바닥에 떨어졌다.",
+       "variant": 1
+      }
+     ],
+     "proud": [
+      {
+       "line": "<<$slave_name>>(은)는 눌린 채로도 눈을 내리깔지 않았다. 그녀는 당신을 똑바로 노려보았다.",
+       "after": "이를 문 턱이 한참 풀리지 않았다.",
+       "variant": 1
+      }
+     ],
+     "quiet": [
+      {
+       "line": "<<$slave_name>>(은)는 저항을 멈추었다.",
+       "after": "힘이 빠진 것인지 그만둔 것인지는 알 수 없었다.",
+       "variant": 1
+      }
+     ],
+     "princess": [
+      {
+       "line": "<<$slave_name>>(은)는 당신의 손을 밀어내려 했다. 그녀는 몇 번이고 몸을 비틀다가 끝내 힘이 빠졌다.",
+       "after": "분한 숨이 한참 동안 가라앉지 않았다.",
+       "variant": 1
+      }
+     ],
+     "bright": [
+      {
+       "line": "<<$slave_name>>(은)는 바닥에 눌린 채 숨을 몰아쉬었다. 그녀는 어색하게 웃어 보이려다 그만두고 눈을 감았다.",
+       "after": "힘이 빠진 손이 바닥에 떨어졌다.",
+       "variant": 1
+      }
+     ],
+     "fierce": [
+      {
+       "line": "<<$slave_name>>(은)는 눌린 채로도 몸부림을 멈추지 않았다. 힘이 다 빠진 뒤에도 그녀의 눈은 당신을 노려보고 있었다.",
+       "after": "거친 숨소리가 오래 이어졌다.",
+       "variant": 1
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "pregnancy_reveal",
+   "label": "임신 확인",
+   "weight": 3,
+   "layout": "devotion2",
+   "cells": [
+    "hi",
+    "lo"
+   ],
+   "cellRule": "무게 3. 헌신 3 이상이면 hi, 0~2면 lo",
+   "condition": "",
+   "hooksFromDb": [
+    {
+     "location": "next_day",
+     "anchor": null,
+     "note": "pregnant_revealed = 1(2008~2012행). 다음 날 처음 마주할 때 낸다"
+    }
+   ],
+   "originalSpeech": "unknown",
+   "text": {
+    "hi": {
+     "meek": [
+      {
+       "line": "<<$slave_name>>(은)는 고개를 숙인 채 두 손으로 배를 감싸 당신 앞에 내밀었다. 떨리는 손끝이 당신의 손끝을 향해 놓였다.",
+       "after": "그녀는 당신의 시선이 배에 머무는 동안, 눈을 감고 고개를 숙인 채 가만히 서 있었다.",
+       "variant": 1
+      }
+     ],
+     "plain": [
+      {
+       "line": "<<$slave_name>>(은)는 고개를 끄덕인 채 두 손으로 배를 가리키며 당신을 똑바로 쳐다봤다.",
+       "after": "그녀는 당신의 반응이 오기까지, 어깨를 한 번 으쓱하고 가만히 서 있었다.",
+       "variant": 1
+      }
+     ],
+     "proud": [
+      {
+       "line": "<<$slave_name>>(은)는 턱을 든 채 한 손으로 배를 짚고 당신을 내려다봤다. 한쪽 눈썹을 올리며 당신의 반응을 기다렸다.",
+       "after": "얹은 손은 내리지 않았고, 시선은 당신에게 고정된 채였다.",
+       "variant": 1
+      }
+     ],
+     "quiet": [
+      {
+       "line": "<<$slave_name>>(은)는 고개를 한 번 끄덕인 뒤 손끝으로 제 배 끝을 가리켰다. 다시 선 자리에 가만히 서서 기다렸다.",
+       "after": "숨소리만 조금 커졌고, 그녀의 손끝은 당신의 손끝 위에 얹혔다.",
+       "variant": 1
+      }
+     ],
+     "princess": [
+      {
+       "line": "<<$slave_name>>(은)는 당신 앞에 서서 두 손으로 배를 포근하게 감쌌다. 턱을 든 채 당신을 올려다보며 방 안을 둘러봤다.",
+       "after": "손바닥으로 배의 곡선을 느꼈고, 끝까지 턱을 내리지 않은 채 당신을 응시했다.",
+       "variant": 1
+      }
+     ],
+     "bright": [
+      {
+       "line": "<<$slave_name>>(은)는 묻기도 전에 쪼르르 당신 앞으로 와서 두 손으로 배를 감싸 내밀었다. 당신을 올려다보며 활짝 웃었다.",
+       "after": "그녀는 당신의 소매를 살짝 잡아끈 채, 손끝이 배 위에 닿기를 기다렸다.",
+       "variant": 1
+      }
+     ],
+     "fierce": [
+      {
+       "line": "<<$slave_name>>(은)는 당당한 걸음으로 다가와 당신과 시선을 맞췄다. 한 손으로 배를 지그시 누른 채, 가슴을 펴고 섰다.",
+       "after": "어깨를 으쓱하고 씩 웃었다. 손바닥은 여전히 배 위에 단단히 붙어 있었다.",
+       "variant": 1
+      }
+     ]
+    },
+    "lo": {
+     "meek": [
+      {
+       "line": "<<$slave_name>>(은)는 어깨를 움츠린 채 반 걸음 물러서 손끝으로 배를 감쌌다. 고개를 숙인 채 옷자락을 쥔 채 서 있었다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "plain": [
+      {
+       "line": "<<$slave_name>>(은)는 바닥을 내려다보다 천천히 고개를 들었다. 배 위로 올리려던 손이 잠시 멈췄다가, 다시 내려갔다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "proud": [
+      {
+       "line": "<<$slave_name>>(은)는 시선을 비스듬히 젖힌 채 입술을 다물었다. 천천히 고개를 돌려, 손바닥을 배 위에 가만히 얹었다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "quiet": [
+      {
+       "line": "<<$slave_name>>(은)는 움직이지 않고 눈을 감았다. 이윽고 손끝만이 아주 천천히 움직여 제 배 위에 얹혔다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "princess": [
+      {
+       "line": "<<$slave_name>>(은)는 등을 꼿꼿이 세운 채 입술을 다물었다. 손을 배 위에 얹지 못한 채, 시선만 배 쪽을 향했다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "bright": [
+      {
+       "line": "<<$slave_name>>(은)는 웃으려다 입꼬리를 내렸다. 붉어진 눈가로 당신을 보며, 한 손으로 배 쪽을 가리켰다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "fierce": [
+      {
+       "line": "<<$slave_name>>(은)는 이를 악물고 고개를 돌렸다. 한 손으로 배를 짚어 누르듯 고정하고, 천천히 당신을 보았다.",
+       "after": "",
+       "variant": 1
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "verbal_punish",
+   "label": "말로 받는 벌",
+   "weight": 2,
+   "layout": "attitude4",
+   "cells": [
+    "shrink",
+    "soft",
+    "obey",
+    "follow"
+   ],
+   "cellRule": "무게 2. 위에서부터 처음 맞는 칸. ① 헌신 3 이상: 움츠림 상태면 shrink, 그 밖은 follow(따름-헌신). ② 헌신 0~1이고 맞섬 상태: 블록 없음. ③ 복종 단계 3 이상(obedience > 20): 움츠림 상태면 shrink, 그 밖은 obey(따름-복종). ④ 그 밖: 움츠림 상태면 shrink, 그 밖은 soft(헌신 2의 맞섬 상태 포함)",
+   "condition": "언어 압박 계열 처벌, torture_intensity >= 4",
+   "hooksFromDb": [],
+   "originalSpeech": "none",
+   "text": {
+    "shrink": {
+     "meek": [
+      {
+       "line": "<<$slave_name>>(은)는 어깨를 움츠리고 손끝을 만지작거렸다. 꾸중이 이어질수록 그녀의 고개는 더 낮아졌다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "plain": [
+      {
+       "line": "<<$slave_name>>(은)는 입술을 깨물고 바닥을 보았다. 꾸중이 길어지자 그녀는 눈을 질끈 감았다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "proud": [
+      {
+       "line": "<<$slave_name>>(은)는 턱을 들었지만 시선이 흔들렸다. 꾸중이 끝나기도 전에 그녀는 짧게 고개를 끄덕였다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "quiet": [
+      {
+       "line": "<<$slave_name>>(은)는 움직이지 않았다. 꾸중이 끝나자 그녀는 고개를 아주 조금 끄덕였다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "princess": [
+      {
+       "line": "<<$slave_name>>(은)는 등을 꼿꼿이 세웠지만 손이 떨렸다. 그녀는 꾸중을 끊으려는 듯 손을 들었다가 내렸다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "bright": [
+      {
+       "line": "<<$slave_name>>(은)는 웃어넘기려다 입꼬리가 굳었다. 꾸중이 길어지자 그녀는 손가락만 꼼지락거리며 바닥을 내려다보았다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "fierce": [
+      {
+       "line": "<<$slave_name>>(은)는 이를 악물었지만 어깨가 먼저 움츠러들었다. 쥔 주먹이 꾸중이 끝날 때까지 떨리고 있었다.",
+       "after": "",
+       "variant": 1
+      }
+     ]
+    },
+    "soft": {
+     "meek": [
+      {
+       "line": "<<$slave_name>>(은)는 두 손을 앞에 모으고 섰다. 꾸중이 끝나자 그녀는 고개를 깊이 숙였다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "plain": [
+      {
+       "line": "<<$slave_name>>(은)는 당신을 똑바로 쳐다보았다. 꾸중이 끝나자 그녀는 고개를 끄덕였지만 입술은 삐죽 나와 있었다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "proud": [
+      {
+       "line": "<<$slave_name>>(은)는 팔짱을 끼고 섰다. 꾸중을 듣는 내내 그녀의 한쪽 눈썹이 올라가 있었다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "quiet": [
+      {
+       "line": "<<$slave_name>>(은)는 고개를 한 번 끄덕였다. 그녀는 꾸중이 끝나자 곧바로 하던 일로 돌아갔다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "princess": [
+      {
+       "line": "<<$slave_name>>(은)는 고개를 돌린 채 들었다. 꾸중이 길어지자 그녀는 손끝으로 팔걸이를 두드렸다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "bright": [
+      {
+       "line": "<<$slave_name>>(은)는 꾸중을 듣는 동안 몇 번이나 입을 열려다 다물었다. 말이 끝나자 그녀는 머쓱한 얼굴로 고개를 꾸벅 숙였다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "fierce": [
+      {
+       "line": "<<$slave_name>>(은)는 꾸중을 듣는 내내 당신을 노려보았다. 말이 끝나자 그녀는 거칠게 숨을 내쉬고 고개를 돌렸다.",
+       "after": "",
+       "variant": 1
+      }
+     ]
+    },
+    "follow": {
+     "meek": [
+      {
+       "line": "<<$slave_name>>(은)는 고개를 들고 당신의 얼굴을 살폈다. 꾸중이 끝나자 그녀는 당신 곁으로 한 걸음 다가섰다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "plain": [
+      {
+       "line": "<<$slave_name>>(은)는 손등으로 뺨을 닦고 자세를 고쳤다. 그녀는 당신을 올려다보며 고개를 한 번 크게 끄덕였다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "proud": [
+      {
+       "line": "<<$slave_name>>(은)는 팔짱을 풀고 손을 내렸다. 그녀는 당신 앞에서 천천히 고개를 숙였다. 귀끝이 붉었다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "quiet": [
+      {
+       "line": "<<$slave_name>>(은)는 당신이 볼 때까지 시선을 거두지 않았다. 그리고 고개를 한 번 깊이 숙였다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "princess": [
+      {
+       "line": "<<$slave_name>>(은)는 한숨을 쉬고 당신을 보았다. 그녀는 잠시 뒤 짧게 고개를 끄덕였다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "bright": [
+      {
+       "line": "<<$slave_name>>(은)는 꾸중이 끝나자마자 당신 앞으로 다가와 고개를 숙였다. 그리고 눈치를 보듯 당신의 얼굴을 올려다보았다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "fierce": [
+      {
+       "line": "<<$slave_name>>(은)는 한동안 입술을 깨물고 서 있다가 당신 앞에 먼저 고개를 숙였다. 굳었던 어깨가 그제야 풀렸다.",
+       "after": "",
+       "variant": 1
+      }
+     ]
+    },
+    "obey": {
+     "meek": [
+      {
+       "line": "<<$slave_name>>(은)는 꾸중이 끝날 때까지 두 손을 앞에 모은 채 움직이지 않았다. 당신이 말을 멈추자 그녀는 고개를 한 번 깊이 숙였다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "plain": [
+      {
+       "line": "<<$slave_name>>(은)는 꾸중을 듣는 내내 정해진 자세를 흐트러뜨리지 않았다. 짧게 고개를 끄덕였을 뿐, 표정은 바뀌지 않았다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "proud": [
+      {
+       "line": "<<$slave_name>>(은)는 등을 곧게 편 채 꾸중을 끝까지 들었다. 시선은 당신의 어깨 너머 한 점에 고정되어 있었다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "quiet": [
+      {
+       "line": "<<$slave_name>>(은)는 한 번도 고개를 들지 않았다. 꾸중이 끝나자 그녀는 정해진 자리로 돌아가 섰다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "princess": [
+      {
+       "line": "<<$slave_name>>(은)는 배운 대로 무릎을 꿇고 손을 무릎 위에 얹었다. 꾸중이 이어지는 동안 그 손가락 하나 움직이지 않았다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "bright": [
+      {
+       "line": "<<$slave_name>>(은)는 평소의 웃음기를 지우고 바른 자세로 섰다. 꾸중이 끝날 때까지 그녀는 한 번도 끼어들지 않았다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "fierce": [
+      {
+       "line": "<<$slave_name>>(은)는 턱에 힘을 준 채 정해진 자세를 지켰다. 쏘아붙일 듯 들썩이던 어깨는 끝내 제자리에 머물렀다.",
+       "after": "",
+       "variant": 1
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "physical_punish",
+   "label": "몸으로 받는 벌",
+   "weight": 2,
+   "layout": "attitude4",
+   "cells": [
+    "shrink",
+    "soft",
+    "obey",
+    "follow"
+   ],
+   "cellRule": "무게 2. 위에서부터 처음 맞는 칸. ① 헌신 3 이상: 움츠림 상태면 shrink, 그 밖은 follow(따름-헌신). ② 헌신 0~1이고 맞섬 상태: 블록 없음. ③ 복종 단계 3 이상(obedience > 20): 움츠림 상태면 shrink, 그 밖은 obey(따름-복종). ④ 그 밖: 움츠림 상태면 shrink, 그 밖은 soft(헌신 2의 맞섬 상태 포함)",
+   "condition": "구타·채찍·고문 기구·구속, torture_intensity >= 4",
+   "hooksFromDb": [],
+   "originalSpeech": "none",
+   "text": {
+    "shrink": {
+     "meek": [
+      {
+       "line": "<<$slave_name>>(은)는 어깨를 움츠리고 손끝을 만지작거렸다. 매가 멎은 뒤에도 그녀는 몸을 펴지 못했다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "plain": [
+      {
+       "line": "<<$slave_name>>(은)는 팔로 제 몸을 감쌌다. 매가 멎은 뒤에도 그녀는 당신이 움직일 때마다 움찔했다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "proud": [
+      {
+       "line": "<<$slave_name>>(은)는 턱을 들었지만 시선이 흔들렸다. 그녀는 아픈 자리를 가리려는 손을 억지로 내렸다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "quiet": [
+      {
+       "line": "<<$slave_name>>(은)는 움직이지 않았다. 입술이 달싹였지만 소리는 나오지 않았다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "princess": [
+      {
+       "line": "<<$slave_name>>(은)는 입술을 다물고 창 쪽을 보았다. 매가 멎을 때까지 그녀는 당신 쪽을 돌아보지 않았다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "bright": [
+      {
+       "line": "<<$slave_name>>(은)는 매가 멎은 뒤에도 웅크린 채 일어나지 못했다. 늘 밝던 얼굴이 눈물과 땀으로 엉망이 되어 있었다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "fierce": [
+      {
+       "line": "<<$slave_name>>(은)는 버티던 무릎이 결국 꺾였다. 바닥을 짚은 손이 떨리는 것을 그녀는 감추지 못했다.",
+       "after": "",
+       "variant": 1
+      }
+     ]
+    },
+    "soft": {
+     "meek": [
+      {
+       "line": "<<$slave_name>>(은)는 고개를 숙인 채 옷자락을 쥐었다. 그녀는 아픈 자리를 감싸며 천천히 고개를 끄덕였다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "plain": [
+      {
+       "line": "<<$slave_name>>(은)는 당신을 똑바로 쳐다보았다. 그녀는 붉어진 자리를 문지르며 얼굴을 찡그렸다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "proud": [
+      {
+       "line": "<<$slave_name>>(은)는 머리카락을 넘기고 당신을 보았다. 그녀는 흐트러진 옷매무새부터 바로잡았다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "quiet": [
+      {
+       "line": "<<$slave_name>>(은)는 눈만 들어 당신을 보았다. 그녀는 매가 멎었는지 확인하듯 한동안 그대로 있었다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "princess": [
+      {
+       "line": "<<$slave_name>>(은)는 한숨을 쉬고 당신을 보았다. 그녀는 눈가가 젖었는데도 끝내 소리를 내지 않았다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "bright": [
+      {
+       "line": "<<$slave_name>>(은)는 아픈 자리를 문지르며 억지로 웃어 보이려 했다. 하지만 일어서는 동안 몇 번이나 얼굴을 찡그렸다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "fierce": [
+      {
+       "line": "<<$slave_name>>(은)는 매가 멎자 거칠게 몸을 일으켰다. 그녀는 당신을 한 번 노려보고는 아픈 자리를 움켜쥔 채 등을 돌렸다.",
+       "after": "",
+       "variant": 1
+      }
+     ]
+    },
+    "follow": {
+     "meek": [
+      {
+       "line": "<<$slave_name>>(은)는 고개를 들고 당신의 얼굴을 살폈다. 그녀는 아픈 자리를 감추듯 옷을 여미고 당신 곁에 섰다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "plain": [
+      {
+       "line": "<<$slave_name>>(은)는 손등으로 뺨을 닦고 자세를 고쳤다. 그녀는 아픈 자리를 한 번 문지르고는 당신을 올려다보았다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "proud": [
+      {
+       "line": "<<$slave_name>>(은)는 팔짱을 풀고 손을 내렸다. 그녀는 아픈 몸으로도 당신 앞에 곧게 서서 고개를 숙였다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "quiet": [
+      {
+       "line": "<<$slave_name>>(은)는 한 걸음 뒤에 붙어 섰다. 그녀는 아픈 기색을 보이지 않으려는 듯 표정을 바꾸지 않았다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "princess": [
+      {
+       "line": "<<$slave_name>>(은)는 턱을 괴고 당신을 올려다보았다. 아픈 자리를 감싸면서도 그녀는 당신 곁을 떠나지 않았다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "bright": [
+      {
+       "line": "<<$slave_name>>(은)는 아픈 몸으로도 당신 곁으로 다가와 섰다. 눈가는 젖어 있었지만 그녀는 당신의 소매를 살짝 잡았다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "fierce": [
+      {
+       "line": "<<$slave_name>>(은)는 거친 숨을 고르고 당신 앞에 섰다. 한참 당신을 바라보던 그녀는 먼저 고개를 숙였다.",
+       "after": "",
+       "variant": 1
+      }
+     ]
+    },
+    "obey": {
+     "meek": [
+      {
+       "line": "<<$slave_name>>(은)는 매가 멎자 아픈 자리를 감싸지도 않고 무릎을 꿇었다. 떨리는 손을 무릎 위에 가지런히 얹고 다음 지시를 기다렸다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "plain": [
+      {
+       "line": "<<$slave_name>>(은)는 매가 멎자마자 바른 자세로 돌아갔다. 붉어진 자리에는 손도 대지 않았고, 시선은 당신의 발끝에 머물렀다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "proud": [
+      {
+       "line": "<<$slave_name>>(은)는 비틀거리면서도 다시 등을 곧게 폈다. 붉게 부은 자리를 가리지도 않고 정해진 자리에 섰다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "quiet": [
+      {
+       "line": "<<$slave_name>>(은)는 소리 없이 몸을 일으켜 원래 자세로 돌아갔다. 숨소리만 조금 거칠어져 있었다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "princess": [
+      {
+       "line": "<<$slave_name>>(은)는 떨리는 다리로 일어나 옷매무새부터 바로 했다. 그리고 배운 대로 고개를 숙인 채 다음 지시를 기다렸다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "bright": [
+      {
+       "line": "<<$slave_name>>(은)는 이를 악물고 바른 자세로 돌아갔다. 아픈 자리로 가려던 손가락이 움찔거렸지만, 손은 끝내 옆구리에 붙어 있었다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "fierce": [
+      {
+       "line": "<<$slave_name>>(은)는 이를 갈며 몸을 일으켜 정해진 자세로 돌아갔다. 붉게 부은 팔이 떨렸지만 그녀는 자세를 풀지 않았다.",
+       "after": "",
+       "variant": 1
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "unjust_punish",
+   "label": "억울한 벌",
+   "weight": 2,
+   "layout": "attitude4",
+   "cells": [
+    "shrink",
+    "soft",
+    "obey",
+    "follow"
+   ],
+   "cellRule": "무게 2. 위에서부터 처음 맞는 칸. ① 헌신 3 이상: 움츠림 상태면 shrink, 그 밖은 follow(따름-헌신). ② 헌신 0~1이고 맞섬 상태: 블록 없음. ③ 복종 단계 3 이상(obedience > 20): 움츠림 상태면 shrink, 그 밖은 obey(따름-복종). ④ 그 밖: 움츠림 상태면 shrink, 그 밖은 soft(헌신 2의 맞섬 상태 포함)",
+   "condition": "처벌 시점에 slave['sin'] = 0",
+   "hooksFromDb": [],
+   "originalSpeech": "none",
+   "text": {
+    "shrink": {
+     "meek": [
+      {
+       "line": "<<$slave_name>>(은)는 반 걸음 물러나 벽 쪽에 붙어 섰다. 그녀는 영문을 모르는 얼굴로 당신과 바닥을 번갈아 보았다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "plain": [
+      {
+       "line": "<<$slave_name>>(은)는 입술을 깨물고 바닥을 보았다. 그녀는 몇 번이나 고개를 갸웃거렸다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "proud": [
+      {
+       "line": "<<$slave_name>>(은)는 주먹을 쥐었다가 폈다. 그녀는 당신을 한 번 오래 바라보고는 고개를 돌렸다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "quiet": [
+      {
+       "line": "<<$slave_name>>(은)는 눈을 감았다. 그녀는 한참 동안 그대로 있었다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "princess": [
+      {
+       "line": "<<$slave_name>>(은)는 치맛자락을 구겨 쥐었다. 그녀는 떨리는 턱을 들어 당신을 보았다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "bright": [
+      {
+       "line": "<<$slave_name>>(은)는 어리둥절한 얼굴로 당신을 보다가 금세 울상이 되었다. 그녀는 무릎을 끌어안고 바닥만 내려다보았다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "fierce": [
+      {
+       "line": "<<$slave_name>>(은)는 이를 악물었지만 무릎이 먼저 꺾였다. 그녀는 바닥을 짚은 손을 좀처럼 들지 못했다.",
+       "after": "",
+       "variant": 1
+      }
+     ]
+    },
+    "soft": {
+     "meek": [
+      {
+       "line": "<<$slave_name>>(은)는 눈을 내리깔고 가만히 들었다. 그녀의 손이 치맛자락을 몇 번이고 구겨 쥐었다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "plain": [
+      {
+       "line": "<<$slave_name>>(은)는 어깨를 한 번 으쓱했다. 그녀는 억울한 듯 당신을 쳐다보며 입술을 삐죽였다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "proud": [
+      {
+       "line": "<<$slave_name>>(은)는 한쪽 눈썹을 올렸다. 그녀는 팔짱을 낀 채 당신이 이유를 말하기를 기다렸다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "quiet": [
+      {
+       "line": "<<$slave_name>>(은)는 선 자리에서 기다렸다. 그녀의 시선이 잠시 당신에게 머물렀다가 내려갔다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "princess": [
+      {
+       "line": "<<$slave_name>>(은)는 손끝으로 팔걸이를 두드렸다. 그녀는 고개를 비스듬히 하고 당신을 빤히 바라보았다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "bright": [
+      {
+       "line": "<<$slave_name>>(은)는 억울한 듯 볼을 부풀리고 당신을 쳐다보았다. 그러다 한숨을 푹 쉬고는 고개를 떨구었다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "fierce": [
+      {
+       "line": "<<$slave_name>>(은)는 당신을 한참 노려보다가 끝내 고개를 돌렸다. 그녀는 일어서면서 바닥을 세게 짚었다.",
+       "after": "",
+       "variant": 1
+      }
+     ]
+    },
+    "follow": {
+     "meek": [
+      {
+       "line": "<<$slave_name>>(은)는 부르면 들릴 거리에 와서 섰다. 그녀는 무언가를 찾듯 당신의 얼굴을 오래 살폈다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "plain": [
+      {
+       "line": "<<$slave_name>>(은)는 묻기도 전에 곁으로 왔다. 그녀는 당신의 얼굴을 올려다보며 무언가를 기다렸다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "proud": [
+      {
+       "line": "<<$slave_name>>(은)는 턱을 든 채 당신의 다음 말을 기다렸다. 그녀는 당신의 표정을 하나도 놓치지 않으려는 듯 바라보았다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "quiet": [
+      {
+       "line": "<<$slave_name>>(은)는 당신이 볼 때까지 시선을 거두지 않았다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "princess": [
+      {
+       "line": "<<$slave_name>>(은)는 당신 옆에 서서 방 안을 둘러보았다. 그러다 그녀는 당신을 정면으로 돌아보았다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "bright": [
+      {
+       "line": "<<$slave_name>>(은)는 한참 당신의 얼굴을 살피다가 곁으로 다가왔다. 그녀는 아무것도 묻지 않고 당신의 기색만 살폈다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "fierce": [
+      {
+       "line": "<<$slave_name>>(은)는 한참 당신을 바라보다가 숨을 길게 내쉬었다. 그녀는 아무것도 묻지 않고 다시 당신 곁에 섰다.",
+       "after": "",
+       "variant": 1
+      }
+     ]
+    },
+    "obey": {
+     "meek": [
+      {
+       "line": "<<$slave_name>>(은)는 영문을 모르는 얼굴로 당신을 한 번 올려다보았다. 그러나 곧 시선을 내리고 다시 바른 자세로 돌아갔다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "plain": [
+      {
+       "line": "<<$slave_name>>(은)는 무언가 물으려다 입을 다물었다. 그녀는 정해진 자세로 돌아가 다음 지시를 기다렸다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "proud": [
+      {
+       "line": "<<$slave_name>>(은)는 한쪽 눈썹이 올라갔다가 곧 내려왔다. 그녀는 아무것도 묻지 않고 등을 곧게 편 채 자리를 지켰다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "quiet": [
+      {
+       "line": "<<$slave_name>>(은)는 잠시 멈칫했을 뿐, 곧 원래 자세로 돌아갔다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "princess": [
+      {
+       "line": "<<$slave_name>>(은)는 입술을 꾹 다문 채 다시 무릎을 꿇었다. 꼿꼿이 편 등이 조금 떨리고 있었다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "bright": [
+      {
+       "line": "<<$slave_name>>(은)는 어리둥절한 표정을 감추고 서둘러 자세를 바로 했다. 무언가 말하려던 입은 꼭 다물려 있었다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "fierce": [
+      {
+       "line": "<<$slave_name>>(은)는 주먹을 쥐었다 펴고는 다시 자세를 바로 했다. 눈은 바닥으로 내려갔지만 턱에는 여전히 힘이 들어가 있었다.",
+       "after": "",
+       "variant": 1
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "shame_punish",
+   "label": "부끄러운 벌",
+   "weight": 2,
+   "layout": "attitude4",
+   "cells": [
+    "shrink",
+    "soft",
+    "obey",
+    "follow"
+   ],
+   "cellRule": "무게 2. 위에서부터 처음 맞는 칸. ① 헌신 3 이상: 움츠림 상태면 shrink, 그 밖은 follow(따름-헌신). ② 헌신 0~1이고 맞섬 상태: 블록 없음. ③ 복종 단계 3 이상(obedience > 20): 움츠림 상태면 shrink, 그 밖은 obey(따름-복종). ④ 그 밖: 움츠림 상태면 shrink, 그 밖은 soft(헌신 2의 맞섬 상태 포함)",
+   "condition": "치욕 계열 처벌",
+   "hooksFromDb": [],
+   "originalSpeech": "none",
+   "text": {
+    "shrink": {
+     "meek": [
+      {
+       "line": "<<$slave_name>>(은)는 어깨를 움츠린 채 반 걸음 물러서 벽에 기대었다. 옷자락을 쥔 손끝이 떨렸다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "plain": [
+      {
+       "line": "<<$slave_name>>(은)는 팔로 제 몸을 감싸 입술을 깨물었다. 대답 대신 한숨을 삼키고 시선을 바닥에 두었다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "proud": [
+      {
+       "line": "<<$slave_name>>(은)는 턱을 들었지만 시선이 창 쪽으로 흔들렸다. 입을 열려다 다물고 고개를 돌렸다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "quiet": [
+      {
+       "line": "<<$slave_name>>(은)는 선 자리에 굳어 눈을 감았다. 숨소리마저 줄인 채 가만히 있었다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "princess": [
+      {
+       "line": "<<$slave_name>>(은)는 등을 꼿꼿이 세운 채 창 쪽을 향했다. 치맛자락을 구겨 쥔 손이 보이지 않게 떨렸다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "bright": [
+      {
+       "line": "<<$slave_name>>(은)는 웃으려다 입꼬리가 내려간 채 바닥을 내려다봤다. 손을 휘젓고도 눈가가 붉었다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "fierce": [
+      {
+       "line": "<<$slave_name>>(은)는 주먹을 쥐었다가 폈다. 이를 악물고 고개를 돌린 채, 어깨를 들썩이며 거친 숨을 내쉬었다.",
+       "after": "",
+       "variant": 1
+      }
+     ]
+    },
+    "soft": {
+     "meek": [
+      {
+       "line": "<<$slave_name>>(은)는 두 손을 앞에 모은 채 눈을 내리깔고 서 있었다. 작게 고개를 끄덕였다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "plain": [
+      {
+       "line": "<<$slave_name>>(은)는 고개를 끄덕인 뒤 당신을 똑바로 쳐다봤다. 어깨를 한 번 으쓱하고 시선을 거두었다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "proud": [
+      {
+       "line": "<<$slave_name>>(은)는 팔짱을 낀 채 한쪽 눈썹을 올렸다. 머리카락을 넘기며 당신을 내려다봤다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "quiet": [
+      {
+       "line": "<<$slave_name>>(은)는 눈만 들어 당신을 보았다. 고개를 한 번 끄덕이고, 선 자리에서 가만히 기다렸다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "princess": [
+      {
+       "line": "<<$slave_name>>(은)는 고개를 돌린 채 가만히 앉아 있었다. 손끝으로 팔걸이를 두드리다 한숨을 쉬며 이쪽을 봤다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "bright": [
+      {
+       "line": "<<$slave_name>>(은)는 고개를 끄덕이며 생긋 웃었다. 발끝을 까딱하며 당신의 다음 말을 기다렸다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "fierce": [
+      {
+       "line": "<<$slave_name>>(은)는 허리에 손을 얹은 채 턱을 치켜들고 당신을 봤다. 한 걸음, 구르듯 다가섰다.",
+       "after": "",
+       "variant": 1
+      }
+     ]
+    },
+    "obey": {
+     "meek": [
+      {
+       "line": "<<$slave_name>>(은)는 두 손을 앞에 모으고 움직이지 않았다. 떨리는 손을 무릎 위에 가지런히 얹고 고개를 숙인 채 지시를 기다렸다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "plain": [
+      {
+       "line": "<<$slave_name>>(은)는 정해진 자세로 돌아갔다. 시선을 당신의 발끝에 둔 채 짧게 고개를 끄덕일 뿐 표정이 바뀌지 않았다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "proud": [
+      {
+       "line": "<<$slave_name>>(은)는 등을 곧게 편 채 시선을 한 점에 고정했다. 아픈 자리를 가리지 않고 제자리에 섰다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "quiet": [
+      {
+       "line": "<<$slave_name>>(은)는 소리 없이 원래 자세로 돌아갔다. 한 번도 고개를 들지 않았고, 숨소리만 조금 거칠어졌다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "princess": [
+      {
+       "line": "<<$slave_name>>(은)는 배운 대로 무릎을 꿇고 손을 얹었다. 옷매무새부터 바로한 뒤, 꼿꼿이 편 등이 가늘게 떨렸다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "bright": [
+      {
+       "line": "<<$slave_name>>(은)는 웃음기를 지우고 바른 자세로 섰다. 움찔거리던 손을 옆구리에 붙이고, 입을 꼭 다물었다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "fierce": [
+      {
+       "line": "<<$slave_name>>(은)는 턱에 힘을 준 채 자세를 지켰다. 주먹을 쥐었다 폈고, 들썩이던 어깨를 제자리에 묶어 두었다.",
+       "after": "",
+       "variant": 1
+      }
+     ]
+    },
+    "follow": {
+     "meek": [
+      {
+       "line": "<<$slave_name>>(은)는 반 걸음 다가와 고개를 숙였다. 부르면 들릴 거리에 서서 당신의 얼굴을 살폈다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "plain": [
+      {
+       "line": "<<$slave_name>>(은)는 눈을 맞추고 웃었다. 묻기도 전에 곁으로 온 그녀는 손등으로 뺨을 닦고 자세를 고쳤다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "proud": [
+      {
+       "line": "<<$slave_name>>(은)는 못 이기는 척 곁에 섰다. 팔짱을 풀고 손을 내린 채, 턱을 든 채 다음 말을 기다렸다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "quiet": [
+      {
+       "line": "<<$slave_name>>(은)는 제 옷자락 끝을 쥐고 한 걸음 뒤에 붙어 섰다. 당신이 볼 때까지 시선을 거두지 않았다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "princess": [
+      {
+       "line": "<<$slave_name>>(은)는 당연하다는 듯 옆자리를 차지했다. 턱을 괴고 당신을 올려다본 채 방 안을 둘러봤다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "bright": [
+      {
+       "line": "<<$slave_name>>(은)는 묻기도 전에 쪼르르 곁으로 왔다. 당신의 소매를 살짝 잡아끈 채 활짝 웃었다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "fierce": [
+      {
+       "line": "<<$slave_name>>(은)는 성큼 다가와 당신 앞에 섰다. 가슴을 펴고 다음 명령을 기다렸다. 어깨를 으쓱하고 씩 웃었다.",
+       "after": "",
+       "variant": 1
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "erotic_reward",
+   "label": "몸으로 받는 보상",
+   "weight": 2,
+   "layout": "attitude4",
+   "cells": [
+    "shrink",
+    "soft",
+    "obey",
+    "follow"
+   ],
+   "cellRule": "무게 2. 위에서부터 처음 맞는 칸. ① 헌신 3 이상: 움츠림 상태면 shrink, 그 밖은 follow(따름-헌신). ② 헌신 0~1이고 맞섬 상태: 블록 없음. ③ 복종 단계 3 이상(obedience > 20): 움츠림 상태면 shrink, 그 밖은 obey(따름-복종). ④ 그 밖: 움츠림 상태면 shrink, 그 밖은 soft(헌신 2의 맞섬 상태 포함)",
+   "condition": "성적 보상 강도 4~5",
+   "hooksFromDb": [],
+   "originalSpeech": null,
+   "text": {
+    "shrink": {
+     "meek": [
+      {
+       "line": "<<$slave_name>>(은)는 어깨를 움츠린 채 두 손으로 제 얼굴을 감쌌다. 고개를 숙인 채, 옷자락을 쥔 손끝이 떨렸다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "plain": [
+      {
+       "line": "<<$slave_name>>(은)는 뜨거운 숨을 낮게 흘렸다. 붉게 달아오른 뺨을 손등으로 가리며, 시선을 비스듬히 내렸다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "proud": [
+      {
+       "line": "<<$slave_name>>(은)는 턱을 살짝 당겨 시선을 피했다. 입술을 가볍게 깨물고는, 당신의 눈을 마주치지 못한 채 고개를 돌렸다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "quiet": [
+      {
+       "line": "<<$slave_name>>(은)는 움직이지 않았다. 눈을 감고, 숨소리마저 줄인 채 가만히 서 있었다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "princess": [
+      {
+       "line": "<<$slave_name>>(은)는 가슴팍의 옷매무새를 만지작거렸다. 숨을 들이켜는 소리가 짧게 들렸고, 어깨가 조금 움츠러들었다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "bright": [
+      {
+       "line": "<<$slave_name>>(은)는 웃으려다 입꼬리가 내려갔다. 평소보다 목소리를 낮추고 바닥을 내려다봤다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "fierce": [
+      {
+       "line": "<<$slave_name>>(은)는 거칠게 몰아쉬던 숨을 억지로 눌러 참았다. 손가락 끝을 말아 쥐고는, 벽 쪽으로 몸을 조금 붙였다.",
+       "after": "",
+       "variant": 1
+      }
+     ]
+    },
+    "soft": {
+     "meek": [
+      {
+       "line": "<<$slave_name>>(은)는 두 손을 겹쳐 배 위에 올렸다. 풀린 눈으로 당신을 바라보며, 아주 천천히 고개를 끄덕였다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "plain": [
+      {
+       "line": "<<$slave_name>>(은)는 고개를 끄덕였다. 어깨를 한 번 으쓱한 뒤 당신을 똑바로 쳐다봤다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "proud": [
+      {
+       "line": "<<$slave_name>>(은)는 한쪽 입꼬리를 살짝 올렸다. 흐트러진 머리카락을 귀 뒤로 넘기며, 나른한 시선으로 당신을 훑었다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "quiet": [
+      {
+       "line": "<<$slave_name>>(은)는 눈꺼풀을 느리게 깜빡였다. 가만히 선 자리에서 숨을 고르더니, 당신을 향해 아주 작게 미소 지었다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "princess": [
+      {
+       "line": "<<$slave_name>>(은)는 엉덩이를 뒤로 빼고 편하게 앉았다. 팔걸이에 턱을 괸 채, 나른하게 당신의 다음 말을 기다렸다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "bright": [
+      {
+       "line": "<<$slave_name>>(은)는 콧노래를 흥얼거리듯 입술을 달싹였다. 발끝을 가볍게 톡톡 치며, 생긋 웃는 얼굴로 당신을 봤다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "fierce": [
+      {
+       "line": "<<$slave_name>>(은)는 허리에 손을 얹고 섰다. 턱을 치켜들고 당신을 보며, 한 걸음 내딛었다.",
+       "after": "",
+       "variant": 1
+      }
+     ]
+    },
+    "obey": {
+     "meek": [
+      {
+       "line": "<<$slave_name>>(은)는 두 팔을 몸 옆에 가지런히 붙였다. 숨이 가라앉기를 기다리며, 고개를 숙인 채 정지 상태로 섰다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "plain": [
+      {
+       "line": "<<$slave_name>>(은)는 발꿈치를 붙여 자세를 바로잡았다. 표정의 변화 없이, 당신의 시선이 닿는 곳에 그대로 멈춰 섰다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "proud": [
+      {
+       "line": "<<$slave_name>>(은)는 허리를 꼿꼿이 세워 섰다. 턱을 든 채 정면을 응시하며, 손가락 끝 하나 움직이지 않고 대기했다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "quiet": [
+      {
+       "line": "<<$slave_name>>(은)는 소리 없이 두 발을 모았다. 고개를 깊게 숙여 시선을 바닥에 고정하고, 정적이 흐를 때까지 기다렸다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "princess": [
+      {
+       "line": "<<$slave_name>>(은)는 무릎을 꿇고 앉아 등을 꼿꼿이 폈다. 손을 허벅지 위에 가지런히 얹고, 흐트러짐 없는 자세를 유지했다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "bright": [
+      {
+       "line": "<<$slave_name>>(은)는 입술을 꼭 다물고 웃음을 참았다. 움찔거리던 손을 옆구리에 밀착시키고, 바른 자세로 굳어 섰다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "fierce": [
+      {
+       "line": "<<$slave_name>>(은)는 턱에 힘을 주고 자세를 고정했다. 가쁘게 들썩이던 어깨를 억지로 누르고, 정면을 똑바로 응시했다.",
+       "after": "",
+       "variant": 1
+      }
+     ]
+    },
+    "follow": {
+     "meek": [
+      {
+       "line": "<<$slave_name>>(은)는 당신의 발치까지 조심스럽게 다가왔다. 고개를 약간 기울인 채, 당신의 표정을 살피며 멈춰 섰다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "plain": [
+      {
+       "line": "<<$slave_name>>(은)는 자연스럽게 당신의 옆에 섰다. 손등으로 입가에 묻은 것을 닦아내고, 말없이 당신의 얼굴을 봤다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "proud": [
+      {
+       "line": "<<$slave_name>>(은)는 못 이기는 척 거리를 좁혔다. 팔짱을 풀고 손을 내린 채, 당신의 어깨가 닿을 만큼 가깝게 섰다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "quiet": [
+      {
+       "line": "<<$slave_name>>(은)는 그림자처럼 당신의 뒤에 붙었다. 옷자락 끝을 아주 살짝 쥐고, 당신이 돌아볼 때까지 기다렸다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "princess": [
+      {
+       "line": "<<$slave_name>>(은)는 당연하다는 듯 당신의 옆자리를 차지했다. 고개를 당신의 어깨 쪽으로 기울이며, 방 안을 둘러봤다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "bright": [
+      {
+       "line": "<<$slave_name>>(은)는 쪼르르 다가와 당신의 소매를 잡았다. 얼굴을 들어 당신을 올려다보며, 활짝 웃는 얼굴로 매달렸다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "fierce": [
+      {
+       "line": "<<$slave_name>>(은)는 성큼 다가와 당신의 앞을 막아섰다. 가슴을 펴고 당당하게 섰으며, 씩 웃으며 다음 명령을 기다렸다.",
+       "after": "",
+       "variant": 1
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "climax",
+   "label": "절정과 그 뒤",
+   "weight": 2,
+   "layout": "attitude4",
+   "cells": [
+    "shrink",
+    "soft",
+    "obey",
+    "follow"
+   ],
+   "cellRule": "무게 2. 위에서부터 처음 맞는 칸. ① 헌신 3 이상: 움츠림 상태면 shrink, 그 밖은 follow(따름-헌신). ② 헌신 0~1이고 맞섬 상태: 블록 없음. ③ 복종 단계 3 이상(obedience > 20): 움츠림 상태면 shrink, 그 밖은 obey(따름-복종). ④ 그 밖: 움츠림 상태면 shrink, 그 밖은 soft(헌신 2의 맞섬 상태 포함)",
+   "condition": "절정 판정",
+   "hooksFromDb": [],
+   "originalSpeech": null,
+   "text": {
+    "shrink": {
+     "meek": [
+      {
+       "line": "<<$slave_name>>(은)는 어깨를 움츠린 채 고개를 숙였다. 반 걸음 물러나 벽 쪽에 붙어 선 채, 옷자락을 쥔 손끝이 떨렸다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "plain": [
+      {
+       "line": "<<$slave_name>>(은)는 입술을 깨물고 바닥을 내려다봤다. 팔로 제 몸을 감싼 채, 대답 대신 한숨을 삼켰다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "proud": [
+      {
+       "line": "<<$slave_name>>(은)는 턱을 들었지만 시선이 흔들렸다. 입을 열려다 다물고 고개를 돌린 채, 차갑게 시선을 내리깔았다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "quiet": [
+      {
+       "line": "<<$slave_name>>(은)는 어깨를 움츠린 채 숨을 들이켰다. 떨리는 손으로 입가를 가리고, 눈을 감은 채 가쁜 숨을 몰아쉬었다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "princess": [
+      {
+       "line": "<<$slave_name>>(은)는 등을 꼿꼿이 세우려 애썼다. 하지만 무릎이 가늘게 떨렸고, 치맛자락을 쥔 손에 힘이 잔뜩 들어갔다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "bright": [
+      {
+       "line": "<<$slave_name>>(은)는 헐떡이는 숨 사이로 작은 신음을 흘렸다. 붉어진 눈가로 바닥을 내려다보며, 손으로 앞머리를 쓸어 올렸다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "fierce": [
+      {
+       "line": "<<$slave_name>>(은)는 이를 악문 채 주먹을 꽉 쥐었다. 어깨가 크게 들썩일 정도로 거친 숨을 내뱉으며, 고개를 돌려 버텼다.",
+       "after": "",
+       "variant": 1
+      }
+     ]
+    },
+    "soft": {
+     "meek": [
+      {
+       "line": "<<$slave_name>>(은)는 두 손을 모아 가슴팍에 얹었다. 가늘게 떨리는 숨을 내쉬며, 눈을 내리깔고 천천히 호흡을 가다듬었다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "plain": [
+      {
+       "line": "<<$slave_name>>(은)는 땀에 젖은 목덜미를 손으로 훔쳤다. 어깨를 한 번 크게 들썩인 뒤, 당신을 똑바로 쳐다봤다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "proud": [
+      {
+       "line": "<<$slave_name>>(은)는 입술을 다문 채 숨을 정리했다. 흐트러진 머리카락을 그대로 둔 채, 턱을 약간 들어 당신을 내려다봤다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "quiet": [
+      {
+       "line": "<<$slave_name>>(은)는 손바닥을 펴 허벅지에 얹었다. 떨림이 멎기를 기다리며, 아주 느리게 눈을 깜빡이며 당신을 보았다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "princess": [
+      {
+       "line": "<<$slave_name>>(은)는 치맛자락에 잡힌 주름을 손끝으로 폈다. 깊은 한숨을 내쉬며, 턱을 살짝 들어 당신의 시선을 받았다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "bright": [
+      {
+       "line": "<<$slave_name>>(은)는 젖은 입술을 핥으며 생긋 웃었다. 땀에 붙은 앞머리를 쓸어 올리고, 발끝을 까딱이며 숨을 골랐다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "fierce": [
+      {
+       "line": "<<$slave_name>>(은)는 두 발을 넓게 벌려 중심을 잡았다. 가쁜 숨을 몰아쉬며 턱을 치켜들었고, 뚫어질 듯 당신을 응시했다.",
+       "after": "",
+       "variant": 1
+      }
+     ]
+    },
+    "obey": {
+     "meek": [
+      {
+       "line": "<<$slave_name>>(은)는 떨리는 두 손을 앞으로 모아 쥐었다. 다리를 바짝 붙인 채 고개를 깊게 숙이고, 숨을 고르며 지시를 기다렸다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "plain": [
+      {
+       "line": "<<$slave_name>>(은)는 제자리에 선 채 자세를 바로잡았다. 거친 숨이 섞인 콧김을 내뱉으며, 시선을 발끝에 두고 멈춰 섰다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "proud": [
+      {
+       "line": "<<$slave_name>>(은)는 등을 곧게 펴고 시선을 한 점에 고정했다. 다리가 미세하게 떨렸지만, 턱을 든 채 제자리를 지켰다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "quiet": [
+      {
+       "line": "<<$slave_name>>(은)는 시선을 바닥으로 내리깔았다. 어깨를 낮게 떨어뜨린 채, 가쁘게 이어지는 숨소리를 죽이며 제자리를 지켰다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "princess": [
+      {
+       "line": "<<$slave_name>>(은)는 무릎을 꿇은 채 흐트러진 치맛자락을 여몄다. 가늘게 떨리는 등으로 자세를 바로잡고, 두 손을 허벅지 위에 얹었다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "bright": [
+      {
+       "line": "<<$slave_name>>(은)는 붉어진 얼굴로 입술을 꾹 다물었다. 덜덜 떨리는 손을 옆구리에 강하게 밀착시키고, 정면을 응시하며 섰다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "fierce": [
+      {
+       "line": "<<$slave_name>>(은)는 두 주먹을 허벅지에 바짝 붙였다. 턱을 치켜들어 가쁜 숨을 억눌렀고, 꼿꼿하게 세운 어깨를 유지했다.",
+       "after": "",
+       "variant": 1
+      }
+     ]
+    },
+    "follow": {
+     "meek": [
+      {
+       "line": "<<$slave_name>>(은)는 반 걸음 다가오다 무릎이 풀려 휘청였다. 당신의 팔을 살짝 붙들고, 숨을 고르며 얼굴을 살폈다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "plain": [
+      {
+       "line": "<<$slave_name>>(은)는 숨을 몰아쉬며 당신 곁으로 왔다. 이마의 땀을 닦지 않은 채, 어깨를 나란히 하고 당신을 봤다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "proud": [
+      {
+       "line": "<<$slave_name>>(은)는 팔짱을 풀고 당신 곁에 섰다. 가쁜 숨이 닿을 거리에서 멈춰, 턱을 든 채 당신의 반응을 기다렸다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "quiet": [
+      {
+       "line": "<<$slave_name>>(은)는 옷자락 끝을 쥐고 한 걸음 뒤에 붙었다. 숨소리가 들릴 만큼 가까이 다가와, 시선을 거두지 않았다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "princess": [
+      {
+       "line": "<<$slave_name>>(은)는 옆자리에 앉아 당신에게 몸을 기울였다. 치맛자락을 정리하며, 턱을 괸 채 당신을 올려다봤다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "bright": [
+      {
+       "line": "<<$slave_name>>(은)는 쪼르르 다가와 소매를 잡아끌었다. 헐떡이는 숨 사이로 활짝 웃으며, 당신의 품에 얼굴을 부볐다.",
+       "after": "",
+       "variant": 1
+      }
+     ],
+     "fierce": [
+      {
+       "line": "<<$slave_name>>(은)는 거침없이 다가와 당신의 영역 안으로 들어왔다. 턱을 든 채 남은 숨을 몰아쉬며, 입가에 옅은 미소를 띠었다.",
+       "after": "",
+       "variant": 1
+      }
+     ]
+    }
+   }
+  }
+ ],
+ "notWritten": [
+  {
+   "id": "warm_reward",
+   "label": "따뜻한 보상",
+   "status": "later_review",
+   "writer": "claude"
+  }
+ ]
+}

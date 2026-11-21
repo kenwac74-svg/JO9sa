@@ -1,0 +1,26 @@
+{
+ "id": "2026-11-16_enrich_execution_draft",
+ "status": "DRAFT_NEEDS_REWRITE",
+ "description": "풍부화 덧대기 시범(사용자 게임 확인 전). 처형 위협(interaction 182~187)의 원래 반응 글 뒤에 그 인물의 몸짓·대사를 한 줄, 헌신 2 이상이면 여운 지문을 한 줄 덧댄다. 목소리 인물은 slave['jo9_voice_cast'](1~5)에 처음 한 번 정해 저장한다. 정신병이면 덧대지 않는다. 원래 글은 바꾸지 않는다.",
+ "before_sha256": "8332e1857fa594283eddda448177e3e63dbf554a2f3b241350aa7a9c3291c94f",
+ "after_sha256": "fbf7fcf3ca3af2c4d8b50c8fec3cadc066ae70637b78289518e8c214c4f7c8d3",
+ "add_locations": [
+  {
+   "name": "jo9_enrich",
+   "desc": "",
+   "body": "! 큰 사건의 원래 글 뒤에 그 인물의 반응(몸짓·대사·여운 지문)을 덧대는 풍부화 블록\r\n! JO9 MOD START ENRICH_20261116 | 2026-11-16_enrich_execution_draft\r\n! args[0]: 'voice' = 목소리 인물(1 순한, 2 담백한, 3 센, 4 조용한, 5 공주)을 정해 저장, 'execution' = 처형 위협\r\n! 규칙: docs/dialogue-rules/MODDER_HANDOFF_TEXT_ENRICHMENT_20261116_KO.md (덧대기만, 여운은 헌신 2 이상, 따르는 쪽은 헌신 3 이상)\r\nif $args[0] = 'voice':\r\n\tif slave['jo9_voice_cast'] = 0:\r\n\t\tlocal jo9_en_e, jo9_en_s\r\n\t\tjo9_en_e = slave['temper'] + slave['sensitivity']\r\n\t\tjo9_en_s = slave['ego'] + slave['pride']\r\n\t\tslave['jo9_voice_cast'] = 2\r\n\t\tif jo9_en_s <= 3: slave['jo9_voice_cast'] = 1\r\n\t\tif jo9_en_s >= 7: slave['jo9_voice_cast'] = 3\r\n\t\tif jo9_en_e <= 3: slave['jo9_voice_cast'] = 4\r\n\t\tif $slave_occupation = 'mprincess' or $slave_occupation = 'barbarian_princess': slave['jo9_voice_cast'] = 5\r\n\t\tif slave_type = 3002 or slave_type = 2610 or slave_type = 2620 or slave_type = 3010 or slave_type = 3021 or slave_type = 3023 or slave_type = 2621 or slave_type = 3012: slave['jo9_voice_cast'] = 5\r\n\tend\r\n\texit\r\nend\r\nif $args[0] = 'execution':\r\n\tif $slave_psy_status = 'broken': exit\r\n\tgs 'jo9_enrich', 'voice'\r\n\tlocal jo9_en_v, $jo9_en_a, $jo9_en_b\r\n\tjo9_en_v = slave['jo9_voice_cast']\r\n\t$jo9_en_a = ''\r\n\t$jo9_en_b = ''\r\n\tif slave['moral'] >= 3:\r\n\t\tif jo9_en_v = 1: $jo9_en_a = '<<$slave_name>>(은)는 무릎을 꿇는다. \"제가 쓸모없어졌다면… 주인님 뜻대로 하세요. 다만 한 번만, 한 번만 더 기회를 주시면 안 될까요.\"' & $jo9_en_b = '그녀는 당신의 발끝에서 눈을 떼지 못한다.'\r\n\t\tif jo9_en_v = 2: $jo9_en_a = '<<$slave_name>>(은)는 마른침을 삼킨다. \"진심이세요? …진심이면, 제가 뭘 고치면 되는지 먼저 말해 주세요. 고칠 수 있어요.\"' & $jo9_en_b = '목소리는 떨리는데 눈은 피하지 않는다.'\r\n\t\tif jo9_en_v = 3: $jo9_en_a = '<<$slave_name>>(은)는 턱을 든다. \"그러실 거면 그러세요. 하지만 저만큼 해낼 사람을 다시 구하긴 쉽지 않을 거예요.\"' & $jo9_en_b = '꼭 쥔 주먹이 하얗게 질려 있다.'\r\n\t\tif jo9_en_v = 4: $jo9_en_a = '<<$slave_name>>(은)는 당신을 본다. \"…알겠어요.\"' & $jo9_en_b = '그녀는 도망치지 않는다. 다만 선 자리에서 손끝이 조금 떨린다.'\r\n\t\tif jo9_en_v = 5: $jo9_en_a = '<<$slave_name>>(은)는 자리에서 일어선다. \"주인이 나를? …농담이라고 해. 지금 당장.\"' & $jo9_en_b = '명령하는 말투와 달리, 치맛자락을 쥔 손이 하얗다.'\r\n\telse\r\n\t\tif jo9_en_v = 1: $jo9_en_a = '<<$slave_name>>(은)는 두 손을 모아 쥔다. \"싫어요, 죽고 싶지 않아요… 뭐든 할게요. 뭐든요.\"' & $jo9_en_b = '말이 끝나기도 전에 다리가 풀려 주저앉는다.'\r\n\t\tif jo9_en_v = 2: $jo9_en_a = '<<$slave_name>>(은)는 한 걸음 물러선다. \"거짓말이죠. 겁주려는 거죠? …아니에요? 잠깐만요, 잠깐만.\"' & $jo9_en_b = '뒷걸음질 치던 등이 벽에 닿는다.'\r\n\t\tif jo9_en_v = 3: $jo9_en_a = '<<$slave_name>>(은)는 입꼬리를 비튼다. \"…할 수 있으면 해 보세요. 빌지는 않을 거니까.\"' & $jo9_en_b = '그렇게 말하고도, 침을 삼키는 소리가 방 안에 들린다.'\r\n\t\tif jo9_en_v = 4: $jo9_en_a = '<<$slave_name>>(은)는 대답하지 않는다.' & $jo9_en_b = '숨이 얕아지고, 눈이 문 쪽을 한 번 스친다.'\r\n\t\tif jo9_en_v = 5: $jo9_en_a = '<<$slave_name>>(은)는 등을 세운다. \"해. 왕가의 사람은 목숨을 구걸하지 않아.\"' & $jo9_en_b = '그 말을 하는 입술에 핏기가 없다.'\r\n\tend\r\n\tif $jo9_en_a = '': exit\r\n\t$text[1] += '<br>  ' + $jo9_en_a\r\n\tif slave['moral'] >= 2: $text[1] += '<br>  ' + $jo9_en_b\r\n\texit\r\nend\r\n! JO9 MOD END ENRICH_20261116\r\n",
+   "actions": []
+  }
+ ],
+ "edits": [
+  {
+   "location": "interaction",
+   "field": "body",
+   "old": "\t$text[1] = $execution_reaction[$slave_psy_status]\r\n",
+   "new": "\t$text[1] = $execution_reaction[$slave_psy_status]\r\n\tgs 'jo9_enrich', 'execution'\r\n",
+   "count": 6,
+   "patchId": "ENRICH_EXECUTION_CALL_20261116"
+  }
+ ],
+ "note": "2026-11-17 원칙 3 확정 뒤 다시 써야 함: 처형 위협의 원래 글은 게임에 나오는 15줄(#txt_man) 중 1줄에만 대사가 있다. 덧대는 블록에서 대사를 빼고 관찰 지문만 남긴다. 넣는 구조(호출 위치, 목소리 인물 저장)는 그대로 쓸 수 있다. 2026-11-17 목소리 인물이 일곱으로 바뀌어 voice 판정도 고쳐야 함(핸드오프 12장)."
+}
