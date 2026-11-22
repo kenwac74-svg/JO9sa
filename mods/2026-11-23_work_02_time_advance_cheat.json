@@ -1,0 +1,18 @@
+{
+  "id": "2026-11-23_work_02_time_advance_cheat",
+  "target": "game\\jack.qsp",
+  "before_sha256": "f36a0b0ce37910a35fe071a34cb6cda9dbe7a1282b7a693863cf8cd078120277",
+  "after_sha256": "7b191692e3a47579f23cfbb47d86f80229a035c695a06c76f9479ac8295e5e8b",
+  "edits": [
+    {
+      "location": "jo9_cheat_days",
+      "field": "body",
+      "old": "if $curloc ! 'menu_form' or (menu_form ! 2100 and menu_form ! 2110): exit",
+      "new": "! JO9 MOD START CHEAT_ADVANCE_DAYS_RENDER_LOCATION_20261123\r\n! menu_form builds the buttons, then main_screen renders them and receives their EXEC.\r\nif ($curloc ! 'main_screen' and $curloc ! 'menu_form') or (menu_form ! 2100 and menu_form ! 2110): exit\r\n! JO9 MOD END CHEAT_ADVANCE_DAYS_RENDER_LOCATION_20261123",
+      "count": 1
+    }
+  ],
+  "status": "APPROVED",
+  "description": "치트 화면의 원하는 일수 보내기·이어 진행 링크에서 실제 화면 위치를 허용",
+  "base": "WORK의 기존 일수 보내기 기능(jo9_cheat_days)이 필요합니다."
+}

@@ -1,0 +1,53 @@
+{
+  "id": "2026-11-23_work_01_combat_invincibility",
+  "status": "APPROVED",
+  "description": "전투 무적 치트를 공통 초기화·화면 갱신·승패 판정에 적용",
+  "base": "WORK. 세 기록을 파일명 순서로 적용하며 before_sha256은 첫 적용 기준입니다.",
+  "target": "game\\jack.qsp",
+  "before_sha256": "cfe6aeb2ef5628da01adfc5695014e672431f8c57fc8388e39d386a7a87c332b",
+  "after_sha256": "f36a0b0ce37910a35fe071a34cb6cda9dbe7a1282b7a693863cf8cd078120277",
+  "edits": [
+    {
+      "location": "начать_бой",
+      "field": "body",
+      "old": "if snake_amulet_on = 1: норм_дух_игрока *= 2\r\n! JO9 MOD START FELICITY_ASSASSIN_INVINCIBLE_20261123\r\n! JO9 MOD START REBELLION_INVINCIBLE_20261123\r\nif cheat_fight_dif = 0 and (jo9_fp['battle'] = 1 or (combatant = 0 and $враг[1] = 'воспитуемая')):\r\n! JO9 MOD END REBELLION_INVINCIBLE_20261123\r\n макс_выносливость_игрока = max(1, макс_выносливость_игрока)\r\n выносливость_игрока = макс_выносливость_игрока\r\n норм_дух_игрока = max(1, норм_дух_игрока)\r\nend\r\n! JO9 MOD END FELICITY_ASSASSIN_INVINCIBLE_20261123\r\nдух_игрока = норм_дух_игрока",
+      "new": "if snake_amulet_on = 1: норм_дух_игрока *= 2\r\nдух_игрока = норм_дух_игрока",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits_combat",
+      "field": "body",
+      "old": "! JO9 MOD END CONST_GROWTH_AND_CLINIC\r\n\r\nif $args[0] = 'setup':\r\n ! Each battle setup recalculates its own base values before entering here.\r\n gs 'jo9_traits_combat', 'reset'\r\n $jo9_trait_combat_actor = $args[1]\r\n if $args[1] ! '': gs 'jo9_traits','vampire_apply',$args[1]\r\n if $args[1] = '': gs 'jo9_traits_combat', 'clean' & exit\r\n jo9_trait_combat_constitution = 0",
+      "new": "! JO9 MOD END CONST_GROWTH_AND_CLINIC\r\n\r\n! JO9 MOD START COMBAT_INVINCIBLE_GLOBAL_20261123\r\nif $args[0] = 'invincible':\r\n if cheat_fight_dif ! 0: exit\r\n макс_здоровье_игрока = max(1, макс_здоровье_игрока)\r\n макс_выносливость_игрока = max(1, макс_выносливость_игрока)\r\n норм_дух_игрока = max(1, норм_дух_игрока)\r\n здоровье_игрока = max(1, здоровье_игрока)\r\n выносливость_игрока = max(1, выносливость_игрока)\r\n дух_игрока = max(1, дух_игрока)\r\n exit\r\nend\r\n! JO9 MOD END COMBAT_INVINCIBLE_GLOBAL_20261123\r\n\r\nif $args[0] = 'setup':\r\n ! Each battle setup recalculates its own base values before entering here.\r\n gs 'jo9_traits_combat', 'reset'\r\n $jo9_trait_combat_actor = $args[1]\r\n if $args[1] ! '': gs 'jo9_traits','vampire_apply',$args[1]\r\n! JO9 MOD START COMBAT_INVINCIBLE_GLOBAL_20261123\r\n if $args[1] = '':\r\n  gs 'jo9_traits_combat', 'invincible'\r\n  gs 'jo9_traits_combat', 'clean'\r\n  exit\r\n end\r\n! JO9 MOD END COMBAT_INVINCIBLE_GLOBAL_20261123\r\n jo9_trait_combat_constitution = 0",
+      "count": 1
+    },
+    {
+      "location": "jo9_traits_combat",
+      "field": "body",
+      "old": " if jo9_trait_combat_mor_num ! jo9_trait_combat_mor_den: дух_игрока = норм_дух_игрока\r\n gs 'jo9_traits_combat', 'clean'",
+      "new": " if jo9_trait_combat_mor_num ! jo9_trait_combat_mor_den: дух_игрока = норм_дух_игрока\r\n! JO9 MOD START COMBAT_INVINCIBLE_GLOBAL_20261123\r\n gs 'jo9_traits_combat', 'invincible'\r\n! JO9 MOD END COMBAT_INVINCIBLE_GLOBAL_20261123\r\n gs 'jo9_traits_combat', 'clean'",
+      "count": 1
+    },
+    {
+      "location": "конец_раунда",
+      "field": "body",
+      "old": "!check for fight end\r\nif поверженные_враги = количество_врагов:",
+      "new": "!check for fight end\r\n! JO9 MOD START COMBAT_INVINCIBLE_GLOBAL_20261123\r\ngs 'jo9_traits_combat', 'invincible'\r\n! JO9 MOD END COMBAT_INVINCIBLE_GLOBAL_20261123\r\nif поверженные_враги = количество_врагов:",
+      "count": 1
+    },
+    {
+      "location": "конец_раунда",
+      "field": "body",
+      "old": "\tgt 'конец_боя'\r\nend\r\n! JO9 MOD START FELICITY_ASSASSIN_INVINCIBLE_20261123\r\n! JO9 MOD START REBELLION_INVINCIBLE_20261123\r\nif cheat_fight_dif = 0 and (jo9_fp['battle'] = 1 or (combatant = 0 and $враг[1] = 'воспитуемая')):\r\n! JO9 MOD END REBELLION_INVINCIBLE_20261123\r\n здоровье_игрока = max(1, здоровье_игрока)\r\n выносливость_игрока = max(1, выносливость_игрока)\r\n дух_игрока = max(1, дух_игрока)\r\nend\r\n! JO9 MOD END FELICITY_ASSASSIN_INVINCIBLE_20261123\r\nif здоровье_игрока <= 0:",
+      "new": "\tgt 'конец_боя'\r\nend\r\nif здоровье_игрока <= 0:",
+      "count": 1
+    },
+    {
+      "location": "боевой_интерфейс",
+      "field": "body",
+      "old": "!Overhauled by crushboss\r\n\r\nif текущий < 1: текущий = количество_врагов",
+      "new": "!Overhauled by crushboss\r\n\r\n! JO9 MOD START COMBAT_INVINCIBLE_GLOBAL_20261123\r\ngs 'jo9_traits_combat', 'invincible'\r\n! JO9 MOD END COMBAT_INVINCIBLE_GLOBAL_20261123\r\nif текущий < 1: текущий = количество_врагов",
+      "count": 1
+    }
+  ]
+}
