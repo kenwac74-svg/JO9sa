@@ -1,15 +1,15 @@
 # 예술 교사 NPC 정리와 무용 교사 신설 기획 (2026-11-23)
 
 - 기준 WORK: `G:\somi\Jack O Nine Tails v2.4_work\game\jack.qsp` (2026-11-23 덤프)
-- 이 문서는 기획과 인계만 담는다. WORK·mods는 바꾸지 않았다.
+- 무용 교사의 원고·평가·이미지 방향을 확정했다. 검토용 컷신과 메뉴 아이콘을 별도로 제작했다.
 - 적용은 모드 개발 담당이 `mods/` 선언형 JSON → `tools\apply_mods.ps1` 절차로 한다.
-- 선례: `mods/2026-10-01_robertus_rufus_art_tutor.json`. 미술 교사를 음악 교사(본 왈츠)에게서 떼어 로베르투스 루푸스로 만든 mod다. 무용 교사도 같은 방식으로 만든다.
+- 선례: `mods/2026-10-01_robertus_rufus_art_tutor.json`. 미술 교사를 음악 교사(본 왈츠)에게서 떼어 로베르투스 루푸스로 만든 mod다. 무용 교사도 수업과 평가를 별도로 연결한다.
 
 ## 1. 로베르투스 루푸스 NPC 이름 등록 (인계)
 
 ### 현황
 - 미술 가정교사(interaction 1733)의 `$coach`는 `'robertus_rufus'`다.
-- 대사에는 `[로베르투스 루푸스 선생]`(한국어 `#txt_man`)과 `[ROBERTUS RUFUS]`(영어 `#txt_woman`)로 7곳씩 나온다.
+- 남주인공 대사 `#txt_man`에는 `[로베르투스 루푸스 선생]`이 7곳 나온다. `#txt_woman`에는 구버전 여주인공의 영어 대사 7곳이 남아 있다.
 - `#masters_base`의 `$npc_name`에는 이 교사가 없다. 다른 교사는 다음처럼 등록되어 있다.
   - `geralt` = 마스터 게랄트
   - `jeevs` = 마스터 지브스
@@ -56,10 +56,10 @@
   - 로베르투스와 본 왈츠는 독일어 감탄사를 쓴다.
   - 무용 교사는 프랑스어 발레 용어(플리에, 를르베, 아라베스크, 그랑 제테)를 써서 세 사람이 귀로 구분되게 한다.
 
-### A안 배경 초안
-> 한때 세르피스 가문 연회장의 프리마였던 무희. 무릎을 다쳐 무대에서 내려온 뒤로는 귀족의 노예들에게 춤을 가르쳐 생계를 잇는다. 동작 하나에도 품위를 요구하며, 노예라도 무대에 서는 순간만큼은 귀족보다 아름다워야 한다고 믿는다.
+### 확정 배경
+> 한때 영원의 로마 대극장의 프리마였던 무희. 무릎을 다쳐 무대에서 내려온 뒤로는 귀족의 노예들에게 춤을 가르쳐 생계를 잇는다. 동작 하나에도 품위를 요구하며, 노예라도 무대에 서는 순간만큼은 귀족보다 아름다워야 한다고 믿는다.
 
-- 세르피스 연결은 선택 사항이다. 가문과 엮지 않으려면 첫 문장을 "한때 영원의 로마 대극장의 프리마였던 무희."로 바꾼다.
+- 특정 가문 소속 없이 활동했다. 가정교사로 초빙되는 수업 장면은 주인공의 저택 응접실이다.
 
 ### 대사 초안 (A안 기준, 한국어)
 
@@ -82,20 +82,19 @@
   ```
   <br><br><center>노예 강의 결과 : <font color="색"><b>등급</b></font> 등급이름</center></div>
   ```
-- 영어 `#txt_woman`에도 같은 대사를 넣는다. 로베르투스 mod가 `#txt_woman`과 `#txt_man`을 둘 다 바꾼 것과 같다.
+- 잭오나 2.4.0부터 남자 주인공만 지원하므로 새 수업 원고는 `#txt_man`에 넣는다.
 
 ### 코드 변경 범위 (선례와 같은 구조)
 
 | location | 변경 |
 |---|---|
-| `interaction` (1722, Lesson on dance (tutor)) | `$coach = 'avgia'` → `'terpsina'`. `$bg_path`를 `'SNKmod\characters\master_terpsina'`로. `$text[1] = $dance_coach` → `$dance_tutor_coach`. **1724 조교 수업은 건드리지 않는다.** |
+| `interaction` (1722, Lesson on dance (tutor)) | `$coach = 'avgia'` → `'terpsina'`. `$bg_path`를 `'characters\master_terpsina'`로. `$text[1] = $dance_coach` → `$dance_tutor_coach`. **1724 조교 수업은 건드리지 않는다.** |
 | `interaction_result` | `if $coach = 'terpsina': $text[3] = $terpsina_diligence[interaction_slave["diligence"]]` 추가 |
 | `#txt_man` | `$dance_tutor_coach`, `$terpsina_diligence[0..5]` 한국어 추가 |
-| `#txt_woman` | 같은 변수의 영어판 추가 |
 | `#masters_base` | `$npc_name['terpsina'] = '마담 테르프시나'` 추가 |
 
 - 비용(`coach_price`), 반감 공식(repulse·motivation_repulse), 능력치 처리는 지금 무용 수업 그대로 둔다. 교사의 얼굴과 대사만 바꾸는 작업이다.
-- 메뉴의 가정교사 항목과 아이콘에 아우기아스 이름이나 그림이 박혀 있는지 적용 전에 확인한다.
+- 가정교사 메뉴의 무용 초빙 툴팁을 ‘무용 교사 초빙’으로 맞추고 무용 전용 아이콘 두 장을 연결한다.
 - 학교(전통 무용과)는 바꾸지 않는다.
 - 이미지는 로베르투스 때처럼 UI 쪽 작업으로 따로 준비한다: 배경 이미지와 메뉴 아이콘.
 
@@ -113,10 +112,10 @@
 Positive:
 ```
 anime illustration, dark gothic fantasy, warm candlelight, cinematic composition, 4:3,
-a grand old ballet rehearsal hall backstage of an opulent theater, tall gilded mirrors along the wall, wooden ballet barre, polished worn wooden floor, heavy crimson velvet curtains, brass candelabras with lit candles, dust in the light beams, old pointe shoes and ribbons hanging on a hook, a cello resting in the corner,
+a private reception room in the protagonist’s Eternal Rome residence, a stone hearth, bookcases, side table, sturdy chair and warm amber candlelight,
 an elegant retired prima ballerina in her forties, tall and slender, silver-streaked black hair in a tight severe bun, sharp aristocratic face, cold critical gaze, long black high-collared dress with fine gold embroidery, black lace gloves, holding a slender ebony cane with a silver handle,
-she stands behind a young adult slave woman at the barre and lifts the girl's chin with the tip of her cane, correcting her posture,
-the slave wears a simple plain practice dress and a black leather collar, one leg extended on the barre, tense expression, sweat on her temple,
+she teaches an adult pupil in a plain practice dress to perform a plié, with one hand resting on a sturdy chair,
+the tutor points toward correct knee alignment with her free hand and holds her cane upright at her side,
 strict mentor and student mood, refined, melancholic, painterly shading, detailed background, rich golden and crimson palette
 ```
 
@@ -125,7 +124,6 @@ Negative:
 nsfw, nudity, child, loli, chibi, modern clothing, sneakers, electric lights, neon, photo, 3d render, text, watermark, signature, blurry, extra limbs, deformed hands, bright daylight, flat lighting
 ```
 
-- 세르피스 가문과 엮기로 하면 Positive 끝에 `serpentine motifs carved into the mirror frames, emerald and gold heraldry`를 붙인다.
 - 지팡이는 배경 초안의 무릎 부상 설정을 보여 준다.
 
 #### 2. 메뉴 아이콘 `content/pic/ui/icons/terpsina.png`, `terpsina_gray.png` (59×66)
@@ -141,12 +139,13 @@ dim crimson and gold background, painterly shading, face fills most of the frame
 
 - 얼굴이 아이콘 대부분을 차지하게 잘라 59×66으로 줄인다.
 - `_gray`는 컬러판을 흑백으로 바꿔 만든다.
-- `json/menu_icon.json` 등록은 UI 쪽 작업이다.
+- `json/menu_icon.json`에서 `menu_item_choreography_tutor`와 `menu_item_choreography_tutor_gray`에 연결한다.
 
-### 사용자 결정 필요
-1. ~~이름~~: **A 마담 테르프시나로 확정** (2026-11-23)
-2. 세르피스 가문과 엮을지
-3. 등급 이름을 발레 용어로 할지, 다른 무용(연회 춤·의식무)으로 할지
+### 2026-11-23 확정 사항
+
+- 마담 테르프시나(`terpsina`)는 영원의 로마 대극장 출신이며, 현재 주인공의 저택에서 가정교사로 수업한다.
+- F~S 평가에는 위 표의 발레 용어를 사용한다.
+- 컬러·흑백 아이콘은 새 컷신의 테르프시나 얼굴로 만든다.
 
 ## 3. 확인 포인트 (적용 후 사용자가 게임에서)
 1. 무용 가정교사를 부르면 새 교사의 그림과 첫 대사가 나오는지
