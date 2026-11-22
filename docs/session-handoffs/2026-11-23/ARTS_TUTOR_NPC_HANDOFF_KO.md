@@ -99,6 +99,50 @@
 - 학교(전통 무용과)는 바꾸지 않는다.
 - 이미지는 로베르투스 때처럼 UI 쪽 작업으로 따로 준비한다: 배경 이미지와 메뉴 아이콘.
 
+### 이미지 프롬프트 (테르프시나)
+
+기존 규격은 WORK에서 확인했다.
+- 수업 배경 `content/pic/characters/*.png`: 795×596, RGB. 로베르투스·본 왈츠·아우기아스 모두 같다.
+- 아이콘 `content/pic/ui/icons/robertus_rufus(_gray).png`: 59×66, RGBA.
+
+화풍은 `master_robertus_rufus.png`에 맞춘다: 애니메 일러스트, 고딕 실내, 따뜻한 촛불 조명, 교사가 노예 뒤에서 지도하는 구도.
+
+#### 1. 수업 배경 `content/pic/characters/master_terpsina.png` (795×596)
+4:3으로 크게 생성(예: 1600×1200)한 뒤 795×596으로 줄인다.
+
+Positive:
+```
+anime illustration, dark gothic fantasy, warm candlelight, cinematic composition, 4:3,
+a grand old ballet rehearsal hall backstage of an opulent theater, tall gilded mirrors along the wall, wooden ballet barre, polished worn wooden floor, heavy crimson velvet curtains, brass candelabras with lit candles, dust in the light beams, old pointe shoes and ribbons hanging on a hook, a cello resting in the corner,
+an elegant retired prima ballerina in her forties, tall and slender, silver-streaked black hair in a tight severe bun, sharp aristocratic face, cold critical gaze, long black high-collared dress with fine gold embroidery, black lace gloves, holding a slender ebony cane with a silver handle,
+she stands behind a young adult slave woman at the barre and lifts the girl's chin with the tip of her cane, correcting her posture,
+the slave wears a simple plain practice dress and a black leather collar, one leg extended on the barre, tense expression, sweat on her temple,
+strict mentor and student mood, refined, melancholic, painterly shading, detailed background, rich golden and crimson palette
+```
+
+Negative:
+```
+nsfw, nudity, child, loli, chibi, modern clothing, sneakers, electric lights, neon, photo, 3d render, text, watermark, signature, blurry, extra limbs, deformed hands, bright daylight, flat lighting
+```
+
+- 세르피스 가문과 엮기로 하면 Positive 끝에 `serpentine motifs carved into the mirror frames, emerald and gold heraldry`를 붙인다.
+- 지팡이는 배경 초안의 무릎 부상 설정을 보여 준다.
+
+#### 2. 메뉴 아이콘 `content/pic/ui/icons/terpsina.png`, `terpsina_gray.png` (59×66)
+- 기존 아이콘은 배경 그림에서 교사의 얼굴을 잘라 쓴 형태다. 1번 그림에서 잘라 쓰는 것을 우선한다.
+- 따로 생성할 때는 아래 프롬프트를 쓴다. Negative는 1번과 같다.
+
+Positive:
+```
+anime illustration, dark gothic fantasy, warm candlelight, close-up bust portrait, three-quarter view,
+elegant retired prima ballerina in her forties, silver-streaked black hair in a tight bun, sharp aristocratic face, cold critical gaze, black high-collared dress with gold embroidery,
+dim crimson and gold background, painterly shading, face fills most of the frame, portrait orientation
+```
+
+- 얼굴이 아이콘 대부분을 차지하게 잘라 59×66으로 줄인다.
+- `_gray`는 컬러판을 흑백으로 바꿔 만든다.
+- `json/menu_icon.json` 등록은 UI 쪽 작업이다.
+
 ### 사용자 결정 필요
 1. ~~이름~~: **A 마담 테르프시나로 확정** (2026-11-23)
 2. 세르피스 가문과 엮을지
