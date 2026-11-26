@@ -1,0 +1,245 @@
+{
+ "_comment": "쿠라 개인 패치 v0.3 (사용자 현재 jack.qsp에서 추출). 각 항목은 앞뒤 한 줄을 포함한 Old 줄 묶음을 New로 바꾼다. 툴팁 변경은 resources/tooltip에서 따로 처리한다.",
+ "Hunks": [
+  {
+   "Location": "main_menu",
+   "Old": [
+    "func('$menu', 'exec_options', $menu_item_Tutorial, 'gt \"demo_intro\"', '튜토리얼')",
+    "func('$menu', 'exec_options', $menu_item_Storyselect, 'gt \"hero_customization\"', '일반 시작')",
+    "FUNC('$menu', 'exec_options', $menu_item_Storycreate, 'gs \"init_custom_game\" & gt \"hero_creation\"', '커스텀 게임')"
+   ],
+   "New": [
+    "func('$menu', 'exec_options', $menu_item_Tutorial, 'gt \"demo_intro\"', '튜토리얼')",
+    "func('$menu', 'exec_options', $menu_item_Storyselect, 'gt \"hero_customization_man\"', '일반 시작')",
+    "FUNC('$menu', 'exec_options', $menu_item_Storycreate, 'gs \"init_custom_game\" & gt \"hero_creation\"', '커스텀 게임')"
+   ],
+   "Occurrence": 0
+  },
+  {
+   "Location": "init_custom_game",
+   "Old": [
+    "get_initial_slave = 0",
+    "sparks = 6000 &! equivalent to Blade"
+   ],
+   "New": [
+    "get_initial_slave = 0",
+    "hero_choice = 1 &! Personal patch: custom protagonist is male-only",
+    "sparks = 6000 &! equivalent to Blade"
+   ],
+   "Occurrence": 0
+  },
+  {
+   "Location": "#masters_base",
+   "Old": [
+    "$clear_ava_path[13] = 'content\\pic\\master\\master_edward.png'",
+    "$master_base_name[13] = '에드워드'",
+    "$hero_description[13] = '   올리가르히의 아들과 그가 거느린 고급 수행 여성들과 함께 요트 파티를 즐기다 바다 괴물의 습격을 받고, 에드워드는 간신히 살아남는다. 항구 술집에서 카드 결제가 거절된 순간, 잭이라는 남자가 노예상 길드와 관련된 수상한 기회를 제안한다. 에드워드는 그 제안을 받아들이고, 여자친구들을 넘기는 대가로 일자리를 얻는다.' + _",
+    "'<br>세력: 무소속<br>스파크: 500'",
+    "$hero_difficulty[13] = '<font color=\"#C71585\">매우 높은 난이도</font>'",
+    "$master_version_stats[13] = {"
+   ],
+   "New": [
+    "$clear_ava_path[13] = 'content\\pic\\master\\master_edward.png'",
+    "$master_base_name[13] = '쿠라'",
+    "$hero_description[13] = '   본명 카일 윈스턴. 지구 24의 거대도시 메가델피아에서 강화인간 용병으로 이름을 날린 뒤 탄트라 서비스를 세웠다. 회사는 도시 매춘 산업의 약 95%를 장악했고, 그는 2조 달러가 넘는 자산을 축적했다. 하지만 목표는 한 도시가 아니라 세계의 매춘 산업 전체다.<br>' + _",
+    "'<br>   코드네임 쿠라. 안개와 마법을 연구해 지구 24와 불멸의 로마를 잇는 비밀 통로를 완성했다. 로마에서 노예를 훈련하고 창관 사업을 장악한 뒤 인력과 기술을 지구로 가져갈 계획이며, 여러 사람이 통과할 수 있도록 통로를 개량할 협력자도 찾고 있다. 전투·의술·마법 지식과 충분한 자금을 준비해 왔다.<br>' + _",
+    "'<br>세력: 무소속 (세르피스 가문과 우호)<br>스파크: 20000'",
+    "$hero_difficulty[13] = '<font color=\"#009900\">매우 쉬운 난이도</font>'",
+    "$master_version_stats[13] = {"
+   ],
+   "Occurrence": 0
+  },
+  {
+   "Location": "#masters_base",
+   "Old": [
+    "$master_version_stats[13] = {",
+    "master_str = 3",
+    "master_cha = 2",
+    "master_style = 3",
+    "master_libido = 4"
+   ],
+   "New": [
+    "$master_version_stats[13] = {",
+    "master_str = 5",
+    "master_cha = 5",
+    "master_style = 4",
+    "master_libido = 4"
+   ],
+   "Occurrence": 0
+  },
+  {
+   "Location": "#masters_base",
+   "Old": [
+    "master_libido = 4",
+    "master_tutor = 1",
+    "master_fighter = 0",
+    "master_butler = 1",
+    "master_artdirector = 2",
+    "master_medic = 0",
+    "master_mage = 0",
+    "master_torture = 1",
+    "master_domination = 1",
+    "master_bondage = 1",
+    "master_flagelation = 1",
+    "master_petting = 2",
+    "master_oral = 2",
+    "master_penetration = 2",
+    "master_fetish = 4",
+    "$master_armor = 'без_брони'"
+   ],
+   "New": [
+    "master_libido = 4",
+    "master_tutor = 5",
+    "master_fighter = 5",
+    "master_butler = 3",
+    "master_artdirector = 3",
+    "master_medic = 4",
+    "master_mage = 3",
+    "master_torture = 5",
+    "master_domination = 5",
+    "master_bondage = 5",
+    "master_flagelation = 4",
+    "master_petting = 5",
+    "master_oral = 5",
+    "master_penetration = 5",
+    "master_fetish = 5",
+    "",
+    "$master_armor = 'без_брони'"
+   ],
+   "Occurrence": 0
+  },
+  {
+   "Location": "#masters_base",
+   "Old": [
+    "$master_armor = 'без_брони'",
+    "$master_cloth = 'man_rugs'",
+    "$master_right_wpn = ''",
+    "sparks = 500",
+    "faction_fame['serpis'] = 0",
+    "faction_fame['taurus'] = 0"
+   ],
+   "New": [
+    "$master_armor = 'без_брони'",
+    "$master_cloth = 'fancy_suit'",
+    "$master_wpn = 'катана'",
+    "$master_left_wpn = 'катана'",
+    "$master_right_wpn = 'безоружный'",
+    "$master_leg_wpn = 'кинжал'",
+    "",
+    "тонизируюзщий_эликсир = 10",
+    "целительный_бальзам = 10",
+    "sparks = 20000",
+    "",
+    "faction_fame['neutral'] = 0",
+    "faction_fame['taurus'] = 0"
+   ],
+   "Occurrence": 0
+  },
+  {
+   "Location": "#masters_base",
+   "Old": [
+    "faction_fame['taurus'] = 0",
+    "debt = 0"
+   ],
+   "New": [
+    "faction_fame['taurus'] = 0",
+    "faction_fame['serpis'] = 3",
+    "faction_fame['korvus'] = 0",
+    "faction_fame['kamira'] = 0",
+    "",
+    "noble_status = 0",
+    "debt = 0"
+   ],
+   "Occurrence": 0
+  },
+  {
+   "Location": "#dynamic",
+   "Old": [
+    "$scroll_ava = {",
+    "    IF hero_choice < 124:",
+    "        hero_choice += 1"
+   ],
+   "New": [
+    "$scroll_ava = {",
+    "    IF hero_choice < 18:",
+    "        hero_choice += 1"
+   ],
+   "Occurrence": 0
+  },
+  {
+   "Location": "#dynamic",
+   "Old": [
+    "    END",
+    "    if hero_choice > 18 and hero_choice < 101: hero_choice = 101    ",
+    "    gt $curloc"
+   ],
+   "New": [
+    "    END",
+    "    gt $curloc"
+   ],
+   "Occurrence": 0
+  },
+  {
+   "Location": "#dynamic",
+   "Old": [
+    "$scroll_ava_back = {",
+    "    IF hero_choice > 1:",
+    "        hero_choice -= 1"
+   ],
+   "New": [
+    "$scroll_ava_back = {",
+    "    IF hero_choice > 1 and hero_choice <= 18:",
+    "        hero_choice -= 1"
+   ],
+   "Occurrence": 0
+  },
+  {
+   "Location": "#dynamic",
+   "Old": [
+    "    else",
+    "        hero_choice = 124",
+    "    END"
+   ],
+   "New": [
+    "    else",
+    "        hero_choice = 18",
+    "    END"
+   ],
+   "Occurrence": 2
+  },
+  {
+   "Location": "#dynamic",
+   "Old": [
+    "    END",
+    "    if hero_choice > 18 and hero_choice < 101: hero_choice = 18  ",
+    "    gt $curloc"
+   ],
+   "New": [
+    "    END",
+    "    gt $curloc"
+   ],
+   "Occurrence": 0
+  },
+  {
+   "Location": "#dynamic",
+   "Old": [
+    "$name_and_start = {",
+    "\t$estate = 'slum_house'",
+    "\t$starting_area = '<font color=\"cd0000\">The Slums</font>'",
+    "\t!$a = input ('Give your character a name. Please try to keep this shorter than 14 characters.')"
+   ],
+   "New": [
+    "$name_and_start = {",
+    "\tif hero_choice = 13:",
+    "\t\t$estate = 'serpis_house'",
+    "\t\t$starting_area = '<font color=\"6B0084\">뱀자리 구역</font>'",
+    "\telse",
+    "\t\t$estate = 'slum_house'",
+    "\t\t$starting_area = '<font color=\"cd0000\">The Slums</font>'",
+    "\tend",
+    "\t!$a = input ('Give your character a name. Please try to keep this shorter than 14 characters.')"
+   ],
+   "Occurrence": 0
+  }
+ ]
+}
