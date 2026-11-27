@@ -1,0 +1,115 @@
+{
+  "id": "2026-11-27_expert_order_final_validation",
+  "description": "전문가 의뢰 후보·외형 검증, 영입 초기 상태 재계산, 귀족 부인 생성 문법 수정",
+  "target": "game\\jack.qsp",
+  "before_sha256": "9FC501CDCD40EB18F356BD6BDC9FEBC7DFD6744073275786BA005BBA216FCBF3",
+  "after_sha256": "4B477D695D4ACEF489A17D991E9706276401EA597E3A75C99C06E4E14C85C3F5",
+  "add_locations": [
+    {
+      "name": "jo9_expert_order",
+      "desc": "",
+      "body": "! JO9 MOD START EXPERT_ORDER_FINAL_20261127_RULES\r\nif $args[0] = 'enabled':\r\n result = 1\r\n if search['age'] = 3 and fresh_mode = 1: result = 0\r\n if search['age'] = 1 and no_milf = 1: result = 0\r\n exit\r\nend\r\n\r\nif $args[0] = 'matches':\r\n result = dyneval($replace({\r\n  result = 0\r\n  if jo9candidate_state ! CONST_INT['slave_exist']: exit\r\n  local jo9appearance = jo9candidate['age']\r\n  if jo9appearance = CONST_INT['fresh_age'] and (fresh_mode = 1 or search['age'] = 5): exit\r\n  if jo9appearance = CONST_INT['mature_age'] and (no_milf = 1 or search['age'] = 4): exit\r\n  if search['age'] = 1 and jo9appearance ! CONST_INT['mature_age']: exit\r\n  if search['age'] = 2 and jo9appearance ! CONST_INT['young_age']: exit\r\n  if search['age'] = 3 and jo9appearance ! CONST_INT['fresh_age']: exit\r\n  if jo9candidate['jo9_learning_trait'] = -1 and jo9candidate['intellect'] ! 0: exit\r\n  if jo9candidate['jo9_learning_trait'] = 1 and jo9candidate['intellect'] ! 5: exit\r\n  if jo9candidate['fat'] > 3 and jo9candidate['stamina'] > 4: exit\r\n  if jo9candidate['beauty'] < search['beauty'] or jo9candidate['stamina'] < search['stamina']: exit\r\n  if jo9candidate['sensitivity'] < search['sensitivity'] or jo9candidate['intellect'] < search['intellect']: exit\r\n  if jo9candidate['temper'] < search['temper'] or jo9candidate['ego'] < search['ego']: exit\r\n  result = 1\r\n }, 'jo9candidate', $args[1]))\r\n exit\r\nend\r\n\r\nif $args[0] = 'initialize':\r\n dynamic $replace({\r\n  if jo9candidate['ego'] >= 4 or jo9candidate['pride'] >= 4 or jo9candidate['defiant'] = 1: jo9candidate['jo9_slave_nature'] = 0\r\n  if $seed_psy_basic[jo9candidate_type] = '' and ($jo9candidate_psy_basic = 'depresive' or $jo9candidate_psy_basic = 'lachrymose'):\r\n   $jo9candidate_psy_basic = iif(jo9candidate['sensitivity'] >= 4, 'lachrymose', 'depresive')\r\n  end\r\n  jo9candidate['calories'] = jo9candidate['stamina']\r\n  jo9candidate['energy'] = iif(jo9candidate['stamina'] > 0, min(5, jo9candidate['stamina'] + iif(difficulty_setting = 2, 0, 1)), 0)\r\n }, 'jo9candidate', $args[1])\r\n gs 'jo9_expert_order','initial_mood',$args[1]\r\n exit\r\nend\r\n\r\nif $args[0] = 'initial_mood':\r\n dynamic $replace({\r\n  jo9candidate['neg_slave'] = 1 + jo9candidate['pride'] + jo9candidate['temper'] + jo9candidate['ego'] + jo9candidate['intellect'] - jo9candidate['rational'] - jo9candidate['custom']\r\n }, 'jo9candidate', $args[1])\r\n exit\r\nend\r\n\r\nif $args[0] = 'revalidate':\r\n result = 0\r\n if search['active'] < 2: exit\r\n if func('jo9_expert_order','matches','selected') = 1:\r\n  result = 1\r\n else\r\n  search['active'] = 1\r\n  dynamic $clear_slave_instance, 'selected'\r\n end\r\n exit\r\nend\r\n\r\nif $args[0] = 'submit':\r\n if search['active'] = 0 and search['cost'] > 0:\r\n  if func('jo9_expert_order','enabled') = 1:\r\n   search['active'] = 1\r\n   sparks -= search['cost'] * 70\r\n  else\r\n   msg '현재 출현 설정에서는 그 외형을 의뢰할 수 없다.'\r\n  end\r\n end\r\nend\r\n! JO9 MOD END EXPERT_ORDER_FINAL_20261127_RULES",
+      "actions": []
+    }
+  ],
+  "edits": [
+    {
+      "location": "$expert_search",
+      "field": "body",
+      "old": "dynamic $swap_slave_instances, 'stock', 'saved_stock' &! save existing pending stock if any - ImperatorAugustus",
+      "new": "! JO9 MOD START EXPERT_ORDER_FINAL_20261127_SEARCH_GUARD\r\nif search['active'] ! 1 or func('jo9_expert_order','enabled') = 0: exit\r\n! JO9 MOD END EXPERT_ORDER_FINAL_20261127_SEARCH_GUARD\r\ndynamic $swap_slave_instances, 'stock', 'saved_stock' &! save existing pending stock if any - ImperatorAugustus",
+      "count": 1
+    },
+    {
+      "location": "$expert_search",
+      "field": "body",
+      "old": "\tmatch = 0\r\n\r\n\tif search['age'] = 0:\r\n\t\tmatch += 1\r\n\telseif stock['age'] = CONST_INT['young_age']:\r\n\t\tif search['age'] = 4 or search['age'] = 5 or search['age'] = 2 or (fresh_mode = 1 and search['age'] = 3): match += 1\r\n\telseif stock['age'] = CONST_INT['fresh_age']:\r\n\t\tif search['age'] = 4 or search['age'] = 3: match += 1\r\n\telseif stock['age'] = CONST_INT['mature_age']:\r\n\t\tif search['age'] = 5 or search['age'] = 1: match += 1\r\n\telse\r\n\t\t!Debug\r\n\t\tmsg '오류! template <<stock_type>>.json에서 stock[\"age\"] = <<stock[\"age\"]>> 이지만, 값은 [0-2] 범위 안에 있어야 합니다. location = <<$curloc>>'\r\n\tend\r\n\r\n\tif stock['beauty'] >= search['beauty']: match += 1\r\n\tif stock['stamina'] >= search['stamina']: match += 1\r\n\tif stock['sensitivity'] >= search['sensitivity']: match += 1\r\n\tif stock['intellect'] >= search['intellect']: match += 1\r\n\tif stock['temper'] >= search['temper']: match += 1\r\n\tif stock['ego'] >= search['ego']: match += 1\r\n\r\n\tif match >= 7:\r\n\t\t$found = 1\r\n! JO9 MOD START SLAVE_NATURE_EXPERT_FINAL_ELIGIBILITY | 2026-10-23_disposition_traits\r\n  if stock['ego'] >= 4 or stock['pride'] >= 4: stock['jo9_slave_nature'] = 0\r\n\t\tdynamic $swap_slave_instances, 'stock', 'selected'\r\n! JO9 MOD END SLAVE_NATURE_EXPERT_FINAL_ELIGIBILITY\r\n\tjump 'expert_search_done'",
+      "new": "! JO9 MOD START EXPERT_ORDER_FINAL_20261127_SELECT\r\n\tif func('jo9_expert_order','matches','stock') = 1:\r\n\t\t$found = 1\r\n\t\tgs 'jo9_expert_order','initialize','stock'\r\n\t\tdynamic $swap_slave_instances, 'stock', 'selected'\r\n\t\tjump 'expert_search_done'\r\n! JO9 MOD END EXPERT_ORDER_FINAL_20261127_SELECT",
+      "count": 1
+    },
+    {
+      "location": "generate_stock",
+      "field": "body",
+      "old": "\tif stock[['art']] < 5: stock['art'] += 1",
+      "new": "! JO9 MOD START EXPERT_ORDER_FINAL_20261127_NOBLE_WIFE\r\n\tif stock['art'] < 5: stock['art'] += 1\r\n! JO9 MOD END EXPERT_ORDER_FINAL_20261127_NOBLE_WIFE",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "! JO9 MOD START R02_JOKER_MENU_CACHE_20261113",
+      "new": "! JO9 MOD START EXPERT_ORDER_FINAL_20261127_OPTION_DISPATCH\r\nif $args[0] = 'expert_appearance': jump 'jo9_expert_appearance'\r\n! JO9 MOD END EXPERT_ORDER_FINAL_20261127_OPTION_DISPATCH\r\n! JO9 MOD START R02_JOKER_MENU_CACHE_20261113",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "$expert_options[11] = {",
+      "new": "! JO9 MOD START EXPERT_ORDER_FINAL_20261127_OPTION_LABEL\r\n:jo9_expert_appearance\r\n! JO9 MOD END EXPERT_ORDER_FINAL_20261127_OPTION_LABEL\r\n$expert_options[11] = {",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tfunc('$menu', 'exec_options', $menu_item_Order_Mature, 'search[\"age\"] = 1 & search[\"cost\"] += 2 & sp_txt = 2 & gt $curloc', '성숙')",
+      "new": "! JO9 MOD START EXPERT_ORDER_FINAL_20261127_OPTION_ORDER_MATURE\r\n\tif no_milf ! 1: func('$menu', 'exec_options', $menu_item_Order_Mature, 'search[\"age\"] = 1 & search[\"cost\"] += 2 & sp_txt = 2 & gt $curloc', '성숙')\r\n! JO9 MOD END EXPERT_ORDER_FINAL_20261127_OPTION_ORDER_MATURE",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tfunc('$menu', 'exec_options', $menu_item_Order_Child, 'search[\"age\"] = 3 & search[\"cost\"] += 2 & sp_txt = 2 & gt $curloc', '아동')",
+      "new": "! JO9 MOD START EXPERT_ORDER_FINAL_20261127_OPTION_ORDER_CHILD\r\n\tif fresh_mode ! 1: func('$menu', 'exec_options', $menu_item_Order_Child, 'search[\"age\"] = 3 & search[\"cost\"] += 2 & sp_txt = 2 & gt $curloc', '아동')\r\n! JO9 MOD END EXPERT_ORDER_FINAL_20261127_OPTION_ORDER_CHILD",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "$expert_options[2] = {",
+      "new": "! JO9 MOD START EXPERT_ORDER_FINAL_20261127_OPTION_EXIT\r\nif $args[0] = 'expert_appearance': exit\r\n! JO9 MOD END EXPERT_ORDER_FINAL_20261127_OPTION_EXIT\r\n$expert_options[2] = {",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\t$yes = {\r\n\t\tsearch['active'] = 1\r\n\t\tsparks -= full_search_cost\r\n\t\tgt 'guild'\r\n\t}",
+      "new": "! JO9 MOD START EXPERT_ORDER_FINAL_20261127_APPROVAL\r\n\t$yes = {gs 'jo9_expert_order','submit' & gt 'guild'}\r\n! JO9 MOD END EXPERT_ORDER_FINAL_20261127_APPROVAL",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\tif full_search_cost > 0:\r\n\t\tgt 'choice_screen'",
+      "new": "! JO9 MOD START EXPERT_ORDER_FINAL_20261127_QUOTE\r\n\tif func('jo9_expert_order','enabled') = 0:\r\n\t\t$text[1] = '현재 출현 설정에서는 그 외형을 의뢰할 수 없다.'\r\n\telseif full_search_cost > 0:\r\n\t\tgt 'choice_screen'\r\n! JO9 MOD END EXPERT_ORDER_FINAL_20261127_QUOTE",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\tif slave_state = CONST_INT['no_slave']:\r\n! JO9 MOD START J9M0734 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included",
+      "new": "! JO9 MOD START EXPERT_ORDER_FINAL_20261127_RECEIPT\r\n\tif func('jo9_expert_order','revalidate') = 0:\r\n\t\t$text[1] = '의뢰 조건에 맞는 후보를 다시 찾기로 했다. 추가 비용은 들지 않는다.'\r\n\telseif slave_state = CONST_INT['no_slave']:\r\n! JO9 MOD END EXPERT_ORDER_FINAL_20261127_RECEIPT\r\n! JO9 MOD START J9M0734 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included",
+      "count": 1
+    },
+    {
+      "location": "main_screen",
+      "field": "body",
+      "old": "if search['active'] = 2:\r\n\tsearch['active'] = 3",
+      "new": "! JO9 MOD START EXPERT_ORDER_FINAL_20261127_NOTICE\r\nif search['active'] = 2 and func('jo9_expert_order','revalidate') = 1:\r\n\tsearch['active'] = 3\r\n! JO9 MOD END EXPERT_ORDER_FINAL_20261127_NOTICE",
+      "count": 1
+    },
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "! JO9 MOD END BUYER_RUMOR_LOAD",
+      "new": "! JO9 MOD END BUYER_RUMOR_LOAD\r\n! JO9 MOD START EXPERT_ORDER_FINAL_20261127_LOAD_APPROVAL\r\nif $place = 'guild_hall' and interaction_city = 9511 and $curloc = 'choice_screen': $yes = {gs 'jo9_expert_order','submit' & gt 'guild'}\r\n! JO9 MOD END EXPERT_ORDER_FINAL_20261127_LOAD_APPROVAL",
+      "count": 1
+    },
+    {
+      "location": "expert_to_slave",
+      "field": "body",
+      "old": "dynamic $swap_slave_instances, 'slave', 'selected'\r\ngs 'jo9_traits','init_slave_nature','slave'",
+      "new": "! JO9 MOD START EXPERT_ORDER_FINAL_20261127_DELIVER\r\nif slave_state ! CONST_INT['no_slave']: exit\r\nif func('jo9_expert_order','revalidate') = 0: exit\r\ndynamic $swap_slave_instances, 'slave', 'selected'\r\ngs 'jo9_expert_order','initialize','slave'\r\ngs 'jo9_traits','init_slave_nature','slave'\r\ngs 'jo9_expert_order','initial_mood','slave'\r\ndynamic $replace($recalc_slave_mood, 'dyn'+'slave', 'slave')\r\n! JO9 MOD END EXPERT_ORDER_FINAL_20261127_DELIVER",
+      "count": 1
+    }
+  ]
+}

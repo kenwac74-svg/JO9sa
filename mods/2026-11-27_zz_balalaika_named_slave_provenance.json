@@ -1,0 +1,163 @@
+{
+  "id": "2026-11-27_zz_balalaika_named_slave_provenance",
+  "target": "game\\jack.qsp",
+  "description": "발랄라이카 출처 대사와 클론 안내문 수정, 6명 암시장 일일 추첨 및 키쿠치요 나유타 판매",
+  "before_sha256": "D01FD53751B7AC04861C5F09AF2E5CF8CB4773EBC3B07B229E7B47C64AB8AD10",
+  "after_sha256": "6F647E3D972E20283AF0FCE9FC5685B26C3515C4D62F5F186A8B29C5F16A1686",
+  "edits": [
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "! JO9 MOD START R02_JOKER_STALE_PURCHASE_GUARD_20261113",
+      "new": "! JO9 MOD START BALALAIKA_NAMED_PROVENANCE_20261127\r\nif $args[0] = 'jo9_bm_smuggler_provenance': jump 'jo9_bm_smuggler_provenance'\r\n! JO9 MOD END BALALAIKA_NAMED_PROVENANCE_20261127\r\n! JO9 MOD START R02_JOKER_STALE_PURCHASE_GUARD_20261113",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "if interaction_city = 6232:\r\n\tnpc = 1\r\n\t$npc_id = 'bararaika'\r\n\t$place = 'smugglers_den'\r\n\t$return_lock = 'shop_general'\r\n\r\n\tspecial_stock = 2575\r\n\r\n\t!Helen stats customization\r\n\tseed_beauty[special_stock] = rand(2,5)\r\n\tseed_exotic[special_stock] = rand(0,1)\r\n\tseed_intellect[special_stock] = rand(4,5)\r\n\tseed_masochism[special_stock] = rand(0,2)\r\n\tseed_nymphomania[special_stock] = rand(0,1)\r\n\r\n\tgs 'generate_stock'\r\n\tgs 'stock_to_slave_nogt'\r\n\r\n\tslave['brand'] = 0\r\n\tsparks -= 3000\r\n\thelen = 1\r\n! JO9 MOD START J9M0801 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included\r\n\t$text[1] = '[발랄라이카]<br>&nbsp;이 아줌마? 당신같은 노예상도 이런 아줌마가 궁금한가? 하긴.. 스파크만 낸다면 뭐든 상관 없지만 말야.</div>'\r\n! JO9 MOD END J9M0801\r\nend",
+      "new": "! JO9 MOD START BALALAIKA_NAMED_PROVENANCE_20261127\r\n:jo9_bm_smuggler_provenance\r\nif $args[0] = 'jo9_bm_smuggler_provenance':\r\n if args[1] = 2575: $result = '[나타샤]<br>&nbsp;이 아주머니가 눈에 들어오셨나 봐요. 기업이 나라까지 쥐고 흔드는 곳에서 제약회사에 다녔다는데, 빚 때문에 시민권까지 잃었대요. 장부를 맡길 사람을 찾으신다면 눈여겨보세요.</div>' & exit\r\n if args[1] = 2574: $result = '[나타샤]<br>&nbsp;그 여자에게 관심 있으세요? 어느 부족의 여전사라더군요. 사령관이었다고 해서 어디 산골 부족인 줄 알았는데, 우주선을 타고 다녔대요. 보급할 행성에서 사냥하다 안개에 들어왔다네요.</div>' & exit\r\n if args[1] = 2573: $result = '[나타샤]<br>&nbsp;아, 이쪽이요? 아르투리아라는 나라의 공주라고 하더군요. 암살자의 칼이 닿기 직전에 유니콘 덕에 목숨을 건졌대요. 다른 차원으로 도망친 끝에 떨어진 곳이 하필 이쪽이었고요.</div>' & exit\r\n if args[1] = 8900: $result = '[나타샤]<br>&nbsp;아, 이쪽이요? 망국의 공주라고 하더군요. 에오스가 쿠로이누 용병단 손에 넘어갈 때 아버지를 잃었대요. 그 뒤엔 밀항선에 올라 겨우 빠져나왔다네요.</div>' & exit\r\n if args[1] = 8901: $result = '[나타샤]<br>&nbsp;아, 이쪽이요? 망국의 여왕이라고 하더군요. 북방의 다크엘프를 다스렸다는데, 부하의 배신과 용병단장 볼트의 계략에 걸려 잡혔대요. 왕관은 없어도 사람을 내려다보는 눈은 그대로네요.</div>' & exit\r\n if args[1] = 8902: $result = '[나타샤]<br>&nbsp;아, 이쪽이요? 귀랑 꼬리를 보니 높으신 분들이 보면 환장하겠어요. 안개 너머에서는 저런 귀와 꼬리를 가진 선수들이 경주를 한대요. 라이스 샤워도 그중 하나였다네요.</div>' & exit\r\n if args[1] = 3001: $result = '[나타샤]<br>&nbsp;츠키는 스파크를 투자하기에 괜찮은 선택이에요. 여러 주인의 손을 거쳐 노예 생활에 익숙하니 오래 곁에 두실 분이라면 눈여겨보세요. 다만 이미 낙인이 찍혀 있어서 되팔 때는 좀 까다로울 수 있어요. 선택은 손님 몫이에요.</div>' & exit\r\n if args[1] = 3002: $result = '[나타샤]<br>&nbsp;루미너스는 뱀파이어 헌터 베네딕트의 실험체예요. 루미너스 안에 있던 강력한 뱀파이어의 힘을 봉인하는 데엔 성공했죠. 그 베네딕트도 고집이며 오만함까진 꺾지 못했어요. 데려가실 거라면 그 점은 염두에 두세요.</div>' & exit\r\n if args[1] = 1448: $result = '[나타샤]<br>&nbsp;이쪽은 시루예요. 마계 제국에서 황제의 호위대장을 지낸 순혈 뱀파이어라고 해요. 안개를 건너면서 차원 이동 능력은 잃었지만, 검술과 마법은 여전하죠. 그 둘을 한 사람에게서 기대할 수 있는 기회는 흔치 않아요.</div>' & exit\r\n exit\r\nend\r\nif instr('|6232|6233|6234|6258|6259|6260|', '|' + str(interaction_city) + '|') > 0:\r\n sp_txt = 1\r\n gt 'shop_general'\r\nend\r\n! JO9 MOD END BALALAIKA_NAMED_PROVENANCE_20261127",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "if interaction_city = 6233:\r\n\tnpc = 1\r\n\t$npc_id = 'bararaika'\r\n\t$place = 'smugglers_den'\r\n\t$return_lock = 'shop_general'\r\n\r\n\tspecial_stock = 2574\r\n\r\n\t!Yasmin stats customization\r\n\tseed_beauty[special_stock] = rand(3,5)\r\n\tseed_exotic[special_stock] = rand(2,5)\r\n\tseed_blood_attitude[special_stock] = rand(1,2)\r\n\tseed_homosexualism[special_stock] = rand(1,2)\r\n\r\n\tgs 'generate_stock'\r\n\tgs 'stock_to_slave_nogt'\r\n\r\n\tslave['grace'] = rand(0,1)\r\n\tslave['brand'] = 0\r\n\tsparks -= 3000\r\n\tyasmin = 1\r\n! JO9 MOD START J9M0800 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included\r\n\t$text[1] = '[발랄라이카]<br>&nbsp;그 년에게 관심있어? 어디 무슨 부족의 여전사인가 뭔가. 그런데 우주는 또 뭐야? 관심 있으면 스파크 내고 데려가도 좋아.</div>'\r\n! JO9 MOD END J9M0800\r\nend",
+      "new": "! BALALAIKA_NAMED_PROVENANCE_20261127 moved interaction 6233 to the daily market",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "if interaction_city = 6234:\r\n\tnpc = 1\r\n\t$npc_id = 'bararaika'\r\n\t$place = 'smugglers_den'\r\n\t$return_lock = 'shop_general'\r\n\r\n\tspecial_stock = 2573\r\n\tgs 'generate_stock'\r\n\tgs 'stock_to_slave_nogt'\r\n\r\n\tslave['grace'] = rand(0,1)\r\n\tslave['brand'] = 0\r\n\tsparks -= 3000\r\n\twilhelmine = 1\r\n! JO9 MOD START J9M0799 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included\r\n\t$text[1] = '[발랄라이카]<br>&nbsp;아 이거? 무슨 공주라고 하더군. 필요하면 스파크 내고 데려가도록 해.</div>'\r\n! JO9 MOD END J9M0799\r\nend",
+      "new": "! BALALAIKA_NAMED_PROVENANCE_20261127 moved interaction 6234 to the daily market",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "if interaction_city = 6258:\r\n\tnpc = 1\r\n\t$npc_id = 'bararaika'\r\n\t$place = 'smugglers_den'\r\n\t$return_lock = 'shop_general'\r\n\r\n\tspecial_stock = 8900\r\n\t\r\n\tgs 'generate_stock'\r\n\tdynamic $swap_slave_instances, 'stock', 'slave' \r\n\r\n\tslave['brand'] = 0\r\n\tsparks -= 10000\r\n\tCelestine = 1\r\n! JO9 MOD START J9M0776 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included\r\n\t$text[1] = '[발랄라이카]<br>&nbsp;아 이거? 어디 망국의 공주라고 하더군. 필요하면 스파크 내고 데려가도록 해.</div>'\r\n! JO9 MOD END J9M0776\r\nend",
+      "new": "! BALALAIKA_NAMED_PROVENANCE_20261127 moved interaction 6258 to the daily market",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "if interaction_city = 6259:\r\n\tnpc = 1\r\n\t$npc_id = 'bararaika'\r\n\t$place = 'smugglers_den'\r\n\t$return_lock = 'shop_general'\r\n\r\n\tspecial_stock = 8901\r\n\t\r\n\tgs 'generate_stock'\r\n\tdynamic $swap_slave_instances, 'stock', 'slave' \r\n\r\n\tslave['brand'] = 0\r\n\tsparks -= 10000\r\n\tOlga = 1\r\n! JO9 MOD START J9M0775 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included\r\n\t$text[1] = '[발랄라이카]<br>&nbsp;아 이거? 어디 망국의 여왕이라고 하더군. 필요하면 스파크 내고 데려가도록 해.</div>'\r\n! JO9 MOD END J9M0775\r\nend",
+      "new": "! BALALAIKA_NAMED_PROVENANCE_20261127 moved interaction 6259 to the daily market",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "if interaction_city = 6260:\r\n\tnpc = 1\r\n\t$npc_id = 'bararaika'\r\n\t$place = 'smugglers_den'\r\n\t$return_lock = 'shop_general'\r\n\r\n\tspecial_stock = 8902\r\n\t\r\n\tgs 'generate_stock'\r\n\tdynamic $swap_slave_instances, 'stock', 'slave' \r\n\r\n\tslave['brand'] = 0\r\n\tsparks -= 3000\r\n\tRiceShower = 1\r\n! JO9 MOD START J9M0774 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included\r\n\t$text[1] = '[발랄라이카]<br>&nbsp;아 이거? 겉모습빼고는 말이랑 똑같은 소녀라더군, 귀랑 꼬리를 보니 높으신 분들이 보면 환장하겠어? 필요하면 스파크 내고 데려가도록 해.</div>'\r\n! JO9 MOD END J9M0774\r\nend",
+      "new": "! BALALAIKA_NAMED_PROVENANCE_20261127 moved interaction 6260 to the daily market",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "if interaction_city = 6261:\r\n\tnpc = 1\r\n\t$npc_id = 'bararaika'\r\n\t$place = 'smugglers_den'\r\n\t$return_lock = 'shop_general'\r\n\r\n\tspecial_stock = 8889\r\n\t\r\n\tgs 'generate_stock'\r\n\tdynamic $swap_slave_instances, 'stock', 'slave' \r\n\r\n\tslave['brand'] = 0\r\n\tsparks -= 3000\r\n\tKikuchiyo = 1\r\n! JO9 MOD START J9M0773 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included\r\n\t$text[1] = '[발랄라이카]<br>&nbsp;아 이거? 안개괴물하고 좋은 승부를 펼치던 걸. 결국 졌지만, 쓸만해 보여서 구해왔지. 필요하면 스파크 내고 데려가도록 해.</div>'\r\n! JO9 MOD END J9M0773\r\nend",
+      "new": "! JO9 MOD START BALALAIKA_NAMED_PROVENANCE_20261127\r\nif interaction_city = 6261:\r\n if $place ! 'kulashop': sp_txt = 1 & gt 'shop_general'\r\n sp_txt = 2\r\n if Kikuchiyo ! 0 or sparks < 3000 or slave_state ! CONST_INT['no_slave']: gt 'shop_general'\r\n\tnpc = 1\r\n\t$npc_id = 'kula'\r\n\t$place = 'kulashop'\r\n\t$return_lock = 'shop_general'\r\n\r\n\tspecial_stock = 8889\r\n\t\r\n\tgs 'generate_stock'\r\n\tdynamic $swap_slave_instances, 'stock', 'slave' \r\n\r\n\tslave['brand'] = 0\r\n\tsparks -= 3000\r\n\tKikuchiyo = 1\r\n! JO9 MOD START J9M0773 | 2026-10-09_dialogue_format_and_protagonist | changed block; context may be included\r\n\t$text[1] = '[쿨라]<br>&nbsp;아소기 시 미부 가문의 키쿠치요야. 안개 괴물한테 지고도 칼을 놓지 않았대. 나유타에서도 그 솜씨면 알아주겠지. 낙인은 없어. 데려가면 실력부터 제대로 써 봐.</div>'\r\n! JO9 MOD END J9M0773\r\nend\r\n! JO9 MOD END BALALAIKA_NAMED_PROVENANCE_20261127",
+      "count": 1
+    },
+    {
+      "location": "#static_txt",
+      "field": "body",
+      "old": "! JO9 MOD START PROFILE_POLISH_20261025_R3",
+      "new": "! JO9 MOD START BALALAIKA_NAMED_PROVENANCE_20261127\r\nif $args[0] = 'jo9_bm_smuggler_info_reload': jump 'jo9_bm_smuggler_info_reload'\r\n! JO9 MOD END BALALAIKA_NAMED_PROVENANCE_20261127\r\n! JO9 MOD START PROFILE_POLISH_20261025_R3",
+      "count": 1
+    },
+    {
+      "location": "#static_txt",
+      "field": "body",
+      "old": "$smuggler_info[13] = '[발랄라이카]<br> 그리고 내가 장담할 수 있는건, 그 여체들은 아무런 질병과 감염이 없는 완전한 처녀라는 거지. 종류는 세개 있어. 아동, 아가씨, 그리고 성인.</div>'",
+      "new": "! JO9 MOD START BALALAIKA_NAMED_PROVENANCE_20261127\r\n:jo9_bm_smuggler_info_reload\r\n$smuggler_info[13] = '[발랄라이카]<br>&nbsp;그리고 내가 장담할 수 있는 건, 그 여체들은 아무런 질병과 감염이 없는 완전한 처녀라는 거지. 종류는 셋이야. 성숙한 쪽, 젊은 쪽, 그리고 앳된 쪽.</div>'\r\nif $args[0] = 'jo9_bm_smuggler_info_reload': exit\r\n! JO9 MOD END BALALAIKA_NAMED_PROVENANCE_20261127",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tif helen = 0:\r\n\t\tif sparks < 3000:\r\n\t\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_BuyHelen_gray, empty, '헬렌을 산다 ($3000)', '그녀를 살 형편이 안 된다')\r\n\t\telseif slave_state ! CONST_INT['no_slave']:\r\n\t\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_BuyHelen_gray, empty, '헬렌을 산다 ($3000)', '이미 노예가 있다')\r\n\t\telse\r\n\t\t\tfunc('$menu', 'interaction_city', $menu_item_BuyHelen, menu_BuyHelen, '헬렌을 산다 ($3000)')\r\n\t\tend\r\n\tend\r\n",
+      "new": "! BALALAIKA_NAMED_PROVENANCE_20261127 moved helen from direct sales\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tif yasmin = 0:\r\n\t\tif sparks < 3000:\r\n\t\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_BuyYasmin_gray, empty, '야스민을 산다 ($3000)', '그녀를 살 형편이 안 된다')\r\n\t\telseif slave_state ! CONST_INT['no_slave']:\r\n\t\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_BuyYasmin_gray, empty, '야스민을 산다 ($3000)', '이미 노예가 있다')\r\n\t\telse\r\n\t\t\tfunc('$menu', 'interaction_city', $menu_item_BuyYasmin, menu_BuyYasmin, '야스민을 산다 ($3000)')\r\n\t\tend\r\n\tend\r\n",
+      "new": "! BALALAIKA_NAMED_PROVENANCE_20261127 moved yasmin from direct sales\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tif wilhelmine = 0:\r\n\t\tif sparks < 3000:\r\n\t\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_buywilhelmine_gray, empty, '빌헬미네를 산다 ($3000)', '그녀를 살 형편이 안 된다')\r\n\t\telseif slave_state ! CONST_INT['no_slave']:\r\n\t\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_buywilhelmine_gray, empty, '빌헬미네를 산다 ($3000)', '이미 노예가 있다')\r\n\t\telse\r\n\t\t\tfunc('$menu', 'interaction_city', $menu_item_buywilhelmine, menu_buywilhelmine, '빌헬미네를 산다 ($3000)')\r\n\t\tend\r\n\tend\r\n",
+      "new": "! BALALAIKA_NAMED_PROVENANCE_20261127 moved wilhelmine from direct sales\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tif Celestine = 0:\r\n\t\tif sparks < 10000:\r\n\t\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_BuyCelestine_gray, empty, '셀레스틴 ($10000)', '스파크가 부족하다')\r\n\t\telseif slave_state ! CONST_INT['no_slave']:\r\n\t\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_BuyCelestine_gray, empty, '셀레스틴 ($10000)', '이미 노예가 있다')\r\n\t\telse\r\n\t\t\tfunc('$menu', 'interaction_city', $menu_item_BuyCelestine, menu_BuyCelestine, '셀레스틴 ($10000)')\r\n\t\tend\r\n\tend\r\n",
+      "new": "! BALALAIKA_NAMED_PROVENANCE_20261127 moved Celestine from direct sales\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tif Olga = 0:\r\n\t\tif sparks < 10000:\r\n\t\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_BuyOlga_gray, empty, '올가 ($10000)', '스파크가 부족하다')\r\n\t\telseif slave_state ! CONST_INT['no_slave']:\r\n\t\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_BuyOlga_gray, empty, '올가 ($10000)', '이미 노예가 있다')\r\n\t\telse\r\n\t\t\tfunc('$menu', 'interaction_city', $menu_item_BuyOlga, menu_BuyOlga, '올가 ($10000)')\r\n\t\tend\r\n\tend\r\n",
+      "new": "! BALALAIKA_NAMED_PROVENANCE_20261127 moved Olga from direct sales\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tif RiceShower = 0:\r\n\t\tif sparks < 3000:\r\n\t\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_BuyRiceShower_gray, empty, '라이스 샤워 ($3000)', '스파크가 부족하다')\r\n\t\telseif slave_state ! CONST_INT['no_slave']:\r\n\t\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_BuyRiceShower_gray, empty, '라이스 샤워 ($3000)', '이미 노예가 있다')\r\n\t\telse\r\n\t\t\tfunc('$menu', 'interaction_city', $menu_item_BuyRiceShower, menu_BuyRiceShower, '라이스 샤워 ($3000)')\r\n\t\tend\r\n\tend\r\n",
+      "new": "! BALALAIKA_NAMED_PROVENANCE_20261127 moved RiceShower from direct sales\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tif Kikuchiyo = 0:\r\n\t\tif sparks < 3000:\r\n\t\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_BuyKikuchiyo_gray, empty, '키쿠치요 ($3000)', '스파크가 부족하다')\r\n\t\telseif slave_state ! CONST_INT['no_slave']:\r\n\t\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_BuyKikuchiyo_gray, empty, '키쿠치요 ($3000)', '이미 노예가 있다')\r\n\t\telse\r\n\t\t\tfunc('$menu', 'interaction_city', $menu_item_BuyKikuchiyo, menu_buyKikuchiyo, '키쿠치요 ($3000)')\r\n\t\tend\r\n\tend\r\n\t\r\n",
+      "new": "! BALALAIKA_NAMED_PROVENANCE_20261127 moved Kikuchiyo from direct sales\r\n\t\r\n",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "$smuggler_options[1] = {",
+      "new": "! JO9 MOD START BALALAIKA_NAMED_PROVENANCE_20261127\r\n:jo9_bm_smuggler_reload\r\n! JO9 MOD END BALALAIKA_NAMED_PROVENANCE_20261127\r\n$smuggler_options[1] = {",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "$smuggler_options[2] = {",
+      "new": "! JO9 MOD START SMUGGLER_DEFAULTED_COMMISSIONS_20261127_PAGE\r\n! JO9 MOD START SMUGGLER_CONTRACT_STOCK_20261127_PAGE\r\n$smuggler_options[3] = {\r\n ! SMUGGLER_CONTRACT_STOCK_20261127\r\n npc = 1 & $npc_id = 'bararaika'\r\n $text_display = '<br><br>'\r\n gs 'jo9_smuggler_contract','menu'\r\n}\r\n! JO9 MOD END SMUGGLER_CONTRACT_STOCK_20261127_PAGE\r\n! JO9 MOD END SMUGGLER_DEFAULTED_COMMISSIONS_20261127_PAGE\r\n! JO9 MOD START BALALAIKA_NAMED_PROVENANCE_20261127\r\nif $args[0] = 'jo9_bm_smuggler_reload': exit\r\n! JO9 MOD END BALALAIKA_NAMED_PROVENANCE_20261127\r\n$smuggler_options[2] = {",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "$KulaShop_options[2] = {",
+      "new": "! JO9 MOD START BALALAIKA_NAMED_PROVENANCE_20261127\r\n:jo9_bm_kula_reload\r\n! JO9 MOD END BALALAIKA_NAMED_PROVENANCE_20261127\r\n$KulaShop_options[2] = {",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "func('$menu', '===BEGIN===', 'column_1')\r\n\t\tif tsuina = 0:\r\n\t\tif sparks < 3000:",
+      "new": "func('$menu', '===BEGIN===', 'column_1')\r\n! JO9 MOD START BALALAIKA_NAMED_PROVENANCE_20261127\r\n\tif Kikuchiyo = 0:\r\n\t\tif sparks < 3000:\r\n\t\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_BuyKikuchiyo_gray, empty, '키쿠치요 ($3000)', '스파크가 부족하다')\r\n\t\telseif slave_state ! CONST_INT['no_slave']:\r\n\t\t\tfunc('$menu', 'location_gray_tooltip', $menu_item_BuyKikuchiyo_gray, empty, '키쿠치요 ($3000)', '이미 노예가 있다')\r\n\t\telse\r\n\t\t\tfunc('$menu', 'interaction_city', $menu_item_BuyKikuchiyo, menu_buyKikuchiyo, '키쿠치요 ($3000)')\r\n\t\tend\r\n\tend\r\n! JO9 MOD END BALALAIKA_NAMED_PROVENANCE_20261127\r\n\t\tif tsuina = 0:\r\n\t\tif sparks < 3000:",
+      "count": 1
+    },
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "\tend\t\t\t\r\n\tfunc('$menu', '===END===')\t\r\n}\r\n$KulaShop_options[3] = {",
+      "new": "\tend\t\t\t\r\n\tfunc('$menu', '===END===')\t\r\n}\r\n! JO9 MOD START BALALAIKA_NAMED_PROVENANCE_20261127\r\nif $args[0] = 'jo9_bm_kula_reload': exit\r\n! JO9 MOD END BALALAIKA_NAMED_PROVENANCE_20261127\r\n$KulaShop_options[3] = {",
+      "count": 1
+    }
+  ]
+}

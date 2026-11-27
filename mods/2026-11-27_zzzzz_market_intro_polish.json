@@ -1,0 +1,16 @@
+{
+  "id": "2026-11-27_zzzzz_market_intro_polish",
+  "target": "game\\jack.qsp",
+  "description": "기존 판매 소개 내용을 살려 나타샤의 대사를 보완하고 쿨라의 인계 표현 삭제",
+  "before_sha256": "3C3674531A1907163C35E197847330354175386FF2C3CDB3BE77F6E7AF36D3A9",
+  "after_sha256": "43898C7140500AB058486279B0B68097EF84AB56A4459288494C6AE7110EC697",
+  "edits": [
+    {
+      "location": "black_market_interface",
+      "field": "body",
+      "old": "if sparks >= bm_price: \r\n   $text[txt] += '$<<bm_price>>에 넘기겠다.'\r\nelse\r\n   $text[txt] += '값은 $<<bm_price>>인데, 네겐 그만한 돈이 없다.'\r\nend",
+      "new": "! JO9 MOD START MARKET_INTRO_POLISH_20261127_PRICE\r\nif $jo9_bm_smuggler_line ! '':\r\n if sparks >= bm_price:\r\n  $text[txt] += '값은 $<<bm_price>>예요.'\r\n else\r\n  $text[txt] += '값은 $<<bm_price>>인데, 지금 갖고 계신 스파크로는 부족하네요.'\r\n end\r\nelse\r\nif sparks >= bm_price: \r\n   $text[txt] += '$<<bm_price>>에 넘기겠다.'\r\nelse\r\n   $text[txt] += '값은 $<<bm_price>>인데, 네겐 그만한 돈이 없다.'\r\nend\r\nend\r\n! JO9 MOD END MARKET_INTRO_POLISH_20261127_PRICE",
+      "count": 1
+    }
+  ]
+}

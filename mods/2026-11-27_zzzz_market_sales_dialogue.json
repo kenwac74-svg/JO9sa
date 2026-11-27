@@ -1,0 +1,23 @@
+{
+  "id": "2026-11-27_zzzz_market_sales_dialogue",
+  "target": "game\\jack.qsp",
+  "description": "암시장 일일 추첨 메뉴와 재배치 판매 대사 정리",
+  "before_sha256": "CCD03CF3E994A795EF2F9A0EA419FBC40EBDCE668B4D99987046D9D8778C0F67",
+  "after_sha256": "3C3674531A1907163C35E197847330354175386FF2C3CDB3BE77F6E7AF36D3A9",
+  "edits": [
+    {
+      "location": "#options",
+      "field": "body",
+      "old": "func('$menu', 'exec_options', $menu_item_dohna, 'sp_txt = 2 & gt $curloc', '나유타 맴버 데려오기')",
+      "new": "func('$menu', 'exec_options', $menu_item_dohna, 'sp_txt = 2 & gt $curloc', '나유타 멤버 데리고 오기')",
+      "count": 1
+    },
+    {
+      "location": "$ongload",
+      "field": "body",
+      "old": "! JO9 MOD END RUMOR_PROVIDER_ICON_LOAD_20261028\r\n\r\n",
+      "new": "! JO9 MOD END RUMOR_PROVIDER_ICON_LOAD_20261028\r\n\r\n! JO9 MOD START MARKET_SALES_DIALOGUE_20261127_LOAD\r\nif $curloc = 'shop_general' and $place = 'kulashop' and sp_txt = 1 and instr($maintxt, '나유타 맴버 데려오기') > 0: gt 'shop_general'\r\n! JO9 MOD END MARKET_SALES_DIALOGUE_20261127_LOAD\r\n",
+      "count": 1
+    }
+  ]
+}

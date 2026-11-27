@@ -1,0 +1,44 @@
+{
+  "id": "2026-11-27_zzzzzzz_smuggler_contract_stock",
+  "description": "발랄라이카 계약 파기 상품 진열·구매 및 밀수 안내 16쪽",
+  "target": "game\\jack.qsp",
+  "before_sha256": "4B477D695D4ACEF489A17D991E9706276401EA597E3A75C99C06E4E14C85C3F5",
+  "after_sha256": "66042AF369098CD740F5072DF6B44428FEEFF1C2FBE85A16B08EE3B5F23A8CE1",
+  "add_locations": [
+    {
+      "name": "jo9_smuggler_contract_catalog",
+      "desc": "",
+      "body": "! JO9 MOD START SMUGGLER_CONTRACT_STOCK_20261127_CATALOG\r\nkillvar 'jo9_contract_items'\r\nkillvar 'jo9_contract_prices'\r\n! Register future unique entries here.\r\n! jo9_contract_items[] = character_id & jo9_contract_prices[character_id] = price_in_sparks\r\n! JO9 MOD END SMUGGLER_CONTRACT_STOCK_20261127_CATALOG",
+      "actions": []
+    },
+    {
+      "name": "jo9_smuggler_contract",
+      "desc": "",
+      "body": "! JO9 MOD START SMUGGLER_CONTRACT_STOCK_20261127_TRADE\r\nif $args[0] = 'help':\r\n $smuggler_info[16] = '[발랄라이카]<br>&nbsp;나한테 노예를 찾아 달라고 주문해 놓고 인수 날짜까지 나타나지 않는 노예상도 있어. 기한이 지나면 내가 처분해. 그런 건 특별 상품에 따로 올려 두지. 이름이랑 값은 거기서 확인해.</div>'\r\n exit\r\nend\r\n\r\nif $args[0] = 'available':\r\n result = 0\r\n local jo9_contract_id, jo9_contract_i, $jo9_contract_slot\r\n jo9_contract_id = args[1]\r\n if jo9_contract_id <= 0 or jo9_contract_prices[jo9_contract_id] <= 0: exit\r\n if $seed_name[jo9_contract_id] = '' or $seed_name[jo9_contract_id] = 'blank' or $seed_name[jo9_contract_id] = 'пусто' or $fullimage[jo9_contract_id] = '': exit\r\n if black_market_taken[str(jo9_contract_id)] > 0: exit\r\n for jo9_contract_i = 0 to arrsize('$all_slave_characters') - 1:\r\n  $jo9_contract_slot = $all_slave_characters[jo9_contract_i]\r\n  if dyneval('result = ' + $jo9_contract_slot + '_state > 0 and ' + $jo9_contract_slot + '_type = ' + str(jo9_contract_id)) = 1: exit\r\n end\r\n result = 1\r\n exit\r\nend\r\n\r\nif $args[0] = 'menu':\r\n gs 'jo9_smuggler_contract_catalog'\r\n local jo9_contract_index, jo9_contract_item, jo9_contract_count, $jo9_contract_exec\r\n func('$menu', '===BEGIN===', 'column_0')\r\n for jo9_contract_index = 0 to arrsize('jo9_contract_items') - 1:\r\n  jo9_contract_item = jo9_contract_items[jo9_contract_index]\r\n  if func('jo9_smuggler_contract', 'available', jo9_contract_item) = 1:\r\n   jo9_contract_count += 1\r\n   $jo9_contract_exec = 'jo9_contract_quote_id = <<jo9_contract_item>> & interaction_city = 62130 & gt \"interaction_city\"'\r\n   func('$menu', 'exec_options', $menu_item_Orderparcel2, $jo9_contract_exec, '<<$seed_name[jo9_contract_item]>> ($<<jo9_contract_prices[jo9_contract_item]>>)')\r\n  end\r\n end\r\n if jo9_contract_count = 0:\r\n  $sp_text[3] = '[발랄라이카]<br>&nbsp;지금은 내놓을 계약 파기 상품이 없어.'\r\n else\r\n  $sp_text[3] = '[발랄라이카]<br>&nbsp;인수 기한이 지난 주문들이야. 관심 가는 물건이 있으면 골라 봐.'\r\n end\r\n func('$menu', 'exec_options', $menu_item_nobuy, 'sp_txt = 1 & gt $curloc', '돌아간다')\r\n func('$menu', '===END===')\r\n exit\r\nend\r\n\r\nif $args[0] = 'quote':\r\n gs 'jo9_smuggler_contract_catalog'\r\n local jo9_contract_quote, jo9_contract_cost\r\n jo9_contract_quote = args[1]\r\n if func('jo9_smuggler_contract', 'available', jo9_contract_quote) = 1:\r\n  jo9_contract_cost = jo9_contract_prices[jo9_contract_quote]\r\n  $text[1] = '[발랄라이카]<br>&nbsp;<<$seed_name[jo9_contract_quote]>>? <<jo9_contract_cost>>스파크야.'\r\n  if slave_state ! CONST_INT['no_slave']:\r\n   $text[1] += '<br>&nbsp;먼저 데리고 온 노예부터 보내고 와.'\r\n  elseif sparks < jo9_contract_cost:\r\n   $text[1] += '<br>&nbsp;돈이 모자라. 값에 맞춰 가져와.'\r\n  else\r\n   $text[1] += '<br><br><a id=\"jo9-contract-buy\" href=\"EXEC: gs ''jo9_smuggler_contract'', ''buy'', <<jo9_contract_quote>>, <<jo9_contract_cost>>\"><font color=\"#228B22\"><<jo9_contract_cost>>스파크를 내고 산다</font></a>'\r\n  end\r\n else\r\n  $text[1] = '[발랄라이카]<br>&nbsp;그 물건은 이제 없다.'\r\n end\r\n if instr($text[1], 'id=\"jo9-contract-buy\"') > 0:\r\n  $text[1] += '<br>'\r\n else\r\n  $text[1] += '<br><br>'\r\n end\r\n $text[1] += '<a id=\"jo9-contract-back\" href=\"EXEC: jo9_contract_quote_id = 0 & sp_txt = 3 & gt ''shop_general''\"><font color=\"#B22222\">이번에는 사지 않는다</font></a></div>'\r\n exit\r\nend\r\n\r\nif $args[0] = 'buy':\r\n if $curloc ! 'interaction_screen_city' or $place ! 'smugglers_den' or interaction_city ! 62130: exit\r\n local jo9_contract_buy, jo9_contract_cost\r\n jo9_contract_buy = args[1]\r\n if jo9_contract_buy ! jo9_contract_quote_id: exit\r\n gs 'jo9_smuggler_contract_catalog'\r\n jo9_contract_cost = jo9_contract_prices[jo9_contract_buy]\r\n if func('jo9_smuggler_contract', 'available', jo9_contract_buy) = 1 and jo9_contract_cost = args[2] and sparks >= jo9_contract_cost and slave_state = CONST_INT['no_slave']:\r\n  special_stock = jo9_contract_buy\r\n  killvar '$special_age'\r\n  gs 'generate_stock'\r\n  if stock_state = CONST_INT['slave_exist'] and stock_type = jo9_contract_buy:\r\n   if func('stock_to_slave_nogt') = 1:\r\n    slave['brand'] = 0\r\n    tattoo_brand = 0\r\n    sparks -= jo9_contract_cost\r\n    black_market_taken[str(jo9_contract_buy)] = 1\r\n    gs '$slave_price'\r\n    if sound_on = 1: play 'contentsndkkm.wav', sound_volume\r\n   end\r\n  end\r\n end\r\n jo9_contract_quote_id = 0\r\n sp_txt = 3\r\n gt 'shop_general'\r\nend\r\n! JO9 MOD END SMUGGLER_CONTRACT_STOCK_20261127_TRADE",
+      "actions": []
+    }
+  ],
+  "edits": [
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "\tcopyarr '$text', '$smuggler_info'",
+      "new": "! JO9 MOD START SMUGGLER_CONTRACT_STOCK_20261127_HELP\r\n\tgs 'jo9_smuggler_contract','help'\r\n! JO9 MOD END SMUGGLER_CONTRACT_STOCK_20261127_HELP\r\n\tcopyarr '$text', '$smuggler_info'",
+      "count": 1
+    },
+    {
+      "location": "interaction_city",
+      "field": "body",
+      "old": "if interaction_city = 6221:",
+      "new": "! JO9 MOD START SMUGGLER_CONTRACT_STOCK_20261127_QUOTE\r\nif interaction_city = 62130:\r\n npc = 1\r\n $npc_id = 'bararaika'\r\n $place = 'smugglers_den'\r\n $return_lock = 'shop_general'\r\n sp_txt = 3\r\n gs 'jo9_smuggler_contract','quote',jo9_contract_quote_id\r\nend\r\n! JO9 MOD END SMUGGLER_CONTRACT_STOCK_20261127_QUOTE\r\n\r\nif interaction_city = 6221:",
+      "count": 1
+    },
+    {
+      "location": "interaction_screen_city",
+      "field": "body",
+      "old": "if (interaction_city = 6667792 and instr($text[txt], 'id=\"jo9-erza-positive-choice\"') > 0 and instr($text[txt], 'id=\"jo9-erza-negative-choice\"') > 0) or (interaction_city = 951541 and instr($text[txt], 'id=\"jo9-gloria-choice-951545\"') > 0) or instr($text[txt], 'data-jo9-choice=\"') > 0:",
+      "new": "! JO9 MOD START SMUGGLER_CONTRACT_STOCK_20261127_QUOTE_NAV\r\nif (interaction_city = 6667792 and instr($text[txt], 'id=\"jo9-erza-positive-choice\"') > 0 and instr($text[txt], 'id=\"jo9-erza-negative-choice\"') > 0) or (interaction_city = 951541 and instr($text[txt], 'id=\"jo9-gloria-choice-951545\"') > 0) or instr($text[txt], 'data-jo9-choice=\"') > 0 or (interaction_city = 62130 and instr($text[txt], 'id=\"jo9-contract-back\"') > 0):\r\n! JO9 MOD END SMUGGLER_CONTRACT_STOCK_20261127_QUOTE_NAV",
+      "count": 1
+    }
+  ]
+}
