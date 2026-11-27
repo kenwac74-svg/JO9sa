@@ -111,10 +111,7 @@ for (let index = featureStart; index < featureEnd; index++) {
   assert.ok(spec, `missing trait key: ${name}`);
   const description = key === '$jo9_attention_text' ? traitDescriptions.get('attention') : staticText.get(key);
   assert.ok(description, `missing trait description: ${name}`);
-  let summary = inlineSummaries[key] || description.text;
-  if (key === '$танцовщица') summary += name === '이국적인 댄서'
-    ? ' 색정광 또는 이상성욕 선호가 드러난 인물에게 표시되는 이름이다.'
-    : ' 해당 성향이 드러나지 않은 인물에게 표시되는 이름이다.';
+  const summary = inlineSummaries[key] || description.text;
   add(name, categoryFor(spec.key), spec.key + spec.value, summary,
     `#static_base:${index + 1} · ${description.source}`, aliases[key]);
 }

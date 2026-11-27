@@ -1,0 +1,37 @@
+{
+  "description": "무용 재능의 공용 표시와 듀플리카토 명칭을 발레리나로 통일",
+  "id": "2026-11-27_zzzzzzzzzzzzzzz_dance_talent_single_name",
+  "target": "game\\jack.qsp",
+  "before_sha256": "21AB3D70D99FC1E0B6DA45BDF8F4CC06913490E3754D53A9EE4237D44C8312CE",
+  "after_sha256": "502B361AC290B79816D005A20A37CA6B7960001BFD3F704D58F85E99AB19C7B6",
+  "edits": [
+    {
+      "location": "#static_base",
+      "field": "body",
+      "old": "        if dynslave['calisthenics_affinity'] > 0:\r\n            if (dynslave['nymphomania'] > 0 and (dynslave['nymphomania_revealed'] > 0 or spell_revelio = 1)) or (dynslave['perversion'] > 0 and (dynslave['perversion_revealed'] > 0 or spell_revelio = 1)):\r\n                if dynslave['calisthenics_affinity_revealed'] = 2 or spell_revelio = 1: \r\n                    $dynslave_features_list += '<a href=\"EXEC: msg $танцовщица\"><<dyneval($vb_cycle_skill, 5, \"이국적인 댄서\")>></a><br>'\r\n                end\r\n            else\r\n                if dynslave['calisthenics_affinity_revealed'] = 2 or spell_revelio = 1: \r\n                    $dynslave_features_list += '<a href=\"EXEC: msg $танцовщица\"><<dyneval($vb_cycle_skill, 5, \"발레리나\")>></a><br>'\r\n                end\r\n            end\r\n        end\r\n",
+      "new": "        ! JO9 MOD START DANCE_TALENT_SINGLE_NAME_20261127\r\n        if dynslave['calisthenics_affinity'] > 0 and (dynslave['calisthenics_affinity_revealed'] = 2 or spell_revelio = 1):\r\n            $dynslave_features_list += '<a href=\"EXEC: msg $танцовщица\"><<dyneval($vb_cycle_skill, 5, \"발레리나\")>></a><br>'\r\n        end\r\n        ! JO9 MOD END DANCE_TALENT_SINGLE_NAME_20261127\r\n",
+      "count": 1
+    },
+    {
+      "location": "#static_txt",
+      "field": "body",
+      "old": "$танцовщица = '[이국적인 댄서 / 발레리나]<br>당신 노예는 춤에 분명한 재능이 있다. 음악을 깊이 느끼고, 춤동작을 순식간에 따라 하며, 쉽게 즉흥적으로 움직이고 자기만의 스타일과 안무까지 만들어 낸다.'",
+      "new": "$танцовщица = '[발레리나]<br>당신 노예는 춤에 분명한 재능이 있다. 음악을 깊이 느끼고, 춤동작을 순식간에 따라 하며, 쉽게 즉흥적으로 움직이고 자기만의 스타일과 안무까지 만들어 낸다.'",
+      "count": 1
+    },
+    {
+      "location": "interaction",
+      "field": "body",
+      "old": " $text[2] = '<br> 듀플리카토 에센티아 · 사용 제한과 재능<br><br>하루에 한 번 사용할 수 있으며, 노예 한 사람은 평생 한 번만 받을 수 있다. 노예가 이미 가진 같은 긍정 재능은 복사할 수 없다. 복사할 재능과 상충하는 특성은 적용할 때 제거되며, 확인창에서 미리 볼 수 있다.<br><br>복사 가능한 재능 : 운동광, 달변가, 순종적인 동물, 순종적인 말, 미련한 소, 타고난 간호사, 타고난 하녀, 예민한 미각, 타고난 투사, 타고난 마법사, 타고난 미적감각, 절대음감, 발레리나(이국적인 댄서), 보좌관.'",
+      "new": " $text[2] = '<br> 듀플리카토 에센티아 · 사용 제한과 재능<br><br>하루에 한 번 사용할 수 있으며, 노예 한 사람은 평생 한 번만 받을 수 있다. 노예가 이미 가진 같은 긍정 재능은 복사할 수 없다. 복사할 재능과 상충하는 특성은 적용할 때 제거되며, 확인창에서 미리 볼 수 있다.<br><br>복사 가능한 재능 : 운동광, 달변가, 순종적인 동물, 순종적인 말, 미련한 소, 타고난 간호사, 타고난 하녀, 예민한 미각, 타고난 투사, 타고난 마법사, 타고난 미적감각, 절대음감, 발레리나, 보좌관.'",
+      "count": 1
+    },
+    {
+      "location": "jo9_duplicato_traits",
+      "field": "body",
+      "old": "if $j9de_key='calisthenics_affinity':\r\n $j9de_label='발레리나'\r\n if dyneval('result='+$j9de_role+\"['nymphomania']\")>0 and (dyneval('result='+$j9de_role+\"['nymphomania_revealed']\")>0 or spell_revelio=1): $j9de_label='이국적인 댄서'\r\n if dyneval('result='+$j9de_role+\"['perversion']\")>0 and (dyneval('result='+$j9de_role+\"['perversion_revealed']\")>0 or spell_revelio=1): $j9de_label='이국적인 댄서'\r\nend\r\n",
+      "new": "! JO9 MOD START DANCE_TALENT_SINGLE_NAME_20261127\r\nif $j9de_key='calisthenics_affinity': $j9de_label='발레리나'\r\n! JO9 MOD END DANCE_TALENT_SINGLE_NAME_20261127\r\n",
+      "count": 1
+    }
+  ]
+}

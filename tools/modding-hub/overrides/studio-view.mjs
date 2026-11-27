@@ -2,7 +2,7 @@ import {newSpawnPolicy,spawnNotice} from './spawn-notice.mjs';
 // 통합 캐릭터 편집 탭: 게임 폴더의 캐릭터를 골라 외형·배경 이야기·설정·능력치·특성을 한 화면에서 고친다(로컬 서버 /api 필요)
 import {roleUrl, masterSettings, masterStats, cmValue, patchCm, initialCm, cmInitialChanges, patchNativeStat, nativeRows, cloneBody, cloneForm} from './studio-role.mjs';
 import {QUESTION_NAMES} from '/workspace/general-dialogue.mjs';
-import {loadGamePresentation,gameRules,describeGameValue,valueBadge,simulationFields,refreshGameField,traitStyle} from './game-presentation.mjs';
+import {loadGamePresentation,gameRules,describeGameValue,valueBadge,simulationFields,refreshGameField,traitStyle,editorTraitRows,findTraitByName} from './game-presentation.mjs';
 import {runtimeValues,runtimeControls,bindRuntimeControls,subscribeRuntime} from './runtime-initials.mjs';
 import {describeCharacterField} from './character-fields.mjs';
 import {esc as e, loadSimData} from './sim-data.mjs';
@@ -43,7 +43,7 @@ export async function createStudioView(api, options = {}) {
  await loadGamePresentation();
  const seedKeys = SEEDS.keys;
  // 게임 JSON(seed_)로 정할 수 있는 특성: 묶인 키가 게임이 읽는 seed 키인 것만
- const traitRows = TRAITS.rows.filter(t => t.binding && seedKeys.includes(t.binding.key) && t.binding.setValue !== undefined);
+ const traitRows = editorTraitRows(TRAITS.rows).filter(t => t.binding && seedKeys.includes(t.binding.key) && t.binding.setValue !== undefined);
  const traitKeys = new Set(traitRows.map(t => t.binding.key));
  const traitOn = (v, b) => v !== undefined && (b.op === '>' ? v > b.threshold : b.op === '<' ? v < b.threshold : b.op === '>=' ? v >= b.threshold : b.op === 'range' ? v >= b.min && v <= b.max : v === b.threshold);
 
@@ -668,7 +668,7 @@ export async function createStudioView(api, options = {}) {
   if (act === 'cancel-preview') { st.preview = null; return render(); }
   if (act === 'discard') { st.edits = blank(); st.preview = null; return render(); }
   if (act === 'trait-add') {
-   const name = root.querySelector('[data-st="trait"]').value.trim(), tr = traitRows.find(r => r.name === name);
+   const name = root.querySelector('[data-st="trait"]').value.trim(), tr = findTraitByName(traitRows,name);
    if (!tr) return api.toast('그런 특성이 없거나 게임 JSON으로 정할 수 없는 특성입니다: ' + name);
    setVal('seed_' + tr.binding.key, tr.binding.setValue); return render();
   }

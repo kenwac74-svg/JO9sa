@@ -1,3 +1,4 @@
+import {editorTraitRows} from './game-presentation.mjs';
 import {clone,estimate,validateState,SCHEMA} from './engine.mjs';
 import {parseCharacterJSON,exportCharacterJSON,primitiveFields,setPath,getPath,setTrait,traitMatches,normalizeRaceTags,applyTraitEffects,SKILL_ALIASES,DERIVED,normalizeTraitCatalogue,applyStandardCase,preserveRawEditCharacter,setCharacterSeedAge} from './character-io.mjs';
 import {buildBackgroundCases,findBackgrounds,backgroundCategories,autoBackground,useBackground,JOB_MAP} from './backgrounds.mjs';
@@ -13,7 +14,7 @@ export async function createWorkbench(api){
  const [traitsData,bgData,sample,draftData]=await Promise.all(['traits.json','backgrounds.json','isabella-source.json','background-drafts.json'].map(async f=>{const r=await fetch('./data/'+f);if(!r.ok)throw new Error(f+' 데이터를 읽지 못했습니다.');return r.json();}));
  bgData.records.push(...draftData.records);
  const gameSeedKeys=await fetch('./data/game-seed-keys.json').then(r=>r.ok?r.json():null).then(d=>new Set(d?.keys??[])).catch(()=>new Set());
- let traits=normalizeTraitCatalogue(api.getState().traitCatalogue??traitsData);
+ let traits=normalizeTraitCatalogue(api.getState().traitCatalogue??editorTraitRows(traitsData.rows));
  const allCases=()=>buildBackgroundCases(bgData,state().config);
  const savedBrowser=api.getState().backgroundBrowser??{};
  let browserStateRef=api.getState().backgroundBrowser;

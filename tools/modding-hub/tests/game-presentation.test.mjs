@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import {setGamePresentation,loadGamePresentation,describeGameValue,readSimulation,attributeCards,skillTree,statusDashboard,traitPresentation} from '../overrides/game-presentation.mjs';
+import {setGamePresentation,loadGamePresentation,describeGameValue,readSimulation,attributeCards,skillTree,statusDashboard,traitPresentation,editorTraitRows,findTraitByName} from '../overrides/game-presentation.mjs';
 import {initialPreview} from '../overrides/initial-preview.mjs';
 const rules={palettes:{skill:{0:'#cd0000',1:'#EA0090',2:'#6B0084',3:'#0000D8',4:'#009FEF',5:'#009900'}},labels:{beauty:'외모',pride:'태도',fat:'체형'},values:{beauty:{6:{text:'절세의 미모 S++',cycle:'skill',index:5}},pride:{0:{text:'개방적',cycle:'skill',index:5}},fat:{1:{text:'모델 체형',cycle:'skill',index:5}},sub_hj:{0:{text:'핸드잡 F',cycle:'skill',index:0}}},skills:[{key:'petting',label:'애무',children:['sub_hj']}],supportedSeeds:['moral','psy_basic']};
 setGamePresentation(rules);
@@ -52,4 +52,24 @@ test('unspecified sex skills use F while missing category averages zero defaults
  assert(!skillTree({}).includes('미설정'));assert(skillTree({}).includes('애무 F'));
  const original=rules.skills;rules.skills=[{key:'petting',label:'애무',children:['sub_hj','sub_fj']}];
  try{assert(skillTree({sub_hj:4}).includes('애무 C'));}finally{rules.skills=original;}
+});
+test('the retired dancing label is removed and the editable talent remains',()=>{
+ const id='calisthenics_affinity > 0', binding={key:'calisthenics_affinity',op:'>',threshold:0,setValue:1};
+ const primary={id,name:'발레리나',description:'해당 성향이 드러나지 않은 인물에게 표시되는 이름이다.',binding,aliases:[]};
+ const alternate={id,name:'이국적인 댄서',description:'성향에 따라 표시되는 이름이다.',binding,aliases:[]};
+ const unrelated={id:'calisthenics_affinity < 0',name:'별도 판정',binding:{...binding,op:'<'}};
+ const rows=editorTraitRows([alternate,unrelated,primary]);
+ assert.equal(rows.length,2);
+ const result=findTraitByName(rows,'발레리나');
+ assert.equal(findTraitByName(rows,'이국적인 댄서'),undefined);
+ assert.deepEqual(result.aliases,[]);
+ assert.equal(result.id,id);
+ assert.deepEqual(result.binding,binding);
+ assert(result.description.startsWith('무용술을 더 빨리 배운다.'));
+ assert(!result.description.includes('성향'));
+ assert.equal(rows[0],unrelated);
+ assert.deepEqual(primary.aliases,[]);
+ assert.deepEqual(editorTraitRows(rows),rows);
+ assert.equal(editorTraitRows([alternate])[0].name,'발레리나');
+ assert.deepEqual(editorTraitRows([{...primary,aliases:['이국적인 댄서']}])[0].aliases,[]);
 });

@@ -68,3 +68,17 @@ export function refreshGameField(input){
  const key=input.dataset.stSet??input.dataset.stInitial??input.dataset.stMasterStat??input.dataset.stSimulation,description=box.querySelector('[data-game-description]');
  if(key&&description){const value=input.value===''?(input.dataset.gameDefault??0):input.value,d=describeGameValue(key,value);description.innerHTML=valueBadge(key,value);box.title=d.tooltip;}
 }
+// Older trait data lists a retired display name for the same seed.
+export function editorTraitRows(rows){
+ const danceId='calisthenics_affinity > 0', primaryName='발레리나', retiredName='이국적인 댄서';
+ const danceRows=rows.filter(row=>row.id===danceId && [primaryName,retiredName].includes(row.name));
+ const primary=danceRows.find(row=>row.name===primaryName)??danceRows[0];
+ if(!primary)return rows;
+ const aliases=[...new Set(danceRows.flatMap(row=>row.aliases??[]))].filter(name=>name!==primaryName&&name!==retiredName);
+ const talent={...primary,name:primaryName,description:'무용술을 더 빨리 배운다.',aliases};
+ return rows.filter(row=>row===primary || !danceRows.includes(row)).map(row=>row===primary?talent:row);
+}
+
+export function findTraitByName(rows,name){
+ return rows.find(row=>row.name===name)??rows.find(row=>row.aliases?.includes(name));
+}

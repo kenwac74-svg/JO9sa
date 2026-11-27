@@ -1,4 +1,5 @@
 // 산식 계수: 과거 경험 공식의 계수를 편집하는 탭(세계·출신·직업 대분류 범위 → 소분류 값, 연령, 특성 키워드 가중치, 그 밖 계수)
+import {editorTraitRows,findTraitByName} from './game-presentation.mjs';
 import {loadSimData,esc as e,getFormula,saveFormula,resetFormula,onFormulaChange,formulaEdited} from './sim-data.mjs';
 import {tierOf,categoryFactor} from './past-history.mjs';
 
@@ -8,7 +9,7 @@ const LV_FAT=['앙상한','모델 체형','날씬한','육감적인','통통한'
 export async function createCoefView(api){
  const D=await loadSimData();
  const TRAITS=await fetch('./data/traits.json').then(r=>r.json());
- const traitRows=TRAITS.rows.filter(r=>r.binding&&!r.binding.key.includes('['));
+ const traitRows=editorTraitRows(TRAITS.rows).filter(r=>r.binding&&!r.binding.key.includes('['));
  const F=()=>getFormula(D.formula);
  const id='coef';
  api.tabNames[id]=['산식 계수','산식 계수','과거 경험 공식의 계수를 고칩니다. 바꾼 값은 이 브라우저에 저장되고 캐릭터 시뮬레이터·뽑기 분포에 바로 적용됩니다.'];
@@ -101,7 +102,7 @@ export async function createCoefView(api){
   if(a==='export'){const blob=new Blob([JSON.stringify(F(),null,1)],{type:'application/json'}),u=URL.createObjectURL(blob),l=document.createElement('a');l.href=u;l.download='past-history-formula.json';l.click();setTimeout(()=>URL.revokeObjectURL(u),1000);}
   if(a==='age-add'){const age=root.querySelector('#cfAgeNew').value,w=root.querySelector('#cfAgeW').value;if(age===''||w===''||!Number.isInteger(Number(age))||Number(age)<0||Number(age)>99){api.toast('seed_age는 0~99 정수로, 가중치는 숫자로 넣으세요.');return;}edit(f=>{f.ageFactor[String(Number(age))]=Math.trunc(Number(w));});}
   if(a==='age-del')edit(f=>{delete f.ageFactor[b.dataset.age];});
-  if(a==='tw-add'){const name=root.querySelector('#cfTwName').value.trim(),w=root.querySelector('#cfTwF').value,row=traitRows.find(r=>r.name===name);
+  if(a==='tw-add'){const name=root.querySelector('#cfTwName').value.trim(),w=root.querySelector('#cfTwF').value,row=findTraitByName(traitRows,name);
    if(!row){api.toast(`"${name}"와 맞는 특성이 없어 추가하지 않았습니다.`);return;}if(w===''){api.toast('가중치를 넣으세요.');return;}
    const bnd=row.binding;edit(f=>{(f.traitWeights??=[]).push({name:row.name,key:bnd.key,op:bnd.op,value:bnd.threshold,min:bnd.min,max:bnd.max,factor:Math.trunc(Number(w))});});}
   if(a==='tw-del')edit(f=>{f.traitWeights.splice(Number(b.dataset.i),1);});

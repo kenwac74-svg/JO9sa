@@ -1,4 +1,5 @@
 // 특성 편집: 모든 특성을 열람하고, 필로우토크 변수(총횟수·질·구강·애널 가중치)와 특성 자체 값·설명을 고치며, 형질 변경 요청은 AI용 메모로 남긴다
+import {editorTraitRows,findTraitByName} from './game-presentation.mjs';
 import {loadSimData,esc as e,getFormula,saveFormula,onFormulaChange} from './sim-data.mjs';
 
 const KEY='jo9-trait-edits-v1';
@@ -7,7 +8,7 @@ const OPS={'=':'=','>':'>','<':'<','>=':'≥','range':'범위'};
 export async function createTraitEditor(api){
  const D=await loadSimData();
  const TRAITS=await fetch('./data/traits.json').then(r=>r.json());
- const rows=TRAITS.rows;
+ const rows=editorTraitRows(TRAITS.rows);
  const F=()=>getFormula(D.formula);
  let edits={};try{edits=JSON.parse(localStorage.getItem(KEY)||'{}')??{};}catch{}
  const saveEdits=()=>{try{localStorage.setItem(KEY,JSON.stringify(edits));}catch{}};
@@ -20,9 +21,14 @@ export async function createTraitEditor(api){
  const cats=[...new Set(rows.map(r=>r.category))];
  const bindText=b=>!b?'게임 키 없음(JSON으로 지정 불가)':b.op==='range'?`${b.key} ${b.min}~${b.max}`:`${b.key} ${OPS[b.op]??b.op} ${b.threshold}`;
  // 공식에서 이 특성에 걸린 항목 찾기(이름으로)
- const libidoOf=(f,name)=>f.traits.libido.rules.findIndex(r=>r.name===name);
- const actsOf=(f,name)=>f.traits.acts.rules.findIndex(r=>r.name===name);
- const twOf=(f,name)=>(f.traitWeights??[]).findIndex(r=>r.name===name);
+ const ruleIndex=(rules,name)=>{
+  const dance=rows.find(row=>row.name===name&&row.id==='calisthenics_affinity > 0')?.binding;
+  return rules.findIndex(r=>r.name===name||findTraitByName(rows,r.name)?.name===name||
+   (dance&&r.key===dance.key&&r.op===dance.op&&r.value===dance.threshold));
+ };
+ const libidoOf=(f,name)=>ruleIndex(f.traits.libido.rules,name);
+ const actsOf=(f,name)=>ruleIndex(f.traits.acts.rules,name);
+ const twOf=(f,name)=>ruleIndex(f.traitWeights??[],name);
  const ruleFrom=row=>{const b=row.binding;return {name:row.name,key:b.key,op:b.op,value:b.threshold,min:b.min,max:b.max};};
 
  function detail(row){
@@ -53,7 +59,7 @@ export async function createTraitEditor(api){
  }
  function render(){
   const ql=q.trim().toLowerCase();
-  const list=rows.filter(r=>(!cat||r.category===cat)&&(!ql||[r.name,r.description,r.binding?.key].join(' ').toLowerCase().includes(ql)));
+  const list=rows.filter(r=>(!cat||r.category===cat)&&(!ql||[r.name,r.description,r.binding?.key,...(r.aliases??[])].join(' ').toLowerCase().includes(ql)));
   const row=rows.find(r=>r.id===sel)??list[0];
   const f=F(),marks=r=>[libidoOf(f,r.name)>=0||twOf(f,r.name)>=0?'횟수':'',actsOf(f,r.name)>=0?'배분':'',edits[r.id]?.memo?'메모':'',edits[r.id]&&Object.keys(edits[r.id]).some(k=>k!=='memo')?'수정':''].filter(Boolean);
   const nEdit=Object.keys(edits).length;

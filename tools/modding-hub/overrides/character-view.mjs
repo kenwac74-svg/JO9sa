@@ -1,5 +1,5 @@
 // 캐릭터 시뮬레이터: 위는 게임에 보이는 캐릭터 정보·배경·과거 경험·필로우토크, 아래 고정 패널은 생성·입력·내부 설정을 맡는다
-import {loadGamePresentation,gameRules,attributeCards,skillTree,statusDashboard,readSimulation,valueBadge,traitStyle} from './game-presentation.mjs';
+import {loadGamePresentation,gameRules,attributeCards,skillTree,statusDashboard,readSimulation,valueBadge,traitStyle,editorTraitRows,findTraitByName} from './game-presentation.mjs';
 import {runtimeValues,runtimeControls,bindRuntimeControls,subscribeRuntime,ensureRuntime,runtimeMasterId} from './runtime-initials.mjs';
 import {pastHistory,tierOf} from './past-history.mjs';
 import {pastFacts,packFacts,firstTimeLine,SKILL_NAME} from './past-facts.mjs';
@@ -56,7 +56,7 @@ export async function createCharacterView(api){
  const get=async f=>{const r=await fetch('./data/'+f);if(!r.ok)throw new Error(f+'를 읽지 못했습니다.');return r.json();};
  const [CAT,FACTS,XENO,FIRST,IV,TRAITS,BG,BGD,REFS,ACQ,DEFAULT_QUESTIONS]=await Promise.all(['background-categories.json','past-facts.json','xeno-talk-drafts.json','first-time-drafts.json','first-time-interviews.json','traits.json','backgrounds.json','background-drafts.json','interview-refs.json','acquisition-routes.json','sex-talk-questionnaire.json'].map(get));
  const RECORDS=[...BG.records,...BGD.records];
- const traitRows=TRAITS.rows.filter(r=>r.binding&&!r.binding.key.includes('['));
+ const traitRows=editorTraitRows(TRAITS.rows).filter(r=>r.binding&&!r.binding.key.includes('['));
  const traitOn=(ch,r)=>{
   const b=r.binding;if(ch[b.key]===undefined)return false;
   // 정신 상태(sanity)는 생성 단계에서 0(미설정)이라 0이면 보이지 않는다
@@ -416,7 +416,7 @@ export async function createCharacterView(api){
  function applyTerms(raw){
   const c=ch(),unknown=[];
   for(const tok of raw.split(/[,，]/).map(s=>s.trim()).filter(Boolean)){
-   const trait=traitRows.find(r=>r.name===tok);
+   const trait=findTraitByName(traitRows,tok);
    if(trait){
     // 같은 키의 다른 특성은 함께 바뀐다(한 키에 한 값)
     c[trait.binding.key]=trait.binding.setValue;continue;

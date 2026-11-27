@@ -1,0 +1,16 @@
+{
+  "description": "발랄라이카 특별 상품 치즈루와 레이제이 리코의 거래 경위 대사 추가",
+  "id": "2026-11-28_balalaika_contract_provenance",
+  "target": "game\\jack.qsp",
+  "before_sha256": "502B361AC290B79816D005A20A37CA6B7960001BFD3F704D58F85E99AB19C7B6",
+  "after_sha256": "FE4690E368C429AE1366E9781741882D0BB640787AF34473563FEC5834A054AD",
+  "edits": [
+    {
+      "location": "jo9_smuggler_contract",
+      "field": "body",
+      "old": "  $text[1] = '[발랄라이카]<br>&nbsp;<<$seed_name[jo9_contract_quote]>>? <<jo9_contract_cost>>스파크야.'",
+      "new": "  $text[1] = '[발랄라이카]<br>&nbsp;<<$seed_name[jo9_contract_quote]>>? <<jo9_contract_cost>>스파크야.'\r\n  ! JO9 MOD START BALALAIKA_CONTRACT_PROVENANCE_20261128\r\n  if jo9_contract_quote = 9000: $text[1] += '<br>&nbsp;북극여행이라는 노예상이 팔기로 한 애야. 사겠다던 놈이 계약금만 내고 코빼기도 안 비쳐서, 결국 내 쪽에 매물로 넘어왔지.'\r\n  if jo9_contract_quote = 9001: $text[1] += '<br>&nbsp;Noel이라는 노예상이 주문해서 구해 놨더니, 찾으러 오질 않아. 주문은 지가 해 놓고 내가 언제까지 기다려 줘야 해?'\r\n  ! JO9 MOD END BALALAIKA_CONTRACT_PROVENANCE_20261128",
+      "count": 1
+    }
+  ]
+}
