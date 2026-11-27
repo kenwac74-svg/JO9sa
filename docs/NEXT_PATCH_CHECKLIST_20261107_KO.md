@@ -97,6 +97,10 @@
 
 완료 판정은 최신 적용·출고 기록에 근거한다. 사용자의 실제 화면 전수 검증 완료를 뜻하지 않는다.
 
+## 추가 이미지 수정 · 2026-11-22
+
+- [x] **콜로세움 까마귀자리 투사 패배 이미지의 중복 다리 제거** · 2026-11-28 WORK 및 추적 리소스에 795 × 596 PNG로 반영. 대상 `game/content/pic/mob/defeated/gladiator_champion_corvus.png`. [수정 원본](../records/corvus-defeat-three-leg-20261122/corvus-arena-defeated-leg-fix.png).
+
 ## 추천 편성 순서
 
 1. **작은 후속 패치 묶음** — P01·P02의 확정 불일치, P05 대사 순서, P11·P12 도구 정합, P14의 실제 잔여 번역.
