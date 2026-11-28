@@ -1,0 +1,154 @@
+<!-- 질문 메뉴 원고(q*_manuscript.json)를 원고표 CSV와 나란히 불러와 사용자가 직접 칸을 채우고 저장하는 기계적 입출력 편집기 -->
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>질문 원고 편집기</title>
+<style>
+/* 위: 파일 불러오기·거르기·저장 / 아래: 칸마다 원문(참고)과 입력란 */
+:root{--bg:#f6f7f4;--surface:#fff;--fg:#1f2421;--muted:#5d665f;--line:#dde2dc;--accent:#2f6b57;--done:#2f6b57;--wait:#b23a3a;
+--sans:"Noto Sans KR","Malgun Gothic",system-ui,sans-serif;--serif:"Noto Serif KR","Batang",serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161a18;--surface:#1e2320;--fg:#e6ebe7;--muted:#a3ada6;--line:#323a35;--accent:#7cc4a6;--done:#7cc4a6;--wait:#ef8a8a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#161a18;--surface:#1e2320;--fg:#e6ebe7;--muted:#a3ada6;--line:#323a35;--accent:#7cc4a6;--done:#7cc4a6;--wait:#ef8a8a;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font:15px/1.6 var(--sans);margin:0;padding-inline:max(16px,env(safe-area-inset-left,0px))}
+main{max-width:1200px;margin:0 auto;padding-block:24px 64px;display:grid;gap:16px}
+h1{font:600 22px/1.3 var(--serif);margin:0}p{margin:0;max-width:75ch}.meta{color:var(--muted);font-size:13px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+button,select{font:inherit;font-size:14px;padding:4px 12px;border:1px solid var(--accent);background:var(--surface);color:var(--accent);border-radius:4px;cursor:pointer}
+button:disabled{opacity:.45;cursor:default}
+.list{display:grid;gap:10px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:10px 12px;display:grid;gap:6px}
+.head{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:13px;color:var(--muted)}
+.head b{color:var(--fg)}
+.orig{font-family:var(--serif);font-size:13px;color:var(--muted);border-left:3px solid var(--line);padding-left:8px}
+textarea{width:100%;box-sizing:border-box;font:14px/1.5 var(--serif);background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:6px 8px;resize:vertical}
+.badge{font-size:11px;padding:1px 7px;border:1px solid currentColor;border-radius:3px}
+.badge.done{color:var(--done)}.badge.wait{color:var(--wait);font-weight:600}
+</style>
+</head>
+<body>
+<main>
+<header style="display:grid;gap:10px">
+<h1>질문 원고 편집기</h1>
+<p class="meta">① 원고표 <code>question_fill_table.csv</code>와 ② 고칠 원고 <code>q11xx_manuscript.json</code>을 불러온다. 칸마다 원문(말투 1·2·3)을 참고로 보고 입력란에 직접 쓴다. 저장하기를 누르면 그 JSON 파일이 바뀐다. 내용은 검사하지 않는다. 행을 지우지 않으며, 원고가 없던 칸에 처음 쓰면 <code>writer: user</code> 행이 하나 더해진다.</p>
+<div class="bar">
+<button id="opencsv" type="button">① 원고표 CSV 불러오기</button>
+<button id="openjson" type="button">② 원고 JSON 불러오기</button>
+<select id="mode"><option value="todo">원고 없는 칸만</option><option value="user">사용자 작성 칸</option><option value="all">이 질문의 모든 칸</option></select>
+<button id="save" type="button" disabled>저장하기</button>
+<input type="file" id="fcsv" accept=".csv,text/csv" hidden><input type="file" id="fjson" accept=".json,application/json" hidden>
+</div>
+<p id="state" class="meta">파일을 불러오면 칸이 보인다.</p>
+<p class="meta">사용자 완료 <b id="ndone">0</b> · 사용자 대기 <b id="nwait">0</b></p>
+</header>
+<div id="list" class="list"></div>
+</main>
+<script>
+// 기계적인 입출력: 내용 판단 없이 읽고, 보여 주고, 쓴 그대로 저장한다
+let CSV = null, MS = null, HANDLE = null, FILENAME = 'manuscript.json';
+const $ = id => document.getElementById(id);
+const state = m => { $('state').textContent = m; };
+const key = r => [r.question, r.role, r.voice, r.cell].join('|');
+
+function parseCsv(text) {
+  // 따옴표 안의 쉼표·줄바꿈을 지키는 CSV 읽기
+  const rows = []; let row = [], f = '', q = false;
+  text = text.replace(/^﻿/, '');
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (q) { if (c === '"') { if (text[i + 1] === '"') { f += '"'; i++; } else q = false; } else f += c; continue; }
+    if (c === '"') q = true; else if (c === ',') { row.push(f); f = ''; }
+    else if (c === '\n') { row.push(f); rows.push(row); row = []; f = ''; }
+    else if (c !== '\r') f += c;
+  }
+  if (f !== '' || row.length) { row.push(f); rows.push(row); }
+  const head = rows.shift();
+  return rows.filter(r => r.length > 1).map(r => Object.fromEntries(head.map((h, i) => [h, r[i] ?? ''])));
+}
+
+function render() {
+  if (!CSV || !MS) return;
+  const q = (MS.rows.find(r => r.question) || {}).question;
+  const ms = {}; MS.rows.forEach((r, i) => { ms[key(r)] = i; });
+  const mode = $('mode').value;
+  const list = $('list'); list.replaceChildren();
+  const cells = CSV.filter(r => r.question === q && ['보완', '신규', '원문만', '분리'].includes(r.class));
+  for (const c of cells) {
+    const i = ms[key(c)];
+    const m = i === undefined ? null : MS.rows[i];
+    const has = m && (m.text || '').trim() !== '';
+    if (mode === 'todo' && has) continue;
+    if (mode === 'user' && !(m && m.writer === 'user') && has) continue;
+    const card = document.createElement('div'); card.className = 'card';
+    const head = document.createElement('div'); head.className = 'head';
+    head.innerHTML = '<span class="badge"></span>';
+    for (const [k, v] of [['역할', c.role], ['목소리', c.voice], ['칸', c.cell], ['구분', c.class], ['작성', m ? m.writer : '없음']]) {
+      const s = document.createElement('span'); s.innerHTML = k + ' <b></b>'; s.querySelector('b').textContent = v; head.append(s);
+    }
+    card.append(head);
+    for (const t of ['original_t1', 'original_t2', 'original_t3']) {
+      if (!c[t]) continue;
+      const o = document.createElement('div'); o.className = 'orig'; o.textContent = '원문 말투 ' + t.slice(-1) + ' · ' + c[t]; card.append(o);
+    }
+    const ta = document.createElement('textarea'); ta.rows = 2; ta.placeholder = '여기에 쓴다';
+    ta.value = m ? (m.text || '') : '';
+    ta.addEventListener('input', () => {
+      let j = ms[key(c)];
+      if (j === undefined) {
+        MS.rows.push({ question: c.question, role: c.role, cell: c.cell, voice: c.voice, kind: c.class, tone: c.tone, basis: '', text: '', writer: 'user', batch: 'user' });
+        j = ms[key(c)] = MS.rows.length - 1;
+      }
+      MS.rows[j].text = ta.value;
+      mark(card, ta.value); count(); state('저장하지 않은 변경 있음.');
+    });
+    card.append(ta); list.append(card); mark(card, ta.value);
+  }
+  count();
+  state(FILENAME + ' · 질문 ' + q + ' · 보이는 칸 ' + list.children.length);
+}
+function mark(card, v) {
+  const b = card.querySelector('.badge'); const done = v.trim() !== '';
+  b.className = 'badge ' + (done ? 'done' : 'wait'); b.textContent = done ? '사용자 완료' : '사용자 대기';
+}
+function count() {
+  let d = 0, w = 0;
+  document.querySelectorAll('.card .badge').forEach(b => b.classList.contains('done') ? d++ : w++);
+  $('ndone').textContent = d; $('nwait').textContent = w;
+}
+async function pick(kind) {
+  const isJson = kind === 'json';
+  if (window.showOpenFilePicker) {
+    try {
+      const [h] = await showOpenFilePicker({ types: [{ description: isJson ? 'JSON' : 'CSV', accept: isJson ? { 'application/json': ['.json'] } : { 'text/csv': ['.csv'] } }] });
+      const f = await h.getFile(); await load(kind, f, h); return;
+    } catch (e) { if (e.name === 'AbortError') return; }
+  }
+  $(isJson ? 'fjson' : 'fcsv').click();
+}
+async function load(kind, f, h) {
+  try {
+    if (kind === 'csv') CSV = parseCsv(await f.text());
+    else { MS = JSON.parse(await f.text()); FILENAME = f.name; HANDLE = h || null; $('save').disabled = false; }
+  } catch (e) { state('읽지 못했다: ' + e.message); return; }
+  if (CSV && MS) render(); else state((CSV ? '원고표' : '원고 JSON') + '을 불러왔다. 나머지 파일도 불러온다.');
+}
+$('opencsv').addEventListener('click', () => pick('csv'));
+$('openjson').addEventListener('click', () => pick('json'));
+$('fcsv').addEventListener('change', e => e.target.files[0] && load('csv', e.target.files[0]));
+$('fjson').addEventListener('change', e => e.target.files[0] && load('json', e.target.files[0]));
+$('mode').addEventListener('change', render);
+$('save').addEventListener('click', async () => {
+  const text = JSON.stringify(MS, null, 1);
+  if (HANDLE) {
+    try { const w = await HANDLE.createWritable(); await w.write(text); await w.close(); state(FILENAME + '에 저장했다.'); return; }
+    catch (e) { state('파일에 바로 쓰지 못해 내려받기로 저장한다: ' + e.message); }
+  }
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
+  a.download = FILENAME; a.click(); URL.revokeObjectURL(a.href);
+  state(FILENAME + '을 내려받았다. 저장소의 docs/dialogue-rules/question-fill/에 덮어쓴다.');
+});
+</script>
+</body>
+</html>
